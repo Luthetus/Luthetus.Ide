@@ -3,7 +3,7 @@
 
 - Runs on Linux, Windows, and Mac
 
-### One can gauge their interest in the repository with this one minute GIF:
+### One can gauge their interest in the repository with this two minute GIF:
 ![Example GIF](./Images/Rewrite/introductoryGifLuthetusIde.gif)
 
 ## Features
