@@ -1,5 +1,5 @@
 # Blazor Studio (Not yet released)
-- A free and open source IDE written using .NET - a Photino host, Blazor UI, and C#
+- A free and open source IDE being written with .NET: C#, Blazor UI, and a Photino host.
 
 - Runs on Linux, Windows, and Mac
 
