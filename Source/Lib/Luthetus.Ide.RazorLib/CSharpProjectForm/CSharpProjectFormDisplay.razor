@@ -1,0 +1,131 @@
+@    using BlazorStudio.RazorLib.Terminal
+@    using BlazorStudio.ClassLib.Store.TerminalCase
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<div class="bstudio_form">
+
+    <div class="bstudio_form-group">
+        <div class="bstudio_form-label">
+            Project name:
+        </div>
+
+        <div class="bstudio_form-value">
+            <input class="bstudio_input bstudio_input-text"
+                   style="height: 2em;"
+                   placeholder="Project name"
+                   @bind="_cSharpProjectName"
+                   @bind:event="oninput"/>
+        </div>
+    </div>
+
+    <div class="bstudio_form-group">
+        <div class="bstudio_form-label">
+            Template name:
+        </div>
+
+        <div class="bstudio_form-value">
+            <input class="bstudio_input bstudio_input-text"
+                   style="height: 2em;"
+                   placeholder="Template name"
+                   @bind="_projectTemplateName"
+                   @bind:event="oninput"/>
+        </div>
+    </div>
+
+    <div class="bstudio_form-group">
+        <div class="bstudio_form-label">
+            Optional parameters:
+        </div>
+
+        <div class="bstudio_form-value">
+            <input class="bstudio_input bstudio_input-text"
+                   style="height: 2em;"
+                   placeholder="Optional parameters"
+                   @bind="_optionalParameters"
+                   @bind:event="oninput"/>
+        </div>
+    </div>
+
+    <div class="bstudio_form-group">
+        <div class="bstudio_form-label">
+            Directory:
+        </div>
+
+        <div class="bstudio_form-value"
+             style="display: flex;">
+
+            <input class="bstudio_input bstudio_input-text"
+                   style="height: 2em;"
+                   placeholder="Parent directory"
+                   @bind="_parentDirectoryName"
+                   @bind:event="oninput"/>
+
+            <ButtonDisplay OnClickFunc='async () => RequestInputFileForParentDirectory("Directory for new C# Project")'>
+                <IconFolder/>
+            </ButtonDisplay>
+        </div>
+    </div>
+
+    <div>
+        Project&nbsp;Name:
+        <div>
+            <em class="bcrl_em">
+                @CSharpProjectName
+            </em>.csproj
+        </div>
+    </div>
+
+    <div>
+        Template&nbsp;Name:
+        <div>
+            <em class="bcrl_em">
+                @ProjectTemplateName
+            </em>
+        </div>
+    </div>
+
+    <div>
+        Optional&nbsp;Parameters:
+        <div>
+            <em class="bcrl_em">
+                @OptionalParameters
+            </em>
+        </div>
+    </div>
+
+    <div>
+        Directory&nbsp;Absolute&nbsp;File&nbsp;Path:
+        <div>
+            <em class="bcrl_em">
+                @ParentDirectoryName
+            </em>
+        </div>
+    </div>
+
+    <div>
+        Command:
+        <div>
+            <em class="bcrl_em">
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                @InterpolatedNewCSharpProjectCommand
+                &nbsp;\
+            </em>
+
+            <br/>
+
+            <em class="bcrl_em">
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                @InterpolatedAddExistingProjectToSolutionCommand
+            </em>
+        </div>
+    </div>
+
+    <ButtonDisplay OnClickFunc="StartNewCSharpProjectCommandOnClick">
+        Run
+    </ButtonDisplay>
+
+    <TerminalOutputDisplay TerminalSessionKey="TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY"
+                           TerminalCommandKey="_newCSharpProjectTerminalCommandKey"/>
+</div>

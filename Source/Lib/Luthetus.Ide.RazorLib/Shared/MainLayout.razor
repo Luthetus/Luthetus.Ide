@@ -1,0 +1,37 @@
+﻿@    using BlazorStudio.ClassLib.Context
+@    using BlazorStudio.RazorLib.ContextCase
+@    using BlazorTextEditor.RazorLib
+@    using BlazorCommon.RazorLib.Drag
+@    using BlazorCommon.RazorLib.Dialog
+@    using BlazorCommon.RazorLib.Dimensions
+@    using BlazorCommon.RazorLib.Notification
+@    using BlazorCommon.RazorLib.Resize
+@    using BlazorStudio.ClassLib.Panel
+@    using BlazorStudio.RazorLib.Panel
+
+@inherits LayoutComponentBase
+
+<ContextBoundary ContextRecord="ContextFacts.GlobalContext"
+                 ClassCssString="@($"bstudio_main-layout {UnselectableClassCss} {AppOptionsService.ThemeCssClassString}")"
+                 StyleCssString="@($"{AppOptionsService.FontSizeCssStyleString} {AppOptionsService.FontFamilyCssStyleString}")">
+
+    <DragInitializer/>
+    <DialogInitializer/>
+    <NotificationInitializer/>
+    <BlazorStudioInitializer/>
+
+    <BlazorTextEditorHeader/>
+
+    <BlazorTextEditorBody BodyElementDimensions="_bodyElementDimensions"/>
+
+    <ResizableRow TopElementDimensions="_bodyElementDimensions"
+                  BottomElementDimensions="PanelFacts.GetBottomPanelRecord(PanelsCollectionWrap.Value).ElementDimensions"
+                  ReRenderFuncAsync="ReRenderAsync"/>
+
+    <PanelDisplay PanelRecordKey="PanelFacts.BottomPanelRecordKey"
+                  CssClassString="bstudio_footer"
+                  AdjacentElementDimensions="_bodyElementDimensions"
+                  DimensionAttributeKind="DimensionAttributeKind.Height"
+                  ReRenderSelfAndAdjacentElementDimensionsFunc="ReRenderAsync"/>
+
+</ContextBoundary>

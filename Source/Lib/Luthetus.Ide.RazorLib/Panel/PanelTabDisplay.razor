@@ -1,0 +1,32 @@
+﻿<button class="bstudio_panel-tab bcrl_button bcrl_tab @IsActiveCssClassString"
+        @onclick="DispatchSetActivePanelTabActionOnClick"
+        @onmousedown:stopPropagation="true"
+        @onmousedown="HandleOnMouseDownAsync"
+        @onmouseup:stopPropagation="true"
+        @onmouseup="HandleOnMouseUpAsync"
+        @onmouseout="HandleOnMouseOutAsync">
+    <span>
+        @PanelTab.DisplayName
+    </span>
+    
+    @if (PanelsCollectionWrap.Value.PanelDragEventArgs is not null)
+    {
+        <div class="bstudio_panel-tab-dropzone bstudio_panel-tab-dropzone-top"
+             @onmouseup:stopPropagation="true"
+             @onmouseup="TopDropzoneOnMouseUp">
+        </div>
+        
+        <div class="bstudio_panel-tab-dropzone bstudio_panel-tab-dropzone-bottom"
+             @onmouseup:stopPropagation="true"
+             @onmouseup="BottomDropzoneOnMouseUp">
+        </div>
+    }
+</button>
+
+@if (PanelTab.IsBeingDragged)
+{
+    <div class="bstudio_panel-tab-drag-display"
+         style="@PanelTab.BeingDraggedDimensions.StyleString">
+        @PanelTab.DisplayName
+    </div>
+}

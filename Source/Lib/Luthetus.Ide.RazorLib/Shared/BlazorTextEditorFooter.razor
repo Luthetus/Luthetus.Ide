@@ -1,0 +1,33 @@
+@    using BlazorStudio.ClassLib.Context
+@    using BlazorStudio.ClassLib.Views
+@    using BlazorStudio.RazorLib.Terminal
+@    using BlazorStudio.RazorLib.NuGet
+@    using BlazorStudio.RazorLib.Git
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<ContextBoundary ContextRecord="ContextFacts.MainLayoutFooterContext"
+                 ClassCssString="bstudio_footer"
+                 StyleCssString="@FooterElementDimensions.StyleString">
+
+    <div class="bstudio_footer-body">
+        @{
+            var footerState = FooterStateWrap.Value;
+
+            switch (footerState.ActiveView.ViewKind)
+            {
+                case ViewKind.Terminals:
+                    <TerminalDisplay/>
+                    break;
+                case ViewKind.NugetPackageManager:
+                    <NuGetPackageManager/>
+                    break;
+                case ViewKind.GitDisplay:
+                    <GitChangesDisplay/>
+                    break;
+            }
+        }
+    </div>
+    
+    <BlazorTextEditorFooterViewTabs/>
+</ContextBoundary>

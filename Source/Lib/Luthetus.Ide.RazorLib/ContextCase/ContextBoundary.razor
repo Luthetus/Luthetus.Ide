@@ -1,0 +1,10 @@
+<div class="@ClassCssString"
+     style="@StyleCssString"
+     tabindex="@TabIndex"
+     @onfocusin="HandleOnFocusIn"
+     @onfocusin:stopPropagation="true">
+	
+    <CascadingValue Value="this">
+        @ChildContent
+    </CascadingValue>  
+</div>

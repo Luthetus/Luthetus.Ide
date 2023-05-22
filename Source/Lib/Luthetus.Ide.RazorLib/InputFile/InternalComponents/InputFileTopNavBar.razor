@@ -1,0 +1,69 @@
+﻿@    using BlazorStudio.ClassLib.Store.InputFileCase
+@    using BlazorStudio.ClassLib.FileSystem.Interfaces
+
+<div class="bstudio_input-file-display-top-nav-bar">
+    <div class="bstudio_input-file-display-top-nav-bar-buttons">
+        <ButtonDisplay OnClickFunc="HandleBackButtonOnClick"
+                       IsDisabled="!InputFileState.CanMoveBackwardsInHistory">
+            <IconArrowLeft/>
+        </ButtonDisplay>
+        
+        <ButtonDisplay OnClickFunc="HandleForwardButtonOnClick"
+                       IsDisabled="!InputFileState.CanMoveForwardsInHistory">
+            <IconArrowRight/>
+        </ButtonDisplay>
+    
+        <ButtonDisplay OnClickFunc="HandleUpwardButtonOnClick">
+            <IconArrowUp/>
+        </ButtonDisplay>
+        
+        <ButtonDisplay OnClickFunc="HandleRefreshButtonOnClick">
+            <IconRefresh/>
+        </ButtonDisplay>
+    </div>
+    
+    <div class="bstudio_input-file-display-top-nav-bar-address">
+        <div class="bstudio_input-file-display-top-nav-bar-address-hierarchy"
+             @onclick="() => _showInputTextEditForAddress = true">
+            
+            @if (InputFileState.IndexInHistory < InputFileState.OpenedTreeViewModelHistory.Count)
+            {
+                var openedTreeView = InputFileState.GetOpenedTreeView();
+
+                if (openedTreeView?.Item is not null)
+                {
+                    if (_showInputTextEditForAddress)
+                    {
+                        <InputFileEditAddress InitialInputValue="@openedTreeView.Item.GetAbsoluteFilePathString()"
+                                              OnFocusOutCallbackAsync="InputFileEditAddressOnFocusOutCallbackAsync"
+                                              OnEscapeKeyDownCallbackAsync="HideInputFileEditAddressAsync"/>
+                    }
+                    else
+                    {
+                        foreach (var directory in openedTreeView.Item.Directories)
+                        {
+                            if (directory is IAbsoluteFilePath absoluteFilePath)
+                            {
+                                <InputFileAddressHierarchyEntry AbsoluteFilePath="absoluteFilePath"/>
+                            }
+                        }
+
+                        <InputFileAddressHierarchyEntry AbsoluteFilePath="openedTreeView.Item"/>
+                    }
+                }
+            }
+        </div>
+    </div>
+    
+    <div class="bstudio_input-file-display-top-nav-bar-search">
+        <ButtonDisplay OnClickFunc="FocusSearchElementReferenceOnClickAsync"
+                       CssClassString="bstudio_input-file-search-button">
+            <IconSearch/>
+        </ButtonDisplay>
+        
+        <input @ref="SearchElementReference"
+               @bind="SearchQuery"
+               @bind:event="oninput"
+               class="bstudio_input bstudio_input-file-search-input"/>
+    </div>
+</div>

@@ -1,0 +1,37 @@
+﻿@    using BlazorStudio.ClassLib.Store.InputFileCase
+
+<div class="bstudio_input-file-display-bottom-controls">
+    <div class="bstudio_input-file-display-bottom-controls-text-input">
+        <div>
+            @GetSelectedTreeViewModelAbsoluteFilePathString(InputFileState)    
+        </div>
+        <div>
+            (@InputFileState.Message)    
+        </div>
+    </div>
+    <div class="bstudio_input-file-display-bottom-controls-non-text">
+        <div>
+            <select @onchange="SelectInputFilePatternOnChange">
+                @foreach (var inputFilePattern in InputFileState.InputFilePatterns)
+                {
+                    <option value="@inputFilePattern.PatternName"
+                            selected="@(
+                                (InputFileState.SelectedInputFilePattern?.PatternName ?? string.Empty)
+                                == inputFilePattern.PatternName)">
+                        @inputFilePattern.PatternName
+                    </option>
+                }
+            </select>
+        </div>
+        <div style="display: flex;">
+            <ButtonDisplay OnClickFunc="FireOnAfterSubmit"
+                           IsDisabled="OnAfterSubmitIsDisabled()">
+                Select
+            </ButtonDisplay>
+            
+            <ButtonDisplay OnClickFunc="CancelOnClick">
+                Cancel
+            </ButtonDisplay>
+        </div>
+    </div>
+</div>

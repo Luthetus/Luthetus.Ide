@@ -1,0 +1,21 @@
+@    using BlazorStudio.ClassLib.Context
+@    using BlazorStudio.ClassLib.Store.EditorCase
+@    using BlazorStudio.RazorLib.ContextCase
+@    using BlazorTextEditor.RazorLib
+@    using BlazorTextEditor.RazorLib.HelperComponents
+@    using BlazorTextEditor.RazorLib.Group
+
+<ContextBoundary ContextRecord="ContextFacts.EditorContext"
+                 ClassCssString="bstudio_editor-display"
+                 StyleCssString="@EditorElementDimensions.StyleString">
+
+    <div class="bstudio_section-title">
+        Editor
+    </div>
+
+    <div class="bstudio_section-body">
+        <TextEditorGroupDisplay TextEditorGroupKey="EditorState.EditorTextEditorGroupKey"
+                                TabIndex="0"
+                                HeaderButtonKinds="TextEditorHeaderButtonKinds"/>
+    </div>
+</ContextBoundary>

@@ -1,0 +1,26 @@
+﻿<div class="bstudio_delete-file-form-display"
+     @onkeydown="HandleOnKeyDown">
+
+    <div>
+        <em class="bcrl_em">
+            Remove C# Project:
+        </em>
+
+        <div>
+            <em class="bcrl_em" title="@AbsoluteFilePath.GetAbsoluteFilePathString()">
+                @AbsoluteFilePath.FilenameWithExtension
+            </em>
+        </div>
+    </div>
+
+    <div style="display: flex; justify-content: space-between;">
+        <ButtonDisplay OnClickFunc="RemoveCSharpProjectFromSolutionOnClick">
+            Delete
+        </ButtonDisplay>
+
+        <ButtonDisplay @ref="_cancelButtonDisplay" 
+                       OnClickFunc="CancelOnClick">
+            Cancel
+        </ButtonDisplay>
+    </div>
+</div>

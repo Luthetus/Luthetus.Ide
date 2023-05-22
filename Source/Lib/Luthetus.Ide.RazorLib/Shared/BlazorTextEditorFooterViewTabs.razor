@@ -1,0 +1,8 @@
+﻿@    using BlazorStudio.ClassLib.Views
+
+<div class="bstudio_footer-view-tabs">
+    @foreach (var view in ViewFacts.Views)
+    {
+        <ViewTabDisplay View="view"/>
+    }
+</div>

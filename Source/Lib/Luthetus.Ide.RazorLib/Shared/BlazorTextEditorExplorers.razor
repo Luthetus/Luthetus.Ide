@@ -1,0 +1,15 @@
+﻿@    using BlazorStudio.RazorLib.SolutionExplorer
+@    using BlazorStudio.RazorLib.FolderExplorer
+@    using BlazorCommon.RazorLib.Resize
+
+<div class="bstudio_explorers-display"
+     style="height: 100%; @ExplorersElementDimensions.StyleString">
+    
+    <SolutionExplorerDisplay SolutionExplorerElementDimensions="_solutionExplorerElementDimensions"/>
+    
+    <ResizableRow TopElementDimensions="_solutionExplorerElementDimensions"
+                  BottomElementDimensions="_folderExplorerElementDimensions"
+                  ReRenderFuncAsync="ReRenderAsync"/>
+    
+    <FolderExplorerDisplay FolderExplorerElementDimensions="_folderExplorerElementDimensions"/>
+</div>

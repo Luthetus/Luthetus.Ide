@@ -1,0 +1,61 @@
+@using BlazorCommon.RazorLib.Store.AccountCase
+<div class="bstudio_file-form-display"
+     @onkeydown="HandleOnKeyDown">
+
+    <div style="margin-bottom: 10px;">
+
+        <div>
+            Container Name: @AccountState.DEFAULT_CONTAINER_NAME
+        </div>
+    </div>
+
+    <div style="margin-bottom: 10px;">
+
+        <div>
+            <label for="bstudio_alias-key-input">
+                Group Name:
+            </label>
+
+            <input id="bstudio_alias-key-input"
+                   class="bstudio_input bstudio_input-text"
+                   style="height: 2em;"
+                   type="text"
+                   placeholder="Group Name"
+                   autocapitalize="none"
+                   autocorrect="off"
+                   autocomplete="off"
+                   spellcheck="false"
+                   @bind="GroupKey"
+                   @bind:event="oninput"/>
+        </div>
+        
+        <div class="bstudio_login-form-hint">
+            ^ filter
+        </div>
+    </div>
+
+    <div style="margin-bottom: 10px;">
+
+        <div>
+            <label for="bstudio_alias-input">
+                Alias:
+            </label>
+
+            <input id="bstudio_alias-input"
+                   class="bstudio_input bstudio_input-text"
+                   style="height: 2em;"
+                   type="text"
+                   placeholder="Alias"
+                   autocapitalize="none"
+                   autocorrect="off"
+                   autocomplete="off"
+                   spellcheck="false"
+                   @bind="Alias"
+                   @bind:event="oninput"/>
+        </div>
+
+        <div class="bstudio_login-form-hint">
+            ^ your display name
+        </div>
+    </div>
+</div>

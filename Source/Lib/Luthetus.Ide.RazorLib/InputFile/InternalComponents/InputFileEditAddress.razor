@@ -1,0 +1,14 @@
+﻿<div class="bstudio_input-file-edit-address"
+     @onfocusout="InputTextEditForAddressOnFocusOutAsync">
+    
+    <input @ref="_inputTextEditForAddressElementReference"
+           @bind="_editForAddressValue"
+           @onkeydown="InputTextEditForAddressOnKeyDownAsync"
+           class="bstudio_input bstudio_input-file-search-input"/>
+
+    <button @onclick="OnEscapeKeyDownCallbackAsync.Invoke"
+            @onclick:stopPropagation="true"
+            class="bcrl_button">
+        Cancel
+    </button>
+</div>

@@ -1,0 +1,21 @@
+﻿<div class="bstudio_file-form-display"
+     @onkeydown="HandleOnKeyDown">
+    
+    @if (CheckForTemplates)
+    {
+        <FileTemplatesDisplay @ref="_fileTemplatesDisplay" 
+                              FileName="@_fileName" />
+    }
+    
+    <input class="bstudio_input bstudio_input-text"
+           style="height: 2em;"
+           type="text"
+           placeholder="@PlaceholderText"
+           autocapitalize="none"
+           autocorrect="off"
+           autocomplete="off"
+           spellcheck="false"
+           @bind="_fileName"
+           @bind:event="oninput"
+           @ref="_inputElementReference" />
+</div>

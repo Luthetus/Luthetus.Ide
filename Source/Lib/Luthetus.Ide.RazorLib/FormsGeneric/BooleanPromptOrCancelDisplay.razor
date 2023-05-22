@@ -1,0 +1,25 @@
+﻿<div class="bstudio_boolean-prompt-or-cancel"
+     @onkeydown="HandleOnKeyDown">
+
+    <div>
+        @Message
+    </div>
+
+    <div style="display: flex; justify-content: space-between;">
+        <ButtonDisplay OnClickFunc="async () => OnAfterAcceptAction()">
+            @(AcceptOptionTextOverride ?? "Accept")
+        </ButtonDisplay>
+
+        <ButtonDisplay @ref="_declineButtonDisplay"
+                       OnClickFunc="async () => OnAfterDeclineAction()">
+            @(DeclineOptionTextOverride ?? "Decline")
+        </ButtonDisplay>
+        
+        @if (IncludeCancelOption)
+        {
+            <ButtonDisplay OnClickFunc="async () => OnAfterCancelAction()">
+                Cancel
+            </ButtonDisplay>
+        }
+    </div>
+</div>

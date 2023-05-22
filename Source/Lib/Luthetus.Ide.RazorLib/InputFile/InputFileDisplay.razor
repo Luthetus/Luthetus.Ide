@@ -1,0 +1,39 @@
+@    using BlazorStudio.RazorLib.InputFile.InternalComponents
+@    using BlazorCommon.RazorLib.Resize
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<div class="bstudio_input-file-display">
+    @{
+        var inputFileState = InputFileStateWrap.Value;
+        
+        _searchMatchTuples = new();
+    }
+    
+    <CascadingValue Value="inputFileState">
+        <CascadingValue Name="SetInputFileContentTreeViewRootFunc" Value="SetInputFileContentTreeViewRootFunc">
+            <CascadingValue Value="_inputFileTreeViewMouseEventHandler">
+                <CascadingValue Value="_inputFileTreeViewKeyboardEventHandler">
+                    <CascadingValue Name="SearchMatchTuples" Value="_searchMatchTuples">
+                        <InputFileTopNavBar @ref="_inputFileTopNavBarComponent"/>
+                        
+                        <div class="bstudio_input-file-display-body @BodyClassCssString"
+                             style="@BodyStyleCssString">
+
+                            <InputFileSidebar ElementDimensions="_sidebarElementDimensions"
+                                              SetSelectedAbsoluteFilePath="tvm => _selectedAbsoluteFilePath = tvm"/>
+                            
+                            <ResizableColumn LeftElementDimensions="_sidebarElementDimensions"
+                                             RightElementDimensions="_contentElementDimensions"
+                                             ReRenderFuncAsync="async () => await InvokeAsync(StateHasChanged)"/>
+                            
+                            <InputFileContent ElementDimensions="_contentElementDimensions"
+                                              SetSelectedAbsoluteFilePath="tvm => _selectedAbsoluteFilePath = tvm" />
+                        </div>
+                        
+                        <InputFileBottomControls />
+                    </CascadingValue>
+                </CascadingValue>
+            </CascadingValue>
+        </CascadingValue>
+    </CascadingValue>
+</div>

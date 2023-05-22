@@ -1,0 +1,55 @@
+﻿@    using BlazorStudio.ClassLib.Panel
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@{
+    var panelsCollection = PanelsCollectionWrap.Value;
+
+    var panelRecord = panelsCollection.PanelRecordsList
+        .FirstOrDefault(x => x.PanelRecordKey == PanelRecordKey);
+
+    PanelTab? activePanelTab = null;
+
+    if (panelRecord is not null)
+    {
+        activePanelTab = panelRecord.PanelTabs
+            .FirstOrDefault(x =>
+                x.PanelTabKey == panelRecord.ActivePanelTabKey);
+    }
+}
+
+<div class="bstudio_panel @PanelPositionCssClass @CssClassString"
+     style="@GetElementDimensionsStyleString(panelRecord, activePanelTab)">
+    
+    <div class="bstudio_panel-tabs">
+        @if (panelRecord is not null)
+        {
+            foreach (var panelTab in panelRecord.PanelTabs)
+            {
+                <PanelTabDisplay PanelTab="panelTab"
+                                 PanelRecord="panelRecord"/>
+            }
+        }
+        
+        @if (PanelsCollectionWrap.Value.PanelDragEventArgs is not null)
+        {
+            <div class="bstudio_panel-tab-dropzone bstudio_panel-tab-dropzone-top"
+                 @onmouseup:stopPropagation="true"
+                 @onmouseup="TopDropzoneOnMouseUp">
+            </div>
+            
+            <div class="bstudio_panel-tab-dropzone bstudio_panel-tab-dropzone-bottom"
+                 @onmouseup:stopPropagation="true"
+                 @onmouseup="BottomDropzoneOnMouseUp">
+            </div>
+        }
+    </div>
+    
+    <div class="bstudio_panel-body">
+        @if (activePanelTab is not null)
+        {
+            <DynamicComponent Type="activePanelTab.ContentRendererType"/>
+        }
+    </div>
+    
+</div>

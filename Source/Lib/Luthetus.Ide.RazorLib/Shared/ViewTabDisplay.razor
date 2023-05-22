@@ -1,0 +1,7 @@
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<ButtonDisplay CssClassString="@($"bstudio_editor-tab-display bcrl_tab {IsActiveCssClass}")"
+               OnClickFunc="async () => DispatchSetActiveViewAction()">
+
+        @View.ViewKey.DisplayName
+</ButtonDisplay>

@@ -1,0 +1,6 @@
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<ButtonDisplay OnClickFunc="async () => DispatchIncrementCounterStateAction()"
+               CssClassString="bstudio_counter-display">
+        @CounterStateWrap.Value.Count
+</ButtonDisplay>

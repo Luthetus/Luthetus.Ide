@@ -1,0 +1,171 @@
+﻿@    using BlazorStudio.ClassLib.Context
+@    using BlazorStudio.ClassLib.Store.TerminalCase
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<ContextBoundary ContextRecord="ContextFacts.NuGetPackageManagerContext"
+                 ClassCssString="bstudio_nu-get-package-manager-display"
+                 StyleCssString="height: 100%; width: 100%;">
+    <div class="bstudio_section-title">
+        NuGet
+    </div>
+    <div class="bstudio_section-body"
+         style="width: 100%;">
+
+        @{
+            var nuGetPackageManagerState = NuGetPackageManagerStateWrap.Value;
+            var dotNetSolutionStateWrap = DotNetSolutionStateWrap.Value;
+
+            if (dotNetSolutionStateWrap.DotNetSolution is null)
+            {
+                <div>
+                    Solution has not yet been chosen
+                </div>
+            }
+            else
+            {
+                <div style="margin-bottom: 2em;">
+                    <table>
+                        <tbody>
+                        <tr>
+                            <td>
+                                Project:
+                            </td>
+                            <td>
+                                <select @onchange="e => SelectedProjectToModifyChanged(e, dotNetSolutionStateWrap)">
+                                    @{
+                                        <option value="@Guid.Empty"
+                                                selected="@(!ValidateSolutionContainsSelectedProject(dotNetSolutionStateWrap, nuGetPackageManagerState))">
+                                            Select a project to modify
+                                        </option>
+
+                                        foreach (var project in dotNetSolutionStateWrap.DotNetSolution.DotNetProjects)
+                                        {
+                                            <option value="@project.ProjectIdGuid.ToString()"
+                                                    selected="@CheckIfProjectIsSelected(project, nuGetPackageManagerState)">
+                                                @project.DisplayName
+                                            </option>
+                                        }
+                                    }
+                                </select>
+                            </td>
+                            <td>
+                                @if (nuGetPackageManagerState.SelectedProjectToModify is null)
+                                {
+                                    <em class="bcrl_em">
+                                        {theSelectedProjectWasNotFound}
+                                    </em>
+                                }
+                                else
+                                {
+                                    <em class="bcrl_em">
+                                        @nuGetPackageManagerState.SelectedProjectToModify.DisplayName
+                                    </em>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Source:
+                            </td>
+                            <td>
+                                <select>
+                                    <option>TODO: pick provider</option>
+                                </select>
+                            </td>
+                            <td>
+                                <em class="bcrl_em">
+                                    @NugetPackageManagerProvider.ProviderWebsiteUrlNoFormatting
+                                </em>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Search:
+                            </td>
+                            <td>
+                                <input class="bstudio_input bstudio_input-text"
+                                       style="height: 2em;"
+                                       placeholder="Nuget query"
+                                       @bind="NugetQuery"
+                                       @bind:event="oninput"/>
+                            </td>
+                            <td>
+                                <em class="bcrl_em">
+                                    @{
+                                        var localNugetQuery = NugetQuery;
+                                    }
+
+                                    @if (string.IsNullOrWhiteSpace(localNugetQuery))
+                                    {
+                                        <text>{searchNotYetSet}</text>
+                                    }
+                                    else
+                                    {
+                                        <text>@localNugetQuery</text>
+                                    }
+                                </em>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Include prerelease:
+                            </td>
+                            <td>
+                                <input class="bstudio_input"
+                                       type="checkbox"
+                                       @bind="IncludePrerelease" />
+                            </td>
+                            <td>
+                                <em class="bcrl_em">
+                                    @IncludePrerelease
+                                </em>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <hr/>
+
+                    <div>
+                        <span>RESULT:</span>
+
+                        <em class="bcrl_em">
+                            @(NugetPackageManagerProvider
+                                .BuildQuery(NugetQuery, IncludePrerelease)
+                                .Query)
+                        </em>
+                    </div>
+
+                    <ButtonDisplay OnClickFunc="SubmitNugetQueryOnClick">
+                        Submit
+                    </ButtonDisplay>
+
+                    @if (_performingNugetQuery)
+                    {
+                        <IconLoading />
+                    }
+
+                    @if (_exceptionFromNugetQuery is not null)
+                    {
+                        <div>@_exceptionFromNugetQuery.Message</div>
+                    }
+
+                    <hr/>
+
+                    @{
+                        var nugetResult = NuGetPackageManagerStateWrap.Value.MostRecentQueryResult;
+
+                        if (NuGetPackageManagerStateWrap.Value.MostRecentQueryResult.Any())
+                        {
+                            foreach (var entry in nugetResult)
+                            {
+                                <NugetPackageDisplay NugetPackageRecord="entry"/>
+                            }
+                        }
+                    }
+                </div>
+            }
+        }
+    </div>
+</ContextBoundary>

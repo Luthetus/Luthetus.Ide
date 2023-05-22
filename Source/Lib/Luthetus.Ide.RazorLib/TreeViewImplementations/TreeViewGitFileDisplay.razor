@@ -1,0 +1,45 @@
+﻿@    using BlazorStudio.RazorLib.File
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@{
+    var gitFile = TreeViewGitFile.Item;
+
+    var cssClass = "bstudio_git-file"; 
+}
+
+@if (gitFile is null)
+{
+    <div class="@cssClass"
+         title="null">
+        null
+    </div>
+}
+else
+{
+    <div class="@cssClass"
+         title="@gitFile.GitDirtyReason">
+    
+        @{
+            var gitState = GitStateWrap.Value;
+
+            string shortenedParentDirectoryFilePathString = gitFile.AbsoluteFilePath
+                .GetAbsoluteFilePathString();
+        
+            if (gitFile.AbsoluteFilePath.ParentDirectory is not null &&
+                gitState.GitFolderAbsoluteFilePath?.ParentDirectory is not null)
+            {
+            }
+        }
+    
+        <FileIconDisplay AbsoluteFilePath="gitFile.AbsoluteFilePath"/>
+    
+        <em class="bcrl_em">
+            @gitFile.AbsoluteFilePath.FilenameWithExtension
+        </em>
+    
+        <span>
+            @shortenedParentDirectoryFilePathString
+        </span>
+    </div>
+}

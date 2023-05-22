@@ -1,0 +1,75 @@
+﻿@    using BlazorStudio.RazorLib.Terminal
+@    using BlazorStudio.ClassLib.Store.TerminalCase
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<div class="bstudio_form">
+    
+    <div class="bstudio_form-group">
+        <div class="bstudio_form-label">
+            Name:
+        </div>
+
+        <div class="bstudio_form-value">
+            <input class="bstudio_input bstudio_input-text"
+                       style="height: 2em;"
+                       placeholder="Solution name"
+                       @bind="_solutionName"
+                       @bind:event="oninput"/>
+        </div>
+    </div>
+
+    <div class="bstudio_form-group">
+        <div class="bstudio_form-label">
+            Directory:
+        </div>
+
+        <div class="bstudio_form-value"
+             style="display: flex;">
+            
+            <input class="bstudio_input bstudio_input-text"
+                   style="height: 2em;"
+                   placeholder="Parent directory"
+                   @bind="_parentDirectoryName"
+                   @bind:event="oninput"/>
+
+            <ButtonDisplay OnClickFunc="async () => RequestInputFileForParentDirectory()">
+                <IconFolder/>
+            </ButtonDisplay>
+        </div>
+    </div>
+
+    <div>
+        Solution&nbsp;Name:
+        <div>
+            <em class="bcrl_em">
+                @SolutionName
+            </em>.sln
+        </div>
+    </div>
+
+    <div>
+        Directory&nbsp;Absolute&nbsp;File&nbsp;Path:
+        <div>
+            <em class="bcrl_em">
+                @ParentDirectoryName
+            </em>
+        </div>
+    </div>
+
+    <div>
+        Command:
+        <div>
+            <em class="bcrl_em">
+                @InterpolatedCommand
+            </em>
+        </div>
+    </div>
+    
+    <ButtonDisplay OnClickFunc="StartNewDotNetSolutionCommandOnClick">
+        Run
+    </ButtonDisplay>
+    
+    <TerminalOutputDisplay TerminalSessionKey="TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY" 
+                           TerminalCommandKey="_newDotNetSolutionTerminalCommandKey" />
+</div>

@@ -1,0 +1,12 @@
+﻿@using BlazorCommon.RazorLib.TreeView.Displays
+
+<div class="bstudio_input-file-display-content"
+     style="@ElementDimensions.StyleString">
+    
+    <CascadingValue Name="SearchQuery" Value="InputFileState.SearchQuery">
+        <TreeViewStateDisplay TreeViewStateKey="TreeViewInputFileContentStateKey"
+                              CssStyleString="height: 100%;"
+                              TreeViewMouseEventHandler="InputFileTreeViewMouseEventHandler"
+                              TreeViewKeyboardEventHandler="InputFileTreeViewKeyboardEventHandler"/>
+    </CascadingValue>
+</div>

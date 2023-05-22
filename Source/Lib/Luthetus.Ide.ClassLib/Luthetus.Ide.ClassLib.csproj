@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <Version>1.0.0</Version>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Azure.Storage.Common" Version="12.13.0" />
+        <PackageReference Include="CliWrap" Version="3.6.0" />
+        <PackageReference Include="Fluxor" Version="5.7.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.10" />
+        <PackageReference Include="Microsoft.Build.Locator" Version="1.4.1" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+        <PackageReference Include="System.Reactive" Version="5.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\..\Luthetus.TextEditor\Source\Lib\Luthetus.TextEditor.RazorLib\Luthetus.TextEditor.RazorLib.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Azure.Core">
+        <HintPath>..\..\..\.nuget\packages\azure.core\1.25.0\lib\net5.0\Azure.Core.dll</HintPath>
+      </Reference>
+      <Reference Include="Azure.Storage.Blobs">
+        <HintPath>..\..\..\.nuget\packages\azure.storage.blobs\12.14.1\lib\netstandard2.1\Azure.Storage.Blobs.dll</HintPath>
+      </Reference>
+      <Reference Include="System.Memory.Data">
+        <HintPath>..\..\..\.nuget\packages\system.memory.data\1.0.2\lib\netstandard2.0\System.Memory.Data.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+</Project>

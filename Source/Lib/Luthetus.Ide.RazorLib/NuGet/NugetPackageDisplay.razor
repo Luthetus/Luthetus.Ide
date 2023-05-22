@@ -1,0 +1,45 @@
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<div class="bstudio_nuget-package-display">
+    
+    <div>
+        @NugetPackageRecord.Title
+        <span title="Total Downloads">(@($"{NugetPackageRecord.TotalDownloads:N0}") Downloads)</span>
+        
+        <div style="margin-left: 2ch; padding-left: 5px; border-left: 1px solid var(--bcrl_primary-border-color)">
+            <select @onchange="SelectedNugetVersionChanged">
+                @{
+                    foreach (var version in _nugetPackageVersionsOrdered)
+                    {
+                        <option value="@version.Version"
+                                selected="@(_nugetPackageVersionString == version.Version)">
+                            @version.Version
+                        </option>
+                    }
+                }
+            </select>
+            
+            @{
+                var buttonIsDisabled = !ValidateSolutionContainsSelectedProject();
+            }
+            
+            <ButtonDisplay OnClickFunc="AddNugetPackageReferenceOnClick"
+                           CssStyleString="display: inline-flex; margin-left: 5px;"
+                           IsDisabled="buttonIsDisabled">
+                
+                @if (buttonIsDisabled)
+                {
+                    <text>
+                        Must select a Project to Modify
+                    </text>
+                }
+                else
+                {
+                    <text>
+                        Add to @NuGetPackageManagerStateWrap.Value.SelectedProjectToModify.DisplayName
+                    </text>
+                }
+            </ButtonDisplay>
+        </div>
+    </div>
+</div>

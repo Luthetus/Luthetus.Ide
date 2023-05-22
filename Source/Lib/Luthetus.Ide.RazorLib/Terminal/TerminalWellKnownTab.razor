@@ -1,0 +1,35 @@
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@{
+    var wellKnownTerminalSession = TerminalSessionsStateSelection.Value;
+
+    if (wellKnownTerminalSession is not null)
+    {
+        <ButtonDisplay CssClassString="@CssClassString"
+                       OnClickFunc="DispatchSetActiveTerminalCommandKeyActionOnClick">
+            @WellKnownTerminalSessionKey.DisplayName
+    
+            <ButtonDisplay OnClickFunc="ClearStandardOutOnClick"
+                           OnClickStopPropagation="true">
+                Clear
+            </ButtonDisplay>
+        
+            <ButtonDisplay OnClickFunc="KillProcessOnClick"
+                           OnClickStopPropagation="true"
+                           IsDisabled="!wellKnownTerminalSession.HasExecutingProcess">
+                Kill
+            </ButtonDisplay>
+
+            <div style="margin-left: 15px;">
+                @if (wellKnownTerminalSession.HasExecutingProcess)
+                {
+                    <IconLoading/>
+                }
+                else
+                {
+                    <IconBlank/>
+                }
+            </div>
+        </ButtonDisplay>
+    }
+}
