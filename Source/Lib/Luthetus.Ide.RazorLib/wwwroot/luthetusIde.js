@@ -1,4 +1,4 @@
-window.luthetus.ide = {
+window.luthetusIde = {
     localStorageSetItem: function (key, value) {
         localStorage.setItem(key, value);
     },

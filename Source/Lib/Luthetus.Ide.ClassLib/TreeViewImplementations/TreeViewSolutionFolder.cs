@@ -67,10 +67,10 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
             });
     }
 
-    public override async Task LoadChildrenAsync()
+    public override Task LoadChildrenAsync()
     {
         if (Item is null)
-            return;
+            return Task.CompletedTask;
 
         try
         {
@@ -92,6 +92,8 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
         }
 
         TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
+
+        return Task.CompletedTask;
     }
 
     public override void RemoveRelatedFilesFromParent(

@@ -20,7 +20,7 @@ public class LocalStorageEffects
         IDispatcher dispatcher)
     {
         await _jsRuntime.InvokeVoidAsync(
-            "luthetus.ide.localStorageSetItem",
+            "luthetusIde.localStorageSetItem",
             localStorageSetItemAction.Key,
             localStorageSetItemAction.Value);
     }
