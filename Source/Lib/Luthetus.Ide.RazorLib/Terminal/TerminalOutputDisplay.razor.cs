@@ -47,6 +47,8 @@ public partial class TerminalOutputDisplay : FluxorComponent
     /// </summary>
     [Parameter]
     public TerminalCommandKey? TerminalCommandKey { get; set; }
+    [Parameter]
+    public bool AllowInput { get; set; }
 
     protected override void OnInitialized()
     {

@@ -3,9 +3,8 @@
 
 - Runs on Linux, Windows, and Mac
 
-## This gif serves to be a quick showcase of what some of the IDE is so people can gauge their interest in the Repository. The gif is 1 minute and 30 seconds long.
-
-![startupProject](/Images/startupProject.gif)
+### One can gauge their interest in the repository with this one minute GIF:
+![Example GIF](./Images/Rewrite/introductoryGifLuthetusIde.gif)
 
 ## Features
 

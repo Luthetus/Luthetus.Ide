@@ -32,7 +32,7 @@
     </div>
     
     <div class="luth_ide_terminal-output-input-display">
-        @if (terminalSession is not null)
+        @if (terminalSession is not null && AllowInput)
         {
             <div>
                 @(terminalSession.WorkingDirectoryAbsoluteFilePathString ?? "null")
