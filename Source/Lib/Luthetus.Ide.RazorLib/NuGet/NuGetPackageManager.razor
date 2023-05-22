@@ -4,12 +4,12 @@
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <ContextBoundary ContextRecord="ContextFacts.NuGetPackageManagerContext"
-                 ClassCssString="bstudio_nu-get-package-manager-display"
+                 ClassCssString="luth_ide_nu-get-package-manager-display"
                  StyleCssString="height: 100%; width: 100%;">
-    <div class="bstudio_section-title">
+    <div class="luth_ide_section-title">
         NuGet
     </div>
-    <div class="bstudio_section-body"
+    <div class="luth_ide_section-body"
          style="width: 100%;">
 
         @{
@@ -84,7 +84,7 @@
                                 Search:
                             </td>
                             <td>
-                                <input class="bstudio_input bstudio_input-text"
+                                <input class="luth_ide_input luth_ide_input-text"
                                        style="height: 2em;"
                                        placeholder="Nuget query"
                                        @bind="NugetQuery"
@@ -112,7 +112,7 @@
                                 Include prerelease:
                             </td>
                             <td>
-                                <input class="bstudio_input"
+                                <input class="luth_ide_input"
                                        type="checkbox"
                                        @bind="IncludePrerelease" />
                             </td>

@@ -4,8 +4,8 @@
 
 @{ var terminalSession = TerminalSessionsStateSelection.Value; }
 
-<div class="bstudio_terminal-output-display">
-    <div class="bstudio_terminal-output-history-display">
+<div class="luth_ide_terminal-output-display">
+    <div class="luth_ide_terminal-output-history-display">
         @{
             string outputString = string.Empty;
 
@@ -31,7 +31,7 @@
         @ParseHttpLinks(outputString)
     </div>
     
-    <div class="bstudio_terminal-output-input-display">
+    <div class="luth_ide_terminal-output-input-display">
         @if (terminalSession is not null)
         {
             <div>

@@ -20,7 +20,7 @@ public partial class TerminalWellKnownTab : FluxorComponent
     public TerminalSessionKey WellKnownTerminalSessionKey { get; set; } = null!;
 
     private string CssClassString =>
-        $"bstudio_terminal-tab {ActiveTerminalCommandKeyCssClassString}";
+        $"luth_ide_terminal-tab {ActiveTerminalCommandKeyCssClassString}";
 
     private string ActiveTerminalCommandKeyCssClassString =>
         IsActiveTerminalCommandKey

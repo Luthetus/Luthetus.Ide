@@ -54,7 +54,7 @@ public partial class PanelDisplay : FluxorComponent
             position = "bottom";
         }
 
-        return $"bstudio_panel_{position}";
+        return $"luth_ide_panel_{position}";
     }
 
     private async Task PassAlongSizeIfHiddenAsync()
@@ -114,9 +114,9 @@ public partial class PanelDisplay : FluxorComponent
         if (activePanelTab is null)
         {
             return "calc(" +
-                   "var(--bstudio_panel-tabs-font-size)" +
-                   " + var(--bstudio_panel-tabs-margin)" +
-                   " + var(--bstudio_panel-tabs-bug-are-not-aligning-need-to-fix-todo))";
+                   "var(--luth_ide_panel-tabs-font-size)" +
+                   " + var(--luth_ide_panel-tabs-margin)" +
+                   " + var(--luth_ide_panel-tabs-bug-are-not-aligning-need-to-fix-todo))";
         }
 
         return panelRecord?.ElementDimensions.StyleString ?? string.Empty;

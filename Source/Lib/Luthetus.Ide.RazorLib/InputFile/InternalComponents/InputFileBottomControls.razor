@@ -1,7 +1,7 @@
 ﻿@using Luthetus.Ide.ClassLib.Store.InputFileCase
 
-<div class="bstudio_input-file-display-bottom-controls">
-    <div class="bstudio_input-file-display-bottom-controls-text-input">
+<div class="luth_ide_input-file-display-bottom-controls">
+    <div class="luth_ide_input-file-display-bottom-controls-text-input">
         <div>
             @GetSelectedTreeViewModelAbsoluteFilePathString(InputFileState)    
         </div>
@@ -9,7 +9,7 @@
             (@InputFileState.Message)    
         </div>
     </div>
-    <div class="bstudio_input-file-display-bottom-controls-non-text">
+    <div class="luth_ide_input-file-display-bottom-controls-non-text">
         <div>
             <select @onchange="SelectInputFilePatternOnChange">
                 @foreach (var inputFilePattern in InputFileState.InputFilePatterns)

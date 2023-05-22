@@ -1,14 +1,14 @@
 ﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-<div class="bstudio_startup-controls-display">
-   <div class="bstudio_startup-controls-display-entry">
+<div class="luth_ide_startup-controls-display">
+   <div class="luth_ide_startup-controls-display-entry">
       MSBuild:&nbsp;  
    </div>
-   <div class="bstudio_startup-controls-display-entry">
+   <div class="luth_ide_startup-controls-display-entry">
       StartupProject:&nbsp;
       @(ProgramExecutionStateWrap.Value.StartupProjectAbsoluteFilePath?.FileNameNoExtension ?? "null")   
    </div>
-   <div class="bstudio_startup-controls-display-entry">
+   <div class="luth_ide_startup-controls-display-entry">
       <ButtonDisplay OnClickFunc="StartProgramWithoutDebuggingOnClick"
                      IsDisabled="ProgramExecutionStateWrap.Value.StartupProjectAbsoluteFilePath is null">
          <IconStartWithoutDebugging/>

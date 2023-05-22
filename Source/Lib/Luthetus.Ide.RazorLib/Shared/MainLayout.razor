@@ -12,7 +12,7 @@
 @inherits LayoutComponentBase
 
 <ContextBoundary ContextRecord="ContextFacts.GlobalContext"
-                 ClassCssString="@($"bstudio_main-layout {UnselectableClassCss} {AppOptionsService.ThemeCssClassString}")"
+                 ClassCssString="@($"luth_ide_main-layout {UnselectableClassCss} {AppOptionsService.ThemeCssClassString}")"
                  StyleCssString="@($"{AppOptionsService.FontSizeCssStyleString} {AppOptionsService.FontFamilyCssStyleString}")">
 
     <DragInitializer/>
@@ -29,7 +29,7 @@
                   ReRenderFuncAsync="ReRenderAsync"/>
 
     <PanelDisplay PanelRecordKey="PanelFacts.BottomPanelRecordKey"
-                  CssClassString="bstudio_footer"
+                  CssClassString="luth_ide_footer"
                   AdjacentElementDimensions="_bodyElementDimensions"
                   DimensionAttributeKind="DimensionAttributeKind.Height"
                   ReRenderSelfAndAdjacentElementDimensionsFunc="ReRenderAsync"/>

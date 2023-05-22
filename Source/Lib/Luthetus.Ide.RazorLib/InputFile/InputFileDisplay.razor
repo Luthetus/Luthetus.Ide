@@ -2,7 +2,7 @@
 @using Luthetus.Common.RazorLib.Resize
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-<div class="bstudio_input-file-display">
+<div class="luth_ide_input-file-display">
     @{
         var inputFileState = InputFileStateWrap.Value;
         
@@ -16,7 +16,7 @@
                     <CascadingValue Name="SearchMatchTuples" Value="_searchMatchTuples">
                         <InputFileTopNavBar @ref="_inputFileTopNavBarComponent"/>
                         
-                        <div class="bstudio_input-file-display-body @BodyClassCssString"
+                        <div class="luth_ide_input-file-display-body @BodyClassCssString"
                              style="@BodyStyleCssString">
 
                             <InputFileSidebar ElementDimensions="_sidebarElementDimensions"

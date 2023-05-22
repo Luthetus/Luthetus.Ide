@@ -18,10 +18,10 @@
     }
 }
 
-<div class="bstudio_panel @PanelPositionCssClass @CssClassString"
+<div class="luth_ide_panel @PanelPositionCssClass @CssClassString"
      style="@GetElementDimensionsStyleString(panelRecord, activePanelTab)">
     
-    <div class="bstudio_panel-tabs">
+    <div class="luth_ide_panel-tabs">
         @if (panelRecord is not null)
         {
             foreach (var panelTab in panelRecord.PanelTabs)
@@ -33,19 +33,19 @@
         
         @if (PanelsCollectionWrap.Value.PanelDragEventArgs is not null)
         {
-            <div class="bstudio_panel-tab-dropzone bstudio_panel-tab-dropzone-top"
+            <div class="luth_ide_panel-tab-dropzone luth_ide_panel-tab-dropzone-top"
                  @onmouseup:stopPropagation="true"
                  @onmouseup="TopDropzoneOnMouseUp">
             </div>
             
-            <div class="bstudio_panel-tab-dropzone bstudio_panel-tab-dropzone-bottom"
+            <div class="luth_ide_panel-tab-dropzone luth_ide_panel-tab-dropzone-bottom"
                  @onmouseup:stopPropagation="true"
                  @onmouseup="BottomDropzoneOnMouseUp">
             </div>
         }
     </div>
     
-    <div class="bstudio_panel-body">
+    <div class="luth_ide_panel-body">
         @if (activePanelTab is not null)
         {
             <DynamicComponent Type="activePanelTab.ContentRendererType"/>

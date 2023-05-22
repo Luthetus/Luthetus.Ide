@@ -5,17 +5,17 @@
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <ContextBoundary ContextRecord="ContextFacts.TerminalContext"
-                 ClassCssString="bstudio_terminal-display"
+                 ClassCssString="luth_ide_terminal-display"
                  StyleCssString="height: 100%; width: 100%;">
 
-    <div class="bstudio_section-title">
+    <div class="luth_ide_section-title">
         Terminal Display
     </div>
 
-    <div class="bstudio_section-body"
+    <div class="luth_ide_section-body"
          style="width: 100%;">
         
-        <div class="bstudio_terminal-tabs-container">
+        <div class="luth_ide_terminal-tabs-container">
             @for (var i = 0; i < TerminalSessionFacts.WELL_KNOWN_TERMINAL_SESSION_KEYS.Length; i++)
             {
                 var index = i;
