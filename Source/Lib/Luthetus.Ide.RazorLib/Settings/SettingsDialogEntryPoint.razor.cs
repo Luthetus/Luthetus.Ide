@@ -1,5 +1,5 @@
-using BlazorCommon.RazorLib.Dialog;
-using BlazorCommon.RazorLib.Store.DialogCase;
+using Luthetus.Common.RazorLib.Dialog;
+using Luthetus.Common.RazorLib.Store.DialogCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 

@@ -1,16 +1,16 @@
 ﻿using System.Collections.Immutable;
-using BlazorCommon.RazorLib.ComponentRenderers;
-using BlazorCommon.RazorLib.ComponentRenderers.Types;
-using BlazorCommon.RazorLib.Dialog;
-using BlazorCommon.RazorLib.Dimensions;
-using BlazorCommon.RazorLib.Dropdown;
-using BlazorCommon.RazorLib.Menu;
-using BlazorCommon.RazorLib.Notification;
-using BlazorCommon.RazorLib.Store.NotificationCase;
-using BlazorCommon.RazorLib.TreeView;
-using BlazorCommon.RazorLib.TreeView.Commands;
-using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
 using Fluxor;
+using Luthetus.Common.RazorLib.ComponentRenderers;
+using Luthetus.Common.RazorLib.ComponentRenderers.Types;
+using Luthetus.Common.RazorLib.Dialog;
+using Luthetus.Common.RazorLib.Dimensions;
+using Luthetus.Common.RazorLib.Dropdown;
+using Luthetus.Common.RazorLib.Menu;
+using Luthetus.Common.RazorLib.Notification;
+using Luthetus.Common.RazorLib.Store.NotificationCase;
+using Luthetus.Common.RazorLib.TreeView;
+using Luthetus.Common.RazorLib.TreeView.Commands;
+using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.Menu;
 using Luthetus.Ide.ClassLib.Store.TerminalCase;
@@ -28,7 +28,7 @@ public partial class InputFileContextMenu : ComponentBase
     [Inject]
     private ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
     [Inject]
-    private IBlazorCommonComponentRenderers BlazorCommonComponentRenderers { get; set; } = null!;
+    private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
 
@@ -175,12 +175,12 @@ public partial class InputFileContextMenu : ComponentBase
 
     private Task NotifyCopyCompleted(IAbsoluteFilePath absoluteFilePath)
     {
-        if (BlazorCommonComponentRenderers.InformativeNotificationRendererType != null)
+        if (LuthetusCommonComponentRenderers.InformativeNotificationRendererType != null)
         {
             var notificationInformative = new NotificationRecord(
                 NotificationKey.NewNotificationKey(),
                 "Copy Action",
-                BlazorCommonComponentRenderers.InformativeNotificationRendererType,
+                LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
                 new Dictionary<string, object?>
                 {
                     {
@@ -205,12 +205,12 @@ public partial class InputFileContextMenu : ComponentBase
     {
         ParentOfCutFile = parentTreeViewModel;
 
-        if (BlazorCommonComponentRenderers.InformativeNotificationRendererType != null)
+        if (LuthetusCommonComponentRenderers.InformativeNotificationRendererType != null)
         {
             var notificationInformative = new NotificationRecord(
                 NotificationKey.NewNotificationKey(),
                 "Cut Action",
-                BlazorCommonComponentRenderers.InformativeNotificationRendererType,
+                LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
                 new Dictionary<string, object?>
                 {
                     {

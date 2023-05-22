@@ -1,5 +1,5 @@
-﻿using BlazorStudio.ClassLib.CodeAnalysis.C.EvaluatorCase;
-using BlazorStudio.ClassLib.CodeAnalysis.C.Syntax;
+﻿using Luthetus.Ide.ClassLib.CodeAnalysis.C.EvaluatorCase;
+using Luthetus.Ide.ClassLib.CodeAnalysis.C.Syntax;
 
 namespace Luthetus.Ide.Tests.Basics.SemanticParsing.C;
 

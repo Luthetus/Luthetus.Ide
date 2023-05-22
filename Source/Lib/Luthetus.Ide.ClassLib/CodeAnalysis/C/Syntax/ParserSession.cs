@@ -3,15 +3,12 @@ using Luthetus.Ide.ClassLib.CodeAnalysis.C.Syntax.SyntaxNodes.Expression;
 using Luthetus.Ide.ClassLib.CodeAnalysis.C.Syntax.SyntaxTokens;
 using Luthetus.TextEditor.RazorLib.Analysis;
 using Luthetus.TextEditor.RazorLib.Analysis.GenericLexer.Decoration;
-using Luthetus.Ide.ClassLib.CodeAnalysis;
 using Luthetus.Ide.ClassLib.CodeAnalysis.C.BinderCase;
 using Luthetus.Ide.ClassLib.CodeAnalysis.C.BinderCase.BoundNodes;
 using Luthetus.Ide.ClassLib.CodeAnalysis.C.BinderCase.BoundNodes.Expression;
 using Luthetus.Ide.ClassLib.CodeAnalysis.C.BinderCase.BoundNodes.Statements;
 using Luthetus.Ide.ClassLib.CodeAnalysis.C.Syntax.SyntaxNodes;
-using Luthetus.Ide.ClassLib.CodeAnalysis.C.Syntax.SyntaxNodes.Expression;
 using Luthetus.Ide.ClassLib.CodeAnalysis.C.Syntax.SyntaxNodes.Statement;
-using Luthetus.Ide.ClassLib.CodeAnalysis.C.Syntax.SyntaxTokens;
 
 namespace Luthetus.Ide.ClassLib.CodeAnalysis.C.Syntax;
 

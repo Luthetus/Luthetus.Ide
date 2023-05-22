@@ -1,5 +1,4 @@
-﻿using BlazorStudio.ClassLib.CodeAnalysis.C.Syntax;
-using BlazorStudio.ClassLib.Parsing.C;
+﻿using Luthetus.Ide.ClassLib.CodeAnalysis.C.Syntax;
 
 namespace Luthetus.Ide.Tests.UserStories.SemanticParsing.C;
 

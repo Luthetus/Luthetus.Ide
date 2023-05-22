@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
-using BlazorCommon.RazorLib.Dimensions;
-using BlazorTextEditor.RazorLib.HelperComponents;
+using Luthetus.Common.RazorLib.Dimensions;
+using Luthetus.TextEditor.RazorLib.HelperComponents;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.Editor;

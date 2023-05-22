@@ -1,10 +1,10 @@
-﻿using BlazorCommon.RazorLib.Clipboard;
-using BlazorCommon.RazorLib.ComponentRenderers;
-using BlazorCommon.RazorLib.Storage;
-using BlazorStudio.ClassLib.FileSystem.Classes.Local;
-using BlazorTextEditor.RazorLib;
-using Fluxor;
+﻿using Luthetus.Common.RazorLib.Clipboard;
+using Luthetus.Common.RazorLib.ComponentRenderers;
+using Luthetus.Common.RazorLib.Storage;
+using Luthetus.TextEditor.RazorLib;
+using Luthetus.Ide.ClassLib.FileSystem.Classes.Local;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
+using Fluxor;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 
@@ -13,7 +13,7 @@ namespace Luthetus.Ide.Tests.Basics.FileSystem;
 /// <summary>
 /// Setup the dependency injection necessary
 /// </summary>
-public class BlazorStudioFileSystemTestingBase
+public class LuthetusFileSystemTestingBase
 {
     protected readonly ServiceProvider ServiceProvider;
 
@@ -26,13 +26,13 @@ public class BlazorStudioFileSystemTestingBase
     protected IDispatcher Dispatcher =>
         ServiceProvider.GetRequiredService<IDispatcher>();
 
-    public BlazorStudioFileSystemTestingBase()
+    public LuthetusFileSystemTestingBase()
     {
         var services = new ServiceCollection();
 
         services.AddScoped<IJSRuntime>(_ => new DoNothingJsRuntime());
 
-        services.AddScoped<IBlazorCommonComponentRenderers>(_ => new BlazorCommonComponentRenderers(
+        services.AddScoped<ILuthetusCommonComponentRenderers>(_ => new LuthetusCommonComponentRenderers(
             null,
             null,
             null,
@@ -42,31 +42,31 @@ public class BlazorStudioFileSystemTestingBase
 
         var shouldInitializeFluxor = false;
 
-        services.AddBlazorTextEditor(inTextEditorOptions =>
+        services.AddLuthetusTextEditor(inTextEditorOptions =>
         {
-            var blazorCommonOptions =
-                (inTextEditorOptions.BlazorCommonOptions ?? new()) with
+            var luthetusCommonOptions =
+                (inTextEditorOptions.LuthetusCommonOptions ?? new()) with
                 {
                     InitializeFluxor = shouldInitializeFluxor
                 };
 
-            var blazorCommonFactories = blazorCommonOptions.BlazorCommonFactories with
+            var blazorCommonFactories = luthetusCommonOptions.LuthetusCommonFactories with
             {
                 ClipboardServiceFactory = _ => new InMemoryClipboardService(true),
                 StorageServiceFactory = _ => new DoNothingStorageService(true)
             };
 
-            blazorCommonOptions = blazorCommonOptions with
+            luthetusCommonOptions = luthetusCommonOptions with
             {
-                BlazorCommonFactories = blazorCommonFactories
+                LuthetusCommonFactories = blazorCommonFactories
             };
 
             return inTextEditorOptions with
             {
                 InitializeFluxor = shouldInitializeFluxor,
-                CustomThemeRecords = BlazorTextEditorCustomThemeFacts.AllCustomThemes,
-                InitialThemeKey = BlazorTextEditorCustomThemeFacts.DarkTheme.ThemeKey,
-                BlazorCommonOptions = blazorCommonOptions
+                CustomThemeRecords = LuthetusTextEditorCustomThemeFacts.AllCustomThemes,
+                InitialThemeKey = LuthetusTextEditorCustomThemeFacts.DarkTheme.ThemeKey,
+                LuthetusCommonOptions = luthetusCommonOptions
             };
         });
 
@@ -75,8 +75,8 @@ public class BlazorStudioFileSystemTestingBase
 
         services.AddFluxor(options => options
             .ScanAssemblies(
-                typeof(BlazorCommon.RazorLib.ServiceCollectionExtensions).Assembly,
-                typeof(BlazorTextEditor.RazorLib.ServiceCollectionExtensions).Assembly,
+                typeof(Luthetus.Common.RazorLib.ServiceCollectionExtensions).Assembly,
+                typeof(Luthetus.TextEditor.RazorLib.ServiceCollectionExtensions).Assembly,
                 typeof(ClassLib.ServiceCollectionExtensions).Assembly));
 
         ServiceProvider = services.BuildServiceProvider();

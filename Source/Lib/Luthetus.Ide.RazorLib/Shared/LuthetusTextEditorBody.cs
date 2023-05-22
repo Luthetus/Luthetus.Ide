@@ -1,12 +1,12 @@
-using BlazorCommon.RazorLib.Dimensions;
-using BlazorCommon.RazorLib.Resize;
-using BlazorStudio.ClassLib.Store.PanelCase;
+using Luthetus.Common.RazorLib.Dimensions;
+using Luthetus.Common.RazorLib.Resize;
+using Luthetus.Ide.ClassLib.Store.PanelCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.Shared;
 
-public partial class BlazorTextEditorBody : ComponentBase
+public partial class LuthetusTextEditorBody : ComponentBase
 {
     [Inject]
     private IState<PanelsCollection> PanelsCollectionWrap { get; set; } = null!;

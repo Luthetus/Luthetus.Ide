@@ -1,13 +1,13 @@
 ﻿using System.Collections.Immutable;
-using BlazorCommon.RazorLib.TreeView;
-using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
-using BlazorStudio.ClassLib.Store.GitCase;
-using BlazorStudio.ClassLib.TreeViewImplementations;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
+using Luthetus.Common.RazorLib.TreeView;
+using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
+using Luthetus.Ide.ClassLib.Store.GitCase;
+using Luthetus.Ide.ClassLib.TreeViewImplementations;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
 using Luthetus.Ide.ClassLib.Store.TerminalCase;
+using Fluxor;
+using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.Git;
@@ -21,7 +21,7 @@ public partial class GitChangesDisplay : FluxorComponent, IGitDisplayRendererTyp
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
-    private ILuthetusIdeComponentRenderers BlazorStudioComponentRenderers { get; set; } = null!;
+    private ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
 
@@ -70,7 +70,7 @@ public partial class GitChangesDisplay : FluxorComponent, IGitDisplayRendererTyp
         var treeViewNodes = gitState.GitFilesList
             .Select(x => (TreeViewNoType)new TreeViewGitFile(
                 x,
-                BlazorStudioComponentRenderers,
+                LuthetusIdeComponentRenderers,
                 false,
                 false))
             .ToArray();

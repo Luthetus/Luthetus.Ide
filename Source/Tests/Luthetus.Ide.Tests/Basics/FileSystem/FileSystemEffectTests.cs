@@ -1,9 +1,9 @@
-﻿using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
-using BlazorStudio.ClassLib.Store.FileSystemCase;
+﻿using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
+using Luthetus.Ide.ClassLib.Store.FileSystemCase;
 
 namespace Luthetus.Ide.Tests.Basics.FileSystem;
 
-public class FileSystemEffectTests : BlazorStudioFileSystemTestingBase
+public class FileSystemEffectTests : LuthetusFileSystemTestingBase
 {
     [Fact]
     public void SaveFile()
@@ -11,7 +11,7 @@ public class FileSystemEffectTests : BlazorStudioFileSystemTestingBase
         var content = "abc123";
 
         var absoluteFilePath = new AbsoluteFilePath(
-            @"C:\Users\hunte\Desktop\TestBlazorStudio\apple.txt",
+            @"C:\Users\hunte\Desktop\TestLuthetus\apple.txt",
             true,
             EnvironmentProvider);
 

@@ -84,9 +84,6 @@ public class DotNetSolutionParser
         string? displayName = null;
         string? relativePathFromSolutionFileString = null;
 
-        bool withinDoubleQuote = false;
-        bool readingProjectDefinitionMember = false;
-
         var doubleQuoteCounter = 0;
 
         while (!stringWalker.IsEof)

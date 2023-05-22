@@ -1,12 +1,12 @@
-using BlazorCommon.RazorLib.Dimensions;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
+using Luthetus.Common.RazorLib.Dimensions;
 using Luthetus.Ide.ClassLib.Store.FooterCase;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.Shared;
 
-public partial class BlazorTextEditorFooter : FluxorComponent
+public partial class LuthetusTextEditorFooter : FluxorComponent
 {
     [Inject]
     private IState<FooterState> FooterStateWrap { get; set; } = null!;

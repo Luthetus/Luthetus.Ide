@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using Luthetus.Ide.ClassLib.InputFile;
-using Luthetus.Ide.ClassLib.Store.FolderExplorerCase;
 using Luthetus.Ide.ClassLib.Store.InputFileCase;
 using Fluxor;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;

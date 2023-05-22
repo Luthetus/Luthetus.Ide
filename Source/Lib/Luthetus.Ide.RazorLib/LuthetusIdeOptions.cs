@@ -1,4 +1,4 @@
 ﻿namespace Luthetus.Ide.RazorLib;
 
-public record BlazorStudioOptions(
+public record LuthetusIdeOptions(
     bool IsNativeApplication);

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Misc;
 using Luthetus.TextEditor.RazorLib.Lexing;
-using Luthetus.TextEditor.RazorLib.Model;
 using Luthetus.Ide.ClassLib.CodeAnalysis.C.Syntax;
 
 namespace Luthetus.Ide.ClassLib.CodeAnalysis.C;

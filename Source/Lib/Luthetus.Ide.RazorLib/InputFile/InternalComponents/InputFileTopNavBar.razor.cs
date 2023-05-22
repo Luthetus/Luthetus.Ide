@@ -1,12 +1,12 @@
-﻿using BlazorCommon.RazorLib.BackgroundTaskCase;
-using BlazorCommon.RazorLib.ComponentRenderers.Types;
-using BlazorCommon.RazorLib.Notification;
-using BlazorCommon.RazorLib.Store.NotificationCase;
-using BlazorStudio.ClassLib.Store.InputFileCase;
-using Fluxor;
+﻿using Luthetus.Common.RazorLib.BackgroundTaskCase;
+using Luthetus.Common.RazorLib.ComponentRenderers.Types;
+using Luthetus.Common.RazorLib.Notification;
+using Luthetus.Common.RazorLib.Store.NotificationCase;
+using Luthetus.Ide.ClassLib.Store.InputFileCase;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
+using Fluxor;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.InputFile.InternalComponents;
@@ -16,7 +16,7 @@ public partial class InputFileTopNavBar : ComponentBase
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
-    private ILuthetusIdeComponentRenderers BlazorStudioComponentRenderers { get; set; } = null!;
+    private ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
@@ -58,7 +58,7 @@ public partial class InputFileTopNavBar : ComponentBase
     private async Task HandleUpwardButtonOnClick()
     {
         Dispatcher.Dispatch(new InputFileState.OpenParentDirectoryAction(
-            BlazorStudioComponentRenderers,
+            LuthetusIdeComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,
             BackgroundTaskQueue));
@@ -83,7 +83,7 @@ public partial class InputFileTopNavBar : ComponentBase
             if (localSearchElementReference is not null)
                 await localSearchElementReference.Value.FocusAsync();
         }
-        catch (Exception e)
+        catch (Exception)
         {
             // 2023-04-18: The app has had a bug where it "freezes" and must be restarted.
             //             This bug is seemingly happening randomly. I have a suspicion
@@ -132,12 +132,12 @@ public partial class InputFileTopNavBar : ComponentBase
         }
         catch (Exception exception)
         {
-            if (BlazorStudioComponentRenderers.LuthetusCommonComponentRenderers.ErrorNotificationRendererType != null)
+            if (LuthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.ErrorNotificationRendererType != null)
             {
                 var errorNotification = new NotificationRecord(
                     NotificationKey.NewNotificationKey(),
                     $"ERROR: {nameof(InputFileTopNavBar)}",
-                    BlazorStudioComponentRenderers.LuthetusCommonComponentRenderers.ErrorNotificationRendererType,
+                    LuthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.ErrorNotificationRendererType,
                     new Dictionary<string, object?>
                     {
                         {

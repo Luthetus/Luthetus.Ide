@@ -1,7 +1,7 @@
-﻿@    using BlazorStudio.ClassLib.Context
-@    using Microsoft.AspNetCore.Components
-@    using BlazorCommon.RazorLib.TreeView
-@    using BlazorCommon.RazorLib.TreeView.Displays
+﻿@using Luthetus.Ide.ClassLib.Context
+@using Microsoft.AspNetCore.Components
+@using Luthetus.Common.RazorLib.TreeView
+@using Luthetus.Common.RazorLib.TreeView.Displays
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
@@ -16,7 +16,7 @@
     <div class="bstudio_section-title">
         Git Changes
         
-        <button class="bcrl_button"
+        <button class="luth_button"
                 style="display: inline-flex;"
                 @onclick="RefreshGitOnClick"
                 @onclick:stopPropagation="true">
@@ -31,7 +31,7 @@
                  style="display: inline-flex;">
                 <IconLoading CssStyleString="display: inline;"/>
                 
-                <button class="bcrl_button"
+                <button class="luth_button"
                         style="display: inline-flex;"
                         @onclick="ResetGitActionCancellationTokenSource">
                     <IconClose/>
@@ -48,7 +48,7 @@
             <div class="bstudio_git-changes-git-folder-not-found">
                 <div>
                     
-                    <em class="bcrl_em">.git</em>
+                    <em class="luth_em">.git</em>
 
                     folder was not found.
                 </div>
@@ -58,15 +58,15 @@
                     <div>
                         Searched in folder:
                     
-                        <div class="bcrl_indent-child-content">
-                            <em class="bcrl_em">
+                        <div class="luth_indent-child-content">
+                            <em class="luth_em">
                                 @gitState.MostRecentTryFindGitFolderInDirectoryAction.DirectoryAbsoluteFilePath.GetAbsoluteFilePathString()
                             </em>
                         </div>
                     </div>
                 }
 
-                <button class="bcrl_button"
+                <button class="luth_button"
                         @onclick="GitInitOnClick">
                     Git Init
                 </button>
@@ -84,8 +84,8 @@
             <div style="height: 3em;">
                 .git folder:
                     
-                <div class="bcrl_indent-child-content">
-                    <em class="bcrl_em">
+                <div class="luth_indent-child-content">
+                    <em class="luth_em">
                         @gitState.GitFolderAbsoluteFilePath.GetAbsoluteFilePathString()
                     </em>
                 </div>

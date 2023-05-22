@@ -4,7 +4,6 @@ using Luthetus.TextEditor.RazorLib.Analysis;
 using Luthetus.TextEditor.RazorLib.Lexing;
 using Luthetus.TextEditor.RazorLib.Analysis.GenericLexer.Decoration;
 using Luthetus.Ide.ClassLib.CodeAnalysis.C.BinderCase.BoundNodes.Statements;
-using Luthetus.Ide.ClassLib.CodeAnalysis;
 using Luthetus.Ide.ClassLib.CodeAnalysis.C.Syntax.SyntaxTokens;
 using Luthetus.Ide.ClassLib.CodeAnalysis.C.BinderCase.BoundNodes;
 using Luthetus.Ide.ClassLib.CodeAnalysis.C.BinderCase.BoundNodes.Expression;

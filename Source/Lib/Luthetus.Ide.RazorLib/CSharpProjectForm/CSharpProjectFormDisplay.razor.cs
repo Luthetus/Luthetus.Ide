@@ -1,17 +1,16 @@
 using System.Collections.Immutable;
 using System.Text;
-using BlazorCommon.RazorLib.Dialog;
-using BlazorCommon.RazorLib.Store.DialogCase;
-using BlazorStudio.ClassLib.InputFile;
-using BlazorStudio.ClassLib.Store.DotNetSolutionCase;
-using BlazorStudio.ClassLib.Store.InputFileCase;
-using BlazorStudio.ClassLib.Store.TerminalCase;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
+using Luthetus.Common.RazorLib.Dialog;
+using Luthetus.Common.RazorLib.Store.DialogCase;
+using Luthetus.Ide.ClassLib.InputFile;
+using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
+using Luthetus.Ide.ClassLib.Store.InputFileCase;
+using Luthetus.Ide.ClassLib.Store.TerminalCase;
 using Luthetus.Ide.ClassLib.CommandLine;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.Namespaces;
-using Luthetus.Ide.ClassLib.Store.TerminalCase;
+using Fluxor;
+using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.CSharpProjectForm;

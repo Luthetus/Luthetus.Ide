@@ -1,5 +1,4 @@
-﻿using BlazorStudio.ClassLib.CodeAnalysis;
-using BlazorTextEditor.RazorLib.Analysis;
+﻿using Luthetus.TextEditor.RazorLib.Analysis;
 using Luthetus.Ide.ClassLib.CodeAnalysis.C.BinderCase.BoundNodes;
 using Luthetus.Ide.ClassLib.CodeAnalysis.C.BinderCase.BoundNodes.Expression;
 using Luthetus.Ide.ClassLib.CodeAnalysis.C.BinderCase.BoundNodes.Statements;

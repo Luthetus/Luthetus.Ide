@@ -8,11 +8,9 @@ public class InternalResponse<T> : InternalResponseVoid
         : base(message)
     {
         ItemJson = itemJson;
-        Message = message;
     }
 
     public string ItemJson { get; }
-    public string Message { get; }
 
     public Type ItemType => typeof(T);
 }

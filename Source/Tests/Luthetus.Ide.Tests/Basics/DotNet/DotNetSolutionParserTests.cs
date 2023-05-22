@@ -1,6 +1,6 @@
-﻿using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
-using BlazorStudio.ClassLib.FileSystem.Classes.Local;
-using BlazorStudio.ClassLib.Namespaces;
+﻿using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
+using Luthetus.Ide.ClassLib.FileSystem.Classes.Local;
+using Luthetus.Ide.ClassLib.Namespaces;
 using Luthetus.Ide.ClassLib.DotNet;
 
 namespace Luthetus.Ide.Tests.Basics.DotNet;

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.BackgroundTaskCase;
 using Luthetus.Common.RazorLib.ComponentRenderers.Types;
-using Luthetus.Common.RazorLib.Misc;
 using Luthetus.Common.RazorLib.Notification;
 using Luthetus.Common.RazorLib.Store.NotificationCase;
 using Luthetus.Ide.ClassLib.InputFile;
@@ -9,9 +8,7 @@ using Luthetus.Ide.ClassLib.Store.FileSystemCase;
 using Luthetus.Ide.ClassLib.Store.InputFileCase;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Group;
-using Luthetus.TextEditor.RazorLib.Lexing;
 using Luthetus.TextEditor.RazorLib.Model;
-using Luthetus.TextEditor.RazorLib.Semantics;
 using Luthetus.TextEditor.RazorLib.ViewModel;
 using Fluxor;
 using Luthetus.Ide.ClassLib.ComponentRenderers;

@@ -1,8 +1,8 @@
-﻿using BlazorCommon.RazorLib.Misc;
-using BlazorStudio.ClassLib.DotNet.CSharp;
-using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
-using BlazorStudio.ClassLib.FileSystem.Classes.Local;
-using BlazorTextEditor.RazorLib.Analysis.Html.SyntaxActors;
+﻿using Luthetus.Common.RazorLib.Misc;
+using Luthetus.Ide.ClassLib.DotNet.CSharp;
+using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
+using Luthetus.Ide.ClassLib.FileSystem.Classes.Local;
+using Luthetus.TextEditor.RazorLib.Analysis.Html.SyntaxActors;
 
 namespace Luthetus.Ide.Tests.Basics.DotNet;
 
@@ -42,8 +42,6 @@ public class CSharpProjectParserTests
                 $"Name: {x.AttributeNameSyntax.TextEditorTextSpan.GetText(PROJECT_TEST_DATA)}",
                 $"Value: {x.AttributeValueSyntax.TextEditorTextSpan.GetText(PROJECT_TEST_DATA)}"))
             .ToArray();
-
-        var z = 2;
     }
 
     [Fact]
@@ -80,8 +78,6 @@ public class CSharpProjectParserTests
                 $"Name: {x.AttributeNameSyntax.TextEditorTextSpan.GetText(PROJECT_TEST_DATA)}",
                 $"Value: {x.AttributeValueSyntax.TextEditorTextSpan.GetText(PROJECT_TEST_DATA)}"))
             .ToArray();
-
-        var z = 2;
     }
 
     private const string PROJECT_TEST_DATA = @"<Project Sdk=""Microsoft.NET.Sdk.Web"">

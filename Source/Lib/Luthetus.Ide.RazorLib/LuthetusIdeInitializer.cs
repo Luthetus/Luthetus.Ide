@@ -1,16 +1,14 @@
-﻿using BlazorCommon.RazorLib.BackgroundTaskCase;
-using BlazorCommon.RazorLib.ComponentRenderers;
-using BlazorCommon.RazorLib.Icons.Codicon;
-using BlazorCommon.RazorLib.Store.ThemeCase;
-using BlazorStudio.ClassLib.Panel;
-using BlazorStudio.ClassLib.Store.PanelCase;
-using BlazorStudio.ClassLib.Store.TerminalCase;
-using BlazorTextEditor.RazorLib;
-using BlazorTextEditor.RazorLib.Store.Find;
+﻿using Luthetus.Common.RazorLib.BackgroundTaskCase;
+using Luthetus.Common.RazorLib.ComponentRenderers;
+using Luthetus.Common.RazorLib.Icons.Codicon;
+using Luthetus.Common.RazorLib.Store.ThemeCase;
+using Luthetus.Ide.ClassLib.Panel;
+using Luthetus.Ide.ClassLib.Store.PanelCase;
+using Luthetus.Ide.ClassLib.Store.TerminalCase;
+using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.Store.Find;
 using Fluxor;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
-using Luthetus.Ide.ClassLib.Panel;
-using Luthetus.Ide.ClassLib.Store.TerminalCase;
 using Luthetus.Ide.RazorLib.Adhoc;
 using Luthetus.Ide.RazorLib.FolderExplorer;
 using Luthetus.Ide.RazorLib.Git;
@@ -22,7 +20,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib;
 
-public partial class BlazorStudioInitializer : ComponentBase
+public partial class LuthetusIdeInitializer : ComponentBase
 {
     [Inject]
     private IState<PanelsCollection> PanelsCollectionWrap { get; set; } = null!;
@@ -31,17 +29,17 @@ public partial class BlazorStudioInitializer : ComponentBase
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
-    private BlazorTextEditorOptions BlazorTextEditorOptions { get; set; } = null!;
+    private LuthetusTextEditorOptions LuthetusTextEditorOptions { get; set; } = null!;
     [Inject]
     private IBackgroundTaskQueue BackgroundTaskQueue { get; set; } = null!;
     [Inject]
-    private IBlazorCommonComponentRenderers BlazorCommonComponentRenderers { get; set; } = null!;
+    private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
 
     protected override void OnInitialized()
     {
-        if (BlazorTextEditorOptions.CustomThemeRecords is not null)
+        if (LuthetusTextEditorOptions.CustomThemeRecords is not null)
         {
-            foreach (var themeRecord in BlazorTextEditorOptions.CustomThemeRecords)
+            foreach (var themeRecord in LuthetusTextEditorOptions.CustomThemeRecords)
             {
                 Dispatcher.Dispatch(
                     new ThemeRecordsCollection.RegisterAction(
@@ -49,7 +47,7 @@ public partial class BlazorStudioInitializer : ComponentBase
             }
         }
 
-        foreach (var findProvider in BlazorTextEditorOptions.FindProviders)
+        foreach (var findProvider in LuthetusTextEditorOptions.FindProviders)
         {
             Dispatcher.Dispatch(
                 new TextEditorFindProviderState.RegisterAction(
@@ -63,7 +61,7 @@ public partial class BlazorStudioInitializer : ComponentBase
                 Dispatcher,
                 FileSystemProvider,
                 BackgroundTaskQueue,
-                BlazorCommonComponentRenderers)
+                LuthetusCommonComponentRenderers)
             {
                 TerminalSessionKey = terminalSessionKey
             };

@@ -1,16 +1,16 @@
 ﻿using System.Collections.Immutable;
-using BlazorCommon.RazorLib.Dialog;
-using BlazorCommon.RazorLib.Dimensions;
-using BlazorCommon.RazorLib.Store.DropdownCase;
-using BlazorCommon.RazorLib.TreeView;
-using BlazorCommon.RazorLib.TreeView.Commands;
-using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
-using BlazorStudio.ClassLib.Store.InputFileCase;
-using BlazorStudio.ClassLib.TreeViewImplementations;
-using Fluxor;
+using Luthetus.Common.RazorLib.Dialog;
+using Luthetus.Common.RazorLib.Dimensions;
+using Luthetus.Common.RazorLib.Store.DropdownCase;
+using Luthetus.Common.RazorLib.TreeView;
+using Luthetus.Common.RazorLib.TreeView.Commands;
+using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
+using Luthetus.Ide.ClassLib.Store.InputFileCase;
+using Luthetus.Ide.ClassLib.TreeViewImplementations;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.RazorLib.InputFile.Classes;
+using Fluxor;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.InputFile.InternalComponents;
@@ -20,7 +20,7 @@ public partial class InputFileSidebar : ComponentBase
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
-    private ILuthetusIdeComponentRenderers BlazorStudioComponentRenderers { get; set; } = null!;
+    private ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
@@ -53,7 +53,7 @@ public partial class InputFileSidebar : ComponentBase
     {
         var directoryHomeNode = new TreeViewAbsoluteFilePath(
             EnvironmentProvider.HomeDirectoryAbsoluteFilePath,
-            BlazorStudioComponentRenderers,
+            LuthetusIdeComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,
             true,
@@ -61,7 +61,7 @@ public partial class InputFileSidebar : ComponentBase
 
         var directoryRootNode = new TreeViewAbsoluteFilePath(
             EnvironmentProvider.RootDirectoryAbsoluteFilePath,
-            BlazorStudioComponentRenderers,
+            LuthetusIdeComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,
             true,

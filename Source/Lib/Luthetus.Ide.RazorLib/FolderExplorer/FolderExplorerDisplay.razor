@@ -1,11 +1,11 @@
-@    using BlazorStudio.ClassLib.Context
-@    using BlazorStudio.ClassLib.Store.FolderExplorerCase
-@    using BlazorStudio.RazorLib.ContextCase
-@    using BlazorCommon.RazorLib.Dropdown
-@    using BlazorCommon.RazorLib.TreeView
-@    using BlazorCommon.RazorLib.TreeView.Displays
-@    using BlazorStudio.RazorLib.FolderExplorer.InternalComponents
-@    using Microsoft.AspNetCore.Components.Authorization
+@using Luthetus.Ide.ClassLib.Context
+@using Luthetus.Ide.ClassLib.Store.FolderExplorerCase
+@using Luthetus.Ide.RazorLib.ContextCase
+@using Luthetus.Ide.RazorLib.FolderExplorer.InternalComponents
+@using Luthetus.Common.RazorLib.Dropdown
+@using Luthetus.Common.RazorLib.TreeView
+@using Luthetus.Common.RazorLib.TreeView.Displays
+@using Microsoft.AspNetCore.Components.Authorization
 
 <ContextBoundary ContextRecord="ContextFacts.FolderExplorerContext"
                  ClassCssString="bstudio_folder-explorer-display"
@@ -27,15 +27,15 @@
                 
                 <hr/>
                 
-                <button class="bcrl_button"
+                <button class="luth_button"
                         @onclick="SetFolderExplorerOnClickAsync">
                     Open Adhoc Folder
                 </button>
             }
             else
             {
-                <CascadingValue Name="BlazorTreeViewIconWidth" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
-                    <CascadingValue Name="BlazorTreeViewIconHeight" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
+                <CascadingValue Name="LuthetusTreeViewIconWidth" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
+                    <CascadingValue Name="LuthetusTreeViewIconHeight" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
                         <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
                             <TreeViewStateDisplay TreeViewStateKey="TreeViewFolderExplorerContentStateKey"
                                                   CssStyleString="height: 100%;"

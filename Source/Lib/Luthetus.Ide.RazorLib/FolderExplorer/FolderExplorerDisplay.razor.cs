@@ -1,22 +1,21 @@
 using System.Collections.Immutable;
-using BlazorCommon.RazorLib.BackgroundTaskCase;
-using BlazorCommon.RazorLib.Store.AccountCase;
-using BlazorCommon.RazorLib.Store.ApplicationOptions;
-using BlazorCommon.RazorLib.Store.DropdownCase;
-using BlazorCommon.RazorLib.TreeView;
-using BlazorCommon.RazorLib.TreeView.Commands;
-using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
-using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
-using BlazorStudio.ClassLib.Store.FolderExplorerCase;
-using BlazorStudio.ClassLib.TreeViewImplementations;
-using BlazorTextEditor.RazorLib;
-using Fluxor;
+using Luthetus.Common.RazorLib.BackgroundTaskCase;
+using Luthetus.Common.RazorLib.Store.AccountCase;
+using Luthetus.Common.RazorLib.Store.ApplicationOptions;
+using Luthetus.Common.RazorLib.Store.DropdownCase;
+using Luthetus.Common.RazorLib.TreeView;
+using Luthetus.Common.RazorLib.TreeView.Commands;
+using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
+using Luthetus.TextEditor.RazorLib;
+using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
+using Luthetus.Ide.ClassLib.Store.FolderExplorerCase;
+using Luthetus.Ide.ClassLib.TreeViewImplementations;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
-using Luthetus.Ide.ClassLib.Store.FolderExplorerCase;
 using Luthetus.Ide.ClassLib.Store.TerminalCase;
 using Luthetus.Ide.RazorLib.FolderExplorer.Classes;
 using Luthetus.Ide.RazorLib.FolderExplorer.InternalComponents;
+using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 
@@ -41,7 +40,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
-    private ILuthetusIdeComponentRenderers BlazorStudioComponentRenderers { get; set; } = null!;
+    private ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; set; } = null!;
     [Inject]
     private ClassLib.Menu.ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
     [Inject]
@@ -113,7 +112,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
         _folderExplorerTreeViewMouseEventHandler = new FolderExplorerTreeViewMouseEventHandler(
             Dispatcher,
             TextEditorService,
-            BlazorStudioComponentRenderers,
+            LuthetusIdeComponentRenderers,
             FileSystemProvider,
             TreeViewService,
             BackgroundTaskQueue);
@@ -121,7 +120,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
         _folderExplorerTreeViewKeyboardEventHandler = new FolderExplorerTreeViewKeyboardEventHandler(
             TerminalSessionsStateWrap,
             CommonMenuOptionsFactory,
-            BlazorStudioComponentRenderers,
+            LuthetusIdeComponentRenderers,
             FileSystemProvider,
             Dispatcher,
             TreeViewService,
@@ -150,7 +149,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     {
         var rootNode = new TreeViewAbsoluteFilePath(
             absoluteFilePath,
-            BlazorStudioComponentRenderers,
+            LuthetusIdeComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,
             true,

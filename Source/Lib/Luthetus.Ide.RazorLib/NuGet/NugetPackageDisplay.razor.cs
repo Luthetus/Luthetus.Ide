@@ -1,15 +1,14 @@
 using System.Collections.Immutable;
-using BlazorCommon.RazorLib.ComponentRenderers;
-using BlazorStudio.ClassLib.Store.TerminalCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
-using BlazorCommon.RazorLib.ComponentRenderers.Types;
-using BlazorCommon.RazorLib.Notification;
-using BlazorCommon.RazorLib.Store.NotificationCase;
-using BlazorStudio.ClassLib.Store.DotNetSolutionCase;
-using BlazorStudio.ClassLib.Store.NugetPackageManagerCase;
+using Luthetus.Common.RazorLib.ComponentRenderers;
+using Luthetus.Common.RazorLib.ComponentRenderers.Types;
+using Luthetus.Common.RazorLib.Notification;
+using Luthetus.Common.RazorLib.Store.NotificationCase;
 using Luthetus.Ide.ClassLib.Store.TerminalCase;
+using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
+using Luthetus.Ide.ClassLib.Store.NugetPackageManagerCase;
 using Luthetus.Ide.ClassLib.Nuget;
 using Luthetus.Ide.ClassLib.CommandLine;
 
@@ -24,7 +23,7 @@ public partial class NugetPackageDisplay : FluxorComponent
     [Inject]
     private IState<TerminalSessionsState> TerminalSessionsStateWrap { get; set; } = null!;
     [Inject]
-    private IBlazorCommonComponentRenderers BlazorCommonComponentRenderers { get; set; } = null!;
+    private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -106,12 +105,12 @@ public partial class NugetPackageDisplay : FluxorComponent
             parentDirectory.GetAbsoluteFilePathString(),
             CancellationToken.None, () =>
             {
-                if (BlazorCommonComponentRenderers.InformativeNotificationRendererType is not null)
+                if (LuthetusCommonComponentRenderers.InformativeNotificationRendererType is not null)
                 {
                     var notificationInformative = new NotificationRecord(
                         NotificationKey.NewNotificationKey(),
                         "Add Nuget Package Reference",
-                        BlazorCommonComponentRenderers.InformativeNotificationRendererType,
+                        LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
                         new Dictionary<string, object?>
                         {
                             {

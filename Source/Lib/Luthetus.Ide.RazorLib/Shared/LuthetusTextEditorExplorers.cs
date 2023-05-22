@@ -1,10 +1,10 @@
-﻿using BlazorCommon.RazorLib.Dimensions;
-using BlazorCommon.RazorLib.Resize;
+﻿using Luthetus.Common.RazorLib.Dimensions;
+using Luthetus.Common.RazorLib.Resize;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.Shared;
 
-public partial class BlazorTextEditorExplorers : ComponentBase
+public partial class LuthetusTextEditorExplorers : ComponentBase
 {
     [Parameter, EditorRequired]
     public ElementDimensions ExplorersElementDimensions { get; set; } = null!;

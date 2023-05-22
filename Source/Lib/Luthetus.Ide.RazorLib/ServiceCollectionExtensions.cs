@@ -1,17 +1,15 @@
-using BlazorCommon.RazorLib.BackgroundTaskCase;
-using BlazorCommon.RazorLib.Clipboard;
-using BlazorCommon.RazorLib.ComponentRenderers;
-using BlazorCommon.RazorLib.Notification;
-using BlazorCommon.RazorLib.Store.AccountCase;
-using BlazorCommon.RazorLib.WatchWindow;
-using BlazorCommon.RazorLib.WatchWindow.TreeViewDisplays;
-using BlazorStudio.ClassLib.ComponentRenderers;
-using BlazorStudio.ClassLib.FileSystem.Classes.Local;
-using BlazorStudio.ClassLib.FileSystem.Classes.Website;
-using BlazorTextEditor.RazorLib;
-using Fluxor;
-using Luthetus.Ide.ClassLib;
+using Luthetus.Common.RazorLib.BackgroundTaskCase;
+using Luthetus.Common.RazorLib.Clipboard;
+using Luthetus.Common.RazorLib.ComponentRenderers;
+using Luthetus.Common.RazorLib.Notification;
+using Luthetus.Common.RazorLib.Store.AccountCase;
+using Luthetus.Common.RazorLib.WatchWindow;
+using Luthetus.Common.RazorLib.WatchWindow.TreeViewDisplays;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
+using Luthetus.Ide.ClassLib.FileSystem.Classes.Local;
+using Luthetus.Ide.ClassLib.FileSystem.Classes.Website;
+using Luthetus.TextEditor.RazorLib;
+using Luthetus.Ide.ClassLib;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.RazorLib.CSharpProjectForm;
 using Luthetus.Ide.RazorLib.File;
@@ -20,6 +18,7 @@ using Luthetus.Ide.RazorLib.Git;
 using Luthetus.Ide.RazorLib.InputFile;
 using Luthetus.Ide.RazorLib.NuGet;
 using Luthetus.Ide.RazorLib.TreeViewImplementations;
+using Fluxor;
 using Microsoft.Extensions.DependencyInjection;
 using TreeViewExceptionDisplay = Luthetus.Ide.RazorLib.TreeViewImplementations.TreeViewExceptionDisplay;
 
@@ -27,7 +26,7 @@ namespace Luthetus.Ide.RazorLib;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddBlazorStudioRazorLibServices(
+    public static IServiceCollection AddLuthetusIdeRazorLibServices(
         this IServiceCollection services,
         bool isNativeApplication)
     {
@@ -40,7 +39,7 @@ public static class ServiceCollectionExtensions
             typeof(TreeViewExceptionDisplay),
             typeof(TreeViewEnumerableDisplay));
 
-        var commonRendererTypes = new BlazorCommonComponentRenderers(
+        var commonRendererTypes = new LuthetusCommonComponentRenderers(
             typeof(BackgroundTaskDisplay),
             typeof(CommonErrorNotificationDisplay),
             typeof(CommonInformativeNotificationDisplay),
@@ -48,38 +47,38 @@ public static class ServiceCollectionExtensions
             typeof(TreeViewMissingRendererFallbackDisplay),
             watchWindowTreeViewRenderers);
 
-        // TODO: Move registration of "IBlazorCommonComponentRenderers" to BlazorCommon
-        services.AddScoped<IBlazorCommonComponentRenderers>(_ => commonRendererTypes);
+        // TODO: Move registration of "ILuthetusCommonComponentRenderers" to LuthetusCommon
+        services.AddScoped<ILuthetusCommonComponentRenderers>(_ => commonRendererTypes);
 
         var shouldInitializeFluxor = false;
 
-        services.AddBlazorTextEditor(inTextEditorOptions =>
+        services.AddLuthetusTextEditor(inTextEditorOptions =>
         {
-            var blazorCommonOptions =
-                (inTextEditorOptions.BlazorCommonOptions ?? new()) with
+            var luthetusCommonOptions =
+                (inTextEditorOptions.LuthetusCommonOptions ?? new()) with
                 {
                     InitializeFluxor = shouldInitializeFluxor
                 };
 
             if (isNativeApplication)
             {
-                var blazorCommonFactories = blazorCommonOptions.BlazorCommonFactories with
+                var luthetusCommonFactories = luthetusCommonOptions.LuthetusCommonFactories with
                 {
                     ClipboardServiceFactory = _ => new InMemoryClipboardService(true),
                 };
 
-                blazorCommonOptions = blazorCommonOptions with
+                luthetusCommonOptions = luthetusCommonOptions with
                 {
-                    BlazorCommonFactories = blazorCommonFactories
+                    LuthetusCommonFactories = luthetusCommonFactories
                 };
             }
 
             return inTextEditorOptions with
             {
                 InitializeFluxor = shouldInitializeFluxor,
-                CustomThemeRecords = BlazorTextEditorCustomThemeFacts.AllCustomThemes,
-                InitialThemeKey = BlazorTextEditorCustomThemeFacts.DarkTheme.ThemeKey,
-                BlazorCommonOptions = blazorCommonOptions
+                CustomThemeRecords = LuthetusTextEditorCustomThemeFacts.AllCustomThemes,
+                InitialThemeKey = LuthetusTextEditorCustomThemeFacts.DarkTheme.ThemeKey,
+                LuthetusCommonOptions = luthetusCommonOptions
             };
         });
 
@@ -113,14 +112,14 @@ public static class ServiceCollectionExtensions
             services.AddAuthorizationCore();
 
         services.AddSingleton(_ =>
-            new BlazorStudioOptions(isNativeApplication));
+            new LuthetusIdeOptions(isNativeApplication));
 
         services.AddScoped<ILuthetusIdeComponentRenderers>(serviceProvider =>
         {
             var blazorCommonComponentRenderers = serviceProvider
-                .GetRequiredService<IBlazorCommonComponentRenderers>();
+                .GetRequiredService<ILuthetusCommonComponentRenderers>();
 
-            return new BlazorStudioComponentRenderers(
+            return new LuthetusIdeComponentRenderers(
                 blazorCommonComponentRenderers,
                 typeof(BooleanPromptOrCancelDisplay),
                 typeof(FileFormDisplay),

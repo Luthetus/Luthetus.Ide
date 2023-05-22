@@ -1,18 +1,18 @@
 using System.Collections.Immutable;
-using BlazorCommon.RazorLib.BackgroundTaskCase;
-using BlazorCommon.RazorLib.Dimensions;
-using BlazorCommon.RazorLib.Resize;
-using BlazorCommon.RazorLib.TreeView;
-using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
-using BlazorStudio.ClassLib.Store.InputFileCase;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
+using Luthetus.Common.RazorLib.BackgroundTaskCase;
+using Luthetus.Common.RazorLib.Dimensions;
+using Luthetus.Common.RazorLib.Resize;
+using Luthetus.Common.RazorLib.TreeView;
+using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
+using Luthetus.Ide.ClassLib.Store.InputFileCase;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.TreeViewImplementations;
 using Luthetus.Ide.RazorLib.InputFile.Classes;
 using Luthetus.Ide.RazorLib.InputFile.InternalComponents;
+using Fluxor;
+using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.InputFile;
@@ -22,7 +22,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
-    private ILuthetusIdeComponentRenderers BlazorStudioComponentRenderers { get; set; } = null!;
+    private ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
@@ -101,7 +101,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
             TreeViewService,
             InputFileStateWrap,
             Dispatcher,
-            BlazorStudioComponentRenderers,
+            LuthetusIdeComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,
             SetInputFileContentTreeViewRootFunc,
@@ -112,7 +112,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
                     if (SearchElementReference is not null)
                         await SearchElementReference.Value.FocusAsync();
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     // 2023-04-18: The app has had a bug where it "freezes" and must be restarted.
                     //             This bug is seemingly happening randomly. I have a suspicion
@@ -171,7 +171,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     {
         var pseudoRootNode = new TreeViewAbsoluteFilePath(
             absoluteFilePath,
-            BlazorStudioComponentRenderers,
+            LuthetusIdeComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,
             true,
@@ -214,7 +214,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
 
         var setOpenedTreeViewModelAction = new InputFileState.SetOpenedTreeViewModelAction(
             pseudoRootNode,
-            BlazorStudioComponentRenderers,
+            LuthetusIdeComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider);
 

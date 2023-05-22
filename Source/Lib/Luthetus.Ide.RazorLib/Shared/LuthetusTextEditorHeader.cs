@@ -1,15 +1,15 @@
 using System.Collections.Immutable;
-using BlazorCommon.RazorLib.BackgroundTaskCase;
-using BlazorCommon.RazorLib.Dialog;
-using BlazorCommon.RazorLib.Dropdown;
-using BlazorCommon.RazorLib.Menu;
-using BlazorCommon.RazorLib.Store.AccountCase;
-using BlazorCommon.RazorLib.Store.DialogCase;
-using BlazorCommon.RazorLib.Store.DropdownCase;
-using BlazorStudio.ClassLib.Store.DotNetSolutionCase;
-using BlazorTextEditor.RazorLib;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
+using Luthetus.Common.RazorLib.BackgroundTaskCase;
+using Luthetus.Common.RazorLib.Dialog;
+using Luthetus.Common.RazorLib.Dropdown;
+using Luthetus.Common.RazorLib.Menu;
+using Luthetus.Common.RazorLib.Store.AccountCase;
+using Luthetus.Common.RazorLib.Store.DialogCase;
+using Luthetus.Common.RazorLib.Store.DropdownCase;
+using Luthetus.TextEditor.RazorLib;
+using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.Store.EditorCase;
@@ -21,7 +21,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.Shared;
 
-public partial class BlazorTextEditorHeader : FluxorComponent
+public partial class LuthetusTextEditorHeader : FluxorComponent
 {
     [Inject]
     private IState<AccountState> AccountStateWrap { get; set; } = null!;
@@ -30,7 +30,7 @@ public partial class BlazorTextEditorHeader : FluxorComponent
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
-    private ILuthetusIdeComponentRenderers BlazorStudioComponentRenderers { get; set; } = null!;
+    private ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
@@ -91,7 +91,7 @@ public partial class BlazorTextEditorHeader : FluxorComponent
                     await EditorState.ShowInputFileAsync(
                         Dispatcher,
                         TextEditorService,
-                        BlazorStudioComponentRenderers,
+                        LuthetusIdeComponentRenderers,
                         FileSystemProvider,
                         BackgroundTaskQueue));
 
@@ -108,7 +108,7 @@ public partial class BlazorTextEditorHeader : FluxorComponent
                     await EditorState.ShowInputFileAsync(
                         Dispatcher,
                         TextEditorService,
-                        BlazorStudioComponentRenderers,
+                        LuthetusIdeComponentRenderers,
                         FileSystemProvider,
                         BackgroundTaskQueue));
 
@@ -118,7 +118,7 @@ public partial class BlazorTextEditorHeader : FluxorComponent
                 async () =>
                     await DotNetSolutionState.ShowInputFileAsync(
                         Dispatcher,
-                        BlazorStudioComponentRenderers,
+                        LuthetusIdeComponentRenderers,
                         FileSystemProvider,
                         EnvironmentProvider));
 

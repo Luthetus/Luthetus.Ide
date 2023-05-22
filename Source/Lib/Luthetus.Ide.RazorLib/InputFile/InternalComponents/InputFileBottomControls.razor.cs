@@ -1,10 +1,10 @@
-﻿using BlazorCommon.RazorLib.BackgroundTaskCase;
-using BlazorCommon.RazorLib.Dialog;
-using BlazorCommon.RazorLib.Store.DialogCase;
-using BlazorStudio.ClassLib.Store.InputFileCase;
-using Fluxor;
+﻿using Luthetus.Common.RazorLib.BackgroundTaskCase;
+using Luthetus.Common.RazorLib.Dialog;
+using Luthetus.Common.RazorLib.Store.DialogCase;
+using Luthetus.Ide.ClassLib.Store.InputFileCase;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
+using Fluxor;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.InputFile.InternalComponents;
@@ -14,7 +14,7 @@ public partial class InputFileBottomControls : ComponentBase
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
-    private ILuthetusIdeComponentRenderers BlazorStudioComponentRenderers { get; set; } = null!;
+    private ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]

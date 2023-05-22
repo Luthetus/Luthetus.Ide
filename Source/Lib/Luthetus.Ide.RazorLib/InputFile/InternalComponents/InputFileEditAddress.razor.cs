@@ -1,4 +1,4 @@
-﻿using BlazorCommon.RazorLib.Keyboard;
+﻿using Luthetus.Common.RazorLib.Keyboard;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
@@ -33,7 +33,7 @@ public partial class InputFileEditAddress : ComponentBase
                 if (_inputTextEditForAddressElementReference is not null)
                     await _inputTextEditForAddressElementReference.Value.FocusAsync();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // 2023-04-18: The app has had a bug where it "freezes" and must be restarted.
                 //             This bug is seemingly happening randomly. I have a suspicion

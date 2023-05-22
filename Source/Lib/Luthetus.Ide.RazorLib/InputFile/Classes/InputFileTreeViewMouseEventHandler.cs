@@ -1,10 +1,10 @@
-﻿using BlazorCommon.RazorLib.TreeView;
-using BlazorCommon.RazorLib.TreeView.Commands;
-using BlazorCommon.RazorLib.TreeView.Events;
-using BlazorStudio.ClassLib.Store.InputFileCase;
-using Fluxor;
+﻿using Luthetus.Common.RazorLib.TreeView;
+using Luthetus.Common.RazorLib.TreeView.Commands;
+using Luthetus.Common.RazorLib.TreeView.Events;
+using Luthetus.Ide.ClassLib.Store.InputFileCase;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.TreeViewImplementations;
+using Fluxor;
 
 namespace Luthetus.Ide.RazorLib.InputFile.Classes;
 

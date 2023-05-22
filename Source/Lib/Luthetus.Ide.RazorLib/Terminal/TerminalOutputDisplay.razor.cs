@@ -1,17 +1,16 @@
 using System.Collections.Immutable;
 using System.Text;
-using BlazorCommon.RazorLib.ComponentRenderers;
-using BlazorCommon.RazorLib.Keyboard;
-using BlazorCommon.RazorLib.Notification;
-using BlazorStudio.ClassLib.Store.TerminalCase;
-using BlazorTextEditor.RazorLib;
-using BlazorTextEditor.RazorLib.Cursor;
-using BlazorTextEditor.RazorLib.HelperComponents;
-using BlazorTextEditor.RazorLib.Model;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
-using Luthetus.Ide.ClassLib.Html;
+using Luthetus.Common.RazorLib.ComponentRenderers;
+using Luthetus.Common.RazorLib.Keyboard;
+using Luthetus.Common.RazorLib.Notification;
+using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.Cursor;
+using Luthetus.TextEditor.RazorLib.HelperComponents;
+using Luthetus.TextEditor.RazorLib.Model;
 using Luthetus.Ide.ClassLib.Store.TerminalCase;
+using Luthetus.Ide.ClassLib.Html;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
@@ -31,7 +30,7 @@ public partial class TerminalOutputDisplay : FluxorComponent
     [Inject]
     private INotificationService NotificationService { get; set; } = null!;
     [Inject]
-    private IBlazorCommonComponentRenderers BlazorCommonComponentRenderers { get; set; } = null!;
+    private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
 
     /// <summary>
     /// <see cref="TerminalSessionKey"/> is used to narrow down the terminal

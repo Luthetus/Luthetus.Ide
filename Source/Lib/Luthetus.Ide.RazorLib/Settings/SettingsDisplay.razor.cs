@@ -1,4 +1,4 @@
-﻿using BlazorCommon.RazorLib.Dialog;
+﻿using Luthetus.Common.RazorLib.Dialog;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.Settings;

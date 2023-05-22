@@ -1,5 +1,5 @@
-﻿using BlazorCommon.RazorLib.Keyboard;
-using BlazorCommon.RazorLib.Menu;
+﻿using Luthetus.Common.RazorLib.Keyboard;
+using Luthetus.Common.RazorLib.Menu;
 using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.RazorLib.Button;
@@ -62,7 +62,7 @@ public partial class DeleteFileFormDisplay
                 {
                     await _cancelButtonDisplay.ButtonElementReference.Value.FocusAsync();
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     // 2023-04-18: The app has had a bug where it "freezes" and must be restarted.
                     //             This bug is seemingly happening randomly. I have a suspicion

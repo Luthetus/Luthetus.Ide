@@ -1,15 +1,15 @@
 using System.Collections.Immutable;
-using BlazorCommon.RazorLib.BackgroundTaskCase;
-using BlazorCommon.RazorLib.Store.ApplicationOptions;
-using BlazorCommon.RazorLib.Store.DropdownCase;
-using BlazorCommon.RazorLib.TreeView;
-using BlazorCommon.RazorLib.TreeView.Commands;
-using BlazorCommon.RazorLib.TreeView.TreeViewClasses;
-using BlazorStudio.ClassLib.FileSystem.Classes.FilePath;
-using BlazorStudio.ClassLib.Namespaces;
-using BlazorStudio.ClassLib.Store.DotNetSolutionCase;
-using BlazorStudio.ClassLib.TreeViewImplementations;
-using BlazorTextEditor.RazorLib;
+using Luthetus.Common.RazorLib.BackgroundTaskCase;
+using Luthetus.Common.RazorLib.Store.ApplicationOptions;
+using Luthetus.Common.RazorLib.Store.DropdownCase;
+using Luthetus.Common.RazorLib.TreeView;
+using Luthetus.Common.RazorLib.TreeView.Commands;
+using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
+using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
+using Luthetus.Ide.ClassLib.Namespaces;
+using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
+using Luthetus.Ide.ClassLib.TreeViewImplementations;
+using Luthetus.TextEditor.RazorLib;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
@@ -36,7 +36,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
-    private ILuthetusIdeComponentRenderers BlazorStudioComponentRenderers { get; set; } = null!;
+    private ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; set; } = null!;
     [Inject]
     private ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
     [Inject]
@@ -70,7 +70,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         _solutionExplorerTreeViewKeymap = new SolutionExplorerTreeViewKeymap(
             TerminalSessionsStateWrap,
             CommonMenuOptionsFactory,
-            BlazorStudioComponentRenderers,
+            LuthetusIdeComponentRenderers,
             FileSystemProvider,
             Dispatcher,
             TreeViewService,
@@ -81,7 +81,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             new SolutionExplorerTreeViewMouseEventHandler(
                 Dispatcher,
                 TextEditorService,
-                BlazorStudioComponentRenderers,
+                LuthetusIdeComponentRenderers,
                 FileSystemProvider,
                 TreeViewService,
                 BackgroundTaskQueue);
@@ -117,7 +117,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     {
         var rootNode = new TreeViewSolution(
             dotNetSolution,
-            BlazorStudioComponentRenderers,
+            LuthetusIdeComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,
             true,

@@ -1,10 +1,10 @@
-﻿using BlazorCommon.RazorLib.Dimensions;
-using BlazorCommon.RazorLib.Reactive;
-using BlazorCommon.RazorLib.Resize;
-using BlazorCommon.RazorLib.Store.DragCase;
-using BlazorStudio.ClassLib.Store.PanelCase;
-using Fluxor;
+﻿using Luthetus.Common.RazorLib.Dimensions;
+using Luthetus.Common.RazorLib.Reactive;
+using Luthetus.Common.RazorLib.Resize;
+using Luthetus.Common.RazorLib.Store.DragCase;
+using Luthetus.Ide.ClassLib.Store.PanelCase;
 using Luthetus.Ide.ClassLib.Panel;
+using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
@@ -27,7 +27,7 @@ public partial class PanelTabDisplay : ComponentBase, IDisposable
     private bool IsActive => PanelRecord.ActivePanelTabKey == PanelTab.PanelTabKey;
 
     private string IsActiveCssClassString => IsActive
-        ? "bcrl_active"
+        ? "luth_active"
         : string.Empty;
 
     // TODO: The ValueTuple being used here needs to be made into a class likely as this is not nice to read

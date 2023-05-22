@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading;
-using BlazorCommon.RazorLib.BackgroundTaskCase;
+using Luthetus.Common.RazorLib.BackgroundTaskCase;
 using Luthetus.Ide.RazorLib;
 using Microsoft.Extensions.DependencyInjection;
 using Photino.Blazor;
@@ -17,7 +17,7 @@ namespace Luthetus.Ide.Photino
             appBuilder.Services
                 .AddLogging();
 
-            appBuilder.Services.AddBlazorStudioRazorLibServices(true);
+            appBuilder.Services.AddLuthetusIdeRazorLibServices(true);
 
             // The code:
             //     builder.Services.AddHostedService<QueuedHostedService>();
@@ -38,7 +38,7 @@ namespace Luthetus.Ide.Photino
             // customize window
             app.MainWindow
                 .SetIconFile("favicon.ico")
-                .SetTitle("BlazorStudio")
+                .SetTitle("Luthetus IDE")
                 .SetDevToolsEnabled(true)
                 .SetContextMenuEnabled(true)
                 .SetUseOsDefaultSize(false)

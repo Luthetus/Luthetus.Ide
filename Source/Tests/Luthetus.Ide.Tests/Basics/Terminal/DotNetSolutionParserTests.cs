@@ -14,7 +14,7 @@ public class CliWrapTests
 
         await Cli.Wrap("dotnet")
             .WithArguments(new[] { "new", "sln" })
-            .WithWorkingDirectory(@"C:\Users\hunte\Desktop\TestBlazorStudio")
+            .WithWorkingDirectory(@"C:\Users\hunte\Desktop\TestLuthetus")
             .WithStandardErrorPipe(PipeTarget.ToStringBuilder(standardErrorBuilder))
             .WithStandardOutputPipe(PipeTarget.ToStringBuilder(standardInputBuilder))
             .WithValidation(CommandResultValidation.None)

@@ -1,7 +1,5 @@
 ﻿using Luthetus.Ide.ClassLib.CodeAnalysis.C.Syntax;
-using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Analysis;
-using Luthetus.TextEditor.RazorLib.Diff;
 using Luthetus.TextEditor.RazorLib.Lexing;
 using Luthetus.TextEditor.RazorLib.Model;
 using Luthetus.TextEditor.RazorLib.Semantics;

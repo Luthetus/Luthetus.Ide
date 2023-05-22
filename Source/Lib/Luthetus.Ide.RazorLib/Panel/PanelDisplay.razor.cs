@@ -1,5 +1,5 @@
-﻿using BlazorCommon.RazorLib.Dimensions;
-using BlazorStudio.ClassLib.Store.PanelCase;
+﻿using Luthetus.Common.RazorLib.Dimensions;
+using Luthetus.Ide.ClassLib.Store.PanelCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Ide.ClassLib.Panel;

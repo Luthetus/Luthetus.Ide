@@ -1,5 +1,5 @@
-﻿@    using BlazorStudio.RazorLib.Terminal
-@    using BlazorStudio.ClassLib.Store.TerminalCase
+﻿@using Luthetus.Ide.RazorLib.Terminal
+@using Luthetus.Ide.ClassLib.Store.TerminalCase
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
@@ -42,7 +42,7 @@
     <div>
         Solution&nbsp;Name:
         <div>
-            <em class="bcrl_em">
+            <em class="luth_em">
                 @SolutionName
             </em>.sln
         </div>
@@ -51,7 +51,7 @@
     <div>
         Directory&nbsp;Absolute&nbsp;File&nbsp;Path:
         <div>
-            <em class="bcrl_em">
+            <em class="luth_em">
                 @ParentDirectoryName
             </em>
         </div>
@@ -60,7 +60,7 @@
     <div>
         Command:
         <div>
-            <em class="bcrl_em">
+            <em class="luth_em">
                 @InterpolatedCommand
             </em>
         </div>

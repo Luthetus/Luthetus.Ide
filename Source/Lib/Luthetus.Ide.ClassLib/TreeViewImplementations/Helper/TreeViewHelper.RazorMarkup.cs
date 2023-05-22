@@ -3,7 +3,6 @@ using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
 using Luthetus.Ide.ClassLib.FileConstants;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.Namespaces;
-using Luthetus.Ide.ClassLib.TreeViewImplementations;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementations.Helper;
 

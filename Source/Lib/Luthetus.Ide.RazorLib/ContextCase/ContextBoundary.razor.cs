@@ -1,5 +1,5 @@
 using System.Collections.Immutable;
-using BlazorStudio.ClassLib.Store.ContextCase;
+using Luthetus.Ide.ClassLib.Store.ContextCase;
 using Fluxor;
 using Luthetus.Ide.ClassLib.Context;
 using Microsoft.AspNetCore.Components;

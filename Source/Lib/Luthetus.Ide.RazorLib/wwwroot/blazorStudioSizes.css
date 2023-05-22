@@ -20,7 +20,7 @@
     --bstudio_input-file-display-top-nav-bar-buttons-width: 120px;
     --bstudio_input-file-display-top-nav-bar-search-width: 220px;
     --bstudio_input-file-display-top-nav-bar-address-hierarchy-width: calc(100% - var(--bstudio_input-file-display-top-nav-bar-buttons-width) - var(--bstudio_input-file-display-top-nav-bar-search-width));
-    --bstudio_text-editor-display-height: calc(100% - var(--bcrl_tabs-bar-height) - var(--bcrl_tabs-bar-margin-bottom));
+    --bstudio_text-editor-display-height: calc(100% - var(--luth_tabs-bar-height) - var(--luth_tabs-bar-margin-bottom));
     --bstudio_input-file-display-bottom-controls-non-text-width: 12rem;
     --bstudio_input-file-display-bottom-controls-non-text-margin-left: 15px;
     --bstudio_input-file-display-bottom-controls-non-text-buttons-margin-left: 15px;

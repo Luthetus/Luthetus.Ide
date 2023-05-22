@@ -1,6 +1,6 @@
-using BlazorCommon.RazorLib.Keyboard;
-using BlazorCommon.RazorLib.Menu;
-using BlazorCommon.RazorLib.Store.AccountCase;
+using Luthetus.Common.RazorLib.Keyboard;
+using Luthetus.Common.RazorLib.Menu;
+using Luthetus.Common.RazorLib.Store.AccountCase;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -69,7 +69,7 @@ public partial class LoginFormDisplay : ComponentBase
                 {
                     await _containerInputElementReference.Value.FocusAsync();
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     // 2023-04-18: The app has had a bug where it "freezes" and must be restarted.
                     //             This bug is seemingly happening randomly. I have a suspicion

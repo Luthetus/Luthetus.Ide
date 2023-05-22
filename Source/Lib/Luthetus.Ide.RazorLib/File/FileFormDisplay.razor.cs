@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
-using BlazorCommon.RazorLib.Keyboard;
-using BlazorCommon.RazorLib.Menu;
+using Luthetus.Common.RazorLib.Keyboard;
+using Luthetus.Common.RazorLib.Menu;
 using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
 using Luthetus.Ide.ClassLib.FileTemplates;
 using Microsoft.AspNetCore.Components;
@@ -58,7 +58,7 @@ public partial class FileFormDisplay
                 {
                     await _inputElementReference.Value.FocusAsync();
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     // 2023-04-18: The app has had a bug where it "freezes" and must be restarted.
                     //             This bug is seemingly happening randomly. I have a suspicion
