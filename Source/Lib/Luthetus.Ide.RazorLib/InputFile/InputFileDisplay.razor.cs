@@ -97,7 +97,6 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
             SetInputFileContentTreeViewRootFunc);
 
         _inputFileTreeViewKeyboardEventHandler = new InputFileTreeViewKeyboardEventHandler(
-            InputFileContent.TreeViewInputFileContentStateKey,
             TreeViewService,
             InputFileStateWrap,
             Dispatcher,

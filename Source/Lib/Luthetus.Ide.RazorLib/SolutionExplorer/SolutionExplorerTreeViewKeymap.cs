@@ -14,7 +14,6 @@ using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.Menu;
 using Luthetus.Ide.ClassLib.Namespaces;
 using Luthetus.Ide.ClassLib.Store.EditorCase;
-using Luthetus.Ide.ClassLib.Store.TerminalCase;
 using Luthetus.Ide.ClassLib.TreeViewImplementations;
 using Fluxor;
 

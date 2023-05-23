@@ -68,7 +68,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         DotNetSolutionStateWrap.StateChanged += DotNetSolutionStateWrapOnStateChanged;
 
         _solutionExplorerTreeViewKeymap = new SolutionExplorerTreeViewKeymap(
-            TerminalSessionsStateWrap,
             CommonMenuOptionsFactory,
             LuthetusIdeComponentRenderers,
             FileSystemProvider,

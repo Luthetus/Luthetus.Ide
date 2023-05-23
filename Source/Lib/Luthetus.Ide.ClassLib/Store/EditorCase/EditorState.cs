@@ -69,15 +69,18 @@ public class EditorState
         ITextEditorService textEditorService,
         ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
         IFileSystemProvider fileSystemProvider,
-        IBackgroundTaskQueue backgroundTaskQueue)
+        IBackgroundTaskQueue backgroundTaskQueue,
+        TextEditorGroupKey? editorTextEditorGroupKey = null)
     {
+        editorTextEditorGroupKey ??= EditorTextEditorGroupKey;
+
         if (absoluteFilePath is null ||
             absoluteFilePath.IsDirectory)
         {
             return;
         }
 
-        textEditorService.Group.Register(EditorTextEditorGroupKey);
+        textEditorService.Group.Register(editorTextEditorGroupKey);
 
         var inputFileAbsoluteFilePathString = absoluteFilePath.GetAbsoluteFilePathString();
 
@@ -107,11 +110,11 @@ public class EditorState
             inputFileAbsoluteFilePathString);
 
         textEditorService.Group.AddViewModel(
-            EditorTextEditorGroupKey,
+            editorTextEditorGroupKey,
             viewModel);
 
         textEditorService.Group.SetActiveViewModel(
-            EditorTextEditorGroupKey,
+            editorTextEditorGroupKey,
             viewModel);
     }
 
