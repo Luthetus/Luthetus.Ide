@@ -22,9 +22,8 @@ namespace Luthetus.Ide.RazorLib.SolutionExplorer;
 
 public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
 {
-    private readonly IState<TerminalSessionsState> _terminalSessionsStateWrap;
     private readonly ICommonMenuOptionsFactory _commonMenuOptionsFactory;
-    private readonly ILuthetusIdeComponentRenderers _blazorStudioComponentRenderers;
+    private readonly ILuthetusIdeComponentRenderers _luthetusIdeComponentRenderers;
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IDispatcher _dispatcher;
     private readonly ITreeViewService _treeViewService;
@@ -32,9 +31,8 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
     private readonly IBackgroundTaskQueue _backgroundTaskQueue;
 
     public SolutionExplorerTreeViewKeymap(
-        IState<TerminalSessionsState> terminalSessionsStateWrap,
         ICommonMenuOptionsFactory commonMenuOptionsFactory,
-        ILuthetusIdeComponentRenderers blazorStudioComponentRenderers,
+        ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IDispatcher dispatcher,
         ITreeViewService treeViewService,
@@ -42,9 +40,8 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
         IBackgroundTaskQueue backgroundTaskQueue)
         : base(treeViewService)
     {
-        _terminalSessionsStateWrap = terminalSessionsStateWrap;
         _commonMenuOptionsFactory = commonMenuOptionsFactory;
-        _blazorStudioComponentRenderers = blazorStudioComponentRenderers;
+        _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
         _fileSystemProvider = fileSystemProvider;
         _dispatcher = dispatcher;
         _treeViewService = treeViewService;
@@ -148,12 +145,12 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
 
     private Task NotifyCopyCompleted(NamespacePath namespacePath)
     {
-        if (_blazorStudioComponentRenderers.LuthetusCommonComponentRenderers.InformativeNotificationRendererType != null)
+        if (_luthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.InformativeNotificationRendererType != null)
         {
             var notificationInformative = new NotificationRecord(
                 NotificationKey.NewNotificationKey(),
                 "Copy Action",
-                _blazorStudioComponentRenderers.LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
+                _luthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
                 new Dictionary<string, object?>
                 {
                     {
@@ -178,12 +175,12 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
     {
         SolutionExplorerContextMenu.ParentOfCutFile = parentTreeViewModel;
 
-        if (_blazorStudioComponentRenderers.LuthetusCommonComponentRenderers.InformativeNotificationRendererType != null)
+        if (_luthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.InformativeNotificationRendererType != null)
         {
             var notificationInformative = new NotificationRecord(
                 NotificationKey.NewNotificationKey(),
                 "Cut Action",
-                _blazorStudioComponentRenderers.LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
+                _luthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
                 new Dictionary<string, object?>
                 {
                     {
@@ -318,7 +315,7 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
             shouldSetFocusToEditor,
             _dispatcher,
             _textEditorService,
-            _blazorStudioComponentRenderers,
+            _luthetusIdeComponentRenderers,
             _fileSystemProvider,
             _backgroundTaskQueue);
     }

@@ -50,7 +50,7 @@ public class LuthetusFileSystemTestingBase
                     InitializeFluxor = shouldInitializeFluxor
                 };
 
-            var blazorCommonFactories = luthetusCommonOptions.LuthetusCommonFactories with
+            var luthetusCommonFactories = luthetusCommonOptions.LuthetusCommonFactories with
             {
                 ClipboardServiceFactory = _ => new InMemoryClipboardService(true),
                 StorageServiceFactory = _ => new DoNothingStorageService(true)
@@ -58,7 +58,7 @@ public class LuthetusFileSystemTestingBase
 
             luthetusCommonOptions = luthetusCommonOptions with
             {
-                LuthetusCommonFactories = blazorCommonFactories
+                LuthetusCommonFactories = luthetusCommonFactories
             };
 
             return inTextEditorOptions with

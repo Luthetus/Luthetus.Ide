@@ -14,11 +14,9 @@ namespace Luthetus.Ide.RazorLib.InputFile.Classes;
 
 public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
-    private readonly TreeViewStateKey _treeViewStateKey;
-    private readonly ITreeViewService _treeViewService;
     private readonly IState<InputFileState> _inputFileStateWrap;
     private readonly IDispatcher _dispatcher;
-    private readonly ILuthetusIdeComponentRenderers _blazorStudioComponentRenderers;
+    private readonly ILuthetusIdeComponentRenderers _luthetusIdeComponentRenderers;
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly Func<IAbsoluteFilePath, Task> _setInputFileContentTreeViewRootFunc;
@@ -26,11 +24,11 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
     private readonly Func<List<(TreeViewStateKey treeViewStateKey, TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)>> _getSearchMatchTuplesFunc;
     private readonly IBackgroundTaskQueue _backgroundTaskQueue;
 
-    public InputFileTreeViewKeyboardEventHandler(TreeViewStateKey treeViewStateKey,
+    public InputFileTreeViewKeyboardEventHandler(
         ITreeViewService treeViewService,
         IState<InputFileState> inputFileStateWrap,
         IDispatcher dispatcher,
-        ILuthetusIdeComponentRenderers blazorStudioComponentRenderers,
+        ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
         Func<IAbsoluteFilePath, Task> setInputFileContentTreeViewRootFunc,
@@ -39,11 +37,9 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         IBackgroundTaskQueue backgroundTaskQueue)
         : base(treeViewService)
     {
-        _treeViewStateKey = treeViewStateKey;
-        _treeViewService = treeViewService;
         _inputFileStateWrap = inputFileStateWrap;
         _dispatcher = dispatcher;
-        _blazorStudioComponentRenderers = blazorStudioComponentRenderers;
+        _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
         _fileSystemProvider = fileSystemProvider;
         _environmentProvider = environmentProvider;
         _setInputFileContentTreeViewRootFunc = setInputFileContentTreeViewRootFunc;
@@ -160,7 +156,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         ITreeViewCommandParameter treeViewCommandParameter)
     {
         _dispatcher.Dispatch(new InputFileState.OpenParentDirectoryAction(
-            _blazorStudioComponentRenderers,
+            _luthetusIdeComponentRenderers,
             _fileSystemProvider,
             _environmentProvider,
             _backgroundTaskQueue));

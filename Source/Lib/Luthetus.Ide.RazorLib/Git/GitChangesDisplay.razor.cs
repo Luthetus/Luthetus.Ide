@@ -9,7 +9,6 @@ using Luthetus.Ide.ClassLib.Store.TerminalCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
-using Luthetus.Common.RazorLib.Store.NotificationCase;
 
 namespace Luthetus.Ide.RazorLib.Git;
 

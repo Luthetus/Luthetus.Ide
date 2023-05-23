@@ -15,14 +15,14 @@ public class FolderExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
     private readonly IDispatcher _dispatcher;
     private readonly ITextEditorService _textEditorService;
-    private readonly ILuthetusIdeComponentRenderers _blazorStudioComponentRenderers;
+    private readonly ILuthetusIdeComponentRenderers _luthetusIdeComponentRenderers;
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IBackgroundTaskQueue _backgroundTaskQueue;
 
     public FolderExplorerTreeViewMouseEventHandler(
         IDispatcher dispatcher,
         ITextEditorService textEditorService,
-        ILuthetusIdeComponentRenderers blazorStudioComponentRenderers,
+        ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         ITreeViewService treeViewService,
         IBackgroundTaskQueue backgroundTaskQueue)
@@ -30,7 +30,7 @@ public class FolderExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
     {
         _dispatcher = dispatcher;
         _textEditorService = textEditorService;
-        _blazorStudioComponentRenderers = blazorStudioComponentRenderers;
+        _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
         _fileSystemProvider = fileSystemProvider;
         _backgroundTaskQueue = backgroundTaskQueue;
     }
@@ -54,7 +54,7 @@ public class FolderExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
             true,
             _dispatcher,
             _textEditorService,
-            _blazorStudioComponentRenderers,
+            _luthetusIdeComponentRenderers,
             _fileSystemProvider,
             _backgroundTaskQueue);
 
