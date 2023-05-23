@@ -173,7 +173,7 @@ public class AbsoluteFilePath : IAbsoluteFilePath
             return nearestSharedAncestorAbsoluteFilePathString + upperDirectoryString;
         }
 
-        return relativeFilePathString;
+        return "/" + relativeFilePathString;
     }
 
     public void ConsumeTokenAsRootDrive()

@@ -42,7 +42,7 @@ public class WebsiteEnvironmentProvider : IEnvironmentProvider
     }
 
     public char DirectorySeparatorChar => '/';
-    public char AltDirectorySeparatorChar => '/';
+    public char AltDirectorySeparatorChar => '\\';
 
     public string GetRandomFileName()
     {
