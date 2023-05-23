@@ -9,6 +9,7 @@ using Luthetus.Ide.ClassLib.Store.TerminalCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
+using Luthetus.Common.RazorLib.Store.NotificationCase;
 
 namespace Luthetus.Ide.RazorLib.Git;
 
@@ -29,7 +30,7 @@ public partial class GitChangesDisplay : FluxorComponent, IGitDisplayRendererTyp
         TreeViewStateKey.NewTreeViewStateKey();
 
     private CancellationTokenSource _gitActionCancellationTokenSource = new();
-    private bool _disposedValue;
+    private bool _disposed;
 
     protected override void OnInitialized()
     {
@@ -109,14 +110,16 @@ public partial class GitChangesDisplay : FluxorComponent, IGitDisplayRendererTyp
 
     protected override void Dispose(bool disposing)
     {
-        if (!_disposedValue)
+        if (_disposed)
         {
-            if (disposing)
-            {
-                _gitActionCancellationTokenSource.Cancel();
-            }
+            return;
+        }
 
-            _disposedValue = true;
+        if (disposing)
+        {
+            _disposed = true;
+
+            _gitActionCancellationTokenSource.Cancel();
         }
 
         base.Dispose(disposing);

@@ -184,15 +184,18 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 
     protected override void Dispose(bool disposing)
     {
-        if (disposing)
+        if (_disposed)
         {
-            if (!_disposed)
-            {
-                _disposed = true;
-                DotNetSolutionStateWrap.StateChanged -= DotNetSolutionStateWrapOnStateChanged;
-            }
+            return;
         }
 
-        base.Dispose(true);
+        if (disposing)
+        {
+            _disposed = true;
+            
+            DotNetSolutionStateWrap.StateChanged -= DotNetSolutionStateWrapOnStateChanged;
+        }
+
+        base.Dispose(disposing);
     }
 }
