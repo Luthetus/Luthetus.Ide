@@ -3,6 +3,7 @@ using Luthetus.Ide.ClassLib.CodeAnalysis.C.BinderCase.BoundNodes;
 using Luthetus.Ide.ClassLib.CodeAnalysis.C.BinderCase.BoundNodes.Expression;
 using Luthetus.Ide.ClassLib.CodeAnalysis.C.BinderCase.BoundNodes.Statements;
 using Luthetus.Ide.ClassLib.CodeAnalysis.C.Syntax;
+using Luthetus.Ide.ClassLib.CodeAnalysis;
 
 namespace Luthetus.Ide.Tests.Basics.SemanticParsing.C;
 

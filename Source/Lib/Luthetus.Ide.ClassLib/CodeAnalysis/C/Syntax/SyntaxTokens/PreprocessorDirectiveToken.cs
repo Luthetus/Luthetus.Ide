@@ -7,9 +7,9 @@ public class PreprocessorDirectiveToken : ISyntaxToken
     public PreprocessorDirectiveToken(
         TextEditorTextSpan textEditorTextSpan)
     {
-        TextEditorTextSpan = textEditorTextSpan;
+        TextSpan = textEditorTextSpan;
     }
 
-    public TextEditorTextSpan TextEditorTextSpan { get; }
+    public TextEditorTextSpan TextSpan { get; }
     public SyntaxKind SyntaxKind => SyntaxKind.PreprocessorDirectiveToken;
 }

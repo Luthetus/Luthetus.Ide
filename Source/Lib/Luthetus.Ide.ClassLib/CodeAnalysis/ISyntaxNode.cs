@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
+using Luthetus.Ide.ClassLib.CodeAnalysis.C.Syntax;
 
-namespace Luthetus.Ide.ClassLib.CodeAnalysis.C.Syntax.SyntaxNodes;
+namespace Luthetus.Ide.ClassLib.CodeAnalysis;
 
 public interface ISyntaxNode : ISyntax
 {

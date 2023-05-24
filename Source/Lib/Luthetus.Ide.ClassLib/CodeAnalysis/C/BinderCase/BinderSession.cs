@@ -7,9 +7,8 @@ using Luthetus.Ide.ClassLib.CodeAnalysis.C.BinderCase.BoundNodes.Statements;
 using Luthetus.Ide.ClassLib.CodeAnalysis.C.Syntax.SyntaxTokens;
 using Luthetus.Ide.ClassLib.CodeAnalysis.C.BinderCase.BoundNodes;
 using Luthetus.Ide.ClassLib.CodeAnalysis.C.BinderCase.BoundNodes.Expression;
-using Luthetus.Ide.ClassLib.CodeAnalysis.C.Symbols;
 using Luthetus.Ide.ClassLib.CodeAnalysis.C.Syntax.SyntaxNodes.Expression;
-using Luthetus.Ide.ClassLib.CodeAnalysis.C.Syntax;
+using Luthetus.Ide.ClassLib.CodeAnalysis.Symbols;
 
 namespace Luthetus.Ide.ClassLib.CodeAnalysis.C.BinderCase;
 
@@ -95,7 +94,7 @@ public class BinderSession
         ISyntaxToken token,
         out BoundTypeNode? boundTypeNode)
     {
-        var text = token.TextEditorTextSpan.GetText(_sourceText);
+        var text = token.TextSpan.GetText(_sourceText);
 
         if (_currentScope.TypeMap.TryGetValue(text, out var type))
         {
@@ -111,7 +110,7 @@ public class BinderSession
         BoundTypeNode boundTypeNode,
         IdentifierToken identifierToken)
     {
-        var text = identifierToken.TextEditorTextSpan.GetText(_sourceText);
+        var text = identifierToken.TextSpan.GetText(_sourceText);
 
         if (_currentScope.FunctionDeclarationMap.TryGetValue(
             text,
@@ -131,7 +130,7 @@ public class BinderSession
             boundFunctionDeclarationNode);
 
         Symbols.Add(
-            new FunctionSymbol(identifierToken.TextEditorTextSpan with
+            new FunctionSymbol(identifierToken.TextSpan with
             {
                 DecorationByte = (byte)GenericDecorationKind.Function
             }));
@@ -145,7 +144,7 @@ public class BinderSession
         IBoundExpressionNode boundExpressionNode)
     {
         _diagnosticBag.ReportReturnStatementsAreStillBeingImplemented(
-                keywordToken.TextEditorTextSpan);
+                keywordToken.TextSpan);
 
         return new BoundReturnStatementNode(
             keywordToken,
@@ -156,7 +155,7 @@ public class BinderSession
         BoundTypeNode boundTypeNode,
         IdentifierToken identifierToken)
     {
-        var text = identifierToken.TextEditorTextSpan.GetText(_sourceText);
+        var text = identifierToken.TextSpan.GetText(_sourceText);
 
         if (_currentScope.VariableDeclarationMap.TryGetValue(
             text,
@@ -183,7 +182,7 @@ public class BinderSession
         IdentifierToken identifierToken,
         IBoundExpressionNode boundExpressionNode)
     {
-        var text = identifierToken.TextEditorTextSpan.GetText(_sourceText);
+        var text = identifierToken.TextSpan.GetText(_sourceText);
 
         if (TryGetVariableHierarchically(
                 text,
@@ -211,7 +210,7 @@ public class BinderSession
     public BoundFunctionInvocationNode? BindFunctionInvocationNode(
         IdentifierToken identifierToken)
     {
-        var text = identifierToken.TextEditorTextSpan.GetText(_sourceText);
+        var text = identifierToken.TextSpan.GetText(_sourceText);
 
         if (TryGetBoundFunctionDeclarationNodeHierarchically(
                 text,
@@ -223,7 +222,7 @@ public class BinderSession
         else
         {
             _diagnosticBag.ReportUndefindFunction(
-                identifierToken.TextEditorTextSpan,
+                identifierToken.TextSpan,
                 text);
 
             return new(identifierToken)

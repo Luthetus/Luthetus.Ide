@@ -7,9 +7,9 @@ public class NumericLiteralToken : ISyntaxToken
     public NumericLiteralToken(
         TextEditorTextSpan textEditorTextSpan)
     {
-        TextEditorTextSpan = textEditorTextSpan;
+        TextSpan = textEditorTextSpan;
     }
 
-    public TextEditorTextSpan TextEditorTextSpan { get; }
+    public TextEditorTextSpan TextSpan { get; }
     public SyntaxKind SyntaxKind => SyntaxKind.NumericLiteralToken;
 }

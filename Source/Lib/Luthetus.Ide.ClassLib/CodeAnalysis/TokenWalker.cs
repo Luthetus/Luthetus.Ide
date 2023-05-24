@@ -1,7 +1,7 @@
 ﻿using System.Collections.Immutable;
 using Luthetus.Ide.ClassLib.CodeAnalysis.C.Syntax.SyntaxTokens;
 
-namespace Luthetus.Ide.ClassLib.CodeAnalysis.C.Syntax;
+namespace Luthetus.Ide.ClassLib.CodeAnalysis;
 
 public class TokenWalker
 {

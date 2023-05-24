@@ -1,5 +1,4 @@
 ﻿using Luthetus.Ide.ClassLib.CodeAnalysis.C.Syntax;
-using Luthetus.Ide.ClassLib.CodeAnalysis.C.Syntax.SyntaxNodes;
 
 namespace Luthetus.Ide.ClassLib.CodeAnalysis.C;
 

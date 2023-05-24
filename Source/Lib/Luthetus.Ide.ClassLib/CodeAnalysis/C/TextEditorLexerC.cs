@@ -26,7 +26,7 @@ public class TextEditorLexerC : ITextEditorLexer
                 lexSession is not null)
             {
                 return Task.FromResult(
-                    lexSession.SyntaxTokens.Select(x => x.TextEditorTextSpan)
+                    lexSession.SyntaxTokens.Select(x => x.TextSpan)
                     .ToImmutableArray());
             }
 
@@ -40,7 +40,7 @@ public class TextEditorLexerC : ITextEditorLexer
         RecentLexSession = lexSession;
 
         return Task.FromResult(
-            lexSession.SyntaxTokens.Select(x => x.TextEditorTextSpan)
+            lexSession.SyntaxTokens.Select(x => x.TextSpan)
             .ToImmutableArray());
     }
 }

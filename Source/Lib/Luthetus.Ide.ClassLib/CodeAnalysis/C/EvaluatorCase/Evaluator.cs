@@ -1,7 +1,5 @@
 ﻿using Luthetus.TextEditor.RazorLib.Analysis;
 using Luthetus.Ide.ClassLib.CodeAnalysis.C.BinderCase.BoundNodes.Expression;
-using Luthetus.Ide.ClassLib.CodeAnalysis.C.Syntax;
-using Luthetus.Ide.ClassLib.CodeAnalysis.C.Syntax.SyntaxNodes;
 using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.CodeAnalysis.C.EvaluatorCase;
@@ -58,7 +56,7 @@ public class Evaluator
         if (boundLiteralExpressionNode.ResultType == typeof(int))
         {
             var value = int.Parse(
-                boundLiteralExpressionNode.LiteralSyntaxToken.TextEditorTextSpan
+                boundLiteralExpressionNode.LiteralSyntaxToken.TextSpan
                     .GetText(_sourceText));
 
             return new EvaluatorResult(
@@ -67,7 +65,7 @@ public class Evaluator
         }
         else if (boundLiteralExpressionNode.ResultType == typeof(string))
         {
-            var value = new string(boundLiteralExpressionNode.LiteralSyntaxToken.TextEditorTextSpan
+            var value = new string(boundLiteralExpressionNode.LiteralSyntaxToken.TextSpan
                 .GetText(_sourceText)
                 .Skip(1)
                 .SkipLast(1)

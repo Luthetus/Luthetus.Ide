@@ -1,6 +1,4 @@
 ﻿using Luthetus.Ide.ClassLib.CodeAnalysis.C.BinderCase.BoundNodes.Expression;
-using Luthetus.Ide.ClassLib.CodeAnalysis.C.Syntax;
-using Luthetus.Ide.ClassLib.CodeAnalysis.C.Syntax.SyntaxNodes;
 using Luthetus.Ide.ClassLib.CodeAnalysis.C.Syntax.SyntaxTokens;
 using System.Collections.Immutable;
 

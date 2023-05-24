@@ -7,7 +7,6 @@ using Luthetus.Ide.ClassLib.CodeAnalysis.C.BinderCase;
 using Luthetus.Ide.ClassLib.CodeAnalysis.C.BinderCase.BoundNodes;
 using Luthetus.Ide.ClassLib.CodeAnalysis.C.BinderCase.BoundNodes.Expression;
 using Luthetus.Ide.ClassLib.CodeAnalysis.C.BinderCase.BoundNodes.Statements;
-using Luthetus.Ide.ClassLib.CodeAnalysis.C.Syntax.SyntaxNodes;
 using Luthetus.Ide.ClassLib.CodeAnalysis.C.Syntax.SyntaxNodes.Statement;
 
 namespace Luthetus.Ide.ClassLib.CodeAnalysis.C.Syntax;
@@ -189,7 +188,7 @@ public class ParserSession
     private void ParseKeywordToken(
         KeywordToken inToken)
     {
-        var text = inToken.TextEditorTextSpan.GetText(_sourceText);
+        var text = inToken.TextSpan.GetText(_sourceText);
 
         if (_binder.TryGetTypeHierarchically(text, out var type) &&
             type is not null)
@@ -403,7 +402,7 @@ public class ParserSession
 
         _binder.RegisterBoundScope(
             scopeReturnType,
-            inToken.TextEditorTextSpan);
+            inToken.TextSpan);
 
         _currentCompilationUnitBuilder = new(_currentCompilationUnitBuilder);
     }
@@ -411,7 +410,7 @@ public class ParserSession
     private void ParseCloseBraceToken(
         CloseBraceToken inToken)
     {
-        _binder.DisposeBoundScope(inToken.TextEditorTextSpan);
+        _binder.DisposeBoundScope(inToken.TextSpan);
 
         if (_currentCompilationUnitBuilder.Parent is not null)
         {

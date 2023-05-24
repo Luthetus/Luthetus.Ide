@@ -1,15 +1,15 @@
 ﻿using Luthetus.TextEditor.RazorLib.Lexing;
 
-namespace Luthetus.Ide.ClassLib.CodeAnalysis.C.Syntax.SyntaxTokens;
+namespace Luthetus.Ide.ClassLib.CodeAnalysis.CSharp.Syntax.SyntaxTokens;
 
 public class EndOfFileToken : ISyntaxToken
 {
-    public EndOfFileToken(
-        TextEditorTextSpan textEditorTextSpan)
+    public EndOfFileToken(TextEditorTextSpan textSpan)
     {
-        TextSpan = textEditorTextSpan;
+        TextSpan = textSpan;
     }
 
     public TextEditorTextSpan TextSpan { get; }
+
     public SyntaxKind SyntaxKind => SyntaxKind.EndOfFileToken;
 }

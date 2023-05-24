@@ -8,11 +8,11 @@ public class LibraryReferenceToken : ISyntaxToken
         TextEditorTextSpan textEditorTextSpan,
         bool isAbsolutePath)
     {
-        TextEditorTextSpan = textEditorTextSpan;
+        TextSpan = textEditorTextSpan;
         IsAbsolutePath = isAbsolutePath;
     }
 
-    public TextEditorTextSpan TextEditorTextSpan { get; }
+    public TextEditorTextSpan TextSpan { get; }
     public SyntaxKind SyntaxKind => SyntaxKind.LibraryReferenceToken;
     public bool IsAbsolutePath { get; }
 }

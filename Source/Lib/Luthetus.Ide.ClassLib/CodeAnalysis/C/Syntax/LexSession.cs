@@ -150,7 +150,7 @@ public class LexSession
                     var preprocessorDirectiveToken = ConsumePreprocessorDirective();
                     _syntaxTokens.Add(preprocessorDirectiveToken);
 
-                    if (preprocessorDirectiveToken.TextEditorTextSpan
+                    if (preprocessorDirectiveToken.TextSpan
                             .GetText(_stringWalker.Content) ==
                         CLanguageFacts.Preprocessor.Directives.INCLUDE)
                     {

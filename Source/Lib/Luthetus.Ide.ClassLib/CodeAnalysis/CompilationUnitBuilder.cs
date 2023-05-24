@@ -1,7 +1,7 @@
 ﻿using Luthetus.TextEditor.RazorLib.Analysis;
 using System.Collections.Immutable;
 
-namespace Luthetus.Ide.ClassLib.CodeAnalysis.C.Syntax.SyntaxNodes;
+namespace Luthetus.Ide.ClassLib.CodeAnalysis;
 
 public class CompilationUnitBuilder
 {

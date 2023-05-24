@@ -17,6 +17,6 @@ public class SyntaxTokenHelper
         string sourceText)
     {
         return (syntaxToken,
-            syntaxToken.TextEditorTextSpan.GetText(sourceText));
+            syntaxToken.TextSpan.GetText(sourceText));
     }
 }

@@ -1,7 +1,6 @@
 ﻿using Luthetus.TextEditor.RazorLib.Lexing;
-using Luthetus.Ide.ClassLib.CodeAnalysis.C.Syntax;
 
-namespace Luthetus.Ide.ClassLib.CodeAnalysis.C.Symbols;
+namespace Luthetus.Ide.ClassLib.CodeAnalysis.Symbols;
 
 public class FunctionSymbol : ISymbol
 {
