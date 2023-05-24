@@ -6,6 +6,9 @@
 ### One can gauge their interest in the repository with this two minute GIF:
 ![Example GIF](./Images/Rewrite/introductoryGifLuthetusIde.gif)
 
+## Demo:
+https://luthetus.github.io/
+
 ## Features
 
 I will go through the various features by text description and then an accompanying gif. I'll zoom in a bit more for these gifs and keep them short.
