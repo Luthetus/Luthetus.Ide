@@ -149,9 +149,10 @@ public class Lexer
                     var preprocessorDirectiveToken = LexPreprocessorDirectiveToken();
                     _syntaxTokens.Add(preprocessorDirectiveToken);
                     break;
+                default:
+                    _ = _stringWalker.ReadCharacter();
+                    break;
             }
-
-            _ = _stringWalker.ReadCharacter();
         }
 
         var endOfFileTextSpan = new TextEditorTextSpan(

@@ -3,8 +3,6 @@ using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Expression;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statements;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.C.LexerCase;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.C.ParserCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.LexerCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.ParserCase;
 using Luthetus.TextEditor.RazorLib.Analysis;
@@ -64,10 +62,10 @@ public class ParserTests
     {
         string sourceText = "3 + 3".ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var lexer = new Lexer(sourceText);
         lexer.Lex();
 
-        var parser = new ParserSession(
+        var parser = new Parser(
             lexer.SyntaxTokens,
             sourceText,
             lexer.Diagnostics);
@@ -98,11 +96,11 @@ public class ParserTests
         string sourceText = @"// C:\Users\hunte\Repos\Aaa\"
             .ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var lexer = new Lexer(sourceText);
 
         lexer.Lex();
 
-        var parser = new ParserSession(
+        var parser = new Parser(
             lexer.SyntaxTokens,
             sourceText,
             lexer.Diagnostics);
@@ -118,11 +116,11 @@ public class ParserTests
         string sourceText = @"int x;"
             .ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var lexer = new Lexer(sourceText);
 
         lexer.Lex();
 
-        var parser = new ParserSession(
+        var parser = new Parser(
             lexer.SyntaxTokens,
             sourceText,
             lexer.Diagnostics);
@@ -168,11 +166,11 @@ public class ParserTests
 x = 42;"
             .ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var lexer = new Lexer(sourceText);
 
         lexer.Lex();
 
-        var parser = new ParserSession(
+        var parser = new Parser(
             lexer.SyntaxTokens,
             sourceText,
             lexer.Diagnostics);
@@ -202,11 +200,11 @@ x = 42;"
         string sourceText = @"int x = 42;"
             .ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var lexer = new Lexer(sourceText);
 
         lexer.Lex();
 
-        var parser = new ParserSession(
+        var parser = new Parser(
             lexer.SyntaxTokens,
             sourceText,
             lexer.Diagnostics);
@@ -238,11 +236,11 @@ x = 42;"
 }"
             .ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var lexer = new Lexer(sourceText);
 
         lexer.Lex();
 
-        var parser = new ParserSession(
+        var parser = new Parser(
             lexer.SyntaxTokens,
             sourceText,
             lexer.Diagnostics);
@@ -269,11 +267,11 @@ x = 42;"
 WriteHelloWorldToConsole();"
             .ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var lexer = new Lexer(sourceText);
 
         lexer.Lex();
 
-        var parser = new ParserSession(
+        var parser = new Parser(
             lexer.SyntaxTokens,
             sourceText,
             lexer.Diagnostics);
@@ -303,11 +301,11 @@ WriteHelloWorldToConsole();"
         string sourceText = @"printf();"
             .ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var lexer = new Lexer(sourceText);
 
         lexer.Lex();
 
-        var parser = new ParserSession(
+        var parser = new Parser(
             lexer.SyntaxTokens,
             sourceText,
             lexer.Diagnostics);
@@ -337,5 +335,22 @@ WriteHelloWorldToConsole();"
                 TextEditorDiagnosticLevel.Error,
                 errorDiagnostic.DiagnosticLevel);
         }
+    }
+    
+    [Fact]
+    public void SHOULD_PARSE_NAMESPACE_DEFINITION_EMPTY()
+    {
+        string sourceText = @"namespace HelloWorld {}".ReplaceLineEndings("\n");
+
+        var lexer = new Lexer(sourceText);
+
+        lexer.Lex();
+
+        var parser = new Parser(
+            lexer.SyntaxTokens,
+            sourceText,
+            lexer.Diagnostics);
+
+        var compilationUnit = parser.Parse();
     }
 }
