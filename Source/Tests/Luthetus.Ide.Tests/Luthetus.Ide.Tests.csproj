@@ -10,6 +10,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Compile Remove="Basics\Xml\**" />
+      <EmbeddedResource Remove="Basics\Xml\**" />
+      <None Remove="Basics\Xml\**" />
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="CliWrap" Version="3.6.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
         <PackageReference Include="xunit" Version="2.4.1" />
@@ -21,10 +27,6 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Basics\Xml\" />
     </ItemGroup>
 
     <ItemGroup>
