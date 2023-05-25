@@ -153,6 +153,13 @@ public class Binder
             keywordToken,
             boundExpressionNode);
     }
+    
+    public BoundNamespaceStatementNode BindNamespaceStatementNode(
+        KeywordToken keywordToken)
+    {
+        return new BoundNamespaceStatementNode(
+            keywordToken);
+    }
 
     public BoundVariableDeclarationStatementNode BindVariableDeclarationNode(
         BoundTypeNode boundTypeNode,

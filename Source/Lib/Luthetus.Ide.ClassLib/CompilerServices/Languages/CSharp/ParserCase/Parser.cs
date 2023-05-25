@@ -190,6 +190,7 @@ public class Parser
     private void ParseKeywordToken(
         KeywordToken inToken)
     {
+        // TODO: Make many keywords SyntaxKinds. Then if SyntaxKind.EndsWith("Keyword"); so that string checking doesn't need to be done.
         var text = inToken.TextSpan.GetText(_sourceText);
 
         if (_binder.TryGetTypeHierarchically(text, out var type) &&
@@ -204,8 +205,6 @@ public class Parser
 
             if (text == "return")
             {
-                // TODO: Make many keywords SyntaxKinds. Then if SyntaxKind.EndsWith("Keyword"); so that string checking doesn't need to be done.
-
                 var boundReturnStatementNode = _binder.BindReturnStatementNode(
                     inToken,
                     ParseExpression());
@@ -213,6 +212,15 @@ public class Parser
                 _currentCompilationUnitBuilder.Children.Add(boundReturnStatementNode);
 
                 _nodeRecent = boundReturnStatementNode;
+            }
+            else if (text == "namespace")
+            {
+                var boundNamespaceStatementNode = _binder.BindNamespaceStatementNode(
+                    inToken);
+
+                _currentCompilationUnitBuilder.Children.Add(boundNamespaceStatementNode);
+
+                _nodeRecent = boundNamespaceStatementNode;
             }
             else
             {
