@@ -1,4 +1,5 @@
 ﻿using Luthetus.Ide.ClassLib.CompilerServices.Languages.C.TextEditorCase;
+using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.TextEditorCase;
 using Luthetus.TextEditor.RazorLib.Analysis.C.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.Analysis.CSharp.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.Analysis.Css.Decoration;
@@ -48,8 +49,8 @@ public static class ExtensionNoPeriodFacts
             HTML => new TextEditorHtmlLexer(),
             XML => new TextEditorHtmlLexer(),
             C_SHARP_PROJECT => new TextEditorHtmlLexer(),
-            C_SHARP_CLASS => new TextEditorCSharpLexer(),
-            RAZOR_CODEBEHIND => new TextEditorCSharpLexer(),
+            C_SHARP_CLASS => new TextEditorLexerCSharp(),
+            RAZOR_CODEBEHIND => new TextEditorLexerCSharp(),
             RAZOR_MARKUP => new TextEditorRazorLexer(),
             CSHTML_CLASS => new TextEditorRazorLexer(),
             CSS => new TextEditorCssLexer(),
@@ -93,8 +94,8 @@ public static class ExtensionNoPeriodFacts
             HTML => null,
             XML => null,
             C_SHARP_PROJECT => null,
-            C_SHARP_CLASS => null,
-            RAZOR_CODEBEHIND => null,
+            C_SHARP_CLASS => new SemanticModelCSharp(),
+            RAZOR_CODEBEHIND => new SemanticModelCSharp(),
             RAZOR_MARKUP => null,
             CSHTML_CLASS => null,
             CSS => null,

@@ -2,7 +2,7 @@
 using Luthetus.Ide.ClassLib.CompilerServices.Common.General;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.SyntaxTokens;
-using Luthetus.Ide.ClassLib.Parsing.C.Facts;
+using Luthetus.Ide.ClassLib.CompilerServices.Languages.C.Facts;
 using Luthetus.TextEditor.RazorLib.Analysis;
 using Luthetus.TextEditor.RazorLib.Analysis.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.Lexing;

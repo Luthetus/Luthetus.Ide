@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Ide.ClassLib.Parsing.C.Facts;
+﻿namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.C.Facts;
 
 public partial class CLanguageFacts
 {

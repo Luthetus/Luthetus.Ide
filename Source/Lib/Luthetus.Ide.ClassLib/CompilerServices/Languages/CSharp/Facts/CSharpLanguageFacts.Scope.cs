@@ -1,8 +1,8 @@
 ﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase;
 
-namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.C.Facts;
+namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.Facts;
 
-public partial class CLanguageFacts
+public partial class CSharpLanguageFacts
 {
     public class Scope
     {
@@ -11,6 +11,14 @@ public partial class CLanguageFacts
             var typeMap = new Dictionary<string, Type>
             {
                 {
+                    Types.Void.name,
+                    Types.Void.type
+                },
+                {
+                    Types.Bool.name,
+                    Types.Bool.type
+                },
+                {
                     Types.Int.name,
                     Types.Int.type
                 },
@@ -18,10 +26,6 @@ public partial class CLanguageFacts
                     Types.String.name,
                     Types.String.type
                 },
-                {
-                    Types.Void.name,
-                    Types.Void.type
-                }
             };
 
             return new BoundScope(

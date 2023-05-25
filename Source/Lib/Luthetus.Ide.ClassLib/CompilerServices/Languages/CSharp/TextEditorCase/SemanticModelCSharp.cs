@@ -1,15 +1,15 @@
-﻿using Luthetus.Ide.ClassLib.CompilerServices.Languages.C.ParserCase;
+﻿using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.ParserCase;
 using Luthetus.TextEditor.RazorLib.Analysis;
 using Luthetus.TextEditor.RazorLib.Lexing;
 using Luthetus.TextEditor.RazorLib.Model;
 using Luthetus.TextEditor.RazorLib.Semantics;
 using System.Collections.Immutable;
 
-namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.C.TextEditorCase;
+namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.TextEditorCase;
 
-public class SemanticModelC : ISemanticModel
+public class SemanticModelCSharp : ISemanticModel
 {
-    private SemanticModelResultC? _recentSemanticModelResult;
+    private SemanticModelResultCSharp? _recentSemanticModelResult;
 
     public ImmutableList<TextEditorTextSpan> DiagnosticTextSpans { get; set; } = ImmutableList<TextEditorTextSpan>.Empty;
     public ImmutableList<TextEditorTextSpan> SymbolTextSpans { get; private set; } = ImmutableList<TextEditorTextSpan>.Empty;
@@ -29,7 +29,7 @@ public class SemanticModelC : ISemanticModel
         _ = ParseWithResult(model);
     }
 
-    public SemanticModelResultC? ParseWithResult(
+    public SemanticModelResultCSharp? ParseWithResult(
         TextEditorModel model)
     {
         var text = model.GetAllText();
@@ -38,13 +38,13 @@ public class SemanticModelC : ISemanticModel
             text,
             model.RenderStateKey);
 
-        var textEditorLexerC = (TextEditorLexerC)model.Lexer;
+        var textEditorLexerC = (TextEditorLexerCSharp)model.Lexer;
         var recentLexSession = textEditorLexerC.RecentLexSession;
 
         if (recentLexSession is null)
             return null;
 
-        var parserSession = new ParserSession(
+        var parserSession = new Parser(
             recentLexSession.SyntaxTokens,
             text,
             recentLexSession.Diagnostics);
@@ -73,7 +73,7 @@ public class SemanticModelC : ISemanticModel
             .Select(x => x.TextSpan)
             .ToImmutableList();
 
-        var semanticModelResult = new SemanticModelResultC(
+        var semanticModelResult = new SemanticModelResultCSharp(
             text,
             parserSession,
             compilationUnit);

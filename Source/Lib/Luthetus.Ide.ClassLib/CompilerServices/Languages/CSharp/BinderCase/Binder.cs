@@ -1,5 +1,4 @@
 ﻿using System.Collections.Immutable;
-using Luthetus.Ide.ClassLib.Parsing.C.Facts;
 using Luthetus.TextEditor.RazorLib.Analysis;
 using Luthetus.TextEditor.RazorLib.Lexing;
 using Luthetus.TextEditor.RazorLib.Analysis.GenericLexer.Decoration;
@@ -12,12 +11,13 @@ using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Expres
 using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statements;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase;
+using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.Facts;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.BinderCase;
 
 public class Binder
 {
-    private readonly BoundScope _globalScope = CLanguageFacts.Scope.GetInitialGlobalScope();
+    private readonly BoundScope _globalScope = CSharpLanguageFacts.Scope.GetInitialGlobalScope();
     private readonly string _sourceText;
     private readonly LuthetusIdeDiagnosticBag _diagnosticBag = new();
 

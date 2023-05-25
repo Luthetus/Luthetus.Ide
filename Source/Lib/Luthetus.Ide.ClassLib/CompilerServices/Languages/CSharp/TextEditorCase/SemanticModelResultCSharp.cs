@@ -1,13 +1,13 @@
 ﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.General;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.C.ParserCase;
+using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.ParserCase;
 
-namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.C.TextEditorCase;
+namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.TextEditorCase;
 
-public class SemanticModelResultC
+public class SemanticModelResultCSharp
 {
-    public SemanticModelResultC(
+    public SemanticModelResultCSharp(
         string text,
-        ParserSession parserSession,
+        Parser parserSession,
         CompilationUnit compilationUnit)
     {
         Text = text;
@@ -16,6 +16,6 @@ public class SemanticModelResultC
     }
 
     public string Text { get; }
-    public ParserSession ParserSession { get; }
+    public Parser ParserSession { get; }
     public CompilationUnit CompilationUnit { get; }
 }
