@@ -2,6 +2,7 @@
 using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Expression;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statements;
+using Luthetus.Ide.ClassLib.CompilerServices.Common.General;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.LexerCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.ParserCase;
@@ -336,10 +337,15 @@ WriteHelloWorldToConsole();"
                 errorDiagnostic.DiagnosticLevel);
         }
     }
-    
+
     [Fact]
     public void SHOULD_PARSE_NAMESPACE_DEFINITION_EMPTY()
     {
+        /*
+         * GOAL: Add "HelloWorld" key to NamespaceDictionary with
+         *       a single CompilationUnit child which has no ISyntaxNode children.
+         */
+
         string sourceText = @"namespace HelloWorld {}".ReplaceLineEndings("\n");
 
         var lexer = new Lexer(sourceText);
@@ -352,5 +358,105 @@ WriteHelloWorldToConsole();"
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
+
+        throw new NotImplementedException();
+    }
+
+    [Fact]
+    public void SHOULD_PARSE_TWO_NAMESPACE_DECLARATIONS_WITH_THE_SAME_IDENTIFIER_INTO_A_SINGLE_SCOPE()
+    {
+        /*
+         * GOAL: Add "PersonCase" key to NamespaceDictionary with
+         *       two CompilationUnit children.
+         *           -PersonModel.cs
+         *           -PersonDisplay.razor.cs
+         *           
+         *       Afterwards evaluate the Namespace as a BoundScope
+         *       which would contain the two classes:
+         *          -PersonModel
+         *          -PersonDisplay
+         */
+
+        string personModelFile = @"namespace PersonCase
+{
+    public class PersonModel
+    {
+    }
+}".ReplaceLineEndings("\n");
+
+        string personDisplayFile = @"namespace PersonCase
+{
+    public partial class PersonDisplay : ComponentBase
+    {
+    }
+}".ReplaceLineEndings("\n");
+
+        CompilationUnit personModelFileCompilationUnit;
+        CompilationUnit personDisplayFileCompilationUnit;
+
+        // Parse personModelFile
+        {
+            var lexer = new Lexer(personModelFile);
+
+            lexer.Lex();
+
+            var parser = new Parser(
+                lexer.SyntaxTokens,
+                personModelFile,
+                lexer.Diagnostics);
+
+            personModelFileCompilationUnit = parser.Parse();
+        }
+
+        // Parse personModelFile
+        {
+            var lexer = new Lexer(personDisplayFile);
+
+            lexer.Lex();
+
+            var parser = new Parser(
+                lexer.SyntaxTokens,
+                personDisplayFile,
+                lexer.Diagnostics);
+
+            personDisplayFileCompilationUnit = parser.Parse();
+        }
+
+        throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void SHOULD_PARSE_USING_STATEMENT()
+    {
+        /*
+         * GOAL: Add "PersonCase" key to NamespaceDictionary with
+         *       two CompilationUnit children.
+         *           -PersonModel.cs
+         *           -PersonDisplay.razor.cs
+         *           
+         *       Afterwards evaluate the Namespace as a BoundScope
+         *       which would contain the two classes:
+         *          -PersonModel
+         *          -PersonDisplay
+         *      
+         *      Afterwards add "Pages" key to NamespaceDictionary
+         *      with one CompilationUnit child.
+         *          -PersonPage.razor
+         */
+
+        string sourceText = @"namespace HelloWorld {}".ReplaceLineEndings("\n");
+
+        var lexer = new Lexer(sourceText);
+
+        lexer.Lex();
+
+        var parser = new Parser(
+            lexer.SyntaxTokens,
+            sourceText,
+            lexer.Diagnostics);
+
+        var compilationUnit = parser.Parse();
+
+        throw new NotImplementedException();
     }
 }

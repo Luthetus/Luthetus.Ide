@@ -42,7 +42,7 @@ public class Parser
     private CompilationUnitBuilder _currentCompilationUnitBuilder;
 
     /// <summary>When parsing the body of a function this is used in order to keep the function declaration node itself in the syntax tree immutable.<br/><br/>That is to say, this action would create the function declaration node and then append it.</summary>
-    private Action<CompilationUnit>? _finalizeCompilationUnitAction;
+    private Stack<Action<CompilationUnit>> _finalizeCompilationUnitActionStack = new();
 
     public CompilationUnit Parse()
     {
@@ -215,12 +215,36 @@ public class Parser
             }
             else if (text == "namespace")
             {
-                var boundNamespaceStatementNode = _binder.BindNamespaceStatementNode(
-                    inToken);
+                var nextToken = _tokenWalker.Consume();
 
-                _currentCompilationUnitBuilder.Children.Add(boundNamespaceStatementNode);
+                if (nextToken.SyntaxKind == SyntaxKind.IdentifierToken)
+                {
+                    var boundNamespaceStatementNode = _binder.BindNamespaceStatementNode(
+                        inToken,
+                        (IdentifierToken)nextToken);
 
-                _nodeRecent = boundNamespaceStatementNode;
+                    var closureCurrentCompilationUnitBuilder = _currentCompilationUnitBuilder;
+                    var namespaceCompilationUnitBuilder = new CompilationUnitBuilder(closureCurrentCompilationUnitBuilder);
+                    
+                    _currentCompilationUnitBuilder = namespaceCompilationUnitBuilder;
+
+                    _finalizeCompilationUnitActionStack.Push(compilationUnit =>
+                    {
+                        boundNamespaceStatementNode = _binder.ReplaceBoundNamespaceStatementNode(
+                            boundNamespaceStatementNode,
+                            compilationUnit);
+
+                        closureCurrentCompilationUnitBuilder.Children
+                            .Add(boundNamespaceStatementNode);
+                    });
+
+                    _nodeRecent = boundNamespaceStatementNode;
+
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
             }
             else
             {
@@ -300,7 +324,7 @@ public class Parser
         }
         else
         {
-            // 'function invocation' OR 'variable assignment' OR 'variable reference'
+            // 'function invocation' OR 'variable assignment' OR 'variable reference' 'namespace declaration'
 
             if (nextToken.SyntaxKind == SyntaxKind.OpenParenthesisToken)
             {
@@ -392,22 +416,22 @@ public class Parser
 
             scopeReturnType = boundFunctionDeclarationNode.BoundTypeNode.Type;
 
-            _finalizeCompilationUnitAction = compilationUnit =>
+            _finalizeCompilationUnitActionStack.Push(compilationUnit =>
             {
                 boundFunctionDeclarationNode = boundFunctionDeclarationNode
                     .WithFunctionBody(compilationUnit);
 
                 closureCompilationUnitBuilder.Children
                     .Add(boundFunctionDeclarationNode);
-            };
+            });
         }
         else
         {
-            _finalizeCompilationUnitAction = compilationUnit =>
+            _finalizeCompilationUnitActionStack.Push(compilationUnit =>
             {
                 closureCompilationUnitBuilder.Children
                     .Add(compilationUnit);
-            };
+            });
         }
 
         _binder.RegisterBoundScope(
@@ -422,9 +446,10 @@ public class Parser
     {
         _binder.DisposeBoundScope(inToken.TextSpan);
 
-        if (_currentCompilationUnitBuilder.Parent is not null)
+        if (_currentCompilationUnitBuilder.Parent is not null &&
+            _finalizeCompilationUnitActionStack.Any())
         {
-            _finalizeCompilationUnitAction?.Invoke(
+            _finalizeCompilationUnitActionStack.Pop().Invoke(
                 _currentCompilationUnitBuilder.Build());
 
             _currentCompilationUnitBuilder = _currentCompilationUnitBuilder.Parent;

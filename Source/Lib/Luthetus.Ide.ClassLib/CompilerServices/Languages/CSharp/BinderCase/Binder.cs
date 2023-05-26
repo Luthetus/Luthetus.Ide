@@ -19,8 +19,11 @@ public class Binder
 {
     private readonly BoundScope _globalScope = CSharpLanguageFacts.Scope.GetInitialGlobalScope();
     private readonly string _sourceText;
+    private readonly Dictionary<string, BoundNamespaceStatementNode> _boundNamespaceStatementNodes = new();
+    private readonly List<ISymbol> _symbols = new();
     private readonly LuthetusIdeDiagnosticBag _diagnosticBag = new();
 
+    private List<BoundScope> _boundScopes = new();
     private BoundScope _currentScope;
 
     public Binder(
@@ -29,16 +32,16 @@ public class Binder
         _sourceText = sourceText;
         _currentScope = _globalScope;
 
-        BoundScopes.Add(_globalScope);
+        _boundScopes.Add(_globalScope);
 
-        BoundScopes = BoundScopes
+        _boundScopes = _boundScopes
             .OrderBy(x => x.StartingIndexInclusive)
             .ToList();
     }
 
-    public List<BoundScope> BoundScopes { get; private set; } = new();
-    public List<ISymbol> Symbols { get; private set; } = new();
-
+    public ImmutableDictionary<string, BoundNamespaceStatementNode> BoundNamespaceStatementNodes => _boundNamespaceStatementNodes.ToImmutableDictionary();
+    public ImmutableArray<ISymbol> Symbols => _symbols.ToImmutableArray();
+    public ImmutableArray<BoundScope> BoundScopes => _boundScopes.ToImmutableArray();
     public ImmutableArray<TextEditorDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
 
     public BoundLiteralExpressionNode BindLiteralExpressionNode(
@@ -132,7 +135,7 @@ public class Binder
             text,
             boundFunctionDeclarationNode);
 
-        Symbols.Add(
+        _symbols.Add(
             new FunctionSymbol(identifierToken.TextSpan with
             {
                 DecorationByte = (byte)GenericDecorationKind.Function
@@ -155,10 +158,61 @@ public class Binder
     }
     
     public BoundNamespaceStatementNode BindNamespaceStatementNode(
-        KeywordToken keywordToken)
+        KeywordToken keywordToken,
+        IdentifierToken identifierToken)
     {
-        return new BoundNamespaceStatementNode(
-            keywordToken);
+        var namespaceIdentifier = identifierToken.TextSpan.GetText(_sourceText);
+
+        if (_boundNamespaceStatementNodes.TryGetValue(
+                namespaceIdentifier, 
+                out var boundNamespaceStatementNode))
+        {
+            return boundNamespaceStatementNode;
+        }
+        else
+        {
+            return new BoundNamespaceStatementNode(
+                keywordToken,
+                identifierToken,
+                ImmutableArray<BoundNamespaceEntryNode>.Empty);
+        }
+    }
+    
+    public BoundNamespaceStatementNode ReplaceBoundNamespaceStatementNode(
+        BoundNamespaceStatementNode inBoundNamespaceStatementNode,
+        CompilationUnit compilationUnit)
+    {
+        var namespaceIdentifier = inBoundNamespaceStatementNode
+            .IdentifierToken.TextSpan.GetText(_sourceText);
+
+        if (_boundNamespaceStatementNodes.TryGetValue(
+                namespaceIdentifier, 
+                out var existingBoundNamespaceStatementNode))
+        {
+            var boundNamespaceEntryNode = new BoundNamespaceEntryNode(
+                "TODO: resourceUri",
+                compilationUnit);
+
+            var outChildren = existingBoundNamespaceStatementNode.Children
+                .Add(boundNamespaceEntryNode)
+                .Select(x => (BoundNamespaceEntryNode)x)
+                .ToImmutableArray();
+
+            var outBoundNamespaceStatementNode = new BoundNamespaceStatementNode(
+                existingBoundNamespaceStatementNode.KeywordToken,
+                existingBoundNamespaceStatementNode.IdentifierToken,
+                outChildren);
+
+            _boundNamespaceStatementNodes[namespaceIdentifier] = outBoundNamespaceStatementNode;
+
+            return outBoundNamespaceStatementNode;
+        }
+        else
+        {
+            throw new NotImplementedException(
+                $"The {nameof(inBoundNamespaceStatementNode)}" +
+                $" was not found in the {nameof(_boundNamespaceStatementNodes)} dictionary.");
+        }
     }
 
     public BoundVariableDeclarationStatementNode BindVariableDeclarationNode(
@@ -255,9 +309,9 @@ public class Binder
             new(),
             new());
 
-        BoundScopes.Add(boundScope);
+        _boundScopes.Add(boundScope);
 
-        BoundScopes = BoundScopes
+        _boundScopes = _boundScopes
             .OrderBy(x => x.StartingIndexInclusive)
             .ToList();
 
