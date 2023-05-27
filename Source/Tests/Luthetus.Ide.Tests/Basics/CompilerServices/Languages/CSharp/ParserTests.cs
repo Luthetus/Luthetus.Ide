@@ -338,14 +338,10 @@ WriteHelloWorldToConsole();"
         }
     }
 
+    /// <summary>GOAL: Add "HelloWorld" key to NamespaceDictionary with a single BoundNamespaceEntryNode child which has a CompilationUnit without any children.</summary>
     [Fact]
     public void SHOULD_PARSE_NAMESPACE_DEFINITION_EMPTY()
     {
-        /*
-         * GOAL: Add "HelloWorld" key to NamespaceDictionary with
-         *       a single CompilationUnit child which has no ISyntaxNode children.
-         */
-
         string sourceText = @"namespace HelloWorld {}".ReplaceLineEndings("\n");
 
         var lexer = new Lexer(sourceText);
@@ -359,7 +355,31 @@ WriteHelloWorldToConsole();"
 
         var compilationUnit = parser.Parse();
 
-        throw new NotImplementedException();
+        var boundNamespaceStatementNode =
+            (BoundNamespaceStatementNode)compilationUnit.Children.Single();
+
+        var boundNamespaceEntryNode =
+            (BoundNamespaceEntryNode)boundNamespaceStatementNode.Children.Single();
+
+        var namespaceEntryCompilationUnit =
+            (CompilationUnit)boundNamespaceEntryNode.Children.Single();
+
+        Assert.Empty(namespaceEntryCompilationUnit.Children);
+
+        // Assert SyntaxKinds are correct
+        {
+            Assert.Equal(
+                SyntaxKind.BoundNamespaceStatementNode,
+                boundNamespaceStatementNode.SyntaxKind);
+
+            Assert.Equal(
+                SyntaxKind.BoundNamespaceEntryNode,
+                boundNamespaceEntryNode.SyntaxKind);
+
+            Assert.Equal(
+                SyntaxKind.CompilationUnit,
+                namespaceEntryCompilationUnit.SyntaxKind);
+        }
     }
 
     [Fact]

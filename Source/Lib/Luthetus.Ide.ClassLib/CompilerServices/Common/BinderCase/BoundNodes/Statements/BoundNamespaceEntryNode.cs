@@ -13,6 +13,11 @@ public class BoundNamespaceEntryNode : ISyntaxNode
     {
         ResourceUri = resourceUri;
         CompilationUnit = compilationUnit;
+
+        Children = new ISyntax[]
+        {
+            CompilationUnit
+        }.ToImmutableArray();
     }
 
     /// <summary>This might be used to refer to the absolute file path of the file on one's computer which was parsed to make this <see cref="BoundNamespaceEntryNode"/>.</summary>

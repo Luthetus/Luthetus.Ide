@@ -223,23 +223,7 @@ public class Parser
                         inToken,
                         (IdentifierToken)nextToken);
 
-                    var closureCurrentCompilationUnitBuilder = _currentCompilationUnitBuilder;
-                    var namespaceCompilationUnitBuilder = new CompilationUnitBuilder(closureCurrentCompilationUnitBuilder);
-                    
-                    _currentCompilationUnitBuilder = namespaceCompilationUnitBuilder;
-
-                    _finalizeCompilationUnitActionStack.Push(compilationUnit =>
-                    {
-                        boundNamespaceStatementNode = _binder.ReplaceBoundNamespaceStatementNode(
-                            boundNamespaceStatementNode,
-                            compilationUnit);
-
-                        closureCurrentCompilationUnitBuilder.Children
-                            .Add(boundNamespaceStatementNode);
-                    });
-
                     _nodeRecent = boundNamespaceStatementNode;
-
                 }
                 else
                 {
@@ -406,7 +390,7 @@ public class Parser
     private void ParseOpenBraceToken(
         OpenBraceToken inToken)
     {
-        var closureCompilationUnitBuilder = _currentCompilationUnitBuilder;
+        var closureCurrentCompilationUnitBuilder = _currentCompilationUnitBuilder;
         Type? scopeReturnType = null;
 
         if (_nodeRecent is not null &&
@@ -421,15 +405,30 @@ public class Parser
                 boundFunctionDeclarationNode = boundFunctionDeclarationNode
                     .WithFunctionBody(compilationUnit);
 
-                closureCompilationUnitBuilder.Children
+                closureCurrentCompilationUnitBuilder.Children
                     .Add(boundFunctionDeclarationNode);
+            });
+        }
+        else if (_nodeRecent is not null &&
+                 _nodeRecent.SyntaxKind == SyntaxKind.BoundNamespaceStatementNode)
+        {
+            _finalizeCompilationUnitActionStack.Push(compilationUnit =>
+            {
+                var boundNamespaceStatementNode = (BoundNamespaceStatementNode)_nodeRecent;
+
+                boundNamespaceStatementNode = _binder.RegisterBoundNamespaceEntryNode(
+                    boundNamespaceStatementNode,
+                    compilationUnit);
+
+                closureCurrentCompilationUnitBuilder.Children
+                    .Add(boundNamespaceStatementNode);
             });
         }
         else
         {
             _finalizeCompilationUnitActionStack.Push(compilationUnit =>
             {
-                closureCompilationUnitBuilder.Children
+                closureCurrentCompilationUnitBuilder.Children
                     .Add(compilationUnit);
             });
         }

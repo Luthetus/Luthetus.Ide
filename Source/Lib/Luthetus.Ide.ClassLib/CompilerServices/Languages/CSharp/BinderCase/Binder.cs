@@ -171,14 +171,20 @@ public class Binder
         }
         else
         {
-            return new BoundNamespaceStatementNode(
+            boundNamespaceStatementNode = new BoundNamespaceStatementNode(
                 keywordToken,
                 identifierToken,
                 ImmutableArray<BoundNamespaceEntryNode>.Empty);
+
+            _boundNamespaceStatementNodes.Add(
+                namespaceIdentifier,
+                boundNamespaceStatementNode);
+
+            return boundNamespaceStatementNode;
         }
     }
     
-    public BoundNamespaceStatementNode ReplaceBoundNamespaceStatementNode(
+    public BoundNamespaceStatementNode RegisterBoundNamespaceEntryNode(
         BoundNamespaceStatementNode inBoundNamespaceStatementNode,
         CompilationUnit compilationUnit)
     {
