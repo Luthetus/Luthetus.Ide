@@ -37,13 +37,23 @@ public class LuthetusIdeDiagnosticBag : IEnumerable<TextEditorDiagnostic>
             textEditorTextSpan);
     }
 
-    public void ReportUndefindFunction(
+    public void ReportUndefinedClass(
         TextEditorTextSpan textEditorTextSpan,
-        string undefinedFunctionName)
+        string undefinedClassIdentifier)
     {
         Report(
             TextEditorDiagnosticLevel.Error,
-            $"Undefined function: '{undefinedFunctionName}'",
+            $"Undefined class: '{undefinedClassIdentifier}'",
+            textEditorTextSpan);
+    }
+
+    public void ReportUndefindFunction(
+        TextEditorTextSpan textEditorTextSpan,
+        string undefinedFunctionIdentifier)
+    {
+        Report(
+            TextEditorDiagnosticLevel.Error,
+            $"Undefined function: '{undefinedFunctionIdentifier}'",
             textEditorTextSpan);
     }
 
@@ -55,7 +65,7 @@ public class LuthetusIdeDiagnosticBag : IEnumerable<TextEditorDiagnostic>
             $"Parsing of return statements is still being implemented.",
             textEditorTextSpan);
     }
-
+    
     private void Report(
         TextEditorDiagnosticLevel luthetusIdeDiagnosticLevel,
         string message,

@@ -19,19 +19,29 @@ public class BoundClassDeclarationNode : ISyntaxNode
 
     public BoundClassDeclarationNode(
         ISyntaxToken identifierToken,
-        CompilationUnit classBodyCompilationUnit)
+        BoundInheritanceStatementNode? boundInheritanceStatementNode,
+        CompilationUnit? classBodyCompilationUnit)
     {
         IdentifierToken = identifierToken;
+        BoundInheritanceStatementNode = boundInheritanceStatementNode;
         ClassBodyCompilationUnit = classBodyCompilationUnit;
 
-        Children = new ISyntax[]
+        var childrenList = new List<ISyntax>(3)
         {
-            IdentifierToken,
-            ClassBodyCompilationUnit
-        }.ToImmutableArray();
+            IdentifierToken
+        };
+
+        if (BoundInheritanceStatementNode is not null)
+            childrenList.Add(BoundInheritanceStatementNode);
+        
+        if (ClassBodyCompilationUnit is not null)
+            childrenList.Add(ClassBodyCompilationUnit);
+
+        Children = childrenList.ToImmutableArray();
     }
 
     public ISyntaxToken IdentifierToken { get; }
+    public BoundInheritanceStatementNode? BoundInheritanceStatementNode { get; }
     public CompilationUnit? ClassBodyCompilationUnit { get; }
 
     public ImmutableArray<ISyntax> Children { get; }
@@ -43,6 +53,16 @@ public class BoundClassDeclarationNode : ISyntaxNode
     {
         return new BoundClassDeclarationNode(
             IdentifierToken,
+            BoundInheritanceStatementNode,
             classBodyCompilationUnit);
+    }
+    
+    public BoundClassDeclarationNode WithBoundInheritanceStatementNode(
+        BoundInheritanceStatementNode boundInheritanceStatementNode)
+    {
+        return new BoundClassDeclarationNode(
+            IdentifierToken,
+            boundInheritanceStatementNode,
+            ClassBodyCompilationUnit);
     }
 }

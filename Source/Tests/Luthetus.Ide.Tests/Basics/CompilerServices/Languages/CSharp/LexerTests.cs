@@ -344,4 +344,21 @@ public class LexerTests
         var text = closeBraceToken.TextSpan.GetText(sourceText);
         Assert.Equal(closeBraceTokenAsString, text);
     }
+
+    [Fact]
+    public void SHOULD_LEX_COLON_TOKEN()
+    {
+        var colonTokenAsString = ":";
+        var sourceText = $"{colonTokenAsString}".ReplaceLineEndings("\n");
+
+        var lexer = new Lexer(sourceText);
+        lexer.Lex();
+
+        var colonToken = lexer.SyntaxTokens.First();
+
+        Assert.Equal(SyntaxKind.ColonToken, colonToken.SyntaxKind);
+
+        var text = colonToken.TextSpan.GetText(sourceText);
+        Assert.Equal(colonTokenAsString, text);
+    }
 }

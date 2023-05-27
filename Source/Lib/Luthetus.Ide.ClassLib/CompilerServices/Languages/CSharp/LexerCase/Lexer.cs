@@ -145,6 +145,10 @@ public class Lexer
                     var closeBraceToken = LexCloseBraceToken();
                     _syntaxTokens.Add(closeBraceToken);
                     break;
+                case ':':
+                    var colonToken = LexColonToken();
+                    _syntaxTokens.Add(colonToken);
+                    break;
                 case '#':
                     var preprocessorDirectiveToken = LexPreprocessorDirectiveToken();
                     _syntaxTokens.Add(preprocessorDirectiveToken);
@@ -448,6 +452,20 @@ public class Lexer
             (byte)GenericDecorationKind.None);
 
         return new CloseBraceToken(textSpan);
+    }
+    
+    private ColonToken LexColonToken()
+    {
+        var entryPositionIndex = _stringWalker.PositionIndex;
+
+        _stringWalker.ReadCharacter();
+
+        var textSpan = new TextEditorTextSpan(
+            entryPositionIndex,
+            _stringWalker.PositionIndex,
+            (byte)GenericDecorationKind.None);
+
+        return new ColonToken(textSpan);
     }
 
     private PreprocessorDirectiveToken LexPreprocessorDirectiveToken()

@@ -16,11 +16,12 @@ namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.ParserCase;
 public class Parser
 {
     private readonly TokenWalker _tokenWalker;
-    private readonly Binder _binder;
     private readonly CompilationUnitBuilder _globalCompilationUnitBuilder;
     private readonly LuthetusIdeDiagnosticBag _diagnosticBag = new();
     private readonly ImmutableArray<TextEditorDiagnostic> _lexerDiagnostics;
     private readonly string _sourceText;
+
+    private Binder _binder;
 
     public Parser(
         ImmutableArray<ISyntaxToken> tokens,
@@ -57,6 +58,15 @@ public class Parser
     /// <summary>When parsing the body of a function this is used in order to keep the function declaration node itself in the syntax tree immutable.<br/><br/>That is to say, this action would create the function declaration node and then append it.</summary>
     private Stack<Action<CompilationUnit>> _finalizeCompilationUnitActionStack = new();
 
+    /// <summary>This method is used when parsing many files as a single compilation. The first binder instance would be passed to the following parsers.</summary>
+    public CompilationUnit Parse(
+        Binder previousBinder)
+    {
+        _binder = previousBinder;
+
+        return Parse();
+    }
+
     public CompilationUnit Parse()
     {
         while (true)
@@ -91,6 +101,9 @@ public class Parser
                     break;
                 case SyntaxKind.CloseBraceToken:
                     ParseCloseBraceToken((CloseBraceToken)consumedToken);
+                    break;
+                case SyntaxKind.ColonToken:
+                    ParseColonToken((ColonToken)consumedToken);
                     break;
                 case SyntaxKind.StatementDelimiterToken:
                     ParseStatementDelimiterToken();
@@ -265,10 +278,45 @@ public class Parser
             {
                 // TODO: Implement keywords for visibility
             }
+            else if (text == "partial")
+            {
+                // TODO: Implement the 'partial' keyword
+            }
             else
             {
                 throw new NotImplementedException("Implement more keywords");
             }
+        }
+    }
+
+    private void ParseColonToken(
+        ColonToken inToken)
+    {
+        if (_nodeRecent is not null &&
+            _nodeRecent.SyntaxKind == SyntaxKind.BoundClassDeclarationNode)
+        {
+            var boundClassDeclarationNode = (BoundClassDeclarationNode)_nodeRecent;
+
+            var nextToken = _tokenWalker.Consume();
+            
+            if (nextToken.SyntaxKind == SyntaxKind.IdentifierToken)
+            {
+                var boundInheritanceStatementNode = _binder.BindInheritanceStatementNode(
+                    (IdentifierToken)nextToken);
+
+                boundClassDeclarationNode = boundClassDeclarationNode
+                    .WithBoundInheritanceStatementNode(boundInheritanceStatementNode);
+
+                _nodeRecent = boundClassDeclarationNode;
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
+        else
+        {
+            throw new NotImplementedException();
         }
     }
 

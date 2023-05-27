@@ -12,7 +12,6 @@ using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statem
 using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.Facts;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.BinderCase;
 
@@ -227,8 +226,8 @@ public class Binder
             classIdentifier,
             out var classDeclarationNode))
         {
-            // TODO: The function was already declared, so report a diagnostic?
-            // TODO: The function was already declared, so check that the return types match?
+            // TODO: The class was already declared, so report a diagnostic?
+            // TODO: The class was already declared, so check that the return types match?
             return classDeclarationNode;
         }
 
@@ -246,6 +245,26 @@ public class Binder
             }));
 
         return boundClassDeclarationNode;
+    }
+    
+    public BoundInheritanceStatementNode BindInheritanceStatementNode(
+        IdentifierToken parentClassIdentifierToken)
+    {
+        var parentClassIdentifier = parentClassIdentifierToken.TextSpan.GetText(_sourceText);
+
+        var boundInheritanceStatementNode = new BoundInheritanceStatementNode(
+                parentClassIdentifierToken);
+
+        if (!_currentScope.ClassDeclarationMap.TryGetValue(
+            parentClassIdentifier,
+            out _))
+        {
+            _diagnosticBag.ReportUndefinedClass(
+                parentClassIdentifierToken.TextSpan,
+                parentClassIdentifier);
+        }
+
+        return boundInheritanceStatementNode;
     }
 
     public BoundVariableDeclarationStatementNode BindVariableDeclarationNode(

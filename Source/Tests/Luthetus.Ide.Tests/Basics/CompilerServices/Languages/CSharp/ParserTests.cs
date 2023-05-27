@@ -417,6 +417,81 @@ WriteHelloWorldToConsole();"
             SyntaxKind.BoundFunctionDeclarationNode,
             boundFunctionDeclarationNode.SyntaxKind);
     }
+    
+    [Fact]
+    public void SHOULD_PARSE_CLASS_DECLARATION_WHICH_HAS_PARTIAL_MODIFIER()
+    {
+        string classIdentifier = "PersonModel";
+
+        string sourceText = @$"public partial class {classIdentifier}
+{{
+}}".ReplaceLineEndings("\n");
+
+        var lexer = new Lexer(sourceText);
+
+        lexer.Lex();
+
+        var parser = new Parser(
+            lexer.SyntaxTokens,
+            sourceText,
+            lexer.Diagnostics);
+
+        var compilationUnit = parser.Parse();
+
+        var globalScope = parser.Binder.BoundScopes.First();
+
+        var personModel = globalScope.ClassDeclarationMap.Single();
+
+        Assert.Equal(classIdentifier, personModel.Key);
+
+        var boundClassDeclarationNode = 
+            (BoundClassDeclarationNode)compilationUnit.Children.Single();
+
+        if (boundClassDeclarationNode.ClassBodyCompilationUnit is null)
+            throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
+
+        Assert.Empty(
+            boundClassDeclarationNode.ClassBodyCompilationUnit.Children);
+    }
+    
+    [Fact]
+    public void SHOULD_PARSE_CLASS_DECLARATION_WHICH_IS_INHERITING()
+    {
+        string classIdentifier = "PersonDisplay";
+
+        string sourceText = @$"public class {classIdentifier} : ComponentBase
+{{
+}}".ReplaceLineEndings("\n");
+
+        var lexer = new Lexer(sourceText);
+
+        lexer.Lex();
+
+        var parser = new Parser(
+            lexer.SyntaxTokens,
+            sourceText,
+            lexer.Diagnostics);
+
+        var compilationUnit = parser.Parse();
+
+        var globalScope = parser.Binder.BoundScopes.First();
+
+        var personModel = globalScope.ClassDeclarationMap.Single();
+
+        Assert.Equal(classIdentifier, personModel.Key);
+
+        var boundClassDeclarationNode = 
+            (BoundClassDeclarationNode)compilationUnit.Children.Single();
+
+        if (boundClassDeclarationNode.ClassBodyCompilationUnit is null)
+            throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
+
+        Assert.NotNull(
+            boundClassDeclarationNode.BoundInheritanceStatementNode);
+
+        Assert.Empty(
+            boundClassDeclarationNode.ClassBodyCompilationUnit.Children);
+    }
 
     /// <summary>GOAL: Add "HelloWorld" key to NamespaceDictionary with a single CompilationUnit child which has a CompilationUnit without any children.</summary>
     [Fact]
@@ -459,7 +534,7 @@ WriteHelloWorldToConsole();"
     [Fact]
     public void SHOULD_PARSE_TWO_NAMESPACE_DECLARATIONS_WITH_THE_SAME_IDENTIFIER_INTO_A_SINGLE_SCOPE()
     {
-        var personModelFile = new TestResource(
+        var modelFile = new TestResource(
             "PersonModel.cs",
             @"namespace PersonCase
 {
@@ -468,7 +543,7 @@ WriteHelloWorldToConsole();"
     }
 }".ReplaceLineEndings("\n"));
 
-        var personDisplayFile = new TestResource(
+        var displayFile = new TestResource(
             "PersonDisplay.razor.cs",
             @"namespace PersonCase
 {
@@ -477,38 +552,35 @@ WriteHelloWorldToConsole();"
     }
 }".ReplaceLineEndings("\n"));
 
-        CompilationUnit personModelFileCompilationUnit;
-        CompilationUnit personDisplayFileCompilationUnit;
+        CompilationUnit modelCompilationUnit;
+        CompilationUnit displayCompilationUnit;
 
-        // Parse personModelFile
-        {
-            var lexer = new Lexer(personModelFile.Content);
+        // personModelFile
+        var modelLexer = new Lexer(modelFile.Content);
 
-            lexer.Lex();
+        modelLexer.Lex();
 
-            var parser = new Parser(
-                lexer.SyntaxTokens,
-                personModelFile.Content,
-                lexer.Diagnostics,
-                "PersonModel.cs");
+        var modelParser = new Parser(
+            modelLexer.SyntaxTokens,
+            modelFile.Content,
+            modelLexer.Diagnostics,
+            "PersonModel.cs");
 
-            personModelFileCompilationUnit = parser.Parse();
-        }
+        modelCompilationUnit = modelParser.Parse();
 
-        // Parse personModelFile
-        {
-            var lexer = new Lexer(personDisplayFile.Content);
+        // personDisplayFile
+        var displayLexer = new Lexer(displayFile.Content);
 
-            lexer.Lex();
+        displayLexer.Lex();
 
-            var parser = new Parser(
-                lexer.SyntaxTokens,
-                personDisplayFile.Content,
-                lexer.Diagnostics,
-                "PersonDisplay.razor.cs");
+        var displayParser = new Parser(
+            displayLexer.SyntaxTokens,
+            displayFile.Content,
+            displayLexer.Diagnostics,
+            "PersonDisplay.razor.cs");
 
-            personDisplayFileCompilationUnit = parser.Parse();
-        }
+        displayCompilationUnit = displayParser
+            .Parse(modelParser.Binder);
 
         throw new NotImplementedException();
     }

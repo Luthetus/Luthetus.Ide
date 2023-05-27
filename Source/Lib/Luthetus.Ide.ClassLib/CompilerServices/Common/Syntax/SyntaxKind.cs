@@ -22,6 +22,7 @@ public enum SyntaxKind
     CloseParenthesisToken,
     OpenBraceToken,
     CloseBraceToken,
+    ColonToken,
     EndOfFileToken,
 
     // Nodes
@@ -39,6 +40,7 @@ public enum SyntaxKind
     BoundReturnStatementNode,
     BoundNamespaceStatementNode,
     BoundClassDeclarationNode,
+    BoundInheritanceStatementNode,
 
     // Symbols
     TypeSymbol,
