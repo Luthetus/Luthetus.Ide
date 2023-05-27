@@ -348,6 +348,24 @@ public class Binder
         }
     }
 
+    public BoundUsingDeclarationNode BindUsingDeclarationNode(
+        KeywordToken usingKeywordToken,
+        IdentifierToken namespaceIdentifierToken)
+    {
+        var namespaceText = namespaceIdentifierToken.TextSpan.GetText(_sourceText);
+
+        if (_boundNamespaceStatementNodes.TryGetValue(
+                namespaceText,
+                out var boundNamespaceStatementNode))
+        {
+            AddNamespaceToCurrentScope(boundNamespaceStatementNode);
+        }
+
+        return new BoundUsingDeclarationNode(
+            usingKeywordToken,
+            namespaceIdentifierToken);
+    }
+
     public void RegisterBoundScope(
         Type? scopeReturnType,
         TextEditorTextSpan textEditorTextSpan)
@@ -369,6 +387,25 @@ public class Binder
             .ToList();
 
         _currentScope = boundScope;
+    }
+    
+    public void AddNamespaceToCurrentScope(
+        BoundNamespaceStatementNode boundNamespaceStatementNode)
+    {
+        foreach (var child in boundNamespaceStatementNode.Children)
+        {
+            if (child.SyntaxKind != SyntaxKind.BoundClassDeclarationNode)
+                continue;
+
+            var boundClassDeclarationNode = (BoundClassDeclarationNode)child;
+
+            var identifierText = boundClassDeclarationNode.IdentifierToken.TextSpan
+                .GetText(_sourceText);
+
+            _currentScope.ClassDeclarationMap.Add(
+                identifierText,
+                boundClassDeclarationNode);
+        }
     }
 
     public void DisposeBoundScope(

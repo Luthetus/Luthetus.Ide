@@ -41,6 +41,7 @@ public enum SyntaxKind
     BoundNamespaceStatementNode,
     BoundClassDeclarationNode,
     BoundInheritanceStatementNode,
+    BoundUsingDeclarationNode,
 
     // Symbols
     TypeSymbol,

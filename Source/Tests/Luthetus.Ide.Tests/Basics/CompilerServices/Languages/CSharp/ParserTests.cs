@@ -594,38 +594,84 @@ WriteHelloWorldToConsole();"
 
         throw new NotImplementedException();
     }
-    
+
+    /// <summary>GOAL: Add "PersonCase" key to NamespaceDictionary with two CompilationUnit children: PersonModel.cs, and PersonDisplay.razor.cs. Afterwards evaluate the Namespace as a BoundScope which would contain the two classes: PersonModel, and PersonDisplay. Afterwards add "Pages" key to NamespaceDictionary with one CompilationUnit child: PersonPage.razor. Have PersonPage.razor.cs include a using statement that includes the "PersonCase" namespace.</summary>
     [Fact]
     public void SHOULD_PARSE_USING_STATEMENT()
     {
-        /*
-         * GOAL: Add "PersonCase" key to NamespaceDictionary with
-         *       two CompilationUnit children.
-         *           -PersonModel.cs
-         *           -PersonDisplay.razor.cs
-         *           
-         *       Afterwards evaluate the Namespace as a BoundScope
-         *       which would contain the two classes:
-         *          -PersonModel
-         *          -PersonDisplay
-         *      
-         *      Afterwards add "Pages" key to NamespaceDictionary
-         *      with one CompilationUnit child.
-         *          -PersonPage.razor
-         */
+        var modelFile = new TestResource(
+            "PersonModel.cs",
+            @"namespace PersonCase
+{
+    public class PersonModel
+    {
+    }
+}".ReplaceLineEndings("\n"));
 
-        string sourceText = @"namespace HelloWorld {}".ReplaceLineEndings("\n");
+        var displayFile = new TestResource(
+            "PersonDisplay.razor.cs",
+            @"namespace PersonCase
+{
+    public partial class PersonDisplay : ComponentBase
+    {
+    }
+}".ReplaceLineEndings("\n"));
+        
+        var pageFile = new TestResource(
+            "PersonPage.razor.cs",
+            @"using PersonCase;
 
-        var lexer = new Lexer(sourceText);
+namespace Pages
+{
+    public partial class PersonPage : ComponentBase
+    {
+    }
+}".ReplaceLineEndings("\n"));
 
-        lexer.Lex();
+        CompilationUnit modelCompilationUnit;
+        CompilationUnit displayCompilationUnit;
+        CompilationUnit pageCompilationUnit;
 
-        var parser = new Parser(
-            lexer.SyntaxTokens,
-            sourceText,
-            lexer.Diagnostics);
+        // personModelFile
+        var modelLexer = new Lexer(modelFile.Content);
 
-        var compilationUnit = parser.Parse();
+        modelLexer.Lex();
+
+        var modelParser = new Parser(
+            modelLexer.SyntaxTokens,
+            modelFile.Content,
+            modelLexer.Diagnostics,
+            "PersonModel.cs");
+
+        modelCompilationUnit = modelParser.Parse();
+
+        // personDisplayFile
+        var displayLexer = new Lexer(displayFile.Content);
+
+        displayLexer.Lex();
+
+        var displayParser = new Parser(
+            displayLexer.SyntaxTokens,
+            displayFile.Content,
+            displayLexer.Diagnostics,
+            "PersonDisplay.razor.cs");
+
+        displayCompilationUnit = displayParser
+            .Parse(modelParser.Binder);
+        
+        // personPageFile
+        var pageLexer = new Lexer(pageFile.Content);
+
+        pageLexer.Lex();
+
+        var pageParser = new Parser(
+            pageLexer.SyntaxTokens,
+            pageFile.Content,
+            pageLexer.Diagnostics,
+            "pageParser.razor.cs");
+
+        pageCompilationUnit = pageParser
+            .Parse(displayParser.Binder);
 
         throw new NotImplementedException();
     }

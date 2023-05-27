@@ -273,6 +273,25 @@ public class Parser
                     throw new NotImplementedException();
                 }
             }
+            else if (text == "using")
+            {
+                var nextToken = _tokenWalker.Consume();
+
+                if (nextToken.SyntaxKind == SyntaxKind.IdentifierToken)
+                {
+                    var boundUsingDeclarationNode = _binder.BindUsingDeclarationNode(
+                        inToken,
+                        (IdentifierToken)nextToken);
+
+                    _currentCompilationUnitBuilder.Children.Add(boundUsingDeclarationNode);
+
+                    _nodeRecent = boundUsingDeclarationNode;
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
+            }
             else if (text == "public" ||
                      text == "internal" ||
                      text == "private")
@@ -478,7 +497,7 @@ public class Parser
         Type? scopeReturnType = null;
 
         if (_nodeRecent is not null &&
-                 _nodeRecent.SyntaxKind == SyntaxKind.BoundNamespaceStatementNode)
+            _nodeRecent.SyntaxKind == SyntaxKind.BoundNamespaceStatementNode)
         {
             var boundNamespaceStatementNode = (BoundNamespaceStatementNode)_nodeRecent;
 
@@ -507,7 +526,7 @@ public class Parser
             });
         }
         else if (_nodeRecent is not null &&
-            _nodeRecent.SyntaxKind == SyntaxKind.BoundFunctionDeclarationNode)
+                 _nodeRecent.SyntaxKind == SyntaxKind.BoundFunctionDeclarationNode)
         {
             var boundFunctionDeclarationNode = (BoundFunctionDeclarationNode)_nodeRecent;
             
@@ -534,6 +553,12 @@ public class Parser
         _binder.RegisterBoundScope(
             scopeReturnType,
             inToken.TextSpan);
+
+        if (_nodeRecent is not null &&
+            _nodeRecent.SyntaxKind == SyntaxKind.BoundNamespaceStatementNode)
+        {
+            _binder.AddNamespaceToCurrentScope((BoundNamespaceStatementNode)_nodeRecent);
+        }
 
         _currentCompilationUnitBuilder = new(_currentCompilationUnitBuilder);
     }
