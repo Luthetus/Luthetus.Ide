@@ -18,11 +18,11 @@ namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.BinderCase;
 public class Binder
 {
     private readonly BoundScope _globalScope = CSharpLanguageFacts.Scope.GetInitialGlobalScope();
-    private readonly string _sourceText;
     private readonly Dictionary<string, BoundNamespaceStatementNode> _boundNamespaceStatementNodes = new();
     private readonly List<ISymbol> _symbols = new();
     private readonly LuthetusIdeDiagnosticBag _diagnosticBag = new();
 
+    private string _sourceText;
     private List<BoundScope> _boundScopes = new();
     private BoundScope _currentScope;
 
@@ -448,5 +448,11 @@ public class Binder
 
         boundVariableDeclarationStatementNode = null;
         return false;
+    }
+
+    public void SetSourceText(
+        string sourceText)
+    {
+        _sourceText = sourceText;
     }
 }

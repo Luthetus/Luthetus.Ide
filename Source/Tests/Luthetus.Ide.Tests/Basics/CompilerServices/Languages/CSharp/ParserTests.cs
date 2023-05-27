@@ -582,6 +582,16 @@ WriteHelloWorldToConsole();"
         displayCompilationUnit = displayParser
             .Parse(modelParser.Binder);
 
+        var boundNamespaceStatementNode =
+            (BoundNamespaceStatementNode)displayCompilationUnit.Children.Single();
+
+        Assert.Equal(
+            SyntaxKind.BoundNamespaceStatementNode,
+            boundNamespaceStatementNode.SyntaxKind);
+
+        var modelNamespaceEntry = boundNamespaceStatementNode.Children[0];
+        var displayNamespaceEntry = boundNamespaceStatementNode.Children[1];
+
         throw new NotImplementedException();
     }
     

@@ -63,6 +63,7 @@ public class Parser
         Binder previousBinder)
     {
         _binder = previousBinder;
+        _binder.SetSourceText(_sourceText);
 
         return Parse();
     }
