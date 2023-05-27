@@ -246,6 +246,7 @@ public class BinderSession
             null,
             new(),
             new(),
+            new(),
             new());
 
         BoundScopes.Add(boundScope);

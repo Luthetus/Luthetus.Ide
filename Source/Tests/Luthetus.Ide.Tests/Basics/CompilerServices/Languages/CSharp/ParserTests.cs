@@ -1,5 +1,4 @@
-﻿
-using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes;
+﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Expression;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statements;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.General;
@@ -338,7 +337,88 @@ WriteHelloWorldToConsole();"
         }
     }
 
-    /// <summary>GOAL: Add "HelloWorld" key to NamespaceDictionary with a single BoundNamespaceEntryNode child which has a CompilationUnit without any children.</summary>
+    [Fact]
+    public void SHOULD_PARSE_CLASS_DECLARATION_EMPTY()
+    {
+        string classIdentifier = "PersonModel";
+
+        string sourceText = @$"public class {classIdentifier}
+{{
+}}".ReplaceLineEndings("\n");
+
+        var lexer = new Lexer(sourceText);
+
+        lexer.Lex();
+
+        var parser = new Parser(
+            lexer.SyntaxTokens,
+            sourceText,
+            lexer.Diagnostics);
+
+        var compilationUnit = parser.Parse();
+
+        var globalScope = parser.Binder.BoundScopes.First();
+
+        var personModel = globalScope.ClassDeclarationMap.Single();
+
+        Assert.Equal(classIdentifier, personModel.Key);
+
+        var boundClassDeclarationNode = 
+            (BoundClassDeclarationNode)compilationUnit.Children.Single();
+
+        if (boundClassDeclarationNode.ClassBodyCompilationUnit is null)
+            throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
+
+        Assert.Empty(
+            boundClassDeclarationNode.ClassBodyCompilationUnit.Children);
+    }
+    
+    [Fact]
+    public void SHOULD_PARSE_CLASS_DECLARATION_WHICH_CONTAINS_A_METHOD()
+    {
+        string classIdentifier = "PersonModel";
+        string methodIdentifier = "Walk";
+
+        string sourceText = @$"public class {classIdentifier}
+{{
+    public void {methodIdentifier}()
+    {{
+    }}
+}}".ReplaceLineEndings("\n");
+
+        var lexer = new Lexer(sourceText);
+
+        lexer.Lex();
+
+        var parser = new Parser(
+            lexer.SyntaxTokens,
+            sourceText,
+            lexer.Diagnostics);
+
+        var compilationUnit = parser.Parse();
+
+        var globalScope = parser.Binder.BoundScopes.First();
+
+        var personModel = globalScope.ClassDeclarationMap.Single();
+
+        Assert.Equal(classIdentifier, personModel.Key);
+
+        var boundClassDeclarationNode = 
+            (BoundClassDeclarationNode)compilationUnit.Children.Single();
+
+        if (boundClassDeclarationNode.ClassBodyCompilationUnit is null)
+            throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
+
+        var boundFunctionDeclarationNode = 
+            (BoundFunctionDeclarationNode)boundClassDeclarationNode
+                .ClassBodyCompilationUnit.Children.Single();
+
+        Assert.Equal(
+            SyntaxKind.BoundFunctionDeclarationNode,
+            boundFunctionDeclarationNode.SyntaxKind);
+    }
+
+    /// <summary>GOAL: Add "HelloWorld" key to NamespaceDictionary with a single CompilationUnit child which has a CompilationUnit without any children.</summary>
     [Fact]
     public void SHOULD_PARSE_NAMESPACE_DEFINITION_EMPTY()
     {
@@ -358,13 +438,10 @@ WriteHelloWorldToConsole();"
         var boundNamespaceStatementNode =
             (BoundNamespaceStatementNode)compilationUnit.Children.Single();
 
-        var boundNamespaceEntryNode =
-            (BoundNamespaceEntryNode)boundNamespaceStatementNode.Children.Single();
+        var namespaceCompilationUnit =
+            (CompilationUnit)boundNamespaceStatementNode.Children.Single();
 
-        var namespaceEntryCompilationUnit =
-            (CompilationUnit)boundNamespaceEntryNode.Children.Single();
-
-        Assert.Empty(namespaceEntryCompilationUnit.Children);
+        Assert.Empty(namespaceCompilationUnit.Children);
 
         // Assert SyntaxKinds are correct
         {
@@ -373,71 +450,62 @@ WriteHelloWorldToConsole();"
                 boundNamespaceStatementNode.SyntaxKind);
 
             Assert.Equal(
-                SyntaxKind.BoundNamespaceEntryNode,
-                boundNamespaceEntryNode.SyntaxKind);
-
-            Assert.Equal(
                 SyntaxKind.CompilationUnit,
-                namespaceEntryCompilationUnit.SyntaxKind);
+                namespaceCompilationUnit.SyntaxKind);
         }
     }
 
+    /// <summary>GOAL: Add "PersonCase" key to NamespaceDictionary with two CompilationUnit children: 'PersonModel.cs', and 'PersonDisplay.razor.cs'.<br/><br/>Afterwards convert the Namespace to a BoundScope which would contain the two classes: 'PersonModel', and 'PersonDisplay'</summary>
     [Fact]
     public void SHOULD_PARSE_TWO_NAMESPACE_DECLARATIONS_WITH_THE_SAME_IDENTIFIER_INTO_A_SINGLE_SCOPE()
     {
-        /*
-         * GOAL: Add "PersonCase" key to NamespaceDictionary with
-         *       two CompilationUnit children.
-         *           -PersonModel.cs
-         *           -PersonDisplay.razor.cs
-         *           
-         *       Afterwards evaluate the Namespace as a BoundScope
-         *       which would contain the two classes:
-         *          -PersonModel
-         *          -PersonDisplay
-         */
-
-        string personModelFile = @"namespace PersonCase
+        var personModelFile = new TestResource(
+            "PersonModel.cs",
+            @"namespace PersonCase
 {
     public class PersonModel
     {
     }
-}".ReplaceLineEndings("\n");
+}".ReplaceLineEndings("\n"));
 
-        string personDisplayFile = @"namespace PersonCase
+        var personDisplayFile = new TestResource(
+            "PersonDisplay.razor.cs",
+            @"namespace PersonCase
 {
     public partial class PersonDisplay : ComponentBase
     {
     }
-}".ReplaceLineEndings("\n");
+}".ReplaceLineEndings("\n"));
 
         CompilationUnit personModelFileCompilationUnit;
         CompilationUnit personDisplayFileCompilationUnit;
 
         // Parse personModelFile
         {
-            var lexer = new Lexer(personModelFile);
+            var lexer = new Lexer(personModelFile.Content);
 
             lexer.Lex();
 
             var parser = new Parser(
                 lexer.SyntaxTokens,
-                personModelFile,
-                lexer.Diagnostics);
+                personModelFile.Content,
+                lexer.Diagnostics,
+                "PersonModel.cs");
 
             personModelFileCompilationUnit = parser.Parse();
         }
 
         // Parse personModelFile
         {
-            var lexer = new Lexer(personDisplayFile);
+            var lexer = new Lexer(personDisplayFile.Content);
 
             lexer.Lex();
 
             var parser = new Parser(
                 lexer.SyntaxTokens,
-                personDisplayFile,
-                lexer.Diagnostics);
+                personDisplayFile.Content,
+                lexer.Diagnostics,
+                "PersonDisplay.razor.cs");
 
             personDisplayFileCompilationUnit = parser.Parse();
         }

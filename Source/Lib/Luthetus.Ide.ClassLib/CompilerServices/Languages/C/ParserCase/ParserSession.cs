@@ -17,7 +17,7 @@ public class ParserSession
 {
     private readonly TokenWalker _tokenWalker;
     private readonly BinderSession _binder;
-    private readonly CompilationUnitBuilder _globalCompilationUnitBuilder = new(null);
+    private readonly CompilationUnitBuilder _globalCompilationUnitBuilder = new();
     private readonly LuthetusIdeDiagnosticBag _diagnosticBag = new();
     private readonly ImmutableArray<TextEditorDiagnostic> _lexerDiagnostics;
     private readonly string _sourceText;

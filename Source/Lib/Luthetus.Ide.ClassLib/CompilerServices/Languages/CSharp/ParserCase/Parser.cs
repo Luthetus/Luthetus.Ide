@@ -17,7 +17,7 @@ public class Parser
 {
     private readonly TokenWalker _tokenWalker;
     private readonly Binder _binder;
-    private readonly CompilationUnitBuilder _globalCompilationUnitBuilder = new(null);
+    private readonly CompilationUnitBuilder _globalCompilationUnitBuilder;
     private readonly LuthetusIdeDiagnosticBag _diagnosticBag = new();
     private readonly ImmutableArray<TextEditorDiagnostic> _lexerDiagnostics;
     private readonly string _sourceText;
@@ -25,15 +25,28 @@ public class Parser
     public Parser(
         ImmutableArray<ISyntaxToken> tokens,
         string sourceText,
-        ImmutableArray<TextEditorDiagnostic> lexerDiagnostics)
+        ImmutableArray<TextEditorDiagnostic> lexerDiagnostics,
+        string resourceUri)
     {
         _sourceText = sourceText;
         _lexerDiagnostics = lexerDiagnostics;
         _tokenWalker = new TokenWalker(tokens);
         _binder = new Binder(sourceText);
+        ResourceUri = resourceUri;
 
+        _globalCompilationUnitBuilder = new(null, ResourceUri);
         _currentCompilationUnitBuilder = _globalCompilationUnitBuilder;
     }
+    
+    public Parser(
+        ImmutableArray<ISyntaxToken> tokens,
+        string sourceText,
+        ImmutableArray<TextEditorDiagnostic> lexerDiagnostics)
+        : this(tokens, sourceText, lexerDiagnostics, string.Empty)
+    {
+    }
+
+    public string ResourceUri { get; }
 
     public ImmutableArray<TextEditorDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
     public Binder Binder => _binder;
@@ -230,6 +243,28 @@ public class Parser
                     throw new NotImplementedException();
                 }
             }
+            else if (text == "class")
+            {
+                var nextToken = _tokenWalker.Consume();
+
+                if (nextToken.SyntaxKind == SyntaxKind.IdentifierToken)
+                {
+                    var boundClassDeclarationNode = _binder.BindClassDeclarationNode(
+                        (IdentifierToken)nextToken);
+
+                    _nodeRecent = boundClassDeclarationNode;
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
+            }
+            else if (text == "public" ||
+                     text == "internal" ||
+                     text == "private")
+            {
+                // TODO: Implement keywords for visibility
+            }
             else
             {
                 throw new NotImplementedException("Implement more keywords");
@@ -394,10 +429,39 @@ public class Parser
         Type? scopeReturnType = null;
 
         if (_nodeRecent is not null &&
+                 _nodeRecent.SyntaxKind == SyntaxKind.BoundNamespaceStatementNode)
+        {
+            var boundNamespaceStatementNode = (BoundNamespaceStatementNode)_nodeRecent;
+
+            _finalizeCompilationUnitActionStack.Push(compilationUnit =>
+            {
+                boundNamespaceStatementNode = _binder.RegisterBoundNamespaceEntryNode(
+                    boundNamespaceStatementNode,
+                    compilationUnit);
+
+                closureCurrentCompilationUnitBuilder.Children
+                    .Add(boundNamespaceStatementNode);
+            });
+        }
+        else if (_nodeRecent is not null &&
+                 _nodeRecent.SyntaxKind == SyntaxKind.BoundClassDeclarationNode)
+        {
+            var boundClassDeclarationNode = (BoundClassDeclarationNode)_nodeRecent;
+
+            _finalizeCompilationUnitActionStack.Push(compilationUnit =>
+            {
+                boundClassDeclarationNode = boundClassDeclarationNode
+                    .WithClassBody(compilationUnit);
+
+                closureCurrentCompilationUnitBuilder.Children
+                    .Add(boundClassDeclarationNode);
+            });
+        }
+        else if (_nodeRecent is not null &&
             _nodeRecent.SyntaxKind == SyntaxKind.BoundFunctionDeclarationNode)
         {
             var boundFunctionDeclarationNode = (BoundFunctionDeclarationNode)_nodeRecent;
-
+            
             scopeReturnType = boundFunctionDeclarationNode.BoundTypeNode.Type;
 
             _finalizeCompilationUnitActionStack.Push(compilationUnit =>
@@ -407,21 +471,6 @@ public class Parser
 
                 closureCurrentCompilationUnitBuilder.Children
                     .Add(boundFunctionDeclarationNode);
-            });
-        }
-        else if (_nodeRecent is not null &&
-                 _nodeRecent.SyntaxKind == SyntaxKind.BoundNamespaceStatementNode)
-        {
-            _finalizeCompilationUnitActionStack.Push(compilationUnit =>
-            {
-                var boundNamespaceStatementNode = (BoundNamespaceStatementNode)_nodeRecent;
-
-                boundNamespaceStatementNode = _binder.RegisterBoundNamespaceEntryNode(
-                    boundNamespaceStatementNode,
-                    compilationUnit);
-
-                closureCurrentCompilationUnitBuilder.Children
-                    .Add(boundNamespaceStatementNode);
             });
         }
         else

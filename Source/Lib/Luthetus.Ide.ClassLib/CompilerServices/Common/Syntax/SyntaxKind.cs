@@ -38,7 +38,7 @@ public enum SyntaxKind
     BoundFunctionInvocationNode,
     BoundReturnStatementNode,
     BoundNamespaceStatementNode,
-    BoundNamespaceEntryNode,
+    BoundClassDeclarationNode,
 
     // Symbols
     TypeSymbol,

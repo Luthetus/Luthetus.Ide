@@ -1,4 +1,5 @@
-﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
+﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.General;
+using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.SyntaxTokens;
 using System.Collections.Immutable;
 
@@ -33,7 +34,7 @@ public class BoundNamespaceStatementNode : ISyntaxNode
     public BoundNamespaceStatementNode(
         KeywordToken keywordToken,
         IdentifierToken identifierToken,
-        ImmutableArray<BoundNamespaceEntryNode> children)
+        ImmutableArray<CompilationUnit> children)
     {
         Children = children
             .Select(x => (ISyntax)x)

@@ -12,6 +12,7 @@ using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statem
 using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.Facts;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.BinderCase;
 
@@ -116,10 +117,10 @@ public class Binder
         BoundTypeNode boundTypeNode,
         IdentifierToken identifierToken)
     {
-        var text = identifierToken.TextSpan.GetText(_sourceText);
+        var functionIdentifier = identifierToken.TextSpan.GetText(_sourceText);
 
         if (_currentScope.FunctionDeclarationMap.TryGetValue(
-            text,
+            functionIdentifier,
             out var functionDeclarationNode))
         {
             // TODO: The function was already declared, so report a diagnostic?
@@ -132,7 +133,7 @@ public class Binder
             identifierToken);
 
         _currentScope.FunctionDeclarationMap.Add(
-            text,
+            functionIdentifier,
             boundFunctionDeclarationNode);
 
         _symbols.Add(
@@ -174,7 +175,7 @@ public class Binder
             boundNamespaceStatementNode = new BoundNamespaceStatementNode(
                 keywordToken,
                 identifierToken,
-                ImmutableArray<BoundNamespaceEntryNode>.Empty);
+                ImmutableArray<CompilationUnit>.Empty);
 
             _boundNamespaceStatementNodes.Add(
                 namespaceIdentifier,
@@ -195,13 +196,9 @@ public class Binder
                 namespaceIdentifier, 
                 out var existingBoundNamespaceStatementNode))
         {
-            var boundNamespaceEntryNode = new BoundNamespaceEntryNode(
-                "TODO: resourceUri",
-                compilationUnit);
-
             var outChildren = existingBoundNamespaceStatementNode.Children
-                .Add(boundNamespaceEntryNode)
-                .Select(x => (BoundNamespaceEntryNode)x)
+                .Add(compilationUnit)
+                .Select(x => (CompilationUnit)x)
                 .ToImmutableArray();
 
             var outBoundNamespaceStatementNode = new BoundNamespaceStatementNode(
@@ -219,6 +216,36 @@ public class Binder
                 $"The {nameof(inBoundNamespaceStatementNode)}" +
                 $" was not found in the {nameof(_boundNamespaceStatementNodes)} dictionary.");
         }
+    }
+
+    public BoundClassDeclarationNode BindClassDeclarationNode(
+        IdentifierToken identifierToken)
+    {
+        var classIdentifier = identifierToken.TextSpan.GetText(_sourceText);
+
+        if (_currentScope.ClassDeclarationMap.TryGetValue(
+            classIdentifier,
+            out var classDeclarationNode))
+        {
+            // TODO: The function was already declared, so report a diagnostic?
+            // TODO: The function was already declared, so check that the return types match?
+            return classDeclarationNode;
+        }
+
+        var boundClassDeclarationNode = new BoundClassDeclarationNode(
+            identifierToken);
+
+        _currentScope.ClassDeclarationMap.Add(
+            classIdentifier,
+            boundClassDeclarationNode);
+
+        _symbols.Add(
+            new TypeSymbol(identifierToken.TextSpan with
+            {
+                DecorationByte = (byte)GenericDecorationKind.Type
+            }));
+
+        return boundClassDeclarationNode;
     }
 
     public BoundVariableDeclarationStatementNode BindVariableDeclarationNode(
@@ -311,6 +338,7 @@ public class Binder
             scopeReturnType,
             textEditorTextSpan.StartingIndexInclusive,
             null,
+            new(),
             new(),
             new(),
             new());

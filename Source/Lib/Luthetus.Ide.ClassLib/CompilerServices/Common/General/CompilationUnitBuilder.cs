@@ -6,20 +6,38 @@ namespace Luthetus.Ide.ClassLib.CompilerServices.Common.General;
 
 public class CompilationUnitBuilder
 {
-    public CompilationUnitBuilder(CompilationUnitBuilder? parent)
+    public CompilationUnitBuilder()
+        : this(null, string.Empty)
+    {
+    }
+    
+    public CompilationUnitBuilder(
+        CompilationUnitBuilder parent)
+        : this(parent, parent.ResourceUri)
     {
         Parent = parent;
+        ResourceUri = parent.ResourceUri;
+    }
+    
+    public CompilationUnitBuilder(
+        CompilationUnitBuilder? parent,
+        string resourceUri)
+    {
+        Parent = parent;
+        ResourceUri = resourceUri;
     }
 
     public bool IsExpression { get; set; }
-    public List<ISyntax> Children { get; set; } = new();
+    public List<ISyntax> Children { get; } = new();
     public CompilationUnitBuilder? Parent { get; }
+    public string ResourceUri { get; }
 
     public CompilationUnit Build()
     {
         return new CompilationUnit(
             IsExpression,
-            Children.ToImmutableArray());
+            Children.ToImmutableArray(),
+            ResourceUri);
     }
 
     public CompilationUnit Build(
@@ -28,6 +46,7 @@ public class CompilationUnitBuilder
         return new CompilationUnit(
             IsExpression,
             Children.ToImmutableArray(),
-            diagnostics);
+            diagnostics,
+            ResourceUri);
     }
 }
