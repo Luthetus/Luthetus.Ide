@@ -582,9 +582,11 @@ WriteHelloWorldToConsole();"
     [Fact]
     public void SHOULD_PARSE_NAMESPACE_FILE_SCOPED()
     {
-        var sourceText = @"namespace PersonCase;
+        var classIdentifier = "PersonModel";
 
-public class PersonModel
+        var sourceText = @$"namespace PersonCase;
+
+public class {classIdentifier}
 {
 }"
             .ReplaceLineEndings("\n");
@@ -597,13 +599,26 @@ public class PersonModel
 
         lexer.Lex();
 
-        var modelParser = new Parser(
+        var parser = new Parser(
             lexer.SyntaxTokens,
             lexer.Diagnostics);
 
-        var compilationUnit = modelParser.Parse();
+        var compilationUnit = parser.Parse();
 
-        throw new NotImplementedException();
+        var boundNamespaceStatementNode =
+            (BoundNamespaceStatementNode)compilationUnit.Children.Single();
+
+        var namespaceCompilationUnit =
+            (CompilationUnit)boundNamespaceStatementNode.Children.Single();
+
+        var boundClassDeclarationNode =
+            (BoundClassDeclarationNode)namespaceCompilationUnit.Children.Single();
+
+        var globalScope = parser.Binder.BoundScopes.First();
+
+        var personModel = globalScope.ClassDeclarationMap.Single();
+
+        Assert.Equal(classIdentifier, personModel.Key);
     }
 
     /// <summary>GOAL: Add "PersonCase" key to NamespaceDictionary with two CompilationUnit children: 'PersonModel.cs', and 'PersonDisplay.razor.cs'.<br/><br/>Afterwards convert the Namespace to a BoundScope which would contain the two classes: 'PersonModel', and 'PersonDisplay'</summary>
@@ -789,17 +804,22 @@ namespace Pages
 public class PersonModel
 {
     public BodyModel BodyModel { get; set; }
-
-    public void Exist()
-    {
-        BodyModel.Walk();
-    }
 }
 
 public class BodyModel
 {
     public void Walk()
     {
+    }
+}
+
+public class World
+{
+    private PersonModel _person = new PersonModel();
+
+    public void Tick()
+    {
+        _person.BodyModel.Walk();
     }
 }"
             .ReplaceLineEndings("\n");
@@ -824,7 +844,10 @@ public class BodyModel
     [Fact]
     public void SHOULD_PARSE_METHOD_INVOCATION_ON_STATIC_CLASS()
     {
-        var sourceText = @"System.Console.WriteLine(""Hello World!"");"
+        var sourceText = @"
+using System;
+
+Console.WriteLine(""Hello World!"");"
             .ReplaceLineEndings("\n");
 
         var resourceUri = new ResourceUri(string.Empty);
