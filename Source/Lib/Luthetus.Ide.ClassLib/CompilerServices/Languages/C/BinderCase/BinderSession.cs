@@ -18,15 +18,12 @@ namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.C.BinderCase;
 public class BinderSession
 {
     private readonly BoundScope _globalScope = CLanguageFacts.Scope.GetInitialGlobalScope();
-    private readonly string _sourceText;
     private readonly LuthetusIdeDiagnosticBag _diagnosticBag = new();
 
     private BoundScope _currentScope;
 
-    public BinderSession(
-        string sourceText)
+    public BinderSession()
     {
-        _sourceText = sourceText;
         _currentScope = _globalScope;
 
         BoundScopes.Add(_globalScope);

@@ -18,30 +18,23 @@ public class ParserSession
 {
     private readonly TokenWalker _tokenWalker;
     private readonly BinderSession _binder;
-    private readonly CompilationUnitBuilder _globalCompilationUnitBuilder = new();
+    private readonly CompilationUnitBuilder _globalCompilationUnitBuilder = new(null);
     private readonly LuthetusIdeDiagnosticBag _diagnosticBag = new();
     private readonly ImmutableArray<TextEditorDiagnostic> _lexerDiagnostics;
-    private readonly string _sourceText;
 
     public ParserSession(
         ImmutableArray<ISyntaxToken> tokens,
-        ResourceUri resourceUri,
-        string sourceText,
         ImmutableArray<TextEditorDiagnostic> lexerDiagnostics)
     {
-        ResourceUri = resourceUri;
-        _sourceText = sourceText;
         _lexerDiagnostics = lexerDiagnostics;
         _tokenWalker = new TokenWalker(tokens);
-        _binder = new BinderSession(sourceText);
+        _binder = new BinderSession();
 
         _currentCompilationUnitBuilder = _globalCompilationUnitBuilder;
     }
 
     public ImmutableArray<TextEditorDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
     public BinderSession Binder => _binder;
-
-    public ResourceUri ResourceUri { get; }
 
     private ISyntaxNode? _nodeRecent;
     private CompilationUnitBuilder _currentCompilationUnitBuilder;
@@ -374,11 +367,11 @@ public class ParserSession
         return new BoundLiteralExpressionNode(
             new EndOfFileToken(
                 new TextEditorTextSpan(
-                    -1,
-                    -1,
+                    0,
+                    0,
                     (byte)GenericDecorationKind.None,
-                    ResourceUri,
-                    _sourceText)),
+                    new(string.Empty),
+                    string.Empty)),
             typeof(void));
     }
 

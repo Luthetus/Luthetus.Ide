@@ -9,12 +9,10 @@ public class CompilationUnit : ISyntaxNode
 {
     public CompilationUnit(
         bool isExpression,
-        ImmutableArray<ISyntax> children,
-        ResourceUri resourceUri)
+        ImmutableArray<ISyntax> children)
     {
         IsExpression = isExpression;
         Children = children;
-        ResourceUri = resourceUri;
 
         Diagnostics = ImmutableArray<TextEditorDiagnostic>.Empty;
     }
@@ -22,19 +20,15 @@ public class CompilationUnit : ISyntaxNode
     public CompilationUnit(
         bool isExpression,
         ImmutableArray<ISyntax> children,
-        ImmutableArray<TextEditorDiagnostic> diagnostics,
-        ResourceUri resourceUri)
+        ImmutableArray<TextEditorDiagnostic> diagnostics)
     {
         IsExpression = isExpression;
         Children = children;
         Diagnostics = diagnostics;
-        ResourceUri = resourceUri;
     }
 
     public bool IsExpression { get; }
     public ImmutableArray<TextEditorDiagnostic> Diagnostics { get; }
-    /// <summary>This might be used to refer to the absolute file path of the file on one's computer which was parsed.</summary>
-    public ResourceUri ResourceUri { get; }
 
     public ImmutableArray<ISyntax> Children { get; }
     public bool IsFabricated { get; init; }

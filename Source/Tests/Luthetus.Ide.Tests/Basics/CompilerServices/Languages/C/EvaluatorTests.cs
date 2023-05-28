@@ -24,8 +24,6 @@ public class EvaluatorTests
 
         var parser = new ParserSession(
             lexer.SyntaxTokens,
-            resourceUri,
-            sourceText,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
@@ -56,8 +54,6 @@ public class EvaluatorTests
 
         var parser = new ParserSession(
             lexer.SyntaxTokens,
-            resourceUri,
-            sourceText,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
@@ -90,8 +86,6 @@ public class EvaluatorTests
 
         var parser = new ParserSession(
             lexer.SyntaxTokens,
-            resourceUri,
-            sourceText,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
@@ -124,8 +118,6 @@ public class EvaluatorTests
 
         var parser = new ParserSession(
             lexer.SyntaxTokens,
-            resourceUri,
-            sourceText,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();

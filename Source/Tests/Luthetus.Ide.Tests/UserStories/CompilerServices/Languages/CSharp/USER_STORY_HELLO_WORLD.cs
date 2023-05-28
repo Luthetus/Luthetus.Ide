@@ -34,7 +34,6 @@ namespace HelloWorld
 
         var parser = new Parser(
             lexer.SyntaxTokens,
-            sourceText,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();

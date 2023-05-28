@@ -46,7 +46,6 @@ public class SemanticModelCSharp : ISemanticModel
 
         var parserSession = new Parser(
             recentLexSession.SyntaxTokens,
-            text,
             recentLexSession.Diagnostics);
 
         var compilationUnit = parserSession.Parse();

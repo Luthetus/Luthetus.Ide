@@ -27,7 +27,6 @@ public class ParserTests
 
         var parser = new Parser(
             lexer.SyntaxTokens,
-            sourceText,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
@@ -55,7 +54,6 @@ public class ParserTests
 
         var parser = new Parser(
             lexer.SyntaxTokens,
-            sourceText,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
@@ -83,7 +81,6 @@ public class ParserTests
 
         var parser = new Parser(
             lexer.SyntaxTokens,
-            sourceText,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
@@ -122,7 +119,6 @@ public class ParserTests
 
         var parser = new Parser(
             lexer.SyntaxTokens,
-            sourceText,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
@@ -146,7 +142,6 @@ public class ParserTests
 
         var parser = new Parser(
             lexer.SyntaxTokens,
-            sourceText,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
@@ -200,7 +195,6 @@ x = 42;"
 
         var parser = new Parser(
             lexer.SyntaxTokens,
-            sourceText,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
@@ -238,7 +232,6 @@ x = 42;"
 
         var parser = new Parser(
             lexer.SyntaxTokens,
-            sourceText,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
@@ -278,7 +271,6 @@ x = 42;"
 
         var parser = new Parser(
             lexer.SyntaxTokens,
-            sourceText,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
@@ -313,7 +305,6 @@ WriteHelloWorldToConsole();"
 
         var parser = new Parser(
             lexer.SyntaxTokens,
-            sourceText,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
@@ -351,7 +342,6 @@ WriteHelloWorldToConsole();"
 
         var parser = new Parser(
             lexer.SyntaxTokens,
-            sourceText,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
@@ -400,7 +390,6 @@ WriteHelloWorldToConsole();"
 
         var parser = new Parser(
             lexer.SyntaxTokens,
-            sourceText,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
@@ -444,7 +433,6 @@ WriteHelloWorldToConsole();"
 
         var parser = new Parser(
             lexer.SyntaxTokens,
-            sourceText,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
@@ -489,7 +477,6 @@ WriteHelloWorldToConsole();"
 
         var parser = new Parser(
             lexer.SyntaxTokens,
-            sourceText,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
@@ -529,7 +516,6 @@ WriteHelloWorldToConsole();"
 
         var parser = new Parser(
             lexer.SyntaxTokens,
-            sourceText,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
@@ -569,7 +555,6 @@ WriteHelloWorldToConsole();"
 
         var parser = new Parser(
             lexer.SyntaxTokens,
-            sourceText,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
@@ -631,9 +616,7 @@ WriteHelloWorldToConsole();"
 
         var modelParser = new Parser(
             modelLexer.SyntaxTokens,
-            modelFile.Content,
-            modelLexer.Diagnostics,
-            modelResourceUri);
+            modelLexer.Diagnostics);
 
         modelCompilationUnit = modelParser.Parse();
 
@@ -646,9 +629,7 @@ WriteHelloWorldToConsole();"
 
         var displayParser = new Parser(
             displayLexer.SyntaxTokens,
-            displayFile.Content,
-            displayLexer.Diagnostics,
-            displayResourceUri);
+            displayLexer.Diagnostics);
 
         displayCompilationUnit = displayParser
             .Parse(modelParser.Binder);
@@ -713,9 +694,7 @@ namespace Pages
 
         var modelParser = new Parser(
             modelLexer.SyntaxTokens,
-            modelFile.Content,
-            modelLexer.Diagnostics,
-            modelResourceUri);
+            modelLexer.Diagnostics);
 
         modelCompilationUnit = modelParser.Parse();
 
@@ -728,9 +707,7 @@ namespace Pages
 
         var displayParser = new Parser(
             displayLexer.SyntaxTokens,
-            displayFile.Content,
-            displayLexer.Diagnostics,
-            displayResourceUri);
+            displayLexer.Diagnostics);
 
         displayCompilationUnit = displayParser
             .Parse(modelParser.Binder);
@@ -744,9 +721,7 @@ namespace Pages
 
         var pageParser = new Parser(
             pageLexer.SyntaxTokens,
-            pageFile.Content,
-            pageLexer.Diagnostics,
-            pageResourceUri);
+            pageLexer.Diagnostics);
 
         pageCompilationUnit = pageParser
             .Parse(displayParser.Binder);

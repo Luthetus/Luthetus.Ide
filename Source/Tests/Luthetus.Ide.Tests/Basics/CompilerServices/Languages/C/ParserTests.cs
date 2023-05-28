@@ -26,8 +26,6 @@ public class ParserTests
 
         var parser = new ParserSession(
             lexer.SyntaxTokens,
-            resourceUri,
-            sourceText,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
@@ -55,8 +53,6 @@ public class ParserTests
 
         var parser = new ParserSession(
             lexer.SyntaxTokens,
-            resourceUri,
-            sourceText,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
@@ -84,8 +80,6 @@ public class ParserTests
 
         var parser = new ParserSession(
             lexer.SyntaxTokens,
-            resourceUri,
-            sourceText,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
@@ -124,8 +118,6 @@ public class ParserTests
 
         var parser = new ParserSession(
             lexer.SyntaxTokens,
-            resourceUri,
-            sourceText,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
@@ -156,8 +148,6 @@ public class ParserTests
 
         var parser = new ParserSession(
             lexer.SyntaxTokens,
-            resourceUri,
-            sourceText,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
@@ -193,8 +183,6 @@ public class ParserTests
 
         var parser = new ParserSession(
             lexer.SyntaxTokens,
-            resourceUri,
-            sourceText,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
@@ -218,8 +206,6 @@ public class ParserTests
 
         var parser = new ParserSession(
             lexer.SyntaxTokens,
-            resourceUri,
-            sourceText,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
@@ -273,8 +259,6 @@ x = 42;"
 
         var parser = new ParserSession(
             lexer.SyntaxTokens,
-            resourceUri,
-            sourceText,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
@@ -312,8 +296,6 @@ x = 42;"
 
         var parser = new ParserSession(
             lexer.SyntaxTokens,
-            resourceUri,
-            sourceText,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
@@ -353,8 +335,6 @@ x = 42;"
 
         var parser = new ParserSession(
             lexer.SyntaxTokens,
-            resourceUri,
-            sourceText,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
@@ -389,8 +369,6 @@ WriteHelloWorldToConsole();"
 
         var parser = new ParserSession(
             lexer.SyntaxTokens,
-            resourceUri,
-            sourceText,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
@@ -428,8 +406,6 @@ WriteHelloWorldToConsole();"
 
         var parser = new ParserSession(
             lexer.SyntaxTokens,
-            resourceUri,
-            sourceText,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();

@@ -22,14 +22,11 @@ public class Binder
     private readonly List<ISymbol> _symbols = new();
     private readonly LuthetusIdeDiagnosticBag _diagnosticBag = new();
 
-    private string _sourceText;
     private List<BoundScope> _boundScopes = new();
     private BoundScope _currentScope;
 
-    public Binder(
-        string sourceText)
+    public Binder()
     {
-        _sourceText = sourceText;
         _currentScope = _globalScope;
 
         _boundScopes.Add(_globalScope);
@@ -490,11 +487,5 @@ public class Binder
 
         boundVariableDeclarationStatementNode = null;
         return false;
-    }
-
-    public void SetSourceText(
-        string sourceText)
-    {
-        _sourceText = sourceText;
     }
 }

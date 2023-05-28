@@ -20,35 +20,20 @@ public class Parser
     private readonly CompilationUnitBuilder _globalCompilationUnitBuilder;
     private readonly LuthetusIdeDiagnosticBag _diagnosticBag = new();
     private readonly ImmutableArray<TextEditorDiagnostic> _lexerDiagnostics;
-    private readonly string _sourceText;
 
     private Binder _binder;
 
     public Parser(
         ImmutableArray<ISyntaxToken> tokens,
-        string sourceText,
-        ImmutableArray<TextEditorDiagnostic> lexerDiagnostics,
-        ResourceUri resourceUri)
+        ImmutableArray<TextEditorDiagnostic> lexerDiagnostics)
     {
-        _sourceText = sourceText;
         _lexerDiagnostics = lexerDiagnostics;
         _tokenWalker = new TokenWalker(tokens);
-        _binder = new Binder(sourceText);
-        ResourceUri = resourceUri;
+        _binder = new Binder();
 
-        _globalCompilationUnitBuilder = new(null, ResourceUri);
+        _globalCompilationUnitBuilder = new(null);
         _currentCompilationUnitBuilder = _globalCompilationUnitBuilder;
     }
-    
-    public Parser(
-        ImmutableArray<ISyntaxToken> tokens,
-        string sourceText,
-        ImmutableArray<TextEditorDiagnostic> lexerDiagnostics)
-        : this(tokens, sourceText, lexerDiagnostics, new ResourceUri(string.Empty))
-    {
-    }
-
-    public ResourceUri ResourceUri { get; }
 
     public ImmutableArray<TextEditorDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
     public Binder Binder => _binder;
@@ -64,7 +49,6 @@ public class Parser
         Binder previousBinder)
     {
         _binder = previousBinder;
-        _binder.SetSourceText(_sourceText);
 
         return Parse();
     }
@@ -489,11 +473,11 @@ public class Parser
         return new BoundLiteralExpressionNode(
             new EndOfFileToken(
                 new TextEditorTextSpan(
-                    -1,
-                    -1,
+                    0,
+                    0,
                     (byte)GenericDecorationKind.None,
-                    ResourceUri,
-                    _sourceText)),
+                    new ResourceUri(string.Empty),
+                    string.Empty)),
             typeof(void));
     }
 
