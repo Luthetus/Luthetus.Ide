@@ -35,6 +35,9 @@ public class Parser
         _currentCompilationUnitBuilder = _globalCompilationUnitBuilder;
     }
 
+    /// <summary>If a file scoped namespace is found, then set this field, so that prior to finishing the parser constructs the namespace node.</summary>
+    private Action<CompilationUnit>? _finalizeFileScopeAction;
+
     public ImmutableArray<TextEditorDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
     public Binder Binder => _binder;
 
@@ -92,7 +95,7 @@ public class Parser
                     ParseColonToken((ColonToken)consumedToken);
                     break;
                 case SyntaxKind.StatementDelimiterToken:
-                    ParseStatementDelimiterToken();
+                    ParseStatementDelimiterToken((StatementDelimiterToken)consumedToken);
                     break;
                 case SyntaxKind.EndOfFileToken:
                     if (_nodeRecent is IExpressionNode)
@@ -105,6 +108,18 @@ public class Parser
 
             if (consumedToken.SyntaxKind == SyntaxKind.EndOfFileToken)
                 break;
+        }
+
+        if (_finalizeFileScopeAction is not null &&
+            _currentCompilationUnitBuilder.Parent is not null)
+        {
+            // The current token here would be the EOF token.
+            _binder.DisposeBoundScope(_tokenWalker.Current.TextSpan);
+
+            _finalizeFileScopeAction.Invoke(
+                _currentCompilationUnitBuilder.Build());
+
+            _currentCompilationUnitBuilder = _currentCompilationUnitBuilder.Parent;
         }
 
         return _currentCompilationUnitBuilder.Build(
@@ -231,6 +246,13 @@ public class Parser
 
                 if (nextToken.SyntaxKind == SyntaxKind.IdentifierToken)
                 {
+                    if (_finalizeFileScopeAction is not null)
+                    {
+                        throw new NotImplementedException(
+                            "Need to add logic to report diagnostic when there is" +
+                            " already a file scoped namespace.");
+                    }
+
                     var boundNamespaceStatementNode = _binder.BindNamespaceStatementNode(
                         inToken,
                         (IdentifierToken)nextToken);
@@ -580,8 +602,34 @@ public class Parser
         }
     }
 
-    private void ParseStatementDelimiterToken()
+    private void ParseStatementDelimiterToken(
+        StatementDelimiterToken inToken)
     {
+        if (_nodeRecent is not null &&
+            _nodeRecent.SyntaxKind == SyntaxKind.BoundNamespaceStatementNode)
+        {
+            var closureCurrentCompilationUnitBuilder = _currentCompilationUnitBuilder;
+            Type? scopeReturnType = null;
 
+            var boundNamespaceStatementNode = (BoundNamespaceStatementNode)_nodeRecent;
+
+            _finalizeFileScopeAction = compilationUnit =>
+            {
+                boundNamespaceStatementNode = _binder.RegisterBoundNamespaceEntryNode(
+                    boundNamespaceStatementNode,
+                    compilationUnit);
+
+                closureCurrentCompilationUnitBuilder.Children
+                    .Add(boundNamespaceStatementNode);
+            };
+
+            _binder.RegisterBoundScope(
+                scopeReturnType,
+                inToken.TextSpan);
+
+            _binder.AddNamespaceToCurrentScope((BoundNamespaceStatementNode)_nodeRecent);
+
+            _currentCompilationUnitBuilder = new(_currentCompilationUnitBuilder);
+        }
     }
 }
