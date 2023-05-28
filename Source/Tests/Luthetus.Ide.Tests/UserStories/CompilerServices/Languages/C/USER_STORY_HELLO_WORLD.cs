@@ -1,5 +1,6 @@
 ﻿using Luthetus.Ide.ClassLib.CompilerServices.Languages.C.LexerCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.C.ParserCase;
+using Luthetus.TextEditor.RazorLib.Lexing;
 
 namespace Luthetus.Ide.Tests.UserStories.CompilerServices.Languages.C;
 
@@ -21,12 +22,17 @@ int main() {
    return 0;
 }".ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new LexerSession(
+            resourceUri,
+            sourceText);
 
         lexer.Lex();
 
         var parser = new ParserSession(
             lexer.SyntaxTokens,
+            resourceUri,
             sourceText,
             lexer.Diagnostics);
 

@@ -1,5 +1,6 @@
 ﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
 using Luthetus.TextEditor.RazorLib.Analysis;
+using Luthetus.TextEditor.RazorLib.Lexing;
 using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.General;
@@ -9,7 +10,7 @@ public class CompilationUnit : ISyntaxNode
     public CompilationUnit(
         bool isExpression,
         ImmutableArray<ISyntax> children,
-        string resourceUri)
+        ResourceUri resourceUri)
     {
         IsExpression = isExpression;
         Children = children;
@@ -22,7 +23,7 @@ public class CompilationUnit : ISyntaxNode
         bool isExpression,
         ImmutableArray<ISyntax> children,
         ImmutableArray<TextEditorDiagnostic> diagnostics,
-        string resourceUri)
+        ResourceUri resourceUri)
     {
         IsExpression = isExpression;
         Children = children;
@@ -33,7 +34,7 @@ public class CompilationUnit : ISyntaxNode
     public bool IsExpression { get; }
     public ImmutableArray<TextEditorDiagnostic> Diagnostics { get; }
     /// <summary>This might be used to refer to the absolute file path of the file on one's computer which was parsed.</summary>
-    public string ResourceUri { get; }
+    public ResourceUri ResourceUri { get; }
 
     public ImmutableArray<ISyntax> Children { get; }
     public bool IsFabricated { get; init; }

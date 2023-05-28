@@ -1,6 +1,7 @@
 ﻿using Luthetus.Ide.ClassLib.CompilerServices.Languages.C.EvaluatorCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.LexerCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.ParserCase;
+using Luthetus.TextEditor.RazorLib.Lexing;
 
 namespace Luthetus.Ide.Tests.Basics.CompilerServices.Languages.CSharp;
 
@@ -13,7 +14,12 @@ public class EvaluatorTests
 
         string sourceText = $"{x}".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
+
         lexer.Lex();
 
         var parser = new Parser(
@@ -39,7 +45,12 @@ public class EvaluatorTests
         var x = "123abc";
         string sourceText = $"\"{x}\"".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
+
         lexer.Lex();
 
         var parser = new Parser(
@@ -67,7 +78,12 @@ public class EvaluatorTests
 
         string sourceText = $"{x} + {y}".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
+
         lexer.Lex();
 
         var parser = new Parser(
@@ -94,8 +110,13 @@ public class EvaluatorTests
         var y = "abc";
 
         string sourceText = $"\"{x}\" + \"{y}\"".ReplaceLineEndings("\n");
+        
+        var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(sourceText);
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
+
         lexer.Lex();
 
         var parser = new Parser(

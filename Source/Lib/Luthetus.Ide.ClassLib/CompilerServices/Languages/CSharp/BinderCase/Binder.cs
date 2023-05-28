@@ -100,7 +100,7 @@ public class Binder
         ISyntaxToken token,
         out BoundTypeNode? boundTypeNode)
     {
-        var text = token.TextSpan.GetText(_sourceText);
+        var text = token.TextSpan.GetText();
 
         if (_currentScope.TypeMap.TryGetValue(text, out var type))
         {
@@ -116,7 +116,7 @@ public class Binder
         BoundTypeNode boundTypeNode,
         IdentifierToken identifierToken)
     {
-        var functionIdentifier = identifierToken.TextSpan.GetText(_sourceText);
+        var functionIdentifier = identifierToken.TextSpan.GetText();
 
         if (_currentScope.FunctionDeclarationMap.TryGetValue(
             functionIdentifier,
@@ -161,7 +161,7 @@ public class Binder
         KeywordToken keywordToken,
         IdentifierToken identifierToken)
     {
-        var namespaceIdentifier = identifierToken.TextSpan.GetText(_sourceText);
+        var namespaceIdentifier = identifierToken.TextSpan.GetText();
 
         if (_boundNamespaceStatementNodes.TryGetValue(
                 namespaceIdentifier, 
@@ -189,7 +189,7 @@ public class Binder
         CompilationUnit compilationUnit)
     {
         var namespaceIdentifier = inBoundNamespaceStatementNode
-            .IdentifierToken.TextSpan.GetText(_sourceText);
+            .IdentifierToken.TextSpan.GetText();
 
         if (_boundNamespaceStatementNodes.TryGetValue(
                 namespaceIdentifier, 
@@ -220,7 +220,7 @@ public class Binder
     public BoundClassDeclarationNode BindClassDeclarationNode(
         IdentifierToken identifierToken)
     {
-        var classIdentifier = identifierToken.TextSpan.GetText(_sourceText);
+        var classIdentifier = identifierToken.TextSpan.GetText();
 
         if (_currentScope.ClassDeclarationMap.TryGetValue(
             classIdentifier,
@@ -250,7 +250,7 @@ public class Binder
     public BoundInheritanceStatementNode BindInheritanceStatementNode(
         IdentifierToken parentClassIdentifierToken)
     {
-        var parentClassIdentifier = parentClassIdentifierToken.TextSpan.GetText(_sourceText);
+        var parentClassIdentifier = parentClassIdentifierToken.TextSpan.GetText();
 
         var boundInheritanceStatementNode = new BoundInheritanceStatementNode(
                 parentClassIdentifierToken);
@@ -271,7 +271,7 @@ public class Binder
         BoundTypeNode boundTypeNode,
         IdentifierToken identifierToken)
     {
-        var text = identifierToken.TextSpan.GetText(_sourceText);
+        var text = identifierToken.TextSpan.GetText();
 
         if (_currentScope.VariableDeclarationMap.TryGetValue(
             text,
@@ -298,7 +298,7 @@ public class Binder
         IdentifierToken identifierToken,
         IBoundExpressionNode boundExpressionNode)
     {
-        var text = identifierToken.TextSpan.GetText(_sourceText);
+        var text = identifierToken.TextSpan.GetText();
 
         if (TryGetVariableHierarchically(
                 text,
@@ -326,7 +326,7 @@ public class Binder
     public BoundFunctionInvocationNode? BindFunctionInvocationNode(
         IdentifierToken identifierToken)
     {
-        var text = identifierToken.TextSpan.GetText(_sourceText);
+        var text = identifierToken.TextSpan.GetText();
 
         if (TryGetBoundFunctionDeclarationNodeHierarchically(
                 text,
@@ -352,7 +352,7 @@ public class Binder
         KeywordToken usingKeywordToken,
         IdentifierToken namespaceIdentifierToken)
     {
-        var namespaceText = namespaceIdentifierToken.TextSpan.GetText(_sourceText);
+        var namespaceText = namespaceIdentifierToken.TextSpan.GetText();
 
         if (_boundNamespaceStatementNodes.TryGetValue(
                 namespaceText,
@@ -404,7 +404,7 @@ public class Binder
                 var boundClassDeclarationNode = (BoundClassDeclarationNode)child;
 
                 var identifierText = boundClassDeclarationNode.IdentifierToken.TextSpan
-                    .GetText(_sourceText);
+                    .GetText();
 
                 _currentScope.ClassDeclarationMap.Add(
                     identifierText,

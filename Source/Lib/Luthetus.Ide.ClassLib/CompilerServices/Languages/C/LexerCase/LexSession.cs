@@ -15,9 +15,9 @@ public class LexerSession
     private readonly List<ISyntaxToken> _syntaxTokens = new();
     private readonly LuthetusIdeDiagnosticBag _diagnosticBag = new();
 
-    public LexerSession(string content)
+    public LexerSession(ResourceUri resourceUri, string sourceText)
     {
-        _stringWalker = new StringWalker(content);
+        _stringWalker = new StringWalker(resourceUri, sourceText);
     }
 
     public ImmutableArray<ISyntaxToken> SyntaxTokens => _syntaxTokens.ToImmutableArray();
@@ -152,8 +152,7 @@ public class LexerSession
                     var preprocessorDirectiveToken = ConsumePreprocessorDirective();
                     _syntaxTokens.Add(preprocessorDirectiveToken);
 
-                    if (preprocessorDirectiveToken.TextSpan
-                            .GetText(_stringWalker.SourceText) ==
+                    if (preprocessorDirectiveToken.TextSpan.GetText() ==
                         CLanguageFacts.Preprocessor.Directives.INCLUDE)
                     {
                         if (TryConsumeLibraryReference(out var libraryReferenceToken) &&

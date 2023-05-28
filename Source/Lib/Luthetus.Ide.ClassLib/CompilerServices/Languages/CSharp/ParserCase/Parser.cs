@@ -9,6 +9,7 @@ using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.SyntaxTokens;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.BinderCase;
 using Luthetus.TextEditor.RazorLib.Analysis;
 using Luthetus.TextEditor.RazorLib.Analysis.GenericLexer.Decoration;
+using Luthetus.TextEditor.RazorLib.Lexing;
 using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.ParserCase;
@@ -27,7 +28,7 @@ public class Parser
         ImmutableArray<ISyntaxToken> tokens,
         string sourceText,
         ImmutableArray<TextEditorDiagnostic> lexerDiagnostics,
-        string resourceUri)
+        ResourceUri resourceUri)
     {
         _sourceText = sourceText;
         _lexerDiagnostics = lexerDiagnostics;
@@ -43,11 +44,11 @@ public class Parser
         ImmutableArray<ISyntaxToken> tokens,
         string sourceText,
         ImmutableArray<TextEditorDiagnostic> lexerDiagnostics)
-        : this(tokens, sourceText, lexerDiagnostics, string.Empty)
+        : this(tokens, sourceText, lexerDiagnostics, new ResourceUri(string.Empty))
     {
     }
 
-    public string ResourceUri { get; }
+    public ResourceUri ResourceUri { get; }
 
     public ImmutableArray<TextEditorDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
     public Binder Binder => _binder;
@@ -218,7 +219,7 @@ public class Parser
         KeywordToken inToken)
     {
         // TODO: Make many keywords SyntaxKinds. Then if SyntaxKind.EndsWith("Keyword"); so that string checking doesn't need to be done.
-        var text = inToken.TextSpan.GetText(_sourceText);
+        var text = inToken.TextSpan.GetText();
 
         if (_binder.TryGetTypeHierarchically(text, out var type) &&
             type is not null)
@@ -486,7 +487,13 @@ public class Parser
 
         // #TODO: Correctly implement this method Returning a nonsensical token for now.
         return new BoundLiteralExpressionNode(
-            new EndOfFileToken(new(-1, -1, (byte)GenericDecorationKind.None)),
+            new EndOfFileToken(
+                new TextEditorTextSpan(
+                    -1,
+                    -1,
+                    (byte)GenericDecorationKind.None,
+                    ResourceUri,
+                    _sourceText)),
             typeof(void));
     }
 

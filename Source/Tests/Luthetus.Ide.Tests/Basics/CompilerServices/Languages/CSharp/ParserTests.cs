@@ -6,6 +6,7 @@ using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.LexerCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.ParserCase;
 using Luthetus.TextEditor.RazorLib.Analysis;
+using Luthetus.TextEditor.RazorLib.Lexing;
 
 namespace Luthetus.Ide.Tests.Basics.CompilerServices.Languages.CSharp;
 
@@ -16,7 +17,12 @@ public class ParserTests
     {
         string sourceText = "3".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
+
         lexer.Lex();
 
         var parser = new Parser(
@@ -39,7 +45,12 @@ public class ParserTests
     {
         string sourceText = "\"123abc\"".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
+
         lexer.Lex();
 
         var parser = new Parser(
@@ -62,7 +73,12 @@ public class ParserTests
     {
         string sourceText = "3 + 3".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
+
         lexer.Lex();
 
         var parser = new Parser(
@@ -96,7 +112,11 @@ public class ParserTests
         string sourceText = @"// C:\Users\hunte\Repos\Aaa\"
             .ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
 
         lexer.Lex();
 
@@ -116,7 +136,11 @@ public class ParserTests
         string sourceText = @"int x;"
             .ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
 
         lexer.Lex();
 
@@ -166,7 +190,11 @@ public class ParserTests
 x = 42;"
             .ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
 
         lexer.Lex();
 
@@ -200,7 +228,11 @@ x = 42;"
         string sourceText = @"int x = 42;"
             .ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
 
         lexer.Lex();
 
@@ -236,7 +268,11 @@ x = 42;"
 }"
             .ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
 
         lexer.Lex();
 
@@ -267,7 +303,11 @@ x = 42;"
 WriteHelloWorldToConsole();"
             .ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
 
         lexer.Lex();
 
@@ -301,7 +341,11 @@ WriteHelloWorldToConsole();"
         string sourceText = @"printf();"
             .ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
 
         lexer.Lex();
 
@@ -346,7 +390,11 @@ WriteHelloWorldToConsole();"
 {{
 }}".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
 
         lexer.Lex();
 
@@ -386,7 +434,11 @@ WriteHelloWorldToConsole();"
     }}
 }}".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
 
         lexer.Lex();
 
@@ -427,7 +479,11 @@ WriteHelloWorldToConsole();"
 {{
 }}".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
 
         lexer.Lex();
 
@@ -463,7 +519,11 @@ WriteHelloWorldToConsole();"
 {{
 }}".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
 
         lexer.Lex();
 
@@ -499,7 +559,11 @@ WriteHelloWorldToConsole();"
     {
         string sourceText = @"namespace HelloWorld {}".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
 
         lexer.Lex();
 
@@ -552,11 +616,16 @@ WriteHelloWorldToConsole();"
     }
 }".ReplaceLineEndings("\n"));
 
+        var modelResourceUri = new ResourceUri("PersonModel.cs");
+        var displayResourceUri = new ResourceUri("PersonDisplay.razor.cs");
+
         CompilationUnit modelCompilationUnit;
         CompilationUnit displayCompilationUnit;
 
         // personModelFile
-        var modelLexer = new Lexer(modelFile.Content);
+        var modelLexer = new Lexer(
+            modelResourceUri,
+            modelFile.Content);
 
         modelLexer.Lex();
 
@@ -564,12 +633,14 @@ WriteHelloWorldToConsole();"
             modelLexer.SyntaxTokens,
             modelFile.Content,
             modelLexer.Diagnostics,
-            "PersonModel.cs");
+            modelResourceUri);
 
         modelCompilationUnit = modelParser.Parse();
 
         // personDisplayFile
-        var displayLexer = new Lexer(displayFile.Content);
+        var displayLexer = new Lexer(
+            displayResourceUri,
+            displayFile.Content);
 
         displayLexer.Lex();
 
@@ -577,7 +648,7 @@ WriteHelloWorldToConsole();"
             displayLexer.SyntaxTokens,
             displayFile.Content,
             displayLexer.Diagnostics,
-            "PersonDisplay.razor.cs");
+            displayResourceUri);
 
         displayCompilationUnit = displayParser
             .Parse(modelParser.Binder);
@@ -625,12 +696,18 @@ namespace Pages
     }
 }".ReplaceLineEndings("\n"));
 
+        var modelResourceUri = new ResourceUri("PersonModel.cs");
+        var displayResourceUri = new ResourceUri("PersonDisplay.razor.cs");
+        var pageResourceUri = new ResourceUri("PersonPage.razor.cs");
+
         CompilationUnit modelCompilationUnit;
         CompilationUnit displayCompilationUnit;
         CompilationUnit pageCompilationUnit;
 
         // personModelFile
-        var modelLexer = new Lexer(modelFile.Content);
+        var modelLexer = new Lexer(
+            modelResourceUri,
+            modelFile.Content);
 
         modelLexer.Lex();
 
@@ -638,12 +715,14 @@ namespace Pages
             modelLexer.SyntaxTokens,
             modelFile.Content,
             modelLexer.Diagnostics,
-            "PersonModel.cs");
+            modelResourceUri);
 
         modelCompilationUnit = modelParser.Parse();
 
         // personDisplayFile
-        var displayLexer = new Lexer(displayFile.Content);
+        var displayLexer = new Lexer(
+            displayResourceUri,
+            displayFile.Content);
 
         displayLexer.Lex();
 
@@ -651,13 +730,15 @@ namespace Pages
             displayLexer.SyntaxTokens,
             displayFile.Content,
             displayLexer.Diagnostics,
-            "PersonDisplay.razor.cs");
+            displayResourceUri);
 
         displayCompilationUnit = displayParser
             .Parse(modelParser.Binder);
         
         // personPageFile
-        var pageLexer = new Lexer(pageFile.Content);
+        var pageLexer = new Lexer(
+            pageResourceUri,
+            pageFile.Content);
 
         pageLexer.Lex();
 
@@ -665,7 +746,7 @@ namespace Pages
             pageLexer.SyntaxTokens,
             pageFile.Content,
             pageLexer.Diagnostics,
-            "pageParser.razor.cs");
+            pageResourceUri);
 
         pageCompilationUnit = pageParser
             .Parse(displayParser.Binder);

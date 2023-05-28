@@ -44,25 +44,26 @@ public static class ExtensionNoPeriodFacts
     public const string HPP = "hpp";
 
     public static ITextEditorLexer GetLexer(
+        ResourceUri resourceUri,
         string extensionNoPeriod) => extensionNoPeriod switch
         {
-            HTML => new TextEditorHtmlLexer(),
-            XML => new TextEditorHtmlLexer(),
-            C_SHARP_PROJECT => new TextEditorHtmlLexer(),
-            C_SHARP_CLASS => new TextEditorLexerCSharp(),
-            RAZOR_CODEBEHIND => new TextEditorLexerCSharp(),
-            RAZOR_MARKUP => new TextEditorRazorLexer(),
-            CSHTML_CLASS => new TextEditorRazorLexer(),
-            CSS => new TextEditorCssLexer(),
-            JAVA_SCRIPT => new TextEditorJavaScriptLexer(),
-            JSON => new TextEditorJsonLexer(),
-            TYPE_SCRIPT => new TextEditorTypeScriptLexer(),
-            F_SHARP => new TextEditorFSharpLexer(),
-            C => new TextEditorLexerC(),
-            H => new TextEditorCLexer(),
-            CPP => new TextEditorCLexer(),
-            HPP => new TextEditorCLexer(),
-            _ => new TextEditorLexerDefault(),
+            HTML => new TextEditorHtmlLexer(resourceUri),
+            XML => new TextEditorHtmlLexer(resourceUri),
+            C_SHARP_PROJECT => new TextEditorHtmlLexer(resourceUri),
+            C_SHARP_CLASS => new TextEditorLexerCSharp(resourceUri),
+            RAZOR_CODEBEHIND => new TextEditorLexerCSharp(resourceUri),
+            RAZOR_MARKUP => new TextEditorRazorLexer(resourceUri),
+            CSHTML_CLASS => new TextEditorRazorLexer(resourceUri),
+            CSS => new TextEditorCssLexer(resourceUri),
+            JAVA_SCRIPT => new TextEditorJavaScriptLexer(resourceUri),
+            JSON => new TextEditorJsonLexer(resourceUri),
+            TYPE_SCRIPT => new TextEditorTypeScriptLexer(resourceUri),
+            F_SHARP => new TextEditorFSharpLexer(resourceUri),
+            C => new TextEditorLexerC(resourceUri),
+            H => new TextEditorCLexer(resourceUri),
+            CPP => new TextEditorCLexer(resourceUri),
+            HPP => new TextEditorCLexer(resourceUri),
+            _ => new TextEditorLexerDefault(resourceUri),
         };
 
     public static IDecorationMapper GetDecorationMapper(

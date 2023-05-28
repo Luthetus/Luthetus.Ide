@@ -1,5 +1,6 @@
 ﻿using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.LexerCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.ParserCase;
+using Luthetus.TextEditor.RazorLib.Lexing;
 
 namespace Luthetus.Ide.Tests.UserStories.CompilerServices.Languages.CSharp;
 
@@ -23,7 +24,11 @@ namespace HelloWorld
     }
 }".ReplaceLineEndings("\n");
 
-        var lexer = new Lexer(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
 
         lexer.Lex();
 

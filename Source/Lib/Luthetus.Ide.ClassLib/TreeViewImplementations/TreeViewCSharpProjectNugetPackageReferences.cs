@@ -64,7 +64,9 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
         var content = await FileSystemProvider.File.ReadAllTextAsync(
             Item.CSharpProjectNamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString());
 
-        var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(content);
+        var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
+            new (Item.CSharpProjectNamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString()),
+            content);
 
         var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
 
@@ -84,10 +86,10 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
                 .AttributeSyntaxes
                 .Select(x => (
                     x.AttributeNameSyntax.TextEditorTextSpan
-                        .GetText(content)
+                        .GetText()
                         .Trim(),
                     x.AttributeValueSyntax.TextEditorTextSpan
-                        .GetText(content)
+                        .GetText()
                         .Replace("\"", string.Empty)
                         .Replace("=", string.Empty)
                         .Trim()))

@@ -3,6 +3,7 @@ using Luthetus.Ide.ClassLib.DotNet.CSharp;
 using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
 using Luthetus.Ide.ClassLib.FileSystem.Classes.Local;
 using Luthetus.TextEditor.RazorLib.Analysis.Html.SyntaxActors;
+using Luthetus.TextEditor.RazorLib.Lexing;
 
 namespace Luthetus.Ide.Tests.Basics.DotNet;
 
@@ -20,11 +21,15 @@ public class CSharpProjectParserTests
             false,
             localEnvironmentProvider);
 
-        var htmlLexer = new TextEditorHtmlLexer();
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var htmlLexer = new TextEditorHtmlLexer(resourceUri);
 
         var textSpans = htmlLexer.Lex(PROJECT_TEST_DATA, RenderStateKey.NewRenderStateKey());
 
-        var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(PROJECT_TEST_DATA);
+        var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
+            resourceUri,
+            PROJECT_TEST_DATA);
 
         var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
 
@@ -39,8 +44,8 @@ public class CSharpProjectParserTests
         var attributeNameValueTuples = packageReferences
             .SelectMany(x => x.AttributeSyntaxes)
             .Select(x => (
-                $"Name: {x.AttributeNameSyntax.TextEditorTextSpan.GetText(PROJECT_TEST_DATA)}",
-                $"Value: {x.AttributeValueSyntax.TextEditorTextSpan.GetText(PROJECT_TEST_DATA)}"))
+                $"Name: {x.AttributeNameSyntax.TextEditorTextSpan.GetText()}",
+                $"Value: {x.AttributeValueSyntax.TextEditorTextSpan.GetText()}"))
             .ToArray();
     }
 
@@ -56,11 +61,15 @@ public class CSharpProjectParserTests
             false,
             localEnvironmentProvider);
 
-        var htmlLexer = new TextEditorHtmlLexer();
+        var resourceUri = new ResourceUri(projectAbsoluteFilePathString);
+
+        var htmlLexer = new TextEditorHtmlLexer(resourceUri);
 
         var textSpans = htmlLexer.Lex(PROJECT_TEST_DATA, RenderStateKey.NewRenderStateKey());
 
-        var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(PROJECT_TEST_DATA);
+        var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
+            resourceUri,
+            PROJECT_TEST_DATA);
 
         var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
 
@@ -75,8 +84,8 @@ public class CSharpProjectParserTests
         var attributeNameValueTuples = packageReferences
             .SelectMany(x => x.AttributeSyntaxes)
             .Select(x => (
-                $"Name: {x.AttributeNameSyntax.TextEditorTextSpan.GetText(PROJECT_TEST_DATA)}",
-                $"Value: {x.AttributeValueSyntax.TextEditorTextSpan.GetText(PROJECT_TEST_DATA)}"))
+                $"Name: {x.AttributeNameSyntax.TextEditorTextSpan.GetText()}",
+                $"Value: {x.AttributeValueSyntax.TextEditorTextSpan.GetText()}"))
             .ToArray();
     }
 

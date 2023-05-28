@@ -9,11 +9,18 @@ public class TextEditorLexerCSharp : ITextEditorLexer
 {
     private readonly object _lexerLock = new object();
 
+    public TextEditorLexerCSharp(ResourceUri resourceUri)
+    {
+        ResourceUri = resourceUri;
+    }
+
     public RenderStateKey ModelRenderStateKey { get; private set; } = RenderStateKey.Empty;
     public Lexer? RecentLexSession { get; private set; }
 
+    public ResourceUri ResourceUri { get; }
+
     public Task<ImmutableArray<TextEditorTextSpan>> Lex(
-        string text,
+        string sourceText,
         RenderStateKey modelRenderStateKey)
     {
         Lexer? lexSession;
@@ -33,7 +40,9 @@ public class TextEditorLexerCSharp : ITextEditorLexer
             ModelRenderStateKey = modelRenderStateKey;
         }
 
-        lexSession = new Lexer(text);
+        lexSession = new Lexer(
+            ResourceUri,
+            sourceText);
 
         lexSession.Lex();
 

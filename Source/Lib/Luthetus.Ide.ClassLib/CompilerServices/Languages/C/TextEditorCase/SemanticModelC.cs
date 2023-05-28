@@ -46,6 +46,7 @@ public class SemanticModelC : ISemanticModel
 
         var parserSession = new ParserSession(
             recentLexSession.SyntaxTokens,
+            model.ResourceUri,
             text,
             recentLexSession.Diagnostics);
 

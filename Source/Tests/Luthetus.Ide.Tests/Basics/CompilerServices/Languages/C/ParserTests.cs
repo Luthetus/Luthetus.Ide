@@ -5,6 +5,7 @@ using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statem
 using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.C.LexerCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.C.ParserCase;
+using Luthetus.TextEditor.RazorLib.Lexing;
 
 namespace Luthetus.Ide.Tests.Basics.CompilerServices.Languages.C;
 
@@ -15,11 +16,17 @@ public class ParserTests
     {
         string sourceText = "3".ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new LexerSession(
+            resourceUri,
+            sourceText);
+
         lexer.Lex();
 
         var parser = new ParserSession(
             lexer.SyntaxTokens,
+            resourceUri,
             sourceText,
             lexer.Diagnostics);
 
@@ -38,11 +45,17 @@ public class ParserTests
     {
         string sourceText = "\"123abc\"".ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new LexerSession(
+            resourceUri,
+            sourceText);
+
         lexer.Lex();
 
         var parser = new ParserSession(
             lexer.SyntaxTokens,
+            resourceUri,
             sourceText,
             lexer.Diagnostics);
 
@@ -61,11 +74,17 @@ public class ParserTests
     {
         string sourceText = "3 + 3".ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new LexerSession(
+            resourceUri,
+            sourceText);
+
         lexer.Lex();
 
         var parser = new ParserSession(
             lexer.SyntaxTokens,
+            resourceUri,
             sourceText,
             lexer.Diagnostics);
 
@@ -95,12 +114,17 @@ public class ParserTests
         string sourceText = "#include <stdlib.h>"
             .ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new LexerSession(
+            resourceUri,
+            sourceText);
 
         lexer.Lex();
 
         var parser = new ParserSession(
             lexer.SyntaxTokens,
+            resourceUri,
             sourceText,
             lexer.Diagnostics);
 
@@ -122,12 +146,17 @@ public class ParserTests
 #include <stdio.h>"
             .ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new LexerSession(
+            resourceUri,
+            sourceText);
 
         lexer.Lex();
 
         var parser = new ParserSession(
             lexer.SyntaxTokens,
+            resourceUri,
             sourceText,
             lexer.Diagnostics);
 
@@ -154,12 +183,17 @@ public class ParserTests
         string sourceText = @"// C:\Users\hunte\Repos\Aaa\"
             .ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new LexerSession(
+            resourceUri,
+            sourceText);
 
         lexer.Lex();
 
         var parser = new ParserSession(
             lexer.SyntaxTokens,
+            resourceUri,
             sourceText,
             lexer.Diagnostics);
 
@@ -174,12 +208,17 @@ public class ParserTests
         string sourceText = @"int x;"
             .ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new LexerSession(
+            resourceUri,
+            sourceText);
 
         lexer.Lex();
 
         var parser = new ParserSession(
             lexer.SyntaxTokens,
+            resourceUri,
             sourceText,
             lexer.Diagnostics);
 
@@ -224,12 +263,17 @@ public class ParserTests
 x = 42;"
             .ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new LexerSession(
+            resourceUri,
+            sourceText);
 
         lexer.Lex();
 
         var parser = new ParserSession(
             lexer.SyntaxTokens,
+            resourceUri,
             sourceText,
             lexer.Diagnostics);
 
@@ -258,12 +302,17 @@ x = 42;"
         string sourceText = @"int x = 42;"
             .ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new LexerSession(
+            resourceUri,
+            sourceText);
 
         lexer.Lex();
 
         var parser = new ParserSession(
             lexer.SyntaxTokens,
+            resourceUri,
             sourceText,
             lexer.Diagnostics);
 
@@ -294,12 +343,17 @@ x = 42;"
 }"
             .ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new LexerSession(
+            resourceUri,
+            sourceText);
 
         lexer.Lex();
 
         var parser = new ParserSession(
             lexer.SyntaxTokens,
+            resourceUri,
             sourceText,
             lexer.Diagnostics);
 
@@ -325,12 +379,17 @@ x = 42;"
 WriteHelloWorldToConsole();"
             .ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new LexerSession(
+            resourceUri,
+            sourceText);
 
         lexer.Lex();
 
         var parser = new ParserSession(
             lexer.SyntaxTokens,
+            resourceUri,
             sourceText,
             lexer.Diagnostics);
 
@@ -359,12 +418,17 @@ WriteHelloWorldToConsole();"
         string sourceText = @"printf();"
             .ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new LexerSession(
+            resourceUri,
+            sourceText);
 
         lexer.Lex();
 
         var parser = new ParserSession(
             lexer.SyntaxTokens,
+            resourceUri,
             sourceText,
             lexer.Diagnostics);
 

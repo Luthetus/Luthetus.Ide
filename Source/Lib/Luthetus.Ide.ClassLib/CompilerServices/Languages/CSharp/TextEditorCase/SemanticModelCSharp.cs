@@ -66,7 +66,9 @@ public class SemanticModelCSharp : ISemanticModel
             return new TextEditorTextSpan(
                 x.TextEditorTextSpan.StartingIndexInclusive,
                 x.TextEditorTextSpan.EndingIndexExclusive,
-                (byte)textEditorDecorationKind);
+                (byte)textEditorDecorationKind,
+                model.ResourceUri,
+                text);
         }).ToImmutableList();
 
         SymbolTextSpans = parserSession.Binder.Symbols

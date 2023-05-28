@@ -10,6 +10,7 @@ using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Expres
 using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statements;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.C.BinderCase;
+using Luthetus.TextEditor.RazorLib.Lexing;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.C.ParserCase;
 
@@ -24,9 +25,11 @@ public class ParserSession
 
     public ParserSession(
         ImmutableArray<ISyntaxToken> tokens,
+        ResourceUri resourceUri,
         string sourceText,
         ImmutableArray<TextEditorDiagnostic> lexerDiagnostics)
     {
+        ResourceUri = resourceUri;
         _sourceText = sourceText;
         _lexerDiagnostics = lexerDiagnostics;
         _tokenWalker = new TokenWalker(tokens);
@@ -37,6 +40,8 @@ public class ParserSession
 
     public ImmutableArray<TextEditorDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
     public BinderSession Binder => _binder;
+
+    public ResourceUri ResourceUri { get; }
 
     private ISyntaxNode? _nodeRecent;
     private CompilationUnitBuilder _currentCompilationUnitBuilder;
@@ -190,7 +195,7 @@ public class ParserSession
     private void ParseKeywordToken(
         KeywordToken inToken)
     {
-        var text = inToken.TextSpan.GetText(_sourceText);
+        var text = inToken.TextSpan.GetText();
 
         if (_binder.TryGetTypeHierarchically(text, out var type) &&
             type is not null)
@@ -367,7 +372,13 @@ public class ParserSession
 
         // #TODO: Correctly implement this method Returning a nonsensical token for now.
         return new BoundLiteralExpressionNode(
-            new EndOfFileToken(new(-1, -1, (byte)GenericDecorationKind.None)),
+            new EndOfFileToken(
+                new TextEditorTextSpan(
+                    -1,
+                    -1,
+                    (byte)GenericDecorationKind.None,
+                    ResourceUri,
+                    _sourceText)),
             typeof(void));
     }
 

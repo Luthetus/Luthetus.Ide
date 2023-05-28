@@ -1,5 +1,6 @@
 ﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
 using Luthetus.TextEditor.RazorLib.Analysis;
+using Luthetus.TextEditor.RazorLib.Lexing;
 using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.General;
@@ -7,7 +8,7 @@ namespace Luthetus.Ide.ClassLib.CompilerServices.Common.General;
 public class CompilationUnitBuilder
 {
     public CompilationUnitBuilder()
-        : this(null, string.Empty)
+        : this(null, new ResourceUri(string.Empty))
     {
     }
     
@@ -21,7 +22,7 @@ public class CompilationUnitBuilder
     
     public CompilationUnitBuilder(
         CompilationUnitBuilder? parent,
-        string resourceUri)
+        ResourceUri resourceUri)
     {
         Parent = parent;
         ResourceUri = resourceUri;
@@ -30,7 +31,7 @@ public class CompilationUnitBuilder
     public bool IsExpression { get; set; }
     public List<ISyntax> Children { get; } = new();
     public CompilationUnitBuilder? Parent { get; }
-    public string ResourceUri { get; }
+    public ResourceUri ResourceUri { get; }
 
     public CompilationUnit Build()
     {

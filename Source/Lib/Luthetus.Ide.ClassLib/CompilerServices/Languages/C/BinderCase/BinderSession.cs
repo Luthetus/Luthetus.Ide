@@ -97,7 +97,7 @@ public class BinderSession
         ISyntaxToken token,
         out BoundTypeNode? boundTypeNode)
     {
-        var text = token.TextSpan.GetText(_sourceText);
+        var text = token.TextSpan.GetText();
 
         if (_currentScope.TypeMap.TryGetValue(text, out var type))
         {
@@ -113,7 +113,7 @@ public class BinderSession
         BoundTypeNode boundTypeNode,
         IdentifierToken identifierToken)
     {
-        var text = identifierToken.TextSpan.GetText(_sourceText);
+        var text = identifierToken.TextSpan.GetText();
 
         if (_currentScope.FunctionDeclarationMap.TryGetValue(
             text,
@@ -158,7 +158,7 @@ public class BinderSession
         BoundTypeNode boundTypeNode,
         IdentifierToken identifierToken)
     {
-        var text = identifierToken.TextSpan.GetText(_sourceText);
+        var text = identifierToken.TextSpan.GetText();
 
         if (_currentScope.VariableDeclarationMap.TryGetValue(
             text,
@@ -185,7 +185,7 @@ public class BinderSession
         IdentifierToken identifierToken,
         IBoundExpressionNode boundExpressionNode)
     {
-        var text = identifierToken.TextSpan.GetText(_sourceText);
+        var text = identifierToken.TextSpan.GetText();
 
         if (TryGetVariableHierarchically(
                 text,
@@ -213,7 +213,7 @@ public class BinderSession
     public BoundFunctionInvocationNode? BindFunctionInvocationNode(
         IdentifierToken identifierToken)
     {
-        var text = identifierToken.TextSpan.GetText(_sourceText);
+        var text = identifierToken.TextSpan.GetText();
 
         if (TryGetBoundFunctionDeclarationNodeHierarchically(
                 text,
