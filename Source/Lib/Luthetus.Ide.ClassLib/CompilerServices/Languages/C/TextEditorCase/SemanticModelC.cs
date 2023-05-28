@@ -63,10 +63,10 @@ public class SemanticModelC : ISemanticModel
                 _ => throw new NotImplementedException(),
             };
 
-            return new TextEditorTextSpan(
-                x.TextEditorTextSpan.StartingIndexInclusive,
-                x.TextEditorTextSpan.EndingIndexExclusive,
-                (byte)textEditorDecorationKind);
+            return x.TextEditorTextSpan with
+            {
+                DecorationByte = (byte)textEditorDecorationKind
+            };
         }).ToImmutableList();
 
         SymbolTextSpans = parserSession.Binder.Symbols

@@ -392,19 +392,24 @@ public class Binder
     public void AddNamespaceToCurrentScope(
         BoundNamespaceStatementNode boundNamespaceStatementNode)
     {
-        foreach (var child in boundNamespaceStatementNode.Children)
+        foreach (var namespaceEntry in boundNamespaceStatementNode.Children)
         {
-            if (child.SyntaxKind != SyntaxKind.BoundClassDeclarationNode)
-                continue;
+            var compilationUnit = (CompilationUnit)namespaceEntry;
 
-            var boundClassDeclarationNode = (BoundClassDeclarationNode)child;
+            foreach (var child in compilationUnit.Children)
+            {
+                if (child.SyntaxKind != SyntaxKind.BoundClassDeclarationNode)
+                    continue;
 
-            var identifierText = boundClassDeclarationNode.IdentifierToken.TextSpan
-                .GetText(_sourceText);
+                var boundClassDeclarationNode = (BoundClassDeclarationNode)child;
 
-            _currentScope.ClassDeclarationMap.Add(
-                identifierText,
-                boundClassDeclarationNode);
+                var identifierText = boundClassDeclarationNode.IdentifierToken.TextSpan
+                    .GetText(_sourceText);
+
+                _currentScope.ClassDeclarationMap.Add(
+                    identifierText,
+                    boundClassDeclarationNode);
+            }
         }
     }
 

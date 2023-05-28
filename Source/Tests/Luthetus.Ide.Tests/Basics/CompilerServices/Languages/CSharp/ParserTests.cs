@@ -589,10 +589,7 @@ WriteHelloWorldToConsole();"
             SyntaxKind.BoundNamespaceStatementNode,
             boundNamespaceStatementNode.SyntaxKind);
 
-        var modelNamespaceEntry = boundNamespaceStatementNode.Children[0];
-        var displayNamespaceEntry = boundNamespaceStatementNode.Children[1];
-
-        throw new NotImplementedException();
+        Assert.Equal(2, boundNamespaceStatementNode.Children.Length);
     }
 
     /// <summary>GOAL: Add "PersonCase" key to NamespaceDictionary with two CompilationUnit children: PersonModel.cs, and PersonDisplay.razor.cs. Afterwards evaluate the Namespace as a BoundScope which would contain the two classes: PersonModel, and PersonDisplay. Afterwards add "Pages" key to NamespaceDictionary with one CompilationUnit child: PersonPage.razor. Have PersonPage.razor.cs include a using statement that includes the "PersonCase" namespace.</summary>
