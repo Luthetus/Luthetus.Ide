@@ -587,8 +587,8 @@ WriteHelloWorldToConsole();"
         var sourceText = @$"namespace PersonCase;
 
 public class {classIdentifier}
-{
-}"
+{{
+}}"
             .ReplaceLineEndings("\n");
 
         var resourceUri = new ResourceUri(string.Empty);
