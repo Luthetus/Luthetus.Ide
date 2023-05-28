@@ -283,6 +283,17 @@ public class Parser
             {
                 // TODO: Implement keywords for visibility
             }
+            else if (text == "static")
+            {
+                // TODO: Implement keywords for object lifetime
+            }
+            else if (text == "override" ||
+                     text == "virtual" ||
+                     text == "abstract" ||
+                     text == "sealed")
+            {
+                // TODO: Implement keywords for inheritance
+            }
             else if (text == "partial")
             {
                 // TODO: Implement the 'partial' keyword

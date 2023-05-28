@@ -417,6 +417,7 @@ public class Binder
         {
             _currentScope.EndingIndexExclusive = textEditorTextSpan.EndingIndexExclusive;
             _currentScope = _currentScope.Parent;
+            _boundScopes.RemoveAt(_boundScopes.Count - 1);
         }
     }
 

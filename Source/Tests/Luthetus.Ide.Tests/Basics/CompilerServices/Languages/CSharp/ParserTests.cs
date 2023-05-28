@@ -579,6 +579,33 @@ WriteHelloWorldToConsole();"
         }
     }
 
+    [Fact]
+    public void SHOULD_PARSE_NAMESPACE_FILE_SCOPED()
+    {
+        var sourceText = @"namespace PersonCase;
+
+public class PersonModel
+{
+}"
+            .ReplaceLineEndings("\n");
+
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
+
+        lexer.Lex();
+
+        var modelParser = new Parser(
+            lexer.SyntaxTokens,
+            lexer.Diagnostics);
+
+        var compilationUnit = modelParser.Parse();
+
+        throw new NotImplementedException();
+    }
+
     /// <summary>GOAL: Add "PersonCase" key to NamespaceDictionary with two CompilationUnit children: 'PersonModel.cs', and 'PersonDisplay.razor.cs'.<br/><br/>Afterwards convert the Namespace to a BoundScope which would contain the two classes: 'PersonModel', and 'PersonDisplay'</summary>
     [Fact]
     public void SHOULD_PARSE_TWO_NAMESPACE_DECLARATIONS_WITH_THE_SAME_IDENTIFIER_INTO_A_SINGLE_SCOPE()
@@ -725,6 +752,117 @@ namespace Pages
 
         pageCompilationUnit = pageParser
             .Parse(displayParser.Binder);
+
+        Assert.Equal(
+            2,
+            displayParser.Binder.BoundScopes.First().ClassDeclarationMap.Count);
+    }
+    
+    [Fact]
+    public void SHOULD_PARSE_METHOD_INVOCATION_ON_CLASS_INSTANCE()
+    {
+        var sourceText = @"System.Console.WriteLine(""Hello World!"");"
+            .ReplaceLineEndings("\n");
+
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
+
+        lexer.Lex();
+
+        var modelParser = new Parser(
+            lexer.SyntaxTokens,
+            lexer.Diagnostics);
+
+        var compilationUnit = modelParser.Parse();
+
+        throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void SHOULD_PARSE_METHOD_INVOCATION_ON_A_CLASS_INSTANCE_WHICH_IS_NESTED_A_MEMBER_ACCESS_EXPRESSION()
+    {
+        var sourceText = @"namespace PersonCase;
+
+public class PersonModel
+{
+    public BodyModel BodyModel { get; set; }
+
+    public void Exist()
+    {
+        BodyModel.Walk();
+    }
+}
+
+public class BodyModel
+{
+    public void Walk()
+    {
+    }
+}"
+            .ReplaceLineEndings("\n");
+
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
+
+        lexer.Lex();
+
+        var modelParser = new Parser(
+            lexer.SyntaxTokens,
+            lexer.Diagnostics);
+
+        var compilationUnit = modelParser.Parse();
+
+        throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void SHOULD_PARSE_METHOD_INVOCATION_ON_STATIC_CLASS()
+    {
+        var sourceText = @"System.Console.WriteLine(""Hello World!"");"
+            .ReplaceLineEndings("\n");
+
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
+
+        lexer.Lex();
+
+        var modelParser = new Parser(
+            lexer.SyntaxTokens,
+            lexer.Diagnostics);
+
+        var compilationUnit = modelParser.Parse();
+
+        throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void SHOULD_PARSE_METHOD_INVOCATION_ON_STATIC_CLASS_WITH_EXPLICIT_NAMESPACE_QUALIFICATION()
+    {
+        var sourceText = @"System.Console.WriteLine(""Hello World!"");"
+            .ReplaceLineEndings("\n");
+
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
+
+        lexer.Lex();
+
+        var modelParser = new Parser(
+            lexer.SyntaxTokens,
+            lexer.Diagnostics);
+
+        var compilationUnit = modelParser.Parse();
 
         throw new NotImplementedException();
     }
