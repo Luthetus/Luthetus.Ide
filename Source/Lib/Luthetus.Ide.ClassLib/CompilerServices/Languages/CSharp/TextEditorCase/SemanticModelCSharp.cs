@@ -38,7 +38,7 @@ public class SemanticModelCSharp : ISemanticModel
             text,
             model.RenderStateKey);
 
-        var textEditorLexerC = (TextEditorLexerCSharp)model.Lexer;
+        var textEditorLexerC = (IdeCSharpLexer)model.Lexer;
         var recentLexSession = textEditorLexerC.RecentLexSession;
 
         if (recentLexSession is null)

@@ -447,4 +447,26 @@ public class LexerTests
         var text = colonToken.TextSpan.GetText();
         Assert.Equal(colonTokenAsString, text);
     }
+    
+    [Fact]
+    public void SHOULD_LEX_MEMBER_ACCESS_TOKEN()
+    {
+        var memberAccessTokenAsString = ".";
+        var sourceText = $"{memberAccessTokenAsString}".ReplaceLineEndings("\n");
+
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
+
+        lexer.Lex();
+
+        var memberAccessToken = lexer.SyntaxTokens.First();
+
+        Assert.Equal(SyntaxKind.MemberAccessToken, memberAccessToken.SyntaxKind);
+
+        var text = memberAccessToken.TextSpan.GetText();
+        Assert.Equal(memberAccessTokenAsString, text);
+    }
 }

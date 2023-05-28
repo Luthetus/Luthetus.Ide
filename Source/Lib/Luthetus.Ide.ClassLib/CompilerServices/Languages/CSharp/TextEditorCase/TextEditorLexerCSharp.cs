@@ -5,11 +5,11 @@ using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.LexerCase;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.TextEditorCase;
 
-public class TextEditorLexerCSharp : ITextEditorLexer
+public class IdeCSharpLexer : ITextEditorLexer
 {
     private readonly object _lexerLock = new object();
 
-    public TextEditorLexerCSharp(ResourceUri resourceUri)
+    public IdeCSharpLexer(ResourceUri resourceUri)
     {
         ResourceUri = resourceUri;
     }

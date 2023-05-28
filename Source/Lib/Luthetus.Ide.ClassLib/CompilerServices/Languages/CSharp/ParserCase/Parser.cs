@@ -429,7 +429,7 @@ public class Parser
         }
         else
         {
-            // 'function invocation' OR 'variable assignment' OR 'variable reference' 'namespace declaration'
+            // 'function invocation' OR 'variable assignment' OR 'variable reference' OR 'namespace declaration' OR  'namespace identifier' OR 'static class identifier'
 
             if (nextToken.SyntaxKind == SyntaxKind.OpenParenthesisToken)
             {
@@ -467,8 +467,26 @@ public class Parser
             }
             else
             {
-                // 'variable reference'
-                throw new NotImplementedException();
+                // 'variable reference' OR 'namespace identifier' OR 'static class identifier'
+
+                if (_binder.BoundNamespaceStatementNodes.ContainsKey(inToken.TextSpan.GetText()))
+                {
+                    if (nextToken.SyntaxKind == SyntaxKind.MemberAccessToken)
+                    {
+                        // TODO: (2023-05-28) Implement explicit namespace qualification checking. If they try to member access 'Console' on the namespace 'System' one should ensure 'Console' is really in the namespace. But, for now just return.
+                        return;
+                    }
+                    else
+                    {
+                        // TODO: (2023-05-28) Report an error diagnostic for 'namespaces are not statements'. Something like this I'm not sure.
+                        return;
+                    }
+                }
+                else
+                {
+                    // TODO: (2023-05-28) Report an error diagnostic for 'unknown identifier'. Something like this I'm not sure.
+                    return;
+                }
             }
         }
     }

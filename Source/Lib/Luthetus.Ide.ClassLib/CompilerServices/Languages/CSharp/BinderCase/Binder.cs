@@ -18,7 +18,7 @@ namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.BinderCase;
 public class Binder
 {
     private readonly BoundScope _globalScope = CSharpLanguageFacts.Scope.GetInitialGlobalScope();
-    private readonly Dictionary<string, BoundNamespaceStatementNode> _boundNamespaceStatementNodes = new();
+    private readonly Dictionary<string, BoundNamespaceStatementNode> _boundNamespaceStatementNodes = CSharpLanguageFacts.Namespaces.GetInitialBoundNamespaceStatementNodes();
     private readonly List<ISymbol> _symbols = new();
     private readonly LuthetusIdeDiagnosticBag _diagnosticBag = new();
 

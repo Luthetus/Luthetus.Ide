@@ -23,6 +23,7 @@ public enum SyntaxKind
     OpenBraceToken,
     CloseBraceToken,
     ColonToken,
+    MemberAccessToken,
     EndOfFileToken,
 
     // Nodes
