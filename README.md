@@ -7,7 +7,7 @@
 ![Example GIF](./Images/Rewrite/introductoryGifLuthetusIde.gif)
 
 ## Demo:
-https://luthetus.github.io/
+https://luthetus.github.io/Luthetus.Website/
 
 ## Features
 
