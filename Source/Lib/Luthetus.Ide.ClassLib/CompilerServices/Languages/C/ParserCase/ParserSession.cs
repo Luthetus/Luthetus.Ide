@@ -10,6 +10,7 @@ using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Expres
 using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statements;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.C.BinderCase;
+using Luthetus.TextEditor.RazorLib.Lexing;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.C.ParserCase;
 
@@ -17,20 +18,17 @@ public class ParserSession
 {
     private readonly TokenWalker _tokenWalker;
     private readonly BinderSession _binder;
-    private readonly CompilationUnitBuilder _globalCompilationUnitBuilder = new();
+    private readonly CompilationUnitBuilder _globalCompilationUnitBuilder = new(null);
     private readonly LuthetusIdeDiagnosticBag _diagnosticBag = new();
     private readonly ImmutableArray<TextEditorDiagnostic> _lexerDiagnostics;
-    private readonly string _sourceText;
 
     public ParserSession(
         ImmutableArray<ISyntaxToken> tokens,
-        string sourceText,
         ImmutableArray<TextEditorDiagnostic> lexerDiagnostics)
     {
-        _sourceText = sourceText;
         _lexerDiagnostics = lexerDiagnostics;
         _tokenWalker = new TokenWalker(tokens);
-        _binder = new BinderSession(sourceText);
+        _binder = new BinderSession();
 
         _currentCompilationUnitBuilder = _globalCompilationUnitBuilder;
     }
@@ -190,7 +188,7 @@ public class ParserSession
     private void ParseKeywordToken(
         KeywordToken inToken)
     {
-        var text = inToken.TextSpan.GetText(_sourceText);
+        var text = inToken.TextSpan.GetText();
 
         if (_binder.TryGetTypeHierarchically(text, out var type) &&
             type is not null)
@@ -367,7 +365,13 @@ public class ParserSession
 
         // #TODO: Correctly implement this method Returning a nonsensical token for now.
         return new BoundLiteralExpressionNode(
-            new EndOfFileToken(new(-1, -1, (byte)GenericDecorationKind.None)),
+            new EndOfFileToken(
+                new TextEditorTextSpan(
+                    0,
+                    0,
+                    (byte)GenericDecorationKind.None,
+                    new(string.Empty),
+                    string.Empty)),
             typeof(void));
     }
 

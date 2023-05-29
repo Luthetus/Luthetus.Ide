@@ -60,7 +60,7 @@ public class Evaluator
         {
             var value = int.Parse(
                 boundLiteralExpressionNode.LiteralSyntaxToken.TextSpan
-                    .GetText(_sourceText));
+                    .GetText());
 
             return new EvaluatorResult(
                 boundLiteralExpressionNode.ResultType,
@@ -69,7 +69,7 @@ public class Evaluator
         else if (boundLiteralExpressionNode.ResultType == typeof(string))
         {
             var value = new string(boundLiteralExpressionNode.LiteralSyntaxToken.TextSpan
-                .GetText(_sourceText)
+                .GetText()
                 .Skip(1)
                 .SkipLast(1)
                 .ToArray());

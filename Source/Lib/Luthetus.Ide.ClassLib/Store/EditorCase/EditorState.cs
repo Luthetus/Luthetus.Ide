@@ -14,6 +14,7 @@ using Fluxor;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.FileConstants;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
+using Luthetus.TextEditor.RazorLib.Lexing;
 
 namespace Luthetus.Ide.ClassLib.Store.EditorCase;
 
@@ -125,10 +126,12 @@ public class EditorState
         string inputFileAbsoluteFilePathString)
     {
         var textEditorModel = textEditorService.Model
-            .FindOrDefaultByResourceUri(inputFileAbsoluteFilePathString);
+            .FindOrDefaultByResourceUri(new(inputFileAbsoluteFilePathString));
 
         if (textEditorModel is null)
         {
+            var resourceUri = new ResourceUri(inputFileAbsoluteFilePathString);
+
             var fileLastWriteTime = await fileSystemProvider.File.GetLastWriteTimeAsync(
                 inputFileAbsoluteFilePathString);
 
@@ -136,6 +139,7 @@ public class EditorState
                 inputFileAbsoluteFilePathString);
 
             var lexer = ExtensionNoPeriodFacts.GetLexer(
+                resourceUri,
                 absoluteFilePath.ExtensionNoPeriod);
 
             var decorationMapper = ExtensionNoPeriodFacts.GetDecorationMapper(
@@ -146,7 +150,7 @@ public class EditorState
                 lexer);
 
             textEditorModel = new TextEditorModel(
-                inputFileAbsoluteFilePathString,
+                resourceUri,
                 fileLastWriteTime,
                 absoluteFilePath.ExtensionNoPeriod,
                 content,

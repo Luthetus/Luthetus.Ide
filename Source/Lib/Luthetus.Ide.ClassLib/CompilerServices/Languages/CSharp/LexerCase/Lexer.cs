@@ -15,9 +15,11 @@ public class Lexer
     private readonly List<ISyntaxToken> _syntaxTokens = new();
     private readonly LuthetusIdeDiagnosticBag _diagnosticBag = new();
 
-    public Lexer(string text)
+    public Lexer(
+        ResourceUri resourceUri,
+        string sourceText)
     {
-        _stringWalker = new(text);
+        _stringWalker = new(resourceUri, sourceText);
     }
 
     public ImmutableArray<ISyntaxToken> SyntaxTokens => _syntaxTokens.ToImmutableArray();
@@ -149,6 +151,10 @@ public class Lexer
                     var colonToken = LexColonToken();
                     _syntaxTokens.Add(colonToken);
                     break;
+                case '.':
+                    var memberAccessToken = LexMemberAccessToken();
+                    _syntaxTokens.Add(memberAccessToken);
+                    break;
                 case '#':
                     var preprocessorDirectiveToken = LexPreprocessorDirectiveToken();
                     _syntaxTokens.Add(preprocessorDirectiveToken);
@@ -162,7 +168,9 @@ public class Lexer
         var endOfFileTextSpan = new TextEditorTextSpan(
             _stringWalker.PositionIndex,
             _stringWalker.PositionIndex + 1,
-            (byte)GenericDecorationKind.None);
+            (byte)GenericDecorationKind.None,
+            _stringWalker.ResourceUri,
+            _stringWalker.SourceText);
 
         _syntaxTokens.Add(new EndOfFileToken(endOfFileTextSpan));
     }
@@ -202,7 +210,9 @@ public class Lexer
         var textSpan = new TextEditorTextSpan(
             entryPositionIndex,
             _stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.None);
+            (byte)GenericDecorationKind.None,
+            _stringWalker.ResourceUri,
+            _stringWalker.SourceText);
 
         return new NumericLiteralToken(textSpan);
     }
@@ -237,7 +247,9 @@ public class Lexer
         var textSpan = new TextEditorTextSpan(
             entryPositionIndex,
             _stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.StringLiteral);
+            (byte)GenericDecorationKind.StringLiteral,
+            _stringWalker.ResourceUri,
+            _stringWalker.SourceText);
 
         return new StringLiteralToken(textSpan);
     }
@@ -270,7 +282,9 @@ public class Lexer
         var textSpan = new TextEditorTextSpan(
             entryPositionIndex,
             _stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.CommentSingleLine);
+            (byte)GenericDecorationKind.CommentSingleLine,
+            _stringWalker.ResourceUri,
+            _stringWalker.SourceText);
 
         return new CommentSingleLineToken(textSpan);
     }
@@ -310,7 +324,9 @@ public class Lexer
         var textSpan = new TextEditorTextSpan(
             entryPositionIndex,
             _stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.CommentMultiLine);
+            (byte)GenericDecorationKind.CommentMultiLine,
+            _stringWalker.ResourceUri,
+            _stringWalker.SourceText);
 
         return new CommentMultiLineToken(textSpan);
     }
@@ -334,9 +350,11 @@ public class Lexer
         var textSpan = new TextEditorTextSpan(
             entryPositionIndex,
             _stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.None);
+            (byte)GenericDecorationKind.None,
+            _stringWalker.ResourceUri,
+            _stringWalker.SourceText);
 
-        var textValue = textSpan.GetText(_stringWalker.Content);
+        var textValue = textSpan.GetText();
 
         if (CSharpKeywords.ALL.Contains(textValue))
         {
@@ -365,7 +383,9 @@ public class Lexer
         var textSpan = new TextEditorTextSpan(
             entryPositionIndex,
             _stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.None);
+            (byte)GenericDecorationKind.None,
+            _stringWalker.ResourceUri,
+            _stringWalker.SourceText);
 
         return new PlusToken(textSpan);
     }
@@ -379,7 +399,9 @@ public class Lexer
         var textSpan = new TextEditorTextSpan(
             entryPositionIndex,
             _stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.None);
+            (byte)GenericDecorationKind.None,
+            _stringWalker.ResourceUri,
+            _stringWalker.SourceText);
 
         return new EqualsToken(textSpan);
     }
@@ -393,7 +415,9 @@ public class Lexer
         var textSpan = new TextEditorTextSpan(
             entryPositionIndex,
             _stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.None);
+            (byte)GenericDecorationKind.None,
+            _stringWalker.ResourceUri,
+            _stringWalker.SourceText);
 
         return new StatementDelimiterToken(textSpan);
     }
@@ -407,7 +431,9 @@ public class Lexer
         var textSpan = new TextEditorTextSpan(
             entryPositionIndex,
             _stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.None);
+            (byte)GenericDecorationKind.None,
+            _stringWalker.ResourceUri,
+            _stringWalker.SourceText);
 
         return new OpenParenthesisToken(textSpan);
     }
@@ -421,7 +447,9 @@ public class Lexer
         var textSpan = new TextEditorTextSpan(
             entryPositionIndex,
             _stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.None);
+            (byte)GenericDecorationKind.None,
+            _stringWalker.ResourceUri,
+            _stringWalker.SourceText);
 
         return new CloseParenthesisToken(textSpan);
     }
@@ -435,7 +463,9 @@ public class Lexer
         var textSpan = new TextEditorTextSpan(
             entryPositionIndex,
             _stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.None);
+            (byte)GenericDecorationKind.None,
+            _stringWalker.ResourceUri,
+            _stringWalker.SourceText);
 
         return new OpenBraceToken(textSpan);
     }
@@ -449,7 +479,9 @@ public class Lexer
         var textSpan = new TextEditorTextSpan(
             entryPositionIndex,
             _stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.None);
+            (byte)GenericDecorationKind.None,
+            _stringWalker.ResourceUri,
+            _stringWalker.SourceText);
 
         return new CloseBraceToken(textSpan);
     }
@@ -463,9 +495,27 @@ public class Lexer
         var textSpan = new TextEditorTextSpan(
             entryPositionIndex,
             _stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.None);
+            (byte)GenericDecorationKind.None,
+            _stringWalker.ResourceUri,
+            _stringWalker.SourceText);
 
         return new ColonToken(textSpan);
+    }
+    
+    private MemberAccessToken LexMemberAccessToken()
+    {
+        var entryPositionIndex = _stringWalker.PositionIndex;
+
+        _stringWalker.ReadCharacter();
+
+        var textSpan = new TextEditorTextSpan(
+            entryPositionIndex,
+            _stringWalker.PositionIndex,
+            (byte)GenericDecorationKind.None,
+            _stringWalker.ResourceUri,
+            _stringWalker.SourceText);
+
+        return new MemberAccessToken(textSpan);
     }
 
     private PreprocessorDirectiveToken LexPreprocessorDirectiveToken()
@@ -496,7 +546,9 @@ public class Lexer
         var textSpan = new TextEditorTextSpan(
             entryPositionIndex,
             _stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.None);
+            (byte)GenericDecorationKind.None,
+            _stringWalker.ResourceUri,
+            _stringWalker.SourceText);
 
         return new PreprocessorDirectiveToken(textSpan);
     }

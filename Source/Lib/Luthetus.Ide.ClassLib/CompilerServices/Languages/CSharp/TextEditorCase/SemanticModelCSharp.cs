@@ -11,8 +11,8 @@ public class SemanticModelCSharp : ISemanticModel
 {
     private SemanticModelResultCSharp? _recentSemanticModelResult;
 
-    public ImmutableList<TextEditorTextSpan> DiagnosticTextSpans { get; set; } = ImmutableList<TextEditorTextSpan>.Empty;
-    public ImmutableList<TextEditorTextSpan> SymbolTextSpans { get; private set; } = ImmutableList<TextEditorTextSpan>.Empty;
+    public ImmutableList<(TextEditorDiagnostic diagnostic, TextEditorTextSpan textSpan)> DiagnosticTextSpanTuples { get; private set; } = ImmutableList<(TextEditorDiagnostic diagnostic, TextEditorTextSpan textSpan)>.Empty;
+    public ImmutableList<(string message, TextEditorTextSpan textSpan)> SymbolMessageTextSpanTuples { get; private set; } = ImmutableList<(string message, TextEditorTextSpan textSpan)>.Empty;
 
     public SymbolDefinition? GoToDefinition(
         TextEditorModel model,
@@ -38,7 +38,7 @@ public class SemanticModelCSharp : ISemanticModel
             text,
             model.RenderStateKey);
 
-        var textEditorLexerC = (TextEditorLexerCSharp)model.Lexer;
+        var textEditorLexerC = (IdeCSharpLexer)model.Lexer;
         var recentLexSession = textEditorLexerC.RecentLexSession;
 
         if (recentLexSession is null)
@@ -46,12 +46,11 @@ public class SemanticModelCSharp : ISemanticModel
 
         var parserSession = new Parser(
             recentLexSession.SyntaxTokens,
-            text,
             recentLexSession.Diagnostics);
 
         var compilationUnit = parserSession.Parse();
 
-        DiagnosticTextSpans = compilationUnit.Diagnostics.Select(x =>
+        DiagnosticTextSpanTuples = compilationUnit.Diagnostics.Select(x =>
         {
             var textEditorDecorationKind = x.DiagnosticLevel switch
             {
@@ -63,14 +62,16 @@ public class SemanticModelCSharp : ISemanticModel
                 _ => throw new NotImplementedException(),
             };
 
-            return new TextEditorTextSpan(
-                x.TextEditorTextSpan.StartingIndexInclusive,
-                x.TextEditorTextSpan.EndingIndexExclusive,
-                (byte)textEditorDecorationKind);
+            var textSpan = x.TextEditorTextSpan with
+            {
+                DecorationByte = (byte)textEditorDecorationKind
+            };
+
+            return (x, textSpan);
         }).ToImmutableList();
 
-        SymbolTextSpans = parserSession.Binder.Symbols
-            .Select(x => x.TextSpan)
+        SymbolMessageTextSpanTuples = parserSession.Binder.Symbols
+            .Select(x => ($"({x.GetType().Name}){x.TextSpan.GetText()}", x.TextSpan))
             .ToImmutableList();
 
         var semanticModelResult = new SemanticModelResultCSharp(

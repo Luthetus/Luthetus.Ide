@@ -20,7 +20,9 @@ public class DotNetSolutionParser
         var dotNetSolutionFolders = new List<DotNetSolutionFolder>();
         var globalSection = new DotNetSolutionGlobalSection(null);
 
-        var stringWalker = new StringWalker(content);
+        var stringWalker = new StringWalker(
+            new(namespacePath.AbsoluteFilePath.GetAbsoluteFilePathString()),
+            content);
 
         while (!stringWalker.IsEof)
         {

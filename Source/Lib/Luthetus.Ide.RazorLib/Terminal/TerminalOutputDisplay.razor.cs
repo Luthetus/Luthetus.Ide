@@ -13,6 +13,7 @@ using Luthetus.Ide.ClassLib.Store.TerminalCase;
 using Luthetus.Ide.ClassLib.Html;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Luthetus.TextEditor.RazorLib.Lexing;
 
 namespace Luthetus.Ide.RazorLib.Terminal;
 
@@ -81,8 +82,8 @@ public partial class TerminalOutputDisplay : FluxorComponent
                 TextEditorService.Model.RegisterTemplated(
                     terminalSession.TextEditorModelKey,
                     WellKnownModelKind.TerminalGeneric,
-                    terminalSession.TerminalSessionKey.DisplayName
-                    ?? "__terminal-display-name-fallback__",
+                    new ResourceUri(terminalSession.TerminalSessionKey.DisplayName
+                        ?? "__terminal-display-name-fallback__"),
                     DateTime.UtcNow,
                     "TERMINAL",
                     string.Empty);

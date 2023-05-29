@@ -1,5 +1,6 @@
 ﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.C.LexerCase;
+using Luthetus.TextEditor.RazorLib.Lexing;
 
 namespace Luthetus.Ide.Tests.Basics.CompilerServices.Languages.C;
 
@@ -11,14 +12,19 @@ public class LexerTests
         var numericValue = 4135;
         var sourceText = $"{numericValue}".ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new LexerSession(
+            resourceUri,
+            sourceText);
+
         lexer.Lex();
 
         var numericLiteralToken = lexer.SyntaxTokens.First();
 
         Assert.Equal(SyntaxKind.NumericLiteralToken, numericLiteralToken.SyntaxKind);
 
-        var text = numericLiteralToken.TextSpan.GetText(sourceText);
+        var text = numericLiteralToken.TextSpan.GetText();
         Assert.Equal(numericValue, int.Parse(text));
     }
 
@@ -28,14 +34,19 @@ public class LexerTests
         var stringValue = "\"Apple Sauce\"";
         var sourceText = $"{stringValue}".ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new LexerSession(
+            resourceUri,
+            sourceText);
+
         lexer.Lex();
 
         var stringLiteralToken = lexer.SyntaxTokens.First();
 
         Assert.Equal(SyntaxKind.StringLiteralToken, stringLiteralToken.SyntaxKind);
 
-        var text = stringLiteralToken.TextSpan.GetText(sourceText);
+        var text = stringLiteralToken.TextSpan.GetText();
         Assert.Equal(stringValue, text);
     }
 
@@ -45,14 +56,19 @@ public class LexerTests
         var singleLineCommentAsString = @"// C:\Users\hunte\Repos\Aaa\";
         var sourceText = $"{singleLineCommentAsString}".ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new LexerSession(
+            resourceUri,
+            sourceText);
+
         lexer.Lex();
 
         var commentSingleLineToken = lexer.SyntaxTokens.First();
 
         Assert.Equal(SyntaxKind.CommentSingleLineToken, commentSingleLineToken.SyntaxKind);
 
-        var text = commentSingleLineToken.TextSpan.GetText(sourceText);
+        var text = commentSingleLineToken.TextSpan.GetText();
         Assert.Equal(singleLineCommentAsString, text);
     }
 
@@ -63,14 +79,19 @@ public class LexerTests
         var sourceText = $@"{singleLineCommentAsString}
 ".ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new LexerSession(
+            resourceUri,
+            sourceText);
+
         lexer.Lex();
 
         var commentSingleLineToken = lexer.SyntaxTokens.First();
 
         Assert.Equal(SyntaxKind.CommentSingleLineToken, commentSingleLineToken.SyntaxKind);
 
-        var text = commentSingleLineToken.TextSpan.GetText(sourceText);
+        var text = commentSingleLineToken.TextSpan.GetText();
         Assert.Equal(singleLineCommentAsString, text);
     }
 
@@ -83,14 +104,19 @@ public class LexerTests
 
         var sourceText = $"{multiLineCommentAsString}".ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new LexerSession(
+            resourceUri,
+            sourceText);
+
         lexer.Lex();
 
         var commentMultiLineToken = lexer.SyntaxTokens.First();
 
         Assert.Equal(SyntaxKind.CommentMultiLineToken, commentMultiLineToken.SyntaxKind);
 
-        var text = commentMultiLineToken.TextSpan.GetText(sourceText);
+        var text = commentMultiLineToken.TextSpan.GetText();
         Assert.Equal(multiLineCommentAsString, text);
     }
 
@@ -102,14 +128,19 @@ public class LexerTests
 
         var sourceText = $"{multiLineCommentAsString}".ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new LexerSession(
+            resourceUri,
+            sourceText);
+
         lexer.Lex();
 
         var commentMultiLineToken = lexer.SyntaxTokens.First();
 
         Assert.Equal(SyntaxKind.CommentMultiLineToken, commentMultiLineToken.SyntaxKind);
 
-        var text = commentMultiLineToken.TextSpan.GetText(sourceText);
+        var text = commentMultiLineToken.TextSpan.GetText();
         Assert.Equal(multiLineCommentAsString, text);
     }
 
@@ -119,14 +150,19 @@ public class LexerTests
         var keywordAsString = "int";
         var sourceText = $"{keywordAsString}".ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new LexerSession(
+            resourceUri,
+            sourceText);
+
         lexer.Lex();
 
         var keywordToken = lexer.SyntaxTokens.First();
 
         Assert.Equal(SyntaxKind.KeywordToken, keywordToken.SyntaxKind);
 
-        var text = keywordToken.TextSpan.GetText(sourceText);
+        var text = keywordToken.TextSpan.GetText();
         Assert.Equal(keywordAsString, text);
     }
 
@@ -198,14 +234,19 @@ public class LexerTests
     {
         var sourceText = $"{identifierAsString}".ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new LexerSession(
+            resourceUri,
+            sourceText);
+
         lexer.Lex();
 
         var identifierToken = lexer.SyntaxTokens.First();
 
         Assert.Equal(SyntaxKind.IdentifierToken, identifierToken.SyntaxKind);
 
-        var text = identifierToken.TextSpan.GetText(sourceText);
+        var text = identifierToken.TextSpan.GetText();
         Assert.Equal(identifierAsString, text);
     }
 
@@ -215,14 +256,19 @@ public class LexerTests
         var plusTokenAsString = "+";
         var sourceText = $"{plusTokenAsString}".ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new LexerSession(
+            resourceUri,
+            sourceText);
+
         lexer.Lex();
 
         var plusToken = lexer.SyntaxTokens.First();
 
         Assert.Equal(SyntaxKind.PlusToken, plusToken.SyntaxKind);
 
-        var text = plusToken.TextSpan.GetText(sourceText);
+        var text = plusToken.TextSpan.GetText();
         Assert.Equal(plusTokenAsString, text);
     }
 
@@ -232,14 +278,19 @@ public class LexerTests
         var preprocessorDirectiveAsString = "#include";
         var sourceText = $"{preprocessorDirectiveAsString}".ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new LexerSession(
+            resourceUri,
+            sourceText);
+
         lexer.Lex();
 
         var preprocessorDirectiveToken = lexer.SyntaxTokens.First();
 
         Assert.Equal(SyntaxKind.PreprocessorDirectiveToken, preprocessorDirectiveToken.SyntaxKind);
 
-        var text = preprocessorDirectiveToken.TextSpan.GetText(sourceText);
+        var text = preprocessorDirectiveToken.TextSpan.GetText();
         Assert.Equal(preprocessorDirectiveAsString, text);
     }
 
@@ -250,7 +301,12 @@ public class LexerTests
         var libraryReferenceAsString = "<stdlib.h>";
         var sourceText = $"{preprocessorDirectiveAsString} {libraryReferenceAsString}".ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new LexerSession(
+            resourceUri,
+            sourceText);
+
         lexer.Lex();
 
         // Preprocessor Directive Token Assertions
@@ -259,7 +315,7 @@ public class LexerTests
 
             Assert.Equal(SyntaxKind.PreprocessorDirectiveToken, preprocessorDirectiveToken.SyntaxKind);
 
-            var text = preprocessorDirectiveToken.TextSpan.GetText(sourceText);
+            var text = preprocessorDirectiveToken.TextSpan.GetText();
             Assert.Equal(preprocessorDirectiveAsString, text);
         }
 
@@ -269,7 +325,7 @@ public class LexerTests
 
             Assert.Equal(SyntaxKind.LibraryReferenceToken, libraryReferenceToken.SyntaxKind);
 
-            var text = libraryReferenceToken.TextSpan.GetText(sourceText);
+            var text = libraryReferenceToken.TextSpan.GetText();
             Assert.Equal(libraryReferenceAsString, text);
         }
     }
@@ -280,14 +336,19 @@ public class LexerTests
         var equalsTokenAsString = "=";
         var sourceText = $"{equalsTokenAsString}".ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new LexerSession(
+            resourceUri,
+            sourceText);
+
         lexer.Lex();
 
         var equalsToken = lexer.SyntaxTokens.First();
 
         Assert.Equal(SyntaxKind.EqualsToken, equalsToken.SyntaxKind);
 
-        var text = equalsToken.TextSpan.GetText(sourceText);
+        var text = equalsToken.TextSpan.GetText();
         Assert.Equal(equalsTokenAsString, text);
     }
 
@@ -297,14 +358,19 @@ public class LexerTests
         var statementDelimiterTokenAsString = ";";
         var sourceText = $"{statementDelimiterTokenAsString}".ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new LexerSession(
+            resourceUri,
+            sourceText);
+
         lexer.Lex();
 
         var statementDelimiterToken = lexer.SyntaxTokens.First();
 
         Assert.Equal(SyntaxKind.StatementDelimiterToken, statementDelimiterToken.SyntaxKind);
 
-        var text = statementDelimiterToken.TextSpan.GetText(sourceText);
+        var text = statementDelimiterToken.TextSpan.GetText();
         Assert.Equal(statementDelimiterTokenAsString, text);
     }
 
@@ -314,14 +380,19 @@ public class LexerTests
         var openParenthesisTokenAsString = "(";
         var sourceText = $"{openParenthesisTokenAsString}".ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new LexerSession(
+            resourceUri,
+            sourceText);
+
         lexer.Lex();
 
         var openParenthesisToken = lexer.SyntaxTokens.First();
 
         Assert.Equal(SyntaxKind.OpenParenthesisToken, openParenthesisToken.SyntaxKind);
 
-        var text = openParenthesisToken.TextSpan.GetText(sourceText);
+        var text = openParenthesisToken.TextSpan.GetText();
         Assert.Equal(openParenthesisTokenAsString, text);
     }
 
@@ -331,14 +402,19 @@ public class LexerTests
         var closeParenthesisTokenAsString = ")";
         var sourceText = $"{closeParenthesisTokenAsString}".ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new LexerSession(
+            resourceUri,
+            sourceText);
+
         lexer.Lex();
 
         var closeParenthesisToken = lexer.SyntaxTokens.First();
 
         Assert.Equal(SyntaxKind.CloseParenthesisToken, closeParenthesisToken.SyntaxKind);
 
-        var text = closeParenthesisToken.TextSpan.GetText(sourceText);
+        var text = closeParenthesisToken.TextSpan.GetText();
         Assert.Equal(closeParenthesisTokenAsString, text);
     }
 
@@ -348,14 +424,19 @@ public class LexerTests
         var openBraceTokenAsString = "{";
         var sourceText = $"{openBraceTokenAsString}".ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new LexerSession(
+            resourceUri,
+            sourceText);
+
         lexer.Lex();
 
         var openBraceToken = lexer.SyntaxTokens.First();
 
         Assert.Equal(SyntaxKind.OpenBraceToken, openBraceToken.SyntaxKind);
 
-        var text = openBraceToken.TextSpan.GetText(sourceText);
+        var text = openBraceToken.TextSpan.GetText();
         Assert.Equal(openBraceTokenAsString, text);
     }
 
@@ -365,14 +446,19 @@ public class LexerTests
         var closeBraceTokenAsString = "}";
         var sourceText = $"{closeBraceTokenAsString}".ReplaceLineEndings("\n");
 
-        var lexer = new LexerSession(sourceText);
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new LexerSession(
+            resourceUri,
+            sourceText);
+
         lexer.Lex();
 
         var closeBraceToken = lexer.SyntaxTokens.First();
 
         Assert.Equal(SyntaxKind.CloseBraceToken, closeBraceToken.SyntaxKind);
 
-        var text = closeBraceToken.TextSpan.GetText(sourceText);
+        var text = closeBraceToken.TextSpan.GetText();
         Assert.Equal(closeBraceTokenAsString, text);
     }
 }

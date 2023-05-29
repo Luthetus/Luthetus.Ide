@@ -9,6 +9,7 @@ using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.SyntaxTokens;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.BinderCase;
 using Luthetus.TextEditor.RazorLib.Analysis;
 using Luthetus.TextEditor.RazorLib.Analysis.GenericLexer.Decoration;
+using Luthetus.TextEditor.RazorLib.Lexing;
 using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.ParserCase;
@@ -19,35 +20,23 @@ public class Parser
     private readonly CompilationUnitBuilder _globalCompilationUnitBuilder;
     private readonly LuthetusIdeDiagnosticBag _diagnosticBag = new();
     private readonly ImmutableArray<TextEditorDiagnostic> _lexerDiagnostics;
-    private readonly string _sourceText;
 
     private Binder _binder;
 
     public Parser(
         ImmutableArray<ISyntaxToken> tokens,
-        string sourceText,
-        ImmutableArray<TextEditorDiagnostic> lexerDiagnostics,
-        string resourceUri)
+        ImmutableArray<TextEditorDiagnostic> lexerDiagnostics)
     {
-        _sourceText = sourceText;
         _lexerDiagnostics = lexerDiagnostics;
         _tokenWalker = new TokenWalker(tokens);
-        _binder = new Binder(sourceText);
-        ResourceUri = resourceUri;
+        _binder = new Binder();
 
-        _globalCompilationUnitBuilder = new(null, ResourceUri);
+        _globalCompilationUnitBuilder = new(null);
         _currentCompilationUnitBuilder = _globalCompilationUnitBuilder;
     }
-    
-    public Parser(
-        ImmutableArray<ISyntaxToken> tokens,
-        string sourceText,
-        ImmutableArray<TextEditorDiagnostic> lexerDiagnostics)
-        : this(tokens, sourceText, lexerDiagnostics, string.Empty)
-    {
-    }
 
-    public string ResourceUri { get; }
+    /// <summary>If a file scoped namespace is found, then set this field, so that prior to finishing the parser constructs the namespace node.</summary>
+    private Action<CompilationUnit>? _finalizeFileScopeAction;
 
     public ImmutableArray<TextEditorDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
     public Binder Binder => _binder;
@@ -63,7 +52,6 @@ public class Parser
         Binder previousBinder)
     {
         _binder = previousBinder;
-        _binder.SetSourceText(_sourceText);
 
         return Parse();
     }
@@ -107,7 +95,7 @@ public class Parser
                     ParseColonToken((ColonToken)consumedToken);
                     break;
                 case SyntaxKind.StatementDelimiterToken:
-                    ParseStatementDelimiterToken();
+                    ParseStatementDelimiterToken((StatementDelimiterToken)consumedToken);
                     break;
                 case SyntaxKind.EndOfFileToken:
                     if (_nodeRecent is IExpressionNode)
@@ -120,6 +108,18 @@ public class Parser
 
             if (consumedToken.SyntaxKind == SyntaxKind.EndOfFileToken)
                 break;
+        }
+
+        if (_finalizeFileScopeAction is not null &&
+            _currentCompilationUnitBuilder.Parent is not null)
+        {
+            // The current token here would be the EOF token.
+            _binder.DisposeBoundScope(_tokenWalker.Current.TextSpan);
+
+            _finalizeFileScopeAction.Invoke(
+                _currentCompilationUnitBuilder.Build());
+
+            _currentCompilationUnitBuilder = _currentCompilationUnitBuilder.Parent;
         }
 
         return _currentCompilationUnitBuilder.Build(
@@ -218,7 +218,7 @@ public class Parser
         KeywordToken inToken)
     {
         // TODO: Make many keywords SyntaxKinds. Then if SyntaxKind.EndsWith("Keyword"); so that string checking doesn't need to be done.
-        var text = inToken.TextSpan.GetText(_sourceText);
+        var text = inToken.TextSpan.GetText();
 
         if (_binder.TryGetTypeHierarchically(text, out var type) &&
             type is not null)
@@ -246,6 +246,13 @@ public class Parser
 
                 if (nextToken.SyntaxKind == SyntaxKind.IdentifierToken)
                 {
+                    if (_finalizeFileScopeAction is not null)
+                    {
+                        throw new NotImplementedException(
+                            "Need to add logic to report diagnostic when there is" +
+                            " already a file scoped namespace.");
+                    }
+
                     var boundNamespaceStatementNode = _binder.BindNamespaceStatementNode(
                         inToken,
                         (IdentifierToken)nextToken);
@@ -273,11 +280,41 @@ public class Parser
                     throw new NotImplementedException();
                 }
             }
+            else if (text == "using")
+            {
+                var nextToken = _tokenWalker.Consume();
+
+                if (nextToken.SyntaxKind == SyntaxKind.IdentifierToken)
+                {
+                    var boundUsingDeclarationNode = _binder.BindUsingDeclarationNode(
+                        inToken,
+                        (IdentifierToken)nextToken);
+
+                    _currentCompilationUnitBuilder.Children.Add(boundUsingDeclarationNode);
+
+                    _nodeRecent = boundUsingDeclarationNode;
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
+            }
             else if (text == "public" ||
                      text == "internal" ||
                      text == "private")
             {
                 // TODO: Implement keywords for visibility
+            }
+            else if (text == "static")
+            {
+                // TODO: Implement keywords for object lifetime
+            }
+            else if (text == "override" ||
+                     text == "virtual" ||
+                     text == "abstract" ||
+                     text == "sealed")
+            {
+                // TODO: Implement keywords for inheritance
             }
             else if (text == "partial")
             {
@@ -392,7 +429,7 @@ public class Parser
         }
         else
         {
-            // 'function invocation' OR 'variable assignment' OR 'variable reference' 'namespace declaration'
+            // 'function invocation' OR 'variable assignment' OR 'variable reference' OR 'namespace declaration' OR  'namespace identifier' OR 'static class identifier'
 
             if (nextToken.SyntaxKind == SyntaxKind.OpenParenthesisToken)
             {
@@ -430,8 +467,26 @@ public class Parser
             }
             else
             {
-                // 'variable reference'
-                throw new NotImplementedException();
+                // 'variable reference' OR 'namespace identifier' OR 'static class identifier'
+
+                if (_binder.BoundNamespaceStatementNodes.ContainsKey(inToken.TextSpan.GetText()))
+                {
+                    if (nextToken.SyntaxKind == SyntaxKind.MemberAccessToken)
+                    {
+                        // TODO: (2023-05-28) Implement explicit namespace qualification checking. If they try to member access 'Console' on the namespace 'System' one should ensure 'Console' is really in the namespace. But, for now just return.
+                        return;
+                    }
+                    else
+                    {
+                        // TODO: (2023-05-28) Report an error diagnostic for 'namespaces are not statements'. Something like this I'm not sure.
+                        return;
+                    }
+                }
+                else
+                {
+                    // TODO: (2023-05-28) Report an error diagnostic for 'unknown identifier'. Something like this I'm not sure.
+                    return;
+                }
             }
         }
     }
@@ -467,7 +522,13 @@ public class Parser
 
         // #TODO: Correctly implement this method Returning a nonsensical token for now.
         return new BoundLiteralExpressionNode(
-            new EndOfFileToken(new(-1, -1, (byte)GenericDecorationKind.None)),
+            new EndOfFileToken(
+                new TextEditorTextSpan(
+                    0,
+                    0,
+                    (byte)GenericDecorationKind.None,
+                    new ResourceUri(string.Empty),
+                    string.Empty)),
             typeof(void));
     }
 
@@ -478,7 +539,7 @@ public class Parser
         Type? scopeReturnType = null;
 
         if (_nodeRecent is not null &&
-                 _nodeRecent.SyntaxKind == SyntaxKind.BoundNamespaceStatementNode)
+            _nodeRecent.SyntaxKind == SyntaxKind.BoundNamespaceStatementNode)
         {
             var boundNamespaceStatementNode = (BoundNamespaceStatementNode)_nodeRecent;
 
@@ -507,7 +568,7 @@ public class Parser
             });
         }
         else if (_nodeRecent is not null &&
-            _nodeRecent.SyntaxKind == SyntaxKind.BoundFunctionDeclarationNode)
+                 _nodeRecent.SyntaxKind == SyntaxKind.BoundFunctionDeclarationNode)
         {
             var boundFunctionDeclarationNode = (BoundFunctionDeclarationNode)_nodeRecent;
             
@@ -535,6 +596,12 @@ public class Parser
             scopeReturnType,
             inToken.TextSpan);
 
+        if (_nodeRecent is not null &&
+            _nodeRecent.SyntaxKind == SyntaxKind.BoundNamespaceStatementNode)
+        {
+            _binder.AddNamespaceToCurrentScope((BoundNamespaceStatementNode)_nodeRecent);
+        }
+
         _currentCompilationUnitBuilder = new(_currentCompilationUnitBuilder);
     }
 
@@ -553,8 +620,34 @@ public class Parser
         }
     }
 
-    private void ParseStatementDelimiterToken()
+    private void ParseStatementDelimiterToken(
+        StatementDelimiterToken inToken)
     {
+        if (_nodeRecent is not null &&
+            _nodeRecent.SyntaxKind == SyntaxKind.BoundNamespaceStatementNode)
+        {
+            var closureCurrentCompilationUnitBuilder = _currentCompilationUnitBuilder;
+            Type? scopeReturnType = null;
 
+            var boundNamespaceStatementNode = (BoundNamespaceStatementNode)_nodeRecent;
+
+            _finalizeFileScopeAction = compilationUnit =>
+            {
+                boundNamespaceStatementNode = _binder.RegisterBoundNamespaceEntryNode(
+                    boundNamespaceStatementNode,
+                    compilationUnit);
+
+                closureCurrentCompilationUnitBuilder.Children
+                    .Add(boundNamespaceStatementNode);
+            };
+
+            _binder.RegisterBoundScope(
+                scopeReturnType,
+                inToken.TextSpan);
+
+            _binder.AddNamespaceToCurrentScope((BoundNamespaceStatementNode)_nodeRecent);
+
+            _currentCompilationUnitBuilder = new(_currentCompilationUnitBuilder);
+        }
     }
 }

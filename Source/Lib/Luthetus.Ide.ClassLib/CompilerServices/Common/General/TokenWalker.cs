@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.Lexing;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.General;
 
@@ -19,11 +20,21 @@ public class TokenWalker
     public bool IsEof => Current.SyntaxKind == SyntaxKind.EndOfFileToken;
 
     /// <summary>If there are any tokens, then assume the final token is the end of file token. Otherwise, fabricate an end of file token.</summary>
-    private ISyntaxToken EOF => _tokens.Length > 0
-        ? _tokens[_tokens.Length - 1]
-        : new EndOfFileToken(
-            new TextEditor.RazorLib.Lexing.TextEditorTextSpan(
-                -1, -1, 0));
+    private ISyntaxToken EOF
+    {
+        get
+        {
+            return _tokens.Length > 0
+                ? _tokens[_tokens.Length - 1]
+                : new EndOfFileToken(
+                    new TextEditorTextSpan(
+                        0,
+                        0,
+                        0,
+                        new ResourceUri(string.Empty),
+                        string.Empty));
+        }
+    } 
 
     private int _index;
 

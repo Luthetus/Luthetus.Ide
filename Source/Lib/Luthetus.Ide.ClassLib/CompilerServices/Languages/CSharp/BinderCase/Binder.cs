@@ -18,18 +18,15 @@ namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.BinderCase;
 public class Binder
 {
     private readonly BoundScope _globalScope = CSharpLanguageFacts.Scope.GetInitialGlobalScope();
-    private readonly Dictionary<string, BoundNamespaceStatementNode> _boundNamespaceStatementNodes = new();
+    private readonly Dictionary<string, BoundNamespaceStatementNode> _boundNamespaceStatementNodes = CSharpLanguageFacts.Namespaces.GetInitialBoundNamespaceStatementNodes();
     private readonly List<ISymbol> _symbols = new();
     private readonly LuthetusIdeDiagnosticBag _diagnosticBag = new();
 
-    private string _sourceText;
     private List<BoundScope> _boundScopes = new();
     private BoundScope _currentScope;
 
-    public Binder(
-        string sourceText)
+    public Binder()
     {
-        _sourceText = sourceText;
         _currentScope = _globalScope;
 
         _boundScopes.Add(_globalScope);
@@ -100,7 +97,7 @@ public class Binder
         ISyntaxToken token,
         out BoundTypeNode? boundTypeNode)
     {
-        var text = token.TextSpan.GetText(_sourceText);
+        var text = token.TextSpan.GetText();
 
         if (_currentScope.TypeMap.TryGetValue(text, out var type))
         {
@@ -116,7 +113,7 @@ public class Binder
         BoundTypeNode boundTypeNode,
         IdentifierToken identifierToken)
     {
-        var functionIdentifier = identifierToken.TextSpan.GetText(_sourceText);
+        var functionIdentifier = identifierToken.TextSpan.GetText();
 
         if (_currentScope.FunctionDeclarationMap.TryGetValue(
             functionIdentifier,
@@ -161,7 +158,7 @@ public class Binder
         KeywordToken keywordToken,
         IdentifierToken identifierToken)
     {
-        var namespaceIdentifier = identifierToken.TextSpan.GetText(_sourceText);
+        var namespaceIdentifier = identifierToken.TextSpan.GetText();
 
         if (_boundNamespaceStatementNodes.TryGetValue(
                 namespaceIdentifier, 
@@ -189,7 +186,7 @@ public class Binder
         CompilationUnit compilationUnit)
     {
         var namespaceIdentifier = inBoundNamespaceStatementNode
-            .IdentifierToken.TextSpan.GetText(_sourceText);
+            .IdentifierToken.TextSpan.GetText();
 
         if (_boundNamespaceStatementNodes.TryGetValue(
                 namespaceIdentifier, 
@@ -220,7 +217,7 @@ public class Binder
     public BoundClassDeclarationNode BindClassDeclarationNode(
         IdentifierToken identifierToken)
     {
-        var classIdentifier = identifierToken.TextSpan.GetText(_sourceText);
+        var classIdentifier = identifierToken.TextSpan.GetText();
 
         if (_currentScope.ClassDeclarationMap.TryGetValue(
             classIdentifier,
@@ -250,7 +247,7 @@ public class Binder
     public BoundInheritanceStatementNode BindInheritanceStatementNode(
         IdentifierToken parentClassIdentifierToken)
     {
-        var parentClassIdentifier = parentClassIdentifierToken.TextSpan.GetText(_sourceText);
+        var parentClassIdentifier = parentClassIdentifierToken.TextSpan.GetText();
 
         var boundInheritanceStatementNode = new BoundInheritanceStatementNode(
                 parentClassIdentifierToken);
@@ -271,7 +268,7 @@ public class Binder
         BoundTypeNode boundTypeNode,
         IdentifierToken identifierToken)
     {
-        var text = identifierToken.TextSpan.GetText(_sourceText);
+        var text = identifierToken.TextSpan.GetText();
 
         if (_currentScope.VariableDeclarationMap.TryGetValue(
             text,
@@ -298,7 +295,7 @@ public class Binder
         IdentifierToken identifierToken,
         IBoundExpressionNode boundExpressionNode)
     {
-        var text = identifierToken.TextSpan.GetText(_sourceText);
+        var text = identifierToken.TextSpan.GetText();
 
         if (TryGetVariableHierarchically(
                 text,
@@ -326,7 +323,7 @@ public class Binder
     public BoundFunctionInvocationNode? BindFunctionInvocationNode(
         IdentifierToken identifierToken)
     {
-        var text = identifierToken.TextSpan.GetText(_sourceText);
+        var text = identifierToken.TextSpan.GetText();
 
         if (TryGetBoundFunctionDeclarationNodeHierarchically(
                 text,
@@ -346,6 +343,24 @@ public class Binder
                 IsFabricated = true
             };
         }
+    }
+
+    public BoundUsingDeclarationNode BindUsingDeclarationNode(
+        KeywordToken usingKeywordToken,
+        IdentifierToken namespaceIdentifierToken)
+    {
+        var namespaceText = namespaceIdentifierToken.TextSpan.GetText();
+
+        if (_boundNamespaceStatementNodes.TryGetValue(
+                namespaceText,
+                out var boundNamespaceStatementNode))
+        {
+            AddNamespaceToCurrentScope(boundNamespaceStatementNode);
+        }
+
+        return new BoundUsingDeclarationNode(
+            usingKeywordToken,
+            namespaceIdentifierToken);
     }
 
     public void RegisterBoundScope(
@@ -370,6 +385,30 @@ public class Binder
 
         _currentScope = boundScope;
     }
+    
+    public void AddNamespaceToCurrentScope(
+        BoundNamespaceStatementNode boundNamespaceStatementNode)
+    {
+        foreach (var namespaceEntry in boundNamespaceStatementNode.Children)
+        {
+            var compilationUnit = (CompilationUnit)namespaceEntry;
+
+            foreach (var child in compilationUnit.Children)
+            {
+                if (child.SyntaxKind != SyntaxKind.BoundClassDeclarationNode)
+                    continue;
+
+                var boundClassDeclarationNode = (BoundClassDeclarationNode)child;
+
+                var identifierText = boundClassDeclarationNode.IdentifierToken.TextSpan
+                    .GetText();
+
+                _currentScope.ClassDeclarationMap.Add(
+                    identifierText,
+                    boundClassDeclarationNode);
+            }
+        }
+    }
 
     public void DisposeBoundScope(
         TextEditorTextSpan textEditorTextSpan)
@@ -378,6 +417,10 @@ public class Binder
         {
             _currentScope.EndingIndexExclusive = textEditorTextSpan.EndingIndexExclusive;
             _currentScope = _currentScope.Parent;
+
+#if !DEBUG
+            _boundScopes.RemoveAt(_boundScopes.Count - 1);
+#endif
         }
     }
 
@@ -448,11 +491,5 @@ public class Binder
 
         boundVariableDeclarationStatementNode = null;
         return false;
-    }
-
-    public void SetSourceText(
-        string sourceText)
-    {
-        _sourceText = sourceText;
     }
 }
