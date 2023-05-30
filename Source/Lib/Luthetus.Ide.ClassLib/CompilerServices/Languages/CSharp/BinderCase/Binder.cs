@@ -323,6 +323,12 @@ public class Binder
     public BoundFunctionInvocationNode? BindFunctionInvocationNode(
         IdentifierToken identifierToken)
     {
+        _symbols.Add(
+            new FunctionSymbol(identifierToken.TextSpan with
+            {
+                DecorationByte = (byte)GenericDecorationKind.Function
+            }));
+
         var text = identifierToken.TextSpan.GetText();
 
         if (TryGetBoundFunctionDeclarationNodeHierarchically(
