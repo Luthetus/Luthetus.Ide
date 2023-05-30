@@ -10,6 +10,7 @@ public enum SyntaxKind
     CommentSingleLineToken,
     IdentifierToken,
     KeywordToken,
+    KeywordContextualToken,
     NumericLiteralToken,
     StringLiteralToken,
     TriviaToken,
@@ -24,6 +25,7 @@ public enum SyntaxKind
     CloseBraceToken,
     ColonToken,
     MemberAccessToken,
+    BadToken,
     EndOfFileToken,
 
     // Nodes

@@ -82,6 +82,9 @@ public class Parser
                 case SyntaxKind.KeywordToken:
                     ParseKeywordToken((KeywordToken)consumedToken);
                     break;
+                case SyntaxKind.KeywordContextualToken:
+                    ParseKeywordContextualToken((KeywordContextualToken)consumedToken);
+                    break;
                 case SyntaxKind.IdentifierToken:
                     ParseIdentifierToken((IdentifierToken)consumedToken);
                     break;
@@ -320,9 +323,69 @@ public class Parser
             {
                 // TODO: Implement the 'partial' keyword
             }
+            else if (text == "await")
+            {
+                // TODO: Implement the 'await' keyword
+            }
             else
             {
                 throw new NotImplementedException("Implement more keywords");
+            }
+        }
+    }
+    
+    private void ParseKeywordContextualToken(
+        KeywordContextualToken inToken)
+    {
+        // TODO: Make many keywords SyntaxKinds. Then if SyntaxKind.EndsWith("Keyword"); so that string checking doesn't need to be done.
+        var text = inToken.TextSpan.GetText();
+        
+        // 'return', 'if', 'get', etc...
+
+        if (text == "var")
+        {
+            var previousToken = _tokenWalker.Peek(-2);
+
+            if (previousToken.SyntaxKind == SyntaxKind.StatementDelimiterToken ||
+                previousToken.SyntaxKind == SyntaxKind.BadToken)
+            {
+                var nextToken = _tokenWalker.Consume();
+
+                var nextTokenText = nextToken.TextSpan.GetText();
+
+                if (nextTokenText == "var")
+                    nextToken = new IdentifierToken(nextToken.TextSpan);
+
+                if (nextToken.SyntaxKind == SyntaxKind.IdentifierToken)
+                {
+                    // Current contextual var keyword to be be interpreted as a keyword.
+                    // And the next token is to be treated as an identifier, even if its text is "var"
+
+                    if (_binder.TryGetTypeHierarchically(text, out var type) &&
+                        type is not null)
+                    {
+                        // 'var' type
+                        _nodeRecent = new BoundTypeNode(type, inToken);
+                    }
+
+                    ParseIdentifierToken((IdentifierToken)nextToken);
+                }
+                else
+                {
+                    _ = _tokenWalker.Backtrack();
+
+                    // A local variable is named var and is starting a statement
+                    var inTokenAsIdentifier = new IdentifierToken(inToken.TextSpan);
+                 
+                    ParseIdentifierToken(inTokenAsIdentifier);
+                }
+            }
+            else
+            {
+                // A local variable is named var and is NOT starting a statement
+                var inTokenAsIdentifier = new IdentifierToken(inToken.TextSpan);
+
+                ParseIdentifierToken(inTokenAsIdentifier);
             }
         }
     }

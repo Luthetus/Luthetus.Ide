@@ -2,14 +2,14 @@
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.SyntaxTokens;
 
-public class EndOfFileToken : ISyntaxToken
+public class BadToken : ISyntaxToken
 {
-    public EndOfFileToken(
+    public BadToken(
         TextEditorTextSpan textEditorTextSpan)
     {
         TextSpan = textEditorTextSpan;
     }
 
     public TextEditorTextSpan TextSpan { get; }
-    public SyntaxKind SyntaxKind => SyntaxKind.EndOfFileToken;
+    public SyntaxKind SyntaxKind => SyntaxKind.BadToken;
 }

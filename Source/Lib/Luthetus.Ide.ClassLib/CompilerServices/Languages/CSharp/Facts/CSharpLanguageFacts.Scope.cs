@@ -15,6 +15,10 @@ public partial class CSharpLanguageFacts
                     Types.Void.type
                 },
                 {
+                    Types.Var.name,
+                    Types.Var.type
+                },
+                {
                     Types.Bool.name,
                     Types.Bool.type
                 },

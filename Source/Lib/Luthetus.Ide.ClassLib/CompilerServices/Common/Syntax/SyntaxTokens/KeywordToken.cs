@@ -13,3 +13,15 @@ public class KeywordToken : ISyntaxToken
     public TextEditorTextSpan TextSpan { get; }
     public SyntaxKind SyntaxKind => SyntaxKind.KeywordToken;
 }
+
+public class KeywordContextualToken : ISyntaxToken
+{
+    public KeywordContextualToken(
+        TextEditorTextSpan textEditorTextSpan)
+    {
+        TextSpan = textEditorTextSpan;
+    }
+
+    public TextEditorTextSpan TextSpan { get; }
+    public SyntaxKind SyntaxKind => SyntaxKind.KeywordContextualToken;
+}

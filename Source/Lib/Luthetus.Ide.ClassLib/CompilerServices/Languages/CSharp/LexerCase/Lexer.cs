@@ -116,8 +116,8 @@ public class Lexer
                 case 'Z':
                 /* Underscore */
                 case '_':
-                    var identifierOrKeywordToken = LexIdentifierOrKeyword();
-                    _syntaxTokens.Add(identifierOrKeywordToken);
+                    var identifierOrKeywordTokenOrKeywordContextual = LexIdentifierOrKeywordOrKeywordContextual();
+                    _syntaxTokens.Add(identifierOrKeywordTokenOrKeywordContextual);
                     break;
                 case '+':
                     var plusToken = LexPlusToken();
@@ -331,7 +331,7 @@ public class Lexer
         return new CommentMultiLineToken(textSpan);
     }
 
-    private ISyntaxToken LexIdentifierOrKeyword()
+    private ISyntaxToken LexIdentifierOrKeywordOrKeywordContextual()
     {
         var entryPositionIndex = _stringWalker.PositionIndex;
 
@@ -367,6 +367,9 @@ public class Lexer
             {
                 DecorationByte = decorationByte,
             };
+
+            if (CSharpKeywords.CONTEXTUAL_KEYWORDS.Contains(textValue))
+                return new KeywordContextualToken(textSpan);
 
             return new KeywordToken(textSpan);
         }
