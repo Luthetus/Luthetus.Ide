@@ -17,35 +17,27 @@ public class TokenWalker
     public ImmutableArray<ISyntaxToken> Tokens => _tokens;
     public ISyntaxToken Current => Peek(0);
     public ISyntaxToken Next => Peek(1);
+    public ISyntaxToken Previous => Peek(-1);
     public bool IsEof => Current.SyntaxKind == SyntaxKind.EndOfFileToken;
 
     /// <summary>If there are any tokens, then assume the final token is the end of file token. Otherwise, fabricate an end of file token.</summary>
-    private ISyntaxToken EOF
-    {
-        get
-        {
-            return _tokens.Length > 0
-                ? _tokens[_tokens.Length - 1]
-                : new EndOfFileToken(
-                    new TextEditorTextSpan(
-                        0,
-                        0,
-                        0,
-                        new ResourceUri(string.Empty),
-                        string.Empty));
-        }
-    } 
+    private ISyntaxToken EOF =>
+        _tokens.Length > 0
+            ? _tokens[_tokens.Length - 1]
+            : new EndOfFileToken(new(0, 0, 0, new(string.Empty), string.Empty));
 
     private int _index;
 
+    /// <summary>The input to this method can be positive OR negative.<br/><br/>Returns <see cref="BadToken"/> when an index out of bounds error would've occurred.</summary>
     public ISyntaxToken Peek(int offset)
     {
         var index = _index + offset;
 
-        if (index >= _tokens.Length)
+        if (index < 0 ||
+            index >= _tokens.Length)
         {
             // Return the end of file token (the last token)
-            return EOF;
+            return GetBadToken();
         }
 
         return _tokens[index];
@@ -59,7 +51,9 @@ public class TokenWalker
             return EOF;
         }
 
-        return _tokens[_index++];
+        var consumedToken = _tokens[_index++];
+
+        return consumedToken;
     }
 
     public ISyntaxToken Backtrack()
@@ -67,6 +61,10 @@ public class TokenWalker
         if (_index > 0)
             _index--;
 
+        // TODO: (2023-05-30) Should 'StatementDelimiterTokenRecent' be set here? See logic for tracking whether the current statement is completed. This is used for determining the contextual var keyword.
+
         return Peek(_index);
     }
+
+    private BadToken GetBadToken() => new BadToken(new(0, 0, 0, new(string.Empty), string.Empty));
 }
