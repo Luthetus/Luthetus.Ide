@@ -16,6 +16,7 @@ using System.Text;
 using Luthetus.TextEditor.RazorLib.Analysis.Html.Facts;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.Symbols;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
+using Luthetus.Ide.ClassLib.CompilerServices.Common.General;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor.TextEditorCase;
 
@@ -23,6 +24,8 @@ public class TEST_RazorSyntaxTree
 {
     public const string ADHOC_CLASS_IDENTIFIER = "__CLASS_Aaa__";
     public const string ADHOC_FUNCTION_IDENTIFIER = "__RENDER_FUNCTION_Bbb__";
+
+    public (Lexer Lexer, Parser Parser, CompilationUnit CompilationUnit, List<AdhocTextInsertion> AdhocClassInsertions, List<AdhocTextInsertion> AdhocRenderFunctionInsertions, AdhocTextInsertion RenderFunctionAdhocTextInsertion) RecentResult;
 
     private readonly StringBuilder _classBuilder = new($"public class {ADHOC_CLASS_IDENTIFIER}\n{{");
     private readonly StringBuilder _renderFunctionBuilder = new($"public void {ADHOC_FUNCTION_IDENTIFIER}()\n\t{{");
@@ -41,7 +44,7 @@ public class TEST_RazorSyntaxTree
     private string RenderFunctionContents => _renderFunctionBuilder.ToString();
 #endif
 
-    public ImmutableArray<ISymbol> ParseAdhocCSharpClass()
+    public void ParseAdhocCSharpClass()
     {
         StringWalker? stringWalker = null;
 
@@ -49,9 +52,6 @@ public class TEST_RazorSyntaxTree
             stringWalker = AdhocClassInsertions.First().StringWalker;
         else if (AdhocRenderFunctionInsertions.Any())
             stringWalker = AdhocRenderFunctionInsertions.First().StringWalker;
-
-        if (stringWalker is null)
-            return ImmutableArray<ISymbol>.Empty;
 
         _classBuilder.Append("\n\t");
 
@@ -64,7 +64,6 @@ public class TEST_RazorSyntaxTree
         _classBuilder.Append("\n\t}\n}");
 
         var classContents = _classBuilder.ToString();
-        var renderFunctionContents = _renderFunctionBuilder.ToString();
 
         var lexer = new Lexer(
             AdhocResourceUri,
@@ -78,62 +77,7 @@ public class TEST_RazorSyntaxTree
 
         var compilationUnit = parser.Parse();
 
-        var resultingSymbols = new List<ISymbol>();
-
-        foreach (var adhocSymbol in parser.Binder.Symbols)
-        {
-            var adhocTextInsertion = AdhocClassInsertions
-                .SingleOrDefault(x =>
-                    adhocSymbol.TextSpan.StartingIndexInclusive >= x.InsertionStartingIndexInclusive &&
-                    adhocSymbol.TextSpan.EndingIndexExclusive < x.InsertionEndingIndexExclusive);
-
-            // TODO: Fix for spans that go 2 adhocTextInsertions worth of length?
-            if (adhocTextInsertion is null)
-            {
-                adhocTextInsertion = AdhocRenderFunctionInsertions
-                    .SingleOrDefault(x =>
-                        adhocSymbol.TextSpan.StartingIndexInclusive >= x.InsertionStartingIndexInclusive &&
-                        adhocSymbol.TextSpan.EndingIndexExclusive < x.InsertionEndingIndexExclusive);
-            }
-
-            if (adhocTextInsertion is not null)
-            {
-                ISymbol? symbolToAdd = null;
-
-                var symbolSourceTextStartingIndexInclusive =
-                    adhocTextInsertion.SourceTextStartingIndexInclusive +
-                    (adhocSymbol.TextSpan.StartingIndexInclusive - adhocTextInsertion.InsertionStartingIndexInclusive);
-                
-                var symbolSourceTextEndingIndexExclusive =
-                    symbolSourceTextStartingIndexInclusive +
-                    (adhocSymbol.TextSpan.EndingIndexExclusive - adhocSymbol.TextSpan.StartingIndexInclusive);
-
-                switch (adhocSymbol.SyntaxKind)
-                {
-                    case SyntaxKind.TypeSymbol:
-                        var sourceTextSpan = adhocSymbol.TextSpan with 
-                        { 
-                            ResourceUri = stringWalker.ResourceUri,
-                            SourceText = stringWalker.SourceText,
-                            DecorationByte = (byte)HtmlDecorationKind.InjectedLanguageType,
-                            StartingIndexInclusive = symbolSourceTextStartingIndexInclusive,
-                            EndingIndexExclusive = symbolSourceTextEndingIndexExclusive,
-                        };
-
-                        symbolToAdd = new TypeSymbol(sourceTextSpan);
-                        break;
-                    case SyntaxKind.FunctionSymbol:
-                        break;
-                    case SyntaxKind.VariableSymbol:
-                        break;
-                }
-
-                if (symbolToAdd is not null)
-                    resultingSymbols.Add(symbolToAdd);
-            }
-        }
-
-        return resultingSymbols.ToImmutableArray();
+        RecentResult = (lexer, parser, compilationUnit, AdhocClassInsertions, AdhocRenderFunctionInsertions, renderFunctionAdhocTextInsertion);
     }
 
     /// <summary>currentCharacterIn:<br/> -<see cref="InjectedLanguageDefinition.TransitionSubstring"/><br/></summary>

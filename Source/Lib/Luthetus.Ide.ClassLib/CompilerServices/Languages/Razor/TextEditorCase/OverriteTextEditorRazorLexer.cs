@@ -9,6 +9,8 @@ namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor.TextEditorCase;
 
 public class OverriteTextEditorRazorLexer : ITextEditorLexer
 {
+    public TEST_RazorSyntaxTree TEST_RazorSyntaxTree = new();
+
     public OverriteTextEditorRazorLexer(ResourceUri resourceUri)
     {
         ResourceUri = resourceUri;
@@ -22,7 +24,7 @@ public class OverriteTextEditorRazorLexer : ITextEditorLexer
         string sourceText,
         RenderStateKey modelRenderStateKey)
     {
-        var TEST_RazorSyntaxTree = new TEST_RazorSyntaxTree();
+        TEST_RazorSyntaxTree = new TEST_RazorSyntaxTree();
 
         InjectedLanguageDefinition TEST_InjectedLanguageDefinitionRazorInjectedLanguageDefinition = new(
             RazorFacts.TRANSITION_SUBSTRING,
@@ -35,7 +37,7 @@ public class OverriteTextEditorRazorLexer : ITextEditorLexer
             sourceText,
             TEST_InjectedLanguageDefinitionRazorInjectedLanguageDefinition);
 
-        var symbols = TEST_RazorSyntaxTree.ParseAdhocCSharpClass();
+        TEST_RazorSyntaxTree.ParseAdhocCSharpClass();
 
         var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
 
@@ -73,12 +75,6 @@ public class OverriteTextEditorRazorLexer : ITextEditorLexer
         {
             textEditorTextSpans.AddRange(htmlSyntaxWalker.CommentNodes
                 .Select(c => c.TextEditorTextSpan));
-        }
-
-        // TEST_Finalize
-        {
-            textEditorTextSpans.AddRange(symbols
-                .Select(s => s.TextSpan));
         }
 
         return Task.FromResult(textEditorTextSpans.ToImmutableArray());

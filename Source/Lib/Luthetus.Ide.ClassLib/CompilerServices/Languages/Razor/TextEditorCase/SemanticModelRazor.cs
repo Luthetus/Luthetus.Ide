@@ -1,5 +1,8 @@
-﻿using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.ParserCase;
+﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.Symbols;
+using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
+using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.ParserCase;
 using Luthetus.TextEditor.RazorLib.Analysis;
+using Luthetus.TextEditor.RazorLib.Analysis.Html.Decoration;
 using Luthetus.TextEditor.RazorLib.Lexing;
 using Luthetus.TextEditor.RazorLib.Model;
 using Luthetus.TextEditor.RazorLib.Semantics;
@@ -38,39 +41,98 @@ public class SemanticModelRazor : ISemanticModel
             text,
             model.RenderStateKey);
 
-        var textEditorLexerC = (IdeRazorLexer)model.Lexer;
-        var recentLexSession = textEditorLexerC.RecentLexSession;
+        var overriteTextEditorRazorLexer = (OverriteTextEditorRazorLexer)model.Lexer;
 
-        if (recentLexSession is null)
+        if (overriteTextEditorRazorLexer.TEST_RazorSyntaxTree is null)
             return null;
 
-        var parserSession = new Parser(
-            recentLexSession.SyntaxTokens,
-            recentLexSession.Diagnostics);
+        var recentResult = overriteTextEditorRazorLexer
+            .TEST_RazorSyntaxTree
+            .RecentResult;
 
-        var compilationUnit = parserSession.Parse();
+        var parserSession = recentResult
+            .Parser;
 
-        DiagnosticTextSpanTuples = compilationUnit.Diagnostics.Select(x =>
+        var compilationUnit = recentResult
+            .CompilationUnit;
+
+        // Testing
+        var resultingSymbols = new List<ISymbol>();
+
+        foreach (var adhocSymbol in parserSession.Binder.Symbols)
         {
-            var textEditorDecorationKind = x.DiagnosticLevel switch
+            var adhocTextInsertion = recentResult.AdhocClassInsertions
+                .SingleOrDefault(x =>
+                    adhocSymbol.TextSpan.StartingIndexInclusive >= x.InsertionStartingIndexInclusive &&
+                    adhocSymbol.TextSpan.EndingIndexExclusive < x.InsertionEndingIndexExclusive);
+
+            // TODO: Fix for spans that go 2 adhocTextInsertions worth of length?
+            if (adhocTextInsertion is null)
             {
-                TextEditorDiagnosticLevel.Hint => TextEditorSemanticDecorationKind.DiagnosticHint,
-                TextEditorDiagnosticLevel.Suggestion => TextEditorSemanticDecorationKind.DiagnosticSuggestion,
-                TextEditorDiagnosticLevel.Warning => TextEditorSemanticDecorationKind.DiagnosticWarning,
-                TextEditorDiagnosticLevel.Error => TextEditorSemanticDecorationKind.DiagnosticError,
-                TextEditorDiagnosticLevel.Other => TextEditorSemanticDecorationKind.DiagnosticOther,
-                _ => throw new NotImplementedException(),
-            };
+                adhocTextInsertion = recentResult.AdhocRenderFunctionInsertions
+                    .SingleOrDefault(x =>
+                        adhocSymbol.TextSpan.StartingIndexInclusive >= x.InsertionStartingIndexInclusive &&
+                        adhocSymbol.TextSpan.EndingIndexExclusive < x.InsertionEndingIndexExclusive);
+            }
 
-            var textSpan = x.TextEditorTextSpan with
+            if (adhocTextInsertion is not null)
             {
-                DecorationByte = (byte)textEditorDecorationKind
-            };
+                ISymbol? symbolToAdd = null;
 
-            return (x, textSpan);
-        }).ToImmutableList();
+                var symbolSourceTextStartingIndexInclusive =
+                    adhocTextInsertion.SourceTextStartingIndexInclusive +
+                    (adhocSymbol.TextSpan.StartingIndexInclusive - adhocTextInsertion.InsertionStartingIndexInclusive);
 
-        SymbolMessageTextSpanTuples = parserSession.Binder.Symbols
+                var symbolSourceTextEndingIndexExclusive =
+                    symbolSourceTextStartingIndexInclusive +
+                    (adhocSymbol.TextSpan.EndingIndexExclusive - adhocSymbol.TextSpan.StartingIndexInclusive);
+
+                switch (adhocSymbol.SyntaxKind)
+                {
+                    case SyntaxKind.TypeSymbol:
+                        var sourceTextSpan = adhocSymbol.TextSpan with
+                        {
+                            ResourceUri = model.ResourceUri,
+                            SourceText = text,
+                            DecorationByte = (byte)HtmlDecorationKind.InjectedLanguageType,
+                            StartingIndexInclusive = symbolSourceTextStartingIndexInclusive,
+                            EndingIndexExclusive = symbolSourceTextEndingIndexExclusive,
+                        };
+
+                        symbolToAdd = new TypeSymbol(sourceTextSpan);
+                        break;
+                    case SyntaxKind.FunctionSymbol:
+                        break;
+                    case SyntaxKind.VariableSymbol:
+                        break;
+                }
+
+                if (symbolToAdd is not null)
+                    resultingSymbols.Add(symbolToAdd);
+            }
+        }
+
+        //DiagnosticTextSpanTuples = compilationUnit.Diagnostics.Select(x =>
+        //{
+        //    var textEditorDecorationKind = x.DiagnosticLevel switch
+        //    {
+        //        TextEditorDiagnosticLevel.Hint => TextEditorSemanticDecorationKind.DiagnosticHint,
+        //        TextEditorDiagnosticLevel.Suggestion => TextEditorSemanticDecorationKind.DiagnosticSuggestion,
+        //        TextEditorDiagnosticLevel.Warning => TextEditorSemanticDecorationKind.DiagnosticWarning,
+        //        TextEditorDiagnosticLevel.Error => TextEditorSemanticDecorationKind.DiagnosticError,
+        //        TextEditorDiagnosticLevel.Other => TextEditorSemanticDecorationKind.DiagnosticOther,
+        //        _ => throw new NotImplementedException(),
+        //    };
+
+        //    var textSpan = x.TextEditorTextSpan with
+        //    {
+        //        DecorationByte = (byte)textEditorDecorationKind
+        //    };
+
+        //    return (x, textSpan);
+        //}).ToImmutableList();
+
+        SymbolMessageTextSpanTuples = resultingSymbols
             .Select(x => ($"({x.GetType().Name}){x.TextSpan.GetText()}", x.TextSpan))
             .ToImmutableList();
 
