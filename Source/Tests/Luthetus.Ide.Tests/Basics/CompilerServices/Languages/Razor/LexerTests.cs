@@ -39,6 +39,10 @@ public class LexerTests
 	{
 		_count++;
 	}
+  
+	public class MyClass
+	{
+	}
 }"
         .ReplaceLineEndings("\n");
 
@@ -62,6 +66,22 @@ public class LexerTests
         var z = 2;
     }
 
+    public class TEST_delayed_text_insertion
+    {
+        public TEST_delayed_text_insertion(
+            string content,
+            int offset)
+        {
+            Content = content;
+            Offset = offset;
+        }
+
+        public string Content { get; set; }
+        public int Offset { get; set; }
+        public int StartInsertionPositionIndexInclusive { get; set; }
+        public int EndInsertionPositionIndexExclusive { get; set; }
+    }
+
     public class TEST_RazorSyntaxTree
     {
         public const string ADHOC_CLASS_IDENTIFIER = "__CLASS_Aaa__";
@@ -69,6 +89,11 @@ public class LexerTests
 
         private readonly StringBuilder _classBuilder = new($"public class {ADHOC_CLASS_IDENTIFIER}\n{{");
         private readonly StringBuilder _renderFunctionBuilder = new($"public void {ADHOC_FUNCTION_IDENTIFIER}()\n\t{{");
+
+        /// <summary>Need to track the offset of these insertions so <see cref="_classBuilder"/> isn't working when it comes to directly appending to it.</summary>
+        private readonly List<TEST_delayed_text_insertion> DelayedClassBuilder = new();
+        /// <summary>Need to track the offset of these insertions so <see cref="_renderFunctionBuilder"/> isn't working when it comes to directly appending to it.</summary>
+        private readonly List<TEST_delayed_text_insertion> DelayedRenderFunctionBuilder = new();
 
         private readonly ResourceUri AdhocResourceUri = new ResourceUri(ADHOC_CLASS_IDENTIFIER + ".cs");
 
@@ -97,6 +122,8 @@ public class LexerTests
                 lexer.Diagnostics);
 
             var compilationUnit = parser.Parse();
+
+            var symbols = parser.Binder.Symbols;
 
             var z = 2;
         }
@@ -1193,7 +1220,18 @@ public class LexerTests
         {
             // Testing something
             {
+                var delayedTextInsertion = new TEST_delayed_text_insertion(
+                    cSharpText,
+                    offsetPositionIndex)
+                {
+                    StartInsertionPositionIndexInclusive = _classBuilder.Length
+                };
+
                 _classBuilder.Append(cSharpText);
+
+                delayedTextInsertion.EndInsertionPositionIndexExclusive = _classBuilder.Length;
+
+                DelayedClassBuilder.Add(delayedTextInsertion);
             }
 
             var classTemplateOpening = "public class Aaa{";
@@ -1213,8 +1251,18 @@ public class LexerTests
         {
             // Testing something
             {
-                // Semicolons can appear twice in a row with no issue. So just append one in case the razor logic didn't have it.
-                _renderFunctionBuilder.Append(cSharpText + ';');
+                var delayedTextInsertion = new TEST_delayed_text_insertion(
+                    cSharpText,
+                    offsetPositionIndex)
+                {
+                    StartInsertionPositionIndexInclusive = _renderFunctionBuilder.Length
+                };
+
+                _renderFunctionBuilder.Append(cSharpText);
+
+                delayedTextInsertion.EndInsertionPositionIndexExclusive = _renderFunctionBuilder.Length;
+
+                DelayedRenderFunctionBuilder.Add(delayedTextInsertion);
             }
 
             var classTemplateOpening = "public class Aaa{public void Bbb(){";
