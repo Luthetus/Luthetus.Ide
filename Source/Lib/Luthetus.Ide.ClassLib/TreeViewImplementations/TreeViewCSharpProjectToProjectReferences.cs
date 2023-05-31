@@ -74,8 +74,8 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
 
         cSharpProjectSyntaxWalker.Visit(syntaxNodeRoot);
 
-        var projectReferences = cSharpProjectSyntaxWalker.TagSyntaxes
-            .Where(ts => (ts.OpenTagNameSyntax?.Value ?? string.Empty) == "ProjectReference")
+        var projectReferences = cSharpProjectSyntaxWalker.TagNodes
+            .Where(ts => (ts.OpenTagNameSyntax?.TextEditorTextSpan.GetText() ?? string.Empty) == "ProjectReference")
             .ToList();
 
         List<CSharpProjectToProjectReference> cSharpProjectToProjectReferences = new();

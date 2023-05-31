@@ -5,11 +5,20 @@ namespace Luthetus.Ide.ClassLib.DotNet.CSharp;
 
 public class CSharpProjectSyntaxWalker : XmlSyntaxWalker
 {
-    public List<TagSyntax> TagSyntaxes { get; } = new();
+    public List<TagNode> TagNodes { get; } = new();
 
-    public override void VisitTagSyntax(TagSyntax tagSyntax)
+    public override void VisitTagOpeningNode(TagNode node)
     {
-        TagSyntaxes.Add(tagSyntax);
-        base.VisitTagSyntax(tagSyntax);
+        TagNodes.Add(node);
+    }
+
+    public override void VisitTagClosingNode(TagNode node)
+    {
+        TagNodes.Add(node);
+    }
+
+    public override void VisitTagSelfClosingNode(TagNode node)
+    {
+        TagNodes.Add(node);
     }
 }

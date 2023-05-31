@@ -37,8 +37,8 @@ public class CSharpProjectParserTests
 
         cSharpProjectSyntaxWalker.Visit(syntaxNodeRoot);
 
-        var packageReferences = cSharpProjectSyntaxWalker.TagSyntaxes
-            .Where(ts => (ts.OpenTagNameSyntax?.Value ?? string.Empty) == "PackageReference")
+        var packageReferences = cSharpProjectSyntaxWalker.TagNodes
+            .Where(ts => (ts.OpenTagNameSyntax?.TextEditorTextSpan.GetText() ?? string.Empty) == "PackageReference")
             .ToList();
 
         var attributeNameValueTuples = packageReferences
@@ -77,8 +77,8 @@ public class CSharpProjectParserTests
 
         cSharpProjectSyntaxWalker.Visit(syntaxNodeRoot);
 
-        var packageReferences = cSharpProjectSyntaxWalker.TagSyntaxes
-            .Where(ts => (ts.OpenTagNameSyntax?.Value ?? string.Empty) == "PackageReference")
+        var packageReferences = cSharpProjectSyntaxWalker.TagNodes
+            .Where(ts => (ts.OpenTagNameSyntax?.TextEditorTextSpan.GetText() ?? string.Empty) == "PackageReference")
             .ToList();
 
         var attributeNameValueTuples = packageReferences

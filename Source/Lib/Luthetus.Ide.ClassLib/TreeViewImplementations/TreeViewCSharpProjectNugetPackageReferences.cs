@@ -74,8 +74,8 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
 
         cSharpProjectSyntaxWalker.Visit(syntaxNodeRoot);
 
-        var packageReferences = cSharpProjectSyntaxWalker.TagSyntaxes
-            .Where(ts => (ts.OpenTagNameSyntax?.Value ?? string.Empty) == "PackageReference")
+        var packageReferences = cSharpProjectSyntaxWalker.TagNodes
+            .Where(ts => (ts.OpenTagNameSyntax?.TextEditorTextSpan.GetText() ?? string.Empty) == "PackageReference")
             .ToList();
 
         List<LightWeightNugetPackageRecord> lightWeightNugetPackageRecords = new();
