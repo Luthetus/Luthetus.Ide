@@ -247,6 +247,12 @@ public class Binder
     public BoundInheritanceStatementNode BindInheritanceStatementNode(
         IdentifierToken parentClassIdentifierToken)
     {
+        _symbols.Add(
+            new TypeSymbol(parentClassIdentifierToken.TextSpan with
+            {
+                DecorationByte = (byte)GenericDecorationKind.Type
+            }));
+
         var parentClassIdentifier = parentClassIdentifierToken.TextSpan.GetText();
 
         var boundInheritanceStatementNode = new BoundInheritanceStatementNode(
