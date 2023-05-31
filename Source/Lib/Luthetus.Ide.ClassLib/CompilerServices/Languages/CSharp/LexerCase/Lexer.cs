@@ -120,12 +120,43 @@ public class Lexer
                     _syntaxTokens.Add(identifierOrKeywordTokenOrKeywordContextual);
                     break;
                 case '+':
-                    var plusToken = LexPlusToken();
-                    _syntaxTokens.Add(plusToken);
+                    if (_stringWalker.PeekCharacter(1) == '+')
+                    {
+                        var plusPlusToken = LexPlusPlusToken();
+                        _syntaxTokens.Add(plusPlusToken);
+                    }
+                    else
+                    {
+                        var plusToken = LexPlusToken();
+                        _syntaxTokens.Add(plusToken);
+                    }
+
+                    break;
+                case '-':
+                    if (_stringWalker.PeekCharacter(1) == '-')
+                    {
+                        var minusMinusToken = LexMinusMinusToken();
+                        _syntaxTokens.Add(minusMinusToken);
+                    }
+                    else
+                    {
+                        var minusToken = LexMinusToken();
+                        _syntaxTokens.Add(minusToken);
+                    }
+
                     break;
                 case '=':
-                    var equalsToken = LexEqualsToken();
-                    _syntaxTokens.Add(equalsToken);
+                    if (_stringWalker.PeekCharacter(1) == '=')
+                    {
+                        var equalsEqualsToken = LexEqualsEqualsToken();
+                        _syntaxTokens.Add(equalsEqualsToken);
+                    }
+                    else
+                    {
+                        var equalsToken = LexEqualsToken();
+                        _syntaxTokens.Add(equalsToken);
+                    }
+
                     break;
                 case ';':
                     var statementDelimiterToken = LexStatementDelimiterToken();
@@ -337,9 +368,14 @@ public class Lexer
 
         while (!_stringWalker.IsEof)
         {
-            if (char.IsWhiteSpace(_stringWalker.CurrentCharacter) ||
-                char.IsPunctuation(_stringWalker.CurrentCharacter) &&
-                    _stringWalker.CurrentCharacter != '_')
+            //if (char.IsWhiteSpace(_stringWalker.CurrentCharacter) ||
+            //    (char.IsPunctuation(_stringWalker.CurrentCharacter) && _stringWalker.CurrentCharacter != '_'))
+            //{
+            //    break;
+            //}
+            
+            if (!char.IsLetterOrDigit(_stringWalker.CurrentCharacter) &&
+                _stringWalker.CurrentCharacter != '_')
             {
                 break;
             }
@@ -392,6 +428,60 @@ public class Lexer
 
         return new PlusToken(textSpan);
     }
+    
+    private PlusPlusToken LexPlusPlusToken()
+    {
+        var entryPositionIndex = _stringWalker.PositionIndex;
+
+        // First '+'
+        _stringWalker.ReadCharacter();
+        // Second '+'
+        _stringWalker.ReadCharacter();
+
+        var textSpan = new TextEditorTextSpan(
+            entryPositionIndex,
+            _stringWalker.PositionIndex,
+            (byte)GenericDecorationKind.None,
+            _stringWalker.ResourceUri,
+            _stringWalker.SourceText);
+
+        return new PlusPlusToken(textSpan);
+    }
+    
+    private MinusToken LexMinusToken()
+    {
+        var entryPositionIndex = _stringWalker.PositionIndex;
+
+        _stringWalker.ReadCharacter();
+
+        var textSpan = new TextEditorTextSpan(
+            entryPositionIndex,
+            _stringWalker.PositionIndex,
+            (byte)GenericDecorationKind.None,
+            _stringWalker.ResourceUri,
+            _stringWalker.SourceText);
+
+        return new MinusToken(textSpan);
+    }
+    
+    private MinusMinusToken LexMinusMinusToken()
+    {
+        var entryPositionIndex = _stringWalker.PositionIndex;
+
+        // First '-'
+        _stringWalker.ReadCharacter();
+        // Second '-'
+        _stringWalker.ReadCharacter();
+
+        var textSpan = new TextEditorTextSpan(
+            entryPositionIndex,
+            _stringWalker.PositionIndex,
+            (byte)GenericDecorationKind.None,
+            _stringWalker.ResourceUri,
+            _stringWalker.SourceText);
+
+        return new MinusMinusToken(textSpan);
+    }
 
     private EqualsToken LexEqualsToken()
     {
@@ -407,6 +497,25 @@ public class Lexer
             _stringWalker.SourceText);
 
         return new EqualsToken(textSpan);
+    }
+
+    private EqualsEqualsToken LexEqualsEqualsToken()
+    {
+        var entryPositionIndex = _stringWalker.PositionIndex;
+
+        // First '='
+        _stringWalker.ReadCharacter();
+        // Second '='
+        _stringWalker.ReadCharacter();
+
+        var textSpan = new TextEditorTextSpan(
+            entryPositionIndex,
+            _stringWalker.PositionIndex,
+            (byte)GenericDecorationKind.None,
+            _stringWalker.ResourceUri,
+            _stringWalker.SourceText);
+
+        return new EqualsEqualsToken(textSpan);
     }
 
     private StatementDelimiterToken LexStatementDelimiterToken()

@@ -2,14 +2,14 @@
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.SyntaxTokens;
 
-public class EqualsToken : ISyntaxToken
+public class MinusToken : ISyntaxToken
 {
-    public EqualsToken(
+    public MinusToken(
         TextEditorTextSpan textEditorTextSpan)
     {
         TextSpan = textEditorTextSpan;
     }
 
     public TextEditorTextSpan TextSpan { get; }
-    public SyntaxKind SyntaxKind => SyntaxKind.EqualsToken;
+    public SyntaxKind SyntaxKind => SyntaxKind.MinusToken;
 }
