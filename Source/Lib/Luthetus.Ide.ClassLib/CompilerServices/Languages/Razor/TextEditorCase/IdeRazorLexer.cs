@@ -36,8 +36,9 @@ public class IdeRazorLexer : ITextEditorLexer
         InjectedLanguageDefinition razorInjectedLanguageDefinition = new(
             RazorFacts.TRANSITION_SUBSTRING,
             RazorFacts.TRANSITION_SUBSTRING_ESCAPED,
-            IdeRazorSyntaxTree
-                .ParseInjectedLanguageFragment);
+            IdeRazorSyntaxTree.ParseInjectedLanguageFragment,
+            IdeRazorSyntaxTree.ParseAttributeName,
+            IdeRazorSyntaxTree.ParseAttributeValue);
 
         var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
             ResourceUri,

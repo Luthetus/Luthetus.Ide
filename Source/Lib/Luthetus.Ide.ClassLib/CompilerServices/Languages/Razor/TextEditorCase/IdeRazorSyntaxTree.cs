@@ -189,6 +189,43 @@ public class IdeRazorSyntaxTree
             injectedLanguageDefinition);
     }
 
+    public static AttributeNameNode ParseAttributeName(
+        StringWalker stringWalker,
+        TextEditorHtmlDiagnosticBag textEditorHtmlDiagnosticBag,
+        InjectedLanguageDefinition injectedLanguageDefinition)
+    {
+        var startingPositionIndex = stringWalker.PositionIndex;
+
+        while (!stringWalker.IsEof)
+        {
+            _ = stringWalker.ReadCharacter();
+
+            if (WhitespaceFacts.ALL.Contains(stringWalker.CurrentCharacter) ||
+                HtmlFacts.SEPARATOR_FOR_ATTRIBUTE_NAME_AND_ATTRIBUTE_VALUE == stringWalker.CurrentCharacter ||
+                stringWalker.CheckForSubstringRange(HtmlFacts.OPEN_TAG_ENDING_OPTIONS, out var matchedOn))
+            {
+                break;
+            }
+        }
+
+        var attributeNameTextSpan = new TextEditorTextSpan(
+            startingPositionIndex,
+            stringWalker.PositionIndex,
+            (byte)HtmlDecorationKind.InjectedLanguageFragment,
+            stringWalker.ResourceUri,
+            stringWalker.SourceText);
+
+        return new AttributeNameNode(attributeNameTextSpan);
+    }
+    
+    public static AttributeValueNode ParseAttributeValue(
+        StringWalker stringWalker,
+        TextEditorHtmlDiagnosticBag textEditorHtmlDiagnosticBag,
+        InjectedLanguageDefinition injectedLanguageDefinition)
+    {
+        throw new NotImplementedException();
+    }
+
     /// <summary> The @code{...} section must be wrapped in an adhoc class definition so that Roslyn can syntax highlight methods. <br/><br/> The @{...} code blocks must be wrapped in an adhoc method.</summary>
     private List<IHtmlSyntaxNode> ReadCodeBlock(
         StringWalker stringWalker,
