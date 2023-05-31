@@ -28,9 +28,9 @@ public class TEST_RazorSyntaxTree
     private readonly StringBuilder _renderFunctionBuilder = new($"public void {ADHOC_FUNCTION_IDENTIFIER}()\n\t{{");
 
     /// <summary>Need to track the offset of these insertions so <see cref="_classBuilder"/> isn't working when it comes to directly appending to it.</summary>
-    private readonly List<TEST_delayed_text_insertion> DelayedClassBuilder = new();
+    private readonly List<AdhocTextInsertion> AdhocClassInsertions = new();
     /// <summary>Need to track the offset of these insertions so <see cref="_renderFunctionBuilder"/> isn't working when it comes to directly appending to it.</summary>
-    private readonly List<TEST_delayed_text_insertion> DelayedRenderFunctionBuilder = new();
+    private readonly List<AdhocTextInsertion> AdhocRenderFunctionInsertions = new();
 
     private readonly ResourceUri AdhocResourceUri = new ResourceUri(ADHOC_CLASS_IDENTIFIER + ".cs");
 
@@ -41,12 +41,30 @@ public class TEST_RazorSyntaxTree
     private string RenderFunctionContents => _renderFunctionBuilder.ToString();
 #endif
 
-    public ImmutableArray<ISymbol> TEST_Finalize()
+    public ImmutableArray<ISymbol> ParseAdhocCSharpClass()
     {
-        _classBuilder.Append("\n\t" + _renderFunctionBuilder.ToString() + "\n\t}");
-        _classBuilder.Append("\n}");
+        StringWalker? stringWalker = null;
+
+        if (AdhocClassInsertions.Any())
+            stringWalker = AdhocClassInsertions.First().StringWalker;
+        else if (AdhocRenderFunctionInsertions.Any())
+            stringWalker = AdhocRenderFunctionInsertions.First().StringWalker;
+
+        if (stringWalker is null)
+            return ImmutableArray<ISymbol>.Empty;
+
+        _classBuilder.Append("\n\t");
+
+        var renderFunctionAdhocTextInsertion = AdhocTextInsertion.PerformInsertion(
+            _renderFunctionBuilder.ToString(),
+            0,
+            _classBuilder,
+            stringWalker);
+
+        _classBuilder.Append("\n\t}\n}");
 
         var classContents = _classBuilder.ToString();
+        var renderFunctionContents = _renderFunctionBuilder.ToString();
 
         var lexer = new Lexer(
             AdhocResourceUri,
@@ -62,39 +80,47 @@ public class TEST_RazorSyntaxTree
 
         var resultingSymbols = new List<ISymbol>();
 
-        foreach (var originalSymbol in parser.Binder.Symbols)
+        foreach (var adhocSymbol in parser.Binder.Symbols)
         {
-            var originalTextSpan = originalSymbol.TextSpan;
-
-            var insertedTextBucket = DelayedClassBuilder
+            var adhocTextInsertion = AdhocClassInsertions
                 .SingleOrDefault(x =>
-                    originalSymbol.TextSpan.StartingIndexInclusive >= x.StartInsertionPositionIndexInclusive &&
-                    originalSymbol.TextSpan.EndingIndexExclusive < x.EndInsertionPositionIndexExclusive);
+                    adhocSymbol.TextSpan.StartingIndexInclusive >= x.InsertionStartingIndexInclusive &&
+                    adhocSymbol.TextSpan.EndingIndexExclusive < x.InsertionEndingIndexExclusive);
 
-            if (insertedTextBucket is null)
+            // TODO: Fix for spans that go 2 adhocTextInsertions worth of length?
+            if (adhocTextInsertion is null)
             {
-                insertedTextBucket = DelayedRenderFunctionBuilder
+                adhocTextInsertion = AdhocRenderFunctionInsertions
                     .SingleOrDefault(x =>
-                        originalSymbol.TextSpan.StartingIndexInclusive >= x.StartInsertionPositionIndexInclusive &&
-                        originalSymbol.TextSpan.EndingIndexExclusive < x.EndInsertionPositionIndexExclusive);
+                        adhocSymbol.TextSpan.StartingIndexInclusive >= x.InsertionStartingIndexInclusive &&
+                        adhocSymbol.TextSpan.EndingIndexExclusive < x.InsertionEndingIndexExclusive);
             }
 
-            if (insertedTextBucket is not null)
+            if (adhocTextInsertion is not null)
             {
                 ISymbol? symbolToAdd = null;
 
-                switch (originalSymbol.SyntaxKind)
+                var symbolSourceTextStartingIndexInclusive =
+                    adhocTextInsertion.SourceTextStartingIndexInclusive +
+                    (adhocSymbol.TextSpan.StartingIndexInclusive - adhocTextInsertion.InsertionStartingIndexInclusive);
+                
+                var symbolSourceTextEndingIndexExclusive =
+                    symbolSourceTextStartingIndexInclusive +
+                    (adhocSymbol.TextSpan.EndingIndexExclusive - adhocSymbol.TextSpan.StartingIndexInclusive);
+
+                switch (adhocSymbol.SyntaxKind)
                 {
                     case SyntaxKind.TypeSymbol:
-                        var startingIndexInclusive = insertedTextBucket.Offset + (originalTextSpan.EndingIndexExclusive - originalTextSpan.StartingIndexInclusive);
-
-                        var shiftedTextSpan = originalTextSpan with 
+                        var sourceTextSpan = adhocSymbol.TextSpan with 
                         { 
-                            StartingIndexInclusive = startingIndexInclusive,
-                            EndingIndexExclusive = originalTextSpan.EndingIndexExclusive - insertedTextBucket.Offset,
+                            ResourceUri = stringWalker.ResourceUri,
+                            SourceText = stringWalker.SourceText,
+                            DecorationByte = (byte)HtmlDecorationKind.InjectedLanguageType,
+                            StartingIndexInclusive = symbolSourceTextStartingIndexInclusive,
+                            EndingIndexExclusive = symbolSourceTextEndingIndexExclusive,
                         };
 
-                        symbolToAdd = new TypeSymbol(shiftedTextSpan);
+                        symbolToAdd = new TypeSymbol(sourceTextSpan);
                         break;
                     case SyntaxKind.FunctionSymbol:
                         break;
@@ -107,13 +133,7 @@ public class TEST_RazorSyntaxTree
             }
         }
 
-        return parser.Binder.Symbols
-            .Select(s => 
-            {
-                
-
-                return s;
-            }).ToImmutableArray();
+        return resultingSymbols.ToImmutableArray();
     }
 
     /// <summary>currentCharacterIn:<br/> -<see cref="InjectedLanguageDefinition.TransitionSubstring"/><br/></summary>
@@ -361,14 +381,16 @@ public class TEST_RazorSyntaxTree
                         injectedLanguageFragmentSyntaxes.AddRange(
                             ParseCSharpWithAdhocClassWrapping(
                                 cSharpText,
-                                positionIndexOffset));
+                                positionIndexOffset,
+                                stringWalker));
                     }
                     else
                     {
                         injectedLanguageFragmentSyntaxes.AddRange(
                             ParseCSharpWithAdhocMethodWrapping(
                                 cSharpText,
-                                positionIndexOffset));
+                                positionIndexOffset,
+                                stringWalker));
                     }
 
                     break;
@@ -1204,22 +1226,18 @@ public class TEST_RazorSyntaxTree
 
     private List<IHtmlSyntaxNode> ParseCSharpWithAdhocClassWrapping(
         string cSharpText,
-        int offsetPositionIndex)
+        int sourceTextStartingIndexInclusive,
+        StringWalker stringWalker)
     {
         // Testing something
         {
-            var delayedTextInsertion = new TEST_delayed_text_insertion(
+            var adhocTextInsertion = AdhocTextInsertion.PerformInsertion(
                 cSharpText,
-                offsetPositionIndex)
-            {
-                StartInsertionPositionIndexInclusive = _classBuilder.Length
-            };
+                sourceTextStartingIndexInclusive,
+                _classBuilder,
+                stringWalker);
 
-            _classBuilder.Append(cSharpText);
-
-            delayedTextInsertion.EndInsertionPositionIndexExclusive = _classBuilder.Length;
-
-            DelayedClassBuilder.Add(delayedTextInsertion);
+            AdhocClassInsertions.Add(adhocTextInsertion);
         }
 
         var classTemplateOpening = "public class Aaa{";
@@ -1230,27 +1248,23 @@ public class TEST_RazorSyntaxTree
         return ParseCSharp(
             injectedLanguageString,
             classTemplateOpening.Length,
-            offsetPositionIndex);
+            sourceTextStartingIndexInclusive);
     }
 
     private List<IHtmlSyntaxNode> ParseCSharpWithAdhocMethodWrapping(
         string cSharpText,
-        int offsetPositionIndex)
+        int sourceTextStartingIndexInclusive,
+        StringWalker stringWalker)
     {
         // Testing something
         {
-            var delayedTextInsertion = new TEST_delayed_text_insertion(
+            var adhocTextInsertion = AdhocTextInsertion.PerformInsertion(
                 cSharpText,
-                offsetPositionIndex)
-            {
-                StartInsertionPositionIndexInclusive = _renderFunctionBuilder.Length
-            };
+                sourceTextStartingIndexInclusive,
+                _renderFunctionBuilder,
+                stringWalker);
 
-            _renderFunctionBuilder.Append(cSharpText);
-
-            delayedTextInsertion.EndInsertionPositionIndexExclusive = _renderFunctionBuilder.Length;
-
-            DelayedRenderFunctionBuilder.Add(delayedTextInsertion);
+            AdhocRenderFunctionInsertions.Add(adhocTextInsertion);
         }
 
         var classTemplateOpening = "public class Aaa{public void Bbb(){";
@@ -1261,7 +1275,7 @@ public class TEST_RazorSyntaxTree
         return ParseCSharp(
             injectedLanguageString,
             classTemplateOpening.Length,
-            offsetPositionIndex);
+            sourceTextStartingIndexInclusive);
     }
 
     /// <summary> If Lexing C# from a razor code block one must either use <see cref="ParseCSharpWithAdhocClassWrapping"/> for an @code{} section or <see cref="ParseCSharpWithAdhocMethodWrapping"/> for a basic @{} block</summary>

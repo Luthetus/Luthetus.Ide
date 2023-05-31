@@ -35,7 +35,7 @@ public class OverriteTextEditorRazorLexer : ITextEditorLexer
             sourceText,
             TEST_InjectedLanguageDefinitionRazorInjectedLanguageDefinition);
 
-        var symbols = TEST_RazorSyntaxTree.TEST_Finalize();
+        var symbols = TEST_RazorSyntaxTree.ParseAdhocCSharpClass();
 
         var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
 

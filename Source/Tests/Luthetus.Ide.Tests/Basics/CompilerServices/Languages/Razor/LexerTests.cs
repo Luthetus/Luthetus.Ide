@@ -47,7 +47,7 @@ public class LexerTests
             sourceText,
             TEST_InjectedLanguageDefinitionRazorInjectedLanguageDefinition);
 
-        TEST_RazorSyntaxTree.TEST_Finalize();
+        TEST_RazorSyntaxTree.ParseAdhocCSharpClass();
 
         var z = 2;
     }

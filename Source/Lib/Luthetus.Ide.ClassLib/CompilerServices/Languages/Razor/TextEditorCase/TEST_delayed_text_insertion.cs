@@ -1,17 +1,43 @@
-﻿namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor.TextEditorCase;
+﻿using Luthetus.TextEditor.RazorLib.Analysis;
+using System.Text;
 
-public class TEST_delayed_text_insertion
+namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor.TextEditorCase;
+
+public class AdhocTextInsertion
 {
-    public TEST_delayed_text_insertion(
+    public AdhocTextInsertion(
         string content,
-        int offset)
+        int sourceTextStartingIndexInclusive,
+        int insertionStartingIndexInclusive,
+        StringWalker stringWalker)
     {
         Content = content;
-        Offset = offset;
+        SourceTextStartingIndexInclusive = sourceTextStartingIndexInclusive;
+        InsertionStartingIndexInclusive = insertionStartingIndexInclusive;
+        StringWalker = stringWalker;
     }
 
-    public string Content { get; set; }
-    public int Offset { get; set; }
-    public int StartInsertionPositionIndexInclusive { get; set; }
-    public int EndInsertionPositionIndexExclusive { get; set; }
+    public string Content { get; }
+    public int SourceTextStartingIndexInclusive { get; }
+    public int InsertionStartingIndexInclusive { get;}
+    public StringWalker StringWalker { get;}
+    
+    public int InsertionEndingIndexExclusive => InsertionStartingIndexInclusive + Content.Length;
+
+    public static AdhocTextInsertion PerformInsertion(
+        string content,
+        int sourceTextStartingIndexInclusive,
+        StringBuilder stringBuilder,
+        StringWalker stringWalker)
+    {
+        var adhocTextInsertion = new AdhocTextInsertion(
+                content,
+                sourceTextStartingIndexInclusive,
+                stringBuilder.Length,
+                stringWalker);
+
+        stringBuilder.Append(content);
+
+        return adhocTextInsertion;
+    }
 }
