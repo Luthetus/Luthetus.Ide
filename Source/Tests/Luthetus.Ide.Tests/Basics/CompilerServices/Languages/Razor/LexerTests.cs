@@ -10,22 +10,9 @@ public class LexerTests
     [Fact]
     public void ADHOC()
     {
-        var sourceText = @"<div class=""bwa_counter""
-     @onclick=""IncrementCountOnClick"">
+        var sourceText = @"<h1>Hello, world!</h1>".ReplaceLineEndings("\n");
 
-	Count: @_count
-</div>
-
-@code {
-	private int _count;
-
-	private void IncrementCountOnClick()
-	{
-		_count++;
-	}
-}";
-
-        var resourceUri = new ResourceUri("Counter.razor");
+        var resourceUri = new ResourceUri("Adhoc.razor");
 
         var textEditorRazorLexer = new TextEditorRazorLexer(resourceUri);
 
