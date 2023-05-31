@@ -1,6 +1,4 @@
 ﻿using Luthetus.Common.RazorLib.Misc;
-using Luthetus.TextEditor.RazorLib.Analysis.Html.SyntaxActors;
-using Luthetus.TextEditor.RazorLib.Analysis.Razor.Facts;
 using Luthetus.TextEditor.RazorLib.Analysis.Razor.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.Lexing;
 
@@ -31,10 +29,9 @@ public class LexerTests
 
         var textEditorRazorLexer = new TextEditorRazorLexer(resourceUri);
 
-        var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
-            resourceUri,
+        var textSpans = textEditorRazorLexer.Lex(
             sourceText,
-            RazorInjectedLanguageFacts.RazorInjectedLanguageDefinition);
+            RenderStateKey.NewRenderStateKey());
 
         var z = 2;
     }
