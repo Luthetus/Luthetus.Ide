@@ -1,5 +1,4 @@
-﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase;
-using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statements;
+﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statements;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.Facts;
 

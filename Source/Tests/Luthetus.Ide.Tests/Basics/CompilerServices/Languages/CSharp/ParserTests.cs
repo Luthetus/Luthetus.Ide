@@ -1031,67 +1031,37 @@ Console.WriteLine(""Hello World!"");"
     [Fact]
     public void SHOULD_PARSE_CONDITIONAL_VAR_KEYWORD()
     {
-        // TODO: (2023-05-30) It is 6:16 AM and I'm tired. Leaving my thought process here so I can pick back up another time. I think this works, albeit "var" maps to the type "void".
-        //
-        // For 'var' assume it is an identifier until shown otherwise.
-        //
-        // INPUT:
-        //     var var = 2;
-        //     var x = var * 2;
-        //
-        // IDEA:
-        //     ContextualVar -> IsNextTokenAnIdentifier ? KeywordToken : IdentifierToken.
-        // ISSUE:
-        //     How do I know if I am at the start of a statement?
-        //     The previous "IDEA" depends on me knowing I am starting a statement.
-        //
-        // IDEA a):
-        //     Keep a boolean field that tracks whether the _nodeRecent
-        //     is a completed statement or not.
-        // ISSUE a):
-        //     Tracking this field will be a nightmare and lead to bugs constantly
-        //     appearing whenever one forgets to update its value.
-        //
-        // IDEA b):
-        //     Everytime a statement delimiter token is encountered in the while() loop
-        //     of the Parse() method, then update a
-        //     StatementDelimiterToken _statementDelimiterTokenRecent field.
-        // ISSUE b):
-        //     Tracking this field as well sounds like a nightmare, albeit
-        //     less of a nightmare than the previous "IDEA a)".
-        //     |
-        //     if one were to manually consume a token and get back a
-        //     StatementDelimiterToken, then we'd be relying on that individual
-        //     to properly update the field.
-        //     |
-        //     If we however, put the field on the TokenWalker itself,
-        //     then the responsibility of tracking the field
-        //     is isolated.
-        //
-        // DECISION:
-        //     Add a "StatementDelimiterToken StatementDelimiterTokenRecent"
-        //     property to the TokenWalker. The property is to have a public
-        //     getter, but a private setter.
-        //     |
-        //     All invocations of the TokenWalker.Consume() method will thereby
-        //     be solely responsible for the tracking of this "StatementDelimiterTokenRecent"
-        //     property.
-        //
-        // REALIZATION WHEN IMPLEMENTING DECISION:
-        //     The TokenWalker in should instead have a property named "TokenConsumedRecent".
-        //     The property is to have a public getter, but a private setter.
-        //     |
-        //     All invocations of the TokenWalker.Consume() method will thereby
-        //     be solely responsible for the tracking of this "TokenConsumedRecent"
-        //     property.
-        //
-        // I AM A CLOWN:
-        //     The "TokenWalker.Peek()" method should be rewritten
-        //     to handle negative numbers.
-
         var sourceText = @"var var = 2;
 
 var x = var * 2;"
+            .ReplaceLineEndings("\n");
+
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
+
+        lexer.Lex();
+
+        var modelParser = new Parser(
+            lexer.SyntaxTokens,
+            lexer.Diagnostics);
+
+        var compilationUnit = modelParser.Parse();
+
+        throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void SHOULD_PARSE_VARIABLE_REFERENCE()
+    {
+        var sourceText = @"private int _count;
+
+private void IncrementCountOnClick()
+{
+	_count++;
+}"
             .ReplaceLineEndings("\n");
 
         var resourceUri = new ResourceUri(string.Empty);

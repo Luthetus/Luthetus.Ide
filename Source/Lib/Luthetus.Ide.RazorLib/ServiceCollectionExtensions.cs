@@ -45,7 +45,8 @@ public static class ServiceCollectionExtensions
             typeof(CommonInformativeNotificationDisplay),
             typeof(TreeViewExceptionDisplay),
             typeof(TreeViewMissingRendererFallbackDisplay),
-            watchWindowTreeViewRenderers);
+            watchWindowTreeViewRenderers,
+            null);
 
         // TODO: Move registration of "ILuthetusCommonComponentRenderers" to LuthetusCommon
         services.AddScoped<ILuthetusCommonComponentRenderers>(_ => commonRendererTypes);

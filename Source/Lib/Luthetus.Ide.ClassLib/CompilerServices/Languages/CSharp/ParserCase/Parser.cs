@@ -552,6 +552,7 @@ public class Parser
                     var boundIdentifierReferenceNode = _binder.BindIdentifierReferenceNode(inToken);
 
                     _nodeRecent = boundIdentifierReferenceNode;
+                    _currentCompilationUnitBuilder.Children.Add(boundIdentifierReferenceNode);
 
                     return;
                 }

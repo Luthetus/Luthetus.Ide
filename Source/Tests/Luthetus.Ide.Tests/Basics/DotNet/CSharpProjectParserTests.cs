@@ -37,12 +37,12 @@ public class CSharpProjectParserTests
 
         cSharpProjectSyntaxWalker.Visit(syntaxNodeRoot);
 
-        var packageReferences = cSharpProjectSyntaxWalker.TagSyntaxes
-            .Where(ts => (ts.OpenTagNameSyntax?.Value ?? string.Empty) == "PackageReference")
+        var packageReferences = cSharpProjectSyntaxWalker.TagNodes
+            .Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.GetText() ?? string.Empty) == "PackageReference")
             .ToList();
 
         var attributeNameValueTuples = packageReferences
-            .SelectMany(x => x.AttributeSyntaxes)
+            .SelectMany(x => x.AttributeNodes)
             .Select(x => (
                 $"Name: {x.AttributeNameSyntax.TextEditorTextSpan.GetText()}",
                 $"Value: {x.AttributeValueSyntax.TextEditorTextSpan.GetText()}"))
@@ -77,12 +77,12 @@ public class CSharpProjectParserTests
 
         cSharpProjectSyntaxWalker.Visit(syntaxNodeRoot);
 
-        var packageReferences = cSharpProjectSyntaxWalker.TagSyntaxes
-            .Where(ts => (ts.OpenTagNameSyntax?.Value ?? string.Empty) == "PackageReference")
+        var packageReferences = cSharpProjectSyntaxWalker.TagNodes
+            .Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.GetText() ?? string.Empty) == "PackageReference")
             .ToList();
 
         var attributeNameValueTuples = packageReferences
-            .SelectMany(x => x.AttributeSyntaxes)
+            .SelectMany(x => x.AttributeNodes)
             .Select(x => (
                 $"Name: {x.AttributeNameSyntax.TextEditorTextSpan.GetText()}",
                 $"Value: {x.AttributeValueSyntax.TextEditorTextSpan.GetText()}"))

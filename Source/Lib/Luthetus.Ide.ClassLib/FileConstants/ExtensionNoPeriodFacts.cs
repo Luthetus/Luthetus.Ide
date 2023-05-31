@@ -1,7 +1,7 @@
 ﻿using Luthetus.Ide.ClassLib.CompilerServices.Languages.C.TextEditorCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.TextEditorCase;
+using Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor.TextEditorCase;
 using Luthetus.TextEditor.RazorLib.Analysis.C.SyntaxActors;
-using Luthetus.TextEditor.RazorLib.Analysis.CSharp.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.Analysis.Css.Decoration;
 using Luthetus.TextEditor.RazorLib.Analysis.Css.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.Analysis.FSharp.SyntaxActors;
@@ -11,7 +11,6 @@ using Luthetus.TextEditor.RazorLib.Analysis.Html.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.Analysis.JavaScript.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.Analysis.Json.Decoration;
 using Luthetus.TextEditor.RazorLib.Analysis.Json.SyntaxActors;
-using Luthetus.TextEditor.RazorLib.Analysis.Razor.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.Analysis.TypeScript.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.Decoration;
 using Luthetus.TextEditor.RazorLib.Lexing;
@@ -52,8 +51,8 @@ public static class ExtensionNoPeriodFacts
             C_SHARP_PROJECT => new TextEditorHtmlLexer(resourceUri),
             C_SHARP_CLASS => new IdeCSharpLexer(resourceUri),
             RAZOR_CODEBEHIND => new IdeCSharpLexer(resourceUri),
-            RAZOR_MARKUP => new TextEditorRazorLexer(resourceUri),
-            CSHTML_CLASS => new TextEditorRazorLexer(resourceUri),
+            RAZOR_MARKUP => new IdeRazorLexer(resourceUri),
+            CSHTML_CLASS => new IdeRazorLexer(resourceUri),
             CSS => new TextEditorCssLexer(resourceUri),
             JAVA_SCRIPT => new TextEditorJavaScriptLexer(resourceUri),
             JSON => new TextEditorJsonLexer(resourceUri),
@@ -97,8 +96,8 @@ public static class ExtensionNoPeriodFacts
             C_SHARP_PROJECT => null,
             C_SHARP_CLASS => new SemanticModelCSharp(),
             RAZOR_CODEBEHIND => new SemanticModelCSharp(),
-            RAZOR_MARKUP => null,
-            CSHTML_CLASS => null,
+            RAZOR_MARKUP => new SemanticModelRazor(),
+            CSHTML_CLASS => new SemanticModelRazor(),
             CSS => null,
             JAVA_SCRIPT => null,
             JSON => null,

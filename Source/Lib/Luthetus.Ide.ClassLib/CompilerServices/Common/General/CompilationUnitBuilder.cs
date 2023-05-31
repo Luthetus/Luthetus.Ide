@@ -1,6 +1,5 @@
 ﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
 using Luthetus.TextEditor.RazorLib.Analysis;
-using Luthetus.TextEditor.RazorLib.Lexing;
 using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.General;

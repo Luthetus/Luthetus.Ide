@@ -38,6 +38,7 @@ public class LuthetusFileSystemTestingBase
             null,
             null,
             null,
+            null,
             null));
 
         var shouldInitializeFluxor = false;
