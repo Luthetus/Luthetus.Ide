@@ -1,55 +1,89 @@
 ﻿using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Misc;
+using Luthetus.Ide.ClassLib.CompilerServices.Languages.C.LexerCase;
+using Luthetus.TextEditor.RazorLib.Analysis.Html.InjectedLanguage;
+using Luthetus.TextEditor.RazorLib.Analysis.Html.SyntaxActors;
+using Luthetus.TextEditor.RazorLib.Analysis.Razor.Facts;
 using Luthetus.TextEditor.RazorLib.Lexing;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.LexerCase;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor.TextEditorCase;
 
 public class IdeRazorLexer : ITextEditorLexer
 {
-    private readonly object _lexerLock = new object();
-
     public IdeRazorLexer(ResourceUri resourceUri)
     {
         ResourceUri = resourceUri;
     }
+    
+    public IdeRazorSyntaxTree IdeRazorSyntaxTree = new();
 
     public RenderStateKey ModelRenderStateKey { get; private set; } = RenderStateKey.Empty;
-    public Lexer? RecentLexSession { get; private set; }
 
     public ResourceUri ResourceUri { get; }
+    public ImmutableArray<TextEditorTextSpan> RecentResult { get; private set; } = ImmutableArray<TextEditorTextSpan>.Empty;
 
     public Task<ImmutableArray<TextEditorTextSpan>> Lex(
         string sourceText,
         RenderStateKey modelRenderStateKey)
     {
-        Lexer? lexSession;
+        if (ModelRenderStateKey == modelRenderStateKey)
+            return Task.FromResult(RecentResult);
 
-        lock (_lexerLock)
+        ModelRenderStateKey = modelRenderStateKey;
+
+        IdeRazorSyntaxTree = new IdeRazorSyntaxTree();
+
+        InjectedLanguageDefinition razorInjectedLanguageDefinition = new(
+            RazorFacts.TRANSITION_SUBSTRING,
+            RazorFacts.TRANSITION_SUBSTRING_ESCAPED,
+            IdeRazorSyntaxTree
+                .ParseInjectedLanguageFragment);
+
+        var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
+            ResourceUri,
+            sourceText,
+            razorInjectedLanguageDefinition);
+
+        var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
+
+        var htmlSyntaxWalker = new HtmlSyntaxWalker();
+
+        htmlSyntaxWalker.Visit(syntaxNodeRoot);
+
+        List<TextEditorTextSpan> textEditorTextSpans = new();
+
+        // Tag Names
         {
-            lexSession = RecentLexSession;
-
-            if (ModelRenderStateKey == modelRenderStateKey &&
-                lexSession is not null)
-            {
-                return Task.FromResult(
-                    lexSession.SyntaxTokens.Select(x => x.TextSpan)
-                    .ToImmutableArray());
-            }
-
-            ModelRenderStateKey = modelRenderStateKey;
+            textEditorTextSpans.AddRange(htmlSyntaxWalker.TagNameNodes
+                .Select(tns => tns.TextEditorTextSpan));
         }
 
-        lexSession = new Lexer(
-            ResourceUri,
-            sourceText);
+        // InjectedLanguageFragmentSyntaxes
+        {
+            textEditorTextSpans.AddRange(htmlSyntaxWalker.InjectedLanguageFragmentNodes
+                .Select(ilfs => ilfs.TextEditorTextSpan));
+        }
 
-        lexSession.Lex();
+        // Attribute Names
+        {
+            textEditorTextSpans.AddRange(htmlSyntaxWalker.AttributeNameNodes
+                .Select(an => an.TextEditorTextSpan));
+        }
 
-        RecentLexSession = lexSession;
+        // Attribute Values
+        {
+            textEditorTextSpans.AddRange(htmlSyntaxWalker.AttributeValueNodes
+                .Select(av => av.TextEditorTextSpan));
+        }
 
-        return Task.FromResult(
-            lexSession.SyntaxTokens.Select(x => x.TextSpan)
-            .ToImmutableArray());
+        // Comments
+        {
+            textEditorTextSpans.AddRange(htmlSyntaxWalker.CommentNodes
+                .Select(c => c.TextEditorTextSpan));
+        }
+
+        RecentResult = textEditorTextSpans.ToImmutableArray();
+
+        return Task.FromResult(RecentResult);
     }
 }

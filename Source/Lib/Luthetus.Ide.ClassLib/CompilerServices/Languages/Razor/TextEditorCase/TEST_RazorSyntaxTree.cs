@@ -14,25 +14,18 @@ using Luthetus.TextEditor.RazorLib.Analysis.Razor.Facts;
 using Luthetus.TextEditor.RazorLib.Analysis;
 using System.Text;
 using Luthetus.TextEditor.RazorLib.Analysis.Html.Facts;
-using Luthetus.Ide.ClassLib.CompilerServices.Common.Symbols;
-using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
-using Luthetus.Ide.ClassLib.CompilerServices.Common.General;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor.TextEditorCase;
 
-public class TEST_RazorSyntaxTree
+public class IdeRazorSyntaxTree
 {
     public const string ADHOC_CLASS_IDENTIFIER = "__CLASS_Aaa__";
     public const string ADHOC_FUNCTION_IDENTIFIER = "__RENDER_FUNCTION_Bbb__";
 
-    public (Lexer Lexer, Parser Parser, CompilationUnit CompilationUnit, List<AdhocTextInsertion> AdhocClassInsertions, List<AdhocTextInsertion> AdhocRenderFunctionInsertions, AdhocTextInsertion RenderFunctionAdhocTextInsertion) RecentResult;
-
     private readonly StringBuilder _classBuilder = new($"public class {ADHOC_CLASS_IDENTIFIER}\n{{");
     private readonly StringBuilder _renderFunctionBuilder = new($"public void {ADHOC_FUNCTION_IDENTIFIER}()\n\t{{");
 
-    /// <summary>Need to track the offset of these insertions so <see cref="_classBuilder"/> isn't working when it comes to directly appending to it.</summary>
     private readonly List<AdhocTextInsertion> AdhocClassInsertions = new();
-    /// <summary>Need to track the offset of these insertions so <see cref="_renderFunctionBuilder"/> isn't working when it comes to directly appending to it.</summary>
     private readonly List<AdhocTextInsertion> AdhocRenderFunctionInsertions = new();
 
     private readonly ResourceUri AdhocResourceUri = new ResourceUri(ADHOC_CLASS_IDENTIFIER + ".cs");
@@ -44,6 +37,8 @@ public class TEST_RazorSyntaxTree
     private string RenderFunctionContents => _renderFunctionBuilder.ToString();
 #endif
 
+    public SemanticModelResultRazor? RecentResult;
+
     public void ParseAdhocCSharpClass()
     {
         StringWalker? stringWalker = null;
@@ -52,6 +47,9 @@ public class TEST_RazorSyntaxTree
             stringWalker = AdhocClassInsertions.First().StringWalker;
         else if (AdhocRenderFunctionInsertions.Any())
             stringWalker = AdhocRenderFunctionInsertions.First().StringWalker;
+
+        if (stringWalker is null)
+            return;
 
         _classBuilder.Append("\n\t");
 
@@ -77,7 +75,13 @@ public class TEST_RazorSyntaxTree
 
         var compilationUnit = parser.Parse();
 
-        RecentResult = (lexer, parser, compilationUnit, AdhocClassInsertions, AdhocRenderFunctionInsertions, renderFunctionAdhocTextInsertion);
+        RecentResult = new SemanticModelResultRazor(
+            lexer,
+            parser,
+            compilationUnit,
+            AdhocClassInsertions,
+            AdhocRenderFunctionInsertions,
+            renderFunctionAdhocTextInsertion);
     }
 
     /// <summary>currentCharacterIn:<br/> -<see cref="InjectedLanguageDefinition.TransitionSubstring"/><br/></summary>

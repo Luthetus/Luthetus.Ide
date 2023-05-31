@@ -34,7 +34,7 @@ public class LexerTests
 
         var resourceUri = new ResourceUri("Adhoc.razor");
 
-        var TEST_RazorSyntaxTree = new TEST_RazorSyntaxTree();
+        var TEST_RazorSyntaxTree = new IdeRazorSyntaxTree();
 
         InjectedLanguageDefinition TEST_InjectedLanguageDefinitionRazorInjectedLanguageDefinition = new(
             RazorFacts.TRANSITION_SUBSTRING,

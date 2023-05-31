@@ -1,4 +1,5 @@
 ﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.General;
+using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.LexerCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.ParserCase;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor.TextEditorCase;
@@ -6,16 +7,25 @@ namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor.TextEditorCase;
 public class SemanticModelResultRazor
 {
     public SemanticModelResultRazor(
-        string text,
-        Parser parserSession,
-        CompilationUnit compilationUnit)
+        Lexer lexer,
+        Parser parser,
+        CompilationUnit compilationUnit,
+        List<AdhocTextInsertion> adhocClassInsertions,
+        List<AdhocTextInsertion> adhocRenderFunctionInsertions,
+        AdhocTextInsertion renderFunctionAdhocTextInsertion)
     {
-        Text = text;
-        ParserSession = parserSession;
+        Lexer = lexer;
+        Parser = parser;
         CompilationUnit = compilationUnit;
+        AdhocClassInsertions = adhocClassInsertions;
+        AdhocRenderFunctionInsertions = adhocRenderFunctionInsertions;
+        RenderFunctionAdhocTextInsertion = renderFunctionAdhocTextInsertion;
     }
 
-    public string Text { get; }
-    public Parser ParserSession { get; }
+    public Lexer Lexer { get; }
+    public Parser Parser { get; }
     public CompilationUnit CompilationUnit { get; }
+    public List<AdhocTextInsertion> AdhocClassInsertions { get; }
+    public List<AdhocTextInsertion> AdhocRenderFunctionInsertions { get; }
+    public AdhocTextInsertion RenderFunctionAdhocTextInsertion { get; }
 }

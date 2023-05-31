@@ -1,6 +1,5 @@
 ﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.Symbols;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.ParserCase;
 using Luthetus.TextEditor.RazorLib.Analysis;
 using Luthetus.TextEditor.RazorLib.Analysis.Html.Decoration;
 using Luthetus.TextEditor.RazorLib.Lexing;
@@ -41,14 +40,19 @@ public class SemanticModelRazor : ISemanticModel
             text,
             model.RenderStateKey);
 
-        var overriteTextEditorRazorLexer = (OverriteTextEditorRazorLexer)model.Lexer;
+        var overriteTextEditorRazorLexer = (IdeRazorLexer)model.Lexer;
 
-        if (overriteTextEditorRazorLexer.TEST_RazorSyntaxTree is null)
+        if (overriteTextEditorRazorLexer.IdeRazorSyntaxTree is null)
             return null;
 
+        overriteTextEditorRazorLexer.IdeRazorSyntaxTree.ParseAdhocCSharpClass();
+
         var recentResult = overriteTextEditorRazorLexer
-            .TEST_RazorSyntaxTree
+            .IdeRazorSyntaxTree
             .RecentResult;
+
+        if (recentResult is null)
+            return null;
 
         var parserSession = recentResult
             .Parser;
@@ -87,23 +91,39 @@ public class SemanticModelRazor : ISemanticModel
                     symbolSourceTextStartingIndexInclusive +
                     (adhocSymbol.TextSpan.EndingIndexExclusive - adhocSymbol.TextSpan.StartingIndexInclusive);
 
+                var sourceTextSpan = adhocSymbol.TextSpan with
+                {
+                    ResourceUri = model.ResourceUri,
+                    SourceText = text,
+                    StartingIndexInclusive = symbolSourceTextStartingIndexInclusive,
+                    EndingIndexExclusive = symbolSourceTextEndingIndexExclusive,
+                };
+
                 switch (adhocSymbol.SyntaxKind)
                 {
                     case SyntaxKind.TypeSymbol:
-                        var sourceTextSpan = adhocSymbol.TextSpan with
+                        sourceTextSpan = sourceTextSpan with
                         {
-                            ResourceUri = model.ResourceUri,
-                            SourceText = text,
                             DecorationByte = (byte)HtmlDecorationKind.InjectedLanguageType,
-                            StartingIndexInclusive = symbolSourceTextStartingIndexInclusive,
-                            EndingIndexExclusive = symbolSourceTextEndingIndexExclusive,
                         };
 
                         symbolToAdd = new TypeSymbol(sourceTextSpan);
                         break;
                     case SyntaxKind.FunctionSymbol:
+                        sourceTextSpan = sourceTextSpan with
+                        {
+                            DecorationByte = (byte)HtmlDecorationKind.InjectedLanguageMethod,
+                        };
+
+                        symbolToAdd = new FunctionSymbol(sourceTextSpan);
                         break;
                     case SyntaxKind.VariableSymbol:
+                        sourceTextSpan = sourceTextSpan with
+                        {
+                            DecorationByte = (byte)HtmlDecorationKind.InjectedLanguageVariable,
+                        };
+
+                        symbolToAdd = new VariableSymbol(sourceTextSpan);
                         break;
                 }
 
@@ -136,13 +156,6 @@ public class SemanticModelRazor : ISemanticModel
             .Select(x => ($"({x.GetType().Name}){x.TextSpan.GetText()}", x.TextSpan))
             .ToImmutableList();
 
-        var semanticModelResult = new SemanticModelResultRazor(
-            text,
-            parserSession,
-            compilationUnit);
-
-        _recentSemanticModelResult = semanticModelResult;
-
-        return semanticModelResult;
+        return null;
     }
 }

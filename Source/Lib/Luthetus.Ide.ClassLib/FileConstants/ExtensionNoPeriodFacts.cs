@@ -11,7 +11,6 @@ using Luthetus.TextEditor.RazorLib.Analysis.Html.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.Analysis.JavaScript.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.Analysis.Json.Decoration;
 using Luthetus.TextEditor.RazorLib.Analysis.Json.SyntaxActors;
-using Luthetus.TextEditor.RazorLib.Analysis.Razor.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.Analysis.TypeScript.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.Decoration;
 using Luthetus.TextEditor.RazorLib.Lexing;
@@ -52,8 +51,8 @@ public static class ExtensionNoPeriodFacts
             C_SHARP_PROJECT => new TextEditorHtmlLexer(resourceUri),
             C_SHARP_CLASS => new IdeCSharpLexer(resourceUri),
             RAZOR_CODEBEHIND => new IdeCSharpLexer(resourceUri),
-            RAZOR_MARKUP => new OverriteTextEditorRazorLexer(resourceUri),
-            CSHTML_CLASS => new OverriteTextEditorRazorLexer(resourceUri),
+            RAZOR_MARKUP => new IdeRazorLexer(resourceUri),
+            CSHTML_CLASS => new IdeRazorLexer(resourceUri),
             CSS => new TextEditorCssLexer(resourceUri),
             JAVA_SCRIPT => new TextEditorJavaScriptLexer(resourceUri),
             JSON => new TextEditorJsonLexer(resourceUri),
