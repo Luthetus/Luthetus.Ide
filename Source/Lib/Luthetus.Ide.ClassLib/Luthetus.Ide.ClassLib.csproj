@@ -35,8 +35,4 @@
       </Reference>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="CompilerServices\Languages\Razor\Syntax\" />
-    </ItemGroup>
-
 </Project>
