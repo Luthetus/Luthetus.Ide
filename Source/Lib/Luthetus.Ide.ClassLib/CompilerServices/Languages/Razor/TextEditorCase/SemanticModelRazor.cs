@@ -68,7 +68,7 @@ public class SemanticModelRazor : ISemanticModel
             var adhocTextInsertion = recentResult.AdhocClassInsertions
                 .SingleOrDefault(x =>
                     adhocSymbol.TextSpan.StartingIndexInclusive >= x.InsertionStartingIndexInclusive &&
-                    adhocSymbol.TextSpan.EndingIndexExclusive < x.InsertionEndingIndexExclusive);
+                    adhocSymbol.TextSpan.EndingIndexExclusive <= x.InsertionEndingIndexExclusive);
 
             // TODO: Fix for spans that go 2 adhocTextInsertions worth of length?
             if (adhocTextInsertion is null)
@@ -76,7 +76,7 @@ public class SemanticModelRazor : ISemanticModel
                 adhocTextInsertion = recentResult.AdhocRenderFunctionInsertions
                     .SingleOrDefault(x =>
                         adhocSymbol.TextSpan.StartingIndexInclusive >= x.InsertionStartingIndexInclusive &&
-                        adhocSymbol.TextSpan.EndingIndexExclusive < x.InsertionEndingIndexExclusive);
+                        adhocSymbol.TextSpan.EndingIndexExclusive <= x.InsertionEndingIndexExclusive);
             }
 
             if (adhocTextInsertion is not null)

@@ -3,6 +3,7 @@ using Luthetus.TextEditor.RazorLib.Analysis.Razor.Facts;
 using Luthetus.TextEditor.RazorLib.Lexing;
 using Luthetus.TextEditor.RazorLib.Analysis.Html.InjectedLanguage;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor.TextEditorCase;
+using Luthetus.Common.RazorLib.Misc;
 
 namespace Luthetus.Ide.Tests.Basics.CompilerServices.Languages.Razor;
 
@@ -34,20 +35,9 @@ public class LexerTests
 
         var resourceUri = new ResourceUri("Adhoc.razor");
 
-        var TEST_RazorSyntaxTree = new IdeRazorSyntaxTree();
+        var lexer = new IdeRazorLexer(resourceUri);
 
-        InjectedLanguageDefinition TEST_InjectedLanguageDefinitionRazorInjectedLanguageDefinition = new(
-            RazorFacts.TRANSITION_SUBSTRING,
-            RazorFacts.TRANSITION_SUBSTRING_ESCAPED,
-            TEST_RazorSyntaxTree
-                .ParseInjectedLanguageFragment);
-
-        var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
-            resourceUri,
-            sourceText,
-            TEST_InjectedLanguageDefinitionRazorInjectedLanguageDefinition);
-
-        TEST_RazorSyntaxTree.ParseAdhocCSharpClass();
+        lexer.Lex(sourceText, RenderStateKey.NewRenderStateKey());
 
         var z = 2;
     }

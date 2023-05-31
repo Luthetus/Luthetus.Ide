@@ -19,7 +19,7 @@ public class AdhocTextInsertion
 
     public string Content { get; }
     public int SourceTextStartingIndexInclusive { get; }
-    public int InsertionStartingIndexInclusive { get;}
+    public int InsertionStartingIndexInclusive { get; set; }
     public StringWalker StringWalker { get;}
     
     public int InsertionEndingIndexExclusive => InsertionStartingIndexInclusive + Content.Length;

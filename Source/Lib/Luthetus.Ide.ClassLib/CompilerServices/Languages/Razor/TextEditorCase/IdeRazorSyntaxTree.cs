@@ -59,6 +59,12 @@ public class IdeRazorSyntaxTree
             _classBuilder,
             stringWalker);
 
+        foreach (var renderFunctionInsertion in AdhocRenderFunctionInsertions)
+        {
+            renderFunctionInsertion.InsertionStartingIndexInclusive +=
+                renderFunctionAdhocTextInsertion.InsertionStartingIndexInclusive;
+        }
+
         _classBuilder.Append("\n\t}\n}");
 
         var classContents = _classBuilder.ToString();
@@ -437,7 +443,34 @@ public class IdeRazorSyntaxTree
         TextEditorHtmlDiagnosticBag textEditorHtmlDiagnosticBag,
         InjectedLanguageDefinition injectedLanguageDefinition)
     {
-        return new List<IHtmlSyntaxNode>();
+        var injectedLanguageFragmentSyntaxes = new List<IHtmlSyntaxNode>();
+        var entryPositionIndex = stringWalker.PositionIndex;
+
+        while (!stringWalker.IsEof)
+        {
+            if (!char.IsLetterOrDigit(stringWalker.CurrentCharacter) &&
+                stringWalker.CurrentCharacter != '_')
+            {
+                break;
+            }
+
+            _ = stringWalker.ReadCharacter();
+        }
+
+        var textSpan = new TextEditorTextSpan(
+            entryPositionIndex,
+            stringWalker.PositionIndex,
+            (byte)GenericDecorationKind.None,
+            stringWalker.ResourceUri,
+            stringWalker.SourceText);
+
+        ParseCSharpWithAdhocMethodWrapping(
+            textSpan.GetText(),
+            entryPositionIndex,
+            stringWalker);
+        
+        // TODO: Syntax highlighting
+        return injectedLanguageFragmentSyntaxes;
     }
 
     /// <summary>Example: @if (true) { ... } else { ... }</summary>

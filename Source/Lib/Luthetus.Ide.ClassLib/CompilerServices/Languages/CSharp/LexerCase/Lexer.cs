@@ -368,12 +368,6 @@ public class Lexer
 
         while (!_stringWalker.IsEof)
         {
-            //if (char.IsWhiteSpace(_stringWalker.CurrentCharacter) ||
-            //    (char.IsPunctuation(_stringWalker.CurrentCharacter) && _stringWalker.CurrentCharacter != '_'))
-            //{
-            //    break;
-            //}
-            
             if (!char.IsLetterOrDigit(_stringWalker.CurrentCharacter) &&
                 _stringWalker.CurrentCharacter != '_')
             {
