@@ -45,6 +45,7 @@ public enum SyntaxKind
     BoundClassDeclarationNode,
     BoundInheritanceStatementNode,
     BoundUsingDeclarationNode,
+    BoundIdentifierReferenceNode,
 
     // Symbols
     TypeSymbol,
