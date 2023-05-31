@@ -268,6 +268,12 @@ public class Binder
         BoundTypeNode boundTypeNode,
         IdentifierToken identifierToken)
     {
+        _symbols.Add(
+            new VariableSymbol(identifierToken.TextSpan with
+            {
+                DecorationByte = (byte)GenericDecorationKind.Variable
+            }));
+
         var text = identifierToken.TextSpan.GetText();
 
         if (_currentScope.VariableDeclarationMap.TryGetValue(
@@ -295,6 +301,12 @@ public class Binder
         IdentifierToken identifierToken,
         IBoundExpressionNode boundExpressionNode)
     {
+        _symbols.Add(
+            new VariableSymbol(identifierToken.TextSpan with
+            {
+                DecorationByte = (byte)GenericDecorationKind.Variable
+            }));
+
         var text = identifierToken.TextSpan.GetText();
 
         if (TryGetVariableHierarchically(
@@ -316,6 +328,65 @@ public class Binder
         else
         {
             // TODO: The variable was not yet declared, so report a diagnostic?
+            return null;
+        }
+    }
+    
+    public BoundIdentifierReferenceNode? BindIdentifierReferenceNode(
+        IdentifierToken identifierToken)
+    {
+        var text = identifierToken.TextSpan.GetText();
+
+        if (TryGetVariableHierarchically(
+                text,
+                out var variableDeclarationNode) &&
+            variableDeclarationNode is not null)
+        {
+            _symbols.Add(
+                new VariableSymbol(identifierToken.TextSpan with
+                {
+                    DecorationByte = (byte)GenericDecorationKind.Variable
+                }));
+
+            return new BoundIdentifierReferenceNode(
+                identifierToken,
+                variableDeclarationNode.BoundTypeNode.Type);
+        }
+        else if (TryGetTypeHierarchically(
+                     text,
+                     out var type) &&
+                 type is not null)
+        {
+            _symbols.Add(
+                new TypeSymbol(identifierToken.TextSpan with
+                {
+                    DecorationByte = (byte)GenericDecorationKind.Type
+                }));
+
+            return new BoundIdentifierReferenceNode(
+                identifierToken,
+                type);
+        }
+        else if (TryGetBoundFunctionDeclarationNodeHierarchically(
+                     text,
+                     out var boundFunctionDeclarationNode) &&
+                 boundFunctionDeclarationNode is not null)
+        {
+            // TODO: Would this conditional branch be for method groups? @onclick="MethodName"
+
+            _symbols.Add(
+                new FunctionSymbol(identifierToken.TextSpan with
+                {
+                    DecorationByte = (byte)GenericDecorationKind.Function
+                }));
+
+            return new BoundIdentifierReferenceNode(
+                identifierToken,
+                typeof(void));
+        }
+        else
+        {
+            // TODO: The identifier was not found, so report a diagnostic?
             return null;
         }
     }

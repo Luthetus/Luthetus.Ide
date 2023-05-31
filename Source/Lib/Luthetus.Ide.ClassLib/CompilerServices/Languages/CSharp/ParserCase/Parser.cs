@@ -548,6 +548,11 @@ public class Parser
                 else
                 {
                     // TODO: (2023-05-28) Report an error diagnostic for 'unknown identifier'. Something like this I'm not sure.
+
+                    var boundIdentifierReferenceNode = _binder.BindIdentifierReferenceNode(inToken);
+
+                    _nodeRecent = boundIdentifierReferenceNode;
+
                     return;
                 }
             }
