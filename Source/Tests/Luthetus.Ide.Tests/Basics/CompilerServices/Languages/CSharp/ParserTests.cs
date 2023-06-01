@@ -1050,7 +1050,41 @@ var x = var * 2;"
 
         var compilationUnit = modelParser.Parse();
 
-        throw new NotImplementedException();
+        // BoundVariableDeclarationStatementNode
+        {
+            var boundVariableDeclarationStatementNode =
+                (BoundVariableDeclarationStatementNode)
+                compilationUnit.Children[0];
+            
+            Assert.NotNull(boundVariableDeclarationStatementNode);
+        }
+
+        // BoundVariableAssignmentStatementNode
+        {
+            var boundVariableAssignmentStatementNode =
+                (BoundVariableAssignmentStatementNode)
+                compilationUnit.Children[1];
+
+            Assert.NotNull(boundVariableAssignmentStatementNode);
+        }
+
+        // BoundVariableDeclarationStatementNode
+        {
+            var boundVariableDeclarationStatementNode =
+                (BoundVariableDeclarationStatementNode)
+                compilationUnit.Children[2];
+
+            Assert.NotNull(boundVariableDeclarationStatementNode);
+        }
+
+        // BoundVariableAssignmentStatementNode
+        {
+            var boundVariableAssignmentStatementNode =
+                (BoundVariableAssignmentStatementNode)
+                compilationUnit.Children[3];
+
+            Assert.NotNull(boundVariableAssignmentStatementNode);
+        }
     }
     
     [Fact]
@@ -1078,7 +1112,32 @@ private void IncrementCountOnClick()
 
         var compilationUnit = modelParser.Parse();
 
-        throw new NotImplementedException();
+        // BoundVariableDeclarationStatementNode
+        {
+            var boundVariableDeclarationStatementNode =
+            (BoundVariableDeclarationStatementNode)
+            compilationUnit.Children[0];
+
+            Assert.NotNull(boundVariableDeclarationStatementNode);
+        }
+
+        // BoundFunctionDeclarationNode
+        {
+            var boundFunctionDeclarationNode =
+            (BoundFunctionDeclarationNode)
+            compilationUnit.Children[1];
+
+            Assert.NotNull(boundFunctionDeclarationNode);
+        }
+
+        // BoundIdentifierReferenceNode
+        {
+            var boundIdentifierReferenceNode =
+            (BoundIdentifierReferenceNode)
+            compilationUnit.Children[2];
+
+            Assert.NotNull(boundIdentifierReferenceNode);
+        }
     }
     
     [Fact]
@@ -1103,6 +1162,11 @@ private void IncrementCountOnClick()
 
         var compilationUnit = modelParser.Parse();
 
-        throw new NotImplementedException();
+        var boundIfStatementNode = 
+            (BoundIfStatementNode)compilationUnit.Children.Single();
+
+        Assert.NotNull(boundIfStatementNode.KeywordToken);
+        Assert.NotNull(boundIfStatementNode.BoundExpressionNode);
+        Assert.NotNull(boundIfStatementNode.IfStatementBodyCompilationUnit);
     }
 }
