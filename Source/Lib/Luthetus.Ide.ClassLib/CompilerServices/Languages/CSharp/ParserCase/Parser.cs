@@ -327,6 +327,12 @@ public class Parser
             {
                 // TODO: Implement the 'await' keyword
             }
+            else if (text == "if")
+            {
+                var expression = ParseIfStatementExpression();
+                var boundIfStatementNode = _binder.BindIfStatementNode(inToken, expression);
+                _nodeRecent = boundIfStatementNode;
+            }
             else
             {
                 throw new NotImplementedException("Implement more keywords");
@@ -575,6 +581,40 @@ public class Parser
         }
     }
 
+    /// <summary>TODO: Implement ParseIfStatementExpression() correctly. Until then, skip until the closing parenthesis of the if statement is found.</summary>
+    private IBoundExpressionNode ParseIfStatementExpression()
+    {
+        var unmatchedParenthesisCount = 0;
+
+        while (true)
+        {
+            var tokenCurrent = _tokenWalker.Consume();
+
+            if (tokenCurrent.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+                unmatchedParenthesisCount++;
+            
+            if (tokenCurrent.SyntaxKind == SyntaxKind.CloseParenthesisToken)
+                unmatchedParenthesisCount--;
+            
+            if (tokenCurrent.SyntaxKind == SyntaxKind.EndOfFileToken ||
+                unmatchedParenthesisCount == 0)
+            {
+                break;
+            }
+        }
+
+        // TODO: Correctly implement this method. For now just returning a nonsensical token.
+        return new BoundLiteralExpressionNode(
+            new EndOfFileToken(
+                new TextEditorTextSpan(
+                    0,
+                    0,
+                    (byte)GenericDecorationKind.None,
+                    new ResourceUri(string.Empty),
+                    string.Empty)),
+            typeof(void));
+    }
+
     /// <summary>TODO: Implement ParseExpression() correctly. Until then, skip until the statement delimiter token or end of file token is found.</summary>
     private IBoundExpressionNode ParseExpression()
     {
@@ -650,6 +690,20 @@ public class Parser
 
                 closureCurrentCompilationUnitBuilder.Children
                     .Add(boundFunctionDeclarationNode);
+            });
+        }
+        else if (_nodeRecent is not null &&
+                 _nodeRecent.SyntaxKind == SyntaxKind.BoundIfStatementNode)
+        {
+            var boundIfStatementNode = (BoundIfStatementNode)_nodeRecent;
+
+            _finalizeCompilationUnitActionStack.Push(compilationUnit =>
+            {
+                boundIfStatementNode = boundIfStatementNode
+                    .WithIfStatementBody(compilationUnit);
+
+                closureCurrentCompilationUnitBuilder.Children
+                    .Add(boundIfStatementNode);
             });
         }
         else

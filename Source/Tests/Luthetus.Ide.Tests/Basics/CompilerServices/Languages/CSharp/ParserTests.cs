@@ -1080,4 +1080,29 @@ private void IncrementCountOnClick()
 
         throw new NotImplementedException();
     }
+    
+    [Fact]
+    public void SHOULD_PARSE_IF_STATEMENT()
+    {
+        var sourceText = @"if (true)
+{
+}"
+            .ReplaceLineEndings("\n");
+
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
+
+        lexer.Lex();
+
+        var modelParser = new Parser(
+            lexer.SyntaxTokens,
+            lexer.Diagnostics);
+
+        var compilationUnit = modelParser.Parse();
+
+        throw new NotImplementedException();
+    }
 }

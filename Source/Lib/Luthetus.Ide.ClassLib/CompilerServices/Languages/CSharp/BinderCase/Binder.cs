@@ -153,7 +153,18 @@ public class Binder
             keywordToken,
             boundExpressionNode);
     }
-    
+
+    public BoundIfStatementNode BindIfStatementNode(
+        KeywordToken ifKeywordToken,
+        IBoundExpressionNode boundExpressionNode)
+    {
+        var boundIfStatementNode = new BoundIfStatementNode(
+            ifKeywordToken,
+            boundExpressionNode);
+
+        return boundIfStatementNode;
+    }
+
     public BoundNamespaceStatementNode BindNamespaceStatementNode(
         KeywordToken keywordToken,
         IdentifierToken identifierToken)

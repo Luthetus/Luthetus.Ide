@@ -469,4 +469,114 @@ public class LexerTests
         var text = memberAccessToken.TextSpan.GetText();
         Assert.Equal(memberAccessTokenAsString, text);
     }
+
+    [Fact]
+    public void SHOULD_LEX_BANG_TOKEN()
+    {
+        var bangTokenAsString = "!";
+        var sourceText = $"{bangTokenAsString}".ReplaceLineEndings("\n");
+
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
+
+        lexer.Lex();
+
+        var bangToken = lexer.SyntaxTokens.First();
+
+        Assert.Equal(SyntaxKind.BangToken, bangToken.SyntaxKind);
+
+        var text = bangToken.TextSpan.GetText();
+        Assert.Equal(bangTokenAsString, text);
+    }
+    
+    [Fact]
+    public void SHOULD_LEX_QUESTION_MARK_TOKEN()
+    {
+        var questionMarkTokenAsString = "?";
+        var sourceText = $"{questionMarkTokenAsString}".ReplaceLineEndings("\n");
+
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
+
+        lexer.Lex();
+
+        var questionMarkToken = lexer.SyntaxTokens.First();
+
+        Assert.Equal(SyntaxKind.QuestionMarkToken, questionMarkToken.SyntaxKind);
+
+        var text = questionMarkToken.TextSpan.GetText();
+        Assert.Equal(questionMarkTokenAsString, text);
+    }
+    
+    [Fact]
+    public void SHOULD_LEX_QUESTION_MARK_QUESTION_MARK_TOKEN()
+    {
+        var questionMarkQuestionMarkTokenAsString = "??";
+        var sourceText = $"{questionMarkQuestionMarkTokenAsString}".ReplaceLineEndings("\n");
+
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
+
+        lexer.Lex();
+
+        var questionMarkQuestionMarkToken = lexer.SyntaxTokens.First();
+
+        Assert.Equal(SyntaxKind.QuestionMarkQuestionMarkToken, questionMarkQuestionMarkToken.SyntaxKind);
+
+        var text = questionMarkQuestionMarkToken.TextSpan.GetText();
+        Assert.Equal(questionMarkQuestionMarkTokenAsString, text);
+    }
+
+    [Fact]
+    public void SHOULD_LEX_OPEN_ANGLE_BRACKET_TOKEN()
+    {
+        var openAngleBracketTokenAsString = "<";
+        var sourceText = $"{openAngleBracketTokenAsString}".ReplaceLineEndings("\n");
+
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
+
+        lexer.Lex();
+
+        var openAngleBracketToken = lexer.SyntaxTokens.First();
+
+        Assert.Equal(SyntaxKind.OpenAngleBracketToken, openAngleBracketToken.SyntaxKind);
+
+        var text = openAngleBracketToken.TextSpan.GetText();
+        Assert.Equal(openAngleBracketTokenAsString, text);
+    }
+    
+    [Fact]
+    public void SHOULD_LEX_CLOSE_ANGLE_BRACKET_TOKEN()
+    {
+        var closeAngleBracketTokenAsString = ">";
+        var sourceText = $"{closeAngleBracketTokenAsString}".ReplaceLineEndings("\n");
+
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
+
+        lexer.Lex();
+
+        var closeAngleBracketToken = lexer.SyntaxTokens.First();
+
+        Assert.Equal(SyntaxKind.CloseAngleBracketToken, closeAngleBracketToken.SyntaxKind);
+
+        var text = closeAngleBracketToken.TextSpan.GetText();
+        Assert.Equal(closeAngleBracketTokenAsString, text);
+    }
 }
