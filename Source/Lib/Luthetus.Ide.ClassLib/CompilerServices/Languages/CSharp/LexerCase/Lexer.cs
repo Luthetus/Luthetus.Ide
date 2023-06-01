@@ -158,6 +158,23 @@ public class Lexer
                     }
 
                     break;
+                case '?':
+                    if (_stringWalker.PeekCharacter(1) == '?')
+                    {
+                        var questionMarkQuestionMarkToken = LexQuestionMarkQuestionMarkToken();
+                        _syntaxTokens.Add(questionMarkQuestionMarkToken);
+                    }
+                    else
+                    {
+                        var questionMarkToken = LexQuestionMarkToken();
+                        _syntaxTokens.Add(questionMarkToken);
+                    }
+
+                    break;
+                case '!':
+                    var bangToken = LexBangToken();
+                    _syntaxTokens.Add(bangToken);
+                    break;
                 case ';':
                     var statementDelimiterToken = LexStatementDelimiterToken();
                     _syntaxTokens.Add(statementDelimiterToken);
@@ -177,6 +194,14 @@ public class Lexer
                 case '}':
                     var closeBraceToken = LexCloseBraceToken();
                     _syntaxTokens.Add(closeBraceToken);
+                    break;
+                case '<':
+                    var openAngleBracketToken = LexOpenAngleBracketToken();
+                    _syntaxTokens.Add(openAngleBracketToken);
+                    break;
+                case '>':
+                    var closeAngleBracketToken = LexCloseAngleBracketToken();
+                    _syntaxTokens.Add(closeAngleBracketToken);
                     break;
                 case ':':
                     var colonToken = LexColonToken();
@@ -511,6 +536,57 @@ public class Lexer
 
         return new EqualsEqualsToken(textSpan);
     }
+    
+    private QuestionMarkToken LexQuestionMarkToken()
+    {
+        var entryPositionIndex = _stringWalker.PositionIndex;
+
+        _stringWalker.ReadCharacter();
+
+        var textSpan = new TextEditorTextSpan(
+            entryPositionIndex,
+            _stringWalker.PositionIndex,
+            (byte)GenericDecorationKind.None,
+            _stringWalker.ResourceUri,
+            _stringWalker.SourceText);
+
+        return new QuestionMarkToken(textSpan);
+    }
+
+    private QuestionMarkQuestionMarkToken LexQuestionMarkQuestionMarkToken()
+    {
+        var entryPositionIndex = _stringWalker.PositionIndex;
+
+        // First '?'
+        _stringWalker.ReadCharacter();
+        // Second '?'
+        _stringWalker.ReadCharacter();
+
+        var textSpan = new TextEditorTextSpan(
+            entryPositionIndex,
+            _stringWalker.PositionIndex,
+            (byte)GenericDecorationKind.None,
+            _stringWalker.ResourceUri,
+            _stringWalker.SourceText);
+
+        return new QuestionMarkQuestionMarkToken(textSpan);
+    }
+
+    private BangToken LexBangToken()
+    {
+        var entryPositionIndex = _stringWalker.PositionIndex;
+
+        _stringWalker.ReadCharacter();
+
+        var textSpan = new TextEditorTextSpan(
+            entryPositionIndex,
+            _stringWalker.PositionIndex,
+            (byte)GenericDecorationKind.None,
+            _stringWalker.ResourceUri,
+            _stringWalker.SourceText);
+
+        return new BangToken(textSpan);
+    }
 
     private StatementDelimiterToken LexStatementDelimiterToken()
     {
@@ -590,6 +666,38 @@ public class Lexer
             _stringWalker.SourceText);
 
         return new CloseBraceToken(textSpan);
+    }
+    
+    private OpenAngleBracketToken LexOpenAngleBracketToken()
+    {
+        var entryPositionIndex = _stringWalker.PositionIndex;
+
+        _stringWalker.ReadCharacter();
+
+        var textSpan = new TextEditorTextSpan(
+            entryPositionIndex,
+            _stringWalker.PositionIndex,
+            (byte)GenericDecorationKind.None,
+            _stringWalker.ResourceUri,
+            _stringWalker.SourceText);
+
+        return new OpenAngleBracketToken(textSpan);
+    }
+
+    private CloseAngleBracketToken LexCloseAngleBracketToken()
+    {
+        var entryPositionIndex = _stringWalker.PositionIndex;
+
+        _stringWalker.ReadCharacter();
+
+        var textSpan = new TextEditorTextSpan(
+            entryPositionIndex,
+            _stringWalker.PositionIndex,
+            (byte)GenericDecorationKind.None,
+            _stringWalker.ResourceUri,
+            _stringWalker.SourceText);
+
+        return new CloseAngleBracketToken(textSpan);
     }
     
     private ColonToken LexColonToken()
