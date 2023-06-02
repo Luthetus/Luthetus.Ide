@@ -1,9 +1,4 @@
-﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.LexerCase;
-using Luthetus.TextEditor.RazorLib.Lexing;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.SemanticContextCase;
-
-namespace Luthetus.Ide.Tests.Basics.CompilerServices.Languages.CSharp.SemanticContextCase;
+﻿namespace Luthetus.Ide.Tests.Basics.CompilerServices.Languages.CSharp.SemanticContextCase;
 
 public partial class SemanticContextTests
 {

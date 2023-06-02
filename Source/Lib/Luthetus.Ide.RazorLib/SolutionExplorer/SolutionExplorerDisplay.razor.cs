@@ -70,20 +70,13 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         _solutionExplorerTreeViewKeymap = new SolutionExplorerTreeViewKeymap(
             CommonMenuOptionsFactory,
             LuthetusIdeComponentRenderers,
-            FileSystemProvider,
             Dispatcher,
-            TreeViewService,
-            TextEditorService,
-            BackgroundTaskQueue);
+            TreeViewService);
 
         _solutionExplorerTreeViewMouseEventHandler =
             new SolutionExplorerTreeViewMouseEventHandler(
                 Dispatcher,
-                TextEditorService,
-                LuthetusIdeComponentRenderers,
-                FileSystemProvider,
-                TreeViewService,
-                BackgroundTaskQueue);
+                TreeViewService);
 
         base.OnInitialized();
     }

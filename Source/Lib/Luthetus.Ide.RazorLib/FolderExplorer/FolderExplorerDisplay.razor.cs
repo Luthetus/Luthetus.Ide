@@ -111,21 +111,13 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 
         _folderExplorerTreeViewMouseEventHandler = new FolderExplorerTreeViewMouseEventHandler(
             Dispatcher,
-            TextEditorService,
-            LuthetusIdeComponentRenderers,
-            FileSystemProvider,
-            TreeViewService,
-            BackgroundTaskQueue);
+            TreeViewService);
 
         _folderExplorerTreeViewKeyboardEventHandler = new FolderExplorerTreeViewKeyboardEventHandler(
-            TerminalSessionsStateWrap,
             CommonMenuOptionsFactory,
             LuthetusIdeComponentRenderers,
-            FileSystemProvider,
             Dispatcher,
-            TreeViewService,
-            TextEditorService,
-            BackgroundTaskQueue);
+            TreeViewService);
 
         base.OnInitialized();
     }

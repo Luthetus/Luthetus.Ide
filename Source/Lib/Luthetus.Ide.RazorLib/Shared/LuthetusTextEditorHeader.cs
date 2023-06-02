@@ -9,11 +9,9 @@ using Luthetus.Common.RazorLib.Store.AccountCase;
 using Luthetus.Common.RazorLib.Store.DialogCase;
 using Luthetus.Common.RazorLib.Store.DropdownCase;
 using Luthetus.TextEditor.RazorLib;
-using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.Store.EditorCase;
-using Luthetus.Ide.ClassLib.Store.FolderExplorerCase;
 using Luthetus.Ide.RazorLib.Account;
 using Luthetus.Ide.RazorLib.Button;
 using Luthetus.Ide.RazorLib.DotNetSolutionForm;
@@ -82,45 +80,25 @@ public partial class LuthetusTextEditorHeader : FluxorComponent
 
         // Menu Option Open
         {
-            // TODO: Why do all the OnClicks have an async void lambda? Not quite sure what I was doing when I originally wrote this and should revisit this.
-
             var menuOptionOpenFile = new MenuOptionRecord(
                 "File",
                 MenuOptionKind.Other,
-                async () =>
-                    await EditorState.ShowInputFileAsync(
-                        Dispatcher,
-                        TextEditorService,
-                        LuthetusIdeComponentRenderers,
-                        FileSystemProvider,
-                        BackgroundTaskQueue));
+                () => Dispatcher.Dispatch(new EditorState.ShowInputFileAction()));
 
             var menuOptionOpenDirectory = new MenuOptionRecord(
                 "Directory",
                 MenuOptionKind.Other,
-                async () =>
-                    await FolderExplorerState.ShowInputFileAsync(Dispatcher));
+                () => Dispatcher.Dispatch(new EditorState.ShowInputFileAction()));
 
             var menuOptionOpenCSharpProject = new MenuOptionRecord(
                 "C# Project - TODO: Adhoc Sln",
                 MenuOptionKind.Other,
-                async () =>
-                    await EditorState.ShowInputFileAsync(
-                        Dispatcher,
-                        TextEditorService,
-                        LuthetusIdeComponentRenderers,
-                        FileSystemProvider,
-                        BackgroundTaskQueue));
+                () => Dispatcher.Dispatch(new EditorState.ShowInputFileAction()));
 
             var menuOptionOpenDotNetSolution = new MenuOptionRecord(
                 ".NET Solution",
                 MenuOptionKind.Other,
-                async () =>
-                    await DotNetSolutionState.ShowInputFileAsync(
-                        Dispatcher,
-                        LuthetusIdeComponentRenderers,
-                        FileSystemProvider,
-                        EnvironmentProvider));
+                () => Dispatcher.Dispatch(new EditorState.ShowInputFileAction()));
 
             var menuOptionOpen = new MenuOptionRecord(
                 "Open",

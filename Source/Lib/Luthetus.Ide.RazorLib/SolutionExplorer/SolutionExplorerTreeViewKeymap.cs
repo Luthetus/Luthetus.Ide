@@ -1,5 +1,4 @@
-﻿using Luthetus.Common.RazorLib.BackgroundTaskCase;
-using Luthetus.Common.RazorLib.ComponentRenderers.Types;
+﻿using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.Keyboard;
 using Luthetus.Common.RazorLib.Menu;
 using Luthetus.Common.RazorLib.Notification;
@@ -8,7 +7,6 @@ using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.Common.RazorLib.TreeView.Events;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
-using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.Menu;
@@ -23,29 +21,20 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
 {
     private readonly ICommonMenuOptionsFactory _commonMenuOptionsFactory;
     private readonly ILuthetusIdeComponentRenderers _luthetusIdeComponentRenderers;
-    private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IDispatcher _dispatcher;
     private readonly ITreeViewService _treeViewService;
-    private readonly ITextEditorService _textEditorService;
-    private readonly IBackgroundTaskQueue _backgroundTaskQueue;
 
     public SolutionExplorerTreeViewKeymap(
         ICommonMenuOptionsFactory commonMenuOptionsFactory,
         ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
-        IFileSystemProvider fileSystemProvider,
         IDispatcher dispatcher,
-        ITreeViewService treeViewService,
-        ITextEditorService textEditorService,
-        IBackgroundTaskQueue backgroundTaskQueue)
+        ITreeViewService treeViewService)
         : base(treeViewService)
     {
         _commonMenuOptionsFactory = commonMenuOptionsFactory;
         _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
-        _fileSystemProvider = fileSystemProvider;
         _dispatcher = dispatcher;
         _treeViewService = treeViewService;
-        _textEditorService = textEditorService;
-        _backgroundTaskQueue = backgroundTaskQueue;
     }
 
     public override async Task<bool> OnKeyDownAsync(
@@ -309,14 +298,9 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
             return;
         }
 
-        await EditorState.OpenInEditorAsync(
+        _dispatcher.Dispatch(new EditorState.OpenInEditorAction(
             treeViewNamespacePath.Item.AbsoluteFilePath,
-            shouldSetFocusToEditor,
-            _dispatcher,
-            _textEditorService,
-            _luthetusIdeComponentRenderers,
-            _fileSystemProvider,
-            _backgroundTaskQueue);
+            shouldSetFocusToEditor));
     }
 
     private async Task ReloadTreeViewModel(

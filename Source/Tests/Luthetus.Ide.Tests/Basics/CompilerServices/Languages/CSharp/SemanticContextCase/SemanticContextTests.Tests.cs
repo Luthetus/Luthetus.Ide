@@ -1,10 +1,6 @@
-﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.LexerCase;
-using Luthetus.TextEditor.RazorLib.Lexing;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.SemanticContextCase;
+﻿using Luthetus.TextEditor.RazorLib.Lexing;
 using Luthetus.Ide.ClassLib.DotNet;
 using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
-using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.Namespaces;
 using Luthetus.Ide.ClassLib.FileSystem.Classes.Local;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.SemanticContextCase.Implementations;
