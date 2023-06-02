@@ -34,8 +34,19 @@ public class SemanticModelCSharp : ISemanticModel
         if (boundScope is null)
             return null;
 
+        var textSpanText = textSpan.GetText();
+
+        while (boundScope.Parent is not null &&
+               !boundScope.VariableDeclarationMap.ContainsKey(textSpanText))
+        {
+            boundScope = boundScope.Parent;
+        }
+
+        if (!boundScope.VariableDeclarationMap.ContainsKey(textSpanText))
+            return null;
+
         var symbolDefinitionId = ISymbol.GetSymbolDefinitionId(
-            textSpan.GetText(),
+            textSpanText,
             boundScope.BoundScopeKey);
 
         if (semanticModelResult.ParserSession.Binder.SymbolDefinitions.TryGetValue(
