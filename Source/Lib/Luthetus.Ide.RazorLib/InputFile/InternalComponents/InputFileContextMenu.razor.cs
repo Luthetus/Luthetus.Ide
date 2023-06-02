@@ -22,8 +22,6 @@ namespace Luthetus.Ide.RazorLib.InputFile.InternalComponents;
 public partial class InputFileContextMenu : ComponentBase
 {
     [Inject]
-    private IState<TerminalSessionsState> TerminalSessionsStateWrap { get; set; } = null!;
-    [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;

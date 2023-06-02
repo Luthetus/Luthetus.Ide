@@ -17,8 +17,6 @@ public partial class GitChangesDisplay : FluxorComponent, IGitDisplayRendererTyp
     [Inject]
     private IState<GitState> GitStateWrap { get; set; } = null!;
     [Inject]
-    private IState<TerminalSessionsState> TerminalSessionsStateWrap { get; set; } = null!;
-    [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; set; } = null!;

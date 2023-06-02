@@ -13,21 +13,12 @@ public partial class InputFileBottomControls : ComponentBase
 {
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
-    [Inject]
-    private ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; set; } = null!;
-    [Inject]
-    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
-    [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-    [Inject]
-    private IBackgroundTaskQueue BackgroundTaskQueue { get; set; } = null!;
 
     [CascadingParameter]
     public DialogRecord? DialogRecord { get; set; }
     [CascadingParameter]
     public InputFileState InputFileState { get; set; } = null!;
 
-    private ElementReference? _searchElementReference;
     private string _searchQuery = string.Empty;
 
     private void SelectInputFilePatternOnChange(ChangeEventArgs changeEventArgs)

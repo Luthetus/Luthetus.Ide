@@ -31,10 +31,6 @@ public class IdeRazorSyntaxTree
     private readonly ResourceUri AdhocResourceUri = new ResourceUri(ADHOC_CLASS_IDENTIFIER + ".cs");
 
 #if DEBUG
-    [Obsolete("Only available in DEBUG mode, to be viewed via the debugger")]
-    private string ClassContents => _classBuilder.ToString();
-    [Obsolete("Only available in DEBUG mode, to be viewed via the debugger")]
-    private string RenderFunctionContents => _renderFunctionBuilder.ToString();
 #endif
 
     public SemanticModelResultRazor? RecentResult;

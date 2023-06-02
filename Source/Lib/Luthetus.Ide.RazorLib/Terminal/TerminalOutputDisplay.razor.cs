@@ -21,17 +21,12 @@ public partial class TerminalOutputDisplay : FluxorComponent
 {
     [Inject]
     private IStateSelection<TerminalSessionsState, TerminalSession?> TerminalSessionsStateSelection { get; set; } = null!;
-    [Inject]
-    private IState<TerminalSessionWasModifiedState> TerminalSessionWasModifiedStateWrap { get; set; } = null!;
+
     // TODO: Don't inject TerminalSessionsStateWrap. It causes too many unnecessary re-renders
     [Inject]
     private IState<TerminalSessionsState> TerminalSessionsStateWrap { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
-    [Inject]
-    private INotificationService NotificationService { get; set; } = null!;
-    [Inject]
-    private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
 
     /// <summary>
     /// <see cref="TerminalSessionKey"/> is used to narrow down the terminal
@@ -95,16 +90,6 @@ public partial class TerminalOutputDisplay : FluxorComponent
         }
 
         base.OnAfterRender(firstRender);
-    }
-
-    private MarkupString GetAllTextEscaped(string value)
-    {
-        return (MarkupString)value
-            .Replace("\r\n", "\\r\\n<br/>")
-            .Replace("\r", "\\r<br/>")
-            .Replace("\n", "\\n<br/>")
-            .Replace("\t", "--->")
-            .Replace(" ", "·");
     }
 
     private static MarkupString ParseHttpLinks(string input)
