@@ -2,9 +2,6 @@
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.LexerCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.ParserCase;
 using Luthetus.TextEditor.RazorLib.Lexing;
-using static System.Net.Mime.MediaTypeNames;
-using System.Reflection;
-using Luthetus.TextEditor.RazorLib.Model;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor.TextEditorCase;
 

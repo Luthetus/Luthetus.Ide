@@ -1,7 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.Analysis.Html.SyntaxActors;
-using Luthetus.TextEditor.RazorLib.Analysis.Razor.Facts;
-using Luthetus.TextEditor.RazorLib.Lexing;
-using Luthetus.TextEditor.RazorLib.Analysis.Html.InjectedLanguage;
+﻿using Luthetus.TextEditor.RazorLib.Lexing;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor.TextEditorCase;
 using Luthetus.Common.RazorLib.Misc;
 

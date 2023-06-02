@@ -11,7 +11,6 @@ using Luthetus.TextEditor.RazorLib.Analysis;
 using Luthetus.TextEditor.RazorLib.Analysis.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.Lexing;
 using System.Collections.Immutable;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.ParserCase;
 
