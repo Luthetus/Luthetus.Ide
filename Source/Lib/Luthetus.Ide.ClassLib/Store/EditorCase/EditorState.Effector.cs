@@ -317,8 +317,6 @@ public partial class EditorState
                     });
 
                 dispatcher.Dispatch(saveFileAction);
-
-                innerTextEditor.ClearEditBlocks();
             }
         }
     }
