@@ -1,4 +1,5 @@
-﻿using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.ParserCase;
+﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.Symbols;
+using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.ParserCase;
 using Luthetus.TextEditor.RazorLib.Analysis;
 using Luthetus.TextEditor.RazorLib.Lexing;
 using Luthetus.TextEditor.RazorLib.Model;
@@ -19,6 +20,32 @@ public class SemanticModelCSharp : ISemanticModel
         TextEditorTextSpan textSpan)
     {
         var semanticModelResult = ParseWithResult(model);
+
+        if (semanticModelResult is null)
+            return null;
+
+        var boundScope = semanticModelResult.ParserSession.Binder.BoundScopes
+            .Where(bs => bs.StartingIndexInclusive <= textSpan.StartingIndexInclusive &&
+                         bs.EndingIndexExclusive >= textSpan.EndingIndexExclusive)
+            // Get the closest scope
+            .OrderBy(bs => textSpan.StartingIndexInclusive - bs.StartingIndexInclusive)
+            .FirstOrDefault();
+
+        if (boundScope is null)
+            return null;
+
+        var symbolDefinitionId = ISymbol.GetSymbolDefinitionId(
+            textSpan.GetText(),
+            boundScope.BoundScopeKey);
+
+        if (semanticModelResult.ParserSession.Binder.SymbolDefinitions.TryGetValue(
+                symbolDefinitionId,
+                out var symbolDefinition))
+        {
+            return new TextEditorSymbolDefinition(
+                symbolDefinition.Symbol.TextSpan.ResourceUri,
+                symbolDefinition.Symbol.TextSpan.StartingIndexInclusive);
+        }
 
         return null;
     }

@@ -38,7 +38,8 @@ public class Binder
     }
 
     public ImmutableDictionary<string, BoundNamespaceStatementNode> BoundNamespaceStatementNodes => _boundNamespaceStatementNodes.ToImmutableDictionary();
-    public ImmutableArray<ISymbol> Symbols => _symbolDefinitions.Values.Select(v => v.Symbol).ToImmutableArray();
+    public ImmutableArray<ISymbol> Symbols => _symbolDefinitions.Values.SelectMany(x => x.SymbolReferences).Select(x => x.Symbol).ToImmutableArray();
+    public Dictionary<string, SymbolDefinition> SymbolDefinitions => _symbolDefinitions;
     public ImmutableArray<BoundScope> BoundScopes => _boundScopes.ToImmutableArray();
     public ImmutableArray<TextEditorDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
 
@@ -510,10 +511,6 @@ public class Binder
         {
             _currentScope.EndingIndexExclusive = textEditorTextSpan.EndingIndexExclusive;
             _currentScope = _currentScope.Parent;
-
-#if !DEBUG
-            _boundScopes.RemoveAt(_boundScopes.Count - 1);
-#endif
         }
     }
 
@@ -590,7 +587,7 @@ public class Binder
     private void AddSymbolDefinition(ISymbol symbol)
     {
         var symbolDefinitionId = ISymbol.GetSymbolDefinitionId(
-            symbol,
+            symbol.TextSpan.GetText(),
             _currentScope.BoundScopeKey);
 
         var symbolDefinition = new SymbolDefinition(
@@ -619,7 +616,7 @@ public class Binder
     private void AddSymbolReference(ISymbol symbol)
     {
         var symbolDefinitionId = ISymbol.GetSymbolDefinitionId(
-            symbol,
+            symbol.TextSpan.GetText(),
             _currentScope.BoundScopeKey);
 
         if (!_symbolDefinitions.TryGetValue(
