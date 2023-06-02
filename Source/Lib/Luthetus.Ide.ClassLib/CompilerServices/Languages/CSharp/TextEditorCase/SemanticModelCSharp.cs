@@ -26,7 +26,7 @@ public class SemanticModelCSharp : ISemanticModel
 
         var boundScope = semanticModelResult.ParserSession.Binder.BoundScopes
             .Where(bs => bs.StartingIndexInclusive <= textSpan.StartingIndexInclusive &&
-                         bs.EndingIndexExclusive >= textSpan.EndingIndexExclusive)
+                         (bs.EndingIndexExclusive ?? int.MaxValue) >= textSpan.EndingIndexExclusive)
             // Get the closest scope
             .OrderBy(bs => textSpan.StartingIndexInclusive - bs.StartingIndexInclusive)
             .FirstOrDefault();
