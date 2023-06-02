@@ -2,7 +2,7 @@
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.SyntaxNodes.Expression;
 
-public class LiteralExpressionNode : IExpressionNode
+public sealed record LiteralExpressionNode : IExpressionNode
 {
     public LiteralExpressionNode(ISyntaxToken literalSyntaxToken)
     {

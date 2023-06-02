@@ -2,7 +2,7 @@
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.SyntaxTokens;
 
-public class PlusPlusToken : ISyntaxToken
+public sealed record PlusPlusToken : ISyntaxToken
 {
     public PlusPlusToken(
         TextEditorTextSpan textEditorTextSpan)

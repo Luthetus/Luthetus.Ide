@@ -2,7 +2,7 @@
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.SyntaxTokens;
 
-public class CommentSingleLineToken : ISyntaxToken
+public sealed record CommentSingleLineToken : ISyntaxToken
 {
     public CommentSingleLineToken(
         TextEditorTextSpan textEditorTextSpan)

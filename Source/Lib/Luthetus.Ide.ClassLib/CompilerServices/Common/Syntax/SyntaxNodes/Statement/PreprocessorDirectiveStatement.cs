@@ -2,7 +2,7 @@
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.SyntaxNodes.Statement;
 
-public class PreprocessorLibraryReferenceStatement : IStatementNode
+public sealed record PreprocessorLibraryReferenceStatement : IStatementNode
 {
     public PreprocessorLibraryReferenceStatement(
         ISyntaxToken includeDirectiveSyntaxToken,

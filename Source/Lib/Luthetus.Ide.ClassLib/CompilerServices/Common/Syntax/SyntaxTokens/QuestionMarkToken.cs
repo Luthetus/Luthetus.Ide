@@ -2,7 +2,7 @@
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.SyntaxTokens;
 
-public class QuestionMarkToken : ISyntaxToken
+public sealed record QuestionMarkToken : ISyntaxToken
 {
     public QuestionMarkToken(
         TextEditorTextSpan textEditorTextSpan)

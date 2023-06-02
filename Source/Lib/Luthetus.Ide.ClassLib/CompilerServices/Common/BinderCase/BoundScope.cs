@@ -2,7 +2,7 @@
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase;
 
-public class BoundScope
+public sealed record BoundScope
 {
     public BoundScope(
         BoundScope? parent,

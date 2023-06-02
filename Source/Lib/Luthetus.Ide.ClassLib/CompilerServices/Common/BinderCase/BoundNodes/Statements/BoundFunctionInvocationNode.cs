@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statements;
 
-public class BoundFunctionInvocationNode : ISyntaxNode
+public sealed record BoundFunctionInvocationNode : ISyntaxNode
 {
     public BoundFunctionInvocationNode(
         ISyntaxToken identifierToken)

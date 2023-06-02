@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statements;
 
-public class BoundReturnStatementNode : ISyntaxNode
+public sealed record BoundReturnStatementNode : ISyntaxNode
 {
     public BoundReturnStatementNode(
         KeywordToken keywordToken,

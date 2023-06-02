@@ -2,7 +2,7 @@
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.SyntaxTokens;
 
-public class OpenBraceToken : ISyntaxToken
+public sealed record OpenBraceToken : ISyntaxToken
 {
     public OpenBraceToken(
         TextEditorTextSpan textEditorTextSpan)

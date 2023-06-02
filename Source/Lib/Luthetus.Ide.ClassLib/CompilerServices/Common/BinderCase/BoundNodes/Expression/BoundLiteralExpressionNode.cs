@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Expression;
 
-public class BoundLiteralExpressionNode : IBoundExpressionNode
+public sealed record BoundLiteralExpressionNode : IBoundExpressionNode
 {
     public BoundLiteralExpressionNode(
         ISyntaxToken literalSyntaxToken,

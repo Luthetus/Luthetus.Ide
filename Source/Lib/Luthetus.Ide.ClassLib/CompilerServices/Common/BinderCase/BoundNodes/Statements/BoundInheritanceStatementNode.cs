@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statements;
 
-public class BoundInheritanceStatementNode : ISyntaxNode
+public sealed record BoundInheritanceStatementNode : ISyntaxNode
 {
     public BoundInheritanceStatementNode(
         IdentifierToken parentClassIdentifierToken)

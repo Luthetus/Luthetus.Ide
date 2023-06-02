@@ -49,7 +49,7 @@ public partial class ParserTests
                 boundNamespaceStatementNode.SyntaxKind);
 
             Assert.Equal(
-                SyntaxKind.CompilationUnit,
+                SyntaxKind.CompilationUnitNode,
                 namespaceCompilationUnit.SyntaxKind);
         }
     }

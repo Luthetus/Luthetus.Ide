@@ -2,7 +2,7 @@
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.SyntaxTokens;
 
-public class TriviaToken : ISyntaxToken
+public sealed record TriviaToken : ISyntaxToken
 {
     public TriviaToken(
         TextEditorTextSpan textEditorTextSpan)

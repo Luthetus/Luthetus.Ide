@@ -2,7 +2,7 @@
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.SyntaxTokens;
 
-public class StatementDelimiterToken : ISyntaxToken
+public sealed record StatementDelimiterToken : ISyntaxToken
 {
     public StatementDelimiterToken(
         TextEditorTextSpan textEditorTextSpan)

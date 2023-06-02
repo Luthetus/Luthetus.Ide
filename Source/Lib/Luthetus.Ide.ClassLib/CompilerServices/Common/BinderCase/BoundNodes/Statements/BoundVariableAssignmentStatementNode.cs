@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statements;
 
-public class BoundVariableAssignmentStatementNode : ISyntaxNode
+public sealed record BoundVariableAssignmentStatementNode : ISyntaxNode
 {
     public BoundVariableAssignmentStatementNode(
         ISyntaxToken identifierToken,

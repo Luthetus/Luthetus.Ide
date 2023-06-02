@@ -38,7 +38,7 @@ public enum SyntaxKind
     EndOfFileToken,
 
     // Nodes
-    CompilationUnit,
+    CompilationUnitNode,
     LiteralExpressionNode,
     BoundLiteralExpressionNode,
     BoundBinaryOperatorNode,

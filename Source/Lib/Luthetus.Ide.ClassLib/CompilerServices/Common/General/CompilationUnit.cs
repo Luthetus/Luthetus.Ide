@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.General;
 
-public class CompilationUnit : ISyntaxNode
+public sealed record CompilationUnit : ISyntaxNode
 {
     public CompilationUnit(
         bool isExpression,
@@ -31,5 +31,5 @@ public class CompilationUnit : ISyntaxNode
 
     public ImmutableArray<ISyntax> Children { get; }
     public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.CompilationUnit;
+    public SyntaxKind SyntaxKind => SyntaxKind.CompilationUnitNode;
 }

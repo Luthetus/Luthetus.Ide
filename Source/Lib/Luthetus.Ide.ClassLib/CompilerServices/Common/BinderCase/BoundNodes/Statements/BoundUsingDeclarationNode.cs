@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statements;
 
-public class BoundUsingDeclarationNode : ISyntaxNode
+public sealed record BoundUsingDeclarationNode : ISyntaxNode
 {
     public BoundUsingDeclarationNode(
         KeywordToken keywordToken,

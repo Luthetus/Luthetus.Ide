@@ -3,7 +3,7 @@ using Luthetus.TextEditor.RazorLib.Lexing;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.Symbols;
 
-public class VariableSymbol : ISymbol
+public sealed record VariableSymbol : ISymbol
 {
     public VariableSymbol(
         TextEditorTextSpan textSpan)

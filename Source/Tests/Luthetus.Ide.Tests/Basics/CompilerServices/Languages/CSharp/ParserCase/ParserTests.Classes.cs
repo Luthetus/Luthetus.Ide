@@ -180,4 +180,92 @@ public partial class ParserTests
         Assert.Empty(
             boundClassDeclarationNode.ClassBodyCompilationUnit.Children);
     }
+
+    [Fact]
+    public void SHOULD_PARSE_CLASS_DECLARATION_WHICH_HAS_ONE_GENERIC_ARGUMENT()
+    {
+        string classIdentifier = "Box";
+        string genericArgumentIdentifier = "T";
+
+        string sourceText = @$"public class {classIdentifier}<{genericArgumentIdentifier}> : ComponentBase
+{{
+}}".ReplaceLineEndings("\n");
+
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
+
+        lexer.Lex();
+
+        var parser = new Parser(
+            lexer.SyntaxTokens,
+            lexer.Diagnostics);
+
+        var compilationUnit = parser.Parse();
+
+        var globalScope = parser.Binder.BoundScopes.First();
+
+        var personModel = globalScope.ClassDeclarationMap.Single();
+
+        Assert.Equal(classIdentifier, personModel.Key);
+
+        var boundClassDeclarationNode =
+            (BoundClassDeclarationNode)compilationUnit.Children.Single();
+
+        if (boundClassDeclarationNode.ClassBodyCompilationUnit is null)
+            throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
+
+        Assert.NotNull(
+            boundClassDeclarationNode.BoundInheritanceStatementNode);
+
+        Assert.Empty(
+            boundClassDeclarationNode.ClassBodyCompilationUnit.Children);
+    }
+    
+    [Fact]
+    public void SHOULD_PARSE_CLASS_DECLARATION_WHICH_HAS_THREE_GENERIC_ARGUMENTS()
+    {
+        string classIdentifier = "Box";
+        string genericArgOne = "TItem";
+        string genericArgTwo = "TPackager";
+        string genericArgThree = "TDeliverer";
+
+        string sourceText = @$"public class {classIdentifier}<{genericArgOne}, {genericArgTwo}, {genericArgThree}> : ComponentBase
+{{
+}}".ReplaceLineEndings("\n");
+
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
+
+        lexer.Lex();
+
+        var parser = new Parser(
+            lexer.SyntaxTokens,
+            lexer.Diagnostics);
+
+        var compilationUnit = parser.Parse();
+
+        var globalScope = parser.Binder.BoundScopes.First();
+
+        var personModel = globalScope.ClassDeclarationMap.Single();
+
+        Assert.Equal(classIdentifier, personModel.Key);
+
+        var boundClassDeclarationNode =
+            (BoundClassDeclarationNode)compilationUnit.Children.Single();
+
+        if (boundClassDeclarationNode.ClassBodyCompilationUnit is null)
+            throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
+
+        Assert.NotNull(
+            boundClassDeclarationNode.BoundInheritanceStatementNode);
+
+        Assert.Empty(
+            boundClassDeclarationNode.ClassBodyCompilationUnit.Children);
+    }
 }

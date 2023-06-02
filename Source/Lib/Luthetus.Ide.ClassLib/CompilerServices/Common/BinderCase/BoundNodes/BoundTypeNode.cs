@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes;
 
-public class BoundTypeNode : ISyntaxNode
+public sealed record BoundTypeNode : ISyntaxNode
 {
     public BoundTypeNode(
         Type type,

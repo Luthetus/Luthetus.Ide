@@ -2,7 +2,7 @@
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.SyntaxTokens;
 
-public class OpenAngleBracketToken : ISyntaxToken
+public sealed record OpenAngleBracketToken : ISyntaxToken
 {
     public OpenAngleBracketToken(
         TextEditorTextSpan textEditorTextSpan)

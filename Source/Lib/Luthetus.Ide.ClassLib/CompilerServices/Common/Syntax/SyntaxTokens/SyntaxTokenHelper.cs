@@ -1,6 +1,6 @@
 ﻿namespace Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.SyntaxTokens;
 
-public class SyntaxTokenHelper
+public sealed record SyntaxTokenHelper
 {
     public static (ISyntaxToken syntaxToken, string text)[] GetTokenTextTuples(
         IEnumerable<ISyntaxToken> syntaxTokens,

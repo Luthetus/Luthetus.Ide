@@ -3,7 +3,7 @@ using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Expression;
 
-public class BoundBinaryExpressionNode : IBoundExpressionNode
+public sealed record BoundBinaryExpressionNode : IBoundExpressionNode
 {
     public BoundBinaryExpressionNode(
         IBoundExpressionNode leftBoundExpressionNode,

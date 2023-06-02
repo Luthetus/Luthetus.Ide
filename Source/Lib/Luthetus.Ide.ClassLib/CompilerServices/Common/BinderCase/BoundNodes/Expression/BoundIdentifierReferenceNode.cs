@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Expression;
 
-public class BoundIdentifierReferenceNode : IBoundExpressionNode
+public sealed record BoundIdentifierReferenceNode : IBoundExpressionNode
 {
     public BoundIdentifierReferenceNode(
         IdentifierToken identifierToken,

@@ -2,7 +2,7 @@
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.SyntaxTokens;
 
-public class BadToken : ISyntaxToken
+public sealed record BadToken : ISyntaxToken
 {
     public BadToken(
         TextEditorTextSpan textEditorTextSpan)

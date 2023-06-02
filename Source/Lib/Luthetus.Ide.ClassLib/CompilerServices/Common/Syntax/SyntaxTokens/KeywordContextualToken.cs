@@ -2,14 +2,14 @@
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.SyntaxTokens;
 
-public sealed record KeywordToken : ISyntaxToken
+public sealed record KeywordContextualToken : ISyntaxToken
 {
-    public KeywordToken(
+    public KeywordContextualToken(
         TextEditorTextSpan textEditorTextSpan)
     {
         TextSpan = textEditorTextSpan;
     }
 
     public TextEditorTextSpan TextSpan { get; }
-    public SyntaxKind SyntaxKind => SyntaxKind.KeywordToken;
+    public SyntaxKind SyntaxKind => SyntaxKind.KeywordContextualToken;
 }
