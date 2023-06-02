@@ -3,9 +3,9 @@ using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.LexerCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.ParserCase;
 using Luthetus.TextEditor.RazorLib.Lexing;
 
-namespace Luthetus.Ide.Tests.Basics.CompilerServices.Languages.CSharp;
+namespace Luthetus.Ide.Tests.Basics.CompilerServices.Languages.CSharp.EvaluatorCase;
 
-public class EvaluatorTests
+public partial class EvaluatorTests
 {
     [Fact]
     public void SHOULD_EVALUATE_NUMERIC_LITERAL_EXPRESSION()
@@ -107,7 +107,7 @@ public class EvaluatorTests
         var y = "abc";
 
         string sourceText = $"\"{x}\" + \"{y}\"".ReplaceLineEndings("\n");
-        
+
         var resourceUri = new ResourceUri(string.Empty);
 
         var lexer = new Lexer(
