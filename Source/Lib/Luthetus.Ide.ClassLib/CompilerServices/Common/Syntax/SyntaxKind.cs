@@ -61,4 +61,5 @@ public enum SyntaxKind
     TypeSymbol,
     FunctionSymbol,
     VariableSymbol,
+    PropertySymbol,
 }

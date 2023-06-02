@@ -11,6 +11,7 @@ using Luthetus.TextEditor.RazorLib.Analysis;
 using Luthetus.TextEditor.RazorLib.Analysis.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.Lexing;
 using System.Collections.Immutable;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.ParserCase;
 
@@ -333,6 +334,14 @@ public class Parser
                 var boundIfStatementNode = _binder.BindIfStatementNode(inToken, expression);
                 _nodeRecent = boundIfStatementNode;
             }
+            else if (text == "get")
+            {
+                // TODO: Implement the 'get' keyword
+            }
+            else if (text == "set")
+            {
+                // TODO: Implement the 'set' keyword
+            }
             else
             {
                 throw new NotImplementedException("Implement more keywords");
@@ -454,48 +463,65 @@ public class Parser
             else if (nextToken.SyntaxKind == SyntaxKind.EqualsToken ||
                      nextToken.SyntaxKind == SyntaxKind.StatementDelimiterToken)
             {
-                // 'variable declaration' OR 'variable initialization'
+                // 'variable declaration' OR 'variable initialization' OR 'property which is expression bound'
 
-                // 'variable declaration'
-                var boundVariableDeclarationStatementNode = _binder.BindVariableDeclarationNode(
-                    (BoundTypeNode)_nodeRecent,
-                    inToken);
-
-                _currentCompilationUnitBuilder.Children.Add(boundVariableDeclarationStatementNode);
-
-                if (nextToken.SyntaxKind == SyntaxKind.EqualsToken)
+                if (_tokenWalker.Current.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
                 {
-                    // 'variable initialization'
+                    _tokenWalker.Backtrack();
+                    _tokenWalker.Backtrack();
 
-                    var rightHandExpression = ParseExpression();
+                    ParsePropertyDefinition();
+                }
+                else
+                {
+                    // 'variable declaration'
+                    var boundVariableDeclarationStatementNode = _binder.BindVariableDeclarationNode(
+                        (BoundTypeNode)_nodeRecent,
+                        inToken);
 
-                    var boundVariableAssignmentNode = _binder.BindVariableAssignmentNode(
-                        (IdentifierToken)boundVariableDeclarationStatementNode.IdentifierToken,
-                        rightHandExpression);
+                    _currentCompilationUnitBuilder.Children.Add(boundVariableDeclarationStatementNode);
 
-                    if (boundVariableAssignmentNode is null)
+                    if (nextToken.SyntaxKind == SyntaxKind.EqualsToken)
                     {
-                        // TODO: Why would boundVariableDeclarationStatementNode ever be null here? The variable had just been defined. I suppose what I mean to say is, should this get the '!' operator? The compiler is correctly complaining and the return type should have nullability in the case of undefined variables. So, use the not null operator?
-                        throw new NotImplementedException();
+                        // 'variable initialization'
+
+                        var rightHandExpression = ParseExpression();
+
+                        var boundVariableAssignmentNode = _binder.BindVariableAssignmentNode(
+                            (IdentifierToken)boundVariableDeclarationStatementNode.IdentifierToken,
+                            rightHandExpression);
+
+                        if (boundVariableAssignmentNode is null)
+                        {
+                            // TODO: Why would boundVariableDeclarationStatementNode ever be null here? The variable had just been defined. I suppose what I mean to say is, should this get the '!' operator? The compiler is correctly complaining and the return type should have nullability in the case of undefined variables. So, use the not null operator?
+                            throw new NotImplementedException();
+                        }
+                        else
+                        {
+                            _currentCompilationUnitBuilder.Children
+                                .Add(boundVariableAssignmentNode);
+                        }
                     }
-                    else
-                    {
-                        _currentCompilationUnitBuilder.Children
-                            .Add(boundVariableAssignmentNode);
-                    }
+
+                    var expectedStatementDelimiterToken = _tokenWalker.Consume();
+
+                    if (expectedStatementDelimiterToken.SyntaxKind != SyntaxKind.StatementDelimiterToken)
+                        _ = _tokenWalker.Backtrack();
+
+                    _nodeRecent = null;
+                }
+            }
+            else if (nextToken.SyntaxKind == SyntaxKind.OpenBraceToken)
+            {
+                // Would this conditional branch be for C# Properties?
+
+                // Backtrack to the Property Identifier
+                {
+                    _ = _tokenWalker.Backtrack();
+                    _ = _tokenWalker.Backtrack();
                 }
 
-                var expectedStatementDelimiterToken = _tokenWalker.Consume();
-
-                if (expectedStatementDelimiterToken.SyntaxKind != SyntaxKind.StatementDelimiterToken)
-                    _ = _tokenWalker.Backtrack();
-
-                _nodeRecent = null;
-            }
-            else
-            {
-                // TODO: Report a diagnostic
-                throw new NotImplementedException();
+                ParsePropertyDefinition();
             }
         }
         else
@@ -565,6 +591,30 @@ public class Parser
                     return;
                 }
             }
+        }
+    }
+
+    /// <summary>Assumes invocation occurs with the property identifier as _tokenWalker's current token</summary>
+    private void ParsePropertyDefinition()
+    {
+        var propertyTypeToken = _tokenWalker.Peek(-1);
+        var propertyIdentifierToken = _tokenWalker.Consume();
+
+        BoundTypeNode? boundTypeNode = null;
+
+        if (_binder.TryGetTypeHierarchically(
+                propertyTypeToken.TextSpan.GetText(),
+                out var type) &&
+                    type is not null)
+        {
+            boundTypeNode = new BoundTypeNode(type, propertyTypeToken);
+        }
+
+        if (boundTypeNode is not null)
+        {
+            _binder.BindPropertyDeclarationNode(
+                boundTypeNode,
+                (IdentifierToken)propertyIdentifierToken);
         }
     }
 

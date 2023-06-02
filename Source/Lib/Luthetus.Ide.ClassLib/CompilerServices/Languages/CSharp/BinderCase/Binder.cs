@@ -352,7 +352,39 @@ public class Binder
             return null;
         }
     }
-    
+
+    public BoundVariableDeclarationStatementNode BindPropertyDeclarationNode(
+        BoundTypeNode boundTypeNode,
+        IdentifierToken identifierToken)
+    {
+        AddSymbolDefinition(new PropertySymbol(identifierToken.TextSpan with
+        {
+            DecorationByte = (byte)GenericDecorationKind.Property
+        }));
+
+        var text = identifierToken.TextSpan.GetText();
+
+        if (_currentScope.VariableDeclarationMap.TryGetValue(
+            text,
+            out var propertyDeclarationNode))
+        {
+            // TODO: The property was already declared, so report a diagnostic?
+            // TODO: The property was already declared, so check that the return types match?
+            return propertyDeclarationNode;
+        }
+
+        var boundVariableDeclarationStatementNode = new BoundVariableDeclarationStatementNode(
+            boundTypeNode,
+            identifierToken,
+            false);
+
+        _currentScope.VariableDeclarationMap.Add(
+            text,
+            boundVariableDeclarationStatementNode);
+
+        return boundVariableDeclarationStatementNode;
+    }
+
     public BoundIdentifierReferenceNode? BindIdentifierReferenceNode(
         IdentifierToken identifierToken)
     {
