@@ -313,4 +313,26 @@ public partial class LexerTests
         var text = closeAngleBracketToken.TextSpan.GetText();
         Assert.Equal(closeAngleBracketTokenAsString, text);
     }
+    
+    [Fact]
+    public void SHOULD_LEX_DOLLAR_SIGN_TOKEN()
+    {
+        var dollarSignTokenAsString = "$";
+        var sourceText = $"{dollarSignTokenAsString}".ReplaceLineEndings("\n");
+
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
+
+        lexer.Lex();
+
+        var dollarSignToken = lexer.SyntaxTokens.First();
+
+        Assert.Equal(SyntaxKind.DollarSignToken, dollarSignToken.SyntaxKind);
+
+        var text = dollarSignToken.TextSpan.GetText();
+        Assert.Equal(dollarSignTokenAsString, text);
+    }
 }

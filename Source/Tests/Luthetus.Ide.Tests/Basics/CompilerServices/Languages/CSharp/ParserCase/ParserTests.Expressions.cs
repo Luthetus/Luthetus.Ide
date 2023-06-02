@@ -43,4 +43,26 @@ public partial class ParserTests
             typeof(int),
             boundBinaryExpressionNode.RightBoundExpressionNode.ResultType);
     }
+    
+    [Fact]
+    public void SHOULD_PARSE_STRING_INTERPOLATION_EXPRESSION()
+    {
+        string sourceText = "$\"DisplayName: {FirstName} {LastName}\"".ReplaceLineEndings("\n");
+
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
+
+        lexer.Lex();
+
+        var parser = new Parser(
+            lexer.SyntaxTokens,
+            lexer.Diagnostics);
+
+        var compilationUnit = parser.Parse();
+
+        throw new NotImplementedException();
+    }
 }

@@ -94,6 +94,13 @@ public class Parser
                 case SyntaxKind.CloseBraceToken:
                     ParseCloseBraceToken((CloseBraceToken)consumedToken);
                     break;
+                case SyntaxKind.OpenAngleBracketToken:
+                    break;
+                case SyntaxKind.CloseAngleBracketToken:
+                    break;
+                case SyntaxKind.DollarSignToken:
+                    ParseDollarSignToken((DollarSignToken)consumedToken);
+                    break;
                 case SyntaxKind.ColonToken:
                     ParseColonToken((ColonToken)consumedToken);
                     break;
@@ -341,6 +348,23 @@ public class Parser
             {
                 // TODO: Implement the 'set' keyword
             }
+            else if (text == "interface")
+            {
+                // TODO: Implement the 'interface' keyword
+                var nextToken = _tokenWalker.Consume();
+
+                if (nextToken.SyntaxKind == SyntaxKind.IdentifierToken)
+                {
+                    var boundClassDeclarationNode = _binder.BindClassDeclarationNode(
+                        (IdentifierToken)nextToken);
+
+                    _nodeRecent = boundClassDeclarationNode;
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
+            }
             else
             {
                 throw new NotImplementedException("Implement more keywords");
@@ -401,6 +425,20 @@ public class Parser
 
                 ParseIdentifierToken(inTokenAsIdentifier);
             }
+        }
+    }
+
+    private void ParseDollarSignToken(
+        DollarSignToken inToken)
+    {
+        if (_tokenWalker.Current.SyntaxKind == SyntaxKind.StringLiteralToken)
+        {
+            var stringLiteralToken = _tokenWalker.Consume();
+
+            _nodeRecent = ParseStringLiteralToken(
+                (StringLiteralToken)stringLiteralToken);
+
+            _binder.BindStringInterpolationExpression(inToken);
         }
     }
 

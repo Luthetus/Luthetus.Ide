@@ -95,6 +95,16 @@ public class Binder
         throw new NotImplementedException();
     }
 
+    /// <summary>TODO: Construct a BoundStringInterpolationExpressionNode and identify the expressions within the string literal. For now I am just making the dollar sign the same color as a string literal.</summary>
+    public void BindStringInterpolationExpression(
+        DollarSignToken dollarSignToken)
+    {
+        AddSymbolReference(new StringInterpolationSymbol(dollarSignToken.TextSpan with
+        {
+            DecorationByte = (byte)GenericDecorationKind.StringLiteral,
+        }));
+    }
+
     public bool TryBindTypeNode(
         ISyntaxToken token,
         out BoundTypeNode? boundTypeNode)
