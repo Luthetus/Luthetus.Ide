@@ -14,4 +14,3 @@ public sealed record FunctionSymbol : ISymbol
     public TextEditorTextSpan TextSpan { get; }
     public SyntaxKind SyntaxKind => SyntaxKind.FunctionSymbol;
 }
-

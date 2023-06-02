@@ -14,7 +14,7 @@ public class SemanticModelCSharp : ISemanticModel
     public ImmutableList<(TextEditorDiagnostic diagnostic, TextEditorTextSpan textSpan)> DiagnosticTextSpanTuples { get; private set; } = ImmutableList<(TextEditorDiagnostic diagnostic, TextEditorTextSpan textSpan)>.Empty;
     public ImmutableList<(string message, TextEditorTextSpan textSpan)> SymbolMessageTextSpanTuples { get; private set; } = ImmutableList<(string message, TextEditorTextSpan textSpan)>.Empty;
 
-    public SymbolDefinition? GoToDefinition(
+    public TextEditorSymbolDefinition? GoToDefinition(
         TextEditorModel model,
         TextEditorTextSpan textSpan)
     {

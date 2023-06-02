@@ -19,7 +19,8 @@ public class Binder
 {
     private readonly BoundScope _globalScope = CSharpLanguageFacts.Scope.GetInitialGlobalScope();
     private readonly Dictionary<string, BoundNamespaceStatementNode> _boundNamespaceStatementNodes = CSharpLanguageFacts.Namespaces.GetInitialBoundNamespaceStatementNodes();
-    private readonly List<ISymbol> _symbols = new();
+    /// <summary>The key for _symbolDefinitions is calculated by <see cref="ISymbol.GetSymbolDefinitionId"/></summary>
+    private readonly Dictionary<string, SymbolDefinition> _symbolDefinitions = new();
     private readonly LuthetusIdeDiagnosticBag _diagnosticBag = new();
 
     private List<BoundScope> _boundScopes = new();
@@ -37,7 +38,7 @@ public class Binder
     }
 
     public ImmutableDictionary<string, BoundNamespaceStatementNode> BoundNamespaceStatementNodes => _boundNamespaceStatementNodes.ToImmutableDictionary();
-    public ImmutableArray<ISymbol> Symbols => _symbols.ToImmutableArray();
+    public ImmutableArray<ISymbol> Symbols => _symbolDefinitions.Values.Select(v => v.Symbol).ToImmutableArray();
     public ImmutableArray<BoundScope> BoundScopes => _boundScopes.ToImmutableArray();
     public ImmutableArray<TextEditorDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
 
@@ -133,11 +134,10 @@ public class Binder
             functionIdentifier,
             boundFunctionDeclarationNode);
 
-        _symbols.Add(
-            new FunctionSymbol(identifierToken.TextSpan with
-            {
-                DecorationByte = (byte)GenericDecorationKind.Function
-            }));
+        AddSymbolDefinition(new FunctionSymbol(identifierToken.TextSpan with
+        {
+            DecorationByte = (byte)GenericDecorationKind.Function
+        }));
 
         return boundFunctionDeclarationNode;
     }
@@ -250,11 +250,10 @@ public class Binder
             classIdentifier,
             boundClassDeclarationNode);
 
-        _symbols.Add(
-            new TypeSymbol(identifierToken.TextSpan with
-            {
-                DecorationByte = (byte)GenericDecorationKind.Type
-            }));
+        AddSymbolDefinition(new TypeSymbol(identifierToken.TextSpan with
+        {
+            DecorationByte = (byte)GenericDecorationKind.Type
+        }));
 
         return boundClassDeclarationNode;
     }
@@ -262,11 +261,10 @@ public class Binder
     public BoundInheritanceStatementNode BindInheritanceStatementNode(
         IdentifierToken parentClassIdentifierToken)
     {
-        _symbols.Add(
-            new TypeSymbol(parentClassIdentifierToken.TextSpan with
-            {
-                DecorationByte = (byte)GenericDecorationKind.Type
-            }));
+        AddSymbolReference(new TypeSymbol(parentClassIdentifierToken.TextSpan with
+        {
+            DecorationByte = (byte)GenericDecorationKind.Type
+        }));
 
         var parentClassIdentifier = parentClassIdentifierToken.TextSpan.GetText();
 
@@ -289,12 +287,11 @@ public class Binder
         BoundTypeNode boundTypeNode,
         IdentifierToken identifierToken)
     {
-        _symbols.Add(
-            new VariableSymbol(identifierToken.TextSpan with
-            {
-                DecorationByte = (byte)GenericDecorationKind.Variable
-            }));
-
+        AddSymbolDefinition(new VariableSymbol(identifierToken.TextSpan with
+        {
+            DecorationByte = (byte)GenericDecorationKind.Variable
+        }));
+        
         var text = identifierToken.TextSpan.GetText();
 
         if (_currentScope.VariableDeclarationMap.TryGetValue(
@@ -323,11 +320,10 @@ public class Binder
         IdentifierToken identifierToken,
         IBoundExpressionNode boundExpressionNode)
     {
-        _symbols.Add(
-            new VariableSymbol(identifierToken.TextSpan with
-            {
-                DecorationByte = (byte)GenericDecorationKind.Variable
-            }));
+        AddSymbolReference(new VariableSymbol(identifierToken.TextSpan with
+        {
+            DecorationByte = (byte)GenericDecorationKind.Variable
+        }));
 
         var text = identifierToken.TextSpan.GetText();
 
@@ -366,11 +362,10 @@ public class Binder
                 out var variableDeclarationNode) &&
             variableDeclarationNode is not null)
         {
-            _symbols.Add(
-                new VariableSymbol(identifierToken.TextSpan with
-                {
-                    DecorationByte = (byte)GenericDecorationKind.Variable
-                }));
+            AddSymbolReference(new VariableSymbol(identifierToken.TextSpan with
+            {
+                DecorationByte = (byte)GenericDecorationKind.Variable
+            }));
 
             return new BoundIdentifierReferenceNode(
                 identifierToken,
@@ -381,11 +376,10 @@ public class Binder
                      out var type) &&
                  type is not null)
         {
-            _symbols.Add(
-                new TypeSymbol(identifierToken.TextSpan with
-                {
-                    DecorationByte = (byte)GenericDecorationKind.Type
-                }));
+            AddSymbolReference(new TypeSymbol(identifierToken.TextSpan with
+            {
+                DecorationByte = (byte)GenericDecorationKind.Type
+            }));
 
             return new BoundIdentifierReferenceNode(
                 identifierToken,
@@ -398,11 +392,10 @@ public class Binder
         {
             // TODO: Would this conditional branch be for method groups? @onclick="MethodName"
 
-            _symbols.Add(
-                new FunctionSymbol(identifierToken.TextSpan with
-                {
-                    DecorationByte = (byte)GenericDecorationKind.Function
-                }));
+            AddSymbolReference(new FunctionSymbol(identifierToken.TextSpan with
+            {
+                DecorationByte = (byte)GenericDecorationKind.Function
+            }));
 
             return new BoundIdentifierReferenceNode(
                 identifierToken,
@@ -418,11 +411,10 @@ public class Binder
     public BoundFunctionInvocationNode? BindFunctionInvocationNode(
         IdentifierToken identifierToken)
     {
-        _symbols.Add(
-            new FunctionSymbol(identifierToken.TextSpan with
-            {
-                DecorationByte = (byte)GenericDecorationKind.Function
-            }));
+        AddSymbolReference(new FunctionSymbol(identifierToken.TextSpan with
+        {
+            DecorationByte = (byte)GenericDecorationKind.Function
+        }));
 
         var text = identifierToken.TextSpan.GetText();
 
@@ -592,5 +584,63 @@ public class Binder
 
         boundVariableDeclarationStatementNode = null;
         return false;
+    }
+
+    /// <summary>This method will handle the <see cref="SymbolDefinition"/>, but also invoke <see cref="AddSymbolReference"/> because each definition is being treated as a reference itself.</summary>
+    private void AddSymbolDefinition(ISymbol symbol)
+    {
+        var symbolDefinitionId = ISymbol.GetSymbolDefinitionId(
+            symbol,
+            _currentScope.BoundScopeKey);
+
+        var symbolDefinition = new SymbolDefinition(
+            _currentScope.BoundScopeKey,
+            symbol);
+
+        if (!_symbolDefinitions.TryAdd(
+                symbolDefinitionId,
+                symbolDefinition))
+        {
+            var existingSymbolDefinition = _symbolDefinitions[symbolDefinitionId];
+
+            if (existingSymbolDefinition.IsFabricated)
+            {
+                _symbolDefinitions[symbolDefinitionId] = existingSymbolDefinition with
+                {
+                    IsFabricated = false
+                };
+            }
+            // TODO: The else branch of this if statement would mean the Symbol definition was found twice, should a diagnostic be reported here?
+        }
+
+        AddSymbolReference(symbol);
+    }
+
+    private void AddSymbolReference(ISymbol symbol)
+    {
+        var symbolDefinitionId = ISymbol.GetSymbolDefinitionId(
+            symbol,
+            _currentScope.BoundScopeKey);
+
+        if (!_symbolDefinitions.TryGetValue(
+                symbolDefinitionId,
+                out var symbolDefinition))
+        {
+            symbolDefinition = new SymbolDefinition(
+                _currentScope.BoundScopeKey,
+                symbol)
+            {
+                IsFabricated = true
+            };
+
+            // TODO: Symbol definition was not found, should a diagnostic be reported here?
+            _symbolDefinitions.Add(
+                symbolDefinitionId,
+                symbolDefinition);
+        }
+
+        symbolDefinition.SymbolReferences.Add(new SymbolReference(
+            symbol,
+            _currentScope.BoundScopeKey));
     }
 }

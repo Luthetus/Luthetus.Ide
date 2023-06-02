@@ -24,6 +24,7 @@ public sealed record BoundScope
         VariableDeclarationMap = variableDeclarationMap;
     }
 
+    public BoundScopeKey BoundScopeKey { get; init; } = BoundScopeKey.NewBoundScopeKey();
     public BoundScope? Parent { get; init; }
     /// <summary>A <see cref="ScopeReturnType"/> with the value of "null" means refer to the <see cref="Parent"/> bound scope's <see cref="ScopeReturnType"/></summary>
     public Type? ScopeReturnType { get; init; }
@@ -33,5 +34,5 @@ public sealed record BoundScope
     public Dictionary<string, Type> TypeMap { get; init; }
     public Dictionary<string, BoundClassDeclarationNode> ClassDeclarationMap { get; init; }
     public Dictionary<string, BoundFunctionDeclarationNode> FunctionDeclarationMap { get; init; }
-    public Dictionary<string, BoundVariableDeclarationStatementNode> VariableDeclarationMap { get; init; }
+    public Dictionary<string, BoundVariableDeclarationStatementNode> VariableDeclarationMap { get; init; }    
 }
