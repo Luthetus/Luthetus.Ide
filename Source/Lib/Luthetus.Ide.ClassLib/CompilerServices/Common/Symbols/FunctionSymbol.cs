@@ -3,7 +3,7 @@ using Luthetus.TextEditor.RazorLib.Lexing;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.Symbols;
 
-public class FunctionSymbol : ISymbol
+public sealed record FunctionSymbol : ISymbol
 {
     public FunctionSymbol(
         TextEditorTextSpan textSpan)
@@ -14,4 +14,3 @@ public class FunctionSymbol : ISymbol
     public TextEditorTextSpan TextSpan { get; }
     public SyntaxKind SyntaxKind => SyntaxKind.FunctionSymbol;
 }
-

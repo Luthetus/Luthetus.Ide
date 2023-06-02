@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Expression;
 
-public class BoundLiteralExpressionNode : IBoundExpressionNode
+public sealed record BoundLiteralExpressionNode : IBoundExpressionNode
 {
     public BoundLiteralExpressionNode(
         ISyntaxToken literalSyntaxToken,
@@ -18,10 +18,10 @@ public class BoundLiteralExpressionNode : IBoundExpressionNode
         }.ToImmutableArray();
     }
 
-    public ISyntaxToken LiteralSyntaxToken { get; }
-    public Type ResultType { get; }
+    public ISyntaxToken LiteralSyntaxToken { get; init; }
+    public Type ResultType { get; init; }
 
-    public ImmutableArray<ISyntax> Children { get; }
+    public ImmutableArray<ISyntax> Children { get; init; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.BoundLiteralExpressionNode;
 }

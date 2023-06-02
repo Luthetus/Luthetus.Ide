@@ -1,255 +1,16 @@
 ﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.LexerCase;
 using Luthetus.TextEditor.RazorLib.Lexing;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Luthetus.Ide.Tests.Basics.CompilerServices.Languages.CSharp;
+namespace Luthetus.Ide.Tests.Basics.CompilerServices.Languages.CSharp.LexerCase;
 
-public class LexerTests
+public partial class LexerTests
 {
-    [Fact]
-    public void SHOULD_LEX_NUMERIC_LITERAL_TOKEN()
-    {
-        var numericValue = 4135;
-        var sourceText = $"{numericValue}".ReplaceLineEndings("\n");
-
-        var resourceUri = new ResourceUri(string.Empty);
-
-        var lexer = new Lexer(
-            resourceUri,
-            sourceText);
-
-        lexer.Lex();
-
-        var numericLiteralToken = lexer.SyntaxTokens.First();
-
-        Assert.Equal(SyntaxKind.NumericLiteralToken, numericLiteralToken.SyntaxKind);
-
-        var text = numericLiteralToken.TextSpan.GetText();
-        Assert.Equal(numericValue, int.Parse(text));
-    }
-
-    [Fact]
-    public void SHOULD_LEX_STRING_LITERAL_TOKEN()
-    {
-        var stringValue = "\"Apple Sauce\"";
-        var sourceText = $"{stringValue}".ReplaceLineEndings("\n");
-
-        var resourceUri = new ResourceUri(string.Empty);
-
-        var lexer = new Lexer(
-            resourceUri,
-            sourceText);
-
-        lexer.Lex();
-
-        var stringLiteralToken = lexer.SyntaxTokens.First();
-
-        Assert.Equal(SyntaxKind.StringLiteralToken, stringLiteralToken.SyntaxKind);
-
-        var text = stringLiteralToken.TextSpan.GetText();
-        Assert.Equal(stringValue, text);
-    }
-
-    [Fact]
-    public void SHOULD_LEX_COMMENT_SINGLE_LINE_TOKEN_WITH_ENDING_AS_END_OF_FILE()
-    {
-        var singleLineCommentAsString = @"// C:\Users\hunte\Repos\Aaa\";
-        var sourceText = $"{singleLineCommentAsString}".ReplaceLineEndings("\n");
-
-        var resourceUri = new ResourceUri(string.Empty);
-
-        var lexer = new Lexer(
-            resourceUri,
-            sourceText);
-
-        lexer.Lex();
-
-        var commentSingleLineToken = lexer.SyntaxTokens.First();
-
-        Assert.Equal(SyntaxKind.CommentSingleLineToken, commentSingleLineToken.SyntaxKind);
-
-        var text = commentSingleLineToken.TextSpan.GetText();
-        Assert.Equal(singleLineCommentAsString, text);
-    }
-
-    [Fact]
-    public void SHOULD_LEX_COMMENT_SINGLE_LINE_TOKEN_WITH_ENDING_AS_NEW_LINE()
-    {
-        var singleLineCommentAsString = @"// C:\Users\hunte\Repos\Aaa\";
-        var sourceText = $@"{singleLineCommentAsString}
-".ReplaceLineEndings("\n");
-
-        var resourceUri = new ResourceUri(string.Empty);
-
-        var lexer = new Lexer(
-            resourceUri,
-            sourceText);
-
-        lexer.Lex();
-
-        var commentSingleLineToken = lexer.SyntaxTokens.First();
-
-        Assert.Equal(SyntaxKind.CommentSingleLineToken, commentSingleLineToken.SyntaxKind);
-
-        var text = commentSingleLineToken.TextSpan.GetText();
-        Assert.Equal(singleLineCommentAsString, text);
-    }
-
-    [Fact]
-    public void SHOULD_LEX_COMMENT_MULTI_LINE_TOKEN_WRITTEN_ON_MULTIPLE_LINES()
-    {
-        var multiLineCommentAsString = @"/*
-	A Multi-Line Comment
-*/".ReplaceLineEndings("\n");
-
-        var sourceText = $"{multiLineCommentAsString}".ReplaceLineEndings("\n");
-
-        var resourceUri = new ResourceUri(string.Empty);
-
-        var lexer = new Lexer(
-            resourceUri,
-            sourceText);
-
-        lexer.Lex();
-
-        var commentMultiLineToken = lexer.SyntaxTokens.First();
-
-        Assert.Equal(SyntaxKind.CommentMultiLineToken, commentMultiLineToken.SyntaxKind);
-
-        var text = commentMultiLineToken.TextSpan.GetText();
-        Assert.Equal(multiLineCommentAsString, text);
-    }
-
-    [Fact]
-    public void SHOULD_LEX_COMMENT_MULTI_LINE_TOKEN_WRITTEN_ON_SINGLE_LINE()
-    {
-        var multiLineCommentAsString = @"/* Another Multi-Line Comment */"
-            .ReplaceLineEndings("\n");
-
-        var sourceText = $"{multiLineCommentAsString}".ReplaceLineEndings("\n");
-
-        var resourceUri = new ResourceUri(string.Empty);
-
-        var lexer = new Lexer(
-            resourceUri,
-            sourceText);
-
-        lexer.Lex();
-
-        var commentMultiLineToken = lexer.SyntaxTokens.First();
-
-        Assert.Equal(SyntaxKind.CommentMultiLineToken, commentMultiLineToken.SyntaxKind);
-
-        var text = commentMultiLineToken.TextSpan.GetText();
-        Assert.Equal(multiLineCommentAsString, text);
-    }
-
-    [Fact]
-    public void SHOULD_LEX_KEYWORD_TOKEN()
-    {
-        var keywordAsString = "int";
-        var sourceText = $"{keywordAsString}".ReplaceLineEndings("\n");
-
-        var resourceUri = new ResourceUri(string.Empty);
-
-        var lexer = new Lexer(
-            resourceUri,
-            sourceText);
-
-        lexer.Lex();
-
-        var keywordToken = lexer.SyntaxTokens.First();
-
-        Assert.Equal(SyntaxKind.KeywordToken, keywordToken.SyntaxKind);
-
-        var text = keywordToken.TextSpan.GetText();
-        Assert.Equal(keywordAsString, text);
-    }
-
-    [Theory]
-    /* Lowercase Letters */
-    [InlineData("a")]
-    [InlineData("b")]
-    [InlineData("c")]
-    [InlineData("d")]
-    [InlineData("e")]
-    [InlineData("f")]
-    [InlineData("g")]
-    [InlineData("h")]
-    [InlineData("i")]
-    [InlineData("j")]
-    [InlineData("k")]
-    [InlineData("l")]
-    [InlineData("m")]
-    [InlineData("n")]
-    [InlineData("o")]
-    [InlineData("p")]
-    [InlineData("q")]
-    [InlineData("r")]
-    [InlineData("s")]
-    [InlineData("t")]
-    [InlineData("u")]
-    [InlineData("v")]
-    [InlineData("w")]
-    [InlineData("x")]
-    [InlineData("y")]
-    [InlineData("z")]
-    /* Uppercase Letters */
-    [InlineData("A")]
-    [InlineData("B")]
-    [InlineData("C")]
-    [InlineData("D")]
-    [InlineData("E")]
-    [InlineData("F")]
-    [InlineData("G")]
-    [InlineData("H")]
-    [InlineData("I")]
-    [InlineData("J")]
-    [InlineData("K")]
-    [InlineData("L")]
-    [InlineData("M")]
-    [InlineData("N")]
-    [InlineData("O")]
-    [InlineData("P")]
-    [InlineData("Q")]
-    [InlineData("R")]
-    [InlineData("S")]
-    [InlineData("T")]
-    [InlineData("U")]
-    [InlineData("V")]
-    [InlineData("W")]
-    [InlineData("X")]
-    [InlineData("Y")]
-    [InlineData("Z")]
-    /* Underscore */
-    [InlineData("_")]
-    /* Misc */
-    [InlineData("abc")]
-    [InlineData("aBc")]
-    [InlineData("Abc")]
-    [InlineData("ABc")]
-    [InlineData("_a")]
-    [InlineData("_A")]
-    public void SHOULD_LEX_IDENTIFIER_TOKEN(string identifierAsString)
-    {
-        var sourceText = $"{identifierAsString}".ReplaceLineEndings("\n");
-
-        var resourceUri = new ResourceUri(string.Empty);
-
-        var lexer = new Lexer(
-            resourceUri,
-            sourceText);
-
-        lexer.Lex();
-
-        var identifierToken = lexer.SyntaxTokens.First();
-
-        Assert.Equal(SyntaxKind.IdentifierToken, identifierToken.SyntaxKind);
-
-        var text = identifierToken.TextSpan.GetText();
-        Assert.Equal(identifierAsString, text);
-    }
-
     [Fact]
     public void SHOULD_LEX_PLUS_TOKEN()
     {
@@ -270,28 +31,6 @@ public class LexerTests
 
         var text = plusToken.TextSpan.GetText();
         Assert.Equal(plusTokenAsString, text);
-    }
-
-    [Fact]
-    public void SHOULD_LEX_PREPROCESSOR_DIRECTIVE_TOKEN()
-    {
-        var preprocessorDirectiveAsString = "#region regionIdentifierHere";
-        var sourceText = $"{preprocessorDirectiveAsString}".ReplaceLineEndings("\n");
-
-        var resourceUri = new ResourceUri(string.Empty);
-
-        var lexer = new Lexer(
-            resourceUri,
-            sourceText);
-
-        lexer.Lex();
-
-        var preprocessorDirectiveToken = lexer.SyntaxTokens.First();
-
-        Assert.Equal(SyntaxKind.PreprocessorDirectiveToken, preprocessorDirectiveToken.SyntaxKind);
-
-        var text = preprocessorDirectiveToken.TextSpan.GetText();
-        Assert.Equal(preprocessorDirectiveAsString, text);
     }
 
     [Fact]
@@ -447,7 +186,7 @@ public class LexerTests
         var text = colonToken.TextSpan.GetText();
         Assert.Equal(colonTokenAsString, text);
     }
-    
+
     [Fact]
     public void SHOULD_LEX_MEMBER_ACCESS_TOKEN()
     {
@@ -491,7 +230,7 @@ public class LexerTests
         var text = bangToken.TextSpan.GetText();
         Assert.Equal(bangTokenAsString, text);
     }
-    
+
     [Fact]
     public void SHOULD_LEX_QUESTION_MARK_TOKEN()
     {
@@ -513,7 +252,7 @@ public class LexerTests
         var text = questionMarkToken.TextSpan.GetText();
         Assert.Equal(questionMarkTokenAsString, text);
     }
-    
+
     [Fact]
     public void SHOULD_LEX_QUESTION_MARK_QUESTION_MARK_TOKEN()
     {
@@ -557,7 +296,7 @@ public class LexerTests
         var text = openAngleBracketToken.TextSpan.GetText();
         Assert.Equal(openAngleBracketTokenAsString, text);
     }
-    
+
     [Fact]
     public void SHOULD_LEX_CLOSE_ANGLE_BRACKET_TOKEN()
     {

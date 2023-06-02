@@ -3,22 +3,8 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statements;
 
-public class BoundVariableDeclarationStatementNode : ISyntaxNode
+public sealed record BoundVariableDeclarationStatementNode : ISyntaxNode
 {
-    public BoundVariableDeclarationStatementNode(
-        BoundTypeNode boundTypeNode,
-        ISyntaxToken identifierToken)
-    {
-        BoundTypeNode = boundTypeNode;
-        IdentifierToken = identifierToken;
-
-        Children = new ISyntax[]
-        {
-            BoundTypeNode,
-            IdentifierToken
-        }.ToImmutableArray();
-    }
-
     public BoundVariableDeclarationStatementNode(
         BoundTypeNode boundTypeNode,
         ISyntaxToken identifierToken,
@@ -35,20 +21,11 @@ public class BoundVariableDeclarationStatementNode : ISyntaxNode
         }.ToImmutableArray();
     }
 
-    public BoundTypeNode BoundTypeNode { get; }
-    public ISyntaxToken IdentifierToken { get; }
-    public bool IsInitialized { get; }
+    public BoundTypeNode BoundTypeNode { get; init; }
+    public ISyntaxToken IdentifierToken { get; init; }
+    public bool IsInitialized { get; init; }
 
-    public ImmutableArray<ISyntax> Children { get; }
+    public ImmutableArray<ISyntax> Children { get; init; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.BoundVariableDeclarationStatementNode;
-
-    public BoundVariableDeclarationStatementNode WithIsInitialized(
-        bool isInitialized)
-    {
-        return new BoundVariableDeclarationStatementNode(
-            BoundTypeNode,
-            IdentifierToken,
-            isInitialized);
-    }
 }

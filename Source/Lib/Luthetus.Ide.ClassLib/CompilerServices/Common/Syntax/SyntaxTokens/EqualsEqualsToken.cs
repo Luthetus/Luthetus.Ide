@@ -2,7 +2,7 @@
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.SyntaxTokens;
 
-public class EqualsEqualsToken : ISyntaxToken
+public sealed record EqualsEqualsToken : ISyntaxToken
 {
     public EqualsEqualsToken(
         TextEditorTextSpan textEditorTextSpan)

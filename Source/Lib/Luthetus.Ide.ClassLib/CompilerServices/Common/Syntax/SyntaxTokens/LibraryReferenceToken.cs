@@ -2,7 +2,7 @@
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.SyntaxTokens;
 
-public class LibraryReferenceToken : ISyntaxToken
+public sealed record LibraryReferenceToken : ISyntaxToken
 {
     public LibraryReferenceToken(
         TextEditorTextSpan textEditorTextSpan,

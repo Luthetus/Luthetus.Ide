@@ -38,12 +38,12 @@ public enum SyntaxKind
     EndOfFileToken,
 
     // Nodes
-    CompilationUnit,
+    CompilationUnitNode,
     LiteralExpressionNode,
     BoundLiteralExpressionNode,
     BoundBinaryOperatorNode,
     BoundBinaryExpressionNode,
-    PreprocessorLibraryReferenceStatement,
+    PreprocessorLibraryReferenceStatementNode,
     BoundTypeNode,
     BoundFunctionDeclarationNode,
     BoundIfStatementNode,

@@ -123,7 +123,8 @@ public class BinderSession
 
         var boundFunctionDeclarationNode = new BoundFunctionDeclarationNode(
             boundTypeNode,
-            identifierToken);
+            identifierToken,
+            null);
 
         _currentScope.FunctionDeclarationMap.Add(
             text,
@@ -168,7 +169,8 @@ public class BinderSession
 
         var boundVariableDeclarationStatementNode = new BoundVariableDeclarationStatementNode(
             boundTypeNode,
-            identifierToken);
+            identifierToken,
+            false);
 
         _currentScope.VariableDeclarationMap.Add(
             text,
@@ -192,8 +194,10 @@ public class BinderSession
             if (variableDeclarationNode.IsInitialized)
                 return new(identifierToken, boundExpressionNode);
 
-            variableDeclarationNode = variableDeclarationNode
-                .WithIsInitialized(true);
+            variableDeclarationNode = variableDeclarationNode with
+            {
+                IsInitialized = true
+            };
 
             _currentScope.VariableDeclarationMap[text] =
                 variableDeclarationNode;

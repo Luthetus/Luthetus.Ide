@@ -2,7 +2,7 @@
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.SyntaxTokens;
 
-public class ColonToken : ISyntaxToken
+public sealed record ColonToken : ISyntaxToken
 {
     public ColonToken(
         TextEditorTextSpan textEditorTextSpan)

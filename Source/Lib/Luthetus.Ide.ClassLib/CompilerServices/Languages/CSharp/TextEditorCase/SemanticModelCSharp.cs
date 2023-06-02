@@ -1,4 +1,5 @@
-﻿using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.ParserCase;
+﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.Symbols;
+using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.ParserCase;
 using Luthetus.TextEditor.RazorLib.Analysis;
 using Luthetus.TextEditor.RazorLib.Lexing;
 using Luthetus.TextEditor.RazorLib.Model;
@@ -14,11 +15,37 @@ public class SemanticModelCSharp : ISemanticModel
     public ImmutableList<(TextEditorDiagnostic diagnostic, TextEditorTextSpan textSpan)> DiagnosticTextSpanTuples { get; private set; } = ImmutableList<(TextEditorDiagnostic diagnostic, TextEditorTextSpan textSpan)>.Empty;
     public ImmutableList<(string message, TextEditorTextSpan textSpan)> SymbolMessageTextSpanTuples { get; private set; } = ImmutableList<(string message, TextEditorTextSpan textSpan)>.Empty;
 
-    public SymbolDefinition? GoToDefinition(
+    public TextEditorSymbolDefinition? GoToDefinition(
         TextEditorModel model,
         TextEditorTextSpan textSpan)
     {
         var semanticModelResult = ParseWithResult(model);
+
+        if (semanticModelResult is null)
+            return null;
+
+        var boundScope = semanticModelResult.ParserSession.Binder.BoundScopes
+            .Where(bs => bs.StartingIndexInclusive <= textSpan.StartingIndexInclusive &&
+                         (bs.EndingIndexExclusive ?? int.MaxValue) >= textSpan.EndingIndexExclusive)
+            // Get the closest scope
+            .OrderBy(bs => textSpan.StartingIndexInclusive - bs.StartingIndexInclusive)
+            .FirstOrDefault();
+
+        if (boundScope is null)
+            return null;
+
+        var symbolDefinitionId = ISymbol.GetSymbolDefinitionId(
+            textSpan.GetText(),
+            boundScope.BoundScopeKey);
+
+        if (semanticModelResult.ParserSession.Binder.SymbolDefinitions.TryGetValue(
+                symbolDefinitionId,
+                out var symbolDefinition))
+        {
+            return new TextEditorSymbolDefinition(
+                symbolDefinition.Symbol.TextSpan.ResourceUri,
+                symbolDefinition.Symbol.TextSpan.StartingIndexInclusive);
+        }
 
         return null;
     }

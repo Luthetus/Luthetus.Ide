@@ -2,7 +2,7 @@
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.SyntaxTokens;
 
-public class EndOfFileToken : ISyntaxToken
+public sealed record EndOfFileToken : ISyntaxToken
 {
     public EndOfFileToken(
         TextEditorTextSpan textEditorTextSpan)

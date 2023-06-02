@@ -127,7 +127,7 @@ public class ParserTests
         var libraryReferenceNode = compilationUnit.Children.Single();
 
         Assert.Equal(
-            SyntaxKind.PreprocessorLibraryReferenceStatement,
+            SyntaxKind.PreprocessorLibraryReferenceStatementNode,
             libraryReferenceNode.SyntaxKind);
     }
 
@@ -157,13 +157,13 @@ public class ParserTests
         var firstLibraryReferenceNode = compilationUnit.Children.First();
 
         Assert.Equal(
-            SyntaxKind.PreprocessorLibraryReferenceStatement,
+            SyntaxKind.PreprocessorLibraryReferenceStatementNode,
             firstLibraryReferenceNode.SyntaxKind);
 
         var secondLibraryReferenceNode = compilationUnit.Children.Last();
 
         Assert.Equal(
-            SyntaxKind.PreprocessorLibraryReferenceStatement,
+            SyntaxKind.PreprocessorLibraryReferenceStatementNode,
             secondLibraryReferenceNode.SyntaxKind);
     }
 

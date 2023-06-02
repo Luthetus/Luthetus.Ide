@@ -2,7 +2,7 @@
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.SyntaxTokens;
 
-public class OpenParenthesisToken : ISyntaxToken
+public sealed record OpenParenthesisToken : ISyntaxToken
 {
     public OpenParenthesisToken(
         TextEditorTextSpan textEditorTextSpan)

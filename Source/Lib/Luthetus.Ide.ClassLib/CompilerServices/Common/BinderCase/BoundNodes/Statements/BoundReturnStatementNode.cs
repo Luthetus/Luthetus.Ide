@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statements;
 
-public class BoundReturnStatementNode : ISyntaxNode
+public sealed record BoundReturnStatementNode : ISyntaxNode
 {
     public BoundReturnStatementNode(
         KeywordToken keywordToken,
@@ -21,10 +21,10 @@ public class BoundReturnStatementNode : ISyntaxNode
         }.ToImmutableArray();
     }
 
-    public KeywordToken KeywordToken { get; }
-    public IBoundExpressionNode BoundExpressionNode { get; }
+    public KeywordToken KeywordToken { get; init; }
+    public IBoundExpressionNode BoundExpressionNode { get; init; }
 
-    public ImmutableArray<ISyntax> Children { get; }
+    public ImmutableArray<ISyntax> Children { get; init; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.BoundReturnStatementNode;
 }

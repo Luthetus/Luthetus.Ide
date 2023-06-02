@@ -2,7 +2,7 @@
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase;
 
-public class BoundScope
+public sealed record BoundScope
 {
     public BoundScope(
         BoundScope? parent,
@@ -24,14 +24,15 @@ public class BoundScope
         VariableDeclarationMap = variableDeclarationMap;
     }
 
-    public BoundScope? Parent { get; }
+    public BoundScopeKey BoundScopeKey { get; init; } = BoundScopeKey.NewBoundScopeKey();
+    public BoundScope? Parent { get; init; }
     /// <summary>A <see cref="ScopeReturnType"/> with the value of "null" means refer to the <see cref="Parent"/> bound scope's <see cref="ScopeReturnType"/></summary>
-    public Type? ScopeReturnType { get; }
-    public int StartingIndexInclusive { get; }
+    public Type? ScopeReturnType { get; init; }
+    public int StartingIndexInclusive { get; init; }
     /// <summary>TODO: Remove the "internal set" hack and make a new immutable instance instead.</summary>
     public int? EndingIndexExclusive { get; internal set; }
-    public Dictionary<string, Type> TypeMap { get; }
-    public Dictionary<string, BoundClassDeclarationNode> ClassDeclarationMap { get; }
-    public Dictionary<string, BoundFunctionDeclarationNode> FunctionDeclarationMap { get; }
-    public Dictionary<string, BoundVariableDeclarationStatementNode> VariableDeclarationMap { get; }
+    public Dictionary<string, Type> TypeMap { get; init; }
+    public Dictionary<string, BoundClassDeclarationNode> ClassDeclarationMap { get; init; }
+    public Dictionary<string, BoundFunctionDeclarationNode> FunctionDeclarationMap { get; init; }
+    public Dictionary<string, BoundVariableDeclarationStatementNode> VariableDeclarationMap { get; init; }    
 }

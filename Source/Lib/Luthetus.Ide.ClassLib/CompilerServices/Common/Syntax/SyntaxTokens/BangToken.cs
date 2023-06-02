@@ -2,7 +2,7 @@
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.SyntaxTokens;
 
-public class BangToken : ISyntaxToken
+public sealed record BangToken : ISyntaxToken
 {
     public BangToken(
         TextEditorTextSpan textEditorTextSpan)

@@ -411,8 +411,10 @@ public class Parser
                 var boundInheritanceStatementNode = _binder.BindInheritanceStatementNode(
                     (IdentifierToken)nextToken);
 
-                boundClassDeclarationNode = boundClassDeclarationNode
-                    .WithBoundInheritanceStatementNode(boundInheritanceStatementNode);
+                boundClassDeclarationNode = boundClassDeclarationNode with
+                {
+                    BoundInheritanceStatementNode = boundInheritanceStatementNode
+                };
 
                 _nodeRecent = boundClassDeclarationNode;
             }
@@ -669,8 +671,10 @@ public class Parser
 
             _finalizeCompilationUnitActionStack.Push(compilationUnit =>
             {
-                boundClassDeclarationNode = boundClassDeclarationNode
-                    .WithClassBody(compilationUnit);
+                boundClassDeclarationNode = boundClassDeclarationNode with
+                {
+                    ClassBodyCompilationUnit = compilationUnit
+                };
 
                 closureCurrentCompilationUnitBuilder.Children
                     .Add(boundClassDeclarationNode);
@@ -685,8 +689,10 @@ public class Parser
 
             _finalizeCompilationUnitActionStack.Push(compilationUnit =>
             {
-                boundFunctionDeclarationNode = boundFunctionDeclarationNode
-                    .WithFunctionBody(compilationUnit);
+                boundFunctionDeclarationNode = boundFunctionDeclarationNode with
+                {
+                    FunctionBodyCompilationUnit = compilationUnit
+                };
 
                 closureCurrentCompilationUnitBuilder.Children
                     .Add(boundFunctionDeclarationNode);
@@ -699,8 +705,10 @@ public class Parser
 
             _finalizeCompilationUnitActionStack.Push(compilationUnit =>
             {
-                boundIfStatementNode = boundIfStatementNode
-                    .WithIfStatementBody(compilationUnit);
+                boundIfStatementNode = boundIfStatementNode with
+                {
+                    IfStatementBodyCompilationUnit = compilationUnit
+                };
 
                 closureCurrentCompilationUnitBuilder.Children
                     .Add(boundIfStatementNode);

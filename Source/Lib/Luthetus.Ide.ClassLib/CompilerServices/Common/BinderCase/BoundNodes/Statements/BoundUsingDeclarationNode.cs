@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statements;
 
-public class BoundUsingDeclarationNode : ISyntaxNode
+public sealed record BoundUsingDeclarationNode : ISyntaxNode
 {
     public BoundUsingDeclarationNode(
         KeywordToken keywordToken,
@@ -20,10 +20,10 @@ public class BoundUsingDeclarationNode : ISyntaxNode
         }.ToImmutableArray();
     }
 
-    public KeywordToken KeywordToken { get; }
-    public IdentifierToken NamespaceIdentifier { get; }
+    public KeywordToken KeywordToken { get; init; }
+    public IdentifierToken NamespaceIdentifier { get; init; }
 
-    public ImmutableArray<ISyntax> Children { get; }
+    public ImmutableArray<ISyntax> Children { get; init; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.BoundUsingDeclarationNode;
 }

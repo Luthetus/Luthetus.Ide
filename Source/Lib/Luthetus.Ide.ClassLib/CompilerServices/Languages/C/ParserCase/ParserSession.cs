@@ -390,8 +390,10 @@ public class ParserSession
 
             _finalizeCompilationUnitAction = compilationUnit =>
             {
-                boundFunctionDeclarationNode = boundFunctionDeclarationNode
-                    .WithFunctionBody(compilationUnit);
+                boundFunctionDeclarationNode = boundFunctionDeclarationNode with
+                {
+                    FunctionBodyCompilationUnit = compilationUnit
+                };
 
                 closureCompilationUnitBuilder.Children
                     .Add(boundFunctionDeclarationNode);

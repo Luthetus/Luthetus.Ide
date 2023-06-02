@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes;
 
-public class BoundTypeNode : ISyntaxNode
+public sealed record BoundTypeNode : ISyntaxNode
 {
     public BoundTypeNode(
         Type type,
@@ -18,10 +18,10 @@ public class BoundTypeNode : ISyntaxNode
         }.ToImmutableArray();
     }
 
-    public Type Type { get; }
-    public ISyntaxToken Token { get; }
+    public Type Type { get; init; }
+    public ISyntaxToken Token { get; init; }
 
-    public ImmutableArray<ISyntax> Children { get; }
+    public ImmutableArray<ISyntax> Children { get; init; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.BoundTypeNode;
 }

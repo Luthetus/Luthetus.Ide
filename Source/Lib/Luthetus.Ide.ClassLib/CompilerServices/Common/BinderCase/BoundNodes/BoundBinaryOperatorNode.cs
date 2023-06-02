@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes;
 
-public class BoundBinaryOperatorNode : ISyntaxNode
+public sealed record BoundBinaryOperatorNode : ISyntaxNode
 {
     public BoundBinaryOperatorNode(
         Type leftOperandType,
@@ -23,12 +23,12 @@ public class BoundBinaryOperatorNode : ISyntaxNode
         .ToImmutableArray();
     }
 
-    public Type LeftOperandType { get; }
-    public ISyntaxToken OperatorToken { get; }
-    public Type RightOperandType { get; }
-    public Type ResultType { get; }
+    public Type LeftOperandType { get; init; }
+    public ISyntaxToken OperatorToken { get; init; }
+    public Type RightOperandType { get; init; }
+    public Type ResultType { get; init; }
 
-    public ImmutableArray<ISyntax> Children { get; }
+    public ImmutableArray<ISyntax> Children { get; init; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.BoundBinaryOperatorNode;
 }
