@@ -20,24 +20,4 @@ public partial class TreeViewGitFileDisplay
 
     [Parameter, EditorRequired]
     public TreeViewGitFile TreeViewGitFile { get; set; } = null!;
-
-    private string TryShortenGitFilePath(
-        IAbsoluteFilePath absoluteFilePath,
-        IAbsoluteFilePath shortenByStartsWithAbsoluteFilePath)
-    {
-        var shortenByStartsWithAbsoluteFilePathString = shortenByStartsWithAbsoluteFilePath.ParentDirectory?
-            .GetAbsoluteFilePathString() ?? string.Empty;
-
-        var absoluteFilePathString = absoluteFilePath
-            .GetAbsoluteFilePathString();
-
-        if (absoluteFilePathString.StartsWith(shortenByStartsWithAbsoluteFilePathString))
-        {
-            return new string(absoluteFilePathString
-                .Skip(shortenByStartsWithAbsoluteFilePathString.Length)
-                .ToArray());
-        }
-
-        return absoluteFilePathString;
-    }
 }

@@ -14,7 +14,7 @@ public record FolderExplorerState(IAbsoluteFilePath? AbsoluteFilePath)
 
     }
 
-    public static Task ShowInputFileAsync(IDispatcher dispatcher)
+    public static void ShowInputFile(IDispatcher dispatcher)
     {
         dispatcher.Dispatch(
             new InputFileState.RequestInputFileStateFormAction(
@@ -42,7 +42,5 @@ public record FolderExplorerState(IAbsoluteFilePath? AbsoluteFilePath)
                         "Directory",
                         afp => afp.IsDirectory)
                 }.ToImmutableArray()));
-
-        return Task.CompletedTask;
     }
 }

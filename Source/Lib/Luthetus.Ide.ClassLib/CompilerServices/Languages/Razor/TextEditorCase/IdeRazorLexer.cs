@@ -1,6 +1,5 @@
 ﻿using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Misc;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.C.LexerCase;
 using Luthetus.TextEditor.RazorLib.Analysis.Html.InjectedLanguage;
 using Luthetus.TextEditor.RazorLib.Analysis.Html.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.Analysis.Razor.Facts;

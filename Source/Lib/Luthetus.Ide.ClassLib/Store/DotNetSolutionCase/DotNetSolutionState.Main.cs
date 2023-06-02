@@ -51,7 +51,7 @@ public partial record DotNetSolutionState(
                 }));
     }
     
-    public static Task ShowInputFileAsync(
+    public static void ShowInputFile(
         IDispatcher dispatcher,
         ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
         IFileSystemProvider fileSystemProvider,
@@ -86,8 +86,6 @@ public partial record DotNetSolutionState(
                         afp => 
                             afp.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
                 }.ToImmutableArray()));
-
-        return Task.CompletedTask;
     }
     
     public static async Task OpenInSolutionExplorerAsync(

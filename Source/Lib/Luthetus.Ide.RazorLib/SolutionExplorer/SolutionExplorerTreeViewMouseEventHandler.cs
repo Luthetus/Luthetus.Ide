@@ -1,10 +1,6 @@
-﻿using Luthetus.Common.RazorLib.BackgroundTaskCase;
-using Luthetus.Common.RazorLib.TreeView;
+﻿using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.Common.RazorLib.TreeView.Events;
-using Luthetus.TextEditor.RazorLib;
-using Luthetus.Ide.ClassLib.ComponentRenderers;
-using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.Store.EditorCase;
 using Luthetus.Ide.ClassLib.TreeViewImplementations;
 using Fluxor;
@@ -14,28 +10,16 @@ namespace Luthetus.Ide.RazorLib.SolutionExplorer;
 public class SolutionExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
     private readonly IDispatcher _dispatcher;
-    private readonly ITextEditorService _textEditorService;
-    private readonly ILuthetusIdeComponentRenderers _luthetusIdeComponentRenderers;
-    private readonly IFileSystemProvider _fileSystemProvider;
-    private readonly IBackgroundTaskQueue _backgroundTaskQueue;
 
     public SolutionExplorerTreeViewMouseEventHandler(
         IDispatcher dispatcher,
-        ITextEditorService textEditorService,
-        ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
-        IFileSystemProvider fileSystemProvider,
-        ITreeViewService treeViewService,
-        IBackgroundTaskQueue backgroundTaskQueue)
+        ITreeViewService treeViewService)
         : base(treeViewService)
     {
         _dispatcher = dispatcher;
-        _textEditorService = textEditorService;
-        _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
-        _fileSystemProvider = fileSystemProvider;
-        _backgroundTaskQueue = backgroundTaskQueue;
     }
 
-    public override async Task<bool> OnDoubleClickAsync(
+    public override Task<bool> OnDoubleClickAsync(
         ITreeViewCommandParameter treeViewCommandParameter)
     {
         _ = base.OnDoubleClickAsync(treeViewCommandParameter);
@@ -43,21 +27,16 @@ public class SolutionExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandl
         if (treeViewCommandParameter.TargetNode
             is not TreeViewNamespacePath treeViewNamespacePath)
         {
-            return false;
+            return Task.FromResult(false);
         }
 
         if (treeViewNamespacePath.Item is null)
-            return false;
+            return Task.FromResult(false);
 
-        await EditorState.OpenInEditorAsync(
+        _dispatcher.Dispatch(new EditorState.OpenInEditorAction(
             treeViewNamespacePath.Item.AbsoluteFilePath,
-            true,
-            _dispatcher,
-            _textEditorService,
-            _luthetusIdeComponentRenderers,
-            _fileSystemProvider,
-            _backgroundTaskQueue);
+            true));
 
-        return true;
+        return Task.FromResult(true);
     }
 }

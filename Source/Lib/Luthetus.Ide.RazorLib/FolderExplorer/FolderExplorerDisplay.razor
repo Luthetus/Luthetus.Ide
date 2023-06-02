@@ -21,7 +21,7 @@
 
             if (folderExplorerState.AbsoluteFilePath is null)
             {
-                <ButtonDisplay OnClickFunc="async () => await FolderExplorerState.ShowInputFileAsync(Dispatcher)">
+                <ButtonDisplay OnClickFunc="() => { FolderExplorerState.ShowInputFile(Dispatcher); return Task.CompletedTask; }">
                     Open Folder
                 </ButtonDisplay>
                 

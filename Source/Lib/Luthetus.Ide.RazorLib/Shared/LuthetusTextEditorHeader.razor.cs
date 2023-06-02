@@ -9,24 +9,24 @@ using Luthetus.Common.RazorLib.Store.AccountCase;
 using Luthetus.Common.RazorLib.Store.DialogCase;
 using Luthetus.Common.RazorLib.Store.DropdownCase;
 using Luthetus.TextEditor.RazorLib;
-using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.Store.EditorCase;
-using Luthetus.Ide.ClassLib.Store.FolderExplorerCase;
 using Luthetus.Ide.RazorLib.Account;
 using Luthetus.Ide.RazorLib.Button;
 using Luthetus.Ide.RazorLib.DotNetSolutionForm;
 using Microsoft.AspNetCore.Components;
+using Luthetus.Ide.ClassLib.Store.FolderExplorerCase;
+using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 
 namespace Luthetus.Ide.RazorLib.Shared;
 
 public partial class LuthetusTextEditorHeader : FluxorComponent
 {
     [Inject]
-    private IState<AccountState> AccountStateWrap { get; set; } = null!;
-    [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private IState<AccountState> AccountStateWrap { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
@@ -37,6 +37,7 @@ public partial class LuthetusTextEditorHeader : FluxorComponent
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
     private IBackgroundTaskQueue BackgroundTaskQueue { get; set; } = null!;
+
 
     [Parameter, EditorRequired]
     public Type LoginDisplayComponentType { get; set; } = typeof(LoginFormDisplay);
@@ -82,41 +83,25 @@ public partial class LuthetusTextEditorHeader : FluxorComponent
 
         // Menu Option Open
         {
-            // TODO: Why do all the OnClicks have an async void lambda? Not quite sure what I was doing when I originally wrote this and should revisit this.
-
             var menuOptionOpenFile = new MenuOptionRecord(
                 "File",
                 MenuOptionKind.Other,
-                async () =>
-                    await EditorState.ShowInputFileAsync(
-                        Dispatcher,
-                        TextEditorService,
-                        LuthetusIdeComponentRenderers,
-                        FileSystemProvider,
-                        BackgroundTaskQueue));
+                () => Dispatcher.Dispatch(new EditorState.ShowInputFileAction()));
 
             var menuOptionOpenDirectory = new MenuOptionRecord(
                 "Directory",
                 MenuOptionKind.Other,
-                async () =>
-                    await FolderExplorerState.ShowInputFileAsync(Dispatcher));
+                () => FolderExplorerState.ShowInputFile(Dispatcher));
 
             var menuOptionOpenCSharpProject = new MenuOptionRecord(
                 "C# Project - TODO: Adhoc Sln",
                 MenuOptionKind.Other,
-                async () =>
-                    await EditorState.ShowInputFileAsync(
-                        Dispatcher,
-                        TextEditorService,
-                        LuthetusIdeComponentRenderers,
-                        FileSystemProvider,
-                        BackgroundTaskQueue));
+                () => Dispatcher.Dispatch(new EditorState.ShowInputFileAction()));
 
             var menuOptionOpenDotNetSolution = new MenuOptionRecord(
                 ".NET Solution",
                 MenuOptionKind.Other,
-                async () =>
-                    await DotNetSolutionState.ShowInputFileAsync(
+                () => DotNetSolutionState.ShowInputFile(
                         Dispatcher,
                         LuthetusIdeComponentRenderers,
                         FileSystemProvider,
@@ -174,26 +159,6 @@ public partial class LuthetusTextEditorHeader : FluxorComponent
             if (_buttonDisplayComponentFile?.ButtonElementReference is not null)
             {
                 await _buttonDisplayComponentFile.ButtonElementReference.Value
-                    .FocusAsync();
-            }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
-    }
-
-    /// <summary>
-    /// TODO: Make this method abstracted into a component that takes care of the UI to show the dropdown and to restore focus when menu closed
-    /// </summary>
-    private async Task RestoreFocusToButtonDisplayComponentAccount()
-    {
-        try
-        {
-            if (_buttonDisplayComponentAccount?.ButtonElementReference is not null)
-            {
-                await _buttonDisplayComponentAccount.ButtonElementReference.Value
                     .FocusAsync();
             }
         }

@@ -24,15 +24,11 @@ namespace Luthetus.Ide.RazorLib.SolutionExplorer;
 public partial class SolutionExplorerDisplay : FluxorComponent
 {
     [Inject]
-    private IState<TerminalSessionsState> TerminalSessionsStateWrap { get; set; } = null!;
-    [Inject]
     private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
     private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
-    [Inject]
-    private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
@@ -43,8 +39,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-    [Inject]
-    private IBackgroundTaskQueue BackgroundTaskQueue { get; set; } = null!;
 
     // For Windows: @"C:\Users\hunte\Repos\TestSolutionParser\TestSolutionParser.sln";
     // For Linux: @"/home/hunter/Repos/Demos/BlazorCrudApp/BlazorCrudApp.sln";
@@ -70,20 +64,13 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         _solutionExplorerTreeViewKeymap = new SolutionExplorerTreeViewKeymap(
             CommonMenuOptionsFactory,
             LuthetusIdeComponentRenderers,
-            FileSystemProvider,
             Dispatcher,
-            TreeViewService,
-            TextEditorService,
-            BackgroundTaskQueue);
+            TreeViewService);
 
         _solutionExplorerTreeViewMouseEventHandler =
             new SolutionExplorerTreeViewMouseEventHandler(
                 Dispatcher,
-                TextEditorService,
-                LuthetusIdeComponentRenderers,
-                FileSystemProvider,
-                TreeViewService,
-                BackgroundTaskQueue);
+                TreeViewService);
 
         base.OnInitialized();
     }

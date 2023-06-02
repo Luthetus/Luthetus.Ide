@@ -32,6 +32,7 @@ public enum SyntaxKind
     CloseBraceToken,
     OpenAngleBracketToken,
     CloseAngleBracketToken,
+    DollarSignToken,
     ColonToken,
     MemberAccessToken,
     BadToken,
@@ -61,4 +62,6 @@ public enum SyntaxKind
     TypeSymbol,
     FunctionSymbol,
     VariableSymbol,
+    PropertySymbol,
+    StringInterpolationSymbol,
 }

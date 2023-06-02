@@ -203,6 +203,10 @@ public class Lexer
                     var closeAngleBracketToken = LexCloseAngleBracketToken();
                     _syntaxTokens.Add(closeAngleBracketToken);
                     break;
+                case '$':
+                    var dollarSignToken = LexDollarSignToken();
+                    _syntaxTokens.Add(dollarSignToken);
+                    break;
                 case ':':
                     var colonToken = LexColonToken();
                     _syntaxTokens.Add(colonToken);
@@ -698,6 +702,22 @@ public class Lexer
             _stringWalker.SourceText);
 
         return new CloseAngleBracketToken(textSpan);
+    }
+    
+    private DollarSignToken LexDollarSignToken()
+    {
+        var entryPositionIndex = _stringWalker.PositionIndex;
+
+        _stringWalker.ReadCharacter();
+
+        var textSpan = new TextEditorTextSpan(
+            entryPositionIndex,
+            _stringWalker.PositionIndex,
+            (byte)GenericDecorationKind.None,
+            _stringWalker.ResourceUri,
+            _stringWalker.SourceText);
+
+        return new DollarSignToken(textSpan);
     }
     
     private ColonToken LexColonToken()

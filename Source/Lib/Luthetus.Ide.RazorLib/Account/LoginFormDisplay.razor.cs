@@ -32,19 +32,6 @@ public partial class LoginFormDisplay : ComponentBase
         }
     }
 
-    private string ContainerKey
-    {
-        get => AccountStateWrap.Value.ContainerName;
-        set
-        {
-            Dispatcher.Dispatch(new AccountState.AccountStateWithAction(
-                inAccountState => inAccountState with
-                {
-                    ContainerName = value
-                }));
-        }
-    }
-
     private string Alias
     {
         get => AccountStateWrap.Value.Alias;
