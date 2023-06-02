@@ -20,7 +20,52 @@ public class SemanticModelRazor : ISemanticModel
         TextEditorModel model,
         TextEditorTextSpan textSpan)
     {
-        var semanticModelResult = ParseWithResult(model);
+        _ = ParseWithResult(model);
+
+        if (_recentSemanticModelResult is null)
+            return null;
+
+        var boundScope = _recentSemanticModelResult.Parser.Binder.BoundScopes
+            .Where(bs => bs.StartingIndexInclusive <= textSpan.StartingIndexInclusive &&
+                         (bs.EndingIndexExclusive ?? int.MaxValue) >= textSpan.EndingIndexExclusive)
+            // Get the closest scope
+            .OrderBy(bs => textSpan.StartingIndexInclusive - bs.StartingIndexInclusive)
+            .FirstOrDefault();
+
+        if (boundScope is null)
+            return null;
+
+        var textSpanText = textSpan.GetText();
+
+        while (boundScope.Parent is not null &&
+               !boundScope.VariableDeclarationMap.ContainsKey(textSpanText))
+        {
+            boundScope = boundScope.Parent;
+        }
+
+        if (!boundScope.VariableDeclarationMap.ContainsKey(textSpanText))
+            return null;
+
+        var symbolDefinitionId = ISymbol.GetSymbolDefinitionId(
+            textSpanText,
+            boundScope.BoundScopeKey);
+
+        if (_recentSemanticModelResult.Parser.Binder.SymbolDefinitions.TryGetValue(
+                symbolDefinitionId,
+                out var symbolDefinition))
+        {
+            var sourceTextSpan = _recentSemanticModelResult.MapAdhocCSharpTextSpanToSource(
+                model.ResourceUri,
+                model.GetAllText(),
+                symbolDefinition.Symbol.TextSpan);
+
+            if (sourceTextSpan is null)
+                return null;
+
+            return new TextEditorSymbolDefinition(
+                sourceTextSpan.ResourceUri,
+                sourceTextSpan.StartingIndexInclusive);
+        }
 
         return null;
     }
@@ -34,10 +79,10 @@ public class SemanticModelRazor : ISemanticModel
     public SemanticModelResultRazor? ParseWithResult(
         TextEditorModel model)
     {
-        var text = model.GetAllText();
+        var modelText = model.GetAllText();
 
         model.Lexer.Lex(
-            text,
+            modelText,
             model.RenderStateKey);
 
         var overriteTextEditorRazorLexer = (IdeRazorLexer)model.Lexer;
@@ -47,17 +92,17 @@ public class SemanticModelRazor : ISemanticModel
 
         overriteTextEditorRazorLexer.IdeRazorSyntaxTree.ParseAdhocCSharpClass();
 
-        var recentResult = overriteTextEditorRazorLexer
+        _recentSemanticModelResult = overriteTextEditorRazorLexer
             .IdeRazorSyntaxTree
             .RecentResult;
 
-        if (recentResult is null)
+        if (_recentSemanticModelResult is null)
             return null;
 
-        var parserSession = recentResult
+        var parserSession = _recentSemanticModelResult
             .Parser;
 
-        var compilationUnit = recentResult
+        var compilationUnit = _recentSemanticModelResult
             .CompilationUnit;
 
         // Testing
@@ -65,92 +110,47 @@ public class SemanticModelRazor : ISemanticModel
 
         foreach (var adhocSymbol in parserSession.Binder.Symbols)
         {
-            var adhocTextInsertion = recentResult.AdhocClassInsertions
-                .SingleOrDefault(x =>
-                    adhocSymbol.TextSpan.StartingIndexInclusive >= x.InsertionStartingIndexInclusive &&
-                    adhocSymbol.TextSpan.EndingIndexExclusive <= x.InsertionEndingIndexExclusive);
+            var sourceTextSpan = _recentSemanticModelResult.MapAdhocCSharpTextSpanToSource(
+                model.ResourceUri,
+                modelText,
+                adhocSymbol.TextSpan);
 
-            // TODO: Fix for spans that go 2 adhocTextInsertions worth of length?
-            if (adhocTextInsertion is null)
+            if (sourceTextSpan is null)
+                continue;
+            
+            ISymbol? symbolToAdd = null;
+
+            switch (adhocSymbol.SyntaxKind)
             {
-                adhocTextInsertion = recentResult.AdhocRenderFunctionInsertions
-                    .SingleOrDefault(x =>
-                        adhocSymbol.TextSpan.StartingIndexInclusive >= x.InsertionStartingIndexInclusive &&
-                        adhocSymbol.TextSpan.EndingIndexExclusive <= x.InsertionEndingIndexExclusive);
+                case SyntaxKind.TypeSymbol:
+                    sourceTextSpan = sourceTextSpan with
+                    {
+                        DecorationByte = (byte)HtmlDecorationKind.InjectedLanguageType,
+                    };
+
+                    symbolToAdd = new TypeSymbol(sourceTextSpan);
+                    break;
+                case SyntaxKind.FunctionSymbol:
+                    sourceTextSpan = sourceTextSpan with
+                    {
+                        DecorationByte = (byte)HtmlDecorationKind.InjectedLanguageMethod,
+                    };
+
+                    symbolToAdd = new FunctionSymbol(sourceTextSpan);
+                    break;
+                case SyntaxKind.VariableSymbol:
+                    sourceTextSpan = sourceTextSpan with
+                    {
+                        DecorationByte = (byte)HtmlDecorationKind.InjectedLanguageVariable,
+                    };
+
+                    symbolToAdd = new VariableSymbol(sourceTextSpan);
+                    break;
             }
 
-            if (adhocTextInsertion is not null)
-            {
-                ISymbol? symbolToAdd = null;
-
-                var symbolSourceTextStartingIndexInclusive =
-                    adhocTextInsertion.SourceTextStartingIndexInclusive +
-                    (adhocSymbol.TextSpan.StartingIndexInclusive - adhocTextInsertion.InsertionStartingIndexInclusive);
-
-                var symbolSourceTextEndingIndexExclusive =
-                    symbolSourceTextStartingIndexInclusive +
-                    (adhocSymbol.TextSpan.EndingIndexExclusive - adhocSymbol.TextSpan.StartingIndexInclusive);
-
-                var sourceTextSpan = adhocSymbol.TextSpan with
-                {
-                    ResourceUri = model.ResourceUri,
-                    SourceText = text,
-                    StartingIndexInclusive = symbolSourceTextStartingIndexInclusive,
-                    EndingIndexExclusive = symbolSourceTextEndingIndexExclusive,
-                };
-
-                switch (adhocSymbol.SyntaxKind)
-                {
-                    case SyntaxKind.TypeSymbol:
-                        sourceTextSpan = sourceTextSpan with
-                        {
-                            DecorationByte = (byte)HtmlDecorationKind.InjectedLanguageType,
-                        };
-
-                        symbolToAdd = new TypeSymbol(sourceTextSpan);
-                        break;
-                    case SyntaxKind.FunctionSymbol:
-                        sourceTextSpan = sourceTextSpan with
-                        {
-                            DecorationByte = (byte)HtmlDecorationKind.InjectedLanguageMethod,
-                        };
-
-                        symbolToAdd = new FunctionSymbol(sourceTextSpan);
-                        break;
-                    case SyntaxKind.VariableSymbol:
-                        sourceTextSpan = sourceTextSpan with
-                        {
-                            DecorationByte = (byte)HtmlDecorationKind.InjectedLanguageVariable,
-                        };
-
-                        symbolToAdd = new VariableSymbol(sourceTextSpan);
-                        break;
-                }
-
-                if (symbolToAdd is not null)
-                    resultingSymbols.Add(symbolToAdd);
-            }
+            if (symbolToAdd is not null)
+                resultingSymbols.Add(symbolToAdd);
         }
-
-        //DiagnosticTextSpanTuples = compilationUnit.Diagnostics.Select(x =>
-        //{
-        //    var textEditorDecorationKind = x.DiagnosticLevel switch
-        //    {
-        //        TextEditorDiagnosticLevel.Hint => TextEditorSemanticDecorationKind.DiagnosticHint,
-        //        TextEditorDiagnosticLevel.Suggestion => TextEditorSemanticDecorationKind.DiagnosticSuggestion,
-        //        TextEditorDiagnosticLevel.Warning => TextEditorSemanticDecorationKind.DiagnosticWarning,
-        //        TextEditorDiagnosticLevel.Error => TextEditorSemanticDecorationKind.DiagnosticError,
-        //        TextEditorDiagnosticLevel.Other => TextEditorSemanticDecorationKind.DiagnosticOther,
-        //        _ => throw new NotImplementedException(),
-        //    };
-
-        //    var textSpan = x.TextEditorTextSpan with
-        //    {
-        //        DecorationByte = (byte)textEditorDecorationKind
-        //    };
-
-        //    return (x, textSpan);
-        //}).ToImmutableList();
 
         SymbolMessageTextSpanTuples = resultingSymbols
             .Select(x => ($"({x.GetType().Name}){x.TextSpan.GetText()}", x.TextSpan))
