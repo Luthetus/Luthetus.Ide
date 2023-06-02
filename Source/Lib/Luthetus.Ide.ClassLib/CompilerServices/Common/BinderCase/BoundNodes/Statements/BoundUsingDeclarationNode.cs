@@ -20,10 +20,10 @@ public sealed record BoundUsingDeclarationNode : ISyntaxNode
         }.ToImmutableArray();
     }
 
-    public KeywordToken KeywordToken { get; }
-    public IdentifierToken NamespaceIdentifier { get; }
+    public KeywordToken KeywordToken { get; init; }
+    public IdentifierToken NamespaceIdentifier { get; init; }
 
-    public ImmutableArray<ISyntax> Children { get; }
+    public ImmutableArray<ISyntax> Children { get; init; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.BoundUsingDeclarationNode;
 }

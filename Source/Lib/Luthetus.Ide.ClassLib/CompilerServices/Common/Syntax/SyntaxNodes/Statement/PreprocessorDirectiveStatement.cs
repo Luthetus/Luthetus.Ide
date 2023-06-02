@@ -18,10 +18,10 @@ public sealed record PreprocessorLibraryReferenceStatement : IStatementNode
         }.ToImmutableArray();
     }
 
-    public ISyntaxToken IncludeDirectiveSyntaxToken { get; }
-    public ISyntaxToken LibraryReferenceSyntaxToken { get; }
+    public ISyntaxToken IncludeDirectiveSyntaxToken { get; init; }
+    public ISyntaxToken LibraryReferenceSyntaxToken { get; init; }
 
-    public ImmutableArray<ISyntax> Children { get; }
+    public ImmutableArray<ISyntax> Children { get; init; }
     public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.PreprocessorLibraryReferenceStatement;
+    public SyntaxKind SyntaxKind => SyntaxKind.PreprocessorLibraryReferenceStatementNode;
 }

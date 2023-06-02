@@ -19,10 +19,10 @@ public sealed record BoundIdentifierReferenceNode : IBoundExpressionNode
         }.ToImmutableArray();
     }
 
-    public IdentifierToken IdentifierToken { get; }
-    public Type ResultType { get; }
+    public IdentifierToken IdentifierToken { get; init; }
+    public Type ResultType { get; init; }
 
-    public ImmutableArray<ISyntax> Children { get; }
+    public ImmutableArray<ISyntax> Children { get; init; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.BoundIdentifierReferenceNode;
 }

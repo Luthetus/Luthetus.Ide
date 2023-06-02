@@ -21,10 +21,10 @@ public sealed record BoundReturnStatementNode : ISyntaxNode
         }.ToImmutableArray();
     }
 
-    public KeywordToken KeywordToken { get; }
-    public IBoundExpressionNode BoundExpressionNode { get; }
+    public KeywordToken KeywordToken { get; init; }
+    public IBoundExpressionNode BoundExpressionNode { get; init; }
 
-    public ImmutableArray<ISyntax> Children { get; }
+    public ImmutableArray<ISyntax> Children { get; init; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.BoundReturnStatementNode;
 }

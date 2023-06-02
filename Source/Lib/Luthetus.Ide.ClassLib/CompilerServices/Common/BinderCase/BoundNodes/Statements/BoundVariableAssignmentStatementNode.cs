@@ -20,10 +20,10 @@ public sealed record BoundVariableAssignmentStatementNode : ISyntaxNode
         }.ToImmutableArray();
     }
 
-    public ISyntaxToken IdentifierToken { get; }
-    public IBoundExpressionNode BoundExpressionNode { get; }
+    public ISyntaxToken IdentifierToken { get; init; }
+    public IBoundExpressionNode BoundExpressionNode { get; init; }
 
-    public ImmutableArray<ISyntax> Children { get; }
+    public ImmutableArray<ISyntax> Children { get; init; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.BoundVariableAssignmentStatementNode;
 }

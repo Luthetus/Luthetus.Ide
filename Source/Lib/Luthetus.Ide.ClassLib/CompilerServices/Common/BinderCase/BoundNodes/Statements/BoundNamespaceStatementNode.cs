@@ -12,17 +12,18 @@ public sealed record BoundNamespaceStatementNode : ISyntaxNode
         IdentifierToken identifierToken,
         ImmutableArray<CompilationUnit> children)
     {
+        KeywordToken = keywordToken;
+        IdentifierToken = identifierToken;
+
         Children = children
             .Select(x => (ISyntax)x)
             .ToImmutableArray();
-        KeywordToken = keywordToken;
-        IdentifierToken = identifierToken;
     }
 
-    public KeywordToken KeywordToken { get; }
-    public IdentifierToken IdentifierToken { get; }
+    public KeywordToken KeywordToken { get; init; }
+    public IdentifierToken IdentifierToken { get; init; }
 
-    public ImmutableArray<ISyntax> Children { get; }
+    public ImmutableArray<ISyntax> Children { get; init; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.BoundNamespaceStatementNode;
 }

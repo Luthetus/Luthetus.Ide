@@ -17,9 +17,9 @@ public sealed record BoundInheritanceStatementNode : ISyntaxNode
         }.ToImmutableArray();
     }
 
-    public IdentifierToken ParentClassIdentifierToken { get; }
+    public IdentifierToken ParentClassIdentifierToken { get; init; }
 
-    public ImmutableArray<ISyntax> Children { get; }
+    public ImmutableArray<ISyntax> Children { get; init; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.BoundInheritanceStatementNode;
 }

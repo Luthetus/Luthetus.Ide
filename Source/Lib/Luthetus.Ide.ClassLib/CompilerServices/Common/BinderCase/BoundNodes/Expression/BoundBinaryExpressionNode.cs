@@ -22,12 +22,12 @@ public sealed record BoundBinaryExpressionNode : IBoundExpressionNode
         }.ToImmutableArray();
     }
 
-    public IBoundExpressionNode LeftBoundExpressionNode { get; }
-    public BoundBinaryOperatorNode BoundBinaryOperatorNode { get; }
-    public IBoundExpressionNode RightBoundExpressionNode { get; }
+    public IBoundExpressionNode LeftBoundExpressionNode { get; init; }
+    public BoundBinaryOperatorNode BoundBinaryOperatorNode { get; init; }
+    public IBoundExpressionNode RightBoundExpressionNode { get; init; }
     public Type ResultType => BoundBinaryOperatorNode.ResultType;
 
-    public ImmutableArray<ISyntax> Children { get; }
+    public ImmutableArray<ISyntax> Children { get; init; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.BoundBinaryExpressionNode;
 }

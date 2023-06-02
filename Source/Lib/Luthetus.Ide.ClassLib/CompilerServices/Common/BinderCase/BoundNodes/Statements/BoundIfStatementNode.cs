@@ -10,49 +10,30 @@ public sealed record BoundIfStatementNode : ISyntaxNode
 {
     public BoundIfStatementNode(
         KeywordToken keywordToken,
-        IBoundExpressionNode boundExpressionNode)
-    {
-        KeywordToken = keywordToken;
-        BoundExpressionNode = boundExpressionNode;
-
-        Children = new ISyntax[]
-        {
-            KeywordToken,
-            BoundExpressionNode,
-        }.ToImmutableArray();
-    }
-
-    public BoundIfStatementNode(
-        KeywordToken keywordToken,
         IBoundExpressionNode boundExpressionNode,
-        CompilationUnit ifStatementBodyCompilationUnit)
+        CompilationUnit? ifStatementBodyCompilationUnit)
     {
         KeywordToken = keywordToken;
         BoundExpressionNode = boundExpressionNode;
         IfStatementBodyCompilationUnit = ifStatementBodyCompilationUnit;
 
-        Children = new ISyntax[]
+        var childrenList = new List<ISyntax>(3)
         {
             KeywordToken,
             BoundExpressionNode,
-            IfStatementBodyCompilationUnit,
-        }.ToImmutableArray();
+        };
+
+        if (IfStatementBodyCompilationUnit is not null)
+            childrenList.Add(IfStatementBodyCompilationUnit);
+
+        Children = childrenList.ToImmutableArray();
     }
 
-    public KeywordToken KeywordToken { get; }
-    public IBoundExpressionNode BoundExpressionNode { get; }
-    public CompilationUnit? IfStatementBodyCompilationUnit { get; }
+    public KeywordToken KeywordToken { get; init; }
+    public IBoundExpressionNode BoundExpressionNode { get; init; }
+    public CompilationUnit? IfStatementBodyCompilationUnit { get; init; }
 
-    public ImmutableArray<ISyntax> Children { get; }
+    public ImmutableArray<ISyntax> Children { get; init; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.BoundIfStatementNode;
-
-    public BoundIfStatementNode WithIfStatementBody(
-        CompilationUnit ifStatementBodyCompilationUnit)
-    {
-        return new BoundIfStatementNode(
-            KeywordToken,
-            BoundExpressionNode,
-            ifStatementBodyCompilationUnit);
-    }
 }

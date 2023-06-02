@@ -7,17 +7,6 @@ namespace Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.St
 public sealed record BoundClassDeclarationNode : ISyntaxNode
 {
     public BoundClassDeclarationNode(
-        ISyntaxToken identifierToken)
-    {
-        IdentifierToken = identifierToken;
-
-        Children = new ISyntax[]
-        {
-            IdentifierToken
-        }.ToImmutableArray();
-    }
-
-    public BoundClassDeclarationNode(
         ISyntaxToken identifierToken,
         BoundInheritanceStatementNode? boundInheritanceStatementNode,
         CompilationUnit? classBodyCompilationUnit)
@@ -40,29 +29,11 @@ public sealed record BoundClassDeclarationNode : ISyntaxNode
         Children = childrenList.ToImmutableArray();
     }
 
-    public ISyntaxToken IdentifierToken { get; }
-    public BoundInheritanceStatementNode? BoundInheritanceStatementNode { get; }
-    public CompilationUnit? ClassBodyCompilationUnit { get; }
+    public ISyntaxToken IdentifierToken { get; init; }
+    public BoundInheritanceStatementNode? BoundInheritanceStatementNode { get; init; }
+    public CompilationUnit? ClassBodyCompilationUnit { get; init; }
 
-    public ImmutableArray<ISyntax> Children { get; }
+    public ImmutableArray<ISyntax> Children { get; init; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.BoundClassDeclarationNode;
-
-    public BoundClassDeclarationNode WithClassBody(
-        CompilationUnit classBodyCompilationUnit)
-    {
-        return new BoundClassDeclarationNode(
-            IdentifierToken,
-            BoundInheritanceStatementNode,
-            classBodyCompilationUnit);
-    }
-    
-    public BoundClassDeclarationNode WithBoundInheritanceStatementNode(
-        BoundInheritanceStatementNode boundInheritanceStatementNode)
-    {
-        return new BoundClassDeclarationNode(
-            IdentifierToken,
-            boundInheritanceStatementNode,
-            ClassBodyCompilationUnit);
-    }
 }

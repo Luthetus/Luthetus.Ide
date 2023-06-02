@@ -43,7 +43,7 @@ public enum SyntaxKind
     BoundLiteralExpressionNode,
     BoundBinaryOperatorNode,
     BoundBinaryExpressionNode,
-    PreprocessorLibraryReferenceStatement,
+    PreprocessorLibraryReferenceStatementNode,
     BoundTypeNode,
     BoundFunctionDeclarationNode,
     BoundIfStatementNode,

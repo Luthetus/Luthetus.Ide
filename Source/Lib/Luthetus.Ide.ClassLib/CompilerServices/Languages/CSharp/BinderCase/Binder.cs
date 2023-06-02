@@ -126,7 +126,8 @@ public class Binder
 
         var boundFunctionDeclarationNode = new BoundFunctionDeclarationNode(
             boundTypeNode,
-            identifierToken);
+            identifierToken,
+            null);
 
         _currentScope.FunctionDeclarationMap.Add(
             functionIdentifier,
@@ -160,7 +161,8 @@ public class Binder
     {
         var boundIfStatementNode = new BoundIfStatementNode(
             ifKeywordToken,
-            boundExpressionNode);
+            boundExpressionNode,
+            null);
 
         return boundIfStatementNode;
     }
@@ -240,7 +242,9 @@ public class Binder
         }
 
         var boundClassDeclarationNode = new BoundClassDeclarationNode(
-            identifierToken);
+            identifierToken,
+            null,
+            null);
 
         _currentScope.ClassDeclarationMap.Add(
             classIdentifier,
@@ -304,7 +308,8 @@ public class Binder
 
         var boundVariableDeclarationStatementNode = new BoundVariableDeclarationStatementNode(
             boundTypeNode,
-            identifierToken);
+            identifierToken,
+            false);
 
         _currentScope.VariableDeclarationMap.Add(
             text,
@@ -334,8 +339,10 @@ public class Binder
             if (variableDeclarationNode.IsInitialized)
                 return new(identifierToken, boundExpressionNode);
 
-            variableDeclarationNode = variableDeclarationNode
-                .WithIsInitialized(true);
+            variableDeclarationNode = variableDeclarationNode with
+            {
+                IsInitialized = true
+            };
 
             _currentScope.VariableDeclarationMap[text] =
                 variableDeclarationNode;

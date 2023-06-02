@@ -23,12 +23,12 @@ public sealed record BoundBinaryOperatorNode : ISyntaxNode
         .ToImmutableArray();
     }
 
-    public Type LeftOperandType { get; }
-    public ISyntaxToken OperatorToken { get; }
-    public Type RightOperandType { get; }
-    public Type ResultType { get; }
+    public Type LeftOperandType { get; init; }
+    public ISyntaxToken OperatorToken { get; init; }
+    public Type RightOperandType { get; init; }
+    public Type ResultType { get; init; }
 
-    public ImmutableArray<ISyntax> Children { get; }
+    public ImmutableArray<ISyntax> Children { get; init; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.BoundBinaryOperatorNode;
 }

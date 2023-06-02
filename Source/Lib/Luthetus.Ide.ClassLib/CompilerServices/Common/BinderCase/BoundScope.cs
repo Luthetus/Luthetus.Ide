@@ -24,14 +24,14 @@ public sealed record BoundScope
         VariableDeclarationMap = variableDeclarationMap;
     }
 
-    public BoundScope? Parent { get; }
+    public BoundScope? Parent { get; init; }
     /// <summary>A <see cref="ScopeReturnType"/> with the value of "null" means refer to the <see cref="Parent"/> bound scope's <see cref="ScopeReturnType"/></summary>
-    public Type? ScopeReturnType { get; }
-    public int StartingIndexInclusive { get; }
+    public Type? ScopeReturnType { get; init; }
+    public int StartingIndexInclusive { get; init; }
     /// <summary>TODO: Remove the "internal set" hack and make a new immutable instance instead.</summary>
     public int? EndingIndexExclusive { get; internal set; }
-    public Dictionary<string, Type> TypeMap { get; }
-    public Dictionary<string, BoundClassDeclarationNode> ClassDeclarationMap { get; }
-    public Dictionary<string, BoundFunctionDeclarationNode> FunctionDeclarationMap { get; }
-    public Dictionary<string, BoundVariableDeclarationStatementNode> VariableDeclarationMap { get; }
+    public Dictionary<string, Type> TypeMap { get; init; }
+    public Dictionary<string, BoundClassDeclarationNode> ClassDeclarationMap { get; init; }
+    public Dictionary<string, BoundFunctionDeclarationNode> FunctionDeclarationMap { get; init; }
+    public Dictionary<string, BoundVariableDeclarationStatementNode> VariableDeclarationMap { get; init; }
 }

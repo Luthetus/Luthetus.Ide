@@ -16,9 +16,9 @@ public sealed record BoundFunctionInvocationNode : ISyntaxNode
         }.ToImmutableArray();
     }
 
-    public ISyntaxToken IdentifierToken { get; }
+    public ISyntaxToken IdentifierToken { get; init; }
 
-    public ImmutableArray<ISyntax> Children { get; }
+    public ImmutableArray<ISyntax> Children { get; init; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.BoundFunctionInvocationNode;
 }

@@ -18,10 +18,10 @@ public sealed record BoundLiteralExpressionNode : IBoundExpressionNode
         }.ToImmutableArray();
     }
 
-    public ISyntaxToken LiteralSyntaxToken { get; }
-    public Type ResultType { get; }
+    public ISyntaxToken LiteralSyntaxToken { get; init; }
+    public Type ResultType { get; init; }
 
-    public ImmutableArray<ISyntax> Children { get; }
+    public ImmutableArray<ISyntax> Children { get; init; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.BoundLiteralExpressionNode;
 }
