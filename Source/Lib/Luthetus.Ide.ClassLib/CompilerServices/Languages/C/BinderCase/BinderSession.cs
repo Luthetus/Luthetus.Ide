@@ -245,6 +245,7 @@ public class BinderSession
             scopeReturnType,
             textEditorTextSpan.StartingIndexInclusive,
             null,
+            textEditorTextSpan.ResourceUri,
             new(),
             new(),
             new(),

@@ -508,6 +508,7 @@ public class Binder
             scopeReturnType,
             textEditorTextSpan.StartingIndexInclusive,
             null,
+            textEditorTextSpan.ResourceUri,
             new(),
             new(),
             new(),
@@ -549,11 +550,10 @@ public class Binder
     public void DisposeBoundScope(
         TextEditorTextSpan textEditorTextSpan)
     {
+        _currentScope.EndingIndexExclusive = textEditorTextSpan.EndingIndexExclusive;
+
         if (_currentScope.Parent is not null)
-        {
-            _currentScope.EndingIndexExclusive = textEditorTextSpan.EndingIndexExclusive;
             _currentScope = _currentScope.Parent;
-        }
     }
 
     /// <summary>Search hierarchically through all the scopes, starting at the <see cref="_currentScope"/>.<br/><br/>If a match is found, then set the out parameter to it and return true.<br/><br/>If none of the searched scopes contained a match then set the out parameter to null and return false.</summary>

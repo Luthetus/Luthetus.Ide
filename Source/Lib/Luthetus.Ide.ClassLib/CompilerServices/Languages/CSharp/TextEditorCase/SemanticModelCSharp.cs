@@ -31,7 +31,11 @@ public class SemanticModelCSharp : ISemanticModel
         if (semanticModelResult is null)
             return null;
 
-        var boundScope = semanticModelResult.ParserSession.Binder.BoundScopes
+        var sameFileBoundScopes = semanticModelResult.ParserSession.Binder.BoundScopes
+            .Where(bs => bs.ResourceUri == model.ResourceUri)
+            .ToArray();
+
+        var boundScope = sameFileBoundScopes
             .Where(bs => bs.StartingIndexInclusive <= textSpan.StartingIndexInclusive &&
                          (bs.EndingIndexExclusive ?? int.MaxValue) >= textSpan.EndingIndexExclusive)
             // Get the closest scope
@@ -44,13 +48,33 @@ public class SemanticModelCSharp : ISemanticModel
         var textSpanText = textSpan.GetText();
 
         while (boundScope.Parent is not null &&
-               !boundScope.VariableDeclarationMap.ContainsKey(textSpanText))
+               !boundScope.VariableDeclarationMap.ContainsKey(textSpanText) &&
+               !boundScope.ClassDeclarationMap.ContainsKey(textSpanText) &&
+               !boundScope.FunctionDeclarationMap.ContainsKey(textSpanText) &&
+               !boundScope.TypeMap.ContainsKey(textSpanText))
         {
             boundScope = boundScope.Parent;
         }
 
-        if (!boundScope.VariableDeclarationMap.ContainsKey(textSpanText))
+        if (!boundScope.VariableDeclarationMap.ContainsKey(textSpanText) &&
+            !boundScope.ClassDeclarationMap.ContainsKey(textSpanText) &&
+            !boundScope.FunctionDeclarationMap.ContainsKey(textSpanText) &&
+            !boundScope.TypeMap.ContainsKey(textSpanText))
+        {
             return null;
+        }
+
+        // (2023-06-03) Symbols don't understand scope right? I was using symbols to find goto-definition across files and wasn't getting anywhere. Going to try and use the bound scope which contains the definition directly.
+        {
+            if (boundScope.ClassDeclarationMap.TryGetValue(
+                textSpanText,
+                out var boundClassDeclarationNode))
+            {
+                return new TextEditorSymbolDefinition(
+                    boundClassDeclarationNode.IdentifierToken.TextSpan.ResourceUri,
+                    boundClassDeclarationNode.IdentifierToken.TextSpan.StartingIndexInclusive);
+            }
+        }
 
         var symbolDefinitionId = ISymbol.GetSymbolDefinitionId(
             textSpanText,
@@ -83,8 +107,8 @@ public class SemanticModelCSharp : ISemanticModel
             text,
             model.RenderStateKey);
 
-        var textEditorLexerC = (IdeCSharpLexer)model.Lexer;
-        var recentLexSession = textEditorLexerC.RecentLexSession;
+        var textEditorLexerCSharp = (IdeCSharpLexer)model.Lexer;
+        var recentLexSession = textEditorLexerCSharp.RecentLexSession;
 
         if (recentLexSession is null)
             return null;
