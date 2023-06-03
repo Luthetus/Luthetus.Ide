@@ -1,4 +1,5 @@
 ﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.Symbols;
+using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.BinderCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.ParserCase;
 using Luthetus.TextEditor.RazorLib.Analysis;
 using Luthetus.TextEditor.RazorLib.Lexing;
@@ -10,8 +11,7 @@ namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.TextEditorCase
 
 public class SemanticModelCSharp : ISemanticModel
 {
-    private SemanticModelResultCSharp? _recentSemanticModelResult;
-    private SemanticResult _semanticResult = new();
+    private SemanticResultCSharp? _semanticResult;
 
     public ISemanticResult? SemanticResult => _semanticResult;
 
@@ -67,7 +67,7 @@ public class SemanticModelCSharp : ISemanticModel
         _ = ParseWithResult(model);
     }
 
-    public SemanticModelResultCSharp? ParseWithResult(
+    public SemanticResultCSharp? ParseWithResult(
         TextEditorModel model)
     {
         var text = model.GetAllText();
@@ -88,7 +88,12 @@ public class SemanticModelCSharp : ISemanticModel
 
         var compilationUnit = parserSession.Parse();
 
-        _semanticResult = _semanticResult with 
+        var localSemanticResult = new SemanticResultCSharp(
+            text,
+            parserSession,
+            compilationUnit);
+
+        localSemanticResult = localSemanticResult with 
         {
             DiagnosticTextSpanTuples = compilationUnit.Diagnostics.Select(x =>
             {
@@ -111,20 +116,15 @@ public class SemanticModelCSharp : ISemanticModel
             }).ToImmutableList()
         };
 
-        _semanticResult = _semanticResult with 
+        localSemanticResult = localSemanticResult with 
         {
             SymbolMessageTextSpanTuples = parserSession.Binder.Symbols
                 .Select(x => ($"({x.GetType().Name}){x.TextSpan.GetText()}", x.TextSpan))
                 .ToImmutableList()
         };
 
-        var semanticModelResult = new SemanticModelResultCSharp(
-            text,
-            parserSession,
-            compilationUnit);
+        _semanticResult = localSemanticResult;
 
-        _recentSemanticModelResult = semanticModelResult;
-
-        return semanticModelResult;
+        return localSemanticResult;
     }
 }

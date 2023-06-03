@@ -380,4 +380,49 @@ namespace Pages
     {
         throw new NotImplementedException("(2023-05-30) I am not sure how I want to test this yet.");
     }
+
+    [Fact]
+    public void SHOULD_PARSE_NAMESPACE_IDENTIFIER_CONTAINING_MEMBER_ACCESS_TOKEN()
+    {
+        string namespaceIdentifier = "BlazorWasmApp.PersonCase";
+
+        string sourceText = @$"namespace {namespaceIdentifier} {{}}".ReplaceLineEndings("\n");
+
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
+
+        lexer.Lex();
+
+        var parser = new Parser(
+            lexer.SyntaxTokens,
+            lexer.Diagnostics);
+
+        var compilationUnit = parser.Parse();
+
+        var boundNamespaceStatementNode =
+            (BoundNamespaceStatementNode)compilationUnit.Children.Single();
+
+        Assert.Equal(
+            namespaceIdentifier,
+            boundNamespaceStatementNode.IdentifierToken.TextSpan.GetText());
+
+        var namespaceCompilationUnit =
+            (CompilationUnit)boundNamespaceStatementNode.Children.Single();
+
+        Assert.Empty(namespaceCompilationUnit.Children);
+
+        // Assert SyntaxKinds are correct
+        {
+            Assert.Equal(
+                SyntaxKind.BoundNamespaceStatementNode,
+                boundNamespaceStatementNode.SyntaxKind);
+
+            Assert.Equal(
+                SyntaxKind.CompilationUnitNode,
+                namespaceCompilationUnit.SyntaxKind);
+        }
+    }
 }

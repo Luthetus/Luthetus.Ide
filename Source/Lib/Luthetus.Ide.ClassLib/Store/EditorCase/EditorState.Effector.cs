@@ -17,6 +17,7 @@ using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.TextEditor.RazorLib.Lexing;
 using Luthetus.TextEditor.RazorLib.Semantics;
 using Luthetus.Ide.ClassLib.Store.SemanticContextCase;
+using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.BinderCase;
 
 namespace Luthetus.Ide.ClassLib.Store.EditorCase;
 

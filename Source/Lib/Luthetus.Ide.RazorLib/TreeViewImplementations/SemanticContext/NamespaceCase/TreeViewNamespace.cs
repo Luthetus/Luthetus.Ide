@@ -1,25 +1,31 @@
 ﻿using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Common.RazorLib.WatchWindow.TreeViewClasses;
+using Luthetus.Common.RazorLib.WatchWindow;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.SemanticContextCase.Implementations;
-using Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext;
-using Luthetus.Ide.ClassLib.Store.SemanticContextCase;
+using Luthetus.TextEditor.RazorLib.Semantics;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statements;
+using Luthetus.Ide.ClassLib.CompilerServices.Common.General;
+using Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.CompilationUnitCase;
 
-namespace Luthetus.Ide.ClassLib.TreeViewImplementations.SemanticContext;
+namespace Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.NamespaceCase;
 
-public class TreeViewDotNetSolutionSemanticContext : TreeViewWithType<(SemanticContextState semanticContextState, DotNetSolutionSemanticContext dotNetSolutionSemanticContext)>
+public class TreeViewNamespace : TreeViewWithType<BoundNamespaceStatementNode>
 {
-    public TreeViewDotNetSolutionSemanticContext(
-        (SemanticContextState semanticContextState, DotNetSolutionSemanticContext dotNetSolutionSemanticContext) semanticContextTuple,
+    public TreeViewNamespace(
+        BoundNamespaceStatementNode boundNamespaceStatementNode,
         ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
         bool isExpandable,
         bool isExpanded)
             : base(
-                semanticContextTuple,
+                boundNamespaceStatementNode,
                 isExpandable,
                 isExpanded)
     {
@@ -34,53 +40,43 @@ public class TreeViewDotNetSolutionSemanticContext : TreeViewWithType<(SemanticC
 
     public override bool Equals(object? obj)
     {
-        if (obj is null ||
-            obj is not TreeViewDotNetSolutionSemanticContext treeViewDotNetSolutionSemanticContext ||
-            treeViewDotNetSolutionSemanticContext.Item.dotNetSolutionSemanticContext is null ||
-            Item.dotNetSolutionSemanticContext is null)
-        {
-            return false;
-        }
-
-        return treeViewDotNetSolutionSemanticContext.Item.dotNetSolutionSemanticContext.DotNetSolution.NamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString() ==
-               Item.dotNetSolutionSemanticContext.DotNetSolution.NamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString();
+        // TODO: Equals
+        return false;
     }
 
     public override int GetHashCode()
     {
-        return Item.dotNetSolutionSemanticContext.DotNetSolution.NamespacePath.AbsoluteFilePath
-            .GetAbsoluteFilePathString()
-            .GetHashCode();
+        // TODO: GetHashCode
+        return Path.GetRandomFileName().GetHashCode();
     }
 
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            typeof(TreeViewDotNetSolutionSemanticContextDisplay),
+            typeof(TreeViewNamespaceDisplay),
             new Dictionary<string, object?>
             {
                 {
-                    nameof(TreeViewDotNetSolutionSemanticContextDisplay.DotNetSolutionSemanticContext),
-                    Item.dotNetSolutionSemanticContext
+                    nameof(TreeViewNamespaceDisplay.BoundNamespaceStatementNode),
+                    Item
                 },
             });
     }
 
     public override async Task LoadChildrenAsync()
     {
-        if (Item.dotNetSolutionSemanticContext is null)
+        if (Item is null)
             return;
 
         try
         {
-            var newChildren = Item.dotNetSolutionSemanticContext.DotNetProjectContextMap.Values
-                .Select(dnp => (TreeViewNoType)new TreeViewDotNetProjectSemanticContext(
-                    (Item.semanticContextState, dnp),
-                    LuthetusIdeComponentRenderers,
-                    FileSystemProvider,
-                    EnvironmentProvider,
-                    true,
-                    false))
+            var newChildren = Item.Children.Select(x => (TreeViewNoType) new TreeViewCompilationUnit(
+                (CompilationUnit)x,
+                LuthetusIdeComponentRenderers,
+                FileSystemProvider,
+                EnvironmentProvider,
+                true,
+                false))
                 .ToList();
 
             var oldChildrenMap = Children

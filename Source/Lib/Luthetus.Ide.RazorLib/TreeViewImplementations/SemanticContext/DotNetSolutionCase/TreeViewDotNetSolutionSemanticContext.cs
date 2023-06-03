@@ -6,13 +6,17 @@ using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.SemanticContextCas
 using Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext;
 using Luthetus.Ide.ClassLib.Store.SemanticContextCase;
 using System.Linq;
+using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.TextEditorCase;
+using Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor.TextEditorCase;
+using Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.DotNetSolutionCase;
+using Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.NamespaceCase;
 
-namespace Luthetus.Ide.ClassLib.TreeViewImplementations.SemanticContext;
+namespace Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.DotNetSolutionCase;
 
-public class TreeViewDotNetProjectSemanticContext : TreeViewWithType<(SemanticContextState semanticContextState, DotNetProjectSemanticContext dotNetProjectSemanticContext)>
+public class TreeViewDotNetSolutionSemanticContext : TreeViewWithType<(SemanticContextState semanticContextState, DotNetSolutionSemanticContext dotNetSolutionSemanticContext)>
 {
-    public TreeViewDotNetProjectSemanticContext(
-        (SemanticContextState semanticContextState, DotNetProjectSemanticContext dotNetProjectSemanticContext) semanticContextTuple,
+    public TreeViewDotNetSolutionSemanticContext(
+        (SemanticContextState semanticContextState, DotNetSolutionSemanticContext dotNetSolutionSemanticContext) semanticContextTuple,
         ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
@@ -35,20 +39,20 @@ public class TreeViewDotNetProjectSemanticContext : TreeViewWithType<(SemanticCo
     public override bool Equals(object? obj)
     {
         if (obj is null ||
-            obj is not TreeViewDotNetProjectSemanticContext treeViewDotNetProjectSemanticContext ||
-            treeViewDotNetProjectSemanticContext.Item.dotNetProjectSemanticContext is null ||
-            Item.dotNetProjectSemanticContext.DotNetProject is null)
+            obj is not TreeViewDotNetSolutionSemanticContext treeViewDotNetSolutionSemanticContext ||
+            treeViewDotNetSolutionSemanticContext.Item.dotNetSolutionSemanticContext is null ||
+            Item.dotNetSolutionSemanticContext is null)
         {
             return false;
         }
 
-        return treeViewDotNetProjectSemanticContext.Item.dotNetProjectSemanticContext.DotNetProject.AbsoluteFilePath.GetAbsoluteFilePathString() ==
-               Item.dotNetProjectSemanticContext.DotNetProject.AbsoluteFilePath.GetAbsoluteFilePathString();
+        return treeViewDotNetSolutionSemanticContext.Item.dotNetSolutionSemanticContext.DotNetSolution.NamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString() ==
+               Item.dotNetSolutionSemanticContext.DotNetSolution.NamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString();
     }
 
     public override int GetHashCode()
     {
-        return Item.dotNetProjectSemanticContext.DotNetProject.AbsoluteFilePath
+        return Item.dotNetSolutionSemanticContext.DotNetSolution.NamespacePath.AbsoluteFilePath
             .GetAbsoluteFilePathString()
             .GetHashCode();
     }
@@ -56,26 +60,56 @@ public class TreeViewDotNetProjectSemanticContext : TreeViewWithType<(SemanticCo
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            typeof(TreeViewDotNetProjectSemanticContextDisplay),
+            typeof(TreeViewDotNetSolutionSemanticContextDisplay),
             new Dictionary<string, object?>
             {
                 {
-                    nameof(TreeViewDotNetProjectSemanticContextDisplay.DotNetProjectSemanticContext),
-                    Item.dotNetProjectSemanticContext
+                    nameof(TreeViewDotNetSolutionSemanticContextDisplay.DotNetSolutionSemanticContext),
+                    Item.dotNetSolutionSemanticContext
                 },
             });
     }
 
     public override async Task LoadChildrenAsync()
     {
-        if (Item.dotNetProjectSemanticContext.DotNetProject is null)
+        if (Item.dotNetSolutionSemanticContext is null ||
+            Item.semanticContextState.DotNetSolutionSemanticContext is null)
             return;
 
         try
         {
-            var newChildren = Item.semanticContextState.DotNetSolutionSemanticContext.SemanticModelMap.Values
-                .Select(sm => (TreeViewNoType)new TreeViewSemanticModel(
-                    sm,
+            var cSharpSemanticModels = new List<SemanticModelCSharp>();
+            var razorSemanticModels = new List<SemanticModelRazor>();
+
+            var semanticResultCSharps = new List<SemanticResultCSharp>();
+            var semanticResultRazors = new List<SemanticResultRazor>();
+
+            foreach (var semanticModel in Item.semanticContextState.DotNetSolutionSemanticContext.SemanticModelMap.Values)
+            {
+                if (semanticModel is SemanticModelCSharp semanticModelCSharp)
+                {
+                    cSharpSemanticModels.Add(semanticModelCSharp);
+
+                    if (semanticModelCSharp.SemanticResult is not null)
+                        semanticResultCSharps.Add((SemanticResultCSharp)semanticModelCSharp.SemanticResult);
+                }
+                else if (semanticModel is SemanticModelRazor semanticModelRazor)
+                {
+                    razorSemanticModels.Add(semanticModelRazor);
+
+                    if (semanticModelRazor.SemanticResult is not null)
+                        semanticResultRazors.Add((SemanticResultRazor)semanticModelRazor.SemanticResult);
+                }
+            }
+
+            var namespaces = semanticResultCSharps
+                .SelectMany(x => x.ParserSession.Binder.BoundNamespaceStatementNodes.Values)
+                .Union(semanticResultRazors.SelectMany(x => x.Parser.Binder.BoundNamespaceStatementNodes.Values))
+                .ToArray();
+
+            var newChildren = namespaces
+                .Select(n => (TreeViewNoType)new TreeViewNamespace(
+                    n,
                     LuthetusIdeComponentRenderers,
                     FileSystemProvider,
                     EnvironmentProvider,

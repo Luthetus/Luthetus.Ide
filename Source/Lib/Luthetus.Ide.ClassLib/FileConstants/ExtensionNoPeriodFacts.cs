@@ -1,4 +1,5 @@
 ﻿using Luthetus.Ide.ClassLib.CompilerServices.Languages.C.TextEditorCase;
+using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.BinderCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.TextEditorCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor.TextEditorCase;
 using Luthetus.TextEditor.RazorLib.Analysis.C.SyntaxActors;
