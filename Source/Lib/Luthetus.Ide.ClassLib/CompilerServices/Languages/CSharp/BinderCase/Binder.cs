@@ -141,9 +141,12 @@ public class Binder
             identifierToken,
             null);
 
-        _currentScope.FunctionDeclarationMap.Add(
+        var success = _currentScope.FunctionDeclarationMap.TryAdd(
             functionIdentifier,
             boundFunctionDeclarationNode);
+
+        if (!success)
+            _currentScope.FunctionDeclarationMap[functionIdentifier] = boundFunctionDeclarationNode;
 
         AddSymbolDefinition(new FunctionSymbol(identifierToken.TextSpan with
         {
@@ -197,9 +200,12 @@ public class Binder
                 identifierToken,
                 ImmutableArray<CompilationUnit>.Empty);
 
-            _boundNamespaceStatementNodes.Add(
+            var success = _boundNamespaceStatementNodes.TryAdd(
                 namespaceIdentifier,
                 boundNamespaceStatementNode);
+
+            if (!success)
+                _boundNamespaceStatementNodes[namespaceIdentifier] = boundNamespaceStatementNode;
 
             return boundNamespaceStatementNode;
         }
@@ -257,9 +263,12 @@ public class Binder
             null,
             null);
 
-        _currentScope.ClassDeclarationMap.Add(
+        var success = _currentScope.ClassDeclarationMap.TryAdd(
             classIdentifier,
             boundClassDeclarationNode);
+
+        if (!success)
+            _currentScope.ClassDeclarationMap[classIdentifier] = boundClassDeclarationNode;
 
         AddSymbolDefinition(new TypeSymbol(identifierToken.TextSpan with
         {
@@ -319,9 +328,12 @@ public class Binder
             identifierToken,
             false);
 
-        _currentScope.VariableDeclarationMap.Add(
+        var success = _currentScope.VariableDeclarationMap.TryAdd(
             text,
             boundVariableDeclarationStatementNode);
+
+        if (!success)
+            _currentScope.VariableDeclarationMap[text] = boundVariableDeclarationStatementNode;
 
         return boundVariableDeclarationStatementNode;
     }
@@ -388,9 +400,12 @@ public class Binder
             identifierToken,
             false);
 
-        _currentScope.VariableDeclarationMap.Add(
+        var success = _currentScope.VariableDeclarationMap.TryAdd(
             text,
             boundVariableDeclarationStatementNode);
+
+        if (!success)
+            _currentScope.VariableDeclarationMap[text] = boundVariableDeclarationStatementNode;
 
         return boundVariableDeclarationStatementNode;
     }
@@ -540,9 +555,15 @@ public class Binder
                 var identifierText = boundClassDeclarationNode.IdentifierToken.TextSpan
                     .GetText();
 
-                _currentScope.ClassDeclarationMap.Add(
+                var success = _currentScope.ClassDeclarationMap.TryAdd(
                     identifierText,
                     boundClassDeclarationNode);
+
+                if (!success)
+                {
+                    _currentScope.ClassDeclarationMap[identifierText] =
+                        boundClassDeclarationNode;
+                }
             }
         }
     }
@@ -673,9 +694,12 @@ public class Binder
             };
 
             // TODO: Symbol definition was not found, should a diagnostic be reported here?
-            _symbolDefinitions.Add(
+            var success = _symbolDefinitions.TryAdd(
                 symbolDefinitionId,
                 symbolDefinition);
+
+            if (!success)
+                _symbolDefinitions[symbolDefinitionId] = symbolDefinition;
         }
 
         symbolDefinition.SymbolReferences.Add(new SymbolReference(
