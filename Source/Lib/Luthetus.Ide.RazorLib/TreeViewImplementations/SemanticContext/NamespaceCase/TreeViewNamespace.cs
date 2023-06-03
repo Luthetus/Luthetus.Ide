@@ -12,6 +12,8 @@ using System.Threading.Tasks;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statements;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.General;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.CompilationUnitCase;
+using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
+using Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.BoundClassDeclarationNodeCase;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.NamespaceCase;
 
@@ -70,14 +72,17 @@ public class TreeViewNamespace : TreeViewWithType<BoundNamespaceStatementNode>
 
         try
         {
-            var newChildren = Item.Children.Select(x => (TreeViewNoType) new TreeViewCompilationUnit(
-                (CompilationUnit)x,
-                LuthetusIdeComponentRenderers,
-                FileSystemProvider,
-                EnvironmentProvider,
-                true,
-                false))
-                .ToList();
+            var newChildren = Item.Children
+                .SelectMany(x => ((CompilationUnit)x).Children)
+                .Where(x => x.SyntaxKind == SyntaxKind.BoundClassDeclarationNode)
+                .Select(x => (TreeViewNoType) new TreeViewBoundClassDeclarationNode(
+                    (BoundClassDeclarationNode)x,
+                    LuthetusIdeComponentRenderers,
+                    FileSystemProvider,
+                    EnvironmentProvider,
+                    true,
+                    false))
+                    .ToList();
 
             var oldChildrenMap = Children
                 .ToDictionary(child => child);
