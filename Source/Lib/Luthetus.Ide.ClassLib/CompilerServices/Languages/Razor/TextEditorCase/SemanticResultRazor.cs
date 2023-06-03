@@ -1,13 +1,16 @@
 ﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.General;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.LexerCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.ParserCase;
+using Luthetus.TextEditor.RazorLib.Analysis;
 using Luthetus.TextEditor.RazorLib.Lexing;
+using Luthetus.TextEditor.RazorLib.Semantics;
+using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor.TextEditorCase;
 
-public class SemanticModelResultRazor
+public record SemanticResultRazor : ISemanticResult
 {
-    public SemanticModelResultRazor(
+    public SemanticResultRazor(
         Lexer lexer,
         Parser parser,
         CompilationUnit compilationUnit,
@@ -29,6 +32,10 @@ public class SemanticModelResultRazor
     public List<AdhocTextInsertion> AdhocClassInsertions { get; }
     public List<AdhocTextInsertion> AdhocRenderFunctionInsertions { get; }
     public AdhocTextInsertion RenderFunctionAdhocTextInsertion { get; }
+
+    public ImmutableList<(TextEditorDiagnostic diagnostic, TextEditorTextSpan textSpan)> DiagnosticTextSpanTuples { get; init; } = ImmutableList<(TextEditorDiagnostic diagnostic, TextEditorTextSpan textSpan)>.Empty;
+
+    public ImmutableList<(string message, TextEditorTextSpan textSpan)> SymbolMessageTextSpanTuples { get; init; } = ImmutableList<(string message, TextEditorTextSpan textSpan)>.Empty;
 
     public TextEditorTextSpan? MapAdhocCSharpTextSpanToSource(
         ResourceUri sourceResourceUri,

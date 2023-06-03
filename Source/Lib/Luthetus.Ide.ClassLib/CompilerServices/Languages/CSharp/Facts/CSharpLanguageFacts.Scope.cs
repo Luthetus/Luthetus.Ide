@@ -1,4 +1,5 @@
 ﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase;
+using Luthetus.TextEditor.RazorLib.Lexing;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.Facts;
 
@@ -37,6 +38,7 @@ public partial class CSharpLanguageFacts
                 typeof(void),
                 0,
                 null,
+                new ResourceUri(string.Empty),
                 typeMap,
                 new(),
                 new(),

@@ -252,27 +252,55 @@ public class Parser
             }
             else if (text == "namespace")
             {
-                var nextToken = _tokenWalker.Consume();
+                var combineNamespaceIdentifierIntoOne = new List<ISyntaxToken>();
 
-                if (nextToken.SyntaxKind == SyntaxKind.IdentifierToken)
+                while (!_tokenWalker.IsEof)
                 {
-                    if (_finalizeFileScopeAction is not null)
+                    var nextToken = _tokenWalker.Consume();
+
+                    if (nextToken.SyntaxKind == SyntaxKind.MemberAccessToken)
                     {
-                        throw new NotImplementedException(
-                            "Need to add logic to report diagnostic when there is" +
-                            " already a file scoped namespace.");
+                        if (combineNamespaceIdentifierIntoOne.Count % 2 == 1)
+                            combineNamespaceIdentifierIntoOne.Add(nextToken);
+                        else
+                            break;
                     }
-
-                    var boundNamespaceStatementNode = _binder.BindNamespaceStatementNode(
-                        inToken,
-                        (IdentifierToken)nextToken);
-
-                    _nodeRecent = boundNamespaceStatementNode;
+                    else if (nextToken.SyntaxKind == SyntaxKind.IdentifierToken)
+                    {
+                        if (combineNamespaceIdentifierIntoOne.Count % 2 == 0)
+                            combineNamespaceIdentifierIntoOne.Add(nextToken);
+                        else
+                            break;
+                    }
+                    else
+                    {
+                        _tokenWalker.Backtrack();
+                        break;
+                    }
                 }
-                else
-                {
+
+                if (combineNamespaceIdentifierIntoOne.Count == 0)
                     throw new NotImplementedException();
+
+                var identifierTextSpan = combineNamespaceIdentifierIntoOne.First().TextSpan with
+                {
+                    EndingIndexExclusive = combineNamespaceIdentifierIntoOne.Last().TextSpan.EndingIndexExclusive
+                };
+
+                var combinedIdentifierToken = new IdentifierToken(identifierTextSpan);
+
+                if (_finalizeFileScopeAction is not null)
+                {
+                    throw new NotImplementedException(
+                        "Need to add logic to report diagnostic when there is" +
+                        " already a file scoped namespace.");
                 }
+
+                var boundNamespaceStatementNode = _binder.BindNamespaceStatementNode(
+                        inToken,
+                        combinedIdentifierToken);
+
+                _nodeRecent = boundNamespaceStatementNode;
             }
             else if (text == "class")
             {

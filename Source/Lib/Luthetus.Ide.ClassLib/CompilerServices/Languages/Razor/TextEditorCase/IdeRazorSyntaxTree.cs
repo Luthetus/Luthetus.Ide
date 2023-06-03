@@ -33,7 +33,7 @@ public class IdeRazorSyntaxTree
 #if DEBUG
 #endif
 
-    public SemanticModelResultRazor? RecentResult;
+    public SemanticResultRazor? RecentResult;
 
     public void ParseAdhocCSharpClass()
     {
@@ -77,7 +77,7 @@ public class IdeRazorSyntaxTree
 
         var compilationUnit = parser.Parse();
 
-        RecentResult = new SemanticModelResultRazor(
+        RecentResult = new SemanticResultRazor(
             lexer,
             parser,
             compilationUnit,

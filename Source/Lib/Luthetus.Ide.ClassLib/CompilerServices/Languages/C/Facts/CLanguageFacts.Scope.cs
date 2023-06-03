@@ -1,4 +1,5 @@
 ﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase;
+using Luthetus.TextEditor.RazorLib.Lexing;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.C.Facts;
 
@@ -29,6 +30,7 @@ public partial class CLanguageFacts
                 typeof(void),
                 0,
                 null,
+                new ResourceUri(string.Empty),
                 typeMap,
                 new(),
                 new(),

@@ -32,11 +32,14 @@ public class TokenWalker
     {
         var index = _index + offset;
 
-        if (index < 0 ||
-            index >= _tokens.Length)
+        if (index < 0)
+        {
+            return GetBadToken();
+        }
+        else if (index >= _tokens.Length)
         {
             // Return the end of file token (the last token)
-            return GetBadToken();
+            return EOF;
         }
 
         return _tokens[index];

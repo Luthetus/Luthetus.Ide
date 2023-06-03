@@ -1,5 +1,6 @@
 ﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.Symbols;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
+using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.BinderCase;
 using Luthetus.TextEditor.RazorLib.Analysis;
 using Luthetus.TextEditor.RazorLib.Analysis.Html.Decoration;
 using Luthetus.TextEditor.RazorLib.Lexing;
@@ -11,21 +12,27 @@ namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor.TextEditorCase;
 
 public class SemanticModelRazor : ISemanticModel
 {
-    private SemanticModelResultRazor? _recentSemanticModelResult;
+    private readonly Binder _sharedBinder;
 
-    public ImmutableList<(TextEditorDiagnostic diagnostic, TextEditorTextSpan textSpan)> DiagnosticTextSpanTuples { get; private set; } = ImmutableList<(TextEditorDiagnostic diagnostic, TextEditorTextSpan textSpan)>.Empty;
-    public ImmutableList<(string message, TextEditorTextSpan textSpan)> SymbolMessageTextSpanTuples { get; private set; } = ImmutableList<(string message, TextEditorTextSpan textSpan)>.Empty;
+    private SemanticResultRazor? _semanticResult;
+
+    public SemanticModelRazor(Binder sharedBinder)
+    {
+        _sharedBinder = sharedBinder;
+    }
+
+    public ISemanticResult? SemanticResult => _semanticResult;
 
     public TextEditorSymbolDefinition? GoToDefinition(
         TextEditorModel model,
         TextEditorTextSpan textSpan)
     {
-        _ = ParseWithResult(model);
+        var localSemanticResult = ParseWithResult(model);
 
-        if (_recentSemanticModelResult is null)
+        if (localSemanticResult is null)
             return null;
 
-        var boundScope = _recentSemanticModelResult.Parser.Binder.BoundScopes
+        var boundScope = localSemanticResult.Parser.Binder.BoundScopes
             .Where(bs => bs.StartingIndexInclusive <= textSpan.StartingIndexInclusive &&
                          (bs.EndingIndexExclusive ?? int.MaxValue) >= textSpan.EndingIndexExclusive)
             // Get the closest scope
@@ -50,11 +57,11 @@ public class SemanticModelRazor : ISemanticModel
             textSpanText,
             boundScope.BoundScopeKey);
 
-        if (_recentSemanticModelResult.Parser.Binder.SymbolDefinitions.TryGetValue(
+        if (localSemanticResult.Parser.Binder.SymbolDefinitions.TryGetValue(
                 symbolDefinitionId,
                 out var symbolDefinition))
         {
-            var sourceTextSpan = _recentSemanticModelResult.MapAdhocCSharpTextSpanToSource(
+            var sourceTextSpan = localSemanticResult.MapAdhocCSharpTextSpanToSource(
                 model.ResourceUri,
                 model.GetAllText(),
                 symbolDefinition.Symbol.TextSpan);
@@ -76,7 +83,7 @@ public class SemanticModelRazor : ISemanticModel
         _ = ParseWithResult(model);
     }
 
-    public SemanticModelResultRazor? ParseWithResult(
+    public SemanticResultRazor? ParseWithResult(
         TextEditorModel model)
     {
         var modelText = model.GetAllText();
@@ -92,17 +99,17 @@ public class SemanticModelRazor : ISemanticModel
 
         overriteTextEditorRazorLexer.IdeRazorSyntaxTree.ParseAdhocCSharpClass();
 
-        _recentSemanticModelResult = overriteTextEditorRazorLexer
+        var localSemanticResult = overriteTextEditorRazorLexer
             .IdeRazorSyntaxTree
             .RecentResult;
 
-        if (_recentSemanticModelResult is null)
+        if (localSemanticResult is null)
             return null;
 
-        var parserSession = _recentSemanticModelResult
+        var parserSession = localSemanticResult
             .Parser;
 
-        var compilationUnit = _recentSemanticModelResult
+        var compilationUnit = localSemanticResult
             .CompilationUnit;
 
         // Testing
@@ -110,7 +117,7 @@ public class SemanticModelRazor : ISemanticModel
 
         foreach (var adhocSymbol in parserSession.Binder.Symbols)
         {
-            var sourceTextSpan = _recentSemanticModelResult.MapAdhocCSharpTextSpanToSource(
+            var sourceTextSpan = localSemanticResult.MapAdhocCSharpTextSpanToSource(
                 model.ResourceUri,
                 modelText,
                 adhocSymbol.TextSpan);
@@ -152,10 +159,14 @@ public class SemanticModelRazor : ISemanticModel
                 resultingSymbols.Add(symbolToAdd);
         }
 
-        SymbolMessageTextSpanTuples = resultingSymbols
-            .Select(x => ($"({x.GetType().Name}){x.TextSpan.GetText()}", x.TextSpan))
-            .ToImmutableList();
+        localSemanticResult = localSemanticResult with 
+        {
+            SymbolMessageTextSpanTuples = resultingSymbols
+                .Select(x => ($"({x.GetType().Name}){x.TextSpan.GetText()}", x.TextSpan))
+                .ToImmutableList()
+        };
 
-        return null;
+        _semanticResult = localSemanticResult;
+        return localSemanticResult;
     }
 }

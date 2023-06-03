@@ -1,4 +1,5 @@
 ﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.Symbols;
+using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.BinderCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.ParserCase;
 using Luthetus.TextEditor.RazorLib.Analysis;
 using Luthetus.TextEditor.RazorLib.Lexing;
@@ -10,10 +11,16 @@ namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.TextEditorCase
 
 public class SemanticModelCSharp : ISemanticModel
 {
-    private SemanticModelResultCSharp? _recentSemanticModelResult;
+    private readonly Binder _sharedBinder;
 
-    public ImmutableList<(TextEditorDiagnostic diagnostic, TextEditorTextSpan textSpan)> DiagnosticTextSpanTuples { get; private set; } = ImmutableList<(TextEditorDiagnostic diagnostic, TextEditorTextSpan textSpan)>.Empty;
-    public ImmutableList<(string message, TextEditorTextSpan textSpan)> SymbolMessageTextSpanTuples { get; private set; } = ImmutableList<(string message, TextEditorTextSpan textSpan)>.Empty;
+    private SemanticResultCSharp? _semanticResult;
+
+    public SemanticModelCSharp(Binder sharedBinder)
+    {
+        _sharedBinder = sharedBinder;
+    }
+
+    public ISemanticResult? SemanticResult => _semanticResult;
 
     public TextEditorSymbolDefinition? GoToDefinition(
         TextEditorModel model,
@@ -24,7 +31,11 @@ public class SemanticModelCSharp : ISemanticModel
         if (semanticModelResult is null)
             return null;
 
-        var boundScope = semanticModelResult.ParserSession.Binder.BoundScopes
+        var sameFileBoundScopes = semanticModelResult.ParserSession.Binder.BoundScopes
+            .Where(bs => bs.ResourceUri == model.ResourceUri)
+            .ToArray();
+
+        var boundScope = sameFileBoundScopes
             .Where(bs => bs.StartingIndexInclusive <= textSpan.StartingIndexInclusive &&
                          (bs.EndingIndexExclusive ?? int.MaxValue) >= textSpan.EndingIndexExclusive)
             // Get the closest scope
@@ -37,13 +48,33 @@ public class SemanticModelCSharp : ISemanticModel
         var textSpanText = textSpan.GetText();
 
         while (boundScope.Parent is not null &&
-               !boundScope.VariableDeclarationMap.ContainsKey(textSpanText))
+               !boundScope.VariableDeclarationMap.ContainsKey(textSpanText) &&
+               !boundScope.ClassDeclarationMap.ContainsKey(textSpanText) &&
+               !boundScope.FunctionDeclarationMap.ContainsKey(textSpanText) &&
+               !boundScope.TypeMap.ContainsKey(textSpanText))
         {
             boundScope = boundScope.Parent;
         }
 
-        if (!boundScope.VariableDeclarationMap.ContainsKey(textSpanText))
+        if (!boundScope.VariableDeclarationMap.ContainsKey(textSpanText) &&
+            !boundScope.ClassDeclarationMap.ContainsKey(textSpanText) &&
+            !boundScope.FunctionDeclarationMap.ContainsKey(textSpanText) &&
+            !boundScope.TypeMap.ContainsKey(textSpanText))
+        {
             return null;
+        }
+
+        // (2023-06-03) Symbols don't understand scope right? I was using symbols to find goto-definition across files and wasn't getting anywhere. Going to try and use the bound scope which contains the definition directly.
+        {
+            if (boundScope.ClassDeclarationMap.TryGetValue(
+                textSpanText,
+                out var boundClassDeclarationNode))
+            {
+                return new TextEditorSymbolDefinition(
+                    boundClassDeclarationNode.IdentifierToken.TextSpan.ResourceUri,
+                    boundClassDeclarationNode.IdentifierToken.TextSpan.StartingIndexInclusive);
+            }
+        }
 
         var symbolDefinitionId = ISymbol.GetSymbolDefinitionId(
             textSpanText,
@@ -67,7 +98,7 @@ public class SemanticModelCSharp : ISemanticModel
         _ = ParseWithResult(model);
     }
 
-    public SemanticModelResultCSharp? ParseWithResult(
+    public SemanticResultCSharp? ParseWithResult(
         TextEditorModel model)
     {
         var text = model.GetAllText();
@@ -76,8 +107,8 @@ public class SemanticModelCSharp : ISemanticModel
             text,
             model.RenderStateKey);
 
-        var textEditorLexerC = (IdeCSharpLexer)model.Lexer;
-        var recentLexSession = textEditorLexerC.RecentLexSession;
+        var textEditorLexerCSharp = (IdeCSharpLexer)model.Lexer;
+        var recentLexSession = textEditorLexerCSharp.RecentLexSession;
 
         if (recentLexSession is null)
             return null;
@@ -86,39 +117,48 @@ public class SemanticModelCSharp : ISemanticModel
             recentLexSession.SyntaxTokens,
             recentLexSession.Diagnostics);
 
-        var compilationUnit = parserSession.Parse();
+        var compilationUnit = parserSession.Parse(_sharedBinder);
 
-        DiagnosticTextSpanTuples = compilationUnit.Diagnostics.Select(x =>
-        {
-            var textEditorDecorationKind = x.DiagnosticLevel switch
-            {
-                TextEditorDiagnosticLevel.Hint => TextEditorSemanticDecorationKind.DiagnosticHint,
-                TextEditorDiagnosticLevel.Suggestion => TextEditorSemanticDecorationKind.DiagnosticSuggestion,
-                TextEditorDiagnosticLevel.Warning => TextEditorSemanticDecorationKind.DiagnosticWarning,
-                TextEditorDiagnosticLevel.Error => TextEditorSemanticDecorationKind.DiagnosticError,
-                TextEditorDiagnosticLevel.Other => TextEditorSemanticDecorationKind.DiagnosticOther,
-                _ => throw new NotImplementedException(),
-            };
-
-            var textSpan = x.TextEditorTextSpan with
-            {
-                DecorationByte = (byte)textEditorDecorationKind
-            };
-
-            return (x, textSpan);
-        }).ToImmutableList();
-
-        SymbolMessageTextSpanTuples = parserSession.Binder.Symbols
-            .Select(x => ($"({x.GetType().Name}){x.TextSpan.GetText()}", x.TextSpan))
-            .ToImmutableList();
-
-        var semanticModelResult = new SemanticModelResultCSharp(
+        var localSemanticResult = new SemanticResultCSharp(
             text,
             parserSession,
             compilationUnit);
 
-        _recentSemanticModelResult = semanticModelResult;
+        localSemanticResult = localSemanticResult with 
+        {
+            DiagnosticTextSpanTuples = compilationUnit.Diagnostics
+                .Where(x => x.TextEditorTextSpan.ResourceUri == model.ResourceUri)
+                .Select(x =>
+                {
+                    var textEditorDecorationKind = x.DiagnosticLevel switch
+                    {
+                        TextEditorDiagnosticLevel.Hint => TextEditorSemanticDecorationKind.DiagnosticHint,
+                        TextEditorDiagnosticLevel.Suggestion => TextEditorSemanticDecorationKind.DiagnosticSuggestion,
+                        TextEditorDiagnosticLevel.Warning => TextEditorSemanticDecorationKind.DiagnosticWarning,
+                        TextEditorDiagnosticLevel.Error => TextEditorSemanticDecorationKind.DiagnosticError,
+                        TextEditorDiagnosticLevel.Other => TextEditorSemanticDecorationKind.DiagnosticOther,
+                        _ => throw new NotImplementedException(),
+                    };
 
-        return semanticModelResult;
+                    var textSpan = x.TextEditorTextSpan with
+                    {
+                        DecorationByte = (byte)textEditorDecorationKind
+                    };
+
+                    return (x, textSpan);
+                }).ToImmutableList()
+        };
+
+        localSemanticResult = localSemanticResult with 
+        {
+            SymbolMessageTextSpanTuples = parserSession.Binder.Symbols
+                .Where(x => x.TextSpan.ResourceUri == model.ResourceUri)
+                .Select(x => ($"({x.GetType().Name}){x.TextSpan.GetText()}", x.TextSpan))
+                .ToImmutableList()
+        };
+
+        _semanticResult = localSemanticResult;
+
+        return localSemanticResult;
     }
 }
