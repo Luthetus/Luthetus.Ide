@@ -5,7 +5,6 @@ using Luthetus.Ide.ClassLib.Namespaces;
 using Luthetus.Ide.ClassLib.FileSystem.Classes.Local;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.SemanticContextCase.Implementations;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.SemanticContextCase.Keys;
-using System.Collections.Immutable;
 
 namespace Luthetus.Ide.Tests.Basics.CompilerServices.Languages.CSharp.SemanticContextCase;
 
@@ -37,8 +36,7 @@ public partial class SemanticContextTests
 
         var dotNetSolutionSemanticContext = new DotNetSolutionSemanticContext(
             DotNetSolutionKey.NewSolutionKey(),
-            dotNetSolution,
-            ImmutableDictionary<DotNetProjectKey, DotNetProjectSemanticContext>.Empty);
+            dotNetSolution);
 
         Assert.Empty(dotNetSolutionSemanticContext.DotNetProjectContextMap);
     }
@@ -72,8 +70,7 @@ EndProject
 
         var dotNetSolutionSemanticContext = new DotNetSolutionSemanticContext(
             DotNetSolutionKey.NewSolutionKey(),
-            dotNetSolution,
-            ImmutableDictionary<DotNetProjectKey, DotNetProjectSemanticContext>.Empty);
+            dotNetSolution);
 
         Assert.Single(dotNetSolutionSemanticContext.DotNetProjectContextMap);
     }
@@ -111,8 +108,7 @@ EndProject
 
         var dotNetSolutionSemanticContext = new DotNetSolutionSemanticContext(
             DotNetSolutionKey.NewSolutionKey(),
-            dotNetSolution,
-            ImmutableDictionary<DotNetProjectKey, DotNetProjectSemanticContext>.Empty);
+            dotNetSolution);
 
         Assert.Equal(3, dotNetSolutionSemanticContext.DotNetProjectContextMap.Count);
     }

@@ -44,7 +44,9 @@ public static class ExtensionNoPeriodFacts
 
     public static ITextEditorLexer GetLexer(
         ResourceUri resourceUri,
-        string extensionNoPeriod) => extensionNoPeriod switch
+        string extensionNoPeriod)
+    {
+        return extensionNoPeriod switch
         {
             HTML => new TextEditorHtmlLexer(resourceUri),
             XML => new TextEditorHtmlLexer(resourceUri),
@@ -64,9 +66,12 @@ public static class ExtensionNoPeriodFacts
             HPP => new TextEditorCLexer(resourceUri),
             _ => new TextEditorLexerDefault(resourceUri),
         };
+    }
 
     public static IDecorationMapper GetDecorationMapper(
-        string extensionNoPeriod) => extensionNoPeriod switch
+        string extensionNoPeriod)
+    {
+        return extensionNoPeriod switch
         {
             HTML => new TextEditorHtmlDecorationMapper(),
             XML => new TextEditorHtmlDecorationMapper(),
@@ -86,27 +91,30 @@ public static class ExtensionNoPeriodFacts
             HPP => new GenericDecorationMapper(),
             _ => new TextEditorDecorationMapperDefault(),
         };
+    }
 
-    public static ISemanticModel? GetSemanticModel(
-        string extensionNoPeriod,
-        ITextEditorLexer lexer) => extensionNoPeriod switch
+    public static ISemanticModel GetSemanticModel(
+        string extensionNoPeriod)
+    {
+        return extensionNoPeriod switch
         {
-            HTML => null,
-            XML => null,
-            C_SHARP_PROJECT => null,
+            HTML => new SemanticModelDefault(),
+            XML => new SemanticModelDefault(),
+            C_SHARP_PROJECT => new SemanticModelDefault(),
             C_SHARP_CLASS => new SemanticModelCSharp(),
             RAZOR_CODEBEHIND => new SemanticModelCSharp(),
             RAZOR_MARKUP => new SemanticModelRazor(),
             CSHTML_CLASS => new SemanticModelRazor(),
-            CSS => null,
-            JAVA_SCRIPT => null,
-            JSON => null,
-            TYPE_SCRIPT => null,
-            F_SHARP => null,
+            CSS => new SemanticModelDefault(),
+            JAVA_SCRIPT => new SemanticModelDefault(),
+            JSON => new SemanticModelDefault(),
+            TYPE_SCRIPT => new SemanticModelDefault(),
+            F_SHARP => new SemanticModelDefault(),
             C => new SemanticModelC(),
-            H => null,
-            CPP => null,
-            HPP => null,
-            _ => null,
+            H => new SemanticModelDefault(),
+            CPP => new SemanticModelDefault(),
+            HPP => new SemanticModelDefault(),
+            _ => new SemanticModelDefault(),
         };
+    }
 }

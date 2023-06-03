@@ -15,6 +15,8 @@ using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.FileConstants;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.TextEditor.RazorLib.Lexing;
+using Luthetus.TextEditor.RazorLib.Semantics;
+using Luthetus.Ide.ClassLib.Store.SemanticContextCase;
 
 namespace Luthetus.Ide.ClassLib.Store.EditorCase;
 
@@ -28,17 +30,20 @@ public partial class EditorState
         private readonly ILuthetusIdeComponentRenderers _luthetusIdeComponentRenderers;
         private readonly IFileSystemProvider _fileSystemProvider;
         private readonly IBackgroundTaskQueue _backgroundTaskQueue;
+        private readonly IState<SemanticContextState> _semanticContextStateWrap;
 
         public Effector(
             ITextEditorService textEditorService,
             ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
             IFileSystemProvider fileSystemProvider,
-            IBackgroundTaskQueue backgroundTaskQueue)
+            IBackgroundTaskQueue backgroundTaskQueue,
+            IState<SemanticContextState> semanticContextStateWrap)
         {
             _textEditorService = textEditorService;
             _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
             _fileSystemProvider = fileSystemProvider;
             _backgroundTaskQueue = backgroundTaskQueue;
+            _semanticContextStateWrap = semanticContextStateWrap;
         }
 
         [EffectMethod]
@@ -92,8 +97,10 @@ public partial class EditorState
 
             var textEditorModel = await GetOrCreateTextEditorModelAsync(
                 openInEditorAction.AbsoluteFilePath,
-                inputFileAbsoluteFilePathString,
-                dispatcher);
+                inputFileAbsoluteFilePathString);
+
+            if (textEditorModel is null)
+                return;
 
             await CheckIfContentsWereModifiedAsync(
                 dispatcher,
@@ -116,23 +123,22 @@ public partial class EditorState
                 viewModel);
         }
 
-        private async Task<TextEditorModel> GetOrCreateTextEditorModelAsync(
+        private async Task<TextEditorModel?> GetOrCreateTextEditorModelAsync(
             IAbsoluteFilePath absoluteFilePath,
-            string inputFileAbsoluteFilePathString,
-            IDispatcher dispatcher)
+            string absoluteFilePathString)
         {
             var textEditorModel = _textEditorService.Model
-                .FindOrDefaultByResourceUri(new(inputFileAbsoluteFilePathString));
+                .FindOrDefaultByResourceUri(new(absoluteFilePathString));
 
             if (textEditorModel is null)
             {
-                var resourceUri = new ResourceUri(inputFileAbsoluteFilePathString);
+                var resourceUri = new ResourceUri(absoluteFilePathString);
 
                 var fileLastWriteTime = await _fileSystemProvider.File.GetLastWriteTimeAsync(
-                    inputFileAbsoluteFilePathString);
+                    absoluteFilePathString);
 
                 var content = await _fileSystemProvider.File.ReadAllTextAsync(
-                    inputFileAbsoluteFilePathString);
+                    absoluteFilePathString);
 
                 var lexer = ExtensionNoPeriodFacts.GetLexer(
                     resourceUri,
@@ -141,13 +147,12 @@ public partial class EditorState
                 var decorationMapper = ExtensionNoPeriodFacts.GetDecorationMapper(
                     absoluteFilePath.ExtensionNoPeriod);
 
-                // (2023-06-02) I'm trying to store the SemanticModels as state so the files can see eachother's
-                {
-                }
+                var semanticModel = GetOrCreateSemanticModel(
+                    absoluteFilePath,
+                    absoluteFilePathString);
 
-                var semanticModel = ExtensionNoPeriodFacts.GetSemanticModel(
-                    absoluteFilePath.ExtensionNoPeriod,
-                    lexer);
+                if (semanticModel is null)
+                    return null;
 
                 textEditorModel = new TextEditorModel(
                     resourceUri,
@@ -168,6 +173,34 @@ public partial class EditorState
             }
 
             return textEditorModel;
+        }
+
+        private ISemanticModel? GetOrCreateSemanticModel(
+            IAbsoluteFilePath absoluteFilePath,
+            string inputFileAbsoluteFilePathString)
+        {
+            if (_semanticContextStateWrap.Value.DotNetSolutionSemanticContext is null)
+                return null;
+
+            var resourceUri = new ResourceUri(inputFileAbsoluteFilePathString);
+
+            _semanticContextStateWrap.Value.DotNetSolutionSemanticContext.SemanticModelMap
+                .TryGetValue(
+                    resourceUri,
+                    out var semanticModel);
+
+            if (semanticModel is null)
+            {
+                semanticModel = ExtensionNoPeriodFacts.GetSemanticModel(
+                    absoluteFilePath.ExtensionNoPeriod);
+
+                _semanticContextStateWrap.Value.DotNetSolutionSemanticContext.SemanticModelMap
+                    .Add(
+                        resourceUri,
+                        semanticModel);
+            }
+
+            return semanticModel;
         }
 
         private async Task CheckIfContentsWereModifiedAsync(
