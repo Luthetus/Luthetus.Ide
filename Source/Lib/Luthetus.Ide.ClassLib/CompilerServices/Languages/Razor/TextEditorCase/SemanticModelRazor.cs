@@ -13,8 +13,9 @@ public class SemanticModelRazor : ISemanticModel
 {
     private SemanticModelResultRazor? _recentSemanticModelResult;
 
-    public ImmutableList<(TextEditorDiagnostic diagnostic, TextEditorTextSpan textSpan)> DiagnosticTextSpanTuples { get; private set; } = ImmutableList<(TextEditorDiagnostic diagnostic, TextEditorTextSpan textSpan)>.Empty;
-    public ImmutableList<(string message, TextEditorTextSpan textSpan)> SymbolMessageTextSpanTuples { get; private set; } = ImmutableList<(string message, TextEditorTextSpan textSpan)>.Empty;
+    private SemanticResult _semanticResult = new();
+
+    public ISemanticResult? SemanticResult => _semanticResult;
 
     public TextEditorSymbolDefinition? GoToDefinition(
         TextEditorModel model,
@@ -152,9 +153,12 @@ public class SemanticModelRazor : ISemanticModel
                 resultingSymbols.Add(symbolToAdd);
         }
 
-        SymbolMessageTextSpanTuples = resultingSymbols
-            .Select(x => ($"({x.GetType().Name}){x.TextSpan.GetText()}", x.TextSpan))
-            .ToImmutableList();
+        _semanticResult = _semanticResult with 
+        {
+            SymbolMessageTextSpanTuples = resultingSymbols
+                .Select(x => ($"({x.GetType().Name}){x.TextSpan.GetText()}", x.TextSpan))
+                .ToImmutableList()
+        };
 
         return null;
     }

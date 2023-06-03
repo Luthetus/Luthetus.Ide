@@ -11,9 +11,9 @@ namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.TextEditorCase
 public class SemanticModelCSharp : ISemanticModel
 {
     private SemanticModelResultCSharp? _recentSemanticModelResult;
+    private SemanticResult _semanticResult = new();
 
-    public ImmutableList<(TextEditorDiagnostic diagnostic, TextEditorTextSpan textSpan)> DiagnosticTextSpanTuples { get; private set; } = ImmutableList<(TextEditorDiagnostic diagnostic, TextEditorTextSpan textSpan)>.Empty;
-    public ImmutableList<(string message, TextEditorTextSpan textSpan)> SymbolMessageTextSpanTuples { get; private set; } = ImmutableList<(string message, TextEditorTextSpan textSpan)>.Empty;
+    public ISemanticResult? SemanticResult => _semanticResult;
 
     public TextEditorSymbolDefinition? GoToDefinition(
         TextEditorModel model,
@@ -88,29 +88,35 @@ public class SemanticModelCSharp : ISemanticModel
 
         var compilationUnit = parserSession.Parse();
 
-        DiagnosticTextSpanTuples = compilationUnit.Diagnostics.Select(x =>
+        _semanticResult = _semanticResult with 
         {
-            var textEditorDecorationKind = x.DiagnosticLevel switch
+            DiagnosticTextSpanTuples = compilationUnit.Diagnostics.Select(x =>
             {
-                TextEditorDiagnosticLevel.Hint => TextEditorSemanticDecorationKind.DiagnosticHint,
-                TextEditorDiagnosticLevel.Suggestion => TextEditorSemanticDecorationKind.DiagnosticSuggestion,
-                TextEditorDiagnosticLevel.Warning => TextEditorSemanticDecorationKind.DiagnosticWarning,
-                TextEditorDiagnosticLevel.Error => TextEditorSemanticDecorationKind.DiagnosticError,
-                TextEditorDiagnosticLevel.Other => TextEditorSemanticDecorationKind.DiagnosticOther,
-                _ => throw new NotImplementedException(),
-            };
+                var textEditorDecorationKind = x.DiagnosticLevel switch
+                {
+                    TextEditorDiagnosticLevel.Hint => TextEditorSemanticDecorationKind.DiagnosticHint,
+                    TextEditorDiagnosticLevel.Suggestion => TextEditorSemanticDecorationKind.DiagnosticSuggestion,
+                    TextEditorDiagnosticLevel.Warning => TextEditorSemanticDecorationKind.DiagnosticWarning,
+                    TextEditorDiagnosticLevel.Error => TextEditorSemanticDecorationKind.DiagnosticError,
+                    TextEditorDiagnosticLevel.Other => TextEditorSemanticDecorationKind.DiagnosticOther,
+                    _ => throw new NotImplementedException(),
+                };
 
-            var textSpan = x.TextEditorTextSpan with
-            {
-                DecorationByte = (byte)textEditorDecorationKind
-            };
+                var textSpan = x.TextEditorTextSpan with
+                {
+                    DecorationByte = (byte)textEditorDecorationKind
+                };
 
-            return (x, textSpan);
-        }).ToImmutableList();
+                return (x, textSpan);
+            }).ToImmutableList()
+        };
 
-        SymbolMessageTextSpanTuples = parserSession.Binder.Symbols
-            .Select(x => ($"({x.GetType().Name}){x.TextSpan.GetText()}", x.TextSpan))
-            .ToImmutableList();
+        _semanticResult = _semanticResult with 
+        {
+            SymbolMessageTextSpanTuples = parserSession.Binder.Symbols
+                .Select(x => ($"({x.GetType().Name}){x.TextSpan.GetText()}", x.TextSpan))
+                .ToImmutableList()
+        };
 
         var semanticModelResult = new SemanticModelResultCSharp(
             text,
