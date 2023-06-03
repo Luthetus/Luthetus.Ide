@@ -12,7 +12,14 @@ namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor.TextEditorCase;
 
 public class SemanticModelRazor : ISemanticModel
 {
+    private readonly Binder _sharedBinder;
+
     private SemanticResultRazor? _semanticResult;
+
+    public SemanticModelRazor(Binder sharedBinder)
+    {
+        _sharedBinder = sharedBinder;
+    }
 
     public ISemanticResult? SemanticResult => _semanticResult;
 

@@ -11,7 +11,14 @@ namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.TextEditorCase
 
 public class SemanticModelCSharp : ISemanticModel
 {
+    private readonly Binder _sharedBinder;
+
     private SemanticResultCSharp? _semanticResult;
+
+    public SemanticModelCSharp(Binder sharedBinder)
+    {
+        _sharedBinder = sharedBinder;
+    }
 
     public ISemanticResult? SemanticResult => _semanticResult;
 
@@ -86,7 +93,7 @@ public class SemanticModelCSharp : ISemanticModel
             recentLexSession.SyntaxTokens,
             recentLexSession.Diagnostics);
 
-        var compilationUnit = parserSession.Parse();
+        var compilationUnit = parserSession.Parse(_sharedBinder);
 
         var localSemanticResult = new SemanticResultCSharp(
             text,
@@ -95,30 +102,33 @@ public class SemanticModelCSharp : ISemanticModel
 
         localSemanticResult = localSemanticResult with 
         {
-            DiagnosticTextSpanTuples = compilationUnit.Diagnostics.Select(x =>
-            {
-                var textEditorDecorationKind = x.DiagnosticLevel switch
+            DiagnosticTextSpanTuples = compilationUnit.Diagnostics
+                .Where(x => x.TextEditorTextSpan.ResourceUri == model.ResourceUri)
+                .Select(x =>
                 {
-                    TextEditorDiagnosticLevel.Hint => TextEditorSemanticDecorationKind.DiagnosticHint,
-                    TextEditorDiagnosticLevel.Suggestion => TextEditorSemanticDecorationKind.DiagnosticSuggestion,
-                    TextEditorDiagnosticLevel.Warning => TextEditorSemanticDecorationKind.DiagnosticWarning,
-                    TextEditorDiagnosticLevel.Error => TextEditorSemanticDecorationKind.DiagnosticError,
-                    TextEditorDiagnosticLevel.Other => TextEditorSemanticDecorationKind.DiagnosticOther,
-                    _ => throw new NotImplementedException(),
-                };
+                    var textEditorDecorationKind = x.DiagnosticLevel switch
+                    {
+                        TextEditorDiagnosticLevel.Hint => TextEditorSemanticDecorationKind.DiagnosticHint,
+                        TextEditorDiagnosticLevel.Suggestion => TextEditorSemanticDecorationKind.DiagnosticSuggestion,
+                        TextEditorDiagnosticLevel.Warning => TextEditorSemanticDecorationKind.DiagnosticWarning,
+                        TextEditorDiagnosticLevel.Error => TextEditorSemanticDecorationKind.DiagnosticError,
+                        TextEditorDiagnosticLevel.Other => TextEditorSemanticDecorationKind.DiagnosticOther,
+                        _ => throw new NotImplementedException(),
+                    };
 
-                var textSpan = x.TextEditorTextSpan with
-                {
-                    DecorationByte = (byte)textEditorDecorationKind
-                };
+                    var textSpan = x.TextEditorTextSpan with
+                    {
+                        DecorationByte = (byte)textEditorDecorationKind
+                    };
 
-                return (x, textSpan);
-            }).ToImmutableList()
+                    return (x, textSpan);
+                }).ToImmutableList()
         };
 
         localSemanticResult = localSemanticResult with 
         {
             SymbolMessageTextSpanTuples = parserSession.Binder.Symbols
+                .Where(x => x.TextSpan.ResourceUri == model.ResourceUri)
                 .Select(x => ($"({x.GetType().Name}){x.TextSpan.GetText()}", x.TextSpan))
                 .ToImmutableList()
         };

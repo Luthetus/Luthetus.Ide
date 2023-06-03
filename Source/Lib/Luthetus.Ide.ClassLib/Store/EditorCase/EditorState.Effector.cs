@@ -32,6 +32,7 @@ public partial class EditorState
         private readonly IFileSystemProvider _fileSystemProvider;
         private readonly IBackgroundTaskQueue _backgroundTaskQueue;
         private readonly IState<SemanticContextState> _semanticContextStateWrap;
+        private readonly Binder _sharedBinder = new();
 
         public Effector(
             ITextEditorService textEditorService,
@@ -193,7 +194,8 @@ public partial class EditorState
             if (semanticModel is null)
             {
                 semanticModel = ExtensionNoPeriodFacts.GetSemanticModel(
-                    absoluteFilePath.ExtensionNoPeriod);
+                    absoluteFilePath.ExtensionNoPeriod,
+                    _sharedBinder);
 
                 _semanticContextStateWrap.Value.DotNetSolutionSemanticContext.SemanticModelMap
                     .Add(

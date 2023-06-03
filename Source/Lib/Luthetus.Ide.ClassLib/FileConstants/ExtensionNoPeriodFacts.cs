@@ -95,17 +95,18 @@ public static class ExtensionNoPeriodFacts
     }
 
     public static ISemanticModel GetSemanticModel(
-        string extensionNoPeriod)
+        string extensionNoPeriod, 
+        Binder _sharedBinder)
     {
         return extensionNoPeriod switch
         {
             HTML => new SemanticModelDefault(),
             XML => new SemanticModelDefault(),
             C_SHARP_PROJECT => new SemanticModelDefault(),
-            C_SHARP_CLASS => new SemanticModelCSharp(),
-            RAZOR_CODEBEHIND => new SemanticModelCSharp(),
-            RAZOR_MARKUP => new SemanticModelRazor(),
-            CSHTML_CLASS => new SemanticModelRazor(),
+            C_SHARP_CLASS => new SemanticModelCSharp(_sharedBinder),
+            RAZOR_CODEBEHIND => new SemanticModelCSharp(_sharedBinder),
+            RAZOR_MARKUP => new SemanticModelRazor(_sharedBinder),
+            CSHTML_CLASS => new SemanticModelRazor(_sharedBinder),
             CSS => new SemanticModelDefault(),
             JAVA_SCRIPT => new SemanticModelDefault(),
             JSON => new SemanticModelDefault(),
