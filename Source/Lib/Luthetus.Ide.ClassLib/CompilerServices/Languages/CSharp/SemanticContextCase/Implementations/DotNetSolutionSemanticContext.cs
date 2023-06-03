@@ -35,8 +35,8 @@ public sealed record DotNetSolutionSemanticContext : ISemanticContext
     public DotNetSolution DotNetSolution { get; init; }
     public ImmutableDictionary<DotNetProjectKey, DotNetProjectSemanticContext> DotNetProjectContextMap { get; init; } = ImmutableDictionary<DotNetProjectKey, DotNetProjectSemanticContext>.Empty;
 
-    /// <summary>TODO: Should the <see cref="SemanticModelMap"/> be concurrency safe?</summary>
-    public ImmutableDictionary<ResourceUri, ISemanticModel> SemanticModelMap { get; init; } = ImmutableDictionary<ResourceUri, ISemanticModel>.Empty;
+    /// <summary>TODO: Should the <see cref="SemanticModelMap"/> be concurrency safe and immutable?</summary>
+    public Dictionary<ResourceUri, ISemanticModel> SemanticModelMap { get; init; } = new();
 }
 
 
