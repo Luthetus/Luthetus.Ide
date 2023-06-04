@@ -604,43 +604,43 @@ public class Parser
             // 'function invocation' OR 'variable assignment' OR 'variable reference' OR 'namespace declaration' OR  'namespace identifier' OR 'static class identifier'
 
             // TODO: Move this logic that determines if generic function logic
-            //{
-            //    if (consumedToken.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
-            //    {
-            //        int peekIndex = 0;
-
-            //        // Alternate between reading an identifier (true) and a comma (false)
-            //        bool typeComparisonSwitch = true;
-
-            //        while (true)
-            //        {
-            //            var peekedToken = _tokenWalker.Peek(peekIndex++);
-
-            //            if (typeComparisonSwitch)
-            //            {
-            //                if (peekedToken.SyntaxKind == SyntaxKind.IdentifierToken)
-            //                {
-
-            //                }
-            //            }
-            //            else
-            //            {
-            //                if (peekedToken.SyntaxKind == SyntaxKind.CommaToken)
-            //                {
-
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
-
-            if (consumedToken.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
             {
-                
+                // int peekIndex = 0;
+                // 
+                // // Alternate between reading an identifier (true) and a comma (false)
+                // bool typeComparisonSwitch = true;
+                // 
+                // while (true)
+                // {
+                //     var peekedToken = _tokenWalker.Peek(peekIndex++);
+                // 
+                //     if (peekedToken.SyntaxKind == SyntaxKind.EndOfFileToken ||
+                //         peekedToken.SyntaxKind == SyntaxKind.BadToken)
+                //     {
+                //         break;
+                //     }
+                // 
+                //     bool tokenWasValidArgument = typeComparisonSwitch
+                //         ? peekedToken.SyntaxKind == SyntaxKind.IdentifierToken
+                //         : peekedToken.SyntaxKind == SyntaxKind.CommaToken;
+                // 
+                //     if (!tokenWasValidArgument)
+                //     {
+                //         if (peekedToken.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
+                //         {
+                // 
+                //         }
+                //     }
+                // }
             }
-            else if (consumedToken.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+
+            if (consumedToken.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
+                consumedToken.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
             {
                 // 'function invocation'
+                
+                // TODO: (2023-06-04) I believe this if block will run for '<' mathematical operator.
+
                 var boundFunctionInvocationNode = _binder.BindFunctionInvocationNode(
                     identifierToken);
 
@@ -648,6 +648,11 @@ public class Parser
                     throw new ApplicationException($"{nameof(boundFunctionInvocationNode)} was null.");
 
                 _currentCompilationUnitBuilder.Children.Add(boundFunctionInvocationNode);
+
+                if (consumedToken.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
+                {
+                    ParseGenericArguments((OpenAngleBracketToken)consumedToken);
+                }
 
                 ParseFunctionArguments();
             }
@@ -936,7 +941,8 @@ public class Parser
     private void ParseCloseAngleBracketToken(
         CloseAngleBracketToken closeAngleBracketToken)
     {
-        throw new NotImplementedException();
+        // if one: throw new NotImplementedException();
+        // then: lambdas will no longer work. So I'm keeping this method empty.
     }
 
     private void ParseOpenSquareBracketToken(
