@@ -534,6 +534,22 @@ public class Binder
             openSquareBracketToken,
             closeSquareBracketToken);
     }
+    
+    /// <summary>TODO: Correctly implement this method. For now going to skip until the attribute closing angle bracket.</summary>
+    public BoundGenericArgumentNode BindGenericArgument(
+        OpenAngleBracketToken openAngleBracketToken,
+        CloseAngleBracketToken closeAngleBracketToken)
+    {
+        AddSymbolReference(new TypeSymbol(openAngleBracketToken.TextSpan with
+        {
+            DecorationByte = (byte)GenericDecorationKind.Type,
+            EndingIndexExclusive = closeAngleBracketToken.TextSpan.EndingIndexExclusive
+        }));
+
+        return new BoundGenericArgumentNode(
+            openAngleBracketToken,
+            closeAngleBracketToken);
+    }
 
     public void RegisterBoundScope(
         Type? scopeReturnType,

@@ -182,7 +182,7 @@ public partial class ParserTests
         string classIdentifier = "Box";
         string genericArgumentIdentifier = "T";
 
-        string sourceText = @$"public class {classIdentifier}<{genericArgumentIdentifier}> : ComponentBase
+        string sourceText = @$"public class {classIdentifier}<{genericArgumentIdentifier}>
 {{
 }}".ReplaceLineEndings("\n");
 
