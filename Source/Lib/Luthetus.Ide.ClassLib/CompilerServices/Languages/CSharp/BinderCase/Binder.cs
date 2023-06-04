@@ -410,7 +410,7 @@ public class Binder
         return boundVariableDeclarationStatementNode;
     }
 
-    public BoundIdentifierReferenceNode? BindIdentifierReferenceNode(
+    public BoundIdentifierReferenceNode BindIdentifierReferenceNode(
         IdentifierToken identifierToken)
     {
         var text = identifierToken.TextSpan.GetText();
@@ -462,7 +462,12 @@ public class Binder
         else
         {
             // TODO: The identifier was not found, so report a diagnostic?
-            return null;
+            return new BoundIdentifierReferenceNode(
+                identifierToken,
+                typeof(void))
+            {
+                IsFabricated = true
+            };
         }
     }
 
@@ -512,6 +517,22 @@ public class Binder
         return new BoundUsingDeclarationNode(
             usingKeywordToken,
             namespaceIdentifierToken);
+    }
+
+    /// <summary>TODO: Correctly implement this method. For now going to skip until the attribute closing square bracket.</summary>
+    public BoundAttributeNode BindAttributeNode(
+        OpenSquareBracketToken openSquareBracketToken,
+        CloseSquareBracketToken closeSquareBracketToken)
+    {
+        AddSymbolReference(new TypeSymbol(openSquareBracketToken.TextSpan with
+        {
+            DecorationByte = (byte)GenericDecorationKind.Type,
+            EndingIndexExclusive = closeSquareBracketToken.TextSpan.EndingIndexExclusive
+        }));
+
+        return new BoundAttributeNode(
+            openSquareBracketToken,
+            closeSquareBracketToken);
     }
 
     public void RegisterBoundScope(

@@ -7,21 +7,21 @@ using Microsoft.AspNetCore.Components;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.SyntaxTokens;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.NamespaceCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
-using Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.ISyntaxCase;
+using Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.SyntaxTokenTextCase;
 
-namespace Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.BoundClassDeclarationNodeCase;
+namespace Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.ISyntaxCase;
 
-public class TreeViewBoundClassDeclarationNode : TreeViewWithType<BoundClassDeclarationNode>
+public class TreeViewISyntax : TreeViewWithType<ISyntax>
 {
-    public TreeViewBoundClassDeclarationNode(
-        BoundClassDeclarationNode boundClassDeclarationNode,
+    public TreeViewISyntax(
+        ISyntax syntax,
         ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
         bool isExpandable,
         bool isExpanded)
             : base(
-                boundClassDeclarationNode,
+                syntax,
                 isExpandable,
                 isExpanded)
     {
@@ -49,11 +49,11 @@ public class TreeViewBoundClassDeclarationNode : TreeViewWithType<BoundClassDecl
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            typeof(TreeViewBoundClassDeclarationNodeDisplay),
+            typeof(TreeViewISyntaxDisplay),
             new Dictionary<string, object?>
             {
                 {
-                    nameof(TreeViewBoundClassDeclarationNodeDisplay.BoundClassDeclarationNode),
+                    nameof(TreeViewISyntaxDisplay.Syntax),
                     Item
                 },
             });
@@ -68,14 +68,27 @@ public class TreeViewBoundClassDeclarationNode : TreeViewWithType<BoundClassDecl
         {
             var newChildren = new List<TreeViewNoType>();
 
-            newChildren.AddRange(Item.Children
-                .Select(x => new TreeViewISyntax(
-                    x,
+            if (Item is ISyntaxNode syntaxNode)
+            {
+                newChildren.AddRange(syntaxNode.Children
+                    .Select(x => new TreeViewISyntax(
+                        x,
+                        LuthetusIdeComponentRenderers,
+                        FileSystemProvider,
+                        EnvironmentProvider,
+                        true,
+                        false)));
+            }
+            else if (Item is ISyntaxToken syntaxToken)
+            {
+                newChildren.Add(new TreeViewSyntaxTokenText(
+                    syntaxToken,
                     LuthetusIdeComponentRenderers,
                     FileSystemProvider,
                     EnvironmentProvider,
-                    true,
-                    false)));
+                    false,
+                    false));
+            }
 
             var oldChildrenMap = Children
                 .ToDictionary(child => child);
@@ -120,6 +133,11 @@ public class TreeViewBoundClassDeclarationNode : TreeViewWithType<BoundClassDecl
         }
 
         TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
+    }
+
+    private string FormatIdentifierToBeMarkupString(IdentifierToken identifierToken)
+    {
+        return $"<span class=\"luth_te_type\">{identifierToken.TextSpan.GetText()}</span>";
     }
 
     public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)

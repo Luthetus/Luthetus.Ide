@@ -263,4 +263,32 @@ public partial class ParserTests
         Assert.Empty(
             boundClassDeclarationNode.ClassBodyCompilationUnit.Children);
     }
+    
+    [Fact]
+    public void SHOULD_PARSE_PROPERTY_ATTRIBUTE()
+    {
+        var attributeIdentifier = "Parameter";
+
+        string sourceText = @$"public partial class PersonDisplay : ComponentBase
+{{
+	[{attributeIdentifier}]
+	public IPersonModel PersonModel {{ get; set; }}
+}}".ReplaceLineEndings("\n");
+
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
+
+        lexer.Lex();
+
+        var parser = new Parser(
+            lexer.SyntaxTokens,
+            lexer.Diagnostics);
+
+        var compilationUnit = parser.Parse();
+
+        throw new ApplicationException("Need to add Assertions");
+    }
 }

@@ -2,15 +2,14 @@
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.SyntaxTokens;
 
-public sealed record CloseAngleBracketToken : ISyntaxToken
+public sealed record CloseSquareBracketToken : ISyntaxToken
 {
-    public CloseAngleBracketToken(
+    public CloseSquareBracketToken(
         TextEditorTextSpan textEditorTextSpan)
     {
         TextSpan = textEditorTextSpan;
     }
 
     public TextEditorTextSpan TextSpan { get; }
-    public SyntaxKind SyntaxKind => SyntaxKind.CloseAngleBracketToken;
+    public SyntaxKind SyntaxKind => SyntaxKind.CloseSquareBracketToken;
 }
-
