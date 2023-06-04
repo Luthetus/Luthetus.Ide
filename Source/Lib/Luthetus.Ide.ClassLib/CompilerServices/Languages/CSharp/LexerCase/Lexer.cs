@@ -203,6 +203,14 @@ public class Lexer
                     var closeAngleBracketToken = LexCloseAngleBracketToken();
                     _syntaxTokens.Add(closeAngleBracketToken);
                     break;
+                case '[':
+                    var openSquareBracketToken = LexOpenSquareBracketToken();
+                    _syntaxTokens.Add(openSquareBracketToken);
+                    break;
+                case ']':
+                    var closeSquareBracketToken = LexCloseSquareBracketToken();
+                    _syntaxTokens.Add(closeSquareBracketToken);
+                    break;
                 case '$':
                     var dollarSignToken = LexDollarSignToken();
                     _syntaxTokens.Add(dollarSignToken);
@@ -702,6 +710,38 @@ public class Lexer
             _stringWalker.SourceText);
 
         return new CloseAngleBracketToken(textSpan);
+    }
+    
+    private OpenSquareBracketToken LexOpenSquareBracketToken()
+    {
+        var entryPositionIndex = _stringWalker.PositionIndex;
+
+        _stringWalker.ReadCharacter();
+
+        var textSpan = new TextEditorTextSpan(
+            entryPositionIndex,
+            _stringWalker.PositionIndex,
+            (byte)GenericDecorationKind.None,
+            _stringWalker.ResourceUri,
+            _stringWalker.SourceText);
+
+        return new OpenSquareBracketToken(textSpan);
+    }
+    
+    private CloseSquareBracketToken LexCloseSquareBracketToken()
+    {
+        var entryPositionIndex = _stringWalker.PositionIndex;
+
+        _stringWalker.ReadCharacter();
+
+        var textSpan = new TextEditorTextSpan(
+            entryPositionIndex,
+            _stringWalker.PositionIndex,
+            (byte)GenericDecorationKind.None,
+            _stringWalker.ResourceUri,
+            _stringWalker.SourceText);
+
+        return new CloseSquareBracketToken(textSpan);
     }
     
     private DollarSignToken LexDollarSignToken()

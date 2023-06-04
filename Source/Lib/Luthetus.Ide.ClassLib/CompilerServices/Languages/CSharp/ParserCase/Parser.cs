@@ -98,6 +98,12 @@ public class Parser
                     break;
                 case SyntaxKind.CloseAngleBracketToken:
                     break;
+                case SyntaxKind.OpenSquareBracketToken:
+                    ParseOpenSquareBracketToken((OpenSquareBracketToken)consumedToken);
+                    break;
+                case SyntaxKind.CloseSquareBracketToken:
+                    ParseCloseSquareBracketToken((CloseSquareBracketToken)consumedToken);
+                    break;
                 case SyntaxKind.DollarSignToken:
                     ParseDollarSignToken((DollarSignToken)consumedToken);
                     break;
@@ -252,42 +258,7 @@ public class Parser
             }
             else if (text == "namespace")
             {
-                var combineNamespaceIdentifierIntoOne = new List<ISyntaxToken>();
-
-                while (!_tokenWalker.IsEof)
-                {
-                    var nextToken = _tokenWalker.Consume();
-
-                    if (nextToken.SyntaxKind == SyntaxKind.MemberAccessToken)
-                    {
-                        if (combineNamespaceIdentifierIntoOne.Count % 2 == 1)
-                            combineNamespaceIdentifierIntoOne.Add(nextToken);
-                        else
-                            break;
-                    }
-                    else if (nextToken.SyntaxKind == SyntaxKind.IdentifierToken)
-                    {
-                        if (combineNamespaceIdentifierIntoOne.Count % 2 == 0)
-                            combineNamespaceIdentifierIntoOne.Add(nextToken);
-                        else
-                            break;
-                    }
-                    else
-                    {
-                        _tokenWalker.Backtrack();
-                        break;
-                    }
-                }
-
-                if (combineNamespaceIdentifierIntoOne.Count == 0)
-                    throw new NotImplementedException();
-
-                var identifierTextSpan = combineNamespaceIdentifierIntoOne.First().TextSpan with
-                {
-                    EndingIndexExclusive = combineNamespaceIdentifierIntoOne.Last().TextSpan.EndingIndexExclusive
-                };
-
-                var combinedIdentifierToken = new IdentifierToken(identifierTextSpan);
+                var namespaceIdentifier = ParseNamespaceIdentifier();
 
                 if (_finalizeFileScopeAction is not null)
                 {
@@ -298,7 +269,7 @@ public class Parser
 
                 var boundNamespaceStatementNode = _binder.BindNamespaceStatementNode(
                         inToken,
-                        combinedIdentifierToken);
+                        namespaceIdentifier);
 
                 _nodeRecent = boundNamespaceStatementNode;
             }
@@ -320,22 +291,15 @@ public class Parser
             }
             else if (text == "using")
             {
-                var nextToken = _tokenWalker.Consume();
+                var namespaceIdentifier = ParseNamespaceIdentifier();
 
-                if (nextToken.SyntaxKind == SyntaxKind.IdentifierToken)
-                {
-                    var boundUsingDeclarationNode = _binder.BindUsingDeclarationNode(
+                var boundUsingDeclarationNode = _binder.BindUsingDeclarationNode(
                         inToken,
-                        (IdentifierToken)nextToken);
+                        namespaceIdentifier);
 
-                    _currentCompilationUnitBuilder.Children.Add(boundUsingDeclarationNode);
+                _currentCompilationUnitBuilder.Children.Add(boundUsingDeclarationNode);
 
-                    _nodeRecent = boundUsingDeclarationNode;
-                }
-                else
-                {
-                    throw new NotImplementedException();
-                }
+                _nodeRecent = boundUsingDeclarationNode;
             }
             else if (text == "public" ||
                      text == "internal" ||
@@ -400,6 +364,46 @@ public class Parser
         }
     }
     
+    private IdentifierToken ParseNamespaceIdentifier()
+    {
+        var combineNamespaceIdentifierIntoOne = new List<ISyntaxToken>();
+
+        while (!_tokenWalker.IsEof)
+        {
+            var nextToken = _tokenWalker.Consume();
+
+            if (nextToken.SyntaxKind == SyntaxKind.MemberAccessToken)
+            {
+                if (combineNamespaceIdentifierIntoOne.Count % 2 == 1)
+                    combineNamespaceIdentifierIntoOne.Add(nextToken);
+                else
+                    break;
+            }
+            else if (nextToken.SyntaxKind == SyntaxKind.IdentifierToken)
+            {
+                if (combineNamespaceIdentifierIntoOne.Count % 2 == 0)
+                    combineNamespaceIdentifierIntoOne.Add(nextToken);
+                else
+                    break;
+            }
+            else
+            {
+                _tokenWalker.Backtrack();
+                break;
+            }
+        }
+
+        if (combineNamespaceIdentifierIntoOne.Count == 0)
+            throw new NotImplementedException();
+
+        var identifierTextSpan = combineNamespaceIdentifierIntoOne.First().TextSpan with
+        {
+            EndingIndexExclusive = combineNamespaceIdentifierIntoOne.Last().TextSpan.EndingIndexExclusive
+        };
+
+        return new IdentifierToken(identifierTextSpan);
+    }
+
     private void ParseKeywordContextualToken(
         KeywordContextualToken inToken)
     {
@@ -864,6 +868,55 @@ public class Parser
 
             _currentCompilationUnitBuilder = _currentCompilationUnitBuilder.Parent;
         }
+    }
+
+    private void ParseOpenSquareBracketToken(
+        OpenSquareBracketToken inToken)
+    {
+        if (_nodeRecent is not null)
+        { 
+            if (_nodeRecent.SyntaxKind == SyntaxKind.LiteralExpressionNode ||
+                _nodeRecent.SyntaxKind == SyntaxKind.BoundLiteralExpressionNode ||
+                _nodeRecent.SyntaxKind == SyntaxKind.BoundBinaryExpressionNode ||
+                /* Prefer the enum comparison. Will short circuit. This "is" cast is for fallback in case someone in the future adds for expression syntax kinds but does not update this if statement TODO: Check if node ends with "ExpressionNode"? */
+                _nodeRecent is IBoundExpressionNode)
+            {
+                // Mathematical square bracket
+                throw new NotImplementedException();
+            }
+            else
+            {
+                // Attribute
+                _ = ParseAttribute(inToken);
+            }
+        }
+    }
+
+    private void ParseCloseSquareBracketToken(
+        CloseSquareBracketToken inToken)
+    {
+        var z = 2;
+    }
+    
+    /// <summary>TODO: Correctly implement this method. For now going to skip until the attribute closing square bracket.</summary>
+    private BoundAttributeNode ParseAttribute(OpenSquareBracketToken inToken)
+    {
+        ISyntaxToken tokenCurrent;
+
+        while (true)
+        {
+            tokenCurrent = _tokenWalker.Consume();
+
+            if (tokenCurrent.SyntaxKind == SyntaxKind.EndOfFileToken ||
+                tokenCurrent.SyntaxKind == SyntaxKind.CloseSquareBracketToken)
+            {
+                break;
+            }
+        }
+
+        return _binder.BindAttributeNode(
+            inToken,
+            (CloseSquareBracketToken)tokenCurrent);
     }
 
     private void ParseStatementDelimiterToken(

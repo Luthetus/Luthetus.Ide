@@ -1,4 +1,5 @@
-﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.Symbols;
+﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.General;
+using Luthetus.Ide.ClassLib.CompilerServices.Common.Symbols;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.BinderCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.ParserCase;
 using Luthetus.TextEditor.RazorLib.Analysis;
@@ -117,7 +118,10 @@ public class SemanticModelCSharp : ISemanticModel
             recentLexSession.SyntaxTokens,
             recentLexSession.Diagnostics);
 
-        var compilationUnit = parserSession.Parse(_sharedBinder);
+        CompilationUnit compilationUnit;
+
+        compilationUnit = parserSession.Parse(_sharedBinder);
+
 
         var localSemanticResult = new SemanticResultCSharp(
             text,

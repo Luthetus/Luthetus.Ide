@@ -376,6 +376,37 @@ namespace Pages
     }
 
     [Fact]
+    public void SHOULD_PARSE_USING_STATEMENT_CONTAINING_MEMBER_ACCESS_TOKEN()
+    {
+        var namespaceIdentifier = "Microsoft.AspNetCore.Components";
+
+        var sourceFile = new TestResource(
+            "PersonModel.cs",
+            @$"using {namespaceIdentifier};".ReplaceLineEndings("\n"));
+
+        var sourceResourceUri = new ResourceUri("PersonPage.razor.cs");
+
+        var lexer = new Lexer(
+            sourceResourceUri,
+            sourceFile.Content);
+
+        lexer.Lex();
+
+        var parser = new Parser(
+            lexer.SyntaxTokens,
+            lexer.Diagnostics);
+
+        var compilationUnit = parser.Parse();
+
+        var boundUsingDeclarationNode =
+            (BoundUsingDeclarationNode)compilationUnit.Children.Single();
+
+        Assert.Equal(
+            namespaceIdentifier,
+            boundUsingDeclarationNode.NamespaceIdentifier.TextSpan.GetText());
+    }
+
+    [Fact]
     public void SHOULD_PARSE_TOP_LEVEL_STATEMENTS()
     {
         throw new NotImplementedException("(2023-05-30) I am not sure how I want to test this yet.");

@@ -32,6 +32,8 @@ public enum SyntaxKind
     CloseBraceToken,
     OpenAngleBracketToken,
     CloseAngleBracketToken,
+    OpenSquareBracketToken,
+    CloseSquareBracketToken,
     DollarSignToken,
     ColonToken,
     MemberAccessToken,
@@ -57,6 +59,7 @@ public enum SyntaxKind
     BoundInheritanceStatementNode,
     BoundUsingDeclarationNode,
     BoundIdentifierReferenceNode,
+    BoundAttributeNode,
 
     // Symbols
     TypeSymbol,

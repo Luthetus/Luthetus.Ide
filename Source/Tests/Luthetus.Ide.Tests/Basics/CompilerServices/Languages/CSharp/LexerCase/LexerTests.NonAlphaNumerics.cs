@@ -335,4 +335,48 @@ public partial class LexerTests
         var text = dollarSignToken.TextSpan.GetText();
         Assert.Equal(dollarSignTokenAsString, text);
     }
+    
+    [Fact]
+    public void SHOULD_LEX_OPEN_SQUARE_BRACKET_TOKEN()
+    {
+        var openSquareBracketTokenAsString = "[";
+        var sourceText = $"{openSquareBracketTokenAsString}".ReplaceLineEndings("\n");
+
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
+
+        lexer.Lex();
+
+        var openSquareBracketToken = lexer.SyntaxTokens.First();
+
+        Assert.Equal(SyntaxKind.OpenSquareBracketToken, openSquareBracketToken.SyntaxKind);
+
+        var text = openSquareBracketToken.TextSpan.GetText();
+        Assert.Equal(openSquareBracketTokenAsString, text);
+    }
+    
+    [Fact]
+    public void SHOULD_LEX_CLOSE_SQUARE_BRACKET_TOKEN()
+    {
+        var closeSquareBracketTokenAsString = "]";
+        var sourceText = $"{closeSquareBracketTokenAsString}".ReplaceLineEndings("\n");
+
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
+
+        lexer.Lex();
+
+        var closeSquareBracketToken = lexer.SyntaxTokens.First();
+
+        Assert.Equal(SyntaxKind.CloseSquareBracketToken, closeSquareBracketToken.SyntaxKind);
+
+        var text = closeSquareBracketToken.TextSpan.GetText();
+        Assert.Equal(closeSquareBracketTokenAsString, text);
+    }
 }
