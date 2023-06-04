@@ -223,6 +223,10 @@ public class Lexer
                     var memberAccessToken = LexMemberAccessToken();
                     _syntaxTokens.Add(memberAccessToken);
                     break;
+                case ',':
+                    var commaToken = LexCommaToken();
+                    _syntaxTokens.Add(commaToken);
+                    break;
                 case '#':
                     var preprocessorDirectiveToken = LexPreprocessorDirectiveToken();
                     _syntaxTokens.Add(preprocessorDirectiveToken);
@@ -790,6 +794,22 @@ public class Lexer
             _stringWalker.SourceText);
 
         return new MemberAccessToken(textSpan);
+    }
+    
+    private CommaToken LexCommaToken()
+    {
+        var entryPositionIndex = _stringWalker.PositionIndex;
+
+        _stringWalker.ReadCharacter();
+
+        var textSpan = new TextEditorTextSpan(
+            entryPositionIndex,
+            _stringWalker.PositionIndex,
+            (byte)GenericDecorationKind.None,
+            _stringWalker.ResourceUri,
+            _stringWalker.SourceText);
+
+        return new CommaToken(textSpan);
     }
 
     private PreprocessorDirectiveToken LexPreprocessorDirectiveToken()

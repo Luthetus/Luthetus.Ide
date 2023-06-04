@@ -37,6 +37,7 @@ public enum SyntaxKind
     DollarSignToken,
     ColonToken,
     MemberAccessToken,
+    CommaToken,
     BadToken,
     EndOfFileToken,
 

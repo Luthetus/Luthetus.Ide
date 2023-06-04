@@ -519,7 +519,11 @@ public class Parser
         {
             // 'function declaration' OR 'variable declaration' OR 'variable initialization'
 
-            if (consumedToken.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+            if (false)
+            {
+                // TODO: Implement generic types for 'function declaration'
+            }
+            else if (consumedToken.SyntaxKind == SyntaxKind.OpenParenthesisToken)
             {
                 // 'function declaration'
 
@@ -599,7 +603,42 @@ public class Parser
         {
             // 'function invocation' OR 'variable assignment' OR 'variable reference' OR 'namespace declaration' OR  'namespace identifier' OR 'static class identifier'
 
-            if (consumedToken.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+            // TODO: Move this logic that determines if generic function logic
+            //{
+            //    if (consumedToken.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
+            //    {
+            //        int peekIndex = 0;
+
+            //        // Alternate between reading an identifier (true) and a comma (false)
+            //        bool typeComparisonSwitch = true;
+
+            //        while (true)
+            //        {
+            //            var peekedToken = _tokenWalker.Peek(peekIndex++);
+
+            //            if (typeComparisonSwitch)
+            //            {
+            //                if (peekedToken.SyntaxKind == SyntaxKind.IdentifierToken)
+            //                {
+
+            //                }
+            //            }
+            //            else
+            //            {
+            //                if (peekedToken.SyntaxKind == SyntaxKind.CommaToken)
+            //                {
+
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
+
+            if (consumedToken.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
+            {
+                
+            }
+            else if (consumedToken.SyntaxKind == SyntaxKind.OpenParenthesisToken)
             {
                 // 'function invocation'
                 var boundFunctionInvocationNode = _binder.BindFunctionInvocationNode(

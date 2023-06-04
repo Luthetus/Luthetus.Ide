@@ -203,6 +203,28 @@ public partial class LexerTests
         var text = memberAccessToken.TextSpan.GetText();
         Assert.Equal(memberAccessTokenAsString, text);
     }
+    
+    [Fact]
+    public void SHOULD_LEX_COMMA_TOKEN()
+    {
+        var commaTokenAsString = ",";
+        var sourceText = $"{commaTokenAsString}".ReplaceLineEndings("\n");
+
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
+
+        lexer.Lex();
+
+        var commaToken = lexer.SyntaxTokens.First();
+
+        Assert.Equal(SyntaxKind.CommaToken, commaToken.SyntaxKind);
+
+        var text = commaToken.TextSpan.GetText();
+        Assert.Equal(commaTokenAsString, text);
+    }
 
     [Fact]
     public void SHOULD_LEX_BANG_TOKEN()
