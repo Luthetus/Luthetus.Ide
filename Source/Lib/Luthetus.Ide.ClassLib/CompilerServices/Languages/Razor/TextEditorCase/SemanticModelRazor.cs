@@ -1,7 +1,6 @@
 ﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.Symbols;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.BinderCase;
-using Luthetus.TextEditor.RazorLib.Analysis;
 using Luthetus.TextEditor.RazorLib.Analysis.Html.Decoration;
 using Luthetus.TextEditor.RazorLib.Lexing;
 using Luthetus.TextEditor.RazorLib.Model;

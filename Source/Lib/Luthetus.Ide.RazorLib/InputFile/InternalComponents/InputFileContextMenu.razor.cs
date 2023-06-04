@@ -13,7 +13,6 @@ using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.Menu;
-using Luthetus.Ide.ClassLib.Store.TerminalCase;
 using Luthetus.Ide.ClassLib.TreeViewImplementations;
 using Microsoft.AspNetCore.Components;
 

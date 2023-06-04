@@ -5,7 +5,6 @@ using Luthetus.Ide.ClassLib.Store.GitCase;
 using Luthetus.Ide.ClassLib.TreeViewImplementations;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
-using Luthetus.Ide.ClassLib.Store.TerminalCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
