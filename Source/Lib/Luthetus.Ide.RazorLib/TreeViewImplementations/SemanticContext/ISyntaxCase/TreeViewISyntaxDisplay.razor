@@ -1,0 +1,15 @@
+﻿@using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
+
+@if (Syntax is ISyntaxNode)
+{
+    <span class="luth_te_variable">
+        @Syntax.SyntaxKind
+    </span>
+}
+else
+{
+    <span class="luth_te_method">
+        @Syntax.SyntaxKind
+    </span>
+}
+
