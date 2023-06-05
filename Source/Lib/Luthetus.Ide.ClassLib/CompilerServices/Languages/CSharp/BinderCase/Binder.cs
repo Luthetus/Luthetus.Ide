@@ -621,7 +621,7 @@ public class Binder
 
                 AddSymbolReference(new VariableSymbol(identifierToken.TextSpan with
                 {
-                    DecorationByte = (byte)GenericDecorationKind.Type
+                    DecorationByte = (byte)GenericDecorationKind.Variable
                 }));
             }
             else
@@ -631,6 +631,13 @@ public class Binder
             }
 
             boundGenericArgumentListing.Add(syntax);
+
+            if (shouldMatch is null)
+                shouldMatch = true;
+            else if (shouldMatch.Value)
+                shouldMatch = false;
+            else
+                shouldMatch = null;
         }
 
         return new BoundFunctionArgumentsNode(

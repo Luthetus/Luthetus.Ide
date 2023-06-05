@@ -1018,6 +1018,7 @@ public class Parser
         return null;
     }
 
+    /// <summary>TODO: If one invokes this method when parsing a function invocation it will be incorrect. Needs changing to read type or not.</summary>
     private BoundFunctionArgumentsNode ParseFunctionArguments(
         OpenParenthesisToken openParenthesisToken)
     {
