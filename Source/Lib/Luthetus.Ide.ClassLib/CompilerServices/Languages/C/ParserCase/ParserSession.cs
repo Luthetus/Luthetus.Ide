@@ -27,7 +27,7 @@ public class ParserSession
         ImmutableArray<TextEditorDiagnostic> lexerDiagnostics)
     {
         _lexerDiagnostics = lexerDiagnostics;
-        _tokenWalker = new TokenWalker(tokens);
+        _tokenWalker = new TokenWalker(tokens, _diagnosticBag);
         _binder = new BinderSession();
 
         _currentCompilationUnitBuilder = _globalCompilationUnitBuilder;

@@ -535,19 +535,40 @@ public class Binder
             closeSquareBracketToken);
     }
     
-    /// <summary>TODO: Correctly implement this method. For now going to skip until the attribute closing angle bracket.</summary>
-    public BoundGenericArgumentNode BindGenericArgument(
+    public BoundGenericArgumentNode BindGenericArguments(
         OpenAngleBracketToken openAngleBracketToken,
+        List<ISyntaxToken> genericArgumentListing,
         CloseAngleBracketToken closeAngleBracketToken)
     {
-        AddSymbolReference(new TypeSymbol(openAngleBracketToken.TextSpan with
+        var boundGenericArgumentListing = new List<ISyntax>();
+
+        for (var i = 0; i < genericArgumentListing.Count; i++)
         {
-            DecorationByte = (byte)GenericDecorationKind.Type,
-            EndingIndexExclusive = closeAngleBracketToken.TextSpan.EndingIndexExclusive
-        }));
+            ISyntax syntax;
+
+            if (i % 2 == 1)
+            {
+                // CommaToken
+                syntax = genericArgumentListing[i];
+            }
+            else
+            {
+                var identifierToken = genericArgumentListing[i];
+
+                syntax = new BoundTypeNode(typeof(void), identifierToken);
+
+                AddSymbolReference(new TypeSymbol(identifierToken.TextSpan with
+                {
+                    DecorationByte = (byte)GenericDecorationKind.Type
+                }));
+            }
+
+            boundGenericArgumentListing.Add(syntax);
+        }
 
         return new BoundGenericArgumentNode(
             openAngleBracketToken,
+            boundGenericArgumentListing,
             closeAngleBracketToken);
     }
 

@@ -8,19 +8,27 @@ public sealed record BoundGenericArgumentNode : ISyntaxNode
 {
     public BoundGenericArgumentNode(
         OpenAngleBracketToken openAngleBracketToken,
+        List<ISyntax> boundGenericArgumentListing,
         CloseAngleBracketToken closeAngleBracketToken)
     {
         OpenAngleBracketToken = openAngleBracketToken;
+        BoundGenericArgumentListing = boundGenericArgumentListing;
         CloseAngleBracketToken = closeAngleBracketToken;
-        
-        Children = new ISyntax[]
+
+        var children = new List<ISyntax>
         {
-            OpenAngleBracketToken,
-            CloseAngleBracketToken,
-        }.ToImmutableArray();
+            OpenAngleBracketToken
+        };
+
+        children.AddRange(BoundGenericArgumentListing);
+
+        children.Add(CloseAngleBracketToken);
+
+        Children = children.ToImmutableArray();
     }
 
     public OpenAngleBracketToken OpenAngleBracketToken { get; init; }
+    public List<ISyntax> BoundGenericArgumentListing { get; init; }
     public CloseAngleBracketToken CloseAngleBracketToken { get; init; }
 
     public ImmutableArray<ISyntax> Children { get; init; }

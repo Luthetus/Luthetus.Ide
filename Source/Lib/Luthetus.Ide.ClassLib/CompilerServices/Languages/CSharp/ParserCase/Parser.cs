@@ -28,7 +28,7 @@ public class Parser
         ImmutableArray<TextEditorDiagnostic> lexerDiagnostics)
     {
         _lexerDiagnostics = lexerDiagnostics;
-        _tokenWalker = new TokenWalker(tokens);
+        _tokenWalker = new TokenWalker(tokens, _diagnosticBag);
         _binder = new Binder();
 
         _globalCompilationUnitBuilder = new(null);
@@ -969,64 +969,54 @@ public class Parser
         return null;
     }
 
-    /// <summary>TODO: Correctly implement this method. For now going to skip until the attribute closing angle bracket.</summary>
     private BoundGenericArgumentNode? ParseGenericArguments(
         OpenAngleBracketToken openAngleBracketToken)
     {
-        // TODO: Move this logic that determines if generic function logic
-        {
-            var genericArgumentListing = new List<ISyntax>();
+        // Contains 'IdentifierToken' then 'CommaToken' then repeat pattern as long as there are entries.
+        var genericArgumentListing = new List<ISyntaxToken>();
 
-            // Alternate between reading an identifier (true) and a comma (false)
-            bool typeComparisonSwitch = true;
-
-            while (true)
-            {
-                var consumedToken = _tokenWalker.Consume();
-
-                genericArgumentListing.Add(consumedToken);
-
-                if (consumedToken.SyntaxKind == SyntaxKind.EndOfFileToken ||
-                    consumedToken.SyntaxKind == SyntaxKind.BadToken)
-                {
-                    break;
-                }
-
-                bool tokenWasValidArgument = typeComparisonSwitch
-                    ? consumedToken.SyntaxKind == SyntaxKind.IdentifierToken
-                    : consumedToken.SyntaxKind == SyntaxKind.CommaToken;
-
-                if (!tokenWasValidArgument)
-                {
-                    if (consumedToken.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
-                    {
-
-                    }
-                }
-            }
-        }
-
-        ISyntaxToken tokenCurrent;
+        // Alternate between reading an identifier (true) and a comma (false)
+        bool shouldMatchIdentifier = true;
 
         while (true)
         {
-            tokenCurrent = _tokenWalker.Consume();
+            ISyntaxToken consumedToken = shouldMatchIdentifier
+                ? _tokenWalker.Match(SyntaxKind.IdentifierToken)
+                : _tokenWalker.Match(SyntaxKind.CommaToken);
 
-            if (tokenCurrent.SyntaxKind == SyntaxKind.EndOfFileToken ||
-                tokenCurrent.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
+            if (shouldMatchIdentifier)
             {
-                break;
+                // Always take the identifier, even if fabricated
+                genericArgumentListing.Add(consumedToken);
+
+                if (consumedToken.IsFabricated)
+                {
+                    // If it were fabricated then finish the GenericArguments
+                    break;
+                }
             }
+            else
+            {
+                if (!consumedToken.IsFabricated)
+                {
+                    genericArgumentListing.Add(consumedToken);
+                }
+                else
+                {
+                    // If it were fabricated then finish the GenericArguments
+                    break;
+                }
+            }
+
+            shouldMatchIdentifier = !shouldMatchIdentifier;
         }
 
-        if (tokenCurrent.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
-        {
-            return _binder.BindGenericArgument(
-                openAngleBracketToken,
-                (CloseAngleBracketToken)tokenCurrent);
-        }
+        var closeAngleBracketToken = _tokenWalker.Match(SyntaxKind.CloseAngleBracketToken);
 
-        return null;
+        return _binder.BindGenericArguments(
+            openAngleBracketToken,
+            genericArgumentListing,
+            (CloseAngleBracketToken)closeAngleBracketToken);
     }
 
     private void ParseStatementDelimiterToken(
@@ -1058,44 +1048,5 @@ public class Parser
 
             _currentCompilationUnitBuilder = new(_currentCompilationUnitBuilder);
         }
-    }
-
-    /// <summary>If the syntaxKind passed in does not match the current token, then a syntax token with that syntax kind will be fabricated and then returned instead.</summary>
-    private ISyntaxToken MatchToken(
-        SyntaxKind expectedSyntaxKind)
-    {
-        var currentToken = _tokenWalker.Peek(0);
-
-        if (currentToken.SyntaxKind == expectedSyntaxKind)
-            return _tokenWalker.Consume();
-
-        var fabricatedToken = _tokenWalker.FabricateToken(expectedSyntaxKind);
-
-        _diagnosticBag.ReportUnexpectedToken(
-            fabricatedToken.TextSpan,
-            currentToken.SyntaxKind.ToString(),
-            expectedSyntaxKind.ToString());
-
-        return fabricatedToken;
-    }
-
-    /// <summary>If the syntaxKind passed in does not match the current token, then a syntax token with that syntax kind will be fabricated and then returned instead.</summary>
-    private ISyntaxToken MatchTokenRange(
-        IEnumerable<SyntaxKind> validSyntaxKinds,
-        SyntaxKind fabricationKind)
-    {
-        var currentToken = _tokenWalker.Peek(0);
-
-        if (validSyntaxKinds.Contains(currentToken.SyntaxKind))
-            return _tokenWalker.Consume();
-
-        var fabricatedToken = _tokenWalker.FabricateToken(fabricationKind);
-
-        _diagnosticBag.ReportUnexpectedToken(
-            fabricatedToken.TextSpan,
-            currentToken.SyntaxKind.ToString(),
-            fabricationKind.ToString());
-
-        return fabricatedToken;
     }
 }
