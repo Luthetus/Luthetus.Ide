@@ -1022,6 +1022,14 @@ public class Parser
     private BoundFunctionArgumentsNode ParseFunctionArguments(
         OpenParenthesisToken openParenthesisToken)
     {
+        if (_tokenWalker.Peek(0).SyntaxKind == SyntaxKind.CloseParenthesisToken)
+        {
+            return _binder.BindFunctionArguments(
+                openParenthesisToken,
+                new(),
+                (CloseParenthesisToken)_tokenWalker.Consume());
+        }
+
         // Contains 'IdentifierType' then 'IdentifierArgument' then 'CommaToken' then repeat pattern as long as there are entries.
         var genericArgumentListing = new List<ISyntaxToken>();
 
