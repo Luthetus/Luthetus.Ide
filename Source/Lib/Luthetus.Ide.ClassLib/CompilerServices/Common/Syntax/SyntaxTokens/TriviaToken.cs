@@ -12,4 +12,5 @@ public sealed record TriviaToken : ISyntaxToken
 
     public TextEditorTextSpan TextSpan { get; }
     public SyntaxKind SyntaxKind => SyntaxKind.TriviaToken;
+    public bool IsFabricated { get; init; }
 }

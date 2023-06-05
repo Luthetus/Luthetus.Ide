@@ -12,4 +12,5 @@ public sealed record CommentSingleLineToken : ISyntaxToken
 
     public TextEditorTextSpan TextSpan { get; }
     public SyntaxKind SyntaxKind => SyntaxKind.CommentSingleLineToken;
+    public bool IsFabricated { get; init; }
 }

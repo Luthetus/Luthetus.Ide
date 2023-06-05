@@ -12,4 +12,5 @@ public sealed record CommaToken : ISyntaxToken
 
     public TextEditorTextSpan TextSpan { get; }
     public SyntaxKind SyntaxKind => SyntaxKind.CommaToken;
+    public bool IsFabricated { get; init; }
 }

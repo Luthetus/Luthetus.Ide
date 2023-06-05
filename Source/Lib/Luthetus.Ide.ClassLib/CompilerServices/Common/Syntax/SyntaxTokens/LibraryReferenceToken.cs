@@ -15,4 +15,5 @@ public sealed record LibraryReferenceToken : ISyntaxToken
     public TextEditorTextSpan TextSpan { get; }
     public SyntaxKind SyntaxKind => SyntaxKind.LibraryReferenceToken;
     public bool IsAbsolutePath { get; }
+    public bool IsFabricated { get; init; }
 }

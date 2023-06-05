@@ -12,4 +12,5 @@ public sealed record DollarSignToken : ISyntaxToken
 
     public TextEditorTextSpan TextSpan { get; }
     public SyntaxKind SyntaxKind => SyntaxKind.DollarSignToken;
+    public bool IsFabricated { get; init; }
 }

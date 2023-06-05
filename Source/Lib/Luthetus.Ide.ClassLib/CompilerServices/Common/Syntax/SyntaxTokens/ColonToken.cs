@@ -12,4 +12,5 @@ public sealed record ColonToken : ISyntaxToken
 
     public TextEditorTextSpan TextSpan { get; }
     public SyntaxKind SyntaxKind => SyntaxKind.ColonToken;
+    public bool IsFabricated { get; init; }
 }

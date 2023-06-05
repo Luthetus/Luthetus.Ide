@@ -12,4 +12,5 @@ public sealed record BadToken : ISyntaxToken
 
     public TextEditorTextSpan TextSpan { get; }
     public SyntaxKind SyntaxKind => SyntaxKind.BadToken;
+    public bool IsFabricated { get; init; }
 }

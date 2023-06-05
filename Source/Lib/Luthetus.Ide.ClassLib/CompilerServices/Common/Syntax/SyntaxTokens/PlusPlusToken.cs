@@ -12,4 +12,5 @@ public sealed record PlusPlusToken : ISyntaxToken
 
     public TextEditorTextSpan TextSpan { get; }
     public SyntaxKind SyntaxKind => SyntaxKind.PlusPlusToken;
+    public bool IsFabricated { get; init; }
 }

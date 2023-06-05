@@ -12,4 +12,5 @@ public sealed record EqualsEqualsToken : ISyntaxToken
 
     public TextEditorTextSpan TextSpan { get; }
     public SyntaxKind SyntaxKind => SyntaxKind.EqualsEqualsToken;
+    public bool IsFabricated { get; init; }
 }

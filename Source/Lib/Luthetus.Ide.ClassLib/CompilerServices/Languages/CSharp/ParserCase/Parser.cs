@@ -603,37 +603,6 @@ public class Parser
         {
             // 'function invocation' OR 'variable assignment' OR 'variable reference' OR 'namespace declaration' OR  'namespace identifier' OR 'static class identifier'
 
-            // TODO: Move this logic that determines if generic function logic
-            {
-                // int peekIndex = 0;
-                // 
-                // // Alternate between reading an identifier (true) and a comma (false)
-                // bool typeComparisonSwitch = true;
-                // 
-                // while (true)
-                // {
-                //     var peekedToken = _tokenWalker.Peek(peekIndex++);
-                // 
-                //     if (peekedToken.SyntaxKind == SyntaxKind.EndOfFileToken ||
-                //         peekedToken.SyntaxKind == SyntaxKind.BadToken)
-                //     {
-                //         break;
-                //     }
-                // 
-                //     bool tokenWasValidArgument = typeComparisonSwitch
-                //         ? peekedToken.SyntaxKind == SyntaxKind.IdentifierToken
-                //         : peekedToken.SyntaxKind == SyntaxKind.CommaToken;
-                // 
-                //     if (!tokenWasValidArgument)
-                //     {
-                //         if (peekedToken.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
-                //         {
-                // 
-                //         }
-                //     }
-                // }
-            }
-
             if (consumedToken.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
                 consumedToken.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
             {
@@ -1004,6 +973,39 @@ public class Parser
     private BoundGenericArgumentNode? ParseGenericArguments(
         OpenAngleBracketToken openAngleBracketToken)
     {
+        // TODO: Move this logic that determines if generic function logic
+        {
+            var genericArgumentListing = new List<ISyntax>();
+
+            // Alternate between reading an identifier (true) and a comma (false)
+            bool typeComparisonSwitch = true;
+
+            while (true)
+            {
+                var consumedToken = _tokenWalker.Consume();
+
+                genericArgumentListing.Add(consumedToken);
+
+                if (consumedToken.SyntaxKind == SyntaxKind.EndOfFileToken ||
+                    consumedToken.SyntaxKind == SyntaxKind.BadToken)
+                {
+                    break;
+                }
+
+                bool tokenWasValidArgument = typeComparisonSwitch
+                    ? consumedToken.SyntaxKind == SyntaxKind.IdentifierToken
+                    : consumedToken.SyntaxKind == SyntaxKind.CommaToken;
+
+                if (!tokenWasValidArgument)
+                {
+                    if (consumedToken.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
+                    {
+
+                    }
+                }
+            }
+        }
+
         ISyntaxToken tokenCurrent;
 
         while (true)
@@ -1056,5 +1058,15 @@ public class Parser
 
             _currentCompilationUnitBuilder = new(_currentCompilationUnitBuilder);
         }
+    }
+
+    private ISyntaxToken MatchToken(SyntaxKind syntaxKind)
+    {
+        var token = _tokenWalker.Peek(0);
+
+        if (token.SyntaxKind == syntaxKind)
+            return _tokenWalker.Consume();
+
+        return TokenFactory
     }
 }

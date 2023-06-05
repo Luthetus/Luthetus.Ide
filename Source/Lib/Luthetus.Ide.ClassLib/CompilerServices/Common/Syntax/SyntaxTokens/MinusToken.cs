@@ -12,4 +12,5 @@ public sealed record MinusToken : ISyntaxToken
 
     public TextEditorTextSpan TextSpan { get; }
     public SyntaxKind SyntaxKind => SyntaxKind.MinusToken;
+    public bool IsFabricated { get; init; }
 }

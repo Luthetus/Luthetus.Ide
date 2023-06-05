@@ -12,4 +12,5 @@ public sealed record NumericLiteralToken : ISyntaxToken
 
     public TextEditorTextSpan TextSpan { get; }
     public SyntaxKind SyntaxKind => SyntaxKind.NumericLiteralToken;
+    public bool IsFabricated { get; init; }
 }

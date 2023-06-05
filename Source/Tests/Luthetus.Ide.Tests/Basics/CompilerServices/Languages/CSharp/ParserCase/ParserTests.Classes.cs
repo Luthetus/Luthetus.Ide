@@ -291,4 +291,100 @@ public partial class ParserTests
 
         throw new ApplicationException("Need to add Assertions");
     }
+    
+    [Fact]
+    public void SHOULD_PARSE_PROPERTY_WITH_TYPE_NOT_FOUND()
+    {
+        string sourceText = @"public class Aaa
+{
+    public IPersonModel MyProperty { get; set; }
+}".ReplaceLineEndings("\n");
+
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
+
+        lexer.Lex();
+
+        var parser = new Parser(
+            lexer.SyntaxTokens,
+            lexer.Diagnostics);
+
+        var compilationUnit = parser.Parse();
+
+        throw new ApplicationException("Need to add Assertions");
+    }
+
+    /// <summary>TODO: Delete this method. I am testing something.</summary>
+    [Fact]
+    private void TestingSomethingTodoDeleteThis()
+    {
+        /*
+	        {visibility} {inheritance} {storage} Aaa
+	        {
+	        }
+
+	        {visibility} => [ "public", "private", "internal", "file?" ]
+
+	        {inheritance} => [ "abstract", "virtual" ]
+
+	        {partial} => [ "partial" ]
+
+	        {storage} => [ "class", "struct", "record" ]
+        */
+
+        var classIdentifier = "Aaa";
+
+        var validClassDefinitionStarts = new string[]
+        {
+            "public abstract partial class",
+            "public abstract partial struct",
+            "public virtual partial class",
+            "public virtual partial struct",
+            "public virtual partial record",
+            "public virtual class",
+            "public virtual struct",
+            "public virtual record",
+            "public abstract partial record",
+            "public abstract class",
+            "public abstract struct",
+            "public abstract record",
+            "private virtual partial class",
+            "private virtual partial struct",
+            "private virtual partial record",
+            "private virtual class",
+            "private virtual struct",
+            "private virtual record",
+            "internal virtual partial class",
+            "internal virtual partial struct",
+            "internal virtual partial record",
+            "internal virtual class",
+            "internal virtual struct",
+            "internal virtual record",
+            "file virtual partial class",
+            "file virtual partial struct",
+            "file virtual partial record",
+            "file virtual class",
+            "file virtual struct",
+            "file virtual record",
+        };
+
+        var validClassDefinitions = new List<string>();
+
+        foreach (var validClassDefinitionStart in validClassDefinitionStarts)
+        {
+            var validClassDefinition = $"{validClassDefinitionStart} {classIdentifier}{{}}";
+
+            if (!validClassDefinitions.Contains(validClassDefinition))
+            {
+                validClassDefinitions.Add(validClassDefinition);
+            }
+        }
+
+        var x = 2;
+
+        throw new NotImplementedException();
+    }
 }
