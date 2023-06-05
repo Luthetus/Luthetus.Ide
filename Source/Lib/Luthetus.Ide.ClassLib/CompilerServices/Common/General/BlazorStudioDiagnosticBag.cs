@@ -29,11 +29,12 @@ public class LuthetusIdeDiagnosticBag : IEnumerable<TextEditorDiagnostic>
 
     public void ReportUnexpectedToken(
         TextEditorTextSpan textEditorTextSpan,
-        string unexpectedToken)
+        string unexpectedToken,
+        string expectedToken)
     {
         Report(
             TextEditorDiagnosticLevel.Error,
-            $"Unexpected token: '{unexpectedToken}'",
+            $"Unexpected token: '{unexpectedToken}' | expected: '{expectedToken}'",
             textEditorTextSpan);
     }
 

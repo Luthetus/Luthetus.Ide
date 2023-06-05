@@ -1060,13 +1060,42 @@ public class Parser
         }
     }
 
-    private ISyntaxToken MatchToken(SyntaxKind syntaxKind)
+    /// <summary>If the syntaxKind passed in does not match the current token, then a syntax token with that syntax kind will be fabricated and then returned instead.</summary>
+    private ISyntaxToken MatchToken(
+        SyntaxKind expectedSyntaxKind)
     {
-        var token = _tokenWalker.Peek(0);
+        var currentToken = _tokenWalker.Peek(0);
 
-        if (token.SyntaxKind == syntaxKind)
+        if (currentToken.SyntaxKind == expectedSyntaxKind)
             return _tokenWalker.Consume();
 
-        return TokenFactory
+        var fabricatedToken = _tokenWalker.FabricateToken(expectedSyntaxKind);
+
+        _diagnosticBag.ReportUnexpectedToken(
+            fabricatedToken.TextSpan,
+            currentToken.SyntaxKind.ToString(),
+            expectedSyntaxKind.ToString());
+
+        return fabricatedToken;
+    }
+
+    /// <summary>If the syntaxKind passed in does not match the current token, then a syntax token with that syntax kind will be fabricated and then returned instead.</summary>
+    private ISyntaxToken MatchTokenRange(
+        IEnumerable<SyntaxKind> validSyntaxKinds,
+        SyntaxKind fabricationKind)
+    {
+        var currentToken = _tokenWalker.Peek(0);
+
+        if (validSyntaxKinds.Contains(currentToken.SyntaxKind))
+            return _tokenWalker.Consume();
+
+        var fabricatedToken = _tokenWalker.FabricateToken(fabricationKind);
+
+        _diagnosticBag.ReportUnexpectedToken(
+            fabricatedToken.TextSpan,
+            currentToken.SyntaxKind.ToString(),
+            fabricationKind.ToString());
+
+        return fabricatedToken;
     }
 }
