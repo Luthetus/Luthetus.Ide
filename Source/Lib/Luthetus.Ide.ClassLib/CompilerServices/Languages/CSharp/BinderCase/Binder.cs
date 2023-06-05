@@ -278,6 +278,19 @@ public class Binder
         return boundClassDeclarationNode;
     }
     
+    public BoundConstructorInvocationNode BindConstructorInvocationNode(
+        KeywordToken keywordToken,
+        BoundTypeNode? boundTypeNode,
+        BoundFunctionArgumentsNode boundFunctionArgumentsNode,
+        BoundObjectInitializationNode? boundObjectInitializationNode)
+    {
+        return new BoundConstructorInvocationNode(
+            keywordToken,
+            boundTypeNode,
+            boundFunctionArgumentsNode,
+            boundObjectInitializationNode);
+    }
+    
     public BoundInheritanceStatementNode BindInheritanceStatementNode(
         IdentifierToken parentClassIdentifierToken)
     {
@@ -535,7 +548,7 @@ public class Binder
             closeSquareBracketToken);
     }
     
-    public BoundGenericArgumentNode BindGenericArguments(
+    public BoundGenericArgumentsNode BindGenericArguments(
         OpenAngleBracketToken openAngleBracketToken,
         List<ISyntaxToken> genericArgumentListing,
         CloseAngleBracketToken closeAngleBracketToken)
@@ -566,10 +579,64 @@ public class Binder
             boundGenericArgumentListing.Add(syntax);
         }
 
-        return new BoundGenericArgumentNode(
+        return new BoundGenericArgumentsNode(
             openAngleBracketToken,
             boundGenericArgumentListing,
             closeAngleBracketToken);
+    }
+    
+    public BoundFunctionArgumentsNode BindFunctionArguments(
+        OpenParenthesisToken openParenthesisToken,
+        List<ISyntaxToken> functionArgumentListing,
+        CloseParenthesisToken closeParenthesisToken)
+    {
+        var boundGenericArgumentListing = new List<ISyntax>();
+
+        // Alternate between reading type identifier (null), argument identifier (true), and a single comma (false)
+        bool? shouldMatch = null;
+
+        // The initialized value for 'seenBoundTypeNode' should never occur. I don't want to mark this variable as nullable however.
+        BoundTypeNode seenBoundTypeNode = new BoundTypeNode(typeof(void), openParenthesisToken);
+
+        for (var i = 0; i < functionArgumentListing.Count; i++)
+        {
+            ISyntax syntax;
+
+            if (shouldMatch is null)
+            {
+                var identifierToken = functionArgumentListing[i];
+
+                syntax = new BoundTypeNode(typeof(void), identifierToken);
+
+                AddSymbolReference(new TypeSymbol(identifierToken.TextSpan with
+                {
+                    DecorationByte = (byte)GenericDecorationKind.Type
+                }));
+            }
+            else if (shouldMatch.Value)
+            {
+                var identifierToken = functionArgumentListing[i];
+
+                syntax = new BoundVariableDeclarationStatementNode(seenBoundTypeNode, identifierToken, false);
+
+                AddSymbolReference(new VariableSymbol(identifierToken.TextSpan with
+                {
+                    DecorationByte = (byte)GenericDecorationKind.Type
+                }));
+            }
+            else
+            {
+                // CommaToken
+                syntax = functionArgumentListing[i];
+            }
+
+            boundGenericArgumentListing.Add(syntax);
+        }
+
+        return new BoundFunctionArgumentsNode(
+            openParenthesisToken,
+            boundGenericArgumentListing,
+            closeParenthesisToken);
     }
 
     public void RegisterBoundScope(

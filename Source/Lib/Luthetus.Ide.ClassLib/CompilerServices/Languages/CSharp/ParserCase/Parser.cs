@@ -342,6 +342,41 @@ public class Parser
             {
                 // TODO: Implement the 'set' keyword
             }
+            else if (text == "new")
+            {
+                var typeIdentifier = _tokenWalker.Match(SyntaxKind.IdentifierToken);
+
+                if (_tokenWalker.Peek(0).SyntaxKind == SyntaxKind.MemberAccessToken)
+                {
+                    // "explicit namespace qualification" OR "nested class"
+                    throw new NotImplementedException();
+                }
+
+                var success = _binder.TryBindTypeNode(typeIdentifier, out var boundTypeNode);
+
+                if (!success)
+                    boundTypeNode = new BoundTypeNode(typeof(void), typeIdentifier);
+
+                var openParenthesisToken = _tokenWalker.Match(SyntaxKind.OpenParenthesisToken);
+
+                var boundFunctionArgumentsNode = ParseFunctionArguments((OpenParenthesisToken)openParenthesisToken);
+
+                BoundObjectInitializationNode? boundObjectInitializationNode = null;
+
+                if (_tokenWalker.Peek(0).SyntaxKind == SyntaxKind.OpenBraceToken)
+                {
+                    var openBraceToken = (OpenBraceToken)_tokenWalker.Consume();
+                    boundObjectInitializationNode = ParseObjectInitialization(openBraceToken);
+                }    
+
+                var boundConstructorInvocationNode = _binder.BindConstructorInvocationNode(
+                    keywordToken,
+                    boundTypeNode,
+                    boundFunctionArgumentsNode,
+                    boundObjectInitializationNode);
+
+                _currentCompilationUnitBuilder.Children.Add(boundConstructorInvocationNode);
+            }
             else if (text == "interface")
             {
                 // TODO: Implement the 'interface' keyword
@@ -365,7 +400,32 @@ public class Parser
             }
         }
     }
-    
+
+    /// <summary>TODO: Correctly parse object initialization. For now, just skip over it when parsing.</summary>
+    private BoundObjectInitializationNode ParseObjectInitialization(
+        OpenBraceToken openBraceToken) 
+    {
+        ISyntaxToken consumedToken = new BadToken(openBraceToken.TextSpan);
+
+        while (!_tokenWalker.IsEof)
+        {
+            consumedToken = _tokenWalker.Consume();
+
+            if (consumedToken.SyntaxKind == SyntaxKind.EndOfFileToken ||
+                consumedToken.SyntaxKind == SyntaxKind.CloseBraceToken)
+            {
+                break;
+            }
+        }
+
+        if (consumedToken.SyntaxKind != SyntaxKind.CloseBraceToken)
+            consumedToken = _tokenWalker.Match(SyntaxKind.CloseBraceToken);
+
+        return new BoundObjectInitializationNode(
+            openBraceToken,
+            (CloseBraceToken)consumedToken);
+    }
+
     private IdentifierToken ParseNamespaceIdentifier()
     {
         var combineNamespaceIdentifierIntoOne = new List<ISyntaxToken>();
@@ -533,7 +593,7 @@ public class Parser
 
                 _nodeRecent = boundFunctionDeclarationNode;
 
-                ParseFunctionArguments();
+                ParseFunctionArguments((OpenParenthesisToken)consumedToken);
             }
             else if (consumedToken.SyntaxKind == SyntaxKind.EqualsToken ||
                      consumedToken.SyntaxKind == SyntaxKind.StatementDelimiterToken)
@@ -623,7 +683,11 @@ public class Parser
                     ParseGenericArguments((OpenAngleBracketToken)consumedToken);
                 }
 
-                ParseFunctionArguments();
+                var openParenthesisToken = consumedToken.SyntaxKind != SyntaxKind.OpenParenthesisToken
+                    ? _tokenWalker.Match(SyntaxKind.OpenParenthesisToken)
+                    : consumedToken;
+
+                ParseFunctionArguments((OpenParenthesisToken)openParenthesisToken);
             }
             else if (consumedToken.SyntaxKind == SyntaxKind.EqualsToken)
             {
@@ -699,21 +763,6 @@ public class Parser
             _binder.BindPropertyDeclarationNode(
                 boundTypeNode,
                 (IdentifierToken)propertyIdentifierToken);
-        }
-    }
-
-    /// <summary>TODO: Implement ParseFunctionArguments() correctly. Until then, skip until the body of the function is found. Specifically until the CloseParenthesisToken is found</summary>
-    private void ParseFunctionArguments()
-    {
-        while (true)
-        {
-            var tokenCurrent = _tokenWalker.Consume();
-
-            if (tokenCurrent.SyntaxKind == SyntaxKind.EndOfFileToken ||
-                tokenCurrent.SyntaxKind == SyntaxKind.CloseParenthesisToken)
-            {
-                break;
-            }
         }
     }
 
@@ -969,7 +1018,62 @@ public class Parser
         return null;
     }
 
-    private BoundGenericArgumentNode? ParseGenericArguments(
+    private BoundFunctionArgumentsNode ParseFunctionArguments(
+        OpenParenthesisToken openParenthesisToken)
+    {
+        // Contains 'IdentifierType' then 'IdentifierArgument' then 'CommaToken' then repeat pattern as long as there are entries.
+        var genericArgumentListing = new List<ISyntaxToken>();
+
+        // Alternate between reading type identifier (null), argument identifier (true), and a single comma (false)
+        bool? shouldMatch = null;
+
+        while (true)
+        {
+            ISyntaxToken consumedToken = shouldMatch ?? true
+                ? _tokenWalker.Match(SyntaxKind.IdentifierToken)
+                : _tokenWalker.Match(SyntaxKind.CommaToken);
+
+            if (shouldMatch ?? true)
+            {
+                // Always take the identifier, even if fabricated
+                genericArgumentListing.Add(consumedToken);
+
+                if (consumedToken.IsFabricated)
+                {
+                    // If it were fabricated then finish the GenericArguments
+                    break;
+                }
+            }
+            else
+            {
+                if (!consumedToken.IsFabricated)
+                {
+                    genericArgumentListing.Add(consumedToken);
+                }
+                else
+                {
+                    // If it were fabricated then finish the GenericArguments
+                    break;
+                }
+            }
+
+            if (shouldMatch is null)
+                shouldMatch = true;
+            else if (shouldMatch.Value)
+                shouldMatch = false;
+            else
+                shouldMatch = null;
+        }
+
+        var closeParenthesisToken = _tokenWalker.Match(SyntaxKind.CloseParenthesisToken);
+
+        return _binder.BindFunctionArguments(
+            openParenthesisToken,
+            genericArgumentListing,
+            (CloseParenthesisToken)closeParenthesisToken);
+    }
+
+    private BoundGenericArgumentsNode? ParseGenericArguments(
         OpenAngleBracketToken openAngleBracketToken)
     {
         // Contains 'IdentifierToken' then 'CommaToken' then repeat pattern as long as there are entries.

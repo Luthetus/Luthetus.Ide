@@ -61,7 +61,10 @@ public enum SyntaxKind
     BoundUsingDeclarationNode,
     BoundIdentifierReferenceNode,
     BoundAttributeNode,
-    BoundGenericArgumentNode,
+    BoundGenericArgumentsNode,
+    BoundFunctionArgumentsNode,
+    BoundConstructorInvocationNode,
+    BoundObjectInitializationNode,
 
     // Symbols
     TypeSymbol,

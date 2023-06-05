@@ -4,9 +4,9 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statements;
 
-public sealed record BoundGenericArgumentNode : ISyntaxNode
+public sealed record BoundGenericArgumentsNode : ISyntaxNode
 {
-    public BoundGenericArgumentNode(
+    public BoundGenericArgumentsNode(
         OpenAngleBracketToken openAngleBracketToken,
         List<ISyntax> boundGenericArgumentListing,
         CloseAngleBracketToken closeAngleBracketToken)
@@ -33,5 +33,5 @@ public sealed record BoundGenericArgumentNode : ISyntaxNode
 
     public ImmutableArray<ISyntax> Children { get; init; }
     public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.BoundGenericArgumentNode;
+    public SyntaxKind SyntaxKind => SyntaxKind.BoundGenericArgumentsNode;
 }
