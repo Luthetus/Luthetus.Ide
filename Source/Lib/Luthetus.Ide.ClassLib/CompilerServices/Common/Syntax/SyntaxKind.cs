@@ -65,6 +65,7 @@ public enum SyntaxKind
     BoundFunctionArgumentsNode,
     BoundConstructorInvocationNode,
     BoundObjectInitializationNode,
+    BoundNamespaceEntryNode,
 
     // Symbols
     TypeSymbol,

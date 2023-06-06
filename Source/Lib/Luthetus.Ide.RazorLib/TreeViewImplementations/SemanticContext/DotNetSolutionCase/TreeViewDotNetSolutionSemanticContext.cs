@@ -105,6 +105,7 @@ public class TreeViewDotNetSolutionSemanticContext : TreeViewWithType<(SemanticC
                 .ToArray();
 
             var newChildren = namespaces
+                .OrderBy(x => x.IdentifierToken.TextSpan.GetText())
                 .Select(n => (TreeViewNoType)new TreeViewNamespace(
                     n,
                     LuthetusIdeComponentRenderers,

@@ -22,7 +22,7 @@ public sealed record SymbolDefinition
         SymbolReferences = symbolReferences;
     }
 
-    internal List<SymbolReference> SymbolReferences { get; } = new();
+    internal List<SymbolReference> SymbolReferences { get; init; } = new();
 
     public BoundScopeKey BoundScopeKey { get; }
     public ISymbol Symbol { get; }

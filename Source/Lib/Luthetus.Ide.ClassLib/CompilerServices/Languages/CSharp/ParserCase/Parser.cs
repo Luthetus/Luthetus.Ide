@@ -47,11 +47,14 @@ public class Parser
     /// <summary>When parsing the body of a function this is used in order to keep the function declaration node itself in the syntax tree immutable.<br/><br/>That is to say, this action would create the function declaration node and then append it.</summary>
     private Stack<Action<CompilationUnit>> _finalizeCompilationUnitActionStack = new();
 
-    /// <summary>This method is used when parsing many files as a single compilation. The first binder instance would be passed to the following parsers.</summary>
+    /// <summary>This method is used when parsing many files as a single compilation. The first binder instance would be passed to the following parsers. The resourceUri is passed in so if a file is parsed for a second time, the previous symbols can be deleted so they do not duplicate.</summary>
     public CompilationUnit Parse(
-        Binder previousBinder)
+        Binder previousBinder,
+        ResourceUri resourceUri)
     {
         _binder = previousBinder;
+        _binder.CurrentResourceUri = resourceUri;
+        _binder.ClearStateByResourceUri(resourceUri);
 
         return Parse();
     }

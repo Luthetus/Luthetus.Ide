@@ -78,4 +78,13 @@ public class LuthetusIdeDiagnosticBag : IEnumerable<TextEditorDiagnostic>
                 message,
                 textEditorTextSpan));
     }
+    
+    public void ClearByResourceUri(ResourceUri resourceUri)
+    {
+        var keep = _luthetusIdeDiagnostics
+            .Where(x => x.TextSpan.ResourceUri != resourceUri);
+
+        _luthetusIdeDiagnostics.Clear();
+        _luthetusIdeDiagnostics.AddRange(keep);
+    }
 }

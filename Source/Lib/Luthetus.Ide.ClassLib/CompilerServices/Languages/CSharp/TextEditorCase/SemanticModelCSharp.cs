@@ -120,7 +120,9 @@ public class SemanticModelCSharp : ISemanticModel
 
         CompilationUnit compilationUnit;
 
-        compilationUnit = parserSession.Parse(_sharedBinder);
+        compilationUnit = parserSession.Parse(
+            _sharedBinder,
+            model.ResourceUri);
 
 
         var localSemanticResult = new SemanticResultCSharp(
@@ -131,7 +133,7 @@ public class SemanticModelCSharp : ISemanticModel
         localSemanticResult = localSemanticResult with 
         {
             DiagnosticTextSpanTuples = compilationUnit.Diagnostics
-                .Where(x => x.TextEditorTextSpan.ResourceUri == model.ResourceUri)
+                .Where(x => x.TextSpan.ResourceUri == model.ResourceUri)
                 .Select(x =>
                 {
                     var textEditorDecorationKind = x.DiagnosticLevel switch
@@ -144,7 +146,7 @@ public class SemanticModelCSharp : ISemanticModel
                         _ => throw new NotImplementedException(),
                     };
 
-                    var textSpan = x.TextEditorTextSpan with
+                    var textSpan = x.TextSpan with
                     {
                         DecorationByte = (byte)textEditorDecorationKind
                     };

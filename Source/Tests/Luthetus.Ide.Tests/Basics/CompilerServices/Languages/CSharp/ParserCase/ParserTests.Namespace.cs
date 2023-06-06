@@ -263,8 +263,9 @@ public class {classIdentifier}
             displayLexer.SyntaxTokens,
             displayLexer.Diagnostics);
 
-        displayCompilationUnit = displayParser
-            .Parse(modelParser.Binder);
+        displayCompilationUnit = displayParser.Parse(
+            modelParser.Binder,
+            displayResourceUri);
 
         var boundNamespaceStatementNode =
             (BoundNamespaceStatementNode)displayCompilationUnit.Children.Single();
@@ -353,8 +354,9 @@ namespace Pages
             displayLexer.SyntaxTokens,
             displayLexer.Diagnostics);
 
-        displayCompilationUnit = displayParser
-            .Parse(modelParser.Binder);
+        displayCompilationUnit = displayParser.Parse(
+            modelParser.Binder,
+            displayResourceUri);
 
         // personPageFile
         var pageLexer = new Lexer(
@@ -367,8 +369,9 @@ namespace Pages
             pageLexer.SyntaxTokens,
             pageLexer.Diagnostics);
 
-        pageCompilationUnit = pageParser
-            .Parse(displayParser.Binder);
+        pageCompilationUnit = pageParser.Parse(
+            displayParser.Binder,
+            pageResourceUri);
 
         Assert.Equal(
             2,
