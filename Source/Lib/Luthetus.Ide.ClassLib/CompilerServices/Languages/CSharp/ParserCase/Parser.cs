@@ -383,7 +383,7 @@ public class Parser
 
                     var openParenthesisToken = _tokenWalker.Match(SyntaxKind.OpenParenthesisToken);
 
-                    var boundFunctionArgumentsNode = ParseFunctionArguments((OpenParenthesisToken)openParenthesisToken);
+                    var boundFunctionArgumentsNode = ParseFunctionParameters((OpenParenthesisToken)openParenthesisToken);
 
                     BoundObjectInitializationNode? boundObjectInitializationNode = null;
 
@@ -419,7 +419,7 @@ public class Parser
 
                     if (_tokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
                     {
-                        boundFunctionArgumentsNode = ParseFunctionArguments(
+                        boundFunctionArgumentsNode = ParseFunctionParameters(
                             (OpenParenthesisToken)_tokenWalker.Consume());
                     }
 
@@ -492,10 +492,16 @@ public class Parser
             {
                 var matchedToken = _tokenWalker.Match(SyntaxKind.IdentifierToken);
                 combineNamespaceIdentifierIntoOne.Add(matchedToken);
+
+                if (matchedToken.IsFabricated)
+                    break;
             }
-            else if (_tokenWalker.Current.SyntaxKind == SyntaxKind.MemberAccessToken)
+            else
             {
-                combineNamespaceIdentifierIntoOne.Add(_tokenWalker.Consume());
+                if (_tokenWalker.Current.SyntaxKind == SyntaxKind.MemberAccessToken)
+                    combineNamespaceIdentifierIntoOne.Add(_tokenWalker.Consume());
+                else
+                    break;
             }
         }
 
@@ -711,7 +717,7 @@ public class Parser
 
                 var openParenthesisToken = (OpenParenthesisToken)_tokenWalker.Match(SyntaxKind.OpenParenthesisToken);
 
-                ParseFunctionArguments(openParenthesisToken);
+                ParseFunctionParameters(openParenthesisToken);
             }
             else if (_tokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
             {
@@ -743,11 +749,13 @@ public class Parser
                     if (_tokenWalker.Current.SyntaxKind == SyntaxKind.MemberAccessToken)
                     {
                         // TODO: (2023-05-28) Implement explicit namespace qualification checking. If they try to member access 'Console' on the namespace 'System' one should ensure 'Console' is really in the namespace. But, for now just return.
+                        _tokenWalker.Consume();
                         return;
                     }
                     else
                     {
                         // TODO: (2023-05-28) Report an error diagnostic for 'namespaces are not statements'. Something like this I'm not sure.
+                        _tokenWalker.Consume();
                         return;
                     }
                 }
@@ -1042,7 +1050,7 @@ public class Parser
         return null;
     }
 
-    /// <summary>TODO: If one invokes this method when parsing a function invocation it will be incorrect. Needs changing to read type or not.</summary>
+    /// <summary>Use this method for function declaration, whereas <see cref="ParseFunctionParameters"/> should be used for function invocation.</summary>
     private BoundFunctionArgumentsNode ParseFunctionArguments(
         OpenParenthesisToken openParenthesisToken)
     {
@@ -1055,23 +1063,23 @@ public class Parser
         }
 
         // Contains 'IdentifierType' then 'IdentifierArgument' then 'CommaToken' then repeat pattern as long as there are entries.
-        var genericArgumentListing = new List<ISyntaxToken>();
+        var functionArgumentListing = new List<ISyntaxToken>();
 
         // Alternate between reading type identifier (null), argument identifier (true), and a single comma (false)
         bool? shouldMatch = null;
 
         while (true)
         {
-            ISyntaxToken consumedToken = shouldMatch ?? true
+            ISyntaxToken token = shouldMatch ?? true
                 ? _tokenWalker.Match(SyntaxKind.IdentifierToken)
                 : _tokenWalker.Match(SyntaxKind.CommaToken);
 
             if (shouldMatch ?? true)
             {
                 // Always take the identifier, even if fabricated
-                genericArgumentListing.Add(consumedToken);
+                functionArgumentListing.Add(token);
 
-                if (consumedToken.IsFabricated)
+                if (token.IsFabricated)
                 {
                     // If it were fabricated then finish the GenericArguments
                     break;
@@ -1079,9 +1087,9 @@ public class Parser
             }
             else
             {
-                if (!consumedToken.IsFabricated)
+                if (!token.IsFabricated)
                 {
-                    genericArgumentListing.Add(consumedToken);
+                    functionArgumentListing.Add(token);
                 }
                 else
                 {
@@ -1102,7 +1110,71 @@ public class Parser
 
         return _binder.BindFunctionArguments(
             openParenthesisToken,
-            genericArgumentListing,
+            functionArgumentListing,
+            (CloseParenthesisToken)closeParenthesisToken);
+    }
+
+    /// <summary>Use this method for function invocation, whereas <see cref="ParseFunctionArguments"/> should be used for function declaration.</summary>
+    private BoundFunctionArgumentsNode ParseFunctionParameters(
+        OpenParenthesisToken openParenthesisToken)
+    {
+        if (_tokenWalker.Peek(0).SyntaxKind == SyntaxKind.CloseParenthesisToken)
+        {
+            return _binder.BindFunctionParameters(
+                openParenthesisToken,
+                new(),
+                (CloseParenthesisToken)_tokenWalker.Consume());
+        }
+
+        // Contains 'OPTIONAL_KEYWORD(out, ref)', then 'IdentifierParameter', then 'CommaToken' then repeat pattern as long as there are entries.
+        var functionParametersListing = new List<ISyntaxToken>();
+
+        // Alternate between reading type identifier (null), argument identifier (true), and a single comma (false)
+        bool? shouldMatch = null;
+
+        while (true)
+        {
+            ISyntaxToken token = shouldMatch ?? true
+                ? _tokenWalker.Match(SyntaxKind.IdentifierToken)
+                : _tokenWalker.Match(SyntaxKind.CommaToken);
+
+            if (shouldMatch ?? true)
+            {
+                // Always take the identifier, even if fabricated
+                functionParametersListing.Add(token);
+
+                if (token.IsFabricated)
+                {
+                    // If it were fabricated then finish the GenericArguments
+                    break;
+                }
+            }
+            else
+            {
+                if (!token.IsFabricated)
+                {
+                    functionParametersListing.Add(token);
+                }
+                else
+                {
+                    // If it were fabricated then finish the GenericArguments
+                    break;
+                }
+            }
+
+            if (shouldMatch is null)
+                shouldMatch = true;
+            else if (shouldMatch.Value)
+                shouldMatch = false;
+            else
+                shouldMatch = null;
+        }
+
+        var closeParenthesisToken = _tokenWalker.Match(SyntaxKind.CloseParenthesisToken);
+
+        return _binder.BindFunctionParameters(
+            openParenthesisToken,
+            functionParametersListing,
             (CloseParenthesisToken)closeParenthesisToken);
     }
 

@@ -601,8 +601,71 @@ public class Binder
             boundGenericArgumentListing,
             closeAngleBracketToken);
     }
-    
+
+    /// <summary>Use this method for function declaration, whereas <see cref="BindFunctionParameters"/> should be used for function invocation.</summary>
     public BoundFunctionArgumentsNode BindFunctionArguments(
+        OpenParenthesisToken openParenthesisToken,
+        List<ISyntaxToken> functionArgumentListing,
+        CloseParenthesisToken closeParenthesisToken)
+    {
+        var boundGenericArgumentListing = new List<ISyntax>();
+
+        // Alternate between reading type identifier (null), argument identifier (true), and a single comma (false)
+        bool? shouldMatch = null;
+
+        // The initialized value for 'seenBoundTypeNode' should never occur. I don't want to mark this variable as nullable however.
+        BoundTypeNode seenBoundTypeNode = new BoundTypeNode(typeof(void), openParenthesisToken);
+
+        for (var i = 0; i < functionArgumentListing.Count; i++)
+        {
+            ISyntax syntax;
+
+            if (shouldMatch is null)
+            {
+                var identifierToken = functionArgumentListing[i];
+
+                syntax = new BoundTypeNode(typeof(void), identifierToken);
+
+                AddSymbolReference(new TypeSymbol(identifierToken.TextSpan with
+                {
+                    DecorationByte = (byte)GenericDecorationKind.Type
+                }));
+            }
+            else if (shouldMatch.Value)
+            {
+                var identifierToken = functionArgumentListing[i];
+
+                syntax = new BoundVariableDeclarationStatementNode(seenBoundTypeNode, identifierToken, false);
+
+                AddSymbolReference(new VariableSymbol(identifierToken.TextSpan with
+                {
+                    DecorationByte = (byte)GenericDecorationKind.Variable
+                }));
+            }
+            else
+            {
+                // CommaToken
+                syntax = functionArgumentListing[i];
+            }
+
+            boundGenericArgumentListing.Add(syntax);
+
+            if (shouldMatch is null)
+                shouldMatch = true;
+            else if (shouldMatch.Value)
+                shouldMatch = false;
+            else
+                shouldMatch = null;
+        }
+
+        return new BoundFunctionArgumentsNode(
+            openParenthesisToken,
+            boundGenericArgumentListing,
+            closeParenthesisToken);
+    }
+
+    /// <summary>Use this method for function invocation, whereas <see cref="BindFunctionArguments"/> should be used for function declaration.</summary>
+    public BoundFunctionArgumentsNode BindFunctionParameters(
         OpenParenthesisToken openParenthesisToken,
         List<ISyntaxToken> functionArgumentListing,
         CloseParenthesisToken closeParenthesisToken)
