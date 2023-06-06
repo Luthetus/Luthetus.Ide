@@ -1126,48 +1126,89 @@ public class Parser
                 (CloseParenthesisToken)_tokenWalker.Consume());
         }
 
-        // Contains 'OPTIONAL_KEYWORD(out, ref)', then 'IdentifierParameter', then 'CommaToken' then repeat pattern as long as there are entries.
+        // Contains 'OPTIONAL_KEYWORD(out Type, out, ref)', then 'Expression/IdentifierParameter', then 'CommaToken' then repeat pattern as long as there are entries.
         var functionParametersListing = new List<ISyntaxToken>();
 
-        // Alternate between reading type identifier (null), argument identifier (true), and a single comma (false)
-        bool? shouldMatch = null;
+        // Alternate between reading 'Expression/IdentifierParameter' (true), and a single comma (false)
+        bool canReadComma = false;
 
         while (true)
         {
-            ISyntaxToken token = shouldMatch ?? true
-                ? _tokenWalker.Match(SyntaxKind.IdentifierToken)
-                : _tokenWalker.Match(SyntaxKind.CommaToken);
-
-            if (shouldMatch ?? true)
+            if (!canReadComma)
             {
-                // Always take the identifier, even if fabricated
-                functionParametersListing.Add(token);
-
-                if (token.IsFabricated)
+                // TODO: Uncomment and finish this logic to read keywords which are part of the parameter
                 {
-                    // If it were fabricated then finish the GenericArguments
-                    break;
+                    //if (_tokenWalker.Current.SyntaxKind == SyntaxKind.KeywordToken)
+                    //{
+                    //    var keywordToken = _tokenWalker.Consume();
+                    //    var keywordText = keywordToken.TextSpan.GetText();
+
+                    //    if (keywordText == "out")
+                    //    {
+                    //        throw new NotImplementedException();
+                    //    }
+                    //    else if (keywordText == "ref")
+                    //    {
+                    //        throw new NotImplementedException();
+                    //    }
+                    //}
                 }
-            }
-            else
-            {
-                if (!token.IsFabricated)
+
+                // TODO: This should be reading an expression. For now going to just read up until either a comma, or a closing parenthesis. Then mark that as one singular variable
+
+                bool IsInvalidToken(ISyntaxToken syntaxToken) => 
+                    syntaxToken.SyntaxKind != SyntaxKind.CommaToken ||
+                    syntaxToken.SyntaxKind != SyntaxKind.CloseParenthesisToken ||
+                    syntaxToken.SyntaxKind != SyntaxKind.EndOfFileToken;
+
+                IdentifierToken parameterIdentifierToken;
+
+                if (IsInvalidToken(_tokenWalker.Current))
                 {
-                    functionParametersListing.Add(token);
+                    parameterIdentifierToken = (IdentifierToken)_tokenWalker.Match(SyntaxKind.IdentifierToken);
+
+                    if (_tokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken ||
+                        _tokenWalker.Current.SyntaxKind == SyntaxKind.EndOfFileToken)
+                    {
+                        break;
+                    }
                 }
                 else
                 {
-                    // If it were fabricated then finish the GenericArguments
-                    break;
-                }
-            }
+                    ISyntaxToken syntaxToken = _tokenWalker.Consume();
 
-            if (shouldMatch is null)
-                shouldMatch = true;
-            else if (shouldMatch.Value)
-                shouldMatch = false;
+                    while (true)
+                    {
+                        if (IsInvalidToken(_tokenWalker.Current))
+                        {
+                            parameterIdentifierToken = new IdentifierToken(
+                                new TextEditorTextSpan(
+                                    syntaxToken.TextSpan.StartingIndexInclusive,
+                                    _tokenWalker.Current.TextSpan.StartingIndexInclusive,
+                                    (byte)GenericDecorationKind.Variable,
+                                    syntaxToken.TextSpan.ResourceUri,
+                                    syntaxToken.TextSpan.SourceText));
+
+                            break;
+                        }
+
+                        _ = _tokenWalker.Consume();
+                    }
+                }
+
+                functionParametersListing.Add(parameterIdentifierToken);
+
+                canReadComma = true;
+            }
             else
-                shouldMatch = null;
+            {
+                canReadComma = false;
+
+                if (_tokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
+                    functionParametersListing.Add(_tokenWalker.Consume());
+                else
+                    break;
+            }
         }
 
         var closeParenthesisToken = _tokenWalker.Match(SyntaxKind.CloseParenthesisToken);
