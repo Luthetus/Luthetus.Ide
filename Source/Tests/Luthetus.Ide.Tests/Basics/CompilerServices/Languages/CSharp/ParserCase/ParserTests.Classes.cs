@@ -12,39 +12,31 @@ public partial class ParserTests
     public void SHOULD_PARSE_CLASS_DECLARATION_EMPTY()
     {
         string classIdentifier = "PersonModel";
-
-        string sourceText = @$"public class {classIdentifier}
-{{
-}}".ReplaceLineEndings("\n");
-
+        string sourceText = @$"public class {classIdentifier} {{ }}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(
-            resourceUri,
-            sourceText);
-
+        var lexer = new Lexer(resourceUri, sourceText);
         lexer.Lex();
-
-        var parser = new Parser(
-            lexer.SyntaxTokens,
-            lexer.Diagnostics);
-
+        var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
 
-        var globalScope = parser.Binder.BoundScopes.First();
+        // Assertions
+        {
+            var globalScope = parser.Binder.BoundScopes.First();
 
-        var personModel = globalScope.ClassDeclarationMap.Single();
+            var personModel = globalScope.ClassDeclarationMap.Single();
 
-        Assert.Equal(classIdentifier, personModel.Key);
+            Assert.Equal(classIdentifier, personModel.Key);
 
-        var boundClassDeclarationNode =
-            (BoundClassDeclarationNode)compilationUnit.Children.Single();
+            var boundClassDeclarationNode =
+                (BoundClassDeclarationNode)compilationUnit.Children.Single();
 
-        if (boundClassDeclarationNode.ClassBodyCompilationUnit is null)
-            throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
+            if (boundClassDeclarationNode.ClassBodyCompilationUnit is null)
+                throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
 
-        Assert.Empty(
-            boundClassDeclarationNode.ClassBodyCompilationUnit.Children);
+            Assert.Empty(
+                boundClassDeclarationNode.ClassBodyCompilationUnit.Children);
+        }
     }
 
     [Fact]
@@ -52,269 +44,238 @@ public partial class ParserTests
     {
         string classIdentifier = "PersonModel";
         string methodIdentifier = "Walk";
-
-        string sourceText = @$"public class {classIdentifier}
-{{
-    public void {methodIdentifier}()
-    {{
-    }}
-}}".ReplaceLineEndings("\n");
-
+        string sourceText = @$"public class {classIdentifier} {{ public void {methodIdentifier}() {{ }} }}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(
-            resourceUri,
-            sourceText);
-
+        var lexer = new Lexer(resourceUri, sourceText);
         lexer.Lex();
-
-        var parser = new Parser(
-            lexer.SyntaxTokens,
-            lexer.Diagnostics);
-
+        var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
 
-        var globalScope = parser.Binder.BoundScopes.First();
+        // Assertions
+        {
+            var globalScope = parser.Binder.BoundScopes.First();
 
-        var personModel = globalScope.ClassDeclarationMap.Single();
+            var personModel = globalScope.ClassDeclarationMap.Single();
 
-        Assert.Equal(classIdentifier, personModel.Key);
+            Assert.Equal(classIdentifier, personModel.Key);
 
-        var boundClassDeclarationNode =
-            (BoundClassDeclarationNode)compilationUnit.Children.Single();
+            var boundClassDeclarationNode =
+                (BoundClassDeclarationNode)compilationUnit.Children.Single();
 
-        if (boundClassDeclarationNode.ClassBodyCompilationUnit is null)
-            throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
+            if (boundClassDeclarationNode.ClassBodyCompilationUnit is null)
+                throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
 
-        var boundFunctionDeclarationNode =
-            (BoundFunctionDeclarationNode)boundClassDeclarationNode
-                .ClassBodyCompilationUnit.Children.Single();
+            var boundFunctionDeclarationNode =
+                (BoundFunctionDeclarationNode)boundClassDeclarationNode
+                    .ClassBodyCompilationUnit.Children.Single();
 
-        Assert.Equal(
-            SyntaxKind.BoundFunctionDeclarationNode,
-            boundFunctionDeclarationNode.SyntaxKind);
+            Assert.Equal(
+                SyntaxKind.BoundFunctionDeclarationNode,
+                boundFunctionDeclarationNode.SyntaxKind);
+        }
     }
 
     [Fact]
     public void SHOULD_PARSE_CLASS_DECLARATION_WHICH_HAS_PARTIAL_MODIFIER()
     {
         string classIdentifier = "PersonModel";
-
-        string sourceText = @$"public partial class {classIdentifier}
-{{
-}}".ReplaceLineEndings("\n");
-
+        string sourceText = @$"public partial class {classIdentifier} {{ }}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(
-            resourceUri,
-            sourceText);
-
+        var lexer = new Lexer(resourceUri, sourceText);
         lexer.Lex();
-
-        var parser = new Parser(
-            lexer.SyntaxTokens,
-            lexer.Diagnostics);
-
+        var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
 
-        var globalScope = parser.Binder.BoundScopes.First();
+        // Assertions
+        {
+            var globalScope = parser.Binder.BoundScopes.First();
 
-        var personModel = globalScope.ClassDeclarationMap.Single();
+            var personModel = globalScope.ClassDeclarationMap.Single();
 
-        Assert.Equal(classIdentifier, personModel.Key);
+            Assert.Equal(classIdentifier, personModel.Key);
 
-        var boundClassDeclarationNode =
-            (BoundClassDeclarationNode)compilationUnit.Children.Single();
+            var boundClassDeclarationNode =
+                (BoundClassDeclarationNode)compilationUnit.Children.Single();
 
-        if (boundClassDeclarationNode.ClassBodyCompilationUnit is null)
-            throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
+            if (boundClassDeclarationNode.ClassBodyCompilationUnit is null)
+                throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
 
-        Assert.Empty(
-            boundClassDeclarationNode.ClassBodyCompilationUnit.Children);
+            Assert.Empty(
+                boundClassDeclarationNode.ClassBodyCompilationUnit.Children);
+        }
     }
 
     [Fact]
     public void SHOULD_PARSE_CLASS_DECLARATION_WHICH_IS_INHERITING()
     {
         string classIdentifier = "PersonDisplay";
-
-        string sourceText = @$"public class {classIdentifier} : ComponentBase
-{{
-}}".ReplaceLineEndings("\n");
-
+        string sourceText = @$"public class {classIdentifier} : ComponentBase {{ }}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(
-            resourceUri,
-            sourceText);
-
+        var lexer = new Lexer(resourceUri, sourceText);
         lexer.Lex();
-
-        var parser = new Parser(
-            lexer.SyntaxTokens,
-            lexer.Diagnostics);
-
+        var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
 
-        var globalScope = parser.Binder.BoundScopes.First();
+        // Assertions
+        {
+            var globalScope = parser.Binder.BoundScopes.First();
 
-        var personModel = globalScope.ClassDeclarationMap.Single();
+            var personModel = globalScope.ClassDeclarationMap.Single();
 
-        Assert.Equal(classIdentifier, personModel.Key);
+            Assert.Equal(classIdentifier, personModel.Key);
 
-        var boundClassDeclarationNode =
-            (BoundClassDeclarationNode)compilationUnit.Children.Single();
+            var boundClassDeclarationNode =
+                (BoundClassDeclarationNode)compilationUnit.Children.Single();
 
-        if (boundClassDeclarationNode.ClassBodyCompilationUnit is null)
-            throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
+            if (boundClassDeclarationNode.ClassBodyCompilationUnit is null)
+                throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
 
-        Assert.NotNull(
-            boundClassDeclarationNode.BoundInheritanceStatementNode);
+            Assert.NotNull(
+                boundClassDeclarationNode.BoundInheritanceStatementNode);
 
-        Assert.Empty(
-            boundClassDeclarationNode.ClassBodyCompilationUnit.Children);
+            Assert.Empty(
+                boundClassDeclarationNode.ClassBodyCompilationUnit.Children);
+        }
     }
 
     [Fact]
     public void SHOULD_PARSE_CLASS_DECLARATION_WHICH_HAS_ONE_GENERIC_ARGUMENT()
     {
-        string classIdentifier = "Box";
-        string genericArgumentIdentifier = "T";
-
-        string sourceText = @$"public class {classIdentifier}<{genericArgumentIdentifier}>
-{{
-}}".ReplaceLineEndings("\n");
-
+        string classIdentifier = "Box", genericArgumentIdentifier = "T";
+        string sourceText = @$"public class {classIdentifier}<{genericArgumentIdentifier}> {{ }}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(
-            resourceUri,
-            sourceText);
-
+        var lexer = new Lexer(resourceUri, sourceText);
         lexer.Lex();
-
-        var parser = new Parser(
-            lexer.SyntaxTokens,
-            lexer.Diagnostics);
-
+        var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
 
-        var globalScope = parser.Binder.BoundScopes.First();
+        // Assertions
+        {
+            var globalScope = parser.Binder.BoundScopes.First();
 
-        var personModel = globalScope.ClassDeclarationMap.Single();
+            var personModel = globalScope.ClassDeclarationMap.Single();
 
-        Assert.Equal(classIdentifier, personModel.Key);
+            Assert.Equal(classIdentifier, personModel.Key);
 
-        var boundClassDeclarationNode =
-            (BoundClassDeclarationNode)compilationUnit.Children.Single();
+            var boundClassDeclarationNode =
+                (BoundClassDeclarationNode)compilationUnit.Children.Single();
 
-        if (boundClassDeclarationNode.ClassBodyCompilationUnit is null)
-            throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
+            if (boundClassDeclarationNode.ClassBodyCompilationUnit is null)
+                throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
 
-        Assert.NotNull(
-            boundClassDeclarationNode.BoundInheritanceStatementNode);
+            Assert.NotNull(
+                boundClassDeclarationNode.BoundInheritanceStatementNode);
 
-        Assert.Empty(
-            boundClassDeclarationNode.ClassBodyCompilationUnit.Children);
+            Assert.Empty(
+                boundClassDeclarationNode.ClassBodyCompilationUnit.Children);
+        }
+    }
+    
+    [Fact]
+    public void SHOULD_PARSE_CLASS_DECLARATION_WHICH_HAS_TWO_GENERIC_ARGUMENT()
+    {
+        string classIdentifier = "Box", genericArgOne = "TItem", genericArgTwo = "TPackager";
+        string sourceText = @$"public class {classIdentifier}<{genericArgOne}, {genericArgTwo}> {{ }}".ReplaceLineEndings("\n");
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var compilationUnit = parser.Parse();
+
+        // Assertions
+        {
+            var globalScope = parser.Binder.BoundScopes.First();
+
+            var personModel = globalScope.ClassDeclarationMap.Single();
+
+            Assert.Equal(classIdentifier, personModel.Key);
+
+            var boundClassDeclarationNode =
+                (BoundClassDeclarationNode)compilationUnit.Children.Single();
+
+            if (boundClassDeclarationNode.ClassBodyCompilationUnit is null)
+                throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
+
+            Assert.NotNull(
+                boundClassDeclarationNode.BoundInheritanceStatementNode);
+
+            Assert.Empty(
+                boundClassDeclarationNode.ClassBodyCompilationUnit.Children);
+        }
     }
     
     [Fact]
     public void SHOULD_PARSE_CLASS_DECLARATION_WHICH_HAS_THREE_GENERIC_ARGUMENTS()
     {
-        string classIdentifier = "Box";
-        string genericArgOne = "TItem";
-        string genericArgTwo = "TPackager";
-        string genericArgThree = "TDeliverer";
-
-        string sourceText = @$"public class {classIdentifier}<{genericArgOne}, {genericArgTwo}, {genericArgThree}> : ComponentBase
-{{
-}}".ReplaceLineEndings("\n");
-
+        string classIdentifier = "Box", genericArgOne = "TItem", genericArgTwo = "TPackager", genericArgThree = "TDeliverer";
+        string sourceText = @$"public class {classIdentifier}<{genericArgOne}, {genericArgTwo}, {genericArgThree}> : ComponentBase {{ }}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(
-            resourceUri,
-            sourceText);
-
+        var lexer = new Lexer(resourceUri, sourceText);
         lexer.Lex();
-
-        var parser = new Parser(
-            lexer.SyntaxTokens,
-            lexer.Diagnostics);
-
+        var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
 
-        var globalScope = parser.Binder.BoundScopes.First();
+        // Assertions
+        {
+            var globalScope = parser.Binder.BoundScopes.First();
 
-        var personModel = globalScope.ClassDeclarationMap.Single();
+            var personModel = globalScope.ClassDeclarationMap.Single();
 
-        Assert.Equal(classIdentifier, personModel.Key);
+            Assert.Equal(classIdentifier, personModel.Key);
 
-        var boundClassDeclarationNode =
-            (BoundClassDeclarationNode)compilationUnit.Children.Single();
+            var boundClassDeclarationNode =
+                (BoundClassDeclarationNode)compilationUnit.Children.Single();
 
-        if (boundClassDeclarationNode.ClassBodyCompilationUnit is null)
-            throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
+            if (boundClassDeclarationNode.ClassBodyCompilationUnit is null)
+                throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
 
-        Assert.NotNull(
-            boundClassDeclarationNode.BoundInheritanceStatementNode);
+            Assert.NotNull(
+                boundClassDeclarationNode.BoundInheritanceStatementNode);
 
-        Assert.Empty(
-            boundClassDeclarationNode.ClassBodyCompilationUnit.Children);
+            Assert.Empty(
+                boundClassDeclarationNode.ClassBodyCompilationUnit.Children);
+        }
     }
     
     [Fact]
     public void SHOULD_PARSE_PROPERTY_ATTRIBUTE()
     {
         var attributeIdentifier = "Parameter";
-
-        string sourceText = @$"public partial class PersonDisplay : ComponentBase
-{{
-	[{attributeIdentifier}]
-	public IPersonModel PersonModel {{ get; set; }}
-}}".ReplaceLineEndings("\n");
-
+        string sourceText = @$"public partial class PersonDisplay : ComponentBase {{ [{attributeIdentifier}] public IPersonModel PersonModel {{ get; set; }} }}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(
-            resourceUri,
-            sourceText);
-
+        var lexer = new Lexer(resourceUri, sourceText);
         lexer.Lex();
-
-        var parser = new Parser(
-            lexer.SyntaxTokens,
-            lexer.Diagnostics);
-
+        var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
 
-        throw new ApplicationException("Need to add Assertions");
+        // Assertions
+        {
+            throw new ApplicationException("Need to add Assertions");
+        }
     }
     
     [Fact]
     public void SHOULD_PARSE_PROPERTY_WITH_TYPE_NOT_FOUND()
     {
-        string sourceText = @"public class Aaa
-{
-    public IPersonModel MyProperty { get; set; }
-}".ReplaceLineEndings("\n");
-
+        string sourceText = @"public class Aaa { public IPersonModel MyProperty { get; set; } }".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
-
-        var lexer = new Lexer(
-            resourceUri,
-            sourceText);
-
-        lexer.Lex();
-
-        var parser = new Parser(
-            lexer.SyntaxTokens,
-            lexer.Diagnostics);
-
+        
+        var lexer = new Lexer(resourceUri, sourceText);
+        lexer.Lex();        
+        var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
 
-        throw new ApplicationException("Need to add Assertions");
+        // Assertions
+        {
+            throw new ApplicationException("Need to add Assertions");
+        }
     }
 
     /// <summary>TODO: Delete this method. I am testing something.</summary>

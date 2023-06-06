@@ -669,7 +669,7 @@ public class Parser
             if (consumedToken.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
                 consumedToken.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
             {
-                // 'function invocation'
+                // 'function invocation' 
                 
                 // TODO: (2023-06-04) I believe this if block will run for '<' mathematical operator.
 
