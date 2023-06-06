@@ -11,6 +11,7 @@ using Luthetus.TextEditor.RazorLib.Analysis;
 using Luthetus.TextEditor.RazorLib.Analysis.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.Lexing;
 using System.Collections.Immutable;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.ParserCase;
 
@@ -621,13 +622,14 @@ public class Parser
             {
                 // 'function declaration'
 
+                var boundFunctionArguments = ParseFunctionArguments((OpenParenthesisToken)_tokenWalker.Consume());
+
                 var boundFunctionDeclarationNode = _binder.BindFunctionDeclarationNode(
                     (BoundTypeNode)_nodeRecent,
-                    identifierToken);
+                    identifierToken,
+                    boundFunctionArguments);
 
                 _nodeRecent = boundFunctionDeclarationNode;
-
-                ParseFunctionArguments((OpenParenthesisToken)_tokenWalker.Consume());
             }
             else if (_tokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken ||
                      _tokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
@@ -1073,47 +1075,49 @@ public class Parser
         }
 
         // Contains 'IdentifierType' then 'IdentifierArgument' then 'CommaToken' then repeat pattern as long as there are entries.
-        var functionArgumentListing = new List<ISyntaxToken>();
+        var functionArgumentListing = new List<ISyntax>();
 
         // Alternate between reading type identifier (null), argument identifier (true), and a single comma (false)
-        bool? shouldMatch = null;
+        bool? canReadComma = null;
 
         while (true)
         {
-            ISyntaxToken token = shouldMatch ?? true
-                ? _tokenWalker.Match(SyntaxKind.IdentifierToken)
-                : _tokenWalker.Match(SyntaxKind.CommaToken);
-
-            if (shouldMatch ?? true)
+            if (canReadComma is null)
             {
-                // Always take the identifier, even if fabricated
-                functionArgumentListing.Add(token);
+                var boundTypeNode = MatchBoundTypeNode();
 
-                if (token.IsFabricated)
-                {
-                    // If it were fabricated then finish the GenericArguments
+                functionArgumentListing.Add(boundTypeNode);
+
+                if (boundTypeNode.Token.IsFabricated)
                     break;
-                }
+
+                canReadComma = false;
+            }
+            else if (!canReadComma.Value)
+            {
+                var identifierToken = (IdentifierToken)_tokenWalker.Match(SyntaxKind.IdentifierToken);
+
+                functionArgumentListing.Add(identifierToken);
+
+                if (identifierToken.IsFabricated)
+                    break;
+
+                canReadComma = true;
             }
             else
             {
-                if (!token.IsFabricated)
+                if (_tokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
                 {
-                    functionArgumentListing.Add(token);
+                    var commaToken = (CommaToken)_tokenWalker.Consume();
+                    functionArgumentListing.Add(commaToken);
                 }
                 else
                 {
-                    // If it were fabricated then finish the GenericArguments
                     break;
                 }
-            }
 
-            if (shouldMatch is null)
-                shouldMatch = true;
-            else if (shouldMatch.Value)
-                shouldMatch = false;
-            else
-                shouldMatch = null;
+                canReadComma = null;
+            }
         }
 
         var closeParenthesisToken = _tokenWalker.Match(SyntaxKind.CloseParenthesisToken);
@@ -1308,5 +1312,49 @@ public class Parser
 
             _currentCompilationUnitBuilder = new(_currentCompilationUnitBuilder);
         }
+    }
+
+    private BoundTypeNode MatchBoundTypeNode()
+    {
+        BoundTypeNode? boundTypeNode = null;
+
+        var syntaxToken = _tokenWalker.Current;
+
+        if (syntaxToken.SyntaxKind == SyntaxKind.KeywordToken)
+        {
+            if (_binder.TryGetTypeHierarchically(syntaxToken.TextSpan.GetText(), out var type) &&
+                type is not null)
+            {
+                // 'int', 'string', 'bool', etc...
+                boundTypeNode = new BoundTypeNode(type, syntaxToken);
+            }
+        }
+        else if (syntaxToken.SyntaxKind == SyntaxKind.IdentifierToken)
+        {
+            if (_binder.TryGetTypeHierarchically(syntaxToken.TextSpan.GetText(), out var type) &&
+                type is not null)
+            {
+                // 'int', 'string', 'bool', etc...
+                boundTypeNode = new BoundTypeNode(type, syntaxToken);
+            }
+        }
+
+        if (boundTypeNode is null)
+        {
+            _diagnosticBag.ReportUnexpectedToken(
+                syntaxToken.TextSpan,
+                syntaxToken.TextSpan.GetText(),
+                "Type");
+
+            boundTypeNode = new BoundTypeNode(
+                typeof(void),
+                syntaxToken);
+        }
+        else
+        {
+            _ = _tokenWalker.Consume();
+        }
+
+        return boundTypeNode;
     }
 }

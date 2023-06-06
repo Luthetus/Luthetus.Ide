@@ -9,10 +9,12 @@ public sealed record BoundFunctionDeclarationNode : ISyntaxNode
     public BoundFunctionDeclarationNode(
         BoundTypeNode boundTypeNode,
         ISyntaxToken identifierToken,
+        BoundFunctionArgumentsNode boundFunctionArgumentsNode,
         CompilationUnit? functionBodyCompilationUnit)
     {
         BoundTypeNode = boundTypeNode;
         IdentifierToken = identifierToken;
+        BoundFunctionArgumentsNode = boundFunctionArgumentsNode;
         FunctionBodyCompilationUnit = functionBodyCompilationUnit;
 
         var childrenList = new List<ISyntax>(3)
@@ -29,6 +31,7 @@ public sealed record BoundFunctionDeclarationNode : ISyntaxNode
 
     public BoundTypeNode BoundTypeNode { get; init; }
     public ISyntaxToken IdentifierToken { get; init; }
+    public BoundFunctionArgumentsNode BoundFunctionArgumentsNode { get; init; }
     public CompilationUnit? FunctionBodyCompilationUnit { get; init; }
 
     public ImmutableArray<ISyntax> Children { get; init; }

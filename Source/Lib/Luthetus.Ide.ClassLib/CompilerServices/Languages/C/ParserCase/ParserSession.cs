@@ -235,7 +235,8 @@ public class ParserSession
 
                 var boundFunctionDeclarationNode = _binder.BindFunctionDeclarationNode(
                     (BoundTypeNode)_nodeRecent,
-                    inToken);
+                    inToken,
+                    null);
 
                 _nodeRecent = boundFunctionDeclarationNode;
 

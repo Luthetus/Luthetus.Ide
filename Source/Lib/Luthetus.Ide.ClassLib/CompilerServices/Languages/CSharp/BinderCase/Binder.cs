@@ -125,7 +125,8 @@ public class Binder
 
     public BoundFunctionDeclarationNode BindFunctionDeclarationNode(
         BoundTypeNode boundTypeNode,
-        IdentifierToken identifierToken)
+        IdentifierToken identifierToken,
+        BoundFunctionArgumentsNode boundFunctionArguments)
     {
         var functionIdentifier = identifierToken.TextSpan.GetText();
 
@@ -141,6 +142,7 @@ public class Binder
         var boundFunctionDeclarationNode = new BoundFunctionDeclarationNode(
             boundTypeNode,
             identifierToken,
+            boundFunctionArguments,
             null);
 
         var success = _currentScope.FunctionDeclarationMap.TryAdd(
@@ -603,65 +605,18 @@ public class Binder
             closeAngleBracketToken);
     }
 
-    /// <summary>Use this method for function declaration, whereas <see cref="BindFunctionParameters"/> should be used for function invocation.</summary>
+    /// <summary>
+    /// Use this method for function declaration, whereas <see cref="BindFunctionParameters"/> should be used for function invocation.
+    /// TODO: Implement this method correctly. For now I will just return.
+    /// </summary>
     public BoundFunctionArgumentsNode BindFunctionArguments(
         OpenParenthesisToken openParenthesisToken,
-        List<ISyntaxToken> functionArgumentListing,
+        List<ISyntax> functionArgumentListing,
         CloseParenthesisToken closeParenthesisToken)
     {
-        var boundGenericArgumentListing = new List<ISyntax>();
-
-        // Alternate between reading type identifier (null), argument identifier (true), and a single comma (false)
-        bool? shouldMatch = null;
-
-        // The initialized value for 'seenBoundTypeNode' should never occur. I don't want to mark this variable as nullable however.
-        BoundTypeNode seenBoundTypeNode = new BoundTypeNode(typeof(void), openParenthesisToken);
-
-        for (var i = 0; i < functionArgumentListing.Count; i++)
-        {
-            ISyntax syntax;
-
-            if (shouldMatch is null)
-            {
-                var identifierToken = functionArgumentListing[i];
-
-                syntax = new BoundTypeNode(typeof(void), identifierToken);
-
-                AddSymbolReference(new TypeSymbol(identifierToken.TextSpan with
-                {
-                    DecorationByte = (byte)GenericDecorationKind.Type
-                }));
-            }
-            else if (shouldMatch.Value)
-            {
-                var identifierToken = functionArgumentListing[i];
-
-                syntax = new BoundVariableDeclarationStatementNode(seenBoundTypeNode, identifierToken, false);
-
-                AddSymbolReference(new VariableSymbol(identifierToken.TextSpan with
-                {
-                    DecorationByte = (byte)GenericDecorationKind.Variable
-                }));
-            }
-            else
-            {
-                // CommaToken
-                syntax = functionArgumentListing[i];
-            }
-
-            boundGenericArgumentListing.Add(syntax);
-
-            if (shouldMatch is null)
-                shouldMatch = true;
-            else if (shouldMatch.Value)
-                shouldMatch = false;
-            else
-                shouldMatch = null;
-        }
-
         return new BoundFunctionArgumentsNode(
             openParenthesisToken,
-            boundGenericArgumentListing,
+            functionArgumentListing,
             closeParenthesisToken);
     }
 
