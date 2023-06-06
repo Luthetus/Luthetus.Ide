@@ -10,7 +10,7 @@ public sealed record BoundConstructorInvocationNode : ISyntaxNode
     public BoundConstructorInvocationNode(
         KeywordToken keywordToken,
         BoundTypeNode? boundTypeNode,
-        BoundFunctionArgumentsNode boundFunctionArgumentsNode,
+        BoundFunctionArgumentsNode? boundFunctionArgumentsNode,
         BoundObjectInitializationNode? boundObjectInitializationNode)
     {
         KeywordToken = keywordToken;
@@ -25,9 +25,10 @@ public sealed record BoundConstructorInvocationNode : ISyntaxNode
 
         if (BoundTypeNode is not null)
             children.Add(BoundTypeNode);
-
-        children.Add(BoundFunctionArgumentsNode);
-
+        
+        if (BoundFunctionArgumentsNode is not null)
+            children.Add(BoundFunctionArgumentsNode);
+        
         if (BoundObjectInitializationNode is not null)
             children.Add(BoundObjectInitializationNode);
 
@@ -36,7 +37,7 @@ public sealed record BoundConstructorInvocationNode : ISyntaxNode
 
     public KeywordToken KeywordToken { get; }
     public BoundTypeNode? BoundTypeNode { get; }
-    public BoundFunctionArgumentsNode BoundFunctionArgumentsNode { get; }
+    public BoundFunctionArgumentsNode? BoundFunctionArgumentsNode { get; }
     public BoundObjectInitializationNode? BoundObjectInitializationNode { get; }
 
     public bool IsFabricated { get; init; }

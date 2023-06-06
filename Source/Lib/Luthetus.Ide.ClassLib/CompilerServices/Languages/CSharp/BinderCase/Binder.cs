@@ -290,9 +290,17 @@ public class Binder
     public BoundConstructorInvocationNode BindConstructorInvocationNode(
         KeywordToken keywordToken,
         BoundTypeNode? boundTypeNode,
-        BoundFunctionArgumentsNode boundFunctionArgumentsNode,
+        BoundFunctionArgumentsNode? boundFunctionArgumentsNode,
         BoundObjectInitializationNode? boundObjectInitializationNode)
     {
+        if (boundTypeNode is not null)
+        {
+            AddSymbolReference(new TypeSymbol(boundTypeNode.Token.TextSpan with
+            {
+                DecorationByte = (byte)GenericDecorationKind.Type
+            }));
+        }
+
         return new BoundConstructorInvocationNode(
             keywordToken,
             boundTypeNode,

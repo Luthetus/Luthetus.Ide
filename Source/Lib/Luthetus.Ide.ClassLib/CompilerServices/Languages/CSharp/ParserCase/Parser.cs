@@ -176,7 +176,7 @@ public class Parser
         return boundLiteralExpressionNode;
     }
 
-    private BoundBinaryExpressionNode ParsePlusToken(
+    private void ParsePlusToken(
         PlusToken plusToken)
     {
         var localNodeRecent = _nodeRecent;
@@ -184,19 +184,33 @@ public class Parser
         if (localNodeRecent is not BoundLiteralExpressionNode leftBoundLiteralExpressionNode)
             throw new NotImplementedException();
 
-        var consumedToken = _tokenWalker.Consume();
+        var validMatches = new SyntaxKind[] 
+        {
+            SyntaxKind.NumericLiteralToken,
+            SyntaxKind.StringLiteralToken,
+        };
+
+        var matchedToken = _tokenWalker.MatchRange(
+            validMatches,
+            SyntaxKind.BadToken);
 
         BoundLiteralExpressionNode rightBoundLiteralExpressionNode;
 
-        if (consumedToken.SyntaxKind == SyntaxKind.NumericLiteralToken)
+        if (matchedToken.SyntaxKind == SyntaxKind.NumericLiteralToken)
         {
             rightBoundLiteralExpressionNode = ParseNumericLiteralToken(
-                (NumericLiteralToken)consumedToken);
+                (NumericLiteralToken)matchedToken);
+        }
+        else if (matchedToken.SyntaxKind == SyntaxKind.StringLiteralToken)
+        {
+            rightBoundLiteralExpressionNode = ParseStringLiteralToken(
+                (StringLiteralToken)matchedToken);
         }
         else
         {
-            rightBoundLiteralExpressionNode = ParseStringLiteralToken(
-                (StringLiteralToken)consumedToken);
+            // TODO: I'm not sure what to do when the matchedToken is unexpected. For now I'll "simplify" the binary expression to be the left operand alone.
+            _nodeRecent = leftBoundLiteralExpressionNode;
+            return;
         }
 
         var boundBinaryOperatorNode = _binder.BindBinaryOperatorNode(
@@ -210,8 +224,6 @@ public class Parser
             rightBoundLiteralExpressionNode);
 
         _nodeRecent = boundBinaryExpressionNode;
-
-        return boundBinaryExpressionNode;
     }
 
     private IStatementNode ParsePreprocessorDirectiveToken(
@@ -280,19 +292,12 @@ public class Parser
             }
             else if (text == "class")
             {
-                var consumedToken = _tokenWalker.Consume();
+                var matchedToken = _tokenWalker.Match(SyntaxKind.IdentifierToken);
 
-                if (consumedToken.SyntaxKind == SyntaxKind.IdentifierToken)
-                {
-                    var boundClassDeclarationNode = _binder.BindClassDeclarationNode(
-                        (IdentifierToken)consumedToken);
+                var boundClassDeclarationNode = _binder.BindClassDeclarationNode(
+                    (IdentifierToken)matchedToken);
 
-                    _nodeRecent = boundClassDeclarationNode;
-                }
-                else
-                {
-                    throw new NotImplementedException();
-                }
+                _nodeRecent = boundClassDeclarationNode;
             }
             else if (text == "using")
             {
@@ -355,47 +360,95 @@ public class Parser
                     throw new NotImplementedException();
                 }
 
-                var success = _binder.TryBindTypeNode(typeIdentifier, out var boundTypeNode);
+                BoundTypeNode boundTypeNode = new BoundTypeNode(typeof(void), typeIdentifier);
 
-                if (!success)
-                    boundTypeNode = new BoundTypeNode(typeof(void), typeIdentifier);
-
-                var openParenthesisToken = _tokenWalker.Match(SyntaxKind.OpenParenthesisToken);
-
-                var boundFunctionArgumentsNode = ParseFunctionArguments((OpenParenthesisToken)openParenthesisToken);
-
-                BoundObjectInitializationNode? boundObjectInitializationNode = null;
-
-                if (_tokenWalker.Peek(0).SyntaxKind == SyntaxKind.OpenBraceToken)
+                if (!typeIdentifier.IsFabricated)
                 {
-                    var openBraceToken = (OpenBraceToken)_tokenWalker.Consume();
-                    boundObjectInitializationNode = ParseObjectInitialization(openBraceToken);
-                }    
+                    if (_binder.TryBindTypeNode(typeIdentifier, out var successfullyBoundTypeNode) &&
+                        successfullyBoundTypeNode is not null)
+                    {
+                        boundTypeNode = successfullyBoundTypeNode;
+                    }
+                }
 
-                var boundConstructorInvocationNode = _binder.BindConstructorInvocationNode(
-                    keywordToken,
-                    boundTypeNode,
-                    boundFunctionArgumentsNode,
-                    boundObjectInitializationNode);
+                // TODO: combine the logic for 'new()' without a type identifier and 'new List<int>()' with a type identifier. To start I am going to isolate them in their own if conditional blocks.
+                if (typeIdentifier.IsFabricated)
+                {
+                    // If "new()" LACKS a type identifier then the OpenParenthesisToken must be there. This is true even still for when there is object initialization OpenBraceToken. For new() the parenthesis are required.
+                    // valid inputs:
+                    //     new()
+                    //     new(){}
+                    //     new(...)
+                    //     new(...){}
 
-                _currentCompilationUnitBuilder.Children.Add(boundConstructorInvocationNode);
+                    var openParenthesisToken = _tokenWalker.Match(SyntaxKind.OpenParenthesisToken);
+
+                    var boundFunctionArgumentsNode = ParseFunctionArguments((OpenParenthesisToken)openParenthesisToken);
+
+                    BoundObjectInitializationNode? boundObjectInitializationNode = null;
+
+                    if (_tokenWalker.Peek(0).SyntaxKind == SyntaxKind.OpenBraceToken)
+                    {
+                        var openBraceToken = (OpenBraceToken)_tokenWalker.Consume();
+                        boundObjectInitializationNode = ParseObjectInitialization(openBraceToken);
+                    }
+
+                    var boundConstructorInvocationNode = _binder.BindConstructorInvocationNode(
+                        keywordToken,
+                        boundTypeNode,
+                        boundFunctionArgumentsNode,
+                        boundObjectInitializationNode);
+
+                    _currentCompilationUnitBuilder.Children.Add(boundConstructorInvocationNode);
+                }
+                else
+                {
+                    // If "new List<int>()" HAS a type identifier then the OpenParenthesisToken is optional, given that the object initializer syntax OpenBraceToken is found, and one wishes to invoke the parameterless constructor.
+                    // valid inputs:
+                    //     new List<int>()
+                    //     new List<int>(){}
+                    //     new List<int>{}
+                    //     new List<int>(...)
+                    //     new List<int>(...){}
+                    //     new string(...){}
+
+                    if (_tokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
+                        ParseGenericArguments((OpenAngleBracketToken)_tokenWalker.Consume());
+
+                    BoundFunctionArgumentsNode? boundFunctionArgumentsNode = null;
+
+                    if (_tokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+                    {
+                        boundFunctionArgumentsNode = ParseFunctionArguments(
+                            (OpenParenthesisToken)_tokenWalker.Consume());
+                    }
+
+                    BoundObjectInitializationNode? boundObjectInitializationNode = null;
+
+                    if (_tokenWalker.Peek(0).SyntaxKind == SyntaxKind.OpenBraceToken)
+                    {
+                        var openBraceToken = (OpenBraceToken)_tokenWalker.Consume();
+                        boundObjectInitializationNode = ParseObjectInitialization(openBraceToken);
+                    }
+
+                    var boundConstructorInvocationNode = _binder.BindConstructorInvocationNode(
+                        keywordToken,
+                        boundTypeNode,
+                        boundFunctionArgumentsNode,
+                        boundObjectInitializationNode);
+
+                    _currentCompilationUnitBuilder.Children.Add(boundConstructorInvocationNode);
+                }
             }
             else if (text == "interface")
             {
                 // TODO: Implement the 'interface' keyword
-                var consumedToken = _tokenWalker.Consume();
+                var matchedToken = _tokenWalker.Match(SyntaxKind.IdentifierToken);
 
-                if (consumedToken.SyntaxKind == SyntaxKind.IdentifierToken)
-                {
-                    var boundClassDeclarationNode = _binder.BindClassDeclarationNode(
-                        (IdentifierToken)consumedToken);
+                var boundClassDeclarationNode = _binder.BindClassDeclarationNode(
+                    (IdentifierToken)matchedToken);
 
-                    _nodeRecent = boundClassDeclarationNode;
-                }
-                else
-                {
-                    throw new NotImplementedException();
-                }
+                _nodeRecent = boundClassDeclarationNode;
             }
             else
             {
@@ -408,25 +461,25 @@ public class Parser
     private BoundObjectInitializationNode ParseObjectInitialization(
         OpenBraceToken openBraceToken) 
     {
-        ISyntaxToken consumedToken = new BadToken(openBraceToken.TextSpan);
+        ISyntaxToken shouldBeCloseBraceToken = new BadToken(openBraceToken.TextSpan);
 
         while (!_tokenWalker.IsEof)
         {
-            consumedToken = _tokenWalker.Consume();
+            shouldBeCloseBraceToken = _tokenWalker.Consume();
 
-            if (consumedToken.SyntaxKind == SyntaxKind.EndOfFileToken ||
-                consumedToken.SyntaxKind == SyntaxKind.CloseBraceToken)
+            if (shouldBeCloseBraceToken.SyntaxKind == SyntaxKind.EndOfFileToken ||
+                shouldBeCloseBraceToken.SyntaxKind == SyntaxKind.CloseBraceToken)
             {
                 break;
             }
         }
 
-        if (consumedToken.SyntaxKind != SyntaxKind.CloseBraceToken)
-            consumedToken = _tokenWalker.Match(SyntaxKind.CloseBraceToken);
+        if (shouldBeCloseBraceToken.SyntaxKind != SyntaxKind.CloseBraceToken)
+            shouldBeCloseBraceToken = _tokenWalker.Match(SyntaxKind.CloseBraceToken);
 
         return new BoundObjectInitializationNode(
             openBraceToken,
-            (CloseBraceToken)consumedToken);
+            (CloseBraceToken)shouldBeCloseBraceToken);
     }
 
     private IdentifierToken ParseNamespaceIdentifier()
@@ -435,31 +488,16 @@ public class Parser
 
         while (!_tokenWalker.IsEof)
         {
-            var consumedToken = _tokenWalker.Consume();
-
-            if (consumedToken.SyntaxKind == SyntaxKind.MemberAccessToken)
+            if (combineNamespaceIdentifierIntoOne.Count % 2 == 0)
             {
-                if (combineNamespaceIdentifierIntoOne.Count % 2 == 1)
-                    combineNamespaceIdentifierIntoOne.Add(consumedToken);
-                else
-                    break;
+                var matchedToken = _tokenWalker.Match(SyntaxKind.IdentifierToken);
+                combineNamespaceIdentifierIntoOne.Add(matchedToken);
             }
-            else if (consumedToken.SyntaxKind == SyntaxKind.IdentifierToken)
+            else if (_tokenWalker.Current.SyntaxKind == SyntaxKind.MemberAccessToken)
             {
-                if (combineNamespaceIdentifierIntoOne.Count % 2 == 0)
-                    combineNamespaceIdentifierIntoOne.Add(consumedToken);
-                else
-                    break;
-            }
-            else
-            {
-                _tokenWalker.Backtrack();
-                break;
+                combineNamespaceIdentifierIntoOne.Add(_tokenWalker.Consume());
             }
         }
-
-        if (combineNamespaceIdentifierIntoOne.Count == 0)
-            throw new NotImplementedException();
 
         var identifierTextSpan = combineNamespaceIdentifierIntoOne.First().TextSpan with
         {
