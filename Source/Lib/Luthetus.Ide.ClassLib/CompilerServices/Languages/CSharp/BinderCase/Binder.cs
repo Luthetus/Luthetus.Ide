@@ -258,6 +258,7 @@ public class Binder
         var boundClassDeclarationNode = new BoundClassDeclarationNode(
             identifierToken,
             null,
+            null,
             null);
 
         if (_currentScope.ClassDeclarationMap.TryGetValue(

@@ -1,5 +1,7 @@
-﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statements;
+﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes;
+using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statements;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
+using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.SyntaxTokens;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.LexerCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.ParserCase;
 using Luthetus.TextEditor.RazorLib.Lexing;
@@ -167,11 +169,13 @@ public partial class ParserTests
             if (boundClassDeclarationNode.ClassBodyCompilationUnit is null)
                 throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
 
-            Assert.NotNull(
-                boundClassDeclarationNode.BoundInheritanceStatementNode);
+            Assert.NotNull(boundClassDeclarationNode.BoundGenericArgumentsNode);
+            Assert.Single(boundClassDeclarationNode.BoundGenericArgumentsNode!.BoundGenericArgumentListing);
 
-            Assert.Empty(
-                boundClassDeclarationNode.ClassBodyCompilationUnit.Children);
+            var boundTypeNode = (BoundTypeNode)boundClassDeclarationNode.BoundGenericArgumentsNode.BoundGenericArgumentListing.Single();
+            Assert.Equal(genericArgumentIdentifier, boundTypeNode.Token.TextSpan.GetText());
+
+            Assert.Empty(boundClassDeclarationNode.ClassBodyCompilationUnit.Children);
         }
     }
     
@@ -201,11 +205,19 @@ public partial class ParserTests
             if (boundClassDeclarationNode.ClassBodyCompilationUnit is null)
                 throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
 
-            Assert.NotNull(
-                boundClassDeclarationNode.BoundInheritanceStatementNode);
+            Assert.NotNull(boundClassDeclarationNode.BoundGenericArgumentsNode);
+            Assert.Equal(3, boundClassDeclarationNode.BoundGenericArgumentsNode!.BoundGenericArgumentListing.Count);
 
-            Assert.Empty(
-                boundClassDeclarationNode.ClassBodyCompilationUnit.Children);
+            var firstBoundTypeNode = (BoundTypeNode)boundClassDeclarationNode.BoundGenericArgumentsNode.BoundGenericArgumentListing[0];
+            Assert.Equal(genericArgOne, firstBoundTypeNode.Token.TextSpan.GetText());
+            
+            var commaToken = (CommaToken)boundClassDeclarationNode.BoundGenericArgumentsNode.BoundGenericArgumentListing[1];
+            Assert.Equal(",", commaToken.TextSpan.GetText());
+            
+            var secondBoundTypeNode = (BoundTypeNode)boundClassDeclarationNode.BoundGenericArgumentsNode.BoundGenericArgumentListing[2];
+            Assert.Equal(genericArgTwo, secondBoundTypeNode.Token.TextSpan.GetText());
+
+            Assert.Empty(boundClassDeclarationNode.ClassBodyCompilationUnit.Children);
         }
     }
     

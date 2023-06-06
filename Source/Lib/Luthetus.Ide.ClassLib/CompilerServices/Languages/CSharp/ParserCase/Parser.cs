@@ -983,7 +983,17 @@ public class Parser
             else
             {
                 // Generic Arguments
-                _ = ParseGenericArguments(openAngleBracketToken);
+                var boundGenericArguments = ParseGenericArguments(openAngleBracketToken);
+
+                if (_nodeRecent.SyntaxKind == SyntaxKind.BoundClassDeclarationNode)
+                {
+                    var boundClassDeclarationNode = (BoundClassDeclarationNode)_nodeRecent;
+
+                    _nodeRecent = boundClassDeclarationNode with
+                    {
+                        BoundGenericArgumentsNode = boundGenericArguments
+                    };
+                }
             }
         }
     }

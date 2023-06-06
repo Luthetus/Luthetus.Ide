@@ -7,16 +7,19 @@ namespace Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.St
 public sealed record BoundClassDeclarationNode : ISyntaxNode
 {
     private ISyntaxToken _identifierToken;
+    private BoundGenericArgumentsNode? _boundGenericArgumentsNode;
     private BoundInheritanceStatementNode? _boundInheritanceStatementNode;
     private CompilationUnit? _classBodyCompilationUnit;
     private ImmutableArray<ISyntax> _children;
 
     public BoundClassDeclarationNode(
         ISyntaxToken identifierToken,
+        BoundGenericArgumentsNode? boundGenericArgumentsNode,
         BoundInheritanceStatementNode? boundInheritanceStatementNode,
         CompilationUnit? classBodyCompilationUnit)
     {
         _identifierToken = identifierToken;
+        _boundGenericArgumentsNode = boundGenericArgumentsNode;
         _boundInheritanceStatementNode = boundInheritanceStatementNode;
         _classBodyCompilationUnit = classBodyCompilationUnit;
 
@@ -33,6 +36,16 @@ public sealed record BoundClassDeclarationNode : ISyntaxNode
         }
     }
 
+    public BoundGenericArgumentsNode? BoundGenericArgumentsNode
+    {
+        get => _boundGenericArgumentsNode;
+        init
+        {
+            _boundGenericArgumentsNode = value;
+            SetChildren();
+        }
+    }
+    
     public BoundInheritanceStatementNode? BoundInheritanceStatementNode
     {
         get => _boundInheritanceStatementNode;
@@ -67,11 +80,14 @@ public sealed record BoundClassDeclarationNode : ISyntaxNode
 
     private void SetChildren()
     {
-        var childrenList = new List<ISyntax>(3)
+        var childrenList = new List<ISyntax>(4)
         {
             IdentifierToken
         };
 
+        if (BoundGenericArgumentsNode is not null)
+            childrenList.Add(BoundGenericArgumentsNode);
+        
         if (BoundInheritanceStatementNode is not null)
             childrenList.Add(BoundInheritanceStatementNode);
 
