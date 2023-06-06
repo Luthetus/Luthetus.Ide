@@ -12,4 +12,5 @@ public sealed record OpenBraceToken : ISyntaxToken
 
     public TextEditorTextSpan TextSpan { get; }
     public SyntaxKind SyntaxKind => SyntaxKind.OpenBraceToken;
+    public bool IsFabricated { get; init; }
 }

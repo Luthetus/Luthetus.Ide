@@ -64,7 +64,7 @@ public class SemanticModelC : ISemanticModel
                     _ => throw new NotImplementedException(),
                 };
 
-                var textSpan = x.TextEditorTextSpan with
+                var textSpan = x.TextSpan with
                 {
                     DecorationByte = (byte)textEditorDecorationKind
                 };

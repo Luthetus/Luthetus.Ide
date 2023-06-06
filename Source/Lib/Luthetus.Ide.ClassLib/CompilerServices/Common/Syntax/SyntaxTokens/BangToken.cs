@@ -12,4 +12,5 @@ public sealed record BangToken : ISyntaxToken
 
     public TextEditorTextSpan TextSpan { get; }
     public SyntaxKind SyntaxKind => SyntaxKind.BangToken;
+    public bool IsFabricated { get; init; }
 }

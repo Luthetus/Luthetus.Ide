@@ -12,5 +12,6 @@ public sealed record CloseAngleBracketToken : ISyntaxToken
 
     public TextEditorTextSpan TextSpan { get; }
     public SyntaxKind SyntaxKind => SyntaxKind.CloseAngleBracketToken;
+    public bool IsFabricated { get; init; }
 }
 

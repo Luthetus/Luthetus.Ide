@@ -15,4 +15,5 @@ public sealed record PreprocessorDirectiveToken : ISyntaxToken
 
     public TextEditorTextSpan TextSpan { get; }
     public SyntaxKind SyntaxKind => SyntaxKind.PreprocessorDirectiveToken;
+    public bool IsFabricated { get; init; }
 }

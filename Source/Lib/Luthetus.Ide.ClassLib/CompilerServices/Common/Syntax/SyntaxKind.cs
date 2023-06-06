@@ -37,6 +37,7 @@ public enum SyntaxKind
     DollarSignToken,
     ColonToken,
     MemberAccessToken,
+    CommaToken,
     BadToken,
     EndOfFileToken,
 
@@ -60,6 +61,11 @@ public enum SyntaxKind
     BoundUsingDeclarationNode,
     BoundIdentifierReferenceNode,
     BoundAttributeNode,
+    BoundGenericArgumentsNode,
+    BoundFunctionArgumentsNode,
+    BoundConstructorInvocationNode,
+    BoundObjectInitializationNode,
+    BoundNamespaceEntryNode,
 
     // Symbols
     TypeSymbol,

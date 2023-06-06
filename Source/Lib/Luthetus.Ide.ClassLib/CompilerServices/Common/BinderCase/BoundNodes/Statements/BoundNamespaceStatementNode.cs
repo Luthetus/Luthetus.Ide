@@ -10,7 +10,7 @@ public sealed record BoundNamespaceStatementNode : ISyntaxNode
     public BoundNamespaceStatementNode(
         KeywordToken keywordToken,
         IdentifierToken identifierToken,
-        ImmutableArray<CompilationUnit> children)
+        ImmutableArray<BoundNamespaceEntryNode> children)
     {
         KeywordToken = keywordToken;
         IdentifierToken = identifierToken;

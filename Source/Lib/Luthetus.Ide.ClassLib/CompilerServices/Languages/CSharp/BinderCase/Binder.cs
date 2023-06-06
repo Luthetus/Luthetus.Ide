@@ -37,6 +37,8 @@ public class Binder
             .ToList();
     }
 
+    public ResourceUri? CurrentResourceUri { get; set; }
+
     public ImmutableDictionary<string, BoundNamespaceStatementNode> BoundNamespaceStatementNodes => _boundNamespaceStatementNodes.ToImmutableDictionary();
     public ImmutableArray<ISymbol> Symbols => _symbolDefinitions.Values.SelectMany(x => x.SymbolReferences).Select(x => x.Symbol).ToImmutableArray();
     public Dictionary<string, SymbolDefinition> SymbolDefinitions => _symbolDefinitions;
@@ -198,7 +200,7 @@ public class Binder
             boundNamespaceStatementNode = new BoundNamespaceStatementNode(
                 keywordToken,
                 identifierToken,
-                ImmutableArray<CompilationUnit>.Empty);
+                ImmutableArray<BoundNamespaceEntryNode>.Empty);
 
             var success = _boundNamespaceStatementNodes.TryAdd(
                 namespaceIdentifier,
@@ -222,9 +224,13 @@ public class Binder
                 namespaceIdentifier, 
                 out var existingBoundNamespaceStatementNode))
         {
+            var boundNamespaceEntryNode = new BoundNamespaceEntryNode(
+                inBoundNamespaceStatementNode.IdentifierToken.TextSpan.ResourceUri,
+                compilationUnit);
+
             var outChildren = existingBoundNamespaceStatementNode.Children
-                .Add(compilationUnit)
-                .Select(x => (CompilationUnit)x)
+                .Add(boundNamespaceEntryNode)
+                .Select(x => (BoundNamespaceEntryNode)x)
                 .ToImmutableArray();
 
             var outBoundNamespaceStatementNode = new BoundNamespaceStatementNode(
@@ -249,26 +255,29 @@ public class Binder
     {
         var classIdentifier = identifierToken.TextSpan.GetText();
 
+        var boundClassDeclarationNode = new BoundClassDeclarationNode(
+            identifierToken,
+            null,
+            null);
+
         if (_currentScope.ClassDeclarationMap.TryGetValue(
             classIdentifier,
             out var classDeclarationNode))
         {
             // TODO: The class was already declared, so report a diagnostic?
             // TODO: The class was already declared, so check that the return types match?
+            _currentScope.ClassDeclarationMap[classIdentifier] = boundClassDeclarationNode;
             return classDeclarationNode;
         }
-
-        var boundClassDeclarationNode = new BoundClassDeclarationNode(
-            identifierToken,
-            null,
-            null);
-
-        var success = _currentScope.ClassDeclarationMap.TryAdd(
-            classIdentifier,
-            boundClassDeclarationNode);
-
-        if (!success)
-            _currentScope.ClassDeclarationMap[classIdentifier] = boundClassDeclarationNode;
+        else
+        {
+            var success = _currentScope.ClassDeclarationMap.TryAdd(
+                classIdentifier,
+                boundClassDeclarationNode);
+            
+            if (!success)
+                _currentScope.ClassDeclarationMap[classIdentifier] = boundClassDeclarationNode;
+        }
 
         AddSymbolDefinition(new TypeSymbol(identifierToken.TextSpan with
         {
@@ -276,6 +285,19 @@ public class Binder
         }));
 
         return boundClassDeclarationNode;
+    }
+    
+    public BoundConstructorInvocationNode BindConstructorInvocationNode(
+        KeywordToken keywordToken,
+        BoundTypeNode? boundTypeNode,
+        BoundFunctionArgumentsNode boundFunctionArgumentsNode,
+        BoundObjectInitializationNode? boundObjectInitializationNode)
+    {
+        return new BoundConstructorInvocationNode(
+            keywordToken,
+            boundTypeNode,
+            boundFunctionArgumentsNode,
+            boundObjectInitializationNode);
     }
     
     public BoundInheritanceStatementNode BindInheritanceStatementNode(
@@ -534,6 +556,104 @@ public class Binder
             openSquareBracketToken,
             closeSquareBracketToken);
     }
+    
+    public BoundGenericArgumentsNode BindGenericArguments(
+        OpenAngleBracketToken openAngleBracketToken,
+        List<ISyntaxToken> genericArgumentListing,
+        CloseAngleBracketToken closeAngleBracketToken)
+    {
+        var boundGenericArgumentListing = new List<ISyntax>();
+
+        for (var i = 0; i < genericArgumentListing.Count; i++)
+        {
+            ISyntax syntax;
+
+            if (i % 2 == 1)
+            {
+                // CommaToken
+                syntax = genericArgumentListing[i];
+            }
+            else
+            {
+                var identifierToken = genericArgumentListing[i];
+
+                syntax = new BoundTypeNode(typeof(void), identifierToken);
+
+                AddSymbolReference(new TypeSymbol(identifierToken.TextSpan with
+                {
+                    DecorationByte = (byte)GenericDecorationKind.Type
+                }));
+            }
+
+            boundGenericArgumentListing.Add(syntax);
+        }
+
+        return new BoundGenericArgumentsNode(
+            openAngleBracketToken,
+            boundGenericArgumentListing,
+            closeAngleBracketToken);
+    }
+    
+    public BoundFunctionArgumentsNode BindFunctionArguments(
+        OpenParenthesisToken openParenthesisToken,
+        List<ISyntaxToken> functionArgumentListing,
+        CloseParenthesisToken closeParenthesisToken)
+    {
+        var boundGenericArgumentListing = new List<ISyntax>();
+
+        // Alternate between reading type identifier (null), argument identifier (true), and a single comma (false)
+        bool? shouldMatch = null;
+
+        // The initialized value for 'seenBoundTypeNode' should never occur. I don't want to mark this variable as nullable however.
+        BoundTypeNode seenBoundTypeNode = new BoundTypeNode(typeof(void), openParenthesisToken);
+
+        for (var i = 0; i < functionArgumentListing.Count; i++)
+        {
+            ISyntax syntax;
+
+            if (shouldMatch is null)
+            {
+                var identifierToken = functionArgumentListing[i];
+
+                syntax = new BoundTypeNode(typeof(void), identifierToken);
+
+                AddSymbolReference(new TypeSymbol(identifierToken.TextSpan with
+                {
+                    DecorationByte = (byte)GenericDecorationKind.Type
+                }));
+            }
+            else if (shouldMatch.Value)
+            {
+                var identifierToken = functionArgumentListing[i];
+
+                syntax = new BoundVariableDeclarationStatementNode(seenBoundTypeNode, identifierToken, false);
+
+                AddSymbolReference(new VariableSymbol(identifierToken.TextSpan with
+                {
+                    DecorationByte = (byte)GenericDecorationKind.Variable
+                }));
+            }
+            else
+            {
+                // CommaToken
+                syntax = functionArgumentListing[i];
+            }
+
+            boundGenericArgumentListing.Add(syntax);
+
+            if (shouldMatch is null)
+                shouldMatch = true;
+            else if (shouldMatch.Value)
+                shouldMatch = false;
+            else
+                shouldMatch = null;
+        }
+
+        return new BoundFunctionArgumentsNode(
+            openParenthesisToken,
+            boundGenericArgumentListing,
+            closeParenthesisToken);
+    }
 
     public void RegisterBoundScope(
         Type? scopeReturnType,
@@ -564,9 +684,9 @@ public class Binder
     {
         foreach (var namespaceEntry in boundNamespaceStatementNode.Children)
         {
-            var compilationUnit = (CompilationUnit)namespaceEntry;
+            var boundNamespaceEntryNode = (BoundNamespaceEntryNode)namespaceEntry;
 
-            foreach (var child in compilationUnit.Children)
+            foreach (var child in boundNamespaceEntryNode.CompilationUnit.Children)
             {
                 if (child.SyntaxKind != SyntaxKind.BoundClassDeclarationNode)
                     continue;
@@ -726,5 +846,40 @@ public class Binder
         symbolDefinition.SymbolReferences.Add(new SymbolReference(
             symbol,
             _currentScope.BoundScopeKey));
+    }
+
+    public void ClearStateByResourceUri(ResourceUri resourceUri)
+    {
+        foreach (var boundNamespaceStatementNode in _boundNamespaceStatementNodes)
+        {
+            var keep = boundNamespaceStatementNode.Value.Children
+                .Where(x => ((BoundNamespaceEntryNode)x).ResourceUri != resourceUri)
+                .ToImmutableArray();
+
+            _boundNamespaceStatementNodes[boundNamespaceStatementNode.Key] =
+                boundNamespaceStatementNode.Value with
+                {
+                    Children = keep
+                };
+        }
+        
+        foreach (var symbolDefinition in _symbolDefinitions)
+        {
+            var keep = symbolDefinition.Value.SymbolReferences
+                .Where(x => x.Symbol.TextSpan.ResourceUri != resourceUri)
+                .ToList();
+
+            _symbolDefinitions[symbolDefinition.Key] =
+                symbolDefinition.Value with
+                {
+                    SymbolReferences = keep
+                };
+        }
+
+        _boundScopes = _boundScopes
+            .Where(x => x.ResourceUri != resourceUri)
+            .ToList();
+
+        _diagnosticBag.ClearByResourceUri(resourceUri);
     }
 }

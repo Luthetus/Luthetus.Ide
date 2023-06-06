@@ -12,4 +12,5 @@ public sealed record EndOfFileToken : ISyntaxToken
 
     public TextEditorTextSpan TextSpan { get; }
     public SyntaxKind SyntaxKind => SyntaxKind.EndOfFileToken;
+    public bool IsFabricated { get; init; }
 }

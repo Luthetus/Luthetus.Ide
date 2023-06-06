@@ -12,4 +12,5 @@ public sealed record OpenParenthesisToken : ISyntaxToken
 
     public TextEditorTextSpan TextSpan { get; }
     public SyntaxKind SyntaxKind => SyntaxKind.OpenParenthesisToken;
+    public bool IsFabricated { get; init; }
 }

@@ -29,11 +29,12 @@ public class LuthetusIdeDiagnosticBag : IEnumerable<TextEditorDiagnostic>
 
     public void ReportUnexpectedToken(
         TextEditorTextSpan textEditorTextSpan,
-        string unexpectedToken)
+        string unexpectedToken,
+        string expectedToken)
     {
         Report(
             TextEditorDiagnosticLevel.Error,
-            $"Unexpected token: '{unexpectedToken}'",
+            $"Unexpected token: '{unexpectedToken}' | expected: '{expectedToken}'",
             textEditorTextSpan);
     }
 
@@ -76,5 +77,14 @@ public class LuthetusIdeDiagnosticBag : IEnumerable<TextEditorDiagnostic>
                 luthetusIdeDiagnosticLevel,
                 message,
                 textEditorTextSpan));
+    }
+    
+    public void ClearByResourceUri(ResourceUri resourceUri)
+    {
+        var keep = _luthetusIdeDiagnostics
+            .Where(x => x.TextSpan.ResourceUri != resourceUri);
+
+        _luthetusIdeDiagnostics.Clear();
+        _luthetusIdeDiagnostics.AddRange(keep);
     }
 }

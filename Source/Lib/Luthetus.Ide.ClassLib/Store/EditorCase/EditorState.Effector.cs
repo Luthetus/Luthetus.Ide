@@ -25,6 +25,8 @@ public partial class EditorState
 {
     public static readonly TextEditorGroupKey EditorTextEditorGroupKey = TextEditorGroupKey.NewTextEditorGroupKey();
 
+    public static readonly Binder SharedBinder = new();
+
     private class Effector
     {
         private readonly ITextEditorService _textEditorService;
@@ -32,7 +34,6 @@ public partial class EditorState
         private readonly IFileSystemProvider _fileSystemProvider;
         private readonly IBackgroundTaskQueue _backgroundTaskQueue;
         private readonly IState<SemanticContextState> _semanticContextStateWrap;
-        private readonly Binder _sharedBinder = new();
 
         public Effector(
             ITextEditorService textEditorService,
@@ -47,6 +48,7 @@ public partial class EditorState
             _backgroundTaskQueue = backgroundTaskQueue;
             _semanticContextStateWrap = semanticContextStateWrap;
         }
+
 
         [EffectMethod]
         public Task HandleShowInputFileAction(
@@ -195,7 +197,7 @@ public partial class EditorState
             {
                 semanticModel = ExtensionNoPeriodFacts.GetSemanticModel(
                     absoluteFilePath.ExtensionNoPeriod,
-                    _sharedBinder);
+                    SharedBinder);
 
                 _semanticContextStateWrap.Value.DotNetSolutionSemanticContext.SemanticModelMap
                     .Add(

@@ -10,9 +10,41 @@ namespace Luthetus.Ide.Tests.Basics.CompilerServices.Languages.CSharp.ParserCase
 public partial class ParserTests
 {
     [Fact]
-    public void SHOULD_PARSE_FUNCTION_DEFINITION_STATEMENT()
+    public void SHOULD_PARSE_FUNCTION_DEFINITION_STATEMENT_NO_ARGUMENTS()
     {
         string sourceText = @"void WriteHelloWorldToConsole()
+{
+}"
+            .ReplaceLineEndings("\n");
+
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(
+            resourceUri,
+            sourceText);
+
+        lexer.Lex();
+
+        var parser = new Parser(
+            lexer.SyntaxTokens,
+            lexer.Diagnostics);
+
+        var compilationUnit = parser.Parse();
+
+        Assert.Single(compilationUnit.Children);
+
+        var boundFunctionDeclarationNode =
+            (BoundFunctionDeclarationNode)compilationUnit.Children[0];
+
+        Assert.Equal(
+            SyntaxKind.BoundFunctionDeclarationNode,
+            boundFunctionDeclarationNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void SHOULD_PARSE_FUNCTION_DEFINITION_STATEMENT_WITH_ARGUMENTS()
+    {
+        string sourceText = @"void WriteHelloWorldToConsole(int times, bool usePurpleText)
 {
 }"
             .ReplaceLineEndings("\n");

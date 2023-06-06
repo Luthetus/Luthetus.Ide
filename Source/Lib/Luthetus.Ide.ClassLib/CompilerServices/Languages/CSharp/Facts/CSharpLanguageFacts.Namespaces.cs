@@ -18,7 +18,7 @@ public partial class CSharpLanguageFacts
                     new BoundNamespaceStatementNode(
                         new(new(0, 0, 0, new(string.Empty), string.Empty)),
                         new(new(0, SystemNamespaceIdentifier.Length, 0, new(string.Empty), SystemNamespaceIdentifier)),
-                        System.Collections.Immutable.ImmutableArray<Common.General.CompilationUnit>.Empty)
+                        System.Collections.Immutable.ImmutableArray<BoundNamespaceEntryNode>.Empty)
                 }
             };
         }

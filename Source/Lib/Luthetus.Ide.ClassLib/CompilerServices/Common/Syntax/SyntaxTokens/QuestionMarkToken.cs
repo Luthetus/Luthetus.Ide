@@ -12,4 +12,5 @@ public sealed record QuestionMarkToken : ISyntaxToken
 
     public TextEditorTextSpan TextSpan { get; }
     public SyntaxKind SyntaxKind => SyntaxKind.QuestionMarkToken;
+    public bool IsFabricated { get; init; }
 }

@@ -7,10 +7,14 @@ namespace Luthetus.Ide.ClassLib.CompilerServices.Common.General;
 public class TokenWalker
 {
     private readonly ImmutableArray<ISyntaxToken> _tokens;
+    private readonly LuthetusIdeDiagnosticBag _diagnosticBag;
 
-    public TokenWalker(ImmutableArray<ISyntaxToken> tokens)
+    public TokenWalker(
+        ImmutableArray<ISyntaxToken> tokens,
+        LuthetusIdeDiagnosticBag diagnosticBag)
     {
         _tokens = tokens;
+        _diagnosticBag = diagnosticBag;
     }
 
     public ImmutableArray<ISyntaxToken> Tokens => _tokens;
@@ -66,6 +70,45 @@ public class TokenWalker
         // TODO: (2023-05-30) Should 'StatementDelimiterTokenRecent' be set here? See logic for tracking whether the current statement is completed. This is used for determining the contextual var keyword.
 
         return Peek(_index);
+    }
+
+    /// <summary>If the syntaxKind passed in does not match the current token, then a syntax token with that syntax kind will be fabricated and then returned instead.</summary>
+    public ISyntaxToken Match(
+        SyntaxKind expectedSyntaxKind)
+    {
+        var currentToken = Peek(0);
+
+        if (currentToken.SyntaxKind == expectedSyntaxKind)
+            return Consume();
+
+        var fabricatedToken = this.FabricateToken(expectedSyntaxKind);
+
+        _diagnosticBag.ReportUnexpectedToken(
+            fabricatedToken.TextSpan,
+            currentToken.SyntaxKind.ToString(),
+            expectedSyntaxKind.ToString());
+
+        return fabricatedToken;
+    }
+
+    /// <summary>If the syntaxKind passed in does not match the current token, then a syntax token with that syntax kind will be fabricated and then returned instead.</summary>
+    public ISyntaxToken MatchRange(
+        IEnumerable<SyntaxKind> validSyntaxKinds,
+        SyntaxKind fabricationKind)
+    {
+        var currentToken = Peek(0);
+
+        if (validSyntaxKinds.Contains(currentToken.SyntaxKind))
+            return Consume();
+
+        var fabricatedToken = this.FabricateToken(fabricationKind);
+
+        _diagnosticBag.ReportUnexpectedToken(
+            fabricatedToken.TextSpan,
+            currentToken.SyntaxKind.ToString(),
+            fabricationKind.ToString());
+
+        return fabricatedToken;
     }
 
     private BadToken GetBadToken() => new BadToken(new(0, 0, 0, new(string.Empty), string.Empty));

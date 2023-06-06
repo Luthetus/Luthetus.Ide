@@ -12,4 +12,5 @@ public sealed record KeywordToken : ISyntaxToken
 
     public TextEditorTextSpan TextSpan { get; }
     public SyntaxKind SyntaxKind => SyntaxKind.KeywordToken;
+    public bool IsFabricated { get; init; }
 }
