@@ -517,23 +517,24 @@ public class Parser
 
         if (text == "var")
         {
+            // Check if previous statement is finished, and a new one is starting.
+            // TODO: 'Peek(-2)' is horribly confusing. The reason for using -2 is that one consumed the 'var' keyword and moved their position forward by 1. So to read the token behind 'var' one must go back 2 tokens. It feels natural to put '-1' and then this evaluates to the wrong token. Should an expression bound property be made for 'Peek(-2)'?
             var previousToken = _tokenWalker.Peek(-2);
 
             if (previousToken.SyntaxKind == SyntaxKind.StatementDelimiterToken ||
                 previousToken.SyntaxKind == SyntaxKind.BadToken)
             {
-                var consumedToken = _tokenWalker.Consume();
+                // Check if the next token is a second 'var keyword' or an IdentifierToken. Two IdentifierTokens is invalid, and therefore one can contextually take this 'var' as a keyword.
+                bool nextTokenIsVarKeyword =
+                    _tokenWalker.Current.SyntaxKind == SyntaxKind.KeywordContextualToken &&
+                    _tokenWalker.Current.TextSpan.GetText() == "var";
 
-                var consumedTokenText = consumedToken.TextSpan.GetText();
+                bool nextTokenIsIdentifierToken =
+                    _tokenWalker.Current.SyntaxKind == SyntaxKind.IdentifierToken;
 
-                if (consumedTokenText == "var")
-                    consumedToken = new IdentifierToken(consumedToken.TextSpan);
-
-                if (consumedToken.SyntaxKind == SyntaxKind.IdentifierToken)
+                if (nextTokenIsVarKeyword || nextTokenIsIdentifierToken)
                 {
-                    // Current contextual var keyword to be be interpreted as a keyword.
-                    // And the next token is to be treated as an identifier, even if its text is "var"
-
+                    // Take 'var' as a keyword
                     if (_binder.TryGetTypeHierarchically(text, out var type) &&
                         type is not null)
                     {
@@ -541,25 +542,13 @@ public class Parser
                         _nodeRecent = new BoundTypeNode(type, keywordContextualToken);
                     }
 
-                    ParseIdentifierToken((IdentifierToken)consumedToken);
-                }
-                else
-                {
-                    _ = _tokenWalker.Backtrack();
-
-                    // A local variable is named var and is starting a statement
-                    var keywordContextualTokenAsIdentifier = new IdentifierToken(keywordContextualToken.TextSpan);
-                 
-                    ParseIdentifierToken(keywordContextualTokenAsIdentifier);
+                    return;
                 }
             }
-            else
-            {
-                // A local variable is named var and is NOT starting a statement
-                var keywordContextualTokenAsIdentifier = new IdentifierToken(keywordContextualToken.TextSpan);
 
-                ParseIdentifierToken(keywordContextualTokenAsIdentifier);
-            }
+            // Take 'var' as an identifier
+            IdentifierToken varIdentifierToken = new(keywordContextualToken.TextSpan);
+            ParseIdentifierToken(varIdentifierToken);
         }
     }
 
@@ -613,8 +602,6 @@ public class Parser
     private void ParseIdentifierToken(
         IdentifierToken identifierToken)
     {
-        var consumedToken = _tokenWalker.Consume();
-
         if (_nodeRecent is not null &&
             _nodeRecent.SyntaxKind == SyntaxKind.BoundTypeNode)
         {
@@ -624,7 +611,7 @@ public class Parser
             {
                 // TODO: Implement generic types for 'function declaration'
             }
-            else if (consumedToken.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+            else if (_tokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
             {
                 // 'function declaration'
 
@@ -634,16 +621,16 @@ public class Parser
 
                 _nodeRecent = boundFunctionDeclarationNode;
 
-                ParseFunctionArguments((OpenParenthesisToken)consumedToken);
+                ParseFunctionArguments((OpenParenthesisToken)_tokenWalker.Consume());
             }
-            else if (consumedToken.SyntaxKind == SyntaxKind.EqualsToken ||
-                     consumedToken.SyntaxKind == SyntaxKind.StatementDelimiterToken)
+            else if (_tokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken ||
+                     _tokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
             {
                 // 'variable declaration' OR 'variable initialization' OR 'property which is expression bound'
 
-                if (_tokenWalker.Current.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
+                if (_tokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
                 {
-                    _tokenWalker.Backtrack();
+                    // Move current token to be the Identifier
                     _tokenWalker.Backtrack();
 
                     ParsePropertyDefinition();
@@ -657,9 +644,12 @@ public class Parser
 
                     _currentCompilationUnitBuilder.Children.Add(boundVariableDeclarationStatementNode);
 
-                    if (consumedToken.SyntaxKind == SyntaxKind.EqualsToken)
+                    if (_tokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
                     {
                         // 'variable initialization'
+
+                        // Move past the EqualsToken
+                        _ = _tokenWalker.Consume();
 
                         var rightHandExpression = ParseExpression();
 
@@ -679,33 +669,28 @@ public class Parser
                         }
                     }
 
-                    var expectedStatementDelimiterToken = _tokenWalker.Consume();
-
-                    if (expectedStatementDelimiterToken.SyntaxKind != SyntaxKind.StatementDelimiterToken)
-                        _ = _tokenWalker.Backtrack();
+                    // This conditional branch is for variable declaration, so at this point a StatementDelimiterToken is always expected.
+                    _ = _tokenWalker.Match(SyntaxKind.StatementDelimiterToken);
 
                     _nodeRecent = null;
                 }
             }
-            else if (consumedToken.SyntaxKind == SyntaxKind.OpenBraceToken)
+            else if (_tokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
             {
-                // Would this conditional branch be for C# Properties?
+                // 'property'
 
                 // Backtrack to the Property Identifier
-                {
-                    _ = _tokenWalker.Backtrack();
-                    _ = _tokenWalker.Backtrack();
-                }
+                _ = _tokenWalker.Backtrack();
 
                 ParsePropertyDefinition();
             }
         }
         else
         {
-            // 'function invocation' OR 'variable assignment' OR 'variable reference' OR 'namespace declaration' OR  'namespace identifier' OR 'static class identifier'
+            // 'function invocation' OR 'variable assignment' OR 'variable reference' OR 'namespace declaration' OR  'namespace identifier' OR 'static class identifier' OR 'generic class declaration'
 
-            if (consumedToken.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
-                consumedToken.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
+            if (_tokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
+                _tokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
             {
                 // 'function invocation' 
                 
@@ -719,18 +704,16 @@ public class Parser
 
                 _currentCompilationUnitBuilder.Children.Add(boundFunctionInvocationNode);
 
-                if (consumedToken.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
+                if (_tokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
                 {
-                    ParseGenericArguments((OpenAngleBracketToken)consumedToken);
+                    ParseGenericArguments((OpenAngleBracketToken)_tokenWalker.Consume());
                 }
 
-                var openParenthesisToken = consumedToken.SyntaxKind != SyntaxKind.OpenParenthesisToken
-                    ? _tokenWalker.Match(SyntaxKind.OpenParenthesisToken)
-                    : consumedToken;
+                var openParenthesisToken = (OpenParenthesisToken)_tokenWalker.Match(SyntaxKind.OpenParenthesisToken);
 
-                ParseFunctionArguments((OpenParenthesisToken)openParenthesisToken);
+                ParseFunctionArguments(openParenthesisToken);
             }
-            else if (consumedToken.SyntaxKind == SyntaxKind.EqualsToken)
+            else if (_tokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
             {
                 // 'variable assignment'
 
@@ -757,7 +740,7 @@ public class Parser
 
                 if (_binder.BoundNamespaceStatementNodes.ContainsKey(identifierToken.TextSpan.GetText()))
                 {
-                    if (consumedToken.SyntaxKind == SyntaxKind.MemberAccessToken)
+                    if (_tokenWalker.Current.SyntaxKind == SyntaxKind.MemberAccessToken)
                     {
                         // TODO: (2023-05-28) Implement explicit namespace qualification checking. If they try to member access 'Console' on the namespace 'System' one should ensure 'Console' is really in the namespace. But, for now just return.
                         return;
