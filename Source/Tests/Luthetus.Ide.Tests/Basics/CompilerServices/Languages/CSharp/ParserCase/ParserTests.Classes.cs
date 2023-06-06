@@ -257,7 +257,7 @@ public partial class ParserTests
 
         // Assertions
         {
-            throw new ApplicationException("Need to add Assertions");
+            throw new NotImplementedException("Need to add Assertions");
         }
     }
     
@@ -274,7 +274,7 @@ public partial class ParserTests
 
         // Assertions
         {
-            throw new ApplicationException("Need to add Assertions");
+            throw new NotImplementedException("Need to add Assertions");
         }
     }
 

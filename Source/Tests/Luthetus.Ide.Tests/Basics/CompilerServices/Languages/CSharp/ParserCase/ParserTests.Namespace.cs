@@ -23,22 +23,13 @@ public partial class ParserTests
 
         // Assertions
         {
-            var boundNamespaceStatementNode =
-                (BoundNamespaceStatementNode)compilationUnit.Children.Single();
+            var boundNamespaceStatementNode = (BoundNamespaceStatementNode)compilationUnit.Children.Single();
+            var boundNamespaceEntryNode = (BoundNamespaceEntryNode)boundNamespaceStatementNode.Children.Single();
 
-            var namespaceCompilationUnit =
-                (CompilationUnit)boundNamespaceStatementNode.Children.Single();
+            Assert.Empty(boundNamespaceEntryNode.CompilationUnit.Children);
 
-            Assert.Empty(namespaceCompilationUnit.Children);
-
-            // Assert SyntaxKinds are correct
-            Assert.Equal(
-                SyntaxKind.BoundNamespaceStatementNode,
-                boundNamespaceStatementNode.SyntaxKind);
-
-            Assert.Equal(
-                SyntaxKind.CompilationUnitNode,
-                namespaceCompilationUnit.SyntaxKind);
+            Assert.Equal(SyntaxKind.BoundNamespaceStatementNode, boundNamespaceStatementNode.SyntaxKind);
+            Assert.Equal(SyntaxKind.BoundNamespaceEntryNode,boundNamespaceEntryNode.SyntaxKind);
         }
     }
 
@@ -56,14 +47,9 @@ public partial class ParserTests
 
         // Assertions
         {
-            var boundNamespaceStatementNode =
-            (BoundNamespaceStatementNode)compilationUnit.Children.Single();
-
-            var namespaceCompilationUnit =
-                (CompilationUnit)boundNamespaceStatementNode.Children.Single();
-
-            var boundClassDeclarationNode =
-                (BoundClassDeclarationNode)namespaceCompilationUnit.Children.Single();
+            var boundNamespaceStatementNode = (BoundNamespaceStatementNode)compilationUnit.Children.Single();
+            var boundNamespaceEntryNode = (BoundNamespaceEntryNode)boundNamespaceStatementNode.Children.Single();
+            var boundClassDeclarationNode = (BoundClassDeclarationNode)boundNamespaceEntryNode.CompilationUnit.Children.Single();
 
             var namespaceScope = parser.Binder.BoundScopes[1];
 
@@ -87,14 +73,9 @@ public partial class ParserTests
 
         // Assertions
         {
-            var boundNamespaceStatementNode =
-                (BoundNamespaceStatementNode)compilationUnit.Children.Single();
-
-            var namespaceCompilationUnit =
-                (CompilationUnit)boundNamespaceStatementNode.Children.Single();
-
-            var boundClassDeclarationNode =
-                (BoundClassDeclarationNode)namespaceCompilationUnit.Children.Single();
+            var boundNamespaceStatementNode = (BoundNamespaceStatementNode)compilationUnit.Children.Single();
+            var boundNamespaceEntryNode = (BoundNamespaceEntryNode)boundNamespaceStatementNode.Children.Single();
+            var boundClassDeclarationNode = (BoundClassDeclarationNode)boundNamespaceEntryNode.CompilationUnit.Children.Single();
 
             var namespaceScope = parser.Binder.BoundScopes[1];
 
@@ -275,26 +256,14 @@ public partial class ParserTests
 
         // Assertions
         {
-            var boundNamespaceStatementNode =
-            (BoundNamespaceStatementNode)compilationUnit.Children.Single();
+            var boundNamespaceStatementNode = (BoundNamespaceStatementNode)compilationUnit.Children.Single();
+            Assert.Equal(namespaceIdentifier, boundNamespaceStatementNode.IdentifierToken.TextSpan.GetText());
 
-            Assert.Equal(
-                namespaceIdentifier,
-                boundNamespaceStatementNode.IdentifierToken.TextSpan.GetText());
+            var boundNamespaceEntryNode = (BoundNamespaceEntryNode)boundNamespaceStatementNode.Children.Single();
+            Assert.Empty(boundNamespaceEntryNode.CompilationUnit.Children);
 
-            var namespaceCompilationUnit =
-                (CompilationUnit)boundNamespaceStatementNode.Children.Single();
-
-            Assert.Empty(namespaceCompilationUnit.Children);
-
-            // Assert SyntaxKinds are correct
-            Assert.Equal(
-                SyntaxKind.BoundNamespaceStatementNode,
-                boundNamespaceStatementNode.SyntaxKind);
-
-            Assert.Equal(
-                SyntaxKind.CompilationUnitNode,
-                namespaceCompilationUnit.SyntaxKind);
+            Assert.Equal(SyntaxKind.BoundNamespaceStatementNode, boundNamespaceStatementNode.SyntaxKind);
+            Assert.Equal(SyntaxKind.BoundNamespaceEntryNode, boundNamespaceEntryNode.SyntaxKind);
         }
     }
 }
