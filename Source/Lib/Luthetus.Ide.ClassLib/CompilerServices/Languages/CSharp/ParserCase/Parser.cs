@@ -254,7 +254,7 @@ public class Parser
         // TODO: Make many keywords SyntaxKinds. Then if SyntaxKind.EndsWith("Keyword"); so that string checking doesn't need to be done.
         var text = keywordToken.TextSpan.GetText();
 
-        if (_binder.TryBindClassDeclarationNode(keywordToken, out var boundClassDeclarationNode))
+        if (_binder.TryBindClassDeclarationNode(keywordToken, out var boundClassDeclarationNode, shouldReportUndefinedTypeOrNamespace: false))
         {
             // 'int', 'string', 'bool', etc...
             _nodeRecent = boundClassDeclarationNode;
@@ -735,16 +735,8 @@ public class Parser
                     identifierToken,
                     rightHandExpression);
 
-                if (boundVariableAssignmentNode is null)
-                {
-                    // TODO: Why would boundVariableDeclarationStatementNode ever be null here? The variable had just been defined. I suppose what I mean to say is, should this get the '!' operator? The compiler is correctly complaining and the return type should have nullability in the case of undefined variables. So, use the not null operator?
-                    throw new NotImplementedException();
-                }
-                else
-                {
-                    _currentCompilationUnitBuilder.Children
-                        .Add(boundVariableAssignmentNode);
-                }
+                _currentCompilationUnitBuilder.Children
+                    .Add(boundVariableAssignmentNode);
             }
             else
             {

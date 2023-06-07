@@ -112,7 +112,8 @@ public class Binder
     public bool TryBindClassDeclarationNode(
         ISyntaxToken syntaxToken,
         out BoundClassDeclarationNode boundClassDeclarationNode,
-        bool createTypeSymbolReference = true)
+        bool createTypeSymbolReference = true,
+        bool shouldReportUndefinedTypeOrNamespace = true)
     {
         if (createTypeSymbolReference &&
             syntaxToken.SyntaxKind == SyntaxKind.IdentifierToken)
@@ -124,7 +125,8 @@ public class Binder
         }
         
         if (syntaxToken.SyntaxKind == SyntaxKind.IdentifierToken ||
-            syntaxToken.SyntaxKind == SyntaxKind.KeywordToken)
+            syntaxToken.SyntaxKind == SyntaxKind.KeywordToken ||
+            syntaxToken.SyntaxKind == SyntaxKind.KeywordContextualToken)
         {
             if (TryGetClassHierarchically(syntaxToken.TextSpan.GetText(), out var nullableBoundClassDeclarationNode) &&
                 nullableBoundClassDeclarationNode is not null)
@@ -134,9 +136,12 @@ public class Binder
             }
         }
 
-        _diagnosticBag.ReportUndefinedTypeOrNamespace(
+        if (shouldReportUndefinedTypeOrNamespace)
+        {
+            _diagnosticBag.ReportUndefinedTypeOrNamespace(
                 syntaxToken.TextSpan,
                 syntaxToken.TextSpan.GetText());
+        }
 
         boundClassDeclarationNode = CSharpLanguageFacts.Types.Void;
         return false;
@@ -384,8 +389,7 @@ public class Binder
         return boundVariableDeclarationStatementNode;
     }
 
-    /// <summary>Returns null if the variable was not yet declared.</summary>
-    public BoundVariableAssignmentStatementNode? BindVariableAssignmentNode(
+    public BoundVariableAssignmentStatementNode BindVariableAssignmentNode(
         IdentifierToken identifierToken,
         IBoundExpressionNode boundExpressionNode)
     {
@@ -417,7 +421,10 @@ public class Binder
         else
         {
             // TODO: The variable was not yet declared, so report a diagnostic?
-            return null;
+            return new(identifierToken, boundExpressionNode)
+            {
+                IsFabricated = true
+            };
         }
     }
 

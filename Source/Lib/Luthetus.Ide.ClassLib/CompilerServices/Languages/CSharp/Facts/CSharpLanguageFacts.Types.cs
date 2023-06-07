@@ -10,35 +10,35 @@ public partial class CSharpLanguageFacts
     public class Types
     {
         public static readonly BoundClassDeclarationNode Void = new(
-            new IdentifierToken(new TextEditorTextSpan(0, 0, (byte)GenericDecorationKind.None, new ResourceUri(string.Empty), "void")),
+            new IdentifierToken(new TextEditorTextSpan(0, "void".Length, (byte)GenericDecorationKind.None, new ResourceUri(string.Empty), "void")),
             typeof(void),
             null,
             null,
             null);
 
         public static readonly BoundClassDeclarationNode Int = new(
-            new IdentifierToken(new TextEditorTextSpan(0, 0, (byte)GenericDecorationKind.None, new ResourceUri(string.Empty), "int")),
+            new IdentifierToken(new TextEditorTextSpan(0, "int".Length, (byte)GenericDecorationKind.None, new ResourceUri(string.Empty), "int")),
             typeof(int),
             null,
             null,
             null);
 
         public static readonly BoundClassDeclarationNode String = new(
-            new IdentifierToken(new TextEditorTextSpan(0, 0, (byte)GenericDecorationKind.None, new ResourceUri(string.Empty), "string")),
+            new IdentifierToken(new TextEditorTextSpan(0, "string".Length, (byte)GenericDecorationKind.None, new ResourceUri(string.Empty), "string")),
             typeof(string),
             null,
             null,
             null);
 
         public static readonly BoundClassDeclarationNode Bool = new(
-            new IdentifierToken(new TextEditorTextSpan(0, 0, (byte)GenericDecorationKind.None, new ResourceUri(string.Empty), "bool")),
+            new IdentifierToken(new TextEditorTextSpan(0, "bool".Length, (byte)GenericDecorationKind.None, new ResourceUri(string.Empty), "bool")),
             typeof(bool),
             null,
             null,
             null);
 
         public static readonly BoundClassDeclarationNode Var = new(
-            new IdentifierToken(new TextEditorTextSpan(0, 0, (byte)GenericDecorationKind.None, new ResourceUri(string.Empty), "var")),
+            new IdentifierToken(new TextEditorTextSpan(0, "var".Length, (byte)GenericDecorationKind.None, new ResourceUri(string.Empty), "var")),
             typeof(void),
             null,
             null,
