@@ -12,9 +12,10 @@ namespace Luthetus.Ide.Tests.Basics.CompilerServices.Languages.CSharp.ParserCase
 public partial class ParserTests
 {
     [Fact]
-    public void SHOULD_PARSE_FUNCTION_DEFINITION_STATEMENT_NO_ARGUMENTS()
+    public void SHOULD_PARSE_FUNCTION_DEFINITION_STATEMENT_WITH_KEYWORD_RETURN_TYPE_NO_ARGUMENTS()
     {
-        string sourceText = @"void WriteHelloWorldToConsole(){}".ReplaceLineEndings("\n");
+        string functionIdentifier = "WriteHelloWorldToConsole";
+        string sourceText = @$"void {functionIdentifier}(){{}}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
         var lexer = new Lexer(resourceUri, sourceText);
@@ -26,12 +27,39 @@ public partial class ParserTests
         {
             Assert.Single(compilationUnit.Children);
 
-            var boundFunctionDeclarationNode =
-                (BoundFunctionDeclarationNode)compilationUnit.Children[0];
+            var boundFunctionDeclarationNode = (BoundFunctionDeclarationNode)compilationUnit.Children[0];
 
-            Assert.Equal(
-                SyntaxKind.BoundFunctionDeclarationNode,
-                boundFunctionDeclarationNode.SyntaxKind);
+            Assert.Equal(SyntaxKind.BoundFunctionDeclarationNode, boundFunctionDeclarationNode.SyntaxKind);
+            Assert.Equal("void", boundFunctionDeclarationNode.BoundTypeNode.Token.TextSpan.GetText());
+            Assert.Equal(functionIdentifier, boundFunctionDeclarationNode.IdentifierToken.TextSpan.GetText());
+            Assert.NotNull(boundFunctionDeclarationNode.FunctionBodyCompilationUnit);
+            Assert.Empty(boundFunctionDeclarationNode.FunctionBodyCompilationUnit!.Children);
+        }
+    }
+    
+    [Fact]
+    public void SHOULD_PARSE_FUNCTION_DEFINITION_STATEMENT_WITH_INTERFACE_RETURN_TYPE_NO_ARGUMENTS()
+    {
+        string functionIdentifier = "WriteHelloWorldToConsole";
+        string sourceText = @$"IPerson {functionIdentifier}(){{}}".ReplaceLineEndings("\n");
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new Lexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var compilationUnit = parser.Parse();
+
+        // Assertions
+        {
+            Assert.Single(compilationUnit.Children);
+
+            var boundFunctionDeclarationNode = (BoundFunctionDeclarationNode)compilationUnit.Children[0];
+
+            Assert.Equal(SyntaxKind.BoundFunctionDeclarationNode, boundFunctionDeclarationNode.SyntaxKind);
+            Assert.Equal("IPerson", boundFunctionDeclarationNode.BoundTypeNode.Token.TextSpan.GetText());
+            Assert.Equal(functionIdentifier, boundFunctionDeclarationNode.IdentifierToken.TextSpan.GetText());
+            Assert.NotNull(boundFunctionDeclarationNode.FunctionBodyCompilationUnit);
+            Assert.Empty(boundFunctionDeclarationNode.FunctionBodyCompilationUnit!.Children);
         }
     }
 
@@ -248,7 +276,10 @@ public partial class ParserTests
     [Fact]
     public void SHOULD_PARSE_METHOD_DEFINITION_WITH_GENERIC_ARGUMENT()
     {
-        var sourceText = @"public T Clone<T>(T item) { return item; }".ReplaceLineEndings("\n");
+        var genericArgumentIdentifier = "T";
+        var functionIdentifier = "Clone";
+        var functionArgumentIdentifier = "item";
+        var sourceText = @$"public {genericArgumentIdentifier} {functionIdentifier}<{genericArgumentIdentifier}>({genericArgumentIdentifier} {functionArgumentIdentifier}) {{ return {functionArgumentIdentifier}; }}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
         var lexer = new Lexer(resourceUri, sourceText);
@@ -258,7 +289,24 @@ public partial class ParserTests
 
         // Assertions
         {
-            throw new NotImplementedException();
+            Assert.Single(compilationUnit.Children);
+
+            var boundFunctionDeclarationNode = (BoundFunctionDeclarationNode)compilationUnit.Children[0];
+
+            Assert.Equal(SyntaxKind.BoundFunctionDeclarationNode, boundFunctionDeclarationNode.SyntaxKind);
+            Assert.Equal(genericArgumentIdentifier, boundFunctionDeclarationNode.BoundTypeNode.Token.TextSpan.GetText());
+            Assert.Equal(functionIdentifier, boundFunctionDeclarationNode.IdentifierToken.TextSpan.GetText());
+            Assert.NotNull(boundFunctionDeclarationNode.FunctionBodyCompilationUnit);
+
+            var argumentBoundTypeNode = (BoundTypeNode)boundFunctionDeclarationNode.BoundFunctionArgumentsNode.BoundFunctionArgumentListing[0];
+            Assert.Equal(genericArgumentIdentifier, argumentBoundTypeNode.Token.TextSpan.GetText());
+            var argumentIdentifierToken = (IdentifierToken)boundFunctionDeclarationNode.BoundFunctionArgumentsNode.BoundFunctionArgumentListing[1];
+            Assert.Equal(functionArgumentIdentifier, argumentIdentifierToken.TextSpan.GetText());
+
+            Assert.NotNull(boundFunctionDeclarationNode.BoundGenericArgumentsNode);
+            Assert.Single(boundFunctionDeclarationNode.BoundGenericArgumentsNode!.BoundGenericArgumentListing);
+            var genericBoundTypeNode = (BoundTypeNode)boundFunctionDeclarationNode.BoundGenericArgumentsNode.BoundGenericArgumentListing[0];
+            Assert.Equal(genericArgumentIdentifier, genericBoundTypeNode.Token.TextSpan.GetText());
         }
     }
 

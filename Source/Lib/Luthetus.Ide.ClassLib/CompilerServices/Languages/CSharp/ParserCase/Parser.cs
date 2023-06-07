@@ -614,11 +614,12 @@ public class Parser
         {
             // 'function declaration' OR 'variable declaration' OR 'variable initialization'
 
-            if (false)
-            {
-                // TODO: Implement generic types for 'function declaration'
-            }
-            else if (_tokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+            BoundGenericArgumentsNode? genericArguments = null;
+
+            if (_tokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
+                genericArguments = ParseGenericArguments((OpenAngleBracketToken)_tokenWalker.Consume());
+            
+            if (_tokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
             {
                 // 'function declaration'
 
@@ -627,7 +628,8 @@ public class Parser
                 var boundFunctionDeclarationNode = _binder.BindFunctionDeclarationNode(
                     (BoundTypeNode)_nodeRecent,
                     identifierToken,
-                    boundFunctionArguments);
+                    boundFunctionArguments,
+                    genericArguments);
 
                 _nodeRecent = boundFunctionDeclarationNode;
             }
@@ -700,6 +702,30 @@ public class Parser
             if (_tokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
                 _tokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
             {
+                if (_nodeRecent is not null &&
+                    _nodeRecent.SyntaxKind == SyntaxKind.BoundIdentifierReferenceNode)
+                {
+                    var boundIdentifierReferenceNode = (BoundIdentifierReferenceNode)_nodeRecent;
+                    var identifierText = boundIdentifierReferenceNode.IdentifierToken.TextSpan.GetText();
+
+                    // The contextual identifier can now be understood to be the return Type of a function.
+                    if (_binder.TryGetTypeHierarchically(identifierText, out var type) &&
+                        type is not null)
+                    {
+                        _nodeRecent = new BoundTypeNode(type, boundIdentifierReferenceNode.IdentifierToken);
+                    }
+                    else
+                    {
+                        _nodeRecent = new BoundTypeNode(typeof(void), boundIdentifierReferenceNode.IdentifierToken);
+                    }
+
+                    // Re-invoke ParseIdentifierToken now that _nodeRecent is known to be a Type identifier
+                    {
+                        ParseIdentifierToken(identifierToken);
+                        return;
+                    }
+                }
+
                 // 'function invocation' 
                 
                 // TODO: (2023-06-04) I believe this if block will run for '<' mathematical operator.
@@ -766,9 +792,7 @@ public class Parser
                     // TODO: (2023-05-28) Report an error diagnostic for 'unknown identifier'. Something like this I'm not sure.
 
                     var boundIdentifierReferenceNode = _binder.BindIdentifierReferenceNode(identifierToken);
-
                     _nodeRecent = boundIdentifierReferenceNode;
-                    _currentCompilationUnitBuilder.Children.Add(boundIdentifierReferenceNode);
 
                     return;
                 }
@@ -1084,12 +1108,8 @@ public class Parser
         {
             if (canReadComma is null)
             {
-                var boundTypeNode = MatchBoundTypeNode();
-
+                var boundTypeNode = ParseBoundTypeNode();
                 functionArgumentListing.Add(boundTypeNode);
-
-                if (boundTypeNode.Token.IsFabricated)
-                    break;
 
                 canReadComma = false;
             }
@@ -1240,39 +1260,34 @@ public class Parser
         var genericArgumentListing = new List<ISyntaxToken>();
 
         // Alternate between reading an identifier (true) and a comma (false)
-        bool shouldMatchIdentifier = true;
+        bool canReadComma = false;
 
         while (true)
         {
-            ISyntaxToken consumedToken = shouldMatchIdentifier
-                ? _tokenWalker.Match(SyntaxKind.IdentifierToken)
-                : _tokenWalker.Match(SyntaxKind.CommaToken);
-
-            if (shouldMatchIdentifier)
+            if (!canReadComma)
             {
-                // Always take the identifier, even if fabricated
-                genericArgumentListing.Add(consumedToken);
+                var identifierToken = _tokenWalker.Match(SyntaxKind.IdentifierToken);
+                genericArgumentListing.Add(identifierToken);
 
-                if (consumedToken.IsFabricated)
-                {
-                    // If it were fabricated then finish the GenericArguments
+                if (identifierToken.IsFabricated)
                     break;
-                }
+
+                canReadComma = true;
             }
             else
             {
-                if (!consumedToken.IsFabricated)
+                canReadComma = false;
+
+                if (_tokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
                 {
-                    genericArgumentListing.Add(consumedToken);
+                    var commaToken = (CommaToken)_tokenWalker.Consume();
+                    genericArgumentListing.Add(commaToken);
                 }
                 else
                 {
-                    // If it were fabricated then finish the GenericArguments
                     break;
                 }
             }
-
-            shouldMatchIdentifier = !shouldMatchIdentifier;
         }
 
         var closeAngleBracketToken = _tokenWalker.Match(SyntaxKind.CloseAngleBracketToken);
@@ -1314,11 +1329,11 @@ public class Parser
         }
     }
 
-    private BoundTypeNode MatchBoundTypeNode()
+    private BoundTypeNode ParseBoundTypeNode()
     {
         BoundTypeNode? boundTypeNode = null;
 
-        var syntaxToken = _tokenWalker.Current;
+        var syntaxToken = _tokenWalker.Consume(); ;
 
         if (syntaxToken.SyntaxKind == SyntaxKind.KeywordToken)
         {
@@ -1349,10 +1364,6 @@ public class Parser
             boundTypeNode = new BoundTypeNode(
                 typeof(void),
                 syntaxToken);
-        }
-        else
-        {
-            _ = _tokenWalker.Consume();
         }
 
         return boundTypeNode;

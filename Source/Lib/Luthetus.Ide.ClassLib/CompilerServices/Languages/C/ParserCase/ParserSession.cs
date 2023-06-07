@@ -236,6 +236,9 @@ public class ParserSession
                 var boundFunctionDeclarationNode = _binder.BindFunctionDeclarationNode(
                     (BoundTypeNode)_nodeRecent,
                     inToken,
+                    // TODO: I'm working on C# and breaking some C code. Need to look at this later.
+                    null,
+                    // TODO: I'm working on C# and breaking some C code. Need to look at this later.
                     null);
 
                 _nodeRecent = boundFunctionDeclarationNode;

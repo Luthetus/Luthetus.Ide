@@ -126,7 +126,8 @@ public class Binder
     public BoundFunctionDeclarationNode BindFunctionDeclarationNode(
         BoundTypeNode boundTypeNode,
         IdentifierToken identifierToken,
-        BoundFunctionArgumentsNode boundFunctionArguments)
+        BoundFunctionArgumentsNode boundFunctionArguments,
+        BoundGenericArgumentsNode? boundGenericArgumentsNode)
     {
         var functionIdentifier = identifierToken.TextSpan.GetText();
 
@@ -143,6 +144,7 @@ public class Binder
             boundTypeNode,
             identifierToken,
             boundFunctionArguments,
+            boundGenericArgumentsNode,
             null);
 
         var success = _currentScope.FunctionDeclarationMap.TryAdd(

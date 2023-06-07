@@ -109,6 +109,7 @@ public class BinderSession
     public BoundFunctionDeclarationNode BindFunctionDeclarationNode(
         BoundTypeNode boundTypeNode,
         IdentifierToken identifierToken,
+        BoundGenericArgumentsNode boundGenericArgumentsNode,
         BoundFunctionArgumentsNode boundFunctionArguments)
     {
         var text = identifierToken.TextSpan.GetText();
@@ -126,6 +127,7 @@ public class BinderSession
             boundTypeNode,
             identifierToken,
             boundFunctionArguments,
+            boundGenericArgumentsNode,
             null);
 
         _currentScope.FunctionDeclarationMap.Add(
