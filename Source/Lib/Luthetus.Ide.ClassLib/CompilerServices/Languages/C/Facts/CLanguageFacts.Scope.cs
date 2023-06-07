@@ -10,7 +10,7 @@ public partial class CLanguageFacts
     {
         public static BoundScope GetInitialGlobalScope()
         {
-            var classMap = new Dictionary<string, BoundClassDeclarationNode>
+            var classMap = new Dictionary<string, BoundClassDefinitionNode>
             {
                 {
                     Types.Int.TypeClauseToken.TextSpan.GetText(),

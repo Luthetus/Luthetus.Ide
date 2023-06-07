@@ -9,12 +9,12 @@ public sealed record BoundConstructorInvocationNode : ISyntaxNode
 {
     public BoundConstructorInvocationNode(
         KeywordToken keywordToken,
-        BoundClassDeclarationNode? boundClassDeclarationNode,
+        BoundClassReferenceNode? boundClassReferenceNode,
         BoundFunctionParametersNode? boundFunctionParametersNode,
         BoundObjectInitializationNode? boundObjectInitializationNode)
     {
         KeywordToken = keywordToken;
-        BoundClassDeclarationNode = boundClassDeclarationNode;
+        BoundClassReferenceNode = boundClassReferenceNode;
         BoundFunctionParametersNode = boundFunctionParametersNode;
         BoundObjectInitializationNode = boundObjectInitializationNode;
 
@@ -23,8 +23,8 @@ public sealed record BoundConstructorInvocationNode : ISyntaxNode
             KeywordToken
         };
 
-        if (BoundClassDeclarationNode is not null)
-            children.Add(BoundClassDeclarationNode);
+        if (BoundClassReferenceNode is not null)
+            children.Add(BoundClassReferenceNode);
         
         if (BoundFunctionParametersNode is not null)
             children.Add(BoundFunctionParametersNode);
@@ -36,7 +36,7 @@ public sealed record BoundConstructorInvocationNode : ISyntaxNode
     }
 
     public KeywordToken KeywordToken { get; }
-    public BoundClassDeclarationNode? BoundClassDeclarationNode { get; }
+    public BoundClassReferenceNode? BoundClassReferenceNode { get; }
     public BoundFunctionParametersNode? BoundFunctionParametersNode { get; }
     public BoundObjectInitializationNode? BoundObjectInitializationNode { get; }
 

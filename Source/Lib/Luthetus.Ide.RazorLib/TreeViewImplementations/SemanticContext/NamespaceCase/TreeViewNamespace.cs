@@ -5,7 +5,7 @@ using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statements;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.General;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
-using Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.BoundClassDeclarationNodeCase;
+using Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.BoundClassDefinitionNodeCase;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.NamespaceCase;
 
@@ -66,9 +66,9 @@ public class TreeViewNamespace : TreeViewWithType<BoundNamespaceStatementNode>
         {
             var newChildren = Item.Children
                 .SelectMany(x => ((BoundNamespaceEntryNode)x).CompilationUnit.Children)
-                .Where(x => x.SyntaxKind == SyntaxKind.BoundClassDeclarationNode)
-                .Select(x => (TreeViewNoType) new TreeViewBoundClassDeclarationNode(
-                    (BoundClassDeclarationNode)x,
+                .Where(x => x.SyntaxKind == SyntaxKind.BoundClassDefinitionNode)
+                .Select(x => (TreeViewNoType) new TreeViewBoundClassDefinitionNode(
+                    (BoundClassDefinitionNode)x,
                     LuthetusIdeComponentRenderers,
                     FileSystemProvider,
                     EnvironmentProvider,

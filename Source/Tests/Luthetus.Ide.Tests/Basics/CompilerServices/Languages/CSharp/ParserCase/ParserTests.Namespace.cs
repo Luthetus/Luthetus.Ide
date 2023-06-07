@@ -49,11 +49,11 @@ public partial class ParserTests
         {
             var boundNamespaceStatementNode = (BoundNamespaceStatementNode)compilationUnit.Children.Single();
             var boundNamespaceEntryNode = (BoundNamespaceEntryNode)boundNamespaceStatementNode.Children.Single();
-            var boundClassDeclarationNode = (BoundClassDeclarationNode)boundNamespaceEntryNode.CompilationUnit.Children.Single();
+            var boundClassDefinitionNode = (BoundClassDefinitionNode)boundNamespaceEntryNode.CompilationUnit.Children.Single();
 
             var namespaceScope = parser.Binder.BoundScopes[1];
 
-            var personModel = namespaceScope.ClassDeclarationMap.Single();
+            var personModel = namespaceScope.ClassDefinitionMap.Single();
 
             Assert.Equal(classIdentifier, personModel.Key);
         }
@@ -75,11 +75,11 @@ public partial class ParserTests
         {
             var boundNamespaceStatementNode = (BoundNamespaceStatementNode)compilationUnit.Children.Single();
             var boundNamespaceEntryNode = (BoundNamespaceEntryNode)boundNamespaceStatementNode.Children.Single();
-            var boundClassDeclarationNode = (BoundClassDeclarationNode)boundNamespaceEntryNode.CompilationUnit.Children.Single();
+            var boundClassDefinitionNode = (BoundClassDefinitionNode)boundNamespaceEntryNode.CompilationUnit.Children.Single();
 
             var namespaceScope = parser.Binder.BoundScopes[1];
 
-            var personModelKeyValuePair = namespaceScope.ClassDeclarationMap.Single();
+            var personModelKeyValuePair = namespaceScope.ClassDefinitionMap.Single();
 
             Assert.Equal(classIdentifier, personModelKeyValuePair.Key);
         }
@@ -160,10 +160,10 @@ public partial class ParserTests
             // TODO: (2023-05-28) The way a reference to namespaceScope is obtained is hacky and perhaps should be changed. The BoundScopes[2] is at index 2 specifically. Index 0 is global scope. Index 1 is the first time the namespace is declared. Index 2 is the second time the namespace is declared.
             var namespaceScope = displayParser.Binder.BoundScopes[2];
 
-            Assert.Equal(2, namespaceScope.ClassDeclarationMap.Count);
+            Assert.Equal(2, namespaceScope.ClassDefinitionMap.Count);
 
-            var personModelKeyValuePair = namespaceScope.ClassDeclarationMap.Single(x => x.Key == personModelClassIdentifier);
-            var personDisplayKeyValuePair = namespaceScope.ClassDeclarationMap.Single(x => x.Key == personDisplayClassIdentifier);
+            var personModelKeyValuePair = namespaceScope.ClassDefinitionMap.Single(x => x.Key == personModelClassIdentifier);
+            var personDisplayKeyValuePair = namespaceScope.ClassDefinitionMap.Single(x => x.Key == personDisplayClassIdentifier);
 
             // These assertions feel redundant but the previous code which does a .Single() matching doesn't convey the intention. A Dictionary might not be sorted as one expects as well so cannot constant index lookup.
             Assert.Equal(personModelClassIdentifier, personModelKeyValuePair.Key);
@@ -206,7 +206,7 @@ public partial class ParserTests
         {
             Assert.Equal(
                 2,
-                displayParser.Binder.BoundScopes.First().ClassDeclarationMap.Count);
+                displayParser.Binder.BoundScopes.First().ClassDefinitionMap.Count);
         }
     }
 
@@ -224,12 +224,12 @@ public partial class ParserTests
 
         // Assertions
         {
-            var boundUsingDeclarationNode =
-                (BoundUsingDeclarationNode)compilationUnit.Children.Single();
+            var boundUsingStatementNode =
+                (BoundUsingStatementNode)compilationUnit.Children.Single();
 
             Assert.Equal(
                 namespaceIdentifier,
-                boundUsingDeclarationNode.NamespaceIdentifier.TextSpan.GetText());
+                boundUsingStatementNode.NamespaceIdentifier.TextSpan.GetText());
         }
     }
 

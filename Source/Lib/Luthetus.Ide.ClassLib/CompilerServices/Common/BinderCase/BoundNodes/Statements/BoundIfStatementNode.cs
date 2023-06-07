@@ -17,7 +17,7 @@ public sealed record BoundIfStatementNode : ISyntaxNode
         BoundExpressionNode = boundExpressionNode;
         IfStatementBodyCompilationUnit = ifStatementBodyCompilationUnit;
 
-        var childrenList = new List<ISyntax>(3)
+        var childrenList = new List<ISyntax>
         {
             KeywordToken,
             BoundExpressionNode,

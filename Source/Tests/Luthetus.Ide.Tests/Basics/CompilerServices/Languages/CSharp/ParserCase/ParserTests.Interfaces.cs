@@ -11,7 +11,7 @@ namespace Luthetus.Ide.Tests.Basics.CompilerServices.Languages.CSharp.ParserCase
 public partial class ParserTests
 {
     [Fact]
-    public void SHOULD_PARSE_INTERFACE_FUNCTION_DECLARATION()
+    public void SHOULD_PARSE_INTERFACE_FUNCTION_DEFINITION()
     {
         string sourceText = @$"public interface IPersonRepository {{ public void AddPerson(IPersonModel personModel); }}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);

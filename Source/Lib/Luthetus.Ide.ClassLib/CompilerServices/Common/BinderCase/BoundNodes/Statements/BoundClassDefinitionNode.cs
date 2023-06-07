@@ -5,7 +5,8 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statements;
 
-public sealed record BoundClassDeclarationNode : ISyntaxNode
+/// <summary><see cref="BoundClassDefinitionNode"/> is used for specifically only definition of types such as the syntax: 'public class PersonModel" Whereas <see cref="BoundClassReferenceNode"/> is used for invoking a constructor or doing type comparison, etc...</summary>
+public sealed record BoundClassDefinitionNode : ISyntaxNode
 {
     private ISyntaxToken _typeClauseToken;
     private Type _type;
@@ -14,7 +15,7 @@ public sealed record BoundClassDeclarationNode : ISyntaxNode
     private CompilationUnit? _classBodyCompilationUnit;
     private ImmutableArray<ISyntax> _children;
 
-    public BoundClassDeclarationNode(
+    public BoundClassDefinitionNode(
         ISyntaxToken typeClauseToken,
         Type type,
         BoundGenericArgumentsNode? boundGenericArgumentsNode,
@@ -95,7 +96,7 @@ public sealed record BoundClassDeclarationNode : ISyntaxNode
     }
 
     public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.BoundClassDeclarationNode;
+    public SyntaxKind SyntaxKind => SyntaxKind.BoundClassDefinitionNode;
 
     private void SetChildren()
     {

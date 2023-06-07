@@ -4,20 +4,21 @@ using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statements;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.ISyntaxCase;
+using Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.BoundClassDefinitionNodeCase;
 
-namespace Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.BoundClassDeclarationNodeCase;
+namespace Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.BoundClassDefinitionNodeCase;
 
-public class TreeViewBoundClassDeclarationNode : TreeViewWithType<BoundClassDeclarationNode>
+public class TreeViewBoundClassDefinitionNode : TreeViewWithType<BoundClassDefinitionNode>
 {
-    public TreeViewBoundClassDeclarationNode(
-        BoundClassDeclarationNode boundClassDeclarationNode,
+    public TreeViewBoundClassDefinitionNode(
+        BoundClassDefinitionNode boundClassDefinitionNode,
         ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
         bool isExpandable,
         bool isExpanded)
             : base(
-                boundClassDeclarationNode,
+                boundClassDefinitionNode,
                 isExpandable,
                 isExpanded)
     {
@@ -45,11 +46,11 @@ public class TreeViewBoundClassDeclarationNode : TreeViewWithType<BoundClassDecl
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            typeof(TreeViewBoundClassDeclarationNodeDisplay),
+            typeof(TreeViewBoundClassDefinitionNodeDisplay),
             new Dictionary<string, object?>
             {
                 {
-                    nameof(TreeViewBoundClassDeclarationNodeDisplay.BoundClassDeclarationNode),
+                    nameof(TreeViewBoundClassDefinitionNodeDisplay.BoundClassDefinitionNode),
                     Item
                 },
             });

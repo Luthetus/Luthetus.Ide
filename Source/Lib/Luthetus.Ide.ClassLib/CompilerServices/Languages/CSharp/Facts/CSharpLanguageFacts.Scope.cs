@@ -11,7 +11,7 @@ public partial class CSharpLanguageFacts
     {
         public static BoundScope GetInitialGlobalScope()
         {
-            var classMap = new Dictionary<string, BoundClassDeclarationNode>
+            var classMap = new Dictionary<string, BoundClassDefinitionNode>
             {
                 {
                     Types.Void.TypeClauseToken.TextSpan.GetText(),

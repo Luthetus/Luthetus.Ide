@@ -50,28 +50,28 @@ public class SemanticModelCSharp : ISemanticModel
 
         while (boundScope.Parent is not null &&
                !boundScope.VariableDeclarationMap.ContainsKey(textSpanText) &&
-               !boundScope.ClassDeclarationMap.ContainsKey(textSpanText) &&
-               !boundScope.FunctionDeclarationMap.ContainsKey(textSpanText))
+               !boundScope.ClassDefinitionMap.ContainsKey(textSpanText) &&
+               !boundScope.FunctionDefinitionMap.ContainsKey(textSpanText))
         {
             boundScope = boundScope.Parent;
         }
 
         if (!boundScope.VariableDeclarationMap.ContainsKey(textSpanText) &&
-            !boundScope.ClassDeclarationMap.ContainsKey(textSpanText) &&
-            !boundScope.FunctionDeclarationMap.ContainsKey(textSpanText))
+            !boundScope.ClassDefinitionMap.ContainsKey(textSpanText) &&
+            !boundScope.FunctionDefinitionMap.ContainsKey(textSpanText))
         {
             return null;
         }
 
         // (2023-06-03) Symbols don't understand scope right? I was using symbols to find goto-definition across files and wasn't getting anywhere. Going to try and use the bound scope which contains the definition directly.
         {
-            if (boundScope.ClassDeclarationMap.TryGetValue(
+            if (boundScope.ClassDefinitionMap.TryGetValue(
                 textSpanText,
-                out var boundClassDeclarationNode))
+                out var boundClassDefinitionNode))
             {
                 return new TextEditorSymbolDefinition(
-                    boundClassDeclarationNode.TypeClauseToken.TextSpan.ResourceUri,
-                    boundClassDeclarationNode.TypeClauseToken.TextSpan.StartingIndexInclusive);
+                    boundClassDefinitionNode.TypeClauseToken.TextSpan.ResourceUri,
+                    boundClassDefinitionNode.TypeClauseToken.TextSpan.StartingIndexInclusive);
             }
         }
 

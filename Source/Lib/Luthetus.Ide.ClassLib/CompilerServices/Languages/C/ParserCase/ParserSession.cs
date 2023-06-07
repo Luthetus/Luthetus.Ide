@@ -39,7 +39,7 @@ public class ParserSession
     private ISyntaxNode? _nodeRecent;
     private CompilationUnitBuilder _currentCompilationUnitBuilder;
 
-    /// <summary>When parsing the body of a function this is used in order to keep the function declaration node itself in the syntax tree immutable.<br/><br/>That is to say, this action would create the function declaration node and then append it.</summary>
+    /// <summary>When parsing the body of a function this is used in order to keep the function definition node itself in the syntax tree immutable.<br/><br/>That is to say, this action would create the function definition node and then append it.</summary>
     private Action<CompilationUnit>? _finalizeCompilationUnitAction;
 
     public CompilationUnit Parse()
@@ -190,11 +190,11 @@ public class ParserSession
     {
         var text = inToken.TextSpan.GetText();
 
-        if (_binder.TryGetClassHierarchically(text, out var boundClassDeclarationNode) &&
-            boundClassDeclarationNode is not null)
+        if (_binder.TryGetClassHierarchically(inToken, null, out var boundClassDefinitionNode) &&
+            boundClassDefinitionNode is not null)
         {
             // 'int', 'string', 'bool', etc...
-            _nodeRecent = boundClassDeclarationNode;
+            _nodeRecent = boundClassDefinitionNode;
         }
         else
         {
@@ -225,23 +225,23 @@ public class ParserSession
         var nextToken = _tokenWalker.Consume();
 
         if (_nodeRecent is not null &&
-            _nodeRecent.SyntaxKind == SyntaxKind.BoundClassDeclarationNode)
+            _nodeRecent.SyntaxKind == SyntaxKind.BoundClassReferenceNode)
         {
-            // 'function declaration' OR 'variable declaration' OR 'variable initialization'
+            // 'function definition' OR 'variable declaration' OR 'variable initialization'
 
             if (nextToken.SyntaxKind == SyntaxKind.OpenParenthesisToken)
             {
-                // 'function declaration'
+                // 'function definition'
 
-                var boundFunctionDeclarationNode = _binder.BindFunctionDeclarationNode(
-                    (BoundClassDeclarationNode)_nodeRecent,
+                var boundFunctionDefinitionNode = _binder.BindFunctionDefinitionNode(
+                    (BoundClassReferenceNode)_nodeRecent,
                     inToken,
                     // TODO: I'm working on C# and breaking some C code. Need to look at this later.
                     null,
                     // TODO: I'm working on C# and breaking some C code. Need to look at this later.
                     null);
 
-                _nodeRecent = boundFunctionDeclarationNode;
+                _nodeRecent = boundFunctionDefinitionNode;
 
                 ParseFunctionArguments();
             }
@@ -252,7 +252,7 @@ public class ParserSession
 
                 // 'variable declaration'
                 var boundVariableDeclarationStatementNode = _binder.BindVariableDeclarationNode(
-                    (BoundClassDeclarationNode)_nodeRecent,
+                    (BoundClassReferenceNode)_nodeRecent,
                     inToken);
 
                 _currentCompilationUnitBuilder.Children.Add(boundVariableDeclarationStatementNode);
@@ -387,21 +387,21 @@ public class ParserSession
         Type? scopeReturnType = null;
 
         if (_nodeRecent is not null &&
-            _nodeRecent.SyntaxKind == SyntaxKind.BoundFunctionDeclarationNode)
+            _nodeRecent.SyntaxKind == SyntaxKind.BoundFunctionDefinitionNode)
         {
-            var boundFunctionDeclarationNode = (BoundFunctionDeclarationNode)_nodeRecent;
+            var boundFunctionDefinitionNode = (BoundFunctionDefinitionNode)_nodeRecent;
 
-            scopeReturnType = boundFunctionDeclarationNode.BoundClassDeclarationNode.Type;
+            scopeReturnType = boundFunctionDefinitionNode.BoundClassDefinitionNode.Type;
 
             _finalizeCompilationUnitAction = compilationUnit =>
             {
-                boundFunctionDeclarationNode = boundFunctionDeclarationNode with
+                boundFunctionDefinitionNode = boundFunctionDefinitionNode with
                 {
                     FunctionBodyCompilationUnit = compilationUnit
                 };
 
                 closureCompilationUnitBuilder.Children
-                    .Add(boundFunctionDeclarationNode);
+                    .Add(boundFunctionDefinitionNode);
             };
         }
         else

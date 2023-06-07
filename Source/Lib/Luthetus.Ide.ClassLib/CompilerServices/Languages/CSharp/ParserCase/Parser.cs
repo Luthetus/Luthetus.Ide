@@ -11,7 +11,6 @@ using Luthetus.TextEditor.RazorLib.Analysis;
 using Luthetus.TextEditor.RazorLib.Analysis.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.Lexing;
 using System.Collections.Immutable;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.ParserCase;
 
@@ -45,7 +44,7 @@ public class Parser
     private ISyntaxNode? _nodeRecent;
     private CompilationUnitBuilder _currentCompilationUnitBuilder;
 
-    /// <summary>When parsing the body of a function this is used in order to keep the function declaration node itself in the syntax tree immutable.<br/><br/>That is to say, this action would create the function declaration node and then append it.</summary>
+    /// <summary>When parsing the body of a function this is used in order to keep the function definition node itself in the syntax tree immutable.<br/><br/>That is to say, this action would create the function definition node and then append it.</summary>
     private Stack<Action<CompilationUnit>> _finalizeCompilationUnitActionStack = new();
 
     /// <summary>This method is used when parsing many files as a single compilation. The first binder instance would be passed to the following parsers. The resourceUri is passed in so if a file is parsed for a second time, the previous symbols can be deleted so they do not duplicate.</summary>
@@ -254,10 +253,10 @@ public class Parser
         // TODO: Make many keywords SyntaxKinds. Then if SyntaxKind.EndsWith("Keyword"); so that string checking doesn't need to be done.
         var text = keywordToken.TextSpan.GetText();
 
-        if (_binder.TryBindClassDeclarationNode(keywordToken, out var boundClassDeclarationNode, shouldReportUndefinedTypeOrNamespace: false))
+        if (_binder.TryBindClassDefinitionNode(keywordToken, out var boundClassDefinitionNode, shouldReportUndefinedTypeOrNamespace: false))
         {
             // 'int', 'string', 'bool', etc...
-            _nodeRecent = boundClassDeclarationNode;
+            _nodeRecent = boundClassDefinitionNode;
         }
         else
         {
@@ -294,22 +293,22 @@ public class Parser
             {
                 var matchedToken = _tokenWalker.Match(SyntaxKind.IdentifierToken);
 
-                boundClassDeclarationNode = _binder.BindClassDeclarationNode(
+                boundClassDefinitionNode = _binder.BindClassDefinitionNode(
                     (IdentifierToken)matchedToken);
 
-                _nodeRecent = boundClassDeclarationNode;
+                _nodeRecent = boundClassDefinitionNode;
             }
             else if (text == "using")
             {
                 var namespaceIdentifier = ParseNamespaceIdentifier();
 
-                var boundUsingDeclarationNode = _binder.BindUsingDeclarationNode(
+                var boundUsingStatementNode = _binder.BindUsingStatementNode(
                         keywordToken,
                         namespaceIdentifier);
 
-                _currentCompilationUnitBuilder.Children.Add(boundUsingDeclarationNode);
+                _currentCompilationUnitBuilder.Children.Add(boundUsingStatementNode);
 
-                _nodeRecent = boundUsingDeclarationNode;
+                _nodeRecent = boundUsingStatementNode;
             }
             else if (text == "public" ||
                      text == "internal" ||
@@ -360,7 +359,7 @@ public class Parser
                     throw new NotImplementedException();
                 }
 
-                _binder.TryBindClassDeclarationNode(typeClauseToken, out boundClassDeclarationNode);
+                _binder.TryBindClassDefinitionNode(typeClauseToken, out boundClassDefinitionNode);
 
                 // TODO: combine the logic for 'new()' without a type identifier and 'new List<int>()' with a type identifier. To start I am going to isolate them in their own if conditional blocks.
                 if (typeClauseToken.IsFabricated)
@@ -386,7 +385,7 @@ public class Parser
 
                     var boundConstructorInvocationNode = _binder.BindConstructorInvocationNode(
                         keywordToken,
-                        boundClassDeclarationNode,
+                        boundClassDefinitionNode,
                         boundFunctionArgumentsNode,
                         boundObjectInitializationNode);
 
@@ -424,7 +423,7 @@ public class Parser
 
                     var boundConstructorInvocationNode = _binder.BindConstructorInvocationNode(
                         keywordToken,
-                        boundClassDeclarationNode,
+                        boundClassDefinitionNode,
                         boundFunctionParametersNode,
                         boundObjectInitializationNode);
 
@@ -436,10 +435,10 @@ public class Parser
                 // TODO: Implement the 'interface' keyword
                 var matchedToken = _tokenWalker.Match(SyntaxKind.IdentifierToken);
 
-                boundClassDeclarationNode = _binder.BindClassDeclarationNode(
+                boundClassDefinitionNode = _binder.BindClassDefinitionNode(
                     (IdentifierToken)matchedToken);
 
-                _nodeRecent = boundClassDeclarationNode;
+                _nodeRecent = boundClassDefinitionNode;
             }
             else
             {
@@ -532,10 +531,10 @@ public class Parser
                 if (nextTokenIsVarKeyword || nextTokenIsIdentifierToken)
                 {
                     // Take 'var' as a keyword
-                    if (_binder.TryBindClassDeclarationNode(keywordContextualToken, out var boundClassDeclarationNode))
+                    if (_binder.TryBindClassDefinitionNode(keywordContextualToken, out var boundClassDefinitionNode))
                     {
                         // 'var' type
-                        _nodeRecent = boundClassDeclarationNode;
+                        _nodeRecent = boundClassDefinitionNode;
                     }
 
                     return;
@@ -566,23 +565,23 @@ public class Parser
         ColonToken colonToken)
     {
         if (_nodeRecent is not null &&
-            _nodeRecent.SyntaxKind == SyntaxKind.BoundClassDeclarationNode)
+            _nodeRecent.SyntaxKind == SyntaxKind.BoundClassDefinitionNode)
         {
-            var boundClassDeclarationNode = (BoundClassDeclarationNode)_nodeRecent;
+            var boundClassDefinitionNode = (BoundClassDefinitionNode)_nodeRecent;
 
             var matchTypeClauseToken = MatchTypeClauseToken();
 
-            _ = _binder.TryBindClassDeclarationNode(matchTypeClauseToken, out boundClassDeclarationNode);
+            _ = _binder.TryBindClassDefinitionNode(matchTypeClauseToken, out boundClassDefinitionNode);
 
             var boundInheritanceStatementNode = _binder.BindInheritanceStatementNode(
-                boundClassDeclarationNode);
+                boundClassDefinitionNode);
 
-            boundClassDeclarationNode = boundClassDeclarationNode with
+            boundClassDefinitionNode = boundClassDefinitionNode with
             {
                 BoundInheritanceStatementNode = boundInheritanceStatementNode
             };
 
-            _nodeRecent = boundClassDeclarationNode;
+            _nodeRecent = boundClassDefinitionNode;
         }
         else
         {
@@ -594,9 +593,9 @@ public class Parser
         IdentifierToken identifierToken)
     {
         if (_nodeRecent is not null &&
-            _nodeRecent.SyntaxKind == SyntaxKind.BoundClassDeclarationNode)
+            _nodeRecent.SyntaxKind == SyntaxKind.BoundClassDefinitionNode)
         {
-            // 'function declaration' OR 'variable declaration' OR 'variable initialization'
+            // 'function definition' OR 'variable declaration' OR 'variable initialization'
 
             BoundGenericArgumentsNode? genericArguments = null;
 
@@ -605,17 +604,17 @@ public class Parser
             
             if (_tokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
             {
-                // 'function declaration'
+                // 'function definition'
 
                 var boundFunctionArguments = ParseFunctionArguments((OpenParenthesisToken)_tokenWalker.Consume());
 
-                var boundFunctionDeclarationNode = _binder.BindFunctionDeclarationNode(
-                    (BoundClassDeclarationNode)_nodeRecent,
+                var boundFunctionDefinitionNode = _binder.BindFunctionDefinitionNode(
+                    (BoundClassDefinitionNode)_nodeRecent,
                     identifierToken,
                     boundFunctionArguments,
                     genericArguments);
 
-                _nodeRecent = boundFunctionDeclarationNode;
+                _nodeRecent = boundFunctionDefinitionNode;
             }
             else if (_tokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken ||
                      _tokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
@@ -633,7 +632,7 @@ public class Parser
                 {
                     // 'variable declaration'
                     var boundVariableDeclarationStatementNode = _binder.BindVariableDeclarationNode(
-                        (BoundClassDeclarationNode)_nodeRecent,
+                        (BoundClassDefinitionNode)_nodeRecent,
                         identifierToken);
 
                     _currentCompilationUnitBuilder.Children.Add(boundVariableDeclarationStatementNode);
@@ -681,7 +680,7 @@ public class Parser
         }
         else
         {
-            // 'function invocation' OR 'variable assignment' OR 'variable reference' OR 'namespace declaration' OR  'namespace identifier' OR 'static class identifier' OR 'generic class declaration'
+            // 'function invocation' OR 'variable assignment' OR 'variable reference' OR 'namespace declaration' OR  'namespace identifier' OR 'static class identifier' OR 'generic class definition'
 
             if (_tokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
                 _tokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
@@ -692,8 +691,8 @@ public class Parser
                     var boundIdentifierReferenceNode = (BoundIdentifierReferenceNode)_nodeRecent;
 
                     // The contextual identifier can now be understood to be the return Type of a function.
-                    _ = _binder.TryBindClassDeclarationNode(boundIdentifierReferenceNode.IdentifierToken, out var boundClassDeclarationNode);
-                    _nodeRecent = boundClassDeclarationNode;
+                    _ = _binder.TryBindClassDefinitionNode(boundIdentifierReferenceNode.IdentifierToken, out var boundClassDefinitionNode);
+                    _nodeRecent = boundClassDefinitionNode;
 
                     // Re-invoke ParseIdentifierToken now that _nodeRecent is known to be a Type identifier
                     {
@@ -773,13 +772,13 @@ public class Parser
     /// <summary>Assumes invocation occurs with the property identifier as _tokenWalker's current token</summary>
     private void ParsePropertyDefinition()
     {
-        var propertyTypeToken = _tokenWalker.Peek(-1);
+        var propertyTypeClauseToken = _tokenWalker.Peek(-1);
         var propertyIdentifierToken = _tokenWalker.Consume();
 
-        _ = _binder.TryBindClassDeclarationNode(propertyTypeToken, out var boundClassDeclarationNode);
+        _ = _binder.TryGetClassHierarchically(propertyTypeClauseToken, out var boundClassDefinitionNode);
 
         _binder.BindPropertyDeclarationNode(
-            boundClassDeclarationNode,
+            boundClassDefinitionNode,
             (IdentifierToken)propertyIdentifierToken);
     }
 
@@ -865,37 +864,37 @@ public class Parser
             });
         }
         else if (_nodeRecent is not null &&
-                 _nodeRecent.SyntaxKind == SyntaxKind.BoundClassDeclarationNode)
+                 _nodeRecent.SyntaxKind == SyntaxKind.BoundClassDefinitionNode)
         {
-            var boundClassDeclarationNode = (BoundClassDeclarationNode)_nodeRecent;
+            var boundClassDefinitionNode = (BoundClassDefinitionNode)_nodeRecent;
 
             _finalizeCompilationUnitActionStack.Push(compilationUnit =>
             {
-                boundClassDeclarationNode = boundClassDeclarationNode with
+                boundClassDefinitionNode = boundClassDefinitionNode with
                 {
                     ClassBodyCompilationUnit = compilationUnit
                 };
 
                 closureCurrentCompilationUnitBuilder.Children
-                    .Add(boundClassDeclarationNode);
+                    .Add(boundClassDefinitionNode);
             });
         }
         else if (_nodeRecent is not null &&
-                 _nodeRecent.SyntaxKind == SyntaxKind.BoundFunctionDeclarationNode)
+                 _nodeRecent.SyntaxKind == SyntaxKind.BoundFunctionDefinitionNode)
         {
-            var boundFunctionDeclarationNode = (BoundFunctionDeclarationNode)_nodeRecent;
+            var boundFunctionDefinitionNode = (BoundFunctionDefinitionNode)_nodeRecent;
             
-            scopeReturnType = boundFunctionDeclarationNode.BoundClassDeclarationNode.Type;
+            scopeReturnType = boundFunctionDefinitionNode.BoundClassDeclarationNode.Type;
 
             _finalizeCompilationUnitActionStack.Push(compilationUnit =>
             {
-                boundFunctionDeclarationNode = boundFunctionDeclarationNode with
+                boundFunctionDefinitionNode = boundFunctionDefinitionNode with
                 {
                     FunctionBodyCompilationUnit = compilationUnit
                 };
 
                 closureCurrentCompilationUnitBuilder.Children
-                    .Add(boundFunctionDeclarationNode);
+                    .Add(boundFunctionDefinitionNode);
             });
         }
         else if (_nodeRecent is not null &&
@@ -970,11 +969,11 @@ public class Parser
                 // Generic Arguments
                 var boundGenericArguments = ParseGenericArguments(openAngleBracketToken);
 
-                if (_nodeRecent.SyntaxKind == SyntaxKind.BoundClassDeclarationNode)
+                if (_nodeRecent.SyntaxKind == SyntaxKind.BoundClassDefinitionNode)
                 {
-                    var boundClassDeclarationNode = (BoundClassDeclarationNode)_nodeRecent;
+                    var boundClassDefinitionNode = (BoundClassDefinitionNode)_nodeRecent;
 
-                    _nodeRecent = boundClassDeclarationNode with
+                    _nodeRecent = boundClassDefinitionNode with
                     {
                         BoundGenericArgumentsNode = boundGenericArguments
                     };
@@ -1045,7 +1044,7 @@ public class Parser
         return null;
     }
 
-    /// <summary>Use this method for function declaration, whereas <see cref="ParseFunctionParameters"/> should be used for function invocation.</summary>
+    /// <summary>Use this method for function definition, whereas <see cref="ParseFunctionParameters"/> should be used for function invocation.</summary>
     private BoundFunctionArgumentsNode ParseFunctionArguments(
         OpenParenthesisToken openParenthesisToken)
     {
@@ -1110,7 +1109,7 @@ public class Parser
             (CloseParenthesisToken)closeParenthesisToken);
     }
 
-    /// <summary>Use this method for function invocation, whereas <see cref="ParseFunctionArguments"/> should be used for function declaration.</summary>
+    /// <summary>Use this method for function invocation, whereas <see cref="ParseFunctionArguments"/> should be used for function definition.</summary>
     private BoundFunctionParametersNode ParseFunctionParameters(
         OpenParenthesisToken openParenthesisToken)
     {

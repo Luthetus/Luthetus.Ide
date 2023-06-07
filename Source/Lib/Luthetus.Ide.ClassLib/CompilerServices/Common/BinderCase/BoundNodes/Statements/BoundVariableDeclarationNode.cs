@@ -6,22 +6,22 @@ namespace Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.St
 public sealed record BoundVariableDeclarationStatementNode : ISyntaxNode
 {
     public BoundVariableDeclarationStatementNode(
-        BoundClassDeclarationNode boundClassDeclarationNode,
+        BoundClassReferenceNode boundClassReferenceNode,
         ISyntaxToken identifierToken,
         bool isInitialized)
     {
-        BoundClassDeclarationNode = boundClassDeclarationNode;
+        BoundClassReferenceNode = boundClassReferenceNode;
         IdentifierToken = identifierToken;
         IsInitialized = isInitialized;
 
         Children = new ISyntax[]
         {
-            BoundClassDeclarationNode,
+            BoundClassReferenceNode,
             IdentifierToken
         }.ToImmutableArray();
     }
 
-    public BoundClassDeclarationNode BoundClassDeclarationNode { get; init; }
+    public BoundClassReferenceNode BoundClassReferenceNode { get; init; }
     public ISyntaxToken IdentifierToken { get; init; }
     public bool IsInitialized { get; init; }
 

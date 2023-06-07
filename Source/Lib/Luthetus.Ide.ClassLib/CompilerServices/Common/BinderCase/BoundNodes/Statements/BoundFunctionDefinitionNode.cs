@@ -4,20 +4,20 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statements;
 
-public sealed record BoundFunctionDeclarationNode : ISyntaxNode
+public sealed record BoundFunctionDefinitionNode : ISyntaxNode
 {
     private CompilationUnit? _functionBodyCompilationUnit;
     private ImmutableArray<ISyntax> _children;
     private BoundGenericArgumentsNode? _boundGenericArgumentsNode;
 
-    public BoundFunctionDeclarationNode(
-            BoundClassDeclarationNode boundClassDeclarationNode,
+    public BoundFunctionDefinitionNode(
+            BoundClassReferenceNode boundClassReferenceNode,
             ISyntaxToken identifierToken,
             BoundFunctionArgumentsNode boundFunctionArgumentsNode,
             BoundGenericArgumentsNode? boundGenericArgumentsNode,
             CompilationUnit? functionBodyCompilationUnit)
     {
-        BoundClassDeclarationNode = boundClassDeclarationNode;
+        BoundClassReferenceNode = boundClassReferenceNode;
         IdentifierToken = identifierToken;
         BoundFunctionArgumentsNode = boundFunctionArgumentsNode;
         BoundGenericArgumentsNode = boundGenericArgumentsNode;
@@ -26,7 +26,7 @@ public sealed record BoundFunctionDeclarationNode : ISyntaxNode
         CalculateChildren();
     }
 
-    public BoundClassDeclarationNode BoundClassDeclarationNode { get; init; }
+    public BoundClassReferenceNode BoundClassReferenceNode { get; init; }
     public ISyntaxToken IdentifierToken { get; init; }
     public BoundFunctionArgumentsNode BoundFunctionArgumentsNode { get; init; }
 
@@ -62,13 +62,13 @@ public sealed record BoundFunctionDeclarationNode : ISyntaxNode
     }
 
     public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.BoundFunctionDeclarationNode;
+    public SyntaxKind SyntaxKind => SyntaxKind.BoundFunctionDefinitionNode;
 
     private void CalculateChildren()
     {
-        var childrenList = new List<ISyntax>(3)
+        var childrenList = new List<ISyntax>
         {
-            BoundClassDeclarationNode,
+            BoundClassReferenceNode,
             IdentifierToken,
             BoundFunctionArgumentsNode
         };

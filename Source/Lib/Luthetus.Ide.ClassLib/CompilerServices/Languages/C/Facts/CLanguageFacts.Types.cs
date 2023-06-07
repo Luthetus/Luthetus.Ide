@@ -9,21 +9,21 @@ public partial class CLanguageFacts
 {
     public class Types
     {
-        public static readonly BoundClassDeclarationNode Int = new(
+        public static readonly BoundClassDefinitionNode Int = new(
             new IdentifierToken(new TextEditorTextSpan(0, 0, (byte)GenericDecorationKind.None, new ResourceUri(string.Empty), "int")),
             typeof(int),
             null,
             null,
             null);
 
-        public static readonly BoundClassDeclarationNode String = new(
+        public static readonly BoundClassDefinitionNode String = new(
             new IdentifierToken(new TextEditorTextSpan(0, 0, (byte)GenericDecorationKind.None, new ResourceUri(string.Empty), "string")),
             typeof(string),
             null,
             null,
             null);
         
-        public static readonly BoundClassDeclarationNode Void = new(
+        public static readonly BoundClassDefinitionNode Void = new(
             new IdentifierToken(new TextEditorTextSpan(0, 0, (byte)GenericDecorationKind.None, new ResourceUri(string.Empty), "void")),
             typeof(void),
             null,

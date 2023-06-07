@@ -224,16 +224,16 @@ public class ParserTests
             2,
             boundVariableDeclarationStatementNode.Children.Length);
 
-        var boundClassDeclarationNode = (BoundClassDeclarationNode)boundVariableDeclarationStatementNode
+        var boundClassDefinitionNode = (BoundClassDefinitionNode)boundVariableDeclarationStatementNode
             .Children[0];
 
         Assert.Equal(
-            SyntaxKind.BoundClassDeclarationNode,
-            boundClassDeclarationNode.SyntaxKind);
+            SyntaxKind.BoundClassDefinitionNode,
+            boundClassDefinitionNode.SyntaxKind);
 
         Assert.Equal(
             typeof(int),
-            boundClassDeclarationNode.Type);
+            boundClassDefinitionNode.Type);
 
         var identifierToken = boundVariableDeclarationStatementNode.Children[1];
 
@@ -341,12 +341,12 @@ x = 42;"
 
         Assert.Single(compilationUnit.Children);
 
-        var boundFunctionDeclarationNode =
-            (BoundFunctionDeclarationNode)compilationUnit.Children[0];
+        var boundFunctionDefinitionNode =
+            (BoundFunctionDefinitionNode)compilationUnit.Children[0];
 
         Assert.Equal(
-            SyntaxKind.BoundFunctionDeclarationNode,
-            boundFunctionDeclarationNode.SyntaxKind);
+            SyntaxKind.BoundFunctionDefinitionNode,
+            boundFunctionDefinitionNode.SyntaxKind);
     }
 
     [Fact]
@@ -375,12 +375,12 @@ WriteHelloWorldToConsole();"
 
         Assert.Equal(2, compilationUnit.Children.Length);
 
-        var boundFunctionDeclarationNode =
-            (BoundFunctionDeclarationNode)compilationUnit.Children[0];
+        var boundFunctionDefinitionNode =
+            (BoundFunctionDefinitionNode)compilationUnit.Children[0];
 
         Assert.Equal(
-            SyntaxKind.BoundFunctionDeclarationNode,
-            boundFunctionDeclarationNode.SyntaxKind);
+            SyntaxKind.BoundFunctionDefinitionNode,
+            boundFunctionDefinitionNode.SyntaxKind);
 
         var boundFunctionInvocationNode =
             (BoundFunctionInvocationNode)compilationUnit.Children[1];

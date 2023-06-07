@@ -25,30 +25,30 @@ public partial class ParserTests
         {
             Assert.Single(compilationUnit.Children);
 
-            var boundVariableDeclarationStatementNode =
+            var boundVariableDefinitionStatementNode =
                 (BoundVariableDeclarationStatementNode)compilationUnit.Children
                     .Single();
 
             Assert.Equal(
                 SyntaxKind.BoundVariableDeclarationStatementNode,
-                boundVariableDeclarationStatementNode.SyntaxKind);
+                boundVariableDefinitionStatementNode.SyntaxKind);
 
             Assert.Equal(
                 2,
-                boundVariableDeclarationStatementNode.Children.Length);
+                boundVariableDefinitionStatementNode.Children.Length);
 
-            var boundClassDeclarationNode = (BoundClassDeclarationNode)boundVariableDeclarationStatementNode
+            var boundClassDefinitionNode = (BoundClassDefinitionNode)boundVariableDefinitionStatementNode
                 .Children[0];
 
             Assert.Equal(
-                SyntaxKind.BoundClassDeclarationNode,
-                boundClassDeclarationNode.SyntaxKind);
+                SyntaxKind.BoundClassDefinitionNode,
+                boundClassDefinitionNode.SyntaxKind);
 
             Assert.Equal(
                 typeof(int),
-                boundClassDeclarationNode.Type);
+                boundClassDefinitionNode.Type);
 
-            var identifierToken = boundVariableDeclarationStatementNode.Children[1];
+            var identifierToken = boundVariableDefinitionStatementNode.Children[1];
 
             Assert.Equal(
                 SyntaxKind.IdentifierToken,
@@ -161,8 +161,8 @@ public partial class ParserTests
             var boundVariableDeclarationStatementNode = (BoundVariableDeclarationStatementNode)compilationUnit.Children[0];
             Assert.NotNull(boundVariableDeclarationStatementNode);
 
-            var boundFunctionDeclarationNode = (BoundFunctionDeclarationNode)compilationUnit.Children[1];
-            Assert.NotNull(boundFunctionDeclarationNode);
+            var boundFunctionDefinitionNode = (BoundFunctionDefinitionNode)compilationUnit.Children[1];
+            Assert.NotNull(boundFunctionDefinitionNode);
 
             var boundIdentifierReferenceNode = (BoundIdentifierReferenceNode)compilationUnit.Children[2];
             Assert.NotNull(boundIdentifierReferenceNode);

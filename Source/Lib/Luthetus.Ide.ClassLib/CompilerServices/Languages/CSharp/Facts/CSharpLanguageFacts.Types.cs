@@ -9,35 +9,35 @@ public partial class CSharpLanguageFacts
 {
     public class Types
     {
-        public static readonly BoundClassDeclarationNode Void = new(
+        public static readonly BoundClassDefinitionNode Void = new(
             new IdentifierToken(new TextEditorTextSpan(0, "void".Length, (byte)GenericDecorationKind.None, new ResourceUri(string.Empty), "void")),
             typeof(void),
             null,
             null,
             null);
 
-        public static readonly BoundClassDeclarationNode Int = new(
+        public static readonly BoundClassDefinitionNode Int = new(
             new IdentifierToken(new TextEditorTextSpan(0, "int".Length, (byte)GenericDecorationKind.None, new ResourceUri(string.Empty), "int")),
             typeof(int),
             null,
             null,
             null);
 
-        public static readonly BoundClassDeclarationNode String = new(
+        public static readonly BoundClassDefinitionNode String = new(
             new IdentifierToken(new TextEditorTextSpan(0, "string".Length, (byte)GenericDecorationKind.None, new ResourceUri(string.Empty), "string")),
             typeof(string),
             null,
             null,
             null);
 
-        public static readonly BoundClassDeclarationNode Bool = new(
+        public static readonly BoundClassDefinitionNode Bool = new(
             new IdentifierToken(new TextEditorTextSpan(0, "bool".Length, (byte)GenericDecorationKind.None, new ResourceUri(string.Empty), "bool")),
             typeof(bool),
             null,
             null,
             null);
 
-        public static readonly BoundClassDeclarationNode Var = new(
+        public static readonly BoundClassDefinitionNode Var = new(
             new IdentifierToken(new TextEditorTextSpan(0, "var".Length, (byte)GenericDecorationKind.None, new ResourceUri(string.Empty), "var")),
             typeof(void),
             null,

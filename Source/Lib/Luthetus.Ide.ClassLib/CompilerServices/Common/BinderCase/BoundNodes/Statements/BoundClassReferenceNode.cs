@@ -3,21 +3,21 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statements;
 
-public sealed record BoundFunctionInvocationNode : ISyntaxNode
+/// <summary><see cref="BoundClassReferenceNode"/> is used for invoking a constructor or doing type comparison, etc... Whereas <see cref="BoundClassDefinitionNode"/> is used for specifically only definition of types such as the syntax: 'public class PersonModel"</summary>
+public sealed record BoundClassReferenceNode : ISyntaxNode
 {
-    public BoundFunctionInvocationNode(
-        ISyntaxToken identifierToken,
-        BoundFunctionParametersNode boundFunctionParametersNode,
+    public BoundClassReferenceNode(
+        ISyntaxToken typeClauseToken,
+        Type? type,
         BoundGenericArgumentsNode? boundGenericArgumentsNode)
     {
-        IdentifierToken = identifierToken;
-        BoundFunctionParametersNode = boundFunctionParametersNode;
+        TypeClauseToken = typeClauseToken;
+        Type = type;
         BoundGenericArgumentsNode = boundGenericArgumentsNode;
 
         var childrenList = new List<ISyntax>
         {
-            IdentifierToken,
-            BoundFunctionParametersNode
+            TypeClauseToken,
         };
 
         if (BoundGenericArgumentsNode is not null)
@@ -26,11 +26,11 @@ public sealed record BoundFunctionInvocationNode : ISyntaxNode
         Children = childrenList.ToImmutableArray();
     }
 
-    public ISyntaxToken IdentifierToken { get; init; }
-    public BoundFunctionParametersNode BoundFunctionParametersNode { get; init; }
+    public ISyntaxToken TypeClauseToken { get; init; }
+    public Type Type { get; init; }
     public BoundGenericArgumentsNode? BoundGenericArgumentsNode { get; init; }
 
     public ImmutableArray<ISyntax> Children { get; init; }
     public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.BoundFunctionInvocationNode;
+    public SyntaxKind SyntaxKind => SyntaxKind.BoundClassReferenceNode;
 }
