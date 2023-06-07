@@ -1,4 +1,5 @@
 ﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase;
+using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statements;
 using Luthetus.TextEditor.RazorLib.Lexing;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.C.Facts;
@@ -9,19 +10,19 @@ public partial class CLanguageFacts
     {
         public static BoundScope GetInitialGlobalScope()
         {
-            var typeMap = new Dictionary<string, Type>
+            var classMap = new Dictionary<string, BoundClassDeclarationNode>
             {
                 {
-                    Types.Int.name,
-                    Types.Int.type
+                    Types.Int.TypeClauseToken.TextSpan.GetText(),
+                    Types.Int
                 },
                 {
-                    Types.String.name,
-                    Types.String.type
+                    Types.String.TypeClauseToken.TextSpan.GetText(),
+                    Types.String
                 },
                 {
-                    Types.Void.name,
-                    Types.Void.type
+                    Types.Void.TypeClauseToken.TextSpan.GetText(),
+                    Types.Void
                 }
             };
 
@@ -31,8 +32,7 @@ public partial class CLanguageFacts
                 0,
                 null,
                 new ResourceUri(string.Empty),
-                typeMap,
-                new(),
+                classMap,
                 new(),
                 new());
         }

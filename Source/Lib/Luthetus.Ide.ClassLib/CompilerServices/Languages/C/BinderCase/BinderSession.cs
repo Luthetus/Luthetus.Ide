@@ -90,27 +90,24 @@ public class BinderSession
         throw new NotImplementedException();
     }
 
-    public bool TryBindTypeNode(
+    public bool TryBindClassReferenceNode(
         ISyntaxToken token,
-        out BoundTypeNode? boundTypeNode)
+        out BoundClassDeclarationNode? boundClassDeclarationNode)
     {
         var text = token.TextSpan.GetText();
 
-        if (_currentScope.TypeMap.TryGetValue(text, out var type))
-        {
-            boundTypeNode = new BoundTypeNode(type, token);
+        if (_currentScope.ClassDeclarationMap.TryGetValue(text, out boundClassDeclarationNode))
             return true;
-        }
 
-        boundTypeNode = null;
+        boundClassDeclarationNode = null;
         return false;
     }
 
     public BoundFunctionDeclarationNode BindFunctionDeclarationNode(
-        BoundTypeNode boundTypeNode,
+        BoundClassDeclarationNode boundClassDeclarationNode,
         IdentifierToken identifierToken,
-        BoundGenericArgumentsNode boundGenericArgumentsNode,
-        BoundFunctionArgumentsNode boundFunctionArguments)
+        BoundFunctionArgumentsNode boundFunctionArguments,
+        BoundGenericArgumentsNode? boundGenericArgumentsNode)
     {
         var text = identifierToken.TextSpan.GetText();
 
@@ -124,7 +121,7 @@ public class BinderSession
         }
 
         var boundFunctionDeclarationNode = new BoundFunctionDeclarationNode(
-            boundTypeNode,
+            boundClassDeclarationNode,
             identifierToken,
             boundFunctionArguments,
             boundGenericArgumentsNode,
@@ -157,7 +154,7 @@ public class BinderSession
     }
 
     public BoundVariableDeclarationStatementNode BindVariableDeclarationNode(
-        BoundTypeNode boundTypeNode,
+        BoundClassDeclarationNode boundClassDeclarationNode,
         IdentifierToken identifierToken)
     {
         var text = identifierToken.TextSpan.GetText();
@@ -172,7 +169,7 @@ public class BinderSession
         }
 
         var boundVariableDeclarationStatementNode = new BoundVariableDeclarationStatementNode(
-            boundTypeNode,
+            boundClassDeclarationNode,
             identifierToken,
             false);
 
@@ -216,7 +213,8 @@ public class BinderSession
     }
 
     public BoundFunctionInvocationNode? BindFunctionInvocationNode(
-        IdentifierToken identifierToken)
+        IdentifierToken identifierToken,
+        BoundFunctionParametersNode boundFunctionParametersNode)
     {
         var text = identifierToken.TextSpan.GetText();
 
@@ -225,7 +223,7 @@ public class BinderSession
                 out var boundFunctionDeclarationNode) &&
             boundFunctionDeclarationNode is not null)
         {
-            return new(identifierToken);
+            return new(identifierToken, boundFunctionParametersNode, null);
         }
         else
         {
@@ -233,7 +231,7 @@ public class BinderSession
                 identifierToken.TextSpan,
                 text);
 
-            return new(identifierToken)
+            return new(identifierToken, boundFunctionParametersNode, null)
             {
                 IsFabricated = true
             };
@@ -250,7 +248,6 @@ public class BinderSession
             textEditorTextSpan.StartingIndexInclusive,
             null,
             textEditorTextSpan.ResourceUri,
-            new(),
             new(),
             new(),
             new());
@@ -298,17 +295,17 @@ public class BinderSession
     }
 
     /// <summary>Search hierarchically through all the scopes, starting at the <see cref="_currentScope"/>.<br/><br/>If a match is found, then set the out parameter to it and return true.<br/><br/>If none of the searched scopes contained a match then set the out parameter to null and return false.</summary>
-    public bool TryGetTypeHierarchically(
+    public bool TryGetClassHierarchically(
         string text,
-        out Type? type)
+        out BoundClassDeclarationNode? boundClassDeclarationNode)
     {
         var localScope = _currentScope;
 
         while (localScope is not null)
         {
-            if (localScope.TypeMap.TryGetValue(
+            if (localScope.ClassDeclarationMap.TryGetValue(
                     text,
-                    out type))
+                    out boundClassDeclarationNode))
             {
                 return true;
             }
@@ -316,7 +313,7 @@ public class BinderSession
             localScope = localScope.Parent;
         }
 
-        type = null;
+        boundClassDeclarationNode = null;
         return false;
     }
 

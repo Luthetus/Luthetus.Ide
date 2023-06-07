@@ -190,11 +190,11 @@ public class ParserSession
     {
         var text = inToken.TextSpan.GetText();
 
-        if (_binder.TryGetTypeHierarchically(text, out var type) &&
-            type is not null)
+        if (_binder.TryGetClassHierarchically(text, out var boundClassDeclarationNode) &&
+            boundClassDeclarationNode is not null)
         {
             // 'int', 'string', 'bool', etc...
-            _nodeRecent = new BoundTypeNode(type, inToken);
+            _nodeRecent = boundClassDeclarationNode;
         }
         else
         {
@@ -225,7 +225,7 @@ public class ParserSession
         var nextToken = _tokenWalker.Consume();
 
         if (_nodeRecent is not null &&
-            _nodeRecent.SyntaxKind == SyntaxKind.BoundTypeNode)
+            _nodeRecent.SyntaxKind == SyntaxKind.BoundClassDeclarationNode)
         {
             // 'function declaration' OR 'variable declaration' OR 'variable initialization'
 
@@ -234,7 +234,7 @@ public class ParserSession
                 // 'function declaration'
 
                 var boundFunctionDeclarationNode = _binder.BindFunctionDeclarationNode(
-                    (BoundTypeNode)_nodeRecent,
+                    (BoundClassDeclarationNode)_nodeRecent,
                     inToken,
                     // TODO: I'm working on C# and breaking some C code. Need to look at this later.
                     null,
@@ -252,7 +252,7 @@ public class ParserSession
 
                 // 'variable declaration'
                 var boundVariableDeclarationStatementNode = _binder.BindVariableDeclarationNode(
-                    (BoundTypeNode)_nodeRecent,
+                    (BoundClassDeclarationNode)_nodeRecent,
                     inToken);
 
                 _currentCompilationUnitBuilder.Children.Add(boundVariableDeclarationStatementNode);
@@ -299,15 +299,16 @@ public class ParserSession
             if (nextToken.SyntaxKind == SyntaxKind.OpenParenthesisToken)
             {
                 // 'function invocation'
+
                 var boundFunctionInvocationNode = _binder.BindFunctionInvocationNode(
-                    inToken);
+                    inToken,
+                    // TODO: I'm working on C# and breaking this file, going to pass null for now
+                    null);
 
                 if (boundFunctionInvocationNode is null)
                     throw new ApplicationException($"{nameof(boundFunctionInvocationNode)} was null.");
 
                 _currentCompilationUnitBuilder.Children.Add(boundFunctionInvocationNode);
-
-                ParseFunctionArguments();
             }
             else if (nextToken.SyntaxKind == SyntaxKind.EqualsToken)
             {
@@ -390,7 +391,7 @@ public class ParserSession
         {
             var boundFunctionDeclarationNode = (BoundFunctionDeclarationNode)_nodeRecent;
 
-            scopeReturnType = boundFunctionDeclarationNode.BoundTypeNode.Type;
+            scopeReturnType = boundFunctionDeclarationNode.BoundClassDeclarationNode.Type;
 
             _finalizeCompilationUnitAction = compilationUnit =>
             {

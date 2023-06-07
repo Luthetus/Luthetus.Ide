@@ -1,24 +1,28 @@
 ﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.General;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
+using System;
 using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statements;
 
 public sealed record BoundClassDeclarationNode : ISyntaxNode
 {
-    private ISyntaxToken _identifierToken;
+    private ISyntaxToken _typeClauseToken;
+    private Type _type;
     private BoundGenericArgumentsNode? _boundGenericArgumentsNode;
     private BoundInheritanceStatementNode? _boundInheritanceStatementNode;
     private CompilationUnit? _classBodyCompilationUnit;
     private ImmutableArray<ISyntax> _children;
 
     public BoundClassDeclarationNode(
-        ISyntaxToken identifierToken,
+        ISyntaxToken typeClauseToken,
+        Type type,
         BoundGenericArgumentsNode? boundGenericArgumentsNode,
         BoundInheritanceStatementNode? boundInheritanceStatementNode,
         CompilationUnit? classBodyCompilationUnit)
     {
-        _identifierToken = identifierToken;
+        _typeClauseToken = typeClauseToken;
+        _type = type;
         _boundGenericArgumentsNode = boundGenericArgumentsNode;
         _boundInheritanceStatementNode = boundInheritanceStatementNode;
         _classBodyCompilationUnit = classBodyCompilationUnit;
@@ -26,12 +30,22 @@ public sealed record BoundClassDeclarationNode : ISyntaxNode
         SetChildren();
     }
 
-    public ISyntaxToken IdentifierToken 
+    public ISyntaxToken TypeClauseToken 
     {
-        get => _identifierToken;
+        get => _typeClauseToken;
         init
         {
-            _identifierToken = value;
+            _typeClauseToken = value;
+            SetChildren();
+        }
+    }
+    
+    public Type Type
+    {
+        get => _type;
+        init
+        {
+            _type = value;
             SetChildren();
         }
     }
@@ -80,9 +94,9 @@ public sealed record BoundClassDeclarationNode : ISyntaxNode
 
     private void SetChildren()
     {
-        var childrenList = new List<ISyntax>(4)
+        var childrenList = new List<ISyntax>
         {
-            IdentifierToken
+            TypeClauseToken,
         };
 
         if (BoundGenericArgumentsNode is not null)

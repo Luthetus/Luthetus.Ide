@@ -7,17 +7,17 @@ namespace Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.St
 public sealed record BoundInheritanceStatementNode : ISyntaxNode
 {
     public BoundInheritanceStatementNode(
-        IdentifierToken parentClassIdentifierToken)
+        BoundClassDeclarationNode parentBoundClassDeclarationNode)
     {
-        ParentClassIdentifierToken = parentClassIdentifierToken;
+        ParentBoundClassDeclarationNode = parentBoundClassDeclarationNode;
         
         Children = new ISyntax[]
         {
-            ParentClassIdentifierToken
+            ParentBoundClassDeclarationNode
         }.ToImmutableArray();
     }
 
-    public IdentifierToken ParentClassIdentifierToken { get; init; }
+    public BoundClassDeclarationNode ParentBoundClassDeclarationNode { get; init; }
 
     public ImmutableArray<ISyntax> Children { get; init; }
     public bool IsFabricated { get; init; }

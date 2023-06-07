@@ -1,4 +1,6 @@
 ﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase;
+using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes;
+using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statements;
 using Luthetus.TextEditor.RazorLib.Lexing;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.Facts;
@@ -9,27 +11,27 @@ public partial class CSharpLanguageFacts
     {
         public static BoundScope GetInitialGlobalScope()
         {
-            var typeMap = new Dictionary<string, Type>
+            var classMap = new Dictionary<string, BoundClassDeclarationNode>
             {
                 {
-                    Types.Void.name,
-                    Types.Void.type
+                    Types.Void.TypeClauseToken.TextSpan.GetText(),
+                    Types.Void
                 },
                 {
-                    Types.Var.name,
-                    Types.Var.type
+                    Types.Var.TypeClauseToken.TextSpan.GetText(),
+                    Types.Var
                 },
                 {
-                    Types.Bool.name,
-                    Types.Bool.type
+                    Types.Bool.TypeClauseToken.TextSpan.GetText(),
+                    Types.Bool
                 },
                 {
-                    Types.Int.name,
-                    Types.Int.type
+                    Types.Int.TypeClauseToken.TextSpan.GetText(),
+                    Types.Int
                 },
                 {
-                    Types.String.name,
-                    Types.String.type
+                    Types.String.TypeClauseToken.TextSpan.GetText(),
+                    Types.String
                 },
             };
 
@@ -39,8 +41,7 @@ public partial class CSharpLanguageFacts
                 0,
                 null,
                 new ResourceUri(string.Empty),
-                typeMap,
-                new(),
+                classMap,
                 new(),
                 new());
         }

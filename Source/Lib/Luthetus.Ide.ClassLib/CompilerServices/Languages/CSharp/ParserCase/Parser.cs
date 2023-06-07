@@ -254,11 +254,10 @@ public class Parser
         // TODO: Make many keywords SyntaxKinds. Then if SyntaxKind.EndsWith("Keyword"); so that string checking doesn't need to be done.
         var text = keywordToken.TextSpan.GetText();
 
-        if (_binder.TryGetTypeHierarchically(text, out var type) &&
-            type is not null)
+        if (_binder.TryBindClassDeclarationNode(keywordToken, out var boundClassDeclarationNode))
         {
             // 'int', 'string', 'bool', etc...
-            _nodeRecent = new BoundTypeNode(type, keywordToken);
+            _nodeRecent = boundClassDeclarationNode;
         }
         else
         {
@@ -295,7 +294,7 @@ public class Parser
             {
                 var matchedToken = _tokenWalker.Match(SyntaxKind.IdentifierToken);
 
-                var boundClassDeclarationNode = _binder.BindClassDeclarationNode(
+                boundClassDeclarationNode = _binder.BindClassDeclarationNode(
                     (IdentifierToken)matchedToken);
 
                 _nodeRecent = boundClassDeclarationNode;
@@ -353,7 +352,7 @@ public class Parser
             }
             else if (text == "new")
             {
-                var typeIdentifier = _tokenWalker.Match(SyntaxKind.IdentifierToken);
+                var typeClauseToken = MatchTypeClauseToken();
 
                 if (_tokenWalker.Peek(0).SyntaxKind == SyntaxKind.MemberAccessToken)
                 {
@@ -361,19 +360,10 @@ public class Parser
                     throw new NotImplementedException();
                 }
 
-                BoundTypeNode boundTypeNode = new BoundTypeNode(typeof(void), typeIdentifier);
-
-                if (!typeIdentifier.IsFabricated)
-                {
-                    if (_binder.TryBindTypeNode(typeIdentifier, out var successfullyBoundTypeNode) &&
-                        successfullyBoundTypeNode is not null)
-                    {
-                        boundTypeNode = successfullyBoundTypeNode;
-                    }
-                }
+                _binder.TryBindClassDeclarationNode(typeClauseToken, out boundClassDeclarationNode);
 
                 // TODO: combine the logic for 'new()' without a type identifier and 'new List<int>()' with a type identifier. To start I am going to isolate them in their own if conditional blocks.
-                if (typeIdentifier.IsFabricated)
+                if (typeClauseToken.IsFabricated)
                 {
                     // If "new()" LACKS a type identifier then the OpenParenthesisToken must be there. This is true even still for when there is object initialization OpenBraceToken. For new() the parenthesis are required.
                     // valid inputs:
@@ -396,7 +386,7 @@ public class Parser
 
                     var boundConstructorInvocationNode = _binder.BindConstructorInvocationNode(
                         keywordToken,
-                        boundTypeNode,
+                        boundClassDeclarationNode,
                         boundFunctionArgumentsNode,
                         boundObjectInitializationNode);
 
@@ -416,11 +406,11 @@ public class Parser
                     if (_tokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
                         ParseGenericArguments((OpenAngleBracketToken)_tokenWalker.Consume());
 
-                    BoundFunctionArgumentsNode? boundFunctionArgumentsNode = null;
+                    BoundFunctionParametersNode? boundFunctionParametersNode = null;
 
                     if (_tokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
                     {
-                        boundFunctionArgumentsNode = ParseFunctionParameters(
+                        boundFunctionParametersNode = ParseFunctionParameters(
                             (OpenParenthesisToken)_tokenWalker.Consume());
                     }
 
@@ -434,8 +424,8 @@ public class Parser
 
                     var boundConstructorInvocationNode = _binder.BindConstructorInvocationNode(
                         keywordToken,
-                        boundTypeNode,
-                        boundFunctionArgumentsNode,
+                        boundClassDeclarationNode,
+                        boundFunctionParametersNode,
                         boundObjectInitializationNode);
 
                     _currentCompilationUnitBuilder.Children.Add(boundConstructorInvocationNode);
@@ -446,7 +436,7 @@ public class Parser
                 // TODO: Implement the 'interface' keyword
                 var matchedToken = _tokenWalker.Match(SyntaxKind.IdentifierToken);
 
-                var boundClassDeclarationNode = _binder.BindClassDeclarationNode(
+                boundClassDeclarationNode = _binder.BindClassDeclarationNode(
                     (IdentifierToken)matchedToken);
 
                 _nodeRecent = boundClassDeclarationNode;
@@ -542,11 +532,10 @@ public class Parser
                 if (nextTokenIsVarKeyword || nextTokenIsIdentifierToken)
                 {
                     // Take 'var' as a keyword
-                    if (_binder.TryGetTypeHierarchically(text, out var type) &&
-                        type is not null)
+                    if (_binder.TryBindClassDeclarationNode(keywordContextualToken, out var boundClassDeclarationNode))
                     {
                         // 'var' type
-                        _nodeRecent = new BoundTypeNode(type, keywordContextualToken);
+                        _nodeRecent = boundClassDeclarationNode;
                     }
 
                     return;
@@ -581,24 +570,19 @@ public class Parser
         {
             var boundClassDeclarationNode = (BoundClassDeclarationNode)_nodeRecent;
 
-            var consumedToken = _tokenWalker.Consume();
-            
-            if (consumedToken.SyntaxKind == SyntaxKind.IdentifierToken)
-            {
-                var boundInheritanceStatementNode = _binder.BindInheritanceStatementNode(
-                    (IdentifierToken)consumedToken);
+            var matchTypeClauseToken = MatchTypeClauseToken();
 
-                boundClassDeclarationNode = boundClassDeclarationNode with
-                {
-                    BoundInheritanceStatementNode = boundInheritanceStatementNode
-                };
+            _ = _binder.TryBindClassDeclarationNode(matchTypeClauseToken, out boundClassDeclarationNode);
 
-                _nodeRecent = boundClassDeclarationNode;
-            }
-            else
+            var boundInheritanceStatementNode = _binder.BindInheritanceStatementNode(
+                boundClassDeclarationNode);
+
+            boundClassDeclarationNode = boundClassDeclarationNode with
             {
-                throw new NotImplementedException();
-            }
+                BoundInheritanceStatementNode = boundInheritanceStatementNode
+            };
+
+            _nodeRecent = boundClassDeclarationNode;
         }
         else
         {
@@ -610,7 +594,7 @@ public class Parser
         IdentifierToken identifierToken)
     {
         if (_nodeRecent is not null &&
-            _nodeRecent.SyntaxKind == SyntaxKind.BoundTypeNode)
+            _nodeRecent.SyntaxKind == SyntaxKind.BoundClassDeclarationNode)
         {
             // 'function declaration' OR 'variable declaration' OR 'variable initialization'
 
@@ -626,7 +610,7 @@ public class Parser
                 var boundFunctionArguments = ParseFunctionArguments((OpenParenthesisToken)_tokenWalker.Consume());
 
                 var boundFunctionDeclarationNode = _binder.BindFunctionDeclarationNode(
-                    (BoundTypeNode)_nodeRecent,
+                    (BoundClassDeclarationNode)_nodeRecent,
                     identifierToken,
                     boundFunctionArguments,
                     genericArguments);
@@ -649,7 +633,7 @@ public class Parser
                 {
                     // 'variable declaration'
                     var boundVariableDeclarationStatementNode = _binder.BindVariableDeclarationNode(
-                        (BoundTypeNode)_nodeRecent,
+                        (BoundClassDeclarationNode)_nodeRecent,
                         identifierToken);
 
                     _currentCompilationUnitBuilder.Children.Add(boundVariableDeclarationStatementNode);
@@ -706,18 +690,10 @@ public class Parser
                     _nodeRecent.SyntaxKind == SyntaxKind.BoundIdentifierReferenceNode)
                 {
                     var boundIdentifierReferenceNode = (BoundIdentifierReferenceNode)_nodeRecent;
-                    var identifierText = boundIdentifierReferenceNode.IdentifierToken.TextSpan.GetText();
 
                     // The contextual identifier can now be understood to be the return Type of a function.
-                    if (_binder.TryGetTypeHierarchically(identifierText, out var type) &&
-                        type is not null)
-                    {
-                        _nodeRecent = new BoundTypeNode(type, boundIdentifierReferenceNode.IdentifierToken);
-                    }
-                    else
-                    {
-                        _nodeRecent = new BoundTypeNode(typeof(void), boundIdentifierReferenceNode.IdentifierToken);
-                    }
+                    _ = _binder.TryBindClassDeclarationNode(boundIdentifierReferenceNode.IdentifierToken, out var boundClassDeclarationNode);
+                    _nodeRecent = boundClassDeclarationNode;
 
                     // Re-invoke ParseIdentifierToken now that _nodeRecent is known to be a Type identifier
                     {
@@ -727,25 +703,27 @@ public class Parser
                 }
 
                 // 'function invocation' 
-                
+
                 // TODO: (2023-06-04) I believe this if block will run for '<' mathematical operator.
 
+                BoundGenericArgumentsNode? genericArguments = null;
+
+                if (_tokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
+                    genericArguments = ParseGenericArguments((OpenAngleBracketToken)_tokenWalker.Consume());
+
+                var openParenthesisToken = (OpenParenthesisToken)_tokenWalker.Match(SyntaxKind.OpenParenthesisToken);
+
+                var functionParameters = ParseFunctionParameters(openParenthesisToken);
+
                 var boundFunctionInvocationNode = _binder.BindFunctionInvocationNode(
-                    identifierToken);
+                    identifierToken,
+                    functionParameters,
+                    genericArguments);
 
                 if (boundFunctionInvocationNode is null)
                     throw new ApplicationException($"{nameof(boundFunctionInvocationNode)} was null.");
 
                 _currentCompilationUnitBuilder.Children.Add(boundFunctionInvocationNode);
-
-                if (_tokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
-                {
-                    ParseGenericArguments((OpenAngleBracketToken)_tokenWalker.Consume());
-                }
-
-                var openParenthesisToken = (OpenParenthesisToken)_tokenWalker.Match(SyntaxKind.OpenParenthesisToken);
-
-                ParseFunctionParameters(openParenthesisToken);
             }
             else if (_tokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
             {
@@ -806,22 +784,11 @@ public class Parser
         var propertyTypeToken = _tokenWalker.Peek(-1);
         var propertyIdentifierToken = _tokenWalker.Consume();
 
-        BoundTypeNode? boundTypeNode = null;
+        _ = _binder.TryBindClassDeclarationNode(propertyTypeToken, out var boundClassDeclarationNode);
 
-        if (_binder.TryGetTypeHierarchically(
-                propertyTypeToken.TextSpan.GetText(),
-                out var type) &&
-                    type is not null)
-        {
-            boundTypeNode = new BoundTypeNode(type, propertyTypeToken);
-        }
-
-        if (boundTypeNode is not null)
-        {
-            _binder.BindPropertyDeclarationNode(
-                boundTypeNode,
-                (IdentifierToken)propertyIdentifierToken);
-        }
+        _binder.BindPropertyDeclarationNode(
+            boundClassDeclarationNode,
+            (IdentifierToken)propertyIdentifierToken);
     }
 
     /// <summary>TODO: Implement ParseIfStatementExpression() correctly. Until then, skip until the closing parenthesis of the if statement is found.</summary>
@@ -926,7 +893,7 @@ public class Parser
         {
             var boundFunctionDeclarationNode = (BoundFunctionDeclarationNode)_nodeRecent;
             
-            scopeReturnType = boundFunctionDeclarationNode.BoundTypeNode.Type;
+            scopeReturnType = boundFunctionDeclarationNode.BoundClassDeclarationNode.Type;
 
             _finalizeCompilationUnitActionStack.Push(compilationUnit =>
             {
@@ -1098,28 +1065,31 @@ public class Parser
                 (CloseParenthesisToken)_tokenWalker.Consume());
         }
 
-        // Contains 'IdentifierType' then 'IdentifierArgument' then 'CommaToken' then repeat pattern as long as there are entries.
-        var functionArgumentListing = new List<ISyntax>();
+        // Contains 'TypeClause' then 'ArgumentIdentifier' then 'CommaToken' then repeat pattern as long as there are entries.
+        var functionArgumentListing = new List<ISyntaxToken>();
 
-        // Alternate between reading type identifier (null), argument identifier (true), and a single comma (false)
+        // Alternate between reading TypeClause (null), ArgumentIdentifier (true), and a Comma (false)
         bool? canReadComma = null;
 
         while (true)
         {
             if (canReadComma is null)
             {
-                var boundTypeNode = ParseBoundTypeNode();
-                functionArgumentListing.Add(boundTypeNode);
+                var typeClauseToken = MatchTypeClauseToken();
+                
+                functionArgumentListing.Add(typeClauseToken);
+
+                if (typeClauseToken.IsFabricated)
+                    break;
 
                 canReadComma = false;
             }
             else if (!canReadComma.Value)
             {
-                var identifierToken = (IdentifierToken)_tokenWalker.Match(SyntaxKind.IdentifierToken);
+                var variableIdentifierToken = (IdentifierToken)_tokenWalker.Match(SyntaxKind.IdentifierToken);
+                functionArgumentListing.Add(variableIdentifierToken);
 
-                functionArgumentListing.Add(identifierToken);
-
-                if (identifierToken.IsFabricated)
+                if (variableIdentifierToken.IsFabricated)
                     break;
 
                 canReadComma = true;
@@ -1149,7 +1119,7 @@ public class Parser
     }
 
     /// <summary>Use this method for function invocation, whereas <see cref="ParseFunctionArguments"/> should be used for function declaration.</summary>
-    private BoundFunctionArgumentsNode ParseFunctionParameters(
+    private BoundFunctionParametersNode ParseFunctionParameters(
         OpenParenthesisToken openParenthesisToken)
     {
         if (_tokenWalker.Peek(0).SyntaxKind == SyntaxKind.CloseParenthesisToken)
@@ -1163,33 +1133,13 @@ public class Parser
         // Contains 'OPTIONAL_KEYWORD(out Type, out, ref)', then 'Expression/IdentifierParameter', then 'CommaToken' then repeat pattern as long as there are entries.
         var functionParametersListing = new List<ISyntaxToken>();
 
-        // Alternate between reading 'Expression/IdentifierParameter' (true), and a single comma (false)
+        // Alternate between reading 'OPTIONAL_KEYWORD[out, ref] Expression/IdentifierParameter' (true), and a single comma (false)
         bool canReadComma = false;
 
         while (true)
         {
             if (!canReadComma)
             {
-                // TODO: Uncomment and finish this logic to read keywords which are part of the parameter
-                {
-                    //if (_tokenWalker.Current.SyntaxKind == SyntaxKind.KeywordToken)
-                    //{
-                    //    var keywordToken = _tokenWalker.Consume();
-                    //    var keywordText = keywordToken.TextSpan.GetText();
-
-                    //    if (keywordText == "out")
-                    //    {
-                    //        throw new NotImplementedException();
-                    //    }
-                    //    else if (keywordText == "ref")
-                    //    {
-                    //        throw new NotImplementedException();
-                    //    }
-                    //}
-                }
-
-                // TODO: This should be reading an expression. For now going to just read up until either a comma, or a closing parenthesis. Then mark that as one singular variable
-
                 bool IsInvalidToken(ISyntaxToken syntaxToken) => 
                     syntaxToken.SyntaxKind != SyntaxKind.CommaToken ||
                     syntaxToken.SyntaxKind != SyntaxKind.CloseParenthesisToken ||
@@ -1329,43 +1279,12 @@ public class Parser
         }
     }
 
-    private BoundTypeNode ParseBoundTypeNode()
+    /// <summary>The keywords: "string, var, void, etc..." being Types is constantly resulting in me writing code incorrectly. This method will return either a keyword, or identifier (if they are truly in the tokens list and not fabricated). Otherwise, fabricate an identifier.</summary>
+    private ISyntaxToken MatchTypeClauseToken()
     {
-        BoundTypeNode? boundTypeNode = null;
+        if (_tokenWalker.Current.SyntaxKind == SyntaxKind.KeywordToken)
+            return _tokenWalker.Consume();
 
-        var syntaxToken = _tokenWalker.Consume(); ;
-
-        if (syntaxToken.SyntaxKind == SyntaxKind.KeywordToken)
-        {
-            if (_binder.TryGetTypeHierarchically(syntaxToken.TextSpan.GetText(), out var type) &&
-                type is not null)
-            {
-                // 'int', 'string', 'bool', etc...
-                boundTypeNode = new BoundTypeNode(type, syntaxToken);
-            }
-        }
-        else if (syntaxToken.SyntaxKind == SyntaxKind.IdentifierToken)
-        {
-            if (_binder.TryGetTypeHierarchically(syntaxToken.TextSpan.GetText(), out var type) &&
-                type is not null)
-            {
-                // 'int', 'string', 'bool', etc...
-                boundTypeNode = new BoundTypeNode(type, syntaxToken);
-            }
-        }
-
-        if (boundTypeNode is null)
-        {
-            _diagnosticBag.ReportUnexpectedToken(
-                syntaxToken.TextSpan,
-                syntaxToken.TextSpan.GetText(),
-                "Type");
-
-            boundTypeNode = new BoundTypeNode(
-                typeof(void),
-                syntaxToken);
-        }
-
-        return boundTypeNode;
+        return _tokenWalker.Match(SyntaxKind.IdentifierToken);
     }
 }

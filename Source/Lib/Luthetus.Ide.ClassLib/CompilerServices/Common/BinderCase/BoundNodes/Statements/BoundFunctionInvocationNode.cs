@@ -6,17 +6,29 @@ namespace Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.St
 public sealed record BoundFunctionInvocationNode : ISyntaxNode
 {
     public BoundFunctionInvocationNode(
-        ISyntaxToken identifierToken)
+        ISyntaxToken identifierToken,
+        BoundFunctionParametersNode boundFunctionParametersNode,
+        BoundGenericArgumentsNode? boundGenericArgumentsNode)
     {
         IdentifierToken = identifierToken;
+        BoundFunctionParametersNode = boundFunctionParametersNode;
+        BoundGenericArgumentsNode = boundGenericArgumentsNode;
 
-        Children = new ISyntax[]
+        var childrenList = new List<ISyntax>(3)
         {
-            IdentifierToken
-        }.ToImmutableArray();
+            IdentifierToken,
+            BoundFunctionParametersNode
+        };
+
+        if (BoundGenericArgumentsNode is not null)
+            childrenList.Add(BoundGenericArgumentsNode);
+
+        Children = childrenList.ToImmutableArray();
     }
 
     public ISyntaxToken IdentifierToken { get; init; }
+    public BoundFunctionParametersNode BoundFunctionParametersNode { get; init; }
+    public BoundGenericArgumentsNode? BoundGenericArgumentsNode { get; init; }
 
     public ImmutableArray<ISyntax> Children { get; init; }
     public bool IsFabricated { get; init; }

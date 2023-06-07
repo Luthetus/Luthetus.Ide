@@ -51,16 +51,14 @@ public class SemanticModelCSharp : ISemanticModel
         while (boundScope.Parent is not null &&
                !boundScope.VariableDeclarationMap.ContainsKey(textSpanText) &&
                !boundScope.ClassDeclarationMap.ContainsKey(textSpanText) &&
-               !boundScope.FunctionDeclarationMap.ContainsKey(textSpanText) &&
-               !boundScope.TypeMap.ContainsKey(textSpanText))
+               !boundScope.FunctionDeclarationMap.ContainsKey(textSpanText))
         {
             boundScope = boundScope.Parent;
         }
 
         if (!boundScope.VariableDeclarationMap.ContainsKey(textSpanText) &&
             !boundScope.ClassDeclarationMap.ContainsKey(textSpanText) &&
-            !boundScope.FunctionDeclarationMap.ContainsKey(textSpanText) &&
-            !boundScope.TypeMap.ContainsKey(textSpanText))
+            !boundScope.FunctionDeclarationMap.ContainsKey(textSpanText))
         {
             return null;
         }
@@ -72,8 +70,8 @@ public class SemanticModelCSharp : ISemanticModel
                 out var boundClassDeclarationNode))
             {
                 return new TextEditorSymbolDefinition(
-                    boundClassDeclarationNode.IdentifierToken.TextSpan.ResourceUri,
-                    boundClassDeclarationNode.IdentifierToken.TextSpan.StartingIndexInclusive);
+                    boundClassDeclarationNode.TypeClauseToken.TextSpan.ResourceUri,
+                    boundClassDeclarationNode.TypeClauseToken.TextSpan.StartingIndexInclusive);
             }
         }
 

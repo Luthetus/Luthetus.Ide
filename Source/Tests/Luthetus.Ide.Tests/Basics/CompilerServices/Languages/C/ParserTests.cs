@@ -224,16 +224,16 @@ public class ParserTests
             2,
             boundVariableDeclarationStatementNode.Children.Length);
 
-        var boundTypeNode = (BoundTypeNode)boundVariableDeclarationStatementNode
+        var boundClassDeclarationNode = (BoundClassDeclarationNode)boundVariableDeclarationStatementNode
             .Children[0];
 
         Assert.Equal(
-            SyntaxKind.BoundTypeNode,
-            boundTypeNode.SyntaxKind);
+            SyntaxKind.BoundClassDeclarationNode,
+            boundClassDeclarationNode.SyntaxKind);
 
         Assert.Equal(
             typeof(int),
-            boundTypeNode.Type);
+            boundClassDeclarationNode.Type);
 
         var identifierToken = boundVariableDeclarationStatementNode.Children[1];
 

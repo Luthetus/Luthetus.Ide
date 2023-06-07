@@ -11,13 +11,13 @@ public sealed record BoundFunctionDeclarationNode : ISyntaxNode
     private BoundGenericArgumentsNode? _boundGenericArgumentsNode;
 
     public BoundFunctionDeclarationNode(
-            BoundTypeNode boundTypeNode,
+            BoundClassDeclarationNode boundClassDeclarationNode,
             ISyntaxToken identifierToken,
             BoundFunctionArgumentsNode boundFunctionArgumentsNode,
             BoundGenericArgumentsNode? boundGenericArgumentsNode,
             CompilationUnit? functionBodyCompilationUnit)
     {
-        BoundTypeNode = boundTypeNode;
+        BoundClassDeclarationNode = boundClassDeclarationNode;
         IdentifierToken = identifierToken;
         BoundFunctionArgumentsNode = boundFunctionArgumentsNode;
         BoundGenericArgumentsNode = boundGenericArgumentsNode;
@@ -26,7 +26,7 @@ public sealed record BoundFunctionDeclarationNode : ISyntaxNode
         CalculateChildren();
     }
 
-    public BoundTypeNode BoundTypeNode { get; init; }
+    public BoundClassDeclarationNode BoundClassDeclarationNode { get; init; }
     public ISyntaxToken IdentifierToken { get; init; }
     public BoundFunctionArgumentsNode BoundFunctionArgumentsNode { get; init; }
 
@@ -68,7 +68,7 @@ public sealed record BoundFunctionDeclarationNode : ISyntaxNode
     {
         var childrenList = new List<ISyntax>(3)
         {
-            BoundTypeNode,
+            BoundClassDeclarationNode,
             IdentifierToken,
             BoundFunctionArgumentsNode
         };

@@ -12,6 +12,7 @@ using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statem
 using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.Facts;
+using System.Reflection;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.BinderCase;
 
@@ -107,24 +108,42 @@ public class Binder
         }));
     }
 
-    public bool TryBindTypeNode(
-        ISyntaxToken token,
-        out BoundTypeNode? boundTypeNode)
+    /// <summary>If an Identifier maps to an undefined Type, then the Type will be set to typeof(void) and false will be returned. No matter what, a <see cref="BoundClassDeclarationNode"/> is returned.</summary>
+    public bool TryBindClassDeclarationNode(
+        ISyntaxToken syntaxToken,
+        out BoundClassDeclarationNode boundClassDeclarationNode,
+        bool createTypeSymbolReference = true)
     {
-        var text = token.TextSpan.GetText();
-
-        if (_currentScope.TypeMap.TryGetValue(text, out var type))
+        if (createTypeSymbolReference &&
+            syntaxToken.SyntaxKind == SyntaxKind.IdentifierToken)
         {
-            boundTypeNode = new BoundTypeNode(type, token);
-            return true;
+            AddSymbolReference(new TypeSymbol(syntaxToken.TextSpan with
+            {
+                DecorationByte = (byte)GenericDecorationKind.Type
+            }));
+        }
+        
+        if (syntaxToken.SyntaxKind == SyntaxKind.IdentifierToken ||
+            syntaxToken.SyntaxKind == SyntaxKind.KeywordToken)
+        {
+            if (TryGetClassHierarchically(syntaxToken.TextSpan.GetText(), out var nullableBoundClassDeclarationNode) &&
+                nullableBoundClassDeclarationNode is not null)
+            {
+                boundClassDeclarationNode = nullableBoundClassDeclarationNode;
+                return true;
+            }
         }
 
-        boundTypeNode = null;
+        _diagnosticBag.ReportUndefinedTypeOrNamespace(
+                syntaxToken.TextSpan,
+                syntaxToken.TextSpan.GetText());
+
+        boundClassDeclarationNode = CSharpLanguageFacts.Types.Void;
         return false;
     }
 
     public BoundFunctionDeclarationNode BindFunctionDeclarationNode(
-        BoundTypeNode boundTypeNode,
+        BoundClassDeclarationNode boundClassDeclarationNode,
         IdentifierToken identifierToken,
         BoundFunctionArgumentsNode boundFunctionArguments,
         BoundGenericArgumentsNode? boundGenericArgumentsNode)
@@ -141,7 +160,7 @@ public class Binder
         }
 
         var boundFunctionDeclarationNode = new BoundFunctionDeclarationNode(
-            boundTypeNode,
+            boundClassDeclarationNode,
             identifierToken,
             boundFunctionArguments,
             boundGenericArgumentsNode,
@@ -261,6 +280,7 @@ public class Binder
 
         var boundClassDeclarationNode = new BoundClassDeclarationNode(
             identifierToken,
+            typeof(void),
             null,
             null,
             null);
@@ -294,13 +314,13 @@ public class Binder
     
     public BoundConstructorInvocationNode BindConstructorInvocationNode(
         KeywordToken keywordToken,
-        BoundTypeNode? boundTypeNode,
-        BoundFunctionArgumentsNode? boundFunctionArgumentsNode,
+        BoundClassDeclarationNode? boundClassDeclarationNode,
+        BoundFunctionParametersNode? boundFunctionParametersNode,
         BoundObjectInitializationNode? boundObjectInitializationNode)
     {
-        if (boundTypeNode is not null)
+        if (boundClassDeclarationNode is not null)
         {
-            AddSymbolReference(new TypeSymbol(boundTypeNode.Token.TextSpan with
+            AddSymbolReference(new TypeSymbol(boundClassDeclarationNode.TypeClauseToken.TextSpan with
             {
                 DecorationByte = (byte)GenericDecorationKind.Type
             }));
@@ -308,38 +328,29 @@ public class Binder
 
         return new BoundConstructorInvocationNode(
             keywordToken,
-            boundTypeNode,
-            boundFunctionArgumentsNode,
+            boundClassDeclarationNode,
+            boundFunctionParametersNode,
             boundObjectInitializationNode);
     }
     
     public BoundInheritanceStatementNode BindInheritanceStatementNode(
-        IdentifierToken parentClassIdentifierToken)
+        BoundClassDeclarationNode boundClassDeclarationNode)
     {
-        AddSymbolReference(new TypeSymbol(parentClassIdentifierToken.TextSpan with
+        AddSymbolReference(new TypeSymbol(boundClassDeclarationNode.TypeClauseToken.TextSpan with
         {
             DecorationByte = (byte)GenericDecorationKind.Type
         }));
 
-        var parentClassIdentifier = parentClassIdentifierToken.TextSpan.GetText();
-
         var boundInheritanceStatementNode = new BoundInheritanceStatementNode(
-                parentClassIdentifierToken);
+            boundClassDeclarationNode);
 
-        if (!_currentScope.ClassDeclarationMap.TryGetValue(
-            parentClassIdentifier,
-            out _))
-        {
-            _diagnosticBag.ReportUndefinedClass(
-                parentClassIdentifierToken.TextSpan,
-                parentClassIdentifier);
-        }
+        // Do not report undefined class here. This is because by means of having a BoundClassDeclarationNode the binder would've already reported this.
 
         return boundInheritanceStatementNode;
     }
 
     public BoundVariableDeclarationStatementNode BindVariableDeclarationNode(
-        BoundTypeNode boundTypeNode,
+        BoundClassDeclarationNode boundClassDeclarationNode,
         IdentifierToken identifierToken)
     {
         AddSymbolDefinition(new VariableSymbol(identifierToken.TextSpan with
@@ -359,7 +370,7 @@ public class Binder
         }
 
         var boundVariableDeclarationStatementNode = new BoundVariableDeclarationStatementNode(
-            boundTypeNode,
+            boundClassDeclarationNode,
             identifierToken,
             false);
 
@@ -411,7 +422,7 @@ public class Binder
     }
 
     public BoundVariableDeclarationStatementNode BindPropertyDeclarationNode(
-        BoundTypeNode boundTypeNode,
+        BoundClassDeclarationNode boundClassDeclarationNode,
         IdentifierToken identifierToken)
     {
         AddSymbolDefinition(new PropertySymbol(identifierToken.TextSpan with
@@ -431,7 +442,7 @@ public class Binder
         }
 
         var boundVariableDeclarationStatementNode = new BoundVariableDeclarationStatementNode(
-            boundTypeNode,
+            boundClassDeclarationNode,
             identifierToken,
             false);
 
@@ -462,12 +473,12 @@ public class Binder
 
             return new BoundIdentifierReferenceNode(
                 identifierToken,
-                variableDeclarationNode.BoundTypeNode.Type);
+                variableDeclarationNode.BoundClassDeclarationNode.Type);
         }
-        else if (TryGetTypeHierarchically(
+        else if (TryGetClassHierarchically(
                      text,
-                     out var type) &&
-                 type is not null)
+                     out var boundClassDeclarationNode) &&
+                 boundClassDeclarationNode is not null)
         {
             AddSymbolReference(new TypeSymbol(identifierToken.TextSpan with
             {
@@ -476,7 +487,7 @@ public class Binder
 
             return new BoundIdentifierReferenceNode(
                 identifierToken,
-                type);
+                boundClassDeclarationNode.Type);
         }
         else if (TryGetBoundFunctionDeclarationNodeHierarchically(
                      text,
@@ -507,7 +518,9 @@ public class Binder
     }
 
     public BoundFunctionInvocationNode? BindFunctionInvocationNode(
-        IdentifierToken identifierToken)
+        IdentifierToken identifierToken,
+        BoundFunctionParametersNode boundFunctionParametersNode,
+        BoundGenericArgumentsNode? genericArguments)
     {
         AddSymbolReference(new FunctionSymbol(identifierToken.TextSpan with
         {
@@ -521,7 +534,7 @@ public class Binder
                 out var boundFunctionDeclarationNode) &&
             boundFunctionDeclarationNode is not null)
         {
-            return new(identifierToken);
+            return new(identifierToken, boundFunctionParametersNode, genericArguments);
         }
         else
         {
@@ -529,7 +542,7 @@ public class Binder
                 identifierToken.TextSpan,
                 text);
 
-            return new(identifierToken)
+            return new(identifierToken, boundFunctionParametersNode, genericArguments)
             {
                 IsFabricated = true
             };
@@ -590,7 +603,7 @@ public class Binder
             {
                 var identifierToken = genericArgumentListing[i];
 
-                syntax = new BoundTypeNode(typeof(void), identifierToken);
+                syntax = CSharpLanguageFacts.Types.Void;
 
                 AddSymbolReference(new TypeSymbol(identifierToken.TextSpan with
                 {
@@ -607,33 +620,121 @@ public class Binder
             closeAngleBracketToken);
     }
 
-    /// <summary>
-    /// Use this method for function declaration, whereas <see cref="BindFunctionParameters"/> should be used for function invocation.
-    /// TODO: Implement this method correctly. For now I will just return.
-    /// </summary>
+    /// <summary>Use this method for function declaration, whereas <see cref="BindFunctionParameters"/> should be used for function invocation.</summary>
     public BoundFunctionArgumentsNode BindFunctionArguments(
-        OpenParenthesisToken openParenthesisToken,
-        List<ISyntax> functionArgumentListing,
-        CloseParenthesisToken closeParenthesisToken)
-    {
-        return new BoundFunctionArgumentsNode(
-            openParenthesisToken,
-            functionArgumentListing,
-            closeParenthesisToken);
-    }
-
-    /// <summary>
-    /// Use this method for function invocation, whereas <see cref="BindFunctionArguments"/> should be used for function declaration.
-    /// TODO: Implement this method correctly. For now I will just return.
-    /// </summary>
-    public BoundFunctionArgumentsNode BindFunctionParameters(
         OpenParenthesisToken openParenthesisToken,
         List<ISyntaxToken> functionArgumentListing,
         CloseParenthesisToken closeParenthesisToken)
     {
+        List<ISyntax> boundFunctionArguments = new();
+
+        // Alternate between reading TypeClause (null), ArgumentIdentifier (true), and a Comma (false)
+        bool? canReadComma = null;
+
+        // The assigned value here is to avoid involving nulls. Assign to this variable each time a bound type node is made so the variable can declare itself with type.
+        var boundClassDeclarationNode = CSharpLanguageFacts.Types.Void;
+
+        foreach (var syntaxToken in functionArgumentListing)
+        {
+            if (canReadComma is null)
+            {
+                var typeIdentifierToken = (IdentifierToken)syntaxToken;
+                _ = TryBindClassDeclarationNode(typeIdentifierToken, out boundClassDeclarationNode);
+
+                boundFunctionArguments.Add(typeIdentifierToken);
+                canReadComma = false;
+            }
+            else if (!canReadComma.Value)
+            {
+                var variableIdentifierToken = (IdentifierToken)syntaxToken;
+                var boundVariableDeclaration = BindVariableDeclarationNode(boundClassDeclarationNode, variableIdentifierToken);
+
+                boundFunctionArguments.Add(boundVariableDeclaration);
+                canReadComma = true;
+            }
+            // else => Ignore the commas
+        }
+
         return new BoundFunctionArgumentsNode(
             openParenthesisToken,
-            new(),
+            boundFunctionArguments,
+            closeParenthesisToken);
+    }
+
+    /// <summary>Use this method for function invocation, whereas <see cref="BindFunctionArguments"/> should be used for function declaration.</summary>
+    public BoundFunctionParametersNode BindFunctionParameters(
+        OpenParenthesisToken openParenthesisToken,
+        List<ISyntaxToken> functionArgumentListing,
+        CloseParenthesisToken closeParenthesisToken)
+    {
+        /*
+         * out Type
+         * out
+         * ref
+         * 1 + 1
+         * "Hello World!"
+         * variable
+         * Property
+         * MethodGroup
+         * MethodInvocation
+         */
+
+        var boundFunctionParameterListing = new List<ISyntax>();
+
+        // Alternate between reading 'OPTIONAL_KEYWORD[out, ref] Expression/IdentifierParameter' (true), and a single comma (false)
+        bool canReadComma = false;
+
+        for (var i = 0; i < functionArgumentListing.Count; i++)
+        {
+            var functionArgument = functionArgumentListing[i];
+
+            if (!canReadComma)
+            {
+                if (functionArgument.SyntaxKind == SyntaxKind.KeywordToken)
+                {
+                    boundFunctionParameterListing.Add(functionArgument);
+
+                    if (functionArgument.TextSpan.GetText() == "out")
+                    {
+                        if (i + 2 < functionArgumentListing.Count)
+                        {
+                            var possibleTypeArgument = functionArgumentListing[i + 1];
+                            var possibleVariableArgument = functionArgumentListing[i + 2];
+
+                            if (possibleTypeArgument.SyntaxKind != SyntaxKind.CommaToken &&
+                                possibleVariableArgument.SyntaxKind != SyntaxKind.CommaToken)
+                            {
+                                // Take i + 1 to be a Type and then skip forward in the for loop.
+                                _ = TryBindClassDeclarationNode(possibleTypeArgument, out var boundClassDeclarationNode);
+                                i++;
+
+                                boundFunctionParameterListing.Add(boundClassDeclarationNode);
+                            }
+                        }
+                    }
+
+                    // Skip the keyword
+                    continue;
+                }
+
+                // TODO: Read from Function declaration the BoundClassDeclarationNode
+                var boundVariableDeclarationNode = BindVariableDeclarationNode(
+                    CSharpLanguageFacts.Types.Void,
+                    (IdentifierToken)functionArgument);
+
+                boundFunctionParameterListing.Add(boundVariableDeclarationNode);
+
+                canReadComma = true;
+            }
+            else
+            {
+                canReadComma = false;
+            }
+        }
+
+        return new BoundFunctionParametersNode(
+            openParenthesisToken,
+            boundFunctionParameterListing,
             closeParenthesisToken);
     }
 
@@ -647,7 +748,6 @@ public class Binder
             textEditorTextSpan.StartingIndexInclusive,
             null,
             textEditorTextSpan.ResourceUri,
-            new(),
             new(),
             new(),
             new());
@@ -675,7 +775,7 @@ public class Binder
 
                 var boundClassDeclarationNode = (BoundClassDeclarationNode)child;
 
-                var identifierText = boundClassDeclarationNode.IdentifierToken.TextSpan
+                var identifierText = boundClassDeclarationNode.TypeClauseToken.TextSpan
                     .GetText();
 
                 var success = _currentScope.ClassDeclarationMap.TryAdd(
@@ -724,17 +824,17 @@ public class Binder
     }
 
     /// <summary>Search hierarchically through all the scopes, starting at the <see cref="_currentScope"/>.<br/><br/>If a match is found, then set the out parameter to it and return true.<br/><br/>If none of the searched scopes contained a match then set the out parameter to null and return false.</summary>
-    public bool TryGetTypeHierarchically(
+    public bool TryGetClassHierarchically(
         string text,
-        out Type? type)
+        out BoundClassDeclarationNode? boundClassDeclarationNode)
     {
         var localScope = _currentScope;
 
         while (localScope is not null)
         {
-            if (localScope.TypeMap.TryGetValue(
+            if (localScope.ClassDeclarationMap.TryGetValue(
                     text,
-                    out type))
+                    out boundClassDeclarationNode))
             {
                 return true;
             }
@@ -742,7 +842,7 @@ public class Binder
             localScope = localScope.Parent;
         }
 
-        type = null;
+        boundClassDeclarationNode = null;
         return false;
     }
 
