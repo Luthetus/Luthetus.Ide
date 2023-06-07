@@ -26,18 +26,15 @@ public partial class ParserTests
         {
             var globalScope = parser.Binder.BoundScopes.First();
 
-            var personModel = globalScope.ClassDeclarationMap.Single();
+            Assert.True(globalScope.ClassDeclarationMap.ContainsKey(classIdentifier));
 
-            Assert.Equal(classIdentifier, personModel.Key);
-
-            var boundClassDeclarationNode =
-                (BoundClassDeclarationNode)compilationUnit.Children.Single();
+            var boundClassDeclarationNode = (BoundClassDeclarationNode)compilationUnit.Children.Single();
 
             if (boundClassDeclarationNode.ClassBodyCompilationUnit is null)
                 throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
 
-            Assert.Empty(
-                boundClassDeclarationNode.ClassBodyCompilationUnit.Children);
+            Assert.Equal(classIdentifier, boundClassDeclarationNode.Identifier.TextSpan.GetText());
+            Assert.Empty(boundClassDeclarationNode.ClassBodyCompilationUnit.Children);
         }
     }
 

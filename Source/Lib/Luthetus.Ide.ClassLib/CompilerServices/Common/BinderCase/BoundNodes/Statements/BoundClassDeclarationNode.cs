@@ -30,7 +30,12 @@ public sealed record BoundClassDeclarationNode : ISyntaxNode
         SetChildren();
     }
 
-    public ISyntaxToken TypeClauseToken 
+    public ISyntaxToken Identifier
+    {
+        get => _typeClauseToken;
+    }
+    
+    public ISyntaxToken TypeClauseToken
     {
         get => _typeClauseToken;
         init
