@@ -110,25 +110,26 @@ public class Binder
 
     /// <summary>If an Identifier maps to an undefined Type, then the Type will be set to typeof(void) and false will be returned. No matter what, a <see cref="BoundClassDefinitionNode"/> is returned.</summary>
     public bool TryBindClassDefinitionNode(
-        ISyntaxToken syntaxToken,
+        ISyntaxToken typeClauseToken,
+        BoundGenericArgumentsNode? boundGenericArgumentsNode,
         out BoundClassDefinitionNode boundClassDefinitionNode,
         bool createTypeSymbolReference = true,
         bool shouldReportUndefinedTypeOrNamespace = true)
     {
         if (createTypeSymbolReference &&
-            syntaxToken.SyntaxKind == SyntaxKind.IdentifierToken)
+            typeClauseToken.SyntaxKind == SyntaxKind.IdentifierToken)
         {
-            AddSymbolReference(new TypeSymbol(syntaxToken.TextSpan with
+            AddSymbolReference(new TypeSymbol(typeClauseToken.TextSpan with
             {
                 DecorationByte = (byte)GenericDecorationKind.Type
             }));
         }
         
-        if (syntaxToken.SyntaxKind == SyntaxKind.IdentifierToken ||
-            syntaxToken.SyntaxKind == SyntaxKind.KeywordToken ||
-            syntaxToken.SyntaxKind == SyntaxKind.KeywordContextualToken)
+        if (typeClauseToken.SyntaxKind == SyntaxKind.IdentifierToken ||
+            typeClauseToken.SyntaxKind == SyntaxKind.KeywordToken ||
+            typeClauseToken.SyntaxKind == SyntaxKind.KeywordContextualToken)
         {
-            if (TryGetClassDefinitionHierarchically(syntaxToken.TextSpan.GetText(), out var nullableBoundClassDefinitionNode) &&
+            if (TryGetClassDefinitionHierarchically(typeClauseToken, boundGenericArgumentsNode,  out var nullableBoundClassDefinitionNode) &&
                 nullableBoundClassDefinitionNode is not null)
             {
                 boundClassDefinitionNode = nullableBoundClassDefinitionNode;
@@ -139,8 +140,8 @@ public class Binder
         if (shouldReportUndefinedTypeOrNamespace)
         {
             _diagnosticBag.ReportUndefinedTypeOrNamespace(
-                syntaxToken.TextSpan,
-                syntaxToken.TextSpan.GetText());
+                typeClauseToken.TextSpan,
+                typeClauseToken.TextSpan.GetText());
         }
 
         boundClassDefinitionNode = CSharpLanguageFacts.Types.Void;
@@ -355,7 +356,7 @@ public class Binder
     }
 
     public BoundVariableDeclarationStatementNode BindVariableDeclarationNode(
-        BoundClassDefinitionNode boundClassDefinitionNode,
+        BoundClassReferenceNode boundClassReferenceNode,
         IdentifierToken identifierToken)
     {
         AddSymbolDefinition(new VariableSymbol(identifierToken.TextSpan with
@@ -375,7 +376,7 @@ public class Binder
         }
 
         var boundVariableDeclarationStatementNode = new BoundVariableDeclarationStatementNode(
-            boundClassDefinitionNode,
+            boundClassReferenceNode,
             identifierToken,
             false);
 
@@ -482,10 +483,11 @@ public class Binder
                 identifierToken,
                 variableDeclarationNode.BoundClassReferenceNode);
         }
-        else if (TryGetClassHierarchically(
-                     text,
-                     out var boundClassDefinitionNode) &&
-                 boundClassDefinitionNode is not null)
+        else if (TryGetClassReferenceHierarchically(
+                     identifierToken,
+                     null,
+                     out var boundClassReferenceNode) &&
+                 boundClassReferenceNode is not null)
         {
             AddSymbolReference(new TypeSymbol(identifierToken.TextSpan with
             {
@@ -494,7 +496,7 @@ public class Binder
 
             return new BoundIdentifierReferenceNode(
                 identifierToken,
-                boundClassDefinitionNode.Type);
+                boundClassReferenceNode);
         }
         else if (TryGetBoundFunctionDefinitionNodeHierarchically(
                      text,
@@ -510,17 +512,16 @@ public class Binder
 
             return new BoundIdentifierReferenceNode(
                 identifierToken,
-                typeof(void));
+                // TODO: Null is should not be passed in here
+                null);
         }
         else
         {
             // TODO: The identifier was not found, so report a diagnostic?
             return new BoundIdentifierReferenceNode(
                 identifierToken,
-                typeof(void))
-            {
-                IsFabricated = true
-            };
+                // TODO: Null is should not be passed in here
+                null);
         }
     }
 
@@ -638,15 +639,15 @@ public class Binder
         // Alternate between reading TypeClause (null), ArgumentIdentifier (true), and a Comma (false)
         bool? canReadComma = null;
 
-        // The assigned value here is to avoid involving nulls. Assign to this variable each time a bound type node is made so the variable can declare itself with type.
-        var boundClassDefinitionNode = CSharpLanguageFacts.Types.Void;
+        // TODO: Don't make this null
+        BoundClassReferenceNode boundClassReferenceNode = null;
 
         foreach (var syntaxToken in functionArgumentListing)
         {
             if (canReadComma is null)
             {
                 var typeIdentifierToken = (IdentifierToken)syntaxToken;
-                _ = TryBindClassDefinitionNode(typeIdentifierToken, out boundClassDefinitionNode);
+                _ = TryGetClassReferenceHierarchically(typeIdentifierToken, null, out boundClassReferenceNode);
 
                 boundFunctionArguments.Add(typeIdentifierToken);
                 canReadComma = false;
@@ -654,7 +655,7 @@ public class Binder
             else if (!canReadComma.Value)
             {
                 var variableIdentifierToken = (IdentifierToken)syntaxToken;
-                var boundVariableDeclaration = BindVariableDeclarationNode(boundClassDefinitionNode, variableIdentifierToken);
+                var boundVariableDeclaration = BindVariableDeclarationNode(boundClassReferenceNode, variableIdentifierToken);
 
                 boundFunctionArguments.Add(boundVariableDeclaration);
                 canReadComma = true;
@@ -712,10 +713,10 @@ public class Binder
                                 possibleVariableArgument.SyntaxKind != SyntaxKind.CommaToken)
                             {
                                 // Take i + 1 to be a Type and then skip forward in the for loop.
-                                _ = TryBindClassDefinitionNode(possibleTypeArgument, out var boundClassDefinitionNode);
+                                _ = TryGetClassReferenceHierarchically(possibleTypeArgument, null, out var boundClassReferenceNode);
                                 i++;
 
-                                boundFunctionParameterListing.Add(boundClassDefinitionNode);
+                                boundFunctionParameterListing.Add(boundClassReferenceNode);
                             }
                         }
                     }
@@ -726,7 +727,8 @@ public class Binder
 
                 // TODO: Read from Function definition the BoundClassDefinitionNode
                 var boundVariableDeclarationNode = BindVariableDeclarationNode(
-                    CSharpLanguageFacts.Types.Void,
+                    // TODO: Don't pass in null
+                    null,
                     (IdentifierToken)functionArgument);
 
                 boundFunctionParameterListing.Add(boundVariableDeclarationNode);
@@ -842,18 +844,20 @@ public class Binder
         {
             if (localScope.ClassDefinitionMap.TryGetValue(
                     typeClauseToken.TextSpan.GetText(),
-                    out _))
+                    out var boundClassDefinitionNode))
             {
                 boundClassReferenceNode = new BoundClassReferenceNode(
                     typeClauseToken,
+                    boundClassDefinitionNode.Type,
                     boundGenericArgumentsNode);
+
                 return true;
             }
 
             localScope = localScope.Parent;
         }
 
-        boundClassDefinitionNode = null;
+        boundClassReferenceNode = null;
         return false;
     }
 
@@ -869,11 +873,8 @@ public class Binder
         {
             if (localScope.ClassDefinitionMap.TryGetValue(
                     typeClauseToken.TextSpan.GetText(),
-                    out _))
+                    out boundClassDefinitionNode))
             {
-                boundClassReferenceNode = new BoundClassReferenceNode(
-                    typeClauseToken,
-                    boundGenericArgumentsNode);
                 return true;
             }
 

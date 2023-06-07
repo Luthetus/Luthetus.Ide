@@ -391,7 +391,7 @@ public class ParserSession
         {
             var boundFunctionDefinitionNode = (BoundFunctionDefinitionNode)_nodeRecent;
 
-            scopeReturnType = boundFunctionDefinitionNode.BoundClassDefinitionNode.Type;
+            scopeReturnType = boundFunctionDefinitionNode.BoundClassReferenceNode.Type;
 
             _finalizeCompilationUnitAction = compilationUnit =>
             {

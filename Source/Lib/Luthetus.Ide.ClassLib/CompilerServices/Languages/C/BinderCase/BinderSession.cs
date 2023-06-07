@@ -101,6 +101,8 @@ public class BinderSession
         {
             boundClassReferenceNode = new BoundClassReferenceNode(
                 typeClauseToken,
+                // TODO: Don't pass null here
+                null,
                 boundGenericArgumentsNode);
 
             return true;
@@ -317,6 +319,8 @@ public class BinderSession
             {
                 boundClassReferenceNode = new BoundClassReferenceNode(
                     typeClauseToken,
+                    // TODO: Don't pass null here
+                    null,
                     boundGenericArgumentsNode);
 
                 return true;

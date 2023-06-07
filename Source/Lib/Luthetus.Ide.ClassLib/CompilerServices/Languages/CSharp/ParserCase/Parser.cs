@@ -253,10 +253,10 @@ public class Parser
         // TODO: Make many keywords SyntaxKinds. Then if SyntaxKind.EndsWith("Keyword"); so that string checking doesn't need to be done.
         var text = keywordToken.TextSpan.GetText();
 
-        if (_binder.TryBindClassDefinitionNode(keywordToken, out var boundClassDefinitionNode, shouldReportUndefinedTypeOrNamespace: false))
+        if (_binder.TryGetClassReferenceHierarchically(keywordToken, null, out var boundClassReferenceNode))
         {
             // 'int', 'string', 'bool', etc...
-            _nodeRecent = boundClassDefinitionNode;
+            _nodeRecent = boundClassReferenceNode;
         }
         else
         {
@@ -291,12 +291,9 @@ public class Parser
             }
             else if (text == "class")
             {
-                var matchedToken = _tokenWalker.Match(SyntaxKind.IdentifierToken);
+                var identifierToken = (IdentifierToken)_tokenWalker.Match(SyntaxKind.IdentifierToken);
 
-                boundClassDefinitionNode = _binder.BindClassDefinitionNode(
-                    (IdentifierToken)matchedToken);
-
-                _nodeRecent = boundClassDefinitionNode;
+                _nodeRecent = _binder.BindClassDefinitionNode(identifierToken);
             }
             else if (text == "using")
             {
@@ -359,7 +356,7 @@ public class Parser
                     throw new NotImplementedException();
                 }
 
-                _binder.TryBindClassDefinitionNode(typeClauseToken, out boundClassDefinitionNode);
+                _binder.TryGetClassReferenceHierarchically(typeClauseToken, null, out boundClassReferenceNode);
 
                 // TODO: combine the logic for 'new()' without a type identifier and 'new List<int>()' with a type identifier. To start I am going to isolate them in their own if conditional blocks.
                 if (typeClauseToken.IsFabricated)
@@ -385,7 +382,7 @@ public class Parser
 
                     var boundConstructorInvocationNode = _binder.BindConstructorInvocationNode(
                         keywordToken,
-                        boundClassDefinitionNode,
+                        boundClassReferenceNode,
                         boundFunctionArgumentsNode,
                         boundObjectInitializationNode);
 
@@ -423,7 +420,7 @@ public class Parser
 
                     var boundConstructorInvocationNode = _binder.BindConstructorInvocationNode(
                         keywordToken,
-                        boundClassDefinitionNode,
+                        boundClassReferenceNode,
                         boundFunctionParametersNode,
                         boundObjectInitializationNode);
 
@@ -433,12 +430,9 @@ public class Parser
             else if (text == "interface")
             {
                 // TODO: Implement the 'interface' keyword
-                var matchedToken = _tokenWalker.Match(SyntaxKind.IdentifierToken);
+                var identifierToken = (IdentifierToken)_tokenWalker.Match(SyntaxKind.IdentifierToken);
 
-                boundClassDefinitionNode = _binder.BindClassDefinitionNode(
-                    (IdentifierToken)matchedToken);
-
-                _nodeRecent = boundClassDefinitionNode;
+                _nodeRecent = _binder.BindClassDefinitionNode(identifierToken);
             }
             else
             {
@@ -531,7 +525,7 @@ public class Parser
                 if (nextTokenIsVarKeyword || nextTokenIsIdentifierToken)
                 {
                     // Take 'var' as a keyword
-                    if (_binder.TryBindClassDefinitionNode(keywordContextualToken, out var boundClassDefinitionNode))
+                    if (_binder.TryGetClassReferenceHierarchically(keywordContextualToken, null, out var boundClassDefinitionNode))
                     {
                         // 'var' type
                         _nodeRecent = boundClassDefinitionNode;
@@ -571,17 +565,21 @@ public class Parser
 
             var matchTypeClauseToken = MatchTypeClauseToken();
 
-            _ = _binder.TryBindClassDefinitionNode(matchTypeClauseToken, out boundClassDefinitionNode);
+            var success = _binder.TryGetClassReferenceHierarchically(matchTypeClauseToken, null, out var parentClassReference);
 
-            var boundInheritanceStatementNode = _binder.BindInheritanceStatementNode(
-                boundClassDefinitionNode);
-
-            boundClassDefinitionNode = boundClassDefinitionNode with
+            // TODO: If not successful at getting class reference one should be fabricated instead of returning null.
+            if (success && parentClassReference is not null)
             {
-                BoundInheritanceStatementNode = boundInheritanceStatementNode
-            };
+                var boundInheritanceStatementNode = _binder.BindInheritanceStatementNode(
+                    parentClassReference);
 
-            _nodeRecent = boundClassDefinitionNode;
+                boundClassDefinitionNode = boundClassDefinitionNode with
+                {
+                    BoundInheritanceStatementNode = boundInheritanceStatementNode
+                };
+
+                _nodeRecent = boundClassDefinitionNode;
+            }
         }
         else
         {
@@ -593,7 +591,7 @@ public class Parser
         IdentifierToken identifierToken)
     {
         if (_nodeRecent is not null &&
-            _nodeRecent.SyntaxKind == SyntaxKind.BoundClassDefinitionNode)
+            _nodeRecent.SyntaxKind == SyntaxKind.BoundClassReferenceNode)
         {
             // 'function definition' OR 'variable declaration' OR 'variable initialization'
 
@@ -609,7 +607,7 @@ public class Parser
                 var boundFunctionArguments = ParseFunctionArguments((OpenParenthesisToken)_tokenWalker.Consume());
 
                 var boundFunctionDefinitionNode = _binder.BindFunctionDefinitionNode(
-                    (BoundClassDefinitionNode)_nodeRecent,
+                    (BoundClassReferenceNode)_nodeRecent,
                     identifierToken,
                     boundFunctionArguments,
                     genericArguments);
@@ -632,7 +630,7 @@ public class Parser
                 {
                     // 'variable declaration'
                     var boundVariableDeclarationStatementNode = _binder.BindVariableDeclarationNode(
-                        (BoundClassDefinitionNode)_nodeRecent,
+                        (BoundClassReferenceNode)_nodeRecent,
                         identifierToken);
 
                     _currentCompilationUnitBuilder.Children.Add(boundVariableDeclarationStatementNode);
@@ -691,7 +689,7 @@ public class Parser
                     var boundIdentifierReferenceNode = (BoundIdentifierReferenceNode)_nodeRecent;
 
                     // The contextual identifier can now be understood to be the return Type of a function.
-                    _ = _binder.TryBindClassDefinitionNode(boundIdentifierReferenceNode.IdentifierToken, out var boundClassDefinitionNode);
+                    _ = _binder.TryGetClassReferenceHierarchically(boundIdentifierReferenceNode.IdentifierToken, null, out var boundClassDefinitionNode);
                     _nodeRecent = boundClassDefinitionNode;
 
                     // Re-invoke ParseIdentifierToken now that _nodeRecent is known to be a Type identifier
@@ -775,10 +773,10 @@ public class Parser
         var propertyTypeClauseToken = _tokenWalker.Peek(-1);
         var propertyIdentifierToken = _tokenWalker.Consume();
 
-        _ = _binder.TryGetClassHierarchically(propertyTypeClauseToken, out var boundClassDefinitionNode);
+        _ = _binder.TryGetClassReferenceHierarchically(propertyTypeClauseToken, null, out var boundClassReferenceNode);
 
         _binder.BindPropertyDeclarationNode(
-            boundClassDefinitionNode,
+            boundClassReferenceNode,
             (IdentifierToken)propertyIdentifierToken);
     }
 
@@ -884,7 +882,7 @@ public class Parser
         {
             var boundFunctionDefinitionNode = (BoundFunctionDefinitionNode)_nodeRecent;
             
-            scopeReturnType = boundFunctionDefinitionNode.BoundClassDeclarationNode.Type;
+            scopeReturnType = boundFunctionDefinitionNode.BoundClassReferenceNode.Type;
 
             _finalizeCompilationUnitActionStack.Push(compilationUnit =>
             {

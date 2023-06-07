@@ -30,7 +30,7 @@ public partial class ParserTests
             var boundFunctionDefinitionNode = (BoundFunctionDefinitionNode)compilationUnit.Children[0];
 
             Assert.Equal(SyntaxKind.BoundFunctionDefinitionNode, boundFunctionDefinitionNode.SyntaxKind);
-            Assert.Equal("void", boundFunctionDefinitionNode.BoundClassDefinitionNode.TypeClauseToken.TextSpan.GetText());
+            Assert.Equal("void", boundFunctionDefinitionNode.BoundClassReferenceNode.TypeClauseToken.TextSpan.GetText());
             Assert.Equal(functionIdentifier, boundFunctionDefinitionNode.IdentifierToken.TextSpan.GetText());
             Assert.NotNull(boundFunctionDefinitionNode.FunctionBodyCompilationUnit);
             Assert.Empty(boundFunctionDefinitionNode.FunctionBodyCompilationUnit!.Children);
@@ -56,7 +56,7 @@ public partial class ParserTests
             var boundFunctionDefinitionNode = (BoundFunctionDefinitionNode)compilationUnit.Children[0];
 
             Assert.Equal(SyntaxKind.BoundFunctionDefinitionNode, boundFunctionDefinitionNode.SyntaxKind);
-            Assert.Equal("IPerson", boundFunctionDefinitionNode.BoundClassDeclarationNode.TypeClauseToken.TextSpan.GetText());
+            Assert.Equal("IPerson", boundFunctionDefinitionNode.BoundClassReferenceNode.TypeClauseToken.TextSpan.GetText());
             Assert.Equal(functionIdentifier, boundFunctionDefinitionNode.IdentifierToken.TextSpan.GetText());
             Assert.NotNull(boundFunctionDefinitionNode.FunctionBodyCompilationUnit);
             Assert.Empty(boundFunctionDefinitionNode.FunctionBodyCompilationUnit!.Children);
@@ -420,7 +420,7 @@ public partial class ParserTests
             var boundFunctionDefinitionNode = (BoundFunctionDefinitionNode)compilationUnit.Children[0];
 
             Assert.Equal(SyntaxKind.BoundFunctionDefinitionNode, boundFunctionDefinitionNode.SyntaxKind);
-            Assert.Equal(genericArgumentIdentifier, boundFunctionDefinitionNode.BoundClassDeclarationNode.TypeClauseToken.TextSpan.GetText());
+            Assert.Equal(genericArgumentIdentifier, boundFunctionDefinitionNode.BoundClassReferenceNode.TypeClauseToken.TextSpan.GetText());
             Assert.Equal(functionIdentifier, boundFunctionDefinitionNode.IdentifierToken.TextSpan.GetText());
             Assert.NotNull(boundFunctionDefinitionNode.FunctionBodyCompilationUnit);
 
