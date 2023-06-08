@@ -57,8 +57,18 @@ public class LuthetusIdeDiagnosticBag : IEnumerable<TextEditorDiagnostic>
             $"Undefined type or namespace: '{undefinedTypeOrNamespaceIdentifier}'",
             textEditorTextSpan);
     }
+    
+    public void ReportAlreadyDefinedType(
+        TextEditorTextSpan textEditorTextSpan,
+        string alreadyDefinedTypeIdentifier)
+    {
+        Report(
+            TextEditorDiagnosticLevel.Error,
+            $"Already defined type: '{alreadyDefinedTypeIdentifier}'",
+            textEditorTextSpan);
+    }
 
-    public void ReportUndefindFunction(
+    public void ReportUndefinedFunction(
         TextEditorTextSpan textEditorTextSpan,
         string undefinedFunctionIdentifier)
     {

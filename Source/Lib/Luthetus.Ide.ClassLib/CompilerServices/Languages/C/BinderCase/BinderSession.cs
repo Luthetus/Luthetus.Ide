@@ -236,7 +236,7 @@ public class BinderSession
         }
         else
         {
-            _diagnosticBag.ReportUndefindFunction(
+            _diagnosticBag.ReportUndefinedFunction(
                 identifierToken.TextSpan,
                 text);
 

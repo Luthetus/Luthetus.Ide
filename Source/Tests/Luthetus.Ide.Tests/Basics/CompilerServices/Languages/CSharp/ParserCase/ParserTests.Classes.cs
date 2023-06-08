@@ -87,18 +87,15 @@ public partial class ParserTests
         {
             var globalScope = parser.Binder.BoundScopes.First();
 
-            var personModel = globalScope.ClassDefinitionMap.Single();
+            Assert.True(globalScope.ClassDefinitionMap.ContainsKey(classIdentifier));
 
-            Assert.Equal(classIdentifier, personModel.Key);
-
-            var boundClassDefinitionNode =
-                (BoundClassDefinitionNode)compilationUnit.Children.Single();
+            var boundClassDefinitionNode = (BoundClassDefinitionNode)compilationUnit.Children.Single();
 
             if (boundClassDefinitionNode.ClassBodyCompilationUnit is null)
                 throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
 
-            Assert.Empty(
-                boundClassDefinitionNode.ClassBodyCompilationUnit.Children);
+            Assert.Equal(classIdentifier, boundClassDefinitionNode.Identifier.TextSpan.GetText());
+            Assert.Empty(boundClassDefinitionNode.ClassBodyCompilationUnit.Children);
         }
     }
 
@@ -152,22 +149,22 @@ public partial class ParserTests
         {
             var globalScope = parser.Binder.BoundScopes.First();
 
-            var personModel = globalScope.ClassDefinitionMap.Single();
-
-            Assert.Equal(classIdentifier, personModel.Key);
+            Assert.True(globalScope.ClassDefinitionMap.ContainsKey(classIdentifier));
 
             var boundClassDefinitionNode = (BoundClassDefinitionNode)compilationUnit.Children.Single();
-
+            
             if (boundClassDefinitionNode.ClassBodyCompilationUnit is null)
                 throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
 
-            Assert.NotNull(boundClassDefinitionNode.BoundGenericArgumentsNode);
-            Assert.Single(boundClassDefinitionNode.BoundGenericArgumentsNode!.BoundGenericArgumentListing);
-
-            var genericTypeBoundClassDefinitionNode = (BoundClassDefinitionNode)boundClassDefinitionNode.BoundGenericArgumentsNode.BoundGenericArgumentListing.Single();
-            Assert.Equal(genericArgumentIdentifier, genericTypeBoundClassDefinitionNode.TypeClauseToken.TextSpan.GetText());
-
+            Assert.Equal(classIdentifier, boundClassDefinitionNode.Identifier.TextSpan.GetText());
             Assert.Empty(boundClassDefinitionNode.ClassBodyCompilationUnit.Children);
+            
+            if (boundClassDefinitionNode.BoundGenericArgumentsNode is null)
+                throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
+
+            Assert.Single(boundClassDefinitionNode.BoundGenericArgumentsNode.BoundGenericArgumentListing);
+            var typeClauseToken = (ISyntaxToken)boundClassDefinitionNode.BoundGenericArgumentsNode.BoundGenericArgumentListing.Single();
+            Assert.Equal(genericArgumentIdentifier, typeClauseToken.TextSpan.GetText());
         }
     }
     
@@ -187,12 +184,9 @@ public partial class ParserTests
         {
             var globalScope = parser.Binder.BoundScopes.First();
 
-            var personModel = globalScope.ClassDefinitionMap.Single();
+            Assert.True(globalScope.ClassDefinitionMap.ContainsKey(classIdentifier));
 
-            Assert.Equal(classIdentifier, personModel.Key);
-
-            var boundClassDefinitionNode =
-                (BoundClassDefinitionNode)compilationUnit.Children.Single();
+            var boundClassDefinitionNode = (BoundClassDefinitionNode)compilationUnit.Children.Single();
 
             if (boundClassDefinitionNode.ClassBodyCompilationUnit is null)
                 throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
@@ -200,14 +194,14 @@ public partial class ParserTests
             Assert.NotNull(boundClassDefinitionNode.BoundGenericArgumentsNode);
             Assert.Equal(3, boundClassDefinitionNode.BoundGenericArgumentsNode!.BoundGenericArgumentListing.Count);
 
-            var firstBoundClassDefinitionNode = (BoundClassDefinitionNode)boundClassDefinitionNode.BoundGenericArgumentsNode.BoundGenericArgumentListing[0];
-            Assert.Equal(genericArgOne, firstBoundClassDefinitionNode.TypeClauseToken.TextSpan.GetText());
+            var firstTypeClauseToken = (ISyntaxToken)boundClassDefinitionNode.BoundGenericArgumentsNode.BoundGenericArgumentListing[0];
+            Assert.Equal(genericArgOne, firstTypeClauseToken.TextSpan.GetText());
             
             var commaToken = (CommaToken)boundClassDefinitionNode.BoundGenericArgumentsNode.BoundGenericArgumentListing[1];
             Assert.Equal(",", commaToken.TextSpan.GetText());
             
-            var secondBoundClassDefinitionNode = (BoundClassDefinitionNode)boundClassDefinitionNode.BoundGenericArgumentsNode.BoundGenericArgumentListing[2];
-            Assert.Equal(genericArgTwo, secondBoundClassDefinitionNode.TypeClauseToken.TextSpan.GetText());
+            var secondTypeClauseToken = (ISyntaxToken)boundClassDefinitionNode.BoundGenericArgumentsNode.BoundGenericArgumentListing[2];
+            Assert.Equal(genericArgTwo, secondTypeClauseToken.TextSpan.GetText());
 
             Assert.Empty(boundClassDefinitionNode.ClassBodyCompilationUnit.Children);
         }
@@ -229,9 +223,7 @@ public partial class ParserTests
         {
             var globalScope = parser.Binder.BoundScopes.First();
 
-            var personModel = globalScope.ClassDefinitionMap.Single();
-
-            Assert.Equal(classIdentifier, personModel.Key);
+            Assert.True(globalScope.ClassDefinitionMap.ContainsKey(classIdentifier));
 
             var boundClassDefinitionNode =
                 (BoundClassDefinitionNode)compilationUnit.Children.Single();
@@ -242,20 +234,20 @@ public partial class ParserTests
             Assert.NotNull(boundClassDefinitionNode.BoundGenericArgumentsNode);
             Assert.Equal(5, boundClassDefinitionNode.BoundGenericArgumentsNode!.BoundGenericArgumentListing.Count);
 
-            var firstBoundClassDefinitionNode = (BoundClassDefinitionNode)boundClassDefinitionNode.BoundGenericArgumentsNode.BoundGenericArgumentListing[0];
-            Assert.Equal(genericArgOne, firstBoundClassDefinitionNode.TypeClauseToken.TextSpan.GetText());
+            var firstTypeClauseToken = (ISyntaxToken)boundClassDefinitionNode.BoundGenericArgumentsNode.BoundGenericArgumentListing[0];
+            Assert.Equal(genericArgOne, firstTypeClauseToken.TextSpan.GetText());
 
             var firstCommaToken = (CommaToken)boundClassDefinitionNode.BoundGenericArgumentsNode.BoundGenericArgumentListing[1];
             Assert.Equal(",", firstCommaToken.TextSpan.GetText());
 
-            var secondBoundClassDefinitionNode = (BoundClassDefinitionNode)boundClassDefinitionNode.BoundGenericArgumentsNode.BoundGenericArgumentListing[2];
-            Assert.Equal(genericArgTwo, secondBoundClassDefinitionNode.TypeClauseToken.TextSpan.GetText());
+            var secondTypeClauseToken = (ISyntaxToken)boundClassDefinitionNode.BoundGenericArgumentsNode.BoundGenericArgumentListing[2];
+            Assert.Equal(genericArgTwo, secondTypeClauseToken.TextSpan.GetText());
 
             var secondCommaToken = (CommaToken)boundClassDefinitionNode.BoundGenericArgumentsNode.BoundGenericArgumentListing[3];
             Assert.Equal(",", secondCommaToken.TextSpan.GetText());
 
-            var thirdBoundClassDefinitionNode = (BoundClassDefinitionNode)boundClassDefinitionNode.BoundGenericArgumentsNode.BoundGenericArgumentListing[4];
-            Assert.Equal(genericArgThree, thirdBoundClassDefinitionNode.TypeClauseToken.TextSpan.GetText());
+            var thirdTypeClauseToken = (ISyntaxToken)boundClassDefinitionNode.BoundGenericArgumentsNode.BoundGenericArgumentListing[4];
+            Assert.Equal(genericArgThree, thirdTypeClauseToken.TextSpan.GetText());
 
             Assert.Empty(boundClassDefinitionNode.ClassBodyCompilationUnit.Children);
         }

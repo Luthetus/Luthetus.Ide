@@ -253,10 +253,16 @@ public class Parser
         // TODO: Make many keywords SyntaxKinds. Then if SyntaxKind.EndsWith("Keyword"); so that string checking doesn't need to be done.
         var text = keywordToken.TextSpan.GetText();
 
-        if (_binder.TryGetClassReferenceHierarchically(keywordToken, null, out var boundClassReferenceNode))
+        if (_binder.TryGetClassReferenceHierarchically(
+                keywordToken, 
+                null, 
+                out var boundClassReferenceNode,
+                shouldReportUndefinedTypeOrNamespace: false,
+                shouldCreateClassDefinitionIfUndefined: false))
         {
             // 'int', 'string', 'bool', etc...
-            _nodeRecent = boundClassReferenceNode;
+            if (boundClassReferenceNode is not null)
+                _nodeRecent = boundClassReferenceNode;
         }
         else
         {
@@ -293,7 +299,12 @@ public class Parser
             {
                 var identifierToken = (IdentifierToken)_tokenWalker.Match(SyntaxKind.IdentifierToken);
 
-                _nodeRecent = _binder.BindClassDefinitionNode(identifierToken);
+                _ = _binder.TryBindClassDefinitionNode(
+                    identifierToken,
+                    null,
+                    out var boundClassDefinitionNode);
+                
+                _nodeRecent = boundClassDefinitionNode;
             }
             else if (text == "using")
             {
@@ -432,7 +443,12 @@ public class Parser
                 // TODO: Implement the 'interface' keyword
                 var identifierToken = (IdentifierToken)_tokenWalker.Match(SyntaxKind.IdentifierToken);
 
-                _nodeRecent = _binder.BindClassDefinitionNode(identifierToken);
+                _ = _binder.TryBindClassDefinitionNode(
+                    identifierToken,
+                    null,
+                    out var boundClassDefinitionNode);
+
+                _nodeRecent = boundClassDefinitionNode;
             }
             else
             {
