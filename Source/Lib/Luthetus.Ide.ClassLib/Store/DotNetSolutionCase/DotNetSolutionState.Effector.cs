@@ -8,6 +8,9 @@ using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.Namespaces;
 using Luthetus.Ide.ClassLib.TreeViewImplementations;
 using System.Collections.Immutable;
+using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.SemanticContextCase.Implementations;
+using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.SemanticContextCase.Keys;
+using Luthetus.Ide.ClassLib.Store.SemanticContextCase;
 
 namespace Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 
@@ -68,6 +71,7 @@ public partial record DotNetSolutionState
                     }));
             
             dispatcher.Dispatch(new SetDotNetSolutionTreeViewAction());
+            dispatcher.Dispatch(new ParseDotNetSolutionAction());
         }
 
         [EffectMethod(typeof(SetDotNetSolutionTreeViewAction))]
@@ -82,7 +86,7 @@ public partial record DotNetSolutionState
             dispatcher.Dispatch(new WithAction(inDotNetSolutionState =>
                 inDotNetSolutionState with
                 {
-                    IsLoadingSolutionExplorer = true
+                    IsExecutingAsyncTaskLinks = inDotNetSolutionState.IsExecutingAsyncTaskLinks + 1
                 }));
 
             var rootNode = new TreeViewSolution(
@@ -119,7 +123,39 @@ public partial record DotNetSolutionState
             dispatcher.Dispatch(new WithAction(inDotNetSolutionState =>
                 inDotNetSolutionState with
                 {
-                    IsLoadingSolutionExplorer = false
+                    IsExecutingAsyncTaskLinks = inDotNetSolutionState.IsExecutingAsyncTaskLinks - 1
+                }));
+        }
+        
+        [EffectMethod(typeof(ParseDotNetSolutionAction))]
+        public async Task HandleParseDotNetSolutionAction(
+            IDispatcher dispatcher)
+        {
+            var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
+
+            if (dotNetSolutionState.DotNetSolution is null)
+                return;
+
+            var dotNetSolutionSemanticContext = new DotNetSolutionSemanticContext(
+                DotNetSolutionKey.NewSolutionKey(),
+                dotNetSolutionState.DotNetSolution);
+
+            dispatcher.Dispatch(
+                new SemanticContextState.SetDotNetSolutionSemanticContextAction(
+                    dotNetSolutionSemanticContext));
+
+            dispatcher.Dispatch(new WithAction(inDotNetSolutionState =>
+                inDotNetSolutionState with
+                {
+                    IsExecutingAsyncTaskLinks = inDotNetSolutionState.IsExecutingAsyncTaskLinks + 1
+                }));
+
+            await Task.Delay(5_000);
+
+            dispatcher.Dispatch(new WithAction(inDotNetSolutionState =>
+                inDotNetSolutionState with
+                {
+                    IsExecutingAsyncTaskLinks = inDotNetSolutionState.IsExecutingAsyncTaskLinks - 1
                 }));
         }
     }

@@ -8,16 +8,17 @@ using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 
 namespace Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 
+/// <param name="IsExecutingAsyncTaskLinks">Each link is a separate async task. The async task increments the links when it starts, then decrements when it is finished. A loading icon is shown in the solution explorer if links > 0</param>
 [FeatureState]
 public partial record DotNetSolutionState(
     DotNetSolution? DotNetSolution,
-    bool IsLoadingSolutionExplorer)
+    int IsExecutingAsyncTaskLinks)
 {
     public static readonly TreeViewStateKey TreeViewSolutionExplorerStateKey = TreeViewStateKey.NewTreeViewStateKey();
 
     private DotNetSolutionState() : this(
         default(DotNetSolution?),
-        false)
+        0)
     {
     }
     

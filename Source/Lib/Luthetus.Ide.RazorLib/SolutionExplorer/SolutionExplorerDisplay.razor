@@ -16,7 +16,7 @@
         <div class="luth_ide_section-title">
             Solution Explorer
 
-            @if (dotNetSolutionState.IsLoadingSolutionExplorer)
+            @if (dotNetSolutionState.IsExecutingAsyncTaskLinks > 0)
             {
                 <IconLoading/>
             }

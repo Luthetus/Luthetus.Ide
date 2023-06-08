@@ -8,4 +8,5 @@ public partial record DotNetSolutionState
 
     private record WithAction(Func<DotNetSolutionState, DotNetSolutionState> WithFunc);
     private record SetDotNetSolutionTreeViewAction;
+    private record ParseDotNetSolutionAction;
 }
