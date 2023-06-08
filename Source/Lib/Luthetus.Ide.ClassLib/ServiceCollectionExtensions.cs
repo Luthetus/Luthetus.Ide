@@ -4,6 +4,7 @@ using Luthetus.Ide.ClassLib.FileTemplates;
 using Luthetus.Ide.ClassLib.Menu;
 using Luthetus.Ide.ClassLib.Nuget;
 using Microsoft.Extensions.DependencyInjection;
+using Luthetus.Ide.ClassLib.CompilerServices.ParserTaskCase;
 
 namespace Luthetus.Ide.ClassLib;
 
@@ -18,6 +19,8 @@ public static class ServiceCollectionExtensions
             .AddScoped<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>()
             .AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>()
             .AddSingleton<IBackgroundTaskMonitor, BackgroundTaskMonitor>()
+            .AddSingleton<IParserTaskQueue, ParserTaskQueue>()
+            .AddSingleton<IParserTaskMonitor, ParserTaskMonitor>()
             .AddFluxor(options =>
                 options.ScanAssemblies(
                     typeof(Luthetus.Common.RazorLib.ServiceCollectionExtensions).Assembly,
