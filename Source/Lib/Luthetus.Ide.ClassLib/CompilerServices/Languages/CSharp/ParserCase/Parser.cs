@@ -1,5 +1,4 @@
-﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes;
-using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Expression;
+﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Expression;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statements;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.General;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;

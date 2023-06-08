@@ -2,7 +2,6 @@
 using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Expression;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statements;
-using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.C.LexerCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.C.ParserCase;
 using Luthetus.TextEditor.RazorLib.Lexing;
