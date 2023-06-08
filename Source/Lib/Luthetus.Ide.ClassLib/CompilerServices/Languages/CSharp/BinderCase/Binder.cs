@@ -860,9 +860,19 @@ public class Binder
         ISyntaxToken typeClauseToken,
         BoundGenericArgumentsNode? boundGenericArgumentsNode,
         out BoundClassReferenceNode? boundClassReferenceNode,
+        bool shouldCreateTypeSymbolReference = true,
         bool shouldReportUndefinedTypeOrNamespace = true,
         bool shouldCreateClassDefinitionIfUndefined = true)
     {
+        if (shouldCreateTypeSymbolReference &&
+            typeClauseToken.SyntaxKind == SyntaxKind.IdentifierToken)
+        {
+            AddSymbolReference(new TypeSymbol(typeClauseToken.TextSpan with
+            {
+                DecorationByte = (byte)GenericDecorationKind.Type
+            }));
+        }
+
         var localScope = _currentScope;
 
         while (localScope is not null)
