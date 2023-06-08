@@ -640,21 +640,26 @@ public class Binder
         {
             if (canReadComma is null)
             {
-                var typeIdentifierToken = (IdentifierToken)syntaxToken;
-                _ = TryGetClassReferenceHierarchically(typeIdentifierToken, null, out boundClassReferenceNode);
+                _ = TryGetClassReferenceHierarchically(syntaxToken, null, out boundClassReferenceNode!);
 
-                boundFunctionArguments.Add(typeIdentifierToken);
+                boundFunctionArguments.Add(boundClassReferenceNode);
                 canReadComma = false;
             }
             else if (!canReadComma.Value)
             {
                 var variableIdentifierToken = (IdentifierToken)syntaxToken;
-                var boundVariableDeclaration = BindVariableDeclarationNode(boundClassReferenceNode, variableIdentifierToken);
+                var boundVariableDeclaration = BindVariableDeclarationNode(boundClassReferenceNode!, variableIdentifierToken);
 
                 boundFunctionArguments.Add(boundVariableDeclaration);
                 canReadComma = true;
             }
-            // else => Ignore the commas
+            else
+            {
+                if (syntaxToken.SyntaxKind == SyntaxKind.CommaToken)
+                    canReadComma = null;
+                else
+                    break;
+            }
         }
 
         return new BoundFunctionArgumentsNode(

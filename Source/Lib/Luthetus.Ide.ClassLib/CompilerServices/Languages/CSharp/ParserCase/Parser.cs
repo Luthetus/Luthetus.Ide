@@ -898,7 +898,7 @@ public class Parser
         {
             var boundFunctionDefinitionNode = (BoundFunctionDefinitionNode)_nodeRecent;
             
-            scopeReturnType = boundFunctionDefinitionNode.BoundClassReferenceNode.Type;
+            scopeReturnType = boundFunctionDefinitionNode.ReturnBoundClassReferenceNode.Type;
 
             _finalizeCompilationUnitActionStack.Push(compilationUnit =>
             {

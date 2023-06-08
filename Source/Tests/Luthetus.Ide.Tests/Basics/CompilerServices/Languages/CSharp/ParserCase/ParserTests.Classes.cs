@@ -102,8 +102,9 @@ public partial class ParserTests
     [Fact]
     public void SHOULD_PARSE_CLASS_DEFINITION_WHICH_IS_INHERITING()
     {
-        string classIdentifier = "PersonDisplay";
-        string sourceText = @$"public class {classIdentifier} : ComponentBase {{ }}".ReplaceLineEndings("\n");
+        string derivingClassIdentifier = "PersonDisplay";
+        string parentClassIdentifier = "PersonDisplay";
+        string sourceText = @$"public class {derivingClassIdentifier} : {parentClassIdentifier} {{ }}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
         var lexer = new Lexer(resourceUri, sourceText);
@@ -115,21 +116,17 @@ public partial class ParserTests
         {
             var globalScope = parser.Binder.BoundScopes.First();
 
-            var personModel = globalScope.ClassDefinitionMap.Single();
+            Assert.True(globalScope.ClassDefinitionMap.ContainsKey(derivingClassIdentifier));
 
-            Assert.Equal(classIdentifier, personModel.Key);
-
-            var boundClassDefinitionNode =
-                (BoundClassDefinitionNode)compilationUnit.Children.Single();
+            var boundClassDefinitionNode = (BoundClassDefinitionNode)compilationUnit.Children.Single();
 
             if (boundClassDefinitionNode.ClassBodyCompilationUnit is null)
                 throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
 
-            Assert.NotNull(
-                boundClassDefinitionNode.BoundInheritanceStatementNode);
+            Assert.Empty(boundClassDefinitionNode.ClassBodyCompilationUnit.Children);
 
-            Assert.Empty(
-                boundClassDefinitionNode.ClassBodyCompilationUnit.Children);
+            Assert.NotNull(boundClassDefinitionNode.BoundInheritanceStatementNode);
+            Assert.Equal(parentClassIdentifier, boundClassDefinitionNode.BoundInheritanceStatementNode!.ParentBoundClassReferenceNode.TypeClauseToken.TextSpan.GetText());
         }
     }
 
