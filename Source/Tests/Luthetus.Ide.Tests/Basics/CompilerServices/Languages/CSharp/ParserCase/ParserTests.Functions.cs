@@ -91,12 +91,14 @@ public partial class ParserTests
             // Function Identifier
             Assert.Equal(functionIdentifierText, boundFunctionDefinitionNode.IdentifierToken.TextSpan.GetText());
 
-            // Arguments
-            var boundClassDefinitionNode = (BoundClassDefinitionNode)boundFunctionDefinitionNode.BoundFunctionArgumentsNode.BoundFunctionArgumentListing.Single();
-            Assert.Equal(typeof(int), boundClassDefinitionNode.Type);
-            Assert.Equal(argumentTypeClauseText, boundClassDefinitionNode.Identifier.TextSpan.GetText());
-            var identifierToken = (IdentifierToken)boundFunctionDefinitionNode.BoundFunctionArgumentsNode.BoundFunctionArgumentListing[1];
-            Assert.Equal(argumentIdentifierText, identifierToken.TextSpan.GetText());
+            // Argument Type
+            var boundClassReferenceNode = (BoundClassReferenceNode)boundFunctionDefinitionNode.BoundFunctionArgumentsNode.BoundFunctionArgumentListing[0];
+            Assert.Equal(typeof(int), boundClassReferenceNode.Type);
+            Assert.Equal(argumentTypeClauseText, boundClassReferenceNode.Identifier.TextSpan.GetText());
+
+            // Argument Identifier
+            var boundVariableDeclarationStatementNode = (BoundVariableDeclarationStatementNode)boundFunctionDefinitionNode.BoundFunctionArgumentsNode.BoundFunctionArgumentListing[1];
+            Assert.Equal(argumentIdentifierText, boundVariableDeclarationStatementNode.IdentifierToken.TextSpan.GetText());
 
             // Body CompilationUnit
             Assert.Empty(boundFunctionDefinitionNode.FunctionBodyCompilationUnit!.Children);
@@ -104,9 +106,15 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_FUNCTION_DEFINITION_STATEMENT_WITH_TWO_ARGUMENT()
+    public void SHOULD_PARSE_FUNCTION_DEFINITION_STATEMENT_WITH_TWO_ARGUMENTS()
     {
-        string sourceText = @"void WriteHelloWorldToConsole(int times, bool usePurpleText){}".ReplaceLineEndings("\n");
+        string functionReturnTypeClauseText = "void";
+        string functionIdentifierText = "WriteHelloWorldToConsole";
+        string firstArgumentTypeClauseText = "int";
+        string firstArgumentIdentifierText = "times";
+        string secondArgumentTypeClauseText = "bool";
+        string secondArgumentIdentifierText = "usePurpleText";
+        string sourceText = @$"{functionReturnTypeClauseText} {functionIdentifierText}({firstArgumentTypeClauseText} {firstArgumentIdentifierText}, {secondArgumentTypeClauseText} {secondArgumentIdentifierText}){{}}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
         var lexer = new Lexer(resourceUri, sourceText);
@@ -117,27 +125,57 @@ public partial class ParserTests
         // Assertions
         {
             Assert.Single(compilationUnit.Children);
-            var boundFunctionDefinitionNode = (BoundFunctionDefinitionNode)compilationUnit.Children[0];
+            var boundFunctionDefinitionNode = (BoundFunctionDefinitionNode)compilationUnit.Children.Single();
             Assert.Equal(SyntaxKind.BoundFunctionDefinitionNode, boundFunctionDefinitionNode.SyntaxKind);
 
-            var firstBoundClassDefinitionNode = (BoundClassDefinitionNode)boundFunctionDefinitionNode.BoundFunctionArgumentsNode.BoundFunctionArgumentListing[0];
-            Assert.Equal(typeof(int), firstBoundClassDefinitionNode.Type);
-            var firstIdentifierToken = (IdentifierToken)boundFunctionDefinitionNode.BoundFunctionArgumentsNode.BoundFunctionArgumentListing[1];
-            Assert.Equal("times", firstIdentifierToken.TextSpan.GetText());
+            // Return Type
+            Assert.Equal(functionReturnTypeClauseText, boundFunctionDefinitionNode.ReturnBoundClassReferenceNode.TypeClauseToken.TextSpan.GetText());
+            Assert.Equal(typeof(void), boundFunctionDefinitionNode.ReturnBoundClassReferenceNode.Type);
 
-            var commaToken = (CommaToken)boundFunctionDefinitionNode.BoundFunctionArgumentsNode.BoundFunctionArgumentListing[2];
+            // Function Identifier
+            Assert.Equal(functionIdentifierText, boundFunctionDefinitionNode.IdentifierToken.TextSpan.GetText());
 
-            var secondBoundClassDefinitionNode = (BoundClassDefinitionNode)boundFunctionDefinitionNode.BoundFunctionArgumentsNode.BoundFunctionArgumentListing[3];
-            Assert.Equal(typeof(bool), secondBoundClassDefinitionNode.Type);
-            var secondIdentifierToken = (IdentifierToken)boundFunctionDefinitionNode.BoundFunctionArgumentsNode.BoundFunctionArgumentListing[4];
-            Assert.Equal("usePurpleText", secondIdentifierToken.TextSpan.GetText());
+            // First Argument
+            {
+                // Argument Type
+                var boundClassReferenceNode = (BoundClassReferenceNode)boundFunctionDefinitionNode.BoundFunctionArgumentsNode.BoundFunctionArgumentListing[0];
+                Assert.Equal(typeof(int), boundClassReferenceNode.Type);
+                Assert.Equal(firstArgumentTypeClauseText, boundClassReferenceNode.Identifier.TextSpan.GetText());
+
+                // Argument Identifier
+                var boundVariableDeclarationStatementNode = (BoundVariableDeclarationStatementNode)boundFunctionDefinitionNode.BoundFunctionArgumentsNode.BoundFunctionArgumentListing[1];
+                Assert.Equal(firstArgumentIdentifierText, boundVariableDeclarationStatementNode.IdentifierToken.TextSpan.GetText());
+            }
+
+            // Second Argument
+            {
+                // Argument Type
+                var boundClassReferenceNode = (BoundClassReferenceNode)boundFunctionDefinitionNode.BoundFunctionArgumentsNode.BoundFunctionArgumentListing[2];
+                Assert.Equal(typeof(bool), boundClassReferenceNode.Type);
+                Assert.Equal(secondArgumentTypeClauseText, boundClassReferenceNode.Identifier.TextSpan.GetText());
+
+                // Argument Identifier
+                var boundVariableDeclarationStatementNode = (BoundVariableDeclarationStatementNode)boundFunctionDefinitionNode.BoundFunctionArgumentsNode.BoundFunctionArgumentListing[3];
+                Assert.Equal(secondArgumentIdentifierText, boundVariableDeclarationStatementNode.IdentifierToken.TextSpan.GetText());
+            }
+
+            // Body CompilationUnit
+            Assert.Empty(boundFunctionDefinitionNode.FunctionBodyCompilationUnit!.Children);
         }
     }
 
     [Fact]
-    public void SHOULD_PARSE_FUNCTION_DEFINITION_STATEMENT_WITH_THREE_ARGUMENT()
+    public void SHOULD_PARSE_FUNCTION_DEFINITION_STATEMENT_WITH_THREE_ARGUMENTS()
     {
-        string sourceText = @"void WriteHelloWorldToConsole(int times, bool usePurpleText, string additionalText){}".ReplaceLineEndings("\n");
+        string functionReturnTypeClauseText = "void";
+        string functionIdentifierText = "WriteHelloWorldToConsole";
+        string firstArgumentTypeClauseText = "int";
+        string firstArgumentIdentifierText = "times";
+        string secondArgumentTypeClauseText = "bool";
+        string secondArgumentIdentifierText = "usePurpleText";
+        string thirdArgumentTypeClauseText = "string";
+        string thirdArgumentIdentifierText = "additionalText";
+        string sourceText = @$"{functionReturnTypeClauseText} {functionIdentifierText}({firstArgumentTypeClauseText} {firstArgumentIdentifierText}, {secondArgumentTypeClauseText} {secondArgumentIdentifierText}, {thirdArgumentTypeClauseText} {thirdArgumentIdentifierText}){{}}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
         var lexer = new Lexer(resourceUri, sourceText);
@@ -148,27 +186,54 @@ public partial class ParserTests
         // Assertions
         {
             Assert.Single(compilationUnit.Children);
-            var boundFunctionDefinitionNode = (BoundFunctionDefinitionNode)compilationUnit.Children[0];
+            var boundFunctionDefinitionNode = (BoundFunctionDefinitionNode)compilationUnit.Children.Single();
             Assert.Equal(SyntaxKind.BoundFunctionDefinitionNode, boundFunctionDefinitionNode.SyntaxKind);
 
-            var firstBoundClassDefinitionNode = (BoundClassDefinitionNode)boundFunctionDefinitionNode.BoundFunctionArgumentsNode.BoundFunctionArgumentListing[0];
-            Assert.Equal(typeof(int), firstBoundClassDefinitionNode.Type);
-            var firstIdentifierToken = (IdentifierToken)boundFunctionDefinitionNode.BoundFunctionArgumentsNode.BoundFunctionArgumentListing[1];
-            Assert.Equal("times", firstIdentifierToken.TextSpan.GetText());
+            // Return Type
+            Assert.Equal(functionReturnTypeClauseText, boundFunctionDefinitionNode.ReturnBoundClassReferenceNode.TypeClauseToken.TextSpan.GetText());
+            Assert.Equal(typeof(void), boundFunctionDefinitionNode.ReturnBoundClassReferenceNode.Type);
 
-            var firstCommaToken = (CommaToken)boundFunctionDefinitionNode.BoundFunctionArgumentsNode.BoundFunctionArgumentListing[2];
+            // Function Identifier
+            Assert.Equal(functionIdentifierText, boundFunctionDefinitionNode.IdentifierToken.TextSpan.GetText());
 
-            var secondBoundClassDefinitionNode = (BoundClassDefinitionNode)boundFunctionDefinitionNode.BoundFunctionArgumentsNode.BoundFunctionArgumentListing[3];
-            Assert.Equal(typeof(bool), secondBoundClassDefinitionNode.Type);
-            var secondIdentifierToken = (IdentifierToken)boundFunctionDefinitionNode.BoundFunctionArgumentsNode.BoundFunctionArgumentListing[4];
-            Assert.Equal("usePurpleText", secondIdentifierToken.TextSpan.GetText());
+            // First Argument
+            {
+                // Argument Type
+                var boundClassReferenceNode = (BoundClassReferenceNode)boundFunctionDefinitionNode.BoundFunctionArgumentsNode.BoundFunctionArgumentListing[0];
+                Assert.Equal(typeof(int), boundClassReferenceNode.Type);
+                Assert.Equal(firstArgumentTypeClauseText, boundClassReferenceNode.Identifier.TextSpan.GetText());
 
-            var secondCommaToken = (CommaToken)boundFunctionDefinitionNode.BoundFunctionArgumentsNode.BoundFunctionArgumentListing[5];
+                // Argument Identifier
+                var boundVariableDeclarationStatementNode = (BoundVariableDeclarationStatementNode)boundFunctionDefinitionNode.BoundFunctionArgumentsNode.BoundFunctionArgumentListing[1];
+                Assert.Equal(firstArgumentIdentifierText, boundVariableDeclarationStatementNode.IdentifierToken.TextSpan.GetText());
+            }
 
-            var thirdBoundClassDefinitionNode = (BoundClassDefinitionNode)boundFunctionDefinitionNode.BoundFunctionArgumentsNode.BoundFunctionArgumentListing[6];
-            Assert.Equal(typeof(string), thirdBoundClassDefinitionNode.Type);
-            var thirdIdentifierToken = (IdentifierToken)boundFunctionDefinitionNode.BoundFunctionArgumentsNode.BoundFunctionArgumentListing[7];
-            Assert.Equal("additionalText", thirdIdentifierToken.TextSpan.GetText());
+            // Second Argument
+            {
+                // Argument Type
+                var boundClassReferenceNode = (BoundClassReferenceNode)boundFunctionDefinitionNode.BoundFunctionArgumentsNode.BoundFunctionArgumentListing[2];
+                Assert.Equal(typeof(bool), boundClassReferenceNode.Type);
+                Assert.Equal(secondArgumentTypeClauseText, boundClassReferenceNode.Identifier.TextSpan.GetText());
+
+                // Argument Identifier
+                var boundVariableDeclarationStatementNode = (BoundVariableDeclarationStatementNode)boundFunctionDefinitionNode.BoundFunctionArgumentsNode.BoundFunctionArgumentListing[3];
+                Assert.Equal(secondArgumentIdentifierText, boundVariableDeclarationStatementNode.IdentifierToken.TextSpan.GetText());
+            }
+            
+            // Third Argument
+            {
+                // Argument Type
+                var boundClassReferenceNode = (BoundClassReferenceNode)boundFunctionDefinitionNode.BoundFunctionArgumentsNode.BoundFunctionArgumentListing[4];
+                Assert.Equal(typeof(string), boundClassReferenceNode.Type);
+                Assert.Equal(thirdArgumentTypeClauseText, boundClassReferenceNode.Identifier.TextSpan.GetText());
+
+                // Argument Identifier
+                var boundVariableDeclarationStatementNode = (BoundVariableDeclarationStatementNode)boundFunctionDefinitionNode.BoundFunctionArgumentsNode.BoundFunctionArgumentListing[5];
+                Assert.Equal(thirdArgumentIdentifierText, boundVariableDeclarationStatementNode.IdentifierToken.TextSpan.GetText());
+            }
+
+            // Body CompilationUnit
+            Assert.Empty(boundFunctionDefinitionNode.FunctionBodyCompilationUnit!.Children);
         }
     }
     

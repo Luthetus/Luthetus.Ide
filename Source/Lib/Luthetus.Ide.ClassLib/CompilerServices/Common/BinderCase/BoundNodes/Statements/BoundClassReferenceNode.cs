@@ -26,6 +26,8 @@ public sealed record BoundClassReferenceNode : ISyntaxNode
         Children = childrenList.ToImmutableArray();
     }
 
+    public ISyntaxToken Identifier => TypeClauseToken;
+
     public ISyntaxToken TypeClauseToken { get; init; }
     public Type Type { get; init; }
     public BoundGenericArgumentsNode? BoundGenericArgumentsNode { get; init; }
