@@ -14,6 +14,7 @@ using Luthetus.Ide.ClassLib.Store.EditorCase;
 using Luthetus.Ide.ClassLib.TreeViewImplementations;
 using Luthetus.Ide.RazorLib.SolutionExplorer;
 using Fluxor;
+using Luthetus.Ide.ClassLib.Store.FolderExplorerCase;
 
 namespace Luthetus.Ide.RazorLib.FolderExplorer.Classes;
 
@@ -314,11 +315,11 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         await treeViewModel.LoadChildrenAsync();
 
         _treeViewService.ReRenderNode(
-            FolderExplorerDisplay.TreeViewFolderExplorerContentStateKey,
+            FolderExplorerState.TreeViewFolderExplorerContentStateKey,
             treeViewModel);
 
         _treeViewService.MoveUp(
-            FolderExplorerDisplay.TreeViewFolderExplorerContentStateKey,
+            FolderExplorerState.TreeViewFolderExplorerContentStateKey,
             false);
     }
 }

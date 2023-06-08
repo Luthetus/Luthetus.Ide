@@ -3,13 +3,20 @@ using Luthetus.Ide.ClassLib.InputFile;
 using Luthetus.Ide.ClassLib.Store.InputFileCase;
 using Fluxor;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
+using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 
 namespace Luthetus.Ide.ClassLib.Store.FolderExplorerCase;
 
 [FeatureState]
-public record FolderExplorerState(IAbsoluteFilePath? AbsoluteFilePath)
+public partial record FolderExplorerState(
+    IAbsoluteFilePath? AbsoluteFilePath,
+    bool IsLoadingFolderExplorer)
 {
-    public FolderExplorerState() : this(default(IAbsoluteFilePath))
+    public static readonly TreeViewStateKey TreeViewFolderExplorerContentStateKey = TreeViewStateKey.NewTreeViewStateKey();
+
+    private FolderExplorerState() : this(
+        default,
+        false)
     {
 
     }
@@ -18,21 +25,18 @@ public record FolderExplorerState(IAbsoluteFilePath? AbsoluteFilePath)
     {
         dispatcher.Dispatch(
             new InputFileState.RequestInputFileStateFormAction(
-                "FolderExplorer",
+                "Folder Explorer",
                 afp =>
                 {
-                    dispatcher.Dispatch(
-                        new SetFolderExplorerStateAction(afp));
+                    if (afp is not null)
+                        dispatcher.Dispatch(new SetFolderExplorerAction(afp));
 
                     return Task.CompletedTask;
                 },
                 afp =>
                 {
-                    if (afp is null ||
-                        !afp.IsDirectory)
-                    {
+                    if (afp is null || !afp.IsDirectory)
                         return Task.FromResult(false);
-                    }
 
                     return Task.FromResult(true);
                 },

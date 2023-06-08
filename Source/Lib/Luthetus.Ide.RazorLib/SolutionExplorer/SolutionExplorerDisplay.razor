@@ -25,11 +25,9 @@
         <div class="luth_ide_section-body">
             @if (dotNetSolutionState.DotNetSolution is null)
             {
-                <div>Dot Net Solution is null</div>
-                
                 <button class="luth_button"
                         @onclick="() => DotNetSolutionState.ShowInputFile(Dispatcher)">
-                    Set solution explorer
+                    Open Solution
                 </button>
             }
             else

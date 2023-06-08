@@ -1,13 +1,9 @@
 ﻿using System.Collections.Immutable;
 using Fluxor;
-using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
 using Luthetus.Ide.ClassLib.InputFile;
-using Luthetus.Ide.ClassLib.Namespaces;
 using Luthetus.Ide.ClassLib.Store.InputFileCase;
-using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.DotNet;
 using Luthetus.Ide.ClassLib.FileConstants;
-using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 
 namespace Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
@@ -30,7 +26,7 @@ public partial record DotNetSolutionState(
     {
         dispatcher.Dispatch(
             new InputFileState.RequestInputFileStateFormAction(
-                "TextEditor",
+                "Solution Explorer",
                 afp =>
                 {
                     if (afp is not null)

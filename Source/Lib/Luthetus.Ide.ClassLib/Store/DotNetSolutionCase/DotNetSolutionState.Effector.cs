@@ -36,7 +36,7 @@ public partial record DotNetSolutionState
         }
 
         [EffectMethod]
-        public async Task HandleSetDotNetSolutionEffect(
+        public async Task HandleSetDotNetSolutionAction(
             SetDotNetSolutionAction setDotNetSolutionAction,
             IDispatcher dispatcher)
         {
@@ -71,7 +71,7 @@ public partial record DotNetSolutionState
         }
 
         [EffectMethod(typeof(SetDotNetSolutionTreeViewAction))]
-        public async Task SetSolutionExplorerTreeViewRootAsync(
+        public async Task HandleSetDotNetSolutionTreeViewAction(
             IDispatcher dispatcher)
         {
             var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
