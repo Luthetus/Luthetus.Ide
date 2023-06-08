@@ -124,7 +124,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
 
         Dispatcher.Dispatch(new PanelsCollection.SetActivePanelTabAction(
             leftPanel.PanelRecordKey,
-            folderExplorerPanelTab.PanelTabKey));
+            solutionExplorerPanelTab.PanelTabKey));
     }
 
     private void InitializeRightPanelTabs()

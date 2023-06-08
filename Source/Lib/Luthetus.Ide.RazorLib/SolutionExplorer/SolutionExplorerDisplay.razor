@@ -15,6 +15,11 @@
 
         <div class="luth_ide_section-title">
             Solution Explorer
+
+            @if (dotNetSolutionState.IsLoadingSolutionExplorer)
+            {
+                <IconLoading/>
+            }
         </div>
 
         <div class="luth_ide_section-body">
@@ -23,7 +28,7 @@
                 <div>Dot Net Solution is null</div>
                 
                 <button class="luth_button"
-                        @onclick="async () => await SetSolutionExplorerOnClick(SOLUTION_EXPLORER_ABSOLUTE_PATH_STRING)">
+                        @onclick="() => DotNetSolutionState.ShowInputFile(Dispatcher)">
                     Set solution explorer
                 </button>
             }
@@ -32,7 +37,7 @@
                 <CascadingValue Name="LuthetusTreeViewIconWidth" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
                     <CascadingValue Name="LuthetusTreeViewIconHeight" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
                         <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
-                            <TreeViewStateDisplay TreeViewStateKey="TreeViewSolutionExplorerStateKey"
+                            <TreeViewStateDisplay TreeViewStateKey="DotNetSolutionState.TreeViewSolutionExplorerStateKey"
                                                   CssStyleString="height: 100%;"
                                                   OnContextMenuFunc="OnTreeViewContextMenuFunc"
                                                   TreeViewKeyboardEventHandler="_solutionExplorerTreeViewKeymap"

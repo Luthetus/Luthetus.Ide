@@ -222,13 +222,15 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     .TerminalSessionMap[
                         TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY],
                 Dispatcher,
-                async () =>
+                () =>
                 {
-                    await DotNetSolutionState.SetActiveSolutionAsync(
-                        treeViewSolution.Item.NamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
-                        FileSystemProvider,
-                        EnvironmentProvider,
-                        Dispatcher);
+                    if (treeViewSolution.Item is not null)
+                    {
+                        Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionAction(
+                            treeViewSolution.Item.NamespacePath.AbsoluteFilePath));
+                    }
+
+                    return Task.CompletedTask;
                 }),
             new MenuOptionRecord(
                 "Set as Startup Project",
@@ -243,16 +245,15 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     .TerminalSessionMap[
                         TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY],
                 Dispatcher,
-                async () =>
+                () =>
                 {
-                    if (treeViewSolution?.Item is not null)
+                    if (treeViewSolution.Item is not null)
                     {
-                        await DotNetSolutionState.SetActiveSolutionAsync(
-                            treeViewSolution.Item.NamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
-                            FileSystemProvider,
-                            EnvironmentProvider,
-                            Dispatcher);
+                        Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionAction(
+                            treeViewSolution.Item.NamespacePath.AbsoluteFilePath));
                     }
+
+                    return Task.CompletedTask;
                 }),
         };
     }
@@ -405,13 +406,12 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                         localFormattedAddExistingProjectToSolutionCommand.arguments,
                         null,
                         CancellationToken.None,
-                        async () =>
+                        () =>
                         {
-                            await DotNetSolutionState.SetActiveSolutionAsync(
-                                solutionNamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
-                                FileSystemProvider,
-                                EnvironmentProvider,
-                                Dispatcher);
+                            Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionAction(
+                                solutionNamespacePath.AbsoluteFilePath));
+
+                            return Task.CompletedTask;
                         });
 
                     var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
@@ -461,11 +461,11 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         await treeViewModel.LoadChildrenAsync();
 
         TreeViewService.ReRenderNode(
-            SolutionExplorerDisplay.TreeViewSolutionExplorerStateKey,
+            DotNetSolutionState.TreeViewSolutionExplorerStateKey,
             treeViewModel);
 
         TreeViewService.MoveUp(
-            SolutionExplorerDisplay.TreeViewSolutionExplorerStateKey,
+            DotNetSolutionState.TreeViewSolutionExplorerStateKey,
             false);
     }
 

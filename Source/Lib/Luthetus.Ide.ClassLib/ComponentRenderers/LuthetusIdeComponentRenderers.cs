@@ -16,6 +16,7 @@ public class LuthetusIdeComponentRenderers : ILuthetusIdeComponentRenderers
         Type? gitDisplayRendererType,
         Type? removeCSharpProjectFromSolutionRendererType,
         Type? inputFileRendererType,
+        Type? parserTaskDisplayRendererType,
         Type? treeViewCSharpProjectDependenciesRendererType,
         Type? treeViewCSharpProjectNugetPackageReferencesRendererType,
         Type? treeViewCSharpProjectToProjectReferencesRendererType,
@@ -34,6 +35,7 @@ public class LuthetusIdeComponentRenderers : ILuthetusIdeComponentRenderers
         GitDisplayRendererType = gitDisplayRendererType;
         RemoveCSharpProjectFromSolutionRendererType = removeCSharpProjectFromSolutionRendererType;
         InputFileRendererType = inputFileRendererType;
+        ParserTaskDisplayRendererType = parserTaskDisplayRendererType;
         TreeViewCSharpProjectDependenciesRendererType = treeViewCSharpProjectDependenciesRendererType;
         TreeViewCSharpProjectNugetPackageReferencesRendererType = treeViewCSharpProjectNugetPackageReferencesRendererType;
         TreeViewCSharpProjectToProjectReferencesRendererType = treeViewCSharpProjectToProjectReferencesRendererType;
@@ -59,4 +61,5 @@ public class LuthetusIdeComponentRenderers : ILuthetusIdeComponentRenderers
     public Type? GitDisplayRendererType { get; }
     public Type? RemoveCSharpProjectFromSolutionRendererType { get; }
     public Type? InputFileRendererType { get; }
+    public Type? ParserTaskDisplayRendererType { get; }
 }

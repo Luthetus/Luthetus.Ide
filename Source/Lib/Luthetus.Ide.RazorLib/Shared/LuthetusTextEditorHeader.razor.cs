@@ -101,11 +101,7 @@ public partial class LuthetusTextEditorHeader : FluxorComponent
             var menuOptionOpenDotNetSolution = new MenuOptionRecord(
                 ".NET Solution",
                 MenuOptionKind.Other,
-                () => DotNetSolutionState.ShowInputFile(
-                        Dispatcher,
-                        LuthetusIdeComponentRenderers,
-                        FileSystemProvider,
-                        EnvironmentProvider));
+                () => DotNetSolutionState.ShowInputFile(Dispatcher));
 
             var menuOptionOpen = new MenuOptionRecord(
                 "Open",

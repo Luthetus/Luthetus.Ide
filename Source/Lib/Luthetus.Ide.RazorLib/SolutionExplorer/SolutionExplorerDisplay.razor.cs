@@ -41,10 +41,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     // For Linux: @"/home/hunter/Repos/Demos/BlazorCrudApp/BlazorCrudApp.sln";
     private const string SOLUTION_EXPLORER_ABSOLUTE_PATH_STRING = @"C:\Users\hunte\Repos\TestSolutionParser\TestSolutionParser.sln";
 
-    public static readonly TreeViewStateKey TreeViewSolutionExplorerStateKey =
-        TreeViewStateKey.NewTreeViewStateKey();
-
-    private string _filePath = string.Empty;
     private ITreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
     private SolutionExplorerTreeViewKeymap _solutionExplorerTreeViewKeymap = null!;
     private SolutionExplorerTreeViewMouseEventHandler _solutionExplorerTreeViewMouseEventHandler = null!;
@@ -74,14 +70,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 
     private async void DotNetSolutionStateWrapOnStateChanged(object? sender, EventArgs e)
     {
-        var dotNetSolutionState = DotNetSolutionStateWrap.Value;
-
-        if (dotNetSolutionState.DotNetSolution is not null)
-        {
-            await SetSolutionExplorerTreeViewRootAsync(
-                dotNetSolutionState.DotNetSolution);
-        }
-
         await InvokeAsync(StateHasChanged);
     }
 
@@ -94,75 +82,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent
                 SolutionExplorerContextMenu.ContextMenuEventDropdownKey));
 
         await InvokeAsync(StateHasChanged);
-    }
-
-    private async Task SetSolutionExplorerTreeViewRootAsync(DotNetSolution dotNetSolution)
-    {
-        var rootNode = new TreeViewSolution(
-            dotNetSolution,
-            LuthetusIdeComponentRenderers,
-            FileSystemProvider,
-            EnvironmentProvider,
-            true,
-            true);
-
-        await rootNode.LoadChildrenAsync();
-
-        if (!TreeViewService.TryGetTreeViewState(
-                TreeViewSolutionExplorerStateKey,
-                out _))
-        {
-            TreeViewService.RegisterTreeViewState(new TreeViewState(
-                TreeViewSolutionExplorerStateKey,
-                rootNode,
-                rootNode,
-                ImmutableList<TreeViewNoType>.Empty));
-        }
-        else
-        {
-            TreeViewService.SetRoot(
-                TreeViewSolutionExplorerStateKey,
-                rootNode);
-
-            TreeViewService.SetActiveNode(
-                TreeViewSolutionExplorerStateKey,
-                rootNode);
-        }
-    }
-
-    private async Task SetSolutionExplorerOnClick(
-        string localSolutionExplorerAbsolutePathString)
-    {
-        await DotNetSolutionState.SetActiveSolutionAsync(
-            localSolutionExplorerAbsolutePathString,
-            FileSystemProvider,
-            EnvironmentProvider,
-            Dispatcher);
-
-        var content = await FileSystemProvider.File.ReadAllTextAsync(
-            localSolutionExplorerAbsolutePathString,
-            CancellationToken.None);
-
-        var solutionAbsoluteFilePath = new AbsoluteFilePath(
-            localSolutionExplorerAbsolutePathString,
-            false,
-            EnvironmentProvider);
-
-        var solutionNamespacePath = new NamespacePath(
-            string.Empty,
-            solutionAbsoluteFilePath);
-
-        var dotNetSolution = DotNetSolutionParser.Parse(
-            content,
-            solutionNamespacePath,
-            EnvironmentProvider);
-
-        Dispatcher.Dispatch(
-            new DotNetSolutionState.WithAction(
-                inDotNetSolutionState => inDotNetSolutionState with
-                {
-                    DotNetSolution = dotNetSolution
-                }));
     }
 
     protected override void Dispose(bool disposing)

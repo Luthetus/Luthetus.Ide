@@ -157,17 +157,17 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                         localFormattedAddExistingProjectToSolutionCommand.arguments,
                         localParentDirectoryName,
                         _newCSharpProjectCancellationTokenSource.Token,
-                        async () =>
+                        () =>
                         {
                             Dispatcher.Dispatch(
                                 new DialogRecordsCollection.DisposeAction(
                                     DialogRecord.DialogKey));
+                            
+                            Dispatcher.Dispatch(
+                                new DotNetSolutionState.SetDotNetSolutionAction(
+                                    solutionNamespacePath.AbsoluteFilePath));
 
-                            await DotNetSolutionState.SetActiveSolutionAsync(
-                                solutionNamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
-                                FileSystemProvider,
-                                EnvironmentProvider,
-                                Dispatcher);
+                            return Task.CompletedTask;
                         });
 
                     await generalTerminalSession

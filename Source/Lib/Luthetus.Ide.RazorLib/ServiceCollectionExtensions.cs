@@ -21,6 +21,8 @@ using Luthetus.Ide.RazorLib.TreeViewImplementations;
 using Fluxor;
 using Microsoft.Extensions.DependencyInjection;
 using TreeViewExceptionDisplay = Luthetus.Ide.RazorLib.TreeViewImplementations.TreeViewExceptionDisplay;
+using Luthetus.Ide.ClassLib.CompilerServices.ParserTaskCase;
+using Luthetus.Ide.RazorLib.ParserTaskCase;
 
 namespace Luthetus.Ide.RazorLib;
 
@@ -132,6 +134,7 @@ public static class ServiceCollectionExtensions
                 typeof(GitChangesDisplay),
                 typeof(RemoveCSharpProjectFromSolutionDisplay),
                 typeof(InputFileDisplay),
+                typeof(ParserTaskDisplay),
                 typeof(TreeViewCSharpProjectDependenciesDisplay),
                 typeof(TreeViewCSharpProjectNugetPackageReferencesDisplay),
                 typeof(TreeViewCSharpProjectToProjectReferencesDisplay),

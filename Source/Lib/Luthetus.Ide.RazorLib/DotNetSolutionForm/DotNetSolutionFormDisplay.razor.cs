@@ -141,11 +141,14 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                     '.' +
                     ExtensionNoPeriodFacts.DOT_NET_SOLUTION;
 
-                await DotNetSolutionState.SetActiveSolutionAsync(
+                var solutionAbsoluteFilePath = new AbsoluteFilePath(
                     solutionAbsoluteFilePathString,
-                    FileSystemProvider,
-                    EnvironmentProvider,
-                    Dispatcher);
+                    false,
+                    EnvironmentProvider);
+
+                Dispatcher.Dispatch(
+                    new DotNetSolutionState.SetDotNetSolutionAction(
+                        solutionAbsoluteFilePath));
             });
 
         var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[

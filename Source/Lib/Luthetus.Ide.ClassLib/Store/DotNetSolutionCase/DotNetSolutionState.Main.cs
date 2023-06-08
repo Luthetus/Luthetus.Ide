@@ -8,74 +8,40 @@ using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.DotNet;
 using Luthetus.Ide.ClassLib.FileConstants;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
+using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 
 namespace Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 
 [FeatureState]
 public partial record DotNetSolutionState(
-    DotNetSolution? DotNetSolution)
+    DotNetSolution? DotNetSolution,
+    bool IsLoadingSolutionExplorer)
 {
-    private DotNetSolutionState() : this(default(DotNetSolution?))
-    {
-    }
-    
-    public static async Task SetActiveSolutionAsync(
-        string solutionAbsolutePathString,
-        IFileSystemProvider fileSystemProvider,
-        IEnvironmentProvider environmentProvider,
-        IDispatcher dispatcher)
-    {
-        var content = await fileSystemProvider.File.ReadAllTextAsync(
-            solutionAbsolutePathString,
-            CancellationToken.None);
+    public static readonly TreeViewStateKey TreeViewSolutionExplorerStateKey = TreeViewStateKey.NewTreeViewStateKey();
 
-        var solutionAbsoluteFilePath = new AbsoluteFilePath(
-            solutionAbsolutePathString,
-            false,
-            environmentProvider);
-        
-        var solutionNamespacePath = new NamespacePath(
-            string.Empty,
-            solutionAbsoluteFilePath);
-
-        var dotNetSolution = DotNetSolutionParser.Parse(
-            content,
-            solutionNamespacePath,
-            environmentProvider);
-        
-        dispatcher.Dispatch(
-            new WithAction(
-                inDotNetSolutionState => inDotNetSolutionState with
-                {
-                    DotNetSolution = dotNetSolution
-                }));
+    private DotNetSolutionState() : this(
+        default(DotNetSolution?),
+        false)
+    {
     }
     
     public static void ShowInputFile(
-        IDispatcher dispatcher,
-        ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
-        IFileSystemProvider fileSystemProvider,
-        IEnvironmentProvider environmentProvider)
+        IDispatcher dispatcher)
     {
         dispatcher.Dispatch(
             new InputFileState.RequestInputFileStateFormAction(
                 "TextEditor",
-                async afp =>
+                afp =>
                 {
-                    await OpenInSolutionExplorerAsync(
-                        afp, 
-                        dispatcher,
-                        luthetusIdeComponentRenderers,
-                        fileSystemProvider,
-                        environmentProvider);
+                    if (afp is not null)
+                        dispatcher.Dispatch(new SetDotNetSolutionAction(afp));
+
+                    return Task.CompletedTask;
                 },
                 afp =>
                 {
-                    if (afp is null ||
-                        afp.IsDirectory)
-                    {
+                    if (afp is null || afp.IsDirectory)
                         return Task.FromResult(false);
-                    }
 
                     return Task.FromResult(true);
                 },
@@ -83,28 +49,7 @@ public partial record DotNetSolutionState(
                 {
                     new InputFilePattern(
                         ".NET Solution",
-                        afp => 
-                            afp.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
+                        afp => afp.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
                 }.ToImmutableArray()));
-    }
-    
-    public static async Task OpenInSolutionExplorerAsync(
-        IAbsoluteFilePath? absoluteFilePath,
-        IDispatcher dispatcher,
-        ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
-        IFileSystemProvider fileSystemProvider,
-        IEnvironmentProvider environmentProvider)
-    {
-        if (absoluteFilePath is null ||
-            absoluteFilePath.IsDirectory)
-        {
-            return;
-        }
-
-        await SetActiveSolutionAsync(
-            absoluteFilePath.GetAbsoluteFilePathString(),
-            fileSystemProvider,
-            environmentProvider,
-            dispatcher);
     }
 }

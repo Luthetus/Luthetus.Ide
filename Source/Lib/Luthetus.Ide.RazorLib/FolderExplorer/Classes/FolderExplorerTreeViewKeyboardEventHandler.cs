@@ -314,11 +314,11 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         await treeViewModel.LoadChildrenAsync();
 
         _treeViewService.ReRenderNode(
-            SolutionExplorerDisplay.TreeViewSolutionExplorerStateKey,
+            FolderExplorerDisplay.TreeViewFolderExplorerContentStateKey,
             treeViewModel);
 
         _treeViewService.MoveUp(
-            SolutionExplorerDisplay.TreeViewSolutionExplorerStateKey,
+            FolderExplorerDisplay.TreeViewFolderExplorerContentStateKey,
             false);
     }
 }
