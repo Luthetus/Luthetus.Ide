@@ -132,11 +132,6 @@ public class TreeViewISyntax : TreeViewWithType<ISyntax>
         TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
     }
 
-    private string FormatIdentifierToBeMarkupString(IdentifierToken identifierToken)
-    {
-        return $"<span class=\"luth_te_type\">{identifierToken.TextSpan.GetText()}</span>";
-    }
-
     public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
     {
         return;

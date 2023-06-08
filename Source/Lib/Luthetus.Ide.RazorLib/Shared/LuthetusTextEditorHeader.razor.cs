@@ -25,18 +25,6 @@ public partial class LuthetusTextEditorHeader : FluxorComponent
 {
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
-    [Inject]
-    private IState<AccountState> AccountStateWrap { get; set; } = null!;
-    [Inject]
-    private ITextEditorService TextEditorService { get; set; } = null!;
-    [Inject]
-    private ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; set; } = null!;
-    [Inject]
-    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
-    [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-    [Inject]
-    private IBackgroundTaskQueue BackgroundTaskQueue { get; set; } = null!;
 
 
     [Parameter, EditorRequired]
@@ -48,7 +36,6 @@ public partial class LuthetusTextEditorHeader : FluxorComponent
 
     private DropdownKey _dropdownKeyAccount = DropdownKey.NewDropdownKey();
     private MenuRecord _menuAccount = new(ImmutableArray<MenuOptionRecord>.Empty);
-    private ButtonDisplay? _buttonDisplayComponentAccount;
 
     protected override Task OnInitializedAsync()
     {
