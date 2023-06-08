@@ -6,7 +6,6 @@ using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
-using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.Menu;
 using Microsoft.AspNetCore.Components;
 
