@@ -55,23 +55,19 @@ public partial class ParserTests
         {
             var globalScope = parser.Binder.BoundScopes.First();
 
-            var personModel = globalScope.ClassDefinitionMap.Single();
+            Assert.True(globalScope.ClassDefinitionMap.ContainsKey(classIdentifier));
 
-            Assert.Equal(classIdentifier, personModel.Key);
-
-            var boundClassDefinitionNode =
-                (BoundClassDefinitionNode)compilationUnit.Children.Single();
+            var boundClassDefinitionNode = (BoundClassDefinitionNode)compilationUnit.Children.Single();
 
             if (boundClassDefinitionNode.ClassBodyCompilationUnit is null)
                 throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
+            
+            Assert.Equal(classIdentifier, boundClassDefinitionNode.Identifier.TextSpan.GetText());
 
-            var boundFunctionDefinitionNode =
-                (BoundFunctionDefinitionNode)boundClassDefinitionNode
-                    .ClassBodyCompilationUnit.Children.Single();
+            var boundFunctionDefinitionNode = (BoundFunctionDefinitionNode)boundClassDefinitionNode.ClassBodyCompilationUnit.Children.Single();
 
-            Assert.Equal(
-                SyntaxKind.BoundFunctionDefinitionNode,
-                boundFunctionDefinitionNode.SyntaxKind);
+            Assert.Equal(SyntaxKind.BoundFunctionDefinitionNode, boundFunctionDefinitionNode.SyntaxKind);
+            Assert.Equal(methodIdentifier, boundFunctionDefinitionNode.IdentifierToken.TextSpan.GetText());
         }
     }
 
