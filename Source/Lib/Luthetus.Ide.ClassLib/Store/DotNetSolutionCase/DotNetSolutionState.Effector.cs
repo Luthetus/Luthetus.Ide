@@ -133,13 +133,13 @@ public partial record DotNetSolutionState
         }
         
         [EffectMethod(typeof(ParseDotNetSolutionAction))]
-        public async Task HandleParseDotNetSolutionAction(
+        public Task HandleParseDotNetSolutionAction(
             IDispatcher dispatcher)
         {
             var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
 
             if (dotNetSolutionState.DotNetSolution is null)
-                return;
+                return Task.CompletedTask;
 
             var dotNetSolutionSemanticContext = new DotNetSolutionSemanticContext(
                 DotNetSolutionKey.NewSolutionKey(),
@@ -168,12 +168,14 @@ public partial record DotNetSolutionState
                 },
                 "Parse Task Name",
                 "Parse Task Description",
-                true,
+                false,
                 _ => Task.CompletedTask,
                 dispatcher,
                 CancellationToken.None);
 
             _parserTaskQueue.QueueParserWorkItem(parserTask);
+
+            return Task.CompletedTask;
         }
     }
 }
