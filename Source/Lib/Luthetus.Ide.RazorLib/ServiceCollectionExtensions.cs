@@ -62,19 +62,6 @@ public static class ServiceCollectionExtensions
                     InitializeFluxor = shouldInitializeFluxor
                 };
 
-            if (isNativeApplication)
-            {
-                var luthetusCommonFactories = luthetusCommonOptions.LuthetusCommonFactories with
-                {
-                    ClipboardServiceFactory = _ => new InMemoryClipboardService(true),
-                };
-
-                luthetusCommonOptions = luthetusCommonOptions with
-                {
-                    LuthetusCommonFactories = luthetusCommonFactories
-                };
-            }
-
             return inTextEditorOptions with
             {
                 InitializeFluxor = shouldInitializeFluxor,
