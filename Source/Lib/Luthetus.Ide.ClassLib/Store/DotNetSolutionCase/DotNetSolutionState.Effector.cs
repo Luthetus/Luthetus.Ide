@@ -148,31 +148,31 @@ public partial record DotNetSolutionState
                 new SemanticContextState.SetDotNetSolutionSemanticContextAction(
                     dotNetSolutionSemanticContext));
 
-            var parserTask = new ParserTask(
-                async cancellationToken =>
-                {
-                    dispatcher.Dispatch(new WithAction(inDotNetSolutionState =>
-                        inDotNetSolutionState with
-                        {
-                            IsExecutingAsyncTaskLinks = inDotNetSolutionState.IsExecutingAsyncTaskLinks + 1
-                        }));
+            //var parserTask = new ParserTask(
+            //    async cancellationToken =>
+            //    {
+            //        dispatcher.Dispatch(new WithAction(inDotNetSolutionState =>
+            //            inDotNetSolutionState with
+            //            {
+            //                IsExecutingAsyncTaskLinks = inDotNetSolutionState.IsExecutingAsyncTaskLinks + 1
+            //            }));
 
-                    await Task.Delay(5_000);
+            //        await Task.Delay(5_000);
 
-                    dispatcher.Dispatch(new WithAction(inDotNetSolutionState =>
-                        inDotNetSolutionState with
-                        {
-                            IsExecutingAsyncTaskLinks = inDotNetSolutionState.IsExecutingAsyncTaskLinks - 1
-                        }));
-                },
-                "Parse Task Name",
-                "Parse Task Description",
-                false,
-                _ => Task.CompletedTask,
-                dispatcher,
-                CancellationToken.None);
+            //        dispatcher.Dispatch(new WithAction(inDotNetSolutionState =>
+            //            inDotNetSolutionState with
+            //            {
+            //                IsExecutingAsyncTaskLinks = inDotNetSolutionState.IsExecutingAsyncTaskLinks - 1
+            //            }));
+            //    },
+            //    "Parse Task Name",
+            //    "Parse Task Description",
+            //    false,
+            //    _ => Task.CompletedTask,
+            //    dispatcher,
+            //    CancellationToken.None);
 
-            _parserTaskQueue.QueueParserWorkItem(parserTask);
+            //_parserTaskQueue.QueueParserWorkItem(parserTask);
 
             return Task.CompletedTask;
         }
