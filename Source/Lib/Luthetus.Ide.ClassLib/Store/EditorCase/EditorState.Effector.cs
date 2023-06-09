@@ -168,6 +168,7 @@ public partial class EditorState
                     decorationMapper,
                     semanticModel,
                     null,
+                    new(),
                     TextEditorModelKey.NewTextEditorModelKey()
                 );
 
@@ -327,33 +328,22 @@ public partial class EditorState
             {
                 var innerContent = innerTextEditor.GetAllText();
 
+                var cancellationToken = textEditorModel.TextEditorSaveFileHelper.GetCancellationToken();
+
                 var saveFileAction = new FileSystemState.SaveFileAction(
                     absoluteFilePath,
                     innerContent,
-                    () =>
+                    writtenDateTime =>
                     {
-                        var backgroundTask = new BackgroundTask(
-                            async cancellationToken =>
-                            {
-                                var fileLastWriteTime = await _fileSystemProvider.File
-                                    .GetLastWriteTimeAsync(
-                                        inputFileAbsoluteFilePathString,
-                                        cancellationToken);
-
-                                _textEditorService.Model.SetResourceData(
-                                    textEditorModel.ModelKey,
-                                    textEditorModel.ResourceUri,
-                                    fileLastWriteTime);
-                            },
-                            "HandleOnSaveRequestedTask",
-                            "TODO: Describe this task",
-                            false,
-                            _ => Task.CompletedTask,
-                            dispatcher,
-                            CancellationToken.None);
-
-                        _commonBackgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
-                    });
+                        if (writtenDateTime is not null)
+                        {
+                            _textEditorService.Model.SetResourceData(
+                                innerTextEditor.ModelKey,
+                                innerTextEditor.ResourceUri,
+                                writtenDateTime.Value);
+                        }
+                    },
+                    cancellationToken);
 
                 dispatcher.Dispatch(saveFileAction);
             }

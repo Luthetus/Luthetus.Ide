@@ -7,5 +7,6 @@ public partial class FileSystemState
     public record SaveFileAction(
         IAbsoluteFilePath AbsoluteFilePath,
         string Content,
-        Action OnAfterSaveCompleted);
+        Action<DateTime?> OnAfterSaveCompletedWrittenDateTimeAction,
+        CancellationToken CancellationToken = default);
 }
