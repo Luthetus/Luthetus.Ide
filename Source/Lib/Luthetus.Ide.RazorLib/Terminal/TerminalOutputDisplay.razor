@@ -7,7 +7,7 @@
 <div class="luth_ide_terminal-output-display">
     <div class="luth_ide_terminal-output-history-display">
         @{
-            string outputString = string.Empty;
+            string outputString = TerminalSessionWasModifiedStateWrap.Value.EmptyTextHack;
 
             if (terminalSession is not null)
             {

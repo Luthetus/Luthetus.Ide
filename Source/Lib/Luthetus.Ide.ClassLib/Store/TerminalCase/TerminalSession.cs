@@ -219,12 +219,16 @@ public class TerminalSession
         {
             stringBuilder.Clear();
         }
+
+        DispatchNewStateKey();
     }
 
     public void KillProcess()
     {
         _commandCancellationTokenSource.Cancel();
         _commandCancellationTokenSource = new();
+
+        DispatchNewStateKey();
     }
 
     private void DispatchNewStateKey()
