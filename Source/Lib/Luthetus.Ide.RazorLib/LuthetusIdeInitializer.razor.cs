@@ -9,9 +9,7 @@ using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Store.Find;
 using Fluxor;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
-using Luthetus.Ide.RazorLib.Adhoc;
 using Luthetus.Ide.RazorLib.FolderExplorer;
-using Luthetus.Ide.RazorLib.Git;
 using Luthetus.Ide.RazorLib.Notification;
 using Luthetus.Ide.RazorLib.NuGet;
 using Luthetus.Ide.RazorLib.SolutionExplorer;
@@ -98,18 +96,6 @@ public partial class LuthetusIdeInitializer : ComponentBase
             leftPanel.PanelRecordKey,
             solutionExplorerPanelTab));
 
-        var gitChangesPanelTab = new PanelTab(
-            PanelTabKey.NewPanelTabKey(),
-            leftPanel.ElementDimensions,
-            new(),
-            typeof(GitChangesDisplay),
-            typeof(IconFolder),
-            "Git Changes");
-
-        Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
-            leftPanel.PanelRecordKey,
-            gitChangesPanelTab));
-
         var folderExplorerPanelTab = new PanelTab(
             PanelTabKey.NewPanelTabKey(),
             leftPanel.ElementDimensions,
@@ -142,47 +128,11 @@ public partial class LuthetusIdeInitializer : ComponentBase
         Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
             rightPanel.PanelRecordKey,
             notificationsPanelTab));
-
-        var adhocPanelTab = new PanelTab(
-            PanelTabKey.NewPanelTabKey(),
-            rightPanel.ElementDimensions,
-            new(),
-            typeof(AdhocDisplay),
-            typeof(IconFolder),
-            "Adhoc");
-
-        Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
-            rightPanel.PanelRecordKey,
-            adhocPanelTab));
     }
 
     private void InitializeBottomPanelTabs()
     {
         var bottomPanel = PanelFacts.GetBottomPanelRecord(PanelsCollectionWrap.Value);
-
-        var gitPanelTab = new PanelTab(
-            PanelTabKey.NewPanelTabKey(),
-            bottomPanel.ElementDimensions,
-            new(),
-            typeof(TerminalDisplay),
-            typeof(IconFolder),
-            "Git");
-
-        Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
-            bottomPanel.PanelRecordKey,
-            gitPanelTab));
-
-        var buildPanelTab = new PanelTab(
-            PanelTabKey.NewPanelTabKey(),
-            bottomPanel.ElementDimensions,
-            new(),
-            typeof(TerminalDisplay),
-            typeof(IconFolder),
-            "Build");
-
-        Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
-            bottomPanel.PanelRecordKey,
-            buildPanelTab));
 
         var terminalPanelTab = new PanelTab(
             PanelTabKey.NewPanelTabKey(),
@@ -196,10 +146,6 @@ public partial class LuthetusIdeInitializer : ComponentBase
             bottomPanel.PanelRecordKey,
             terminalPanelTab));
 
-        Dispatcher.Dispatch(new PanelsCollection.SetActivePanelTabAction(
-            bottomPanel.PanelRecordKey,
-            terminalPanelTab.PanelTabKey));
-
         var nuGetPanelTab = new PanelTab(
             PanelTabKey.NewPanelTabKey(),
             bottomPanel.ElementDimensions,
@@ -212,28 +158,8 @@ public partial class LuthetusIdeInitializer : ComponentBase
             bottomPanel.PanelRecordKey,
             nuGetPanelTab));
 
-        var unitTestsPanelTab = new PanelTab(
-            PanelTabKey.NewPanelTabKey(),
-            bottomPanel.ElementDimensions,
-            new(),
-            typeof(TerminalDisplay),
-            typeof(IconFolder),
-            "Unit Tests");
-
-        Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
+        Dispatcher.Dispatch(new PanelsCollection.SetActivePanelTabAction(
             bottomPanel.PanelRecordKey,
-            unitTestsPanelTab));
-
-        var problemsPanelTab = new PanelTab(
-            PanelTabKey.NewPanelTabKey(),
-            bottomPanel.ElementDimensions,
-            new(),
-            typeof(TerminalDisplay),
-            typeof(IconFolder),
-            "Problems");
-
-        Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
-            bottomPanel.PanelRecordKey,
-            problemsPanelTab));
+            terminalPanelTab.PanelTabKey));
     }
 }

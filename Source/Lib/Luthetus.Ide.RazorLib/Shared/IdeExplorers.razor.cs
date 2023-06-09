@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.Shared;
 
-public partial class LuthetusTextEditorExplorers : ComponentBase
+public partial class IdeExplorers : ComponentBase
 {
     [Parameter, EditorRequired]
     public ElementDimensions ExplorersElementDimensions { get; set; } = null!;

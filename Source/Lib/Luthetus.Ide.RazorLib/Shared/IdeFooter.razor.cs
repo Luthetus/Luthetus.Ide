@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.Shared;
 
-public partial class LuthetusTextEditorFooter : FluxorComponent
+public partial class IdeFooter : FluxorComponent
 {
     [Inject]
     private IState<FooterState> FooterStateWrap { get; set; } = null!;

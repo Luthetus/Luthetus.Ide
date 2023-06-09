@@ -11,7 +11,6 @@ using System.Collections.Immutable;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.SemanticContextCase.Implementations;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.SemanticContextCase.Keys;
 using Luthetus.Ide.ClassLib.Store.SemanticContextCase;
-using Luthetus.Common.RazorLib.BackgroundTaskCase;
 using Luthetus.Ide.ClassLib.CompilerServices.ParserTaskCase;
 
 namespace Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;

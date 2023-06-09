@@ -16,11 +16,10 @@ using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 
 namespace Luthetus.Ide.RazorLib.Shared;
 
-public partial class LuthetusTextEditorHeader : FluxorComponent
+public partial class IdeHeader : FluxorComponent
 {
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
-
 
     [Parameter, EditorRequired]
     public Type LoginDisplayComponentType { get; set; } = typeof(LoginFormDisplay);

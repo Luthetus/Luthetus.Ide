@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.Shared;
 
-public partial class LuthetusTextEditorBody : ComponentBase
+public partial class IdeBody : ComponentBase
 {
     [Inject]
     private IState<PanelsCollection> PanelsCollectionWrap { get; set; } = null!;
