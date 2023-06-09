@@ -4,28 +4,29 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.Notification;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 
-namespace Luthetus.Ide.ClassLib.CompilerServices.ParserTaskCase;
+namespace Luthetus.Ide.ClassLib.FileSystem.HostedServiceCase;
 
-public class ParserHostedService : BackgroundService
+public class FileSystemQueuedHostedService : BackgroundService
 {
     private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
     private readonly ILogger _logger;
 
-    public ParserHostedService(
-        IParserTaskQueue taskQueue,
-        IParserTaskMonitor taskMonitor,
+    public FileSystemQueuedHostedService(
+        IFileSystemBackgroundTaskQueue taskQueue,
+        IFileSystemBackgroundTaskMonitor taskMonitor,
         ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
         ILoggerFactory loggerFactory)
     {
         _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
         TaskQueue = taskQueue;
         TaskMonitor = taskMonitor;
-        _logger = loggerFactory.CreateLogger<ParserHostedService>();
+        _logger = loggerFactory.CreateLogger<FileSystemQueuedHostedService>();
     }
 
-    public IParserTaskQueue TaskQueue { get; }
-    public IParserTaskMonitor TaskMonitor { get; }
+    public IBackgroundTaskQueue TaskQueue { get; }
+    public IBackgroundTaskMonitor TaskMonitor { get; }
 
     protected async override Task ExecuteAsync(
         CancellationToken cancellationToken)
@@ -41,7 +42,7 @@ public class ParserHostedService : BackgroundService
             {
                 try
                 {
-                    TaskMonitor.SetExecutingParserTask(backgroundTask);
+                    TaskMonitor.SetExecutingBackgroundTask(backgroundTask);
 
                     var task = backgroundTask.InvokeWorkItem(cancellationToken);
                 }
@@ -80,7 +81,7 @@ public class ParserHostedService : BackgroundService
                 }
                 finally
                 {
-                    TaskMonitor.SetExecutingParserTask(null);
+                    TaskMonitor.SetExecutingBackgroundTask(null);
                 }
             }
         }

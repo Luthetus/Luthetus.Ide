@@ -21,13 +21,13 @@
          
          &nbsp;
          
-         @if (BackgroundTaskMonitor.ExecutingBackgroundTask is null)
+         @if (CommonBackgroundTaskMonitor.ExecutingBackgroundTask is null)
          {
              @: null
          }
          else
          {
-             @BackgroundTaskMonitor.ExecutingBackgroundTask.Name
+             @CommonBackgroundTaskMonitor.ExecutingBackgroundTask.Name
          }
      </div>
 </div>

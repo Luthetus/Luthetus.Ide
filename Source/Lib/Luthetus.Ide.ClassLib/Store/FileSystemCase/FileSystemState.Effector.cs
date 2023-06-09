@@ -1,11 +1,12 @@
 ﻿using System.Collections.Concurrent;
-using Luthetus.Common.RazorLib.BackgroundTaskCase;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.Notification;
 using Luthetus.Common.RazorLib.Store.NotificationCase;
 using Fluxor;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 
 namespace Luthetus.Ide.ClassLib.Store.FileSystemCase;
 
@@ -15,7 +16,7 @@ public partial class FileSystemState
     {
         private readonly IFileSystemProvider _fileSystemProvider;
         private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
-        private readonly IBackgroundTaskQueue _backgroundTaskQueue;
+        private readonly ICommonBackgroundTaskQueue _commonBackgroundTaskQueue;
 
         /// <summary>
         /// "string: absoluteFilePath"
@@ -30,11 +31,11 @@ public partial class FileSystemState
         public Effector(
             IFileSystemProvider fileSystemProvider,
             ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
-            IBackgroundTaskQueue backgroundTaskQueue)
+            ICommonBackgroundTaskQueue commonBackgroundTaskQueue)
         {
             _fileSystemProvider = fileSystemProvider;
             _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
-            _backgroundTaskQueue = backgroundTaskQueue;
+            _commonBackgroundTaskQueue = commonBackgroundTaskQueue;
         }
         
         [EffectMethod]
@@ -63,7 +64,7 @@ public partial class FileSystemState
                     dispatcher,
                     CancellationToken.None);
 
-                _backgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
+                _commonBackgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
             }
 
             // Produce write task and construct consumer if necessary

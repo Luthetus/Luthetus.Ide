@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using Luthetus.Common.RazorLib.BackgroundTaskCase;
 using Luthetus.Common.RazorLib.Dimensions;
 using Luthetus.Common.RazorLib.Resize;
 using Luthetus.Common.RazorLib.TreeView;
@@ -14,6 +13,7 @@ using Luthetus.Ide.RazorLib.InputFile.InternalComponents;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
 
 namespace Luthetus.Ide.RazorLib.InputFile;
 
@@ -32,7 +32,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
-    private IBackgroundTaskQueue BackgroundTaskQueue { get; set; } = null!;
+    private ICommonBackgroundTaskQueue CommonBackgroundTaskQueue { get; set; } = null!;
 
     /// <summary>
     /// Receives the <see cref="_selectedAbsoluteFilePath"/> as
@@ -120,7 +120,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
                 }
             },
             () => _searchMatchTuples,
-            BackgroundTaskQueue);
+            CommonBackgroundTaskQueue);
 
         InitializeElementDimensions();
 

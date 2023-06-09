@@ -2,41 +2,42 @@ using Luthetus.Common.RazorLib.Store.NotificationCase;
 using Luthetus.Common.RazorLib.Notification;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 
-namespace Luthetus.Ide.ClassLib.CompilerServices.ParserTaskCase;
+namespace Luthetus.Ide.ClassLib.CompilerServices.HostedServiceCase;
 
-public class ParserTaskMonitor : IParserTaskMonitor
+public class CompilerServiceBackgroundTaskMonitor : ICompilerServiceBackgroundTaskMonitor
 {
     private readonly ILuthetusIdeComponentRenderers _luthetusIdeComponentRenderers;
 
-    public ParserTaskMonitor(
+    public CompilerServiceBackgroundTaskMonitor(
         ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers)
     {
         _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
     }
 
-    public IParserTask? ExecutingParserTask { get; private set; }
+    public IBackgroundTask? ExecutingBackgroundTask { get; private set; }
 
-    public event Action? ExecutingParserTaskChanged;
+    public event Action? ExecutingBackgroundTaskChanged;
 
-    public void SetExecutingParserTask(IParserTask? backgroundTask)
+    public void SetExecutingBackgroundTask(IBackgroundTask? backgroundTask)
     {
-        ExecutingParserTask = backgroundTask;
-        ExecutingParserTaskChanged?.Invoke();
+        ExecutingBackgroundTask = backgroundTask;
+        ExecutingBackgroundTaskChanged?.Invoke();
 
         if (backgroundTask is not null &&
             backgroundTask.ShouldNotifyWhenStartingWorkItem &&
             backgroundTask.Dispatcher is not null &&
-            _luthetusIdeComponentRenderers.ParserTaskDisplayRendererType is not null)
+            _luthetusIdeComponentRenderers.CompilerServiceBackgroundTaskDisplayRendererType is not null)
         {
             var notificationRecord = new NotificationRecord(
                 NotificationKey.NewNotificationKey(),
                 $"Starting: {backgroundTask.Name}",
-                _luthetusIdeComponentRenderers.ParserTaskDisplayRendererType,
+                _luthetusIdeComponentRenderers.CompilerServiceBackgroundTaskDisplayRendererType,
                 new Dictionary<string, object?>
                 {
                     {
-                        nameof(IParserTaskDisplayRendererType.ParserTask),
+                        nameof(ICompilerServiceBackgroundTaskDisplayRendererType.BackgroundTask),
                         backgroundTask
                     }
                 },

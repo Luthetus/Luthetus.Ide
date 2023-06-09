@@ -11,7 +11,7 @@ using System.Collections.Immutable;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.SemanticContextCase.Implementations;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.SemanticContextCase.Keys;
 using Luthetus.Ide.ClassLib.Store.SemanticContextCase;
-using Luthetus.Ide.ClassLib.CompilerServices.ParserTaskCase;
+using Luthetus.Ide.ClassLib.CompilerServices.HostedServiceCase;
 
 namespace Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 
@@ -24,7 +24,7 @@ public partial record DotNetSolutionState
         private readonly ILuthetusIdeComponentRenderers _luthetusIdeComponentRenderers;
         private readonly ITreeViewService _treeViewService;
         private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
-        private readonly IParserTaskQueue _parserTaskQueue;
+        private readonly ICompilerServiceBackgroundTaskQueue _compilerServiceBackgroundTaskQueue;
 
         public Effector(
             IFileSystemProvider fileSystemProvider,
@@ -32,14 +32,14 @@ public partial record DotNetSolutionState
             ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
             ITreeViewService treeViewService,
             IState<DotNetSolutionState> dotNetSolutionStateWrap,
-            IParserTaskQueue parserTaskQueue)
+            ICompilerServiceBackgroundTaskQueue compilerServiceBackgroundTaskQueue)
         {
             _fileSystemProvider = fileSystemProvider;
             _environmentProvider = environmentProvider;
             _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
             _treeViewService = treeViewService;
             _dotNetSolutionStateWrap = dotNetSolutionStateWrap;
-            _parserTaskQueue = parserTaskQueue;
+            _compilerServiceBackgroundTaskQueue = compilerServiceBackgroundTaskQueue;
         }
 
         [EffectMethod]

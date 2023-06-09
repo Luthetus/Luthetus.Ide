@@ -1,12 +1,13 @@
 ﻿using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
-using Luthetus.Common.RazorLib.BackgroundTaskCase;
 using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 using Luthetus.Ide.ClassLib.Store.NugetPackageManagerCase;
 using Luthetus.Ide.ClassLib.Nuget;
 using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
 using Luthetus.Ide.ClassLib.DotNet;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 
 namespace Luthetus.Ide.RazorLib.NuGet;
 
@@ -21,7 +22,7 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
     [Inject]
     private INugetPackageManagerProvider NugetPackageManagerProvider { get; set; } = null!;
     [Inject]
-    private IBackgroundTaskQueue BackgroundTaskQueue { get; set; } = null!;
+    private ICommonBackgroundTaskQueue CommonBackgroundTaskQueue { get; set; } = null!;
 
     private bool _performingNugetQuery;
     private Exception? _exceptionFromNugetQuery;
@@ -123,7 +124,7 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
                 Dispatcher,
                 CancellationToken.None);
 
-            BackgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
+            CommonBackgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
         }
         catch (Exception e)
         {

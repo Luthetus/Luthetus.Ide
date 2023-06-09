@@ -1,15 +1,16 @@
-﻿using Luthetus.Common.RazorLib.BackgroundTaskCase;
-using Fluxor;
+﻿using Fluxor;
 using Microsoft.AspNetCore.Components;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 
 namespace Luthetus.Ide.RazorLib.Adhoc;
 
 public partial class AdhocDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IBackgroundTaskQueue BackgroundTaskQueue { get; set; } = null!;
+    private ICommonBackgroundTaskQueue CommonBackgroundTaskQueue { get; set; } = null!;
     [Inject]
-    private IBackgroundTaskMonitor BackgroundTaskMonitor { get; set; } = null!;
+    private ICommonBackgroundTaskMonitor CommonBackgroundTaskMonitor { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -17,7 +18,7 @@ public partial class AdhocDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        BackgroundTaskMonitor.ExecutingBackgroundTaskChanged += BackgroundTaskMonitorOnExecutingBackgroundTaskChanged;
+        CommonBackgroundTaskMonitor.ExecutingBackgroundTaskChanged += BackgroundTaskMonitorOnExecutingBackgroundTaskChanged;
 
         base.OnInitialized();
     }
@@ -43,7 +44,7 @@ public partial class AdhocDisplay : ComponentBase, IDisposable
             BackgroundTaskKey.NewBackgroundTaskKey(),
             token);
 
-        BackgroundTaskQueue.QueueBackgroundWorkItem(
+        CommonBackgroundTaskQueue.QueueBackgroundWorkItem(
             backgroundTask);
     }
 
@@ -60,7 +61,7 @@ public partial class AdhocDisplay : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        BackgroundTaskMonitor.ExecutingBackgroundTaskChanged -= BackgroundTaskMonitorOnExecutingBackgroundTaskChanged;
+        CommonBackgroundTaskMonitor.ExecutingBackgroundTaskChanged -= BackgroundTaskMonitorOnExecutingBackgroundTaskChanged;
 
         _cancellationTokenSource.Cancel();
     }

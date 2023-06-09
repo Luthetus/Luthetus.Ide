@@ -1,5 +1,4 @@
 ﻿using System.Collections.Immutable;
-using Luthetus.Common.RazorLib.BackgroundTaskCase;
 using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.Notification;
 using Luthetus.Common.RazorLib.Store.NotificationCase;
@@ -18,6 +17,8 @@ using Luthetus.TextEditor.RazorLib.Lexing;
 using Luthetus.TextEditor.RazorLib.Semantics;
 using Luthetus.Ide.ClassLib.Store.SemanticContextCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.BinderCase;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 
 namespace Luthetus.Ide.ClassLib.Store.EditorCase;
 
@@ -32,20 +33,20 @@ public partial class EditorState
         private readonly ITextEditorService _textEditorService;
         private readonly ILuthetusIdeComponentRenderers _luthetusIdeComponentRenderers;
         private readonly IFileSystemProvider _fileSystemProvider;
-        private readonly IBackgroundTaskQueue _backgroundTaskQueue;
+        private readonly ICommonBackgroundTaskQueue _commonBackgroundTaskQueue;
         private readonly IState<SemanticContextState> _semanticContextStateWrap;
 
         public Effector(
             ITextEditorService textEditorService,
             ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
             IFileSystemProvider fileSystemProvider,
-            IBackgroundTaskQueue backgroundTaskQueue,
+            ICommonBackgroundTaskQueue commonBackgroundTaskQueue,
             IState<SemanticContextState> semanticContextStateWrap)
         {
             _textEditorService = textEditorService;
             _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
             _fileSystemProvider = fileSystemProvider;
-            _backgroundTaskQueue = backgroundTaskQueue;
+            _commonBackgroundTaskQueue = commonBackgroundTaskQueue;
             _semanticContextStateWrap = semanticContextStateWrap;
         }
 
@@ -263,7 +264,7 @@ public partial class EditorState
                                 dispatcher,
                                 CancellationToken.None);
 
-                            _backgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
+                            _commonBackgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
                         })
                     },
                     {
@@ -351,7 +352,7 @@ public partial class EditorState
                             dispatcher,
                             CancellationToken.None);
 
-                        _backgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
+                        _commonBackgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
                     });
 
                 dispatcher.Dispatch(saveFileAction);

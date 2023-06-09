@@ -1,5 +1,4 @@
-﻿using Luthetus.Common.RazorLib.BackgroundTaskCase;
-using Luthetus.Common.RazorLib.ComponentRenderers;
+﻿using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.Icons.Codicon;
 using Luthetus.Common.RazorLib.Store.ThemeCase;
 using Luthetus.Ide.ClassLib.Panel;
@@ -15,6 +14,7 @@ using Luthetus.Ide.RazorLib.NuGet;
 using Luthetus.Ide.RazorLib.SolutionExplorer;
 using Luthetus.Ide.RazorLib.Terminal;
 using Microsoft.AspNetCore.Components;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
 
 namespace Luthetus.Ide.RazorLib;
 
@@ -29,7 +29,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
     [Inject]
     private LuthetusTextEditorOptions LuthetusTextEditorOptions { get; set; } = null!;
     [Inject]
-    private IBackgroundTaskQueue BackgroundTaskQueue { get; set; } = null!;
+    private ICommonBackgroundTaskQueue CommonBackgroundTaskQueue { get; set; } = null!;
     [Inject]
     private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
 
@@ -58,7 +58,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
                 null,
                 Dispatcher,
                 FileSystemProvider,
-                BackgroundTaskQueue,
+                CommonBackgroundTaskQueue,
                 LuthetusCommonComponentRenderers)
             {
                 TerminalSessionKey = terminalSessionKey
