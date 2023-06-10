@@ -8,10 +8,14 @@ using Luthetus.Ide.ClassLib.Store.PanelCase;
 using Luthetus.Ide.ClassLib.Dimensions;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
+using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
+using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
+using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
+using Luthetus.Common.RazorLib.StateHasChangedBoundaryCase;
 
 namespace Luthetus.Ide.RazorLib.Shared;
 
-public partial class MainLayout : LayoutComponentBase, IDisposable
+public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 {
     [Inject]
     private IState<DragState> DragStateWrap { get; set; } = null!;
@@ -23,8 +27,10 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
-
-    private string _message = string.Empty;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 
     private string UnselectableClassCss => DragStateWrap.Value.ShouldDisplay
         ? "balc_unselectable"
@@ -33,7 +39,8 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
     private bool _previousDragStateWrapShouldDisplay;
 
     private ElementDimensions _bodyElementDimensions = new();
-    private ElementDimensions _footerElementDimensions = new();
+
+    private StateHasChangedBoundary _bodyAndFooterStateHasChangedBoundaryComponent = null!;
 
     protected override void OnInitialized()
     {
@@ -74,8 +81,15 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
             await TextEditorService.Options.SetFromLocalStorageAsync();
             await AppOptionsService.SetFromLocalStorageAsync();
 
-            if (System.IO.File.Exists("/home/hunter/Repos/Demos/TestApp/TestApp.sln"))
+            if (System.IO.File.Exists("C:\\Users\\hunte\\Repos\\Demos\\BlazorCrudApp\\BlazorCrudApp.sln"))
             {
+                var absoluteFilePath = new AbsoluteFilePath(
+                    "C:\\Users\\hunte\\Repos\\Demos\\BlazorCrudApp\\BlazorCrudApp.sln",
+                    false,
+                    EnvironmentProvider);
+
+                Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionAction(
+                    absoluteFilePath));
             }
         }
 
@@ -83,11 +97,6 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
     }
 
     private async void AppOptionsStateWrapOnStateChanged(object? sender, EventArgs e)
-    {
-        await InvokeAsync(StateHasChanged);
-    }
-
-    private async void FontStateWrapOnStateChanged(object? sender, EventArgs e)
     {
         await InvokeAsync(StateHasChanged);
     }

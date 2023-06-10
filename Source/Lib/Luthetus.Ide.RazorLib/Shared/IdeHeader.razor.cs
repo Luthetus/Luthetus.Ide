@@ -21,20 +21,13 @@ public partial class IdeHeader : FluxorComponent
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
-    [Parameter, EditorRequired]
-    public Type LoginDisplayComponentType { get; set; } = typeof(LoginFormDisplay);
-
     private DropdownKey _dropdownKeyFile = DropdownKey.NewDropdownKey();
     private MenuRecord _menuFile = new(ImmutableArray<MenuOptionRecord>.Empty);
     private ButtonDisplay? _buttonDisplayComponentFile;
 
-    private DropdownKey _dropdownKeyAccount = DropdownKey.NewDropdownKey();
-    private MenuRecord _menuAccount = new(ImmutableArray<MenuOptionRecord>.Empty);
-
     protected override Task OnInitializedAsync()
     {
         InitializeMenuFile();
-        InitializeMenuAccount();
 
         return base.OnInitializedAsync();
     }
@@ -100,23 +93,6 @@ public partial class IdeHeader : FluxorComponent
         }
 
         _menuFile = new MenuRecord(menuOptions.ToImmutableArray());
-    }
-
-    private void InitializeMenuAccount()
-    {
-        var menuOptions = new List<MenuOptionRecord>();
-
-        // Menu Option Login
-        {
-            var menuOptionLogin = new MenuOptionRecord(
-                "Login",
-                MenuOptionKind.Other,
-                WidgetRendererType: typeof(LoginFormDisplay));
-
-            menuOptions.Add(menuOptionLogin);
-        }
-
-        _menuAccount = new MenuRecord(menuOptions.ToImmutableArray());
     }
 
     private void AddActiveDropdownKey(DropdownKey dropdownKey)
