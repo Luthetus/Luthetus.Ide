@@ -76,7 +76,7 @@ public class SemanticModelC : ISemanticModel
         _semanticResult = _semanticResult with 
         {
             SymbolMessageTextSpanTuples = parserSession.Binder.Symbols
-                .Select(x => ($"({x.SyntaxKind.GetType().Name}){x.TextSpan.GetText()}", x.TextSpan))
+                .Select(x => ($"({x.SyntaxKind.GetType().Name}) {x.TextSpan.GetText()}", x.TextSpan))
                 .ToImmutableList()
         };
 

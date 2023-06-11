@@ -161,7 +161,7 @@ public class SemanticModelRazor : ISemanticModel
         localSemanticResult = localSemanticResult with 
         {
             SymbolMessageTextSpanTuples = resultingSymbols
-                .Select(x => ($"({x.GetType().Name}){x.TextSpan.GetText()}", x.TextSpan))
+                .Select(x => ($"({x.GetType().Name}) {x.TextSpan.GetText()}", x.TextSpan))
                 .ToImmutableList()
         };
 
