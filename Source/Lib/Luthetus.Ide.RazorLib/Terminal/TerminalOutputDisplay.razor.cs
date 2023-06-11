@@ -24,6 +24,8 @@ public partial class TerminalOutputDisplay : FluxorComponent
     [Inject]
     private IState<TerminalSessionsState> TerminalSessionsStateWrap { get; set; } = null!;
     [Inject]
+    private IState<TerminalSessionWasModifiedState> TerminalSessionWasModifiedStateWrap { get; set; } = null!;
+    [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
 
     /// <summary>
@@ -63,27 +65,33 @@ public partial class TerminalOutputDisplay : FluxorComponent
 
     protected override void OnAfterRender(bool firstRender)
     {
-        var terminalSession = TerminalSessionsStateSelection.Value;
-
-        if (terminalSession is not null)
+        if (firstRender)
         {
-            var textEditorModel = TextEditorService.Model
-                .FindOrDefault(terminalSession.TextEditorModelKey);
-
-            if (textEditorModel is null)
+            if (AllowInput)
             {
-                TextEditorService.Model.RegisterTemplated(
-                    terminalSession.TextEditorModelKey,
-                    WellKnownModelKind.TerminalGeneric,
-                    new ResourceUri(terminalSession.TerminalSessionKey.DisplayName
-                        ?? "__terminal-display-name-fallback__"),
-                    DateTime.UtcNow,
-                    "TERMINAL",
-                    string.Empty);
+                var terminalSession = TerminalSessionsStateSelection.Value;
 
-                TextEditorService.ViewModel.Register(
-                    terminalSession.TextEditorViewModelKey,
-                    terminalSession.TextEditorModelKey);
+                if (terminalSession is not null)
+                {
+                    var textEditorModel = TextEditorService.Model
+                        .FindOrDefault(terminalSession.TextEditorModelKey);
+
+                    if (textEditorModel is null)
+                    {
+                        TextEditorService.Model.RegisterTemplated(
+                            terminalSession.TextEditorModelKey,
+                            WellKnownModelKind.TerminalGeneric,
+                            new ResourceUri(terminalSession.TerminalSessionKey.DisplayName
+                                ?? "__terminal-display-name-fallback__"),
+                            DateTime.UtcNow,
+                            "TERMINAL",
+                            string.Empty);
+
+                        TextEditorService.ViewModel.Register(
+                            terminalSession.TextEditorViewModelKey,
+                            terminalSession.TextEditorModelKey);
+                    }
+                }
             }
         }
 

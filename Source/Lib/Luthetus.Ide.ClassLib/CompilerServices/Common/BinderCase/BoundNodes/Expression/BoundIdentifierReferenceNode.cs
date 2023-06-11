@@ -1,4 +1,5 @@
-﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
+﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statements;
+using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.SyntaxTokens;
 using System.Collections.Immutable;
 
@@ -8,10 +9,10 @@ public sealed record BoundIdentifierReferenceNode : IBoundExpressionNode
 {
     public BoundIdentifierReferenceNode(
         IdentifierToken identifierToken,
-        Type resultType)
+        BoundClassReferenceNode boundClassReferenceNode)
     {
         IdentifierToken = identifierToken;
-        ResultType = resultType;
+        BoundClassReferenceNode = boundClassReferenceNode;
 
         Children = new ISyntax[]
         {
@@ -20,6 +21,7 @@ public sealed record BoundIdentifierReferenceNode : IBoundExpressionNode
     }
 
     public IdentifierToken IdentifierToken { get; init; }
+    public BoundClassReferenceNode? BoundClassReferenceNode { get; init; }
     public Type ResultType { get; init; }
 
     public ImmutableArray<ISyntax> Children { get; init; }

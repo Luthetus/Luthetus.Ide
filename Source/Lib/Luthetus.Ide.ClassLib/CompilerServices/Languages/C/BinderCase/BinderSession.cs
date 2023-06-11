@@ -90,45 +90,55 @@ public class BinderSession
         throw new NotImplementedException();
     }
 
-    public bool TryBindTypeNode(
-        ISyntaxToken token,
-        out BoundTypeNode? boundTypeNode)
+    public bool TryBindClassReferenceNode(
+        ISyntaxToken typeClauseToken,
+        BoundGenericArgumentsNode? boundGenericArgumentsNode,
+        out BoundClassReferenceNode? boundClassReferenceNode)
     {
-        var text = token.TextSpan.GetText();
+        var text = typeClauseToken.TextSpan.GetText();
 
-        if (_currentScope.TypeMap.TryGetValue(text, out var type))
+        if (_currentScope.ClassDefinitionMap.TryGetValue(text, out _))
         {
-            boundTypeNode = new BoundTypeNode(type, token);
+            boundClassReferenceNode = new BoundClassReferenceNode(
+                typeClauseToken,
+                // TODO: Don't pass null here
+                null,
+                boundGenericArgumentsNode);
+
             return true;
         }
 
-        boundTypeNode = null;
+        boundClassReferenceNode = null;
         return false;
     }
 
-    public BoundFunctionDeclarationNode BindFunctionDeclarationNode(
-        BoundTypeNode boundTypeNode,
-        IdentifierToken identifierToken)
+    public BoundFunctionDefinitionNode BindFunctionDefinitionNode(
+        BoundClassReferenceNode boundClassReferenceNode,
+        IdentifierToken identifierToken,
+        BoundFunctionArgumentsNode boundFunctionArguments,
+        BoundGenericArgumentsNode? boundGenericArgumentsNode)
     {
         var text = identifierToken.TextSpan.GetText();
 
-        if (_currentScope.FunctionDeclarationMap.TryGetValue(
+        if (_currentScope.FunctionDefinitionMap.TryGetValue(
             text,
-            out var functionDeclarationNode))
+            out var functionDefinitionNode))
         {
             // TODO: The function was already declared, so report a diagnostic?
             // TODO: The function was already declared, so check that the return types match?
-            return functionDeclarationNode;
+            return functionDefinitionNode;
         }
 
-        var boundFunctionDeclarationNode = new BoundFunctionDeclarationNode(
-            boundTypeNode,
+        var boundFunctionDefinitionNode = new BoundFunctionDefinitionNode(
+            boundClassReferenceNode,
             identifierToken,
+            boundFunctionArguments,
+            boundGenericArgumentsNode,
             null);
 
-        _currentScope.FunctionDeclarationMap.Add(
+        _currentScope.FunctionDefinitionMap.Add(
             text,
-            boundFunctionDeclarationNode);
+            boundFunctionDefinitionNode);
 
         Symbols.Add(
             new FunctionSymbol(identifierToken.TextSpan with
@@ -136,7 +146,7 @@ public class BinderSession
                 DecorationByte = (byte)GenericDecorationKind.Function
             }));
 
-        return boundFunctionDeclarationNode;
+        return boundFunctionDefinitionNode;
     }
 
     /// <summary>TODO: Validate that the returned bound expression node has the same result type as the enclosing scope.</summary>
@@ -153,7 +163,7 @@ public class BinderSession
     }
 
     public BoundVariableDeclarationStatementNode BindVariableDeclarationNode(
-        BoundTypeNode boundTypeNode,
+        BoundClassReferenceNode boundClassReferenceNode,
         IdentifierToken identifierToken)
     {
         var text = identifierToken.TextSpan.GetText();
@@ -168,7 +178,7 @@ public class BinderSession
         }
 
         var boundVariableDeclarationStatementNode = new BoundVariableDeclarationStatementNode(
-            boundTypeNode,
+            boundClassReferenceNode,
             identifierToken,
             false);
 
@@ -212,24 +222,25 @@ public class BinderSession
     }
 
     public BoundFunctionInvocationNode? BindFunctionInvocationNode(
-        IdentifierToken identifierToken)
+        IdentifierToken identifierToken,
+        BoundFunctionParametersNode boundFunctionParametersNode)
     {
         var text = identifierToken.TextSpan.GetText();
 
-        if (TryGetBoundFunctionDeclarationNodeHierarchically(
+        if (TryGetBoundFunctionDefinitionNodeHierarchically(
                 text,
-                out var boundFunctionDeclarationNode) &&
-            boundFunctionDeclarationNode is not null)
+                out var boundFunctionDefinitionNode) &&
+            boundFunctionDefinitionNode is not null)
         {
-            return new(identifierToken);
+            return new(identifierToken, boundFunctionParametersNode, null);
         }
         else
         {
-            _diagnosticBag.ReportUndefindFunction(
+            _diagnosticBag.ReportUndefinedFunction(
                 identifierToken.TextSpan,
                 text);
 
-            return new(identifierToken)
+            return new(identifierToken, boundFunctionParametersNode, null)
             {
                 IsFabricated = true
             };
@@ -246,7 +257,6 @@ public class BinderSession
             textEditorTextSpan.StartingIndexInclusive,
             null,
             textEditorTextSpan.ResourceUri,
-            new(),
             new(),
             new(),
             new());
@@ -271,17 +281,17 @@ public class BinderSession
     }
 
     /// <summary>Search hierarchically through all the scopes, starting at the <see cref="_currentScope"/>.<br/><br/>If a match is found, then set the out parameter to it and return true.<br/><br/>If none of the searched scopes contained a match then set the out parameter to null and return false.</summary>
-    public bool TryGetBoundFunctionDeclarationNodeHierarchically(
+    public bool TryGetBoundFunctionDefinitionNodeHierarchically(
         string text,
-        out BoundFunctionDeclarationNode? boundFunctionDeclarationNode)
+        out BoundFunctionDefinitionNode? boundFunctionDefinitionNode)
     {
         var localScope = _currentScope;
 
         while (localScope is not null)
         {
-            if (localScope.FunctionDeclarationMap.TryGetValue(
+            if (localScope.FunctionDefinitionMap.TryGetValue(
                     text,
-                    out boundFunctionDeclarationNode))
+                    out boundFunctionDefinitionNode))
             {
                 return true;
             }
@@ -289,30 +299,37 @@ public class BinderSession
             localScope = localScope.Parent;
         }
 
-        boundFunctionDeclarationNode = null;
+        boundFunctionDefinitionNode = null;
         return false;
     }
 
     /// <summary>Search hierarchically through all the scopes, starting at the <see cref="_currentScope"/>.<br/><br/>If a match is found, then set the out parameter to it and return true.<br/><br/>If none of the searched scopes contained a match then set the out parameter to null and return false.</summary>
-    public bool TryGetTypeHierarchically(
-        string text,
-        out Type? type)
+    public bool TryGetClassHierarchically(
+        ISyntaxToken typeClauseToken,
+        BoundGenericArgumentsNode? boundGenericArgumentsNode,
+        out BoundClassReferenceNode? boundClassReferenceNode)
     {
         var localScope = _currentScope;
 
         while (localScope is not null)
         {
-            if (localScope.TypeMap.TryGetValue(
-                    text,
-                    out type))
+            if (localScope.ClassDefinitionMap.TryGetValue(
+                    typeClauseToken.TextSpan.GetText(),
+                    out _))
             {
+                boundClassReferenceNode = new BoundClassReferenceNode(
+                    typeClauseToken,
+                    // TODO: Don't pass null here
+                    null,
+                    boundGenericArgumentsNode);
+
                 return true;
             }
 
             localScope = localScope.Parent;
         }
 
-        type = null;
+        boundClassReferenceNode = null;
         return false;
     }
 

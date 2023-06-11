@@ -1,7 +1,7 @@
-﻿using Luthetus.Common.RazorLib.BackgroundTaskCase;
-using Fluxor;
+﻿using Fluxor;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.TreeViewImplementations;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 
 namespace Luthetus.Ide.ClassLib.Store.InputFileCase;
 
@@ -142,7 +142,7 @@ public partial record InputFileState
                     null,
                     CancellationToken.None);
 
-                openParentDirectoryAction.BackgroundTaskQueue
+                openParentDirectoryAction.CommonBackgroundTaskQueue
                     .QueueBackgroundWorkItem(backgroundTask);
             }
 
@@ -181,7 +181,7 @@ public partial record InputFileState
                 null,
                 CancellationToken.None);
 
-            refreshCurrentSelectionAction.BackgroundTaskQueue
+            refreshCurrentSelectionAction.CommonBackgroundTaskQueue
                 .QueueBackgroundWorkItem(backgroundTask);
 
             return inInputFileState;

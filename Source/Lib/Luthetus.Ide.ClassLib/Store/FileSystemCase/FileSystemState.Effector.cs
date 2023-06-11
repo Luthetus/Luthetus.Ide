@@ -1,11 +1,11 @@
-﻿using System.Collections.Concurrent;
-using Luthetus.Common.RazorLib.BackgroundTaskCase;
-using Luthetus.Common.RazorLib.ComponentRenderers;
+﻿using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.Notification;
 using Luthetus.Common.RazorLib.Store.NotificationCase;
 using Fluxor;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
+using Luthetus.Ide.ClassLib.FileSystem.HostedServiceCase;
 
 namespace Luthetus.Ide.ClassLib.Store.FileSystemCase;
 
@@ -15,26 +15,18 @@ public partial class FileSystemState
     {
         private readonly IFileSystemProvider _fileSystemProvider;
         private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
-        private readonly IBackgroundTaskQueue _backgroundTaskQueue;
+        private readonly IFileSystemBackgroundTaskQueue _fileSystemBackgroundTaskQueue;
 
-        /// <summary>
-        /// "string: absoluteFilePath"
-        /// <br/>
-        /// "ValueTuple: containing the parameters to <see cref="PerformWriteOperationAsync"/>"
-        /// </summary>
-        private readonly ConcurrentDictionary<
-            string, 
-            (string absoluteFilePathString, SaveFileAction saveFileAction, IDispatcher dispatcher)?>
-            _concurrentMapToTasksForThrottleByFile = new();
-        
+        private readonly object _syncRoot = new object();
+
         public Effector(
             IFileSystemProvider fileSystemProvider,
             ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
-            IBackgroundTaskQueue backgroundTaskQueue)
+            IFileSystemBackgroundTaskQueue fileSystemBackgroundTaskQueue)
         {
             _fileSystemProvider = fileSystemProvider;
             _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
-            _backgroundTaskQueue = backgroundTaskQueue;
+            _fileSystemBackgroundTaskQueue = fileSystemBackgroundTaskQueue;
         }
         
         [EffectMethod]
@@ -42,143 +34,81 @@ public partial class FileSystemState
             SaveFileAction saveFileAction,
             IDispatcher dispatcher)
         {
-            var absoluteFilePathString = saveFileAction.AbsoluteFilePath
-                .GetAbsoluteFilePathString();
-
-            void FireAndForgetConsumerFirstLoop()
+            // The lock is used here because I'm worried that the 'Effect' is not concurrency safe.
+            //
+            // I don't want 3 requests to save the same file, to end up writing out
+            //     the first request last, resulting in lost data.
+            //
+            lock (_syncRoot)
             {
-                // The first loop relies on the downstream code 'bool isFirstLoop = true;'
                 var backgroundTask = new BackgroundTask(
                     async cancellationToken =>
                     {
-                        await PerformWriteOperationAsync(
-                            absoluteFilePathString,
-                            saveFileAction,
-                            dispatcher);
+                        if (saveFileAction.CancellationToken.IsCancellationRequested)
+                            return;
+
+                        var absoluteFilePathString = saveFileAction.AbsoluteFilePath.GetAbsoluteFilePathString();
+
+                        string notificationMessage;
+
+                        if (absoluteFilePathString is not null &&
+                            await _fileSystemProvider.File.ExistsAsync(absoluteFilePathString))
+                        {
+                            await _fileSystemProvider.File.WriteAllTextAsync(
+                                absoluteFilePathString,
+                                saveFileAction.Content);
+
+                            notificationMessage = $"successfully saved: {absoluteFilePathString}";
+                        }
+                        else
+                        {
+                            // TODO: Save As to make new file
+                            notificationMessage = "File not found. TODO: Save As";
+                        }
+
+                        if (_luthetusCommonComponentRenderers.InformativeNotificationRendererType is not null)
+                        {
+                            var notificationInformative = new NotificationRecord(
+                                NotificationKey.NewNotificationKey(),
+                                "Save Action",
+                                _luthetusCommonComponentRenderers.InformativeNotificationRendererType,
+                                new Dictionary<string, object?>
+                                {
+                                    {
+                                        nameof(IInformativeNotificationRendererType.Message),
+                                        notificationMessage
+                                    },
+                                },
+                                TimeSpan.FromSeconds(5),
+                                null);
+
+                            dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+                                notificationInformative));
+                        }
+
+                        DateTime? fileLastWriteTime = null;
+
+                        if (absoluteFilePathString is not null)
+                        {
+                            fileLastWriteTime = await _fileSystemProvider.File
+                                .GetLastWriteTimeAsync(
+                                    absoluteFilePathString,
+                                    cancellationToken);
+                        }
+
+                        saveFileAction.OnAfterSaveCompletedWrittenDateTimeAction?.Invoke(fileLastWriteTime);
                     },
-                    "FireAndForgetConsumerFirstLoopTask",
+                    "Save File",
                     "TODO: Describe this task",
                     false,
-                    _ =>  Task.CompletedTask,
+                    _ => Task.CompletedTask,
                     dispatcher,
                     CancellationToken.None);
 
-                _backgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
+                _fileSystemBackgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
             }
 
-            // Produce write task and construct consumer if necessary
-            _ = _concurrentMapToTasksForThrottleByFile
-                .AddOrUpdate(absoluteFilePathString,
-                    absoluteFilePath =>
-                    {
-                        FireAndForgetConsumerFirstLoop();
-                        return null;
-                    },
-                    (absoluteFilePath, foundExistingValue) =>
-                    {
-                        if (foundExistingValue is null)
-                        {
-                            FireAndForgetConsumerFirstLoop();
-                            return null;
-                        }
-                        
-                        return (absoluteFilePathString, saveFileAction, dispatcher);
-                    });
             return Task.CompletedTask;
-        }
-
-        private async Task PerformWriteOperationAsync(
-            string absoluteFilePathString, 
-            SaveFileAction saveFileAction,
-            IDispatcher dispatcher)
-        {
-            bool isFirstLoop = true;
-            
-            // goto is used because the do-while or while loops would have
-            // hard to decipher predicates due to the double if for the semaphore
-            doConsumeLabel:
-
-            (string absoluteFilePathString, 
-                SaveFileAction saveFileAction, 
-                IDispatcher dispatcher)? 
-                writeRequest;
-            
-            if (isFirstLoop)
-            {
-                // Perform the first request
-                writeRequest = (absoluteFilePathString, saveFileAction, dispatcher);
-            }
-            else
-            {
-                // Take most recent write request.
-                //
-                // Then update most recent write request to be
-                // null as to throttle and take the most recent and
-                // discard the in between events.
-                writeRequest = _concurrentMapToTasksForThrottleByFile
-                    .AddOrUpdate(absoluteFilePathString,
-                        absoluteFilePath =>
-                        {
-                            // This should never occur as 
-                            // being in this method is dependent on
-                            // a value having already existed
-                            return null;
-                        },
-                        (absoluteFilePath, foundExistingValue) =>
-                        {
-                            if (foundExistingValue is null)
-                                return null;
-
-                            return foundExistingValue;
-                        });
-            }
-
-            if (writeRequest is null)
-                return;
-
-            isFirstLoop = false;
-            
-            string notificationMessage;
-            
-            if (absoluteFilePathString is not null &&
-                await _fileSystemProvider.File.ExistsAsync(absoluteFilePathString))
-            {
-                await _fileSystemProvider.File.WriteAllTextAsync(
-                    absoluteFilePathString,
-                    saveFileAction.Content);
-             
-               notificationMessage = $"successfully saved: {absoluteFilePathString}";
-            }
-            else
-            {
-                // TODO: Save As to make new file
-                notificationMessage = "File not found. TODO: Save As";
-            }
-
-            if (_luthetusCommonComponentRenderers.InformativeNotificationRendererType is not null)
-            {
-                var notificationInformative  = new NotificationRecord(
-                    NotificationKey.NewNotificationKey(), 
-                    "Save Action",
-                    _luthetusCommonComponentRenderers.InformativeNotificationRendererType,
-                    new Dictionary<string, object?>
-                    {
-                        {
-                            nameof(IInformativeNotificationRendererType.Message), 
-                            notificationMessage
-                        },
-                    },
-                    TimeSpan.FromSeconds(5),
-                    null);
-                
-                dispatcher.Dispatch(
-                    new NotificationRecordsCollection.RegisterAction(
-                        notificationInformative));
-            }
-            
-            saveFileAction.OnAfterSaveCompleted?.Invoke();
-
-            goto doConsumeLabel;
         }
     }
 }

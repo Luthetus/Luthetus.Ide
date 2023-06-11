@@ -11,9 +11,8 @@ public sealed record BoundScope
         int startingIndexInclusive,
         int? endingIndexExclusive,
         ResourceUri resourceUri,
-        Dictionary<string, Type> typeMap,
-        Dictionary<string, BoundClassDeclarationNode> classDeclarationMap,
-        Dictionary<string, BoundFunctionDeclarationNode> functionDeclarationMap,
+        Dictionary<string, BoundClassDefinitionNode> classDefinitionMap,
+        Dictionary<string, BoundFunctionDefinitionNode> functionDefinitionMap,
         Dictionary<string, BoundVariableDeclarationStatementNode> variableDeclarationMap)
     {
         Parent = parent;
@@ -21,9 +20,8 @@ public sealed record BoundScope
         StartingIndexInclusive = startingIndexInclusive;
         EndingIndexExclusive = endingIndexExclusive;
         ResourceUri = resourceUri;
-        TypeMap = typeMap;
-        ClassDeclarationMap = classDeclarationMap;
-        FunctionDeclarationMap = functionDeclarationMap;
+        ClassDefinitionMap = classDefinitionMap;
+        FunctionDefinitionMap = functionDefinitionMap;
         VariableDeclarationMap = variableDeclarationMap;
     }
 
@@ -35,8 +33,7 @@ public sealed record BoundScope
     /// <summary>TODO: Remove the "internal set" hack and make a new immutable instance instead.</summary>
     public int? EndingIndexExclusive { get; internal set; }
     public ResourceUri ResourceUri { get; init; }
-    public Dictionary<string, Type> TypeMap { get; init; }
-    public Dictionary<string, BoundClassDeclarationNode> ClassDeclarationMap { get; init; }
-    public Dictionary<string, BoundFunctionDeclarationNode> FunctionDeclarationMap { get; init; }
+    public Dictionary<string, BoundClassDefinitionNode> ClassDefinitionMap { get; init; }
+    public Dictionary<string, BoundFunctionDefinitionNode> FunctionDefinitionMap { get; init; }
     public Dictionary<string, BoundVariableDeclarationStatementNode> VariableDeclarationMap { get; init; }    
 }

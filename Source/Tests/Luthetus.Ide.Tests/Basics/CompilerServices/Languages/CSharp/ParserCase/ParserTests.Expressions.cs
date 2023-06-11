@@ -10,20 +10,16 @@ public partial class ParserTests
     [Fact]
     public void SHOULD_PARSE_NUMERIC_BINARY_EXPRESSION()
     {
-        string sourceText = "3 + 3".ReplaceLineEndings("\n");
+        string sourceText = 
+            "3 + 3"
+            .ReplaceLineEndings("\n");
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(
-            resourceUri,
-            sourceText);
-
+        var lexer = new Lexer(resourceUri, sourceText);
         lexer.Lex();
 
-        var parser = new Parser(
-            lexer.SyntaxTokens,
-            lexer.Diagnostics);
-
+        var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
 
         Assert.Single(compilationUnit.Children);
@@ -48,21 +44,16 @@ public partial class ParserTests
     public void SHOULD_PARSE_STRING_INTERPOLATION_EXPRESSION()
     {
         string sourceText = "$\"DisplayName: {FirstName} {LastName}\"".ReplaceLineEndings("\n");
-
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(
-            resourceUri,
-            sourceText);
-
+        var lexer = new Lexer(resourceUri, sourceText);
         lexer.Lex();
-
-        var parser = new Parser(
-            lexer.SyntaxTokens,
-            lexer.Diagnostics);
-
+        var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
 
-        throw new NotImplementedException();
+        // Assertions
+        {
+            throw new NotImplementedException();
+        }
     }
 }

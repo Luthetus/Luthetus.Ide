@@ -1,5 +1,4 @@
-﻿using Luthetus.Common.RazorLib.BackgroundTaskCase;
-using Luthetus.Common.RazorLib.Keyboard;
+﻿using Luthetus.Common.RazorLib.Keyboard;
 using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.Common.RazorLib.TreeView.Events;
@@ -9,6 +8,7 @@ using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.TreeViewImplementations;
 using Fluxor;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
 
 namespace Luthetus.Ide.RazorLib.InputFile.Classes;
 
@@ -22,7 +22,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
     private readonly Func<IAbsoluteFilePath, Task> _setInputFileContentTreeViewRootFunc;
     private readonly Func<Task> _focusSearchInputElementFunc;
     private readonly Func<List<(TreeViewStateKey treeViewStateKey, TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)>> _getSearchMatchTuplesFunc;
-    private readonly IBackgroundTaskQueue _backgroundTaskQueue;
+    private readonly ICommonBackgroundTaskQueue _commonBackgroundTaskQueue;
 
     public InputFileTreeViewKeyboardEventHandler(
         ITreeViewService treeViewService,
@@ -34,7 +34,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         Func<IAbsoluteFilePath, Task> setInputFileContentTreeViewRootFunc,
         Func<Task> focusSearchInputElementFunc,
         Func<List<(TreeViewStateKey treeViewStateKey, TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)>> getSearchMatchTuplesFunc,
-        IBackgroundTaskQueue backgroundTaskQueue)
+        ICommonBackgroundTaskQueue commonBackgroundTaskQueue)
         : base(treeViewService)
     {
         _inputFileStateWrap = inputFileStateWrap;
@@ -45,7 +45,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         _setInputFileContentTreeViewRootFunc = setInputFileContentTreeViewRootFunc;
         _focusSearchInputElementFunc = focusSearchInputElementFunc;
         _getSearchMatchTuplesFunc = getSearchMatchTuplesFunc;
-        _backgroundTaskQueue = backgroundTaskQueue;
+        _commonBackgroundTaskQueue = commonBackgroundTaskQueue;
     }
 
     public override async Task<bool> OnKeyDownAsync(
@@ -159,7 +159,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
             _luthetusIdeComponentRenderers,
             _fileSystemProvider,
             _environmentProvider,
-            _backgroundTaskQueue));
+            _commonBackgroundTaskQueue));
 
         await ChangeContentRootToOpenedTreeView(_inputFileStateWrap.Value);
     }
@@ -168,7 +168,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         ITreeViewCommandParameter treeViewCommandParameter)
     {
         _dispatcher.Dispatch(
-            new InputFileState.RefreshCurrentSelectionAction(_backgroundTaskQueue));
+            new InputFileState.RefreshCurrentSelectionAction(_commonBackgroundTaskQueue));
 
         await ChangeContentRootToOpenedTreeView(_inputFileStateWrap.Value);
     }

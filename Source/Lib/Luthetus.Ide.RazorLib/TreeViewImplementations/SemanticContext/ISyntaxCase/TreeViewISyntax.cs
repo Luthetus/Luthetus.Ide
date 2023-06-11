@@ -2,7 +2,6 @@
 using Luthetus.Common.RazorLib.WatchWindow.TreeViewClasses;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
-using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.SyntaxTokens;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.SyntaxTokenTextCase;
 
@@ -130,11 +129,6 @@ public class TreeViewISyntax : TreeViewWithType<ISyntax>
         }
 
         TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
-    }
-
-    private string FormatIdentifierToBeMarkupString(IdentifierToken identifierToken)
-    {
-        return $"<span class=\"luth_te_type\">{identifierToken.TextSpan.GetText()}</span>";
     }
 
     public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)

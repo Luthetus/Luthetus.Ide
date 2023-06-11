@@ -1,5 +1,3 @@
-using Luthetus.Common.RazorLib.BackgroundTaskCase;
-using Luthetus.Common.RazorLib.Clipboard;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.Notification;
 using Luthetus.Common.RazorLib.Store.AccountCase;
@@ -21,6 +19,8 @@ using Luthetus.Ide.RazorLib.TreeViewImplementations;
 using Fluxor;
 using Microsoft.Extensions.DependencyInjection;
 using TreeViewExceptionDisplay = Luthetus.Ide.RazorLib.TreeViewImplementations.TreeViewExceptionDisplay;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
+using Luthetus.Ide.RazorLib.HostedServiceCase;
 
 namespace Luthetus.Ide.RazorLib;
 
@@ -40,7 +40,7 @@ public static class ServiceCollectionExtensions
             typeof(TreeViewEnumerableDisplay));
 
         var commonRendererTypes = new LuthetusCommonComponentRenderers(
-            typeof(BackgroundTaskDisplay),
+            typeof(CommonBackgroundTaskDisplay),
             typeof(CommonErrorNotificationDisplay),
             typeof(CommonInformativeNotificationDisplay),
             typeof(TreeViewExceptionDisplay),
@@ -60,19 +60,6 @@ public static class ServiceCollectionExtensions
                 {
                     InitializeFluxor = shouldInitializeFluxor
                 };
-
-            if (isNativeApplication)
-            {
-                var luthetusCommonFactories = luthetusCommonOptions.LuthetusCommonFactories with
-                {
-                    ClipboardServiceFactory = _ => new InMemoryClipboardService(true),
-                };
-
-                luthetusCommonOptions = luthetusCommonOptions with
-                {
-                    LuthetusCommonFactories = luthetusCommonFactories
-                };
-            }
 
             return inTextEditorOptions with
             {
@@ -132,6 +119,8 @@ public static class ServiceCollectionExtensions
                 typeof(GitChangesDisplay),
                 typeof(RemoveCSharpProjectFromSolutionDisplay),
                 typeof(InputFileDisplay),
+                typeof(CompilerServiceBackgroundTaskDisplay),
+                typeof(FileSystemBackgroundTaskDisplay),
                 typeof(TreeViewCSharpProjectDependenciesDisplay),
                 typeof(TreeViewCSharpProjectNugetPackageReferencesDisplay),
                 typeof(TreeViewCSharpProjectToProjectReferencesDisplay),

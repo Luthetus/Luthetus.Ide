@@ -3,107 +3,16 @@
 @using Luthetus.Common.RazorLib.TreeView
 @using Luthetus.Common.RazorLib.TreeView.Displays
 
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
-
 <ContextBoundary ContextRecord="ContextFacts.GitContext"
                  ClassCssString="luth_ide_git-display"
                  StyleCssString="height: 100%; width: 100%;">
 
-    @{
-        var gitState = GitStateWrap.Value;
-    }
-    
     <div class="luth_ide_section-title">
         Git Changes
-        
-        <button class="luth_button"
-                style="display: inline-flex;"
-                @onclick="RefreshGitOnClick"
-                @onclick:stopPropagation="true">
-            <IconRefresh/>
-        </button>
-        
-        @{ var mostRecentActiveGitTask = gitState.ActiveGitTasks.LastOrDefault(); }
-        
-        @if (mostRecentActiveGitTask is not null)
-        {
-            <div title="@mostRecentActiveGitTask.DisplayName"
-                 style="display: inline-flex;">
-                <IconLoading CssStyleString="display: inline;"/>
-                
-                <button class="luth_button"
-                        style="display: inline-flex;"
-                        @onclick="ResetGitActionCancellationTokenSource">
-                    <IconClose/>
-                </button>
-            </div>
-        }
     </div>
 
     <div class="luth_ide_section-body"
          style="width: 100%;">
-        
-        @if (gitState.GitFolderAbsoluteFilePath is null)
-        {
-            <div class="luth_ide_git-changes-git-folder-not-found">
-                <div>
-                    
-                    <em class="luth_em">.git</em>
-
-                    folder was not found.
-                </div>
-                
-                @if (gitState.MostRecentTryFindGitFolderInDirectoryAction is not null)
-                {
-                    <div>
-                        Searched in folder:
-                    
-                        <div class="luth_indent-child-content">
-                            <em class="luth_em">
-                                @gitState.MostRecentTryFindGitFolderInDirectoryAction.DirectoryAbsoluteFilePath.GetAbsoluteFilePathString()
-                            </em>
-                        </div>
-                    </div>
-                }
-
-                <button class="luth_button"
-                        @onclick="GitInitOnClick">
-                    Git Init
-                </button>
-            </div>
-        }
-        else
-        {
-            @* 
-                TODO: Make 3em into a CSS Variable and see change TreeViewStateDisplay.CssStyleString to use the CSS Variable that was made.
-                
-                - 3em is for the div above it showing the found .git folder
-                - 2rem is for the margin on the <hr/>
-                - 1px is for the height of the <hr/> 
-            *@
-            <div style="height: 3em;">
-                .git folder:
-                    
-                <div class="luth_indent-child-content">
-                    <em class="luth_em">
-                        @gitState.GitFolderAbsoluteFilePath.GetAbsoluteFilePathString()
-                    </em>
-                </div>
-            </div>
-            
-            <hr/>
-            
-            @* 
-                TODO: Make TreeViewStateDisplay.CssStyleString use CSS Variables.
-                
-                - 3em is for the div above it showing the found .git folder
-                - 2rem is for the margin on the <hr/>
-                - 1px is for the height of the <hr/> 
-            *@
-            <TreeViewStateDisplay TreeViewStateKey="GitChangesTreeViewStateKey"
-                                  CssStyleString="height: calc(100% - 3em - 2rem - 1px);"
-                                  TreeViewMouseEventHandler="new(TreeViewService)"
-                                  TreeViewKeyboardEventHandler="new(TreeViewService)"/>
-        }
+        Still in development
     </div>
 </ContextBoundary>

@@ -1,18 +1,11 @@
-using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Store.ApplicationOptions;
 using Luthetus.Common.RazorLib.Store.DropdownCase;
 using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
-using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
-using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
-using Luthetus.Ide.ClassLib.Namespaces;
 using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
-using Luthetus.Ide.ClassLib.TreeViewImplementations;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
-using Luthetus.Ide.ClassLib.DotNet;
-using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.Menu;
 using Microsoft.AspNetCore.Components;
 
@@ -32,19 +25,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     private ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; set; } = null!;
     [Inject]
     private ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
-    [Inject]
-    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
-    [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 
-    // For Windows: @"C:\Users\hunte\Repos\TestSolutionParser\TestSolutionParser.sln";
-    // For Linux: @"/home/hunter/Repos/Demos/BlazorCrudApp/BlazorCrudApp.sln";
-    private const string SOLUTION_EXPLORER_ABSOLUTE_PATH_STRING = @"C:\Users\hunte\Repos\TestSolutionParser\TestSolutionParser.sln";
-
-    public static readonly TreeViewStateKey TreeViewSolutionExplorerStateKey =
-        TreeViewStateKey.NewTreeViewStateKey();
-
-    private string _filePath = string.Empty;
     private ITreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
     private SolutionExplorerTreeViewKeymap _solutionExplorerTreeViewKeymap = null!;
     private SolutionExplorerTreeViewMouseEventHandler _solutionExplorerTreeViewMouseEventHandler = null!;
@@ -74,14 +55,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 
     private async void DotNetSolutionStateWrapOnStateChanged(object? sender, EventArgs e)
     {
-        var dotNetSolutionState = DotNetSolutionStateWrap.Value;
-
-        if (dotNetSolutionState.DotNetSolution is not null)
-        {
-            await SetSolutionExplorerTreeViewRootAsync(
-                dotNetSolutionState.DotNetSolution);
-        }
-
         await InvokeAsync(StateHasChanged);
     }
 
@@ -94,75 +67,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent
                 SolutionExplorerContextMenu.ContextMenuEventDropdownKey));
 
         await InvokeAsync(StateHasChanged);
-    }
-
-    private async Task SetSolutionExplorerTreeViewRootAsync(DotNetSolution dotNetSolution)
-    {
-        var rootNode = new TreeViewSolution(
-            dotNetSolution,
-            LuthetusIdeComponentRenderers,
-            FileSystemProvider,
-            EnvironmentProvider,
-            true,
-            true);
-
-        await rootNode.LoadChildrenAsync();
-
-        if (!TreeViewService.TryGetTreeViewState(
-                TreeViewSolutionExplorerStateKey,
-                out _))
-        {
-            TreeViewService.RegisterTreeViewState(new TreeViewState(
-                TreeViewSolutionExplorerStateKey,
-                rootNode,
-                rootNode,
-                ImmutableList<TreeViewNoType>.Empty));
-        }
-        else
-        {
-            TreeViewService.SetRoot(
-                TreeViewSolutionExplorerStateKey,
-                rootNode);
-
-            TreeViewService.SetActiveNode(
-                TreeViewSolutionExplorerStateKey,
-                rootNode);
-        }
-    }
-
-    private async Task SetSolutionExplorerOnClick(
-        string localSolutionExplorerAbsolutePathString)
-    {
-        await DotNetSolutionState.SetActiveSolutionAsync(
-            localSolutionExplorerAbsolutePathString,
-            FileSystemProvider,
-            EnvironmentProvider,
-            Dispatcher);
-
-        var content = await FileSystemProvider.File.ReadAllTextAsync(
-            localSolutionExplorerAbsolutePathString,
-            CancellationToken.None);
-
-        var solutionAbsoluteFilePath = new AbsoluteFilePath(
-            localSolutionExplorerAbsolutePathString,
-            false,
-            EnvironmentProvider);
-
-        var solutionNamespacePath = new NamespacePath(
-            string.Empty,
-            solutionAbsoluteFilePath);
-
-        var dotNetSolution = DotNetSolutionParser.Parse(
-            content,
-            solutionNamespacePath,
-            EnvironmentProvider);
-
-        Dispatcher.Dispatch(
-            new DotNetSolutionState.WithAction(
-                inDotNetSolutionState => inDotNetSolutionState with
-                {
-                    DotNetSolution = dotNetSolution
-                }));
     }
 
     protected override void Dispose(bool disposing)

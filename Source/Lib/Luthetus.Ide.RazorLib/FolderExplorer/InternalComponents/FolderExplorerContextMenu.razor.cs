@@ -14,6 +14,7 @@ using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Ide.ClassLib.Menu;
 using Luthetus.Ide.ClassLib.TreeViewImplementations;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
+using Luthetus.Ide.ClassLib.Store.FolderExplorerCase;
 
 namespace Luthetus.Ide.RazorLib.FolderExplorer.InternalComponents;
 
@@ -161,11 +162,11 @@ public partial class FolderExplorerContextMenu : ComponentBase
         await treeViewModel.LoadChildrenAsync();
 
         TreeViewService.ReRenderNode(
-            FolderExplorerDisplay.TreeViewFolderExplorerContentStateKey,
+            FolderExplorerState.TreeViewFolderExplorerContentStateKey,
             treeViewModel);
 
         TreeViewService.MoveUp(
-            FolderExplorerDisplay.TreeViewFolderExplorerContentStateKey,
+            FolderExplorerState.TreeViewFolderExplorerContentStateKey,
             false);
     }
 

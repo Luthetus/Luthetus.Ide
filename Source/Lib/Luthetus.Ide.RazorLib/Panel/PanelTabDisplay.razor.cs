@@ -1,5 +1,4 @@
 ﻿using Luthetus.Common.RazorLib.Dimensions;
-using Luthetus.Common.RazorLib.Reactive;
 using Luthetus.Common.RazorLib.Resize;
 using Luthetus.Common.RazorLib.Store.DragCase;
 using Luthetus.Ide.ClassLib.Store.PanelCase;
@@ -29,12 +28,6 @@ public partial class PanelTabDisplay : ComponentBase, IDisposable
     private string IsActiveCssClassString => IsActive
         ? "luth_active"
         : string.Empty;
-
-    // TODO: The ValueTuple being used here needs to be made into a class likely as this is not nice to read
-    private readonly IThrottle<((MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), bool thinksLeftMouseButtonIsDown)>
-        _onMouseMoveThrottle =
-            new Throttle<((MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), bool thinksLeftMouseButtonIsDown)>(
-                TimeSpan.FromMilliseconds(30));
 
     private bool _thinksLeftMouseButtonIsDown;
 
@@ -203,16 +196,6 @@ public partial class PanelTabDisplay : ComponentBase, IDisposable
 
         if (!localThinksLeftMouseButtonIsDown)
             return;
-
-        var mostRecentEventArgs = await _onMouseMoveThrottle.FireAsync(
-            (mouseEventArgsTuple, localThinksLeftMouseButtonIsDown),
-            CancellationToken.None);
-
-        if (mostRecentEventArgs.isCancellationRequested)
-            return;
-
-        localThinksLeftMouseButtonIsDown = mostRecentEventArgs.tEventArgs.thinksLeftMouseButtonIsDown;
-        mouseEventArgsTuple = mostRecentEventArgs.tEventArgs.Item1;
 
         // Buttons is a bit flag
         // '& 1' gets if left mouse button is held

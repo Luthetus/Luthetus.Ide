@@ -10,30 +10,22 @@ public partial class ParserTests
     [Fact]
     public void SHOULD_PARSE_IF_STATEMENT()
     {
-        var sourceText = @"if (true)
-{
-}"
-            .ReplaceLineEndings("\n");
-
+        var sourceText = @"if (true) { }".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(
-            resourceUri,
-            sourceText);
-
+        var lexer = new Lexer(resourceUri, sourceText);
         lexer.Lex();
+        var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var compilationUnit = parser.Parse();
 
-        var modelParser = new Parser(
-            lexer.SyntaxTokens,
-            lexer.Diagnostics);
-
-        var compilationUnit = modelParser.Parse();
-
-        var boundIfStatementNode =
+        // Assertions
+        {
+            var boundIfStatementNode =
             (BoundIfStatementNode)compilationUnit.Children.Single();
 
-        Assert.NotNull(boundIfStatementNode.KeywordToken);
-        Assert.NotNull(boundIfStatementNode.BoundExpressionNode);
-        Assert.NotNull(boundIfStatementNode.IfStatementBodyCompilationUnit);
+            Assert.NotNull(boundIfStatementNode.KeywordToken);
+            Assert.NotNull(boundIfStatementNode.BoundExpressionNode);
+            Assert.NotNull(boundIfStatementNode.IfStatementBodyCompilationUnit);
+        }
     }
 }

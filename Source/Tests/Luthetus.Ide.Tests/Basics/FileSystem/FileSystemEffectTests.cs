@@ -18,7 +18,7 @@ public class FileSystemEffectTests : LuthetusFileSystemTestingBase
         var saveFileAction = new FileSystemState.SaveFileAction(
             absoluteFilePath,
             content,
-            () => { });
+            writtenDateTime => { });
 
         Dispatcher.Dispatch(saveFileAction);
     }

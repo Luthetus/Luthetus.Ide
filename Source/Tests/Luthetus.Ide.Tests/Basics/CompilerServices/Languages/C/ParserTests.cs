@@ -2,7 +2,6 @@
 using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Expression;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statements;
-using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.C.LexerCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.C.ParserCase;
 using Luthetus.TextEditor.RazorLib.Lexing;
@@ -224,16 +223,16 @@ public class ParserTests
             2,
             boundVariableDeclarationStatementNode.Children.Length);
 
-        var boundTypeNode = (BoundTypeNode)boundVariableDeclarationStatementNode
+        var boundClassDefinitionNode = (BoundClassDefinitionNode)boundVariableDeclarationStatementNode
             .Children[0];
 
         Assert.Equal(
-            SyntaxKind.BoundTypeNode,
-            boundTypeNode.SyntaxKind);
+            SyntaxKind.BoundClassDefinitionNode,
+            boundClassDefinitionNode.SyntaxKind);
 
         Assert.Equal(
             typeof(int),
-            boundTypeNode.Type);
+            boundClassDefinitionNode.Type);
 
         var identifierToken = boundVariableDeclarationStatementNode.Children[1];
 
@@ -341,12 +340,12 @@ x = 42;"
 
         Assert.Single(compilationUnit.Children);
 
-        var boundFunctionDeclarationNode =
-            (BoundFunctionDeclarationNode)compilationUnit.Children[0];
+        var boundFunctionDefinitionNode =
+            (BoundFunctionDefinitionNode)compilationUnit.Children[0];
 
         Assert.Equal(
-            SyntaxKind.BoundFunctionDeclarationNode,
-            boundFunctionDeclarationNode.SyntaxKind);
+            SyntaxKind.BoundFunctionDefinitionNode,
+            boundFunctionDefinitionNode.SyntaxKind);
     }
 
     [Fact]
@@ -375,12 +374,12 @@ WriteHelloWorldToConsole();"
 
         Assert.Equal(2, compilationUnit.Children.Length);
 
-        var boundFunctionDeclarationNode =
-            (BoundFunctionDeclarationNode)compilationUnit.Children[0];
+        var boundFunctionDefinitionNode =
+            (BoundFunctionDefinitionNode)compilationUnit.Children[0];
 
         Assert.Equal(
-            SyntaxKind.BoundFunctionDeclarationNode,
-            boundFunctionDeclarationNode.SyntaxKind);
+            SyntaxKind.BoundFunctionDefinitionNode,
+            boundFunctionDefinitionNode.SyntaxKind);
 
         var boundFunctionInvocationNode =
             (BoundFunctionInvocationNode)compilationUnit.Children[1];

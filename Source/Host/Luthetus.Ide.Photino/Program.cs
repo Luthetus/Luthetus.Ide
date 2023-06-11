@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Threading;
-using Luthetus.Common.RazorLib.BackgroundTaskCase;
+using System.Threading.Tasks;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
+using Luthetus.Ide.ClassLib.CompilerServices.HostedServiceCase;
+using Luthetus.Ide.ClassLib.FileSystem.HostedServiceCase;
 using Luthetus.Ide.RazorLib;
 using Microsoft.Extensions.DependencyInjection;
 using Photino.Blazor;
@@ -24,16 +27,26 @@ namespace Luthetus.Ide.Photino
             //
             // is not working for the Photino Blazor app.
             // So manual starting of the service is done.
-            appBuilder.Services.AddSingleton<QueuedHostedService>();
+            appBuilder.Services.AddSingleton<CommonQueuedHostedService>();
+            appBuilder.Services.AddSingleton<FileSystemQueuedHostedService>();
+            appBuilder.Services.AddSingleton<CompilerServiceQueuedHostedService>();
 
             // register root component and selector
             appBuilder.RootComponents.Add<App>("app");
 
             var app = appBuilder.Build();
 
-            var queuedHostedService = app.Services.GetRequiredService<QueuedHostedService>();
+            var backgroundTasksCancellationTokenSource = new CancellationTokenSource();
 
-            queuedHostedService.StartAsync(CancellationToken.None);
+            var commonQueuedHostedService = app.Services.GetRequiredService<CommonQueuedHostedService>();
+            var fileSystemQueuedHostedService = app.Services.GetRequiredService<FileSystemQueuedHostedService>();
+            var compilerServiceQueuedHostedService = app.Services.GetRequiredService<CompilerServiceQueuedHostedService>();
+
+            var cancellationToken = backgroundTasksCancellationTokenSource.Token;
+
+            _ = Task.Run(async () => await commonQueuedHostedService.StartAsync(cancellationToken));
+            _ = Task.Run(async () => await fileSystemQueuedHostedService.StartAsync(cancellationToken));
+            _ = Task.Run(async () => await compilerServiceQueuedHostedService.StartAsync(cancellationToken));
 
             // customize window
             app.MainWindow
@@ -48,6 +61,7 @@ namespace Luthetus.Ide.Photino
 
             AppDomain.CurrentDomain.UnhandledException += (sender, error) =>
             {
+                backgroundTasksCancellationTokenSource.Cancel();
                 app.MainWindow.ShowMessage("Fatal exception", error.ExceptionObject.ToString());
             };
 

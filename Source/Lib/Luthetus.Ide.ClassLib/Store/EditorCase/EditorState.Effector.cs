@@ -1,5 +1,4 @@
 ﻿using System.Collections.Immutable;
-using Luthetus.Common.RazorLib.BackgroundTaskCase;
 using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.Notification;
 using Luthetus.Common.RazorLib.Store.NotificationCase;
@@ -18,6 +17,8 @@ using Luthetus.TextEditor.RazorLib.Lexing;
 using Luthetus.TextEditor.RazorLib.Semantics;
 using Luthetus.Ide.ClassLib.Store.SemanticContextCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.BinderCase;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 
 namespace Luthetus.Ide.ClassLib.Store.EditorCase;
 
@@ -32,20 +33,20 @@ public partial class EditorState
         private readonly ITextEditorService _textEditorService;
         private readonly ILuthetusIdeComponentRenderers _luthetusIdeComponentRenderers;
         private readonly IFileSystemProvider _fileSystemProvider;
-        private readonly IBackgroundTaskQueue _backgroundTaskQueue;
+        private readonly ICommonBackgroundTaskQueue _commonBackgroundTaskQueue;
         private readonly IState<SemanticContextState> _semanticContextStateWrap;
 
         public Effector(
             ITextEditorService textEditorService,
             ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
             IFileSystemProvider fileSystemProvider,
-            IBackgroundTaskQueue backgroundTaskQueue,
+            ICommonBackgroundTaskQueue commonBackgroundTaskQueue,
             IState<SemanticContextState> semanticContextStateWrap)
         {
             _textEditorService = textEditorService;
             _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
             _fileSystemProvider = fileSystemProvider;
-            _backgroundTaskQueue = backgroundTaskQueue;
+            _commonBackgroundTaskQueue = commonBackgroundTaskQueue;
             _semanticContextStateWrap = semanticContextStateWrap;
         }
 
@@ -167,6 +168,7 @@ public partial class EditorState
                     decorationMapper,
                     semanticModel,
                     null,
+                    new(),
                     TextEditorModelKey.NewTextEditorModelKey()
                 );
 
@@ -263,7 +265,7 @@ public partial class EditorState
                                 dispatcher,
                                 CancellationToken.None);
 
-                            _backgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
+                            _commonBackgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
                         })
                     },
                     {
@@ -326,33 +328,22 @@ public partial class EditorState
             {
                 var innerContent = innerTextEditor.GetAllText();
 
+                var cancellationToken = textEditorModel.TextEditorSaveFileHelper.GetCancellationToken();
+
                 var saveFileAction = new FileSystemState.SaveFileAction(
                     absoluteFilePath,
                     innerContent,
-                    () =>
+                    writtenDateTime =>
                     {
-                        var backgroundTask = new BackgroundTask(
-                            async cancellationToken =>
-                            {
-                                var fileLastWriteTime = await _fileSystemProvider.File
-                                    .GetLastWriteTimeAsync(
-                                        inputFileAbsoluteFilePathString,
-                                        cancellationToken);
-
-                                _textEditorService.Model.SetResourceData(
-                                    textEditorModel.ModelKey,
-                                    textEditorModel.ResourceUri,
-                                    fileLastWriteTime);
-                            },
-                            "HandleOnSaveRequestedTask",
-                            "TODO: Describe this task",
-                            false,
-                            _ => Task.CompletedTask,
-                            dispatcher,
-                            CancellationToken.None);
-
-                        _backgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
-                    });
+                        if (writtenDateTime is not null)
+                        {
+                            _textEditorService.Model.SetResourceData(
+                                innerTextEditor.ModelKey,
+                                innerTextEditor.ResourceUri,
+                                writtenDateTime.Value);
+                        }
+                    },
+                    cancellationToken);
 
                 dispatcher.Dispatch(saveFileAction);
             }

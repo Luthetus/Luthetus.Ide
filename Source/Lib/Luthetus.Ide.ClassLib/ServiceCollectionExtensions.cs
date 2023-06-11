@@ -1,9 +1,11 @@
-﻿using Luthetus.Common.RazorLib.BackgroundTaskCase;
-using Fluxor;
+﻿using Fluxor;
 using Luthetus.Ide.ClassLib.FileTemplates;
 using Luthetus.Ide.ClassLib.Menu;
 using Luthetus.Ide.ClassLib.Nuget;
 using Microsoft.Extensions.DependencyInjection;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
+using Luthetus.Ide.ClassLib.CompilerServices.HostedServiceCase;
+using Luthetus.Ide.ClassLib.FileSystem.HostedServiceCase;
 
 namespace Luthetus.Ide.ClassLib;
 
@@ -16,8 +18,12 @@ public static class ServiceCollectionExtensions
             .AddScoped<ICommonMenuOptionsFactory, CommonMenuOptionsFactory>()
             .AddScoped<IFileTemplateProvider, FileTemplateProvider>()
             .AddScoped<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>()
-            .AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>()
-            .AddSingleton<IBackgroundTaskMonitor, BackgroundTaskMonitor>()
+            .AddSingleton<ICommonBackgroundTaskQueue, CommonBackgroundTaskQueue>()
+            .AddSingleton<ICommonBackgroundTaskMonitor, CommonBackgroundTaskMonitor>()
+            .AddSingleton<IFileSystemBackgroundTaskQueue, FileSystemBackgroundTaskQueue>()
+            .AddSingleton<IFileSystemBackgroundTaskMonitor, FileSystemBackgroundTaskMonitor>()
+            .AddSingleton<ICompilerServiceBackgroundTaskQueue, CompilerServiceBackgroundTaskQueue>()
+            .AddSingleton<ICompilerServiceBackgroundTaskMonitor, CompilerServiceBackgroundTaskMonitor>()
             .AddFluxor(options =>
                 options.ScanAssemblies(
                     typeof(Luthetus.Common.RazorLib.ServiceCollectionExtensions).Assembly,

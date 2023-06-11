@@ -14,6 +14,7 @@ using Luthetus.Ide.ClassLib.Namespaces;
 using Luthetus.Ide.ClassLib.Store.EditorCase;
 using Luthetus.Ide.ClassLib.TreeViewImplementations;
 using Fluxor;
+using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 
 namespace Luthetus.Ide.RazorLib.SolutionExplorer;
 
@@ -312,11 +313,11 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
         await treeViewModel.LoadChildrenAsync();
 
         _treeViewService.ReRenderNode(
-            SolutionExplorerDisplay.TreeViewSolutionExplorerStateKey,
+            DotNetSolutionState.TreeViewSolutionExplorerStateKey,
             treeViewModel);
 
         _treeViewService.MoveUp(
-            SolutionExplorerDisplay.TreeViewSolutionExplorerStateKey,
+            DotNetSolutionState.TreeViewSolutionExplorerStateKey,
             false);
     }
 }

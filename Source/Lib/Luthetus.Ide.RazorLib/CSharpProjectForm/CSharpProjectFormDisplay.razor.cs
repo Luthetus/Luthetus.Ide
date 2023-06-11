@@ -7,7 +7,6 @@ using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 using Luthetus.Ide.ClassLib.Store.InputFileCase;
 using Luthetus.Ide.ClassLib.Store.TerminalCase;
 using Luthetus.Ide.ClassLib.CommandLine;
-using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.Namespaces;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
@@ -21,10 +20,6 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     private IState<TerminalSessionsState> TerminalSessionsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
-    [Inject]
-    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
-    [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 
     [CascadingParameter]
     public DialogRecord DialogRecord { get; set; } = null!;
@@ -157,17 +152,17 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                         localFormattedAddExistingProjectToSolutionCommand.arguments,
                         localParentDirectoryName,
                         _newCSharpProjectCancellationTokenSource.Token,
-                        async () =>
+                        () =>
                         {
                             Dispatcher.Dispatch(
                                 new DialogRecordsCollection.DisposeAction(
                                     DialogRecord.DialogKey));
+                            
+                            Dispatcher.Dispatch(
+                                new DotNetSolutionState.SetDotNetSolutionAction(
+                                    solutionNamespacePath.AbsoluteFilePath));
 
-                            await DotNetSolutionState.SetActiveSolutionAsync(
-                                solutionNamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
-                                FileSystemProvider,
-                                EnvironmentProvider,
-                                Dispatcher);
+                            return Task.CompletedTask;
                         });
 
                     await generalTerminalSession

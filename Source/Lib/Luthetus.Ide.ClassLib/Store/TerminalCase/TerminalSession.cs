@@ -2,7 +2,6 @@
 using System.Collections.Immutable;
 using System.Reactive.Linq;
 using System.Text;
-using Luthetus.Common.RazorLib.BackgroundTaskCase;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.Notification;
@@ -14,6 +13,8 @@ using CliWrap.EventStream;
 using Fluxor;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.State;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 
 namespace Luthetus.Ide.ClassLib.Store.TerminalCase;
 
@@ -21,7 +22,7 @@ public class TerminalSession
 {
     private readonly IDispatcher _dispatcher;
     private readonly IFileSystemProvider _fileSystemProvider;
-    private readonly IBackgroundTaskQueue _backgroundTaskQueue;
+    private readonly ICommonBackgroundTaskQueue _commonBackgroundTaskQueue;
     private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
     private readonly List<TerminalCommand> _terminalCommandsHistory = new();
     private CancellationTokenSource _commandCancellationTokenSource = new();
@@ -37,12 +38,12 @@ public class TerminalSession
         string? workingDirectoryAbsoluteFilePathString,
         IDispatcher dispatcher,
         IFileSystemProvider fileSystemProvider,
-        IBackgroundTaskQueue backgroundTaskQueue,
+        ICommonBackgroundTaskQueue commonBackgroundTaskQueue,
         ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers)
     {
         _dispatcher = dispatcher;
         _fileSystemProvider = fileSystemProvider;
-        _backgroundTaskQueue = backgroundTaskQueue;
+        _commonBackgroundTaskQueue = commonBackgroundTaskQueue;
         _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
         WorkingDirectoryAbsoluteFilePathString = workingDirectoryAbsoluteFilePathString;
     }
@@ -198,7 +199,7 @@ public class TerminalSession
             _dispatcher,
             CancellationToken.None);
 
-        _backgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
+        _commonBackgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
     }
 
     public void ClearStandardOut()
@@ -218,12 +219,16 @@ public class TerminalSession
         {
             stringBuilder.Clear();
         }
+
+        DispatchNewStateKey();
     }
 
     public void KillProcess()
     {
         _commandCancellationTokenSource.Cancel();
         _commandCancellationTokenSource = new();
+
+        DispatchNewStateKey();
     }
 
     private void DispatchNewStateKey()

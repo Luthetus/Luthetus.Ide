@@ -24,8 +24,6 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-    [Inject]
-    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
 
     [CascadingParameter]
     public DialogRecord DialogRecord { get; set; } = null!;
@@ -141,11 +139,14 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                     '.' +
                     ExtensionNoPeriodFacts.DOT_NET_SOLUTION;
 
-                await DotNetSolutionState.SetActiveSolutionAsync(
+                var solutionAbsoluteFilePath = new AbsoluteFilePath(
                     solutionAbsoluteFilePathString,
-                    FileSystemProvider,
-                    EnvironmentProvider,
-                    Dispatcher);
+                    false,
+                    EnvironmentProvider);
+
+                Dispatcher.Dispatch(
+                    new DotNetSolutionState.SetDotNetSolutionAction(
+                        solutionAbsoluteFilePath));
             });
 
         var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[

@@ -9,13 +9,13 @@ public sealed record BoundConstructorInvocationNode : ISyntaxNode
 {
     public BoundConstructorInvocationNode(
         KeywordToken keywordToken,
-        BoundTypeNode? boundTypeNode,
-        BoundFunctionArgumentsNode boundFunctionArgumentsNode,
+        BoundClassReferenceNode? boundClassReferenceNode,
+        BoundFunctionParametersNode? boundFunctionParametersNode,
         BoundObjectInitializationNode? boundObjectInitializationNode)
     {
         KeywordToken = keywordToken;
-        BoundTypeNode = boundTypeNode;
-        BoundFunctionArgumentsNode = boundFunctionArgumentsNode;
+        BoundClassReferenceNode = boundClassReferenceNode;
+        BoundFunctionParametersNode = boundFunctionParametersNode;
         BoundObjectInitializationNode = boundObjectInitializationNode;
 
         var children = new List<ISyntax>
@@ -23,11 +23,12 @@ public sealed record BoundConstructorInvocationNode : ISyntaxNode
             KeywordToken
         };
 
-        if (BoundTypeNode is not null)
-            children.Add(BoundTypeNode);
-
-        children.Add(BoundFunctionArgumentsNode);
-
+        if (BoundClassReferenceNode is not null)
+            children.Add(BoundClassReferenceNode);
+        
+        if (BoundFunctionParametersNode is not null)
+            children.Add(BoundFunctionParametersNode);
+        
         if (BoundObjectInitializationNode is not null)
             children.Add(BoundObjectInitializationNode);
 
@@ -35,8 +36,8 @@ public sealed record BoundConstructorInvocationNode : ISyntaxNode
     }
 
     public KeywordToken KeywordToken { get; }
-    public BoundTypeNode? BoundTypeNode { get; }
-    public BoundFunctionArgumentsNode BoundFunctionArgumentsNode { get; }
+    public BoundClassReferenceNode? BoundClassReferenceNode { get; }
+    public BoundFunctionParametersNode? BoundFunctionParametersNode { get; }
     public BoundObjectInitializationNode? BoundObjectInitializationNode { get; }
 
     public bool IsFabricated { get; init; }

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Immutable;
-using Luthetus.Common.RazorLib.BackgroundTaskCase;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.InputFile;
@@ -16,7 +16,7 @@ public partial record InputFileState
     public record SetSearchQueryAction(string SearchQuery);
     public record MoveBackwardsInHistoryAction;
     public record MoveForwardsInHistoryAction;
-    public record OpenParentDirectoryAction(ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers, IFileSystemProvider FileSystemProvider, IEnvironmentProvider EnvironmentProvider, IBackgroundTaskQueue BackgroundTaskQueue);
-    public record RefreshCurrentSelectionAction(IBackgroundTaskQueue BackgroundTaskQueue);
+    public record OpenParentDirectoryAction(ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers, IFileSystemProvider FileSystemProvider, IEnvironmentProvider EnvironmentProvider, ICommonBackgroundTaskQueue CommonBackgroundTaskQueue);
+    public record RefreshCurrentSelectionAction(ICommonBackgroundTaskQueue CommonBackgroundTaskQueue);
     public record StartInputFileStateFormAction(RequestInputFileStateFormAction RequestInputFileStateFormAction);
 }
