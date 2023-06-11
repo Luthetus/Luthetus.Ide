@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
 using Luthetus.Ide.ClassLib.CompilerServices.HostedServiceCase;
 using Luthetus.Ide.ClassLib.FileSystem.HostedServiceCase;
+using Luthetus.TextEditor.RazorLib.HostedServiceCase;
 
 namespace Luthetus.Ide.ClassLib;
 
@@ -20,6 +21,8 @@ public static class ServiceCollectionExtensions
             .AddScoped<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>()
             .AddSingleton<ICommonBackgroundTaskQueue, CommonBackgroundTaskQueue>()
             .AddSingleton<ICommonBackgroundTaskMonitor, CommonBackgroundTaskMonitor>()
+            .AddSingleton<ITextEditorBackgroundTaskQueue, TextEditorBackgroundTaskQueue>()
+            .AddSingleton<ITextEditorBackgroundTaskMonitor, TextEditorBackgroundTaskMonitor>()
             .AddSingleton<IFileSystemBackgroundTaskQueue, FileSystemBackgroundTaskQueue>()
             .AddSingleton<IFileSystemBackgroundTaskMonitor, FileSystemBackgroundTaskMonitor>()
             .AddSingleton<ICompilerServiceBackgroundTaskQueue, CompilerServiceBackgroundTaskQueue>()

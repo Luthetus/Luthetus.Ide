@@ -157,7 +157,7 @@ public class SemanticModelCSharp : ISemanticModel
         {
             SymbolMessageTextSpanTuples = parserSession.Binder.Symbols
                 .Where(x => x.TextSpan.ResourceUri == model.ResourceUri)
-                .Select(x => ($"({x.GetType().Name}){x.TextSpan.GetText()}", x.TextSpan))
+                .Select(x => ($"({x.GetType().Name}) {x.TextSpan.GetText()}", x.TextSpan))
                 .ToImmutableList()
         };
 
