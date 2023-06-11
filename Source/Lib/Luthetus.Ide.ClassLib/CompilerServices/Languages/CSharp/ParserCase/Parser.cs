@@ -855,6 +855,48 @@ public class Parser
             typeof(void));
     }
 
+    /// <summary>TODO: Implement ParseFunctionParameterExpression() correctly. Until then, skip until the comma token or end of file token is found.</summary>
+    private IBoundExpressionNode ParseFunctionParameterExpression()
+    {
+        while (true)
+        {
+            if (_tokenWalker.Current.SyntaxKind == SyntaxKind.EndOfFileToken ||
+                _tokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken ||
+                _tokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
+            {
+                break;
+            }
+
+            var currentToken = _tokenWalker.Consume();
+
+            switch (currentToken.SyntaxKind)
+            {
+                case SyntaxKind.NumericLiteralToken:
+                {
+                    var boundLiteralExpressionNode = ParseNumericLiteralToken((NumericLiteralToken)currentToken);
+                    break;
+                }
+                   
+                case SyntaxKind.StringLiteralToken:
+                {
+                    var boundLiteralExpressionNode = ParseStringLiteralToken((StringLiteralToken)currentToken);
+                    break;
+                }
+            }
+        }
+
+        // #TODO: Correctly implement this method Returning a nonsensical token for now.
+        return new BoundLiteralExpressionNode(
+            new EndOfFileToken(
+                new TextEditorTextSpan(
+                    0,
+                    0,
+                    (byte)GenericDecorationKind.None,
+                    new ResourceUri(string.Empty),
+                    string.Empty)),
+            typeof(void));
+    }
+
     private void ParseOpenBraceToken(
         OpenBraceToken openBraceToken)
     {
@@ -1122,86 +1164,132 @@ public class Parser
             (CloseParenthesisToken)closeParenthesisToken);
     }
 
+    
+
     /// <summary>Use this method for function invocation, whereas <see cref="ParseFunctionArguments"/> should be used for function definition.</summary>
     private BoundFunctionParametersNode ParseFunctionParameters(
         OpenParenthesisToken openParenthesisToken)
     {
-        if (_tokenWalker.Peek(0).SyntaxKind == SyntaxKind.CloseParenthesisToken)
+        if (_tokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
         {
-            return _binder.BindFunctionParameters(
+            return new BoundFunctionParametersNode(
                 openParenthesisToken,
                 new(),
                 (CloseParenthesisToken)_tokenWalker.Consume());
         }
 
-        // Contains 'OPTIONAL_KEYWORD(out Type, out, ref)', then 'Expression/IdentifierParameter', then 'CommaToken' then repeat pattern as long as there are entries.
-        var functionParametersListing = new List<ISyntaxToken>();
+        var functionParametersListing = new List<ISyntax>();
 
-        // Alternate between reading 'OPTIONAL_KEYWORD[out, ref] Expression/IdentifierParameter' (true), and a single comma (false)
         bool canReadComma = false;
 
         while (true)
         {
             if (!canReadComma)
             {
-                bool IsInvalidToken(ISyntaxToken syntaxToken) => 
-                    syntaxToken.SyntaxKind != SyntaxKind.CommaToken ||
-                    syntaxToken.SyntaxKind != SyntaxKind.CloseParenthesisToken ||
-                    syntaxToken.SyntaxKind != SyntaxKind.EndOfFileToken;
-
-                IdentifierToken parameterIdentifierToken;
-
-                if (IsInvalidToken(_tokenWalker.Current))
+                if (_tokenWalker.Current.SyntaxKind == SyntaxKind.KeywordToken)
                 {
-                    parameterIdentifierToken = (IdentifierToken)_tokenWalker.Match(SyntaxKind.IdentifierToken);
+                    var currentTokenText = _tokenWalker.Current.TextSpan.GetText();
 
-                    if (_tokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken ||
-                        _tokenWalker.Current.SyntaxKind == SyntaxKind.EndOfFileToken)
+                    if (currentTokenText == "out")
                     {
-                        break;
+                        functionParametersListing.Add(_tokenWalker.Consume());
+
+                        if (_tokenWalker.Peek(0).SyntaxKind != SyntaxKind.CommaToken &&
+                            _tokenWalker.Peek(1).SyntaxKind != SyntaxKind.CommaToken)
+                        {
+                            // out with variable declaration
+                            //
+                            // 'out IPersonModel variableIdentifier' OR 'out string variableIdentifier' OR 'out var variableIdentifier'
+
+                            var outTypeClause = MatchTypeClauseToken();
+                            functionParametersListing.Add(outTypeClause);
+                        }
+
+                        var outVariableIdentifier = _tokenWalker.Match(SyntaxKind.IdentifierToken);
+                        
+                        functionParametersListing.Add(outVariableIdentifier);
+
+                        if (outVariableIdentifier.IsFabricated && 
+                            _tokenWalker.Current.SyntaxKind != SyntaxKind.CommaToken)
+                        {
+                            break;
+                        }
+                    }
+                    else if (currentTokenText == "in")
+                    {
+                        /*
+                         * https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/in-parameter-modifier
+                         * NOTE: "Overloading based on the presence of in is allowed":
+                         * 
+                         * void SampleMethod(in int i) { }
+                         * void SampleMethod(int i) { }
+                        */
+
+                        functionParametersListing.Add(_tokenWalker.Consume());
+
+                        // Function invocation would never specify a type when using the 'in' keyword. (only declaration would include that)
+
+                        var inVariableIdentifier = _tokenWalker.Match(SyntaxKind.IdentifierToken);
+                        functionParametersListing.Add(inVariableIdentifier);
+
+                        if (inVariableIdentifier.IsFabricated &&
+                            _tokenWalker.Current.SyntaxKind != SyntaxKind.CommaToken)
+                        {
+                            break;
+                        }
+                    }
+                    else if (currentTokenText == "ref")
+                    {
+                        /*
+                         * https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/ref
+                         * NOTE: "methods can be overloaded when one method has a ref, in, or out parameter and the other has a parameter that is passed by value"
+                         */
+
+                        functionParametersListing.Add(_tokenWalker.Consume());
+
+                        // Function invocation would never specify a type when using the 'ref' keyword. (only declaration would include that)
+
+                        var refVariableIdentifier = _tokenWalker.Match(SyntaxKind.IdentifierToken);
+                        functionParametersListing.Add(refVariableIdentifier);
+
+                        if (refVariableIdentifier.IsFabricated &&
+                            _tokenWalker.Current.SyntaxKind != SyntaxKind.CommaToken)
+                        {
+                            break;
+                        }
                     }
                 }
                 else
                 {
-                    ISyntaxToken syntaxToken = _tokenWalker.Consume();
+                    var expression = ParseFunctionParameterExpression();
+                    functionParametersListing.Add(expression);
 
-                    while (true)
+                    if (expression.IsFabricated &&
+                        _tokenWalker.Current.SyntaxKind != SyntaxKind.CommaToken)
                     {
-                        if (IsInvalidToken(_tokenWalker.Current))
-                        {
-                            parameterIdentifierToken = new IdentifierToken(
-                                new TextEditorTextSpan(
-                                    syntaxToken.TextSpan.StartingIndexInclusive,
-                                    _tokenWalker.Current.TextSpan.StartingIndexInclusive,
-                                    (byte)GenericDecorationKind.Variable,
-                                    syntaxToken.TextSpan.ResourceUri,
-                                    syntaxToken.TextSpan.SourceText));
-
-                            break;
-                        }
-
-                        _ = _tokenWalker.Consume();
+                        break;
                     }
                 }
-
-                functionParametersListing.Add(parameterIdentifierToken);
 
                 canReadComma = true;
             }
             else
             {
-                canReadComma = false;
-
                 if (_tokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
+                {
                     functionParametersListing.Add(_tokenWalker.Consume());
+                    canReadComma = false;
+                }
                 else
+                {
                     break;
+                }
             }
         }
 
         var closeParenthesisToken = _tokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 
-        return _binder.BindFunctionParameters(
+        return new BoundFunctionParametersNode(
             openParenthesisToken,
             functionParametersListing,
             (CloseParenthesisToken)closeParenthesisToken);

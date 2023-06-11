@@ -375,7 +375,7 @@ public partial class ParserTests
             throw new NotImplementedException();
         }
     }
-    
+
     [Fact]
     public void SHOULD_PARSE_FUNCTION_INVOCATION_STATEMENT_HAVING_REF_VARIABLE_ARGUMENT_REFERENCE()
     {
