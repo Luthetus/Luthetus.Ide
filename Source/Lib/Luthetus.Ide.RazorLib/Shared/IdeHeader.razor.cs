@@ -7,7 +7,6 @@ using Luthetus.Common.RazorLib.Menu;
 using Luthetus.Common.RazorLib.Store.DialogCase;
 using Luthetus.Common.RazorLib.Store.DropdownCase;
 using Luthetus.Ide.ClassLib.Store.EditorCase;
-using Luthetus.Ide.RazorLib.Account;
 using Luthetus.Ide.RazorLib.Button;
 using Luthetus.Ide.RazorLib.DotNetSolutionForm;
 using Microsoft.AspNetCore.Components;
