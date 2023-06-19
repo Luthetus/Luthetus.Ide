@@ -246,6 +246,8 @@ public class Binder
         KeywordToken keywordToken,
         IdentifierToken identifierToken)
     {
+        AddSymbolReference(new NamespaceSymbol(identifierToken.TextSpan));
+
         var namespaceIdentifier = identifierToken.TextSpan.GetText();
 
         if (_boundNamespaceStatementNodes.TryGetValue(
@@ -552,6 +554,8 @@ public class Binder
         KeywordToken usingKeywordToken,
         IdentifierToken namespaceIdentifierToken)
     {
+        AddSymbolReference(new NamespaceSymbol(namespaceIdentifierToken.TextSpan));
+
         var namespaceText = namespaceIdentifierToken.TextSpan.GetText();
 
         if (_boundNamespaceStatementNodes.TryGetValue(

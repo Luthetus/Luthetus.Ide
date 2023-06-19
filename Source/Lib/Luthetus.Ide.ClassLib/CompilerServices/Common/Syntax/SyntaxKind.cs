@@ -74,4 +74,5 @@ public enum SyntaxKind
     VariableSymbol,
     PropertySymbol,
     StringInterpolationSymbol,
+    NamespaceSymbol,
 }
