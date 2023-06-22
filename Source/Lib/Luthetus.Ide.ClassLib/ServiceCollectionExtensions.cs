@@ -29,8 +29,6 @@ public static class ServiceCollectionExtensions
             .AddSingleton<ICompilerServiceBackgroundTaskMonitor, CompilerServiceBackgroundTaskMonitor>()
             .AddFluxor(options =>
                 options.ScanAssemblies(
-                    typeof(Luthetus.Common.RazorLib.ServiceCollectionExtensions).Assembly,
-                    typeof(Luthetus.TextEditor.RazorLib.ServiceCollectionExtensions).Assembly,
                     typeof(ServiceCollectionExtensions).Assembly));
     }
 }

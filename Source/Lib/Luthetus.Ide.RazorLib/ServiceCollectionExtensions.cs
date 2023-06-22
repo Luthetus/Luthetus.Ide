@@ -51,22 +51,12 @@ public static class ServiceCollectionExtensions
         // TODO: Move registration of "ILuthetusCommonComponentRenderers" to LuthetusCommon
         services.AddScoped<ILuthetusCommonComponentRenderers>(_ => commonRendererTypes);
 
-        var shouldInitializeFluxor = false;
-
         services.AddLuthetusTextEditor(inTextEditorOptions =>
         {
-            var luthetusCommonOptions =
-                (inTextEditorOptions.LuthetusCommonOptions ?? new()) with
-                {
-                    InitializeFluxor = shouldInitializeFluxor
-                };
-
             return inTextEditorOptions with
             {
-                InitializeFluxor = shouldInitializeFluxor,
                 CustomThemeRecords = LuthetusTextEditorCustomThemeFacts.AllCustomThemes,
                 InitialThemeKey = LuthetusTextEditorCustomThemeFacts.DarkTheme.ThemeKey,
-                LuthetusCommonOptions = luthetusCommonOptions
             };
         });
 
