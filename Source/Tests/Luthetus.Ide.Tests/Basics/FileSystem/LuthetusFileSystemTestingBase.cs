@@ -7,6 +7,7 @@ using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Fluxor;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
+using Luthetus.Common.RazorLib;
 
 namespace Luthetus.Ide.Tests.Basics.FileSystem;
 
@@ -69,8 +70,8 @@ public class LuthetusFileSystemTestingBase
 
         services.AddFluxor(options => options
             .ScanAssemblies(
-                typeof(Luthetus.Common.RazorLib.ServiceCollectionExtensions).Assembly,
-                typeof(Luthetus.TextEditor.RazorLib.ServiceCollectionExtensions).Assembly,
+                typeof(LuthetusCommonOptions).Assembly,
+                typeof(LuthetusTextEditorOptions).Assembly,
                 typeof(ClassLib.ServiceCollectionExtensions).Assembly));
 
         ServiceProvider = services.BuildServiceProvider();

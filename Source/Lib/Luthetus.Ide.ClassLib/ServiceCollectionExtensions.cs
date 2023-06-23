@@ -7,6 +7,8 @@ using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
 using Luthetus.Ide.ClassLib.CompilerServices.HostedServiceCase;
 using Luthetus.Ide.ClassLib.FileSystem.HostedServiceCase;
 using Luthetus.TextEditor.RazorLib.HostedServiceCase;
+using Luthetus.Common.RazorLib;
+using Luthetus.TextEditor.RazorLib;
 
 namespace Luthetus.Ide.ClassLib;
 
@@ -29,6 +31,8 @@ public static class ServiceCollectionExtensions
             .AddSingleton<ICompilerServiceBackgroundTaskMonitor, CompilerServiceBackgroundTaskMonitor>()
             .AddFluxor(options =>
                 options.ScanAssemblies(
-                    typeof(ServiceCollectionExtensions).Assembly));
+                    typeof(ServiceCollectionExtensions).Assembly,
+                    typeof(LuthetusCommonOptions).Assembly,
+                    typeof(LuthetusTextEditorOptions).Assembly));
     }
 }
