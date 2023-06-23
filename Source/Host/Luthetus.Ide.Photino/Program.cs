@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
 using Luthetus.Ide.ClassLib.CompilerServices.HostedServiceCase;
 using Luthetus.Ide.ClassLib.FileSystem.HostedServiceCase;
+using Luthetus.Ide.Photino.TestApps;
 using Luthetus.Ide.RazorLib;
 using Luthetus.TextEditor.RazorLib.HostedServiceCase;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,14 +34,24 @@ namespace Luthetus.Ide.Photino
             appBuilder.Services.AddSingleton<FileSystemQueuedHostedService>();
             appBuilder.Services.AddSingleton<CompilerServiceQueuedHostedService>();
 
+            // TODO: This AppKind enum is weirdly written. Probably should set an environment variable and then read that when starting the application to determine what verson is ran?
+            var appKind = AppKind.TestAppLuthetusIde;
+
             // register root component and selector
+            switch (appKind)
             {
-                var performingAdhocManualTestingOfUiElements = false;
-                
-                if (performingAdhocManualTestingOfUiElements)
-                    appBuilder.RootComponents.Add<TestApp>("app");
-                else
+                case AppKind.Normal:
                     appBuilder.RootComponents.Add<App>("app");
+                    break;
+                case AppKind.TestAppLuthetusCommon:
+                    appBuilder.RootComponents.Add<TestAppLuthetusCommon>("app");
+                    break;
+                case AppKind.TestAppLuthetusTextEditor:
+                    appBuilder.RootComponents.Add<TestAppLuthetusTextEditor>("app");
+                    break;
+                case AppKind.TestAppLuthetusIde:
+                    appBuilder.RootComponents.Add<TestAppLuthetusIde>("app");
+                    break;
             }
 
             var app = appBuilder.Build();
