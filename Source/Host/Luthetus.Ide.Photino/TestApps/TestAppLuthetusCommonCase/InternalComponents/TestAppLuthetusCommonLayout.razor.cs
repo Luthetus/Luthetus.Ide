@@ -9,6 +9,7 @@ using Luthetus.Common.RazorLib.Resize;
 using Luthetus.Common.RazorLib.StateHasChangedBoundaryCase;
 using Luthetus.Common.RazorLib.Store.ApplicationOptions;
 using Luthetus.Common.RazorLib.Store.DragCase;
+using Luthetus.Ide.Photino.TestApps.TestAppLuthetusCommonCase.InternalComponents.RenderCounter;
 
 namespace Luthetus.Ide.Photino.TestApps.TestAppLuthetusCommonCase.InternalComponents;
 
@@ -30,8 +31,9 @@ public partial class TestAppLuthetusCommonLayout : LayoutComponentBase, IDisposa
     private bool _previousDragStateWrapShouldDisplay;
 
     private ElementDimensions _bodyElementDimensions = new();
-
     private StateHasChangedBoundary _bodyAndFooterStateHasChangedBoundaryComponent = null!;
+
+    private RenderCounterDisplay _renderCounterDisplayComponent = null!;
 
     protected override void OnInitialized()
     {
@@ -43,6 +45,8 @@ public partial class TestAppLuthetusCommonLayout : LayoutComponentBase, IDisposa
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        _renderCounterDisplayComponent.IncrementCount();
+
         if (firstRender)
         {
             await AppOptionsService.SetFromLocalStorageAsync();

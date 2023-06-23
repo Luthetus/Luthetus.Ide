@@ -10,6 +10,9 @@
 @using Luthetus.Ide.RazorLib.Panel
 @using Luthetus.Common.RazorLib.ShouldRenderBoundaryCase
 @using Luthetus.Common.RazorLib.StateHasChangedBoundaryCase
+@using Luthetus.Common.RazorLib.Options
+@using Luthetus.Ide.Photino.TestApps.TestAppLuthetusCommonCase.InternalComponents.Settings
+@using Luthetus.Ide.Photino.TestApps.TestAppLuthetusCommonCase.InternalComponents.RenderCounter
 
 @inherits LayoutComponentBase
 
@@ -17,9 +20,14 @@
                  ClassCssString="@($"luth_test-app-luthetus-common-layout {UnselectableClassCss} {AppOptionsService.ThemeCssClassString}")"
                  StyleCssString="@($"{AppOptionsService.FontSizeCssStyleString} {AppOptionsService.FontFamilyCssStyleString}")">
 
+    <RenderCounterDisplay @ref="_renderCounterDisplayComponent"
+                          DisplayName="@nameof(TestAppLuthetusCommonLayout)"/>
+
     <ShouldRenderBoundary>
         <DragInitializer/>
         <DialogInitializer/>
         <NotificationInitializer/>
+
+        <SettingsDialogEntryPoint/>
     </ShouldRenderBoundary>
 </ContextBoundary>

@@ -1,0 +1,10 @@
+@using Luthetus.Common.RazorLib.Icons.Codicon
+@using Luthetus.Ide.RazorLib.Button
+@using Luthetus.Ide.Photino.TestApps.TestAppLuthetusCommonCase.InternalComponents.RenderCounter
+
+<button class="luth_button"
+        @onclick="DispatchRegisterDialogRecordAction">
+    <IconSettingsGear />
+    <RenderCounterDisplay @ref="_renderCounterDisplayComponent"
+                          DisplayName="@nameof(SettingsDialogEntryPoint)" />
+</button>
