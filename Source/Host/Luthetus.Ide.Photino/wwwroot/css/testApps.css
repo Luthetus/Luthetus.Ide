@@ -1,7 +1,0 @@
-.luth_test-app-luthetus-common-layout {
-    width: 100vw;
-    height: 100vh;
-    overflow: auto;
-    color: var(--luth_primary-foreground-color);
-    background-color: var(--luth_primary-background-color);
-}
