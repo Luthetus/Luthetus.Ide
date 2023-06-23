@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Luthetus.Ide.Photino;
+﻿namespace Luthetus.Ide.Photino;
 
 /// <summary>
 /// The 'Luthetus.Ide.Photino' app has a lot of parts to it.
