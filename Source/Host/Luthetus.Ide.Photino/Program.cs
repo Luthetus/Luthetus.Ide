@@ -37,7 +37,7 @@ namespace Luthetus.Ide.Photino
             appBuilder.Services.AddSingleton<CompilerServiceQueuedHostedService>();
 
             // TODO: This AppKind enum is weirdly written. Probably should set an environment variable and then read that when starting the application to determine what verson is ran?
-            var appKind = AppKind.TestAppLuthetusIde;
+            var appKind = AppKind.TestAppLuthetusCommon;
 
             // register root component and selector
             switch (appKind)
