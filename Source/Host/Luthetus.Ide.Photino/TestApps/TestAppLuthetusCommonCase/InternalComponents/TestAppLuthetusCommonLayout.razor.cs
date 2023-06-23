@@ -24,16 +24,24 @@ public partial class TestAppLuthetusCommonLayout : LayoutComponentBase, IDisposa
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
-    private string UnselectableClassCss => DragStateWrap.Value.ShouldDisplay
-        ? "balc_unselectable"
-        : string.Empty;
+    private readonly object _ignoreStateHasChangedCounterLock = new();
 
     private bool _previousDragStateWrapShouldDisplay;
 
-    private ElementDimensions _bodyElementDimensions = new();
-    private StateHasChangedBoundary _bodyAndFooterStateHasChangedBoundaryComponent = null!;
+    private StateHasChangedBoundary _stateHasChangedBoundaryComponentAaa = null!;
+    private StateHasChangedBoundary _stateHasChangedBoundaryComponentBbb = null!;
 
     private RenderCounterDisplay _renderCounterDisplayComponent = null!;
+
+    /// <summary>
+    /// At this point in time I'm just messing around. Getting a bit experimental.
+    /// This seems silly but I want to do it at least once just to see what happens.
+    /// </summary>
+    private int _ignoreStateHasChangedCounter;
+
+    private string UnselectableClassCss => DragStateWrap.Value.ShouldDisplay
+        ? "balc_unselectable"
+        : string.Empty;
 
     protected override void OnInitialized()
     {
@@ -41,6 +49,22 @@ public partial class TestAppLuthetusCommonLayout : LayoutComponentBase, IDisposa
         AppOptionsStateWrap.StateChanged += AppOptionsStateWrapOnStateChanged;
 
         base.OnInitialized();
+    }
+
+    protected override bool ShouldRender()
+    {
+        bool shouldRender = true;
+
+        lock (_ignoreStateHasChangedCounterLock)
+        {
+            if (_ignoreStateHasChangedCounter > 0)
+            {
+                _ignoreStateHasChangedCounter--;
+                shouldRender = false;
+            }
+        }
+
+        return shouldRender;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -67,6 +91,34 @@ public partial class TestAppLuthetusCommonLayout : LayoutComponentBase, IDisposa
             _previousDragStateWrapShouldDisplay = DragStateWrap.Value.ShouldDisplay;
             await InvokeAsync(StateHasChanged);
         }
+    }
+
+    /// <summary>
+    /// At this point in time I'm just messing around. Getting a bit experimental.
+    /// This seems silly but I want to do it at least once just to see what happens.
+    /// </summary>
+    private async Task IgnoreOnClickAsync(Func<Task> onClickFunc)
+    {
+        lock (_ignoreStateHasChangedCounterLock)
+        {
+            _ignoreStateHasChangedCounter++;
+        }
+
+        await onClickFunc.Invoke();
+    }
+
+    /// <summary>
+    /// At this point in time I'm just messing around. Getting a bit experimental.
+    /// This seems silly but I want to do it at least once just to see what happens.
+    /// </summary>
+    private void IgnoreOnClick(Action onClickAction)
+    {
+        lock (_ignoreStateHasChangedCounterLock)
+        {
+            _ignoreStateHasChangedCounter++;
+        }
+
+        onClickAction.Invoke();
     }
 
     public void Dispose()
