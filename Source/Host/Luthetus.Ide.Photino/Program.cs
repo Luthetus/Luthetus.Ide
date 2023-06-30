@@ -33,7 +33,6 @@ namespace Luthetus.Ide.Photino
             appBuilder.Services.AddSingleton<FileSystemQueuedHostedService>();
             appBuilder.Services.AddSingleton<CompilerServiceQueuedHostedService>();
 
-            // register root component and selector
             appBuilder.RootComponents.Add<App>("app");
 
             var app = appBuilder.Build();

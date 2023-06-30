@@ -7,6 +7,7 @@ using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Fluxor;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
+using Luthetus.Common.RazorLib;
 
 namespace Luthetus.Ide.Tests.Basics.FileSystem;
 
@@ -41,15 +42,9 @@ public class LuthetusFileSystemTestingBase
             null,
             null));
 
-        var shouldInitializeFluxor = false;
-
         services.AddLuthetusTextEditor(inTextEditorOptions =>
         {
-            var luthetusCommonOptions =
-                (inTextEditorOptions.LuthetusCommonOptions ?? new()) with
-                {
-                    InitializeFluxor = shouldInitializeFluxor
-                };
+            var luthetusCommonOptions = inTextEditorOptions.LuthetusCommonOptions ?? new();
 
             var luthetusCommonFactories = luthetusCommonOptions.LuthetusCommonFactories with
             {
@@ -64,7 +59,6 @@ public class LuthetusFileSystemTestingBase
 
             return inTextEditorOptions with
             {
-                InitializeFluxor = shouldInitializeFluxor,
                 CustomThemeRecords = LuthetusTextEditorCustomThemeFacts.AllCustomThemes,
                 InitialThemeKey = LuthetusTextEditorCustomThemeFacts.DarkTheme.ThemeKey,
                 LuthetusCommonOptions = luthetusCommonOptions
@@ -76,8 +70,8 @@ public class LuthetusFileSystemTestingBase
 
         services.AddFluxor(options => options
             .ScanAssemblies(
-                typeof(Luthetus.Common.RazorLib.ServiceCollectionExtensions).Assembly,
-                typeof(Luthetus.TextEditor.RazorLib.ServiceCollectionExtensions).Assembly,
+                typeof(LuthetusCommonOptions).Assembly,
+                typeof(LuthetusTextEditorOptions).Assembly,
                 typeof(ClassLib.ServiceCollectionExtensions).Assembly));
 
         ServiceProvider = services.BuildServiceProvider();
