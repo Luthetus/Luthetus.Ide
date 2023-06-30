@@ -17,13 +17,13 @@ public class ParserTests
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new LexerSession(
+        var lexer = new CLexerSession(
             resourceUri,
             sourceText);
 
         lexer.Lex();
 
-        var parser = new ParserSession(
+        var parser = new CParserSession(
             lexer.SyntaxTokens,
             lexer.Diagnostics);
 
@@ -44,13 +44,13 @@ public class ParserTests
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new LexerSession(
+        var lexer = new CLexerSession(
             resourceUri,
             sourceText);
 
         lexer.Lex();
 
-        var parser = new ParserSession(
+        var parser = new CParserSession(
             lexer.SyntaxTokens,
             lexer.Diagnostics);
 
@@ -71,13 +71,13 @@ public class ParserTests
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new LexerSession(
+        var lexer = new CLexerSession(
             resourceUri,
             sourceText);
 
         lexer.Lex();
 
-        var parser = new ParserSession(
+        var parser = new CParserSession(
             lexer.SyntaxTokens,
             lexer.Diagnostics);
 
@@ -109,13 +109,13 @@ public class ParserTests
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new LexerSession(
+        var lexer = new CLexerSession(
             resourceUri,
             sourceText);
 
         lexer.Lex();
 
-        var parser = new ParserSession(
+        var parser = new CParserSession(
             lexer.SyntaxTokens,
             lexer.Diagnostics);
 
@@ -139,13 +139,13 @@ public class ParserTests
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new LexerSession(
+        var lexer = new CLexerSession(
             resourceUri,
             sourceText);
 
         lexer.Lex();
 
-        var parser = new ParserSession(
+        var parser = new CParserSession(
             lexer.SyntaxTokens,
             lexer.Diagnostics);
 
@@ -174,13 +174,13 @@ public class ParserTests
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new LexerSession(
+        var lexer = new CLexerSession(
             resourceUri,
             sourceText);
 
         lexer.Lex();
 
-        var parser = new ParserSession(
+        var parser = new CParserSession(
             lexer.SyntaxTokens,
             lexer.Diagnostics);
 
@@ -197,13 +197,13 @@ public class ParserTests
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new LexerSession(
+        var lexer = new CLexerSession(
             resourceUri,
             sourceText);
 
         lexer.Lex();
 
-        var parser = new ParserSession(
+        var parser = new CParserSession(
             lexer.SyntaxTokens,
             lexer.Diagnostics);
 
@@ -250,13 +250,13 @@ x = 42;"
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new LexerSession(
+        var lexer = new CLexerSession(
             resourceUri,
             sourceText);
 
         lexer.Lex();
 
-        var parser = new ParserSession(
+        var parser = new CParserSession(
             lexer.SyntaxTokens,
             lexer.Diagnostics);
 
@@ -287,13 +287,13 @@ x = 42;"
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new LexerSession(
+        var lexer = new CLexerSession(
             resourceUri,
             sourceText);
 
         lexer.Lex();
 
-        var parser = new ParserSession(
+        var parser = new CParserSession(
             lexer.SyntaxTokens,
             lexer.Diagnostics);
 
@@ -326,13 +326,13 @@ x = 42;"
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new LexerSession(
+        var lexer = new CLexerSession(
             resourceUri,
             sourceText);
 
         lexer.Lex();
 
-        var parser = new ParserSession(
+        var parser = new CParserSession(
             lexer.SyntaxTokens,
             lexer.Diagnostics);
 
@@ -360,13 +360,13 @@ WriteHelloWorldToConsole();"
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new LexerSession(
+        var lexer = new CLexerSession(
             resourceUri,
             sourceText);
 
         lexer.Lex();
 
-        var parser = new ParserSession(
+        var parser = new CParserSession(
             lexer.SyntaxTokens,
             lexer.Diagnostics);
 
@@ -397,13 +397,13 @@ WriteHelloWorldToConsole();"
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new LexerSession(
+        var lexer = new CLexerSession(
             resourceUri,
             sourceText);
 
         lexer.Lex();
 
-        var parser = new ParserSession(
+        var parser = new CParserSession(
             lexer.SyntaxTokens,
             lexer.Diagnostics);
 

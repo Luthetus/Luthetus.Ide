@@ -25,7 +25,7 @@ public partial class EditorState
 {
     public static readonly TextEditorGroupKey EditorTextEditorGroupKey = TextEditorGroupKey.NewTextEditorGroupKey();
 
-    public static readonly Binder SharedBinder = new();
+    public static readonly CSharpBinder SharedBinder = new();
 
     private class Effector
     {

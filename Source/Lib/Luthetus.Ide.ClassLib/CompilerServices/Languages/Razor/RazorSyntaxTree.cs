@@ -15,9 +15,9 @@ using Luthetus.TextEditor.RazorLib.Analysis;
 using System.Text;
 using Luthetus.TextEditor.RazorLib.Analysis.Html.Facts;
 
-namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor.TextEditorCase;
+namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor;
 
-public class IdeRazorSyntaxTree
+public class RazorSyntaxTree
 {
     public const string ADHOC_CLASS_IDENTIFIER = "__CLASS_Aaa__";
     public const string ADHOC_FUNCTION_IDENTIFIER = "__RENDER_FUNCTION_Bbb__";
@@ -66,7 +66,7 @@ public class IdeRazorSyntaxTree
 
         lexer.Lex();
 
-        var parser = new Parser(
+        var parser = new CSharpParser(
             lexer.SyntaxTokens,
             lexer.Diagnostics);
 
@@ -200,7 +200,7 @@ public class IdeRazorSyntaxTree
 
         return new AttributeNameNode(attributeNameTextSpan);
     }
-    
+
     public static AttributeValueNode ParseAttributeValue(
         StringWalker stringWalker,
         TextEditorHtmlDiagnosticBag textEditorHtmlDiagnosticBag,
@@ -488,7 +488,7 @@ public class IdeRazorSyntaxTree
             textSpan.GetText(),
             entryPositionIndex,
             stringWalker);
-        
+
         // TODO: Syntax highlighting
         return injectedLanguageFragmentSyntaxes;
     }

@@ -22,13 +22,13 @@ public partial class EvaluatorTests
 
         lexer.Lex();
 
-        var parser = new Parser(
+        var parser = new CSharpParser(
             lexer.SyntaxTokens,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
 
-        var evaluator = new Evaluator(
+        var evaluator = new CEvaluator(
             compilationUnit,
             sourceText);
 
@@ -52,13 +52,13 @@ public partial class EvaluatorTests
 
         lexer.Lex();
 
-        var parser = new Parser(
+        var parser = new CSharpParser(
             lexer.SyntaxTokens,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
 
-        var evaluator = new Evaluator(
+        var evaluator = new CEvaluator(
             compilationUnit,
             sourceText);
 
@@ -84,13 +84,13 @@ public partial class EvaluatorTests
 
         lexer.Lex();
 
-        var parser = new Parser(
+        var parser = new CSharpParser(
             lexer.SyntaxTokens,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
 
-        var evaluator = new Evaluator(
+        var evaluator = new CEvaluator(
             compilationUnit,
             sourceText);
 
@@ -116,13 +116,13 @@ public partial class EvaluatorTests
 
         lexer.Lex();
 
-        var parser = new Parser(
+        var parser = new CSharpParser(
             lexer.SyntaxTokens,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
 
-        var evaluator = new Evaluator(
+        var evaluator = new CEvaluator(
             compilationUnit,
             sourceText);
 

@@ -19,7 +19,7 @@ public partial class ParserTests
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
 
-        var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
 
         Assert.Single(compilationUnit.Children);
@@ -48,7 +48,7 @@ public partial class ParserTests
 
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
-        var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
 
         // Assertions

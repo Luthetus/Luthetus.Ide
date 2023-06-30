@@ -1,4 +1,5 @@
-﻿using Luthetus.TextEditor.RazorLib.Lexing;
+﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.General;
+using Luthetus.TextEditor.RazorLib.Lexing;
 using Luthetus.TextEditor.RazorLib.Model;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.NewInterfaceCase;
@@ -18,6 +19,7 @@ public class CSharpResource
     public TextEditorModelKey ModelKey { get; }
     public ResourceUri ResourceUri { get; }
     public CSharpCompilerService CSharpCompilerService { get; }
+    public CompilationUnit? CompilationUnit { get; internal set; }
 
     /// <returns>
     /// The <see cref="Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.ISyntaxNode"/>

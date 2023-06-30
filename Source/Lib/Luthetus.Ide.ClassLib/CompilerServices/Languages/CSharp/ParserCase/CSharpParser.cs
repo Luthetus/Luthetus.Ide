@@ -13,22 +13,22 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.ParserCase;
 
-public class Parser
+public class CSharpParser
 {
     private readonly TokenWalker _tokenWalker;
     private readonly CompilationUnitBuilder _globalCompilationUnitBuilder;
     private readonly LuthetusIdeDiagnosticBag _diagnosticBag = new();
     private readonly ImmutableArray<TextEditorDiagnostic> _lexerDiagnostics;
 
-    private Binder _binder;
+    private CSharpBinder _binder;
 
-    public Parser(
+    public CSharpParser(
         ImmutableArray<ISyntaxToken> tokens,
         ImmutableArray<TextEditorDiagnostic> lexerDiagnostics)
     {
         _lexerDiagnostics = lexerDiagnostics;
         _tokenWalker = new TokenWalker(tokens, _diagnosticBag);
-        _binder = new Binder();
+        _binder = new CSharpBinder();
 
         _globalCompilationUnitBuilder = new(null);
         _currentCompilationUnitBuilder = _globalCompilationUnitBuilder;
@@ -38,7 +38,7 @@ public class Parser
     private Action<CompilationUnit>? _finalizeFileScopeAction;
 
     public ImmutableArray<TextEditorDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
-    public Binder Binder => _binder;
+    public CSharpBinder Binder => _binder;
 
     private ISyntaxNode? _nodeRecent;
     private CompilationUnitBuilder _currentCompilationUnitBuilder;
@@ -48,7 +48,7 @@ public class Parser
 
     /// <summary>This method is used when parsing many files as a single compilation. The first binder instance would be passed to the following parsers. The resourceUri is passed in so if a file is parsed for a second time, the previous symbols can be deleted so they do not duplicate.</summary>
     public CompilationUnit Parse(
-        Binder previousBinder,
+        CSharpBinder previousBinder,
         ResourceUri resourceUri)
     {
         _binder = previousBinder;

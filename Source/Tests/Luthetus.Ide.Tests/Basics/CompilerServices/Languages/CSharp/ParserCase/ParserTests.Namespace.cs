@@ -18,7 +18,7 @@ public partial class ParserTests
 
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
-        var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
 
         // Assertions
@@ -42,7 +42,7 @@ public partial class ParserTests
 
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
-        var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
 
         // Assertions
@@ -68,7 +68,7 @@ public partial class ParserTests
 
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
-        var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
 
         // Assertions
@@ -95,7 +95,7 @@ public partial class ParserTests
 
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
-        var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
 
         // Assertions
@@ -114,7 +114,7 @@ public partial class ParserTests
 
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
-        var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
 
         // Assertions
@@ -138,12 +138,12 @@ public partial class ParserTests
 
         var modelLexer = new CSharpLexer(modelResourceUri, modelFile.Content);
         modelLexer.Lex();
-        var modelParser = new Parser(modelLexer.SyntaxTokens, modelLexer.Diagnostics);
+        var modelParser = new CSharpParser(modelLexer.SyntaxTokens, modelLexer.Diagnostics);
         modelCompilationUnit = modelParser.Parse();
 
         var displayLexer = new CSharpLexer(displayResourceUri, displayFile.Content);
         displayLexer.Lex();
-        var displayParser = new Parser(displayLexer.SyntaxTokens, displayLexer.Diagnostics);
+        var displayParser = new CSharpParser(displayLexer.SyntaxTokens, displayLexer.Diagnostics);
         displayCompilationUnit = displayParser.Parse(modelParser.Binder, displayResourceUri);
 
         // Assertions
@@ -189,17 +189,17 @@ public partial class ParserTests
 
         var modelLexer = new CSharpLexer(modelResourceUri, modelFile.Content);
         modelLexer.Lex();
-        var modelParser = new Parser(modelLexer.SyntaxTokens, modelLexer.Diagnostics);
+        var modelParser = new CSharpParser(modelLexer.SyntaxTokens, modelLexer.Diagnostics);
         modelCompilationUnit = modelParser.Parse();
 
         var displayLexer = new CSharpLexer(displayResourceUri, displayFile.Content);
         displayLexer.Lex();
-        var displayParser = new Parser(displayLexer.SyntaxTokens, displayLexer.Diagnostics);
+        var displayParser = new CSharpParser(displayLexer.SyntaxTokens, displayLexer.Diagnostics);
         displayCompilationUnit = displayParser.Parse(modelParser.Binder, displayResourceUri);
 
         var pageLexer = new CSharpLexer(pageResourceUri,pageFile.Content);
         pageLexer.Lex();
-        var pageParser = new Parser(pageLexer.SyntaxTokens, pageLexer.Diagnostics);
+        var pageParser = new CSharpParser(pageLexer.SyntaxTokens, pageLexer.Diagnostics);
         pageCompilationUnit = pageParser.Parse(displayParser.Binder, pageResourceUri);
 
         // Assertions
@@ -219,7 +219,7 @@ public partial class ParserTests
 
         var lexer = new CSharpLexer(sourceResourceUri, sourceFile.Content);
         lexer.Lex();
-        var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
 
         // Assertions
@@ -251,7 +251,7 @@ public partial class ParserTests
 
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
-        var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
 
         // Assertions

@@ -15,14 +15,14 @@ using Luthetus.Ide.ClassLib.CompilerServices.Languages.C.Facts;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.C.BinderCase;
 
-public class BinderSession
+public class CBinderSession
 {
     private readonly BoundScope _globalScope = CLanguageFacts.Scope.GetInitialGlobalScope();
     private readonly LuthetusIdeDiagnosticBag _diagnosticBag = new();
 
     private BoundScope _currentScope;
 
-    public BinderSession()
+    public CBinderSession()
     {
         _currentScope = _globalScope;
 

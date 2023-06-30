@@ -40,7 +40,7 @@ public class PersonModel
 
         lexer.Lex();
 
-        var parser = new Parser(
+        var parser = new CSharpParser(
             lexer.SyntaxTokens,
             lexer.Diagnostics);
 
