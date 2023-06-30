@@ -16,7 +16,7 @@ public partial class ParserTests
         string sourceText = @"namespace HelloWorld {}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
@@ -40,7 +40,7 @@ public partial class ParserTests
         var sourceText = @$"namespace PersonCase {{ public class {classIdentifier} {{ }} }}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
@@ -66,7 +66,7 @@ public partial class ParserTests
         var sourceText = @$"namespace PersonCase; public class {classIdentifier} {{ }}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
@@ -93,7 +93,7 @@ public partial class ParserTests
         var sourceText = @$"namespace PersonCase; public class {classIdentifier} {{ }} namespace Pages {{ public class {classIdentifier} {{ }} }}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
@@ -112,7 +112,7 @@ public partial class ParserTests
         var sourceText = @$"namespace Pages {{ public class {classIdentifier} {{ }} }} namespace PersonCase; public class {classIdentifier} {{ }}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
@@ -136,12 +136,12 @@ public partial class ParserTests
         CompilationUnit modelCompilationUnit;
         CompilationUnit displayCompilationUnit;
 
-        var modelLexer = new Lexer(modelResourceUri, modelFile.Content);
+        var modelLexer = new CSharpLexer(modelResourceUri, modelFile.Content);
         modelLexer.Lex();
         var modelParser = new Parser(modelLexer.SyntaxTokens, modelLexer.Diagnostics);
         modelCompilationUnit = modelParser.Parse();
 
-        var displayLexer = new Lexer(displayResourceUri, displayFile.Content);
+        var displayLexer = new CSharpLexer(displayResourceUri, displayFile.Content);
         displayLexer.Lex();
         var displayParser = new Parser(displayLexer.SyntaxTokens, displayLexer.Diagnostics);
         displayCompilationUnit = displayParser.Parse(modelParser.Binder, displayResourceUri);
@@ -187,17 +187,17 @@ public partial class ParserTests
         CompilationUnit displayCompilationUnit;
         CompilationUnit pageCompilationUnit;
 
-        var modelLexer = new Lexer(modelResourceUri, modelFile.Content);
+        var modelLexer = new CSharpLexer(modelResourceUri, modelFile.Content);
         modelLexer.Lex();
         var modelParser = new Parser(modelLexer.SyntaxTokens, modelLexer.Diagnostics);
         modelCompilationUnit = modelParser.Parse();
 
-        var displayLexer = new Lexer(displayResourceUri, displayFile.Content);
+        var displayLexer = new CSharpLexer(displayResourceUri, displayFile.Content);
         displayLexer.Lex();
         var displayParser = new Parser(displayLexer.SyntaxTokens, displayLexer.Diagnostics);
         displayCompilationUnit = displayParser.Parse(modelParser.Binder, displayResourceUri);
 
-        var pageLexer = new Lexer(pageResourceUri,pageFile.Content);
+        var pageLexer = new CSharpLexer(pageResourceUri,pageFile.Content);
         pageLexer.Lex();
         var pageParser = new Parser(pageLexer.SyntaxTokens, pageLexer.Diagnostics);
         pageCompilationUnit = pageParser.Parse(displayParser.Binder, pageResourceUri);
@@ -217,7 +217,7 @@ public partial class ParserTests
         var sourceFile = new TestResource("PersonModel.cs", @$"using {namespaceIdentifier};".ReplaceLineEndings("\n"));
         var sourceResourceUri = new ResourceUri("PersonPage.razor.cs");
 
-        var lexer = new Lexer(sourceResourceUri, sourceFile.Content);
+        var lexer = new CSharpLexer(sourceResourceUri, sourceFile.Content);
         lexer.Lex();
         var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
@@ -249,7 +249,7 @@ public partial class ParserTests
         string sourceText = @$"namespace {namespaceIdentifier} {{}}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();

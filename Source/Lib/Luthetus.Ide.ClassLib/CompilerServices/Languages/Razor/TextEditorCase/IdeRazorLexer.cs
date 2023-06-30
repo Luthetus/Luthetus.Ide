@@ -7,7 +7,7 @@ using Luthetus.TextEditor.RazorLib.Lexing;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor.TextEditorCase;
 
-public class IdeRazorLexer : ITextEditorLexer
+public class IdeRazorLexer
 {
     public IdeRazorLexer(ResourceUri resourceUri)
     {

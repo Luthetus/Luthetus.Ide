@@ -30,11 +30,6 @@ public class IdeRazorSyntaxTree
 
     private readonly ResourceUri AdhocResourceUri = new ResourceUri(ADHOC_CLASS_IDENTIFIER + ".cs");
 
-#if DEBUG
-#endif
-
-    public SemanticResultRazor? RecentResult;
-
     public void ParseAdhocCSharpClass()
     {
         StringWalker? stringWalker = null;
@@ -65,7 +60,7 @@ public class IdeRazorSyntaxTree
 
         var classContents = _classBuilder.ToString();
 
-        var lexer = new Lexer(
+        var lexer = new CSharpLexer(
             AdhocResourceUri,
             classContents);
 
@@ -76,14 +71,6 @@ public class IdeRazorSyntaxTree
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
-
-        RecentResult = new SemanticResultRazor(
-            lexer,
-            parser,
-            compilationUnit,
-            AdhocClassInsertions,
-            AdhocRenderFunctionInsertions,
-            renderFunctionAdhocTextInsertion);
     }
 
     /// <summary>currentCharacterIn:<br/> -<see cref="InjectedLanguageDefinition.TransitionSubstring"/><br/></summary>

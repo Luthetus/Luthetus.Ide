@@ -16,7 +16,7 @@ public partial class EvaluatorTests
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(
+        var lexer = new CSharpLexer(
             resourceUri,
             sourceText);
 
@@ -46,7 +46,7 @@ public partial class EvaluatorTests
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(
+        var lexer = new CSharpLexer(
             resourceUri,
             sourceText);
 
@@ -78,7 +78,7 @@ public partial class EvaluatorTests
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(
+        var lexer = new CSharpLexer(
             resourceUri,
             sourceText);
 
@@ -110,7 +110,7 @@ public partial class EvaluatorTests
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(
+        var lexer = new CSharpLexer(
             resourceUri,
             sourceText);
 

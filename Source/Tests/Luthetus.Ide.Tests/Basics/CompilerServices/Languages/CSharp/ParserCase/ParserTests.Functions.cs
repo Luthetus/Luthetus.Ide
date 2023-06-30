@@ -17,7 +17,7 @@ public partial class ParserTests
         string sourceText = @$"void {functionIdentifier}(){{}}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
@@ -43,7 +43,7 @@ public partial class ParserTests
         string sourceText = @$"IPerson {functionIdentifier}(){{}}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
@@ -72,7 +72,7 @@ public partial class ParserTests
         string sourceText = @$"{functionReturnTypeClauseText} {functionIdentifierText}({argumentTypeClauseText} {argumentIdentifierText}) {{}}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
@@ -116,7 +116,7 @@ public partial class ParserTests
         string sourceText = @$"{functionReturnTypeClauseText} {functionIdentifierText}({firstArgumentTypeClauseText} {firstArgumentIdentifierText}, {secondArgumentTypeClauseText} {secondArgumentIdentifierText}){{}}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
@@ -177,7 +177,7 @@ public partial class ParserTests
         string sourceText = @$"{functionReturnTypeClauseText} {functionIdentifierText}({firstArgumentTypeClauseText} {firstArgumentIdentifierText}, {secondArgumentTypeClauseText} {secondArgumentIdentifierText}, {thirdArgumentTypeClauseText} {thirdArgumentIdentifierText}){{}}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
@@ -242,7 +242,7 @@ public partial class ParserTests
         string sourceText = @"void WriteHelloWorldToConsole(int times = 1){}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
@@ -260,7 +260,7 @@ public partial class ParserTests
         string sourceText = @$"void {functionInvocationIdentifier}(){{}} {functionInvocationIdentifier}();".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
@@ -280,7 +280,7 @@ public partial class ParserTests
         string sourceText = @"void WriteToConsole(string input){} WriteToConsole(""Aaa"");".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
@@ -297,7 +297,7 @@ public partial class ParserTests
         string sourceText = @"void WriteToConsole(int input){} WriteToConsole(31);".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
@@ -314,7 +314,7 @@ public partial class ParserTests
         string sourceText = @"void WriteToConsole(string input){} WriteToConsole(""a"" + ""b"");".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
@@ -331,7 +331,7 @@ public partial class ParserTests
         string sourceText = @"int x = 2; void WriteToConsole(int input){} WriteToConsole(x);".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
@@ -348,7 +348,7 @@ public partial class ParserTests
         string sourceText = @"int x = 2; void WriteToConsole(out int input){} WriteToConsole(out x);".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
@@ -365,7 +365,7 @@ public partial class ParserTests
         string sourceText = @"void WriteToConsole(out int input){} WriteToConsole(out int x);".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
@@ -382,7 +382,7 @@ public partial class ParserTests
         string sourceText = @"int x = 2; void WriteToConsole(ref int input){} WriteToConsole(ref x);".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
@@ -399,7 +399,7 @@ public partial class ParserTests
         string sourceText = @"printf();".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
@@ -434,7 +434,7 @@ public partial class ParserTests
         var sourceText = @"TODO".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
@@ -451,7 +451,7 @@ public partial class ParserTests
         var sourceText = @"using System; Console.WriteLine(""Hello World!"");".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
@@ -468,7 +468,7 @@ public partial class ParserTests
         var sourceText = @"System.Console.WriteLine(""Hello World!"");".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
@@ -488,7 +488,7 @@ public partial class ParserTests
         var sourceText = @$"public {genericArgumentIdentifier} {functionIdentifier}<{genericArgumentIdentifier}>({genericArgumentIdentifier} {functionArgumentIdentifier}) {{ return {functionArgumentIdentifier}; }}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
@@ -522,7 +522,7 @@ public partial class ParserTests
         var sourceText = @"public T Clone<T>(T item) where T : class { return item; }".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
@@ -539,7 +539,7 @@ public partial class ParserTests
         var sourceText = @"Clone<int>(3){}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();

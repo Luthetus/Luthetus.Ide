@@ -15,7 +15,7 @@ public partial class ParserTests
         string sourceText = @"int x;".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
@@ -61,7 +61,7 @@ public partial class ParserTests
         string sourceText = @"int x; x = 42;".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
@@ -92,7 +92,7 @@ public partial class ParserTests
         string sourceText = @"int x = 42;".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
@@ -123,7 +123,7 @@ public partial class ParserTests
         var sourceText = @"var var = 2; var x = var * 2;".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var modelParser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = modelParser.Parse();
@@ -150,7 +150,7 @@ public partial class ParserTests
         var sourceText = @"private int _count; private void IncrementCountOnClick() { _count++; }".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var modelParser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = modelParser.Parse();

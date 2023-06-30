@@ -14,7 +14,6 @@ using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.FileConstants;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.TextEditor.RazorLib.Lexing;
-using Luthetus.TextEditor.RazorLib.Semantics;
 using Luthetus.Ide.ClassLib.Store.SemanticContextCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.BinderCase;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
@@ -145,28 +144,16 @@ public partial class EditorState
                 var content = await _fileSystemProvider.File.ReadAllTextAsync(
                     absoluteFilePathString);
 
-                var lexer = ExtensionNoPeriodFacts.GetLexer(
-                    resourceUri,
-                    absoluteFilePath.ExtensionNoPeriod);
-
                 var decorationMapper = ExtensionNoPeriodFacts.GetDecorationMapper(
                     absoluteFilePath.ExtensionNoPeriod);
-
-                var semanticModel = GetOrCreateSemanticModel(
-                    absoluteFilePath,
-                    absoluteFilePathString);
-
-                if (semanticModel is null)
-                    return null;
 
                 textEditorModel = new TextEditorModel(
                     resourceUri,
                     fileLastWriteTime,
                     absoluteFilePath.ExtensionNoPeriod,
                     content,
-                    lexer,
+                    null,
                     decorationMapper,
-                    semanticModel,
                     null,
                     new(),
                     TextEditorModelKey.NewTextEditorModelKey()
@@ -179,35 +166,6 @@ public partial class EditorState
             }
 
             return textEditorModel;
-        }
-
-        private ISemanticModel? GetOrCreateSemanticModel(
-            IAbsoluteFilePath absoluteFilePath,
-            string inputFileAbsoluteFilePathString)
-        {
-            if (_semanticContextStateWrap.Value.DotNetSolutionSemanticContext is null)
-                return null;
-
-            var resourceUri = new ResourceUri(inputFileAbsoluteFilePathString);
-
-            _semanticContextStateWrap.Value.DotNetSolutionSemanticContext.SemanticModelMap
-                .TryGetValue(
-                    resourceUri,
-                    out var semanticModel);
-
-            if (semanticModel is null)
-            {
-                semanticModel = ExtensionNoPeriodFacts.GetSemanticModel(
-                    absoluteFilePath.ExtensionNoPeriod,
-                    SharedBinder);
-
-                _semanticContextStateWrap.Value.DotNetSolutionSemanticContext.SemanticModelMap
-                    .Add(
-                        resourceUri,
-                        semanticModel);
-            }
-
-            return semanticModel;
         }
 
         private async Task CheckIfContentsWereModifiedAsync(

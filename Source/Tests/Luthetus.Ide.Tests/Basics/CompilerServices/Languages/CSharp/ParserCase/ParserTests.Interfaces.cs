@@ -12,7 +12,7 @@ public partial class ParserTests
         string sourceText = @$"public interface IPersonRepository {{ public void AddPerson(IPersonModel personModel); }}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();

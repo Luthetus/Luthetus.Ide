@@ -9,13 +9,13 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.LexerCase;
 
-public class Lexer
+public class CSharpLexer
 {
     private readonly StringWalker _stringWalker;
     private readonly List<ISyntaxToken> _syntaxTokens = new();
     private readonly LuthetusIdeDiagnosticBag _diagnosticBag = new();
 
-    public Lexer(
+    public CSharpLexer(
         ResourceUri resourceUri,
         string sourceText)
     {

@@ -1,21 +1,8 @@
-﻿using Luthetus.Ide.ClassLib.CompilerServices.Languages.C.TextEditorCase;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.BinderCase;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.TextEditorCase;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor.TextEditorCase;
-using Luthetus.TextEditor.RazorLib.Analysis.C.SyntaxActors;
-using Luthetus.TextEditor.RazorLib.Analysis.Css.Decoration;
-using Luthetus.TextEditor.RazorLib.Analysis.Css.SyntaxActors;
-using Luthetus.TextEditor.RazorLib.Analysis.FSharp.SyntaxActors;
+﻿using Luthetus.TextEditor.RazorLib.Analysis.Css.Decoration;
 using Luthetus.TextEditor.RazorLib.Analysis.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.Analysis.Html.Decoration;
-using Luthetus.TextEditor.RazorLib.Analysis.Html.SyntaxActors;
-using Luthetus.TextEditor.RazorLib.Analysis.JavaScript.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.Analysis.Json.Decoration;
-using Luthetus.TextEditor.RazorLib.Analysis.Json.SyntaxActors;
-using Luthetus.TextEditor.RazorLib.Analysis.TypeScript.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.Decoration;
-using Luthetus.TextEditor.RazorLib.Lexing;
-using Luthetus.TextEditor.RazorLib.Semantics;
 
 namespace Luthetus.Ide.ClassLib.FileConstants;
 
@@ -43,32 +30,6 @@ public static class ExtensionNoPeriodFacts
     public const string CPP = "cpp";
     public const string HPP = "hpp";
 
-    public static ITextEditorLexer GetLexer(
-        ResourceUri resourceUri,
-        string extensionNoPeriod)
-    {
-        return extensionNoPeriod switch
-        {
-            HTML => new TextEditorHtmlLexer(resourceUri),
-            XML => new TextEditorHtmlLexer(resourceUri),
-            C_SHARP_PROJECT => new TextEditorHtmlLexer(resourceUri),
-            C_SHARP_CLASS => new IdeCSharpLexer(resourceUri),
-            RAZOR_CODEBEHIND => new IdeCSharpLexer(resourceUri),
-            RAZOR_MARKUP => new IdeRazorLexer(resourceUri),
-            CSHTML_CLASS => new IdeRazorLexer(resourceUri),
-            CSS => new TextEditorCssLexer(resourceUri),
-            JAVA_SCRIPT => new TextEditorJavaScriptLexer(resourceUri),
-            JSON => new TextEditorJsonLexer(resourceUri),
-            TYPE_SCRIPT => new TextEditorTypeScriptLexer(resourceUri),
-            F_SHARP => new TextEditorFSharpLexer(resourceUri),
-            C => new TextEditorLexerC(resourceUri),
-            H => new TextEditorCLexer(resourceUri),
-            CPP => new TextEditorCLexer(resourceUri),
-            HPP => new TextEditorCLexer(resourceUri),
-            _ => new TextEditorLexerDefault(resourceUri),
-        };
-    }
-
     public static IDecorationMapper GetDecorationMapper(
         string extensionNoPeriod)
     {
@@ -91,32 +52,6 @@ public static class ExtensionNoPeriodFacts
             CPP => new GenericDecorationMapper(),
             HPP => new GenericDecorationMapper(),
             _ => new TextEditorDecorationMapperDefault(),
-        };
-    }
-
-    public static ISemanticModel GetSemanticModel(
-        string extensionNoPeriod, 
-        Binder _sharedBinder)
-    {
-        return extensionNoPeriod switch
-        {
-            HTML => new SemanticModelDefault(),
-            XML => new SemanticModelDefault(),
-            C_SHARP_PROJECT => new SemanticModelDefault(),
-            C_SHARP_CLASS => new SemanticModelCSharp(_sharedBinder),
-            RAZOR_CODEBEHIND => new SemanticModelCSharp(_sharedBinder),
-            RAZOR_MARKUP => new SemanticModelRazor(_sharedBinder),
-            CSHTML_CLASS => new SemanticModelRazor(_sharedBinder),
-            CSS => new SemanticModelDefault(),
-            JAVA_SCRIPT => new SemanticModelDefault(),
-            JSON => new SemanticModelDefault(),
-            TYPE_SCRIPT => new SemanticModelDefault(),
-            F_SHARP => new SemanticModelDefault(),
-            C => new SemanticModelC(),
-            H => new SemanticModelDefault(),
-            CPP => new SemanticModelDefault(),
-            HPP => new SemanticModelDefault(),
-            _ => new SemanticModelDefault(),
         };
     }
 }
