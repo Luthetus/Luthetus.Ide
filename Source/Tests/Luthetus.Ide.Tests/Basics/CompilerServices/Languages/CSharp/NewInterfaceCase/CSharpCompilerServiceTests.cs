@@ -2,6 +2,7 @@
 using Luthetus.Ide.ClassLib.CompilerServices.HostedServiceCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.NewInterfaceCase;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
+using Luthetus.TextEditor.RazorLib.HostedServiceCase.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.Lexing;
 using Luthetus.TextEditor.RazorLib.Model;
 using Microsoft.Extensions.Logging;
@@ -68,12 +69,9 @@ public class CSharpCompilerServiceTests
         ICompilerServiceBackgroundTaskQueue compilerServiceBackgroundTaskQueue)
     {
         var nullLuthetusCommonComponentRenderers =
-            new LuthetusCommonComponentRenderers(null, null, null, null, null, null, null);
+            new LuthetusCommonComponentRenderers(null, null, null, null, null, null, null, null);
 
-        var nullLuthetusIdeComponentRenderers =
-            new LuthetusIdeComponentRenderers(nullLuthetusCommonComponentRenderers, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-
-        var compilerServiceBackgroundTaskMonitor = new CompilerServiceBackgroundTaskMonitor(nullLuthetusIdeComponentRenderers);
+        var compilerServiceBackgroundTaskMonitor = new CompilerServiceBackgroundTaskMonitor(nullLuthetusCommonComponentRenderers);
 
         return new CompilerServiceQueuedHostedService(
             compilerServiceBackgroundTaskQueue,

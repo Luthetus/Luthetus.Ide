@@ -18,6 +18,7 @@ using Luthetus.Ide.ClassLib.Store.SemanticContextCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.BinderCase;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
 
 namespace Luthetus.Ide.ClassLib.Store.EditorCase;
 
@@ -34,19 +35,22 @@ public partial class EditorState
         private readonly IFileSystemProvider _fileSystemProvider;
         private readonly ICommonBackgroundTaskQueue _commonBackgroundTaskQueue;
         private readonly IState<SemanticContextState> _semanticContextStateWrap;
+        private readonly TextEditorXmlCompilerService _textEditorXmlCompilerService;
 
         public Effector(
             ITextEditorService textEditorService,
             ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
             IFileSystemProvider fileSystemProvider,
             ICommonBackgroundTaskQueue commonBackgroundTaskQueue,
-            IState<SemanticContextState> semanticContextStateWrap)
+            IState<SemanticContextState> semanticContextStateWrap,
+            TextEditorXmlCompilerService textEditorXmlCompilerService)
         {
             _textEditorService = textEditorService;
             _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
             _fileSystemProvider = fileSystemProvider;
             _commonBackgroundTaskQueue = commonBackgroundTaskQueue;
             _semanticContextStateWrap = semanticContextStateWrap;
+            _textEditorXmlCompilerService = textEditorXmlCompilerService;
         }
 
 
@@ -144,6 +148,10 @@ public partial class EditorState
                 var content = await _fileSystemProvider.File.ReadAllTextAsync(
                     absoluteFilePathString);
 
+                var compilerService = ExtensionNoPeriodFacts.GetCompilerService(
+                    absoluteFilePath.ExtensionNoPeriod,
+                    _textEditorXmlCompilerService);
+                
                 var decorationMapper = ExtensionNoPeriodFacts.GetDecorationMapper(
                     absoluteFilePath.ExtensionNoPeriod);
 
@@ -152,12 +160,14 @@ public partial class EditorState
                     fileLastWriteTime,
                     absoluteFilePath.ExtensionNoPeriod,
                     content,
-                    null,
+                    compilerService,
                     decorationMapper,
                     null,
                     new(),
                     TextEditorModelKey.NewTextEditorModelKey()
                 );
+
+                textEditorModel.CompilerService.RegisterModel(textEditorModel);
 
                 _textEditorService.Model.RegisterCustom(textEditorModel);
 

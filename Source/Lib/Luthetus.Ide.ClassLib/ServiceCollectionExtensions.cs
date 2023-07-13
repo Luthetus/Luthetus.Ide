@@ -4,11 +4,11 @@ using Luthetus.Ide.ClassLib.Menu;
 using Luthetus.Ide.ClassLib.Nuget;
 using Microsoft.Extensions.DependencyInjection;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
-using Luthetus.Ide.ClassLib.CompilerServices.HostedServiceCase;
 using Luthetus.Ide.ClassLib.FileSystem.HostedServiceCase;
-using Luthetus.TextEditor.RazorLib.HostedServiceCase;
 using Luthetus.Common.RazorLib;
 using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.HostedServiceCase.TextEditorCase;
+using Luthetus.TextEditor.RazorLib.HostedServiceCase.CompilerServiceCase;
 
 namespace Luthetus.Ide.ClassLib;
 

@@ -2,6 +2,7 @@
 using Luthetus.TextEditor.RazorLib.Analysis.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.Analysis.Html.Decoration;
 using Luthetus.TextEditor.RazorLib.Analysis.Json.Decoration;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.Decoration;
 
 namespace Luthetus.Ide.ClassLib.FileConstants;
@@ -52,6 +53,35 @@ public static class ExtensionNoPeriodFacts
             CPP => new GenericDecorationMapper(),
             HPP => new GenericDecorationMapper(),
             _ => new TextEditorDecorationMapperDefault(),
+        };
+    }
+
+    /// <summary>
+    /// TODO: (2023-07-13) Do not pass in dependency injectable parameters.
+    /// </summary>
+    public static ICompilerService? GetCompilerService(
+        string extensionNoPeriod,
+        TextEditorXmlCompilerService? textEditorXmlCompilerService)
+    {
+        return extensionNoPeriod switch
+        {
+            HTML => textEditorXmlCompilerService,
+            XML => textEditorXmlCompilerService,
+            C_SHARP_PROJECT => textEditorXmlCompilerService,
+            C_SHARP_CLASS => null,
+            RAZOR_CODEBEHIND => null,
+            RAZOR_MARKUP => null,
+            CSHTML_CLASS => null,
+            CSS => null,
+            JAVA_SCRIPT => null,
+            JSON => null,
+            TYPE_SCRIPT => null,
+            F_SHARP => null,
+            C => null,
+            H => null,
+            CPP => null,
+            HPP => null,
+            _ => null,
         };
     }
 }

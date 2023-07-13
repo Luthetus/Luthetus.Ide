@@ -21,6 +21,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TreeViewExceptionDisplay = Luthetus.Ide.RazorLib.TreeViewImplementations.TreeViewExceptionDisplay;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
 using Luthetus.Ide.RazorLib.HostedServiceCase;
+using Luthetus.TextEditor.RazorLib.HostedServiceCase.CompilerServiceCase;
 
 namespace Luthetus.Ide.RazorLib;
 
@@ -46,7 +47,8 @@ public static class ServiceCollectionExtensions
             typeof(TreeViewExceptionDisplay),
             typeof(TreeViewMissingRendererFallbackDisplay),
             watchWindowTreeViewRenderers,
-            null);
+            null,
+            typeof(CompilerServiceBackgroundTaskDisplay));
 
         // TODO: Move registration of "ILuthetusCommonComponentRenderers" to LuthetusCommon
         services.AddScoped<ILuthetusCommonComponentRenderers>(_ => commonRendererTypes);
