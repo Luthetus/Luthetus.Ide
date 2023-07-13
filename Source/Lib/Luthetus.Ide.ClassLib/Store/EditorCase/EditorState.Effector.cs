@@ -19,6 +19,7 @@ using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.BinderCase;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
+using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.NewInterfaceCase;
 
 namespace Luthetus.Ide.ClassLib.Store.EditorCase;
 
@@ -36,6 +37,7 @@ public partial class EditorState
         private readonly ICommonBackgroundTaskQueue _commonBackgroundTaskQueue;
         private readonly IState<SemanticContextState> _semanticContextStateWrap;
         private readonly TextEditorXmlCompilerService _textEditorXmlCompilerService;
+        private readonly CSharpCompilerService _cSharpCompilerService;
 
         public Effector(
             ITextEditorService textEditorService,
@@ -43,7 +45,8 @@ public partial class EditorState
             IFileSystemProvider fileSystemProvider,
             ICommonBackgroundTaskQueue commonBackgroundTaskQueue,
             IState<SemanticContextState> semanticContextStateWrap,
-            TextEditorXmlCompilerService textEditorXmlCompilerService)
+            TextEditorXmlCompilerService textEditorXmlCompilerService,
+            CSharpCompilerService cSharpCompilerService)
         {
             _textEditorService = textEditorService;
             _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
@@ -51,6 +54,7 @@ public partial class EditorState
             _commonBackgroundTaskQueue = commonBackgroundTaskQueue;
             _semanticContextStateWrap = semanticContextStateWrap;
             _textEditorXmlCompilerService = textEditorXmlCompilerService;
+            _cSharpCompilerService = cSharpCompilerService;
         }
 
 
@@ -150,7 +154,8 @@ public partial class EditorState
 
                 var compilerService = ExtensionNoPeriodFacts.GetCompilerService(
                     absoluteFilePath.ExtensionNoPeriod,
-                    _textEditorXmlCompilerService);
+                    _textEditorXmlCompilerService,
+                    _cSharpCompilerService);
                 
                 var decorationMapper = ExtensionNoPeriodFacts.GetDecorationMapper(
                     absoluteFilePath.ExtensionNoPeriod);
