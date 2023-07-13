@@ -1,7 +1,7 @@
 ﻿using Luthetus.TextEditor.RazorLib.Analysis;
 using System.Text;
 
-namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor.TextEditorCase;
+namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor;
 
 public class AdhocTextInsertion
 {
@@ -20,8 +20,8 @@ public class AdhocTextInsertion
     public string Content { get; }
     public int SourceTextStartingIndexInclusive { get; }
     public int InsertionStartingIndexInclusive { get; set; }
-    public StringWalker StringWalker { get;}
-    
+    public StringWalker StringWalker { get; }
+
     public int InsertionEndingIndexExclusive => InsertionStartingIndexInclusive + Content.Length;
 
     public static AdhocTextInsertion PerformInsertion(

@@ -9,13 +9,13 @@ using Luthetus.TextEditor.RazorLib.Lexing;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.C.LexerCase;
 
-public class LexerSession
+public class CLexerSession
 {
     private readonly StringWalker _stringWalker;
     private readonly List<ISyntaxToken> _syntaxTokens = new();
     private readonly LuthetusIdeDiagnosticBag _diagnosticBag = new();
 
-    public LexerSession(ResourceUri resourceUri, string sourceText)
+    public CLexerSession(ResourceUri resourceUri, string sourceText)
     {
         _stringWalker = new StringWalker(resourceUri, sourceText);
     }

@@ -7,13 +7,13 @@ using Luthetus.Ide.ClassLib.CompilerServices.Common.EvaluatorCase;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.C.EvaluatorCase;
 
-public class Evaluator
+public class CEvaluator
 {
     private readonly CompilationUnit _compilationUnit;
     private readonly string _sourceText;
     private readonly LuthetusIdeDiagnosticBag _diagnosticBag = new();
 
-    public Evaluator(
+    public CEvaluator(
         CompilationUnit compilationUnit,
         string sourceText)
     {

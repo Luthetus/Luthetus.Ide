@@ -14,7 +14,7 @@ public class LexerTests
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new LexerSession(
+        var lexer = new CLexerSession(
             resourceUri,
             sourceText);
 
@@ -36,7 +36,7 @@ public class LexerTests
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new LexerSession(
+        var lexer = new CLexerSession(
             resourceUri,
             sourceText);
 
@@ -58,7 +58,7 @@ public class LexerTests
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new LexerSession(
+        var lexer = new CLexerSession(
             resourceUri,
             sourceText);
 
@@ -81,7 +81,7 @@ public class LexerTests
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new LexerSession(
+        var lexer = new CLexerSession(
             resourceUri,
             sourceText);
 
@@ -106,7 +106,7 @@ public class LexerTests
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new LexerSession(
+        var lexer = new CLexerSession(
             resourceUri,
             sourceText);
 
@@ -130,7 +130,7 @@ public class LexerTests
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new LexerSession(
+        var lexer = new CLexerSession(
             resourceUri,
             sourceText);
 
@@ -152,7 +152,7 @@ public class LexerTests
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new LexerSession(
+        var lexer = new CLexerSession(
             resourceUri,
             sourceText);
 
@@ -236,7 +236,7 @@ public class LexerTests
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new LexerSession(
+        var lexer = new CLexerSession(
             resourceUri,
             sourceText);
 
@@ -258,7 +258,7 @@ public class LexerTests
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new LexerSession(
+        var lexer = new CLexerSession(
             resourceUri,
             sourceText);
 
@@ -280,7 +280,7 @@ public class LexerTests
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new LexerSession(
+        var lexer = new CLexerSession(
             resourceUri,
             sourceText);
 
@@ -303,7 +303,7 @@ public class LexerTests
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new LexerSession(
+        var lexer = new CLexerSession(
             resourceUri,
             sourceText);
 
@@ -338,7 +338,7 @@ public class LexerTests
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new LexerSession(
+        var lexer = new CLexerSession(
             resourceUri,
             sourceText);
 
@@ -360,7 +360,7 @@ public class LexerTests
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new LexerSession(
+        var lexer = new CLexerSession(
             resourceUri,
             sourceText);
 
@@ -382,7 +382,7 @@ public class LexerTests
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new LexerSession(
+        var lexer = new CLexerSession(
             resourceUri,
             sourceText);
 
@@ -404,7 +404,7 @@ public class LexerTests
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new LexerSession(
+        var lexer = new CLexerSession(
             resourceUri,
             sourceText);
 
@@ -426,7 +426,7 @@ public class LexerTests
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new LexerSession(
+        var lexer = new CLexerSession(
             resourceUri,
             sourceText);
 
@@ -448,7 +448,7 @@ public class LexerTests
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new LexerSession(
+        var lexer = new CLexerSession(
             resourceUri,
             sourceText);
 

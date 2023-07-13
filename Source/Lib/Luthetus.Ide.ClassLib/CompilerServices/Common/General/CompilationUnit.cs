@@ -4,6 +4,9 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.General;
 
+/// <summary>
+/// TODO: CompilationUnit perhaps should be changed to refer to a C# file itself only. As of (2023-06-30) I've been using <see cref="CompilationUnit"/> for anything which contains an arbitrary amount of <see cref="ISyntaxNode"/>(s)
+/// </summary>
 public sealed record CompilationUnit : ISyntaxNode
 {
     public CompilationUnit(

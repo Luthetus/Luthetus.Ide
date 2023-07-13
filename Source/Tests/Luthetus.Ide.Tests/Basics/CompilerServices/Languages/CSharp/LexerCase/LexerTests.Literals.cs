@@ -14,7 +14,7 @@ public partial class LexerTests
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(
+        var lexer = new CSharpLexer(
             resourceUri,
             sourceText);
 
@@ -36,7 +36,7 @@ public partial class LexerTests
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(
+        var lexer = new CSharpLexer(
             resourceUri,
             sourceText);
 

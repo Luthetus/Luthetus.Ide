@@ -5,16 +5,16 @@ using Luthetus.TextEditor.RazorLib.Analysis.Html.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.Analysis.Razor.Facts;
 using Luthetus.TextEditor.RazorLib.Lexing;
 
-namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor.TextEditorCase;
+namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor;
 
-public class IdeRazorLexer : ITextEditorLexer
+public class RazorLexer
 {
-    public IdeRazorLexer(ResourceUri resourceUri)
+    public RazorLexer(ResourceUri resourceUri)
     {
         ResourceUri = resourceUri;
     }
-    
-    public IdeRazorSyntaxTree IdeRazorSyntaxTree = new();
+
+    public RazorSyntaxTree IdeRazorSyntaxTree = new();
 
     public RenderStateKey ModelRenderStateKey { get; private set; } = RenderStateKey.Empty;
 
@@ -30,14 +30,14 @@ public class IdeRazorLexer : ITextEditorLexer
 
         ModelRenderStateKey = modelRenderStateKey;
 
-        IdeRazorSyntaxTree = new IdeRazorSyntaxTree();
+        IdeRazorSyntaxTree = new RazorSyntaxTree();
 
         InjectedLanguageDefinition razorInjectedLanguageDefinition = new(
             RazorFacts.TRANSITION_SUBSTRING,
             RazorFacts.TRANSITION_SUBSTRING_ESCAPED,
             IdeRazorSyntaxTree.ParseInjectedLanguageFragment,
-            IdeRazorSyntaxTree.ParseAttributeName,
-            IdeRazorSyntaxTree.ParseAttributeValue);
+            RazorSyntaxTree.ParseAttributeName,
+            RazorSyntaxTree.ParseAttributeValue);
 
         var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
             ResourceUri,

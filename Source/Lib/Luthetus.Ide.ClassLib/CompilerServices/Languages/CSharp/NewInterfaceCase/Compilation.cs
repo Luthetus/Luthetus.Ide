@@ -1,11 +1,4 @@
-﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.NewInterfaceCase;
+﻿namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.NewInterfaceCase;
 
 /// <summary>
 /// The result from having compiled the various resources.

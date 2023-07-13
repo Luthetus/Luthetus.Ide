@@ -5,16 +5,17 @@ using Luthetus.Common.RazorLib.Notification;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
+using Luthetus.TextEditor.RazorLib.HostedServiceCase.CompilerServiceCase;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.HostedServiceCase;
 
-public class CompilerServiceQueuedHostedService : BackgroundService
+public class UnitTestsCompilerServiceQueuedHostedService : BackgroundService
 {
     private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
     private readonly ILogger _logger;
 
-    public CompilerServiceQueuedHostedService(
-        ICompilerServiceBackgroundTaskQueue taskQueue,
+    public UnitTestsCompilerServiceQueuedHostedService(
+        UnitTestsCompilerServiceBackgroundTaskQueue taskQueue,
         ICompilerServiceBackgroundTaskMonitor taskMonitor,
         ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
         ILoggerFactory loggerFactory)
@@ -25,7 +26,7 @@ public class CompilerServiceQueuedHostedService : BackgroundService
         _logger = loggerFactory.CreateLogger<CompilerServiceQueuedHostedService>();
     }
 
-    public IBackgroundTaskQueue TaskQueue { get; }
+    public UnitTestsCompilerServiceBackgroundTaskQueue TaskQueue { get; }
     public IBackgroundTaskMonitor TaskMonitor { get; }
 
     protected async override Task ExecuteAsync(
@@ -87,5 +88,28 @@ public class CompilerServiceQueuedHostedService : BackgroundService
         }
 
         _logger.LogInformation("Queued Hosted Service is stopping.");
+    }
+
+    public override async Task StopAsync(CancellationToken cancellationToken)
+    {
+        TaskQueue.StopEnqueue();
+
+        while (!cancellationToken.IsCancellationRequested)
+        {
+            if (TaskQueue.QueueCount == 0)
+            {
+                var executingBackgroundTask = TaskMonitor.ExecutingBackgroundTask;
+
+                if (executingBackgroundTask is null || executingBackgroundTask.WorkProgress is null)
+                    break;
+
+                await executingBackgroundTask.WorkProgress;
+                break;
+            }
+
+            await Task.Delay(TimeSpan.FromSeconds(1));
+        }
+
+        await base.StopAsync(cancellationToken);
     }
 }

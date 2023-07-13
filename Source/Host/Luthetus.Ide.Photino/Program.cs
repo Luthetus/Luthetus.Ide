@@ -2,10 +2,11 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
-using Luthetus.Ide.ClassLib.CompilerServices.HostedServiceCase;
 using Luthetus.Ide.ClassLib.FileSystem.HostedServiceCase;
 using Luthetus.Ide.RazorLib;
-using Luthetus.TextEditor.RazorLib.HostedServiceCase;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
+using Luthetus.TextEditor.RazorLib.HostedServiceCase.CompilerServiceCase;
+using Luthetus.TextEditor.RazorLib.HostedServiceCase.TextEditorCase;
 using Microsoft.Extensions.DependencyInjection;
 using Photino.Blazor;
 
@@ -23,6 +24,8 @@ namespace Luthetus.Ide.Photino
 
             appBuilder.Services.AddLuthetusIdeRazorLibServices(true);
 
+            appBuilder.Services.AddScoped<TextEditorXmlCompilerService>();
+
             // The code:
             //     builder.Services.AddHostedService<QueuedHostedService>();
             //
@@ -30,8 +33,8 @@ namespace Luthetus.Ide.Photino
             // So manual starting of the service is done.
             appBuilder.Services.AddSingleton<CommonQueuedHostedService>();
             appBuilder.Services.AddSingleton<TextEditorQueuedHostedService>();
-            appBuilder.Services.AddSingleton<FileSystemQueuedHostedService>();
             appBuilder.Services.AddSingleton<CompilerServiceQueuedHostedService>();
+            appBuilder.Services.AddSingleton<FileSystemQueuedHostedService>();
 
             appBuilder.RootComponents.Add<App>("app");
 
@@ -41,15 +44,15 @@ namespace Luthetus.Ide.Photino
 
             var commonQueuedHostedService = app.Services.GetRequiredService<CommonQueuedHostedService>();
             var textEditorQueuedHostedService = app.Services.GetRequiredService<TextEditorQueuedHostedService>();
-            var fileSystemQueuedHostedService = app.Services.GetRequiredService<FileSystemQueuedHostedService>();
             var compilerServiceQueuedHostedService = app.Services.GetRequiredService<CompilerServiceQueuedHostedService>();
+            var fileSystemQueuedHostedService = app.Services.GetRequiredService<FileSystemQueuedHostedService>();
 
             var cancellationToken = backgroundTasksCancellationTokenSource.Token;
 
             _ = Task.Run(async () => await commonQueuedHostedService.StartAsync(cancellationToken));
             _ = Task.Run(async () => await textEditorQueuedHostedService.StartAsync(cancellationToken));
-            _ = Task.Run(async () => await fileSystemQueuedHostedService.StartAsync(cancellationToken));
             _ = Task.Run(async () => await compilerServiceQueuedHostedService.StartAsync(cancellationToken));
+            _ = Task.Run(async () => await fileSystemQueuedHostedService.StartAsync(cancellationToken));
 
             // customize window
             app.MainWindow

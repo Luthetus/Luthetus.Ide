@@ -16,9 +16,9 @@ public partial class ParserTests
         string sourceText = @$"public class {classIdentifier} {{ }}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
-        var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
 
         // Assertions
@@ -45,9 +45,9 @@ public partial class ParserTests
         string sourceText = @$"public class {classIdentifier} {{ public void {methodIdentifier}() {{ }} }}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
-        var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
 
         // Assertions
@@ -77,9 +77,9 @@ public partial class ParserTests
         string sourceText = @$"public partial class {classIdentifier} {{ }}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
-        var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
 
         // Assertions
@@ -106,9 +106,9 @@ public partial class ParserTests
         string sourceText = @$"public class {derivingClassIdentifier} : {parentClassIdentifier} {{ }}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
-        var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
 
         // Assertions
@@ -136,9 +136,9 @@ public partial class ParserTests
         string sourceText = @$"public class {classIdentifier}<{genericArgumentIdentifier}> {{ }}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
-        var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
 
         // Assertions
@@ -171,9 +171,9 @@ public partial class ParserTests
         string sourceText = @$"public class {classIdentifier}<{genericArgOne}, {genericArgTwo}> {{ }}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
-        var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
 
         // Assertions
@@ -210,9 +210,9 @@ public partial class ParserTests
         string sourceText = @$"public class {classIdentifier}<{genericArgOne}, {genericArgTwo}, {genericArgThree}> : ComponentBase {{ }}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
-        var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
 
         // Assertions
@@ -256,9 +256,9 @@ public partial class ParserTests
         string sourceText = @$"public partial class PersonDisplay : ComponentBase {{ [{attributeIdentifier}] public IPersonModel PersonModel {{ get; set; }} }}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
-        var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
 
         // Assertions
@@ -273,9 +273,9 @@ public partial class ParserTests
         string sourceText = @"public class Aaa { public IPersonModel MyProperty { get; set; } }".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
         
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();        
-        var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
 
         // Assertions

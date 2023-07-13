@@ -1,21 +1,9 @@
-﻿using Luthetus.Ide.ClassLib.CompilerServices.Languages.C.TextEditorCase;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.BinderCase;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.TextEditorCase;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor.TextEditorCase;
-using Luthetus.TextEditor.RazorLib.Analysis.C.SyntaxActors;
-using Luthetus.TextEditor.RazorLib.Analysis.Css.Decoration;
-using Luthetus.TextEditor.RazorLib.Analysis.Css.SyntaxActors;
-using Luthetus.TextEditor.RazorLib.Analysis.FSharp.SyntaxActors;
+﻿using Luthetus.TextEditor.RazorLib.Analysis.Css.Decoration;
 using Luthetus.TextEditor.RazorLib.Analysis.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.Analysis.Html.Decoration;
-using Luthetus.TextEditor.RazorLib.Analysis.Html.SyntaxActors;
-using Luthetus.TextEditor.RazorLib.Analysis.JavaScript.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.Analysis.Json.Decoration;
-using Luthetus.TextEditor.RazorLib.Analysis.Json.SyntaxActors;
-using Luthetus.TextEditor.RazorLib.Analysis.TypeScript.SyntaxActors;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.Decoration;
-using Luthetus.TextEditor.RazorLib.Lexing;
-using Luthetus.TextEditor.RazorLib.Semantics;
 
 namespace Luthetus.Ide.ClassLib.FileConstants;
 
@@ -43,32 +31,6 @@ public static class ExtensionNoPeriodFacts
     public const string CPP = "cpp";
     public const string HPP = "hpp";
 
-    public static ITextEditorLexer GetLexer(
-        ResourceUri resourceUri,
-        string extensionNoPeriod)
-    {
-        return extensionNoPeriod switch
-        {
-            HTML => new TextEditorHtmlLexer(resourceUri),
-            XML => new TextEditorHtmlLexer(resourceUri),
-            C_SHARP_PROJECT => new TextEditorHtmlLexer(resourceUri),
-            C_SHARP_CLASS => new IdeCSharpLexer(resourceUri),
-            RAZOR_CODEBEHIND => new IdeCSharpLexer(resourceUri),
-            RAZOR_MARKUP => new IdeRazorLexer(resourceUri),
-            CSHTML_CLASS => new IdeRazorLexer(resourceUri),
-            CSS => new TextEditorCssLexer(resourceUri),
-            JAVA_SCRIPT => new TextEditorJavaScriptLexer(resourceUri),
-            JSON => new TextEditorJsonLexer(resourceUri),
-            TYPE_SCRIPT => new TextEditorTypeScriptLexer(resourceUri),
-            F_SHARP => new TextEditorFSharpLexer(resourceUri),
-            C => new TextEditorLexerC(resourceUri),
-            H => new TextEditorCLexer(resourceUri),
-            CPP => new TextEditorCLexer(resourceUri),
-            HPP => new TextEditorCLexer(resourceUri),
-            _ => new TextEditorLexerDefault(resourceUri),
-        };
-    }
-
     public static IDecorationMapper GetDecorationMapper(
         string extensionNoPeriod)
     {
@@ -94,29 +56,32 @@ public static class ExtensionNoPeriodFacts
         };
     }
 
-    public static ISemanticModel GetSemanticModel(
-        string extensionNoPeriod, 
-        Binder _sharedBinder)
+    /// <summary>
+    /// TODO: (2023-07-13) Do not pass in dependency injectable parameters.
+    /// </summary>
+    public static ICompilerService? GetCompilerService(
+        string extensionNoPeriod,
+        TextEditorXmlCompilerService? textEditorXmlCompilerService)
     {
         return extensionNoPeriod switch
         {
-            HTML => new SemanticModelDefault(),
-            XML => new SemanticModelDefault(),
-            C_SHARP_PROJECT => new SemanticModelDefault(),
-            C_SHARP_CLASS => new SemanticModelCSharp(_sharedBinder),
-            RAZOR_CODEBEHIND => new SemanticModelCSharp(_sharedBinder),
-            RAZOR_MARKUP => new SemanticModelRazor(_sharedBinder),
-            CSHTML_CLASS => new SemanticModelRazor(_sharedBinder),
-            CSS => new SemanticModelDefault(),
-            JAVA_SCRIPT => new SemanticModelDefault(),
-            JSON => new SemanticModelDefault(),
-            TYPE_SCRIPT => new SemanticModelDefault(),
-            F_SHARP => new SemanticModelDefault(),
-            C => new SemanticModelC(),
-            H => new SemanticModelDefault(),
-            CPP => new SemanticModelDefault(),
-            HPP => new SemanticModelDefault(),
-            _ => new SemanticModelDefault(),
+            HTML => textEditorXmlCompilerService,
+            XML => textEditorXmlCompilerService,
+            C_SHARP_PROJECT => textEditorXmlCompilerService,
+            C_SHARP_CLASS => null,
+            RAZOR_CODEBEHIND => null,
+            RAZOR_MARKUP => null,
+            CSHTML_CLASS => null,
+            CSS => null,
+            JAVA_SCRIPT => null,
+            JSON => null,
+            TYPE_SCRIPT => null,
+            F_SHARP => null,
+            C => null,
+            H => null,
+            CPP => null,
+            HPP => null,
+            _ => null,
         };
     }
 }

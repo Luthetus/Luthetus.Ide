@@ -13,27 +13,27 @@ using Luthetus.TextEditor.RazorLib.Lexing;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.C.ParserCase;
 
-public class ParserSession
+public class CParserSession
 {
     private readonly TokenWalker _tokenWalker;
-    private readonly BinderSession _binder;
+    private readonly CBinderSession _binder;
     private readonly CompilationUnitBuilder _globalCompilationUnitBuilder = new(null);
     private readonly LuthetusIdeDiagnosticBag _diagnosticBag = new();
     private readonly ImmutableArray<TextEditorDiagnostic> _lexerDiagnostics;
 
-    public ParserSession(
+    public CParserSession(
         ImmutableArray<ISyntaxToken> tokens,
         ImmutableArray<TextEditorDiagnostic> lexerDiagnostics)
     {
         _lexerDiagnostics = lexerDiagnostics;
         _tokenWalker = new TokenWalker(tokens, _diagnosticBag);
-        _binder = new BinderSession();
+        _binder = new CBinderSession();
 
         _currentCompilationUnitBuilder = _globalCompilationUnitBuilder;
     }
 
     public ImmutableArray<TextEditorDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
-    public BinderSession Binder => _binder;
+    public CBinderSession Binder => _binder;
 
     private ISyntaxNode? _nodeRecent;
     private CompilationUnitBuilder _currentCompilationUnitBuilder;

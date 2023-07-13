@@ -26,13 +26,13 @@ namespace HelloWorld
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(
+        var lexer = new CSharpLexer(
             resourceUri,
             sourceText);
 
         lexer.Lex();
 
-        var parser = new Parser(
+        var parser = new CSharpParser(
             lexer.SyntaxTokens,
             lexer.Diagnostics);
 

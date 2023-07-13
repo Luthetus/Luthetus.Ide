@@ -16,19 +16,19 @@ public class EvaluatorTests
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new LexerSession(
+        var lexer = new CLexerSession(
             resourceUri,
             sourceText);
 
         lexer.Lex();
 
-        var parser = new ParserSession(
+        var parser = new CParserSession(
             lexer.SyntaxTokens,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
 
-        var evaluator = new Evaluator(
+        var evaluator = new CEvaluator(
             compilationUnit,
             sourceText);
 
@@ -46,19 +46,19 @@ public class EvaluatorTests
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new LexerSession(
+        var lexer = new CLexerSession(
             resourceUri,
             sourceText);
 
         lexer.Lex();
 
-        var parser = new ParserSession(
+        var parser = new CParserSession(
             lexer.SyntaxTokens,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
 
-        var evaluator = new Evaluator(
+        var evaluator = new CEvaluator(
             compilationUnit,
             sourceText);
 
@@ -78,19 +78,19 @@ public class EvaluatorTests
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new LexerSession(
+        var lexer = new CLexerSession(
             resourceUri,
             sourceText);
 
         lexer.Lex();
 
-        var parser = new ParserSession(
+        var parser = new CParserSession(
             lexer.SyntaxTokens,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
 
-        var evaluator = new Evaluator(
+        var evaluator = new CEvaluator(
             compilationUnit,
             sourceText);
 
@@ -110,19 +110,19 @@ public class EvaluatorTests
 
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new LexerSession(
+        var lexer = new CLexerSession(
             resourceUri,
             sourceText);
 
         lexer.Lex();
 
-        var parser = new ParserSession(
+        var parser = new CParserSession(
             lexer.SyntaxTokens,
             lexer.Diagnostics);
 
         var compilationUnit = parser.Parse();
 
-        var evaluator = new Evaluator(
+        var evaluator = new CEvaluator(
             compilationUnit,
             sourceText);
 

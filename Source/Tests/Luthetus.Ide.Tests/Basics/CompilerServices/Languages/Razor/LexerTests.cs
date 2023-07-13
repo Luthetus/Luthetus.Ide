@@ -1,6 +1,6 @@
 ﻿using Luthetus.TextEditor.RazorLib.Lexing;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor.TextEditorCase;
 using Luthetus.Common.RazorLib.Misc;
+using Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor;
 
 namespace Luthetus.Ide.Tests.Basics.CompilerServices.Languages.Razor;
 
@@ -32,7 +32,7 @@ public class LexerTests
 
         var resourceUri = new ResourceUri("Adhoc.razor");
 
-        var lexer = new IdeRazorLexer(resourceUri);
+        var lexer = new RazorLexer(resourceUri);
 
         lexer.Lex(sourceText, RenderStateKey.NewRenderStateKey());
 

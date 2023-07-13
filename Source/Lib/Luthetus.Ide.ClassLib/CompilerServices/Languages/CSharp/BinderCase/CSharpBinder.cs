@@ -15,7 +15,7 @@ using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.Facts;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.BinderCase;
 
-public class Binder
+public class CSharpBinder
 {
     private readonly BoundScope _globalScope = CSharpLanguageFacts.Scope.GetInitialGlobalScope();
     private readonly Dictionary<string, BoundNamespaceStatementNode> _boundNamespaceStatementNodes = CSharpLanguageFacts.Namespaces.GetInitialBoundNamespaceStatementNodes();
@@ -26,7 +26,7 @@ public class Binder
     private List<BoundScope> _boundScopes = new();
     private BoundScope _currentScope;
 
-    public Binder()
+    public CSharpBinder()
     {
         _currentScope = _globalScope;
 

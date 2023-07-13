@@ -13,9 +13,9 @@ public partial class ParserTests
         string sourceText = "3".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
-        var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
 
         // Assertions
@@ -35,9 +35,9 @@ public partial class ParserTests
         string sourceText = "\"123abc\"".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
-        var lexer = new Lexer(resourceUri, sourceText);
+        var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
-        var parser = new Parser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
         var compilationUnit = parser.Parse();
 
         // Assertions
