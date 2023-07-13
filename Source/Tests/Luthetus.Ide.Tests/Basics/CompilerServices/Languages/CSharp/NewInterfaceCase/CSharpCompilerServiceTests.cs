@@ -1,7 +1,5 @@
 ﻿using Luthetus.Common.RazorLib.ComponentRenderers;
-using Luthetus.Ide.ClassLib.CompilerServices.HostedServiceCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.NewInterfaceCase;
-using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.TextEditor.RazorLib.HostedServiceCase.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.Lexing;
 using Luthetus.TextEditor.RazorLib.Model;
