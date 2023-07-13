@@ -5,6 +5,7 @@ using Luthetus.TextEditor.RazorLib.Analysis.Html.Decoration;
 using Luthetus.TextEditor.RazorLib.Analysis.Json.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase.CssCase;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase.JsonCase;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase.XmlCase;
 using Luthetus.TextEditor.RazorLib.Decoration;
 
@@ -66,7 +67,8 @@ public static class ExtensionNoPeriodFacts
         string extensionNoPeriod,
         TextEditorXmlCompilerService? xmlCompilerService,
         CSharpCompilerService? cSharpCompilerService,
-        TextEditorCssCompilerService? cssCompilerService)
+        TextEditorCssCompilerService? cssCompilerService,
+        TextEditorJsonCompilerService? jsonCompilerService)
     {
         return extensionNoPeriod switch
         {
@@ -79,7 +81,7 @@ public static class ExtensionNoPeriodFacts
             CSHTML_CLASS => cSharpCompilerService,
             CSS => cssCompilerService,
             JAVA_SCRIPT => null,
-            JSON => null,
+            JSON => jsonCompilerService,
             TYPE_SCRIPT => null,
             F_SHARP => null,
             C => null,

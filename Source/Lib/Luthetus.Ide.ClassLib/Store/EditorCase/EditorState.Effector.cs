@@ -21,6 +21,7 @@ using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.NewInterfaceCase;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase.XmlCase;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase.CssCase;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase.JsonCase;
 
 namespace Luthetus.Ide.ClassLib.Store.EditorCase;
 
@@ -40,6 +41,7 @@ public partial class EditorState
         private readonly TextEditorXmlCompilerService _xmlCompilerService;
         private readonly CSharpCompilerService _cSharpCompilerService;
         private readonly TextEditorCssCompilerService _cssCompilerService;
+        private readonly TextEditorJsonCompilerService _jsonCompilerService;
 
         public Effector(
             ITextEditorService textEditorService,
@@ -47,18 +49,20 @@ public partial class EditorState
             IFileSystemProvider fileSystemProvider,
             ICommonBackgroundTaskQueue commonBackgroundTaskQueue,
             IState<SemanticContextState> semanticContextStateWrap,
-            TextEditorXmlCompilerService textEditorXmlCompilerService,
+            TextEditorXmlCompilerService xmlCompilerService,
             CSharpCompilerService cSharpCompilerService,
-            TextEditorCssCompilerService textEditorCssCompilerService)
+            TextEditorCssCompilerService cssCompilerService,
+            TextEditorJsonCompilerService jsonCompilerService)
         {
             _textEditorService = textEditorService;
             _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
             _fileSystemProvider = fileSystemProvider;
             _commonBackgroundTaskQueue = commonBackgroundTaskQueue;
             _semanticContextStateWrap = semanticContextStateWrap;
-            _xmlCompilerService = textEditorXmlCompilerService;
+            _xmlCompilerService = xmlCompilerService;
             _cSharpCompilerService = cSharpCompilerService;
-            _cssCompilerService = textEditorCssCompilerService;
+            _cssCompilerService = cssCompilerService;
+            _jsonCompilerService = jsonCompilerService;
         }
 
 
@@ -160,7 +164,8 @@ public partial class EditorState
                     absoluteFilePath.ExtensionNoPeriod,
                     _xmlCompilerService,
                     _cSharpCompilerService,
-                    _cssCompilerService);
+                    _cssCompilerService,
+                    _jsonCompilerService);
                 
                 var decorationMapper = ExtensionNoPeriodFacts.GetDecorationMapper(
                     absoluteFilePath.ExtensionNoPeriod);
