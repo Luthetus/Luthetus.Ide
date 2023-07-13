@@ -4,6 +4,8 @@ using Luthetus.TextEditor.RazorLib.Analysis.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.Analysis.Html.Decoration;
 using Luthetus.TextEditor.RazorLib.Analysis.Json.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase.CssCase;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase.XmlCase;
 using Luthetus.TextEditor.RazorLib.Decoration;
 
 namespace Luthetus.Ide.ClassLib.FileConstants;
@@ -62,19 +64,20 @@ public static class ExtensionNoPeriodFacts
     /// </summary>
     public static ICompilerService? GetCompilerService(
         string extensionNoPeriod,
-        TextEditorXmlCompilerService? textEditorXmlCompilerService,
-        CSharpCompilerService? cSharpCompilerService)
+        TextEditorXmlCompilerService? xmlCompilerService,
+        CSharpCompilerService? cSharpCompilerService,
+        TextEditorCssCompilerService? cssCompilerService)
     {
         return extensionNoPeriod switch
         {
-            HTML => textEditorXmlCompilerService,
-            XML => textEditorXmlCompilerService,
-            C_SHARP_PROJECT => textEditorXmlCompilerService,
+            HTML => xmlCompilerService,
+            XML => xmlCompilerService,
+            C_SHARP_PROJECT => xmlCompilerService,
             C_SHARP_CLASS => cSharpCompilerService,
             RAZOR_CODEBEHIND => cSharpCompilerService,
             RAZOR_MARKUP => null,
             CSHTML_CLASS => cSharpCompilerService,
-            CSS => null,
+            CSS => cssCompilerService,
             JAVA_SCRIPT => null,
             JSON => null,
             TYPE_SCRIPT => null,

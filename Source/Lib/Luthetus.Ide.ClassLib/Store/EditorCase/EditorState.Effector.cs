@@ -18,8 +18,9 @@ using Luthetus.Ide.ClassLib.Store.SemanticContextCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.BinderCase;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
-using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.NewInterfaceCase;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase.XmlCase;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase.CssCase;
 
 namespace Luthetus.Ide.ClassLib.Store.EditorCase;
 
@@ -36,8 +37,9 @@ public partial class EditorState
         private readonly IFileSystemProvider _fileSystemProvider;
         private readonly ICommonBackgroundTaskQueue _commonBackgroundTaskQueue;
         private readonly IState<SemanticContextState> _semanticContextStateWrap;
-        private readonly TextEditorXmlCompilerService _textEditorXmlCompilerService;
+        private readonly TextEditorXmlCompilerService _xmlCompilerService;
         private readonly CSharpCompilerService _cSharpCompilerService;
+        private readonly TextEditorCssCompilerService _cssCompilerService;
 
         public Effector(
             ITextEditorService textEditorService,
@@ -46,15 +48,17 @@ public partial class EditorState
             ICommonBackgroundTaskQueue commonBackgroundTaskQueue,
             IState<SemanticContextState> semanticContextStateWrap,
             TextEditorXmlCompilerService textEditorXmlCompilerService,
-            CSharpCompilerService cSharpCompilerService)
+            CSharpCompilerService cSharpCompilerService,
+            TextEditorCssCompilerService textEditorCssCompilerService)
         {
             _textEditorService = textEditorService;
             _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
             _fileSystemProvider = fileSystemProvider;
             _commonBackgroundTaskQueue = commonBackgroundTaskQueue;
             _semanticContextStateWrap = semanticContextStateWrap;
-            _textEditorXmlCompilerService = textEditorXmlCompilerService;
+            _xmlCompilerService = textEditorXmlCompilerService;
             _cSharpCompilerService = cSharpCompilerService;
+            _cssCompilerService = textEditorCssCompilerService;
         }
 
 
@@ -154,8 +158,9 @@ public partial class EditorState
 
                 var compilerService = ExtensionNoPeriodFacts.GetCompilerService(
                     absoluteFilePath.ExtensionNoPeriod,
-                    _textEditorXmlCompilerService,
-                    _cSharpCompilerService);
+                    _xmlCompilerService,
+                    _cSharpCompilerService,
+                    _cssCompilerService);
                 
                 var decorationMapper = ExtensionNoPeriodFacts.GetDecorationMapper(
                     absoluteFilePath.ExtensionNoPeriod);
