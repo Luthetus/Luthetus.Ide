@@ -23,7 +23,8 @@ using Luthetus.TextEditor.RazorLib.CompilerServiceCase.CssCase;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase.JsonCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.CompilerServiceCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor.CompilerServiceCase;
-using Luthetus.TextEditor.RazorLib.CompilerServiceCase.JsCase;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase.JavaScriptCase;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase.TypeScriptCase;
 
 namespace Luthetus.Ide.ClassLib.Store.EditorCase;
 
@@ -44,7 +45,8 @@ public partial class EditorState
         private readonly CSharpCompilerService _cSharpCompilerService;
         private readonly RazorCompilerService _razorCompilerService;
         private readonly TextEditorCssCompilerService _cssCompilerService;
-        private readonly TextEditorJsCompilerService _jsCompilerService;
+        private readonly TextEditorJavaScriptCompilerService _javaScriptCompilerService;
+        private readonly TextEditorTypeScriptCompilerService _typeScriptCompilerService;
         private readonly TextEditorJsonCompilerService _jsonCompilerService;
 
         public Effector(
@@ -57,7 +59,8 @@ public partial class EditorState
             CSharpCompilerService cSharpCompilerService,
             RazorCompilerService razorCompilerService,
             TextEditorCssCompilerService cssCompilerService,
-            TextEditorJsCompilerService jsCompilerService,
+            TextEditorJavaScriptCompilerService javaScriptCompilerService,
+            TextEditorTypeScriptCompilerService typeScriptCompilerService,
             TextEditorJsonCompilerService jsonCompilerService)
         {
             _textEditorService = textEditorService;
@@ -69,7 +72,8 @@ public partial class EditorState
             _cSharpCompilerService = cSharpCompilerService;
             _razorCompilerService = razorCompilerService;
             _cssCompilerService = cssCompilerService;
-            _jsCompilerService = jsCompilerService;
+            _javaScriptCompilerService = javaScriptCompilerService;
+            _typeScriptCompilerService = typeScriptCompilerService;
             _jsonCompilerService = jsonCompilerService;
         }
 
@@ -174,7 +178,8 @@ public partial class EditorState
                     _cSharpCompilerService,
                     _razorCompilerService,
                     _cssCompilerService,
-                    _jsCompilerService,
+                    _javaScriptCompilerService,
+                    _typeScriptCompilerService,
                     _jsonCompilerService);
                 
                 var decorationMapper = ExtensionNoPeriodFacts.GetDecorationMapper(

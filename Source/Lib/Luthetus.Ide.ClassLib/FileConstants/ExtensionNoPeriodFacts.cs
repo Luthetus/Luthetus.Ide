@@ -6,8 +6,9 @@ using Luthetus.TextEditor.RazorLib.Analysis.Html.Decoration;
 using Luthetus.TextEditor.RazorLib.Analysis.Json.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase.CssCase;
-using Luthetus.TextEditor.RazorLib.CompilerServiceCase.JsCase;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase.JavaScriptCase;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase.JsonCase;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase.TypeScriptCase;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase.XmlCase;
 using Luthetus.TextEditor.RazorLib.Decoration;
 
@@ -71,7 +72,8 @@ public static class ExtensionNoPeriodFacts
         CSharpCompilerService? cSharpCompilerService,
         RazorCompilerService? razorCompilerService,
         TextEditorCssCompilerService? cssCompilerService,
-        TextEditorJsCompilerService? jsCompilerService,
+        TextEditorJavaScriptCompilerService? javaScriptCompilerService,
+        TextEditorTypeScriptCompilerService? typeScriptCompilerService,
         TextEditorJsonCompilerService? jsonCompilerService)
     {
         return extensionNoPeriod switch
@@ -84,9 +86,9 @@ public static class ExtensionNoPeriodFacts
             RAZOR_MARKUP => razorCompilerService,
             CSHTML_CLASS => cSharpCompilerService,
             CSS => cssCompilerService,
-            JAVA_SCRIPT => jsCompilerService,
+            JAVA_SCRIPT => javaScriptCompilerService,
             JSON => jsonCompilerService,
-            TYPE_SCRIPT => null,
+            TYPE_SCRIPT => typeScriptCompilerService,
             F_SHARP => null,
             C => null,
             H => null,
