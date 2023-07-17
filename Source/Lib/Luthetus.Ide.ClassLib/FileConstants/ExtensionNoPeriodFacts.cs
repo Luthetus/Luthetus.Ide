@@ -1,4 +1,5 @@
-﻿using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.NewInterfaceCase;
+﻿using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.CompilerServiceCase;
+using Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.Analysis.Css.Decoration;
 using Luthetus.TextEditor.RazorLib.Analysis.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.Analysis.Html.Decoration;
@@ -67,6 +68,7 @@ public static class ExtensionNoPeriodFacts
         string extensionNoPeriod,
         TextEditorXmlCompilerService? xmlCompilerService,
         CSharpCompilerService? cSharpCompilerService,
+        RazorCompilerService? razorCompilerService,
         TextEditorCssCompilerService? cssCompilerService,
         TextEditorJsonCompilerService? jsonCompilerService)
     {
@@ -77,7 +79,7 @@ public static class ExtensionNoPeriodFacts
             C_SHARP_PROJECT => xmlCompilerService,
             C_SHARP_CLASS => cSharpCompilerService,
             RAZOR_CODEBEHIND => cSharpCompilerService,
-            RAZOR_MARKUP => null,
+            RAZOR_MARKUP => razorCompilerService,
             CSHTML_CLASS => cSharpCompilerService,
             CSS => cssCompilerService,
             JAVA_SCRIPT => null,

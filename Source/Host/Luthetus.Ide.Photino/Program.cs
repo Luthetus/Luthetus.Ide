@@ -2,7 +2,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.NewInterfaceCase;
+using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.CompilerServiceCase;
+using Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor.CompilerServiceCase;
 using Luthetus.Ide.ClassLib.FileSystem.HostedServiceCase;
 using Luthetus.Ide.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase.CssCase;
@@ -29,6 +30,7 @@ namespace Luthetus.Ide.Photino
 
             appBuilder.Services.AddScoped<TextEditorXmlCompilerService>();
             appBuilder.Services.AddScoped<CSharpCompilerService>();
+            appBuilder.Services.AddScoped<RazorCompilerService>();
             appBuilder.Services.AddScoped<TextEditorCssCompilerService>();
             appBuilder.Services.AddScoped<TextEditorJsonCompilerService>();
 

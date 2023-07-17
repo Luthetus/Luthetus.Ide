@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.NewInterfaceCase;
+﻿namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.CompilerServiceCase;
 
 /// <summary>
 /// The result from having compiled the various resources.

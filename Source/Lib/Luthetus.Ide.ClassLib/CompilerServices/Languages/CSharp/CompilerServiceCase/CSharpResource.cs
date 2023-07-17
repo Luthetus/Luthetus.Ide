@@ -4,7 +4,7 @@ using Luthetus.TextEditor.RazorLib.Lexing;
 using Luthetus.TextEditor.RazorLib.Model;
 using System.Collections.Immutable;
 
-namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.NewInterfaceCase;
+namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.CompilerServiceCase;
 
 public class CSharpResource
 {
@@ -35,7 +35,7 @@ public class CSharpResource
     }
 
     /// <returns>
-    /// The <see cref="Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.ISyntaxNode"/>
+    /// The <see cref="ISyntaxNode"/>
     /// which represents the resource in the compilation result.
     /// </returns>
     public async Task GetRootSyntaxNodeAsync()

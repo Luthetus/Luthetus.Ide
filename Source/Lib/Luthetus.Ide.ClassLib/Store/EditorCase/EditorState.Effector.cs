@@ -18,10 +18,11 @@ using Luthetus.Ide.ClassLib.Store.SemanticContextCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.BinderCase;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.NewInterfaceCase;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase.XmlCase;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase.CssCase;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase.JsonCase;
+using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.CompilerServiceCase;
+using Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor.CompilerServiceCase;
 
 namespace Luthetus.Ide.ClassLib.Store.EditorCase;
 
@@ -40,6 +41,7 @@ public partial class EditorState
         private readonly IState<SemanticContextState> _semanticContextStateWrap;
         private readonly TextEditorXmlCompilerService _xmlCompilerService;
         private readonly CSharpCompilerService _cSharpCompilerService;
+        private readonly RazorCompilerService _razorCompilerService;
         private readonly TextEditorCssCompilerService _cssCompilerService;
         private readonly TextEditorJsonCompilerService _jsonCompilerService;
 
@@ -51,6 +53,7 @@ public partial class EditorState
             IState<SemanticContextState> semanticContextStateWrap,
             TextEditorXmlCompilerService xmlCompilerService,
             CSharpCompilerService cSharpCompilerService,
+            RazorCompilerService razorCompilerService,
             TextEditorCssCompilerService cssCompilerService,
             TextEditorJsonCompilerService jsonCompilerService)
         {
@@ -61,6 +64,7 @@ public partial class EditorState
             _semanticContextStateWrap = semanticContextStateWrap;
             _xmlCompilerService = xmlCompilerService;
             _cSharpCompilerService = cSharpCompilerService;
+            _razorCompilerService = razorCompilerService;
             _cssCompilerService = cssCompilerService;
             _jsonCompilerService = jsonCompilerService;
         }
@@ -164,6 +168,7 @@ public partial class EditorState
                     absoluteFilePath.ExtensionNoPeriod,
                     _xmlCompilerService,
                     _cSharpCompilerService,
+                    _razorCompilerService,
                     _cssCompilerService,
                     _jsonCompilerService);
                 
