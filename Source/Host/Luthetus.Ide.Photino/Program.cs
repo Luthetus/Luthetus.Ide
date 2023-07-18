@@ -2,9 +2,15 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
+using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.CompilerServiceCase;
+using Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor.CompilerServiceCase;
 using Luthetus.Ide.ClassLib.FileSystem.HostedServiceCase;
 using Luthetus.Ide.RazorLib;
-using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase.CssCase;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase.JavaScriptCase;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase.JsonCase;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase.TypeScriptCase;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase.XmlCase;
 using Luthetus.TextEditor.RazorLib.HostedServiceCase.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.HostedServiceCase.TextEditorCase;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +31,12 @@ namespace Luthetus.Ide.Photino
             appBuilder.Services.AddLuthetusIdeRazorLibServices(true);
 
             appBuilder.Services.AddScoped<TextEditorXmlCompilerService>();
+            appBuilder.Services.AddScoped<CSharpCompilerService>();
+            appBuilder.Services.AddScoped<RazorCompilerService>();
+            appBuilder.Services.AddScoped<TextEditorCssCompilerService>();
+            appBuilder.Services.AddScoped<TextEditorJavaScriptCompilerService>();
+            appBuilder.Services.AddScoped<TextEditorTypeScriptCompilerService>();
+            appBuilder.Services.AddScoped<TextEditorJsonCompilerService>();
 
             // The code:
             //     builder.Services.AddHostedService<QueuedHostedService>();

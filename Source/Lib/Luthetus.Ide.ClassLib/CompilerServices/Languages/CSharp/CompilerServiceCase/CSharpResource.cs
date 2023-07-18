@@ -1,8 +1,10 @@
 ﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.General;
+using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
 using Luthetus.TextEditor.RazorLib.Lexing;
 using Luthetus.TextEditor.RazorLib.Model;
+using System.Collections.Immutable;
 
-namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.NewInterfaceCase;
+namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.CompilerServiceCase;
 
 public class CSharpResource
 {
@@ -20,9 +22,20 @@ public class CSharpResource
     public ResourceUri ResourceUri { get; }
     public CSharpCompilerService CSharpCompilerService { get; }
     public CompilationUnit? CompilationUnit { get; internal set; }
+    public ImmutableArray<ISyntaxToken>? SyntaxTokens { get; internal set; }
+
+    public ImmutableArray<TextEditorTextSpan> SyntacticTextSpans => GetSyntacticTextSpans();
+
+    private ImmutableArray<TextEditorTextSpan> GetSyntacticTextSpans()
+    {
+        if (SyntaxTokens is null)
+            return ImmutableArray<TextEditorTextSpan>.Empty;
+
+        return SyntaxTokens.Value.Select(st => st.TextSpan).ToImmutableArray();
+    }
 
     /// <returns>
-    /// The <see cref="Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.ISyntaxNode"/>
+    /// The <see cref="ISyntaxNode"/>
     /// which represents the resource in the compilation result.
     /// </returns>
     public async Task GetRootSyntaxNodeAsync()

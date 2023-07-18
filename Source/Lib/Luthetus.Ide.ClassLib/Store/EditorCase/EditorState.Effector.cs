@@ -18,7 +18,13 @@ using Luthetus.Ide.ClassLib.Store.SemanticContextCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.BinderCase;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
-using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase.XmlCase;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase.CssCase;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase.JsonCase;
+using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.CompilerServiceCase;
+using Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor.CompilerServiceCase;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase.JavaScriptCase;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase.TypeScriptCase;
 
 namespace Luthetus.Ide.ClassLib.Store.EditorCase;
 
@@ -35,7 +41,13 @@ public partial class EditorState
         private readonly IFileSystemProvider _fileSystemProvider;
         private readonly ICommonBackgroundTaskQueue _commonBackgroundTaskQueue;
         private readonly IState<SemanticContextState> _semanticContextStateWrap;
-        private readonly TextEditorXmlCompilerService _textEditorXmlCompilerService;
+        private readonly TextEditorXmlCompilerService _xmlCompilerService;
+        private readonly CSharpCompilerService _cSharpCompilerService;
+        private readonly RazorCompilerService _razorCompilerService;
+        private readonly TextEditorCssCompilerService _cssCompilerService;
+        private readonly TextEditorJavaScriptCompilerService _javaScriptCompilerService;
+        private readonly TextEditorTypeScriptCompilerService _typeScriptCompilerService;
+        private readonly TextEditorJsonCompilerService _jsonCompilerService;
 
         public Effector(
             ITextEditorService textEditorService,
@@ -43,14 +55,26 @@ public partial class EditorState
             IFileSystemProvider fileSystemProvider,
             ICommonBackgroundTaskQueue commonBackgroundTaskQueue,
             IState<SemanticContextState> semanticContextStateWrap,
-            TextEditorXmlCompilerService textEditorXmlCompilerService)
+            TextEditorXmlCompilerService xmlCompilerService,
+            CSharpCompilerService cSharpCompilerService,
+            RazorCompilerService razorCompilerService,
+            TextEditorCssCompilerService cssCompilerService,
+            TextEditorJavaScriptCompilerService javaScriptCompilerService,
+            TextEditorTypeScriptCompilerService typeScriptCompilerService,
+            TextEditorJsonCompilerService jsonCompilerService)
         {
             _textEditorService = textEditorService;
             _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
             _fileSystemProvider = fileSystemProvider;
             _commonBackgroundTaskQueue = commonBackgroundTaskQueue;
             _semanticContextStateWrap = semanticContextStateWrap;
-            _textEditorXmlCompilerService = textEditorXmlCompilerService;
+            _xmlCompilerService = xmlCompilerService;
+            _cSharpCompilerService = cSharpCompilerService;
+            _razorCompilerService = razorCompilerService;
+            _cssCompilerService = cssCompilerService;
+            _javaScriptCompilerService = javaScriptCompilerService;
+            _typeScriptCompilerService = typeScriptCompilerService;
+            _jsonCompilerService = jsonCompilerService;
         }
 
 
@@ -150,7 +174,13 @@ public partial class EditorState
 
                 var compilerService = ExtensionNoPeriodFacts.GetCompilerService(
                     absoluteFilePath.ExtensionNoPeriod,
-                    _textEditorXmlCompilerService);
+                    _xmlCompilerService,
+                    _cSharpCompilerService,
+                    _razorCompilerService,
+                    _cssCompilerService,
+                    _javaScriptCompilerService,
+                    _typeScriptCompilerService,
+                    _jsonCompilerService);
                 
                 var decorationMapper = ExtensionNoPeriodFacts.GetDecorationMapper(
                     absoluteFilePath.ExtensionNoPeriod);

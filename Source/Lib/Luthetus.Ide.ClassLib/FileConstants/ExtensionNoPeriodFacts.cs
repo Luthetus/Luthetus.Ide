@@ -1,8 +1,15 @@
-﻿using Luthetus.TextEditor.RazorLib.Analysis.Css.Decoration;
+﻿using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.CompilerServiceCase;
+using Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor.CompilerServiceCase;
+using Luthetus.TextEditor.RazorLib.Analysis.Css.Decoration;
 using Luthetus.TextEditor.RazorLib.Analysis.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.Analysis.Html.Decoration;
 using Luthetus.TextEditor.RazorLib.Analysis.Json.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase.CssCase;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase.JavaScriptCase;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase.JsonCase;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase.TypeScriptCase;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase.XmlCase;
 using Luthetus.TextEditor.RazorLib.Decoration;
 
 namespace Luthetus.Ide.ClassLib.FileConstants;
@@ -61,21 +68,27 @@ public static class ExtensionNoPeriodFacts
     /// </summary>
     public static ICompilerService? GetCompilerService(
         string extensionNoPeriod,
-        TextEditorXmlCompilerService? textEditorXmlCompilerService)
+        TextEditorXmlCompilerService? xmlCompilerService,
+        CSharpCompilerService? cSharpCompilerService,
+        RazorCompilerService? razorCompilerService,
+        TextEditorCssCompilerService? cssCompilerService,
+        TextEditorJavaScriptCompilerService? javaScriptCompilerService,
+        TextEditorTypeScriptCompilerService? typeScriptCompilerService,
+        TextEditorJsonCompilerService? jsonCompilerService)
     {
         return extensionNoPeriod switch
         {
-            HTML => textEditorXmlCompilerService,
-            XML => textEditorXmlCompilerService,
-            C_SHARP_PROJECT => textEditorXmlCompilerService,
-            C_SHARP_CLASS => null,
-            RAZOR_CODEBEHIND => null,
-            RAZOR_MARKUP => null,
-            CSHTML_CLASS => null,
-            CSS => null,
-            JAVA_SCRIPT => null,
-            JSON => null,
-            TYPE_SCRIPT => null,
+            HTML => xmlCompilerService,
+            XML => xmlCompilerService,
+            C_SHARP_PROJECT => xmlCompilerService,
+            C_SHARP_CLASS => cSharpCompilerService,
+            RAZOR_CODEBEHIND => cSharpCompilerService,
+            RAZOR_MARKUP => razorCompilerService,
+            CSHTML_CLASS => cSharpCompilerService,
+            CSS => cssCompilerService,
+            JAVA_SCRIPT => javaScriptCompilerService,
+            JSON => jsonCompilerService,
+            TYPE_SCRIPT => typeScriptCompilerService,
             F_SHARP => null,
             C => null,
             H => null,

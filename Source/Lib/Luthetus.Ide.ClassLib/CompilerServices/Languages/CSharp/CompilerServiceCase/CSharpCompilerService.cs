@@ -7,7 +7,7 @@ using Luthetus.TextEditor.RazorLib.Lexing;
 using Luthetus.TextEditor.RazorLib.Model;
 using System.Collections.Immutable;
 
-namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.NewInterfaceCase;
+namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.CompilerServiceCase;
 
 public class CSharpCompilerService : ICompilerService
 {
@@ -35,9 +35,15 @@ public class CSharpCompilerService : ICompilerService
         }
     }
 
-    public ImmutableArray<TextEditorTextSpan> GetSyntacticTextSpansFor(TextEditorModel textEditorModel)
+    public ImmutableArray<TextEditorTextSpan> GetSyntacticTextSpansFor(TextEditorModel model)
     {
-        throw new NotImplementedException();
+        lock (_cSharpResourceMapLock)
+        {
+            if (!_cSharpResourceMap.ContainsKey(model.ModelKey))
+                return ImmutableArray<TextEditorTextSpan>.Empty;
+
+            return _cSharpResourceMap[model.ModelKey].SyntacticTextSpans;
+        }
     }
 
     public ImmutableArray<ITextEditorSymbol> GetSymbolsFor(TextEditorModel textEditorModel)
@@ -82,8 +88,10 @@ public class CSharpCompilerService : ICompilerService
                     if (!_cSharpResourceMap.ContainsKey(model.ModelKey))
                         return;
 
-                    _cSharpResourceMap[model.ModelKey]
-                        .CompilationUnit = compilationUnit;
+                    var cSharpResource = _cSharpResourceMap[model.ModelKey];
+
+                    cSharpResource.CompilationUnit = compilationUnit;
+                    cSharpResource.SyntaxTokens = lexer.SyntaxTokens;
                 }
 
                 await model.ApplySyntaxHighlightingAsync();
