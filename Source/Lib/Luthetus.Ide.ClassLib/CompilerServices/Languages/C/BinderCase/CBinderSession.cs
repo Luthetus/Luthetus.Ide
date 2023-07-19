@@ -15,7 +15,7 @@ using Luthetus.Ide.ClassLib.CompilerServices.Languages.C.Facts;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.C.BinderCase;
 
-public class CBinderSession
+public class CBinderSession : IBinder
 {
     private readonly BoundScope _globalScope = CLanguageFacts.Scope.GetInitialGlobalScope();
     private readonly LuthetusIdeDiagnosticBag _diagnosticBag = new();

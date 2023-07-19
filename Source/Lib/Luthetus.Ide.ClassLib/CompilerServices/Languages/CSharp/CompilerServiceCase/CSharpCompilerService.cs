@@ -84,7 +84,7 @@ public class CSharpCompilerService : ICompilerService
                 var lexer = new CSharpLexer(model.ResourceUri, model.GetAllText());
                 lexer.Lex();
 
-                var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
+                var parser = new CSharpParser(lexer);
                 var compilationUnit = parser.Parse();
 
                 if (compilationUnit is null)
@@ -97,7 +97,7 @@ public class CSharpCompilerService : ICompilerService
 
                     var cSharpResource = _cSharpResourceMap[model.ModelKey];
 
-                    cSharpResource.CodeBlockNode = compilationUnit;
+                    cSharpResource.CompilationUnit = compilationUnit;
                     cSharpResource.SyntaxTokens = lexer.SyntaxTokens;
                 }
 

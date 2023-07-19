@@ -1,6 +1,10 @@
 ﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
+using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.BinderCase;
+using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.LexerCase;
+using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.ParserCase;
 using Luthetus.TextEditor.RazorLib.Analysis;
 using System.Collections.Immutable;
+using System.Linq;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.General;
 
@@ -13,26 +17,31 @@ namespace Luthetus.Ide.ClassLib.CompilerServices.Common.General;
 public sealed record CompilationUnit : ISyntaxNode
 {
     public CompilationUnit(
-        bool isExpression,
-        ImmutableArray<ISyntax> children)
+        CodeBlockNode topLevelStatementsCodeBlockNode,
+        ILexer lexer,
+        IParser parser,
+        IBinder binder)
     {
-        IsExpression = isExpression;
-        Children = children;
+        TopLevelStatementsCodeBlockNode = topLevelStatementsCodeBlockNode;
+        Lexer = lexer;
+        Parser = parser;
+        Binder = binder;
 
-        Diagnostics = ImmutableArray<TextEditorDiagnostic>.Empty;
+        Diagnostics = Lexer.Diagnostics
+            .Union(Parser.Diagnostics)
+            .Union(Binder.Diagnostics)
+            .ToImmutableArray();
+
+        Children = new ISyntax[] 
+        {
+            TopLevelStatementsCodeBlockNode 
+        }.ToImmutableArray();
     }
 
-    public CompilationUnit(
-        bool isExpression,
-        ImmutableArray<ISyntax> children,
-        ImmutableArray<TextEditorDiagnostic> diagnostics)
-    {
-        IsExpression = isExpression;
-        Children = children;
-        Diagnostics = diagnostics;
-    }
-
-    public bool IsExpression { get; init; }
+    public CodeBlockNode TopLevelStatementsCodeBlockNode { get; }
+    public ILexer Lexer { get; }
+    public IParser Parser { get; }
+    public IBinder Binder { get; }
     public ImmutableArray<TextEditorDiagnostic> Diagnostics { get; init; }
 
     public ImmutableArray<ISyntax> Children { get; init; }

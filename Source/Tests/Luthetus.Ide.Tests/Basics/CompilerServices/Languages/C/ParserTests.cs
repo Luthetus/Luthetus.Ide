@@ -23,9 +23,7 @@ public class ParserTests
 
         lexer.Lex();
 
-        var parser = new CParserSession(
-            lexer.SyntaxTokens,
-            lexer.Diagnostics);
+        var parser = new CParserSession(lexer);
 
         var compilationUnit = parser.Parse();
 
@@ -50,9 +48,7 @@ public class ParserTests
 
         lexer.Lex();
 
-        var parser = new CParserSession(
-            lexer.SyntaxTokens,
-            lexer.Diagnostics);
+        var parser = new CParserSession(lexer);
 
         var compilationUnit = parser.Parse();
 
@@ -77,9 +73,7 @@ public class ParserTests
 
         lexer.Lex();
 
-        var parser = new CParserSession(
-            lexer.SyntaxTokens,
-            lexer.Diagnostics);
+        var parser = new CParserSession(lexer);
 
         var compilationUnit = parser.Parse();
 
@@ -115,9 +109,7 @@ public class ParserTests
 
         lexer.Lex();
 
-        var parser = new CParserSession(
-            lexer.SyntaxTokens,
-            lexer.Diagnostics);
+        var parser = new CParserSession(lexer);
 
         var compilationUnit = parser.Parse();
 
@@ -145,9 +137,7 @@ public class ParserTests
 
         lexer.Lex();
 
-        var parser = new CParserSession(
-            lexer.SyntaxTokens,
-            lexer.Diagnostics);
+        var parser = new CParserSession(lexer);
 
         var compilationUnit = parser.Parse();
 
@@ -180,9 +170,7 @@ public class ParserTests
 
         lexer.Lex();
 
-        var parser = new CParserSession(
-            lexer.SyntaxTokens,
-            lexer.Diagnostics);
+        var parser = new CParserSession(lexer);
 
         var compilationUnit = parser.Parse();
 
@@ -203,9 +191,7 @@ public class ParserTests
 
         lexer.Lex();
 
-        var parser = new CParserSession(
-            lexer.SyntaxTokens,
-            lexer.Diagnostics);
+        var parser = new CParserSession(lexer);
 
         var compilationUnit = parser.Parse();
 
@@ -256,9 +242,7 @@ x = 42;"
 
         lexer.Lex();
 
-        var parser = new CParserSession(
-            lexer.SyntaxTokens,
-            lexer.Diagnostics);
+        var parser = new CParserSession(lexer);
 
         var compilationUnit = parser.Parse();
 
@@ -293,9 +277,7 @@ x = 42;"
 
         lexer.Lex();
 
-        var parser = new CParserSession(
-            lexer.SyntaxTokens,
-            lexer.Diagnostics);
+        var parser = new CParserSession(lexer);
 
         var compilationUnit = parser.Parse();
 
@@ -332,9 +314,7 @@ x = 42;"
 
         lexer.Lex();
 
-        var parser = new CParserSession(
-            lexer.SyntaxTokens,
-            lexer.Diagnostics);
+        var parser = new CParserSession(lexer);
 
         var compilationUnit = parser.Parse();
 
@@ -366,9 +346,7 @@ WriteHelloWorldToConsole();"
 
         lexer.Lex();
 
-        var parser = new CParserSession(
-            lexer.SyntaxTokens,
-            lexer.Diagnostics);
+        var parser = new CParserSession(lexer);
 
         var compilationUnit = parser.Parse();
 
@@ -403,9 +381,7 @@ WriteHelloWorldToConsole();"
 
         lexer.Lex();
 
-        var parser = new CParserSession(
-            lexer.SyntaxTokens,
-            lexer.Diagnostics);
+        var parser = new CParserSession(lexer);
 
         var compilationUnit = parser.Parse();
 

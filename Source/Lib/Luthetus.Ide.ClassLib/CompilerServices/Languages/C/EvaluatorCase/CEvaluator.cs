@@ -9,15 +9,15 @@ namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.C.EvaluatorCase;
 
 public class CEvaluator
 {
-    private readonly CodeBlockNode _codeBlockNode;
+    private readonly CompilationUnit _compilationUnit;
     private readonly string _sourceText;
     private readonly LuthetusIdeDiagnosticBag _diagnosticBag = new();
 
     public CEvaluator(
-        CodeBlockNode codeBlockNode,
+        CompilationUnit compilationUnit,
         string sourceText)
     {
-        _codeBlockNode = codeBlockNode;
+        _compilationUnit = compilationUnit;
         _sourceText = sourceText;
     }
 
@@ -25,15 +25,15 @@ public class CEvaluator
 
     public EvaluatorResult Evaluate()
     {
-        if (_codeBlockNode.Diagnostics.Any(x =>
+        if (_compilationUnit.Diagnostics.Any(x =>
                 x.DiagnosticLevel == TextEditorDiagnosticLevel.Error))
         {
             throw new NotImplementedException("TODO: What should be done when there are error diagnostics?");
         }
 
-        if (_codeBlockNode.IsExpression)
+        if (_compilationUnit.TopLevelStatementsCodeBlockNode.IsExpression)
         {
-            var boundExpressionNode = _codeBlockNode.Children.Single();
+            var boundExpressionNode = _compilationUnit.TopLevelStatementsCodeBlockNode.Children.Single();
 
             return EvaluateExpression((IBoundExpressionNode)boundExpressionNode);
         }

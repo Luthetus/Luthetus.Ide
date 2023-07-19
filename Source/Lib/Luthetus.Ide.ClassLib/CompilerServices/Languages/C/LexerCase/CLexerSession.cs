@@ -9,7 +9,7 @@ using Luthetus.TextEditor.RazorLib.Lexing;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.C.LexerCase;
 
-public class CLexerSession
+public class CLexerSession : ILexer
 {
     private readonly StringWalker _stringWalker;
     private readonly List<ISyntaxToken> _syntaxTokens = new();

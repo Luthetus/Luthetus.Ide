@@ -30,9 +30,7 @@ int main() {
 
         lexer.Lex();
 
-        var parser = new CParserSession(
-            lexer.SyntaxTokens,
-            lexer.Diagnostics);
+        var parser = new CParserSession(lexer);
 
         var compilationUnit = parser.Parse();
 

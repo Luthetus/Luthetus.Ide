@@ -22,14 +22,14 @@ public class CSharpResource
     public TextEditorModelKey ModelKey { get; }
     public ResourceUri ResourceUri { get; }
     public CSharpCompilerService CSharpCompilerService { get; }
-    public CodeBlockNode? CodeBlockNode { get; internal set; }
+    public CompilationUnit? CompilationUnit { get; internal set; }
     public ImmutableArray<ISyntaxToken>? SyntaxTokens { get; internal set; }
 
     public ImmutableArray<TextEditorTextSpan> SyntacticTextSpans => GetSyntacticTextSpans();
     public ImmutableArray<ITextEditorSymbol> Symbols => GetSymbols();
 
     /// <summary>
-    /// TODO: When setting the <see cref="CodeBlockNode"/> it might be a useful
+    /// TODO: When setting the <see cref="CompilationUnit"/> it might be a useful
     /// optimization to evaluate these linq expressions and store the result
     /// as to not re-evaluate the linq expression over and over.
     /// </summary>
@@ -42,13 +42,13 @@ public class CSharpResource
     }
     
     /// <summary>
-    /// TODO: When setting the <see cref="CodeBlockNode"/> it might be a useful
+    /// TODO: When setting the <see cref="CompilationUnit"/> it might be a useful
     /// optimization to evaluate these linq expressions and store the result
     /// as to not re-evaluate the linq expression over and over.
     /// </summary>
     private ImmutableArray<ITextEditorSymbol> GetSymbols()
     {
-        if (CodeBlockNode is null)
+        if (CompilationUnit is null)
             return ImmutableArray<ITextEditorSymbol>.Empty;
 
         return ImmutableArray<ITextEditorSymbol>.Empty; // return CodeBlockNode...Value.Select(st => st.TextSpan).ToImmutableArray();

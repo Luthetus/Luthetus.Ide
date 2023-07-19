@@ -18,7 +18,7 @@ public partial class ParserTests
 
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
-        var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
 
         // Assertions
@@ -42,7 +42,7 @@ public partial class ParserTests
 
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
-        var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
 
         // Assertions
@@ -68,7 +68,7 @@ public partial class ParserTests
 
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
-        var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
 
         // Assertions
@@ -95,7 +95,7 @@ public partial class ParserTests
 
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
-        var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
 
         // Assertions
@@ -114,7 +114,7 @@ public partial class ParserTests
 
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
-        var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
 
         // Assertions
@@ -133,23 +133,23 @@ public partial class ParserTests
         var modelResourceUri = new ResourceUri("PersonModel.cs");
         var displayResourceUri = new ResourceUri("PersonDisplay.razor.cs");
 
-        CodeBlockNode modelCodeBlockNode;
-        CodeBlockNode displayCodeBlockNode;
+        CompilationUnit modelCompilationUnit;
+        CompilationUnit displayCompilationUnit;
 
         var modelLexer = new CSharpLexer(modelResourceUri, modelFile.Content);
         modelLexer.Lex();
-        var modelParser = new CSharpParser(modelLexer.SyntaxTokens, modelLexer.Diagnostics);
-        modelCodeBlockNode = modelParser.Parse();
+        var modelParser = new CSharpParser(modelLexer);
+        modelCompilationUnit = modelParser.Parse();
 
         var displayLexer = new CSharpLexer(displayResourceUri, displayFile.Content);
         displayLexer.Lex();
-        var displayParser = new CSharpParser(displayLexer.SyntaxTokens, displayLexer.Diagnostics);
-        displayCodeBlockNode = displayParser.Parse(modelParser.Binder, displayResourceUri);
+        var displayParser = new CSharpParser(displayLexer);
+        displayCompilationUnit = displayParser.Parse(modelParser.Binder, displayResourceUri);
 
         // Assertions
         {
             var boundNamespaceStatementNode =
-                (BoundNamespaceStatementNode)displayCodeBlockNode.Children.Single();
+                (BoundNamespaceStatementNode)displayCompilationUnit.Children.Single();
 
             Assert.Equal(
                 SyntaxKind.BoundNamespaceStatementNode,
@@ -183,24 +183,24 @@ public partial class ParserTests
         var displayResourceUri = new ResourceUri("PersonDisplay.razor.cs");
         var pageResourceUri = new ResourceUri("PersonPage.razor.cs");
 
-        CodeBlockNode modelCodeBlockNode;
-        CodeBlockNode displayCodeBlockNode;
-        CodeBlockNode pageCodeBlockNode;
+        CompilationUnit modelCompilationUnit;
+        CompilationUnit displayCompilationUnit;
+        CompilationUnit pageCompilationUnit;
 
         var modelLexer = new CSharpLexer(modelResourceUri, modelFile.Content);
         modelLexer.Lex();
-        var modelParser = new CSharpParser(modelLexer.SyntaxTokens, modelLexer.Diagnostics);
-        modelCodeBlockNode = modelParser.Parse();
+        var modelParser = new CSharpParser(modelLexer);
+        modelCompilationUnit = modelParser.Parse();
 
         var displayLexer = new CSharpLexer(displayResourceUri, displayFile.Content);
         displayLexer.Lex();
-        var displayParser = new CSharpParser(displayLexer.SyntaxTokens, displayLexer.Diagnostics);
-        displayCodeBlockNode = displayParser.Parse(modelParser.Binder, displayResourceUri);
+        var displayParser = new CSharpParser(displayLexer);
+        displayCompilationUnit = displayParser.Parse(modelParser.Binder, displayResourceUri);
 
         var pageLexer = new CSharpLexer(pageResourceUri,pageFile.Content);
         pageLexer.Lex();
-        var pageParser = new CSharpParser(pageLexer.SyntaxTokens, pageLexer.Diagnostics);
-        pageCodeBlockNode = pageParser.Parse(displayParser.Binder, pageResourceUri);
+        var pageParser = new CSharpParser(pageLexer);
+        pageCompilationUnit = pageParser.Parse(displayParser.Binder, pageResourceUri);
 
         // Assertions
         {
@@ -219,7 +219,7 @@ public partial class ParserTests
 
         var lexer = new CSharpLexer(sourceResourceUri, sourceFile.Content);
         lexer.Lex();
-        var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
 
         // Assertions
@@ -251,7 +251,7 @@ public partial class ParserTests
 
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
-        var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
 
         // Assertions
