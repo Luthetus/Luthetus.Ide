@@ -1,10 +1,6 @@
 ﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.BinderCase;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.LexerCase;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.ParserCase;
 using Luthetus.TextEditor.RazorLib.Analysis;
 using System.Collections.Immutable;
-using System.Linq;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.General;
 
