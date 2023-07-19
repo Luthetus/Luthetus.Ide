@@ -12,6 +12,7 @@ using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statem
 using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.Facts;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.BinderCase;
 
@@ -44,6 +45,10 @@ public class CSharpBinder : IBinder
     public Dictionary<string, SymbolDefinition> SymbolDefinitions => _symbolDefinitions;
     public ImmutableArray<BoundScope> BoundScopes => _boundScopes.ToImmutableArray();
     public ImmutableArray<TextEditorDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
+
+    ImmutableArray<ITextEditorSymbol> IBinder.Symbols => Symbols
+        .Select(s => (ITextEditorSymbol)s)
+        .ToImmutableArray();
 
     public BoundLiteralExpressionNode BindLiteralExpressionNode(
         LiteralExpressionNode literalExpressionNode)

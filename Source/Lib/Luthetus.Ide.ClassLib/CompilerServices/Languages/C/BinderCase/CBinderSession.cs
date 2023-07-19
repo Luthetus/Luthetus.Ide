@@ -12,6 +12,7 @@ using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statem
 using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.C.Facts;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.C.BinderCase;
 
@@ -37,6 +38,10 @@ public class CBinderSession : IBinder
     public List<ISymbol> Symbols { get; private set; } = new();
 
     public ImmutableArray<TextEditorDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
+
+    ImmutableArray<ITextEditorSymbol> IBinder.Symbols => Symbols
+        .Select(s => (ITextEditorSymbol)s)
+        .ToImmutableArray();
 
     public BoundLiteralExpressionNode BindLiteralExpressionNode(
         LiteralExpressionNode literalExpressionNode)

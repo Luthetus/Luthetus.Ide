@@ -51,7 +51,7 @@ public class CSharpResource
         if (CompilationUnit is null)
             return ImmutableArray<ITextEditorSymbol>.Empty;
 
-        return ImmutableArray<ITextEditorSymbol>.Empty; // return CodeBlockNode...Value.Select(st => st.TextSpan).ToImmutableArray();
+        return CompilationUnit.Binder.Symbols;
     }
 
     /// <returns>
