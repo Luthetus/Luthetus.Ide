@@ -6,7 +6,7 @@ namespace Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.St
 
 public sealed record BoundFunctionDefinitionNode : ISyntaxNode
 {
-    private CompilationUnit? _functionBodyCompilationUnit;
+    private CodeBlockNode? _functionBodyCodeBlockNode;
     private ImmutableArray<ISyntax> _children;
     private BoundGenericArgumentsNode? _boundGenericArgumentsNode;
 
@@ -15,13 +15,13 @@ public sealed record BoundFunctionDefinitionNode : ISyntaxNode
             ISyntaxToken identifierToken,
             BoundFunctionArgumentsNode boundFunctionArgumentsNode,
             BoundGenericArgumentsNode? boundGenericArgumentsNode,
-            CompilationUnit? functionBodyCompilationUnit)
+            CodeBlockNode? functionBodyCodeBlockNode)
     {
         ReturnBoundClassReferenceNode = returnBoundClassReferenceNode;
         IdentifierToken = identifierToken;
         BoundFunctionArgumentsNode = boundFunctionArgumentsNode;
         BoundGenericArgumentsNode = boundGenericArgumentsNode;
-        FunctionBodyCompilationUnit = functionBodyCompilationUnit;
+        FunctionBodyCodeBlockNode = functionBodyCodeBlockNode;
 
         CalculateChildren();
     }
@@ -40,13 +40,16 @@ public sealed record BoundFunctionDefinitionNode : ISyntaxNode
         }
     }
 
-    /// <summary>Only the null properties and "Children" itself need to have backing fields. This is due to the record needing to re-assign Children.</summary>
-    public CompilationUnit? FunctionBodyCompilationUnit
+    /// <summary>
+    /// Only the null properties and "Children" itself need to have backing fields.
+    /// This is due to the record needing to re-assign Children.
+    /// </summary>
+    public CodeBlockNode? FunctionBodyCodeBlockNode
     {
-        get => _functionBodyCompilationUnit;
+        get => _functionBodyCodeBlockNode;
         init
         {
-            _functionBodyCompilationUnit = value;
+            _functionBodyCodeBlockNode = value;
             CalculateChildren();
         }
     }
@@ -76,8 +79,8 @@ public sealed record BoundFunctionDefinitionNode : ISyntaxNode
         if (BoundGenericArgumentsNode is not null)
             childrenList.Add(BoundGenericArgumentsNode);
         
-        if (FunctionBodyCompilationUnit is not null)
-            childrenList.Add(FunctionBodyCompilationUnit);
+        if (FunctionBodyCodeBlockNode is not null)
+            childrenList.Add(FunctionBodyCodeBlockNode);
 
         _children = childrenList.ToImmutableArray();
     }

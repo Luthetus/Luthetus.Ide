@@ -1,12 +1,12 @@
 ﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.Lexing;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.Symbols;
 
-public interface ISymbol
+public interface ISymbol : ITextEditorSymbol
 {
-    public TextEditorTextSpan TextSpan { get; }
     public SyntaxKind SyntaxKind { get; }
 
     /// <summary>The Id for a <see cref="SymbolDefinition"/> is the string concatenation of the <see cref="BoundScopeKey"/>, a '+' character, and the text span's text value.</summary>

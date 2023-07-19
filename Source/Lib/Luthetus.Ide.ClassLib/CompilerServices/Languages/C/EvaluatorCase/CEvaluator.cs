@@ -31,9 +31,9 @@ public class CEvaluator
             throw new NotImplementedException("TODO: What should be done when there are error diagnostics?");
         }
 
-        if (_compilationUnit.IsExpression)
+        if (_compilationUnit.TopLevelStatementsCodeBlockNode.IsExpression)
         {
-            var boundExpressionNode = _compilationUnit.Children.Single();
+            var boundExpressionNode = _compilationUnit.TopLevelStatementsCodeBlockNode.Children.Single();
 
             return EvaluateExpression((IBoundExpressionNode)boundExpressionNode);
         }

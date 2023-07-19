@@ -6,17 +6,17 @@ using Luthetus.Ide.ClassLib.CompilerServices.Common.General;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.CompilationUnitCase;
 
-public class TreeViewCompilationUnit : TreeViewWithType<CompilationUnit>
+public class TreeViewCompilationUnit : TreeViewWithType<CodeBlockNode>
 {
     public TreeViewCompilationUnit(
-        CompilationUnit compilationUnit,
+        CodeBlockNode codeBlockNode,
         ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
         bool isExpandable,
         bool isExpanded)
             : base(
-                compilationUnit,
+                codeBlockNode,
                 isExpandable,
                 isExpanded)
     {
@@ -48,7 +48,7 @@ public class TreeViewCompilationUnit : TreeViewWithType<CompilationUnit>
             new Dictionary<string, object?>
             {
                 {
-                    nameof(TreeViewCompilationUnitDisplay.CompilationUnit),
+                    nameof(TreeViewCompilationUnitDisplay.CodeBlockNode),
                     Item
                 },
             });

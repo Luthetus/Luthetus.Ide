@@ -9,7 +9,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.LexerCase;
 
-public class CSharpLexer
+public class CSharpLexer : ILexer
 {
     private readonly StringWalker _stringWalker;
     private readonly List<ISyntaxToken> _syntaxTokens = new();

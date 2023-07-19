@@ -18,7 +18,7 @@ public partial class ParserTests
 
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
-        var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
 
         // Assertions
@@ -26,7 +26,7 @@ public partial class ParserTests
             var boundNamespaceStatementNode = (BoundNamespaceStatementNode)compilationUnit.Children.Single();
             var boundNamespaceEntryNode = (BoundNamespaceEntryNode)boundNamespaceStatementNode.Children.Single();
 
-            Assert.Empty(boundNamespaceEntryNode.CompilationUnit.Children);
+            Assert.Empty(boundNamespaceEntryNode.CodeBlockNode.Children);
 
             Assert.Equal(SyntaxKind.BoundNamespaceStatementNode, boundNamespaceStatementNode.SyntaxKind);
             Assert.Equal(SyntaxKind.BoundNamespaceEntryNode,boundNamespaceEntryNode.SyntaxKind);
@@ -42,14 +42,14 @@ public partial class ParserTests
 
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
-        var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
 
         // Assertions
         {
             var boundNamespaceStatementNode = (BoundNamespaceStatementNode)compilationUnit.Children.Single();
             var boundNamespaceEntryNode = (BoundNamespaceEntryNode)boundNamespaceStatementNode.Children.Single();
-            var boundClassDefinitionNode = (BoundClassDefinitionNode)boundNamespaceEntryNode.CompilationUnit.Children.Single();
+            var boundClassDefinitionNode = (BoundClassDefinitionNode)boundNamespaceEntryNode.CodeBlockNode.Children.Single();
 
             var namespaceScope = parser.Binder.BoundScopes[1];
 
@@ -68,14 +68,14 @@ public partial class ParserTests
 
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
-        var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
 
         // Assertions
         {
             var boundNamespaceStatementNode = (BoundNamespaceStatementNode)compilationUnit.Children.Single();
             var boundNamespaceEntryNode = (BoundNamespaceEntryNode)boundNamespaceStatementNode.Children.Single();
-            var boundClassDefinitionNode = (BoundClassDefinitionNode)boundNamespaceEntryNode.CompilationUnit.Children.Single();
+            var boundClassDefinitionNode = (BoundClassDefinitionNode)boundNamespaceEntryNode.CodeBlockNode.Children.Single();
 
             var namespaceScope = parser.Binder.BoundScopes[1];
 
@@ -95,7 +95,7 @@ public partial class ParserTests
 
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
-        var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
 
         // Assertions
@@ -114,7 +114,7 @@ public partial class ParserTests
 
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
-        var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
 
         // Assertions
@@ -138,12 +138,12 @@ public partial class ParserTests
 
         var modelLexer = new CSharpLexer(modelResourceUri, modelFile.Content);
         modelLexer.Lex();
-        var modelParser = new CSharpParser(modelLexer.SyntaxTokens, modelLexer.Diagnostics);
+        var modelParser = new CSharpParser(modelLexer);
         modelCompilationUnit = modelParser.Parse();
 
         var displayLexer = new CSharpLexer(displayResourceUri, displayFile.Content);
         displayLexer.Lex();
-        var displayParser = new CSharpParser(displayLexer.SyntaxTokens, displayLexer.Diagnostics);
+        var displayParser = new CSharpParser(displayLexer);
         displayCompilationUnit = displayParser.Parse(modelParser.Binder, displayResourceUri);
 
         // Assertions
@@ -189,17 +189,17 @@ public partial class ParserTests
 
         var modelLexer = new CSharpLexer(modelResourceUri, modelFile.Content);
         modelLexer.Lex();
-        var modelParser = new CSharpParser(modelLexer.SyntaxTokens, modelLexer.Diagnostics);
+        var modelParser = new CSharpParser(modelLexer);
         modelCompilationUnit = modelParser.Parse();
 
         var displayLexer = new CSharpLexer(displayResourceUri, displayFile.Content);
         displayLexer.Lex();
-        var displayParser = new CSharpParser(displayLexer.SyntaxTokens, displayLexer.Diagnostics);
+        var displayParser = new CSharpParser(displayLexer);
         displayCompilationUnit = displayParser.Parse(modelParser.Binder, displayResourceUri);
 
         var pageLexer = new CSharpLexer(pageResourceUri,pageFile.Content);
         pageLexer.Lex();
-        var pageParser = new CSharpParser(pageLexer.SyntaxTokens, pageLexer.Diagnostics);
+        var pageParser = new CSharpParser(pageLexer);
         pageCompilationUnit = pageParser.Parse(displayParser.Binder, pageResourceUri);
 
         // Assertions
@@ -219,7 +219,7 @@ public partial class ParserTests
 
         var lexer = new CSharpLexer(sourceResourceUri, sourceFile.Content);
         lexer.Lex();
-        var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
 
         // Assertions
@@ -251,7 +251,7 @@ public partial class ParserTests
 
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
-        var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
 
         // Assertions
@@ -260,7 +260,7 @@ public partial class ParserTests
             Assert.Equal(namespaceIdentifier, boundNamespaceStatementNode.IdentifierToken.TextSpan.GetText());
 
             var boundNamespaceEntryNode = (BoundNamespaceEntryNode)boundNamespaceStatementNode.Children.Single();
-            Assert.Empty(boundNamespaceEntryNode.CompilationUnit.Children);
+            Assert.Empty(boundNamespaceEntryNode.CodeBlockNode.Children);
 
             Assert.Equal(SyntaxKind.BoundNamespaceStatementNode, boundNamespaceStatementNode.SyntaxKind);
             Assert.Equal(SyntaxKind.BoundNamespaceEntryNode, boundNamespaceEntryNode.SyntaxKind);

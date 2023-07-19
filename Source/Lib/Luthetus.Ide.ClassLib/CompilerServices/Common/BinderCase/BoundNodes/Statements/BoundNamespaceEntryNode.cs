@@ -9,19 +9,19 @@ public sealed record BoundNamespaceEntryNode : ISyntaxNode
 {
     public BoundNamespaceEntryNode(
         ResourceUri resourceUri,
-        CompilationUnit compilationUnit)
+        CodeBlockNode codeBlockNode)
     {
         ResourceUri = resourceUri;
-        CompilationUnit = compilationUnit;
+        CodeBlockNode = codeBlockNode;
 
-        Children = new ISyntax[] 
+        Children = (new ISyntax[] 
         {
-            CompilationUnit
-        }.ToImmutableArray();
+            CodeBlockNode
+        }).ToImmutableArray();
     }
 
     public ResourceUri ResourceUri { get; }
-    public CompilationUnit CompilationUnit { get; init; }
+    public CodeBlockNode CodeBlockNode { get; init; }
 
     public ImmutableArray<ISyntax> Children { get; init; }
     public bool IsFabricated { get; init; }

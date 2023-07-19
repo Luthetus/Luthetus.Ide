@@ -6,6 +6,7 @@ using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.SyntaxNodes.Expressio
 using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.SyntaxNodes.Statement;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax.SyntaxTokens;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.BinderCase;
+using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.LexerCase;
 using Luthetus.TextEditor.RazorLib.Analysis;
 using Luthetus.TextEditor.RazorLib.Analysis.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.Lexing;
@@ -13,47 +14,42 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.ParserCase;
 
-public class CSharpParser
+public class CSharpParser : IParser
 {
     private readonly TokenWalker _tokenWalker;
-    private readonly CompilationUnitBuilder _globalCompilationUnitBuilder;
+    private readonly CodeBlockBuilder _globalCodeBlockBuilder;
     private readonly LuthetusIdeDiagnosticBag _diagnosticBag = new();
-    private readonly ImmutableArray<TextEditorDiagnostic> _lexerDiagnostics;
-
-    private CSharpBinder _binder;
 
     public CSharpParser(
-        ImmutableArray<ISyntaxToken> tokens,
-        ImmutableArray<TextEditorDiagnostic> lexerDiagnostics)
+        CSharpLexer lexer)
     {
-        _lexerDiagnostics = lexerDiagnostics;
-        _tokenWalker = new TokenWalker(tokens, _diagnosticBag);
-        _binder = new CSharpBinder();
+        Lexer = lexer;
+        _tokenWalker = new TokenWalker(lexer.SyntaxTokens, _diagnosticBag);
+        Binder = new CSharpBinder();
 
-        _globalCompilationUnitBuilder = new(null);
-        _currentCompilationUnitBuilder = _globalCompilationUnitBuilder;
+        _globalCodeBlockBuilder = new(null);
+        _currentCodeBlockBuilder = _globalCodeBlockBuilder;
     }
 
     /// <summary>If a file scoped namespace is found, then set this field, so that prior to finishing the parser constructs the namespace node.</summary>
-    private Action<CompilationUnit>? _finalizeFileScopeAction;
+    private Action<CodeBlockNode>? _finalizeNamespaceFileScopeCodeBlockNodeAction;
+    private ISyntaxNode? _nodeRecent;
+    private CodeBlockBuilder _currentCodeBlockBuilder;
+    /// <summary>When parsing the body of a function this is used in order to keep the function definition node itself in the syntax tree immutable.<br/><br/>That is to say, this action would create the function definition node and then append it.</summary>
+    private Stack<Action<CodeBlockNode>> _finalizeCodeBlockNodeActionStack = new();
 
     public ImmutableArray<TextEditorDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
-    public CSharpBinder Binder => _binder;
-
-    private ISyntaxNode? _nodeRecent;
-    private CompilationUnitBuilder _currentCompilationUnitBuilder;
-
-    /// <summary>When parsing the body of a function this is used in order to keep the function definition node itself in the syntax tree immutable.<br/><br/>That is to say, this action would create the function definition node and then append it.</summary>
-    private Stack<Action<CompilationUnit>> _finalizeCompilationUnitActionStack = new();
+    public CSharpBinder Binder { get; private set; }
+    public CSharpLexer Lexer { get; }
 
     /// <summary>This method is used when parsing many files as a single compilation. The first binder instance would be passed to the following parsers. The resourceUri is passed in so if a file is parsed for a second time, the previous symbols can be deleted so they do not duplicate.</summary>
     public CompilationUnit Parse(
         CSharpBinder previousBinder,
         ResourceUri resourceUri)
     {
-        _binder = previousBinder;
-        _binder.CurrentResourceUri = resourceUri;
-        _binder.ClearStateByResourceUri(resourceUri);
+        Binder = previousBinder;
+        Binder.CurrentResourceUri = resourceUri;
+        Binder.ClearStateByResourceUri(resourceUri);
 
         return Parse();
     }
@@ -120,8 +116,8 @@ public class CSharpParser
                 case SyntaxKind.EndOfFileToken:
                     if (_nodeRecent is IExpressionNode)
                     {
-                        _currentCompilationUnitBuilder.IsExpression = true;
-                        _currentCompilationUnitBuilder.Children.Add(_nodeRecent);
+                        _currentCodeBlockBuilder.IsExpression = true;
+                        _currentCodeBlockBuilder.Children.Add(_nodeRecent);
                     }
                     break;
             }
@@ -130,23 +126,29 @@ public class CSharpParser
                 break;
         }
 
-        if (_finalizeFileScopeAction is not null &&
-            _currentCompilationUnitBuilder.Parent is not null)
+        if (_finalizeNamespaceFileScopeCodeBlockNodeAction is not null &&
+            _currentCodeBlockBuilder.Parent is not null)
         {
             // The current token here would be the EOF token.
-            _binder.DisposeBoundScope(_tokenWalker.Current.TextSpan);
+            Binder.DisposeBoundScope(_tokenWalker.Current.TextSpan);
 
-            _finalizeFileScopeAction.Invoke(
-                _currentCompilationUnitBuilder.Build());
+            _finalizeNamespaceFileScopeCodeBlockNodeAction.Invoke(
+                _currentCodeBlockBuilder.Build());
 
-            _currentCompilationUnitBuilder = _currentCompilationUnitBuilder.Parent;
+            _currentCodeBlockBuilder = _currentCodeBlockBuilder.Parent;
         }
 
-        return _currentCompilationUnitBuilder.Build(
+        var topLevelStatementsCodeBlock = _currentCodeBlockBuilder.Build(
             Diagnostics
-                .Union(_binder.Diagnostics)
-                .Union(_lexerDiagnostics)
+                .Union(Binder.Diagnostics)
+                .Union(Lexer.Diagnostics)
                 .ToImmutableArray());
+
+        return new CompilationUnit(
+            topLevelStatementsCodeBlock,
+            Lexer,
+            this,
+            Binder);
     }
 
     private BoundLiteralExpressionNode ParseNumericLiteralToken(
@@ -154,7 +156,7 @@ public class CSharpParser
     {
         var literalExpressionNode = new LiteralExpressionNode(numericLiteralToken);
 
-        var boundLiteralExpressionNode = _binder
+        var boundLiteralExpressionNode = Binder
             .BindLiteralExpressionNode(literalExpressionNode);
 
         _nodeRecent = boundLiteralExpressionNode;
@@ -167,7 +169,7 @@ public class CSharpParser
     {
         var literalExpressionNode = new LiteralExpressionNode(stringLiteralToken);
 
-        var boundLiteralExpressionNode = _binder
+        var boundLiteralExpressionNode = Binder
                 .BindLiteralExpressionNode(literalExpressionNode);
 
         _nodeRecent = boundLiteralExpressionNode;
@@ -212,7 +214,7 @@ public class CSharpParser
             return;
         }
 
-        var boundBinaryOperatorNode = _binder.BindBinaryOperatorNode(
+        var boundBinaryOperatorNode = Binder.BindBinaryOperatorNode(
             leftBoundLiteralExpressionNode,
             plusToken,
             rightBoundLiteralExpressionNode);
@@ -236,7 +238,7 @@ public class CSharpParser
                 preprocessorDirectiveToken,
                 consumedToken);
 
-            _currentCompilationUnitBuilder.Children.Add(preprocessorLibraryReferenceStatement);
+            _currentCodeBlockBuilder.Children.Add(preprocessorLibraryReferenceStatement);
 
             return preprocessorLibraryReferenceStatement;
         }
@@ -252,7 +254,7 @@ public class CSharpParser
         // TODO: Make many keywords SyntaxKinds. Then if SyntaxKind.EndsWith("Keyword"); so that string checking doesn't need to be done.
         var text = keywordToken.TextSpan.GetText();
 
-        if (_binder.TryGetClassReferenceHierarchically(
+        if (Binder.TryGetClassReferenceHierarchically(
                 keywordToken, 
                 null, 
                 out var boundClassReferenceNode,
@@ -269,11 +271,11 @@ public class CSharpParser
 
             if (text == "return")
             {
-                var boundReturnStatementNode = _binder.BindReturnStatementNode(
+                var boundReturnStatementNode = Binder.BindReturnStatementNode(
                     keywordToken,
                     ParseExpression());
 
-                _currentCompilationUnitBuilder.Children.Add(boundReturnStatementNode);
+                _currentCodeBlockBuilder.Children.Add(boundReturnStatementNode);
 
                 _nodeRecent = boundReturnStatementNode;
             }
@@ -281,14 +283,14 @@ public class CSharpParser
             {
                 var namespaceIdentifier = ParseNamespaceIdentifier();
 
-                if (_finalizeFileScopeAction is not null)
+                if (_finalizeNamespaceFileScopeCodeBlockNodeAction is not null)
                 {
                     throw new NotImplementedException(
                         "Need to add logic to report diagnostic when there is" +
                         " already a file scoped namespace.");
                 }
 
-                var boundNamespaceStatementNode = _binder.BindNamespaceStatementNode(
+                var boundNamespaceStatementNode = Binder.BindNamespaceStatementNode(
                         keywordToken,
                         namespaceIdentifier);
 
@@ -298,7 +300,7 @@ public class CSharpParser
             {
                 var identifierToken = (IdentifierToken)_tokenWalker.Match(SyntaxKind.IdentifierToken);
 
-                _ = _binder.TryBindClassDefinitionNode(
+                _ = Binder.TryBindClassDefinitionNode(
                     identifierToken,
                     null,
                     out var boundClassDefinitionNode);
@@ -309,11 +311,11 @@ public class CSharpParser
             {
                 var namespaceIdentifier = ParseNamespaceIdentifier();
 
-                var boundUsingStatementNode = _binder.BindUsingStatementNode(
+                var boundUsingStatementNode = Binder.BindUsingStatementNode(
                         keywordToken,
                         namespaceIdentifier);
 
-                _currentCompilationUnitBuilder.Children.Add(boundUsingStatementNode);
+                _currentCodeBlockBuilder.Children.Add(boundUsingStatementNode);
 
                 _nodeRecent = boundUsingStatementNode;
             }
@@ -345,7 +347,7 @@ public class CSharpParser
             else if (text == "if")
             {
                 var expression = ParseIfStatementExpression();
-                var boundIfStatementNode = _binder.BindIfStatementNode(keywordToken, expression);
+                var boundIfStatementNode = Binder.BindIfStatementNode(keywordToken, expression);
                 _nodeRecent = boundIfStatementNode;
             }
             else if (text == "get")
@@ -366,7 +368,7 @@ public class CSharpParser
                     throw new NotImplementedException();
                 }
 
-                _binder.TryGetClassReferenceHierarchically(typeClauseToken, null, out boundClassReferenceNode);
+                Binder.TryGetClassReferenceHierarchically(typeClauseToken, null, out boundClassReferenceNode);
 
                 // TODO: combine the logic for 'new()' without a type identifier and 'new List<int>()' with a type identifier. To start I am going to isolate them in their own if conditional blocks.
                 if (typeClauseToken.IsFabricated)
@@ -390,13 +392,13 @@ public class CSharpParser
                         boundObjectInitializationNode = ParseObjectInitialization(openBraceToken);
                     }
 
-                    var boundConstructorInvocationNode = _binder.BindConstructorInvocationNode(
+                    var boundConstructorInvocationNode = Binder.BindConstructorInvocationNode(
                         keywordToken,
                         boundClassReferenceNode,
                         boundFunctionArgumentsNode,
                         boundObjectInitializationNode);
 
-                    _currentCompilationUnitBuilder.Children.Add(boundConstructorInvocationNode);
+                    _currentCodeBlockBuilder.Children.Add(boundConstructorInvocationNode);
                 }
                 else
                 {
@@ -428,13 +430,13 @@ public class CSharpParser
                         boundObjectInitializationNode = ParseObjectInitialization(openBraceToken);
                     }
 
-                    var boundConstructorInvocationNode = _binder.BindConstructorInvocationNode(
+                    var boundConstructorInvocationNode = Binder.BindConstructorInvocationNode(
                         keywordToken,
                         boundClassReferenceNode,
                         boundFunctionParametersNode,
                         boundObjectInitializationNode);
 
-                    _currentCompilationUnitBuilder.Children.Add(boundConstructorInvocationNode);
+                    _currentCodeBlockBuilder.Children.Add(boundConstructorInvocationNode);
                 }
             }
             else if (text == "interface")
@@ -442,7 +444,7 @@ public class CSharpParser
                 // TODO: Implement the 'interface' keyword
                 var identifierToken = (IdentifierToken)_tokenWalker.Match(SyntaxKind.IdentifierToken);
 
-                _ = _binder.TryBindClassDefinitionNode(
+                _ = Binder.TryBindClassDefinitionNode(
                     identifierToken,
                     null,
                     out var boundClassDefinitionNode);
@@ -540,7 +542,7 @@ public class CSharpParser
                 if (nextTokenIsVarKeyword || nextTokenIsIdentifierToken)
                 {
                     // Take 'var' as a keyword
-                    if (_binder.TryGetClassReferenceHierarchically(keywordContextualToken, null, out var boundClassDefinitionNode))
+                    if (Binder.TryGetClassReferenceHierarchically(keywordContextualToken, null, out var boundClassDefinitionNode))
                     {
                         // 'var' type
                         _nodeRecent = boundClassDefinitionNode;
@@ -566,7 +568,7 @@ public class CSharpParser
             _nodeRecent = ParseStringLiteralToken(
                 (StringLiteralToken)stringLiteralToken);
 
-            _binder.BindStringInterpolationExpression(dollarSignToken);
+            Binder.BindStringInterpolationExpression(dollarSignToken);
         }
     }
 
@@ -580,12 +582,12 @@ public class CSharpParser
 
             var matchTypeClauseToken = MatchTypeClauseToken();
 
-            var success = _binder.TryGetClassReferenceHierarchically(matchTypeClauseToken, null, out var parentClassReference);
+            var success = Binder.TryGetClassReferenceHierarchically(matchTypeClauseToken, null, out var parentClassReference);
 
             // TODO: If not successful at getting class reference one should be fabricated instead of returning null.
             if (success && parentClassReference is not null)
             {
-                var boundInheritanceStatementNode = _binder.BindInheritanceStatementNode(
+                var boundInheritanceStatementNode = Binder.BindInheritanceStatementNode(
                     parentClassReference);
 
                 boundClassDefinitionNode = boundClassDefinitionNode with
@@ -621,7 +623,7 @@ public class CSharpParser
 
                 var boundFunctionArguments = ParseFunctionArguments((OpenParenthesisToken)_tokenWalker.Consume());
 
-                var boundFunctionDefinitionNode = _binder.BindFunctionDefinitionNode(
+                var boundFunctionDefinitionNode = Binder.BindFunctionDefinitionNode(
                     (BoundClassReferenceNode)_nodeRecent,
                     identifierToken,
                     boundFunctionArguments,
@@ -644,11 +646,11 @@ public class CSharpParser
                 else
                 {
                     // 'variable declaration'
-                    var boundVariableDeclarationStatementNode = _binder.BindVariableDeclarationNode(
+                    var boundVariableDeclarationStatementNode = Binder.BindVariableDeclarationNode(
                         (BoundClassReferenceNode)_nodeRecent,
                         identifierToken);
 
-                    _currentCompilationUnitBuilder.Children.Add(boundVariableDeclarationStatementNode);
+                    _currentCodeBlockBuilder.Children.Add(boundVariableDeclarationStatementNode);
 
                     if (_tokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
                     {
@@ -659,7 +661,7 @@ public class CSharpParser
 
                         var rightHandExpression = ParseExpression();
 
-                        var boundVariableAssignmentNode = _binder.BindVariableAssignmentNode(
+                        var boundVariableAssignmentNode = Binder.BindVariableAssignmentNode(
                             (IdentifierToken)boundVariableDeclarationStatementNode.IdentifierToken,
                             rightHandExpression);
 
@@ -670,7 +672,7 @@ public class CSharpParser
                         }
                         else
                         {
-                            _currentCompilationUnitBuilder.Children
+                            _currentCodeBlockBuilder.Children
                                 .Add(boundVariableAssignmentNode);
                         }
                     }
@@ -704,7 +706,7 @@ public class CSharpParser
                     var boundIdentifierReferenceNode = (BoundIdentifierReferenceNode)_nodeRecent;
 
                     // The contextual identifier can now be understood to be the return Type of a function.
-                    _ = _binder.TryGetClassReferenceHierarchically(boundIdentifierReferenceNode.IdentifierToken, null, out var boundClassDefinitionNode);
+                    _ = Binder.TryGetClassReferenceHierarchically(boundIdentifierReferenceNode.IdentifierToken, null, out var boundClassDefinitionNode);
                     _nodeRecent = boundClassDefinitionNode;
 
                     // Re-invoke ParseIdentifierToken now that _nodeRecent is known to be a Type identifier
@@ -727,7 +729,7 @@ public class CSharpParser
 
                 var functionParameters = ParseFunctionParameters(openParenthesisToken);
 
-                var boundFunctionInvocationNode = _binder.BindFunctionInvocationNode(
+                var boundFunctionInvocationNode = Binder.BindFunctionInvocationNode(
                     identifierToken,
                     functionParameters,
                     genericArguments);
@@ -735,7 +737,7 @@ public class CSharpParser
                 if (boundFunctionInvocationNode is null)
                     throw new ApplicationException($"{nameof(boundFunctionInvocationNode)} was null.");
 
-                _currentCompilationUnitBuilder.Children.Add(boundFunctionInvocationNode);
+                _currentCodeBlockBuilder.Children.Add(boundFunctionInvocationNode);
             }
             else if (_tokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
             {
@@ -743,18 +745,18 @@ public class CSharpParser
 
                 var rightHandExpression = ParseExpression();
 
-                var boundVariableAssignmentNode = _binder.BindVariableAssignmentNode(
+                var boundVariableAssignmentNode = Binder.BindVariableAssignmentNode(
                     identifierToken,
                     rightHandExpression);
 
-                _currentCompilationUnitBuilder.Children
+                _currentCodeBlockBuilder.Children
                     .Add(boundVariableAssignmentNode);
             }
             else
             {
                 // 'variable reference' OR 'namespace identifier' OR 'static class identifier'
 
-                if (_binder.BoundNamespaceStatementNodes.ContainsKey(identifierToken.TextSpan.GetText()))
+                if (Binder.BoundNamespaceStatementNodes.ContainsKey(identifierToken.TextSpan.GetText()))
                 {
                     if (_tokenWalker.Current.SyntaxKind == SyntaxKind.MemberAccessToken)
                     {
@@ -773,7 +775,7 @@ public class CSharpParser
                 {
                     // TODO: (2023-05-28) Report an error diagnostic for 'unknown identifier'. Something like this I'm not sure.
 
-                    var boundIdentifierReferenceNode = _binder.BindIdentifierReferenceNode(identifierToken);
+                    var boundIdentifierReferenceNode = Binder.BindIdentifierReferenceNode(identifierToken);
                     _nodeRecent = boundIdentifierReferenceNode;
 
                     return;
@@ -788,9 +790,9 @@ public class CSharpParser
         var propertyTypeClauseToken = _tokenWalker.Peek(-1);
         var propertyIdentifierToken = _tokenWalker.Consume();
 
-        _ = _binder.TryGetClassReferenceHierarchically(propertyTypeClauseToken, null, out var boundClassReferenceNode);
+        _ = Binder.TryGetClassReferenceHierarchically(propertyTypeClauseToken, null, out var boundClassReferenceNode);
 
-        _binder.BindPropertyDeclarationNode(
+        Binder.BindPropertyDeclarationNode(
             boundClassReferenceNode,
             (IdentifierToken)propertyIdentifierToken);
     }
@@ -900,7 +902,7 @@ public class CSharpParser
     private void ParseOpenBraceToken(
         OpenBraceToken openBraceToken)
     {
-        var closureCurrentCompilationUnitBuilder = _currentCompilationUnitBuilder;
+        var closureCurrentCompilationUnitBuilder = _currentCodeBlockBuilder;
         Type? scopeReturnType = null;
 
         if (_nodeRecent is not null &&
@@ -908,9 +910,9 @@ public class CSharpParser
         {
             var boundNamespaceStatementNode = (BoundNamespaceStatementNode)_nodeRecent;
 
-            _finalizeCompilationUnitActionStack.Push(compilationUnit =>
+            _finalizeCodeBlockNodeActionStack.Push(compilationUnit =>
             {
-                boundNamespaceStatementNode = _binder.RegisterBoundNamespaceEntryNode(
+                boundNamespaceStatementNode = Binder.RegisterBoundNamespaceEntryNode(
                     boundNamespaceStatementNode,
                     compilationUnit);
 
@@ -923,11 +925,11 @@ public class CSharpParser
         {
             var boundClassDefinitionNode = (BoundClassDefinitionNode)_nodeRecent;
 
-            _finalizeCompilationUnitActionStack.Push(compilationUnit =>
+            _finalizeCodeBlockNodeActionStack.Push(compilationUnit =>
             {
                 boundClassDefinitionNode = boundClassDefinitionNode with
                 {
-                    ClassBodyCompilationUnit = compilationUnit
+                    ClassBodyCodeBlockNode = compilationUnit
                 };
 
                 closureCurrentCompilationUnitBuilder.Children
@@ -941,11 +943,11 @@ public class CSharpParser
             
             scopeReturnType = boundFunctionDefinitionNode.ReturnBoundClassReferenceNode.Type;
 
-            _finalizeCompilationUnitActionStack.Push(compilationUnit =>
+            _finalizeCodeBlockNodeActionStack.Push(compilationUnit =>
             {
                 boundFunctionDefinitionNode = boundFunctionDefinitionNode with
                 {
-                    FunctionBodyCompilationUnit = compilationUnit
+                    FunctionBodyCodeBlockNode = compilationUnit
                 };
 
                 closureCurrentCompilationUnitBuilder.Children
@@ -957,11 +959,11 @@ public class CSharpParser
         {
             var boundIfStatementNode = (BoundIfStatementNode)_nodeRecent;
 
-            _finalizeCompilationUnitActionStack.Push(compilationUnit =>
+            _finalizeCodeBlockNodeActionStack.Push(compilationUnit =>
             {
                 boundIfStatementNode = boundIfStatementNode with
                 {
-                    IfStatementBodyCompilationUnit = compilationUnit
+                    IfStatementBodyCodeBlockNode = compilationUnit
                 };
 
                 closureCurrentCompilationUnitBuilder.Children
@@ -970,38 +972,38 @@ public class CSharpParser
         }
         else
         {
-            _finalizeCompilationUnitActionStack.Push(compilationUnit =>
+            _finalizeCodeBlockNodeActionStack.Push(compilationUnit =>
             {
                 closureCurrentCompilationUnitBuilder.Children
                     .Add(compilationUnit);
             });
         }
 
-        _binder.RegisterBoundScope(
+        Binder.RegisterBoundScope(
             scopeReturnType,
             openBraceToken.TextSpan);
 
         if (_nodeRecent is not null &&
             _nodeRecent.SyntaxKind == SyntaxKind.BoundNamespaceStatementNode)
         {
-            _binder.AddNamespaceToCurrentScope((BoundNamespaceStatementNode)_nodeRecent);
+            Binder.AddNamespaceToCurrentScope((BoundNamespaceStatementNode)_nodeRecent);
         }
 
-        _currentCompilationUnitBuilder = new(_currentCompilationUnitBuilder);
+        _currentCodeBlockBuilder = new(_currentCodeBlockBuilder);
     }
 
     private void ParseCloseBraceToken(
         CloseBraceToken closeBraceToken)
     {
-        _binder.DisposeBoundScope(closeBraceToken.TextSpan);
+        Binder.DisposeBoundScope(closeBraceToken.TextSpan);
 
-        if (_currentCompilationUnitBuilder.Parent is not null &&
-            _finalizeCompilationUnitActionStack.Any())
+        if (_currentCodeBlockBuilder.Parent is not null &&
+            _finalizeCodeBlockNodeActionStack.Any())
         {
-            _finalizeCompilationUnitActionStack.Pop().Invoke(
-                _currentCompilationUnitBuilder.Build());
+            _finalizeCodeBlockNodeActionStack.Pop().Invoke(
+                _currentCodeBlockBuilder.Build());
 
-            _currentCompilationUnitBuilder = _currentCompilationUnitBuilder.Parent;
+            _currentCodeBlockBuilder = _currentCodeBlockBuilder.Parent;
         }
     }
     
@@ -1091,7 +1093,7 @@ public class CSharpParser
 
         if (tokenCurrent.SyntaxKind == SyntaxKind.CloseSquareBracketToken)
         {
-            return _binder.BindAttributeNode(
+            return Binder.BindAttributeNode(
                 openSquareBracketToken,
                 (CloseSquareBracketToken)tokenCurrent);
         }
@@ -1105,7 +1107,7 @@ public class CSharpParser
     {
         if (_tokenWalker.Peek(0).SyntaxKind == SyntaxKind.CloseParenthesisToken)
         {
-            return _binder.BindFunctionArguments(
+            return Binder.BindFunctionArguments(
                 openParenthesisToken,
                 new(),
                 (CloseParenthesisToken)_tokenWalker.Consume());
@@ -1158,7 +1160,7 @@ public class CSharpParser
 
         var closeParenthesisToken = _tokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 
-        return _binder.BindFunctionArguments(
+        return Binder.BindFunctionArguments(
             openParenthesisToken,
             functionArgumentListing,
             (CloseParenthesisToken)closeParenthesisToken);
@@ -1334,7 +1336,7 @@ public class CSharpParser
 
         var closeAngleBracketToken = _tokenWalker.Match(SyntaxKind.CloseAngleBracketToken);
 
-        return _binder.BindGenericArguments(
+        return Binder.BindGenericArguments(
             openAngleBracketToken,
             genericArgumentListing,
             (CloseAngleBracketToken)closeAngleBracketToken);
@@ -1346,14 +1348,14 @@ public class CSharpParser
         if (_nodeRecent is not null &&
             _nodeRecent.SyntaxKind == SyntaxKind.BoundNamespaceStatementNode)
         {
-            var closureCurrentCompilationUnitBuilder = _currentCompilationUnitBuilder;
+            var closureCurrentCompilationUnitBuilder = _currentCodeBlockBuilder;
             Type? scopeReturnType = null;
 
             var boundNamespaceStatementNode = (BoundNamespaceStatementNode)_nodeRecent;
 
-            _finalizeFileScopeAction = compilationUnit =>
+            _finalizeNamespaceFileScopeCodeBlockNodeAction = compilationUnit =>
             {
-                boundNamespaceStatementNode = _binder.RegisterBoundNamespaceEntryNode(
+                boundNamespaceStatementNode = Binder.RegisterBoundNamespaceEntryNode(
                     boundNamespaceStatementNode,
                     compilationUnit);
 
@@ -1361,13 +1363,13 @@ public class CSharpParser
                     .Add(boundNamespaceStatementNode);
             };
 
-            _binder.RegisterBoundScope(
+            Binder.RegisterBoundScope(
                 scopeReturnType,
                 statementDelimiterToken.TextSpan);
 
-            _binder.AddNamespaceToCurrentScope((BoundNamespaceStatementNode)_nodeRecent);
+            Binder.AddNamespaceToCurrentScope((BoundNamespaceStatementNode)_nodeRecent);
 
-            _currentCompilationUnitBuilder = new(_currentCompilationUnitBuilder);
+            _currentCodeBlockBuilder = new(_currentCodeBlockBuilder);
         }
     }
 

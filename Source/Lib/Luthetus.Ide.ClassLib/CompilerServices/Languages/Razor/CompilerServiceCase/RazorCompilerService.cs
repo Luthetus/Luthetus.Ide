@@ -49,26 +49,26 @@ public class RazorCompilerService : ICompilerService
         }
     }
 
-    public ImmutableArray<ITextEditorSymbol> GetSymbolsFor(TextEditorModel textEditorModel)
+    public ImmutableArray<ITextEditorSymbol> GetSymbolsFor(TextEditorModel model)
+    {
+        return ImmutableArray<ITextEditorSymbol>.Empty;
+    }
+
+    public ImmutableArray<TextEditorTextSpan> GetDiagnosticTextSpansFor(TextEditorModel model)
     {
         throw new NotImplementedException();
     }
 
-    public ImmutableArray<TextEditorTextSpan> GetDiagnosticTextSpansFor(TextEditorModel textEditorModel)
+    public void ModelWasModified(TextEditorModel model, ImmutableArray<TextEditorTextSpan> editTextSpans)
     {
         throw new NotImplementedException();
     }
 
-    public void ModelWasModified(TextEditorModel textEditorModel, ImmutableArray<TextEditorTextSpan> editTextSpans)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void DisposeModel(TextEditorModel textEditorModel)
+    public void DisposeModel(TextEditorModel model)
     {
         lock (_razorResourceMapLock)
         {
-            _razorResourceMap.Remove(textEditorModel.ModelKey);
+            _razorResourceMap.Remove(model.ModelKey);
         }
     }
 

@@ -15,7 +15,7 @@ public partial class ParserTests
 
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
-        var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
+        var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
 
         // Assertions
@@ -25,7 +25,7 @@ public partial class ParserTests
 
             Assert.NotNull(boundIfStatementNode.KeywordToken);
             Assert.NotNull(boundIfStatementNode.BoundExpressionNode);
-            Assert.NotNull(boundIfStatementNode.IfStatementBodyCompilationUnit);
+            Assert.NotNull(boundIfStatementNode.IfStatementBodyCodeBlockNode);
         }
     }
 }

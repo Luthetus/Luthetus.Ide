@@ -64,7 +64,7 @@ public class TreeViewNamespace : TreeViewWithType<BoundNamespaceStatementNode>
         try
         {
             var newChildren = Item.Children
-                .SelectMany(x => ((BoundNamespaceEntryNode)x).CompilationUnit.Children)
+                .SelectMany(x => ((BoundNamespaceEntryNode)x).CodeBlockNode.Children)
                 .Where(x => x.SyntaxKind == SyntaxKind.BoundClassDefinitionNode)
                 .Select(x => (TreeViewNoType) new TreeViewBoundClassDefinitionNode(
                     (BoundClassDefinitionNode)x,

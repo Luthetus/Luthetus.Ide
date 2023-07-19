@@ -22,9 +22,7 @@ public partial class EvaluatorTests
 
         lexer.Lex();
 
-        var parser = new CSharpParser(
-            lexer.SyntaxTokens,
-            lexer.Diagnostics);
+        var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
 
@@ -52,9 +50,7 @@ public partial class EvaluatorTests
 
         lexer.Lex();
 
-        var parser = new CSharpParser(
-            lexer.SyntaxTokens,
-            lexer.Diagnostics);
+        var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
 
@@ -84,9 +80,7 @@ public partial class EvaluatorTests
 
         lexer.Lex();
 
-        var parser = new CSharpParser(
-            lexer.SyntaxTokens,
-            lexer.Diagnostics);
+        var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
 
@@ -116,9 +110,7 @@ public partial class EvaluatorTests
 
         lexer.Lex();
 
-        var parser = new CSharpParser(
-            lexer.SyntaxTokens,
-            lexer.Diagnostics);
+        var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
 

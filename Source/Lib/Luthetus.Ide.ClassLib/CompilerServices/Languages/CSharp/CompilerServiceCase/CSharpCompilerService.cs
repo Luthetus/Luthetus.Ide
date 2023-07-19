@@ -46,26 +46,32 @@ public class CSharpCompilerService : ICompilerService
         }
     }
 
-    public ImmutableArray<ITextEditorSymbol> GetSymbolsFor(TextEditorModel textEditorModel)
-    {
-        throw new NotImplementedException();
-    }
-
-    public ImmutableArray<TextEditorTextSpan> GetDiagnosticTextSpansFor(TextEditorModel textEditorModel)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void ModelWasModified(TextEditorModel textEditorModel, ImmutableArray<TextEditorTextSpan> editTextSpans)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void DisposeModel(TextEditorModel textEditorModel)
+    public ImmutableArray<ITextEditorSymbol> GetSymbolsFor(TextEditorModel model)
     {
         lock (_cSharpResourceMapLock)
         {
-            _cSharpResourceMap.Remove(textEditorModel.ModelKey);
+            if (!_cSharpResourceMap.ContainsKey(model.ModelKey))
+                return ImmutableArray<ITextEditorSymbol>.Empty;
+
+            return _cSharpResourceMap[model.ModelKey].Symbols;
+        }
+    }
+
+    public ImmutableArray<TextEditorTextSpan> GetDiagnosticTextSpansFor(TextEditorModel model)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void ModelWasModified(TextEditorModel model, ImmutableArray<TextEditorTextSpan> editTextSpans)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void DisposeModel(TextEditorModel model)
+    {
+        lock (_cSharpResourceMapLock)
+        {
+            _cSharpResourceMap.Remove(model.ModelKey);
         }
     }
 
@@ -77,7 +83,7 @@ public class CSharpCompilerService : ICompilerService
                 var lexer = new CSharpLexer(model.ResourceUri, model.GetAllText());
                 lexer.Lex();
 
-                var parser = new CSharpParser(lexer.SyntaxTokens, lexer.Diagnostics);
+                var parser = new CSharpParser(lexer);
                 var compilationUnit = parser.Parse();
 
                 if (compilationUnit is null)

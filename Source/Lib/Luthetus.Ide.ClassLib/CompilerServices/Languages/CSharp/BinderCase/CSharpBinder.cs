@@ -12,10 +12,11 @@ using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statem
 using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.Facts;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.BinderCase;
 
-public class CSharpBinder
+public class CSharpBinder : IBinder
 {
     private readonly BoundScope _globalScope = CSharpLanguageFacts.Scope.GetInitialGlobalScope();
     private readonly Dictionary<string, BoundNamespaceStatementNode> _boundNamespaceStatementNodes = CSharpLanguageFacts.Namespaces.GetInitialBoundNamespaceStatementNodes();
@@ -44,6 +45,10 @@ public class CSharpBinder
     public Dictionary<string, SymbolDefinition> SymbolDefinitions => _symbolDefinitions;
     public ImmutableArray<BoundScope> BoundScopes => _boundScopes.ToImmutableArray();
     public ImmutableArray<TextEditorDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
+
+    ImmutableArray<ITextEditorSymbol> IBinder.Symbols => Symbols
+        .Select(s => (ITextEditorSymbol)s)
+        .ToImmutableArray();
 
     public BoundLiteralExpressionNode BindLiteralExpressionNode(
         LiteralExpressionNode literalExpressionNode)
@@ -276,7 +281,7 @@ public class CSharpBinder
     
     public BoundNamespaceStatementNode RegisterBoundNamespaceEntryNode(
         BoundNamespaceStatementNode inBoundNamespaceStatementNode,
-        CompilationUnit compilationUnit)
+        CodeBlockNode codeBlockNode)
     {
         var namespaceIdentifier = inBoundNamespaceStatementNode
             .IdentifierToken.TextSpan.GetText();
@@ -287,7 +292,7 @@ public class CSharpBinder
         {
             var boundNamespaceEntryNode = new BoundNamespaceEntryNode(
                 inBoundNamespaceStatementNode.IdentifierToken.TextSpan.ResourceUri,
-                compilationUnit);
+                codeBlockNode);
 
             var outChildren = existingBoundNamespaceStatementNode.Children
                 .Add(boundNamespaceEntryNode)
@@ -700,7 +705,7 @@ public class CSharpBinder
         {
             var boundNamespaceEntryNode = (BoundNamespaceEntryNode)namespaceEntry;
 
-            foreach (var child in boundNamespaceEntryNode.CompilationUnit.Children)
+            foreach (var child in boundNamespaceEntryNode.CodeBlockNode.Children)
             {
                 if (child.SyntaxKind != SyntaxKind.BoundClassDefinitionNode)
                     continue;
