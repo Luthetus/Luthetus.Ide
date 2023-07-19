@@ -4,28 +4,28 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.General;
 
-public class CompilationUnitBuilder
+public class CodeBlockBuilder
 {
-    public CompilationUnitBuilder(CompilationUnitBuilder? parent)
+    public CodeBlockBuilder(CodeBlockBuilder? parent)
     {
         Parent = parent;
     }
 
     public bool IsExpression { get; set; }
     public List<ISyntax> Children { get; } = new();
-    public CompilationUnitBuilder? Parent { get; }
+    public CodeBlockBuilder? Parent { get; }
 
-    public CompilationUnit Build()
+    public CodeBlockNode Build()
     {
-        return new CompilationUnit(
+        return new CodeBlockNode(
             IsExpression,
             Children.ToImmutableArray());
     }
 
-    public CompilationUnit Build(
+    public CodeBlockNode Build(
         ImmutableArray<TextEditorDiagnostic> diagnostics)
     {
-        return new CompilationUnit(
+        return new CodeBlockNode(
             IsExpression,
             Children.ToImmutableArray(),
             diagnostics);

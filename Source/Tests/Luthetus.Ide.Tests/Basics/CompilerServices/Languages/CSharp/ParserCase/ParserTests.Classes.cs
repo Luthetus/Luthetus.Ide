@@ -29,11 +29,11 @@ public partial class ParserTests
 
             var boundClassDefinitionNode = (BoundClassDefinitionNode)compilationUnit.Children.Single();
 
-            if (boundClassDefinitionNode.ClassBodyCompilationUnit is null)
+            if (boundClassDefinitionNode.ClassBodyCodeBlockNode is null)
                 throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
 
             Assert.Equal(classIdentifier, boundClassDefinitionNode.Identifier.TextSpan.GetText());
-            Assert.Empty(boundClassDefinitionNode.ClassBodyCompilationUnit.Children);
+            Assert.Empty(boundClassDefinitionNode.ClassBodyCodeBlockNode.Children);
         }
     }
 
@@ -58,12 +58,12 @@ public partial class ParserTests
 
             var boundClassDefinitionNode = (BoundClassDefinitionNode)compilationUnit.Children.Single();
 
-            if (boundClassDefinitionNode.ClassBodyCompilationUnit is null)
+            if (boundClassDefinitionNode.ClassBodyCodeBlockNode is null)
                 throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
             
             Assert.Equal(classIdentifier, boundClassDefinitionNode.Identifier.TextSpan.GetText());
 
-            var boundFunctionDefinitionNode = (BoundFunctionDefinitionNode)boundClassDefinitionNode.ClassBodyCompilationUnit.Children.Single();
+            var boundFunctionDefinitionNode = (BoundFunctionDefinitionNode)boundClassDefinitionNode.ClassBodyCodeBlockNode.Children.Single();
 
             Assert.Equal(SyntaxKind.BoundFunctionDefinitionNode, boundFunctionDefinitionNode.SyntaxKind);
             Assert.Equal(methodIdentifier, boundFunctionDefinitionNode.IdentifierToken.TextSpan.GetText());
@@ -90,11 +90,11 @@ public partial class ParserTests
 
             var boundClassDefinitionNode = (BoundClassDefinitionNode)compilationUnit.Children.Single();
 
-            if (boundClassDefinitionNode.ClassBodyCompilationUnit is null)
+            if (boundClassDefinitionNode.ClassBodyCodeBlockNode is null)
                 throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
 
             Assert.Equal(classIdentifier, boundClassDefinitionNode.Identifier.TextSpan.GetText());
-            Assert.Empty(boundClassDefinitionNode.ClassBodyCompilationUnit.Children);
+            Assert.Empty(boundClassDefinitionNode.ClassBodyCodeBlockNode.Children);
         }
     }
 
@@ -119,10 +119,10 @@ public partial class ParserTests
 
             var boundClassDefinitionNode = (BoundClassDefinitionNode)compilationUnit.Children.Single();
 
-            if (boundClassDefinitionNode.ClassBodyCompilationUnit is null)
+            if (boundClassDefinitionNode.ClassBodyCodeBlockNode is null)
                 throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
 
-            Assert.Empty(boundClassDefinitionNode.ClassBodyCompilationUnit.Children);
+            Assert.Empty(boundClassDefinitionNode.ClassBodyCodeBlockNode.Children);
 
             Assert.NotNull(boundClassDefinitionNode.BoundInheritanceStatementNode);
             Assert.Equal(parentClassIdentifier, boundClassDefinitionNode.BoundInheritanceStatementNode!.ParentBoundClassReferenceNode.TypeClauseToken.TextSpan.GetText());
@@ -149,11 +149,11 @@ public partial class ParserTests
 
             var boundClassDefinitionNode = (BoundClassDefinitionNode)compilationUnit.Children.Single();
             
-            if (boundClassDefinitionNode.ClassBodyCompilationUnit is null)
+            if (boundClassDefinitionNode.ClassBodyCodeBlockNode is null)
                 throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
 
             Assert.Equal(classIdentifier, boundClassDefinitionNode.Identifier.TextSpan.GetText());
-            Assert.Empty(boundClassDefinitionNode.ClassBodyCompilationUnit.Children);
+            Assert.Empty(boundClassDefinitionNode.ClassBodyCodeBlockNode.Children);
             
             if (boundClassDefinitionNode.BoundGenericArgumentsNode is null)
                 throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
@@ -184,7 +184,7 @@ public partial class ParserTests
 
             var boundClassDefinitionNode = (BoundClassDefinitionNode)compilationUnit.Children.Single();
 
-            if (boundClassDefinitionNode.ClassBodyCompilationUnit is null)
+            if (boundClassDefinitionNode.ClassBodyCodeBlockNode is null)
                 throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
 
             Assert.NotNull(boundClassDefinitionNode.BoundGenericArgumentsNode);
@@ -199,7 +199,7 @@ public partial class ParserTests
             var secondTypeClauseToken = (ISyntaxToken)boundClassDefinitionNode.BoundGenericArgumentsNode.BoundGenericArgumentListing[2];
             Assert.Equal(genericArgTwo, secondTypeClauseToken.TextSpan.GetText());
 
-            Assert.Empty(boundClassDefinitionNode.ClassBodyCompilationUnit.Children);
+            Assert.Empty(boundClassDefinitionNode.ClassBodyCodeBlockNode.Children);
         }
     }
     
@@ -224,7 +224,7 @@ public partial class ParserTests
             var boundClassDefinitionNode =
                 (BoundClassDefinitionNode)compilationUnit.Children.Single();
 
-            if (boundClassDefinitionNode.ClassBodyCompilationUnit is null)
+            if (boundClassDefinitionNode.ClassBodyCodeBlockNode is null)
                 throw new ApplicationException("ClassBodyCompilationUnit should not be null here.");
 
             Assert.NotNull(boundClassDefinitionNode.BoundGenericArgumentsNode);
@@ -245,7 +245,7 @@ public partial class ParserTests
             var thirdTypeClauseToken = (ISyntaxToken)boundClassDefinitionNode.BoundGenericArgumentsNode.BoundGenericArgumentListing[4];
             Assert.Equal(genericArgThree, thirdTypeClauseToken.TextSpan.GetText());
 
-            Assert.Empty(boundClassDefinitionNode.ClassBodyCompilationUnit.Children);
+            Assert.Empty(boundClassDefinitionNode.ClassBodyCodeBlockNode.Children);
         }
     }
     

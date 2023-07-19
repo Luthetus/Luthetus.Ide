@@ -6,6 +6,7 @@ using Luthetus.TextEditor.RazorLib.HostedServiceCase.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.Lexing;
 using Luthetus.TextEditor.RazorLib.Model;
 using System.Collections.Immutable;
+using System.Reflection;
 
 namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.CompilerServiceCase;
 
@@ -46,26 +47,32 @@ public class CSharpCompilerService : ICompilerService
         }
     }
 
-    public ImmutableArray<ITextEditorSymbol> GetSymbolsFor(TextEditorModel textEditorModel)
-    {
-        throw new NotImplementedException();
-    }
-
-    public ImmutableArray<TextEditorTextSpan> GetDiagnosticTextSpansFor(TextEditorModel textEditorModel)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void ModelWasModified(TextEditorModel textEditorModel, ImmutableArray<TextEditorTextSpan> editTextSpans)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void DisposeModel(TextEditorModel textEditorModel)
+    public ImmutableArray<ITextEditorSymbol> GetSymbolsFor(TextEditorModel model)
     {
         lock (_cSharpResourceMapLock)
         {
-            _cSharpResourceMap.Remove(textEditorModel.ModelKey);
+            if (!_cSharpResourceMap.ContainsKey(model.ModelKey))
+                return ImmutableArray<ITextEditorSymbol>.Empty;
+
+            return _cSharpResourceMap[model.ModelKey].Symbols;
+        }
+    }
+
+    public ImmutableArray<TextEditorTextSpan> GetDiagnosticTextSpansFor(TextEditorModel model)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void ModelWasModified(TextEditorModel model, ImmutableArray<TextEditorTextSpan> editTextSpans)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void DisposeModel(TextEditorModel model)
+    {
+        lock (_cSharpResourceMapLock)
+        {
+            _cSharpResourceMap.Remove(model.ModelKey);
         }
     }
 
@@ -90,7 +97,7 @@ public class CSharpCompilerService : ICompilerService
 
                     var cSharpResource = _cSharpResourceMap[model.ModelKey];
 
-                    cSharpResource.CompilationUnit = compilationUnit;
+                    cSharpResource.CodeBlockNode = compilationUnit;
                     cSharpResource.SyntaxTokens = lexer.SyntaxTokens;
                 }
 

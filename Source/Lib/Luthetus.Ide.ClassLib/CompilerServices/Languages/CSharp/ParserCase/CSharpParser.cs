@@ -16,7 +16,7 @@ namespace Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.ParserCase;
 public class CSharpParser
 {
     private readonly TokenWalker _tokenWalker;
-    private readonly CompilationUnitBuilder _globalCompilationUnitBuilder;
+    private readonly CodeBlockBuilder _globalCodeBlockBuilder;
     private readonly LuthetusIdeDiagnosticBag _diagnosticBag = new();
     private readonly ImmutableArray<TextEditorDiagnostic> _lexerDiagnostics;
 
@@ -30,24 +30,24 @@ public class CSharpParser
         _tokenWalker = new TokenWalker(tokens, _diagnosticBag);
         _binder = new CSharpBinder();
 
-        _globalCompilationUnitBuilder = new(null);
-        _currentCompilationUnitBuilder = _globalCompilationUnitBuilder;
+        _globalCodeBlockBuilder = new(null);
+        _currentCodeBlockBuilder = _globalCodeBlockBuilder;
     }
 
     /// <summary>If a file scoped namespace is found, then set this field, so that prior to finishing the parser constructs the namespace node.</summary>
-    private Action<CompilationUnit>? _finalizeFileScopeAction;
+    private Action<CodeBlockNode>? _finalizeNamespaceFileScopeCodeBlockNodeAction;
 
     public ImmutableArray<TextEditorDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
     public CSharpBinder Binder => _binder;
 
     private ISyntaxNode? _nodeRecent;
-    private CompilationUnitBuilder _currentCompilationUnitBuilder;
+    private CodeBlockBuilder _currentCodeBlockBuilder;
 
     /// <summary>When parsing the body of a function this is used in order to keep the function definition node itself in the syntax tree immutable.<br/><br/>That is to say, this action would create the function definition node and then append it.</summary>
-    private Stack<Action<CompilationUnit>> _finalizeCompilationUnitActionStack = new();
+    private Stack<Action<CodeBlockNode>> _finalizeCodeBlockNodeActionStack = new();
 
     /// <summary>This method is used when parsing many files as a single compilation. The first binder instance would be passed to the following parsers. The resourceUri is passed in so if a file is parsed for a second time, the previous symbols can be deleted so they do not duplicate.</summary>
-    public CompilationUnit Parse(
+    public CodeBlockNode Parse(
         CSharpBinder previousBinder,
         ResourceUri resourceUri)
     {
@@ -58,7 +58,7 @@ public class CSharpParser
         return Parse();
     }
 
-    public CompilationUnit Parse()
+    public CodeBlockNode Parse()
     {
         while (true)
         {
@@ -120,8 +120,8 @@ public class CSharpParser
                 case SyntaxKind.EndOfFileToken:
                     if (_nodeRecent is IExpressionNode)
                     {
-                        _currentCompilationUnitBuilder.IsExpression = true;
-                        _currentCompilationUnitBuilder.Children.Add(_nodeRecent);
+                        _currentCodeBlockBuilder.IsExpression = true;
+                        _currentCodeBlockBuilder.Children.Add(_nodeRecent);
                     }
                     break;
             }
@@ -130,19 +130,19 @@ public class CSharpParser
                 break;
         }
 
-        if (_finalizeFileScopeAction is not null &&
-            _currentCompilationUnitBuilder.Parent is not null)
+        if (_finalizeNamespaceFileScopeCodeBlockNodeAction is not null &&
+            _currentCodeBlockBuilder.Parent is not null)
         {
             // The current token here would be the EOF token.
             _binder.DisposeBoundScope(_tokenWalker.Current.TextSpan);
 
-            _finalizeFileScopeAction.Invoke(
-                _currentCompilationUnitBuilder.Build());
+            _finalizeNamespaceFileScopeCodeBlockNodeAction.Invoke(
+                _currentCodeBlockBuilder.Build());
 
-            _currentCompilationUnitBuilder = _currentCompilationUnitBuilder.Parent;
+            _currentCodeBlockBuilder = _currentCodeBlockBuilder.Parent;
         }
 
-        return _currentCompilationUnitBuilder.Build(
+        return _currentCodeBlockBuilder.Build(
             Diagnostics
                 .Union(_binder.Diagnostics)
                 .Union(_lexerDiagnostics)
@@ -236,7 +236,7 @@ public class CSharpParser
                 preprocessorDirectiveToken,
                 consumedToken);
 
-            _currentCompilationUnitBuilder.Children.Add(preprocessorLibraryReferenceStatement);
+            _currentCodeBlockBuilder.Children.Add(preprocessorLibraryReferenceStatement);
 
             return preprocessorLibraryReferenceStatement;
         }
@@ -273,7 +273,7 @@ public class CSharpParser
                     keywordToken,
                     ParseExpression());
 
-                _currentCompilationUnitBuilder.Children.Add(boundReturnStatementNode);
+                _currentCodeBlockBuilder.Children.Add(boundReturnStatementNode);
 
                 _nodeRecent = boundReturnStatementNode;
             }
@@ -281,7 +281,7 @@ public class CSharpParser
             {
                 var namespaceIdentifier = ParseNamespaceIdentifier();
 
-                if (_finalizeFileScopeAction is not null)
+                if (_finalizeNamespaceFileScopeCodeBlockNodeAction is not null)
                 {
                     throw new NotImplementedException(
                         "Need to add logic to report diagnostic when there is" +
@@ -313,7 +313,7 @@ public class CSharpParser
                         keywordToken,
                         namespaceIdentifier);
 
-                _currentCompilationUnitBuilder.Children.Add(boundUsingStatementNode);
+                _currentCodeBlockBuilder.Children.Add(boundUsingStatementNode);
 
                 _nodeRecent = boundUsingStatementNode;
             }
@@ -396,7 +396,7 @@ public class CSharpParser
                         boundFunctionArgumentsNode,
                         boundObjectInitializationNode);
 
-                    _currentCompilationUnitBuilder.Children.Add(boundConstructorInvocationNode);
+                    _currentCodeBlockBuilder.Children.Add(boundConstructorInvocationNode);
                 }
                 else
                 {
@@ -434,7 +434,7 @@ public class CSharpParser
                         boundFunctionParametersNode,
                         boundObjectInitializationNode);
 
-                    _currentCompilationUnitBuilder.Children.Add(boundConstructorInvocationNode);
+                    _currentCodeBlockBuilder.Children.Add(boundConstructorInvocationNode);
                 }
             }
             else if (text == "interface")
@@ -648,7 +648,7 @@ public class CSharpParser
                         (BoundClassReferenceNode)_nodeRecent,
                         identifierToken);
 
-                    _currentCompilationUnitBuilder.Children.Add(boundVariableDeclarationStatementNode);
+                    _currentCodeBlockBuilder.Children.Add(boundVariableDeclarationStatementNode);
 
                     if (_tokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
                     {
@@ -670,7 +670,7 @@ public class CSharpParser
                         }
                         else
                         {
-                            _currentCompilationUnitBuilder.Children
+                            _currentCodeBlockBuilder.Children
                                 .Add(boundVariableAssignmentNode);
                         }
                     }
@@ -735,7 +735,7 @@ public class CSharpParser
                 if (boundFunctionInvocationNode is null)
                     throw new ApplicationException($"{nameof(boundFunctionInvocationNode)} was null.");
 
-                _currentCompilationUnitBuilder.Children.Add(boundFunctionInvocationNode);
+                _currentCodeBlockBuilder.Children.Add(boundFunctionInvocationNode);
             }
             else if (_tokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
             {
@@ -747,7 +747,7 @@ public class CSharpParser
                     identifierToken,
                     rightHandExpression);
 
-                _currentCompilationUnitBuilder.Children
+                _currentCodeBlockBuilder.Children
                     .Add(boundVariableAssignmentNode);
             }
             else
@@ -900,7 +900,7 @@ public class CSharpParser
     private void ParseOpenBraceToken(
         OpenBraceToken openBraceToken)
     {
-        var closureCurrentCompilationUnitBuilder = _currentCompilationUnitBuilder;
+        var closureCurrentCompilationUnitBuilder = _currentCodeBlockBuilder;
         Type? scopeReturnType = null;
 
         if (_nodeRecent is not null &&
@@ -908,7 +908,7 @@ public class CSharpParser
         {
             var boundNamespaceStatementNode = (BoundNamespaceStatementNode)_nodeRecent;
 
-            _finalizeCompilationUnitActionStack.Push(compilationUnit =>
+            _finalizeCodeBlockNodeActionStack.Push(compilationUnit =>
             {
                 boundNamespaceStatementNode = _binder.RegisterBoundNamespaceEntryNode(
                     boundNamespaceStatementNode,
@@ -923,11 +923,11 @@ public class CSharpParser
         {
             var boundClassDefinitionNode = (BoundClassDefinitionNode)_nodeRecent;
 
-            _finalizeCompilationUnitActionStack.Push(compilationUnit =>
+            _finalizeCodeBlockNodeActionStack.Push(compilationUnit =>
             {
                 boundClassDefinitionNode = boundClassDefinitionNode with
                 {
-                    ClassBodyCompilationUnit = compilationUnit
+                    ClassBodyCodeBlockNode = compilationUnit
                 };
 
                 closureCurrentCompilationUnitBuilder.Children
@@ -941,11 +941,11 @@ public class CSharpParser
             
             scopeReturnType = boundFunctionDefinitionNode.ReturnBoundClassReferenceNode.Type;
 
-            _finalizeCompilationUnitActionStack.Push(compilationUnit =>
+            _finalizeCodeBlockNodeActionStack.Push(compilationUnit =>
             {
                 boundFunctionDefinitionNode = boundFunctionDefinitionNode with
                 {
-                    FunctionBodyCompilationUnit = compilationUnit
+                    FunctionBodyCodeBlockNode = compilationUnit
                 };
 
                 closureCurrentCompilationUnitBuilder.Children
@@ -957,11 +957,11 @@ public class CSharpParser
         {
             var boundIfStatementNode = (BoundIfStatementNode)_nodeRecent;
 
-            _finalizeCompilationUnitActionStack.Push(compilationUnit =>
+            _finalizeCodeBlockNodeActionStack.Push(compilationUnit =>
             {
                 boundIfStatementNode = boundIfStatementNode with
                 {
-                    IfStatementBodyCompilationUnit = compilationUnit
+                    IfStatementBodyCodeBlockNode = compilationUnit
                 };
 
                 closureCurrentCompilationUnitBuilder.Children
@@ -970,7 +970,7 @@ public class CSharpParser
         }
         else
         {
-            _finalizeCompilationUnitActionStack.Push(compilationUnit =>
+            _finalizeCodeBlockNodeActionStack.Push(compilationUnit =>
             {
                 closureCurrentCompilationUnitBuilder.Children
                     .Add(compilationUnit);
@@ -987,7 +987,7 @@ public class CSharpParser
             _binder.AddNamespaceToCurrentScope((BoundNamespaceStatementNode)_nodeRecent);
         }
 
-        _currentCompilationUnitBuilder = new(_currentCompilationUnitBuilder);
+        _currentCodeBlockBuilder = new(_currentCodeBlockBuilder);
     }
 
     private void ParseCloseBraceToken(
@@ -995,13 +995,13 @@ public class CSharpParser
     {
         _binder.DisposeBoundScope(closeBraceToken.TextSpan);
 
-        if (_currentCompilationUnitBuilder.Parent is not null &&
-            _finalizeCompilationUnitActionStack.Any())
+        if (_currentCodeBlockBuilder.Parent is not null &&
+            _finalizeCodeBlockNodeActionStack.Any())
         {
-            _finalizeCompilationUnitActionStack.Pop().Invoke(
-                _currentCompilationUnitBuilder.Build());
+            _finalizeCodeBlockNodeActionStack.Pop().Invoke(
+                _currentCodeBlockBuilder.Build());
 
-            _currentCompilationUnitBuilder = _currentCompilationUnitBuilder.Parent;
+            _currentCodeBlockBuilder = _currentCodeBlockBuilder.Parent;
         }
     }
     
@@ -1346,12 +1346,12 @@ public class CSharpParser
         if (_nodeRecent is not null &&
             _nodeRecent.SyntaxKind == SyntaxKind.BoundNamespaceStatementNode)
         {
-            var closureCurrentCompilationUnitBuilder = _currentCompilationUnitBuilder;
+            var closureCurrentCompilationUnitBuilder = _currentCodeBlockBuilder;
             Type? scopeReturnType = null;
 
             var boundNamespaceStatementNode = (BoundNamespaceStatementNode)_nodeRecent;
 
-            _finalizeFileScopeAction = compilationUnit =>
+            _finalizeNamespaceFileScopeCodeBlockNodeAction = compilationUnit =>
             {
                 boundNamespaceStatementNode = _binder.RegisterBoundNamespaceEntryNode(
                     boundNamespaceStatementNode,
@@ -1367,7 +1367,7 @@ public class CSharpParser
 
             _binder.AddNamespaceToCurrentScope((BoundNamespaceStatementNode)_nodeRecent);
 
-            _currentCompilationUnitBuilder = new(_currentCompilationUnitBuilder);
+            _currentCodeBlockBuilder = new(_currentCodeBlockBuilder);
         }
     }
 

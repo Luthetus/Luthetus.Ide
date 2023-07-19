@@ -5,14 +5,14 @@ using System.Collections.Immutable;
 namespace Luthetus.Ide.ClassLib.CompilerServices.Common.General;
 
 /// <summary>
-/// The <see cref="CompilationUnit"/> is used to represent
-/// a singular C# resource file (that is to say a singular file on the user's file system).
+/// The <see cref="CodeBlockNode"/> is used for storing a sequence of
+/// statements (or a single expression-statement).
 /// <br/><br/>
-/// TODO: How should <see cref="CompilationUnit"/> work in regards to the C# 'partial' keyword, would many C# resource files need be stitched together into a single <see cref="CompilationUnit"/>?
+/// Perhaps one might use <see cref="CodeBlockNode"/> for the body of a class definition, for example.
 /// </summary>
-public sealed record CompilationUnit : ISyntaxNode
+public sealed record CodeBlockNode : ISyntaxNode
 {
-    public CompilationUnit(
+    public CodeBlockNode(
         bool isExpression,
         ImmutableArray<ISyntax> children)
     {
@@ -22,7 +22,7 @@ public sealed record CompilationUnit : ISyntaxNode
         Diagnostics = ImmutableArray<TextEditorDiagnostic>.Empty;
     }
 
-    public CompilationUnit(
+    public CodeBlockNode(
         bool isExpression,
         ImmutableArray<ISyntax> children,
         ImmutableArray<TextEditorDiagnostic> diagnostics)

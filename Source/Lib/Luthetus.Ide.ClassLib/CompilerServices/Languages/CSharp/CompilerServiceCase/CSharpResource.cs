@@ -1,5 +1,6 @@
 ﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.General;
 using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.Lexing;
 using Luthetus.TextEditor.RazorLib.Model;
 using System.Collections.Immutable;
@@ -21,17 +22,36 @@ public class CSharpResource
     public TextEditorModelKey ModelKey { get; }
     public ResourceUri ResourceUri { get; }
     public CSharpCompilerService CSharpCompilerService { get; }
-    public CompilationUnit? CompilationUnit { get; internal set; }
+    public CodeBlockNode? CodeBlockNode { get; internal set; }
     public ImmutableArray<ISyntaxToken>? SyntaxTokens { get; internal set; }
 
     public ImmutableArray<TextEditorTextSpan> SyntacticTextSpans => GetSyntacticTextSpans();
+    public ImmutableArray<ITextEditorSymbol> Symbols => GetSymbols();
 
+    /// <summary>
+    /// TODO: When setting the <see cref="CodeBlockNode"/> it might be a useful
+    /// optimization to evaluate these linq expressions and store the result
+    /// as to not re-evaluate the linq expression over and over.
+    /// </summary>
     private ImmutableArray<TextEditorTextSpan> GetSyntacticTextSpans()
     {
         if (SyntaxTokens is null)
             return ImmutableArray<TextEditorTextSpan>.Empty;
 
         return SyntaxTokens.Value.Select(st => st.TextSpan).ToImmutableArray();
+    }
+    
+    /// <summary>
+    /// TODO: When setting the <see cref="CodeBlockNode"/> it might be a useful
+    /// optimization to evaluate these linq expressions and store the result
+    /// as to not re-evaluate the linq expression over and over.
+    /// </summary>
+    private ImmutableArray<ITextEditorSymbol> GetSymbols()
+    {
+        if (CodeBlockNode is null)
+            return ImmutableArray<ITextEditorSymbol>.Empty;
+
+        return ImmutableArray<ITextEditorSymbol>.Empty; // return CodeBlockNode...Value.Select(st => st.TextSpan).ToImmutableArray();
     }
 
     /// <returns>

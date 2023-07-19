@@ -25,7 +25,7 @@ public partial class ParserTests
 
             Assert.NotNull(boundIfStatementNode.KeywordToken);
             Assert.NotNull(boundIfStatementNode.BoundExpressionNode);
-            Assert.NotNull(boundIfStatementNode.IfStatementBodyCompilationUnit);
+            Assert.NotNull(boundIfStatementNode.IfStatementBodyCodeBlockNode);
         }
     }
 }

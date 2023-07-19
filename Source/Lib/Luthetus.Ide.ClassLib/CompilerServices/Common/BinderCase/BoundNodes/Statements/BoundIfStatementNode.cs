@@ -11,11 +11,11 @@ public sealed record BoundIfStatementNode : ISyntaxNode
     public BoundIfStatementNode(
         KeywordToken keywordToken,
         IBoundExpressionNode boundExpressionNode,
-        CompilationUnit? ifStatementBodyCompilationUnit)
+        CodeBlockNode? ifStatementBodyCodeBlockNode)
     {
         KeywordToken = keywordToken;
         BoundExpressionNode = boundExpressionNode;
-        IfStatementBodyCompilationUnit = ifStatementBodyCompilationUnit;
+        IfStatementBodyCodeBlockNode = ifStatementBodyCodeBlockNode;
 
         var childrenList = new List<ISyntax>
         {
@@ -23,15 +23,15 @@ public sealed record BoundIfStatementNode : ISyntaxNode
             BoundExpressionNode,
         };
 
-        if (IfStatementBodyCompilationUnit is not null)
-            childrenList.Add(IfStatementBodyCompilationUnit);
+        if (IfStatementBodyCodeBlockNode is not null)
+            childrenList.Add(IfStatementBodyCodeBlockNode);
 
         Children = childrenList.ToImmutableArray();
     }
 
     public KeywordToken KeywordToken { get; init; }
     public IBoundExpressionNode BoundExpressionNode { get; init; }
-    public CompilationUnit? IfStatementBodyCompilationUnit { get; init; }
+    public CodeBlockNode? IfStatementBodyCodeBlockNode { get; init; }
 
     public ImmutableArray<ISyntax> Children { get; init; }
     public bool IsFabricated { get; init; }

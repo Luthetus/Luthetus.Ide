@@ -276,7 +276,7 @@ public class CSharpBinder
     
     public BoundNamespaceStatementNode RegisterBoundNamespaceEntryNode(
         BoundNamespaceStatementNode inBoundNamespaceStatementNode,
-        CompilationUnit compilationUnit)
+        CodeBlockNode codeBlockNode)
     {
         var namespaceIdentifier = inBoundNamespaceStatementNode
             .IdentifierToken.TextSpan.GetText();
@@ -287,7 +287,7 @@ public class CSharpBinder
         {
             var boundNamespaceEntryNode = new BoundNamespaceEntryNode(
                 inBoundNamespaceStatementNode.IdentifierToken.TextSpan.ResourceUri,
-                compilationUnit);
+                codeBlockNode);
 
             var outChildren = existingBoundNamespaceStatementNode.Children
                 .Add(boundNamespaceEntryNode)
@@ -700,7 +700,7 @@ public class CSharpBinder
         {
             var boundNamespaceEntryNode = (BoundNamespaceEntryNode)namespaceEntry;
 
-            foreach (var child in boundNamespaceEntryNode.CompilationUnit.Children)
+            foreach (var child in boundNamespaceEntryNode.CodeBlockNode.Children)
             {
                 if (child.SyntaxKind != SyntaxKind.BoundClassDefinitionNode)
                     continue;

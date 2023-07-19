@@ -26,7 +26,7 @@ public partial class ParserTests
             var boundNamespaceStatementNode = (BoundNamespaceStatementNode)compilationUnit.Children.Single();
             var boundNamespaceEntryNode = (BoundNamespaceEntryNode)boundNamespaceStatementNode.Children.Single();
 
-            Assert.Empty(boundNamespaceEntryNode.CompilationUnit.Children);
+            Assert.Empty(boundNamespaceEntryNode.CodeBlockNode.Children);
 
             Assert.Equal(SyntaxKind.BoundNamespaceStatementNode, boundNamespaceStatementNode.SyntaxKind);
             Assert.Equal(SyntaxKind.BoundNamespaceEntryNode,boundNamespaceEntryNode.SyntaxKind);
@@ -49,7 +49,7 @@ public partial class ParserTests
         {
             var boundNamespaceStatementNode = (BoundNamespaceStatementNode)compilationUnit.Children.Single();
             var boundNamespaceEntryNode = (BoundNamespaceEntryNode)boundNamespaceStatementNode.Children.Single();
-            var boundClassDefinitionNode = (BoundClassDefinitionNode)boundNamespaceEntryNode.CompilationUnit.Children.Single();
+            var boundClassDefinitionNode = (BoundClassDefinitionNode)boundNamespaceEntryNode.CodeBlockNode.Children.Single();
 
             var namespaceScope = parser.Binder.BoundScopes[1];
 
@@ -75,7 +75,7 @@ public partial class ParserTests
         {
             var boundNamespaceStatementNode = (BoundNamespaceStatementNode)compilationUnit.Children.Single();
             var boundNamespaceEntryNode = (BoundNamespaceEntryNode)boundNamespaceStatementNode.Children.Single();
-            var boundClassDefinitionNode = (BoundClassDefinitionNode)boundNamespaceEntryNode.CompilationUnit.Children.Single();
+            var boundClassDefinitionNode = (BoundClassDefinitionNode)boundNamespaceEntryNode.CodeBlockNode.Children.Single();
 
             var namespaceScope = parser.Binder.BoundScopes[1];
 
@@ -133,23 +133,23 @@ public partial class ParserTests
         var modelResourceUri = new ResourceUri("PersonModel.cs");
         var displayResourceUri = new ResourceUri("PersonDisplay.razor.cs");
 
-        CompilationUnit modelCompilationUnit;
-        CompilationUnit displayCompilationUnit;
+        CodeBlockNode modelCodeBlockNode;
+        CodeBlockNode displayCodeBlockNode;
 
         var modelLexer = new CSharpLexer(modelResourceUri, modelFile.Content);
         modelLexer.Lex();
         var modelParser = new CSharpParser(modelLexer.SyntaxTokens, modelLexer.Diagnostics);
-        modelCompilationUnit = modelParser.Parse();
+        modelCodeBlockNode = modelParser.Parse();
 
         var displayLexer = new CSharpLexer(displayResourceUri, displayFile.Content);
         displayLexer.Lex();
         var displayParser = new CSharpParser(displayLexer.SyntaxTokens, displayLexer.Diagnostics);
-        displayCompilationUnit = displayParser.Parse(modelParser.Binder, displayResourceUri);
+        displayCodeBlockNode = displayParser.Parse(modelParser.Binder, displayResourceUri);
 
         // Assertions
         {
             var boundNamespaceStatementNode =
-                (BoundNamespaceStatementNode)displayCompilationUnit.Children.Single();
+                (BoundNamespaceStatementNode)displayCodeBlockNode.Children.Single();
 
             Assert.Equal(
                 SyntaxKind.BoundNamespaceStatementNode,
@@ -183,24 +183,24 @@ public partial class ParserTests
         var displayResourceUri = new ResourceUri("PersonDisplay.razor.cs");
         var pageResourceUri = new ResourceUri("PersonPage.razor.cs");
 
-        CompilationUnit modelCompilationUnit;
-        CompilationUnit displayCompilationUnit;
-        CompilationUnit pageCompilationUnit;
+        CodeBlockNode modelCodeBlockNode;
+        CodeBlockNode displayCodeBlockNode;
+        CodeBlockNode pageCodeBlockNode;
 
         var modelLexer = new CSharpLexer(modelResourceUri, modelFile.Content);
         modelLexer.Lex();
         var modelParser = new CSharpParser(modelLexer.SyntaxTokens, modelLexer.Diagnostics);
-        modelCompilationUnit = modelParser.Parse();
+        modelCodeBlockNode = modelParser.Parse();
 
         var displayLexer = new CSharpLexer(displayResourceUri, displayFile.Content);
         displayLexer.Lex();
         var displayParser = new CSharpParser(displayLexer.SyntaxTokens, displayLexer.Diagnostics);
-        displayCompilationUnit = displayParser.Parse(modelParser.Binder, displayResourceUri);
+        displayCodeBlockNode = displayParser.Parse(modelParser.Binder, displayResourceUri);
 
         var pageLexer = new CSharpLexer(pageResourceUri,pageFile.Content);
         pageLexer.Lex();
         var pageParser = new CSharpParser(pageLexer.SyntaxTokens, pageLexer.Diagnostics);
-        pageCompilationUnit = pageParser.Parse(displayParser.Binder, pageResourceUri);
+        pageCodeBlockNode = pageParser.Parse(displayParser.Binder, pageResourceUri);
 
         // Assertions
         {
@@ -260,7 +260,7 @@ public partial class ParserTests
             Assert.Equal(namespaceIdentifier, boundNamespaceStatementNode.IdentifierToken.TextSpan.GetText());
 
             var boundNamespaceEntryNode = (BoundNamespaceEntryNode)boundNamespaceStatementNode.Children.Single();
-            Assert.Empty(boundNamespaceEntryNode.CompilationUnit.Children);
+            Assert.Empty(boundNamespaceEntryNode.CodeBlockNode.Children);
 
             Assert.Equal(SyntaxKind.BoundNamespaceStatementNode, boundNamespaceStatementNode.SyntaxKind);
             Assert.Equal(SyntaxKind.BoundNamespaceEntryNode, boundNamespaceEntryNode.SyntaxKind);

@@ -6,5 +6,5 @@ namespace Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.Compilat
 public partial class TreeViewCompilationUnitDisplay : ComponentBase
 {
     [Parameter, EditorRequired]
-    public CompilationUnit CompilationUnit { get; set; } = null!;
+    public CodeBlockNode CodeBlockNode { get; set; } = null!;
 }

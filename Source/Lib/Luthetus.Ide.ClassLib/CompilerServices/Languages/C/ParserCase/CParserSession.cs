@@ -17,7 +17,7 @@ public class CParserSession
 {
     private readonly TokenWalker _tokenWalker;
     private readonly CBinderSession _binder;
-    private readonly CompilationUnitBuilder _globalCompilationUnitBuilder = new(null);
+    private readonly CodeBlockBuilder _globalCodeBlockBuilder = new(null);
     private readonly LuthetusIdeDiagnosticBag _diagnosticBag = new();
     private readonly ImmutableArray<TextEditorDiagnostic> _lexerDiagnostics;
 
@@ -29,19 +29,19 @@ public class CParserSession
         _tokenWalker = new TokenWalker(tokens, _diagnosticBag);
         _binder = new CBinderSession();
 
-        _currentCompilationUnitBuilder = _globalCompilationUnitBuilder;
+        _currentCodeBlockBuilder = _globalCodeBlockBuilder;
     }
 
     public ImmutableArray<TextEditorDiagnostic> Diagnostics => _diagnosticBag.ToImmutableArray();
     public CBinderSession Binder => _binder;
 
     private ISyntaxNode? _nodeRecent;
-    private CompilationUnitBuilder _currentCompilationUnitBuilder;
+    private CodeBlockBuilder _currentCodeBlockBuilder;
 
     /// <summary>When parsing the body of a function this is used in order to keep the function definition node itself in the syntax tree immutable.<br/><br/>That is to say, this action would create the function definition node and then append it.</summary>
-    private Action<CompilationUnit>? _finalizeCompilationUnitAction;
+    private Action<CodeBlockNode>? _finalizeCodeBlockNodeAction;
 
-    public CompilationUnit Parse()
+    public CodeBlockNode Parse()
     {
         while (true)
         {
@@ -82,8 +82,8 @@ public class CParserSession
                 case SyntaxKind.EndOfFileToken:
                     if (_nodeRecent is IExpressionNode)
                     {
-                        _currentCompilationUnitBuilder.IsExpression = true;
-                        _currentCompilationUnitBuilder.Children.Add(_nodeRecent);
+                        _currentCodeBlockBuilder.IsExpression = true;
+                        _currentCodeBlockBuilder.Children.Add(_nodeRecent);
                     }
                     break;
             }
@@ -92,7 +92,7 @@ public class CParserSession
                 break;
         }
 
-        return _currentCompilationUnitBuilder.Build(
+        return _currentCodeBlockBuilder.Build(
             Diagnostics
                 .Union(_binder.Diagnostics)
                 .Union(_lexerDiagnostics)
@@ -174,7 +174,7 @@ public class CParserSession
                 inToken,
                 nextToken);
 
-            _currentCompilationUnitBuilder.Children.Add(preprocessorLibraryReferenceStatement);
+            _currentCodeBlockBuilder.Children.Add(preprocessorLibraryReferenceStatement);
 
             return preprocessorLibraryReferenceStatement;
         }
@@ -207,7 +207,7 @@ public class CParserSession
                     inToken,
                     ParseExpression());
 
-                _currentCompilationUnitBuilder.Children.Add(boundReturnStatementNode);
+                _currentCodeBlockBuilder.Children.Add(boundReturnStatementNode);
 
                 _nodeRecent = boundReturnStatementNode;
             }
@@ -254,7 +254,7 @@ public class CParserSession
                     (BoundClassReferenceNode)_nodeRecent,
                     inToken);
 
-                _currentCompilationUnitBuilder.Children.Add(boundVariableDeclarationStatementNode);
+                _currentCodeBlockBuilder.Children.Add(boundVariableDeclarationStatementNode);
 
                 if (nextToken.SyntaxKind == SyntaxKind.EqualsToken)
                 {
@@ -273,7 +273,7 @@ public class CParserSession
                     }
                     else
                     {
-                        _currentCompilationUnitBuilder.Children
+                        _currentCodeBlockBuilder.Children
                             .Add(boundVariableAssignmentNode);
                     }
                 }
@@ -307,7 +307,7 @@ public class CParserSession
                 if (boundFunctionInvocationNode is null)
                     throw new ApplicationException($"{nameof(boundFunctionInvocationNode)} was null.");
 
-                _currentCompilationUnitBuilder.Children.Add(boundFunctionInvocationNode);
+                _currentCodeBlockBuilder.Children.Add(boundFunctionInvocationNode);
             }
             else if (nextToken.SyntaxKind == SyntaxKind.EqualsToken)
             {
@@ -326,7 +326,7 @@ public class CParserSession
                 }
                 else
                 {
-                    _currentCompilationUnitBuilder.Children
+                    _currentCodeBlockBuilder.Children
                         .Add(boundVariableAssignmentNode);
                 }
             }
@@ -382,7 +382,7 @@ public class CParserSession
     private void ParseOpenBraceToken(
         OpenBraceToken inToken)
     {
-        var closureCompilationUnitBuilder = _currentCompilationUnitBuilder;
+        var closureCompilationUnitBuilder = _currentCodeBlockBuilder;
         Type? scopeReturnType = null;
 
         if (_nodeRecent is not null &&
@@ -392,11 +392,11 @@ public class CParserSession
 
             scopeReturnType = boundFunctionDefinitionNode.ReturnBoundClassReferenceNode.Type;
 
-            _finalizeCompilationUnitAction = compilationUnit =>
+            _finalizeCodeBlockNodeAction = compilationUnit =>
             {
                 boundFunctionDefinitionNode = boundFunctionDefinitionNode with
                 {
-                    FunctionBodyCompilationUnit = compilationUnit
+                    FunctionBodyCodeBlockNode = compilationUnit
                 };
 
                 closureCompilationUnitBuilder.Children
@@ -405,7 +405,7 @@ public class CParserSession
         }
         else
         {
-            _finalizeCompilationUnitAction = compilationUnit =>
+            _finalizeCodeBlockNodeAction = compilationUnit =>
             {
                 closureCompilationUnitBuilder.Children
                     .Add(compilationUnit);
@@ -416,7 +416,7 @@ public class CParserSession
             scopeReturnType,
             inToken.TextSpan);
 
-        _currentCompilationUnitBuilder = new(_currentCompilationUnitBuilder);
+        _currentCodeBlockBuilder = new(_currentCodeBlockBuilder);
     }
 
     private void ParseCloseBraceToken(
@@ -424,12 +424,12 @@ public class CParserSession
     {
         _binder.DisposeBoundScope(inToken.TextSpan);
 
-        if (_currentCompilationUnitBuilder.Parent is not null)
+        if (_currentCodeBlockBuilder.Parent is not null)
         {
-            _finalizeCompilationUnitAction?.Invoke(
-                _currentCompilationUnitBuilder.Build());
+            _finalizeCodeBlockNodeAction?.Invoke(
+                _currentCodeBlockBuilder.Build());
 
-            _currentCompilationUnitBuilder = _currentCompilationUnitBuilder.Parent;
+            _currentCodeBlockBuilder = _currentCodeBlockBuilder.Parent;
         }
     }
 

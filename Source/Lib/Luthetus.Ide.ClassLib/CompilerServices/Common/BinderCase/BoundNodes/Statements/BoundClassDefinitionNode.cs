@@ -11,7 +11,7 @@ public sealed record BoundClassDefinitionNode : ISyntaxNode
     private Type _type;
     private BoundGenericArgumentsNode? _boundGenericArgumentsNode;
     private BoundInheritanceStatementNode? _boundInheritanceStatementNode;
-    private CompilationUnit? _classBodyCompilationUnit;
+    private CodeBlockNode? _classBodyCodeBlockNode;
     private ImmutableArray<ISyntax> _children;
 
     public BoundClassDefinitionNode(
@@ -19,13 +19,13 @@ public sealed record BoundClassDefinitionNode : ISyntaxNode
         Type type,
         BoundGenericArgumentsNode? boundGenericArgumentsNode,
         BoundInheritanceStatementNode? boundInheritanceStatementNode,
-        CompilationUnit? classBodyCompilationUnit)
+        CodeBlockNode? classBodyCodeBlockNode)
     {
         _typeClauseToken = typeClauseToken;
         _type = type;
         _boundGenericArgumentsNode = boundGenericArgumentsNode;
         _boundInheritanceStatementNode = boundInheritanceStatementNode;
-        _classBodyCompilationUnit = classBodyCompilationUnit;
+        _classBodyCodeBlockNode = classBodyCodeBlockNode;
 
         SetChildren();
     }
@@ -72,12 +72,12 @@ public sealed record BoundClassDefinitionNode : ISyntaxNode
         }
     }
 
-    public CompilationUnit? ClassBodyCompilationUnit
+    public CodeBlockNode? ClassBodyCodeBlockNode
     {
-        get => _classBodyCompilationUnit;
+        get => _classBodyCodeBlockNode;
         init
         {
-            _classBodyCompilationUnit = value;
+            _classBodyCodeBlockNode = value;
             SetChildren();
         }
     }
@@ -107,8 +107,8 @@ public sealed record BoundClassDefinitionNode : ISyntaxNode
         if (BoundInheritanceStatementNode is not null)
             childrenList.Add(BoundInheritanceStatementNode);
 
-        if (ClassBodyCompilationUnit is not null)
-            childrenList.Add(ClassBodyCompilationUnit);
+        if (ClassBodyCodeBlockNode is not null)
+            childrenList.Add(ClassBodyCodeBlockNode);
 
         _children = childrenList.ToImmutableArray();
     }
