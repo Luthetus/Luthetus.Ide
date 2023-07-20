@@ -12,6 +12,8 @@ public sealed record StringInterpolationSymbol : ISymbol
     }
 
     public TextEditorTextSpan TextSpan { get; }
+    public string SymbolKindString => SyntaxKind.ToString();
+
     public SyntaxKind SyntaxKind => SyntaxKind.StringInterpolationSymbol;
 }
 
