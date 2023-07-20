@@ -1,5 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.CompilerServiceCase;
+using Luthetus.TextEditor.RazorLib.Analysis;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.HostedServiceCase.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.Lexing;
@@ -54,9 +55,9 @@ public class RazorCompilerService : ICompilerService
         return ImmutableArray<ITextEditorSymbol>.Empty;
     }
 
-    public ImmutableArray<TextEditorTextSpan> GetDiagnosticTextSpansFor(TextEditorModel model)
+    public ImmutableArray<TextEditorDiagnostic> GetDiagnosticsFor(TextEditorModel model)
     {
-        throw new NotImplementedException();
+        return ImmutableArray<TextEditorDiagnostic>.Empty;
     }
 
     public void ModelWasModified(TextEditorModel model, ImmutableArray<TextEditorTextSpan> editTextSpans)

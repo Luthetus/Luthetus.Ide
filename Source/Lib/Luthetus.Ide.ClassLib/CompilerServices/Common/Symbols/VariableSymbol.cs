@@ -12,6 +12,8 @@ public sealed record VariableSymbol : ISymbol
     }
 
     public TextEditorTextSpan TextSpan { get; }
+    public string SymbolKindString => SyntaxKind.ToString();
+
     public SyntaxKind SyntaxKind => SyntaxKind.VariableSymbol;
 }
 
