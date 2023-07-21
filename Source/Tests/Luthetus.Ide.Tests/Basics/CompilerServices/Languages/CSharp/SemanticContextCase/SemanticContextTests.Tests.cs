@@ -1,12 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.Lexing;
-using Luthetus.Ide.ClassLib.DotNet;
-using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
-using Luthetus.Ide.ClassLib.Namespaces;
-using Luthetus.Ide.ClassLib.FileSystem.Classes.Local;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.SemanticContextCase.Implementations;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.SemanticContextCase.Keys;
-
-namespace Luthetus.Ide.Tests.Basics.CompilerServices.Languages.CSharp.SemanticContextCase;
+﻿namespace Luthetus.Ide.Tests.Basics.CompilerServices.Languages.CSharp.SemanticContextCase;
 
 public partial class SemanticContextTests
 {

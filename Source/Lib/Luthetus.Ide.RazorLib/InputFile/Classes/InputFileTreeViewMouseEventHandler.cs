@@ -1,12 +1,4 @@
-﻿using Luthetus.Common.RazorLib.TreeView;
-using Luthetus.Common.RazorLib.TreeView.Commands;
-using Luthetus.Common.RazorLib.TreeView.Events;
-using Luthetus.Ide.ClassLib.Store.InputFileCase;
-using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
-using Luthetus.Ide.ClassLib.TreeViewImplementations;
-using Fluxor;
-
-namespace Luthetus.Ide.RazorLib.InputFile.Classes;
+﻿namespace Luthetus.Ide.RazorLib.InputFile.Classes;
 
 public class InputFileTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {

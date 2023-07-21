@@ -1,8 +1,4 @@
-﻿using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.LexerCase;
-using Luthetus.TextEditor.RazorLib.Lexing;
-
-namespace Luthetus.Ide.Tests.Basics.CompilerServices.Languages.CSharp.LexerCase;
+﻿namespace Luthetus.Ide.Tests.Basics.CompilerServices.Languages.CSharp.LexerCase;
 
 public partial class LexerTests
 {

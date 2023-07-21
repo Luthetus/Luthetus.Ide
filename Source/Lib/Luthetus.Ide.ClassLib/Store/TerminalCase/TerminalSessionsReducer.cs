@@ -1,6 +1,4 @@
-﻿using Fluxor;
-
-namespace Luthetus.Ide.ClassLib.Store.TerminalCase;
+﻿namespace Luthetus.Ide.ClassLib.Store.TerminalCase;
 
 public class TerminalSessionsReducer
 {

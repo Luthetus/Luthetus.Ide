@@ -1,11 +1,4 @@
-﻿using Luthetus.Common.RazorLib.ComponentRenderers;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.CompilerServiceCase;
-using Luthetus.TextEditor.RazorLib.HostedServiceCase.CompilerServiceCase;
-using Luthetus.TextEditor.RazorLib.Lexing;
-using Luthetus.TextEditor.RazorLib.Model;
-using Microsoft.Extensions.Logging;
-
-namespace Luthetus.Ide.Tests.Basics.CompilerServices.Languages.CSharp.NewInterfaceCase;
+﻿namespace Luthetus.Ide.Tests.Basics.CompilerServices.Languages.CSharp.NewInterfaceCase;
 
 public class CSharpCompilerServiceTests
 {

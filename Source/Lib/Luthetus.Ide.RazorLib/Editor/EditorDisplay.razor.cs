@@ -1,11 +1,3 @@
-using System.Collections.Immutable;
-using Fluxor;
-using Luthetus.Common.RazorLib.Dimensions;
-using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
-using Luthetus.TextEditor.RazorLib;
-using Luthetus.TextEditor.RazorLib.HelperComponents;
-using Microsoft.AspNetCore.Components;
-
 namespace Luthetus.Ide.RazorLib.Editor;
 
 public partial class EditorDisplay : ComponentBase

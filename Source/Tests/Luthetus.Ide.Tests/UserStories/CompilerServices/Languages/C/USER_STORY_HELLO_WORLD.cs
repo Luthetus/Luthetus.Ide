@@ -1,8 +1,4 @@
-﻿using Luthetus.Ide.ClassLib.CompilerServices.Languages.C.LexerCase;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.C.ParserCase;
-using Luthetus.TextEditor.RazorLib.Lexing;
-
-namespace Luthetus.Ide.Tests.UserStories.CompilerServices.Languages.C;
+﻿namespace Luthetus.Ide.Tests.UserStories.CompilerServices.Languages.C;
 
 /// <summary>
 /// User Story Description:

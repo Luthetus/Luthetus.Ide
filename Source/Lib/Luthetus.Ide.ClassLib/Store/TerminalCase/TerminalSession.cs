@@ -1,20 +1,5 @@
-﻿using System.Collections.Concurrent;
-using System.Collections.Immutable;
-using System.Reactive.Linq;
-using System.Text;
-using Luthetus.Common.RazorLib.ComponentRenderers;
-using Luthetus.Common.RazorLib.ComponentRenderers.Types;
-using Luthetus.Common.RazorLib.Notification;
-using Luthetus.Common.RazorLib.Store.NotificationCase;
-using Luthetus.TextEditor.RazorLib.Model;
-using Luthetus.TextEditor.RazorLib.ViewModel;
-using CliWrap;
-using CliWrap.EventStream;
-using Fluxor;
-using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
+﻿using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.State;
-using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
-using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 
 namespace Luthetus.Ide.ClassLib.Store.TerminalCase;
 

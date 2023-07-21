@@ -1,7 +1,4 @@
-﻿using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
-using System.Collections.Concurrent;
-
-namespace Luthetus.Ide.ClassLib.FileSystem.HostedServiceCase;
+﻿namespace Luthetus.Ide.ClassLib.FileSystem.HostedServiceCase;
 
 public class FileSystemBackgroundTaskQueue : IFileSystemBackgroundTaskQueue
 {

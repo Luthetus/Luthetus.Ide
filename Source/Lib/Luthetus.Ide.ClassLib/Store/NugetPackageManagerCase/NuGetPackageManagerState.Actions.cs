@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using Luthetus.Ide.ClassLib.DotNet;
+﻿using Luthetus.Ide.ClassLib.DotNet;
 using Luthetus.Ide.ClassLib.Nuget;
 
 namespace Luthetus.Ide.ClassLib.Store.NugetPackageManagerCase;

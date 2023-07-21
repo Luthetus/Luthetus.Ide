@@ -1,6 +1,4 @@
-﻿using System.Collections.Immutable;
-
-namespace Luthetus.Ide.ClassLib.FileTemplates;
+﻿namespace Luthetus.Ide.ClassLib.FileTemplates;
 
 public class FileTemplateProvider : IFileTemplateProvider
 {

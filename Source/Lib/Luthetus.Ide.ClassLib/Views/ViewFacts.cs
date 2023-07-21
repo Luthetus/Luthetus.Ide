@@ -1,6 +1,4 @@
-﻿using System.Collections.Immutable;
-
-namespace Luthetus.Ide.ClassLib.Views;
+﻿namespace Luthetus.Ide.ClassLib.Views;
 
 public static class ViewFacts
 {

@@ -1,17 +1,3 @@
-using System.Collections.Immutable;
-using System.Text;
-using Luthetus.Common.RazorLib.Dialog;
-using Luthetus.Common.RazorLib.Store.DialogCase;
-using Luthetus.Ide.ClassLib.InputFile;
-using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
-using Luthetus.Ide.ClassLib.Store.InputFileCase;
-using Luthetus.Ide.ClassLib.Store.TerminalCase;
-using Luthetus.Ide.ClassLib.CommandLine;
-using Luthetus.Ide.ClassLib.Namespaces;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
-using Microsoft.AspNetCore.Components;
-
 namespace Luthetus.Ide.RazorLib.CSharpProjectForm;
 
 public partial class CSharpProjectFormDisplay : FluxorComponent

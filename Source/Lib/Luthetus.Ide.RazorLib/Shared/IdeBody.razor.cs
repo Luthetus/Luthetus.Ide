@@ -1,10 +1,3 @@
-using Luthetus.Common.RazorLib.Dimensions;
-using Luthetus.Common.RazorLib.Resize;
-using Luthetus.Ide.ClassLib.Store.PanelCase;
-using Fluxor;
-using Microsoft.AspNetCore.Components;
-using Luthetus.Common.RazorLib.StateHasChangedBoundaryCase;
-
 namespace Luthetus.Ide.RazorLib.Shared;
 
 public partial class IdeBody : ComponentBase

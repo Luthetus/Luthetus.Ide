@@ -1,6 +1,4 @@
-﻿using Fluxor;
-
-namespace Luthetus.Ide.ClassLib.Store.PanelCase;
+﻿namespace Luthetus.Ide.ClassLib.Store.PanelCase;
 
 public partial record PanelsCollection
 {

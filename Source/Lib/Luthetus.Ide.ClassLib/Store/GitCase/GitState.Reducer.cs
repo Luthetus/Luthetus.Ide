@@ -1,6 +1,4 @@
-﻿using Fluxor;
-
-namespace Luthetus.Ide.ClassLib.Store.GitCase;
+﻿namespace Luthetus.Ide.ClassLib.Store.GitCase;
 
 public partial record GitState
 {

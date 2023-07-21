@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
-
-namespace Luthetus.Ide.RazorLib.Button;
+﻿namespace Luthetus.Ide.RazorLib.Button;
 
 public partial class ButtonDisplay : ComponentBase
 {

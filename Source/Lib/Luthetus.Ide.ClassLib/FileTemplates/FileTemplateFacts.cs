@@ -1,6 +1,4 @@
-﻿using System.Collections.Immutable;
-using System.Text;
-using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
+﻿using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
 using Luthetus.Ide.ClassLib.Namespaces;
 using Luthetus.Ide.ClassLib.FileConstants;
 

@@ -1,6 +1,4 @@
-﻿using Fluxor;
-
-namespace Luthetus.Ide.ClassLib.Store.SemanticContextCase;
+﻿namespace Luthetus.Ide.ClassLib.Store.SemanticContextCase;
 
 public partial class SemanticContextState
 {

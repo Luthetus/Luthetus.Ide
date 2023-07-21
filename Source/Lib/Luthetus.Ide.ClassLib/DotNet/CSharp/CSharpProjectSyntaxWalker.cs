@@ -1,7 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.Analysis.Html.SyntaxActors;
-using Luthetus.TextEditor.RazorLib.Analysis.Html.SyntaxObjects;
-
-namespace Luthetus.Ide.ClassLib.DotNet.CSharp;
+﻿namespace Luthetus.Ide.ClassLib.DotNet.CSharp;
 
 public class CSharpProjectSyntaxWalker : XmlSyntaxWalker
 {

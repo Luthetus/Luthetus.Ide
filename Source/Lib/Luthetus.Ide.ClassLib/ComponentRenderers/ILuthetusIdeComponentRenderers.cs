@@ -1,6 +1,4 @@
-﻿using Luthetus.Common.RazorLib.ComponentRenderers;
-
-namespace Luthetus.Ide.ClassLib.ComponentRenderers;
+﻿namespace Luthetus.Ide.ClassLib.ComponentRenderers;
 
 public interface ILuthetusIdeComponentRenderers
 {

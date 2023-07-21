@@ -1,18 +1,4 @@
-﻿using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.CompilerServiceCase;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor.CompilerServiceCase;
-using Luthetus.TextEditor.RazorLib.Analysis.Css.Decoration;
-using Luthetus.TextEditor.RazorLib.Analysis.GenericLexer.Decoration;
-using Luthetus.TextEditor.RazorLib.Analysis.Html.Decoration;
-using Luthetus.TextEditor.RazorLib.Analysis.Json.Decoration;
-using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
-using Luthetus.TextEditor.RazorLib.CompilerServiceCase.CssCase;
-using Luthetus.TextEditor.RazorLib.CompilerServiceCase.JavaScriptCase;
-using Luthetus.TextEditor.RazorLib.CompilerServiceCase.JsonCase;
-using Luthetus.TextEditor.RazorLib.CompilerServiceCase.TypeScriptCase;
-using Luthetus.TextEditor.RazorLib.CompilerServiceCase.XmlCase;
-using Luthetus.TextEditor.RazorLib.Decoration;
-
-namespace Luthetus.Ide.ClassLib.FileConstants;
+﻿namespace Luthetus.Ide.ClassLib.FileConstants;
 
 /// <summary>
 /// The constants do not start with a period

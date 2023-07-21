@@ -1,41 +1,26 @@
-﻿using Luthetus.TextEditor.RazorLib.Lexing;
-using Luthetus.Common.RazorLib.Misc;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor;
-
-namespace Luthetus.Ide.Tests.Basics.CompilerServices.Languages.Razor;
+﻿namespace Luthetus.Ide.Tests.Basics.CompilerServices.Languages.Razor;
 
 public class LexerTests
 {
-    /// <summary>Trying to figure out where I want to go with this file. So I'm going to use this adhoc test to reason out my plan.</summary>
     [Fact]
-    public void ADHOC()
+    public void Aaa()
     {
-        var sourceText = @"<div class=""bwa_counter""
-     @onclick=""IncrementCountOnClick"">
+        var singleLineCommentAsString = @"// C:\Users\hunte\Repos\Aaa\";
+        var sourceText = $"{singleLineCommentAsString}".ReplaceLineEndings("\n");
 
-	Count: @_count
-</div>
+        var resourceUri = new ResourceUri(string.Empty);
 
-@code {
-	private int _count;
+        var lexer = new CSharpLexer(
+            resourceUri,
+            sourceText);
 
-	private void IncrementCountOnClick()
-	{
-		_count++;
-	}
-  
-	public class MyClass
-	{
-	}
-}"
-        .ReplaceLineEndings("\n");
+        lexer.Lex();
 
-        var resourceUri = new ResourceUri("Adhoc.razor");
+        var commentSingleLineToken = lexer.SyntaxTokens.First();
 
-        var lexer = new RazorLexer(resourceUri);
+        Assert.Equal(SyntaxKind.CommentSingleLineToken, commentSingleLineToken.SyntaxKind);
 
-        lexer.Lex(sourceText, RenderStateKey.NewRenderStateKey());
-
-        var z = 2;
+        var text = commentSingleLineToken.TextSpan.GetText();
+        Assert.Equal(singleLineCommentAsString, text);
     }
 }

@@ -1,8 +1,4 @@
-﻿using System.Collections.Immutable;
-using Luthetus.Ide.ClassLib.FileTemplates;
-using Microsoft.AspNetCore.Components;
-
-namespace Luthetus.Ide.RazorLib.File;
+﻿namespace Luthetus.Ide.RazorLib.File;
 
 public partial class FileTemplatesDisplay : ComponentBase
 {

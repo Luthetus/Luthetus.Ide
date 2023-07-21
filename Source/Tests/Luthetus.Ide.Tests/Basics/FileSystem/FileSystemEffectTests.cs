@@ -1,7 +1,4 @@
-﻿using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
-using Luthetus.Ide.ClassLib.Store.FileSystemCase;
-
-namespace Luthetus.Ide.Tests.Basics.FileSystem;
+﻿namespace Luthetus.Ide.Tests.Basics.FileSystem;
 
 public class FileSystemEffectTests : LuthetusFileSystemTestingBase
 {

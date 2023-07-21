@@ -1,5 +1,4 @@
-﻿using Fluxor;
-using Luthetus.Ide.ClassLib.Views;
+﻿using Luthetus.Ide.ClassLib.Views;
 
 namespace Luthetus.Ide.ClassLib.Store.FooterCase;
 

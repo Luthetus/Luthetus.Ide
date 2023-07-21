@@ -1,19 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Dimensions;
-using Luthetus.Common.RazorLib.Options;
-using Luthetus.Common.RazorLib.Resize;
-using Luthetus.Common.RazorLib.Store.ApplicationOptions;
-using Luthetus.Common.RazorLib.Store.DragCase;
-using Luthetus.TextEditor.RazorLib;
-using Luthetus.Ide.ClassLib.Store.PanelCase;
-using Luthetus.Ide.ClassLib.Dimensions;
-using Fluxor;
-using Microsoft.AspNetCore.Components;
-using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
-using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
-using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
-using Luthetus.Common.RazorLib.StateHasChangedBoundaryCase;
-
-namespace Luthetus.Ide.RazorLib.Shared;
+﻿namespace Luthetus.Ide.RazorLib.Shared;
 
 public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 {

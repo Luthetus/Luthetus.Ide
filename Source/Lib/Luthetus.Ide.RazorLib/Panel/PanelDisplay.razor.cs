@@ -1,12 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Dimensions;
-using Luthetus.Ide.ClassLib.Store.PanelCase;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
-using Luthetus.Ide.ClassLib.Panel;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-
-namespace Luthetus.Ide.RazorLib.Panel;
+﻿namespace Luthetus.Ide.RazorLib.Panel;
 
 public partial class PanelDisplay : FluxorComponent
 {

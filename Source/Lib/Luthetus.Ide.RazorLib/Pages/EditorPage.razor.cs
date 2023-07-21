@@ -1,11 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Dimensions;
-using Luthetus.Common.RazorLib.Resize;
-using Luthetus.Ide.ClassLib.Store.PanelCase;
-using Luthetus.Ide.ClassLib.Dimensions;
-using Fluxor;
-using Microsoft.AspNetCore.Components;
-
-namespace Luthetus.Ide.RazorLib.Pages;
+﻿namespace Luthetus.Ide.RazorLib.Pages;
 
 public partial class EditorPage : ComponentBase
 {

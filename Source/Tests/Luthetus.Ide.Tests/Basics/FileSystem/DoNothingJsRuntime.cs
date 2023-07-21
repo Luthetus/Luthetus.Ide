@@ -1,6 +1,4 @@
-﻿using Microsoft.JSInterop;
-
-namespace Luthetus.Ide.Tests.Basics.FileSystem;
+﻿namespace Luthetus.Ide.Tests.Basics.FileSystem;
 
 public class DoNothingJsRuntime : IJSRuntime
 {

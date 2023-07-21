@@ -1,5 +1,4 @@
-﻿using Fluxor;
-using Luthetus.Ide.ClassLib.State;
+﻿using Luthetus.Ide.ClassLib.State;
 
 namespace Luthetus.Ide.ClassLib.Store.TerminalCase;
 

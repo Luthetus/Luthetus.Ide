@@ -1,9 +1,4 @@
-﻿using Luthetus.Ide.ClassLib.CompilerServices.Languages.C.EvaluatorCase;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.C.LexerCase;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.C.ParserCase;
-using Luthetus.TextEditor.RazorLib.Lexing;
-
-namespace Luthetus.Ide.Tests.Basics.CompilerServices.Languages.C;
+﻿namespace Luthetus.Ide.Tests.Basics.CompilerServices.Languages.C;
 
 public class EvaluatorTests
 {

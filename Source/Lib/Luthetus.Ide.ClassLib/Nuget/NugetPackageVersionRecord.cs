@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Luthetus.Ide.ClassLib.Nuget;
+﻿namespace Luthetus.Ide.ClassLib.Nuget;
 
 /// <summary>
 /// When reading response Nuget returns <see cref="AtId"/> as a member named "@id"

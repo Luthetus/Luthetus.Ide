@@ -1,5 +1,4 @@
-﻿using System.Text;
-using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
+﻿using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 
 namespace Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
 

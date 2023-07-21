@@ -1,8 +1,4 @@
-﻿using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.LexerCase;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.ParserCase;
-using Luthetus.TextEditor.RazorLib.Lexing;
-
-namespace Luthetus.Ide.Tests.Adhoc.CompilerServices.Languages.CSharp.ParserCase;
+﻿namespace Luthetus.Ide.Tests.Adhoc.CompilerServices.Languages.CSharp.ParserCase;
 
 /// <summary>If I find something wrong with the UI I'll put a test here if I feel like I need to in order to solve the UI bug.</summary>
 public partial class AdhocTests

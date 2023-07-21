@@ -1,5 +1,3 @@
-using Fluxor;
-
 namespace Luthetus.Ide.ClassLib.Store.TerminalCase;
 
 [FeatureState]

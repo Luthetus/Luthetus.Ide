@@ -1,20 +1,8 @@
-﻿using Luthetus.Common.RazorLib.ComponentRenderers;
-using Luthetus.Common.RazorLib.Icons.Codicon;
-using Luthetus.Common.RazorLib.Store.ThemeCase;
-using Luthetus.Ide.ClassLib.Panel;
-using Luthetus.Ide.ClassLib.Store.PanelCase;
-using Luthetus.Ide.ClassLib.Store.TerminalCase;
-using Luthetus.TextEditor.RazorLib;
-using Luthetus.TextEditor.RazorLib.Store.Find;
-using Fluxor;
-using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
-using Luthetus.Ide.RazorLib.FolderExplorer;
+﻿using Luthetus.Ide.RazorLib.FolderExplorer;
 using Luthetus.Ide.RazorLib.Notification;
 using Luthetus.Ide.RazorLib.NuGet;
 using Luthetus.Ide.RazorLib.SolutionExplorer;
 using Luthetus.Ide.RazorLib.Terminal;
-using Microsoft.AspNetCore.Components;
-using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
 
 namespace Luthetus.Ide.RazorLib;
 

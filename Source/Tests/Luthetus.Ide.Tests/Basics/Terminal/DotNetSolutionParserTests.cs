@@ -1,8 +1,4 @@
-﻿using System.Text;
-using CliWrap;
-using CliWrap.Buffered;
-
-namespace Luthetus.Ide.Tests.Basics.Terminal;
+﻿namespace Luthetus.Ide.Tests.Basics.Terminal;
 
 public class CliWrapTests
 {

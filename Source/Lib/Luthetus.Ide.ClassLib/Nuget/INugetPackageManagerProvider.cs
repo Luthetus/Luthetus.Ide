@@ -1,6 +1,4 @@
-﻿using System.Collections.Immutable;
-
-namespace Luthetus.Ide.ClassLib.Nuget;
+﻿namespace Luthetus.Ide.ClassLib.Nuget;
 
 public interface INugetPackageManagerProvider
 {

@@ -1,8 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keyboard;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-
-namespace Luthetus.Ide.RazorLib.InputFile.InternalComponents;
+﻿namespace Luthetus.Ide.RazorLib.InputFile.InternalComponents;
 
 public partial class InputFileEditAddress : ComponentBase
 {

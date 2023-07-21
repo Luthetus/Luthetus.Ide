@@ -1,10 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Dimensions;
-using Luthetus.Common.RazorLib.TreeView;
-using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
-using Luthetus.Ide.ClassLib.Store.InputFileCase;
-using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
-using Luthetus.Ide.RazorLib.InputFile.Classes;
-using Microsoft.AspNetCore.Components;
+﻿using Luthetus.Ide.RazorLib.InputFile.Classes;
 
 namespace Luthetus.Ide.RazorLib.InputFile.InternalComponents;
 

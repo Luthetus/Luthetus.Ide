@@ -1,6 +1,4 @@
-﻿using Fluxor;
-
-namespace Luthetus.Ide.ClassLib.Store.NugetPackageManagerCase;
+﻿namespace Luthetus.Ide.ClassLib.Store.NugetPackageManagerCase;
 
 public partial record NuGetPackageManagerState
 {
