@@ -5,18 +5,18 @@ namespace Luthetus.Ide.ClassLib.Store.NugetPackageManagerCase;
 
 [FeatureState]
 public partial record NuGetPackageManagerState(
-    IDotNetProject? SelectedProjectToModify, 
+    IDotNetProject? SelectedProjectToModify,
     string NugetQuery,
     bool IncludePrerelease,
     ImmutableArray<NugetPackageRecord> MostRecentQueryResult)
 {
-    public NuGetPackageManagerState() 
+    public NuGetPackageManagerState()
         : this(
-            default(IDotNetProject?), 
-            string.Empty, 
-            false, 
+            default(IDotNetProject?),
+            string.Empty,
+            false,
             ImmutableArray<NugetPackageRecord>.Empty)
     {
-        
+
     }
 }

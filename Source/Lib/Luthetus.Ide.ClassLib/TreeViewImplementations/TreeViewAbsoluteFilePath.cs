@@ -54,10 +54,10 @@ public class TreeViewAbsoluteFilePath : TreeViewWithType<IAbsoluteFilePath>
             LuthetusIdeComponentRenderers.TreeViewAbsoluteFilePathRendererType!,
             new Dictionary<string, object?>
             {
-                {
-                    nameof(ITreeViewAbsoluteFilePathRendererType.TreeViewAbsoluteFilePath),
-                    this
-                },
+            {
+                nameof(ITreeViewAbsoluteFilePathRendererType.TreeViewAbsoluteFilePath),
+                this
+            },
             });
     }
 
@@ -105,17 +105,17 @@ public class TreeViewAbsoluteFilePath : TreeViewWithType<IAbsoluteFilePath>
         catch (Exception exception)
         {
             Children = new List<TreeViewNoType>
+        {
+            new TreeViewException(
+                exception,
+                false,
+                false,
+                LuthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
             {
-                new TreeViewException(
-                    exception,
-                    false,
-                    false,
-                    LuthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
-                {
-                    Parent = this,
-                    IndexAmongSiblings = 0,
-                }
-            };
+                Parent = this,
+                IndexAmongSiblings = 0,
+            }
+        };
         }
 
         TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();

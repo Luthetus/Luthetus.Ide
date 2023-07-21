@@ -155,10 +155,10 @@ public class TerminalSession
                             _luthetusCommonComponentRenderers.ErrorNotificationRendererType,
                             new Dictionary<string, object?>
                             {
-                                {
-                                    nameof(IErrorNotificationRendererType.Message),
-                                    e.ToString()
-                                }
+                            {
+                                nameof(IErrorNotificationRendererType.Message),
+                                e.ToString()
+                            }
                             },
                             TimeSpan.FromSeconds(10),
                             IErrorNotificationRendererType.CSS_CLASS_STRING);

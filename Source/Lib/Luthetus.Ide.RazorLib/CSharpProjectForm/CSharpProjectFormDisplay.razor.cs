@@ -95,9 +95,9 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                 },
                 new[]
                 {
-                    new InputFilePattern(
-                        "Directory",
-                        afp => afp.IsDirectory)
+                new InputFilePattern(
+                    "Directory",
+                    afp => afp.IsDirectory)
                 }.ToImmutableArray()));
     }
 
@@ -143,7 +143,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                             Dispatcher.Dispatch(
                                 new DialogRecordsCollection.DisposeAction(
                                     DialogRecord.DialogKey));
-                            
+
                             Dispatcher.Dispatch(
                                 new DotNetSolutionState.SetDotNetSolutionAction(
                                     solutionNamespacePath.AbsoluteFilePath));

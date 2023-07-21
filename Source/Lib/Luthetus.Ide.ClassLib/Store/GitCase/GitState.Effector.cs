@@ -21,7 +21,7 @@ public partial record GitState
            {
                await _handleActionSemaphoreSlim.WaitAsync(
                    refreshGitAction.CancellationToken);
-                   
+
                 // Code 
            }
            finally
@@ -53,14 +53,14 @@ public partial record GitState
                 nameof(HandleRefreshGitAction),
                 refreshGitAction,
                 refreshGitAction.CancellationToken);
-            
+
             if (refreshGitAction.CancellationToken.IsCancellationRequested)
                 return;
-            
+
             try
             {
                 await _handleActionSemaphoreSlim.WaitAsync();
-                
+
                 if (refreshGitAction.CancellationToken.IsCancellationRequested)
                     return;
 
@@ -99,7 +99,7 @@ public partial record GitState
                 var gitStatusCommand = new TerminalCommand(
                     GitFacts.GitStatusTerminalCommandKey,
                     GitCliFacts.TARGET_FILE_NAME,
-                    new [] { GitCliFacts.STATUS_COMMAND },
+                    new[] { GitCliFacts.STATUS_COMMAND },
                     gitState.GitFolderAbsoluteFilePath.ParentDirectory.GetAbsoluteFilePathString(),
                     CancellationToken.None,
                     async () =>
@@ -154,17 +154,17 @@ public partial record GitState
                 {
                     var nextActiveGitTasks = withGitState.ActiveGitTasks.Remove(
                         handleRefreshGitTask);
-                    
+
                     return withGitState with
                     {
                         ActiveGitTasks = nextActiveGitTasks,
                     };
                 }));
-                
+
                 _handleActionSemaphoreSlim.Release();
             }
         }
-        
+
         [EffectMethod]
         public async Task HandleGitInitAction(
             GitInitAction gitInitAction,
@@ -178,34 +178,34 @@ public partial record GitState
 
             if (gitInitAction.CancellationToken.IsCancellationRequested)
                 return;
-            
+
             try
             {
                 await _handleActionSemaphoreSlim.WaitAsync();
-                
+
                 if (gitInitAction.CancellationToken.IsCancellationRequested)
                     return;
-                
+
                 dispatcher.Dispatch(new SetGitStateWithAction(withGitState =>
                 {
                     var nextActiveGitTasks = withGitState.ActiveGitTasks.Add(
                         handleHandleGitInitAction);
-                    
+
                     return withGitState with
                     {
                         ActiveGitTasks = nextActiveGitTasks,
                     };
                 }));
-                   
+
                 var gitState = _gitStateWrap.Value;
-        
+
                 if (gitState.MostRecentTryFindGitFolderInDirectoryAction is null)
                     return;
-        
+
                 var gitInitCommand = new TerminalCommand(
                     GitFacts.GitInitTerminalCommandKey,
                     GitCliFacts.TARGET_FILE_NAME,
-                    new [] { GitCliFacts.INIT_COMMAND },
+                    new[] { GitCliFacts.INIT_COMMAND },
                     gitState.MostRecentTryFindGitFolderInDirectoryAction.DirectoryAbsoluteFilePath.GetAbsoluteFilePathString(),
                     CancellationToken.None,
                     () =>
@@ -213,13 +213,13 @@ public partial record GitState
                         dispatcher.Dispatch(
                             new GitState.RefreshGitAction(
                                 gitInitAction.CancellationToken));
-                        
+
                         return Task.CompletedTask;
                     });
-        
+
                 var generalTerminalSession = _terminalSessionsStateWrap.Value.TerminalSessionMap[
                     TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
-        
+
                 await generalTerminalSession
                     .EnqueueCommandAsync(gitInitCommand);
             }
@@ -229,17 +229,17 @@ public partial record GitState
                 {
                     var nextActiveGitTasks = withGitState.ActiveGitTasks.Remove(
                         handleHandleGitInitAction);
-                    
+
                     return withGitState with
                     {
                         ActiveGitTasks = nextActiveGitTasks,
                     };
                 }));
-                
+
                 _handleActionSemaphoreSlim.Release();
             }
         }
-        
+
         [EffectMethod]
         public async Task ReduceTryFindGitFolderInDirectoryAction(
             TryFindGitFolderInDirectoryAction tryFindGitFolderInDirectoryAction,
@@ -253,53 +253,53 @@ public partial record GitState
 
             if (tryFindGitFolderInDirectoryAction.CancellationToken.IsCancellationRequested)
                 return;
-            
+
             try
             {
                 await _handleActionSemaphoreSlim.WaitAsync();
-                
+
                 if (tryFindGitFolderInDirectoryAction.CancellationToken.IsCancellationRequested)
                     return;
-                
+
                 dispatcher.Dispatch(new SetGitStateWithAction(withGitState =>
                 {
                     var nextActiveGitTasks = withGitState.ActiveGitTasks.Add(
                         handleTryFindGitFolderInDirectoryAction);
-                    
+
                     return withGitState with
                     {
                         ActiveGitTasks = nextActiveGitTasks,
                     };
                 }));
-                   
+
                 if (!tryFindGitFolderInDirectoryAction.DirectoryAbsoluteFilePath.IsDirectory)
                     return;
 
-                var directoryAbsoluteFilePathString = 
+                var directoryAbsoluteFilePathString =
                     tryFindGitFolderInDirectoryAction.DirectoryAbsoluteFilePath
                         .GetAbsoluteFilePathString();
-            
+
                 var childDirectoryAbsoluteFilePathStrings = await _fileSystemProvider.Directory
                     .GetDirectoriesAsync(
                         directoryAbsoluteFilePathString);
 
                 var gitFolderAbsoluteFilePathString = childDirectoryAbsoluteFilePathStrings.FirstOrDefault(
                     x => x.EndsWith(GitFacts.GIT_FOLDER_NAME));
-            
+
                 if (gitFolderAbsoluteFilePathString is not null)
                 {
                     var gitFolderAbsoluteFilePath = new AbsoluteFilePath(
                         gitFolderAbsoluteFilePathString,
                         true,
                         _environmentProvider);
-                
+
                     dispatcher.Dispatch(
                         new SetGitStateWithAction(withGitState => withGitState with
                         {
                             GitFolderAbsoluteFilePath = gitFolderAbsoluteFilePath,
                             MostRecentTryFindGitFolderInDirectoryAction = tryFindGitFolderInDirectoryAction
                         }));
-                    
+
                     dispatcher.Dispatch(
                         new GitState.RefreshGitAction(
                             tryFindGitFolderInDirectoryAction.CancellationToken));
@@ -312,7 +312,7 @@ public partial record GitState
                             GitFolderAbsoluteFilePath = null,
                             MostRecentTryFindGitFolderInDirectoryAction = tryFindGitFolderInDirectoryAction
                         }));
-                } 
+                }
             }
             finally
             {
@@ -320,17 +320,17 @@ public partial record GitState
                 {
                     var nextActiveGitTasks = withGitState.ActiveGitTasks.Remove(
                         handleTryFindGitFolderInDirectoryAction);
-                    
+
                     return withGitState with
                     {
                         ActiveGitTasks = nextActiveGitTasks,
                     };
                 }));
-                
+
                 _handleActionSemaphoreSlim.Release();
             }
         }
-        
+
         private async Task GetGitOutputSectionAsync(
             GitState gitState,
             string gitStatusOutput,
@@ -340,7 +340,7 @@ public partial record GitState
         {
             if (gitState.GitFolderAbsoluteFilePath?.ParentDirectory is null)
                 return;
-            
+
             var indexOfChangesNotStagedForCommitTextStart = gitStatusOutput.IndexOf(
                 sectionStart,
                 StringComparison.InvariantCulture);
@@ -357,7 +357,7 @@ public partial record GitState
 
                 // This skips the second newline when seeing: "\n\n"
                 string? currentLine = await gitStatusOutputReader.ReadLineAsync();
-                
+
                 while ((currentLine = await gitStatusOutputReader.ReadLineAsync()) is not null &&
                        currentLine.Length > 0)
                 {
@@ -367,7 +367,7 @@ public partial record GitState
                     // Whereas output for this command starts with a tab.
                     //
                     // TODO: I imagine this is a very naive presumption and this should be revisited but I am still feeling out how to write this git logic.
-                    
+
                     /*
                      * Changes not staged for commit:
                      *   (use "git add/rm <file>..." to update what will be committed)
@@ -377,18 +377,18 @@ public partial record GitState
                      */
                     if (currentLine.StartsWith(new string(' ', 2)))
                         continue;
-                    
+
                     changesNotStagedForCommitBuilder.Append(currentLine);
                 }
 
                 var changesNotStagedForCommitText = changesNotStagedForCommitBuilder.ToString();
-                
+
                 var changesNotStagedForCommitCollection = changesNotStagedForCommitText
                     .Split('\t')
                     .Select(x => x.Trim())
                     .OrderBy(x => x)
                     .ToArray();
-                
+
                 if (changesNotStagedForCommitCollection.First() == string.Empty)
                 {
                     changesNotStagedForCommitCollection = changesNotStagedForCommitCollection
@@ -411,11 +411,11 @@ public partial record GitState
                         {
                             var relativePath = x;
                             GitDirtyReason innerGitDirtyReason = GitDirtyReason.None;
-                            
+
                             if (x.StartsWith(GitFacts.GIT_DIRTY_REASON_MODIFIED))
                             {
                                 innerGitDirtyReason = GitDirtyReason.Modified;
-                                
+
                                 relativePath = new string(relativePath
                                     .Skip(GitFacts.GIT_DIRTY_REASON_MODIFIED.Length)
                                     .ToArray());
@@ -423,12 +423,12 @@ public partial record GitState
                             else if (x.StartsWith(GitFacts.GIT_DIRTY_REASON_DELETED))
                             {
                                 innerGitDirtyReason = GitDirtyReason.Deleted;
-                                
+
                                 relativePath = new string(relativePath
                                     .Skip(GitFacts.GIT_DIRTY_REASON_DELETED.Length)
                                     .ToArray());
                             }
-                            
+
                             return (relativePath, innerGitDirtyReason);
                         })
                         .ToArray();
@@ -440,10 +440,10 @@ public partial record GitState
                         var absoluteFilePathString =
                             gitState.GitFolderAbsoluteFilePath.ParentDirectory.GetAbsoluteFilePathString() +
                             x.relativePath;
-                        
+
                         var isDirectory = x.relativePath.EndsWith(_environmentProvider.DirectorySeparatorChar) ||
                                           x.relativePath.EndsWith(_environmentProvider.AltDirectorySeparatorChar);
-                        
+
                         var absoluteFilePath = new AbsoluteFilePath(
                             absoluteFilePathString,
                             isDirectory,
@@ -458,4 +458,3 @@ public partial record GitState
         }
     }
 }
-

@@ -24,6 +24,6 @@ public partial record GitState(
         ImmutableList<GitFile>.Empty,
         ImmutableList<GitTask>.Empty)
     {
-        
+
     }
 }

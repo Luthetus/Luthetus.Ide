@@ -10,11 +10,11 @@ public partial class TreeViewHelper
     {
         if (directoryTreeView.Item is null)
             return new();
-        
+
         var directoryAbsoluteFilePathString = directoryTreeView.Item.AbsoluteFilePath
             .GetAbsoluteFilePathString();
-        
-        var childDirectoryTreeViewModels = 
+
+        var childDirectoryTreeViewModels =
             (await directoryTreeView.FileSystemProvider
                 .Directory.GetDirectoriesAsync(directoryAbsoluteFilePathString))
                 .OrderBy(filePathString => filePathString)
@@ -44,7 +44,7 @@ public partial class TreeViewHelper
                         TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
                     };
                 });
-        
+
         var childFileTreeViewModels =
             (await directoryTreeView.FileSystemProvider
                 .Directory.GetFilesAsync(directoryAbsoluteFilePathString))
@@ -57,7 +57,7 @@ public partial class TreeViewHelper
                         directoryTreeView.EnvironmentProvider);
 
                     var namespaceString = directoryTreeView.Item.Namespace;
-                    
+
                     var namespacePath = new NamespacePath(
                         namespaceString,
                         absoluteFilePath);
@@ -75,7 +75,7 @@ public partial class TreeViewHelper
                 }).ToList();
 
         var copyOfChildrenToFindRelatedFiles = new List<TreeViewNoType>(childFileTreeViewModels);
-        
+
         foreach (var child in childFileTreeViewModels)
         {
             child.RemoveRelatedFilesFromParent(
@@ -90,17 +90,17 @@ public partial class TreeViewHelper
             .Union(childFileTreeViewModels)
             .ToList();
     }
-    
+
     public static async Task<List<TreeViewNoType>> LoadChildrenForDirectoryAsync(
         TreeViewAbsoluteFilePath directoryTreeView)
     {
         if (directoryTreeView.Item is null)
             return new();
-        
+
         var directoryAbsoluteFilePathString = directoryTreeView.Item
             .GetAbsoluteFilePathString();
-        
-        var childDirectoryTreeViewModels = 
+
+        var childDirectoryTreeViewModels =
             (await directoryTreeView.FileSystemProvider
                 .Directory.GetDirectoriesAsync(directoryAbsoluteFilePathString))
                 .OrderBy(filePathString => filePathString)
@@ -122,8 +122,8 @@ public partial class TreeViewHelper
                         TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
                     };
                 });
-        
-        var childFileTreeViewModels = 
+
+        var childFileTreeViewModels =
             (await directoryTreeView.FileSystemProvider
                 .Directory.GetFilesAsync(directoryAbsoluteFilePathString))
                 .OrderBy(filePathString => filePathString)

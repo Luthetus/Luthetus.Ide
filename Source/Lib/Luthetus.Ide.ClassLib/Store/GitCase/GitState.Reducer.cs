@@ -14,4 +14,3 @@ public partial record GitState
         }
     }
 }
-

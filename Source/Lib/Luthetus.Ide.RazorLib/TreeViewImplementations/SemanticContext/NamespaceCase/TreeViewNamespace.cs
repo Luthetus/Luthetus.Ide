@@ -43,10 +43,10 @@ public class TreeViewNamespace : TreeViewWithType<BoundNamespaceStatementNode>
             typeof(TreeViewNamespaceDisplay),
             new Dictionary<string, object?>
             {
-                {
-                    nameof(TreeViewNamespaceDisplay.BoundNamespaceStatementNode),
-                    Item
-                },
+            {
+                nameof(TreeViewNamespaceDisplay.BoundNamespaceStatementNode),
+                Item
+            },
             });
     }
 
@@ -60,7 +60,7 @@ public class TreeViewNamespace : TreeViewWithType<BoundNamespaceStatementNode>
             var newChildren = Item.Children
                 .SelectMany(x => ((BoundNamespaceEntryNode)x).CodeBlockNode.Children)
                 .Where(x => x.SyntaxKind == SyntaxKind.BoundClassDefinitionNode)
-                .Select(x => (TreeViewNoType) new TreeViewBoundClassDefinitionNode(
+                .Select(x => (TreeViewNoType)new TreeViewBoundClassDefinitionNode(
                     (BoundClassDefinitionNode)x,
                     LuthetusIdeComponentRenderers,
                     FileSystemProvider,
@@ -98,17 +98,17 @@ public class TreeViewNamespace : TreeViewWithType<BoundNamespaceStatementNode>
         catch (Exception exception)
         {
             Children = new List<TreeViewNoType>
+        {
+            new TreeViewException(
+                exception,
+                false,
+                false,
+                LuthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
             {
-                new TreeViewException(
-                    exception,
-                    false,
-                    false,
-                    LuthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
-                {
-                    Parent = this,
-                    IndexAmongSiblings = 0,
-                }
-            };
+                Parent = this,
+                IndexAmongSiblings = 0,
+            }
+        };
         }
 
         TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();

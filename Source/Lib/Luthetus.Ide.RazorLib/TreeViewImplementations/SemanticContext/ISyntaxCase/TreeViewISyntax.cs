@@ -43,10 +43,10 @@ public class TreeViewISyntax : TreeViewWithType<ISyntax>
             typeof(TreeViewISyntaxDisplay),
             new Dictionary<string, object?>
             {
-                {
-                    nameof(TreeViewISyntaxDisplay.Syntax),
-                    Item
-                },
+            {
+                nameof(TreeViewISyntaxDisplay.Syntax),
+                Item
+            },
             });
     }
 
@@ -110,17 +110,17 @@ public class TreeViewISyntax : TreeViewWithType<ISyntax>
         catch (Exception exception)
         {
             Children = new List<TreeViewNoType>
+        {
+            new TreeViewException(
+                exception,
+                false,
+                false,
+                LuthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
             {
-                new TreeViewException(
-                    exception,
-                    false,
-                    false,
-                    LuthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
-                {
-                    Parent = this,
-                    IndexAmongSiblings = 0,
-                }
-            };
+                Parent = this,
+                IndexAmongSiblings = 0,
+            }
+        };
         }
 
         TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();

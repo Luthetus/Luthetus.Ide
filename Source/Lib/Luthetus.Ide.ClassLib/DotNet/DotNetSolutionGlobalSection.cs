@@ -4,4 +4,3 @@ namespace Luthetus.Ide.ClassLib.DotNet;
 
 public record DotNetSolutionGlobalSection(
     GlobalSectionNestedProjects GlobalSectionNestedProjects);
-

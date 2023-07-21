@@ -22,7 +22,7 @@ public partial class FileSystemState
             _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
             _fileSystemBackgroundTaskQueue = fileSystemBackgroundTaskQueue;
         }
-        
+
         [EffectMethod]
         public Task HandleSaveFileAction(
             SaveFileAction saveFileAction,
@@ -68,10 +68,10 @@ public partial class FileSystemState
                                 _luthetusCommonComponentRenderers.InformativeNotificationRendererType,
                                 new Dictionary<string, object?>
                                 {
-                                    {
-                                        nameof(IInformativeNotificationRendererType.Message),
-                                        notificationMessage
-                                    },
+                                {
+                                    nameof(IInformativeNotificationRendererType.Message),
+                                    notificationMessage
+                                },
                                 },
                                 TimeSpan.FromSeconds(5),
                                 null);

@@ -41,10 +41,10 @@ public class TreeViewCompilationUnit : TreeViewWithType<CodeBlockNode>
             typeof(TreeViewCompilationUnitDisplay),
             new Dictionary<string, object?>
             {
-                {
-                    nameof(TreeViewCompilationUnitDisplay.CodeBlockNode),
-                    Item
-                },
+            {
+                nameof(TreeViewCompilationUnitDisplay.CodeBlockNode),
+                Item
+            },
             });
     }
 
@@ -91,17 +91,17 @@ public class TreeViewCompilationUnit : TreeViewWithType<CodeBlockNode>
         catch (Exception exception)
         {
             Children = new List<TreeViewNoType>
+        {
+            new TreeViewException(
+                exception,
+                false,
+                false,
+                LuthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
             {
-                new TreeViewException(
-                    exception,
-                    false,
-                    false,
-                    LuthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
-                {
-                    Parent = this,
-                    IndexAmongSiblings = 0,
-                }
-            };
+                Parent = this,
+                IndexAmongSiblings = 0,
+            }
+        };
         }
 
         TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();

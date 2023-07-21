@@ -33,10 +33,10 @@ public class FileSystemBackgroundTaskMonitor : IFileSystemBackgroundTaskMonitor
                 _luthetusIdeComponentRenderers.CompilerServiceBackgroundTaskDisplayRendererType,
                 new Dictionary<string, object?>
                 {
-                    {
-                        nameof(IFileSystemBackgroundTaskDisplayRendererType.BackgroundTask),
-                        backgroundTask
-                    }
+                {
+                    nameof(IFileSystemBackgroundTaskDisplayRendererType.BackgroundTask),
+                    backgroundTask
+                }
                 },
                 null,
                 null);

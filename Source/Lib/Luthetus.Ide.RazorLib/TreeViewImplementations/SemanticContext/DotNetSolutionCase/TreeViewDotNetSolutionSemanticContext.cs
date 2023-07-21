@@ -50,10 +50,10 @@ public class TreeViewDotNetSolutionSemanticContext : TreeViewWithType<(SemanticC
             typeof(TreeViewDotNetSolutionSemanticContextDisplay),
             new Dictionary<string, object?>
             {
-                {
-                    nameof(TreeViewDotNetSolutionSemanticContextDisplay.DotNetSolutionSemanticContext),
-                    Item.dotNetSolutionSemanticContext
-                },
+            {
+                nameof(TreeViewDotNetSolutionSemanticContextDisplay.DotNetSolutionSemanticContext),
+                Item.dotNetSolutionSemanticContext
+            },
             });
     }
 
@@ -70,17 +70,17 @@ public class TreeViewDotNetSolutionSemanticContext : TreeViewWithType<(SemanticC
         catch (Exception exception)
         {
             Children = new List<TreeViewNoType>
+        {
+            new TreeViewException(
+                exception,
+                false,
+                false,
+                LuthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
             {
-                new TreeViewException(
-                    exception,
-                    false,
-                    false,
-                    LuthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
-                {
-                    Parent = this,
-                    IndexAmongSiblings = 0,
-                }
-            };
+                Parent = this,
+                IndexAmongSiblings = 0,
+            }
+        };
         }
 
         TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();

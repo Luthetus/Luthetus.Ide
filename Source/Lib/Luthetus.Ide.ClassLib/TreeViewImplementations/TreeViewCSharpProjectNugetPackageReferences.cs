@@ -63,7 +63,7 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
             Item.CSharpProjectNamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString());
 
         var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
-            new (Item.CSharpProjectNamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString()),
+            new(Item.CSharpProjectNamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString()),
             content);
 
         var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;

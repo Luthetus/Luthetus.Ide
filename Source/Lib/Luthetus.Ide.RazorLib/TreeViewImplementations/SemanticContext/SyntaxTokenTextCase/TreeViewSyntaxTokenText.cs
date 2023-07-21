@@ -41,10 +41,10 @@ public class TreeViewSyntaxTokenText : TreeViewWithType<ISyntaxToken>
             typeof(TreeViewSyntaxTokenTextDisplay),
             new Dictionary<string, object?>
             {
-                {
-                    nameof(TreeViewSyntaxTokenTextDisplay.SyntaxToken),
-                    Item
-                },
+            {
+                nameof(TreeViewSyntaxTokenTextDisplay.SyntaxToken),
+                Item
+            },
             });
     }
 

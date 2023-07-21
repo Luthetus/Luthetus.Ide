@@ -120,36 +120,36 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
 
         navMenuWidth.DimensionUnits.AddRange(new[]
         {
-            new DimensionUnit
-            {
-                Value = 40,
-                DimensionUnitKind = DimensionUnitKind.Percentage
-            },
-            new DimensionUnit
-            {
-                Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                DimensionOperatorKind = DimensionOperatorKind.Subtract
-            }
-        });
+        new DimensionUnit
+        {
+            Value = 40,
+            DimensionUnitKind = DimensionUnitKind.Percentage
+        },
+        new DimensionUnit
+        {
+            Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
+            DimensionUnitKind = DimensionUnitKind.Pixels,
+            DimensionOperatorKind = DimensionOperatorKind.Subtract
+        }
+    });
 
         var contentWidth = _contentElementDimensions.DimensionAttributes
             .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
 
         contentWidth.DimensionUnits.AddRange(new[]
         {
-            new DimensionUnit
-            {
-                Value = 60,
-                DimensionUnitKind = DimensionUnitKind.Percentage
-            },
-            new DimensionUnit
-            {
-                Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                DimensionOperatorKind = DimensionOperatorKind.Subtract
-            }
-        });
+        new DimensionUnit
+        {
+            Value = 60,
+            DimensionUnitKind = DimensionUnitKind.Percentage
+        },
+        new DimensionUnit
+        {
+            Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
+            DimensionUnitKind = DimensionUnitKind.Pixels,
+            DimensionOperatorKind = DimensionOperatorKind.Subtract
+        }
+    });
     }
 
     private async Task SetInputFileContentTreeViewRootFunc(IAbsoluteFilePath absoluteFilePath)

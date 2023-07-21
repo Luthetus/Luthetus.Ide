@@ -66,7 +66,7 @@ public partial record DotNetSolutionState
                     {
                         DotNetSolution = dotNetSolution
                     }));
-            
+
             dispatcher.Dispatch(new SetDotNetSolutionTreeViewAction());
             dispatcher.Dispatch(new ParseDotNetSolutionAction());
         }
@@ -123,7 +123,7 @@ public partial record DotNetSolutionState
                     IsExecutingAsyncTaskLinks = inDotNetSolutionState.IsExecutingAsyncTaskLinks - 1
                 }));
         }
-        
+
         [EffectMethod(typeof(ParseDotNetSolutionAction))]
         public Task HandleParseDotNetSolutionAction(
             IDispatcher dispatcher)

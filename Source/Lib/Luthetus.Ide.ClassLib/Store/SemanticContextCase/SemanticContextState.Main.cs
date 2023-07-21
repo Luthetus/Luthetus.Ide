@@ -6,7 +6,7 @@ public partial class SemanticContextState
     private SemanticContextState()
     {
     }
-    
+
     public SemanticContextState(DotNetSolutionSemanticContext dotNetSolutionSemanticContext)
     {
         DotNetSolutionSemanticContext = dotNetSolutionSemanticContext;

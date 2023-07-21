@@ -4,4 +4,3 @@ public record LightWeightNugetPackageRecord(
     string Id,
     string Title,
     string Version);
-

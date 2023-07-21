@@ -138,11 +138,11 @@ public partial class TerminalOutputDisplay : FluxorComponent
 
             var whitespace = new[]
             {
-                KeyboardKeyFacts.WhitespaceCharacters.SPACE,
-                KeyboardKeyFacts.WhitespaceCharacters.TAB,
-                KeyboardKeyFacts.WhitespaceCharacters.NEW_LINE,
-                KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN,
-            };
+            KeyboardKeyFacts.WhitespaceCharacters.SPACE,
+            KeyboardKeyFacts.WhitespaceCharacters.TAB,
+            KeyboardKeyFacts.WhitespaceCharacters.NEW_LINE,
+            KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN,
+        };
 
             var indexOfFirstWordEndingExclusive = text.IndexOfAny(whitespace);
 

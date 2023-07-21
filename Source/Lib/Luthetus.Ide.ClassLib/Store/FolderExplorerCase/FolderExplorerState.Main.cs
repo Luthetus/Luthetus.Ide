@@ -39,9 +39,9 @@ public partial record FolderExplorerState(
                 },
                 new[]
                 {
-                    new InputFilePattern(
-                        "Directory",
-                        afp => afp.IsDirectory)
+                new InputFilePattern(
+                    "Directory",
+                    afp => afp.IsDirectory)
                 }.ToImmutableArray()));
     }
 }

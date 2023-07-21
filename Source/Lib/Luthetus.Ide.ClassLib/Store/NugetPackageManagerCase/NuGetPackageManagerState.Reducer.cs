@@ -11,11 +11,11 @@ public partial record NuGetPackageManagerState
         {
             return inNuGetPackageManagerState with
             {
-                SelectedProjectToModify = 
+                SelectedProjectToModify =
                     setSelectedProjectToModifyAction.SelectedProjectToModify
             };
         }
-        
+
         [ReducerMethod]
         public static NuGetPackageManagerState ReduceSetNugetQueryAction(
             NuGetPackageManagerState inNuGetPackageManagerState,
@@ -23,11 +23,11 @@ public partial record NuGetPackageManagerState
         {
             return inNuGetPackageManagerState with
             {
-                NugetQuery = 
+                NugetQuery =
                     setNugetQueryAction.NugetQuery
             };
         }
-        
+
         [ReducerMethod]
         public static NuGetPackageManagerState ReduceSetIncludePrereleaseAction(
             NuGetPackageManagerState inNuGetPackageManagerState,
@@ -35,11 +35,11 @@ public partial record NuGetPackageManagerState
         {
             return inNuGetPackageManagerState with
             {
-                IncludePrerelease = 
+                IncludePrerelease =
                     setIncludePrereleaseAction.IncludePrerelease
             };
         }
-        
+
         [ReducerMethod]
         public static NuGetPackageManagerState ReduceSetMostRecentQueryResultAction(
             NuGetPackageManagerState inNuGetPackageManagerState,
@@ -47,7 +47,7 @@ public partial record NuGetPackageManagerState
         {
             return inNuGetPackageManagerState with
             {
-                MostRecentQueryResult = 
+                MostRecentQueryResult =
                     setMostRecentQueryResultAction.QueryResult
             };
         }

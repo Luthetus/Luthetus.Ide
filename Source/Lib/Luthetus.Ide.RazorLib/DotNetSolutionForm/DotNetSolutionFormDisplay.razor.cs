@@ -74,9 +74,9 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                 },
                 new[]
                 {
-                    new InputFilePattern(
-                        "Directory",
-                        afp => afp.IsDirectory)
+                new InputFilePattern(
+                    "Directory",
+                    afp => afp.IsDirectory)
                 }.ToImmutableArray()));
     }
 

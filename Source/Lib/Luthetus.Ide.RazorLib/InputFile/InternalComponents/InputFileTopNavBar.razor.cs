@@ -129,10 +129,10 @@ public partial class InputFileTopNavBar : ComponentBase
                     LuthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.ErrorNotificationRendererType,
                     new Dictionary<string, object?>
                     {
-                        {
-                            nameof(IErrorNotificationRendererType.Message),
-                            exception.ToString()
-                        }
+                    {
+                        nameof(IErrorNotificationRendererType.Message),
+                        exception.ToString()
+                    }
                     },
                     TimeSpan.FromSeconds(12),
                     IErrorNotificationRendererType.CSS_CLASS_STRING);

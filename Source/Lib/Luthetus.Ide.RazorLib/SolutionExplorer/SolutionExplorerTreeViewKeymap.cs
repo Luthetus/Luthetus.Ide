@@ -124,10 +124,10 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
                 _luthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
                 new Dictionary<string, object?>
                 {
-                    {
-                        nameof(IInformativeNotificationRendererType.Message),
-                        $"Copied: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
-                    },
+                {
+                    nameof(IInformativeNotificationRendererType.Message),
+                    $"Copied: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
+                },
                 },
                 TimeSpan.FromSeconds(3),
                 null);
@@ -154,10 +154,10 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
                 _luthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
                 new Dictionary<string, object?>
                 {
-                    {
-                        nameof(IInformativeNotificationRendererType.Message),
-                        $"Cut: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
-                    },
+                {
+                    nameof(IInformativeNotificationRendererType.Message),
+                    $"Cut: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
+                },
                 },
                 TimeSpan.FromSeconds(3),
                 null);

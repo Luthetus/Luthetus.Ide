@@ -58,10 +58,10 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
             LuthetusIdeComponentRenderers.TreeViewSolutionFolderRendererType!,
             new Dictionary<string, object?>
             {
-                {
-                    nameof(ITreeViewSolutionFolderRendererType.DotNetSolutionFolder),
-                    Item
-                },
+            {
+                nameof(ITreeViewSolutionFolderRendererType.DotNetSolutionFolder),
+                Item
+            },
             });
     }
 
@@ -76,17 +76,17 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
         catch (Exception exception)
         {
             Children = new List<TreeViewNoType>
+        {
+            new TreeViewException(
+                exception,
+                false,
+                false,
+                LuthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
             {
-                new TreeViewException(
-                    exception,
-                    false,
-                    false,
-                    LuthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
-                {
-                    Parent = this,
-                    IndexAmongSiblings = 0,
-                }
-            };
+                Parent = this,
+                IndexAmongSiblings = 0,
+            }
+        };
         }
 
         TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();

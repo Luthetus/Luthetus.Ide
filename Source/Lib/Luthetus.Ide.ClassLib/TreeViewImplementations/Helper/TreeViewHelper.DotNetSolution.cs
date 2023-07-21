@@ -32,7 +32,7 @@ public partial class TreeViewHelper
                 var namespacePath = new NamespacePath(
                     x.AbsoluteFilePath.FileNameNoExtension,
                     x.AbsoluteFilePath);
-                
+
                 return (TreeViewNoType)new TreeViewNamespacePath(
                     namespacePath,
                     treeViewSolution.LuthetusIdeComponentRenderers,
@@ -50,7 +50,7 @@ public partial class TreeViewHelper
         var children = childSolutionFolders
             .Union(childProjects)
             .ToList();
-        
+
         var copyOfChildrenToFindRelatedFiles = new List<TreeViewNoType>(children);
 
         // The foreach for child.Parent and the
@@ -58,7 +58,7 @@ public partial class TreeViewHelper
         // cannot be combined.
         foreach (var child in children)
             child.Parent = treeViewSolution;
-        
+
         foreach (var child in children)
         {
             child.RemoveRelatedFilesFromParent(

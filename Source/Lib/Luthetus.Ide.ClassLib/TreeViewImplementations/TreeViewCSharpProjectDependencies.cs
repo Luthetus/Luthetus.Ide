@@ -81,10 +81,10 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
         };
 
         var newChildren = new List<TreeViewNoType>
-        {
-            treeViewCSharpProjectNugetPackageReferences,
-            treeViewCSharpProjectToProjectReferences
-        };
+    {
+        treeViewCSharpProjectNugetPackageReferences,
+        treeViewCSharpProjectToProjectReferences
+    };
 
         for (int i = 0; i < newChildren.Count; i++)
         {

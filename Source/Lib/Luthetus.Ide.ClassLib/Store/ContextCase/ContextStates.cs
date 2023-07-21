@@ -9,7 +9,7 @@ public record ContextStates(ImmutableArray<ContextRecord> ActiveContextRecords)
     {
         ActiveContextRecords = new[]
         {
-            ContextFacts.GlobalContext
-        }.ToImmutableArray();
+        ContextFacts.GlobalContext
+    }.ToImmutableArray();
     }
 }

@@ -58,10 +58,10 @@ public class FileSystemQueuedHostedService : BackgroundService
                             _luthetusCommonComponentRenderers.ErrorNotificationRendererType,
                             new Dictionary<string, object?>
                             {
-                                {
-                                    nameof(IErrorNotificationRendererType.Message),
-                                    string.Format($"backgroundTask.Name => {ex.Message}")
-                                }
+                            {
+                                nameof(IErrorNotificationRendererType.Message),
+                                string.Format($"backgroundTask.Name => {ex.Message}")
+                            }
                             },
                             null,
                             IErrorNotificationRendererType.CSS_CLASS_STRING);

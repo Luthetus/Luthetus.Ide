@@ -20,22 +20,22 @@ public partial class IdeBody : ComponentBase
 
         editorWidth.DimensionUnits.AddRange(new[]
         {
-            new DimensionUnit
-            {
-                Value = 33.3333,
-                DimensionUnitKind = DimensionUnitKind.Percentage
-            },
-            new DimensionUnit
-            {
-                Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                DimensionOperatorKind = DimensionOperatorKind.Subtract
-            }
-        });
+        new DimensionUnit
+        {
+            Value = 33.3333,
+            DimensionUnitKind = DimensionUnitKind.Percentage
+        },
+        new DimensionUnit
+        {
+            Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
+            DimensionUnitKind = DimensionUnitKind.Pixels,
+            DimensionOperatorKind = DimensionOperatorKind.Subtract
+        }
+    });
 
         base.OnInitialized();
     }
-    
+
     private async Task ReRenderLeftPanelAndEditor()
     {
         await (_leftPanelStateHasChangedBoundaryComponent?

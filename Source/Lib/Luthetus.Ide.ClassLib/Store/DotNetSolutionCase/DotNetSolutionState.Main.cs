@@ -18,7 +18,7 @@ public partial record DotNetSolutionState(
         0)
     {
     }
-    
+
     public static void ShowInputFile(
         IDispatcher dispatcher)
     {
@@ -41,9 +41,9 @@ public partial record DotNetSolutionState(
                 },
                 new[]
                 {
-                    new InputFilePattern(
-                        ".NET Solution",
-                        afp => afp.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
+                new InputFilePattern(
+                    ".NET Solution",
+                    afp => afp.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
                 }.ToImmutableArray()));
     }
 }

@@ -68,7 +68,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         if (disposing)
         {
             _disposed = true;
-            
+
             DotNetSolutionStateWrap.StateChanged -= DotNetSolutionStateWrapOnStateChanged;
         }
 

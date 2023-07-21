@@ -43,10 +43,10 @@ public class TreeViewBoundClassDefinitionNode : TreeViewWithType<BoundClassDefin
             typeof(TreeViewBoundClassDefinitionNodeDisplay),
             new Dictionary<string, object?>
             {
-                {
-                    nameof(TreeViewBoundClassDefinitionNodeDisplay.BoundClassDefinitionNode),
-                    Item
-                },
+            {
+                nameof(TreeViewBoundClassDefinitionNodeDisplay.BoundClassDefinitionNode),
+                Item
+            },
             });
     }
 
@@ -97,17 +97,17 @@ public class TreeViewBoundClassDefinitionNode : TreeViewWithType<BoundClassDefin
         catch (Exception exception)
         {
             Children = new List<TreeViewNoType>
+        {
+            new TreeViewException(
+                exception,
+                false,
+                false,
+                LuthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
             {
-                new TreeViewException(
-                    exception,
-                    false,
-                    false,
-                    LuthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
-                {
-                    Parent = this,
-                    IndexAmongSiblings = 0,
-                }
-            };
+                Parent = this,
+                IndexAmongSiblings = 0,
+            }
+        };
         }
 
         TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();

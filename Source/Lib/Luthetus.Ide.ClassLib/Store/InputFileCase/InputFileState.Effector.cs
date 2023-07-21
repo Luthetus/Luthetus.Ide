@@ -14,7 +14,7 @@ public partial record InputFileState
         {
             _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
         }
-        
+
         [EffectMethod]
         public Task HandleRequestInputFileStateFormAction(
             RequestInputFileStateFormAction requestInputFileStateFormAction,
@@ -34,8 +34,8 @@ public partial record InputFileState
                     HtmlFacts.Classes.DIALOG_PADDING_0)
                 {
                     IsResizable = true
-                }; 
-            
+                };
+
                 dispatcher.Dispatch(
                     new DialogRecordsCollection.RegisterAction(
                         inputFileDialog));

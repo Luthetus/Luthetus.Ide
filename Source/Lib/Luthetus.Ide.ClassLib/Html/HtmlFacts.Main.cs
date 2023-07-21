@@ -2,5 +2,5 @@
 
 public static partial class HtmlFacts
 {
-    
+
 }

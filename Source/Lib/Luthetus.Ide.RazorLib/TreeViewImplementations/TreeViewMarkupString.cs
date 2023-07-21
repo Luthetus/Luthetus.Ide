@@ -41,10 +41,10 @@ public class TreeViewMarkupString : TreeViewWithType<MarkupString>
             typeof(TreeViewMarkupStringDisplay),
             new Dictionary<string, object?>
             {
-                {
-                    nameof(TreeViewMarkupStringDisplay.MarkupString),
-                    Item
-                },
+            {
+                nameof(TreeViewMarkupStringDisplay.MarkupString),
+                Item
+            },
             });
     }
 

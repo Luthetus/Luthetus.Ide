@@ -21,10 +21,10 @@ public static class DotNetCliFacts
     {
         return (DOT_NET_CLI_TARGET_FILE_NAME, new[]
         {
-            "run",
-            "--project",
-            projectPath
-        });
+        "run",
+        "--project",
+        projectPath
+    });
     }
 
     public static (string targetFileName, IEnumerable<string> arguments) FormatDotnetNewSln(
@@ -32,11 +32,11 @@ public static class DotNetCliFacts
     {
         return (DOT_NET_CLI_TARGET_FILE_NAME, new[]
         {
-            "new",
-            "sln",
-            "-o",
-            solutionName
-        });
+        "new",
+        "sln",
+        "-o",
+        solutionName
+    });
     }
 
     public static (string targetFileName, IEnumerable<string> arguments) FormatDotnetNewCSharpProject(
@@ -45,12 +45,12 @@ public static class DotNetCliFacts
         string optionalParameters)
     {
         var arguments = new List<string>
-        {
-            "new",
-            projectTemplateName,
-            "-o",
-            cSharpProjectName
-        };
+    {
+        "new",
+        projectTemplateName,
+        "-o",
+        cSharpProjectName
+    };
 
         if (!string.IsNullOrWhiteSpace(optionalParameters))
             arguments.Add(optionalParameters);
@@ -64,11 +64,11 @@ public static class DotNetCliFacts
     {
         return (DOT_NET_CLI_TARGET_FILE_NAME, new[]
         {
-            "sln",
-            solutionAbsoluteFilePathString,
-            "add",
-            cSharpProjectPath
-        });
+        "sln",
+        solutionAbsoluteFilePathString,
+        "add",
+        cSharpProjectPath
+    });
     }
 
     public static (string targetFileName, IEnumerable<string> arguments) FormatRemoveCSharpProjectReferenceFromSolutionAction(
@@ -77,11 +77,11 @@ public static class DotNetCliFacts
     {
         return (DOT_NET_CLI_TARGET_FILE_NAME, new[]
         {
-            "sln",
-            solutionAbsoluteFilePathString,
-            "remove",
-            cSharpProjectAbsoluteFilePathString
-        });
+        "sln",
+        solutionAbsoluteFilePathString,
+        "remove",
+        cSharpProjectAbsoluteFilePathString
+    });
     }
 
     public static (string targetFileName, IEnumerable<string> arguments) FormatAddNugetPackageReferenceToProject(
@@ -91,13 +91,13 @@ public static class DotNetCliFacts
     {
         return (DOT_NET_CLI_TARGET_FILE_NAME, new[]
         {
-            "add",
-            cSharpProjectAbsoluteFilePathString,
-            "package",
-            nugetPackageId,
-            "--version",
-            nugetPackageVersion
-        });
+        "add",
+        cSharpProjectAbsoluteFilePathString,
+        "package",
+        nugetPackageId,
+        "--version",
+        nugetPackageVersion
+    });
     }
 
     public static (string targetFileName, IEnumerable<string> arguments) FormatRemoveNugetPackageReferenceFromProject(
@@ -106,11 +106,11 @@ public static class DotNetCliFacts
     {
         return (DOT_NET_CLI_TARGET_FILE_NAME, new[]
         {
-            "remove",
-            cSharpProjectAbsoluteFilePathString,
-            "package",
-            nugetPackageId
-        });
+        "remove",
+        cSharpProjectAbsoluteFilePathString,
+        "package",
+        nugetPackageId
+    });
     }
 
     public static (string targetFileName, IEnumerable<string> arguments) FormatAddProjectToProjectReference(
@@ -119,11 +119,11 @@ public static class DotNetCliFacts
     {
         return (DOT_NET_CLI_TARGET_FILE_NAME, new[]
         {
-            "add",
-            receivingProjectAbsoluteFilePathString,
-            "reference",
-            referenceProjectAbsoluteFilePathString
-        });
+        "add",
+        receivingProjectAbsoluteFilePathString,
+        "reference",
+        referenceProjectAbsoluteFilePathString
+    });
     }
 
     public static (string targetFileName, IEnumerable<string> arguments) FormatRemoveProjectToProjectReference(
@@ -132,11 +132,11 @@ public static class DotNetCliFacts
     {
         return (DOT_NET_CLI_TARGET_FILE_NAME, new[]
         {
-            "remove",
-            modifyProjectAbsoluteFilePathString,
-            "reference",
-            referenceProjectAbsoluteFilePathString
-        });
+        "remove",
+        modifyProjectAbsoluteFilePathString,
+        "reference",
+        referenceProjectAbsoluteFilePathString
+    });
     }
 
     public static (string targetFileName, IEnumerable<string> arguments) FormatMoveProjectToSolutionFolder(
@@ -146,12 +146,12 @@ public static class DotNetCliFacts
     {
         return (DOT_NET_CLI_TARGET_FILE_NAME, new[]
         {
-            "sln",
-            solutionAbsoluteFilePathString,
-            "add",
-            projectToMoveAbsoluteFilePathString,
-            "--solution-folder",
-            solutionFolderPath,
-        });
+        "sln",
+        solutionAbsoluteFilePathString,
+        "add",
+        projectToMoveAbsoluteFilePathString,
+        "--solution-folder",
+        solutionFolderPath,
+    });
     }
 }

@@ -36,7 +36,7 @@ public partial class IdeHeader : FluxorComponent
                 SubMenu: new MenuRecord(
                     new[]
                     {
-                        menuOptionNewDotNetSolution
+                    menuOptionNewDotNetSolution
                     }.ToImmutableArray()));
 
             menuOptions.Add(menuOptionNew);
@@ -70,10 +70,10 @@ public partial class IdeHeader : FluxorComponent
                 SubMenu: new MenuRecord(
                     new[]
                     {
-                        menuOptionOpenFile,
-                        menuOptionOpenDirectory,
-                        menuOptionOpenCSharpProject,
-                        menuOptionOpenDotNetSolution
+                    menuOptionOpenFile,
+                    menuOptionOpenDirectory,
+                    menuOptionOpenCSharpProject,
+                    menuOptionOpenDotNetSolution
                     }.ToImmutableArray()));
 
             menuOptions.Add(menuOptionOpen);

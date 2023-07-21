@@ -25,7 +25,7 @@ public partial record InputFileState(
         ImmutableArray<InputFilePattern>.Empty,
         null,
         string.Empty,
-        string.Empty) 
+        string.Empty)
     {
     }
 }

@@ -53,10 +53,10 @@ public class TreeViewCSharpProjectToProjectReference : TreeViewWithType<CSharpPr
             LuthetusIdeComponentRenderers.TreeViewCSharpProjectToProjectReferenceRendererType!,
             new Dictionary<string, object?>
             {
-                {
-                    nameof(ITreeViewCSharpProjectToProjectReferenceRendererType.CSharpProjectToProjectReference),
-                    Item
-                },
+            {
+                nameof(ITreeViewCSharpProjectToProjectReferenceRendererType.CSharpProjectToProjectReference),
+                Item
+            },
             });
     }
 
