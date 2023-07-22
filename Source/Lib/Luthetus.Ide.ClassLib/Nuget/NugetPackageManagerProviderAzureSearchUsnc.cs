@@ -1,4 +1,6 @@
-﻿namespace Luthetus.Ide.ClassLib.Nuget;
+﻿using System.Collections.Immutable;
+
+namespace Luthetus.Ide.ClassLib.Nuget;
 
 public class NugetPackageManagerProviderAzureSearchUsnc : INugetPackageManagerProvider
 {

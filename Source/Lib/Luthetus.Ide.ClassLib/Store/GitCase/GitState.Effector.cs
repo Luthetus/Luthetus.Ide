@@ -3,6 +3,9 @@ using Luthetus.Ide.ClassLib.Store.TerminalCase;
 using Luthetus.Ide.ClassLib.CommandLine;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.Git;
+using Fluxor;
+using System.Collections.Immutable;
+using System.Text;
 
 namespace Luthetus.Ide.ClassLib.Store.GitCase;
 

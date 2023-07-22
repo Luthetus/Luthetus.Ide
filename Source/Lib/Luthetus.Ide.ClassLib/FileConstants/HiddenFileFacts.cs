@@ -1,4 +1,6 @@
-﻿namespace Luthetus.Ide.ClassLib.FileConstants;
+﻿using System.Collections.Immutable;
+
+namespace Luthetus.Ide.ClassLib.FileConstants;
 
 public static class HiddenFileFacts
 {

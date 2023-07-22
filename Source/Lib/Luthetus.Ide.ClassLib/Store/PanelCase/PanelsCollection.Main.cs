@@ -1,5 +1,9 @@
-﻿using Luthetus.Ide.ClassLib.Dimensions;
+﻿using Fluxor;
+using Luthetus.Common.RazorLib.Dimensions;
+using Luthetus.Common.RazorLib.Resize;
+using Luthetus.Ide.ClassLib.Dimensions;
 using Luthetus.Ide.ClassLib.Panel;
+using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.Store.PanelCase;
 

@@ -1,3 +1,5 @@
+using System.Collections.Immutable;
+
 namespace Luthetus.Ide.ClassLib.Store.TerminalCase;
 
 public static class TerminalSessionFacts

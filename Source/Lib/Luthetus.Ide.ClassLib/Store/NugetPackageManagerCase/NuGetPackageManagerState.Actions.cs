@@ -1,5 +1,6 @@
 ﻿using Luthetus.Ide.ClassLib.DotNet;
 using Luthetus.Ide.ClassLib.Nuget;
+using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.Store.NugetPackageManagerCase;
 

@@ -1,6 +1,8 @@
-﻿using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
+﻿using Fluxor;
+using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.InputFile;
 using Luthetus.Ide.ClassLib.TreeViewImplementations;
+using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.Store.InputFileCase;
 

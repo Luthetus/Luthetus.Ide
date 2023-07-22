@@ -1,4 +1,7 @@
-﻿namespace Luthetus.Ide.ClassLib.FileConstants;
+﻿using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
+using Luthetus.TextEditor.RazorLib.Decoration;
+
+namespace Luthetus.Ide.ClassLib.FileConstants;
 
 /// <summary>
 /// The constants do not start with a period

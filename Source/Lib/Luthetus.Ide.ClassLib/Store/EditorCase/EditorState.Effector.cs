@@ -5,6 +5,18 @@ using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.FileConstants;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.Store.SemanticContextCase;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
+using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.Group;
+using Fluxor;
+using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.Model;
+using Luthetus.TextEditor.RazorLib.Lexing;
+using Luthetus.Common.RazorLib.Notification;
+using Luthetus.Common.RazorLib.ComponentRenderers.Types;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
+using Luthetus.Common.RazorLib.Store.NotificationCase;
+using Luthetus.TextEditor.RazorLib.ViewModel;
 
 namespace Luthetus.Ide.ClassLib.Store.EditorCase;
 
@@ -56,7 +68,6 @@ public partial class EditorState
             _typeScriptCompilerService = typeScriptCompilerService;
             _jsonCompilerService = jsonCompilerService;
         }
-
 
         [EffectMethod]
         public Task HandleShowInputFileAction(

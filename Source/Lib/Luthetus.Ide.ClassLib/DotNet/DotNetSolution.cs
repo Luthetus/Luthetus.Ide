@@ -1,4 +1,5 @@
 ﻿using Luthetus.Ide.ClassLib.Namespaces;
+using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.DotNet;
 

@@ -1,4 +1,6 @@
-﻿namespace Luthetus.Ide.ClassLib.FileTemplates;
+﻿using System.Collections.Immutable;
+
+namespace Luthetus.Ide.ClassLib.FileTemplates;
 
 public interface IFileTemplate
 {

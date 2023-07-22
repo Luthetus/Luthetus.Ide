@@ -5,6 +5,11 @@ using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.Namespaces;
 using Luthetus.Ide.ClassLib.TreeViewImplementations;
 using Luthetus.Ide.ClassLib.Store.SemanticContextCase;
+using Luthetus.Common.RazorLib.TreeView;
+using Fluxor;
+using Luthetus.TextEditor.RazorLib.HostedServiceCase.CompilerServiceCase;
+using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
+using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 

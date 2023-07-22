@@ -1,4 +1,6 @@
-﻿namespace Luthetus.Ide.ClassLib.Html;
+﻿using System.Text;
+
+namespace Luthetus.Ide.ClassLib.Html;
 
 public static class HtmlHelper
 {

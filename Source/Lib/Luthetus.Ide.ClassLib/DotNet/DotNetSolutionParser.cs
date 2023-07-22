@@ -3,6 +3,9 @@ using Luthetus.Ide.ClassLib.DotNet.DotNetSolutionGlobalSectionTypes;
 using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.Namespaces;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
+using System.Collections.Immutable;
+using System.Text;
 
 namespace Luthetus.Ide.ClassLib.DotNet;
 

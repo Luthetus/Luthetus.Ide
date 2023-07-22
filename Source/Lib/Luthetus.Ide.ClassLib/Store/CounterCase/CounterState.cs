@@ -1,3 +1,5 @@
+using Fluxor;
+
 namespace Luthetus.Ide.ClassLib.Store.CounterCase;
 
 [FeatureState]

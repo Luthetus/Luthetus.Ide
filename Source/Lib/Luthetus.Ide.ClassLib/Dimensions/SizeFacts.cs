@@ -1,4 +1,6 @@
-﻿namespace Luthetus.Ide.ClassLib.Dimensions;
+﻿using Luthetus.Common.RazorLib.Dimensions;
+
+namespace Luthetus.Ide.ClassLib.Dimensions;
 
 public static class SizeFacts
 {

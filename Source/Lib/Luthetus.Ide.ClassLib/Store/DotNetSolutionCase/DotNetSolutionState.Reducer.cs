@@ -1,4 +1,6 @@
-﻿namespace Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
+﻿using Fluxor;
+
+namespace Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 
 public partial record DotNetSolutionState
 {

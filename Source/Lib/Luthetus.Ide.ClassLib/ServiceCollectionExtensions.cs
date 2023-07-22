@@ -2,6 +2,11 @@
 using Luthetus.Ide.ClassLib.Menu;
 using Luthetus.Ide.ClassLib.Nuget;
 using Luthetus.Ide.ClassLib.FileSystem.HostedServiceCase;
+using Microsoft.Extensions.DependencyInjection;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
+using Luthetus.TextEditor.RazorLib.HostedServiceCase.TextEditorCase;
+using Luthetus.TextEditor.RazorLib.HostedServiceCase.CompilerServiceCase;
+using Fluxor;
 
 namespace Luthetus.Ide.ClassLib;
 

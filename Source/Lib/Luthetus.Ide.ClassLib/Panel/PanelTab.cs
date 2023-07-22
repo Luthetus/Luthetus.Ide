@@ -1,4 +1,6 @@
-﻿namespace Luthetus.Ide.ClassLib.Panel;
+﻿using Luthetus.Common.RazorLib.Dimensions;
+
+namespace Luthetus.Ide.ClassLib.Panel;
 
 /// <summary>
 /// Each PanelTab maintains  its own element dimensions as
