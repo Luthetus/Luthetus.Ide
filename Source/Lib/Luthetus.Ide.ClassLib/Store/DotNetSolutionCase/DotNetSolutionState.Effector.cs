@@ -1,7 +1,4 @@
 ﻿using Luthetus.Ide.ClassLib.ComponentRenderers;
-using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
-using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
-using Luthetus.Ide.ClassLib.Namespaces;
 using Luthetus.Ide.ClassLib.TreeViewImplementations;
 using Luthetus.Ide.ClassLib.Store.SemanticContextCase;
 using Luthetus.Common.RazorLib.TreeView;
@@ -12,6 +9,9 @@ using System.Collections.Immutable;
 using Luthetus.CompilerServices.Lang.DotNet;
 using Luthetus.CompilerServices.Lang.CSharp.SemanticContextCase.Implementations;
 using Luthetus.CompilerServices.Lang.CSharp.SemanticContextCase.Keys;
+using Luthetus.Common.RazorLib.FileSystem.Interfaces;
+using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
+using Luthetus.Common.RazorLib.Namespaces;
 
 namespace Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 

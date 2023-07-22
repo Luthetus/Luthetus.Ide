@@ -1,4 +1,4 @@
-﻿using Luthetus.Ide.ClassLib.Namespaces;
+﻿using Luthetus.Common.RazorLib.Namespaces;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.CompilerServices.Lang.DotNet;
 
