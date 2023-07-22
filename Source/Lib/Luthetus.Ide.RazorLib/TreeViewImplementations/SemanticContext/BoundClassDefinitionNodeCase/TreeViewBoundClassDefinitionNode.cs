@@ -55,7 +55,7 @@ public class TreeViewBoundClassDefinitionNode : TreeViewWithType<BoundClassDefin
             });
     }
 
-    public override async Task LoadChildrenAsync()
+    public override Task LoadChildrenAsync()
     {
         try
         {
@@ -113,6 +113,7 @@ public class TreeViewBoundClassDefinitionNode : TreeViewWithType<BoundClassDefin
         }
 
         TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
+        return Task.CompletedTask;
     }
 
     public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)

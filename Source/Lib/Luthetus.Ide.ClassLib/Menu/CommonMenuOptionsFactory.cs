@@ -787,7 +787,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         Func<Task> onAfterCompletion)
     {
         var backgroundTask = new BackgroundTask(
-            async cancellationToken =>
+            cancellationToken =>
             {
                 var requestInputFileStateFormAction = new InputFileState.RequestInputFileStateFormAction(
                     $"Add Project reference to {projectReceivingReference.Item.AbsoluteFilePath.FilenameWithExtension}",
@@ -858,6 +858,8 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
 
                 dispatcher.Dispatch(
                     requestInputFileStateFormAction);
+
+                return Task.CompletedTask;
             },
             "PerformAddProjectToProjectReferenceActionTask",
             "TODO: Describe this task",
@@ -938,7 +940,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         Func<Task> onAfterCompletion)
     {
         var backgroundTask = new BackgroundTask(
-            async cancellationToken =>
+            cancellationToken =>
             {
                 var moveProjectToSolutionFolderCommand = DotNetCliFacts
                     .FormatMoveProjectToSolutionFolder(
@@ -987,6 +989,8 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                         await terminalSession
                             .EnqueueCommandAsync(moveProjectToSolutionFolderTerminalCommand);
                     });
+
+                return Task.CompletedTask;
             },
             "PerformMoveProjectToSolutionFolderActionTask",
             "TODO: Describe this task",

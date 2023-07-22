@@ -55,7 +55,7 @@ public class TreeViewISyntax : TreeViewWithType<ISyntax>
             });
     }
 
-    public override async Task LoadChildrenAsync()
+    public override Task LoadChildrenAsync()
     {
         try
         {
@@ -126,6 +126,8 @@ public class TreeViewISyntax : TreeViewWithType<ISyntax>
         }
 
         TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
+
+        return Task.CompletedTask;
     }
 
     public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)

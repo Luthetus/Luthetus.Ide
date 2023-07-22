@@ -51,7 +51,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
             null);
     }
 
-    public override async Task LoadChildrenAsync()
+    public override Task LoadChildrenAsync()
     {
         var treeViewCSharpProjectNugetPackageReferences = new TreeViewCSharpProjectNugetPackageReferences(
             new CSharpProjectNugetPackageReferences(Item.CSharpProjectNamespacePath),
@@ -92,6 +92,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
 
         Children = newChildren;
         TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
+        return Task.CompletedTask;
     }
 
     public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)

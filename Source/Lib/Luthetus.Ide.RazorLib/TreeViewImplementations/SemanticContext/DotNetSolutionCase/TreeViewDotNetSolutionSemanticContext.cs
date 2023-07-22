@@ -64,11 +64,13 @@ public class TreeViewDotNetSolutionSemanticContext : TreeViewWithType<(SemanticC
             });
     }
 
-    public override async Task LoadChildrenAsync()
+    public override Task LoadChildrenAsync()
     {
         if (Item.dotNetSolutionSemanticContext is null ||
             Item.semanticContextState.DotNetSolutionSemanticContext is null)
-            return;
+        {
+            return Task.CompletedTask;
+        }
 
         try
         {
@@ -91,6 +93,7 @@ public class TreeViewDotNetSolutionSemanticContext : TreeViewWithType<(SemanticC
         }
 
         TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
+        return Task.CompletedTask;
     }
 
     public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)

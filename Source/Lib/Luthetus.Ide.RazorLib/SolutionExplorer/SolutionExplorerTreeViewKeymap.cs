@@ -284,7 +284,7 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
         return Task.CompletedTask;
     }
 
-    private async Task InvokeOpenInEditorAsync(
+    private Task InvokeOpenInEditorAsync(
         ITreeViewCommandParameter treeViewCommandParameter,
         bool shouldSetFocusToEditor)
     {
@@ -294,12 +294,14 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
             activeNode is not TreeViewNamespacePath treeViewNamespacePath ||
             treeViewNamespacePath.Item is null)
         {
-            return;
+            return Task.CompletedTask;
         }
 
         _dispatcher.Dispatch(new EditorState.OpenInEditorAction(
             treeViewNamespacePath.Item.AbsoluteFilePath,
             shouldSetFocusToEditor));
+
+        return Task.CompletedTask;
     }
 
     private async Task ReloadTreeViewModel(

@@ -56,7 +56,7 @@ public class TreeViewNamespace : TreeViewWithType<BoundNamespaceStatementNode>
             });
     }
 
-    public override async Task LoadChildrenAsync()
+    public override Task LoadChildrenAsync()
     {
         try
         {
@@ -115,6 +115,8 @@ public class TreeViewNamespace : TreeViewWithType<BoundNamespaceStatementNode>
         }
 
         TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
+
+        return Task.CompletedTask;
     }
 
     public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)

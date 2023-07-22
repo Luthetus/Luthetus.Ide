@@ -82,7 +82,7 @@ public class TerminalSession
         return null;
     }
 
-    public async Task EnqueueCommandAsync(TerminalCommand terminalCommand)
+    public Task EnqueueCommandAsync(TerminalCommand terminalCommand)
     {
         var backgroundTask = new BackgroundTask(
             async cancellationToken =>
@@ -200,6 +200,7 @@ public class TerminalSession
             CancellationToken.None);
 
         _commonBackgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
+        return Task.CompletedTask;
     }
 
     public void ClearStandardOut()

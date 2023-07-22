@@ -114,7 +114,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
             localFormattedCommand.arguments,
             _parentDirectoryName,
             _newDotNetSolutionCancellationTokenSource.Token,
-            async () =>
+            () =>
             {
                 // Close Dialog
                 Dispatcher.Dispatch(
@@ -147,6 +147,8 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                 Dispatcher.Dispatch(
                     new DotNetSolutionState.SetDotNetSolutionAction(
                         solutionAbsoluteFilePath));
+
+                return Task.CompletedTask;
             });
 
         var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[

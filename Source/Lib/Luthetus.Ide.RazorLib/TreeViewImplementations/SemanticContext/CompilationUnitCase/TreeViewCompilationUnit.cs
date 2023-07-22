@@ -54,7 +54,7 @@ public class TreeViewCompilationUnit : TreeViewWithType<CodeBlockNode>
             });
     }
 
-    public override async Task LoadChildrenAsync()
+    public override Task LoadChildrenAsync()
     {
         try
         {
@@ -108,6 +108,7 @@ public class TreeViewCompilationUnit : TreeViewWithType<CodeBlockNode>
         }
 
         TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
+        return Task.CompletedTask;
     }
 
     public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)

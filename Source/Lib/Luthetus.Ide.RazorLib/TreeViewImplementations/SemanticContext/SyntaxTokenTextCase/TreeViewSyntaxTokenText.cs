@@ -53,9 +53,9 @@ public class TreeViewSyntaxTokenText : TreeViewWithType<ISyntaxToken>
             });
     }
 
-    public override async Task LoadChildrenAsync()
+    public override Task LoadChildrenAsync()
     {
-        return;
+        return Task.CompletedTask;
     }
 
     public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)

@@ -189,13 +189,13 @@ public partial class PanelTabDisplay : ComponentBase, IDisposable
         Dispatcher.Dispatch(new DragState.SetDragStateAction(true, null));
     }
 
-    private async Task DragEventHandlerScrollAsync(
+    private Task DragEventHandlerScrollAsync(
         (MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs) mouseEventArgsTuple)
     {
         var localThinksLeftMouseButtonIsDown = _thinksLeftMouseButtonIsDown;
 
         if (!localThinksLeftMouseButtonIsDown)
-            return;
+            return Task.CompletedTask;
 
         // Buttons is a bit flag
         // '& 1' gets if left mouse button is held
@@ -213,6 +213,8 @@ public partial class PanelTabDisplay : ComponentBase, IDisposable
             Dispatcher.Dispatch(new PanelsCollection.SetPanelDragEventArgsAction(null));
             PanelTab.IsBeingDragged = false;
         }
+
+        return Task.CompletedTask;
     }
 
     public void Dispose()

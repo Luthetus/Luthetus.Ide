@@ -43,7 +43,7 @@ public interface ICommonMenuOptionsFactory
         Func<Task> onAfterCompletion);
 
     public MenuOptionRecord RemoveCSharpProjectReferenceFromSolution(
-        TreeViewSolution? solutionNode,
+        TreeViewSolution solutionNode,
         TreeViewNamespacePath projectNode,
         TerminalSession terminalSession,
         IDispatcher dispatcher,
