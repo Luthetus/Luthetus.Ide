@@ -1,4 +1,9 @@
-﻿namespace Luthetus.Ide.RazorLib.Adhoc;
+﻿using Fluxor;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
+using Microsoft.AspNetCore.Components;
+
+namespace Luthetus.Ide.RazorLib.Adhoc;
 
 public partial class AdhocDisplay : ComponentBase, IDisposable
 {

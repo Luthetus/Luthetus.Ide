@@ -1,4 +1,11 @@
-﻿namespace Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.DotNetSolutionCase;
+﻿using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
+using Luthetus.Common.RazorLib.WatchWindow.TreeViewClasses;
+using Luthetus.CompilerServices.Lang.CSharp.SemanticContextCase.Implementations;
+using Luthetus.Ide.ClassLib.ComponentRenderers;
+using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
+using Luthetus.Ide.ClassLib.Store.SemanticContextCase;
+
+namespace Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.DotNetSolutionCase;
 
 public class TreeViewDotNetSolutionSemanticContext : TreeViewWithType<(SemanticContextState semanticContextState, DotNetSolutionSemanticContext dotNetSolutionSemanticContext)>
 {

@@ -1,5 +1,17 @@
+using Fluxor;
+using Fluxor.Blazor.Web.Components;
+using Luthetus.Common.RazorLib.Dialog;
+using Luthetus.Common.RazorLib.Dropdown;
+using Luthetus.Common.RazorLib.Menu;
+using Luthetus.Common.RazorLib.Store.DialogCase;
+using Luthetus.Common.RazorLib.Store.DropdownCase;
+using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
+using Luthetus.Ide.ClassLib.Store.EditorCase;
+using Luthetus.Ide.ClassLib.Store.FolderExplorerCase;
 using Luthetus.Ide.RazorLib.Button;
 using Luthetus.Ide.RazorLib.DotNetSolutionForm;
+using Microsoft.AspNetCore.Components;
+using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.Shared;
 

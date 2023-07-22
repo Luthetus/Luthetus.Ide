@@ -1,4 +1,8 @@
-﻿namespace Luthetus.Ide.RazorLib.HostedServiceCase;
+﻿using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
+using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
+using Microsoft.AspNetCore.Components;
+
+namespace Luthetus.Ide.RazorLib.HostedServiceCase;
 
 public partial class FileSystemBackgroundTaskDisplay : ComponentBase, IFileSystemBackgroundTaskDisplayRendererType
 {

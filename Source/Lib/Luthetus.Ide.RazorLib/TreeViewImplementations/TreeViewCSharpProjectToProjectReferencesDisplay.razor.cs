@@ -1,4 +1,6 @@
-﻿namespace Luthetus.Ide.RazorLib.TreeViewImplementations;
+﻿using Microsoft.AspNetCore.Components;
+
+namespace Luthetus.Ide.RazorLib.TreeViewImplementations;
 
 public partial class TreeViewCSharpProjectToProjectReferencesDisplay : ComponentBase
 {

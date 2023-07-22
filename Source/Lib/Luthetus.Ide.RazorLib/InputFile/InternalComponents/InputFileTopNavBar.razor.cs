@@ -1,4 +1,15 @@
-﻿namespace Luthetus.Ide.RazorLib.InputFile.InternalComponents;
+﻿using Fluxor;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
+using Luthetus.Common.RazorLib.ComponentRenderers.Types;
+using Luthetus.Common.RazorLib.Notification;
+using Luthetus.Common.RazorLib.Store.NotificationCase;
+using Luthetus.Ide.ClassLib.ComponentRenderers;
+using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
+using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
+using Luthetus.Ide.ClassLib.Store.InputFileCase;
+using Microsoft.AspNetCore.Components;
+
+namespace Luthetus.Ide.RazorLib.InputFile.InternalComponents;
 
 public partial class InputFileTopNavBar : ComponentBase
 {

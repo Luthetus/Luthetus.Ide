@@ -1,4 +1,11 @@
-﻿namespace Luthetus.Ide.RazorLib.FolderExplorer.Classes;
+﻿using Fluxor;
+using Luthetus.Common.RazorLib.TreeView;
+using Luthetus.Common.RazorLib.TreeView.Commands;
+using Luthetus.Common.RazorLib.TreeView.Events;
+using Luthetus.Ide.ClassLib.Store.EditorCase;
+using Luthetus.Ide.ClassLib.TreeViewImplementations;
+
+namespace Luthetus.Ide.RazorLib.FolderExplorer.Classes;
 
 public class FolderExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {

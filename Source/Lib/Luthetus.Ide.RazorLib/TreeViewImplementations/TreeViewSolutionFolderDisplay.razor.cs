@@ -1,4 +1,8 @@
-﻿namespace Luthetus.Ide.RazorLib.TreeViewImplementations;
+﻿using Luthetus.CompilerServices.Lang.DotNet;
+using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
+using Microsoft.AspNetCore.Components;
+
+namespace Luthetus.Ide.RazorLib.TreeViewImplementations;
 
 public partial class TreeViewSolutionFolderDisplay
     : ComponentBase, ITreeViewSolutionFolderRendererType

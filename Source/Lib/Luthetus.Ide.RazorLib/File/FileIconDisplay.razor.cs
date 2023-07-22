@@ -1,4 +1,7 @@
-﻿namespace Luthetus.Ide.RazorLib.File;
+﻿using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
+using Microsoft.AspNetCore.Components;
+
+namespace Luthetus.Ide.RazorLib.File;
 
 public partial class FileIconDisplay : ComponentBase
 {

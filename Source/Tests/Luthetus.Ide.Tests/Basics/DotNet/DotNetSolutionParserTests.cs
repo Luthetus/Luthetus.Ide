@@ -1,4 +1,10 @@
-﻿namespace Luthetus.Ide.Tests.Basics.DotNet;
+﻿using Luthetus.CompilerServices.Lang.DotNet;
+using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
+using Luthetus.Ide.ClassLib.FileSystem.Classes.Local;
+using Luthetus.Ide.ClassLib.Namespaces;
+using Xunit;
+
+namespace Luthetus.Ide.Tests.Basics.DotNet;
 
 public class DotNetSolutionParserTests
 {

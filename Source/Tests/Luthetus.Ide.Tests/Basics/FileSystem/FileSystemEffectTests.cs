@@ -1,4 +1,7 @@
-﻿namespace Luthetus.Ide.Tests.Basics.FileSystem;
+﻿using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
+using Xunit;
+
+namespace Luthetus.Ide.Tests.Basics.FileSystem;
 
 public class FileSystemEffectTests : LuthetusFileSystemTestingBase
 {
@@ -12,7 +15,7 @@ public class FileSystemEffectTests : LuthetusFileSystemTestingBase
             true,
             EnvironmentProvider);
 
-        var saveFileAction = new FileSystemState.SaveFileAction(
+        var saveFileAction = new ClassLib.Store.FileSystemCase.FileSystemState.SaveFileAction(
             absoluteFilePath,
             content,
             writtenDateTime => { });

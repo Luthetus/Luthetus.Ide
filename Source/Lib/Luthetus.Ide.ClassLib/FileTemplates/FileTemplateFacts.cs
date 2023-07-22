@@ -1,6 +1,8 @@
 ﻿using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
 using Luthetus.Ide.ClassLib.Namespaces;
 using Luthetus.Ide.ClassLib.FileConstants;
+using System.Text;
+using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.FileTemplates;
 

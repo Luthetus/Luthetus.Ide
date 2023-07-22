@@ -1,4 +1,15 @@
-﻿namespace Luthetus.Ide.Tests.Basics.FileSystem;
+﻿using Fluxor;
+using Luthetus.Common.RazorLib;
+using Luthetus.Common.RazorLib.Clipboard;
+using Luthetus.Common.RazorLib.ComponentRenderers;
+using Luthetus.Common.RazorLib.Storage;
+using Luthetus.Ide.ClassLib.FileSystem.Classes.Local;
+using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
+using Luthetus.TextEditor.RazorLib;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.JSInterop;
+
+namespace Luthetus.Ide.Tests.Basics.FileSystem;
 
 /// <summary>
 /// Setup the dependency injection necessary

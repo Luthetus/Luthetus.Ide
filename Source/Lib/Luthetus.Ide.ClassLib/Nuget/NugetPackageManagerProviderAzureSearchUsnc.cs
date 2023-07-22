@@ -1,4 +1,7 @@
 ﻿using System.Collections.Immutable;
+using System.Net.Http.Json;
+using System.Text;
+using System.Web;
 
 namespace Luthetus.Ide.ClassLib.Nuget;
 

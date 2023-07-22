@@ -1,4 +1,22 @@
-﻿namespace Luthetus.Ide.RazorLib.FolderExplorer.InternalComponents;
+﻿using Fluxor;
+using Luthetus.Common.RazorLib.ComponentRenderers;
+using Luthetus.Common.RazorLib.ComponentRenderers.Types;
+using Luthetus.Common.RazorLib.Dimensions;
+using Luthetus.Common.RazorLib.Dropdown;
+using Luthetus.Common.RazorLib.Menu;
+using Luthetus.Common.RazorLib.Notification;
+using Luthetus.Common.RazorLib.Store.NotificationCase;
+using Luthetus.Common.RazorLib.TreeView;
+using Luthetus.Common.RazorLib.TreeView.Commands;
+using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
+using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
+using Luthetus.Ide.ClassLib.Menu;
+using Luthetus.Ide.ClassLib.Store.FolderExplorerCase;
+using Luthetus.Ide.ClassLib.TreeViewImplementations;
+using Microsoft.AspNetCore.Components;
+using System.Collections.Immutable;
+
+namespace Luthetus.Ide.RazorLib.FolderExplorer.InternalComponents;
 
 public partial class FolderExplorerContextMenu : ComponentBase
 {

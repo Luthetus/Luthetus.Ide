@@ -1,4 +1,22 @@
-﻿namespace Luthetus.Ide.Photino;
+﻿using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
+using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
+using Luthetus.CompilerServices.Lang.Css;
+using Luthetus.CompilerServices.Lang.JavaScript;
+using Luthetus.CompilerServices.Lang.Json;
+using Luthetus.CompilerServices.Lang.Razor.CompilerServiceCase;
+using Luthetus.CompilerServices.Lang.TypeScript;
+using Luthetus.CompilerServices.Lang.Xml;
+using Luthetus.Ide.ClassLib.FileSystem.HostedServiceCase;
+using Luthetus.Ide.RazorLib;
+using Luthetus.TextEditor.RazorLib.HostedServiceCase.CompilerServiceCase;
+using Luthetus.TextEditor.RazorLib.HostedServiceCase.TextEditorCase;
+using Microsoft.Extensions.DependencyInjection;
+using Photino.Blazor;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace Luthetus.Ide.Photino;
 
 class Program
 {

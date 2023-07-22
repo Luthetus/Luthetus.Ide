@@ -1,4 +1,12 @@
-﻿namespace Luthetus.Ide.Tests.Basics.DotNet;
+﻿using Luthetus.Common.RazorLib.Misc;
+using Luthetus.CompilerServices.Lang.DotNet.CSharp;
+using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxActors;
+using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
+using Luthetus.Ide.ClassLib.FileSystem.Classes.Local;
+using Luthetus.TextEditor.RazorLib.Lexing;
+using Xunit;
+
+namespace Luthetus.Ide.Tests.Basics.DotNet;
 
 public class CSharpProjectParserTests
 {
