@@ -1,5 +1,5 @@
-﻿using Luthetus.Common.RazorLib.Menu;
-using Fluxor;
+﻿using Fluxor;
+using Luthetus.Common.RazorLib.Menu;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.Namespaces;
 using Luthetus.Ide.ClassLib.Store.TerminalCase;

@@ -1,13 +1,13 @@
-﻿using Luthetus.Common.RazorLib.ComponentRenderers.Types;
+﻿using Fluxor;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
+using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.Notification;
 using Luthetus.Common.RazorLib.Store.NotificationCase;
-using Luthetus.Ide.ClassLib.Store.InputFileCase;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
-using Fluxor;
+using Luthetus.Ide.ClassLib.Store.InputFileCase;
 using Microsoft.AspNetCore.Components;
-using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
 
 namespace Luthetus.Ide.RazorLib.InputFile.InternalComponents;
 
@@ -140,10 +140,10 @@ public partial class InputFileTopNavBar : ComponentBase
                     LuthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.ErrorNotificationRendererType,
                     new Dictionary<string, object?>
                     {
-                        {
-                            nameof(IErrorNotificationRendererType.Message),
-                            exception.ToString()
-                        }
+                    {
+                        nameof(IErrorNotificationRendererType.Message),
+                        exception.ToString()
+                    }
                     },
                     TimeSpan.FromSeconds(12),
                     IErrorNotificationRendererType.CSS_CLASS_STRING);

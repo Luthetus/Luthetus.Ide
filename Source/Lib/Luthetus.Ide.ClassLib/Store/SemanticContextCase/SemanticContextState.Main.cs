@@ -1,5 +1,5 @@
 ﻿using Fluxor;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.SemanticContextCase.Implementations;
+using Luthetus.CompilerServices.Lang.CSharp.SemanticContextCase.Implementations;
 
 namespace Luthetus.Ide.ClassLib.Store.SemanticContextCase;
 
@@ -9,7 +9,7 @@ public partial class SemanticContextState
     private SemanticContextState()
     {
     }
-    
+
     public SemanticContextState(DotNetSolutionSemanticContext dotNetSolutionSemanticContext)
     {
         DotNetSolutionSemanticContext = dotNetSolutionSemanticContext;

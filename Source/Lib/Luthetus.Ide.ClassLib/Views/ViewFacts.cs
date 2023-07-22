@@ -18,8 +18,8 @@ public static class ViewFacts
 
     public static readonly ImmutableArray<View> Views = new[]
     {
-        TerminalsView,
-        NugetPackageManagerView,
-        GitView
-    }.ToImmutableArray();
+    TerminalsView,
+    NugetPackageManagerView,
+    GitView
+}.ToImmutableArray();
 }

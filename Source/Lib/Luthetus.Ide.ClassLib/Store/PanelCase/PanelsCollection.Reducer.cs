@@ -25,7 +25,7 @@ public partial record PanelsCollection
                 PanelRecordsList = nextPanelsList
             };
         }
-        
+
         [ReducerMethod]
         public static PanelsCollection ReduceDisposePanelRecordAction(
             PanelsCollection previousPanelsCollection,
@@ -45,7 +45,7 @@ public partial record PanelsCollection
                 PanelRecordsList = nextPanelsList
             };
         }
-        
+
         [ReducerMethod]
         public static PanelsCollection ReduceRegisterPanelTabAction(
             PanelsCollection previousPanelsCollection,
@@ -59,7 +59,7 @@ public partial record PanelsCollection
 
             var nextPanelTabs = targetedPanelRecord.PanelTabs.Add(
                 registerPanelTabAction.PanelTab);
-            
+
             var nextPanelRecord = targetedPanelRecord with
             {
                 PanelTabs = nextPanelTabs
@@ -74,7 +74,7 @@ public partial record PanelsCollection
                 PanelRecordsList = nextPanelsList
             };
         }
-        
+
         [ReducerMethod]
         public static PanelsCollection ReduceDisposePanelTabAction(
             PanelsCollection previousPanelsCollection,
@@ -85,16 +85,16 @@ public partial record PanelsCollection
 
             if (targetedPanelRecord is null)
                 return previousPanelsCollection;
-            
+
             var panelTabToRemove = targetedPanelRecord.PanelTabs.FirstOrDefault(
                 x => x.PanelTabKey == disposePanelTabAction.PanelTabKey);
-            
+
             if (panelTabToRemove is null)
                 return previousPanelsCollection;
-            
+
             var nextPanelTabs = targetedPanelRecord.PanelTabs.Remove(
                 panelTabToRemove);
-            
+
             var nextPanelRecord = targetedPanelRecord with
             {
                 PanelTabs = nextPanelTabs
@@ -109,7 +109,7 @@ public partial record PanelsCollection
                 PanelRecordsList = nextPanelsList
             };
         }
-        
+
         [ReducerMethod]
         public static PanelsCollection ReduceSetActivePanelTabAction(
             PanelsCollection previousPanelsCollection,
@@ -135,7 +135,7 @@ public partial record PanelsCollection
                 PanelRecordsList = nextPanelsList
             };
         }
-        
+
         [ReducerMethod]
         public static PanelsCollection ReduceSetPanelDragEventArgsAction(
             PanelsCollection previousPanelsCollection,

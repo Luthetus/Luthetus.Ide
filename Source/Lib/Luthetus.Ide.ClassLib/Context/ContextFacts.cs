@@ -56,14 +56,14 @@ public static class ContextFacts
 
     public static readonly ImmutableArray<ContextRecord> ContextRecords = new[]
     {
-        MainLayoutHeaderContext,
-        DialogDisplayContext,
-        FolderExplorerContext,
-        GlobalContext,
-        EditorContext,
-        TextEditorContext,
-        TerminalContext,
-        NuGetPackageManagerContext,
-        GitContext
-    }.ToImmutableArray();
+    MainLayoutHeaderContext,
+    DialogDisplayContext,
+    FolderExplorerContext,
+    GlobalContext,
+    EditorContext,
+    TextEditorContext,
+    TerminalContext,
+    NuGetPackageManagerContext,
+    GitContext
+}.ToImmutableArray();
 }

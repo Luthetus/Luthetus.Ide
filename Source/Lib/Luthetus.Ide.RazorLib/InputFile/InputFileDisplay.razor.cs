@@ -1,19 +1,19 @@
-using System.Collections.Immutable;
+using Fluxor;
+using Fluxor.Blazor.Web.Components;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
 using Luthetus.Common.RazorLib.Dimensions;
 using Luthetus.Common.RazorLib.Resize;
 using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
-using Luthetus.Ide.ClassLib.Store.InputFileCase;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
+using Luthetus.Ide.ClassLib.Store.InputFileCase;
 using Luthetus.Ide.ClassLib.TreeViewImplementations;
 using Luthetus.Ide.RazorLib.InputFile.Classes;
 using Luthetus.Ide.RazorLib.InputFile.InternalComponents;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
-using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
+using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.InputFile;
 
@@ -134,36 +134,36 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
 
         navMenuWidth.DimensionUnits.AddRange(new[]
         {
-            new DimensionUnit
-            {
-                Value = 40,
-                DimensionUnitKind = DimensionUnitKind.Percentage
-            },
-            new DimensionUnit
-            {
-                Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                DimensionOperatorKind = DimensionOperatorKind.Subtract
-            }
-        });
+        new DimensionUnit
+        {
+            Value = 40,
+            DimensionUnitKind = DimensionUnitKind.Percentage
+        },
+        new DimensionUnit
+        {
+            Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
+            DimensionUnitKind = DimensionUnitKind.Pixels,
+            DimensionOperatorKind = DimensionOperatorKind.Subtract
+        }
+    });
 
         var contentWidth = _contentElementDimensions.DimensionAttributes
             .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
 
         contentWidth.DimensionUnits.AddRange(new[]
         {
-            new DimensionUnit
-            {
-                Value = 60,
-                DimensionUnitKind = DimensionUnitKind.Percentage
-            },
-            new DimensionUnit
-            {
-                Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                DimensionOperatorKind = DimensionOperatorKind.Subtract
-            }
-        });
+        new DimensionUnit
+        {
+            Value = 60,
+            DimensionUnitKind = DimensionUnitKind.Percentage
+        },
+        new DimensionUnit
+        {
+            Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
+            DimensionUnitKind = DimensionUnitKind.Pixels,
+            DimensionOperatorKind = DimensionOperatorKind.Subtract
+        }
+    });
     }
 
     private async Task SetInputFileContentTreeViewRootFunc(IAbsoluteFilePath absoluteFilePath)

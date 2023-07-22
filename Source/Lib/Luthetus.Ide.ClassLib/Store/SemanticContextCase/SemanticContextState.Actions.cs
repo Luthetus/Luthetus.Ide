@@ -1,4 +1,4 @@
-﻿using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.SemanticContextCase.Implementations;
+﻿using Luthetus.CompilerServices.Lang.CSharp.SemanticContextCase.Implementations;
 
 namespace Luthetus.Ide.ClassLib.Store.SemanticContextCase;
 

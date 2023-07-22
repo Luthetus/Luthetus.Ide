@@ -1,12 +1,12 @@
+using Fluxor;
 using Luthetus.Common.RazorLib.Store.ApplicationOptions;
 using Luthetus.Common.RazorLib.Store.DropdownCase;
 using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
-using Luthetus.Ide.ClassLib.Store.FolderExplorerCase;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
+using Luthetus.Ide.ClassLib.Store.FolderExplorerCase;
 using Luthetus.Ide.RazorLib.FolderExplorer.Classes;
 using Luthetus.Ide.RazorLib.FolderExplorer.InternalComponents;
-using Fluxor;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.FolderExplorer;

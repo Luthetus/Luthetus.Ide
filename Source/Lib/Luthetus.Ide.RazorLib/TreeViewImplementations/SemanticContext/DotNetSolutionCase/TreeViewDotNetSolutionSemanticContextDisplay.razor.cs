@@ -1,4 +1,4 @@
-﻿using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.SemanticContextCase.Implementations;
+﻿using Luthetus.CompilerServices.Lang.CSharp.SemanticContextCase.Implementations;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.DotNetSolutionCase;

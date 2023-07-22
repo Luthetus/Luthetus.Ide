@@ -1,9 +1,9 @@
-﻿using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
-using Luthetus.Ide.ClassLib.DotNet.CSharp;
-using Luthetus.TextEditor.RazorLib.Analysis.Html.SyntaxActors;
-using Luthetus.Ide.ClassLib.ComponentRenderers;
+﻿using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
+using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
+using Luthetus.CompilerServices.Lang.DotNet.CSharp;
+using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxActors;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementations;
 

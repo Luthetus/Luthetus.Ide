@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using Fluxor;
+﻿using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.Dialog;
@@ -15,6 +14,7 @@ using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.Menu;
 using Luthetus.Ide.ClassLib.TreeViewImplementations;
 using Microsoft.AspNetCore.Components;
+using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.InputFile.InternalComponents;
 
@@ -81,27 +81,27 @@ public partial class InputFileContextMenu : ComponentBase
     {
         return new[]
         {
-            CommonMenuOptionsFactory.NewEmptyFile(
-                treeViewModel.Item,
-                async () => await ReloadTreeViewModel(treeViewModel)),
-            CommonMenuOptionsFactory.NewDirectory(
-                treeViewModel.Item,
-                async () => await ReloadTreeViewModel(treeViewModel)),
-            CommonMenuOptionsFactory.PasteClipboard(
-                treeViewModel.Item,
-                async () =>
-                {
-                    var localParentOfCutFile =
-                        ParentOfCutFile;
+        CommonMenuOptionsFactory.NewEmptyFile(
+            treeViewModel.Item,
+            async () => await ReloadTreeViewModel(treeViewModel)),
+        CommonMenuOptionsFactory.NewDirectory(
+            treeViewModel.Item,
+            async () => await ReloadTreeViewModel(treeViewModel)),
+        CommonMenuOptionsFactory.PasteClipboard(
+            treeViewModel.Item,
+            async () =>
+            {
+                var localParentOfCutFile =
+                    ParentOfCutFile;
 
-                    ParentOfCutFile = null;
+                ParentOfCutFile = null;
 
-                    if (localParentOfCutFile is not null)
-                        await ReloadTreeViewModel(localParentOfCutFile);
+                if (localParentOfCutFile is not null)
+                    await ReloadTreeViewModel(localParentOfCutFile);
 
-                    await ReloadTreeViewModel(treeViewModel);
-                }),
-        };
+                await ReloadTreeViewModel(treeViewModel);
+            }),
+    };
     }
 
     private MenuOptionRecord[] GetFileMenuOptions(
@@ -110,26 +110,26 @@ public partial class InputFileContextMenu : ComponentBase
     {
         return new[]
         {
-            CommonMenuOptionsFactory.CopyFile(
-                treeViewModel.Item,
-                () => NotifyCopyCompleted(treeViewModel.Item)),
-            CommonMenuOptionsFactory.CutFile(
-                treeViewModel.Item,
-                () => NotifyCutCompleted(treeViewModel.Item, parentTreeViewModel)),
-            CommonMenuOptionsFactory.DeleteFile(
-                treeViewModel.Item,
-                async () =>
-                {
-                    await ReloadTreeViewModel(parentTreeViewModel);
-                }),
-            CommonMenuOptionsFactory.RenameFile(
-                treeViewModel.Item,
-                Dispatcher,
-                async ()  =>
-                {
-                    await ReloadTreeViewModel(parentTreeViewModel);
-                }),
-        };
+        CommonMenuOptionsFactory.CopyFile(
+            treeViewModel.Item,
+            () => NotifyCopyCompleted(treeViewModel.Item)),
+        CommonMenuOptionsFactory.CutFile(
+            treeViewModel.Item,
+            () => NotifyCutCompleted(treeViewModel.Item, parentTreeViewModel)),
+        CommonMenuOptionsFactory.DeleteFile(
+            treeViewModel.Item,
+            async () =>
+            {
+                await ReloadTreeViewModel(parentTreeViewModel);
+            }),
+        CommonMenuOptionsFactory.RenameFile(
+            treeViewModel.Item,
+            Dispatcher,
+            async ()  =>
+            {
+                await ReloadTreeViewModel(parentTreeViewModel);
+            }),
+    };
     }
 
     private MenuOptionRecord[] GetDebugMenuOptions(
@@ -180,10 +180,10 @@ public partial class InputFileContextMenu : ComponentBase
                 LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
                 new Dictionary<string, object?>
                 {
-                    {
-                        nameof(IInformativeNotificationRendererType.Message),
-                        $"Copied: {absoluteFilePath.FilenameWithExtension}"
-                    },
+                {
+                    nameof(IInformativeNotificationRendererType.Message),
+                    $"Copied: {absoluteFilePath.FilenameWithExtension}"
+                },
                 },
                 TimeSpan.FromSeconds(3),
                 null);
@@ -210,10 +210,10 @@ public partial class InputFileContextMenu : ComponentBase
                 LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
                 new Dictionary<string, object?>
                 {
-                    {
-                        nameof(IInformativeNotificationRendererType.Message),
-                        $"Cut: {absoluteFilePath.FilenameWithExtension}"
-                    },
+                {
+                    nameof(IInformativeNotificationRendererType.Message),
+                    $"Cut: {absoluteFilePath.FilenameWithExtension}"
+                },
                 },
                 TimeSpan.FromSeconds(3),
                 null);

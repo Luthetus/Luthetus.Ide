@@ -1,15 +1,15 @@
-﻿using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.CompilerServiceCase;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor.CompilerServiceCase;
-using Luthetus.TextEditor.RazorLib.Analysis.Css.Decoration;
-using Luthetus.TextEditor.RazorLib.Analysis.GenericLexer.Decoration;
-using Luthetus.TextEditor.RazorLib.Analysis.Html.Decoration;
-using Luthetus.TextEditor.RazorLib.Analysis.Json.Decoration;
+﻿using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
+using Luthetus.CompilerServices.Lang.Css;
+using Luthetus.CompilerServices.Lang.Css.Css.Decoration;
+using Luthetus.CompilerServices.Lang.JavaScript;
+using Luthetus.CompilerServices.Lang.Json;
+using Luthetus.CompilerServices.Lang.Json.Json.Decoration;
+using Luthetus.CompilerServices.Lang.Razor.CompilerServiceCase;
+using Luthetus.CompilerServices.Lang.TypeScript;
+using Luthetus.CompilerServices.Lang.Xml;
+using Luthetus.CompilerServices.Lang.Xml.Html.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
-using Luthetus.TextEditor.RazorLib.CompilerServiceCase.CssCase;
-using Luthetus.TextEditor.RazorLib.CompilerServiceCase.JavaScriptCase;
-using Luthetus.TextEditor.RazorLib.CompilerServiceCase.JsonCase;
-using Luthetus.TextEditor.RazorLib.CompilerServiceCase.TypeScriptCase;
-using Luthetus.TextEditor.RazorLib.CompilerServiceCase.XmlCase;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.Decoration;
 
 namespace Luthetus.Ide.ClassLib.FileConstants;

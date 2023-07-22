@@ -2,7 +2,7 @@
 using Luthetus.Common.RazorLib.WatchWindow.TreeViewClasses;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
-using Luthetus.Ide.ClassLib.CompilerServices.Common.General;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.CompilationUnitCase;
 
@@ -47,10 +47,10 @@ public class TreeViewCompilationUnit : TreeViewWithType<CodeBlockNode>
             typeof(TreeViewCompilationUnitDisplay),
             new Dictionary<string, object?>
             {
-                {
-                    nameof(TreeViewCompilationUnitDisplay.CodeBlockNode),
-                    Item
-                },
+            {
+                nameof(TreeViewCompilationUnitDisplay.CodeBlockNode),
+                Item
+            },
             });
     }
 
@@ -97,17 +97,17 @@ public class TreeViewCompilationUnit : TreeViewWithType<CodeBlockNode>
         catch (Exception exception)
         {
             Children = new List<TreeViewNoType>
+        {
+            new TreeViewException(
+                exception,
+                false,
+                false,
+                LuthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
             {
-                new TreeViewException(
-                    exception,
-                    false,
-                    false,
-                    LuthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
-                {
-                    Parent = this,
-                    IndexAmongSiblings = 0,
-                }
-            };
+                Parent = this,
+                IndexAmongSiblings = 0,
+            }
+        };
         }
 
         TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();

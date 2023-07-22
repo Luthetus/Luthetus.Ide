@@ -1,5 +1,5 @@
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase.Syntax;
 using Microsoft.AspNetCore.Components;
-using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.ISyntaxCase;
 

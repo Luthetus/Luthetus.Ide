@@ -1,9 +1,10 @@
 ﻿using Luthetus.Common.RazorLib.Misc;
-using Luthetus.Ide.ClassLib.DotNet.CSharp;
+using Luthetus.CompilerServices.Lang.DotNet.CSharp;
+using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxActors;
 using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
 using Luthetus.Ide.ClassLib.FileSystem.Classes.Local;
-using Luthetus.TextEditor.RazorLib.Analysis.Html.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.Lexing;
+using Xunit;
 
 namespace Luthetus.Ide.Tests.Basics.DotNet;
 

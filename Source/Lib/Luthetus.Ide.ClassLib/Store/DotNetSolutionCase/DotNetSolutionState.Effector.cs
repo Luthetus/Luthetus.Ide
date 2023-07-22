@@ -1,17 +1,17 @@
-﻿using Fluxor;
-using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
-using Luthetus.Common.RazorLib.TreeView;
-using Luthetus.Ide.ClassLib.ComponentRenderers;
-using Luthetus.Ide.ClassLib.DotNet;
+﻿using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.Namespaces;
 using Luthetus.Ide.ClassLib.TreeViewImplementations;
-using System.Collections.Immutable;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.SemanticContextCase.Implementations;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.SemanticContextCase.Keys;
 using Luthetus.Ide.ClassLib.Store.SemanticContextCase;
+using Luthetus.Common.RazorLib.TreeView;
+using Fluxor;
 using Luthetus.TextEditor.RazorLib.HostedServiceCase.CompilerServiceCase;
+using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
+using System.Collections.Immutable;
+using Luthetus.CompilerServices.Lang.DotNet;
+using Luthetus.CompilerServices.Lang.CSharp.SemanticContextCase.Implementations;
+using Luthetus.CompilerServices.Lang.CSharp.SemanticContextCase.Keys;
 
 namespace Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 
@@ -73,7 +73,7 @@ public partial record DotNetSolutionState
                     {
                         DotNetSolution = dotNetSolution
                     }));
-            
+
             dispatcher.Dispatch(new SetDotNetSolutionTreeViewAction());
             dispatcher.Dispatch(new ParseDotNetSolutionAction());
         }
@@ -130,7 +130,7 @@ public partial record DotNetSolutionState
                     IsExecutingAsyncTaskLinks = inDotNetSolutionState.IsExecutingAsyncTaskLinks - 1
                 }));
         }
-        
+
         [EffectMethod(typeof(ParseDotNetSolutionAction))]
         public Task HandleParseDotNetSolutionAction(
             IDispatcher dispatcher)

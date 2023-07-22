@@ -1,11 +1,4 @@
-﻿using System.Collections.Immutable;
-using Luthetus.Common.RazorLib.Clipboard;
-using Luthetus.Common.RazorLib.ComponentRenderers.Types;
-using Luthetus.Common.RazorLib.Menu;
-using Luthetus.Common.RazorLib.Notification;
-using Luthetus.Common.RazorLib.Store.NotificationCase;
-using Fluxor;
-using Luthetus.Ide.ClassLib.FileTemplates;
+﻿using Luthetus.Ide.ClassLib.FileTemplates;
 using Luthetus.Ide.ClassLib.InputFile;
 using Luthetus.Ide.ClassLib.Store.InputFileCase;
 using Luthetus.Ide.ClassLib.Store.TerminalCase;
@@ -19,7 +12,14 @@ using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.Namespaces;
 using Luthetus.Ide.ClassLib.TreeViewImplementations;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
+using Luthetus.Common.RazorLib.Menu;
+using Fluxor;
+using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
+using Luthetus.Common.RazorLib.Notification;
+using Luthetus.Common.RazorLib.ComponentRenderers.Types;
+using Luthetus.Common.RazorLib.Store.NotificationCase;
+using Luthetus.Common.RazorLib.Clipboard;
 
 namespace Luthetus.Ide.ClassLib.Menu;
 
@@ -60,27 +60,27 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
             WidgetRendererType: _luthetusIdeComponentRenderers.FileFormRendererType,
             WidgetParameters: new Dictionary<string, object?>
             {
-                {
-                    nameof(IFileFormRendererType.FileName),
-                    string.Empty
-                },
-                {
-                    nameof(IFileFormRendererType.CheckForTemplates),
-                    false
-                },
-                {
-                    nameof(IFileFormRendererType.OnAfterSubmitAction),
-                    new Action<string, IFileTemplate?, ImmutableArray<IFileTemplate>>(
-                        (fileName, exactMatchFileTemplate, relatedMatchFileTemplates) =>
-                            PerformNewFileAction(
-                                fileName,
-                                exactMatchFileTemplate,
-                                relatedMatchFileTemplates,
-                                new NamespacePath(
-                                    string.Empty,
-                                    parentDirectory),
-                                onAfterCompletion))
-                },
+            {
+                nameof(IFileFormRendererType.FileName),
+                string.Empty
+            },
+            {
+                nameof(IFileFormRendererType.CheckForTemplates),
+                false
+            },
+            {
+                nameof(IFileFormRendererType.OnAfterSubmitAction),
+                new Action<string, IFileTemplate?, ImmutableArray<IFileTemplate>>(
+                    (fileName, exactMatchFileTemplate, relatedMatchFileTemplates) =>
+                        PerformNewFileAction(
+                            fileName,
+                            exactMatchFileTemplate,
+                            relatedMatchFileTemplates,
+                            new NamespacePath(
+                                string.Empty,
+                                parentDirectory),
+                            onAfterCompletion))
+            },
             });
     }
 
@@ -94,25 +94,25 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
             WidgetRendererType: _luthetusIdeComponentRenderers.FileFormRendererType,
             WidgetParameters: new Dictionary<string, object?>
             {
-                {
-                    nameof(IFileFormRendererType.FileName),
-                    string.Empty
-                },
-                {
-                    nameof(IFileFormRendererType.CheckForTemplates),
-                    true
-                },
-                {
-                    nameof(IFileFormRendererType.OnAfterSubmitAction),
-                    new Action<string, IFileTemplate?, ImmutableArray<IFileTemplate>>(
-                        (fileName, exactMatchFileTemplate, relatedMatchFileTemplates) =>
-                            PerformNewFileAction(
-                                fileName,
-                                exactMatchFileTemplate,
-                                relatedMatchFileTemplates,
-                                parentDirectory,
-                                onAfterCompletion))
-                },
+            {
+                nameof(IFileFormRendererType.FileName),
+                string.Empty
+            },
+            {
+                nameof(IFileFormRendererType.CheckForTemplates),
+                true
+            },
+            {
+                nameof(IFileFormRendererType.OnAfterSubmitAction),
+                new Action<string, IFileTemplate?, ImmutableArray<IFileTemplate>>(
+                    (fileName, exactMatchFileTemplate, relatedMatchFileTemplates) =>
+                        PerformNewFileAction(
+                            fileName,
+                            exactMatchFileTemplate,
+                            relatedMatchFileTemplates,
+                            parentDirectory,
+                            onAfterCompletion))
+            },
             });
     }
 
@@ -126,23 +126,23 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
             WidgetRendererType: _luthetusIdeComponentRenderers.FileFormRendererType,
             WidgetParameters: new Dictionary<string, object?>
             {
-                {
-                    nameof(IFileFormRendererType.FileName),
-                    string.Empty
-                },
-                {
-                    nameof(IFileFormRendererType.IsDirectory),
-                    true
-                },
-                {
-                    nameof(IFileFormRendererType.OnAfterSubmitAction),
-                    new Action<string, IFileTemplate?, ImmutableArray<IFileTemplate>>(
-                        (directoryName, _, _) =>
-                            PerformNewDirectoryAction(
-                                directoryName,
-                                parentDirectory,
-                                onAfterCompletion))
-                },
+            {
+                nameof(IFileFormRendererType.FileName),
+                string.Empty
+            },
+            {
+                nameof(IFileFormRendererType.IsDirectory),
+                true
+            },
+            {
+                nameof(IFileFormRendererType.OnAfterSubmitAction),
+                new Action<string, IFileTemplate?, ImmutableArray<IFileTemplate>>(
+                    (directoryName, _, _) =>
+                        PerformNewDirectoryAction(
+                            directoryName,
+                            parentDirectory,
+                            onAfterCompletion))
+            },
             });
     }
 
@@ -156,19 +156,19 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
             WidgetRendererType: _luthetusIdeComponentRenderers.DeleteFileFormRendererType,
             WidgetParameters: new Dictionary<string, object?>
             {
-                {
-                    nameof(IDeleteFileFormRendererType.AbsoluteFilePath),
-                    absoluteFilePath
-                },
-                {
-                    nameof(IDeleteFileFormRendererType.IsDirectory),
-                    true
-                },
-                {
-                    nameof(IDeleteFileFormRendererType.OnAfterSubmitAction),
-                    new Action<IAbsoluteFilePath>(afp =>
-                        PerformDeleteFileAction(afp, onAfterCompletion))
-                },
+            {
+                nameof(IDeleteFileFormRendererType.AbsoluteFilePath),
+                absoluteFilePath
+            },
+            {
+                nameof(IDeleteFileFormRendererType.IsDirectory),
+                true
+            },
+            {
+                nameof(IDeleteFileFormRendererType.OnAfterSubmitAction),
+                new Action<IAbsoluteFilePath>(afp =>
+                    PerformDeleteFileAction(afp, onAfterCompletion))
+            },
             });
     }
 
@@ -183,26 +183,26 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
             WidgetRendererType: _luthetusIdeComponentRenderers.FileFormRendererType,
             WidgetParameters: new Dictionary<string, object?>
             {
-                {
-                    nameof(IFileFormRendererType.FileName),
-                    sourceAbsoluteFilePath.IsDirectory
-                        ? sourceAbsoluteFilePath.FileNameNoExtension
-                        : sourceAbsoluteFilePath.FilenameWithExtension
-                },
-                {
-                    nameof(IFileFormRendererType.IsDirectory),
-                    sourceAbsoluteFilePath.IsDirectory
-                },
-                {
-                    nameof(IFileFormRendererType.OnAfterSubmitAction),
-                    new Action<string, IFileTemplate?, ImmutableArray<IFileTemplate>>(
-                        (nextName, _, _) =>
-                            PerformRenameAction(
-                                sourceAbsoluteFilePath,
-                                nextName,
-                                dispatcher,
-                                onAfterCompletion))
-                },
+            {
+                nameof(IFileFormRendererType.FileName),
+                sourceAbsoluteFilePath.IsDirectory
+                    ? sourceAbsoluteFilePath.FileNameNoExtension
+                    : sourceAbsoluteFilePath.FilenameWithExtension
+            },
+            {
+                nameof(IFileFormRendererType.IsDirectory),
+                sourceAbsoluteFilePath.IsDirectory
+            },
+            {
+                nameof(IFileFormRendererType.OnAfterSubmitAction),
+                new Action<string, IFileTemplate?, ImmutableArray<IFileTemplate>>(
+                    (nextName, _, _) =>
+                        PerformRenameAction(
+                            sourceAbsoluteFilePath,
+                            nextName,
+                            dispatcher,
+                            onAfterCompletion))
+            },
             });
     }
 
@@ -255,20 +255,20 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
             WidgetRendererType: _luthetusIdeComponentRenderers.RemoveCSharpProjectFromSolutionRendererType,
             WidgetParameters: new Dictionary<string, object?>
             {
-                {
-                    nameof(IRemoveCSharpProjectFromSolutionRendererType.AbsoluteFilePath),
-                    projectNode.Item?.AbsoluteFilePath
-                },
-                {
-                    nameof(IDeleteFileFormRendererType.OnAfterSubmitAction),
-                    new Action<IAbsoluteFilePath>(_ =>
-                        PerformRemoveCSharpProjectReferenceFromSolutionAction(
-                            treeViewSolution,
-                            projectNode,
-                            terminalSession,
-                            dispatcher,
-                            onAfterCompletion))
-                },
+            {
+                nameof(IRemoveCSharpProjectFromSolutionRendererType.AbsoluteFilePath),
+                projectNode.Item?.AbsoluteFilePath
+            },
+            {
+                nameof(IDeleteFileFormRendererType.OnAfterSubmitAction),
+                new Action<IAbsoluteFilePath>(_ =>
+                    PerformRemoveCSharpProjectReferenceFromSolutionAction(
+                        treeViewSolution,
+                        projectNode,
+                        terminalSession,
+                        dispatcher,
+                        onAfterCompletion))
+            },
             });
     }
 
@@ -317,26 +317,26 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
             WidgetRendererType: _luthetusIdeComponentRenderers.FileFormRendererType,
             WidgetParameters: new Dictionary<string, object?>
             {
-                {
-                    nameof(IFileFormRendererType.FileName),
-                    string.Empty
-                },
-                {
-                    nameof(IFileFormRendererType.IsDirectory),
-                    false
-                },
-                {
-                    nameof(IFileFormRendererType.OnAfterSubmitAction),
-                    new Action<string, IFileTemplate?, ImmutableArray<IFileTemplate>>(
-                        (nextName, _, _) =>
-                            PerformMoveProjectToSolutionFolderAction(
-                                treeViewSolution,
-                                treeViewProjectToMove,
-                                nextName,
-                                terminalSession,
-                                dispatcher,
-                                onAfterCompletion))
-                },
+            {
+                nameof(IFileFormRendererType.FileName),
+                string.Empty
+            },
+            {
+                nameof(IFileFormRendererType.IsDirectory),
+                false
+            },
+            {
+                nameof(IFileFormRendererType.OnAfterSubmitAction),
+                new Action<string, IFileTemplate?, ImmutableArray<IFileTemplate>>(
+                    (nextName, _, _) =>
+                        PerformMoveProjectToSolutionFolderAction(
+                            treeViewSolution,
+                            treeViewProjectToMove,
+                            nextName,
+                            terminalSession,
+                            dispatcher,
+                            onAfterCompletion))
+            },
             });
     }
 
@@ -713,10 +713,10 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                     _luthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.ErrorNotificationRendererType,
                     new Dictionary<string, object?>
                     {
-                        {
-                            nameof(IErrorNotificationRendererType.Message),
-                            $"ERROR: {e.Message}"
-                        },
+                    {
+                        nameof(IErrorNotificationRendererType.Message),
+                        $"ERROR: {e.Message}"
+                    },
                     },
                     TimeSpan.FromSeconds(15),
                     IErrorNotificationRendererType.CSS_CLASS_STRING);
@@ -834,11 +834,11 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                                         .InformativeNotificationRendererType,
                                     new Dictionary<string, object?>
                                     {
-                                        {
-                                            nameof(IInformativeNotificationRendererType.Message),
-                                            $"Modified {projectReceivingReference.Item.AbsoluteFilePath.FilenameWithExtension}" +
-                                            $" to have a reference to {referencedProject.FilenameWithExtension}"
-                                        },
+                                    {
+                                        nameof(IInformativeNotificationRendererType.Message),
+                                        $"Modified {projectReceivingReference.Item.AbsoluteFilePath.FilenameWithExtension}" +
+                                        $" to have a reference to {referencedProject.FilenameWithExtension}"
+                                    },
                                     },
                                     TimeSpan.FromSeconds(7),
                                     null);
@@ -867,11 +867,11 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                     },
                     new[]
                     {
-                        new InputFilePattern(
-                            "C# Project",
-                            afp =>
-                                afp.ExtensionNoPeriod
-                                    .EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
+                    new InputFilePattern(
+                        "C# Project",
+                        afp =>
+                            afp.ExtensionNoPeriod
+                                .EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
                     }.ToImmutableArray());
 
                 dispatcher.Dispatch(
@@ -924,11 +924,11 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                                 .InformativeNotificationRendererType,
                             new Dictionary<string, object?>
                             {
-                                {
-                                    nameof(IInformativeNotificationRendererType.Message),
-                                    $"Modified {treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsoluteFilePath.FilenameWithExtension}" +
-                                    $" to have a reference to {treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsoluteFilePath.FilenameWithExtension}"
-                                },
+                            {
+                                nameof(IInformativeNotificationRendererType.Message),
+                                $"Modified {treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsoluteFilePath.FilenameWithExtension}" +
+                                $" to have a reference to {treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsoluteFilePath.FilenameWithExtension}"
+                            },
                             },
                             TimeSpan.FromSeconds(7),
                             null);
@@ -991,11 +991,11 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                                 .InformativeNotificationRendererType,
                             new Dictionary<string, object?>
                             {
-                                {
-                                    nameof(IInformativeNotificationRendererType.Message),
-                                    $"Moved {treeViewProjectToMove.Item.AbsoluteFilePath.FilenameWithExtension}" +
-                                    $" to the Solution Folder path: {solutionFolderPath}"
-                                },
+                            {
+                                nameof(IInformativeNotificationRendererType.Message),
+                                $"Moved {treeViewProjectToMove.Item.AbsoluteFilePath.FilenameWithExtension}" +
+                                $" to the Solution Folder path: {solutionFolderPath}"
+                            },
                             },
                             TimeSpan.FromSeconds(7),
                             null);
@@ -1065,11 +1065,11 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                                 .InformativeNotificationRendererType,
                             new Dictionary<string, object?>
                             {
-                                {
-                                    nameof(IInformativeNotificationRendererType.Message),
-                                    $"Modified {modifyProjectNamespacePath.AbsoluteFilePath.FilenameWithExtension}" +
-                                    $" to NOT have a reference to {treeViewLightWeightNugetPackageRecord.Item.Id}"
-                                },
+                            {
+                                nameof(IInformativeNotificationRendererType.Message),
+                                $"Modified {modifyProjectNamespacePath.AbsoluteFilePath.FilenameWithExtension}" +
+                                $" to NOT have a reference to {treeViewLightWeightNugetPackageRecord.Item.Id}"
+                            },
                             },
                             TimeSpan.FromSeconds(7),
                             null);

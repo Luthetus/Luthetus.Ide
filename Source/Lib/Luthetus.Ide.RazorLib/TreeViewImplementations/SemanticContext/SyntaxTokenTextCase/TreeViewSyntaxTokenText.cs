@@ -1,7 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
-using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase.Syntax;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.SyntaxTokenTextCase;
 
@@ -46,10 +46,10 @@ public class TreeViewSyntaxTokenText : TreeViewWithType<ISyntaxToken>
             typeof(TreeViewSyntaxTokenTextDisplay),
             new Dictionary<string, object?>
             {
-                {
-                    nameof(TreeViewSyntaxTokenTextDisplay.SyntaxToken),
-                    Item
-                },
+            {
+                nameof(TreeViewSyntaxTokenTextDisplay.SyntaxToken),
+                Item
+            },
             });
     }
 

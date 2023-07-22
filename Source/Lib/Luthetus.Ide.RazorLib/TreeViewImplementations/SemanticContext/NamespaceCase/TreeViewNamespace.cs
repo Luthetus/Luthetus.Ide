@@ -2,9 +2,9 @@
 using Luthetus.Common.RazorLib.WatchWindow.TreeViewClasses;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
-using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statements;
-using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.BoundClassDefinitionNodeCase;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase.Syntax.BoundNodes.Statements;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.NamespaceCase;
 
@@ -49,10 +49,10 @@ public class TreeViewNamespace : TreeViewWithType<BoundNamespaceStatementNode>
             typeof(TreeViewNamespaceDisplay),
             new Dictionary<string, object?>
             {
-                {
-                    nameof(TreeViewNamespaceDisplay.BoundNamespaceStatementNode),
-                    Item
-                },
+            {
+                nameof(TreeViewNamespaceDisplay.BoundNamespaceStatementNode),
+                Item
+            },
             });
     }
 
@@ -66,7 +66,7 @@ public class TreeViewNamespace : TreeViewWithType<BoundNamespaceStatementNode>
             var newChildren = Item.Children
                 .SelectMany(x => ((BoundNamespaceEntryNode)x).CodeBlockNode.Children)
                 .Where(x => x.SyntaxKind == SyntaxKind.BoundClassDefinitionNode)
-                .Select(x => (TreeViewNoType) new TreeViewBoundClassDefinitionNode(
+                .Select(x => (TreeViewNoType)new TreeViewBoundClassDefinitionNode(
                     (BoundClassDefinitionNode)x,
                     LuthetusIdeComponentRenderers,
                     FileSystemProvider,
@@ -104,17 +104,17 @@ public class TreeViewNamespace : TreeViewWithType<BoundNamespaceStatementNode>
         catch (Exception exception)
         {
             Children = new List<TreeViewNoType>
+        {
+            new TreeViewException(
+                exception,
+                false,
+                false,
+                LuthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
             {
-                new TreeViewException(
-                    exception,
-                    false,
-                    false,
-                    LuthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
-                {
-                    Parent = this,
-                    IndexAmongSiblings = 0,
-                }
-            };
+                Parent = this,
+                IndexAmongSiblings = 0,
+            }
+        };
         }
 
         TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();

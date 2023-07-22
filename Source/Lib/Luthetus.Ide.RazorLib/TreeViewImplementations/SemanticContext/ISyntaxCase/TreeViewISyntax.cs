@@ -2,8 +2,8 @@
 using Luthetus.Common.RazorLib.WatchWindow.TreeViewClasses;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
-using Luthetus.Ide.ClassLib.CompilerServices.Common.Syntax;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.SyntaxTokenTextCase;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase.Syntax;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.ISyntaxCase;
 
@@ -48,10 +48,10 @@ public class TreeViewISyntax : TreeViewWithType<ISyntax>
             typeof(TreeViewISyntaxDisplay),
             new Dictionary<string, object?>
             {
-                {
-                    nameof(TreeViewISyntaxDisplay.Syntax),
-                    Item
-                },
+            {
+                nameof(TreeViewISyntaxDisplay.Syntax),
+                Item
+            },
             });
     }
 
@@ -115,17 +115,17 @@ public class TreeViewISyntax : TreeViewWithType<ISyntax>
         catch (Exception exception)
         {
             Children = new List<TreeViewNoType>
+        {
+            new TreeViewException(
+                exception,
+                false,
+                false,
+                LuthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
             {
-                new TreeViewException(
-                    exception,
-                    false,
-                    false,
-                    LuthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
-                {
-                    Parent = this,
-                    IndexAmongSiblings = 0,
-                }
-            };
+                Parent = this,
+                IndexAmongSiblings = 0,
+            }
+        };
         }
 
         TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();

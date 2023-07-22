@@ -1,12 +1,12 @@
+using Fluxor;
+using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Store.ApplicationOptions;
 using Luthetus.Common.RazorLib.Store.DropdownCase;
 using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
-using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.Menu;
+using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.SolutionExplorer;
@@ -79,7 +79,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         if (disposing)
         {
             _disposed = true;
-            
+
             DotNetSolutionStateWrap.StateChanged -= DotNetSolutionStateWrapOnStateChanged;
         }
 

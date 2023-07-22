@@ -1,9 +1,9 @@
-﻿using Luthetus.Common.RazorLib.Dimensions;
+﻿using Fluxor;
+using Luthetus.Common.RazorLib.Dimensions;
 using Luthetus.Common.RazorLib.Resize;
 using Luthetus.Common.RazorLib.Store.DragCase;
-using Luthetus.Ide.ClassLib.Store.PanelCase;
 using Luthetus.Ide.ClassLib.Panel;
-using Fluxor;
+using Luthetus.Ide.ClassLib.Store.PanelCase;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 

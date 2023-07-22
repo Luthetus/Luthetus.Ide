@@ -1,4 +1,4 @@
-using Luthetus.Ide.ClassLib.DotNet;
+using Luthetus.CompilerServices.Lang.DotNet;
 
 namespace Luthetus.Ide.ClassLib.ComponentRenderers.Types;
 

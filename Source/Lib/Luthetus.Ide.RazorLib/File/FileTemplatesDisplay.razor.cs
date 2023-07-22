@@ -1,6 +1,6 @@
-﻿using System.Collections.Immutable;
-using Luthetus.Ide.ClassLib.FileTemplates;
+﻿using Luthetus.Ide.ClassLib.FileTemplates;
 using Microsoft.AspNetCore.Components;
+using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.File;
 

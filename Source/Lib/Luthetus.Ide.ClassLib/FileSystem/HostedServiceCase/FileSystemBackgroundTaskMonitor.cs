@@ -1,8 +1,8 @@
-using Luthetus.Common.RazorLib.Store.NotificationCase;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 using Luthetus.Common.RazorLib.Notification;
+using Luthetus.Common.RazorLib.Store.NotificationCase;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
-using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 
 namespace Luthetus.Ide.ClassLib.FileSystem.HostedServiceCase;
 
@@ -36,10 +36,10 @@ public class FileSystemBackgroundTaskMonitor : IFileSystemBackgroundTaskMonitor
                 _luthetusIdeComponentRenderers.CompilerServiceBackgroundTaskDisplayRendererType,
                 new Dictionary<string, object?>
                 {
-                    {
-                        nameof(IFileSystemBackgroundTaskDisplayRendererType.BackgroundTask),
-                        backgroundTask
-                    }
+                {
+                    nameof(IFileSystemBackgroundTaskDisplayRendererType.BackgroundTask),
+                    backgroundTask
+                }
                 },
                 null,
                 null);

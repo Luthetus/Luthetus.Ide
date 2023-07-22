@@ -1,8 +1,8 @@
-﻿using System.Collections.Immutable;
-using Fluxor;
+﻿using Fluxor;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.InputFile;
 using Luthetus.Ide.ClassLib.TreeViewImplementations;
+using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.Store.InputFileCase;
 
@@ -27,7 +27,7 @@ public partial record InputFileState(
         ImmutableArray<InputFilePattern>.Empty,
         null,
         string.Empty,
-        string.Empty) 
+        string.Empty)
     {
     }
 }

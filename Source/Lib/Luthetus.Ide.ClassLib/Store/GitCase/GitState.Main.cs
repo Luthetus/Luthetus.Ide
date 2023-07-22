@@ -1,7 +1,7 @@
-﻿using System.Collections.Immutable;
-using Fluxor;
+﻿using Fluxor;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.Git;
+using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.Store.GitCase;
 
@@ -26,6 +26,6 @@ public partial record GitState(
         ImmutableList<GitFile>.Empty,
         ImmutableList<GitTask>.Empty)
     {
-        
+
     }
 }

@@ -1,7 +1,7 @@
-﻿using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
-using Luthetus.Ide.ClassLib.DotNet.CSharp;
-using Luthetus.Ide.ClassLib.ComponentRenderers;
+﻿using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
+using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
+using Luthetus.CompilerServices.Lang.DotNet.CSharp;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementations;
 
@@ -82,10 +82,10 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
         };
 
         var newChildren = new List<TreeViewNoType>
-        {
-            treeViewCSharpProjectNugetPackageReferences,
-            treeViewCSharpProjectToProjectReferences
-        };
+    {
+        treeViewCSharpProjectNugetPackageReferences,
+        treeViewCSharpProjectToProjectReferences
+    };
 
         for (int i = 0; i < newChildren.Count; i++)
         {

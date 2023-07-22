@@ -1,6 +1,7 @@
-﻿using System.Text;
-using CliWrap;
+﻿using CliWrap;
 using CliWrap.Buffered;
+using System.Text;
+using Xunit;
 
 namespace Luthetus.Ide.Tests.Basics.Terminal;
 

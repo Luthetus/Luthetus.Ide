@@ -54,10 +54,10 @@ public class TreeViewLightWeightNugetPackageRecord : TreeViewWithType<LightWeigh
             LuthetusIdeComponentRenderers.TreeViewLightWeightNugetPackageRecordRendererType!,
             new Dictionary<string, object?>
             {
-                {
-                    nameof(ITreeViewLightWeightNugetPackageRecordRendererType.LightWeightNugetPackageRecord),
-                    Item
-                },
+            {
+                nameof(ITreeViewLightWeightNugetPackageRecordRendererType.LightWeightNugetPackageRecord),
+                Item
+            },
             });
     }
 

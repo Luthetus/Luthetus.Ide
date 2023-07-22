@@ -1,8 +1,8 @@
-﻿using Luthetus.Common.RazorLib.Dialog;
-using Luthetus.Common.RazorLib.Store.DialogCase;
-using Luthetus.Ide.ClassLib.Html;
-using Fluxor;
+﻿using Luthetus.Ide.ClassLib.Html;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
+using Fluxor;
+using Luthetus.Common.RazorLib.Dialog;
+using Luthetus.Common.RazorLib.Store.DialogCase;
 
 namespace Luthetus.Ide.ClassLib.Store.InputFileCase;
 
@@ -17,7 +17,7 @@ public partial record InputFileState
         {
             _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
         }
-        
+
         [EffectMethod]
         public Task HandleRequestInputFileStateFormAction(
             RequestInputFileStateFormAction requestInputFileStateFormAction,
@@ -37,8 +37,8 @@ public partial record InputFileState
                     HtmlFacts.Classes.DIALOG_PADDING_0)
                 {
                     IsResizable = true
-                }; 
-            
+                };
+
                 dispatcher.Dispatch(
                     new DialogRecordsCollection.RegisterAction(
                         inputFileDialog));

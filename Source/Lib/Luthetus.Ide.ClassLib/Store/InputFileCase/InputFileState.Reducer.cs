@@ -1,7 +1,7 @@
 ﻿using Fluxor;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.TreeViewImplementations;
-using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 
 namespace Luthetus.Ide.ClassLib.Store.InputFileCase;
 
@@ -29,7 +29,7 @@ public partial record InputFileState
                     .RequestInputFileStateFormAction.Message
             };
         }
-        
+
         [ReducerMethod]
         public static InputFileState ReduceSetSelectedTreeViewModelAction(
             InputFileState inInputFileState,
@@ -37,11 +37,11 @@ public partial record InputFileState
         {
             return inInputFileState with
             {
-                SelectedTreeViewModel = 
+                SelectedTreeViewModel =
                     setSelectedTreeViewModelAction.SelectedTreeViewModel
             };
         }
-        
+
         [ReducerMethod]
         public static InputFileState ReduceSetOpenedTreeViewModelAction(
             InputFileState inInputFileState,
@@ -56,10 +56,10 @@ public partial record InputFileState
                     setOpenedTreeViewModelAction.FileSystemProvider,
                     setOpenedTreeViewModelAction.EnvironmentProvider);
             }
-                
+
             return inInputFileState;
         }
-        
+
         [ReducerMethod]
         public static InputFileState ReduceSetSelectedInputFilePatternAction(
             InputFileState inInputFileState,
@@ -67,7 +67,7 @@ public partial record InputFileState
         {
             return inInputFileState with
             {
-                SelectedInputFilePattern = 
+                SelectedInputFilePattern =
                     setSelectedInputFilePatternAction.InputFilePattern
             };
         }
@@ -81,14 +81,14 @@ public partial record InputFileState
             {
                 return inInputFileState with
                 {
-                    IndexInHistory = inInputFileState.IndexInHistory - 
+                    IndexInHistory = inInputFileState.IndexInHistory -
                                              1,
                 };
             }
-            
+
             return inInputFileState;
         }
-        
+
         [ReducerMethod]
         public static InputFileState ReduceMoveForwardsInHistoryAction(
             InputFileState inInputFileState,
@@ -98,14 +98,14 @@ public partial record InputFileState
             {
                 return inInputFileState with
                 {
-                    IndexInHistory = inInputFileState.IndexInHistory + 
+                    IndexInHistory = inInputFileState.IndexInHistory +
                                              1,
                 };
             }
-            
+
             return inInputFileState;
         }
-        
+
         [ReducerMethod]
         public static InputFileState ReduceOpenParentDirectoryAction(
             InputFileState inInputFileState,
@@ -115,15 +115,15 @@ public partial record InputFileState
                 .OpenedTreeViewModelHistory[inInputFileState.IndexInHistory];
 
             TreeViewAbsoluteFilePath? parentDirectoryTreeViewModel = null;
-            
+
             // If has a ParentDirectory select it
             if (currentSelection.Item.Directories.Any())
             {
-                var parentDirectoryAbsoluteFilePath = 
+                var parentDirectoryAbsoluteFilePath =
                     currentSelection.Item.Directories.Last();
-                
+
                 parentDirectoryTreeViewModel = new TreeViewAbsoluteFilePath(
-                    (IAbsoluteFilePath)parentDirectoryAbsoluteFilePath, 
+                    (IAbsoluteFilePath)parentDirectoryAbsoluteFilePath,
                     openParentDirectoryAction.LuthetusIdeComponentRenderers,
                     openParentDirectoryAction.FileSystemProvider,
                     openParentDirectoryAction.EnvironmentProvider,
@@ -138,7 +138,7 @@ public partial record InputFileState
                     "ReduceOpenParentDirectoryActionTask",
                     "TODO: Describe this task",
                     false,
-                    _ =>  Task.CompletedTask,
+                    _ => Task.CompletedTask,
                     null,
                     CancellationToken.None);
 
@@ -158,7 +158,7 @@ public partial record InputFileState
 
             return inInputFileState;
         }
-        
+
         [ReducerMethod]
         public static InputFileState ReduceRefreshCurrentSelectionAction(
             InputFileState inInputFileState,
@@ -168,7 +168,7 @@ public partial record InputFileState
                 .OpenedTreeViewModelHistory[inInputFileState.IndexInHistory];
 
             currentSelection.Children.Clear();
-            
+
             var backgroundTask = new BackgroundTask(
                 async cancellationToken =>
                 {
@@ -177,7 +177,7 @@ public partial record InputFileState
                 "ReduceRefreshCurrentSelectionActionTask",
                 "TODO: Describe this task",
                 false,
-                _ =>  Task.CompletedTask,
+                _ => Task.CompletedTask,
                 null,
                 CancellationToken.None);
 
@@ -186,7 +186,7 @@ public partial record InputFileState
 
             return inInputFileState;
         }
-        
+
         [ReducerMethod]
         public static InputFileState ReduceSetSearchQueryAction(
             InputFileState inInputFileState,
@@ -195,14 +195,14 @@ public partial record InputFileState
             var openedTreeViewModel = inInputFileState
                 .OpenedTreeViewModelHistory[
                     inInputFileState.IndexInHistory];
-            
+
             foreach (var treeViewModel in openedTreeViewModel.Children)
             {
                 var treeViewAbsoluteFilePath = (TreeViewAbsoluteFilePath)treeViewModel;
-                
+
                 treeViewModel.IsHidden = !treeViewAbsoluteFilePath.Item.FilenameWithExtension
                     .Contains(
-                        setSearchQueryAction.SearchQuery, 
+                        setSearchQueryAction.SearchQuery,
                         StringComparison.InvariantCultureIgnoreCase);
             }
 

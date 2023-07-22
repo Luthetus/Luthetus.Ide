@@ -1,9 +1,9 @@
-using System.Collections.Immutable;
 using Luthetus.Ide.ClassLib.InputFile;
 using Luthetus.Ide.ClassLib.Store.InputFileCase;
-using Fluxor;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
+using Fluxor;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
+using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.Store.FolderExplorerCase;
 
@@ -42,9 +42,9 @@ public partial record FolderExplorerState(
                 },
                 new[]
                 {
-                    new InputFilePattern(
-                        "Directory",
-                        afp => afp.IsDirectory)
+                new InputFilePattern(
+                    "Directory",
+                    afp => afp.IsDirectory)
                 }.ToImmutableArray()));
     }
 }

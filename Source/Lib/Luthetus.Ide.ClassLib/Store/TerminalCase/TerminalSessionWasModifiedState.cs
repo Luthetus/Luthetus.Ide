@@ -1,6 +1,6 @@
-﻿using System.Collections.Immutable;
-using Fluxor;
+﻿using Fluxor;
 using Luthetus.Ide.ClassLib.State;
+using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.Store.TerminalCase;
 

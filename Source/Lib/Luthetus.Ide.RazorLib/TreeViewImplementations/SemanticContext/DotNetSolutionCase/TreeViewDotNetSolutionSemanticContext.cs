@@ -1,8 +1,8 @@
 ﻿using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Common.RazorLib.WatchWindow.TreeViewClasses;
+using Luthetus.CompilerServices.Lang.CSharp.SemanticContextCase.Implementations;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.SemanticContextCase.Implementations;
 using Luthetus.Ide.ClassLib.Store.SemanticContextCase;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.DotNetSolutionCase;
@@ -57,10 +57,10 @@ public class TreeViewDotNetSolutionSemanticContext : TreeViewWithType<(SemanticC
             typeof(TreeViewDotNetSolutionSemanticContextDisplay),
             new Dictionary<string, object?>
             {
-                {
-                    nameof(TreeViewDotNetSolutionSemanticContextDisplay.DotNetSolutionSemanticContext),
-                    Item.dotNetSolutionSemanticContext
-                },
+            {
+                nameof(TreeViewDotNetSolutionSemanticContextDisplay.DotNetSolutionSemanticContext),
+                Item.dotNetSolutionSemanticContext
+            },
             });
     }
 
@@ -77,17 +77,17 @@ public class TreeViewDotNetSolutionSemanticContext : TreeViewWithType<(SemanticC
         catch (Exception exception)
         {
             Children = new List<TreeViewNoType>
+        {
+            new TreeViewException(
+                exception,
+                false,
+                false,
+                LuthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
             {
-                new TreeViewException(
-                    exception,
-                    false,
-                    false,
-                    LuthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
-                {
-                    Parent = this,
-                    IndexAmongSiblings = 0,
-                }
-            };
+                Parent = this,
+                IndexAmongSiblings = 0,
+            }
+        };
         }
 
         TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();

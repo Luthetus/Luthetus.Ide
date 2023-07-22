@@ -1,30 +1,30 @@
-﻿using System.Collections.Immutable;
-using Luthetus.Common.RazorLib.ComponentRenderers.Types;
-using Luthetus.Common.RazorLib.Notification;
-using Luthetus.Common.RazorLib.Store.NotificationCase;
-using Luthetus.Ide.ClassLib.InputFile;
+﻿using Luthetus.Ide.ClassLib.InputFile;
 using Luthetus.Ide.ClassLib.Store.FileSystemCase;
 using Luthetus.Ide.ClassLib.Store.InputFileCase;
-using Luthetus.TextEditor.RazorLib;
-using Luthetus.TextEditor.RazorLib.Group;
-using Luthetus.TextEditor.RazorLib.Model;
-using Luthetus.TextEditor.RazorLib.ViewModel;
-using Fluxor;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.FileConstants;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
-using Luthetus.TextEditor.RazorLib.Lexing;
 using Luthetus.Ide.ClassLib.Store.SemanticContextCase;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.BinderCase;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
+using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.Group;
+using Fluxor;
+using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.Model;
+using Luthetus.TextEditor.RazorLib.Lexing;
+using Luthetus.Common.RazorLib.Notification;
+using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
-using Luthetus.TextEditor.RazorLib.CompilerServiceCase.XmlCase;
-using Luthetus.TextEditor.RazorLib.CompilerServiceCase.CssCase;
-using Luthetus.TextEditor.RazorLib.CompilerServiceCase.JsonCase;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.CSharp.CompilerServiceCase;
-using Luthetus.Ide.ClassLib.CompilerServices.Languages.Razor.CompilerServiceCase;
-using Luthetus.TextEditor.RazorLib.CompilerServiceCase.JavaScriptCase;
-using Luthetus.TextEditor.RazorLib.CompilerServiceCase.TypeScriptCase;
+using Luthetus.Common.RazorLib.Store.NotificationCase;
+using Luthetus.TextEditor.RazorLib.ViewModel;
+using Luthetus.CompilerServices.Lang.CSharp.BinderCase;
+using Luthetus.CompilerServices.Lang.Xml;
+using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
+using Luthetus.CompilerServices.Lang.Razor.CompilerServiceCase;
+using Luthetus.CompilerServices.Lang.Css;
+using Luthetus.CompilerServices.Lang.JavaScript;
+using Luthetus.CompilerServices.Lang.TypeScript;
+using Luthetus.CompilerServices.Lang.Json;
 
 namespace Luthetus.Ide.ClassLib.Store.EditorCase;
 
@@ -77,7 +77,6 @@ public partial class EditorState
             _jsonCompilerService = jsonCompilerService;
         }
 
-
         [EffectMethod]
         public Task HandleShowInputFileAction(
             ShowInputFileAction showInputFileAction,
@@ -101,9 +100,9 @@ public partial class EditorState
                     },
                     new[]
                     {
-                    new InputFilePattern(
-                        "File",
-                        afp => !afp.IsDirectory)
+                new InputFilePattern(
+                    "File",
+                    afp => !afp.IsDirectory)
                     }.ToImmutableArray()));
 
             return Task.CompletedTask;
@@ -114,7 +113,7 @@ public partial class EditorState
             OpenInEditorAction openInEditorAction,
             IDispatcher dispatcher)
         {
-            var editorTextEditorGroupKey = 
+            var editorTextEditorGroupKey =
                 openInEditorAction.EditorTextEditorGroupKey ?? EditorTextEditorGroupKey;
 
             if (openInEditorAction.AbsoluteFilePath is null ||
@@ -181,7 +180,7 @@ public partial class EditorState
                     _javaScriptCompilerService,
                     _typeScriptCompilerService,
                     _jsonCompilerService);
-                
+
                 var decorationMapper = ExtensionNoPeriodFacts.GetDecorationMapper(
                     absoluteFilePath.ExtensionNoPeriod);
 
@@ -227,54 +226,54 @@ public partial class EditorState
                     _luthetusIdeComponentRenderers.BooleanPromptOrCancelRendererType,
                     new Dictionary<string, object?>
                     {
+                {
+                    nameof(IBooleanPromptOrCancelRendererType.Message),
+                    "File contents were modified on disk"
+                },
+                {
+                    nameof(IBooleanPromptOrCancelRendererType.AcceptOptionTextOverride),
+                    "Reload"
+                },
+                {
+                    nameof(IBooleanPromptOrCancelRendererType.OnAfterAcceptAction),
+                    new Action(() =>
                     {
-                        nameof(IBooleanPromptOrCancelRendererType.Message),
-                        "File contents were modified on disk"
-                    },
+                        var backgroundTask = new BackgroundTask(
+                            async cancellationToken =>
+                            {
+                                dispatcher.Dispatch(
+                                    new NotificationRecordsCollection.DisposeAction(
+                                        notificationInformativeKey));
+
+                                var content = await _fileSystemProvider.File
+                                    .ReadAllTextAsync(inputFileAbsoluteFilePathString);
+
+                                _textEditorService.Model.Reload(
+                                    textEditorModel.ModelKey,
+                                    content,
+                                    fileLastWriteTime);
+
+                                await textEditorModel.ApplySyntaxHighlightingAsync();
+                            },
+                            "FileContentsWereModifiedOnDiskTask",
+                            "TODO: Describe this task",
+                            false,
+                            _ => Task.CompletedTask,
+                            dispatcher,
+                            CancellationToken.None);
+
+                        _commonBackgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
+                    })
+                },
+                {
+                    nameof(IBooleanPromptOrCancelRendererType.OnAfterDeclineAction),
+                    new Action(() =>
                     {
-                        nameof(IBooleanPromptOrCancelRendererType.AcceptOptionTextOverride),
-                        "Reload"
-                    },
-                    {
-                        nameof(IBooleanPromptOrCancelRendererType.OnAfterAcceptAction),
-                        new Action(() =>
-                        {
-                            var backgroundTask = new BackgroundTask(
-                                async cancellationToken =>
-                                {
-                                    dispatcher.Dispatch(
-                                        new NotificationRecordsCollection.DisposeAction(
-                                            notificationInformativeKey));
-
-                                    var content = await _fileSystemProvider.File
-                                        .ReadAllTextAsync(inputFileAbsoluteFilePathString);
-
-                                    _textEditorService.Model.Reload(
-                                        textEditorModel.ModelKey,
-                                        content,
-                                        fileLastWriteTime);
-
-                                    await textEditorModel.ApplySyntaxHighlightingAsync();
-                                },
-                                "FileContentsWereModifiedOnDiskTask",
-                                "TODO: Describe this task",
-                                false,
-                                _ => Task.CompletedTask,
-                                dispatcher,
-                                CancellationToken.None);
-
-                            _commonBackgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
-                        })
-                    },
-                    {
-                        nameof(IBooleanPromptOrCancelRendererType.OnAfterDeclineAction),
-                        new Action(() =>
-                        {
-                            dispatcher.Dispatch(
-                                new NotificationRecordsCollection.DisposeAction(
-                                    notificationInformativeKey));
-                        })
-                    },
+                        dispatcher.Dispatch(
+                            new NotificationRecordsCollection.DisposeAction(
+                                notificationInformativeKey));
+                    })
+                },
                     },
                     TimeSpan.FromSeconds(20),
                     null);

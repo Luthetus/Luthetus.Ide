@@ -1,5 +1,5 @@
-﻿using System.Collections.Immutable;
-using Luthetus.Ide.ClassLib.FileTemplates;
+﻿using Luthetus.Ide.ClassLib.FileTemplates;
+using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.ComponentRenderers.Types;
 

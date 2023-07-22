@@ -1,18 +1,18 @@
-﻿using System.Collections.Immutable;
-using System.Text;
+﻿using Fluxor;
+using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Dialog;
 using Luthetus.Common.RazorLib.Store.DialogCase;
-using Luthetus.Ide.ClassLib.InputFile;
-using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
-using Luthetus.Ide.ClassLib.Store.InputFileCase;
-using Luthetus.Ide.ClassLib.Store.TerminalCase;
 using Luthetus.Ide.ClassLib.CommandLine;
 using Luthetus.Ide.ClassLib.FileConstants;
 using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
+using Luthetus.Ide.ClassLib.InputFile;
+using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
+using Luthetus.Ide.ClassLib.Store.InputFileCase;
+using Luthetus.Ide.ClassLib.Store.TerminalCase;
 using Microsoft.AspNetCore.Components;
+using System.Collections.Immutable;
+using System.Text;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionForm;
 
@@ -90,9 +90,9 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                 },
                 new[]
                 {
-                    new InputFilePattern(
-                        "Directory",
-                        afp => afp.IsDirectory)
+                new InputFilePattern(
+                    "Directory",
+                    afp => afp.IsDirectory)
                 }.ToImmutableArray()));
     }
 

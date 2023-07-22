@@ -1,11 +1,11 @@
-﻿using Luthetus.Common.RazorLib.ComponentRenderers;
-using Luthetus.Common.RazorLib.ComponentRenderers.Types;
-using Luthetus.Common.RazorLib.Notification;
-using Luthetus.Common.RazorLib.Store.NotificationCase;
-using Fluxor;
-using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
-using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
+﻿using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.FileSystem.HostedServiceCase;
+using Luthetus.Common.RazorLib.ComponentRenderers;
+using Fluxor;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
+using Luthetus.Common.RazorLib.Notification;
+using Luthetus.Common.RazorLib.ComponentRenderers.Types;
+using Luthetus.Common.RazorLib.Store.NotificationCase;
 
 namespace Luthetus.Ide.ClassLib.Store.FileSystemCase;
 
@@ -28,7 +28,7 @@ public partial class FileSystemState
             _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
             _fileSystemBackgroundTaskQueue = fileSystemBackgroundTaskQueue;
         }
-        
+
         [EffectMethod]
         public Task HandleSaveFileAction(
             SaveFileAction saveFileAction,
@@ -74,10 +74,10 @@ public partial class FileSystemState
                                 _luthetusCommonComponentRenderers.InformativeNotificationRendererType,
                                 new Dictionary<string, object?>
                                 {
-                                    {
-                                        nameof(IInformativeNotificationRendererType.Message),
-                                        notificationMessage
-                                    },
+                                {
+                                    nameof(IInformativeNotificationRendererType.Message),
+                                    notificationMessage
+                                },
                                 },
                                 TimeSpan.FromSeconds(5),
                                 null);

@@ -1,16 +1,16 @@
-using System.Collections.Immutable;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
-using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.Notification;
 using Luthetus.Common.RazorLib.Store.NotificationCase;
-using Luthetus.Ide.ClassLib.Store.TerminalCase;
+using Luthetus.Ide.ClassLib.CommandLine;
+using Luthetus.Ide.ClassLib.Nuget;
 using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 using Luthetus.Ide.ClassLib.Store.NugetPackageManagerCase;
-using Luthetus.Ide.ClassLib.Nuget;
-using Luthetus.Ide.ClassLib.CommandLine;
+using Luthetus.Ide.ClassLib.Store.TerminalCase;
+using Microsoft.AspNetCore.Components;
+using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.NuGet;
 
@@ -113,10 +113,10 @@ public partial class NugetPackageDisplay : FluxorComponent
                         LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
                         new Dictionary<string, object?>
                         {
-                            {
-                                nameof(IInformativeNotificationRendererType.Message),
-                                $"{targetNugetPackage.Title}, {targetNugetVersion} was added to {targetProject.DisplayName}"
-                            },
+                        {
+                            nameof(IInformativeNotificationRendererType.Message),
+                            $"{targetNugetPackage.Title}, {targetNugetVersion} was added to {targetProject.DisplayName}"
+                        },
                         },
                         TimeSpan.FromSeconds(6),
                         null);

@@ -1,6 +1,6 @@
-using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.Ide.ClassLib.Context;
+using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.Store.ContextCase;
 
@@ -11,7 +11,7 @@ public record ContextStates(ImmutableArray<ContextRecord> ActiveContextRecords)
     {
         ActiveContextRecords = new[]
         {
-            ContextFacts.GlobalContext
-        }.ToImmutableArray();
+        ContextFacts.GlobalContext
+    }.ToImmutableArray();
     }
 }

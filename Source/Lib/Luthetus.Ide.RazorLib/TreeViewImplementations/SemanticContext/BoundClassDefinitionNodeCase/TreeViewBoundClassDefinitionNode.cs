@@ -2,8 +2,8 @@
 using Luthetus.Common.RazorLib.WatchWindow.TreeViewClasses;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
-using Luthetus.Ide.ClassLib.CompilerServices.Common.BinderCase.BoundNodes.Statements;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.ISyntaxCase;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase.Syntax.BoundNodes.Statements;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.BoundClassDefinitionNodeCase;
 
@@ -48,10 +48,10 @@ public class TreeViewBoundClassDefinitionNode : TreeViewWithType<BoundClassDefin
             typeof(TreeViewBoundClassDefinitionNodeDisplay),
             new Dictionary<string, object?>
             {
-                {
-                    nameof(TreeViewBoundClassDefinitionNodeDisplay.BoundClassDefinitionNode),
-                    Item
-                },
+            {
+                nameof(TreeViewBoundClassDefinitionNodeDisplay.BoundClassDefinitionNode),
+                Item
+            },
             });
     }
 
@@ -102,17 +102,17 @@ public class TreeViewBoundClassDefinitionNode : TreeViewWithType<BoundClassDefin
         catch (Exception exception)
         {
             Children = new List<TreeViewNoType>
+        {
+            new TreeViewException(
+                exception,
+                false,
+                false,
+                LuthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
             {
-                new TreeViewException(
-                    exception,
-                    false,
-                    false,
-                    LuthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
-                {
-                    Parent = this,
-                    IndexAmongSiblings = 0,
-                }
-            };
+                Parent = this,
+                IndexAmongSiblings = 0,
+            }
+        };
         }
 
         TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();

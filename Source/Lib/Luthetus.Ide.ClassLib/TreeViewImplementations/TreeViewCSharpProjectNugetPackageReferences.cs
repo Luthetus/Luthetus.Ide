@@ -1,9 +1,9 @@
-﻿using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
-using Luthetus.Ide.ClassLib.DotNet.CSharp;
-using Luthetus.TextEditor.RazorLib.Analysis.Html.SyntaxActors;
-using Luthetus.Ide.ClassLib.ComponentRenderers;
+﻿using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.Nuget;
+using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
+using Luthetus.CompilerServices.Lang.DotNet.CSharp;
+using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxActors;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementations;
 
@@ -65,7 +65,7 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
             Item.CSharpProjectNamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString());
 
         var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
-            new (Item.CSharpProjectNamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString()),
+            new(Item.CSharpProjectNamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString()),
             content);
 
         var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;

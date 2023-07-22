@@ -1,4 +1,5 @@
-﻿using Luthetus.Common.RazorLib.ComponentRenderers.Types;
+﻿using Fluxor;
+using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.Keyboard;
 using Luthetus.Common.RazorLib.Menu;
 using Luthetus.Common.RazorLib.Notification;
@@ -11,10 +12,9 @@ using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.Menu;
 using Luthetus.Ide.ClassLib.Namespaces;
+using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 using Luthetus.Ide.ClassLib.Store.EditorCase;
 using Luthetus.Ide.ClassLib.TreeViewImplementations;
-using Fluxor;
-using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 
 namespace Luthetus.Ide.RazorLib.SolutionExplorer;
 
@@ -142,10 +142,10 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
                 _luthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
                 new Dictionary<string, object?>
                 {
-                    {
-                        nameof(IInformativeNotificationRendererType.Message),
-                        $"Copied: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
-                    },
+                {
+                    nameof(IInformativeNotificationRendererType.Message),
+                    $"Copied: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
+                },
                 },
                 TimeSpan.FromSeconds(3),
                 null);
@@ -172,10 +172,10 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
                 _luthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
                 new Dictionary<string, object?>
                 {
-                    {
-                        nameof(IInformativeNotificationRendererType.Message),
-                        $"Cut: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
-                    },
+                {
+                    nameof(IInformativeNotificationRendererType.Message),
+                    $"Cut: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
+                },
                 },
                 TimeSpan.FromSeconds(3),
                 null);

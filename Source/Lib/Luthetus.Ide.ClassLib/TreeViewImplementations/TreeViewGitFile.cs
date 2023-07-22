@@ -48,10 +48,10 @@ public class TreeViewGitFile : TreeViewWithType<GitFile>
             LuthetusIdeComponentRenderers.TreeViewGitFileRendererType!,
             new Dictionary<string, object?>
             {
-                {
-                    nameof(ITreeViewGitFileRendererType.TreeViewGitFile),
-                    this
-                },
+            {
+                nameof(ITreeViewGitFileRendererType.TreeViewGitFile),
+                this
+            },
             });
     }
 

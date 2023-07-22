@@ -1,8 +1,8 @@
-﻿using Luthetus.Common.RazorLib.Dimensions;
+﻿using Fluxor;
+using Luthetus.Common.RazorLib.Dimensions;
 using Luthetus.Common.RazorLib.Resize;
-using Luthetus.Ide.ClassLib.Store.PanelCase;
 using Luthetus.Ide.ClassLib.Dimensions;
-using Fluxor;
+using Luthetus.Ide.ClassLib.Store.PanelCase;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.Pages;
@@ -21,24 +21,24 @@ public partial class EditorPage : ComponentBase
 
         bodyHeight.DimensionUnits.AddRange(new[]
         {
-            new DimensionUnit
-            {
-                Value = 78,
-                DimensionUnitKind = DimensionUnitKind.Percentage
-            },
-            new DimensionUnit
-            {
-                Value = ResizableRow.RESIZE_HANDLE_HEIGHT_IN_PIXELS / 2,
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                DimensionOperatorKind = DimensionOperatorKind.Subtract
-            },
-            new DimensionUnit
-            {
-                Value = SizeFacts.Bstudio.Header.Height.Value / 2,
-                DimensionUnitKind = SizeFacts.Bstudio.Header.Height.DimensionUnitKind,
-                DimensionOperatorKind = DimensionOperatorKind.Subtract
-            }
-        });
+        new DimensionUnit
+        {
+            Value = 78,
+            DimensionUnitKind = DimensionUnitKind.Percentage
+        },
+        new DimensionUnit
+        {
+            Value = ResizableRow.RESIZE_HANDLE_HEIGHT_IN_PIXELS / 2,
+            DimensionUnitKind = DimensionUnitKind.Pixels,
+            DimensionOperatorKind = DimensionOperatorKind.Subtract
+        },
+        new DimensionUnit
+        {
+            Value = SizeFacts.Bstudio.Header.Height.Value / 2,
+            DimensionUnitKind = SizeFacts.Bstudio.Header.Height.DimensionUnitKind,
+            DimensionOperatorKind = DimensionOperatorKind.Subtract
+        }
+    });
 
         base.OnInitialized();
     }

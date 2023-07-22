@@ -1,8 +1,8 @@
-﻿using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
-using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
+﻿using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
 using Luthetus.Ide.ClassLib.FileConstants;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.Namespaces;
+using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementations.Helper;
 
@@ -13,15 +13,15 @@ public partial class TreeViewHelper
     {
         if (razorMarkupTreeView.Item is null)
             return new();
-        
+
         var parentDirectoryOfRazorMarkup = (IAbsoluteFilePath)
             razorMarkupTreeView.Item.AbsoluteFilePath.Directories
                 .Last();
-        
+
         var parentAbsoluteFilePathString = parentDirectoryOfRazorMarkup
             .GetAbsoluteFilePathString();
 
-        var childFileTreeViewModels = 
+        var childFileTreeViewModels =
             (await razorMarkupTreeView.FileSystemProvider
                 .Directory.GetFilesAsync(parentAbsoluteFilePathString))
                 .Select(x =>
@@ -32,7 +32,7 @@ public partial class TreeViewHelper
                         razorMarkupTreeView.EnvironmentProvider);
 
                     var namespaceString = razorMarkupTreeView.Item.Namespace;
-                    
+
                     return (TreeViewNoType)new TreeViewNamespacePath(
                         new NamespacePath(
                             namespaceString,
@@ -53,7 +53,7 @@ public partial class TreeViewHelper
 
         return razorMarkupTreeView.Children;
     }
-    
+
     public static void RazorMarkupFindRelatedFiles(
         TreeViewNamespacePath razorMarkupTreeView,
         List<TreeViewNoType> siblingsAndSelfTreeViews)
@@ -62,19 +62,19 @@ public partial class TreeViewHelper
             return;
 
         razorMarkupTreeView.Children.Clear();
-        
+
         // .razor files look to remove .razor.cs and .razor.css files
 
         var matches = new[]
         {
-            razorMarkupTreeView.Item.AbsoluteFilePath.FilenameWithExtension +
-                '.' + 
-                ExtensionNoPeriodFacts.C_SHARP_CLASS,
-            razorMarkupTreeView.Item.AbsoluteFilePath.FilenameWithExtension +
-                '.' + 
-                ExtensionNoPeriodFacts.CSS
-        };
-        
+        razorMarkupTreeView.Item.AbsoluteFilePath.FilenameWithExtension +
+            '.' +
+            ExtensionNoPeriodFacts.C_SHARP_CLASS,
+        razorMarkupTreeView.Item.AbsoluteFilePath.FilenameWithExtension +
+            '.' +
+            ExtensionNoPeriodFacts.CSS
+    };
+
         var relatedFiles = siblingsAndSelfTreeViews.Where(x =>
                 x.UntypedItem is NamespacePath namespacePath &&
                 matches.Contains(namespacePath.AbsoluteFilePath.FilenameWithExtension))
@@ -86,7 +86,7 @@ public partial class TreeViewHelper
         for (var index = 0; index < relatedFiles.Length; index++)
         {
             var relatedFile = relatedFiles[index];
-            
+
             siblingsAndSelfTreeViews.Remove(relatedFile);
 
             relatedFile.Parent = razorMarkupTreeView;
@@ -97,7 +97,7 @@ public partial class TreeViewHelper
         }
 
         razorMarkupTreeView.IsExpandable = true;
-        
+
         razorMarkupTreeView.TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
     }
 }

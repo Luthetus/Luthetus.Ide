@@ -7,8 +7,8 @@ namespace Luthetus.Ide.ClassLib.Store.InputFileCase;
 public partial record InputFileState
 {
     public bool CanMoveBackwardsInHistory => IndexInHistory > 0;
-    
-    public bool CanMoveForwardsInHistory => IndexInHistory < 
+
+    public bool CanMoveForwardsInHistory => IndexInHistory <
         OpenedTreeViewModelHistory.Count - 1;
 
     public TreeViewAbsoluteFilePath? GetOpenedTreeView()
@@ -16,10 +16,10 @@ public partial record InputFileState
         if (IndexInHistory == -1 ||
             IndexInHistory >= OpenedTreeViewModelHistory.Count)
             return null;
-        
+
         return OpenedTreeViewModelHistory[IndexInHistory];
     }
-    
+
     private static InputFileState NewOpenedTreeViewModelHistory(
         InputFileState inInputFileState,
         TreeViewAbsoluteFilePath selectedTreeViewModel,
@@ -38,13 +38,13 @@ public partial record InputFileState
         selectionClone.IsExpanded = true;
 
         selectionClone.Children = selectedTreeViewModel.Children;
-        
-        var nextHistory = 
+
+        var nextHistory =
             inInputFileState.OpenedTreeViewModelHistory;
-             
+
         // If not at end of history the more recent history is
         // replaced by the to be selected TreeViewModel
-        if (inInputFileState.IndexInHistory != 
+        if (inInputFileState.IndexInHistory !=
             inInputFileState.OpenedTreeViewModelHistory.Count - 1)
         {
             var historyCount = inInputFileState.OpenedTreeViewModelHistory.Count;
@@ -54,10 +54,10 @@ public partial record InputFileState
             nextHistory = inInputFileState.OpenedTreeViewModelHistory
                 .RemoveRange(startingIndexToRemove, countToRemove);
         }
-            
+
         nextHistory = nextHistory
             .Add(selectionClone);
-            
+
         return inInputFileState with
         {
             IndexInHistory = inInputFileState.IndexInHistory + 1,

@@ -1,10 +1,10 @@
-﻿using Luthetus.Common.RazorLib.Store.NotificationCase;
+﻿using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.Notification;
+using Luthetus.Common.RazorLib.Store.NotificationCase;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 
 namespace Luthetus.Ide.ClassLib.FileSystem.HostedServiceCase;
 
@@ -66,10 +66,10 @@ public class FileSystemQueuedHostedService : BackgroundService
                             _luthetusCommonComponentRenderers.ErrorNotificationRendererType,
                             new Dictionary<string, object?>
                             {
-                                {
-                                    nameof(IErrorNotificationRendererType.Message),
-                                    string.Format($"backgroundTask.Name => {ex.Message}")
-                                }
+                            {
+                                nameof(IErrorNotificationRendererType.Message),
+                                string.Format($"backgroundTask.Name => {ex.Message}")
+                            }
                             },
                             null,
                             IErrorNotificationRendererType.CSS_CLASS_STRING);
