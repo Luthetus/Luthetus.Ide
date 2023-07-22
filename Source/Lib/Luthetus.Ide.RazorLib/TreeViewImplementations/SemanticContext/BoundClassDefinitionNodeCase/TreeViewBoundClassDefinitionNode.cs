@@ -1,7 +1,7 @@
-﻿using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
+﻿using Luthetus.Common.RazorLib.FileSystem.Interfaces;
+using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Common.RazorLib.WatchWindow.TreeViewClasses;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
-using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.SemanticContext.ISyntaxCase;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase.Syntax.BoundNodes.Statements;
 
@@ -55,11 +55,8 @@ public class TreeViewBoundClassDefinitionNode : TreeViewWithType<BoundClassDefin
             });
     }
 
-    public override async Task LoadChildrenAsync()
+    public override Task LoadChildrenAsync()
     {
-        if (Item is null)
-            return;
-
         try
         {
             var newChildren = new List<TreeViewNoType>();
@@ -116,6 +113,7 @@ public class TreeViewBoundClassDefinitionNode : TreeViewWithType<BoundClassDefin
         }
 
         TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
+        return Task.CompletedTask;
     }
 
     public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)

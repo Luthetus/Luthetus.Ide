@@ -7,9 +7,6 @@ using Luthetus.Ide.ClassLib.CommandLine;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
 using Luthetus.Ide.ClassLib.FileConstants;
-using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
-using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
-using Luthetus.Ide.ClassLib.Namespaces;
 using Luthetus.Ide.ClassLib.TreeViewImplementations;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
 using Luthetus.Common.RazorLib.Menu;
@@ -20,6 +17,9 @@ using Luthetus.Common.RazorLib.Notification;
 using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.Store.NotificationCase;
 using Luthetus.Common.RazorLib.Clipboard;
+using Luthetus.Common.RazorLib.Namespaces;
+using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
+using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 
 namespace Luthetus.Ide.ClassLib.Menu;
 
@@ -243,7 +243,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
     }
 
     public MenuOptionRecord RemoveCSharpProjectReferenceFromSolution(
-        TreeViewSolution? treeViewSolution,
+        TreeViewSolution treeViewSolution,
         TreeViewNamespacePath projectNode,
         TerminalSession terminalSession,
         IDispatcher dispatcher,
@@ -257,7 +257,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
             {
             {
                 nameof(IRemoveCSharpProjectFromSolutionRendererType.AbsoluteFilePath),
-                projectNode.Item?.AbsoluteFilePath
+                projectNode.Item.AbsoluteFilePath
             },
             {
                 nameof(IDeleteFileFormRendererType.OnAfterSubmitAction),
@@ -739,8 +739,8 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
     }
 
     private void PerformRemoveCSharpProjectReferenceFromSolutionAction(
-        TreeViewSolution? treeViewSolution,
-        TreeViewNamespacePath? projectNode,
+        TreeViewSolution treeViewSolution,
+        TreeViewNamespacePath projectNode,
         TerminalSession terminalSession,
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
@@ -748,39 +748,27 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         var backgroundTask = new BackgroundTask(
             async cancellationToken =>
             {
-                if (treeViewSolution?.Item is not null &&
-                    projectNode?.Item is not null)
-                {
-                    var workingDirectory = (IAbsoluteFilePath)treeViewSolution
-                        .Item.NamespacePath.AbsoluteFilePath.Directories.Last();
+                var workingDirectory = (IAbsoluteFilePath)treeViewSolution
+                    .Item.NamespacePath.AbsoluteFilePath.Directories.Last();
 
-                    var removeCSharpProjectReferenceFromSolutionCommandString =
-                        DotNetCliFacts.FormatRemoveCSharpProjectReferenceFromSolutionAction(
-                            treeViewSolution.Item.NamespacePath.AbsoluteFilePath
-                                .GetAbsoluteFilePathString(),
-                            projectNode.Item.AbsoluteFilePath
-                                .GetAbsoluteFilePathString());
+                var removeCSharpProjectReferenceFromSolutionCommandString =
+                    DotNetCliFacts.FormatRemoveCSharpProjectReferenceFromSolutionAction(
+                        treeViewSolution.Item.NamespacePath.AbsoluteFilePath
+                            .GetAbsoluteFilePathString(),
+                        projectNode.Item.AbsoluteFilePath
+                            .GetAbsoluteFilePathString());
 
-                    var removeCSharpProjectReferenceFromSolutionCommand = new TerminalCommand(
-                        TerminalCommandKey.NewTerminalCommandKey(),
-                        removeCSharpProjectReferenceFromSolutionCommandString.targetFileName,
-                        removeCSharpProjectReferenceFromSolutionCommandString.arguments,
-                        workingDirectory.GetAbsoluteFilePathString(),
-                        CancellationToken.None,
-                        async () => await onAfterCompletion.Invoke());
+                var removeCSharpProjectReferenceFromSolutionCommand = new TerminalCommand(
+                    TerminalCommandKey.NewTerminalCommandKey(),
+                    removeCSharpProjectReferenceFromSolutionCommandString.targetFileName,
+                    removeCSharpProjectReferenceFromSolutionCommandString.arguments,
+                    workingDirectory.GetAbsoluteFilePathString(),
+                    CancellationToken.None,
+                    async () => await onAfterCompletion.Invoke());
 
-                    await terminalSession
-                        .EnqueueCommandAsync(
-                            removeCSharpProjectReferenceFromSolutionCommand);
-                }
-                else
-                {
-                    // Do not combine this "onAfterCompletion.Invoke" with the if statement's.
-                    // One awaits a terminal command.
-                    // The other does not.
-                    // They cannot combine. 
-                    await onAfterCompletion.Invoke();
-                }
+                await terminalSession
+                    .EnqueueCommandAsync(
+                        removeCSharpProjectReferenceFromSolutionCommand);
             },
             "PerformRemoveCSharpProjectReferenceFromSolutionActionTask",
             "TODO: Describe this task",
@@ -799,14 +787,8 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         Func<Task> onAfterCompletion)
     {
         var backgroundTask = new BackgroundTask(
-            async cancellationToken =>
+            cancellationToken =>
             {
-                if (projectReceivingReference.Item is null)
-                {
-                    await onAfterCompletion.Invoke();
-                    return;
-                }
-
                 var requestInputFileStateFormAction = new InputFileState.RequestInputFileStateFormAction(
                     $"Add Project reference to {projectReceivingReference.Item.AbsoluteFilePath.FilenameWithExtension}",
                     async referencedProject =>
@@ -876,6 +858,8 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
 
                 dispatcher.Dispatch(
                     requestInputFileStateFormAction);
+
+                return Task.CompletedTask;
             },
             "PerformAddProjectToProjectReferenceActionTask",
             "TODO: Describe this task",
@@ -896,12 +880,6 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         var backgroundTask = new BackgroundTask(
             async cancellationToken =>
             {
-                if (treeViewCSharpProjectToProjectReference.Item is null)
-                {
-                    await onAfterCompletion.Invoke();
-                    return;
-                }
-
                 var interpolatedCommand = DotNetCliFacts
                     .FormatRemoveProjectToProjectReference(
                         treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsoluteFilePath
@@ -962,14 +940,8 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         Func<Task> onAfterCompletion)
     {
         var backgroundTask = new BackgroundTask(
-            async cancellationToken =>
+            cancellationToken =>
             {
-                if (treeViewProjectToMove.Item is null)
-                {
-                    await onAfterCompletion.Invoke();
-                    return;
-                }
-
                 var moveProjectToSolutionFolderCommand = DotNetCliFacts
                     .FormatMoveProjectToSolutionFolder(
                         treeViewSolution.Item.NamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
@@ -1017,6 +989,8 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                         await terminalSession
                             .EnqueueCommandAsync(moveProjectToSolutionFolderTerminalCommand);
                     });
+
+                return Task.CompletedTask;
             },
             "PerformMoveProjectToSolutionFolderActionTask",
             "TODO: Describe this task",
@@ -1038,12 +1012,6 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         var backgroundTask = new BackgroundTask(
             async cancellationToken =>
             {
-                if (treeViewLightWeightNugetPackageRecord.Item is null)
-                {
-                    await onAfterCompletion.Invoke();
-                    return;
-                }
-
                 var interpolatedCommand = DotNetCliFacts
                     .FormatRemoveNugetPackageReferenceFromProject(
                         modifyProjectNamespacePath.AbsoluteFilePath

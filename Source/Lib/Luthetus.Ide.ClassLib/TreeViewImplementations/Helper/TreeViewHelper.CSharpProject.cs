@@ -1,9 +1,9 @@
-﻿using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
-using Luthetus.Ide.ClassLib.Namespaces;
-using Luthetus.Ide.ClassLib.FileConstants;
-using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
+﻿using Luthetus.Ide.ClassLib.FileConstants;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.CompilerServices.Lang.DotNet.CSharp;
+using Luthetus.Common.RazorLib.FileSystem.Interfaces;
+using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
+using Luthetus.Common.RazorLib.Namespaces;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementations.Helper;
 
@@ -12,9 +12,6 @@ public partial class TreeViewHelper
     public static async Task<List<TreeViewNoType>> LoadChildrenForCSharpProjectAsync(
         TreeViewNamespacePath cSharpProjectTreeView)
     {
-        if (cSharpProjectTreeView.Item is null)
-            return new();
-
         var parentDirectoryOfCSharpProject = (IAbsoluteFilePath)
             cSharpProjectTreeView.Item.AbsoluteFilePath.Directories
                 .Last();
@@ -64,9 +61,6 @@ public partial class TreeViewHelper
 
         foreach (var directoryTreeViewModel in childDirectoryTreeViewModels)
         {
-            if (directoryTreeViewModel.Item is null)
-                continue;
-
             if (uniqueDirectories.Any(unique => directoryTreeViewModel
                     .Item.AbsoluteFilePath.FileNameNoExtension == unique))
             {
@@ -79,11 +73,11 @@ public partial class TreeViewHelper
         }
 
         foundUniqueDirectories = foundUniqueDirectories
-            .OrderBy(x => x.Item?.AbsoluteFilePath.FileNameNoExtension ?? string.Empty)
+            .OrderBy(x => x.Item.AbsoluteFilePath.FileNameNoExtension)
             .ToList();
 
         foundDefaultDirectories = foundDefaultDirectories
-            .OrderBy(x => x.Item?.AbsoluteFilePath.FileNameNoExtension ?? string.Empty)
+            .OrderBy(x => x.Item.AbsoluteFilePath.FileNameNoExtension)
             .ToList();
 
         var childFileTreeViewModels =

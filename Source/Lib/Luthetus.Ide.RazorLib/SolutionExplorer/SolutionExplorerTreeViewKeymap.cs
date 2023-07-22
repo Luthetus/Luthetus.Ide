@@ -1,7 +1,9 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Types;
+using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Keyboard;
 using Luthetus.Common.RazorLib.Menu;
+using Luthetus.Common.RazorLib.Namespaces;
 using Luthetus.Common.RazorLib.Notification;
 using Luthetus.Common.RazorLib.Store.NotificationCase;
 using Luthetus.Common.RazorLib.TreeView;
@@ -9,9 +11,7 @@ using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.Common.RazorLib.TreeView.Events;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
-using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.Menu;
-using Luthetus.Ide.ClassLib.Namespaces;
 using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 using Luthetus.Ide.ClassLib.Store.EditorCase;
 using Luthetus.Ide.ClassLib.TreeViewImplementations;
@@ -193,8 +193,7 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
         if (activeNode is null ||
-            activeNode is not TreeViewNamespacePath treeViewNamespacePath ||
-            treeViewNamespacePath.Item is null)
+            activeNode is not TreeViewNamespacePath treeViewNamespacePath)
         {
             return Task.CompletedTask;
         }
@@ -213,8 +212,7 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
         if (activeNode is null ||
-            activeNode is not TreeViewNamespacePath treeViewNamespacePath ||
-            treeViewNamespacePath.Item is null)
+            activeNode is not TreeViewNamespacePath treeViewNamespacePath)
         {
             return Task.CompletedTask;
         }
@@ -286,7 +284,7 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
         return Task.CompletedTask;
     }
 
-    private async Task InvokeOpenInEditorAsync(
+    private Task InvokeOpenInEditorAsync(
         ITreeViewCommandParameter treeViewCommandParameter,
         bool shouldSetFocusToEditor)
     {
@@ -296,12 +294,14 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
             activeNode is not TreeViewNamespacePath treeViewNamespacePath ||
             treeViewNamespacePath.Item is null)
         {
-            return;
+            return Task.CompletedTask;
         }
 
         _dispatcher.Dispatch(new EditorState.OpenInEditorAction(
             treeViewNamespacePath.Item.AbsoluteFilePath,
             shouldSetFocusToEditor));
+
+        return Task.CompletedTask;
     }
 
     private async Task ReloadTreeViewModel(

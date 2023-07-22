@@ -1,7 +1,7 @@
 ﻿using Luthetus.Ide.ClassLib.ComponentRenderers;
-using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.CompilerServices.Lang.DotNet.CSharp;
+using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementations;
 
@@ -31,8 +31,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
     public override bool Equals(object? obj)
     {
         if (obj is null ||
-            obj is not TreeViewCSharpProjectDependencies treeViewCSharpProjectDependencies ||
-            Item is null)
+            obj is not TreeViewCSharpProjectDependencies)
         {
             return false;
         }
@@ -42,9 +41,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
 
     public override int GetHashCode()
     {
-        return Item?
-            .GetHashCode()
-               ?? default;
+        return Item.GetHashCode();
     }
 
     public override TreeViewRenderer GetTreeViewRenderer()
@@ -54,11 +51,8 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
             null);
     }
 
-    public override async Task LoadChildrenAsync()
+    public override Task LoadChildrenAsync()
     {
-        if (Item is null)
-            return;
-
         var treeViewCSharpProjectNugetPackageReferences = new TreeViewCSharpProjectNugetPackageReferences(
             new CSharpProjectNugetPackageReferences(Item.CSharpProjectNamespacePath),
             LuthetusIdeComponentRenderers,
@@ -98,6 +92,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
 
         Children = newChildren;
         TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
+        return Task.CompletedTask;
     }
 
     public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)

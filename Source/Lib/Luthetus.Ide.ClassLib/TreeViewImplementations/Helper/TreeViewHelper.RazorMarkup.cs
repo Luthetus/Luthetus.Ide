@@ -1,8 +1,8 @@
-﻿using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
-using Luthetus.Ide.ClassLib.FileConstants;
-using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
-using Luthetus.Ide.ClassLib.Namespaces;
+﻿using Luthetus.Ide.ClassLib.FileConstants;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
+using Luthetus.Common.RazorLib.Namespaces;
+using Luthetus.Common.RazorLib.FileSystem.Interfaces;
+using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementations.Helper;
 
@@ -58,9 +58,6 @@ public partial class TreeViewHelper
         TreeViewNamespacePath razorMarkupTreeView,
         List<TreeViewNoType> siblingsAndSelfTreeViews)
     {
-        if (razorMarkupTreeView.Item is null)
-            return;
-
         razorMarkupTreeView.Children.Clear();
 
         // .razor files look to remove .razor.cs and .razor.css files

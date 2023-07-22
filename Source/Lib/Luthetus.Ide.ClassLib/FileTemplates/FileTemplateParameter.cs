@@ -1,5 +1,5 @@
-﻿using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
-using Luthetus.Ide.ClassLib.Namespaces;
+﻿using Luthetus.Common.RazorLib.FileSystem.Interfaces;
+using Luthetus.Common.RazorLib.Namespaces;
 
 namespace Luthetus.Ide.ClassLib.FileTemplates;
 

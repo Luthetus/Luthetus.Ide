@@ -1,4 +1,4 @@
-﻿using Luthetus.Ide.ClassLib.Namespaces;
+﻿using Luthetus.Common.RazorLib.Namespaces;
 
 namespace Luthetus.Ide.ClassLib.ComponentRenderers.Types;
 

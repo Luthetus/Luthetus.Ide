@@ -5,9 +5,9 @@ using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.ComponentRenderers.Types;
+using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Notification;
 using Luthetus.Common.RazorLib.Store.NotificationCase;
-using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.State;
 using Luthetus.TextEditor.RazorLib.Model;
 using Luthetus.TextEditor.RazorLib.ViewModel;
@@ -82,7 +82,7 @@ public class TerminalSession
         return null;
     }
 
-    public async Task EnqueueCommandAsync(TerminalCommand terminalCommand)
+    public Task EnqueueCommandAsync(TerminalCommand terminalCommand)
     {
         var backgroundTask = new BackgroundTask(
             async cancellationToken =>
@@ -200,6 +200,7 @@ public class TerminalSession
             CancellationToken.None);
 
         _commonBackgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
+        return Task.CompletedTask;
     }
 
     public void ClearStandardOut()

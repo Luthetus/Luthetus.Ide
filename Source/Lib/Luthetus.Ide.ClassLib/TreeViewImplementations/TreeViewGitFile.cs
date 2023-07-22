@@ -25,21 +25,18 @@ public class TreeViewGitFile : TreeViewWithType<GitFile>
     public override bool Equals(object? obj)
     {
         if (obj is null ||
-            obj is not TreeViewGitFile treeViewGitFile ||
-            treeViewGitFile.Item is null ||
-            Item is null)
+            obj is not TreeViewGitFile treeViewGitFile)
         {
             return false;
         }
 
-        return treeViewGitFile.Item.AbsoluteFilePath
-                   .GetAbsoluteFilePathString() ==
+        return treeViewGitFile.Item.AbsoluteFilePath.GetAbsoluteFilePathString() ==
                Item.AbsoluteFilePath.GetAbsoluteFilePathString();
     }
 
     public override int GetHashCode()
     {
-        return Item?.AbsoluteFilePath.GetAbsoluteFilePathString().GetHashCode() ?? default;
+        return Item.AbsoluteFilePath.GetAbsoluteFilePathString().GetHashCode();
     }
 
     public override TreeViewRenderer GetTreeViewRenderer()

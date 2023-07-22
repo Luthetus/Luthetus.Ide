@@ -1,11 +1,11 @@
 ﻿using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Dialog;
+using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
+using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Store.DialogCase;
 using Luthetus.Ide.ClassLib.CommandLine;
 using Luthetus.Ide.ClassLib.FileConstants;
-using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
-using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.InputFile;
 using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 using Luthetus.Ide.ClassLib.Store.InputFileCase;
@@ -114,7 +114,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
             localFormattedCommand.arguments,
             _parentDirectoryName,
             _newDotNetSolutionCancellationTokenSource.Token,
-            async () =>
+            () =>
             {
                 // Close Dialog
                 Dispatcher.Dispatch(
@@ -147,6 +147,8 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                 Dispatcher.Dispatch(
                     new DotNetSolutionState.SetDotNetSolutionAction(
                         solutionAbsoluteFilePath));
+
+                return Task.CompletedTask;
             });
 
         var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[

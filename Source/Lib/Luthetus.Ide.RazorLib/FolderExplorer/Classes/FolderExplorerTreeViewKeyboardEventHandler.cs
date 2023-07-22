@@ -1,5 +1,6 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Types;
+using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Keyboard;
 using Luthetus.Common.RazorLib.Menu;
 using Luthetus.Common.RazorLib.Notification;
@@ -9,7 +10,6 @@ using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.Common.RazorLib.TreeView.Events;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
-using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.Menu;
 using Luthetus.Ide.ClassLib.Store.EditorCase;
 using Luthetus.Ide.ClassLib.Store.FolderExplorerCase;
@@ -193,8 +193,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
         if (activeNode is null ||
-            activeNode is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePathPath ||
-            treeViewAbsoluteFilePathPath.Item is null)
+            activeNode is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePathPath)
         {
             return Task.CompletedTask;
         }
@@ -213,8 +212,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
         if (activeNode is null ||
-            activeNode is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePathPath ||
-            treeViewAbsoluteFilePathPath.Item is null)
+            activeNode is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePathPath)
         {
             return Task.CompletedTask;
         }
@@ -268,8 +266,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
         if (activeNode is null ||
-            activeNode is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePathPath ||
-            treeViewAbsoluteFilePathPath.Item is null)
+            activeNode is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePathPath)
         {
             return Task.CompletedTask;
         }
@@ -293,8 +290,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
         if (activeNode is null ||
-            activeNode is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePathPath ||
-            treeViewAbsoluteFilePathPath.Item is null)
+            activeNode is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePathPath)
         {
             return Task.CompletedTask;
         }

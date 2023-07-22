@@ -1,7 +1,7 @@
 ﻿using Fluxor;
+using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Menu;
-using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
-using Luthetus.Ide.ClassLib.Namespaces;
+using Luthetus.Common.RazorLib.Namespaces;
 using Luthetus.Ide.ClassLib.Store.TerminalCase;
 using Luthetus.Ide.ClassLib.TreeViewImplementations;
 
@@ -43,7 +43,7 @@ public interface ICommonMenuOptionsFactory
         Func<Task> onAfterCompletion);
 
     public MenuOptionRecord RemoveCSharpProjectReferenceFromSolution(
-        TreeViewSolution? solutionNode,
+        TreeViewSolution solutionNode,
         TreeViewNamespacePath projectNode,
         TerminalSession terminalSession,
         IDispatcher dispatcher,

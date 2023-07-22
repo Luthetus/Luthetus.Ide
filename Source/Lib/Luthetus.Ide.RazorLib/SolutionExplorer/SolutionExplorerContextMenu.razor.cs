@@ -4,7 +4,9 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.Dialog;
 using Luthetus.Common.RazorLib.Dimensions;
 using Luthetus.Common.RazorLib.Dropdown;
+using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Menu;
+using Luthetus.Common.RazorLib.Namespaces;
 using Luthetus.Common.RazorLib.Notification;
 using Luthetus.Common.RazorLib.Store.DialogCase;
 using Luthetus.Common.RazorLib.Store.NotificationCase;
@@ -13,9 +15,7 @@ using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Ide.ClassLib.CommandLine;
 using Luthetus.Ide.ClassLib.FileConstants;
-using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.InputFile;
-using Luthetus.Ide.ClassLib.Namespaces;
 using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 using Luthetus.Ide.ClassLib.Store.InputFileCase;
 using Luthetus.Ide.ClassLib.Store.ProgramExecutionCase;
@@ -126,9 +126,6 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     private MenuOptionRecord[] GetDotNetSolutionMenuOptions(
         TreeViewSolution treeViewSolution)
     {
-        if (treeViewSolution.Item is null)
-            return Array.Empty<MenuOptionRecord>();
-
         // TODO: Add menu options for non C# projects perhaps a more generic option is good
 
         var addNewCSharpProject = new MenuOptionRecord(
@@ -220,11 +217,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             Dispatcher,
             () =>
             {
-                if (treeViewSolution.Item is not null)
-                {
-                    Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionAction(
-                        treeViewSolution.Item.NamespacePath.AbsoluteFilePath));
-                }
+                Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionAction(
+                    treeViewSolution.Item.NamespacePath.AbsoluteFilePath));
 
                 return Task.CompletedTask;
             }),
@@ -243,11 +237,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             Dispatcher,
             () =>
             {
-                if (treeViewSolution.Item is not null)
-                {
-                    Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionAction(
-                        treeViewSolution.Item.NamespacePath.AbsoluteFilePath));
-                }
+                Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionAction(
+                    treeViewSolution.Item.NamespacePath.AbsoluteFilePath));
 
                 return Task.CompletedTask;
             }),

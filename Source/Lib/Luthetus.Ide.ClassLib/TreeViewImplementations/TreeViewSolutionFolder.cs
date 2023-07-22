@@ -1,11 +1,11 @@
-﻿using Luthetus.Ide.ClassLib.Namespaces;
-using Luthetus.Ide.ClassLib.ComponentRenderers;
+﻿using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
-using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Common.RazorLib.WatchWindow.TreeViewClasses;
 using Luthetus.CompilerServices.Lang.DotNet;
 using Luthetus.CompilerServices.Lang.DotNet.CSharp;
+using Luthetus.Common.RazorLib.FileSystem.Interfaces;
+using Luthetus.Common.RazorLib.Namespaces;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementations;
 
@@ -35,9 +35,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
     public override bool Equals(object? obj)
     {
         if (obj is null ||
-            obj is not TreeViewSolutionFolder treeViewSolutionFolder ||
-            treeViewSolutionFolder.Item is null ||
-            Item is null)
+            obj is not TreeViewSolutionFolder treeViewSolutionFolder)
         {
             return false;
         }
@@ -48,10 +46,9 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
 
     public override int GetHashCode()
     {
-        return Item?.AbsoluteFilePath
+        return Item.AbsoluteFilePath
             .GetAbsoluteFilePathString()
-            .GetHashCode()
-               ?? default;
+            .GetHashCode();
     }
 
     public override TreeViewRenderer GetTreeViewRenderer()

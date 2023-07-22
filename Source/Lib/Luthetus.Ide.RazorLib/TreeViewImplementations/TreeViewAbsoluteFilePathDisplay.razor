@@ -1,7 +1,7 @@
 ﻿<div>
     
     @{
-        var displayText = TreeViewAbsoluteFilePath.Item?.FilenameWithExtension ?? "null";
+        var displayText = TreeViewAbsoluteFilePath.Item.FilenameWithExtension;
     }
     
     @if (!String.IsNullOrWhiteSpace(SearchQuery))

@@ -1,7 +1,7 @@
-﻿using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
+﻿using Luthetus.Common.RazorLib.FileSystem.Interfaces;
+using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
-using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.Nuget;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementations;
@@ -32,8 +32,7 @@ public class TreeViewLightWeightNugetPackageRecord : TreeViewWithType<LightWeigh
     public override bool Equals(object? obj)
     {
         if (obj is null ||
-            obj is not TreeViewLightWeightNugetPackageRecord treeViewLightWeightNugetPackageRecord ||
-            Item is null)
+            obj is not TreeViewLightWeightNugetPackageRecord)
         {
             return false;
         }
@@ -43,9 +42,7 @@ public class TreeViewLightWeightNugetPackageRecord : TreeViewWithType<LightWeigh
 
     public override int GetHashCode()
     {
-        return Item?
-            .GetHashCode()
-               ?? default;
+        return Item.GetHashCode();
     }
 
     public override TreeViewRenderer GetTreeViewRenderer()
@@ -61,12 +58,10 @@ public class TreeViewLightWeightNugetPackageRecord : TreeViewWithType<LightWeigh
             });
     }
 
-    public override async Task LoadChildrenAsync()
+    public override Task LoadChildrenAsync()
     {
-        if (Item is null)
-            return;
-
         TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
+        return Task.CompletedTask;
     }
 
     public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)

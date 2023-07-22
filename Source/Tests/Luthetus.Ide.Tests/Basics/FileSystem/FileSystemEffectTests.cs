@@ -1,4 +1,4 @@
-﻿using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
+﻿using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
 using Xunit;
 
 namespace Luthetus.Ide.Tests.Basics.FileSystem;

@@ -2,10 +2,10 @@
 using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
 using Luthetus.Ide.ClassLib.FileConstants;
-using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
-using Luthetus.Ide.ClassLib.Namespaces;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Common.RazorLib.WatchWindow.TreeViewClasses;
+using Luthetus.Common.RazorLib.Namespaces;
+using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementations;
 
@@ -35,21 +35,18 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
     public override bool Equals(object? obj)
     {
         if (obj is null ||
-            obj is not TreeViewNamespacePath treeViewSolutionExplorer ||
-            treeViewSolutionExplorer.Item is null ||
-            Item is null)
+            obj is not TreeViewNamespacePath treeViewSolutionExplorer)
         {
             return false;
         }
 
-        return treeViewSolutionExplorer.Item.AbsoluteFilePath
-                   .GetAbsoluteFilePathString() ==
+        return treeViewSolutionExplorer.Item.AbsoluteFilePath.GetAbsoluteFilePathString() ==
                Item.AbsoluteFilePath.GetAbsoluteFilePathString();
     }
 
     public override int GetHashCode()
     {
-        return Item?.AbsoluteFilePath.GetAbsoluteFilePathString().GetHashCode() ?? default;
+        return Item.AbsoluteFilePath.GetAbsoluteFilePathString().GetHashCode();
     }
 
     public override TreeViewRenderer GetTreeViewRenderer()
@@ -67,9 +64,6 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
 
     public override async Task LoadChildrenAsync()
     {
-        if (Item is null)
-            return;
-
         try
         {
             var newChildren = new List<TreeViewNoType>();
@@ -147,9 +141,6 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
     /// </summary>
     public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
     {
-        if (Item is null)
-            return;
-
         if (Item.AbsoluteFilePath.ExtensionNoPeriod
             .EndsWith(ExtensionNoPeriodFacts.RAZOR_MARKUP))
         {

@@ -1,11 +1,11 @@
-﻿using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
-using Luthetus.Ide.ClassLib.FileSystem.HostedServiceCase;
+﻿using Luthetus.Ide.ClassLib.FileSystem.HostedServiceCase;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 using Luthetus.Common.RazorLib.Notification;
 using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.Store.NotificationCase;
+using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 
 namespace Luthetus.Ide.ClassLib.Store.FileSystemCase;
 
