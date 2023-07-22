@@ -17,6 +17,14 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 using Luthetus.Common.RazorLib.Store.NotificationCase;
 using Luthetus.TextEditor.RazorLib.ViewModel;
+using Luthetus.CompilerServices.Lang.CSharp.BinderCase;
+using Luthetus.CompilerServices.Lang.Xml;
+using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
+using Luthetus.CompilerServices.Lang.Razor.CompilerServiceCase;
+using Luthetus.CompilerServices.Lang.Css;
+using Luthetus.CompilerServices.Lang.JavaScript;
+using Luthetus.CompilerServices.Lang.TypeScript;
+using Luthetus.CompilerServices.Lang.Json;
 
 namespace Luthetus.Ide.ClassLib.Store.EditorCase;
 

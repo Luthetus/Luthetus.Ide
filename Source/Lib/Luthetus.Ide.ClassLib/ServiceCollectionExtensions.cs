@@ -7,6 +7,8 @@ using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
 using Luthetus.TextEditor.RazorLib.HostedServiceCase.TextEditorCase;
 using Luthetus.TextEditor.RazorLib.HostedServiceCase.CompilerServiceCase;
 using Fluxor;
+using Luthetus.Common.RazorLib;
+using Luthetus.TextEditor.RazorLib;
 
 namespace Luthetus.Ide.ClassLib;
 

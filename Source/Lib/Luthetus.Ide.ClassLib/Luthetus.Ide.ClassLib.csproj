@@ -21,6 +21,13 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Languages\CSharp\Source\Luthetus.CompilerServices.Lang.CSharp.csproj" />
+      <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Languages\Css\Source\Luthetus.CompilerServices.Lang.Css.csproj" />
+      <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Languages\DotNet\Source\Luthetus.CompilerServices.Lang.DotNet.csproj" />
+      <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Languages\JavaScript\Source\Luthetus.CompilerServices.Lang.JavaScript.csproj" />
+      <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Languages\Json\Source\Luthetus.CompilerServices.Lang.Json.csproj" />
+      <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Languages\Razor\Source\Luthetus.CompilerServices.Lang.Razor.csproj" />
+      <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Languages\TypeScript\Source\Luthetus.CompilerServices.Lang.TypeScript.csproj" />
       <ProjectReference Include="..\..\..\..\Luthetus.TextEditor\Source\Lib\Luthetus.TextEditor.RazorLib\Luthetus.TextEditor.RazorLib.csproj" />
     </ItemGroup>
 

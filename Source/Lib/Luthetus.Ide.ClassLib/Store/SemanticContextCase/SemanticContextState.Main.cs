@@ -1,4 +1,7 @@
-﻿namespace Luthetus.Ide.ClassLib.Store.SemanticContextCase;
+﻿using Fluxor;
+using Luthetus.CompilerServices.Lang.CSharp.SemanticContextCase.Implementations;
+
+namespace Luthetus.Ide.ClassLib.Store.SemanticContextCase;
 
 [FeatureState]
 public partial class SemanticContextState

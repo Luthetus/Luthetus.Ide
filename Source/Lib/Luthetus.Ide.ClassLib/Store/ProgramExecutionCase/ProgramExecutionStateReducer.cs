@@ -1,4 +1,6 @@
-﻿namespace Luthetus.Ide.ClassLib.Store.ProgramExecutionCase;
+﻿using Fluxor;
+
+namespace Luthetus.Ide.ClassLib.Store.ProgramExecutionCase;
 
 public class ProgramExecutionStateReducer
 {

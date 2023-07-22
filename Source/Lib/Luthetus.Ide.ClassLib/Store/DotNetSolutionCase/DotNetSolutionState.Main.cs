@@ -1,10 +1,10 @@
 ﻿using Luthetus.Ide.ClassLib.InputFile;
 using Luthetus.Ide.ClassLib.Store.InputFileCase;
-using Luthetus.Ide.ClassLib.DotNet;
 using Luthetus.Ide.ClassLib.FileConstants;
 using Fluxor;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using System.Collections.Immutable;
+using Luthetus.CompilerServices.Lang.DotNet;
 
 namespace Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 

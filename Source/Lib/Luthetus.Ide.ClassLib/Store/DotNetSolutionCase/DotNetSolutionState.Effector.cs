@@ -1,5 +1,4 @@
 ﻿using Luthetus.Ide.ClassLib.ComponentRenderers;
-using Luthetus.Ide.ClassLib.DotNet;
 using Luthetus.Ide.ClassLib.FileSystem.Classes.FilePath;
 using Luthetus.Ide.ClassLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.Namespaces;
@@ -10,6 +9,9 @@ using Fluxor;
 using Luthetus.TextEditor.RazorLib.HostedServiceCase.CompilerServiceCase;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using System.Collections.Immutable;
+using Luthetus.CompilerServices.Lang.DotNet;
+using Luthetus.CompilerServices.Lang.CSharp.SemanticContextCase.Implementations;
+using Luthetus.CompilerServices.Lang.CSharp.SemanticContextCase.Keys;
 
 namespace Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 
