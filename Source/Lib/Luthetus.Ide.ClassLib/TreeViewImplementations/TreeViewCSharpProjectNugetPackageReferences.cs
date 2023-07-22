@@ -33,8 +33,7 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
     public override bool Equals(object? obj)
     {
         if (obj is null ||
-            obj is not TreeViewCSharpProjectNugetPackageReferences treeViewCSharpProjectNugetPackageReferences ||
-            Item is null)
+            obj is not TreeViewCSharpProjectNugetPackageReferences)
         {
             return false;
         }
@@ -44,9 +43,7 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
 
     public override int GetHashCode()
     {
-        return Item?
-            .GetHashCode()
-               ?? default;
+        return Item.GetHashCode();
     }
 
     public override TreeViewRenderer GetTreeViewRenderer()
@@ -58,9 +55,6 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
 
     public override async Task LoadChildrenAsync()
     {
-        if (Item is null)
-            return;
-
         var content = await FileSystemProvider.File.ReadAllTextAsync(
             Item.CSharpProjectNamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString());
 

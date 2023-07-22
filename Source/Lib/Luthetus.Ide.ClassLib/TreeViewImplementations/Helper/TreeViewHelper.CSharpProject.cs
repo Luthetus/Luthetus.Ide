@@ -12,9 +12,6 @@ public partial class TreeViewHelper
     public static async Task<List<TreeViewNoType>> LoadChildrenForCSharpProjectAsync(
         TreeViewNamespacePath cSharpProjectTreeView)
     {
-        if (cSharpProjectTreeView.Item is null)
-            return new();
-
         var parentDirectoryOfCSharpProject = (IAbsoluteFilePath)
             cSharpProjectTreeView.Item.AbsoluteFilePath.Directories
                 .Last();
@@ -64,9 +61,6 @@ public partial class TreeViewHelper
 
         foreach (var directoryTreeViewModel in childDirectoryTreeViewModels)
         {
-            if (directoryTreeViewModel.Item is null)
-                continue;
-
             if (uniqueDirectories.Any(unique => directoryTreeViewModel
                     .Item.AbsoluteFilePath.FileNameNoExtension == unique))
             {
@@ -79,11 +73,11 @@ public partial class TreeViewHelper
         }
 
         foundUniqueDirectories = foundUniqueDirectories
-            .OrderBy(x => x.Item?.AbsoluteFilePath.FileNameNoExtension ?? string.Empty)
+            .OrderBy(x => x.Item.AbsoluteFilePath.FileNameNoExtension)
             .ToList();
 
         foundDefaultDirectories = foundDefaultDirectories
-            .OrderBy(x => x.Item?.AbsoluteFilePath.FileNameNoExtension ?? string.Empty)
+            .OrderBy(x => x.Item.AbsoluteFilePath.FileNameNoExtension)
             .ToList();
 
         var childFileTreeViewModels =

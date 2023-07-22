@@ -54,8 +54,7 @@ public class InputFileTreeViewMouseEventHandler : TreeViewMouseEventHandler
             return false;
         }
 
-        if (treeViewAbsoluteFilePath.Item != null)
-            await _setInputFileContentTreeViewRootFunc.Invoke(treeViewAbsoluteFilePath.Item);
+        await _setInputFileContentTreeViewRootFunc.Invoke(treeViewAbsoluteFilePath.Item);
 
         return true;
     }

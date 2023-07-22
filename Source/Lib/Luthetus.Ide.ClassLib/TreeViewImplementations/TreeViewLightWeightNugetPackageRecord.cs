@@ -32,8 +32,7 @@ public class TreeViewLightWeightNugetPackageRecord : TreeViewWithType<LightWeigh
     public override bool Equals(object? obj)
     {
         if (obj is null ||
-            obj is not TreeViewLightWeightNugetPackageRecord treeViewLightWeightNugetPackageRecord ||
-            Item is null)
+            obj is not TreeViewLightWeightNugetPackageRecord)
         {
             return false;
         }
@@ -43,9 +42,7 @@ public class TreeViewLightWeightNugetPackageRecord : TreeViewWithType<LightWeigh
 
     public override int GetHashCode()
     {
-        return Item?
-            .GetHashCode()
-               ?? default;
+        return Item.GetHashCode();
     }
 
     public override TreeViewRenderer GetTreeViewRenderer()
@@ -63,9 +60,6 @@ public class TreeViewLightWeightNugetPackageRecord : TreeViewWithType<LightWeigh
 
     public override async Task LoadChildrenAsync()
     {
-        if (Item is null)
-            return;
-
         TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
     }
 

@@ -58,9 +58,6 @@ public class TreeViewNamespace : TreeViewWithType<BoundNamespaceStatementNode>
 
     public override async Task LoadChildrenAsync()
     {
-        if (Item is null)
-            return;
-
         try
         {
             var newChildren = Item.Children

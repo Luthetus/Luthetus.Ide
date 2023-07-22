@@ -33,9 +33,7 @@ public class TreeViewAbsoluteFilePath : TreeViewWithType<IAbsoluteFilePath>
     public override bool Equals(object? obj)
     {
         if (obj is null ||
-            obj is not TreeViewNamespacePath treeViewSolutionExplorer ||
-            treeViewSolutionExplorer.Item is null ||
-            Item is null)
+            obj is not TreeViewNamespacePath treeViewSolutionExplorer)
         {
             return false;
         }
@@ -47,7 +45,7 @@ public class TreeViewAbsoluteFilePath : TreeViewWithType<IAbsoluteFilePath>
 
     public override int GetHashCode()
     {
-        return Item?.GetAbsoluteFilePathString().GetHashCode() ?? default;
+        return Item.GetAbsoluteFilePathString().GetHashCode();
     }
 
     public override TreeViewRenderer GetTreeViewRenderer()
@@ -65,9 +63,6 @@ public class TreeViewAbsoluteFilePath : TreeViewWithType<IAbsoluteFilePath>
 
     public override async Task LoadChildrenAsync()
     {
-        if (Item is null)
-            return;
-
         try
         {
             var newChildren = new List<TreeViewNoType>();

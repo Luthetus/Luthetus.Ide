@@ -57,9 +57,6 @@ public class TreeViewISyntax : TreeViewWithType<ISyntax>
 
     public override async Task LoadChildrenAsync()
     {
-        if (Item is null)
-            return;
-
         try
         {
             var newChildren = new List<TreeViewNoType>();

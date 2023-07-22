@@ -35,9 +35,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
     public override bool Equals(object? obj)
     {
         if (obj is null ||
-            obj is not TreeViewSolutionFolder treeViewSolutionFolder ||
-            treeViewSolutionFolder.Item is null ||
-            Item is null)
+            obj is not TreeViewSolutionFolder treeViewSolutionFolder)
         {
             return false;
         }
@@ -48,10 +46,9 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
 
     public override int GetHashCode()
     {
-        return Item?.AbsoluteFilePath
+        return Item.AbsoluteFilePath
             .GetAbsoluteFilePathString()
-            .GetHashCode()
-               ?? default;
+            .GetHashCode();
     }
 
     public override TreeViewRenderer GetTreeViewRenderer()

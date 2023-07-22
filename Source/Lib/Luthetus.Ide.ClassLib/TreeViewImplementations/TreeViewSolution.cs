@@ -34,9 +34,7 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolution>
     public override bool Equals(object? obj)
     {
         if (obj is null ||
-            obj is not TreeViewSolution treeViewSolution ||
-            treeViewSolution.Item is null ||
-            Item is null)
+            obj is not TreeViewSolution treeViewSolution)
         {
             return false;
         }
@@ -47,10 +45,9 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolution>
 
     public override int GetHashCode()
     {
-        return Item?.NamespacePath.AbsoluteFilePath
+        return Item.NamespacePath.AbsoluteFilePath
             .GetAbsoluteFilePathString()
-            .GetHashCode()
-               ?? default;
+            .GetHashCode();
     }
 
     public override TreeViewRenderer GetTreeViewRenderer()
@@ -61,16 +58,13 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolution>
             {
             {
                 nameof(ITreeViewNamespacePathRendererType.NamespacePath),
-                Item?.NamespacePath
+                Item.NamespacePath
             },
             });
     }
 
     public override async Task LoadChildrenAsync()
     {
-        if (Item is null)
-            return;
-
         try
         {
             var newChildren = await TreeViewHelper

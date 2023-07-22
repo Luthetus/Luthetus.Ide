@@ -58,9 +58,6 @@ public partial class TreeViewHelper
         TreeViewNamespacePath razorMarkupTreeView,
         List<TreeViewNoType> siblingsAndSelfTreeViews)
     {
-        if (razorMarkupTreeView.Item is null)
-            return;
-
         razorMarkupTreeView.Children.Clear();
 
         // .razor files look to remove .razor.cs and .razor.css files

@@ -193,8 +193,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
         if (activeNode is null ||
-            activeNode is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePathPath ||
-            treeViewAbsoluteFilePathPath.Item is null)
+            activeNode is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePathPath)
         {
             return Task.CompletedTask;
         }
@@ -213,8 +212,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
         if (activeNode is null ||
-            activeNode is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePathPath ||
-            treeViewAbsoluteFilePathPath.Item is null)
+            activeNode is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePathPath)
         {
             return Task.CompletedTask;
         }
@@ -268,8 +266,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
         if (activeNode is null ||
-            activeNode is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePathPath ||
-            treeViewAbsoluteFilePathPath.Item is null)
+            activeNode is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePathPath)
         {
             return Task.CompletedTask;
         }
@@ -293,8 +290,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
         if (activeNode is null ||
-            activeNode is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePathPath ||
-            treeViewAbsoluteFilePathPath.Item is null)
+            activeNode is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePathPath)
         {
             return Task.CompletedTask;
         }

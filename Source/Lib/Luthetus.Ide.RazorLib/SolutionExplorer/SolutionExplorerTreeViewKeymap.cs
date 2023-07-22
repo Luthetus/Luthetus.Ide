@@ -193,8 +193,7 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
         if (activeNode is null ||
-            activeNode is not TreeViewNamespacePath treeViewNamespacePath ||
-            treeViewNamespacePath.Item is null)
+            activeNode is not TreeViewNamespacePath treeViewNamespacePath)
         {
             return Task.CompletedTask;
         }
@@ -213,8 +212,7 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
         if (activeNode is null ||
-            activeNode is not TreeViewNamespacePath treeViewNamespacePath ||
-            treeViewNamespacePath.Item is null)
+            activeNode is not TreeViewNamespacePath treeViewNamespacePath)
         {
             return Task.CompletedTask;
         }

@@ -31,8 +31,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
     public override bool Equals(object? obj)
     {
         if (obj is null ||
-            obj is not TreeViewCSharpProjectDependencies treeViewCSharpProjectDependencies ||
-            Item is null)
+            obj is not TreeViewCSharpProjectDependencies)
         {
             return false;
         }
@@ -42,9 +41,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
 
     public override int GetHashCode()
     {
-        return Item?
-            .GetHashCode()
-               ?? default;
+        return Item.GetHashCode();
     }
 
     public override TreeViewRenderer GetTreeViewRenderer()
@@ -56,9 +53,6 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
 
     public override async Task LoadChildrenAsync()
     {
-        if (Item is null)
-            return;
-
         var treeViewCSharpProjectNugetPackageReferences = new TreeViewCSharpProjectNugetPackageReferences(
             new CSharpProjectNugetPackageReferences(Item.CSharpProjectNamespacePath),
             LuthetusIdeComponentRenderers,

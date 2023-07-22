@@ -126,9 +126,6 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     private MenuOptionRecord[] GetDotNetSolutionMenuOptions(
         TreeViewSolution treeViewSolution)
     {
-        if (treeViewSolution.Item is null)
-            return Array.Empty<MenuOptionRecord>();
-
         // TODO: Add menu options for non C# projects perhaps a more generic option is good
 
         var addNewCSharpProject = new MenuOptionRecord(
@@ -220,11 +217,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             Dispatcher,
             () =>
             {
-                if (treeViewSolution.Item is not null)
-                {
-                    Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionAction(
-                        treeViewSolution.Item.NamespacePath.AbsoluteFilePath));
-                }
+                Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionAction(
+                    treeViewSolution.Item.NamespacePath.AbsoluteFilePath));
 
                 return Task.CompletedTask;
             }),
@@ -243,11 +237,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             Dispatcher,
             () =>
             {
-                if (treeViewSolution.Item is not null)
-                {
-                    Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionAction(
-                        treeViewSolution.Item.NamespacePath.AbsoluteFilePath));
-                }
+                Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionAction(
+                    treeViewSolution.Item.NamespacePath.AbsoluteFilePath));
 
                 return Task.CompletedTask;
             }),

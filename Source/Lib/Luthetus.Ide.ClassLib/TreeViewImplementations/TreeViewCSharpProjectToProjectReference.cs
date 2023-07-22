@@ -32,8 +32,7 @@ public class TreeViewCSharpProjectToProjectReference : TreeViewWithType<CSharpPr
     public override bool Equals(object? obj)
     {
         if (obj is null ||
-            obj is not TreeViewCSharpProjectToProjectReference treeViewCSharpProjectToProjectReference ||
-            Item is null)
+            obj is not TreeViewCSharpProjectToProjectReference)
         {
             return false;
         }
@@ -43,9 +42,7 @@ public class TreeViewCSharpProjectToProjectReference : TreeViewWithType<CSharpPr
 
     public override int GetHashCode()
     {
-        return Item?
-            .GetHashCode()
-               ?? default;
+        return Item.GetHashCode();
     }
 
     public override TreeViewRenderer GetTreeViewRenderer()
@@ -63,9 +60,6 @@ public class TreeViewCSharpProjectToProjectReference : TreeViewWithType<CSharpPr
 
     public override async Task LoadChildrenAsync()
     {
-        if (Item is null)
-            return;
-
         TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
     }
 

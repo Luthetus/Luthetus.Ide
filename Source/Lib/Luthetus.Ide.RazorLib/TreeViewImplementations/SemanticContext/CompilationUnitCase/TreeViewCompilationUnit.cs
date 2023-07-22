@@ -56,9 +56,6 @@ public class TreeViewCompilationUnit : TreeViewWithType<CodeBlockNode>
 
     public override async Task LoadChildrenAsync()
     {
-        if (Item is null)
-            return;
-
         try
         {
             //Item.Children.Select(x => (TreeViewNoType) new TreeViewCompilationUnit());

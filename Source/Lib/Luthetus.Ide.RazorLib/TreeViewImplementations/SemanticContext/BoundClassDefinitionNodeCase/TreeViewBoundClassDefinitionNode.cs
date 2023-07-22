@@ -57,9 +57,6 @@ public class TreeViewBoundClassDefinitionNode : TreeViewWithType<BoundClassDefin
 
     public override async Task LoadChildrenAsync()
     {
-        if (Item is null)
-            return;
-
         try
         {
             var newChildren = new List<TreeViewNoType>();

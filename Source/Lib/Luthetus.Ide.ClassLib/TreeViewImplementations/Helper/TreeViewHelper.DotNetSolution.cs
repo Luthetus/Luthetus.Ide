@@ -9,9 +9,6 @@ public partial class TreeViewHelper
     public static Task<List<TreeViewNoType>> LoadChildrenForDotNetSolutionAsync(
         TreeViewSolution treeViewSolution)
     {
-        if (treeViewSolution.Item is null)
-            return Task.FromResult<List<TreeViewNoType>>(new());
-
         var childSolutionFolders = treeViewSolution.Item.SolutionFolders
             .Select(x => (TreeViewNoType)new TreeViewSolutionFolder(
                 x,

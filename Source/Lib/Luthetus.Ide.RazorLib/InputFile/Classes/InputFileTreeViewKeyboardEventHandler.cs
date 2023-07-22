@@ -129,7 +129,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
 
         var treeViewAbsoluteFilePath = activeNode as TreeViewAbsoluteFilePath;
 
-        if (treeViewAbsoluteFilePath?.Item is null)
+        if (treeViewAbsoluteFilePath is null)
             return;
 
         await _setInputFileContentTreeViewRootFunc.Invoke(

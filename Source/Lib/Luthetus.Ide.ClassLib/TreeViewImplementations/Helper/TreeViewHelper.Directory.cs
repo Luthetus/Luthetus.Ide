@@ -9,9 +9,6 @@ public partial class TreeViewHelper
     public static async Task<List<TreeViewNoType>> LoadChildrenForDirectoryAsync(
         TreeViewNamespacePath directoryTreeView)
     {
-        if (directoryTreeView.Item is null)
-            return new();
-
         var directoryAbsoluteFilePathString = directoryTreeView.Item.AbsoluteFilePath
             .GetAbsoluteFilePathString();
 
@@ -95,9 +92,6 @@ public partial class TreeViewHelper
     public static async Task<List<TreeViewNoType>> LoadChildrenForDirectoryAsync(
         TreeViewAbsoluteFilePath directoryTreeView)
     {
-        if (directoryTreeView.Item is null)
-            return new();
-
         var directoryAbsoluteFilePathString = directoryTreeView.Item
             .GetAbsoluteFilePathString();
 
