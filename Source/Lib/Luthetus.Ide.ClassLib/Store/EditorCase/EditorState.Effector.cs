@@ -3,7 +3,6 @@ using Luthetus.Ide.ClassLib.Store.FileSystemCase;
 using Luthetus.Ide.ClassLib.Store.InputFileCase;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.FileConstants;
-using Luthetus.Ide.ClassLib.Store.SemanticContextCase;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Group;
@@ -25,6 +24,7 @@ using Luthetus.CompilerServices.Lang.JavaScript;
 using Luthetus.CompilerServices.Lang.TypeScript;
 using Luthetus.CompilerServices.Lang.Json;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
+using Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
 
 namespace Luthetus.Ide.ClassLib.Store.EditorCase;
 
@@ -40,8 +40,8 @@ public partial class EditorState
         private readonly ILuthetusIdeComponentRenderers _luthetusIdeComponentRenderers;
         private readonly IFileSystemProvider _fileSystemProvider;
         private readonly ICommonBackgroundTaskQueue _commonBackgroundTaskQueue;
-        private readonly IState<SemanticContextState> _semanticContextStateWrap;
         private readonly TextEditorXmlCompilerService _xmlCompilerService;
+        private readonly DotNetSolutionCompilerService _dotNetCompilerService;
         private readonly CSharpCompilerService _cSharpCompilerService;
         private readonly RazorCompilerService _razorCompilerService;
         private readonly TextEditorCssCompilerService _cssCompilerService;
@@ -54,8 +54,8 @@ public partial class EditorState
             ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
             IFileSystemProvider fileSystemProvider,
             ICommonBackgroundTaskQueue commonBackgroundTaskQueue,
-            IState<SemanticContextState> semanticContextStateWrap,
             TextEditorXmlCompilerService xmlCompilerService,
+            DotNetSolutionCompilerService dotNetCompilerService,
             CSharpCompilerService cSharpCompilerService,
             RazorCompilerService razorCompilerService,
             TextEditorCssCompilerService cssCompilerService,
@@ -67,8 +67,8 @@ public partial class EditorState
             _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
             _fileSystemProvider = fileSystemProvider;
             _commonBackgroundTaskQueue = commonBackgroundTaskQueue;
-            _semanticContextStateWrap = semanticContextStateWrap;
             _xmlCompilerService = xmlCompilerService;
+            _dotNetCompilerService = dotNetCompilerService;
             _cSharpCompilerService = cSharpCompilerService;
             _razorCompilerService = razorCompilerService;
             _cssCompilerService = cssCompilerService;
@@ -174,6 +174,7 @@ public partial class EditorState
                 var compilerService = ExtensionNoPeriodFacts.GetCompilerService(
                     absoluteFilePath.ExtensionNoPeriod,
                     _xmlCompilerService,
+                    _dotNetCompilerService,
                     _cSharpCompilerService,
                     _razorCompilerService,
                     _cssCompilerService,

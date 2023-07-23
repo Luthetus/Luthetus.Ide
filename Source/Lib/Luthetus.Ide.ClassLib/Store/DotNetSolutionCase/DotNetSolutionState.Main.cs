@@ -4,7 +4,7 @@ using Luthetus.Ide.ClassLib.FileConstants;
 using Fluxor;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using System.Collections.Immutable;
-using Luthetus.CompilerServices.Lang.DotNet;
+using Luthetus.CompilerServices.Lang.DotNetSolution;
 
 namespace Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 

@@ -1,6 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.Namespaces;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
-using Luthetus.CompilerServices.Lang.DotNet;
+using Luthetus.CompilerServices.Lang.DotNetSolution;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementations.Helper;
 

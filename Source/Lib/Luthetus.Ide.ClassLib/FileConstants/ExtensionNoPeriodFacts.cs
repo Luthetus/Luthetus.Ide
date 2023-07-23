@@ -1,6 +1,7 @@
 ﻿using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.Css;
 using Luthetus.CompilerServices.Lang.Css.Css.Decoration;
+using Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.JavaScript;
 using Luthetus.CompilerServices.Lang.Json;
 using Luthetus.CompilerServices.Lang.Json.Json.Decoration;
@@ -59,6 +60,7 @@ public static class ExtensionNoPeriodFacts
             H => new GenericDecorationMapper(),
             CPP => new GenericDecorationMapper(),
             HPP => new GenericDecorationMapper(),
+            DOT_NET_SOLUTION => new TextEditorHtmlDecorationMapper(),
             _ => new TextEditorDecorationMapperDefault(),
         };
     }
@@ -69,6 +71,7 @@ public static class ExtensionNoPeriodFacts
     public static ICompilerService? GetCompilerService(
         string extensionNoPeriod,
         TextEditorXmlCompilerService? xmlCompilerService,
+        DotNetSolutionCompilerService? dotNetCompilerService,
         CSharpCompilerService? cSharpCompilerService,
         RazorCompilerService? razorCompilerService,
         TextEditorCssCompilerService? cssCompilerService,
@@ -94,6 +97,7 @@ public static class ExtensionNoPeriodFacts
             H => null,
             CPP => null,
             HPP => null,
+            DOT_NET_SOLUTION => dotNetCompilerService,
             _ => null,
         };
     }

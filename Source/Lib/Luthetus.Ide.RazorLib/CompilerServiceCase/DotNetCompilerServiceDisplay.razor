@@ -1,0 +1,12 @@
+﻿<div class="luth_ide_dot-net-compiler-service">
+    <div class="luth_ide_dot-net-compiler-service-title">
+        @nameof(DotNetCompilerService)
+    </div>
+
+    <div class="luth_ide_dot-net-compiler-service-body">
+        @foreach (var compilerServiceResource in DotNetCompilerService.CompilerServiceResources)
+        {
+            <CompilerServiceResourceDisplay CompilerServiceResource="compilerServiceResource" />
+        }
+    </div>
+</div>

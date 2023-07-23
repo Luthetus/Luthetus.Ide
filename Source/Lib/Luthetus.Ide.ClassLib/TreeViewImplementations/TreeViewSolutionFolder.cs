@@ -2,10 +2,10 @@
 using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Common.RazorLib.WatchWindow.TreeViewClasses;
-using Luthetus.CompilerServices.Lang.DotNet;
-using Luthetus.CompilerServices.Lang.DotNet.CSharp;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Namespaces;
+using Luthetus.CompilerServices.Lang.DotNetSolution;
+using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementations;
 

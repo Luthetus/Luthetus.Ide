@@ -1,9 +1,9 @@
 ﻿using Luthetus.Ide.ClassLib.FileConstants;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
-using Luthetus.CompilerServices.Lang.DotNet.CSharp;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
 using Luthetus.Common.RazorLib.Namespaces;
+using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementations.Helper;
 
