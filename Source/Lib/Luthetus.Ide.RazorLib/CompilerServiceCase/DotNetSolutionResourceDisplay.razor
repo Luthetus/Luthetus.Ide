@@ -1,0 +1,24 @@
+﻿<div class="luth_ide_compiler-service-resource">
+    <div>
+        ResourceUri:&nbsp;@DotNetSolutionResource.ResourceUri.Value
+    </div>
+    <div>
+        ModelKey:&nbsp;@DotNetSolutionResource.ModelKey
+    </div>
+    <div>
+        @nameof(DotNetSolutionResource)
+    </div>
+    <div>
+        @{
+            var localDotNetSolution = DotNetSolutionResource.DotNetSolution;
+        }
+
+        @if (localDotNetSolution is not null)
+        {
+            foreach (var project in localDotNetSolution.DotNetProjects)
+            {
+                <div>@project.AbsoluteFilePath.GetAbsoluteFilePathString()</div>
+            }
+        }
+    </div>
+</div>

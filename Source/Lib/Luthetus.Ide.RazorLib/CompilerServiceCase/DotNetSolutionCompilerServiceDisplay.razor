@@ -1,4 +1,5 @@
-﻿<div class="luth_ide_dot-net-compiler-service">
+﻿@using Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
+<div class="luth_ide_dot-net-compiler-service">
     <div class="luth_ide_dot-net-compiler-service-title">
         @nameof(DotNetCompilerService)
     </div>
@@ -6,7 +7,7 @@
     <div class="luth_ide_dot-net-compiler-service-body">
         @foreach (var compilerServiceResource in DotNetCompilerService.CompilerServiceResources)
         {
-            <CompilerServiceResourceDisplay CompilerServiceResource="compilerServiceResource" />
+            <DotNetSolutionResourceDisplay DotNetSolutionResource="(DotNetSolutionResource)compilerServiceResource" />
         }
     </div>
 </div>

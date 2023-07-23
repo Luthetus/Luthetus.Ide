@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.CompilerServiceCase;
 
-public partial class DotNetCompilerServiceDisplay : ComponentBase
+public partial class DotNetSolutionCompilerServiceDisplay : ComponentBase
 {
     [Inject]
     private DotNetSolutionCompilerService DotNetCompilerService { get; set; } = null!;
