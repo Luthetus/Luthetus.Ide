@@ -3,11 +3,17 @@ using Luthetus.CompilerServices.Lang.CSharpProject.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
 using Microsoft.AspNetCore.Components;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
+using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 
 namespace Luthetus.Ide.RazorLib.CompilerServiceCase;
 
 public partial class CompilerServiceResourceDisplay : ComponentBase
 {
+    [Inject]
+    private CSharpProjectCompilerService CSharpProjectCompilerService { get; set; } = null!;
+    [Inject]
+    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
+
     [CascadingParameter(Name = "CompilerServiceDisplayDimensions")]
     public CompilerServiceDisplayDimensions CompilerServiceDisplayDimensions { get; set; } = null!;
 

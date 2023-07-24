@@ -1,4 +1,5 @@
 ﻿using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
+using Luthetus.CompilerServices.Lang.CSharpProject.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.Css;
 using Luthetus.CompilerServices.Lang.Css.Css.Decoration;
 using Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
@@ -72,6 +73,7 @@ public static class ExtensionNoPeriodFacts
         string extensionNoPeriod,
         TextEditorXmlCompilerService? xmlCompilerService,
         DotNetSolutionCompilerService? dotNetCompilerService,
+        CSharpProjectCompilerService? cSharpProjectCompilerService,
         CSharpCompilerService? cSharpCompilerService,
         RazorCompilerService? razorCompilerService,
         TextEditorCssCompilerService? cssCompilerService,
@@ -83,7 +85,7 @@ public static class ExtensionNoPeriodFacts
         {
             HTML => xmlCompilerService,
             XML => xmlCompilerService,
-            C_SHARP_PROJECT => xmlCompilerService,
+            C_SHARP_PROJECT => cSharpProjectCompilerService,
             C_SHARP_CLASS => cSharpCompilerService,
             RAZOR_CODEBEHIND => cSharpCompilerService,
             RAZOR_MARKUP => razorCompilerService,

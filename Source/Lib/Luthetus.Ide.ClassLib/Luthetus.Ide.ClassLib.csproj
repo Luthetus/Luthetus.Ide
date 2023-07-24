@@ -21,6 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Languages\CSharpProject\Source\Luthetus.CompilerServices.Lang.CSharpProject.csproj" />
       <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Languages\CSharp\Source\Luthetus.CompilerServices.Lang.CSharp.csproj" />
       <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Languages\Css\Source\Luthetus.CompilerServices.Lang.Css.csproj" />
       <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Languages\DotNetSolution\Source\Luthetus.CompilerServices.Lang.DotNetSolution.csproj" />

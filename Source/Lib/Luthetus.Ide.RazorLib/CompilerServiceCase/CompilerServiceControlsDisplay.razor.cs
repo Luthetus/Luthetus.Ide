@@ -22,9 +22,9 @@ public partial class CompilerServiceControlsDisplay : ComponentBase
     private const int MINIMUM_VIEW_BOX_WIDTH = 5;
     private const int MINIMUM_VIEW_BOX_HEIGHT = 5;
     private const int MINIMUM_CIRCLE_RADIUS_IN_PIXELS = 5;
-    private const int MINIMUM_MINIMUM_MARGIN_RIGHT_BETWEEN_SIBLINGS_AND_SELF = 5;
-    private const int MINIMUM_SVG_PADDING = 5;
-    private const int MINIMUM_SVG_FONT_SIZE_IN_PIXELS = 5;
+    private const int MINIMUM_MINIMUM_MARGIN_RIGHT_BETWEEN_SIBLINGS_AND_SELF = 1;
+    private const int MINIMUM_SVG_PADDING = 1;
+    private const int MINIMUM_SVG_FONT_SIZE_IN_PIXELS = 1;
 
     private readonly Guid ComponentIdentifier = Guid.NewGuid();
 

@@ -25,6 +25,7 @@ using Luthetus.CompilerServices.Lang.TypeScript;
 using Luthetus.CompilerServices.Lang.Json;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
+using Luthetus.CompilerServices.Lang.CSharpProject.CompilerServiceCase;
 
 namespace Luthetus.Ide.ClassLib.Store.EditorCase;
 
@@ -42,6 +43,7 @@ public partial class EditorState
         private readonly ICommonBackgroundTaskQueue _commonBackgroundTaskQueue;
         private readonly TextEditorXmlCompilerService _xmlCompilerService;
         private readonly DotNetSolutionCompilerService _dotNetCompilerService;
+        private readonly CSharpProjectCompilerService _cSharpProjectCompilerService;
         private readonly CSharpCompilerService _cSharpCompilerService;
         private readonly RazorCompilerService _razorCompilerService;
         private readonly TextEditorCssCompilerService _cssCompilerService;
@@ -56,6 +58,7 @@ public partial class EditorState
             ICommonBackgroundTaskQueue commonBackgroundTaskQueue,
             TextEditorXmlCompilerService xmlCompilerService,
             DotNetSolutionCompilerService dotNetCompilerService,
+            CSharpProjectCompilerService cSharpProjectCompilerService,
             CSharpCompilerService cSharpCompilerService,
             RazorCompilerService razorCompilerService,
             TextEditorCssCompilerService cssCompilerService,
@@ -69,6 +72,7 @@ public partial class EditorState
             _commonBackgroundTaskQueue = commonBackgroundTaskQueue;
             _xmlCompilerService = xmlCompilerService;
             _dotNetCompilerService = dotNetCompilerService;
+            _cSharpProjectCompilerService = cSharpProjectCompilerService;
             _cSharpCompilerService = cSharpCompilerService;
             _razorCompilerService = razorCompilerService;
             _cssCompilerService = cssCompilerService;
@@ -175,6 +179,7 @@ public partial class EditorState
                     absoluteFilePath.ExtensionNoPeriod,
                     _xmlCompilerService,
                     _dotNetCompilerService,
+                    _cSharpProjectCompilerService,
                     _cSharpCompilerService,
                     _razorCompilerService,
                     _cssCompilerService,

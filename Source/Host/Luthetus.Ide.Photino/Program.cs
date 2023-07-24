@@ -1,5 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
+using Luthetus.CompilerServices.Lang.CSharpProject.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.Css;
 using Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.JavaScript;
@@ -33,6 +34,7 @@ class Program
 
         appBuilder.Services.AddScoped<TextEditorXmlCompilerService>();
         appBuilder.Services.AddScoped<DotNetSolutionCompilerService>();
+        appBuilder.Services.AddScoped<CSharpProjectCompilerService>();
         appBuilder.Services.AddScoped<CSharpCompilerService>();
         appBuilder.Services.AddScoped<RazorCompilerService>();
         appBuilder.Services.AddScoped<TextEditorCssCompilerService>();

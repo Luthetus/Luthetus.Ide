@@ -1,4 +1,6 @@
 ﻿@using Luthetus.Common.RazorLib.Dimensions;
+@using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
+@using Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
 
 @{
     var localCompilerServiceResource = CompilerServiceResource;
@@ -21,20 +23,38 @@
     <text text-anchor="middle" dominant-baseline="middle"
           x="@xCenterInPixelsCssValue" y="@yCenterInPixelsCssValue"
           style="@fontSizeStyleAttribute">
-        @localCompilerServiceResource.ResourceUri.Value
+        
+        @{
+            var absoluteFilePath = new AbsoluteFilePath(
+                localCompilerServiceResource.ResourceUri.Value,
+                false,
+                EnvironmentProvider);
+        }
+
+        @absoluteFilePath.FilenameWithExtension
     </text>
 </g>
 
-@*@if (DotNetSolutionResource.DotNetSolution is not null)
+@if (localCompilerServiceResource is DotNetSolutionResource dotNetSolutionResource &&
+     dotNetSolutionResource.DotNetSolution is not null)
 {
-    var dotNetProjects = DotNetSolutionResource.DotNetSolution.DotNetProjects;
+    var dotNetProjects = dotNetSolutionResource.DotNetSolution.DotNetProjects;
 
     for (var temporaryIndex = 0; temporaryIndex < dotNetProjects.Count; temporaryIndex++)
     {
         var index = temporaryIndex;
         var dotNetProject = dotNetProjects[index];
 
-        <DotNetSolutionResourceDisplay DotNetSolutionResource="compilerServiceResource"
-                                       Index="index" />
+        var cSharpProjectResource = CSharpProjectCompilerService.CompilerServiceResources
+            .SingleOrDefault(csr => 
+                csr.ResourceUri.Value == dotNetProject.AbsoluteFilePath.GetAbsoluteFilePathString());
+
+        if (cSharpProjectResource is not null)
+        {
+            <CompilerServiceResourceDisplay CompilerServiceResource="cSharpProjectResource"
+                                            IndexAmongSiblings="index"
+                                            Depth="Depth + 1"
+                                            CountOfSiblingsAndSelf="@dotNetProjects.Count" />
+        }
     }
-}*@
+}
