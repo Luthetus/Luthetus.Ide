@@ -19,6 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Languages\DotNetSolution\Source\Luthetus.CompilerServices.Lang.DotNetSolution.csproj" />
         <ProjectReference Include="..\..\Lib\Luthetus.Ide.RazorLib\Luthetus.Ide.RazorLib.csproj" />
         <ProjectReference Include="..\Photino.Blazor\Photino.Blazor\Photino.Blazor.csproj" />
     </ItemGroup>

@@ -1,0 +1,36 @@
+﻿@using Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
+
+@{
+    var compilerService = CompilerService;
+    var compilerServiceResources = CompilerService.CompilerServiceResources;
+}
+
+<div class="luth_ide_compiler-service">
+    <div class="luth_ide_compiler-service-title">
+        @compilerService.GetType().Name
+    </div>
+
+    <div class="luth_ide_compiler-service-main row">
+        <div class="luth_ide_compiler-service-body col-12 col-md-8">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <CascadingValue Name="CompilerServiceDisplayDimensions" Value="_compilerServiceDisplayDimensions">
+                    @for (var temporaryIndex = 0; temporaryIndex < compilerServiceResources.Length; temporaryIndex++)
+                    {
+                        var index = temporaryIndex;
+                        var compilerServiceResource = compilerServiceResources[index];
+
+                        <CompilerServiceResourceDisplay CompilerServiceResource="compilerServiceResource"
+                                                        IndexAmongSiblings="index"
+                                                        Depth="Depth + 1"
+                                                        CountOfSiblingsAndSelf="@compilerServiceResources.Length" />
+                    }
+                </CascadingValue>
+            </svg>
+        </div>
+
+        <div class="luth_ide_compiler-service-controls-wrap col-12 col-md-4">
+            <CompilerServiceControlsDisplay CompilerServiceDisplayDimensions="_compilerServiceDisplayDimensions"
+                                        DimensionsStateHasChangedFunc="OnDimensionsStateHasChanged" />
+        </div>
+    </div>
+</div>

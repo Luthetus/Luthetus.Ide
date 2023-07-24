@@ -1,8 +1,40 @@
-﻿<div class="luth_ide_compiler-service-resource">
-    <div>
-        ResourceUri:&nbsp;@CompilerServiceResource.ResourceUri.Value
-    </div>
-    <div>
-        ModelKey:&nbsp;@CompilerServiceResource.ModelKey
-    </div>
-</div>
+﻿@using Luthetus.Common.RazorLib.Dimensions;
+
+@{
+    var localCompilerServiceResource = CompilerServiceResource;
+
+    var circleRadiusInPixelsCssValue = CompilerServiceDisplayDimensions.CircleRadiusInPixels.ToCssValue();
+
+    var xCenterInPixelsCssValue = GetXCenterInPixels().ToCssValue();
+    var yCenterInPixelsCssValue = GetYCenterInPixels().ToCssValue();
+
+    var svgFontSizeInPixelsCssValue = CompilerServiceDisplayDimensions.SvgFontSizeInPixels.ToCssValue();
+
+    var fontSizeStyleAttribute = $"font-size: {svgFontSizeInPixelsCssValue}px;";
+}
+
+<g class="luth_ide_compiler-service-resource">
+    <circle stroke="darkgray" stroke-width="1px"
+            fill="@GetFill(localCompilerServiceResource)"
+            cx="@xCenterInPixelsCssValue" cy="@yCenterInPixelsCssValue" r="@circleRadiusInPixelsCssValue" />
+
+    <text text-anchor="middle" dominant-baseline="middle"
+          x="@xCenterInPixelsCssValue" y="@yCenterInPixelsCssValue"
+          style="@fontSizeStyleAttribute">
+        @localCompilerServiceResource.ResourceUri.Value
+    </text>
+</g>
+
+@*@if (DotNetSolutionResource.DotNetSolution is not null)
+{
+    var dotNetProjects = DotNetSolutionResource.DotNetSolution.DotNetProjects;
+
+    for (var temporaryIndex = 0; temporaryIndex < dotNetProjects.Count; temporaryIndex++)
+    {
+        var index = temporaryIndex;
+        var dotNetProject = dotNetProjects[index];
+
+        <DotNetSolutionResourceDisplay DotNetSolutionResource="compilerServiceResource"
+                                       Index="index" />
+    }
+}*@
