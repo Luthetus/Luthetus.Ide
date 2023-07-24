@@ -20,16 +20,35 @@
             fill="@GetFill(localCompilerServiceResource)"
             cx="@xCenterInPixelsCssValue" cy="@yCenterInPixelsCssValue" r="@circleRadiusInPixelsCssValue" />
 
+    @{
+        var absoluteFilePath = new AbsoluteFilePath(
+        localCompilerServiceResource.ResourceUri.Value,
+        false,
+        EnvironmentProvider);
+    }
+
+    @* 
+    Render the 'text' twice.
+
+    The first render with 'filter="url(#solid)"'
+        will render out the text with a solid color background to it.
+
+    The second render re-writes out the text because otherwise,
+        the 'filter' logic results in blurry text.
+
+    https://stackoverflow.com/questions/15500894/background-color-of-text-in-svg
+    *@
+
+    <text filter="url(#solid)"
+          text-anchor="middle" dominant-baseline="middle"
+          x="@xCenterInPixelsCssValue" y="@yCenterInPixelsCssValue"
+          style="@fontSizeStyleAttribute">
+
+        @absoluteFilePath.FilenameWithExtension
+    </text>
     <text text-anchor="middle" dominant-baseline="middle"
           x="@xCenterInPixelsCssValue" y="@yCenterInPixelsCssValue"
           style="@fontSizeStyleAttribute">
-        
-        @{
-            var absoluteFilePath = new AbsoluteFilePath(
-                localCompilerServiceResource.ResourceUri.Value,
-                false,
-                EnvironmentProvider);
-        }
 
         @absoluteFilePath.FilenameWithExtension
     </text>

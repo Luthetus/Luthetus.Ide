@@ -31,7 +31,7 @@ public partial class CompilerServiceResourceDisplay : ComponentBase
 
     private double GetYCenterInPixels()
     {
-        var verticalOffsetByDepth = (Depth + 1) * CompilerServiceDisplayDimensions.CircleRadiusInPixels;
+        var verticalOffsetByDepth = (Depth + 1) * (2.5 * CompilerServiceDisplayDimensions.CircleRadiusInPixels);
         var svgPaddingTop = CompilerServiceDisplayDimensions.SvgPadding;
 
         return verticalOffsetByDepth + svgPaddingTop;
@@ -43,10 +43,13 @@ public partial class CompilerServiceResourceDisplay : ComponentBase
             1.0 / (CountOfSiblingsAndSelf + 1.0);
 
         var horizontalSpacingBetweenEachCircle =
-            CompilerServiceDisplayDimensions.ViewBoxWidth * percentageOfHorizontalSpacingBetweenEachCircle;
+            (IndexAmongSiblings + 1) *
+            (CompilerServiceDisplayDimensions.ViewBoxWidth * percentageOfHorizontalSpacingBetweenEachCircle);
 
-        var horizontalOffsetByMarginBetweenCircles = 
-            IndexAmongSiblings * CompilerServiceDisplayDimensions.MinimumMarginRightBetweenSiblingsAndSelf;
+        //var horizontalOffsetByMarginBetweenCircles = 
+        //    IndexAmongSiblings * CompilerServiceDisplayDimensions.MinimumMarginRightBetweenSiblingsAndSelf;
+        
+        var horizontalOffsetByMarginBetweenCircles = 0;
 
         var svgPaddingLeft = CompilerServiceDisplayDimensions.SvgPadding;
 

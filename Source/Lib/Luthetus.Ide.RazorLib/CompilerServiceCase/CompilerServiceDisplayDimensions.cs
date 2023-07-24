@@ -7,5 +7,5 @@ public record CompilerServiceDisplayDimensions
     public double CircleRadiusInPixels { get; init; } = 10;
     public double MinimumMarginRightBetweenSiblingsAndSelf { get; init; } = 3;
     public double SvgPadding { get; init; } = 3;
-    public double SvgFontSizeInPixels { get; init; } = 5;
+    public double SvgFontSizeInPixels { get; init; } = 3;
 }

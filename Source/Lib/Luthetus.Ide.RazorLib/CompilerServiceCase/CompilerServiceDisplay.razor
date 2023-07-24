@@ -13,6 +13,12 @@
     <div class="luth_ide_compiler-service-main row">
         <div class="luth_ide_compiler-service-body col-12 col-md-8">
             <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <filter x="0" y="0" width="1" height="1" id="solid">
+                        <feFlood flood-color="yellow" />
+                        <feComposite in="SourceGraphic" operator="xor" />
+                    </filter>
+                </defs>
                 <CascadingValue Name="CompilerServiceDisplayDimensions" Value="_compilerServiceDisplayDimensions">
                     @for (var temporaryIndex = 0; temporaryIndex < compilerServiceResources.Length; temporaryIndex++)
                     {
