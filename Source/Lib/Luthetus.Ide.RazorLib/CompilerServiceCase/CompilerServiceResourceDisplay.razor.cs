@@ -31,10 +31,20 @@ public partial class CompilerServiceResourceDisplay : ComponentBase
 
     private double GetYCenterInPixels()
     {
-        var verticalOffsetByDepth = (Depth + 1) * (2.5 * CompilerServiceDisplayDimensions.CircleRadiusInPixels);
+        var initialCircleOffsetByRadius = CompilerServiceDisplayDimensions.CircleRadiusInPixels;
+
+        var verticalOffsetByTotalDiameterRenderedUpToThisPoint = 
+            Depth * (2 * CompilerServiceDisplayDimensions.CircleRadiusInPixels);
+
+        var verticalOffsetByMinimumMarginBottomBetweenRows = 
+            Depth * CompilerServiceDisplayDimensions.MinimumMarginBottomBetweenRows;
+
         var svgPaddingTop = CompilerServiceDisplayDimensions.SvgPadding;
 
-        return verticalOffsetByDepth + svgPaddingTop;
+        return initialCircleOffsetByRadius +
+            verticalOffsetByTotalDiameterRenderedUpToThisPoint +
+            verticalOffsetByMinimumMarginBottomBetweenRows +
+            svgPaddingTop;
     }
     
     private double GetXCenterInPixels()
