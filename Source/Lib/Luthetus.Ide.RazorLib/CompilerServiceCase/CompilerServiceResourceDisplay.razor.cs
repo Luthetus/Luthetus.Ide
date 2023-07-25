@@ -28,6 +28,12 @@ public partial class CompilerServiceResourceDisplay : ComponentBase
     /// </summary>
     [Parameter, EditorRequired]
     public int Depth { get; set; }
+    [Parameter, EditorRequired]
+    public bool ShouldDrawLineConnectingSelfToParent { get; set; }
+    [Parameter, EditorRequired]
+    public double ParentXCenterInPixels { get; set; }
+    [Parameter, EditorRequired]
+    public double ParentYCenterInPixels { get; set; }
 
     private double GetYCenterInPixels()
     {
