@@ -41,30 +41,30 @@ public partial class EditorState
         private readonly ILuthetusIdeComponentRenderers _luthetusIdeComponentRenderers;
         private readonly IFileSystemProvider _fileSystemProvider;
         private readonly ICommonBackgroundTaskQueue _commonBackgroundTaskQueue;
-        private readonly TextEditorXmlCompilerService _xmlCompilerService;
+        private readonly XmlCompilerService _xmlCompilerService;
         private readonly DotNetSolutionCompilerService _dotNetCompilerService;
         private readonly CSharpProjectCompilerService _cSharpProjectCompilerService;
         private readonly CSharpCompilerService _cSharpCompilerService;
         private readonly RazorCompilerService _razorCompilerService;
-        private readonly TextEditorCssCompilerService _cssCompilerService;
-        private readonly TextEditorJavaScriptCompilerService _javaScriptCompilerService;
-        private readonly TextEditorTypeScriptCompilerService _typeScriptCompilerService;
-        private readonly TextEditorJsonCompilerService _jsonCompilerService;
+        private readonly CssCompilerService _cssCompilerService;
+        private readonly JavaScriptCompilerService _javaScriptCompilerService;
+        private readonly TypeScriptCompilerService _typeScriptCompilerService;
+        private readonly JsonCompilerService _jsonCompilerService;
 
         public Effector(
             ITextEditorService textEditorService,
             ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
             IFileSystemProvider fileSystemProvider,
             ICommonBackgroundTaskQueue commonBackgroundTaskQueue,
-            TextEditorXmlCompilerService xmlCompilerService,
+            XmlCompilerService xmlCompilerService,
             DotNetSolutionCompilerService dotNetCompilerService,
             CSharpProjectCompilerService cSharpProjectCompilerService,
             CSharpCompilerService cSharpCompilerService,
             RazorCompilerService razorCompilerService,
-            TextEditorCssCompilerService cssCompilerService,
-            TextEditorJavaScriptCompilerService javaScriptCompilerService,
-            TextEditorTypeScriptCompilerService typeScriptCompilerService,
-            TextEditorJsonCompilerService jsonCompilerService)
+            CssCompilerService cssCompilerService,
+            JavaScriptCompilerService javaScriptCompilerService,
+            TypeScriptCompilerService typeScriptCompilerService,
+            JsonCompilerService jsonCompilerService)
         {
             _textEditorService = textEditorService;
             _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;

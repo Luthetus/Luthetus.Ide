@@ -32,15 +32,15 @@ class Program
 
         appBuilder.Services.AddLuthetusIdeRazorLibServices(true);
 
-        appBuilder.Services.AddScoped<TextEditorXmlCompilerService>();
+        appBuilder.Services.AddScoped<XmlCompilerService>();
         appBuilder.Services.AddScoped<DotNetSolutionCompilerService>();
         appBuilder.Services.AddScoped<CSharpProjectCompilerService>();
         appBuilder.Services.AddScoped<CSharpCompilerService>();
         appBuilder.Services.AddScoped<RazorCompilerService>();
-        appBuilder.Services.AddScoped<TextEditorCssCompilerService>();
-        appBuilder.Services.AddScoped<TextEditorJavaScriptCompilerService>();
-        appBuilder.Services.AddScoped<TextEditorTypeScriptCompilerService>();
-        appBuilder.Services.AddScoped<TextEditorJsonCompilerService>();
+        appBuilder.Services.AddScoped<CssCompilerService>();
+        appBuilder.Services.AddScoped<JavaScriptCompilerService>();
+        appBuilder.Services.AddScoped<TypeScriptCompilerService>();
+        appBuilder.Services.AddScoped<JsonCompilerService>();
 
         // The code:
         //     builder.Services.AddHostedService<QueuedHostedService>();

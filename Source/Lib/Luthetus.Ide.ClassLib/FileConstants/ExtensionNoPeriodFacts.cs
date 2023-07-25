@@ -71,15 +71,15 @@ public static class ExtensionNoPeriodFacts
     /// </summary>
     public static ICompilerService? GetCompilerService(
         string extensionNoPeriod,
-        TextEditorXmlCompilerService? xmlCompilerService,
+        XmlCompilerService? xmlCompilerService,
         DotNetSolutionCompilerService? dotNetCompilerService,
         CSharpProjectCompilerService? cSharpProjectCompilerService,
         CSharpCompilerService? cSharpCompilerService,
         RazorCompilerService? razorCompilerService,
-        TextEditorCssCompilerService? cssCompilerService,
-        TextEditorJavaScriptCompilerService? javaScriptCompilerService,
-        TextEditorTypeScriptCompilerService? typeScriptCompilerService,
-        TextEditorJsonCompilerService? jsonCompilerService)
+        CssCompilerService? cssCompilerService,
+        JavaScriptCompilerService? javaScriptCompilerService,
+        TypeScriptCompilerService? typeScriptCompilerService,
+        JsonCompilerService? jsonCompilerService)
     {
         return extensionNoPeriod switch
         {
