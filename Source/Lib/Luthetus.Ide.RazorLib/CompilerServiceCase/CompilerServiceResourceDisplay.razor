@@ -43,13 +43,15 @@
     <text filter="url(#solid)"
           text-anchor="middle" dominant-baseline="middle"
           x="@xCenterInPixelsCssValue" y="@yCenterInPixelsCssValue"
-          style="@fontSizeStyleAttribute">
+          style="@fontSizeStyleAttribute"
+          fill="var(--luth_primary-foreground-color)">
 
         @absoluteFilePath.FilenameWithExtension
     </text>
     <text text-anchor="middle" dominant-baseline="middle"
           x="@xCenterInPixelsCssValue" y="@yCenterInPixelsCssValue"
-          style="@fontSizeStyleAttribute">
+          style="@fontSizeStyleAttribute"
+          fill="var(--luth_primary-foreground-color)">
 
         @absoluteFilePath.FilenameWithExtension
     </text>
@@ -90,7 +92,7 @@
               y1="@((ParentYCenterInPixels + changeParentYPositionBy).ToCssValue())"
               x2="@((xCenterInPixels + changeMyXPositionBy).ToCssValue())"
               y2="@((yCenterInPixels + changeMyYPositionBy).ToCssValue())"
-              stroke="darkgray"/>
+              stroke="orange"/>
 
         @* Triangle base connection *@
         @*<line x1="@ParentXCenterInPixels.ToCssValue()"
