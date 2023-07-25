@@ -3,6 +3,7 @@ using Luthetus.CompilerServices.Lang.CSharpProject.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.Css;
 using Luthetus.CompilerServices.Lang.Css.Css.Decoration;
 using Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
+using Luthetus.CompilerServices.Lang.FSharp;
 using Luthetus.CompilerServices.Lang.JavaScript;
 using Luthetus.CompilerServices.Lang.Json;
 using Luthetus.CompilerServices.Lang.Json.Json.Decoration;
@@ -77,6 +78,7 @@ public static class ExtensionNoPeriodFacts
         CSharpCompilerService? cSharpCompilerService,
         RazorCompilerService? razorCompilerService,
         CssCompilerService? cssCompilerService,
+        FSharpCompilerService? fSharpCompilerService,
         JavaScriptCompilerService? javaScriptCompilerService,
         TypeScriptCompilerService? typeScriptCompilerService,
         JsonCompilerService? jsonCompilerService)
@@ -94,7 +96,7 @@ public static class ExtensionNoPeriodFacts
             JAVA_SCRIPT => javaScriptCompilerService,
             JSON => jsonCompilerService,
             TYPE_SCRIPT => typeScriptCompilerService,
-            F_SHARP => null,
+            F_SHARP => fSharpCompilerService,
             C => null,
             H => null,
             CPP => null,

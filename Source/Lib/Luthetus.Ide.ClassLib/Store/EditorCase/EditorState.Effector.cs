@@ -26,6 +26,7 @@ using Luthetus.CompilerServices.Lang.Json;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.CSharpProject.CompilerServiceCase;
+using Luthetus.CompilerServices.Lang.FSharp;
 
 namespace Luthetus.Ide.ClassLib.Store.EditorCase;
 
@@ -47,6 +48,7 @@ public partial class EditorState
         private readonly CSharpCompilerService _cSharpCompilerService;
         private readonly RazorCompilerService _razorCompilerService;
         private readonly CssCompilerService _cssCompilerService;
+        private readonly FSharpCompilerService _fSharpCompilerService;
         private readonly JavaScriptCompilerService _javaScriptCompilerService;
         private readonly TypeScriptCompilerService _typeScriptCompilerService;
         private readonly JsonCompilerService _jsonCompilerService;
@@ -62,6 +64,7 @@ public partial class EditorState
             CSharpCompilerService cSharpCompilerService,
             RazorCompilerService razorCompilerService,
             CssCompilerService cssCompilerService,
+            FSharpCompilerService fSharpCompilerService,
             JavaScriptCompilerService javaScriptCompilerService,
             TypeScriptCompilerService typeScriptCompilerService,
             JsonCompilerService jsonCompilerService)
@@ -76,6 +79,7 @@ public partial class EditorState
             _cSharpCompilerService = cSharpCompilerService;
             _razorCompilerService = razorCompilerService;
             _cssCompilerService = cssCompilerService;
+            _fSharpCompilerService = fSharpCompilerService;
             _javaScriptCompilerService = javaScriptCompilerService;
             _typeScriptCompilerService = typeScriptCompilerService;
             _jsonCompilerService = jsonCompilerService;
@@ -183,6 +187,7 @@ public partial class EditorState
                     _cSharpCompilerService,
                     _razorCompilerService,
                     _cssCompilerService,
+                    _fSharpCompilerService,
                     _javaScriptCompilerService,
                     _typeScriptCompilerService,
                     _jsonCompilerService);
