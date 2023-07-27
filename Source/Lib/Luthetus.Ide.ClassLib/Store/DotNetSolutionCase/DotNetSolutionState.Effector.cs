@@ -1,17 +1,14 @@
 ﻿using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.TreeViewImplementations;
-using Luthetus.Ide.ClassLib.Store.SemanticContextCase;
 using Luthetus.Common.RazorLib.TreeView;
 using Fluxor;
 using Luthetus.TextEditor.RazorLib.HostedServiceCase.CompilerServiceCase;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using System.Collections.Immutable;
-using Luthetus.CompilerServices.Lang.DotNet;
-using Luthetus.CompilerServices.Lang.CSharp.SemanticContextCase.Implementations;
-using Luthetus.CompilerServices.Lang.CSharp.SemanticContextCase.Keys;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
 using Luthetus.Common.RazorLib.Namespaces;
+using Luthetus.CompilerServices.Lang.DotNetSolution;
 
 namespace Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 
@@ -139,14 +136,6 @@ public partial record DotNetSolutionState
 
             if (dotNetSolutionState.DotNetSolution is null)
                 return Task.CompletedTask;
-
-            var dotNetSolutionSemanticContext = new DotNetSolutionSemanticContext(
-                DotNetSolutionKey.NewSolutionKey(),
-                dotNetSolutionState.DotNetSolution);
-
-            dispatcher.Dispatch(
-                new SemanticContextState.SetDotNetSolutionSemanticContextAction(
-                    dotNetSolutionSemanticContext));
 
             //var parserTask = new ParserTask(
             //    async cancellationToken =>

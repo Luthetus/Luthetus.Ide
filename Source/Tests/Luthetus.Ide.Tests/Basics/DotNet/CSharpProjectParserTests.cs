@@ -1,7 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
 using Luthetus.Common.RazorLib.FileSystem.Classes.Local;
 using Luthetus.Common.RazorLib.Misc;
-using Luthetus.CompilerServices.Lang.DotNet.CSharp;
+using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
 using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.Lexing;
 using Xunit;

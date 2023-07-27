@@ -1,7 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
 using Luthetus.Common.RazorLib.FileSystem.Classes.Local;
 using Luthetus.Common.RazorLib.Namespaces;
-using Luthetus.CompilerServices.Lang.DotNet;
+using Luthetus.CompilerServices.Lang.DotNetSolution;
 using Xunit;
 
 namespace Luthetus.Ide.Tests.Basics.DotNet;

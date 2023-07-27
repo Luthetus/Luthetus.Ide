@@ -3,7 +3,6 @@ using Luthetus.Ide.ClassLib.Store.FileSystemCase;
 using Luthetus.Ide.ClassLib.Store.InputFileCase;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.FileConstants;
-using Luthetus.Ide.ClassLib.Store.SemanticContextCase;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Group;
@@ -25,6 +24,9 @@ using Luthetus.CompilerServices.Lang.JavaScript;
 using Luthetus.CompilerServices.Lang.TypeScript;
 using Luthetus.CompilerServices.Lang.Json;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
+using Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
+using Luthetus.CompilerServices.Lang.CSharpProject.CompilerServiceCase;
+using Luthetus.CompilerServices.Lang.FSharp;
 
 namespace Luthetus.Ide.ClassLib.Store.EditorCase;
 
@@ -40,38 +42,44 @@ public partial class EditorState
         private readonly ILuthetusIdeComponentRenderers _luthetusIdeComponentRenderers;
         private readonly IFileSystemProvider _fileSystemProvider;
         private readonly ICommonBackgroundTaskQueue _commonBackgroundTaskQueue;
-        private readonly IState<SemanticContextState> _semanticContextStateWrap;
-        private readonly TextEditorXmlCompilerService _xmlCompilerService;
+        private readonly XmlCompilerService _xmlCompilerService;
+        private readonly DotNetSolutionCompilerService _dotNetCompilerService;
+        private readonly CSharpProjectCompilerService _cSharpProjectCompilerService;
         private readonly CSharpCompilerService _cSharpCompilerService;
         private readonly RazorCompilerService _razorCompilerService;
-        private readonly TextEditorCssCompilerService _cssCompilerService;
-        private readonly TextEditorJavaScriptCompilerService _javaScriptCompilerService;
-        private readonly TextEditorTypeScriptCompilerService _typeScriptCompilerService;
-        private readonly TextEditorJsonCompilerService _jsonCompilerService;
+        private readonly CssCompilerService _cssCompilerService;
+        private readonly FSharpCompilerService _fSharpCompilerService;
+        private readonly JavaScriptCompilerService _javaScriptCompilerService;
+        private readonly TypeScriptCompilerService _typeScriptCompilerService;
+        private readonly JsonCompilerService _jsonCompilerService;
 
         public Effector(
             ITextEditorService textEditorService,
             ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
             IFileSystemProvider fileSystemProvider,
             ICommonBackgroundTaskQueue commonBackgroundTaskQueue,
-            IState<SemanticContextState> semanticContextStateWrap,
-            TextEditorXmlCompilerService xmlCompilerService,
+            XmlCompilerService xmlCompilerService,
+            DotNetSolutionCompilerService dotNetCompilerService,
+            CSharpProjectCompilerService cSharpProjectCompilerService,
             CSharpCompilerService cSharpCompilerService,
             RazorCompilerService razorCompilerService,
-            TextEditorCssCompilerService cssCompilerService,
-            TextEditorJavaScriptCompilerService javaScriptCompilerService,
-            TextEditorTypeScriptCompilerService typeScriptCompilerService,
-            TextEditorJsonCompilerService jsonCompilerService)
+            CssCompilerService cssCompilerService,
+            FSharpCompilerService fSharpCompilerService,
+            JavaScriptCompilerService javaScriptCompilerService,
+            TypeScriptCompilerService typeScriptCompilerService,
+            JsonCompilerService jsonCompilerService)
         {
             _textEditorService = textEditorService;
             _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
             _fileSystemProvider = fileSystemProvider;
             _commonBackgroundTaskQueue = commonBackgroundTaskQueue;
-            _semanticContextStateWrap = semanticContextStateWrap;
             _xmlCompilerService = xmlCompilerService;
+            _dotNetCompilerService = dotNetCompilerService;
+            _cSharpProjectCompilerService = cSharpProjectCompilerService;
             _cSharpCompilerService = cSharpCompilerService;
             _razorCompilerService = razorCompilerService;
             _cssCompilerService = cssCompilerService;
+            _fSharpCompilerService = fSharpCompilerService;
             _javaScriptCompilerService = javaScriptCompilerService;
             _typeScriptCompilerService = typeScriptCompilerService;
             _jsonCompilerService = jsonCompilerService;
@@ -174,9 +182,12 @@ public partial class EditorState
                 var compilerService = ExtensionNoPeriodFacts.GetCompilerService(
                     absoluteFilePath.ExtensionNoPeriod,
                     _xmlCompilerService,
+                    _dotNetCompilerService,
+                    _cSharpProjectCompilerService,
                     _cSharpCompilerService,
                     _razorCompilerService,
                     _cssCompilerService,
+                    _fSharpCompilerService,
                     _javaScriptCompilerService,
                     _typeScriptCompilerService,
                     _jsonCompilerService);

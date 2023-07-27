@@ -1,4 +1,4 @@
-﻿using Luthetus.CompilerServices.Lang.DotNet;
+﻿using Luthetus.CompilerServices.Lang.DotNetSolution;
 using Luthetus.Ide.ClassLib.Nuget;
 using System.Collections.Immutable;
 

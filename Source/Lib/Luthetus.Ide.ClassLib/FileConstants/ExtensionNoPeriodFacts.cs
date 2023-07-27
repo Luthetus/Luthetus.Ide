@@ -1,6 +1,9 @@
 ﻿using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
+using Luthetus.CompilerServices.Lang.CSharpProject.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.Css;
 using Luthetus.CompilerServices.Lang.Css.Css.Decoration;
+using Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
+using Luthetus.CompilerServices.Lang.FSharp;
 using Luthetus.CompilerServices.Lang.JavaScript;
 using Luthetus.CompilerServices.Lang.Json;
 using Luthetus.CompilerServices.Lang.Json.Json.Decoration;
@@ -59,6 +62,7 @@ public static class ExtensionNoPeriodFacts
             H => new GenericDecorationMapper(),
             CPP => new GenericDecorationMapper(),
             HPP => new GenericDecorationMapper(),
+            DOT_NET_SOLUTION => new TextEditorHtmlDecorationMapper(),
             _ => new TextEditorDecorationMapperDefault(),
         };
     }
@@ -68,19 +72,22 @@ public static class ExtensionNoPeriodFacts
     /// </summary>
     public static ICompilerService? GetCompilerService(
         string extensionNoPeriod,
-        TextEditorXmlCompilerService? xmlCompilerService,
+        XmlCompilerService? xmlCompilerService,
+        DotNetSolutionCompilerService? dotNetCompilerService,
+        CSharpProjectCompilerService? cSharpProjectCompilerService,
         CSharpCompilerService? cSharpCompilerService,
         RazorCompilerService? razorCompilerService,
-        TextEditorCssCompilerService? cssCompilerService,
-        TextEditorJavaScriptCompilerService? javaScriptCompilerService,
-        TextEditorTypeScriptCompilerService? typeScriptCompilerService,
-        TextEditorJsonCompilerService? jsonCompilerService)
+        CssCompilerService? cssCompilerService,
+        FSharpCompilerService? fSharpCompilerService,
+        JavaScriptCompilerService? javaScriptCompilerService,
+        TypeScriptCompilerService? typeScriptCompilerService,
+        JsonCompilerService? jsonCompilerService)
     {
         return extensionNoPeriod switch
         {
             HTML => xmlCompilerService,
             XML => xmlCompilerService,
-            C_SHARP_PROJECT => xmlCompilerService,
+            C_SHARP_PROJECT => cSharpProjectCompilerService,
             C_SHARP_CLASS => cSharpCompilerService,
             RAZOR_CODEBEHIND => cSharpCompilerService,
             RAZOR_MARKUP => razorCompilerService,
@@ -89,11 +96,12 @@ public static class ExtensionNoPeriodFacts
             JAVA_SCRIPT => javaScriptCompilerService,
             JSON => jsonCompilerService,
             TYPE_SCRIPT => typeScriptCompilerService,
-            F_SHARP => null,
+            F_SHARP => fSharpCompilerService,
             C => null,
             H => null,
             CPP => null,
             HPP => null,
+            DOT_NET_SOLUTION => dotNetCompilerService,
             _ => null,
         };
     }

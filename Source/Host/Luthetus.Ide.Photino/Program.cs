@@ -1,6 +1,9 @@
 ﻿using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
+using Luthetus.CompilerServices.Lang.CSharpProject.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.Css;
+using Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
+using Luthetus.CompilerServices.Lang.FSharp;
 using Luthetus.CompilerServices.Lang.JavaScript;
 using Luthetus.CompilerServices.Lang.Json;
 using Luthetus.CompilerServices.Lang.Razor.CompilerServiceCase;
@@ -30,13 +33,16 @@ class Program
 
         appBuilder.Services.AddLuthetusIdeRazorLibServices(true);
 
-        appBuilder.Services.AddScoped<TextEditorXmlCompilerService>();
+        appBuilder.Services.AddScoped<XmlCompilerService>();
+        appBuilder.Services.AddScoped<DotNetSolutionCompilerService>();
+        appBuilder.Services.AddScoped<CSharpProjectCompilerService>();
         appBuilder.Services.AddScoped<CSharpCompilerService>();
         appBuilder.Services.AddScoped<RazorCompilerService>();
-        appBuilder.Services.AddScoped<TextEditorCssCompilerService>();
-        appBuilder.Services.AddScoped<TextEditorJavaScriptCompilerService>();
-        appBuilder.Services.AddScoped<TextEditorTypeScriptCompilerService>();
-        appBuilder.Services.AddScoped<TextEditorJsonCompilerService>();
+        appBuilder.Services.AddScoped<CssCompilerService>();
+        appBuilder.Services.AddScoped<FSharpCompilerService>();
+        appBuilder.Services.AddScoped<JavaScriptCompilerService>();
+        appBuilder.Services.AddScoped<TypeScriptCompilerService>();
+        appBuilder.Services.AddScoped<JsonCompilerService>();
 
         // The code:
         //     builder.Services.AddHostedService<QueuedHostedService>();

@@ -1,4 +1,4 @@
-﻿using Luthetus.CompilerServices.Lang.DotNet.CSharp;
+﻿using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
 
 namespace Luthetus.Ide.ClassLib.ComponentRenderers.Types;
 
