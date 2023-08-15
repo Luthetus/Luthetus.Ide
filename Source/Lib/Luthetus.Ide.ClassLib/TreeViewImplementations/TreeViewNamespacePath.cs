@@ -26,10 +26,6 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
         LuthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
         FileSystemProvider = fileSystemProvider;
         EnvironmentProvider = environmentProvider;
-
-        // Adding ICompilerService symbols as children (2023-08-14)
-        if (Item.AbsoluteFilePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.C_SHARP_CLASS)
-            IsExpandable = true;
     }
 
     public ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; }
@@ -87,9 +83,6 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
                         break;
                     case ExtensionNoPeriodFacts.RAZOR_MARKUP:
                         newChildren = await this.RazorMarkupLoadChildrenAsync();
-                        break;
-                    case ExtensionNoPeriodFacts.C_SHARP_CLASS:
-                        newChildren = await this.CSharpClassLoadChildrenAsync();
                         break;
                 }
             }

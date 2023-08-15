@@ -8,12 +8,12 @@ namespace Luthetus.Ide.ClassLib.TreeViewImplementations.Helper;
 
 public partial class TreeViewHelper
 {
-    public static async Task<List<TreeViewNoType>> CSharpClassLoadChildrenAsync(
+    public static Task<List<TreeViewNoType>> CSharpClassLoadChildrenAsync(
         this TreeViewNamespacePath cSharpClassTreeView)
     {
         if (cSharpClassTreeView.Item is null)
-            return new();
+            return Task.FromResult<List<TreeViewNoType>>(new());
 
-        return cSharpClassTreeView.Children;
+        return Task.FromResult(cSharpClassTreeView.Children);
     }
 }
