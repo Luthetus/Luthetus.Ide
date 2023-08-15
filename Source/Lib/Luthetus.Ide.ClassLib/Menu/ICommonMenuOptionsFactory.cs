@@ -70,7 +70,7 @@ public interface ICommonMenuOptionsFactory
 
     public MenuOptionRecord RemoveNuGetPackageReferenceFromProject(
         NamespacePath modifyProjectNamespacePath,
-        TreeViewLightWeightNugetPackageRecord treeViewLightWeightNugetPackageRecord,
+        TreeViewCSharpProjectNugetPackageReference treeViewCSharpProjectNugetPackageReference,
         TerminalSession terminalSession,
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion);

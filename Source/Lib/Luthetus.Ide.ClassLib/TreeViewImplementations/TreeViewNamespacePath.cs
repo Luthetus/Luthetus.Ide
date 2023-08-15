@@ -26,6 +26,10 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
         LuthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
         FileSystemProvider = fileSystemProvider;
         EnvironmentProvider = environmentProvider;
+
+        // Adding ICompilerService symbols as children (2023-08-14)
+        if (Item.AbsoluteFilePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.C_SHARP_CLASS)
+            IsExpandable = true;
     }
 
     public ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; }
@@ -70,8 +74,7 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
 
             if (Item.AbsoluteFilePath.IsDirectory)
             {
-                newChildren = await TreeViewHelper
-                    .LoadChildrenForDirectoryAsync(this);
+                newChildren = await this.DirectoryLoadChildrenAsync();
             }
             else
             {
@@ -80,18 +83,18 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
                     case ExtensionNoPeriodFacts.DOT_NET_SOLUTION:
                         return;
                     case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
-                        newChildren = await TreeViewHelper
-                            .LoadChildrenForCSharpProjectAsync(this);
+                        newChildren = await this.CSharpProjectLoadChildrenAsync();
                         break;
                     case ExtensionNoPeriodFacts.RAZOR_MARKUP:
-                        newChildren = await TreeViewHelper
-                            .LoadChildrenForRazorMarkupAsync(this);
+                        newChildren = await this.RazorMarkupLoadChildrenAsync();
+                        break;
+                    case ExtensionNoPeriodFacts.C_SHARP_CLASS:
+                        newChildren = await this.CSharpClassLoadChildrenAsync();
                         break;
                 }
             }
 
-            var oldChildrenMap = Children
-                .ToDictionary(child => child);
+            var oldChildrenMap = Children.ToDictionary(child => child);
 
             foreach (var newChild in newChildren)
             {

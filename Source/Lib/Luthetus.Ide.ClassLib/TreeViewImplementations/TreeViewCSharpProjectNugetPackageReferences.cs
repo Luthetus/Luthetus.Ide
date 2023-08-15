@@ -33,17 +33,19 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
     public override bool Equals(object? obj)
     {
         if (obj is null ||
-            obj is not TreeViewCSharpProjectNugetPackageReferences)
+            obj is not TreeViewCSharpProjectNugetPackageReferences otherTreeView)
         {
             return false;
         }
 
-        return true;
+        return otherTreeView.GetHashCode() == GetHashCode();
     }
 
     public override int GetHashCode()
     {
-        return Item.GetHashCode();
+        return Item.CSharpProjectNamespacePath.AbsoluteFilePath
+            .GetAbsoluteFilePathString()
+            .GetHashCode();
     }
 
     public override TreeViewRenderer GetTreeViewRenderer()
@@ -103,9 +105,12 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
             lightWeightNugetPackageRecords.Add(lightWeightNugetPackageRecord);
         }
 
+        var cSharpProjectAbsoluteFilePathString = Item.CSharpProjectNamespacePath.AbsoluteFilePath
+            .GetAbsoluteFilePathString();
+
         var newChildren = lightWeightNugetPackageRecords
-            .Select(x => (TreeViewNoType)new TreeViewLightWeightNugetPackageRecord(
-                x,
+            .Select(npr => (TreeViewNoType)new TreeViewCSharpProjectNugetPackageReference(
+                new(cSharpProjectAbsoluteFilePathString, npr),
                 LuthetusIdeComponentRenderers,
                 FileSystemProvider,
                 EnvironmentProvider,

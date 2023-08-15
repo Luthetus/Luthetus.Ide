@@ -6,17 +6,17 @@ using Luthetus.Ide.ClassLib.Nuget;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementations;
 
-public class TreeViewLightWeightNugetPackageRecord : TreeViewWithType<LightWeightNugetPackageRecord>
+public class TreeViewCSharpProjectNugetPackageReference : TreeViewWithType<CSharpProjectNugetPackageReference>
 {
-    public TreeViewLightWeightNugetPackageRecord(
-        LightWeightNugetPackageRecord lightWeightNugetPackageRecord,
+    public TreeViewCSharpProjectNugetPackageReference(
+        CSharpProjectNugetPackageReference cSharpProjectNugetPackageReference,
         ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
         bool isExpandable,
         bool isExpanded)
             : base(
-                lightWeightNugetPackageRecord,
+                cSharpProjectNugetPackageReference,
                 isExpandable,
                 isExpanded)
     {
@@ -32,17 +32,20 @@ public class TreeViewLightWeightNugetPackageRecord : TreeViewWithType<LightWeigh
     public override bool Equals(object? obj)
     {
         if (obj is null ||
-            obj is not TreeViewLightWeightNugetPackageRecord)
+            obj is not TreeViewCSharpProjectNugetPackageReference otherTreeView)
         {
             return false;
         }
 
-        return true;
+        return otherTreeView.GetHashCode() == GetHashCode();
     }
 
     public override int GetHashCode()
     {
-        return Item.GetHashCode();
+        var uniqueString = Item.CSharpProjectAbsoluteFilePathString +
+            Item.LightWeightNugetPackageRecord.Id;
+
+        return uniqueString.GetHashCode();
     }
 
     public override TreeViewRenderer GetTreeViewRenderer()
@@ -52,7 +55,7 @@ public class TreeViewLightWeightNugetPackageRecord : TreeViewWithType<LightWeigh
             new Dictionary<string, object?>
             {
             {
-                nameof(ITreeViewLightWeightNugetPackageRecordRendererType.LightWeightNugetPackageRecord),
+                nameof(ITreeViewCSharpProjectNugetPackageReferenceRendererType.CSharpProjectNugetPackageReference),
                 Item
             },
             });

@@ -8,8 +8,8 @@ namespace Luthetus.Ide.ClassLib.TreeViewImplementations.Helper;
 
 public partial class TreeViewHelper
 {
-    public static async Task<List<TreeViewNoType>> LoadChildrenForRazorMarkupAsync(
-        TreeViewNamespacePath razorMarkupTreeView)
+    public static async Task<List<TreeViewNoType>> RazorMarkupLoadChildrenAsync(
+        this TreeViewNamespacePath razorMarkupTreeView)
     {
         if (razorMarkupTreeView.Item is null)
             return new();
