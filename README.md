@@ -1,4 +1,4 @@
-# Blazor Studio (Not yet released)
+# Luthetus.Ide (Not yet released)
 - A free and open source IDE being written with .NET: C#, Blazor UI, and a Photino host.
 
 - Runs on Linux, Windows, and Mac
@@ -58,7 +58,7 @@ NuGet Package Manager
 - The gif for this will be the gif at the start of this file where I showcase its usage as to decrease how large this README is.
 
 Text Editor
-- Has its own public repository and is a NuGet Package itself. Find source code at: https://github.com/huntercfreeman/Blazor.Text.Editor
+- Has its own public repository and is a NuGet Package itself. Find source code at: https://github.com/Luthetus/Luthetus.TextEditor/
 - Syntax Highlighting
 - Text Selection
 - Keyboard movement: { ArrowLeft, ArrowDown, ArrowUp, ArrowRight, Home, End }
@@ -108,10 +108,29 @@ Why Am I Making this IDE?
 You may be interested in visiting my [youtube channel](https://www.youtube.com/channel/UCzhWhqYVP40as1MFUesQM9w). I make videos about this repository there.
 
 # Cloning and locally running the repo
+Luthetus.Ide has references to other projects of mine.
 
-BlazorStudio is "plug and play" or "clone and run" that is to say. So, just 
-- Clone the source code 
-- Run the C# Project named `BlazorStudio.Photino`
+I wanted to avoid git-submodules, as I wonder if they would make things more complicated or not. I want anyone to be able to clone and run this repository, without needing knowledge of submodules.
 
-as shown in the following gif.
-![cloneBlazorStudio.gif](/Images/RootREADME/cloneGifIntro.gif)
+Therefore, to run this repository one must clone this repo itself, and a few of my other repositories of which Luthetus.Ide references.
+
+Preferably the main branch would use the NuGet Packages of the projects which are referenced. I hope to make this change in the future.
+
+Clone the following repos into the same folder:
+- Luthetus.Common
+  - [Source code](https://github.com/Luthetus/Luthetus.Common)
+  - git https url: https://github.com/Luthetus/Luthetus.Common.git
+- Luthetus.TextEditor
+  - [Source code](https://github.com/Luthetus/Luthetus.TextEditor)
+  - git https url: https://github.com/Luthetus/Luthetus.TextEditor.git
+- Luthetus.CompilerServices
+  - [Source code](https://github.com/Luthetus/Luthetus.CompilerServices)
+  - git https url: https://github.com/Luthetus/Luthetus.CompilerServices.git
+- Luthetus.Ide
+  - [Source code](https://github.com/Luthetus/Luthetus.Ide)
+  - git https url: https://github.com/Luthetus/Luthetus.Ide.git
+
+Possible errors with this 'scuffed' approach I have at the moment are:
+- Do to me not using submodules, the parent repository (Luthetus.Ide) does not track the commit which was being used by a child-repository (ex: Luthetus.TextEditor). I intend to keep the 'main' branches in sync, but I want to acknowledge possible errors. If there are others who wish to contribute to the code I'll make submodules a number one priority. As of right now, I'm the only developer on this so the unorganized nature of my approach is working, and effective for rapid changes. As the project grows, things would then need to be better organized.
+- The C# projects use file paths to resolve project references. The error here would be that the file paths do not match. Open the C# project in a text editor, and fix the file paths.
+- The .NET Solutions use file paths to include C# projects in a solution. The error here would be that the file paths do not match. Open the .NET Solution in a text editor, and fix the file paths.
