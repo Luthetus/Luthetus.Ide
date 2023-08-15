@@ -67,11 +67,9 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolution>
     {
         try
         {
-            var newChildren = await TreeViewHelper
-                .LoadChildrenForDotNetSolutionAsync(this);
+            var newChildren = await this.DotNetSolutionLoadChildrenAsync();
 
-            var oldChildrenMap = Children
-                .ToDictionary(child => child);
+            var oldChildrenMap = Children.ToDictionary(child => child);
 
             foreach (var newChild in newChildren)
             {

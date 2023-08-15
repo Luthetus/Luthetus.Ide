@@ -6,8 +6,8 @@ namespace Luthetus.Ide.ClassLib.TreeViewImplementations.Helper;
 
 public partial class TreeViewHelper
 {
-    public static async Task<List<TreeViewNoType>> LoadChildrenForDirectoryAsync(
-        TreeViewNamespacePath directoryTreeView)
+    public static async Task<List<TreeViewNoType>> DirectoryLoadChildrenAsync(
+        this TreeViewNamespacePath directoryTreeView)
     {
         var directoryAbsoluteFilePathString = directoryTreeView.Item.AbsoluteFilePath
             .GetAbsoluteFilePathString();

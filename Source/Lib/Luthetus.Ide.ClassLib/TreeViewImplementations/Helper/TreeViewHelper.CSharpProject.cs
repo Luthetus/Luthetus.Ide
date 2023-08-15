@@ -9,8 +9,8 @@ namespace Luthetus.Ide.ClassLib.TreeViewImplementations.Helper;
 
 public partial class TreeViewHelper
 {
-    public static async Task<List<TreeViewNoType>> LoadChildrenForCSharpProjectAsync(
-        TreeViewNamespacePath cSharpProjectTreeView)
+    public static async Task<List<TreeViewNoType>> CSharpProjectLoadChildrenAsync(
+        this TreeViewNamespacePath cSharpProjectTreeView)
     {
         var parentDirectoryOfCSharpProject = (IAbsoluteFilePath)
             cSharpProjectTreeView.Item.AbsoluteFilePath.Directories

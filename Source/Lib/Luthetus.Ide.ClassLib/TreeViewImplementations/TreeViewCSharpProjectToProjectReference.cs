@@ -32,17 +32,26 @@ public class TreeViewCSharpProjectToProjectReference : TreeViewWithType<CSharpPr
     public override bool Equals(object? obj)
     {
         if (obj is null ||
-            obj is not TreeViewCSharpProjectToProjectReference)
+            obj is not TreeViewCSharpProjectToProjectReference otherTreeView)
         {
             return false;
         }
 
-        return true;
+        return otherTreeView.GetHashCode() == GetHashCode();
     }
 
     public override int GetHashCode()
     {
-        return Item.GetHashCode();
+        var modifyProjectAbsoluteFilePathString = Item.ModifyProjectNamespacePath.AbsoluteFilePath
+            .GetAbsoluteFilePathString();
+        
+        var referenceProjectAbsoluteFilePathString = Item.ReferenceProjectAbsoluteFilePath
+            .GetAbsoluteFilePathString();
+
+        var uniqueAbsoluteFilePathString = modifyProjectAbsoluteFilePathString +
+            referenceProjectAbsoluteFilePathString;
+
+        return uniqueAbsoluteFilePathString.GetHashCode();
     }
 
     public override TreeViewRenderer GetTreeViewRenderer()

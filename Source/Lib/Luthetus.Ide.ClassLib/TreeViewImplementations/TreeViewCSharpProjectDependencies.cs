@@ -31,17 +31,19 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
     public override bool Equals(object? obj)
     {
         if (obj is null ||
-            obj is not TreeViewCSharpProjectDependencies)
+            obj is not TreeViewCSharpProjectDependencies otherTreeView)
         {
             return false;
         }
 
-        return true;
+        return otherTreeView.GetHashCode() == GetHashCode();
     }
 
     public override int GetHashCode()
     {
-        return Item.GetHashCode();
+        return Item.CSharpProjectNamespacePath.AbsoluteFilePath
+            .GetAbsoluteFilePathString()
+            .GetHashCode();
     }
 
     public override TreeViewRenderer GetTreeViewRenderer()

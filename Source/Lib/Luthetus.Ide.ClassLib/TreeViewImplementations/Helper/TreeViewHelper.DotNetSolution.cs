@@ -6,8 +6,8 @@ namespace Luthetus.Ide.ClassLib.TreeViewImplementations.Helper;
 
 public partial class TreeViewHelper
 {
-    public static Task<List<TreeViewNoType>> LoadChildrenForDotNetSolutionAsync(
-        TreeViewSolution treeViewSolution)
+    public static Task<List<TreeViewNoType>> DotNetSolutionLoadChildrenAsync(
+        this TreeViewSolution treeViewSolution)
     {
         var childSolutionFolders = treeViewSolution.Item.SolutionFolders
             .Select(x => (TreeViewNoType)new TreeViewSolutionFolder(
@@ -65,7 +65,6 @@ public partial class TreeViewHelper
 
         // The parent directory gets what is left over after the
         // children take their respective 'code behinds'
-        return Task.FromResult(
-            copyOfChildrenToFindRelatedFiles);
+        return Task.FromResult(copyOfChildrenToFindRelatedFiles);
     }
 }

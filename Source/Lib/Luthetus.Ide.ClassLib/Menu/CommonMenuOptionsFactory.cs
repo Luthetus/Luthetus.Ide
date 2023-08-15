@@ -342,7 +342,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
 
     public MenuOptionRecord RemoveNuGetPackageReferenceFromProject(
         NamespacePath modifyProjectNamespacePath,
-        TreeViewLightWeightNugetPackageRecord treeViewLightWeightNugetPackageRecord,
+        TreeViewCSharpProjectNugetPackageReference treeViewCSharpProjectNugetPackageReference,
         TerminalSession terminalSession,
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
@@ -352,7 +352,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
             MenuOptionKind.Other,
             OnClick: () => PerformRemoveNuGetPackageReferenceFromProjectAction(
                 modifyProjectNamespacePath,
-                treeViewLightWeightNugetPackageRecord,
+                treeViewCSharpProjectNugetPackageReference,
                 terminalSession,
                 dispatcher,
                 onAfterCompletion));
@@ -1004,7 +1004,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
 
     public void PerformRemoveNuGetPackageReferenceFromProjectAction(
         NamespacePath modifyProjectNamespacePath,
-        TreeViewLightWeightNugetPackageRecord treeViewLightWeightNugetPackageRecord,
+        TreeViewCSharpProjectNugetPackageReference treeViewCSharpProjectNugetPackageReference,
         TerminalSession terminalSession,
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
@@ -1016,7 +1016,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                     .FormatRemoveNugetPackageReferenceFromProject(
                         modifyProjectNamespacePath.AbsoluteFilePath
                             .GetAbsoluteFilePathString(),
-                        treeViewLightWeightNugetPackageRecord.Item.Id);
+                        treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id);
 
                 var removeNugetPackageReferenceFromProjectTerminalCommand = new TerminalCommand(
                     TerminalCommandKey.NewTerminalCommandKey(),
@@ -1036,7 +1036,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                             {
                                 nameof(IInformativeNotificationRendererType.Message),
                                 $"Modified {modifyProjectNamespacePath.AbsoluteFilePath.FilenameWithExtension}" +
-                                $" to NOT have a reference to {treeViewLightWeightNugetPackageRecord.Item.Id}"
+                                $" to NOT have a reference to {treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id}"
                             },
                             },
                             TimeSpan.FromSeconds(7),
