@@ -10,7 +10,8 @@ https://luthetus.github.io/Luthetus.Website/
 
 ## Features
 
-Solution Explorer
+### Solution Explorer:
+![solutionExplorerGif](./Images/Gifs/solutionExplorerGif.gif)
 - Tracks the file system default namespace.
 - Interpolate file system namespace when creating a templated C# file.
 - Create codebehinds for Blazor components with the 'partial', 'ComponentBase', and 'using' automatically.
@@ -19,12 +20,13 @@ Solution Explorer
 - For .NET Solutions the Context Menu also gets: "Add New C# Project", and "Add Existing C# Project"
 - For C# Projects the Context Menu also gets: "Add Project Reference", "Set As Startup Project", and "Remove (no files are deleted)"
 - Nesting of 'codebehind' like files. So nesting "MyComponent.razor.cs" behind "MyComponent.razor".
-![solutionExplorer](./Images/solutionExplorer.gif)
 
-Input File Dialog
+### Input File Dialog:
+![solutionExplorer](./Images/solutionExplorer.gif)
 - Traverse the file system in order to select a file. This file must satisfy a predicate which is defined by the requester. So I can request for a C# Project and the user sees an input file dialog which asks the user to pick a C# Project.
 
-NuGet Package Manager
+### NuGet Package Manager
+![solutionExplorer](./Images/solutionExplorer.gif)
 - Query "azuresearch-usnc.nuget.org/"
 - Pick the Project one wishes to add the NuGet Package reference to.
 - Option for "Include Prerelease"
@@ -33,18 +35,18 @@ NuGet Package Manager
 - Button to add the NuGet Package at the selected version to the chosen Project.
 - The gif for this will be the gif at the start of this file where I showcase its usage as to decrease how large this README is.
 
-Themes
+### Themes
+![textEditor](./Images/themes.gif)
 - Visual Studio Dark Theme Clone
 - Visual Studio Light Theme Clone
-![textEditor](./Images/themes.gif)
 
-Why Am I Making this IDE?
+## Why Am I Making this IDE?
 - https://github.com/Luthetus/Luthetus.About
 
-#### References I find useful:
+## References I find useful:
   - Scintilla Documentation: [https://www.scintilla.org/ScintillaDoc.html](https://www.scintilla.org/ScintillaDoc.html)
 
-# Cloning and locally running the repo
+## Cloning and locally running the repo
 Luthetus.Ide has references to other projects of mine.
 
 I wanted to avoid git-submodules, as I wonder if they would make things more complicated or not. I want anyone to be able to clone and run this repository, without needing knowledge of submodules.
