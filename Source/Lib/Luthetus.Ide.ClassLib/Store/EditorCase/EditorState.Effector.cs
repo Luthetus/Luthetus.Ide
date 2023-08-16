@@ -237,56 +237,57 @@ public partial class EditorState
                     _luthetusIdeComponentRenderers.BooleanPromptOrCancelRendererType,
                     new Dictionary<string, object?>
                     {
-                {
-                    nameof(IBooleanPromptOrCancelRendererType.Message),
-                    "File contents were modified on disk"
-                },
-                {
-                    nameof(IBooleanPromptOrCancelRendererType.AcceptOptionTextOverride),
-                    "Reload"
-                },
-                {
-                    nameof(IBooleanPromptOrCancelRendererType.OnAfterAcceptAction),
-                    new Action(() =>
-                    {
-                        var backgroundTask = new BackgroundTask(
-                            async cancellationToken =>
+                        {
+                            nameof(IBooleanPromptOrCancelRendererType.Message),
+                            "File contents were modified on disk"
+                        },
+                        {
+                            nameof(IBooleanPromptOrCancelRendererType.AcceptOptionTextOverride),
+                            "Reload"
+                        },
+                        {
+                            nameof(IBooleanPromptOrCancelRendererType.OnAfterAcceptAction),
+                            new Action(() =>
+                            {
+                                var backgroundTask = new BackgroundTask(
+                                    async cancellationToken =>
+                                    {
+                                        dispatcher.Dispatch(
+                                            new NotificationRecordsCollection.DisposeAction(
+                                                notificationInformativeKey));
+
+                                        var content = await _fileSystemProvider.File
+                                            .ReadAllTextAsync(inputFileAbsoluteFilePathString);
+
+                                        _textEditorService.Model.Reload(
+                                            textEditorModel.ModelKey,
+                                            content,
+                                            fileLastWriteTime);
+
+                                        await textEditorModel.ApplySyntaxHighlightingAsync();
+                                    },
+                                    "FileContentsWereModifiedOnDiskTask",
+                                    "TODO: Describe this task",
+                                    false,
+                                    _ => Task.CompletedTask,
+                                    dispatcher,
+                                    CancellationToken.None);
+
+                                _commonBackgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
+                            })
+                        },
+                        {
+                            nameof(IBooleanPromptOrCancelRendererType.OnAfterDeclineAction),
+                            new Action(() =>
                             {
                                 dispatcher.Dispatch(
                                     new NotificationRecordsCollection.DisposeAction(
                                         notificationInformativeKey));
-
-                                var content = await _fileSystemProvider.File
-                                    .ReadAllTextAsync(inputFileAbsoluteFilePathString);
-
-                                _textEditorService.Model.Reload(
-                                    textEditorModel.ModelKey,
-                                    content,
-                                    fileLastWriteTime);
-
-                                await textEditorModel.ApplySyntaxHighlightingAsync();
-                            },
-                            "FileContentsWereModifiedOnDiskTask",
-                            "TODO: Describe this task",
-                            false,
-                            _ => Task.CompletedTask,
-                            dispatcher,
-                            CancellationToken.None);
-
-                        _commonBackgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
-                    })
-                },
-                {
-                    nameof(IBooleanPromptOrCancelRendererType.OnAfterDeclineAction),
-                    new Action(() =>
-                    {
-                        dispatcher.Dispatch(
-                            new NotificationRecordsCollection.DisposeAction(
-                                notificationInformativeKey));
-                    })
-                },
+                            })
+                        },
                     },
                     TimeSpan.FromSeconds(20),
+                    true,
                     null);
 
                 dispatcher.Dispatch(

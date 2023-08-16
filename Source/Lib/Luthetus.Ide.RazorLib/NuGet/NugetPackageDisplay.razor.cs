@@ -113,12 +113,13 @@ public partial class NugetPackageDisplay : FluxorComponent
                         LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
                         new Dictionary<string, object?>
                         {
-                        {
-                            nameof(IInformativeNotificationRendererType.Message),
-                            $"{targetNugetPackage.Title}, {targetNugetVersion} was added to {targetProject.DisplayName}"
-                        },
+                            {
+                                nameof(IInformativeNotificationRendererType.Message),
+                                $"{targetNugetPackage.Title}, {targetNugetVersion} was added to {targetProject.DisplayName}"
+                            },
                         },
                         TimeSpan.FromSeconds(6),
+                        true,
                         null);
 
                     Dispatcher.Dispatch(

@@ -74,12 +74,13 @@ public partial class FileSystemState
                                 _luthetusCommonComponentRenderers.InformativeNotificationRendererType,
                                 new Dictionary<string, object?>
                                 {
-                                {
-                                    nameof(IInformativeNotificationRendererType.Message),
-                                    notificationMessage
-                                },
+                                    {
+                                        nameof(IInformativeNotificationRendererType.Message),
+                                        notificationMessage
+                                    },
                                 },
                                 TimeSpan.FromSeconds(5),
+                                true,
                                 null);
 
                             dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(

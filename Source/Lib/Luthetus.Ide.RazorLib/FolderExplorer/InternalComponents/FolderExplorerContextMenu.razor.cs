@@ -177,12 +177,13 @@ public partial class FolderExplorerContextMenu : ComponentBase
                 LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
                 new Dictionary<string, object?>
                 {
-                {
-                    nameof(IInformativeNotificationRendererType.Message),
-                    $"Copied: {absoluteFilePath.FilenameWithExtension}"
-                },
+                    {
+                        nameof(IInformativeNotificationRendererType.Message),
+                        $"Copied: {absoluteFilePath.FilenameWithExtension}"
+                    },
                 },
                 TimeSpan.FromSeconds(3),
+                true,
                 null);
 
             Dispatcher.Dispatch(
@@ -207,12 +208,13 @@ public partial class FolderExplorerContextMenu : ComponentBase
                 LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
                 new Dictionary<string, object?>
                 {
-                {
-                    nameof(IInformativeNotificationRendererType.Message),
-                    $"Cut: {absoluteFilePath.FilenameWithExtension}"
-                },
+                    {
+                        nameof(IInformativeNotificationRendererType.Message),
+                        $"Cut: {absoluteFilePath.FilenameWithExtension}"
+                    },
                 },
                 TimeSpan.FromSeconds(3),
+                true,
                 null);
 
             Dispatcher.Dispatch(

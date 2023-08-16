@@ -713,12 +713,13 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                     _luthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.ErrorNotificationRendererType,
                     new Dictionary<string, object?>
                     {
-                    {
-                        nameof(IErrorNotificationRendererType.Message),
-                        $"ERROR: {e.Message}"
-                    },
+                        {
+                            nameof(IErrorNotificationRendererType.Message),
+                            $"ERROR: {e.Message}"
+                        },
                     },
                     TimeSpan.FromSeconds(15),
+                    true,
                     IErrorNotificationRendererType.CSS_CLASS_STRING);
 
                 dispatcher.Dispatch(
@@ -816,13 +817,14 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                                         .InformativeNotificationRendererType,
                                     new Dictionary<string, object?>
                                     {
-                                    {
-                                        nameof(IInformativeNotificationRendererType.Message),
-                                        $"Modified {projectReceivingReference.Item.AbsoluteFilePath.FilenameWithExtension}" +
-                                        $" to have a reference to {referencedProject.FilenameWithExtension}"
-                                    },
+                                        {
+                                            nameof(IInformativeNotificationRendererType.Message),
+                                            $"Modified {projectReceivingReference.Item.AbsoluteFilePath.FilenameWithExtension}" +
+                                            $" to have a reference to {referencedProject.FilenameWithExtension}"
+                                        },
                                     },
                                     TimeSpan.FromSeconds(7),
+                                    true,
                                     null);
 
                                 dispatcher.Dispatch(
@@ -902,13 +904,14 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                                 .InformativeNotificationRendererType,
                             new Dictionary<string, object?>
                             {
-                            {
-                                nameof(IInformativeNotificationRendererType.Message),
-                                $"Modified {treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsoluteFilePath.FilenameWithExtension}" +
-                                $" to have a reference to {treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsoluteFilePath.FilenameWithExtension}"
-                            },
+                                {
+                                    nameof(IInformativeNotificationRendererType.Message),
+                                    $"Modified {treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsoluteFilePath.FilenameWithExtension}" +
+                                    $" to have a reference to {treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsoluteFilePath.FilenameWithExtension}"
+                                },
                             },
                             TimeSpan.FromSeconds(7),
+                            true,
                             null);
 
                         dispatcher.Dispatch(
@@ -963,13 +966,14 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                                 .InformativeNotificationRendererType,
                             new Dictionary<string, object?>
                             {
-                            {
-                                nameof(IInformativeNotificationRendererType.Message),
-                                $"Moved {treeViewProjectToMove.Item.AbsoluteFilePath.FilenameWithExtension}" +
-                                $" to the Solution Folder path: {solutionFolderPath}"
-                            },
+                                {
+                                    nameof(IInformativeNotificationRendererType.Message),
+                                    $"Moved {treeViewProjectToMove.Item.AbsoluteFilePath.FilenameWithExtension}" +
+                                    $" to the Solution Folder path: {solutionFolderPath}"
+                                },
                             },
                             TimeSpan.FromSeconds(7),
+                            true,
                             null);
 
                         dispatcher.Dispatch(
@@ -1033,13 +1037,14 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                                 .InformativeNotificationRendererType,
                             new Dictionary<string, object?>
                             {
-                            {
-                                nameof(IInformativeNotificationRendererType.Message),
-                                $"Modified {modifyProjectNamespacePath.AbsoluteFilePath.FilenameWithExtension}" +
-                                $" to NOT have a reference to {treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id}"
-                            },
+                                {
+                                    nameof(IInformativeNotificationRendererType.Message),
+                                    $"Modified {modifyProjectNamespacePath.AbsoluteFilePath.FilenameWithExtension}" +
+                                    $" to NOT have a reference to {treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id}"
+                                },
                             },
                             TimeSpan.FromSeconds(7),
+                            true,
                             null);
 
                         dispatcher.Dispatch(
