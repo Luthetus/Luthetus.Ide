@@ -82,7 +82,7 @@ Clone the following repos into the same folder:
   - git https url: https://github.com/Luthetus/Luthetus.Ide.git
 
 Possible errors with this 'scuffed' approach I have at the moment are:
-- Do to me not using submodules, the parent repository (Luthetus.Ide) does not track the commit which was being used by a child-repository (ex: Luthetus.TextEditor). I intend to keep the 'main' branches in sync, but I want to acknowledge possible errors. If there are others who wish to contribute to the code I'll make submodules a number one priority. As of right now, I'm the only developer on this so the unorganized nature of my approach is working, and effective for rapid changes. As the project grows, things would then need to be better organized.
+- Due to me not using submodules, the parent repository (Luthetus.Ide) does not track the commit which was being used by a child-repository (ex: Luthetus.TextEditor). I intend to keep the 'main' branches in sync, but I want to acknowledge possible errors. If there are others who wish to contribute to the code I'll make submodules a number one priority. As of right now, I'm the only developer on this so the unorganized nature of my approach is working, and effective for rapid changes. As the project grows, things would then need to be better organized.
 - The C# projects use file paths to resolve project references. The error here would be that the file paths do not match. Open the C# project in a text editor, and fix the file paths.
 - The .NET Solutions use file paths to include C# projects in a solution. The error here would be that the file paths do not match. Open the .NET Solution in a text editor, and fix the file paths.
 
