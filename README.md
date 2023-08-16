@@ -22,7 +22,7 @@ https://luthetus.github.io/Luthetus.Website/
 - Nesting of 'codebehind' like files. So nesting "MyComponent.razor.cs" behind "MyComponent.razor".
 
 ### Input File Dialog:
-#TODO GIF
+![solutionExplorerGif](./Images/Gifs/inputFileDialogGif.gif)
 - Traverse the file system in order to select a file. This file must satisfy a predicate which is defined by the requester. So I can request for a C# Project and the user sees an input file dialog which asks the user to pick a C# Project.
 
 ### NuGet Package Manager
