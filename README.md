@@ -22,11 +22,11 @@ https://luthetus.github.io/Luthetus.Website/
 - Nesting of 'codebehind' like files. So nesting "MyComponent.razor.cs" behind "MyComponent.razor".
 
 ### Input File Dialog:
-#TODO GIF
+![inputFileDialogGif](./Images/Gifs/inputFileDialogGif.gif)
 - Traverse the file system in order to select a file. This file must satisfy a predicate which is defined by the requester. So I can request for a C# Project and the user sees an input file dialog which asks the user to pick a C# Project.
 
 ### NuGet Package Manager
-#TODO GIF
+![nugetPackageManagerGif](./Images/Gifs/nugetPackageManagerGif.gif)
 - Query "azuresearch-usnc.nuget.org/"
 - Pick the Project one wishes to add the NuGet Package reference to.
 - Option for "Include Prerelease"
@@ -35,10 +35,22 @@ https://luthetus.github.io/Luthetus.Website/
 - Button to add the NuGet Package at the selected version to the chosen Project.
 - The gif for this will be the gif at the start of this file where I showcase its usage as to decrease how large this README is.
 
-### Themes
-#TODO GIF
-- Visual Studio Dark Theme Clone
-- Visual Studio Light Theme Clone
+### Settings
+![settingsGif](./Images/Gifs/settingsGif.gif)
+- Application Settings
+  - Font-Size
+  - Font-Family
+  - Icon-Size
+  - Theme
+- Text Editor Settings
+  - Font-Size
+  - Font-Family
+  - Cursor-Width
+  - Show Newlines
+  - Use Monospace Optimizations (you should not turn off monospace optimizations because the non-monospace logic is currently very unoptimized as of 2023-08-16)
+  - Show Whitespace
+  - Theme
+  - Keymap (Default, or Vim)
 
 ## Why Am I Making this IDE?
 - https://github.com/Luthetus/Luthetus.About
