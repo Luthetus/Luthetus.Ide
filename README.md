@@ -22,11 +22,11 @@ https://luthetus.github.io/Luthetus.Website/
 - Nesting of 'codebehind' like files. So nesting "MyComponent.razor.cs" behind "MyComponent.razor".
 
 ### Input File Dialog:
-![solutionExplorerGif](./Images/Gifs/inputFileDialogGif.gif)
+![inputFileDialogGif](./Images/Gifs/inputFileDialogGif.gif)
 - Traverse the file system in order to select a file. This file must satisfy a predicate which is defined by the requester. So I can request for a C# Project and the user sees an input file dialog which asks the user to pick a C# Project.
 
 ### NuGet Package Manager
-#TODO GIF
+![nugetPackageManagerGif](./Images/Gifs/nugetPackageManagerGif.gif)
 - Query "azuresearch-usnc.nuget.org/"
 - Pick the Project one wishes to add the NuGet Package reference to.
 - Option for "Include Prerelease"
