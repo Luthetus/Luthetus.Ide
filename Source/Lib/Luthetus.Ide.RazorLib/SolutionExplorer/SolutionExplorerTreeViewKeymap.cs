@@ -148,6 +148,7 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
                 },
                 },
                 TimeSpan.FromSeconds(3),
+                true,
                 null);
 
             _dispatcher.Dispatch(
@@ -172,12 +173,13 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
                 _luthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
                 new Dictionary<string, object?>
                 {
-                {
-                    nameof(IInformativeNotificationRendererType.Message),
-                    $"Cut: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
-                },
+                    {
+                        nameof(IInformativeNotificationRendererType.Message),
+                        $"Cut: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
+                    },
                 },
                 TimeSpan.FromSeconds(3),
+                true,
                 null);
 
             _dispatcher.Dispatch(

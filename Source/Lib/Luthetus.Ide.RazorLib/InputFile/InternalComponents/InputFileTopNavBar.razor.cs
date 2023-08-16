@@ -146,6 +146,7 @@ public partial class InputFileTopNavBar : ComponentBase
                     }
                     },
                     TimeSpan.FromSeconds(12),
+                    true,
                     IErrorNotificationRendererType.CSS_CLASS_STRING);
 
                 Dispatcher.Dispatch(

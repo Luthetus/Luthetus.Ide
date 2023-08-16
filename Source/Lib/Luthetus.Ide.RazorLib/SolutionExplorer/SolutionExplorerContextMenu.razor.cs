@@ -473,6 +473,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 },
                 },
                 TimeSpan.FromSeconds(3),
+                true,
                 null);
 
             Dispatcher.Dispatch(
@@ -503,6 +504,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 },
                 },
                 TimeSpan.FromSeconds(3),
+                true,
                 null);
 
             Dispatcher.Dispatch(

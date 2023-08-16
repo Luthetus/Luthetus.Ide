@@ -142,12 +142,13 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
                 _luthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
                 new Dictionary<string, object?>
                 {
-                {
-                    nameof(IInformativeNotificationRendererType.Message),
-                    $"Copied: {absoluteFilePath.FilenameWithExtension}"
-                },
+                    {
+                        nameof(IInformativeNotificationRendererType.Message),
+                        $"Copied: {absoluteFilePath.FilenameWithExtension}"
+                    },
                 },
                 TimeSpan.FromSeconds(3),
+                true,
                 null);
 
             _dispatcher.Dispatch(
@@ -178,6 +179,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
                 },
                 },
                 TimeSpan.FromSeconds(3),
+                true,
                 null);
 
             _dispatcher.Dispatch(
