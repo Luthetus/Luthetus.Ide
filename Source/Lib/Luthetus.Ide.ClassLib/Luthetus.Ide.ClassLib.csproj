@@ -18,6 +18,7 @@
         <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
         <PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
         <PackageReference Include="System.Reactive" Version="5.0.0" />
+        <PackageReference Include="Luthetus.TextEditor" Version="1.2.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -30,7 +31,6 @@
       <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Source\Json\Source\Luthetus.CompilerServices.Lang.Json.csproj" />
       <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Source\Razor\Source\Luthetus.CompilerServices.Lang.Razor.csproj" />
       <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Source\TypeScript\Source\Luthetus.CompilerServices.Lang.TypeScript.csproj" />
-      <ProjectReference Include="..\..\..\..\Luthetus.TextEditor\Source\Lib\Luthetus.TextEditor.RazorLib\Luthetus.TextEditor.RazorLib.csproj" />
     </ItemGroup>
 
     <ItemGroup>
