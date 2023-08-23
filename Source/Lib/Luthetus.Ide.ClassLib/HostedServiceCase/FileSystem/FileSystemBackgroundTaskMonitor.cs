@@ -4,7 +4,7 @@ using Luthetus.Common.RazorLib.Store.NotificationCase;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
 
-namespace Luthetus.Ide.ClassLib.FileSystem.HostedServiceCase;
+namespace Luthetus.Ide.ClassLib.HostedServiceCase.FileSystem;
 
 public class FileSystemBackgroundTaskMonitor : IFileSystemBackgroundTaskMonitor
 {

@@ -13,6 +13,7 @@ public partial class TreeViewHelper
             .Select(x => (TreeViewNoType)new TreeViewSolutionFolder(
                 x,
                 treeViewSolution.LuthetusIdeComponentRenderers,
+                treeViewSolution.LuthetusCommonComponentRenderers,
                 treeViewSolution.FileSystemProvider,
                 treeViewSolution.EnvironmentProvider,
                 true,
@@ -34,6 +35,7 @@ public partial class TreeViewHelper
                 return (TreeViewNoType)new TreeViewNamespacePath(
                     namespacePath,
                     treeViewSolution.LuthetusIdeComponentRenderers,
+                    treeViewSolution.LuthetusCommonComponentRenderers,
                     treeViewSolution.FileSystemProvider,
                     treeViewSolution.EnvironmentProvider,
                     true,

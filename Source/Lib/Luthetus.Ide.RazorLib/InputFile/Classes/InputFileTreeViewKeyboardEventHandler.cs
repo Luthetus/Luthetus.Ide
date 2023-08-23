@@ -1,5 +1,6 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
+using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Keyboard;
 using Luthetus.Common.RazorLib.TreeView;
@@ -17,6 +18,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
     private readonly IState<InputFileState> _inputFileStateWrap;
     private readonly IDispatcher _dispatcher;
     private readonly ILuthetusIdeComponentRenderers _luthetusIdeComponentRenderers;
+    private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly Func<IAbsoluteFilePath, Task> _setInputFileContentTreeViewRootFunc;
@@ -29,6 +31,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         IState<InputFileState> inputFileStateWrap,
         IDispatcher dispatcher,
         ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
+        ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
         Func<IAbsoluteFilePath, Task> setInputFileContentTreeViewRootFunc,
@@ -40,6 +43,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         _inputFileStateWrap = inputFileStateWrap;
         _dispatcher = dispatcher;
         _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
+        _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
         _fileSystemProvider = fileSystemProvider;
         _environmentProvider = environmentProvider;
         _setInputFileContentTreeViewRootFunc = setInputFileContentTreeViewRootFunc;
@@ -157,6 +161,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
     {
         _dispatcher.Dispatch(new InputFileState.OpenParentDirectoryAction(
             _luthetusIdeComponentRenderers,
+            _luthetusCommonComponentRenderers,
             _fileSystemProvider,
             _environmentProvider,
             _commonBackgroundTaskQueue));

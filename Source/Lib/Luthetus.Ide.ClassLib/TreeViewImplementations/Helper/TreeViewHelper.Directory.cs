@@ -34,6 +34,7 @@ public partial class TreeViewHelper
                     return (TreeViewNoType)new TreeViewNamespacePath(
                         namespacePath,
                         directoryTreeView.LuthetusIdeComponentRenderers,
+                        directoryTreeView.LuthetusCommonComponentRenderers,
                         directoryTreeView.FileSystemProvider,
                         directoryTreeView.EnvironmentProvider,
                         true,
@@ -63,6 +64,7 @@ public partial class TreeViewHelper
                     return (TreeViewNoType)new TreeViewNamespacePath(
                         namespacePath,
                         directoryTreeView.LuthetusIdeComponentRenderers,
+                        directoryTreeView.LuthetusCommonComponentRenderers,
                         directoryTreeView.FileSystemProvider,
                         directoryTreeView.EnvironmentProvider,
                         false,
@@ -109,6 +111,7 @@ public partial class TreeViewHelper
                     return (TreeViewNoType)new TreeViewAbsoluteFilePath(
                         absoluteFilePath,
                         directoryTreeView.LuthetusIdeComponentRenderers,
+                        directoryTreeView.LuthetusCommonComponentRenderers,
                         directoryTreeView.FileSystemProvider,
                         directoryTreeView.EnvironmentProvider,
                         true,
@@ -132,6 +135,7 @@ public partial class TreeViewHelper
                     return (TreeViewNoType)new TreeViewAbsoluteFilePath(
                         absoluteFilePath,
                         directoryTreeView.LuthetusIdeComponentRenderers,
+                        directoryTreeView.LuthetusCommonComponentRenderers,
                         directoryTreeView.FileSystemProvider,
                         directoryTreeView.EnvironmentProvider,
                         false,

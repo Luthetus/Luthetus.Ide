@@ -20,12 +20,14 @@ using Luthetus.Common.RazorLib.Clipboard;
 using Luthetus.Common.RazorLib.Namespaces;
 using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
+using Luthetus.Common.RazorLib.ComponentRenderers;
 
 namespace Luthetus.Ide.ClassLib.Menu;
 
-public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
+public class MenuOptionsFactory : IMenuOptionsFactory
 {
     private readonly ILuthetusIdeComponentRenderers _luthetusIdeComponentRenderers;
+    private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly IClipboardService _clipboardService;
@@ -36,14 +38,16 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
     /// to work and instead added <see cref="IDispatcher"/> as an argument
     /// to methods in this file that need an <see cref="IDispatcher"/>
     /// </summary>
-    public CommonMenuOptionsFactory(
+    public MenuOptionsFactory(
         ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
+        ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
         IClipboardService clipboardService,
         ICommonBackgroundTaskQueue commonBackgroundTaskQueue)
     {
         _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
+        _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
         _fileSystemProvider = fileSystemProvider;
         _environmentProvider = environmentProvider;
         _clipboardService = clipboardService;
@@ -705,12 +709,12 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
         }
         catch (Exception e)
         {
-            if (_luthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.ErrorNotificationRendererType is not null)
+            if (_luthetusCommonComponentRenderers.ErrorNotificationRendererType is not null)
             {
                 var notificationError = new NotificationRecord(
                     NotificationKey.NewNotificationKey(),
                     "Rename Action",
-                    _luthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.ErrorNotificationRendererType,
+                    _luthetusCommonComponentRenderers.ErrorNotificationRendererType,
                     new Dictionary<string, object?>
                     {
                         {
@@ -813,7 +817,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                                 var notificationInformative = new NotificationRecord(
                                     NotificationKey.NewNotificationKey(),
                                     "Add Project Reference",
-                                    _luthetusIdeComponentRenderers.LuthetusCommonComponentRenderers
+                                    _luthetusCommonComponentRenderers
                                         .InformativeNotificationRendererType,
                                     new Dictionary<string, object?>
                                     {
@@ -900,7 +904,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                         var notificationInformative = new NotificationRecord(
                             NotificationKey.NewNotificationKey(),
                             "Remove Project Reference",
-                            _luthetusIdeComponentRenderers.LuthetusCommonComponentRenderers
+                            _luthetusCommonComponentRenderers
                                 .InformativeNotificationRendererType,
                             new Dictionary<string, object?>
                             {
@@ -962,7 +966,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                         var notificationInformative = new NotificationRecord(
                             NotificationKey.NewNotificationKey(),
                             "Move Project To Solution Folder",
-                            _luthetusIdeComponentRenderers.LuthetusCommonComponentRenderers
+                            _luthetusCommonComponentRenderers
                                 .InformativeNotificationRendererType,
                             new Dictionary<string, object?>
                             {
@@ -1033,7 +1037,7 @@ public class CommonMenuOptionsFactory : ICommonMenuOptionsFactory
                         var notificationInformative = new NotificationRecord(
                             NotificationKey.NewNotificationKey(),
                             "Remove Project Reference",
-                            _luthetusIdeComponentRenderers.LuthetusCommonComponentRenderers
+                            _luthetusCommonComponentRenderers
                                 .InformativeNotificationRendererType,
                             new Dictionary<string, object?>
                             {

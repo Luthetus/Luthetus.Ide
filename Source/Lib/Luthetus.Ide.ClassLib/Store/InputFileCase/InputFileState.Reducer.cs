@@ -53,6 +53,7 @@ public partial record InputFileState
                     inInputFileState,
                     setOpenedTreeViewModelAction.TreeViewModel,
                     setOpenedTreeViewModelAction.LuthetusIdeComponentRenderers,
+                    setOpenedTreeViewModelAction.LuthetusCommonComponentRenderers,
                     setOpenedTreeViewModelAction.FileSystemProvider,
                     setOpenedTreeViewModelAction.EnvironmentProvider);
             }
@@ -125,6 +126,7 @@ public partial record InputFileState
                 parentDirectoryTreeViewModel = new TreeViewAbsoluteFilePath(
                     (IAbsoluteFilePath)parentDirectoryAbsoluteFilePath,
                     openParentDirectoryAction.LuthetusIdeComponentRenderers,
+                    openParentDirectoryAction.LuthetusCommonComponentRenderers,
                     openParentDirectoryAction.FileSystemProvider,
                     openParentDirectoryAction.EnvironmentProvider,
                     false,
@@ -152,6 +154,7 @@ public partial record InputFileState
                     inInputFileState,
                     parentDirectoryTreeViewModel,
                     openParentDirectoryAction.LuthetusIdeComponentRenderers,
+                    openParentDirectoryAction.LuthetusCommonComponentRenderers,
                     openParentDirectoryAction.FileSystemProvider,
                     openParentDirectoryAction.EnvironmentProvider);
             }

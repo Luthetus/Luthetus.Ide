@@ -1,5 +1,6 @@
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
+using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.Store.ApplicationOptions;
 using Luthetus.Common.RazorLib.Store.DropdownCase;
 using Luthetus.Common.RazorLib.TreeView;
@@ -24,7 +25,9 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     [Inject]
     private ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; set; } = null!;
     [Inject]
-    private ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
+    private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
+    [Inject]
+    private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
 
     private ITreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
     private SolutionExplorerTreeViewKeymap _solutionExplorerTreeViewKeymap = null!;
@@ -40,8 +43,9 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         DotNetSolutionStateWrap.StateChanged += DotNetSolutionStateWrapOnStateChanged;
 
         _solutionExplorerTreeViewKeymap = new SolutionExplorerTreeViewKeymap(
-            CommonMenuOptionsFactory,
+            MenuOptionsFactory,
             LuthetusIdeComponentRenderers,
+            LuthetusCommonComponentRenderers,
             Dispatcher,
             TreeViewService);
 

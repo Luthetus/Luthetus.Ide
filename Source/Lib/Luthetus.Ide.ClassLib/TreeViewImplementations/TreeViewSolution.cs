@@ -5,6 +5,7 @@ using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Common.RazorLib.WatchWindow.TreeViewClasses;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.CompilerServices.Lang.DotNetSolution;
+using Luthetus.Common.RazorLib.ComponentRenderers;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementations;
 
@@ -13,6 +14,7 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolution>
     public TreeViewSolution(
         DotNetSolution dotNetSolution,
         ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
+        ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
         bool isExpandable,
@@ -23,11 +25,13 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolution>
                 isExpanded)
     {
         LuthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
+        LuthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
         FileSystemProvider = fileSystemProvider;
         EnvironmentProvider = environmentProvider;
     }
 
     public ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; }
+    public ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; }
     public IFileSystemProvider FileSystemProvider { get; }
     public IEnvironmentProvider EnvironmentProvider { get; }
 
@@ -102,7 +106,7 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolution>
                 exception,
                 false,
                 false,
-                LuthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
+                LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
             {
                 Parent = this,
                 IndexAmongSiblings = 0,

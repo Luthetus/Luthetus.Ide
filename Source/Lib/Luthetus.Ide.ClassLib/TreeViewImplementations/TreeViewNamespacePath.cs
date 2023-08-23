@@ -6,6 +6,7 @@ using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Common.RazorLib.WatchWindow.TreeViewClasses;
 using Luthetus.Common.RazorLib.Namespaces;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
+using Luthetus.Common.RazorLib.ComponentRenderers;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementations;
 
@@ -14,6 +15,7 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
     public TreeViewNamespacePath(
         NamespacePath namespacePath,
         ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
+        ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
         bool isExpandable,
@@ -24,11 +26,13 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
                 isExpanded)
     {
         LuthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
+        LuthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
         FileSystemProvider = fileSystemProvider;
         EnvironmentProvider = environmentProvider;
     }
 
     public ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; }
+    public ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; }
     public IFileSystemProvider FileSystemProvider { get; }
     public IEnvironmentProvider EnvironmentProvider { get; }
 
@@ -120,7 +124,7 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
                 exception,
                 false,
                 false,
-                LuthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
+                LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
             {
                 Parent = this,
                 IndexAmongSiblings = 0,

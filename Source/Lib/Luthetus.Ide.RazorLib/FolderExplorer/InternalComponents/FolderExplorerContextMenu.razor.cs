@@ -23,7 +23,7 @@ public partial class FolderExplorerContextMenu : ComponentBase
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
-    private ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
+    private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
     [Inject]
     private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
     [Inject]
@@ -78,13 +78,13 @@ public partial class FolderExplorerContextMenu : ComponentBase
     {
         return new[]
         {
-        CommonMenuOptionsFactory.NewEmptyFile(
+        MenuOptionsFactory.NewEmptyFile(
             treeViewModel.Item,
             async () => await ReloadTreeViewModel(treeViewModel)),
-        CommonMenuOptionsFactory.NewDirectory(
+        MenuOptionsFactory.NewDirectory(
             treeViewModel.Item,
             async () => await ReloadTreeViewModel(treeViewModel)),
-        CommonMenuOptionsFactory.PasteClipboard(
+        MenuOptionsFactory.PasteClipboard(
             treeViewModel.Item,
             async () =>
             {
@@ -107,19 +107,19 @@ public partial class FolderExplorerContextMenu : ComponentBase
     {
         return new[]
         {
-        CommonMenuOptionsFactory.CopyFile(
+        MenuOptionsFactory.CopyFile(
             treeViewModel.Item,
             () => NotifyCopyCompleted(treeViewModel.Item)),
-        CommonMenuOptionsFactory.CutFile(
+        MenuOptionsFactory.CutFile(
             treeViewModel.Item,
             () => NotifyCutCompleted(treeViewModel.Item, parentTreeViewModel)),
-        CommonMenuOptionsFactory.DeleteFile(
+        MenuOptionsFactory.DeleteFile(
             treeViewModel.Item,
             async () =>
             {
                 await ReloadTreeViewModel(parentTreeViewModel);
             }),
-        CommonMenuOptionsFactory.RenameFile(
+        MenuOptionsFactory.RenameFile(
             treeViewModel.Item,
             Dispatcher,
             async ()  =>

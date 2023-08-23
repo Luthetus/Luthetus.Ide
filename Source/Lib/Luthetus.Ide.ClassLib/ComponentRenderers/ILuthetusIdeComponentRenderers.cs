@@ -4,7 +4,6 @@ namespace Luthetus.Ide.ClassLib.ComponentRenderers;
 
 public interface ILuthetusIdeComponentRenderers
 {
-    public ILuthetusCommonComponentRenderers? LuthetusCommonComponentRenderers { get; }
     public Type? BooleanPromptOrCancelRendererType { get; }
     public Type? FileFormRendererType { get; }
     public Type? DeleteFileFormRendererType { get; }
