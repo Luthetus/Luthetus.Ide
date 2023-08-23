@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Icons.Codicon;
 using Luthetus.Common.RazorLib.Store.ThemeCase;
+using Luthetus.Ide.ClassLib.HostedServiceCase.Terminal;
 using Luthetus.Ide.ClassLib.Panel;
 using Luthetus.Ide.ClassLib.Store.PanelCase;
 using Luthetus.Ide.ClassLib.Store.TerminalCase;
@@ -29,7 +30,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
     [Inject]
     private LuthetusTextEditorOptions LuthetusTextEditorOptions { get; set; } = null!;
     [Inject]
-    private ICommonBackgroundTaskQueue CommonBackgroundTaskQueue { get; set; } = null!;
+    private ITerminalBackgroundTaskQueue TerminalBackgroundTaskQueue { get; set; } = null!;
     [Inject]
     private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
 
@@ -58,7 +59,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
                 null,
                 Dispatcher,
                 FileSystemProvider,
-                CommonBackgroundTaskQueue,
+                TerminalBackgroundTaskQueue,
                 LuthetusCommonComponentRenderers)
             {
                 TerminalSessionKey = terminalSessionKey
