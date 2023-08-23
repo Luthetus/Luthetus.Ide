@@ -8,6 +8,7 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Notification;
 using Luthetus.Common.RazorLib.Store.NotificationCase;
+using Luthetus.Ide.ClassLib.HostedServiceCase.Terminal;
 using Luthetus.Ide.ClassLib.State;
 using Luthetus.TextEditor.RazorLib.Model;
 using Luthetus.TextEditor.RazorLib.ViewModel;
@@ -22,7 +23,7 @@ public class TerminalSession
 {
     private readonly IDispatcher _dispatcher;
     private readonly IFileSystemProvider _fileSystemProvider;
-    private readonly ICommonBackgroundTaskQueue _commonBackgroundTaskQueue;
+    private readonly ITerminalBackgroundTaskQueue _terminalBackgroundTaskQueue;
     private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
     private readonly List<TerminalCommand> _terminalCommandsHistory = new();
     private CancellationTokenSource _commandCancellationTokenSource = new();
@@ -38,12 +39,12 @@ public class TerminalSession
         string? workingDirectoryAbsoluteFilePathString,
         IDispatcher dispatcher,
         IFileSystemProvider fileSystemProvider,
-        ICommonBackgroundTaskQueue commonBackgroundTaskQueue,
+        ITerminalBackgroundTaskQueue terminalBackgroundTaskQueue,
         ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers)
     {
         _dispatcher = dispatcher;
         _fileSystemProvider = fileSystemProvider;
-        _commonBackgroundTaskQueue = commonBackgroundTaskQueue;
+        _terminalBackgroundTaskQueue = terminalBackgroundTaskQueue;
         _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
         WorkingDirectoryAbsoluteFilePathString = workingDirectoryAbsoluteFilePathString;
     }
@@ -200,7 +201,7 @@ public class TerminalSession
             _dispatcher,
             CancellationToken.None);
 
-        _commonBackgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
+        _terminalBackgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
         return Task.CompletedTask;
     }
 

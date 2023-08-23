@@ -1,4 +1,5 @@
 ﻿using Fluxor;
+using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Keyboard;
@@ -20,20 +21,23 @@ namespace Luthetus.Ide.RazorLib.FolderExplorer.Classes;
 
 public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
-    private readonly ICommonMenuOptionsFactory _commonMenuOptionsFactory;
+    private readonly IMenuOptionsFactory _menuOptionsFactory;
     private readonly ILuthetusIdeComponentRenderers _luthetusIdeComponentRenderers;
+    private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
     private readonly IDispatcher _dispatcher;
     private readonly ITreeViewService _treeViewService;
 
     public FolderExplorerTreeViewKeyboardEventHandler(
-        ICommonMenuOptionsFactory commonMenuOptionsFactory,
+        IMenuOptionsFactory menuOptionsFactory,
         ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
+        ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
         IDispatcher dispatcher,
         ITreeViewService treeViewService)
         : base(treeViewService)
     {
-        _commonMenuOptionsFactory = commonMenuOptionsFactory;
+        _menuOptionsFactory = menuOptionsFactory;
         _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
+        _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
         _dispatcher = dispatcher;
         _treeViewService = treeViewService;
     }
@@ -134,12 +138,12 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
 
     private Task NotifyCopyCompleted(IAbsoluteFilePath absoluteFilePath)
     {
-        if (_luthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.InformativeNotificationRendererType is not null)
+        if (_luthetusCommonComponentRenderers.InformativeNotificationRendererType is not null)
         {
             var notificationInformative = new NotificationRecord(
                 NotificationKey.NewNotificationKey(),
                 "Copy Action",
-                _luthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
+                _luthetusCommonComponentRenderers.InformativeNotificationRendererType,
                 new Dictionary<string, object?>
                 {
                     {
@@ -165,12 +169,12 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
     {
         SolutionExplorerContextMenu.ParentOfCutFile = parentTreeViewModel;
 
-        if (_luthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.InformativeNotificationRendererType is not null)
+        if (_luthetusCommonComponentRenderers.InformativeNotificationRendererType is not null)
         {
             var notificationInformative = new NotificationRecord(
                 NotificationKey.NewNotificationKey(),
                 "Cut Action",
-                _luthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
+                _luthetusCommonComponentRenderers.InformativeNotificationRendererType,
                 new Dictionary<string, object?>
                 {
                 {
@@ -200,7 +204,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
             return Task.CompletedTask;
         }
 
-        var copyFileMenuOption = _commonMenuOptionsFactory.CopyFile(
+        var copyFileMenuOption = _menuOptionsFactory.CopyFile(
             treeViewAbsoluteFilePathPath.Item,
             () => NotifyCopyCompleted(treeViewAbsoluteFilePathPath.Item));
 
@@ -223,7 +227,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
 
         if (treeViewAbsoluteFilePathPath.Item.IsDirectory)
         {
-            pasteMenuOptionRecord = _commonMenuOptionsFactory.PasteClipboard(
+            pasteMenuOptionRecord = _menuOptionsFactory.PasteClipboard(
                 treeViewAbsoluteFilePathPath.Item,
                 async () =>
                 {
@@ -243,7 +247,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
             var parentDirectory = (IAbsoluteFilePath)treeViewAbsoluteFilePathPath
                 .Item.Directories.Last();
 
-            pasteMenuOptionRecord = _commonMenuOptionsFactory.PasteClipboard(
+            pasteMenuOptionRecord = _menuOptionsFactory.PasteClipboard(
                 parentDirectory,
                 async () =>
                 {
@@ -275,7 +279,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
 
         var parent = treeViewAbsoluteFilePathPath.Parent as TreeViewAbsoluteFilePath;
 
-        MenuOptionRecord cutFileOptionRecord = _commonMenuOptionsFactory.CutFile(
+        MenuOptionRecord cutFileOptionRecord = _menuOptionsFactory.CutFile(
             treeViewAbsoluteFilePathPath.Item,
             () => NotifyCutCompleted(
                 treeViewAbsoluteFilePathPath.Item,

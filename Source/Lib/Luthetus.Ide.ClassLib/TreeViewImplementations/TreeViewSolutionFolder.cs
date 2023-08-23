@@ -6,6 +6,7 @@ using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Namespaces;
 using Luthetus.CompilerServices.Lang.DotNetSolution;
 using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
+using Luthetus.Common.RazorLib.ComponentRenderers;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementations;
 
@@ -14,6 +15,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
     public TreeViewSolutionFolder(
         DotNetSolutionFolder dotNetSolutionFolder,
         ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
+        ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
         bool isExpandable,
@@ -24,11 +26,13 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
                 isExpanded)
     {
         LuthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
+        LuthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
         FileSystemProvider = fileSystemProvider;
         EnvironmentProvider = environmentProvider;
     }
 
     public ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; }
+    public ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; }
     public IFileSystemProvider FileSystemProvider { get; }
     public IEnvironmentProvider EnvironmentProvider { get; }
 
@@ -80,7 +84,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
                 exception,
                 false,
                 false,
-                LuthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
+                LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
             {
                 Parent = this,
                 IndexAmongSiblings = 0,
@@ -196,6 +200,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
         return (TreeViewNoType)new TreeViewSolutionFolder(
             dotNetSolutionFolder,
             LuthetusIdeComponentRenderers,
+            LuthetusCommonComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,
             true,
@@ -215,6 +220,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
         return (TreeViewNoType)new TreeViewNamespacePath(
             namespacePath,
             LuthetusIdeComponentRenderers,
+            LuthetusCommonComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,
             true,

@@ -38,6 +38,7 @@ public partial class TreeViewHelper
                             namespaceString,
                             absoluteFilePath),
                         razorMarkupTreeView.LuthetusIdeComponentRenderers,
+                        razorMarkupTreeView.LuthetusCommonComponentRenderers,
                         razorMarkupTreeView.FileSystemProvider,
                         razorMarkupTreeView.EnvironmentProvider,
                         false,

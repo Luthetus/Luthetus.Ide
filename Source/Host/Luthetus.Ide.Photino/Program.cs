@@ -1,15 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
-using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
-using Luthetus.CompilerServices.Lang.CSharpProject.CompilerServiceCase;
-using Luthetus.CompilerServices.Lang.Css;
-using Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
-using Luthetus.CompilerServices.Lang.FSharp;
-using Luthetus.CompilerServices.Lang.JavaScript;
-using Luthetus.CompilerServices.Lang.Json;
-using Luthetus.CompilerServices.Lang.Razor.CompilerServiceCase;
-using Luthetus.CompilerServices.Lang.TypeScript;
-using Luthetus.CompilerServices.Lang.Xml;
-using Luthetus.Ide.ClassLib.FileSystem.HostedServiceCase;
+using Luthetus.Ide.ClassLib.HostedServiceCase.FileSystem;
+using Luthetus.Ide.ClassLib.HostedServiceCase.Terminal;
 using Luthetus.Ide.RazorLib;
 using Luthetus.TextEditor.RazorLib.HostedServiceCase.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.HostedServiceCase.TextEditorCase;
@@ -33,17 +24,6 @@ class Program
 
         appBuilder.Services.AddLuthetusIdeRazorLibServices(true);
 
-        appBuilder.Services.AddScoped<XmlCompilerService>();
-        appBuilder.Services.AddScoped<DotNetSolutionCompilerService>();
-        appBuilder.Services.AddScoped<CSharpProjectCompilerService>();
-        appBuilder.Services.AddScoped<CSharpCompilerService>();
-        appBuilder.Services.AddScoped<RazorCompilerService>();
-        appBuilder.Services.AddScoped<CssCompilerService>();
-        appBuilder.Services.AddScoped<FSharpCompilerService>();
-        appBuilder.Services.AddScoped<JavaScriptCompilerService>();
-        appBuilder.Services.AddScoped<TypeScriptCompilerService>();
-        appBuilder.Services.AddScoped<JsonCompilerService>();
-
         // The code:
         //     builder.Services.AddHostedService<QueuedHostedService>();
         //
@@ -53,6 +33,7 @@ class Program
         appBuilder.Services.AddSingleton<TextEditorQueuedHostedService>();
         appBuilder.Services.AddSingleton<CompilerServiceQueuedHostedService>();
         appBuilder.Services.AddSingleton<FileSystemQueuedHostedService>();
+        appBuilder.Services.AddSingleton<TerminalQueuedHostedService>();
 
         appBuilder.RootComponents.Add<App>("app");
 
@@ -64,6 +45,7 @@ class Program
         var textEditorQueuedHostedService = app.Services.GetRequiredService<TextEditorQueuedHostedService>();
         var compilerServiceQueuedHostedService = app.Services.GetRequiredService<CompilerServiceQueuedHostedService>();
         var fileSystemQueuedHostedService = app.Services.GetRequiredService<FileSystemQueuedHostedService>();
+        var terminalQueuedHostedService = app.Services.GetRequiredService<TerminalQueuedHostedService>();
 
         var cancellationToken = backgroundTasksCancellationTokenSource.Token;
 
@@ -71,6 +53,7 @@ class Program
         _ = Task.Run(async () => await textEditorQueuedHostedService.StartAsync(cancellationToken));
         _ = Task.Run(async () => await compilerServiceQueuedHostedService.StartAsync(cancellationToken));
         _ = Task.Run(async () => await fileSystemQueuedHostedService.StartAsync(cancellationToken));
+        _ = Task.Run(async () => await terminalQueuedHostedService.StartAsync(cancellationToken));
 
         // customize window
         app.MainWindow
@@ -90,6 +73,5 @@ class Program
         };
 
         app.Run();
-
     }
 }

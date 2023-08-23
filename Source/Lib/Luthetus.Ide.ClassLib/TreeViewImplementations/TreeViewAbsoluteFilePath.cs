@@ -4,6 +4,7 @@ using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Common.RazorLib.WatchWindow.TreeViewClasses;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
+using Luthetus.Common.RazorLib.ComponentRenderers;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementations;
 
@@ -12,6 +13,7 @@ public class TreeViewAbsoluteFilePath : TreeViewWithType<IAbsoluteFilePath>
     public TreeViewAbsoluteFilePath(
         IAbsoluteFilePath absoluteFilePath,
         ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
+        ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
         bool isExpandable,
@@ -22,11 +24,13 @@ public class TreeViewAbsoluteFilePath : TreeViewWithType<IAbsoluteFilePath>
                 isExpanded)
     {
         LuthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
+        LuthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
         FileSystemProvider = fileSystemProvider;
         EnvironmentProvider = environmentProvider;
     }
 
     public ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; }
+    public ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; }
     public IFileSystemProvider FileSystemProvider { get; }
     public IEnvironmentProvider EnvironmentProvider { get; }
 
@@ -107,7 +111,7 @@ public class TreeViewAbsoluteFilePath : TreeViewWithType<IAbsoluteFilePath>
                 exception,
                 false,
                 false,
-                LuthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
+                LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
             {
                 Parent = this,
                 IndexAmongSiblings = 0,

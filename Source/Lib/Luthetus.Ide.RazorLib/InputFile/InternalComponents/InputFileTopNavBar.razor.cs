@@ -1,5 +1,6 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
+using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
@@ -17,6 +18,8 @@ public partial class InputFileTopNavBar : ComponentBase
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; set; } = null!;
+    [Inject]
+    private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
@@ -59,6 +62,7 @@ public partial class InputFileTopNavBar : ComponentBase
     {
         Dispatcher.Dispatch(new InputFileState.OpenParentDirectoryAction(
             LuthetusIdeComponentRenderers,
+            LuthetusCommonComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,
             CommonBackgroundTaskQueue));
@@ -132,12 +136,12 @@ public partial class InputFileTopNavBar : ComponentBase
         }
         catch (Exception exception)
         {
-            if (LuthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.ErrorNotificationRendererType != null)
+            if (LuthetusCommonComponentRenderers.ErrorNotificationRendererType != null)
             {
                 var errorNotification = new NotificationRecord(
                     NotificationKey.NewNotificationKey(),
                     $"ERROR: {nameof(InputFileTopNavBar)}",
-                    LuthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.ErrorNotificationRendererType,
+                    LuthetusCommonComponentRenderers.ErrorNotificationRendererType,
                     new Dictionary<string, object?>
                     {
                     {

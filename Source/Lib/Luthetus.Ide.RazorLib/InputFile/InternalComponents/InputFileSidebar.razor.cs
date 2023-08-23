@@ -1,4 +1,5 @@
 ﻿using Fluxor;
+using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.Dialog;
 using Luthetus.Common.RazorLib.Dimensions;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
@@ -21,6 +22,8 @@ public partial class InputFileSidebar : ComponentBase
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; set; } = null!;
+    [Inject]
+    private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
@@ -54,6 +57,7 @@ public partial class InputFileSidebar : ComponentBase
         var directoryHomeNode = new TreeViewAbsoluteFilePath(
             EnvironmentProvider.HomeDirectoryAbsoluteFilePath,
             LuthetusIdeComponentRenderers,
+            LuthetusCommonComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,
             true,
@@ -62,6 +66,7 @@ public partial class InputFileSidebar : ComponentBase
         var directoryRootNode = new TreeViewAbsoluteFilePath(
             EnvironmentProvider.RootDirectoryAbsoluteFilePath,
             LuthetusIdeComponentRenderers,
+            LuthetusCommonComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,
             true,

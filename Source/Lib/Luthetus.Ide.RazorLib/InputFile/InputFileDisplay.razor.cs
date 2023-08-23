@@ -1,6 +1,7 @@
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
+using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.Dimensions;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Resize;
@@ -23,6 +24,8 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; set; } = null!;
+    [Inject]
+    private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
@@ -101,6 +104,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
             InputFileStateWrap,
             Dispatcher,
             LuthetusIdeComponentRenderers,
+            LuthetusCommonComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,
             SetInputFileContentTreeViewRootFunc,
@@ -171,6 +175,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
         var pseudoRootNode = new TreeViewAbsoluteFilePath(
             absoluteFilePath,
             LuthetusIdeComponentRenderers,
+            LuthetusCommonComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,
             true,
@@ -214,6 +219,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
         var setOpenedTreeViewModelAction = new InputFileState.SetOpenedTreeViewModelAction(
             pseudoRootNode,
             LuthetusIdeComponentRenderers,
+            LuthetusCommonComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider);
 

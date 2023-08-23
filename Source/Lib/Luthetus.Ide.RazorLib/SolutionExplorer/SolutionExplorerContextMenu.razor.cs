@@ -16,6 +16,7 @@ using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Ide.ClassLib.CommandLine;
 using Luthetus.Ide.ClassLib.FileConstants;
 using Luthetus.Ide.ClassLib.InputFile;
+using Luthetus.Ide.ClassLib.Menu;
 using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 using Luthetus.Ide.ClassLib.Store.InputFileCase;
 using Luthetus.Ide.ClassLib.Store.ProgramExecutionCase;
@@ -34,7 +35,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
-    private ClassLib.Menu.ICommonMenuOptionsFactory CommonMenuOptionsFactory { get; set; } = null!;
+    private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
     [Inject]
     private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
     [Inject]
@@ -178,16 +179,16 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
         return new[]
         {
-            CommonMenuOptionsFactory.NewEmptyFile(
+            MenuOptionsFactory.NewEmptyFile(
                 parentDirectory,
                 async () => await ReloadTreeViewModel(treeViewModel)),
-            CommonMenuOptionsFactory.NewTemplatedFile(
+            MenuOptionsFactory.NewTemplatedFile(
                 new NamespacePath(treeViewModel.Item.Namespace, parentDirectory),
                 async () => await ReloadTreeViewModel(treeViewModel)),
-            CommonMenuOptionsFactory.NewDirectory(
+            MenuOptionsFactory.NewDirectory(
                 parentDirectory,
                 async () => await ReloadTreeViewModel(treeViewModel)),
-            CommonMenuOptionsFactory.PasteClipboard(
+            MenuOptionsFactory.PasteClipboard(
                 parentDirectory,
                 async () =>
                 {
@@ -201,14 +202,14 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
                     await ReloadTreeViewModel(treeViewModel);
                 }),
-            CommonMenuOptionsFactory.AddProjectToProjectReference(
+            MenuOptionsFactory.AddProjectToProjectReference(
                 treeViewModel,
                 TerminalSessionsStateWrap.Value
                     .TerminalSessionMap[
                         TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY],
                 Dispatcher,
                 () => Task.CompletedTask),
-            CommonMenuOptionsFactory.MoveProjectToSolutionFolder(
+            MenuOptionsFactory.MoveProjectToSolutionFolder(
                 treeViewSolution,
                 treeViewModel,
                 TerminalSessionsStateWrap.Value
@@ -228,7 +229,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 () => Dispatcher.Dispatch(
                     new ProgramExecutionState.SetStartupProjectAbsoluteFilePathAction(
                         treeViewModel.Item.AbsoluteFilePath))),
-            CommonMenuOptionsFactory.RemoveCSharpProjectReferenceFromSolution(
+            MenuOptionsFactory.RemoveCSharpProjectReferenceFromSolution(
                 treeViewSolution,
                 treeViewModel,
                 TerminalSessionsStateWrap.Value
@@ -250,7 +251,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     {
         return new[]
         {
-            CommonMenuOptionsFactory.RemoveProjectToProjectReference(
+            MenuOptionsFactory.RemoveProjectToProjectReference(
                 treeViewCSharpProjectToProjectReference,
                 TerminalSessionsStateWrap.Value
                     .TerminalSessionMap[
@@ -267,7 +268,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
         return new[]
         {
-        CommonMenuOptionsFactory.RemoveNuGetPackageReferenceFromProject(
+        MenuOptionsFactory.RemoveNuGetPackageReferenceFromProject(
             treeViewCSharpProjectNugetPackageReferences.Item.CSharpProjectNamespacePath,
             treeViewCSharpProjectNugetPackageReference,
             TerminalSessionsStateWrap.Value
@@ -282,16 +283,16 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     {
         return new[]
         {
-        CommonMenuOptionsFactory.NewEmptyFile(
+        MenuOptionsFactory.NewEmptyFile(
             treeViewModel.Item.AbsoluteFilePath,
             async () => await ReloadTreeViewModel(treeViewModel)),
-        CommonMenuOptionsFactory.NewTemplatedFile(
+        MenuOptionsFactory.NewTemplatedFile(
             treeViewModel.Item,
             async () => await ReloadTreeViewModel(treeViewModel)),
-        CommonMenuOptionsFactory.NewDirectory(
+        MenuOptionsFactory.NewDirectory(
             treeViewModel.Item.AbsoluteFilePath,
             async () => await ReloadTreeViewModel(treeViewModel)),
-        CommonMenuOptionsFactory.PasteClipboard(
+        MenuOptionsFactory.PasteClipboard(
             treeViewModel.Item.AbsoluteFilePath,
             async () =>
             {
@@ -314,19 +315,19 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     {
         return new[]
         {
-        CommonMenuOptionsFactory.CopyFile(
+        MenuOptionsFactory.CopyFile(
             treeViewModel.Item.AbsoluteFilePath,
             () => NotifyCopyCompleted(treeViewModel.Item)),
-        CommonMenuOptionsFactory.CutFile(
+        MenuOptionsFactory.CutFile(
             treeViewModel.Item.AbsoluteFilePath,
             () => NotifyCutCompleted(treeViewModel.Item, parentTreeViewModel)),
-        CommonMenuOptionsFactory.DeleteFile(
+        MenuOptionsFactory.DeleteFile(
             treeViewModel.Item.AbsoluteFilePath,
             async () =>
             {
                 await ReloadTreeViewModel(parentTreeViewModel);
             }),
-        CommonMenuOptionsFactory.RenameFile(
+        MenuOptionsFactory.RenameFile(
             treeViewModel.Item.AbsoluteFilePath,
             Dispatcher,
             async ()  =>

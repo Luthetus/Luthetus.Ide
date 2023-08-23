@@ -5,6 +5,7 @@ using Fluxor;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
+using Luthetus.Common.RazorLib.ComponentRenderers;
 
 namespace Luthetus.Ide.ClassLib.Store.FolderExplorerCase;
 
@@ -15,6 +16,7 @@ public partial record FolderExplorerState
         private readonly IFileSystemProvider _fileSystemProvider;
         private readonly IEnvironmentProvider _environmentProvider;
         private readonly ILuthetusIdeComponentRenderers _luthetusIdeComponentRenderers;
+        private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
         private readonly ITreeViewService _treeViewService;
         private readonly IState<FolderExplorerState> _folderExplorerStateWrap;
 
@@ -22,12 +24,14 @@ public partial record FolderExplorerState
             IFileSystemProvider fileSystemProvider,
             IEnvironmentProvider environmentProvider,
             ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
+            ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
             ITreeViewService treeViewService,
             IState<FolderExplorerState> folderExplorerStateWrap)
         {
             _fileSystemProvider = fileSystemProvider;
             _environmentProvider = environmentProvider;
             _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
+            _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
             _treeViewService = treeViewService;
             _folderExplorerStateWrap = folderExplorerStateWrap;
         }
@@ -67,6 +71,7 @@ public partial record FolderExplorerState
             var rootNode = new TreeViewAbsoluteFilePath(
                 folderExplorerState.AbsoluteFilePath,
                 _luthetusIdeComponentRenderers,
+                _luthetusCommonComponentRenderers,
                 _fileSystemProvider,
                 _environmentProvider,
                 true,

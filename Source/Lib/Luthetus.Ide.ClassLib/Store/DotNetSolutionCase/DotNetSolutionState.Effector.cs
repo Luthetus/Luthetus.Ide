@@ -9,6 +9,7 @@ using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
 using Luthetus.Common.RazorLib.Namespaces;
 using Luthetus.CompilerServices.Lang.DotNetSolution;
+using Luthetus.Common.RazorLib.ComponentRenderers;
 
 namespace Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 
@@ -19,6 +20,7 @@ public partial record DotNetSolutionState
         private readonly IFileSystemProvider _fileSystemProvider;
         private readonly IEnvironmentProvider _environmentProvider;
         private readonly ILuthetusIdeComponentRenderers _luthetusIdeComponentRenderers;
+        private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
         private readonly ITreeViewService _treeViewService;
         private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
         private readonly ICompilerServiceBackgroundTaskQueue _compilerServiceBackgroundTaskQueue;
@@ -27,6 +29,7 @@ public partial record DotNetSolutionState
             IFileSystemProvider fileSystemProvider,
             IEnvironmentProvider environmentProvider,
             ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
+            ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
             ITreeViewService treeViewService,
             IState<DotNetSolutionState> dotNetSolutionStateWrap,
             ICompilerServiceBackgroundTaskQueue compilerServiceBackgroundTaskQueue)
@@ -34,6 +37,7 @@ public partial record DotNetSolutionState
             _fileSystemProvider = fileSystemProvider;
             _environmentProvider = environmentProvider;
             _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
+            _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
             _treeViewService = treeViewService;
             _dotNetSolutionStateWrap = dotNetSolutionStateWrap;
             _compilerServiceBackgroundTaskQueue = compilerServiceBackgroundTaskQueue;
@@ -93,6 +97,7 @@ public partial record DotNetSolutionState
             var rootNode = new TreeViewSolution(
                 dotNetSolutionState.DotNetSolution,
                 _luthetusIdeComponentRenderers,
+                _luthetusCommonComponentRenderers,
                 _fileSystemProvider,
                 _environmentProvider,
                 true,

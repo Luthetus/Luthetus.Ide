@@ -5,7 +5,6 @@ namespace Luthetus.Ide.ClassLib.ComponentRenderers;
 public class LuthetusIdeComponentRenderers : ILuthetusIdeComponentRenderers
 {
     public LuthetusIdeComponentRenderers(
-        ILuthetusCommonComponentRenderers? luthetusCommonComponentRenderers,
         Type? booleanPromptOrCancelRendererType,
         Type? fileFormRendererType,
         Type? deleteFileFormRendererType,
@@ -25,7 +24,6 @@ public class LuthetusIdeComponentRenderers : ILuthetusIdeComponentRenderers
         Type? treeViewCSharpProjectToProjectReferenceRendererType,
         Type? treeViewSolutionFolderRendererType)
     {
-        LuthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
         BooleanPromptOrCancelRendererType = booleanPromptOrCancelRendererType;
         FileFormRendererType = fileFormRendererType;
         DeleteFileFormRendererType = deleteFileFormRendererType;
@@ -46,7 +44,6 @@ public class LuthetusIdeComponentRenderers : ILuthetusIdeComponentRenderers
         TreeViewSolutionFolderRendererType = treeViewSolutionFolderRendererType;
     }
 
-    public ILuthetusCommonComponentRenderers? LuthetusCommonComponentRenderers { get; }
     public Type? BooleanPromptOrCancelRendererType { get; }
     public Type? FileFormRendererType { get; }
     public Type? DeleteFileFormRendererType { get; }

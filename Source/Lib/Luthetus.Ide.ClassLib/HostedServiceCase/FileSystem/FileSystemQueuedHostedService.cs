@@ -6,7 +6,7 @@ using Luthetus.Common.RazorLib.Store.NotificationCase;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Luthetus.Ide.ClassLib.FileSystem.HostedServiceCase;
+namespace Luthetus.Ide.ClassLib.HostedServiceCase.FileSystem;
 
 public class FileSystemQueuedHostedService : BackgroundService
 {

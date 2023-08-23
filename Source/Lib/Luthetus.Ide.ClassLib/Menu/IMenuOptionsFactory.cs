@@ -7,7 +7,7 @@ using Luthetus.Ide.ClassLib.TreeViewImplementations;
 
 namespace Luthetus.Ide.ClassLib.Menu;
 
-public interface ICommonMenuOptionsFactory
+public interface IMenuOptionsFactory
 {
     public MenuOptionRecord NewEmptyFile(
         IAbsoluteFilePath parentDirectory,

@@ -5,14 +5,9 @@ using Luthetus.Ide.RazorLib.Git;
 using Luthetus.Ide.RazorLib.InputFile;
 using Luthetus.Ide.RazorLib.NuGet;
 using Luthetus.Ide.RazorLib.TreeViewImplementations;
-using TreeViewExceptionDisplay = Luthetus.Ide.RazorLib.TreeViewImplementations.TreeViewExceptionDisplay;
 using Luthetus.Ide.RazorLib.HostedServiceCase;
 using Microsoft.Extensions.DependencyInjection;
-using Luthetus.Common.RazorLib.WatchWindow;
-using Luthetus.Common.RazorLib.WatchWindow.TreeViewDisplays;
 using Luthetus.Common.RazorLib.ComponentRenderers;
-using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
-using Luthetus.Common.RazorLib.Notification;
 using Luthetus.TextEditor.RazorLib.HostedServiceCase.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.Common.RazorLib.Store.AccountCase;
@@ -29,37 +24,20 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddLuthetusIdeRazorLibServices(
         this IServiceCollection services,
-        bool isNativeApplication)
+        bool isNativeApplication,
+        Func<LuthetusTextEditorOptions, LuthetusTextEditorOptions>? configureTextEditorOptions = null)
     {
-        var watchWindowTreeViewRenderers = new WatchWindowTreeViewRenderers(
-            typeof(TreeViewTextDisplay),
-            typeof(TreeViewReflectionDisplay),
-            typeof(TreeViewPropertiesDisplay),
-            typeof(TreeViewInterfaceImplementationDisplay),
-            typeof(TreeViewFieldsDisplay),
-            typeof(TreeViewExceptionDisplay),
-            typeof(TreeViewEnumerableDisplay));
-
-        var commonRendererTypes = new LuthetusCommonComponentRenderers(
-            typeof(CommonBackgroundTaskDisplay),
-            typeof(CommonErrorNotificationDisplay),
-            typeof(CommonInformativeNotificationDisplay),
-            typeof(TreeViewExceptionDisplay),
-            typeof(TreeViewMissingRendererFallbackDisplay),
-            watchWindowTreeViewRenderers,
-            null,
-            typeof(CompilerServiceBackgroundTaskDisplay));
-
-        // TODO: Move registration of "ILuthetusCommonComponentRenderers" to LuthetusCommon
-        services.AddScoped<ILuthetusCommonComponentRenderers>(_ => commonRendererTypes);
-
         services.AddLuthetusTextEditor(inTextEditorOptions =>
         {
-            return inTextEditorOptions with
+            inTextEditorOptions = inTextEditorOptions with
             {
                 CustomThemeRecords = LuthetusTextEditorCustomThemeFacts.AllCustomThemes,
                 InitialThemeKey = LuthetusTextEditorCustomThemeFacts.DarkTheme.ThemeKey,
             };
+
+            return configureTextEditorOptions is null 
+                ? inTextEditorOptions
+                : configureTextEditorOptions.Invoke(inTextEditorOptions);
         });
 
         Func<IServiceProvider, IEnvironmentProvider> environmentProviderFactory;
@@ -85,22 +63,15 @@ public static class ServiceCollectionExtensions
         }
 
         services
-            .AddScoped(environmentProviderFactory.Invoke)
-            .AddScoped(fileSystemProviderFactory.Invoke);
-
-        if (isNativeApplication)
-            services.AddAuthorizationCore();
+            .AddSingleton(environmentProviderFactory.Invoke)
+            .AddSingleton(fileSystemProviderFactory.Invoke);
 
         services.AddSingleton(_ =>
             new LuthetusIdeOptions(isNativeApplication));
 
-        services.AddScoped<ILuthetusIdeComponentRenderers>(serviceProvider =>
+        services.AddSingleton<ILuthetusIdeComponentRenderers>(serviceProvider =>
         {
-            var blazorCommonComponentRenderers = serviceProvider
-                .GetRequiredService<ILuthetusCommonComponentRenderers>();
-
             return new LuthetusIdeComponentRenderers(
-                blazorCommonComponentRenderers,
                 typeof(BooleanPromptOrCancelDisplay),
                 typeof(FileFormDisplay),
                 typeof(DeleteFileFormDisplay),

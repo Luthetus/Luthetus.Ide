@@ -1,4 +1,5 @@
 ﻿using Fluxor;
+using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Keyboard;
@@ -20,20 +21,23 @@ namespace Luthetus.Ide.RazorLib.SolutionExplorer;
 
 public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
 {
-    private readonly ICommonMenuOptionsFactory _commonMenuOptionsFactory;
+    private readonly IMenuOptionsFactory _commonMenuOptionsFactory;
     private readonly ILuthetusIdeComponentRenderers _luthetusIdeComponentRenderers;
+    private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
     private readonly IDispatcher _dispatcher;
     private readonly ITreeViewService _treeViewService;
 
     public SolutionExplorerTreeViewKeymap(
-        ICommonMenuOptionsFactory commonMenuOptionsFactory,
+        IMenuOptionsFactory menuOptionsFactory,
         ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
+        ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
         IDispatcher dispatcher,
         ITreeViewService treeViewService)
         : base(treeViewService)
     {
-        _commonMenuOptionsFactory = commonMenuOptionsFactory;
+        _commonMenuOptionsFactory = menuOptionsFactory;
         _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
+        _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
         _dispatcher = dispatcher;
         _treeViewService = treeViewService;
     }
@@ -134,12 +138,12 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
 
     private Task NotifyCopyCompleted(NamespacePath namespacePath)
     {
-        if (_luthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.InformativeNotificationRendererType != null)
+        if (_luthetusCommonComponentRenderers.InformativeNotificationRendererType != null)
         {
             var notificationInformative = new NotificationRecord(
                 NotificationKey.NewNotificationKey(),
                 "Copy Action",
-                _luthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
+                _luthetusCommonComponentRenderers.InformativeNotificationRendererType,
                 new Dictionary<string, object?>
                 {
                 {
@@ -165,12 +169,12 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
     {
         SolutionExplorerContextMenu.ParentOfCutFile = parentTreeViewModel;
 
-        if (_luthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.InformativeNotificationRendererType != null)
+        if (_luthetusCommonComponentRenderers.InformativeNotificationRendererType != null)
         {
             var notificationInformative = new NotificationRecord(
                 NotificationKey.NewNotificationKey(),
                 "Cut Action",
-                _luthetusIdeComponentRenderers.LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
+                _luthetusCommonComponentRenderers.InformativeNotificationRendererType,
                 new Dictionary<string, object?>
                 {
                     {

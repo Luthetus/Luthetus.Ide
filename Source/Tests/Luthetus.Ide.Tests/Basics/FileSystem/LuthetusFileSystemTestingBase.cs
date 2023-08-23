@@ -39,8 +39,6 @@ public class LuthetusFileSystemTestingBase
             null,
             null,
             null,
-            null,
-            null,
             null));
 
         services.AddLuthetusTextEditor(inTextEditorOptions =>
