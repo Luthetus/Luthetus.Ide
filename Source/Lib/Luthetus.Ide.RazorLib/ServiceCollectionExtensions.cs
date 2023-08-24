@@ -7,7 +7,6 @@ using Luthetus.Ide.RazorLib.NuGet;
 using Luthetus.Ide.RazorLib.TreeViewImplementations;
 using Luthetus.Ide.RazorLib.HostedServiceCase;
 using Microsoft.Extensions.DependencyInjection;
-using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.TextEditor.RazorLib.HostedServiceCase.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.Common.RazorLib.Store.AccountCase;
