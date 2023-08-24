@@ -40,7 +40,8 @@ public partial record DotNetSolutionState(
                     if (afp is null || afp.IsDirectory)
                         return Task.FromResult(false);
 
-                    return Task.FromResult(true);
+                    return Task.FromResult(
+                        afp.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION);
                 },
                 new[]
                 {
