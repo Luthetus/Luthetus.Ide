@@ -243,7 +243,7 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
         else
         {
             var parentDirectory = (IAbsoluteFilePath)treeViewNamespacePath
-                .Item.AbsoluteFilePath.Directories.Last();
+                .Item.AbsoluteFilePath.AncestorDirectories.Last();
 
             pasteMenuOptionRecord = _commonMenuOptionsFactory.PasteClipboard(
                 parentDirectory,

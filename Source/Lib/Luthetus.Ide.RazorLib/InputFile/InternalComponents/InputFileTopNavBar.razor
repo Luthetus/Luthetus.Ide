@@ -40,7 +40,7 @@
                     }
                     else
                     {
-                        foreach (var directory in openedTreeView.Item.Directories)
+                        foreach (var directory in openedTreeView.Item.AncestorDirectories)
                         {
                             if (directory is IAbsoluteFilePath absoluteFilePath)
                             {

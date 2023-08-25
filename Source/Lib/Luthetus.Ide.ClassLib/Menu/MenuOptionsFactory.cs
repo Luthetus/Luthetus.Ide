@@ -679,7 +679,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
 
         var sourceAbsoluteFilePathString = sourceAbsoluteFilePath.GetAbsoluteFilePathString();
 
-        var parentOfSource = (IAbsoluteFilePath)sourceAbsoluteFilePath.Directories.Last();
+        var parentOfSource = (IAbsoluteFilePath)sourceAbsoluteFilePath.AncestorDirectories.Last();
 
         var destinationAbsoluteFilePathString = parentOfSource.GetAbsoluteFilePathString() +
                                   nextName;
@@ -753,7 +753,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             async cancellationToken =>
             {
                 var workingDirectory = (IAbsoluteFilePath)treeViewSolution
-                    .Item.NamespacePath.AbsoluteFilePath.Directories.Last();
+                    .Item.NamespacePath.AbsoluteFilePath.AncestorDirectories.Last();
 
                 var removeCSharpProjectReferenceFromSolutionFormattedCommand =
                     DotNetCliFacts.FormatRemoveCSharpProjectReferenceFromSolutionAction(

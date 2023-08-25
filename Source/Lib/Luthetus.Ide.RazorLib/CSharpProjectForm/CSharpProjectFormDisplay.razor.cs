@@ -125,16 +125,16 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                     TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
 
             var newCSharpProjectCommand = new TerminalCommand(
-                    _loadProjectTemplatesTerminalCommandKey,
-                    formattedCommand,
-                    EnvironmentProvider.HomeDirectoryAbsoluteFilePath.GetAbsoluteFilePathString(),
-                    _newCSharpProjectCancellationTokenSource.Token,
-                    async () =>
-                    {
-                        var output = generalTerminalSession.ReadStandardOut(_loadProjectTemplatesTerminalCommandKey);
+                _loadProjectTemplatesTerminalCommandKey,
+                formattedCommand,
+                EnvironmentProvider.HomeDirectoryAbsoluteFilePath.GetAbsoluteFilePathString(),
+                _newCSharpProjectCancellationTokenSource.Token,
+                async () =>
+                {
+                    var output = generalTerminalSession.ReadStandardOut(_loadProjectTemplatesTerminalCommandKey);
 
-                        await FormatDotnetNewListDeprecatedAsync();
-                    });
+                    await FormatDotnetNewListDeprecatedAsync();
+                });
 
             await generalTerminalSession.EnqueueCommandAsync(newCSharpProjectCommand);
         }
