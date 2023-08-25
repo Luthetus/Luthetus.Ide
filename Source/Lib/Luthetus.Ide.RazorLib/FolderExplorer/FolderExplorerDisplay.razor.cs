@@ -71,9 +71,8 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     {
         _mostRecentTreeViewCommandParameter = treeViewCommandParameter;
 
-        Dispatcher.Dispatch(
-            new DropdownsState.AddActiveAction(
-                FolderExplorerContextMenu.ContextMenuEventDropdownKey));
+        Dispatcher.Dispatch(new DropdownsState.AddActiveAction(
+            FolderExplorerContextMenu.ContextMenuEventDropdownKey));
 
         await InvokeAsync(StateHasChanged);
     }

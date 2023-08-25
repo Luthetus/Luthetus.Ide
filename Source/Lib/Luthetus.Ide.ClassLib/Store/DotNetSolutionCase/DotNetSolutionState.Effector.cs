@@ -68,12 +68,11 @@ public partial record DotNetSolutionState
                 solutionNamespacePath,
                 _environmentProvider);
 
-            dispatcher.Dispatch(
-                new WithAction(
-                    inDotNetSolutionState => inDotNetSolutionState with
-                    {
-                        DotNetSolution = dotNetSolution
-                    }));
+            dispatcher.Dispatch(new WithAction(
+                inDotNetSolutionState => inDotNetSolutionState with
+                {
+                    DotNetSolution = dotNetSolution
+                }));
 
             dispatcher.Dispatch(new SetDotNetSolutionTreeViewAction());
             dispatcher.Dispatch(new ParseDotNetSolutionAction());

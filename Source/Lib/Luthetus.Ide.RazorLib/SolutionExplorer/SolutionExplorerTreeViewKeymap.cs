@@ -155,9 +155,8 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
                 true,
                 null);
 
-            _dispatcher.Dispatch(
-                new NotificationRecordsCollection.RegisterAction(
-                    notificationInformative));
+            _dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+                notificationInformative));
         }
 
         return Task.CompletedTask;
@@ -186,9 +185,8 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
                 true,
                 null);
 
-            _dispatcher.Dispatch(
-                new NotificationRecordsCollection.RegisterAction(
-                    notificationInformative));
+            _dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+                notificationInformative));
         }
 
         return Task.CompletedTask;

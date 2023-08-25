@@ -39,17 +39,15 @@ public partial class LuthetusIdeInitializer : ComponentBase
         {
             foreach (var themeRecord in LuthetusTextEditorOptions.CustomThemeRecords)
             {
-                Dispatcher.Dispatch(
-                    new ThemeRecordsCollection.RegisterAction(
-                        themeRecord));
+                Dispatcher.Dispatch(new ThemeRecordsCollection.RegisterAction(
+                    themeRecord));
             }
         }
 
         foreach (var findProvider in LuthetusTextEditorOptions.FindProviders)
         {
-            Dispatcher.Dispatch(
-                new TextEditorFindProviderState.RegisterAction(
-                    findProvider));
+            Dispatcher.Dispatch(new TextEditorFindProviderState.RegisterAction(
+                findProvider));
         }
 
         foreach (var terminalSessionKey in TerminalSessionFacts.WELL_KNOWN_TERMINAL_SESSION_KEYS)

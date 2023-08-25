@@ -25,9 +25,8 @@ public partial record InputFileState
         {
             if (_luthetusIdeComponentRenderers.InputFileRendererType is not null)
             {
-                dispatcher.Dispatch(
-                    new StartInputFileStateFormAction(
-                        requestInputFileStateFormAction));
+                dispatcher.Dispatch(new StartInputFileStateFormAction(
+                    requestInputFileStateFormAction));
 
                 var inputFileDialog = new DialogRecord(
                     DialogFacts.InputFileDialogKey,
@@ -39,9 +38,8 @@ public partial record InputFileState
                     IsResizable = true
                 };
 
-                dispatcher.Dispatch(
-                    new DialogRecordsCollection.RegisterAction(
-                        inputFileDialog));
+                dispatcher.Dispatch(new DialogRecordsCollection.RegisterAction(
+                    inputFileDialog));
             }
 
             return Task.CompletedTask;

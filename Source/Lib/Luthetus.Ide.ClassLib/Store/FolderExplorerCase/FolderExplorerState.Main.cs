@@ -23,28 +23,25 @@ public partial record FolderExplorerState(
 
     public static void ShowInputFile(IDispatcher dispatcher)
     {
-        dispatcher.Dispatch(
-            new InputFileState.RequestInputFileStateFormAction(
-                "Folder Explorer",
-                afp =>
-                {
-                    if (afp is not null)
-                        dispatcher.Dispatch(new SetFolderExplorerAction(afp));
+        dispatcher.Dispatch(new InputFileState.RequestInputFileStateFormAction(
+            "Folder Explorer",
+            afp =>
+            {
+                if (afp is not null)
+                    dispatcher.Dispatch(new SetFolderExplorerAction(afp));
 
-                    return Task.CompletedTask;
-                },
-                afp =>
-                {
-                    if (afp is null || !afp.IsDirectory)
-                        return Task.FromResult(false);
+                return Task.CompletedTask;
+            },
+            afp =>
+            {
+                if (afp is null || !afp.IsDirectory)
+                    return Task.FromResult(false);
 
-                    return Task.FromResult(true);
-                },
-                new[]
-                {
-                new InputFilePattern(
-                    "Directory",
-                    afp => afp.IsDirectory)
-                }.ToImmutableArray()));
+                return Task.FromResult(true);
+            },
+            new[]
+            {
+                new InputFilePattern("Directory", afp => afp.IsDirectory)
+            }.ToImmutableArray()));
     }
 }

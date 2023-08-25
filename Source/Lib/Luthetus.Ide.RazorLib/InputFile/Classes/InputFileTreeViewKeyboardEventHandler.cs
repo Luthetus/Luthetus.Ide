@@ -172,8 +172,8 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
     private async Task HandleRefreshButtonOnClick(
         ITreeViewCommandParameter treeViewCommandParameter)
     {
-        _dispatcher.Dispatch(
-            new InputFileState.RefreshCurrentSelectionAction(_commonBackgroundTaskQueue));
+        _dispatcher.Dispatch(new InputFileState.RefreshCurrentSelectionAction(
+            _commonBackgroundTaskQueue));
 
         await ChangeContentRootToOpenedTreeView(_inputFileStateWrap.Value);
     }

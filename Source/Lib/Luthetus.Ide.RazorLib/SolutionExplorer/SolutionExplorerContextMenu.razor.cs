@@ -226,9 +226,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             new MenuOptionRecord(
                 "Set as Startup Project",
                 MenuOptionKind.Other,
-                () => Dispatcher.Dispatch(
-                    new ProgramExecutionState.SetStartupProjectAbsoluteFilePathAction(
-                        treeViewModel.Item.AbsoluteFilePath))),
+                () => Dispatcher.Dispatch(new ProgramExecutionState.SetStartupProjectAbsoluteFilePathAction(
+                    treeViewModel.Item.AbsoluteFilePath))),
             MenuOptionsFactory.RemoveCSharpProjectReferenceFromSolution(
                 treeViewSolution,
                 treeViewModel,
@@ -367,67 +366,57 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             IsResizable = true
         };
 
-        Dispatcher.Dispatch(
-            new DialogRecordsCollection.RegisterAction(
-                dialogRecord));
+        Dispatcher.Dispatch(new DialogRecordsCollection.RegisterAction(
+            dialogRecord));
     }
 
     private void AddExistingProjectToSolution(
         NamespacePath solutionNamespacePath)
     {
-        Dispatcher.Dispatch(
-            new InputFileState.RequestInputFileStateFormAction(
-                "Existing C# Project to add to solution",
-                async afp =>
-                {
-                    if (afp is null)
-                        return;
+        Dispatcher.Dispatch(new InputFileState.RequestInputFileStateFormAction(
+            "Existing C# Project to add to solution",
+            async afp =>
+            {
+                if (afp is null)
+                    return;
 
-                    var localFormattedAddExistingProjectToSolutionCommand = DotNetCliFacts
-                        .FormatAddExistingProjectToSolution(
-                            solutionNamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
-                            afp.GetAbsoluteFilePathString());
+                var localFormattedAddExistingProjectToSolutionCommand = DotNetCliFacts
+                    .FormatAddExistingProjectToSolution(
+                        solutionNamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
+                        afp.GetAbsoluteFilePathString());
 
-                    var addExistingProjectToSolutionTerminalCommand = new TerminalCommand(
-                        TerminalCommandKey.NewTerminalCommandKey(),
-                        localFormattedAddExistingProjectToSolutionCommand.targetFileName,
-                        localFormattedAddExistingProjectToSolutionCommand.arguments,
-                        null,
-                        CancellationToken.None,
-                        () =>
-                        {
-                            Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionAction(
-                                solutionNamespacePath.AbsoluteFilePath));
-
-                            return Task.CompletedTask;
-                        });
-
-                    var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
-                        TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
-
-                    await generalTerminalSession
-                        .EnqueueCommandAsync(addExistingProjectToSolutionTerminalCommand);
-                },
-                afp =>
-                {
-                    if (afp is null ||
-                        afp.IsDirectory)
+                var addExistingProjectToSolutionTerminalCommand = new TerminalCommand(
+                    TerminalCommandKey.NewTerminalCommandKey(),
+                    localFormattedAddExistingProjectToSolutionCommand,
+                    null,
+                    CancellationToken.None,
+                    () =>
                     {
-                        return Task.FromResult(false);
-                    }
+                        Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionAction(
+                            solutionNamespacePath.AbsoluteFilePath));
 
-                    return Task.FromResult(
-                        afp.ExtensionNoPeriod
-                            .EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT));
-                },
-                new[]
-                {
+                        return Task.CompletedTask;
+                    });
+
+                var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
+                    TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
+
+                await generalTerminalSession.EnqueueCommandAsync(addExistingProjectToSolutionTerminalCommand);
+            },
+            afp =>
+            {
+                if (afp is null || afp.IsDirectory)
+                    return Task.FromResult(false);
+
+                return Task.FromResult(
+                    afp.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT));
+            },
+            new[]
+            {
                 new InputFilePattern(
                     "C# Project",
-                    afp =>
-                        afp.ExtensionNoPeriod
-                            .EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
-                }.ToImmutableArray()));
+                    afp => afp.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
+            }.ToImmutableArray()));
     }
 
     /// <summary>
@@ -477,9 +466,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 true,
                 null);
 
-            Dispatcher.Dispatch(
-                new NotificationRecordsCollection.RegisterAction(
-                    notificationInformative));
+            Dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+                notificationInformative));
         }
 
         return Task.CompletedTask;
@@ -508,9 +496,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 true,
                 null);
 
-            Dispatcher.Dispatch(
-                new NotificationRecordsCollection.RegisterAction(
-                    notificationInformative));
+            Dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+                notificationInformative));
         }
 
         return Task.CompletedTask;

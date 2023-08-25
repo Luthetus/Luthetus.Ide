@@ -186,9 +186,8 @@ public partial class FolderExplorerContextMenu : ComponentBase
                 true,
                 null);
 
-            Dispatcher.Dispatch(
-                new NotificationRecordsCollection.RegisterAction(
-                    notificationInformative));
+            Dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+                notificationInformative));
         }
 
         return Task.CompletedTask;
@@ -217,9 +216,8 @@ public partial class FolderExplorerContextMenu : ComponentBase
                 true,
                 null);
 
-            Dispatcher.Dispatch(
-                new NotificationRecordsCollection.RegisterAction(
-                    notificationInformative));
+            Dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+                notificationInformative));
         }
 
         return Task.CompletedTask;

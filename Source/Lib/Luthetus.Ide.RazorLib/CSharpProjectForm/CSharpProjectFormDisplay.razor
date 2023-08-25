@@ -5,6 +5,24 @@
 
 <div class="luth_ide_form">
 
+    <button class="luth_button"
+            @onclick="ReadProjectTemplates">
+        ReadProjectTemplates
+    </button>
+
+    @if (_isReadingProjectTemplates)
+    {
+        <text>
+            _isReadingProjectTemplates
+            <IconLoading />
+        </text>
+    }
+
+    <TerminalOutputDisplay TerminalSessionKey="TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY"
+                           TerminalCommandKey="_loadProjectTemplatesTerminalCommandKey" />
+
+    <hr/>
+
     <div class="luth_ide_form-group">
         <div class="luth_ide_form-label">
             Project name:
@@ -14,7 +32,7 @@
             <input class="luth_ide_input luth_ide_input-text"
                    style="height: 2em;"
                    placeholder="Project name"
-                   @bind="_cSharpProjectName"
+                   @bind="_cSharpProjectNameValue"
                    @bind:event="oninput"/>
         </div>
     </div>
@@ -28,7 +46,7 @@
             <input class="luth_ide_input luth_ide_input-text"
                    style="height: 2em;"
                    placeholder="Template name"
-                   @bind="_projectTemplateName"
+                   @bind="_projectTemplateNameValue"
                    @bind:event="oninput"/>
         </div>
     </div>
@@ -42,7 +60,7 @@
             <input class="luth_ide_input luth_ide_input-text"
                    style="height: 2em;"
                    placeholder="Optional parameters"
-                   @bind="_optionalParameters"
+                   @bind="_optionalParametersValue"
                    @bind:event="oninput"/>
         </div>
     </div>
@@ -58,7 +76,7 @@
             <input class="luth_ide_input luth_ide_input-text"
                    style="height: 2em;"
                    placeholder="Parent directory"
-                   @bind="_parentDirectoryName"
+                   @bind="_parentDirectoryNameValue"
                    @bind:event="oninput"/>
 
             <ButtonDisplay OnClickFunc='async () => RequestInputFileForParentDirectory("Directory for new C# Project")'>
@@ -71,7 +89,7 @@
         Project&nbsp;Name:
         <div>
             <em class="luth_em">
-                @CSharpProjectName
+                @CSharpProjectNameDisplay
             </em>.csproj
         </div>
     </div>
@@ -80,7 +98,7 @@
         Template&nbsp;Name:
         <div>
             <em class="luth_em">
-                @ProjectTemplateName
+                @ProjectTemplateNameDisplay
             </em>
         </div>
     </div>
@@ -89,7 +107,7 @@
         Optional&nbsp;Parameters:
         <div>
             <em class="luth_em">
-                @OptionalParameters
+                @OptionalParametersDisplay
             </em>
         </div>
     </div>
@@ -98,7 +116,7 @@
         Directory&nbsp;Absolute&nbsp;File&nbsp;Path:
         <div>
             <em class="luth_em">
-                @ParentDirectoryName
+                @ParentDirectoryNameDisplay
             </em>
         </div>
     </div>
@@ -108,7 +126,7 @@
         <div>
             <em class="luth_em">
                 &nbsp;&nbsp;&nbsp;&nbsp;
-                @InterpolatedNewCSharpProjectCommand
+                @FormattedNewCSharpProjectCommand.Value
                 &nbsp;\
             </em>
 
@@ -117,7 +135,7 @@
             <em class="luth_em">
                 &nbsp;&nbsp;&nbsp;&nbsp;
                 &nbsp;&nbsp;&nbsp;&nbsp;
-                @InterpolatedAddExistingProjectToSolutionCommand
+                @FormattedAddExistingProjectToSolutionCommand.Value
             </em>
         </div>
     </div>

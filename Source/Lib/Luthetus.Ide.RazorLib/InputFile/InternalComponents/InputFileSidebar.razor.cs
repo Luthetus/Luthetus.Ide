@@ -93,9 +93,8 @@ public partial class InputFileSidebar : ComponentBase
     {
         _mostRecentTreeViewCommandParameter = treeViewCommandParameter;
 
-        Dispatcher.Dispatch(
-            new DropdownsState.AddActiveAction(
-                InputFileContextMenu.ContextMenuEventDropdownKey));
+        Dispatcher.Dispatch(new DropdownsState.AddActiveAction(
+            InputFileContextMenu.ContextMenuEventDropdownKey));
 
         await InvokeAsync(StateHasChanged);
     }

@@ -25,29 +25,28 @@ public partial record DotNetSolutionState(
     public static void ShowInputFile(
         IDispatcher dispatcher)
     {
-        dispatcher.Dispatch(
-            new InputFileState.RequestInputFileStateFormAction(
-                "Solution Explorer",
-                afp =>
-                {
-                    if (afp is not null)
-                        dispatcher.Dispatch(new SetDotNetSolutionAction(afp));
+        dispatcher.Dispatch(new InputFileState.RequestInputFileStateFormAction(
+            "Solution Explorer",
+            afp =>
+            {
+                if (afp is not null)
+                    dispatcher.Dispatch(new SetDotNetSolutionAction(afp));
 
-                    return Task.CompletedTask;
-                },
-                afp =>
-                {
-                    if (afp is null || afp.IsDirectory)
-                        return Task.FromResult(false);
+                return Task.CompletedTask;
+            },
+            afp =>
+            {
+                if (afp is null || afp.IsDirectory)
+                    return Task.FromResult(false);
 
-                    return Task.FromResult(
-                        afp.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION);
-                },
-                new[]
-                {
+                return Task.FromResult(
+                    afp.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION);
+            },
+            new[]
+            {
                 new InputFilePattern(
                     ".NET Solution",
                     afp => afp.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
-                }.ToImmutableArray()));
+            }.ToImmutableArray()));
     }
 }

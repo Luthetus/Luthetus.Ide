@@ -75,9 +75,8 @@ public class FileSystemQueuedHostedService : BackgroundService
                             true,
                             IErrorNotificationRendererType.CSS_CLASS_STRING);
 
-                        backgroundTask.Dispatcher.Dispatch(
-                            new NotificationRecordsCollection.RegisterAction(
-                                notificationRecord));
+                        backgroundTask.Dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+                            notificationRecord));
                     }
                 }
                 finally

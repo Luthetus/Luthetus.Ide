@@ -55,56 +55,32 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
         ? "{enter parent directory name}"
         : _parentDirectoryName;
 
-    private (string targetFileName, IEnumerable<string> arguments) FormattedCommand =>
-        DotNetCliFacts.FormatDotnetNewSln(_solutionName);
-
-    private string InterpolatedCommand =>
-        FormattedCommandToStringHelper(FormattedCommand);
-
-    private string FormattedCommandToStringHelper(
-        (string targetFileName, IEnumerable<string> arguments) formattedCommand)
-    {
-        var interpolatedCommandBuilder = new StringBuilder(
-            formattedCommand.targetFileName);
-
-        foreach (var argument in formattedCommand.arguments)
-        {
-            interpolatedCommandBuilder.Append($" {argument}");
-        }
-
-        return interpolatedCommandBuilder.ToString();
-    }
+    private FormattedCommand FormattedCommand => DotNetCliFacts.FormatDotnetNewSln(_solutionName);
 
     private void RequestInputFileForParentDirectory()
     {
-        Dispatcher.Dispatch(
-            new InputFileState.RequestInputFileStateFormAction(
-                "Directory for new .NET Solution",
-                async afp =>
-                {
-                    if (afp is null)
-                        return;
+        Dispatcher.Dispatch(new InputFileState.RequestInputFileStateFormAction(
+            "Directory for new .NET Solution",
+            async afp =>
+            {
+                if (afp is null)
+                    return;
 
-                    _parentDirectoryName = afp.GetAbsoluteFilePathString();
+                _parentDirectoryName = afp.GetAbsoluteFilePathString();
 
-                    await InvokeAsync(StateHasChanged);
-                },
-                afp =>
-                {
-                    if (afp is null ||
-                        !afp.IsDirectory)
-                    {
-                        return Task.FromResult(false);
-                    }
+                await InvokeAsync(StateHasChanged);
+            },
+            afp =>
+            {
+                if (afp is null || !afp.IsDirectory)
+                    return Task.FromResult(false);
 
-                    return Task.FromResult(true);
-                },
-                new[]
-                {
-                new InputFilePattern(
-                    "Directory",
-                    afp => afp.IsDirectory)
-                }.ToImmutableArray()));
+                return Task.FromResult(true);
+            },
+            new[]
+            {
+                new InputFilePattern("Directory", afp => afp.IsDirectory)
+            }.ToImmutableArray()));
     }
 
     private async Task StartNewDotNetSolutionCommandOnClick()
@@ -129,16 +105,14 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
         {
             var newDotNetSolutionCommand = new TerminalCommand(
                 _newDotNetSolutionTerminalCommandKey,
-                localFormattedCommand.targetFileName,
-                localFormattedCommand.arguments,
+                localFormattedCommand,
                 _parentDirectoryName,
                 _newDotNetSolutionCancellationTokenSource.Token,
                 () =>
                 {
                     // Close Dialog
-                    Dispatcher.Dispatch(
-                        new DialogRecordsCollection.DisposeAction(
-                            DialogRecord.DialogKey));
+                    Dispatcher.Dispatch(new DialogRecordsCollection.DisposeAction(
+                        DialogRecord.DialogKey));
 
                     // Open the created .NET Solution
                     localParentDirectoryName = FilePathHelper.StripEndingDirectorySeparatorIfExists(
@@ -163,9 +137,8 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                         false,
                         EnvironmentProvider);
 
-                    Dispatcher.Dispatch(
-                        new DotNetSolutionState.SetDotNetSolutionAction(
-                            solutionAbsoluteFilePath));
+                    Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionAction(
+                        solutionAbsoluteFilePath));
 
                     return Task.CompletedTask;
                 });
@@ -203,9 +176,8 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
             HackForWebsite_NEW_SOLUTION_TEMPLATE);
 
         // Close Dialog
-        Dispatcher.Dispatch(
-            new DialogRecordsCollection.DisposeAction(
-                DialogRecord.DialogKey));
+        Dispatcher.Dispatch(new DialogRecordsCollection.DisposeAction(
+            DialogRecord.DialogKey));
 
         var notificationRecord = new NotificationRecord(
             NotificationKey.NewNotificationKey(),
@@ -230,9 +202,8 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
             false,
             EnvironmentProvider);
 
-        Dispatcher.Dispatch(
-            new DotNetSolutionState.SetDotNetSolutionAction(
-                solutionAbsoluteFilePath));
+        Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionAction(
+            solutionAbsoluteFilePath));
     }
 
     private const string HackForWebsite_NEW_SOLUTION_TEMPLATE = @"
