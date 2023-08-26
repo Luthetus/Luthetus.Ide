@@ -115,10 +115,6 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                         DialogRecord.DialogKey));
 
                     // Open the created .NET Solution
-                    localParentDirectoryName = FilePathHelper.StripEndingDirectorySeparatorIfExists(
-                        localParentDirectoryName,
-                        EnvironmentProvider);
-
                     var parentDirectoryAbsoluteFilePath = new AbsoluteFilePath(
                         localParentDirectoryName,
                         true,

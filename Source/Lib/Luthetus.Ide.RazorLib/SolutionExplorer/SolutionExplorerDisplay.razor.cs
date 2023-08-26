@@ -24,8 +24,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
-    private ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; set; } = null!;
-    [Inject]
     private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
     [Inject]
     private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
@@ -45,7 +43,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 
         _solutionExplorerTreeViewKeymap = new SolutionExplorerTreeViewKeymap(
             MenuOptionsFactory,
-            LuthetusIdeComponentRenderers,
             LuthetusCommonComponentRenderers,
             Dispatcher,
             TreeViewService);

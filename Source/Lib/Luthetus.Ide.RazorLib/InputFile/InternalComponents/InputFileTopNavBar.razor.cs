@@ -105,10 +105,6 @@ public partial class InputFileTopNavBar : ComponentBase
 
     private async Task InputFileEditAddressOnFocusOutCallbackAsync(string address)
     {
-        address = FilePathHelper.StripEndingDirectorySeparatorIfExists(
-            address,
-            EnvironmentProvider);
-
         try
         {
             if (!await FileSystemProvider.Directory.ExistsAsync(address))
