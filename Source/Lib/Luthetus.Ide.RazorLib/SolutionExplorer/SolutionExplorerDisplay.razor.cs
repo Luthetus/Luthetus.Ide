@@ -1,6 +1,7 @@
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers;
+using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Store.ApplicationOptions;
 using Luthetus.Common.RazorLib.Store.DropdownCase;
 using Luthetus.Common.RazorLib.TreeView;
@@ -28,11 +29,15 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
     [Inject]
     private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
+    [Inject]
+    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 
     private ITreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
     private SolutionExplorerTreeViewKeymap _solutionExplorerTreeViewKeymap = null!;
     private SolutionExplorerTreeViewMouseEventHandler _solutionExplorerTreeViewMouseEventHandler = null!;
     private bool _disposed;
+    private string _testAbsoluteFilePathString = string.Empty;
+    private bool _testAbsoluteFilePathIsDirectoryCheckbox;
 
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
         AppOptionsStateWrap.Value.Options.IconSizeInPixels.GetValueOrDefault() *
