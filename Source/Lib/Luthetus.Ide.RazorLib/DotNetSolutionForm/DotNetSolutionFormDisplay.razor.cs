@@ -1,6 +1,5 @@
 ﻿using Fluxor;
 using Fluxor.Blazor.Web.Components;
-using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.Dialog;
@@ -17,7 +16,6 @@ using Luthetus.Ide.ClassLib.Store.InputFileCase;
 using Luthetus.Ide.ClassLib.Store.TerminalCase;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
-using System.Text;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionForm;
 
