@@ -1,0 +1,10 @@
+.luth_ide_project-template {
+    margin-bottom: 12px;
+    background-color: var(--luth_tertiary-background-color);
+    color: var(--luth_tertiary-foreground-color);
+}
+
+.luth_ide_project-template-title {
+    background-color: var(--luth_ide_section-title-background-color);
+    color: var(--luth_primary-foreground-color);
+}

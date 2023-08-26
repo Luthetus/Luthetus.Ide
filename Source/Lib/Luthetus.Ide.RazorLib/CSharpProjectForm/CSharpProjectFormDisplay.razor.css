@@ -1,0 +1,32 @@
+.luth_ide_graphical-project-template-inputs {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+}
+
+.luth_ide_graphical-project-template-search-container {
+    position: sticky;
+    top: 0;
+    right: 0;
+}
+
+.luth_ide_graphical-project-template-container {
+    width: 100%;
+}
+
+.luth_ide_c-sharp-project-form-tabs {
+    height: 15%;
+    min-height: 50px;
+}
+
+.luth_ide_c-sharp-project-form-panel {
+    height: 70%;
+    min-height: 150px;
+    overflow-y: auto;
+    position: relative;
+}
+
+.luth_ide_c-sharp-project-form-submit-section {
+    height: 15%;
+    min-height: 50px;
+}

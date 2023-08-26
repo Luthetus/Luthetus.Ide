@@ -24,151 +24,185 @@
         }
     </div>
 
-    @if (_activePanelKind == CSharpProjectFormPanelKind.Graphical)
-    {
-        if (_isReadingProjectTemplates)
+    <div class="luth_ide_c-sharp-project-form-panel">
+        @if (_activePanelKind == CSharpProjectFormPanelKind.Graphical)
         {
-            <div>
-                Reading project templates
-                <IconLoading />
+            <div class="luth_ide_graphical-project-template-inputs">
+
+                <div class="luth_ide_graphical-project-template-search-container">
+                    <input class="luth_ide_input luth_ide_input-text"
+                           type="text"
+                           placeholder="Search"
+                           autocapitalize="none"
+                           autocorrect="off"
+                           autocomplete="off"
+                           spellcheck="false"
+                           @bind="_searchInput"
+                           @bind:event="oninput" />
+                </div>
+
+                @if (_isReadingProjectTemplates)
+                {
+                    <div>
+                        Reading project templates
+                        <IconLoading />
+                    </div>
+                }
+                else
+                {
+                    <div class="luth_ide_graphical-project-template-container">
+                        @{
+                            List<ProjectTemplate> filteredProjectTemplateContainer = _projectTemplateContainer;
+
+                            var localSearchInput = _searchInput;
+
+                            if (!string.IsNullOrWhiteSpace(localSearchInput))
+                            {
+                                filteredProjectTemplateContainer = _projectTemplateContainer.Where(pt =>
+                                    pt.TemplateName!.Contains(localSearchInput, StringComparison.InvariantCultureIgnoreCase) ||
+                                    pt.ShortName!.Contains(localSearchInput, StringComparison.InvariantCultureIgnoreCase) ||
+                                    pt.Language!.Contains(localSearchInput, StringComparison.InvariantCultureIgnoreCase) ||
+                                    pt.Tags!.Contains(localSearchInput, StringComparison.InvariantCultureIgnoreCase))
+                                    .ToList();
+                            }
+                        }
+                        @foreach (var projectTemplate in filteredProjectTemplateContainer)
+                        {
+                            <ProjectTemplateDisplay ProjectTemplate="projectTemplate" />
+                        }
+                    </div>
+                }
             </div>
         }
-        else
+        else if (_activePanelKind == CSharpProjectFormPanelKind.Manual)
         {
-            foreach (var projectTemplate in _projectTemplateContainer)
-            {
-                <ProjectTemplateDisplay ProjectTemplate="projectTemplate" />
-            }
+            <div class="luth_ide_manual-project-template-inputs">
+                <div class="luth_ide_form-group">
+                    <div class="luth_ide_form-label">
+                        Project name:
+                    </div>
+
+                    <div class="luth_ide_form-value">
+                        <input class="luth_ide_input luth_ide_input-text"
+                               style="height: 2em;"
+                               placeholder="Project name"
+                        @bind="_cSharpProjectNameValue"
+                        @bind:event="oninput" />
+                    </div>
+                </div>
+
+                <div class="luth_ide_form-group">
+                    <div class="luth_ide_form-label">
+                        Template name:
+                    </div>
+
+                    <div class="luth_ide_form-value">
+                        <input class="luth_ide_input luth_ide_input-text"
+                               style="height: 2em;"
+                               placeholder="Template name"
+                        @bind="_projectTemplateNameValue"
+                        @bind:event="oninput" />
+                    </div>
+                </div>
+
+                <div class="luth_ide_form-group">
+                    <div class="luth_ide_form-label">
+                        Optional parameters:
+                    </div>
+
+                    <div class="luth_ide_form-value">
+                        <input class="luth_ide_input luth_ide_input-text"
+                               style="height: 2em;"
+                               placeholder="Optional parameters"
+                        @bind="_optionalParametersValue"
+                        @bind:event="oninput" />
+                    </div>
+                </div>
+
+                <div class="luth_ide_form-group">
+                    <div class="luth_ide_form-label">
+                        Directory:
+                    </div>
+
+                    <div class="luth_ide_form-value"
+                         style="display: flex;">
+
+                        <input class="luth_ide_input luth_ide_input-text"
+                               style="height: 2em;"
+                               placeholder="Parent directory"
+                        @bind="_parentDirectoryNameValue"
+                        @bind:event="oninput" />
+
+                        <ButtonDisplay OnClickFunc='async () => RequestInputFileForParentDirectory("Directory for new C# Project")'>
+                            <IconFolder />
+                        </ButtonDisplay>
+                    </div>
+                </div>
+
+                <div>
+                    Project&nbsp;Name:
+                    <div>
+                        <em class="luth_em">
+                            @CSharpProjectNameDisplay
+                        </em>.csproj
+                    </div>
+                </div>
+
+                <div>
+                    Template&nbsp;Name:
+                    <div>
+                        <em class="luth_em">
+                            @ProjectTemplateNameDisplay
+                        </em>
+                    </div>
+                </div>
+
+                <div>
+                    Optional&nbsp;Parameters:
+                    <div>
+                        <em class="luth_em">
+                            @OptionalParametersDisplay
+                        </em>
+                    </div>
+                </div>
+
+                <div>
+                    Directory&nbsp;Absolute&nbsp;File&nbsp;Path:
+                    <div>
+                        <em class="luth_em">
+                            @ParentDirectoryNameDisplay
+                        </em>
+                    </div>
+                </div>
+
+                <div>
+                    Command:
+                    <div>
+                        <em class="luth_em">
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            @FormattedNewCSharpProjectCommand.Value
+                            &nbsp;\
+                        </em>
+
+                        <br />
+
+                        <em class="luth_em">
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            @FormattedAddExistingProjectToSolutionCommand.Value
+                        </em>
+                    </div>
+                </div>
+            </div>
         }
-    }
-    else if (_activePanelKind == CSharpProjectFormPanelKind.Manual)
-    {
-        <div class="luth_ide_manual-project-template-inputs">
-            <div class="luth_ide_form-group">
-                <div class="luth_ide_form-label">
-                    Project name:
-                </div>
+    </div>
 
-                <div class="luth_ide_form-value">
-                    <input class="luth_ide_input luth_ide_input-text"
-                           style="height: 2em;"
-                           placeholder="Project name"
-                    @bind="_cSharpProjectNameValue"
-                    @bind:event="oninput" />
-                </div>
-            </div>
+    <div class="luth_ide_c-sharp-project-form-submit-section">
+        <ButtonDisplay OnClickFunc="StartNewCSharpProjectCommandOnClick">
+            Run
+        </ButtonDisplay>
 
-            <div class="luth_ide_form-group">
-                <div class="luth_ide_form-label">
-                    Template name:
-                </div>
-
-                <div class="luth_ide_form-value">
-                    <input class="luth_ide_input luth_ide_input-text"
-                           style="height: 2em;"
-                           placeholder="Template name"
-                    @bind="_projectTemplateNameValue"
-                    @bind:event="oninput" />
-                </div>
-            </div>
-
-            <div class="luth_ide_form-group">
-                <div class="luth_ide_form-label">
-                    Optional parameters:
-                </div>
-
-                <div class="luth_ide_form-value">
-                    <input class="luth_ide_input luth_ide_input-text"
-                           style="height: 2em;"
-                           placeholder="Optional parameters"
-                    @bind="_optionalParametersValue"
-                    @bind:event="oninput" />
-                </div>
-            </div>
-
-            <div class="luth_ide_form-group">
-                <div class="luth_ide_form-label">
-                    Directory:
-                </div>
-
-                <div class="luth_ide_form-value"
-                     style="display: flex;">
-
-                    <input class="luth_ide_input luth_ide_input-text"
-                           style="height: 2em;"
-                           placeholder="Parent directory"
-                    @bind="_parentDirectoryNameValue"
-                    @bind:event="oninput" />
-
-                    <ButtonDisplay OnClickFunc='async () => RequestInputFileForParentDirectory("Directory for new C# Project")'>
-                        <IconFolder />
-                    </ButtonDisplay>
-                </div>
-            </div>
-
-            <div>
-                Project&nbsp;Name:
-                <div>
-                    <em class="luth_em">
-                        @CSharpProjectNameDisplay
-                    </em>.csproj
-                </div>
-            </div>
-
-            <div>
-                Template&nbsp;Name:
-                <div>
-                    <em class="luth_em">
-                        @ProjectTemplateNameDisplay
-                    </em>
-                </div>
-            </div>
-
-            <div>
-                Optional&nbsp;Parameters:
-                <div>
-                    <em class="luth_em">
-                        @OptionalParametersDisplay
-                    </em>
-                </div>
-            </div>
-
-            <div>
-                Directory&nbsp;Absolute&nbsp;File&nbsp;Path:
-                <div>
-                    <em class="luth_em">
-                        @ParentDirectoryNameDisplay
-                    </em>
-                </div>
-            </div>
-
-            <div>
-                Command:
-                <div>
-                    <em class="luth_em">
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                        @FormattedNewCSharpProjectCommand.Value
-                        &nbsp;\
-                    </em>
-
-                    <br />
-
-                    <em class="luth_em">
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                        @FormattedAddExistingProjectToSolutionCommand.Value
-                    </em>
-                </div>
-            </div>
-        </div>
-    }
-
-    <hr/>
-
-    <ButtonDisplay OnClickFunc="StartNewCSharpProjectCommandOnClick">
-        Run
-    </ButtonDisplay>
-
-    <TerminalOutputDisplay TerminalSessionKey="TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY"
-                           TerminalCommandKey="_newCSharpProjectTerminalCommandKey"/>
+        <TerminalOutputDisplay TerminalSessionKey="TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY"
+                               TerminalCommandKey="_newCSharpProjectTerminalCommandKey" />
+    </div>
 </div>

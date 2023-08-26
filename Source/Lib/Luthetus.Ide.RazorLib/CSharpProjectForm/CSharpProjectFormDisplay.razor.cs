@@ -54,6 +54,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     private string _parentDirectoryNameValue = string.Empty;
     private List<ProjectTemplate> _projectTemplateContainer = new List<ProjectTemplate>();
     private CSharpProjectFormPanelKind _activePanelKind = CSharpProjectFormPanelKind.Graphical;
+    private string _searchInput = string.Empty;
 
     private string ProjectTemplateNameDisplay => string.IsNullOrWhiteSpace(_projectTemplateNameValue)
         ? "{enter Template name}"
