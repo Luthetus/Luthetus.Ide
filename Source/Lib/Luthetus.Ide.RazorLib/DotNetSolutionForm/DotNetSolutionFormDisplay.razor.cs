@@ -155,8 +155,8 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
         string localSolutionName,
         string localParentDirectoryName)
     {
-        var directoryContainingSolution = EnvironmentProvider
-            .JoinPaths(localParentDirectoryName, localSolutionName) +
+        var directoryContainingSolution =
+            EnvironmentProvider.JoinPaths(localParentDirectoryName, localSolutionName) +
             EnvironmentProvider.DirectorySeparatorChar;
 
         await FileSystemProvider.Directory.CreateDirectoryAsync(
