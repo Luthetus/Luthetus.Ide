@@ -52,6 +52,8 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     private string _cSharpProjectNameValue = string.Empty;
     private string _optionalParametersValue = string.Empty;
     private string _parentDirectoryNameValue = string.Empty;
+    private List<ProjectTemplate> _projectTemplateContainer = new List<ProjectTemplate>();
+    private CSharpProjectFormPanelKind _activePanelKind = CSharpProjectFormPanelKind.Graphical;
 
     private string ProjectTemplateNameDisplay => string.IsNullOrWhiteSpace(_projectTemplateNameValue)
         ? "{enter Template name}"
@@ -78,7 +80,25 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             SolutionNamespacePath?.AbsoluteFilePath.GetAbsoluteFilePathString()
             ?? string.Empty,
             $"{_cSharpProjectNameValue}/{_cSharpProjectNameValue}.csproj");
-    
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await ReadProjectTemplates();
+        }
+        
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private string GetIsActiveCssClassString(CSharpProjectFormPanelKind panelKind)
+    {
+        return _activePanelKind == panelKind
+            ? "luth_active"
+            : string.Empty;
+    }
+
     private void RequestInputFileForParentDirectory(string message)
     {
         Dispatcher.Dispatch(new InputFileState.RequestInputFileStateFormAction(
@@ -135,7 +155,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                     var output = generalTerminalSession.ReadStandardOut(_loadProjectTemplatesTerminalCommandKey);
 
                     if (output is not null)
-                        LexDotNetNewListTerminalOutput(output);
+                        await LexDotNetNewListTerminalOutputAsync(output);
                     else
                         await FormatDotnetNewListDeprecatedAsync();
                 });
@@ -177,7 +197,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                         var output = generalTerminalSession.ReadStandardOut(_loadProjectTemplatesTerminalCommandKey);
 
                         if (output is not null)
-                            LexDotNetNewListTerminalOutput(output);
+                            await LexDotNetNewListTerminalOutputAsync(output);
                         else
                             throw new NotImplementedException("Use manual template text input html elements?");
                     });
@@ -194,7 +214,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         }
     }
 
-    private void LexDotNetNewListTerminalOutput(string output)
+    private async Task LexDotNetNewListTerminalOutputAsync(string output)
     {
         var keywordTemplateName = "Template Name";
         var keywordShortName = "Short Name";
@@ -219,7 +239,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         int? columnLength = null;
 
         var projectTemplate = new ProjectTemplate(null, null, null, null);
-        var projectTemplateContainer = new List<ProjectTemplate>();
+        _projectTemplateContainer = new List<ProjectTemplate>();
 
         while (!stringWalker.IsEof)
         {
@@ -332,7 +352,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                         Tags = columnBuilder.ToString().Trim()
                     };
 
-                    projectTemplateContainer.Add(projectTemplate);
+                    _projectTemplateContainer.Add(projectTemplate);
 
                     projectTemplate = new(null, null, null, null);
                     columnLength = lengthOfTemplateNameColumn;
@@ -343,6 +363,8 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
             _ = stringWalker.ReadCharacter();
         }
+
+        await InvokeAsync(StateHasChanged);
     }
 
     private async Task StartNewCSharpProjectCommandOnClick()
