@@ -15,8 +15,8 @@
 }
 
 .luth_ide_c-sharp-project-form-tabs {
-    height: 15%;
-    min-height: 50px;
+    height: 7%;
+    min-height: 30px;
 }
 
 .luth_ide_c-sharp-project-form-panel {
@@ -27,6 +27,11 @@
 }
 
 .luth_ide_c-sharp-project-form-submit-section {
-    height: 15%;
-    min-height: 50px;
+    height: 14%;
+    min-height: 40px;
+}
+
+.luth_ide_c-sharp-project-form-submit-section {
+    height: 9%;
+    min-height: 40px;
 }

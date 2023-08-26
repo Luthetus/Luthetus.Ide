@@ -174,29 +174,29 @@
                         </em>
                     </div>
                 </div>
-
-                <div>
-                    Command:
-                    <div>
-                        <em class="luth_em">
-                            &nbsp;&nbsp;&nbsp;&nbsp;
-                            @FormattedNewCSharpProjectCommand.Value
-                            &nbsp;\
-                        </em>
-
-                        <br />
-
-                        <em class="luth_em">
-                            &nbsp;&nbsp;&nbsp;&nbsp;
-                            &nbsp;&nbsp;&nbsp;&nbsp;
-                            @FormattedAddExistingProjectToSolutionCommand.Value
-                        </em>
-                    </div>
-                </div>
             </div>
         }
     </div>
 
+    <div class="luth_ide_c-sharp-project-form-command-section">
+        Command:
+        <div>
+            <em class="luth_em">
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                @FormattedNewCSharpProjectCommand.Value
+                &nbsp;\
+            </em>
+
+            <br />
+
+            <em class="luth_em">
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                @FormattedAddExistingProjectToSolutionCommand.Value
+            </em>
+        </div>
+    </div>
+    
     <div class="luth_ide_c-sharp-project-form-submit-section">
         <ButtonDisplay OnClickFunc="StartNewCSharpProjectCommandOnClick">
             Run
