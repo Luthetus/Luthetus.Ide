@@ -3,7 +3,6 @@ using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.Dialog;
-using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Namespaces;
 using Luthetus.Common.RazorLib.Notification;
@@ -491,7 +490,12 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             FileSystemProvider,
             EnvironmentProvider);
 
-        await HackForWebsite_AddExistingProjectToSolutionAsync();
+        await HackForWebsite_AddExistingProjectToSolutionAsync(
+            localProjectTemplateShortName,
+            localCSharpProjectName,
+            localOptionalParameters,
+            localParentDirectoryName,
+            solutionNamespacePath);
 
         // Close Dialog
         Dispatcher.Dispatch(new DialogRecordsCollection.DisposeAction(
@@ -516,7 +520,12 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         notificationRecord));
     }
 
-    private async Task HackForWebsite_AddExistingProjectToSolutionAsync()
+    private async Task HackForWebsite_AddExistingProjectToSolutionAsync(
+        string localProjectTemplateShortName,
+        string localCSharpProjectName,
+        string localOptionalParameters,
+        string localParentDirectoryName,
+        NamespacePath solutionNamespacePath)
     {
         var dotNetSolutionAbsoluteFilePathString = SolutionNamespacePath!.AbsoluteFilePath
             .GetAbsoluteFilePathString();
@@ -532,23 +541,36 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             interceptParseDotNetProject: HandleInterceptParseDotNetProject,
             interceptPriorToReturning: HandleInterceptPriorToReturning);
 
-        dispatcher.Dispatch(new WithAction(
+        Dispatcher.Dispatch(new DotNetSolutionState.WithAction(
             inDotNetSolutionState => inDotNetSolutionState with
             {
                 DotNetSolution = dotNetSolution
             }));
 
-        dispatcher.Dispatch(new SetDotNetSolutionTreeViewAction());
-        dispatcher.Dispatch(new ParseDotNetSolutionAction());
-    }
+        Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionTreeViewAction());
 
-    private string HandleInterceptParseDotNetProject(string remainingContent)
-    {
+        string HandleInterceptParseDotNetProject(string remainingContent, NamespacePath namespacePath)
+        {
+            var projectEntry = GetSolutionProjectEntry(localCSharpProjectName);
+            return projectEntry + remainingContent;
+        }
 
+        string GetSolutionProjectEntry(string projectName)
+        {
+            var projectTypeGuid = WebsiteProjectTemplateRegistry.GetProjectTypeGuid(localProjectTemplateShortName);
+            var projectIdGuid = Guid.NewGuid();
+
+            return @$"Project(""{{{projectTypeGuid}}}"") = ""BlazorWasmApp-empty"", ""BlazorApp-empty2\BlazorWasmApp-empty.csproj"", ""{{{projectIdGuid}}}""
+EndProject";
+        }
     }
     
-    private void HandleInterceptPriorToReturning(string remainingContent)
+    private void HandleInterceptPriorToReturning(string content, NamespacePath namespacePath)
     {
-
+        FileSystemProvider.File
+            .WriteAllTextAsync(namespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(), content)
+            .ConfigureAwait(false)
+            .GetAwaiter()
+            .GetResult();
     }
 }

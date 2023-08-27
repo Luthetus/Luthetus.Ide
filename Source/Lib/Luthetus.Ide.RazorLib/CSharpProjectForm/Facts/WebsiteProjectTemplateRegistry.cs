@@ -215,4 +215,22 @@ public static class WebsiteProjectTemplateRegistry
     {
         throw new NotImplementedException();
     }
+
+    public static Guid GetProjectTypeGuid(string projectTemplateShortName)
+    {
+        if (projectTemplateShortName == BlazorWasmEmptyProjectTemplate.ShortName)
+            return Guid.Parse("FAE04EC0-301F-11D3-BF4B-00C04F79EFBC");
+        else if (projectTemplateShortName == BlazorServerSideEmptyProjectTemplate.ShortName)
+            throw new NotImplementedException();
+        else if (projectTemplateShortName == ClassLibProjectTemplate.ShortName)
+            throw new NotImplementedException();
+        else if (projectTemplateShortName == RazorLibProjectTemplate.ShortName)
+            throw new NotImplementedException();
+        else if (projectTemplateShortName == ConsoleAppProjectTemplate.ShortName)
+            throw new NotImplementedException();
+        else if (projectTemplateShortName == XUnitProjectTemplate.ShortName)
+            throw new NotImplementedException();
+        else
+            throw new NotImplementedException($"The {nameof(ProjectTemplate.ShortName)}: '{projectTemplateShortName}' was not recognized.");
+    }
 }
