@@ -1,12 +1,15 @@
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers;
+using Luthetus.Common.RazorLib.Dialog;
 using Luthetus.Common.RazorLib.Store.ApplicationOptions;
+using Luthetus.Common.RazorLib.Store.DialogCase;
 using Luthetus.Common.RazorLib.Store.DropdownCase;
 using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.Ide.ClassLib.Menu;
 using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
+using Luthetus.Ide.RazorLib.DotNetSolutionForm;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.SolutionExplorer;
@@ -66,6 +69,22 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             SolutionExplorerContextMenu.ContextMenuEventDropdownKey));
 
         await InvokeAsync(StateHasChanged);
+    }
+
+    private void OpenNewDotNetSolutionDialog()
+    {
+        var dialogRecord = new DialogRecord(
+            DialogKey.NewDialogKey(),
+            "New .NET Solution",
+            typeof(DotNetSolutionFormDisplay),
+            null,
+            null)
+        {
+            IsResizable = true
+        };
+
+        Dispatcher.Dispatch(new DialogRecordsCollection.RegisterAction(
+            dialogRecord));
     }
 
     protected override void Dispose(bool disposing)
