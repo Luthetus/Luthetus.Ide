@@ -17,8 +17,10 @@ using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 using Luthetus.Ide.ClassLib.Store.InputFileCase;
 using Luthetus.Ide.ClassLib.Store.TerminalCase;
 using Luthetus.Ide.RazorLib.CSharpProjectForm.Facts;
+using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.Lexing;
+using Luthetus.TextEditor.RazorLib.Store.Model;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 using System.Text;
@@ -39,6 +41,8 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
     [Inject]
     private LuthetusIdeOptions LuthetusIdeOptions { get; set; } = null!;
+    [Inject]
+    private ITextEditorService TextEditorService { get; set; } = null!;
 
     [CascadingParameter]
     public DialogRecord DialogRecord { get; set; } = null!;
@@ -573,8 +577,9 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                 cSharpProjectAbsoluteFilePath,
                 EnvironmentProvider);
 
-            return @$"Project(""{{{projectTypeGuid}}}"") = ""{localCSharpProjectName}"", ""{relativePathFromSlnToProject}"", ""{{{projectIdGuid}}}""
-EndProject";
+            return @$"Project(""{{{projectTypeGuid.ToString().ToUpperInvariant()}}}"") = ""{localCSharpProjectName}"", ""{relativePathFromSlnToProject}"", ""{{{projectIdGuid.ToString().ToUpperInvariant()}}}""
+EndProject
+";
         }
     }
     
@@ -586,6 +591,17 @@ EndProject";
             await FileSystemProvider.File.WriteAllTextAsync(
                 namespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
                 content);
+
+            var solutionTextEditorModel = TextEditorService.Model.FindOrDefaultByResourceUri(
+                new ResourceUri(namespacePath.AbsoluteFilePath.GetAbsoluteFilePathString()));
+
+            if (solutionTextEditorModel is not null)
+            {
+                Dispatcher.Dispatch(new TextEditorModelsCollection.ReloadAction(
+                    solutionTextEditorModel.ModelKey,
+                    content,
+                    DateTime.UtcNow));
+            }
         });
     }
 }
