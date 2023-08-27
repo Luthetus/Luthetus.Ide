@@ -369,6 +369,16 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         await InvokeAsync(StateHasChanged);
     }
 
+    private string GetCssClassForActivePanelKind(CSharpProjectFormPanelKind localActivePanelKind)
+    {
+        return localActivePanelKind switch
+        {
+            CSharpProjectFormPanelKind.Graphical => "luth_ide_c-sharp-project-form-graphical-panel",
+            CSharpProjectFormPanelKind.Manual => "luth_ide_c-sharp-project-form-manual-panel",
+            _ => throw new NotImplementedException($"The {nameof(CSharpProjectFormPanelKind)}: '{localActivePanelKind}' was unrecognized."),
+        };
+    }
+
     private async Task StartNewCSharpProjectCommandOnClick()
     {
         var formattedCommandNewCSharpProject = FormattedNewCSharpProjectCommand;
