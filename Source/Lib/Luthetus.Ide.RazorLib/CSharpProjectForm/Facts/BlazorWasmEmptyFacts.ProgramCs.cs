@@ -8,8 +8,9 @@ namespace Luthetus.Ide.RazorLib.CSharpProjectForm.Facts;
 
 public static partial class BlazorWasmEmptyFacts
 {
-    public const string PROGRAM_CS_ABSOLUTE_FILE_PATH = @"/BlazorWasmEmpty/Program.cs";
-    public const string PROGRAM_CS_RAZOR_CONTENTS = @"using BlazorWasmApp_empty;
+    public const string PROGRAM_CS_RELATIVE_FILE_PATH = @"Program.cs";
+
+    public static string GetProgramCsContents(string projectName) => @$"using {projectName};
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -17,7 +18,7 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>(""#app"");
 builder.RootComponents.Add<HeadOutlet>(""head::after"");
 
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+builder.Services.AddScoped(sp => new HttpClient {{ BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) }});
 
 await builder.Build().RunAsync();
 ";

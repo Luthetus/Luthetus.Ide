@@ -463,20 +463,20 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         string localParentDirectoryName,
         NamespacePath solutionNamespacePath)
     {
-        var directoryContainingSolution = EnvironmentProvider
+        var directoryContainingProject = EnvironmentProvider
             .JoinPaths(localParentDirectoryName, localCSharpProjectName) +
             EnvironmentProvider.DirectorySeparatorChar;
 
         await FileSystemProvider.Directory.CreateDirectoryAsync(
-            directoryContainingSolution);
+            directoryContainingProject);
 
         var localCSharpProjectNameWithExtension =
-            localProjectTemplateShortName +
+            localCSharpProjectName +
             '.' +
             ExtensionNoPeriodFacts.C_SHARP_PROJECT;
 
         var cSharpProjectAbsoluteFilePathString = EnvironmentProvider.JoinPaths(
-            directoryContainingSolution,
+            directoryContainingProject,
             localCSharpProjectNameWithExtension);
 
         await WebsiteProjectTemplateRegistry.HandleNewCSharpProjectAsync(
@@ -486,7 +486,8 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             localParentDirectoryName,
             solutionNamespacePath,
             cSharpProjectAbsoluteFilePathString,
-            FileSystemProvider);
+            FileSystemProvider,
+            EnvironmentProvider);
 
         // Close Dialog
         Dispatcher.Dispatch(new DialogRecordsCollection.DisposeAction(

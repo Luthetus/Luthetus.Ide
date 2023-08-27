@@ -8,8 +8,7 @@ namespace Luthetus.Ide.RazorLib.CSharpProjectForm.Facts;
 
 public static partial class BlazorWasmEmptyFacts
 {
-    public const string CSPROJ_ABSOLUTE_FILE_PATH = @"/BlazorWasmEmpty/BlazorWasmEmpty.csproj";
-    public const string CSPROJ_CONTENTS = @"<Project Sdk=""Microsoft.NET.Sdk.BlazorWebAssembly"">
+    public static string GetCsprojContents(string projectName) => @$"<Project Sdk=""Microsoft.NET.Sdk.BlazorWebAssembly"">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>

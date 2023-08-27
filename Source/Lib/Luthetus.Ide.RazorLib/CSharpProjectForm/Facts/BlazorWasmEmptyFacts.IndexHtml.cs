@@ -8,18 +8,19 @@ namespace Luthetus.Ide.RazorLib.CSharpProjectForm.Facts;
 
 public static partial class BlazorWasmEmptyFacts
 {
-    public const string INDEX_HTML_ABSOLUTE_FILE_PATH = @"/BlazorWasmEmpty/wwwroot/index.html";
-    public const string INDEX_HTML_CONTENTS = @"<!DOCTYPE html>
+    public const string INDEX_HTML_RELATIVE_FILE_PATH = @"wwwroot/index.html";
+
+    public static string GetIndexHtmlContents(string projectName) => @$"<!DOCTYPE html>
 <html lang=""en"">
 
 <head>
     <meta charset=""utf-8"" />
-    <title>BlazorWasmApp-empty</title>
+    <title>{projectName}</title>
     <base href=""/"" />
     <link href=""css/app.css"" rel=""stylesheet"" />
 
     <!-- If you add any scoped CSS files, uncomment the following to load them
-    <link href=""BlazorWasmApp_empty.styles.css"" rel=""stylesheet"" /> -->
+    <link href=""{projectName}.styles.css"" rel=""stylesheet"" /> -->
 </head>
 
 <body>

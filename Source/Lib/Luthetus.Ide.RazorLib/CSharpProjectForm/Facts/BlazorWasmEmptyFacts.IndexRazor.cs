@@ -8,8 +8,9 @@ namespace Luthetus.Ide.RazorLib.CSharpProjectForm.Facts;
 
 public static partial class BlazorWasmEmptyFacts
 {
-    public const string INDEX_RAZOR_ABSOLUTE_FILE_PATH = @"/BlazorWasmEmpty/Pages/index.razor";
-    public const string INDEX_RAZOR_CONTENTS = @"@page ""/""
+    public const string INDEX_RAZOR_RELATIVE_FILE_PATH = @"Pages/index.razor";
+
+    public static string GetIndexRazorContents(string projectName) => @$"@page ""/""
 
 <h1>Hello, world!</h1>
 ";
