@@ -98,8 +98,8 @@
                                         foreach (var projectTemplate in filteredProjectTemplateContainer)
                                         {
                                             <ProjectTemplateDisplay ProjectTemplate="projectTemplate"
-                                                                    ShortNameOfSelectedProjectTemplate="@_projectTemplateNameValue"
-                                                                    OnProjectTemplateSelectedEventCallback="pt => _projectTemplateNameValue = pt.ShortName!" />
+                                                                    ShortNameOfSelectedProjectTemplate="@_projectTemplateShortNameValue"
+                                                                    OnProjectTemplateSelectedEventCallback="pt => _projectTemplateShortNameValue = pt.ShortName!" />
                                         }
                                     }
                                 </div>
@@ -118,7 +118,7 @@
                                     <input class="luth_ide_input luth_ide_input-text"
                                            style="height: 2em;"
                                            placeholder="Template name"
-                                    @bind="_projectTemplateNameValue"
+                                    @bind="_projectTemplateShortNameValue"
                                     @bind:event="oninput" />
                                 </div>
                             </div>
@@ -181,7 +181,7 @@
                 Template&nbsp;Name:
             </span>
             <span class="luth_ide_form-output-entry-value">
-                <em class="luth_em">@ProjectTemplateNameDisplay</em>
+                <em class="luth_em">@ProjectTemplateShortNameDisplay</em>
             </span>
         </div>
         

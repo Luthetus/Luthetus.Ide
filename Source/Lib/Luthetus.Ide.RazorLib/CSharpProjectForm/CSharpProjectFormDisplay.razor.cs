@@ -14,6 +14,7 @@ using Luthetus.Ide.ClassLib.InputFile;
 using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 using Luthetus.Ide.ClassLib.Store.InputFileCase;
 using Luthetus.Ide.ClassLib.Store.TerminalCase;
+using Luthetus.Ide.RazorLib.CSharpProjectForm.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.Lexing;
 using Microsoft.AspNetCore.Components;
@@ -48,7 +49,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     private readonly CancellationTokenSource _newCSharpProjectCancellationTokenSource = new();
 
     private bool _isReadingProjectTemplates = false;
-    private string _projectTemplateNameValue = string.Empty;
+    private string _projectTemplateShortNameValue = string.Empty;
     private string _cSharpProjectNameValue = string.Empty;
     private string _optionalParametersValue = string.Empty;
     private string _parentDirectoryNameValue = string.Empty;
@@ -57,9 +58,9 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     private string _searchInput = string.Empty;
     private ProjectTemplate? _selectedProjectTemplate = null;
 
-    private string ProjectTemplateNameDisplay => string.IsNullOrWhiteSpace(_projectTemplateNameValue)
+    private string ProjectTemplateShortNameDisplay => string.IsNullOrWhiteSpace(_projectTemplateShortNameValue)
         ? "{enter Template name}"
-        : _projectTemplateNameValue;
+        : _projectTemplateShortNameValue;
 
     private string CSharpProjectNameDisplay => string.IsNullOrWhiteSpace(_cSharpProjectNameValue)
         ? "{enter C# Project name}"
@@ -73,7 +74,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
     private FormattedCommand FormattedNewCSharpProjectCommand => DotNetCliFacts
         .FormatDotnetNewCSharpProject(
-            _projectTemplateNameValue,
+            _projectTemplateShortNameValue,
             _cSharpProjectNameValue,
             _optionalParametersValue);
 
@@ -387,13 +388,13 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         var formattedCommandNewCSharpProject = FormattedNewCSharpProjectCommand;
         var formattedCommandAddExistingProjectToSolution = FormattedAddExistingProjectToSolutionCommand;
 
-        var localProjectTemplateName = _projectTemplateNameValue;
+        var localProjectTemplateShortName = _projectTemplateShortNameValue;
         var localCSharpProjectName = _cSharpProjectNameValue;
         var localOptionalParameters = _optionalParametersValue;
         var localParentDirectoryName = _parentDirectoryNameValue;
         var solutionNamespacePath = SolutionNamespacePath;
 
-        if (string.IsNullOrWhiteSpace(localProjectTemplateName) ||
+        if (string.IsNullOrWhiteSpace(localProjectTemplateShortName) ||
             string.IsNullOrWhiteSpace(localCSharpProjectName) ||
             string.IsNullOrWhiteSpace(localParentDirectoryName))
         {
@@ -403,7 +404,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         if (!LuthetusIdeOptions.IsNativeApplication)
         {
             await HackForWebsite_StartNewCSharpProjectCommandOnClick(
-                localProjectTemplateName,
+                localProjectTemplateShortName,
                 localCSharpProjectName,
                 localOptionalParameters,
                 localParentDirectoryName,
@@ -449,59 +450,14 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
     private async Task HackForWebsite_ReadProjectTemplates()
     {
-        _projectTemplateContainer = new();
-
-        var blazorWasmEmptyProjectTemplate = new ProjectTemplate(
-            "Blazor WebAssembly App Empty",
-            "blazorwasm-empty",
-            "[C#]",
-            "Web/Blazor/WebAssembly/PWA/Empty");
-        
-        var blazorServerSideEmptyProjectTemplate = new ProjectTemplate(
-            "Blazor Server App Empty",
-            "blazorserver-empty",
-            "[C#]",
-            "Web/Blazor/Empty");
-        
-        var classLibProjectTemplate = new ProjectTemplate(
-            "Class Library",
-            "classlib",
-            "[C#],F#,VB",
-            "Common/Library");
-        
-        var razorLibProjectTemplate = new ProjectTemplate(
-            "Razor Class Library",
-            "razorclasslib",
-            "[C#]",
-            "Web/Razor/Library/Razor Class Library");
-        
-        var consoleAppProjectTemplate = new ProjectTemplate(
-            "Console App",
-            "console",
-            "[C#],F#,VB",
-            "Common/Console");
-        
-        var xUnitProjectTemplate = new ProjectTemplate(
-            "xUnit Test Project",
-            "xunit",
-            "[C#],F#,VB",
-            "Test/xUnit");
-
-        _projectTemplateContainer.AddRange(new[] 
-        {
-            blazorWasmEmptyProjectTemplate,
-            blazorServerSideEmptyProjectTemplate,
-            classLibProjectTemplate,
-            razorLibProjectTemplate,
-            consoleAppProjectTemplate,
-            xUnitProjectTemplate,
-        });
+        _projectTemplateContainer = WebsiteProjectTemplateRegistry.WebsiteProjectTemplatesContainer
+            .ToList();
 
         await InvokeAsync(StateHasChanged);
     }
 
     private async Task HackForWebsite_StartNewCSharpProjectCommandOnClick(
-        string localProjectTemplateName,
+        string localProjectTemplateShortName,
         string localCSharpProjectName,
         string localOptionalParameters,
         string localParentDirectoryName,
@@ -515,7 +471,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             directoryContainingSolution);
 
         var localCSharpProjectNameWithExtension =
-            localProjectTemplateName +
+            localProjectTemplateShortName +
             '.' +
             ExtensionNoPeriodFacts.C_SHARP_PROJECT;
 
@@ -523,9 +479,14 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             directoryContainingSolution,
             localCSharpProjectNameWithExtension);
 
-        await FileSystemProvider.File.WriteAllTextAsync(
+        await WebsiteProjectTemplateRegistry.HandleNewCSharpProjectAsync(
+            localProjectTemplateShortName,
+            localCSharpProjectName,
+            localOptionalParameters,
+            localParentDirectoryName,
+            solutionNamespacePath,
             cSharpProjectAbsoluteFilePathString,
-            HackForWebsite_NEW_C_SHARP_PROJECT_TEMPLATE);
+            FileSystemProvider);
 
         // Close Dialog
         Dispatcher.Dispatch(new DialogRecordsCollection.DisposeAction(
@@ -549,20 +510,4 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         Dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
             notificationRecord));
     }
-
-    private const string HackForWebsite_NEW_C_SHARP_PROJECT_TEMPLATE = @"<Project Sdk=""Microsoft.NET.Sdk.BlazorWebAssembly"">
-
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include=""Microsoft.AspNetCore.Components.WebAssembly"" Version=""6.0.21"" />
-    <PackageReference Include=""Microsoft.AspNetCore.Components.WebAssembly.DevServer"" Version=""6.0.21"" PrivateAssets=""all"" />
-  </ItemGroup>
-
-</Project>
-";
 }
