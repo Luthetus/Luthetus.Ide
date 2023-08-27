@@ -529,7 +529,8 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             content,
             SolutionNamespacePath,
             EnvironmentProvider,
-            interceptParseDotNetProject: HandleInterceptParseDotNetProject);
+            interceptParseDotNetProject: HandleInterceptParseDotNetProject,
+            interceptPriorToReturning: HandleInterceptPriorToReturning);
 
         dispatcher.Dispatch(new WithAction(
             inDotNetSolutionState => inDotNetSolutionState with
@@ -542,6 +543,11 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     }
 
     private string HandleInterceptParseDotNetProject(string remainingContent)
+    {
+
+    }
+    
+    private void HandleInterceptPriorToReturning(string remainingContent)
     {
 
     }
