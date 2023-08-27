@@ -129,7 +129,10 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
     private async Task ReadProjectTemplates()
     {
-        await FormatDotNetNewListAsync();
+        if (!LuthetusIdeOptions.IsNativeApplication)
+            await HackForWebsite_ReadProjectTemplates();
+        else
+            await FormatDotNetNewListAsync();
     }
     
     private async Task FormatDotNetNewListAsync()
@@ -443,7 +446,60 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             await generalTerminalSession.EnqueueCommandAsync(newCSharpProjectCommand);
         }
     }
-    
+
+    private async Task HackForWebsite_ReadProjectTemplates()
+    {
+        _projectTemplateContainer = new();
+
+        var blazorWasmEmptyProjectTemplate = new ProjectTemplate(
+            "Blazor WebAssembly App Empty",
+            "blazorwasm-empty",
+            "[C#]",
+            "Web/Blazor/WebAssembly/PWA/Empty");
+        
+        var blazorServerSideEmptyProjectTemplate = new ProjectTemplate(
+            "Blazor Server App Empty",
+            "blazorserver-empty",
+            "[C#]",
+            "Web/Blazor/Empty");
+        
+        var classLibProjectTemplate = new ProjectTemplate(
+            "Class Library",
+            "classlib",
+            "[C#],F#,VB",
+            "Common/Library");
+        
+        var razorLibProjectTemplate = new ProjectTemplate(
+            "Razor Class Library",
+            "razorclasslib",
+            "[C#]",
+            "Web/Razor/Library/Razor Class Library");
+        
+        var consoleAppProjectTemplate = new ProjectTemplate(
+            "Console App",
+            "console",
+            "[C#],F#,VB",
+            "Common/Console");
+        
+        var xUnitProjectTemplate = new ProjectTemplate(
+            "xUnit Test Project",
+            "xunit",
+            "[C#],F#,VB",
+            "Test/xUnit");
+
+        _projectTemplateContainer.AddRange(new[] 
+        {
+            blazorWasmEmptyProjectTemplate,
+            blazorServerSideEmptyProjectTemplate,
+            classLibProjectTemplate,
+            razorLibProjectTemplate,
+            consoleAppProjectTemplate,
+            xUnitProjectTemplate,
+        });
+
+        await InvokeAsync(StateHasChanged);
+    }
+
     private async Task HackForWebsite_StartNewCSharpProjectCommandOnClick(
         string localProjectTemplateName,
         string localCSharpProjectName,
