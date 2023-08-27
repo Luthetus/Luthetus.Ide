@@ -580,10 +580,12 @@ EndProject";
     
     private void HandleInterceptPriorToReturning(string content, NamespacePath namespacePath)
     {
-        FileSystemProvider.File
-            .WriteAllTextAsync(namespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(), content)
-            .ConfigureAwait(false)
-            .GetAwaiter()
-            .GetResult();
+        // TODO: Cannot wait monitors error. This Task.Run() has a race condition if two CSharpProjectForms are completed. (something like this)
+        _ = Task.Run(async () =>
+        {
+            await FileSystemProvider.File.WriteAllTextAsync(
+                namespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
+                content);
+        });
     }
 }
