@@ -3,11 +3,13 @@ using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.Dialog;
+using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Namespaces;
 using Luthetus.Common.RazorLib.Notification;
 using Luthetus.Common.RazorLib.Store.DialogCase;
 using Luthetus.Common.RazorLib.Store.NotificationCase;
+using Luthetus.CompilerServices.Lang.DotNetSolution;
 using Luthetus.Ide.ClassLib.CommandLine;
 using Luthetus.Ide.ClassLib.FileConstants;
 using Luthetus.Ide.ClassLib.InputFile;
@@ -90,7 +92,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         {
             await ReadProjectTemplates();
         }
-        
+
 
         await base.OnAfterRenderAsync(firstRender);
     }
@@ -135,7 +137,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         else
             await FormatDotNetNewListAsync();
     }
-    
+
     private async Task FormatDotNetNewListAsync()
     {
         try
@@ -177,7 +179,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             }
         }
     }
-    
+
     private async Task FormatDotnetNewListDeprecatedAsync()
     {
         try
@@ -278,7 +280,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                     }
 
                     shouldLocateDashes = false;
-                }    
+                }
 
                 // Count the '-' (dashes) to know the character length of each column.
                 if (stringWalker.CurrentCharacter != '-')
@@ -489,6 +491,8 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             FileSystemProvider,
             EnvironmentProvider);
 
+        await HackForWebsite_AddExistingProjectToSolutionAsync();
+
         // Close Dialog
         Dispatcher.Dispatch(new DialogRecordsCollection.DisposeAction(
             DialogRecord.DialogKey));
@@ -509,6 +513,36 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             null);
 
         Dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
-            notificationRecord));
+        notificationRecord));
+    }
+
+    private async Task HackForWebsite_AddExistingProjectToSolutionAsync()
+    {
+        var dotNetSolutionAbsoluteFilePathString = SolutionNamespacePath!.AbsoluteFilePath
+            .GetAbsoluteFilePathString();
+
+        var content = await FileSystemProvider.File.ReadAllTextAsync(
+            dotNetSolutionAbsoluteFilePathString,
+            CancellationToken.None);
+
+        var dotNetSolution = DotNetSolutionParser.Parse(
+            content,
+            SolutionNamespacePath,
+            EnvironmentProvider,
+            interceptParseDotNetProject: HandleInterceptParseDotNetProject);
+
+        dispatcher.Dispatch(new WithAction(
+            inDotNetSolutionState => inDotNetSolutionState with
+            {
+                DotNetSolution = dotNetSolution
+            }));
+
+        dispatcher.Dispatch(new SetDotNetSolutionTreeViewAction());
+        dispatcher.Dispatch(new ParseDotNetSolutionAction());
+    }
+
+    private string HandleInterceptParseDotNetProject(string remainingContent)
+    {
+
     }
 }
