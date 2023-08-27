@@ -6,7 +6,6 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.Store.NotificationCase;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.HostedServiceCase.FileSystem;
-using Luthetus.Ide.ClassLib.HostedServiceCase.Terminal;
 
 namespace Luthetus.Ide.ClassLib.Store.FileSystemCase;
 

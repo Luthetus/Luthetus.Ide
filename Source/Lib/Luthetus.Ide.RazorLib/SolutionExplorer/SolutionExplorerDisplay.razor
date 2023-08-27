@@ -1,3 +1,4 @@
+@using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
 @using Luthetus.Ide.ClassLib.Context
 @using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase
 @using Luthetus.Ide.RazorLib.ContextCase
@@ -26,8 +27,15 @@
             @if (dotNetSolutionState.DotNetSolution is null)
             {
                 <button class="luth_button"
+                        style="display: inline; margin-right: 12px; margin-bottom: 12px;"
                         @onclick="() => DotNetSolutionState.ShowInputFile(Dispatcher)">
                     Open Solution
+                </button>
+
+                <button class="luth_button"
+                        style="display: inline;"
+                        @onclick="OpenNewDotNetSolutionDialog">
+                    New Solution
                 </button>
             }
             else
@@ -43,7 +51,6 @@
                         </CascadingValue>
                     </CascadingValue>
                 </CascadingValue>
-
 
                 <DropdownDisplay DropdownKey="SolutionExplorerContextMenu.ContextMenuEventDropdownKey"
                                  DropdownPositionKind="DropdownPositionKind.Unset"

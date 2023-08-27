@@ -96,9 +96,8 @@ public partial class IdeHeader : FluxorComponent
 
     private void AddActiveDropdownKey(DropdownKey dropdownKey)
     {
-        Dispatcher.Dispatch(
-            new DropdownsState.AddActiveAction(
-                dropdownKey));
+        Dispatcher.Dispatch(new DropdownsState.AddActiveAction(
+            dropdownKey));
     }
 
     /// <summary>
@@ -133,8 +132,7 @@ public partial class IdeHeader : FluxorComponent
             IsResizable = true
         };
 
-        Dispatcher.Dispatch(
-            new DialogRecordsCollection.RegisterAction(
-                dialogRecord));
+        Dispatcher.Dispatch(new DialogRecordsCollection.RegisterAction(
+            dialogRecord));
     }
 }

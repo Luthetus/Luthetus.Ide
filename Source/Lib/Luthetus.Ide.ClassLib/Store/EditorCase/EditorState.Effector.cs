@@ -90,28 +90,20 @@ public partial class EditorState
             ShowInputFileAction showInputFileAction,
             IDispatcher dispatcher)
         {
-            dispatcher.Dispatch(
-                new InputFileState.RequestInputFileStateFormAction(
-                    "TextEditor",
-                    async afp => await HandleOpenInEditorAction(
-                                    new OpenInEditorAction(afp, true),
-                                    dispatcher),
-                    afp =>
-                    {
-                        if (afp is null ||
-                            afp.IsDirectory)
-                        {
-                            return Task.FromResult(false);
-                        }
+            dispatcher.Dispatch(new InputFileState.RequestInputFileStateFormAction(
+                "TextEditor",
+                async afp => await HandleOpenInEditorAction(new OpenInEditorAction(afp, true), dispatcher),
+                afp =>
+                {
+                    if (afp is null || afp.IsDirectory)
+                        return Task.FromResult(false);
 
-                        return Task.FromResult(true);
-                    },
-                    new[]
-                    {
-                new InputFilePattern(
-                    "File",
-                    afp => !afp.IsDirectory)
-                    }.ToImmutableArray()));
+                    return Task.FromResult(true);
+                },
+                new[]
+                {
+                    new InputFilePattern("File", afp => !afp.IsDirectory)
+                }.ToImmutableArray()));
 
             return Task.CompletedTask;
         }
@@ -252,9 +244,8 @@ public partial class EditorState
                                 var backgroundTask = new BackgroundTask(
                                     async cancellationToken =>
                                     {
-                                        dispatcher.Dispatch(
-                                            new NotificationRecordsCollection.DisposeAction(
-                                                notificationInformativeKey));
+                                        dispatcher.Dispatch(new NotificationRecordsCollection.DisposeAction(
+                                            notificationInformativeKey));
 
                                         var content = await _fileSystemProvider.File
                                             .ReadAllTextAsync(inputFileAbsoluteFilePathString);
@@ -280,9 +271,8 @@ public partial class EditorState
                             nameof(IBooleanPromptOrCancelRendererType.OnAfterDeclineAction),
                             new Action(() =>
                             {
-                                dispatcher.Dispatch(
-                                    new NotificationRecordsCollection.DisposeAction(
-                                        notificationInformativeKey));
+                                dispatcher.Dispatch(new NotificationRecordsCollection.DisposeAction(
+                                    notificationInformativeKey));
                             })
                         },
                     },
@@ -290,9 +280,8 @@ public partial class EditorState
                     true,
                     null);
 
-                dispatcher.Dispatch(
-                    new NotificationRecordsCollection.RegisterAction(
-                        notificationInformative));
+                dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+                    notificationInformative));
             }
         }
 

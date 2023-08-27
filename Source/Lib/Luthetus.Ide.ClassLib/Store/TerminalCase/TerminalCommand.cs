@@ -1,9 +1,10 @@
-﻿namespace Luthetus.Ide.ClassLib.Store.TerminalCase;
+﻿using Luthetus.Ide.ClassLib.CommandLine;
+
+namespace Luthetus.Ide.ClassLib.Store.TerminalCase;
 
 public record TerminalCommand(
     TerminalCommandKey TerminalCommandKey,
-    string TargetFilePath,
-    IEnumerable<string> Arguments,
+    FormattedCommand FormattedCommand,
     string? ChangeWorkingDirectoryTo = null,
     CancellationToken CancellationToken = default,
     Func<Task>? ContinueWith = null);

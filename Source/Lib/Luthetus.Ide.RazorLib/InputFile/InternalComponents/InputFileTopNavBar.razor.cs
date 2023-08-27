@@ -38,10 +38,8 @@ public partial class InputFileTopNavBar : ComponentBase
     public string SearchQuery
     {
         get => InputFileState.SearchQuery;
-        set => Dispatcher
-            .Dispatch(
-                new InputFileState.SetSearchQueryAction(
-                    value));
+        set => Dispatcher.Dispatch(new InputFileState.SetSearchQueryAction(
+                   value));
     }
 
     private async Task HandleBackButtonOnClick()
@@ -72,8 +70,8 @@ public partial class InputFileTopNavBar : ComponentBase
 
     private async Task HandleRefreshButtonOnClick()
     {
-        Dispatcher.Dispatch(
-            new InputFileState.RefreshCurrentSelectionAction(CommonBackgroundTaskQueue));
+        Dispatcher.Dispatch(new InputFileState.RefreshCurrentSelectionAction(
+            CommonBackgroundTaskQueue));
 
         await ChangeContentRootToOpenedTreeView(InputFileState);
     }
@@ -107,10 +105,6 @@ public partial class InputFileTopNavBar : ComponentBase
 
     private async Task InputFileEditAddressOnFocusOutCallbackAsync(string address)
     {
-        address = FilePathHelper.StripEndingDirectorySeparatorIfExists(
-            address,
-            EnvironmentProvider);
-
         try
         {
             if (!await FileSystemProvider.Directory.ExistsAsync(address))
@@ -153,9 +147,8 @@ public partial class InputFileTopNavBar : ComponentBase
                     true,
                     IErrorNotificationRendererType.CSS_CLASS_STRING);
 
-                Dispatcher.Dispatch(
-                    new NotificationRecordsCollection.RegisterAction(
-                        errorNotification));
+                Dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+                    errorNotification));
             }
         }
     }

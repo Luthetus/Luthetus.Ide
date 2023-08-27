@@ -50,9 +50,8 @@ public partial class TerminalWellKnownTab : FluxorComponent
 
     private Task DispatchSetActiveTerminalCommandKeyActionOnClick()
     {
-        Dispatcher.Dispatch(
-            new WellKnownTerminalSessionsState.SetActiveWellKnownTerminalSessionKey(
-                WellKnownTerminalSessionKey));
+        Dispatcher.Dispatch(new WellKnownTerminalSessionsState.SetActiveWellKnownTerminalSessionKey(
+            WellKnownTerminalSessionKey));
 
         return Task.CompletedTask;
     }

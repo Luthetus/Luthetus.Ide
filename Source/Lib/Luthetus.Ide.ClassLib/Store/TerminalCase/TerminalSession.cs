@@ -2,7 +2,6 @@
 using CliWrap.EventStream;
 using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
-using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
@@ -91,20 +90,20 @@ public class TerminalSession
                 if (terminalCommand.ChangeWorkingDirectoryTo is not null)
                     WorkingDirectoryAbsoluteFilePathString = terminalCommand.ChangeWorkingDirectoryTo;
 
-                if (terminalCommand.TargetFilePath == "cd" &&
-                    terminalCommand.Arguments.Any())
+                if (terminalCommand.FormattedCommand.TargetFileName == "cd" &&
+                    terminalCommand.FormattedCommand.Arguments.Any())
                 {
                     // TODO: Don't keep this logic as it is hacky. I'm trying to set myself up to be able to run "gcc" to compile ".c" files. Then I can work on adding symbol related logic like "go to definition" or etc.
-                    WorkingDirectoryAbsoluteFilePathString = terminalCommand.Arguments.ElementAt(0);
+                    WorkingDirectoryAbsoluteFilePathString = terminalCommand.FormattedCommand.Arguments.ElementAt(0);
                 }
 
                 _terminalCommandsHistory.Add(terminalCommand);
                 ActiveTerminalCommand = terminalCommand;
 
-                var command = Cli.Wrap(terminalCommand.TargetFilePath);
+                var command = Cli.Wrap(terminalCommand.FormattedCommand.TargetFileName);
 
-                if (terminalCommand.Arguments.Any())
-                    command = command.WithArguments(terminalCommand.Arguments);
+                if (terminalCommand.FormattedCommand.Arguments.Any())
+                    command = command.WithArguments(terminalCommand.FormattedCommand.Arguments);
 
                 if (terminalCommand.ChangeWorkingDirectoryTo is not null)
                 {
@@ -137,26 +136,26 @@ public class TerminalSession
                                 switch (cmdEvent)
                                 {
                                     case StartedCommandEvent started:
-                                        _standardOutBuilderMap[terminalCommandKey]
-                                            .AppendLine($"Process started; ID: {started.ProcessId}");
+                                        _standardOutBuilderMap[terminalCommandKey].AppendLine(
+                                            $"> {WorkingDirectoryAbsoluteFilePathString} (PID:{started.ProcessId}) {terminalCommand.FormattedCommand.Value}");
 
                                         DispatchNewStateKey();
                                         break;
                                     case StandardOutputCommandEvent stdOut:
-                                        _standardOutBuilderMap[terminalCommandKey]
-                                            .AppendLine($"Out> {stdOut.Text}");
+                                        _standardOutBuilderMap[terminalCommandKey].AppendLine(
+                                            $"{stdOut.Text}");
 
                                         DispatchNewStateKey();
                                         break;
                                     case StandardErrorCommandEvent stdErr:
-                                        _standardOutBuilderMap[terminalCommandKey]
-                                            .AppendLine($"Err> {stdErr.Text}");
+                                        _standardOutBuilderMap[terminalCommandKey].AppendLine(
+                                            $"Err> {stdErr.Text}");
 
                                         DispatchNewStateKey();
                                         break;
                                     case ExitedCommandEvent exited:
-                                        _standardOutBuilderMap[terminalCommandKey]
-                                            .AppendLine($"Process exited; Code: {exited.ExitCode}");
+                                        _standardOutBuilderMap[terminalCommandKey].AppendLine(
+                                            $"Process exited; Code: {exited.ExitCode}");
 
                                         DispatchNewStateKey();
                                         break;
@@ -180,9 +179,8 @@ public class TerminalSession
                             true,
                             IErrorNotificationRendererType.CSS_CLASS_STRING);
 
-                        _dispatcher.Dispatch(
-                            new NotificationRecordsCollection.RegisterAction(
-                                notificationRecord));
+                        _dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+                            notificationRecord));
                     }
                     finally
                     {
@@ -236,9 +234,8 @@ public class TerminalSession
 
     private void DispatchNewStateKey()
     {
-        _dispatcher.Dispatch(
-            new TerminalSessionWasModifiedStateReducer.SetTerminalSessionStateKeyAction(
-                TerminalSessionKey,
-                StateKey.NewStateKey()));
+        _dispatcher.Dispatch(new TerminalSessionWasModifiedStateReducer.SetTerminalSessionStateKeyAction(
+            TerminalSessionKey,
+            StateKey.NewStateKey()));
     }
 }

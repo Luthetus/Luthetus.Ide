@@ -1,6 +1,7 @@
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Keyboard;
+using Luthetus.Ide.ClassLib.CommandLine;
 using Luthetus.Ide.ClassLib.Html;
 using Luthetus.Ide.ClassLib.Store.TerminalCase;
 using Luthetus.TextEditor.RazorLib;
@@ -177,10 +178,13 @@ public partial class TerminalOutputDisplay : FluxorComponent
                 .Where(x => !string.IsNullOrWhiteSpace(x))
                 .ToArray();
 
+            var formattedCommand = new FormattedCommand(
+                targetFileName,
+                arguments);
+
             var terminalCommand = new TerminalCommand(
                 TerminalCommandKey.NewTerminalCommandKey(),
-                targetFileName,
-                arguments,
+                formattedCommand,
                 null,
                 CancellationToken.None,
                 () => Task.CompletedTask);

@@ -155,9 +155,8 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
                 true,
                 null);
 
-            _dispatcher.Dispatch(
-                new NotificationRecordsCollection.RegisterAction(
-                    notificationInformative));
+            _dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+                notificationInformative));
         }
 
         return Task.CompletedTask;
@@ -186,9 +185,8 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
                 true,
                 null);
 
-            _dispatcher.Dispatch(
-                new NotificationRecordsCollection.RegisterAction(
-                    notificationInformative));
+            _dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+                notificationInformative));
         }
 
         return Task.CompletedTask;
@@ -245,7 +243,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         else
         {
             var parentDirectory = (IAbsoluteFilePath)treeViewAbsoluteFilePathPath
-                .Item.Directories.Last();
+                .Item.AncestorDirectories.Last();
 
             pasteMenuOptionRecord = _menuOptionsFactory.PasteClipboard(
                 parentDirectory,

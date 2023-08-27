@@ -30,17 +30,15 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
     public string NugetQuery
     {
         get => NuGetPackageManagerStateWrap.Value.NugetQuery;
-        set => Dispatcher.Dispatch(
-            new NuGetPackageManagerState.SetNugetQueryAction(
-                value));
+        set => Dispatcher.Dispatch(new NuGetPackageManagerState.SetNugetQueryAction(
+                   value));
     }
 
     public bool IncludePrerelease
     {
         get => NuGetPackageManagerStateWrap.Value.IncludePrerelease;
-        set => Dispatcher.Dispatch(
-            new NuGetPackageManagerState.SetIncludePrereleaseAction(
-                value));
+        set => Dispatcher.Dispatch(new NuGetPackageManagerState.SetIncludePrereleaseAction(
+                   value));
     }
 
     private void SelectedProjectToModifyChanged(
@@ -63,9 +61,8 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
                 .SingleOrDefault(x => x.ProjectIdGuid == projectIdGuid);
         }
 
-        Dispatcher.Dispatch(
-            new NuGetPackageManagerState.SetSelectedProjectToModifyAction(
-                selectedProject));
+        Dispatcher.Dispatch(new NuGetPackageManagerState.SetSelectedProjectToModifyAction(
+            selectedProject));
     }
 
     private bool CheckIfProjectIsSelected(

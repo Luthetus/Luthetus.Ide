@@ -27,9 +27,8 @@ public partial class InputFileBottomControls : ComponentBase
 
         if (pattern is not null)
         {
-            Dispatcher.Dispatch(
-                new InputFileState.SetSelectedInputFilePatternAction(
-                    pattern));
+            Dispatcher.Dispatch(new InputFileState.SetSelectedInputFilePatternAction(
+                pattern));
         }
     }
 
@@ -52,9 +51,8 @@ public partial class InputFileBottomControls : ComponentBase
         {
             if (DialogRecord is not null)
             {
-                Dispatcher.Dispatch(
-                    new DialogRecordsCollection.DisposeAction(
-                        DialogRecord.DialogKey));
+                Dispatcher.Dispatch(new DialogRecordsCollection.DisposeAction(
+                    DialogRecord.DialogKey));
             }
 
             await InputFileState.OnAfterSubmitFunc
@@ -73,9 +71,8 @@ public partial class InputFileBottomControls : ComponentBase
     {
         if (DialogRecord is not null)
         {
-            Dispatcher.Dispatch(
-                new DialogRecordsCollection.DisposeAction(
-                    DialogRecord.DialogKey));
+            Dispatcher.Dispatch(new DialogRecordsCollection.DisposeAction(
+                DialogRecord.DialogKey));
         }
 
         return Task.CompletedTask;

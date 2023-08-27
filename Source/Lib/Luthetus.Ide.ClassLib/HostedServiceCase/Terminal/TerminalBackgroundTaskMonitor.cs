@@ -45,9 +45,8 @@ public class TerminalBackgroundTaskMonitor : ITerminalBackgroundTaskMonitor
                 true,
                 null);
 
-            backgroundTask.Dispatcher.Dispatch(
-                new NotificationRecordsCollection.RegisterAction(
-                    notificationRecord));
+            backgroundTask.Dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+                notificationRecord));
         }
     }
 }

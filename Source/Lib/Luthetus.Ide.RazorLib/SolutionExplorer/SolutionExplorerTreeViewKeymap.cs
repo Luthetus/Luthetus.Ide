@@ -11,7 +11,6 @@ using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.Common.RazorLib.TreeView.Events;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
-using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib.Menu;
 using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 using Luthetus.Ide.ClassLib.Store.EditorCase;
@@ -21,22 +20,19 @@ namespace Luthetus.Ide.RazorLib.SolutionExplorer;
 
 public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
 {
-    private readonly IMenuOptionsFactory _commonMenuOptionsFactory;
-    private readonly ILuthetusIdeComponentRenderers _luthetusIdeComponentRenderers;
+    private readonly IMenuOptionsFactory _menuOptionsFactory;
     private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
     private readonly IDispatcher _dispatcher;
     private readonly ITreeViewService _treeViewService;
 
     public SolutionExplorerTreeViewKeymap(
         IMenuOptionsFactory menuOptionsFactory,
-        ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
         ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
         IDispatcher dispatcher,
         ITreeViewService treeViewService)
         : base(treeViewService)
     {
-        _commonMenuOptionsFactory = menuOptionsFactory;
-        _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
+        _menuOptionsFactory = menuOptionsFactory;
         _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
         _dispatcher = dispatcher;
         _treeViewService = treeViewService;
@@ -53,14 +49,10 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
         switch (treeViewCommandParameter.KeyboardEventArgs.Code)
         {
             case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
-                await InvokeOpenInEditorAsync(
-                    treeViewCommandParameter,
-                    true);
+                await InvokeOpenInEditorAsync(treeViewCommandParameter, true);
                 return true;
             case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
-                await InvokeOpenInEditorAsync(
-                    treeViewCommandParameter,
-                    false);
+                await InvokeOpenInEditorAsync(treeViewCommandParameter, false);
                 return true;
         }
 
@@ -155,9 +147,8 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
                 true,
                 null);
 
-            _dispatcher.Dispatch(
-                new NotificationRecordsCollection.RegisterAction(
-                    notificationInformative));
+            _dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+                notificationInformative));
         }
 
         return Task.CompletedTask;
@@ -186,9 +177,8 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
                 true,
                 null);
 
-            _dispatcher.Dispatch(
-                new NotificationRecordsCollection.RegisterAction(
-                    notificationInformative));
+            _dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+                notificationInformative));
         }
 
         return Task.CompletedTask;
@@ -204,7 +194,7 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
             return Task.CompletedTask;
         }
 
-        var copyFileMenuOption = _commonMenuOptionsFactory.CopyFile(
+        var copyFileMenuOption = _menuOptionsFactory.CopyFile(
             treeViewNamespacePath.Item.AbsoluteFilePath,
             () => NotifyCopyCompleted(treeViewNamespacePath.Item));
 
@@ -227,7 +217,7 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
 
         if (treeViewNamespacePath.Item.AbsoluteFilePath.IsDirectory)
         {
-            pasteMenuOptionRecord = _commonMenuOptionsFactory.PasteClipboard(
+            pasteMenuOptionRecord = _menuOptionsFactory.PasteClipboard(
                 treeViewNamespacePath.Item.AbsoluteFilePath,
                 async () =>
                 {
@@ -245,9 +235,9 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
         else
         {
             var parentDirectory = (IAbsoluteFilePath)treeViewNamespacePath
-                .Item.AbsoluteFilePath.Directories.Last();
+                .Item.AbsoluteFilePath.AncestorDirectories.Last();
 
-            pasteMenuOptionRecord = _commonMenuOptionsFactory.PasteClipboard(
+            pasteMenuOptionRecord = _menuOptionsFactory.PasteClipboard(
                 parentDirectory,
                 async () =>
                 {
@@ -280,7 +270,7 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
 
         var parent = treeViewNamespacePath.Parent as TreeViewNamespacePath;
 
-        MenuOptionRecord cutFileOptionRecord = _commonMenuOptionsFactory.CutFile(
+        MenuOptionRecord cutFileOptionRecord = _menuOptionsFactory.CutFile(
             treeViewNamespacePath.Item.AbsoluteFilePath,
             () => NotifyCutCompleted(
                 treeViewNamespacePath.Item,

@@ -100,8 +100,7 @@ public partial class NugetPackageDisplay : FluxorComponent
 
         var addNugetPackageReferenceCommand = new TerminalCommand(
             AddNugetPackageTerminalCommandKey,
-            formattedCommand.targetFileName,
-            formattedCommand.arguments,
+            formattedCommand,
             parentDirectory.GetAbsoluteFilePathString(),
             CancellationToken.None, () =>
             {
@@ -122,9 +121,8 @@ public partial class NugetPackageDisplay : FluxorComponent
                         true,
                         null);
 
-                    Dispatcher.Dispatch(
-                        new NotificationRecordsCollection.RegisterAction(
-                            notificationInformative));
+                    Dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+                        notificationInformative));
                 }
 
                 return Task.CompletedTask;

@@ -5,8 +5,8 @@ namespace Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 public partial record DotNetSolutionState
 {
     public record SetDotNetSolutionAction(IAbsoluteFilePath SolutionAbsoluteFilePath);
+    public record WithAction(Func<DotNetSolutionState, DotNetSolutionState> WithFunc);
+    public record SetDotNetSolutionTreeViewAction;
 
-    private record WithAction(Func<DotNetSolutionState, DotNetSolutionState> WithFunc);
-    private record SetDotNetSolutionTreeViewAction;
     private record ParseDotNetSolutionAction;
 }

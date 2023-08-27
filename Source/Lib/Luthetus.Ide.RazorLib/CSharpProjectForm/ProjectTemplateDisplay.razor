@@ -1,0 +1,14 @@
+﻿<div class="luth_ide_project-template"
+     @onclick="async () => await OnProjectTemplateSelectedEventCallback.InvokeAsync(ProjectTemplate)">
+
+    <div class="luth_ide_project-template-title @IsActiveCssClass">
+        @ProjectTemplate.TemplateName (@ProjectTemplate.ShortName)
+    </div>
+    
+    <div class="luth_ide_project-template-body">
+        <div class="luth_ide_project-template-body-entry">
+            <em class="luth_em">@ProjectTemplate.Language</em>
+            @ProjectTemplate.Tags
+        </div>
+    </div>
+</div>

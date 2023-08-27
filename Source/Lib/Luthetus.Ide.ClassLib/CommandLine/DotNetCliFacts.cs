@@ -3,155 +3,198 @@
 namespace Luthetus.Ide.ClassLib.CommandLine;
 
 /// <summary>
-/// Any values given will NOT be wrapped in quotes internally
+/// Any values given will NOT be wrapped in quotes internally at this step.
+/// Later, if one uses CliWrap, then at that point they will be wrapped in quotes.
 /// </summary>
 public static class DotNetCliFacts
 {
     public const string DOT_NET_CLI_TARGET_FILE_NAME = "dotnet";
 
-    public static (string targetFileName, IEnumerable<string> arguments) FormatStartProjectWithoutDebugging(
+    public static FormattedCommand FormatStartProjectWithoutDebugging(
         IAbsoluteFilePath projectAbsoluteFilePath)
     {
         return FormatStartProjectWithoutDebugging(
             projectAbsoluteFilePath.GetAbsoluteFilePathString());
     }
 
-    public static (string targetFileName, IEnumerable<string> arguments) FormatStartProjectWithoutDebugging(
+    public static FormattedCommand FormatStartProjectWithoutDebugging(
         string projectPath)
     {
-        return (DOT_NET_CLI_TARGET_FILE_NAME, new[]
-        {
-        "run",
-        "--project",
-        projectPath
-    });
+        return new FormattedCommand(
+            DOT_NET_CLI_TARGET_FILE_NAME,
+            new[]
+            {
+                "run",
+                "--project",
+                projectPath
+            });
     }
 
-    public static (string targetFileName, IEnumerable<string> arguments) FormatDotnetNewSln(
+    public static FormattedCommand FormatDotnetNewSln(
         string solutionName)
     {
-        return (DOT_NET_CLI_TARGET_FILE_NAME, new[]
-        {
-        "new",
-        "sln",
-        "-o",
-        solutionName
-    });
+        return new FormattedCommand(
+            DOT_NET_CLI_TARGET_FILE_NAME,
+            new[]
+            {
+                "new",
+                "sln",
+                "-o",
+                solutionName
+            });
     }
 
-    public static (string targetFileName, IEnumerable<string> arguments) FormatDotnetNewCSharpProject(
+    public static FormattedCommand FormatDotnetNewCSharpProject(
         string projectTemplateName,
         string cSharpProjectName,
         string optionalParameters)
     {
         var arguments = new List<string>
-    {
-        "new",
-        projectTemplateName,
-        "-o",
-        cSharpProjectName
-    };
+        {
+            "new",
+            projectTemplateName,
+            "-o",
+            cSharpProjectName
+        };
 
         if (!string.IsNullOrWhiteSpace(optionalParameters))
             arguments.Add(optionalParameters);
 
-        return (DOT_NET_CLI_TARGET_FILE_NAME, arguments);
+        return new FormattedCommand(
+            DOT_NET_CLI_TARGET_FILE_NAME,
+            arguments);
     }
 
-    public static (string targetFileName, IEnumerable<string> arguments) FormatAddExistingProjectToSolution(
+    public static FormattedCommand FormatAddExistingProjectToSolution(
         string solutionAbsoluteFilePathString,
         string cSharpProjectPath)
     {
-        return (DOT_NET_CLI_TARGET_FILE_NAME, new[]
-        {
-        "sln",
-        solutionAbsoluteFilePathString,
-        "add",
-        cSharpProjectPath
-    });
+        return new FormattedCommand(
+            DOT_NET_CLI_TARGET_FILE_NAME,
+            new[]
+            {
+                "sln",
+                solutionAbsoluteFilePathString,
+                "add",
+                cSharpProjectPath
+            });
     }
 
-    public static (string targetFileName, IEnumerable<string> arguments) FormatRemoveCSharpProjectReferenceFromSolutionAction(
+    public static FormattedCommand FormatRemoveCSharpProjectReferenceFromSolutionAction(
         string solutionAbsoluteFilePathString,
         string cSharpProjectAbsoluteFilePathString)
     {
-        return (DOT_NET_CLI_TARGET_FILE_NAME, new[]
-        {
-        "sln",
-        solutionAbsoluteFilePathString,
-        "remove",
-        cSharpProjectAbsoluteFilePathString
-    });
+        return new FormattedCommand(
+            DOT_NET_CLI_TARGET_FILE_NAME,
+            new[]
+            {
+                "sln",
+                solutionAbsoluteFilePathString,
+                "remove",
+                cSharpProjectAbsoluteFilePathString
+            });
     }
 
-    public static (string targetFileName, IEnumerable<string> arguments) FormatAddNugetPackageReferenceToProject(
+    public static FormattedCommand FormatAddNugetPackageReferenceToProject(
         string cSharpProjectAbsoluteFilePathString,
         string nugetPackageId,
         string nugetPackageVersion)
     {
-        return (DOT_NET_CLI_TARGET_FILE_NAME, new[]
-        {
-        "add",
-        cSharpProjectAbsoluteFilePathString,
-        "package",
-        nugetPackageId,
-        "--version",
-        nugetPackageVersion
-    });
+        return new FormattedCommand(
+            DOT_NET_CLI_TARGET_FILE_NAME,
+            new[]
+            {
+                "add",
+                cSharpProjectAbsoluteFilePathString,
+                "package",
+                nugetPackageId,
+                "--version",
+                nugetPackageVersion
+            });
     }
 
-    public static (string targetFileName, IEnumerable<string> arguments) FormatRemoveNugetPackageReferenceFromProject(
+    public static FormattedCommand FormatRemoveNugetPackageReferenceFromProject(
         string cSharpProjectAbsoluteFilePathString,
         string nugetPackageId)
     {
-        return (DOT_NET_CLI_TARGET_FILE_NAME, new[]
-        {
-        "remove",
-        cSharpProjectAbsoluteFilePathString,
-        "package",
-        nugetPackageId
-    });
+        return new FormattedCommand(
+            DOT_NET_CLI_TARGET_FILE_NAME,
+            new[]
+            {
+                "remove",
+                cSharpProjectAbsoluteFilePathString,
+                "package",
+                nugetPackageId
+            });
     }
 
-    public static (string targetFileName, IEnumerable<string> arguments) FormatAddProjectToProjectReference(
+    public static FormattedCommand FormatAddProjectToProjectReference(
         string receivingProjectAbsoluteFilePathString,
         string referenceProjectAbsoluteFilePathString)
     {
-        return (DOT_NET_CLI_TARGET_FILE_NAME, new[]
-        {
-        "add",
-        receivingProjectAbsoluteFilePathString,
-        "reference",
-        referenceProjectAbsoluteFilePathString
-    });
+        return new FormattedCommand(
+            DOT_NET_CLI_TARGET_FILE_NAME,
+            new[]
+            {
+                "add",
+                receivingProjectAbsoluteFilePathString,
+                "reference",
+                referenceProjectAbsoluteFilePathString
+            });
     }
 
-    public static (string targetFileName, IEnumerable<string> arguments) FormatRemoveProjectToProjectReference(
+    public static FormattedCommand FormatRemoveProjectToProjectReference(
         string modifyProjectAbsoluteFilePathString,
         string referenceProjectAbsoluteFilePathString)
     {
-        return (DOT_NET_CLI_TARGET_FILE_NAME, new[]
-        {
-        "remove",
-        modifyProjectAbsoluteFilePathString,
-        "reference",
-        referenceProjectAbsoluteFilePathString
-    });
+        return new FormattedCommand(
+            DOT_NET_CLI_TARGET_FILE_NAME,
+            new[]
+            {
+                "remove",
+                modifyProjectAbsoluteFilePathString,
+                "reference",
+                referenceProjectAbsoluteFilePathString
+            });
     }
 
-    public static (string targetFileName, IEnumerable<string> arguments) FormatMoveProjectToSolutionFolder(
+    public static FormattedCommand FormatMoveProjectToSolutionFolder(
         string solutionAbsoluteFilePathString,
         string projectToMoveAbsoluteFilePathString,
         string solutionFolderPath)
     {
-        return (DOT_NET_CLI_TARGET_FILE_NAME, new[]
-        {
-        "sln",
-        solutionAbsoluteFilePathString,
-        "add",
-        projectToMoveAbsoluteFilePathString,
-        "--solution-folder",
-        solutionFolderPath,
-    });
+        return new FormattedCommand(
+            DOT_NET_CLI_TARGET_FILE_NAME,
+            new[]
+            {
+                "sln",
+                solutionAbsoluteFilePathString,
+                "add",
+                projectToMoveAbsoluteFilePathString,
+                "--solution-folder",
+                solutionFolderPath,
+            });
+    }
+    
+    public static FormattedCommand FormatDotnetNewList()
+    {
+        return new FormattedCommand(
+            DOT_NET_CLI_TARGET_FILE_NAME,
+            new[]
+            {
+                "new",
+                "list",
+            });
+    }
+    
+    public static FormattedCommand FormatDotnetNewListDeprecated()
+    {
+        return new FormattedCommand(
+            DOT_NET_CLI_TARGET_FILE_NAME,
+            new[]
+            {
+                "new",
+                "--list",
+            });
     }
 }

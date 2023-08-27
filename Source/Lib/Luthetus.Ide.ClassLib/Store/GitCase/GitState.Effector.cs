@@ -99,10 +99,16 @@ public partial record GitState
                 var generalTerminalSession = _terminalSessionsStateWrap.Value.TerminalSessionMap[
                     TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
 
+                var formattedCommand = new FormattedCommand(
+                    GitCliFacts.TARGET_FILE_NAME,
+                    new[]
+                    {
+                        GitCliFacts.STATUS_COMMAND
+                    });
+
                 var gitStatusCommand = new TerminalCommand(
                     GitFacts.GitStatusTerminalCommandKey,
-                    GitCliFacts.TARGET_FILE_NAME,
-                    new[] { GitCliFacts.STATUS_COMMAND },
+                    formattedCommand,
                     gitState.GitFolderAbsoluteFilePath.ParentDirectory.GetAbsoluteFilePathString(),
                     CancellationToken.None,
                     async () =>
@@ -205,17 +211,22 @@ public partial record GitState
                 if (gitState.MostRecentTryFindGitFolderInDirectoryAction is null)
                     return;
 
+                var formattedCommand = new FormattedCommand(
+                    GitCliFacts.TARGET_FILE_NAME,
+                    new[] 
+                    {
+                        GitCliFacts.INIT_COMMAND
+                    });
+
                 var gitInitCommand = new TerminalCommand(
                     GitFacts.GitInitTerminalCommandKey,
-                    GitCliFacts.TARGET_FILE_NAME,
-                    new[] { GitCliFacts.INIT_COMMAND },
+                    formattedCommand,
                     gitState.MostRecentTryFindGitFolderInDirectoryAction.DirectoryAbsoluteFilePath.GetAbsoluteFilePathString(),
                     CancellationToken.None,
                     () =>
                     {
-                        dispatcher.Dispatch(
-                            new GitState.RefreshGitAction(
-                                gitInitAction.CancellationToken));
+                        dispatcher.Dispatch(new RefreshGitAction(
+                            gitInitAction.CancellationToken));
 
                         return Task.CompletedTask;
                     });
@@ -296,21 +307,20 @@ public partial record GitState
                         true,
                         _environmentProvider);
 
-                    dispatcher.Dispatch(
-                        new SetGitStateWithAction(withGitState => withGitState with
+                    dispatcher.Dispatch(new SetGitStateWithAction(
+                        withGitState => withGitState with
                         {
                             GitFolderAbsoluteFilePath = gitFolderAbsoluteFilePath,
                             MostRecentTryFindGitFolderInDirectoryAction = tryFindGitFolderInDirectoryAction
                         }));
 
-                    dispatcher.Dispatch(
-                        new GitState.RefreshGitAction(
-                            tryFindGitFolderInDirectoryAction.CancellationToken));
+                    dispatcher.Dispatch(new RefreshGitAction(
+                        tryFindGitFolderInDirectoryAction.CancellationToken));
                 }
                 else
                 {
-                    dispatcher.Dispatch(
-                        new SetGitStateWithAction(withGitState => withGitState with
+                    dispatcher.Dispatch(new SetGitStateWithAction(
+                        withGitState => withGitState with
                         {
                             GitFolderAbsoluteFilePath = null,
                             MostRecentTryFindGitFolderInDirectoryAction = tryFindGitFolderInDirectoryAction
@@ -319,16 +329,17 @@ public partial record GitState
             }
             finally
             {
-                dispatcher.Dispatch(new SetGitStateWithAction(withGitState =>
-                {
-                    var nextActiveGitTasks = withGitState.ActiveGitTasks.Remove(
-                        handleTryFindGitFolderInDirectoryAction);
-
-                    return withGitState with
+                dispatcher.Dispatch(new SetGitStateWithAction(
+                    withGitState =>
                     {
-                        ActiveGitTasks = nextActiveGitTasks,
-                    };
-                }));
+                        var nextActiveGitTasks = withGitState.ActiveGitTasks.Remove(
+                            handleTryFindGitFolderInDirectoryAction);
+
+                        return withGitState with
+                        {
+                            ActiveGitTasks = nextActiveGitTasks,
+                        };
+                    }));
 
                 _handleActionSemaphoreSlim.Release();
             }

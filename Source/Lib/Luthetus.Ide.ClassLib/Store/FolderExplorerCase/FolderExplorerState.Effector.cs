@@ -41,12 +41,11 @@ public partial record FolderExplorerState
             SetFolderExplorerAction setFolderExplorerAction,
             IDispatcher dispatcher)
         {
-            dispatcher.Dispatch(
-                new WithAction(
-                    inFolderExplorerState => inFolderExplorerState with
-                    {
-                        AbsoluteFilePath = setFolderExplorerAction.FolderAbsoluteFilePath
-                    }));
+            dispatcher.Dispatch(new WithAction(
+                inFolderExplorerState => inFolderExplorerState with
+                {
+                    AbsoluteFilePath = setFolderExplorerAction.FolderAbsoluteFilePath
+                }));
 
             dispatcher.Dispatch(new SetFolderExplorerTreeViewAction());
 

@@ -37,8 +37,7 @@ public partial class StartupControlsDisplay : FluxorComponent
 
         var startProgramWithoutDebuggingCommand = new TerminalCommand(
             _newDotNetSolutionTerminalCommandKey,
-            formattedCommand.targetFileName,
-            formattedCommand.arguments,
+            formattedCommand,
             parentDirectoryAbsoluteFilePathString,
             _newDotNetSolutionCancellationTokenSource.Token);
 

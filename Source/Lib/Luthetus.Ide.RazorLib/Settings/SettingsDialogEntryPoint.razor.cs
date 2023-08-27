@@ -22,8 +22,7 @@ public partial class SettingsDialogEntryPoint : ComponentBase
 
     public void DispatchRegisterDialogRecordAction()
     {
-        Dispatcher.Dispatch(
-            new DialogRecordsCollection.RegisterAction(
-                _dialogRecord));
+        Dispatcher.Dispatch(new DialogRecordsCollection.RegisterAction(
+            _dialogRecord));
     }
 }

@@ -26,7 +26,7 @@
     --luth_ide_input-file-display-bottom-controls-non-text-buttons-margin-left: 15px;
     --luth_ide_input-file-display-bottom-controls-text-input-width: calc(100% - var(--luth_ide_input-file-display-bottom-controls-non-text-width) - var(--luth_ide_input-file-display-bottom-controls-non-text-margin-left));
     --luth_ide_input-file-display-bottom-controls-text-input-padding-left: 5px;
-    --luth_ide_panel-tabs-font-size: 0.7em;
+    --luth_ide_panel-tabs-font-size: 0.85em;
     --luth_ide_panel-tabs-margin: 4px;
     --luth_ide_panel-tabs-bug-are-not-aligning-need-to-fix-todo: 0.7em;
 }
