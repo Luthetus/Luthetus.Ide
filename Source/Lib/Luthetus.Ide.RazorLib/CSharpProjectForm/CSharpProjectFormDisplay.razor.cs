@@ -3,6 +3,7 @@ using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.Dialog;
+using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Namespaces;
 using Luthetus.Common.RazorLib.Notification;
@@ -495,7 +496,8 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             localCSharpProjectName,
             localOptionalParameters,
             localParentDirectoryName,
-            solutionNamespacePath);
+            solutionNamespacePath,
+            cSharpProjectAbsoluteFilePathString);
 
         // Close Dialog
         Dispatcher.Dispatch(new DialogRecordsCollection.DisposeAction(
@@ -525,7 +527,8 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         string localCSharpProjectName,
         string localOptionalParameters,
         string localParentDirectoryName,
-        NamespacePath solutionNamespacePath)
+        NamespacePath solutionNamespacePath,
+        string cSharpProjectAbsoluteFilePathString)
     {
         var dotNetSolutionAbsoluteFilePathString = SolutionNamespacePath!.AbsoluteFilePath
             .GetAbsoluteFilePathString();
@@ -560,7 +563,17 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             var projectTypeGuid = WebsiteProjectTemplateRegistry.GetProjectTypeGuid(localProjectTemplateShortName);
             var projectIdGuid = Guid.NewGuid();
 
-            return @$"Project(""{{{projectTypeGuid}}}"") = ""BlazorWasmApp-empty"", ""BlazorApp-empty2\BlazorWasmApp-empty.csproj"", ""{{{projectIdGuid}}}""
+            var cSharpProjectAbsoluteFilePath = new AbsoluteFilePath(
+                cSharpProjectAbsoluteFilePathString,
+                false,
+                EnvironmentProvider);
+
+            var relativePathFromSlnToProject = AbsoluteFilePath.ConstructRelativePathFromTwoAbsoluteFilePaths(
+                solutionNamespacePath.AbsoluteFilePath,
+                cSharpProjectAbsoluteFilePath,
+                EnvironmentProvider);
+
+            return @$"Project(""{{{projectTypeGuid}}}"") = ""{localCSharpProjectName}"", ""{relativePathFromSlnToProject}"", ""{{{projectIdGuid}}}""
 EndProject";
         }
     }
