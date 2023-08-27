@@ -573,19 +573,27 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                 cSharpProjectAbsoluteFilePath,
                 EnvironmentProvider);
 
-            return @$"Project(""{{{projectTypeGuid}}}"") = ""{localCSharpProjectName}"", ""{relativePathFromSlnToProject}"", ""{{{projectIdGuid}}}""
-EndProject";
+            return @$"Project(""{{{projectTypeGuid.ToString().ToUpperInvariant()}}}"") = ""{localCSharpProjectName}"", ""{relativePathFromSlnToProject}"", ""{{{projectIdGuid.ToString().ToUpperInvariant()}}}""
+EndProject
+";
         }
     }
     
     private void HandleInterceptPriorToReturning(string content, NamespacePath namespacePath)
     {
-        // TODO: Cannot wait monitors error. This Task.Run() has a race condition if two CSharpProjectForms are completed. (something like this)
-        _ = Task.Run(async () =>
+        try
         {
-            await FileSystemProvider.File.WriteAllTextAsync(
-                namespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
-                content);
-        });
+            // TODO: Cannot wait monitors error. This Task.Run() has a race condition if two CSharpProjectForms are completed. (something like this)
+            _ = Task.Run(async () =>
+            {
+                await FileSystemProvider.File.WriteAllTextAsync(
+                    namespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
+                    content);
+            });
+        }
+        catch (Exception exception)
+        {
+            var aaa = 2;
+        }
     }
 }
