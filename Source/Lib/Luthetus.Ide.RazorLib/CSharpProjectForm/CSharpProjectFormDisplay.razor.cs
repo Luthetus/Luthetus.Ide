@@ -17,8 +17,10 @@ using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 using Luthetus.Ide.ClassLib.Store.InputFileCase;
 using Luthetus.Ide.ClassLib.Store.TerminalCase;
 using Luthetus.Ide.RazorLib.CSharpProjectForm.Facts;
+using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.Lexing;
+using Luthetus.TextEditor.RazorLib.Store.Model;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 using System.Text;
@@ -39,6 +41,8 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
     [Inject]
     private LuthetusIdeOptions LuthetusIdeOptions { get; set; } = null!;
+    [Inject]
+    private ITextEditorService TextEditorService { get; set; } = null!;
 
     [CascadingParameter]
     public DialogRecord DialogRecord { get; set; } = null!;
@@ -581,19 +585,23 @@ EndProject
     
     private void HandleInterceptPriorToReturning(string content, NamespacePath namespacePath)
     {
-        try
+        // TODO: Cannot wait monitors error. This Task.Run() has a race condition if two CSharpProjectForms are completed. (something like this)
+        _ = Task.Run(async () =>
         {
-            // TODO: Cannot wait monitors error. This Task.Run() has a race condition if two CSharpProjectForms are completed. (something like this)
-            _ = Task.Run(async () =>
+            await FileSystemProvider.File.WriteAllTextAsync(
+                namespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
+                content);
+
+            var solutionTextEditorModel = TextEditorService.Model.FindOrDefaultByResourceUri(
+                new ResourceUri(namespacePath.AbsoluteFilePath.GetAbsoluteFilePathString()));
+
+            if (solutionTextEditorModel is not null)
             {
-                await FileSystemProvider.File.WriteAllTextAsync(
-                    namespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
-                    content);
-            });
-        }
-        catch (Exception exception)
-        {
-            var aaa = 2;
-        }
+                Dispatcher.Dispatch(new TextEditorModelsCollection.ReloadAction(
+                    solutionTextEditorModel.ModelKey,
+                    content,
+                    DateTime.UtcNow));
+            }
+        });
     }
 }
