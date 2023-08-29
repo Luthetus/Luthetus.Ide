@@ -53,11 +53,14 @@ public static class WebsiteProjectTemplateRegistry
         WebsiteProjectTemplatesContainer = new[]
         {
             BlazorWasmEmptyProjectTemplate,
-            BlazorServerSideEmptyProjectTemplate,
-            ClassLibProjectTemplate,
-            RazorLibProjectTemplate,
-            ConsoleAppProjectTemplate,
-            XUnitProjectTemplate,
+
+            // TODO: Uncomment templates when they are implemented
+
+            //BlazorServerSideEmptyProjectTemplate,
+            //ClassLibProjectTemplate,
+            //RazorLibProjectTemplate,
+            //ConsoleAppProjectTemplate,
+            //XUnitProjectTemplate,
         }.ToImmutableArray();
     }
 
