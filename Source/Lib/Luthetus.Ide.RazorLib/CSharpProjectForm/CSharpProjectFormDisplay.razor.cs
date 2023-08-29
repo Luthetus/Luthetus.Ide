@@ -10,6 +10,7 @@ using Luthetus.Common.RazorLib.Notification;
 using Luthetus.Common.RazorLib.Store.DialogCase;
 using Luthetus.Common.RazorLib.Store.NotificationCase;
 using Luthetus.CompilerServices.Lang.DotNetSolution;
+using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
 using Luthetus.Ide.ClassLib.CommandLine;
 using Luthetus.Ide.ClassLib.FileConstants;
 using Luthetus.Ide.ClassLib.InputFile;
@@ -541,12 +542,53 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             dotNetSolutionAbsoluteFilePathString,
             CancellationToken.None);
 
-        var dotNetSolution = DotNetSolutionParser.Parse(
+        var dotNetSolution = DotNetSolutionLexer.Lex(
             content,
             SolutionNamespacePath,
-            EnvironmentProvider,
-            interceptParseDotNetProject: HandleInterceptParseDotNetProject,
-            interceptPriorToReturning: HandleInterceptPriorToReturning);
+            EnvironmentProvider);
+
+        var projectTypeGuid = WebsiteProjectTemplateRegistry.GetProjectTypeGuid(
+            localProjectTemplateShortName);
+
+        var cSharpProjectAbsoluteFilePath = new AbsoluteFilePath(
+            cSharpProjectAbsoluteFilePathString,
+            false,
+            EnvironmentProvider);
+
+        var relativePathFromSlnToProject = AbsoluteFilePath.ConstructRelativePathFromTwoAbsoluteFilePaths(
+            SolutionNamespacePath.AbsoluteFilePath,
+            cSharpProjectAbsoluteFilePath,
+            EnvironmentProvider);
+
+        var projectIdGuid = Guid.NewGuid();
+
+        var cSharpProject = new CSharpProject(
+            localCSharpProjectName,
+            projectTypeGuid,
+            relativePathFromSlnToProject,
+            projectIdGuid);
+
+        cSharpProject.SetAbsoluteFilePath(cSharpProjectAbsoluteFilePath);
+
+        var modifiedSolutionFileContents = dotNetSolution.AddDotNetProject(
+            content,
+            cSharpProject,
+            EnvironmentProvider);
+
+        await FileSystemProvider.File.WriteAllTextAsync(
+            SolutionNamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
+            content);
+
+        var solutionTextEditorModel = TextEditorService.Model.FindOrDefaultByResourceUri(
+            new ResourceUri(SolutionNamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString()));
+
+        if (solutionTextEditorModel is not null)
+        {
+            Dispatcher.Dispatch(new TextEditorModelsCollection.ReloadAction(
+                solutionTextEditorModel.ModelKey,
+                modifiedSolutionFileContents,
+                DateTime.UtcNow));
+        }
 
         Dispatcher.Dispatch(new DotNetSolutionState.WithAction(
             inDotNetSolutionState => inDotNetSolutionState with
@@ -555,53 +597,5 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             }));
 
         Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionTreeViewAction());
-
-        string HandleInterceptParseDotNetProject(string remainingContent, NamespacePath namespacePath)
-        {
-            var projectEntry = GetSolutionProjectEntry(localCSharpProjectName);
-            return projectEntry + remainingContent;
-        }
-
-        string GetSolutionProjectEntry(string projectName)
-        {
-            var projectTypeGuid = WebsiteProjectTemplateRegistry.GetProjectTypeGuid(localProjectTemplateShortName);
-            var projectIdGuid = Guid.NewGuid();
-
-            var cSharpProjectAbsoluteFilePath = new AbsoluteFilePath(
-                cSharpProjectAbsoluteFilePathString,
-                false,
-                EnvironmentProvider);
-
-            var relativePathFromSlnToProject = AbsoluteFilePath.ConstructRelativePathFromTwoAbsoluteFilePaths(
-                solutionNamespacePath.AbsoluteFilePath,
-                cSharpProjectAbsoluteFilePath,
-                EnvironmentProvider);
-
-            return @$"Project(""{{{projectTypeGuid.ToString().ToUpperInvariant()}}}"") = ""{localCSharpProjectName}"", ""{relativePathFromSlnToProject}"", ""{{{projectIdGuid.ToString().ToUpperInvariant()}}}""
-EndProject
-";
-        }
-    }
-    
-    private void HandleInterceptPriorToReturning(string content, NamespacePath namespacePath)
-    {
-        // TODO: Cannot wait monitors error. This Task.Run() has a race condition if two CSharpProjectForms are completed. (something like this)
-        _ = Task.Run(async () =>
-        {
-            await FileSystemProvider.File.WriteAllTextAsync(
-                namespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
-                content);
-
-            var solutionTextEditorModel = TextEditorService.Model.FindOrDefaultByResourceUri(
-                new ResourceUri(namespacePath.AbsoluteFilePath.GetAbsoluteFilePathString()));
-
-            if (solutionTextEditorModel is not null)
-            {
-                Dispatcher.Dispatch(new TextEditorModelsCollection.ReloadAction(
-                    solutionTextEditorModel.ModelKey,
-                    content,
-                    DateTime.UtcNow));
-            }
-        });
     }
 }

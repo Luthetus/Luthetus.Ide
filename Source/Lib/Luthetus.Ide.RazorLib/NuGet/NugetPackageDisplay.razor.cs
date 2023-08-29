@@ -72,7 +72,7 @@ public partial class NugetPackageDisplay : FluxorComponent
             return false;
 
         return dotNetSolutionState.DotNetSolution.DotNetProjects
-            .Exists(x =>
+            .Any(x =>
                 x.ProjectIdGuid == nuGetPackageManagerState.SelectedProjectToModify.ProjectIdGuid);
     }
 

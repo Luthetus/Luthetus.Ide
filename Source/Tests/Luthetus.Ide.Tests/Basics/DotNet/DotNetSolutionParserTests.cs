@@ -20,7 +20,7 @@ public class DotNetSolutionParserTests
             false,
             localEnvironmentProvider);
 
-        var solution = DotNetSolutionParser.Parse(
+        var solution = DotNetSolutionLexer.Lex(
             SOLUTION_TEST_DATA,
             new NamespacePath("", solutionAbsoluteFilePath),
             localEnvironmentProvider);

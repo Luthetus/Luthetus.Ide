@@ -63,7 +63,7 @@ public partial record DotNetSolutionState
                 string.Empty,
                 solutionAbsoluteFilePath);
 
-            var dotNetSolution = DotNetSolutionParser.Parse(
+            var dotNetSolution = DotNetSolutionLexer.Lex(
                 content,
                 solutionNamespacePath,
                 _environmentProvider);

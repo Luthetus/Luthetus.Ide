@@ -233,4 +233,6 @@ public static class WebsiteProjectTemplateRegistry
         else
             throw new NotImplementedException($"The {nameof(ProjectTemplate.ShortName)}: '{projectTemplateShortName}' was not recognized.");
     }
+
+    
 }

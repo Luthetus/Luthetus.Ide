@@ -120,7 +120,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
         if (ancestorNode is TreeViewSolution treeViewSolution)
         {
             var nestedProjectEntries = treeViewSolution
-                .Item.DotNetSolutionGlobalSection.GlobalSectionNestedProjects.NestedProjectEntries
+                .Item.DotNetSolutionGlobalSection.GlobalSectionNestedProjectsToken.Token.NestedProjectEntries
                 .Where(x => x.SolutionFolderIdGuid == Item.ProjectIdGuid)
                 .ToArray();
 
