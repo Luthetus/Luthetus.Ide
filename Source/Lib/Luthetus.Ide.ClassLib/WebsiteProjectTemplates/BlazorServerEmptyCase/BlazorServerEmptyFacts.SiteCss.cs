@@ -8,13 +8,9 @@ namespace Luthetus.Ide.ClassLib.WebsiteProjectTemplates.BlazorServerEmptyCase;
 
 public static partial class BlazorServerEmptyFacts
 {
-    public const string APP_CSS_RELATIVE_FILE_PATH = @"wwwroot/css/app.css";
+    public const string SITE_CSS_RELATIVE_FILE_PATH = @"wwwroot/css/site.css";
 
-    public static string GetAppCssContents(string projectName) => @$"h1:focus {{
-    outline: none;
-}}
-
-#blazor-error-ui {{
+    public static string GetSiteCssContents(string projectName) => @$"#blazor-error-ui {{
     background: lightyellow;
     bottom: 0;
     box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
@@ -29,7 +25,7 @@ public static partial class BlazorServerEmptyFacts
     #blazor-error-ui .dismiss {{
         cursor: pointer;
         position: absolute;
-        right: 0.75rem;
+        right: 3.5rem;
         top: 0.5rem;
     }}
 
