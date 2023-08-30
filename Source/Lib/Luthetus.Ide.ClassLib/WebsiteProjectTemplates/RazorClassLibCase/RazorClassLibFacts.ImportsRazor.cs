@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Luthetus.Ide.ClassLib.WebsiteProjectTemplates.RazorClassLibCase;
+﻿namespace Luthetus.Ide.ClassLib.WebsiteProjectTemplates.RazorClassLibCase;
 
 public partial class RazorClassLibFacts
 {

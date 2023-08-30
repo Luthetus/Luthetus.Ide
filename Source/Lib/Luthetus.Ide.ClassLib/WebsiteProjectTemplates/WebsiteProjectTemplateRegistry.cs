@@ -1,18 +1,12 @@
 ﻿using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
-using Luthetus.Common.RazorLib.Namespaces;
 using Luthetus.Ide.ClassLib.WebsiteProjectTemplates.BlazorServerEmptyCase;
 using Luthetus.Ide.ClassLib.WebsiteProjectTemplates.BlazorWasmEmptyCase;
 using Luthetus.Ide.ClassLib.WebsiteProjectTemplates.ClassLibCase;
 using Luthetus.Ide.ClassLib.WebsiteProjectTemplates.ConsoleAppCase;
 using Luthetus.Ide.ClassLib.WebsiteProjectTemplates.RazorClassLibCase;
 using Luthetus.Ide.ClassLib.WebsiteProjectTemplates.XUnitCase;
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Luthetus.Ide.ClassLib.WebsiteProjectTemplates;
 
