@@ -78,31 +78,30 @@ public static class WebsiteProjectTemplateRegistry
 
     public static async Task HandleNewCSharpProjectAsync(
         string projectTemplateShortName,
-        string cSharpProjectName,
-        string optionalParameters,
-        string parentDirectoryName,
-        NamespacePath solutionNamespacePath,
         string cSharpProjectAbsoluteFilePathString,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider)
     {
         if (projectTemplateShortName == BlazorWasmEmptyProjectTemplate.ShortName)
-            await HandleBlazorWasmEmptyProjectTemplateAsync(projectTemplateShortName, cSharpProjectName, optionalParameters, parentDirectoryName, solutionNamespacePath, cSharpProjectAbsoluteFilePathString, fileSystemProvider, environmentProvider);
+            await HandleBlazorWasmEmptyProjectTemplateAsync(cSharpProjectAbsoluteFilePathString, fileSystemProvider, environmentProvider);
         else if (projectTemplateShortName == BlazorServerSideEmptyProjectTemplate.ShortName)
-            await HandleBlazorServerSideEmptyProjectTemplateAsync(projectTemplateShortName, cSharpProjectName, optionalParameters, parentDirectoryName, solutionNamespacePath, cSharpProjectAbsoluteFilePathString, fileSystemProvider, environmentProvider);
+            await HandleBlazorServerSideEmptyProjectTemplateAsync(cSharpProjectAbsoluteFilePathString, fileSystemProvider, environmentProvider);
         else if (projectTemplateShortName == ClassLibProjectTemplate.ShortName)
-            await HandleClassLibProjectTemplateAsync(projectTemplateShortName, cSharpProjectName, optionalParameters, parentDirectoryName, solutionNamespacePath, cSharpProjectAbsoluteFilePathString, fileSystemProvider, environmentProvider);
+            await HandleClassLibProjectTemplateAsync(cSharpProjectAbsoluteFilePathString, fileSystemProvider, environmentProvider);
         else if (projectTemplateShortName == RazorClassLibProjectTemplate.ShortName)
-            await HandleRazorLibProjectTemplateAsync(projectTemplateShortName, cSharpProjectName, optionalParameters, parentDirectoryName, solutionNamespacePath, cSharpProjectAbsoluteFilePathString, fileSystemProvider, environmentProvider);
+            await HandleRazorLibProjectTemplateAsync(cSharpProjectAbsoluteFilePathString, fileSystemProvider, environmentProvider);
         else if (projectTemplateShortName == ConsoleAppProjectTemplate.ShortName)
-            await HandleConsoleAppProjectTemplateAsync(projectTemplateShortName, cSharpProjectName, optionalParameters, parentDirectoryName, solutionNamespacePath, cSharpProjectAbsoluteFilePathString, fileSystemProvider, environmentProvider);
+            await HandleConsoleAppProjectTemplateAsync(cSharpProjectAbsoluteFilePathString, fileSystemProvider, environmentProvider);
         else if (projectTemplateShortName == XUnitProjectTemplate.ShortName)
-            await HandleXUnitProjectTemplateAsync(projectTemplateShortName, cSharpProjectName, optionalParameters, parentDirectoryName, solutionNamespacePath, cSharpProjectAbsoluteFilePathString, fileSystemProvider, environmentProvider);
+            await HandleXUnitProjectTemplateAsync(cSharpProjectAbsoluteFilePathString, fileSystemProvider, environmentProvider);
         else
             throw new NotImplementedException($"The {nameof(ProjectTemplate.ShortName)}: '{projectTemplateShortName}' was not recognized.");
     }
 
-    private static async Task HandleBlazorWasmEmptyProjectTemplateAsync(string projectTemplateShortName, string cSharpProjectName, string optionalParameters, string parentDirectoryName, NamespacePath solutionNamespacePath, string cSharpProjectAbsoluteFilePathString, IFileSystemProvider fileSystemProvider, IEnvironmentProvider environmentProvider)
+    private static async Task HandleBlazorWasmEmptyProjectTemplateAsync(
+        string cSharpProjectAbsoluteFilePathString,
+        IFileSystemProvider fileSystemProvider,
+        IEnvironmentProvider environmentProvider)
     {
         var cSharpProjectAbsoluteFilePath = new AbsoluteFilePath(cSharpProjectAbsoluteFilePathString, false, environmentProvider);
         var parentDirectoryOfProject = cSharpProjectAbsoluteFilePath.ParentDirectory;
@@ -197,7 +196,10 @@ public static class WebsiteProjectTemplateRegistry
         }
     }
 
-    private static async Task HandleBlazorServerSideEmptyProjectTemplateAsync(string projectTemplateShortName, string cSharpProjectName, string optionalParameters, string parentDirectoryName, NamespacePath solutionNamespacePath, string cSharpProjectAbsoluteFilePathString, IFileSystemProvider fileSystemProvider, IEnvironmentProvider environmentProvider)
+    private static async Task HandleBlazorServerSideEmptyProjectTemplateAsync(
+        string cSharpProjectAbsoluteFilePathString,
+        IFileSystemProvider fileSystemProvider,
+        IEnvironmentProvider environmentProvider)
     {
         var cSharpProjectAbsoluteFilePath = new AbsoluteFilePath(cSharpProjectAbsoluteFilePathString, false, environmentProvider);
         var parentDirectoryOfProject = cSharpProjectAbsoluteFilePath.ParentDirectory;
@@ -325,7 +327,10 @@ public static class WebsiteProjectTemplateRegistry
         }
     }
 
-    private static async Task HandleClassLibProjectTemplateAsync(string projectTemplateShortName, string cSharpProjectName, string optionalParameters, string parentDirectoryName, NamespacePath solutionNamespacePath, string cSharpProjectAbsoluteFilePathString, IFileSystemProvider fileSystemProvider, IEnvironmentProvider environmentProvider)
+    private static async Task HandleClassLibProjectTemplateAsync(
+        string cSharpProjectAbsoluteFilePathString,
+        IFileSystemProvider fileSystemProvider,
+        IEnvironmentProvider environmentProvider)
     {
         var cSharpProjectAbsoluteFilePath = new AbsoluteFilePath(cSharpProjectAbsoluteFilePathString, false, environmentProvider);
         var parentDirectoryOfProject = cSharpProjectAbsoluteFilePath.ParentDirectory;
@@ -354,7 +359,10 @@ public static class WebsiteProjectTemplateRegistry
         }
     }
 
-    private static async Task HandleRazorLibProjectTemplateAsync(string projectTemplateShortName, string cSharpProjectName, string optionalParameters, string parentDirectoryName, NamespacePath solutionNamespacePath, string cSharpProjectAbsoluteFilePathString, IFileSystemProvider fileSystemProvider, IEnvironmentProvider environmentProvider)
+    private static async Task HandleRazorLibProjectTemplateAsync(
+        string cSharpProjectAbsoluteFilePathString,
+        IFileSystemProvider fileSystemProvider,
+        IEnvironmentProvider environmentProvider)
     {
         var cSharpProjectAbsoluteFilePath = new AbsoluteFilePath(cSharpProjectAbsoluteFilePathString, false, environmentProvider);
         var parentDirectoryOfProject = cSharpProjectAbsoluteFilePath.ParentDirectory;
@@ -427,7 +435,10 @@ public static class WebsiteProjectTemplateRegistry
         }
     }
 
-    private static async Task HandleConsoleAppProjectTemplateAsync(string projectTemplateShortName, string cSharpProjectName, string optionalParameters, string parentDirectoryName, NamespacePath solutionNamespacePath, string cSharpProjectAbsoluteFilePathString, IFileSystemProvider fileSystemProvider, IEnvironmentProvider environmentProvider)
+    private static async Task HandleConsoleAppProjectTemplateAsync(
+        string cSharpProjectAbsoluteFilePathString,
+        IFileSystemProvider fileSystemProvider,
+        IEnvironmentProvider environmentProvider)
     {
         var cSharpProjectAbsoluteFilePath = new AbsoluteFilePath(cSharpProjectAbsoluteFilePathString, false, environmentProvider);
         var parentDirectoryOfProject = cSharpProjectAbsoluteFilePath.ParentDirectory;
@@ -456,7 +467,10 @@ public static class WebsiteProjectTemplateRegistry
         }
     }
 
-    private static async Task HandleXUnitProjectTemplateAsync(string projectTemplateShortName, string cSharpProjectName, string optionalParameters, string parentDirectoryName, NamespacePath solutionNamespacePath, string cSharpProjectAbsoluteFilePathString, IFileSystemProvider fileSystemProvider, IEnvironmentProvider environmentProvider)
+    private static async Task HandleXUnitProjectTemplateAsync(
+        string cSharpProjectAbsoluteFilePathString,
+        IFileSystemProvider fileSystemProvider,
+        IEnvironmentProvider environmentProvider)
     {
         var cSharpProjectAbsoluteFilePath = new AbsoluteFilePath(cSharpProjectAbsoluteFilePathString, false, environmentProvider);
         var parentDirectoryOfProject = cSharpProjectAbsoluteFilePath.ParentDirectory;

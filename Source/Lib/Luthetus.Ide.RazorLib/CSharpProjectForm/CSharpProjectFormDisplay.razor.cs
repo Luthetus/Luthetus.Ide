@@ -488,10 +488,6 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
         await WebsiteProjectTemplateRegistry.HandleNewCSharpProjectAsync(
             localProjectTemplateShortName,
-            localCSharpProjectName,
-            localOptionalParameters,
-            localParentDirectoryName,
-            solutionNamespacePath,
             cSharpProjectAbsoluteFilePathString,
             FileSystemProvider,
             EnvironmentProvider);
