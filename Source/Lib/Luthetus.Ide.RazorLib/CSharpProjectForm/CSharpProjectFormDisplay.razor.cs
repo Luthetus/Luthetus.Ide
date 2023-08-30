@@ -17,7 +17,7 @@ using Luthetus.Ide.ClassLib.InputFile;
 using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 using Luthetus.Ide.ClassLib.Store.InputFileCase;
 using Luthetus.Ide.ClassLib.Store.TerminalCase;
-using Luthetus.Ide.RazorLib.CSharpProjectForm.Facts;
+using Luthetus.Ide.ClassLib.WebsiteProjectTemplates;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.Lexing;
@@ -229,9 +229,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
     private async Task LexDotNetNewListTerminalOutputAsync(string output)
     {
-        var keywordTemplateName = "Template Name";
-        var keywordShortName = "Short Name";
-        var keywordLanguage = "Language";
+        // The columns are titled: { "Template Name", "Short Name", "Language", "Tags" }
         var keywordTags = "Tags";
 
         var resourceUri = new ResourceUri(string.Empty);
@@ -488,10 +486,6 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
         await WebsiteProjectTemplateRegistry.HandleNewCSharpProjectAsync(
             localProjectTemplateShortName,
-            localCSharpProjectName,
-            localOptionalParameters,
-            localParentDirectoryName,
-            solutionNamespacePath,
             cSharpProjectAbsoluteFilePathString,
             FileSystemProvider,
             EnvironmentProvider);
@@ -499,9 +493,6 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         await HackForWebsite_AddExistingProjectToSolutionAsync(
             localProjectTemplateShortName,
             localCSharpProjectName,
-            localOptionalParameters,
-            localParentDirectoryName,
-            solutionNamespacePath,
             cSharpProjectAbsoluteFilePathString);
 
         // Close Dialog
@@ -530,9 +521,6 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     private async Task HackForWebsite_AddExistingProjectToSolutionAsync(
         string localProjectTemplateShortName,
         string localCSharpProjectName,
-        string localOptionalParameters,
-        string localParentDirectoryName,
-        NamespacePath solutionNamespacePath,
         string cSharpProjectAbsoluteFilePathString)
     {
         var dotNetSolutionAbsoluteFilePathString = SolutionNamespacePath!.AbsoluteFilePath
