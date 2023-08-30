@@ -229,9 +229,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
     private async Task LexDotNetNewListTerminalOutputAsync(string output)
     {
-        var keywordTemplateName = "Template Name";
-        var keywordShortName = "Short Name";
-        var keywordLanguage = "Language";
+        // The columns are titled: { "Template Name", "Short Name", "Language", "Tags" }
         var keywordTags = "Tags";
 
         var resourceUri = new ResourceUri(string.Empty);
@@ -495,9 +493,6 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         await HackForWebsite_AddExistingProjectToSolutionAsync(
             localProjectTemplateShortName,
             localCSharpProjectName,
-            localOptionalParameters,
-            localParentDirectoryName,
-            solutionNamespacePath,
             cSharpProjectAbsoluteFilePathString);
 
         // Close Dialog
@@ -526,9 +521,6 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     private async Task HackForWebsite_AddExistingProjectToSolutionAsync(
         string localProjectTemplateShortName,
         string localCSharpProjectName,
-        string localOptionalParameters,
-        string localParentDirectoryName,
-        NamespacePath solutionNamespacePath,
         string cSharpProjectAbsoluteFilePathString)
     {
         var dotNetSolutionAbsoluteFilePathString = SolutionNamespacePath!.AbsoluteFilePath
