@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Luthetus.Ide.RazorLib.CSharpProjectForm.Facts;
+namespace Luthetus.Ide.ClassLib.WebsiteProjectTemplates.BlazorWasmEmptyCase;
 
 public static partial class BlazorWasmEmptyFacts
 {
