@@ -3,6 +3,7 @@ using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Namespaces;
 using Luthetus.Ide.ClassLib.WebsiteProjectTemplates.BlazorWasmEmptyCase;
 using Luthetus.Ide.ClassLib.WebsiteProjectTemplates.ClassLibCase;
+using Luthetus.Ide.ClassLib.WebsiteProjectTemplates.ConsoleAppCase;
 using Luthetus.Ide.ClassLib.WebsiteProjectTemplates.RazorClassLibCase;
 using System;
 using System.Collections.Generic;
@@ -58,11 +59,11 @@ public static class WebsiteProjectTemplateRegistry
             BlazorWasmEmptyProjectTemplate,
             ClassLibProjectTemplate,
             RazorClassLibProjectTemplate,
+            ConsoleAppProjectTemplate,
 
             // TODO: Uncomment templates when they are implemented
 
             //BlazorServerSideEmptyProjectTemplate,
-            //ConsoleAppProjectTemplate,
             //XUnitProjectTemplate,
         }.ToImmutableArray();
     }
@@ -306,7 +307,31 @@ public static class WebsiteProjectTemplateRegistry
 
     private static async Task HandleConsoleAppProjectTemplateAsync(string projectTemplateShortName, string cSharpProjectName, string optionalParameters, string parentDirectoryName, NamespacePath solutionNamespacePath, string cSharpProjectAbsoluteFilePathString, IFileSystemProvider fileSystemProvider, IEnvironmentProvider environmentProvider)
     {
-        throw new NotImplementedException();
+        var cSharpProjectAbsoluteFilePath = new AbsoluteFilePath(cSharpProjectAbsoluteFilePathString, false, environmentProvider);
+        var parentDirectoryOfProject = cSharpProjectAbsoluteFilePath.ParentDirectory;
+
+        if (parentDirectoryOfProject is null)
+            throw new NotImplementedException();
+
+        var parentDirectoryOfProjectAbsoluteFilePathString = parentDirectoryOfProject.GetAbsoluteFilePathString();
+
+        // Class1Cs
+        {
+            var absoluteFilePath = environmentProvider.JoinPaths(
+                parentDirectoryOfProjectAbsoluteFilePathString,
+                ConsoleAppFacts.PROGRAM_CS_RELATIVE_FILE_PATH);
+
+            await fileSystemProvider.File.WriteAllTextAsync(
+                absoluteFilePath,
+                ConsoleAppFacts.GetProgramCsContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+        }
+
+        // Csproj
+        {
+            await fileSystemProvider.File.WriteAllTextAsync(
+                cSharpProjectAbsoluteFilePathString,
+                ConsoleAppFacts.GetCsprojContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+        }
     }
 
     private static async Task HandleXUnitProjectTemplateAsync(string projectTemplateShortName, string cSharpProjectName, string optionalParameters, string parentDirectoryName, NamespacePath solutionNamespacePath, string cSharpProjectAbsoluteFilePathString, IFileSystemProvider fileSystemProvider, IEnvironmentProvider environmentProvider)
@@ -325,7 +350,7 @@ public static class WebsiteProjectTemplateRegistry
         else if (projectTemplateShortName == RazorClassLibProjectTemplate.ShortName)
             return Guid.Parse("FAE04EC0-301F-11D3-BF4B-00C04F79EFBC");
         else if (projectTemplateShortName == ConsoleAppProjectTemplate.ShortName)
-            throw new NotImplementedException();
+            return Guid.Parse("FAE04EC0-301F-11D3-BF4B-00C04F79EFBC");
         else if (projectTemplateShortName == XUnitProjectTemplate.ShortName)
             throw new NotImplementedException();
         else
