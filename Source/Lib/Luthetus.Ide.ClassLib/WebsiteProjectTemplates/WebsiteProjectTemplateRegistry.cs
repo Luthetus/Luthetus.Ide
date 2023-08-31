@@ -103,7 +103,7 @@ public static class WebsiteProjectTemplateRegistry
         if (parentDirectoryOfProject is null)
             throw new NotImplementedException();
 
-        var parentDirectoryOfProjectAbsoluteFilePathString = parentDirectoryOfProject.GetAbsoluteFilePathString();
+        var parentDirectoryOfProjectAbsoluteFilePathString = parentDirectoryOfProject.FormattedInput;
 
         // AppCss
         {
@@ -201,7 +201,7 @@ public static class WebsiteProjectTemplateRegistry
         if (parentDirectoryOfProject is null)
             throw new NotImplementedException();
 
-        var parentDirectoryOfProjectAbsoluteFilePathString = parentDirectoryOfProject.GetAbsoluteFilePathString();
+        var parentDirectoryOfProjectAbsoluteFilePathString = parentDirectoryOfProject.FormattedInput;
 
         // AppRazor
         {
@@ -332,7 +332,7 @@ public static class WebsiteProjectTemplateRegistry
         if (parentDirectoryOfProject is null)
             throw new NotImplementedException();
 
-        var parentDirectoryOfProjectAbsoluteFilePathString = parentDirectoryOfProject.GetAbsoluteFilePathString();
+        var parentDirectoryOfProjectAbsoluteFilePathString = parentDirectoryOfProject.FormattedInput;
 
         // Class1Cs
         {
@@ -364,7 +364,7 @@ public static class WebsiteProjectTemplateRegistry
         if (parentDirectoryOfProject is null)
             throw new NotImplementedException();
 
-        var parentDirectoryOfProjectAbsoluteFilePathString = parentDirectoryOfProject.GetAbsoluteFilePathString();
+        var parentDirectoryOfProjectAbsoluteFilePathString = parentDirectoryOfProject.FormattedInput;
 
         // Component1Razor
         {
@@ -440,7 +440,7 @@ public static class WebsiteProjectTemplateRegistry
         if (parentDirectoryOfProject is null)
             throw new NotImplementedException();
 
-        var parentDirectoryOfProjectAbsoluteFilePathString = parentDirectoryOfProject.GetAbsoluteFilePathString();
+        var parentDirectoryOfProjectAbsoluteFilePathString = parentDirectoryOfProject.FormattedInput;
 
         // ProgramCs
         {
@@ -472,7 +472,7 @@ public static class WebsiteProjectTemplateRegistry
         if (parentDirectoryOfProject is null)
             throw new NotImplementedException();
 
-        var parentDirectoryOfProjectAbsoluteFilePathString = parentDirectoryOfProject.GetAbsoluteFilePathString();
+        var parentDirectoryOfProjectAbsoluteFilePathString = parentDirectoryOfProject.FormattedInput;
 
         // Csproj
         {

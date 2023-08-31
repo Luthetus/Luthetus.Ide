@@ -40,13 +40,13 @@ public class TreeViewAbsoluteFilePath : TreeViewWithType<IAbsoluteFilePath>
             return false;
 
         return treeViewSolutionExplorer.Item.AbsoluteFilePath
-                   .GetAbsoluteFilePathString() ==
-               Item.GetAbsoluteFilePathString();
+                   .FormattedInput ==
+               Item.FormattedInput;
     }
 
     public override int GetHashCode()
     {
-        return Item.GetAbsoluteFilePathString().GetHashCode();
+        return Item.FormattedInput.GetHashCode();
     }
 
     public override TreeViewRenderer GetTreeViewRenderer()

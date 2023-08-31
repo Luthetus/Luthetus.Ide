@@ -124,7 +124,7 @@ public partial class EditorState
 
             _textEditorService.Group.Register(editorTextEditorGroupKey);
 
-            var inputFileAbsoluteFilePathString = openInEditorAction.AbsoluteFilePath.GetAbsoluteFilePathString();
+            var inputFileAbsoluteFilePathString = openInEditorAction.AbsoluteFilePath.FormattedInput;
 
             var textEditorModel = await GetOrCreateTextEditorModelAsync(
                 openInEditorAction.AbsoluteFilePath,

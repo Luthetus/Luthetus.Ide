@@ -90,7 +90,7 @@ public partial record GitState
                 }));
 
                 if (gitState.GitFolderAbsoluteFilePath is null ||
-                    !await _fileSystemProvider.Directory.ExistsAsync(gitState.GitFolderAbsoluteFilePath.GetAbsoluteFilePathString()) ||
+                    !await _fileSystemProvider.Directory.ExistsAsync(gitState.GitFolderAbsoluteFilePath.FormattedInput) ||
                     gitState.GitFolderAbsoluteFilePath.ParentDirectory is null)
                 {
                     return;
@@ -109,7 +109,7 @@ public partial record GitState
                 var gitStatusCommand = new TerminalCommand(
                     GitFacts.GitStatusTerminalCommandKey,
                     formattedCommand,
-                    gitState.GitFolderAbsoluteFilePath.ParentDirectory.GetAbsoluteFilePathString(),
+                    gitState.GitFolderAbsoluteFilePath.ParentDirectory.FormattedInput,
                     CancellationToken.None,
                     async () =>
                     {
@@ -221,7 +221,7 @@ public partial record GitState
                 var gitInitCommand = new TerminalCommand(
                     GitFacts.GitInitTerminalCommandKey,
                     formattedCommand,
-                    gitState.MostRecentTryFindGitFolderInDirectoryAction.DirectoryAbsoluteFilePath.GetAbsoluteFilePathString(),
+                    gitState.MostRecentTryFindGitFolderInDirectoryAction.DirectoryAbsoluteFilePath.FormattedInput,
                     CancellationToken.None,
                     () =>
                     {
@@ -291,7 +291,7 @@ public partial record GitState
 
                 var directoryAbsoluteFilePathString =
                     tryFindGitFolderInDirectoryAction.DirectoryAbsoluteFilePath
-                        .GetAbsoluteFilePathString();
+                        .FormattedInput;
 
                 var childDirectoryAbsoluteFilePathStrings = await _fileSystemProvider.Directory
                     .GetDirectoriesAsync(
@@ -452,7 +452,7 @@ public partial record GitState
                     .Select(x =>
                     {
                         var absoluteFilePathString =
-                            gitState.GitFolderAbsoluteFilePath.ParentDirectory.GetAbsoluteFilePathString() +
+                            gitState.GitFolderAbsoluteFilePath.ParentDirectory.FormattedInput +
                             x.relativePath;
 
                         var isDirectory = x.relativePath.EndsWith(_environmentProvider.DirectorySeparatorChar) ||

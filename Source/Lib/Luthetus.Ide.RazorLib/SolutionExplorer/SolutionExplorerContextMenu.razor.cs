@@ -378,8 +378,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
                 var localFormattedAddExistingProjectToSolutionCommand = DotNetCliFacts
                     .FormatAddExistingProjectToSolution(
-                        solutionNamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
-                        afp.GetAbsoluteFilePathString());
+                        solutionNamespacePath.AbsoluteFilePath.FormattedInput,
+                        afp.FormattedInput);
 
                 var addExistingProjectToSolutionTerminalCommand = new TerminalCommand(
                     TerminalCommandKey.NewTerminalCommandKey(),

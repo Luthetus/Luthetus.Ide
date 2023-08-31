@@ -34,7 +34,7 @@
                 {
                     if (_showInputTextEditForAddress)
                     {
-                        <InputFileEditAddress InitialInputValue="@openedTreeView.Item.GetAbsoluteFilePathString()"
+                        <InputFileEditAddress InitialInputValue="@openedTreeView.Item.FormattedInput"
                                               OnFocusOutCallbackAsync="InputFileEditAddressOnFocusOutCallbackAsync"
                                               OnEscapeKeyDownCallbackAsync="HideInputFileEditAddressAsync"/>
                     }

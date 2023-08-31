@@ -41,13 +41,13 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
         if (obj is not TreeViewNamespacePath treeViewSolutionExplorer)
             return false;
 
-        return treeViewSolutionExplorer.Item.AbsoluteFilePath.GetAbsoluteFilePathString() ==
-               Item.AbsoluteFilePath.GetAbsoluteFilePathString();
+        return treeViewSolutionExplorer.Item.AbsoluteFilePath.FormattedInput ==
+               Item.AbsoluteFilePath.FormattedInput;
     }
 
     public override int GetHashCode()
     {
-        return Item.AbsoluteFilePath.GetAbsoluteFilePathString().GetHashCode();
+        return Item.AbsoluteFilePath.FormattedInput.GetHashCode();
     }
 
     public override TreeViewRenderer GetTreeViewRenderer()

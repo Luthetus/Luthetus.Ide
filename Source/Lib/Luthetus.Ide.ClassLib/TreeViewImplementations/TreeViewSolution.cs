@@ -40,14 +40,14 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolution>
         if (obj is not TreeViewSolution treeViewSolution)
             return false;
 
-        return treeViewSolution.Item.NamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString() ==
-               Item.NamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString();
+        return treeViewSolution.Item.NamespacePath.AbsoluteFilePath.FormattedInput ==
+               Item.NamespacePath.AbsoluteFilePath.FormattedInput;
     }
 
     public override int GetHashCode()
     {
         return Item.NamespacePath.AbsoluteFilePath
-            .GetAbsoluteFilePathString()
+            .FormattedInput
             .GetHashCode();
     }
 

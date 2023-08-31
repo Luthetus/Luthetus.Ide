@@ -39,7 +39,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
     public override int GetHashCode()
     {
         return Item.CSharpProjectNamespacePath.AbsoluteFilePath
-            .GetAbsoluteFilePathString()
+            .FormattedInput
             .GetHashCode();
     }
 

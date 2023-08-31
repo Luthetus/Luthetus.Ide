@@ -368,7 +368,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 if (exactMatchFileTemplate is null)
                 {
                     var emptyFileAbsoluteFilePathString = 
-                        namespacePath.AbsoluteFilePath.GetAbsoluteFilePathString() + fileName;
+                        namespacePath.AbsoluteFilePath.FormattedInput + fileName;
 
                     var emptyFileAbsoluteFilePath = new AbsoluteFilePath(
                         emptyFileAbsoluteFilePathString,
@@ -376,7 +376,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                         _environmentProvider);
 
                     await _fileSystemProvider.File.WriteAllTextAsync(
-                        emptyFileAbsoluteFilePath.GetAbsoluteFilePathString(),
+                        emptyFileAbsoluteFilePath.FormattedInput,
                         string.Empty,
                         CancellationToken.None);
                 }
@@ -395,7 +395,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                                 _environmentProvider));
 
                         await _fileSystemProvider.File.WriteAllTextAsync(
-                            templateResult.FileNamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
+                            templateResult.FileNamespacePath.AbsoluteFilePath.FormattedInput,
                             templateResult.Contents,
                             CancellationToken.None);
                     }
@@ -418,7 +418,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         IAbsoluteFilePath parentDirectory,
         Func<Task> onAfterCompletion)
     {
-        var directoryAbsoluteFilePathString = parentDirectory.GetAbsoluteFilePathString() + directoryName;
+        var directoryAbsoluteFilePathString = parentDirectory.FormattedInput + directoryName;
 
         var directoryAbsoluteFilePath = new AbsoluteFilePath(
             directoryAbsoluteFilePathString,
@@ -429,7 +429,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             async cancellationToken =>
             {
                 await _fileSystemProvider.Directory.CreateDirectoryAsync(
-                    directoryAbsoluteFilePath.GetAbsoluteFilePathString(),
+                    directoryAbsoluteFilePath.FormattedInput,
                     CancellationToken.None);
 
                 await onAfterCompletion.Invoke();
@@ -454,14 +454,14 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 if (absoluteFilePath.IsDirectory)
                 {
                     await _fileSystemProvider.Directory.DeleteAsync(
-                        absoluteFilePath.GetAbsoluteFilePathString(),
+                        absoluteFilePath.FormattedInput,
                         true,
                         CancellationToken.None);
                 }
                 else
                 {
                     await _fileSystemProvider.File.DeleteAsync(
-                        absoluteFilePath.GetAbsoluteFilePathString());
+                        absoluteFilePath.FormattedInput);
                 }
 
                 await onAfterCompletion.Invoke();
@@ -488,7 +488,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                         ClipboardFacts.FormatPhrase(
                             ClipboardFacts.CopyCommand,
                             ClipboardFacts.AbsoluteFilePathDataType,
-                            absoluteFilePath.GetAbsoluteFilePathString()));
+                            absoluteFilePath.FormattedInput));
 
                 await onAfterCompletion.Invoke();
             },
@@ -514,7 +514,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                         ClipboardFacts.FormatPhrase(
                             ClipboardFacts.CutCommand,
                             ClipboardFacts.AbsoluteFilePathDataType,
-                            absoluteFilePath.GetAbsoluteFilePathString()));
+                            absoluteFilePath.FormattedInput));
 
                 await onAfterCompletion.Invoke();
             },
@@ -571,21 +571,21 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                                     if (clipboardAbsoluteFilePath.IsDirectory)
                                     {
                                         var clipboardDirectoryInfo = new DirectoryInfo(
-                                            clipboardAbsoluteFilePath.GetAbsoluteFilePathString());
+                                            clipboardAbsoluteFilePath.FormattedInput);
 
                                         var receivingDirectoryInfo = new DirectoryInfo(
-                                            receivingDirectory.GetAbsoluteFilePathString());
+                                            receivingDirectory.FormattedInput);
 
                                         CopyFilesRecursively(clipboardDirectoryInfo, receivingDirectoryInfo);
                                     }
                                     else
                                     {
                                         var destinationAbsoluteFilePathString =
-                                            receivingDirectory.GetAbsoluteFilePathString() +
+                                            receivingDirectory.FormattedInput +
                                             clipboardAbsoluteFilePath.FilenameWithExtension;
 
                                         var sourceAbsoluteFilePathString = clipboardAbsoluteFilePath
-                                            .GetAbsoluteFilePathString();
+                                            .FormattedInput;
 
                                         await _fileSystemProvider.File.CopyAsync(
                                             sourceAbsoluteFilePathString,
@@ -652,11 +652,11 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 sourceAbsoluteFilePath = temporaryRenameResult;
         }
 
-        var sourceAbsoluteFilePathString = sourceAbsoluteFilePath.GetAbsoluteFilePathString();
+        var sourceAbsoluteFilePathString = sourceAbsoluteFilePath.FormattedInput;
 
         var parentOfSource = sourceAbsoluteFilePath.AncestorDirectories.Last();
 
-        var destinationAbsoluteFilePathString = parentOfSource.GetAbsoluteFilePathString() + nextName;
+        var destinationAbsoluteFilePathString = parentOfSource.FormattedInput + nextName;
 
         try
         {
@@ -714,13 +714,13 @@ public class MenuOptionsFactory : IMenuOptionsFactory
 
                 var removeCSharpProjectReferenceFromSolutionFormattedCommand =
                     DotNetCliFacts.FormatRemoveCSharpProjectReferenceFromSolutionAction(
-                        treeViewSolution.Item.NamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
-                        projectNode.Item.AbsoluteFilePath.GetAbsoluteFilePathString());
+                        treeViewSolution.Item.NamespacePath.AbsoluteFilePath.FormattedInput,
+                        projectNode.Item.AbsoluteFilePath.FormattedInput);
 
                 var removeCSharpProjectReferenceFromSolutionCommand = new TerminalCommand(
                     TerminalCommandKey.NewTerminalCommandKey(),
                     removeCSharpProjectReferenceFromSolutionFormattedCommand,
-                    workingDirectory.GetAbsoluteFilePathString(),
+                    workingDirectory.FormattedInput,
                     CancellationToken.None,
                     async () => await onAfterCompletion.Invoke());
 
@@ -754,8 +754,8 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                             return;
 
                         var formattedCommand = DotNetCliFacts.FormatAddProjectToProjectReference(
-                            projectReceivingReference.Item.AbsoluteFilePath.GetAbsoluteFilePathString(),
-                            referencedProject.GetAbsoluteFilePathString());
+                            projectReceivingReference.Item.AbsoluteFilePath.FormattedInput,
+                            referencedProject.FormattedInput);
 
                         var addProjectToProjectReferenceTerminalCommand = new TerminalCommand(
                             TerminalCommandKey.NewTerminalCommandKey(),
@@ -825,8 +825,8 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             async cancellationToken =>
             {
                 var formattedCommand = DotNetCliFacts.FormatRemoveProjectToProjectReference(
-                    treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
-                    treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsoluteFilePath.GetAbsoluteFilePathString());
+                    treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsoluteFilePath.FormattedInput,
+                    treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsoluteFilePath.FormattedInput);
 
                 var removeProjectToProjectReferenceTerminalCommand = new TerminalCommand(
                     TerminalCommandKey.NewTerminalCommandKey(),
@@ -879,8 +879,8 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             cancellationToken =>
             {
                 var formattedCommand = DotNetCliFacts.FormatMoveProjectToSolutionFolder(
-                    treeViewSolution.Item.NamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
-                    treeViewProjectToMove.Item.AbsoluteFilePath.GetAbsoluteFilePathString(),
+                    treeViewSolution.Item.NamespacePath.AbsoluteFilePath.FormattedInput,
+                    treeViewProjectToMove.Item.AbsoluteFilePath.FormattedInput,
                     solutionFolderPath);
 
                 var moveProjectToSolutionFolderTerminalCommand = new TerminalCommand(
@@ -940,7 +940,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             async cancellationToken =>
             {
                 var formattedCommand = DotNetCliFacts.FormatRemoveNugetPackageReferenceFromProject(
-                    modifyProjectNamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
+                    modifyProjectNamespacePath.AbsoluteFilePath.FormattedInput,
                     treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id);
 
                 var removeNugetPackageReferenceFromProjectTerminalCommand = new TerminalCommand(

@@ -10,7 +10,7 @@ public partial class TreeViewHelper
         this TreeViewNamespacePath directoryTreeView)
     {
         var directoryAbsoluteFilePathString = directoryTreeView.Item.AbsoluteFilePath
-            .GetAbsoluteFilePathString();
+            .FormattedInput;
 
         var childDirectoryTreeViewModels =
             (await directoryTreeView.FileSystemProvider
@@ -95,7 +95,7 @@ public partial class TreeViewHelper
         TreeViewAbsoluteFilePath directoryTreeView)
     {
         var directoryAbsoluteFilePathString = directoryTreeView.Item
-            .GetAbsoluteFilePathString();
+            .FormattedInput;
 
         var childDirectoryTreeViewModels =
             (await directoryTreeView.FileSystemProvider

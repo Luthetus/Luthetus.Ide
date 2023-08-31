@@ -94,14 +94,14 @@ public partial class NugetPackageDisplay : FluxorComponent
             return;
 
         var formattedCommand = DotNetCliFacts.FormatAddNugetPackageReferenceToProject(
-            targetProject.AbsoluteFilePath.GetAbsoluteFilePathString(),
+            targetProject.AbsoluteFilePath.FormattedInput,
             targetNugetPackage.Id,
             targetNugetVersion);
 
         var addNugetPackageReferenceCommand = new TerminalCommand(
             AddNugetPackageTerminalCommandKey,
             formattedCommand,
-            parentDirectory.GetAbsoluteFilePathString(),
+            parentDirectory.FormattedInput,
             CancellationToken.None, () =>
             {
                 if (LuthetusCommonComponentRenderers.InformativeNotificationRendererType is not null)
