@@ -91,7 +91,7 @@ public static class ExtensionNoPeriodFacts
             C_SHARP_CLASS => cSharpCompilerService,
             RAZOR_CODEBEHIND => cSharpCompilerService,
             RAZOR_MARKUP => razorCompilerService,
-            CSHTML_CLASS => cSharpCompilerService,
+            CSHTML_CLASS => razorCompilerService,
             CSS => cssCompilerService,
             JAVA_SCRIPT => javaScriptCompilerService,
             JSON => jsonCompilerService,
