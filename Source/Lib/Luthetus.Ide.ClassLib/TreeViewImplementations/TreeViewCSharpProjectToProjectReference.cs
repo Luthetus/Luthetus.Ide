@@ -31,11 +31,8 @@ public class TreeViewCSharpProjectToProjectReference : TreeViewWithType<CSharpPr
 
     public override bool Equals(object? obj)
     {
-        if (obj is null ||
-            obj is not TreeViewCSharpProjectToProjectReference otherTreeView)
-        {
+        if (obj is not TreeViewCSharpProjectToProjectReference otherTreeView)
             return false;
-        }
 
         return otherTreeView.GetHashCode() == GetHashCode();
     }

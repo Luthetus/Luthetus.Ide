@@ -32,11 +32,8 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
 
     public override bool Equals(object? obj)
     {
-        if (obj is null ||
-            obj is not TreeViewCSharpProjectNugetPackageReferences otherTreeView)
-        {
+        if (obj is not TreeViewCSharpProjectNugetPackageReferences otherTreeView)
             return false;
-        }
 
         return otherTreeView.GetHashCode() == GetHashCode();
     }

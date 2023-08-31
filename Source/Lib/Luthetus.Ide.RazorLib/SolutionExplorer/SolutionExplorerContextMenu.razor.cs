@@ -96,12 +96,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             if (treeViewSolution.Item.NamespacePath.AbsoluteFilePath.ExtensionNoPeriod ==
                 ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
             {
-                if (treeViewSolution.Parent is null ||
-                    treeViewSolution.Parent is TreeViewAdhoc)
-                {
-                    menuRecords.AddRange(
-                        GetDotNetSolutionMenuOptions(treeViewSolution));
-                }
+                if (treeViewSolution.Parent is null || treeViewSolution.Parent is TreeViewAdhoc)
+                    menuRecords.AddRange(GetDotNetSolutionMenuOptions(treeViewSolution));
             }
         }
         else if (treeViewModel is TreeViewCSharpProjectToProjectReference treeViewCSharpProjectToProjectReference)

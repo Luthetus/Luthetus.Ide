@@ -38,11 +38,8 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
 
     public override bool Equals(object? obj)
     {
-        if (obj is null ||
-            obj is not TreeViewNamespacePath treeViewSolutionExplorer)
-        {
+        if (obj is not TreeViewNamespacePath treeViewSolutionExplorer)
             return false;
-        }
 
         return treeViewSolutionExplorer.Item.AbsoluteFilePath.GetAbsoluteFilePathString() ==
                Item.AbsoluteFilePath.GetAbsoluteFilePathString();
