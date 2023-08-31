@@ -37,8 +37,7 @@ public partial class FileFormDisplay
 
     protected override Task OnParametersSetAsync()
     {
-        if (_previousFileNameParameter is null ||
-            _previousFileNameParameter != FileName)
+        if (_previousFileNameParameter is null || _previousFileNameParameter != FileName)
         {
             _previousFileNameParameter = FileName;
             _fileName = FileName;

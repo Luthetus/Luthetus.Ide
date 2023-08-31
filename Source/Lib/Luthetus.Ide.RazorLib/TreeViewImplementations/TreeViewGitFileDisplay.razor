@@ -14,8 +14,7 @@
     @{
         var gitState = GitStateWrap.Value;
 
-        string shortenedParentDirectoryFilePathString = gitFile.AbsoluteFilePath
-        .GetAbsoluteFilePathString();
+        string shortenedParentDirectoryFilePathString = gitFile.AbsoluteFilePath.FormattedInput;
 
         if (gitFile.AbsoluteFilePath.ParentDirectory is not null &&
         gitState.GitFolderAbsoluteFilePath?.ParentDirectory is not null)

@@ -32,11 +32,8 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
 
     public override bool Equals(object? obj)
     {
-        if (obj is null ||
-            obj is not TreeViewCSharpProjectToProjectReferences otherTreeView)
-        {
+        if (obj is not TreeViewCSharpProjectToProjectReferences otherTreeView)
             return false;
-        }
 
         return otherTreeView.GetHashCode() == GetHashCode();
     }
@@ -44,7 +41,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
     public override int GetHashCode()
     {
         return Item.CSharpProjectNamespacePath.AbsoluteFilePath
-            .GetAbsoluteFilePathString()
+            .FormattedInput
             .GetHashCode();
     }
 
@@ -58,10 +55,10 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
     public override async Task LoadChildrenAsync()
     {
         var content = await FileSystemProvider.File.ReadAllTextAsync(
-            Item.CSharpProjectNamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString());
+            Item.CSharpProjectNamespacePath.AbsoluteFilePath.FormattedInput);
 
         var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
-            new(Item.CSharpProjectNamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString()),
+            new(Item.CSharpProjectNamespacePath.AbsoluteFilePath.FormattedInput),
             content);
 
         var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;

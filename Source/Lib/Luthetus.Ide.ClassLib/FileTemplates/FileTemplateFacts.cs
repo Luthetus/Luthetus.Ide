@@ -77,7 +77,7 @@ public static class FileTemplateFacts
 
         var emptyFileAbsoluteFilePathString = fileTemplateParameter
                                                   .ParentDirectory.AbsoluteFilePath
-                                                  .GetAbsoluteFilePathString() +
+                                                  .FormattedInput +
                                               fileTemplateParameter.Filename;
 
         // Create AbsoluteFilePath as to leverage it for
@@ -93,7 +93,7 @@ public static class FileTemplateFacts
 
         var templatedFileFileAbsoluteFilePathString = fileTemplateParameter
                                                      .ParentDirectory.AbsoluteFilePath
-                                                     .GetAbsoluteFilePathString() +
+                                                     .FormattedInput +
                                                  emptyFileAbsoluteFilePath.FileNameNoExtension +
                                                  '.' +
                                                  ExtensionNoPeriodFacts.C_SHARP_CLASS;
@@ -145,7 +145,7 @@ public static class FileTemplateFacts
 
         var emptyFileAbsoluteFilePathString = fileTemplateParameter
                                                   .ParentDirectory.AbsoluteFilePath
-                                                  .GetAbsoluteFilePathString() +
+                                                  .FormattedInput +
                                               fileTemplateParameter.Filename;
 
         // Create AbsoluteFilePath as to leverage it for
@@ -160,7 +160,7 @@ public static class FileTemplateFacts
 
         var templatedFileFileAbsoluteFilePathString = fileTemplateParameter
                                                      .ParentDirectory.AbsoluteFilePath
-                                                     .GetAbsoluteFilePathString() +
+                                                     .FormattedInput +
                                                  emptyFileAbsoluteFilePath.FileNameNoExtension +
                                                  '.' +
                                                  ExtensionNoPeriodFacts.RAZOR_MARKUP;
@@ -225,7 +225,7 @@ public static class FileTemplateFacts
 
         var emptyFileAbsoluteFilePathString = fileTemplateParameter
                                                   .ParentDirectory.AbsoluteFilePath
-                                                  .GetAbsoluteFilePathString() +
+                                                  .FormattedInput +
                                               fileTemplateParameter.Filename;
 
         // Create AbsoluteFilePath as to leverage it for
@@ -241,7 +241,7 @@ public static class FileTemplateFacts
 
         var templatedFileFileAbsoluteFilePathString = fileTemplateParameter
                                                      .ParentDirectory.AbsoluteFilePath
-                                                     .GetAbsoluteFilePathString() +
+                                                     .FormattedInput +
                                                  emptyFileAbsoluteFilePath.FileNameNoExtension;
 
         if (templatedFileFileAbsoluteFilePathString.EndsWith(

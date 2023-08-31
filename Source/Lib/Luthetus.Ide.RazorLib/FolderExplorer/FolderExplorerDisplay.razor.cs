@@ -49,7 +49,6 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 
         _folderExplorerTreeViewKeyboardEventHandler = new FolderExplorerTreeViewKeyboardEventHandler(
             MenuOptionsFactory,
-            LuthetusIdeComponentRenderers,
             LuthetusCommonComponentRenderers,
             Dispatcher,
             TreeViewService);

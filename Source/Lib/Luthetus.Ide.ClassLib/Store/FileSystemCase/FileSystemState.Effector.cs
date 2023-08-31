@@ -47,7 +47,7 @@ public partial class FileSystemState
                         if (saveFileAction.CancellationToken.IsCancellationRequested)
                             return;
 
-                        var absoluteFilePathString = saveFileAction.AbsoluteFilePath.GetAbsoluteFilePathString();
+                        var absoluteFilePathString = saveFileAction.AbsoluteFilePath.FormattedInput;
 
                         string notificationMessage;
 

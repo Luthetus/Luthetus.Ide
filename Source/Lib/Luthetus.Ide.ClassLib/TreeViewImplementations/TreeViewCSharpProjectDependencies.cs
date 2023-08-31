@@ -30,11 +30,8 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
 
     public override bool Equals(object? obj)
     {
-        if (obj is null ||
-            obj is not TreeViewCSharpProjectDependencies otherTreeView)
-        {
+        if (obj is not TreeViewCSharpProjectDependencies otherTreeView)
             return false;
-        }
 
         return otherTreeView.GetHashCode() == GetHashCode();
     }
@@ -42,7 +39,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
     public override int GetHashCode()
     {
         return Item.CSharpProjectNamespacePath.AbsoluteFilePath
-            .GetAbsoluteFilePathString()
+            .FormattedInput
             .GetHashCode();
     }
 

@@ -87,7 +87,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
     private FormattedCommand FormattedAddExistingProjectToSolutionCommand => DotNetCliFacts
         .FormatAddExistingProjectToSolution(
-            SolutionNamespacePath?.AbsoluteFilePath.GetAbsoluteFilePathString()
+            SolutionNamespacePath?.AbsoluteFilePath.FormattedInput
             ?? string.Empty,
             $"{_cSharpProjectNameValue}/{_cSharpProjectNameValue}.csproj");
 
@@ -118,7 +118,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                 if (afp is null)
                     return;
 
-                _parentDirectoryNameValue = afp.GetAbsoluteFilePathString();
+                _parentDirectoryNameValue = afp.FormattedInput;
 
                 await InvokeAsync(StateHasChanged);
             },
@@ -161,7 +161,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             var newCSharpProjectCommand = new TerminalCommand(
                 _loadProjectTemplatesTerminalCommandKey,
                 formattedCommand,
-                EnvironmentProvider.HomeDirectoryAbsoluteFilePath.GetAbsoluteFilePathString(),
+                EnvironmentProvider.HomeDirectoryAbsoluteFilePath.FormattedInput,
                 _newCSharpProjectCancellationTokenSource.Token,
                 async () =>
                 {
@@ -203,7 +203,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             var newCSharpProjectCommand = new TerminalCommand(
                     _loadProjectTemplatesTerminalCommandKey,
                     formattedCommand,
-                    EnvironmentProvider.HomeDirectoryAbsoluteFilePath.GetAbsoluteFilePathString(),
+                    EnvironmentProvider.HomeDirectoryAbsoluteFilePath.FormattedInput,
                     _newCSharpProjectCancellationTokenSource.Token,
                     async () =>
                     {
@@ -524,7 +524,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         string cSharpProjectAbsoluteFilePathString)
     {
         var dotNetSolutionAbsoluteFilePathString = SolutionNamespacePath!.AbsoluteFilePath
-            .GetAbsoluteFilePathString();
+            .FormattedInput;
 
         var content = await FileSystemProvider.File.ReadAllTextAsync(
             dotNetSolutionAbsoluteFilePathString,
@@ -564,11 +564,11 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             EnvironmentProvider);
 
         await FileSystemProvider.File.WriteAllTextAsync(
-            SolutionNamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString(),
+            SolutionNamespacePath.AbsoluteFilePath.FormattedInput,
             content);
 
         var solutionTextEditorModel = TextEditorService.Model.FindOrDefaultByResourceUri(
-            new ResourceUri(SolutionNamespacePath.AbsoluteFilePath.GetAbsoluteFilePathString()));
+            new ResourceUri(SolutionNamespacePath.AbsoluteFilePath.FormattedInput));
 
         if (solutionTextEditorModel is not null)
         {

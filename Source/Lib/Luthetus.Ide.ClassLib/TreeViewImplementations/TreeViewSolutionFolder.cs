@@ -38,20 +38,17 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
 
     public override bool Equals(object? obj)
     {
-        if (obj is null ||
-            obj is not TreeViewSolutionFolder treeViewSolutionFolder)
-        {
+        if (obj is not TreeViewSolutionFolder treeViewSolutionFolder)
             return false;
-        }
 
-        return treeViewSolutionFolder.Item.AbsoluteFilePath.GetAbsoluteFilePathString() ==
-               Item.AbsoluteFilePath.GetAbsoluteFilePathString();
+        return treeViewSolutionFolder.Item.AbsoluteFilePath.FormattedInput ==
+               Item.AbsoluteFilePath.FormattedInput;
     }
 
     public override int GetHashCode()
     {
         return Item.AbsoluteFilePath
-            .GetAbsoluteFilePathString()
+            .FormattedInput
             .GetHashCode();
     }
 

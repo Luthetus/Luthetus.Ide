@@ -24,19 +24,16 @@ public class TreeViewGitFile : TreeViewWithType<GitFile>
 
     public override bool Equals(object? obj)
     {
-        if (obj is null ||
-            obj is not TreeViewGitFile treeViewGitFile)
-        {
+        if (obj is not TreeViewGitFile treeViewGitFile)
             return false;
-        }
 
-        return treeViewGitFile.Item.AbsoluteFilePath.GetAbsoluteFilePathString() ==
-               Item.AbsoluteFilePath.GetAbsoluteFilePathString();
+        return treeViewGitFile.Item.AbsoluteFilePath.FormattedInput ==
+               Item.AbsoluteFilePath.FormattedInput;
     }
 
     public override int GetHashCode()
     {
-        return Item.AbsoluteFilePath.GetAbsoluteFilePathString().GetHashCode();
+        return Item.AbsoluteFilePath.FormattedInput.GetHashCode();
     }
 
     public override TreeViewRenderer GetTreeViewRenderer()

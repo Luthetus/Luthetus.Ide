@@ -23,39 +23,26 @@ public class InputFileTreeViewMouseEventHandler : TreeViewMouseEventHandler
         _setInputFileContentTreeViewRootFunc = setInputFileContentTreeViewRootFunc;
     }
 
-    public override Task<bool> OnClickAsync(
-        ITreeViewCommandParameter treeViewCommandParameter)
+    public override void OnClick(ITreeViewCommandParameter treeViewCommandParameter)
     {
-        _ = base.OnClickAsync(treeViewCommandParameter);
+        base.OnClick(treeViewCommandParameter);
 
-        if (treeViewCommandParameter.TargetNode
-            is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)
-        {
-            return Task.FromResult(false);
-        }
+        if (treeViewCommandParameter.TargetNode is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)
+            return;
 
-        var setSelectedTreeViewModelAction =
-            new InputFileState.SetSelectedTreeViewModelAction(
-                treeViewAbsoluteFilePath);
+        var setSelectedTreeViewModelAction = new InputFileState.SetSelectedTreeViewModelAction(
+            treeViewAbsoluteFilePath);
 
         _dispatcher.Dispatch(setSelectedTreeViewModelAction);
-
-        return Task.FromResult(true);
     }
 
-    public override async Task<bool> OnDoubleClickAsync(
-        ITreeViewCommandParameter treeViewCommandParameter)
+    public override void OnDoubleClick(ITreeViewCommandParameter treeViewCommandParameter)
     {
-        _ = base.OnDoubleClickAsync(treeViewCommandParameter);
+        base.OnDoubleClick(treeViewCommandParameter);
 
-        if (treeViewCommandParameter.TargetNode
-            is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)
-        {
-            return false;
-        }
+        if (treeViewCommandParameter.TargetNode is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)
+            return;
 
-        await _setInputFileContentTreeViewRootFunc.Invoke(treeViewAbsoluteFilePath.Item);
-
-        return true;
+        _setInputFileContentTreeViewRootFunc.Invoke(treeViewAbsoluteFilePath.Item);
     }
 }

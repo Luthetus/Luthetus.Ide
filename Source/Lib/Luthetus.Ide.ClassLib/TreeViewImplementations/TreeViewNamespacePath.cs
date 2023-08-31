@@ -38,19 +38,16 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
 
     public override bool Equals(object? obj)
     {
-        if (obj is null ||
-            obj is not TreeViewNamespacePath treeViewSolutionExplorer)
-        {
+        if (obj is not TreeViewNamespacePath treeViewSolutionExplorer)
             return false;
-        }
 
-        return treeViewSolutionExplorer.Item.AbsoluteFilePath.GetAbsoluteFilePathString() ==
-               Item.AbsoluteFilePath.GetAbsoluteFilePathString();
+        return treeViewSolutionExplorer.Item.AbsoluteFilePath.FormattedInput ==
+               Item.AbsoluteFilePath.FormattedInput;
     }
 
     public override int GetHashCode()
     {
-        return Item.AbsoluteFilePath.GetAbsoluteFilePathString().GetHashCode();
+        return Item.AbsoluteFilePath.FormattedInput.GetHashCode();
     }
 
     public override TreeViewRenderer GetTreeViewRenderer()

@@ -19,24 +19,15 @@ public class SolutionExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandl
         _dispatcher = dispatcher;
     }
 
-    public override Task<bool> OnDoubleClickAsync(
-        ITreeViewCommandParameter treeViewCommandParameter)
+    public override void OnDoubleClick(ITreeViewCommandParameter treeViewCommandParameter)
     {
-        _ = base.OnDoubleClickAsync(treeViewCommandParameter);
+        base.OnDoubleClick(treeViewCommandParameter);
 
-        if (treeViewCommandParameter.TargetNode
-            is not TreeViewNamespacePath treeViewNamespacePath)
-        {
-            return Task.FromResult(false);
-        }
-
-        if (treeViewNamespacePath.Item is null)
-            return Task.FromResult(false);
+        if (treeViewCommandParameter.TargetNode is not TreeViewNamespacePath treeViewNamespacePath)
+            return;
 
         _dispatcher.Dispatch(new EditorState.OpenInEditorAction(
             treeViewNamespacePath.Item.AbsoluteFilePath,
             true));
-
-        return Task.FromResult(true);
     }
 }

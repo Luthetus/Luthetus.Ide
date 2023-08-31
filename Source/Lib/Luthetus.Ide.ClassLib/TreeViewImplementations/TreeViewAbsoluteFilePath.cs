@@ -36,20 +36,17 @@ public class TreeViewAbsoluteFilePath : TreeViewWithType<IAbsoluteFilePath>
 
     public override bool Equals(object? obj)
     {
-        if (obj is null ||
-            obj is not TreeViewNamespacePath treeViewSolutionExplorer)
-        {
+        if (obj is not TreeViewNamespacePath treeViewSolutionExplorer)
             return false;
-        }
 
         return treeViewSolutionExplorer.Item.AbsoluteFilePath
-                   .GetAbsoluteFilePathString() ==
-               Item.GetAbsoluteFilePathString();
+                   .FormattedInput ==
+               Item.FormattedInput;
     }
 
     public override int GetHashCode()
     {
-        return Item.GetAbsoluteFilePathString().GetHashCode();
+        return Item.FormattedInput.GetHashCode();
     }
 
     public override TreeViewRenderer GetTreeViewRenderer()

@@ -45,11 +45,8 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
         ChangeEventArgs changeEventArgs,
         DotNetSolutionState dotNetSolutionState)
     {
-        if (changeEventArgs.Value is null ||
-            dotNetSolutionState.DotNetSolution is null)
-        {
+        if (changeEventArgs.Value is null || dotNetSolutionState.DotNetSolution is null)
             return;
-        }
 
         var projectIdGuid = Guid.Parse((string)changeEventArgs.Value);
 
@@ -82,7 +79,9 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
     {
         if (dotNetSolutionState.DotNetSolution is null ||
             nuGetPackageManagerState.SelectedProjectToModify is null)
+        {
             return false;
+        }
 
         return dotNetSolutionState.DotNetSolution.DotNetProjects
             .Any(x =>

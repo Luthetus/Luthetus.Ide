@@ -39,8 +39,7 @@ public partial class NugetPackageDisplay : FluxorComponent
 
     protected override void OnParametersSet()
     {
-        if (_previousNugetPackageId is null ||
-            _previousNugetPackageId != NugetPackageRecord.Id)
+        if (_previousNugetPackageId is null || _previousNugetPackageId != NugetPackageRecord.Id)
         {
             _previousNugetPackageId = NugetPackageRecord.Id;
 
@@ -50,8 +49,7 @@ public partial class NugetPackageDisplay : FluxorComponent
 
             _nugetPackageVersionString = _nugetPackageVersionsOrdered
                 .FirstOrDefault()?
-                .Version
-                    ?? string.Empty;
+                .Version ?? string.Empty;
         }
 
         base.OnParametersSet();
@@ -69,7 +67,9 @@ public partial class NugetPackageDisplay : FluxorComponent
 
         if (dotNetSolutionState.DotNetSolution is null ||
             nuGetPackageManagerState.SelectedProjectToModify is null)
+        {
             return false;
+        }
 
         return dotNetSolutionState.DotNetSolution.DotNetProjects
             .Any(x =>
@@ -94,14 +94,14 @@ public partial class NugetPackageDisplay : FluxorComponent
             return;
 
         var formattedCommand = DotNetCliFacts.FormatAddNugetPackageReferenceToProject(
-            targetProject.AbsoluteFilePath.GetAbsoluteFilePathString(),
+            targetProject.AbsoluteFilePath.FormattedInput,
             targetNugetPackage.Id,
             targetNugetVersion);
 
         var addNugetPackageReferenceCommand = new TerminalCommand(
             AddNugetPackageTerminalCommandKey,
             formattedCommand,
-            parentDirectory.GetAbsoluteFilePathString(),
+            parentDirectory.FormattedInput,
             CancellationToken.None, () =>
             {
                 if (LuthetusCommonComponentRenderers.InformativeNotificationRendererType is not null)

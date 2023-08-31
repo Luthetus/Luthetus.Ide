@@ -64,7 +64,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                 if (afp is null)
                     return;
 
-                _parentDirectoryName = afp.GetAbsoluteFilePathString();
+                _parentDirectoryName = afp.FormattedInput;
 
                 await InvokeAsync(StateHasChanged);
             },
@@ -119,7 +119,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                         EnvironmentProvider);
 
                     var solutionAbsoluteFilePathString =
-                        parentDirectoryAbsoluteFilePath.GetAbsoluteFilePathString() +
+                        parentDirectoryAbsoluteFilePath.FormattedInput +
                         localSolutionName +
                         EnvironmentProvider.DirectorySeparatorChar +
                         localSolutionName +

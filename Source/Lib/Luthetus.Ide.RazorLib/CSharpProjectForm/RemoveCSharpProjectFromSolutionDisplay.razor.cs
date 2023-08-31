@@ -26,8 +26,8 @@ public partial class RemoveCSharpProjectFromSolutionDisplay
     protected override Task OnParametersSetAsync()
     {
         if (_previousAbsoluteFilePath is null ||
-            _previousAbsoluteFilePath.GetAbsoluteFilePathString() !=
-            AbsoluteFilePath.GetAbsoluteFilePathString())
+            _previousAbsoluteFilePath.FormattedInput !=
+            AbsoluteFilePath.FormattedInput)
         {
             _previousAbsoluteFilePath = AbsoluteFilePath;
         }

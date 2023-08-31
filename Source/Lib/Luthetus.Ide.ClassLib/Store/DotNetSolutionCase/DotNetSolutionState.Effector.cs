@@ -48,7 +48,7 @@ public partial record DotNetSolutionState
             SetDotNetSolutionAction setDotNetSolutionAction,
             IDispatcher dispatcher)
         {
-            var dotNetSolutionAbsoluteFilePathString = setDotNetSolutionAction.SolutionAbsoluteFilePath.GetAbsoluteFilePathString();
+            var dotNetSolutionAbsoluteFilePathString = setDotNetSolutionAction.SolutionAbsoluteFilePath.FormattedInput;
 
             var content = await _fileSystemProvider.File.ReadAllTextAsync(
                 dotNetSolutionAbsoluteFilePathString,

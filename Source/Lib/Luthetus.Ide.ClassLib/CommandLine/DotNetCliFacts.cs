@@ -14,7 +14,7 @@ public static class DotNetCliFacts
         IAbsoluteFilePath projectAbsoluteFilePath)
     {
         return FormatStartProjectWithoutDebugging(
-            projectAbsoluteFilePath.GetAbsoluteFilePathString());
+            projectAbsoluteFilePath.FormattedInput);
     }
 
     public static FormattedCommand FormatStartProjectWithoutDebugging(

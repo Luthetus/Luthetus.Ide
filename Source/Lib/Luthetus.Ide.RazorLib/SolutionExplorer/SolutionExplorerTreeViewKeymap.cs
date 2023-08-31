@@ -38,94 +38,68 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
         _treeViewService = treeViewService;
     }
 
-    public override async Task<bool> OnKeyDownAsync(
-        ITreeViewCommandParameter treeViewCommandParameter)
+    public override void OnKeyDown(ITreeViewCommandParameter treeViewCommandParameter)
     {
         if (treeViewCommandParameter.KeyboardEventArgs is null)
-            return false;
+            return;
 
-        _ = await base.OnKeyDownAsync(treeViewCommandParameter);
+        base.OnKeyDown(treeViewCommandParameter);
 
         switch (treeViewCommandParameter.KeyboardEventArgs.Code)
         {
             case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
-                await InvokeOpenInEditorAsync(treeViewCommandParameter, true);
-                return true;
+                InvokeOpenInEditor(treeViewCommandParameter, true);
+                return;
             case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
-                await InvokeOpenInEditorAsync(treeViewCommandParameter, false);
-                return true;
+                InvokeOpenInEditor(treeViewCommandParameter, false);
+                return;
         }
 
         if (treeViewCommandParameter.KeyboardEventArgs.CtrlKey)
         {
-            var wasMappedToAnAction = await CtrlModifiedKeymapAsync(treeViewCommandParameter);
-
-            if (wasMappedToAnAction)
-                return wasMappedToAnAction;
+            CtrlModifiedKeymap(treeViewCommandParameter);
+            return;
         }
-
-        if (treeViewCommandParameter.KeyboardEventArgs.AltKey)
+        else if (treeViewCommandParameter.KeyboardEventArgs.AltKey)
         {
-            var wasMappedToAnAction = await AltModifiedKeymapAsync(treeViewCommandParameter);
-
-            if (wasMappedToAnAction)
-                return wasMappedToAnAction;
+            AltModifiedKeymap(treeViewCommandParameter);
+            return;
         }
-
-        return false;
     }
 
-    private async Task<bool> CtrlModifiedKeymapAsync(
-        ITreeViewCommandParameter treeViewCommandParameter)
+    private void CtrlModifiedKeymap(ITreeViewCommandParameter treeViewCommandParameter)
     {
         if (treeViewCommandParameter.KeyboardEventArgs is null)
-            return false;
+            return;
 
         if (treeViewCommandParameter.KeyboardEventArgs.AltKey)
         {
-            var wasMappedToAnAction = await CtrlAltModifiedKeymapAsync(treeViewCommandParameter);
-
-            if (wasMappedToAnAction)
-                return wasMappedToAnAction;
+            CtrlAltModifiedKeymap(treeViewCommandParameter);
+            return;
         }
 
         switch (treeViewCommandParameter.KeyboardEventArgs.Key)
         {
             case "c":
-                await InvokeCopyFileAsync(treeViewCommandParameter);
-                return true;
+                InvokeCopyFile(treeViewCommandParameter);
+                return;
             case "x":
-                await InvokeCutFile(treeViewCommandParameter);
-                return true;
+                InvokeCutFile(treeViewCommandParameter);
+                return;
             case "v":
-                await InvokePasteClipboard(treeViewCommandParameter);
-                return true;
+                InvokePasteClipboard(treeViewCommandParameter);
+                return;
         }
-
-        return false;
     }
 
-    /// <summary>
-    ///     Do not go from <see cref="AltModifiedKeymapAsync" /> to
-    ///     <see cref="CtrlAltModifiedKeymapAsync" />
-    ///     <br /><br />
-    ///     Code in this method should only be here if it
-    ///     does not include a Ctrl key being pressed.
-    ///     <br /><br />
-    ///     As otherwise, we'd have to permute over
-    ///     all the possible keyboard modifier
-    ///     keys and have a method for each permutation.
-    /// </summary>
-    private Task<bool> AltModifiedKeymapAsync(
-        ITreeViewCommandParameter treeViewCommandParameter)
+    private void AltModifiedKeymap(ITreeViewCommandParameter treeViewCommandParameter)
     {
-        return Task.FromResult(false);
+        return;
     }
 
-    private Task<bool> CtrlAltModifiedKeymapAsync(
-        ITreeViewCommandParameter treeViewCommandParameter)
+    private void CtrlAltModifiedKeymap(ITreeViewCommandParameter treeViewCommandParameter)
     {
-        return Task.FromResult(false);
+        return;
     }
 
     private Task NotifyCopyCompleted(NamespacePath namespacePath)
@@ -184,34 +158,26 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
         return Task.CompletedTask;
     }
 
-    private Task InvokeCopyFileAsync(ITreeViewCommandParameter treeViewCommandParameter)
+    private void InvokeCopyFile(ITreeViewCommandParameter treeViewCommandParameter)
     {
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
-        if (activeNode is null ||
-            activeNode is not TreeViewNamespacePath treeViewNamespacePath)
-        {
-            return Task.CompletedTask;
-        }
+        if (activeNode is not TreeViewNamespacePath treeViewNamespacePath)
+            return;
 
         var copyFileMenuOption = _menuOptionsFactory.CopyFile(
             treeViewNamespacePath.Item.AbsoluteFilePath,
             () => NotifyCopyCompleted(treeViewNamespacePath.Item));
 
         copyFileMenuOption.OnClick?.Invoke();
-
-        return Task.CompletedTask;
     }
 
-    private Task InvokePasteClipboard(ITreeViewCommandParameter treeViewCommandParameter)
+    private void InvokePasteClipboard(ITreeViewCommandParameter treeViewCommandParameter)
     {
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
-        if (activeNode is null ||
-            activeNode is not TreeViewNamespacePath treeViewNamespacePath)
-        {
-            return Task.CompletedTask;
-        }
+        if (activeNode is not TreeViewNamespacePath treeViewNamespacePath)
+            return;
 
         MenuOptionRecord pasteMenuOptionRecord;
 
@@ -254,19 +220,14 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
         }
 
         pasteMenuOptionRecord.OnClick?.Invoke();
-        return Task.CompletedTask;
     }
 
-    private Task InvokeCutFile(ITreeViewCommandParameter treeViewCommandParameter)
+    private void InvokeCutFile(ITreeViewCommandParameter treeViewCommandParameter)
     {
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
-        if (activeNode is null ||
-            activeNode is not TreeViewNamespacePath treeViewNamespacePath ||
-            treeViewNamespacePath.Item is null)
-        {
-            return Task.CompletedTask;
-        }
+        if (activeNode is not TreeViewNamespacePath treeViewNamespacePath)
+            return;
 
         var parent = treeViewNamespacePath.Parent as TreeViewNamespacePath;
 
@@ -277,27 +238,22 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
                 parent));
 
         cutFileOptionRecord.OnClick?.Invoke();
-        return Task.CompletedTask;
     }
 
-    private Task InvokeOpenInEditorAsync(
+    private void InvokeOpenInEditor(
         ITreeViewCommandParameter treeViewCommandParameter,
         bool shouldSetFocusToEditor)
     {
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
-        if (activeNode is null ||
-            activeNode is not TreeViewNamespacePath treeViewNamespacePath ||
-            treeViewNamespacePath.Item is null)
-        {
-            return Task.CompletedTask;
-        }
+        if (activeNode is not TreeViewNamespacePath treeViewNamespacePath)
+            return;
 
         _dispatcher.Dispatch(new EditorState.OpenInEditorAction(
             treeViewNamespacePath.Item.AbsoluteFilePath,
             shouldSetFocusToEditor));
 
-        return Task.CompletedTask;
+        return;
     }
 
     private async Task ReloadTreeViewModel(

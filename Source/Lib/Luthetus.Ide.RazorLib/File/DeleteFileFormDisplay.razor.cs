@@ -32,8 +32,8 @@ public partial class DeleteFileFormDisplay
     protected override async Task OnParametersSetAsync()
     {
         if (_previousAbsoluteFilePath is null ||
-            _previousAbsoluteFilePath.GetAbsoluteFilePathString() !=
-            AbsoluteFilePath.GetAbsoluteFilePathString())
+            _previousAbsoluteFilePath.FormattedInput !=
+            AbsoluteFilePath.FormattedInput)
         {
             _countOfImmediateChildren = null;
 
@@ -43,7 +43,7 @@ public partial class DeleteFileFormDisplay
             {
                 _countOfImmediateChildren = (await FileSystemProvider.Directory
                     .EnumerateFileSystemEntriesAsync(
-                        AbsoluteFilePath.GetAbsoluteFilePathString()))
+                        AbsoluteFilePath.FormattedInput))
                     .Count();
             }
         }
