@@ -9,13 +9,11 @@ using Luthetus.Ide.RazorLib.HostedServiceCase;
 using Microsoft.Extensions.DependencyInjection;
 using Luthetus.TextEditor.RazorLib.HostedServiceCase.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib;
-using Luthetus.Common.RazorLib.Store.AccountCase;
-using Fluxor;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.FileSystem.Classes.Local;
-using Luthetus.Common.RazorLib.FileSystem.Classes.Website;
+using Luthetus.Common.RazorLib.FileSystem.Classes.InMemoryFileSystem;
 
 namespace Luthetus.Ide.RazorLib;
 
@@ -45,20 +43,14 @@ public static class ServiceCollectionExtensions
         if (isNativeApplication)
         {
             environmentProviderFactory = _ => new LocalEnvironmentProvider();
-
             fileSystemProviderFactory = _ => new LocalFileSystemProvider();
         }
         else
         {
-            environmentProviderFactory = serviceProvider =>
-                new WebsiteEnvironmentProvider(
-                    serviceProvider.GetRequiredService<IState<AccountState>>());
+            environmentProviderFactory = _ => new InMemoryEnvironmentProvider();
 
-            fileSystemProviderFactory = serviceProvider =>
-                new WebsiteFileSystemProvider(
-                    serviceProvider.GetRequiredService<IEnvironmentProvider>(),
-                    serviceProvider.GetRequiredService<IState<AccountState>>(),
-                    serviceProvider.GetRequiredService<HttpClient>());
+            fileSystemProviderFactory = serviceProvider => new InMemoryFileSystemProvider(
+                serviceProvider.GetRequiredService<IEnvironmentProvider>());
         }
 
         services
