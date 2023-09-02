@@ -41,7 +41,7 @@ public partial class EditorState
         private readonly ITextEditorService _textEditorService;
         private readonly ILuthetusIdeComponentRenderers _luthetusIdeComponentRenderers;
         private readonly IFileSystemProvider _fileSystemProvider;
-        private readonly ICommonBackgroundTaskQueue _commonBackgroundTaskQueue;
+        private readonly ILuthetusCommonBackgroundTaskService _luthetusCommonBackgroundTaskService;
         private readonly XmlCompilerService _xmlCompilerService;
         private readonly DotNetSolutionCompilerService _dotNetCompilerService;
         private readonly CSharpProjectCompilerService _cSharpProjectCompilerService;
@@ -57,7 +57,7 @@ public partial class EditorState
             ITextEditorService textEditorService,
             ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
             IFileSystemProvider fileSystemProvider,
-            ICommonBackgroundTaskQueue commonBackgroundTaskQueue,
+            ILuthetusCommonBackgroundTaskService luthetusCommonBackgroundTaskService,
             XmlCompilerService xmlCompilerService,
             DotNetSolutionCompilerService dotNetCompilerService,
             CSharpProjectCompilerService cSharpProjectCompilerService,
@@ -72,7 +72,7 @@ public partial class EditorState
             _textEditorService = textEditorService;
             _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
             _fileSystemProvider = fileSystemProvider;
-            _commonBackgroundTaskQueue = commonBackgroundTaskQueue;
+            _luthetusCommonBackgroundTaskService = luthetusCommonBackgroundTaskService;
             _xmlCompilerService = xmlCompilerService;
             _dotNetCompilerService = dotNetCompilerService;
             _cSharpProjectCompilerService = cSharpProjectCompilerService;
@@ -264,7 +264,7 @@ public partial class EditorState
                                     dispatcher,
                                     CancellationToken.None);
 
-                                _commonBackgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
+                                _luthetusCommonBackgroundTaskService.QueueBackgroundWorkItem(backgroundTask);
                             })
                         },
                         {

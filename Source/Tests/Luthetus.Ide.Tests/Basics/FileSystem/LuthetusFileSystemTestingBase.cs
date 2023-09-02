@@ -1,7 +1,6 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib;
 using Luthetus.Common.RazorLib.Clipboard;
-using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.FileSystem.Classes.Local;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Storage;
@@ -18,14 +17,9 @@ public class LuthetusFileSystemTestingBase
 {
     protected readonly ServiceProvider ServiceProvider;
 
-    protected IEnvironmentProvider EnvironmentProvider =>
-        ServiceProvider.GetRequiredService<IEnvironmentProvider>();
-
-    protected IFileSystemProvider FileSystemProvider =>
-        ServiceProvider.GetRequiredService<IFileSystemProvider>();
-
-    protected IDispatcher Dispatcher =>
-        ServiceProvider.GetRequiredService<IDispatcher>();
+    protected IEnvironmentProvider EnvironmentProvider => ServiceProvider.GetRequiredService<IEnvironmentProvider>();
+    protected IFileSystemProvider FileSystemProvider => ServiceProvider.GetRequiredService<IFileSystemProvider>();
+    protected IDispatcher Dispatcher => ServiceProvider.GetRequiredService<IDispatcher>();
 
     public LuthetusFileSystemTestingBase()
     {
@@ -33,45 +27,32 @@ public class LuthetusFileSystemTestingBase
 
         services.AddScoped<IJSRuntime>(_ => new DoNothingJsRuntime());
 
-        services.AddScoped<ILuthetusCommonComponentRenderers>(_ => new LuthetusCommonComponentRenderers(
-            null,
-            null,
-            null,
-            null,
-            null,
-            null));
-
-        services.AddLuthetusTextEditor(inTextEditorOptions =>
+        services.AddLuthetusCommonServices(commonOptions =>
         {
-            var luthetusCommonOptions = inTextEditorOptions.LuthetusCommonOptions ?? new();
-
-            var luthetusCommonFactories = luthetusCommonOptions.LuthetusCommonFactories with
+            var outLuthetusCommonFactories = commonOptions.LuthetusCommonFactories with
             {
                 ClipboardServiceFactory = _ => new InMemoryClipboardService(true),
                 StorageServiceFactory = _ => new DoNothingStorageService(true)
             };
 
-            luthetusCommonOptions = luthetusCommonOptions with
+            return commonOptions with
             {
-                LuthetusCommonFactories = luthetusCommonFactories
+                LuthetusCommonFactories = outLuthetusCommonFactories
             };
+        });
 
-            return inTextEditorOptions with
-            {
-                CustomThemeRecords = LuthetusTextEditorCustomThemeFacts.AllCustomThemes,
-                InitialThemeKey = LuthetusTextEditorCustomThemeFacts.DarkTheme.ThemeKey,
-                LuthetusCommonOptions = luthetusCommonOptions
-            };
+        services.AddLuthetusTextEditor(inTextEditorOptions => inTextEditorOptions with
+        {
+            AddLuthetusCommon = false
         });
 
         services.AddScoped<IEnvironmentProvider>(_ => new LocalEnvironmentProvider());
         services.AddScoped<IFileSystemProvider>(_ => new LocalFileSystemProvider());
 
-        services.AddFluxor(options => options
-            .ScanAssemblies(
-                typeof(LuthetusCommonOptions).Assembly,
-                typeof(LuthetusTextEditorOptions).Assembly,
-                typeof(ClassLib.ServiceCollectionExtensions).Assembly));
+        services.AddFluxor(options => options.ScanAssemblies(
+            typeof(LuthetusCommonOptions).Assembly,
+            typeof(LuthetusTextEditorOptions).Assembly,
+            typeof(ClassLib.ServiceCollectionExtensions).Assembly));
 
         ServiceProvider = services.BuildServiceProvider();
 

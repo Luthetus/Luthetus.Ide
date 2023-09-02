@@ -1,12 +1,16 @@
 ﻿using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 using System.Collections.Concurrent;
 
-namespace Luthetus.Ide.ClassLib.HostedServiceCase.FileSystem;
+namespace Luthetus.Ide.ClassLib.HostedServiceCase.Terminal;
 
-public class FileSystemBackgroundTaskQueue : IFileSystemBackgroundTaskQueue
+public class LuthetusIdeTerminalBackgroundTaskService : ILuthetusIdeTerminalBackgroundTaskService
 {
     private readonly ConcurrentQueue<IBackgroundTask> _backgroundTasks = new();
     private readonly SemaphoreSlim _workItemsQueueSemaphoreSlim = new(0);
+
+    public event Action? ExecutingBackgroundTaskChanged;
+
+    public IBackgroundTask? ExecutingBackgroundTask { get; private set; }
 
     public void QueueBackgroundWorkItem(
         IBackgroundTask backgroundTask)
@@ -33,5 +37,11 @@ public class FileSystemBackgroundTaskQueue : IFileSystemBackgroundTaskQueue
         }
 
         return backgroundTask;
+    }
+
+    public void SetExecutingBackgroundTask(IBackgroundTask? backgroundTask)
+    {
+        ExecutingBackgroundTask = backgroundTask;
+        ExecutingBackgroundTaskChanged?.Invoke();
     }
 }

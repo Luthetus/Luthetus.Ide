@@ -24,7 +24,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
     private readonly Func<IAbsoluteFilePath, Task> _setInputFileContentTreeViewRootFunc;
     private readonly Func<Task> _focusSearchInputElementFunc;
     private readonly Func<List<(TreeViewStateKey treeViewStateKey, TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)>> _getSearchMatchTuplesFunc;
-    private readonly ICommonBackgroundTaskQueue _commonBackgroundTaskQueue;
+    private readonly ILuthetusCommonBackgroundTaskService _luthetusCommonBackgroundTaskService;
 
     public InputFileTreeViewKeyboardEventHandler(
         ITreeViewService treeViewService,
@@ -37,7 +37,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         Func<IAbsoluteFilePath, Task> setInputFileContentTreeViewRootFunc,
         Func<Task> focusSearchInputElementFunc,
         Func<List<(TreeViewStateKey treeViewStateKey, TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)>> getSearchMatchTuplesFunc,
-        ICommonBackgroundTaskQueue commonBackgroundTaskQueue)
+        ILuthetusCommonBackgroundTaskService luthetusCommonBackgroundTaskService)
         : base(treeViewService)
     {
         _inputFileStateWrap = inputFileStateWrap;
@@ -49,7 +49,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         _setInputFileContentTreeViewRootFunc = setInputFileContentTreeViewRootFunc;
         _focusSearchInputElementFunc = focusSearchInputElementFunc;
         _getSearchMatchTuplesFunc = getSearchMatchTuplesFunc;
-        _commonBackgroundTaskQueue = commonBackgroundTaskQueue;
+        _luthetusCommonBackgroundTaskService = luthetusCommonBackgroundTaskService;
     }
 
     public override void OnKeyDown(ITreeViewCommandParameter treeViewCommandParameter)
@@ -149,7 +149,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
             _luthetusCommonComponentRenderers,
             _fileSystemProvider,
             _environmentProvider,
-            _commonBackgroundTaskQueue));
+            _luthetusCommonBackgroundTaskService));
 
         ChangeContentRootToOpenedTreeView(_inputFileStateWrap.Value);
     }
@@ -157,7 +157,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
     private void HandleRefreshButtonOnClick(ITreeViewCommandParameter treeViewCommandParameter)
     {
         _dispatcher.Dispatch(new InputFileState.RefreshCurrentSelectionAction(
-            _commonBackgroundTaskQueue));
+            _luthetusCommonBackgroundTaskService));
 
         ChangeContentRootToOpenedTreeView(_inputFileStateWrap.Value);
     }

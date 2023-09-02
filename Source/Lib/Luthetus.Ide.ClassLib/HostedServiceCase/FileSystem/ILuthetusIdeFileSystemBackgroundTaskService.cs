@@ -2,7 +2,6 @@
 
 namespace Luthetus.Ide.ClassLib.HostedServiceCase.FileSystem;
 
-public interface IFileSystemBackgroundTaskMonitor : IBackgroundTaskMonitor
+public interface ILuthetusIdeFileSystemBackgroundTaskService : IBackgroundTaskService
 {
-
 }

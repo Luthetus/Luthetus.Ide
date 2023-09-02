@@ -2,7 +2,7 @@
 
 namespace Luthetus.Ide.ClassLib.HostedServiceCase.Terminal;
 
-public interface ITerminalBackgroundTaskQueue : IBackgroundTaskQueue
+public interface ILuthetusIdeTerminalBackgroundTaskService : IBackgroundTaskService
 {
 
 }

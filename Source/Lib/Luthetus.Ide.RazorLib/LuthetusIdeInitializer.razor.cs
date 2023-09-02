@@ -7,6 +7,7 @@ using Luthetus.Ide.ClassLib.HostedServiceCase.Terminal;
 using Luthetus.Ide.ClassLib.Panel;
 using Luthetus.Ide.ClassLib.Store.PanelCase;
 using Luthetus.Ide.ClassLib.Store.TerminalCase;
+using Luthetus.Ide.RazorLib.BackgroundServiceCase;
 using Luthetus.Ide.RazorLib.FolderExplorer;
 using Luthetus.Ide.RazorLib.Notification;
 using Luthetus.Ide.RazorLib.NuGet;
@@ -29,7 +30,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
     [Inject]
     private LuthetusTextEditorOptions LuthetusTextEditorOptions { get; set; } = null!;
     [Inject]
-    private ITerminalBackgroundTaskQueue TerminalBackgroundTaskQueue { get; set; } = null!;
+    private ILuthetusIdeTerminalBackgroundTaskService TerminalBackgroundTaskQueue { get; set; } = null!;
     [Inject]
     private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
 
@@ -126,6 +127,18 @@ public partial class LuthetusIdeInitializer : ComponentBase
         Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
             rightPanel.PanelRecordKey,
             notificationsPanelTab));
+        
+        var backgroundServicesPanelTab = new PanelTab(
+            PanelTabKey.NewPanelTabKey(),
+            rightPanel.ElementDimensions,
+            new(),
+            typeof(BackgroundServicesPanelDisplay),
+            typeof(IconFolder),
+            "Background Tasks");
+
+        Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
+            rightPanel.PanelRecordKey,
+            backgroundServicesPanelTab));
     }
 
     private void InitializeBottomPanelTabs()

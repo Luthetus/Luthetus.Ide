@@ -5,9 +5,7 @@ using Luthetus.Ide.RazorLib.Git;
 using Luthetus.Ide.RazorLib.InputFile;
 using Luthetus.Ide.RazorLib.NuGet;
 using Luthetus.Ide.RazorLib.TreeViewImplementations;
-using Luthetus.Ide.RazorLib.HostedServiceCase;
 using Microsoft.Extensions.DependencyInjection;
-using Luthetus.TextEditor.RazorLib.HostedServiceCase.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
 using Luthetus.Ide.ClassLib;
@@ -21,26 +19,37 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddLuthetusIdeRazorLibServices(
         this IServiceCollection services,
-        bool isNativeApplication,
-        Func<LuthetusTextEditorOptions, LuthetusTextEditorOptions>? configureTextEditorOptions = null)
+        Func<LuthetusIdeOptions, LuthetusIdeOptions>? configure = null)
     {
-        services.AddLuthetusTextEditor(inTextEditorOptions =>
+        var ideOptions = new LuthetusIdeOptions();
+
+        if (configure is not null)
+            ideOptions = configure.Invoke(ideOptions);
+
+        if (ideOptions.AddLuthetusTextEditor)
         {
-            inTextEditorOptions = inTextEditorOptions with
+            services.AddLuthetusTextEditor(inTextEditorOptions => inTextEditorOptions with
             {
                 CustomThemeRecords = LuthetusTextEditorCustomThemeFacts.AllCustomThemes,
                 InitialThemeKey = LuthetusTextEditorCustomThemeFacts.DarkTheme.ThemeKey,
-            };
+            });
+        }
 
-            return configureTextEditorOptions is null 
-                ? inTextEditorOptions
-                : configureTextEditorOptions.Invoke(inTextEditorOptions);
-        });
+        return services
+            .AddSingleton(ideOptions)
+            .AddSingleton<ILuthetusIdeComponentRenderers>(_ideComponentRenderers)
+            .AddLuthetusIdeFileSystem(ideOptions)
+            .AddLuthetusIdeClassLibServices();
+    }
 
+    private static IServiceCollection AddLuthetusIdeFileSystem(
+        this IServiceCollection services,
+        LuthetusIdeOptions ideOptions)
+    {
         Func<IServiceProvider, IEnvironmentProvider> environmentProviderFactory;
         Func<IServiceProvider, IFileSystemProvider> fileSystemProviderFactory;
 
-        if (isNativeApplication)
+        if (ideOptions.IsNativeApplication)
         {
             environmentProviderFactory = _ => new LocalEnvironmentProvider();
             fileSystemProviderFactory = _ => new LocalFileSystemProvider();
@@ -53,36 +62,26 @@ public static class ServiceCollectionExtensions
                 serviceProvider.GetRequiredService<IEnvironmentProvider>());
         }
 
-        services
+        return services
             .AddSingleton(environmentProviderFactory.Invoke)
             .AddSingleton(fileSystemProviderFactory.Invoke);
-
-        services.AddSingleton(_ =>
-            new LuthetusIdeOptions(isNativeApplication));
-
-        services.AddSingleton<ILuthetusIdeComponentRenderers>(serviceProvider =>
-        {
-            return new LuthetusIdeComponentRenderers(
-                typeof(BooleanPromptOrCancelDisplay),
-                typeof(FileFormDisplay),
-                typeof(DeleteFileFormDisplay),
-                typeof(TreeViewNamespacePathDisplay),
-                typeof(TreeViewAbsoluteFilePathDisplay),
-                typeof(TreeViewGitFileDisplay),
-                typeof(NuGetPackageManager),
-                typeof(GitChangesDisplay),
-                typeof(RemoveCSharpProjectFromSolutionDisplay),
-                typeof(InputFileDisplay),
-                typeof(CompilerServiceBackgroundTaskDisplay),
-                typeof(FileSystemBackgroundTaskDisplay),
-                typeof(TreeViewCSharpProjectDependenciesDisplay),
-                typeof(TreeViewCSharpProjectNugetPackageReferencesDisplay),
-                typeof(TreeViewCSharpProjectToProjectReferencesDisplay),
-                typeof(TreeViewCSharpProjectNugetPackageReferenceDisplay),
-                typeof(TreeViewCSharpProjectToProjectReferenceDisplay),
-                typeof(TreeViewSolutionFolderDisplay));
-        });
-
-        return services.AddLuthetusIdeClassLibServices();
     }
+
+    private static readonly LuthetusIdeComponentRenderers _ideComponentRenderers = new(
+        typeof(BooleanPromptOrCancelDisplay),
+        typeof(FileFormDisplay),
+        typeof(DeleteFileFormDisplay),
+        typeof(TreeViewNamespacePathDisplay),
+        typeof(TreeViewAbsoluteFilePathDisplay),
+        typeof(TreeViewGitFileDisplay),
+        typeof(NuGetPackageManager),
+        typeof(GitChangesDisplay),
+        typeof(RemoveCSharpProjectFromSolutionDisplay),
+        typeof(InputFileDisplay),
+        typeof(TreeViewCSharpProjectDependenciesDisplay),
+        typeof(TreeViewCSharpProjectNugetPackageReferencesDisplay),
+        typeof(TreeViewCSharpProjectToProjectReferencesDisplay),
+        typeof(TreeViewCSharpProjectNugetPackageReferenceDisplay),
+        typeof(TreeViewCSharpProjectToProjectReferenceDisplay),
+        typeof(TreeViewSolutionFolderDisplay));
 }

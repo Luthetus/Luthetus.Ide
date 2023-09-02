@@ -25,7 +25,7 @@ public partial class InputFileTopNavBar : ComponentBase
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
-    private ICommonBackgroundTaskQueue CommonBackgroundTaskQueue { get; set; } = null!;
+    private ILuthetusCommonBackgroundTaskService LuthetusCommonBackgroundTaskService { get; set; } = null!;
 
     [CascadingParameter(Name = "SetInputFileContentTreeViewRootFunc")]
     public Func<IAbsoluteFilePath, Task> SetInputFileContentTreeViewRootFunc { get; set; } = null!;
@@ -63,7 +63,7 @@ public partial class InputFileTopNavBar : ComponentBase
             LuthetusCommonComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,
-            CommonBackgroundTaskQueue));
+            LuthetusCommonBackgroundTaskService));
 
         await ChangeContentRootToOpenedTreeView(InputFileState);
     }
@@ -71,7 +71,7 @@ public partial class InputFileTopNavBar : ComponentBase
     private async Task HandleRefreshButtonOnClick()
     {
         Dispatcher.Dispatch(new InputFileState.RefreshCurrentSelectionAction(
-            CommonBackgroundTaskQueue));
+            LuthetusCommonBackgroundTaskService));
 
         await ChangeContentRootToOpenedTreeView(InputFileState);
     }

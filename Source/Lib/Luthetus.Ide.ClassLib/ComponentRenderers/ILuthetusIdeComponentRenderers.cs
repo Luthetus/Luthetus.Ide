@@ -18,6 +18,4 @@ public interface ILuthetusIdeComponentRenderers
     public Type? GitDisplayRendererType { get; }
     public Type? RemoveCSharpProjectFromSolutionRendererType { get; }
     public Type? InputFileRendererType { get; }
-    public Type? CompilerServiceBackgroundTaskDisplayRendererType { get; }
-    public Type? FileSystemBackgroundTaskDisplayRendererType { get; }
 }
