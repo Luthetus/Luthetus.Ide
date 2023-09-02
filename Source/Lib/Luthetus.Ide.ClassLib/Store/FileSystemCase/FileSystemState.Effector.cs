@@ -15,18 +15,18 @@ public partial class FileSystemState
     {
         private readonly IFileSystemProvider _fileSystemProvider;
         private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
-        private readonly IFileSystemBackgroundTaskQueue _fileSystemBackgroundTaskQueue;
+        private readonly ILuthetusIdeFileSystemBackgroundTaskService _luthetusIdeFileSystemBackgroundTaskService;
 
         private readonly object _syncRoot = new object();
 
         public Effector(
             IFileSystemProvider fileSystemProvider,
             ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
-            IFileSystemBackgroundTaskQueue fileSystemBackgroundTaskQueue)
+            ILuthetusIdeFileSystemBackgroundTaskService luthetusIdeFileSystemBackgroundTaskService)
         {
             _fileSystemProvider = fileSystemProvider;
             _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
-            _fileSystemBackgroundTaskQueue = fileSystemBackgroundTaskQueue;
+            _luthetusIdeFileSystemBackgroundTaskService = luthetusIdeFileSystemBackgroundTaskService;
         }
 
         [EffectMethod]
@@ -106,7 +106,7 @@ public partial class FileSystemState
                     dispatcher,
                     CancellationToken.None);
 
-                _fileSystemBackgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
+                _luthetusIdeFileSystemBackgroundTaskService.QueueBackgroundWorkItem(backgroundTask);
             }
 
             return Task.CompletedTask;

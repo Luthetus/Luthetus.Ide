@@ -22,7 +22,7 @@ public class TerminalSession
 {
     private readonly IDispatcher _dispatcher;
     private readonly IFileSystemProvider _fileSystemProvider;
-    private readonly ITerminalBackgroundTaskQueue _terminalBackgroundTaskQueue;
+    private readonly ILuthetusIdeTerminalBackgroundTaskService _terminalBackgroundTaskQueue;
     private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
     private readonly List<TerminalCommand> _terminalCommandsHistory = new();
     private CancellationTokenSource _commandCancellationTokenSource = new();
@@ -38,7 +38,7 @@ public class TerminalSession
         string? workingDirectoryAbsoluteFilePathString,
         IDispatcher dispatcher,
         IFileSystemProvider fileSystemProvider,
-        ITerminalBackgroundTaskQueue terminalBackgroundTaskQueue,
+        ILuthetusIdeTerminalBackgroundTaskService terminalBackgroundTaskQueue,
         ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers)
     {
         _dispatcher = dispatcher;

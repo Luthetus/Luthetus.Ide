@@ -8,25 +8,22 @@ using Microsoft.Extensions.Logging;
 
 namespace Luthetus.Ide.ClassLib.HostedServiceCase.FileSystem;
 
-public class FileSystemQueuedHostedService : BackgroundService
+public class LuthetusIdeFileSystemBackgroundTaskServiceWorker : BackgroundService
 {
     private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
     private readonly ILogger _logger;
 
-    public FileSystemQueuedHostedService(
-        IFileSystemBackgroundTaskQueue taskQueue,
-        IFileSystemBackgroundTaskMonitor taskMonitor,
+    public LuthetusIdeFileSystemBackgroundTaskServiceWorker(
+        ILuthetusIdeFileSystemBackgroundTaskService backgroundTaskService,
         ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
         ILoggerFactory loggerFactory)
     {
         _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
-        TaskQueue = taskQueue;
-        TaskMonitor = taskMonitor;
-        _logger = loggerFactory.CreateLogger<FileSystemQueuedHostedService>();
+        BackgroundTaskService = backgroundTaskService;
+        _logger = loggerFactory.CreateLogger<LuthetusIdeFileSystemBackgroundTaskServiceWorker>();
     }
 
-    public IBackgroundTaskQueue TaskQueue { get; }
-    public IBackgroundTaskMonitor TaskMonitor { get; }
+    public IBackgroundTaskService BackgroundTaskService { get; }
 
     protected async override Task ExecuteAsync(
         CancellationToken cancellationToken)
@@ -35,14 +32,14 @@ public class FileSystemQueuedHostedService : BackgroundService
 
         while (!cancellationToken.IsCancellationRequested)
         {
-            var backgroundTask = await TaskQueue
+            var backgroundTask = await BackgroundTaskService
                 .DequeueAsync(cancellationToken);
 
             if (backgroundTask is not null)
             {
                 try
                 {
-                    TaskMonitor.SetExecutingBackgroundTask(backgroundTask);
+                    BackgroundTaskService.SetExecutingBackgroundTask(backgroundTask);
 
                     var task = backgroundTask.InvokeWorkItem(cancellationToken);
                 }
@@ -81,7 +78,7 @@ public class FileSystemQueuedHostedService : BackgroundService
                 }
                 finally
                 {
-                    TaskMonitor.SetExecutingBackgroundTask(null);
+                    BackgroundTaskService.SetExecutingBackgroundTask(null);
                 }
             }
         }

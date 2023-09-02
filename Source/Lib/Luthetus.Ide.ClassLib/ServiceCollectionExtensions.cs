@@ -26,6 +26,8 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services)
     {
         services
+            .AddSingleton<ILuthetusIdeFileSystemBackgroundTaskService, LuthetusIdeFileSystemBackgroundTaskService>()
+            .AddSingleton<ILuthetusIdeTerminalBackgroundTaskService, LuthetusIdeTerminalBackgroundTaskService>()
             .AddScoped<XmlCompilerService>()
             .AddScoped<DotNetSolutionCompilerService>()
             .AddScoped<CSharpProjectCompilerService>()
@@ -35,19 +37,9 @@ public static class ServiceCollectionExtensions
             .AddScoped<FSharpCompilerService>()
             .AddScoped<JavaScriptCompilerService>()
             .AddScoped<TypeScriptCompilerService>()
-            .AddScoped<JsonCompilerService>();
-
-        services
-            .AddSingleton<IFileSystemBackgroundTaskQueue, FileSystemBackgroundTaskQueue>()
-            .AddSingleton<IFileSystemBackgroundTaskMonitor, FileSystemBackgroundTaskMonitor>()
-            .AddSingleton<ITerminalBackgroundTaskQueue, TerminalBackgroundTaskQueue>()
-            .AddSingleton<ITerminalBackgroundTaskMonitor, TerminalBackgroundTaskMonitor>();
-
-        services
+            .AddScoped<JsonCompilerService>()
             .AddScoped<IMenuOptionsFactory, MenuOptionsFactory>()
-            .AddScoped<IFileTemplateProvider, FileTemplateProvider>();
-
-        services
+            .AddScoped<IFileTemplateProvider, FileTemplateProvider>()
             .AddScoped<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>();
 
         services

@@ -13,8 +13,6 @@ public class LuthetusIdeComponentRenderers : ILuthetusIdeComponentRenderers
         Type? gitDisplayRendererType,
         Type? removeCSharpProjectFromSolutionRendererType,
         Type? inputFileRendererType,
-        Type? compilerServiceBackgroundTaskDisplayRendererType,
-        Type? fileSystemBackgroundTaskDisplayRendererType,
         Type? treeViewCSharpProjectDependenciesRendererType,
         Type? treeViewCSharpProjectNugetPackageReferencesRendererType,
         Type? treeViewCSharpProjectToProjectReferencesRendererType,
@@ -32,8 +30,6 @@ public class LuthetusIdeComponentRenderers : ILuthetusIdeComponentRenderers
         GitDisplayRendererType = gitDisplayRendererType;
         RemoveCSharpProjectFromSolutionRendererType = removeCSharpProjectFromSolutionRendererType;
         InputFileRendererType = inputFileRendererType;
-        CompilerServiceBackgroundTaskDisplayRendererType = compilerServiceBackgroundTaskDisplayRendererType;
-        FileSystemBackgroundTaskDisplayRendererType = fileSystemBackgroundTaskDisplayRendererType;
         TreeViewCSharpProjectDependenciesRendererType = treeViewCSharpProjectDependenciesRendererType;
         TreeViewCSharpProjectNugetPackageReferencesRendererType = treeViewCSharpProjectNugetPackageReferencesRendererType;
         TreeViewCSharpProjectToProjectReferencesRendererType = treeViewCSharpProjectToProjectReferencesRendererType;
@@ -58,6 +54,4 @@ public class LuthetusIdeComponentRenderers : ILuthetusIdeComponentRenderers
     public Type? GitDisplayRendererType { get; }
     public Type? RemoveCSharpProjectFromSolutionRendererType { get; }
     public Type? InputFileRendererType { get; }
-    public Type? CompilerServiceBackgroundTaskDisplayRendererType { get; }
-    public Type? FileSystemBackgroundTaskDisplayRendererType { get; }
 }

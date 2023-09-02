@@ -144,7 +144,7 @@ public partial record InputFileState
                     null,
                     CancellationToken.None);
 
-                openParentDirectoryAction.CommonBackgroundTaskQueue
+                openParentDirectoryAction.LuthetusCommonBackgroundTaskService
                     .QueueBackgroundWorkItem(backgroundTask);
             }
 
@@ -184,7 +184,7 @@ public partial record InputFileState
                 null,
                 CancellationToken.None);
 
-            refreshCurrentSelectionAction.CommonBackgroundTaskQueue
+            refreshCurrentSelectionAction.LuthetusCommonBackgroundTaskService
                 .QueueBackgroundWorkItem(backgroundTask);
 
             return inInputFileState;

@@ -35,7 +35,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
-    private ICommonBackgroundTaskQueue CommonBackgroundTaskQueue { get; set; } = null!;
+    private ILuthetusCommonBackgroundTaskService LuthetusCommonBackgroundTaskService { get; set; } = null!;
 
     /// <summary>
     /// Receives the <see cref="_selectedAbsoluteFilePath"/> as
@@ -124,7 +124,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
                 }
             },
             () => _searchMatchTuples,
-            CommonBackgroundTaskQueue);
+            LuthetusCommonBackgroundTaskService);
 
         InitializeElementDimensions();
 

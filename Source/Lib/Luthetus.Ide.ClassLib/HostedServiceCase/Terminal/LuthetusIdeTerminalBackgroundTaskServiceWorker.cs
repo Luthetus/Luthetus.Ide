@@ -8,25 +8,22 @@ using Microsoft.Extensions.Logging;
 
 namespace Luthetus.Ide.ClassLib.HostedServiceCase.Terminal;
 
-public class TerminalQueuedHostedService : BackgroundService
+public class LuthetusIdeTerminalBackgroundTaskServiceWorker : BackgroundService
 {
     private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
     private readonly ILogger _logger;
 
-    public TerminalQueuedHostedService(
-        ITerminalBackgroundTaskQueue taskQueue,
-        ITerminalBackgroundTaskMonitor taskMonitor,
+    public LuthetusIdeTerminalBackgroundTaskServiceWorker(
+        ILuthetusIdeTerminalBackgroundTaskService backgroundTaskService,
         ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
         ILoggerFactory loggerFactory)
     {
         _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
-        TaskQueue = taskQueue;
-        TaskMonitor = taskMonitor;
-        _logger = loggerFactory.CreateLogger<TerminalQueuedHostedService>();
+        BackgroundTaskService = backgroundTaskService;
+        _logger = loggerFactory.CreateLogger<LuthetusIdeTerminalBackgroundTaskServiceWorker>();
     }
 
-    public IBackgroundTaskQueue TaskQueue { get; }
-    public IBackgroundTaskMonitor TaskMonitor { get; }
+    public IBackgroundTaskService BackgroundTaskService { get; }
 
     protected async override Task ExecuteAsync(
         CancellationToken cancellationToken)
@@ -35,14 +32,13 @@ public class TerminalQueuedHostedService : BackgroundService
 
         while (!cancellationToken.IsCancellationRequested)
         {
-            var backgroundTask = await TaskQueue
-                .DequeueAsync(cancellationToken);
+            var backgroundTask = await BackgroundTaskService.DequeueAsync(cancellationToken);
 
             if (backgroundTask is not null)
             {
                 try
                 {
-                    TaskMonitor.SetExecutingBackgroundTask(backgroundTask);
+                    BackgroundTaskService.SetExecutingBackgroundTask(backgroundTask);
 
                     var task = backgroundTask.InvokeWorkItem(cancellationToken);
                 }
@@ -81,7 +77,7 @@ public class TerminalQueuedHostedService : BackgroundService
                 }
                 finally
                 {
-                    TaskMonitor.SetExecutingBackgroundTask(null);
+                    BackgroundTaskService.SetExecutingBackgroundTask(null);
                 }
             }
         }

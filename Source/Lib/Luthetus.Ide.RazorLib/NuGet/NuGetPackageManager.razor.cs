@@ -22,7 +22,7 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
     [Inject]
     private INugetPackageManagerProvider NugetPackageManagerProvider { get; set; } = null!;
     [Inject]
-    private ICommonBackgroundTaskQueue CommonBackgroundTaskQueue { get; set; } = null!;
+    private ILuthetusCommonBackgroundTaskService LuthetusCommonBackgroundTaskService { get; set; } = null!;
 
     private bool _performingNugetQuery;
     private Exception? _exceptionFromNugetQuery;
@@ -120,7 +120,7 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
                 Dispatcher,
                 CancellationToken.None);
 
-            CommonBackgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
+            LuthetusCommonBackgroundTaskService.QueueBackgroundWorkItem(backgroundTask);
         }
         catch (Exception e)
         {

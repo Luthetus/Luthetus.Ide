@@ -2,11 +2,13 @@
 using Luthetus.Ide.ClassLib.HostedServiceCase.FileSystem;
 using Luthetus.Ide.ClassLib.HostedServiceCase.Terminal;
 using Luthetus.Ide.RazorLib;
+using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.HostedServiceCase.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.HostedServiceCase.TextEditorCase;
 using Microsoft.Extensions.DependencyInjection;
 using Photino.Blazor;
 using System;
+using System.Reflection.PortableExecutable;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,21 +21,14 @@ class Program
     {
         var appBuilder = PhotinoBlazorAppBuilder.CreateDefault(args);
 
-        appBuilder.Services
-            .AddLogging();
+        appBuilder.Services.AddLogging();
 
-        appBuilder.Services.AddLuthetusIdeRazorLibServices(true);
+        appBuilder.Services.AddLuthetusIdeRazorLibServices(options => options with
+        {
+            IsNativeApplication = true,
+        });
 
-        // The code:
-        //     builder.Services.AddHostedService<QueuedHostedService>();
-        //
-        // is not working for the Photino Blazor app.
-        // So manual starting of the service is done.
-        appBuilder.Services.AddSingleton<CommonQueuedHostedService>();
-        appBuilder.Services.AddSingleton<TextEditorQueuedHostedService>();
-        appBuilder.Services.AddSingleton<CompilerServiceQueuedHostedService>();
-        appBuilder.Services.AddSingleton<FileSystemQueuedHostedService>();
-        appBuilder.Services.AddSingleton<TerminalQueuedHostedService>();
+        appBuilder.Services.AddLuthetusIdePhotino();
 
         appBuilder.RootComponents.Add<App>("app");
 
@@ -41,19 +36,9 @@ class Program
 
         var backgroundTasksCancellationTokenSource = new CancellationTokenSource();
 
-        var commonQueuedHostedService = app.Services.GetRequiredService<CommonQueuedHostedService>();
-        var textEditorQueuedHostedService = app.Services.GetRequiredService<TextEditorQueuedHostedService>();
-        var compilerServiceQueuedHostedService = app.Services.GetRequiredService<CompilerServiceQueuedHostedService>();
-        var fileSystemQueuedHostedService = app.Services.GetRequiredService<FileSystemQueuedHostedService>();
-        var terminalQueuedHostedService = app.Services.GetRequiredService<TerminalQueuedHostedService>();
-
         var cancellationToken = backgroundTasksCancellationTokenSource.Token;
 
-        _ = Task.Run(async () => await commonQueuedHostedService.StartAsync(cancellationToken));
-        _ = Task.Run(async () => await textEditorQueuedHostedService.StartAsync(cancellationToken));
-        _ = Task.Run(async () => await compilerServiceQueuedHostedService.StartAsync(cancellationToken));
-        _ = Task.Run(async () => await fileSystemQueuedHostedService.StartAsync(cancellationToken));
-        _ = Task.Run(async () => await terminalQueuedHostedService.StartAsync(cancellationToken));
+        InvokeWorkers(app.Services, cancellationToken);
 
         // customize window
         app.MainWindow
@@ -73,5 +58,20 @@ class Program
         };
 
         app.Run();
+    }
+
+    private static void InvokeWorkers(IServiceProvider serviceProvider, CancellationToken cancellationToken)
+    {
+        var commonQueuedHostedService = serviceProvider.GetRequiredService<LuthetusCommonBackgroundTaskServiceWorker>();
+        var textEditorQueuedHostedService = serviceProvider.GetRequiredService<LuthetusTextEditorTextEditorBackgroundTaskServiceWorker>();
+        var compilerServiceQueuedHostedService = serviceProvider.GetRequiredService<LuthetusTextEditorCompilerServiceBackgroundTaskServiceWorker>();
+        var fileSystemQueuedHostedService = serviceProvider.GetRequiredService<LuthetusIdeFileSystemBackgroundTaskServiceWorker>();
+        var terminalQueuedHostedService = serviceProvider.GetRequiredService<LuthetusIdeTerminalBackgroundTaskServiceWorker>();
+
+        _ = Task.Run(async () => await commonQueuedHostedService.StartAsync(cancellationToken));
+        _ = Task.Run(async () => await textEditorQueuedHostedService.StartAsync(cancellationToken));
+        _ = Task.Run(async () => await compilerServiceQueuedHostedService.StartAsync(cancellationToken));
+        _ = Task.Run(async () => await fileSystemQueuedHostedService.StartAsync(cancellationToken));
+        _ = Task.Run(async () => await terminalQueuedHostedService.StartAsync(cancellationToken));
     }
 }

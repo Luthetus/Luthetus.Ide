@@ -31,7 +31,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly IClipboardService _clipboardService;
-    private readonly ICommonBackgroundTaskQueue _commonBackgroundTaskQueue;
+    private readonly ILuthetusCommonBackgroundTaskService _luthetusCommonBackgroundTaskService;
 
     public MenuOptionsFactory(
         ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
@@ -39,14 +39,14 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
         IClipboardService clipboardService,
-        ICommonBackgroundTaskQueue commonBackgroundTaskQueue)
+        ILuthetusCommonBackgroundTaskService luthetusCommonBackgroundTaskService)
     {
         _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
         _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
         _fileSystemProvider = fileSystemProvider;
         _environmentProvider = environmentProvider;
         _clipboardService = clipboardService;
-        _commonBackgroundTaskQueue = commonBackgroundTaskQueue;
+        _luthetusCommonBackgroundTaskService = luthetusCommonBackgroundTaskService;
     }
 
     public MenuOptionRecord NewEmptyFile(
@@ -410,7 +410,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             null,
             CancellationToken.None);
 
-        _commonBackgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
+        _luthetusCommonBackgroundTaskService.QueueBackgroundWorkItem(backgroundTask);
     }
 
     private void PerformNewDirectoryAction(
@@ -441,7 +441,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             null,
             CancellationToken.None);
 
-        _commonBackgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
+        _luthetusCommonBackgroundTaskService.QueueBackgroundWorkItem(backgroundTask);
     }
 
     private void PerformDeleteFileAction(
@@ -473,7 +473,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             null,
             CancellationToken.None);
 
-        _commonBackgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
+        _luthetusCommonBackgroundTaskService.QueueBackgroundWorkItem(backgroundTask);
     }
 
     private void PerformCopyFileAction(
@@ -499,7 +499,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             null,
             CancellationToken.None);
 
-        _commonBackgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
+        _luthetusCommonBackgroundTaskService.QueueBackgroundWorkItem(backgroundTask);
     }
 
     private void PerformCutFileAction(
@@ -525,7 +525,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             null,
             CancellationToken.None);
 
-        _commonBackgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
+        _luthetusCommonBackgroundTaskService.QueueBackgroundWorkItem(backgroundTask);
     }
 
     private void PerformPasteFileAction(
@@ -618,7 +618,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             null,
             CancellationToken.None);
 
-        _commonBackgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
+        _luthetusCommonBackgroundTaskService.QueueBackgroundWorkItem(backgroundTask);
     }
 
     private IAbsoluteFilePath? PerformRenameAction(
@@ -734,7 +734,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             dispatcher,
             CancellationToken.None);
 
-        _commonBackgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
+        _luthetusCommonBackgroundTaskService.QueueBackgroundWorkItem(backgroundTask);
     }
 
     public void PerformAddProjectToProjectReferenceAction(
@@ -812,7 +812,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             dispatcher,
             CancellationToken.None);
 
-        _commonBackgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
+        _luthetusCommonBackgroundTaskService.QueueBackgroundWorkItem(backgroundTask);
     }
 
     public void PerformRemoveProjectToProjectReferenceAction(
@@ -864,7 +864,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             dispatcher,
             CancellationToken.None);
 
-        _commonBackgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
+        _luthetusCommonBackgroundTaskService.QueueBackgroundWorkItem(backgroundTask);
     }
 
     public void PerformMoveProjectToSolutionFolderAction(
@@ -926,7 +926,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             dispatcher,
             CancellationToken.None);
 
-        _commonBackgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
+        _luthetusCommonBackgroundTaskService.QueueBackgroundWorkItem(backgroundTask);
     }
 
     public void PerformRemoveNuGetPackageReferenceFromProjectAction(
@@ -979,7 +979,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             dispatcher,
             CancellationToken.None);
 
-        _commonBackgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
+        _luthetusCommonBackgroundTaskService.QueueBackgroundWorkItem(backgroundTask);
     }
 
     /// <summary>
