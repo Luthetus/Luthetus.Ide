@@ -1,8 +1,6 @@
-﻿@using Luthetus.TextEditor.RazorLib
-@using Luthetus.Common.RazorLib.Drag
-@using Luthetus.Common.RazorLib.Dialog
+﻿@using Luthetus.Common.RazorLib
+@using Luthetus.TextEditor.RazorLib
 @using Luthetus.Common.RazorLib.Dimensions
-@using Luthetus.Common.RazorLib.Notification
 @using Luthetus.Common.RazorLib.Resize
 @using Luthetus.Ide.ClassLib.Context
 @using Luthetus.Ide.RazorLib.ContextCase
@@ -18,9 +16,8 @@
                  StyleCssString="@($"{AppOptionsService.FontSizeCssStyleString} {AppOptionsService.FontFamilyCssStyleString}")">
 
     <ShouldRenderBoundary>
-        <DragInitializer/>
-        <DialogInitializer/>
-        <NotificationInitializer/>
+        <LuthetusCommonInitializer/>
+        <LuthetusTextEditorInitializer/>
         <LuthetusIdeInitializer/>
 
         <IdeHeader/>

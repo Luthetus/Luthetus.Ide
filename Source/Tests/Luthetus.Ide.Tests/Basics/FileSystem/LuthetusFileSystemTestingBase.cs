@@ -27,7 +27,9 @@ public class LuthetusFileSystemTestingBase
 
         services.AddScoped<IJSRuntime>(_ => new DoNothingJsRuntime());
 
-        services.AddLuthetusCommonServices(commonOptions =>
+        var hostingInformation = new LuthetusHostingInformation(LuthetusHostingKind.UnitTest);
+
+        services.AddLuthetusCommonServices(hostingInformation, commonOptions =>
         {
             var outLuthetusCommonFactories = commonOptions.LuthetusCommonFactories with
             {
@@ -41,7 +43,7 @@ public class LuthetusFileSystemTestingBase
             };
         });
 
-        services.AddLuthetusTextEditor(inTextEditorOptions => inTextEditorOptions with
+        services.AddLuthetusTextEditor(hostingInformation, inTextEditorOptions => inTextEditorOptions with
         {
             AddLuthetusCommon = false
         });

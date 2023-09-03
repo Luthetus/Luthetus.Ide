@@ -1,5 +1,6 @@
 ﻿using Fluxor;
 using Fluxor.Blazor.Web.Components;
+using Luthetus.Common.RazorLib;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.Dialog;
@@ -33,6 +34,8 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
     private LuthetusIdeOptions LuthetusIdeOptions { get; set; } = null!;
     [Inject]
     private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
+    [Inject]
+    private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
 
     [CascadingParameter]
     public DialogRecord DialogRecord { get; set; } = null!;
@@ -93,7 +96,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
             return;
         }
 
-        if (!LuthetusIdeOptions.IsNativeApplication)
+        if (LuthetusHostingInformation.LuthetusHostingKind != LuthetusHostingKind.Photino)
         {
             await HackForWebsite_StartNewDotNetSolutionCommandOnClick(
                 localSolutionName,
