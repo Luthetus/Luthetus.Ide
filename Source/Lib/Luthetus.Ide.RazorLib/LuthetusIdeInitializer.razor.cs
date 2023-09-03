@@ -46,8 +46,13 @@ public partial class LuthetusIdeInitializer : ComponentBase
     {
         if (LuthetusHostingInformation.LuthetusHostingKind != LuthetusHostingKind.ServerSide)
         {
-            _ = Task.Run(async () => await LuthetusIdeFileSystemBackgroundTaskServiceWorker.StartAsync(CancellationToken.None));
-            _ = Task.Run(async () => await LuthetusIdeTerminalBackgroundTaskServiceWorker.StartAsync(CancellationToken.None));
+            _ = Task.Run(async () => await LuthetusIdeFileSystemBackgroundTaskServiceWorker
+                .StartAsync(CancellationToken.None)
+                .ConfigureAwait(false));
+
+            _ = Task.Run(async () => await LuthetusIdeTerminalBackgroundTaskServiceWorker
+                .StartAsync(CancellationToken.None)
+                .ConfigureAwait(false));
         }
 
         if (LuthetusTextEditorOptions.CustomThemeRecords is not null)

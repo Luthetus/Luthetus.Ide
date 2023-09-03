@@ -15,11 +15,11 @@
                  ClassCssString="@($"luth_ide_main-layout {UnselectableClassCss} {AppOptionsService.ThemeCssClassString}")"
                  StyleCssString="@($"{AppOptionsService.FontSizeCssStyleString} {AppOptionsService.FontFamilyCssStyleString}")">
 
-    <ShouldRenderBoundary>
-        <LuthetusCommonInitializer/>
-        <LuthetusTextEditorInitializer/>
-        <LuthetusIdeInitializer/>
+    <LuthetusCommonInitializer />
+    <LuthetusTextEditorInitializer />
+    <LuthetusIdeInitializer />
 
+    <ShouldRenderBoundary>
         <IdeHeader/>
 
         <StateHasChangedBoundary @ref="_bodyAndFooterStateHasChangedBoundaryComponent">
