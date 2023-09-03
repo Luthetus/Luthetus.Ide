@@ -1,8 +1,10 @@
 ﻿using Fluxor;
+using Luthetus.Common.RazorLib;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Icons.Codicon;
 using Luthetus.Common.RazorLib.Store.ThemeCase;
+using Luthetus.Ide.ClassLib.HostedServiceCase.FileSystem;
 using Luthetus.Ide.ClassLib.HostedServiceCase.Terminal;
 using Luthetus.Ide.ClassLib.Panel;
 using Luthetus.Ide.ClassLib.Store.PanelCase;
@@ -33,9 +35,21 @@ public partial class LuthetusIdeInitializer : ComponentBase
     private ILuthetusIdeTerminalBackgroundTaskService TerminalBackgroundTaskQueue { get; set; } = null!;
     [Inject]
     private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
+    [Inject]
+    private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
+    [Inject]
+    private LuthetusIdeFileSystemBackgroundTaskServiceWorker LuthetusIdeFileSystemBackgroundTaskServiceWorker { get; set; } = null!;
+    [Inject]
+    private LuthetusIdeTerminalBackgroundTaskServiceWorker LuthetusIdeTerminalBackgroundTaskServiceWorker { get; set; } = null!;
 
     protected override void OnInitialized()
     {
+        if (LuthetusHostingInformation.LuthetusHostingKind != LuthetusHostingKind.ServerSide)
+        {
+            _ = Task.Run(async () => await LuthetusIdeFileSystemBackgroundTaskServiceWorker.StartAsync(CancellationToken.None));
+            _ = Task.Run(async () => await LuthetusIdeTerminalBackgroundTaskServiceWorker.StartAsync(CancellationToken.None));
+        }
+
         if (LuthetusTextEditorOptions.CustomThemeRecords is not null)
         {
             foreach (var themeRecord in LuthetusTextEditorOptions.CustomThemeRecords)

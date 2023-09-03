@@ -12,6 +12,9 @@ using Luthetus.Ide.ClassLib;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.FileSystem.Classes.Local;
 using Luthetus.Common.RazorLib.FileSystem.Classes.InMemoryFileSystem;
+using Luthetus.Common.RazorLib;
+using Luthetus.Ide.ClassLib.HostedServiceCase.FileSystem;
+using Luthetus.Ide.ClassLib.HostedServiceCase.Terminal;
 
 namespace Luthetus.Ide.RazorLib;
 
@@ -19,6 +22,7 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddLuthetusIdeRazorLibServices(
         this IServiceCollection services,
+        LuthetusHostingInformation hostingInformation,
         Func<LuthetusIdeOptions, LuthetusIdeOptions>? configure = null)
     {
         var ideOptions = new LuthetusIdeOptions();
@@ -28,28 +32,38 @@ public static class ServiceCollectionExtensions
 
         if (ideOptions.AddLuthetusTextEditor)
         {
-            services.AddLuthetusTextEditor(inTextEditorOptions => inTextEditorOptions with
+            services.AddLuthetusTextEditor(hostingInformation, inTextEditorOptions => inTextEditorOptions with
             {
                 CustomThemeRecords = LuthetusTextEditorCustomThemeFacts.AllCustomThemes,
                 InitialThemeKey = LuthetusTextEditorCustomThemeFacts.DarkTheme.ThemeKey,
             });
         }
 
+        if (hostingInformation.LuthetusHostingKind == LuthetusHostingKind.ServerSide)
+        {
+            services
+                .AddHostedService(sp => sp.GetRequiredService<LuthetusIdeFileSystemBackgroundTaskServiceWorker>())
+                .AddHostedService(sp => sp.GetRequiredService<LuthetusIdeTerminalBackgroundTaskServiceWorker>());
+        }
+
         return services
             .AddSingleton(ideOptions)
+            .AddSingleton<LuthetusIdeFileSystemBackgroundTaskServiceWorker>()
+            .AddSingleton<LuthetusIdeTerminalBackgroundTaskServiceWorker>()
             .AddSingleton<ILuthetusIdeComponentRenderers>(_ideComponentRenderers)
-            .AddLuthetusIdeFileSystem(ideOptions)
+            .AddLuthetusIdeFileSystem(hostingInformation, ideOptions)
             .AddLuthetusIdeClassLibServices();
     }
 
     private static IServiceCollection AddLuthetusIdeFileSystem(
         this IServiceCollection services,
+        LuthetusHostingInformation hostingInformation,
         LuthetusIdeOptions ideOptions)
     {
         Func<IServiceProvider, IEnvironmentProvider> environmentProviderFactory;
         Func<IServiceProvider, IFileSystemProvider> fileSystemProviderFactory;
 
-        if (ideOptions.IsNativeApplication)
+        if (hostingInformation.LuthetusHostingKind == LuthetusHostingKind.Photino)
         {
             environmentProviderFactory = _ => new LocalEnvironmentProvider();
             fileSystemProviderFactory = _ => new LocalFileSystemProvider();
