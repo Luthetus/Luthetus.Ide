@@ -1,6 +1,4 @@
-﻿using Luthetus.Common.RazorLib;
-
-namespace Luthetus.Ide.RazorLib;
+﻿namespace Luthetus.Ide.RazorLib;
 
 public record LuthetusIdeOptions
 {

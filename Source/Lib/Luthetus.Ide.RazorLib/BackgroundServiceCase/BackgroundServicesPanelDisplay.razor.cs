@@ -1,11 +1,9 @@
-using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
 using Luthetus.Ide.ClassLib.HostedServiceCase.FileSystem;
 using Luthetus.Ide.ClassLib.HostedServiceCase.Terminal;
 using Luthetus.TextEditor.RazorLib.HostedServiceCase.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.HostedServiceCase.TextEditorCase;
 using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Luthetus.Ide.RazorLib.BackgroundServiceCase;
 

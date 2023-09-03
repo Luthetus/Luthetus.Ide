@@ -16,8 +16,6 @@ using Luthetus.Ide.RazorLib.NuGet;
 using Luthetus.Ide.RazorLib.SolutionExplorer;
 using Luthetus.Ide.RazorLib.Terminal;
 using Luthetus.TextEditor.RazorLib;
-using Luthetus.TextEditor.RazorLib.HostedServiceCase.CompilerServiceCase;
-using Luthetus.TextEditor.RazorLib.HostedServiceCase.TextEditorCase;
 using Luthetus.TextEditor.RazorLib.Store.Find;
 using Microsoft.AspNetCore.Components;
 
