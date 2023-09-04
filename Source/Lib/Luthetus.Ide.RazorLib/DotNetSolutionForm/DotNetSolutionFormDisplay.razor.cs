@@ -31,8 +31,6 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
-    private LuthetusIdeOptions LuthetusIdeOptions { get; set; } = null!;
-    [Inject]
     private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
     [Inject]
     private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
