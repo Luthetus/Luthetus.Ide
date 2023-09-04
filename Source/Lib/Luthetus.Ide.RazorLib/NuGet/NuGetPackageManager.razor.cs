@@ -45,7 +45,7 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
         ChangeEventArgs changeEventArgs,
         DotNetSolutionState dotNetSolutionState)
     {
-        if (changeEventArgs.Value is null || dotNetSolutionState.DotNetSolution is null)
+        if (changeEventArgs.Value is null || dotNetSolutionState.DotNetSolutionModel is null)
             return;
 
         var projectIdGuid = Guid.Parse((string)changeEventArgs.Value);
@@ -54,7 +54,7 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
 
         if (projectIdGuid != Guid.Empty)
         {
-            selectedProject = dotNetSolutionState.DotNetSolution.DotNetProjects
+            selectedProject = dotNetSolutionState.DotNetSolutionModel.DotNetProjects
                 .SingleOrDefault(x => x.ProjectIdGuid == projectIdGuid);
         }
 
@@ -77,13 +77,13 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
         DotNetSolutionState dotNetSolutionState,
         NuGetPackageManagerState nuGetPackageManagerState)
     {
-        if (dotNetSolutionState.DotNetSolution is null ||
+        if (dotNetSolutionState.DotNetSolutionModel is null ||
             nuGetPackageManagerState.SelectedProjectToModify is null)
         {
             return false;
         }
 
-        return dotNetSolutionState.DotNetSolution.DotNetProjects
+        return dotNetSolutionState.DotNetSolutionModel.DotNetProjects
             .Any(x =>
                 x.ProjectIdGuid == nuGetPackageManagerState.SelectedProjectToModify.ProjectIdGuid);
     }

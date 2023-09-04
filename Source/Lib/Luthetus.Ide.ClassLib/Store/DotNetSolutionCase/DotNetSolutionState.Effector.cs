@@ -68,10 +68,12 @@ public partial record DotNetSolutionState
                 solutionNamespacePath,
                 _environmentProvider);
 
+            dispatcher.Dispatch(new RegisterAction(dotNetSolution));
+            
             dispatcher.Dispatch(new WithAction(
                 inDotNetSolutionState => inDotNetSolutionState with
                 {
-                    DotNetSolution = dotNetSolution
+                    DotNetSolutionModelKey = dotNetSolution.DotNetSolutionModelKey
                 }));
 
             dispatcher.Dispatch(new SetDotNetSolutionTreeViewAction());
@@ -84,7 +86,10 @@ public partial record DotNetSolutionState
         {
             var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
 
-            if (dotNetSolutionState.DotNetSolution is null)
+            var dotNetSolutionModel = dotNetSolutionState.DotNetSolutions.FirstOrDefault(x =>
+                x.DotNetSolutionModelKey == dotNetSolutionState.DotNetSolutionModelKey);
+
+            if (dotNetSolutionModel is null)
                 return;
 
             dispatcher.Dispatch(new WithAction(inDotNetSolutionState =>
@@ -94,7 +99,7 @@ public partial record DotNetSolutionState
                 }));
 
             var rootNode = new TreeViewSolution(
-                dotNetSolutionState.DotNetSolution,
+                dotNetSolutionModel,
                 _luthetusIdeComponentRenderers,
                 _luthetusCommonComponentRenderers,
                 _fileSystemProvider,
@@ -138,7 +143,10 @@ public partial record DotNetSolutionState
         {
             var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
 
-            if (dotNetSolutionState.DotNetSolution is null)
+            var dotNetSolutionModel = dotNetSolutionState.DotNetSolutions.FirstOrDefault(x =>
+                x.DotNetSolutionModelKey == dotNetSolutionState.DotNetSolutionModelKey);
+
+            if (dotNetSolutionModel is null)
                 return Task.CompletedTask;
 
             //var parserTask = new ParserTask(

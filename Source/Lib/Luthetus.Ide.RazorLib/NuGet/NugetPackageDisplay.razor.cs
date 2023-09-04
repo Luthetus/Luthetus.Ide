@@ -65,15 +65,14 @@ public partial class NugetPackageDisplay : FluxorComponent
         var dotNetSolutionState = DotNetSolutionStateWrap.Value;
         var nuGetPackageManagerState = NuGetPackageManagerStateWrap.Value;
 
-        if (dotNetSolutionState.DotNetSolution is null ||
+        if (dotNetSolutionState.DotNetSolutionModel is null ||
             nuGetPackageManagerState.SelectedProjectToModify is null)
         {
             return false;
         }
 
-        return dotNetSolutionState.DotNetSolution.DotNetProjects
-            .Any(x =>
-                x.ProjectIdGuid == nuGetPackageManagerState.SelectedProjectToModify.ProjectIdGuid);
+        return dotNetSolutionState.DotNetSolutionModel.DotNetProjects.Any(x =>
+            x.ProjectIdGuid == nuGetPackageManagerState.SelectedProjectToModify.ProjectIdGuid);
     }
 
     private async Task AddNugetPackageReferenceOnClick()

@@ -13,6 +13,7 @@ using Luthetus.Common.RazorLib.Store.NotificationCase;
 using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
+using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
 using Luthetus.Ide.ClassLib.CommandLine;
 using Luthetus.Ide.ClassLib.FileConstants;
 using Luthetus.Ide.ClassLib.InputFile;
@@ -128,12 +129,12 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         var addNewCSharpProject = new MenuOptionRecord(
             "New C# Project",
             MenuOptionKind.Other,
-            () => OpenNewCSharpProjectDialog(treeViewSolution.Item.NamespacePath));
+            () => OpenNewCSharpProjectDialog(treeViewSolution.Item));
 
         var addExistingCSharpProject = new MenuOptionRecord(
             "Existing C# Project",
             MenuOptionKind.Other,
-            () => AddExistingProjectToSolution(treeViewSolution.Item.NamespacePath));
+            () => AddExistingProjectToSolution(treeViewSolution.Item));
 
         return new[]
         {
@@ -343,8 +344,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         };
     }
 
-    private void OpenNewCSharpProjectDialog(
-        NamespacePath solutionNamespacePath)
+    private void OpenNewCSharpProjectDialog(DotNetSolutionModel dotNetSolutionModel)
     {
         var dialogRecord = new DialogRecord(
             DialogKey.NewDialogKey(),
@@ -352,10 +352,10 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             typeof(CSharpProjectFormDisplay),
             new Dictionary<string, object?>
             {
-            {
-                nameof(CSharpProjectFormDisplay.SolutionNamespacePath),
-                solutionNamespacePath
-            }
+                {
+                    nameof(CSharpProjectFormDisplay.DotNetSolutionModelKey),
+                    dotNetSolutionModel.DotNetSolutionModelKey
+                },
             },
             null)
         {
@@ -366,8 +366,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             dialogRecord));
     }
 
-    private void AddExistingProjectToSolution(
-        NamespacePath solutionNamespacePath)
+    private void AddExistingProjectToSolution(DotNetSolutionModel dotNetSolutionModel)
     {
         Dispatcher.Dispatch(new InputFileState.RequestInputFileStateFormAction(
             "Existing C# Project to add to solution",
@@ -378,7 +377,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
                 var localFormattedAddExistingProjectToSolutionCommand = DotNetCliFacts
                     .FormatAddExistingProjectToSolution(
-                        solutionNamespacePath.AbsoluteFilePath.FormattedInput,
+                        dotNetSolutionModel.NamespacePath.AbsoluteFilePath.FormattedInput,
                         afp.FormattedInput);
 
                 var addExistingProjectToSolutionTerminalCommand = new TerminalCommand(
@@ -389,7 +388,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     () =>
                     {
                         Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionAction(
-                            solutionNamespacePath.AbsoluteFilePath));
+                            dotNetSolutionModel.NamespacePath.AbsoluteFilePath));
 
                         return Task.CompletedTask;
                     });
