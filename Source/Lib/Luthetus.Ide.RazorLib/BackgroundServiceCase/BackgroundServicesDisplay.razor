@@ -4,10 +4,27 @@
     </div>
 
     <div class="luth_ide_section-body">
-        <BackgroundServiceDisplay BackgroundTaskQueue="LuthetusCommonBackgroundTaskService" />
-        <BackgroundServiceDisplay BackgroundTaskQueue="LuthetusIdeFileSystemBackgroundTaskService" />
-        <BackgroundServiceDisplay BackgroundTaskQueue="LuthetusIdeTerminalBackgroundTaskService" />
-        <BackgroundServiceDisplay BackgroundTaskQueue="LuthetusTextEditorCompilerServiceBackgroundTaskService" />
-        <BackgroundServiceDisplay BackgroundTaskQueue="LuthetusTextEditorTextEditorBackgroundTaskService" />
+        <BackgroundServiceDisplay BackgroundTaskQueue="LuthetusCommonBackgroundTaskService"
+                                  DisplayName="Common"/>
+
+        <hr/>
+
+        <BackgroundServiceDisplay BackgroundTaskQueue="LuthetusIdeFileSystemBackgroundTaskService"
+                                  DisplayName="FileSystem" />
+
+        <hr />
+
+        <BackgroundServiceDisplay BackgroundTaskQueue="LuthetusIdeTerminalBackgroundTaskService"
+                                  DisplayName="Terminal" />
+
+        <hr />
+
+        <BackgroundServiceDisplay BackgroundTaskQueue="LuthetusTextEditorCompilerServiceBackgroundTaskService"
+                                  DisplayName="CompilerService" />
+
+        <hr />
+
+        <BackgroundServiceDisplay BackgroundTaskQueue="LuthetusTextEditorTextEditorBackgroundTaskService"
+                                  DisplayName="TextEditor"/>
     </div>
 </div>
