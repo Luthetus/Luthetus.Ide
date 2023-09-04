@@ -23,18 +23,8 @@ public class LuthetusIdeFileSystemBackgroundTaskService : ILuthetusIdeFileSystem
     public async Task<IBackgroundTask?> DequeueAsync(
         CancellationToken cancellationToken)
     {
-        IBackgroundTask? backgroundTask;
-
-        try
-        {
-            await _workItemsQueueSemaphoreSlim.WaitAsync(cancellationToken);
-
-            _backgroundTasks.TryDequeue(out backgroundTask);
-        }
-        finally
-        {
-            _workItemsQueueSemaphoreSlim.Release();
-        }
+        await _workItemsQueueSemaphoreSlim.WaitAsync(cancellationToken);
+        _ = _backgroundTasks.TryDequeue(out var backgroundTask);
 
         return backgroundTask;
     }

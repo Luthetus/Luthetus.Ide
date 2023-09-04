@@ -2,7 +2,7 @@
 
 namespace Luthetus.Ide.RazorLib.Notification;
 
-public partial class NotificationHistoryDisplay : ComponentBase
+public partial class NotificationsDisplay : ComponentBase
 {
 
 }

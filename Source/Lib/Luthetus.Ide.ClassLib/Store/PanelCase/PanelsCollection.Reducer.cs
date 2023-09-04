@@ -57,8 +57,19 @@ public partial record PanelsCollection
             if (targetedPanelRecord is null)
                 return previousPanelsCollection;
 
-            var nextPanelTabs = targetedPanelRecord.PanelTabs.Add(
-                registerPanelTabAction.PanelTab);
+            var nextPanelTabs = targetedPanelRecord.PanelTabs;
+
+            if (registerPanelTabAction.InsertAtIndexZero)
+            {
+                nextPanelTabs = targetedPanelRecord.PanelTabs.Insert(
+                    0,
+                    registerPanelTabAction.PanelTab);
+            }
+            else
+            {
+                nextPanelTabs = targetedPanelRecord.PanelTabs.Add(
+                    registerPanelTabAction.PanelTab);
+            }
 
             var nextPanelRecord = targetedPanelRecord with
             {

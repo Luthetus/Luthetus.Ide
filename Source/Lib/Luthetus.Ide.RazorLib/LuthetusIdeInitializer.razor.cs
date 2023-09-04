@@ -46,8 +46,13 @@ public partial class LuthetusIdeInitializer : ComponentBase
     {
         if (LuthetusHostingInformation.LuthetusHostingKind != LuthetusHostingKind.ServerSide)
         {
-            _ = Task.Run(async () => await LuthetusIdeFileSystemBackgroundTaskServiceWorker.StartAsync(CancellationToken.None));
-            _ = Task.Run(async () => await LuthetusIdeTerminalBackgroundTaskServiceWorker.StartAsync(CancellationToken.None));
+            _ = Task.Run(async () => await LuthetusIdeFileSystemBackgroundTaskServiceWorker
+                .StartAsync(CancellationToken.None)
+                .ConfigureAwait(false));
+
+            _ = Task.Run(async () => await LuthetusIdeTerminalBackgroundTaskServiceWorker
+                .StartAsync(CancellationToken.None)
+                .ConfigureAwait(false));
         }
 
         if (LuthetusTextEditorOptions.CustomThemeRecords is not null)
@@ -107,7 +112,8 @@ public partial class LuthetusIdeInitializer : ComponentBase
 
         Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
             leftPanel.PanelRecordKey,
-            solutionExplorerPanelTab));
+            solutionExplorerPanelTab,
+            false));
 
         var folderExplorerPanelTab = new PanelTab(
             PanelTabKey.NewPanelTabKey(),
@@ -119,7 +125,8 @@ public partial class LuthetusIdeInitializer : ComponentBase
 
         Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
             leftPanel.PanelRecordKey,
-            folderExplorerPanelTab));
+            folderExplorerPanelTab,
+            false));
 
         Dispatcher.Dispatch(new PanelsCollection.SetActivePanelTabAction(
             leftPanel.PanelRecordKey,
@@ -134,25 +141,27 @@ public partial class LuthetusIdeInitializer : ComponentBase
             PanelTabKey.NewPanelTabKey(),
             rightPanel.ElementDimensions,
             new(),
-            typeof(NotificationHistoryDisplay),
+            typeof(NotificationsDisplay),
             typeof(IconFolder),
             "Notifications");
 
         Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
             rightPanel.PanelRecordKey,
-            notificationsPanelTab));
+            notificationsPanelTab,
+            false));
         
         var backgroundServicesPanelTab = new PanelTab(
             PanelTabKey.NewPanelTabKey(),
             rightPanel.ElementDimensions,
             new(),
-            typeof(BackgroundServicesPanelDisplay),
+            typeof(BackgroundServicesDisplay),
             typeof(IconFolder),
             "Background Tasks");
 
         Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
             rightPanel.PanelRecordKey,
-            backgroundServicesPanelTab));
+            backgroundServicesPanelTab,
+            false));
     }
 
     private void InitializeBottomPanelTabs()
@@ -169,7 +178,8 @@ public partial class LuthetusIdeInitializer : ComponentBase
 
         Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
             bottomPanel.PanelRecordKey,
-            terminalPanelTab));
+            terminalPanelTab,
+            false));
 
         var nuGetPanelTab = new PanelTab(
             PanelTabKey.NewPanelTabKey(),
@@ -181,7 +191,8 @@ public partial class LuthetusIdeInitializer : ComponentBase
 
         Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
             bottomPanel.PanelRecordKey,
-            nuGetPanelTab));
+            nuGetPanelTab,
+            false));
 
         Dispatcher.Dispatch(new PanelsCollection.SetActivePanelTabAction(
             bottomPanel.PanelRecordKey,

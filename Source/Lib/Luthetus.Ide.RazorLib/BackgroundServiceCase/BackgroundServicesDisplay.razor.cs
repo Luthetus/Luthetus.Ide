@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.BackgroundServiceCase;
 
-public partial class BackgroundServicesPanelDisplay : ComponentBase
+public partial class BackgroundServicesDisplay : ComponentBase
 {
     [Inject]
     private ILuthetusCommonBackgroundTaskService LuthetusCommonBackgroundTaskService { get; set; } = null!;

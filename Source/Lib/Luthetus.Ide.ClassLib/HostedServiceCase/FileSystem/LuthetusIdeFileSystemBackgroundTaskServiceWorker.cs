@@ -32,8 +32,7 @@ public class LuthetusIdeFileSystemBackgroundTaskServiceWorker : BackgroundServic
 
         while (!cancellationToken.IsCancellationRequested)
         {
-            var backgroundTask = await BackgroundTaskService
-                .DequeueAsync(cancellationToken);
+            var backgroundTask = await BackgroundTaskService.DequeueAsync(cancellationToken);
 
             if (backgroundTask is not null)
             {

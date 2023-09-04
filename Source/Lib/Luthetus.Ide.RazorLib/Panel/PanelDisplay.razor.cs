@@ -142,7 +142,8 @@ public partial class PanelDisplay : FluxorComponent
 
             Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
                 panelRecord.PanelRecordKey,
-                panelDragEventArgs.Value.TagDragTarget));
+                panelDragEventArgs.Value.TagDragTarget,
+                true));
         }
 
         return Task.CompletedTask;
@@ -168,7 +169,8 @@ public partial class PanelDisplay : FluxorComponent
 
             Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
                 panelRecord.PanelRecordKey,
-                panelDragEventArgs.Value.TagDragTarget));
+                panelDragEventArgs.Value.TagDragTarget,
+                false));
         }
 
         return Task.CompletedTask;
