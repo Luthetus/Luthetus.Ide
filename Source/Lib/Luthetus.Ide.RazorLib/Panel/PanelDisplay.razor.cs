@@ -1,6 +1,7 @@
 ﻿using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Dimensions;
+using Luthetus.Common.RazorLib.Store.DragCase;
 using Luthetus.Ide.ClassLib.Panel;
 using Luthetus.Ide.ClassLib.Store.PanelCase;
 using Microsoft.AspNetCore.Components;
@@ -144,6 +145,9 @@ public partial class PanelDisplay : FluxorComponent
                 panelRecord.PanelRecordKey,
                 panelDragEventArgs.Value.TagDragTarget,
                 true));
+
+            Dispatcher.Dispatch(new PanelsCollection.SetPanelDragEventArgsAction(null));
+            Dispatcher.Dispatch(new DragState.SetDragStateAction(false, null));
         }
 
         return Task.CompletedTask;
@@ -171,6 +175,9 @@ public partial class PanelDisplay : FluxorComponent
                 panelRecord.PanelRecordKey,
                 panelDragEventArgs.Value.TagDragTarget,
                 false));
+
+            Dispatcher.Dispatch(new PanelsCollection.SetPanelDragEventArgsAction(null));
+            Dispatcher.Dispatch(new DragState.SetDragStateAction(false, null));
         }
 
         return Task.CompletedTask;

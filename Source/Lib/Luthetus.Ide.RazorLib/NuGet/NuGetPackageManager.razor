@@ -16,7 +16,7 @@
             var nuGetPackageManagerState = NuGetPackageManagerStateWrap.Value;
             var dotNetSolutionStateWrap = DotNetSolutionStateWrap.Value;
 
-            if (dotNetSolutionStateWrap.DotNetSolution is null)
+            if (dotNetSolutionStateWrap.DotNetSolutionModel is null)
             {
                 <div>
                     Solution has not yet been chosen
@@ -39,7 +39,7 @@
                                             Select a project to modify
                                         </option>
 
-                                        foreach (var project in dotNetSolutionStateWrap.DotNetSolution.DotNetProjects)
+                                        foreach (var project in dotNetSolutionStateWrap.DotNetSolutionModel.DotNetProjects)
                                         {
                                             <option value="@project.ProjectIdGuid.ToString()"
                                                     selected="@CheckIfProjectIsSelected(project, nuGetPackageManagerState)">

@@ -4,15 +4,15 @@ using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Common.RazorLib.WatchWindow.TreeViewClasses;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
-using Luthetus.CompilerServices.Lang.DotNetSolution;
 using Luthetus.Common.RazorLib.ComponentRenderers;
+using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementations;
 
-public class TreeViewSolution : TreeViewWithType<DotNetSolution>
+public class TreeViewSolution : TreeViewWithType<DotNetSolutionModel>
 {
     public TreeViewSolution(
-        DotNetSolution dotNetSolution,
+        DotNetSolutionModel dotNetSolutionModel,
         ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
         ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
         IFileSystemProvider fileSystemProvider,
@@ -20,7 +20,7 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolution>
         bool isExpandable,
         bool isExpanded)
             : base(
-                dotNetSolution,
+                dotNetSolutionModel,
                 isExpandable,
                 isExpanded)
     {

@@ -137,9 +137,9 @@ both circles a bit instead of ending at their edges.
 </g>
 
 @if (localCompilerServiceResource is DotNetSolutionResource dotNetSolutionResource &&
-     dotNetSolutionResource.DotNetSolution is not null)
+     dotNetSolutionResource.DotNetSolutionModel is not null)
 {
-    var dotNetProjects = dotNetSolutionResource.DotNetSolution.DotNetProjects;
+    var dotNetProjects = dotNetSolutionResource.DotNetSolutionModel.DotNetProjects;
 
     for (var temporaryIndex = 0; temporaryIndex < dotNetProjects.Count(); temporaryIndex++)
     {

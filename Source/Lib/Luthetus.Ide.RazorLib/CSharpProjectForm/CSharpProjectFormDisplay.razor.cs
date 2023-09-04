@@ -10,8 +10,7 @@ using Luthetus.Common.RazorLib.Namespaces;
 using Luthetus.Common.RazorLib.Notification;
 using Luthetus.Common.RazorLib.Store.DialogCase;
 using Luthetus.Common.RazorLib.Store.NotificationCase;
-using Luthetus.CompilerServices.Lang.DotNetSolution;
-using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
+using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
 using Luthetus.Ide.ClassLib.CommandLine;
 using Luthetus.Ide.ClassLib.FileConstants;
 using Luthetus.Ide.ClassLib.InputFile;
@@ -34,6 +33,8 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     [Inject]
     private IState<TerminalSessionsState> TerminalSessionsStateWrap { get; set; } = null!;
     [Inject]
+    private IState<DotNetSolutionState> DotNetSolutionState { get; set; } = null!;
+    [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
@@ -52,7 +53,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     public DialogRecord DialogRecord { get; set; } = null!;
 
     [Parameter]
-    public NamespacePath? SolutionNamespacePath { get; set; }
+    public DotNetSolutionModelKey DotNetSolutionModelKey { get; set; }
 
     private readonly TerminalCommandKey _newCSharpProjectTerminalCommandKey = TerminalCommandKey.NewTerminalCommandKey();
     private readonly TerminalCommandKey _loadProjectTemplatesTerminalCommandKey = TerminalCommandKey.NewTerminalCommandKey();
@@ -67,6 +68,9 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     private CSharpProjectFormPanelKind _activePanelKind = CSharpProjectFormPanelKind.Graphical;
     private string _searchInput = string.Empty;
     private ProjectTemplate? _selectedProjectTemplate = null;
+
+    private DotNetSolutionModel DotNetSolutionModel => DotNetSolutionState.Value.DotNetSolutions.FirstOrDefault(
+        x => x.DotNetSolutionModelKey == DotNetSolutionModelKey);
 
     private string ProjectTemplateShortNameDisplay => string.IsNullOrWhiteSpace(_projectTemplateShortNameValue)
         ? "{enter Template name}"
@@ -90,7 +94,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
     private FormattedCommand FormattedAddExistingProjectToSolutionCommand => DotNetCliFacts
         .FormatAddExistingProjectToSolution(
-            SolutionNamespacePath?.AbsoluteFilePath.FormattedInput
+            DotNetSolutionModel.NamespacePath?.AbsoluteFilePath.FormattedInput
             ?? string.Empty,
             $"{_cSharpProjectNameValue}/{_cSharpProjectNameValue}.csproj");
 
@@ -400,7 +404,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         var localCSharpProjectName = _cSharpProjectNameValue;
         var localOptionalParameters = _optionalParametersValue;
         var localParentDirectoryName = _parentDirectoryNameValue;
-        var solutionNamespacePath = SolutionNamespacePath;
+        var solutionNamespacePath = DotNetSolutionModel.NamespacePath;
 
         if (string.IsNullOrWhiteSpace(localProjectTemplateShortName) ||
             string.IsNullOrWhiteSpace(localCSharpProjectName) ||
@@ -526,65 +530,37 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         string localCSharpProjectName,
         string cSharpProjectAbsoluteFilePathString)
     {
-        var dotNetSolutionAbsoluteFilePathString = SolutionNamespacePath!.AbsoluteFilePath
+        var dotNetSolutionAbsoluteFilePathString = DotNetSolutionModel.NamespacePath!.AbsoluteFilePath
             .FormattedInput;
 
-        var content = await FileSystemProvider.File.ReadAllTextAsync(
-            dotNetSolutionAbsoluteFilePathString,
-            CancellationToken.None);
+        var cSharpAbsoluteFilePath = new AbsoluteFilePath(cSharpProjectAbsoluteFilePathString, false, EnvironmentProvider);
 
-        var dotNetSolution = DotNetSolutionLexer.Lex(
-            content,
-            SolutionNamespacePath,
-            EnvironmentProvider);
-
-        var projectTypeGuid = WebsiteProjectTemplateRegistry.GetProjectTypeGuid(
-            localProjectTemplateShortName);
-
-        var cSharpProjectAbsoluteFilePath = new AbsoluteFilePath(
-            cSharpProjectAbsoluteFilePathString,
-            false,
-            EnvironmentProvider);
-
-        var relativePathFromSlnToProject = AbsoluteFilePath.ConstructRelativePathFromTwoAbsoluteFilePaths(
-            SolutionNamespacePath.AbsoluteFilePath,
-            cSharpProjectAbsoluteFilePath,
-            EnvironmentProvider);
-
-        var projectIdGuid = Guid.NewGuid();
-
-        var cSharpProject = new CSharpProject(
+        Dispatcher.Dispatch(new DotNetSolutionState.AddExistingProjectToSolutionAction(
+            DotNetSolutionModel.DotNetSolutionModelKey,
+            localProjectTemplateShortName,
             localCSharpProjectName,
-            projectTypeGuid,
-            relativePathFromSlnToProject,
-            projectIdGuid);
-
-        cSharpProject.SetAbsoluteFilePath(cSharpProjectAbsoluteFilePath);
-
-        var modifiedSolutionFileContents = dotNetSolution.AddDotNetProject(
-            content,
-            cSharpProject,
-            EnvironmentProvider);
+            cSharpAbsoluteFilePath,
+            EnvironmentProvider));
 
         await FileSystemProvider.File.WriteAllTextAsync(
-            SolutionNamespacePath.AbsoluteFilePath.FormattedInput,
-            content);
+            DotNetSolutionModel.NamespacePath.AbsoluteFilePath.FormattedInput,
+            DotNetSolutionModel.SolutionFileContents);
 
         var solutionTextEditorModel = TextEditorService.Model.FindOrDefaultByResourceUri(
-            new ResourceUri(SolutionNamespacePath.AbsoluteFilePath.FormattedInput));
+            new ResourceUri(DotNetSolutionModel.NamespacePath.AbsoluteFilePath.FormattedInput));
 
         if (solutionTextEditorModel is not null)
         {
             Dispatcher.Dispatch(new TextEditorModelsCollection.ReloadAction(
                 solutionTextEditorModel.ModelKey,
-                modifiedSolutionFileContents,
+                DotNetSolutionModel.SolutionFileContents,
                 DateTime.UtcNow));
         }
 
         Dispatcher.Dispatch(new DotNetSolutionState.WithAction(
             inDotNetSolutionState => inDotNetSolutionState with
             {
-                DotNetSolution = dotNetSolution
+                DotNetSolutionModelKey = DotNetSolutionModel.DotNetSolutionModelKey
             }));
 
         Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionTreeViewAction());
