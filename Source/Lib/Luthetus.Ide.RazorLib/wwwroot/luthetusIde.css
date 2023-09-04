@@ -31,7 +31,7 @@ input[type="checkbox"]{
 }
 
 .luth_ide_footer {
-    background-color: var(--luth_ide_footer-background-color);
+    background-color: var(--luth_ide_body-background-color);
 }
 
 .luth_ide_section-title {
@@ -310,6 +310,7 @@ button.luth_ide_input-file-address-hierarchy-entry {
 
 .luth_ide_panel-tabs {
     position: relative;
+    background-color: var(--luth_ide_footer-background-color);
 }
 
 .luth_ide_panel-tab {
@@ -326,20 +327,21 @@ button.luth_ide_input-file-address-hierarchy-entry {
     position: absolute;
     left: 0;
     z-index: 100;
+    background-color: var(--luth_primary-hover-background-color);
+    opacity: 0.6;
 }
 
-.luth_ide_panel-tab-dropzone:hover {
-    background-color: orange;
-}
+    .luth_ide_panel-tab-dropzone:hover {
+        background-color: var(--luth_button-hover-background-color);
+        box-shadow: 0 0 2px var(--luth_primary-overlay-box-shadow-color);
+    }
 
 .luth_ide_panel-tab-dropzone-top {
     top: 0;
-    background-color: aqua;
 }
 
 .luth_ide_panel-tab-dropzone-bottom {
     top: 50%;
-    background-color: mediumpurple;
 }
 
 .luth_ide_panel-tab-drag-display {

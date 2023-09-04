@@ -127,7 +127,8 @@ public partial class PanelTabDisplay : ComponentBase, IDisposable
 
             Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
                 PanelRecord.PanelRecordKey,
-                panelDragEventArgs.Value.TagDragTarget));
+                panelDragEventArgs.Value.TagDragTarget,
+                false));
         }
 
         return Task.CompletedTask;
@@ -145,7 +146,8 @@ public partial class PanelTabDisplay : ComponentBase, IDisposable
 
             Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
                 PanelRecord.PanelRecordKey,
-                panelDragEventArgs.Value.TagDragTarget));
+                panelDragEventArgs.Value.TagDragTarget,
+                false));
         }
 
         return Task.CompletedTask;

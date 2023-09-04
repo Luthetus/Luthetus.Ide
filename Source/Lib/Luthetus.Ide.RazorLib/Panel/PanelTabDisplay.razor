@@ -9,6 +9,15 @@
         @PanelTab.DisplayName
     </span>
     
+    @*
+    <!--
+    Commenting out this code. The idea was to track the index of the panel tab
+    which was being hovered over. Then one can insert the panel tab they are
+    dragging either before or after that index.
+
+    (2023-09-03)
+    -->
+
     @if (PanelsCollectionWrap.Value.PanelDragEventArgs is not null)
     {
         <div class="luth_ide_panel-tab-dropzone luth_ide_panel-tab-dropzone-top"
@@ -20,7 +29,7 @@
              @onmouseup:stopPropagation="true"
              @onmouseup="BottomDropzoneOnMouseUp">
         </div>
-    }
+    } *@
 </button>
 
 @if (PanelTab.IsBeingDragged)
