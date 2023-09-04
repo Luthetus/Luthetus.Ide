@@ -7,6 +7,16 @@
         <BackgroundServiceDisplay BackgroundTaskQueue="LuthetusCommonBackgroundTaskService"
                                   DisplayName="Common"/>
 
+        <hr />
+
+        <BackgroundServiceDisplay BackgroundTaskQueue="LuthetusTextEditorTextEditorBackgroundTaskService"
+                                  DisplayName="TextEditor" />
+
+        <hr />
+
+        <BackgroundServiceDisplay BackgroundTaskQueue="LuthetusTextEditorCompilerServiceBackgroundTaskService"
+                                  DisplayName="CompilerService" />
+
         <hr/>
 
         <BackgroundServiceDisplay BackgroundTaskQueue="LuthetusIdeFileSystemBackgroundTaskService"
@@ -16,15 +26,5 @@
 
         <BackgroundServiceDisplay BackgroundTaskQueue="LuthetusIdeTerminalBackgroundTaskService"
                                   DisplayName="Terminal" />
-
-        <hr />
-
-        <BackgroundServiceDisplay BackgroundTaskQueue="LuthetusTextEditorCompilerServiceBackgroundTaskService"
-                                  DisplayName="CompilerService" />
-
-        <hr />
-
-        <BackgroundServiceDisplay BackgroundTaskQueue="LuthetusTextEditorTextEditorBackgroundTaskService"
-                                  DisplayName="TextEditor"/>
     </div>
 </div>

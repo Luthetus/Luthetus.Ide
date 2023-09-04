@@ -12,11 +12,11 @@ public partial class BackgroundServicesDisplay : ComponentBase
     [Inject]
     private ILuthetusCommonBackgroundTaskService LuthetusCommonBackgroundTaskService { get; set; } = null!;
     [Inject]
-    private ILuthetusIdeFileSystemBackgroundTaskService LuthetusIdeFileSystemBackgroundTaskService { get; set; } = null!;
-    [Inject]
-    private ILuthetusIdeTerminalBackgroundTaskService LuthetusIdeTerminalBackgroundTaskService { get; set; } = null!;
+    private ILuthetusTextEditorTextEditorBackgroundTaskService LuthetusTextEditorTextEditorBackgroundTaskService { get; set; } = null!;
     [Inject]
     private ILuthetusTextEditorCompilerServiceBackgroundTaskService LuthetusTextEditorCompilerServiceBackgroundTaskService { get; set; } = null!;
     [Inject]
-    private ILuthetusTextEditorTextEditorBackgroundTaskService LuthetusTextEditorTextEditorBackgroundTaskService { get; set; } = null!;
+    private ILuthetusIdeFileSystemBackgroundTaskService LuthetusIdeFileSystemBackgroundTaskService { get; set; } = null!;
+    [Inject]
+    private ILuthetusIdeTerminalBackgroundTaskService LuthetusIdeTerminalBackgroundTaskService { get; set; } = null!;
 }

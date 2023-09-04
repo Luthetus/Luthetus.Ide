@@ -2,7 +2,7 @@ using Fluxor;
 using Luthetus.Common.RazorLib.Dimensions;
 using Luthetus.Common.RazorLib.Resize;
 using Luthetus.Common.RazorLib.StateHasChangedBoundaryCase;
-using Luthetus.Ide.ClassLib.Store.PanelCase;
+using Luthetus.Common.RazorLib.Store.PanelCase;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.Shared;
