@@ -15,6 +15,7 @@ using Luthetus.Common.RazorLib.FileSystem.Classes.InMemoryFileSystem;
 using Luthetus.Common.RazorLib;
 using Luthetus.Ide.ClassLib.HostedServiceCase.FileSystem;
 using Luthetus.Ide.ClassLib.HostedServiceCase.Terminal;
+using Luthetus.Common.RazorLib.Theme;
 
 namespace Luthetus.Ide.RazorLib;
 
@@ -35,7 +36,7 @@ public static class ServiceCollectionExtensions
             services.AddLuthetusTextEditor(hostingInformation, inTextEditorOptions => inTextEditorOptions with
             {
                 CustomThemeRecords = LuthetusTextEditorCustomThemeFacts.AllCustomThemes,
-                InitialThemeKey = LuthetusTextEditorCustomThemeFacts.DarkTheme.ThemeKey,
+                InitialThemeKey = ThemeFacts.VisualStudioDarkThemeClone.ThemeKey,
             });
         }
 
