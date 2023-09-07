@@ -27,6 +27,8 @@ using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.CSharpProject.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.FSharp;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
+using Luthetus.TextEditor.RazorLib.Decoration;
 
 namespace Luthetus.Ide.ClassLib.Store.EditorCase;
 
@@ -202,6 +204,10 @@ public partial class EditorState
                 textEditorModel.CompilerService.RegisterModel(textEditorModel);
 
                 _textEditorService.Model.RegisterCustom(textEditorModel);
+                
+                _textEditorService.Model.RegisterPresentationModel(
+                    textEditorModel.ModelKey,
+                    CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
 
                 _ = Task.Run(async () =>
                     await textEditorModel.ApplySyntaxHighlightingAsync());
@@ -306,13 +312,19 @@ public partial class EditorState
                     viewModelKey,
                     textEditorModel.ModelKey);
 
+                var presentationKeys = new[]
+                {
+                    CompilerServiceDiagnosticPresentationFacts.PresentationKey
+                }.ToImmutableArray();
+
                 _textEditorService.ViewModel.With(
                     viewModelKey,
                     textEditorViewModel => textEditorViewModel with
                     {
                         OnSaveRequested = HandleOnSaveRequested,
                         GetTabDisplayNameFunc = _ => absoluteFilePath.FilenameWithExtension,
-                        ShouldSetFocusAfterNextRender = shouldSetFocusToEditor
+                        ShouldSetFocusAfterNextRender = shouldSetFocusToEditor,
+                        FirstPresentationLayerKeys = presentationKeys.ToImmutableList()
                     });
             }
             else
