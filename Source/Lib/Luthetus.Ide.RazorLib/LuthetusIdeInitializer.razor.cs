@@ -12,7 +12,6 @@ using Luthetus.Ide.ClassLib.Store.TerminalCase;
 using Luthetus.Ide.RazorLib.BackgroundServiceCase;
 using Luthetus.Ide.RazorLib.CompilerServiceExplorer;
 using Luthetus.Ide.RazorLib.FolderExplorer;
-using Luthetus.Ide.RazorLib.Notification;
 using Luthetus.Ide.RazorLib.NuGet;
 using Luthetus.Ide.RazorLib.SolutionExplorer;
 using Luthetus.Ide.RazorLib.Terminal;

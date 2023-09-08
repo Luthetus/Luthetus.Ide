@@ -11,7 +11,6 @@ using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Model;
 using Luthetus.TextEditor.RazorLib.Lexing;
 using Luthetus.Common.RazorLib.Notification;
-using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 using Luthetus.Common.RazorLib.Store.NotificationCase;
 using Luthetus.TextEditor.RazorLib.ViewModel;
@@ -28,7 +27,6 @@ using Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.CSharpProject.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.FSharp;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
-using Luthetus.TextEditor.RazorLib.Decoration;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Types;
 
 namespace Luthetus.Ide.ClassLib.Store.EditorCase;

@@ -13,11 +13,7 @@ using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.FileSystem.Classes.Local;
 using Luthetus.Common.RazorLib.FileSystem.Classes.InMemoryFileSystem;
 using Luthetus.Common.RazorLib;
-using Luthetus.Ide.ClassLib.HostedServiceCase.FileSystem;
-using Luthetus.Ide.ClassLib.HostedServiceCase.Terminal;
 using Luthetus.Common.RazorLib.Theme;
-using Luthetus.TextEditor.RazorLib.HostedServiceCase.CompilerServiceCase;
-using Luthetus.TextEditor.RazorLib.HostedServiceCase.TextEditorCase;
 
 namespace Luthetus.Ide.RazorLib;
 
