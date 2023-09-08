@@ -1,0 +1,42 @@
+﻿@using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
+@using Luthetus.Ide.ClassLib.Context
+@using Luthetus.Ide.ClassLib.Store.CompilerServiceExplorerCase;
+@using Luthetus.Ide.RazorLib.ContextCase
+@using Luthetus.Common.RazorLib.Dropdown
+@using Luthetus.Common.RazorLib.TreeView
+@using Luthetus.Common.RazorLib.TreeView.Displays
+
+<div class="luth_ide_compiler-explorer-display"
+     style="height: 100%;">
+    @{
+        <div class="luth_ide_section-title">
+            Compiler Explorer
+            
+            <button class="luth_button"
+                    @onclick="ReloadOnClick">
+                Reload
+            </button>
+        </div>
+
+        <div class="luth_ide_section-body">
+            <CascadingValue Name="LuthetusTreeViewIconWidth" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
+                <CascadingValue Name="LuthetusTreeViewIconHeight" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
+                    <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
+                        <TreeViewStateDisplay TreeViewStateKey="CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey"
+                                                CssStyleString="height: 100%;"
+                                                OnContextMenuFunc="OnTreeViewContextMenuFunc"
+                                                TreeViewKeyboardEventHandler="_compilerServiceExplorerTreeViewKeymap"
+                                                TreeViewMouseEventHandler="_compilerServiceExplorerTreeViewMouseEventHandler"/>
+                    </CascadingValue>
+                </CascadingValue>
+            </CascadingValue>
+
+            <DropdownDisplay DropdownKey="CompilerServiceExplorerContextMenu.ContextMenuEventDropdownKey"
+                                DropdownPositionKind="DropdownPositionKind.Unset"
+                                CssStyleString="@CompilerServiceExplorerContextMenu.GetContextMenuCssStyleString(_mostRecentTreeViewCommandParameter)">
+
+                <CompilerServiceExplorerContextMenu TreeViewCommandParameter="_mostRecentTreeViewCommandParameter"/>
+            </DropdownDisplay>
+        </div>
+    }
+</div>

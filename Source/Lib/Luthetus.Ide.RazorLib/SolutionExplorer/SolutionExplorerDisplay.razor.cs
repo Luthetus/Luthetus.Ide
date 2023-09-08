@@ -30,7 +30,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
 
     private ITreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
-    private SolutionExplorerTreeViewKeymap _solutionExplorerTreeViewKeymap = null!;
+    private SolutionExplorerTreeViewKeyboardEventHandler _solutionExplorerTreeViewKeymap = null!;
     private SolutionExplorerTreeViewMouseEventHandler _solutionExplorerTreeViewMouseEventHandler = null!;
     private bool _disposed;
 
@@ -42,7 +42,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     {
         DotNetSolutionStateWrap.StateChanged += DotNetSolutionStateWrapOnStateChanged;
 
-        _solutionExplorerTreeViewKeymap = new SolutionExplorerTreeViewKeymap(
+        _solutionExplorerTreeViewKeymap = new SolutionExplorerTreeViewKeyboardEventHandler(
             MenuOptionsFactory,
             LuthetusCommonComponentRenderers,
             Dispatcher,
