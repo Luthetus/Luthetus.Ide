@@ -138,32 +138,19 @@ public partial class LuthetusIdeInitializer : ComponentBase
     {
         var rightPanel = PanelFacts.GetRightPanelRecord(PanelsCollectionWrap.Value);
 
-        var notificationsPanelTab = new PanelTab(
-            PanelTabKey.NewPanelTabKey(),
-            rightPanel.ElementDimensions,
-            new(),
-            typeof(NotificationsDisplay),
-            typeof(IconFolder),
-            "Notifications");
+        //var notificationsPanelTab = new PanelTab(
+        //    PanelTabKey.NewPanelTabKey(),
+        //    rightPanel.ElementDimensions,
+        //    new(),
+        //    typeof(NotificationsDisplay),
+        //    typeof(IconFolder),
+        //    "Notifications");
 
-        Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
-            rightPanel.PanelRecordKey,
-            notificationsPanelTab,
-            false));
-        
-        var backgroundServicesPanelTab = new PanelTab(
-            PanelTabKey.NewPanelTabKey(),
-            rightPanel.ElementDimensions,
-            new(),
-            typeof(BackgroundServicesDisplay),
-            typeof(IconFolder),
-            "Background Tasks");
+        //Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
+        //    rightPanel.PanelRecordKey,
+        //    notificationsPanelTab,
+        //    false));
 
-        Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
-            rightPanel.PanelRecordKey,
-            backgroundServicesPanelTab,
-            false));
-        
         var compilerServiceExplorerPanelTab = new PanelTab(
             PanelTabKey.NewPanelTabKey(),
             rightPanel.ElementDimensions,
@@ -175,6 +162,19 @@ public partial class LuthetusIdeInitializer : ComponentBase
         Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
             rightPanel.PanelRecordKey,
             compilerServiceExplorerPanelTab,
+            false));
+
+        var backgroundServicesPanelTab = new PanelTab(
+            PanelTabKey.NewPanelTabKey(),
+            rightPanel.ElementDimensions,
+            new(),
+            typeof(BackgroundServicesDisplay),
+            typeof(IconFolder),
+            "Background Tasks");
+
+        Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
+            rightPanel.PanelRecordKey,
+            backgroundServicesPanelTab,
             false));
     }
 
