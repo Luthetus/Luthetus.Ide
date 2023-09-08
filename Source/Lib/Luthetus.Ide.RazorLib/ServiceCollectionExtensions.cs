@@ -16,6 +16,8 @@ using Luthetus.Common.RazorLib;
 using Luthetus.Ide.ClassLib.HostedServiceCase.FileSystem;
 using Luthetus.Ide.ClassLib.HostedServiceCase.Terminal;
 using Luthetus.Common.RazorLib.Theme;
+using Luthetus.TextEditor.RazorLib.HostedServiceCase.CompilerServiceCase;
+using Luthetus.TextEditor.RazorLib.HostedServiceCase.TextEditorCase;
 
 namespace Luthetus.Ide.RazorLib;
 
@@ -40,20 +42,11 @@ public static class ServiceCollectionExtensions
             });
         }
 
-        if (hostingInformation.LuthetusHostingKind == LuthetusHostingKind.ServerSide)
-        {
-            services
-                .AddHostedService(sp => sp.GetRequiredService<LuthetusIdeFileSystemBackgroundTaskServiceWorker>())
-                .AddHostedService(sp => sp.GetRequiredService<LuthetusIdeTerminalBackgroundTaskServiceWorker>());
-        }
-
         return services
             .AddSingleton(ideOptions)
-            .AddSingleton<LuthetusIdeFileSystemBackgroundTaskServiceWorker>()
-            .AddSingleton<LuthetusIdeTerminalBackgroundTaskServiceWorker>()
             .AddSingleton<ILuthetusIdeComponentRenderers>(_ideComponentRenderers)
             .AddLuthetusIdeFileSystem(hostingInformation, ideOptions)
-            .AddLuthetusIdeClassLibServices();
+            .AddLuthetusIdeClassLibServices(hostingInformation);
     }
 
     private static IServiceCollection AddLuthetusIdeFileSystem(

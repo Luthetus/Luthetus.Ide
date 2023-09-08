@@ -23,11 +23,26 @@ namespace Luthetus.Ide.ClassLib;
 public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddLuthetusIdeClassLibServices(
-        this IServiceCollection services)
+        this IServiceCollection services,
+        LuthetusHostingInformation hostingInformation)
     {
+        if (hostingInformation.LuthetusHostingKind == LuthetusHostingKind.ServerSide)
+        {
+            services
+                .AddHostedService(sp => sp.GetRequiredService<LuthetusIdeFileSystemBackgroundTaskServiceWorker>())
+                .AddHostedService(sp => sp.GetRequiredService<LuthetusIdeTerminalBackgroundTaskServiceWorker>());
+        }
+
+        if (hostingInformation.LuthetusHostingKind != LuthetusHostingKind.UnitTesting)
+        {
+            services
+                .AddSingleton<ILuthetusIdeFileSystemBackgroundTaskService, LuthetusIdeFileSystemBackgroundTaskService>()
+                .AddSingleton<LuthetusIdeFileSystemBackgroundTaskServiceWorker>()
+                .AddSingleton<ILuthetusIdeTerminalBackgroundTaskService, LuthetusIdeTerminalBackgroundTaskService>()
+                .AddSingleton<LuthetusIdeTerminalBackgroundTaskServiceWorker>();
+        }
+
         services
-            .AddSingleton<ILuthetusIdeFileSystemBackgroundTaskService, LuthetusIdeFileSystemBackgroundTaskService>()
-            .AddSingleton<ILuthetusIdeTerminalBackgroundTaskService, LuthetusIdeTerminalBackgroundTaskService>()
             .AddScoped<XmlCompilerService>()
             .AddScoped<DotNetSolutionCompilerService>()
             .AddScoped<CSharpProjectCompilerService>()
