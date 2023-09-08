@@ -6,16 +6,15 @@ using Luthetus.Common.RazorLib.WatchWindow.TreeViewClasses;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
-using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
-using Luthetus.CompilerServices.Lang.FSharp;
+using Luthetus.CompilerServices.Lang.CSharp.BinderCase;
 using Luthetus.Common.RazorLib.WatchWindow;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementations.CompilerServiceExplorerCase;
 
-public class TreeViewCompilerServicesExplorerRoot : TreeViewWithType<CompilerServicesExplorerRoot>
+public class TreeViewCSharpBinder : TreeViewWithType<CSharpBinder>
 {
-    public TreeViewCompilerServicesExplorerRoot(
-        CompilerServicesExplorerRoot compilerServicesExplorerRoot,
+    public TreeViewCSharpBinder(
+        CSharpBinder cSharpBinder,
         ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
         ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
         IFileSystemProvider fileSystemProvider,
@@ -23,7 +22,7 @@ public class TreeViewCompilerServicesExplorerRoot : TreeViewWithType<CompilerSer
         bool isExpandable,
         bool isExpanded)
             : base(
-                compilerServicesExplorerRoot,
+                cSharpBinder,
                 isExpandable,
                 isExpanded)
     {
@@ -40,7 +39,7 @@ public class TreeViewCompilerServicesExplorerRoot : TreeViewWithType<CompilerSer
 
     public override bool Equals(object? obj)
     {
-        if (obj is not TreeViewCompilerServicesExplorerRoot treeViewCompilerServicesExplorerRoot)
+        if (obj is not TreeViewCSharpBinder treeViewCSharpBinder)
             return false;
 
         return true;
@@ -48,17 +47,17 @@ public class TreeViewCompilerServicesExplorerRoot : TreeViewWithType<CompilerSer
 
     public override int GetHashCode()
     {
-        return nameof(Item.CSharpCompilerService).GetHashCode();
+        return nameof(TreeViewCSharpBinder).GetHashCode();
     }
 
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            LuthetusIdeComponentRenderers.TreeViewCompilerServicesExplorerRootRendererType,
+            LuthetusIdeComponentRenderers.TreeViewCSharpBinderRendererType,
             new Dictionary<string, object?>
             {
                 {
-                    nameof(ITreeViewCompilerServicesExplorerRootRendererType.TreeViewCompilerServicesExplorerRoot),
+                    nameof(ITreeViewCSharpBinderRendererType.TreeViewCSharpBinder),
                     this
                 },
             });
@@ -70,21 +69,10 @@ public class TreeViewCompilerServicesExplorerRoot : TreeViewWithType<CompilerSer
         {
             var newChildren = new List<TreeViewNoType>();
 
-            //var treeViewCSharpBinder = new TreeViewCSharpBinder(
-            //    Item.CSharpCompilerService.Binder,
-            //    LuthetusIdeComponentRenderers,
-            //    LuthetusCommonComponentRenderers,
-            //    FileSystemProvider,
-            //    EnvironmentProvider,
-            //    true,
-            //    false);
-
-            //newChildren.Add(treeViewCSharpBinder);
-
             var watchWindowObjectWrap = new WatchWindowObjectWrap(
-                Item.CSharpCompilerService.Binder,
-                Item.CSharpCompilerService.Binder.GetType(),
-                "Binder",
+                Item,
+                Item.GetType(),
+                "DisplayNameHere",
                 true);
 
             var treeViewReflection = new TreeViewReflection(
@@ -94,42 +82,6 @@ public class TreeViewCompilerServicesExplorerRoot : TreeViewWithType<CompilerSer
                 LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers!);
 
             newChildren.Add(treeViewReflection);
-
-            var folder = new Folder("C# Files", () =>
-            {
-                var folderChildren = new List<TreeViewNoType>();
-
-                var cSharpResources = Item.CSharpCompilerService.CompilerServiceResources
-                    .Select(x => (CSharpResource)x)
-                    .OrderBy(x => x.ResourceUri.Value);
-
-                foreach (var cSharpResource in cSharpResources)
-                {
-                    var treeViewCSharpResource = new TreeViewCSharpResource(
-                        cSharpResource,
-                        LuthetusIdeComponentRenderers,
-                        LuthetusCommonComponentRenderers,
-                        FileSystemProvider,
-                        EnvironmentProvider,
-                        true,
-                        false);
-
-                    folderChildren.Add(treeViewCSharpResource);
-                }
-
-                return Task.FromResult(folderChildren);
-            });
-
-            var treeViewFolder = new TreeViewFolder(
-                folder,
-                LuthetusIdeComponentRenderers,
-                LuthetusCommonComponentRenderers,
-                FileSystemProvider,
-                EnvironmentProvider,
-                true,
-                false);
-
-            newChildren.Add(treeViewFolder);
 
             var oldChildrenMap = Children
                 .ToDictionary(child => child);

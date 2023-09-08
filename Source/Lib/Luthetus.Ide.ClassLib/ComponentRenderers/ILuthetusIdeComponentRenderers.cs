@@ -20,4 +20,6 @@ public interface ILuthetusIdeComponentRenderers
     public Type? InputFileRendererType { get; }
     public Type? TreeViewCompilerServicesExplorerRootRendererType { get; }
     public Type? TreeViewCSharpResourceRendererType { get; }
+    public Type? TreeViewCSharpBinderRendererType { get; }
+    public Type? TreeViewFolderRendererType { get; }
 }

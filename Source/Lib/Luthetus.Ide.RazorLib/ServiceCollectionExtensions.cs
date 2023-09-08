@@ -101,5 +101,7 @@ public static class ServiceCollectionExtensions
         typeof(TreeViewCSharpProjectToProjectReferenceDisplay),
         typeof(TreeViewSolutionFolderDisplay),
         typeof(TreeViewCompilerServicesExplorerRootDisplay),
-        typeof(TreeViewCSharpResourceDisplay));
+        typeof(TreeViewCSharpResourceDisplay),
+        typeof(TreeViewCSharpBinderDisplay),
+        typeof(TreeViewFolderDisplay));
 }
