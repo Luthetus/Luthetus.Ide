@@ -16,16 +16,16 @@ using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 using Luthetus.Ide.ClassLib.Store.EditorCase;
 using Luthetus.Ide.ClassLib.TreeViewImplementations;
 
-namespace Luthetus.Ide.RazorLib.SolutionExplorer;
+namespace Luthetus.Ide.RazorLib.CompilerServiceExplorer;
 
-public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
+public class CompilerServiceExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
     private readonly IMenuOptionsFactory _menuOptionsFactory;
     private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
     private readonly IDispatcher _dispatcher;
     private readonly ITreeViewService _treeViewService;
 
-    public SolutionExplorerTreeViewKeymap(
+    public CompilerServiceExplorerTreeViewKeyboardEventHandler(
         IMenuOptionsFactory menuOptionsFactory,
         ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
         IDispatcher dispatcher,
@@ -80,14 +80,7 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
 
         switch (treeViewCommandParameter.KeyboardEventArgs.Key)
         {
-            case "c":
-                InvokeCopyFile(treeViewCommandParameter);
-                return;
-            case "x":
-                InvokeCutFile(treeViewCommandParameter);
-                return;
-            case "v":
-                InvokePasteClipboard(treeViewCommandParameter);
+            default:
                 return;
         }
     }
@@ -126,118 +119,6 @@ public class SolutionExplorerTreeViewKeymap : TreeViewKeyboardEventHandler
         }
 
         return Task.CompletedTask;
-    }
-
-    private Task NotifyCutCompleted(
-        NamespacePath namespacePath,
-        TreeViewNamespacePath? parentTreeViewModel)
-    {
-        SolutionExplorerContextMenu.ParentOfCutFile = parentTreeViewModel;
-
-        if (_luthetusCommonComponentRenderers.InformativeNotificationRendererType != null)
-        {
-            var notificationInformative = new NotificationRecord(
-                NotificationKey.NewNotificationKey(),
-                "Cut Action",
-                _luthetusCommonComponentRenderers.InformativeNotificationRendererType,
-                new Dictionary<string, object?>
-                {
-                    {
-                        nameof(IInformativeNotificationRendererType.Message),
-                        $"Cut: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
-                    },
-                },
-                TimeSpan.FromSeconds(3),
-                true,
-                null);
-
-            _dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
-                notificationInformative));
-        }
-
-        return Task.CompletedTask;
-    }
-
-    private void InvokeCopyFile(ITreeViewCommandParameter treeViewCommandParameter)
-    {
-        var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
-
-        if (activeNode is not TreeViewNamespacePath treeViewNamespacePath)
-            return;
-
-        var copyFileMenuOption = _menuOptionsFactory.CopyFile(
-            treeViewNamespacePath.Item.AbsoluteFilePath,
-            () => NotifyCopyCompleted(treeViewNamespacePath.Item));
-
-        copyFileMenuOption.OnClick?.Invoke();
-    }
-
-    private void InvokePasteClipboard(ITreeViewCommandParameter treeViewCommandParameter)
-    {
-        var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
-
-        if (activeNode is not TreeViewNamespacePath treeViewNamespacePath)
-            return;
-
-        MenuOptionRecord pasteMenuOptionRecord;
-
-        if (treeViewNamespacePath.Item.AbsoluteFilePath.IsDirectory)
-        {
-            pasteMenuOptionRecord = _menuOptionsFactory.PasteClipboard(
-                treeViewNamespacePath.Item.AbsoluteFilePath,
-                async () =>
-                {
-                    var localParentOfCutFile =
-                        SolutionExplorerContextMenu.ParentOfCutFile;
-
-                    SolutionExplorerContextMenu.ParentOfCutFile = null;
-
-                    if (localParentOfCutFile is not null)
-                        await ReloadTreeViewModel(localParentOfCutFile);
-
-                    await ReloadTreeViewModel(treeViewNamespacePath);
-                });
-        }
-        else
-        {
-            var parentDirectory = (IAbsoluteFilePath)treeViewNamespacePath
-                .Item.AbsoluteFilePath.AncestorDirectories.Last();
-
-            pasteMenuOptionRecord = _menuOptionsFactory.PasteClipboard(
-                parentDirectory,
-                async () =>
-                {
-                    var localParentOfCutFile =
-                        SolutionExplorerContextMenu.ParentOfCutFile;
-
-                    SolutionExplorerContextMenu.ParentOfCutFile = null;
-
-                    if (localParentOfCutFile is not null)
-                        await ReloadTreeViewModel(localParentOfCutFile);
-
-                    await ReloadTreeViewModel(treeViewNamespacePath);
-                });
-        }
-
-        pasteMenuOptionRecord.OnClick?.Invoke();
-    }
-
-    private void InvokeCutFile(ITreeViewCommandParameter treeViewCommandParameter)
-    {
-        var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
-
-        if (activeNode is not TreeViewNamespacePath treeViewNamespacePath)
-            return;
-
-        var parent = treeViewNamespacePath.Parent as TreeViewNamespacePath;
-
-        MenuOptionRecord cutFileOptionRecord = _menuOptionsFactory.CutFile(
-            treeViewNamespacePath.Item.AbsoluteFilePath,
-            () => NotifyCutCompleted(
-                treeViewNamespacePath.Item,
-                parent));
-
-        cutFileOptionRecord.OnClick?.Invoke();
     }
 
     private void InvokeOpenInEditor(

@@ -18,7 +18,9 @@ public class LuthetusIdeComponentRenderers : ILuthetusIdeComponentRenderers
         Type? treeViewCSharpProjectToProjectReferencesRendererType,
         Type? treeViewLightWeightNugetPackageRecordRendererType,
         Type? treeViewCSharpProjectToProjectReferenceRendererType,
-        Type? treeViewSolutionFolderRendererType)
+        Type? treeViewSolutionFolderRendererType,
+        Type? treeViewCompilerServicesExplorerRootRendererType,
+        Type? treeViewCSharpResourceRendererType)
     {
         BooleanPromptOrCancelRendererType = booleanPromptOrCancelRendererType;
         FileFormRendererType = fileFormRendererType;
@@ -30,6 +32,8 @@ public class LuthetusIdeComponentRenderers : ILuthetusIdeComponentRenderers
         GitDisplayRendererType = gitDisplayRendererType;
         RemoveCSharpProjectFromSolutionRendererType = removeCSharpProjectFromSolutionRendererType;
         InputFileRendererType = inputFileRendererType;
+        TreeViewCompilerServicesExplorerRootRendererType = treeViewCompilerServicesExplorerRootRendererType;
+        TreeViewCSharpResourceRendererType = treeViewCSharpResourceRendererType;
         TreeViewCSharpProjectDependenciesRendererType = treeViewCSharpProjectDependenciesRendererType;
         TreeViewCSharpProjectNugetPackageReferencesRendererType = treeViewCSharpProjectNugetPackageReferencesRendererType;
         TreeViewCSharpProjectToProjectReferencesRendererType = treeViewCSharpProjectToProjectReferencesRendererType;
@@ -54,4 +58,6 @@ public class LuthetusIdeComponentRenderers : ILuthetusIdeComponentRenderers
     public Type? GitDisplayRendererType { get; }
     public Type? RemoveCSharpProjectFromSolutionRendererType { get; }
     public Type? InputFileRendererType { get; }
+    public Type? TreeViewCompilerServicesExplorerRootRendererType { get; }
+    public Type? TreeViewCSharpResourceRendererType { get; }
 }

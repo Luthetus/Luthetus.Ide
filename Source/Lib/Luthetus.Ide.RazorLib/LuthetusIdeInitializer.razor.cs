@@ -10,6 +10,7 @@ using Luthetus.Ide.ClassLib.HostedServiceCase.FileSystem;
 using Luthetus.Ide.ClassLib.HostedServiceCase.Terminal;
 using Luthetus.Ide.ClassLib.Store.TerminalCase;
 using Luthetus.Ide.RazorLib.BackgroundServiceCase;
+using Luthetus.Ide.RazorLib.CompilerServiceExplorer;
 using Luthetus.Ide.RazorLib.FolderExplorer;
 using Luthetus.Ide.RazorLib.Notification;
 using Luthetus.Ide.RazorLib.NuGet;
@@ -161,6 +162,19 @@ public partial class LuthetusIdeInitializer : ComponentBase
         Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
             rightPanel.PanelRecordKey,
             backgroundServicesPanelTab,
+            false));
+        
+        var compilerServiceExplorerPanelTab = new PanelTab(
+            PanelTabKey.NewPanelTabKey(),
+            rightPanel.ElementDimensions,
+            new(),
+            typeof(CompilerServiceExplorerDisplay),
+            typeof(IconFolder),
+            "Compiler Explorer");
+
+        Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
+            rightPanel.PanelRecordKey,
+            compilerServiceExplorerPanelTab,
             false));
     }
 
