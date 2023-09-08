@@ -27,7 +27,7 @@ public class LuthetusFileSystemTestingBase
 
         services.AddScoped<IJSRuntime>(_ => new DoNothingJsRuntime());
 
-        var hostingInformation = new LuthetusHostingInformation(LuthetusHostingKind.UnitTest);
+        var hostingInformation = new LuthetusHostingInformation(LuthetusHostingKind.UnitTesting);
 
         services.AddLuthetusCommonServices(hostingInformation, commonOptions =>
         {
