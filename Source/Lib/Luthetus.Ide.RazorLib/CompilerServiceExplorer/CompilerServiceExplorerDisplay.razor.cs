@@ -44,6 +44,8 @@ public partial class CompilerServiceExplorerDisplay : ComponentBase, IDisposable
         AppOptionsStateWrap.Value.Options.IconSizeInPixels.GetValueOrDefault() *
         (2.0 / 3.0));
 
+    private static bool _hasInitialized;
+
     protected override void OnInitialized()
     {
         CompilerServiceExplorerStateWrap.StateChanged += RerenderAfterEventWithArgs;
@@ -66,6 +68,20 @@ public partial class CompilerServiceExplorerDisplay : ComponentBase, IDisposable
                 TreeViewService);
 
         base.OnInitialized();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (!_hasInitialized)
+            {
+                _hasInitialized = true;
+                ReloadOnClick();
+            }
+        }
+
+        base.OnAfterRender(firstRender);
     }
 
     private async void RerenderAfterEventWithArgs(object? sender, EventArgs e)

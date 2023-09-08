@@ -18,11 +18,7 @@ public class LuthetusIdeComponentRenderers : ILuthetusIdeComponentRenderers
         Type? treeViewCSharpProjectToProjectReferencesRendererType,
         Type? treeViewLightWeightNugetPackageRecordRendererType,
         Type? treeViewCSharpProjectToProjectReferenceRendererType,
-        Type? treeViewSolutionFolderRendererType,
-        Type? treeViewCompilerServicesExplorerRootRendererType,
-        Type? treeViewCSharpResourceRendererType,
-        Type? treeViewCSharpBinderRendererType,
-        Type? treeViewFolderRendererType)
+        Type? treeViewSolutionFolderRendererType)
     {
         BooleanPromptOrCancelRendererType = booleanPromptOrCancelRendererType;
         FileFormRendererType = fileFormRendererType;
@@ -34,10 +30,6 @@ public class LuthetusIdeComponentRenderers : ILuthetusIdeComponentRenderers
         GitDisplayRendererType = gitDisplayRendererType;
         RemoveCSharpProjectFromSolutionRendererType = removeCSharpProjectFromSolutionRendererType;
         InputFileRendererType = inputFileRendererType;
-        TreeViewCompilerServicesExplorerRootRendererType = treeViewCompilerServicesExplorerRootRendererType;
-        TreeViewCSharpResourceRendererType = treeViewCSharpResourceRendererType;
-        TreeViewCSharpBinderRendererType = treeViewCSharpBinderRendererType;
-        TreeViewFolderRendererType = treeViewFolderRendererType;
         TreeViewCSharpProjectDependenciesRendererType = treeViewCSharpProjectDependenciesRendererType;
         TreeViewCSharpProjectNugetPackageReferencesRendererType = treeViewCSharpProjectNugetPackageReferencesRendererType;
         TreeViewCSharpProjectToProjectReferencesRendererType = treeViewCSharpProjectToProjectReferencesRendererType;
@@ -62,8 +54,4 @@ public class LuthetusIdeComponentRenderers : ILuthetusIdeComponentRenderers
     public Type? GitDisplayRendererType { get; }
     public Type? RemoveCSharpProjectFromSolutionRendererType { get; }
     public Type? InputFileRendererType { get; }
-    public Type? TreeViewCompilerServicesExplorerRootRendererType { get; }
-    public Type? TreeViewCSharpResourceRendererType { get; }
-    public Type? TreeViewCSharpBinderRendererType { get; }
-    public Type? TreeViewFolderRendererType { get; }
 }

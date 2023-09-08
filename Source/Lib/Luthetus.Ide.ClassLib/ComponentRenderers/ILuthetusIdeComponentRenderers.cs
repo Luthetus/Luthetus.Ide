@@ -18,8 +18,4 @@ public interface ILuthetusIdeComponentRenderers
     public Type? GitDisplayRendererType { get; }
     public Type? RemoveCSharpProjectFromSolutionRendererType { get; }
     public Type? InputFileRendererType { get; }
-    public Type? TreeViewCompilerServicesExplorerRootRendererType { get; }
-    public Type? TreeViewCSharpResourceRendererType { get; }
-    public Type? TreeViewCSharpBinderRendererType { get; }
-    public Type? TreeViewFolderRendererType { get; }
 }

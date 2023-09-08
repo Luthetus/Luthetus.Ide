@@ -8,6 +8,17 @@ using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.Ide.ClassLib.TreeViewImplementations.CompilerServiceExplorerCase;
+using Luthetus.CompilerServices.Lang.CSharpProject.CompilerServiceCase;
+using Luthetus.CompilerServices.Lang.Css;
+using Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
+using Luthetus.CompilerServices.Lang.FSharp;
+using Luthetus.CompilerServices.Lang.JavaScript;
+using Luthetus.CompilerServices.Lang.Json;
+using Luthetus.CompilerServices.Lang.Razor.CompilerServiceCase;
+using Luthetus.CompilerServices.Lang.TypeScript;
+using Luthetus.CompilerServices.Lang.Xml;
+using Luthetus.Common.RazorLib.WatchWindow.TreeViewClasses;
+using Luthetus.Common.RazorLib.WatchWindow;
 
 namespace Luthetus.Ide.ClassLib.Store.CompilerServiceExplorerCase;
 
@@ -21,7 +32,16 @@ public partial record CompilerServiceExplorerState
         private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
         private readonly ITreeViewService _treeViewService;
         private readonly IState<CompilerServiceExplorerState> _compilerServiceExplorerStateWrap;
+        private readonly XmlCompilerService _xmlCompilerService;
+        private readonly DotNetSolutionCompilerService _dotNetCompilerService;
+        private readonly CSharpProjectCompilerService _cSharpProjectCompilerService;
         private readonly CSharpCompilerService _cSharpCompilerService;
+        private readonly RazorCompilerService _razorCompilerService;
+        private readonly CssCompilerService _cssCompilerService;
+        private readonly FSharpCompilerService _fSharpCompilerService;
+        private readonly JavaScriptCompilerService _javaScriptCompilerService;
+        private readonly TypeScriptCompilerService _typeScriptCompilerService;
+        private readonly JsonCompilerService _jsonCompilerService;
 
         public Effector(
             IFileSystemProvider fileSystemProvider,
@@ -30,7 +50,16 @@ public partial record CompilerServiceExplorerState
             ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
             ITreeViewService treeViewService,
             IState<CompilerServiceExplorerState> compilerServiceExplorerStateWrap,
-            CSharpCompilerService cSharpCompilerService)
+            XmlCompilerService xmlCompilerService,
+            DotNetSolutionCompilerService dotNetCompilerService,
+            CSharpProjectCompilerService cSharpProjectCompilerService,
+            CSharpCompilerService cSharpCompilerService,
+            RazorCompilerService razorCompilerService,
+            CssCompilerService cssCompilerService,
+            FSharpCompilerService fSharpCompilerService,
+            JavaScriptCompilerService javaScriptCompilerService,
+            TypeScriptCompilerService typeScriptCompilerService,
+            JsonCompilerService jsonCompilerService)
         {
             _fileSystemProvider = fileSystemProvider;
             _environmentProvider = environmentProvider;
@@ -38,7 +67,16 @@ public partial record CompilerServiceExplorerState
             _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
             _treeViewService = treeViewService;
             _compilerServiceExplorerStateWrap = compilerServiceExplorerStateWrap;
+            _xmlCompilerService = xmlCompilerService;
+            _dotNetCompilerService = dotNetCompilerService;
+            _cSharpProjectCompilerService = cSharpProjectCompilerService;
             _cSharpCompilerService = cSharpCompilerService;
+            _razorCompilerService = razorCompilerService;
+            _cssCompilerService = cssCompilerService;
+            _fSharpCompilerService = fSharpCompilerService;
+            _javaScriptCompilerService = javaScriptCompilerService;
+            _typeScriptCompilerService = typeScriptCompilerService;
+            _jsonCompilerService = jsonCompilerService;
         }
 
         [EffectMethod]
@@ -57,16 +95,29 @@ public partial record CompilerServiceExplorerState
         {
             var compilerServiceExplorerState = _compilerServiceExplorerStateWrap.Value;
 
-            var compilerServicesExplorerRoot = new CompilerServicesExplorerRoot(_cSharpCompilerService);
+            var compilerServiceCollection = new CompilerServiceCollection(
+                _xmlCompilerService,
+                _dotNetCompilerService,
+                _cSharpProjectCompilerService,
+                _cSharpCompilerService,
+                _razorCompilerService,
+                _cssCompilerService,
+                _fSharpCompilerService,
+                _javaScriptCompilerService,
+                _typeScriptCompilerService,
+                _jsonCompilerService);
 
-            var rootNode = new TreeViewCompilerServicesExplorerRoot(
-                compilerServicesExplorerRoot,
-                _luthetusIdeComponentRenderers,
-                _luthetusCommonComponentRenderers,
-                _fileSystemProvider,
-                _environmentProvider,
-                true,
+            var watchWindowObjectWrap = new WatchWindowObjectWrap(
+                compilerServiceCollection,
+                compilerServiceCollection.GetType(),
+                "Compiler Services",
                 true);
+
+            var rootNode = new TreeViewReflection(
+                watchWindowObjectWrap,
+                true,
+                true,
+                _luthetusCommonComponentRenderers.WatchWindowTreeViewRenderers!);
 
             await rootNode.LoadChildrenAsync();
 

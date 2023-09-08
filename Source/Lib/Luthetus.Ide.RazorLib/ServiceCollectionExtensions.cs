@@ -16,7 +16,6 @@ using Luthetus.Common.RazorLib;
 using Luthetus.Ide.ClassLib.HostedServiceCase.FileSystem;
 using Luthetus.Ide.ClassLib.HostedServiceCase.Terminal;
 using Luthetus.Common.RazorLib.Theme;
-using Luthetus.Ide.RazorLib.TreeViewImplementations.CompilerServiceExplorerCase;
 
 namespace Luthetus.Ide.RazorLib;
 
@@ -99,9 +98,5 @@ public static class ServiceCollectionExtensions
         typeof(TreeViewCSharpProjectToProjectReferencesDisplay),
         typeof(TreeViewCSharpProjectNugetPackageReferenceDisplay),
         typeof(TreeViewCSharpProjectToProjectReferenceDisplay),
-        typeof(TreeViewSolutionFolderDisplay),
-        typeof(TreeViewCompilerServicesExplorerRootDisplay),
-        typeof(TreeViewCSharpResourceDisplay),
-        typeof(TreeViewCSharpBinderDisplay),
-        typeof(TreeViewFolderDisplay));
+        typeof(TreeViewSolutionFolderDisplay));
 }
