@@ -1,7 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
-using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
+using Luthetus.Ide.ClassLib.ComponentRenderers.Types.TreeViews;
 using Luthetus.Ide.ClassLib.Nuget;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementations;
@@ -48,7 +48,7 @@ public class TreeViewCSharpProjectNugetPackageReference : TreeViewWithType<CShar
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            LuthetusIdeComponentRenderers.TreeViewLightWeightNugetPackageRecordRendererType!,
+            LuthetusIdeComponentRenderers.LuthetusIdeTreeViews.TreeViewLightWeightNugetPackageRecordRendererType!,
             new Dictionary<string, object?>
             {
             {

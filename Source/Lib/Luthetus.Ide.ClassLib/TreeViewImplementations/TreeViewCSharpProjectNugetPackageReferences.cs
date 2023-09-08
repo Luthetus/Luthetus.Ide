@@ -48,7 +48,7 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            LuthetusIdeComponentRenderers.TreeViewCSharpProjectNugetPackageReferencesRendererType!,
+            LuthetusIdeComponentRenderers.LuthetusIdeTreeViews.TreeViewCSharpProjectNugetPackageReferencesRendererType!,
             null);
     }
 

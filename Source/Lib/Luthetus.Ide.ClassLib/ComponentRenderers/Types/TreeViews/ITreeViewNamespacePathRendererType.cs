@@ -1,6 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.Namespaces;
 
-namespace Luthetus.Ide.ClassLib.ComponentRenderers.Types;
+namespace Luthetus.Ide.ClassLib.ComponentRenderers.Types.TreeViews;
 
 public interface ITreeViewNamespacePathRendererType
 {

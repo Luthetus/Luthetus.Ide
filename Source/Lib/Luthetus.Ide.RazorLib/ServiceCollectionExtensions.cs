@@ -82,21 +82,25 @@ public static class ServiceCollectionExtensions
             .AddSingleton(fileSystemProviderFactory.Invoke);
     }
 
-    private static readonly LuthetusIdeComponentRenderers _ideComponentRenderers = new(
-        typeof(BooleanPromptOrCancelDisplay),
-        typeof(FileFormDisplay),
-        typeof(DeleteFileFormDisplay),
+    private static readonly LuthetusIdeTreeViews _ideTreeViews = new(
         typeof(TreeViewNamespacePathDisplay),
         typeof(TreeViewAbsoluteFilePathDisplay),
         typeof(TreeViewGitFileDisplay),
-        typeof(NuGetPackageManager),
-        typeof(GitChangesDisplay),
-        typeof(RemoveCSharpProjectFromSolutionDisplay),
-        typeof(InputFileDisplay),
+        typeof(TreeViewCompilerServiceDisplay),
         typeof(TreeViewCSharpProjectDependenciesDisplay),
         typeof(TreeViewCSharpProjectNugetPackageReferencesDisplay),
         typeof(TreeViewCSharpProjectToProjectReferencesDisplay),
         typeof(TreeViewCSharpProjectNugetPackageReferenceDisplay),
         typeof(TreeViewCSharpProjectToProjectReferenceDisplay),
         typeof(TreeViewSolutionFolderDisplay));
+    
+    private static readonly LuthetusIdeComponentRenderers _ideComponentRenderers = new(
+        typeof(BooleanPromptOrCancelDisplay),
+        typeof(FileFormDisplay),
+        typeof(DeleteFileFormDisplay),
+        typeof(NuGetPackageManager),
+        typeof(GitChangesDisplay),
+        typeof(RemoveCSharpProjectFromSolutionDisplay),
+        typeof(InputFileDisplay),
+        _ideTreeViews);
 }

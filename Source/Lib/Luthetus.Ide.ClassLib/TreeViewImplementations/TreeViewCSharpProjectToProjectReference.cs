@@ -2,7 +2,7 @@
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
-using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
+using Luthetus.Ide.ClassLib.ComponentRenderers.Types.TreeViews;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementations;
 
@@ -54,7 +54,7 @@ public class TreeViewCSharpProjectToProjectReference : TreeViewWithType<CSharpPr
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            LuthetusIdeComponentRenderers.TreeViewCSharpProjectToProjectReferenceRendererType!,
+            LuthetusIdeComponentRenderers.LuthetusIdeTreeViews.TreeViewCSharpProjectToProjectReferenceRendererType!,
             new Dictionary<string, object?>
             {
             {

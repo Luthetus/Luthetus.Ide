@@ -46,7 +46,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            LuthetusIdeComponentRenderers.TreeViewCSharpProjectDependenciesRendererType!,
+            LuthetusIdeComponentRenderers.LuthetusIdeTreeViews.TreeViewCSharpProjectDependenciesRendererType!,
             null);
     }
 

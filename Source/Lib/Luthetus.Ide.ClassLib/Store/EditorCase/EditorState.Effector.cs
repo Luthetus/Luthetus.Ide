@@ -29,6 +29,7 @@ using Luthetus.CompilerServices.Lang.CSharpProject.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.FSharp;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.Decoration;
+using Luthetus.Ide.RazorLib.ComponentRenderers.Types;
 
 namespace Luthetus.Ide.ClassLib.Store.EditorCase;
 

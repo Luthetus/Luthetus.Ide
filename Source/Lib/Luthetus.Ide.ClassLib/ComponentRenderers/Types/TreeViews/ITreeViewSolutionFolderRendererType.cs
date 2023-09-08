@@ -1,6 +1,6 @@
 using Luthetus.CompilerServices.Lang.DotNetSolution;
 
-namespace Luthetus.Ide.ClassLib.ComponentRenderers.Types;
+namespace Luthetus.Ide.ClassLib.ComponentRenderers.Types.TreeViews;
 
 public interface ITreeViewSolutionFolderRendererType
 {
