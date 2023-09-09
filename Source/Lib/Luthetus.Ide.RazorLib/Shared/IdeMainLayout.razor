@@ -32,7 +32,12 @@
                           CssClassString="luth_ide_footer"
                           AdjacentElementDimensions="_bodyElementDimensions"
                           DimensionAttributeKind="DimensionAttributeKind.Height"
-                          ReRenderSelfAndAdjacentElementDimensionsFunc="_bodyAndFooterStateHasChangedBoundaryComponent.InvokeStateHasChangedAsync" />
+                          ReRenderSelfAndAdjacentElementDimensionsFunc="_bodyAndFooterStateHasChangedBoundaryComponent.InvokeStateHasChangedAsync">
+
+                <JustifyEndRenderFragment>
+                    <Luthetus.Common.RazorLib.Notification.A.NotificationsInteractiveIconDisplay/>
+                </JustifyEndRenderFragment>
+            </PanelDisplay>
         </StateHasChangedBoundary>
     </ShouldRenderBoundary>
 </ContextBoundary>

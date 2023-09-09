@@ -313,6 +313,12 @@ button.luth_ide_input-file-address-hierarchy-entry {
     background-color: var(--luth_ide_footer-background-color);
 }
 
+.luth_ide_panel-tabs-justify-end {
+    position: absolute;
+    right: calc(3ch + 3px);
+    top: 0;
+}
+
 .luth_ide_panel-tab {
     padding: 1px;
     font-size: var(--luth_ide_panel-tabs-font-size);
