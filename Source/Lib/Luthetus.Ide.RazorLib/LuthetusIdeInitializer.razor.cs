@@ -239,7 +239,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
                         new TabEntryWithType<CompilerServiceExplorerViewKind>(
                             viewKind,
                             tab => ((TabEntryWithType<CompilerServiceExplorerViewKind>)tab).Item.ToString(),
-                            tab => Dispatcher.Dispatch(new TabGroupsCollection.SetActiveTabEntryKeyAction(tab.TabEntryKey))
+                            tab => { }
                         ))
                     .ToImmutableList();
 
@@ -252,6 +252,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
         var tabGroupLoadTabEntriesOutput = await tabGroup.LoadTabEntriesAsync();
 
         Dispatcher.Dispatch(new TabGroupsCollection.SetTabEntriesAction(
+            tabGroup.TabGroupKey,
             tabGroupLoadTabEntriesOutput.OutTabEntries));
 
     }
