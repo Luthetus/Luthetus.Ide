@@ -1,5 +1,4 @@
 ﻿using Luthetus.Ide.ClassLib.ComponentRenderers;
-using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Common.RazorLib.WatchWindow.TreeViewClasses;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
@@ -7,6 +6,7 @@ using Luthetus.Common.RazorLib.Namespaces;
 using Luthetus.CompilerServices.Lang.DotNetSolution;
 using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
 using Luthetus.Common.RazorLib.ComponentRenderers;
+using Luthetus.Ide.ClassLib.ComponentRenderers.Types.TreeViews;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementations;
 
@@ -55,13 +55,13 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            LuthetusIdeComponentRenderers.TreeViewSolutionFolderRendererType!,
+            LuthetusIdeComponentRenderers.LuthetusIdeTreeViews.TreeViewSolutionFolderRendererType!,
             new Dictionary<string, object?>
             {
-            {
-                nameof(ITreeViewSolutionFolderRendererType.DotNetSolutionFolder),
-                Item
-            },
+                {
+                    nameof(ITreeViewSolutionFolderRendererType.DotNetSolutionFolder),
+                    Item
+                },
             });
     }
 
@@ -81,7 +81,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
                 exception,
                 false,
                 false,
-                LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
+                LuthetusCommonComponentRenderers)
             {
                 Parent = this,
                 IndexAmongSiblings = 0,

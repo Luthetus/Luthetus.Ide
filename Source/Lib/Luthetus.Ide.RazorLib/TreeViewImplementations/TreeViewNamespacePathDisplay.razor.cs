@@ -1,5 +1,5 @@
 ﻿using Luthetus.Common.RazorLib.Namespaces;
-using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
+using Luthetus.Ide.ClassLib.ComponentRenderers.Types.TreeViews;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementations;

@@ -1,10 +1,10 @@
 ﻿using Luthetus.Ide.ClassLib.TreeViewImplementations.Helper;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
-using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Common.RazorLib.WatchWindow.TreeViewClasses;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.ComponentRenderers;
+using Luthetus.Ide.ClassLib.ComponentRenderers.Types.TreeViews;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementations;
 
@@ -52,7 +52,7 @@ public class TreeViewAbsoluteFilePath : TreeViewWithType<IAbsoluteFilePath>
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            LuthetusIdeComponentRenderers.TreeViewAbsoluteFilePathRendererType!,
+            LuthetusIdeComponentRenderers.LuthetusIdeTreeViews.TreeViewAbsoluteFilePathRendererType!,
             new Dictionary<string, object?>
             {
             {
@@ -108,7 +108,7 @@ public class TreeViewAbsoluteFilePath : TreeViewWithType<IAbsoluteFilePath>
                 exception,
                 false,
                 false,
-                LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
+                LuthetusCommonComponentRenderers)
             {
                 Parent = this,
                 IndexAmongSiblings = 0,

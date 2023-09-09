@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.ComponentRenderers.Types;
+﻿using Luthetus.Common.RazorLib.ComponentRenderers.Types.TreeViews;
 using Luthetus.Common.RazorLib.WatchWindow.TreeViewClasses;
 using Microsoft.AspNetCore.Components;
 

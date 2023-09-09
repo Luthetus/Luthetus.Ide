@@ -1,11 +1,11 @@
 ﻿using Luthetus.Ide.ClassLib.TreeViewImplementations.Helper;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
-using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Common.RazorLib.WatchWindow.TreeViewClasses;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
+using Luthetus.Ide.ClassLib.ComponentRenderers.Types.TreeViews;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementations;
 
@@ -54,7 +54,7 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolutionModel>
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            LuthetusIdeComponentRenderers.TreeViewNamespacePathRendererType!,
+            LuthetusIdeComponentRenderers.LuthetusIdeTreeViews.TreeViewNamespacePathRendererType!,
             new Dictionary<string, object?>
             {
             {
@@ -103,7 +103,7 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolutionModel>
                 exception,
                 false,
                 false,
-                LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
+                LuthetusCommonComponentRenderers)
             {
                 Parent = this,
                 IndexAmongSiblings = 0,

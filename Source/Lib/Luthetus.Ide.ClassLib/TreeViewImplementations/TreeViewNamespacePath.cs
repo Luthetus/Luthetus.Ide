@@ -1,12 +1,12 @@
 ﻿using Luthetus.Ide.ClassLib.TreeViewImplementations.Helper;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
-using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
 using Luthetus.Ide.ClassLib.FileConstants;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Common.RazorLib.WatchWindow.TreeViewClasses;
 using Luthetus.Common.RazorLib.Namespaces;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.ComponentRenderers;
+using Luthetus.Ide.ClassLib.ComponentRenderers.Types.TreeViews;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementations;
 
@@ -53,13 +53,13 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            LuthetusIdeComponentRenderers.TreeViewNamespacePathRendererType!,
+            LuthetusIdeComponentRenderers.LuthetusIdeTreeViews.TreeViewNamespacePathRendererType!,
             new Dictionary<string, object?>
             {
-            {
-                nameof(ITreeViewNamespacePathRendererType.NamespacePath),
-                Item
-            },
+                {
+                    nameof(ITreeViewNamespacePathRendererType.NamespacePath),
+                    Item
+                },
             });
     }
 
@@ -121,7 +121,7 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
                 exception,
                 false,
                 false,
-                LuthetusCommonComponentRenderers.WatchWindowTreeViewRenderers)
+                LuthetusCommonComponentRenderers)
             {
                 Parent = this,
                 IndexAmongSiblings = 0,

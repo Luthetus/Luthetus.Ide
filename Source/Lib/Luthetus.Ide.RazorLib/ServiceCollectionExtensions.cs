@@ -13,8 +13,6 @@ using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.FileSystem.Classes.Local;
 using Luthetus.Common.RazorLib.FileSystem.Classes.InMemoryFileSystem;
 using Luthetus.Common.RazorLib;
-using Luthetus.Ide.ClassLib.HostedServiceCase.FileSystem;
-using Luthetus.Ide.ClassLib.HostedServiceCase.Terminal;
 using Luthetus.Common.RazorLib.Theme;
 
 namespace Luthetus.Ide.RazorLib;
@@ -40,20 +38,11 @@ public static class ServiceCollectionExtensions
             });
         }
 
-        if (hostingInformation.LuthetusHostingKind == LuthetusHostingKind.ServerSide)
-        {
-            services
-                .AddHostedService(sp => sp.GetRequiredService<LuthetusIdeFileSystemBackgroundTaskServiceWorker>())
-                .AddHostedService(sp => sp.GetRequiredService<LuthetusIdeTerminalBackgroundTaskServiceWorker>());
-        }
-
         return services
             .AddSingleton(ideOptions)
-            .AddSingleton<LuthetusIdeFileSystemBackgroundTaskServiceWorker>()
-            .AddSingleton<LuthetusIdeTerminalBackgroundTaskServiceWorker>()
             .AddSingleton<ILuthetusIdeComponentRenderers>(_ideComponentRenderers)
             .AddLuthetusIdeFileSystem(hostingInformation, ideOptions)
-            .AddLuthetusIdeClassLibServices();
+            .AddLuthetusIdeClassLibServices(hostingInformation);
     }
 
     private static IServiceCollection AddLuthetusIdeFileSystem(
@@ -82,21 +71,25 @@ public static class ServiceCollectionExtensions
             .AddSingleton(fileSystemProviderFactory.Invoke);
     }
 
-    private static readonly LuthetusIdeComponentRenderers _ideComponentRenderers = new(
-        typeof(BooleanPromptOrCancelDisplay),
-        typeof(FileFormDisplay),
-        typeof(DeleteFileFormDisplay),
+    private static readonly LuthetusIdeTreeViews _ideTreeViews = new(
         typeof(TreeViewNamespacePathDisplay),
         typeof(TreeViewAbsoluteFilePathDisplay),
         typeof(TreeViewGitFileDisplay),
-        typeof(NuGetPackageManager),
-        typeof(GitChangesDisplay),
-        typeof(RemoveCSharpProjectFromSolutionDisplay),
-        typeof(InputFileDisplay),
+        typeof(TreeViewCompilerServiceDisplay),
         typeof(TreeViewCSharpProjectDependenciesDisplay),
         typeof(TreeViewCSharpProjectNugetPackageReferencesDisplay),
         typeof(TreeViewCSharpProjectToProjectReferencesDisplay),
         typeof(TreeViewCSharpProjectNugetPackageReferenceDisplay),
         typeof(TreeViewCSharpProjectToProjectReferenceDisplay),
         typeof(TreeViewSolutionFolderDisplay));
+    
+    private static readonly LuthetusIdeComponentRenderers _ideComponentRenderers = new(
+        typeof(BooleanPromptOrCancelDisplay),
+        typeof(FileFormDisplay),
+        typeof(DeleteFileFormDisplay),
+        typeof(NuGetPackageManager),
+        typeof(GitChangesDisplay),
+        typeof(RemoveCSharpProjectFromSolutionDisplay),
+        typeof(InputFileDisplay),
+        _ideTreeViews);
 }

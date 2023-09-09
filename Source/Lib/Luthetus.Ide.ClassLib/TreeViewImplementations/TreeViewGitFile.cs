@@ -1,6 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
-using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
+using Luthetus.Ide.ClassLib.ComponentRenderers.Types.TreeViews;
 using Luthetus.Ide.ClassLib.Git;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementations;
@@ -39,7 +39,7 @@ public class TreeViewGitFile : TreeViewWithType<GitFile>
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            LuthetusIdeComponentRenderers.TreeViewGitFileRendererType!,
+            LuthetusIdeComponentRenderers.LuthetusIdeTreeViews.TreeViewGitFileRendererType!,
             new Dictionary<string, object?>
             {
             {
