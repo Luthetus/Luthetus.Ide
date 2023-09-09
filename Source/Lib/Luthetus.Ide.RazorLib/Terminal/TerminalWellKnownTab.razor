@@ -5,20 +5,22 @@
 
     if (wellKnownTerminalSession is not null)
     {
-        <ButtonDisplay CssClassString="@CssClassString"
-                       OnClickFunc="DispatchSetActiveTerminalCommandKeyActionOnClick">
+        <button class="luth_button @CssClassString"
+                @onclick="DispatchSetActiveTerminalCommandKeyActionOnClick">
             @WellKnownTerminalSessionKey.DisplayName
-    
-            <ButtonDisplay OnClickFunc="ClearStandardOutOnClick"
-                           OnClickStopPropagation="true">
+
+            <button class="luth_button"
+                    @onclick="ClearStandardOutOnClick"
+                    @onclick:stopPropagation="true">
                 Clear
-            </ButtonDisplay>
-        
-            <ButtonDisplay OnClickFunc="KillProcessOnClick"
-                           OnClickStopPropagation="true"
-                           IsDisabled="!wellKnownTerminalSession.HasExecutingProcess">
+            </button>
+
+            <button class="luth_button"
+                    disabled=@(!wellKnownTerminalSession.HasExecutingProcess)
+                    @onclick="KillProcessOnClick"
+                    @onclick:stopPropagation="true">
                 Kill
-            </ButtonDisplay>
+            </button>
 
             <div style="margin-left: 15px;">
                 @if (wellKnownTerminalSession.HasExecutingProcess)
@@ -30,6 +32,6 @@
                     <IconBlank/>
                 }
             </div>
-        </ButtonDisplay>
+        </button>
     }
 }

@@ -137,9 +137,10 @@
                         </em>
                     </div>
 
-                    <ButtonDisplay OnClickFunc="SubmitNugetQueryOnClick">
+                    <button class="luth_button"
+                            @onclick="SubmitNugetQueryOnClick">
                         Submit
-                    </ButtonDisplay>
+                    </button>
 
                     @if (_performingNugetQuery)
                     {

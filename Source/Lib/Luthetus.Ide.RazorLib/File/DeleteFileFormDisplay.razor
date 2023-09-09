@@ -32,13 +32,15 @@
     </div>
 
     <div style="display: flex; justify-content: space-between;">
-        <ButtonDisplay OnClickFunc="DeleteFileOnClick">
+        <button class="luth_button"
+                @onclick="DeleteFileOnClick">
             Delete
-        </ButtonDisplay>
+        </button>
 
-        <ButtonDisplay @ref="_cancelButtonDisplay" 
-                       OnClickFunc="CancelOnClick">
+        <button class="luth_button"
+                @ref="_cancelButtonElementReference"
+                @onclick="CancelOnClick">
             Cancel
-        </ButtonDisplay>
+        </button>
     </div>
 </div>

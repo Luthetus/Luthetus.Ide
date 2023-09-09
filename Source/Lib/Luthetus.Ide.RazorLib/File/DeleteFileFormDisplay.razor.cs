@@ -2,7 +2,6 @@
 using Luthetus.Common.RazorLib.Keyboard;
 using Luthetus.Common.RazorLib.Menu;
 using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
-using Luthetus.Ide.RazorLib.Button;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
@@ -27,7 +26,7 @@ public partial class DeleteFileFormDisplay
     private IAbsoluteFilePath? _previousAbsoluteFilePath;
 
     private int? _countOfImmediateChildren;
-    private ButtonDisplay? _cancelButtonDisplay;
+    private ElementReference? _cancelButtonElementReference;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -56,11 +55,11 @@ public partial class DeleteFileFormDisplay
         if (firstRender)
         {
             if (MenuOptionWidgetParameters is not null &&
-                _cancelButtonDisplay?.ButtonElementReference is not null)
+                _cancelButtonElementReference is not null)
             {
                 try
                 {
-                    await _cancelButtonDisplay.ButtonElementReference.Value.FocusAsync();
+                    await _cancelButtonElementReference.Value.FocusAsync();
                 }
                 catch (Exception)
                 {

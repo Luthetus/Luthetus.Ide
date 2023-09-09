@@ -2,7 +2,6 @@
 using Luthetus.Common.RazorLib.Keyboard;
 using Luthetus.Common.RazorLib.Menu;
 using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
-using Luthetus.Ide.RazorLib.Button;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
@@ -21,7 +20,7 @@ public partial class RemoveCSharpProjectFromSolutionDisplay
 
     private IAbsoluteFilePath? _previousAbsoluteFilePath;
 
-    private ButtonDisplay? _cancelButtonDisplay;
+    private ElementReference? _cancelButtonElementReference;
 
     protected override Task OnParametersSetAsync()
     {
@@ -40,12 +39,11 @@ public partial class RemoveCSharpProjectFromSolutionDisplay
         if (firstRender)
         {
             if (MenuOptionWidgetParameters is not null &&
-                _cancelButtonDisplay?.ButtonElementReference is not null)
+                _cancelButtonElementReference is not null)
             {
                 try
                 {
-                    await _cancelButtonDisplay.ButtonElementReference.Value
-                        .FocusAsync();
+                    await _cancelButtonElementReference.Value.FocusAsync();
                 }
                 catch (Exception)
                 {

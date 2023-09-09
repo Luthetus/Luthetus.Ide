@@ -1,6 +1,5 @@
 ﻿using Luthetus.Common.RazorLib.Keyboard;
 using Luthetus.Common.RazorLib.Menu;
-using Luthetus.Ide.RazorLib.Button;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Types;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -27,17 +26,17 @@ public partial class BooleanPromptOrCancelDisplay : ComponentBase, IBooleanPromp
     [Parameter, EditorRequired]
     public Action OnAfterCancelAction { get; set; } = null!;
 
-    private ButtonDisplay? _declineButtonDisplay;
+    private ElementReference? _declineButtonElementReference;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            if (_declineButtonDisplay?.ButtonElementReference is not null)
+            if (_declineButtonElementReference is not null)
             {
                 try
                 {
-                    await _declineButtonDisplay.ButtonElementReference.Value.FocusAsync();
+                    await _declineButtonElementReference.Value.FocusAsync();
                 }
                 catch (Exception)
                 {

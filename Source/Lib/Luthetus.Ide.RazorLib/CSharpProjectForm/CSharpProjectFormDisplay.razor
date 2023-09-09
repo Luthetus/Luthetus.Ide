@@ -32,7 +32,7 @@
                         @foreach (var panelKind in Enum.GetValues<CSharpProjectFormPanelKind>())
                         {
                             <button class="luth_ide_panel-tab luth_button luth_tab @GetIsActiveCssClassString(panelKind)"
-                            @onclick="() => _activePanelKind = panelKind">
+                                    @onclick="() => _activePanelKind = panelKind">
 
                                 @switch (panelKind)
                                 {
@@ -145,9 +145,10 @@
                 @bind="_parentDirectoryNameValue"
                 @bind:event="oninput" />
 
-                <ButtonDisplay OnClickFunc='async () => RequestInputFileForParentDirectory("Directory for new C# Project")'>
+                <button class="luth_button"
+                        @onclick='async () => RequestInputFileForParentDirectory("Directory for new C# Project")'>
                     <IconFolder />
-                </ButtonDisplay>
+                </button>
             </div>
         </div>
 
@@ -225,9 +226,10 @@
             </div>
         </div>
 
-        <ButtonDisplay OnClickFunc="StartNewCSharpProjectCommandOnClick">
+        <button class="luth_button"
+                @onclick="StartNewCSharpProjectCommandOnClick">
             Run
-        </ButtonDisplay>
+        </button>
 
         <TerminalOutputDisplay TerminalSessionKey="TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY"
                                TerminalCommandKey="_newCSharpProjectTerminalCommandKey" />
