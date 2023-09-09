@@ -20,7 +20,7 @@ using Luthetus.Common.RazorLib.WatchWindow;
 
 namespace Luthetus.Ide.ClassLib.Store.CompilerServiceExplorerCase;
 
-public partial record CompilerServiceExplorerState
+public partial class CompilerServiceExplorerState
 {
     private class Effector
     {
@@ -158,11 +158,11 @@ public partial record CompilerServiceExplorerState
                     rootNode);
             }
 
-            dispatcher.Dispatch(new WithAction(inCompilerServiceExplorerState =>
-                inCompilerServiceExplorerState with
-                {
-                    IsLoadingCompilerServiceExplorer = false
-                }));
+            dispatcher.Dispatch(new NewAction(inCompilerServiceExplorerState =>
+                new CompilerServiceExplorerState(
+                    inCompilerServiceExplorerState.Model,
+                    inCompilerServiceExplorerState.GraphicalView,
+                    inCompilerServiceExplorerState.ReflectionView)));
         }
     }
 }

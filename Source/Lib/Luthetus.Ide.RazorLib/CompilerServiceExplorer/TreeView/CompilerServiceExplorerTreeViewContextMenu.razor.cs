@@ -7,9 +7,9 @@ using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Ide.RazorLib.CompilerServiceExplorer;
+namespace Luthetus.Ide.RazorLib.CompilerServiceExplorer.TreeView;
 
-public partial class CompilerServiceExplorerContextMenu : ComponentBase
+public partial class CompilerServiceExplorerTreeViewContextMenu : ComponentBase
 {
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;

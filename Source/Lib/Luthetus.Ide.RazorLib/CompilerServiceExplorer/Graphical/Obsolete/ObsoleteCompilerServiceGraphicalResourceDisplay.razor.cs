@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Components;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 
-namespace Luthetus.Ide.RazorLib.CompilerServiceCase;
+namespace Luthetus.Ide.RazorLib.CompilerServiceExplorer.Graphical.Obsolete;
 
-public partial class CompilerServiceResourceDisplay : ComponentBase
+public partial class ObsoleteCompilerServiceGraphicalResourceDisplay : ComponentBase
 {
     [Inject]
     private CSharpProjectCompilerService CSharpProjectCompilerService { get; set; } = null!;
@@ -15,7 +15,7 @@ public partial class CompilerServiceResourceDisplay : ComponentBase
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 
     [CascadingParameter(Name = "CompilerServiceDisplayDimensions")]
-    public CompilerServiceDisplayDimensions CompilerServiceDisplayDimensions { get; set; } = null!;
+    public ObsoleteCompilerServiceGraphicalDimensions CompilerServiceDisplayDimensions { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public ICompilerServiceResource CompilerServiceResource { get; set; } = null!;
