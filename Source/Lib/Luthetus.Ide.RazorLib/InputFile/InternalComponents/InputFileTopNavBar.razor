@@ -3,23 +3,27 @@
 
 <div class="luth_ide_input-file-display-top-nav-bar">
     <div class="luth_ide_input-file-display-top-nav-bar-buttons">
-        <ButtonDisplay OnClickFunc="HandleBackButtonOnClick"
-                       IsDisabled="!InputFileState.CanMoveBackwardsInHistory">
+        <button class="luth_button"
+                disabled=@(!InputFileState.CanMoveBackwardsInHistory)
+                @onclick="HandleBackButtonOnClick">
             <IconArrowLeft/>
-        </ButtonDisplay>
+        </button>
         
-        <ButtonDisplay OnClickFunc="HandleForwardButtonOnClick"
-                       IsDisabled="!InputFileState.CanMoveForwardsInHistory">
+        <button disabled=@(!InputFileState.CanMoveForwardsInHistory)
+                class="luth_button"
+                @onclick="HandleForwardButtonOnClick">
             <IconArrowRight/>
-        </ButtonDisplay>
+        </button>
     
-        <ButtonDisplay OnClickFunc="HandleUpwardButtonOnClick">
+        <button class="luth_button"
+                @onclick="HandleUpwardButtonOnClick">
             <IconArrowUp/>
-        </ButtonDisplay>
+        </button>
         
-        <ButtonDisplay OnClickFunc="HandleRefreshButtonOnClick">
+        <button class="luth_button"
+                @onclick="HandleRefreshButtonOnClick">
             <IconRefresh/>
-        </ButtonDisplay>
+        </button>
     </div>
     
     <div class="luth_ide_input-file-display-top-nav-bar-address">
@@ -56,10 +60,10 @@
     </div>
     
     <div class="luth_ide_input-file-display-top-nav-bar-search">
-        <ButtonDisplay OnClickFunc="FocusSearchElementReferenceOnClickAsync"
-                       CssClassString="luth_ide_input-file-search-button">
+        <button @onclick="FocusSearchElementReferenceOnClickAsync"
+                class="luth_button luth_ide_input-file-search-button">
             <IconSearch/>
-        </ButtonDisplay>
+        </button>
         
         <input @ref="SearchElementReference"
                @bind="SearchQuery"

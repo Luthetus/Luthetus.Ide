@@ -8,7 +8,6 @@ using Luthetus.Common.RazorLib.Store.DropdownCase;
 using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 using Luthetus.Ide.ClassLib.Store.EditorCase;
 using Luthetus.Ide.ClassLib.Store.FolderExplorerCase;
-using Luthetus.Ide.RazorLib.Button;
 using Luthetus.Ide.RazorLib.DotNetSolutionForm;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
@@ -22,7 +21,7 @@ public partial class IdeHeader : FluxorComponent
 
     private DropdownKey _dropdownKeyFile = DropdownKey.NewDropdownKey();
     private MenuRecord _menuFile = new(ImmutableArray<MenuOptionRecord>.Empty);
-    private ButtonDisplay? _buttonDisplayComponentFile;
+    private ElementReference? _buttonFileElementReference;
 
     protected override Task OnInitializedAsync()
     {
@@ -107,10 +106,9 @@ public partial class IdeHeader : FluxorComponent
     {
         try
         {
-            if (_buttonDisplayComponentFile?.ButtonElementReference is not null)
+            if (_buttonFileElementReference is not null)
             {
-                await _buttonDisplayComponentFile.ButtonElementReference.Value
-                    .FocusAsync();
+                await _buttonFileElementReference.Value.FocusAsync();
             }
         }
         catch (Exception e)

@@ -5,9 +5,13 @@ using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Icons.Codicon;
 using Luthetus.Common.RazorLib.Panel;
 using Luthetus.Common.RazorLib.Store.PanelCase;
+using Luthetus.Common.RazorLib.Store.TabGroupCase;
 using Luthetus.Common.RazorLib.Store.ThemeCase;
+using Luthetus.Common.RazorLib.TabGroups;
 using Luthetus.Ide.ClassLib.HostedServiceCase.FileSystem;
 using Luthetus.Ide.ClassLib.HostedServiceCase.Terminal;
+using Luthetus.Ide.ClassLib.Store.CompilerServiceExplorerCase;
+using Luthetus.Ide.ClassLib.Store.CompilerServiceExplorerCase.InnerDetails;
 using Luthetus.Ide.ClassLib.Store.TerminalCase;
 using Luthetus.Ide.RazorLib.BackgroundServiceCase;
 using Luthetus.Ide.RazorLib.CompilerServiceExplorer;
@@ -18,6 +22,7 @@ using Luthetus.Ide.RazorLib.Terminal;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Store.Find;
 using Microsoft.AspNetCore.Components;
+using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib;
 
@@ -89,6 +94,16 @@ public partial class LuthetusIdeInitializer : ComponentBase
         InitializePanelTabs();
 
         base.OnInitialized();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await InitializeCompilerServiceExplorerStateAsync();
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     private void InitializePanelTabs()
@@ -210,5 +225,35 @@ public partial class LuthetusIdeInitializer : ComponentBase
         Dispatcher.Dispatch(new PanelsCollection.SetActivePanelTabAction(
             bottomPanel.PanelRecordKey,
             terminalPanelTab.PanelTabKey));
+    }
+
+    private async Task InitializeCompilerServiceExplorerStateAsync()
+    {
+        var tabGroup = new TabGroup(
+            tabGroupLoadTabEntriesParameter =>
+            {
+                var viewKinds = Enum.GetValues<CompilerServiceExplorerViewKind>();
+
+                var tabEntryNoTypes = viewKinds
+                    .Select(viewKind => (TabEntryNoType)
+                        new TabEntryWithType<CompilerServiceExplorerViewKind>(
+                            viewKind,
+                            tab => ((TabEntryWithType<CompilerServiceExplorerViewKind>)tab).Item.ToString(),
+                            tab => { }
+                        ))
+                    .ToImmutableList();
+
+                return Task.FromResult(new TabGroupLoadTabEntriesOutput(tabEntryNoTypes));
+            },
+            CompilerServiceExplorerState.TabGroupKey);
+
+        Dispatcher.Dispatch(new TabGroupsCollection.RegisterAction(tabGroup));
+        
+        var tabGroupLoadTabEntriesOutput = await tabGroup.LoadTabEntriesAsync();
+
+        Dispatcher.Dispatch(new TabGroupsCollection.SetTabEntriesAction(
+            tabGroup.TabGroupKey,
+            tabGroupLoadTabEntriesOutput.OutTabEntries));
+
     }
 }

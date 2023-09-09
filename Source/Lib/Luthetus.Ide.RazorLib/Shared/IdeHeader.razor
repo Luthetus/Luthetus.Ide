@@ -14,9 +14,10 @@
         
         <SettingsDialogEntryPoint/>
 
-        <ButtonDisplay @ref="_buttonDisplayComponentFile"
-                       OnClickFunc="() => { AddActiveDropdownKey(_dropdownKeyFile); return Task.CompletedTask; }"
-                       CssStyleString="position: relative; margin-left: 15px;">
+        <button @ref="_buttonFileElementReference"
+                @onclick="() => { AddActiveDropdownKey(_dropdownKeyFile); return Task.CompletedTask; }"
+                class="luth_button"
+                style="position: relative; margin-left: 15px;">
             File
             
             <DropdownDisplay DropdownKey="_dropdownKeyFile"
@@ -26,7 +27,7 @@
                     <MenuDisplay MenuRecord="_menuFile"/>
                 </CascadingValue>
             </DropdownDisplay>
-        </ButtonDisplay>
+        </button>
 
         <StartupControlsDisplay/>
     </div>

@@ -33,9 +33,10 @@
                    @bind="_parentDirectoryName"
                    @bind:event="oninput"/>
 
-            <ButtonDisplay OnClickFunc="async () => RequestInputFileForParentDirectory()">
+            <button class="luth_button"
+                    @onclick="async () => RequestInputFileForParentDirectory()">
                 <IconFolder/>
-            </ButtonDisplay>
+            </button>
         </div>
     </div>
 
@@ -66,9 +67,10 @@
         </div>
     </div>
     
-    <ButtonDisplay OnClickFunc="StartNewDotNetSolutionCommandOnClick">
+    <button class="luth_button"
+            @onclick="StartNewDotNetSolutionCommandOnClick">
         Run
-    </ButtonDisplay>
+    </button>
     
     <TerminalOutputDisplay TerminalSessionKey="TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY" 
                            TerminalCommandKey="_newDotNetSolutionTerminalCommandKey" />

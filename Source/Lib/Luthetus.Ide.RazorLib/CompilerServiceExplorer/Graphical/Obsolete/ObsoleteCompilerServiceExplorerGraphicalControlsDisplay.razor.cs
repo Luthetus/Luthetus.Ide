@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Ide.RazorLib.CompilerServiceCase;
+namespace Luthetus.Ide.RazorLib.CompilerServiceExplorer.Graphical.Obsolete;
 
-public partial class CompilerServiceControlsDisplay : ComponentBase
+public partial class ObsoleteCompilerServiceExplorerGraphicalControlsDisplay : ComponentBase
 {
-    public CompilerServiceControlsDisplay()
+    public ObsoleteCompilerServiceExplorerGraphicalControlsDisplay()
     {
         ViewBoxWidthInputId = $"luth_ide_compiler-service-controls_view-box-width-input_{ComponentIdentifier}";
         ViewBoxHeightInputId = $"luth_ide_compiler-service-controls_view-box-height-input_{ComponentIdentifier}";
@@ -16,9 +16,9 @@ public partial class CompilerServiceControlsDisplay : ComponentBase
     }
 
     [Parameter, EditorRequired]
-    public CompilerServiceDisplayDimensions CompilerServiceDisplayDimensions { get; set; } = null!;
+    public ObsoleteCompilerServiceGraphicalDimensions CompilerServiceDisplayDimensions { get; set; } = null!;
     [Parameter, EditorRequired]
-    public Func<CompilerServiceDisplayDimensions, Task> DimensionsStateHasChangedFunc { get; set; } = null!;
+    public Func<ObsoleteCompilerServiceGraphicalDimensions, Task> DimensionsStateHasChangedFunc { get; set; } = null!;
 
     private const int MINIMUM_VIEW_BOX_WIDTH = 5;
     private const int MINIMUM_VIEW_BOX_HEIGHT = 5;
@@ -71,7 +71,7 @@ public partial class CompilerServiceControlsDisplay : ComponentBase
             });
         }
     }
-    
+
     private double InputCircleRadiusInPixels
     {
         get => CompilerServiceDisplayDimensions.CircleRadiusInPixels;
@@ -88,7 +88,7 @@ public partial class CompilerServiceControlsDisplay : ComponentBase
             });
         }
     }
-    
+
     private double InputMinimumMarginRightBetweenSiblingsAndSelf
     {
         get => CompilerServiceDisplayDimensions.MinimumMarginRightBetweenSiblingsAndSelf;
@@ -105,7 +105,7 @@ public partial class CompilerServiceControlsDisplay : ComponentBase
             });
         }
     }
-    
+
     private double InputMinimumMarginBottomBetweenRows
     {
         get => CompilerServiceDisplayDimensions.MinimumMarginBottomBetweenRows;
@@ -122,7 +122,7 @@ public partial class CompilerServiceControlsDisplay : ComponentBase
             });
         }
     }
-    
+
     private double InputSvgPadding
     {
         get => CompilerServiceDisplayDimensions.SvgPadding;
@@ -139,7 +139,7 @@ public partial class CompilerServiceControlsDisplay : ComponentBase
             });
         }
     }
-    
+
     private double InputSvgFontSizeInPixels
     {
         get => CompilerServiceDisplayDimensions.SvgFontSizeInPixels;

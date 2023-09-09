@@ -2,7 +2,7 @@ using Fluxor;
 
 namespace Luthetus.Ide.ClassLib.Store.CompilerServiceExplorerCase;
 
-public partial record CompilerServiceExplorerState
+public partial class CompilerServiceExplorerState
 {
     private class Reducer
     {
@@ -11,8 +11,11 @@ public partial record CompilerServiceExplorerState
             CompilerServiceExplorerState inCompilerServiceExplorerState,
             SetCompilerServiceExplorerAction setCompilerServiceExplorerStateAction)
         {
-            // TODO: 'return inCompilerServiceExplorerState with {};' is hacky way of forcing re-render (2023-09-07)
-            return inCompilerServiceExplorerState with {};
+            // TODO: 'return new CompilerServiceExplorerState(...);' is hacky way of forcing re-render (2023-09-07)
+            return new CompilerServiceExplorerState(
+                inCompilerServiceExplorerState.Model,
+                inCompilerServiceExplorerState.GraphicalView,
+                inCompilerServiceExplorerState.ReflectionView);
         }
     }
 }

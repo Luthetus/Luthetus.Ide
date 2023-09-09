@@ -24,14 +24,16 @@
             </select>
         </div>
         <div style="display: flex;">
-            <ButtonDisplay OnClickFunc="FireOnAfterSubmit"
-                           IsDisabled="OnAfterSubmitIsDisabled()">
+            <button class="luth_button"
+                    disabled=@(OnAfterSubmitIsDisabled())
+                    @onclick="FireOnAfterSubmit">
                 Select
-            </ButtonDisplay>
+            </button>
             
-            <ButtonDisplay OnClickFunc="CancelOnClick">
+            <button class="luth_button"
+                    @onclick="CancelOnClick">
                 Cancel
-            </ButtonDisplay>
+            </button>
         </div>
     </div>
 </div>

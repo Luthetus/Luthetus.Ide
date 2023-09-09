@@ -9,9 +9,10 @@
       @(ProgramExecutionStateWrap.Value.StartupProjectAbsoluteFilePath?.FileNameNoExtension ?? "null")   
    </div>
    <div class="luth_ide_startup-controls-display-entry">
-      <ButtonDisplay OnClickFunc="StartProgramWithoutDebuggingOnClick"
-                     IsDisabled="ProgramExecutionStateWrap.Value.StartupProjectAbsoluteFilePath is null">
+      <button @onclick="StartProgramWithoutDebuggingOnClick"
+              class="luth_button"
+              disabled=@(ProgramExecutionStateWrap.Value.StartupProjectAbsoluteFilePath is null)>
          <IconStartWithoutDebugging/>
-      </ButtonDisplay>
+      </button>
    </div>
 </div>

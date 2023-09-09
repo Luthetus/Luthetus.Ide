@@ -14,7 +14,7 @@ using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 using Luthetus.Ide.ClassLib.Store.EditorCase;
 using Luthetus.Ide.ClassLib.TreeViewImplementations;
 
-namespace Luthetus.Ide.RazorLib.CompilerServiceExplorer;
+namespace Luthetus.Ide.RazorLib.CompilerServiceExplorer.TreeView;
 
 public class CompilerServiceExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {

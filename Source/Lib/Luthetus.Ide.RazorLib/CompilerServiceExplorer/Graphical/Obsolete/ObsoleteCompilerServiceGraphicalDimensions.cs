@@ -1,6 +1,6 @@
-﻿namespace Luthetus.Ide.RazorLib.CompilerServiceCase;
+﻿namespace Luthetus.Ide.RazorLib.CompilerServiceExplorer.Graphical.Obsolete;
 
-public record CompilerServiceDisplayDimensions
+public record ObsoleteCompilerServiceGraphicalDimensions
 {
     public int ViewBoxWidth { get; init; } = 100;
     public int ViewBoxHeight { get; init; } = 100;

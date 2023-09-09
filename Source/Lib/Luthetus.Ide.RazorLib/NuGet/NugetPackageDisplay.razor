@@ -23,9 +23,10 @@
                 var buttonIsDisabled = !ValidateSolutionContainsSelectedProject();
             }
             
-            <ButtonDisplay OnClickFunc="AddNugetPackageReferenceOnClick"
-                           CssStyleString="display: inline-flex; margin-left: 5px;"
-                           IsDisabled="buttonIsDisabled">
+            <button @onclick="AddNugetPackageReferenceOnClick"
+                    class="luth_button"
+                    style="display: inline-flex; margin-left: 5px;"
+                    disabled=@(buttonIsDisabled)>
                 
                 @if (buttonIsDisabled)
                 {
@@ -39,7 +40,7 @@
                         Add to @NuGetPackageManagerStateWrap.Value.SelectedProjectToModify.DisplayName
                     </text>
                 }
-            </ButtonDisplay>
+            </button>
         </div>
     </div>
 </div>
