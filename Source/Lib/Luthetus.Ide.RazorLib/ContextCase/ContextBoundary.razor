@@ -1,5 +1,5 @@
 <div id="@ContextRecord.ContextElementId"
-     class="@ClassCssString"
+     class="luth_ide_context-boundary @ClassCssString"
      style="@StyleCssString"
      tabindex="@TabIndex"
      @onfocusin="HandleOnFocusIn"
@@ -9,5 +9,8 @@
 	
     <CascadingValue Value="this">
         @ChildContent
-    </CascadingValue>  
+    </CascadingValue>
+
+    <ContextBoundaryMeasurer ContextRecord="ContextRecord"
+                             GetContextBoundaryHeirarchy="() => GetContextBoundaryHeirarchy(new())"/>
 </div>

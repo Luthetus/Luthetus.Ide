@@ -17,6 +17,7 @@ using Luthetus.CompilerServices.Lang.TypeScript;
 using Luthetus.CompilerServices.Lang.Xml;
 using Luthetus.Ide.ClassLib.HostedServiceCase.FileSystem;
 using Luthetus.Ide.ClassLib.HostedServiceCase.Terminal;
+using Luthetus.Ide.ClassLib.CommandCase;
 
 namespace Luthetus.Ide.ClassLib;
 
@@ -43,6 +44,7 @@ public static class ServiceCollectionExtensions
         }
 
         services
+            .AddScoped<ICommandFactory, CommandFactory>()
             .AddScoped<XmlCompilerService>()
             .AddScoped<DotNetSolutionCompilerService>()
             .AddScoped<CSharpProjectCompilerService>()

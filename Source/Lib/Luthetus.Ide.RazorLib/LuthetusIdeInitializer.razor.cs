@@ -9,10 +9,8 @@ using Luthetus.Common.RazorLib.Store.TabGroupCase;
 using Luthetus.Common.RazorLib.Store.ThemeCase;
 using Luthetus.Common.RazorLib.TabGroups;
 using Luthetus.Ide.ClassLib.CommandCase;
-using Luthetus.Ide.ClassLib.Context;
 using Luthetus.Ide.ClassLib.HostedServiceCase.FileSystem;
 using Luthetus.Ide.ClassLib.HostedServiceCase.Terminal;
-using Luthetus.Ide.ClassLib.KeymapCase;
 using Luthetus.Ide.ClassLib.Store.CompilerServiceExplorerCase;
 using Luthetus.Ide.ClassLib.Store.CompilerServiceExplorerCase.InnerDetails;
 using Luthetus.Ide.ClassLib.Store.TerminalCase;
@@ -26,7 +24,6 @@ using Luthetus.Ide.RazorLib.Terminal;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Store.Find;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib;
@@ -52,7 +49,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
     [Inject]
     private LuthetusIdeTerminalBackgroundTaskServiceWorker LuthetusIdeTerminalBackgroundTaskServiceWorker { get; set; } = null!;
     [Inject]
-    private IJSRuntime JsRuntime { get; set; } = null!;
+    private ICommandFactory CommandFactory { get; set; } = null!;
 
     protected override void OnInitialized()
     {
@@ -100,7 +97,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
 
         InitializePanelTabs();
 
-        InitializeGlobalContext();
+        CommandFactory.Initialize();
 
         base.OnInitialized();
     }
@@ -279,81 +276,6 @@ public partial class LuthetusIdeInitializer : ComponentBase
 
         Dispatcher.Dispatch(new TabGroupsCollection.SetActiveTabEntryKeyAction(
             tabGroup.TabGroupKey,
-            tabGroupLoadTabEntriesOutput.OutTabEntries.First().TabEntryKey));
-    }
-
-    /// <summary>
-    /// TODO: <see cref="InitializeGlobalContext"/> shouldn't be here. (more commenting on next lines)
-    /// I was trying to make CommandFacts but I needed the IJSRuntime,
-    /// its late for me and I'm going to bed but I wanna finish my thoughts
-    /// then re-work the initialization later. (2023-09-09)
-    /// </summary>
-    private void InitializeGlobalContext()
-    {
-        {
-            var keymapArgument = new KeymapArgument(
-            "KeyZ",
-            null,
-            false,
-            false,
-            true,
-            true,
-            false,
-            false);
-
-            var command = new Command(
-                async () =>
-                {
-                    var success = await JsRuntime.InvokeAsync<bool>(
-                        "luthetusIde.tryFocusHtmlElementById",
-                        ContextFacts.GlobalContext.ContextElementId);
-
-                    if (success)
-                    {
-                        // TODO: Add a 'reveal' Func to perhaps set an active panel tab if needed,
-                        // then invoke javascript one last time to try again.
-                    }
-                },
-                "Focus Context Element",
-                "focus-context-element",
-                false);
-
-            ContextFacts.GlobalContext.Keymap.Map.Add(
-                keymapArgument,
-                command);
-        }
-
-        {
-            var keymapArgument = new KeymapArgument(
-            "KeyX",
-            null,
-            false,
-            false,
-            true,
-            true,
-            false,
-            false);
-
-            var command = new Command(
-                async () =>
-                {
-                    var success = await JsRuntime.InvokeAsync<bool>(
-                        "luthetusIde.tryFocusHtmlElementById",
-                        ContextFacts.ActiveContextsContext.ContextElementId);
-
-                    if (success)
-                    {
-                        // TODO: Add a 'reveal' Func to perhaps set an active panel tab if needed,
-                        // then invoke javascript one last time to try again.
-                    }
-                },
-                "Focus Context Element",
-                "focus-context-element",
-                false);
-
-            ContextFacts.GlobalContext.Keymap.Map.Add(
-                keymapArgument,
-                command);
-        }
+            tabGroupLoadTabEntriesOutput.OutTabEntries.Last().TabEntryKey));
     }
 }

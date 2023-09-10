@@ -1,0 +1,31 @@
+﻿@using Luthetus.Ide.RazorLib.KeymapCase
+
+<div class="luth_ide_active-context-entry">
+
+    <div class="luth_ide_active-context-title">
+        <button class="luth_button"
+                style="display: inline;"
+                @onclick="() => _isExpanded = !_isExpanded">
+        
+            @if (_isExpanded)
+            {
+                <IconChevronDown />
+            }
+            else
+            {
+                <IconChevronRight />
+            }
+        </button>
+
+        <em class="luth_em">
+            @ContextRecord.DisplayNameFriendly
+        </em>
+    </div>
+
+    <div class="luth_ide_active-context-body">
+        @if (_isExpanded)
+        {
+            <KeymapDisplay Keymap="ContextRecord.Keymap"/>
+        }
+    </div>
+</div>

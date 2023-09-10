@@ -12,13 +12,39 @@
     }
 
     <div class="luth_ide_section-title">
+
+        @{
+            var isInspecting = GetIsInspecting(contextStates);
+        }
+
+        <button class="luth_button"
+                style="display: inline;"
+                @onclick="() => DispatchToggleInspectActionOnClick(isInspecting)">
+
+            @if (isInspecting)
+            {
+                <IconLock />
+            }
+            else
+            {
+                <IconInspect />
+            }
+        </button>
+
         ActiveContextsDisplay
     </div>
 
     <div class="luth_ide_section-body">
-        @foreach (var contextRecord in contextStates.ActiveContextRecords)
+
+        @{
+            var contextRecordsToRender = contextStates.InspectionTargetContextRecords
+                ?? contextStates.ActiveContextRecords;
+        }
+
+        @foreach (var contextRecord in contextRecordsToRender)
         {
-            <div>@contextRecord.DisplayNameFriendly</div>
+            <ActiveContextEntryDisplay ContextRecord="contextRecord" />
+            <hr />
         }
     </div>
 </ContextBoundary>
