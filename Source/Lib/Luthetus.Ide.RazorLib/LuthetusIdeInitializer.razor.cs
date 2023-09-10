@@ -276,6 +276,6 @@ public partial class LuthetusIdeInitializer : ComponentBase
 
         Dispatcher.Dispatch(new TabGroupsCollection.SetActiveTabEntryKeyAction(
             tabGroup.TabGroupKey,
-            tabGroupLoadTabEntriesOutput.OutTabEntries.First().TabEntryKey));
+            tabGroupLoadTabEntriesOutput.OutTabEntries.Last().TabEntryKey));
     }
 }
