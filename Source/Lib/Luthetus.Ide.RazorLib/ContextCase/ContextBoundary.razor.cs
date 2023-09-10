@@ -1,4 +1,5 @@
 using Fluxor;
+using Fluxor.Blazor.Web.Components;
 using Luthetus.Ide.ClassLib.Context;
 using Luthetus.Ide.ClassLib.KeymapCase;
 using Luthetus.Ide.ClassLib.Store.ContextCase;
@@ -80,7 +81,15 @@ public partial class ContextBoundary : ComponentBase
         else
         {
             if (ParentContextBoundary is not null)
-                await HandleKeymapArgumentAsync(keymapArgument);
+                await ParentContextBoundary.HandleKeymapArgumentAsync(keymapArgument);
         }
+    }
+
+    public int GetZIndex(int counter)
+    {
+        if (ParentContextBoundary is not null)
+            return ParentContextBoundary.GetZIndex(counter + 1);
+
+        return counter;
     }
 }

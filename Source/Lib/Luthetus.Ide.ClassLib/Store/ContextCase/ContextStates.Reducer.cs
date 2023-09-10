@@ -8,12 +8,47 @@ public partial record ContextStates
     {
         [ReducerMethod]
         public static ContextStates ReduceSetActiveContextRecordsAction(
-            ContextStates previousContextStates,
+            ContextStates inContextStates,
             SetActiveContextRecordsAction setActiveContextRecordsAction)
         {
-            return previousContextStates with
+            return inContextStates with
             {
                 ActiveContextRecords = setActiveContextRecordsAction.ContextRecords
+            };
+        }
+        
+        [ReducerMethod(typeof(ToggleSelectInspectionTargetAction))]
+        public static ContextStates ReduceToggleInspectAction(
+            ContextStates inContextStates)
+        {
+            return inContextStates with
+            {
+                IsSelectingInspectionTarget = !inContextStates.IsSelectingInspectionTarget,
+            };
+        }
+        
+        [ReducerMethod]
+        public static ContextStates ReduceSetInspectionTargetAction(
+            ContextStates inContextStates,
+            SetInspectionTargetAction setInspectionTargetAction)
+        {
+            return inContextStates with
+            {
+                InspectionTargetContextRecords = setInspectionTargetAction.ContextRecords,
+            };
+        }
+        
+        [ReducerMethod]
+        public static ContextStates ReduceSetMeasuredHtmlElementDimensionsAction(
+            ContextStates inContextStates,
+            AddMeasuredHtmlElementDimensionsAction addMeasuredHtmlElementDimensionsAction)
+        {
+            var outList = inContextStates.MeasuredHtmlElementDimensionsForSelectingInspectionTargetTuples
+                .Add((addMeasuredHtmlElementDimensionsAction.ContextRecord, addMeasuredHtmlElementDimensionsAction.MeasuredHtmlElementDimensions));
+
+            return inContextStates with
+            {
+                MeasuredHtmlElementDimensionsForSelectingInspectionTargetTuples = outList,
             };
         }
     }

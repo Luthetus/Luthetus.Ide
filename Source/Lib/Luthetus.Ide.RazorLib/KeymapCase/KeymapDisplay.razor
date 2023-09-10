@@ -1,0 +1,18 @@
+﻿<div class="luth_ide_keymap">
+    @{
+        var keymapKvps = Keymap.Map.ToArray();
+    }
+
+    @foreach (var kvp in keymapKvps)
+    {
+        <div class="luth_ide_keymap-entry">
+            <div class="luth_ide_keymap-entry-argument">
+                @kvp.Key
+            </div>
+
+            <div class="luth_ide_keymap-entry-command">
+                @kvp.Value
+            </div>
+        </div>
+    }
+</div>

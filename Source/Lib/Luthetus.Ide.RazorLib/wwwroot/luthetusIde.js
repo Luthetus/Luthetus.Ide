@@ -14,6 +14,29 @@ window.luthetusIde = {
 
         element.focus();
         return true;
+    },
+    measureElementById: function (elementId) {
+        let element = document.getElementById(elementId);
+
+        if (!element) {
+            return {
+                WidthInPixels: 0,
+                HeightInPixels: 0,
+                LeftInPixels: 0,
+                TopInPixels: 0,
+                ZIndex: 0,
+            }
+        }
+
+        let boundingClientRect = element.getBoundingClientRect();
+
+        return {
+            WidthInPixels: boundingClientRect.width,
+            HeightInPixels: boundingClientRect.height,
+            LeftInPixels: boundingClientRect.left,
+            TopInPixels: boundingClientRect.top,
+            ZIndex: 0,
+        }
     }
 }
 

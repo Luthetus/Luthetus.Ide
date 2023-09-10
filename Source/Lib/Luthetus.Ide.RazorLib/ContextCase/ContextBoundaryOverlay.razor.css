@@ -1,0 +1,11 @@
+.luth_ide_context-boundary-overlay {
+    position: fixed;
+    left: 0;
+    top: 0;
+}
+
+.luth_ide_context-boundary-overlay:hover {
+    background-color: aqua;
+    opacity: 0.6;
+    cursor: crosshair;
+}
