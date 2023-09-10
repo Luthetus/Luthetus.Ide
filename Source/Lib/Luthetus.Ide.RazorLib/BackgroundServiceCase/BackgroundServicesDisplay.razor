@@ -1,11 +1,16 @@
-﻿<div class="luth_ide_background-services">
+﻿@using Luthetus.Ide.ClassLib.Context;
+
+<ContextBoundary ContextRecord="ContextFacts.BackgroundServicesContext"
+                 ClassCssString="luth_ide_background-services"
+                 StyleCssString="height: 100%">
+
     <div class="luth_ide_section-title">
         Background Tasks
     </div>
 
     <div class="luth_ide_section-body">
         <BackgroundServiceDisplay BackgroundTaskQueue="LuthetusCommonBackgroundTaskService"
-                                  DisplayName="Common"/>
+                                  DisplayName="Common" />
 
         <hr />
 
@@ -17,7 +22,7 @@
         <BackgroundServiceDisplay BackgroundTaskQueue="LuthetusTextEditorCompilerServiceBackgroundTaskService"
                                   DisplayName="CompilerService" />
 
-        <hr/>
+        <hr />
 
         <BackgroundServiceDisplay BackgroundTaskQueue="LuthetusIdeFileSystemBackgroundTaskService"
                                   DisplayName="FileSystem" />
@@ -27,4 +32,4 @@
         <BackgroundServiceDisplay BackgroundTaskQueue="LuthetusIdeTerminalBackgroundTaskService"
                                   DisplayName="Terminal" />
     </div>
-</div>
+</ContextBoundary>

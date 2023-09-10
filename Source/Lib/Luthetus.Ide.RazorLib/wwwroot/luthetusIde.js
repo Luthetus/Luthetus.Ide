@@ -5,6 +5,16 @@ window.luthetusIde = {
     localStorageGetItem: function (key, value) {
         return localStorage.getItem(key);
     },
+    tryFocusHtmlElementById: function (elementId) {
+        let element = document.getElementById(elementId);
+
+        if (!element) {
+            return false;
+        }
+
+        element.focus();
+        return true;
+    }
 }
 
 Blazor.registerCustomEventType('bskeydown', {

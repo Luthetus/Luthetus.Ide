@@ -1,7 +1,9 @@
 using Fluxor;
 using Luthetus.Ide.ClassLib.Context;
+using Luthetus.Ide.ClassLib.KeymapCase;
 using Luthetus.Ide.ClassLib.Store.ContextCase;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.ContextCase;
@@ -35,12 +37,50 @@ public partial class ContextBoundary : ComponentBase
         }
         else
         {
-            Dispatcher.Dispatch(new SetActiveContextRecordsAction(contextRecords.ToImmutableArray()));
+            Dispatcher.Dispatch(new ContextStates.SetActiveContextRecordsAction(contextRecords.ToImmutableArray()));
         }
     }
 
     public void HandleOnFocusIn()
     {
         DispatchSetActiveContextStatesAction(new());
+    }
+    
+    public async Task HandleOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
+    {
+        if (keyboardEventArgs.Key == "Shift" ||
+            keyboardEventArgs.Key == "Control" ||
+            keyboardEventArgs.Key == "Alt" ||
+            keyboardEventArgs.Key == "Meta")
+        {
+            return;
+        }
+
+        var keymapArgument = new KeymapArgument(
+            keyboardEventArgs.Code,
+            null,
+            keyboardEventArgs.ShiftKey,
+            keyboardEventArgs.ShiftKey,
+            keyboardEventArgs.CtrlKey,
+            keyboardEventArgs.CtrlKey,
+            keyboardEventArgs.AltKey,
+            keyboardEventArgs.AltKey);
+
+        await HandleKeymapArgumentAsync(keymapArgument);
+    }
+
+    public async Task HandleKeymapArgumentAsync(KeymapArgument keymapArgument)
+    {
+        var success = ContextRecord.Keymap.Map.TryGetValue(keymapArgument, out var command);
+
+        if (success && command is not null)
+        {
+            await command.DoAsyncFunc();
+        }
+        else
+        {
+            if (ParentContextBoundary is not null)
+                await HandleKeymapArgumentAsync(keymapArgument);
+        }
     }
 }

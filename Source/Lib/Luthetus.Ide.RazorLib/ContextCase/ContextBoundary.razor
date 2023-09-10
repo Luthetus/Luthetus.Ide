@@ -1,8 +1,11 @@
-<div class="@ClassCssString"
+<div id="@ContextRecord.ContextElementId"
+     class="@ClassCssString"
      style="@StyleCssString"
      tabindex="@TabIndex"
      @onfocusin="HandleOnFocusIn"
-     @onfocusin:stopPropagation="true">
+     @onfocusin:stopPropagation="true"
+     @onkeydown="HandleOnKeyDownAsync"
+     @onkeydown:stopPropagation="true">
 	
     <CascadingValue Value="this">
         @ChildContent
