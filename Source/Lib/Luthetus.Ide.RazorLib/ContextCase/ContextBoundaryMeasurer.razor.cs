@@ -5,6 +5,7 @@ using Fluxor;
 using Luthetus.Ide.ClassLib.Context;
 using Microsoft.JSInterop;
 using Luthetus.Ide.ClassLib.JavaScriptObjects;
+using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.ContextCase;
 
@@ -20,7 +21,7 @@ public partial class ContextBoundaryMeasurer : FluxorComponent
     [Parameter, EditorRequired]
     public ContextRecord ContextRecord { get; set; } = null!;
     [Parameter, EditorRequired]
-    public Func<int> GetZIndexFunc { get; set; } = null!;
+    public Func<ImmutableArray<ContextRecord>> GetContextBoundaryHeirarchy { get; set; } = null!;
 
     private bool _previousIsSelectingInspectionTarget;
 
@@ -45,15 +46,17 @@ public partial class ContextBoundaryMeasurer : FluxorComponent
             if (contextStates.IsSelectingInspectionTarget)
             {
                 var measuredHtmlElementDimensions = await JsRuntime.InvokeAsync<MeasuredHtmlElementDimensions>("luthetusIde.measureElementById",
-                ContextRecord.ContextElementId);
+                    ContextRecord.ContextElementId);
+
+                var contextBoundaryHeirarchy = GetContextBoundaryHeirarchy.Invoke();
 
                 measuredHtmlElementDimensions = measuredHtmlElementDimensions with
                 {
-                    ZIndex = GetZIndexFunc.Invoke()
+                    ZIndex = contextBoundaryHeirarchy.Length
                 };
 
                 Dispatcher.Dispatch(new ContextStates.AddMeasuredHtmlElementDimensionsAction(
-                    ContextRecord, measuredHtmlElementDimensions));
+                    ContextRecord, contextBoundaryHeirarchy, measuredHtmlElementDimensions));
             }
         }
 

@@ -10,9 +10,9 @@ public partial record ContextStates(
     ImmutableArray<ContextRecord> ActiveContextRecords,
     ImmutableArray<ContextRecord>? InspectionTargetContextRecords,
     bool IsSelectingInspectionTarget,
-    ImmutableArray<(ContextRecord contextRecord, MeasuredHtmlElementDimensions measuredHtmlElementDimensions)> MeasuredHtmlElementDimensionsForSelectingInspectionTargetTuples)
+    ImmutableArray<(ContextRecord contextRecord, ImmutableArray<ContextRecord> contextBoundaryHeirarchy, MeasuredHtmlElementDimensions measuredHtmlElementDimensions)> MeasuredHtmlElementDimensionsForSelectingInspectionTargetTuples)
 {
-    private ContextStates() : this(ImmutableArray<ContextRecord>.Empty, null, false, ImmutableArray<(ContextRecord contextRecord, MeasuredHtmlElementDimensions measuredHtmlElementDimensions)>.Empty)
+    private ContextStates() : this(ImmutableArray<ContextRecord>.Empty, null, false, ImmutableArray<(ContextRecord contextRecord, ImmutableArray<ContextRecord> contextBoundaryHeirarchy, MeasuredHtmlElementDimensions measuredHtmlElementDimensions)>.Empty)
     {
         ActiveContextRecords = new[]
         {

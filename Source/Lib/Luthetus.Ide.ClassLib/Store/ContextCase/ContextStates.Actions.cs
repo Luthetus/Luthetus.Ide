@@ -8,6 +8,8 @@ public partial record ContextStates
 {
     public record SetActiveContextRecordsAction(ImmutableArray<ContextRecord> ContextRecords);
     public record ToggleSelectInspectionTargetAction;
-    public record SetInspectionTargetAction(ImmutableArray<ContextRecord> ContextRecords);
-    public record AddMeasuredHtmlElementDimensionsAction(ContextRecord ContextRecord, MeasuredHtmlElementDimensions MeasuredHtmlElementDimensions);
+    public record SetSelectInspectionTargetTrueAction;
+    public record SetSelectInspectionTargetFalseAction;
+    public record SetInspectionTargetAction(ImmutableArray<ContextRecord>? ContextRecords);
+    public record AddMeasuredHtmlElementDimensionsAction(ContextRecord ContextRecord, ImmutableArray<ContextRecord> ContextBoundaryHeirarchy, MeasuredHtmlElementDimensions MeasuredHtmlElementDimensions);
 }

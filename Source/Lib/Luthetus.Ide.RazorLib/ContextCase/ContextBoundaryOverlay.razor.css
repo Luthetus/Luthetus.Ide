@@ -7,5 +7,5 @@
 .luth_ide_context-boundary-overlay:hover {
     background-color: aqua;
     opacity: 0.6;
-    cursor: crosshair;
+    cursor: default;
 }

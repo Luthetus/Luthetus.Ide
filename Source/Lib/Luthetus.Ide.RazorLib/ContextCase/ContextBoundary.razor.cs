@@ -85,11 +85,13 @@ public partial class ContextBoundary : ComponentBase
         }
     }
 
-    public int GetZIndex(int counter)
+    public ImmutableArray<ContextRecord> GetContextBoundaryHeirarchy(List<ContextRecord> contextRecords)
     {
-        if (ParentContextBoundary is not null)
-            return ParentContextBoundary.GetZIndex(counter + 1);
+        contextRecords.Add(ContextRecord);
 
-        return counter;
+        if (ParentContextBoundary is not null)
+            return ParentContextBoundary.GetContextBoundaryHeirarchy(contextRecords);
+        else
+            return contextRecords.ToImmutableArray();
     }
 }

@@ -15,8 +15,15 @@ public partial class ActiveContextsDisplay : FluxorComponent
     private bool GetIsInspecting(ContextStates localContextStates) =>
         localContextStates.InspectionTargetContextRecords is not null;
 
-    private void DispatchToggleInspectActionOnClick()
+    private void DispatchToggleInspectActionOnClick(bool isInspecting)
     {
-        Dispatcher.Dispatch(new ContextStates.ToggleSelectInspectionTargetAction());
+        if (isInspecting)
+        {
+            Dispatcher.Dispatch(new ContextStates.SetSelectInspectionTargetFalseAction());
+        }
+        else
+        {
+            Dispatcher.Dispatch(new ContextStates.SetSelectInspectionTargetTrueAction());
+        }
     }
 }
