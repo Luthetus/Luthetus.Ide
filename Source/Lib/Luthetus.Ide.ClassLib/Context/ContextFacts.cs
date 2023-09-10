@@ -10,6 +10,12 @@ public static class ContextFacts
         "Global",
         "global",
         Keymap.Empty);
+    
+    public static readonly ContextRecord ActiveContextsContext = new(
+        ContextKey.NewContextKey(),
+        "Active Contexts",
+        "active-contexts",
+        Keymap.Empty);
 
     public static readonly ContextRecord FolderExplorerContext = new(
         ContextKey.NewContextKey(),
@@ -86,6 +92,7 @@ public static class ContextFacts
     public static readonly ImmutableArray<ContextRecord> ContextRecords = new[]
     {
         GlobalContext,
+        ActiveContextsContext,
         FolderExplorerContext,
         SolutionExplorerContext,
         CompilerServiceExplorerContext,

@@ -290,7 +290,8 @@ public partial class LuthetusIdeInitializer : ComponentBase
     /// </summary>
     private void InitializeGlobalContext()
     {
-        var keymapArgument = new KeymapArgument(
+        {
+            var keymapArgument = new KeymapArgument(
             "KeyZ",
             null,
             false,
@@ -300,26 +301,59 @@ public partial class LuthetusIdeInitializer : ComponentBase
             false,
             false);
 
-        // The <byte> generic type here is because I'm using closure for everything in this specific case.
-        var command = new Command(
-            async () =>
-            {
-                var success = await JsRuntime.InvokeAsync<bool>(
-                    "luthetusIde.tryFocusHtmlElementById",
-                    ContextFacts.GlobalContext.ContextElementId);
-
-                if (success)
+            var command = new Command(
+                async () =>
                 {
-                    // TODO: Add a 'reveal' Func to perhaps set an active panel tab if needed,
-                    // then invoke javascript one last time to try again.
-                }
-            },
-            "Focus Context Element",
-            "focus-context-element",
+                    var success = await JsRuntime.InvokeAsync<bool>(
+                        "luthetusIde.tryFocusHtmlElementById",
+                        ContextFacts.GlobalContext.ContextElementId);
+
+                    if (success)
+                    {
+                        // TODO: Add a 'reveal' Func to perhaps set an active panel tab if needed,
+                        // then invoke javascript one last time to try again.
+                    }
+                },
+                "Focus Context Element",
+                "focus-context-element",
+                false);
+
+            ContextFacts.GlobalContext.Keymap.Map.Add(
+                keymapArgument,
+                command);
+        }
+
+        {
+            var keymapArgument = new KeymapArgument(
+            "KeyX",
+            null,
+            false,
+            false,
+            true,
+            true,
+            false,
             false);
 
-        ContextFacts.GlobalContext.Keymap.Map.Add(
-            keymapArgument,
-            command);
+            var command = new Command(
+                async () =>
+                {
+                    var success = await JsRuntime.InvokeAsync<bool>(
+                        "luthetusIde.tryFocusHtmlElementById",
+                        ContextFacts.ActiveContextsContext.ContextElementId);
+
+                    if (success)
+                    {
+                        // TODO: Add a 'reveal' Func to perhaps set an active panel tab if needed,
+                        // then invoke javascript one last time to try again.
+                    }
+                },
+                "Focus Context Element",
+                "focus-context-element",
+                false);
+
+            ContextFacts.GlobalContext.Keymap.Map.Add(
+                keymapArgument,
+                command);
+        }
     }
 }
