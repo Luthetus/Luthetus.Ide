@@ -1,5 +1,6 @@
 ﻿@using Fluxor.Blazor.Web.Components;
 @using Luthetus.Common.RazorLib.TabGroups
+@using Luthetus.Ide.ClassLib.Context;
 @using Luthetus.Ide.ClassLib.Store.CompilerServiceExplorerCase.InnerDetails;
 @using Luthetus.Ide.ClassLib.Store.CompilerServiceExplorerCase;
 @using Luthetus.Ide.RazorLib.CompilerServiceExplorer.Graphical
@@ -7,8 +8,9 @@
 
 @inherits FluxorComponent
 
-<div class="luth_ide_compiler-explorer-display"
-     style="height: 100%;">
+<ContextBoundary ContextRecord="ContextFacts.CompilerServiceExplorerContext"
+                 ClassCssString="luth_ide_compiler-service-explorer"
+                 StyleCssString="height: 100%">
 
     @{
         var compilerServiceExplorerState = CompilerServiceExplorerStateWrap.Value;
@@ -28,8 +30,7 @@
     </div>
 
     <div class="luth_ide_section-body">
-        
-        <TabGroupDisplay TabGroupKey="CompilerServiceExplorerState.TabGroupKey"/>
+        <TabGroupDisplay TabGroupKey="CompilerServiceExplorerState.TabGroupKey" />
 
         @switch (compilerServiceExplorerViewKind)
         {
@@ -41,4 +42,4 @@
                 break;
         }
     </div>
-</div>
+</ContextBoundary>
