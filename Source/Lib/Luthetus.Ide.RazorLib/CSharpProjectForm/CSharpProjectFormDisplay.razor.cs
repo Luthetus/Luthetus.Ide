@@ -31,9 +31,9 @@ namespace Luthetus.Ide.RazorLib.CSharpProjectForm;
 public partial class CSharpProjectFormDisplay : FluxorComponent
 {
     [Inject]
-    private IState<TerminalSessionsState> TerminalSessionsStateWrap { get; set; } = null!;
+    private IState<TerminalSessionRegistry> TerminalSessionsStateWrap { get; set; } = null!;
     [Inject]
-    private IState<DotNetSolutionState> DotNetSolutionState { get; set; } = null!;
+    private IState<DotNetSolutionRegistry> DotNetSolutionState { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -55,8 +55,8 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     [Parameter]
     public DotNetSolutionModelKey DotNetSolutionModelKey { get; set; }
 
-    private readonly TerminalCommandKey _newCSharpProjectTerminalCommandKey = TerminalCommandKey.NewTerminalCommandKey();
-    private readonly TerminalCommandKey _loadProjectTemplatesTerminalCommandKey = TerminalCommandKey.NewTerminalCommandKey();
+    private readonly TerminalCommandKey _newCSharpProjectTerminalCommandKey = TerminalCommandKey.NewKey();
+    private readonly TerminalCommandKey _loadProjectTemplatesTerminalCommandKey = TerminalCommandKey.NewKey();
     private readonly CancellationTokenSource _newCSharpProjectCancellationTokenSource = new();
 
     private bool _isReadingProjectTemplates = false;
@@ -118,7 +118,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
     private void RequestInputFileForParentDirectory(string message)
     {
-        Dispatcher.Dispatch(new InputFileState.RequestInputFileStateFormAction(
+        Dispatcher.Dispatch(new InputFileRegistry.RequestInputFileStateFormAction(
             message,
             async afp =>
             {
@@ -446,7 +446,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                                 Dispatcher.Dispatch(new DialogRegistry.DisposeAction(
                                     DialogRecord.DialogKey));
 
-                                Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionAction(
+                                Dispatcher.Dispatch(new DotNetSolutionRegistry.SetDotNetSolutionAction(
                                     solutionNamespacePath.AbsoluteFilePath));
 
                                 return Task.CompletedTask;
@@ -507,7 +507,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             DialogRecord.DialogKey));
 
         var notificationRecord = new NotificationRecord(
-            NotificationKey.NewNotificationKey(),
+            NotificationKey.NewKey(),
             "Website .sln template was used",
             LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
             new Dictionary<string, object?>
@@ -535,7 +535,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
         var cSharpAbsoluteFilePath = new AbsoluteFilePath(cSharpProjectAbsoluteFilePathString, false, EnvironmentProvider);
 
-        Dispatcher.Dispatch(new DotNetSolutionState.AddExistingProjectToSolutionAction(
+        Dispatcher.Dispatch(new DotNetSolutionRegistry.AddExistingProjectToSolutionAction(
             DotNetSolutionModel.DotNetSolutionModelKey,
             localProjectTemplateShortName,
             localCSharpProjectName,
@@ -551,18 +551,18 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
         if (solutionTextEditorModel is not null)
         {
-            Dispatcher.Dispatch(new TextEditorModelsCollection.ReloadAction(
+            Dispatcher.Dispatch(new TextEditorModelsRegistry.ReloadAction(
                 solutionTextEditorModel.ModelKey,
                 DotNetSolutionModel.SolutionFileContents,
                 DateTime.UtcNow));
         }
 
-        Dispatcher.Dispatch(new DotNetSolutionState.WithAction(
+        Dispatcher.Dispatch(new DotNetSolutionRegistry.WithAction(
             inDotNetSolutionState => inDotNetSolutionState with
             {
                 DotNetSolutionModelKey = DotNetSolutionModel.DotNetSolutionModelKey
             }));
 
-        Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionTreeViewAction());
+        Dispatcher.Dispatch(new DotNetSolutionRegistry.SetDotNetSolutionTreeViewAction());
     }
 }

@@ -10,7 +10,7 @@ namespace Luthetus.Ide.RazorLib.CompilerServiceExplorer;
 public partial class CompilerServiceExplorerDisplay : FluxorComponent
 {
     [Inject]
-    private IState<CompilerServiceExplorerState> CompilerServiceExplorerStateWrap { get; set; } = null!;
+    private IState<CompilerServiceExplorerRegistry> CompilerServiceExplorerStateWrap { get; set; } = null!;
     [Inject]
     private IStateSelection<TabGroupsCollection, TabGroup?> TabGroupsCollectionStateSelection { get; set; } = null!;
 
@@ -18,7 +18,7 @@ public partial class CompilerServiceExplorerDisplay : FluxorComponent
     {
         TabGroupsCollectionStateSelection.Select(tabGroupsCollection =>
             tabGroupsCollection.TabGroups.SingleOrDefault(
-                x => x.TabGroupKey == CompilerServiceExplorerState.TabGroupKey));
+                x => x.TabGroupKey == CompilerServiceExplorerRegistry.TabGroupKey));
 
         base.OnInitialized();
     }

@@ -32,7 +32,7 @@ namespace Luthetus.Ide.RazorLib.SolutionExplorer;
 public partial class SolutionExplorerContextMenu : ComponentBase
 {
     [Inject]
-    private IState<TerminalSessionsState> TerminalSessionsStateWrap { get; set; } = null!;
+    private IState<TerminalSessionRegistry> TerminalSessionsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -45,7 +45,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     [Parameter, EditorRequired]
     public ITreeViewCommandParameter TreeViewCommandParameter { get; set; } = null!;
 
-    public static readonly DropdownKey ContextMenuEventDropdownKey = DropdownKey.NewDropdownKey();
+    public static readonly DropdownKey ContextMenuEventDropdownKey = DropdownKey.NewKey();
 
     /// <summary>
     /// The program is currently running using Photino locally on the user's computer
@@ -215,7 +215,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 Dispatcher,
                 () =>
                 {
-                    Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionAction(
+                    Dispatcher.Dispatch(new DotNetSolutionRegistry.SetDotNetSolutionAction(
                         treeViewSolution.Item.NamespacePath.AbsoluteFilePath));
 
                     return Task.CompletedTask;
@@ -223,7 +223,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             new MenuOptionRecord(
                 "Set as Startup Project",
                 MenuOptionKind.Other,
-                () => Dispatcher.Dispatch(new ProgramExecutionState.SetStartupProjectAbsoluteFilePathAction(
+                () => Dispatcher.Dispatch(new ProgramExecutionRegistry.SetStartupProjectAbsoluteFilePathAction(
                     treeViewModel.Item.AbsoluteFilePath))),
             MenuOptionsFactory.RemoveCSharpProjectReferenceFromSolution(
                 treeViewSolution,
@@ -234,7 +234,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 Dispatcher,
                 () =>
                 {
-                    Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionAction(
+                    Dispatcher.Dispatch(new DotNetSolutionRegistry.SetDotNetSolutionAction(
                         treeViewSolution.Item.NamespacePath.AbsoluteFilePath));
 
                     return Task.CompletedTask;
@@ -347,7 +347,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     private void OpenNewCSharpProjectDialog(DotNetSolutionModel dotNetSolutionModel)
     {
         var dialogRecord = new DialogRecord(
-            DialogKey.NewDialogKey(),
+            DialogKey.NewKey(),
             "New C# Project",
             typeof(CSharpProjectFormDisplay),
             new Dictionary<string, object?>
@@ -368,7 +368,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
     private void AddExistingProjectToSolution(DotNetSolutionModel dotNetSolutionModel)
     {
-        Dispatcher.Dispatch(new InputFileState.RequestInputFileStateFormAction(
+        Dispatcher.Dispatch(new InputFileRegistry.RequestInputFileStateFormAction(
             "Existing C# Project to add to solution",
             async afp =>
             {
@@ -381,13 +381,13 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                         afp.FormattedInput);
 
                 var addExistingProjectToSolutionTerminalCommand = new TerminalCommand(
-                    TerminalCommandKey.NewTerminalCommandKey(),
+                    TerminalCommandKey.NewKey(),
                     localFormattedAddExistingProjectToSolutionCommand,
                     null,
                     CancellationToken.None,
                     () =>
                     {
-                        Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionAction(
+                        Dispatcher.Dispatch(new DotNetSolutionRegistry.SetDotNetSolutionAction(
                             dotNetSolutionModel.NamespacePath.AbsoluteFilePath));
 
                         return Task.CompletedTask;
@@ -433,11 +433,11 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         await treeViewModel.LoadChildrenAsync();
 
         TreeViewService.ReRenderNode(
-            DotNetSolutionState.TreeViewSolutionExplorerStateKey,
+            DotNetSolutionRegistry.TreeViewSolutionExplorerStateKey,
             treeViewModel);
 
         TreeViewService.MoveUp(
-            DotNetSolutionState.TreeViewSolutionExplorerStateKey,
+            DotNetSolutionRegistry.TreeViewSolutionExplorerStateKey,
             false);
     }
 
@@ -447,7 +447,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         if (LuthetusCommonComponentRenderers.InformativeNotificationRendererType != null)
         {
             var notificationInformative = new NotificationRecord(
-                NotificationKey.NewNotificationKey(),
+                NotificationKey.NewKey(),
                 "Copy Action",
                 LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
                 new Dictionary<string, object?>
@@ -477,7 +477,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         if (LuthetusCommonComponentRenderers.InformativeNotificationRendererType != null)
         {
             var notificationInformative = new NotificationRecord(
-                NotificationKey.NewNotificationKey(),
+                NotificationKey.NewKey(),
                 "Cut Action",
                 LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
                 new Dictionary<string, object?>

@@ -670,7 +670,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             if (_luthetusCommonComponentRenderers.ErrorNotificationRendererType is not null)
             {
                 var notificationError = new NotificationRecord(
-                    NotificationKey.NewNotificationKey(),
+                    NotificationKey.NewKey(),
                     "Rename Action",
                     _luthetusCommonComponentRenderers.ErrorNotificationRendererType,
                     new Dictionary<string, object?>
@@ -718,7 +718,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                         projectNode.Item.AbsoluteFilePath.FormattedInput);
 
                 var removeCSharpProjectReferenceFromSolutionCommand = new TerminalCommand(
-                    TerminalCommandKey.NewTerminalCommandKey(),
+                    TerminalCommandKey.NewKey(),
                     removeCSharpProjectReferenceFromSolutionFormattedCommand,
                     workingDirectory.FormattedInput,
                     CancellationToken.None,
@@ -746,7 +746,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         var backgroundTask = new BackgroundTask(
             cancellationToken =>
             {
-                var requestInputFileStateFormAction = new InputFileState.RequestInputFileStateFormAction(
+                var requestInputFileStateFormAction = new InputFileRegistry.RequestInputFileStateFormAction(
                     $"Add Project reference to {projectReceivingReference.Item.AbsoluteFilePath.FilenameWithExtension}",
                     async referencedProject =>
                     {
@@ -758,14 +758,14 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                             referencedProject.FormattedInput);
 
                         var addProjectToProjectReferenceTerminalCommand = new TerminalCommand(
-                            TerminalCommandKey.NewTerminalCommandKey(),
+                            TerminalCommandKey.NewKey(),
                             formattedCommand,
                             null,
                             CancellationToken.None,
                             async () =>
                             {
                                 var notificationInformative = new NotificationRecord(
-                                    NotificationKey.NewNotificationKey(),
+                                    NotificationKey.NewKey(),
                                     "Add Project Reference",
                                     _luthetusCommonComponentRenderers.InformativeNotificationRendererType,
                                     new Dictionary<string, object?>
@@ -829,14 +829,14 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsoluteFilePath.FormattedInput);
 
                 var removeProjectToProjectReferenceTerminalCommand = new TerminalCommand(
-                    TerminalCommandKey.NewTerminalCommandKey(),
+                    TerminalCommandKey.NewKey(),
                     formattedCommand,
                     null,
                     CancellationToken.None,
                     async () =>
                     {
                         var notificationInformative = new NotificationRecord(
-                            NotificationKey.NewNotificationKey(),
+                            NotificationKey.NewKey(),
                             "Remove Project Reference",
                             _luthetusCommonComponentRenderers.InformativeNotificationRendererType,
                             new Dictionary<string, object?>
@@ -884,14 +884,14 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     solutionFolderPath);
 
                 var moveProjectToSolutionFolderTerminalCommand = new TerminalCommand(
-                    TerminalCommandKey.NewTerminalCommandKey(),
+                    TerminalCommandKey.NewKey(),
                     formattedCommand,
                     null,
                     CancellationToken.None,
                     async () =>
                     {
                         var notificationInformative = new NotificationRecord(
-                            NotificationKey.NewNotificationKey(),
+                            NotificationKey.NewKey(),
                             "Move Project To Solution Folder",
                             _luthetusCommonComponentRenderers.InformativeNotificationRendererType,
                             new Dictionary<string, object?>
@@ -944,14 +944,14 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id);
 
                 var removeNugetPackageReferenceFromProjectTerminalCommand = new TerminalCommand(
-                    TerminalCommandKey.NewTerminalCommandKey(),
+                    TerminalCommandKey.NewKey(),
                     formattedCommand,
                     null,
                     CancellationToken.None,
                     async () =>
                     {
                         var notificationInformative = new NotificationRecord(
-                            NotificationKey.NewNotificationKey(),
+                            NotificationKey.NewKey(),
                             "Remove Project Reference",
                             _luthetusCommonComponentRenderers.InformativeNotificationRendererType,
                             new Dictionary<string, object?>

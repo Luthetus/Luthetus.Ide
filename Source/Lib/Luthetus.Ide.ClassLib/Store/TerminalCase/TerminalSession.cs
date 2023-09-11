@@ -49,7 +49,7 @@ public class TerminalSession
     }
 
     public TerminalSessionKey TerminalSessionKey { get; init; } =
-        TerminalSessionKey.NewTerminalSessionKey();
+        TerminalSessionKey.NewKey();
 
     public TextEditorModelKey TextEditorModelKey => new(TerminalSessionKey.Guid);
     public TextEditorViewModelKey TextEditorViewModelKey => new(TerminalSessionKey.Guid);
@@ -165,7 +165,7 @@ public class TerminalSession
                     catch (Exception e)
                     {
                         var notificationRecord = new NotificationRecord(
-                            NotificationKey.NewNotificationKey(),
+                            NotificationKey.NewKey(),
                             "Terminal Exception",
                             _luthetusCommonComponentRenderers.ErrorNotificationRendererType,
                             new Dictionary<string, object?>
@@ -234,8 +234,8 @@ public class TerminalSession
 
     private void DispatchNewStateKey()
     {
-        _dispatcher.Dispatch(new TerminalSessionWasModifiedStateReducer.SetTerminalSessionStateKeyAction(
+        _dispatcher.Dispatch(new TerminalSessionWasModifiedRegistryReducer.SetTerminalSessionStateKeyAction(
             TerminalSessionKey,
-            StateKey.NewStateKey()));
+            StateKey.NewKey()));
     }
 }

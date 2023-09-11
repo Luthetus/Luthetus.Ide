@@ -19,13 +19,13 @@ namespace Luthetus.Ide.RazorLib.Terminal;
 public partial class TerminalOutputDisplay : FluxorComponent
 {
     [Inject]
-    private IStateSelection<TerminalSessionsState, TerminalSession?> TerminalSessionsStateSelection { get; set; } = null!;
+    private IStateSelection<TerminalSessionRegistry, TerminalSession?> TerminalSessionsStateSelection { get; set; } = null!;
 
     // TODO: Don't inject TerminalSessionsStateWrap. It causes too many unnecessary re-renders
     [Inject]
-    private IState<TerminalSessionsState> TerminalSessionsStateWrap { get; set; } = null!;
+    private IState<TerminalSessionRegistry> TerminalSessionsStateWrap { get; set; } = null!;
     [Inject]
-    private IState<TerminalSessionWasModifiedState> TerminalSessionWasModifiedStateWrap { get; set; } = null!;
+    private IState<TerminalSessionWasModifiedRegistry> TerminalSessionWasModifiedStateWrap { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
 
@@ -183,7 +183,7 @@ public partial class TerminalOutputDisplay : FluxorComponent
                 arguments);
 
             var terminalCommand = new TerminalCommand(
-                TerminalCommandKey.NewTerminalCommandKey(),
+                TerminalCommandKey.NewKey(),
                 formattedCommand,
                 null,
                 CancellationToken.None,

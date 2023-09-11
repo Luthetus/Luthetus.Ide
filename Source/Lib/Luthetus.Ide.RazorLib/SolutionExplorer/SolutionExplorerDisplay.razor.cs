@@ -19,7 +19,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     [Inject]
     private IState<AppOptionsRegistry> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
-    private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
+    private IState<DotNetSolutionRegistry> DotNetSolutionStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -74,7 +74,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     private void OpenNewDotNetSolutionDialog()
     {
         var dialogRecord = new DialogRecord(
-            DialogKey.NewDialogKey(),
+            DialogKey.NewKey(),
             "New .NET Solution",
             typeof(DotNetSolutionFormDisplay),
             null,

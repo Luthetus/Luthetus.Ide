@@ -13,8 +13,8 @@ public static class GitFacts
     public const string GIT_DIRTY_REASON_DELETED = "deleted:";
 
     public static readonly TerminalCommandKey GitInitTerminalCommandKey =
-        TerminalCommandKey.NewTerminalCommandKey();
+        TerminalCommandKey.NewKey();
 
     public static readonly TerminalCommandKey GitStatusTerminalCommandKey =
-        TerminalCommandKey.NewTerminalCommandKey();
+        TerminalCommandKey.NewKey();
 }

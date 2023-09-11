@@ -11,18 +11,18 @@ using Luthetus.Ide.RazorLib.CompilerServiceExplorer.TreeView;
 using Luthetus.TextEditor.RazorLib.Store.Group;
 using Luthetus.TextEditor.RazorLib.Store.ViewModel;
 using Microsoft.AspNetCore.Components;
-using static Luthetus.Ide.ClassLib.Store.CompilerServiceExplorerCase.CompilerServiceExplorerState;
+using static Luthetus.Ide.ClassLib.Store.CompilerServiceExplorerCase.CompilerServiceExplorerRegistry;
 
 namespace Luthetus.Ide.RazorLib.CompilerServiceExplorer.TreeView;
 
 public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IState<CompilerServiceExplorerState> CompilerServiceExplorerStateWrap { get; set; } = null!;
+    private IState<CompilerServiceExplorerRegistry> CompilerServiceExplorerStateWrap { get; set; } = null!;
     [Inject]
-    private IState<TextEditorViewModelsCollection> TextEditorViewModelsCollectionWrap { get; set; } = null!;
+    private IState<TextEditorViewModelsRegistry> TextEditorViewModelsCollectionWrap { get; set; } = null!;
     [Inject]
-    private IState<TextEditorGroupsCollection> TextEditorGroupsCollectionWrap { get; set; } = null!;
+    private IState<TextEditorGroupsRegistry> TextEditorGroupsCollectionWrap { get; set; } = null!;
     [Inject]
     private IState<AppOptionsRegistry> AppOptionsStateWrap { get; set; } = null!;
     [Inject]

@@ -23,7 +23,7 @@ namespace Luthetus.Ide.RazorLib.DotNetSolutionForm;
 public partial class DotNetSolutionFormDisplay : FluxorComponent
 {
     [Inject]
-    private IState<TerminalSessionsState> TerminalSessionsStateWrap { get; set; } = null!;
+    private IState<TerminalSessionRegistry> TerminalSessionsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -39,7 +39,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
     public DialogRecord DialogRecord { get; set; } = null!;
 
     private readonly TerminalCommandKey _newDotNetSolutionTerminalCommandKey =
-        TerminalCommandKey.NewTerminalCommandKey();
+        TerminalCommandKey.NewKey();
 
     private readonly CancellationTokenSource _newDotNetSolutionCancellationTokenSource = new();
 
@@ -58,7 +58,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
 
     private void RequestInputFileForParentDirectory()
     {
-        Dispatcher.Dispatch(new InputFileState.RequestInputFileStateFormAction(
+        Dispatcher.Dispatch(new InputFileRegistry.RequestInputFileStateFormAction(
             "Directory for new .NET Solution",
             async afp =>
             {
@@ -132,7 +132,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                         false,
                         EnvironmentProvider);
 
-                    Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionAction(
+                    Dispatcher.Dispatch(new DotNetSolutionRegistry.SetDotNetSolutionAction(
                         solutionAbsoluteFilePath));
 
                     return Task.CompletedTask;
@@ -175,7 +175,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
             DialogRecord.DialogKey));
 
         var notificationRecord = new NotificationRecord(
-            NotificationKey.NewNotificationKey(),
+            NotificationKey.NewKey(),
             "Website .sln template was used",
             LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
             new Dictionary<string, object?>
@@ -197,7 +197,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
             false,
             EnvironmentProvider);
 
-        Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionAction(
+        Dispatcher.Dispatch(new DotNetSolutionRegistry.SetDotNetSolutionAction(
             solutionAbsoluteFilePath));
     }
 

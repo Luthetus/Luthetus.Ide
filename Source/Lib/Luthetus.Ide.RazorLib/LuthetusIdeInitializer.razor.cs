@@ -75,7 +75,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
 
         foreach (var findProvider in LuthetusTextEditorOptions.FindProviders)
         {
-            Dispatcher.Dispatch(new TextEditorFindProviderState.RegisterAction(
+            Dispatcher.Dispatch(new TextEditorFindProviderRegistry.RegisterAction(
                 findProvider));
         }
 
@@ -91,7 +91,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
                 TerminalSessionKey = terminalSessionKey
             };
 
-            Dispatcher.Dispatch(new TerminalSessionsReducer.RegisterTerminalSessionAction(
+            Dispatcher.Dispatch(new TerminalSessionRegistryReducer.RegisterTerminalSessionAction(
                 terminalSession));
         }
 
@@ -124,7 +124,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
         var leftPanel = PanelFacts.GetLeftPanelRecord(PanelsCollectionWrap.Value);
 
         var solutionExplorerPanelTab = new PanelTab(
-            PanelTabKey.NewPanelTabKey(),
+            PanelTabKey.NewKey(),
             leftPanel.ElementDimensions,
             new(),
             typeof(SolutionExplorerDisplay),
@@ -137,7 +137,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
             false));
 
         var folderExplorerPanelTab = new PanelTab(
-            PanelTabKey.NewPanelTabKey(),
+            PanelTabKey.NewKey(),
             leftPanel.ElementDimensions,
             new(),
             typeof(FolderExplorerDisplay),
@@ -172,7 +172,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
         //    false));
 
         var compilerServiceExplorerPanelTab = new PanelTab(
-            PanelTabKey.NewPanelTabKey(),
+            PanelTabKey.NewKey(),
             rightPanel.ElementDimensions,
             new(),
             typeof(CompilerServiceExplorerDisplay),
@@ -185,7 +185,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
             false));
 
         var backgroundServicesPanelTab = new PanelTab(
-            PanelTabKey.NewPanelTabKey(),
+            PanelTabKey.NewKey(),
             rightPanel.ElementDimensions,
             new(),
             typeof(BackgroundServicesDisplay),
@@ -203,7 +203,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
         var bottomPanel = PanelFacts.GetBottomPanelRecord(PanelsCollectionWrap.Value);
 
         var terminalPanelTab = new PanelTab(
-            PanelTabKey.NewPanelTabKey(),
+            PanelTabKey.NewKey(),
             bottomPanel.ElementDimensions,
             new(),
             typeof(TerminalDisplay),
@@ -216,7 +216,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
             false));
 
         var nuGetPanelTab = new PanelTab(
-            PanelTabKey.NewPanelTabKey(),
+            PanelTabKey.NewKey(),
             bottomPanel.ElementDimensions,
             new(),
             typeof(NuGetPackageManager),
@@ -229,7 +229,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
             false));
 
         var activeContextsPanelTab = new PanelTab(
-            PanelTabKey.NewPanelTabKey(),
+            PanelTabKey.NewKey(),
             bottomPanel.ElementDimensions,
             new(),
             typeof(ActiveContextsDisplay),
@@ -264,7 +264,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
 
                 return Task.FromResult(new TabGroupLoadTabEntriesOutput(tabEntryNoTypes));
             },
-            CompilerServiceExplorerState.TabGroupKey);
+            CompilerServiceExplorerRegistry.TabGroupKey);
 
         Dispatcher.Dispatch(new TabGroupsCollection.RegisterAction(tabGroup));
         

@@ -8,5 +8,5 @@ namespace Luthetus.Ide.RazorLib.ContextCase;
 public partial class ContextInitializerDisplay : FluxorComponent
 {
     [Inject]
-    private IState<ContextStates> ContextStatesWrap { get; set; } = null!;
+    private IState<ContextRegistry> ContextStatesWrap { get; set; } = null!;
 }

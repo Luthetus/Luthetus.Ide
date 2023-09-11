@@ -15,7 +15,7 @@ namespace Luthetus.Ide.RazorLib.InputFile.Classes;
 
 public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
-    private readonly IState<InputFileState> _inputFileStateWrap;
+    private readonly IState<InputFileRegistry> _inputFileStateWrap;
     private readonly IDispatcher _dispatcher;
     private readonly ILuthetusIdeComponentRenderers _luthetusIdeComponentRenderers;
     private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
@@ -28,7 +28,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
 
     public InputFileTreeViewKeyboardEventHandler(
         ITreeViewService treeViewService,
-        IState<InputFileState> inputFileStateWrap,
+        IState<InputFileRegistry> inputFileStateWrap,
         IDispatcher dispatcher,
         ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
         ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
@@ -130,21 +130,21 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
 
     private void HandleBackButtonOnClick(ITreeViewCommandParameter treeViewCommandParameter)
     {
-        _dispatcher.Dispatch(new InputFileState.MoveBackwardsInHistoryAction());
+        _dispatcher.Dispatch(new InputFileRegistry.MoveBackwardsInHistoryAction());
 
         ChangeContentRootToOpenedTreeView(_inputFileStateWrap.Value);
     }
 
     private void HandleForwardButtonOnClick(ITreeViewCommandParameter treeViewCommandParameter)
     {
-        _dispatcher.Dispatch(new InputFileState.MoveForwardsInHistoryAction());
+        _dispatcher.Dispatch(new InputFileRegistry.MoveForwardsInHistoryAction());
 
         ChangeContentRootToOpenedTreeView(_inputFileStateWrap.Value);
     }
 
     private void HandleUpwardButtonOnClick(ITreeViewCommandParameter treeViewCommandParameter)
     {
-        _dispatcher.Dispatch(new InputFileState.OpenParentDirectoryAction(
+        _dispatcher.Dispatch(new InputFileRegistry.OpenParentDirectoryAction(
             _luthetusIdeComponentRenderers,
             _luthetusCommonComponentRenderers,
             _fileSystemProvider,
@@ -156,13 +156,13 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
 
     private void HandleRefreshButtonOnClick(ITreeViewCommandParameter treeViewCommandParameter)
     {
-        _dispatcher.Dispatch(new InputFileState.RefreshCurrentSelectionAction(
+        _dispatcher.Dispatch(new InputFileRegistry.RefreshCurrentSelectionAction(
             _luthetusCommonBackgroundTaskService));
 
         ChangeContentRootToOpenedTreeView(_inputFileStateWrap.Value);
     }
 
-    private void ChangeContentRootToOpenedTreeView(InputFileState inputFileState)
+    private void ChangeContentRootToOpenedTreeView(InputFileRegistry inputFileState)
     {
         var openedTreeView = inputFileState.GetOpenedTreeView();
 
@@ -180,7 +180,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
             return;
 
         var setSelectedTreeViewModelAction =
-            new InputFileState.SetSelectedTreeViewModelAction(
+            new InputFileRegistry.SetSelectedTreeViewModelAction(
                 treeViewAbsoluteFilePath);
 
         _dispatcher.Dispatch(setSelectedTreeViewModelAction);

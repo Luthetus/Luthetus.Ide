@@ -38,7 +38,7 @@ public partial class InputFileSidebar : ComponentBase
     [CascadingParameter]
     public InputFileTreeViewKeyboardEventHandler InputFileTreeViewKeyboardEventHandler { get; set; } = null!;
     [CascadingParameter]
-    public InputFileState InputFileState { get; set; } = null!;
+    public InputFileRegistry InputFileState { get; set; } = null!;
     [CascadingParameter]
     public DialogRecord DialogRecord { get; set; } = null!;
 
@@ -48,7 +48,7 @@ public partial class InputFileSidebar : ComponentBase
     public Action<IAbsoluteFilePath?> SetSelectedAbsoluteFilePath { get; set; } = null!;
 
     public static readonly TreeViewStateKey TreeViewInputFileSidebarStateKey =
-        TreeViewStateKey.NewTreeViewStateKey();
+        TreeViewStateKey.NewKey();
 
     private ITreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
 

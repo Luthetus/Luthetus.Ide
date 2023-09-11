@@ -26,7 +26,7 @@ public class FolderExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
         if (treeViewCommandParameter.TargetNode is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)
             return;
 
-        _dispatcher.Dispatch(new EditorState.OpenInEditorAction(
+        _dispatcher.Dispatch(new EditorRegistry.OpenInEditorAction(
             treeViewAbsoluteFilePath.Item,
             true));
     }

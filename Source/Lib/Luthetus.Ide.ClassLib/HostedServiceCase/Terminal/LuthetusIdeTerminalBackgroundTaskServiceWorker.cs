@@ -57,7 +57,7 @@ public class LuthetusIdeTerminalBackgroundTaskServiceWorker : BackgroundService
                         _luthetusCommonComponentRenderers.ErrorNotificationRendererType is not null)
                     {
                         var notificationRecord = new NotificationRecord(
-                            NotificationKey.NewNotificationKey(),
+                            NotificationKey.NewKey(),
                             "ExecutingParserTaskChanged",
                             _luthetusCommonComponentRenderers.ErrorNotificationRendererType,
                             new Dictionary<string, object?>

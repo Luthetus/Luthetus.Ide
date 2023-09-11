@@ -10,12 +10,12 @@ namespace Luthetus.Ide.RazorLib.StartupControls;
 public partial class StartupControlsDisplay : FluxorComponent
 {
     [Inject]
-    private IState<ProgramExecutionState> ProgramExecutionStateWrap { get; set; } = null!;
+    private IState<ProgramExecutionRegistry> ProgramExecutionStateWrap { get; set; } = null!;
     [Inject]
-    private IState<TerminalSessionsState> TerminalSessionsStateWrap { get; set; } = null!;
+    private IState<TerminalSessionRegistry> TerminalSessionsStateWrap { get; set; } = null!;
 
     private readonly TerminalCommandKey _newDotNetSolutionTerminalCommandKey =
-        TerminalCommandKey.NewTerminalCommandKey();
+        TerminalCommandKey.NewKey();
 
     private readonly CancellationTokenSource _newDotNetSolutionCancellationTokenSource = new();
 

@@ -19,7 +19,7 @@ public partial class IdeHeader : FluxorComponent
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
-    private DropdownKey _dropdownKeyFile = DropdownKey.NewDropdownKey();
+    private DropdownKey _dropdownKeyFile = DropdownKey.NewKey();
     private MenuRecord _menuFile = new(ImmutableArray<MenuOptionRecord>.Empty);
     private ElementReference? _buttonFileElementReference;
 
@@ -58,22 +58,22 @@ public partial class IdeHeader : FluxorComponent
             var menuOptionOpenFile = new MenuOptionRecord(
                 "File",
                 MenuOptionKind.Other,
-                () => Dispatcher.Dispatch(new EditorState.ShowInputFileAction()));
+                () => Dispatcher.Dispatch(new EditorRegistry.ShowInputFileAction()));
 
             var menuOptionOpenDirectory = new MenuOptionRecord(
                 "Directory",
                 MenuOptionKind.Other,
-                () => FolderExplorerState.ShowInputFile(Dispatcher));
+                () => FolderExplorerRegistry.ShowInputFile(Dispatcher));
 
             var menuOptionOpenCSharpProject = new MenuOptionRecord(
                 "C# Project - TODO: Adhoc Sln",
                 MenuOptionKind.Other,
-                () => Dispatcher.Dispatch(new EditorState.ShowInputFileAction()));
+                () => Dispatcher.Dispatch(new EditorRegistry.ShowInputFileAction()));
 
             var menuOptionOpenDotNetSolution = new MenuOptionRecord(
                 ".NET Solution",
                 MenuOptionKind.Other,
-                () => DotNetSolutionState.ShowInputFile(Dispatcher));
+                () => DotNetSolutionRegistry.ShowInputFile(Dispatcher));
 
             var menuOptionOpen = new MenuOptionRecord(
                 "Open",
@@ -121,7 +121,7 @@ public partial class IdeHeader : FluxorComponent
     private void OpenNewDotNetSolutionDialog()
     {
         var dialogRecord = new DialogRecord(
-            DialogKey.NewDialogKey(),
+            DialogKey.NewKey(),
             "New .NET Solution",
             typeof(DotNetSolutionFormDisplay),
             null,

@@ -38,7 +38,7 @@ public partial class ContextBoundary : ComponentBase
         }
         else
         {
-            Dispatcher.Dispatch(new ContextStates.SetActiveContextRecordsAction(contextRecords.ToImmutableArray()));
+            Dispatcher.Dispatch(new ContextRegistry.SetActiveContextRecordsAction(contextRecords.ToImmutableArray()));
         }
     }
 

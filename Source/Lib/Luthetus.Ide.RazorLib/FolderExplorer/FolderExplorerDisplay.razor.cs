@@ -16,7 +16,7 @@ namespace Luthetus.Ide.RazorLib.FolderExplorer;
 public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IState<FolderExplorerState> FolderExplorerStateWrap { get; set; } = null!;
+    private IState<FolderExplorerRegistry> FolderExplorerStateWrap { get; set; } = null!;
     [Inject]
     private IState<AppOptionsRegistry> AppOptionsStateWrap { get; set; } = null!;
     [Inject]

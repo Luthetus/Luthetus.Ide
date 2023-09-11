@@ -7,5 +7,5 @@ namespace Luthetus.Ide.RazorLib.CompilerServiceExplorer.Graphical;
 public partial class CompilerServiceExplorerGraphicalDisplay : ComponentBase
 {
     [Inject]
-    private IState<CompilerServiceExplorerState> CompilerServiceExplorerStateWrap { get; set; } = null!;
+    private IState<CompilerServiceExplorerRegistry> CompilerServiceExplorerStateWrap { get; set; } = null!;
 }
