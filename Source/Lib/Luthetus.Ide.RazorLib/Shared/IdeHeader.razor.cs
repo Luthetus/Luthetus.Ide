@@ -95,7 +95,7 @@ public partial class IdeHeader : FluxorComponent
 
     private void AddActiveDropdownKey(DropdownKey dropdownKey)
     {
-        Dispatcher.Dispatch(new DropdownsState.AddActiveAction(
+        Dispatcher.Dispatch(new DropdownRegistry.AddActiveAction(
             dropdownKey));
     }
 

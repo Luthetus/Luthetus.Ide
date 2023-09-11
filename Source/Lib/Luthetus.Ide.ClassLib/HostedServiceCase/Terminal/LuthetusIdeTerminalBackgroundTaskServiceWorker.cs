@@ -71,7 +71,7 @@ public class LuthetusIdeTerminalBackgroundTaskServiceWorker : BackgroundService
                             true,
                             IErrorNotificationRendererType.CSS_CLASS_STRING);
 
-                        backgroundTask.Dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+                        backgroundTask.Dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
                             notificationRecord));
                     }
                 }

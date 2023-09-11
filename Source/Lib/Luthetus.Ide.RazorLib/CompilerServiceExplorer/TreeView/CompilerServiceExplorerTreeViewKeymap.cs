@@ -112,7 +112,7 @@ public class CompilerServiceExplorerTreeViewKeyboardEventHandler : TreeViewKeybo
                 true,
                 null);
 
-            _dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+            _dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
                 notificationInformative));
         }
 

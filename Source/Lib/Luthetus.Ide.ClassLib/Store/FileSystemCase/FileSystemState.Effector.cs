@@ -83,7 +83,7 @@ public partial class FileSystemState
                                 true,
                                 null);
 
-                            dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+                            dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
                                 notificationInformative));
                         }
 

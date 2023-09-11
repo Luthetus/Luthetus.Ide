@@ -123,7 +123,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
                 true,
                 null);
 
-            _dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+            _dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
                 notificationInformative));
         }
 
@@ -153,7 +153,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
                 true,
                 null);
 
-            _dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+            _dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
                 notificationInformative));
         }
 

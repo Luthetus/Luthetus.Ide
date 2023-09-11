@@ -98,7 +98,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
     {
         _mostRecentTreeViewCommandParameter = treeViewCommandParameter;
 
-        Dispatcher.Dispatch(new DropdownsState.AddActiveAction(
+        Dispatcher.Dispatch(new DropdownRegistry.AddActiveAction(
             CompilerServiceExplorerTreeViewContextMenu.ContextMenuEventDropdownKey));
 
         await InvokeAsync(StateHasChanged);

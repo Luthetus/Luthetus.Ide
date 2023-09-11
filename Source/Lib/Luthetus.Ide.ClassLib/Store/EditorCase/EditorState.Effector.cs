@@ -249,7 +249,7 @@ public partial class EditorState
                                 var backgroundTask = new BackgroundTask(
                                     async cancellationToken =>
                                     {
-                                        dispatcher.Dispatch(new NotificationRecordsCollection.DisposeAction(
+                                        dispatcher.Dispatch(new NotificationRegistry.DisposeAction(
                                             notificationInformativeKey));
 
                                         var content = await _fileSystemProvider.File
@@ -276,7 +276,7 @@ public partial class EditorState
                             nameof(IBooleanPromptOrCancelRendererType.OnAfterDeclineAction),
                             new Action(() =>
                             {
-                                dispatcher.Dispatch(new NotificationRecordsCollection.DisposeAction(
+                                dispatcher.Dispatch(new NotificationRegistry.DisposeAction(
                                     notificationInformativeKey));
                             })
                         },
@@ -285,7 +285,7 @@ public partial class EditorState
                     true,
                     null);
 
-                dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+                dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
                     notificationInformative));
             }
         }

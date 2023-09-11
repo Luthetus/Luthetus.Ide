@@ -186,7 +186,7 @@ public partial class InputFileContextMenu : ComponentBase
                 true,
                 null);
 
-            Dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+            Dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
                 notificationInformative));
         }
 
@@ -216,7 +216,7 @@ public partial class InputFileContextMenu : ComponentBase
                 true,
                 null);
 
-            Dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+            Dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
                 notificationInformative));
         }
 

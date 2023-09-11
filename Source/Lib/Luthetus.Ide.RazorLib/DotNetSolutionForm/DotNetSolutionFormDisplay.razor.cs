@@ -189,7 +189,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
             true,
             null);
 
-        Dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+        Dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
             notificationRecord));
 
         var solutionAbsoluteFilePath = new AbsoluteFilePath(

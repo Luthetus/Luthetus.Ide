@@ -684,7 +684,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     true,
                     IErrorNotificationRendererType.CSS_CLASS_STRING);
 
-                dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(notificationError));
+                dispatcher.Dispatch(new NotificationRegistry.RegisterAction(notificationError));
             }
 
             onAfterCompletion.Invoke();
@@ -779,7 +779,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                                     true,
                                     null);
 
-                                dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(notificationInformative));
+                                dispatcher.Dispatch(new NotificationRegistry.RegisterAction(notificationInformative));
 
                                 await onAfterCompletion.Invoke();
                             });
@@ -850,7 +850,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                             true,
                             null);
 
-                        dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(notificationInformative));
+                        dispatcher.Dispatch(new NotificationRegistry.RegisterAction(notificationInformative));
 
                         await onAfterCompletion.Invoke();
                     });
@@ -905,7 +905,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                             true,
                             null);
 
-                        dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(notificationInformative));
+                        dispatcher.Dispatch(new NotificationRegistry.RegisterAction(notificationInformative));
 
                         await onAfterCompletion.Invoke();
                     });
@@ -965,7 +965,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                             true,
                             null);
 
-                        dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(notificationInformative));
+                        dispatcher.Dispatch(new NotificationRegistry.RegisterAction(notificationInformative));
 
                         await onAfterCompletion.Invoke();
                     });

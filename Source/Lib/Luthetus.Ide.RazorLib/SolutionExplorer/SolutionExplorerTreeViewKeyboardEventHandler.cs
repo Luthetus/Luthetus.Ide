@@ -121,7 +121,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
                 true,
                 null);
 
-            _dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+            _dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
                 notificationInformative));
         }
 
@@ -151,7 +151,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
                 true,
                 null);
 
-            _dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+            _dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
                 notificationInformative));
         }
 

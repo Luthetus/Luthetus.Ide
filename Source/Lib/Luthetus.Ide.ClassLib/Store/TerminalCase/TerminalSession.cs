@@ -179,7 +179,7 @@ public class TerminalSession
                             true,
                             IErrorNotificationRendererType.CSS_CLASS_STRING);
 
-                        _dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+                        _dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
                             notificationRecord));
                     }
                     finally

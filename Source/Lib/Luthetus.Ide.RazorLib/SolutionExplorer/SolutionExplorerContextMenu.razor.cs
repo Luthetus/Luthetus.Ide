@@ -461,7 +461,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 true,
                 null);
 
-            Dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+            Dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
                 notificationInformative));
         }
 
@@ -491,7 +491,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 true,
                 null);
 
-            Dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+            Dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
                 notificationInformative));
         }
 

@@ -147,7 +147,7 @@ public partial class InputFileTopNavBar : ComponentBase
                     true,
                     IErrorNotificationRendererType.CSS_CLASS_STRING);
 
-                Dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+                Dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
                     errorNotification));
             }
         }
