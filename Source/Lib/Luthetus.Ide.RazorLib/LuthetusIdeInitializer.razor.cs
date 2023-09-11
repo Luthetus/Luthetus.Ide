@@ -68,7 +68,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
         {
             foreach (var themeRecord in LuthetusTextEditorOptions.CustomThemeRecords)
             {
-                Dispatcher.Dispatch(new ThemeRecordsCollection.RegisterAction(
+                Dispatcher.Dispatch(new ThemeRecordRegistry.RegisterAction(
                     themeRecord));
             }
         }
