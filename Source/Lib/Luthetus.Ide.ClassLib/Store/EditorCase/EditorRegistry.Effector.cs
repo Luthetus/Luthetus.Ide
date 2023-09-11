@@ -13,7 +13,6 @@ using Luthetus.TextEditor.RazorLib.Lexing;
 using Luthetus.Common.RazorLib.Notification;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 using Luthetus.Common.RazorLib.Store.NotificationCase;
-using Luthetus.TextEditor.RazorLib.ViewModel;
 using Luthetus.CompilerServices.Lang.CSharp.BinderCase;
 using Luthetus.CompilerServices.Lang.Xml;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
@@ -28,6 +27,7 @@ using Luthetus.CompilerServices.Lang.CSharpProject.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.FSharp;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Types;
+using Luthetus.TextEditor.RazorLib.ViewModel.InternalClasses;
 
 namespace Luthetus.Ide.ClassLib.Store.EditorCase;
 

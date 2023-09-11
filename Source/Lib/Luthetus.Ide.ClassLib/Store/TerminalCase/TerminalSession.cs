@@ -10,7 +10,7 @@ using Luthetus.Common.RazorLib.Store.NotificationCase;
 using Luthetus.Ide.ClassLib.HostedServiceCase.Terminal;
 using Luthetus.Ide.ClassLib.State;
 using Luthetus.TextEditor.RazorLib.Model;
-using Luthetus.TextEditor.RazorLib.ViewModel;
+using Luthetus.TextEditor.RazorLib.ViewModel.InternalClasses;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Reactive.Linq;
