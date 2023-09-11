@@ -31,7 +31,7 @@ namespace Luthetus.Ide.RazorLib;
 public partial class LuthetusIdeInitializer : ComponentBase
 {
     [Inject]
-    private IState<PanelsCollection> PanelsCollectionWrap { get; set; } = null!;
+    private IState<PanelsRegistry> PanelsCollectionWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -131,7 +131,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
             typeof(IconFolder),
             "Solution Explorer");
 
-        Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
+        Dispatcher.Dispatch(new PanelsRegistry.RegisterEntryAction(
             leftPanel.PanelRecordKey,
             solutionExplorerPanelTab,
             false));
@@ -144,12 +144,12 @@ public partial class LuthetusIdeInitializer : ComponentBase
             typeof(IconFolder),
             "Folder Explorer");
 
-        Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
+        Dispatcher.Dispatch(new PanelsRegistry.RegisterEntryAction(
             leftPanel.PanelRecordKey,
             folderExplorerPanelTab,
             false));
 
-        Dispatcher.Dispatch(new PanelsCollection.SetActivePanelTabAction(
+        Dispatcher.Dispatch(new PanelsRegistry.SetActiveEntryAction(
             leftPanel.PanelRecordKey,
             solutionExplorerPanelTab.PanelTabKey));
     }
@@ -179,7 +179,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
             typeof(IconFolder),
             "Compiler Service Explorer");
 
-        Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
+        Dispatcher.Dispatch(new PanelsRegistry.RegisterEntryAction(
             rightPanel.PanelRecordKey,
             compilerServiceExplorerPanelTab,
             false));
@@ -192,7 +192,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
             typeof(IconFolder),
             "Background Tasks");
 
-        Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
+        Dispatcher.Dispatch(new PanelsRegistry.RegisterEntryAction(
             rightPanel.PanelRecordKey,
             backgroundServicesPanelTab,
             false));
@@ -210,7 +210,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
             typeof(IconFolder),
             "Terminal");
 
-        Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
+        Dispatcher.Dispatch(new PanelsRegistry.RegisterEntryAction(
             bottomPanel.PanelRecordKey,
             terminalPanelTab,
             false));
@@ -223,7 +223,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
             typeof(IconFolder),
             "NuGet");
 
-        Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
+        Dispatcher.Dispatch(new PanelsRegistry.RegisterEntryAction(
             bottomPanel.PanelRecordKey,
             nuGetPanelTab,
             false));
@@ -236,12 +236,12 @@ public partial class LuthetusIdeInitializer : ComponentBase
             typeof(IconFolder),
             "Active Contexts");
 
-        Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
+        Dispatcher.Dispatch(new PanelsRegistry.RegisterEntryAction(
             bottomPanel.PanelRecordKey,
             activeContextsPanelTab,
             false));
 
-        Dispatcher.Dispatch(new PanelsCollection.SetActivePanelTabAction(
+        Dispatcher.Dispatch(new PanelsRegistry.SetActiveEntryAction(
             bottomPanel.PanelRecordKey,
             terminalPanelTab.PanelTabKey));
     }

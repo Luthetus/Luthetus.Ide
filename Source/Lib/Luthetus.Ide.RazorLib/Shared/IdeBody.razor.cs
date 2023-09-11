@@ -10,7 +10,7 @@ namespace Luthetus.Ide.RazorLib.Shared;
 public partial class IdeBody : ComponentBase
 {
     [Inject]
-    private IState<PanelsCollection> PanelsCollectionWrap { get; set; } = null!;
+    private IState<PanelsRegistry> PanelsCollectionWrap { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public ElementDimensions BodyElementDimensions { get; set; } = null!;
