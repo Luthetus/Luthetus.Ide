@@ -52,7 +52,7 @@ public partial class InputFileBottomControls : ComponentBase
             if (DialogRecord is not null)
             {
                 Dispatcher.Dispatch(new DialogRegistry.DisposeAction(
-                    DialogRecord.DialogKey));
+                    DialogRecord.Key));
             }
 
             await InputFileState.OnAfterSubmitFunc
@@ -72,7 +72,7 @@ public partial class InputFileBottomControls : ComponentBase
         if (DialogRecord is not null)
         {
             Dispatcher.Dispatch(new DialogRegistry.DisposeAction(
-                DialogRecord.DialogKey));
+                DialogRecord.Key));
         }
 
         return Task.CompletedTask;

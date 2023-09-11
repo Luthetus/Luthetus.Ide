@@ -5,7 +5,7 @@ using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Options;
 using Luthetus.Common.RazorLib.Resize;
 using Luthetus.Common.RazorLib.StateHasChangedBoundaryCase;
-using Luthetus.Common.RazorLib.Store.ApplicationOptions;
+using Luthetus.Common.RazorLib.Store.AppOptionsCase;
 using Luthetus.Common.RazorLib.Store.DragCase;
 using Luthetus.Common.RazorLib.Store.PanelCase;
 using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;

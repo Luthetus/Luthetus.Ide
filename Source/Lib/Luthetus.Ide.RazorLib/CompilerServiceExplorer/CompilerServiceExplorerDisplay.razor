@@ -1,5 +1,4 @@
 ﻿@using Fluxor.Blazor.Web.Components;
-@using Luthetus.Common.RazorLib.TabGroups
 @using Luthetus.Ide.ClassLib.Context;
 @using Luthetus.Ide.ClassLib.Store.CompilerServiceExplorerCase.InnerDetails;
 @using Luthetus.Ide.ClassLib.Store.CompilerServiceExplorerCase;
@@ -15,7 +14,7 @@
     @{
         var compilerServiceExplorerState = CompilerServiceExplorerStateWrap.Value;
         var tabGroup = TabGroupsCollectionStateSelection.Value;
-        var activeTabEntryNoType = tabGroup?.GetActiveTabEntryNoType();
+        var activeTabEntryNoType = tabGroup?.GetActiveEntryNoType();
 
         CompilerServiceExplorerViewKind compilerServiceExplorerViewKind;
 

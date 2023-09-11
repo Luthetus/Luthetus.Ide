@@ -111,7 +111,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                 {
                     // Close Dialog
                     Dispatcher.Dispatch(new DialogRegistry.DisposeAction(
-                        DialogRecord.DialogKey));
+                        DialogRecord.Key));
 
                     // Open the created .NET Solution
                     var parentDirectoryAbsoluteFilePath = new AbsoluteFilePath(
@@ -172,7 +172,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
 
         // Close Dialog
         Dispatcher.Dispatch(new DialogRegistry.DisposeAction(
-            DialogRecord.DialogKey));
+            DialogRecord.Key));
 
         var notificationRecord = new NotificationRecord(
             NotificationKey.NewKey(),

@@ -5,9 +5,9 @@ using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Icons.Codicon;
 using Luthetus.Common.RazorLib.Panel;
 using Luthetus.Common.RazorLib.Store.PanelCase;
-using Luthetus.Common.RazorLib.Store.TabGroupCase;
+using Luthetus.Common.RazorLib.Store.TabCase;
 using Luthetus.Common.RazorLib.Store.ThemeCase;
-using Luthetus.Common.RazorLib.TabGroups;
+using Luthetus.Common.RazorLib.TabCase;
 using Luthetus.Ide.ClassLib.CommandCase;
 using Luthetus.Ide.ClassLib.HostedServiceCase.FileSystem;
 using Luthetus.Ide.ClassLib.HostedServiceCase.Terminal;
@@ -132,7 +132,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
             "Solution Explorer");
 
         Dispatcher.Dispatch(new PanelsRegistry.RegisterEntryAction(
-            leftPanel.PanelRecordKey,
+            leftPanel.Key,
             solutionExplorerPanelTab,
             false));
 
@@ -145,13 +145,13 @@ public partial class LuthetusIdeInitializer : ComponentBase
             "Folder Explorer");
 
         Dispatcher.Dispatch(new PanelsRegistry.RegisterEntryAction(
-            leftPanel.PanelRecordKey,
+            leftPanel.Key,
             folderExplorerPanelTab,
             false));
 
         Dispatcher.Dispatch(new PanelsRegistry.SetActiveEntryAction(
-            leftPanel.PanelRecordKey,
-            solutionExplorerPanelTab.PanelTabKey));
+            leftPanel.Key,
+            solutionExplorerPanelTab.Key));
     }
 
     private void InitializeRightPanelTabs()
@@ -180,7 +180,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
             "Compiler Service Explorer");
 
         Dispatcher.Dispatch(new PanelsRegistry.RegisterEntryAction(
-            rightPanel.PanelRecordKey,
+            rightPanel.Key,
             compilerServiceExplorerPanelTab,
             false));
 
@@ -193,7 +193,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
             "Background Tasks");
 
         Dispatcher.Dispatch(new PanelsRegistry.RegisterEntryAction(
-            rightPanel.PanelRecordKey,
+            rightPanel.Key,
             backgroundServicesPanelTab,
             false));
     }
@@ -211,7 +211,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
             "Terminal");
 
         Dispatcher.Dispatch(new PanelsRegistry.RegisterEntryAction(
-            bottomPanel.PanelRecordKey,
+            bottomPanel.Key,
             terminalPanelTab,
             false));
 
@@ -224,7 +224,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
             "NuGet");
 
         Dispatcher.Dispatch(new PanelsRegistry.RegisterEntryAction(
-            bottomPanel.PanelRecordKey,
+            bottomPanel.Key,
             nuGetPanelTab,
             false));
 
@@ -237,13 +237,13 @@ public partial class LuthetusIdeInitializer : ComponentBase
             "Active Contexts");
 
         Dispatcher.Dispatch(new PanelsRegistry.RegisterEntryAction(
-            bottomPanel.PanelRecordKey,
+            bottomPanel.Key,
             activeContextsPanelTab,
             false));
 
         Dispatcher.Dispatch(new PanelsRegistry.SetActiveEntryAction(
-            bottomPanel.PanelRecordKey,
-            terminalPanelTab.PanelTabKey));
+            bottomPanel.Key,
+            terminalPanelTab.Key));
     }
 
     private async Task InitializeCompilerServiceExplorerStateAsync()
@@ -266,16 +266,16 @@ public partial class LuthetusIdeInitializer : ComponentBase
             },
             CompilerServiceExplorerRegistry.TabGroupKey);
 
-        Dispatcher.Dispatch(new TabGroupsCollection.RegisterAction(tabGroup));
+        Dispatcher.Dispatch(new TabRegistry.RegisterGroupAction(tabGroup));
         
-        var tabGroupLoadTabEntriesOutput = await tabGroup.LoadTabEntriesAsync();
+        var tabGroupLoadTabEntriesOutput = await tabGroup.LoadEntryBagAsync();
 
-        Dispatcher.Dispatch(new TabGroupsCollection.SetTabEntriesAction(
-            tabGroup.TabGroupKey,
+        Dispatcher.Dispatch(new TabRegistry.SetEntryBagAction(
+            tabGroup.Key,
             tabGroupLoadTabEntriesOutput.OutTabEntries));
 
-        Dispatcher.Dispatch(new TabGroupsCollection.SetActiveTabEntryKeyAction(
-            tabGroup.TabGroupKey,
+        Dispatcher.Dispatch(new TabRegistry.SetActiveEntryKeyAction(
+            tabGroup.Key,
             tabGroupLoadTabEntriesOutput.OutTabEntries.Last().TabEntryKey));
     }
 }

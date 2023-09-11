@@ -1,5 +1,5 @@
 using Fluxor;
-using Luthetus.Common.RazorLib.TabGroups;
+using Luthetus.Common.RazorLib.TabCase;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Ide.ClassLib.Store.CompilerServiceExplorerCase.InnerDetails;
 
@@ -9,7 +9,7 @@ namespace Luthetus.Ide.ClassLib.Store.CompilerServiceExplorerCase;
 public partial class CompilerServiceExplorerRegistry
 {
     public static readonly TreeViewStateKey TreeViewCompilerServiceExplorerContentStateKey = TreeViewStateKey.NewKey();
-    public static readonly TabGroupKey TabGroupKey = TabGroupKey.NewTabGroupKey();
+    public static readonly TabGroupKey TabGroupKey = TabGroupKey.NewKey();
 
     private CompilerServiceExplorerRegistry()
     {

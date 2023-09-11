@@ -34,7 +34,7 @@ public static class ServiceCollectionExtensions
             services.AddLuthetusTextEditor(hostingInformation, inTextEditorOptions => inTextEditorOptions with
             {
                 CustomThemeRecords = LuthetusTextEditorCustomThemeFacts.AllCustomThemes,
-                InitialThemeKey = ThemeFacts.VisualStudioDarkThemeClone.ThemeKey,
+                InitialThemeKey = ThemeFacts.VisualStudioDarkThemeClone.Key,
             });
         }
 

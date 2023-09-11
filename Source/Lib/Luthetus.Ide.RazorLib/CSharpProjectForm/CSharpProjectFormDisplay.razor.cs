@@ -444,7 +444,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                             () =>
                             {
                                 Dispatcher.Dispatch(new DialogRegistry.DisposeAction(
-                                    DialogRecord.DialogKey));
+                                    DialogRecord.Key));
 
                                 Dispatcher.Dispatch(new DotNetSolutionRegistry.SetDotNetSolutionAction(
                                     solutionNamespacePath.AbsoluteFilePath));
@@ -504,7 +504,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
         // Close Dialog
         Dispatcher.Dispatch(new DialogRegistry.DisposeAction(
-            DialogRecord.DialogKey));
+            DialogRecord.Key));
 
         var notificationRecord = new NotificationRecord(
             NotificationKey.NewKey(),

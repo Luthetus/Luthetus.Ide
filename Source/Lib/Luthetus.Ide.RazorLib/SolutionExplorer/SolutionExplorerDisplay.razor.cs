@@ -2,7 +2,7 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.Dialog;
-using Luthetus.Common.RazorLib.Store.ApplicationOptions;
+using Luthetus.Common.RazorLib.Store.AppOptionsCase;
 using Luthetus.Common.RazorLib.Store.DialogCase;
 using Luthetus.Common.RazorLib.Store.DropdownCase;
 using Luthetus.Common.RazorLib.TreeView;

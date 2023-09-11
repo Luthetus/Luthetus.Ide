@@ -1,6 +1,6 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers;
-using Luthetus.Common.RazorLib.Store.ApplicationOptions;
+using Luthetus.Common.RazorLib.Store.AppOptionsCase;
 using Luthetus.Common.RazorLib.Store.DropdownCase;
 using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
