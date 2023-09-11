@@ -17,7 +17,7 @@ namespace Luthetus.Ide.RazorLib.SolutionExplorer;
 public partial class SolutionExplorerDisplay : FluxorComponent
 {
     [Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+    private IState<AppOptionsRegistry> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
     private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
     [Inject]
@@ -83,7 +83,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             IsResizable = true
         };
 
-        Dispatcher.Dispatch(new DialogRecordsCollection.RegisterAction(
+        Dispatcher.Dispatch(new DialogRegistry.RegisterAction(
             dialogRecord));
     }
 

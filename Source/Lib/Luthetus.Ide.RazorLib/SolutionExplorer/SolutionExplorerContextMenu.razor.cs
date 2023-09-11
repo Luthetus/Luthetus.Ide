@@ -362,7 +362,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             IsResizable = true
         };
 
-        Dispatcher.Dispatch(new DialogRecordsCollection.RegisterAction(
+        Dispatcher.Dispatch(new DialogRegistry.RegisterAction(
             dialogRecord));
     }
 

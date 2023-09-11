@@ -110,7 +110,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                 () =>
                 {
                     // Close Dialog
-                    Dispatcher.Dispatch(new DialogRecordsCollection.DisposeAction(
+                    Dispatcher.Dispatch(new DialogRegistry.DisposeAction(
                         DialogRecord.DialogKey));
 
                     // Open the created .NET Solution
@@ -171,7 +171,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
             HackForWebsite_NEW_SOLUTION_TEMPLATE);
 
         // Close Dialog
-        Dispatcher.Dispatch(new DialogRecordsCollection.DisposeAction(
+        Dispatcher.Dispatch(new DialogRegistry.DisposeAction(
             DialogRecord.DialogKey));
 
         var notificationRecord = new NotificationRecord(

@@ -130,7 +130,7 @@ public partial class IdeHeader : FluxorComponent
             IsResizable = true
         };
 
-        Dispatcher.Dispatch(new DialogRecordsCollection.RegisterAction(
+        Dispatcher.Dispatch(new DialogRegistry.RegisterAction(
             dialogRecord));
     }
 }

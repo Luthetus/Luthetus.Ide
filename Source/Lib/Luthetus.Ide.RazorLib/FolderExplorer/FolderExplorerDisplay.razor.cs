@@ -18,7 +18,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     [Inject]
     private IState<FolderExplorerState> FolderExplorerStateWrap { get; set; } = null!;
     [Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+    private IState<AppOptionsRegistry> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]

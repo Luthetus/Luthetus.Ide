@@ -51,7 +51,7 @@ public partial class InputFileBottomControls : ComponentBase
         {
             if (DialogRecord is not null)
             {
-                Dispatcher.Dispatch(new DialogRecordsCollection.DisposeAction(
+                Dispatcher.Dispatch(new DialogRegistry.DisposeAction(
                     DialogRecord.DialogKey));
             }
 
@@ -71,7 +71,7 @@ public partial class InputFileBottomControls : ComponentBase
     {
         if (DialogRecord is not null)
         {
-            Dispatcher.Dispatch(new DialogRecordsCollection.DisposeAction(
+            Dispatcher.Dispatch(new DialogRegistry.DisposeAction(
                 DialogRecord.DialogKey));
         }
 

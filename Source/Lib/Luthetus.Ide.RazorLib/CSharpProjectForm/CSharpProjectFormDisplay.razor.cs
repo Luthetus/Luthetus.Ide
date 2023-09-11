@@ -443,7 +443,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                             _newCSharpProjectCancellationTokenSource.Token,
                             () =>
                             {
-                                Dispatcher.Dispatch(new DialogRecordsCollection.DisposeAction(
+                                Dispatcher.Dispatch(new DialogRegistry.DisposeAction(
                                     DialogRecord.DialogKey));
 
                                 Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionAction(
@@ -503,7 +503,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             cSharpProjectAbsoluteFilePathString);
 
         // Close Dialog
-        Dispatcher.Dispatch(new DialogRecordsCollection.DisposeAction(
+        Dispatcher.Dispatch(new DialogRegistry.DisposeAction(
             DialogRecord.DialogKey));
 
         var notificationRecord = new NotificationRecord(

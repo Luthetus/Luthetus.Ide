@@ -17,9 +17,9 @@ namespace Luthetus.Ide.RazorLib.Shared;
 public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 {
     [Inject]
-    private IState<DragState> DragStateWrap { get; set; } = null!;
+    private IState<DragRegistry> DragStateWrap { get; set; } = null!;
     [Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+    private IState<AppOptionsRegistry> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
     private IState<PanelsCollection> PanelsCollectionWrap { get; set; } = null!;
     [Inject]

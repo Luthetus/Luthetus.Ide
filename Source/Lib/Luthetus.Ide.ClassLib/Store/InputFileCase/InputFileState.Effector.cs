@@ -38,7 +38,7 @@ public partial record InputFileState
                     IsResizable = true
                 };
 
-                dispatcher.Dispatch(new DialogRecordsCollection.RegisterAction(
+                dispatcher.Dispatch(new DialogRegistry.RegisterAction(
                     inputFileDialog));
             }
 

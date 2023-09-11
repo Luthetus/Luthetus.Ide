@@ -22,7 +22,7 @@ public partial class SettingsDialogEntryPoint : ComponentBase
 
     public void DispatchRegisterDialogRecordAction()
     {
-        Dispatcher.Dispatch(new DialogRecordsCollection.RegisterAction(
+        Dispatcher.Dispatch(new DialogRegistry.RegisterAction(
             _dialogRecord));
     }
 }
