@@ -84,7 +84,7 @@ public class TreeViewAbsoluteFilePath : TreeViewWithType<IAbsoluteFilePath>
                     newChild.IsExpanded = oldChild.IsExpanded;
                     newChild.IsExpandable = oldChild.IsExpandable;
                     newChild.IsHidden = oldChild.IsHidden;
-                    newChild.TreeViewNodeKey = oldChild.TreeViewNodeKey;
+                    newChild.Key = oldChild.Key;
                     newChild.Children = oldChild.Children;
                 }
             }
@@ -95,7 +95,7 @@ public class TreeViewAbsoluteFilePath : TreeViewWithType<IAbsoluteFilePath>
 
                 newChild.IndexAmongSiblings = i;
                 newChild.Parent = this;
-                newChild.TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
+                newChild.TreeViewChangedKey = TreeViewChangedKey.NewKey();
             }
 
             Children = newChildren;
@@ -116,7 +116,7 @@ public class TreeViewAbsoluteFilePath : TreeViewWithType<IAbsoluteFilePath>
         };
         }
 
-        TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
+        TreeViewChangedKey = TreeViewChangedKey.NewKey();
     }
 
     public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)

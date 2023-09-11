@@ -118,7 +118,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
                 false,
                 false)
             {
-                TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
+                TreeViewChangedKey = TreeViewChangedKey.NewKey()
             })
             .ToList();
 
@@ -128,11 +128,11 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
 
             newChild.IndexAmongSiblings = i;
             newChild.Parent = this;
-            newChild.TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
+            newChild.TreeViewChangedKey = TreeViewChangedKey.NewKey();
         }
 
         Children = newChildren;
-        TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
+        TreeViewChangedKey = TreeViewChangedKey.NewKey();
     }
 
     public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)

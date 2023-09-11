@@ -89,7 +89,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
         };
         }
 
-        TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
+        TreeViewChangedKey = TreeViewChangedKey.NewKey();
 
         return Task.CompletedTask;
     }
@@ -169,7 +169,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
 
                         originalTreeView.Parent = this;
                         originalTreeView.IndexAmongSiblings = childrensIndex;
-                        originalTreeView.TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
+                        originalTreeView.TreeViewChangedKey = TreeViewChangedKey.NewKey();
 
                         siblingsAndSelfTreeViews.RemoveAt(siblingsIndex);
 
@@ -179,7 +179,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
                     {
                         childTreeView.Parent = this;
                         childTreeView.IndexAmongSiblings = childrensIndex;
-                        childTreeView.TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
+                        childTreeView.TreeViewChangedKey = TreeViewChangedKey.NewKey();
                     }
                 }
             }
@@ -202,7 +202,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
             true,
             false)
         {
-            TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
+            TreeViewChangedKey = TreeViewChangedKey.NewKey()
         };
     }
 
@@ -222,7 +222,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
             true,
             false)
         {
-            TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
+            TreeViewChangedKey = TreeViewChangedKey.NewKey()
         };
     }
 }
