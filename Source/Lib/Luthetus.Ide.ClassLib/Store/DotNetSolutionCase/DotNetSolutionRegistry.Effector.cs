@@ -2,7 +2,6 @@
 using Luthetus.Ide.ClassLib.TreeViewImplementations;
 using Luthetus.Common.RazorLib.TreeView;
 using Fluxor;
-using Luthetus.TextEditor.RazorLib.HostedServiceCase.CompilerServiceCase;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
@@ -10,6 +9,7 @@ using Luthetus.Common.RazorLib.Namespaces;
 using Luthetus.CompilerServices.Lang.DotNetSolution;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 
 namespace Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 
@@ -23,7 +23,7 @@ public partial record DotNetSolutionRegistry
         private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
         private readonly ITreeViewService _treeViewService;
         private readonly IState<DotNetSolutionRegistry> _dotNetSolutionStateWrap;
-        private readonly ILuthetusTextEditorCompilerServiceBackgroundTaskService _compilerServiceBackgroundTaskQueue;
+        private readonly BackgroundTaskService _backgroundTaskService;
 
         public Effector(
             IFileSystemProvider fileSystemProvider,
@@ -32,7 +32,7 @@ public partial record DotNetSolutionRegistry
             ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
             ITreeViewService treeViewService,
             IState<DotNetSolutionRegistry> dotNetSolutionStateWrap,
-            ILuthetusTextEditorCompilerServiceBackgroundTaskService compilerServiceBackgroundTaskQueue)
+            BackgroundTaskService backgroundTaskService)
         {
             _fileSystemProvider = fileSystemProvider;
             _environmentProvider = environmentProvider;
@@ -40,7 +40,7 @@ public partial record DotNetSolutionRegistry
             _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
             _treeViewService = treeViewService;
             _dotNetSolutionStateWrap = dotNetSolutionStateWrap;
-            _compilerServiceBackgroundTaskQueue = compilerServiceBackgroundTaskQueue;
+            _backgroundTaskService = backgroundTaskService;
         }
 
         [EffectMethod]

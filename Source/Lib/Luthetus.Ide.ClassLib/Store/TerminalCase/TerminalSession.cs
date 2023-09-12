@@ -199,7 +199,7 @@ public class TerminalSession
             _dispatcher,
             CancellationToken.None);
 
-        _terminalBackgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
+        _terminalBackgroundTaskQueue.Enqueue(backgroundTask);
         return Task.CompletedTask;
     }
 

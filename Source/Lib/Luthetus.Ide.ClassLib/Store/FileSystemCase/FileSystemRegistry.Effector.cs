@@ -106,7 +106,7 @@ public partial class FileSystemRegistry
                     dispatcher,
                     CancellationToken.None);
 
-                _luthetusIdeFileSystemBackgroundTaskService.QueueBackgroundWorkItem(backgroundTask);
+                _luthetusIdeFileSystemBackgroundTaskService.Enqueue(backgroundTask);
             }
 
             return Task.CompletedTask;

@@ -15,9 +15,8 @@ using Luthetus.CompilerServices.Lang.Json;
 using Luthetus.CompilerServices.Lang.Razor.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.TypeScript;
 using Luthetus.CompilerServices.Lang.Xml;
-using Luthetus.Ide.ClassLib.HostedServiceCase.FileSystem;
-using Luthetus.Ide.ClassLib.HostedServiceCase.Terminal;
 using Luthetus.Ide.ClassLib.CommandCase;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 
 namespace Luthetus.Ide.ClassLib;
 
@@ -27,20 +26,16 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         LuthetusHostingInformation hostingInformation)
     {
+        hostingInformation.BackgroundTaskService.RegisterQueue(FileSystemBackgroundTaskWorker.Queue);
+        services.AddSingleton<FileSystemBackgroundTaskWorker>();
+
+        hostingInformation.BackgroundTaskService.RegisterQueue(TerminalBackgroundTaskWorker.Queue);
+        services.AddSingleton<TerminalBackgroundTaskWorker>();
+
         if (hostingInformation.LuthetusHostingKind == LuthetusHostingKind.ServerSide)
         {
-            services
-                .AddHostedService(sp => sp.GetRequiredService<LuthetusIdeFileSystemBackgroundTaskServiceWorker>())
-                .AddHostedService(sp => sp.GetRequiredService<LuthetusIdeTerminalBackgroundTaskServiceWorker>());
-        }
-
-        if (hostingInformation.LuthetusHostingKind != LuthetusHostingKind.UnitTesting)
-        {
-            services
-                .AddSingleton<ILuthetusIdeFileSystemBackgroundTaskService, LuthetusIdeFileSystemBackgroundTaskService>()
-                .AddSingleton<LuthetusIdeFileSystemBackgroundTaskServiceWorker>()
-                .AddSingleton<ILuthetusIdeTerminalBackgroundTaskService, LuthetusIdeTerminalBackgroundTaskService>()
-                .AddSingleton<LuthetusIdeTerminalBackgroundTaskServiceWorker>();
+            services.AddHostedService(sp => sp.GetRequiredService<FileSystemBackgroundTaskWorker>());
+            services.AddHostedService(sp => sp.GetRequiredService<TerminalBackgroundTaskWorker>());
         }
 
         services

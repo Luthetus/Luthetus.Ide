@@ -12,9 +12,6 @@ public static class GitFacts
     public const string GIT_DIRTY_REASON_MODIFIED = "modified:";
     public const string GIT_DIRTY_REASON_DELETED = "deleted:";
 
-    public static readonly TerminalCommandKey GitInitTerminalCommandKey =
-        TerminalCommandKey.NewKey();
-
-    public static readonly TerminalCommandKey GitStatusTerminalCommandKey =
-        TerminalCommandKey.NewKey();
+    public static readonly TerminalCommandKey GitInitTerminalCommandKey = TerminalCommandKey.NewKey();
+    public static readonly TerminalCommandKey GitStatusTerminalCommandKey = TerminalCommandKey.NewKey();
 }

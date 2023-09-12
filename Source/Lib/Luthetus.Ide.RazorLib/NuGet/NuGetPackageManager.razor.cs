@@ -120,7 +120,7 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
                 Dispatcher,
                 CancellationToken.None);
 
-            LuthetusCommonBackgroundTaskService.QueueBackgroundWorkItem(backgroundTask);
+            LuthetusCommonBackgroundTaskService.Queue(backgroundTask);
         }
         catch (Exception e)
         {

@@ -145,7 +145,7 @@ public partial record InputFileRegistry
                     CancellationToken.None);
 
                 openParentDirectoryAction.LuthetusCommonBackgroundTaskService
-                    .QueueBackgroundWorkItem(backgroundTask);
+                    .Queue(backgroundTask);
             }
 
             if (parentDirectoryTreeViewModel is not null)
@@ -185,7 +185,7 @@ public partial record InputFileRegistry
                 CancellationToken.None);
 
             refreshCurrentSelectionAction.LuthetusCommonBackgroundTaskService
-                .QueueBackgroundWorkItem(backgroundTask);
+                .Queue(backgroundTask);
 
             return inInputFileState;
         }

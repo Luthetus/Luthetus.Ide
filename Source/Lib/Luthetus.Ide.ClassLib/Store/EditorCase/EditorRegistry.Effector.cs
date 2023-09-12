@@ -42,7 +42,7 @@ public partial class EditorRegistry
         private readonly ITextEditorService _textEditorService;
         private readonly ILuthetusIdeComponentRenderers _luthetusIdeComponentRenderers;
         private readonly IFileSystemProvider _fileSystemProvider;
-        private readonly ILuthetusCommonBackgroundTaskService _luthetusCommonBackgroundTaskService;
+        private readonly BackgroundTaskService _backgroundTaskService;
         private readonly XmlCompilerService _xmlCompilerService;
         private readonly DotNetSolutionCompilerService _dotNetCompilerService;
         private readonly CSharpProjectCompilerService _cSharpProjectCompilerService;
@@ -58,7 +58,7 @@ public partial class EditorRegistry
             ITextEditorService textEditorService,
             ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
             IFileSystemProvider fileSystemProvider,
-            ILuthetusCommonBackgroundTaskService luthetusCommonBackgroundTaskService,
+            BackgroundTaskService backgroundTaskService,
             XmlCompilerService xmlCompilerService,
             DotNetSolutionCompilerService dotNetCompilerService,
             CSharpProjectCompilerService cSharpProjectCompilerService,
@@ -73,7 +73,7 @@ public partial class EditorRegistry
             _textEditorService = textEditorService;
             _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
             _fileSystemProvider = fileSystemProvider;
-            _luthetusCommonBackgroundTaskService = luthetusCommonBackgroundTaskService;
+            _backgroundTaskService = backgroundTaskService;
             _xmlCompilerService = xmlCompilerService;
             _dotNetCompilerService = dotNetCompilerService;
             _cSharpProjectCompilerService = cSharpProjectCompilerService;
@@ -246,6 +246,10 @@ public partial class EditorRegistry
                             nameof(IBooleanPromptOrCancelRendererType.OnAfterAcceptAction),
                             new Action(() =>
                             {
+                                _backgroundTaskService.Enqueue(
+                                    BackgroundTaskKey.NewKey(),
+                                    );
+
                                 var backgroundTask = new BackgroundTask(
                                     async cancellationToken =>
                                     {
@@ -269,7 +273,7 @@ public partial class EditorRegistry
                                     dispatcher,
                                     CancellationToken.None);
 
-                                _luthetusCommonBackgroundTaskService.QueueBackgroundWorkItem(backgroundTask);
+                                _backgroundTaskService.Queue(backgroundTask);
                             })
                         },
                         {

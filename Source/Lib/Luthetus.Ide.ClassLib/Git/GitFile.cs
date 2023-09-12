@@ -11,8 +11,7 @@ public record GitFile(IAbsolutePath AbsolutePath, GitDirtyReason GitDirtyReason)
         GitDirtyReason.Added => true,
         GitDirtyReason.Modified => true,
         GitDirtyReason.Deleted => true,
-        _ => throw new ApplicationException(
-            GetUnrecognizedGitDirtyReasonExceptionMessage(GitDirtyReason))
+        _ => throw new ApplicationException(GetUnrecognizedGitDirtyReasonExceptionMessage(GitDirtyReason))
     };
 
     private static string GetUnrecognizedGitDirtyReasonExceptionMessage(GitDirtyReason gitDirtyReason) =>

@@ -9,29 +9,12 @@ namespace Luthetus.Ide.ClassLib.Menu;
 
 public interface IMenuOptionsFactory
 {
-    public MenuOptionRecord NewEmptyFile(
-        IAbsolutePath parentDirectory,
-        Func<Task> onAfterCompletion);
-
-    public MenuOptionRecord NewTemplatedFile(
-        NamespacePath parentDirectory,
-        Func<Task> onAfterCompletion);
-
-    public MenuOptionRecord NewDirectory(
-        IAbsolutePath parentDirectory,
-        Func<Task> onAfterCompletion);
-
-    public MenuOptionRecord DeleteFile(
-        IAbsolutePath absolutePath,
-        Func<Task> onAfterCompletion);
-
-    public MenuOptionRecord CopyFile(
-        IAbsolutePath absolutePath,
-        Func<Task> onAfterCompletion);
-
-    public MenuOptionRecord CutFile(
-        IAbsolutePath absolutePath,
-        Func<Task> onAfterCompletion);
+    public MenuOptionRecord NewEmptyFile(IAbsolutePath parentDirectory, Func<Task> onAfterCompletion);
+    public MenuOptionRecord NewTemplatedFile(NamespacePath parentDirectory, Func<Task> onAfterCompletion);
+    public MenuOptionRecord NewDirectory(IAbsolutePath parentDirectory, Func<Task> onAfterCompletion);
+    public MenuOptionRecord DeleteFile(IAbsolutePath absolutePath, Func<Task> onAfterCompletion);
+    public MenuOptionRecord CopyFile(IAbsolutePath absolutePath, Func<Task> onAfterCompletion);
+    public MenuOptionRecord CutFile(IAbsolutePath absolutePath, Func<Task> onAfterCompletion);
 
     public MenuOptionRecord RenameFile(
         IAbsolutePath sourceAbsolutePath,
