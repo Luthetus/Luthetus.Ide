@@ -9,37 +9,20 @@ namespace Luthetus.Ide.ClassLib.Menu;
 
 public interface IMenuOptionsFactory
 {
-    public MenuOptionRecord NewEmptyFile(
-        IAbsoluteFilePath parentDirectory,
-        Func<Task> onAfterCompletion);
-
-    public MenuOptionRecord NewTemplatedFile(
-        NamespacePath parentDirectory,
-        Func<Task> onAfterCompletion);
-
-    public MenuOptionRecord NewDirectory(
-        IAbsoluteFilePath parentDirectory,
-        Func<Task> onAfterCompletion);
-
-    public MenuOptionRecord DeleteFile(
-        IAbsoluteFilePath absoluteFilePath,
-        Func<Task> onAfterCompletion);
-
-    public MenuOptionRecord CopyFile(
-        IAbsoluteFilePath absoluteFilePath,
-        Func<Task> onAfterCompletion);
-
-    public MenuOptionRecord CutFile(
-        IAbsoluteFilePath absoluteFilePath,
-        Func<Task> onAfterCompletion);
+    public MenuOptionRecord NewEmptyFile(IAbsolutePath parentDirectory, Func<Task> onAfterCompletion);
+    public MenuOptionRecord NewTemplatedFile(NamespacePath parentDirectory, Func<Task> onAfterCompletion);
+    public MenuOptionRecord NewDirectory(IAbsolutePath parentDirectory, Func<Task> onAfterCompletion);
+    public MenuOptionRecord DeleteFile(IAbsolutePath absolutePath, Func<Task> onAfterCompletion);
+    public MenuOptionRecord CopyFile(IAbsolutePath absolutePath, Func<Task> onAfterCompletion);
+    public MenuOptionRecord CutFile(IAbsolutePath absolutePath, Func<Task> onAfterCompletion);
 
     public MenuOptionRecord RenameFile(
-        IAbsoluteFilePath sourceAbsoluteFilePath,
+        IAbsolutePath sourceAbsolutePath,
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion);
 
     public MenuOptionRecord PasteClipboard(
-        IAbsoluteFilePath directoryAbsoluteFilePath,
+        IAbsolutePath directoryAbsolutePath,
         Func<Task> onAfterCompletion);
 
     public MenuOptionRecord RemoveCSharpProjectReferenceFromSolution(

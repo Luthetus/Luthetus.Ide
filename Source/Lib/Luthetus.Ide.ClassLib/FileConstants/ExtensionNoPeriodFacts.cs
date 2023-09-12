@@ -17,9 +17,7 @@ using Luthetus.TextEditor.RazorLib.Decoration;
 
 namespace Luthetus.Ide.ClassLib.FileConstants;
 
-/// <summary>
-/// The constants do not start with a period
-/// </summary>
+/// <summary>The constants do not start with a period</summary>
 public static class ExtensionNoPeriodFacts
 {
     public const string DOT_NET_SOLUTION = "sln";

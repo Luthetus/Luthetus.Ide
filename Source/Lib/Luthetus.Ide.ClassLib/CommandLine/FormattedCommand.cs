@@ -18,8 +18,7 @@ public class FormattedCommand
 
     private string FormattedCommandToStringHelper()
     {
-        var interpolatedCommandBuilder = new StringBuilder(
-            TargetFileName);
+        var interpolatedCommandBuilder = new StringBuilder(TargetFileName);
 
         foreach (var argument in Arguments)
         {

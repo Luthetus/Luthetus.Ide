@@ -5,7 +5,6 @@
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <div class="luth_ide_c-sharp-project-form luth_ide_form @GetCssClassForActivePanelKind(_activePanelKind)">
-
     <div class="luth_ide_c-sharp-project-form-top-inputs">
         <div class="luth_ide_form-group">
             <div class="luth_ide_form-label">
@@ -16,8 +15,8 @@
                 <input class="luth_ide_input luth_ide_input-text"
                        style="height: 2em;"
                        placeholder="Project name"
-                @bind="_cSharpProjectNameValue"
-                @bind:event="oninput" />
+                       @bind="_cSharpProjectNameValue"
+                       @bind:event="oninput" />
             </div>
         </div>
     </div>
@@ -59,8 +58,8 @@
                                    autocorrect="off"
                                    autocomplete="off"
                                    spellcheck="false"
-                            @bind="_searchInput"
-                            @bind:event="oninput" />
+                                   @bind="_searchInput"
+                                   @bind:event="oninput" />
                         </div>
                     }
                 </div>
@@ -89,11 +88,11 @@
                                         if (!string.IsNullOrWhiteSpace(localSearchInput))
                                         {
                                             filteredProjectTemplateContainer = _projectTemplateContainer.Where(pt =>
-                                            pt.TemplateName!.Contains(localSearchInput, StringComparison.InvariantCultureIgnoreCase) ||
-                                            pt.ShortName!.Contains(localSearchInput, StringComparison.InvariantCultureIgnoreCase) ||
-                                            pt.Language!.Contains(localSearchInput, StringComparison.InvariantCultureIgnoreCase) ||
-                                            pt.Tags!.Contains(localSearchInput, StringComparison.InvariantCultureIgnoreCase))
-                                            .ToList();
+                                                    pt.TemplateName!.Contains(localSearchInput, StringComparison.InvariantCultureIgnoreCase) ||
+                                                    pt.ShortName!.Contains(localSearchInput, StringComparison.InvariantCultureIgnoreCase) ||
+                                                    pt.Language!.Contains(localSearchInput, StringComparison.InvariantCultureIgnoreCase) ||
+                                                    pt.Tags!.Contains(localSearchInput, StringComparison.InvariantCultureIgnoreCase))
+                                                .ToList();
                                         }
 
                                         foreach (var projectTemplate in filteredProjectTemplateContainer)
@@ -119,8 +118,8 @@
                                     <input class="luth_ide_input luth_ide_input-text"
                                            style="height: 2em;"
                                            placeholder="Template name"
-                                    @bind="_projectTemplateShortNameValue"
-                                    @bind:event="oninput" />
+                                           @bind="_projectTemplateShortNameValue"
+                                           @bind:event="oninput" />
                                 </div>
                             </div>
                         </div>
@@ -142,8 +141,8 @@
                 <input class="luth_ide_input luth_ide_input-text"
                        style="height: 2em;"
                        placeholder="Parent directory"
-                @bind="_parentDirectoryNameValue"
-                @bind:event="oninput" />
+                       @bind="_parentDirectoryNameValue"
+                       @bind:event="oninput" />
 
                 <button class="luth_button"
                         @onclick='async () => RequestInputFileForParentDirectory("Directory for new C# Project")'>
@@ -161,8 +160,8 @@
                 <input class="luth_ide_input luth_ide_input-text"
                        style="height: 2em;"
                        placeholder="Optional parameters"
-                @bind="_optionalParametersValue"
-                @bind:event="oninput" />
+                       @bind="_optionalParametersValue"
+                       @bind:event="oninput" />
             </div>
         </div>
     </div>
@@ -216,7 +215,7 @@
                     &nbsp;\
                 </em>
 
-                <br />
+                <br/>
 
                 <em class="luth_em">
                     &nbsp;&nbsp;&nbsp;&nbsp;

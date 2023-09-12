@@ -39,7 +39,7 @@ public class TreeViewCSharpProjectNugetPackageReference : TreeViewWithType<CShar
 
     public override int GetHashCode()
     {
-        var uniqueString = Item.CSharpProjectAbsoluteFilePathString +
+        var uniqueString = Item.CSharpProjectAbsolutePathString +
             Item.LightWeightNugetPackageRecord.Id;
 
         return uniqueString.GetHashCode();

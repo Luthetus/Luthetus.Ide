@@ -5,7 +5,7 @@
         @* "Delete" or "Delete Recursively" *@
         <em class="luth_em">
             Delete
-            @if (AbsoluteFilePath.IsDirectory)
+            @if (AbsolutePath.IsDirectory)
             {
                 <text>&nbsp;Recursively</text>
             }
@@ -14,11 +14,11 @@
         :
         &nbsp;
 
-        <em class="luth_em" title="@AbsoluteFilePath.FormattedInput">
-            @AbsoluteFilePath.FilenameWithExtension
+        <em class="luth_em" title="@AbsolutePath.FormattedInput">
+            @AbsolutePath.NameWithExtension
         </em>
 
-        @if (AbsoluteFilePath.IsDirectory)
+        @if (AbsolutePath.IsDirectory)
         {
             <div>
                 AND

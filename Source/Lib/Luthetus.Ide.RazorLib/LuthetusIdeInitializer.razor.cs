@@ -1,5 +1,6 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Icons.Codicon;
@@ -9,12 +10,9 @@ using Luthetus.Common.RazorLib.Store.TabCase;
 using Luthetus.Common.RazorLib.Store.ThemeCase;
 using Luthetus.Common.RazorLib.TabCase;
 using Luthetus.Ide.ClassLib.CommandCase;
-using Luthetus.Ide.ClassLib.HostedServiceCase.FileSystem;
-using Luthetus.Ide.ClassLib.HostedServiceCase.Terminal;
 using Luthetus.Ide.ClassLib.Store.CompilerServiceExplorerCase;
 using Luthetus.Ide.ClassLib.Store.CompilerServiceExplorerCase.InnerDetails;
 using Luthetus.Ide.ClassLib.Store.TerminalCase;
-using Luthetus.Ide.RazorLib.BackgroundServiceCase;
 using Luthetus.Ide.RazorLib.CompilerServiceExplorer;
 using Luthetus.Ide.RazorLib.ContextCase;
 using Luthetus.Ide.RazorLib.FolderExplorer;
@@ -39,15 +37,15 @@ public partial class LuthetusIdeInitializer : ComponentBase
     [Inject]
     private LuthetusTextEditorOptions LuthetusTextEditorOptions { get; set; } = null!;
     [Inject]
-    private ILuthetusIdeTerminalBackgroundTaskService TerminalBackgroundTaskQueue { get; set; } = null!;
+    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]
     private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
     [Inject]
     private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
     [Inject]
-    private LuthetusIdeFileSystemBackgroundTaskServiceWorker LuthetusIdeFileSystemBackgroundTaskServiceWorker { get; set; } = null!;
+    private FileSystemBackgroundTaskWorker FileSystemBackgroundTaskWorker { get; set; } = null!;
     [Inject]
-    private LuthetusIdeTerminalBackgroundTaskServiceWorker LuthetusIdeTerminalBackgroundTaskServiceWorker { get; set; } = null!;
+    private TerminalBackgroundTaskWorker TerminalBackgroundTaskWorker { get; set; } = null!;
     [Inject]
     private ICommandFactory CommandFactory { get; set; } = null!;
 
@@ -55,13 +53,13 @@ public partial class LuthetusIdeInitializer : ComponentBase
     {
         if (LuthetusHostingInformation.LuthetusHostingKind != LuthetusHostingKind.ServerSide)
         {
-            _ = Task.Run(async () => await LuthetusIdeFileSystemBackgroundTaskServiceWorker
-                .StartAsync(CancellationToken.None)
-                .ConfigureAwait(false));
+            _ = Task.Run(async () => await FileSystemBackgroundTaskWorker
+                                               .StartAsync(CancellationToken.None)
+                                               .ConfigureAwait(false));
 
-            _ = Task.Run(async () => await LuthetusIdeTerminalBackgroundTaskServiceWorker
-                .StartAsync(CancellationToken.None)
-                .ConfigureAwait(false));
+            _ = Task.Run(async () => await TerminalBackgroundTaskWorker
+                                               .StartAsync(CancellationToken.None)
+                                               .ConfigureAwait(false));
         }
 
         if (LuthetusTextEditorOptions.CustomThemeRecords is not null)
@@ -85,7 +83,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
                 null,
                 Dispatcher,
                 FileSystemProvider,
-                TerminalBackgroundTaskQueue,
+                BackgroundTaskService,
                 LuthetusCommonComponentRenderers)
             {
                 TerminalSessionKey = terminalSessionKey
@@ -158,19 +156,6 @@ public partial class LuthetusIdeInitializer : ComponentBase
     {
         var rightPanel = PanelFacts.GetRightPanelRecord(PanelsCollectionWrap.Value);
 
-        //var notificationsPanelTab = new PanelTab(
-        //    PanelTabKey.NewPanelTabKey(),
-        //    rightPanel.ElementDimensions,
-        //    new(),
-        //    typeof(NotificationsDisplay),
-        //    typeof(IconFolder),
-        //    "Notifications");
-
-        //Dispatcher.Dispatch(new PanelsCollection.RegisterPanelTabAction(
-        //    rightPanel.PanelRecordKey,
-        //    notificationsPanelTab,
-        //    false));
-
         var compilerServiceExplorerPanelTab = new PanelTab(
             PanelTabKey.NewKey(),
             rightPanel.ElementDimensions,
@@ -182,19 +167,6 @@ public partial class LuthetusIdeInitializer : ComponentBase
         Dispatcher.Dispatch(new PanelsRegistry.RegisterEntryAction(
             rightPanel.Key,
             compilerServiceExplorerPanelTab,
-            false));
-
-        var backgroundServicesPanelTab = new PanelTab(
-            PanelTabKey.NewKey(),
-            rightPanel.ElementDimensions,
-            new(),
-            typeof(BackgroundServicesDisplay),
-            typeof(IconFolder),
-            "Background Tasks");
-
-        Dispatcher.Dispatch(new PanelsRegistry.RegisterEntryAction(
-            rightPanel.Key,
-            backgroundServicesPanelTab,
             false));
     }
 

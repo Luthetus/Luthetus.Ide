@@ -15,13 +15,13 @@ namespace Luthetus.Ide.ClassLib.Store.GitCase;
 /// </summary>
 [FeatureState]
 public partial record GitRegistry(
-    IAbsoluteFilePath? GitFolderAbsoluteFilePath,
+    IAbsolutePath? GitFolderAbsolutePath,
     GitRegistry.TryFindGitFolderInDirectoryAction? MostRecentTryFindGitFolderInDirectoryAction,
     ImmutableList<GitFile> GitFilesList,
     ImmutableList<GitTask> ActiveGitTasks)
 {
     public GitRegistry() : this(
-        default(IAbsoluteFilePath?),
+        default(IAbsolutePath?),
         default(TryFindGitFolderInDirectoryAction?),
         ImmutableList<GitFile>.Empty,
         ImmutableList<GitTask>.Empty)

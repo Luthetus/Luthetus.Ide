@@ -1,5 +1,5 @@
 ﻿@using Luthetus.Common.RazorLib.Dimensions;
-@using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
+@using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 @using Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
 
 @{
@@ -23,7 +23,7 @@
             cx="@xCenterInPixelsCssValue" cy="@yCenterInPixelsCssValue" r="@circleRadiusInPixelsCssValue" />
 
     @{
-        var absoluteFilePath = new AbsoluteFilePath(
+        var absolutePath = new AbsolutePath(
         localCompilerServiceResource.ResourceUri.Value,
         false,
         EnvironmentProvider);
@@ -46,14 +46,14 @@
           style="@fontSizeStyleAttribute"
           fill="var(--luth_primary-foreground-color)">
 
-        @absoluteFilePath.FilenameWithExtension
+        @absolutePath.NameWithExtension
     </text>
     <text text-anchor="middle" dominant-baseline="middle"
           x="@xCenterInPixelsCssValue" y="@yCenterInPixelsCssValue"
           style="@fontSizeStyleAttribute"
           fill="var(--luth_primary-foreground-color)">
 
-        @absoluteFilePath.FilenameWithExtension
+        @absolutePath.NameWithExtension
     </text>
 
     @if (ShouldDrawLineConnectingSelfToParent)
@@ -148,11 +148,11 @@ both circles a bit instead of ending at their edges.
 
         var cSharpProjectResource = CSharpProjectCompilerService.CompilerServiceResources
             .SingleOrDefault(csr => 
-                csr.ResourceUri.Value == dotNetProject.AbsoluteFilePath.FormattedInput);
+                csr.ResourceUri.Value == dotNetProject.AbsolutePath.FormattedInput);
 
         if (cSharpProjectResource is not null)
         {
-            <CompilerServiceResourceDisplay CompilerServiceResource="cSharpProjectResource"
+            <ObsoleteCompilerServiceGraphicalResourceDisplay CompilerServiceResource="cSharpProjectResource"
                                             IndexAmongSiblings="index"
                                             Depth="Depth + 1"
                                             CountOfSiblingsAndSelf="@dotNetProjects.Count()"

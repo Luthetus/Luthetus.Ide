@@ -1,5 +1,5 @@
-﻿using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
-using Luthetus.Common.RazorLib.FileSystem.Classes.Local;
+﻿using Luthetus.Common.RazorLib.FileSystem.Classes.Local;
+using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 using Luthetus.Common.RazorLib.Namespaces;
 using Luthetus.CompilerServices.Lang.DotNetSolution;
 using Xunit;
@@ -13,16 +13,16 @@ public class DotNetSolutionParserTests
     {
         var localEnvironmentProvider = new LocalEnvironmentProvider();
 
-        var solutionAbsoluteFilePathString = @"C:\Users\hunte\Repos\BlazorApp1\BlazorApp1.sln";
+        var solutionAbsolutePathString = @"C:\Users\hunte\Repos\BlazorApp1\BlazorApp1.sln";
 
-        var solutionAbsoluteFilePath = new AbsoluteFilePath(
-            solutionAbsoluteFilePathString,
+        var solutionAbsolutePath = new AbsolutePath(
+            solutionAbsolutePathString,
             false,
             localEnvironmentProvider);
 
         var solution = DotNetSolutionLexer.Lex(
             SOLUTION_TEST_DATA,
-            new NamespacePath("", solutionAbsoluteFilePath),
+            new NamespacePath("", solutionAbsolutePath),
             localEnvironmentProvider);
     }
 

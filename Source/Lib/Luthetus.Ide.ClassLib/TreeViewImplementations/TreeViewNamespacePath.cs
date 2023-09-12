@@ -41,13 +41,13 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
         if (obj is not TreeViewNamespacePath treeViewSolutionExplorer)
             return false;
 
-        return treeViewSolutionExplorer.Item.AbsoluteFilePath.FormattedInput ==
-               Item.AbsoluteFilePath.FormattedInput;
+        return treeViewSolutionExplorer.Item.AbsolutePath.FormattedInput ==
+               Item.AbsolutePath.FormattedInput;
     }
 
     public override int GetHashCode()
     {
-        return Item.AbsoluteFilePath.FormattedInput.GetHashCode();
+        return Item.AbsolutePath.FormattedInput.GetHashCode();
     }
 
     public override TreeViewRenderer GetTreeViewRenderer()
@@ -69,13 +69,13 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
         {
             var newChildren = new List<TreeViewNoType>();
 
-            if (Item.AbsoluteFilePath.IsDirectory)
+            if (Item.AbsolutePath.IsDirectory)
             {
                 newChildren = await this.DirectoryLoadChildrenAsync();
             }
             else
             {
-                switch (Item.AbsoluteFilePath.ExtensionNoPeriod)
+                switch (Item.AbsolutePath.ExtensionNoPeriod)
                 {
                     case ExtensionNoPeriodFacts.DOT_NET_SOLUTION:
                         return;
@@ -138,7 +138,7 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
     /// </summary>
     public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
     {
-        if (Item.AbsoluteFilePath.ExtensionNoPeriod
+        if (Item.AbsolutePath.ExtensionNoPeriod
             .EndsWith(ExtensionNoPeriodFacts.RAZOR_MARKUP))
         {
             TreeViewHelper.RazorMarkupFindRelatedFiles(

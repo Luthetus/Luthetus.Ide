@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
+﻿using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.WebsiteProjectTemplates.BlazorServerEmptyCase;
 using Luthetus.Ide.ClassLib.WebsiteProjectTemplates.BlazorWasmEmptyCase;
@@ -72,435 +72,435 @@ public static class WebsiteProjectTemplateRegistry
 
     public static async Task HandleNewCSharpProjectAsync(
         string projectTemplateShortName,
-        string cSharpProjectAbsoluteFilePathString,
+        string cSharpProjectAbsolutePathString,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider)
     {
         if (projectTemplateShortName == BlazorWasmEmptyProjectTemplate.ShortName)
-            await HandleBlazorWasmEmptyProjectTemplateAsync(cSharpProjectAbsoluteFilePathString, fileSystemProvider, environmentProvider);
+            await HandleBlazorWasmEmptyProjectTemplateAsync(cSharpProjectAbsolutePathString, fileSystemProvider, environmentProvider);
         else if (projectTemplateShortName == BlazorServerSideEmptyProjectTemplate.ShortName)
-            await HandleBlazorServerSideEmptyProjectTemplateAsync(cSharpProjectAbsoluteFilePathString, fileSystemProvider, environmentProvider);
+            await HandleBlazorServerSideEmptyProjectTemplateAsync(cSharpProjectAbsolutePathString, fileSystemProvider, environmentProvider);
         else if (projectTemplateShortName == ClassLibProjectTemplate.ShortName)
-            await HandleClassLibProjectTemplateAsync(cSharpProjectAbsoluteFilePathString, fileSystemProvider, environmentProvider);
+            await HandleClassLibProjectTemplateAsync(cSharpProjectAbsolutePathString, fileSystemProvider, environmentProvider);
         else if (projectTemplateShortName == RazorClassLibProjectTemplate.ShortName)
-            await HandleRazorLibProjectTemplateAsync(cSharpProjectAbsoluteFilePathString, fileSystemProvider, environmentProvider);
+            await HandleRazorLibProjectTemplateAsync(cSharpProjectAbsolutePathString, fileSystemProvider, environmentProvider);
         else if (projectTemplateShortName == ConsoleAppProjectTemplate.ShortName)
-            await HandleConsoleAppProjectTemplateAsync(cSharpProjectAbsoluteFilePathString, fileSystemProvider, environmentProvider);
+            await HandleConsoleAppProjectTemplateAsync(cSharpProjectAbsolutePathString, fileSystemProvider, environmentProvider);
         else if (projectTemplateShortName == XUnitProjectTemplate.ShortName)
-            await HandleXUnitProjectTemplateAsync(cSharpProjectAbsoluteFilePathString, fileSystemProvider, environmentProvider);
+            await HandleXUnitProjectTemplateAsync(cSharpProjectAbsolutePathString, fileSystemProvider, environmentProvider);
         else
             throw new NotImplementedException($"The {nameof(ProjectTemplate.ShortName)}: '{projectTemplateShortName}' was not recognized.");
     }
 
     private static async Task HandleBlazorWasmEmptyProjectTemplateAsync(
-        string cSharpProjectAbsoluteFilePathString,
+        string cSharpProjectAbsolutePathString,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider)
     {
-        var cSharpProjectAbsoluteFilePath = new AbsoluteFilePath(cSharpProjectAbsoluteFilePathString, false, environmentProvider);
-        var parentDirectoryOfProject = cSharpProjectAbsoluteFilePath.ParentDirectory;
+        var cSharpProjectAbsolutePath = new AbsolutePath(cSharpProjectAbsolutePathString, false, environmentProvider);
+        var parentDirectoryOfProject = cSharpProjectAbsolutePath.ParentDirectory;
 
         if (parentDirectoryOfProject is null)
             throw new NotImplementedException();
 
-        var parentDirectoryOfProjectAbsoluteFilePathString = parentDirectoryOfProject.FormattedInput;
+        var parentDirectoryOfProjectAbsolutePathString = parentDirectoryOfProject.FormattedInput;
 
         // AppCss
         {
-            var absoluteFilePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsoluteFilePathString,
+            var absolutePath = environmentProvider.JoinPaths(
+                parentDirectoryOfProjectAbsolutePathString,
                 BlazorWasmEmptyFacts.APP_CSS_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absoluteFilePath,
-                BlazorWasmEmptyFacts.GetAppCssContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                absolutePath,
+                BlazorWasmEmptyFacts.GetAppCssContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
 
         // Csproj
         {
             await fileSystemProvider.File.WriteAllTextAsync(
-                cSharpProjectAbsoluteFilePathString,
-                BlazorWasmEmptyFacts.GetCsprojContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                cSharpProjectAbsolutePathString,
+                BlazorWasmEmptyFacts.GetCsprojContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
 
         // ImportsRazor
         {
-            var absoluteFilePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsoluteFilePathString,
+            var absolutePath = environmentProvider.JoinPaths(
+                parentDirectoryOfProjectAbsolutePathString,
                 BlazorWasmEmptyFacts.IMPORTS_RAZOR_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absoluteFilePath,
-                BlazorWasmEmptyFacts.GetImportsRazorContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                absolutePath,
+                BlazorWasmEmptyFacts.GetImportsRazorContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
         
         // IndexHtml
         {
-            var absoluteFilePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsoluteFilePathString,
+            var absolutePath = environmentProvider.JoinPaths(
+                parentDirectoryOfProjectAbsolutePathString,
                 BlazorWasmEmptyFacts.INDEX_HTML_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absoluteFilePath,
-                BlazorWasmEmptyFacts.GetIndexHtmlContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                absolutePath,
+                BlazorWasmEmptyFacts.GetIndexHtmlContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
         
         // IndexRazor
         {
-            var absoluteFilePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsoluteFilePathString,
+            var absolutePath = environmentProvider.JoinPaths(
+                parentDirectoryOfProjectAbsolutePathString,
                 BlazorWasmEmptyFacts.INDEX_RAZOR_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absoluteFilePath,
-                BlazorWasmEmptyFacts.GetIndexRazorContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                absolutePath,
+                BlazorWasmEmptyFacts.GetIndexRazorContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
         
         // LaunchSettingsJson
         {
-            var absoluteFilePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsoluteFilePathString,
+            var absolutePath = environmentProvider.JoinPaths(
+                parentDirectoryOfProjectAbsolutePathString,
                 BlazorWasmEmptyFacts.LAUNCH_SETTINGS_JSON_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absoluteFilePath,
-                BlazorWasmEmptyFacts.GetLaunchSettingsJsonContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                absolutePath,
+                BlazorWasmEmptyFacts.GetLaunchSettingsJsonContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
         
         // MainLayoutRazor
         {
-            var absoluteFilePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsoluteFilePathString,
+            var absolutePath = environmentProvider.JoinPaths(
+                parentDirectoryOfProjectAbsolutePathString,
                 BlazorWasmEmptyFacts.MAIN_LAYOUT_RAZOR_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absoluteFilePath,
-                BlazorWasmEmptyFacts.GetMainLayoutRazorContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                absolutePath,
+                BlazorWasmEmptyFacts.GetMainLayoutRazorContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
         
         // ProgramCs
         {
-            var absoluteFilePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsoluteFilePathString,
+            var absolutePath = environmentProvider.JoinPaths(
+                parentDirectoryOfProjectAbsolutePathString,
                 BlazorWasmEmptyFacts.PROGRAM_CS_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absoluteFilePath,
-                BlazorWasmEmptyFacts.GetProgramCsContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                absolutePath,
+                BlazorWasmEmptyFacts.GetProgramCsContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
     }
 
     private static async Task HandleBlazorServerSideEmptyProjectTemplateAsync(
-        string cSharpProjectAbsoluteFilePathString,
+        string cSharpProjectAbsolutePathString,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider)
     {
-        var cSharpProjectAbsoluteFilePath = new AbsoluteFilePath(cSharpProjectAbsoluteFilePathString, false, environmentProvider);
-        var parentDirectoryOfProject = cSharpProjectAbsoluteFilePath.ParentDirectory;
+        var cSharpProjectAbsolutePath = new AbsolutePath(cSharpProjectAbsolutePathString, false, environmentProvider);
+        var parentDirectoryOfProject = cSharpProjectAbsolutePath.ParentDirectory;
 
         if (parentDirectoryOfProject is null)
             throw new NotImplementedException();
 
-        var parentDirectoryOfProjectAbsoluteFilePathString = parentDirectoryOfProject.FormattedInput;
+        var parentDirectoryOfProjectAbsolutePathString = parentDirectoryOfProject.FormattedInput;
 
         // AppRazor
         {
-            var absoluteFilePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsoluteFilePathString,
+            var absolutePath = environmentProvider.JoinPaths(
+                parentDirectoryOfProjectAbsolutePathString,
                 BlazorServerEmptyFacts.APP_RAZOR_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absoluteFilePath,
-                BlazorServerEmptyFacts.GetAppRazorContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                absolutePath,
+                BlazorServerEmptyFacts.GetAppRazorContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
 
         // AppSettingsDevelopmentJson
         {
-            var absoluteFilePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsoluteFilePathString,
+            var absolutePath = environmentProvider.JoinPaths(
+                parentDirectoryOfProjectAbsolutePathString,
                 BlazorServerEmptyFacts.APP_SETTINGS_DEVELOPMENT_JSON_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absoluteFilePath,
-                BlazorServerEmptyFacts.GetAppSettingsDevelopmentJsonContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                absolutePath,
+                BlazorServerEmptyFacts.GetAppSettingsDevelopmentJsonContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
 
         // AppSettingsJson
         {
-            var absoluteFilePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsoluteFilePathString,
+            var absolutePath = environmentProvider.JoinPaths(
+                parentDirectoryOfProjectAbsolutePathString,
                 BlazorServerEmptyFacts.APP_SETTINGS_JSON_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absoluteFilePath,
-                BlazorServerEmptyFacts.GetAppSettingsJsonContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                absolutePath,
+                BlazorServerEmptyFacts.GetAppSettingsJsonContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
 
         // Csproj
         {
             await fileSystemProvider.File.WriteAllTextAsync(
-                cSharpProjectAbsoluteFilePathString,
-                BlazorServerEmptyFacts.GetCsprojContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                cSharpProjectAbsolutePathString,
+                BlazorServerEmptyFacts.GetCsprojContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
 
         // HostCshtml
         {
-            var absoluteFilePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsoluteFilePathString,
+            var absolutePath = environmentProvider.JoinPaths(
+                parentDirectoryOfProjectAbsolutePathString,
                 BlazorServerEmptyFacts.HOST_CSHTML_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absoluteFilePath,
-                BlazorServerEmptyFacts.GetHostCshtmlContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                absolutePath,
+                BlazorServerEmptyFacts.GetHostCshtmlContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
 
         // ImportsRazor
         {
-            var absoluteFilePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsoluteFilePathString,
+            var absolutePath = environmentProvider.JoinPaths(
+                parentDirectoryOfProjectAbsolutePathString,
                 BlazorServerEmptyFacts.IMPORTS_RAZOR_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absoluteFilePath,
-                BlazorServerEmptyFacts.GetImportsRazorContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                absolutePath,
+                BlazorServerEmptyFacts.GetImportsRazorContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
 
         // IndexRazor
         {
-            var absoluteFilePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsoluteFilePathString,
+            var absolutePath = environmentProvider.JoinPaths(
+                parentDirectoryOfProjectAbsolutePathString,
                 BlazorServerEmptyFacts.INDEX_RAZOR_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absoluteFilePath,
-                BlazorServerEmptyFacts.GetIndexRazorContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                absolutePath,
+                BlazorServerEmptyFacts.GetIndexRazorContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
 
         // LaunchSettingsJson
         {
-            var absoluteFilePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsoluteFilePathString,
+            var absolutePath = environmentProvider.JoinPaths(
+                parentDirectoryOfProjectAbsolutePathString,
                 BlazorServerEmptyFacts.LAUNCH_SETTINGS_JSON_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absoluteFilePath,
-                BlazorServerEmptyFacts.GetLaunchSettingsJsonContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                absolutePath,
+                BlazorServerEmptyFacts.GetLaunchSettingsJsonContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
 
         // MainLayoutRazor
         {
-            var absoluteFilePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsoluteFilePathString,
+            var absolutePath = environmentProvider.JoinPaths(
+                parentDirectoryOfProjectAbsolutePathString,
                 BlazorServerEmptyFacts.MAIN_LAYOUT_RAZOR_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absoluteFilePath,
-                BlazorServerEmptyFacts.GetMainLayoutRazorContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                absolutePath,
+                BlazorServerEmptyFacts.GetMainLayoutRazorContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
 
         // ProgramCs
         {
-            var absoluteFilePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsoluteFilePathString,
+            var absolutePath = environmentProvider.JoinPaths(
+                parentDirectoryOfProjectAbsolutePathString,
                 BlazorServerEmptyFacts.PROGRAM_CS_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absoluteFilePath,
-                BlazorServerEmptyFacts.GetProgramCsContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                absolutePath,
+                BlazorServerEmptyFacts.GetProgramCsContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
 
         // SiteCss
         {
-            var absoluteFilePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsoluteFilePathString,
+            var absolutePath = environmentProvider.JoinPaths(
+                parentDirectoryOfProjectAbsolutePathString,
                 BlazorServerEmptyFacts.SITE_CSS_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absoluteFilePath,
-                BlazorServerEmptyFacts.GetSiteCssContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                absolutePath,
+                BlazorServerEmptyFacts.GetSiteCssContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
     }
 
     private static async Task HandleClassLibProjectTemplateAsync(
-        string cSharpProjectAbsoluteFilePathString,
+        string cSharpProjectAbsolutePathString,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider)
     {
-        var cSharpProjectAbsoluteFilePath = new AbsoluteFilePath(cSharpProjectAbsoluteFilePathString, false, environmentProvider);
-        var parentDirectoryOfProject = cSharpProjectAbsoluteFilePath.ParentDirectory;
+        var cSharpProjectAbsolutePath = new AbsolutePath(cSharpProjectAbsolutePathString, false, environmentProvider);
+        var parentDirectoryOfProject = cSharpProjectAbsolutePath.ParentDirectory;
 
         if (parentDirectoryOfProject is null)
             throw new NotImplementedException();
 
-        var parentDirectoryOfProjectAbsoluteFilePathString = parentDirectoryOfProject.FormattedInput;
+        var parentDirectoryOfProjectAbsolutePathString = parentDirectoryOfProject.FormattedInput;
 
         // Class1Cs
         {
-            var absoluteFilePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsoluteFilePathString,
+            var absolutePath = environmentProvider.JoinPaths(
+                parentDirectoryOfProjectAbsolutePathString,
                 ClassLibFacts.CLASS_1_CS_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absoluteFilePath,
-                ClassLibFacts.GetClass1CsContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                absolutePath,
+                ClassLibFacts.GetClass1CsContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
 
         // Csproj
         {
             await fileSystemProvider.File.WriteAllTextAsync(
-                cSharpProjectAbsoluteFilePathString,
-                ClassLibFacts.GetCsprojContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                cSharpProjectAbsolutePathString,
+                ClassLibFacts.GetCsprojContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
     }
 
     private static async Task HandleRazorLibProjectTemplateAsync(
-        string cSharpProjectAbsoluteFilePathString,
+        string cSharpProjectAbsolutePathString,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider)
     {
-        var cSharpProjectAbsoluteFilePath = new AbsoluteFilePath(cSharpProjectAbsoluteFilePathString, false, environmentProvider);
-        var parentDirectoryOfProject = cSharpProjectAbsoluteFilePath.ParentDirectory;
+        var cSharpProjectAbsolutePath = new AbsolutePath(cSharpProjectAbsolutePathString, false, environmentProvider);
+        var parentDirectoryOfProject = cSharpProjectAbsolutePath.ParentDirectory;
 
         if (parentDirectoryOfProject is null)
             throw new NotImplementedException();
 
-        var parentDirectoryOfProjectAbsoluteFilePathString = parentDirectoryOfProject.FormattedInput;
+        var parentDirectoryOfProjectAbsolutePathString = parentDirectoryOfProject.FormattedInput;
 
         // Component1Razor
         {
-            var absoluteFilePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsoluteFilePathString,
+            var absolutePath = environmentProvider.JoinPaths(
+                parentDirectoryOfProjectAbsolutePathString,
                 RazorClassLibFacts.COMPONENT_1_RAZOR_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absoluteFilePath,
-                RazorClassLibFacts.GetComponent1RazorContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                absolutePath,
+                RazorClassLibFacts.GetComponent1RazorContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
 
         // Component1RazorCss
         {
-            var absoluteFilePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsoluteFilePathString,
+            var absolutePath = environmentProvider.JoinPaths(
+                parentDirectoryOfProjectAbsolutePathString,
                 RazorClassLibFacts.COMPONENT_1_RAZOR_CSS_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absoluteFilePath,
-                RazorClassLibFacts.GetComponent1RazorCssContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                absolutePath,
+                RazorClassLibFacts.GetComponent1RazorCssContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
 
         // Csproj
         {
             await fileSystemProvider.File.WriteAllTextAsync(
-                cSharpProjectAbsoluteFilePathString,
-                RazorClassLibFacts.GetCsprojContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                cSharpProjectAbsolutePathString,
+                RazorClassLibFacts.GetCsprojContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
 
         // ExampleJsInteropCs
         {
-            var absoluteFilePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsoluteFilePathString,
+            var absolutePath = environmentProvider.JoinPaths(
+                parentDirectoryOfProjectAbsolutePathString,
                 RazorClassLibFacts.EXAMPLE_JS_INTEROP_CS_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absoluteFilePath,
-                RazorClassLibFacts.GetExampleJsInteropCsContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                absolutePath,
+                RazorClassLibFacts.GetExampleJsInteropCsContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
 
         // ExampleJsInteropJs
         {
-            var absoluteFilePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsoluteFilePathString,
+            var absolutePath = environmentProvider.JoinPaths(
+                parentDirectoryOfProjectAbsolutePathString,
                 RazorClassLibFacts.EXAMPLE_JS_INTEROP_JS_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absoluteFilePath,
-                RazorClassLibFacts.GetExampleJsInteropJsContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                absolutePath,
+                RazorClassLibFacts.GetExampleJsInteropJsContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
 
         // ImportsRazor
         {
-            var absoluteFilePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsoluteFilePathString,
+            var absolutePath = environmentProvider.JoinPaths(
+                parentDirectoryOfProjectAbsolutePathString,
                 RazorClassLibFacts.IMPORTS_RAZOR_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absoluteFilePath,
-                RazorClassLibFacts.GetImportsRazorContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                absolutePath,
+                RazorClassLibFacts.GetImportsRazorContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
     }
 
     private static async Task HandleConsoleAppProjectTemplateAsync(
-        string cSharpProjectAbsoluteFilePathString,
+        string cSharpProjectAbsolutePathString,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider)
     {
-        var cSharpProjectAbsoluteFilePath = new AbsoluteFilePath(cSharpProjectAbsoluteFilePathString, false, environmentProvider);
-        var parentDirectoryOfProject = cSharpProjectAbsoluteFilePath.ParentDirectory;
+        var cSharpProjectAbsolutePath = new AbsolutePath(cSharpProjectAbsolutePathString, false, environmentProvider);
+        var parentDirectoryOfProject = cSharpProjectAbsolutePath.ParentDirectory;
 
         if (parentDirectoryOfProject is null)
             throw new NotImplementedException();
 
-        var parentDirectoryOfProjectAbsoluteFilePathString = parentDirectoryOfProject.FormattedInput;
+        var parentDirectoryOfProjectAbsolutePathString = parentDirectoryOfProject.FormattedInput;
 
         // ProgramCs
         {
-            var absoluteFilePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsoluteFilePathString,
+            var absolutePath = environmentProvider.JoinPaths(
+                parentDirectoryOfProjectAbsolutePathString,
                 ConsoleAppFacts.PROGRAM_CS_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absoluteFilePath,
-                ConsoleAppFacts.GetProgramCsContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                absolutePath,
+                ConsoleAppFacts.GetProgramCsContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
 
         // Csproj
         {
             await fileSystemProvider.File.WriteAllTextAsync(
-                cSharpProjectAbsoluteFilePathString,
-                ConsoleAppFacts.GetCsprojContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                cSharpProjectAbsolutePathString,
+                ConsoleAppFacts.GetCsprojContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
     }
 
     private static async Task HandleXUnitProjectTemplateAsync(
-        string cSharpProjectAbsoluteFilePathString,
+        string cSharpProjectAbsolutePathString,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider)
     {
-        var cSharpProjectAbsoluteFilePath = new AbsoluteFilePath(cSharpProjectAbsoluteFilePathString, false, environmentProvider);
-        var parentDirectoryOfProject = cSharpProjectAbsoluteFilePath.ParentDirectory;
+        var cSharpProjectAbsolutePath = new AbsolutePath(cSharpProjectAbsolutePathString, false, environmentProvider);
+        var parentDirectoryOfProject = cSharpProjectAbsolutePath.ParentDirectory;
 
         if (parentDirectoryOfProject is null)
             throw new NotImplementedException();
 
-        var parentDirectoryOfProjectAbsoluteFilePathString = parentDirectoryOfProject.FormattedInput;
+        var parentDirectoryOfProjectAbsolutePathString = parentDirectoryOfProject.FormattedInput;
 
         // Csproj
         {
             await fileSystemProvider.File.WriteAllTextAsync(
-                cSharpProjectAbsoluteFilePathString,
-                XUnitFacts.GetCsprojContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                cSharpProjectAbsolutePathString,
+                XUnitFacts.GetCsprojContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
 
         // UnitTest1Cs
         {
-            var absoluteFilePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsoluteFilePathString,
+            var absolutePath = environmentProvider.JoinPaths(
+                parentDirectoryOfProjectAbsolutePathString,
                 XUnitFacts.UNIT_TEST_1_CS_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absoluteFilePath,
-                XUnitFacts.GetUnitTest1CsContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                absolutePath,
+                XUnitFacts.GetUnitTest1CsContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
         
         // UsingsCs
         {
-            var absoluteFilePath = environmentProvider.JoinPaths(
-                parentDirectoryOfProjectAbsoluteFilePathString,
+            var absolutePath = environmentProvider.JoinPaths(
+                parentDirectoryOfProjectAbsolutePathString,
                 XUnitFacts.USINGS_CS_RELATIVE_FILE_PATH);
 
             await fileSystemProvider.File.WriteAllTextAsync(
-                absoluteFilePath,
-                XUnitFacts.GetUsingsCsContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                absolutePath,
+                XUnitFacts.GetUsingsCsContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
     }
 

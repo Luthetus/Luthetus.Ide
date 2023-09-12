@@ -115,16 +115,16 @@ public partial record InputFileRegistry
             var currentSelection = inInputFileState
                 .OpenedTreeViewModelHistory[inInputFileState.IndexInHistory];
 
-            TreeViewAbsoluteFilePath? parentDirectoryTreeViewModel = null;
+            TreeViewAbsolutePath? parentDirectoryTreeViewModel = null;
 
             // If has a ParentDirectory select it
             if (currentSelection.Item.AncestorDirectories.Any())
             {
-                var parentDirectoryAbsoluteFilePath =
+                var parentDirectoryAbsolutePath =
                     currentSelection.Item.AncestorDirectories.Last();
 
-                parentDirectoryTreeViewModel = new TreeViewAbsoluteFilePath(
-                    (IAbsoluteFilePath)parentDirectoryAbsoluteFilePath,
+                parentDirectoryTreeViewModel = new TreeViewAbsolutePath(
+                    (IAbsolutePath)parentDirectoryAbsolutePath,
                     openParentDirectoryAction.LuthetusIdeComponentRenderers,
                     openParentDirectoryAction.LuthetusCommonComponentRenderers,
                     openParentDirectoryAction.FileSystemProvider,
@@ -132,20 +132,12 @@ public partial record InputFileRegistry
                     false,
                     true);
 
-                var backgroundTask = new BackgroundTask(
-                    async cancellationToken =>
+                openParentDirectoryAction.BackgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
+                    "Open Parent Directory",
+                    async () =>
                     {
                         await parentDirectoryTreeViewModel.LoadChildrenAsync();
-                    },
-                    "ReduceOpenParentDirectoryActionTask",
-                    "TODO: Describe this task",
-                    false,
-                    _ => Task.CompletedTask,
-                    null,
-                    CancellationToken.None);
-
-                openParentDirectoryAction.LuthetusCommonBackgroundTaskService
-                    .QueueBackgroundWorkItem(backgroundTask);
+                    });
             }
 
             if (parentDirectoryTreeViewModel is not null)
@@ -172,20 +164,12 @@ public partial record InputFileRegistry
 
             currentSelection.Children.Clear();
 
-            var backgroundTask = new BackgroundTask(
-                async cancellationToken =>
+            refreshCurrentSelectionAction.BackgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
+                "Refresh Current Selection",
+                async () =>
                 {
                     await currentSelection.LoadChildrenAsync();
-                },
-                "ReduceRefreshCurrentSelectionActionTask",
-                "TODO: Describe this task",
-                false,
-                _ => Task.CompletedTask,
-                null,
-                CancellationToken.None);
-
-            refreshCurrentSelectionAction.LuthetusCommonBackgroundTaskService
-                .QueueBackgroundWorkItem(backgroundTask);
+                });
 
             return inInputFileState;
         }
@@ -201,9 +185,9 @@ public partial record InputFileRegistry
 
             foreach (var treeViewModel in openedTreeViewModel.Children)
             {
-                var treeViewAbsoluteFilePath = (TreeViewAbsoluteFilePath)treeViewModel;
+                var treeViewAbsolutePath = (TreeViewAbsolutePath)treeViewModel;
 
-                treeViewModel.IsHidden = !treeViewAbsoluteFilePath.Item.FilenameWithExtension
+                treeViewModel.IsHidden = !treeViewAbsolutePath.Item.NameWithExtension
                     .Contains(
                         setSearchQueryAction.SearchQuery,
                         StringComparison.InvariantCultureIgnoreCase);

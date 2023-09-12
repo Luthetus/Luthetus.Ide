@@ -87,13 +87,13 @@ public partial class NugetPackageDisplay : FluxorComponent
             return;
         }
 
-        var parentDirectory = targetProject.AbsoluteFilePath.ParentDirectory;
+        var parentDirectory = targetProject.AbsolutePath.ParentDirectory;
 
         if (parentDirectory is null)
             return;
 
         var formattedCommand = DotNetCliFacts.FormatAddNugetPackageReferenceToProject(
-            targetProject.AbsoluteFilePath.FormattedInput,
+            targetProject.AbsolutePath.FormattedInput,
             targetNugetPackage.Id,
             targetNugetVersion);
 
@@ -103,27 +103,7 @@ public partial class NugetPackageDisplay : FluxorComponent
             parentDirectory.FormattedInput,
             CancellationToken.None, () =>
             {
-                if (LuthetusCommonComponentRenderers.InformativeNotificationRendererType is not null)
-                {
-                    var notificationInformative = new NotificationRecord(
-                        NotificationKey.NewKey(),
-                        "Add Nuget Package Reference",
-                        LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
-                        new Dictionary<string, object?>
-                        {
-                            {
-                                nameof(IInformativeNotificationRendererType.Message),
-                                $"{targetNugetPackage.Title}, {targetNugetVersion} was added to {targetProject.DisplayName}"
-                            },
-                        },
-                        TimeSpan.FromSeconds(6),
-                        true,
-                        null);
-
-                    Dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
-                        notificationInformative));
-                }
-
+                NotificationHelper.DispatchInformative("Add Nuget Package Reference", $"{targetNugetPackage.Title}, {targetNugetVersion} was added to {targetProject.DisplayName}", LuthetusCommonComponentRenderers, Dispatcher);
                 return Task.CompletedTask;
             });
 

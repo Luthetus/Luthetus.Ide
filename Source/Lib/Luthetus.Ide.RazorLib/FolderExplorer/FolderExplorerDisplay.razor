@@ -19,7 +19,7 @@
         @{
             var folderExplorerState = FolderExplorerStateWrap.Value;
 
-            if (folderExplorerState.AbsoluteFilePath is null)
+            if (folderExplorerState.AbsolutePath is null)
             {
                 <button class="luth_button"
                         @onclick="() => FolderExplorerRegistry.ShowInputFile(Dispatcher)">

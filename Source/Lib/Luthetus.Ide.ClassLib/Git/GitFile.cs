@@ -2,9 +2,7 @@
 
 namespace Luthetus.Ide.ClassLib.Git;
 
-public record GitFile(
-    IAbsoluteFilePath AbsoluteFilePath,
-    GitDirtyReason GitDirtyReason)
+public record GitFile(IAbsolutePath AbsolutePath, GitDirtyReason GitDirtyReason)
 {
     public bool IsDirty => GitDirtyReason switch
     {
@@ -13,8 +11,7 @@ public record GitFile(
         GitDirtyReason.Added => true,
         GitDirtyReason.Modified => true,
         GitDirtyReason.Deleted => true,
-        _ => throw new ApplicationException(
-            GetUnrecognizedGitDirtyReasonExceptionMessage(GitDirtyReason))
+        _ => throw new ApplicationException(GetUnrecognizedGitDirtyReasonExceptionMessage(GitDirtyReason))
     };
 
     private static string GetUnrecognizedGitDirtyReasonExceptionMessage(GitDirtyReason gitDirtyReason) =>

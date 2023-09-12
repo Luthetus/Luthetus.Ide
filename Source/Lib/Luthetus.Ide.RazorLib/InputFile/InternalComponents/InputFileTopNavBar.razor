@@ -46,13 +46,13 @@
                     {
                         foreach (var directory in openedTreeView.Item.AncestorDirectories)
                         {
-                            if (directory is IAbsoluteFilePath absoluteFilePath)
+                            if (directory is IAbsolutePath absolutePath)
                             {
-                                <InputFileAddressHierarchyEntry AbsoluteFilePath="absoluteFilePath"/>
+                                <InputFileAddressHierarchyEntry AbsolutePath="absolutePath"/>
                             }
                         }
 
-                        <InputFileAddressHierarchyEntry AbsoluteFilePath="openedTreeView.Item"/>
+                        <InputFileAddressHierarchyEntry AbsolutePath="openedTreeView.Item"/>
                     }
                 }
             }

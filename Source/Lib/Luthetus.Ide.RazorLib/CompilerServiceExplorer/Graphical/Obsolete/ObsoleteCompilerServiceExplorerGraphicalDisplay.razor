@@ -25,7 +25,7 @@
                         var index = temporaryIndex;
                         var compilerServiceResource = compilerServiceResources[index];
 
-                        <CompilerServiceGraphicalResourceDisplay CompilerServiceResource="compilerServiceResource"
+                        <ObsoleteCompilerServiceGraphicalResourceDisplay CompilerServiceResource="compilerServiceResource"
                                                         IndexAmongSiblings="index"
                                                         Depth="Depth + 1"
                                                         CountOfSiblingsAndSelf="@compilerServiceResources.Length"
@@ -38,7 +38,7 @@
         </div>
 
         <div class="luth_ide_compiler-service-controls-wrap col-12 col-md-4">
-            <CompilerServiceExplorerGraphicalControlsDisplay CompilerServiceDisplayDimensions="_compilerServiceDisplayDimensions"
+            <ObsoleteCompilerServiceExplorerGraphicalControlsDisplay CompilerServiceDisplayDimensions="_compilerServiceDisplayDimensions"
                                                              DimensionsStateHasChangedFunc="OnDimensionsStateHasChanged" />
         </div>
     </div>

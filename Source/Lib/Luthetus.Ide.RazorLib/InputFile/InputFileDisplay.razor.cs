@@ -1,6 +1,6 @@
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
-using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.Dimensions;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
@@ -35,20 +35,20 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
-    private ILuthetusCommonBackgroundTaskService LuthetusCommonBackgroundTaskService { get; set; } = null!;
+    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 
     /// <summary>
-    /// Receives the <see cref="_selectedAbsoluteFilePath"/> as
+    /// Receives the <see cref="_selectedAbsolutePath"/> as
     /// a parameter to the <see cref="RenderFragment"/>
     /// </summary>
     [Parameter]
-    public RenderFragment<IAbsoluteFilePath?>? HeaderRenderFragment { get; set; }
+    public RenderFragment<IAbsolutePath?>? HeaderRenderFragment { get; set; }
     /// <summary>
-    /// Receives the <see cref="_selectedAbsoluteFilePath"/> as
+    /// Receives the <see cref="_selectedAbsolutePath"/> as
     /// a parameter to the <see cref="RenderFragment"/>
     /// </summary>
     [Parameter]
-    public RenderFragment<IAbsoluteFilePath?>? FooterRenderFragment { get; set; }
+    public RenderFragment<IAbsolutePath?>? FooterRenderFragment { get; set; }
     /// <summary>
     /// One would likely use <see cref="BodyClassCssString"/> in the case where
     /// either <see cref="HeaderRenderFragment"/> or <see cref="FooterRenderFragment"/>
@@ -75,7 +75,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     private readonly ElementDimensions _sidebarElementDimensions = new();
     private readonly ElementDimensions _contentElementDimensions = new();
 
-    private IAbsoluteFilePath? _selectedAbsoluteFilePath;
+    private IAbsolutePath? _selectedAbsolutePath;
     private InputFileTreeViewMouseEventHandler _inputFileTreeViewMouseEventHandler = null!;
     private InputFileTreeViewKeyboardEventHandler _inputFileTreeViewKeyboardEventHandler = null!;
     private InputFileTopNavBar? _inputFileTopNavBarComponent;
@@ -88,7 +88,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     /// A presumption that any mutations to the HashSet are done
     /// via the UI thread. Therefore concurrency is not an issue.
     /// </summary>
-    private List<(TreeViewStateKey treeViewStateKey, TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)> _searchMatchTuples = new();
+    private List<(TreeViewStateKey treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)> _searchMatchTuples = new();
 
     public ElementReference? SearchElementReference => _inputFileTopNavBarComponent?.SearchElementReference;
 
@@ -124,7 +124,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
                 }
             },
             () => _searchMatchTuples,
-            LuthetusCommonBackgroundTaskService);
+            BackgroundTaskService);
 
         InitializeElementDimensions();
 
@@ -170,10 +170,10 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     });
     }
 
-    private async Task SetInputFileContentTreeViewRootFunc(IAbsoluteFilePath absoluteFilePath)
+    private async Task SetInputFileContentTreeViewRootFunc(IAbsolutePath absolutePath)
     {
-        var pseudoRootNode = new TreeViewAbsoluteFilePath(
-            absoluteFilePath,
+        var pseudoRootNode = new TreeViewAbsolutePath(
+            absolutePath,
             LuthetusIdeComponentRenderers,
             LuthetusCommonComponentRenderers,
             FileSystemProvider,

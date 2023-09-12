@@ -7,10 +7,10 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Notification;
 using Luthetus.Common.RazorLib.Store.NotificationCase;
-using Luthetus.Ide.ClassLib.HostedServiceCase.Terminal;
 using Luthetus.Ide.ClassLib.State;
 using Luthetus.TextEditor.RazorLib.Model;
 using Luthetus.TextEditor.RazorLib.ViewModel.InternalClasses;
+using Microsoft.AspNetCore.Components;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Reactive.Linq;
@@ -22,7 +22,7 @@ public class TerminalSession
 {
     private readonly IDispatcher _dispatcher;
     private readonly IFileSystemProvider _fileSystemProvider;
-    private readonly ILuthetusIdeTerminalBackgroundTaskService _terminalBackgroundTaskQueue;
+    private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
     private readonly List<TerminalCommand> _terminalCommandsHistory = new();
     private CancellationTokenSource _commandCancellationTokenSource = new();
@@ -35,17 +35,17 @@ public class TerminalSession
     private readonly Dictionary<TerminalCommandKey, StringBuilder> _standardOutBuilderMap = new();
 
     public TerminalSession(
-        string? workingDirectoryAbsoluteFilePathString,
+        string? workingDirectoryAbsolutePathString,
         IDispatcher dispatcher,
         IFileSystemProvider fileSystemProvider,
-        ILuthetusIdeTerminalBackgroundTaskService terminalBackgroundTaskQueue,
+        IBackgroundTaskService backgroundTaskService,
         ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers)
     {
         _dispatcher = dispatcher;
         _fileSystemProvider = fileSystemProvider;
-        _terminalBackgroundTaskQueue = terminalBackgroundTaskQueue;
+        _backgroundTaskService = backgroundTaskService;
         _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
-        WorkingDirectoryAbsoluteFilePathString = workingDirectoryAbsoluteFilePathString;
+        WorkingDirectoryAbsolutePathString = workingDirectoryAbsolutePathString;
     }
 
     public TerminalSessionKey TerminalSessionKey { get; init; } =
@@ -54,7 +54,7 @@ public class TerminalSession
     public TextEditorModelKey TextEditorModelKey => new(TerminalSessionKey.Guid);
     public TextEditorViewModelKey TextEditorViewModelKey => new(TerminalSessionKey.Guid);
 
-    public string? WorkingDirectoryAbsoluteFilePathString { get; private set; }
+    public string? WorkingDirectoryAbsolutePathString { get; private set; }
 
     public TerminalCommand? ActiveTerminalCommand { get; private set; }
 
@@ -84,17 +84,18 @@ public class TerminalSession
 
     public Task EnqueueCommandAsync(TerminalCommand terminalCommand)
     {
-        var backgroundTask = new BackgroundTask(
-            async cancellationToken =>
+        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), TerminalBackgroundTaskWorker.Queue.Key,
+            "Enqueue Command",
+            async () =>
             {
                 if (terminalCommand.ChangeWorkingDirectoryTo is not null)
-                    WorkingDirectoryAbsoluteFilePathString = terminalCommand.ChangeWorkingDirectoryTo;
+                    WorkingDirectoryAbsolutePathString = terminalCommand.ChangeWorkingDirectoryTo;
 
                 if (terminalCommand.FormattedCommand.TargetFileName == "cd" &&
                     terminalCommand.FormattedCommand.Arguments.Any())
                 {
                     // TODO: Don't keep this logic as it is hacky. I'm trying to set myself up to be able to run "gcc" to compile ".c" files. Then I can work on adding symbol related logic like "go to definition" or etc.
-                    WorkingDirectoryAbsoluteFilePathString = terminalCommand.FormattedCommand.Arguments.ElementAt(0);
+                    WorkingDirectoryAbsolutePathString = terminalCommand.FormattedCommand.Arguments.ElementAt(0);
                 }
 
                 _terminalCommandsHistory.Add(terminalCommand);
@@ -110,10 +111,10 @@ public class TerminalSession
                     command = command
                         .WithWorkingDirectory(terminalCommand.ChangeWorkingDirectoryTo);
                 }
-                else if (WorkingDirectoryAbsoluteFilePathString is not null)
+                else if (WorkingDirectoryAbsolutePathString is not null)
                 {
                     command = command
-                        .WithWorkingDirectory(WorkingDirectoryAbsoluteFilePathString);
+                        .WithWorkingDirectory(WorkingDirectoryAbsolutePathString);
                 }
 
                 // Push-based event stream
@@ -137,7 +138,7 @@ public class TerminalSession
                                 {
                                     case StartedCommandEvent started:
                                         _standardOutBuilderMap[terminalCommandKey].AppendLine(
-                                            $"> {WorkingDirectoryAbsoluteFilePathString} (PID:{started.ProcessId}) {terminalCommand.FormattedCommand.Value}");
+                                            $"> {WorkingDirectoryAbsolutePathString} (PID:{started.ProcessId}) {terminalCommand.FormattedCommand.Value}");
 
                                         DispatchNewStateKey();
                                         break;
@@ -164,23 +165,7 @@ public class TerminalSession
                     }
                     catch (Exception e)
                     {
-                        var notificationRecord = new NotificationRecord(
-                            NotificationKey.NewKey(),
-                            "Terminal Exception",
-                            _luthetusCommonComponentRenderers.ErrorNotificationRendererType,
-                            new Dictionary<string, object?>
-                            {
-                                {
-                                    nameof(IErrorNotificationRendererType.Message),
-                                    e.ToString()
-                                }
-                            },
-                            TimeSpan.FromSeconds(10),
-                            true,
-                            IErrorNotificationRendererType.CSS_CLASS_STRING);
-
-                        _dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
-                            notificationRecord));
+                        NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _luthetusCommonComponentRenderers, _dispatcher);
                     }
                     finally
                     {
@@ -191,15 +176,8 @@ public class TerminalSession
                             await terminalCommand.ContinueWith.Invoke();
                     }
                 }
-            },
-            "EnqueueCommandAsyncTask",
-            "TODO: Describe this task",
-            false,
-            _ => Task.CompletedTask,
-            _dispatcher,
-            CancellationToken.None);
+            });
 
-        _terminalBackgroundTaskQueue.QueueBackgroundWorkItem(backgroundTask);
         return Task.CompletedTask;
     }
 

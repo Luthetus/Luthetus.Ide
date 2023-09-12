@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.Dialog;
 using Luthetus.Common.RazorLib.Dimensions;
 using Luthetus.Common.RazorLib.Dropdown;
+using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Menu;
 using Luthetus.Common.RazorLib.Notification;
@@ -51,30 +52,30 @@ public partial class InputFileContextMenu : ComponentBase
         var treeViewModel = treeViewCommandParameter.TargetNode;
         var parentTreeViewModel = treeViewModel.Parent;
 
-        var parentTreeViewAbsoluteFilePath = parentTreeViewModel as TreeViewAbsoluteFilePath;
+        var parentTreeViewAbsolutePath = parentTreeViewModel as TreeViewAbsolutePath;
 
-        if (treeViewModel is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)
+        if (treeViewModel is not TreeViewAbsolutePath treeViewAbsolutePath)
             return MenuRecord.Empty;
 
-        if (treeViewAbsoluteFilePath.Item.IsDirectory)
+        if (treeViewAbsolutePath.Item.IsDirectory)
         {
             menuRecords.AddRange(
-                GetFileMenuOptions(treeViewAbsoluteFilePath, parentTreeViewAbsoluteFilePath)
-                    .Union(GetDirectoryMenuOptions(treeViewAbsoluteFilePath))
-                    .Union(GetDebugMenuOptions(treeViewAbsoluteFilePath)));
+                GetFileMenuOptions(treeViewAbsolutePath, parentTreeViewAbsolutePath)
+                    .Union(GetDirectoryMenuOptions(treeViewAbsolutePath))
+                    .Union(GetDebugMenuOptions(treeViewAbsolutePath)));
         }
         else
         {
             menuRecords.AddRange(
-                GetFileMenuOptions(treeViewAbsoluteFilePath, parentTreeViewAbsoluteFilePath)
-                    .Union(GetDebugMenuOptions(treeViewAbsoluteFilePath)));
+                GetFileMenuOptions(treeViewAbsolutePath, parentTreeViewAbsolutePath)
+                    .Union(GetDebugMenuOptions(treeViewAbsolutePath)));
         }
 
         return new MenuRecord(
             menuRecords.ToImmutableArray());
     }
 
-    private MenuOptionRecord[] GetDirectoryMenuOptions(TreeViewAbsoluteFilePath treeViewModel)
+    private MenuOptionRecord[] GetDirectoryMenuOptions(TreeViewAbsolutePath treeViewModel)
     {
         return new[]
         {
@@ -102,35 +103,27 @@ public partial class InputFileContextMenu : ComponentBase
     }
 
     private MenuOptionRecord[] GetFileMenuOptions(
-        TreeViewAbsoluteFilePath treeViewModel,
-        TreeViewAbsoluteFilePath? parentTreeViewModel)
+        TreeViewAbsolutePath treeViewModel,
+        TreeViewAbsolutePath? parentTreeViewModel)
     {
         return new[]
         {
-        MenuOptionsFactory.CopyFile(
-            treeViewModel.Item,
-            () => NotifyCopyCompleted(treeViewModel.Item)),
-        MenuOptionsFactory.CutFile(
-            treeViewModel.Item,
-            () => NotifyCutCompleted(treeViewModel.Item, parentTreeViewModel)),
-        MenuOptionsFactory.DeleteFile(
-            treeViewModel.Item,
-            async () =>
-            {
-                await ReloadTreeViewModel(parentTreeViewModel);
+            MenuOptionsFactory.CopyFile(treeViewModel.Item, () => {
+                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.NameWithExtension}", LuthetusCommonComponentRenderers, Dispatcher);
+                return Task.CompletedTask;
             }),
-        MenuOptionsFactory.RenameFile(
-            treeViewModel.Item,
-            Dispatcher,
-            async ()  =>
-            {
-                await ReloadTreeViewModel(parentTreeViewModel);
+            MenuOptionsFactory.CutFile(treeViewModel.Item, () => {
+                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.NameWithExtension}", LuthetusCommonComponentRenderers, Dispatcher);
+                ParentOfCutFile = parentTreeViewModel;
+                return Task.CompletedTask;
             }),
-    };
+            MenuOptionsFactory.DeleteFile(treeViewModel.Item, async () => await ReloadTreeViewModel(parentTreeViewModel)),
+            MenuOptionsFactory.RenameFile(treeViewModel.Item, Dispatcher, async ()  => await ReloadTreeViewModel(parentTreeViewModel)),
+        };
     }
 
     private MenuOptionRecord[] GetDebugMenuOptions(
-        TreeViewAbsoluteFilePath treeViewModel)
+        TreeViewAbsolutePath treeViewModel)
     {
         return new MenuOptionRecord[]
         {
@@ -165,62 +158,6 @@ public partial class InputFileContextMenu : ComponentBase
         TreeViewService.MoveUp(
             InputFileSidebar.TreeViewInputFileSidebarStateKey,
             false);
-    }
-
-    private Task NotifyCopyCompleted(IAbsoluteFilePath absoluteFilePath)
-    {
-        if (LuthetusCommonComponentRenderers.InformativeNotificationRendererType != null)
-        {
-            var notificationInformative = new NotificationRecord(
-                NotificationKey.NewKey(),
-                "Copy Action",
-                LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
-                new Dictionary<string, object?>
-                {
-                {
-                    nameof(IInformativeNotificationRendererType.Message),
-                    $"Copied: {absoluteFilePath.FilenameWithExtension}"
-                },
-                },
-                TimeSpan.FromSeconds(3),
-                true,
-                null);
-
-            Dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
-                notificationInformative));
-        }
-
-        return Task.CompletedTask;
-    }
-
-    private Task NotifyCutCompleted(
-        IAbsoluteFilePath absoluteFilePath,
-        TreeViewAbsoluteFilePath? parentTreeViewModel)
-    {
-        ParentOfCutFile = parentTreeViewModel;
-
-        if (LuthetusCommonComponentRenderers.InformativeNotificationRendererType != null)
-        {
-            var notificationInformative = new NotificationRecord(
-                NotificationKey.NewKey(),
-                "Cut Action",
-                LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
-                new Dictionary<string, object?>
-                {
-                {
-                    nameof(IInformativeNotificationRendererType.Message),
-                    $"Cut: {absoluteFilePath.FilenameWithExtension}"
-                },
-                },
-                TimeSpan.FromSeconds(3),
-                true,
-                null);
-
-            Dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
-                notificationInformative));
-        }
-
-        return Task.CompletedTask;
     }
 
     public static string GetContextMenuCssStyleString(

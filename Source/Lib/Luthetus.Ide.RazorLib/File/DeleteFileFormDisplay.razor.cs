@@ -17,32 +17,32 @@ public partial class DeleteFileFormDisplay
     public MenuOptionWidgetParameters? MenuOptionWidgetParameters { get; set; }
 
     [Parameter, EditorRequired]
-    public IAbsoluteFilePath AbsoluteFilePath { get; set; } = null!;
+    public IAbsolutePath AbsolutePath { get; set; } = null!;
     [Parameter, EditorRequired]
     public bool IsDirectory { get; set; }
     [Parameter, EditorRequired]
-    public Action<IAbsoluteFilePath> OnAfterSubmitAction { get; set; } = null!;
+    public Action<IAbsolutePath> OnAfterSubmitAction { get; set; } = null!;
 
-    private IAbsoluteFilePath? _previousAbsoluteFilePath;
+    private IAbsolutePath? _previousAbsolutePath;
 
     private int? _countOfImmediateChildren;
     private ElementReference? _cancelButtonElementReference;
 
     protected override async Task OnParametersSetAsync()
     {
-        if (_previousAbsoluteFilePath is null ||
-            _previousAbsoluteFilePath.FormattedInput !=
-            AbsoluteFilePath.FormattedInput)
+        if (_previousAbsolutePath is null ||
+            _previousAbsolutePath.FormattedInput !=
+            AbsolutePath.FormattedInput)
         {
             _countOfImmediateChildren = null;
 
-            _previousAbsoluteFilePath = AbsoluteFilePath;
+            _previousAbsolutePath = AbsolutePath;
 
-            if (AbsoluteFilePath.IsDirectory)
+            if (AbsolutePath.IsDirectory)
             {
                 _countOfImmediateChildren = (await FileSystemProvider.Directory
                     .EnumerateFileSystemEntriesAsync(
-                        AbsoluteFilePath.FormattedInput))
+                        AbsolutePath.FormattedInput))
                     .Count();
             }
         }
@@ -87,12 +87,12 @@ public partial class DeleteFileFormDisplay
 
     private async Task DeleteFileOnClick()
     {
-        var localAbsoluteFilePath = AbsoluteFilePath;
+        var localAbsolutePath = AbsolutePath;
 
         if (MenuOptionWidgetParameters is not null)
         {
             await MenuOptionWidgetParameters.CompleteWidgetAsync.Invoke(
-                () => OnAfterSubmitAction.Invoke(localAbsoluteFilePath));
+                () => OnAfterSubmitAction.Invoke(localAbsolutePath));
         }
     }
 

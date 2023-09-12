@@ -27,7 +27,7 @@ public class CompilerServiceExplorerTreeViewMouseEventHandler : TreeViewMouseEve
             return;
 
         _dispatcher.Dispatch(new EditorRegistry.OpenInEditorAction(
-            treeViewNamespacePath.Item.AbsoluteFilePath,
+            treeViewNamespacePath.Item.AbsolutePath,
             true));
     }
 }

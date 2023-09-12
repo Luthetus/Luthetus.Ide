@@ -32,14 +32,14 @@ public partial class InputFileBottomControls : ComponentBase
         }
     }
 
-    private string GetSelectedTreeViewModelAbsoluteFilePathString(InputFileRegistry inputFileState)
+    private string GetSelectedTreeViewModelAbsolutePathString(InputFileRegistry inputFileState)
     {
-        var selectedAbsoluteFilePath = inputFileState.SelectedTreeViewModel?.Item;
+        var selectedAbsolutePath = inputFileState.SelectedTreeViewModel?.Item;
 
-        if (selectedAbsoluteFilePath is null)
+        if (selectedAbsolutePath is null)
             return "Selection is null";
 
-        return selectedAbsoluteFilePath.FormattedInput;
+        return selectedAbsolutePath.FormattedInput;
     }
 
     private async Task FireOnAfterSubmit()

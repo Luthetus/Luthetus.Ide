@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
+﻿using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Ide.ClassLib.ComponentRenderers;
@@ -12,15 +12,15 @@ public partial record InputFileRegistry
 {
     public record RequestInputFileStateFormAction(
         string Message,
-        Func<IAbsoluteFilePath?, Task> OnAfterSubmitFunc,
-        Func<IAbsoluteFilePath?, Task<bool>> SelectionIsValidFunc,
+        Func<IAbsolutePath?, Task> OnAfterSubmitFunc,
+        Func<IAbsolutePath?, Task<bool>> SelectionIsValidFunc,
         ImmutableArray<InputFilePattern> InputFilePatterns);
 
     public record SetSelectedTreeViewModelAction(
-        TreeViewAbsoluteFilePath? SelectedTreeViewModel);
+        TreeViewAbsolutePath? SelectedTreeViewModel);
 
     public record SetOpenedTreeViewModelAction(
-        TreeViewAbsoluteFilePath TreeViewModel,
+        TreeViewAbsolutePath TreeViewModel,
         ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers,
         ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers,
         IFileSystemProvider FileSystemProvider,
@@ -41,10 +41,10 @@ public partial record InputFileRegistry
         ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers,
         IFileSystemProvider FileSystemProvider,
         IEnvironmentProvider EnvironmentProvider,
-        ILuthetusCommonBackgroundTaskService LuthetusCommonBackgroundTaskService);
+        IBackgroundTaskService BackgroundTaskService);
 
     public record RefreshCurrentSelectionAction(
-        ILuthetusCommonBackgroundTaskService LuthetusCommonBackgroundTaskService);
+        IBackgroundTaskService BackgroundTaskService);
 
     public record StartInputFileStateFormAction(
         RequestInputFileStateFormAction RequestInputFileStateFormAction);

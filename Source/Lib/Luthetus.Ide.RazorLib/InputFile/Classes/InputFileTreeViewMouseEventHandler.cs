@@ -11,12 +11,12 @@ namespace Luthetus.Ide.RazorLib.InputFile.Classes;
 public class InputFileTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
     private readonly IDispatcher _dispatcher;
-    private readonly Func<IAbsoluteFilePath, Task> _setInputFileContentTreeViewRootFunc;
+    private readonly Func<IAbsolutePath, Task> _setInputFileContentTreeViewRootFunc;
 
     public InputFileTreeViewMouseEventHandler(
         ITreeViewService treeViewService,
         IDispatcher dispatcher,
-        Func<IAbsoluteFilePath, Task> setInputFileContentTreeViewRootFunc)
+        Func<IAbsolutePath, Task> setInputFileContentTreeViewRootFunc)
         : base(treeViewService)
     {
         _dispatcher = dispatcher;
@@ -27,11 +27,11 @@ public class InputFileTreeViewMouseEventHandler : TreeViewMouseEventHandler
     {
         base.OnClick(treeViewCommandParameter);
 
-        if (treeViewCommandParameter.TargetNode is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)
+        if (treeViewCommandParameter.TargetNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return;
 
         var setSelectedTreeViewModelAction = new InputFileRegistry.SetSelectedTreeViewModelAction(
-            treeViewAbsoluteFilePath);
+            treeViewAbsolutePath);
 
         _dispatcher.Dispatch(setSelectedTreeViewModelAction);
     }
@@ -40,9 +40,9 @@ public class InputFileTreeViewMouseEventHandler : TreeViewMouseEventHandler
     {
         base.OnDoubleClick(treeViewCommandParameter);
 
-        if (treeViewCommandParameter.TargetNode is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)
+        if (treeViewCommandParameter.TargetNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return;
 
-        _setInputFileContentTreeViewRootFunc.Invoke(treeViewAbsoluteFilePath.Item);
+        _setInputFileContentTreeViewRootFunc.Invoke(treeViewAbsolutePath.Item);
     }
 }

@@ -2,14 +2,14 @@
 using Luthetus.Ide.ClassLib.TreeViewImplementations;
 using Luthetus.Common.RazorLib.TreeView;
 using Fluxor;
-using Luthetus.TextEditor.RazorLib.HostedServiceCase.CompilerServiceCase;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
-using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
 using Luthetus.Common.RazorLib.Namespaces;
 using Luthetus.CompilerServices.Lang.DotNetSolution;
 using Luthetus.Common.RazorLib.ComponentRenderers;
+using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 
 namespace Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 
@@ -23,7 +23,7 @@ public partial record DotNetSolutionRegistry
         private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
         private readonly ITreeViewService _treeViewService;
         private readonly IState<DotNetSolutionRegistry> _dotNetSolutionStateWrap;
-        private readonly ILuthetusTextEditorCompilerServiceBackgroundTaskService _compilerServiceBackgroundTaskQueue;
+        private readonly IBackgroundTaskService _backgroundTaskService;
 
         public Effector(
             IFileSystemProvider fileSystemProvider,
@@ -32,7 +32,7 @@ public partial record DotNetSolutionRegistry
             ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
             ITreeViewService treeViewService,
             IState<DotNetSolutionRegistry> dotNetSolutionStateWrap,
-            ILuthetusTextEditorCompilerServiceBackgroundTaskService compilerServiceBackgroundTaskQueue)
+            IBackgroundTaskService backgroundTaskService)
         {
             _fileSystemProvider = fileSystemProvider;
             _environmentProvider = environmentProvider;
@@ -40,7 +40,7 @@ public partial record DotNetSolutionRegistry
             _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
             _treeViewService = treeViewService;
             _dotNetSolutionStateWrap = dotNetSolutionStateWrap;
-            _compilerServiceBackgroundTaskQueue = compilerServiceBackgroundTaskQueue;
+            _backgroundTaskService = backgroundTaskService;
         }
 
         [EffectMethod]
@@ -48,20 +48,20 @@ public partial record DotNetSolutionRegistry
             SetDotNetSolutionAction setDotNetSolutionAction,
             IDispatcher dispatcher)
         {
-            var dotNetSolutionAbsoluteFilePathString = setDotNetSolutionAction.SolutionAbsoluteFilePath.FormattedInput;
+            var dotNetSolutionAbsolutePathString = setDotNetSolutionAction.SolutionAbsolutePath.FormattedInput;
 
             var content = await _fileSystemProvider.File.ReadAllTextAsync(
-                dotNetSolutionAbsoluteFilePathString,
+                dotNetSolutionAbsolutePathString,
                 CancellationToken.None);
 
-            var solutionAbsoluteFilePath = new AbsoluteFilePath(
-                dotNetSolutionAbsoluteFilePathString,
+            var solutionAbsolutePath = new AbsolutePath(
+                dotNetSolutionAbsolutePathString,
                 false,
                 _environmentProvider);
 
             var solutionNamespacePath = new NamespacePath(
                 string.Empty,
-                solutionAbsoluteFilePath);
+                solutionAbsolutePath);
 
             var dotNetSolution = DotNetSolutionLexer.Lex(
                 content,

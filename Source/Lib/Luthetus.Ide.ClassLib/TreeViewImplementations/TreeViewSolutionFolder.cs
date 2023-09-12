@@ -41,13 +41,13 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
         if (obj is not TreeViewSolutionFolder treeViewSolutionFolder)
             return false;
 
-        return treeViewSolutionFolder.Item.AbsoluteFilePath.FormattedInput ==
-               Item.AbsoluteFilePath.FormattedInput;
+        return treeViewSolutionFolder.Item.AbsolutePath.FormattedInput ==
+               Item.AbsolutePath.FormattedInput;
     }
 
     public override int GetHashCode()
     {
-        return Item.AbsoluteFilePath
+        return Item.AbsolutePath
             .FormattedInput
             .GetHashCode();
     }
@@ -210,8 +210,8 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
         CSharpProject cSharpProject)
     {
         var namespacePath = new NamespacePath(
-            cSharpProject.AbsoluteFilePath.FileNameNoExtension,
-            cSharpProject.AbsoluteFilePath);
+            cSharpProject.AbsolutePath.NameNoExtension,
+            cSharpProject.AbsolutePath);
 
         return (TreeViewNoType)new TreeViewNamespacePath(
             namespacePath,

@@ -27,13 +27,13 @@ public class TreeViewGitFile : TreeViewWithType<GitFile>
         if (obj is not TreeViewGitFile treeViewGitFile)
             return false;
 
-        return treeViewGitFile.Item.AbsoluteFilePath.FormattedInput ==
-               Item.AbsoluteFilePath.FormattedInput;
+        return treeViewGitFile.Item.AbsolutePath.FormattedInput ==
+               Item.AbsolutePath.FormattedInput;
     }
 
     public override int GetHashCode()
     {
-        return Item.AbsoluteFilePath.FormattedInput.GetHashCode();
+        return Item.AbsolutePath.FormattedInput.GetHashCode();
     }
 
     public override TreeViewRenderer GetTreeViewRenderer()

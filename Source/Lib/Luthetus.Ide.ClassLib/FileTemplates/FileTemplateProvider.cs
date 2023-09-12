@@ -12,12 +12,10 @@ public class FileTemplateProvider : IFileTemplateProvider
     /// </summary>
     public FileTemplateProvider()
     {
-
         _fileTemplates.Add(FileTemplateFacts.RazorCodebehind);
         _fileTemplates.Add(FileTemplateFacts.RazorMarkup);
         _fileTemplates.Add(FileTemplateFacts.CSharpClass);
     }
 
-    public ImmutableArray<IFileTemplate> FileTemplates => _fileTemplates
-        .ToImmutableArray();
+    public ImmutableArray<IFileTemplate> FileTemplates => _fileTemplates.ToImmutableArray();
 }

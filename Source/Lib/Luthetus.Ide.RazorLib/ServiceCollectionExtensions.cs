@@ -73,7 +73,7 @@ public static class ServiceCollectionExtensions
 
     private static readonly LuthetusIdeTreeViews _ideTreeViews = new(
         typeof(TreeViewNamespacePathDisplay),
-        typeof(TreeViewAbsoluteFilePathDisplay),
+        typeof(TreeViewAbsolutePathDisplay),
         typeof(TreeViewGitFileDisplay),
         typeof(TreeViewCompilerServiceDisplay),
         typeof(TreeViewCSharpProjectDependenciesDisplay),

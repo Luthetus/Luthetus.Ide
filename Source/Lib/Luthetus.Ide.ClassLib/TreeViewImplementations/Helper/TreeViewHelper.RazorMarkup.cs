@@ -2,7 +2,7 @@
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Common.RazorLib.Namespaces;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
-using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
+using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementations.Helper;
 
@@ -14,18 +14,18 @@ public partial class TreeViewHelper
         if (razorMarkupTreeView.Item is null)
             return new();
 
-        var parentDirectoryOfRazorMarkup = (IAbsoluteFilePath)
-            razorMarkupTreeView.Item.AbsoluteFilePath.AncestorDirectories
+        var parentDirectoryOfRazorMarkup = (IAbsolutePath)
+            razorMarkupTreeView.Item.AbsolutePath.AncestorDirectories
                 .Last();
 
-        var parentAbsoluteFilePathString = parentDirectoryOfRazorMarkup.FormattedInput;
+        var parentAbsolutePathString = parentDirectoryOfRazorMarkup.FormattedInput;
 
         var childFileTreeViewModels =
             (await razorMarkupTreeView.FileSystemProvider
-                .Directory.GetFilesAsync(parentAbsoluteFilePathString))
+                .Directory.GetFilesAsync(parentAbsolutePathString))
                 .Select(x =>
                 {
-                    var absoluteFilePath = new AbsoluteFilePath(
+                    var absolutePath = new AbsolutePath(
                         x,
                         false,
                         razorMarkupTreeView.EnvironmentProvider);
@@ -35,7 +35,7 @@ public partial class TreeViewHelper
                     return (TreeViewNoType)new TreeViewNamespacePath(
                         new NamespacePath(
                             namespaceString,
-                            absoluteFilePath),
+                            absolutePath),
                         razorMarkupTreeView.LuthetusIdeComponentRenderers,
                         razorMarkupTreeView.LuthetusCommonComponentRenderers,
                         razorMarkupTreeView.FileSystemProvider,
@@ -64,17 +64,17 @@ public partial class TreeViewHelper
 
         var matches = new[]
         {
-        razorMarkupTreeView.Item.AbsoluteFilePath.FilenameWithExtension +
+        razorMarkupTreeView.Item.AbsolutePath.NameWithExtension +
             '.' +
             ExtensionNoPeriodFacts.C_SHARP_CLASS,
-        razorMarkupTreeView.Item.AbsoluteFilePath.FilenameWithExtension +
+        razorMarkupTreeView.Item.AbsolutePath.NameWithExtension +
             '.' +
             ExtensionNoPeriodFacts.CSS
     };
 
         var relatedFiles = siblingsAndSelfTreeViews.Where(x =>
                 x.UntypedItem is NamespacePath namespacePath &&
-                matches.Contains(namespacePath.AbsoluteFilePath.FilenameWithExtension))
+                matches.Contains(namespacePath.AbsolutePath.NameWithExtension))
             .ToArray();
 
         if (!relatedFiles.Any())

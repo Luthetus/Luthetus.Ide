@@ -4,7 +4,7 @@ using Luthetus.Common.RazorLib;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.Dialog;
-using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
+using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Notification;
 using Luthetus.Common.RazorLib.Store.DialogCase;
@@ -38,9 +38,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
     [CascadingParameter]
     public DialogRecord DialogRecord { get; set; } = null!;
 
-    private readonly TerminalCommandKey _newDotNetSolutionTerminalCommandKey =
-        TerminalCommandKey.NewKey();
-
+    private readonly TerminalCommandKey _newDotNetSolutionTerminalCommandKey = TerminalCommandKey.NewKey();
     private readonly CancellationTokenSource _newDotNetSolutionCancellationTokenSource = new();
 
     private string _solutionName = string.Empty;
@@ -114,26 +112,26 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                         DialogRecord.Key));
 
                     // Open the created .NET Solution
-                    var parentDirectoryAbsoluteFilePath = new AbsoluteFilePath(
+                    var parentDirectoryAbsolutePath = new AbsolutePath(
                         localParentDirectoryName,
                         true,
                         EnvironmentProvider);
 
-                    var solutionAbsoluteFilePathString =
-                        parentDirectoryAbsoluteFilePath.FormattedInput +
+                    var solutionAbsolutePathString =
+                        parentDirectoryAbsolutePath.FormattedInput +
                         localSolutionName +
                         EnvironmentProvider.DirectorySeparatorChar +
                         localSolutionName +
                         '.' +
                         ExtensionNoPeriodFacts.DOT_NET_SOLUTION;
 
-                    var solutionAbsoluteFilePath = new AbsoluteFilePath(
-                        solutionAbsoluteFilePathString,
+                    var solutionAbsolutePath = new AbsolutePath(
+                        solutionAbsolutePathString,
                         false,
                         EnvironmentProvider);
 
                     Dispatcher.Dispatch(new DotNetSolutionRegistry.SetDotNetSolutionAction(
-                        solutionAbsoluteFilePath));
+                        solutionAbsolutePath));
 
                     return Task.CompletedTask;
                 });
@@ -162,43 +160,27 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
             '.' +
             ExtensionNoPeriodFacts.DOT_NET_SOLUTION;
 
-        var solutionAbsoluteFilePathString = EnvironmentProvider.JoinPaths(
+        var solutionAbsolutePathString = EnvironmentProvider.JoinPaths(
             directoryContainingSolution,
             localSolutionFilenameWithExtension);
 
         await FileSystemProvider.File.WriteAllTextAsync(
-            solutionAbsoluteFilePathString,
+            solutionAbsolutePathString,
             HackForWebsite_NEW_SOLUTION_TEMPLATE);
 
         // Close Dialog
         Dispatcher.Dispatch(new DialogRegistry.DisposeAction(
             DialogRecord.Key));
 
-        var notificationRecord = new NotificationRecord(
-            NotificationKey.NewKey(),
-            "Website .sln template was used",
-            LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
-            new Dictionary<string, object?>
-            {
-                {
-                    nameof(IInformativeNotificationRendererType.Message),
-                    "No terminal available"
-                }
-            },
-            TimeSpan.FromSeconds(5),
-            true,
-            null);
+        NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", LuthetusCommonComponentRenderers, Dispatcher);
 
-        Dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
-            notificationRecord));
-
-        var solutionAbsoluteFilePath = new AbsoluteFilePath(
-            solutionAbsoluteFilePathString,
+        var solutionAbsolutePath = new AbsolutePath(
+            solutionAbsolutePathString,
             false,
             EnvironmentProvider);
 
         Dispatcher.Dispatch(new DotNetSolutionRegistry.SetDotNetSolutionAction(
-            solutionAbsoluteFilePath));
+            solutionAbsolutePath));
     }
 
     private const string HackForWebsite_NEW_SOLUTION_TEMPLATE = @"

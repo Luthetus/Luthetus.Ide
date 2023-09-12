@@ -5,14 +5,14 @@ namespace Luthetus.Ide.ClassLib.Store.ProgramExecutionCase;
 public class ProgramExecutionRegistryReducer
 {
     [ReducerMethod]
-    public static ProgramExecutionRegistry ReduceSetStartupProjectAbsoluteFilePathAction(
+    public static ProgramExecutionRegistry ReduceSetStartupProjectAbsolutePathAction(
         ProgramExecutionRegistry inProgramExecutionState,
-        ProgramExecutionRegistry.SetStartupProjectAbsoluteFilePathAction setStartupProjectAbsoluteFilePathAction)
+        ProgramExecutionRegistry.SetStartupProjectAbsolutePathAction setStartupProjectAbsolutePathAction)
     {
         return inProgramExecutionState with
         {
-            StartupProjectAbsoluteFilePath =
-                setStartupProjectAbsoluteFilePathAction.StartupProjectAbsoluteFilePath
+            StartupProjectAbsolutePath =
+                setStartupProjectAbsolutePathAction.StartupProjectAbsolutePath
         };
     }
 }

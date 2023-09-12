@@ -2,8 +2,8 @@
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxActors;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
-using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
 using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
+using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementations;
 
@@ -40,7 +40,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
 
     public override int GetHashCode()
     {
-        return Item.CSharpProjectNamespacePath.AbsoluteFilePath
+        return Item.CSharpProjectNamespacePath.AbsolutePath
             .FormattedInput
             .GetHashCode();
     }
@@ -55,10 +55,10 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
     public override async Task LoadChildrenAsync()
     {
         var content = await FileSystemProvider.File.ReadAllTextAsync(
-            Item.CSharpProjectNamespacePath.AbsoluteFilePath.FormattedInput);
+            Item.CSharpProjectNamespacePath.AbsolutePath.FormattedInput);
 
         var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
-            new(Item.CSharpProjectNamespacePath.AbsoluteFilePath.FormattedInput),
+            new(Item.CSharpProjectNamespacePath.AbsolutePath.FormattedInput),
             content);
 
         var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
@@ -91,20 +91,20 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
             var includeAttribute = attributeNameValueTuples
                 .FirstOrDefault(x => x.Item1 == "Include");
 
-            var referenceProjectAbsoluteFilePathString = AbsoluteFilePath
-                .JoinAnAbsoluteFilePathAndRelativeFilePath(
-                    Item.CSharpProjectNamespacePath.AbsoluteFilePath,
+            var referenceProjectAbsolutePathString = AbsolutePath
+                .JoinAnAbsolutePathAndRelativePath(
+                    Item.CSharpProjectNamespacePath.AbsolutePath,
                     includeAttribute.Item2,
                     EnvironmentProvider);
 
-            var referenceProjectAbsoluteFilePath = new AbsoluteFilePath(
-                referenceProjectAbsoluteFilePathString,
+            var referenceProjectAbsolutePath = new AbsolutePath(
+                referenceProjectAbsolutePathString,
                 false,
                 EnvironmentProvider);
 
             var cSharpProjectToProjectReference = new CSharpProjectToProjectReference(
-                this.Item.CSharpProjectNamespacePath,
-                referenceProjectAbsoluteFilePath);
+                Item.CSharpProjectNamespacePath,
+                referenceProjectAbsolutePath);
 
             cSharpProjectToProjectReferences.Add(cSharpProjectToProjectReference);
         }

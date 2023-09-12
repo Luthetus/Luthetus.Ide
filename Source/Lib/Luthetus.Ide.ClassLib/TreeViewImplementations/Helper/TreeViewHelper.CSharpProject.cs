@@ -1,9 +1,9 @@
 ﻿using Luthetus.Ide.ClassLib.FileConstants;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
-using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
 using Luthetus.Common.RazorLib.Namespaces;
 using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
+using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementations.Helper;
 
@@ -12,35 +12,35 @@ public partial class TreeViewHelper
     public static async Task<List<TreeViewNoType>> CSharpProjectLoadChildrenAsync(
         this TreeViewNamespacePath cSharpProjectTreeView)
     {
-        var parentDirectoryOfCSharpProject = (IAbsoluteFilePath)
-            cSharpProjectTreeView.Item.AbsoluteFilePath.AncestorDirectories
+        var parentDirectoryOfCSharpProject = (IAbsolutePath)
+            cSharpProjectTreeView.Item.AbsolutePath.AncestorDirectories
                 .Last();
 
-        var parentAbsoluteFilePathString = parentDirectoryOfCSharpProject.FormattedInput;
+        var parentAbsolutePathString = parentDirectoryOfCSharpProject.FormattedInput;
 
         var hiddenFiles = HiddenFileFacts
             .GetHiddenFilesByContainerFileExtension(ExtensionNoPeriodFacts.C_SHARP_PROJECT);
 
         var childDirectoryTreeViewModels =
             (await cSharpProjectTreeView.FileSystemProvider
-                .Directory.GetDirectoriesAsync(parentAbsoluteFilePathString))
-                .OrderBy(filePathString => filePathString)
+                .Directory.GetDirectoriesAsync(parentAbsolutePathString))
+                .OrderBy(pathString => pathString)
                 .Where(x => hiddenFiles.All(hidden => !x.EndsWith(hidden)))
                 .Select(x =>
                 {
-                    var absoluteFilePath = new AbsoluteFilePath(
+                    var absolutePath = new AbsolutePath(
                         x,
                         true,
                         cSharpProjectTreeView.EnvironmentProvider);
 
                     var namespaceString = cSharpProjectTreeView.Item.Namespace +
                                           NAMESPACE_DELIMITER +
-                                          absoluteFilePath.FileNameNoExtension;
+                                          absolutePath.NameNoExtension;
 
                     return new TreeViewNamespacePath(
                         new NamespacePath(
                             namespaceString,
-                            absoluteFilePath),
+                            absolutePath),
                         cSharpProjectTreeView.LuthetusIdeComponentRenderers,
                         cSharpProjectTreeView.LuthetusCommonComponentRenderers,
                         cSharpProjectTreeView.FileSystemProvider,
@@ -62,7 +62,7 @@ public partial class TreeViewHelper
         foreach (var directoryTreeViewModel in childDirectoryTreeViewModels)
         {
             if (uniqueDirectories.Any(unique => directoryTreeViewModel
-                    .Item.AbsoluteFilePath.FileNameNoExtension == unique))
+                    .Item.AbsolutePath.NameNoExtension == unique))
             {
                 foundUniqueDirectories.Add(directoryTreeViewModel);
             }
@@ -73,21 +73,21 @@ public partial class TreeViewHelper
         }
 
         foundUniqueDirectories = foundUniqueDirectories
-            .OrderBy(x => x.Item.AbsoluteFilePath.FileNameNoExtension)
+            .OrderBy(x => x.Item.AbsolutePath.NameNoExtension)
             .ToList();
 
         foundDefaultDirectories = foundDefaultDirectories
-            .OrderBy(x => x.Item.AbsoluteFilePath.FileNameNoExtension)
+            .OrderBy(x => x.Item.AbsolutePath.NameNoExtension)
             .ToList();
 
         var childFileTreeViewModels =
             (await cSharpProjectTreeView.FileSystemProvider
-                .Directory.GetFilesAsync(parentAbsoluteFilePathString))
-                .OrderBy(filePathString => filePathString)
+                .Directory.GetFilesAsync(parentAbsolutePathString))
+                .OrderBy(pathString => pathString)
                 .Where(x => !x.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
                 .Select(x =>
                 {
-                    var absoluteFilePath = new AbsoluteFilePath(
+                    var absolutePath = new AbsolutePath(
                         x,
                         false,
                         cSharpProjectTreeView.EnvironmentProvider);
@@ -97,7 +97,7 @@ public partial class TreeViewHelper
                     return (TreeViewNoType)new TreeViewNamespacePath(
                         new NamespacePath(
                             namespaceString,
-                            absoluteFilePath),
+                            absolutePath),
                         cSharpProjectTreeView.LuthetusIdeComponentRenderers,
                         cSharpProjectTreeView.LuthetusCommonComponentRenderers,
                         cSharpProjectTreeView.FileSystemProvider,

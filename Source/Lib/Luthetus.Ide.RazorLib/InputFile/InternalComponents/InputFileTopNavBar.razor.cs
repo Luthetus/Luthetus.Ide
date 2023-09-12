@@ -1,8 +1,8 @@
 ﻿using Fluxor;
-using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.ComponentRenderers.Types;
-using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
+using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Notification;
 using Luthetus.Common.RazorLib.Store.NotificationCase;
@@ -25,10 +25,10 @@ public partial class InputFileTopNavBar : ComponentBase
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
-    private ILuthetusCommonBackgroundTaskService LuthetusCommonBackgroundTaskService { get; set; } = null!;
+    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 
     [CascadingParameter(Name = "SetInputFileContentTreeViewRootFunc")]
-    public Func<IAbsoluteFilePath, Task> SetInputFileContentTreeViewRootFunc { get; set; } = null!;
+    public Func<IAbsolutePath, Task> SetInputFileContentTreeViewRootFunc { get; set; } = null!;
     [CascadingParameter]
     public InputFileRegistry InputFileState { get; set; } = null!;
 
@@ -63,7 +63,7 @@ public partial class InputFileTopNavBar : ComponentBase
             LuthetusCommonComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,
-            LuthetusCommonBackgroundTaskService));
+            BackgroundTaskService));
 
         await ChangeContentRootToOpenedTreeView(InputFileState);
     }
@@ -71,7 +71,7 @@ public partial class InputFileTopNavBar : ComponentBase
     private async Task HandleRefreshButtonOnClick()
     {
         Dispatcher.Dispatch(new InputFileRegistry.RefreshCurrentSelectionAction(
-            LuthetusCommonBackgroundTaskService));
+            BackgroundTaskService));
 
         await ChangeContentRootToOpenedTreeView(InputFileState);
     }
@@ -119,37 +119,18 @@ public partial class InputFileTopNavBar : ComponentBase
                     $"Address provided does not exist. {address}");
             }
 
-            var absoluteFilePath = new AbsoluteFilePath(
+            var absolutePath = new AbsolutePath(
                 address,
                 true,
                 EnvironmentProvider);
 
             _showInputTextEditForAddress = false;
 
-            await SetInputFileContentTreeViewRootFunc.Invoke(absoluteFilePath);
+            await SetInputFileContentTreeViewRootFunc.Invoke(absolutePath);
         }
         catch (Exception exception)
         {
-            if (LuthetusCommonComponentRenderers.ErrorNotificationRendererType != null)
-            {
-                var errorNotification = new NotificationRecord(
-                    NotificationKey.NewKey(),
-                    $"ERROR: {nameof(InputFileTopNavBar)}",
-                    LuthetusCommonComponentRenderers.ErrorNotificationRendererType,
-                    new Dictionary<string, object?>
-                    {
-                    {
-                        nameof(IErrorNotificationRendererType.Message),
-                        exception.ToString()
-                    }
-                    },
-                    TimeSpan.FromSeconds(12),
-                    true,
-                    IErrorNotificationRendererType.CSS_CLASS_STRING);
-
-                Dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
-                    errorNotification));
-            }
+            NotificationHelper.DispatchError($"ERROR: {nameof(InputFileTopNavBar)}", exception.ToString(), LuthetusCommonComponentRenderers, Dispatcher);
         }
     }
 

@@ -40,7 +40,7 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
 
     public override int GetHashCode()
     {
-        return Item.CSharpProjectNamespacePath.AbsoluteFilePath
+        return Item.CSharpProjectNamespacePath.AbsolutePath
             .FormattedInput
             .GetHashCode();
     }
@@ -55,10 +55,10 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
     public override async Task LoadChildrenAsync()
     {
         var content = await FileSystemProvider.File.ReadAllTextAsync(
-            Item.CSharpProjectNamespacePath.AbsoluteFilePath.FormattedInput);
+            Item.CSharpProjectNamespacePath.AbsolutePath.FormattedInput);
 
         var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
-            new(Item.CSharpProjectNamespacePath.AbsoluteFilePath.FormattedInput),
+            new(Item.CSharpProjectNamespacePath.AbsolutePath.FormattedInput),
             content);
 
         var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
@@ -102,12 +102,12 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
             lightWeightNugetPackageRecords.Add(lightWeightNugetPackageRecord);
         }
 
-        var cSharpProjectAbsoluteFilePathString = Item.CSharpProjectNamespacePath.AbsoluteFilePath
+        var cSharpProjectAbsolutePathString = Item.CSharpProjectNamespacePath.AbsolutePath
             .FormattedInput;
 
         var newChildren = lightWeightNugetPackageRecords
             .Select(npr => (TreeViewNoType)new TreeViewCSharpProjectNugetPackageReference(
-                new(cSharpProjectAbsoluteFilePathString, npr),
+                new(cSharpProjectAbsolutePathString, npr),
                 LuthetusIdeComponentRenderers,
                 FileSystemProvider,
                 EnvironmentProvider,

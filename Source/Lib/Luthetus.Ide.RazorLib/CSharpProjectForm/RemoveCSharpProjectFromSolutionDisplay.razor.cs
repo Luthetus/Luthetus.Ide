@@ -7,28 +7,26 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace Luthetus.Ide.RazorLib.CSharpProjectForm;
 
-public partial class RemoveCSharpProjectFromSolutionDisplay
-    : ComponentBase, IRemoveCSharpProjectFromSolutionRendererType
+public partial class RemoveCSharpProjectFromSolutionDisplay : ComponentBase,
+    IRemoveCSharpProjectFromSolutionRendererType
 {
     [CascadingParameter]
     public MenuOptionWidgetParameters? MenuOptionWidgetParameters { get; set; }
 
     [Parameter, EditorRequired]
-    public IAbsoluteFilePath AbsoluteFilePath { get; set; } = null!;
+    public IAbsolutePath AbsolutePath { get; set; } = null!;
     [Parameter, EditorRequired]
-    public Action<IAbsoluteFilePath> OnAfterSubmitAction { get; set; } = null!;
+    public Action<IAbsolutePath> OnAfterSubmitAction { get; set; } = null!;
 
-    private IAbsoluteFilePath? _previousAbsoluteFilePath;
-
+    private IAbsolutePath? _previousAbsolutePath;
     private ElementReference? _cancelButtonElementReference;
 
     protected override Task OnParametersSetAsync()
     {
-        if (_previousAbsoluteFilePath is null ||
-            _previousAbsoluteFilePath.FormattedInput !=
-            AbsoluteFilePath.FormattedInput)
+        if (_previousAbsolutePath is null ||
+            _previousAbsolutePath.FormattedInput != AbsolutePath.FormattedInput)
         {
-            _previousAbsoluteFilePath = AbsoluteFilePath;
+            _previousAbsolutePath = AbsolutePath;
         }
 
         return base.OnParametersSetAsync();
@@ -38,8 +36,7 @@ public partial class RemoveCSharpProjectFromSolutionDisplay
     {
         if (firstRender)
         {
-            if (MenuOptionWidgetParameters is not null &&
-                _cancelButtonElementReference is not null)
+            if (MenuOptionWidgetParameters is not null && _cancelButtonElementReference is not null)
             {
                 try
                 {
@@ -60,31 +57,27 @@ public partial class RemoveCSharpProjectFromSolutionDisplay
 
     private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
-        if (MenuOptionWidgetParameters is not null)
+        if (MenuOptionWidgetParameters is not null &&
+            keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
         {
-            if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
-            {
-                await MenuOptionWidgetParameters.HideWidgetAsync.Invoke();
-            }
+            await MenuOptionWidgetParameters.HideWidgetAsync.Invoke();
         }
     }
 
     private async Task RemoveCSharpProjectFromSolutionOnClick()
     {
-        var localAbsoluteFilePath = AbsoluteFilePath;
+        var localAbsolutePath = AbsolutePath;
 
         if (MenuOptionWidgetParameters is not null)
         {
             await MenuOptionWidgetParameters.CompleteWidgetAsync.Invoke(
-                () => OnAfterSubmitAction.Invoke(localAbsoluteFilePath));
+                () => OnAfterSubmitAction.Invoke(localAbsolutePath));
         }
     }
 
     private async Task CancelOnClick()
     {
         if (MenuOptionWidgetParameters is not null)
-        {
             await MenuOptionWidgetParameters.HideWidgetAsync.Invoke();
-        }
     }
 }

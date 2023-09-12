@@ -23,22 +23,22 @@ public partial class StartupControlsDisplay : FluxorComponent
     {
         var programExecutionState = ProgramExecutionStateWrap.Value;
 
-        if (programExecutionState.StartupProjectAbsoluteFilePath is null)
+        if (programExecutionState.StartupProjectAbsolutePath is null)
             return;
 
-        var parentDirectoryAbsoluteFilePathString = programExecutionState.StartupProjectAbsoluteFilePath.ParentDirectory?.FormattedInput;
+        var parentDirectoryAbsolutePathString = programExecutionState.StartupProjectAbsolutePath.ParentDirectory?.FormattedInput;
 
-        if (parentDirectoryAbsoluteFilePathString is null)
+        if (parentDirectoryAbsolutePathString is null)
             return;
 
         var formattedCommand = DotNetCliFacts
             .FormatStartProjectWithoutDebugging(
-                programExecutionState.StartupProjectAbsoluteFilePath);
+                programExecutionState.StartupProjectAbsolutePath);
 
         var startProgramWithoutDebuggingCommand = new TerminalCommand(
             _newDotNetSolutionTerminalCommandKey,
             formattedCommand,
-            parentDirectoryAbsoluteFilePathString,
+            parentDirectoryAbsolutePathString,
             _newDotNetSolutionCancellationTokenSource.Token);
 
         var executionTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[

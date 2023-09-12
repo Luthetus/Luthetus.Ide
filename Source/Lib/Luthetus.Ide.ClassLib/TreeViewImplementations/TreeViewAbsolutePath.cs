@@ -8,10 +8,10 @@ using Luthetus.Ide.ClassLib.ComponentRenderers.Types.TreeViews;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementations;
 
-public class TreeViewAbsoluteFilePath : TreeViewWithType<IAbsoluteFilePath>
+public class TreeViewAbsolutePath : TreeViewWithType<IAbsolutePath>
 {
-    public TreeViewAbsoluteFilePath(
-        IAbsoluteFilePath absoluteFilePath,
+    public TreeViewAbsolutePath(
+        IAbsolutePath absolutePath,
         ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
         ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
         IFileSystemProvider fileSystemProvider,
@@ -19,7 +19,7 @@ public class TreeViewAbsoluteFilePath : TreeViewWithType<IAbsoluteFilePath>
         bool isExpandable,
         bool isExpanded)
             : base(
-                absoluteFilePath,
+                absolutePath,
                 isExpandable,
                 isExpanded)
     {
@@ -39,7 +39,7 @@ public class TreeViewAbsoluteFilePath : TreeViewWithType<IAbsoluteFilePath>
         if (obj is not TreeViewNamespacePath treeViewSolutionExplorer)
             return false;
 
-        return treeViewSolutionExplorer.Item.AbsoluteFilePath
+        return treeViewSolutionExplorer.Item.AbsolutePath
                    .FormattedInput ==
                Item.FormattedInput;
     }
@@ -52,11 +52,11 @@ public class TreeViewAbsoluteFilePath : TreeViewWithType<IAbsoluteFilePath>
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            LuthetusIdeComponentRenderers.LuthetusIdeTreeViews.TreeViewAbsoluteFilePathRendererType!,
+            LuthetusIdeComponentRenderers.LuthetusIdeTreeViews.TreeViewAbsolutePathRendererType!,
             new Dictionary<string, object?>
             {
             {
-                nameof(ITreeViewAbsoluteFilePathRendererType.TreeViewAbsoluteFilePath),
+                nameof(ITreeViewAbsolutePathRendererType.TreeViewAbsolutePath),
                 this
             },
             });

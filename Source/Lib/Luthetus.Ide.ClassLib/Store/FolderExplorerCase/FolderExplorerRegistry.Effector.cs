@@ -44,7 +44,7 @@ public partial record FolderExplorerRegistry
             dispatcher.Dispatch(new WithAction(
                 inFolderExplorerState => inFolderExplorerState with
                 {
-                    AbsoluteFilePath = setFolderExplorerAction.FolderAbsoluteFilePath
+                    AbsolutePath = setFolderExplorerAction.FolderAbsolutePath
                 }));
 
             dispatcher.Dispatch(new SetFolderExplorerTreeViewAction());
@@ -58,7 +58,7 @@ public partial record FolderExplorerRegistry
         {
             var folderExplorerState = _folderExplorerStateWrap.Value;
 
-            if (folderExplorerState.AbsoluteFilePath is null)
+            if (folderExplorerState.AbsolutePath is null)
                 return;
 
             dispatcher.Dispatch(new WithAction(inFolderExplorerState =>
@@ -67,8 +67,8 @@ public partial record FolderExplorerRegistry
                     IsLoadingFolderExplorer = true
                 }));
 
-            var rootNode = new TreeViewAbsoluteFilePath(
-                folderExplorerState.AbsoluteFilePath,
+            var rootNode = new TreeViewAbsolutePath(
+                folderExplorerState.AbsolutePath,
                 _luthetusIdeComponentRenderers,
                 _luthetusCommonComponentRenderers,
                 _fileSystemProvider,

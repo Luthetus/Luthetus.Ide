@@ -7,7 +7,7 @@ public partial record GitRegistry
     public record SetGitStateWithAction(Func<GitRegistry, GitRegistry> GitStateWithFunc);
 
     public record TryFindGitFolderInDirectoryAction(
-        IAbsoluteFilePath DirectoryAbsoluteFilePath,
+        IAbsolutePath DirectoryAbsolutePath,
         CancellationToken CancellationToken);
 
     public record RefreshGitAction(CancellationToken CancellationToken);

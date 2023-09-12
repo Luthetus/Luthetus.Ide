@@ -5,7 +5,6 @@ using Luthetus.Common.RazorLib.Notification;
 using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.Store.NotificationCase;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
-using Luthetus.Ide.ClassLib.HostedServiceCase.FileSystem;
 
 namespace Luthetus.Ide.ClassLib.Store.FileSystemCase;
 
@@ -15,18 +14,18 @@ public partial class FileSystemRegistry
     {
         private readonly IFileSystemProvider _fileSystemProvider;
         private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
-        private readonly ILuthetusIdeFileSystemBackgroundTaskService _luthetusIdeFileSystemBackgroundTaskService;
+        private readonly IBackgroundTaskService _backgroundTaskService;
 
         private readonly object _syncRoot = new object();
 
         public Effector(
             IFileSystemProvider fileSystemProvider,
             ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
-            ILuthetusIdeFileSystemBackgroundTaskService luthetusIdeFileSystemBackgroundTaskService)
+            IBackgroundTaskService backgroundTaskService)
         {
             _fileSystemProvider = fileSystemProvider;
             _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
-            _luthetusIdeFileSystemBackgroundTaskService = luthetusIdeFileSystemBackgroundTaskService;
+            _backgroundTaskService = backgroundTaskService;
         }
 
         [EffectMethod]
@@ -41,24 +40,25 @@ public partial class FileSystemRegistry
             //
             lock (_syncRoot)
             {
-                var backgroundTask = new BackgroundTask(
-                    async cancellationToken =>
+                _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), FileSystemBackgroundTaskWorker.Queue.Key,
+                    "Handle Save File Action",
+                    async () =>
                     {
                         if (saveFileAction.CancellationToken.IsCancellationRequested)
                             return;
 
-                        var absoluteFilePathString = saveFileAction.AbsoluteFilePath.FormattedInput;
+                        var absolutePathString = saveFileAction.AbsolutePath.FormattedInput;
 
                         string notificationMessage;
 
-                        if (absoluteFilePathString is not null &&
-                            await _fileSystemProvider.File.ExistsAsync(absoluteFilePathString))
+                        if (absolutePathString is not null &&
+                            await _fileSystemProvider.File.ExistsAsync(absolutePathString))
                         {
                             await _fileSystemProvider.File.WriteAllTextAsync(
-                                absoluteFilePathString,
+                                absolutePathString,
                                 saveFileAction.Content);
 
-                            notificationMessage = $"successfully saved: {absoluteFilePathString}";
+                            notificationMessage = $"successfully saved: {absolutePathString}";
                         }
                         else
                         {
@@ -66,47 +66,20 @@ public partial class FileSystemRegistry
                             notificationMessage = "File not found. TODO: Save As";
                         }
 
-                        if (_luthetusCommonComponentRenderers.InformativeNotificationRendererType is not null)
-                        {
-                            var notificationInformative = new NotificationRecord(
-                                NotificationKey.NewKey(),
-                                "Save Action",
-                                _luthetusCommonComponentRenderers.InformativeNotificationRendererType,
-                                new Dictionary<string, object?>
-                                {
-                                    {
-                                        nameof(IInformativeNotificationRendererType.Message),
-                                        notificationMessage
-                                    },
-                                },
-                                TimeSpan.FromSeconds(5),
-                                true,
-                                null);
-
-                            dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
-                                notificationInformative));
-                        }
+                        NotificationHelper.DispatchInformative("Save Action", notificationMessage, _luthetusCommonComponentRenderers, dispatcher);
 
                         DateTime? fileLastWriteTime = null;
 
-                        if (absoluteFilePathString is not null)
+                        if (absolutePathString is not null)
                         {
                             fileLastWriteTime = await _fileSystemProvider.File
                                 .GetLastWriteTimeAsync(
-                                    absoluteFilePathString,
-                                    cancellationToken);
+                                    absolutePathString,
+                                    CancellationToken.None);
                         }
 
                         saveFileAction.OnAfterSaveCompletedWrittenDateTimeAction?.Invoke(fileLastWriteTime);
-                    },
-                    "Save File",
-                    "TODO: Describe this task",
-                    false,
-                    _ => Task.CompletedTask,
-                    dispatcher,
-                    CancellationToken.None);
-
-                _luthetusIdeFileSystemBackgroundTaskService.QueueBackgroundWorkItem(backgroundTask);
+                    });
             }
 
             return Task.CompletedTask;

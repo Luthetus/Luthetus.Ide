@@ -1,7 +1,6 @@
 ﻿using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
-using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
 using Luthetus.CompilerServices.Lang.DotNetSolution;
 using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
 using Luthetus.Ide.ClassLib.Nuget;
@@ -22,7 +21,7 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
     [Inject]
     private INugetPackageManagerProvider NugetPackageManagerProvider { get; set; } = null!;
     [Inject]
-    private ILuthetusCommonBackgroundTaskService LuthetusCommonBackgroundTaskService { get; set; } = null!;
+    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 
     private bool _performingNugetQuery;
     private Exception? _exceptionFromNugetQuery;
@@ -88,7 +87,7 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
                 x.ProjectIdGuid == nuGetPackageManagerState.SelectedProjectToModify.ProjectIdGuid);
     }
 
-    private async Task SubmitNugetQueryOnClick()
+    private async Task SubmitNuGetQueryOnClick()
     {
         var query = NugetPackageManagerProvider
             .BuildQuery(NugetQuery, IncludePrerelease);
@@ -100,8 +99,9 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
             _performingNugetQuery = true;
             await InvokeAsync(StateHasChanged);
 
-            var backgroundTask = new BackgroundTask(
-                async cancellationToken =>
+            BackgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
+                "Submit NuGet Query",
+                async () =>
                 {
                     var localNugetResult =
                         await NugetPackageManagerProvider
@@ -112,15 +112,7 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
                             localNugetResult);
 
                     Dispatcher.Dispatch(setMostRecentQueryResultAction);
-                },
-                "SubmitNugetQueryOnClickTask",
-                "TODO: Describe this task",
-                false,
-                _ => Task.CompletedTask,
-                Dispatcher,
-                CancellationToken.None);
-
-            LuthetusCommonBackgroundTaskService.QueueBackgroundWorkItem(backgroundTask);
+                });
         }
         catch (Exception e)
         {

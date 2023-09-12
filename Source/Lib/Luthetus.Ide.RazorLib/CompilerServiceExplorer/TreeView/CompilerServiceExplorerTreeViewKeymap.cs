@@ -93,32 +93,6 @@ public class CompilerServiceExplorerTreeViewKeyboardEventHandler : TreeViewKeybo
         return;
     }
 
-    private Task NotifyCopyCompleted(NamespacePath namespacePath)
-    {
-        if (_luthetusCommonComponentRenderers.InformativeNotificationRendererType != null)
-        {
-            var notificationInformative = new NotificationRecord(
-                NotificationKey.NewKey(),
-                "Copy Action",
-                _luthetusCommonComponentRenderers.InformativeNotificationRendererType,
-                new Dictionary<string, object?>
-                {
-                {
-                    nameof(IInformativeNotificationRendererType.Message),
-                    $"Copied: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
-                },
-                },
-                TimeSpan.FromSeconds(3),
-                true,
-                null);
-
-            _dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
-                notificationInformative));
-        }
-
-        return Task.CompletedTask;
-    }
-
     private void InvokeOpenInEditor(
         ITreeViewCommandParameter treeViewCommandParameter,
         bool shouldSetFocusToEditor)
@@ -129,26 +103,9 @@ public class CompilerServiceExplorerTreeViewKeyboardEventHandler : TreeViewKeybo
             return;
 
         _dispatcher.Dispatch(new EditorRegistry.OpenInEditorAction(
-            treeViewNamespacePath.Item.AbsoluteFilePath,
+            treeViewNamespacePath.Item.AbsolutePath,
             shouldSetFocusToEditor));
 
         return;
-    }
-
-    private async Task ReloadTreeViewModel(
-        TreeViewNoType? treeViewModel)
-    {
-        if (treeViewModel is null)
-            return;
-
-        await treeViewModel.LoadChildrenAsync();
-
-        _treeViewService.ReRenderNode(
-            DotNetSolutionRegistry.TreeViewSolutionExplorerStateKey,
-            treeViewModel);
-
-        _treeViewService.MoveUp(
-            DotNetSolutionRegistry.TreeViewSolutionExplorerStateKey,
-            false);
     }
 }

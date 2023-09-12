@@ -4,6 +4,6 @@ namespace Luthetus.Ide.ClassLib.ComponentRenderers.Types;
 
 public interface IRemoveCSharpProjectFromSolutionRendererType
 {
-    public IAbsoluteFilePath AbsoluteFilePath { get; set; }
-    public Action<IAbsoluteFilePath> OnAfterSubmitAction { get; set; }
+    public IAbsolutePath AbsolutePath { get; set; }
+    public Action<IAbsolutePath> OnAfterSubmitAction { get; set; }
 }
