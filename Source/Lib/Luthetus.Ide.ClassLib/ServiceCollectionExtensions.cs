@@ -17,6 +17,7 @@ using Luthetus.CompilerServices.Lang.TypeScript;
 using Luthetus.CompilerServices.Lang.Xml;
 using Luthetus.Ide.ClassLib.CommandCase;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
+using Microsoft.Extensions.Logging;
 
 namespace Luthetus.Ide.ClassLib;
 
@@ -27,10 +28,18 @@ public static class ServiceCollectionExtensions
         LuthetusHostingInformation hostingInformation)
     {
         hostingInformation.BackgroundTaskService.RegisterQueue(FileSystemBackgroundTaskWorker.Queue);
-        services.AddSingleton<FileSystemBackgroundTaskWorker>();
+
+        services.AddSingleton(sp => new FileSystemBackgroundTaskWorker(
+            FileSystemBackgroundTaskWorker.Queue.Key,
+            sp.GetRequiredService<IBackgroundTaskService>(),
+            sp.GetRequiredService<ILoggerFactory>()));
 
         hostingInformation.BackgroundTaskService.RegisterQueue(TerminalBackgroundTaskWorker.Queue);
-        services.AddSingleton<TerminalBackgroundTaskWorker>();
+
+        services.AddSingleton(sp => new TerminalBackgroundTaskWorker(
+            TerminalBackgroundTaskWorker.Queue.Key,
+            sp.GetRequiredService<IBackgroundTaskService>(),
+            sp.GetRequiredService<ILoggerFactory>()));
 
         if (hostingInformation.LuthetusHostingKind == LuthetusHostingKind.ServerSide)
         {
