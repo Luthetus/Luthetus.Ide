@@ -10,35 +10,34 @@ public static class FileTemplateFacts
 {
     public static readonly IFileTemplate CSharpClass = new FileTemplate(
         "C# Class",
-        "bstudio-c-sharp-class",
+        "luth_ide_c-sharp-class",
         FileTemplateKind.CSharp,
-        filename => filename
-            .EndsWith('.' + ExtensionNoPeriodFacts.C_SHARP_CLASS),
+        filename => filename.EndsWith('.' + ExtensionNoPeriodFacts.C_SHARP_CLASS),
         _ => ImmutableArray<IFileTemplate>.Empty,
         true,
         CSharpClassCreateFileFunc);
 
     public static readonly IFileTemplate RazorMarkup = new FileTemplate(
         "Razor markup",
-        "bstudio-razor-markup-class",
+        "luth_ide_razor-markup-class",
         FileTemplateKind.Razor,
-        filename => filename
-            .EndsWith('.' + ExtensionNoPeriodFacts.RAZOR_MARKUP),
+        filename => filename.EndsWith('.' + ExtensionNoPeriodFacts.RAZOR_MARKUP),
         _ => new[] { RazorCodebehind }.ToImmutableArray(),
         true,
         RazorMarkupCreateFileFunc);
 
     public static readonly IFileTemplate RazorCodebehind = new FileTemplate(
         "Razor codebehind",
-        "bstudio-razor-codebehind-class",
+        "luth_ide_razor-codebehind-class",
         FileTemplateKind.Razor,
-        filename => filename
-            .EndsWith('.' + ExtensionNoPeriodFacts.RAZOR_CODEBEHIND),
+        filename => filename.EndsWith('.' + ExtensionNoPeriodFacts.RAZOR_CODEBEHIND),
         _ => ImmutableArray<IFileTemplate>.Empty,
         true,
         RazorCodebehindCreateFileFunc);
 
     /// <summary>
+    /// Template should be:
+    /// -------------------
     /// namespace Luthetus.Ide.ClassLib.FileTemplates;
     ///
     /// public class Asdf
@@ -48,69 +47,49 @@ public static class FileTemplateFacts
     /// 
     /// </summary>
     private static FileTemplateResult CSharpClassCreateFileFunc(
-        FileTemplateParameter fileTemplateParameter)
+        FileTemplateParameter templateParameter)
     {
-        string GetContent(string fileNameNoExtension, string namespaceString)
-        {
-            var templateBuilder = new StringBuilder();
+        var emptyFileAbsolutePathString = templateParameter.ParentDirectory.AbsolutePath.FormattedInput +
+            templateParameter.Filename;
 
-            templateBuilder.Append(
-                $"namespace {namespaceString};{Environment.NewLine}");
-
-            templateBuilder.Append(
-                Environment.NewLine);
-
-            templateBuilder.Append(
-                $"public class {fileNameNoExtension}{Environment.NewLine}");
-
-            templateBuilder.Append(
-                $"{{{Environment.NewLine}");
-
-            templateBuilder.Append(
-                $"\t{Environment.NewLine}");
-
-            templateBuilder.Append(
-                $"}}{Environment.NewLine}");
-
-            return templateBuilder.ToString();
-        }
-
-        var emptyFileAbsolutePathString = fileTemplateParameter
-                                                  .ParentDirectory.AbsolutePath
-                                                  .FormattedInput +
-                                              fileTemplateParameter.Filename;
-
-        // Create AbsolutePath as to leverage it for
-        // knowing the file extension and other details
+        // Create AbsolutePath as to leverage it for knowing the file extension and other details
         var emptyFileAbsolutePath = new AbsolutePath(
             emptyFileAbsolutePathString,
             false,
-            fileTemplateParameter.EnvironmentProvider);
+            templateParameter.EnvironmentProvider);
 
         var templatedFileContent = GetContent(
             emptyFileAbsolutePath.NameNoExtension,
-            fileTemplateParameter.ParentDirectory.Namespace);
+            templateParameter.ParentDirectory.Namespace);
 
-        var templatedFileAbsolutePathString = fileTemplateParameter
-                                                     .ParentDirectory.AbsolutePath
-                                                     .FormattedInput +
-                                                 emptyFileAbsolutePath.NameNoExtension +
-                                                 '.' +
-                                                 ExtensionNoPeriodFacts.C_SHARP_CLASS;
+        var templatedFileAbsolutePathString = templateParameter.ParentDirectory.AbsolutePath.FormattedInput +
+            emptyFileAbsolutePath.NameNoExtension +
+            '.' +
+            ExtensionNoPeriodFacts.C_SHARP_CLASS;
 
         var templatedFileAbsolutePath = new AbsolutePath(
             templatedFileAbsolutePathString,
             false,
-            fileTemplateParameter.EnvironmentProvider);
+            templateParameter.EnvironmentProvider);
 
         var templatedFileNamespacePath = new NamespacePath(
-            fileTemplateParameter.ParentDirectory.Namespace,
+            templateParameter.ParentDirectory.Namespace,
             templatedFileAbsolutePath);
 
         return new FileTemplateResult(templatedFileNamespacePath, templatedFileContent);
+
+        string GetContent(string fileNameNoExtension, string namespaceString) =>
+            $@"namespace {namespaceString};{Environment.NewLine}
+{Environment.NewLine}
+public class {fileNameNoExtension}{Environment.NewLine}
+{{{Environment.NewLine}
+	{Environment.NewLine}
+}}{Environment.NewLine}";
     }
 
     /// <summary>
+    /// Template should be:
+    /// -------------------
     /// <h3>Asdf</h3>
     /// 
     /// @code {
@@ -119,65 +98,46 @@ public static class FileTemplateFacts
     /// 
     /// </summary>
     private static FileTemplateResult RazorMarkupCreateFileFunc(
-        FileTemplateParameter fileTemplateParameter)
+        FileTemplateParameter templateParameter)
     {
-        string GetContent(string fileNameNoExtension)
-        {
-            var templateBuilder = new StringBuilder();
+        var emptyFileAbsolutePathString = templateParameter.ParentDirectory.AbsolutePath.FormattedInput +
+            templateParameter.Filename;
 
-            templateBuilder.Append(
-                $"<h3>{fileNameNoExtension}</h3>{Environment.NewLine}");
-
-            templateBuilder.Append(
-                Environment.NewLine);
-
-            templateBuilder.Append(
-                $"@code {{{Environment.NewLine}");
-
-            templateBuilder.Append(
-                $"\t{Environment.NewLine}");
-
-            templateBuilder.Append(
-                $"}}{Environment.NewLine}");
-
-            return templateBuilder.ToString();
-        }
-
-        var emptyFileAbsolutePathString = fileTemplateParameter
-                                                  .ParentDirectory.AbsolutePath
-                                                  .FormattedInput +
-                                              fileTemplateParameter.Filename;
-
-        // Create AbsolutePath as to leverage it for
-        // knowing the file extension and other details
+        // Create AbsolutePath as to leverage it for knowing the file extension and other details
         var emptyFileAbsolutePath = new AbsolutePath(
             emptyFileAbsolutePathString,
             false,
-            fileTemplateParameter.EnvironmentProvider);
+            templateParameter.EnvironmentProvider);
 
-        var templatedFileContent = GetContent(
-            emptyFileAbsolutePath.NameNoExtension);
+        var templatedFileContent = GetContent(emptyFileAbsolutePath.NameNoExtension);
 
-        var templatedFileAbsolutePathString = fileTemplateParameter
-                                                     .ParentDirectory.AbsolutePath
-                                                     .FormattedInput +
-                                                 emptyFileAbsolutePath.NameNoExtension +
-                                                 '.' +
-                                                 ExtensionNoPeriodFacts.RAZOR_MARKUP;
+        var templatedFileAbsolutePathString = templateParameter.ParentDirectory.AbsolutePath.FormattedInput +
+            emptyFileAbsolutePath.NameNoExtension +
+            '.' +
+            ExtensionNoPeriodFacts.RAZOR_MARKUP;
 
         var templatedFileAbsolutePath = new AbsolutePath(
             templatedFileAbsolutePathString,
             false,
-            fileTemplateParameter.EnvironmentProvider);
+            templateParameter.EnvironmentProvider);
 
         var templatedFileNamespacePath = new NamespacePath(
-            fileTemplateParameter.ParentDirectory.Namespace,
+            templateParameter.ParentDirectory.Namespace,
             templatedFileAbsolutePath);
 
         return new FileTemplateResult(templatedFileNamespacePath, templatedFileContent);
+
+        string GetContent(string fileNameNoExtension) =>
+            $@"<h3>{fileNameNoExtension}</h3>{Environment.NewLine}
+{Environment.NewLine}
+@code {{{Environment.NewLine}
+	{Environment.NewLine}
+}}{Environment.NewLine}";
     }
 
     /// <summary>
+    /// Template should be:
+    /// -------------------
     /// using Microsoft.AspNetCore.Components;
     /// 
     /// namespace Luthetus.Ide.RazorLib.Menu;
@@ -188,81 +148,52 @@ public static class FileTemplateFacts
     /// }
     /// </summary>
     private static FileTemplateResult RazorCodebehindCreateFileFunc(
-        FileTemplateParameter fileTemplateParameter)
+        FileTemplateParameter templateParameter)
     {
         string GetContent(string fileNameNoExtension, string namespaceString)
         {
-            var templateBuilder = new StringBuilder();
+            var className = fileNameNoExtension.Replace('.' + ExtensionNoPeriodFacts.RAZOR_MARKUP, string.Empty);
 
-            templateBuilder.Append(
-                $"using Microsoft.AspNetCore.Components;{Environment.NewLine}");
+            var interpolatedResult = $@"using Microsoft.AspNetCore.Components;{Environment.NewLine}
+{Environment.NewLine}
+namespace {namespaceString};{Environment.NewLine}
+{Environment.NewLine}
+public partial class {className} : ComponentBase{Environment.NewLine}
+{{{Environment.NewLine}
+	{Environment.NewLine}
+}}{Environment.NewLine}";
 
-            templateBuilder.Append(
-                Environment.NewLine);
-
-            templateBuilder.Append(
-                $"namespace {namespaceString};{Environment.NewLine}");
-
-            templateBuilder.Append(
-                Environment.NewLine);
-
-            templateBuilder.Append(
-                $"public partial class" +
-                $" {fileNameNoExtension.Replace('.' + ExtensionNoPeriodFacts.RAZOR_MARKUP, string.Empty)}" +
-                $" : ComponentBase{Environment.NewLine}");
-
-            templateBuilder.Append(
-                $"{{{Environment.NewLine}");
-
-            templateBuilder.Append(
-                $"\t{Environment.NewLine}");
-
-            templateBuilder.Append(
-                $"}}{Environment.NewLine}");
-
-            return templateBuilder.ToString();
+            return interpolatedResult;
         }
 
-        var emptyFileAbsolutePathString = fileTemplateParameter
-                                                  .ParentDirectory.AbsolutePath
-                                                  .FormattedInput +
-                                              fileTemplateParameter.Filename;
+        var emptyFileAbsolutePathString = templateParameter.ParentDirectory.AbsolutePath.FormattedInput +
+            templateParameter.Filename;
 
-        // Create AbsolutePath as to leverage it for
-        // knowing the file extension and other details
+        // Create AbsolutePath as to leverage it for knowing the file extension and other details
         var emptyFileAbsolutePath = new AbsolutePath(
             emptyFileAbsolutePathString,
             false,
-            fileTemplateParameter.EnvironmentProvider);
+            templateParameter.EnvironmentProvider);
 
         var templatedFileContent = GetContent(
             emptyFileAbsolutePath.NameNoExtension,
-            fileTemplateParameter.ParentDirectory.Namespace);
+            templateParameter.ParentDirectory.Namespace);
 
-        var templatedFileAbsolutePathString = fileTemplateParameter
-                                                     .ParentDirectory.AbsolutePath
-                                                     .FormattedInput +
-                                                 emptyFileAbsolutePath.NameNoExtension;
+        var templatedFileAbsolutePathString = templateParameter.ParentDirectory.AbsolutePath.FormattedInput +
+            emptyFileAbsolutePath.NameNoExtension;
 
-        if (templatedFileAbsolutePathString.EndsWith(
-                '.' + ExtensionNoPeriodFacts.RAZOR_MARKUP))
-        {
-            templatedFileAbsolutePathString +=
-                '.' + ExtensionNoPeriodFacts.C_SHARP_CLASS;
-        }
+        if (templatedFileAbsolutePathString.EndsWith('.' + ExtensionNoPeriodFacts.RAZOR_MARKUP))
+            templatedFileAbsolutePathString += '.' + ExtensionNoPeriodFacts.C_SHARP_CLASS;
         else
-        {
-            templatedFileAbsolutePathString +=
-                '.' + ExtensionNoPeriodFacts.RAZOR_CODEBEHIND;
-        }
+            templatedFileAbsolutePathString += '.' + ExtensionNoPeriodFacts.RAZOR_CODEBEHIND;
 
         var templatedFileAbsolutePath = new AbsolutePath(
             templatedFileAbsolutePathString,
             false,
-            fileTemplateParameter.EnvironmentProvider);
+            templateParameter.EnvironmentProvider);
 
         var templatedFileNamespacePath = new NamespacePath(
-            fileTemplateParameter.ParentDirectory.Namespace,
+            templateParameter.ParentDirectory.Namespace,
             templatedFileAbsolutePath);
 
         return new FileTemplateResult(templatedFileNamespacePath, templatedFileContent);

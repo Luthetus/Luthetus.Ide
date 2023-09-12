@@ -4,9 +4,7 @@ namespace Luthetus.Ide.ClassLib.FileTemplates;
 
 public class FileTemplateResult
 {
-    public FileTemplateResult(
-        NamespacePath fileNamespacePath,
-        string contents)
+    public FileTemplateResult(NamespacePath fileNamespacePath, string contents)
     {
         FileNamespacePath = fileNamespacePath;
         Contents = contents;

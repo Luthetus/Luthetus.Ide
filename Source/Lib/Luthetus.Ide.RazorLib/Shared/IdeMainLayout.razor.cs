@@ -64,8 +64,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         },
         new DimensionUnit
         {
-            Value = SizeFacts.Bstudio.Header.Height.Value / 2,
-            DimensionUnitKind = SizeFacts.Bstudio.Header.Height.DimensionUnitKind,
+            Value = SizeFacts.Ide.Header.Height.Value / 2,
+            DimensionUnitKind = SizeFacts.Ide.Header.Height.DimensionUnitKind,
             DimensionOperatorKind = DimensionOperatorKind.Subtract
         }
     });

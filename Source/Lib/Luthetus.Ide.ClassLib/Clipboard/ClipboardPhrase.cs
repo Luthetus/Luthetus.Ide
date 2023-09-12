@@ -2,10 +2,7 @@
 
 public class ClipboardPhrase
 {
-    public ClipboardPhrase(
-        string command,
-        string dataType,
-        string value)
+    public ClipboardPhrase(string command, string dataType, string value)
     {
         Command = command;
         DataType = dataType;
