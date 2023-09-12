@@ -17,7 +17,7 @@ public partial class CompilerServiceExplorerTreeViewContextMenu : ComponentBase
     [Parameter, EditorRequired]
     public ITreeViewCommandParameter TreeViewCommandParameter { get; set; } = null!;
 
-    public static readonly DropdownKey ContextMenuEventDropdownKey = DropdownKey.NewDropdownKey();
+    public static readonly DropdownKey ContextMenuEventDropdownKey = DropdownKey.NewKey();
 
     private MenuRecord GetMenuRecord(ITreeViewCommandParameter treeViewCommandParameter)
     {
@@ -43,11 +43,11 @@ public partial class CompilerServiceExplorerTreeViewContextMenu : ComponentBase
         await treeViewModel.LoadChildrenAsync();
 
         TreeViewService.ReRenderNode(
-            DotNetSolutionState.TreeViewSolutionExplorerStateKey,
+            DotNetSolutionRegistry.TreeViewSolutionExplorerStateKey,
             treeViewModel);
 
         TreeViewService.MoveUp(
-            DotNetSolutionState.TreeViewSolutionExplorerStateKey,
+            DotNetSolutionRegistry.TreeViewSolutionExplorerStateKey,
             false);
     }
 

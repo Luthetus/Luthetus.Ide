@@ -17,11 +17,11 @@ namespace Luthetus.Ide.RazorLib.NuGet;
 public partial class NugetPackageDisplay : FluxorComponent
 {
     [Inject]
-    private IState<NuGetPackageManagerState> NuGetPackageManagerStateWrap { get; set; } = null!;
+    private IState<NuGetPackageManagerRegistry> NuGetPackageManagerStateWrap { get; set; } = null!;
     [Inject]
-    private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
+    private IState<DotNetSolutionRegistry> DotNetSolutionStateWrap { get; set; } = null!;
     [Inject]
-    private IState<TerminalSessionsState> TerminalSessionsStateWrap { get; set; } = null!;
+    private IState<TerminalSessionRegistry> TerminalSessionsStateWrap { get; set; } = null!;
     [Inject]
     private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
     [Inject]
@@ -30,7 +30,7 @@ public partial class NugetPackageDisplay : FluxorComponent
     [Parameter, EditorRequired]
     public NugetPackageRecord NugetPackageRecord { get; set; } = null!;
 
-    private static readonly TerminalCommandKey AddNugetPackageTerminalCommandKey = TerminalCommandKey.NewTerminalCommandKey();
+    private static readonly TerminalCommandKey AddNugetPackageTerminalCommandKey = TerminalCommandKey.NewKey();
 
     private string _nugetPackageVersionString;
 
@@ -106,7 +106,7 @@ public partial class NugetPackageDisplay : FluxorComponent
                 if (LuthetusCommonComponentRenderers.InformativeNotificationRendererType is not null)
                 {
                     var notificationInformative = new NotificationRecord(
-                        NotificationKey.NewNotificationKey(),
+                        NotificationKey.NewKey(),
                         "Add Nuget Package Reference",
                         LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
                         new Dictionary<string, object?>
@@ -120,7 +120,7 @@ public partial class NugetPackageDisplay : FluxorComponent
                         true,
                         null);
 
-                    Dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+                    Dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
                         notificationInformative));
                 }
 

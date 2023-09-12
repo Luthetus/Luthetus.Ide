@@ -6,85 +6,85 @@ namespace Luthetus.Ide.ClassLib.Context;
 public static class ContextFacts
 {
     public static readonly ContextRecord GlobalContext = new(
-        ContextKey.NewContextKey(),
+        ContextKey.NewKey(),
         "Global",
         "global",
         Keymap.Empty);
     
     public static readonly ContextRecord ActiveContextsContext = new(
-        ContextKey.NewContextKey(),
+        ContextKey.NewKey(),
         "Active Contexts",
         "active-contexts",
         Keymap.Empty);
 
     public static readonly ContextRecord FolderExplorerContext = new(
-        ContextKey.NewContextKey(),
+        ContextKey.NewKey(),
         "Folder Explorer",
         "folder-explorer",
         Keymap.Empty);
     
     public static readonly ContextRecord SolutionExplorerContext = new(
-        ContextKey.NewContextKey(),
+        ContextKey.NewKey(),
         "Solution Explorer",
         "solution-explorer",
         Keymap.Empty);
     
     public static readonly ContextRecord CompilerServiceExplorerContext = new(
-        ContextKey.NewContextKey(),
+        ContextKey.NewKey(),
         "Compiler Service Explorer",
         "compiler-service-explorer",
         Keymap.Empty);
     
     public static readonly ContextRecord BackgroundServicesContext = new(
-        ContextKey.NewContextKey(),
+        ContextKey.NewKey(),
         "Background Services",
         "background-services",
         Keymap.Empty);
 
     public static readonly ContextRecord DialogDisplayContext = new(
-        ContextKey.NewContextKey(),
+        ContextKey.NewKey(),
         "Dialog Display",
         "dialog-display",
         Keymap.Empty);
 
     public static readonly ContextRecord MainLayoutHeaderContext = new(
-        ContextKey.NewContextKey(),
+        ContextKey.NewKey(),
         "MainLayout Header",
         "main-layout-header",
         Keymap.Empty);
 
     public static readonly ContextRecord MainLayoutFooterContext = new(
-        ContextKey.NewContextKey(),
+        ContextKey.NewKey(),
         "MainLayout Footer",
         "main-layout-footer",
         Keymap.Empty);
 
     public static readonly ContextRecord EditorContext = new(
-        ContextKey.NewContextKey(),
+        ContextKey.NewKey(),
         "Editor",
         "editor",
         Keymap.Empty);
 
     public static readonly ContextRecord TextEditorContext = new(
-        ContextKey.NewContextKey(),
+        ContextKey.NewKey(),
         "Text Editor",
         "text-editor",
         Keymap.Empty);
 
     public static readonly ContextRecord TerminalContext = new(
-        ContextKey.NewContextKey(),
+        ContextKey.NewKey(),
         "Terminal",
         "terminal",
         Keymap.Empty);
 
     public static readonly ContextRecord NuGetPackageManagerContext = new(
-        ContextKey.NewContextKey(),
+        ContextKey.NewKey(),
         "NuGetPackageManager",
         "nu-get-package-manager",
         Keymap.Empty);
 
     public static readonly ContextRecord GitContext = new(
-        ContextKey.NewContextKey(),
+        ContextKey.NewKey(),
         "Git",
         "git",
         Keymap.Empty);

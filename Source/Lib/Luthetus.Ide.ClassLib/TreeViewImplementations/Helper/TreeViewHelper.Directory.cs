@@ -40,7 +40,7 @@ public partial class TreeViewHelper
                         true,
                         false)
                     {
-                        TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
+                        TreeViewChangedKey = TreeViewChangedKey.NewKey()
                     };
                 });
 
@@ -70,7 +70,7 @@ public partial class TreeViewHelper
                         false,
                         false)
                     {
-                        TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
+                        TreeViewChangedKey = TreeViewChangedKey.NewKey()
                     };
                 }).ToList();
 
@@ -117,7 +117,7 @@ public partial class TreeViewHelper
                         true,
                         false)
                     {
-                        TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
+                        TreeViewChangedKey = TreeViewChangedKey.NewKey()
                     };
                 });
 
@@ -141,7 +141,7 @@ public partial class TreeViewHelper
                         false,
                         false)
                     {
-                        TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
+                        TreeViewChangedKey = TreeViewChangedKey.NewKey()
                     };
                 });
 

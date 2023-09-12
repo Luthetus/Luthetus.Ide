@@ -32,7 +32,7 @@ public partial class ContextBoundaryOverlay : ComponentBase
 
     private void DispatchSetInspectionTargetActionOnClick()
     {
-        Dispatcher.Dispatch(new ContextStates.SetInspectionTargetAction(
+        Dispatcher.Dispatch(new ContextRegistry.SetInspectionTargetAction(
             ContextBoundaryHeirarchy));
     }
 }

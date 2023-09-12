@@ -14,9 +14,9 @@ namespace Luthetus.Ide.RazorLib.NuGet;
 public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManagerRendererType
 {
     [Inject]
-    private IState<NuGetPackageManagerState> NuGetPackageManagerStateWrap { get; set; } = null!;
+    private IState<NuGetPackageManagerRegistry> NuGetPackageManagerStateWrap { get; set; } = null!;
     [Inject]
-    private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
+    private IState<DotNetSolutionRegistry> DotNetSolutionStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -30,20 +30,20 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
     public string NugetQuery
     {
         get => NuGetPackageManagerStateWrap.Value.NugetQuery;
-        set => Dispatcher.Dispatch(new NuGetPackageManagerState.SetNugetQueryAction(
+        set => Dispatcher.Dispatch(new NuGetPackageManagerRegistry.SetNugetQueryAction(
                    value));
     }
 
     public bool IncludePrerelease
     {
         get => NuGetPackageManagerStateWrap.Value.IncludePrerelease;
-        set => Dispatcher.Dispatch(new NuGetPackageManagerState.SetIncludePrereleaseAction(
+        set => Dispatcher.Dispatch(new NuGetPackageManagerRegistry.SetIncludePrereleaseAction(
                    value));
     }
 
     private void SelectedProjectToModifyChanged(
         ChangeEventArgs changeEventArgs,
-        DotNetSolutionState dotNetSolutionState)
+        DotNetSolutionRegistry dotNetSolutionState)
     {
         if (changeEventArgs.Value is null || dotNetSolutionState.DotNetSolutionModel is null)
             return;
@@ -58,13 +58,13 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
                 .SingleOrDefault(x => x.ProjectIdGuid == projectIdGuid);
         }
 
-        Dispatcher.Dispatch(new NuGetPackageManagerState.SetSelectedProjectToModifyAction(
+        Dispatcher.Dispatch(new NuGetPackageManagerRegistry.SetSelectedProjectToModifyAction(
             selectedProject));
     }
 
     private bool CheckIfProjectIsSelected(
         IDotNetProject dotNetProject,
-        NuGetPackageManagerState nuGetPackageManagerState)
+        NuGetPackageManagerRegistry nuGetPackageManagerState)
     {
         if (nuGetPackageManagerState.SelectedProjectToModify is null)
             return false;
@@ -74,8 +74,8 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
     }
 
     private bool ValidateSolutionContainsSelectedProject(
-        DotNetSolutionState dotNetSolutionState,
-        NuGetPackageManagerState nuGetPackageManagerState)
+        DotNetSolutionRegistry dotNetSolutionState,
+        NuGetPackageManagerRegistry nuGetPackageManagerState)
     {
         if (dotNetSolutionState.DotNetSolutionModel is null ||
             nuGetPackageManagerState.SelectedProjectToModify is null)
@@ -108,7 +108,7 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
                             .QueryForNugetPackagesAsync(query);
 
                     var setMostRecentQueryResultAction =
-                        new NuGetPackageManagerState.SetMostRecentQueryResultAction(
+                        new NuGetPackageManagerRegistry.SetMostRecentQueryResultAction(
                             localNugetResult);
 
                     Dispatcher.Dispatch(setMostRecentQueryResultAction);

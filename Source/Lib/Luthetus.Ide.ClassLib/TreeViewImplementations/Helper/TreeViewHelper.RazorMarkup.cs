@@ -43,7 +43,7 @@ public partial class TreeViewHelper
                         false,
                         false)
                     {
-                        TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
+                        TreeViewChangedKey = TreeViewChangedKey.NewKey()
                     };
                 }).ToList();
 
@@ -88,13 +88,13 @@ public partial class TreeViewHelper
 
             relatedFile.Parent = razorMarkupTreeView;
             relatedFile.IndexAmongSiblings = index;
-            relatedFile.TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
+            relatedFile.TreeViewChangedKey = TreeViewChangedKey.NewKey();
 
             razorMarkupTreeView.Children.Add(relatedFile);
         }
 
         razorMarkupTreeView.IsExpandable = true;
 
-        razorMarkupTreeView.TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
+        razorMarkupTreeView.TreeViewChangedKey = TreeViewChangedKey.NewKey();
     }
 }

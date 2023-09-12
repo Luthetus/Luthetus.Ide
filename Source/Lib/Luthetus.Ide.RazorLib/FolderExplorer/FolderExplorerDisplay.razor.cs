@@ -1,6 +1,6 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers;
-using Luthetus.Common.RazorLib.Store.ApplicationOptions;
+using Luthetus.Common.RazorLib.Store.AppOptionsCase;
 using Luthetus.Common.RazorLib.Store.DropdownCase;
 using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
@@ -16,9 +16,9 @@ namespace Luthetus.Ide.RazorLib.FolderExplorer;
 public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IState<FolderExplorerState> FolderExplorerStateWrap { get; set; } = null!;
+    private IState<FolderExplorerRegistry> FolderExplorerStateWrap { get; set; } = null!;
     [Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+    private IState<AppOptionsRegistry> AppOptionsRegistryWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -35,13 +35,13 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     private ITreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
 
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-        AppOptionsStateWrap.Value.Options.IconSizeInPixels.GetValueOrDefault() *
+        AppOptionsRegistryWrap.Value.Options.IconSizeInPixels.GetValueOrDefault() *
         (2.0 / 3.0));
 
     protected override void OnInitialized()
     {
         FolderExplorerStateWrap.StateChanged += FolderExplorerStateWrapOnStateChanged;
-        AppOptionsStateWrap.StateChanged += AppOptionsStateWrapOnStateChanged;
+        AppOptionsRegistryWrap.StateChanged += AppOptionsStateWrapOnStateChanged;
 
         _folderExplorerTreeViewMouseEventHandler = new FolderExplorerTreeViewMouseEventHandler(
             Dispatcher,
@@ -70,7 +70,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     {
         _mostRecentTreeViewCommandParameter = treeViewCommandParameter;
 
-        Dispatcher.Dispatch(new DropdownsState.AddActiveAction(
+        Dispatcher.Dispatch(new DropdownRegistry.AddActiveAction(
             FolderExplorerContextMenu.ContextMenuEventDropdownKey));
 
         await InvokeAsync(StateHasChanged);
@@ -79,6 +79,6 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     public void Dispose()
     {
         FolderExplorerStateWrap.StateChanged -= FolderExplorerStateWrapOnStateChanged;
-        AppOptionsStateWrap.StateChanged -= AppOptionsStateWrapOnStateChanged;
+        AppOptionsRegistryWrap.StateChanged -= AppOptionsStateWrapOnStateChanged;
     }
 }

@@ -2,7 +2,6 @@
 @using Luthetus.Ide.ClassLib.Store.EditorCase
 @using Luthetus.Ide.RazorLib.ContextCase
 @using Luthetus.TextEditor.RazorLib
-@using Luthetus.TextEditor.RazorLib.HelperComponents
 @using Luthetus.TextEditor.RazorLib.Group
 
 <ContextBoundary ContextRecord="ContextFacts.EditorContext"
@@ -14,7 +13,7 @@
     </div>
 
     <div class="luth_ide_section-body">
-        <TextEditorGroupDisplay TextEditorGroupKey="EditorState.EditorTextEditorGroupKey"
+        <TextEditorGroupDisplay TextEditorGroupKey="EditorRegistry.EditorTextEditorGroupKey"
                                 TabIndex="0"
                                 HeaderButtonKinds="TextEditorHeaderButtonKinds" />
     </div>

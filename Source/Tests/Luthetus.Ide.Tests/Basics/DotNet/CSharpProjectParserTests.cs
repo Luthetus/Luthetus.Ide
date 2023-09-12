@@ -26,7 +26,7 @@ public class CSharpProjectParserTests
 
         var htmlLexer = new TextEditorHtmlLexer(resourceUri);
 
-        var textSpans = htmlLexer.Lex(PROJECT_TEST_DATA, RenderStateKey.NewRenderStateKey());
+        var textSpans = htmlLexer.Lex(PROJECT_TEST_DATA, RenderStateKey.NewKey());
 
         var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
             resourceUri,
@@ -66,7 +66,7 @@ public class CSharpProjectParserTests
 
         var htmlLexer = new TextEditorHtmlLexer(resourceUri);
 
-        var textSpans = htmlLexer.Lex(PROJECT_TEST_DATA, RenderStateKey.NewRenderStateKey());
+        var textSpans = htmlLexer.Lex(PROJECT_TEST_DATA, RenderStateKey.NewKey());
 
         var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
             resourceUri,

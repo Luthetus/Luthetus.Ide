@@ -19,7 +19,7 @@ public partial class TreeViewHelper
                 true,
                 false)
             {
-                TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
+                TreeViewChangedKey = TreeViewChangedKey.NewKey()
             })
             .OrderBy(x => ((TreeViewSolutionFolder)x).Item.AbsoluteFilePath.FileNameNoExtension)
             .ToList();
@@ -41,7 +41,7 @@ public partial class TreeViewHelper
                     true,
                     false)
                 {
-                    TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
+                    TreeViewChangedKey = TreeViewChangedKey.NewKey()
                 };
             })
             .OrderBy(x => ((TreeViewNamespacePath)x).Item.AbsoluteFilePath.FileNameNoExtension)

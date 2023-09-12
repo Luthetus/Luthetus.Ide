@@ -5,7 +5,7 @@ using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Options;
 using Luthetus.Common.RazorLib.Resize;
 using Luthetus.Common.RazorLib.StateHasChangedBoundaryCase;
-using Luthetus.Common.RazorLib.Store.ApplicationOptions;
+using Luthetus.Common.RazorLib.Store.AppOptionsCase;
 using Luthetus.Common.RazorLib.Store.DragCase;
 using Luthetus.Common.RazorLib.Store.PanelCase;
 using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
@@ -17,11 +17,11 @@ namespace Luthetus.Ide.RazorLib.Shared;
 public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 {
     [Inject]
-    private IState<DragState> DragStateWrap { get; set; } = null!;
+    private IState<DragRegistry> DragRegistryWrap { get; set; } = null!;
     [Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+    private IState<AppOptionsRegistry> AppOptionsRegistryWrap { get; set; } = null!;
     [Inject]
-    private IState<PanelsCollection> PanelsCollectionWrap { get; set; } = null!;
+    private IState<PanelsRegistry> PanelsCollectionWrap { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
@@ -31,7 +31,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 
-    private string UnselectableClassCss => DragStateWrap.Value.ShouldDisplay
+    private string UnselectableClassCss => DragRegistryWrap.Value.ShouldDisplay
         ? "balc_unselectable"
         : string.Empty;
 
@@ -43,8 +43,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        DragStateWrap.StateChanged += DragStateWrapOnStateChanged;
-        AppOptionsStateWrap.StateChanged += AppOptionsStateWrapOnStateChanged;
+        DragRegistryWrap.StateChanged += DragStateWrapOnStateChanged;
+        AppOptionsRegistryWrap.StateChanged += AppOptionsStateWrapOnStateChanged;
 
         var bodyHeight = _bodyElementDimensions.DimensionAttributes
             .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Height);
@@ -87,7 +87,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                     false,
                     EnvironmentProvider);
 
-                Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionAction(
+                Dispatcher.Dispatch(new DotNetSolutionRegistry.SetDotNetSolutionAction(
                     absoluteFilePath));
             }
         }
@@ -102,9 +102,9 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
     private async void DragStateWrapOnStateChanged(object? sender, EventArgs e)
     {
-        if (_previousDragStateWrapShouldDisplay != DragStateWrap.Value.ShouldDisplay)
+        if (_previousDragStateWrapShouldDisplay != DragRegistryWrap.Value.ShouldDisplay)
         {
-            _previousDragStateWrapShouldDisplay = DragStateWrap.Value.ShouldDisplay;
+            _previousDragStateWrapShouldDisplay = DragRegistryWrap.Value.ShouldDisplay;
             await InvokeAsync(StateHasChanged);
         }
     }
@@ -116,7 +116,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
     public void Dispose()
     {
-        DragStateWrap.StateChanged -= DragStateWrapOnStateChanged;
-        AppOptionsStateWrap.StateChanged -= AppOptionsStateWrapOnStateChanged;
+        DragRegistryWrap.StateChanged -= DragStateWrapOnStateChanged;
+        AppOptionsRegistryWrap.StateChanged -= AppOptionsStateWrapOnStateChanged;
     }
 }

@@ -109,7 +109,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         if (_luthetusCommonComponentRenderers.InformativeNotificationRendererType is not null)
         {
             var notificationInformative = new NotificationRecord(
-                NotificationKey.NewNotificationKey(),
+                NotificationKey.NewKey(),
                 "Copy Action",
                 _luthetusCommonComponentRenderers.InformativeNotificationRendererType,
                 new Dictionary<string, object?>
@@ -123,7 +123,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
                 true,
                 null);
 
-            _dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+            _dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
                 notificationInformative));
         }
 
@@ -139,7 +139,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         if (_luthetusCommonComponentRenderers.InformativeNotificationRendererType is not null)
         {
             var notificationInformative = new NotificationRecord(
-                NotificationKey.NewNotificationKey(),
+                NotificationKey.NewKey(),
                 "Cut Action",
                 _luthetusCommonComponentRenderers.InformativeNotificationRendererType,
                 new Dictionary<string, object?>
@@ -153,7 +153,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
                 true,
                 null);
 
-            _dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+            _dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
                 notificationInformative));
         }
 
@@ -250,7 +250,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         if (activeNode is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePathPath)
             return;
 
-        _dispatcher.Dispatch(new EditorState.OpenInEditorAction(
+        _dispatcher.Dispatch(new EditorRegistry.OpenInEditorAction(
             treeViewAbsoluteFilePathPath.Item,
             shouldSetFocusToEditor));
 
@@ -265,11 +265,11 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         await treeViewModel.LoadChildrenAsync();
 
         _treeViewService.ReRenderNode(
-            FolderExplorerState.TreeViewFolderExplorerContentStateKey,
+            FolderExplorerRegistry.TreeViewFolderExplorerContentStateKey,
             treeViewModel);
 
         _treeViewService.MoveUp(
-            FolderExplorerState.TreeViewFolderExplorerContentStateKey,
+            FolderExplorerRegistry.TreeViewFolderExplorerContentStateKey,
             false);
     }
 }

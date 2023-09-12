@@ -60,7 +60,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
             true,
             false)
         {
-            TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
+            TreeViewChangedKey = TreeViewChangedKey.NewKey()
         };
 
         var treeViewCSharpProjectToProjectReferences = new TreeViewCSharpProjectToProjectReferences(
@@ -71,7 +71,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
             true,
             false)
         {
-            TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey()
+            TreeViewChangedKey = TreeViewChangedKey.NewKey()
         };
 
         var newChildren = new List<TreeViewNoType>
@@ -86,11 +86,11 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
 
             newChild.IndexAmongSiblings = i;
             newChild.Parent = this;
-            newChild.TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
+            newChild.TreeViewChangedKey = TreeViewChangedKey.NewKey();
         }
 
         Children = newChildren;
-        TreeViewChangedKey = TreeViewChangedKey.NewTreeViewChangedKey();
+        TreeViewChangedKey = TreeViewChangedKey.NewKey();
         return Task.CompletedTask;
     }
 

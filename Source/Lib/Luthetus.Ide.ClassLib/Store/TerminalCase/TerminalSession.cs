@@ -10,7 +10,7 @@ using Luthetus.Common.RazorLib.Store.NotificationCase;
 using Luthetus.Ide.ClassLib.HostedServiceCase.Terminal;
 using Luthetus.Ide.ClassLib.State;
 using Luthetus.TextEditor.RazorLib.Model;
-using Luthetus.TextEditor.RazorLib.ViewModel;
+using Luthetus.TextEditor.RazorLib.ViewModel.InternalClasses;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Reactive.Linq;
@@ -49,7 +49,7 @@ public class TerminalSession
     }
 
     public TerminalSessionKey TerminalSessionKey { get; init; } =
-        TerminalSessionKey.NewTerminalSessionKey();
+        TerminalSessionKey.NewKey();
 
     public TextEditorModelKey TextEditorModelKey => new(TerminalSessionKey.Guid);
     public TextEditorViewModelKey TextEditorViewModelKey => new(TerminalSessionKey.Guid);
@@ -165,7 +165,7 @@ public class TerminalSession
                     catch (Exception e)
                     {
                         var notificationRecord = new NotificationRecord(
-                            NotificationKey.NewNotificationKey(),
+                            NotificationKey.NewKey(),
                             "Terminal Exception",
                             _luthetusCommonComponentRenderers.ErrorNotificationRendererType,
                             new Dictionary<string, object?>
@@ -179,7 +179,7 @@ public class TerminalSession
                             true,
                             IErrorNotificationRendererType.CSS_CLASS_STRING);
 
-                        _dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+                        _dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
                             notificationRecord));
                     }
                     finally
@@ -234,8 +234,8 @@ public class TerminalSession
 
     private void DispatchNewStateKey()
     {
-        _dispatcher.Dispatch(new TerminalSessionWasModifiedStateReducer.SetTerminalSessionStateKeyAction(
+        _dispatcher.Dispatch(new TerminalSessionWasModifiedRegistryReducer.SetTerminalSessionStateKeyAction(
             TerminalSessionKey,
-            StateKey.NewStateKey()));
+            StateKey.NewKey()));
     }
 }

@@ -22,7 +22,7 @@ public partial class InputFileContent : ComponentBase
     [CascadingParameter]
     public InputFileTreeViewKeyboardEventHandler InputFileTreeViewKeyboardEventHandler { get; set; } = null!;
     [CascadingParameter]
-    public InputFileState InputFileState { get; set; } = null!;
+    public InputFileRegistry InputFileState { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public ElementDimensions ElementDimensions { get; set; } = null!;
@@ -30,7 +30,7 @@ public partial class InputFileContent : ComponentBase
     public Action<IAbsoluteFilePath?> SetSelectedAbsoluteFilePath { get; set; } = null!;
 
     public static readonly TreeViewStateKey TreeViewInputFileContentStateKey =
-        TreeViewStateKey.NewTreeViewStateKey();
+        TreeViewStateKey.NewKey();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

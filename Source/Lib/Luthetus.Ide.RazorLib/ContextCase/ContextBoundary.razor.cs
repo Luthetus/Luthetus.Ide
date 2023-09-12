@@ -1,5 +1,4 @@
 using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Luthetus.Ide.ClassLib.Context;
 using Luthetus.Ide.ClassLib.KeymapCase;
 using Luthetus.Ide.ClassLib.Store.ContextCase;
@@ -38,7 +37,7 @@ public partial class ContextBoundary : ComponentBase
         }
         else
         {
-            Dispatcher.Dispatch(new ContextStates.SetActiveContextRecordsAction(contextRecords.ToImmutableArray()));
+            Dispatcher.Dispatch(new ContextRegistry.SetActiveContextRecordsAction(contextRecords.ToImmutableArray()));
         }
     }
 

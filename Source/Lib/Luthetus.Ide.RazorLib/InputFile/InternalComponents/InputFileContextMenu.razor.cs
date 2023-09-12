@@ -32,7 +32,7 @@ public partial class InputFileContextMenu : ComponentBase
     [Parameter, EditorRequired]
     public ITreeViewCommandParameter TreeViewCommandParameter { get; set; } = null!;
 
-    public static readonly DropdownKey ContextMenuEventDropdownKey = DropdownKey.NewDropdownKey();
+    public static readonly DropdownKey ContextMenuEventDropdownKey = DropdownKey.NewKey();
 
     /// <summary>
     /// The program is currently running using Photino locally on the user's computer
@@ -172,7 +172,7 @@ public partial class InputFileContextMenu : ComponentBase
         if (LuthetusCommonComponentRenderers.InformativeNotificationRendererType != null)
         {
             var notificationInformative = new NotificationRecord(
-                NotificationKey.NewNotificationKey(),
+                NotificationKey.NewKey(),
                 "Copy Action",
                 LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
                 new Dictionary<string, object?>
@@ -186,7 +186,7 @@ public partial class InputFileContextMenu : ComponentBase
                 true,
                 null);
 
-            Dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+            Dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
                 notificationInformative));
         }
 
@@ -202,7 +202,7 @@ public partial class InputFileContextMenu : ComponentBase
         if (LuthetusCommonComponentRenderers.InformativeNotificationRendererType != null)
         {
             var notificationInformative = new NotificationRecord(
-                NotificationKey.NewNotificationKey(),
+                NotificationKey.NewKey(),
                 "Cut Action",
                 LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
                 new Dictionary<string, object?>
@@ -216,7 +216,7 @@ public partial class InputFileContextMenu : ComponentBase
                 true,
                 null);
 
-            Dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+            Dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
                 notificationInformative));
         }
 

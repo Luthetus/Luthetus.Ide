@@ -1,30 +1,29 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers;
-using Luthetus.Common.RazorLib.Store.ApplicationOptions;
+using Luthetus.Common.RazorLib.Store.AppOptionsCase;
 using Luthetus.Common.RazorLib.Store.DropdownCase;
 using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.Ide.ClassLib.Menu;
 using Luthetus.Ide.ClassLib.Store.CompilerServiceExplorerCase;
-using Luthetus.Ide.RazorLib.CompilerServiceExplorer.TreeView;
 using Luthetus.TextEditor.RazorLib.Store.Group;
 using Luthetus.TextEditor.RazorLib.Store.ViewModel;
 using Microsoft.AspNetCore.Components;
-using static Luthetus.Ide.ClassLib.Store.CompilerServiceExplorerCase.CompilerServiceExplorerState;
+using static Luthetus.Ide.ClassLib.Store.CompilerServiceExplorerCase.CompilerServiceExplorerRegistry;
 
 namespace Luthetus.Ide.RazorLib.CompilerServiceExplorer.TreeView;
 
 public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IState<CompilerServiceExplorerState> CompilerServiceExplorerStateWrap { get; set; } = null!;
+    private IState<CompilerServiceExplorerRegistry> CompilerServiceExplorerStateWrap { get; set; } = null!;
     [Inject]
-    private IState<TextEditorViewModelsCollection> TextEditorViewModelsCollectionWrap { get; set; } = null!;
+    private IState<TextEditorViewModelRegistry> TextEditorViewModelRegistryWrap { get; set; } = null!;
     [Inject]
-    private IState<TextEditorGroupsCollection> TextEditorGroupsCollectionWrap { get; set; } = null!;
+    private IState<TextEditorGroupRegistry> TextEditorGroupRegistryWrap { get; set; } = null!;
     [Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+    private IState<AppOptionsRegistry> AppOptionsRegistryWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -41,7 +40,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
     private CompilerServiceExplorerTreeViewMouseEventHandler _compilerServiceExplorerTreeViewMouseEventHandler = null!;
 
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-        AppOptionsStateWrap.Value.Options.IconSizeInPixels.GetValueOrDefault() *
+        AppOptionsRegistryWrap.Value.Options.IconSizeInPixels.GetValueOrDefault() *
         (2.0 / 3.0));
 
     private static bool _hasInitialized;
@@ -49,8 +48,8 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
     protected override void OnInitialized()
     {
         CompilerServiceExplorerStateWrap.StateChanged += RerenderAfterEventWithArgs;
-        TextEditorViewModelsCollectionWrap.StateChanged += RerenderAfterEventWithArgs;
-        TextEditorGroupsCollectionWrap.StateChanged += RerenderAfterEventWithArgs;
+        TextEditorViewModelRegistryWrap.StateChanged += RerenderAfterEventWithArgs;
+        TextEditorGroupRegistryWrap.StateChanged += RerenderAfterEventWithArgs;
 
         CSharpCompilerService.ModelRegistered += RerenderAfterEvent;
         CSharpCompilerService.ModelDisposed += RerenderAfterEvent;
@@ -98,7 +97,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
     {
         _mostRecentTreeViewCommandParameter = treeViewCommandParameter;
 
-        Dispatcher.Dispatch(new DropdownsState.AddActiveAction(
+        Dispatcher.Dispatch(new DropdownRegistry.AddActiveAction(
             CompilerServiceExplorerTreeViewContextMenu.ContextMenuEventDropdownKey));
 
         await InvokeAsync(StateHasChanged);
@@ -112,8 +111,8 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
     public void Dispose()
     {
         CompilerServiceExplorerStateWrap.StateChanged -= RerenderAfterEventWithArgs;
-        TextEditorViewModelsCollectionWrap.StateChanged -= RerenderAfterEventWithArgs;
-        TextEditorGroupsCollectionWrap.StateChanged -= RerenderAfterEventWithArgs;
+        TextEditorViewModelRegistryWrap.StateChanged -= RerenderAfterEventWithArgs;
+        TextEditorGroupRegistryWrap.StateChanged -= RerenderAfterEventWithArgs;
         
         CSharpCompilerService.ModelRegistered -= RerenderAfterEvent;
         CSharpCompilerService.ModelDisposed -= RerenderAfterEvent;

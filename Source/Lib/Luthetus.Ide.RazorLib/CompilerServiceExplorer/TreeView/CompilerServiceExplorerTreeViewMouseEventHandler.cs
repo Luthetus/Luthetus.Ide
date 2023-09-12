@@ -26,7 +26,7 @@ public class CompilerServiceExplorerTreeViewMouseEventHandler : TreeViewMouseEve
         if (treeViewCommandParameter.TargetNode is not TreeViewNamespacePath treeViewNamespacePath)
             return;
 
-        _dispatcher.Dispatch(new EditorState.OpenInEditorAction(
+        _dispatcher.Dispatch(new EditorRegistry.OpenInEditorAction(
             treeViewNamespacePath.Item.AbsoluteFilePath,
             true));
     }

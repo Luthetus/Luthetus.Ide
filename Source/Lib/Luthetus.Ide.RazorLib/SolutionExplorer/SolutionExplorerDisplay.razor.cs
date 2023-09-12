@@ -2,7 +2,7 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.Dialog;
-using Luthetus.Common.RazorLib.Store.ApplicationOptions;
+using Luthetus.Common.RazorLib.Store.AppOptionsCase;
 using Luthetus.Common.RazorLib.Store.DialogCase;
 using Luthetus.Common.RazorLib.Store.DropdownCase;
 using Luthetus.Common.RazorLib.TreeView;
@@ -17,9 +17,9 @@ namespace Luthetus.Ide.RazorLib.SolutionExplorer;
 public partial class SolutionExplorerDisplay : FluxorComponent
 {
     [Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+    private IState<AppOptionsRegistry> AppOptionsRegistryWrap { get; set; } = null!;
     [Inject]
-    private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
+    private IState<DotNetSolutionRegistry> DotNetSolutionStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -35,7 +35,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     private bool _disposed;
 
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-        AppOptionsStateWrap.Value.Options.IconSizeInPixels.GetValueOrDefault() *
+        AppOptionsRegistryWrap.Value.Options.IconSizeInPixels.GetValueOrDefault() *
         (2.0 / 3.0));
 
     protected override void OnInitialized()
@@ -65,7 +65,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     {
         _mostRecentTreeViewCommandParameter = treeViewCommandParameter;
 
-        Dispatcher.Dispatch(new DropdownsState.AddActiveAction(
+        Dispatcher.Dispatch(new DropdownRegistry.AddActiveAction(
             SolutionExplorerContextMenu.ContextMenuEventDropdownKey));
 
         await InvokeAsync(StateHasChanged);
@@ -74,7 +74,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     private void OpenNewDotNetSolutionDialog()
     {
         var dialogRecord = new DialogRecord(
-            DialogKey.NewDialogKey(),
+            DialogKey.NewKey(),
             "New .NET Solution",
             typeof(DotNetSolutionFormDisplay),
             null,
@@ -83,7 +83,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             IsResizable = true
         };
 
-        Dispatcher.Dispatch(new DialogRecordsCollection.RegisterAction(
+        Dispatcher.Dispatch(new DialogRegistry.RegisterAction(
             dialogRecord));
     }
 

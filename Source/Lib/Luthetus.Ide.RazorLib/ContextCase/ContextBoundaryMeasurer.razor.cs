@@ -14,7 +14,7 @@ public partial class ContextBoundaryMeasurer : FluxorComponent
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
     [Inject]
-    private IState<ContextStates> ContextStatesWrap { get; set; } = null!;
+    private IState<ContextRegistry> ContextStatesWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -55,7 +55,7 @@ public partial class ContextBoundaryMeasurer : FluxorComponent
                     ZIndex = contextBoundaryHeirarchy.Length
                 };
 
-                Dispatcher.Dispatch(new ContextStates.AddMeasuredHtmlElementDimensionsAction(
+                Dispatcher.Dispatch(new ContextRegistry.AddMeasuredHtmlElementDimensionsAction(
                     ContextRecord, contextBoundaryHeirarchy, measuredHtmlElementDimensions));
             }
         }

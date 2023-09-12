@@ -30,7 +30,7 @@ public partial class InputFileTopNavBar : ComponentBase
     [CascadingParameter(Name = "SetInputFileContentTreeViewRootFunc")]
     public Func<IAbsoluteFilePath, Task> SetInputFileContentTreeViewRootFunc { get; set; } = null!;
     [CascadingParameter]
-    public InputFileState InputFileState { get; set; } = null!;
+    public InputFileRegistry InputFileState { get; set; } = null!;
 
     public ElementReference? SearchElementReference { get; private set; }
     private bool _showInputTextEditForAddress;
@@ -38,27 +38,27 @@ public partial class InputFileTopNavBar : ComponentBase
     public string SearchQuery
     {
         get => InputFileState.SearchQuery;
-        set => Dispatcher.Dispatch(new InputFileState.SetSearchQueryAction(
+        set => Dispatcher.Dispatch(new InputFileRegistry.SetSearchQueryAction(
                    value));
     }
 
     private async Task HandleBackButtonOnClick()
     {
-        Dispatcher.Dispatch(new InputFileState.MoveBackwardsInHistoryAction());
+        Dispatcher.Dispatch(new InputFileRegistry.MoveBackwardsInHistoryAction());
 
         await ChangeContentRootToOpenedTreeView(InputFileState);
     }
 
     private async Task HandleForwardButtonOnClick()
     {
-        Dispatcher.Dispatch(new InputFileState.MoveForwardsInHistoryAction());
+        Dispatcher.Dispatch(new InputFileRegistry.MoveForwardsInHistoryAction());
 
         await ChangeContentRootToOpenedTreeView(InputFileState);
     }
 
     private async Task HandleUpwardButtonOnClick()
     {
-        Dispatcher.Dispatch(new InputFileState.OpenParentDirectoryAction(
+        Dispatcher.Dispatch(new InputFileRegistry.OpenParentDirectoryAction(
             LuthetusIdeComponentRenderers,
             LuthetusCommonComponentRenderers,
             FileSystemProvider,
@@ -70,7 +70,7 @@ public partial class InputFileTopNavBar : ComponentBase
 
     private async Task HandleRefreshButtonOnClick()
     {
-        Dispatcher.Dispatch(new InputFileState.RefreshCurrentSelectionAction(
+        Dispatcher.Dispatch(new InputFileRegistry.RefreshCurrentSelectionAction(
             LuthetusCommonBackgroundTaskService));
 
         await ChangeContentRootToOpenedTreeView(InputFileState);
@@ -95,7 +95,7 @@ public partial class InputFileTopNavBar : ComponentBase
     }
 
     private async Task ChangeContentRootToOpenedTreeView(
-        InputFileState inputFileState)
+        InputFileRegistry inputFileState)
     {
         var openedTreeView = InputFileState.GetOpenedTreeView();
 
@@ -133,7 +133,7 @@ public partial class InputFileTopNavBar : ComponentBase
             if (LuthetusCommonComponentRenderers.ErrorNotificationRendererType != null)
             {
                 var errorNotification = new NotificationRecord(
-                    NotificationKey.NewNotificationKey(),
+                    NotificationKey.NewKey(),
                     $"ERROR: {nameof(InputFileTopNavBar)}",
                     LuthetusCommonComponentRenderers.ErrorNotificationRendererType,
                     new Dictionary<string, object?>
@@ -147,7 +147,7 @@ public partial class InputFileTopNavBar : ComponentBase
                     true,
                     IErrorNotificationRendererType.CSS_CLASS_STRING);
 
-                Dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+                Dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
                     errorNotification));
             }
         }

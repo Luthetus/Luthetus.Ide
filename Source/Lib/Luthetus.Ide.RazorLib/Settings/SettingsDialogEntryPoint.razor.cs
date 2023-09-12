@@ -11,7 +11,7 @@ public partial class SettingsDialogEntryPoint : ComponentBase
     private IDispatcher Dispatcher { get; set; } = null!;
 
     private DialogRecord _dialogRecord = new(
-        DialogKey.NewDialogKey(),
+        DialogKey.NewKey(),
         "Settings",
         typeof(SettingsDisplay),
         null,
@@ -22,7 +22,7 @@ public partial class SettingsDialogEntryPoint : ComponentBase
 
     public void DispatchRegisterDialogRecordAction()
     {
-        Dispatcher.Dispatch(new DialogRecordsCollection.RegisterAction(
+        Dispatcher.Dispatch(new DialogRegistry.RegisterAction(
             _dialogRecord));
     }
 }

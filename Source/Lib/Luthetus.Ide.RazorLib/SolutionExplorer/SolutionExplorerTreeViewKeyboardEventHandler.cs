@@ -107,7 +107,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         if (_luthetusCommonComponentRenderers.InformativeNotificationRendererType != null)
         {
             var notificationInformative = new NotificationRecord(
-                NotificationKey.NewNotificationKey(),
+                NotificationKey.NewKey(),
                 "Copy Action",
                 _luthetusCommonComponentRenderers.InformativeNotificationRendererType,
                 new Dictionary<string, object?>
@@ -121,7 +121,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
                 true,
                 null);
 
-            _dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+            _dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
                 notificationInformative));
         }
 
@@ -137,7 +137,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         if (_luthetusCommonComponentRenderers.InformativeNotificationRendererType != null)
         {
             var notificationInformative = new NotificationRecord(
-                NotificationKey.NewNotificationKey(),
+                NotificationKey.NewKey(),
                 "Cut Action",
                 _luthetusCommonComponentRenderers.InformativeNotificationRendererType,
                 new Dictionary<string, object?>
@@ -151,7 +151,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
                 true,
                 null);
 
-            _dispatcher.Dispatch(new NotificationRecordsCollection.RegisterAction(
+            _dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
                 notificationInformative));
         }
 
@@ -249,7 +249,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         if (activeNode is not TreeViewNamespacePath treeViewNamespacePath)
             return;
 
-        _dispatcher.Dispatch(new EditorState.OpenInEditorAction(
+        _dispatcher.Dispatch(new EditorRegistry.OpenInEditorAction(
             treeViewNamespacePath.Item.AbsoluteFilePath,
             shouldSetFocusToEditor));
 
@@ -265,11 +265,11 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         await treeViewModel.LoadChildrenAsync();
 
         _treeViewService.ReRenderNode(
-            DotNetSolutionState.TreeViewSolutionExplorerStateKey,
+            DotNetSolutionRegistry.TreeViewSolutionExplorerStateKey,
             treeViewModel);
 
         _treeViewService.MoveUp(
-            DotNetSolutionState.TreeViewSolutionExplorerStateKey,
+            DotNetSolutionRegistry.TreeViewSolutionExplorerStateKey,
             false);
     }
 }

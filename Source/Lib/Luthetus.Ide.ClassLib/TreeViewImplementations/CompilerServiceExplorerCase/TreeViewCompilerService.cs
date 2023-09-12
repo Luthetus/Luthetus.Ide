@@ -96,7 +96,7 @@ public class TreeViewCompilerService : TreeViewWithType<ICompilerService>
                 newChild.IsExpanded = oldChild.IsExpanded;
                 newChild.IsExpandable = oldChild.IsExpandable;
                 newChild.IsHidden = oldChild.IsHidden;
-                newChild.TreeViewNodeKey = oldChild.TreeViewNodeKey;
+                newChild.Key = oldChild.Key;
                 newChild.Children = oldChild.Children;
             }
         }
