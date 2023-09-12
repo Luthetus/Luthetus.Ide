@@ -7,7 +7,6 @@ using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.Ide.ClassLib.Menu;
 using Luthetus.Ide.ClassLib.Store.CompilerServiceExplorerCase;
-using Luthetus.Ide.RazorLib.CompilerServiceExplorer.TreeView;
 using Luthetus.TextEditor.RazorLib.Store.Group;
 using Luthetus.TextEditor.RazorLib.Store.ViewModel;
 using Microsoft.AspNetCore.Components;
