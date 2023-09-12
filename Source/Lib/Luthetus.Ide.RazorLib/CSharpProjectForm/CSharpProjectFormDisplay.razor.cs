@@ -4,7 +4,7 @@ using Luthetus.Common.RazorLib;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.Dialog;
-using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
+using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Namespaces;
 using Luthetus.Common.RazorLib.Notification;
@@ -461,20 +461,20 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             '.' +
             ExtensionNoPeriodFacts.C_SHARP_PROJECT;
 
-        var cSharpProjectAbsoluteFilePathString = EnvironmentProvider.JoinPaths(
+        var cSharpProjectAbsolutePathString = EnvironmentProvider.JoinPaths(
             directoryContainingProject,
             localCSharpProjectNameWithExtension);
 
         await WebsiteProjectTemplateRegistry.HandleNewCSharpProjectAsync(
             localProjectTemplateShortName,
-            cSharpProjectAbsoluteFilePathString,
+            cSharpProjectAbsolutePathString,
             FileSystemProvider,
             EnvironmentProvider);
 
         await HackForWebsite_AddExistingProjectToSolutionAsync(
             localProjectTemplateShortName,
             localCSharpProjectName,
-            cSharpProjectAbsoluteFilePathString);
+            cSharpProjectAbsolutePathString);
 
         // Close Dialog
         Dispatcher.Dispatch(new DialogRegistry.DisposeAction(DialogRecord.Key));
@@ -500,16 +500,16 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     private async Task HackForWebsite_AddExistingProjectToSolutionAsync(
         string localProjectTemplateShortName,
         string localCSharpProjectName,
-        string cSharpProjectAbsoluteFilePathString)
+        string cSharpProjectAbsolutePathString)
     {
-        var dotNetSolutionAbsoluteFilePathString = DotNetSolutionModel.NamespacePath!.AbsolutePath.FormattedInput;
-        var cSharpAbsoluteFilePath = new AbsolutePath(cSharpProjectAbsoluteFilePathString, false, EnvironmentProvider);
+        var dotNetSolutionAbsolutePathString = DotNetSolutionModel.NamespacePath!.AbsolutePath.FormattedInput;
+        var cSharpAbsolutePath = new AbsolutePath(cSharpProjectAbsolutePathString, false, EnvironmentProvider);
 
         Dispatcher.Dispatch(new DotNetSolutionRegistry.AddExistingProjectToSolutionAction(
             DotNetSolutionModel.DotNetSolutionModelKey,
             localProjectTemplateShortName,
             localCSharpProjectName,
-            cSharpAbsoluteFilePath,
+            cSharpAbsolutePath,
             EnvironmentProvider));
 
         await FileSystemProvider.File.WriteAllTextAsync(

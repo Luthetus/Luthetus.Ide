@@ -18,15 +18,15 @@ public partial class RemoveCSharpProjectFromSolutionDisplay : ComponentBase,
     [Parameter, EditorRequired]
     public Action<IAbsolutePath> OnAfterSubmitAction { get; set; } = null!;
 
-    private IAbsolutePath? _previousAbsoluteFilePath;
+    private IAbsolutePath? _previousAbsolutePath;
     private ElementReference? _cancelButtonElementReference;
 
     protected override Task OnParametersSetAsync()
     {
-        if (_previousAbsoluteFilePath is null ||
-            _previousAbsoluteFilePath.FormattedInput != AbsolutePath.FormattedInput)
+        if (_previousAbsolutePath is null ||
+            _previousAbsolutePath.FormattedInput != AbsolutePath.FormattedInput)
         {
-            _previousAbsoluteFilePath = AbsolutePath;
+            _previousAbsolutePath = AbsolutePath;
         }
 
         return base.OnParametersSetAsync();
@@ -66,12 +66,12 @@ public partial class RemoveCSharpProjectFromSolutionDisplay : ComponentBase,
 
     private async Task RemoveCSharpProjectFromSolutionOnClick()
     {
-        var localAbsoluteFilePath = AbsolutePath;
+        var localAbsolutePath = AbsolutePath;
 
         if (MenuOptionWidgetParameters is not null)
         {
             await MenuOptionWidgetParameters.CompleteWidgetAsync.Invoke(
-                () => OnAfterSubmitAction.Invoke(localAbsoluteFilePath));
+                () => OnAfterSubmitAction.Invoke(localAbsolutePath));
         }
     }
 

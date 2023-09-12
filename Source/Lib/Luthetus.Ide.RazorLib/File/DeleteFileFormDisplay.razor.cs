@@ -23,20 +23,20 @@ public partial class DeleteFileFormDisplay
     [Parameter, EditorRequired]
     public Action<IAbsolutePath> OnAfterSubmitAction { get; set; } = null!;
 
-    private IAbsolutePath? _previousAbsoluteFilePath;
+    private IAbsolutePath? _previousAbsolutePath;
 
     private int? _countOfImmediateChildren;
     private ElementReference? _cancelButtonElementReference;
 
     protected override async Task OnParametersSetAsync()
     {
-        if (_previousAbsoluteFilePath is null ||
-            _previousAbsoluteFilePath.FormattedInput !=
+        if (_previousAbsolutePath is null ||
+            _previousAbsolutePath.FormattedInput !=
             AbsolutePath.FormattedInput)
         {
             _countOfImmediateChildren = null;
 
-            _previousAbsoluteFilePath = AbsolutePath;
+            _previousAbsolutePath = AbsolutePath;
 
             if (AbsolutePath.IsDirectory)
             {
@@ -87,12 +87,12 @@ public partial class DeleteFileFormDisplay
 
     private async Task DeleteFileOnClick()
     {
-        var localAbsoluteFilePath = AbsolutePath;
+        var localAbsolutePath = AbsolutePath;
 
         if (MenuOptionWidgetParameters is not null)
         {
             await MenuOptionWidgetParameters.CompleteWidgetAsync.Invoke(
-                () => OnAfterSubmitAction.Invoke(localAbsoluteFilePath));
+                () => OnAfterSubmitAction.Invoke(localAbsolutePath));
         }
     }
 

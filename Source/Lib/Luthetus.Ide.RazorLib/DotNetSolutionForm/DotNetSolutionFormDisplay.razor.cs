@@ -4,7 +4,7 @@ using Luthetus.Common.RazorLib;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.Dialog;
-using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
+using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Notification;
 using Luthetus.Common.RazorLib.Store.DialogCase;
@@ -112,26 +112,26 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                         DialogRecord.Key));
 
                     // Open the created .NET Solution
-                    var parentDirectoryAbsoluteFilePath = new AbsolutePath(
+                    var parentDirectoryAbsolutePath = new AbsolutePath(
                         localParentDirectoryName,
                         true,
                         EnvironmentProvider);
 
-                    var solutionAbsoluteFilePathString =
-                        parentDirectoryAbsoluteFilePath.FormattedInput +
+                    var solutionAbsolutePathString =
+                        parentDirectoryAbsolutePath.FormattedInput +
                         localSolutionName +
                         EnvironmentProvider.DirectorySeparatorChar +
                         localSolutionName +
                         '.' +
                         ExtensionNoPeriodFacts.DOT_NET_SOLUTION;
 
-                    var solutionAbsoluteFilePath = new AbsolutePath(
-                        solutionAbsoluteFilePathString,
+                    var solutionAbsolutePath = new AbsolutePath(
+                        solutionAbsolutePathString,
                         false,
                         EnvironmentProvider);
 
                     Dispatcher.Dispatch(new DotNetSolutionRegistry.SetDotNetSolutionAction(
-                        solutionAbsoluteFilePath));
+                        solutionAbsolutePath));
 
                     return Task.CompletedTask;
                 });
@@ -160,12 +160,12 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
             '.' +
             ExtensionNoPeriodFacts.DOT_NET_SOLUTION;
 
-        var solutionAbsoluteFilePathString = EnvironmentProvider.JoinPaths(
+        var solutionAbsolutePathString = EnvironmentProvider.JoinPaths(
             directoryContainingSolution,
             localSolutionFilenameWithExtension);
 
         await FileSystemProvider.File.WriteAllTextAsync(
-            solutionAbsoluteFilePathString,
+            solutionAbsolutePathString,
             HackForWebsite_NEW_SOLUTION_TEMPLATE);
 
         // Close Dialog
@@ -190,13 +190,13 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
         Dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
             notificationRecord));
 
-        var solutionAbsoluteFilePath = new AbsolutePath(
-            solutionAbsoluteFilePathString,
+        var solutionAbsolutePath = new AbsolutePath(
+            solutionAbsolutePathString,
             false,
             EnvironmentProvider);
 
         Dispatcher.Dispatch(new DotNetSolutionRegistry.SetDotNetSolutionAction(
-            solutionAbsoluteFilePath));
+            solutionAbsolutePath));
     }
 
     private const string HackForWebsite_NEW_SOLUTION_TEMPLATE = @"

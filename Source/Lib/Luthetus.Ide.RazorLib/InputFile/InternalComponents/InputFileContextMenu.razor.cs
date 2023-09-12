@@ -51,23 +51,23 @@ public partial class InputFileContextMenu : ComponentBase
         var treeViewModel = treeViewCommandParameter.TargetNode;
         var parentTreeViewModel = treeViewModel.Parent;
 
-        var parentTreeViewAbsoluteFilePath = parentTreeViewModel as TreeViewAbsolutePath;
+        var parentTreeViewAbsolutePath = parentTreeViewModel as TreeViewAbsolutePath;
 
-        if (treeViewModel is not TreeViewAbsolutePath treeViewAbsoluteFilePath)
+        if (treeViewModel is not TreeViewAbsolutePath treeViewAbsolutePath)
             return MenuRecord.Empty;
 
-        if (treeViewAbsoluteFilePath.Item.IsDirectory)
+        if (treeViewAbsolutePath.Item.IsDirectory)
         {
             menuRecords.AddRange(
-                GetFileMenuOptions(treeViewAbsoluteFilePath, parentTreeViewAbsoluteFilePath)
-                    .Union(GetDirectoryMenuOptions(treeViewAbsoluteFilePath))
-                    .Union(GetDebugMenuOptions(treeViewAbsoluteFilePath)));
+                GetFileMenuOptions(treeViewAbsolutePath, parentTreeViewAbsolutePath)
+                    .Union(GetDirectoryMenuOptions(treeViewAbsolutePath))
+                    .Union(GetDebugMenuOptions(treeViewAbsolutePath)));
         }
         else
         {
             menuRecords.AddRange(
-                GetFileMenuOptions(treeViewAbsoluteFilePath, parentTreeViewAbsoluteFilePath)
-                    .Union(GetDebugMenuOptions(treeViewAbsoluteFilePath)));
+                GetFileMenuOptions(treeViewAbsolutePath, parentTreeViewAbsolutePath)
+                    .Union(GetDebugMenuOptions(treeViewAbsolutePath)));
         }
 
         return new MenuRecord(
@@ -167,7 +167,7 @@ public partial class InputFileContextMenu : ComponentBase
             false);
     }
 
-    private Task NotifyCopyCompleted(IAbsolutePath absoluteFilePath)
+    private Task NotifyCopyCompleted(IAbsolutePath absolutePath)
     {
         if (LuthetusCommonComponentRenderers.InformativeNotificationRendererType != null)
         {
@@ -179,7 +179,7 @@ public partial class InputFileContextMenu : ComponentBase
                 {
                 {
                     nameof(IInformativeNotificationRendererType.Message),
-                    $"Copied: {absoluteFilePath.NameWithExtension}"
+                    $"Copied: {absolutePath.NameWithExtension}"
                 },
                 },
                 TimeSpan.FromSeconds(3),
@@ -194,7 +194,7 @@ public partial class InputFileContextMenu : ComponentBase
     }
 
     private Task NotifyCutCompleted(
-        IAbsolutePath absoluteFilePath,
+        IAbsolutePath absolutePath,
         TreeViewAbsolutePath? parentTreeViewModel)
     {
         ParentOfCutFile = parentTreeViewModel;
@@ -209,7 +209,7 @@ public partial class InputFileContextMenu : ComponentBase
                 {
                 {
                     nameof(IInformativeNotificationRendererType.Message),
-                    $"Cut: {absoluteFilePath.NameWithExtension}"
+                    $"Cut: {absolutePath.NameWithExtension}"
                 },
                 },
                 TimeSpan.FromSeconds(3),

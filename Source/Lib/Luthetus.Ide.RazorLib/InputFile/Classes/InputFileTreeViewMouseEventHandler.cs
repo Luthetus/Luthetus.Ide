@@ -27,11 +27,11 @@ public class InputFileTreeViewMouseEventHandler : TreeViewMouseEventHandler
     {
         base.OnClick(treeViewCommandParameter);
 
-        if (treeViewCommandParameter.TargetNode is not TreeViewAbsolutePath treeViewAbsoluteFilePath)
+        if (treeViewCommandParameter.TargetNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return;
 
         var setSelectedTreeViewModelAction = new InputFileRegistry.SetSelectedTreeViewModelAction(
-            treeViewAbsoluteFilePath);
+            treeViewAbsolutePath);
 
         _dispatcher.Dispatch(setSelectedTreeViewModelAction);
     }
@@ -40,9 +40,9 @@ public class InputFileTreeViewMouseEventHandler : TreeViewMouseEventHandler
     {
         base.OnDoubleClick(treeViewCommandParameter);
 
-        if (treeViewCommandParameter.TargetNode is not TreeViewAbsolutePath treeViewAbsoluteFilePath)
+        if (treeViewCommandParameter.TargetNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return;
 
-        _setInputFileContentTreeViewRootFunc.Invoke(treeViewAbsoluteFilePath.Item);
+        _setInputFileContentTreeViewRootFunc.Invoke(treeViewAbsolutePath.Item);
     }
 }

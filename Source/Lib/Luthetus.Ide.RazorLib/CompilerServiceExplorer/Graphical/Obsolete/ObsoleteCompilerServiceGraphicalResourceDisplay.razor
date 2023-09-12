@@ -1,4 +1,5 @@
 ﻿@using Luthetus.Common.RazorLib.Dimensions;
+@using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 @using Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
 
 @{
@@ -22,7 +23,7 @@
             cx="@xCenterInPixelsCssValue" cy="@yCenterInPixelsCssValue" r="@circleRadiusInPixelsCssValue" />
 
     @{
-        var absoluteFilePath = new AbsolutePath(
+        var absolutePath = new AbsolutePath(
         localCompilerServiceResource.ResourceUri.Value,
         false,
         EnvironmentProvider);
@@ -45,14 +46,14 @@
           style="@fontSizeStyleAttribute"
           fill="var(--luth_primary-foreground-color)">
 
-        @absoluteFilePath.NameWithExtension
+        @absolutePath.NameWithExtension
     </text>
     <text text-anchor="middle" dominant-baseline="middle"
           x="@xCenterInPixelsCssValue" y="@yCenterInPixelsCssValue"
           style="@fontSizeStyleAttribute"
           fill="var(--luth_primary-foreground-color)">
 
-        @absoluteFilePath.NameWithExtension
+        @absolutePath.NameWithExtension
     </text>
 
     @if (ShouldDrawLineConnectingSelfToParent)

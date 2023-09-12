@@ -20,14 +20,14 @@
                              style="@BodyStyleCssString">
 
                             <InputFileSidebar ElementDimensions="_sidebarElementDimensions"
-                                              SetSelectedAbsoluteFilePath="tvm => _selectedAbsoluteFilePath = tvm"/>
+                                              SetSelectedAbsolutePath="tvm => _selectedAbsolutePath = tvm"/>
                             
                             <ResizableColumn LeftElementDimensions="_sidebarElementDimensions"
                                              RightElementDimensions="_contentElementDimensions"
                                              ReRenderFuncAsync="async () => await InvokeAsync(StateHasChanged)"/>
                             
                             <InputFileContent ElementDimensions="_contentElementDimensions"
-                                              SetSelectedAbsoluteFilePath="tvm => _selectedAbsoluteFilePath = tvm" />
+                                              SetSelectedAbsolutePath="tvm => _selectedAbsolutePath = tvm" />
                         </div>
                         
                         <InputFileBottomControls />

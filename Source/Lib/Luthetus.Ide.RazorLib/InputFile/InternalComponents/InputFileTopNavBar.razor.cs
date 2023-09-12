@@ -2,7 +2,7 @@
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.ComponentRenderers.Types;
-using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
+using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Notification;
 using Luthetus.Common.RazorLib.Store.NotificationCase;
@@ -119,14 +119,14 @@ public partial class InputFileTopNavBar : ComponentBase
                     $"Address provided does not exist. {address}");
             }
 
-            var absoluteFilePath = new AbsolutePath(
+            var absolutePath = new AbsolutePath(
                 address,
                 true,
                 EnvironmentProvider);
 
             _showInputTextEditForAddress = false;
 
-            await SetInputFileContentTreeViewRootFunc.Invoke(absoluteFilePath);
+            await SetInputFileContentTreeViewRootFunc.Invoke(absolutePath);
         }
         catch (Exception exception)
         {

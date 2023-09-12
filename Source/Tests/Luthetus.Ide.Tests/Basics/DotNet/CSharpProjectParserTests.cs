@@ -1,5 +1,5 @@
-﻿using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
-using Luthetus.Common.RazorLib.FileSystem.Classes.Local;
+﻿using Luthetus.Common.RazorLib.FileSystem.Classes.Local;
+using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 using Luthetus.Common.RazorLib.Misc;
 using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
 using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxActors;
@@ -15,10 +15,10 @@ public class CSharpProjectParserTests
     {
         var localEnvironmentProvider = new LocalEnvironmentProvider();
 
-        var projectAbsoluteFilePathString = @"C:\Users\hunte\Repos\Demos\BlazorCrudApp\BlazorCrudApp\BlazorCrudApp.csproj";
+        var projectAbsolutePathString = @"C:\Users\hunte\Repos\Demos\BlazorCrudApp\BlazorCrudApp\BlazorCrudApp.csproj";
 
-        var projectAbsoluteFilePath = new AbsolutePath(
-            projectAbsoluteFilePathString,
+        var projectAbsolutePath = new AbsolutePath(
+            projectAbsolutePathString,
             false,
             localEnvironmentProvider);
 
@@ -55,14 +55,14 @@ public class CSharpProjectParserTests
     {
         var localEnvironmentProvider = new LocalEnvironmentProvider();
 
-        var projectAbsoluteFilePathString = @"C:\Users\hunte\Repos\Demos\BlazorCrudApp\BlazorCrudApp\BlazorCrudApp.csproj";
+        var projectAbsolutePathString = @"C:\Users\hunte\Repos\Demos\BlazorCrudApp\BlazorCrudApp\BlazorCrudApp.csproj";
 
-        var projectAbsoluteFilePath = new AbsolutePath(
-            projectAbsoluteFilePathString,
+        var projectAbsolutePath = new AbsolutePath(
+            projectAbsolutePathString,
             false,
             localEnvironmentProvider);
 
-        var resourceUri = new ResourceUri(projectAbsoluteFilePathString);
+        var resourceUri = new ResourceUri(projectAbsolutePathString);
 
         var htmlLexer = new TextEditorHtmlLexer(resourceUri);
 

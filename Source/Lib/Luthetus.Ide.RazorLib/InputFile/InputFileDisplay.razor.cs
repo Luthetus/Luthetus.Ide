@@ -38,13 +38,13 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     private ILuthetusCommonBackgroundTaskService LuthetusCommonBackgroundTaskService { get; set; } = null!;
 
     /// <summary>
-    /// Receives the <see cref="_selectedAbsoluteFilePath"/> as
+    /// Receives the <see cref="_selectedAbsolutePath"/> as
     /// a parameter to the <see cref="RenderFragment"/>
     /// </summary>
     [Parameter]
     public RenderFragment<IAbsolutePath?>? HeaderRenderFragment { get; set; }
     /// <summary>
-    /// Receives the <see cref="_selectedAbsoluteFilePath"/> as
+    /// Receives the <see cref="_selectedAbsolutePath"/> as
     /// a parameter to the <see cref="RenderFragment"/>
     /// </summary>
     [Parameter]
@@ -75,7 +75,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     private readonly ElementDimensions _sidebarElementDimensions = new();
     private readonly ElementDimensions _contentElementDimensions = new();
 
-    private IAbsolutePath? _selectedAbsoluteFilePath;
+    private IAbsolutePath? _selectedAbsolutePath;
     private InputFileTreeViewMouseEventHandler _inputFileTreeViewMouseEventHandler = null!;
     private InputFileTreeViewKeyboardEventHandler _inputFileTreeViewKeyboardEventHandler = null!;
     private InputFileTopNavBar? _inputFileTopNavBarComponent;
@@ -88,7 +88,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     /// A presumption that any mutations to the HashSet are done
     /// via the UI thread. Therefore concurrency is not an issue.
     /// </summary>
-    private List<(TreeViewStateKey treeViewStateKey, TreeViewAbsolutePath treeViewAbsoluteFilePath)> _searchMatchTuples = new();
+    private List<(TreeViewStateKey treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)> _searchMatchTuples = new();
 
     public ElementReference? SearchElementReference => _inputFileTopNavBarComponent?.SearchElementReference;
 
@@ -170,10 +170,10 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     });
     }
 
-    private async Task SetInputFileContentTreeViewRootFunc(IAbsolutePath absoluteFilePath)
+    private async Task SetInputFileContentTreeViewRootFunc(IAbsolutePath absolutePath)
     {
         var pseudoRootNode = new TreeViewAbsolutePath(
-            absoluteFilePath,
+            absolutePath,
             LuthetusIdeComponentRenderers,
             LuthetusCommonComponentRenderers,
             FileSystemProvider,

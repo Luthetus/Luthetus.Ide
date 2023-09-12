@@ -1,12 +1,12 @@
 ﻿@using Luthetus.Ide.ClassLib.FileConstants
 <span class="luth_ide_solution-explorer-icon-display">
-    @if (AbsoluteFilePath.IsDirectory)
+    @if (AbsolutePath.IsDirectory)
     {
-        if (AbsoluteFilePath.NameNoExtension == UniqueFileFacts.Properties)
+        if (AbsolutePath.NameNoExtension == UniqueFileFacts.Properties)
         {
             <IconProperties/>
         }
-        else if (AbsoluteFilePath.NameNoExtension == UniqueFileFacts.WwwRoot)
+        else if (AbsolutePath.NameNoExtension == UniqueFileFacts.WwwRoot)
         {
             <IconWwwRoot/>
         }
@@ -17,7 +17,7 @@
     }
     else
     {
-        switch (AbsoluteFilePath.ExtensionNoPeriod)
+        switch (AbsolutePath.ExtensionNoPeriod)
         {
             case ExtensionNoPeriodFacts.DOT_NET_SOLUTION:
                 <IconDotNetSolution/>

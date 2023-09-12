@@ -1,6 +1,6 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.Dimensions;
-using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
+using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Options;
 using Luthetus.Common.RazorLib.Resize;
@@ -82,13 +82,13 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
             if (System.IO.File.Exists("C:\\Users\\hunte\\Repos\\Demos\\BlazorCrudApp\\BlazorCrudApp.sln"))
             {
-                var absoluteFilePath = new AbsolutePath(
+                var absolutePath = new AbsolutePath(
                     "C:\\Users\\hunte\\Repos\\Demos\\BlazorCrudApp\\BlazorCrudApp.sln",
                     false,
                     EnvironmentProvider);
 
                 Dispatcher.Dispatch(new DotNetSolutionRegistry.SetDotNetSolutionAction(
-                    absoluteFilePath));
+                    absolutePath));
             }
         }
 

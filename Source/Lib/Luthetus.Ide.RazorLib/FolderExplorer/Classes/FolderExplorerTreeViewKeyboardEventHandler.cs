@@ -104,7 +104,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         return;
     }
 
-    private Task NotifyCopyCompleted(IAbsolutePath absoluteFilePath)
+    private Task NotifyCopyCompleted(IAbsolutePath absolutePath)
     {
         if (_luthetusCommonComponentRenderers.InformativeNotificationRendererType is not null)
         {
@@ -116,7 +116,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
                 {
                     {
                         nameof(IInformativeNotificationRendererType.Message),
-                        $"Copied: {absoluteFilePath.NameWithExtension}"
+                        $"Copied: {absolutePath.NameWithExtension}"
                     },
                 },
                 TimeSpan.FromSeconds(3),
@@ -131,7 +131,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
     }
 
     private Task NotifyCutCompleted(
-        IAbsolutePath absoluteFilePath,
+        IAbsolutePath absolutePath,
         TreeViewAbsolutePath? parentTreeViewModel)
     {
         SolutionExplorerContextMenu.ParentOfCutFile = parentTreeViewModel;
@@ -146,7 +146,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
                 {
                 {
                     nameof(IInformativeNotificationRendererType.Message),
-                    $"Cut: {absoluteFilePath.NameWithExtension}"
+                    $"Cut: {absolutePath.NameWithExtension}"
                 },
                 },
                 TimeSpan.FromSeconds(3),
@@ -164,12 +164,12 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
     {
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
-        if (activeNode is not TreeViewAbsolutePath treeViewAbsoluteFilePathPath)
+        if (activeNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return;
 
         var copyFileMenuOption = _menuOptionsFactory.CopyFile(
-            treeViewAbsoluteFilePathPath.Item,
-            () => NotifyCopyCompleted(treeViewAbsoluteFilePathPath.Item));
+            treeViewAbsolutePath.Item,
+            () => NotifyCopyCompleted(treeViewAbsolutePath.Item));
 
         copyFileMenuOption.OnClick?.Invoke();
     }
@@ -178,15 +178,15 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
     {
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
-        if (activeNode is not TreeViewAbsolutePath treeViewAbsoluteFilePathPath)
+        if (activeNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return Task.CompletedTask;
 
         MenuOptionRecord pasteMenuOptionRecord;
 
-        if (treeViewAbsoluteFilePathPath.Item.IsDirectory)
+        if (treeViewAbsolutePath.Item.IsDirectory)
         {
             pasteMenuOptionRecord = _menuOptionsFactory.PasteClipboard(
-                treeViewAbsoluteFilePathPath.Item,
+                treeViewAbsolutePath.Item,
                 async () =>
                 {
                     var localParentOfCutFile =
@@ -197,12 +197,12 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
                     if (localParentOfCutFile is not null)
                         await ReloadTreeViewModel(localParentOfCutFile);
 
-                    await ReloadTreeViewModel(treeViewAbsoluteFilePathPath);
+                    await ReloadTreeViewModel(treeViewAbsolutePath);
                 });
         }
         else
         {
-            var parentDirectory = (IAbsolutePath)treeViewAbsoluteFilePathPath
+            var parentDirectory = (IAbsolutePath)treeViewAbsolutePath
                 .Item.AncestorDirectories.Last();
 
             pasteMenuOptionRecord = _menuOptionsFactory.PasteClipboard(
@@ -215,7 +215,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
                     if (localParentOfCutFile is not null)
                         await ReloadTreeViewModel(localParentOfCutFile);
 
-                    await ReloadTreeViewModel(treeViewAbsoluteFilePathPath);
+                    await ReloadTreeViewModel(treeViewAbsolutePath);
                 });
         }
 
@@ -227,15 +227,15 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
     {
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
-        if (activeNode is not TreeViewAbsolutePath treeViewAbsoluteFilePathPath)
+        if (activeNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return;
 
-        var parent = treeViewAbsoluteFilePathPath.Parent as TreeViewAbsolutePath;
+        var parent = treeViewAbsolutePath.Parent as TreeViewAbsolutePath;
 
         MenuOptionRecord cutFileOptionRecord = _menuOptionsFactory.CutFile(
-            treeViewAbsoluteFilePathPath.Item,
+            treeViewAbsolutePath.Item,
             () => NotifyCutCompleted(
-                treeViewAbsoluteFilePathPath.Item,
+                treeViewAbsolutePath.Item,
                 parent));
 
         cutFileOptionRecord.OnClick?.Invoke();
@@ -247,11 +247,11 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
     {
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
-        if (activeNode is not TreeViewAbsolutePath treeViewAbsoluteFilePathPath)
+        if (activeNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return;
 
         _dispatcher.Dispatch(new EditorRegistry.OpenInEditorAction(
-            treeViewAbsoluteFilePathPath.Item,
+            treeViewAbsolutePath.Item,
             shouldSetFocusToEditor));
 
         return;

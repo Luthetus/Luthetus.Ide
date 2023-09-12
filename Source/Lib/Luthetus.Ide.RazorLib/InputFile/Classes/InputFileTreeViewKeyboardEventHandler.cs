@@ -23,7 +23,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly Func<IAbsolutePath, Task> _setInputFileContentTreeViewRootFunc;
     private readonly Func<Task> _focusSearchInputElementFunc;
-    private readonly Func<List<(TreeViewStateKey treeViewStateKey, TreeViewAbsolutePath treeViewAbsoluteFilePath)>> _getSearchMatchTuplesFunc;
+    private readonly Func<List<(TreeViewStateKey treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)>> _getSearchMatchTuplesFunc;
     private readonly ILuthetusCommonBackgroundTaskService _luthetusCommonBackgroundTaskService;
 
     public InputFileTreeViewKeyboardEventHandler(
@@ -36,7 +36,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         IEnvironmentProvider environmentProvider,
         Func<IAbsolutePath, Task> setInputFileContentTreeViewRootFunc,
         Func<Task> focusSearchInputElementFunc,
-        Func<List<(TreeViewStateKey treeViewStateKey, TreeViewAbsolutePath treeViewAbsoluteFilePath)>> getSearchMatchTuplesFunc,
+        Func<List<(TreeViewStateKey treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)>> getSearchMatchTuplesFunc,
         ILuthetusCommonBackgroundTaskService luthetusCommonBackgroundTaskService)
         : base(treeViewService)
     {
@@ -122,10 +122,10 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
     {
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
-        if (activeNode is not TreeViewAbsolutePath treeViewAbsoluteFilePath)
+        if (activeNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return;
 
-        _setInputFileContentTreeViewRootFunc.Invoke(treeViewAbsoluteFilePath.Item);
+        _setInputFileContentTreeViewRootFunc.Invoke(treeViewAbsolutePath.Item);
     }
 
     private void HandleBackButtonOnClick(ITreeViewCommandParameter treeViewCommandParameter)
@@ -174,14 +174,14 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
     {
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
-        var treeViewAbsoluteFilePath = activeNode as TreeViewAbsolutePath;
+        var treeViewAbsolutePath = activeNode as TreeViewAbsolutePath;
 
-        if (treeViewAbsoluteFilePath is null)
+        if (treeViewAbsolutePath is null)
             return;
 
         var setSelectedTreeViewModelAction =
             new InputFileRegistry.SetSelectedTreeViewModelAction(
-                treeViewAbsoluteFilePath);
+                treeViewAbsolutePath);
 
         _dispatcher.Dispatch(setSelectedTreeViewModelAction);
 

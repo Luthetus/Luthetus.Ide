@@ -23,11 +23,11 @@ public class FolderExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
     {
         base.OnDoubleClick(treeViewCommandParameter);
 
-        if (treeViewCommandParameter.TargetNode is not TreeViewAbsolutePath treeViewAbsoluteFilePath)
+        if (treeViewCommandParameter.TargetNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return;
 
         _dispatcher.Dispatch(new EditorRegistry.OpenInEditorAction(
-            treeViewAbsoluteFilePath.Item,
+            treeViewAbsolutePath.Item,
             true));
     }
 }

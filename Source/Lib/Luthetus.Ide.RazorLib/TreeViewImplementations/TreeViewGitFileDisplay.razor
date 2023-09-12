@@ -14,21 +14,21 @@
     @{
         var gitState = GitStateWrap.Value;
 
-        string shortenedParentDirectoryFilePathString = gitFile.AbsoluteFilePath.FormattedInput;
+        string shortenedParentDirectoryPathString = gitFile.AbsolutePath.FormattedInput;
 
-        if (gitFile.AbsoluteFilePath.ParentDirectory is not null &&
+        if (gitFile.AbsolutePath.ParentDirectory is not null &&
         gitState.GitFolderAbsolutePath?.ParentDirectory is not null)
         {
         }
     }
 
-    <FileIconDisplay AbsoluteFilePath="gitFile.AbsoluteFilePath" />
+    <FileIconDisplay AbsolutePath="gitFile.AbsolutePath" />
 
     <em class="luth_em">
-        @gitFile.AbsoluteFilePath.NameWithExtension
+        @gitFile.AbsolutePath.NameWithExtension
     </em>
 
     <span>
-        @shortenedParentDirectoryFilePathString
+        @shortenedParentDirectoryPathString
     </span>
 </div>
