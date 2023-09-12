@@ -42,7 +42,7 @@ public partial class EditorRegistry
         private readonly ITextEditorService _textEditorService;
         private readonly ILuthetusIdeComponentRenderers _luthetusIdeComponentRenderers;
         private readonly IFileSystemProvider _fileSystemProvider;
-        private readonly BackgroundTaskService _backgroundTaskService;
+        private readonly IBackgroundTaskService _backgroundTaskService;
         private readonly XmlCompilerService _xmlCompilerService;
         private readonly DotNetSolutionCompilerService _dotNetCompilerService;
         private readonly CSharpProjectCompilerService _cSharpProjectCompilerService;
@@ -58,7 +58,7 @@ public partial class EditorRegistry
             ITextEditorService textEditorService,
             ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
             IFileSystemProvider fileSystemProvider,
-            BackgroundTaskService backgroundTaskService,
+            IBackgroundTaskService backgroundTaskService,
             XmlCompilerService xmlCompilerService,
             DotNetSolutionCompilerService dotNetCompilerService,
             CSharpProjectCompilerService cSharpProjectCompilerService,
@@ -248,10 +248,9 @@ public partial class EditorRegistry
                             {
                                 _backgroundTaskService.Enqueue(
                                     BackgroundTaskKey.NewKey(),
-                                    );
-
-                                var backgroundTask = new BackgroundTask(
-                                    async cancellationToken =>
+                                    CommonBackgroundTaskWorker.Queue.Key,
+                                    "Check If Contexts Were Modified",
+                                    async () =>
                                     {
                                         dispatcher.Dispatch(new NotificationRegistry.DisposeAction(
                                             notificationInformativeKey));
@@ -265,15 +264,7 @@ public partial class EditorRegistry
                                             fileLastWriteTime);
 
                                         await textEditorModel.ApplySyntaxHighlightingAsync();
-                                    },
-                                    "FileContentsWereModifiedOnDiskTask",
-                                    "TODO: Describe this task",
-                                    false,
-                                    _ => Task.CompletedTask,
-                                    dispatcher,
-                                    CancellationToken.None);
-
-                                _backgroundTaskService.Queue(backgroundTask);
+                                    });
                             })
                         },
                         {

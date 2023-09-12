@@ -132,20 +132,14 @@ public partial record InputFileRegistry
                     false,
                     true);
 
-                var backgroundTask = new BackgroundTask(
-                    async cancellationToken =>
+                openParentDirectoryAction.BackgroundTaskService.Enqueue(
+                    BackgroundTaskKey.NewKey(),
+                    CommonBackgroundTaskWorker.Queue.Key,
+                    "Open Parent Directory",
+                    async () =>
                     {
                         await parentDirectoryTreeViewModel.LoadChildrenAsync();
-                    },
-                    "ReduceOpenParentDirectoryActionTask",
-                    "TODO: Describe this task",
-                    false,
-                    _ => Task.CompletedTask,
-                    null,
-                    CancellationToken.None);
-
-                openParentDirectoryAction.LuthetusCommonBackgroundTaskService
-                    .Queue(backgroundTask);
+                    });
             }
 
             if (parentDirectoryTreeViewModel is not null)
@@ -172,20 +166,14 @@ public partial record InputFileRegistry
 
             currentSelection.Children.Clear();
 
-            var backgroundTask = new BackgroundTask(
-                async cancellationToken =>
+            refreshCurrentSelectionAction.BackgroundTaskService.Enqueue(
+                BackgroundTaskKey.NewKey(),
+                CommonBackgroundTaskWorker.Queue.Key,
+                "Refresh Current Selection",
+                async () =>
                 {
                     await currentSelection.LoadChildrenAsync();
-                },
-                "ReduceRefreshCurrentSelectionActionTask",
-                "TODO: Describe this task",
-                false,
-                _ => Task.CompletedTask,
-                null,
-                CancellationToken.None);
-
-            refreshCurrentSelectionAction.LuthetusCommonBackgroundTaskService
-                .Queue(backgroundTask);
+                });
 
             return inInputFileState;
         }

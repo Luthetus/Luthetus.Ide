@@ -1,4 +1,5 @@
 ﻿using Luthetus.Common.RazorLib;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 using Luthetus.Ide.RazorLib;
 using Microsoft.Extensions.DependencyInjection;
 using Photino.Blazor;
@@ -15,7 +16,10 @@ class Program
 
         appBuilder.Services.AddLogging();
 
-        var hostingInformation = new LuthetusHostingInformation(LuthetusHostingKind.Photino);
+        var hostingInformation = new LuthetusHostingInformation(
+            LuthetusHostingKind.Photino,
+            new BackgroundTaskService());
+
         appBuilder.Services.AddLuthetusIdeRazorLibServices(hostingInformation);
 
         appBuilder.RootComponents.Add<App>("app");

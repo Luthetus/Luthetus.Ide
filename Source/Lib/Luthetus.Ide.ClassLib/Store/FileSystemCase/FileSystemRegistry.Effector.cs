@@ -5,7 +5,6 @@ using Luthetus.Common.RazorLib.Notification;
 using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.Store.NotificationCase;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
-using Luthetus.Ide.ClassLib.HostedServiceCase.FileSystem;
 
 namespace Luthetus.Ide.ClassLib.Store.FileSystemCase;
 
@@ -15,18 +14,18 @@ public partial class FileSystemRegistry
     {
         private readonly IFileSystemProvider _fileSystemProvider;
         private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
-        private readonly ILuthetusIdeFileSystemBackgroundTaskService _luthetusIdeFileSystemBackgroundTaskService;
+        private readonly IBackgroundTaskService _backgroundTaskService;
 
         private readonly object _syncRoot = new object();
 
         public Effector(
             IFileSystemProvider fileSystemProvider,
             ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
-            ILuthetusIdeFileSystemBackgroundTaskService luthetusIdeFileSystemBackgroundTaskService)
+            IBackgroundTaskService backgroundTaskService)
         {
             _fileSystemProvider = fileSystemProvider;
             _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
-            _luthetusIdeFileSystemBackgroundTaskService = luthetusIdeFileSystemBackgroundTaskService;
+            _backgroundTaskService = backgroundTaskService;
         }
 
         [EffectMethod]
@@ -41,8 +40,11 @@ public partial class FileSystemRegistry
             //
             lock (_syncRoot)
             {
-                var backgroundTask = new BackgroundTask(
-                    async cancellationToken =>
+                _backgroundTaskService.Enqueue(
+                    BackgroundTaskKey.NewKey(),
+                    FileSystemBackgroundTaskWorker.Queue.Key,
+                    "Handle Save File Action",
+                    async () =>
                     {
                         if (saveFileAction.CancellationToken.IsCancellationRequested)
                             return;
@@ -94,19 +96,11 @@ public partial class FileSystemRegistry
                             fileLastWriteTime = await _fileSystemProvider.File
                                 .GetLastWriteTimeAsync(
                                     absolutePathString,
-                                    cancellationToken);
+                                    CancellationToken.None);
                         }
 
                         saveFileAction.OnAfterSaveCompletedWrittenDateTimeAction?.Invoke(fileLastWriteTime);
-                    },
-                    "Save File",
-                    "TODO: Describe this task",
-                    false,
-                    _ => Task.CompletedTask,
-                    dispatcher,
-                    CancellationToken.None);
-
-                _luthetusIdeFileSystemBackgroundTaskService.Enqueue(backgroundTask);
+                    });
             }
 
             return Task.CompletedTask;

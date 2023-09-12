@@ -7,7 +7,6 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Notification;
 using Luthetus.Common.RazorLib.Store.NotificationCase;
-using Luthetus.Ide.ClassLib.HostedServiceCase.Terminal;
 using Luthetus.Ide.ClassLib.State;
 using Luthetus.TextEditor.RazorLib.Model;
 using Luthetus.TextEditor.RazorLib.ViewModel.InternalClasses;
@@ -22,7 +21,7 @@ public class TerminalSession
 {
     private readonly IDispatcher _dispatcher;
     private readonly IFileSystemProvider _fileSystemProvider;
-    private readonly ILuthetusIdeTerminalBackgroundTaskService _terminalBackgroundTaskQueue;
+    private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
     private readonly List<TerminalCommand> _terminalCommandsHistory = new();
     private CancellationTokenSource _commandCancellationTokenSource = new();
@@ -38,12 +37,12 @@ public class TerminalSession
         string? workingDirectoryAbsolutePathString,
         IDispatcher dispatcher,
         IFileSystemProvider fileSystemProvider,
-        ILuthetusIdeTerminalBackgroundTaskService terminalBackgroundTaskQueue,
+        IBackgroundTaskService backgroundTaskService,
         ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers)
     {
         _dispatcher = dispatcher;
         _fileSystemProvider = fileSystemProvider;
-        _terminalBackgroundTaskQueue = terminalBackgroundTaskQueue;
+        _backgroundTaskService = backgroundTaskService;
         _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
         WorkingDirectoryAbsolutePathString = workingDirectoryAbsolutePathString;
     }
@@ -84,8 +83,11 @@ public class TerminalSession
 
     public Task EnqueueCommandAsync(TerminalCommand terminalCommand)
     {
-        var backgroundTask = new BackgroundTask(
-            async cancellationToken =>
+        _backgroundTaskService.Enqueue(
+            BackgroundTaskKey.NewKey(),
+            TerminalBackgroundTaskWorker.Queue.Key,
+            "Enqueue Command",
+            async () =>
             {
                 if (terminalCommand.ChangeWorkingDirectoryTo is not null)
                     WorkingDirectoryAbsolutePathString = terminalCommand.ChangeWorkingDirectoryTo;
@@ -191,15 +193,8 @@ public class TerminalSession
                             await terminalCommand.ContinueWith.Invoke();
                     }
                 }
-            },
-            "EnqueueCommandAsyncTask",
-            "TODO: Describe this task",
-            false,
-            _ => Task.CompletedTask,
-            _dispatcher,
-            CancellationToken.None);
+            });
 
-        _terminalBackgroundTaskQueue.Enqueue(backgroundTask);
         return Task.CompletedTask;
     }
 

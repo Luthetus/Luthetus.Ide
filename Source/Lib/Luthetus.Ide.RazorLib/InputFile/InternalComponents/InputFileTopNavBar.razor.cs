@@ -1,4 +1,5 @@
 ﻿using Fluxor;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.ComponentRenderers.Types;
@@ -25,7 +26,7 @@ public partial class InputFileTopNavBar : ComponentBase
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
-    private ILuthetusCommonBackgroundTaskService LuthetusCommonBackgroundTaskService { get; set; } = null!;
+    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 
     [CascadingParameter(Name = "SetInputFileContentTreeViewRootFunc")]
     public Func<IAbsolutePath, Task> SetInputFileContentTreeViewRootFunc { get; set; } = null!;
@@ -63,7 +64,7 @@ public partial class InputFileTopNavBar : ComponentBase
             LuthetusCommonComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,
-            LuthetusCommonBackgroundTaskService));
+            BackgroundTaskService));
 
         await ChangeContentRootToOpenedTreeView(InputFileState);
     }
@@ -71,7 +72,7 @@ public partial class InputFileTopNavBar : ComponentBase
     private async Task HandleRefreshButtonOnClick()
     {
         Dispatcher.Dispatch(new InputFileRegistry.RefreshCurrentSelectionAction(
-            LuthetusCommonBackgroundTaskService));
+            BackgroundTaskService));
 
         await ChangeContentRootToOpenedTreeView(InputFileState);
     }

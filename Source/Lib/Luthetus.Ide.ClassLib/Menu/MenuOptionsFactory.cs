@@ -31,7 +31,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly IClipboardService _clipboardService;
-    private readonly BackgroundTaskService _backgroundTaskService;
+    private readonly IBackgroundTaskService _backgroundTaskService;
 
     public MenuOptionsFactory(
         ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
@@ -39,7 +39,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
         IClipboardService clipboardService,
-        BackgroundTaskService backgroundTaskService)
+        IBackgroundTaskService backgroundTaskService)
     {
         _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
         _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;

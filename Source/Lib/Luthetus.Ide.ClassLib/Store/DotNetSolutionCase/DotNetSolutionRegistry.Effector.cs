@@ -23,7 +23,7 @@ public partial record DotNetSolutionRegistry
         private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
         private readonly ITreeViewService _treeViewService;
         private readonly IState<DotNetSolutionRegistry> _dotNetSolutionStateWrap;
-        private readonly BackgroundTaskService _backgroundTaskService;
+        private readonly IBackgroundTaskService _backgroundTaskService;
 
         public Effector(
             IFileSystemProvider fileSystemProvider,
@@ -32,7 +32,7 @@ public partial record DotNetSolutionRegistry
             ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
             ITreeViewService treeViewService,
             IState<DotNetSolutionRegistry> dotNetSolutionStateWrap,
-            BackgroundTaskService backgroundTaskService)
+            IBackgroundTaskService backgroundTaskService)
         {
             _fileSystemProvider = fileSystemProvider;
             _environmentProvider = environmentProvider;

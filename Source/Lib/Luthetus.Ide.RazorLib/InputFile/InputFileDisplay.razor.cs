@@ -1,5 +1,6 @@
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.Dimensions;
@@ -35,7 +36,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
-    private ILuthetusCommonBackgroundTaskService LuthetusCommonBackgroundTaskService { get; set; } = null!;
+    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 
     /// <summary>
     /// Receives the <see cref="_selectedAbsolutePath"/> as
@@ -124,7 +125,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
                 }
             },
             () => _searchMatchTuples,
-            LuthetusCommonBackgroundTaskService);
+            BackgroundTaskService);
 
         InitializeElementDimensions();
 

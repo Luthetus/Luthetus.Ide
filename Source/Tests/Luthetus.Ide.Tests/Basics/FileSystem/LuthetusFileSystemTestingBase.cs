@@ -1,5 +1,6 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
 using Luthetus.Common.RazorLib.Clipboard;
 using Luthetus.Common.RazorLib.FileSystem.Classes.Local;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
@@ -27,7 +28,9 @@ public class LuthetusFileSystemTestingBase
 
         services.AddScoped<IJSRuntime>(_ => new DoNothingJsRuntime());
 
-        var hostingInformation = new LuthetusHostingInformation(LuthetusHostingKind.UnitTesting);
+        var hostingInformation = new LuthetusHostingInformation(
+            LuthetusHostingKind.UnitTesting,
+            new BackgroundTaskServiceSynchronous());
 
         services.AddLuthetusCommonServices(hostingInformation, commonOptions =>
         {

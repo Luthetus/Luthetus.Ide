@@ -152,7 +152,7 @@ public static class DotNetCliFacts
         });
     }
     
-    public static FormattedCommand FormatDotnetNewList =>
+    public static FormattedCommand FormatDotnetNewList() =>
         new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
         {
             "new",
