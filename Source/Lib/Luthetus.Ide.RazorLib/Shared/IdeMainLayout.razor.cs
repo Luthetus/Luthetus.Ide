@@ -82,7 +82,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
             if (System.IO.File.Exists("C:\\Users\\hunte\\Repos\\Demos\\BlazorCrudApp\\BlazorCrudApp.sln"))
             {
-                var absoluteFilePath = new AbsoluteFilePath(
+                var absoluteFilePath = new AbsolutePath(
                     "C:\\Users\\hunte\\Repos\\Demos\\BlazorCrudApp\\BlazorCrudApp.sln",
                     false,
                     EnvironmentProvider);

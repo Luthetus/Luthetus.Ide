@@ -10,7 +10,7 @@ namespace Luthetus.Ide.ClassLib.Menu;
 public interface IMenuOptionsFactory
 {
     public MenuOptionRecord NewEmptyFile(
-        IAbsoluteFilePath parentDirectory,
+        IAbsolutePath parentDirectory,
         Func<Task> onAfterCompletion);
 
     public MenuOptionRecord NewTemplatedFile(
@@ -18,28 +18,28 @@ public interface IMenuOptionsFactory
         Func<Task> onAfterCompletion);
 
     public MenuOptionRecord NewDirectory(
-        IAbsoluteFilePath parentDirectory,
+        IAbsolutePath parentDirectory,
         Func<Task> onAfterCompletion);
 
     public MenuOptionRecord DeleteFile(
-        IAbsoluteFilePath absoluteFilePath,
+        IAbsolutePath absoluteFilePath,
         Func<Task> onAfterCompletion);
 
     public MenuOptionRecord CopyFile(
-        IAbsoluteFilePath absoluteFilePath,
+        IAbsolutePath absoluteFilePath,
         Func<Task> onAfterCompletion);
 
     public MenuOptionRecord CutFile(
-        IAbsoluteFilePath absoluteFilePath,
+        IAbsolutePath absoluteFilePath,
         Func<Task> onAfterCompletion);
 
     public MenuOptionRecord RenameFile(
-        IAbsoluteFilePath sourceAbsoluteFilePath,
+        IAbsolutePath sourceAbsoluteFilePath,
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion);
 
     public MenuOptionRecord PasteClipboard(
-        IAbsoluteFilePath directoryAbsoluteFilePath,
+        IAbsolutePath directoryAbsoluteFilePath,
         Func<Task> onAfterCompletion);
 
     public MenuOptionRecord RemoveCSharpProjectReferenceFromSolution(

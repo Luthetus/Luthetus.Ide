@@ -210,7 +210,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
         CSharpProject cSharpProject)
     {
         var namespacePath = new NamespacePath(
-            cSharpProject.AbsoluteFilePath.FileNameNoExtension,
+            cSharpProject.AbsoluteFilePath.NameNoExtension,
             cSharpProject.AbsoluteFilePath);
 
         return (TreeViewNoType)new TreeViewNamespacePath(

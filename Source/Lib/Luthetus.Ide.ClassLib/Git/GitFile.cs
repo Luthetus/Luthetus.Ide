@@ -3,7 +3,7 @@
 namespace Luthetus.Ide.ClassLib.Git;
 
 public record GitFile(
-    IAbsoluteFilePath AbsoluteFilePath,
+    IAbsolutePath AbsoluteFilePath,
     GitDirtyReason GitDirtyReason)
 {
     public bool IsDirty => GitDirtyReason switch

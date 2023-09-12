@@ -38,9 +38,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
     [CascadingParameter]
     public DialogRecord DialogRecord { get; set; } = null!;
 
-    private readonly TerminalCommandKey _newDotNetSolutionTerminalCommandKey =
-        TerminalCommandKey.NewKey();
-
+    private readonly TerminalCommandKey _newDotNetSolutionTerminalCommandKey = TerminalCommandKey.NewKey();
     private readonly CancellationTokenSource _newDotNetSolutionCancellationTokenSource = new();
 
     private string _solutionName = string.Empty;
@@ -114,7 +112,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                         DialogRecord.Key));
 
                     // Open the created .NET Solution
-                    var parentDirectoryAbsoluteFilePath = new AbsoluteFilePath(
+                    var parentDirectoryAbsoluteFilePath = new AbsolutePath(
                         localParentDirectoryName,
                         true,
                         EnvironmentProvider);
@@ -127,7 +125,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                         '.' +
                         ExtensionNoPeriodFacts.DOT_NET_SOLUTION;
 
-                    var solutionAbsoluteFilePath = new AbsoluteFilePath(
+                    var solutionAbsoluteFilePath = new AbsolutePath(
                         solutionAbsoluteFilePathString,
                         false,
                         EnvironmentProvider);
@@ -192,7 +190,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
         Dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
             notificationRecord));
 
-        var solutionAbsoluteFilePath = new AbsoluteFilePath(
+        var solutionAbsoluteFilePath = new AbsolutePath(
             solutionAbsoluteFilePathString,
             false,
             EnvironmentProvider);

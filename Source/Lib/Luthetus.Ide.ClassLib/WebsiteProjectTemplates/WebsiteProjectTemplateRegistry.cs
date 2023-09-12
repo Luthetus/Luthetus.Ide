@@ -97,7 +97,7 @@ public static class WebsiteProjectTemplateRegistry
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider)
     {
-        var cSharpProjectAbsoluteFilePath = new AbsoluteFilePath(cSharpProjectAbsoluteFilePathString, false, environmentProvider);
+        var cSharpProjectAbsoluteFilePath = new AbsolutePath(cSharpProjectAbsoluteFilePathString, false, environmentProvider);
         var parentDirectoryOfProject = cSharpProjectAbsoluteFilePath.ParentDirectory;
 
         if (parentDirectoryOfProject is null)
@@ -113,14 +113,14 @@ public static class WebsiteProjectTemplateRegistry
 
             await fileSystemProvider.File.WriteAllTextAsync(
                 absoluteFilePath,
-                BlazorWasmEmptyFacts.GetAppCssContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                BlazorWasmEmptyFacts.GetAppCssContents(cSharpProjectAbsoluteFilePath.NameNoExtension));
         }
 
         // Csproj
         {
             await fileSystemProvider.File.WriteAllTextAsync(
                 cSharpProjectAbsoluteFilePathString,
-                BlazorWasmEmptyFacts.GetCsprojContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                BlazorWasmEmptyFacts.GetCsprojContents(cSharpProjectAbsoluteFilePath.NameNoExtension));
         }
 
         // ImportsRazor
@@ -131,7 +131,7 @@ public static class WebsiteProjectTemplateRegistry
 
             await fileSystemProvider.File.WriteAllTextAsync(
                 absoluteFilePath,
-                BlazorWasmEmptyFacts.GetImportsRazorContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                BlazorWasmEmptyFacts.GetImportsRazorContents(cSharpProjectAbsoluteFilePath.NameNoExtension));
         }
         
         // IndexHtml
@@ -142,7 +142,7 @@ public static class WebsiteProjectTemplateRegistry
 
             await fileSystemProvider.File.WriteAllTextAsync(
                 absoluteFilePath,
-                BlazorWasmEmptyFacts.GetIndexHtmlContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                BlazorWasmEmptyFacts.GetIndexHtmlContents(cSharpProjectAbsoluteFilePath.NameNoExtension));
         }
         
         // IndexRazor
@@ -153,7 +153,7 @@ public static class WebsiteProjectTemplateRegistry
 
             await fileSystemProvider.File.WriteAllTextAsync(
                 absoluteFilePath,
-                BlazorWasmEmptyFacts.GetIndexRazorContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                BlazorWasmEmptyFacts.GetIndexRazorContents(cSharpProjectAbsoluteFilePath.NameNoExtension));
         }
         
         // LaunchSettingsJson
@@ -164,7 +164,7 @@ public static class WebsiteProjectTemplateRegistry
 
             await fileSystemProvider.File.WriteAllTextAsync(
                 absoluteFilePath,
-                BlazorWasmEmptyFacts.GetLaunchSettingsJsonContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                BlazorWasmEmptyFacts.GetLaunchSettingsJsonContents(cSharpProjectAbsoluteFilePath.NameNoExtension));
         }
         
         // MainLayoutRazor
@@ -175,7 +175,7 @@ public static class WebsiteProjectTemplateRegistry
 
             await fileSystemProvider.File.WriteAllTextAsync(
                 absoluteFilePath,
-                BlazorWasmEmptyFacts.GetMainLayoutRazorContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                BlazorWasmEmptyFacts.GetMainLayoutRazorContents(cSharpProjectAbsoluteFilePath.NameNoExtension));
         }
         
         // ProgramCs
@@ -186,7 +186,7 @@ public static class WebsiteProjectTemplateRegistry
 
             await fileSystemProvider.File.WriteAllTextAsync(
                 absoluteFilePath,
-                BlazorWasmEmptyFacts.GetProgramCsContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                BlazorWasmEmptyFacts.GetProgramCsContents(cSharpProjectAbsoluteFilePath.NameNoExtension));
         }
     }
 
@@ -195,7 +195,7 @@ public static class WebsiteProjectTemplateRegistry
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider)
     {
-        var cSharpProjectAbsoluteFilePath = new AbsoluteFilePath(cSharpProjectAbsoluteFilePathString, false, environmentProvider);
+        var cSharpProjectAbsoluteFilePath = new AbsolutePath(cSharpProjectAbsoluteFilePathString, false, environmentProvider);
         var parentDirectoryOfProject = cSharpProjectAbsoluteFilePath.ParentDirectory;
 
         if (parentDirectoryOfProject is null)
@@ -211,7 +211,7 @@ public static class WebsiteProjectTemplateRegistry
 
             await fileSystemProvider.File.WriteAllTextAsync(
                 absoluteFilePath,
-                BlazorServerEmptyFacts.GetAppRazorContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                BlazorServerEmptyFacts.GetAppRazorContents(cSharpProjectAbsoluteFilePath.NameNoExtension));
         }
 
         // AppSettingsDevelopmentJson
@@ -222,7 +222,7 @@ public static class WebsiteProjectTemplateRegistry
 
             await fileSystemProvider.File.WriteAllTextAsync(
                 absoluteFilePath,
-                BlazorServerEmptyFacts.GetAppSettingsDevelopmentJsonContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                BlazorServerEmptyFacts.GetAppSettingsDevelopmentJsonContents(cSharpProjectAbsoluteFilePath.NameNoExtension));
         }
 
         // AppSettingsJson
@@ -233,14 +233,14 @@ public static class WebsiteProjectTemplateRegistry
 
             await fileSystemProvider.File.WriteAllTextAsync(
                 absoluteFilePath,
-                BlazorServerEmptyFacts.GetAppSettingsJsonContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                BlazorServerEmptyFacts.GetAppSettingsJsonContents(cSharpProjectAbsoluteFilePath.NameNoExtension));
         }
 
         // Csproj
         {
             await fileSystemProvider.File.WriteAllTextAsync(
                 cSharpProjectAbsoluteFilePathString,
-                BlazorServerEmptyFacts.GetCsprojContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                BlazorServerEmptyFacts.GetCsprojContents(cSharpProjectAbsoluteFilePath.NameNoExtension));
         }
 
         // HostCshtml
@@ -251,7 +251,7 @@ public static class WebsiteProjectTemplateRegistry
 
             await fileSystemProvider.File.WriteAllTextAsync(
                 absoluteFilePath,
-                BlazorServerEmptyFacts.GetHostCshtmlContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                BlazorServerEmptyFacts.GetHostCshtmlContents(cSharpProjectAbsoluteFilePath.NameNoExtension));
         }
 
         // ImportsRazor
@@ -262,7 +262,7 @@ public static class WebsiteProjectTemplateRegistry
 
             await fileSystemProvider.File.WriteAllTextAsync(
                 absoluteFilePath,
-                BlazorServerEmptyFacts.GetImportsRazorContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                BlazorServerEmptyFacts.GetImportsRazorContents(cSharpProjectAbsoluteFilePath.NameNoExtension));
         }
 
         // IndexRazor
@@ -273,7 +273,7 @@ public static class WebsiteProjectTemplateRegistry
 
             await fileSystemProvider.File.WriteAllTextAsync(
                 absoluteFilePath,
-                BlazorServerEmptyFacts.GetIndexRazorContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                BlazorServerEmptyFacts.GetIndexRazorContents(cSharpProjectAbsoluteFilePath.NameNoExtension));
         }
 
         // LaunchSettingsJson
@@ -284,7 +284,7 @@ public static class WebsiteProjectTemplateRegistry
 
             await fileSystemProvider.File.WriteAllTextAsync(
                 absoluteFilePath,
-                BlazorServerEmptyFacts.GetLaunchSettingsJsonContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                BlazorServerEmptyFacts.GetLaunchSettingsJsonContents(cSharpProjectAbsoluteFilePath.NameNoExtension));
         }
 
         // MainLayoutRazor
@@ -295,7 +295,7 @@ public static class WebsiteProjectTemplateRegistry
 
             await fileSystemProvider.File.WriteAllTextAsync(
                 absoluteFilePath,
-                BlazorServerEmptyFacts.GetMainLayoutRazorContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                BlazorServerEmptyFacts.GetMainLayoutRazorContents(cSharpProjectAbsoluteFilePath.NameNoExtension));
         }
 
         // ProgramCs
@@ -306,7 +306,7 @@ public static class WebsiteProjectTemplateRegistry
 
             await fileSystemProvider.File.WriteAllTextAsync(
                 absoluteFilePath,
-                BlazorServerEmptyFacts.GetProgramCsContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                BlazorServerEmptyFacts.GetProgramCsContents(cSharpProjectAbsoluteFilePath.NameNoExtension));
         }
 
         // SiteCss
@@ -317,7 +317,7 @@ public static class WebsiteProjectTemplateRegistry
 
             await fileSystemProvider.File.WriteAllTextAsync(
                 absoluteFilePath,
-                BlazorServerEmptyFacts.GetSiteCssContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                BlazorServerEmptyFacts.GetSiteCssContents(cSharpProjectAbsoluteFilePath.NameNoExtension));
         }
     }
 
@@ -326,7 +326,7 @@ public static class WebsiteProjectTemplateRegistry
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider)
     {
-        var cSharpProjectAbsoluteFilePath = new AbsoluteFilePath(cSharpProjectAbsoluteFilePathString, false, environmentProvider);
+        var cSharpProjectAbsoluteFilePath = new AbsolutePath(cSharpProjectAbsoluteFilePathString, false, environmentProvider);
         var parentDirectoryOfProject = cSharpProjectAbsoluteFilePath.ParentDirectory;
 
         if (parentDirectoryOfProject is null)
@@ -342,14 +342,14 @@ public static class WebsiteProjectTemplateRegistry
 
             await fileSystemProvider.File.WriteAllTextAsync(
                 absoluteFilePath,
-                ClassLibFacts.GetClass1CsContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                ClassLibFacts.GetClass1CsContents(cSharpProjectAbsoluteFilePath.NameNoExtension));
         }
 
         // Csproj
         {
             await fileSystemProvider.File.WriteAllTextAsync(
                 cSharpProjectAbsoluteFilePathString,
-                ClassLibFacts.GetCsprojContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                ClassLibFacts.GetCsprojContents(cSharpProjectAbsoluteFilePath.NameNoExtension));
         }
     }
 
@@ -358,7 +358,7 @@ public static class WebsiteProjectTemplateRegistry
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider)
     {
-        var cSharpProjectAbsoluteFilePath = new AbsoluteFilePath(cSharpProjectAbsoluteFilePathString, false, environmentProvider);
+        var cSharpProjectAbsoluteFilePath = new AbsolutePath(cSharpProjectAbsoluteFilePathString, false, environmentProvider);
         var parentDirectoryOfProject = cSharpProjectAbsoluteFilePath.ParentDirectory;
 
         if (parentDirectoryOfProject is null)
@@ -374,7 +374,7 @@ public static class WebsiteProjectTemplateRegistry
 
             await fileSystemProvider.File.WriteAllTextAsync(
                 absoluteFilePath,
-                RazorClassLibFacts.GetComponent1RazorContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                RazorClassLibFacts.GetComponent1RazorContents(cSharpProjectAbsoluteFilePath.NameNoExtension));
         }
 
         // Component1RazorCss
@@ -385,14 +385,14 @@ public static class WebsiteProjectTemplateRegistry
 
             await fileSystemProvider.File.WriteAllTextAsync(
                 absoluteFilePath,
-                RazorClassLibFacts.GetComponent1RazorCssContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                RazorClassLibFacts.GetComponent1RazorCssContents(cSharpProjectAbsoluteFilePath.NameNoExtension));
         }
 
         // Csproj
         {
             await fileSystemProvider.File.WriteAllTextAsync(
                 cSharpProjectAbsoluteFilePathString,
-                RazorClassLibFacts.GetCsprojContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                RazorClassLibFacts.GetCsprojContents(cSharpProjectAbsoluteFilePath.NameNoExtension));
         }
 
         // ExampleJsInteropCs
@@ -403,7 +403,7 @@ public static class WebsiteProjectTemplateRegistry
 
             await fileSystemProvider.File.WriteAllTextAsync(
                 absoluteFilePath,
-                RazorClassLibFacts.GetExampleJsInteropCsContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                RazorClassLibFacts.GetExampleJsInteropCsContents(cSharpProjectAbsoluteFilePath.NameNoExtension));
         }
 
         // ExampleJsInteropJs
@@ -414,7 +414,7 @@ public static class WebsiteProjectTemplateRegistry
 
             await fileSystemProvider.File.WriteAllTextAsync(
                 absoluteFilePath,
-                RazorClassLibFacts.GetExampleJsInteropJsContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                RazorClassLibFacts.GetExampleJsInteropJsContents(cSharpProjectAbsoluteFilePath.NameNoExtension));
         }
 
         // ImportsRazor
@@ -425,7 +425,7 @@ public static class WebsiteProjectTemplateRegistry
 
             await fileSystemProvider.File.WriteAllTextAsync(
                 absoluteFilePath,
-                RazorClassLibFacts.GetImportsRazorContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                RazorClassLibFacts.GetImportsRazorContents(cSharpProjectAbsoluteFilePath.NameNoExtension));
         }
     }
 
@@ -434,7 +434,7 @@ public static class WebsiteProjectTemplateRegistry
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider)
     {
-        var cSharpProjectAbsoluteFilePath = new AbsoluteFilePath(cSharpProjectAbsoluteFilePathString, false, environmentProvider);
+        var cSharpProjectAbsoluteFilePath = new AbsolutePath(cSharpProjectAbsoluteFilePathString, false, environmentProvider);
         var parentDirectoryOfProject = cSharpProjectAbsoluteFilePath.ParentDirectory;
 
         if (parentDirectoryOfProject is null)
@@ -450,14 +450,14 @@ public static class WebsiteProjectTemplateRegistry
 
             await fileSystemProvider.File.WriteAllTextAsync(
                 absoluteFilePath,
-                ConsoleAppFacts.GetProgramCsContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                ConsoleAppFacts.GetProgramCsContents(cSharpProjectAbsoluteFilePath.NameNoExtension));
         }
 
         // Csproj
         {
             await fileSystemProvider.File.WriteAllTextAsync(
                 cSharpProjectAbsoluteFilePathString,
-                ConsoleAppFacts.GetCsprojContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                ConsoleAppFacts.GetCsprojContents(cSharpProjectAbsoluteFilePath.NameNoExtension));
         }
     }
 
@@ -466,7 +466,7 @@ public static class WebsiteProjectTemplateRegistry
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider)
     {
-        var cSharpProjectAbsoluteFilePath = new AbsoluteFilePath(cSharpProjectAbsoluteFilePathString, false, environmentProvider);
+        var cSharpProjectAbsoluteFilePath = new AbsolutePath(cSharpProjectAbsoluteFilePathString, false, environmentProvider);
         var parentDirectoryOfProject = cSharpProjectAbsoluteFilePath.ParentDirectory;
 
         if (parentDirectoryOfProject is null)
@@ -478,7 +478,7 @@ public static class WebsiteProjectTemplateRegistry
         {
             await fileSystemProvider.File.WriteAllTextAsync(
                 cSharpProjectAbsoluteFilePathString,
-                XUnitFacts.GetCsprojContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                XUnitFacts.GetCsprojContents(cSharpProjectAbsoluteFilePath.NameNoExtension));
         }
 
         // UnitTest1Cs
@@ -489,7 +489,7 @@ public static class WebsiteProjectTemplateRegistry
 
             await fileSystemProvider.File.WriteAllTextAsync(
                 absoluteFilePath,
-                XUnitFacts.GetUnitTest1CsContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                XUnitFacts.GetUnitTest1CsContents(cSharpProjectAbsoluteFilePath.NameNoExtension));
         }
         
         // UsingsCs
@@ -500,7 +500,7 @@ public static class WebsiteProjectTemplateRegistry
 
             await fileSystemProvider.File.WriteAllTextAsync(
                 absoluteFilePath,
-                XUnitFacts.GetUsingsCsContents(cSharpProjectAbsoluteFilePath.FileNameNoExtension));
+                XUnitFacts.GetUsingsCsContents(cSharpProjectAbsoluteFilePath.NameNoExtension));
         }
     }
 

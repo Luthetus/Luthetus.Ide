@@ -28,7 +28,7 @@ public partial class InputFileTopNavBar : ComponentBase
     private ILuthetusCommonBackgroundTaskService LuthetusCommonBackgroundTaskService { get; set; } = null!;
 
     [CascadingParameter(Name = "SetInputFileContentTreeViewRootFunc")]
-    public Func<IAbsoluteFilePath, Task> SetInputFileContentTreeViewRootFunc { get; set; } = null!;
+    public Func<IAbsolutePath, Task> SetInputFileContentTreeViewRootFunc { get; set; } = null!;
     [CascadingParameter]
     public InputFileRegistry InputFileState { get; set; } = null!;
 
@@ -119,7 +119,7 @@ public partial class InputFileTopNavBar : ComponentBase
                     $"Address provided does not exist. {address}");
             }
 
-            var absoluteFilePath = new AbsoluteFilePath(
+            var absoluteFilePath = new AbsolutePath(
                 address,
                 true,
                 EnvironmentProvider);

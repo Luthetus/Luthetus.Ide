@@ -12,7 +12,7 @@ public partial class TreeViewHelper
     public static async Task<List<TreeViewNoType>> CSharpProjectLoadChildrenAsync(
         this TreeViewNamespacePath cSharpProjectTreeView)
     {
-        var parentDirectoryOfCSharpProject = (IAbsoluteFilePath)
+        var parentDirectoryOfCSharpProject = (IAbsolutePath)
             cSharpProjectTreeView.Item.AbsoluteFilePath.AncestorDirectories
                 .Last();
 
@@ -28,14 +28,14 @@ public partial class TreeViewHelper
                 .Where(x => hiddenFiles.All(hidden => !x.EndsWith(hidden)))
                 .Select(x =>
                 {
-                    var absoluteFilePath = new AbsoluteFilePath(
+                    var absoluteFilePath = new AbsolutePath(
                         x,
                         true,
                         cSharpProjectTreeView.EnvironmentProvider);
 
                     var namespaceString = cSharpProjectTreeView.Item.Namespace +
                                           NAMESPACE_DELIMITER +
-                                          absoluteFilePath.FileNameNoExtension;
+                                          absoluteFilePath.NameNoExtension;
 
                     return new TreeViewNamespacePath(
                         new NamespacePath(
@@ -62,7 +62,7 @@ public partial class TreeViewHelper
         foreach (var directoryTreeViewModel in childDirectoryTreeViewModels)
         {
             if (uniqueDirectories.Any(unique => directoryTreeViewModel
-                    .Item.AbsoluteFilePath.FileNameNoExtension == unique))
+                    .Item.AbsoluteFilePath.NameNoExtension == unique))
             {
                 foundUniqueDirectories.Add(directoryTreeViewModel);
             }
@@ -73,11 +73,11 @@ public partial class TreeViewHelper
         }
 
         foundUniqueDirectories = foundUniqueDirectories
-            .OrderBy(x => x.Item.AbsoluteFilePath.FileNameNoExtension)
+            .OrderBy(x => x.Item.AbsoluteFilePath.NameNoExtension)
             .ToList();
 
         foundDefaultDirectories = foundDefaultDirectories
-            .OrderBy(x => x.Item.AbsoluteFilePath.FileNameNoExtension)
+            .OrderBy(x => x.Item.AbsoluteFilePath.NameNoExtension)
             .ToList();
 
         var childFileTreeViewModels =
@@ -87,7 +87,7 @@ public partial class TreeViewHelper
                 .Where(x => !x.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
                 .Select(x =>
                 {
-                    var absoluteFilePath = new AbsoluteFilePath(
+                    var absoluteFilePath = new AbsolutePath(
                         x,
                         false,
                         cSharpProjectTreeView.EnvironmentProvider);

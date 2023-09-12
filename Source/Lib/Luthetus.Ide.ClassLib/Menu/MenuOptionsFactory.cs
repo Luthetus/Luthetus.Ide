@@ -50,7 +50,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     }
 
     public MenuOptionRecord NewEmptyFile(
-        IAbsoluteFilePath parentDirectory,
+        IAbsolutePath parentDirectory,
         Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord(
@@ -114,7 +114,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     }
 
     public MenuOptionRecord NewDirectory(
-        IAbsoluteFilePath parentDirectory,
+        IAbsolutePath parentDirectory,
         Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord(
@@ -144,7 +144,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     }
 
     public MenuOptionRecord DeleteFile(
-        IAbsoluteFilePath absoluteFilePath,
+        IAbsolutePath absoluteFilePath,
         Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord(
@@ -163,14 +163,14 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 },
                 {
                     nameof(IDeleteFileFormRendererType.OnAfterSubmitAction),
-                    new Action<IAbsoluteFilePath>(afp =>
+                    new Action<IAbsolutePath>(afp =>
                         PerformDeleteFileAction(afp, onAfterCompletion))
                 },
             });
     }
 
     public MenuOptionRecord RenameFile(
-        IAbsoluteFilePath sourceAbsoluteFilePath,
+        IAbsolutePath sourceAbsoluteFilePath,
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
@@ -183,8 +183,8 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 {
                     nameof(IFileFormRendererType.FileName),
                     sourceAbsoluteFilePath.IsDirectory
-                        ? sourceAbsoluteFilePath.FileNameNoExtension
-                        : sourceAbsoluteFilePath.FilenameWithExtension
+                        ? sourceAbsoluteFilePath.NameNoExtension
+                        : sourceAbsoluteFilePath.NameWithExtension
                 },
                 {
                     nameof(IFileFormRendererType.IsDirectory),
@@ -204,7 +204,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     }
 
     public MenuOptionRecord CopyFile(
-        IAbsoluteFilePath absoluteFilePath,
+        IAbsolutePath absoluteFilePath,
         Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord(
@@ -216,7 +216,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     }
 
     public MenuOptionRecord CutFile(
-        IAbsoluteFilePath absoluteFilePath,
+        IAbsolutePath absoluteFilePath,
         Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord(
@@ -228,7 +228,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     }
 
     public MenuOptionRecord PasteClipboard(
-        IAbsoluteFilePath directoryAbsoluteFilePath,
+        IAbsolutePath directoryAbsoluteFilePath,
         Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord(
@@ -258,7 +258,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 },
                 {
                     nameof(IDeleteFileFormRendererType.OnAfterSubmitAction),
-                    new Action<IAbsoluteFilePath>(_ =>
+                    new Action<IAbsolutePath>(_ =>
                         PerformRemoveCSharpProjectReferenceFromSolutionAction(
                             treeViewSolution,
                             projectNode,
@@ -370,7 +370,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     var emptyFileAbsoluteFilePathString = 
                         namespacePath.AbsoluteFilePath.FormattedInput + fileName;
 
-                    var emptyFileAbsoluteFilePath = new AbsoluteFilePath(
+                    var emptyFileAbsoluteFilePath = new AbsolutePath(
                         emptyFileAbsoluteFilePathString,
                         false,
                         _environmentProvider);
@@ -415,12 +415,12 @@ public class MenuOptionsFactory : IMenuOptionsFactory
 
     private void PerformNewDirectoryAction(
         string directoryName,
-        IAbsoluteFilePath parentDirectory,
+        IAbsolutePath parentDirectory,
         Func<Task> onAfterCompletion)
     {
         var directoryAbsoluteFilePathString = parentDirectory.FormattedInput + directoryName;
 
-        var directoryAbsoluteFilePath = new AbsoluteFilePath(
+        var directoryAbsoluteFilePath = new AbsolutePath(
             directoryAbsoluteFilePathString,
             true,
             _environmentProvider);
@@ -445,7 +445,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     }
 
     private void PerformDeleteFileAction(
-        IAbsoluteFilePath absoluteFilePath,
+        IAbsolutePath absoluteFilePath,
         Func<Task> onAfterCompletion)
     {
         var backgroundTask = new BackgroundTask(
@@ -477,7 +477,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     }
 
     private void PerformCopyFileAction(
-        IAbsoluteFilePath absoluteFilePath,
+        IAbsolutePath absoluteFilePath,
         Func<Task> onAfterCompletion)
     {
         var backgroundTask = new BackgroundTask(
@@ -503,7 +503,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     }
 
     private void PerformCutFileAction(
-        IAbsoluteFilePath absoluteFilePath,
+        IAbsolutePath absoluteFilePath,
         Func<Task> onAfterCompletion)
     {
         var backgroundTask = new BackgroundTask(
@@ -529,7 +529,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     }
 
     private void PerformPasteFileAction(
-        IAbsoluteFilePath receivingDirectory,
+        IAbsolutePath receivingDirectory,
         Func<Task> onAfterCompletion)
     {
         var backgroundTask = new BackgroundTask(
@@ -545,18 +545,18 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                         if (clipboardPhrase.Command == ClipboardFacts.CopyCommand ||
                             clipboardPhrase.Command == ClipboardFacts.CutCommand)
                         {
-                            IAbsoluteFilePath? clipboardAbsoluteFilePath = null;
+                            IAbsolutePath? clipboardAbsoluteFilePath = null;
 
                             if (await _fileSystemProvider.Directory.ExistsAsync(clipboardPhrase.Value))
                             {
-                                clipboardAbsoluteFilePath = new AbsoluteFilePath(
+                                clipboardAbsoluteFilePath = new AbsolutePath(
                                     clipboardPhrase.Value,
                                     true,
                                     _environmentProvider);
                             }
                             else if (await _fileSystemProvider.File.ExistsAsync(clipboardPhrase.Value))
                             {
-                                clipboardAbsoluteFilePath = new AbsoluteFilePath(
+                                clipboardAbsoluteFilePath = new AbsolutePath(
                                     clipboardPhrase.Value,
                                     false,
                                     _environmentProvider);
@@ -582,7 +582,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                                     {
                                         var destinationAbsoluteFilePathString =
                                             receivingDirectory.FormattedInput +
-                                            clipboardAbsoluteFilePath.FilenameWithExtension;
+                                            clipboardAbsoluteFilePath.NameWithExtension;
 
                                         var sourceAbsoluteFilePathString = clipboardAbsoluteFilePath
                                             .FormattedInput;
@@ -621,8 +621,8 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         _luthetusCommonBackgroundTaskService.QueueBackgroundWorkItem(backgroundTask);
     }
 
-    private IAbsoluteFilePath? PerformRenameAction(
-        IAbsoluteFilePath sourceAbsoluteFilePath,
+    private IAbsolutePath? PerformRenameAction(
+        IAbsolutePath sourceAbsoluteFilePath,
         string nextName,
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
@@ -630,7 +630,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         // If the current and next name match when compared
         // with case insensitivity
         if (string.Compare(
-                sourceAbsoluteFilePath.FilenameWithExtension,
+                sourceAbsoluteFilePath.NameWithExtension,
                 nextName,
                 StringComparison.OrdinalIgnoreCase)
                     == 0)
@@ -693,7 +693,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
 
         onAfterCompletion.Invoke();
 
-        return new AbsoluteFilePath(
+        return new AbsolutePath(
             destinationAbsoluteFilePathString,
             sourceAbsoluteFilePath.IsDirectory,
             _environmentProvider);
@@ -747,7 +747,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             cancellationToken =>
             {
                 var requestInputFileStateFormAction = new InputFileRegistry.RequestInputFileStateFormAction(
-                    $"Add Project reference to {projectReceivingReference.Item.AbsoluteFilePath.FilenameWithExtension}",
+                    $"Add Project reference to {projectReceivingReference.Item.AbsoluteFilePath.NameWithExtension}",
                     async referencedProject =>
                     {
                         if (referencedProject is null)
@@ -772,7 +772,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                                     {
                                         {
                                             nameof(IInformativeNotificationRendererType.Message),
-                                            $"Modified {projectReceivingReference.Item.AbsoluteFilePath.FilenameWithExtension} to have a reference to {referencedProject.FilenameWithExtension}"
+                                            $"Modified {projectReceivingReference.Item.AbsoluteFilePath.NameWithExtension} to have a reference to {referencedProject.NameWithExtension}"
                                         },
                                     },
                                     TimeSpan.FromSeconds(7),
@@ -843,7 +843,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                             {
                                 {
                                     nameof(IInformativeNotificationRendererType.Message),
-                                    $"Modified {treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsoluteFilePath.FilenameWithExtension} to have a reference to {treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsoluteFilePath.FilenameWithExtension}"
+                                    $"Modified {treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsoluteFilePath.NameWithExtension} to have a reference to {treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsoluteFilePath.NameWithExtension}"
                                 },
                             },
                             TimeSpan.FromSeconds(7),
@@ -898,7 +898,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                             {
                                 {
                                     nameof(IInformativeNotificationRendererType.Message),
-                                    $"Moved {treeViewProjectToMove.Item.AbsoluteFilePath.FilenameWithExtension} to the Solution Folder path: {solutionFolderPath}"
+                                    $"Moved {treeViewProjectToMove.Item.AbsoluteFilePath.NameWithExtension} to the Solution Folder path: {solutionFolderPath}"
                                 },
                             },
                             TimeSpan.FromSeconds(7),
@@ -958,7 +958,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                             {
                                 {
                                     nameof(IInformativeNotificationRendererType.Message),
-                                    $"Modified {modifyProjectNamespacePath.AbsoluteFilePath.FilenameWithExtension} to NOT have a reference to {treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id}"
+                                    $"Modified {modifyProjectNamespacePath.AbsoluteFilePath.NameWithExtension} to NOT have a reference to {treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id}"
                                 },
                             },
                             TimeSpan.FromSeconds(7),

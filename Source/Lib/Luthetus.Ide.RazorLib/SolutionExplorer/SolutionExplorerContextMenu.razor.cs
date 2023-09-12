@@ -153,7 +153,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     private MenuOptionRecord[] GetCSharpProjectMenuOptions(
         TreeViewNamespacePath treeViewModel)
     {
-        var parentDirectory = (IAbsoluteFilePath)treeViewModel.Item.AbsoluteFilePath.AncestorDirectories.Last();
+        var parentDirectory = (IAbsolutePath)treeViewModel.Item.AbsoluteFilePath.AncestorDirectories.Last();
 
         var treeViewSolution = treeViewModel.Parent as TreeViewSolution;
 
@@ -454,7 +454,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 {
                 {
                     nameof(IInformativeNotificationRendererType.Message),
-                    $"Copied: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
+                    $"Copied: {namespacePath.AbsoluteFilePath.NameWithExtension}"
                 },
                 },
                 TimeSpan.FromSeconds(3),
@@ -484,7 +484,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 {
                 {
                     nameof(IInformativeNotificationRendererType.Message),
-                    $"Cut: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
+                    $"Cut: {namespacePath.AbsoluteFilePath.NameWithExtension}"
                 },
                 },
                 TimeSpan.FromSeconds(3),

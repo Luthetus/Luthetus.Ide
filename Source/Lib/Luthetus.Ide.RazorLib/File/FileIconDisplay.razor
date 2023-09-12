@@ -2,11 +2,11 @@
 <span class="luth_ide_solution-explorer-icon-display">
     @if (AbsoluteFilePath.IsDirectory)
     {
-        if (AbsoluteFilePath.FileNameNoExtension == UniqueFileFacts.Properties)
+        if (AbsoluteFilePath.NameNoExtension == UniqueFileFacts.Properties)
         {
             <IconProperties/>
         }
-        else if (AbsoluteFilePath.FileNameNoExtension == UniqueFileFacts.WwwRoot)
+        else if (AbsoluteFilePath.NameNoExtension == UniqueFileFacts.WwwRoot)
         {
             <IconWwwRoot/>
         }

@@ -12,8 +12,8 @@ public partial record InputFileRegistry
 {
     public record RequestInputFileStateFormAction(
         string Message,
-        Func<IAbsoluteFilePath?, Task> OnAfterSubmitFunc,
-        Func<IAbsoluteFilePath?, Task<bool>> SelectionIsValidFunc,
+        Func<IAbsolutePath?, Task> OnAfterSubmitFunc,
+        Func<IAbsolutePath?, Task<bool>> SelectionIsValidFunc,
         ImmutableArray<InputFilePattern> InputFilePatterns);
 
     public record SetSelectedTreeViewModelAction(

@@ -31,9 +31,9 @@ namespace Luthetus.Ide.RazorLib.CSharpProjectForm;
 public partial class CSharpProjectFormDisplay : FluxorComponent
 {
     [Inject]
-    private IState<TerminalSessionRegistry> TerminalSessionsStateWrap { get; set; } = null!;
+    private IState<TerminalSessionRegistry> TerminalSessionRegistryWrap { get; set; } = null!;
     [Inject]
-    private IState<DotNetSolutionRegistry> DotNetSolutionState { get; set; } = null!;
+    private IState<DotNetSolutionRegistry> DotNetSolutionRegistryWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -69,7 +69,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     private string _searchInput = string.Empty;
     private ProjectTemplate? _selectedProjectTemplate = null;
 
-    private DotNetSolutionModel DotNetSolutionModel => DotNetSolutionState.Value.DotNetSolutions.FirstOrDefault(
+    private DotNetSolutionModel DotNetSolutionModel => DotNetSolutionRegistryWrap.Value.DotNetSolutions.FirstOrDefault(
         x => x.DotNetSolutionModelKey == DotNetSolutionModelKey);
 
     private string ProjectTemplateShortNameDisplay => string.IsNullOrWhiteSpace(_projectTemplateShortNameValue)
@@ -86,17 +86,14 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         ? "{enter parent directory name}"
         : _parentDirectoryNameValue;
 
-    private FormattedCommand FormattedNewCSharpProjectCommand => DotNetCliFacts
-        .FormatDotnetNewCSharpProject(
-            _projectTemplateShortNameValue,
-            _cSharpProjectNameValue,
-            _optionalParametersValue);
+    private FormattedCommand FormattedNewCSharpProjectCommand => DotNetCliFacts.FormatDotnetNewCSharpProject(
+        _projectTemplateShortNameValue,
+        _cSharpProjectNameValue,
+        _optionalParametersValue);
 
-    private FormattedCommand FormattedAddExistingProjectToSolutionCommand => DotNetCliFacts
-        .FormatAddExistingProjectToSolution(
-            DotNetSolutionModel.NamespacePath?.AbsoluteFilePath.FormattedInput
-            ?? string.Empty,
-            $"{_cSharpProjectNameValue}/{_cSharpProjectNameValue}.csproj");
+    private FormattedCommand FormattedAddExistingProjectToSolutionCommand => DotNetCliFacts.FormatAddExistingProjectToSolution(
+        DotNetSolutionModel.NamespacePath?.AbsoluteFilePath.FormattedInput ?? string.Empty,
+        $"{_cSharpProjectNameValue}{EnvironmentProvider.DirectorySeparatorChar}{_cSharpProjectNameValue}.{ExtensionNoPeriodFacts.C_SHARP_PROJECT}");
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -109,12 +106,8 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    private string GetIsActiveCssClassString(CSharpProjectFormPanelKind panelKind)
-    {
-        return _activePanelKind == panelKind
-            ? "luth_active"
-            : string.Empty;
-    }
+    private string GetIsActiveCssClassString(CSharpProjectFormPanelKind panelKind) =>
+        _activePanelKind == panelKind ? "luth_active" : string.Empty;
 
     private void RequestInputFileForParentDirectory(string message)
     {
@@ -145,9 +138,14 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     private async Task ReadProjectTemplates()
     {
         if (LuthetusHostingInformation.LuthetusHostingKind != LuthetusHostingKind.Photino)
-            await HackForWebsite_ReadProjectTemplates();
+        {
+            _projectTemplateContainer = WebsiteProjectTemplateRegistry.WebsiteProjectTemplatesContainer.ToList();
+            await InvokeAsync(StateHasChanged);
+        }
         else
+        {
             await FormatDotNetNewListAsync();
+        }
     }
 
     private async Task FormatDotNetNewListAsync()
@@ -155,20 +153,17 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         try
         {
             // Render UI loading icon
-            {
-                _isReadingProjectTemplates = true;
-                await InvokeAsync(StateHasChanged);
-            }
+            _isReadingProjectTemplates = true;
+            await InvokeAsync(StateHasChanged);
 
             var formattedCommand = DotNetCliFacts.FormatDotnetNewList();
 
-            var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
-                    TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
+            var generalTerminalSession = TerminalSessionRegistryWrap.Value.TerminalSessionMap[TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
 
             var newCSharpProjectCommand = new TerminalCommand(
                 _loadProjectTemplatesTerminalCommandKey,
                 formattedCommand,
-                EnvironmentProvider.HomeDirectoryAbsoluteFilePath.FormattedInput,
+                EnvironmentProvider.HomeDirectoryAbsolutePath.FormattedInput,
                 _newCSharpProjectCancellationTokenSource.Token,
                 async () =>
                 {
@@ -185,52 +180,46 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         finally
         {
             // UI loading message
-            {
-                _isReadingProjectTemplates = false;
-                await InvokeAsync(StateHasChanged);
-            }
+            _isReadingProjectTemplates = false;
+            await InvokeAsync(StateHasChanged);
         }
     }
 
+    /// <summary>If the non-deprecated version of the command fails, then try the deprecated one.</summary>
     private async Task FormatDotnetNewListDeprecatedAsync()
     {
         try
         {
             // UI loading message
-            {
-                _isReadingProjectTemplates = true;
-                await InvokeAsync(StateHasChanged);
-            }
+            _isReadingProjectTemplates = true;
+            await InvokeAsync(StateHasChanged);
 
             var formattedCommand = DotNetCliFacts.FormatDotnetNewListDeprecated();
 
-            var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
-                    TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
+            var generalTerminalSession = TerminalSessionRegistryWrap.Value.TerminalSessionMap[TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
 
             var newCSharpProjectCommand = new TerminalCommand(
-                    _loadProjectTemplatesTerminalCommandKey,
-                    formattedCommand,
-                    EnvironmentProvider.HomeDirectoryAbsoluteFilePath.FormattedInput,
-                    _newCSharpProjectCancellationTokenSource.Token,
-                    async () =>
-                    {
-                        var output = generalTerminalSession.ReadStandardOut(_loadProjectTemplatesTerminalCommandKey);
+                _loadProjectTemplatesTerminalCommandKey,
+                formattedCommand,
+                EnvironmentProvider.HomeDirectoryAbsolutePath.FormattedInput,
+                _newCSharpProjectCancellationTokenSource.Token,
+                async () =>
+                {
+                    var output = generalTerminalSession.ReadStandardOut(_loadProjectTemplatesTerminalCommandKey);
 
-                        if (output is not null)
-                            await LexDotNetNewListTerminalOutputAsync(output);
-                        else
-                            throw new NotImplementedException("Use manual template text input html elements?");
-                    });
+                    if (output is not null)
+                        await LexDotNetNewListTerminalOutputAsync(output);
+                    else
+                        throw new NotImplementedException("Use manual template text input html elements?");
+                });
 
             await generalTerminalSession.EnqueueCommandAsync(newCSharpProjectCommand);
         }
         finally
         {
             // UI loading message
-            {
-                _isReadingProjectTemplates = false;
-                await InvokeAsync(StateHasChanged);
-            }
+            _isReadingProjectTemplates = false;
+            await InvokeAsync(StateHasChanged);
         }
     }
 
@@ -424,8 +413,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         }
         else
         {
-            var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
-                TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
+            var generalTerminalSession = TerminalSessionRegistryWrap.Value.TerminalSessionMap[TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
 
             var newCSharpProjectCommand = new TerminalCommand(
                 _newCSharpProjectTerminalCommandKey,
@@ -443,12 +431,8 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                             _newCSharpProjectCancellationTokenSource.Token,
                             () =>
                             {
-                                Dispatcher.Dispatch(new DialogRegistry.DisposeAction(
-                                    DialogRecord.Key));
-
-                                Dispatcher.Dispatch(new DotNetSolutionRegistry.SetDotNetSolutionAction(
-                                    solutionNamespacePath.AbsoluteFilePath));
-
+                                Dispatcher.Dispatch(new DialogRegistry.DisposeAction(DialogRecord.Key));
+                                Dispatcher.Dispatch(new DotNetSolutionRegistry.SetDotNetSolutionAction(solutionNamespacePath.AbsoluteFilePath));
                                 return Task.CompletedTask;
                             });
 
@@ -458,14 +442,6 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
             await generalTerminalSession.EnqueueCommandAsync(newCSharpProjectCommand);
         }
-    }
-
-    private async Task HackForWebsite_ReadProjectTemplates()
-    {
-        _projectTemplateContainer = WebsiteProjectTemplateRegistry.WebsiteProjectTemplatesContainer
-            .ToList();
-
-        await InvokeAsync(StateHasChanged);
     }
 
     private async Task HackForWebsite_StartNewCSharpProjectCommandOnClick(
@@ -479,11 +455,9 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             .JoinPaths(localParentDirectoryName, localCSharpProjectName) +
             EnvironmentProvider.DirectorySeparatorChar;
 
-        await FileSystemProvider.Directory.CreateDirectoryAsync(
-            directoryContainingProject);
+        await FileSystemProvider.Directory.CreateDirectoryAsync(directoryContainingProject);
 
-        var localCSharpProjectNameWithExtension =
-            localCSharpProjectName +
+        var localCSharpProjectNameWithExtension = localCSharpProjectName +
             '.' +
             ExtensionNoPeriodFacts.C_SHARP_PROJECT;
 
@@ -503,8 +477,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             cSharpProjectAbsoluteFilePathString);
 
         // Close Dialog
-        Dispatcher.Dispatch(new DialogRegistry.DisposeAction(
-            DialogRecord.Key));
+        Dispatcher.Dispatch(new DialogRegistry.DisposeAction(DialogRecord.Key));
 
         var notificationRecord = new NotificationRecord(
             NotificationKey.NewKey(),
@@ -521,8 +494,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             true,
             null);
 
-        Dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
-        notificationRecord));
+        Dispatcher.Dispatch(new NotificationRegistry.RegisterAction(notificationRecord));
     }
 
     private async Task HackForWebsite_AddExistingProjectToSolutionAsync(
@@ -530,10 +502,8 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         string localCSharpProjectName,
         string cSharpProjectAbsoluteFilePathString)
     {
-        var dotNetSolutionAbsoluteFilePathString = DotNetSolutionModel.NamespacePath!.AbsoluteFilePath
-            .FormattedInput;
-
-        var cSharpAbsoluteFilePath = new AbsoluteFilePath(cSharpProjectAbsoluteFilePathString, false, EnvironmentProvider);
+        var dotNetSolutionAbsoluteFilePathString = DotNetSolutionModel.NamespacePath!.AbsoluteFilePath.FormattedInput;
+        var cSharpAbsoluteFilePath = new AbsolutePath(cSharpProjectAbsoluteFilePathString, false, EnvironmentProvider);
 
         Dispatcher.Dispatch(new DotNetSolutionRegistry.AddExistingProjectToSolutionAction(
             DotNetSolutionModel.DotNetSolutionModelKey,

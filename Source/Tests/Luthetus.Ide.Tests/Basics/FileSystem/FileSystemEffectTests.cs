@@ -10,7 +10,7 @@ public class FileSystemEffectTests : LuthetusFileSystemTestingBase
     {
         var content = "abc123";
 
-        var absoluteFilePath = new AbsoluteFilePath(
+        var absoluteFilePath = new AbsolutePath(
             @"C:\Users\hunte\Desktop\TestLuthetus\apple.txt",
             true,
             EnvironmentProvider);

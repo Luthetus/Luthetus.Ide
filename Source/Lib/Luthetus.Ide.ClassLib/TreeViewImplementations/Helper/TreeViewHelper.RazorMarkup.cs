@@ -14,7 +14,7 @@ public partial class TreeViewHelper
         if (razorMarkupTreeView.Item is null)
             return new();
 
-        var parentDirectoryOfRazorMarkup = (IAbsoluteFilePath)
+        var parentDirectoryOfRazorMarkup = (IAbsolutePath)
             razorMarkupTreeView.Item.AbsoluteFilePath.AncestorDirectories
                 .Last();
 
@@ -25,7 +25,7 @@ public partial class TreeViewHelper
                 .Directory.GetFilesAsync(parentAbsoluteFilePathString))
                 .Select(x =>
                 {
-                    var absoluteFilePath = new AbsoluteFilePath(
+                    var absoluteFilePath = new AbsolutePath(
                         x,
                         false,
                         razorMarkupTreeView.EnvironmentProvider);
@@ -64,17 +64,17 @@ public partial class TreeViewHelper
 
         var matches = new[]
         {
-        razorMarkupTreeView.Item.AbsoluteFilePath.FilenameWithExtension +
+        razorMarkupTreeView.Item.AbsoluteFilePath.NameWithExtension +
             '.' +
             ExtensionNoPeriodFacts.C_SHARP_CLASS,
-        razorMarkupTreeView.Item.AbsoluteFilePath.FilenameWithExtension +
+        razorMarkupTreeView.Item.AbsoluteFilePath.NameWithExtension +
             '.' +
             ExtensionNoPeriodFacts.CSS
     };
 
         var relatedFiles = siblingsAndSelfTreeViews.Where(x =>
                 x.UntypedItem is NamespacePath namespacePath &&
-                matches.Contains(namespacePath.AbsoluteFilePath.FilenameWithExtension))
+                matches.Contains(namespacePath.AbsoluteFilePath.NameWithExtension))
             .ToArray();
 
         if (!relatedFiles.Any())

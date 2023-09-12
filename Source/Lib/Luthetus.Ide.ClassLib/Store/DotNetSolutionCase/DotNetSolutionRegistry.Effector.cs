@@ -54,7 +54,7 @@ public partial record DotNetSolutionRegistry
                 dotNetSolutionAbsoluteFilePathString,
                 CancellationToken.None);
 
-            var solutionAbsoluteFilePath = new AbsoluteFilePath(
+            var solutionAbsoluteFilePath = new AbsolutePath(
                 dotNetSolutionAbsoluteFilePathString,
                 false,
                 _environmentProvider);

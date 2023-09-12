@@ -4,6 +4,6 @@ namespace Luthetus.Ide.ClassLib.Store.CompilerServiceExplorerCase.InnerDetails;
 
 public class CompilerServiceExplorerModel
 {
-    public IAbsoluteFilePath? AbsoluteFilePath { get; }
+    public IAbsolutePath? AbsoluteFilePath { get; }
     public bool IsLoadingCompilerServiceExplorer { get; }
 }

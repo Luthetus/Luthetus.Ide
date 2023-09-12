@@ -156,7 +156,7 @@ public partial class EditorRegistry
         }
 
         private async Task<TextEditorModel?> GetOrCreateTextEditorModelAsync(
-            IAbsoluteFilePath absoluteFilePath,
+            IAbsolutePath absoluteFilePath,
             string absoluteFilePathString)
         {
             var textEditorModel = _textEditorService.Model
@@ -291,7 +291,7 @@ public partial class EditorRegistry
         }
 
         private TextEditorViewModelKey GetOrCreateTextEditorViewModel(
-            IAbsoluteFilePath absoluteFilePath,
+            IAbsolutePath absoluteFilePath,
             bool shouldSetFocusToEditor,
             IDispatcher dispatcher,
             TextEditorModel textEditorModel,
@@ -321,7 +321,7 @@ public partial class EditorRegistry
                     textEditorViewModel => textEditorViewModel with
                     {
                         OnSaveRequested = HandleOnSaveRequested,
-                        GetTabDisplayNameFunc = _ => absoluteFilePath.FilenameWithExtension,
+                        GetTabDisplayNameFunc = _ => absoluteFilePath.NameWithExtension,
                         ShouldSetFocusAfterNextRender = shouldSetFocusToEditor,
                         FirstPresentationLayerKeys = presentationKeys.ToImmutableList()
                     });

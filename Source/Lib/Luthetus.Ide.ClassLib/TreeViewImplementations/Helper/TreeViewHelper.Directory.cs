@@ -18,14 +18,14 @@ public partial class TreeViewHelper
                 .OrderBy(filePathString => filePathString)
                 .Select(x =>
                 {
-                    var absoluteFilePath = new AbsoluteFilePath(
+                    var absoluteFilePath = new AbsolutePath(
                         x,
                         true,
                         directoryTreeView.EnvironmentProvider);
 
                     var namespaceString = directoryTreeView.Item.Namespace +
                                           NAMESPACE_DELIMITER +
-                                          absoluteFilePath.FileNameNoExtension;
+                                          absoluteFilePath.NameNoExtension;
 
                     var namespacePath = new NamespacePath(
                         namespaceString,
@@ -50,7 +50,7 @@ public partial class TreeViewHelper
                 .OrderBy(filePathString => filePathString)
                 .Select(x =>
                 {
-                    var absoluteFilePath = new AbsoluteFilePath(
+                    var absoluteFilePath = new AbsolutePath(
                         x,
                         false,
                         directoryTreeView.EnvironmentProvider);
@@ -103,7 +103,7 @@ public partial class TreeViewHelper
                 .OrderBy(filePathString => filePathString)
                 .Select(x =>
                 {
-                    var absoluteFilePath = new AbsoluteFilePath(
+                    var absoluteFilePath = new AbsolutePath(
                         x,
                         true,
                         directoryTreeView.EnvironmentProvider);
@@ -127,7 +127,7 @@ public partial class TreeViewHelper
                 .OrderBy(filePathString => filePathString)
                 .Select(x =>
                 {
-                    var absoluteFilePath = new AbsoluteFilePath(
+                    var absoluteFilePath = new AbsolutePath(
                         x,
                         false,
                         directoryTreeView.EnvironmentProvider);

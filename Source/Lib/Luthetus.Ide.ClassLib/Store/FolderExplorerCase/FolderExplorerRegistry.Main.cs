@@ -9,7 +9,7 @@ namespace Luthetus.Ide.ClassLib.Store.FolderExplorerCase;
 
 [FeatureState]
 public partial record FolderExplorerRegistry(
-    IAbsoluteFilePath? AbsoluteFilePath,
+    IAbsolutePath? AbsoluteFilePath,
     bool IsLoadingFolderExplorer)
 {
     public static readonly TreeViewStateKey TreeViewFolderExplorerContentStateKey = TreeViewStateKey.NewKey();

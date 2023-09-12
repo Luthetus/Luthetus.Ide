@@ -167,7 +167,7 @@ public partial class FolderExplorerContextMenu : ComponentBase
             false);
     }
 
-    private Task NotifyCopyCompleted(IAbsoluteFilePath absoluteFilePath)
+    private Task NotifyCopyCompleted(IAbsolutePath absoluteFilePath)
     {
         if (LuthetusCommonComponentRenderers.InformativeNotificationRendererType != null)
         {
@@ -179,7 +179,7 @@ public partial class FolderExplorerContextMenu : ComponentBase
                 {
                     {
                         nameof(IInformativeNotificationRendererType.Message),
-                        $"Copied: {absoluteFilePath.FilenameWithExtension}"
+                        $"Copied: {absoluteFilePath.NameWithExtension}"
                     },
                 },
                 TimeSpan.FromSeconds(3),
@@ -194,7 +194,7 @@ public partial class FolderExplorerContextMenu : ComponentBase
     }
 
     private Task NotifyCutCompleted(
-        IAbsoluteFilePath absoluteFilePath,
+        IAbsolutePath absoluteFilePath,
         TreeViewAbsoluteFilePath? parentTreeViewModel)
     {
         ParentOfCutFile = parentTreeViewModel;
@@ -209,7 +209,7 @@ public partial class FolderExplorerContextMenu : ComponentBase
                 {
                     {
                         nameof(IInformativeNotificationRendererType.Message),
-                        $"Cut: {absoluteFilePath.FilenameWithExtension}"
+                        $"Cut: {absoluteFilePath.NameWithExtension}"
                     },
                 },
                 TimeSpan.FromSeconds(3),

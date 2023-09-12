@@ -114,7 +114,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
                 {
                 {
                     nameof(IInformativeNotificationRendererType.Message),
-                    $"Copied: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
+                    $"Copied: {namespacePath.AbsoluteFilePath.NameWithExtension}"
                 },
                 },
                 TimeSpan.FromSeconds(3),
@@ -144,7 +144,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
                 {
                     {
                         nameof(IInformativeNotificationRendererType.Message),
-                        $"Cut: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
+                        $"Cut: {namespacePath.AbsoluteFilePath.NameWithExtension}"
                     },
                 },
                 TimeSpan.FromSeconds(3),
@@ -200,7 +200,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         }
         else
         {
-            var parentDirectory = (IAbsoluteFilePath)treeViewNamespacePath
+            var parentDirectory = (IAbsolutePath)treeViewNamespacePath
                 .Item.AbsoluteFilePath.AncestorDirectories.Last();
 
             pasteMenuOptionRecord = _menuOptionsFactory.PasteClipboard(

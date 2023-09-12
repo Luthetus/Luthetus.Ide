@@ -21,7 +21,7 @@ public partial class TreeViewHelper
             {
                 TreeViewChangedKey = TreeViewChangedKey.NewKey()
             })
-            .OrderBy(x => ((TreeViewSolutionFolder)x).Item.AbsoluteFilePath.FileNameNoExtension)
+            .OrderBy(x => ((TreeViewSolutionFolder)x).Item.AbsoluteFilePath.NameNoExtension)
             .ToList();
 
         var childProjects = treeViewSolution.Item.DotNetProjects
@@ -29,7 +29,7 @@ public partial class TreeViewHelper
             .Select(x =>
             {
                 var namespacePath = new NamespacePath(
-                    x.AbsoluteFilePath.FileNameNoExtension,
+                    x.AbsoluteFilePath.NameNoExtension,
                     x.AbsoluteFilePath);
 
                 return (TreeViewNoType)new TreeViewNamespacePath(
@@ -44,7 +44,7 @@ public partial class TreeViewHelper
                     TreeViewChangedKey = TreeViewChangedKey.NewKey()
                 };
             })
-            .OrderBy(x => ((TreeViewNamespacePath)x).Item.AbsoluteFilePath.FileNameNoExtension)
+            .OrderBy(x => ((TreeViewNamespacePath)x).Item.AbsoluteFilePath.NameNoExtension)
             .ToList();
 
         var children = childSolutionFolders

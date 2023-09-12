@@ -105,7 +105,7 @@ public class CompilerServiceExplorerTreeViewKeyboardEventHandler : TreeViewKeybo
                 {
                 {
                     nameof(IInformativeNotificationRendererType.Message),
-                    $"Copied: {namespacePath.AbsoluteFilePath.FilenameWithExtension}"
+                    $"Copied: {namespacePath.AbsoluteFilePath.NameWithExtension}"
                 },
                 },
                 TimeSpan.FromSeconds(3),

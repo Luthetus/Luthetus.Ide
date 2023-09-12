@@ -1,5 +1,5 @@
 ﻿using Fluxor;
-using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
+using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
 using Luthetus.Ide.ClassLib.WebsiteProjectTemplates;
 
@@ -62,7 +62,7 @@ public partial record DotNetSolutionRegistry
             var projectTypeGuid = WebsiteProjectTemplateRegistry.GetProjectTypeGuid(
                 addExistingProjectToSolutionAction.LocalProjectTemplateShortName);
 
-            var relativePathFromSlnToProject = AbsoluteFilePath.ConstructRelativePathFromTwoAbsoluteFilePaths(
+            var relativePathFromSlnToProject = AbsolutePath.ConstructRelativePathFromTwoAbsoluteFilePaths(
                 dotNetSolutionModel.NamespacePath.AbsoluteFilePath,
                 addExistingProjectToSolutionAction.CSharpProjectAbsoluteFilePath,
                 addExistingProjectToSolutionAction.EnvironmentProvider);

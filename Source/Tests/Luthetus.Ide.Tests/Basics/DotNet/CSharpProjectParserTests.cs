@@ -17,7 +17,7 @@ public class CSharpProjectParserTests
 
         var projectAbsoluteFilePathString = @"C:\Users\hunte\Repos\Demos\BlazorCrudApp\BlazorCrudApp\BlazorCrudApp.csproj";
 
-        var projectAbsoluteFilePath = new AbsoluteFilePath(
+        var projectAbsoluteFilePath = new AbsolutePath(
             projectAbsoluteFilePathString,
             false,
             localEnvironmentProvider);
@@ -57,7 +57,7 @@ public class CSharpProjectParserTests
 
         var projectAbsoluteFilePathString = @"C:\Users\hunte\Repos\Demos\BlazorCrudApp\BlazorCrudApp\BlazorCrudApp.csproj";
 
-        var projectAbsoluteFilePath = new AbsoluteFilePath(
+        var projectAbsoluteFilePath = new AbsolutePath(
             projectAbsoluteFilePathString,
             false,
             localEnvironmentProvider);

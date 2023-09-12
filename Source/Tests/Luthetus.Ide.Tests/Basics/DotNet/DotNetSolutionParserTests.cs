@@ -15,7 +15,7 @@ public class DotNetSolutionParserTests
 
         var solutionAbsoluteFilePathString = @"C:\Users\hunte\Repos\BlazorApp1\BlazorApp1.sln";
 
-        var solutionAbsoluteFilePath = new AbsoluteFilePath(
+        var solutionAbsoluteFilePath = new AbsolutePath(
             solutionAbsoluteFilePathString,
             false,
             localEnvironmentProvider);

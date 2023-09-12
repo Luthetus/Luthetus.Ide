@@ -11,7 +11,7 @@ public static class DotNetCliFacts
     public const string DOT_NET_CLI_TARGET_FILE_NAME = "dotnet";
 
     public static FormattedCommand FormatStartProjectWithoutDebugging(
-        IAbsoluteFilePath projectAbsoluteFilePath)
+        IAbsolutePath projectAbsoluteFilePath)
     {
         return FormatStartProjectWithoutDebugging(
             projectAbsoluteFilePath.FormattedInput);

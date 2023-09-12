@@ -4,12 +4,12 @@ using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 namespace Luthetus.Ide.ClassLib.Store.ProgramExecutionCase;
 
 [FeatureState]
-public record ProgramExecutionRegistry(IAbsoluteFilePath? StartupProjectAbsoluteFilePath)
+public record ProgramExecutionRegistry(IAbsolutePath? StartupProjectAbsoluteFilePath)
 {
-    private ProgramExecutionRegistry() : this(default(IAbsoluteFilePath))
+    private ProgramExecutionRegistry() : this(default(IAbsolutePath))
     {
 
     }
 
-    public record SetStartupProjectAbsoluteFilePathAction(IAbsoluteFilePath? StartupProjectAbsoluteFilePath);
+    public record SetStartupProjectAbsoluteFilePathAction(IAbsolutePath? StartupProjectAbsoluteFilePath);
 }

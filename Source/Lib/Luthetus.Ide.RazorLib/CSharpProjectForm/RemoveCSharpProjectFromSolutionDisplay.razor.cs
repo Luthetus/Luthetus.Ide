@@ -7,26 +7,24 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace Luthetus.Ide.RazorLib.CSharpProjectForm;
 
-public partial class RemoveCSharpProjectFromSolutionDisplay
-    : ComponentBase, IRemoveCSharpProjectFromSolutionRendererType
+public partial class RemoveCSharpProjectFromSolutionDisplay : ComponentBase,
+    IRemoveCSharpProjectFromSolutionRendererType
 {
     [CascadingParameter]
     public MenuOptionWidgetParameters? MenuOptionWidgetParameters { get; set; }
 
     [Parameter, EditorRequired]
-    public IAbsoluteFilePath AbsoluteFilePath { get; set; } = null!;
+    public IAbsolutePath AbsoluteFilePath { get; set; } = null!;
     [Parameter, EditorRequired]
-    public Action<IAbsoluteFilePath> OnAfterSubmitAction { get; set; } = null!;
+    public Action<IAbsolutePath> OnAfterSubmitAction { get; set; } = null!;
 
-    private IAbsoluteFilePath? _previousAbsoluteFilePath;
-
+    private IAbsolutePath? _previousAbsoluteFilePath;
     private ElementReference? _cancelButtonElementReference;
 
     protected override Task OnParametersSetAsync()
     {
         if (_previousAbsoluteFilePath is null ||
-            _previousAbsoluteFilePath.FormattedInput !=
-            AbsoluteFilePath.FormattedInput)
+            _previousAbsoluteFilePath.FormattedInput != AbsoluteFilePath.FormattedInput)
         {
             _previousAbsoluteFilePath = AbsoluteFilePath;
         }
@@ -38,8 +36,7 @@ public partial class RemoveCSharpProjectFromSolutionDisplay
     {
         if (firstRender)
         {
-            if (MenuOptionWidgetParameters is not null &&
-                _cancelButtonElementReference is not null)
+            if (MenuOptionWidgetParameters is not null && _cancelButtonElementReference is not null)
             {
                 try
                 {
@@ -60,12 +57,10 @@ public partial class RemoveCSharpProjectFromSolutionDisplay
 
     private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
-        if (MenuOptionWidgetParameters is not null)
+        if (MenuOptionWidgetParameters is not null &&
+            keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
         {
-            if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
-            {
-                await MenuOptionWidgetParameters.HideWidgetAsync.Invoke();
-            }
+            await MenuOptionWidgetParameters.HideWidgetAsync.Invoke();
         }
     }
 
@@ -83,8 +78,6 @@ public partial class RemoveCSharpProjectFromSolutionDisplay
     private async Task CancelOnClick()
     {
         if (MenuOptionWidgetParameters is not null)
-        {
             await MenuOptionWidgetParameters.HideWidgetAsync.Invoke();
-        }
     }
 }

@@ -2,8 +2,8 @@
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxActors;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
-using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
 using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
+using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementations;
 
@@ -91,13 +91,13 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
             var includeAttribute = attributeNameValueTuples
                 .FirstOrDefault(x => x.Item1 == "Include");
 
-            var referenceProjectAbsoluteFilePathString = AbsoluteFilePath
+            var referenceProjectAbsoluteFilePathString = AbsolutePath
                 .JoinAnAbsoluteFilePathAndRelativeFilePath(
                     Item.CSharpProjectNamespacePath.AbsoluteFilePath,
                     includeAttribute.Item2,
                     EnvironmentProvider);
 
-            var referenceProjectAbsoluteFilePath = new AbsoluteFilePath(
+            var referenceProjectAbsoluteFilePath = new AbsolutePath(
                 referenceProjectAbsoluteFilePathString,
                 false,
                 EnvironmentProvider);

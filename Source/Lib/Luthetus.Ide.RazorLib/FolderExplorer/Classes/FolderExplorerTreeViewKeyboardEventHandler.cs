@@ -104,7 +104,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         return;
     }
 
-    private Task NotifyCopyCompleted(IAbsoluteFilePath absoluteFilePath)
+    private Task NotifyCopyCompleted(IAbsolutePath absoluteFilePath)
     {
         if (_luthetusCommonComponentRenderers.InformativeNotificationRendererType is not null)
         {
@@ -116,7 +116,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
                 {
                     {
                         nameof(IInformativeNotificationRendererType.Message),
-                        $"Copied: {absoluteFilePath.FilenameWithExtension}"
+                        $"Copied: {absoluteFilePath.NameWithExtension}"
                     },
                 },
                 TimeSpan.FromSeconds(3),
@@ -131,7 +131,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
     }
 
     private Task NotifyCutCompleted(
-        IAbsoluteFilePath absoluteFilePath,
+        IAbsolutePath absoluteFilePath,
         TreeViewAbsoluteFilePath? parentTreeViewModel)
     {
         SolutionExplorerContextMenu.ParentOfCutFile = parentTreeViewModel;
@@ -146,7 +146,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
                 {
                 {
                     nameof(IInformativeNotificationRendererType.Message),
-                    $"Cut: {absoluteFilePath.FilenameWithExtension}"
+                    $"Cut: {absoluteFilePath.NameWithExtension}"
                 },
                 },
                 TimeSpan.FromSeconds(3),
@@ -202,7 +202,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         }
         else
         {
-            var parentDirectory = (IAbsoluteFilePath)treeViewAbsoluteFilePathPath
+            var parentDirectory = (IAbsolutePath)treeViewAbsoluteFilePathPath
                 .Item.AncestorDirectories.Last();
 
             pasteMenuOptionRecord = _menuOptionsFactory.PasteClipboard(

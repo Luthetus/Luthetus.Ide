@@ -82,23 +82,23 @@ public static class FileTemplateFacts
 
         // Create AbsoluteFilePath as to leverage it for
         // knowing the file extension and other details
-        var emptyFileAbsoluteFilePath = new AbsoluteFilePath(
+        var emptyFileAbsoluteFilePath = new AbsolutePath(
             emptyFileAbsoluteFilePathString,
             false,
             fileTemplateParameter.EnvironmentProvider);
 
         var templatedFileContent = GetContent(
-            emptyFileAbsoluteFilePath.FileNameNoExtension,
+            emptyFileAbsoluteFilePath.NameNoExtension,
             fileTemplateParameter.ParentDirectory.Namespace);
 
         var templatedFileFileAbsoluteFilePathString = fileTemplateParameter
                                                      .ParentDirectory.AbsoluteFilePath
                                                      .FormattedInput +
-                                                 emptyFileAbsoluteFilePath.FileNameNoExtension +
+                                                 emptyFileAbsoluteFilePath.NameNoExtension +
                                                  '.' +
                                                  ExtensionNoPeriodFacts.C_SHARP_CLASS;
 
-        var templatedFileAbsoluteFilePath = new AbsoluteFilePath(
+        var templatedFileAbsoluteFilePath = new AbsolutePath(
             templatedFileFileAbsoluteFilePathString,
             false,
             fileTemplateParameter.EnvironmentProvider);
@@ -150,22 +150,22 @@ public static class FileTemplateFacts
 
         // Create AbsoluteFilePath as to leverage it for
         // knowing the file extension and other details
-        var emptyFileAbsoluteFilePath = new AbsoluteFilePath(
+        var emptyFileAbsoluteFilePath = new AbsolutePath(
             emptyFileAbsoluteFilePathString,
             false,
             fileTemplateParameter.EnvironmentProvider);
 
         var templatedFileContent = GetContent(
-            emptyFileAbsoluteFilePath.FileNameNoExtension);
+            emptyFileAbsoluteFilePath.NameNoExtension);
 
         var templatedFileFileAbsoluteFilePathString = fileTemplateParameter
                                                      .ParentDirectory.AbsoluteFilePath
                                                      .FormattedInput +
-                                                 emptyFileAbsoluteFilePath.FileNameNoExtension +
+                                                 emptyFileAbsoluteFilePath.NameNoExtension +
                                                  '.' +
                                                  ExtensionNoPeriodFacts.RAZOR_MARKUP;
 
-        var templatedFileAbsoluteFilePath = new AbsoluteFilePath(
+        var templatedFileAbsoluteFilePath = new AbsolutePath(
             templatedFileFileAbsoluteFilePathString,
             false,
             fileTemplateParameter.EnvironmentProvider);
@@ -230,19 +230,19 @@ public static class FileTemplateFacts
 
         // Create AbsoluteFilePath as to leverage it for
         // knowing the file extension and other details
-        var emptyFileAbsoluteFilePath = new AbsoluteFilePath(
+        var emptyFileAbsoluteFilePath = new AbsolutePath(
             emptyFileAbsoluteFilePathString,
             false,
             fileTemplateParameter.EnvironmentProvider);
 
         var templatedFileContent = GetContent(
-            emptyFileAbsoluteFilePath.FileNameNoExtension,
+            emptyFileAbsoluteFilePath.NameNoExtension,
             fileTemplateParameter.ParentDirectory.Namespace);
 
         var templatedFileFileAbsoluteFilePathString = fileTemplateParameter
                                                      .ParentDirectory.AbsoluteFilePath
                                                      .FormattedInput +
-                                                 emptyFileAbsoluteFilePath.FileNameNoExtension;
+                                                 emptyFileAbsoluteFilePath.NameNoExtension;
 
         if (templatedFileFileAbsoluteFilePathString.EndsWith(
                 '.' + ExtensionNoPeriodFacts.RAZOR_MARKUP))
@@ -256,7 +256,7 @@ public static class FileTemplateFacts
                 '.' + ExtensionNoPeriodFacts.RAZOR_CODEBEHIND;
         }
 
-        var templatedFileAbsoluteFilePath = new AbsoluteFilePath(
+        var templatedFileAbsoluteFilePath = new AbsolutePath(
             templatedFileFileAbsoluteFilePathString,
             false,
             fileTemplateParameter.EnvironmentProvider);

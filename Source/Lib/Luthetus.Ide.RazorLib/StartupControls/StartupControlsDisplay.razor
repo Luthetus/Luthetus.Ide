@@ -6,7 +6,7 @@
    </div>
    <div class="luth_ide_startup-controls-display-entry">
       StartupProject:&nbsp;
-      @(ProgramExecutionStateWrap.Value.StartupProjectAbsoluteFilePath?.FileNameNoExtension ?? "null")   
+      @(ProgramExecutionStateWrap.Value.StartupProjectAbsoluteFilePath?.NameNoExtension ?? "null")   
    </div>
    <div class="luth_ide_startup-controls-display-entry">
       <button @onclick="StartProgramWithoutDebuggingOnClick"

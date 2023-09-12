@@ -5,7 +5,7 @@ using Fluxor;
 using System.Collections.Immutable;
 using System.Text;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
-using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
+using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 
 namespace Luthetus.Ide.ClassLib.Store.GitCase;
 
@@ -302,7 +302,7 @@ public partial record GitRegistry
 
                 if (gitFolderAbsoluteFilePathString is not null)
                 {
-                    var gitFolderAbsoluteFilePath = new AbsoluteFilePath(
+                    var gitFolderAbsoluteFilePath = new AbsolutePath(
                         gitFolderAbsoluteFilePathString,
                         true,
                         _environmentProvider);
@@ -455,10 +455,9 @@ public partial record GitRegistry
                             gitState.GitFolderAbsoluteFilePath.ParentDirectory.FormattedInput +
                             x.relativePath;
 
-                        var isDirectory = x.relativePath.EndsWith(_environmentProvider.DirectorySeparatorChar) ||
-                                          x.relativePath.EndsWith(_environmentProvider.AltDirectorySeparatorChar);
+                        var isDirectory = _environmentProvider.IsDirectorySeparator(x.relativePath.LastOrDefault());
 
-                        var absoluteFilePath = new AbsoluteFilePath(
+                        var absoluteFilePath = new AbsolutePath(
                             absoluteFilePathString,
                             isDirectory,
                             _environmentProvider);

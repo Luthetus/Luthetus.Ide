@@ -8,10 +8,10 @@ using Luthetus.Ide.ClassLib.ComponentRenderers.Types.TreeViews;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementations;
 
-public class TreeViewAbsoluteFilePath : TreeViewWithType<IAbsoluteFilePath>
+public class TreeViewAbsoluteFilePath : TreeViewWithType<IAbsolutePath>
 {
     public TreeViewAbsoluteFilePath(
-        IAbsoluteFilePath absoluteFilePath,
+        IAbsolutePath absoluteFilePath,
         ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
         ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
         IFileSystemProvider fileSystemProvider,

@@ -17,13 +17,13 @@ public partial class DeleteFileFormDisplay
     public MenuOptionWidgetParameters? MenuOptionWidgetParameters { get; set; }
 
     [Parameter, EditorRequired]
-    public IAbsoluteFilePath AbsoluteFilePath { get; set; } = null!;
+    public IAbsolutePath AbsoluteFilePath { get; set; } = null!;
     [Parameter, EditorRequired]
     public bool IsDirectory { get; set; }
     [Parameter, EditorRequired]
-    public Action<IAbsoluteFilePath> OnAfterSubmitAction { get; set; } = null!;
+    public Action<IAbsolutePath> OnAfterSubmitAction { get; set; } = null!;
 
-    private IAbsoluteFilePath? _previousAbsoluteFilePath;
+    private IAbsolutePath? _previousAbsoluteFilePath;
 
     private int? _countOfImmediateChildren;
     private ElementReference? _cancelButtonElementReference;
