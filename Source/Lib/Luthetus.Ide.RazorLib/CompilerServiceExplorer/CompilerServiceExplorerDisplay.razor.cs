@@ -12,11 +12,11 @@ public partial class CompilerServiceExplorerDisplay : FluxorComponent
     [Inject]
     private IState<CompilerServiceExplorerRegistry> CompilerServiceExplorerStateWrap { get; set; } = null!;
     [Inject]
-    private IStateSelection<TabRegistry, TabGroup?> TabGroupsCollectionStateSelection { get; set; } = null!;
+    private IStateSelection<TabRegistry, TabGroup?> TabRegistrySelection { get; set; } = null!;
 
     protected override void OnInitialized()
     {
-        TabGroupsCollectionStateSelection.Select(tabGroupsCollection =>
+        TabRegistrySelection.Select(tabGroupsCollection =>
             tabGroupsCollection.GroupBag.SingleOrDefault(
                 x => x.Key == CompilerServiceExplorerRegistry.TabGroupKey));
 

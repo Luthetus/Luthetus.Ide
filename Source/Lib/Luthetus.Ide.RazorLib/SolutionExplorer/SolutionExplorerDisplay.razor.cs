@@ -17,7 +17,7 @@ namespace Luthetus.Ide.RazorLib.SolutionExplorer;
 public partial class SolutionExplorerDisplay : FluxorComponent
 {
     [Inject]
-    private IState<AppOptionsRegistry> AppOptionsStateWrap { get; set; } = null!;
+    private IState<AppOptionsRegistry> AppOptionsRegistryWrap { get; set; } = null!;
     [Inject]
     private IState<DotNetSolutionRegistry> DotNetSolutionStateWrap { get; set; } = null!;
     [Inject]
@@ -35,7 +35,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     private bool _disposed;
 
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-        AppOptionsStateWrap.Value.Options.IconSizeInPixels.GetValueOrDefault() *
+        AppOptionsRegistryWrap.Value.Options.IconSizeInPixels.GetValueOrDefault() *
         (2.0 / 3.0));
 
     protected override void OnInitialized()

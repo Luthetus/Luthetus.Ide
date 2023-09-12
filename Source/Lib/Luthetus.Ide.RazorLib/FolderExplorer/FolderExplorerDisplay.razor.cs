@@ -18,7 +18,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     [Inject]
     private IState<FolderExplorerRegistry> FolderExplorerStateWrap { get; set; } = null!;
     [Inject]
-    private IState<AppOptionsRegistry> AppOptionsStateWrap { get; set; } = null!;
+    private IState<AppOptionsRegistry> AppOptionsRegistryWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -35,13 +35,13 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     private ITreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
 
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-        AppOptionsStateWrap.Value.Options.IconSizeInPixels.GetValueOrDefault() *
+        AppOptionsRegistryWrap.Value.Options.IconSizeInPixels.GetValueOrDefault() *
         (2.0 / 3.0));
 
     protected override void OnInitialized()
     {
         FolderExplorerStateWrap.StateChanged += FolderExplorerStateWrapOnStateChanged;
-        AppOptionsStateWrap.StateChanged += AppOptionsStateWrapOnStateChanged;
+        AppOptionsRegistryWrap.StateChanged += AppOptionsStateWrapOnStateChanged;
 
         _folderExplorerTreeViewMouseEventHandler = new FolderExplorerTreeViewMouseEventHandler(
             Dispatcher,
@@ -79,6 +79,6 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     public void Dispose()
     {
         FolderExplorerStateWrap.StateChanged -= FolderExplorerStateWrapOnStateChanged;
-        AppOptionsStateWrap.StateChanged -= AppOptionsStateWrapOnStateChanged;
+        AppOptionsRegistryWrap.StateChanged -= AppOptionsStateWrapOnStateChanged;
     }
 }
