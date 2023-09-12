@@ -9,7 +9,7 @@ public partial class TreeViewHelper
     public static async Task<List<TreeViewNoType>> DirectoryLoadChildrenAsync(
         this TreeViewNamespacePath directoryTreeView)
     {
-        var directoryAbsoluteFilePathString = directoryTreeView.Item.AbsoluteFilePath
+        var directoryAbsoluteFilePathString = directoryTreeView.Item.AbsolutePath
             .FormattedInput;
 
         var childDirectoryTreeViewModels =
@@ -92,7 +92,7 @@ public partial class TreeViewHelper
     }
 
     public static async Task<List<TreeViewNoType>> LoadChildrenForDirectoryAsync(
-        TreeViewAbsoluteFilePath directoryTreeView)
+        TreeViewAbsolutePath directoryTreeView)
     {
         var directoryAbsoluteFilePathString = directoryTreeView.Item
             .FormattedInput;

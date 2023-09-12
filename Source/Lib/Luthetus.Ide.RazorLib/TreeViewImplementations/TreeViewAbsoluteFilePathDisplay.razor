@@ -1,7 +1,7 @@
 ﻿<div>
     
     @{
-        var displayText = TreeViewAbsoluteFilePath.Item.NameWithExtension;
+        var displayText = TreeViewAbsolutePath.Item.NameWithExtension;
     }
     
     @if (!String.IsNullOrWhiteSpace(SearchQuery))
@@ -21,7 +21,7 @@
             if (localSearchMatchTuples is not null)
             {
                 localSearchMatchTuples.Add(
-                    (TreeViewState.Key, TreeViewAbsoluteFilePath));
+                    (TreeViewState.Key, TreeViewAbsolutePath));
             }
             
             string splitStart = string.Empty;

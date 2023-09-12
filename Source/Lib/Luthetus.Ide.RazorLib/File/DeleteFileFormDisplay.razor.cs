@@ -17,7 +17,7 @@ public partial class DeleteFileFormDisplay
     public MenuOptionWidgetParameters? MenuOptionWidgetParameters { get; set; }
 
     [Parameter, EditorRequired]
-    public IAbsolutePath AbsoluteFilePath { get; set; } = null!;
+    public IAbsolutePath AbsolutePath { get; set; } = null!;
     [Parameter, EditorRequired]
     public bool IsDirectory { get; set; }
     [Parameter, EditorRequired]
@@ -32,17 +32,17 @@ public partial class DeleteFileFormDisplay
     {
         if (_previousAbsoluteFilePath is null ||
             _previousAbsoluteFilePath.FormattedInput !=
-            AbsoluteFilePath.FormattedInput)
+            AbsolutePath.FormattedInput)
         {
             _countOfImmediateChildren = null;
 
-            _previousAbsoluteFilePath = AbsoluteFilePath;
+            _previousAbsoluteFilePath = AbsolutePath;
 
-            if (AbsoluteFilePath.IsDirectory)
+            if (AbsolutePath.IsDirectory)
             {
                 _countOfImmediateChildren = (await FileSystemProvider.Directory
                     .EnumerateFileSystemEntriesAsync(
-                        AbsoluteFilePath.FormattedInput))
+                        AbsolutePath.FormattedInput))
                     .Count();
             }
         }
@@ -87,7 +87,7 @@ public partial class DeleteFileFormDisplay
 
     private async Task DeleteFileOnClick()
     {
-        var localAbsoluteFilePath = AbsoluteFilePath;
+        var localAbsoluteFilePath = AbsolutePath;
 
         if (MenuOptionWidgetParameters is not null)
         {

@@ -4,7 +4,7 @@ namespace Luthetus.Ide.ClassLib.ComponentRenderers.Types;
 
 public interface IDeleteFileFormRendererType
 {
-    public IAbsolutePath AbsoluteFilePath { get; set; }
+    public IAbsolutePath AbsolutePath { get; set; }
     public bool IsDirectory { get; set; }
     public Action<IAbsolutePath> OnAfterSubmitAction { get; set; }
 }

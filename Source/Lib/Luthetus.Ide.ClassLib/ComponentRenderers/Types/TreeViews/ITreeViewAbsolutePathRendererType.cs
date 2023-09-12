@@ -2,7 +2,7 @@
 
 namespace Luthetus.Ide.ClassLib.ComponentRenderers.Types.TreeViews;
 
-public interface ITreeViewAbsoluteFilePathRendererType
+public interface ITreeViewAbsolutePathRendererType
 {
-    public TreeViewAbsoluteFilePath TreeViewAbsoluteFilePath { get; set; }
+    public TreeViewAbsolutePath TreeViewAbsolutePath { get; set; }
 }

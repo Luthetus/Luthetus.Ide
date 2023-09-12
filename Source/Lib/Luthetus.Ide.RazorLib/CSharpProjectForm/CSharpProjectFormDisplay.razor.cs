@@ -92,7 +92,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         _optionalParametersValue);
 
     private FormattedCommand FormattedAddExistingProjectToSolutionCommand => DotNetCliFacts.FormatAddExistingProjectToSolution(
-        DotNetSolutionModel.NamespacePath?.AbsoluteFilePath.FormattedInput ?? string.Empty,
+        DotNetSolutionModel.NamespacePath?.AbsolutePath.FormattedInput ?? string.Empty,
         $"{_cSharpProjectNameValue}{EnvironmentProvider.DirectorySeparatorChar}{_cSharpProjectNameValue}.{ExtensionNoPeriodFacts.C_SHARP_PROJECT}");
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -432,7 +432,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                             () =>
                             {
                                 Dispatcher.Dispatch(new DialogRegistry.DisposeAction(DialogRecord.Key));
-                                Dispatcher.Dispatch(new DotNetSolutionRegistry.SetDotNetSolutionAction(solutionNamespacePath.AbsoluteFilePath));
+                                Dispatcher.Dispatch(new DotNetSolutionRegistry.SetDotNetSolutionAction(solutionNamespacePath.AbsolutePath));
                                 return Task.CompletedTask;
                             });
 
@@ -502,7 +502,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         string localCSharpProjectName,
         string cSharpProjectAbsoluteFilePathString)
     {
-        var dotNetSolutionAbsoluteFilePathString = DotNetSolutionModel.NamespacePath!.AbsoluteFilePath.FormattedInput;
+        var dotNetSolutionAbsoluteFilePathString = DotNetSolutionModel.NamespacePath!.AbsolutePath.FormattedInput;
         var cSharpAbsoluteFilePath = new AbsolutePath(cSharpProjectAbsoluteFilePathString, false, EnvironmentProvider);
 
         Dispatcher.Dispatch(new DotNetSolutionRegistry.AddExistingProjectToSolutionAction(
@@ -513,11 +513,11 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             EnvironmentProvider));
 
         await FileSystemProvider.File.WriteAllTextAsync(
-            DotNetSolutionModel.NamespacePath.AbsoluteFilePath.FormattedInput,
+            DotNetSolutionModel.NamespacePath.AbsolutePath.FormattedInput,
             DotNetSolutionModel.SolutionFileContents);
 
         var solutionTextEditorModel = TextEditorService.Model.FindOrDefaultByResourceUri(
-            new ResourceUri(DotNetSolutionModel.NamespacePath.AbsoluteFilePath.FormattedInput));
+            new ResourceUri(DotNetSolutionModel.NamespacePath.AbsolutePath.FormattedInput));
 
         if (solutionTextEditorModel is not null)
         {

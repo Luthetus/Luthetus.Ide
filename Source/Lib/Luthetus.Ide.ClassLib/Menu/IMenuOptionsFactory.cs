@@ -22,24 +22,24 @@ public interface IMenuOptionsFactory
         Func<Task> onAfterCompletion);
 
     public MenuOptionRecord DeleteFile(
-        IAbsolutePath absoluteFilePath,
+        IAbsolutePath absolutePath,
         Func<Task> onAfterCompletion);
 
     public MenuOptionRecord CopyFile(
-        IAbsolutePath absoluteFilePath,
+        IAbsolutePath absolutePath,
         Func<Task> onAfterCompletion);
 
     public MenuOptionRecord CutFile(
-        IAbsolutePath absoluteFilePath,
+        IAbsolutePath absolutePath,
         Func<Task> onAfterCompletion);
 
     public MenuOptionRecord RenameFile(
-        IAbsolutePath sourceAbsoluteFilePath,
+        IAbsolutePath sourceAbsolutePath,
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion);
 
     public MenuOptionRecord PasteClipboard(
-        IAbsolutePath directoryAbsoluteFilePath,
+        IAbsolutePath directoryAbsolutePath,
         Func<Task> onAfterCompletion);
 
     public MenuOptionRecord RemoveCSharpProjectReferenceFromSolution(

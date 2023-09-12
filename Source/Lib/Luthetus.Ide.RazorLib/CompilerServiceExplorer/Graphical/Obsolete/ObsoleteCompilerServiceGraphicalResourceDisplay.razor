@@ -148,7 +148,7 @@ both circles a bit instead of ending at their edges.
 
         var cSharpProjectResource = CSharpProjectCompilerService.CompilerServiceResources
             .SingleOrDefault(csr => 
-                csr.ResourceUri.Value == dotNetProject.AbsoluteFilePath.FormattedInput);
+                csr.ResourceUri.Value == dotNetProject.AbsolutePath.FormattedInput);
 
         if (cSharpProjectResource is not null)
         {

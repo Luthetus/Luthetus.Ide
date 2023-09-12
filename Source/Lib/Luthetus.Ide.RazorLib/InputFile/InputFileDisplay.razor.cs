@@ -88,7 +88,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     /// A presumption that any mutations to the HashSet are done
     /// via the UI thread. Therefore concurrency is not an issue.
     /// </summary>
-    private List<(TreeViewStateKey treeViewStateKey, TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)> _searchMatchTuples = new();
+    private List<(TreeViewStateKey treeViewStateKey, TreeViewAbsolutePath treeViewAbsoluteFilePath)> _searchMatchTuples = new();
 
     public ElementReference? SearchElementReference => _inputFileTopNavBarComponent?.SearchElementReference;
 
@@ -172,7 +172,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
 
     private async Task SetInputFileContentTreeViewRootFunc(IAbsolutePath absoluteFilePath)
     {
-        var pseudoRootNode = new TreeViewAbsoluteFilePath(
+        var pseudoRootNode = new TreeViewAbsolutePath(
             absoluteFilePath,
             LuthetusIdeComponentRenderers,
             LuthetusCommonComponentRenderers,

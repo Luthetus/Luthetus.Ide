@@ -154,7 +154,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             WidgetParameters: new Dictionary<string, object?>
             {
                 {
-                    nameof(IDeleteFileFormRendererType.AbsoluteFilePath),
+                    nameof(IDeleteFileFormRendererType.AbsolutePath),
                     absoluteFilePath
                 },
                 {
@@ -253,8 +253,8 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             WidgetParameters: new Dictionary<string, object?>
             {
                 {
-                    nameof(IRemoveCSharpProjectFromSolutionRendererType.AbsoluteFilePath),
-                    projectNode.Item.AbsoluteFilePath
+                    nameof(IRemoveCSharpProjectFromSolutionRendererType.AbsolutePath),
+                    projectNode.Item.AbsolutePath
                 },
                 {
                     nameof(IDeleteFileFormRendererType.OnAfterSubmitAction),
@@ -368,7 +368,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 if (exactMatchFileTemplate is null)
                 {
                     var emptyFileAbsoluteFilePathString = 
-                        namespacePath.AbsoluteFilePath.FormattedInput + fileName;
+                        namespacePath.AbsolutePath.FormattedInput + fileName;
 
                     var emptyFileAbsoluteFilePath = new AbsolutePath(
                         emptyFileAbsoluteFilePathString,
@@ -395,7 +395,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                                 _environmentProvider));
 
                         await _fileSystemProvider.File.WriteAllTextAsync(
-                            templateResult.FileNamespacePath.AbsoluteFilePath.FormattedInput,
+                            templateResult.FileNamespacePath.AbsolutePath.FormattedInput,
                             templateResult.Contents,
                             CancellationToken.None);
                     }
@@ -487,7 +487,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     .SetClipboard(
                         ClipboardFacts.FormatPhrase(
                             ClipboardFacts.CopyCommand,
-                            ClipboardFacts.AbsoluteFilePathDataType,
+                            ClipboardFacts.AbsolutePathDataType,
                             absoluteFilePath.FormattedInput));
 
                 await onAfterCompletion.Invoke();
@@ -513,7 +513,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     .SetClipboard(
                         ClipboardFacts.FormatPhrase(
                             ClipboardFacts.CutCommand,
-                            ClipboardFacts.AbsoluteFilePathDataType,
+                            ClipboardFacts.AbsolutePathDataType,
                             absoluteFilePath.FormattedInput));
 
                 await onAfterCompletion.Invoke();
@@ -540,7 +540,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 if (ClipboardFacts.TryParseString(clipboardContents, out var clipboardPhrase))
                 {
                     if (clipboardPhrase is not null &&
-                        clipboardPhrase.DataType == ClipboardFacts.AbsoluteFilePathDataType)
+                        clipboardPhrase.DataType == ClipboardFacts.AbsolutePathDataType)
                     {
                         if (clipboardPhrase.Command == ClipboardFacts.CopyCommand ||
                             clipboardPhrase.Command == ClipboardFacts.CutCommand)
@@ -710,12 +710,12 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             async cancellationToken =>
             {
                 var workingDirectory = 
-                    treeViewSolution.Item.NamespacePath.AbsoluteFilePath.ParentDirectory!;
+                    treeViewSolution.Item.NamespacePath.AbsolutePath.ParentDirectory!;
 
                 var removeCSharpProjectReferenceFromSolutionFormattedCommand =
                     DotNetCliFacts.FormatRemoveCSharpProjectReferenceFromSolutionAction(
-                        treeViewSolution.Item.NamespacePath.AbsoluteFilePath.FormattedInput,
-                        projectNode.Item.AbsoluteFilePath.FormattedInput);
+                        treeViewSolution.Item.NamespacePath.AbsolutePath.FormattedInput,
+                        projectNode.Item.AbsolutePath.FormattedInput);
 
                 var removeCSharpProjectReferenceFromSolutionCommand = new TerminalCommand(
                     TerminalCommandKey.NewKey(),
@@ -747,14 +747,14 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             cancellationToken =>
             {
                 var requestInputFileStateFormAction = new InputFileRegistry.RequestInputFileStateFormAction(
-                    $"Add Project reference to {projectReceivingReference.Item.AbsoluteFilePath.NameWithExtension}",
+                    $"Add Project reference to {projectReceivingReference.Item.AbsolutePath.NameWithExtension}",
                     async referencedProject =>
                     {
                         if (referencedProject is null)
                             return;
 
                         var formattedCommand = DotNetCliFacts.FormatAddProjectToProjectReference(
-                            projectReceivingReference.Item.AbsoluteFilePath.FormattedInput,
+                            projectReceivingReference.Item.AbsolutePath.FormattedInput,
                             referencedProject.FormattedInput);
 
                         var addProjectToProjectReferenceTerminalCommand = new TerminalCommand(
@@ -772,7 +772,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                                     {
                                         {
                                             nameof(IInformativeNotificationRendererType.Message),
-                                            $"Modified {projectReceivingReference.Item.AbsoluteFilePath.NameWithExtension} to have a reference to {referencedProject.NameWithExtension}"
+                                            $"Modified {projectReceivingReference.Item.AbsolutePath.NameWithExtension} to have a reference to {referencedProject.NameWithExtension}"
                                         },
                                     },
                                     TimeSpan.FromSeconds(7),
@@ -825,8 +825,8 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             async cancellationToken =>
             {
                 var formattedCommand = DotNetCliFacts.FormatRemoveProjectToProjectReference(
-                    treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsoluteFilePath.FormattedInput,
-                    treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsoluteFilePath.FormattedInput);
+                    treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsolutePath.FormattedInput,
+                    treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsolutePath.FormattedInput);
 
                 var removeProjectToProjectReferenceTerminalCommand = new TerminalCommand(
                     TerminalCommandKey.NewKey(),
@@ -843,7 +843,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                             {
                                 {
                                     nameof(IInformativeNotificationRendererType.Message),
-                                    $"Modified {treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsoluteFilePath.NameWithExtension} to have a reference to {treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsoluteFilePath.NameWithExtension}"
+                                    $"Modified {treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsolutePath.NameWithExtension} to have a reference to {treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsolutePath.NameWithExtension}"
                                 },
                             },
                             TimeSpan.FromSeconds(7),
@@ -879,8 +879,8 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             cancellationToken =>
             {
                 var formattedCommand = DotNetCliFacts.FormatMoveProjectToSolutionFolder(
-                    treeViewSolution.Item.NamespacePath.AbsoluteFilePath.FormattedInput,
-                    treeViewProjectToMove.Item.AbsoluteFilePath.FormattedInput,
+                    treeViewSolution.Item.NamespacePath.AbsolutePath.FormattedInput,
+                    treeViewProjectToMove.Item.AbsolutePath.FormattedInput,
                     solutionFolderPath);
 
                 var moveProjectToSolutionFolderTerminalCommand = new TerminalCommand(
@@ -898,7 +898,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                             {
                                 {
                                     nameof(IInformativeNotificationRendererType.Message),
-                                    $"Moved {treeViewProjectToMove.Item.AbsoluteFilePath.NameWithExtension} to the Solution Folder path: {solutionFolderPath}"
+                                    $"Moved {treeViewProjectToMove.Item.AbsolutePath.NameWithExtension} to the Solution Folder path: {solutionFolderPath}"
                                 },
                             },
                             TimeSpan.FromSeconds(7),
@@ -940,7 +940,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             async cancellationToken =>
             {
                 var formattedCommand = DotNetCliFacts.FormatRemoveNugetPackageReferenceFromProject(
-                    modifyProjectNamespacePath.AbsoluteFilePath.FormattedInput,
+                    modifyProjectNamespacePath.AbsolutePath.FormattedInput,
                     treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id);
 
                 var removeNugetPackageReferenceFromProjectTerminalCommand = new TerminalCommand(
@@ -958,7 +958,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                             {
                                 {
                                     nameof(IInformativeNotificationRendererType.Message),
-                                    $"Modified {modifyProjectNamespacePath.AbsoluteFilePath.NameWithExtension} to NOT have a reference to {treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id}"
+                                    $"Modified {modifyProjectNamespacePath.AbsolutePath.NameWithExtension} to NOT have a reference to {treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id}"
                                 },
                             },
                             TimeSpan.FromSeconds(7),

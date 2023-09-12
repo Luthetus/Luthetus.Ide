@@ -17,10 +17,10 @@ public partial record InputFileRegistry
         ImmutableArray<InputFilePattern> InputFilePatterns);
 
     public record SetSelectedTreeViewModelAction(
-        TreeViewAbsoluteFilePath? SelectedTreeViewModel);
+        TreeViewAbsolutePath? SelectedTreeViewModel);
 
     public record SetOpenedTreeViewModelAction(
-        TreeViewAbsoluteFilePath TreeViewModel,
+        TreeViewAbsolutePath TreeViewModel,
         ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers,
         ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers,
         IFileSystemProvider FileSystemProvider,

@@ -23,7 +23,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly Func<IAbsolutePath, Task> _setInputFileContentTreeViewRootFunc;
     private readonly Func<Task> _focusSearchInputElementFunc;
-    private readonly Func<List<(TreeViewStateKey treeViewStateKey, TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)>> _getSearchMatchTuplesFunc;
+    private readonly Func<List<(TreeViewStateKey treeViewStateKey, TreeViewAbsolutePath treeViewAbsoluteFilePath)>> _getSearchMatchTuplesFunc;
     private readonly ILuthetusCommonBackgroundTaskService _luthetusCommonBackgroundTaskService;
 
     public InputFileTreeViewKeyboardEventHandler(
@@ -36,7 +36,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         IEnvironmentProvider environmentProvider,
         Func<IAbsolutePath, Task> setInputFileContentTreeViewRootFunc,
         Func<Task> focusSearchInputElementFunc,
-        Func<List<(TreeViewStateKey treeViewStateKey, TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)>> getSearchMatchTuplesFunc,
+        Func<List<(TreeViewStateKey treeViewStateKey, TreeViewAbsolutePath treeViewAbsoluteFilePath)>> getSearchMatchTuplesFunc,
         ILuthetusCommonBackgroundTaskService luthetusCommonBackgroundTaskService)
         : base(treeViewService)
     {
@@ -122,7 +122,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
     {
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
-        if (activeNode is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)
+        if (activeNode is not TreeViewAbsolutePath treeViewAbsoluteFilePath)
             return;
 
         _setInputFileContentTreeViewRootFunc.Invoke(treeViewAbsoluteFilePath.Item);
@@ -174,7 +174,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
     {
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
-        var treeViewAbsoluteFilePath = activeNode as TreeViewAbsoluteFilePath;
+        var treeViewAbsoluteFilePath = activeNode as TreeViewAbsolutePath;
 
         if (treeViewAbsoluteFilePath is null)
             return;

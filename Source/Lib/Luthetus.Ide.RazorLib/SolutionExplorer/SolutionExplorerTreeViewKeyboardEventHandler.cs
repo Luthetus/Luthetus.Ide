@@ -114,7 +114,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
                 {
                 {
                     nameof(IInformativeNotificationRendererType.Message),
-                    $"Copied: {namespacePath.AbsoluteFilePath.NameWithExtension}"
+                    $"Copied: {namespacePath.AbsolutePath.NameWithExtension}"
                 },
                 },
                 TimeSpan.FromSeconds(3),
@@ -144,7 +144,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
                 {
                     {
                         nameof(IInformativeNotificationRendererType.Message),
-                        $"Cut: {namespacePath.AbsoluteFilePath.NameWithExtension}"
+                        $"Cut: {namespacePath.AbsolutePath.NameWithExtension}"
                     },
                 },
                 TimeSpan.FromSeconds(3),
@@ -166,7 +166,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
             return;
 
         var copyFileMenuOption = _menuOptionsFactory.CopyFile(
-            treeViewNamespacePath.Item.AbsoluteFilePath,
+            treeViewNamespacePath.Item.AbsolutePath,
             () => NotifyCopyCompleted(treeViewNamespacePath.Item));
 
         copyFileMenuOption.OnClick?.Invoke();
@@ -181,10 +181,10 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 
         MenuOptionRecord pasteMenuOptionRecord;
 
-        if (treeViewNamespacePath.Item.AbsoluteFilePath.IsDirectory)
+        if (treeViewNamespacePath.Item.AbsolutePath.IsDirectory)
         {
             pasteMenuOptionRecord = _menuOptionsFactory.PasteClipboard(
-                treeViewNamespacePath.Item.AbsoluteFilePath,
+                treeViewNamespacePath.Item.AbsolutePath,
                 async () =>
                 {
                     var localParentOfCutFile =
@@ -201,7 +201,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         else
         {
             var parentDirectory = (IAbsolutePath)treeViewNamespacePath
-                .Item.AbsoluteFilePath.AncestorDirectories.Last();
+                .Item.AbsolutePath.AncestorDirectories.Last();
 
             pasteMenuOptionRecord = _menuOptionsFactory.PasteClipboard(
                 parentDirectory,
@@ -232,7 +232,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         var parent = treeViewNamespacePath.Parent as TreeViewNamespacePath;
 
         MenuOptionRecord cutFileOptionRecord = _menuOptionsFactory.CutFile(
-            treeViewNamespacePath.Item.AbsoluteFilePath,
+            treeViewNamespacePath.Item.AbsolutePath,
             () => NotifyCutCompleted(
                 treeViewNamespacePath.Item,
                 parent));
@@ -250,7 +250,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
             return;
 
         _dispatcher.Dispatch(new EditorRegistry.OpenInEditorAction(
-            treeViewNamespacePath.Item.AbsoluteFilePath,
+            treeViewNamespacePath.Item.AbsolutePath,
             shouldSetFocusToEditor));
 
         return;

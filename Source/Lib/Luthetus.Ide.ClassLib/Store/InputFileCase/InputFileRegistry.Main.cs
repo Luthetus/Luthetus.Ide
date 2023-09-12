@@ -9,8 +9,8 @@ namespace Luthetus.Ide.ClassLib.Store.InputFileCase;
 [FeatureState]
 public partial record InputFileRegistry(
     int IndexInHistory,
-    ImmutableList<TreeViewAbsoluteFilePath> OpenedTreeViewModelHistory,
-    TreeViewAbsoluteFilePath? SelectedTreeViewModel,
+    ImmutableList<TreeViewAbsolutePath> OpenedTreeViewModelHistory,
+    TreeViewAbsolutePath? SelectedTreeViewModel,
     Func<IAbsolutePath?, Task> OnAfterSubmitFunc,
     Func<IAbsolutePath?, Task<bool>> SelectionIsValidFunc,
     ImmutableArray<InputFilePattern> InputFilePatterns,
@@ -20,7 +20,7 @@ public partial record InputFileRegistry(
 {
     private InputFileRegistry() : this(
         -1,
-        ImmutableList<TreeViewAbsoluteFilePath>.Empty,
+        ImmutableList<TreeViewAbsolutePath>.Empty,
         null,
         _ => Task.CompletedTask,
         _ => Task.FromResult(false),

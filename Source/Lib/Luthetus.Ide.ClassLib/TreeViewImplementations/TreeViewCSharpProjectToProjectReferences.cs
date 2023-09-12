@@ -40,7 +40,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
 
     public override int GetHashCode()
     {
-        return Item.CSharpProjectNamespacePath.AbsoluteFilePath
+        return Item.CSharpProjectNamespacePath.AbsolutePath
             .FormattedInput
             .GetHashCode();
     }
@@ -55,10 +55,10 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
     public override async Task LoadChildrenAsync()
     {
         var content = await FileSystemProvider.File.ReadAllTextAsync(
-            Item.CSharpProjectNamespacePath.AbsoluteFilePath.FormattedInput);
+            Item.CSharpProjectNamespacePath.AbsolutePath.FormattedInput);
 
         var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
-            new(Item.CSharpProjectNamespacePath.AbsoluteFilePath.FormattedInput),
+            new(Item.CSharpProjectNamespacePath.AbsolutePath.FormattedInput),
             content);
 
         var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
@@ -92,8 +92,8 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
                 .FirstOrDefault(x => x.Item1 == "Include");
 
             var referenceProjectAbsoluteFilePathString = AbsolutePath
-                .JoinAnAbsoluteFilePathAndRelativeFilePath(
-                    Item.CSharpProjectNamespacePath.AbsoluteFilePath,
+                .JoinAnAbsolutePathAndRelativePath(
+                    Item.CSharpProjectNamespacePath.AbsolutePath,
                     includeAttribute.Item2,
                     EnvironmentProvider);
 

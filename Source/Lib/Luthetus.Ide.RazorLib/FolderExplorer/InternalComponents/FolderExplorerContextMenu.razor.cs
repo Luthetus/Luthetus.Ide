@@ -51,9 +51,9 @@ public partial class FolderExplorerContextMenu : ComponentBase
         var treeViewModel = treeViewCommandParameter.TargetNode;
         var parentTreeViewModel = treeViewModel.Parent;
 
-        var parentTreeViewAbsoluteFilePath = parentTreeViewModel as TreeViewAbsoluteFilePath;
+        var parentTreeViewAbsoluteFilePath = parentTreeViewModel as TreeViewAbsolutePath;
 
-        if (treeViewModel is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePath)
+        if (treeViewModel is not TreeViewAbsolutePath treeViewAbsoluteFilePath)
             return MenuRecord.Empty;
 
         if (treeViewAbsoluteFilePath.Item.IsDirectory)
@@ -74,7 +74,7 @@ public partial class FolderExplorerContextMenu : ComponentBase
             menuRecords.ToImmutableArray());
     }
 
-    private MenuOptionRecord[] GetDirectoryMenuOptions(TreeViewAbsoluteFilePath treeViewModel)
+    private MenuOptionRecord[] GetDirectoryMenuOptions(TreeViewAbsolutePath treeViewModel)
     {
         return new[]
         {
@@ -102,8 +102,8 @@ public partial class FolderExplorerContextMenu : ComponentBase
     }
 
     private MenuOptionRecord[] GetFileMenuOptions(
-        TreeViewAbsoluteFilePath treeViewModel,
-        TreeViewAbsoluteFilePath? parentTreeViewModel)
+        TreeViewAbsolutePath treeViewModel,
+        TreeViewAbsolutePath? parentTreeViewModel)
     {
         return new[]
         {
@@ -130,7 +130,7 @@ public partial class FolderExplorerContextMenu : ComponentBase
     }
 
     private MenuOptionRecord[] GetDebugMenuOptions(
-        TreeViewAbsoluteFilePath treeViewModel)
+        TreeViewAbsolutePath treeViewModel)
     {
         return new MenuOptionRecord[]
         {
@@ -195,7 +195,7 @@ public partial class FolderExplorerContextMenu : ComponentBase
 
     private Task NotifyCutCompleted(
         IAbsolutePath absoluteFilePath,
-        TreeViewAbsoluteFilePath? parentTreeViewModel)
+        TreeViewAbsolutePath? parentTreeViewModel)
     {
         ParentOfCutFile = parentTreeViewModel;
 

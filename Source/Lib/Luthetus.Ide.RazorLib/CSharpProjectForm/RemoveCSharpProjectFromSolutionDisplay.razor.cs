@@ -14,7 +14,7 @@ public partial class RemoveCSharpProjectFromSolutionDisplay : ComponentBase,
     public MenuOptionWidgetParameters? MenuOptionWidgetParameters { get; set; }
 
     [Parameter, EditorRequired]
-    public IAbsolutePath AbsoluteFilePath { get; set; } = null!;
+    public IAbsolutePath AbsolutePath { get; set; } = null!;
     [Parameter, EditorRequired]
     public Action<IAbsolutePath> OnAfterSubmitAction { get; set; } = null!;
 
@@ -24,9 +24,9 @@ public partial class RemoveCSharpProjectFromSolutionDisplay : ComponentBase,
     protected override Task OnParametersSetAsync()
     {
         if (_previousAbsoluteFilePath is null ||
-            _previousAbsoluteFilePath.FormattedInput != AbsoluteFilePath.FormattedInput)
+            _previousAbsoluteFilePath.FormattedInput != AbsolutePath.FormattedInput)
         {
-            _previousAbsoluteFilePath = AbsoluteFilePath;
+            _previousAbsoluteFilePath = AbsolutePath;
         }
 
         return base.OnParametersSetAsync();
@@ -66,7 +66,7 @@ public partial class RemoveCSharpProjectFromSolutionDisplay : ComponentBase,
 
     private async Task RemoveCSharpProjectFromSolutionOnClick()
     {
-        var localAbsoluteFilePath = AbsoluteFilePath;
+        var localAbsoluteFilePath = AbsolutePath;
 
         if (MenuOptionWidgetParameters is not null)
         {

@@ -87,13 +87,13 @@ public partial class NugetPackageDisplay : FluxorComponent
             return;
         }
 
-        var parentDirectory = targetProject.AbsoluteFilePath.ParentDirectory;
+        var parentDirectory = targetProject.AbsolutePath.ParentDirectory;
 
         if (parentDirectory is null)
             return;
 
         var formattedCommand = DotNetCliFacts.FormatAddNugetPackageReferenceToProject(
-            targetProject.AbsoluteFilePath.FormattedInput,
+            targetProject.AbsolutePath.FormattedInput,
             targetNugetPackage.Id,
             targetNugetVersion);
 

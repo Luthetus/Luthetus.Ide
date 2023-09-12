@@ -54,7 +54,7 @@ public partial class InputFileSidebar : ComponentBase
 
     protected override void OnInitialized()
     {
-        var directoryHomeNode = new TreeViewAbsoluteFilePath(
+        var directoryHomeNode = new TreeViewAbsolutePath(
             EnvironmentProvider.HomeDirectoryAbsolutePath,
             LuthetusIdeComponentRenderers,
             LuthetusCommonComponentRenderers,
@@ -63,7 +63,7 @@ public partial class InputFileSidebar : ComponentBase
             true,
             false);
 
-        var directoryRootNode = new TreeViewAbsoluteFilePath(
+        var directoryRootNode = new TreeViewAbsolutePath(
             EnvironmentProvider.RootDirectoryAbsolutePath,
             LuthetusIdeComponentRenderers,
             LuthetusCommonComponentRenderers,

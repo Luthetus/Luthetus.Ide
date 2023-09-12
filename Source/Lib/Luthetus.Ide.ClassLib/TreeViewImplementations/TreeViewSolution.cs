@@ -40,13 +40,13 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolutionModel>
         if (obj is not TreeViewSolution treeViewSolution)
             return false;
 
-        return treeViewSolution.Item.NamespacePath.AbsoluteFilePath.FormattedInput ==
-               Item.NamespacePath.AbsoluteFilePath.FormattedInput;
+        return treeViewSolution.Item.NamespacePath.AbsolutePath.FormattedInput ==
+               Item.NamespacePath.AbsolutePath.FormattedInput;
     }
 
     public override int GetHashCode()
     {
-        return Item.NamespacePath.AbsoluteFilePath
+        return Item.NamespacePath.AbsolutePath
             .FormattedInput
             .GetHashCode();
     }

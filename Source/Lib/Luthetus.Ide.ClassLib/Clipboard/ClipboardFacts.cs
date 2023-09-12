@@ -32,7 +32,7 @@ public static class ClipboardFacts
     public const string CutCommand = "cut";
 
     // DataTypes
-    public const string AbsoluteFilePathDataType = "absolute-file-path";
+    public const string AbsolutePathDataType = "absolute-file-path";
 
     public static string FormatPhrase(
         string command,

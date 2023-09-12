@@ -8,9 +8,9 @@ using Luthetus.Ide.ClassLib.ComponentRenderers.Types.TreeViews;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementations;
 
-public class TreeViewAbsoluteFilePath : TreeViewWithType<IAbsolutePath>
+public class TreeViewAbsolutePath : TreeViewWithType<IAbsolutePath>
 {
-    public TreeViewAbsoluteFilePath(
+    public TreeViewAbsolutePath(
         IAbsolutePath absoluteFilePath,
         ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
         ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
@@ -39,7 +39,7 @@ public class TreeViewAbsoluteFilePath : TreeViewWithType<IAbsolutePath>
         if (obj is not TreeViewNamespacePath treeViewSolutionExplorer)
             return false;
 
-        return treeViewSolutionExplorer.Item.AbsoluteFilePath
+        return treeViewSolutionExplorer.Item.AbsolutePath
                    .FormattedInput ==
                Item.FormattedInput;
     }
@@ -52,11 +52,11 @@ public class TreeViewAbsoluteFilePath : TreeViewWithType<IAbsolutePath>
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            LuthetusIdeComponentRenderers.LuthetusIdeTreeViews.TreeViewAbsoluteFilePathRendererType!,
+            LuthetusIdeComponentRenderers.LuthetusIdeTreeViews.TreeViewAbsolutePathRendererType!,
             new Dictionary<string, object?>
             {
             {
-                nameof(ITreeViewAbsoluteFilePathRendererType.TreeViewAbsoluteFilePath),
+                nameof(ITreeViewAbsolutePathRendererType.TreeViewAbsolutePath),
                 this
             },
             });

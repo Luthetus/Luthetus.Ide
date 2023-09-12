@@ -4,7 +4,7 @@ public class LuthetusIdeTreeViews
 {
     public LuthetusIdeTreeViews(
         Type? treeViewNamespacePathRendererType,
-        Type? treeViewAbsoluteFilePathRendererType,
+        Type? treeViewAbsolutePathRendererType,
         Type? treeViewGitFileRendererType,
         Type? treeViewCompilerServiceRendererType,
         Type? treeViewCSharpProjectDependenciesRendererType,
@@ -15,7 +15,7 @@ public class LuthetusIdeTreeViews
         Type? treeViewSolutionFolderRendererType)
     {
         TreeViewNamespacePathRendererType = treeViewNamespacePathRendererType;
-        TreeViewAbsoluteFilePathRendererType = treeViewAbsoluteFilePathRendererType;
+        TreeViewAbsolutePathRendererType = treeViewAbsolutePathRendererType;
         TreeViewGitFileRendererType = treeViewGitFileRendererType;
         TreeViewCompilerServiceRendererType = treeViewCompilerServiceRendererType;
         TreeViewCSharpProjectDependenciesRendererType = treeViewCSharpProjectDependenciesRendererType;
@@ -33,7 +33,7 @@ public class LuthetusIdeTreeViews
     public Type? TreeViewCSharpProjectToProjectReferencesRendererType { get; }
     public Type? TreeViewLightWeightNugetPackageRecordRendererType { get; }
     public Type? TreeViewCSharpProjectToProjectReferenceRendererType { get; }
-    public Type? TreeViewAbsoluteFilePathRendererType { get; }
+    public Type? TreeViewAbsolutePathRendererType { get; }
     public Type? TreeViewGitFileRendererType { get; }
     public Type? TreeViewCompilerServiceRendererType { get; }
 }

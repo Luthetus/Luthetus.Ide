@@ -67,7 +67,7 @@ public partial record FolderExplorerRegistry
                     IsLoadingFolderExplorer = true
                 }));
 
-            var rootNode = new TreeViewAbsoluteFilePath(
+            var rootNode = new TreeViewAbsolutePath(
                 folderExplorerState.AbsoluteFilePath,
                 _luthetusIdeComponentRenderers,
                 _luthetusCommonComponentRenderers,

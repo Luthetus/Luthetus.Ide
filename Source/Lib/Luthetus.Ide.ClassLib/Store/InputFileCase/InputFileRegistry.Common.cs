@@ -12,7 +12,7 @@ public partial record InputFileRegistry
     public bool CanMoveForwardsInHistory => IndexInHistory <
         OpenedTreeViewModelHistory.Count - 1;
 
-    public TreeViewAbsoluteFilePath? GetOpenedTreeView()
+    public TreeViewAbsolutePath? GetOpenedTreeView()
     {
         if (IndexInHistory == -1 ||
             IndexInHistory >= OpenedTreeViewModelHistory.Count)
@@ -23,13 +23,13 @@ public partial record InputFileRegistry
 
     private static InputFileRegistry NewOpenedTreeViewModelHistory(
         InputFileRegistry inInputFileState,
-        TreeViewAbsoluteFilePath selectedTreeViewModel,
+        TreeViewAbsolutePath selectedTreeViewModel,
         ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
         ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider)
     {
-        var selectionClone = new TreeViewAbsoluteFilePath(
+        var selectionClone = new TreeViewAbsolutePath(
             selectedTreeViewModel.Item,
             luthetusIdeComponentRenderers,
             luthetusCommonComponentRenderers,

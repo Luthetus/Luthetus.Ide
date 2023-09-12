@@ -132,7 +132,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
 
     private Task NotifyCutCompleted(
         IAbsolutePath absoluteFilePath,
-        TreeViewAbsoluteFilePath? parentTreeViewModel)
+        TreeViewAbsolutePath? parentTreeViewModel)
     {
         SolutionExplorerContextMenu.ParentOfCutFile = parentTreeViewModel;
 
@@ -164,7 +164,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
     {
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
-        if (activeNode is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePathPath)
+        if (activeNode is not TreeViewAbsolutePath treeViewAbsoluteFilePathPath)
             return;
 
         var copyFileMenuOption = _menuOptionsFactory.CopyFile(
@@ -178,7 +178,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
     {
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
-        if (activeNode is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePathPath)
+        if (activeNode is not TreeViewAbsolutePath treeViewAbsoluteFilePathPath)
             return Task.CompletedTask;
 
         MenuOptionRecord pasteMenuOptionRecord;
@@ -227,10 +227,10 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
     {
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
-        if (activeNode is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePathPath)
+        if (activeNode is not TreeViewAbsolutePath treeViewAbsoluteFilePathPath)
             return;
 
-        var parent = treeViewAbsoluteFilePathPath.Parent as TreeViewAbsoluteFilePath;
+        var parent = treeViewAbsoluteFilePathPath.Parent as TreeViewAbsolutePath;
 
         MenuOptionRecord cutFileOptionRecord = _menuOptionsFactory.CutFile(
             treeViewAbsoluteFilePathPath.Item,
@@ -247,7 +247,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
     {
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
-        if (activeNode is not TreeViewAbsoluteFilePath treeViewAbsoluteFilePathPath)
+        if (activeNode is not TreeViewAbsolutePath treeViewAbsoluteFilePathPath)
             return;
 
         _dispatcher.Dispatch(new EditorRegistry.OpenInEditorAction(

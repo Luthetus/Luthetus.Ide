@@ -13,7 +13,7 @@ public partial class TreeViewHelper
         this TreeViewNamespacePath cSharpProjectTreeView)
     {
         var parentDirectoryOfCSharpProject = (IAbsolutePath)
-            cSharpProjectTreeView.Item.AbsoluteFilePath.AncestorDirectories
+            cSharpProjectTreeView.Item.AbsolutePath.AncestorDirectories
                 .Last();
 
         var parentAbsoluteFilePathString = parentDirectoryOfCSharpProject.FormattedInput;
@@ -73,11 +73,11 @@ public partial class TreeViewHelper
         }
 
         foundUniqueDirectories = foundUniqueDirectories
-            .OrderBy(x => x.Item.AbsoluteFilePath.NameNoExtension)
+            .OrderBy(x => x.Item.AbsolutePath.NameNoExtension)
             .ToList();
 
         foundDefaultDirectories = foundDefaultDirectories
-            .OrderBy(x => x.Item.AbsoluteFilePath.NameNoExtension)
+            .OrderBy(x => x.Item.AbsolutePath.NameNoExtension)
             .ToList();
 
         var childFileTreeViewModels =

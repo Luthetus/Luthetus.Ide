@@ -11,10 +11,10 @@ public static class DotNetCliFacts
     public const string DOT_NET_CLI_TARGET_FILE_NAME = "dotnet";
 
     public static FormattedCommand FormatStartProjectWithoutDebugging(
-        IAbsolutePath projectAbsoluteFilePath)
+        IAbsolutePath projectAbsolutePath)
     {
         return FormatStartProjectWithoutDebugging(
-            projectAbsoluteFilePath.FormattedInput);
+            projectAbsolutePath.FormattedInput);
     }
 
     public static FormattedCommand FormatStartProjectWithoutDebugging(
@@ -66,7 +66,7 @@ public static class DotNetCliFacts
     }
 
     public static FormattedCommand FormatAddExistingProjectToSolution(
-        string solutionAbsoluteFilePathString,
+        string solutionAbsolutePathString,
         string cSharpProjectPath)
     {
         return new FormattedCommand(
@@ -74,29 +74,29 @@ public static class DotNetCliFacts
             new[]
             {
                 "sln",
-                solutionAbsoluteFilePathString,
+                solutionAbsolutePathString,
                 "add",
                 cSharpProjectPath
             });
     }
 
     public static FormattedCommand FormatRemoveCSharpProjectReferenceFromSolutionAction(
-        string solutionAbsoluteFilePathString,
-        string cSharpProjectAbsoluteFilePathString)
+        string solutionAbsolutePathString,
+        string cSharpProjectAbsolutePathString)
     {
         return new FormattedCommand(
             DOT_NET_CLI_TARGET_FILE_NAME,
             new[]
             {
                 "sln",
-                solutionAbsoluteFilePathString,
+                solutionAbsolutePathString,
                 "remove",
-                cSharpProjectAbsoluteFilePathString
+                cSharpProjectAbsolutePathString
             });
     }
 
     public static FormattedCommand FormatAddNugetPackageReferenceToProject(
-        string cSharpProjectAbsoluteFilePathString,
+        string cSharpProjectAbsolutePathString,
         string nugetPackageId,
         string nugetPackageVersion)
     {
@@ -105,7 +105,7 @@ public static class DotNetCliFacts
             new[]
             {
                 "add",
-                cSharpProjectAbsoluteFilePathString,
+                cSharpProjectAbsolutePathString,
                 "package",
                 nugetPackageId,
                 "--version",
@@ -114,7 +114,7 @@ public static class DotNetCliFacts
     }
 
     public static FormattedCommand FormatRemoveNugetPackageReferenceFromProject(
-        string cSharpProjectAbsoluteFilePathString,
+        string cSharpProjectAbsolutePathString,
         string nugetPackageId)
     {
         return new FormattedCommand(
@@ -122,45 +122,45 @@ public static class DotNetCliFacts
             new[]
             {
                 "remove",
-                cSharpProjectAbsoluteFilePathString,
+                cSharpProjectAbsolutePathString,
                 "package",
                 nugetPackageId
             });
     }
 
     public static FormattedCommand FormatAddProjectToProjectReference(
-        string receivingProjectAbsoluteFilePathString,
-        string referenceProjectAbsoluteFilePathString)
+        string receivingProjectAbsolutePathString,
+        string referenceProjectAbsolutePathString)
     {
         return new FormattedCommand(
             DOT_NET_CLI_TARGET_FILE_NAME,
             new[]
             {
                 "add",
-                receivingProjectAbsoluteFilePathString,
+                receivingProjectAbsolutePathString,
                 "reference",
-                referenceProjectAbsoluteFilePathString
+                referenceProjectAbsolutePathString
             });
     }
 
     public static FormattedCommand FormatRemoveProjectToProjectReference(
-        string modifyProjectAbsoluteFilePathString,
-        string referenceProjectAbsoluteFilePathString)
+        string modifyProjectAbsolutePathString,
+        string referenceProjectAbsolutePathString)
     {
         return new FormattedCommand(
             DOT_NET_CLI_TARGET_FILE_NAME,
             new[]
             {
                 "remove",
-                modifyProjectAbsoluteFilePathString,
+                modifyProjectAbsolutePathString,
                 "reference",
-                referenceProjectAbsoluteFilePathString
+                referenceProjectAbsolutePathString
             });
     }
 
     public static FormattedCommand FormatMoveProjectToSolutionFolder(
-        string solutionAbsoluteFilePathString,
-        string projectToMoveAbsoluteFilePathString,
+        string solutionAbsolutePathString,
+        string projectToMoveAbsolutePathString,
         string solutionFolderPath)
     {
         return new FormattedCommand(
@@ -168,9 +168,9 @@ public static class DotNetCliFacts
             new[]
             {
                 "sln",
-                solutionAbsoluteFilePathString,
+                solutionAbsolutePathString,
                 "add",
-                projectToMoveAbsoluteFilePathString,
+                projectToMoveAbsolutePathString,
                 "--solution-folder",
                 solutionFolderPath,
             });

@@ -1,8 +1,8 @@
 ﻿using Luthetus.Ide.ClassLib.FileConstants;
 using System.Text;
 using System.Collections.Immutable;
-using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
 using Luthetus.Common.RazorLib.Namespaces;
+using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 
 namespace Luthetus.Ide.ClassLib.FileTemplates;
 
@@ -75,37 +75,37 @@ public static class FileTemplateFacts
             return templateBuilder.ToString();
         }
 
-        var emptyFileAbsoluteFilePathString = fileTemplateParameter
-                                                  .ParentDirectory.AbsoluteFilePath
+        var emptyFileAbsolutePathString = fileTemplateParameter
+                                                  .ParentDirectory.AbsolutePath
                                                   .FormattedInput +
                                               fileTemplateParameter.Filename;
 
-        // Create AbsoluteFilePath as to leverage it for
+        // Create AbsolutePath as to leverage it for
         // knowing the file extension and other details
-        var emptyFileAbsoluteFilePath = new AbsolutePath(
-            emptyFileAbsoluteFilePathString,
+        var emptyFileAbsolutePath = new AbsolutePath(
+            emptyFileAbsolutePathString,
             false,
             fileTemplateParameter.EnvironmentProvider);
 
         var templatedFileContent = GetContent(
-            emptyFileAbsoluteFilePath.NameNoExtension,
+            emptyFileAbsolutePath.NameNoExtension,
             fileTemplateParameter.ParentDirectory.Namespace);
 
-        var templatedFileFileAbsoluteFilePathString = fileTemplateParameter
-                                                     .ParentDirectory.AbsoluteFilePath
+        var templatedFileAbsolutePathString = fileTemplateParameter
+                                                     .ParentDirectory.AbsolutePath
                                                      .FormattedInput +
-                                                 emptyFileAbsoluteFilePath.NameNoExtension +
+                                                 emptyFileAbsolutePath.NameNoExtension +
                                                  '.' +
                                                  ExtensionNoPeriodFacts.C_SHARP_CLASS;
 
-        var templatedFileAbsoluteFilePath = new AbsolutePath(
-            templatedFileFileAbsoluteFilePathString,
+        var templatedFileAbsolutePath = new AbsolutePath(
+            templatedFileAbsolutePathString,
             false,
             fileTemplateParameter.EnvironmentProvider);
 
         var templatedFileNamespacePath = new NamespacePath(
             fileTemplateParameter.ParentDirectory.Namespace,
-            templatedFileAbsoluteFilePath);
+            templatedFileAbsolutePath);
 
         return new FileTemplateResult(templatedFileNamespacePath, templatedFileContent);
     }
@@ -143,36 +143,36 @@ public static class FileTemplateFacts
             return templateBuilder.ToString();
         }
 
-        var emptyFileAbsoluteFilePathString = fileTemplateParameter
-                                                  .ParentDirectory.AbsoluteFilePath
+        var emptyFileAbsolutePathString = fileTemplateParameter
+                                                  .ParentDirectory.AbsolutePath
                                                   .FormattedInput +
                                               fileTemplateParameter.Filename;
 
-        // Create AbsoluteFilePath as to leverage it for
+        // Create AbsolutePath as to leverage it for
         // knowing the file extension and other details
-        var emptyFileAbsoluteFilePath = new AbsolutePath(
-            emptyFileAbsoluteFilePathString,
+        var emptyFileAbsolutePath = new AbsolutePath(
+            emptyFileAbsolutePathString,
             false,
             fileTemplateParameter.EnvironmentProvider);
 
         var templatedFileContent = GetContent(
-            emptyFileAbsoluteFilePath.NameNoExtension);
+            emptyFileAbsolutePath.NameNoExtension);
 
-        var templatedFileFileAbsoluteFilePathString = fileTemplateParameter
-                                                     .ParentDirectory.AbsoluteFilePath
+        var templatedFileAbsolutePathString = fileTemplateParameter
+                                                     .ParentDirectory.AbsolutePath
                                                      .FormattedInput +
-                                                 emptyFileAbsoluteFilePath.NameNoExtension +
+                                                 emptyFileAbsolutePath.NameNoExtension +
                                                  '.' +
                                                  ExtensionNoPeriodFacts.RAZOR_MARKUP;
 
-        var templatedFileAbsoluteFilePath = new AbsolutePath(
-            templatedFileFileAbsoluteFilePathString,
+        var templatedFileAbsolutePath = new AbsolutePath(
+            templatedFileAbsolutePathString,
             false,
             fileTemplateParameter.EnvironmentProvider);
 
         var templatedFileNamespacePath = new NamespacePath(
             fileTemplateParameter.ParentDirectory.Namespace,
-            templatedFileAbsoluteFilePath);
+            templatedFileAbsolutePath);
 
         return new FileTemplateResult(templatedFileNamespacePath, templatedFileContent);
     }
@@ -223,47 +223,47 @@ public static class FileTemplateFacts
             return templateBuilder.ToString();
         }
 
-        var emptyFileAbsoluteFilePathString = fileTemplateParameter
-                                                  .ParentDirectory.AbsoluteFilePath
+        var emptyFileAbsolutePathString = fileTemplateParameter
+                                                  .ParentDirectory.AbsolutePath
                                                   .FormattedInput +
                                               fileTemplateParameter.Filename;
 
-        // Create AbsoluteFilePath as to leverage it for
+        // Create AbsolutePath as to leverage it for
         // knowing the file extension and other details
-        var emptyFileAbsoluteFilePath = new AbsolutePath(
-            emptyFileAbsoluteFilePathString,
+        var emptyFileAbsolutePath = new AbsolutePath(
+            emptyFileAbsolutePathString,
             false,
             fileTemplateParameter.EnvironmentProvider);
 
         var templatedFileContent = GetContent(
-            emptyFileAbsoluteFilePath.NameNoExtension,
+            emptyFileAbsolutePath.NameNoExtension,
             fileTemplateParameter.ParentDirectory.Namespace);
 
-        var templatedFileFileAbsoluteFilePathString = fileTemplateParameter
-                                                     .ParentDirectory.AbsoluteFilePath
+        var templatedFileAbsolutePathString = fileTemplateParameter
+                                                     .ParentDirectory.AbsolutePath
                                                      .FormattedInput +
-                                                 emptyFileAbsoluteFilePath.NameNoExtension;
+                                                 emptyFileAbsolutePath.NameNoExtension;
 
-        if (templatedFileFileAbsoluteFilePathString.EndsWith(
+        if (templatedFileAbsolutePathString.EndsWith(
                 '.' + ExtensionNoPeriodFacts.RAZOR_MARKUP))
         {
-            templatedFileFileAbsoluteFilePathString +=
+            templatedFileAbsolutePathString +=
                 '.' + ExtensionNoPeriodFacts.C_SHARP_CLASS;
         }
         else
         {
-            templatedFileFileAbsoluteFilePathString +=
+            templatedFileAbsolutePathString +=
                 '.' + ExtensionNoPeriodFacts.RAZOR_CODEBEHIND;
         }
 
-        var templatedFileAbsoluteFilePath = new AbsolutePath(
-            templatedFileFileAbsoluteFilePathString,
+        var templatedFileAbsolutePath = new AbsolutePath(
+            templatedFileAbsolutePathString,
             false,
             fileTemplateParameter.EnvironmentProvider);
 
         var templatedFileNamespacePath = new NamespacePath(
             fileTemplateParameter.ParentDirectory.Namespace,
-            templatedFileAbsoluteFilePath);
+            templatedFileAbsolutePath);
 
         return new FileTemplateResult(templatedFileNamespacePath, templatedFileContent);
     }

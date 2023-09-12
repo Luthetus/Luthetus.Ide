@@ -15,7 +15,7 @@ public partial class TreeViewHelper
             return new();
 
         var parentDirectoryOfRazorMarkup = (IAbsolutePath)
-            razorMarkupTreeView.Item.AbsoluteFilePath.AncestorDirectories
+            razorMarkupTreeView.Item.AbsolutePath.AncestorDirectories
                 .Last();
 
         var parentAbsoluteFilePathString = parentDirectoryOfRazorMarkup.FormattedInput;
@@ -64,17 +64,17 @@ public partial class TreeViewHelper
 
         var matches = new[]
         {
-        razorMarkupTreeView.Item.AbsoluteFilePath.NameWithExtension +
+        razorMarkupTreeView.Item.AbsolutePath.NameWithExtension +
             '.' +
             ExtensionNoPeriodFacts.C_SHARP_CLASS,
-        razorMarkupTreeView.Item.AbsoluteFilePath.NameWithExtension +
+        razorMarkupTreeView.Item.AbsolutePath.NameWithExtension +
             '.' +
             ExtensionNoPeriodFacts.CSS
     };
 
         var relatedFiles = siblingsAndSelfTreeViews.Where(x =>
                 x.UntypedItem is NamespacePath namespacePath &&
-                matches.Contains(namespacePath.AbsoluteFilePath.NameWithExtension))
+                matches.Contains(namespacePath.AbsolutePath.NameWithExtension))
             .ToArray();
 
         if (!relatedFiles.Any())

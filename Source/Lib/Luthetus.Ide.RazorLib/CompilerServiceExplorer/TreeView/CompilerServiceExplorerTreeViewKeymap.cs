@@ -105,7 +105,7 @@ public class CompilerServiceExplorerTreeViewKeyboardEventHandler : TreeViewKeybo
                 {
                 {
                     nameof(IInformativeNotificationRendererType.Message),
-                    $"Copied: {namespacePath.AbsoluteFilePath.NameWithExtension}"
+                    $"Copied: {namespacePath.AbsolutePath.NameWithExtension}"
                 },
                 },
                 TimeSpan.FromSeconds(3),
@@ -129,7 +129,7 @@ public class CompilerServiceExplorerTreeViewKeyboardEventHandler : TreeViewKeybo
             return;
 
         _dispatcher.Dispatch(new EditorRegistry.OpenInEditorAction(
-            treeViewNamespacePath.Item.AbsoluteFilePath,
+            treeViewNamespacePath.Item.AbsolutePath,
             shouldSetFocusToEditor));
 
         return;
