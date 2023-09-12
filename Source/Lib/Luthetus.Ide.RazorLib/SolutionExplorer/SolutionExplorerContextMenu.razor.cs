@@ -223,7 +223,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             new MenuOptionRecord(
                 "Set as Startup Project",
                 MenuOptionKind.Other,
-                () => Dispatcher.Dispatch(new ProgramExecutionRegistry.SetStartupProjectAbsoluteFilePathAction(
+                () => Dispatcher.Dispatch(new ProgramExecutionRegistry.SetStartupProjectAbsolutePathAction(
                     treeViewModel.Item.AbsolutePath))),
             MenuOptionsFactory.RemoveCSharpProjectReferenceFromSolution(
                 treeViewSolution,

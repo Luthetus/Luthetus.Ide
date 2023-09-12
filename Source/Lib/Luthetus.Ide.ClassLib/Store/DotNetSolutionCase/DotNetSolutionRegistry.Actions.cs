@@ -9,7 +9,7 @@ public partial record DotNetSolutionRegistry
 
     public record DisposeAction(DotNetSolutionModelKey DotNetSolutionModelKey);
 
-    public record SetDotNetSolutionAction(IAbsolutePath SolutionAbsoluteFilePath);
+    public record SetDotNetSolutionAction(IAbsolutePath SolutionAbsolutePath);
 
     public record WithAction(Func<DotNetSolutionRegistry, DotNetSolutionRegistry> WithFunc);
 
@@ -19,7 +19,7 @@ public partial record DotNetSolutionRegistry
         DotNetSolutionModelKey DotNetSolutionModelKey,
         string LocalProjectTemplateShortName,
         string LocalCSharpProjectName,
-        IAbsolutePath CSharpProjectAbsoluteFilePath,
+        IAbsolutePath CSharpProjectAbsolutePath,
         IEnvironmentProvider EnvironmentProvider);
 
     private record ParseDotNetSolutionAction;

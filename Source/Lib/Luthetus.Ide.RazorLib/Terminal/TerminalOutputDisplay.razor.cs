@@ -168,7 +168,7 @@ public partial class TerminalOutputDisplay : FluxorComponent
 
             if (targetFileName.StartsWith('.'))
             {
-                targetFileName = (generalTerminalSession.WorkingDirectoryAbsoluteFilePathString ?? string.Empty) +
+                targetFileName = (generalTerminalSession.WorkingDirectoryAbsolutePathString ?? string.Empty) +
                                  targetFileName;
             }
 

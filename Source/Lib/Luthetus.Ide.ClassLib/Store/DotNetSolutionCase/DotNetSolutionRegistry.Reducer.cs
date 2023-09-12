@@ -64,7 +64,7 @@ public partial record DotNetSolutionRegistry
 
             var relativePathFromSlnToProject = AbsolutePath.ConstructRelativePathFromTwoAbsolutePaths(
                 dotNetSolutionModel.NamespacePath.AbsolutePath,
-                addExistingProjectToSolutionAction.CSharpProjectAbsoluteFilePath,
+                addExistingProjectToSolutionAction.CSharpProjectAbsolutePath,
                 addExistingProjectToSolutionAction.EnvironmentProvider);
 
             var projectIdGuid = Guid.NewGuid();
@@ -75,7 +75,7 @@ public partial record DotNetSolutionRegistry
                 relativePathFromSlnToProject,
                 projectIdGuid);
 
-            cSharpProject.SetAbsolutePath(addExistingProjectToSolutionAction.CSharpProjectAbsoluteFilePath);
+            cSharpProject.SetAbsolutePath(addExistingProjectToSolutionAction.CSharpProjectAbsolutePath);
 
             var dotNetSolutionBuilder = dotNetSolutionModel.AddDotNetProject(
                 cSharpProject,

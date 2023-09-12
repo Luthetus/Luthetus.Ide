@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
+﻿using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 using Luthetus.Common.RazorLib.Namespaces;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 
@@ -9,27 +9,27 @@ public partial class TreeViewHelper
     public static async Task<List<TreeViewNoType>> DirectoryLoadChildrenAsync(
         this TreeViewNamespacePath directoryTreeView)
     {
-        var directoryAbsoluteFilePathString = directoryTreeView.Item.AbsolutePath
+        var directoryAbsolutePathString = directoryTreeView.Item.AbsolutePath
             .FormattedInput;
 
         var childDirectoryTreeViewModels =
             (await directoryTreeView.FileSystemProvider
-                .Directory.GetDirectoriesAsync(directoryAbsoluteFilePathString))
-                .OrderBy(filePathString => filePathString)
+                .Directory.GetDirectoriesAsync(directoryAbsolutePathString))
+                .OrderBy(pathString => pathString)
                 .Select(x =>
                 {
-                    var absoluteFilePath = new AbsolutePath(
+                    var absolutePath = new AbsolutePath(
                         x,
                         true,
                         directoryTreeView.EnvironmentProvider);
 
                     var namespaceString = directoryTreeView.Item.Namespace +
                                           NAMESPACE_DELIMITER +
-                                          absoluteFilePath.NameNoExtension;
+                                          absolutePath.NameNoExtension;
 
                     var namespacePath = new NamespacePath(
                         namespaceString,
-                        absoluteFilePath);
+                        absolutePath);
 
                     return (TreeViewNoType)new TreeViewNamespacePath(
                         namespacePath,
@@ -46,11 +46,11 @@ public partial class TreeViewHelper
 
         var childFileTreeViewModels =
             (await directoryTreeView.FileSystemProvider
-                .Directory.GetFilesAsync(directoryAbsoluteFilePathString))
-                .OrderBy(filePathString => filePathString)
+                .Directory.GetFilesAsync(directoryAbsolutePathString))
+                .OrderBy(pathString => pathString)
                 .Select(x =>
                 {
-                    var absoluteFilePath = new AbsolutePath(
+                    var absolutePath = new AbsolutePath(
                         x,
                         false,
                         directoryTreeView.EnvironmentProvider);
@@ -59,7 +59,7 @@ public partial class TreeViewHelper
 
                     var namespacePath = new NamespacePath(
                         namespaceString,
-                        absoluteFilePath);
+                        absolutePath);
 
                     return (TreeViewNoType)new TreeViewNamespacePath(
                         namespacePath,
@@ -94,22 +94,22 @@ public partial class TreeViewHelper
     public static async Task<List<TreeViewNoType>> LoadChildrenForDirectoryAsync(
         TreeViewAbsolutePath directoryTreeView)
     {
-        var directoryAbsoluteFilePathString = directoryTreeView.Item
+        var directoryAbsolutePathString = directoryTreeView.Item
             .FormattedInput;
 
         var childDirectoryTreeViewModels =
             (await directoryTreeView.FileSystemProvider
-                .Directory.GetDirectoriesAsync(directoryAbsoluteFilePathString))
-                .OrderBy(filePathString => filePathString)
+                .Directory.GetDirectoriesAsync(directoryAbsolutePathString))
+                .OrderBy(pathString => pathString)
                 .Select(x =>
                 {
-                    var absoluteFilePath = new AbsolutePath(
+                    var absolutePath = new AbsolutePath(
                         x,
                         true,
                         directoryTreeView.EnvironmentProvider);
 
-                    return (TreeViewNoType)new TreeViewAbsoluteFilePath(
-                        absoluteFilePath,
+                    return (TreeViewNoType)new TreeViewAbsolutePath(
+                        absolutePath,
                         directoryTreeView.LuthetusIdeComponentRenderers,
                         directoryTreeView.LuthetusCommonComponentRenderers,
                         directoryTreeView.FileSystemProvider,
@@ -123,17 +123,17 @@ public partial class TreeViewHelper
 
         var childFileTreeViewModels =
             (await directoryTreeView.FileSystemProvider
-                .Directory.GetFilesAsync(directoryAbsoluteFilePathString))
-                .OrderBy(filePathString => filePathString)
+                .Directory.GetFilesAsync(directoryAbsolutePathString))
+                .OrderBy(pathString => pathString)
                 .Select(x =>
                 {
-                    var absoluteFilePath = new AbsolutePath(
+                    var absolutePath = new AbsolutePath(
                         x,
                         false,
                         directoryTreeView.EnvironmentProvider);
 
-                    return (TreeViewNoType)new TreeViewAbsoluteFilePath(
-                        absoluteFilePath,
+                    return (TreeViewNoType)new TreeViewAbsolutePath(
+                        absolutePath,
                         directoryTreeView.LuthetusIdeComponentRenderers,
                         directoryTreeView.LuthetusCommonComponentRenderers,
                         directoryTreeView.FileSystemProvider,

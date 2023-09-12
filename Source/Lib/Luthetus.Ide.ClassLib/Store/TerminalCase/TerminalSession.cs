@@ -35,7 +35,7 @@ public class TerminalSession
     private readonly Dictionary<TerminalCommandKey, StringBuilder> _standardOutBuilderMap = new();
 
     public TerminalSession(
-        string? workingDirectoryAbsoluteFilePathString,
+        string? workingDirectoryAbsolutePathString,
         IDispatcher dispatcher,
         IFileSystemProvider fileSystemProvider,
         ILuthetusIdeTerminalBackgroundTaskService terminalBackgroundTaskQueue,
@@ -45,7 +45,7 @@ public class TerminalSession
         _fileSystemProvider = fileSystemProvider;
         _terminalBackgroundTaskQueue = terminalBackgroundTaskQueue;
         _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
-        WorkingDirectoryAbsoluteFilePathString = workingDirectoryAbsoluteFilePathString;
+        WorkingDirectoryAbsolutePathString = workingDirectoryAbsolutePathString;
     }
 
     public TerminalSessionKey TerminalSessionKey { get; init; } =
@@ -54,7 +54,7 @@ public class TerminalSession
     public TextEditorModelKey TextEditorModelKey => new(TerminalSessionKey.Guid);
     public TextEditorViewModelKey TextEditorViewModelKey => new(TerminalSessionKey.Guid);
 
-    public string? WorkingDirectoryAbsoluteFilePathString { get; private set; }
+    public string? WorkingDirectoryAbsolutePathString { get; private set; }
 
     public TerminalCommand? ActiveTerminalCommand { get; private set; }
 
@@ -88,13 +88,13 @@ public class TerminalSession
             async cancellationToken =>
             {
                 if (terminalCommand.ChangeWorkingDirectoryTo is not null)
-                    WorkingDirectoryAbsoluteFilePathString = terminalCommand.ChangeWorkingDirectoryTo;
+                    WorkingDirectoryAbsolutePathString = terminalCommand.ChangeWorkingDirectoryTo;
 
                 if (terminalCommand.FormattedCommand.TargetFileName == "cd" &&
                     terminalCommand.FormattedCommand.Arguments.Any())
                 {
                     // TODO: Don't keep this logic as it is hacky. I'm trying to set myself up to be able to run "gcc" to compile ".c" files. Then I can work on adding symbol related logic like "go to definition" or etc.
-                    WorkingDirectoryAbsoluteFilePathString = terminalCommand.FormattedCommand.Arguments.ElementAt(0);
+                    WorkingDirectoryAbsolutePathString = terminalCommand.FormattedCommand.Arguments.ElementAt(0);
                 }
 
                 _terminalCommandsHistory.Add(terminalCommand);
@@ -110,10 +110,10 @@ public class TerminalSession
                     command = command
                         .WithWorkingDirectory(terminalCommand.ChangeWorkingDirectoryTo);
                 }
-                else if (WorkingDirectoryAbsoluteFilePathString is not null)
+                else if (WorkingDirectoryAbsolutePathString is not null)
                 {
                     command = command
-                        .WithWorkingDirectory(WorkingDirectoryAbsoluteFilePathString);
+                        .WithWorkingDirectory(WorkingDirectoryAbsolutePathString);
                 }
 
                 // Push-based event stream
@@ -137,7 +137,7 @@ public class TerminalSession
                                 {
                                     case StartedCommandEvent started:
                                         _standardOutBuilderMap[terminalCommandKey].AppendLine(
-                                            $"> {WorkingDirectoryAbsoluteFilePathString} (PID:{started.ProcessId}) {terminalCommand.FormattedCommand.Value}");
+                                            $"> {WorkingDirectoryAbsolutePathString} (PID:{started.ProcessId}) {terminalCommand.FormattedCommand.Value}");
 
                                         DispatchNewStateKey();
                                         break;

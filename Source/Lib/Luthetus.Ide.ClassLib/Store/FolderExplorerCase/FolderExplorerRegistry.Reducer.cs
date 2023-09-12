@@ -13,7 +13,7 @@ public partial record FolderExplorerRegistry
         {
             return inFolderExplorerState with
             {
-                AbsoluteFilePath = setFolderExplorerStateAction.FolderAbsoluteFilePath
+                AbsolutePath = setFolderExplorerStateAction.FolderAbsolutePath
             };
         }
     }

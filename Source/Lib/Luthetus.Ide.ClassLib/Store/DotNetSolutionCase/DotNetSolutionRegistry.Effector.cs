@@ -6,10 +6,10 @@ using Luthetus.TextEditor.RazorLib.HostedServiceCase.CompilerServiceCase;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
-using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
 using Luthetus.Common.RazorLib.Namespaces;
 using Luthetus.CompilerServices.Lang.DotNetSolution;
 using Luthetus.Common.RazorLib.ComponentRenderers;
+using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 
 namespace Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 
@@ -48,20 +48,20 @@ public partial record DotNetSolutionRegistry
             SetDotNetSolutionAction setDotNetSolutionAction,
             IDispatcher dispatcher)
         {
-            var dotNetSolutionAbsoluteFilePathString = setDotNetSolutionAction.SolutionAbsoluteFilePath.FormattedInput;
+            var dotNetSolutionAbsolutePathString = setDotNetSolutionAction.SolutionAbsolutePath.FormattedInput;
 
             var content = await _fileSystemProvider.File.ReadAllTextAsync(
-                dotNetSolutionAbsoluteFilePathString,
+                dotNetSolutionAbsolutePathString,
                 CancellationToken.None);
 
-            var solutionAbsoluteFilePath = new AbsolutePath(
-                dotNetSolutionAbsoluteFilePathString,
+            var solutionAbsolutePath = new AbsolutePath(
+                dotNetSolutionAbsolutePathString,
                 false,
                 _environmentProvider);
 
             var solutionNamespacePath = new NamespacePath(
                 string.Empty,
-                solutionAbsoluteFilePath);
+                solutionAbsolutePath);
 
             var dotNetSolution = DotNetSolutionLexer.Lex(
                 content,

@@ -39,16 +39,16 @@ public class TreeViewCSharpProjectToProjectReference : TreeViewWithType<CSharpPr
 
     public override int GetHashCode()
     {
-        var modifyProjectAbsoluteFilePathString = Item.ModifyProjectNamespacePath.AbsolutePath
+        var modifyProjectAbsolutePathString = Item.ModifyProjectNamespacePath.AbsolutePath
             .FormattedInput;
         
-        var referenceProjectAbsoluteFilePathString = Item.ReferenceProjectAbsolutePath
+        var referenceProjectAbsolutePathString = Item.ReferenceProjectAbsolutePath
             .FormattedInput;
 
-        var uniqueAbsoluteFilePathString = modifyProjectAbsoluteFilePathString +
-            referenceProjectAbsoluteFilePathString;
+        var uniqueAbsolutePathString = modifyProjectAbsolutePathString +
+            referenceProjectAbsolutePathString;
 
-        return uniqueAbsoluteFilePathString.GetHashCode();
+        return uniqueAbsolutePathString.GetHashCode();
     }
 
     public override TreeViewRenderer GetTreeViewRenderer()

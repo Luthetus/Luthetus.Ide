@@ -102,12 +102,12 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
             lightWeightNugetPackageRecords.Add(lightWeightNugetPackageRecord);
         }
 
-        var cSharpProjectAbsoluteFilePathString = Item.CSharpProjectNamespacePath.AbsolutePath
+        var cSharpProjectAbsolutePathString = Item.CSharpProjectNamespacePath.AbsolutePath
             .FormattedInput;
 
         var newChildren = lightWeightNugetPackageRecords
             .Select(npr => (TreeViewNoType)new TreeViewCSharpProjectNugetPackageReference(
-                new(cSharpProjectAbsoluteFilePathString, npr),
+                new(cSharpProjectAbsolutePathString, npr),
                 LuthetusIdeComponentRenderers,
                 FileSystemProvider,
                 EnvironmentProvider,

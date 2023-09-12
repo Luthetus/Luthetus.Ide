@@ -18,9 +18,9 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.Store.NotificationCase;
 using Luthetus.Common.RazorLib.Clipboard;
 using Luthetus.Common.RazorLib.Namespaces;
-using Luthetus.Common.RazorLib.FileSystem.Classes.FilePath;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.ComponentRenderers;
+using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 
 namespace Luthetus.Ide.ClassLib.Menu;
 
@@ -144,7 +144,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     }
 
     public MenuOptionRecord DeleteFile(
-        IAbsolutePath absoluteFilePath,
+        IAbsolutePath absolutePath,
         Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord(
@@ -155,7 +155,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             {
                 {
                     nameof(IDeleteFileFormRendererType.AbsolutePath),
-                    absoluteFilePath
+                    absolutePath
                 },
                 {
                     nameof(IDeleteFileFormRendererType.IsDirectory),
@@ -170,7 +170,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     }
 
     public MenuOptionRecord RenameFile(
-        IAbsolutePath sourceAbsoluteFilePath,
+        IAbsolutePath sourceAbsolutePath,
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
@@ -182,20 +182,20 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             {
                 {
                     nameof(IFileFormRendererType.FileName),
-                    sourceAbsoluteFilePath.IsDirectory
-                        ? sourceAbsoluteFilePath.NameNoExtension
-                        : sourceAbsoluteFilePath.NameWithExtension
+                    sourceAbsolutePath.IsDirectory
+                        ? sourceAbsolutePath.NameNoExtension
+                        : sourceAbsolutePath.NameWithExtension
                 },
                 {
                     nameof(IFileFormRendererType.IsDirectory),
-                    sourceAbsoluteFilePath.IsDirectory
+                    sourceAbsolutePath.IsDirectory
                 },
                 {
                     nameof(IFileFormRendererType.OnAfterSubmitAction),
                     new Action<string, IFileTemplate?, ImmutableArray<IFileTemplate>>(
                         (nextName, _, _) =>
                             PerformRenameAction(
-                                sourceAbsoluteFilePath,
+                                sourceAbsolutePath,
                                 nextName,
                                 dispatcher,
                                 onAfterCompletion))
@@ -204,38 +204,38 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     }
 
     public MenuOptionRecord CopyFile(
-        IAbsolutePath absoluteFilePath,
+        IAbsolutePath absolutePath,
         Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord(
             "Copy",
             MenuOptionKind.Update,
             OnClick: () => PerformCopyFileAction(
-                absoluteFilePath,
+                absolutePath,
                 onAfterCompletion));
     }
 
     public MenuOptionRecord CutFile(
-        IAbsolutePath absoluteFilePath,
+        IAbsolutePath absolutePath,
         Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord(
             "Cut",
             MenuOptionKind.Update,
             OnClick: () => PerformCutFileAction(
-                absoluteFilePath,
+                absolutePath,
                 onAfterCompletion));
     }
 
     public MenuOptionRecord PasteClipboard(
-        IAbsolutePath directoryAbsoluteFilePath,
+        IAbsolutePath directoryAbsolutePath,
         Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord(
             "Paste",
             MenuOptionKind.Update,
             OnClick: () => PerformPasteFileAction(
-                directoryAbsoluteFilePath,
+                directoryAbsolutePath,
                 onAfterCompletion));
     }
 
@@ -367,16 +367,16 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             {
                 if (exactMatchFileTemplate is null)
                 {
-                    var emptyFileAbsoluteFilePathString = 
+                    var emptyFileAbsolutePathString = 
                         namespacePath.AbsolutePath.FormattedInput + fileName;
 
-                    var emptyFileAbsoluteFilePath = new AbsolutePath(
-                        emptyFileAbsoluteFilePathString,
+                    var emptyFileAbsolutePath = new AbsolutePath(
+                        emptyFileAbsolutePathString,
                         false,
                         _environmentProvider);
 
                     await _fileSystemProvider.File.WriteAllTextAsync(
-                        emptyFileAbsoluteFilePath.FormattedInput,
+                        emptyFileAbsolutePath.FormattedInput,
                         string.Empty,
                         CancellationToken.None);
                 }
@@ -418,10 +418,10 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         IAbsolutePath parentDirectory,
         Func<Task> onAfterCompletion)
     {
-        var directoryAbsoluteFilePathString = parentDirectory.FormattedInput + directoryName;
+        var directoryAbsolutePathString = parentDirectory.FormattedInput + directoryName;
 
-        var directoryAbsoluteFilePath = new AbsolutePath(
-            directoryAbsoluteFilePathString,
+        var directoryAbsolutePath = new AbsolutePath(
+            directoryAbsolutePathString,
             true,
             _environmentProvider);
 
@@ -429,7 +429,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             async cancellationToken =>
             {
                 await _fileSystemProvider.Directory.CreateDirectoryAsync(
-                    directoryAbsoluteFilePath.FormattedInput,
+                    directoryAbsolutePath.FormattedInput,
                     CancellationToken.None);
 
                 await onAfterCompletion.Invoke();
@@ -445,23 +445,23 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     }
 
     private void PerformDeleteFileAction(
-        IAbsolutePath absoluteFilePath,
+        IAbsolutePath absolutePath,
         Func<Task> onAfterCompletion)
     {
         var backgroundTask = new BackgroundTask(
             async cancellationToken =>
             {
-                if (absoluteFilePath.IsDirectory)
+                if (absolutePath.IsDirectory)
                 {
                     await _fileSystemProvider.Directory.DeleteAsync(
-                        absoluteFilePath.FormattedInput,
+                        absolutePath.FormattedInput,
                         true,
                         CancellationToken.None);
                 }
                 else
                 {
                     await _fileSystemProvider.File.DeleteAsync(
-                        absoluteFilePath.FormattedInput);
+                        absolutePath.FormattedInput);
                 }
 
                 await onAfterCompletion.Invoke();
@@ -477,7 +477,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     }
 
     private void PerformCopyFileAction(
-        IAbsolutePath absoluteFilePath,
+        IAbsolutePath absolutePath,
         Func<Task> onAfterCompletion)
     {
         var backgroundTask = new BackgroundTask(
@@ -488,7 +488,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                         ClipboardFacts.FormatPhrase(
                             ClipboardFacts.CopyCommand,
                             ClipboardFacts.AbsolutePathDataType,
-                            absoluteFilePath.FormattedInput));
+                            absolutePath.FormattedInput));
 
                 await onAfterCompletion.Invoke();
             },
@@ -503,7 +503,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     }
 
     private void PerformCutFileAction(
-        IAbsolutePath absoluteFilePath,
+        IAbsolutePath absolutePath,
         Func<Task> onAfterCompletion)
     {
         var backgroundTask = new BackgroundTask(
@@ -514,7 +514,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                         ClipboardFacts.FormatPhrase(
                             ClipboardFacts.CutCommand,
                             ClipboardFacts.AbsolutePathDataType,
-                            absoluteFilePath.FormattedInput));
+                            absolutePath.FormattedInput));
 
                 await onAfterCompletion.Invoke();
             },
@@ -545,33 +545,33 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                         if (clipboardPhrase.Command == ClipboardFacts.CopyCommand ||
                             clipboardPhrase.Command == ClipboardFacts.CutCommand)
                         {
-                            IAbsolutePath? clipboardAbsoluteFilePath = null;
+                            IAbsolutePath? clipboardAbsolutePath = null;
 
                             if (await _fileSystemProvider.Directory.ExistsAsync(clipboardPhrase.Value))
                             {
-                                clipboardAbsoluteFilePath = new AbsolutePath(
+                                clipboardAbsolutePath = new AbsolutePath(
                                     clipboardPhrase.Value,
                                     true,
                                     _environmentProvider);
                             }
                             else if (await _fileSystemProvider.File.ExistsAsync(clipboardPhrase.Value))
                             {
-                                clipboardAbsoluteFilePath = new AbsolutePath(
+                                clipboardAbsolutePath = new AbsolutePath(
                                     clipboardPhrase.Value,
                                     false,
                                     _environmentProvider);
                             }
 
-                            if (clipboardAbsoluteFilePath is not null)
+                            if (clipboardAbsolutePath is not null)
                             {
                                 var successfullyPasted = true;
 
                                 try
                                 {
-                                    if (clipboardAbsoluteFilePath.IsDirectory)
+                                    if (clipboardAbsolutePath.IsDirectory)
                                     {
                                         var clipboardDirectoryInfo = new DirectoryInfo(
-                                            clipboardAbsoluteFilePath.FormattedInput);
+                                            clipboardAbsolutePath.FormattedInput);
 
                                         var receivingDirectoryInfo = new DirectoryInfo(
                                             receivingDirectory.FormattedInput);
@@ -580,16 +580,16 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                                     }
                                     else
                                     {
-                                        var destinationAbsoluteFilePathString =
+                                        var destinationAbsolutePathString =
                                             receivingDirectory.FormattedInput +
-                                            clipboardAbsoluteFilePath.NameWithExtension;
+                                            clipboardAbsolutePath.NameWithExtension;
 
-                                        var sourceAbsoluteFilePathString = clipboardAbsoluteFilePath
+                                        var sourceAbsolutePathString = clipboardAbsolutePath
                                             .FormattedInput;
 
                                         await _fileSystemProvider.File.CopyAsync(
-                                            sourceAbsoluteFilePathString,
-                                            destinationAbsoluteFilePathString);
+                                            sourceAbsolutePathString,
+                                            destinationAbsolutePathString);
                                     }
                                 }
                                 catch (Exception)
@@ -600,7 +600,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                                 if (successfullyPasted && clipboardPhrase.Command == ClipboardFacts.CutCommand)
                                 {
                                     // TODO: Rerender the parent of the deleted due to cut file
-                                    PerformDeleteFileAction(clipboardAbsoluteFilePath, onAfterCompletion);
+                                    PerformDeleteFileAction(clipboardAbsolutePath, onAfterCompletion);
                                 }
                                 else
                                 {
@@ -622,7 +622,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     }
 
     private IAbsolutePath? PerformRenameAction(
-        IAbsolutePath sourceAbsoluteFilePath,
+        IAbsolutePath sourceAbsolutePath,
         string nextName,
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
@@ -630,7 +630,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         // If the current and next name match when compared
         // with case insensitivity
         if (string.Compare(
-                sourceAbsoluteFilePath.NameWithExtension,
+                sourceAbsolutePath.NameWithExtension,
                 nextName,
                 StringComparison.OrdinalIgnoreCase)
                     == 0)
@@ -638,7 +638,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             var temporaryNextName = _environmentProvider.GetRandomFileName();
 
             var temporaryRenameResult = PerformRenameAction(
-                sourceAbsoluteFilePath,
+                sourceAbsolutePath,
                 temporaryNextName,
                 dispatcher,
                 () => Task.CompletedTask);
@@ -649,21 +649,21 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 return null;
             }
             else
-                sourceAbsoluteFilePath = temporaryRenameResult;
+                sourceAbsolutePath = temporaryRenameResult;
         }
 
-        var sourceAbsoluteFilePathString = sourceAbsoluteFilePath.FormattedInput;
+        var sourceAbsolutePathString = sourceAbsolutePath.FormattedInput;
 
-        var parentOfSource = sourceAbsoluteFilePath.AncestorDirectories.Last();
+        var parentOfSource = sourceAbsolutePath.AncestorDirectories.Last();
 
-        var destinationAbsoluteFilePathString = parentOfSource.FormattedInput + nextName;
+        var destinationAbsolutePathString = parentOfSource.FormattedInput + nextName;
 
         try
         {
-            if (sourceAbsoluteFilePath.IsDirectory)
-                _fileSystemProvider.Directory.MoveAsync(sourceAbsoluteFilePathString, destinationAbsoluteFilePathString);
+            if (sourceAbsolutePath.IsDirectory)
+                _fileSystemProvider.Directory.MoveAsync(sourceAbsolutePathString, destinationAbsolutePathString);
             else
-                _fileSystemProvider.File.MoveAsync(sourceAbsoluteFilePathString, destinationAbsoluteFilePathString);
+                _fileSystemProvider.File.MoveAsync(sourceAbsolutePathString, destinationAbsolutePathString);
         }
         catch (Exception e)
         {
@@ -694,8 +694,8 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         onAfterCompletion.Invoke();
 
         return new AbsolutePath(
-            destinationAbsoluteFilePathString,
-            sourceAbsoluteFilePath.IsDirectory,
+            destinationAbsolutePathString,
+            sourceAbsolutePath.IsDirectory,
             _environmentProvider);
     }
 

@@ -89,9 +89,9 @@ public partial record GitRegistry
                     GitFilesList = ImmutableList<GitFile>.Empty
                 }));
 
-                if (gitState.GitFolderAbsoluteFilePath is null ||
-                    !await _fileSystemProvider.Directory.ExistsAsync(gitState.GitFolderAbsoluteFilePath.FormattedInput) ||
-                    gitState.GitFolderAbsoluteFilePath.ParentDirectory is null)
+                if (gitState.GitFolderAbsolutePath is null ||
+                    !await _fileSystemProvider.Directory.ExistsAsync(gitState.GitFolderAbsolutePath.FormattedInput) ||
+                    gitState.GitFolderAbsolutePath.ParentDirectory is null)
                 {
                     return;
                 }
@@ -109,7 +109,7 @@ public partial record GitRegistry
                 var gitStatusCommand = new TerminalCommand(
                     GitFacts.GitStatusTerminalCommandKey,
                     formattedCommand,
-                    gitState.GitFolderAbsoluteFilePath.ParentDirectory.FormattedInput,
+                    gitState.GitFolderAbsolutePath.ParentDirectory.FormattedInput,
                     CancellationToken.None,
                     async () =>
                     {
@@ -221,7 +221,7 @@ public partial record GitRegistry
                 var gitInitCommand = new TerminalCommand(
                     GitFacts.GitInitTerminalCommandKey,
                     formattedCommand,
-                    gitState.MostRecentTryFindGitFolderInDirectoryAction.DirectoryAbsoluteFilePath.FormattedInput,
+                    gitState.MostRecentTryFindGitFolderInDirectoryAction.DirectoryAbsolutePath.FormattedInput,
                     CancellationToken.None,
                     () =>
                     {
@@ -286,31 +286,31 @@ public partial record GitRegistry
                     };
                 }));
 
-                if (!tryFindGitFolderInDirectoryAction.DirectoryAbsoluteFilePath.IsDirectory)
+                if (!tryFindGitFolderInDirectoryAction.DirectoryAbsolutePath.IsDirectory)
                     return;
 
-                var directoryAbsoluteFilePathString =
-                    tryFindGitFolderInDirectoryAction.DirectoryAbsoluteFilePath
+                var directoryAbsolutePathString =
+                    tryFindGitFolderInDirectoryAction.DirectoryAbsolutePath
                         .FormattedInput;
 
-                var childDirectoryAbsoluteFilePathStrings = await _fileSystemProvider.Directory
+                var childDirectoryAbsolutePathStrings = await _fileSystemProvider.Directory
                     .GetDirectoriesAsync(
-                        directoryAbsoluteFilePathString);
+                        directoryAbsolutePathString);
 
-                var gitFolderAbsoluteFilePathString = childDirectoryAbsoluteFilePathStrings.FirstOrDefault(
+                var gitFolderAbsolutePathString = childDirectoryAbsolutePathStrings.FirstOrDefault(
                     x => x.EndsWith(GitFacts.GIT_FOLDER_NAME));
 
-                if (gitFolderAbsoluteFilePathString is not null)
+                if (gitFolderAbsolutePathString is not null)
                 {
-                    var gitFolderAbsoluteFilePath = new AbsolutePath(
-                        gitFolderAbsoluteFilePathString,
+                    var gitFolderAbsolutePath = new AbsolutePath(
+                        gitFolderAbsolutePathString,
                         true,
                         _environmentProvider);
 
                     dispatcher.Dispatch(new SetGitStateWithAction(
                         withGitState => withGitState with
                         {
-                            GitFolderAbsoluteFilePath = gitFolderAbsoluteFilePath,
+                            GitFolderAbsolutePath = gitFolderAbsolutePath,
                             MostRecentTryFindGitFolderInDirectoryAction = tryFindGitFolderInDirectoryAction
                         }));
 
@@ -322,7 +322,7 @@ public partial record GitRegistry
                     dispatcher.Dispatch(new SetGitStateWithAction(
                         withGitState => withGitState with
                         {
-                            GitFolderAbsoluteFilePath = null,
+                            GitFolderAbsolutePath = null,
                             MostRecentTryFindGitFolderInDirectoryAction = tryFindGitFolderInDirectoryAction
                         }));
                 }
@@ -352,7 +352,7 @@ public partial record GitRegistry
             GitDirtyReason? gitDirtyReason,
             Action<ImmutableList<GitFile>> onAfterCompletedAction)
         {
-            if (gitState.GitFolderAbsoluteFilePath?.ParentDirectory is null)
+            if (gitState.GitFolderAbsolutePath?.ParentDirectory is null)
                 return;
 
             var indexOfChangesNotStagedForCommitTextStart = gitStatusOutput.IndexOf(
@@ -451,18 +451,18 @@ public partial record GitRegistry
                 var changesNotStagedForCommitGitFiles = changesNotStagedForCommitRelativePathAndGitDirtyReasonTuples
                     .Select(x =>
                     {
-                        var absoluteFilePathString =
-                            gitState.GitFolderAbsoluteFilePath.ParentDirectory.FormattedInput +
+                        var absolutePathString =
+                            gitState.GitFolderAbsolutePath.ParentDirectory.FormattedInput +
                             x.relativePath;
 
                         var isDirectory = _environmentProvider.IsDirectorySeparator(x.relativePath.LastOrDefault());
 
-                        var absoluteFilePath = new AbsolutePath(
-                            absoluteFilePathString,
+                        var absolutePath = new AbsolutePath(
+                            absolutePathString,
                             isDirectory,
                             _environmentProvider);
 
-                        return new GitFile(absoluteFilePath, x.gitDirtyReason);
+                        return new GitFile(absolutePath, x.gitDirtyReason);
                     })
                     .ToImmutableList();
 

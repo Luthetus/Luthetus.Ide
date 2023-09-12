@@ -120,11 +120,11 @@ public partial record InputFileRegistry
             // If has a ParentDirectory select it
             if (currentSelection.Item.AncestorDirectories.Any())
             {
-                var parentDirectoryAbsoluteFilePath =
+                var parentDirectoryAbsolutePath =
                     currentSelection.Item.AncestorDirectories.Last();
 
                 parentDirectoryTreeViewModel = new TreeViewAbsolutePath(
-                    (IAbsolutePath)parentDirectoryAbsoluteFilePath,
+                    (IAbsolutePath)parentDirectoryAbsolutePath,
                     openParentDirectoryAction.LuthetusIdeComponentRenderers,
                     openParentDirectoryAction.LuthetusCommonComponentRenderers,
                     openParentDirectoryAction.FileSystemProvider,
@@ -201,9 +201,9 @@ public partial record InputFileRegistry
 
             foreach (var treeViewModel in openedTreeViewModel.Children)
             {
-                var treeViewAbsoluteFilePath = (TreeViewAbsolutePath)treeViewModel;
+                var treeViewAbsolutePath = (TreeViewAbsolutePath)treeViewModel;
 
-                treeViewModel.IsHidden = !treeViewAbsoluteFilePath.Item.NameWithExtension
+                treeViewModel.IsHidden = !treeViewAbsolutePath.Item.NameWithExtension
                     .Contains(
                         setSearchQueryAction.SearchQuery,
                         StringComparison.InvariantCultureIgnoreCase);

@@ -11,7 +11,7 @@ namespace Luthetus.Ide.ClassLib.TreeViewImplementations;
 public class TreeViewAbsolutePath : TreeViewWithType<IAbsolutePath>
 {
     public TreeViewAbsolutePath(
-        IAbsolutePath absoluteFilePath,
+        IAbsolutePath absolutePath,
         ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
         ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
         IFileSystemProvider fileSystemProvider,
@@ -19,7 +19,7 @@ public class TreeViewAbsolutePath : TreeViewWithType<IAbsolutePath>
         bool isExpandable,
         bool isExpanded)
             : base(
-                absoluteFilePath,
+                absolutePath,
                 isExpandable,
                 isExpanded)
     {

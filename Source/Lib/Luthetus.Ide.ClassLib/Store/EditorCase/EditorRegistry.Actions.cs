@@ -6,5 +6,5 @@ namespace Luthetus.Ide.ClassLib.Store.EditorCase;
 public partial class EditorRegistry
 {
     public record ShowInputFileAction();
-    public record OpenInEditorAction(IAbsolutePath? AbsoluteFilePath, bool ShouldSetFocusToEditor, TextEditorGroupKey? EditorTextEditorGroupKey = null);
+    public record OpenInEditorAction(IAbsolutePath? AbsolutePath, bool ShouldSetFocusToEditor, TextEditorGroupKey? EditorTextEditorGroupKey = null);
 }

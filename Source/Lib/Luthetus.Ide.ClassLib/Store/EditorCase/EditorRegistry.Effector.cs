@@ -117,34 +117,34 @@ public partial class EditorRegistry
             var editorTextEditorGroupKey =
                 openInEditorAction.EditorTextEditorGroupKey ?? EditorTextEditorGroupKey;
 
-            if (openInEditorAction.AbsoluteFilePath is null ||
-                openInEditorAction.AbsoluteFilePath.IsDirectory)
+            if (openInEditorAction.AbsolutePath is null ||
+                openInEditorAction.AbsolutePath.IsDirectory)
             {
                 return;
             }
 
             _textEditorService.Group.Register(editorTextEditorGroupKey);
 
-            var inputFileAbsoluteFilePathString = openInEditorAction.AbsoluteFilePath.FormattedInput;
+            var inputFileAbsolutePathString = openInEditorAction.AbsolutePath.FormattedInput;
 
             var textEditorModel = await GetOrCreateTextEditorModelAsync(
-                openInEditorAction.AbsoluteFilePath,
-                inputFileAbsoluteFilePathString);
+                openInEditorAction.AbsolutePath,
+                inputFileAbsolutePathString);
 
             if (textEditorModel is null)
                 return;
 
             await CheckIfContentsWereModifiedAsync(
                 dispatcher,
-                inputFileAbsoluteFilePathString,
+                inputFileAbsolutePathString,
                 textEditorModel);
 
             var viewModel = GetOrCreateTextEditorViewModel(
-                openInEditorAction.AbsoluteFilePath,
+                openInEditorAction.AbsolutePath,
                 openInEditorAction.ShouldSetFocusToEditor,
                 dispatcher,
                 textEditorModel,
-                inputFileAbsoluteFilePathString);
+                inputFileAbsolutePathString);
 
             _textEditorService.Group.AddViewModel(
                 editorTextEditorGroupKey,
@@ -156,24 +156,24 @@ public partial class EditorRegistry
         }
 
         private async Task<TextEditorModel?> GetOrCreateTextEditorModelAsync(
-            IAbsolutePath absoluteFilePath,
-            string absoluteFilePathString)
+            IAbsolutePath absolutePath,
+            string absolutePathString)
         {
             var textEditorModel = _textEditorService.Model
-                .FindOrDefaultByResourceUri(new(absoluteFilePathString));
+                .FindOrDefaultByResourceUri(new(absolutePathString));
 
             if (textEditorModel is null)
             {
-                var resourceUri = new ResourceUri(absoluteFilePathString);
+                var resourceUri = new ResourceUri(absolutePathString);
 
                 var fileLastWriteTime = await _fileSystemProvider.File.GetLastWriteTimeAsync(
-                    absoluteFilePathString);
+                    absolutePathString);
 
                 var content = await _fileSystemProvider.File.ReadAllTextAsync(
-                    absoluteFilePathString);
+                    absolutePathString);
 
                 var compilerService = ExtensionNoPeriodFacts.GetCompilerService(
-                    absoluteFilePath.ExtensionNoPeriod,
+                    absolutePath.ExtensionNoPeriod,
                     _xmlCompilerService,
                     _dotNetCompilerService,
                     _cSharpProjectCompilerService,
@@ -186,12 +186,12 @@ public partial class EditorRegistry
                     _jsonCompilerService);
 
                 var decorationMapper = ExtensionNoPeriodFacts.GetDecorationMapper(
-                    absoluteFilePath.ExtensionNoPeriod);
+                    absolutePath.ExtensionNoPeriod);
 
                 textEditorModel = new TextEditorModel(
                     resourceUri,
                     fileLastWriteTime,
-                    absoluteFilePath.ExtensionNoPeriod,
+                    absolutePath.ExtensionNoPeriod,
                     content,
                     compilerService,
                     decorationMapper,
@@ -217,11 +217,11 @@ public partial class EditorRegistry
 
         private async Task CheckIfContentsWereModifiedAsync(
             IDispatcher dispatcher,
-            string inputFileAbsoluteFilePathString,
+            string inputFileAbsolutePathString,
             TextEditorModel textEditorModel)
         {
             var fileLastWriteTime = await _fileSystemProvider.File.GetLastWriteTimeAsync(
-                inputFileAbsoluteFilePathString);
+                inputFileAbsolutePathString);
 
             if (fileLastWriteTime > textEditorModel.ResourceLastWriteTime &&
                 _luthetusIdeComponentRenderers.BooleanPromptOrCancelRendererType is not null)
@@ -253,7 +253,7 @@ public partial class EditorRegistry
                                             notificationInformativeKey));
 
                                         var content = await _fileSystemProvider.File
-                                            .ReadAllTextAsync(inputFileAbsoluteFilePathString);
+                                            .ReadAllTextAsync(inputFileAbsolutePathString);
 
                                         _textEditorService.Model.Reload(
                                             textEditorModel.ModelKey,
@@ -291,11 +291,11 @@ public partial class EditorRegistry
         }
 
         private TextEditorViewModelKey GetOrCreateTextEditorViewModel(
-            IAbsolutePath absoluteFilePath,
+            IAbsolutePath absolutePath,
             bool shouldSetFocusToEditor,
             IDispatcher dispatcher,
             TextEditorModel textEditorModel,
-            string inputFileAbsoluteFilePathString)
+            string inputFileAbsolutePathString)
         {
             var viewModel = _textEditorService.Model
                 .GetViewModelsOrEmpty(textEditorModel.ModelKey)
@@ -321,7 +321,7 @@ public partial class EditorRegistry
                     textEditorViewModel => textEditorViewModel with
                     {
                         OnSaveRequested = HandleOnSaveRequested,
-                        GetTabDisplayNameFunc = _ => absoluteFilePath.NameWithExtension,
+                        GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension,
                         ShouldSetFocusAfterNextRender = shouldSetFocusToEditor,
                         FirstPresentationLayerKeys = presentationKeys.ToImmutableList()
                     });
@@ -340,7 +340,7 @@ public partial class EditorRegistry
                 var cancellationToken = textEditorModel.TextEditorSaveFileHelper.GetCancellationToken();
 
                 var saveFileAction = new FileSystemRegistry.SaveFileAction(
-                    absoluteFilePath,
+                    absolutePath,
                     innerContent,
                     writtenDateTime =>
                     {

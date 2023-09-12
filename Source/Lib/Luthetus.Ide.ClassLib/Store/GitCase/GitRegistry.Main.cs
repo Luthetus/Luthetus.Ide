@@ -15,7 +15,7 @@ namespace Luthetus.Ide.ClassLib.Store.GitCase;
 /// </summary>
 [FeatureState]
 public partial record GitRegistry(
-    IAbsolutePath? GitFolderAbsoluteFilePath,
+    IAbsolutePath? GitFolderAbsolutePath,
     GitRegistry.TryFindGitFolderInDirectoryAction? MostRecentTryFindGitFolderInDirectoryAction,
     ImmutableList<GitFile> GitFilesList,
     ImmutableList<GitTask> ActiveGitTasks)

@@ -47,18 +47,18 @@ public partial class FileSystemRegistry
                         if (saveFileAction.CancellationToken.IsCancellationRequested)
                             return;
 
-                        var absoluteFilePathString = saveFileAction.AbsoluteFilePath.FormattedInput;
+                        var absolutePathString = saveFileAction.AbsolutePath.FormattedInput;
 
                         string notificationMessage;
 
-                        if (absoluteFilePathString is not null &&
-                            await _fileSystemProvider.File.ExistsAsync(absoluteFilePathString))
+                        if (absolutePathString is not null &&
+                            await _fileSystemProvider.File.ExistsAsync(absolutePathString))
                         {
                             await _fileSystemProvider.File.WriteAllTextAsync(
-                                absoluteFilePathString,
+                                absolutePathString,
                                 saveFileAction.Content);
 
-                            notificationMessage = $"successfully saved: {absoluteFilePathString}";
+                            notificationMessage = $"successfully saved: {absolutePathString}";
                         }
                         else
                         {
@@ -89,11 +89,11 @@ public partial class FileSystemRegistry
 
                         DateTime? fileLastWriteTime = null;
 
-                        if (absoluteFilePathString is not null)
+                        if (absolutePathString is not null)
                         {
                             fileLastWriteTime = await _fileSystemProvider.File
                                 .GetLastWriteTimeAsync(
-                                    absoluteFilePathString,
+                                    absolutePathString,
                                     cancellationToken);
                         }
 
