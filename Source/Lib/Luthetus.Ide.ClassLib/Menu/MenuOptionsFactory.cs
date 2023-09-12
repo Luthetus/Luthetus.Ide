@@ -273,9 +273,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         NamespacePath namespacePath,
         Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(
-            BackgroundTaskKey.NewKey(),
-            CommonBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
             "New File Action",
             async () =>
             {
@@ -330,9 +328,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             true,
             _environmentProvider);
 
-        _backgroundTaskService.Enqueue(
-            BackgroundTaskKey.NewKey(),
-            CommonBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
             "New Directory Action",
             async () =>
             {
@@ -348,9 +344,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         IAbsolutePath absolutePath,
         Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(
-            BackgroundTaskKey.NewKey(),
-            CommonBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
             "Delete File Action",
             async () =>
             {
@@ -363,8 +357,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 }
                 else
                 {
-                    await _fileSystemProvider.File.DeleteAsync(
-                        absolutePath.FormattedInput);
+                    await _fileSystemProvider.File.DeleteAsync(absolutePath.FormattedInput);
                 }
 
                 await onAfterCompletion.Invoke();
@@ -375,18 +368,14 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         IAbsolutePath absolutePath,
         Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(
-            BackgroundTaskKey.NewKey(),
-            CommonBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
             "Copy File Action",
             async () =>
             {
-                await _clipboardService
-                    .SetClipboard(
-                        ClipboardFacts.FormatPhrase(
-                            ClipboardFacts.CopyCommand,
-                            ClipboardFacts.AbsolutePathDataType,
-                            absolutePath.FormattedInput));
+                await _clipboardService.SetClipboard(ClipboardFacts.FormatPhrase(
+                    ClipboardFacts.CopyCommand,
+                    ClipboardFacts.AbsolutePathDataType,
+                    absolutePath.FormattedInput));
 
                 await onAfterCompletion.Invoke();
             });
@@ -396,30 +385,22 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         IAbsolutePath absolutePath,
         Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(
-            BackgroundTaskKey.NewKey(),
-            CommonBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
             "Cut File Action",
             async () =>
             {
-                await _clipboardService
-                    .SetClipboard(
-                        ClipboardFacts.FormatPhrase(
-                            ClipboardFacts.CutCommand,
-                            ClipboardFacts.AbsolutePathDataType,
-                            absolutePath.FormattedInput));
+                await _clipboardService.SetClipboard(ClipboardFacts.FormatPhrase(
+                    ClipboardFacts.CutCommand,
+                    ClipboardFacts.AbsolutePathDataType,
+                    absolutePath.FormattedInput));
 
                 await onAfterCompletion.Invoke();
             });
     }
 
-    private void PerformPasteFileAction(
-        IAbsolutePath receivingDirectory,
-        Func<Task> onAfterCompletion)
+    private void PerformPasteFileAction(IAbsolutePath receivingDirectory, Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(
-            BackgroundTaskKey.NewKey(),
-            CommonBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
             "Paste File Action",
             async () =>
             {
@@ -509,11 +490,8 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     {
         // If the current and next name match when compared
         // with case insensitivity
-        if (string.Compare(
-                sourceAbsolutePath.NameWithExtension,
-                nextName,
-                StringComparison.OrdinalIgnoreCase)
-                    == 0)
+        if (string.Compare(sourceAbsolutePath.NameWithExtension, nextName, StringComparison.OrdinalIgnoreCase)
+            == 0)
         {
             var temporaryNextName = _environmentProvider.GetRandomFileName();
 
@@ -529,13 +507,13 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 return null;
             }
             else
+            {
                 sourceAbsolutePath = temporaryRenameResult;
+            }
         }
 
         var sourceAbsolutePathString = sourceAbsolutePath.FormattedInput;
-
         var parentOfSource = sourceAbsolutePath.AncestorDirectories.Last();
-
         var destinationAbsolutePathString = parentOfSource.FormattedInput + nextName;
 
         try
@@ -547,26 +525,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         }
         catch (Exception e)
         {
-            if (_luthetusCommonComponentRenderers.ErrorNotificationRendererType is not null)
-            {
-                var notificationError = new NotificationRecord(
-                    NotificationKey.NewKey(),
-                    "Rename Action",
-                    _luthetusCommonComponentRenderers.ErrorNotificationRendererType,
-                    new Dictionary<string, object?>
-                    {
-                        {
-                            nameof(IErrorNotificationRendererType.Message),
-                            $"ERROR: {e.Message}"
-                        },
-                    },
-                    TimeSpan.FromSeconds(15),
-                    true,
-                    IErrorNotificationRendererType.CSS_CLASS_STRING);
-
-                dispatcher.Dispatch(new NotificationRegistry.RegisterAction(notificationError));
-            }
-
+            NotificationHelper.DispatchError("Rename Action", e.Message, _luthetusCommonComponentRenderers, dispatcher);
             onAfterCompletion.Invoke();
             return null;
         }
@@ -586,29 +545,24 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(
-            BackgroundTaskKey.NewKey(),
-            CommonBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
             "Remove C# Project Reference from Solution Action",
             async () =>
             {
-                var workingDirectory =
-                    treeViewSolution.Item.NamespacePath.AbsolutePath.ParentDirectory!;
+                var workingDirectory = treeViewSolution.Item.NamespacePath.AbsolutePath.ParentDirectory!;
 
-                var removeCSharpProjectReferenceFromSolutionFormattedCommand =
-                    DotNetCliFacts.FormatRemoveCSharpProjectReferenceFromSolutionAction(
-                        treeViewSolution.Item.NamespacePath.AbsolutePath.FormattedInput,
-                        projectNode.Item.AbsolutePath.FormattedInput);
+                var formattedCommand = DotNetCliFacts.FormatRemoveCSharpProjectReferenceFromSolutionAction(
+                    treeViewSolution.Item.NamespacePath.AbsolutePath.FormattedInput,
+                    projectNode.Item.AbsolutePath.FormattedInput);
 
-                var removeCSharpProjectReferenceFromSolutionCommand = new TerminalCommand(
+                var terminalCommand = new TerminalCommand(
                     TerminalCommandKey.NewKey(),
-                    removeCSharpProjectReferenceFromSolutionFormattedCommand,
+                    formattedCommand,
                     workingDirectory.FormattedInput,
                     CancellationToken.None,
                     async () => await onAfterCompletion.Invoke());
 
-                await terminalSession.EnqueueCommandAsync(
-                    removeCSharpProjectReferenceFromSolutionCommand);
+                await terminalSession.EnqueueCommandAsync(terminalCommand);
             });
     }
 
@@ -618,9 +572,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(
-            BackgroundTaskKey.NewKey(),
-            CommonBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
             "Add Project Reference to Project",
             () =>
             {
@@ -635,34 +587,18 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                             projectReceivingReference.Item.AbsolutePath.FormattedInput,
                             referencedProject.FormattedInput);
 
-                        var addProjectToProjectReferenceTerminalCommand = new TerminalCommand(
+                        var terminalCommand = new TerminalCommand(
                             TerminalCommandKey.NewKey(),
                             formattedCommand,
                             null,
                             CancellationToken.None,
                             async () =>
                             {
-                                var notificationInformative = new NotificationRecord(
-                                    NotificationKey.NewKey(),
-                                    "Add Project Reference",
-                                    _luthetusCommonComponentRenderers.InformativeNotificationRendererType,
-                                    new Dictionary<string, object?>
-                                    {
-                                        {
-                                            nameof(IInformativeNotificationRendererType.Message),
-                                            $"Modified {projectReceivingReference.Item.AbsolutePath.NameWithExtension} to have a reference to {referencedProject.NameWithExtension}"
-                                        },
-                                    },
-                                    TimeSpan.FromSeconds(7),
-                                    true,
-                                    null);
-
-                                dispatcher.Dispatch(new NotificationRegistry.RegisterAction(notificationInformative));
-
+                                NotificationHelper.DispatchInformative("Add Project Reference", $"Modified {projectReceivingReference.Item.AbsolutePath.NameWithExtension} to have a reference to {referencedProject.NameWithExtension}", _luthetusCommonComponentRenderers, dispatcher);
                                 await onAfterCompletion.Invoke();
                             });
 
-                        await terminalSession.EnqueueCommandAsync(addProjectToProjectReferenceTerminalCommand);
+                        await terminalSession.EnqueueCommandAsync(terminalCommand);
                     },
                     afp =>
                     {
@@ -672,12 +608,12 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                         return Task.FromResult(
                             afp.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT));
                     },
-                    new[]
+                    (new[]
                     {
                         new InputFilePattern(
                             "C# Project",
                             afp => afp.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
-                    }.ToImmutableArray());
+                    }).ToImmutableArray());
 
                 dispatcher.Dispatch(requestInputFileStateFormAction);
 
@@ -691,9 +627,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(
-            BackgroundTaskKey.NewKey(),
-            CommonBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
             "Remove Project Reference to Project",
             async () =>
             {
@@ -708,23 +642,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     CancellationToken.None,
                     async () =>
                     {
-                        var notificationInformative = new NotificationRecord(
-                            NotificationKey.NewKey(),
-                            "Remove Project Reference",
-                            _luthetusCommonComponentRenderers.InformativeNotificationRendererType,
-                            new Dictionary<string, object?>
-                            {
-                                {
-                                    nameof(IInformativeNotificationRendererType.Message),
-                                    $"Modified {treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsolutePath.NameWithExtension} to have a reference to {treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsolutePath.NameWithExtension}"
-                                },
-                            },
-                            TimeSpan.FromSeconds(7),
-                            true,
-                            null);
-
-                        dispatcher.Dispatch(new NotificationRegistry.RegisterAction(notificationInformative));
-
+                        NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsolutePath.NameWithExtension} to have a reference to {treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsolutePath.NameWithExtension}", _luthetusCommonComponentRenderers, dispatcher);
                         await onAfterCompletion.Invoke();
                     });
 
@@ -740,9 +658,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(
-            BackgroundTaskKey.NewKey(),
-            CommonBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
             "Move Project to Solution Folder",
             () =>
             {
@@ -758,23 +674,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     CancellationToken.None,
                     async () =>
                     {
-                        var notificationInformative = new NotificationRecord(
-                            NotificationKey.NewKey(),
-                            "Move Project To Solution Folder",
-                            _luthetusCommonComponentRenderers.InformativeNotificationRendererType,
-                            new Dictionary<string, object?>
-                            {
-                                {
-                                    nameof(IInformativeNotificationRendererType.Message),
-                                    $"Moved {treeViewProjectToMove.Item.AbsolutePath.NameWithExtension} to the Solution Folder path: {solutionFolderPath}"
-                                },
-                            },
-                            TimeSpan.FromSeconds(7),
-                            true,
-                            null);
-
-                        dispatcher.Dispatch(new NotificationRegistry.RegisterAction(notificationInformative));
-
+                        NotificationHelper.DispatchInformative("Move Project To Solution Folder", $"Moved {treeViewProjectToMove.Item.AbsolutePath.NameWithExtension} to the Solution Folder path: {solutionFolderPath}", _luthetusCommonComponentRenderers, dispatcher);
                         await onAfterCompletion.Invoke();
                     });
 
@@ -796,9 +696,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(
-            BackgroundTaskKey.NewKey(),
-            CommonBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
             "Remove NuGet Package Reference from Project",
             async () =>
             {
@@ -813,23 +711,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     CancellationToken.None,
                     async () =>
                     {
-                        var notificationInformative = new NotificationRecord(
-                            NotificationKey.NewKey(),
-                            "Remove Project Reference",
-                            _luthetusCommonComponentRenderers.InformativeNotificationRendererType,
-                            new Dictionary<string, object?>
-                            {
-                                {
-                                    nameof(IInformativeNotificationRendererType.Message),
-                                    $"Modified {modifyProjectNamespacePath.AbsolutePath.NameWithExtension} to NOT have a reference to {treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id}"
-                                },
-                            },
-                            TimeSpan.FromSeconds(7),
-                            true,
-                            null);
-
-                        dispatcher.Dispatch(new NotificationRegistry.RegisterAction(notificationInformative));
-
+                        NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {modifyProjectNamespacePath.AbsolutePath.NameWithExtension} to NOT have a reference to {treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id}", _luthetusCommonComponentRenderers, dispatcher);
                         await onAfterCompletion.Invoke();
                     });
 

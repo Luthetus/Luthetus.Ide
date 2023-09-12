@@ -99,9 +99,7 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
             _performingNugetQuery = true;
             await InvokeAsync(StateHasChanged);
 
-            BackgroundTaskService.Enqueue(
-                BackgroundTaskKey.NewKey(),
-                CommonBackgroundTaskWorker.Queue.Key,
+            BackgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
                 "Submit NuGet Query",
                 async () =>
                 {

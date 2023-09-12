@@ -45,8 +45,4 @@
       </Reference>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="HostedServiceCase\" />
-    </ItemGroup>
-
 </Project>

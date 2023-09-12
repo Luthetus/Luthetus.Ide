@@ -132,9 +132,7 @@ public partial record InputFileRegistry
                     false,
                     true);
 
-                openParentDirectoryAction.BackgroundTaskService.Enqueue(
-                    BackgroundTaskKey.NewKey(),
-                    CommonBackgroundTaskWorker.Queue.Key,
+                openParentDirectoryAction.BackgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
                     "Open Parent Directory",
                     async () =>
                     {
@@ -166,9 +164,7 @@ public partial record InputFileRegistry
 
             currentSelection.Children.Clear();
 
-            refreshCurrentSelectionAction.BackgroundTaskService.Enqueue(
-                BackgroundTaskKey.NewKey(),
-                CommonBackgroundTaskWorker.Queue.Key,
+            refreshCurrentSelectionAction.BackgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
                 "Refresh Current Selection",
                 async () =>
                 {
