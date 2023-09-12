@@ -551,7 +551,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
         if (solutionTextEditorModel is not null)
         {
-            Dispatcher.Dispatch(new TextEditorModelsRegistry.ReloadAction(
+            Dispatcher.Dispatch(new TextEditorModelRegistry.ReloadAction(
                 solutionTextEditorModel.ModelKey,
                 DotNetSolutionModel.SolutionFileContents,
                 DateTime.UtcNow));

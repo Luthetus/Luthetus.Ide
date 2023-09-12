@@ -20,9 +20,9 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
     [Inject]
     private IState<CompilerServiceExplorerRegistry> CompilerServiceExplorerStateWrap { get; set; } = null!;
     [Inject]
-    private IState<TextEditorViewModelsRegistry> TextEditorViewModelsCollectionWrap { get; set; } = null!;
+    private IState<TextEditorViewModelRegistry> TextEditorViewModelsCollectionWrap { get; set; } = null!;
     [Inject]
-    private IState<TextEditorGroupsRegistry> TextEditorGroupsCollectionWrap { get; set; } = null!;
+    private IState<TextEditorGroupRegistry> TextEditorGroupsCollectionWrap { get; set; } = null!;
     [Inject]
     private IState<AppOptionsRegistry> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
