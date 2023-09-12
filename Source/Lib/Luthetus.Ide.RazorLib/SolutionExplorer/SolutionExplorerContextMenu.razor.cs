@@ -311,26 +311,18 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     {
         return new[]
         {
-        MenuOptionsFactory.CopyFile(
-            treeViewModel.Item.AbsolutePath,
-            () => NotifyCopyCompleted(treeViewModel.Item)),
-        MenuOptionsFactory.CutFile(
-            treeViewModel.Item.AbsolutePath,
-            () => NotifyCutCompleted(treeViewModel.Item, parentTreeViewModel)),
-        MenuOptionsFactory.DeleteFile(
-            treeViewModel.Item.AbsolutePath,
-            async () =>
-            {
-                await ReloadTreeViewModel(parentTreeViewModel);
+            MenuOptionsFactory.CopyFile(treeViewModel.Item.AbsolutePath, () => {
+                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.AbsolutePath.NameWithExtension}", LuthetusCommonComponentRenderers, Dispatcher);
+                return Task.CompletedTask;
             }),
-        MenuOptionsFactory.RenameFile(
-            treeViewModel.Item.AbsolutePath,
-            Dispatcher,
-            async ()  =>
-            {
-                await ReloadTreeViewModel(parentTreeViewModel);
+            MenuOptionsFactory.CutFile(treeViewModel.Item.AbsolutePath, () => {
+                ParentOfCutFile = parentTreeViewModel;
+                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.AbsolutePath.NameWithExtension}", LuthetusCommonComponentRenderers, Dispatcher);
+                return Task.CompletedTask;
             }),
-    };
+            MenuOptionsFactory.DeleteFile(treeViewModel.Item.AbsolutePath, async () => await ReloadTreeViewModel(parentTreeViewModel)),
+            MenuOptionsFactory.RenameFile(treeViewModel.Item.AbsolutePath, Dispatcher, async ()  => await ReloadTreeViewModel(parentTreeViewModel)),
+        };
     }
 
     private MenuOptionRecord[] GetDebugMenuOptions(
@@ -439,63 +431,6 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         TreeViewService.MoveUp(
             DotNetSolutionRegistry.TreeViewSolutionExplorerStateKey,
             false);
-    }
-
-    private Task NotifyCopyCompleted(
-        NamespacePath namespacePath)
-    {
-        if (LuthetusCommonComponentRenderers.InformativeNotificationRendererType != null)
-        {
-            var notificationInformative = new NotificationRecord(
-                NotificationKey.NewKey(),
-                "Copy Action",
-                LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
-                new Dictionary<string, object?>
-                {
-                {
-                    nameof(IInformativeNotificationRendererType.Message),
-                    $"Copied: {namespacePath.AbsolutePath.NameWithExtension}"
-                },
-                },
-                TimeSpan.FromSeconds(3),
-                true,
-                null);
-
-            Dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
-                notificationInformative));
-        }
-
-        return Task.CompletedTask;
-    }
-
-    private Task NotifyCutCompleted(
-        NamespacePath namespacePath,
-        TreeViewNamespacePath? parentTreeViewModel)
-    {
-        ParentOfCutFile = parentTreeViewModel;
-
-        if (LuthetusCommonComponentRenderers.InformativeNotificationRendererType != null)
-        {
-            var notificationInformative = new NotificationRecord(
-                NotificationKey.NewKey(),
-                "Cut Action",
-                LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
-                new Dictionary<string, object?>
-                {
-                {
-                    nameof(IInformativeNotificationRendererType.Message),
-                    $"Cut: {namespacePath.AbsolutePath.NameWithExtension}"
-                },
-                },
-                TimeSpan.FromSeconds(3),
-                true,
-                null);
-
-            Dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
-                notificationInformative));
-        }
-
-        return Task.CompletedTask;
     }
 
     public static string GetContextMenuCssStyleString(

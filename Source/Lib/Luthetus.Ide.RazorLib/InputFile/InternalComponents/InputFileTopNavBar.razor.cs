@@ -130,26 +130,7 @@ public partial class InputFileTopNavBar : ComponentBase
         }
         catch (Exception exception)
         {
-            if (LuthetusCommonComponentRenderers.ErrorNotificationRendererType != null)
-            {
-                var errorNotification = new NotificationRecord(
-                    NotificationKey.NewKey(),
-                    $"ERROR: {nameof(InputFileTopNavBar)}",
-                    LuthetusCommonComponentRenderers.ErrorNotificationRendererType,
-                    new Dictionary<string, object?>
-                    {
-                    {
-                        nameof(IErrorNotificationRendererType.Message),
-                        exception.ToString()
-                    }
-                    },
-                    TimeSpan.FromSeconds(12),
-                    true,
-                    IErrorNotificationRendererType.CSS_CLASS_STRING);
-
-                Dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
-                    errorNotification));
-            }
+            NotificationHelper.DispatchError($"ERROR: {nameof(InputFileTopNavBar)}", exception.ToString(), LuthetusCommonComponentRenderers, Dispatcher);
         }
     }
 

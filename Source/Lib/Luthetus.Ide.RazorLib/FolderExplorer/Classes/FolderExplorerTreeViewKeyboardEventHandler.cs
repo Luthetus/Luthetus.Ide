@@ -1,6 +1,7 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.ComponentRenderers.Types;
+using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Keyboard;
 using Luthetus.Common.RazorLib.Menu;
@@ -104,62 +105,6 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         return;
     }
 
-    private Task NotifyCopyCompleted(IAbsolutePath absolutePath)
-    {
-        if (_luthetusCommonComponentRenderers.InformativeNotificationRendererType is not null)
-        {
-            var notificationInformative = new NotificationRecord(
-                NotificationKey.NewKey(),
-                "Copy Action",
-                _luthetusCommonComponentRenderers.InformativeNotificationRendererType,
-                new Dictionary<string, object?>
-                {
-                    {
-                        nameof(IInformativeNotificationRendererType.Message),
-                        $"Copied: {absolutePath.NameWithExtension}"
-                    },
-                },
-                TimeSpan.FromSeconds(3),
-                true,
-                null);
-
-            _dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
-                notificationInformative));
-        }
-
-        return Task.CompletedTask;
-    }
-
-    private Task NotifyCutCompleted(
-        IAbsolutePath absolutePath,
-        TreeViewAbsolutePath? parentTreeViewModel)
-    {
-        SolutionExplorerContextMenu.ParentOfCutFile = parentTreeViewModel;
-
-        if (_luthetusCommonComponentRenderers.InformativeNotificationRendererType is not null)
-        {
-            var notificationInformative = new NotificationRecord(
-                NotificationKey.NewKey(),
-                "Cut Action",
-                _luthetusCommonComponentRenderers.InformativeNotificationRendererType,
-                new Dictionary<string, object?>
-                {
-                {
-                    nameof(IInformativeNotificationRendererType.Message),
-                    $"Cut: {absolutePath.NameWithExtension}"
-                },
-                },
-                TimeSpan.FromSeconds(3),
-                true,
-                null);
-
-            _dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
-                notificationInformative));
-        }
-
-        return Task.CompletedTask;
-    }
-
     private void CopyFile(ITreeViewCommandParameter treeViewCommandParameter)
     {
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
@@ -169,7 +114,10 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
 
         var copyFileMenuOption = _menuOptionsFactory.CopyFile(
             treeViewAbsolutePath.Item,
-            () => NotifyCopyCompleted(treeViewAbsolutePath.Item));
+            () => { 
+                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewAbsolutePath.Item.NameWithExtension}", _luthetusCommonComponentRenderers, _dispatcher);
+                return Task.CompletedTask;
+            });
 
         copyFileMenuOption.OnClick?.Invoke();
     }
@@ -234,9 +182,11 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
 
         MenuOptionRecord cutFileOptionRecord = _menuOptionsFactory.CutFile(
             treeViewAbsolutePath.Item,
-            () => NotifyCutCompleted(
-                treeViewAbsolutePath.Item,
-                parent));
+            () => {
+                SolutionExplorerContextMenu.ParentOfCutFile = parent;
+                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewAbsolutePath.Item.NameWithExtension}", _luthetusCommonComponentRenderers, _dispatcher);
+                return Task.CompletedTask;
+            });
 
         cutFileOptionRecord.OnClick?.Invoke();
     }

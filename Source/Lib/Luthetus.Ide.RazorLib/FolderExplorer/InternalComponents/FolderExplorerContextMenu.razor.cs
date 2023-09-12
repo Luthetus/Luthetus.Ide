@@ -3,6 +3,7 @@ using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.Dimensions;
 using Luthetus.Common.RazorLib.Dropdown;
+using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Menu;
 using Luthetus.Common.RazorLib.Notification;
@@ -107,26 +108,18 @@ public partial class FolderExplorerContextMenu : ComponentBase
     {
         return new[]
         {
-        MenuOptionsFactory.CopyFile(
-            treeViewModel.Item,
-            () => NotifyCopyCompleted(treeViewModel.Item)),
-        MenuOptionsFactory.CutFile(
-            treeViewModel.Item,
-            () => NotifyCutCompleted(treeViewModel.Item, parentTreeViewModel)),
-        MenuOptionsFactory.DeleteFile(
-            treeViewModel.Item,
-            async () =>
-            {
-                await ReloadTreeViewModel(parentTreeViewModel);
+            MenuOptionsFactory.CopyFile(treeViewModel.Item, () => {
+                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.NameWithExtension}", LuthetusCommonComponentRenderers, Dispatcher);
+                return Task.CompletedTask;
             }),
-        MenuOptionsFactory.RenameFile(
-            treeViewModel.Item,
-            Dispatcher,
-            async ()  =>
-            {
-                await ReloadTreeViewModel(parentTreeViewModel);
+            MenuOptionsFactory.CutFile(treeViewModel.Item, () => {
+                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.NameWithExtension}", LuthetusCommonComponentRenderers, Dispatcher);
+                ParentOfCutFile = parentTreeViewModel;
+                return Task.CompletedTask;
             }),
-    };
+            MenuOptionsFactory.DeleteFile(treeViewModel.Item, async () => await ReloadTreeViewModel(parentTreeViewModel)),
+            MenuOptionsFactory.RenameFile(treeViewModel.Item, Dispatcher, async ()  => await ReloadTreeViewModel(parentTreeViewModel))
+        };
     }
 
     private MenuOptionRecord[] GetDebugMenuOptions(
@@ -165,62 +158,6 @@ public partial class FolderExplorerContextMenu : ComponentBase
         TreeViewService.MoveUp(
             FolderExplorerRegistry.TreeViewFolderExplorerContentStateKey,
             false);
-    }
-
-    private Task NotifyCopyCompleted(IAbsolutePath absolutePath)
-    {
-        if (LuthetusCommonComponentRenderers.InformativeNotificationRendererType != null)
-        {
-            var notificationInformative = new NotificationRecord(
-                NotificationKey.NewKey(),
-                "Copy Action",
-                LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
-                new Dictionary<string, object?>
-                {
-                    {
-                        nameof(IInformativeNotificationRendererType.Message),
-                        $"Copied: {absolutePath.NameWithExtension}"
-                    },
-                },
-                TimeSpan.FromSeconds(3),
-                true,
-                null);
-
-            Dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
-                notificationInformative));
-        }
-
-        return Task.CompletedTask;
-    }
-
-    private Task NotifyCutCompleted(
-        IAbsolutePath absolutePath,
-        TreeViewAbsolutePath? parentTreeViewModel)
-    {
-        ParentOfCutFile = parentTreeViewModel;
-
-        if (LuthetusCommonComponentRenderers.InformativeNotificationRendererType != null)
-        {
-            var notificationInformative = new NotificationRecord(
-                NotificationKey.NewKey(),
-                "Cut Action",
-                LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
-                new Dictionary<string, object?>
-                {
-                    {
-                        nameof(IInformativeNotificationRendererType.Message),
-                        $"Cut: {absolutePath.NameWithExtension}"
-                    },
-                },
-                TimeSpan.FromSeconds(3),
-                true,
-                null);
-
-            Dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
-                notificationInformative));
-        }
-
-        return Task.CompletedTask;
     }
 
     public static string GetContextMenuCssStyleString(ITreeViewCommandParameter? treeViewCommandParameter)

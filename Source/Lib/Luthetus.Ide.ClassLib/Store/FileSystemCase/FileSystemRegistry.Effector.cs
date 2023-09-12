@@ -66,26 +66,7 @@ public partial class FileSystemRegistry
                             notificationMessage = "File not found. TODO: Save As";
                         }
 
-                        if (_luthetusCommonComponentRenderers.InformativeNotificationRendererType is not null)
-                        {
-                            var notificationInformative = new NotificationRecord(
-                                NotificationKey.NewKey(),
-                                "Save Action",
-                                _luthetusCommonComponentRenderers.InformativeNotificationRendererType,
-                                new Dictionary<string, object?>
-                                {
-                                    {
-                                        nameof(IInformativeNotificationRendererType.Message),
-                                        notificationMessage
-                                    },
-                                },
-                                TimeSpan.FromSeconds(5),
-                                true,
-                                null);
-
-                            dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
-                                notificationInformative));
-                        }
+                        NotificationHelper.DispatchInformative("Save Action", notificationMessage, _luthetusCommonComponentRenderers, dispatcher);
 
                         DateTime? fileLastWriteTime = null;
 

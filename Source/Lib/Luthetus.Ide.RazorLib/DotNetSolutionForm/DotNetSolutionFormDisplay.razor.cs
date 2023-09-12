@@ -172,23 +172,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
         Dispatcher.Dispatch(new DialogRegistry.DisposeAction(
             DialogRecord.Key));
 
-        var notificationRecord = new NotificationRecord(
-            NotificationKey.NewKey(),
-            "Website .sln template was used",
-            LuthetusCommonComponentRenderers.InformativeNotificationRendererType,
-            new Dictionary<string, object?>
-            {
-                {
-                    nameof(IInformativeNotificationRendererType.Message),
-                    "No terminal available"
-                }
-            },
-            TimeSpan.FromSeconds(5),
-            true,
-            null);
-
-        Dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
-            notificationRecord));
+        NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", LuthetusCommonComponentRenderers, Dispatcher);
 
         var solutionAbsolutePath = new AbsolutePath(
             solutionAbsolutePathString,

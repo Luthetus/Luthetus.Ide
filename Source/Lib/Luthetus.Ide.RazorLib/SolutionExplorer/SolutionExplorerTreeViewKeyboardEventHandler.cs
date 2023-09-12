@@ -102,62 +102,6 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         return;
     }
 
-    private Task NotifyCopyCompleted(NamespacePath namespacePath)
-    {
-        if (_luthetusCommonComponentRenderers.InformativeNotificationRendererType != null)
-        {
-            var notificationInformative = new NotificationRecord(
-                NotificationKey.NewKey(),
-                "Copy Action",
-                _luthetusCommonComponentRenderers.InformativeNotificationRendererType,
-                new Dictionary<string, object?>
-                {
-                {
-                    nameof(IInformativeNotificationRendererType.Message),
-                    $"Copied: {namespacePath.AbsolutePath.NameWithExtension}"
-                },
-                },
-                TimeSpan.FromSeconds(3),
-                true,
-                null);
-
-            _dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
-                notificationInformative));
-        }
-
-        return Task.CompletedTask;
-    }
-
-    private Task NotifyCutCompleted(
-        NamespacePath namespacePath,
-        TreeViewNamespacePath? parentTreeViewModel)
-    {
-        SolutionExplorerContextMenu.ParentOfCutFile = parentTreeViewModel;
-
-        if (_luthetusCommonComponentRenderers.InformativeNotificationRendererType != null)
-        {
-            var notificationInformative = new NotificationRecord(
-                NotificationKey.NewKey(),
-                "Cut Action",
-                _luthetusCommonComponentRenderers.InformativeNotificationRendererType,
-                new Dictionary<string, object?>
-                {
-                    {
-                        nameof(IInformativeNotificationRendererType.Message),
-                        $"Cut: {namespacePath.AbsolutePath.NameWithExtension}"
-                    },
-                },
-                TimeSpan.FromSeconds(3),
-                true,
-                null);
-
-            _dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
-                notificationInformative));
-        }
-
-        return Task.CompletedTask;
-    }
-
     private void InvokeCopyFile(ITreeViewCommandParameter treeViewCommandParameter)
     {
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
@@ -167,7 +111,10 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 
         var copyFileMenuOption = _menuOptionsFactory.CopyFile(
             treeViewNamespacePath.Item.AbsolutePath,
-            () => NotifyCopyCompleted(treeViewNamespacePath.Item));
+            () => {
+                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewNamespacePath.Item.AbsolutePath.NameWithExtension}", _luthetusCommonComponentRenderers, _dispatcher);
+                return Task.CompletedTask;
+            });
 
         copyFileMenuOption.OnClick?.Invoke();
     }
@@ -233,9 +180,11 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 
         MenuOptionRecord cutFileOptionRecord = _menuOptionsFactory.CutFile(
             treeViewNamespacePath.Item.AbsolutePath,
-            () => NotifyCutCompleted(
-                treeViewNamespacePath.Item,
-                parent));
+            () => {
+                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewNamespacePath.Item.AbsolutePath.NameWithExtension}", _luthetusCommonComponentRenderers, _dispatcher);
+                SolutionExplorerContextMenu.ParentOfCutFile = parent;
+                return Task.CompletedTask;
+            });
 
         cutFileOptionRecord.OnClick?.Invoke();
     }

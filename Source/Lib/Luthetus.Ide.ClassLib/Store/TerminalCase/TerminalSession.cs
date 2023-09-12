@@ -10,6 +10,7 @@ using Luthetus.Common.RazorLib.Store.NotificationCase;
 using Luthetus.Ide.ClassLib.State;
 using Luthetus.TextEditor.RazorLib.Model;
 using Luthetus.TextEditor.RazorLib.ViewModel.InternalClasses;
+using Microsoft.AspNetCore.Components;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Reactive.Linq;
@@ -164,23 +165,7 @@ public class TerminalSession
                     }
                     catch (Exception e)
                     {
-                        var notificationRecord = new NotificationRecord(
-                            NotificationKey.NewKey(),
-                            "Terminal Exception",
-                            _luthetusCommonComponentRenderers.ErrorNotificationRendererType,
-                            new Dictionary<string, object?>
-                            {
-                                {
-                                    nameof(IErrorNotificationRendererType.Message),
-                                    e.ToString()
-                                }
-                            },
-                            TimeSpan.FromSeconds(10),
-                            true,
-                            IErrorNotificationRendererType.CSS_CLASS_STRING);
-
-                        _dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
-                            notificationRecord));
+                        NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _luthetusCommonComponentRenderers, _dispatcher);
                     }
                     finally
                     {
