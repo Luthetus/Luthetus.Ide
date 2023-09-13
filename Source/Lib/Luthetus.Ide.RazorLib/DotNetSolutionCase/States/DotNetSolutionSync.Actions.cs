@@ -21,39 +21,39 @@ namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 internal partial class SynchronizationContext
 {
     [ReducerMethod]
-    public DotNetSolutionState HandleSetDotNetSolutionAction(
+    public DotNetSolutionState ReduceSetDotNetSolutionTask(
         DotNetSolutionState inDotNetSolutionState,
         SetDotNetSolutionTask setDotNetSolutionTask)
     {
         _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
             "HandleSetDotNetSolutionAction",
-            async () => await HandleSetDotNetSolutionActionAsync(
+            async () => await SetDotNetSolutionAsync(
                 setDotNetSolutionTask));
 
         return inDotNetSolutionState;
     }
 
     [ReducerMethod]
-    public DotNetSolutionState HandleSetDotNetSolutionTreeViewAction(
+    public DotNetSolutionState ReduceSetDotNetSolutionTreeViewTask(
         DotNetSolutionState inDotNetSolutionState,
         SetDotNetSolutionTreeViewTask setDotNetSolutionTreeViewTask)
     {
         _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
             "HandleSetDotNetSolutionTreeViewAction",
-            async () => await HandleSetDotNetSolutionTreeViewActionAsync(
+            async () => await SetDotNetSolutionTreeViewAsync(
                 setDotNetSolutionTreeViewTask));
 
         return inDotNetSolutionState;
     }
 
     [ReducerMethod]
-    public DotNetSolutionState HandleParseDotNetSolutionAction(
+    public DotNetSolutionState ReduceParseDotNetSolutionTask(
         DotNetSolutionState inDotNetSolutionState,
         ParseDotNetSolutionTask parseDotNetSolutionTask)
     {
         _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
             "HandleParseDotNetSolutionActionAsync",
-            async () => await HandleParseDotNetSolutionActionAsync(
+            async () => await ParseDotNetSolutionAsync(
                 parseDotNetSolutionTask));
 
         return inDotNetSolutionState;

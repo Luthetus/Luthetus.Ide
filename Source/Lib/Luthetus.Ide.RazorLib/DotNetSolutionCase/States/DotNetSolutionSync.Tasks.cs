@@ -20,7 +20,7 @@ namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 
 internal partial class SynchronizationContext
 {
-    public async Task HandleSetDotNetSolutionActionAsync(SetDotNetSolutionTask setDotNetSolutionAction)
+    public async Task SetDotNetSolutionAsync(SetDotNetSolutionTask setDotNetSolutionAction)
     {
         var dotNetSolutionAbsolutePathString = setDotNetSolutionAction.SolutionAbsolutePath.FormattedInput;
 
@@ -54,9 +54,7 @@ internal partial class SynchronizationContext
         _dispatcher.Dispatch(new ParseDotNetSolutionTask());
     }
 
-
-
-    public async Task HandleSetDotNetSolutionTreeViewActionAsync(
+    public async Task SetDotNetSolutionTreeViewAsync(
         SetDotNetSolutionTreeViewTask setDotNetSolutionTreeViewAction)
     {
         var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
@@ -112,9 +110,7 @@ internal partial class SynchronizationContext
             }));
     }
 
-
-
-    public Task HandleParseDotNetSolutionActionAsync(ParseDotNetSolutionTask parseDotNetSolutionAction)
+    public Task ParseDotNetSolutionAsync(ParseDotNetSolutionTask parseDotNetSolutionAction)
     {
         var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
 
@@ -153,20 +149,14 @@ internal partial class SynchronizationContext
         return Task.CompletedTask;
     }
 
-
-
-    [EffectMethod]
-    public DotNetSolutionState ReduceAddExistingProjectToSolutionAction(
-        DotNetSolutionState inDotNetSolutionState,
-        AddExistingProjectToSolutionAction addExistingProjectToSolutionAction)
+    
+    public Task AddExistingProjectToSolutionAsync(AddExistingProjectToSolutionAction addExistingProjectToSolutionAction)
     {
-        var indexOfDotNetSolutionModel = inDotNetSolutionState.DotNetSolutions.FindIndex(
+        var dotNetSolutionModel = _dotNetSolutionStateWrap.Value.DotNetSolutions.FirstOrDefault(
             x => x.DotNetSolutionModelKey == addExistingProjectToSolutionAction.DotNetSolutionModelKey);
 
-        if (indexOfDotNetSolutionModel == -1)
-            return inDotNetSolutionState;
-
-        var dotNetSolutionModel = inDotNetSolutionState.DotNetSolutions[indexOfDotNetSolutionModel];
+        if (dotNetSolutionModel is null)
+            return Task.CompletedTask;
 
         var projectTypeGuid = WebsiteProjectTemplateRegistry.GetProjectTypeGuid(
             addExistingProjectToSolutionAction.LocalProjectTemplateShortName);
@@ -194,9 +184,6 @@ internal partial class SynchronizationContext
             indexOfDotNetSolutionModel,
             dotNetSolutionBuilder.Build());
 
-        return inDotNetSolutionState with
-        {
-            DotNetSolutions = nextDotNetSolutions
-        };
+        return Task.CompletedTask;
     }
 }
