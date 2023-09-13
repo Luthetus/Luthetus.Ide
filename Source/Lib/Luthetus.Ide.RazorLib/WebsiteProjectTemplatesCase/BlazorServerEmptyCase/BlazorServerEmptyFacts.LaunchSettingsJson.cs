@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Ide.ClassLib.WebsiteProjectTemplatesCase.BlazorServerEmptyCase;
+﻿namespace Luthetus.Ide.RazorLib.WebsiteProjectTemplatesCase.BlazorServerEmptyCase;
 
 public static partial class BlazorServerEmptyFacts
 {

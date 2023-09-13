@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Ide.ClassLib.WebsiteProjectTemplatesCase.XUnitCase;
+﻿namespace Luthetus.Ide.RazorLib.WebsiteProjectTemplatesCase.XUnitCase;
 
 public partial class XUnitFacts
 {

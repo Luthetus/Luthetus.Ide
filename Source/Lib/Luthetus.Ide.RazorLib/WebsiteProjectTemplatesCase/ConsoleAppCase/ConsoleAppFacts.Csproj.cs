@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Ide.ClassLib.WebsiteProjectTemplatesCase.ConsoleAppCase;
+﻿namespace Luthetus.Ide.RazorLib.WebsiteProjectTemplatesCase.ConsoleAppCase;
 
 public partial class ConsoleAppFacts
 {
