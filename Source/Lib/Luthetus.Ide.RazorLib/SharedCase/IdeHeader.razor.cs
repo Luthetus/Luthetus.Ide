@@ -6,6 +6,8 @@ using Luthetus.Common.RazorLib.Menu;
 using Luthetus.Common.RazorLib.Store.DialogCase;
 using Luthetus.Common.RazorLib.Store.DropdownCase;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase;
+using Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
+using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 using Luthetus.Ide.RazorLib.EditorCase;
 using Luthetus.Ide.RazorLib.FolderExplorerCase;
 using Microsoft.AspNetCore.Components;
@@ -72,7 +74,7 @@ public partial class IdeHeader : FluxorComponent
             var menuOptionOpenDotNetSolution = new MenuOptionRecord(
                 ".NET Solution",
                 MenuOptionKind.Other,
-                () => DotNetSolutionRegistry.ShowInputFile(Dispatcher));
+                () => DotNetSolutionState.ShowInputFile(Dispatcher));
 
             var menuOptionOpen = new MenuOptionRecord(
                 "Open",

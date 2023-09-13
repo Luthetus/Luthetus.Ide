@@ -14,12 +14,12 @@ using Luthetus.Ide.RazorLib.CommandCase;
 using Luthetus.Ide.RazorLib.ContextCase;
 using Luthetus.Ide.RazorLib.FolderExplorerCase;
 using Luthetus.Ide.RazorLib.NugetCase;
-using Luthetus.Ide.RazorLib.SolutionExplorerCase;
 using Luthetus.Ide.RazorLib.TerminalCase;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Store.Find;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
+using Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
 
 namespace Luthetus.Ide.RazorLib.InstallationCase;
 

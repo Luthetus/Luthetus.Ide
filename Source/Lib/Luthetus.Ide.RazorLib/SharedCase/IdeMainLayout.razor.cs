@@ -9,6 +9,7 @@ using Luthetus.Common.RazorLib.Store.AppOptionsCase;
 using Luthetus.Common.RazorLib.Store.DragCase;
 using Luthetus.Common.RazorLib.Store.PanelCase;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase;
+using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 using Luthetus.TextEditor.RazorLib;
 using Microsoft.AspNetCore.Components;
 
@@ -87,7 +88,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                     false,
                     EnvironmentProvider);
 
-                Dispatcher.Dispatch(new DotNetSolutionRegistry.SetDotNetSolutionAction(
+                Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionTask(
                     absolutePath));
             }
         }

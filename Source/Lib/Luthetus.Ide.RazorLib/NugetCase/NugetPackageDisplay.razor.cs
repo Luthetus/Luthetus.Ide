@@ -8,6 +8,7 @@ using Luthetus.Ide.RazorLib.TerminalCase;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 using Luthetus.Ide.RazorLib.NugetCase.NugetPackageManagerCase;
+using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 
 namespace Luthetus.Ide.RazorLib.NugetCase;
 
@@ -16,7 +17,7 @@ public partial class NugetPackageDisplay : FluxorComponent
     [Inject]
     private IState<NuGetPackageManagerRegistry> NuGetPackageManagerStateWrap { get; set; } = null!;
     [Inject]
-    private IState<DotNetSolutionRegistry> DotNetSolutionStateWrap { get; set; } = null!;
+    private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
     [Inject]
     private IState<TerminalSessionRegistry> TerminalSessionsStateWrap { get; set; } = null!;
     [Inject]

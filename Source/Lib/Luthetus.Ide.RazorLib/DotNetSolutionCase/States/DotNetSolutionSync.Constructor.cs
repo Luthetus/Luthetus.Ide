@@ -15,6 +15,7 @@ using Luthetus.Common.RazorLib;
 using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
 using Luthetus.Ide.RazorLib.WebsiteProjectTemplatesCase;
 using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
+using Luthetus.TextEditor.RazorLib;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 
@@ -30,6 +31,7 @@ internal partial class SynchronizationContext
     private readonly IState<TerminalSessionRegistry> _terminalSessionsStateWrap;
     private readonly IDispatcher _dispatcher;
     private readonly LuthetusHostingInformation _luthetusHostingInformation;
+    private readonly ITextEditorService _textEditorService;
 
     public SynchronizationContext(
         IFileSystemProvider fileSystemProvider,
@@ -41,6 +43,7 @@ internal partial class SynchronizationContext
         IBackgroundTaskService backgroundTaskService,
         IState<TerminalSessionRegistry> terminalSessionsStateWrap,
         LuthetusHostingInformation luthetusHostingInformation,
+        ITextEditorService textEditorService,
         IDispatcher dispatcher)
     {
         _fileSystemProvider = fileSystemProvider;
@@ -52,6 +55,7 @@ internal partial class SynchronizationContext
         _backgroundTaskService = backgroundTaskService;
         _terminalSessionsStateWrap = terminalSessionsStateWrap;
         _luthetusHostingInformation = luthetusHostingInformation;
+        _textEditorService = textEditorService;
         _dispatcher = dispatcher;
     }
 

@@ -4,6 +4,7 @@
 @using Luthetus.Common.RazorLib.Dropdown
 @using Luthetus.Common.RazorLib.TreeView
 @using Luthetus.Common.RazorLib.TreeView.Displays
+@using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
@@ -27,7 +28,7 @@
             {
                 <button class="luth_button"
                         style="display: inline; margin-right: 12px; margin-bottom: 12px;"
-                        @onclick="() => DotNetSolutionRegistry.ShowInputFile(Dispatcher)">
+                        @onclick="() => DotNetSolutionState.ShowInputFile(Dispatcher)">
                     Open Solution
                 </button>
 
@@ -42,7 +43,7 @@
                 <CascadingValue Name="LuthetusTreeViewIconWidth" Value="AppOptionsRegistryWrap.Value.Options.IconSizeInPixels">
                     <CascadingValue Name="LuthetusTreeViewIconHeight" Value="AppOptionsRegistryWrap.Value.Options.IconSizeInPixels">
                         <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
-                            <TreeViewStateDisplay TreeViewStateKey="DotNetSolutionRegistry.TreeViewSolutionExplorerStateKey"
+                            <TreeViewStateDisplay TreeViewStateKey="DotNetSolutionState.TreeViewSolutionExplorerStateKey"
                                                   CssStyleString="height: 100%;"
                                                   OnContextMenuFunc="OnTreeViewContextMenuFunc"
                                                   TreeViewKeyboardEventHandler="_solutionExplorerTreeViewKeymap"

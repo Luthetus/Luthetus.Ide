@@ -7,8 +7,8 @@ using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.Common.RazorLib.TreeView.Events;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
+using Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
 using Luthetus.Ide.RazorLib.EditorCase;
-using Luthetus.Ide.RazorLib.SolutionExplorerCase;
 using Luthetus.Ide.RazorLib.MenuCase;
 using Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
 

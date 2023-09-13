@@ -486,37 +486,16 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         string localCSharpProjectName,
         string cSharpProjectAbsolutePathString)
     {
-        var dotNetSolutionAbsolutePathString = DotNetSolutionModel.NamespacePath!.AbsolutePath.FormattedInput;
+        var dotNetSolutionModel = DotNetSolutionModel;
+
+        var dotNetSolutionAbsolutePathString = dotNetSolutionModel.NamespacePath!.AbsolutePath.FormattedInput;
         var cSharpAbsolutePath = new AbsolutePath(cSharpProjectAbsolutePathString, false, EnvironmentProvider);
 
         Dispatcher.Dispatch(new DotNetSolutionState.AddExistingProjectToSolutionTask(
-            DotNetSolutionModel.DotNetSolutionModelKey,
+            dotNetSolutionModel.DotNetSolutionModelKey,
             localProjectTemplateShortName,
             localCSharpProjectName,
             cSharpAbsolutePath,
             EnvironmentProvider));
-
-        await FileSystemProvider.File.WriteAllTextAsync(
-            DotNetSolutionModel.NamespacePath.AbsolutePath.FormattedInput,
-            DotNetSolutionModel.SolutionFileContents);
-
-        var solutionTextEditorModel = TextEditorService.Model.FindOrDefaultByResourceUri(
-            new ResourceUri(DotNetSolutionModel.NamespacePath.AbsolutePath.FormattedInput));
-
-        if (solutionTextEditorModel is not null)
-        {
-            Dispatcher.Dispatch(new TextEditorModelRegistry.ReloadAction(
-                solutionTextEditorModel.ModelKey,
-                DotNetSolutionModel.SolutionFileContents,
-                DateTime.UtcNow));
-        }
-
-        Dispatcher.Dispatch(new DotNetSolutionRegistry.WithAction(
-            inDotNetSolutionState => inDotNetSolutionState with
-            {
-                DotNetSolutionModelKey = DotNetSolutionModel.DotNetSolutionModelKey
-            }));
-
-        Dispatcher.Dispatch(new DotNetSolutionRegistry.SetDotNetSolutionTreeViewAction());
     }
 }

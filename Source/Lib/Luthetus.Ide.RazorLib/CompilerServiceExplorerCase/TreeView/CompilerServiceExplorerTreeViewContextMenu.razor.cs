@@ -5,6 +5,7 @@ using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase;
+using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.TreeView;
@@ -43,11 +44,11 @@ public partial class CompilerServiceExplorerTreeViewContextMenu : ComponentBase
         await treeViewModel.LoadChildrenAsync();
 
         TreeViewService.ReRenderNode(
-            DotNetSolutionRegistry.TreeViewSolutionExplorerStateKey,
+            DotNetSolutionState.TreeViewSolutionExplorerStateKey,
             treeViewModel);
 
         TreeViewService.MoveUp(
-            DotNetSolutionRegistry.TreeViewSolutionExplorerStateKey,
+            DotNetSolutionState.TreeViewSolutionExplorerStateKey,
             false);
     }
 

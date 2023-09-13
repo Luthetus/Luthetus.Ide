@@ -6,6 +6,7 @@ using Luthetus.Ide.RazorLib.DotNetSolutionCase;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Types;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Ide.RazorLib.NugetCase.NugetPackageManagerCase;
+using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 
 namespace Luthetus.Ide.RazorLib.NugetCase;
 
@@ -14,7 +15,7 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
     [Inject]
     private IState<NuGetPackageManagerRegistry> NuGetPackageManagerStateWrap { get; set; } = null!;
     [Inject]
-    private IState<DotNetSolutionRegistry> DotNetSolutionStateWrap { get; set; } = null!;
+    private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -41,7 +42,7 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
 
     private void SelectedProjectToModifyChanged(
         ChangeEventArgs changeEventArgs,
-        DotNetSolutionRegistry dotNetSolutionState)
+        DotNetSolutionState dotNetSolutionState)
     {
         if (changeEventArgs.Value is null || dotNetSolutionState.DotNetSolutionModel is null)
             return;
@@ -72,7 +73,7 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
     }
 
     private bool ValidateSolutionContainsSelectedProject(
-        DotNetSolutionRegistry dotNetSolutionState,
+        DotNetSolutionState dotNetSolutionState,
         NuGetPackageManagerRegistry nuGetPackageManagerState)
     {
         if (dotNetSolutionState.DotNetSolutionModel is null ||
