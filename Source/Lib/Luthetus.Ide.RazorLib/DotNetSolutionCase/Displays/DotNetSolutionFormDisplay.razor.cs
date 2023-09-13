@@ -2,7 +2,6 @@
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib;
 using Luthetus.Common.RazorLib.ComponentRenderers;
-using Luthetus.Common.RazorLib.Dialog;
 using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Notification;
@@ -13,8 +12,11 @@ using Luthetus.Ide.RazorLib.FileSystemCase;
 using Luthetus.Ide.RazorLib.TerminalCase;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
+using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
+using Luthetus.Ide.RazorLib.DotNetSolutionCase.Views;
+using Luthetus.Common.RazorLib.Dialog;
 
-namespace Luthetus.Ide.RazorLib.DotNetSolutionCase;
+namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
 
 public partial class DotNetSolutionFormDisplay : FluxorComponent
 {
@@ -33,22 +35,19 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
 
     [CascadingParameter]
     public DialogRecord DialogRecord { get; set; } = null!;
+    
+    [Parameter, EditorRequired]
+    public DotNetSolutionFormView View { get; set; } = null!;
 
-    private readonly TerminalCommandKey _newDotNetSolutionTerminalCommandKey = TerminalCommandKey.NewKey();
-    private readonly CancellationTokenSource _newDotNetSolutionCancellationTokenSource = new();
-
-    private string _solutionName = string.Empty;
-    private string _parentDirectoryName = string.Empty;
-
-    private string SolutionName => string.IsNullOrWhiteSpace(_solutionName)
+    private string SolutionName => string.IsNullOrWhiteSpace(View.SolutionName)
         ? "{enter solution name}"
-        : _solutionName;
+        : View.SolutionName;
 
-    private string ParentDirectoryName => string.IsNullOrWhiteSpace(_parentDirectoryName)
+    private string ParentDirectoryName => string.IsNullOrWhiteSpace(View.ParentDirectoryName)
         ? "{enter parent directory name}"
-        : _parentDirectoryName;
+        : View.ParentDirectoryName;
 
-    private FormattedCommand FormattedCommand => DotNetCliFacts.FormatDotnetNewSln(_solutionName);
+    private FormattedCommand FormattedCommand => DotNetCliFacts.FormatDotnetNewSln(View.SolutionName);
 
     private void RequestInputFileForParentDirectory()
     {
@@ -59,7 +58,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                 if (afp is null)
                     return;
 
-                _parentDirectoryName = afp.FormattedInput;
+                View.ParentDirectoryName = afp.FormattedInput;
 
                 await InvokeAsync(StateHasChanged);
             },
@@ -79,8 +78,8 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
     private async Task StartNewDotNetSolutionCommandOnClick()
     {
         var localFormattedCommand = FormattedCommand;
-        var localSolutionName = _solutionName;
-        var localParentDirectoryName = _parentDirectoryName;
+        var localSolutionName = View.SolutionName;
+        var localParentDirectoryName = View.ParentDirectoryName;
 
         if (string.IsNullOrWhiteSpace(localSolutionName) ||
             string.IsNullOrWhiteSpace(localParentDirectoryName))
@@ -97,15 +96,14 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
         else
         {
             var newDotNetSolutionCommand = new TerminalCommand(
-                _newDotNetSolutionTerminalCommandKey,
+                View.NewDotNetSolutionTerminalCommandKey,
                 localFormattedCommand,
-                _parentDirectoryName,
-                _newDotNetSolutionCancellationTokenSource.Token,
+                View.ParentDirectoryName,
+                View.NewDotNetSolutionCancellationTokenSource.Token,
                 () =>
                 {
                     // Close Dialog
-                    Dispatcher.Dispatch(new DialogRegistry.DisposeAction(
-                        DialogRecord.Key));
+                    Dispatcher.Dispatch(new DialogRegistry.DisposeAction(DialogRecord.Key));
 
                     // Open the created .NET Solution
                     var parentDirectoryAbsolutePath = new AbsolutePath(
@@ -126,7 +124,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                         false,
                         EnvironmentProvider);
 
-                    Dispatcher.Dispatch(new DotNetSolutionRegistry.SetDotNetSolutionAction(
+                    Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionTask(
                         solutionAbsolutePath));
 
                     return Task.CompletedTask;
@@ -162,11 +160,10 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
 
         await FileSystemProvider.File.WriteAllTextAsync(
             solutionAbsolutePathString,
-            HackForWebsite_NEW_SOLUTION_TEMPLATE);
+            DotNetSolutionFormView.HackForWebsite_NEW_SOLUTION_TEMPLATE);
 
         // Close Dialog
-        Dispatcher.Dispatch(new DialogRegistry.DisposeAction(
-            DialogRecord.Key));
+        Dispatcher.Dispatch(new DialogRegistry.DisposeAction(DialogRecord.Key));
 
         NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", LuthetusCommonComponentRenderers, Dispatcher);
 
@@ -175,32 +172,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
             false,
             EnvironmentProvider);
 
-        Dispatcher.Dispatch(new DotNetSolutionRegistry.SetDotNetSolutionAction(
+        Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionTask(
             solutionAbsolutePath));
     }
-
-    private const string HackForWebsite_NEW_SOLUTION_TEMPLATE = @"
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.7.34018.315
-MinimumVisualStudioVersion = 10.0.40219.1
-Global
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{EC571C96-8996-402C-B44A-264F84598795}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EC571C96-8996-402C-B44A-264F84598795}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EC571C96-8996-402C-B44A-264F84598795}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EC571C96-8996-402C-B44A-264F84598795}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {CC0E8FC7-3D42-4480-BAF6-86D1E2F2289E}
-	EndGlobalSection
-EndGlobal
-";
 }

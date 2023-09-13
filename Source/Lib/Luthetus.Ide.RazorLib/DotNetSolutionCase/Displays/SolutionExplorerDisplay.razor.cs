@@ -8,17 +8,20 @@ using Luthetus.Common.RazorLib.Store.DropdownCase;
 using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase;
+using Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
+using Luthetus.Ide.RazorLib.DotNetSolutionCase.Models;
+using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 using Luthetus.Ide.RazorLib.MenuCase;
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Ide.RazorLib.SolutionExplorerCase;
+namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
 
 public partial class SolutionExplorerDisplay : FluxorComponent
 {
     [Inject]
     private IState<AppOptionsRegistry> AppOptionsRegistryWrap { get; set; } = null!;
     [Inject]
-    private IState<DotNetSolutionRegistry> DotNetSolutionStateWrap { get; set; } = null!;
+    private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]

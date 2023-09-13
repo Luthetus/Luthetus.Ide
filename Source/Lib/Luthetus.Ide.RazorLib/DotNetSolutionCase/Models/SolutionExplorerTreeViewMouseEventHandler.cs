@@ -5,7 +5,7 @@ using Luthetus.Common.RazorLib.TreeView.Events;
 using Luthetus.Ide.RazorLib.EditorCase;
 using Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
 
-namespace Luthetus.Ide.RazorLib.SolutionExplorerCase;
+namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.Models;
 
 public class SolutionExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {

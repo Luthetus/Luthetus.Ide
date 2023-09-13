@@ -8,11 +8,14 @@ using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.Common.RazorLib.TreeView.Events;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase;
+using Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
+using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 using Luthetus.Ide.RazorLib.EditorCase;
 using Luthetus.Ide.RazorLib.MenuCase;
+using Luthetus.Ide.RazorLib.SolutionExplorerCase;
 using Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
 
-namespace Luthetus.Ide.RazorLib.SolutionExplorerCase;
+namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.Models;
 
 public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
@@ -212,11 +215,11 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         await treeViewModel.LoadChildrenAsync();
 
         _treeViewService.ReRenderNode(
-            DotNetSolutionRegistry.TreeViewSolutionExplorerStateKey,
+            DotNetSolutionState.TreeViewSolutionExplorerStateKey,
             treeViewModel);
 
         _treeViewService.MoveUp(
-            DotNetSolutionRegistry.TreeViewSolutionExplorerStateKey,
+            DotNetSolutionState.TreeViewSolutionExplorerStateKey,
             false);
     }
 }

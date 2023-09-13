@@ -22,8 +22,9 @@ using Luthetus.Ide.RazorLib.TerminalCase;
 using Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
+using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 
-namespace Luthetus.Ide.RazorLib.SolutionExplorerCase;
+namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
 
 public partial class SolutionExplorerContextMenu : ComponentBase
 {
@@ -211,7 +212,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 Dispatcher,
                 () =>
                 {
-                    Dispatcher.Dispatch(new DotNetSolutionRegistry.SetDotNetSolutionAction(
+                    Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionTask(
                         treeViewSolution.Item.NamespacePath.AbsolutePath));
 
                     return Task.CompletedTask;
@@ -230,7 +231,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 Dispatcher,
                 () =>
                 {
-                    Dispatcher.Dispatch(new DotNetSolutionRegistry.SetDotNetSolutionAction(
+                    Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionTask(
                         treeViewSolution.Item.NamespacePath.AbsolutePath));
 
                     return Task.CompletedTask;
@@ -375,7 +376,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     CancellationToken.None,
                     () =>
                     {
-                        Dispatcher.Dispatch(new DotNetSolutionRegistry.SetDotNetSolutionAction(
+                        Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionTask(
                             dotNetSolutionModel.NamespacePath.AbsolutePath));
 
                         return Task.CompletedTask;
@@ -421,11 +422,11 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         await treeViewModel.LoadChildrenAsync();
 
         TreeViewService.ReRenderNode(
-            DotNetSolutionRegistry.TreeViewSolutionExplorerStateKey,
+            DotNetSolutionState.TreeViewSolutionExplorerStateKey,
             treeViewModel);
 
         TreeViewService.MoveUp(
-            DotNetSolutionRegistry.TreeViewSolutionExplorerStateKey,
+            DotNetSolutionState.TreeViewSolutionExplorerStateKey,
             false);
     }
 
