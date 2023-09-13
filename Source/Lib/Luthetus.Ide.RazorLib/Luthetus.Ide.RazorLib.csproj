@@ -37,8 +37,4 @@
       <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Source\Xml\Source\Luthetus.CompilerServices.Lang.Xml.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="CompilerServiceExplorer\" />
-    </ItemGroup>
-
 </Project>
