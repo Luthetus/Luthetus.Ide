@@ -1,7 +1,7 @@
 using Fluxor;
 using Microsoft.JSInterop;
 
-namespace Luthetus.Ide.ClassLib.LocalStorageCase;
+namespace Luthetus.Ide.RazorLib.LocalStorageCase;
 
 public class LocalStorageEffects
 {

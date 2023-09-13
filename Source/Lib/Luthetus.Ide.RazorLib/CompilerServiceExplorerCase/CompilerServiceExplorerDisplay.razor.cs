@@ -5,7 +5,7 @@ using Luthetus.Common.RazorLib.TabCase;
 using Luthetus.Ide.ClassLib.Store.CompilerServiceExplorerCase;
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Ide.RazorLib.CompilerServiceExplorer;
+namespace Luthetus.Ide.RazorLib.CompilerServiceExplorerCase;
 
 public partial class CompilerServiceExplorerDisplay : FluxorComponent
 {

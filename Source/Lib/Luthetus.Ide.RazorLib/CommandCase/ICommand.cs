@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Ide.ClassLib.CommandCase;
+﻿namespace Luthetus.Ide.RazorLib.CommandCase;
 
 public interface ICommand
 {

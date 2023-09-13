@@ -3,9 +3,9 @@ using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.Common.RazorLib.TreeView.Events;
 using Luthetus.Ide.ClassLib.Store.EditorCase;
-using Luthetus.Ide.ClassLib.TreeViewImplementationsCase;
+using Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
 
-namespace Luthetus.Ide.RazorLib.SolutionExplorer;
+namespace Luthetus.Ide.RazorLib.SolutionExplorerCase;
 
 public class SolutionExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {

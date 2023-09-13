@@ -7,16 +7,16 @@ using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Resize;
 using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
-using Luthetus.Ide.ClassLib.ComponentRenderersCase;
-using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
-using Luthetus.Ide.ClassLib.Store.InputFileCase;
-using Luthetus.Ide.ClassLib.TreeViewImplementationsCase;
-using Luthetus.Ide.RazorLib.InputFile.Classes;
-using Luthetus.Ide.RazorLib.InputFile.InternalComponents;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
+using Luthetus.Ide.RazorLib.ComponentRenderersCase;
+using Luthetus.Ide.RazorLib.InputFileCase.InternalComponents;
+using Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
+using Luthetus.Ide.RazorLib.InputFileCase.Classes;
+using Luthetus.Ide.RazorLib.ComponentRenderersCase.Types;
+using Luthetus.Ide.ClassLib.Store.InputFileCase;
 
-namespace Luthetus.Ide.RazorLib.InputFile;
+namespace Luthetus.Ide.RazorLib.InputFileCase;
 
 public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
 {

@@ -7,11 +7,11 @@ using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.Common.RazorLib.TreeView.Events;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
-using Luthetus.Ide.ClassLib.ComponentRenderersCase;
 using Luthetus.Ide.ClassLib.Store.InputFileCase;
-using Luthetus.Ide.ClassLib.TreeViewImplementationsCase;
+using Luthetus.Ide.RazorLib.ComponentRenderersCase;
+using Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
 
-namespace Luthetus.Ide.RazorLib.InputFile.Classes;
+namespace Luthetus.Ide.RazorLib.InputFileCase.Classes;
 
 public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {

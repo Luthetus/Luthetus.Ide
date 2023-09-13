@@ -1,7 +1,7 @@
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Ide.RazorLib.CompilerServiceExplorer.Graphical.Obsolete;
+namespace Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.Graphical.Obsolete;
 
 public partial class ObsoleteCompilerServiceExplorerGraphicalDisplay : ComponentBase
 {

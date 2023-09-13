@@ -5,14 +5,14 @@ using Luthetus.Common.RazorLib.Store.DropdownCase;
 using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
-using Luthetus.Ide.ClassLib.MenuCase;
 using Luthetus.Ide.ClassLib.Store.CompilerServiceExplorerCase;
+using Luthetus.Ide.RazorLib.MenuCase;
 using Luthetus.TextEditor.RazorLib.Store.Group;
 using Luthetus.TextEditor.RazorLib.Store.ViewModel;
 using Microsoft.AspNetCore.Components;
 using static Luthetus.Ide.ClassLib.Store.CompilerServiceExplorerCase.CompilerServiceExplorerRegistry;
 
-namespace Luthetus.Ide.RazorLib.CompilerServiceExplorer.TreeView;
+namespace Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.TreeView;
 
 public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDisposable
 {
@@ -113,7 +113,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
         CompilerServiceExplorerStateWrap.StateChanged -= RerenderAfterEventWithArgs;
         TextEditorViewModelRegistryWrap.StateChanged -= RerenderAfterEventWithArgs;
         TextEditorGroupRegistryWrap.StateChanged -= RerenderAfterEventWithArgs;
-        
+
         CSharpCompilerService.ModelRegistered -= RerenderAfterEvent;
         CSharpCompilerService.ModelDisposed -= RerenderAfterEvent;
         CSharpCompilerService.ModelParsed -= RerenderAfterEvent;

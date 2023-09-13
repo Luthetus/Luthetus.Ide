@@ -4,14 +4,14 @@ using Luthetus.Common.RazorLib.Store.AppOptionsCase;
 using Luthetus.Common.RazorLib.Store.DropdownCase;
 using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
-using Luthetus.Ide.ClassLib.ComponentRenderersCase;
-using Luthetus.Ide.ClassLib.MenuCase;
-using Luthetus.Ide.ClassLib.FolderExplorerCase;
-using Luthetus.Ide.RazorLib.FolderExplorer.Classes;
-using Luthetus.Ide.RazorLib.FolderExplorer.InternalComponents;
 using Microsoft.AspNetCore.Components;
+using Luthetus.Ide.RazorLib.ComponentRenderersCase;
+using Luthetus.Ide.RazorLib.FolderExplorerCase.Classes;
+using Luthetus.Ide.RazorLib.MenuCase;
+using Luthetus.Ide.RazorLib.FolderExplorerCase.InternalComponents;
+using Luthetus.Ide.ClassLib.FolderExplorerCase;
 
-namespace Luthetus.Ide.RazorLib.FolderExplorer;
+namespace Luthetus.Ide.RazorLib.FolderExplorerCase;
 
 public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 {

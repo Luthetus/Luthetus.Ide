@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Ide.ClassLib.ClipboardCase;
+﻿namespace Luthetus.Ide.RazorLib.ClipboardCase;
 
 public class ClipboardPhrase
 {

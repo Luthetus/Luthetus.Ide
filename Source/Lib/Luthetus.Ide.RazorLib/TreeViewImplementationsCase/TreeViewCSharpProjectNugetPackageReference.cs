@@ -1,10 +1,10 @@
 ﻿using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
-using Luthetus.Ide.ClassLib.ComponentRenderersCase;
-using Luthetus.Ide.ClassLib.ComponentRenderers.Types.TreeViews;
-using Luthetus.Ide.ClassLib.NugetCase;
+using Luthetus.Ide.RazorLib.ComponentRenderersCase;
+using Luthetus.Ide.RazorLib.ComponentRenderersCase.Types.TreeViews;
+using Luthetus.Ide.RazorLib.NugetCase;
 
-namespace Luthetus.Ide.ClassLib.TreeViewImplementationsCase;
+namespace Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
 
 public class TreeViewCSharpProjectNugetPackageReference : TreeViewWithType<CSharpProjectNugetPackageReference>
 {

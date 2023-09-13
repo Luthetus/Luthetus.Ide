@@ -1,12 +1,12 @@
 ﻿using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
-using Luthetus.Ide.ClassLib.ComponentRenderersCase;
-using Luthetus.Ide.ClassLib.ComponentRenderers.Types.TreeViews;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
 using Luthetus.Common.RazorLib.WatchWindow.TreeViewClasses;
+using Luthetus.Ide.RazorLib.ComponentRenderersCase;
+using Luthetus.Ide.RazorLib.ComponentRenderersCase.Types.TreeViews;
 
-namespace Luthetus.Ide.ClassLib.TreeViewImplementationsCase.CompilerServiceExplorerCase;
+namespace Luthetus.Ide.RazorLib.TreeViewImplementationsCase.CompilerServiceExplorerCase;
 
 public class TreeViewCompilerService : TreeViewWithType<ICompilerService>
 {

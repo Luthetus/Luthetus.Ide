@@ -5,11 +5,11 @@ using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Notification;
 using Luthetus.Common.RazorLib.Store.NotificationCase;
-using Luthetus.Ide.ClassLib.ComponentRenderersCase;
 using Luthetus.Ide.ClassLib.Store.InputFileCase;
+using Luthetus.Ide.RazorLib.ComponentRenderersCase;
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Ide.RazorLib.InputFile.InternalComponents;
+namespace Luthetus.Ide.RazorLib.InputFileCase.InternalComponents;
 
 public partial class InputFileTopNavBar : ComponentBase
 {

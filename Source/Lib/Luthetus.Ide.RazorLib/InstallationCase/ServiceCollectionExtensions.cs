@@ -1,6 +1,4 @@
-﻿using Luthetus.Ide.ClassLib.MenuCase;
-using Luthetus.Ide.ClassLib.NugetCase;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Fluxor;
 using Luthetus.Common.RazorLib;
 using Luthetus.TextEditor.RazorLib;
@@ -13,7 +11,6 @@ using Luthetus.CompilerServices.Lang.Json;
 using Luthetus.CompilerServices.Lang.Razor.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.TypeScript;
 using Luthetus.CompilerServices.Lang.Xml;
-using Luthetus.Ide.ClassLib.CommandCase;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 using Microsoft.Extensions.Logging;
 using Luthetus.Ide.RazorLib.FileSystemCase.FileTemplatesCase;
@@ -21,17 +18,19 @@ using Luthetus.Common.RazorLib.FileSystem.Classes.InMemoryFileSystem;
 using Luthetus.Common.RazorLib.FileSystem.Classes.Local;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Theme;
-using Luthetus.Ide.ClassLib.ComponentRenderersCase;
 using Luthetus.Ide.RazorLib.FormsGeneric;
-using Luthetus.Ide.RazorLib.CSharpProjectForm;
-using Luthetus.Ide.RazorLib.File;
-using Luthetus.Ide.RazorLib.Git;
-using Luthetus.Ide.RazorLib.InputFile;
-using Luthetus.Ide.RazorLib.NuGet;
-using Luthetus.Ide.RazorLib.TreeViewImplementations;
 using Luthetus.CompilerServices.Lang.Css;
+using Luthetus.Ide.RazorLib.ComponentRenderersCase;
+using Luthetus.Ide.RazorLib.MenuCase;
+using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.TreeViewImplementations;
+using Luthetus.Ide.RazorLib.FileSystemCase;
+using Luthetus.Ide.RazorLib.GitCase;
+using Luthetus.Ide.RazorLib.NugetCase;
+using Luthetus.Ide.RazorLib.CommandCase;
+using Luthetus.Ide.RazorLib.CSharpProjectFormCase;
+using Luthetus.Ide.RazorLib.InputFileCase;
 
-namespace Luthetus.Ide.RazorLib;
+namespace Luthetus.Ide.RazorLib.InstallationCase;
 
 public static class ServiceCollectionExtensions
 {

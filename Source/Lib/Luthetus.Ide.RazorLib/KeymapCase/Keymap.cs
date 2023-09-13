@@ -1,6 +1,6 @@
-﻿using Luthetus.Ide.ClassLib.CommandCase;
+﻿using Luthetus.Ide.RazorLib.CommandCase;
 
-namespace Luthetus.Ide.ClassLib.KeymapCase;
+namespace Luthetus.Ide.RazorLib.KeymapCase;
 
 public class Keymap
 {

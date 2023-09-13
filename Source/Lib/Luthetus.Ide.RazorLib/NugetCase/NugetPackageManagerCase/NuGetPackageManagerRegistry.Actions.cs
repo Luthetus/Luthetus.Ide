@@ -1,5 +1,5 @@
 ﻿using Luthetus.CompilerServices.Lang.DotNetSolution;
-using Luthetus.Ide.ClassLib.NugetCase;
+using Luthetus.Ide.RazorLib.NugetCase;
 using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.Store.NugetPackageManagerCase;

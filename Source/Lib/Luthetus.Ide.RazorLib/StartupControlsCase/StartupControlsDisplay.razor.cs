@@ -1,11 +1,11 @@
 ﻿using Fluxor;
 using Fluxor.Blazor.Web.Components;
-using Luthetus.Ide.ClassLib.CommandLineCase;
-using Luthetus.Ide.ClassLib.ProgramExecutionCase;
-using Luthetus.Ide.ClassLib.TerminalCase;
+using Luthetus.Ide.RazorLib.CommandLineCase;
+using Luthetus.Ide.RazorLib.ProgramExecutionCase;
+using Luthetus.Ide.RazorLib.TerminalCase;
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Ide.RazorLib.StartupControls;
+namespace Luthetus.Ide.RazorLib.StartupControlsCase;
 
 public partial class StartupControlsDisplay : FluxorComponent
 {

@@ -1,6 +1,6 @@
 ﻿using Fluxor;
 
-namespace Luthetus.Ide.ClassLib.ProgramExecutionCase;
+namespace Luthetus.Ide.RazorLib.ProgramExecutionCase;
 
 public class ProgramExecutionRegistryReducer
 {

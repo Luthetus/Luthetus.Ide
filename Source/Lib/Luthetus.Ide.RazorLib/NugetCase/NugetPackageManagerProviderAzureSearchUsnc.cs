@@ -3,7 +3,7 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Web;
 
-namespace Luthetus.Ide.ClassLib.NugetCase;
+namespace Luthetus.Ide.RazorLib.NugetCase;
 
 public class NugetPackageManagerProviderAzureSearchUsnc : INugetPackageManagerProvider
 {

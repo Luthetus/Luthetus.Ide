@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Components;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 
-namespace Luthetus.Ide.RazorLib.CompilerServiceExplorer.Graphical.Obsolete;
+namespace Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.Graphical.Obsolete;
 
 public partial class ObsoleteCompilerServiceGraphicalResourceDisplay : ComponentBase
 {
@@ -39,10 +39,10 @@ public partial class ObsoleteCompilerServiceGraphicalResourceDisplay : Component
     {
         var initialCircleOffsetByRadius = CompilerServiceDisplayDimensions.CircleRadiusInPixels;
 
-        var verticalOffsetByTotalDiameterRenderedUpToThisPoint = 
+        var verticalOffsetByTotalDiameterRenderedUpToThisPoint =
             Depth * (2 * CompilerServiceDisplayDimensions.CircleRadiusInPixels);
 
-        var verticalOffsetByMinimumMarginBottomBetweenRows = 
+        var verticalOffsetByMinimumMarginBottomBetweenRows =
             Depth * CompilerServiceDisplayDimensions.MinimumMarginBottomBetweenRows;
 
         var svgPaddingTop = CompilerServiceDisplayDimensions.SvgPadding;
@@ -52,10 +52,10 @@ public partial class ObsoleteCompilerServiceGraphicalResourceDisplay : Component
             verticalOffsetByMinimumMarginBottomBetweenRows +
             svgPaddingTop;
     }
-    
+
     private double GetXCenterInPixels()
     {
-        var percentageOfHorizontalSpacingBetweenEachCircle = 
+        var percentageOfHorizontalSpacingBetweenEachCircle =
             1.0 / (CountOfSiblingsAndSelf + 1.0);
 
         var horizontalSpacingBetweenEachCircle =
@@ -64,7 +64,7 @@ public partial class ObsoleteCompilerServiceGraphicalResourceDisplay : Component
 
         //var horizontalOffsetByMarginBetweenCircles = 
         //    IndexAmongSiblings * CompilerServiceDisplayDimensions.MinimumMarginRightBetweenSiblingsAndSelf;
-        
+
         var horizontalOffsetByMarginBetweenCircles = 0;
 
         var svgPaddingLeft = CompilerServiceDisplayDimensions.SvgPadding;
@@ -82,7 +82,7 @@ public partial class ObsoleteCompilerServiceGraphicalResourceDisplay : Component
             return "var(--luth_icon-project-font-color)";
         if (localCompilerServiceResource is CSharpResource)
             return "var(--luth_icon-c-sharp-class-font-color)";
-        
+
         return "currentColor";
     }
 }

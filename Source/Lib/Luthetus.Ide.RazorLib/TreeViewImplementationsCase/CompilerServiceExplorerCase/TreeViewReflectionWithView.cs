@@ -1,9 +1,9 @@
 ﻿using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.WatchWindow;
 using Luthetus.Common.RazorLib.WatchWindow.TreeViewClasses;
-using Luthetus.Ide.ClassLib.ComponentRenderersCase;
+using Luthetus.Ide.RazorLib.ComponentRenderersCase;
 
-namespace Luthetus.Ide.ClassLib.TreeViewImplementationsCase.CompilerServiceExplorerCase;
+namespace Luthetus.Ide.RazorLib.TreeViewImplementationsCase.CompilerServiceExplorerCase;
 
 public class TreeViewReflectionWithView : TreeViewReflection
 {

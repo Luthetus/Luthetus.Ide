@@ -1,9 +1,8 @@
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
-using Luthetus.Ide.ClassLib.TerminalCase;
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Ide.RazorLib.Terminal;
+namespace Luthetus.Ide.RazorLib.TerminalCase;
 
 public partial class TerminalWellKnownTab : FluxorComponent
 {

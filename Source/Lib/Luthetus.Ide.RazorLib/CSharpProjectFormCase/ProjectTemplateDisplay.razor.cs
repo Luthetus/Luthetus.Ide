@@ -1,7 +1,7 @@
-using Luthetus.Ide.ClassLib.WebsiteProjectTemplatesCase;
+using Luthetus.Ide.RazorLib.WebsiteProjectTemplatesCase;
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Ide.RazorLib.CSharpProjectForm;
+namespace Luthetus.Ide.RazorLib.CSharpProjectFormCase;
 
 public partial class ProjectTemplateDisplay : ComponentBase
 {
@@ -14,5 +14,5 @@ public partial class ProjectTemplateDisplay : ComponentBase
 
     private string IsActiveCssClass => ShortNameOfSelectedProjectTemplate == ProjectTemplate.ShortName
         ? "luth_active"
-        : ""; 
+        : "";
 }

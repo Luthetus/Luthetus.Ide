@@ -1,6 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 
-namespace Luthetus.Ide.ClassLib.GitCase;
+namespace Luthetus.Ide.RazorLib.GitCase;
 
 public record GitFile(IAbsolutePath AbsolutePath, GitDirtyReason GitDirtyReason)
 {

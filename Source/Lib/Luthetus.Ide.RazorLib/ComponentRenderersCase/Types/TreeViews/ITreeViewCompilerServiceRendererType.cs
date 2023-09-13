@@ -1,7 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.WatchWindow.TreeViewClasses;
-using Luthetus.Ide.ClassLib.TreeViewImplementationsCase.CompilerServiceExplorerCase;
+using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.CompilerServiceExplorerCase;
 
-namespace Luthetus.Ide.ClassLib.ComponentRenderers.Types.TreeViews;
+namespace Luthetus.Ide.RazorLib.ComponentRenderersCase.Types.TreeViews;
 
 public interface ITreeViewCompilerServiceRendererType
 {

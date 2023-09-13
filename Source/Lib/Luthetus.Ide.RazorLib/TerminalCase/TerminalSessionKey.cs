@@ -1,4 +1,4 @@
-namespace Luthetus.Ide.ClassLib.TerminalCase;
+namespace Luthetus.Ide.RazorLib.TerminalCase;
 
 public record TerminalSessionKey(Guid Guid, string? DisplayName)
 {

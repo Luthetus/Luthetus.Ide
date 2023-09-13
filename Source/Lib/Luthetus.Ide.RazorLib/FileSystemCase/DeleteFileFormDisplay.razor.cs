@@ -1,11 +1,11 @@
 ﻿using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Keyboard;
 using Luthetus.Common.RazorLib.Menu;
-using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
+using Luthetus.Ide.RazorLib.ComponentRenderersCase.Types;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
-namespace Luthetus.Ide.RazorLib.File;
+namespace Luthetus.Ide.RazorLib.FileSystemCase;
 
 public partial class DeleteFileFormDisplay
     : ComponentBase, IDeleteFileFormRendererType

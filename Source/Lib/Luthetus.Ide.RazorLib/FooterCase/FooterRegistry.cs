@@ -1,7 +1,7 @@
 ﻿using Fluxor;
-using Luthetus.Ide.ClassLib.ViewsCase;
+using Luthetus.Ide.RazorLib.ViewsCase;
 
-namespace Luthetus.Ide.ClassLib.FooterCaseCase;
+namespace Luthetus.Ide.RazorLib.FooterCase;
 
 [FeatureState]
 public record FooterRegistry(View ActiveView)

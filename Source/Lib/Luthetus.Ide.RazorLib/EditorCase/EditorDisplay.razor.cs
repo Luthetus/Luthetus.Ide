@@ -6,7 +6,7 @@ using Luthetus.TextEditor.RazorLib.ViewModel.InternalClasses;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 
-namespace Luthetus.Ide.RazorLib.Editor;
+namespace Luthetus.Ide.RazorLib.EditorCase;
 
 public partial class EditorDisplay : ComponentBase
 {

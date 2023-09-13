@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Ide.ClassLib.StateCase;
+﻿namespace Luthetus.Ide.RazorLib.StateCase;
 
 public record StateKey(Guid Guid)
 {

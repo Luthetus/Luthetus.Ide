@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Ide.ClassLib.ViewsCase;
+﻿namespace Luthetus.Ide.RazorLib.ViewsCase;
 
 /// <summary>
 /// Views should use DependencyInjection for data

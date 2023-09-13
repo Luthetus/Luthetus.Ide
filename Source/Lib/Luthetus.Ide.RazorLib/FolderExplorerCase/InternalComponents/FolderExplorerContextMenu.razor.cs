@@ -11,13 +11,13 @@ using Luthetus.Common.RazorLib.Store.NotificationCase;
 using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
-using Luthetus.Ide.ClassLib.MenuCase;
 using Luthetus.Ide.ClassLib.FolderExplorerCase;
-using Luthetus.Ide.ClassLib.TreeViewImplementationsCase;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
+using Luthetus.Ide.RazorLib.MenuCase;
+using Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
 
-namespace Luthetus.Ide.RazorLib.FolderExplorer.InternalComponents;
+namespace Luthetus.Ide.RazorLib.FolderExplorerCase.InternalComponents;
 
 public partial class FolderExplorerContextMenu : ComponentBase
 {

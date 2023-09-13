@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Luthetus.Ide.ClassLib.CommandLineCase;
+namespace Luthetus.Ide.RazorLib.CommandLineCase;
 
 public class FormattedCommand
 {

@@ -12,12 +12,12 @@ using Luthetus.Common.RazorLib.Store.NotificationCase;
 using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
-using Luthetus.Ide.ClassLib.MenuCase;
-using Luthetus.Ide.ClassLib.TreeViewImplementationsCase;
+using Luthetus.Ide.RazorLib.MenuCase;
+using Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 
-namespace Luthetus.Ide.RazorLib.InputFile.InternalComponents;
+namespace Luthetus.Ide.RazorLib.InputFileCase.InternalComponents;
 
 public partial class InputFileContextMenu : ComponentBase
 {

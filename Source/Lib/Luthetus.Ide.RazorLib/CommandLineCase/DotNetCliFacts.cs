@@ -1,6 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 
-namespace Luthetus.Ide.ClassLib.CommandLineCase;
+namespace Luthetus.Ide.RazorLib.CommandLineCase;
 
 /// <summary>
 /// Any values given will NOT be wrapped in quotes internally at this step.
@@ -151,14 +151,14 @@ public static class DotNetCliFacts
             solutionFolderPath,
         });
     }
-    
+
     public static FormattedCommand FormatDotnetNewList() =>
         new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
         {
             "new",
             "list",
         });
-    
+
     public static FormattedCommand FormatDotnetNewListDeprecated() =>
         new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
         {

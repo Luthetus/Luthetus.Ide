@@ -11,12 +11,12 @@ using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.Common.RazorLib.TreeView.Events;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
-using Luthetus.Ide.ClassLib.MenuCase;
 using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 using Luthetus.Ide.ClassLib.Store.EditorCase;
-using Luthetus.Ide.ClassLib.TreeViewImplementationsCase;
+using Luthetus.Ide.RazorLib.MenuCase;
+using Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
 
-namespace Luthetus.Ide.RazorLib.SolutionExplorer;
+namespace Luthetus.Ide.RazorLib.SolutionExplorerCase;
 
 public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
@@ -111,7 +111,8 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 
         var copyFileMenuOption = _menuOptionsFactory.CopyFile(
             treeViewNamespacePath.Item.AbsolutePath,
-            () => {
+            () =>
+            {
                 NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewNamespacePath.Item.AbsolutePath.NameWithExtension}", _luthetusCommonComponentRenderers, _dispatcher);
                 return Task.CompletedTask;
             });
@@ -147,7 +148,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         }
         else
         {
-            var parentDirectory = (IAbsolutePath)treeViewNamespacePath
+            var parentDirectory = treeViewNamespacePath
                 .Item.AbsolutePath.AncestorDirectories.Last();
 
             pasteMenuOptionRecord = _menuOptionsFactory.PasteClipboard(
@@ -180,7 +181,8 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 
         MenuOptionRecord cutFileOptionRecord = _menuOptionsFactory.CutFile(
             treeViewNamespacePath.Item.AbsolutePath,
-            () => {
+            () =>
+            {
                 NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewNamespacePath.Item.AbsolutePath.NameWithExtension}", _luthetusCommonComponentRenderers, _dispatcher);
                 SolutionExplorerContextMenu.ParentOfCutFile = parent;
                 return Task.CompletedTask;

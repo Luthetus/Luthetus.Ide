@@ -7,12 +7,12 @@ using Luthetus.Common.RazorLib.Store.DialogCase;
 using Luthetus.Common.RazorLib.Store.DropdownCase;
 using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
-using Luthetus.Ide.ClassLib.MenuCase;
 using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
-using Luthetus.Ide.RazorLib.DotNetSolutionForm;
+using Luthetus.Ide.RazorLib.DotNetSolutionCase;
+using Luthetus.Ide.RazorLib.MenuCase;
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Ide.RazorLib.SolutionExplorer;
+namespace Luthetus.Ide.RazorLib.SolutionExplorerCase;
 
 public partial class SolutionExplorerDisplay : FluxorComponent
 {

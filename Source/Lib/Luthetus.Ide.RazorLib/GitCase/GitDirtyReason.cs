@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Ide.ClassLib.GitCase;
+﻿namespace Luthetus.Ide.RazorLib.GitCase;
 
 public enum GitDirtyReason
 {

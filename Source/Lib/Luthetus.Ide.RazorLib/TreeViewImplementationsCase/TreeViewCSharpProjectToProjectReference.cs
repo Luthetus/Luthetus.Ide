@@ -1,10 +1,10 @@
 ﻿using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
-using Luthetus.Ide.ClassLib.ComponentRenderersCase;
-using Luthetus.Ide.ClassLib.ComponentRenderers.Types.TreeViews;
+using Luthetus.Ide.RazorLib.ComponentRenderersCase;
+using Luthetus.Ide.RazorLib.ComponentRenderersCase.Types.TreeViews;
 
-namespace Luthetus.Ide.ClassLib.TreeViewImplementationsCase;
+namespace Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
 
 public class TreeViewCSharpProjectToProjectReference : TreeViewWithType<CSharpProjectToProjectReference>
 {
@@ -41,7 +41,7 @@ public class TreeViewCSharpProjectToProjectReference : TreeViewWithType<CSharpPr
     {
         var modifyProjectAbsolutePathString = Item.ModifyProjectNamespacePath.AbsolutePath
             .FormattedInput;
-        
+
         var referenceProjectAbsolutePathString = Item.ReferenceProjectAbsolutePath
             .FormattedInput;
 

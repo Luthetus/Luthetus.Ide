@@ -9,16 +9,16 @@ using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Notification;
 using Luthetus.Common.RazorLib.Store.DialogCase;
 using Luthetus.Common.RazorLib.Store.NotificationCase;
-using Luthetus.Ide.ClassLib.CommandLineCase;
-using Luthetus.Ide.ClassLib.FileConstantsCase;
-using Luthetus.Ide.ClassLib.InputFileCase;
 using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 using Luthetus.Ide.ClassLib.Store.InputFileCase;
-using Luthetus.Ide.ClassLib.TerminalCase;
+using Luthetus.Ide.RazorLib.CommandLineCase;
+using Luthetus.Ide.RazorLib.FileSystemCase;
+using Luthetus.Ide.RazorLib.InputFileCase;
+using Luthetus.Ide.RazorLib.TerminalCase;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 
-namespace Luthetus.Ide.RazorLib.DotNetSolutionForm;
+namespace Luthetus.Ide.RazorLib.DotNetSolutionCase;
 
 public partial class DotNetSolutionFormDisplay : FluxorComponent
 {
@@ -136,11 +136,11 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                     return Task.CompletedTask;
                 });
 
-                var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
-                    TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
+            var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
+                TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
 
-                await generalTerminalSession
-                    .EnqueueCommandAsync(newDotNetSolutionCommand);
+            await generalTerminalSession
+                .EnqueueCommandAsync(newDotNetSolutionCommand);
         }
     }
 

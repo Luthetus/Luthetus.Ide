@@ -1,4 +1,4 @@
-namespace Luthetus.Ide.ClassLib.JavaScriptObjectsCase;
+namespace Luthetus.Ide.RazorLib.JavaScriptObjectsCase;
 
 public record MeasuredHtmlElementDimensions(
     double WidthInPixels,

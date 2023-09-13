@@ -1,6 +1,6 @@
 using Fluxor;
 
-namespace Luthetus.Ide.ClassLib.TerminalCase;
+namespace Luthetus.Ide.RazorLib.TerminalCase;
 
 [FeatureState]
 public record WellKnownTerminalSessionsRegistry(TerminalSessionKey ActiveTerminalSessionKey)

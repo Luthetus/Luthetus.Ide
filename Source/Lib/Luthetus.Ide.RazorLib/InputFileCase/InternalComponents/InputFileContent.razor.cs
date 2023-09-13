@@ -3,10 +3,10 @@ using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Ide.ClassLib.Store.InputFileCase;
-using Luthetus.Ide.RazorLib.InputFile.Classes;
+using Luthetus.Ide.RazorLib.InputFileCase.Classes;
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Ide.RazorLib.InputFile.InternalComponents;
+namespace Luthetus.Ide.RazorLib.InputFileCase.InternalComponents;
 
 public partial class InputFileContent : ComponentBase
 {

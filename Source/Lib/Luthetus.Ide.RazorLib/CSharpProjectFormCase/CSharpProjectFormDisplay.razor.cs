@@ -11,13 +11,14 @@ using Luthetus.Common.RazorLib.Notification;
 using Luthetus.Common.RazorLib.Store.DialogCase;
 using Luthetus.Common.RazorLib.Store.NotificationCase;
 using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
-using Luthetus.Ide.ClassLib.CommandLineCase;
-using Luthetus.Ide.ClassLib.FileConstantsCase;
-using Luthetus.Ide.ClassLib.InputFileCase;
 using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 using Luthetus.Ide.ClassLib.Store.InputFileCase;
-using Luthetus.Ide.ClassLib.TerminalCase;
-using Luthetus.Ide.ClassLib.WebsiteProjectTemplatesCase;
+using Luthetus.Ide.RazorLib.CommandLineCase;
+using Luthetus.Ide.RazorLib.FileSystemCase;
+using Luthetus.Ide.RazorLib.InputFileCase;
+using Luthetus.Ide.RazorLib.InstallationCase;
+using Luthetus.Ide.RazorLib.TerminalCase;
+using Luthetus.Ide.RazorLib.WebsiteProjectTemplatesCase;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.Lexing;
@@ -26,7 +27,7 @@ using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 using System.Text;
 
-namespace Luthetus.Ide.RazorLib.CSharpProjectForm;
+namespace Luthetus.Ide.RazorLib.CSharpProjectFormCase;
 
 public partial class CSharpProjectFormDisplay : FluxorComponent
 {

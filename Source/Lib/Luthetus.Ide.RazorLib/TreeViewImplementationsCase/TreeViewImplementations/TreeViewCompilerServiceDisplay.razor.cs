@@ -1,8 +1,8 @@
-﻿using Luthetus.Ide.ClassLib.ComponentRenderers.Types.TreeViews;
-using Luthetus.Ide.ClassLib.TreeViewImplementationsCase.CompilerServiceExplorerCase;
+﻿using Luthetus.Ide.RazorLib.ComponentRenderersCase.Types.TreeViews;
+using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.CompilerServiceExplorerCase;
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Ide.RazorLib.TreeViewImplementations;
+namespace Luthetus.Ide.RazorLib.TreeViewImplementationsCase.TreeViewImplementations;
 
 public partial class TreeViewCompilerServiceDisplay : ComponentBase,
     ITreeViewCompilerServiceRendererType

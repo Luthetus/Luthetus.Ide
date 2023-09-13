@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Ide.ClassLib.CommandLineCase;
+﻿namespace Luthetus.Ide.RazorLib.CommandLineCase;
 
 public static class GitCliFacts
 {

@@ -1,6 +1,4 @@
-﻿using Luthetus.Ide.ClassLib.ComponentRenderersCase;
-using Luthetus.Ide.ClassLib.TreeViewImplementationsCase;
-using Luthetus.Common.RazorLib.TreeView;
+﻿using Luthetus.Common.RazorLib.TreeView;
 using Fluxor;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using System.Collections.Immutable;
@@ -10,6 +8,8 @@ using Luthetus.CompilerServices.Lang.DotNetSolution;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
+using Luthetus.Ide.RazorLib.ComponentRenderersCase;
+using Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
 
 namespace Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 

@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Ide.ClassLib.WebsiteProjectTemplatesCase;
+﻿namespace Luthetus.Ide.RazorLib.WebsiteProjectTemplatesCase;
 
 public record ProjectTemplate(
     string? TemplateName,

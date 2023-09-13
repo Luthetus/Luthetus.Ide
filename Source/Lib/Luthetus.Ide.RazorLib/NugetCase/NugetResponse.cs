@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Ide.ClassLib.NugetCase;
+﻿namespace Luthetus.Ide.RazorLib.NugetCase;
 
 public record NugetResponse(
     int TotalHits,

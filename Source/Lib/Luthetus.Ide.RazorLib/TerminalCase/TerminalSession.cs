@@ -7,7 +7,7 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Notification;
 using Luthetus.Common.RazorLib.Store.NotificationCase;
-using Luthetus.Ide.ClassLib.StateCase;
+using Luthetus.Ide.RazorLib.StateCase;
 using Luthetus.TextEditor.RazorLib.Model;
 using Luthetus.TextEditor.RazorLib.ViewModel.InternalClasses;
 using Microsoft.AspNetCore.Components;
@@ -16,7 +16,7 @@ using System.Collections.Immutable;
 using System.Reactive.Linq;
 using System.Text;
 
-namespace Luthetus.Ide.ClassLib.TerminalCase;
+namespace Luthetus.Ide.RazorLib.TerminalCase;
 
 public class TerminalSession
 {

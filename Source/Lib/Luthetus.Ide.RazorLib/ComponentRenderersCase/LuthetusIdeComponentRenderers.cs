@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Ide.ClassLib.ComponentRenderersCase;
+﻿namespace Luthetus.Ide.RazorLib.ComponentRenderersCase;
 
 public class LuthetusIdeComponentRenderers : ILuthetusIdeComponentRenderers
 {

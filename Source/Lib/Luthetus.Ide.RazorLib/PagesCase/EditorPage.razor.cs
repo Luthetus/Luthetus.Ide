@@ -4,7 +4,7 @@ using Luthetus.Common.RazorLib.Resize;
 using Luthetus.Common.RazorLib.Store.PanelCase;
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Ide.RazorLib.Pages;
+namespace Luthetus.Ide.RazorLib.PagesCase;
 
 public partial class EditorPage : ComponentBase
 {

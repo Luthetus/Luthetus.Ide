@@ -1,6 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 
-namespace Luthetus.Ide.ClassLib.CompilerServiceExplorerCase;
+namespace Luthetus.Ide.RazorLib.CompilerServiceExplorerCase;
 
 public class CompilerServiceExplorerModel
 {

@@ -9,7 +9,7 @@ using Luthetus.CompilerServices.Lang.Razor.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.TypeScript;
 using Luthetus.CompilerServices.Lang.Xml;
 
-namespace Luthetus.Ide.ClassLib.TreeViewImplementationsCase.CompilerServiceExplorerCase;
+namespace Luthetus.Ide.RazorLib.TreeViewImplementationsCase.CompilerServiceExplorerCase;
 
 public class CompilerServiceCollection
 {

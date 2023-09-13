@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Ide.ClassLib.ComponentRenderers.Types;
+﻿namespace Luthetus.Ide.RazorLib.ComponentRenderersCase.Types;
 
 public interface IGitDisplayRendererType
 {

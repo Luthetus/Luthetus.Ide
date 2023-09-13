@@ -1,4 +1,4 @@
-namespace Luthetus.Ide.ClassLib.ContextCase;
+namespace Luthetus.Ide.RazorLib.ContextCase;
 
 public record ContextKey(Guid Guid)
 {

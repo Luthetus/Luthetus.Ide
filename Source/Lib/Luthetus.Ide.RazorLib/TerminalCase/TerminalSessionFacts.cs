@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 
-namespace Luthetus.Ide.ClassLib.TerminalCase;
+namespace Luthetus.Ide.RazorLib.TerminalCase;
 
 public static class TerminalSessionFacts
 {

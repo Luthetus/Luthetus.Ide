@@ -1,6 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 
-namespace Luthetus.Ide.ClassLib.InputFileCase;
+namespace Luthetus.Ide.RazorLib.InputFileCase;
 
 public class InputFilePattern
 {

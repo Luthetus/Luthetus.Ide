@@ -11,13 +11,13 @@ using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.Common.RazorLib.TreeView.Events;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
-using Luthetus.Ide.ClassLib.MenuCase;
 using Luthetus.Ide.ClassLib.Store.EditorCase;
 using Luthetus.Ide.ClassLib.FolderExplorerCase;
-using Luthetus.Ide.ClassLib.TreeViewImplementationsCase;
-using Luthetus.Ide.RazorLib.SolutionExplorer;
+using Luthetus.Ide.RazorLib.SolutionExplorerCase;
+using Luthetus.Ide.RazorLib.MenuCase;
+using Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
 
-namespace Luthetus.Ide.RazorLib.FolderExplorer.Classes;
+namespace Luthetus.Ide.RazorLib.FolderExplorerCase.Classes;
 
 public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
@@ -114,7 +114,8 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
 
         var copyFileMenuOption = _menuOptionsFactory.CopyFile(
             treeViewAbsolutePath.Item,
-            () => { 
+            () =>
+            {
                 NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewAbsolutePath.Item.NameWithExtension}", _luthetusCommonComponentRenderers, _dispatcher);
                 return Task.CompletedTask;
             });
@@ -150,7 +151,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         }
         else
         {
-            var parentDirectory = (IAbsolutePath)treeViewAbsolutePath
+            var parentDirectory = treeViewAbsolutePath
                 .Item.AncestorDirectories.Last();
 
             pasteMenuOptionRecord = _menuOptionsFactory.PasteClipboard(
@@ -182,7 +183,8 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
 
         MenuOptionRecord cutFileOptionRecord = _menuOptionsFactory.CutFile(
             treeViewAbsolutePath.Item,
-            () => {
+            () =>
+            {
                 SolutionExplorerContextMenu.ParentOfCutFile = parent;
                 NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewAbsolutePath.Item.NameWithExtension}", _luthetusCommonComponentRenderers, _dispatcher);
                 return Task.CompletedTask;

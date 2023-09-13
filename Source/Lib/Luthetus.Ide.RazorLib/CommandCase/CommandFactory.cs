@@ -1,14 +1,14 @@
-﻿using Luthetus.Ide.ClassLib.ContextCase;
-using Luthetus.Ide.ClassLib.KeymapCase;
+﻿using Luthetus.Ide.RazorLib.ContextCase;
+using Luthetus.Ide.RazorLib.KeymapCase;
 using Microsoft.JSInterop;
 
-namespace Luthetus.Ide.ClassLib.CommandCase;
+namespace Luthetus.Ide.RazorLib.CommandCase;
 
 public class CommandFactory : ICommandFactory
 {
     private readonly IJSRuntime _jsRuntime;
     private readonly object InitializeLock = new();
-    
+
     private bool _isInitialized;
 
     public CommandFactory(IJSRuntime jsRuntime)

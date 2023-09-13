@@ -1,8 +1,8 @@
 ﻿using Luthetus.Common.RazorLib.Namespaces;
-using Luthetus.Ide.ClassLib.ComponentRenderers.Types.TreeViews;
+using Luthetus.Ide.RazorLib.ComponentRenderersCase.Types.TreeViews;
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Ide.RazorLib.TreeViewImplementations;
+namespace Luthetus.Ide.RazorLib.TreeViewImplementationsCase.TreeViewImplementations;
 
 public partial class TreeViewNamespacePathDisplay
     : ComponentBase, ITreeViewNamespacePathRendererType

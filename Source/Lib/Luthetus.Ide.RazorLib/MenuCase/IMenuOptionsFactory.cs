@@ -2,10 +2,10 @@
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Menu;
 using Luthetus.Common.RazorLib.Namespaces;
-using Luthetus.Ide.ClassLib.TerminalCase;
-using Luthetus.Ide.ClassLib.TreeViewImplementationsCase;
+using Luthetus.Ide.RazorLib.TerminalCase;
+using Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
 
-namespace Luthetus.Ide.ClassLib.MenuCase;
+namespace Luthetus.Ide.RazorLib.MenuCase;
 
 public interface IMenuOptionsFactory
 {

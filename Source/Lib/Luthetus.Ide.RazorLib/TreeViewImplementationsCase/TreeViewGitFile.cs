@@ -1,9 +1,9 @@
 ﻿using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
-using Luthetus.Ide.ClassLib.ComponentRenderersCase;
-using Luthetus.Ide.ClassLib.ComponentRenderers.Types.TreeViews;
-using Luthetus.Ide.ClassLib.GitCase;
+using Luthetus.Ide.RazorLib.ComponentRenderersCase;
+using Luthetus.Ide.RazorLib.ComponentRenderersCase.Types.TreeViews;
+using Luthetus.Ide.RazorLib.GitCase;
 
-namespace Luthetus.Ide.ClassLib.TreeViewImplementationsCase;
+namespace Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
 
 public class TreeViewGitFile : TreeViewWithType<GitFile>
 {

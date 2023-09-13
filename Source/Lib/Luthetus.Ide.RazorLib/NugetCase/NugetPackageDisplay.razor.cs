@@ -4,15 +4,14 @@ using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.Notification;
 using Luthetus.Common.RazorLib.Store.NotificationCase;
-using Luthetus.Ide.ClassLib.CommandLineCase;
-using Luthetus.Ide.ClassLib.NugetCase;
 using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 using Luthetus.Ide.ClassLib.Store.NugetPackageManagerCase;
-using Luthetus.Ide.ClassLib.TerminalCase;
+using Luthetus.Ide.RazorLib.CommandLineCase;
+using Luthetus.Ide.RazorLib.TerminalCase;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 
-namespace Luthetus.Ide.RazorLib.NuGet;
+namespace Luthetus.Ide.RazorLib.NugetCase;
 
 public partial class NugetPackageDisplay : FluxorComponent
 {

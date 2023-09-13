@@ -2,13 +2,12 @@
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 using Luthetus.CompilerServices.Lang.DotNetSolution;
-using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
-using Luthetus.Ide.ClassLib.NugetCase;
 using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 using Luthetus.Ide.ClassLib.Store.NugetPackageManagerCase;
+using Luthetus.Ide.RazorLib.ComponentRenderersCase.Types;
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Ide.RazorLib.NuGet;
+namespace Luthetus.Ide.RazorLib.NugetCase;
 
 public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManagerRendererType
 {

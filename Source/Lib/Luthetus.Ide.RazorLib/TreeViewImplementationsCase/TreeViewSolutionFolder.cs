@@ -1,14 +1,14 @@
-﻿using Luthetus.Ide.ClassLib.ComponentRenderersCase;
-using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
+﻿using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Common.RazorLib.WatchWindow.TreeViewClasses;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Namespaces;
 using Luthetus.CompilerServices.Lang.DotNetSolution;
 using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
 using Luthetus.Common.RazorLib.ComponentRenderers;
-using Luthetus.Ide.ClassLib.ComponentRenderers.Types.TreeViews;
+using Luthetus.Ide.RazorLib.ComponentRenderersCase;
+using Luthetus.Ide.RazorLib.ComponentRenderersCase.Types.TreeViews;
 
-namespace Luthetus.Ide.ClassLib.TreeViewImplementationsCase;
+namespace Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
 
 public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
 {
@@ -193,7 +193,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
     private TreeViewNoType ConstructTreeViewSolutionFolder(
         DotNetSolutionFolder dotNetSolutionFolder)
     {
-        return (TreeViewNoType)new TreeViewSolutionFolder(
+        return new TreeViewSolutionFolder(
             dotNetSolutionFolder,
             LuthetusIdeComponentRenderers,
             LuthetusCommonComponentRenderers,
@@ -213,7 +213,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
             cSharpProject.AbsolutePath.NameNoExtension,
             cSharpProject.AbsolutePath);
 
-        return (TreeViewNoType)new TreeViewNamespacePath(
+        return new TreeViewNamespacePath(
             namespacePath,
             LuthetusIdeComponentRenderers,
             LuthetusCommonComponentRenderers,

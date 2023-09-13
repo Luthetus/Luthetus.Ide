@@ -1,7 +1,7 @@
-﻿using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
+﻿using Luthetus.Ide.RazorLib.ComponentRenderersCase.Types;
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Ide.RazorLib.Git;
+namespace Luthetus.Ide.RazorLib.GitCase;
 
 public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
 {

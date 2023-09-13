@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Ide.ClassLib.ClipboardCase;
+﻿namespace Luthetus.Ide.RazorLib.ClipboardCase;
 
 public static class ClipboardFacts
 {
@@ -9,7 +9,7 @@ public static class ClipboardFacts
     public const string Tag = "`'\";luth_clipboard";
     /// <summary>Deliminates tag_command_datatype_value</summary>
     public const string FieldDelimiter = "_";
-    
+
     // Commands
     public const string CopyCommand = "copy";
     public const string CutCommand = "cut";

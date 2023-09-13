@@ -4,7 +4,7 @@ using Luthetus.Common.RazorLib.Store.DialogCase;
 using Luthetus.Ide.ClassLib.Store.InputFileCase;
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Ide.RazorLib.InputFile.InternalComponents;
+namespace Luthetus.Ide.RazorLib.InputFileCase.InternalComponents;
 
 public partial class InputFileBottomControls : ComponentBase
 {

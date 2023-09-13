@@ -1,6 +1,6 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
-using Luthetus.Ide.ClassLib.GitCase;
+using Luthetus.Ide.RazorLib.GitCase;
 using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.Store.GitCase;

@@ -1,7 +1,7 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 
-namespace Luthetus.Ide.ClassLib.ProgramExecutionCase;
+namespace Luthetus.Ide.RazorLib.ProgramExecutionCase;
 
 [FeatureState]
 public record ProgramExecutionRegistry(IAbsolutePath? StartupProjectAbsolutePath)

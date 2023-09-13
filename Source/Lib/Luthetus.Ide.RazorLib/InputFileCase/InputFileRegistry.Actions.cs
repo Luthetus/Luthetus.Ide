@@ -1,9 +1,9 @@
 ﻿using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
-using Luthetus.Ide.ClassLib.ComponentRenderersCase;
-using Luthetus.Ide.ClassLib.InputFileCase;
-using Luthetus.Ide.ClassLib.TreeViewImplementationsCase;
+using Luthetus.Ide.RazorLib.ComponentRenderersCase;
+using Luthetus.Ide.RazorLib.InputFileCase;
+using Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
 using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.Store.InputFileCase;

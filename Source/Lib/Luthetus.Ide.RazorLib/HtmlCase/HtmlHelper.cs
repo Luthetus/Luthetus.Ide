@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Luthetus.Ide.ClassLib.HtmlCase;
+namespace Luthetus.Ide.RazorLib.HtmlCase;
 
 public static class HtmlHelper
 {

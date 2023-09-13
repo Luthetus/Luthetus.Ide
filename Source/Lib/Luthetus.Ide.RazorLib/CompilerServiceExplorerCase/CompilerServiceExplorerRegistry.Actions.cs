@@ -1,4 +1,4 @@
-using Luthetus.Ide.ClassLib.CompilerServiceExplorerCase;
+using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase;
 
 namespace Luthetus.Ide.ClassLib.Store.CompilerServiceExplorerCase;
 

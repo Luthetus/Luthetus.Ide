@@ -1,7 +1,7 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
-using Luthetus.Ide.ClassLib.WebsiteProjectTemplatesCase;
+using Luthetus.Ide.RazorLib.WebsiteProjectTemplatesCase;
 
 namespace Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 

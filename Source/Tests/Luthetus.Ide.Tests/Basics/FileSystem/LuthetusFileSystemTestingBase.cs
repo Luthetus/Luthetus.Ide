@@ -57,7 +57,7 @@ public class LuthetusFileSystemTestingBase
         services.AddFluxor(options => options.ScanAssemblies(
             typeof(LuthetusCommonOptions).Assembly,
             typeof(LuthetusTextEditorOptions).Assembly,
-            typeof(ClassLib.InstallationCase.ServiceCollectionExtensions).Assembly));
+            typeof(RazorLib.InstallationCase.ServiceCollectionExtensions).Assembly));
 
         ServiceProvider = services.BuildServiceProvider();
 

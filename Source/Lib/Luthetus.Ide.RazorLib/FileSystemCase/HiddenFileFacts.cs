@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace Luthetus.Ide.ClassLib.FileConstantsCase;
+namespace Luthetus.Ide.RazorLib.FileSystemCase;
 
 public static class HiddenFileFacts
 {

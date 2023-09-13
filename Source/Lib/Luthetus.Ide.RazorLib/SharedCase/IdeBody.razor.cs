@@ -5,7 +5,7 @@ using Luthetus.Common.RazorLib.StateHasChangedBoundaryCase;
 using Luthetus.Common.RazorLib.Store.PanelCase;
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Ide.RazorLib.Shared;
+namespace Luthetus.Ide.RazorLib.SharedCase;
 
 public partial class IdeBody : ComponentBase
 {

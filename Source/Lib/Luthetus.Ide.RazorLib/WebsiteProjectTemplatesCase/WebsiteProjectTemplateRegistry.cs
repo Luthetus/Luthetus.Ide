@@ -8,7 +8,7 @@ using Luthetus.Ide.ClassLib.WebsiteProjectTemplatesCase.RazorClassLibCase;
 using Luthetus.Ide.ClassLib.WebsiteProjectTemplatesCase.XUnitCase;
 using System.Collections.Immutable;
 
-namespace Luthetus.Ide.ClassLib.WebsiteProjectTemplatesCase;
+namespace Luthetus.Ide.RazorLib.WebsiteProjectTemplatesCase;
 
 public static class WebsiteProjectTemplateRegistry
 {
@@ -133,7 +133,7 @@ public static class WebsiteProjectTemplateRegistry
                 absolutePath,
                 BlazorWasmEmptyFacts.GetImportsRazorContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
-        
+
         // IndexHtml
         {
             var absolutePath = environmentProvider.JoinPaths(
@@ -144,7 +144,7 @@ public static class WebsiteProjectTemplateRegistry
                 absolutePath,
                 BlazorWasmEmptyFacts.GetIndexHtmlContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
-        
+
         // IndexRazor
         {
             var absolutePath = environmentProvider.JoinPaths(
@@ -155,7 +155,7 @@ public static class WebsiteProjectTemplateRegistry
                 absolutePath,
                 BlazorWasmEmptyFacts.GetIndexRazorContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
-        
+
         // LaunchSettingsJson
         {
             var absolutePath = environmentProvider.JoinPaths(
@@ -166,7 +166,7 @@ public static class WebsiteProjectTemplateRegistry
                 absolutePath,
                 BlazorWasmEmptyFacts.GetLaunchSettingsJsonContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
-        
+
         // MainLayoutRazor
         {
             var absolutePath = environmentProvider.JoinPaths(
@@ -177,7 +177,7 @@ public static class WebsiteProjectTemplateRegistry
                 absolutePath,
                 BlazorWasmEmptyFacts.GetMainLayoutRazorContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
-        
+
         // ProgramCs
         {
             var absolutePath = environmentProvider.JoinPaths(
@@ -491,7 +491,7 @@ public static class WebsiteProjectTemplateRegistry
                 absolutePath,
                 XUnitFacts.GetUnitTest1CsContents(cSharpProjectAbsolutePath.NameNoExtension));
         }
-        
+
         // UsingsCs
         {
             var absolutePath = environmentProvider.JoinPaths(
@@ -525,5 +525,5 @@ public static class WebsiteProjectTemplateRegistry
             throw new NotImplementedException($"The {nameof(ProjectTemplate.ShortName)}: '{projectTemplateShortName}' was not recognized.");
     }
 
-    
+
 }

@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Ide.ClassLib.ViewsCase;
+﻿namespace Luthetus.Ide.RazorLib.ViewsCase;
 
 public record ViewKey(Guid Guid, string? DisplayName)
 {

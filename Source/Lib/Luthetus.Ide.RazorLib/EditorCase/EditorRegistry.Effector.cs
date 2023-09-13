@@ -1,9 +1,4 @@
-﻿using Luthetus.Ide.ClassLib.InputFileCase;
-using Luthetus.Ide.ClassLib.Store.FileSystemCase;
-using Luthetus.Ide.ClassLib.Store.InputFileCase;
-using Luthetus.Ide.ClassLib.ComponentRenderersCase;
-using Luthetus.Ide.ClassLib.FileConstantsCase;
-using Luthetus.TextEditor.RazorLib;
+﻿using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Group;
 using Fluxor;
 using System.Collections.Immutable;
@@ -25,8 +20,12 @@ using Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.CSharpProject.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.FSharp;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
-using Luthetus.Ide.RazorLib.ComponentRenderers.Types;
 using Luthetus.TextEditor.RazorLib.ViewModel.InternalClasses;
+using Luthetus.Ide.RazorLib.ComponentRenderersCase;
+using Luthetus.Ide.RazorLib.FileSystemCase;
+using Luthetus.Ide.RazorLib.ComponentRenderersCase.Types;
+using Luthetus.Ide.ClassLib.Store.InputFileCase;
+using Luthetus.Ide.RazorLib.InputFileCase;
 
 namespace Luthetus.Ide.ClassLib.Store.EditorCase;
 
@@ -331,7 +330,7 @@ public partial class EditorRegistry
 
                 var cancellationToken = textEditorModel.TextEditorSaveFileHelper.GetCancellationToken();
 
-                var saveFileAction = new FileSystemRegistry.SaveFileAction(
+                var saveFileAction = new FileSystemCase.FileSystemRegistry.SaveFileAction(
                     absolutePath,
                     innerContent,
                     writtenDateTime =>

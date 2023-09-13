@@ -1,6 +1,6 @@
-﻿using Luthetus.Ide.ClassLib.TerminalCase;
+﻿using Luthetus.Ide.RazorLib.TerminalCase;
 
-namespace Luthetus.Ide.ClassLib.GitCase;
+namespace Luthetus.Ide.RazorLib.GitCase;
 
 public static class GitFacts
 {

@@ -15,7 +15,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.Decoration;
 
-namespace Luthetus.Ide.ClassLib.FileConstantsCase;
+namespace Luthetus.Ide.RazorLib.FileSystemCase;
 
 /// <summary>The constants do not start with a period</summary>
 public static class ExtensionNoPeriodFacts

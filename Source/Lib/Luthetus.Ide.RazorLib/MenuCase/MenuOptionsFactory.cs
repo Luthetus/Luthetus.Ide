@@ -1,12 +1,4 @@
-﻿using Luthetus.Ide.ClassLib.InputFileCase;
-using Luthetus.Ide.ClassLib.Store.InputFileCase;
-using Luthetus.Ide.ClassLib.ClipboardCase;
-using Luthetus.Ide.ClassLib.CommandLineCase;
-using Luthetus.Ide.ClassLib.ComponentRenderersCase;
-using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
-using Luthetus.Ide.ClassLib.FileConstantsCase;
-using Luthetus.Ide.ClassLib.TreeViewImplementationsCase;
-using Luthetus.Common.RazorLib.Menu;
+﻿using Luthetus.Common.RazorLib.Menu;
 using Fluxor;
 using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
@@ -18,10 +10,18 @@ using Luthetus.Common.RazorLib.Namespaces;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
-using Luthetus.Ide.ClassLib.TerminalCase;
 using Luthetus.Ide.RazorLib.FileSystemCase.FileTemplatesCase;
+using Luthetus.Ide.RazorLib.ComponentRenderersCase;
+using Luthetus.Ide.RazorLib.CommandLineCase;
+using Luthetus.Ide.RazorLib.FileSystemCase;
+using Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
+using Luthetus.Ide.RazorLib.ComponentRenderersCase.Types;
+using Luthetus.Ide.RazorLib.TerminalCase;
+using Luthetus.Ide.RazorLib.ClipboardCase;
+using Luthetus.Ide.ClassLib.Store.InputFileCase;
+using Luthetus.Ide.RazorLib.InputFileCase;
 
-namespace Luthetus.Ide.ClassLib.MenuCase;
+namespace Luthetus.Ide.RazorLib.MenuCase;
 
 public class MenuOptionsFactory : IMenuOptionsFactory
 {

@@ -1,13 +1,13 @@
-﻿using Luthetus.Ide.ClassLib.TreeViewImplementationsCase.Helper;
-using Luthetus.Ide.ClassLib.ComponentRenderersCase;
-using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
+﻿using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Common.RazorLib.WatchWindow.TreeViewClasses;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
-using Luthetus.Ide.ClassLib.ComponentRenderers.Types.TreeViews;
+using Luthetus.Ide.RazorLib.ComponentRenderersCase;
+using Luthetus.Ide.RazorLib.ComponentRenderersCase.Types.TreeViews;
+using Luthetus.Ide.ClassLib.TreeViewImplementationsCase.Helper;
 
-namespace Luthetus.Ide.ClassLib.TreeViewImplementationsCase;
+namespace Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
 
 public class TreeViewSolution : TreeViewWithType<DotNetSolutionModel>
 {

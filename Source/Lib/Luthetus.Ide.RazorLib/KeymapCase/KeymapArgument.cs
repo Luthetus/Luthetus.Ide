@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Ide.ClassLib.KeymapCase;
+﻿namespace Luthetus.Ide.RazorLib.KeymapCase;
 
 public record KeymapArgument(
     string? Code,

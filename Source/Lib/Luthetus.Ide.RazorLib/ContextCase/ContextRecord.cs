@@ -1,6 +1,6 @@
-using Luthetus.Ide.ClassLib.KeymapCase;
+using Luthetus.Ide.RazorLib.KeymapCase;
 
-namespace Luthetus.Ide.ClassLib.ContextCase;
+namespace Luthetus.Ide.RazorLib.ContextCase;
 
 public record ContextRecord(
     ContextKey ContextKey,

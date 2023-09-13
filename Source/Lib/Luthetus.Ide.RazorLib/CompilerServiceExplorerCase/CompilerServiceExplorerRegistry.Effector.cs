@@ -1,4 +1,3 @@
-using Luthetus.Ide.ClassLib.ComponentRenderersCase;
 using Luthetus.Common.RazorLib.TreeView;
 using Fluxor;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
@@ -6,7 +5,6 @@ using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
-using Luthetus.Ide.ClassLib.TreeViewImplementationsCase.CompilerServiceExplorerCase;
 using Luthetus.CompilerServices.Lang.CSharpProject.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.Css;
 using Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
@@ -17,6 +15,8 @@ using Luthetus.CompilerServices.Lang.Razor.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.TypeScript;
 using Luthetus.CompilerServices.Lang.Xml;
 using Luthetus.Common.RazorLib.WatchWindow;
+using Luthetus.Ide.RazorLib.ComponentRenderersCase;
+using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.CompilerServiceExplorerCase;
 
 namespace Luthetus.Ide.ClassLib.Store.CompilerServiceExplorerCase;
 

@@ -1,12 +1,11 @@
 ﻿using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
-using Luthetus.Ide.ClassLib.ComponentRenderers.Types.TreeViews;
 using Luthetus.Ide.ClassLib.Store.GitCase;
-using Luthetus.Ide.ClassLib.TreeViewImplementationsCase;
+using Luthetus.Ide.RazorLib.ComponentRenderersCase.Types.TreeViews;
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Ide.RazorLib.TreeViewImplementations;
+namespace Luthetus.Ide.RazorLib.TreeViewImplementationsCase.TreeViewImplementations;
 
 public partial class TreeViewGitFileDisplay
     : FluxorComponent, ITreeViewGitFileRendererType

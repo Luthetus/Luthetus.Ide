@@ -7,7 +7,7 @@ using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Ide.RazorLib.CompilerServiceExplorer.TreeView;
+namespace Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.TreeView;
 
 public partial class CompilerServiceExplorerTreeViewContextMenu : ComponentBase
 {

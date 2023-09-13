@@ -1,8 +1,8 @@
-﻿using Luthetus.Ide.ClassLib.ComponentRenderers.Types.TreeViews;
-using Luthetus.Ide.ClassLib.NugetCase;
+﻿using Luthetus.Ide.RazorLib.ComponentRenderersCase.Types.TreeViews;
+using Luthetus.Ide.RazorLib.NugetCase;
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Ide.RazorLib.TreeViewImplementations;
+namespace Luthetus.Ide.RazorLib.TreeViewImplementationsCase.TreeViewImplementations;
 
 public partial class TreeViewCSharpProjectNugetPackageReferenceDisplay :
     ComponentBase, ITreeViewCSharpProjectNugetPackageReferenceRendererType

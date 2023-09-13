@@ -1,6 +1,6 @@
-﻿using Luthetus.Ide.ClassLib.ContextCase;
+﻿using Luthetus.Ide.RazorLib.ContextCase;
 
-namespace Luthetus.Ide.ClassLib.CommandCase;
+namespace Luthetus.Ide.RazorLib.CommandCase;
 
 public interface ICommandFactory
 {

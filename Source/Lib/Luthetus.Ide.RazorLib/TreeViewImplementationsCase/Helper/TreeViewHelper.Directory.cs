@@ -1,6 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 using Luthetus.Common.RazorLib.Namespaces;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
+using Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
 
 namespace Luthetus.Ide.ClassLib.TreeViewImplementationsCase.Helper;
 

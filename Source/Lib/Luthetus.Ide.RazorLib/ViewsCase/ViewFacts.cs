@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace Luthetus.Ide.ClassLib.ViewsCase;
+namespace Luthetus.Ide.RazorLib.ViewsCase;
 
 public static class ViewFacts
 {

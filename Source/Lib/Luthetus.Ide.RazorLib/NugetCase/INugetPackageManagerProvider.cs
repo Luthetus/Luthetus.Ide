@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace Luthetus.Ide.ClassLib.NugetCase;
+namespace Luthetus.Ide.RazorLib.NugetCase;
 
 public interface INugetPackageManagerProvider
 {

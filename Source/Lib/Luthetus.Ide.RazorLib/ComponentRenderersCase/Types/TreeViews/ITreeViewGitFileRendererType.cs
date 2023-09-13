@@ -1,6 +1,6 @@
-﻿using Luthetus.Ide.ClassLib.TreeViewImplementationsCase;
+﻿using Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
 
-namespace Luthetus.Ide.ClassLib.ComponentRenderers.Types.TreeViews;
+namespace Luthetus.Ide.RazorLib.ComponentRenderersCase.Types.TreeViews;
 
 public interface ITreeViewGitFileRendererType
 {

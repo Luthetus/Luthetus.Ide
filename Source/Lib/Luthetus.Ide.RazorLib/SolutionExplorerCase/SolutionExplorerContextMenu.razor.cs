@@ -14,20 +14,20 @@ using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
-using Luthetus.Ide.ClassLib.CommandLineCase;
-using Luthetus.Ide.ClassLib.FileConstantsCase;
-using Luthetus.Ide.ClassLib.InputFileCase;
-using Luthetus.Ide.ClassLib.MenuCase;
-using Luthetus.Ide.ClassLib.ProgramExecutionCase;
 using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 using Luthetus.Ide.ClassLib.Store.InputFileCase;
-using Luthetus.Ide.ClassLib.TerminalCase;
-using Luthetus.Ide.ClassLib.TreeViewImplementationsCase;
-using Luthetus.Ide.RazorLib.CSharpProjectForm;
+using Luthetus.Ide.RazorLib.CommandLineCase;
+using Luthetus.Ide.RazorLib.CSharpProjectFormCase;
+using Luthetus.Ide.RazorLib.FileSystemCase;
+using Luthetus.Ide.RazorLib.InputFileCase;
+using Luthetus.Ide.RazorLib.MenuCase;
+using Luthetus.Ide.RazorLib.ProgramExecutionCase;
+using Luthetus.Ide.RazorLib.TerminalCase;
+using Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 
-namespace Luthetus.Ide.RazorLib.SolutionExplorer;
+namespace Luthetus.Ide.RazorLib.SolutionExplorerCase;
 
 public partial class SolutionExplorerContextMenu : ComponentBase
 {
@@ -153,7 +153,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     private MenuOptionRecord[] GetCSharpProjectMenuOptions(
         TreeViewNamespacePath treeViewModel)
     {
-        var parentDirectory = (IAbsolutePath)treeViewModel.Item.AbsolutePath.AncestorDirectories.Last();
+        var parentDirectory = treeViewModel.Item.AbsolutePath.AncestorDirectories.Last();
 
         var treeViewSolution = treeViewModel.Parent as TreeViewSolution;
 

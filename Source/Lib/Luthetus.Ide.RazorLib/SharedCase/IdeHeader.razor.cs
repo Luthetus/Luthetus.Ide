@@ -8,11 +8,11 @@ using Luthetus.Common.RazorLib.Store.DropdownCase;
 using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 using Luthetus.Ide.ClassLib.Store.EditorCase;
 using Luthetus.Ide.ClassLib.FolderExplorerCase;
-using Luthetus.Ide.RazorLib.DotNetSolutionForm;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
+using Luthetus.Ide.RazorLib.DotNetSolutionCase;
 
-namespace Luthetus.Ide.RazorLib.Shared;
+namespace Luthetus.Ide.RazorLib.SharedCase;
 
 public partial class IdeHeader : FluxorComponent
 {

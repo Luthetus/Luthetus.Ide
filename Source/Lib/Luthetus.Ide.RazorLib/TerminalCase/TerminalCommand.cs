@@ -1,6 +1,6 @@
-﻿using Luthetus.Ide.ClassLib.CommandLineCase;
+﻿using Luthetus.Ide.RazorLib.CommandLineCase;
 
-namespace Luthetus.Ide.ClassLib.TerminalCase;
+namespace Luthetus.Ide.RazorLib.TerminalCase;
 
 public record TerminalCommand(
     TerminalCommandKey TerminalCommandKey,

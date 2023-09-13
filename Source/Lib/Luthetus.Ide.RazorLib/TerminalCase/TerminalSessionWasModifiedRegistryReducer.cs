@@ -1,7 +1,7 @@
 ﻿using Fluxor;
-using Luthetus.Ide.ClassLib.StateCase;
+using Luthetus.Ide.RazorLib.StateCase;
 
-namespace Luthetus.Ide.ClassLib.TerminalCase;
+namespace Luthetus.Ide.RazorLib.TerminalCase;
 
 public class TerminalSessionWasModifiedRegistryReducer
 {

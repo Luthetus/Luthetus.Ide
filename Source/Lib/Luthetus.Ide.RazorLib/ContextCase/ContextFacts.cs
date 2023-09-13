@@ -1,7 +1,7 @@
-using Luthetus.Ide.ClassLib.KeymapCase;
+using Luthetus.Ide.RazorLib.KeymapCase;
 using System.Collections.Immutable;
 
-namespace Luthetus.Ide.ClassLib.ContextCase;
+namespace Luthetus.Ide.RazorLib.ContextCase;
 
 public static class ContextFacts
 {
@@ -10,7 +10,7 @@ public static class ContextFacts
         "Global",
         "global",
         Keymap.Empty);
-    
+
     public static readonly ContextRecord ActiveContextsContext = new(
         ContextKey.NewKey(),
         "Active Contexts",
@@ -22,19 +22,19 @@ public static class ContextFacts
         "Folder Explorer",
         "folder-explorer",
         Keymap.Empty);
-    
+
     public static readonly ContextRecord SolutionExplorerContext = new(
         ContextKey.NewKey(),
         "Solution Explorer",
         "solution-explorer",
         Keymap.Empty);
-    
+
     public static readonly ContextRecord CompilerServiceExplorerContext = new(
         ContextKey.NewKey(),
         "Compiler Service Explorer",
         "compiler-service-explorer",
         Keymap.Empty);
-    
+
     public static readonly ContextRecord BackgroundServicesContext = new(
         ContextKey.NewKey(),
         "Background Services",

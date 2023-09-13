@@ -12,7 +12,7 @@ using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 using Luthetus.TextEditor.RazorLib;
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Ide.RazorLib.Shared;
+namespace Luthetus.Ide.RazorLib.SharedCase;
 
 public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 {
@@ -80,7 +80,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             await TextEditorService.Options.SetFromLocalStorageAsync();
             await AppOptionsService.SetFromLocalStorageAsync();
 
-            if (System.IO.File.Exists("C:\\Users\\hunte\\Repos\\Demos\\BlazorCrudApp\\BlazorCrudApp.sln"))
+            if (File.Exists("C:\\Users\\hunte\\Repos\\Demos\\BlazorCrudApp\\BlazorCrudApp.sln"))
             {
                 var absolutePath = new AbsolutePath(
                     "C:\\Users\\hunte\\Repos\\Demos\\BlazorCrudApp\\BlazorCrudApp.sln",

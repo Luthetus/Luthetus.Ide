@@ -1,6 +1,6 @@
-﻿using Luthetus.Ide.ClassLib.NugetCase;
+﻿using Luthetus.Ide.RazorLib.NugetCase;
 
-namespace Luthetus.Ide.ClassLib.ComponentRenderers.Types.TreeViews;
+namespace Luthetus.Ide.RazorLib.ComponentRenderersCase.Types.TreeViews;
 
 public interface ITreeViewCSharpProjectNugetPackageReferenceRendererType
 {

@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Ide.RazorLib.CSharpProjectForm;
+﻿namespace Luthetus.Ide.RazorLib.CSharpProjectFormCase;
 
 public enum CSharpProjectFormPanelKind
 {

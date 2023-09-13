@@ -1,7 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
-using Luthetus.Ide.ClassLib.ComponentRenderersCase;
-using Luthetus.Ide.ClassLib.TreeViewImplementationsCase;
+using Luthetus.Ide.RazorLib.ComponentRenderersCase;
+using Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
 
 namespace Luthetus.Ide.ClassLib.Store.InputFileCase;
 

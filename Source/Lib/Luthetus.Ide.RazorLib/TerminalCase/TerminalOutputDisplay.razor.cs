@@ -1,9 +1,8 @@
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Keyboard;
-using Luthetus.Ide.ClassLib.CommandLineCase;
-using Luthetus.Ide.ClassLib.HtmlCase;
-using Luthetus.Ide.ClassLib.TerminalCase;
+using Luthetus.Ide.RazorLib.CommandLineCase;
+using Luthetus.Ide.RazorLib.HtmlCase;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Cursor;
 using Luthetus.TextEditor.RazorLib.Lexing;
@@ -14,7 +13,7 @@ using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
 using System.Text;
 
-namespace Luthetus.Ide.RazorLib.Terminal;
+namespace Luthetus.Ide.RazorLib.TerminalCase;
 
 public partial class TerminalOutputDisplay : FluxorComponent
 {

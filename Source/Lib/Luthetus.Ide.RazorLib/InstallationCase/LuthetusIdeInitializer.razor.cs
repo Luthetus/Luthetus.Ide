@@ -9,22 +9,20 @@ using Luthetus.Common.RazorLib.Store.PanelCase;
 using Luthetus.Common.RazorLib.Store.TabCase;
 using Luthetus.Common.RazorLib.Store.ThemeCase;
 using Luthetus.Common.RazorLib.TabCase;
-using Luthetus.Ide.ClassLib.CommandCase;
-using Luthetus.Ide.ClassLib.CompilerServiceExplorerCase;
 using Luthetus.Ide.ClassLib.Store.CompilerServiceExplorerCase;
-using Luthetus.Ide.ClassLib.TerminalCase;
-using Luthetus.Ide.RazorLib.CompilerServiceExplorer;
+using Luthetus.Ide.RazorLib.CommandCase;
+using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase;
 using Luthetus.Ide.RazorLib.ContextCase;
-using Luthetus.Ide.RazorLib.FolderExplorer;
-using Luthetus.Ide.RazorLib.NuGet;
-using Luthetus.Ide.RazorLib.SolutionExplorer;
-using Luthetus.Ide.RazorLib.Terminal;
+using Luthetus.Ide.RazorLib.FolderExplorerCase;
+using Luthetus.Ide.RazorLib.NugetCase;
+using Luthetus.Ide.RazorLib.SolutionExplorerCase;
+using Luthetus.Ide.RazorLib.TerminalCase;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Store.Find;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 
-namespace Luthetus.Ide.RazorLib;
+namespace Luthetus.Ide.RazorLib.InstallationCase;
 
 public partial class LuthetusIdeInitializer : ComponentBase
 {
@@ -239,7 +237,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
             CompilerServiceExplorerRegistry.TabGroupKey);
 
         Dispatcher.Dispatch(new TabRegistry.RegisterGroupAction(tabGroup));
-        
+
         var tabGroupLoadTabEntriesOutput = await tabGroup.LoadEntryBagAsync();
 
         Dispatcher.Dispatch(new TabRegistry.SetEntryBagAction(

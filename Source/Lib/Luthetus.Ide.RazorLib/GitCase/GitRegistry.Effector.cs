@@ -1,11 +1,11 @@
-﻿using Luthetus.Ide.ClassLib.CommandLineCase;
-using Luthetus.Ide.ClassLib.GitCase;
-using Fluxor;
+﻿using Fluxor;
 using System.Collections.Immutable;
 using System.Text;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
-using Luthetus.Ide.ClassLib.TerminalCase;
+using Luthetus.Ide.RazorLib.TerminalCase;
+using Luthetus.Ide.RazorLib.CommandLineCase;
+using Luthetus.Ide.RazorLib.GitCase;
 
 namespace Luthetus.Ide.ClassLib.Store.GitCase;
 
