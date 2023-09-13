@@ -21,24 +21,15 @@ namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 internal partial class SynchronizationContext
 {
     [ReducerMethod]
-    public DotNetSolutionState ReduceSetDotNetSolutionTask(
-        DotNetSolutionState inDotNetSolutionState,
-        SetDotNetSolutionTask setDotNetSolutionTask)
-    {
-        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
-            "HandleSetDotNetSolutionAction",
-            async () => await SetDotNetSolutionAsync(
-                setDotNetSolutionTask));
-
-        return inDotNetSolutionState;
-    }
-
-    [ReducerMethod]
     public DotNetSolutionState ReduceSetDotNetSolutionTreeViewTask(
         DotNetSolutionState inEntry,
         SetDotNetSolutionTreeViewTask setDotNetSolutionTreeViewTask)
     {
         // Enter this method in the shared synchronous-concurrent context
+
+        // If bad input, just return
+        if (inEntry.DotNetSolutionModelKey is null)
+            return inEntry;
 
         // Enqueue onto the async-concurrent context, calculating the replacement .NET Solution
         _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
@@ -65,18 +56,9 @@ internal partial class SynchronizationContext
                 // Therefore, two background tasks that access the same data, cannot do
                 // so simultaneously, because the first background task would've made
                 // its replacement before the second could start.
-                _dispatcher.Dispatch(new WithAction(x =>
-                {
-                    var indexOfSln = x.DotNetSolutions.FindIndex(
-                        sln => sln.DotNetSolutionModelKey == inEntry.DotNetSolutionModelKey);
-                    
-                    var outDotNetSolutions = x.DotNetSolutions.SetItem(indexOfSln, outSln);
-
-                    return x with
-                    {
-                        DotNetSolutions = outDotNetSolutions
-                    };
-                }));
+                _dispatcher.Dispatch(ConstructModelReplacement(
+                    inEntry.DotNetSolutionModelKey,
+                    outSln));
             });
 
         // Return the state without any changes (this is an awkward step but must be done)
@@ -88,16 +70,45 @@ internal partial class SynchronizationContext
     }
 
     [ReducerMethod]
+    public DotNetSolutionState ReduceSetDotNetSolutionTask(
+        DotNetSolutionState inEntry,
+        SetDotNetSolutionTask setDotNetSolutionTask)
+    {
+        if (inEntry.DotNetSolutionModelKey is null)
+            return inEntry;
+
+        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
+            "HandleSetDotNetSolutionAction",
+            async () => {
+                var outDotNetSolution = await SetDotNetSolutionAsync(setDotNetSolutionTask);
+
+                _dispatcher.Dispatch(ConstructModelReplacement(
+                    inEntry.DotNetSolutionModelKey,
+                    outDotNetSolution));
+            });
+
+        return inEntry;
+    }
+
+    [ReducerMethod]
     public DotNetSolutionState ReduceParseDotNetSolutionTask(
-        DotNetSolutionState inDotNetSolutionState,
+        DotNetSolutionState inEntry,
         ParseDotNetSolutionTask parseDotNetSolutionTask)
     {
+        if (inEntry.DotNetSolutionModelKey is null)
+            return inEntry;
+
         _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
             "HandleParseDotNetSolutionActionAsync",
-            async () => await ParseDotNetSolutionAsync(
-                parseDotNetSolutionTask));
+            async () => {
+                var outDotNetSolution = await ParseDotNetSolutionAsync(parseDotNetSolutionTask);
 
-        return inDotNetSolutionState;
+                _dispatcher.Dispatch(ConstructModelReplacement(
+                    inEntry.DotNetSolutionModelKey,
+                    outDotNetSolution));
+            });
+
+        return inEntry;
     }
 
     [ReducerMethod]

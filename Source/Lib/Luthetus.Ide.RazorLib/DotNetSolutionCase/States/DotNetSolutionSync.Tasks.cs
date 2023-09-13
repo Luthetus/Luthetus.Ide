@@ -21,7 +21,7 @@ namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 
 internal partial class SynchronizationContext
 {
-    public async Task SetDotNetSolutionAsync(SetDotNetSolutionTask setDotNetSolutionAction)
+    public async Task<DotNetSolutionModel> SetDotNetSolutionAsync(SetDotNetSolutionTask setDotNetSolutionAction)
     {
         var dotNetSolutionAbsolutePathString = setDotNetSolutionAction.SolutionAbsolutePath.FormattedInput;
 
@@ -111,7 +111,7 @@ internal partial class SynchronizationContext
             }));
     }
 
-    public Task ParseDotNetSolutionAsync(ParseDotNetSolutionTask parseDotNetSolutionAction)
+    public Task<DotNetSolutionModel> ParseDotNetSolutionAsync(ParseDotNetSolutionTask parseDotNetSolutionAction)
     {
         var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
 

@@ -14,6 +14,7 @@ using Luthetus.Ide.RazorLib.TerminalCase;
 using Luthetus.Common.RazorLib;
 using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
 using Luthetus.Ide.RazorLib.WebsiteProjectTemplatesCase;
+using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 
@@ -60,7 +61,27 @@ internal partial class SynchronizationContext
     }
 
     /// <summary>Don't have <see cref="WithAction"/> itself as public scope.</summary>
-    private record WithAction(Func<DotNetSolutionState, DotNetSolutionState> WithFunc) 
+    private record WithAction(Func<DotNetSolutionState, DotNetSolutionState> WithFunc)
         : IWithAction;
+
+    private static WithAction ConstructModelReplacement(
+            DotNetSolutionModelKey dotNetSolutionModelKey,
+            DotNetSolutionModel outDotNetSolutionModel)
+    {
+        return new WithAction(dotNetSolutionState =>
+        {
+            var indexOfSln = dotNetSolutionState.DotNetSolutions.FindIndex(
+                sln => sln.DotNetSolutionModelKey == dotNetSolutionModelKey);
+
+            var outDotNetSolutions = dotNetSolutionState.DotNetSolutions.SetItem(
+                indexOfSln,
+                outDotNetSolutionModel);
+
+            return dotNetSolutionState with
+            {
+                DotNetSolutions = outDotNetSolutions
+            };
+        });
+    }
 }
 
