@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Ide.ClassLib.FileTemplatesCase;
+﻿namespace Luthetus.Ide.RazorLib.FileSystemCase.FileTemplatesCase;
 
 /// <summary>
 /// Use <see cref="FileTemplateKind"/> to search

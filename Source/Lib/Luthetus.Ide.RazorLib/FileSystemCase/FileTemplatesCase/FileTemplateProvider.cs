@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace Luthetus.Ide.ClassLib.FileTemplatesCase;
+namespace Luthetus.Ide.RazorLib.FileSystemCase.FileTemplatesCase;
 
 public class FileTemplateProvider : IFileTemplateProvider
 {

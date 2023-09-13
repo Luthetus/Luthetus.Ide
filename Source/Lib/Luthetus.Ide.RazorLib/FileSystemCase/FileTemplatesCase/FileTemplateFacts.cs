@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Namespaces;
 using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 
-namespace Luthetus.Ide.ClassLib.FileTemplatesCase;
+namespace Luthetus.Ide.RazorLib.FileSystemCase.FileTemplatesCase;
 
 public static class FileTemplateFacts
 {

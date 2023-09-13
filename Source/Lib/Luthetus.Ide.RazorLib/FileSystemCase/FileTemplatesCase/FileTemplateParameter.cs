@@ -1,7 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Namespaces;
 
-namespace Luthetus.Ide.ClassLib.FileTemplatesCase;
+namespace Luthetus.Ide.RazorLib.FileSystemCase.FileTemplatesCase;
 
 public class FileTemplateParameter
 {

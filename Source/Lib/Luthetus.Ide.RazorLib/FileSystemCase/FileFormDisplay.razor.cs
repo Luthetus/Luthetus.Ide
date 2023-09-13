@@ -1,7 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.Keyboard;
 using Luthetus.Common.RazorLib.Menu;
 using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
-using Luthetus.Ide.ClassLib.FileTemplatesCase;
+using Luthetus.Ide.RazorLib.FileSystemCase.FileTemplatesCase;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;

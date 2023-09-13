@@ -1,4 +1,4 @@
-﻿using Luthetus.Ide.ClassLib.FileTemplatesCase;
+﻿using Luthetus.Ide.RazorLib.FileSystemCase.FileTemplatesCase;
 using System.Collections.Immutable;
 
 namespace Luthetus.Ide.ClassLib.ComponentRenderers.Types;

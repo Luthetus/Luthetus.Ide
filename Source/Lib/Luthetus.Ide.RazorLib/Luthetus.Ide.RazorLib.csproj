@@ -25,7 +25,18 @@
     <ItemGroup>
       <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Source\CSharpProject\Source\Luthetus.CompilerServices.Lang.CSharpProject.csproj" />
       <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Source\CSharp\Source\Luthetus.CompilerServices.Lang.CSharp.csproj" />
+      <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Source\Css\Source\Luthetus.CompilerServices.Lang.Css.csproj" />
       <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Source\DotNetSolution\Source\Luthetus.CompilerServices.Lang.DotNetSolution.csproj" />
+      <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Source\FSharp\Source\Luthetus.CompilerServices.Lang.FSharp.csproj" />
+      <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Source\JavaScript\Source\Luthetus.CompilerServices.Lang.JavaScript.csproj" />
+      <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Source\Json\Source\Luthetus.CompilerServices.Lang.Json.csproj" />
+      <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Source\Razor\Source\Luthetus.CompilerServices.Lang.Razor.csproj" />
+      <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Source\TypeScript\Source\Luthetus.CompilerServices.Lang.TypeScript.csproj" />
+      <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Source\Xml\Source\Luthetus.CompilerServices.Lang.Xml.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="CompilerServiceExplorer\" />
     </ItemGroup>
 
 </Project>

@@ -1,5 +1,4 @@
-﻿using Luthetus.Ide.ClassLib.FileTemplatesCase;
-using Luthetus.Ide.ClassLib.InputFileCase;
+﻿using Luthetus.Ide.ClassLib.InputFileCase;
 using Luthetus.Ide.ClassLib.Store.InputFileCase;
 using Luthetus.Ide.ClassLib.ClipboardCase;
 using Luthetus.Ide.ClassLib.CommandLineCase;
@@ -20,6 +19,7 @@ using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 using Luthetus.Ide.ClassLib.TerminalCase;
+using Luthetus.Ide.RazorLib.FileSystemCase.FileTemplatesCase;
 
 namespace Luthetus.Ide.ClassLib.MenuCase;
 
