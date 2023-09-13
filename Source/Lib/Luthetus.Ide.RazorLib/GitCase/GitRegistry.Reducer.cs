@@ -1,6 +1,6 @@
 ﻿using Fluxor;
 
-namespace Luthetus.Ide.ClassLib.Store.GitCase;
+namespace Luthetus.Ide.RazorLib.GitCase;
 
 public partial record GitRegistry
 {

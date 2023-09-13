@@ -6,7 +6,7 @@ using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 using Luthetus.Ide.RazorLib.FileSystemCase;
 using Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
 
-namespace Luthetus.Ide.ClassLib.TreeViewImplementationsCase.Helper;
+namespace Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Helper;
 
 public partial class TreeViewHelper
 {

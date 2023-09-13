@@ -18,7 +18,7 @@ using Luthetus.Common.RazorLib.WatchWindow;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase;
 using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.CompilerServiceExplorerCase;
 
-namespace Luthetus.Ide.ClassLib.Store.CompilerServiceExplorerCase;
+namespace Luthetus.Ide.RazorLib.CompilerServiceExplorerCase;
 
 public partial class CompilerServiceExplorerRegistry
 {

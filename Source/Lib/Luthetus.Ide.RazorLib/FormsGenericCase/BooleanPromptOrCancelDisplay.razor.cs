@@ -4,7 +4,7 @@ using Luthetus.Ide.RazorLib.ComponentRenderersCase.Types;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
-namespace Luthetus.Ide.RazorLib.FormsGeneric;
+namespace Luthetus.Ide.RazorLib.FormsGenericCase;
 
 public partial class BooleanPromptOrCancelDisplay : ComponentBase, IBooleanPromptOrCancelRendererType
 {

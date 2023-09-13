@@ -3,7 +3,7 @@ using Luthetus.Ide.RazorLib.ContextCase;
 using Luthetus.Ide.RazorLib.JavaScriptObjectsCase;
 using System.Collections.Immutable;
 
-namespace Luthetus.Ide.ClassLib.Store.ContextCase;
+namespace Luthetus.Ide.RazorLib.ContextCase;
 
 public partial record ContextRegistry
 {

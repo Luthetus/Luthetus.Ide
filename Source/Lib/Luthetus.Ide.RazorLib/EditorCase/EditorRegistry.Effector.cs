@@ -27,7 +27,7 @@ using Luthetus.Ide.RazorLib.ComponentRenderersCase.Types;
 using Luthetus.Ide.ClassLib.Store.InputFileCase;
 using Luthetus.Ide.RazorLib.InputFileCase;
 
-namespace Luthetus.Ide.ClassLib.Store.EditorCase;
+namespace Luthetus.Ide.RazorLib.EditorCase;
 
 public partial class EditorRegistry
 {

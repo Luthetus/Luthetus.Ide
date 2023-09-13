@@ -1,6 +1,6 @@
 using Fluxor;
 
-namespace Luthetus.Ide.ClassLib.Store.CompilerServiceExplorerCase;
+namespace Luthetus.Ide.RazorLib.CompilerServiceExplorerCase;
 
 public partial class CompilerServiceExplorerRegistry
 {

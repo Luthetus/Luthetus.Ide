@@ -1,6 +1,6 @@
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 
-namespace Luthetus.Ide.ClassLib.FolderExplorerCase;
+namespace Luthetus.Ide.RazorLib.FolderExplorerCase;
 
 public partial record FolderExplorerRegistry
 {

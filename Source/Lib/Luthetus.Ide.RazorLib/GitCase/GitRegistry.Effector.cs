@@ -7,7 +7,7 @@ using Luthetus.Ide.RazorLib.TerminalCase;
 using Luthetus.Ide.RazorLib.CommandLineCase;
 using Luthetus.Ide.RazorLib.GitCase;
 
-namespace Luthetus.Ide.ClassLib.Store.GitCase;
+namespace Luthetus.Ide.RazorLib.GitCase;
 
 public partial record GitRegistry
 {

@@ -1,6 +1,6 @@
 using Fluxor;
 
-namespace Luthetus.Ide.ClassLib.FolderExplorerCase;
+namespace Luthetus.Ide.RazorLib.FolderExplorerCase;
 
 public partial record FolderExplorerRegistry
 {

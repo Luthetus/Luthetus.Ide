@@ -1,7 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
 
-namespace Luthetus.Ide.ClassLib.TreeViewImplementationsCase.Helper;
+namespace Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Helper;
 
 public partial class TreeViewHelper
 {

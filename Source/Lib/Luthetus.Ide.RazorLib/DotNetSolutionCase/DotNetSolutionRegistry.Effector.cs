@@ -11,7 +11,7 @@ using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase;
 using Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
 
-namespace Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
+namespace Luthetus.Ide.RazorLib.DotNetSolutionCase;
 
 public partial record DotNetSolutionRegistry
 {

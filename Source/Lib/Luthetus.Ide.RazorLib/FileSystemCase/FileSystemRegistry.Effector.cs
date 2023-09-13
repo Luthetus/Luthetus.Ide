@@ -6,7 +6,7 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.Store.NotificationCase;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 
-namespace Luthetus.Ide.ClassLib.Store.FileSystemCase;
+namespace Luthetus.Ide.RazorLib.FileSystemCase;
 
 public partial class FileSystemRegistry
 {

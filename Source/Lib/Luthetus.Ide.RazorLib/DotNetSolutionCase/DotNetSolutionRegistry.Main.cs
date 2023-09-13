@@ -6,7 +6,7 @@ using Luthetus.Ide.RazorLib.FileSystemCase;
 using Luthetus.Ide.RazorLib.InputFileCase;
 using Luthetus.Ide.ClassLib.Store.InputFileCase;
 
-namespace Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
+namespace Luthetus.Ide.RazorLib.DotNetSolutionCase;
 
 /// <param name="IsExecutingAsyncTaskLinks">Each link is a separate async task. The async task increments the links when it starts, then decrements when it is finished. A loading icon is shown in the solution explorer if links > 0</param>
 [FeatureState]

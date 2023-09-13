@@ -3,7 +3,7 @@ using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
 using Luthetus.Ide.RazorLib.WebsiteProjectTemplatesCase;
 
-namespace Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
+namespace Luthetus.Ide.RazorLib.DotNetSolutionCase;
 
 public partial record DotNetSolutionRegistry
 {

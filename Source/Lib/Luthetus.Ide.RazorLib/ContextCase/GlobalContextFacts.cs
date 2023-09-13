@@ -4,7 +4,7 @@
 //using System.Text;
 //using System.Threading.Tasks;
 
-//namespace Luthetus.Ide.ClassLib.Context.InstanceFacts;
+//namespace Luthetus.Ide.RazorLib.ContextCase;
 
 //public static class GlobalContextFacts
 //{

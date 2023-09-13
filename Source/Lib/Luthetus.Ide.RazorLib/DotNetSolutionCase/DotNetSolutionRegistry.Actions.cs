@@ -1,7 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
 
-namespace Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
+namespace Luthetus.Ide.RazorLib.DotNetSolutionCase;
 
 public partial record DotNetSolutionRegistry
 {

@@ -18,7 +18,6 @@ using Luthetus.Common.RazorLib.FileSystem.Classes.InMemoryFileSystem;
 using Luthetus.Common.RazorLib.FileSystem.Classes.Local;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Theme;
-using Luthetus.Ide.RazorLib.FormsGeneric;
 using Luthetus.CompilerServices.Lang.Css;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase;
 using Luthetus.Ide.RazorLib.MenuCase;
@@ -29,6 +28,7 @@ using Luthetus.Ide.RazorLib.NugetCase;
 using Luthetus.Ide.RazorLib.CommandCase;
 using Luthetus.Ide.RazorLib.CSharpProjectFormCase;
 using Luthetus.Ide.RazorLib.InputFileCase;
+using Luthetus.Ide.RazorLib.FormsGenericCase;
 
 namespace Luthetus.Ide.RazorLib.InstallationCase;
 

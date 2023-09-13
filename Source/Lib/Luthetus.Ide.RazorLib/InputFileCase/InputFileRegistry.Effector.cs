@@ -4,7 +4,7 @@ using Luthetus.Common.RazorLib.Store.DialogCase;
 using Luthetus.Ide.ClassLib.HtmlCase;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase;
 
-namespace Luthetus.Ide.ClassLib.Store.InputFileCase;
+namespace Luthetus.Ide.RazorLib.InputFileCase;
 
 public partial record InputFileRegistry
 {

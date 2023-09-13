@@ -5,7 +5,7 @@
 //using System.Text;
 //using System.Threading.Tasks;
 
-//namespace Luthetus.Ide.ClassLib.CommandCase;
+//namespace Luthetus.Ide.RazorLib.CommandCase;
 
 //public static class CommandFacts
 //{

@@ -3,7 +3,7 @@ using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
 
-namespace Luthetus.Ide.ClassLib.Store.InputFileCase;
+namespace Luthetus.Ide.RazorLib.InputFileCase;
 
 public partial record InputFileRegistry
 {

@@ -5,7 +5,7 @@ using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Ide.RazorLib.InputFileCase;
 using Luthetus.Ide.ClassLib.Store.InputFileCase;
 
-namespace Luthetus.Ide.ClassLib.FolderExplorerCase;
+namespace Luthetus.Ide.RazorLib.FolderExplorerCase;
 
 [FeatureState]
 public partial record FolderExplorerRegistry(

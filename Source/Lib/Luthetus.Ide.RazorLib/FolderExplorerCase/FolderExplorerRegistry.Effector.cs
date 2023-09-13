@@ -7,7 +7,7 @@ using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase;
 using Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
 
-namespace Luthetus.Ide.ClassLib.FolderExplorerCase;
+namespace Luthetus.Ide.RazorLib.FolderExplorerCase;
 
 public partial record FolderExplorerRegistry
 {
