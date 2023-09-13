@@ -2,7 +2,6 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Store.TabCase;
 using Luthetus.Common.RazorLib.TabCase;
-using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.CompilerServiceExplorerCase;

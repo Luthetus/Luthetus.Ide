@@ -10,7 +10,6 @@ using Luthetus.Ide.RazorLib.EditorCase;
 using Luthetus.Ide.RazorLib.FolderExplorerCase;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
-using Luthetus.Ide.RazorLib.DotNetSolutionCase;
 
 namespace Luthetus.Ide.RazorLib.SharedCase;
 

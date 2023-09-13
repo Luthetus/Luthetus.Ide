@@ -8,7 +8,6 @@ using Luthetus.Common.RazorLib.Store.DropdownCase;
 using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase;
-using Luthetus.Ide.RazorLib.DotNetSolutionCase;
 using Luthetus.Ide.RazorLib.MenuCase;
 using Microsoft.AspNetCore.Components;
 

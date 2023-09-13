@@ -1,9 +1,7 @@
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers;
-using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.Notification;
-using Luthetus.Common.RazorLib.Store.NotificationCase;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase;
 using Luthetus.Ide.RazorLib.CommandLineCase;
 using Luthetus.Ide.RazorLib.TerminalCase;

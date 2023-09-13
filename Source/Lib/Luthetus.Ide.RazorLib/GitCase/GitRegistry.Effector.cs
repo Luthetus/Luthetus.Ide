@@ -5,7 +5,6 @@ using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 using Luthetus.Ide.RazorLib.TerminalCase;
 using Luthetus.Ide.RazorLib.CommandLineCase;
-using Luthetus.Ide.RazorLib.GitCase;
 
 namespace Luthetus.Ide.RazorLib.GitCase;
 

@@ -5,7 +5,6 @@ using Luthetus.Common.RazorLib.Store.DropdownCase;
 using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
-using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase;
 using Luthetus.Ide.RazorLib.MenuCase;
 using Luthetus.TextEditor.RazorLib.Store.Group;
 using Luthetus.TextEditor.RazorLib.Store.ViewModel;

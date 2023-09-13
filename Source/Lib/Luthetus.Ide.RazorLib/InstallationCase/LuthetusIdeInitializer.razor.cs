@@ -11,7 +11,6 @@ using Luthetus.Common.RazorLib.Store.ThemeCase;
 using Luthetus.Common.RazorLib.TabCase;
 using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase;
 using Luthetus.Ide.RazorLib.CommandCase;
-using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase;
 using Luthetus.Ide.RazorLib.ContextCase;
 using Luthetus.Ide.RazorLib.FolderExplorerCase;
 using Luthetus.Ide.RazorLib.NugetCase;
