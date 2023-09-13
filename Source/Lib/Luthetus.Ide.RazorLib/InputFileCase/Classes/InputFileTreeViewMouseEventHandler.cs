@@ -3,7 +3,7 @@ using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.Common.RazorLib.TreeView.Events;
-using Luthetus.Ide.ClassLib.Store.InputFileCase;
+using Luthetus.Ide.RazorLib.InputFileCase;
 using Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
 
 namespace Luthetus.Ide.RazorLib.InputFileCase.Classes;

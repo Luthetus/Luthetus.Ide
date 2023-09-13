@@ -9,7 +9,7 @@ using Luthetus.Common.RazorLib.Store.PanelCase;
 using Luthetus.Common.RazorLib.Store.TabCase;
 using Luthetus.Common.RazorLib.Store.ThemeCase;
 using Luthetus.Common.RazorLib.TabCase;
-using Luthetus.Ide.ClassLib.Store.CompilerServiceExplorerCase;
+using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase;
 using Luthetus.Ide.RazorLib.CommandCase;
 using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase;
 using Luthetus.Ide.RazorLib.ContextCase;

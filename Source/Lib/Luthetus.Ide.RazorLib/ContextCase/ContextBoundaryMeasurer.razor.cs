@@ -4,7 +4,7 @@ using Fluxor;
 using Microsoft.JSInterop;
 using System.Collections.Immutable;
 using Luthetus.Ide.RazorLib.JavaScriptObjectsCase;
-using Luthetus.Ide.ClassLib.Store.ContextCase;
+using Luthetus.Ide.RazorLib.ContextCase;
 
 namespace Luthetus.Ide.RazorLib.ContextCase;
 

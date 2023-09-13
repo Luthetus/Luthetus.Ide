@@ -7,7 +7,7 @@ using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.Common.RazorLib.TreeView.Events;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
-using Luthetus.Ide.ClassLib.Store.InputFileCase;
+using Luthetus.Ide.RazorLib.InputFileCase;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase;
 using Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
 

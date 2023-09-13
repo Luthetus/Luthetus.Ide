@@ -2,7 +2,7 @@
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
-using Luthetus.Ide.ClassLib.Store.InputFileCase;
+using Luthetus.Ide.RazorLib.InputFileCase;
 using Luthetus.Ide.RazorLib.InputFileCase.Classes;
 using Microsoft.AspNetCore.Components;
 

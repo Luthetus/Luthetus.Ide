@@ -1,8 +1,8 @@
 ﻿using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
-using Luthetus.Ide.ClassLib.Store.GitCase;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Types.TreeViews;
+using Luthetus.Ide.RazorLib.GitCase;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementationsCase.TreeViewImplementations;

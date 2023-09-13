@@ -18,7 +18,7 @@ using Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Types;
 using Luthetus.Ide.RazorLib.TerminalCase;
 using Luthetus.Ide.RazorLib.ClipboardCase;
-using Luthetus.Ide.ClassLib.Store.InputFileCase;
+using Luthetus.Ide.RazorLib.InputFileCase;
 using Luthetus.Ide.RazorLib.InputFileCase;
 
 namespace Luthetus.Ide.RazorLib.MenuCase;

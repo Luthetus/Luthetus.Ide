@@ -2,10 +2,10 @@
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 using Luthetus.CompilerServices.Lang.DotNetSolution;
-using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
-using Luthetus.Ide.ClassLib.Store.NugetPackageManagerCase;
+using Luthetus.Ide.RazorLib.DotNetSolutionCase;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Types;
 using Microsoft.AspNetCore.Components;
+using Luthetus.Ide.RazorLib.NugetCase.NugetPackageManagerCase;
 
 namespace Luthetus.Ide.RazorLib.NugetCase;
 

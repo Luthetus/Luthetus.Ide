@@ -1,11 +1,11 @@
 ﻿using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
-using Luthetus.Ide.ClassLib.WebsiteProjectTemplatesCase.BlazorServerEmptyCase;
-using Luthetus.Ide.ClassLib.WebsiteProjectTemplatesCase.BlazorWasmEmptyCase;
-using Luthetus.Ide.ClassLib.WebsiteProjectTemplatesCase.ClassLibCase;
-using Luthetus.Ide.ClassLib.WebsiteProjectTemplatesCase.ConsoleAppCase;
-using Luthetus.Ide.ClassLib.WebsiteProjectTemplatesCase.RazorClassLibCase;
-using Luthetus.Ide.ClassLib.WebsiteProjectTemplatesCase.XUnitCase;
+using Luthetus.Ide.RazorLib.WebsiteProjectTemplatesCase.BlazorServerEmptyCase;
+using Luthetus.Ide.RazorLib.WebsiteProjectTemplatesCase.BlazorWasmEmptyCase;
+using Luthetus.Ide.RazorLib.WebsiteProjectTemplatesCase.ClassLibCase;
+using Luthetus.Ide.RazorLib.WebsiteProjectTemplatesCase.ConsoleAppCase;
+using Luthetus.Ide.RazorLib.WebsiteProjectTemplatesCase.RazorClassLibCase;
+using Luthetus.Ide.RazorLib.WebsiteProjectTemplatesCase.XUnitCase;
 using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.WebsiteProjectTemplatesCase;

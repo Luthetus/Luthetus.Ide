@@ -9,7 +9,7 @@ using Luthetus.Ide.RazorLib.ComponentRenderersCase;
 using Luthetus.Ide.RazorLib.FolderExplorerCase.Classes;
 using Luthetus.Ide.RazorLib.MenuCase;
 using Luthetus.Ide.RazorLib.FolderExplorerCase.InternalComponents;
-using Luthetus.Ide.ClassLib.FolderExplorerCase;
+using Luthetus.Ide.RazorLib.FolderExplorerCase;
 
 namespace Luthetus.Ide.RazorLib.FolderExplorerCase;
 

@@ -11,7 +11,7 @@ using Luthetus.Common.RazorLib.Store.NotificationCase;
 using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
-using Luthetus.Ide.ClassLib.FolderExplorerCase;
+using Luthetus.Ide.RazorLib.FolderExplorerCase;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 using Luthetus.Ide.RazorLib.MenuCase;

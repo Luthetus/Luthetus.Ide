@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
 using Luthetus.Ide.RazorLib.FileSystemCase;
 using Luthetus.Ide.RazorLib.InputFileCase;
-using Luthetus.Ide.ClassLib.Store.InputFileCase;
+using Luthetus.Ide.RazorLib.InputFileCase;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase;
 

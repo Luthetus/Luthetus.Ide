@@ -1,7 +1,7 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.Dialog;
 using Luthetus.Common.RazorLib.Store.DialogCase;
-using Luthetus.Ide.ClassLib.HtmlCase;
+using Luthetus.Ide.RazorLib.HtmlCase;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase;
 
 namespace Luthetus.Ide.RazorLib.InputFileCase;

@@ -14,7 +14,7 @@ using Luthetus.Ide.RazorLib.InputFileCase.InternalComponents;
 using Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
 using Luthetus.Ide.RazorLib.InputFileCase.Classes;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Types;
-using Luthetus.Ide.ClassLib.Store.InputFileCase;
+using Luthetus.Ide.RazorLib.InputFileCase;
 
 namespace Luthetus.Ide.RazorLib.InputFileCase;
 

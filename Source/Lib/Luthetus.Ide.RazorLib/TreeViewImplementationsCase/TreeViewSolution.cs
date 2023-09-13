@@ -5,7 +5,7 @@ using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Types.TreeViews;
-using Luthetus.Ide.ClassLib.TreeViewImplementationsCase.Helper;
+using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Helper;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
 

@@ -4,7 +4,7 @@ using Luthetus.Common.RazorLib.Menu;
 using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
-using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
+using Luthetus.Ide.RazorLib.DotNetSolutionCase;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.TreeView;

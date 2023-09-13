@@ -1,5 +1,5 @@
 using Fluxor;
-using Luthetus.Ide.ClassLib.Store.CompilerServiceExplorerCase;
+using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.Graphical;
