@@ -7,7 +7,7 @@ using Luthetus.Common.RazorLib.Store.DialogCase;
 using Luthetus.Common.RazorLib.Store.DropdownCase;
 using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
-using Luthetus.Ide.ClassLib.Menu;
+using Luthetus.Ide.ClassLib.MenuCase;
 using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 using Luthetus.Ide.RazorLib.DotNetSolutionForm;
 using Microsoft.AspNetCore.Components;

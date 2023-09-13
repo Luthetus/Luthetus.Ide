@@ -11,10 +11,10 @@ using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.Common.RazorLib.TreeView.Events;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
-using Luthetus.Ide.ClassLib.Menu;
+using Luthetus.Ide.ClassLib.MenuCase;
 using Luthetus.Ide.ClassLib.Store.EditorCase;
-using Luthetus.Ide.ClassLib.Store.FolderExplorerCase;
-using Luthetus.Ide.ClassLib.TreeViewImplementations;
+using Luthetus.Ide.ClassLib.FolderExplorerCase;
+using Luthetus.Ide.ClassLib.TreeViewImplementationsCase;
 using Luthetus.Ide.RazorLib.SolutionExplorer;
 
 namespace Luthetus.Ide.RazorLib.FolderExplorer.Classes;

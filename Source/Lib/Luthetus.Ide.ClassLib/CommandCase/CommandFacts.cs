@@ -1,4 +1,4 @@
-﻿//using Luthetus.Ide.ClassLib.Context;
+﻿//using Luthetus.Ide.ClassLib.ContextCase;
 //using Microsoft.JSInterop;
 //using System;
 //using System.Collections.Generic;

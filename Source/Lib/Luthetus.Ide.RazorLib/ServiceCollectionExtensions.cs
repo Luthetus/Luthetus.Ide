@@ -7,13 +7,13 @@ using Luthetus.Ide.RazorLib.NuGet;
 using Luthetus.Ide.RazorLib.TreeViewImplementations;
 using Microsoft.Extensions.DependencyInjection;
 using Luthetus.TextEditor.RazorLib;
-using Luthetus.Ide.ClassLib.ComponentRenderers;
-using Luthetus.Ide.ClassLib;
+using Luthetus.Ide.ClassLib.ComponentRenderersCase;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.FileSystem.Classes.Local;
 using Luthetus.Common.RazorLib.FileSystem.Classes.InMemoryFileSystem;
 using Luthetus.Common.RazorLib;
 using Luthetus.Common.RazorLib.Theme;
+using Luthetus.Ide.ClassLib.InstallationCase;
 
 namespace Luthetus.Ide.RazorLib;
 

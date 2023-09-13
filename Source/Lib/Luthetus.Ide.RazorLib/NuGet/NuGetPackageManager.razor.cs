@@ -3,7 +3,7 @@ using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 using Luthetus.CompilerServices.Lang.DotNetSolution;
 using Luthetus.Ide.ClassLib.ComponentRenderers.Types;
-using Luthetus.Ide.ClassLib.Nuget;
+using Luthetus.Ide.ClassLib.NugetCase;
 using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 using Luthetus.Ide.ClassLib.Store.NugetPackageManagerCase;
 using Microsoft.AspNetCore.Components;

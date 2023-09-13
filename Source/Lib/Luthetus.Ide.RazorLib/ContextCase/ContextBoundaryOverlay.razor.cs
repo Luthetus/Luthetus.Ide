@@ -1,6 +1,6 @@
 using Fluxor;
-using Luthetus.Ide.ClassLib.Context;
-using Luthetus.Ide.ClassLib.JavaScriptObjects;
+using Luthetus.Ide.ClassLib.ContextCase;
+using Luthetus.Ide.ClassLib.JavaScriptObjectsCase;
 using Luthetus.Ide.ClassLib.Store.ContextCase;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;

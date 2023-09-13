@@ -7,9 +7,9 @@ using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.Common.RazorLib.TreeView.Events;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
-using Luthetus.Ide.ClassLib.ComponentRenderers;
+using Luthetus.Ide.ClassLib.ComponentRenderersCase;
 using Luthetus.Ide.ClassLib.Store.InputFileCase;
-using Luthetus.Ide.ClassLib.TreeViewImplementations;
+using Luthetus.Ide.ClassLib.TreeViewImplementationsCase;
 
 namespace Luthetus.Ide.RazorLib.InputFile.Classes;
 

@@ -1,4 +1,4 @@
-﻿using Luthetus.Ide.ClassLib.FileTemplates;
+﻿using Luthetus.Ide.ClassLib.FileTemplatesCase;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 

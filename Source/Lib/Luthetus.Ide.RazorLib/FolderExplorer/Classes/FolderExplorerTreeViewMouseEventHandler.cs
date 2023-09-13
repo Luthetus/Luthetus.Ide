@@ -3,7 +3,7 @@ using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.Common.RazorLib.TreeView.Events;
 using Luthetus.Ide.ClassLib.Store.EditorCase;
-using Luthetus.Ide.ClassLib.TreeViewImplementations;
+using Luthetus.Ide.ClassLib.TreeViewImplementationsCase;
 
 namespace Luthetus.Ide.RazorLib.FolderExplorer.Classes;
 

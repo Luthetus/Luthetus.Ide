@@ -1,4 +1,4 @@
-﻿using Luthetus.Ide.ClassLib.Context;
+﻿using Luthetus.Ide.ClassLib.ContextCase;
 
 namespace Luthetus.Ide.ClassLib.CommandCase;
 

@@ -1,9 +1,9 @@
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Keyboard;
-using Luthetus.Ide.ClassLib.CommandLine;
-using Luthetus.Ide.ClassLib.Html;
-using Luthetus.Ide.ClassLib.Store.TerminalCase;
+using Luthetus.Ide.ClassLib.CommandLineCase;
+using Luthetus.Ide.ClassLib.HtmlCase;
+using Luthetus.Ide.ClassLib.TerminalCase;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Cursor;
 using Luthetus.TextEditor.RazorLib.Lexing;

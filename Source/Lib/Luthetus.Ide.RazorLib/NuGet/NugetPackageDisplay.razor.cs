@@ -4,11 +4,11 @@ using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.ComponentRenderers.Types;
 using Luthetus.Common.RazorLib.Notification;
 using Luthetus.Common.RazorLib.Store.NotificationCase;
-using Luthetus.Ide.ClassLib.CommandLine;
-using Luthetus.Ide.ClassLib.Nuget;
+using Luthetus.Ide.ClassLib.CommandLineCase;
+using Luthetus.Ide.ClassLib.NugetCase;
 using Luthetus.Ide.ClassLib.Store.DotNetSolutionCase;
 using Luthetus.Ide.ClassLib.Store.NugetPackageManagerCase;
-using Luthetus.Ide.ClassLib.Store.TerminalCase;
+using Luthetus.Ide.ClassLib.TerminalCase;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 
