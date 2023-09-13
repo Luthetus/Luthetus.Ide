@@ -23,31 +23,4 @@ public partial record DotNetSolutionState
         IAbsolutePath CSharpProjectAbsolutePath,
         IEnvironmentProvider EnvironmentProvider,
         DotNetSolutionSync Sync);
-
-    public static void ShowInputFile(DotNetSolutionSync sync)
-    {
-        sync.Dispatcher.Dispatch(new InputFileRegistry.RequestInputFileStateFormAction(
-            "Solution Explorer",
-            afp =>
-            {
-                if (afp is not null)
-                    sync.Dispatcher.Dispatch(new SetDotNetSolutionTask(afp, sync));
-
-                return Task.CompletedTask;
-            },
-            afp =>
-            {
-                if (afp is null || afp.IsDirectory)
-                    return Task.FromResult(false);
-
-                return Task.FromResult(
-                    afp.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION);
-            },
-            new[]
-            {
-                new InputFilePattern(
-                    ".NET Solution",
-                    afp => afp.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
-            }.ToImmutableArray()));
-    }
 }

@@ -16,14 +16,14 @@ public partial record DotNetSolutionState
     {
         [ReducerMethod]
         public static DotNetSolutionState ReduceSetDotNetSolutionTreeViewTask(
-            DotNetSolutionState inEntry,
+            DotNetSolutionState inState,
             SetDotNetSolutionTreeViewTask inTask)
         {
             // Enter this method in the shared synchronous-concurrent context
 
             // If bad input, just return
-            if (inEntry.DotNetSolutionModelKey is null)
-                return inEntry;
+            if (inState.DotNetSolutionModelKey is null)
+                return inState;
 
             // Enqueue onto the async-concurrent context, calculating the replacement .NET Solution
             inTask.Sync.BackgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
@@ -55,7 +55,7 @@ public partial record DotNetSolutionState
                     // so simultaneously, because the first background task would've made
                     // its replacement before the second could start.
                     inTask.Sync.Dispatcher.Dispatch(DotNetSolutionSync.ConstructModelReplacement(
-                        inEntry.DotNetSolutionModelKey,
+                        inState.DotNetSolutionModelKey,
                         outSln));
                 });
 
@@ -64,16 +64,16 @@ public partial record DotNetSolutionState
             //
             // Furthermore, free the shared synchronous-concurrent context
             // so the next Action can be ran
-            return inEntry;
+            return inState;
         }
 
         [ReducerMethod]
         public static DotNetSolutionState ReduceSetDotNetSolutionTask(
-            DotNetSolutionState inEntry,
+            DotNetSolutionState inState,
             SetDotNetSolutionTask inTask)
         {
-            if (inEntry.DotNetSolutionModelKey is null)
-                return inEntry;
+            if (inState.DotNetSolutionModelKey is null)
+                return inState;
 
             inTask.Sync.BackgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
                 "SetDotNetSolutionAsync",
@@ -84,20 +84,20 @@ public partial record DotNetSolutionState
                         return;
 
                     inTask.Sync.Dispatcher.Dispatch(DotNetSolutionSync.ConstructModelReplacement(
-                        inEntry.DotNetSolutionModelKey,
+                        outDotNetSolution.DotNetSolutionModelKey,
                         outDotNetSolution));
                 });
 
-            return inEntry;
+            return inState;
         }
 
         [ReducerMethod]
         public static DotNetSolutionState ReduceAddExistingProjectToSolutionAction(
-            DotNetSolutionState inEntry,
+            DotNetSolutionState inState,
             AddExistingProjectToSolutionTask inTask)
         {
-            if (inEntry.DotNetSolutionModelKey is null)
-                return inEntry;
+            if (inState.DotNetSolutionModelKey is null)
+                return inState;
 
             inTask.Sync.BackgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
                 "AddExistingProjectToSolutionAsync",
@@ -108,27 +108,27 @@ public partial record DotNetSolutionState
                         return;
 
                     inTask.Sync.Dispatcher.Dispatch(DotNetSolutionSync.ConstructModelReplacement(
-                        inEntry.DotNetSolutionModelKey,
+                        inState.DotNetSolutionModelKey,
                         outDotNetSolution));
                 });
 
-            return inEntry;
+            return inState;
         }
 
         [ReducerMethod]
         public static DotNetSolutionState ReduceRegisterAction(
-            DotNetSolutionState inDotNetSolutionState,
+            DotNetSolutionState inState,
             RegisterAction registerAction)
         {
-            var dotNetSolutionModel = inDotNetSolutionState.DotNetSolutionModel;
+            var dotNetSolutionModel = inState.DotNetSolutionModel;
 
             if (dotNetSolutionModel is not null)
-                return inDotNetSolutionState;
+                return inState;
 
-            var nextList = inDotNetSolutionState.DotNetSolutions.Add(
+            var nextList = inState.DotNetSolutions.Add(
                 registerAction.DotNetSolutionModel);
 
-            return inDotNetSolutionState with
+            return inState with
             {
                 DotNetSolutions = nextList
             };
@@ -136,18 +136,18 @@ public partial record DotNetSolutionState
 
         [ReducerMethod]
         public static DotNetSolutionState ReduceDisposeAction(
-            DotNetSolutionState inDotNetSolutionState,
+            DotNetSolutionState inState,
             DisposeAction disposeAction)
         {
-            var dotNetSolutionModel = inDotNetSolutionState.DotNetSolutionModel;
+            var dotNetSolutionModel = inState.DotNetSolutionModel;
 
             if (dotNetSolutionModel is null)
-                return inDotNetSolutionState;
+                return inState;
 
-            var nextList = inDotNetSolutionState.DotNetSolutions.Remove(
+            var nextList = inState.DotNetSolutions.Remove(
                 dotNetSolutionModel);
 
-            return inDotNetSolutionState with
+            return inState with
             {
                 DotNetSolutions = nextList
             };
@@ -155,11 +155,11 @@ public partial record DotNetSolutionState
 
         [ReducerMethod]
         public static DotNetSolutionState ReduceWithAction(
-            DotNetSolutionState inDotNetSolutionState,
+            DotNetSolutionState inState,
             IWithAction withActionInterface)
         {
             var withAction = (WithAction)withActionInterface;
-            return withAction.WithFunc.Invoke(inDotNetSolutionState);
+            return withAction.WithFunc.Invoke(inState);
         }
     }
 }

@@ -78,6 +78,9 @@ public partial class DotNetSolutionSync
             var indexOfSln = dotNetSolutionState.DotNetSolutions.FindIndex(
                 sln => sln.DotNetSolutionModelKey == dotNetSolutionModelKey);
 
+            if (indexOfSln == -1)
+                return dotNetSolutionState;
+
             var outDotNetSolutions = dotNetSolutionState.DotNetSolutions.SetItem(
                 indexOfSln,
                 outDotNetSolutionModel);
