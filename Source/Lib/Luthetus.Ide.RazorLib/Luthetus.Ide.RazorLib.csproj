@@ -26,7 +26,6 @@
       <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Source\CSharpProject\Source\Luthetus.CompilerServices.Lang.CSharpProject.csproj" />
       <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Source\CSharp\Source\Luthetus.CompilerServices.Lang.CSharp.csproj" />
       <ProjectReference Include="..\..\..\..\Luthetus.CompilerServices\Source\DotNetSolution\Source\Luthetus.CompilerServices.Lang.DotNetSolution.csproj" />
-      <ProjectReference Include="..\Luthetus.Ide.ClassLib\Luthetus.Ide.ClassLib.csproj" />
     </ItemGroup>
 
 </Project>
