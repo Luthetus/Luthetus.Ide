@@ -13,9 +13,9 @@ public partial record DotNetSolutionState
     public record RegisterAction(DotNetSolutionModel DotNetSolutionModel);
     public record DisposeAction(DotNetSolutionModelKey DotNetSolutionModelKey);
     public record SetDotNetSolutionTask(IAbsolutePath SolutionAbsolutePath);
-    public record SetDotNetSolutionTreeViewTask;
+    public record SetDotNetSolutionTreeViewTask(DotNetSolutionModelKey DotNetSolutionModelKey);
 
-    public record AddExistingProjectToSolutionAction(
+    public record AddExistingProjectToSolutionTask(
         DotNetSolutionModelKey DotNetSolutionModelKey,
         string LocalProjectTemplateShortName,
         string LocalCSharpProjectName,

@@ -33,7 +33,7 @@ internal partial class SynchronizationContext
 
         // Enqueue onto the async-concurrent context, calculating the replacement .NET Solution
         _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
-            "HandleSetDotNetSolutionTreeViewAction",
+            "SetDotNetSolutionTreeViewAsync",
             async () => {
                 // Enter this lambda in the shared async-concurrent context,
                 //
@@ -48,6 +48,10 @@ internal partial class SynchronizationContext
                 //
                 // This is opposed to enqueueing a background task for each of the inner
                 // methods one wishes to invoke.
+
+                // If outSln is null, then return
+                if (outSln is null)
+                    return;
 
                 // Enter the synchronous-concurrent context.
                 //
@@ -78,9 +82,12 @@ internal partial class SynchronizationContext
             return inEntry;
 
         _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
-            "HandleSetDotNetSolutionAction",
+            "SetDotNetSolutionAsync",
             async () => {
                 var outDotNetSolution = await SetDotNetSolutionAsync(setDotNetSolutionTask);
+
+                if (outDotNetSolution is null)
+                    return;
 
                 _dispatcher.Dispatch(ConstructModelReplacement(
                     inEntry.DotNetSolutionModelKey,
@@ -89,19 +96,22 @@ internal partial class SynchronizationContext
 
         return inEntry;
     }
-
+    
     [ReducerMethod]
-    public DotNetSolutionState ReduceParseDotNetSolutionTask(
+    public DotNetSolutionState ReduceAddExistingProjectToSolutionAction(
         DotNetSolutionState inEntry,
-        ParseDotNetSolutionTask parseDotNetSolutionTask)
+        AddExistingProjectToSolutionTask addExistingProjectToSolutionTask)
     {
         if (inEntry.DotNetSolutionModelKey is null)
             return inEntry;
 
         _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
-            "HandleParseDotNetSolutionActionAsync",
+            "AddExistingProjectToSolutionAsync",
             async () => {
-                var outDotNetSolution = await ParseDotNetSolutionAsync(parseDotNetSolutionTask);
+                var outDotNetSolution = await AddExistingProjectToSolutionAsync(addExistingProjectToSolutionTask);
+
+                if (outDotNetSolution is null)
+                    return;
 
                 _dispatcher.Dispatch(ConstructModelReplacement(
                     inEntry.DotNetSolutionModelKey,

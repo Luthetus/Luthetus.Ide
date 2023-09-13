@@ -23,6 +23,7 @@ using Luthetus.TextEditor.RazorLib.Store.Model;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 using System.Text;
+using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 
 namespace Luthetus.Ide.RazorLib.CSharpProjectFormCase;
 
@@ -31,7 +32,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     [Inject]
     private IState<TerminalSessionRegistry> TerminalSessionRegistryWrap { get; set; } = null!;
     [Inject]
-    private IState<DotNetSolutionRegistry> DotNetSolutionRegistryWrap { get; set; } = null!;
+    private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -67,7 +68,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     private string _searchInput = string.Empty;
     private ProjectTemplate? _selectedProjectTemplate = null;
 
-    private DotNetSolutionModel DotNetSolutionModel => DotNetSolutionRegistryWrap.Value.DotNetSolutions.FirstOrDefault(
+    private DotNetSolutionModel DotNetSolutionModel => DotNetSolutionStateWrap.Value.DotNetSolutions.FirstOrDefault(
         x => x.DotNetSolutionModelKey == DotNetSolutionModelKey);
 
     private string ProjectTemplateShortNameDisplay => string.IsNullOrWhiteSpace(_projectTemplateShortNameValue)
@@ -430,7 +431,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                             () =>
                             {
                                 Dispatcher.Dispatch(new DialogRegistry.DisposeAction(DialogRecord.Key));
-                                Dispatcher.Dispatch(new DotNetSolutionRegistry.SetDotNetSolutionAction(solutionNamespacePath.AbsolutePath));
+                                Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionTask(solutionNamespacePath.AbsolutePath));
                                 return Task.CompletedTask;
                             });
 
@@ -488,7 +489,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         var dotNetSolutionAbsolutePathString = DotNetSolutionModel.NamespacePath!.AbsolutePath.FormattedInput;
         var cSharpAbsolutePath = new AbsolutePath(cSharpProjectAbsolutePathString, false, EnvironmentProvider);
 
-        Dispatcher.Dispatch(new DotNetSolutionRegistry.AddExistingProjectToSolutionAction(
+        Dispatcher.Dispatch(new DotNetSolutionState.AddExistingProjectToSolutionTask(
             DotNetSolutionModel.DotNetSolutionModelKey,
             localProjectTemplateShortName,
             localCSharpProjectName,

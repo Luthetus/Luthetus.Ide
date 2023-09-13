@@ -21,7 +21,7 @@ namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 
 internal partial class SynchronizationContext
 {
-    public async Task<DotNetSolutionModel> SetDotNetSolutionAsync(SetDotNetSolutionTask setDotNetSolutionAction)
+    public async Task<DotNetSolutionModel?> SetDotNetSolutionAsync(SetDotNetSolutionTask setDotNetSolutionAction)
     {
         var dotNetSolutionAbsolutePathString = setDotNetSolutionAction.SolutionAbsolutePath.FormattedInput;
 
@@ -51,26 +51,19 @@ internal partial class SynchronizationContext
                 DotNetSolutionModelKey = dotNetSolution.DotNetSolutionModelKey
             }));
 
-        _dispatcher.Dispatch(new SetDotNetSolutionTreeViewTask());
-        _dispatcher.Dispatch(new ParseDotNetSolutionTask());
+        return await SetDotNetSolutionTreeViewAsync(new SetDotNetSolutionTreeViewTask(dotNetSolution.DotNetSolutionModelKey));
     }
 
-    public async Task<DotNetSolutionModel> SetDotNetSolutionTreeViewAsync(
+    public async Task<DotNetSolutionModel?> SetDotNetSolutionTreeViewAsync(
         SetDotNetSolutionTreeViewTask setDotNetSolutionTreeViewAction)
     {
         var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
 
-        var dotNetSolutionModel = dotNetSolutionState.DotNetSolutions.FirstOrDefault(x =>
-            x.DotNetSolutionModelKey == dotNetSolutionState.DotNetSolutionModelKey);
+        var dotNetSolutionModel = dotNetSolutionState.DotNetSolutions.FirstOrDefault(
+            x => x.DotNetSolutionModelKey == setDotNetSolutionTreeViewAction.DotNetSolutionModelKey);
 
         if (dotNetSolutionModel is null)
-            return;
-
-        _dispatcher.Dispatch(new WithAction(inDotNetSolutionState =>
-            inDotNetSolutionState with
-            {
-                IsExecutingAsyncTaskLinks = inDotNetSolutionState.IsExecutingAsyncTaskLinks + 1
-            }));
+            return null;
 
         var rootNode = new TreeViewSolution(
             dotNetSolutionModel,
@@ -83,9 +76,7 @@ internal partial class SynchronizationContext
 
         await rootNode.LoadChildrenAsync();
 
-        if (!_treeViewService.TryGetTreeViewState(
-                TreeViewSolutionExplorerStateKey,
-                out _))
+        if (!_treeViewService.TryGetTreeViewState(TreeViewSolutionExplorerStateKey, out _))
         {
             _treeViewService.RegisterTreeViewState(new TreeViewState(
                 TreeViewSolutionExplorerStateKey,
@@ -95,96 +86,43 @@ internal partial class SynchronizationContext
         }
         else
         {
-            _treeViewService.SetRoot(
-                TreeViewSolutionExplorerStateKey,
-                rootNode);
-
-            _treeViewService.SetActiveNode(
-                TreeViewSolutionExplorerStateKey,
-                rootNode);
+            _treeViewService.SetRoot(TreeViewSolutionExplorerStateKey, rootNode);
+            _treeViewService.SetActiveNode(TreeViewSolutionExplorerStateKey, rootNode);
         }
 
-        _dispatcher.Dispatch(new WithAction(inDotNetSolutionState =>
-            inDotNetSolutionState with
-            {
-                IsExecutingAsyncTaskLinks = inDotNetSolutionState.IsExecutingAsyncTaskLinks - 1
-            }));
+        return dotNetSolutionModel;
     }
-
-    public Task<DotNetSolutionModel> ParseDotNetSolutionAsync(ParseDotNetSolutionTask parseDotNetSolutionAction)
-    {
-        var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
-
-        var dotNetSolutionModel = dotNetSolutionState.DotNetSolutions.FirstOrDefault(x =>
-            x.DotNetSolutionModelKey == dotNetSolutionState.DotNetSolutionModelKey);
-
-        if (dotNetSolutionModel is null)
-            return Task.CompletedTask;
-
-        //var parserTask = new ParserTask(
-        //    async cancellationToken =>
-        //    {
-        //        dispatcher.Dispatch(new WithAction(inDotNetSolutionState =>
-        //            inDotNetSolutionState with
-        //            {
-        //                IsExecutingAsyncTaskLinks = inDotNetSolutionState.IsExecutingAsyncTaskLinks + 1
-        //            }));
-
-        //        await Task.Delay(5_000);
-
-        //        dispatcher.Dispatch(new WithAction(inDotNetSolutionState =>
-        //            inDotNetSolutionState with
-        //            {
-        //                IsExecutingAsyncTaskLinks = inDotNetSolutionState.IsExecutingAsyncTaskLinks - 1
-        //            }));
-        //    },
-        //    "Parse Task Name",
-        //    "Parse Task Description",
-        //    false,
-        //    _ => Task.CompletedTask,
-        //    dispatcher,
-        //    CancellationToken.None);
-
-        //_parserTaskQueue.QueueParserWorkItem(parserTask);
-
-        return Task.CompletedTask;
-    }
-
     
-    public Task AddExistingProjectToSolutionAsync(AddExistingProjectToSolutionAction addExistingProjectToSolutionAction)
+    public async Task<DotNetSolutionModel?> AddExistingProjectToSolutionAsync(AddExistingProjectToSolutionTask addExistingProjectToSolutionTask)
     {
         var dotNetSolutionModel = _dotNetSolutionStateWrap.Value.DotNetSolutions.FirstOrDefault(
-            x => x.DotNetSolutionModelKey == addExistingProjectToSolutionAction.DotNetSolutionModelKey);
+            x => x.DotNetSolutionModelKey == addExistingProjectToSolutionTask.DotNetSolutionModelKey);
 
         if (dotNetSolutionModel is null)
-            return Task.CompletedTask;
+            return null;
 
         var projectTypeGuid = WebsiteProjectTemplateRegistry.GetProjectTypeGuid(
-            addExistingProjectToSolutionAction.LocalProjectTemplateShortName);
+            addExistingProjectToSolutionTask.LocalProjectTemplateShortName);
 
         var relativePathFromSlnToProject = AbsolutePath.ConstructRelativePathFromTwoAbsolutePaths(
             dotNetSolutionModel.NamespacePath.AbsolutePath,
-            addExistingProjectToSolutionAction.CSharpProjectAbsolutePath,
-            addExistingProjectToSolutionAction.EnvironmentProvider);
+            addExistingProjectToSolutionTask.CSharpProjectAbsolutePath,
+            addExistingProjectToSolutionTask.EnvironmentProvider);
 
         var projectIdGuid = Guid.NewGuid();
 
         var cSharpProject = new CSharpProject(
-            addExistingProjectToSolutionAction.LocalCSharpProjectName,
+            addExistingProjectToSolutionTask.LocalCSharpProjectName,
             projectTypeGuid,
             relativePathFromSlnToProject,
             projectIdGuid);
 
-        cSharpProject.SetAbsolutePath(addExistingProjectToSolutionAction.CSharpProjectAbsolutePath);
+        cSharpProject.SetAbsolutePath(addExistingProjectToSolutionTask.CSharpProjectAbsolutePath);
 
         var dotNetSolutionBuilder = dotNetSolutionModel.AddDotNetProject(
             cSharpProject,
-            addExistingProjectToSolutionAction.EnvironmentProvider);
+            addExistingProjectToSolutionTask.EnvironmentProvider);
 
-        var nextDotNetSolutions = inDotNetSolutionState.DotNetSolutions.SetItem(
-            indexOfDotNetSolutionModel,
-            dotNetSolutionBuilder.Build());
-
-        return Task.CompletedTask;
+        return dotNetSolutionBuilder.Build();
     }
 }
