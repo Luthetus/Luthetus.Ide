@@ -35,15 +35,56 @@ internal partial class SynchronizationContext
 
     [ReducerMethod]
     public DotNetSolutionState ReduceSetDotNetSolutionTreeViewTask(
-        DotNetSolutionState inDotNetSolutionState,
+        DotNetSolutionState inEntry,
         SetDotNetSolutionTreeViewTask setDotNetSolutionTreeViewTask)
     {
+        // Enter this method in the shared synchronous-concurrent context
+
+        // Enqueue onto the async-concurrent context, calculating the replacement .NET Solution
         _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
             "HandleSetDotNetSolutionTreeViewAction",
-            async () => await SetDotNetSolutionTreeViewAsync(
-                setDotNetSolutionTreeViewTask));
+            async () => {
+                // Enter this lambda in the shared async-concurrent context,
+                //
+                // The synchronous-concurrent context is not being blocked
+                // by this lambda executing.
+                var outSln = await SetDotNetSolutionTreeViewAsync(setDotNetSolutionTreeViewTask);
 
-        return inDotNetSolutionState;
+                // The method `SetDotNetSolutionTreeViewAsync` returned the replacement .NET Solution
+                //
+                // Furthermore, these inner methods returning the replacement is important.
+                // Because then one can compose the inner methods to do single-Entry-batch-work.
+                //
+                // This is opposed to enqueueing a background task for each of the inner
+                // methods one wishes to invoke.
+
+                // Enter the synchronous-concurrent context.
+                //
+                // This blocks the async-concurrent context while the 'Action' is reduced.
+                //
+                // Therefore, two background tasks that access the same data, cannot do
+                // so simultaneously, because the first background task would've made
+                // its replacement before the second could start.
+                _dispatcher.Dispatch(new WithAction(x =>
+                {
+                    var indexOfSln = x.DotNetSolutions.FindIndex(
+                        sln => sln.DotNetSolutionModelKey == inEntry.DotNetSolutionModelKey);
+                    
+                    var outDotNetSolutions = x.DotNetSolutions.SetItem(indexOfSln, outSln);
+
+                    return x with
+                    {
+                        DotNetSolutions = outDotNetSolutions
+                    };
+                }));
+            });
+
+        // Return the state without any changes (this is an awkward step but must be done)
+        // You are returning the input to THIS method. The backgroundTask didn't touch this
+        //
+        // Furthermore, free the shared synchronous-concurrent context
+        // so the next Action can be ran
+        return inEntry;
     }
 
     [ReducerMethod]

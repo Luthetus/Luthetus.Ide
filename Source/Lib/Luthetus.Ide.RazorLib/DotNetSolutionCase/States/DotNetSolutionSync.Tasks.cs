@@ -15,6 +15,7 @@ using Luthetus.Common.RazorLib;
 using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
 using Luthetus.Ide.RazorLib.WebsiteProjectTemplatesCase;
 using static Luthetus.Ide.RazorLib.DotNetSolutionCase.States.DotNetSolutionState;
+using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 
@@ -54,7 +55,7 @@ internal partial class SynchronizationContext
         _dispatcher.Dispatch(new ParseDotNetSolutionTask());
     }
 
-    public async Task SetDotNetSolutionTreeViewAsync(
+    public async Task<DotNetSolutionModel> SetDotNetSolutionTreeViewAsync(
         SetDotNetSolutionTreeViewTask setDotNetSolutionTreeViewAction)
     {
         var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
