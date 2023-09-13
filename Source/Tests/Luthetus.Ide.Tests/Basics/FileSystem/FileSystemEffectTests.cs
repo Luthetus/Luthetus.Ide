@@ -15,7 +15,7 @@ public class FileSystemEffectTests : LuthetusFileSystemTestingBase
             true,
             EnvironmentProvider);
 
-        var saveFileAction = new ClassLib.Store.FileSystemCase.FileSystemRegistry.SaveFileAction(
+        var saveFileAction = new RazorLib.FileSystemCase.FileSystemRegistry.SaveFileAction(
             absolutePath,
             content,
             writtenDateTime => { });

@@ -1,11 +1,9 @@
 using Microsoft.AspNetCore.Components;
 using Fluxor.Blazor.Web.Components;
-using Luthetus.Ide.ClassLib.Store.ContextCase;
 using Fluxor;
-using Luthetus.Ide.ClassLib.Context;
 using Microsoft.JSInterop;
-using Luthetus.Ide.ClassLib.JavaScriptObjects;
 using System.Collections.Immutable;
+using Luthetus.Ide.RazorLib.JavaScriptObjectsCase;
 
 namespace Luthetus.Ide.RazorLib.ContextCase;
 

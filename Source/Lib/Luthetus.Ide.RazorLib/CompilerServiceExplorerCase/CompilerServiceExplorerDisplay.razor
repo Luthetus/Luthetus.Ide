@@ -1,0 +1,43 @@
+﻿@using Fluxor.Blazor.Web.Components
+@using Luthetus.Common.RazorLib.TabCase
+@using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase;
+@using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.Graphical
+@using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.TreeView
+
+@inherits FluxorComponent
+
+<ContextBoundary ContextRecord="ContextFacts.CompilerServiceExplorerContext"
+                 ClassCssString="luth_ide_compiler-service-explorer"
+                 StyleCssString="height: 100%">
+
+    @{
+        var compilerServiceExplorerState = CompilerServiceExplorerRegistryWrap.Value;
+        var tabGroup = TabRegistrySelection.Value;
+        var activeTabEntryNoType = tabGroup?.GetActiveEntryNoType();
+
+        CompilerServiceExplorerViewKind compilerServiceExplorerViewKind;
+
+        if (activeTabEntryNoType is null)
+            compilerServiceExplorerViewKind = CompilerServiceExplorerViewKind.Graphical;
+        else
+            compilerServiceExplorerViewKind = (CompilerServiceExplorerViewKind)activeTabEntryNoType.UntypedItem;
+    }
+
+    <div class="luth_ide_section-title">
+        Compiler Explorer Display
+    </div>
+
+    <div class="luth_ide_section-body">
+        <TabGroupDisplay TabGroupKey="CompilerServiceExplorerRegistry.TabGroupKey" />
+
+        @switch (compilerServiceExplorerViewKind)
+        {
+            case CompilerServiceExplorerViewKind.Graphical:
+                <CompilerServiceExplorerGraphicalDisplay />
+                break;
+            case CompilerServiceExplorerViewKind.TreeView:
+                <CompilerServiceExplorerTreeViewDisplay />
+                break;
+        }
+    </div>
+</ContextBoundary>

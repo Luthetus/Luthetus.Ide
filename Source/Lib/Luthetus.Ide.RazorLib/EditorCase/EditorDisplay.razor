@@ -1,0 +1,20 @@
+@using Luthetus.Ide.RazorLib.EditorCase;
+@using Luthetus.Ide.RazorLib.ContextCase
+@using Luthetus.Ide.RazorLib.EditorCase
+@using Luthetus.TextEditor.RazorLib
+@using Luthetus.TextEditor.RazorLib.Group
+
+<ContextBoundary ContextRecord="ContextFacts.EditorContext"
+                 ClassCssString="luth_ide_editor-display"
+                 StyleCssString="@EditorElementDimensions.StyleString">
+
+    <div class="luth_ide_section-title">
+        Editor
+    </div>
+
+    <div class="luth_ide_section-body">
+        <TextEditorGroupDisplay TextEditorGroupKey="EditorRegistry.EditorTextEditorGroupKey"
+                                TabIndex="0"
+                                HeaderButtonKinds="TextEditorHeaderButtonKinds" />
+    </div>
+</ContextBoundary>

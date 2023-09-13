@@ -1,7 +1,5 @@
 using Fluxor;
-using Luthetus.Ide.ClassLib.Context;
-using Luthetus.Ide.ClassLib.KeymapCase;
-using Luthetus.Ide.ClassLib.Store.ContextCase;
+using Luthetus.Ide.RazorLib.KeymapCase;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;

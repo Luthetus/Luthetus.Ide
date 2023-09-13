@@ -1,6 +1,6 @@
 ﻿using Luthetus.Common.RazorLib;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
-using Luthetus.Ide.RazorLib;
+using Luthetus.Ide.RazorLib.InstallationCase;
 using Microsoft.Extensions.DependencyInjection;
 using Photino.Blazor;
 using System;
