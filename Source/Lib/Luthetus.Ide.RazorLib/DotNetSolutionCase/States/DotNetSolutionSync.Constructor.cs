@@ -19,7 +19,7 @@ using Luthetus.TextEditor.RazorLib;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 
-internal partial class SynchronizationContext
+public partial class DotNetSolutionSync
 {
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IEnvironmentProvider _environmentProvider;
@@ -27,13 +27,11 @@ internal partial class SynchronizationContext
     private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
     private readonly ITreeViewService _treeViewService;
     private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
-    private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IState<TerminalSessionRegistry> _terminalSessionsStateWrap;
-    private readonly IDispatcher _dispatcher;
     private readonly LuthetusHostingInformation _luthetusHostingInformation;
     private readonly ITextEditorService _textEditorService;
 
-    public SynchronizationContext(
+    public DotNetSolutionSync(
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
         ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
@@ -52,12 +50,15 @@ internal partial class SynchronizationContext
         _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
         _treeViewService = treeViewService;
         _dotNetSolutionStateWrap = dotNetSolutionStateWrap;
-        _backgroundTaskService = backgroundTaskService;
+        BackgroundTaskService = backgroundTaskService;
         _terminalSessionsStateWrap = terminalSessionsStateWrap;
         _luthetusHostingInformation = luthetusHostingInformation;
         _textEditorService = textEditorService;
-        _dispatcher = dispatcher;
+        Dispatcher = dispatcher;
     }
+
+    public IBackgroundTaskService BackgroundTaskService { get; }
+    public IDispatcher Dispatcher { get; }
 
     /// <summary>Don't have the implementation <see cref="WithAction"/> as public scope.</summary>
     public interface IWithAction
@@ -65,10 +66,10 @@ internal partial class SynchronizationContext
     }
 
     /// <summary>Don't have <see cref="WithAction"/> itself as public scope.</summary>
-    private record WithAction(Func<DotNetSolutionState, DotNetSolutionState> WithFunc)
+    public record WithAction(Func<DotNetSolutionState, DotNetSolutionState> WithFunc)
         : IWithAction;
 
-    private static WithAction ConstructModelReplacement(
+    public static IWithAction ConstructModelReplacement(
             DotNetSolutionModelKey dotNetSolutionModelKey,
             DotNetSolutionModel outDotNetSolutionModel)
     {

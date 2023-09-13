@@ -5,33 +5,33 @@ using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
 using Luthetus.Ide.RazorLib.FileSystemCase;
 using Luthetus.Ide.RazorLib.InputFileCase;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 
 public partial record DotNetSolutionState
 {
-    public record RegisterAction(DotNetSolutionModel DotNetSolutionModel);
-    public record DisposeAction(DotNetSolutionModelKey DotNetSolutionModelKey);
-    public record SetDotNetSolutionTask(IAbsolutePath SolutionAbsolutePath);
-    public record SetDotNetSolutionTreeViewTask(DotNetSolutionModelKey DotNetSolutionModelKey);
+    public record RegisterAction(DotNetSolutionModel DotNetSolutionModel, DotNetSolutionSync Sync);
+    public record DisposeAction(DotNetSolutionModelKey DotNetSolutionModelKey, DotNetSolutionSync Sync);
+    public record SetDotNetSolutionTask(IAbsolutePath SolutionAbsolutePath, DotNetSolutionSync Sync);
+    public record SetDotNetSolutionTreeViewTask(DotNetSolutionModelKey DotNetSolutionModelKey, DotNetSolutionSync Sync);
 
     public record AddExistingProjectToSolutionTask(
         DotNetSolutionModelKey DotNetSolutionModelKey,
         string LocalProjectTemplateShortName,
         string LocalCSharpProjectName,
         IAbsolutePath CSharpProjectAbsolutePath,
-        IEnvironmentProvider EnvironmentProvider);
+        IEnvironmentProvider EnvironmentProvider,
+        DotNetSolutionSync Sync);
 
-    public record ParseDotNetSolutionTask;
-
-    public static void ShowInputFile(IDispatcher dispatcher)
+    public static void ShowInputFile(DotNetSolutionSync sync)
     {
-        dispatcher.Dispatch(new InputFileRegistry.RequestInputFileStateFormAction(
+        sync.Dispatcher.Dispatch(new InputFileRegistry.RequestInputFileStateFormAction(
             "Solution Explorer",
             afp =>
             {
                 if (afp is not null)
-                    dispatcher.Dispatch(new SetDotNetSolutionTask(afp));
+                    sync.Dispatcher.Dispatch(new SetDotNetSolutionTask(afp, sync));
 
                 return Task.CompletedTask;
             },

@@ -22,7 +22,7 @@ using Luthetus.TextEditor.RazorLib;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 
-internal partial class SynchronizationContext
+public partial class DotNetSolutionSync
 {
     public async Task<DotNetSolutionModel?> SetDotNetSolutionAsync(SetDotNetSolutionTask setDotNetSolutionAction)
     {
@@ -47,20 +47,20 @@ internal partial class SynchronizationContext
             _environmentProvider);
 
         // TODO: If somehow model was registered already this won't write the state
-        _dispatcher.Dispatch(new RegisterAction(dotNetSolution));
+        Dispatcher.Dispatch(new RegisterAction(dotNetSolution, this));
 
-        _dispatcher.Dispatch(new WithAction(
+        Dispatcher.Dispatch(new WithAction(
             inDotNetSolutionState => inDotNetSolutionState with
             {
                 DotNetSolutionModelKey = dotNetSolution.DotNetSolutionModelKey
             }));
 
         // TODO: Putting a hack for now to overwrite if somehow model was registered already
-        _dispatcher.Dispatch(ConstructModelReplacement(
+        Dispatcher.Dispatch(ConstructModelReplacement(
             dotNetSolution.DotNetSolutionModelKey,
             dotNetSolution));
 
-        return await SetDotNetSolutionTreeViewAsync(new SetDotNetSolutionTreeViewTask(dotNetSolution.DotNetSolutionModelKey));
+        return await SetDotNetSolutionTreeViewAsync(new SetDotNetSolutionTreeViewTask(dotNetSolution.DotNetSolutionModelKey, this));
     }
 
     public async Task<DotNetSolutionModel?> SetDotNetSolutionTreeViewAsync(
@@ -143,17 +143,17 @@ internal partial class SynchronizationContext
 
         if (solutionTextEditorModel is not null)
         {
-            _dispatcher.Dispatch(new TextEditorModelRegistry.ReloadAction(
+            Dispatcher.Dispatch(new TextEditorModelRegistry.ReloadAction(
                 solutionTextEditorModel.ModelKey,
                 inDotNetSolutionModel.SolutionFileContents,
                 DateTime.UtcNow));
         }
 
         // TODO: Putting a hack for now to overwrite if somehow model was registered already
-        _dispatcher.Dispatch(ConstructModelReplacement(
+        Dispatcher.Dispatch(ConstructModelReplacement(
             outDotNetSolutionModel.DotNetSolutionModelKey,
             outDotNetSolutionModel));
         
-        return await SetDotNetSolutionTreeViewAsync(new SetDotNetSolutionTreeViewTask(outDotNetSolutionModel.DotNetSolutionModelKey));
+        return await SetDotNetSolutionTreeViewAsync(new SetDotNetSolutionTreeViewTask(outDotNetSolutionModel.DotNetSolutionModelKey, this));
     }
 }

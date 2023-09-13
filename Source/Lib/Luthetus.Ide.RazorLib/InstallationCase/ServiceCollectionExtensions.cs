@@ -29,6 +29,7 @@ using Luthetus.Ide.RazorLib.CommandCase;
 using Luthetus.Ide.RazorLib.CSharpProjectFormCase;
 using Luthetus.Ide.RazorLib.InputFileCase;
 using Luthetus.Ide.RazorLib.FormsGenericCase;
+using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 
 namespace Luthetus.Ide.RazorLib.InstallationCase;
 
@@ -56,6 +57,7 @@ public static class ServiceCollectionExtensions
         return services
             .AddSingleton(ideOptions)
             .AddSingleton<ILuthetusIdeComponentRenderers>(_ideComponentRenderers)
+            .AddScoped<DotNetSolutionSync>()
             .AddLuthetusIdeFileSystem(hostingInformation, ideOptions)
             .AddLuthetusIdeClassLibServices(hostingInformation);
     }

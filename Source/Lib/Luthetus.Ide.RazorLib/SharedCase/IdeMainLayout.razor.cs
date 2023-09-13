@@ -31,6 +31,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
+    [Inject]
+    private DotNetSolutionSync DotNetSolutionSync { get; set; } = null!;
 
     private string UnselectableClassCss => DragRegistryWrap.Value.ShouldDisplay
         ? "balc_unselectable"
@@ -89,7 +91,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                     EnvironmentProvider);
 
                 Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionTask(
-                    absolutePath));
+                    absolutePath,
+                    DotNetSolutionSync));
             }
         }
 

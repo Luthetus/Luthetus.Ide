@@ -19,6 +19,8 @@ public partial class IdeHeader : FluxorComponent
 {
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private DotNetSolutionSync DotNetSolutionSync { get; set; } = null!;
 
     private DropdownKey _dropdownKeyFile = DropdownKey.NewKey();
     private MenuRecord _menuFile = new(ImmutableArray<MenuOptionRecord>.Empty);
@@ -74,7 +76,7 @@ public partial class IdeHeader : FluxorComponent
             var menuOptionOpenDotNetSolution = new MenuOptionRecord(
                 ".NET Solution",
                 MenuOptionKind.Other,
-                () => DotNetSolutionState.ShowInputFile(Dispatcher));
+                () => DotNetSolutionState.ShowInputFile(DotNetSolutionSync));
 
             var menuOptionOpen = new MenuOptionRecord(
                 "Open",

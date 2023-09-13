@@ -47,6 +47,8 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
+    [Inject]
+    private DotNetSolutionSync DotNetSolutionSync { get; set; } = null!;
 
     [CascadingParameter]
     public DialogRecord DialogRecord { get; set; } = null!;
@@ -431,7 +433,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                             () =>
                             {
                                 Dispatcher.Dispatch(new DialogRegistry.DisposeAction(DialogRecord.Key));
-                                Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionTask(solutionNamespacePath.AbsolutePath));
+                                Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionTask(solutionNamespacePath.AbsolutePath, DotNetSolutionSync));
                                 return Task.CompletedTask;
                             });
 
@@ -496,6 +498,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             localProjectTemplateShortName,
             localCSharpProjectName,
             cSharpAbsolutePath,
-            EnvironmentProvider));
+            EnvironmentProvider,
+            DotNetSolutionSync));
     }
 }

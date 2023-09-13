@@ -30,6 +30,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
     [Inject]
     private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
+    [Inject]
+    private DotNetSolutionSync DotNetSolutionSync { get; set; } = null!;
 
     private ITreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
     private SolutionExplorerTreeViewKeyboardEventHandler _solutionExplorerTreeViewKeymap = null!;

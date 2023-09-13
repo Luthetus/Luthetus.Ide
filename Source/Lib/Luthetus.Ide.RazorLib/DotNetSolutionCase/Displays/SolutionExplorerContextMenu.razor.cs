@@ -38,6 +38,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
+    [Inject]
+    private DotNetSolutionSync DotNetSolutionSync { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public ITreeViewCommandParameter TreeViewCommandParameter { get; set; } = null!;
@@ -213,7 +215,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 () =>
                 {
                     Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionTask(
-                        treeViewSolution.Item.NamespacePath.AbsolutePath));
+                        treeViewSolution.Item.NamespacePath.AbsolutePath,
+                        DotNetSolutionSync));
 
                     return Task.CompletedTask;
                 }),
@@ -232,7 +235,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 () =>
                 {
                     Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionTask(
-                        treeViewSolution.Item.NamespacePath.AbsolutePath));
+                        treeViewSolution.Item.NamespacePath.AbsolutePath,
+                        DotNetSolutionSync));
 
                     return Task.CompletedTask;
                 }),
@@ -377,7 +381,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     () =>
                     {
                         Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionTask(
-                            dotNetSolutionModel.NamespacePath.AbsolutePath));
+                            dotNetSolutionModel.NamespacePath.AbsolutePath,
+                            DotNetSolutionSync));
 
                         return Task.CompletedTask;
                     });
