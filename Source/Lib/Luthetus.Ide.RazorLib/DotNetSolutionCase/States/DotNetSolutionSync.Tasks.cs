@@ -113,7 +113,7 @@ public partial class DotNetSolutionSync
         var projectTypeGuid = WebsiteProjectTemplateRegistry.GetProjectTypeGuid(
             addExistingProjectToSolutionTask.LocalProjectTemplateShortName);
 
-        var relativePathFromSlnToProject = AbsolutePath.ConstructRelativePathFromTwoAbsolutePaths(
+        var relativePathFromSlnToProject = PathHelper.GetRelativeFromTwoAbsolutes(
             inDotNetSolutionModel.NamespacePath.AbsolutePath,
             addExistingProjectToSolutionTask.CSharpProjectAbsolutePath,
             addExistingProjectToSolutionTask.EnvironmentProvider);
