@@ -77,12 +77,13 @@ public static class FileTemplateFacts
         return new FileTemplateResult(templatedFileNamespacePath, templatedFileContent);
 
         string GetContent(string fileNameNoExtension, string namespaceString) =>
-            $@"namespace {namespaceString};{Environment.NewLine}
-{Environment.NewLine}
-public class {fileNameNoExtension}{Environment.NewLine}
-{{{Environment.NewLine}
-	{Environment.NewLine}
-}}{Environment.NewLine}";
+            $@"namespace {namespaceString};
+
+public class {fileNameNoExtension}
+{{
+	
+}}
+".ReplaceLineEndings();
     }
 
     /// <summary>
@@ -126,11 +127,11 @@ public class {fileNameNoExtension}{Environment.NewLine}
         return new FileTemplateResult(templatedFileNamespacePath, templatedFileContent);
 
         string GetContent(string fileNameNoExtension) =>
-            $@"<h3>{fileNameNoExtension}</h3>{Environment.NewLine}
-{Environment.NewLine}
-@code {{{Environment.NewLine}
-	{Environment.NewLine}
-}}{Environment.NewLine}";
+            $@"<h3>{fileNameNoExtension}</h3>
+
+@code {{
+	
+}}".ReplaceLineEndings();
     }
 
     /// <summary>
@@ -152,14 +153,14 @@ public class {fileNameNoExtension}{Environment.NewLine}
         {
             var className = fileNameNoExtension.Replace('.' + ExtensionNoPeriodFacts.RAZOR_MARKUP, string.Empty);
 
-            var interpolatedResult = $@"using Microsoft.AspNetCore.Components;{Environment.NewLine}
-{Environment.NewLine}
-namespace {namespaceString};{Environment.NewLine}
-{Environment.NewLine}
-public partial class {className} : ComponentBase{Environment.NewLine}
-{{{Environment.NewLine}
-	{Environment.NewLine}
-}}{Environment.NewLine}";
+            var interpolatedResult = $@"using Microsoft.AspNetCore.Components;
+
+namespace {namespaceString};
+
+public partial class {className} : ComponentBase
+{{
+	
+}}".ReplaceLineEndings();
 
             return interpolatedResult;
         }
