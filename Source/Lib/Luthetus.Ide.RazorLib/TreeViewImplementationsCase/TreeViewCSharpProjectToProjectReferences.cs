@@ -91,8 +91,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
             var includeAttribute = attributeNameValueTuples
                 .FirstOrDefault(x => x.Item1 == "Include");
 
-            var referenceProjectAbsolutePathString = AbsolutePath
-                .JoinAnAbsolutePathAndRelativePath(
+            var referenceProjectAbsolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
                     Item.CSharpProjectNamespacePath.AbsolutePath,
                     includeAttribute.Item2,
                     EnvironmentProvider);

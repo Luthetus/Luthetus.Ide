@@ -243,7 +243,7 @@ public partial class EditorRegistry
                             nameof(IBooleanPromptOrCancelRendererType.OnAfterAcceptAction),
                             new Action(() =>
                             {
-                                _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
+                                _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
                                     "Check If Contexts Were Modified",
                                     async () =>
                                     {

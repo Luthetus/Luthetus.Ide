@@ -8,6 +8,7 @@ using Luthetus.Common.RazorLib.Store.DropdownCase;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
+using Luthetus.Ide.RazorLib.DotNetSolutionCase.Views;
 using Luthetus.Ide.RazorLib.EditorCase;
 using Luthetus.Ide.RazorLib.FolderExplorerCase;
 using Microsoft.AspNetCore.Components;
@@ -127,7 +128,13 @@ public partial class IdeHeader : FluxorComponent
             DialogKey.NewKey(),
             "New .NET Solution",
             typeof(DotNetSolutionFormDisplay),
-            null,
+            new Dictionary<string, object?>
+            {
+                {
+                    nameof(DotNetSolutionFormDisplay.View),
+                    new DotNetSolutionFormView()
+                }
+            },
             null)
         {
             IsResizable = true
