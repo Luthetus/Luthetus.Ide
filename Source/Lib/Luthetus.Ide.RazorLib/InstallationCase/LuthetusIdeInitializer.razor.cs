@@ -38,27 +38,10 @@ public partial class LuthetusIdeInitializer : ComponentBase
     [Inject]
     private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
     [Inject]
-    private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
-    [Inject]
-    private FileSystemBackgroundTaskWorker FileSystemBackgroundTaskWorker { get; set; } = null!;
-    [Inject]
-    private TerminalBackgroundTaskWorker TerminalBackgroundTaskWorker { get; set; } = null!;
-    [Inject]
     private ICommandFactory CommandFactory { get; set; } = null!;
 
     protected override void OnInitialized()
     {
-        if (LuthetusHostingInformation.LuthetusHostingKind != LuthetusHostingKind.ServerSide)
-        {
-            _ = Task.Run(async () => await FileSystemBackgroundTaskWorker
-                                               .StartAsync(CancellationToken.None)
-                                               .ConfigureAwait(false));
-
-            _ = Task.Run(async () => await TerminalBackgroundTaskWorker
-                                               .StartAsync(CancellationToken.None)
-                                               .ConfigureAwait(false));
-        }
-
         if (LuthetusTextEditorOptions.CustomThemeRecords is not null)
         {
             foreach (var themeRecord in LuthetusTextEditorOptions.CustomThemeRecords)

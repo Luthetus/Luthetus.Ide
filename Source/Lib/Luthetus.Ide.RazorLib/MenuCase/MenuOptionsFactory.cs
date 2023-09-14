@@ -270,7 +270,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         NamespacePath namespacePath,
         Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
             "New File Action",
             async () =>
             {
@@ -325,7 +325,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             true,
             _environmentProvider);
 
-        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
             "New Directory Action",
             async () =>
             {
@@ -341,7 +341,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         IAbsolutePath absolutePath,
         Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
             "Delete File Action",
             async () =>
             {
@@ -365,7 +365,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         IAbsolutePath absolutePath,
         Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
             "Copy File Action",
             async () =>
             {
@@ -382,7 +382,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         IAbsolutePath absolutePath,
         Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
             "Cut File Action",
             async () =>
             {
@@ -397,7 +397,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
 
     private void PerformPasteFileAction(IAbsolutePath receivingDirectory, Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
             "Paste File Action",
             async () =>
             {
@@ -542,7 +542,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
             "Remove C# Project Reference from Solution Action",
             async () =>
             {
@@ -569,7 +569,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
             "Add Project Reference to Project",
             () =>
             {
@@ -624,7 +624,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
             "Remove Project Reference to Project",
             async () =>
             {
@@ -655,7 +655,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
             "Move Project to Solution Folder",
             () =>
             {
@@ -693,7 +693,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), CommonBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
             "Remove NuGet Package Reference from Project",
             async () =>
             {

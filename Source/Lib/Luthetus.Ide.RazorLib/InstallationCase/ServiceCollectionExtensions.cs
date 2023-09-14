@@ -92,26 +92,6 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         LuthetusHostingInformation hostingInformation)
     {
-        hostingInformation.BackgroundTaskService.RegisterQueue(FileSystemBackgroundTaskWorker.Queue);
-
-        services.AddSingleton(sp => new FileSystemBackgroundTaskWorker(
-            FileSystemBackgroundTaskWorker.Queue.Key,
-            sp.GetRequiredService<IBackgroundTaskService>(),
-            sp.GetRequiredService<ILoggerFactory>()));
-
-        hostingInformation.BackgroundTaskService.RegisterQueue(TerminalBackgroundTaskWorker.Queue);
-
-        services.AddSingleton(sp => new TerminalBackgroundTaskWorker(
-            TerminalBackgroundTaskWorker.Queue.Key,
-            sp.GetRequiredService<IBackgroundTaskService>(),
-            sp.GetRequiredService<ILoggerFactory>()));
-
-        if (hostingInformation.LuthetusHostingKind == LuthetusHostingKind.ServerSide)
-        {
-            services.AddHostedService(sp => sp.GetRequiredService<FileSystemBackgroundTaskWorker>());
-            services.AddHostedService(sp => sp.GetRequiredService<TerminalBackgroundTaskWorker>());
-        }
-
         services
             .AddScoped<ICommandFactory, CommandFactory>()
             .AddScoped<XmlCompilerService>()

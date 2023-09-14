@@ -38,7 +38,7 @@ public partial class FileSystemRegistry
             //
             lock (_syncRoot)
             {
-                _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), FileSystemBackgroundTaskWorker.Queue.Key,
+                _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
                     "Handle Save File Action",
                     async () =>
                     {
