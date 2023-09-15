@@ -1,7 +1,7 @@
 ﻿using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
 using Luthetus.Common.RazorLib.FileSystem.Models;
-using Luthetus.Common.RazorLib.TreeView.Models.TreeViewClasses;
+using Luthetus.Common.RazorLib.TreeView.Models;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
 

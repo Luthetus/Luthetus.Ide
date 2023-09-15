@@ -1,7 +1,5 @@
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
-using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
-using Luthetus.Common.RazorLib.Store.DialogCase;
 using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
@@ -25,6 +23,7 @@ using Luthetus.Common.RazorLib.FileSystem.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.Notification.Models;
 using Luthetus.Common.RazorLib.Installation.Models;
+using Luthetus.Common.RazorLib.Dialog.States;
 
 namespace Luthetus.Ide.RazorLib.CSharpProjectFormCase.Displays;
 

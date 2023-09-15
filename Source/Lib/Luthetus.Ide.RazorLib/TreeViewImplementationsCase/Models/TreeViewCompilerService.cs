@@ -1,9 +1,9 @@
 ﻿using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
-using Luthetus.Common.RazorLib.WatchWindow.TreeViewClasses;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
-using Luthetus.Common.RazorLib.TreeView.Models.TreeViewClasses;
+using Luthetus.Common.RazorLib.TreeView.Models;
+using Luthetus.Common.RazorLib.WatchWindow.Models;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
 

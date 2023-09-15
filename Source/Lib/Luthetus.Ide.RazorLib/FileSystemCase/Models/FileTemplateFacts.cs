@@ -1,6 +1,6 @@
-﻿using System.Collections.Immutable;
-using Luthetus.Common.RazorLib.Namespaces;
-using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
+﻿using Luthetus.Common.RazorLib.FileSystem.Models;
+using Luthetus.Common.RazorLib.Namespaces.Models;
+using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.FileSystemCase.Models;
 

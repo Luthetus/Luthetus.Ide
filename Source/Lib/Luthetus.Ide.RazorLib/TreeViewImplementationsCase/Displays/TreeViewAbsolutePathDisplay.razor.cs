@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.TreeView.Models.TreeViewClasses;
+﻿using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
 using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
 using Microsoft.AspNetCore.Components;

@@ -1,7 +1,7 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
-using Luthetus.Common.RazorLib.Store.AppOptionsCase;
-using Luthetus.Common.RazorLib.Store.DropdownCase;
+using Luthetus.Common.RazorLib.Dropdown.States;
+using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.Models;

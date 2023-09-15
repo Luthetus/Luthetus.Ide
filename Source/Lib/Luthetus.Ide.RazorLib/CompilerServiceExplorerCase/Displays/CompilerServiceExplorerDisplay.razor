@@ -1,10 +1,10 @@
-﻿@    using Fluxor.Blazor.Web.Components
-@    using Luthetus.Common.RazorLib.TabCase
-@    using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase;
-@    using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.Models;
-@    using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.States;
-@    using Luthetus.Ide.RazorLib.ContextCase.Displays
-@    using Luthetus.Ide.RazorLib.ContextCase.Models;
+﻿@using Fluxor.Blazor.Web.Components
+@using Luthetus.Common.RazorLib.TabCase
+@using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase;
+@using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.Models;
+@using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.States;
+@using Luthetus.Ide.RazorLib.ContextCase.Displays
+@using Luthetus.Ide.RazorLib.ContextCase.Models;
 
 @inherits FluxorComponent
 
@@ -30,16 +30,6 @@
     </div>
 
     <div class="luth_ide_section-body">
-        <TabGroupDisplay TabGroupKey="CompilerServiceExplorerState.TabGroupKey" />
-
-        @switch (compilerServiceExplorerViewKind)
-        {
-            case CompilerServiceExplorerViewKind.Graphical:
-                <CompilerServiceExplorerGraphicalDisplay />
-                break;
-            case CompilerServiceExplorerViewKind.TreeView:
-                <CompilerServiceExplorerTreeViewDisplay />
-                break;
-        }
+        <CompilerServiceExplorerTreeViewDisplay />
     </div>
 </ContextBoundary>

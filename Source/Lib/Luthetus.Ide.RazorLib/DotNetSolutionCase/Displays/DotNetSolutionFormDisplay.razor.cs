@@ -1,7 +1,5 @@
 ﻿using Fluxor;
 using Fluxor.Blazor.Web.Components;
-using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
-using Luthetus.Common.RazorLib.Store.DialogCase;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
@@ -17,6 +15,7 @@ using Luthetus.Common.RazorLib.Dialog.Models;
 using Luthetus.Common.RazorLib.FileSystem.Models;
 using Luthetus.Common.RazorLib.Notification.Models;
 using Luthetus.Common.RazorLib.Installation.Models;
+using Luthetus.Common.RazorLib.Dialog.States;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
 

@@ -2,7 +2,6 @@
 using Luthetus.Common.RazorLib.Dialog;
 using Luthetus.Common.RazorLib.Dimensions;
 using Luthetus.Common.RazorLib.Namespaces;
-using Luthetus.Common.RazorLib.Store.DialogCase;
 using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
@@ -23,7 +22,8 @@ using Luthetus.Common.RazorLib.Dropdown.Models;
 using Luthetus.Common.RazorLib.Menu.Models;
 using Luthetus.Common.RazorLib.Notification.Models;
 using Luthetus.Common.RazorLib.TreeView.Models;
-using Luthetus.Common.RazorLib.TreeView.Models.TreeViewClasses;
+using Luthetus.Common.RazorLib.Namespaces.Models;
+using Luthetus.Common.RazorLib.Dialog.States;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
 

@@ -1,9 +1,4 @@
 ﻿using Fluxor;
-using Luthetus.Common.RazorLib.Icons.Codicon;
-using Luthetus.Common.RazorLib.Store.PanelCase;
-using Luthetus.Common.RazorLib.Store.TabCase;
-using Luthetus.Common.RazorLib.Store.ThemeCase;
-using Luthetus.Common.RazorLib.TabCase;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Store.Find;
 using Microsoft.AspNetCore.Components;
@@ -24,6 +19,10 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystem.Models;
 using Luthetus.Common.RazorLib.Panel.Models;
 using Luthetus.Common.RazorLib.TabCase.Models;
+using Luthetus.Common.RazorLib.Panel.States;
+using Luthetus.Common.RazorLib.Theme.States;
+using Luthetus.Common.RazorLib.Icons.Displays.Codicon;
+using Luthetus.Common.RazorLib.TabCase.States;
 
 namespace Luthetus.Ide.RazorLib.InstallationCase.Displays;
 

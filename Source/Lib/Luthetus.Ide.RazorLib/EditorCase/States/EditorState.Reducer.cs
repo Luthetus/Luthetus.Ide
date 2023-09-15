@@ -1,7 +1,5 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
-using Luthetus.Common.RazorLib.FileSystem.Interfaces;
-using Luthetus.TextEditor.RazorLib.Group;
 
 namespace Luthetus.Ide.RazorLib.EditorCase.States;
 

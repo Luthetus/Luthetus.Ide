@@ -1,6 +1,5 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.Dimensions;
-using Luthetus.Common.RazorLib.Store.DropdownCase;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
@@ -11,7 +10,7 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dialog.Models;
 using Luthetus.Common.RazorLib.FileSystem.Models;
 using Luthetus.Common.RazorLib.TreeView.Models;
-using Luthetus.Common.RazorLib.TreeView.Models.TreeViewClasses;
+using Luthetus.Common.RazorLib.Dropdown.States;
 
 namespace Luthetus.Ide.RazorLib.InputFileCase.Displays;
 
