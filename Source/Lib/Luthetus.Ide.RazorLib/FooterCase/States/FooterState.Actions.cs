@@ -1,5 +1,4 @@
-﻿using Fluxor;
-using Luthetus.Ide.RazorLib.ViewsCase.Models;
+﻿using Luthetus.Ide.RazorLib.ViewsCase.Models;
 
 namespace Luthetus.Ide.RazorLib.FooterCase.States;
 

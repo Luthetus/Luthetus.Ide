@@ -1,7 +1,6 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.Dimensions;
 using Luthetus.Common.RazorLib.Panel.States;
-using Luthetus.Common.RazorLib.Resize;
 using Luthetus.Common.RazorLib.Resize.Displays;
 using Microsoft.AspNetCore.Components;
 

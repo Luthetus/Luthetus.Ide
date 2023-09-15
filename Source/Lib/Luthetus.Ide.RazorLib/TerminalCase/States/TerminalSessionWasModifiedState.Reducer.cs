@@ -1,6 +1,4 @@
 ﻿using Fluxor;
-using Luthetus.Ide.RazorLib.StateCase.Models;
-using Luthetus.Ide.RazorLib.TerminalCase.Models;
 
 namespace Luthetus.Ide.RazorLib.TerminalCase.States;
 

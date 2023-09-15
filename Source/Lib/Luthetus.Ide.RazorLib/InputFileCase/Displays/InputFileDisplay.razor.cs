@@ -1,7 +1,6 @@
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Dimensions;
-using Luthetus.Common.RazorLib.Resize;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
