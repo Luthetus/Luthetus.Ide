@@ -8,18 +8,6 @@ public class FileSystemEffectTests : LuthetusFileSystemTestingBase
     [Fact]
     public void SaveFile()
     {
-        var content = "abc123";
-
-        var absolutePath = new AbsolutePath(
-            @"C:\Users\hunte\Desktop\TestLuthetus\apple.txt",
-            true,
-            EnvironmentProvider);
-
-        var saveFileAction = new RazorLib.FileSystemCase.States.FileSystemRegistry.SaveFileAction(
-            absolutePath,
-            content,
-            writtenDateTime => { });
-
-        Dispatcher.Dispatch(saveFileAction);
+        throw new NotImplementedException();
     }
 }

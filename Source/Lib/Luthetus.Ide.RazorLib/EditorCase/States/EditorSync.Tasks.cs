@@ -258,7 +258,8 @@ public partial class EditorSync
 
             var cancellationToken = textEditorModel.TextEditorSaveFileHelper.GetCancellationToken();
 
-            var saveFileAction = new FileSystemCase.States.FileSystemRegistry.SaveFileAction(
+            var saveFileAction = new FileSystemCase.States.FileSystemState.SaveFileAction(
+                _fileSystemSync,
                 absolutePath,
                 innerContent,
                 writtenDateTime =>

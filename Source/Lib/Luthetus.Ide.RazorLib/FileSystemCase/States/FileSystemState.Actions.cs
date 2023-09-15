@@ -2,9 +2,10 @@
 
 namespace Luthetus.Ide.RazorLib.FileSystemCase.States;
 
-public partial class FileSystemRegistry
+public partial class FileSystemState
 {
     public record SaveFileAction(
+        FileSystemSync Sync,
         IAbsolutePath AbsolutePath,
         string Content,
         Action<DateTime?> OnAfterSaveCompletedWrittenDateTimeAction,

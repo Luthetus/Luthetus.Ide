@@ -31,6 +31,7 @@ using Luthetus.Ide.RazorLib.InputFileCase.Displays;
 using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Displays;
 using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.States;
 using Luthetus.Ide.RazorLib.EditorCase.States;
+using Luthetus.Ide.RazorLib.FileSystemCase.States;
 
 namespace Luthetus.Ide.RazorLib.InstallationCase.Models;
 
@@ -61,6 +62,7 @@ public static class ServiceCollectionExtensions
             .AddScoped<DotNetSolutionSync>()
             .AddScoped<CompilerServiceExplorerSync>()
             .AddScoped<EditorSync>()
+            .AddScoped<FileSystemSync>()
             .AddLuthetusIdeFileSystem(hostingInformation, ideOptions)
             .AddLuthetusIdeClassLibServices(hostingInformation);
     }
