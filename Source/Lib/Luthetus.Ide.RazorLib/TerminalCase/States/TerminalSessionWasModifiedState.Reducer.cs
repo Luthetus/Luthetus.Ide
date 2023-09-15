@@ -4,15 +4,11 @@ using Luthetus.Ide.RazorLib.TerminalCase.Models;
 
 namespace Luthetus.Ide.RazorLib.TerminalCase.States;
 
-public class TerminalSessionWasModifiedRegistryReducer
+public partial record TerminalSessionWasModifiedState
 {
-    public record SetTerminalSessionStateKeyAction(
-        TerminalSessionKey TerminalSessionKey,
-        StateKey StateKey);
-
     [ReducerMethod]
-    public static TerminalSessionWasModifiedRegistry ReduceSetTerminalSessionStateKeyAction(
-        TerminalSessionWasModifiedRegistry inTerminalSessionWasModifiedState,
+    public static TerminalSessionWasModifiedState ReduceSetTerminalSessionStateKeyAction(
+        TerminalSessionWasModifiedState inTerminalSessionWasModifiedState,
         SetTerminalSessionStateKeyAction setTerminalSessionStateKeyAction)
     {
         if (inTerminalSessionWasModifiedState.TerminalSessionWasModifiedMap.ContainsKey(

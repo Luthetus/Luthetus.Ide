@@ -20,7 +20,7 @@ public partial class NugetPackageDisplay : FluxorComponent
     [Inject]
     private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
     [Inject]
-    private IState<TerminalSessionRegistry> TerminalSessionsStateWrap { get; set; } = null!;
+    private IState<TerminalSessionState> TerminalSessionsStateWrap { get; set; } = null!;
     [Inject]
     private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
     [Inject]

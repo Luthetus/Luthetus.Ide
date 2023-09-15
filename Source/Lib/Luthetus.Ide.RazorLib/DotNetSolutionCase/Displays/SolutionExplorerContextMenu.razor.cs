@@ -30,7 +30,7 @@ namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
 public partial class SolutionExplorerContextMenu : ComponentBase
 {
     [Inject]
-    private IState<TerminalSessionRegistry> TerminalSessionsStateWrap { get; set; } = null!;
+    private IState<TerminalSessionState> TerminalSessionsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]

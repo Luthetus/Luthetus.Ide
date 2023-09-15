@@ -8,5 +8,5 @@ namespace Luthetus.Ide.RazorLib.TerminalCase.Displays;
 public partial class TerminalDisplay : FluxorComponent
 {
     [Inject]
-    private IState<WellKnownTerminalSessionsRegistry> WellKnownTerminalSessionsStateWrap { get; set; } = null!;
+    private IState<WellKnownTerminalSessionsState> WellKnownTerminalSessionsStateWrap { get; set; } = null!;
 }

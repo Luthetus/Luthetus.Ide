@@ -210,7 +210,7 @@ public class TerminalSession
 
     private void DispatchNewStateKey()
     {
-        _dispatcher.Dispatch(new TerminalSessionWasModifiedRegistryReducer.SetTerminalSessionStateKeyAction(
+        _dispatcher.Dispatch(new TerminalSessionWasModifiedState.SetTerminalSessionStateKeyAction(
             TerminalSessionKey,
             StateKey.NewKey()));
     }

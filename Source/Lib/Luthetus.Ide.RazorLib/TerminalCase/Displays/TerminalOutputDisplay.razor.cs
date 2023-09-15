@@ -20,13 +20,13 @@ namespace Luthetus.Ide.RazorLib.TerminalCase.Displays;
 public partial class TerminalOutputDisplay : FluxorComponent
 {
     [Inject]
-    private IStateSelection<TerminalSessionRegistry, TerminalSession?> TerminalSessionsStateSelection { get; set; } = null!;
+    private IStateSelection<TerminalSessionState, TerminalSession?> TerminalSessionsStateSelection { get; set; } = null!;
 
     // TODO: Don't inject TerminalSessionsStateWrap. It causes too many unnecessary re-renders
     [Inject]
-    private IState<TerminalSessionRegistry> TerminalSessionsStateWrap { get; set; } = null!;
+    private IState<TerminalSessionState> TerminalSessionsStateWrap { get; set; } = null!;
     [Inject]
-    private IState<TerminalSessionWasModifiedRegistry> TerminalSessionWasModifiedStateWrap { get; set; } = null!;
+    private IState<TerminalSessionWasModifiedState> TerminalSessionWasModifiedStateWrap { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
 

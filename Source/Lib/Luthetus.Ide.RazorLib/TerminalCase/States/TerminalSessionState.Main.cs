@@ -5,9 +5,9 @@ using System.Collections.Immutable;
 namespace Luthetus.Ide.RazorLib.TerminalCase.States;
 
 [FeatureState]
-public record TerminalSessionRegistry(ImmutableDictionary<TerminalSessionKey, TerminalSession> TerminalSessionMap)
+public partial record TerminalSessionState(ImmutableDictionary<TerminalSessionKey, TerminalSession> TerminalSessionMap)
 {
-    public TerminalSessionRegistry()
+    public TerminalSessionState()
         : this(ImmutableDictionary<TerminalSessionKey, TerminalSession>.Empty)
     {
     }

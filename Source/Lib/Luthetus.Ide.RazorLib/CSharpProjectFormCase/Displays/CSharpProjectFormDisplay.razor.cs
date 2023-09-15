@@ -31,7 +31,7 @@ namespace Luthetus.Ide.RazorLib.CSharpProjectFormCase.Displays;
 public partial class CSharpProjectFormDisplay : FluxorComponent
 {
     [Inject]
-    private IState<TerminalSessionRegistry> TerminalSessionRegistryWrap { get; set; } = null!;
+    private IState<TerminalSessionState> TerminalSessionRegistryWrap { get; set; } = null!;
     [Inject]
     private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
     [Inject]

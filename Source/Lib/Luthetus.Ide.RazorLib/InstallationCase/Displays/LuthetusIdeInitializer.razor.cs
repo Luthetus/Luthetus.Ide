@@ -72,7 +72,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
                 TerminalSessionKey = terminalSessionKey
             };
 
-            Dispatcher.Dispatch(new TerminalSessionRegistryReducer.RegisterTerminalSessionAction(
+            Dispatcher.Dispatch(new TerminalSessionState.RegisterTerminalSessionAction(
                 terminalSession));
         }
 

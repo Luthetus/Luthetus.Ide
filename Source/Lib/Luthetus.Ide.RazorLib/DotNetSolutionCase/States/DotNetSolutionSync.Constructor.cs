@@ -19,7 +19,7 @@ public partial class DotNetSolutionSync
     private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
     private readonly ITreeViewService _treeViewService;
     private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
-    private readonly IState<TerminalSessionRegistry> _terminalSessionsStateWrap;
+    private readonly IState<TerminalSessionState> _terminalSessionsStateWrap;
     private readonly LuthetusHostingInformation _luthetusHostingInformation;
     private readonly ITextEditorService _textEditorService;
 
@@ -30,7 +30,7 @@ public partial class DotNetSolutionSync
         ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
         ITreeViewService treeViewService,
         IState<DotNetSolutionState> dotNetSolutionStateWrap,
-        IState<TerminalSessionRegistry> terminalSessionsStateWrap,
+        IState<TerminalSessionState> terminalSessionsStateWrap,
         LuthetusHostingInformation luthetusHostingInformation,
         ITextEditorService textEditorService,
         IBackgroundTaskService backgroundTaskService,

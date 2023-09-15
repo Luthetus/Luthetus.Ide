@@ -14,7 +14,7 @@ public partial record GitState
 {
     private class Effector
     {
-        private readonly IState<TerminalSessionRegistry> _terminalSessionsStateWrap;
+        private readonly IState<TerminalSessionState> _terminalSessionsStateWrap;
         private readonly IState<GitState> _gitStateWrap;
         private readonly IFileSystemProvider _fileSystemProvider;
         private readonly IEnvironmentProvider _environmentProvider;
@@ -36,7 +36,7 @@ public partial record GitState
         private readonly SemaphoreSlim _handleActionSemaphoreSlim = new(1, 1);
 
         public Effector(
-            IState<TerminalSessionRegistry> terminalSessionsStateWrap,
+            IState<TerminalSessionState> terminalSessionsStateWrap,
             IState<GitState> gitStateWrap,
             IFileSystemProvider fileSystemProvider,
             IEnvironmentProvider environmentProvider)
