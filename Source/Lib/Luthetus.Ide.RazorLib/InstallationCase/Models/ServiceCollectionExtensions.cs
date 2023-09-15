@@ -31,6 +31,7 @@ using Luthetus.Common.RazorLib.FileSystem.Models;
 using Luthetus.Common.RazorLib.Theme.Models;
 using Luthetus.Common.RazorLib.Installation.Models;
 using Luthetus.TextEditor.RazorLib.Installation.Models;
+using Luthetus.Ide.RazorLib.InputFileCase.States;
 
 namespace Luthetus.Ide.RazorLib.InstallationCase.Models;
 
@@ -63,6 +64,7 @@ public static class ServiceCollectionExtensions
             .AddScoped<EditorSync>()
             .AddScoped<FileSystemSync>()
             .AddScoped<FolderExplorerSync>()
+            .AddScoped<InputFileSync>()
             .AddLuthetusIdeFileSystem(hostingInformation, ideOptions)
             .AddLuthetusIdeClassLibServices(hostingInformation);
     }

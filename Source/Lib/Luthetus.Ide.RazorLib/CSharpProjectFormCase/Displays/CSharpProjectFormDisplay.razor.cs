@@ -50,6 +50,8 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
     [Inject]
     private DotNetSolutionSync DotNetSolutionSync { get; set; } = null!;
+    [Inject]
+    private InputFileSync InputFileSync { get; set; } = null!;
 
     [CascadingParameter]
     public DialogRecord DialogRecord { get; set; } = null!;
@@ -114,6 +116,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     private void RequestInputFileForParentDirectory(string message)
     {
         Dispatcher.Dispatch(new InputFileState.RequestInputFileStateFormAction(
+            InputFileSync,
             message,
             async afp =>
             {

@@ -39,6 +39,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
     private DotNetSolutionSync DotNetSolutionSync { get; set; } = null!;
+    [Inject]
+    private InputFileSync InputFileSync { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public ITreeViewCommandParameter TreeViewCommandParameter { get; set; } = null!;
@@ -203,6 +205,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     .TerminalSessionMap[
                         TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY],
                 Dispatcher,
+                InputFileSync,
                 () => Task.CompletedTask),
             MenuOptionsFactory.MoveProjectToSolutionFolder(
                 treeViewSolution,
@@ -361,6 +364,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     private void AddExistingProjectToSolution(DotNetSolutionModel dotNetSolutionModel)
     {
         Dispatcher.Dispatch(new InputFileState.RequestInputFileStateFormAction(
+            InputFileSync,
             "Existing C# Project to add to solution",
             async afp =>
             {

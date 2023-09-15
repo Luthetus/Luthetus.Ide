@@ -21,6 +21,7 @@ public partial class EditorSync
     public Task ShowInputFile(ShowInputFileAction showInputFileAction)
     {
         Dispatcher.Dispatch(new InputFileState.RequestInputFileStateFormAction(
+            _inputFileSync,
             "TextEditor",
             async afp => await OpenInEditor(new OpenInEditorAction(this, afp, true)),
             afp =>

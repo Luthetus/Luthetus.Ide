@@ -37,6 +37,7 @@ public partial record DotNetSolutionState(
     public static void ShowInputFile(DotNetSolutionSync sync)
     {
         sync.Dispatcher.Dispatch(new InputFileState.RequestInputFileStateFormAction(
+            sync.InputFileSync,
             "Solution Explorer",
             afp =>
             {

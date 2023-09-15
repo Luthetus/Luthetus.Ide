@@ -2,6 +2,7 @@
 using Luthetus.Common.RazorLib.FileSystem.Models;
 using Luthetus.Common.RazorLib.Menu.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
+using Luthetus.Ide.RazorLib.InputFileCase.States;
 using Luthetus.Ide.RazorLib.TerminalCase.Models;
 using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
 
@@ -36,6 +37,7 @@ public interface IMenuOptionsFactory
         TreeViewNamespacePath projectReceivingReference,
         TerminalSession terminalSession,
         IDispatcher dispatcher,
+        InputFileSync inputFileSync,
         Func<Task> onAfterCompletion);
 
     public MenuOptionRecord RemoveProjectToProjectReference(

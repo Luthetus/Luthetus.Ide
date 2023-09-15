@@ -9,12 +9,11 @@ namespace Luthetus.Ide.RazorLib.InputFileCase.States;
 public partial record InputFileSync
 {
     public Task HandleRequestInputFileStateFormAction(
-        RequestInputFileStateFormAction requestInputFileStateFormAction,
-        IDispatcher dispatcher)
+        RequestInputFileStateFormAction requestInputFileStateFormAction)
     {
         if (_luthetusIdeComponentRenderers.InputFileRendererType is not null)
         {
-            dispatcher.Dispatch(new StartInputFileStateFormAction(
+            Dispatcher.Dispatch(new StartInputFileStateFormAction(
                 requestInputFileStateFormAction));
 
             var inputFileDialog = new DialogRecord(
@@ -27,7 +26,7 @@ public partial record InputFileSync
                 IsResizable = true
             };
 
-            dispatcher.Dispatch(new DialogRegistry.RegisterAction(
+            Dispatcher.Dispatch(new DialogRegistry.RegisterAction(
                 inputFileDialog));
         }
 

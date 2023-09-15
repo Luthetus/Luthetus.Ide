@@ -11,6 +11,7 @@ namespace Luthetus.Ide.RazorLib.InputFileCase.States;
 public partial record InputFileState
 {
     public record RequestInputFileStateFormAction(
+        InputFileSync Sync,
         string Message,
         Func<IAbsolutePath?, Task> OnAfterSubmitFunc,
         Func<IAbsolutePath?, Task<bool>> SelectionIsValidFunc,

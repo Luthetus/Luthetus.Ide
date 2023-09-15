@@ -194,6 +194,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         TreeViewNamespacePath projectReceivingReference,
         TerminalSession terminalSession,
         IDispatcher dispatcher,
+        InputFileSync inputFileSync,
         Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Add Project Reference", MenuOptionKind.Other,
@@ -201,6 +202,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 projectReceivingReference,
                 terminalSession,
                 dispatcher,
+                inputFileSync,
                 onAfterCompletion));
     }
 
@@ -565,6 +567,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         TreeViewNamespacePath projectReceivingReference,
         TerminalSession terminalSession,
         IDispatcher dispatcher,
+        InputFileSync inputFileSync,
         Func<Task> onAfterCompletion)
     {
         _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
@@ -572,6 +575,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             () =>
             {
                 var requestInputFileStateFormAction = new InputFileState.RequestInputFileStateFormAction(
+                    inputFileSync,
                     $"Add Project reference to {projectReceivingReference.Item.AbsolutePath.NameWithExtension}",
                     async referencedProject =>
                     {

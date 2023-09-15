@@ -8,6 +8,7 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystem.Models;
 using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.Common.RazorLib.Installation.Models;
+using Luthetus.Ide.RazorLib.InputFileCase.States;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 
@@ -33,6 +34,7 @@ public partial class DotNetSolutionSync
         IState<TerminalSessionState> terminalSessionsStateWrap,
         LuthetusHostingInformation luthetusHostingInformation,
         ITextEditorService textEditorService,
+        InputFileSync inputFileSync,
         IBackgroundTaskService backgroundTaskService,
         IDispatcher dispatcher)
     {
@@ -45,13 +47,15 @@ public partial class DotNetSolutionSync
         _terminalSessionsStateWrap = terminalSessionsStateWrap;
         _luthetusHostingInformation = luthetusHostingInformation;
         _textEditorService = textEditorService;
-
+        
+        InputFileSync = inputFileSync;
         BackgroundTaskService = backgroundTaskService;
         Dispatcher = dispatcher;
     }
 
     public IBackgroundTaskService BackgroundTaskService { get; }
     public IDispatcher Dispatcher { get; }
+    public InputFileSync InputFileSync { get; }
 
     /// <summary>Don't have the implementation <see cref="WithAction"/> as public scope.</summary>
     public interface IWithAction

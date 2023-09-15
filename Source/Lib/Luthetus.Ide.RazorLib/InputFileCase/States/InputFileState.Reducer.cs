@@ -1,6 +1,7 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
 using Luthetus.Common.RazorLib.FileSystem.Models;
+using Luthetus.Ide.RazorLib.GitCase.States;
 using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
 
 namespace Luthetus.Ide.RazorLib.InputFileCase.States;
@@ -197,6 +198,18 @@ public partial record InputFileState
             {
                 SearchQuery = setSearchQueryAction.SearchQuery
             };
+        }
+
+        [ReducerMethod]
+        public static InputFileState ReduceRequestInputFileStateFormAction(
+            InputFileState inState,
+            RequestInputFileStateFormAction inTask)
+        {
+            inTask.Sync.BackgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+                "SetDotNetSolutionAsync",
+                async () => await inTask.Sync.HandleRequestInputFileStateFormAction(inTask));
+
+            return inState;
         }
     }
 }
