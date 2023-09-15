@@ -14,7 +14,7 @@ public partial class InputFileBottomControls : ComponentBase
     [CascadingParameter]
     public DialogRecord? DialogRecord { get; set; }
     [CascadingParameter]
-    public InputFileRegistry InputFileState { get; set; } = null!;
+    public InputFileState InputFileState { get; set; } = null!;
 
     private string _searchQuery = string.Empty;
 
@@ -27,12 +27,12 @@ public partial class InputFileBottomControls : ComponentBase
 
         if (pattern is not null)
         {
-            Dispatcher.Dispatch(new InputFileRegistry.SetSelectedInputFilePatternAction(
+            Dispatcher.Dispatch(new InputFileState.SetSelectedInputFilePatternAction(
                 pattern));
         }
     }
 
-    private string GetSelectedTreeViewModelAbsolutePathString(InputFileRegistry inputFileState)
+    private string GetSelectedTreeViewModelAbsolutePathString(InputFileState inputFileState)
     {
         var selectedAbsolutePath = inputFileState.SelectedTreeViewModel?.Item;
 

@@ -28,7 +28,7 @@ public partial class InputFileTopNavBar : ComponentBase
     [CascadingParameter(Name = "SetInputFileContentTreeViewRootFunc")]
     public Func<IAbsolutePath, Task> SetInputFileContentTreeViewRootFunc { get; set; } = null!;
     [CascadingParameter]
-    public InputFileRegistry InputFileState { get; set; } = null!;
+    public InputFileState InputFileState { get; set; } = null!;
 
     public ElementReference? SearchElementReference { get; private set; }
     private bool _showInputTextEditForAddress;
@@ -36,27 +36,27 @@ public partial class InputFileTopNavBar : ComponentBase
     public string SearchQuery
     {
         get => InputFileState.SearchQuery;
-        set => Dispatcher.Dispatch(new InputFileRegistry.SetSearchQueryAction(
+        set => Dispatcher.Dispatch(new InputFileState.SetSearchQueryAction(
                    value));
     }
 
     private async Task HandleBackButtonOnClick()
     {
-        Dispatcher.Dispatch(new InputFileRegistry.MoveBackwardsInHistoryAction());
+        Dispatcher.Dispatch(new InputFileState.MoveBackwardsInHistoryAction());
 
         await ChangeContentRootToOpenedTreeView(InputFileState);
     }
 
     private async Task HandleForwardButtonOnClick()
     {
-        Dispatcher.Dispatch(new InputFileRegistry.MoveForwardsInHistoryAction());
+        Dispatcher.Dispatch(new InputFileState.MoveForwardsInHistoryAction());
 
         await ChangeContentRootToOpenedTreeView(InputFileState);
     }
 
     private async Task HandleUpwardButtonOnClick()
     {
-        Dispatcher.Dispatch(new InputFileRegistry.OpenParentDirectoryAction(
+        Dispatcher.Dispatch(new InputFileState.OpenParentDirectoryAction(
             LuthetusIdeComponentRenderers,
             LuthetusCommonComponentRenderers,
             FileSystemProvider,
@@ -68,7 +68,7 @@ public partial class InputFileTopNavBar : ComponentBase
 
     private async Task HandleRefreshButtonOnClick()
     {
-        Dispatcher.Dispatch(new InputFileRegistry.RefreshCurrentSelectionAction(
+        Dispatcher.Dispatch(new InputFileState.RefreshCurrentSelectionAction(
             BackgroundTaskService));
 
         await ChangeContentRootToOpenedTreeView(InputFileState);
@@ -93,7 +93,7 @@ public partial class InputFileTopNavBar : ComponentBase
     }
 
     private async Task ChangeContentRootToOpenedTreeView(
-        InputFileRegistry inputFileState)
+        InputFileState inputFileState)
     {
         var openedTreeView = InputFileState.GetOpenedTreeView();
 

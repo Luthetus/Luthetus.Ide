@@ -16,7 +16,7 @@ namespace Luthetus.Ide.RazorLib.NugetCase.Displays;
 public partial class NugetPackageDisplay : FluxorComponent
 {
     [Inject]
-    private IState<NuGetPackageManagerRegistry> NuGetPackageManagerStateWrap { get; set; } = null!;
+    private IState<NuGetPackageManagerState> NuGetPackageManagerStateWrap { get; set; } = null!;
     [Inject]
     private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
     [Inject]

@@ -14,13 +14,13 @@ namespace Luthetus.Ide.RazorLib.GitCase.States;
 ///     --The folder which is user selected.<br/>
 /// </summary>
 [FeatureState]
-public partial record GitRegistry(
+public partial record GitState(
     IAbsolutePath? GitFolderAbsolutePath,
-    GitRegistry.TryFindGitFolderInDirectoryAction? MostRecentTryFindGitFolderInDirectoryAction,
+    GitState.TryFindGitFolderInDirectoryAction? MostRecentTryFindGitFolderInDirectoryAction,
     ImmutableList<GitFile> GitFilesList,
     ImmutableList<GitTask> ActiveGitTasks)
 {
-    public GitRegistry() : this(
+    public GitState() : this(
         default(IAbsolutePath?),
         default(TryFindGitFolderInDirectoryAction?),
         ImmutableList<GitFile>.Empty,

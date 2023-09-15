@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.NugetCase.States;
 
-public partial record NuGetPackageManagerRegistry
+public partial record NuGetPackageManagerState
 {
     public record SetSelectedProjectToModifyAction(IDotNetProject? SelectedProjectToModify);
     public record SetNugetQueryAction(string NugetQuery);

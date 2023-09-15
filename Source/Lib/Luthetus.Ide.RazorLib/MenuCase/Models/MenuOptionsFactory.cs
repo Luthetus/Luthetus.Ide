@@ -572,7 +572,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             "Add Project Reference to Project",
             () =>
             {
-                var requestInputFileStateFormAction = new InputFileRegistry.RequestInputFileStateFormAction(
+                var requestInputFileStateFormAction = new InputFileState.RequestInputFileStateFormAction(
                     $"Add Project reference to {projectReceivingReference.Item.AbsolutePath.NameWithExtension}",
                     async referencedProject =>
                     {

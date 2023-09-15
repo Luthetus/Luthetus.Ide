@@ -5,7 +5,7 @@ using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
 
 namespace Luthetus.Ide.RazorLib.InputFileCase.States;
 
-public partial record InputFileRegistry
+public partial record InputFileState
 {
     public bool CanMoveBackwardsInHistory => IndexInHistory > 0;
 
@@ -21,8 +21,8 @@ public partial record InputFileRegistry
         return OpenedTreeViewModelHistory[IndexInHistory];
     }
 
-    private static InputFileRegistry NewOpenedTreeViewModelHistory(
-        InputFileRegistry inInputFileState,
+    private static InputFileState NewOpenedTreeViewModelHistory(
+        InputFileState inInputFileState,
         TreeViewAbsolutePath selectedTreeViewModel,
         ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
         ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,

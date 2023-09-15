@@ -23,7 +23,7 @@ public partial record FolderExplorerState(
 
     public static void ShowInputFile(FolderExplorerSync folderExplorerSync)
     {
-        folderExplorerSync.Dispatcher.Dispatch(new InputFileRegistry.RequestInputFileStateFormAction(
+        folderExplorerSync.Dispatcher.Dispatch(new InputFileState.RequestInputFileStateFormAction(
             "Folder Explorer",
             afp =>
             {

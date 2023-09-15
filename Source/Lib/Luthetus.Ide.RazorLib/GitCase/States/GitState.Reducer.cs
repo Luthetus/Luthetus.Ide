@@ -2,13 +2,13 @@
 
 namespace Luthetus.Ide.RazorLib.GitCase.States;
 
-public partial record GitRegistry
+public partial record GitState
 {
     private class Reducer
     {
         [ReducerMethod]
-        public static GitRegistry ReduceSetGitStateWithAction(
-            GitRegistry inGitState,
+        public static GitState ReduceSetGitStateWithAction(
+            GitState inGitState,
             SetGitStateWithAction setGitStateWithAction)
         {
             return setGitStateWithAction.GitStateWithFunc

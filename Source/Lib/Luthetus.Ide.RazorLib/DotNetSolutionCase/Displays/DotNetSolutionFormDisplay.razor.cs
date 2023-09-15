@@ -55,7 +55,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
 
     private void RequestInputFileForParentDirectory()
     {
-        Dispatcher.Dispatch(new InputFileRegistry.RequestInputFileStateFormAction(
+        Dispatcher.Dispatch(new InputFileState.RequestInputFileStateFormAction(
             "Directory for new .NET Solution",
             async afp =>
             {

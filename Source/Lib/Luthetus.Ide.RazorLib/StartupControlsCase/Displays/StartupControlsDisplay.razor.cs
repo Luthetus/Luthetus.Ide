@@ -11,7 +11,7 @@ namespace Luthetus.Ide.RazorLib.StartupControlsCase.Displays;
 public partial class StartupControlsDisplay : FluxorComponent
 {
     [Inject]
-    private IState<ProgramExecutionRegistry> ProgramExecutionStateWrap { get; set; } = null!;
+    private IState<ProgramExecutionState> ProgramExecutionStateWrap { get; set; } = null!;
     [Inject]
     private IState<TerminalSessionRegistry> TerminalSessionsStateWrap { get; set; } = null!;
 

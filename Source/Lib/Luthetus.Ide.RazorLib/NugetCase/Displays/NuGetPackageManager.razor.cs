@@ -13,7 +13,7 @@ namespace Luthetus.Ide.RazorLib.NugetCase.Displays;
 public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManagerRendererType
 {
     [Inject]
-    private IState<NuGetPackageManagerRegistry> NuGetPackageManagerStateWrap { get; set; } = null!;
+    private IState<NuGetPackageManagerState> NuGetPackageManagerStateWrap { get; set; } = null!;
     [Inject]
     private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
     [Inject]
@@ -29,14 +29,14 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
     public string NugetQuery
     {
         get => NuGetPackageManagerStateWrap.Value.NugetQuery;
-        set => Dispatcher.Dispatch(new NuGetPackageManagerRegistry.SetNugetQueryAction(
+        set => Dispatcher.Dispatch(new NuGetPackageManagerState.SetNugetQueryAction(
                    value));
     }
 
     public bool IncludePrerelease
     {
         get => NuGetPackageManagerStateWrap.Value.IncludePrerelease;
-        set => Dispatcher.Dispatch(new NuGetPackageManagerRegistry.SetIncludePrereleaseAction(
+        set => Dispatcher.Dispatch(new NuGetPackageManagerState.SetIncludePrereleaseAction(
                    value));
     }
 
@@ -57,13 +57,13 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
                 .SingleOrDefault(x => x.ProjectIdGuid == projectIdGuid);
         }
 
-        Dispatcher.Dispatch(new NuGetPackageManagerRegistry.SetSelectedProjectToModifyAction(
+        Dispatcher.Dispatch(new NuGetPackageManagerState.SetSelectedProjectToModifyAction(
             selectedProject));
     }
 
     private bool CheckIfProjectIsSelected(
         IDotNetProject dotNetProject,
-        NuGetPackageManagerRegistry nuGetPackageManagerState)
+        NuGetPackageManagerState nuGetPackageManagerState)
     {
         if (nuGetPackageManagerState.SelectedProjectToModify is null)
             return false;
@@ -74,7 +74,7 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
 
     private bool ValidateSolutionContainsSelectedProject(
         DotNetSolutionState dotNetSolutionState,
-        NuGetPackageManagerRegistry nuGetPackageManagerState)
+        NuGetPackageManagerState nuGetPackageManagerState)
     {
         if (dotNetSolutionState.DotNetSolutionModel is null ||
             nuGetPackageManagerState.SelectedProjectToModify is null)
@@ -108,7 +108,7 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
                             .QueryForNugetPackagesAsync(query);
 
                     var setMostRecentQueryResultAction =
-                        new NuGetPackageManagerRegistry.SetMostRecentQueryResultAction(
+                        new NuGetPackageManagerState.SetMostRecentQueryResultAction(
                             localNugetResult);
 
                     Dispatcher.Dispatch(setMostRecentQueryResultAction);

@@ -10,12 +10,12 @@ using Luthetus.Ide.RazorLib.TerminalCase.States;
 
 namespace Luthetus.Ide.RazorLib.GitCase.States;
 
-public partial record GitRegistry
+public partial record GitState
 {
     private class Effector
     {
         private readonly IState<TerminalSessionRegistry> _terminalSessionsStateWrap;
-        private readonly IState<GitRegistry> _gitStateWrap;
+        private readonly IState<GitState> _gitStateWrap;
         private readonly IFileSystemProvider _fileSystemProvider;
         private readonly IEnvironmentProvider _environmentProvider;
 
@@ -37,7 +37,7 @@ public partial record GitRegistry
 
         public Effector(
             IState<TerminalSessionRegistry> terminalSessionsStateWrap,
-            IState<GitRegistry> gitStateWrap,
+            IState<GitState> gitStateWrap,
             IFileSystemProvider fileSystemProvider,
             IEnvironmentProvider environmentProvider)
         {
@@ -347,7 +347,7 @@ public partial record GitRegistry
         }
 
         private async Task GetGitOutputSectionAsync(
-            GitRegistry gitState,
+            GitState gitState,
             string gitStatusOutput,
             string sectionStart,
             GitDirtyReason? gitDirtyReason,

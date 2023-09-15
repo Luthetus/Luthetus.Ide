@@ -7,7 +7,7 @@ using System.Collections.Immutable;
 namespace Luthetus.Ide.RazorLib.InputFileCase.States;
 
 [FeatureState]
-public partial record InputFileRegistry(
+public partial record InputFileState(
     int IndexInHistory,
     ImmutableList<TreeViewAbsolutePath> OpenedTreeViewModelHistory,
     TreeViewAbsolutePath? SelectedTreeViewModel,
@@ -18,7 +18,7 @@ public partial record InputFileRegistry(
     string SearchQuery,
     string Message)
 {
-    private InputFileRegistry() : this(
+    private InputFileState() : this(
         -1,
         ImmutableList<TreeViewAbsolutePath>.Empty,
         null,

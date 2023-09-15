@@ -22,7 +22,7 @@ public partial class InputFileContent : ComponentBase
     [CascadingParameter]
     public InputFileTreeViewKeyboardEventHandler InputFileTreeViewKeyboardEventHandler { get; set; } = null!;
     [CascadingParameter]
-    public InputFileRegistry InputFileState { get; set; } = null!;
+    public InputFileState InputFileState { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public ElementDimensions ElementDimensions { get; set; } = null!;

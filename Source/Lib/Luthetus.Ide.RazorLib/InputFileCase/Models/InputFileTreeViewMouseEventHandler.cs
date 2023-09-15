@@ -30,7 +30,7 @@ public class InputFileTreeViewMouseEventHandler : TreeViewMouseEventHandler
         if (treeViewCommandParameter.TargetNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return;
 
-        var setSelectedTreeViewModelAction = new InputFileRegistry.SetSelectedTreeViewModelAction(
+        var setSelectedTreeViewModelAction = new InputFileState.SetSelectedTreeViewModelAction(
             treeViewAbsolutePath);
 
         _dispatcher.Dispatch(setSelectedTreeViewModelAction);

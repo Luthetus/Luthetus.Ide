@@ -5,13 +5,13 @@ using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
 
 namespace Luthetus.Ide.RazorLib.InputFileCase.States;
 
-public partial record InputFileRegistry
+public partial record InputFileState
 {
     private static class Reducer
     {
         [ReducerMethod]
-        public static InputFileRegistry ReduceStartInputFileStateFormAction(
-            InputFileRegistry inInputFileState,
+        public static InputFileState ReduceStartInputFileStateFormAction(
+            InputFileState inInputFileState,
             StartInputFileStateFormAction startInputFileStateFormAction)
         {
             return inInputFileState with
@@ -31,8 +31,8 @@ public partial record InputFileRegistry
         }
 
         [ReducerMethod]
-        public static InputFileRegistry ReduceSetSelectedTreeViewModelAction(
-            InputFileRegistry inInputFileState,
+        public static InputFileState ReduceSetSelectedTreeViewModelAction(
+            InputFileState inInputFileState,
             SetSelectedTreeViewModelAction setSelectedTreeViewModelAction)
         {
             return inInputFileState with
@@ -43,8 +43,8 @@ public partial record InputFileRegistry
         }
 
         [ReducerMethod]
-        public static InputFileRegistry ReduceSetOpenedTreeViewModelAction(
-            InputFileRegistry inInputFileState,
+        public static InputFileState ReduceSetOpenedTreeViewModelAction(
+            InputFileState inInputFileState,
             SetOpenedTreeViewModelAction setOpenedTreeViewModelAction)
         {
             if (setOpenedTreeViewModelAction.TreeViewModel.Item.IsDirectory)
@@ -62,8 +62,8 @@ public partial record InputFileRegistry
         }
 
         [ReducerMethod]
-        public static InputFileRegistry ReduceSetSelectedInputFilePatternAction(
-            InputFileRegistry inInputFileState,
+        public static InputFileState ReduceSetSelectedInputFilePatternAction(
+            InputFileState inInputFileState,
             SetSelectedInputFilePatternAction setSelectedInputFilePatternAction)
         {
             return inInputFileState with
@@ -74,8 +74,8 @@ public partial record InputFileRegistry
         }
 
         [ReducerMethod]
-        public static InputFileRegistry ReduceMoveBackwardsInHistoryAction(
-            InputFileRegistry inInputFileState,
+        public static InputFileState ReduceMoveBackwardsInHistoryAction(
+            InputFileState inInputFileState,
             MoveBackwardsInHistoryAction moveBackwardsInHistoryAction)
         {
             if (inInputFileState.CanMoveBackwardsInHistory)
@@ -91,8 +91,8 @@ public partial record InputFileRegistry
         }
 
         [ReducerMethod]
-        public static InputFileRegistry ReduceMoveForwardsInHistoryAction(
-            InputFileRegistry inInputFileState,
+        public static InputFileState ReduceMoveForwardsInHistoryAction(
+            InputFileState inInputFileState,
             MoveForwardsInHistoryAction moveForwardsInHistoryAction)
         {
             if (inInputFileState.CanMoveForwardsInHistory)
@@ -108,8 +108,8 @@ public partial record InputFileRegistry
         }
 
         [ReducerMethod]
-        public static InputFileRegistry ReduceOpenParentDirectoryAction(
-            InputFileRegistry inInputFileState,
+        public static InputFileState ReduceOpenParentDirectoryAction(
+            InputFileState inInputFileState,
             OpenParentDirectoryAction openParentDirectoryAction)
         {
             var currentSelection = inInputFileState
@@ -155,8 +155,8 @@ public partial record InputFileRegistry
         }
 
         [ReducerMethod]
-        public static InputFileRegistry ReduceRefreshCurrentSelectionAction(
-            InputFileRegistry inInputFileState,
+        public static InputFileState ReduceRefreshCurrentSelectionAction(
+            InputFileState inInputFileState,
             RefreshCurrentSelectionAction refreshCurrentSelectionAction)
         {
             var currentSelection = inInputFileState
@@ -175,8 +175,8 @@ public partial record InputFileRegistry
         }
 
         [ReducerMethod]
-        public static InputFileRegistry ReduceSetSearchQueryAction(
-            InputFileRegistry inInputFileState,
+        public static InputFileState ReduceSetSearchQueryAction(
+            InputFileState inInputFileState,
             SetSearchQueryAction setSearchQueryAction)
         {
             var openedTreeViewModel = inInputFileState

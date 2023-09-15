@@ -38,7 +38,7 @@ public partial class InputFileSidebar : ComponentBase
     [CascadingParameter]
     public InputFileTreeViewKeyboardEventHandler InputFileTreeViewKeyboardEventHandler { get; set; } = null!;
     [CascadingParameter]
-    public InputFileRegistry InputFileState { get; set; } = null!;
+    public InputFileState InputFileState { get; set; } = null!;
     [CascadingParameter]
     public DialogRecord DialogRecord { get; set; } = null!;
 

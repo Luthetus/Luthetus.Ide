@@ -224,7 +224,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             new MenuOptionRecord(
                 "Set as Startup Project",
                 MenuOptionKind.Other,
-                () => Dispatcher.Dispatch(new ProgramExecutionRegistry.SetStartupProjectAbsolutePathAction(
+                () => Dispatcher.Dispatch(new ProgramExecutionState.SetStartupProjectAbsolutePathAction(
                     treeViewModel.Item.AbsolutePath))),
             MenuOptionsFactory.RemoveCSharpProjectReferenceFromSolution(
                 treeViewSolution,
@@ -362,7 +362,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
     private void AddExistingProjectToSolution(DotNetSolutionModel dotNetSolutionModel)
     {
-        Dispatcher.Dispatch(new InputFileRegistry.RequestInputFileStateFormAction(
+        Dispatcher.Dispatch(new InputFileState.RequestInputFileStateFormAction(
             "Existing C# Project to add to solution",
             async afp =>
             {

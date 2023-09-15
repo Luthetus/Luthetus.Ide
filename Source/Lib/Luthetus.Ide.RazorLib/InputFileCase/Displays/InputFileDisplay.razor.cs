@@ -27,7 +27,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
-    private IState<InputFileRegistry> InputFileStateWrap { get; set; } = null!;
+    private IState<InputFileState> InputFileStateWrap { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
@@ -214,7 +214,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
 
         await pseudoRootNode.LoadChildrenAsync();
 
-        var setOpenedTreeViewModelAction = new InputFileRegistry.SetOpenedTreeViewModelAction(
+        var setOpenedTreeViewModelAction = new InputFileState.SetOpenedTreeViewModelAction(
             pseudoRootNode,
             LuthetusIdeComponentRenderers,
             LuthetusCommonComponentRenderers,

@@ -2,9 +2,9 @@
 
 namespace Luthetus.Ide.RazorLib.GitCase.States;
 
-public partial record GitRegistry
+public partial record GitState
 {
-    public record SetGitStateWithAction(Func<GitRegistry, GitRegistry> GitStateWithFunc);
+    public record SetGitStateWithAction(Func<GitState, GitState> GitStateWithFunc);
 
     public record TryFindGitFolderInDirectoryAction(
         IAbsolutePath DirectoryAbsolutePath,

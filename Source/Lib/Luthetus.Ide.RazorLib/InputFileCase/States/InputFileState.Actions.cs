@@ -8,7 +8,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.InputFileCase.States;
 
-public partial record InputFileRegistry
+public partial record InputFileState
 {
     public record RequestInputFileStateFormAction(
         string Message,

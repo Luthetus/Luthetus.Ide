@@ -20,7 +20,7 @@ public partial class EditorSync
 {
     public Task ShowInputFile(ShowInputFileAction showInputFileAction)
     {
-        Dispatcher.Dispatch(new InputFileRegistry.RequestInputFileStateFormAction(
+        Dispatcher.Dispatch(new InputFileState.RequestInputFileStateFormAction(
             "TextEditor",
             async afp => await OpenInEditor(new OpenInEditorAction(this, afp, true)),
             afp =>

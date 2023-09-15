@@ -113,7 +113,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
     private void RequestInputFileForParentDirectory(string message)
     {
-        Dispatcher.Dispatch(new InputFileRegistry.RequestInputFileStateFormAction(
+        Dispatcher.Dispatch(new InputFileState.RequestInputFileStateFormAction(
             message,
             async afp =>
             {

@@ -4,9 +4,9 @@ using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 namespace Luthetus.Ide.RazorLib.ProgramExecutionCase.States;
 
 [FeatureState]
-public record ProgramExecutionRegistry(IAbsolutePath? StartupProjectAbsolutePath)
+public partial record ProgramExecutionState(IAbsolutePath? StartupProjectAbsolutePath)
 {
-    private ProgramExecutionRegistry() : this(default(IAbsolutePath))
+    private ProgramExecutionState() : this(default(IAbsolutePath))
     {
 
     }

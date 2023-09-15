@@ -6,13 +6,13 @@ using System.Collections.Immutable;
 namespace Luthetus.Ide.RazorLib.NugetCase.States;
 
 [FeatureState]
-public partial record NuGetPackageManagerRegistry(
+public partial record NuGetPackageManagerState(
     IDotNetProject? SelectedProjectToModify,
     string NugetQuery,
     bool IncludePrerelease,
     ImmutableArray<NugetPackageRecord> MostRecentQueryResult)
 {
-    public NuGetPackageManagerRegistry()
+    public NuGetPackageManagerState()
         : this(
             default(IDotNetProject?),
             string.Empty,

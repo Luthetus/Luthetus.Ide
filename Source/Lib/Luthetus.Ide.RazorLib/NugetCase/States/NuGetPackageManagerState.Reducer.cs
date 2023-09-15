@@ -2,13 +2,13 @@
 
 namespace Luthetus.Ide.RazorLib.NugetCase.States;
 
-public partial record NuGetPackageManagerRegistry
+public partial record NuGetPackageManagerState
 {
     private class NuGetPackageManagerStateReducer
     {
         [ReducerMethod]
-        public static NuGetPackageManagerRegistry ReduceSetSelectedProjectToModifyAction(
-            NuGetPackageManagerRegistry inNuGetPackageManagerState,
+        public static NuGetPackageManagerState ReduceSetSelectedProjectToModifyAction(
+            NuGetPackageManagerState inNuGetPackageManagerState,
             SetSelectedProjectToModifyAction setSelectedProjectToModifyAction)
         {
             return inNuGetPackageManagerState with
@@ -19,8 +19,8 @@ public partial record NuGetPackageManagerRegistry
         }
 
         [ReducerMethod]
-        public static NuGetPackageManagerRegistry ReduceSetNugetQueryAction(
-            NuGetPackageManagerRegistry inNuGetPackageManagerState,
+        public static NuGetPackageManagerState ReduceSetNugetQueryAction(
+            NuGetPackageManagerState inNuGetPackageManagerState,
             SetNugetQueryAction setNugetQueryAction)
         {
             return inNuGetPackageManagerState with
@@ -31,8 +31,8 @@ public partial record NuGetPackageManagerRegistry
         }
 
         [ReducerMethod]
-        public static NuGetPackageManagerRegistry ReduceSetIncludePrereleaseAction(
-            NuGetPackageManagerRegistry inNuGetPackageManagerState,
+        public static NuGetPackageManagerState ReduceSetIncludePrereleaseAction(
+            NuGetPackageManagerState inNuGetPackageManagerState,
             SetIncludePrereleaseAction setIncludePrereleaseAction)
         {
             return inNuGetPackageManagerState with
@@ -43,8 +43,8 @@ public partial record NuGetPackageManagerRegistry
         }
 
         [ReducerMethod]
-        public static NuGetPackageManagerRegistry ReduceSetMostRecentQueryResultAction(
-            NuGetPackageManagerRegistry inNuGetPackageManagerState,
+        public static NuGetPackageManagerState ReduceSetMostRecentQueryResultAction(
+            NuGetPackageManagerState inNuGetPackageManagerState,
             SetMostRecentQueryResultAction setMostRecentQueryResultAction)
         {
             return inNuGetPackageManagerState with
