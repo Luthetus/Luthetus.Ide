@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.FileSystem.Interfaces;
+﻿using Luthetus.Common.RazorLib.FileSystem.Models;
 using Luthetus.TextEditor.RazorLib.Group;
 
 namespace Luthetus.Ide.RazorLib.EditorCase.States;

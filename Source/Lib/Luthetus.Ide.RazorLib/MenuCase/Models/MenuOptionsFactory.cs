@@ -1,12 +1,5 @@
-﻿using Luthetus.Common.RazorLib.Menu;
-using Fluxor;
+﻿using Fluxor;
 using System.Collections.Immutable;
-using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
-using Luthetus.Common.RazorLib.Notification;
-using Luthetus.Common.RazorLib.Clipboard;
-using Luthetus.Common.RazorLib.Namespaces;
-using Luthetus.Common.RazorLib.FileSystem.Interfaces;
-using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 using Luthetus.Ide.RazorLib.ClipboardCase.Models;
 using Luthetus.Ide.RazorLib.CommandLineCase.Models;
@@ -16,6 +9,13 @@ using Luthetus.Ide.RazorLib.TerminalCase.Models;
 using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
 using Luthetus.Ide.RazorLib.InputFileCase.Models;
 using Luthetus.Ide.RazorLib.InputFileCase.States;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
+using Luthetus.Common.RazorLib.Clipboard.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.FileSystem.Models;
+using Luthetus.Common.RazorLib.Menu.Models;
+using Luthetus.Common.RazorLib.Namespaces.Models;
+using Luthetus.Common.RazorLib.Notification.Models;
 
 namespace Luthetus.Ide.RazorLib.MenuCase.Models;
 

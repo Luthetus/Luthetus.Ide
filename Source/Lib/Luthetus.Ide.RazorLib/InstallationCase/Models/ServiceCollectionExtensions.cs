@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Fluxor;
-using Luthetus.Common.RazorLib;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.CSharpProject.CompilerServiceCase;
@@ -13,8 +12,6 @@ using Luthetus.CompilerServices.Lang.TypeScript;
 using Luthetus.CompilerServices.Lang.Xml;
 using Luthetus.Common.RazorLib.FileSystem.Classes.InMemoryFileSystem;
 using Luthetus.Common.RazorLib.FileSystem.Classes.Local;
-using Luthetus.Common.RazorLib.FileSystem.Interfaces;
-using Luthetus.Common.RazorLib.Theme;
 using Luthetus.CompilerServices.Lang.Css;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 using Luthetus.Ide.RazorLib.CommandCase.Models;
@@ -33,6 +30,9 @@ using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.States;
 using Luthetus.Ide.RazorLib.EditorCase.States;
 using Luthetus.Ide.RazorLib.FileSystemCase.States;
 using Luthetus.Ide.RazorLib.FolderExplorerCase.States;
+using Luthetus.Common.RazorLib.FileSystem.Models;
+using Luthetus.Common.RazorLib.Theme.Models;
+using Luthetus.Common.RazorLib.Installation.Models;
 
 namespace Luthetus.Ide.RazorLib.InstallationCase.Models;
 

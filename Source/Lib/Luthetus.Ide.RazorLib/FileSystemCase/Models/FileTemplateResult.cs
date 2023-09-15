@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Namespaces;
+﻿using Luthetus.Common.RazorLib.Namespaces.Models;
 
 namespace Luthetus.Ide.RazorLib.FileSystemCase.Models;
 

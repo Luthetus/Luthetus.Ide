@@ -1,5 +1,5 @@
 ﻿using Fluxor;
-using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
 using static Luthetus.Ide.RazorLib.DotNetSolutionCase.States.DotNetSolutionSync;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;

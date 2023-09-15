@@ -1,5 +1,5 @@
 ﻿using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
-using Luthetus.Common.RazorLib.FileSystem.Interfaces;
+using Luthetus.Common.RazorLib.FileSystem.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 

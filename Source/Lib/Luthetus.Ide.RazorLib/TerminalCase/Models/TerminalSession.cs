@@ -1,10 +1,10 @@
 ﻿using CliWrap;
 using CliWrap.EventStream;
 using Fluxor;
-using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
-using Luthetus.Common.RazorLib.ComponentRenderers;
-using Luthetus.Common.RazorLib.FileSystem.Interfaces;
-using Luthetus.Common.RazorLib.Notification;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.FileSystem.Models;
+using Luthetus.Common.RazorLib.Notification.Models;
 using Luthetus.Ide.RazorLib.StateCase.Models;
 using Luthetus.Ide.RazorLib.TerminalCase.States;
 using Luthetus.TextEditor.RazorLib.Model;

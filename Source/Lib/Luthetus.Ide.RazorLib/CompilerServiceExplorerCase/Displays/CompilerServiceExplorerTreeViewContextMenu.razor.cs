@@ -1,9 +1,8 @@
 ﻿using Luthetus.Common.RazorLib.Dimensions;
-using Luthetus.Common.RazorLib.Dropdown;
-using Luthetus.Common.RazorLib.Menu;
-using Luthetus.Common.RazorLib.TreeView;
-using Luthetus.Common.RazorLib.TreeView.Commands;
-using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
+using Luthetus.Common.RazorLib.Dropdown.Models;
+using Luthetus.Common.RazorLib.Menu.Models;
+using Luthetus.Common.RazorLib.TreeView.Models;
+using Luthetus.Common.RazorLib.TreeView.Models.TreeViewClasses;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 using Microsoft.AspNetCore.Components;
 

@@ -1,5 +1,5 @@
-﻿using Luthetus.Common.RazorLib.ComponentRenderers.Types.TreeViews;
-using Luthetus.Common.RazorLib.WatchWindow.TreeViewClasses;
+﻿using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.WatchWindow.Models;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Displays;

@@ -1,8 +1,8 @@
-﻿using Luthetus.Common.RazorLib.ComponentRenderers;
-using Fluxor;
-using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
+﻿using Fluxor;
 using Luthetus.Common.RazorLib.Notification;
-using Luthetus.Common.RazorLib.FileSystem.Interfaces;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.FileSystem.Models;
 
 namespace Luthetus.Ide.RazorLib.FileSystemCase.States;
 

@@ -2,7 +2,6 @@
 using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Namespaces;
 using Luthetus.CompilerServices.Lang.DotNetSolution;
-using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
 using static Luthetus.Ide.RazorLib.DotNetSolutionCase.States.DotNetSolutionState;
 using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
@@ -10,6 +9,8 @@ using Luthetus.TextEditor.RazorLib.Lexing;
 using Luthetus.TextEditor.RazorLib.Store.Model;
 using Luthetus.Ide.RazorLib.WebsiteProjectTemplatesCase.Models;
 using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
+using Luthetus.Common.RazorLib.FileSystem.Models;
+using Luthetus.Common.RazorLib.TreeView.Models.TreeViewClasses;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 

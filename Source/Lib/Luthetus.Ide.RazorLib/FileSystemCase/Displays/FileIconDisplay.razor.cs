@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.FileSystem.Interfaces;
+﻿using Luthetus.Common.RazorLib.FileSystem.Models;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.FileSystemCase.Displays;

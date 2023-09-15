@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Dialog;
+﻿using Luthetus.Common.RazorLib.Dialog.Models;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.SettingsCase.Displays;

@@ -1,5 +1,5 @@
 ﻿using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
-using Luthetus.Common.RazorLib.FileSystem.Interfaces;
+using Luthetus.Common.RazorLib.FileSystem.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.WebsiteProjectTemplatesCase.Models;

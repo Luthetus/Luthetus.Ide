@@ -1,12 +1,12 @@
 ﻿using Fluxor;
 using System.Collections.Immutable;
 using System.Text;
-using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
 using Luthetus.Ide.RazorLib.CommandLineCase.Models;
 using Luthetus.Ide.RazorLib.GitCase.Models;
 using Luthetus.Ide.RazorLib.TerminalCase.Models;
 using Luthetus.Ide.RazorLib.TerminalCase.States;
+using Luthetus.Common.RazorLib.FileSystem.Models;
 
 namespace Luthetus.Ide.RazorLib.GitCase.States;
 

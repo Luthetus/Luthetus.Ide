@@ -1,5 +1,5 @@
 ﻿using Luthetus.Common.RazorLib.Namespaces;
-using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
+using Luthetus.Common.RazorLib.TreeView.Models.TreeViewClasses;
 using Luthetus.CompilerServices.Lang.DotNetSolution;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;

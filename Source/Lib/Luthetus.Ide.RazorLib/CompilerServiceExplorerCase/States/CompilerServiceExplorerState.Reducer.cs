@@ -1,5 +1,5 @@
 using Fluxor;
-using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
 
 namespace Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.States;
 

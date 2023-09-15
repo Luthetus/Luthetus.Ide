@@ -1,9 +1,9 @@
 using Fluxor;
-using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using System.Collections.Immutable;
-using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Ide.RazorLib.InputFileCase.States;
 using Luthetus.Ide.RazorLib.InputFileCase.Models;
+using Luthetus.Common.RazorLib.FileSystem.Models;
+using Luthetus.Common.RazorLib.TreeView.Models.TreeViewClasses;
 
 namespace Luthetus.Ide.RazorLib.FolderExplorerCase.States;
 

@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.FileSystem.Interfaces;
+﻿using Luthetus.Common.RazorLib.FileSystem.Models;
 
 namespace Luthetus.Ide.RazorLib.CommandLineCase.Models;
 

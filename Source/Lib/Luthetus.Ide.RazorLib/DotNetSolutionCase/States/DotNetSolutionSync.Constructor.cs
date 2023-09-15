@@ -1,13 +1,13 @@
-﻿using Luthetus.Common.RazorLib.TreeView;
-using Fluxor;
-using Luthetus.Common.RazorLib.FileSystem.Interfaces;
-using Luthetus.Common.RazorLib.ComponentRenderers;
-using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
-using Luthetus.Common.RazorLib;
+﻿using Fluxor;
 using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
 using Luthetus.Ide.RazorLib.TerminalCase.States;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.FileSystem.Models;
+using Luthetus.Common.RazorLib.TreeView.Models;
+using Luthetus.Common.RazorLib.Installation.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 

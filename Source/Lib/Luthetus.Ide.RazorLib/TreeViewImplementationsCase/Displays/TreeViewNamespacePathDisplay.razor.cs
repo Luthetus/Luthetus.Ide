@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Namespaces;
+﻿using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
 using Microsoft.AspNetCore.Components;
 

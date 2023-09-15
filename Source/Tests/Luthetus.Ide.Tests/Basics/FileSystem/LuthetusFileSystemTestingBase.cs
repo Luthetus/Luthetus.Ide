@@ -1,9 +1,9 @@
 ﻿using Fluxor;
-using Luthetus.Common.RazorLib;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
 using Luthetus.Common.RazorLib.Clipboard;
 using Luthetus.Common.RazorLib.FileSystem.Classes.Local;
-using Luthetus.Common.RazorLib.FileSystem.Interfaces;
+using Luthetus.Common.RazorLib.FileSystem.Models;
+using Luthetus.Common.RazorLib.Installation.Models;
 using Luthetus.Common.RazorLib.Storage;
 using Luthetus.TextEditor.RazorLib;
 using Microsoft.Extensions.DependencyInjection;

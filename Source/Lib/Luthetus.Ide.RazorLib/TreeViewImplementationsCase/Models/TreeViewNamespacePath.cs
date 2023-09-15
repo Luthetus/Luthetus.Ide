@@ -1,10 +1,10 @@
-﻿using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
-using Luthetus.Common.RazorLib.WatchWindow.TreeViewClasses;
-using Luthetus.Common.RazorLib.Namespaces;
-using Luthetus.Common.RazorLib.FileSystem.Interfaces;
-using Luthetus.Common.RazorLib.ComponentRenderers;
+﻿using Luthetus.Common.RazorLib.WatchWindow.TreeViewClasses;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
 using Luthetus.Ide.RazorLib.FileSystemCase.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.FileSystem.Models;
+using Luthetus.Common.RazorLib.Namespaces.Models;
+using Luthetus.Common.RazorLib.TreeView.Models.TreeViewClasses;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
 

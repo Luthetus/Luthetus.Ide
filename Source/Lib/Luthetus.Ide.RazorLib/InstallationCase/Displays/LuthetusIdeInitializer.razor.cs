@@ -1,9 +1,5 @@
 ﻿using Fluxor;
-using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
-using Luthetus.Common.RazorLib.ComponentRenderers;
-using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Icons.Codicon;
-using Luthetus.Common.RazorLib.Panel;
 using Luthetus.Common.RazorLib.Store.PanelCase;
 using Luthetus.Common.RazorLib.Store.TabCase;
 using Luthetus.Common.RazorLib.Store.ThemeCase;
@@ -23,6 +19,11 @@ using Luthetus.Ide.RazorLib.TerminalCase.Displays;
 using Luthetus.Ide.RazorLib.NugetCase.Displays;
 using Luthetus.Ide.RazorLib.ContextCase.Displays;
 using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.States;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.FileSystem.Models;
+using Luthetus.Common.RazorLib.Panel.Models;
+using Luthetus.Common.RazorLib.TabCase.Models;
 
 namespace Luthetus.Ide.RazorLib.InstallationCase.Displays;
 

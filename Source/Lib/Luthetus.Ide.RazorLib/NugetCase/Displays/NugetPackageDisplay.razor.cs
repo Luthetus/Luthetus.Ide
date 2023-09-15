@@ -1,7 +1,5 @@
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
-using Luthetus.Common.RazorLib.ComponentRenderers;
-using Luthetus.Common.RazorLib.Notification;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
@@ -10,6 +8,8 @@ using Luthetus.Ide.RazorLib.NugetCase.Models;
 using Luthetus.Ide.RazorLib.TerminalCase.Models;
 using Luthetus.Ide.RazorLib.TerminalCase.States;
 using Luthetus.Ide.RazorLib.NugetCase.States;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.Notification.Models;
 
 namespace Luthetus.Ide.RazorLib.NugetCase.Displays;
 

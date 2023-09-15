@@ -1,8 +1,6 @@
 ﻿using Fluxor;
-using Luthetus.Common.RazorLib.FileSystem.Interfaces;
-using Luthetus.Common.RazorLib.TreeView;
-using Luthetus.Common.RazorLib.TreeView.Commands;
-using Luthetus.Common.RazorLib.TreeView.Events;
+using Luthetus.Common.RazorLib.FileSystem.Models;
+using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.Ide.RazorLib.InputFileCase.States;
 using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
 

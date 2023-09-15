@@ -1,5 +1,5 @@
 ﻿using Fluxor;
-using Luthetus.Common.RazorLib.FileSystem.Interfaces;
+using Luthetus.Common.RazorLib.FileSystem.Models;
 using Luthetus.Ide.RazorLib.GitCase.Models;
 using System.Collections.Immutable;
 

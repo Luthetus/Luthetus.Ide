@@ -1,6 +1,6 @@
-﻿using Luthetus.Common.RazorLib.FileSystem.Interfaces;
-using Luthetus.Common.RazorLib.Keyboard;
-using Luthetus.Common.RazorLib.Menu;
+﻿using Luthetus.Common.RazorLib.FileSystem.Models;
+using Luthetus.Common.RazorLib.Keyboard.Models;
+using Luthetus.Common.RazorLib.Menu.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;

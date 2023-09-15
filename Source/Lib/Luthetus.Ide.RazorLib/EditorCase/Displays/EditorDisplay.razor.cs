@@ -1,6 +1,6 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.Dimensions;
-using Luthetus.Common.RazorLib.FileSystem.Interfaces;
+using Luthetus.Common.RazorLib.FileSystem.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.ViewModel.InternalClasses;
 using Microsoft.AspNetCore.Components;

@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keyboard;
+﻿using Luthetus.Common.RazorLib.Keyboard.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 

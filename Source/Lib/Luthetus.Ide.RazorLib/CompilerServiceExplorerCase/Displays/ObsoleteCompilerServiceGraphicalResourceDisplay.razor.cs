@@ -3,8 +3,8 @@ using Luthetus.CompilerServices.Lang.CSharpProject.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
 using Microsoft.AspNetCore.Components;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
-using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.Models;
+using Luthetus.Common.RazorLib.FileSystem.Models;
 
 namespace Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.Displays;
 
