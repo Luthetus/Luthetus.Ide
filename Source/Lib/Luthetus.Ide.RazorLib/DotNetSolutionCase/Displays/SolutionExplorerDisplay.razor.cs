@@ -10,6 +10,7 @@ using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.Viewables;
+using Luthetus.Ide.RazorLib.EditorCase.States;
 using Luthetus.Ide.RazorLib.MenuCase.Models;
 using Microsoft.AspNetCore.Components;
 
@@ -31,6 +32,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
     [Inject]
     private DotNetSolutionSync DotNetSolutionSync { get; set; } = null!;
+    [Inject]
+    private EditorSync EditorSync { get; set; } = null!;
 
     private ITreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
     private SolutionExplorerTreeViewKeyboardEventHandler _solutionExplorerTreeViewKeymap = null!;
@@ -46,6 +49,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         DotNetSolutionStateWrap.StateChanged += DotNetSolutionStateWrapOnStateChanged;
 
         _solutionExplorerTreeViewKeymap = new SolutionExplorerTreeViewKeyboardEventHandler(
+            EditorSync,
             MenuOptionsFactory,
             LuthetusCommonComponentRenderers,
             Dispatcher,
@@ -53,6 +57,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 
         _solutionExplorerTreeViewMouseEventHandler =
             new SolutionExplorerTreeViewMouseEventHandler(
+                EditorSync,
                 Dispatcher,
                 TreeViewService);
 

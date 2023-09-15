@@ -9,6 +9,7 @@ using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
 using Luthetus.Ide.RazorLib.FolderExplorerCase.Models;
 using Luthetus.Ide.RazorLib.MenuCase.Models;
 using Luthetus.Ide.RazorLib.FolderExplorerCase.States;
+using Luthetus.Ide.RazorLib.EditorCase.States;
 
 namespace Luthetus.Ide.RazorLib.FolderExplorerCase.Displays;
 
@@ -28,6 +29,8 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
     [Inject]
     private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
+    [Inject]
+    private EditorSync EditorSync { get; set; } = null!;
 
     private FolderExplorerTreeViewMouseEventHandler _folderExplorerTreeViewMouseEventHandler = null!;
     private FolderExplorerTreeViewKeyboardEventHandler _folderExplorerTreeViewKeyboardEventHandler = null!;
@@ -43,10 +46,12 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
         AppOptionsRegistryWrap.StateChanged += AppOptionsStateWrapOnStateChanged;
 
         _folderExplorerTreeViewMouseEventHandler = new FolderExplorerTreeViewMouseEventHandler(
+            EditorSync,
             Dispatcher,
             TreeViewService);
 
         _folderExplorerTreeViewKeyboardEventHandler = new FolderExplorerTreeViewKeyboardEventHandler(
+            EditorSync,
             MenuOptionsFactory,
             LuthetusCommonComponentRenderers,
             Dispatcher,

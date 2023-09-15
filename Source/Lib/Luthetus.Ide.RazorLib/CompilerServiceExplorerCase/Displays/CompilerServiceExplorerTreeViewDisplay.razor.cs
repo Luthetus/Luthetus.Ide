@@ -7,6 +7,7 @@ using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.Models;
 using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.States;
+using Luthetus.Ide.RazorLib.EditorCase.States;
 using Luthetus.Ide.RazorLib.MenuCase.Models;
 using Luthetus.TextEditor.RazorLib.Store.Group;
 using Luthetus.TextEditor.RazorLib.Store.ViewModel;
@@ -37,6 +38,8 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
     private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
     [Inject]
     private CompilerServiceExplorerSync CompilerServiceExplorerSync { get; set; } = null!;
+    [Inject]
+    private EditorSync EditorSync { get; set; } = null!;
 
     private ITreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
     private CompilerServiceExplorerTreeViewKeyboardEventHandler _compilerServiceExplorerTreeViewKeymap = null!;
@@ -59,6 +62,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
         CSharpCompilerService.ModelParsed += RerenderAfterEvent;
 
         _compilerServiceExplorerTreeViewKeymap = new CompilerServiceExplorerTreeViewKeyboardEventHandler(
+            EditorSync,
             MenuOptionsFactory,
             LuthetusCommonComponentRenderers,
             Dispatcher,
@@ -66,6 +70,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 
         _compilerServiceExplorerTreeViewMouseEventHandler =
             new CompilerServiceExplorerTreeViewMouseEventHandler(
+                EditorSync,
                 Dispatcher,
                 TreeViewService);
 

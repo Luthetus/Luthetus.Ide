@@ -17,18 +17,21 @@ namespace Luthetus.Ide.RazorLib.FolderExplorerCase.Models;
 
 public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
+    private readonly EditorSync _editorSync;
     private readonly IMenuOptionsFactory _menuOptionsFactory;
     private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
     private readonly IDispatcher _dispatcher;
     private readonly ITreeViewService _treeViewService;
 
     public FolderExplorerTreeViewKeyboardEventHandler(
+        EditorSync editorSync,
         IMenuOptionsFactory menuOptionsFactory,
         ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
         IDispatcher dispatcher,
         ITreeViewService treeViewService)
         : base(treeViewService)
     {
+        _editorSync = editorSync;
         _menuOptionsFactory = menuOptionsFactory;
         _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
         _dispatcher = dispatcher;
@@ -198,7 +201,8 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         if (activeNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return;
 
-        _dispatcher.Dispatch(new EditorRegistry.OpenInEditorAction(
+        _dispatcher.Dispatch(new EditorState.OpenInEditorAction(
+            _editorSync,
             treeViewAbsolutePath.Item,
             shouldSetFocusToEditor));
 

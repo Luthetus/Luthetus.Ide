@@ -21,6 +21,8 @@ public partial class IdeHeader : FluxorComponent
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private DotNetSolutionSync DotNetSolutionSync { get; set; } = null!;
+    [Inject]
+    private EditorSync EditorSync { get; set; } = null!;
 
     private DropdownKey _dropdownKeyFile = DropdownKey.NewKey();
     private MenuRecord _menuFile = new(ImmutableArray<MenuOptionRecord>.Empty);
@@ -61,7 +63,7 @@ public partial class IdeHeader : FluxorComponent
             var menuOptionOpenFile = new MenuOptionRecord(
                 "File",
                 MenuOptionKind.Other,
-                () => Dispatcher.Dispatch(new EditorRegistry.ShowInputFileAction()));
+                () => Dispatcher.Dispatch(new EditorState.ShowInputFileAction(EditorSync)));
 
             var menuOptionOpenDirectory = new MenuOptionRecord(
                 "Directory",
@@ -71,7 +73,7 @@ public partial class IdeHeader : FluxorComponent
             var menuOptionOpenCSharpProject = new MenuOptionRecord(
                 "C# Project - TODO: Adhoc Sln",
                 MenuOptionKind.Other,
-                () => Dispatcher.Dispatch(new EditorRegistry.ShowInputFileAction()));
+                () => Dispatcher.Dispatch(new EditorState.ShowInputFileAction(EditorSync)));
 
             var menuOptionOpenDotNetSolution = new MenuOptionRecord(
                 ".NET Solution",

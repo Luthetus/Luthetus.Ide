@@ -9,13 +9,16 @@ namespace Luthetus.Ide.RazorLib.FolderExplorerCase.Models;
 
 public class FolderExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
+    private readonly EditorSync _editorSync;
     private readonly IDispatcher _dispatcher;
 
     public FolderExplorerTreeViewMouseEventHandler(
+        EditorSync editorSync,
         IDispatcher dispatcher,
         ITreeViewService treeViewService)
         : base(treeViewService)
     {
+        _editorSync = editorSync;
         _dispatcher = dispatcher;
     }
 
@@ -26,7 +29,8 @@ public class FolderExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
         if (treeViewCommandParameter.TargetNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return;
 
-        _dispatcher.Dispatch(new EditorRegistry.OpenInEditorAction(
+        _dispatcher.Dispatch(new EditorState.OpenInEditorAction(
+            _editorSync,
             treeViewAbsolutePath.Item,
             true));
     }
