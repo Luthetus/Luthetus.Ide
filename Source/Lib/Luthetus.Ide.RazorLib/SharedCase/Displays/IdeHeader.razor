@@ -1,0 +1,41 @@
+@using Luthetus.Common.RazorLib.Dropdown.Displays
+@using Luthetus.Common.RazorLib.Dropdown.Models;
+@using Luthetus.Common.RazorLib.Menu.Displays
+@using Luthetus.Ide.RazorLib.ContextCase.Displays
+@using Luthetus.Ide.RazorLib.ContextCase.Models;
+@using Luthetus.Ide.RazorLib.SettingsCase
+@using Luthetus.Ide.RazorLib.SettingsCase.Displays
+@using Luthetus.Ide.RazorLib.StartupControlsCase
+@using Luthetus.Common.RazorLib.Dropdown
+@using Luthetus.Common.RazorLib.Menu
+@using Luthetus.Ide.RazorLib.StartupControlsCase.Displays
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<ContextBoundary ContextRecord="ContextFacts.MainLayoutHeaderContext"
+                 ClassCssString="luth_ide_header"
+                 StyleCssString="display: flex; justify-content: space-between;">
+    
+    <div class="luth_ide_header-left-content"
+         style="display: flex;">
+        
+        <SettingsDialogEntryPoint/>
+
+        <button @ref="_buttonFileElementReference"
+                @onclick="() => { AddActiveDropdownKey(_dropdownKeyFile); return Task.CompletedTask; }"
+                class="luth_button"
+                style="position: relative; margin-left: 15px;">
+            File
+            
+            <DropdownDisplay DropdownKey="_dropdownKeyFile"
+                             DropdownPositionKind="DropdownPositionKind.Vertical">
+    
+                <CascadingValue Value="RestoreFocusToButtonDisplayComponentFileAsync" Name="ReturnFocusToParentFuncAsync">
+                    <MenuDisplay MenuRecord="_menuFile"/>
+                </CascadingValue>
+            </DropdownDisplay>
+        </button>
+
+        <StartupControlsDisplay/>
+    </div>
+</ContextBoundary>

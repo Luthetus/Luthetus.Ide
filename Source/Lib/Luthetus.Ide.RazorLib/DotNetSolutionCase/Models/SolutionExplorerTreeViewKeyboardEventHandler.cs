@@ -1,35 +1,34 @@
 ﻿using Fluxor;
-using Luthetus.Common.RazorLib.ComponentRenderers;
-using Luthetus.Common.RazorLib.Keyboard;
-using Luthetus.Common.RazorLib.Menu;
-using Luthetus.Common.RazorLib.Notification;
-using Luthetus.Common.RazorLib.TreeView;
-using Luthetus.Common.RazorLib.TreeView.Commands;
-using Luthetus.Common.RazorLib.TreeView.Events;
-using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
-using Luthetus.Ide.RazorLib.DotNetSolutionCase;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.Keyboard.Models;
+using Luthetus.Common.RazorLib.Menu.Models;
+using Luthetus.Common.RazorLib.Notification.Models;
+using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
-using Luthetus.Ide.RazorLib.EditorCase;
-using Luthetus.Ide.RazorLib.MenuCase;
-using Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
+using Luthetus.Ide.RazorLib.EditorCase.States;
+using Luthetus.Ide.RazorLib.MenuCase.Models;
+using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.Models;
 
 public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
+    private readonly EditorSync _editorSync;
     private readonly IMenuOptionsFactory _menuOptionsFactory;
     private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
     private readonly IDispatcher _dispatcher;
     private readonly ITreeViewService _treeViewService;
 
     public SolutionExplorerTreeViewKeyboardEventHandler(
+        EditorSync editorSync,
         IMenuOptionsFactory menuOptionsFactory,
         ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
         IDispatcher dispatcher,
         ITreeViewService treeViewService)
         : base(treeViewService)
     {
+        _editorSync = editorSync;
         _menuOptionsFactory = menuOptionsFactory;
         _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
         _dispatcher = dispatcher;
@@ -198,7 +197,8 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         if (activeNode is not TreeViewNamespacePath treeViewNamespacePath)
             return;
 
-        _dispatcher.Dispatch(new EditorRegistry.OpenInEditorAction(
+        _dispatcher.Dispatch(new EditorState.OpenInEditorAction(
+            _editorSync,
             treeViewNamespacePath.Item.AbsolutePath,
             shouldSetFocusToEditor));
 

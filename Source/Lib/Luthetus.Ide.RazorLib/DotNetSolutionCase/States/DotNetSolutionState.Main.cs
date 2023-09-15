@@ -1,10 +1,10 @@
 ﻿using Fluxor;
-using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using System.Collections.Immutable;
 using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
-using Luthetus.Ide.RazorLib.FileSystemCase;
-using Luthetus.Ide.RazorLib.InputFileCase;
-using Luthetus.Common.RazorLib.FileSystem.Interfaces;
+using Luthetus.Ide.RazorLib.FileSystemCase.Models;
+using Luthetus.Ide.RazorLib.InputFileCase.Models;
+using Luthetus.Ide.RazorLib.InputFileCase.States;
+using Luthetus.Common.RazorLib.TreeView.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 
@@ -36,7 +36,7 @@ public partial record DotNetSolutionState(
 
     public static void ShowInputFile(DotNetSolutionSync sync)
     {
-        sync.Dispatcher.Dispatch(new InputFileRegistry.RequestInputFileStateFormAction(
+        sync.Dispatcher.Dispatch(new InputFileState.RequestInputFileStateFormAction(
             "Solution Explorer",
             afp =>
             {

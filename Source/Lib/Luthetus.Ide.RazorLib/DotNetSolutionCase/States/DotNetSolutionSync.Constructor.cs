@@ -1,21 +1,13 @@
-﻿using Luthetus.Common.RazorLib.TreeView;
-using Fluxor;
-using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
-using System.Collections.Immutable;
-using Luthetus.Common.RazorLib.FileSystem.Interfaces;
-using Luthetus.Common.RazorLib.Namespaces;
-using Luthetus.CompilerServices.Lang.DotNetSolution;
-using Luthetus.Common.RazorLib.ComponentRenderers;
-using Luthetus.Common.RazorLib.FileSystem.Classes.LuthetusPath;
-using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
-using Luthetus.Ide.RazorLib.ComponentRenderersCase;
-using Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
-using Luthetus.Ide.RazorLib.TerminalCase;
-using Luthetus.Common.RazorLib;
-using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
-using Luthetus.Ide.RazorLib.WebsiteProjectTemplatesCase;
+﻿using Fluxor;
 using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
 using Luthetus.TextEditor.RazorLib;
+using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
+using Luthetus.Ide.RazorLib.TerminalCase.States;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.FileSystem.Models;
+using Luthetus.Common.RazorLib.TreeView.Models;
+using Luthetus.Common.RazorLib.Installation.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 
@@ -27,7 +19,7 @@ public partial class DotNetSolutionSync
     private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
     private readonly ITreeViewService _treeViewService;
     private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
-    private readonly IState<TerminalSessionRegistry> _terminalSessionsStateWrap;
+    private readonly IState<TerminalSessionState> _terminalSessionsStateWrap;
     private readonly LuthetusHostingInformation _luthetusHostingInformation;
     private readonly ITextEditorService _textEditorService;
 
@@ -38,10 +30,10 @@ public partial class DotNetSolutionSync
         ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
         ITreeViewService treeViewService,
         IState<DotNetSolutionState> dotNetSolutionStateWrap,
-        IBackgroundTaskService backgroundTaskService,
-        IState<TerminalSessionRegistry> terminalSessionsStateWrap,
+        IState<TerminalSessionState> terminalSessionsStateWrap,
         LuthetusHostingInformation luthetusHostingInformation,
         ITextEditorService textEditorService,
+        IBackgroundTaskService backgroundTaskService,
         IDispatcher dispatcher)
     {
         _fileSystemProvider = fileSystemProvider;
@@ -50,10 +42,11 @@ public partial class DotNetSolutionSync
         _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
         _treeViewService = treeViewService;
         _dotNetSolutionStateWrap = dotNetSolutionStateWrap;
-        BackgroundTaskService = backgroundTaskService;
         _terminalSessionsStateWrap = terminalSessionsStateWrap;
         _luthetusHostingInformation = luthetusHostingInformation;
         _textEditorService = textEditorService;
+
+        BackgroundTaskService = backgroundTaskService;
         Dispatcher = dispatcher;
     }
 

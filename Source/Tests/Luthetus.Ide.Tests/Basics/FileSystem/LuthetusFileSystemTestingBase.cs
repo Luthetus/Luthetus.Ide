@@ -1,11 +1,10 @@
 ﻿using Fluxor;
-using Luthetus.Common.RazorLib;
-using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
-using Luthetus.Common.RazorLib.Clipboard;
-using Luthetus.Common.RazorLib.FileSystem.Classes.Local;
-using Luthetus.Common.RazorLib.FileSystem.Interfaces;
-using Luthetus.Common.RazorLib.Storage;
-using Luthetus.TextEditor.RazorLib;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
+using Luthetus.Common.RazorLib.Clipboard.Models;
+using Luthetus.Common.RazorLib.FileSystem.Models;
+using Luthetus.Common.RazorLib.Installation.Models;
+using Luthetus.Common.RazorLib.Storage.Models;
+using Luthetus.TextEditor.RazorLib.Installation.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 
@@ -57,7 +56,7 @@ public class LuthetusFileSystemTestingBase
         services.AddFluxor(options => options.ScanAssemblies(
             typeof(LuthetusCommonOptions).Assembly,
             typeof(LuthetusTextEditorOptions).Assembly,
-            typeof(RazorLib.InstallationCase.ServiceCollectionExtensions).Assembly));
+            typeof(RazorLib.InstallationCase.Models.ServiceCollectionExtensions).Assembly));
 
         ServiceProvider = services.BuildServiceProvider();
 

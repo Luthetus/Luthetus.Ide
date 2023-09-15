@@ -1,11 +1,5 @@
 ﻿using Fluxor;
-using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
-using System.Collections.Immutable;
-using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
-using Luthetus.Ide.RazorLib.FileSystemCase;
-using Luthetus.Ide.RazorLib.InputFileCase;
-using Luthetus.Common.RazorLib.FileSystem.Interfaces;
-using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
 using static Luthetus.Ide.RazorLib.DotNetSolutionCase.States.DotNetSolutionSync;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
@@ -55,7 +49,7 @@ public partial record DotNetSolutionState
                     // so simultaneously, because the first background task would've made
                     // its replacement before the second could start.
                     inTask.Sync.Dispatcher.Dispatch(DotNetSolutionSync.ConstructModelReplacement(
-                        inState.DotNetSolutionModelKey,
+                        outSln.DotNetSolutionModelKey,
                         outSln));
                 });
 
@@ -108,7 +102,7 @@ public partial record DotNetSolutionState
                         return;
 
                     inTask.Sync.Dispatcher.Dispatch(DotNetSolutionSync.ConstructModelReplacement(
-                        inState.DotNetSolutionModelKey,
+                        outDotNetSolution.DotNetSolutionModelKey,
                         outDotNetSolution));
                 });
 

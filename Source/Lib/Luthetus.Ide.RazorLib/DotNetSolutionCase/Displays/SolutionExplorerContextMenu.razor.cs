@@ -1,35 +1,34 @@
 ﻿using Fluxor;
-using Luthetus.Common.RazorLib.ComponentRenderers;
-using Luthetus.Common.RazorLib.Dialog;
 using Luthetus.Common.RazorLib.Dimensions;
-using Luthetus.Common.RazorLib.Dropdown;
-using Luthetus.Common.RazorLib.Menu;
-using Luthetus.Common.RazorLib.Namespaces;
-using Luthetus.Common.RazorLib.Notification;
-using Luthetus.Common.RazorLib.Store.DialogCase;
-using Luthetus.Common.RazorLib.TreeView;
-using Luthetus.Common.RazorLib.TreeView.Commands;
-using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
-using Luthetus.Ide.RazorLib.DotNetSolutionCase;
-using Luthetus.Ide.RazorLib.InputFileCase;
-using Luthetus.Ide.RazorLib.CommandLineCase;
-using Luthetus.Ide.RazorLib.CSharpProjectFormCase;
-using Luthetus.Ide.RazorLib.FileSystemCase;
-using Luthetus.Ide.RazorLib.MenuCase;
-using Luthetus.Ide.RazorLib.ProgramExecutionCase;
-using Luthetus.Ide.RazorLib.TerminalCase;
-using Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
+using Luthetus.Ide.RazorLib.CommandLineCase.Models;
+using Luthetus.Ide.RazorLib.FileSystemCase.Models;
+using Luthetus.Ide.RazorLib.MenuCase.Models;
+using Luthetus.Ide.RazorLib.TerminalCase.Models;
+using Luthetus.Ide.RazorLib.TerminalCase.States;
+using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
+using Luthetus.Ide.RazorLib.ProgramExecutionCase.States;
+using Luthetus.Ide.RazorLib.CSharpProjectFormCase.Displays;
+using Luthetus.Ide.RazorLib.InputFileCase.States;
+using Luthetus.Ide.RazorLib.InputFileCase.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.Dialog.Models;
+using Luthetus.Common.RazorLib.Dropdown.Models;
+using Luthetus.Common.RazorLib.Menu.Models;
+using Luthetus.Common.RazorLib.Notification.Models;
+using Luthetus.Common.RazorLib.TreeView.Models;
+using Luthetus.Common.RazorLib.Namespaces.Models;
+using Luthetus.Common.RazorLib.Dialog.States;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
 
 public partial class SolutionExplorerContextMenu : ComponentBase
 {
     [Inject]
-    private IState<TerminalSessionRegistry> TerminalSessionsStateWrap { get; set; } = null!;
+    private IState<TerminalSessionState> TerminalSessionsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -223,7 +222,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             new MenuOptionRecord(
                 "Set as Startup Project",
                 MenuOptionKind.Other,
-                () => Dispatcher.Dispatch(new ProgramExecutionRegistry.SetStartupProjectAbsolutePathAction(
+                () => Dispatcher.Dispatch(new ProgramExecutionState.SetStartupProjectAbsolutePathAction(
                     treeViewModel.Item.AbsolutePath))),
             MenuOptionsFactory.RemoveCSharpProjectReferenceFromSolution(
                 treeViewSolution,
@@ -361,7 +360,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
     private void AddExistingProjectToSolution(DotNetSolutionModel dotNetSolutionModel)
     {
-        Dispatcher.Dispatch(new InputFileRegistry.RequestInputFileStateFormAction(
+        Dispatcher.Dispatch(new InputFileState.RequestInputFileStateFormAction(
             "Existing C# Project to add to solution",
             async afp =>
             {

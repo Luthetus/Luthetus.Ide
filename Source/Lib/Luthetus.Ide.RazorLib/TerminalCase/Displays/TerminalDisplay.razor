@@ -1,0 +1,41 @@
+﻿@using Luthetus.Ide.RazorLib.ContextCase
+@using Luthetus.Ide.RazorLib.ContextCase.Displays
+@using Luthetus.Ide.RazorLib.ContextCase.Models;
+@using Luthetus.Ide.RazorLib.TerminalCase
+@using Luthetus.Ide.RazorLib.TerminalCase.Models;
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<ContextBoundary ContextRecord="ContextFacts.TerminalContext"
+                 ClassCssString="luth_ide_terminal-display"
+                 StyleCssString="height: 100%; width: 100%;">
+
+    <div class="luth_ide_section-title">
+        Terminal Display
+    </div>
+
+    <div class="luth_ide_section-body"
+         style="width: 100%;">
+        
+        <div class="luth_ide_terminal-tabs-container">
+            @for (var i = 0; i < TerminalSessionFacts.WELL_KNOWN_TERMINAL_SESSION_KEYS.Length; i++)
+            {
+                var index = i;
+                var wellKnownTerminalCommandKey = TerminalSessionFacts.WELL_KNOWN_TERMINAL_SESSION_KEYS[index];
+                
+                <TerminalWellKnownTab WellKnownTerminalSessionKey="@wellKnownTerminalCommandKey"/>
+                
+                if (i != TerminalSessionFacts.WELL_KNOWN_TERMINAL_SESSION_KEYS.Length - 1)
+                {
+                    <text>
+                        &nbsp;
+                        &nbsp;
+                        &nbsp;
+                    </text>
+                }
+            }
+        </div>
+
+        <TerminalOutputDisplay TerminalSessionKey="WellKnownTerminalSessionsStateWrap.Value.ActiveTerminalSessionKey"/>
+    </div>
+</ContextBoundary>

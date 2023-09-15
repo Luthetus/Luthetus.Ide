@@ -1,18 +1,16 @@
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
-using Luthetus.Common.RazorLib.ComponentRenderers;
-using Luthetus.Common.RazorLib.Dialog;
-using Luthetus.Common.RazorLib.Store.AppOptionsCase;
-using Luthetus.Common.RazorLib.Store.DialogCase;
-using Luthetus.Common.RazorLib.Store.DropdownCase;
-using Luthetus.Common.RazorLib.TreeView;
-using Luthetus.Common.RazorLib.TreeView.Commands;
-using Luthetus.Ide.RazorLib.DotNetSolutionCase;
-using Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.Dialog.Models;
+using Luthetus.Common.RazorLib.Dialog.States;
+using Luthetus.Common.RazorLib.Dropdown.States;
+using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
-using Luthetus.Ide.RazorLib.DotNetSolutionCase.Views;
-using Luthetus.Ide.RazorLib.MenuCase;
+using Luthetus.Ide.RazorLib.DotNetSolutionCase.Viewables;
+using Luthetus.Ide.RazorLib.EditorCase.States;
+using Luthetus.Ide.RazorLib.MenuCase.Models;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
@@ -33,6 +31,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
     [Inject]
     private DotNetSolutionSync DotNetSolutionSync { get; set; } = null!;
+    [Inject]
+    private EditorSync EditorSync { get; set; } = null!;
 
     private ITreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
     private SolutionExplorerTreeViewKeyboardEventHandler _solutionExplorerTreeViewKeymap = null!;
@@ -48,6 +48,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         DotNetSolutionStateWrap.StateChanged += DotNetSolutionStateWrapOnStateChanged;
 
         _solutionExplorerTreeViewKeymap = new SolutionExplorerTreeViewKeyboardEventHandler(
+            EditorSync,
             MenuOptionsFactory,
             LuthetusCommonComponentRenderers,
             Dispatcher,
@@ -55,6 +56,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 
         _solutionExplorerTreeViewMouseEventHandler =
             new SolutionExplorerTreeViewMouseEventHandler(
+                EditorSync,
                 Dispatcher,
                 TreeViewService);
 
@@ -85,8 +87,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             new Dictionary<string, object?>
             {
                 {
-                    nameof(DotNetSolutionFormDisplay.View),
-                    new DotNetSolutionFormView()
+                    nameof(DotNetSolutionFormDisplay.Viewable),
+                    new DotNetSolutionFormViewable()
                 }
             },
             null)
