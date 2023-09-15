@@ -3,21 +3,13 @@ using Luthetus.Ide.RazorLib.ViewsCase.Models;
 
 namespace Luthetus.Ide.RazorLib.FooterCase.States;
 
-[FeatureState]
-public record FooterRegistry(View ActiveView)
+public partial record FooterState
 {
-    public FooterRegistry() : this(ViewFacts.TerminalsView)
-    {
-
-    }
-
-    public record SetFooterStateViewAction(View View);
-
-    private class FooterStateReducer
+    private class Reducer
     {
         [ReducerMethod]
-        public static FooterRegistry ReduceSetFooterStateViewAction(
-            FooterRegistry inFooterState,
+        public static FooterState ReduceSetFooterStateViewAction(
+            FooterState inFooterState,
             SetFooterStateViewAction setFooterStateViewAction)
         {
             return inFooterState with
