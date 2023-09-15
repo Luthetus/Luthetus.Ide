@@ -49,7 +49,7 @@ public partial record DotNetSolutionState
                     // so simultaneously, because the first background task would've made
                     // its replacement before the second could start.
                     inTask.Sync.Dispatcher.Dispatch(DotNetSolutionSync.ConstructModelReplacement(
-                        inState.DotNetSolutionModelKey,
+                        outSln.DotNetSolutionModelKey,
                         outSln));
                 });
 
@@ -102,7 +102,7 @@ public partial record DotNetSolutionState
                         return;
 
                     inTask.Sync.Dispatcher.Dispatch(DotNetSolutionSync.ConstructModelReplacement(
-                        inState.DotNetSolutionModelKey,
+                        outDotNetSolution.DotNetSolutionModelKey,
                         outDotNetSolution));
                 });
 

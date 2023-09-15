@@ -219,7 +219,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
 
                 return Task.FromResult(new TabGroupLoadTabEntriesOutput(tabEntryNoTypes));
             },
-            CompilerServiceExplorerRegistry.TabGroupKey);
+            CompilerServiceExplorerState.TabGroupKey);
 
         Dispatcher.Dispatch(new TabRegistry.RegisterGroupAction(tabGroup));
 

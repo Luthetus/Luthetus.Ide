@@ -7,19 +7,19 @@ using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.Viewables;
 namespace Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.States;
 
 [FeatureState]
-public partial class CompilerServiceExplorerRegistry
+public partial class CompilerServiceExplorerState
 {
     public static readonly TreeViewStateKey TreeViewCompilerServiceExplorerContentStateKey = TreeViewStateKey.NewKey();
     public static readonly TabGroupKey TabGroupKey = TabGroupKey.NewKey();
 
-    private CompilerServiceExplorerRegistry()
+    public CompilerServiceExplorerState()
     {
         Model = new CompilerServiceExplorerModel();
         GraphicalView = new CompilerServiceExplorerGraphicalViewable();
         ReflectionView = new CompilerServiceExplorerReflectionViewable();
     }
 
-    private CompilerServiceExplorerRegistry(
+    public CompilerServiceExplorerState(
         CompilerServiceExplorerModel model,
         CompilerServiceExplorerGraphicalViewable graphicalView,
         CompilerServiceExplorerReflectionViewable reflectionView)

@@ -11,14 +11,14 @@ using Luthetus.Ide.RazorLib.MenuCase.Models;
 using Luthetus.TextEditor.RazorLib.Store.Group;
 using Luthetus.TextEditor.RazorLib.Store.ViewModel;
 using Microsoft.AspNetCore.Components;
-using static Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.States.CompilerServiceExplorerRegistry;
+using static Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.States.CompilerServiceExplorerState;
 
 namespace Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.Displays;
 
 public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IState<CompilerServiceExplorerRegistry> CompilerServiceExplorerStateWrap { get; set; } = null!;
+    private IState<CompilerServiceExplorerState> CompilerServiceExplorerStateWrap { get; set; } = null!;
     [Inject]
     private IState<TextEditorViewModelRegistry> TextEditorViewModelRegistryWrap { get; set; } = null!;
     [Inject]
@@ -35,6 +35,8 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
     private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
     [Inject]
     private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
+    [Inject]
+    private CompilerServiceExplorerSync CompilerServiceExplorerSync { get; set; } = null!;
 
     private ITreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
     private CompilerServiceExplorerTreeViewKeyboardEventHandler _compilerServiceExplorerTreeViewKeymap = null!;
@@ -106,7 +108,8 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 
     private void ReloadOnClick()
     {
-        Dispatcher.Dispatch(new SetCompilerServiceExplorerAction());
+        Dispatcher.Dispatch(new SetCompilerServiceExplorerTreeViewTask(
+            CompilerServiceExplorerSync));
     }
 
     public void Dispose()

@@ -29,6 +29,7 @@ using Luthetus.Ide.RazorLib.GitCase.Displays;
 using Luthetus.Ide.RazorLib.CSharpProjectFormCase.Displays;
 using Luthetus.Ide.RazorLib.InputFileCase.Displays;
 using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Displays;
+using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.States;
 
 namespace Luthetus.Ide.RazorLib.InstallationCase.Models;
 
@@ -57,6 +58,7 @@ public static class ServiceCollectionExtensions
             .AddSingleton(ideOptions)
             .AddSingleton<ILuthetusIdeComponentRenderers>(_ideComponentRenderers)
             .AddScoped<DotNetSolutionSync>()
+            .AddScoped<CompilerServiceExplorerSync>()
             .AddLuthetusIdeFileSystem(hostingInformation, ideOptions)
             .AddLuthetusIdeClassLibServices(hostingInformation);
     }

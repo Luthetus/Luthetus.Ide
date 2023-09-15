@@ -30,10 +30,10 @@ public partial class DotNetSolutionSync
         ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
         ITreeViewService treeViewService,
         IState<DotNetSolutionState> dotNetSolutionStateWrap,
-        IBackgroundTaskService backgroundTaskService,
         IState<TerminalSessionRegistry> terminalSessionsStateWrap,
         LuthetusHostingInformation luthetusHostingInformation,
         ITextEditorService textEditorService,
+        IBackgroundTaskService backgroundTaskService,
         IDispatcher dispatcher)
     {
         _fileSystemProvider = fileSystemProvider;
@@ -42,10 +42,11 @@ public partial class DotNetSolutionSync
         _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
         _treeViewService = treeViewService;
         _dotNetSolutionStateWrap = dotNetSolutionStateWrap;
-        BackgroundTaskService = backgroundTaskService;
         _terminalSessionsStateWrap = terminalSessionsStateWrap;
         _luthetusHostingInformation = luthetusHostingInformation;
         _textEditorService = textEditorService;
+
+        BackgroundTaskService = backgroundTaskService;
         Dispatcher = dispatcher;
     }
 
