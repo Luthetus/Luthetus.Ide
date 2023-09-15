@@ -1,5 +1,4 @@
 ﻿using Fluxor;
-using Luthetus.Common.RazorLib;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.BaseTypes;
 using Luthetus.Common.RazorLib.ComponentRenderers;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
@@ -9,11 +8,6 @@ using Luthetus.Common.RazorLib.Store.PanelCase;
 using Luthetus.Common.RazorLib.Store.TabCase;
 using Luthetus.Common.RazorLib.Store.ThemeCase;
 using Luthetus.Common.RazorLib.TabCase;
-using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase;
-using Luthetus.Ide.RazorLib.ContextCase;
-using Luthetus.Ide.RazorLib.FolderExplorerCase;
-using Luthetus.Ide.RazorLib.NugetCase;
-using Luthetus.Ide.RazorLib.TerminalCase;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Store.Find;
 using Microsoft.AspNetCore.Components;

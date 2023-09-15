@@ -4,7 +4,6 @@ using Luthetus.Common.RazorLib.Keyboard;
 using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.Common.RazorLib.TreeView.Events;
-using Luthetus.Ide.RazorLib.EditorCase;
 using Luthetus.Ide.RazorLib.EditorCase.States;
 using Luthetus.Ide.RazorLib.MenuCase.Models;
 using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;

@@ -8,7 +8,6 @@ using Luthetus.Common.RazorLib.StateHasChangedBoundaryCase;
 using Luthetus.Common.RazorLib.Store.AppOptionsCase;
 using Luthetus.Common.RazorLib.Store.DragCase;
 using Luthetus.Common.RazorLib.Store.PanelCase;
-using Luthetus.Ide.RazorLib.DotNetSolutionCase;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 using Luthetus.TextEditor.RazorLib;
 using Microsoft.AspNetCore.Components;
