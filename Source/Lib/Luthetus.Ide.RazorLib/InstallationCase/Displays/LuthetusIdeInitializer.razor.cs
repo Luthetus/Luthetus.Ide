@@ -1,6 +1,4 @@
 ﻿using Fluxor;
-using Luthetus.TextEditor.RazorLib;
-using Luthetus.TextEditor.RazorLib.Store.Find;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
@@ -23,6 +21,8 @@ using Luthetus.Common.RazorLib.Panel.States;
 using Luthetus.Common.RazorLib.Theme.States;
 using Luthetus.Common.RazorLib.Icons.Displays.Codicon;
 using Luthetus.Common.RazorLib.TabCase.States;
+using Luthetus.TextEditor.RazorLib.Installation.Models;
+using Luthetus.TextEditor.RazorLib.Find.States;
 
 namespace Luthetus.Ide.RazorLib.InstallationCase.Displays;
 

@@ -2,7 +2,7 @@ using Fluxor;
 using Luthetus.Common.RazorLib.Dimensions;
 using Luthetus.Common.RazorLib.FileSystem.Models;
 using Luthetus.TextEditor.RazorLib;
-using Luthetus.TextEditor.RazorLib.ViewModel.InternalClasses;
+using Luthetus.TextEditor.RazorLib.TextEditorCase.Viewables.InternalClasses;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 

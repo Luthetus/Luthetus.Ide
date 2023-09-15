@@ -8,8 +8,8 @@ using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.Models;
 using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.States;
 using Luthetus.Ide.RazorLib.EditorCase.States;
 using Luthetus.Ide.RazorLib.MenuCase.Models;
-using Luthetus.TextEditor.RazorLib.Store.Group;
-using Luthetus.TextEditor.RazorLib.Store.ViewModel;
+using Luthetus.TextEditor.RazorLib.Group.States;
+using Luthetus.TextEditor.RazorLib.TextEditorCase.States;
 using Microsoft.AspNetCore.Components;
 using static Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.States.CompilerServiceExplorerState;
 

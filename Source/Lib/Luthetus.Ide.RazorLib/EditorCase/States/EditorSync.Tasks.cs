@@ -8,9 +8,9 @@ using Luthetus.Ide.RazorLib.FileSystemCase.Models;
 using Luthetus.Ide.RazorLib.InputFileCase.Models;
 using Luthetus.Ide.RazorLib.InputFileCase.States;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
-using Luthetus.TextEditor.RazorLib.Lexing;
-using Luthetus.TextEditor.RazorLib.Model;
-using Luthetus.TextEditor.RazorLib.ViewModel.InternalClasses;
+using Luthetus.TextEditor.RazorLib.Lexing.Models;
+using Luthetus.TextEditor.RazorLib.TextEditorCase.Model;
+using Luthetus.TextEditor.RazorLib.TextEditorCase.Viewables.InternalClasses;
 using System.Collections.Immutable;
 using static Luthetus.Ide.RazorLib.EditorCase.States.EditorState;
 
