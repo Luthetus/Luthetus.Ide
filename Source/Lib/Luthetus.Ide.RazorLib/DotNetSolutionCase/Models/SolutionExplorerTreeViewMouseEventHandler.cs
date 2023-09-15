@@ -3,7 +3,7 @@ using Luthetus.Common.RazorLib.TreeView;
 using Luthetus.Common.RazorLib.TreeView.Commands;
 using Luthetus.Common.RazorLib.TreeView.Events;
 using Luthetus.Ide.RazorLib.EditorCase;
-using Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
+using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.Models;
 

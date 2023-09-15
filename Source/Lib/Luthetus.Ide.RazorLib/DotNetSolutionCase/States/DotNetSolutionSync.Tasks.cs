@@ -13,12 +13,12 @@ using Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
 using Luthetus.Ide.RazorLib.TerminalCase;
 using Luthetus.Common.RazorLib;
 using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
-using Luthetus.Ide.RazorLib.WebsiteProjectTemplatesCase;
 using static Luthetus.Ide.RazorLib.DotNetSolutionCase.States.DotNetSolutionState;
 using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
 using Luthetus.TextEditor.RazorLib.Lexing;
 using Luthetus.TextEditor.RazorLib.Store.Model;
 using Luthetus.TextEditor.RazorLib;
+using Luthetus.Ide.RazorLib.WebsiteProjectTemplatesCase.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 

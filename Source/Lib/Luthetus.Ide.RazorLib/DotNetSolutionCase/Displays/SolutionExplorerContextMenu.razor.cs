@@ -13,16 +13,17 @@ using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase;
 using Luthetus.Ide.RazorLib.InputFileCase;
-using Luthetus.Ide.RazorLib.CommandLineCase;
 using Luthetus.Ide.RazorLib.CSharpProjectFormCase;
-using Luthetus.Ide.RazorLib.FileSystemCase;
-using Luthetus.Ide.RazorLib.MenuCase;
-using Luthetus.Ide.RazorLib.ProgramExecutionCase;
-using Luthetus.Ide.RazorLib.TerminalCase;
-using Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
+using Luthetus.Ide.RazorLib.CommandLineCase.Models;
+using Luthetus.Ide.RazorLib.FileSystemCase.Models;
+using Luthetus.Ide.RazorLib.MenuCase.Models;
+using Luthetus.Ide.RazorLib.TerminalCase.Models;
+using Luthetus.Ide.RazorLib.TerminalCase.States;
+using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
+using Luthetus.Ide.RazorLib.ProgramExecutionCase.States;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
 

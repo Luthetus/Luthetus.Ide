@@ -12,7 +12,7 @@ using Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.Views;
-using Luthetus.Ide.RazorLib.MenuCase;
+using Luthetus.Ide.RazorLib.MenuCase.Models;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
@@ -86,7 +86,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             {
                 {
                     nameof(DotNetSolutionFormDisplay.View),
-                    new DotNetSolutionFormView()
+                    new DotNetSolutionFormViewable()
                 }
             },
             null)

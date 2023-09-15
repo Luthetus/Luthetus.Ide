@@ -11,8 +11,8 @@ using Luthetus.Ide.RazorLib.DotNetSolutionCase;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 using Luthetus.Ide.RazorLib.EditorCase;
-using Luthetus.Ide.RazorLib.MenuCase;
-using Luthetus.Ide.RazorLib.TreeViewImplementationsCase;
+using Luthetus.Ide.RazorLib.MenuCase.Models;
+using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.Models;
 

@@ -1,0 +1,20 @@
+﻿@    using Fluxor.Blazor.Web.Components
+
+@inherits FluxorComponent
+
+@{
+    var contextStates = ContextStatesWrap.Value;
+}
+
+<div class="luth_ide_context-initializer">
+
+    @if (contextStates.IsSelectingInspectionTarget)
+    {
+        foreach (var measuredHtmlElementDimensionsTuple in contextStates.MeasuredHtmlElementDimensionsForSelectingInspectionTargetTuples)
+        {
+            <ContextBoundaryOverlay ContextRecord="measuredHtmlElementDimensionsTuple.contextRecord"
+                                    ContextBoundaryHeirarchy="measuredHtmlElementDimensionsTuple.contextBoundaryHeirarchy"
+                                    MeasuredHtmlElementDimensions="measuredHtmlElementDimensionsTuple.measuredHtmlElementDimensions" />
+        }
+    }
+</div>

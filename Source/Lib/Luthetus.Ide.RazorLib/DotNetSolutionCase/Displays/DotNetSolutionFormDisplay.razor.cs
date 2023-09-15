@@ -7,14 +7,15 @@ using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.Notification;
 using Luthetus.Common.RazorLib.Store.DialogCase;
 using Luthetus.Ide.RazorLib.InputFileCase;
-using Luthetus.Ide.RazorLib.CommandLineCase;
-using Luthetus.Ide.RazorLib.FileSystemCase;
-using Luthetus.Ide.RazorLib.TerminalCase;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.Views;
 using Luthetus.Common.RazorLib.Dialog;
+using Luthetus.Ide.RazorLib.CommandLineCase.Models;
+using Luthetus.Ide.RazorLib.FileSystemCase.Models;
+using Luthetus.Ide.RazorLib.TerminalCase.Models;
+using Luthetus.Ide.RazorLib.TerminalCase.States;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
 
@@ -39,7 +40,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
     public DialogRecord DialogRecord { get; set; } = null!;
     
     [Parameter, EditorRequired]
-    public DotNetSolutionFormView View { get; set; } = null!;
+    public DotNetSolutionFormViewable View { get; set; } = null!;
 
     private string SolutionName => string.IsNullOrWhiteSpace(View.SolutionName)
         ? "{enter solution name}"
@@ -163,7 +164,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
 
         await FileSystemProvider.File.WriteAllTextAsync(
             solutionAbsolutePathString,
-            DotNetSolutionFormView.HackForWebsite_NEW_SOLUTION_TEMPLATE);
+            DotNetSolutionFormViewable.HackForWebsite_NEW_SOLUTION_TEMPLATE);
 
         // Close Dialog
         Dispatcher.Dispatch(new DialogRegistry.DisposeAction(DialogRecord.Key));
