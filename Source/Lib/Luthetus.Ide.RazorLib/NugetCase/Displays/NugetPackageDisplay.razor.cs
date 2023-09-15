@@ -5,12 +5,12 @@ using Luthetus.Common.RazorLib.Notification;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
-using Luthetus.Ide.RazorLib.NugetCase.NugetPackageManagerCase;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 using Luthetus.Ide.RazorLib.CommandLineCase.Models;
 using Luthetus.Ide.RazorLib.NugetCase.Models;
 using Luthetus.Ide.RazorLib.TerminalCase.Models;
 using Luthetus.Ide.RazorLib.TerminalCase.States;
+using Luthetus.Ide.RazorLib.NugetCase.States;
 
 namespace Luthetus.Ide.RazorLib.NugetCase.Displays;
 

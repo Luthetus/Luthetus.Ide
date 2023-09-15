@@ -5,6 +5,8 @@ using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
 using Luthetus.Ide.RazorLib.InputFileCase;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Ide.RazorLib.FileSystemCase.Models;
+using Luthetus.Ide.RazorLib.InputFileCase.Models;
+using Luthetus.Ide.RazorLib.InputFileCase.States;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 

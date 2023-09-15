@@ -1,6 +1,6 @@
-namespace Luthetus.Ide.RazorLib.ContextCase.Models;
+using Luthetus.Ide.RazorLib.KeymapCase.Models;
 
-namespace Luthetus.Ide.RazorLib.ContextCase;
+namespace Luthetus.Ide.RazorLib.ContextCase.Models;
 
 public record ContextRecord(
     ContextKey ContextKey,

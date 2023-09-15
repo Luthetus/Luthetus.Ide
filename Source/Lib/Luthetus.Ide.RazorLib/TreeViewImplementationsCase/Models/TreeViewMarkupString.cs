@@ -1,7 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
-using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.TreeViewImplementations;
+using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Displays;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;

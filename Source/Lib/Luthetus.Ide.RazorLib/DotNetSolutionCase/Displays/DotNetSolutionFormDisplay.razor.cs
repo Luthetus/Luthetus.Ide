@@ -10,12 +10,14 @@ using Luthetus.Ide.RazorLib.InputFileCase;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
-using Luthetus.Ide.RazorLib.DotNetSolutionCase.Views;
 using Luthetus.Common.RazorLib.Dialog;
 using Luthetus.Ide.RazorLib.CommandLineCase.Models;
 using Luthetus.Ide.RazorLib.FileSystemCase.Models;
 using Luthetus.Ide.RazorLib.TerminalCase.Models;
 using Luthetus.Ide.RazorLib.TerminalCase.States;
+using Luthetus.Ide.RazorLib.DotNetSolutionCase.Viewables;
+using Luthetus.Ide.RazorLib.InputFileCase.States;
+using Luthetus.Ide.RazorLib.InputFileCase.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
 
@@ -40,17 +42,17 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
     public DialogRecord DialogRecord { get; set; } = null!;
     
     [Parameter, EditorRequired]
-    public DotNetSolutionFormViewable View { get; set; } = null!;
+    public DotNetSolutionFormViewable Viewable { get; set; } = null!;
 
-    private string SolutionName => string.IsNullOrWhiteSpace(View.SolutionName)
+    private string SolutionName => string.IsNullOrWhiteSpace(Viewable.SolutionName)
         ? "{enter solution name}"
-        : View.SolutionName;
+        : Viewable.SolutionName;
 
-    private string ParentDirectoryName => string.IsNullOrWhiteSpace(View.ParentDirectoryName)
+    private string ParentDirectoryName => string.IsNullOrWhiteSpace(Viewable.ParentDirectoryName)
         ? "{enter parent directory name}"
-        : View.ParentDirectoryName;
+        : Viewable.ParentDirectoryName;
 
-    private FormattedCommand FormattedCommand => DotNetCliFacts.FormatDotnetNewSln(View.SolutionName);
+    private FormattedCommand FormattedCommand => DotNetCliFacts.FormatDotnetNewSln(Viewable.SolutionName);
 
     private void RequestInputFileForParentDirectory()
     {
@@ -61,7 +63,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                 if (afp is null)
                     return;
 
-                View.ParentDirectoryName = afp.FormattedInput;
+                Viewable.ParentDirectoryName = afp.FormattedInput;
 
                 await InvokeAsync(StateHasChanged);
             },
@@ -81,8 +83,8 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
     private async Task StartNewDotNetSolutionCommandOnClick()
     {
         var localFormattedCommand = FormattedCommand;
-        var localSolutionName = View.SolutionName;
-        var localParentDirectoryName = View.ParentDirectoryName;
+        var localSolutionName = Viewable.SolutionName;
+        var localParentDirectoryName = Viewable.ParentDirectoryName;
 
         if (string.IsNullOrWhiteSpace(localSolutionName) ||
             string.IsNullOrWhiteSpace(localParentDirectoryName))
@@ -99,10 +101,10 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
         else
         {
             var newDotNetSolutionCommand = new TerminalCommand(
-                View.NewDotNetSolutionTerminalCommandKey,
+                Viewable.NewDotNetSolutionTerminalCommandKey,
                 localFormattedCommand,
-                View.ParentDirectoryName,
-                View.NewDotNetSolutionCancellationTokenSource.Token,
+                Viewable.ParentDirectoryName,
+                Viewable.NewDotNetSolutionCancellationTokenSource.Token,
                 () =>
                 {
                     // Close Dialog

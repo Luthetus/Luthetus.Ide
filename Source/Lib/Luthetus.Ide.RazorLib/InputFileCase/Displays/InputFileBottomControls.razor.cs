@@ -1,6 +1,7 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.Dialog;
 using Luthetus.Common.RazorLib.Store.DialogCase;
+using Luthetus.Ide.RazorLib.InputFileCase.States;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.InputFileCase.Displays;

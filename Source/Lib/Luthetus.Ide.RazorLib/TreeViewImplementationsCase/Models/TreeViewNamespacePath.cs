@@ -3,7 +3,6 @@ using Luthetus.Common.RazorLib.WatchWindow.TreeViewClasses;
 using Luthetus.Common.RazorLib.Namespaces;
 using Luthetus.Common.RazorLib.FileSystem.Interfaces;
 using Luthetus.Common.RazorLib.ComponentRenderers;
-using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Helper;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
 using Luthetus.Ide.RazorLib.FileSystemCase.Models;
 

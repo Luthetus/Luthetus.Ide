@@ -2,7 +2,7 @@ using Fluxor;
 using Luthetus.Common.RazorLib.TabCase;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.Models;
-using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.Views;
+using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.Viewables;
 
 namespace Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.States;
 

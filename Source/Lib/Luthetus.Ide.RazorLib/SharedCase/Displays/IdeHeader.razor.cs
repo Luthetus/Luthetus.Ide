@@ -8,9 +8,11 @@ using Luthetus.Common.RazorLib.Store.DropdownCase;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
-using Luthetus.Ide.RazorLib.DotNetSolutionCase.Views;
+using Luthetus.Ide.RazorLib.DotNetSolutionCase.Viewables;
 using Luthetus.Ide.RazorLib.EditorCase;
+using Luthetus.Ide.RazorLib.EditorCase.States;
 using Luthetus.Ide.RazorLib.FolderExplorerCase;
+using Luthetus.Ide.RazorLib.FolderExplorerCase.States;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 
@@ -131,7 +133,7 @@ public partial class IdeHeader : FluxorComponent
             new Dictionary<string, object?>
             {
                 {
-                    nameof(DotNetSolutionFormDisplay.View),
+                    nameof(DotNetSolutionFormDisplay.Viewable),
                     new DotNetSolutionFormViewable()
                 }
             },

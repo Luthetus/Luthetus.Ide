@@ -11,7 +11,7 @@ using Luthetus.Ide.RazorLib.DotNetSolutionCase;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
-using Luthetus.Ide.RazorLib.DotNetSolutionCase.Views;
+using Luthetus.Ide.RazorLib.DotNetSolutionCase.Viewables;
 using Luthetus.Ide.RazorLib.MenuCase.Models;
 using Microsoft.AspNetCore.Components;
 
@@ -85,7 +85,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             new Dictionary<string, object?>
             {
                 {
-                    nameof(DotNetSolutionFormDisplay.View),
+                    nameof(DotNetSolutionFormDisplay.Viewable),
                     new DotNetSolutionFormViewable()
                 }
             },

@@ -16,6 +16,7 @@ using Luthetus.CompilerServices.Lang.TypeScript;
 using Luthetus.CompilerServices.Lang.Xml;
 using Luthetus.Common.RazorLib.WatchWindow;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
+using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
 
 namespace Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.States;
 

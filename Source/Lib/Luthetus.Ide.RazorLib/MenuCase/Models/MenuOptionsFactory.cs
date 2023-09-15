@@ -15,6 +15,8 @@ using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
 using Luthetus.Ide.RazorLib.FileSystemCase.Models;
 using Luthetus.Ide.RazorLib.TerminalCase.Models;
 using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
+using Luthetus.Ide.RazorLib.InputFileCase.Models;
+using Luthetus.Ide.RazorLib.InputFileCase.States;
 
 namespace Luthetus.Ide.RazorLib.MenuCase.Models;
 

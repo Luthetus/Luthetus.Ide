@@ -9,6 +9,8 @@ using Luthetus.Common.RazorLib.TreeView.Events;
 using Luthetus.Common.RazorLib.TreeView.TreeViewClasses;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
 using Luthetus.Ide.RazorLib.EditorCase;
+using Luthetus.Ide.RazorLib.EditorCase.States;
+using Luthetus.Ide.RazorLib.FolderExplorerCase.States;
 using Luthetus.Ide.RazorLib.MenuCase.Models;
 using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
 

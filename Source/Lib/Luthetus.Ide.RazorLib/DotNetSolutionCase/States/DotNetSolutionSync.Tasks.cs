@@ -19,6 +19,7 @@ using Luthetus.TextEditor.RazorLib.Lexing;
 using Luthetus.TextEditor.RazorLib.Store.Model;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.RazorLib.WebsiteProjectTemplatesCase.Models;
+using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 

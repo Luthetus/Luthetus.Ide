@@ -26,6 +26,8 @@ using Luthetus.Ide.RazorLib.InstallationCase.Models;
 using Luthetus.Ide.RazorLib.TerminalCase.Models;
 using Luthetus.Ide.RazorLib.TerminalCase.States;
 using Luthetus.Ide.RazorLib.WebsiteProjectTemplatesCase.Models;
+using Luthetus.Ide.RazorLib.InputFileCase.Models;
+using Luthetus.Ide.RazorLib.InputFileCase.States;
 
 namespace Luthetus.Ide.RazorLib.CSharpProjectFormCase.Displays;
 
