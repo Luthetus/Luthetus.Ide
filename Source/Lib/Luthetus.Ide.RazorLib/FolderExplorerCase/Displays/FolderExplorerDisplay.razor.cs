@@ -16,7 +16,7 @@ namespace Luthetus.Ide.RazorLib.FolderExplorerCase.Displays;
 public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IState<FolderExplorerRegistry> FolderExplorerStateWrap { get; set; } = null!;
+    private IState<FolderExplorerState> FolderExplorerStateWrap { get; set; } = null!;
     [Inject]
     private IState<AppOptionsRegistry> AppOptionsRegistryWrap { get; set; } = null!;
     [Inject]
@@ -31,6 +31,8 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
     [Inject]
     private EditorSync EditorSync { get; set; } = null!;
+    [Inject]
+    private FolderExplorerSync FolderExplorerSync { get; set; } = null!;
 
     private FolderExplorerTreeViewMouseEventHandler _folderExplorerTreeViewMouseEventHandler = null!;
     private FolderExplorerTreeViewKeyboardEventHandler _folderExplorerTreeViewKeyboardEventHandler = null!;

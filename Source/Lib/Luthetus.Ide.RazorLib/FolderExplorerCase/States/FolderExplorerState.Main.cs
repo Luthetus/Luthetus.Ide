@@ -8,27 +8,31 @@ using Luthetus.Ide.RazorLib.InputFileCase.Models;
 namespace Luthetus.Ide.RazorLib.FolderExplorerCase.States;
 
 [FeatureState]
-public partial record FolderExplorerRegistry(
+public partial record FolderExplorerState(
     IAbsolutePath? AbsolutePath,
     bool IsLoadingFolderExplorer)
 {
     public static readonly TreeViewStateKey TreeViewFolderExplorerContentStateKey = TreeViewStateKey.NewKey();
 
-    private FolderExplorerRegistry() : this(
+    private FolderExplorerState() : this(
         default,
         false)
     {
 
     }
 
-    public static void ShowInputFile(IDispatcher dispatcher)
+    public static void ShowInputFile(FolderExplorerSync folderExplorerSync)
     {
-        dispatcher.Dispatch(new InputFileRegistry.RequestInputFileStateFormAction(
+        folderExplorerSync.Dispatcher.Dispatch(new InputFileRegistry.RequestInputFileStateFormAction(
             "Folder Explorer",
             afp =>
             {
                 if (afp is not null)
-                    dispatcher.Dispatch(new SetFolderExplorerAction(afp));
+                {
+                    folderExplorerSync.Dispatcher.Dispatch(new SetFolderExplorerAction(
+                        folderExplorerSync,
+                        afp));
+                }
 
                 return Task.CompletedTask;
             },

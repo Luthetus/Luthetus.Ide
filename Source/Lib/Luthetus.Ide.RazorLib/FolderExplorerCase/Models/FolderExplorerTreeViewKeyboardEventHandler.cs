@@ -217,11 +217,11 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         await treeViewModel.LoadChildrenAsync();
 
         _treeViewService.ReRenderNode(
-            FolderExplorerRegistry.TreeViewFolderExplorerContentStateKey,
+            FolderExplorerState.TreeViewFolderExplorerContentStateKey,
             treeViewModel);
 
         _treeViewService.MoveUp(
-            FolderExplorerRegistry.TreeViewFolderExplorerContentStateKey,
+            FolderExplorerState.TreeViewFolderExplorerContentStateKey,
             false);
     }
 }

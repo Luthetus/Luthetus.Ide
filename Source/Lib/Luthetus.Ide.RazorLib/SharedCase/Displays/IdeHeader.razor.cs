@@ -23,6 +23,8 @@ public partial class IdeHeader : FluxorComponent
     private DotNetSolutionSync DotNetSolutionSync { get; set; } = null!;
     [Inject]
     private EditorSync EditorSync { get; set; } = null!;
+    [Inject]
+    private FolderExplorerSync FolderExplorerSync { get; set; } = null!;
 
     private DropdownKey _dropdownKeyFile = DropdownKey.NewKey();
     private MenuRecord _menuFile = new(ImmutableArray<MenuOptionRecord>.Empty);
@@ -68,7 +70,7 @@ public partial class IdeHeader : FluxorComponent
             var menuOptionOpenDirectory = new MenuOptionRecord(
                 "Directory",
                 MenuOptionKind.Other,
-                () => FolderExplorerRegistry.ShowInputFile(Dispatcher));
+                () => FolderExplorerState.ShowInputFile(FolderExplorerSync));
 
             var menuOptionOpenCSharpProject = new MenuOptionRecord(
                 "C# Project - TODO: Adhoc Sln",

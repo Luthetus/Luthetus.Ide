@@ -23,7 +23,7 @@
             if (folderExplorerState.AbsolutePath is null)
             {
                 <button class="luth_button"
-                        @onclick="() => FolderExplorerRegistry.ShowInputFile(Dispatcher)">
+                        @onclick="() => FolderExplorerState.ShowInputFile(FolderExplorerSync)">
                     Open Folder
                 </button>
             }
@@ -32,7 +32,7 @@
                 <CascadingValue Name="LuthetusTreeViewIconWidth" Value="AppOptionsRegistryWrap.Value.Options.IconSizeInPixels">
                     <CascadingValue Name="LuthetusTreeViewIconHeight" Value="AppOptionsRegistryWrap.Value.Options.IconSizeInPixels">
                         <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
-                            <TreeViewStateDisplay TreeViewStateKey="FolderExplorerRegistry.TreeViewFolderExplorerContentStateKey"
+                            <TreeViewStateDisplay TreeViewStateKey="FolderExplorerState.TreeViewFolderExplorerContentStateKey"
                                                   CssStyleString="height: 100%;"
                                                   OnContextMenuFunc="OnTreeViewContextMenuFunc"
                                                   TreeViewKeyboardEventHandler="_folderExplorerTreeViewKeyboardEventHandler"
