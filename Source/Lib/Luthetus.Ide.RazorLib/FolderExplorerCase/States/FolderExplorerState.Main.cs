@@ -24,6 +24,7 @@ public partial record FolderExplorerState(
     public static void ShowInputFile(FolderExplorerSync folderExplorerSync)
     {
         folderExplorerSync.Dispatcher.Dispatch(new InputFileState.RequestInputFileStateFormAction(
+            folderExplorerSync.InputFileSync,
             "Folder Explorer",
             afp =>
             {

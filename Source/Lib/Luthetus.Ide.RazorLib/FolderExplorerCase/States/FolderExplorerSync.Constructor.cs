@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystem.Models;
 using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
+using Luthetus.Ide.RazorLib.InputFileCase.States;
 
 namespace Luthetus.Ide.RazorLib.FolderExplorerCase.States;
 
@@ -23,6 +24,7 @@ public partial class FolderExplorerSync
         ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
         ITreeViewService treeViewService,
         IState<FolderExplorerState> folderExplorerStateWrap,
+        InputFileSync inputFileSync,
         IBackgroundTaskService backgroundTaskService,
         IDispatcher dispatcher)
     {
@@ -33,10 +35,12 @@ public partial class FolderExplorerSync
         _treeViewService = treeViewService;
         _folderExplorerStateWrap = folderExplorerStateWrap;
 
+        InputFileSync = inputFileSync;
         BackgroundTaskService = backgroundTaskService;
         Dispatcher = dispatcher;
     }
 
     public IBackgroundTaskService BackgroundTaskService { get; }
     public IDispatcher Dispatcher { get; }
+    public InputFileSync InputFileSync { get; }
 }

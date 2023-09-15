@@ -13,6 +13,7 @@ using Luthetus.CompilerServices.Lang.TypeScript;
 using Luthetus.CompilerServices.Lang.Xml;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
 using Luthetus.Ide.RazorLib.FileSystemCase.States;
+using Luthetus.Ide.RazorLib.InputFileCase.States;
 using Luthetus.TextEditor.RazorLib;
 
 namespace Luthetus.Ide.RazorLib.EditorCase.States;
@@ -33,6 +34,7 @@ public partial class EditorSync
     private readonly TypeScriptCompilerService _typeScriptCompilerService;
     private readonly JsonCompilerService _jsonCompilerService;
     private readonly FileSystemSync _fileSystemSync;
+    private readonly InputFileSync _inputFileSync;
 
     public EditorSync(
         ITextEditorService textEditorService,
@@ -49,6 +51,7 @@ public partial class EditorSync
         TypeScriptCompilerService typeScriptCompilerService,
         JsonCompilerService jsonCompilerService,
         FileSystemSync fileSystemSync,
+        InputFileSync inputFileSync,
         IBackgroundTaskService backgroundTaskService,
         IDispatcher dispatcher)
     {
@@ -66,7 +69,7 @@ public partial class EditorSync
         _typeScriptCompilerService = typeScriptCompilerService;
         _jsonCompilerService = jsonCompilerService;
         _fileSystemSync = fileSystemSync;
-
+        _inputFileSync = inputFileSync;
         BackgroundTaskService = backgroundTaskService;
         Dispatcher = dispatcher;
     }

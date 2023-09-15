@@ -35,6 +35,8 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
     private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
     [Inject]
     private DotNetSolutionSync DotNetSolutionSync { get; set; } = null!;
+    [Inject]
+    private InputFileSync InputFileSync { get; set; } = null!;
 
     [CascadingParameter]
     public DialogRecord DialogRecord { get; set; } = null!;
@@ -55,6 +57,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
     private void RequestInputFileForParentDirectory()
     {
         Dispatcher.Dispatch(new InputFileState.RequestInputFileStateFormAction(
+            InputFileSync,
             "Directory for new .NET Solution",
             async afp =>
             {
