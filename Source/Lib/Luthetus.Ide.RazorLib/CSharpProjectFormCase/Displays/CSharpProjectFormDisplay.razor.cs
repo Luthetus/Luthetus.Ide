@@ -25,6 +25,7 @@ using Luthetus.Common.RazorLib.Notification.Models;
 using Luthetus.Common.RazorLib.Installation.Models;
 using Luthetus.Common.RazorLib.Dialog.States;
 using Luthetus.TextEditor.RazorLib.Lexing.Models;
+using Luthetus.Common.RazorLib.KeyCase;
 
 namespace Luthetus.Ide.RazorLib.CSharpProjectFormCase.Displays;
 
@@ -57,10 +58,10 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     public DialogRecord DialogRecord { get; set; } = null!;
 
     [Parameter]
-    public DotNetSolutionModelKey DotNetSolutionModelKey { get; set; }
+    public Key<DotNetSolutionModel> DotNetSolutionModelKey { get; set; }
 
-    private readonly TerminalCommandKey _newCSharpProjectTerminalCommandKey = TerminalCommandKey.NewKey();
-    private readonly TerminalCommandKey _loadProjectTemplatesTerminalCommandKey = TerminalCommandKey.NewKey();
+    private readonly Key<TerminalCommand> _newCSharpProjectTerminalCommandKey = Key<TerminalCommand>.NewKey();
+    private readonly Key<TerminalCommand> _loadProjectTemplatesTerminalCommandKey = Key<TerminalCommand>.NewKey();
     private readonly CancellationTokenSource _newCSharpProjectCancellationTokenSource = new();
 
     private bool _isReadingProjectTemplates = false;

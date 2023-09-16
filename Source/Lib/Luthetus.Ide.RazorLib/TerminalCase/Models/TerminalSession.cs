@@ -9,6 +9,7 @@ using Luthetus.Common.RazorLib.Notification.Models;
 using Luthetus.Ide.RazorLib.StateCase.Models;
 using Luthetus.Ide.RazorLib.TerminalCase.States;
 using Luthetus.TextEditor.RazorLib.TextEditorCase.Model;
+using Luthetus.TextEditor.RazorLib.TextEditorCase.Viewables;
 using Luthetus.TextEditor.RazorLib.TextEditorCase.Viewables.InternalClasses;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
@@ -31,7 +32,7 @@ public class TerminalSession
     /// <summary>
     /// TODO: Prove that standard error is correctly being redirected to standard out
     /// </summary>
-    private readonly Dictionary<TerminalCommandKey, StringBuilder> _standardOutBuilderMap = new();
+    private readonly Dictionary<Key<TerminalCommand>, StringBuilder> _standardOutBuilderMap = new();
 
     public TerminalSession(
         string? workingDirectoryAbsolutePathString,
@@ -47,11 +48,11 @@ public class TerminalSession
         WorkingDirectoryAbsolutePathString = workingDirectoryAbsolutePathString;
     }
 
-    public TerminalSessionKey TerminalSessionKey { get; init; } =
-        TerminalSessionKey.NewKey();
+    public Key<TerminalSession> TerminalSessionKey { get; init; } =
+        Key<TerminalSession>.NewKey();
 
-    public TextEditorModelKey TextEditorModelKey => new(TerminalSessionKey.Guid);
-    public TextEditorViewModelKey TextEditorViewModelKey => new(TerminalSessionKey.Guid);
+    public Key<TextEditorModel> TextEditorModelKey => new(TerminalSessionKey.Guid);
+    public Key<TextEditorViewModel> TextEditorViewModelKey => new(TerminalSessionKey.Guid);
 
     public string? WorkingDirectoryAbsolutePathString { get; private set; }
 
@@ -70,7 +71,7 @@ public class TerminalSession
                 .ToArray());
     }
 
-    public string? ReadStandardOut(TerminalCommandKey terminalCommandKey)
+    public string? ReadStandardOut(Key<TerminalCommand> terminalCommandKey)
     {
         if (_standardOutBuilderMap
             .TryGetValue(terminalCommandKey, out var output))
@@ -213,6 +214,6 @@ public class TerminalSession
     {
         _dispatcher.Dispatch(new TerminalSessionWasModifiedState.SetTerminalSessionStateKeyAction(
             TerminalSessionKey,
-            StateKey.NewKey()));
+            Key<StateRecord>.NewKey()));
     }
 }

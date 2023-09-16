@@ -554,7 +554,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     projectNode.Item.AbsolutePath.FormattedInput);
 
                 var terminalCommand = new TerminalCommand(
-                    TerminalCommandKey.NewKey(),
+                    Key<TerminalCommand>.NewKey(),
                     formattedCommand,
                     workingDirectory.FormattedInput,
                     CancellationToken.None,
@@ -588,7 +588,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                             referencedProject.FormattedInput);
 
                         var terminalCommand = new TerminalCommand(
-                            TerminalCommandKey.NewKey(),
+                            Key<TerminalCommand>.NewKey(),
                             formattedCommand,
                             null,
                             CancellationToken.None,
@@ -636,7 +636,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsolutePath.FormattedInput);
 
                 var removeProjectToProjectReferenceTerminalCommand = new TerminalCommand(
-                    TerminalCommandKey.NewKey(),
+                    Key<TerminalCommand>.NewKey(),
                     formattedCommand,
                     null,
                     CancellationToken.None,
@@ -668,7 +668,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     solutionFolderPath);
 
                 var moveProjectToSolutionFolderTerminalCommand = new TerminalCommand(
-                    TerminalCommandKey.NewKey(),
+                    Key<TerminalCommand>.NewKey(),
                     formattedCommand,
                     null,
                     CancellationToken.None,
@@ -705,7 +705,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id);
 
                 var removeNugetPackageReferenceFromProjectTerminalCommand = new TerminalCommand(
-                    TerminalCommandKey.NewKey(),
+                    Key<TerminalCommand>.NewKey(),
                     formattedCommand,
                     null,
                     CancellationToken.None,

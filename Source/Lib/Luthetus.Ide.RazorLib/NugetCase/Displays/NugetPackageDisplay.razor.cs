@@ -10,6 +10,7 @@ using Luthetus.Ide.RazorLib.TerminalCase.States;
 using Luthetus.Ide.RazorLib.NugetCase.States;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Notification.Models;
+using Luthetus.Common.RazorLib.KeyCase;
 
 namespace Luthetus.Ide.RazorLib.NugetCase.Displays;
 
@@ -29,7 +30,7 @@ public partial class NugetPackageDisplay : FluxorComponent
     [Parameter, EditorRequired]
     public NugetPackageRecord NugetPackageRecord { get; set; } = null!;
 
-    private static readonly TerminalCommandKey AddNugetPackageTerminalCommandKey = TerminalCommandKey.NewKey();
+    private static readonly Key<TerminalCommand> AddNugetPackageTerminalCommandKey = Key<TerminalCommand>.NewKey();
 
     private string _nugetPackageVersionString;
 

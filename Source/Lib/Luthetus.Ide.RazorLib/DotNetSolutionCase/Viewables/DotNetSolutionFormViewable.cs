@@ -1,10 +1,11 @@
-﻿using Luthetus.Ide.RazorLib.TerminalCase.Models;
+﻿using Luthetus.Common.RazorLib.KeyCase;
+using Luthetus.Ide.RazorLib.TerminalCase.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.Viewables;
 
 public class DotNetSolutionFormViewable
 {
-    public TerminalCommandKey NewDotNetSolutionTerminalCommandKey { get; } = TerminalCommandKey.NewKey();
+    public Key<TerminalCommand> NewDotNetSolutionTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
 
     public CancellationTokenSource NewDotNetSolutionCancellationTokenSource { get; set; } = new();
     public string SolutionName { get; set; } = string.Empty;

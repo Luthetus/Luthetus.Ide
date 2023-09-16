@@ -1,6 +1,7 @@
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Keyboard.Models;
+using Luthetus.Common.RazorLib.KeyCase;
 using Luthetus.Ide.RazorLib.CommandLineCase.Models;
 using Luthetus.Ide.RazorLib.HtmlCase.Models;
 using Luthetus.Ide.RazorLib.TerminalCase.Models;
@@ -35,7 +36,7 @@ public partial class TerminalOutputDisplay : FluxorComponent
     /// session.
     /// </summary>
     [Parameter, EditorRequired]
-    public TerminalSessionKey TerminalSessionKey { get; set; } = null!;
+    public Key<TerminalSession> TerminalSessionKey { get; set; } = Key<TerminalSession>.Empty;
     /// <summary>
     /// <see cref="TerminalCommandKey"/> is used to narrow down even further
     /// to the output of a specific command that was executed in a specific
@@ -44,7 +45,7 @@ public partial class TerminalOutputDisplay : FluxorComponent
     /// Optional
     /// </summary>
     [Parameter]
-    public TerminalCommandKey? TerminalCommandKey { get; set; }
+    public Key<TerminalCommand> TerminalCommandKey { get; set; } = Key<TerminalCommand>.Empty;
     [Parameter]
     public bool AllowInput { get; set; }
 
@@ -83,8 +84,7 @@ public partial class TerminalOutputDisplay : FluxorComponent
                         TextEditorService.Model.RegisterTemplated(
                             terminalSession.TextEditorModelKey,
                             WellKnownModelKind.TerminalGeneric,
-                            new ResourceUri(terminalSession.TerminalSessionKey.DisplayName
-                                ?? "__terminal-display-name-fallback__"),
+                            new ResourceUri("__terminal-display-name-fallback__"),
                             DateTime.UtcNow,
                             "TERMINAL",
                             string.Empty);
@@ -184,7 +184,7 @@ public partial class TerminalOutputDisplay : FluxorComponent
                 arguments);
 
             var terminalCommand = new TerminalCommand(
-                TerminalCommandKey.NewKey(),
+                Key<TerminalCommand>.NewKey(),
                 formattedCommand,
                 null,
                 CancellationToken.None,

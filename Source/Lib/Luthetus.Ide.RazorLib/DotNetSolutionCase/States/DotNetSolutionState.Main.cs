@@ -21,12 +21,12 @@ namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 /// </summary>
 [FeatureState]
 public partial record DotNetSolutionState(
-    DotNetSolutionModelKey? DotNetSolutionModelKey,
+    Key<DotNetSolutionModel>? DotNetSolutionModelKey,
     int IsExecutingAsyncTaskLinks)
 {
     public static readonly Key<TreeViewState> TreeViewSolutionExplorerStateKey = Key<TreeViewState>.NewKey();
 
-    private DotNetSolutionState() : this(DotNetSolutionModelKey.Empty, 0)
+    private DotNetSolutionState() : this(Key<DotNetSolutionModel>.Empty, 0)
     {
     }
 

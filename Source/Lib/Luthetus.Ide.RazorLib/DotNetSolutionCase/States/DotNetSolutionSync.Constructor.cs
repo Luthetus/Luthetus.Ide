@@ -9,6 +9,7 @@ using Luthetus.Common.RazorLib.FileSystem.Models;
 using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.Common.RazorLib.Installation.Models;
 using Luthetus.Ide.RazorLib.InputFileCase.States;
+using Luthetus.Common.RazorLib.KeyCase;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 
@@ -67,7 +68,7 @@ public partial class DotNetSolutionSync
         : IWithAction;
 
     public static IWithAction ConstructModelReplacement(
-            DotNetSolutionModelKey dotNetSolutionModelKey,
+            Key<DotNetSolutionModel> dotNetSolutionModelKey,
             DotNetSolutionModel outDotNetSolutionModel)
     {
         return new WithAction(dotNetSolutionState =>

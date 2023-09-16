@@ -378,7 +378,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                         afp.FormattedInput);
 
                 var addExistingProjectToSolutionTerminalCommand = new TerminalCommand(
-                    TerminalCommandKey.NewKey(),
+                    Key<TerminalCommand>.NewKey(),
                     localFormattedAddExistingProjectToSolutionCommand,
                     null,
                     CancellationToken.None,

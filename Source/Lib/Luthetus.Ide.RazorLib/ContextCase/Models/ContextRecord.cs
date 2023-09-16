@@ -1,9 +1,10 @@
+using Luthetus.Common.RazorLib.KeyCase;
 using Luthetus.Ide.RazorLib.KeymapCase.Models;
 
 namespace Luthetus.Ide.RazorLib.ContextCase.Models;
 
 public record ContextRecord(
-    ContextKey ContextKey,
+    Key<ContextRecord> ContextKey,
     string DisplayNameFriendly,
     string ContextNameInternal,
     Keymap Keymap)
