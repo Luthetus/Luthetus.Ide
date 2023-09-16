@@ -4,6 +4,7 @@ using Luthetus.Ide.RazorLib.InputFileCase.States;
 using Luthetus.Ide.RazorLib.InputFileCase.Models;
 using Luthetus.Common.RazorLib.FileSystem.Models;
 using Luthetus.Common.RazorLib.TreeView.Models;
+using Luthetus.Common.RazorLib.KeyCase;
 
 namespace Luthetus.Ide.RazorLib.FolderExplorerCase.States;
 
@@ -12,7 +13,7 @@ public partial record FolderExplorerState(
     IAbsolutePath? AbsolutePath,
     bool IsLoadingFolderExplorer)
 {
-    public static readonly TreeViewStateKey TreeViewFolderExplorerContentStateKey = TreeViewStateKey.NewKey();
+    public static readonly Key<TreeViewState> TreeViewFolderExplorerContentStateKey = Key<TreeViewState>.NewKey();
 
     private FolderExplorerState() : this(
         default,

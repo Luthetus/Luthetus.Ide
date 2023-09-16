@@ -3,6 +3,7 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystem.Models;
 using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.Common.RazorLib.WatchWindow.Models;
+using Luthetus.Common.RazorLib.KeyCase;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
 
@@ -93,7 +94,7 @@ public class TreeViewAbsolutePath : TreeViewWithType<IAbsolutePath>
 
                 newChild.IndexAmongSiblings = i;
                 newChild.Parent = this;
-                newChild.TreeViewChangedKey = TreeViewChangedKey.NewKey();
+                newChild.TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
             }
 
             Children = newChildren;
@@ -114,7 +115,7 @@ public class TreeViewAbsolutePath : TreeViewWithType<IAbsolutePath>
         };
         }
 
-        TreeViewChangedKey = TreeViewChangedKey.NewKey();
+        TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
     }
 
     public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)

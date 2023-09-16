@@ -1,5 +1,6 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
+using Luthetus.Common.RazorLib.KeyCase;
 
 namespace Luthetus.Ide.RazorLib.FolderExplorerCase.States;
 
@@ -12,7 +13,7 @@ public partial record FolderExplorerState
             FolderExplorerState inState,
             SetFolderExplorerAction inTask)
         {
-            inTask.Sync.BackgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+            inTask.Sync.BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
                 "SetDotNetSolutionAsync",
                 async () => await inTask.Sync.SetFolderExplorer(inTask));
 
@@ -24,7 +25,7 @@ public partial record FolderExplorerState
             FolderExplorerState inState,
             SetFolderExplorerTreeViewAction inTask)
         {
-            inTask.Sync.BackgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+            inTask.Sync.BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
                 "SetDotNetSolutionAsync",
                 async () => await inTask.Sync.SetFolderExplorerTreeView(inTask));
 

@@ -7,6 +7,7 @@ using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
 using Luthetus.Ide.RazorLib.NugetCase.Models;
 using Luthetus.Ide.RazorLib.NugetCase.States;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
+using Luthetus.Common.RazorLib.KeyCase;
 
 namespace Luthetus.Ide.RazorLib.NugetCase.Displays;
 
@@ -99,7 +100,7 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
             _performingNugetQuery = true;
             await InvokeAsync(StateHasChanged);
 
-            BackgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+            BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
                 "Submit NuGet Query",
                 async () =>
                 {

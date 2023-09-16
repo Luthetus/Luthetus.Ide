@@ -1,6 +1,7 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
 using Luthetus.Common.RazorLib.FileSystem.Models;
+using Luthetus.Common.RazorLib.KeyCase;
 using Luthetus.Ide.RazorLib.GitCase.States;
 using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
 
@@ -133,7 +134,7 @@ public partial record InputFileState
                     false,
                     true);
 
-                openParentDirectoryAction.BackgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+                openParentDirectoryAction.BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
                     "Open Parent Directory",
                     async () =>
                     {
@@ -165,7 +166,7 @@ public partial record InputFileState
 
             currentSelection.Children.Clear();
 
-            refreshCurrentSelectionAction.BackgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+            refreshCurrentSelectionAction.BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
                 "Refresh Current Selection",
                 async () =>
                 {
@@ -205,7 +206,7 @@ public partial record InputFileState
             InputFileState inState,
             RequestInputFileStateFormAction inTask)
         {
-            inTask.Sync.BackgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+            inTask.Sync.BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
                 "SetDotNetSolutionAsync",
                 async () => await inTask.Sync.HandleRequestInputFileStateFormAction(inTask));
 

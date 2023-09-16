@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dialog.Models;
 using Luthetus.Common.RazorLib.Dialog.States;
 using Luthetus.Common.RazorLib.Dropdown.States;
+using Luthetus.Common.RazorLib.KeyCase;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.Models;
@@ -81,7 +82,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     private void OpenNewDotNetSolutionDialog()
     {
         var dialogRecord = new DialogRecord(
-            DialogKey.NewKey(),
+            Key<DialogRecord>.NewKey(),
             "New .NET Solution",
             typeof(DotNetSolutionFormDisplay),
             new Dictionary<string, object?>

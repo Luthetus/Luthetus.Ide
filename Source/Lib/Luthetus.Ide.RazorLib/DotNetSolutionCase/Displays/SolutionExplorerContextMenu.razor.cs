@@ -22,6 +22,7 @@ using Luthetus.Common.RazorLib.Notification.Models;
 using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.Dialog.States;
+using Luthetus.Common.RazorLib.KeyCase;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
 
@@ -45,7 +46,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     [Parameter, EditorRequired]
     public ITreeViewCommandParameter TreeViewCommandParameter { get; set; } = null!;
 
-    public static readonly DropdownKey ContextMenuEventDropdownKey = DropdownKey.NewKey();
+    public static readonly Key<DropdownRecord> ContextMenuEventDropdownKey = Key<DropdownRecord>.NewKey();
 
     /// <summary>
     /// The program is currently running using Photino locally on the user's computer
@@ -342,7 +343,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     private void OpenNewCSharpProjectDialog(DotNetSolutionModel dotNetSolutionModel)
     {
         var dialogRecord = new DialogRecord(
-            DialogKey.NewKey(),
+            Key<DialogRecord>.NewKey(),
             "New C# Project",
             typeof(CSharpProjectFormDisplay),
             new Dictionary<string, object?>

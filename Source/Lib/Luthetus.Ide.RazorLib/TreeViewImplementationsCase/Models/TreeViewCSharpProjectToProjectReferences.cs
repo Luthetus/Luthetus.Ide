@@ -3,6 +3,7 @@ using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
 using Luthetus.Common.RazorLib.FileSystem.Models;
 using Luthetus.Common.RazorLib.TreeView.Models;
+using Luthetus.Common.RazorLib.KeyCase;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
 
@@ -116,7 +117,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
                 false,
                 false)
             {
-                TreeViewChangedKey = TreeViewChangedKey.NewKey()
+                TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
             })
             .ToList();
 
@@ -126,11 +127,11 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
 
             newChild.IndexAmongSiblings = i;
             newChild.Parent = this;
-            newChild.TreeViewChangedKey = TreeViewChangedKey.NewKey();
+            newChild.TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
         }
 
         Children = newChildren;
-        TreeViewChangedKey = TreeViewChangedKey.NewKey();
+        TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
     }
 
     public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)

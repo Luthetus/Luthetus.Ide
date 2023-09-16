@@ -1,6 +1,7 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
 using Luthetus.Common.RazorLib.FileSystem.Models;
+using Luthetus.Common.RazorLib.KeyCase;
 using Luthetus.Common.RazorLib.Notification.Models;
 using Luthetus.Common.RazorLib.Notification.States;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
@@ -153,7 +154,7 @@ public partial class EditorSync
         if (fileLastWriteTime > textEditorModel.ResourceLastWriteTime &&
             _luthetusIdeComponentRenderers.BooleanPromptOrCancelRendererType is not null)
         {
-            var notificationInformativeKey = NotificationKey.NewKey();
+            var notificationInformativeKey = Key<NotificationRecord>.NewKey();
 
             var notificationInformative = new NotificationRecord(
                 notificationInformativeKey,
@@ -173,7 +174,7 @@ public partial class EditorSync
                             nameof(IBooleanPromptOrCancelRendererType.OnAfterAcceptAction),
                             new Action(() =>
                             {
-                                BackgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+                                BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
                                     "Check If Contexts Were Modified",
                                     async () =>
                                     {

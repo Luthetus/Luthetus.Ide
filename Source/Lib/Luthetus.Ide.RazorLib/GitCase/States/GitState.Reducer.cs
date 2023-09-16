@@ -1,5 +1,6 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
+using Luthetus.Common.RazorLib.KeyCase;
 
 namespace Luthetus.Ide.RazorLib.GitCase.States;
 
@@ -21,7 +22,7 @@ public partial record GitState
             GitState inState,
             RefreshGitTask inTask)
         {
-            inTask.Sync.BackgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+            inTask.Sync.BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
                 "RefreshGit",
                 async () => await inTask.Sync.RefreshGit(inTask));
 
@@ -33,7 +34,7 @@ public partial record GitState
             GitState inState,
             GitInitTask inTask)
         {
-            inTask.Sync.BackgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+            inTask.Sync.BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
                 "GitInit",
                 async () => await inTask.Sync.GitInit(inTask));
 
@@ -45,7 +46,7 @@ public partial record GitState
             GitState inState,
             TryFindGitFolderInDirectoryTask inTask)
         {
-            inTask.Sync.BackgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+            inTask.Sync.BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
             "TryFindGitFolderInDirectory",
             async () => await inTask.Sync.TryFindGitFolderInDirectory(inTask));
 

@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.Dialog.Models;
 using Luthetus.Common.RazorLib.Dialog.States;
 using Luthetus.Common.RazorLib.Dropdown.Models;
 using Luthetus.Common.RazorLib.Dropdown.States;
+using Luthetus.Common.RazorLib.KeyCase;
 using Luthetus.Common.RazorLib.Menu.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
@@ -26,7 +27,7 @@ public partial class IdeHeader : FluxorComponent
     [Inject]
     private FolderExplorerSync FolderExplorerSync { get; set; } = null!;
 
-    private DropdownKey _dropdownKeyFile = DropdownKey.NewKey();
+    private Key<DropdownRecord> _dropdownKeyFile = Key<DropdownRecord>.NewKey();
     private MenuRecord _menuFile = new(ImmutableArray<MenuOptionRecord>.Empty);
     private ElementReference? _buttonFileElementReference;
 
@@ -100,7 +101,7 @@ public partial class IdeHeader : FluxorComponent
         _menuFile = new MenuRecord(menuOptions.ToImmutableArray());
     }
 
-    private void AddActiveDropdownKey(DropdownKey dropdownKey)
+    private void AddActiveDropdownKey(Key<DropdownRecord> dropdownKey)
     {
         Dispatcher.Dispatch(new DropdownRegistry.AddActiveAction(
             dropdownKey));
@@ -128,7 +129,7 @@ public partial class IdeHeader : FluxorComponent
     private void OpenNewDotNetSolutionDialog()
     {
         var dialogRecord = new DialogRecord(
-            DialogKey.NewKey(),
+            Key<DialogRecord>.NewKey(),
             "New .NET Solution",
             typeof(DotNetSolutionFormDisplay),
             new Dictionary<string, object?>
