@@ -1,3 +1,4 @@
+@using Luthetus.Ide.RazorLib.TerminalCase.Models;
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 @{
@@ -7,7 +8,15 @@
     {
         <button class="luth_button @CssClassString"
                 @onclick="DispatchSetActiveTerminalCommandKeyActionOnClick">
-            TODO: TerminalWellKnownTab
+
+            @if (WellKnownTerminalSessionKey == TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY)
+            {
+                @: Execution
+            }
+            else
+            {
+                @: General
+            }
 
             <button class="luth_button"
                     @onclick="ClearStandardOutOnClick"
