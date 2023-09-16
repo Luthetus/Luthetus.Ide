@@ -1,5 +1,6 @@
 ﻿using Fluxor;
 using Fluxor.Blazor.Web.Components;
+using Luthetus.Common.RazorLib.KeyCase;
 using Luthetus.Ide.RazorLib.CommandLineCase.Models;
 using Luthetus.Ide.RazorLib.ProgramExecutionCase.States;
 using Luthetus.Ide.RazorLib.TerminalCase.Models;
@@ -15,8 +16,7 @@ public partial class StartupControlsDisplay : FluxorComponent
     [Inject]
     private IState<TerminalSessionState> TerminalSessionsStateWrap { get; set; } = null!;
 
-    private readonly TerminalCommandKey _newDotNetSolutionTerminalCommandKey =
-        TerminalCommandKey.NewKey();
+    private readonly Key<TerminalCommand> _newDotNetSolutionTerminalCommandKey = Key<TerminalCommand>.NewKey();
 
     private readonly CancellationTokenSource _newDotNetSolutionCancellationTokenSource = new();
 

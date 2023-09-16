@@ -15,6 +15,7 @@ using Luthetus.Common.RazorLib.FileSystem.Models;
 using Luthetus.Common.RazorLib.Menu.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.Notification.Models;
+using Luthetus.Common.RazorLib.KeyCase;
 
 namespace Luthetus.Ide.RazorLib.MenuCase.Models;
 
@@ -270,7 +271,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         NamespacePath namespacePath,
         Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
             "New File Action",
             async () =>
             {
@@ -325,7 +326,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             true,
             _environmentProvider);
 
-        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
             "New Directory Action",
             async () =>
             {
@@ -341,7 +342,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         IAbsolutePath absolutePath,
         Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
             "Delete File Action",
             async () =>
             {
@@ -365,7 +366,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         IAbsolutePath absolutePath,
         Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
             "Copy File Action",
             async () =>
             {
@@ -382,7 +383,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         IAbsolutePath absolutePath,
         Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
             "Cut File Action",
             async () =>
             {
@@ -397,7 +398,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
 
     private void PerformPasteFileAction(IAbsolutePath receivingDirectory, Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
             "Paste File Action",
             async () =>
             {
@@ -542,7 +543,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
             "Remove C# Project Reference from Solution Action",
             async () =>
             {
@@ -553,7 +554,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     projectNode.Item.AbsolutePath.FormattedInput);
 
                 var terminalCommand = new TerminalCommand(
-                    TerminalCommandKey.NewKey(),
+                    Key<TerminalCommand>.NewKey(),
                     formattedCommand,
                     workingDirectory.FormattedInput,
                     CancellationToken.None,
@@ -570,7 +571,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         InputFileSync inputFileSync,
         Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
             "Add Project Reference to Project",
             () =>
             {
@@ -587,7 +588,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                             referencedProject.FormattedInput);
 
                         var terminalCommand = new TerminalCommand(
-                            TerminalCommandKey.NewKey(),
+                            Key<TerminalCommand>.NewKey(),
                             formattedCommand,
                             null,
                             CancellationToken.None,
@@ -626,7 +627,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
             "Remove Project Reference to Project",
             async () =>
             {
@@ -635,7 +636,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsolutePath.FormattedInput);
 
                 var removeProjectToProjectReferenceTerminalCommand = new TerminalCommand(
-                    TerminalCommandKey.NewKey(),
+                    Key<TerminalCommand>.NewKey(),
                     formattedCommand,
                     null,
                     CancellationToken.None,
@@ -657,7 +658,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
             "Move Project to Solution Folder",
             () =>
             {
@@ -667,7 +668,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     solutionFolderPath);
 
                 var moveProjectToSolutionFolderTerminalCommand = new TerminalCommand(
-                    TerminalCommandKey.NewKey(),
+                    Key<TerminalCommand>.NewKey(),
                     formattedCommand,
                     null,
                     CancellationToken.None,
@@ -695,7 +696,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
             "Remove NuGet Package Reference from Project",
             async () =>
             {
@@ -704,7 +705,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id);
 
                 var removeNugetPackageReferenceFromProjectTerminalCommand = new TerminalCommand(
-                    TerminalCommandKey.NewKey(),
+                    Key<TerminalCommand>.NewKey(),
                     formattedCommand,
                     null,
                     CancellationToken.None,

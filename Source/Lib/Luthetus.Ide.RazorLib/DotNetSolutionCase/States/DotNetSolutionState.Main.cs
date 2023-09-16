@@ -5,6 +5,7 @@ using Luthetus.Ide.RazorLib.FileSystemCase.Models;
 using Luthetus.Ide.RazorLib.InputFileCase.Models;
 using Luthetus.Ide.RazorLib.InputFileCase.States;
 using Luthetus.Common.RazorLib.TreeView.Models;
+using Luthetus.Common.RazorLib.KeyCase;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 
@@ -20,12 +21,12 @@ namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 /// </summary>
 [FeatureState]
 public partial record DotNetSolutionState(
-    DotNetSolutionModelKey? DotNetSolutionModelKey,
+    Key<DotNetSolutionModel>? DotNetSolutionModelKey,
     int IsExecutingAsyncTaskLinks)
 {
-    public static readonly TreeViewStateKey TreeViewSolutionExplorerStateKey = TreeViewStateKey.NewKey();
+    public static readonly Key<TreeViewState> TreeViewSolutionExplorerStateKey = Key<TreeViewState>.NewKey();
 
-    private DotNetSolutionState() : this(DotNetSolutionModelKey.Empty, 0)
+    private DotNetSolutionState() : this(Key<DotNetSolutionModel>.Empty, 0)
     {
     }
 

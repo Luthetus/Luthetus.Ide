@@ -1,5 +1,6 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
+using Luthetus.Common.RazorLib.KeyCase;
 
 namespace Luthetus.Ide.RazorLib.EditorCase.States;
 
@@ -10,7 +11,7 @@ public partial class EditorState
         EditorState inState,
         ShowInputFileAction inTask)
     {
-        inTask.Sync.BackgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+        inTask.Sync.BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
             "ShowInputFile",
             async () => await inTask.Sync.ShowInputFile(inTask));
 
@@ -22,7 +23,7 @@ public partial class EditorState
         EditorState inState,
         OpenInEditorAction inTask)
     {
-        inTask.Sync.BackgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+        inTask.Sync.BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
             "OpenInEditor",
             async () => await inTask.Sync.OpenInEditor(inTask));
 

@@ -1,5 +1,6 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
+using Luthetus.Common.RazorLib.KeyCase;
 using static Luthetus.Ide.RazorLib.DotNetSolutionCase.States.DotNetSolutionSync;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
@@ -20,7 +21,7 @@ public partial record DotNetSolutionState
                 return inState;
 
             // Enqueue onto the async-concurrent context, calculating the replacement .NET Solution
-            inTask.Sync.BackgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+            inTask.Sync.BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
                 "SetDotNetSolutionTreeViewAsync",
                 async () => {
                     // Enter this lambda in the shared async-concurrent context,
@@ -69,7 +70,7 @@ public partial record DotNetSolutionState
             if (inState.DotNetSolutionModelKey is null)
                 return inState;
 
-            inTask.Sync.BackgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+            inTask.Sync.BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
                 "SetDotNetSolutionAsync",
                 async () => {
                     var outDotNetSolution = await inTask.Sync.SetDotNetSolutionAsync(inTask);
@@ -93,7 +94,7 @@ public partial record DotNetSolutionState
             if (inState.DotNetSolutionModelKey is null)
                 return inState;
 
-            inTask.Sync.BackgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+            inTask.Sync.BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
                 "AddExistingProjectToSolutionAsync",
                 async () => {
                     var outDotNetSolution = await inTask.Sync.AddExistingProjectToSolutionAsync(inTask);

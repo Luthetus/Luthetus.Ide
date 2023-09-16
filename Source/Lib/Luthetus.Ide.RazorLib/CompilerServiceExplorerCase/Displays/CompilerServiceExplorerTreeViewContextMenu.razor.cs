@@ -1,5 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.Dimensions;
 using Luthetus.Common.RazorLib.Dropdown.Models;
+using Luthetus.Common.RazorLib.KeyCase;
 using Luthetus.Common.RazorLib.Menu.Models;
 using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
@@ -15,7 +16,7 @@ public partial class CompilerServiceExplorerTreeViewContextMenu : ComponentBase
     [Parameter, EditorRequired]
     public ITreeViewCommandParameter TreeViewCommandParameter { get; set; } = null!;
 
-    public static readonly DropdownKey ContextMenuEventDropdownKey = DropdownKey.NewKey();
+    public static readonly Key<DropdownRecord> ContextMenuEventDropdownKey = Key<DropdownRecord>.NewKey();
 
     private MenuRecord GetMenuRecord(ITreeViewCommandParameter treeViewCommandParameter)
     {

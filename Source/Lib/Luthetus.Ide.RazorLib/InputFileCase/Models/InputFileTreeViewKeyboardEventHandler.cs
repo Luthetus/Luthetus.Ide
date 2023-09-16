@@ -3,6 +3,7 @@ using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystem.Models;
 using Luthetus.Common.RazorLib.Keyboard.Models;
+using Luthetus.Common.RazorLib.KeyCase;
 using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
 using Luthetus.Ide.RazorLib.InputFileCase.States;
@@ -20,7 +21,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly Func<IAbsolutePath, Task> _setInputFileContentTreeViewRootFunc;
     private readonly Func<Task> _focusSearchInputElementFunc;
-    private readonly Func<List<(TreeViewStateKey treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)>> _getSearchMatchTuplesFunc;
+    private readonly Func<List<(Key<TreeViewState> treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)>> _getSearchMatchTuplesFunc;
     private readonly IBackgroundTaskService _backgroundTaskService;
 
     public InputFileTreeViewKeyboardEventHandler(
@@ -33,7 +34,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         IEnvironmentProvider environmentProvider,
         Func<IAbsolutePath, Task> setInputFileContentTreeViewRootFunc,
         Func<Task> focusSearchInputElementFunc,
-        Func<List<(TreeViewStateKey treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)>> getSearchMatchTuplesFunc,
+        Func<List<(Key<TreeViewState> treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)>> getSearchMatchTuplesFunc,
         IBackgroundTaskService backgroundTaskService)
         : base(treeViewService)
     {

@@ -70,6 +70,7 @@ public partial class EditorSync
         _jsonCompilerService = jsonCompilerService;
         _fileSystemSync = fileSystemSync;
         _inputFileSync = inputFileSync;
+        
         BackgroundTaskService = backgroundTaskService;
         Dispatcher = dispatcher;
     }

@@ -1,5 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.FileSystem.Models;
-using Luthetus.Common.RazorLib.Misc.Models;
+using Luthetus.Common.RazorLib.KeyCase;
+using Luthetus.Common.RazorLib.RenderStateCase;
 using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
 using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.Lexing;
@@ -26,7 +27,7 @@ public class CSharpProjectParserTests
 
         var htmlLexer = new TextEditorHtmlLexer(resourceUri);
 
-        var textSpans = htmlLexer.Lex(PROJECT_TEST_DATA, RenderStateKey.NewKey());
+        var textSpans = htmlLexer.Lex(PROJECT_TEST_DATA, Key<RenderState>.NewKey());
 
         var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
             resourceUri,
@@ -66,7 +67,7 @@ public class CSharpProjectParserTests
 
         var htmlLexer = new TextEditorHtmlLexer(resourceUri);
 
-        var textSpans = htmlLexer.Lex(PROJECT_TEST_DATA, RenderStateKey.NewKey());
+        var textSpans = htmlLexer.Lex(PROJECT_TEST_DATA, Key<RenderState>.NewKey());
 
         var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
             resourceUri,

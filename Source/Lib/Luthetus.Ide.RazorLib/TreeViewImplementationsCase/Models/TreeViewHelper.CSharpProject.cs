@@ -3,6 +3,7 @@ using Luthetus.Ide.RazorLib.FileSystemCase.Models;
 using Luthetus.Common.RazorLib.FileSystem.Models;
 using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
+using Luthetus.Common.RazorLib.KeyCase;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
 
@@ -47,7 +48,7 @@ public partial class TreeViewHelper
                         true,
                         false)
                     {
-                        TreeViewChangedKey = TreeViewChangedKey.NewKey()
+                        TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
                     };
                 });
 
@@ -104,7 +105,7 @@ public partial class TreeViewHelper
                         false,
                         false)
                     {
-                        TreeViewChangedKey = TreeViewChangedKey.NewKey()
+                        TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
                     };
                 });
 
@@ -116,7 +117,7 @@ public partial class TreeViewHelper
             true,
             false)
         {
-            TreeViewChangedKey = TreeViewChangedKey.NewKey()
+            TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
         };
 
         return

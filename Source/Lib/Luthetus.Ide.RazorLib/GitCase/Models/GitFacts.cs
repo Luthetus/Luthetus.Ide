@@ -1,4 +1,5 @@
-﻿using Luthetus.Ide.RazorLib.TerminalCase.Models;
+﻿using Luthetus.Common.RazorLib.KeyCase;
+using Luthetus.Ide.RazorLib.TerminalCase.Models;
 
 namespace Luthetus.Ide.RazorLib.GitCase.Models;
 
@@ -12,6 +13,6 @@ public static class GitFacts
     public const string GIT_DIRTY_REASON_MODIFIED = "modified:";
     public const string GIT_DIRTY_REASON_DELETED = "deleted:";
 
-    public static readonly TerminalCommandKey GitInitTerminalCommandKey = TerminalCommandKey.NewKey();
-    public static readonly TerminalCommandKey GitStatusTerminalCommandKey = TerminalCommandKey.NewKey();
+    public static readonly Key<TerminalCommand> GitInitTerminalCommandKey = Key<TerminalCommand>.NewKey();
+    public static readonly Key<TerminalCommand> GitStatusTerminalCommandKey = Key<TerminalCommand>.NewKey();
 }

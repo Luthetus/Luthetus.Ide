@@ -1,4 +1,5 @@
 ﻿using Luthetus.Common.RazorLib.FileSystem.Models;
+using Luthetus.Common.RazorLib.KeyCase;
 using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
@@ -65,7 +66,7 @@ public class TreeViewCSharpProjectToProjectReference : TreeViewWithType<CSharpPr
 
     public override Task LoadChildrenAsync()
     {
-        TreeViewChangedKey = TreeViewChangedKey.NewKey();
+        TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
         return Task.CompletedTask;
     }
 

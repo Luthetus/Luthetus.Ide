@@ -9,12 +9,11 @@ public partial record WellKnownTerminalSessionsState
         [ReducerMethod]
         public static WellKnownTerminalSessionsState ReduceSetActiveTerminalCommandKeyAction(
             WellKnownTerminalSessionsState inWellKnownTerminalSessionsState,
-            WellKnownTerminalSessionsState.SetActiveWellKnownTerminalSessionKey setActiveWellKnownTerminalCommandKeyAction)
+            WellKnownTerminalSessionsState.SetActiveWellKnownTerminalSessionKey setActiveWellKnownTerminalSessionKeyAction)
         {
             return inWellKnownTerminalSessionsState with
             {
-                ActiveTerminalSessionKey = setActiveWellKnownTerminalCommandKeyAction
-                    .TerminalCommandKey
+                ActiveTerminalSessionKey = setActiveWellKnownTerminalSessionKeyAction.TerminalSessionKey
             };
         }
     }

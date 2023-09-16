@@ -23,6 +23,7 @@ using Luthetus.Common.RazorLib.Icons.Displays.Codicon;
 using Luthetus.Common.RazorLib.TabCase.States;
 using Luthetus.TextEditor.RazorLib.Installation.Models;
 using Luthetus.TextEditor.RazorLib.Find.States;
+using Luthetus.Common.RazorLib.KeyCase;
 
 namespace Luthetus.Ide.RazorLib.InstallationCase.Displays;
 
@@ -105,7 +106,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
         var leftPanel = PanelFacts.GetLeftPanelRecord(PanelsCollectionWrap.Value);
 
         var solutionExplorerPanelTab = new PanelTab(
-            PanelTabKey.NewKey(),
+            Key<PanelTab>.NewKey(),
             leftPanel.ElementDimensions,
             new(),
             typeof(SolutionExplorerDisplay),
@@ -118,7 +119,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
             false));
 
         var folderExplorerPanelTab = new PanelTab(
-            PanelTabKey.NewKey(),
+            Key<PanelTab>.NewKey(),
             leftPanel.ElementDimensions,
             new(),
             typeof(FolderExplorerDisplay),
@@ -140,7 +141,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
         var rightPanel = PanelFacts.GetRightPanelRecord(PanelsCollectionWrap.Value);
 
         var compilerServiceExplorerPanelTab = new PanelTab(
-            PanelTabKey.NewKey(),
+            Key<PanelTab>.NewKey(),
             rightPanel.ElementDimensions,
             new(),
             typeof(CompilerServiceExplorerDisplay),
@@ -158,7 +159,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
         var bottomPanel = PanelFacts.GetBottomPanelRecord(PanelsCollectionWrap.Value);
 
         var terminalPanelTab = new PanelTab(
-            PanelTabKey.NewKey(),
+            Key<PanelTab>.NewKey(),
             bottomPanel.ElementDimensions,
             new(),
             typeof(TerminalDisplay),
@@ -171,7 +172,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
             false));
 
         var nuGetPanelTab = new PanelTab(
-            PanelTabKey.NewKey(),
+            Key<PanelTab>.NewKey(),
             bottomPanel.ElementDimensions,
             new(),
             typeof(NuGetPackageManager),
@@ -184,7 +185,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
             false));
 
         var activeContextsPanelTab = new PanelTab(
-            PanelTabKey.NewKey(),
+            Key<PanelTab>.NewKey(),
             bottomPanel.ElementDimensions,
             new(),
             typeof(ActiveContextsDisplay),

@@ -1,4 +1,5 @@
 ﻿using Luthetus.Common.RazorLib.FileSystem.Models;
+using Luthetus.Ide.RazorLib.EditorCase.States;
 
 namespace Luthetus.Ide.RazorLib.GitCase.States;
 
@@ -6,10 +7,11 @@ public partial record GitState
 {
     public record SetGitStateWithAction(Func<GitState, GitState> GitStateWithFunc);
 
-    public record TryFindGitFolderInDirectoryAction(
+    public record TryFindGitFolderInDirectoryTask(
+        GitSync Sync,
         IAbsolutePath DirectoryAbsolutePath,
         CancellationToken CancellationToken);
 
-    public record RefreshGitAction(CancellationToken CancellationToken);
-    public record GitInitAction(CancellationToken CancellationToken);
+    public record RefreshGitTask(GitSync Sync, CancellationToken CancellationToken);
+    public record GitInitTask(GitSync Sync, CancellationToken CancellationToken);
 }

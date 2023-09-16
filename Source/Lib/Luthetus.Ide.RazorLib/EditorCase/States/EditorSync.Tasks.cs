@@ -1,6 +1,7 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
 using Luthetus.Common.RazorLib.FileSystem.Models;
+using Luthetus.Common.RazorLib.KeyCase;
 using Luthetus.Common.RazorLib.Notification.Models;
 using Luthetus.Common.RazorLib.Notification.States;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
@@ -10,6 +11,7 @@ using Luthetus.Ide.RazorLib.InputFileCase.States;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.Lexing.Models;
 using Luthetus.TextEditor.RazorLib.TextEditorCase.Model;
+using Luthetus.TextEditor.RazorLib.TextEditorCase.Viewables;
 using Luthetus.TextEditor.RazorLib.TextEditorCase.Viewables.InternalClasses;
 using System.Collections.Immutable;
 using static Luthetus.Ide.RazorLib.EditorCase.States.EditorState;
@@ -124,7 +126,7 @@ public partial class EditorSync
                 decorationMapper,
                 null,
                 new(),
-                TextEditorModelKey.NewKey()
+                Key<TextEditorModel>.NewKey()
             );
 
             textEditorModel.CompilerService.RegisterModel(textEditorModel);
@@ -153,7 +155,7 @@ public partial class EditorSync
         if (fileLastWriteTime > textEditorModel.ResourceLastWriteTime &&
             _luthetusIdeComponentRenderers.BooleanPromptOrCancelRendererType is not null)
         {
-            var notificationInformativeKey = NotificationKey.NewKey();
+            var notificationInformativeKey = Key<NotificationRecord>.NewKey();
 
             var notificationInformative = new NotificationRecord(
                 notificationInformativeKey,
@@ -173,7 +175,7 @@ public partial class EditorSync
                             nameof(IBooleanPromptOrCancelRendererType.OnAfterAcceptAction),
                             new Action(() =>
                             {
-                                BackgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+                                BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
                                     "Check If Contexts Were Modified",
                                     async () =>
                                     {
@@ -210,7 +212,7 @@ public partial class EditorSync
         }
     }
 
-    private TextEditorViewModelKey GetOrCreateTextEditorViewModel(
+    private Key<TextEditorViewModel> GetOrCreateTextEditorViewModel(
         IAbsolutePath absolutePath,
         bool shouldSetFocusToEditor,
         IDispatcher dispatcher,
@@ -221,11 +223,11 @@ public partial class EditorSync
             .GetViewModelsOrEmpty(textEditorModel.ModelKey)
             .FirstOrDefault();
 
-        var viewModelKey = viewModel?.ViewModelKey ?? TextEditorViewModelKey.Empty;
+        var viewModelKey = viewModel?.ViewModelKey ?? Key<TextEditorViewModel>.Empty;
 
         if (viewModel is null)
         {
-            viewModelKey = TextEditorViewModelKey.NewKey();
+            viewModelKey = Key<TextEditorViewModel>.NewKey();
 
             _textEditorService.ViewModel.Register(
                 viewModelKey,

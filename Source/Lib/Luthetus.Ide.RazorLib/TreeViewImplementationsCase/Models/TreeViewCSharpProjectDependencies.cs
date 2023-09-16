@@ -2,6 +2,7 @@
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
 using Luthetus.Common.RazorLib.FileSystem.Models;
 using Luthetus.Common.RazorLib.TreeView.Models;
+using Luthetus.Common.RazorLib.KeyCase;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
 
@@ -60,7 +61,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
             true,
             false)
         {
-            TreeViewChangedKey = TreeViewChangedKey.NewKey()
+            TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
         };
 
         var treeViewCSharpProjectToProjectReferences = new TreeViewCSharpProjectToProjectReferences(
@@ -71,7 +72,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
             true,
             false)
         {
-            TreeViewChangedKey = TreeViewChangedKey.NewKey()
+            TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
         };
 
         var newChildren = new List<TreeViewNoType>
@@ -86,11 +87,11 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
 
             newChild.IndexAmongSiblings = i;
             newChild.Parent = this;
-            newChild.TreeViewChangedKey = TreeViewChangedKey.NewKey();
+            newChild.TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
         }
 
         Children = newChildren;
-        TreeViewChangedKey = TreeViewChangedKey.NewKey();
+        TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
         return Task.CompletedTask;
     }
 

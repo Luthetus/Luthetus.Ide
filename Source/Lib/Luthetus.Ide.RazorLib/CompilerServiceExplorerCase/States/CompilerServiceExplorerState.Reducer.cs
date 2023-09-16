@@ -1,5 +1,6 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
+using Luthetus.Common.RazorLib.KeyCase;
 
 namespace Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.States;
 
@@ -12,7 +13,7 @@ public partial class CompilerServiceExplorerState
             CompilerServiceExplorerState inState,
             SetCompilerServiceExplorerTreeViewTask inTask)
         {
-            inTask.Sync.BackgroundTaskService.Enqueue(BackgroundTaskKey.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+            inTask.Sync.BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
                 "SetDotNetSolutionAsync",
                 async () => await inTask.Sync.SetCompilerServiceExplorerTreeView());
 

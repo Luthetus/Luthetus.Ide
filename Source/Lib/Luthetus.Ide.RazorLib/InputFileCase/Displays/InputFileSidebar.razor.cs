@@ -11,6 +11,7 @@ using Luthetus.Common.RazorLib.Dialog.Models;
 using Luthetus.Common.RazorLib.FileSystem.Models;
 using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.Common.RazorLib.Dropdown.States;
+using Luthetus.Common.RazorLib.KeyCase;
 
 namespace Luthetus.Ide.RazorLib.InputFileCase.Displays;
 
@@ -45,8 +46,8 @@ public partial class InputFileSidebar : ComponentBase
     [Parameter, EditorRequired]
     public Action<IAbsolutePath?> SetSelectedAbsolutePath { get; set; } = null!;
 
-    public static readonly TreeViewStateKey TreeViewInputFileSidebarStateKey =
-        TreeViewStateKey.NewKey();
+    public static readonly Key<TreeViewState> TreeViewInputFileSidebarStateKey =
+        Key<TreeViewState>.NewKey();
 
     private ITreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
 

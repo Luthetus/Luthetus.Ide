@@ -1,4 +1,5 @@
-﻿using Luthetus.Common.RazorLib.Namespaces.Models;
+﻿using Luthetus.Common.RazorLib.KeyCase;
+using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution;
 
@@ -19,7 +20,7 @@ public partial class TreeViewHelper
                 true,
                 false)
             {
-                TreeViewChangedKey = TreeViewChangedKey.NewKey()
+                TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
             })
             .OrderBy(x => ((TreeViewSolutionFolder)x).Item.AbsolutePath.NameNoExtension)
             .ToList();
@@ -41,7 +42,7 @@ public partial class TreeViewHelper
                     true,
                     false)
                 {
-                    TreeViewChangedKey = TreeViewChangedKey.NewKey()
+                    TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
                 };
             })
             .OrderBy(x => ((TreeViewNamespacePath)x).Item.AbsolutePath.NameNoExtension)

@@ -2,6 +2,7 @@
 using Luthetus.Common.RazorLib.FileSystem.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.TreeView.Models;
+using Luthetus.Common.RazorLib.KeyCase;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
 
@@ -42,7 +43,7 @@ public partial class TreeViewHelper
                         false,
                         false)
                     {
-                        TreeViewChangedKey = TreeViewChangedKey.NewKey()
+                        TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
                     };
                 }).ToList();
 
@@ -87,13 +88,13 @@ public partial class TreeViewHelper
 
             relatedFile.Parent = razorMarkupTreeView;
             relatedFile.IndexAmongSiblings = index;
-            relatedFile.TreeViewChangedKey = TreeViewChangedKey.NewKey();
+            relatedFile.TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
 
             razorMarkupTreeView.Children.Add(relatedFile);
         }
 
         razorMarkupTreeView.IsExpandable = true;
 
-        razorMarkupTreeView.TreeViewChangedKey = TreeViewChangedKey.NewKey();
+        razorMarkupTreeView.TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
     }
 }

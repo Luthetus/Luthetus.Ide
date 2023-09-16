@@ -1,5 +1,6 @@
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
+using Luthetus.Common.RazorLib.KeyCase;
 using Luthetus.Ide.RazorLib.TerminalCase.Models;
 using Luthetus.Ide.RazorLib.TerminalCase.States;
 using Microsoft.AspNetCore.Components;
@@ -18,7 +19,7 @@ public partial class TerminalWellKnownTab : FluxorComponent
     private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public TerminalSessionKey WellKnownTerminalSessionKey { get; set; } = null!;
+    public Key<TerminalSession> WellKnownTerminalSessionKey { get; set; } = Key<TerminalSession>.Empty;
 
     private string CssClassString =>
         $"luth_ide_terminal-tab {ActiveTerminalCommandKeyCssClassString}";

@@ -6,6 +6,7 @@ using Luthetus.Common.RazorLib.FileSystem.Models;
 using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.Common.RazorLib.WatchWindow.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
+using Luthetus.Common.RazorLib.KeyCase;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
 
@@ -88,7 +89,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
         };
         }
 
-        TreeViewChangedKey = TreeViewChangedKey.NewKey();
+        TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
 
         return Task.CompletedTask;
     }
@@ -168,7 +169,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
 
                         originalTreeView.Parent = this;
                         originalTreeView.IndexAmongSiblings = childrensIndex;
-                        originalTreeView.TreeViewChangedKey = TreeViewChangedKey.NewKey();
+                        originalTreeView.TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
 
                         siblingsAndSelfTreeViews.RemoveAt(siblingsIndex);
 
@@ -178,7 +179,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
                     {
                         childTreeView.Parent = this;
                         childTreeView.IndexAmongSiblings = childrensIndex;
-                        childTreeView.TreeViewChangedKey = TreeViewChangedKey.NewKey();
+                        childTreeView.TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
                     }
                 }
             }
@@ -201,7 +202,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
             true,
             false)
         {
-            TreeViewChangedKey = TreeViewChangedKey.NewKey()
+            TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
         };
     }
 
@@ -221,7 +222,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
             true,
             false)
         {
-            TreeViewChangedKey = TreeViewChangedKey.NewKey()
+            TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
         };
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.Dimensions;
 using Luthetus.Common.RazorLib.FileSystem.Models;
+using Luthetus.Common.RazorLib.KeyCase;
 using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.Ide.RazorLib.InputFileCase.Models;
 using Luthetus.Ide.RazorLib.InputFileCase.States;
@@ -28,8 +29,7 @@ public partial class InputFileContent : ComponentBase
     [Parameter, EditorRequired]
     public Action<IAbsolutePath?> SetSelectedAbsolutePath { get; set; } = null!;
 
-    public static readonly TreeViewStateKey TreeViewInputFileContentStateKey =
-        TreeViewStateKey.NewKey();
+    public static readonly Key<TreeViewState> TreeViewInputFileContentStateKey = Key<TreeViewState>.NewKey();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

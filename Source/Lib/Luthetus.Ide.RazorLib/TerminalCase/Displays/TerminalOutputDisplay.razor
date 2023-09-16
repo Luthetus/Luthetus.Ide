@@ -1,3 +1,5 @@
+@using Luthetus.Common.RazorLib.KeyCase;
+@using Luthetus.Ide.RazorLib.TerminalCase.Models;
 @using Luthetus.TextEditor.RazorLib.TextEditorCase.Displays
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
@@ -10,19 +12,15 @@
 
             if (terminalSession is not null)
             {
-                if (TerminalCommandKey is null)
+                if (TerminalCommandKey == Key<TerminalCommand>.Empty)
                 {
                     // Render out all of the session's standard output
-                    outputString = terminalSession
-                        .ReadStandardOut()
-                                   ?? string.Empty;
+                    outputString = terminalSession.ReadStandardOut() ?? string.Empty;
                 }
                 else
                 {
                     // Render out ONLY the standard output from the specified command
-                    outputString = terminalSession
-                        .ReadStandardOut(TerminalCommandKey)
-                                   ?? string.Empty;
+                    outputString = terminalSession.ReadStandardOut(TerminalCommandKey) ?? string.Empty;
                 }
             }
         }

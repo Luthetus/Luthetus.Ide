@@ -1,14 +1,15 @@
 ﻿using Fluxor;
+using Luthetus.Common.RazorLib.KeyCase;
 using Luthetus.Ide.RazorLib.TerminalCase.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.TerminalCase.States;
 
 [FeatureState]
-public partial record TerminalSessionState(ImmutableDictionary<TerminalSessionKey, TerminalSession> TerminalSessionMap)
+public partial record TerminalSessionState(ImmutableDictionary<Key<TerminalSession>, TerminalSession> TerminalSessionMap)
 {
     public TerminalSessionState()
-        : this(ImmutableDictionary<TerminalSessionKey, TerminalSession>.Empty)
+        : this(ImmutableDictionary<Key<TerminalSession>, TerminalSession>.Empty)
     {
     }
 }

@@ -1,6 +1,7 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.Dialog.Models;
 using Luthetus.Common.RazorLib.Dialog.States;
+using Luthetus.Common.RazorLib.KeyCase;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.SettingsCase.Displays;
@@ -11,7 +12,7 @@ public partial class SettingsDialogEntryPoint : ComponentBase
     private IDispatcher Dispatcher { get; set; } = null!;
 
     private DialogRecord _dialogRecord = new(
-        DialogKey.NewKey(),
+        Key<DialogRecord>.NewKey(),
         "Settings",
         typeof(SettingsDisplay),
         null,
