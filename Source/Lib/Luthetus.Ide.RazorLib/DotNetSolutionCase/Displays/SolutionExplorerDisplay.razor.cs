@@ -89,7 +89,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             {
                 {
                     nameof(DotNetSolutionFormDisplay.Viewable),
-                    new DotNetSolutionFormViewable()
+                    new DotNetSolutionFormScene()
                 }
             },
             null)

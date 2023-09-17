@@ -16,14 +16,14 @@ public partial class CompilerServiceExplorerState
     public CompilerServiceExplorerState()
     {
         Model = new CompilerServiceExplorerModel();
-        GraphicalView = new CompilerServiceExplorerGraphicalViewable();
-        ReflectionView = new CompilerServiceExplorerReflectionViewable();
+        GraphicalView = new CompilerServiceExplorerGraphicalScene();
+        ReflectionView = new CompilerServiceExplorerReflectionScene();
     }
 
     public CompilerServiceExplorerState(
         CompilerServiceExplorerModel model,
-        CompilerServiceExplorerGraphicalViewable graphicalView,
-        CompilerServiceExplorerReflectionViewable reflectionView)
+        CompilerServiceExplorerGraphicalScene graphicalView,
+        CompilerServiceExplorerReflectionScene reflectionView)
     {
         Model = model;
         GraphicalView = graphicalView;
@@ -31,6 +31,6 @@ public partial class CompilerServiceExplorerState
     }
 
     public CompilerServiceExplorerModel Model { get; }
-    public CompilerServiceExplorerGraphicalViewable GraphicalView { get; }
-    public CompilerServiceExplorerReflectionViewable ReflectionView { get; }
+    public CompilerServiceExplorerGraphicalScene GraphicalView { get; }
+    public CompilerServiceExplorerReflectionScene ReflectionView { get; }
 }

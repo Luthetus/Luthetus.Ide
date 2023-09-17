@@ -549,7 +549,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             {
                 var workingDirectory = treeViewSolution.Item.NamespacePath.AbsolutePath.ParentDirectory!;
 
-                var formattedCommand = DotNetCliFacts.FormatRemoveCSharpProjectReferenceFromSolutionAction(
+                var formattedCommand = DotNetCliCommandFormatter.FormatRemoveCSharpProjectReferenceFromSolutionAction(
                     treeViewSolution.Item.NamespacePath.AbsolutePath.FormattedInput,
                     projectNode.Item.AbsolutePath.FormattedInput);
 
@@ -583,7 +583,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                         if (referencedProject is null)
                             return;
 
-                        var formattedCommand = DotNetCliFacts.FormatAddProjectToProjectReference(
+                        var formattedCommand = DotNetCliCommandFormatter.FormatAddProjectToProjectReference(
                             projectReceivingReference.Item.AbsolutePath.FormattedInput,
                             referencedProject.FormattedInput);
 
@@ -631,7 +631,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             "Remove Project Reference to Project",
             async () =>
             {
-                var formattedCommand = DotNetCliFacts.FormatRemoveProjectToProjectReference(
+                var formattedCommand = DotNetCliCommandFormatter.FormatRemoveProjectToProjectReference(
                     treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsolutePath.FormattedInput,
                     treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsolutePath.FormattedInput);
 
@@ -662,7 +662,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             "Move Project to Solution Folder",
             () =>
             {
-                var formattedCommand = DotNetCliFacts.FormatMoveProjectToSolutionFolder(
+                var formattedCommand = DotNetCliCommandFormatter.FormatMoveProjectToSolutionFolder(
                     treeViewSolution.Item.NamespacePath.AbsolutePath.FormattedInput,
                     treeViewProjectToMove.Item.AbsolutePath.FormattedInput,
                     solutionFolderPath);
@@ -700,7 +700,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             "Remove NuGet Package Reference from Project",
             async () =>
             {
-                var formattedCommand = DotNetCliFacts.FormatRemoveNugetPackageReferenceFromProject(
+                var formattedCommand = DotNetCliCommandFormatter.FormatRemoveNugetPackageReferenceFromProject(
                     modifyProjectNamespacePath.AbsolutePath.FormattedInput,
                     treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id);
 

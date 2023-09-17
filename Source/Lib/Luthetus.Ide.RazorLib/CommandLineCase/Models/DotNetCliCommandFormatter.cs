@@ -6,7 +6,7 @@ namespace Luthetus.Ide.RazorLib.CommandLineCase.Models;
 /// Any values given will NOT be wrapped in quotes internally at this step.
 /// Later, if one uses CliWrap, then at that point they will be wrapped in quotes.
 /// </summary>
-public static class DotNetCliFacts
+public static class DotNetCliCommandFormatter
 {
     public const string DOT_NET_CLI_TARGET_FILE_NAME = "dotnet";
 
