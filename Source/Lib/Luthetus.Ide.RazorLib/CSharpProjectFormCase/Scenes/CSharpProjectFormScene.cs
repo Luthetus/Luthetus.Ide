@@ -7,7 +7,7 @@ using Luthetus.Ide.RazorLib.FileSystemCase.Models;
 using Luthetus.Ide.RazorLib.TerminalCase.Models;
 using Luthetus.Ide.RazorLib.WebsiteProjectTemplatesCase.Models;
 
-namespace Luthetus.Ide.RazorLib.CSharpProjectFormCase.Viewables;
+namespace Luthetus.Ide.RazorLib.CSharpProjectFormCase.Scenes;
 
 public class CSharpProjectFormScene
 {

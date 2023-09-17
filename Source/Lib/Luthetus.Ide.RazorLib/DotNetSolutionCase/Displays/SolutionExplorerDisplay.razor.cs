@@ -9,7 +9,7 @@ using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
-using Luthetus.Ide.RazorLib.DotNetSolutionCase.Viewables;
+using Luthetus.Ide.RazorLib.DotNetSolutionCase.Scenes;
 using Luthetus.Ide.RazorLib.EditorCase.States;
 using Luthetus.Ide.RazorLib.MenuCase.Models;
 using Microsoft.AspNetCore.Components;

@@ -8,7 +8,7 @@ using Luthetus.Common.RazorLib.KeyCase;
 using Luthetus.Common.RazorLib.Menu.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
-using Luthetus.Ide.RazorLib.DotNetSolutionCase.Viewables;
+using Luthetus.Ide.RazorLib.DotNetSolutionCase.Scenes;
 using Luthetus.Ide.RazorLib.EditorCase.States;
 using Luthetus.Ide.RazorLib.FolderExplorerCase.States;
 using Microsoft.AspNetCore.Components;

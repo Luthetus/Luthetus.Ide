@@ -3,7 +3,7 @@ using Luthetus.Common.RazorLib.KeyCase;
 using Luthetus.Common.RazorLib.TabCase.Models;
 using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.Models;
-using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.Viewables;
+using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.Scenes;
 
 namespace Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.States;
 
