@@ -1,7 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.KeyCase;
 using Luthetus.Ide.RazorLib.TerminalCase.Models;
 
-namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.Viewables;
+namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.Scenes;
 
 public class DotNetSolutionFormScene
 {
