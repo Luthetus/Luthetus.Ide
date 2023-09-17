@@ -10,7 +10,7 @@ using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Cursor.Models;
 using Luthetus.TextEditor.RazorLib.Lexing.Models;
 using Luthetus.TextEditor.RazorLib.TextEditorCase.Model;
-using Luthetus.TextEditor.RazorLib.TextEditorCase.Viewables.InternalClasses;
+using Luthetus.TextEditor.RazorLib.TextEditorCase.Scenes.InternalClasses;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;

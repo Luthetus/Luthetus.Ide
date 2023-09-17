@@ -11,8 +11,8 @@ using Luthetus.Ide.RazorLib.InputFileCase.States;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.Lexing.Models;
 using Luthetus.TextEditor.RazorLib.TextEditorCase.Model;
-using Luthetus.TextEditor.RazorLib.TextEditorCase.Viewables;
-using Luthetus.TextEditor.RazorLib.TextEditorCase.Viewables.InternalClasses;
+using Luthetus.TextEditor.RazorLib.TextEditorCase.Scenes;
+using Luthetus.TextEditor.RazorLib.TextEditorCase.Scenes.InternalClasses;
 using System.Collections.Immutable;
 using static Luthetus.Ide.RazorLib.EditorCase.States.EditorState;
 

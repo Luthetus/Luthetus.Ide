@@ -21,7 +21,7 @@ using Luthetus.Common.RazorLib.Notification.Models;
 using Luthetus.Common.RazorLib.Installation.Models;
 using Luthetus.Common.RazorLib.Dialog.States;
 using Luthetus.Common.RazorLib.KeyCase;
-using Luthetus.Ide.RazorLib.CSharpProjectFormCase.Viewables;
+using Luthetus.Ide.RazorLib.CSharpProjectFormCase.Scenes;
 
 namespace Luthetus.Ide.RazorLib.CSharpProjectFormCase.Displays;
 
