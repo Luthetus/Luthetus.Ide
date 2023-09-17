@@ -3,7 +3,7 @@ using Luthetus.Ide.RazorLib.TerminalCase.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.Viewables;
 
-public class DotNetSolutionFormViewable
+public class DotNetSolutionFormScene
 {
     public Key<TerminalCommand> NewDotNetSolutionTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
 

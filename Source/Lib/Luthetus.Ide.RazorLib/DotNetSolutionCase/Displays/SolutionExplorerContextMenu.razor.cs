@@ -372,7 +372,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 if (afp is null)
                     return;
 
-                var localFormattedAddExistingProjectToSolutionCommand = DotNetCliFacts
+                var localFormattedAddExistingProjectToSolutionCommand = DotNetCliCommandFormatter
                     .FormatAddExistingProjectToSolution(
                         dotNetSolutionModel.NamespacePath.AbsolutePath.FormattedInput,
                         afp.FormattedInput);

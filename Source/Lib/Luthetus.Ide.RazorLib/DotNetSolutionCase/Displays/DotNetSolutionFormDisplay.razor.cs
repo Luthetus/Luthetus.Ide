@@ -42,7 +42,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
     public DialogRecord DialogRecord { get; set; } = null!;
     
     [Parameter, EditorRequired]
-    public DotNetSolutionFormViewable Viewable { get; set; } = null!;
+    public DotNetSolutionFormScene Viewable { get; set; } = null!;
 
     private string SolutionName => string.IsNullOrWhiteSpace(Viewable.SolutionName)
         ? "{enter solution name}"
@@ -52,7 +52,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
         ? "{enter parent directory name}"
         : Viewable.ParentDirectoryName;
 
-    private FormattedCommand FormattedCommand => DotNetCliFacts.FormatDotnetNewSln(Viewable.SolutionName);
+    private FormattedCommand FormattedCommand => DotNetCliCommandFormatter.FormatDotnetNewSln(Viewable.SolutionName);
 
     private void RequestInputFileForParentDirectory()
     {
@@ -167,7 +167,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
 
         await FileSystemProvider.File.WriteAllTextAsync(
             solutionAbsolutePathString,
-            DotNetSolutionFormViewable.HackForWebsite_NEW_SOLUTION_TEMPLATE);
+            DotNetSolutionFormScene.HackForWebsite_NEW_SOLUTION_TEMPLATE);
 
         // Close Dialog
         Dispatcher.Dispatch(new DialogRegistry.DisposeAction(DialogRecord.Key));

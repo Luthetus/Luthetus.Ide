@@ -136,7 +136,7 @@ public partial class IdeHeader : FluxorComponent
             {
                 {
                     nameof(DotNetSolutionFormDisplay.Viewable),
-                    new DotNetSolutionFormViewable()
+                    new DotNetSolutionFormScene()
                 }
             },
             null)

@@ -32,7 +32,7 @@ public partial class StartupControlsDisplay : FluxorComponent
         if (parentDirectoryAbsolutePathString is null)
             return;
 
-        var formattedCommand = DotNetCliFacts
+        var formattedCommand = DotNetCliCommandFormatter
             .FormatStartProjectWithoutDebugging(
                 programExecutionState.StartupProjectAbsolutePath);
 
