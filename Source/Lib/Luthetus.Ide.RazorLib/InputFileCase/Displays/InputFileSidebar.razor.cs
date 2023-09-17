@@ -12,6 +12,7 @@ using Luthetus.Common.RazorLib.FileSystem.Models;
 using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.Common.RazorLib.Dropdown.States;
 using Luthetus.Common.RazorLib.KeyCase;
+using Luthetus.Common.RazorLib.Commands.Models;
 
 namespace Luthetus.Ide.RazorLib.InputFileCase.Displays;
 
@@ -49,7 +50,7 @@ public partial class InputFileSidebar : ComponentBase
     public static readonly Key<TreeViewState> TreeViewInputFileSidebarStateKey =
         Key<TreeViewState>.NewKey();
 
-    private ITreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
+    private TreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
 
     protected override void OnInitialized()
     {
@@ -88,7 +89,7 @@ public partial class InputFileSidebar : ComponentBase
         base.OnInitialized();
     }
 
-    private async Task OnTreeViewContextMenuFunc(ITreeViewCommandParameter treeViewCommandParameter)
+    private async Task OnTreeViewContextMenuFunc(TreeViewCommandParameter treeViewCommandParameter)
     {
         _mostRecentTreeViewCommandParameter = treeViewCommandParameter;
 

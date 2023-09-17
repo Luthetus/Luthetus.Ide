@@ -1,4 +1,5 @@
 ﻿using Fluxor;
+using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.FileSystem.Models;
 using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.Ide.RazorLib.InputFileCase.States;
@@ -21,7 +22,7 @@ public class InputFileTreeViewMouseEventHandler : TreeViewMouseEventHandler
         _setInputFileContentTreeViewRootFunc = setInputFileContentTreeViewRootFunc;
     }
 
-    public override void OnClick(ITreeViewCommandParameter treeViewCommandParameter)
+    public override void OnClick(TreeViewCommandParameter treeViewCommandParameter)
     {
         base.OnClick(treeViewCommandParameter);
 
@@ -34,7 +35,7 @@ public class InputFileTreeViewMouseEventHandler : TreeViewMouseEventHandler
         _dispatcher.Dispatch(setSelectedTreeViewModelAction);
     }
 
-    public override void OnDoubleClick(ITreeViewCommandParameter treeViewCommandParameter)
+    public override void OnDoubleClick(TreeViewCommandParameter treeViewCommandParameter)
     {
         base.OnDoubleClick(treeViewCommandParameter);
 

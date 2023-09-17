@@ -1,4 +1,5 @@
 ﻿using Fluxor;
+using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dialog.Models;
 using Luthetus.Common.RazorLib.Dimensions;
@@ -26,7 +27,7 @@ public partial class InputFileContextMenu : ComponentBase
     private ITreeViewService TreeViewService { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public ITreeViewCommandParameter TreeViewCommandParameter { get; set; } = null!;
+    public TreeViewCommandParameter TreeViewCommandParameter { get; set; } = null!;
 
     public static readonly Key<DropdownRecord> ContextMenuEventDropdownKey = Key<DropdownRecord>.NewKey();
 
@@ -37,7 +38,7 @@ public partial class InputFileContextMenu : ComponentBase
     public static TreeViewNoType? ParentOfCutFile;
 
     private MenuRecord GetMenuRecord(
-        ITreeViewCommandParameter treeViewCommandParameter)
+        TreeViewCommandParameter treeViewCommandParameter)
     {
         if (treeViewCommandParameter.TargetNode is null)
             return MenuRecord.Empty;
@@ -156,7 +157,7 @@ public partial class InputFileContextMenu : ComponentBase
     }
 
     public static string GetContextMenuCssStyleString(
-        ITreeViewCommandParameter? treeViewCommandParameter,
+        TreeViewCommandParameter? treeViewCommandParameter,
         DialogRecord dialogRecord)
     {
         if (treeViewCommandParameter?.ContextMenuFixedPosition is null)

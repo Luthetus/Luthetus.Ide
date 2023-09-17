@@ -1,4 +1,5 @@
 using Fluxor;
+using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dropdown.States;
 using Luthetus.Common.RazorLib.Options.States;
@@ -40,7 +41,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
     [Inject]
     private EditorSync EditorSync { get; set; } = null!;
 
-    private ITreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
+    private TreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
     private CompilerServiceExplorerTreeViewKeyboardEventHandler _compilerServiceExplorerTreeViewKeymap = null!;
     private CompilerServiceExplorerTreeViewMouseEventHandler _compilerServiceExplorerTreeViewMouseEventHandler = null!;
 
@@ -100,7 +101,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
         await InvokeAsync(StateHasChanged);
     }
 
-    private async Task OnTreeViewContextMenuFunc(ITreeViewCommandParameter treeViewCommandParameter)
+    private async Task OnTreeViewContextMenuFunc(TreeViewCommandParameter treeViewCommandParameter)
     {
         _mostRecentTreeViewCommandParameter = treeViewCommandParameter;
 

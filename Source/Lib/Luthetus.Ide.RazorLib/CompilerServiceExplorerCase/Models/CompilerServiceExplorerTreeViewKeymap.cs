@@ -1,4 +1,5 @@
 ﻿using Fluxor;
+using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Keyboard.Models;
 using Luthetus.Common.RazorLib.TreeView.Models;
@@ -31,7 +32,7 @@ public class CompilerServiceExplorerTreeViewKeyboardEventHandler : TreeViewKeybo
         _treeViewService = treeViewService;
     }
 
-    public override void OnKeyDown(ITreeViewCommandParameter treeViewCommandParameter)
+    public override void OnKeyDown(TreeViewCommandParameter treeViewCommandParameter)
     {
         if (treeViewCommandParameter.KeyboardEventArgs is null)
             return;
@@ -60,7 +61,7 @@ public class CompilerServiceExplorerTreeViewKeyboardEventHandler : TreeViewKeybo
         }
     }
 
-    private void CtrlModifiedKeymap(ITreeViewCommandParameter treeViewCommandParameter)
+    private void CtrlModifiedKeymap(TreeViewCommandParameter treeViewCommandParameter)
     {
         if (treeViewCommandParameter.KeyboardEventArgs is null)
             return;
@@ -78,18 +79,18 @@ public class CompilerServiceExplorerTreeViewKeyboardEventHandler : TreeViewKeybo
         }
     }
 
-    private void AltModifiedKeymap(ITreeViewCommandParameter treeViewCommandParameter)
+    private void AltModifiedKeymap(TreeViewCommandParameter treeViewCommandParameter)
     {
         return;
     }
 
-    private void CtrlAltModifiedKeymap(ITreeViewCommandParameter treeViewCommandParameter)
+    private void CtrlAltModifiedKeymap(TreeViewCommandParameter treeViewCommandParameter)
     {
         return;
     }
 
     private void InvokeOpenInEditor(
-        ITreeViewCommandParameter treeViewCommandParameter,
+        TreeViewCommandParameter treeViewCommandParameter,
         bool shouldSetFocusToEditor)
     {
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;

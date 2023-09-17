@@ -9,6 +9,7 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.Dropdown.States;
+using Luthetus.Common.RazorLib.Commands.Models;
 
 namespace Luthetus.Ide.RazorLib.FolderExplorerCase.Displays;
 
@@ -35,7 +36,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 
     private FolderExplorerTreeViewMouseEventHandler _folderExplorerTreeViewMouseEventHandler = null!;
     private FolderExplorerTreeViewKeyboardEventHandler _folderExplorerTreeViewKeyboardEventHandler = null!;
-    private ITreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
+    private TreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
 
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
         AppOptionsRegistryWrap.Value.Options.IconSizeInPixels.GetValueOrDefault() *
@@ -71,7 +72,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
         await InvokeAsync(StateHasChanged);
     }
 
-    private async Task OnTreeViewContextMenuFunc(ITreeViewCommandParameter treeViewCommandParameter)
+    private async Task OnTreeViewContextMenuFunc(TreeViewCommandParameter treeViewCommandParameter)
     {
         _mostRecentTreeViewCommandParameter = treeViewCommandParameter;
 

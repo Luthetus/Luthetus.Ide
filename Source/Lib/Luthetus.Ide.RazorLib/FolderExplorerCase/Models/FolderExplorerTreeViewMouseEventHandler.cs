@@ -1,4 +1,5 @@
 ﻿using Fluxor;
+using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.Ide.RazorLib.EditorCase.States;
 using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
@@ -20,7 +21,7 @@ public class FolderExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
         _dispatcher = dispatcher;
     }
 
-    public override void OnDoubleClick(ITreeViewCommandParameter treeViewCommandParameter)
+    public override void OnDoubleClick(TreeViewCommandParameter treeViewCommandParameter)
     {
         base.OnDoubleClick(treeViewCommandParameter);
 

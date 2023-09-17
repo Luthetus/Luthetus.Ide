@@ -1,4 +1,5 @@
 ﻿using Fluxor;
+using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Keyboard.Models;
 using Luthetus.Common.RazorLib.Menu.Models;
@@ -35,7 +36,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         _treeViewService = treeViewService;
     }
 
-    public override void OnKeyDown(ITreeViewCommandParameter treeViewCommandParameter)
+    public override void OnKeyDown(TreeViewCommandParameter treeViewCommandParameter)
     {
         if (treeViewCommandParameter.KeyboardEventArgs is null)
             return;
@@ -64,7 +65,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         }
     }
 
-    private void CtrlModifiedKeymap(ITreeViewCommandParameter treeViewCommandParameter)
+    private void CtrlModifiedKeymap(TreeViewCommandParameter treeViewCommandParameter)
     {
         if (treeViewCommandParameter.KeyboardEventArgs is null)
             return;
@@ -89,17 +90,17 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         }
     }
 
-    private void AltModifiedKeymap(ITreeViewCommandParameter treeViewCommandParameter)
+    private void AltModifiedKeymap(TreeViewCommandParameter treeViewCommandParameter)
     {
         return;
     }
 
-    private void CtrlAltModifiedKeymap(ITreeViewCommandParameter treeViewCommandParameter)
+    private void CtrlAltModifiedKeymap(TreeViewCommandParameter treeViewCommandParameter)
     {
         return;
     }
 
-    private void InvokeCopyFile(ITreeViewCommandParameter treeViewCommandParameter)
+    private void InvokeCopyFile(TreeViewCommandParameter treeViewCommandParameter)
     {
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
@@ -117,7 +118,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         copyFileMenuOption.OnClick?.Invoke();
     }
 
-    private void InvokePasteClipboard(ITreeViewCommandParameter treeViewCommandParameter)
+    private void InvokePasteClipboard(TreeViewCommandParameter treeViewCommandParameter)
     {
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
@@ -167,7 +168,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         pasteMenuOptionRecord.OnClick?.Invoke();
     }
 
-    private void InvokeCutFile(ITreeViewCommandParameter treeViewCommandParameter)
+    private void InvokeCutFile(TreeViewCommandParameter treeViewCommandParameter)
     {
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
@@ -189,7 +190,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
     }
 
     private void InvokeOpenInEditor(
-        ITreeViewCommandParameter treeViewCommandParameter,
+        TreeViewCommandParameter treeViewCommandParameter,
         bool shouldSetFocusToEditor)
     {
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;

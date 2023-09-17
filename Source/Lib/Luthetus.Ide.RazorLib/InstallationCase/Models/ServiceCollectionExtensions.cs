@@ -11,7 +11,7 @@ using Luthetus.CompilerServices.Lang.TypeScript;
 using Luthetus.CompilerServices.Lang.Xml;
 using Luthetus.CompilerServices.Lang.Css;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
-using Luthetus.Ide.RazorLib.CommandCase.Models;
+using Luthetus.Common.RazorLib.CommandCase.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
 using Luthetus.Ide.RazorLib.FileSystemCase.Models;
 using Luthetus.Ide.RazorLib.MenuCase.Models;
@@ -33,6 +33,7 @@ using Luthetus.Common.RazorLib.Installation.Models;
 using Luthetus.TextEditor.RazorLib.Installation.Models;
 using Luthetus.Ide.RazorLib.InputFileCase.States;
 using Luthetus.Ide.RazorLib.LocalStorageCase.Models;
+using Luthetus.Common.RazorLib.CommandCase.Models.Ide;
 
 namespace Luthetus.Ide.RazorLib.InstallationCase.Models;
 
