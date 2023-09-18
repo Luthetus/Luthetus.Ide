@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
-using Luthetus.Ide.RazorLib.CommandCase.Models;
 using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.Models;
 using Luthetus.Ide.RazorLib.TerminalCase.Models;
 using Luthetus.Ide.RazorLib.TerminalCase.States;
@@ -10,7 +9,7 @@ using Luthetus.Ide.RazorLib.FolderExplorerCase.Displays;
 using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.Displays;
 using Luthetus.Ide.RazorLib.TerminalCase.Displays;
 using Luthetus.Ide.RazorLib.NugetCase.Displays;
-using Luthetus.Ide.RazorLib.ContextCase.Displays;
+using Luthetus.Common.RazorLib.ContextCase.Displays;
 using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.States;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
@@ -24,6 +23,7 @@ using Luthetus.Common.RazorLib.TabCase.States;
 using Luthetus.TextEditor.RazorLib.Installation.Models;
 using Luthetus.TextEditor.RazorLib.Find.States;
 using Luthetus.Common.RazorLib.KeyCase;
+using Luthetus.Common.RazorLib.CommandCase.Models.Ide;
 
 namespace Luthetus.Ide.RazorLib.InstallationCase.Displays;
 

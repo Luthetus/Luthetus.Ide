@@ -13,6 +13,7 @@ using Luthetus.Ide.RazorLib.DotNetSolutionCase.Scenes;
 using Luthetus.Ide.RazorLib.EditorCase.States;
 using Luthetus.Ide.RazorLib.MenuCase.Models;
 using Microsoft.AspNetCore.Components;
+using Luthetus.Common.RazorLib.Commands.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
 
@@ -35,7 +36,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     [Inject]
     private EditorSync EditorSync { get; set; } = null!;
 
-    private ITreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
+    private TreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
     private SolutionExplorerTreeViewKeyboardEventHandler _solutionExplorerTreeViewKeymap = null!;
     private SolutionExplorerTreeViewMouseEventHandler _solutionExplorerTreeViewMouseEventHandler = null!;
     private bool _disposed;
@@ -69,7 +70,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         await InvokeAsync(StateHasChanged);
     }
 
-    private async Task OnTreeViewContextMenuFunc(ITreeViewCommandParameter treeViewCommandParameter)
+    private async Task OnTreeViewContextMenuFunc(TreeViewCommandParameter treeViewCommandParameter)
     {
         _mostRecentTreeViewCommandParameter = treeViewCommandParameter;
 

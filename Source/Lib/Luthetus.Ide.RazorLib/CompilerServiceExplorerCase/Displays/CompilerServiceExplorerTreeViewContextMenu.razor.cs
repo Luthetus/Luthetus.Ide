@@ -1,4 +1,5 @@
-﻿using Luthetus.Common.RazorLib.Dimensions;
+﻿using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.Common.RazorLib.Dimensions;
 using Luthetus.Common.RazorLib.Dropdown.Models;
 using Luthetus.Common.RazorLib.KeyCase;
 using Luthetus.Common.RazorLib.Menu.Models;
@@ -14,11 +15,11 @@ public partial class CompilerServiceExplorerTreeViewContextMenu : ComponentBase
     private ITreeViewService TreeViewService { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public ITreeViewCommandParameter TreeViewCommandParameter { get; set; } = null!;
+    public TreeViewCommandParameter TreeViewCommandParameter { get; set; } = null!;
 
     public static readonly Key<DropdownRecord> ContextMenuEventDropdownKey = Key<DropdownRecord>.NewKey();
 
-    private MenuRecord GetMenuRecord(ITreeViewCommandParameter treeViewCommandParameter)
+    private MenuRecord GetMenuRecord(TreeViewCommandParameter treeViewCommandParameter)
     {
         return MenuRecord.Empty;
     }
@@ -51,7 +52,7 @@ public partial class CompilerServiceExplorerTreeViewContextMenu : ComponentBase
     }
 
     public static string GetContextMenuCssStyleString(
-        ITreeViewCommandParameter? treeViewCommandParameter)
+        TreeViewCommandParameter? treeViewCommandParameter)
     {
         if (treeViewCommandParameter?.ContextMenuFixedPosition is null)
             return "display: none;";

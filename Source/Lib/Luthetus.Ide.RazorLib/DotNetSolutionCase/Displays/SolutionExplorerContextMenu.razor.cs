@@ -23,6 +23,7 @@ using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.Dialog.States;
 using Luthetus.Common.RazorLib.KeyCase;
+using Luthetus.Common.RazorLib.Commands.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
 
@@ -44,7 +45,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     private InputFileSync InputFileSync { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public ITreeViewCommandParameter TreeViewCommandParameter { get; set; } = null!;
+    public TreeViewCommandParameter TreeViewCommandParameter { get; set; } = null!;
 
     public static readonly Key<DropdownRecord> ContextMenuEventDropdownKey = Key<DropdownRecord>.NewKey();
 
@@ -55,7 +56,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     public static TreeViewNoType? ParentOfCutFile;
 
     private MenuRecord GetMenuRecord(
-        ITreeViewCommandParameter treeViewCommandParameter)
+        TreeViewCommandParameter treeViewCommandParameter)
     {
         if (treeViewCommandParameter.TargetNode is null)
             return MenuRecord.Empty;
@@ -440,7 +441,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     }
 
     public static string GetContextMenuCssStyleString(
-        ITreeViewCommandParameter? treeViewCommandParameter)
+        TreeViewCommandParameter? treeViewCommandParameter)
     {
         if (treeViewCommandParameter?.ContextMenuFixedPosition is null)
             return "display: none;";

@@ -1,4 +1,5 @@
 ﻿using Fluxor;
+using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Keyboard.Models;
 using Luthetus.Common.RazorLib.Menu.Models;
@@ -35,7 +36,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         _treeViewService = treeViewService;
     }
 
-    public override void OnKeyDown(ITreeViewCommandParameter treeViewCommandParameter)
+    public override void OnKeyDown(TreeViewCommandParameter treeViewCommandParameter)
     {
         if (treeViewCommandParameter.KeyboardEventArgs is null)
             return;
@@ -58,7 +59,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
             AltModifiedKeymap(treeViewCommandParameter);
     }
 
-    private void CtrlModifiedKeymap(ITreeViewCommandParameter treeViewCommandParameter)
+    private void CtrlModifiedKeymap(TreeViewCommandParameter treeViewCommandParameter)
     {
         if (treeViewCommandParameter.KeyboardEventArgs is null)
             return;
@@ -91,17 +92,17 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
     /// <br /><br />
     /// As otherwise, we'd have to permute over all the possible keyboard modifier keys and have a method for each permutation.
     /// </summary>
-    private void AltModifiedKeymap(ITreeViewCommandParameter treeViewCommandParameter)
+    private void AltModifiedKeymap(TreeViewCommandParameter treeViewCommandParameter)
     {
         return;
     }
 
-    private void CtrlAltModifiedKeymap(ITreeViewCommandParameter treeViewCommandParameter)
+    private void CtrlAltModifiedKeymap(TreeViewCommandParameter treeViewCommandParameter)
     {
         return;
     }
 
-    private void CopyFile(ITreeViewCommandParameter treeViewCommandParameter)
+    private void CopyFile(TreeViewCommandParameter treeViewCommandParameter)
     {
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
@@ -119,7 +120,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         copyFileMenuOption.OnClick?.Invoke();
     }
 
-    private Task PasteClipboard(ITreeViewCommandParameter treeViewCommandParameter)
+    private Task PasteClipboard(TreeViewCommandParameter treeViewCommandParameter)
     {
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
@@ -168,7 +169,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         return Task.CompletedTask;
     }
 
-    private void CutFile(ITreeViewCommandParameter treeViewCommandParameter)
+    private void CutFile(TreeViewCommandParameter treeViewCommandParameter)
     {
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
 
@@ -190,7 +191,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
     }
 
     private void InvokeOpenInEditor(
-        ITreeViewCommandParameter treeViewCommandParameter,
+        TreeViewCommandParameter treeViewCommandParameter,
         bool shouldSetFocusToEditor)
     {
         var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
