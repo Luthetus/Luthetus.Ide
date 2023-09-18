@@ -44,50 +44,45 @@ public partial class LuthetusIdeInitializer : ComponentBase
     [Inject]
     private ICommandFactory CommandFactory { get; set; } = null!;
 
-    protected override void OnInitialized()
-    {
-        if (LuthetusTextEditorOptions.CustomThemeRecords is not null)
-        {
-            foreach (var themeRecord in LuthetusTextEditorOptions.CustomThemeRecords)
-            {
-                Dispatcher.Dispatch(new ThemeRecordRegistry.RegisterAction(
-                    themeRecord));
-            }
-        }
-
-        foreach (var findProvider in LuthetusTextEditorOptions.FindProviders)
-        {
-            Dispatcher.Dispatch(new TextEditorFindProviderRegistry.RegisterAction(
-                findProvider));
-        }
-
-        foreach (var terminalSessionKey in TerminalSessionFacts.WELL_KNOWN_TERMINAL_SESSION_KEYS)
-        {
-            var terminalSession = new TerminalSession(
-                null,
-                Dispatcher,
-                FileSystemProvider,
-                BackgroundTaskService,
-                LuthetusCommonComponentRenderers)
-            {
-                TerminalSessionKey = terminalSessionKey
-            };
-
-            Dispatcher.Dispatch(new TerminalSessionState.RegisterTerminalSessionAction(
-                terminalSession));
-        }
-
-        InitializePanelTabs();
-
-        CommandFactory.Initialize();
-
-        base.OnInitialized();
-    }
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
+            if (LuthetusTextEditorOptions.CustomThemeRecords is not null)
+            {
+                foreach (var themeRecord in LuthetusTextEditorOptions.CustomThemeRecords)
+                {
+                    Dispatcher.Dispatch(new ThemeRecordRegistry.RegisterAction(
+                        themeRecord));
+                }
+            }
+
+            foreach (var findProvider in LuthetusTextEditorOptions.FindProviders)
+            {
+                Dispatcher.Dispatch(new TextEditorFindProviderRegistry.RegisterAction(
+                    findProvider));
+            }
+
+            foreach (var terminalSessionKey in TerminalSessionFacts.WELL_KNOWN_TERMINAL_SESSION_KEYS)
+            {
+                var terminalSession = new TerminalSession(
+                    null,
+                    Dispatcher,
+                    FileSystemProvider,
+                    BackgroundTaskService,
+                    LuthetusCommonComponentRenderers)
+                {
+                    TerminalSessionKey = terminalSessionKey
+                };
+
+                Dispatcher.Dispatch(new TerminalSessionState.RegisterTerminalSessionAction(
+                    terminalSession));
+            }
+
+            InitializePanelTabs();
+
+            CommandFactory.Initialize();
+
             await InitializeCompilerServiceExplorerStateAsync();
         }
 
