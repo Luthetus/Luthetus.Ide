@@ -30,7 +30,7 @@ namespace Luthetus.Ide.RazorLib.InstallationCase.Displays;
 public partial class LuthetusIdeInitializer : ComponentBase
 {
     [Inject]
-    private IState<PanelsState> PanelsCollectionWrap { get; set; } = null!;
+    private IState<PanelsState> PanelsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -98,7 +98,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
 
     private void InitializeLeftPanelTabs()
     {
-        var leftPanel = PanelFacts.GetLeftPanelRecord(PanelsCollectionWrap.Value);
+        var leftPanel = PanelFacts.GetLeftPanelRecord(PanelsStateWrap.Value);
 
         var solutionExplorerPanelTab = new PanelTab(
             Key<PanelTab>.NewKey(),
@@ -133,7 +133,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
 
     private void InitializeRightPanelTabs()
     {
-        var rightPanel = PanelFacts.GetRightPanelRecord(PanelsCollectionWrap.Value);
+        var rightPanel = PanelFacts.GetRightPanelRecord(PanelsStateWrap.Value);
 
         var compilerServiceExplorerPanelTab = new PanelTab(
             Key<PanelTab>.NewKey(),
@@ -151,7 +151,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
 
     private void InitializeBottomPanelTabs()
     {
-        var bottomPanel = PanelFacts.GetBottomPanelRecord(PanelsCollectionWrap.Value);
+        var bottomPanel = PanelFacts.GetBottomPanelRecord(PanelsStateWrap.Value);
 
         var terminalPanelTab = new PanelTab(
             Key<PanelTab>.NewKey(),

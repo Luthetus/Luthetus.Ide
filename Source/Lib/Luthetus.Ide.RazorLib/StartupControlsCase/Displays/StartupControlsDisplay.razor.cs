@@ -14,7 +14,7 @@ public partial class StartupControlsDisplay : FluxorComponent
     [Inject]
     private IState<ProgramExecutionState> ProgramExecutionStateWrap { get; set; } = null!;
     [Inject]
-    private IState<TerminalSessionState> TerminalSessionsStateWrap { get; set; } = null!;
+    private IState<TerminalSessionState> TerminalSessionStateWrap { get; set; } = null!;
 
     private readonly Key<TerminalCommand> _newDotNetSolutionTerminalCommandKey = Key<TerminalCommand>.NewKey();
 
@@ -42,7 +42,7 @@ public partial class StartupControlsDisplay : FluxorComponent
             parentDirectoryAbsolutePathString,
             _newDotNetSolutionCancellationTokenSource.Token);
 
-        var executionTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
+        var executionTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[
             TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY];
 
         await executionTerminalSession

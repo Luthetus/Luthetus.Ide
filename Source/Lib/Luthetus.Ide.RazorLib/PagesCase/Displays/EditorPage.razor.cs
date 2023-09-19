@@ -9,7 +9,7 @@ namespace Luthetus.Ide.RazorLib.PagesCase.Displays;
 public partial class EditorPage : ComponentBase
 {
     [Inject]
-    private IState<PanelsState> PanelsCollectionWrap { get; set; } = null!;
+    private IState<PanelsState> PanelsStateWrap { get; set; } = null!;
 
     private ElementDimensions _bodyElementDimensions = new();
 

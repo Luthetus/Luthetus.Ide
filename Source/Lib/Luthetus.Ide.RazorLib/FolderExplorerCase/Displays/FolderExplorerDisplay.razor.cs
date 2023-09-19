@@ -1,6 +1,5 @@
 using Fluxor;
 using Microsoft.AspNetCore.Components;
-using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
 using Luthetus.Ide.RazorLib.FolderExplorerCase.Models;
 using Luthetus.Ide.RazorLib.MenuCase.Models;
 using Luthetus.Ide.RazorLib.FolderExplorerCase.States;
@@ -23,8 +22,6 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
-    [Inject]
-    private ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; set; } = null!;
     [Inject]
     private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
     [Inject]
