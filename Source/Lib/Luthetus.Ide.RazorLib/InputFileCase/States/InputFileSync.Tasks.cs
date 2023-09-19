@@ -26,7 +26,7 @@ public partial record InputFileSync
                 IsResizable = true
             };
 
-            Dispatcher.Dispatch(new DialogRegistry.RegisterAction(
+            Dispatcher.Dispatch(new DialogState.RegisterAction(
                 inputFileDialog));
         }
 

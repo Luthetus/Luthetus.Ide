@@ -10,7 +10,7 @@ using Luthetus.Ide.RazorLib.TerminalCase.States;
 using Luthetus.Ide.RazorLib.NugetCase.States;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Notification.Models;
-using Luthetus.Common.RazorLib.KeyCase;
+using Luthetus.Common.RazorLib.KeyCase.Models;
 
 namespace Luthetus.Ide.RazorLib.NugetCase.Displays;
 

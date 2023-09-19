@@ -1,7 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Dimensions;
 using Luthetus.Common.RazorLib.Dropdown.Models;
-using Luthetus.Common.RazorLib.KeyCase;
+using Luthetus.Common.RazorLib.KeyCase.Models;
 using Luthetus.Common.RazorLib.Menu.Models;
 using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;

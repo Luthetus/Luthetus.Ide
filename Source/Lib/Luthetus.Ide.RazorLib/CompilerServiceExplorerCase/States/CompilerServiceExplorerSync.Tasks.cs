@@ -60,7 +60,7 @@ public partial class CompilerServiceExplorerSync
                 TreeViewCompilerServiceExplorerContentStateKey,
                 out var treeViewState))
         {
-            _treeViewService.RegisterTreeViewState(new TreeViewState(
+            _treeViewService.RegisterTreeViewState(new TreeViewContainer(
                 TreeViewCompilerServiceExplorerContentStateKey,
                 rootNode,
                 rootNode,

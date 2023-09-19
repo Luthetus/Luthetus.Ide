@@ -1,7 +1,7 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
 using Luthetus.Common.RazorLib.FileSystem.Models;
-using Luthetus.Common.RazorLib.KeyCase;
+using Luthetus.Common.RazorLib.KeyCase.Models;
 using Luthetus.Common.RazorLib.Notification.Models;
 using Luthetus.Common.RazorLib.Notification.States;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
@@ -179,7 +179,7 @@ public partial class EditorSync
                                     "Check If Contexts Were Modified",
                                     async () =>
                                     {
-                                        dispatcher.Dispatch(new NotificationRegistry.DisposeAction(
+                                        dispatcher.Dispatch(new NotificationState.DisposeAction(
                                             notificationInformativeKey));
 
                                         var content = await _fileSystemProvider.File
@@ -198,7 +198,7 @@ public partial class EditorSync
                             nameof(IBooleanPromptOrCancelRendererType.OnAfterDeclineAction),
                             new Action(() =>
                             {
-                                dispatcher.Dispatch(new NotificationRegistry.DisposeAction(
+                                dispatcher.Dispatch(new NotificationState.DisposeAction(
                                     notificationInformativeKey));
                             })
                         },
@@ -207,7 +207,7 @@ public partial class EditorSync
                 true,
                 null);
 
-            dispatcher.Dispatch(new NotificationRegistry.RegisterAction(
+            dispatcher.Dispatch(new NotificationState.RegisterAction(
                 notificationInformative));
         }
     }

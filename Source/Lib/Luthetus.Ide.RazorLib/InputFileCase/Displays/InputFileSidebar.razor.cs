@@ -11,8 +11,8 @@ using Luthetus.Common.RazorLib.Dialog.Models;
 using Luthetus.Common.RazorLib.FileSystem.Models;
 using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.Common.RazorLib.Dropdown.States;
-using Luthetus.Common.RazorLib.KeyCase;
 using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.Common.RazorLib.KeyCase.Models;
 
 namespace Luthetus.Ide.RazorLib.InputFileCase.Displays;
 
@@ -47,8 +47,8 @@ public partial class InputFileSidebar : ComponentBase
     [Parameter, EditorRequired]
     public Action<IAbsolutePath?> SetSelectedAbsolutePath { get; set; } = null!;
 
-    public static readonly Key<TreeViewState> TreeViewInputFileSidebarStateKey =
-        Key<TreeViewState>.NewKey();
+    public static readonly Key<TreeViewContainer> TreeViewInputFileSidebarStateKey =
+        Key<TreeViewContainer>.NewKey();
 
     private TreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
 
@@ -79,7 +79,7 @@ public partial class InputFileSidebar : ComponentBase
         if (!TreeViewService.TryGetTreeViewState(
                 TreeViewInputFileSidebarStateKey, out var treeViewState))
         {
-            TreeViewService.RegisterTreeViewState(new TreeViewState(
+            TreeViewService.RegisterTreeViewState(new TreeViewContainer(
                 TreeViewInputFileSidebarStateKey,
                 adhocRootNode,
                 directoryHomeNode,
@@ -93,7 +93,7 @@ public partial class InputFileSidebar : ComponentBase
     {
         _mostRecentTreeViewCommandParameter = treeViewCommandParameter;
 
-        Dispatcher.Dispatch(new DropdownRegistry.AddActiveAction(
+        Dispatcher.Dispatch(new DropdownState.AddActiveAction(
             InputFileContextMenu.ContextMenuEventDropdownKey));
 
         await InvokeAsync(StateHasChanged);

@@ -12,7 +12,7 @@ public partial class CompilerServiceExplorerDisplay : FluxorComponent
     [Inject]
     private IState<CompilerServiceExplorerState> CompilerServiceExplorerRegistryWrap { get; set; } = null!;
     [Inject]
-    private IStateSelection<TabRegistry, TabGroup?> TabRegistrySelection { get; set; } = null!;
+    private IStateSelection<TabState, TabGroup?> TabRegistrySelection { get; set; } = null!;
 
     protected override void OnInitialized()
     {

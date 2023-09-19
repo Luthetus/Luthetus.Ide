@@ -25,7 +25,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
     [Inject]
     private IState<TextEditorGroupRegistry> TextEditorGroupRegistryWrap { get; set; } = null!;
     [Inject]
-    private IState<AppOptionsRegistry> AppOptionsRegistryWrap { get; set; } = null!;
+    private IState<AppOptionsState> AppOptionsRegistryWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -105,7 +105,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
     {
         _mostRecentTreeViewCommandParameter = treeViewCommandParameter;
 
-        Dispatcher.Dispatch(new DropdownRegistry.AddActiveAction(
+        Dispatcher.Dispatch(new DropdownState.AddActiveAction(
             CompilerServiceExplorerTreeViewContextMenu.ContextMenuEventDropdownKey));
 
         await InvokeAsync(StateHasChanged);

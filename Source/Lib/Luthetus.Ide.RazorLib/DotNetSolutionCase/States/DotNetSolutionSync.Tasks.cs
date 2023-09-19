@@ -78,7 +78,7 @@ public partial class DotNetSolutionSync
 
         if (!_treeViewService.TryGetTreeViewState(TreeViewSolutionExplorerStateKey, out _))
         {
-            _treeViewService.RegisterTreeViewState(new TreeViewState(
+            _treeViewService.RegisterTreeViewState(new TreeViewContainer(
                 TreeViewSolutionExplorerStateKey,
                 rootNode,
                 rootNode,

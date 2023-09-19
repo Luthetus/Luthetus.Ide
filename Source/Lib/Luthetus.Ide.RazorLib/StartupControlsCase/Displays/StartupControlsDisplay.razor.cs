@@ -1,6 +1,6 @@
 ﻿using Fluxor;
 using Fluxor.Blazor.Web.Components;
-using Luthetus.Common.RazorLib.KeyCase;
+using Luthetus.Common.RazorLib.KeyCase.Models;
 using Luthetus.Ide.RazorLib.CommandLineCase.Models;
 using Luthetus.Ide.RazorLib.ProgramExecutionCase.States;
 using Luthetus.Ide.RazorLib.TerminalCase.Models;

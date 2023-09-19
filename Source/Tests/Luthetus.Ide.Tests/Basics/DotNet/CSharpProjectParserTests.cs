@@ -1,6 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.FileSystem.Models;
-using Luthetus.Common.RazorLib.KeyCase;
-using Luthetus.Common.RazorLib.RenderStateCase;
+using Luthetus.Common.RazorLib.KeyCase.Models;
+using Luthetus.Common.RazorLib.RenderStateCase.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
 using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.Lexing;

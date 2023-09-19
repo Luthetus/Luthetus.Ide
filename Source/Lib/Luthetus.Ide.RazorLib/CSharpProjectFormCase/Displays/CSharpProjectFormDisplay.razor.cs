@@ -20,8 +20,8 @@ using Luthetus.Common.RazorLib.FileSystem.Models;
 using Luthetus.Common.RazorLib.Notification.Models;
 using Luthetus.Common.RazorLib.Installation.Models;
 using Luthetus.Common.RazorLib.Dialog.States;
-using Luthetus.Common.RazorLib.KeyCase;
 using Luthetus.Ide.RazorLib.CSharpProjectFormCase.Scenes;
+using Luthetus.Common.RazorLib.KeyCase.Models;
 
 namespace Luthetus.Ide.RazorLib.CSharpProjectFormCase.Displays;
 
@@ -240,7 +240,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                         immutableView.NewCSharpProjectCancellationTokenSource.Token,
                         () =>
                         {
-                            Dispatcher.Dispatch(new DialogRegistry.DisposeAction(DialogRecord.Key));
+                            Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.Key));
                             Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionTask(immutableView.DotNetSolutionModel.NamespacePath.AbsolutePath, DotNetSolutionSync));
                             return Task.CompletedTask;
                         });
@@ -282,7 +282,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         Website_AddExistingProjectToSolution(immutableView, cSharpProjectAbsolutePathString);
 
         // Close Dialog
-        Dispatcher.Dispatch(new DialogRegistry.DisposeAction(DialogRecord.Key));
+        Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.Key));
         NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", LuthetusCommonComponentRenderers, Dispatcher);
     }
 

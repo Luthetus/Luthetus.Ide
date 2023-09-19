@@ -1,5 +1,5 @@
 ﻿using Luthetus.Common.RazorLib.FileSystem.Models;
-using Luthetus.Common.RazorLib.KeyCase;
+using Luthetus.Common.RazorLib.KeyCase.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
 using Luthetus.Ide.RazorLib.CommandLineCase.Models;
 using Luthetus.Ide.RazorLib.CSharpProjectFormCase.Models;

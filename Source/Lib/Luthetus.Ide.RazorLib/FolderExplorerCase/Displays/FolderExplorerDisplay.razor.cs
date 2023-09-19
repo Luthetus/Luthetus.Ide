@@ -18,7 +18,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     [Inject]
     private IState<FolderExplorerState> FolderExplorerStateWrap { get; set; } = null!;
     [Inject]
-    private IState<AppOptionsRegistry> AppOptionsRegistryWrap { get; set; } = null!;
+    private IState<AppOptionsState> AppOptionsRegistryWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -76,7 +76,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     {
         _mostRecentTreeViewCommandParameter = treeViewCommandParameter;
 
-        Dispatcher.Dispatch(new DropdownRegistry.AddActiveAction(
+        Dispatcher.Dispatch(new DropdownState.AddActiveAction(
             FolderExplorerContextMenu.ContextMenuEventDropdownKey));
 
         await InvokeAsync(StateHasChanged);

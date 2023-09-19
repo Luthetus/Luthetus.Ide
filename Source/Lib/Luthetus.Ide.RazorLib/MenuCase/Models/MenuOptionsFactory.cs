@@ -15,7 +15,7 @@ using Luthetus.Common.RazorLib.FileSystem.Models;
 using Luthetus.Common.RazorLib.Menu.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.Notification.Models;
-using Luthetus.Common.RazorLib.KeyCase;
+using Luthetus.Common.RazorLib.KeyCase.Models;
 
 namespace Luthetus.Ide.RazorLib.MenuCase.Models;
 

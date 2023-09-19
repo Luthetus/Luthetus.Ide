@@ -4,7 +4,6 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dialog.Models;
 using Luthetus.Common.RazorLib.Dialog.States;
 using Luthetus.Common.RazorLib.Dropdown.States;
-using Luthetus.Common.RazorLib.KeyCase;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.Models;
@@ -14,13 +13,14 @@ using Luthetus.Ide.RazorLib.EditorCase.States;
 using Luthetus.Ide.RazorLib.MenuCase.Models;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.Common.RazorLib.KeyCase.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
 
 public partial class SolutionExplorerDisplay : FluxorComponent
 {
     [Inject]
-    private IState<AppOptionsRegistry> AppOptionsRegistryWrap { get; set; } = null!;
+    private IState<AppOptionsState> AppOptionsRegistryWrap { get; set; } = null!;
     [Inject]
     private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
     [Inject]
@@ -74,7 +74,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     {
         _mostRecentTreeViewCommandParameter = treeViewCommandParameter;
 
-        Dispatcher.Dispatch(new DropdownRegistry.AddActiveAction(
+        Dispatcher.Dispatch(new DropdownState.AddActiveAction(
             SolutionExplorerContextMenu.ContextMenuEventDropdownKey));
 
         await InvokeAsync(StateHasChanged);
@@ -98,7 +98,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             IsResizable = true
         };
 
-        Dispatcher.Dispatch(new DialogRegistry.RegisterAction(
+        Dispatcher.Dispatch(new DialogState.RegisterAction(
             dialogRecord));
     }
 
