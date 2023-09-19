@@ -24,33 +24,6 @@ public partial class CompilerServiceExplorerTreeViewContextMenu : ComponentBase
         return MenuRecord.Empty;
     }
 
-    /// <summary>
-    /// This method I believe is causing bugs
-    /// <br/><br/>
-    /// For example, when removing a C# Project the
-    /// solution is reloaded and a new root is made.
-    /// <br/><br/>
-    /// Then there is a timing issue where the new root is made and set
-    /// as the root. But this method erroneously reloads the old root.
-    /// </summary>
-    /// <param name="treeViewModel"></param>
-    private async Task ReloadTreeViewModel(
-        TreeViewNoType? treeViewModel)
-    {
-        if (treeViewModel is null)
-            return;
-
-        await treeViewModel.LoadChildrenAsync();
-
-        TreeViewService.ReRenderNode(
-            DotNetSolutionState.TreeViewSolutionExplorerStateKey,
-            treeViewModel);
-
-        TreeViewService.MoveUp(
-            DotNetSolutionState.TreeViewSolutionExplorerStateKey,
-            false);
-    }
-
     public static string GetContextMenuCssStyleString(
         TreeViewCommandParameter? treeViewCommandParameter)
     {

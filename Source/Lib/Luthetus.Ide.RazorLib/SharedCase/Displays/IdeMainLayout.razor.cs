@@ -111,11 +111,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         }
     }
 
-    private async Task ReRenderAsync()
-    {
-        await InvokeAsync(StateHasChanged);
-    }
-
     public void Dispose()
     {
         DragStateWrap.StateChanged -= DragStateWrapOnStateChanged;
