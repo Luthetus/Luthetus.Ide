@@ -56,14 +56,14 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     [Parameter]
     public Key<DotNetSolutionModel> DotNetSolutionModelKey { get; set; }
 
-    private CSharpProjectFormScene _view = null!;
+    private CSharpProjectFormScene _scene = null!;
 
     private DotNetSolutionModel? DotNetSolutionModel => DotNetSolutionStateWrap.Value.DotNetSolutions.FirstOrDefault(
         x => x.DotNetSolutionModelKey == DotNetSolutionModelKey);
 
     protected override void OnInitialized()
     {
-        _view = new(DotNetSolutionModel, EnvironmentProvider);
+        _scene = new(DotNetSolutionModel, EnvironmentProvider);
         base.OnInitialized();
     }
 
@@ -78,7 +78,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     }
 
     private string GetIsActiveCssClassString(CSharpProjectFormPanelKind panelKind) =>
-        _view.ActivePanelKind == panelKind ? "luth_active" : string.Empty;
+        _scene.ActivePanelKind == panelKind ? "luth_active" : string.Empty;
 
     private void RequestInputFileForParentDirectory(string message)
     {
@@ -88,7 +88,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                 if (afp is null)
                     return;
 
-                _view.ParentDirectoryNameValue = afp.FormattedInput;
+                _scene.ParentDirectoryNameValue = afp.FormattedInput;
                 await InvokeAsync(StateHasChanged);
             },
             afp =>
@@ -108,7 +108,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     {
         if (LuthetusHostingInformation.LuthetusHostingKind != LuthetusHostingKind.Photino)
         {
-            _view.ProjectTemplateContainer = WebsiteProjectTemplateRegistry.WebsiteProjectTemplatesContainer.ToList();
+            _scene.ProjectTemplateContainer = WebsiteProjectTemplateRegistry.WebsiteProjectTemplatesContainer.ToList();
             await InvokeAsync(StateHasChanged);
         }
         else
@@ -122,7 +122,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         try
         {
             // Render UI loading icon
-            _view.IsReadingProjectTemplates = true;
+            _scene.IsReadingProjectTemplates = true;
             await InvokeAsync(StateHasChanged);
 
             var formattedCommand = DotNetCliCommandFormatter.FormatDotnetNewList();
@@ -130,17 +130,17 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             var generalTerminalSession = TerminalSessionRegistryWrap.Value.TerminalSessionMap[TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
 
             var newCSharpProjectCommand = new TerminalCommand(
-                _view.LoadProjectTemplatesTerminalCommandKey,
+                _scene.LoadProjectTemplatesTerminalCommandKey,
                 formattedCommand,
                 EnvironmentProvider.HomeDirectoryAbsolutePath.FormattedInput,
-                _view.NewCSharpProjectCancellationTokenSource.Token,
+                _scene.NewCSharpProjectCancellationTokenSource.Token,
                 async () =>
                 {
-                    var output = generalTerminalSession.ReadStandardOut(_view.LoadProjectTemplatesTerminalCommandKey);
+                    var output = generalTerminalSession.ReadStandardOut(_scene.LoadProjectTemplatesTerminalCommandKey);
 
                     if (output is not null)
                     {
-                        DotNetCliOutputLexer.LexDotNetNewListTerminalOutput(output);
+                        _scene.ProjectTemplateContainer = DotNetCliOutputLexer.LexDotNetNewListTerminalOutput(output);
                         await InvokeAsync(StateHasChanged);
                     }
                     else
@@ -154,7 +154,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         finally
         {
             // UI loading message
-            _view.IsReadingProjectTemplates = false;
+            _scene.IsReadingProjectTemplates = false;
             await InvokeAsync(StateHasChanged);
         }
     }
@@ -165,24 +165,24 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         try
         {
             // UI loading message
-            _view.IsReadingProjectTemplates = true;
+            _scene.IsReadingProjectTemplates = true;
             await InvokeAsync(StateHasChanged);
 
             var formattedCommand = DotNetCliCommandFormatter.FormatDotnetNewListDeprecated();
             var generalTerminalSession = TerminalSessionRegistryWrap.Value.TerminalSessionMap[TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
 
             var newCSharpProjectCommand = new TerminalCommand(
-                _view.LoadProjectTemplatesTerminalCommandKey,
+                _scene.LoadProjectTemplatesTerminalCommandKey,
                 formattedCommand,
                 EnvironmentProvider.HomeDirectoryAbsolutePath.FormattedInput,
-                _view.NewCSharpProjectCancellationTokenSource.Token,
+                _scene.NewCSharpProjectCancellationTokenSource.Token,
                 async () => 
                 {
-                    var output = generalTerminalSession.ReadStandardOut(_view.LoadProjectTemplatesTerminalCommandKey);
+                    var output = generalTerminalSession.ReadStandardOut(_scene.LoadProjectTemplatesTerminalCommandKey);
 
                     if (output is not null)
                     {
-                        DotNetCliOutputLexer.LexDotNetNewListTerminalOutput(output);
+                        _scene.ProjectTemplateContainer = DotNetCliOutputLexer.LexDotNetNewListTerminalOutput(output);
                         await InvokeAsync(StateHasChanged);
                     }
                     else
@@ -196,7 +196,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         finally
         {
             // UI loading message
-            _view.IsReadingProjectTemplates = false;
+            _scene.IsReadingProjectTemplates = false;
             await InvokeAsync(StateHasChanged);
         }
     }
@@ -213,7 +213,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
     private async Task StartNewCSharpProjectCommandOnClick()
     {
-        var immutableView = _view.TakeSnapshot();
+        var immutableView = _scene.TakeSnapshot();
 
         if (string.IsNullOrWhiteSpace(immutableView.ProjectTemplateShortNameValue) ||
             string.IsNullOrWhiteSpace(immutableView.CSharpProjectNameValue) ||

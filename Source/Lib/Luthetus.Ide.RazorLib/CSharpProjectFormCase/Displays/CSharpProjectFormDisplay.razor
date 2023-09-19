@@ -8,17 +8,16 @@
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-<div class="luth_ide_c-sharp-project-form luth_ide_form @GetCssClassForActivePanelKind(_view.ActivePanelKind)">
-    @if (DotNetSolutionModel is null)
+<div class="luth_ide_c-sharp-project-form luth_ide_form @GetCssClassForActivePanelKind(_scene.ActivePanelKind)">
+    
+    @{ _scene.DotNetSolutionModel = DotNetSolutionModel; }
+
+    @if (_scene.DotNetSolutionModel is null)
     {
-        <div>@nameof(DotNetSolutionModel) is null</div>
+        <div>@nameof(_scene.DotNetSolutionModel) is null</div>
     }
     else
     {
-        var view = new CSharpProjectFormScene(
-            DotNetSolutionModel,
-            EnvironmentProvider);
-
         <div class="luth_ide_c-sharp-project-form-top-inputs">
             <div class="luth_ide_form-group">
                 <div class="luth_ide_form-label">
@@ -29,7 +28,7 @@
                     <input class="luth_ide_input luth_ide_input-text"
                            style="height: 2em;"
                            placeholder="Project name"
-                    @bind="view.CSharpProjectNameValue"
+                    @bind="_scene.CSharpProjectNameValue"
                     @bind:event="oninput" />
                 </div>
             </div>
@@ -45,7 +44,7 @@
                             @foreach (var panelKind in Enum.GetValues<CSharpProjectFormPanelKind>())
                             {
                                 <button class="luth_ide_panel-tab luth_button luth_tab @GetIsActiveCssClassString(panelKind)"
-                                @onclick="() => view.ActivePanelKind = panelKind">
+                                @onclick="() => _scene.ActivePanelKind = panelKind">
 
                                     @switch (panelKind)
                                     {
@@ -62,7 +61,7 @@
                     </div>
 
                     <div class="luth_ide_c-sharp-project-form-sticky-right-side">
-                        @if (view.ActivePanelKind == CSharpProjectFormPanelKind.Graphical)
+                        @if (_scene.ActivePanelKind == CSharpProjectFormPanelKind.Graphical)
                         {
                             <div class="luth_ide_graphical-project-template-search-container">
                                 <input class="luth_ide_input luth_ide_input-text"
@@ -72,7 +71,7 @@
                                        autocorrect="off"
                                        autocomplete="off"
                                        spellcheck="false"
-                                @bind="view.SearchInput"
+                                @bind="_scene.SearchInput"
                                 @bind:event="oninput" />
                             </div>
                         }
@@ -81,10 +80,10 @@
 
                 <div class="luth_ide_form-value">
                     <div class="luth_ide_c-sharp-project-form-panel">
-                        @if (view.ActivePanelKind == CSharpProjectFormPanelKind.Graphical)
+                        @if (_scene.ActivePanelKind == CSharpProjectFormPanelKind.Graphical)
                         {
                             <div class="luth_ide_graphical-project-template-inputs">
-                                @if (view.IsReadingProjectTemplates)
+                                @if (_scene.IsReadingProjectTemplates)
                                 {
                                     <div>
                                         Reading project templates
@@ -95,13 +94,13 @@
                                 {
                                     <div class="luth_ide_graphical-project-template-container">
                                         @{
-                                            List<ProjectTemplate> filteredProjectTemplateContainer = view.ProjectTemplateContainer;
+                                            List<ProjectTemplate> filteredProjectTemplateContainer = _scene.ProjectTemplateContainer;
 
-                                            var localSearchInput = view.SearchInput;
+                                            var localSearchInput = _scene.SearchInput;
 
                                             if (!string.IsNullOrWhiteSpace(localSearchInput))
                                             {
-                                                filteredProjectTemplateContainer = view.ProjectTemplateContainer.Where(pt =>
+                                                filteredProjectTemplateContainer = _scene.ProjectTemplateContainer.Where(pt =>
                                                 pt.TemplateName!.Contains(localSearchInput, StringComparison.InvariantCultureIgnoreCase) ||
                                                 pt.ShortName!.Contains(localSearchInput, StringComparison.InvariantCultureIgnoreCase) ||
                                                 pt.Language!.Contains(localSearchInput, StringComparison.InvariantCultureIgnoreCase) ||
@@ -112,15 +111,15 @@
                                             foreach (var projectTemplate in filteredProjectTemplateContainer)
                                             {
                                                 <ProjectTemplateDisplay ProjectTemplate="projectTemplate"
-                                                                        ShortNameOfSelectedProjectTemplate="@view.ProjectTemplateShortNameValue"
-                                                                        OnProjectTemplateSelectedEventCallback="pt => view.ProjectTemplateShortNameValue = pt.ShortName!" />
+                                                                        ShortNameOfSelectedProjectTemplate="@_scene.ProjectTemplateShortNameValue"
+                                                                        OnProjectTemplateSelectedEventCallback="pt => _scene.ProjectTemplateShortNameValue = pt.ShortName!" />
                                             }
                                         }
                                     </div>
                                 }
                             </div>
                         }
-                        else if (view.ActivePanelKind == CSharpProjectFormPanelKind.Manual)
+                        else if (_scene.ActivePanelKind == CSharpProjectFormPanelKind.Manual)
                         {
                             <div class="luth_ide_manual-project-template-inputs">
                                 <div class="luth_ide_form-group">
@@ -132,7 +131,7 @@
                                         <input class="luth_ide_input luth_ide_input-text"
                                                style="height: 2em;"
                                                placeholder="Template name"
-                                        @bind="view.ProjectTemplateShortNameValue"
+                                        @bind="_scene.ProjectTemplateShortNameValue"
                                         @bind:event="oninput" />
                                     </div>
                                 </div>
@@ -155,7 +154,7 @@
                     <input class="luth_ide_input luth_ide_input-text"
                            style="height: 2em;"
                            placeholder="Parent directory"
-                    @bind="view.ParentDirectoryNameValue"
+                    @bind="_scene.ParentDirectoryNameValue"
                     @bind:event="oninput" />
 
                     <button class="luth_button"
@@ -174,7 +173,7 @@
                     <input class="luth_ide_input luth_ide_input-text"
                            style="height: 2em;"
                            placeholder="Optional parameters"
-                    @bind="view.OptionalParametersValue"
+                    @bind="_scene.OptionalParametersValue"
                     @bind:event="oninput" />
                 </div>
             </div>
@@ -186,7 +185,7 @@
                     Project&nbsp;Name:
                 </span>
                 <span class="luth_ide_form-output-entry-value">
-                    <em class="luth_em">@view.CSharpProjectNameDisplay</em>
+                    <em class="luth_em">@_scene.CSharpProjectNameDisplay</em>
                     .csproj
                 </span>
             </div>
@@ -196,7 +195,7 @@
                     Template&nbsp;Name:
                 </span>
                 <span class="luth_ide_form-output-entry-value">
-                    <em class="luth_em">@view.ProjectTemplateShortNameDisplay</em>
+                    <em class="luth_em">@_scene.ProjectTemplateShortNameDisplay</em>
                 </span>
             </div>
 
@@ -205,7 +204,7 @@
                     Optional&nbsp;Parameters:
                 </span>
                 <span class="luth_ide_form-output-entry-value">
-                    <em class="luth_em">@view.OptionalParametersDisplay</em>
+                    <em class="luth_em">@_scene.OptionalParametersDisplay</em>
                 </span>
             </div>
 
@@ -214,7 +213,7 @@
                     Directory&nbsp;Absolute&nbsp;File&nbsp;Path:
                 </span>
                 <span class="luth_ide_form-output-entry-value">
-                    <em class="luth_em">@view.ParentDirectoryNameDisplay</em>
+                    <em class="luth_em">@_scene.ParentDirectoryNameDisplay</em>
                 </span>
             </div>
         </div>
@@ -225,7 +224,7 @@
                 <div>
                     <em class="luth_em">
                         &nbsp;&nbsp;&nbsp;&nbsp;
-                        @view.FormattedNewCSharpProjectCommand.Value
+                        @_scene.FormattedNewCSharpProjectCommand.Value
                         &nbsp;\
                     </em>
 
@@ -234,7 +233,7 @@
                     <em class="luth_em">
                         &nbsp;&nbsp;&nbsp;&nbsp;
                         &nbsp;&nbsp;&nbsp;&nbsp;
-                        @view.FormattedAddExistingProjectToSolutionCommand.Value
+                        @_scene.FormattedAddExistingProjectToSolutionCommand.Value
                     </em>
                 </div>
             </div>
@@ -245,7 +244,7 @@
             </button>
 
             <TerminalOutputDisplay TerminalSessionKey="TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY"
-                                   TerminalCommandKey="view.NewCSharpProjectTerminalCommandKey" />
+                                   TerminalCommandKey="_scene.NewCSharpProjectTerminalCommandKey" />
         </div>
     }
 </div>
