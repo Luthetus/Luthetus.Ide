@@ -25,7 +25,7 @@ public partial class TerminalOutputDisplay : FluxorComponent
 
     // TODO: Don't inject TerminalSessionsStateWrap. It causes too many unnecessary re-renders
     [Inject]
-    private IState<TerminalSessionState> TerminalSessionsStateWrap { get; set; } = null!;
+    private IState<TerminalSessionState> TerminalSessionStateWrap { get; set; } = null!;
     [Inject]
     private IState<TerminalSessionWasModifiedState> TerminalSessionWasModifiedStateWrap { get; set; } = null!;
     [Inject]
@@ -150,7 +150,7 @@ public partial class TerminalOutputDisplay : FluxorComponent
             var text = textEditor.GetAllText();
             textEditor.SetContent(string.Empty);
 
-            var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
+            var generalTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[
                 TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
 
             var whitespace = new[]

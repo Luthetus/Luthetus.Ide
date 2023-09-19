@@ -30,7 +30,7 @@ namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
 public partial class SolutionExplorerContextMenu : ComponentBase
 {
     [Inject]
-    private IState<TerminalSessionState> TerminalSessionsStateWrap { get; set; } = null!;
+    private IState<TerminalSessionState> TerminalSessionStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -203,7 +203,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 }),
             MenuOptionsFactory.AddProjectToProjectReference(
                 treeViewModel,
-                TerminalSessionsStateWrap.Value
+                TerminalSessionStateWrap.Value
                     .TerminalSessionMap[
                         TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY],
                 Dispatcher,
@@ -212,7 +212,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             MenuOptionsFactory.MoveProjectToSolutionFolder(
                 treeViewSolution,
                 treeViewModel,
-                TerminalSessionsStateWrap.Value
+                TerminalSessionStateWrap.Value
                     .TerminalSessionMap[
                         TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY],
                 Dispatcher,
@@ -232,7 +232,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             MenuOptionsFactory.RemoveCSharpProjectReferenceFromSolution(
                 treeViewSolution,
                 treeViewModel,
-                TerminalSessionsStateWrap.Value
+                TerminalSessionStateWrap.Value
                     .TerminalSessionMap[
                         TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY],
                 Dispatcher,
@@ -254,7 +254,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         {
             MenuOptionsFactory.RemoveProjectToProjectReference(
                 treeViewCSharpProjectToProjectReference,
-                TerminalSessionsStateWrap.Value
+                TerminalSessionStateWrap.Value
                     .TerminalSessionMap[
                         TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY],
                 Dispatcher, () => Task.CompletedTask),
@@ -272,7 +272,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         MenuOptionsFactory.RemoveNuGetPackageReferenceFromProject(
             treeViewCSharpProjectNugetPackageReferences.Item.CSharpProjectNamespacePath,
             treeViewCSharpProjectNugetPackageReference,
-            TerminalSessionsStateWrap.Value
+            TerminalSessionStateWrap.Value
                 .TerminalSessionMap[
                     TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY],
             Dispatcher, () => Task.CompletedTask),
@@ -392,7 +392,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                         return Task.CompletedTask;
                     });
 
-                var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
+                var generalTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[
                     TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
 
                 await generalTerminalSession.EnqueueCommandAsync(addExistingProjectToSolutionTerminalCommand);

@@ -53,7 +53,7 @@ public partial class GitSync
             return;
         }
 
-        var generalTerminalSession = _terminalSessionsStateWrap.Value.TerminalSessionMap[
+        var generalTerminalSession = _terminalSessionStateWrap.Value.TerminalSessionMap[
             TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
 
         var formattedCommand = new FormattedCommand(
@@ -177,7 +177,7 @@ public partial class GitSync
                 return Task.CompletedTask;
             });
 
-        var generalTerminalSession = _terminalSessionsStateWrap.Value.TerminalSessionMap[
+        var generalTerminalSession = _terminalSessionStateWrap.Value.TerminalSessionMap[
             TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
 
         await generalTerminalSession.EnqueueCommandAsync(gitInitCommand);

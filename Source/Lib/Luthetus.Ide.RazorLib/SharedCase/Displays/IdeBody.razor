@@ -15,7 +15,7 @@
                       ReRenderSelfAndAdjacentElementDimensionsFunc="ReRenderLeftPanelAndEditor" />
      </StateHasChangedBoundary>
 
-    <ResizableColumn LeftElementDimensions="@PanelFacts.GetLeftPanelRecord(PanelsCollectionWrap.Value).ElementDimensions"
+    <ResizableColumn LeftElementDimensions="@PanelFacts.GetLeftPanelRecord(PanelsStateWrap.Value).ElementDimensions"
                      RightElementDimensions="_editorElementDimensions"
                      ReRenderFuncAsync="ReRenderLeftPanelAndEditor" />
 
@@ -24,7 +24,7 @@
     </StateHasChangedBoundary>
     
     <ResizableColumn LeftElementDimensions="_editorElementDimensions"
-                     RightElementDimensions="@PanelFacts.GetRightPanelRecord(PanelsCollectionWrap.Value).ElementDimensions"
+                     RightElementDimensions="@PanelFacts.GetRightPanelRecord(PanelsStateWrap.Value).ElementDimensions"
                      ReRenderFuncAsync="ReRenderEditorAndRightPanel" />
 
     <StateHasChangedBoundary @ref="_rightPanelStateHasChangedBoundaryComponent">
