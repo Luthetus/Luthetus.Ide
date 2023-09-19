@@ -134,7 +134,7 @@ public partial class DotNetSolutionSync
 
         if (solutionTextEditorModel is not null)
         {
-            Dispatcher.Dispatch(new TextEditorModelRegistry.ReloadAction(
+            Dispatcher.Dispatch(new TextEditorModelState.ReloadAction(
                 solutionTextEditorModel.ModelKey,
                 inDotNetSolutionModel.SolutionFileContents,
                 DateTime.UtcNow));

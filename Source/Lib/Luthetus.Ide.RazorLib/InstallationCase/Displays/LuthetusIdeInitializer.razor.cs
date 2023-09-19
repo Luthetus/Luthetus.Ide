@@ -59,7 +59,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
 
             foreach (var findProvider in LuthetusTextEditorOptions.FindProviders)
             {
-                Dispatcher.Dispatch(new TextEditorFindProviderRegistry.RegisterAction(
+                Dispatcher.Dispatch(new TextEditorFindProviderState.RegisterAction(
                     findProvider));
             }
 
