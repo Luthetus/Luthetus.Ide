@@ -16,9 +16,9 @@ namespace Luthetus.Ide.RazorLib.SharedCase.Displays;
 public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 {
     [Inject]
-    private IState<DragState> DragRegistryWrap { get; set; } = null!;
+    private IState<DragState> DragStateWrap { get; set; } = null!;
     [Inject]
-    private IState<AppOptionsState> AppOptionsRegistryWrap { get; set; } = null!;
+    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
     private IState<PanelsState> PanelsCollectionWrap { get; set; } = null!;
     [Inject]
@@ -32,7 +32,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     [Inject]
     private DotNetSolutionSync DotNetSolutionSync { get; set; } = null!;
 
-    private string UnselectableClassCss => DragRegistryWrap.Value.ShouldDisplay
+    private string UnselectableClassCss => DragStateWrap.Value.ShouldDisplay
         ? "balc_unselectable"
         : string.Empty;
 
@@ -44,8 +44,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        DragRegistryWrap.StateChanged += DragStateWrapOnStateChanged;
-        AppOptionsRegistryWrap.StateChanged += AppOptionsStateWrapOnStateChanged;
+        DragStateWrap.StateChanged += DragStateWrapOnStateChanged;
+        AppOptionsStateWrap.StateChanged += AppOptionsStateWrapOnStateChanged;
 
         var bodyHeight = _bodyElementDimensions.DimensionAttributes
             .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Height);
@@ -104,9 +104,9 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
     private async void DragStateWrapOnStateChanged(object? sender, EventArgs e)
     {
-        if (_previousDragStateWrapShouldDisplay != DragRegistryWrap.Value.ShouldDisplay)
+        if (_previousDragStateWrapShouldDisplay != DragStateWrap.Value.ShouldDisplay)
         {
-            _previousDragStateWrapShouldDisplay = DragRegistryWrap.Value.ShouldDisplay;
+            _previousDragStateWrapShouldDisplay = DragStateWrap.Value.ShouldDisplay;
             await InvokeAsync(StateHasChanged);
         }
     }
@@ -118,7 +118,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
     public void Dispose()
     {
-        DragRegistryWrap.StateChanged -= DragStateWrapOnStateChanged;
-        AppOptionsRegistryWrap.StateChanged -= AppOptionsStateWrapOnStateChanged;
+        DragStateWrap.StateChanged -= DragStateWrapOnStateChanged;
+        AppOptionsStateWrap.StateChanged -= AppOptionsStateWrapOnStateChanged;
     }
 }

@@ -13,8 +13,8 @@
                  StyleCssString="height: 100%">
 
     @{
-        var compilerServiceExplorerState = CompilerServiceExplorerRegistryWrap.Value;
-        var tabGroup = TabRegistrySelection.Value;
+        var compilerServiceExplorerState = CompilerServiceExplorerStateWrap.Value;
+        var tabGroup = TabStateSelection.Value;
         var activeTabEntryNoType = tabGroup?.GetActiveEntryNoType();
 
         CompilerServiceExplorerViewKind compilerServiceExplorerViewKind;

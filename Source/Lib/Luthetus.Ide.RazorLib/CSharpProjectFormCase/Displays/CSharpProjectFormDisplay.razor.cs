@@ -28,7 +28,7 @@ namespace Luthetus.Ide.RazorLib.CSharpProjectFormCase.Displays;
 public partial class CSharpProjectFormDisplay : FluxorComponent
 {
     [Inject]
-    private IState<TerminalSessionState> TerminalSessionRegistryWrap { get; set; } = null!;
+    private IState<TerminalSessionState> TerminalSessionStateWrap { get; set; } = null!;
     [Inject]
     private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
     [Inject]
@@ -108,7 +108,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     {
         if (LuthetusHostingInformation.LuthetusHostingKind != LuthetusHostingKind.Photino)
         {
-            _scene.ProjectTemplateContainer = WebsiteProjectTemplateRegistry.WebsiteProjectTemplatesContainer.ToList();
+            _scene.ProjectTemplateContainer = WebsiteProjectTemplateFacts.WebsiteProjectTemplatesContainer.ToList();
             await InvokeAsync(StateHasChanged);
         }
         else
@@ -127,7 +127,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
             var formattedCommand = DotNetCliCommandFormatter.FormatDotnetNewList();
 
-            var generalTerminalSession = TerminalSessionRegistryWrap.Value.TerminalSessionMap[TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
+            var generalTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
 
             var newCSharpProjectCommand = new TerminalCommand(
                 _scene.LoadProjectTemplatesTerminalCommandKey,
@@ -169,7 +169,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             await InvokeAsync(StateHasChanged);
 
             var formattedCommand = DotNetCliCommandFormatter.FormatDotnetNewListDeprecated();
-            var generalTerminalSession = TerminalSessionRegistryWrap.Value.TerminalSessionMap[TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
+            var generalTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
 
             var newCSharpProjectCommand = new TerminalCommand(
                 _scene.LoadProjectTemplatesTerminalCommandKey,
@@ -224,7 +224,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
         if (LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.Photino)
         {
-            var generalTerminalSession = TerminalSessionRegistryWrap.Value.TerminalSessionMap[TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
+            var generalTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
 
             var newCSharpProjectCommand = new TerminalCommand(
                 immutableView.NewCSharpProjectTerminalCommandKey,
@@ -273,7 +273,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             directoryContainingProject,
             localCSharpProjectNameWithExtension);
 
-        await WebsiteProjectTemplateRegistry.HandleNewCSharpProjectAsync(
+        await WebsiteProjectTemplateFacts.HandleNewCSharpProjectAsync(
             immutableView.ProjectTemplateShortNameValue,
             cSharpProjectAbsolutePathString,
             FileSystemProvider,

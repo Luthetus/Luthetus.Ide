@@ -101,7 +101,7 @@ public partial class DotNetSolutionSync
         if (inDotNetSolutionModel is null)
             return null;
 
-        var projectTypeGuid = WebsiteProjectTemplateRegistry.GetProjectTypeGuid(
+        var projectTypeGuid = WebsiteProjectTemplateFacts.GetProjectTypeGuid(
             addExistingProjectToSolutionTask.LocalProjectTemplateShortName);
 
         var relativePathFromSlnToProject = PathHelper.GetRelativeFromTwoAbsolutes(

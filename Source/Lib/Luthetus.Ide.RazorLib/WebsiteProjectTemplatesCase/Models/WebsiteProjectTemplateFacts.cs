@@ -3,9 +3,9 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.WebsiteProjectTemplatesCase.Models;
 
-public static class WebsiteProjectTemplateRegistry
+public static class WebsiteProjectTemplateFacts
 {
-    static WebsiteProjectTemplateRegistry()
+    static WebsiteProjectTemplateFacts()
     {
         BlazorWasmEmptyProjectTemplate = new ProjectTemplate(
             "Blazor WebAssembly App Empty",

@@ -21,11 +21,11 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
     [Inject]
     private IState<CompilerServiceExplorerState> CompilerServiceExplorerStateWrap { get; set; } = null!;
     [Inject]
-    private IState<TextEditorViewModelState> TextEditorViewModelRegistryWrap { get; set; } = null!;
+    private IState<TextEditorViewModelState> TextEditorViewModelStateWrap { get; set; } = null!;
     [Inject]
-    private IState<TextEditorGroupState> TextEditorGroupRegistryWrap { get; set; } = null!;
+    private IState<TextEditorGroupState> TextEditorGroupStateWrap { get; set; } = null!;
     [Inject]
-    private IState<AppOptionsState> AppOptionsRegistryWrap { get; set; } = null!;
+    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -46,7 +46,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
     private CompilerServiceExplorerTreeViewMouseEventHandler _compilerServiceExplorerTreeViewMouseEventHandler = null!;
 
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-        AppOptionsRegistryWrap.Value.Options.IconSizeInPixels.GetValueOrDefault() *
+        AppOptionsStateWrap.Value.Options.IconSizeInPixels.GetValueOrDefault() *
         (2.0 / 3.0));
 
     private static bool _hasInitialized;
@@ -54,8 +54,8 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
     protected override void OnInitialized()
     {
         CompilerServiceExplorerStateWrap.StateChanged += RerenderAfterEventWithArgs;
-        TextEditorViewModelRegistryWrap.StateChanged += RerenderAfterEventWithArgs;
-        TextEditorGroupRegistryWrap.StateChanged += RerenderAfterEventWithArgs;
+        TextEditorViewModelStateWrap.StateChanged += RerenderAfterEventWithArgs;
+        TextEditorGroupStateWrap.StateChanged += RerenderAfterEventWithArgs;
 
         CSharpCompilerService.ModelRegistered += RerenderAfterEvent;
         CSharpCompilerService.ModelDisposed += RerenderAfterEvent;
@@ -120,8 +120,8 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
     public void Dispose()
     {
         CompilerServiceExplorerStateWrap.StateChanged -= RerenderAfterEventWithArgs;
-        TextEditorViewModelRegistryWrap.StateChanged -= RerenderAfterEventWithArgs;
-        TextEditorGroupRegistryWrap.StateChanged -= RerenderAfterEventWithArgs;
+        TextEditorViewModelStateWrap.StateChanged -= RerenderAfterEventWithArgs;
+        TextEditorGroupStateWrap.StateChanged -= RerenderAfterEventWithArgs;
 
         CSharpCompilerService.ModelRegistered -= RerenderAfterEvent;
         CSharpCompilerService.ModelDisposed -= RerenderAfterEvent;
