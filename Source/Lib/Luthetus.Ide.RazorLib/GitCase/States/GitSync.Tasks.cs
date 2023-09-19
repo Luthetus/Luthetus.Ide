@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Fluxor;
+﻿using System.Text;
 using System.Collections.Immutable;
-using System.Text;
 using Luthetus.Ide.RazorLib.CommandLineCase.Models;
 using Luthetus.Ide.RazorLib.GitCase.Models;
 using Luthetus.Ide.RazorLib.TerminalCase.Models;
-using Luthetus.Ide.RazorLib.TerminalCase.States;
 using Luthetus.Common.RazorLib.FileSystem.Models;
 using static Luthetus.Ide.RazorLib.GitCase.States.GitState;
 

@@ -10,7 +10,6 @@ using Luthetus.Ide.RazorLib.StateCase.Models;
 using Luthetus.Ide.RazorLib.TerminalCase.States;
 using Luthetus.TextEditor.RazorLib.TextEditorCase.Model;
 using Luthetus.TextEditor.RazorLib.TextEditorCase.Scenes;
-using Luthetus.TextEditor.RazorLib.TextEditorCase.Scenes.InternalClasses;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Reactive.Linq;
