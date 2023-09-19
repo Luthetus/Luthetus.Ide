@@ -17,7 +17,7 @@ public partial class CompilerServiceExplorerDisplay : FluxorComponent
     protected override void OnInitialized()
     {
         TabRegistrySelection.Select(tabGroupsCollection =>
-            tabGroupsCollection.GroupBag.SingleOrDefault(
+            tabGroupsCollection.TabGroupBag.SingleOrDefault(
                 x => x.Key == CompilerServiceExplorerState.TabGroupKey));
 
         base.OnInitialized();
