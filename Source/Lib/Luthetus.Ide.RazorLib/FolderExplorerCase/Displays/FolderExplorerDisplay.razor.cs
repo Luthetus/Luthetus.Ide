@@ -18,7 +18,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     [Inject]
     private IState<FolderExplorerState> FolderExplorerStateWrap { get; set; } = null!;
     [Inject]
-    private IState<AppOptionsRegistry> AppOptionsRegistryWrap { get; set; } = null!;
+    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -39,13 +39,13 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     private TreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
 
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-        AppOptionsRegistryWrap.Value.Options.IconSizeInPixels.GetValueOrDefault() *
+        AppOptionsStateWrap.Value.Options.IconSizeInPixels.GetValueOrDefault() *
         (2.0 / 3.0));
 
     protected override void OnInitialized()
     {
         FolderExplorerStateWrap.StateChanged += FolderExplorerStateWrapOnStateChanged;
-        AppOptionsRegistryWrap.StateChanged += AppOptionsStateWrapOnStateChanged;
+        AppOptionsStateWrap.StateChanged += AppOptionsStateWrapOnStateChanged;
 
         _folderExplorerTreeViewMouseEventHandler = new FolderExplorerTreeViewMouseEventHandler(
             EditorSync,
@@ -76,7 +76,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     {
         _mostRecentTreeViewCommandParameter = treeViewCommandParameter;
 
-        Dispatcher.Dispatch(new DropdownRegistry.AddActiveAction(
+        Dispatcher.Dispatch(new DropdownState.AddActiveAction(
             FolderExplorerContextMenu.ContextMenuEventDropdownKey));
 
         await InvokeAsync(StateHasChanged);
@@ -85,6 +85,6 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     public void Dispose()
     {
         FolderExplorerStateWrap.StateChanged -= FolderExplorerStateWrapOnStateChanged;
-        AppOptionsRegistryWrap.StateChanged -= AppOptionsStateWrapOnStateChanged;
+        AppOptionsStateWrap.StateChanged -= AppOptionsStateWrapOnStateChanged;
     }
 }

@@ -22,8 +22,8 @@ using Luthetus.Common.RazorLib.Notification.Models;
 using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.Dialog.States;
-using Luthetus.Common.RazorLib.KeyCase;
 using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.Common.RazorLib.KeyCase.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
 
@@ -359,7 +359,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             IsResizable = true
         };
 
-        Dispatcher.Dispatch(new DialogRegistry.RegisterAction(
+        Dispatcher.Dispatch(new DialogState.RegisterAction(
             dialogRecord));
     }
 

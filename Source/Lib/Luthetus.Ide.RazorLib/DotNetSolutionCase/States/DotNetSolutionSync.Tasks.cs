@@ -78,7 +78,7 @@ public partial class DotNetSolutionSync
 
         if (!_treeViewService.TryGetTreeViewState(TreeViewSolutionExplorerStateKey, out _))
         {
-            _treeViewService.RegisterTreeViewState(new TreeViewState(
+            _treeViewService.RegisterTreeViewState(new TreeViewContainer(
                 TreeViewSolutionExplorerStateKey,
                 rootNode,
                 rootNode,
@@ -101,7 +101,7 @@ public partial class DotNetSolutionSync
         if (inDotNetSolutionModel is null)
             return null;
 
-        var projectTypeGuid = WebsiteProjectTemplateRegistry.GetProjectTypeGuid(
+        var projectTypeGuid = WebsiteProjectTemplateFacts.GetProjectTypeGuid(
             addExistingProjectToSolutionTask.LocalProjectTemplateShortName);
 
         var relativePathFromSlnToProject = PathHelper.GetRelativeFromTwoAbsolutes(
@@ -134,7 +134,7 @@ public partial class DotNetSolutionSync
 
         if (solutionTextEditorModel is not null)
         {
-            Dispatcher.Dispatch(new TextEditorModelRegistry.ReloadAction(
+            Dispatcher.Dispatch(new TextEditorModelState.ReloadAction(
                 solutionTextEditorModel.ModelKey,
                 inDotNetSolutionModel.SolutionFileContents,
                 DateTime.UtcNow));

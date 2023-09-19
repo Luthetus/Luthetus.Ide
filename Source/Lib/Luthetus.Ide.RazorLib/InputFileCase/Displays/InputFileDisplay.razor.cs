@@ -12,7 +12,7 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystem.Models;
 using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.Common.RazorLib.Resize.Displays;
-using Luthetus.Common.RazorLib.KeyCase;
+using Luthetus.Common.RazorLib.KeyCase.Models;
 
 namespace Luthetus.Ide.RazorLib.InputFileCase.Displays;
 
@@ -86,7 +86,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     /// A presumption that any mutations to the HashSet are done
     /// via the UI thread. Therefore concurrency is not an issue.
     /// </summary>
-    private List<(Key<TreeViewState> treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)> _searchMatchTuples = new();
+    private List<(Key<TreeViewContainer> treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)> _searchMatchTuples = new();
 
     public ElementReference? SearchElementReference => _inputFileTopNavBarComponent?.SearchElementReference;
 
@@ -195,7 +195,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
                 InputFileContent.TreeViewInputFileContentStateKey,
                 out var treeViewState))
         {
-            TreeViewService.RegisterTreeViewState(new TreeViewState(
+            TreeViewService.RegisterTreeViewState(new TreeViewContainer(
                 InputFileContent.TreeViewInputFileContentStateKey,
                 adhocRootNode,
                 activeNode,

@@ -13,7 +13,6 @@ using Luthetus.CompilerServices.Lang.Xml;
 using Luthetus.CompilerServices.Lang.Xml.Html.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase.GenericLexer.Decoration;
-using Luthetus.TextEditor.RazorLib.Decoration;
 using Luthetus.TextEditor.RazorLib.Decoration.Models;
 
 namespace Luthetus.Ide.RazorLib.FileSystemCase.Models;

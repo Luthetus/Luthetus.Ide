@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.KeyCase;
+﻿using Luthetus.Common.RazorLib.KeyCase.Models;
 using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
 using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
@@ -10,11 +10,11 @@ public partial class TreeViewAbsolutePathDisplay : ComponentBase,
     ITreeViewAbsolutePathRendererType
 {
     [CascadingParameter]
-    public TreeViewState TreeViewState { get; set; } = null!;
+    public TreeViewContainer TreeViewState { get; set; } = null!;
     [CascadingParameter(Name = "SearchQuery")]
     public string SearchQuery { get; set; } = string.Empty;
     [CascadingParameter(Name = "SearchMatchTuples")]
-    public List<(Key<TreeViewState> treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)>? SearchMatchTuples { get; set; }
+    public List<(Key<TreeViewContainer> treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)>? SearchMatchTuples { get; set; }
 
     [Parameter, EditorRequired]
     public TreeViewAbsolutePath TreeViewAbsolutePath { get; set; } = null!;

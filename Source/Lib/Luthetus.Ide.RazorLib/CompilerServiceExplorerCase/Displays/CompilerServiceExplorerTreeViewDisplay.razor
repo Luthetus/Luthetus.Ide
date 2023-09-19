@@ -1,10 +1,7 @@
 ﻿@using Luthetus.Common.RazorLib.Dropdown.Displays
 @using Luthetus.Common.RazorLib.Dropdown.Models;
-@using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase
-@using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.States;
-@using Luthetus.Common.RazorLib.Dropdown
-@using Luthetus.Common.RazorLib.TreeView
 @using Luthetus.Common.RazorLib.TreeView.Displays
+@using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.States;
 
 <div class="luth_ide_compiler-explorer-tree-view">
     @{
@@ -19,8 +16,8 @@
         </div>
 
         <div class="luth_ide_compiler-explorer-tree-view-body">
-            <CascadingValue Name="LuthetusTreeViewIconWidth" Value="AppOptionsRegistryWrap.Value.Options.IconSizeInPixels">
-                <CascadingValue Name="LuthetusTreeViewIconHeight" Value="AppOptionsRegistryWrap.Value.Options.IconSizeInPixels">
+            <CascadingValue Name="LuthetusTreeViewIconWidth" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
+                <CascadingValue Name="LuthetusTreeViewIconHeight" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
                     <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
                         <TreeViewStateDisplay TreeViewStateKey="CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey"
                                                 CssStyleString="height: 100%;"

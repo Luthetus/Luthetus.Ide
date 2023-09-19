@@ -1,10 +1,7 @@
-﻿@using Fluxor.Blazor.Web.Components
-@using Luthetus.Common.RazorLib.TabCase
-@using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase;
-@using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.Models;
-@using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.States;
+﻿@using Fluxor.Blazor.Web.Components;
 @using Luthetus.Common.RazorLib.ContextCase.Displays
 @using Luthetus.Common.RazorLib.ContextCase.Models;
+@using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.Models;
 
 @inherits FluxorComponent
 
@@ -13,8 +10,8 @@
                  StyleCssString="height: 100%">
 
     @{
-        var compilerServiceExplorerState = CompilerServiceExplorerRegistryWrap.Value;
-        var tabGroup = TabRegistrySelection.Value;
+        var compilerServiceExplorerState = CompilerServiceExplorerStateWrap.Value;
+        var tabGroup = TabStateSelection.Value;
         var activeTabEntryNoType = tabGroup?.GetActiveEntryNoType();
 
         CompilerServiceExplorerViewKind compilerServiceExplorerViewKind;

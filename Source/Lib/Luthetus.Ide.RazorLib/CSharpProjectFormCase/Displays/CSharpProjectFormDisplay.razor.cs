@@ -20,15 +20,15 @@ using Luthetus.Common.RazorLib.FileSystem.Models;
 using Luthetus.Common.RazorLib.Notification.Models;
 using Luthetus.Common.RazorLib.Installation.Models;
 using Luthetus.Common.RazorLib.Dialog.States;
-using Luthetus.Common.RazorLib.KeyCase;
 using Luthetus.Ide.RazorLib.CSharpProjectFormCase.Scenes;
+using Luthetus.Common.RazorLib.KeyCase.Models;
 
 namespace Luthetus.Ide.RazorLib.CSharpProjectFormCase.Displays;
 
 public partial class CSharpProjectFormDisplay : FluxorComponent
 {
     [Inject]
-    private IState<TerminalSessionState> TerminalSessionRegistryWrap { get; set; } = null!;
+    private IState<TerminalSessionState> TerminalSessionStateWrap { get; set; } = null!;
     [Inject]
     private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
     [Inject]
@@ -108,7 +108,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     {
         if (LuthetusHostingInformation.LuthetusHostingKind != LuthetusHostingKind.Photino)
         {
-            _scene.ProjectTemplateContainer = WebsiteProjectTemplateRegistry.WebsiteProjectTemplatesContainer.ToList();
+            _scene.ProjectTemplateContainer = WebsiteProjectTemplateFacts.WebsiteProjectTemplatesContainer.ToList();
             await InvokeAsync(StateHasChanged);
         }
         else
@@ -127,7 +127,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
             var formattedCommand = DotNetCliCommandFormatter.FormatDotnetNewList();
 
-            var generalTerminalSession = TerminalSessionRegistryWrap.Value.TerminalSessionMap[TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
+            var generalTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
 
             var newCSharpProjectCommand = new TerminalCommand(
                 _scene.LoadProjectTemplatesTerminalCommandKey,
@@ -169,7 +169,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             await InvokeAsync(StateHasChanged);
 
             var formattedCommand = DotNetCliCommandFormatter.FormatDotnetNewListDeprecated();
-            var generalTerminalSession = TerminalSessionRegistryWrap.Value.TerminalSessionMap[TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
+            var generalTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
 
             var newCSharpProjectCommand = new TerminalCommand(
                 _scene.LoadProjectTemplatesTerminalCommandKey,
@@ -224,7 +224,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
         if (LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.Photino)
         {
-            var generalTerminalSession = TerminalSessionRegistryWrap.Value.TerminalSessionMap[TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
+            var generalTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
 
             var newCSharpProjectCommand = new TerminalCommand(
                 immutableView.NewCSharpProjectTerminalCommandKey,
@@ -240,7 +240,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                         immutableView.NewCSharpProjectCancellationTokenSource.Token,
                         () =>
                         {
-                            Dispatcher.Dispatch(new DialogRegistry.DisposeAction(DialogRecord.Key));
+                            Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.Key));
                             Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionTask(immutableView.DotNetSolutionModel.NamespacePath.AbsolutePath, DotNetSolutionSync));
                             return Task.CompletedTask;
                         });
@@ -273,7 +273,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             directoryContainingProject,
             localCSharpProjectNameWithExtension);
 
-        await WebsiteProjectTemplateRegistry.HandleNewCSharpProjectAsync(
+        await WebsiteProjectTemplateFacts.HandleNewCSharpProjectAsync(
             immutableView.ProjectTemplateShortNameValue,
             cSharpProjectAbsolutePathString,
             FileSystemProvider,
@@ -282,7 +282,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         Website_AddExistingProjectToSolution(immutableView, cSharpProjectAbsolutePathString);
 
         // Close Dialog
-        Dispatcher.Dispatch(new DialogRegistry.DisposeAction(DialogRecord.Key));
+        Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.Key));
         NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", LuthetusCommonComponentRenderers, Dispatcher);
     }
 

@@ -22,15 +22,15 @@ using Luthetus.Common.RazorLib.Icons.Displays.Codicon;
 using Luthetus.Common.RazorLib.TabCase.States;
 using Luthetus.TextEditor.RazorLib.Installation.Models;
 using Luthetus.TextEditor.RazorLib.Find.States;
-using Luthetus.Common.RazorLib.KeyCase;
 using Luthetus.Common.RazorLib.CommandCase.Models.Ide;
+using Luthetus.Common.RazorLib.KeyCase.Models;
 
 namespace Luthetus.Ide.RazorLib.InstallationCase.Displays;
 
 public partial class LuthetusIdeInitializer : ComponentBase
 {
     [Inject]
-    private IState<PanelsRegistry> PanelsCollectionWrap { get; set; } = null!;
+    private IState<PanelsState> PanelsCollectionWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -52,14 +52,14 @@ public partial class LuthetusIdeInitializer : ComponentBase
             {
                 foreach (var themeRecord in LuthetusTextEditorOptions.CustomThemeRecords)
                 {
-                    Dispatcher.Dispatch(new ThemeRecordRegistry.RegisterAction(
+                    Dispatcher.Dispatch(new ThemeState.RegisterAction(
                         themeRecord));
                 }
             }
 
             foreach (var findProvider in LuthetusTextEditorOptions.FindProviders)
             {
-                Dispatcher.Dispatch(new TextEditorFindProviderRegistry.RegisterAction(
+                Dispatcher.Dispatch(new TextEditorFindProviderState.RegisterAction(
                     findProvider));
             }
 
@@ -108,7 +108,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
             typeof(IconFolder),
             "Solution Explorer");
 
-        Dispatcher.Dispatch(new PanelsRegistry.RegisterEntryAction(
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
             leftPanel.Key,
             solutionExplorerPanelTab,
             false));
@@ -121,12 +121,12 @@ public partial class LuthetusIdeInitializer : ComponentBase
             typeof(IconFolder),
             "Folder Explorer");
 
-        Dispatcher.Dispatch(new PanelsRegistry.RegisterEntryAction(
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
             leftPanel.Key,
             folderExplorerPanelTab,
             false));
 
-        Dispatcher.Dispatch(new PanelsRegistry.SetActiveEntryAction(
+        Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(
             leftPanel.Key,
             solutionExplorerPanelTab.Key));
     }
@@ -143,7 +143,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
             typeof(IconFolder),
             "Compiler Service Explorer");
 
-        Dispatcher.Dispatch(new PanelsRegistry.RegisterEntryAction(
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
             rightPanel.Key,
             compilerServiceExplorerPanelTab,
             false));
@@ -161,7 +161,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
             typeof(IconFolder),
             "Terminal");
 
-        Dispatcher.Dispatch(new PanelsRegistry.RegisterEntryAction(
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
             bottomPanel.Key,
             terminalPanelTab,
             false));
@@ -174,7 +174,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
             typeof(IconFolder),
             "NuGet");
 
-        Dispatcher.Dispatch(new PanelsRegistry.RegisterEntryAction(
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
             bottomPanel.Key,
             nuGetPanelTab,
             false));
@@ -187,12 +187,12 @@ public partial class LuthetusIdeInitializer : ComponentBase
             typeof(IconFolder),
             "Active Contexts");
 
-        Dispatcher.Dispatch(new PanelsRegistry.RegisterEntryAction(
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
             bottomPanel.Key,
             activeContextsPanelTab,
             false));
 
-        Dispatcher.Dispatch(new PanelsRegistry.SetActiveEntryAction(
+        Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(
             bottomPanel.Key,
             terminalPanelTab.Key));
     }
@@ -217,15 +217,15 @@ public partial class LuthetusIdeInitializer : ComponentBase
             },
             CompilerServiceExplorerState.TabGroupKey);
 
-        Dispatcher.Dispatch(new TabRegistry.RegisterGroupAction(tabGroup));
+        Dispatcher.Dispatch(new TabState.RegisterTabGroupAction(tabGroup));
 
         var tabGroupLoadTabEntriesOutput = await tabGroup.LoadEntryBagAsync();
 
-        Dispatcher.Dispatch(new TabRegistry.SetEntryBagAction(
+        Dispatcher.Dispatch(new TabState.SetTabEntryBagAction(
             tabGroup.Key,
             tabGroupLoadTabEntriesOutput.OutTabEntries));
 
-        Dispatcher.Dispatch(new TabRegistry.SetActiveEntryKeyAction(
+        Dispatcher.Dispatch(new TabState.SetActiveTabEntryKeyAction(
             tabGroup.Key,
             tabGroupLoadTabEntriesOutput.OutTabEntries.Last().TabEntryKey));
     }

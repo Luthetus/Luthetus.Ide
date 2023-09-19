@@ -109,7 +109,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                 () =>
                 {
                     // Close Dialog
-                    Dispatcher.Dispatch(new DialogRegistry.DisposeAction(DialogRecord.Key));
+                    Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.Key));
 
                     // Open the created .NET Solution
                     var parentDirectoryAbsolutePath = new AbsolutePath(
@@ -170,7 +170,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
             DotNetSolutionFormScene.HackForWebsite_NEW_SOLUTION_TEMPLATE);
 
         // Close Dialog
-        Dispatcher.Dispatch(new DialogRegistry.DisposeAction(DialogRecord.Key));
+        Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.Key));
 
         NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", LuthetusCommonComponentRenderers, Dispatcher);
 

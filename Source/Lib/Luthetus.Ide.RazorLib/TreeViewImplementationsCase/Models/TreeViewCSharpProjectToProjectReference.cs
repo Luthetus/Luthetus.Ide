@@ -1,5 +1,5 @@
 ﻿using Luthetus.Common.RazorLib.FileSystem.Models;
-using Luthetus.Common.RazorLib.KeyCase;
+using Luthetus.Common.RazorLib.KeyCase.Models;
 using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;

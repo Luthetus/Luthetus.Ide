@@ -4,7 +4,7 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dialog.Models;
 using Luthetus.Common.RazorLib.Dimensions;
 using Luthetus.Common.RazorLib.Dropdown.Models;
-using Luthetus.Common.RazorLib.KeyCase;
+using Luthetus.Common.RazorLib.KeyCase.Models;
 using Luthetus.Common.RazorLib.Menu.Models;
 using Luthetus.Common.RazorLib.Notification.Models;
 using Luthetus.Common.RazorLib.TreeView.Models;

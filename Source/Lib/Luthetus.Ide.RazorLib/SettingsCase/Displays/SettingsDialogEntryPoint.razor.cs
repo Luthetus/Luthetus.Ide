@@ -1,7 +1,7 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.Dialog.Models;
 using Luthetus.Common.RazorLib.Dialog.States;
-using Luthetus.Common.RazorLib.KeyCase;
+using Luthetus.Common.RazorLib.KeyCase.Models;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.SettingsCase.Displays;
@@ -23,7 +23,7 @@ public partial class SettingsDialogEntryPoint : ComponentBase
 
     public void DispatchRegisterDialogRecordAction()
     {
-        Dispatcher.Dispatch(new DialogRegistry.RegisterAction(
+        Dispatcher.Dispatch(new DialogState.RegisterAction(
             _dialogRecord));
     }
 }

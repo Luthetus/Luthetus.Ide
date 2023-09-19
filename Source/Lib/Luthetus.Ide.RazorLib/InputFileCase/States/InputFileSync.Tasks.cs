@@ -1,5 +1,4 @@
-﻿using Fluxor;
-using Luthetus.Common.RazorLib.Dialog.Models;
+﻿using Luthetus.Common.RazorLib.Dialog.Models;
 using Luthetus.Common.RazorLib.Dialog.States;
 using Luthetus.Ide.RazorLib.HtmlCase.Models;
 using static Luthetus.Ide.RazorLib.InputFileCase.States.InputFileState;
@@ -26,7 +25,7 @@ public partial record InputFileSync
                 IsResizable = true
             };
 
-            Dispatcher.Dispatch(new DialogRegistry.RegisterAction(
+            Dispatcher.Dispatch(new DialogState.RegisterAction(
                 inputFileDialog));
         }
 

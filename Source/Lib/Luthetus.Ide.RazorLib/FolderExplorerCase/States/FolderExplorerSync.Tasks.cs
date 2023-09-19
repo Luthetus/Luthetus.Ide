@@ -48,7 +48,7 @@ public partial class FolderExplorerSync
                 TreeViewFolderExplorerContentStateKey,
                 out var treeViewState))
         {
-            _treeViewService.RegisterTreeViewState(new TreeViewState(
+            _treeViewService.RegisterTreeViewState(new TreeViewContainer(
                 TreeViewFolderExplorerContentStateKey,
                 rootNode,
                 rootNode,

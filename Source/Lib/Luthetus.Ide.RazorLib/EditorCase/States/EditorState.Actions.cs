@@ -1,6 +1,5 @@
 ﻿using Luthetus.Common.RazorLib.FileSystem.Models;
-using Luthetus.Common.RazorLib.KeyCase;
-using Luthetus.TextEditor.RazorLib.Group;
+using Luthetus.Common.RazorLib.KeyCase.Models;
 using Luthetus.TextEditor.RazorLib.Group.Models;
 
 namespace Luthetus.Ide.RazorLib.EditorCase.States;

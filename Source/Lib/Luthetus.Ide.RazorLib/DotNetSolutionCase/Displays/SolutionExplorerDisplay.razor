@@ -1,10 +1,9 @@
 @using Luthetus.Common.RazorLib.ContextCase.Displays
-@using Luthetus.Common.RazorLib.ContextCase.Models
-@using Luthetus.Ide.RazorLib.DotNetSolutionCase
+@using Luthetus.Common.RazorLib.ContextCase.Models;
 @using Luthetus.Common.RazorLib.Dropdown.Displays
+@using Luthetus.Common.RazorLib.Dropdown.Models;
 @using Luthetus.Common.RazorLib.TreeView.Displays
-@using Luthetus.Ide.RazorLib.DotNetSolutionCase.States
-@using Luthetus.Common.RazorLib.Dropdown.Models
+@using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
@@ -40,8 +39,8 @@
             }
             else
             {
-                <CascadingValue Name="LuthetusTreeViewIconWidth" Value="AppOptionsRegistryWrap.Value.Options.IconSizeInPixels">
-                    <CascadingValue Name="LuthetusTreeViewIconHeight" Value="AppOptionsRegistryWrap.Value.Options.IconSizeInPixels">
+                <CascadingValue Name="LuthetusTreeViewIconWidth" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
+                    <CascadingValue Name="LuthetusTreeViewIconHeight" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
                         <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
                             <TreeViewStateDisplay TreeViewStateKey="DotNetSolutionState.TreeViewSolutionExplorerStateKey"
                                                   CssStyleString="height: 100%;"

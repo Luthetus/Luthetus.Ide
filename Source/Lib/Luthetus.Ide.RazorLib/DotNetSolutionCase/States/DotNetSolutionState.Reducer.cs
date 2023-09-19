@@ -1,6 +1,6 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
-using Luthetus.Common.RazorLib.KeyCase;
+using Luthetus.Common.RazorLib.KeyCase.Models;
 using static Luthetus.Ide.RazorLib.DotNetSolutionCase.States.DotNetSolutionSync;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
