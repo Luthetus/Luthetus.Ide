@@ -36,8 +36,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     private TreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
 
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-        AppOptionsStateWrap.Value.Options.IconSizeInPixels.GetValueOrDefault() *
-        (2.0 / 3.0));
+        AppOptionsStateWrap.Value.Options.IconSizeInPixels * (2.0 / 3.0));
 
     protected override void OnInitialized()
     {

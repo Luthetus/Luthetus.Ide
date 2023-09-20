@@ -40,8 +40,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
     private CompilerServiceExplorerTreeViewMouseEventHandler _compilerServiceExplorerTreeViewMouseEventHandler = null!;
 
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-        AppOptionsStateWrap.Value.Options.IconSizeInPixels.GetValueOrDefault() *
-        (2.0 / 3.0));
+        AppOptionsStateWrap.Value.Options.IconSizeInPixels * (2.0 / 3.0));
 
     private static bool _hasInitialized;
 
