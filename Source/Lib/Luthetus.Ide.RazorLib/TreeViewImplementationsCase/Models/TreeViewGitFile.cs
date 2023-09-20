@@ -38,7 +38,7 @@ public class TreeViewGitFile : TreeViewWithType<GitFile>
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            LuthetusIdeComponentRenderers.LuthetusIdeTreeViews.TreeViewGitFileRendererType!,
+            LuthetusIdeComponentRenderers.LuthetusIdeTreeViews.TreeViewGitFileRendererType,
             new Dictionary<string, object?>
             {
             {

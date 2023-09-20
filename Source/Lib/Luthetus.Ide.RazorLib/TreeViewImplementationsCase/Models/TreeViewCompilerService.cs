@@ -43,7 +43,7 @@ public class TreeViewCompilerService : TreeViewWithType<ICompilerService>
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            LuthetusIdeComponentRenderers.LuthetusIdeTreeViews.TreeViewCompilerServiceRendererType!,
+            LuthetusIdeComponentRenderers.LuthetusIdeTreeViews.TreeViewCompilerServiceRendererType,
             new Dictionary<string, object?>
             {
                 {
