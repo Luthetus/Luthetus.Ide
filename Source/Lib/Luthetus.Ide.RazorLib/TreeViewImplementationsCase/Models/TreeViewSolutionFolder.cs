@@ -55,7 +55,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            LuthetusIdeComponentRenderers.LuthetusIdeTreeViews.TreeViewSolutionFolderRendererType!,
+            LuthetusIdeComponentRenderers.LuthetusIdeTreeViews.TreeViewSolutionFolderRendererType,
             new Dictionary<string, object?>
             {
                 {

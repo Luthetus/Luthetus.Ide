@@ -2,12 +2,10 @@
 using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
-using Luthetus.Ide.RazorLib.TerminalCase.States;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystem.Models;
 using Luthetus.Common.RazorLib.TreeView.Models;
-using Luthetus.Common.RazorLib.Installation.Models;
 using Luthetus.Ide.RazorLib.InputFileCase.States;
 using Luthetus.Common.RazorLib.KeyCase.Models;
 
@@ -21,8 +19,6 @@ public partial class DotNetSolutionSync
     private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
     private readonly ITreeViewService _treeViewService;
     private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
-    private readonly IState<TerminalSessionState> _terminalSessionStateWrap;
-    private readonly LuthetusHostingInformation _luthetusHostingInformation;
     private readonly ITextEditorService _textEditorService;
 
     public DotNetSolutionSync(
@@ -32,8 +28,6 @@ public partial class DotNetSolutionSync
         ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
         ITreeViewService treeViewService,
         IState<DotNetSolutionState> dotNetSolutionStateWrap,
-        IState<TerminalSessionState> terminalSessionStateWrap,
-        LuthetusHostingInformation luthetusHostingInformation,
         ITextEditorService textEditorService,
         InputFileSync inputFileSync,
         IBackgroundTaskService backgroundTaskService,
@@ -45,8 +39,6 @@ public partial class DotNetSolutionSync
         _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
         _treeViewService = treeViewService;
         _dotNetSolutionStateWrap = dotNetSolutionStateWrap;
-        _terminalSessionStateWrap = terminalSessionStateWrap;
-        _luthetusHostingInformation = luthetusHostingInformation;
         _textEditorService = textEditorService;
         
         InputFileSync = inputFileSync;

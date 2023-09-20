@@ -52,7 +52,7 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            LuthetusIdeComponentRenderers.LuthetusIdeTreeViews.TreeViewNamespacePathRendererType!,
+            LuthetusIdeComponentRenderers.LuthetusIdeTreeViews.TreeViewNamespacePathRendererType,
             new Dictionary<string, object?>
             {
                 {

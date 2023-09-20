@@ -1,5 +1,4 @@
-﻿using Fluxor;
-using Luthetus.Common.RazorLib.Commands.Models;
+﻿using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Keyboard.Models;
 using Luthetus.Common.RazorLib.Menu.Models;
@@ -18,21 +17,18 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
     private readonly EditorSync _editorSync;
     private readonly IMenuOptionsFactory _menuOptionsFactory;
     private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
-    private readonly IDispatcher _dispatcher;
     private readonly ITreeViewService _treeViewService;
 
     public SolutionExplorerTreeViewKeyboardEventHandler(
         EditorSync editorSync,
         IMenuOptionsFactory menuOptionsFactory,
         ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
-        IDispatcher dispatcher,
         ITreeViewService treeViewService)
         : base(treeViewService)
     {
         _editorSync = editorSync;
         _menuOptionsFactory = menuOptionsFactory;
         _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
-        _dispatcher = dispatcher;
         _treeViewService = treeViewService;
     }
 
@@ -111,7 +107,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
             treeViewNamespacePath.Item.AbsolutePath,
             () =>
             {
-                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewNamespacePath.Item.AbsolutePath.NameWithExtension}", _luthetusCommonComponentRenderers, _dispatcher);
+                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewNamespacePath.Item.AbsolutePath.NameWithExtension}", _luthetusCommonComponentRenderers, _editorSync.Dispatcher);
                 return Task.CompletedTask;
             });
 
@@ -181,7 +177,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
             treeViewNamespacePath.Item.AbsolutePath,
             () =>
             {
-                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewNamespacePath.Item.AbsolutePath.NameWithExtension}", _luthetusCommonComponentRenderers, _dispatcher);
+                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewNamespacePath.Item.AbsolutePath.NameWithExtension}", _luthetusCommonComponentRenderers, _editorSync.Dispatcher);
                 SolutionExplorerContextMenu.ParentOfCutFile = parent;
                 return Task.CompletedTask;
             });
@@ -198,7 +194,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         if (activeNode is not TreeViewNamespacePath treeViewNamespacePath)
             return;
 
-        _dispatcher.Dispatch(new EditorState.OpenInEditorAction(
+        _editorSync.Dispatcher.Dispatch(new EditorState.OpenInEditorAction(
             _editorSync,
             treeViewNamespacePath.Item.AbsolutePath,
             shouldSetFocusToEditor));

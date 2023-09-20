@@ -19,8 +19,6 @@ namespace Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.States;
 
 public partial class CompilerServiceExplorerSync
 {
-    private readonly IFileSystemProvider _fileSystemProvider;
-    private readonly IEnvironmentProvider _environmentProvider;
     private readonly ILuthetusIdeComponentRenderers _luthetusIdeComponentRenderers;
     private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
     private readonly ITreeViewService _treeViewService;
@@ -37,27 +35,23 @@ public partial class CompilerServiceExplorerSync
     private readonly JsonCompilerService _jsonCompilerService;
 
     public CompilerServiceExplorerSync(
-            IFileSystemProvider fileSystemProvider,
-            IEnvironmentProvider environmentProvider,
-            ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
-            ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
-            ITreeViewService treeViewService,
-            IState<CompilerServiceExplorerState> compilerServiceExplorerStateWrap,
-            XmlCompilerService xmlCompilerService,
-            DotNetSolutionCompilerService dotNetSolutionCompilerService,
-            CSharpProjectCompilerService cSharpProjectCompilerService,
-            CSharpCompilerService cSharpCompilerService,
-            RazorCompilerService razorCompilerService,
-            CssCompilerService cssCompilerService,
-            FSharpCompilerService fSharpCompilerService,
-            JavaScriptCompilerService javaScriptCompilerService,
-            TypeScriptCompilerService typeScriptCompilerService,
-            JsonCompilerService jsonCompilerService,
-            IBackgroundTaskService backgroundTaskService,
-            IDispatcher dispatcher)
+        ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
+        ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
+        ITreeViewService treeViewService,
+        IState<CompilerServiceExplorerState> compilerServiceExplorerStateWrap,
+        XmlCompilerService xmlCompilerService,
+        DotNetSolutionCompilerService dotNetSolutionCompilerService,
+        CSharpProjectCompilerService cSharpProjectCompilerService,
+        CSharpCompilerService cSharpCompilerService,
+        RazorCompilerService razorCompilerService,
+        CssCompilerService cssCompilerService,
+        FSharpCompilerService fSharpCompilerService,
+        JavaScriptCompilerService javaScriptCompilerService,
+        TypeScriptCompilerService typeScriptCompilerService,
+        JsonCompilerService jsonCompilerService,
+        IBackgroundTaskService backgroundTaskService,
+        IDispatcher dispatcher)
     {
-        _fileSystemProvider = fileSystemProvider;
-        _environmentProvider = environmentProvider;
         _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
         _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
         _treeViewService = treeViewService;

@@ -48,7 +48,7 @@ public class TreeViewCSharpProjectNugetPackageReference : TreeViewWithType<CShar
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            LuthetusIdeComponentRenderers.LuthetusIdeTreeViews.TreeViewLightWeightNugetPackageRecordRendererType!,
+            LuthetusIdeComponentRenderers.LuthetusIdeTreeViews.TreeViewLightWeightNugetPackageRecordRendererType,
             new Dictionary<string, object?>
             {
             {

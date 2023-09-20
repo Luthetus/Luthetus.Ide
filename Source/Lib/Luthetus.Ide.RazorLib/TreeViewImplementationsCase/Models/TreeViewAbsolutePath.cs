@@ -51,7 +51,7 @@ public class TreeViewAbsolutePath : TreeViewWithType<IAbsolutePath>
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            LuthetusIdeComponentRenderers.LuthetusIdeTreeViews.TreeViewAbsolutePathRendererType!,
+            LuthetusIdeComponentRenderers.LuthetusIdeTreeViews.TreeViewAbsolutePathRendererType,
             new Dictionary<string, object?>
             {
             {

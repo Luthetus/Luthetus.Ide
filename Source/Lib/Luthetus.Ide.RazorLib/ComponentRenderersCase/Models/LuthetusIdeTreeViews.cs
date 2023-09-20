@@ -3,16 +3,16 @@
 public class LuthetusIdeTreeViews
 {
     public LuthetusIdeTreeViews(
-        Type? treeViewNamespacePathRendererType,
-        Type? treeViewAbsolutePathRendererType,
-        Type? treeViewGitFileRendererType,
-        Type? treeViewCompilerServiceRendererType,
-        Type? treeViewCSharpProjectDependenciesRendererType,
-        Type? treeViewCSharpProjectNugetPackageReferencesRendererType,
-        Type? treeViewCSharpProjectToProjectReferencesRendererType,
-        Type? treeViewLightWeightNugetPackageRecordRendererType,
-        Type? treeViewCSharpProjectToProjectReferenceRendererType,
-        Type? treeViewSolutionFolderRendererType)
+        Type treeViewNamespacePathRendererType,
+        Type treeViewAbsolutePathRendererType,
+        Type treeViewGitFileRendererType,
+        Type treeViewCompilerServiceRendererType,
+        Type treeViewCSharpProjectDependenciesRendererType,
+        Type treeViewCSharpProjectNugetPackageReferencesRendererType,
+        Type treeViewCSharpProjectToProjectReferencesRendererType,
+        Type treeViewLightWeightNugetPackageRecordRendererType,
+        Type treeViewCSharpProjectToProjectReferenceRendererType,
+        Type treeViewSolutionFolderRendererType)
     {
         TreeViewNamespacePathRendererType = treeViewNamespacePathRendererType;
         TreeViewAbsolutePathRendererType = treeViewAbsolutePathRendererType;
@@ -26,14 +26,14 @@ public class LuthetusIdeTreeViews
         TreeViewSolutionFolderRendererType = treeViewSolutionFolderRendererType;
     }
 
-    public Type? TreeViewNamespacePathRendererType { get; }
-    public Type? TreeViewSolutionFolderRendererType { get; }
-    public Type? TreeViewCSharpProjectDependenciesRendererType { get; }
-    public Type? TreeViewCSharpProjectNugetPackageReferencesRendererType { get; }
-    public Type? TreeViewCSharpProjectToProjectReferencesRendererType { get; }
-    public Type? TreeViewLightWeightNugetPackageRecordRendererType { get; }
-    public Type? TreeViewCSharpProjectToProjectReferenceRendererType { get; }
-    public Type? TreeViewAbsolutePathRendererType { get; }
-    public Type? TreeViewGitFileRendererType { get; }
-    public Type? TreeViewCompilerServiceRendererType { get; }
+    public Type TreeViewNamespacePathRendererType { get; }
+    public Type TreeViewSolutionFolderRendererType { get; }
+    public Type TreeViewCSharpProjectDependenciesRendererType { get; }
+    public Type TreeViewCSharpProjectNugetPackageReferencesRendererType { get; }
+    public Type TreeViewCSharpProjectToProjectReferencesRendererType { get; }
+    public Type TreeViewLightWeightNugetPackageRecordRendererType { get; }
+    public Type TreeViewCSharpProjectToProjectReferenceRendererType { get; }
+    public Type TreeViewAbsolutePathRendererType { get; }
+    public Type TreeViewGitFileRendererType { get; }
+    public Type TreeViewCompilerServiceRendererType { get; }
 }

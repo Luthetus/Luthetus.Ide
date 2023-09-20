@@ -15,7 +15,6 @@ public partial class FolderExplorerSync
     private readonly ILuthetusIdeComponentRenderers _luthetusIdeComponentRenderers;
     private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
     private readonly ITreeViewService _treeViewService;
-    private readonly IState<FolderExplorerState> _folderExplorerStateWrap;
 
     public FolderExplorerSync(
         IFileSystemProvider fileSystemProvider,
@@ -23,7 +22,6 @@ public partial class FolderExplorerSync
         ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
         ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
         ITreeViewService treeViewService,
-        IState<FolderExplorerState> folderExplorerStateWrap,
         InputFileSync inputFileSync,
         IBackgroundTaskService backgroundTaskService,
         IDispatcher dispatcher)
@@ -33,7 +31,6 @@ public partial class FolderExplorerSync
         _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
         _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
         _treeViewService = treeViewService;
-        _folderExplorerStateWrap = folderExplorerStateWrap;
 
         InputFileSync = inputFileSync;
         BackgroundTaskService = backgroundTaskService;

@@ -1,6 +1,5 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.Commands.Models;
-using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dropdown.States;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.TreeView.Models;
@@ -8,7 +7,6 @@ using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.Models;
 using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.States;
 using Luthetus.Ide.RazorLib.EditorCase.States;
-using Luthetus.Ide.RazorLib.MenuCase.Models;
 using Luthetus.TextEditor.RazorLib.Group.States;
 using Luthetus.TextEditor.RazorLib.TextEditorCase.States;
 using Microsoft.AspNetCore.Components;
@@ -33,10 +31,6 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
-    private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
-    [Inject]
-    private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
-    [Inject]
     private CompilerServiceExplorerSync CompilerServiceExplorerSync { get; set; } = null!;
     [Inject]
     private EditorSync EditorSync { get; set; } = null!;
@@ -46,8 +40,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
     private CompilerServiceExplorerTreeViewMouseEventHandler _compilerServiceExplorerTreeViewMouseEventHandler = null!;
 
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-        AppOptionsStateWrap.Value.Options.IconSizeInPixels.GetValueOrDefault() *
-        (2.0 / 3.0));
+        AppOptionsStateWrap.Value.Options.IconSizeInPixels * (2.0 / 3.0));
 
     private static bool _hasInitialized;
 
@@ -63,16 +56,11 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 
         _compilerServiceExplorerTreeViewKeymap = new CompilerServiceExplorerTreeViewKeyboardEventHandler(
             EditorSync,
-            MenuOptionsFactory,
-            LuthetusCommonComponentRenderers,
-            Dispatcher,
             TreeViewService);
 
-        _compilerServiceExplorerTreeViewMouseEventHandler =
-            new CompilerServiceExplorerTreeViewMouseEventHandler(
-                EditorSync,
-                Dispatcher,
-                TreeViewService);
+        _compilerServiceExplorerTreeViewMouseEventHandler = new CompilerServiceExplorerTreeViewMouseEventHandler(
+            EditorSync,
+            TreeViewService);
 
         base.OnInitialized();
     }

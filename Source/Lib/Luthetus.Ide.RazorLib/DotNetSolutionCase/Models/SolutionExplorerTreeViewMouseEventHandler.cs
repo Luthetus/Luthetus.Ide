@@ -9,16 +9,13 @@ namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.Models;
 public class SolutionExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
     private readonly EditorSync _editorSync;
-    private readonly IDispatcher _dispatcher;
 
     public SolutionExplorerTreeViewMouseEventHandler(
         EditorSync editorSync,
-        IDispatcher dispatcher,
         ITreeViewService treeViewService)
         : base(treeViewService)
     {
         _editorSync = editorSync;
-        _dispatcher = dispatcher;
     }
 
     public override void OnDoubleClick(TreeViewCommandParameter treeViewCommandParameter)
@@ -28,7 +25,7 @@ public class SolutionExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandl
         if (treeViewCommandParameter.TargetNode is not TreeViewNamespacePath treeViewNamespacePath)
             return;
 
-        _dispatcher.Dispatch(new EditorState.OpenInEditorAction(
+        _editorSync.Dispatcher.Dispatch(new EditorState.OpenInEditorAction(
             _editorSync,
             treeViewNamespacePath.Item.AbsolutePath,
             true));

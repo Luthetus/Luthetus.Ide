@@ -68,7 +68,6 @@ public partial class LuthetusIdeInitializer : ComponentBase
                 var terminalSession = new TerminalSession(
                     null,
                     Dispatcher,
-                    FileSystemProvider,
                     BackgroundTaskService,
                     LuthetusCommonComponentRenderers)
                 {

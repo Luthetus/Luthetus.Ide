@@ -48,7 +48,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            LuthetusIdeComponentRenderers.LuthetusIdeTreeViews.TreeViewCSharpProjectToProjectReferencesRendererType!,
+            LuthetusIdeComponentRenderers.LuthetusIdeTreeViews.TreeViewCSharpProjectToProjectReferencesRendererType,
             null);
     }
 
