@@ -53,14 +53,11 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             EditorSync,
             MenuOptionsFactory,
             LuthetusCommonComponentRenderers,
-            Dispatcher,
             TreeViewService);
 
-        _solutionExplorerTreeViewMouseEventHandler =
-            new SolutionExplorerTreeViewMouseEventHandler(
-                EditorSync,
-                Dispatcher,
-                TreeViewService);
+        _solutionExplorerTreeViewMouseEventHandler = new SolutionExplorerTreeViewMouseEventHandler(
+            EditorSync,
+            TreeViewService);
 
         base.OnInitialized();
     }

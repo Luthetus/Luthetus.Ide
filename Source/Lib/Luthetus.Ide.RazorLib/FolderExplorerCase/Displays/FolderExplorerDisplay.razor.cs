@@ -46,14 +46,12 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 
         _folderExplorerTreeViewMouseEventHandler = new FolderExplorerTreeViewMouseEventHandler(
             EditorSync,
-            Dispatcher,
             TreeViewService);
 
         _folderExplorerTreeViewKeyboardEventHandler = new FolderExplorerTreeViewKeyboardEventHandler(
             EditorSync,
             MenuOptionsFactory,
             LuthetusCommonComponentRenderers,
-            Dispatcher,
             TreeViewService);
 
         base.OnInitialized();

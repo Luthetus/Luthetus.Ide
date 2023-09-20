@@ -20,7 +20,6 @@ namespace Luthetus.Ide.RazorLib.TerminalCase.Models;
 public class TerminalSession
 {
     private readonly IDispatcher _dispatcher;
-    private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
     private readonly List<TerminalCommand> _terminalCommandsHistory = new();
@@ -36,12 +35,10 @@ public class TerminalSession
     public TerminalSession(
         string? workingDirectoryAbsolutePathString,
         IDispatcher dispatcher,
-        IFileSystemProvider fileSystemProvider,
         IBackgroundTaskService backgroundTaskService,
         ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers)
     {
         _dispatcher = dispatcher;
-        _fileSystemProvider = fileSystemProvider;
         _backgroundTaskService = backgroundTaskService;
         _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
         WorkingDirectoryAbsolutePathString = workingDirectoryAbsolutePathString;
