@@ -1,0 +1,39 @@
+﻿@using Luthetus.Common.RazorLib.ComponentRunner
+@using Luthetus.Common.RazorLib.ContextCase.Displays
+@using Luthetus.Common.RazorLib.ContextCase.Models;
+@using Luthetus.Common.RazorLib.Dimensions;
+@using Luthetus.Common.RazorLib.Installation.Displays
+@using Luthetus.Common.RazorLib.Panel.Displays
+@using Luthetus.Common.RazorLib.Panel.Models;
+@using Luthetus.Common.RazorLib.Resize.Displays
+@using Luthetus.Common.RazorLib.StateHasChangedBoundaryCase.Displays;
+@using Luthetus.Common.RazorLib.ShouldRenderBoundaryCase.Displays
+@using Luthetus.Ide.RazorLib.InstallationCase.Displays
+@using Luthetus.TextEditor.RazorLib.Installation.Displays
+
+@inherits LayoutComponentBase
+
+<ContextBoundary ContextRecord="ContextFacts.GlobalContext"
+                 ClassCssString="@($"luth_ide_main-layout {UnselectableClassCss} {AppOptionsService.ThemeCssClassString} {TextEditorService.ThemeCssClassString}")"
+                 StyleCssString="@($"{AppOptionsService.FontSizeCssStyleString} {AppOptionsService.FontFamilyCssStyleString}")">
+
+    <LuthetusCommonInitializer />
+    <LuthetusTextEditorInitializer />
+    <LuthetusIdeInitializer />
+
+    <ShouldRenderBoundary>
+        <div class="luth_ide_test-layout"
+             style="padding: 8px;">
+            Test Layout
+        </div>
+
+        <StateHasChangedBoundary @ref="_bodyAndFooterStateHasChangedBoundaryComponent">
+            <ComponentRunnerPanel/>
+            <hr/>
+            <ComponentRunnerPanel/>
+            <hr/>
+            <ComponentRunnerPanel/>
+            <hr/>
+        </StateHasChangedBoundary>
+    </ShouldRenderBoundary>
+</ContextBoundary>

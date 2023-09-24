@@ -1,6 +1,8 @@
 ﻿using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
+using Luthetus.Common.RazorLib.ComponentRunner;
 using Luthetus.Common.RazorLib.Installation.Models;
 using Luthetus.Ide.RazorLib.InstallationCase.Models;
+using Luthetus.TextEditor.RazorLib.Installation.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Photino.Blazor;
 using System;
@@ -21,6 +23,11 @@ class Program
             new BackgroundTaskService());
 
         appBuilder.Services.AddLuthetusIdeRazorLibServices(hostingInformation);
+
+        appBuilder.Services.AddSingleton(new ComponentRunnerOptions(
+            typeof(LuthetusCommonOptions).Assembly,
+            typeof(LuthetusTextEditorOptions).Assembly,
+            typeof(LuthetusIdeOptions).Assembly));
 
         appBuilder.RootComponents.Add<App>("app");
 
