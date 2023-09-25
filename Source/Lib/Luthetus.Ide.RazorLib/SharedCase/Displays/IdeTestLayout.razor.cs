@@ -1,7 +1,10 @@
 ﻿using Fluxor;
+using Luthetus.Common.RazorLib.ComponentRunner;
+using Luthetus.Common.RazorLib.ComponentRunner.Internals;
 using Luthetus.Common.RazorLib.Dimensions;
 using Luthetus.Common.RazorLib.Drag.Displays;
 using Luthetus.Common.RazorLib.FileSystem.Models;
+using Luthetus.Common.RazorLib.KeyCase.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.Panel.States;
@@ -10,6 +13,7 @@ using Luthetus.Common.RazorLib.StateHasChangedBoundaryCase.Displays;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 using Luthetus.TextEditor.RazorLib;
 using Microsoft.AspNetCore.Components;
+using System.Reflection;
 
 namespace Luthetus.Ide.RazorLib.SharedCase.Displays;
 
@@ -31,21 +35,23 @@ public partial class IdeTestLayout : LayoutComponentBase, IDisposable
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
     private DotNetSolutionSync DotNetSolutionSync { get; set; } = null!;
+    [Inject]
+    private ComponentRunnerOptions ComponentRunnerOptions { get; set; } = null!;
 
     private string UnselectableClassCss => DragStateWrap.Value.ShouldDisplay
         ? "balc_unselectable"
         : string.Empty;
 
     private bool _previousDragStateWrapShouldDisplay;
-
     private ElementDimensions _bodyElementDimensions = new();
-
     private StateHasChangedBoundary _bodyAndFooterStateHasChangedBoundaryComponent = null!;
+    private List<Type>? _componentTypes;
 
     protected override void OnInitialized()
     {
         DragStateWrap.StateChanged += DragStateWrapOnStateChanged;
         AppOptionsStateWrap.StateChanged += AppOptionsStateWrapOnStateChanged;
+        TextEditorService.OptionsStateWrap.StateChanged += TextEditorOptionsStateWrap_StateChanged;
 
         var bodyHeight = _bodyElementDimensions.DimensionAttributes
             .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Height);
@@ -92,6 +98,19 @@ public partial class IdeTestLayout : LayoutComponentBase, IDisposable
                     absolutePath,
                     DotNetSolutionSync));
             }
+
+            _componentTypes = new();
+
+            foreach (var assembly in ComponentRunnerOptions.AssembliesToScan)
+            {
+                _componentTypes.AddRange(assembly
+                    .GetTypes()
+                    .Where(t => t.IsSubclassOf(typeof(ComponentBase)) && t.Name != "_Imports"));
+            }
+
+            _componentTypes = _componentTypes.OrderBy(x => x.Name).ToList();
+
+            await _bodyAndFooterStateHasChangedBoundaryComponent.InvokeStateHasChangedAsync();
         }
 
         await base.OnAfterRenderAsync(firstRender);
@@ -111,9 +130,15 @@ public partial class IdeTestLayout : LayoutComponentBase, IDisposable
         }
     }
 
+    private async void TextEditorOptionsStateWrap_StateChanged(object? sender, EventArgs e)
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+
     public void Dispose()
     {
         DragStateWrap.StateChanged -= DragStateWrapOnStateChanged;
         AppOptionsStateWrap.StateChanged -= AppOptionsStateWrapOnStateChanged;
+        TextEditorService.OptionsStateWrap.StateChanged -= TextEditorOptionsStateWrap_StateChanged;
     }
 }
