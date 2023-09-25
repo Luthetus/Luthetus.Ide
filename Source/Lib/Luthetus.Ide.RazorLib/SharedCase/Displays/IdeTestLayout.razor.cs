@@ -12,6 +12,11 @@ using Luthetus.Common.RazorLib.Resize.Displays;
 using Luthetus.Common.RazorLib.StateHasChangedBoundaryCase.Displays;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase.GenericLexer.Decoration;
+using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
+using Luthetus.TextEditor.RazorLib.Lexing.Models;
+using Luthetus.TextEditor.RazorLib.TextEditorCase.Model;
+using Luthetus.TextEditor.RazorLib.TextEditorCase.Scenes;
 using Microsoft.AspNetCore.Components;
 using System.Reflection;
 
@@ -37,6 +42,9 @@ public partial class IdeTestLayout : LayoutComponentBase, IDisposable
     private DotNetSolutionSync DotNetSolutionSync { get; set; } = null!;
     [Inject]
     private ComponentRunnerOptions ComponentRunnerOptions { get; set; } = null!;
+
+    private Key<TextEditorModel> TextEditorModelKey => new Key<TextEditorModel>(SetContentDisplay.TextEditorModelKey.Guid);
+    private Key<TextEditorViewModel> TextEditorViewModelKey = new Key<TextEditorViewModel>(SetContentDisplay.TextEditorViewModelKey.Guid);
 
     private string UnselectableClassCss => DragStateWrap.Value.ShouldDisplay
         ? "balc_unselectable"
@@ -111,6 +119,23 @@ public partial class IdeTestLayout : LayoutComponentBase, IDisposable
             _componentTypes = _componentTypes.OrderBy(x => x.Name).ToList();
 
             await _bodyAndFooterStateHasChangedBoundaryComponent.InvokeStateHasChangedAsync();
+
+            var textEditorModel = new TextEditorModel(
+                new ResourceUri("uniqueIdentifierGoesHere.cs"),
+                DateTime.UtcNow,
+                ".cs",
+                "public class MyClass\n{\n\n}\n",
+                new TextEditorDefaultCompilerService(),
+                new GenericDecorationMapper(),
+                null,
+                new(),
+                TextEditorModelKey);
+
+            TextEditorService.Model.RegisterCustom(textEditorModel);
+
+            TextEditorService.ViewModel.Register(
+                TextEditorViewModelKey,
+                TextEditorModelKey);
         }
 
         await base.OnAfterRenderAsync(firstRender);
