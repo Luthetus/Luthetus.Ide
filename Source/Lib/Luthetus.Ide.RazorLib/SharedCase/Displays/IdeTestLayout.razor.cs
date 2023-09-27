@@ -19,6 +19,11 @@ using Luthetus.TextEditor.RazorLib.TextEditorCase.Model;
 using Luthetus.TextEditor.RazorLib.TextEditorCase.Scenes;
 using Microsoft.AspNetCore.Components;
 using System.Reflection;
+using Luthetus.CompilerServices.Lang.Razor.CompilerServiceCase;
+using Luthetus.CompilerServices.Lang.Xml.Html.Decoration;
+using Luthetus.Ide.RazorLib.EditorCase.States;
+using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
+using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 
 namespace Luthetus.Ide.RazorLib.SharedCase.Displays;
 
@@ -42,9 +47,14 @@ public partial class IdeTestLayout : LayoutComponentBase, IDisposable
     private DotNetSolutionSync DotNetSolutionSync { get; set; } = null!;
     [Inject]
     private ComponentRunnerOptions ComponentRunnerOptions { get; set; } = null!;
+    [Inject]
+    private RazorCompilerService RazorCompilerService { get; set; } = null!;
+    [Inject]
+    private CSharpCompilerService CSharpCompilerService { get; set; } = null!;
+    [Inject]
+    private EditorSync EditorSync { get; set; } = null!;
 
-    private Key<TextEditorModel> TextEditorModelKey => new Key<TextEditorModel>(SetContentDisplay.TextEditorModelKey.Guid);
-    private Key<TextEditorViewModel> TextEditorViewModelKey = new Key<TextEditorViewModel>(SetContentDisplay.TextEditorViewModelKey.Guid);
+    private const string RAZOR_FILE_PATH_STRING = "C:\\Users\\hunte\\Repos\\Demos\\BlazorCrudApp\\Obsolete\\razorFile.razor";
 
     private string UnselectableClassCss => DragStateWrap.Value.ShouldDisplay
         ? "balc_unselectable"
@@ -54,6 +64,7 @@ public partial class IdeTestLayout : LayoutComponentBase, IDisposable
     private ElementDimensions _bodyElementDimensions = new();
     private StateHasChangedBoundary _bodyAndFooterStateHasChangedBoundaryComponent = null!;
     private List<Type>? _componentTypes;
+    private Key<TextEditorViewModel> _textEditorViewModelKey = Key<TextEditorViewModel>.Empty;
 
     protected override void OnInitialized()
     {
@@ -120,22 +131,37 @@ public partial class IdeTestLayout : LayoutComponentBase, IDisposable
 
             await _bodyAndFooterStateHasChangedBoundaryComponent.InvokeStateHasChangedAsync();
 
+            var text = @"using Microsoft.AspNetCore.Components;
+
+namespace ConsoleApp1.Today;
+
+public partial class PersonSimpleDisplay : ComponentBase
+{
+	
+}";
+
+            var resourceUri = new ResourceUri("TestFile.cs");
+
             var textEditorModel = new TextEditorModel(
-                new ResourceUri("uniqueIdentifierGoesHere.cs"),
+                resourceUri,
                 DateTime.UtcNow,
                 ".cs",
-                "public class MyClass\n{\n\n}\n",
-                new TextEditorDefaultCompilerService(),
+                text,
+                CSharpCompilerService,
                 new GenericDecorationMapper(),
                 null,
-                new(),
-                TextEditorModelKey);
+                new());
 
             TextEditorService.Model.RegisterCustom(textEditorModel);
+            CSharpCompilerService.RegisterModel(textEditorModel);
 
-            TextEditorService.ViewModel.Register(
-                TextEditorViewModelKey,
-                TextEditorModelKey);
+            EditorSync.Dispatcher.Dispatch(new EditorState.OpenInEditorAction(
+                EditorSync,
+                new AbsolutePath(
+                    RAZOR_FILE_PATH_STRING,
+                    false,
+                    EnvironmentProvider),
+                false));
         }
 
         await base.OnAfterRenderAsync(firstRender);
@@ -158,6 +184,24 @@ public partial class IdeTestLayout : LayoutComponentBase, IDisposable
     private async void TextEditorOptionsStateWrap_StateChanged(object? sender, EventArgs e)
     {
         await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task GetTextEditorViewModelAsync()
+    {
+        var textEditorModel = TextEditorService.Model.FindOrDefaultByResourceUri(new(RAZOR_FILE_PATH_STRING));
+
+        if (textEditorModel is not null)
+        {
+            var textEditorViewModelBag = TextEditorService.Model.GetViewModelsOrEmpty(textEditorModel.ModelKey);
+
+            var viewModel = textEditorViewModelBag.FirstOrDefault();
+
+            if (viewModel is not null)
+            {
+                _textEditorViewModelKey = viewModel.ViewModelKey;
+                await _bodyAndFooterStateHasChangedBoundaryComponent.InvokeStateHasChangedAsync();
+            }
+        }
     }
 
     public void Dispose()

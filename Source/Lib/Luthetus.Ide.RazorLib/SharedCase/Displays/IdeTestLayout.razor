@@ -3,6 +3,7 @@
 @using Luthetus.Common.RazorLib.ContextCase.Models;
 @using Luthetus.Common.RazorLib.Dimensions;
 @using Luthetus.Common.RazorLib.Installation.Displays
+@using Luthetus.Common.RazorLib.KeyCase.Models;
 @using Luthetus.Common.RazorLib.Panel.Displays
 @using Luthetus.Common.RazorLib.Panel.Models;
 @using Luthetus.Common.RazorLib.Resize.Displays
@@ -10,6 +11,8 @@
 @using Luthetus.Common.RazorLib.ShouldRenderBoundaryCase.Displays
 @using Luthetus.Ide.RazorLib.InstallationCase.Displays
 @using Luthetus.TextEditor.RazorLib.Installation.Displays
+@using Luthetus.TextEditor.RazorLib.TextEditorCase.Displays
+@using Luthetus.TextEditor.RazorLib.TextEditorCase.Scenes;
 
 @inherits LayoutComponentBase
 
@@ -36,6 +39,22 @@
             }
             else
             {
+                <div style="height: calc(100% - 58px);">
+                    @if (_textEditorViewModelKey == Key<TextEditorViewModel>.Empty)
+                    {
+                        <button class="luth_button"
+                                @onclick="GetTextEditorViewModelAsync">
+                            GetTextEditorViewModelAsync
+                        </button>
+                    }
+                    else
+                    {
+                        <TextEditorViewModelDisplay TextEditorViewModelKey="_textEditorViewModelKey" />
+                    }
+                </div>
+
+                <hr/>
+
                 <ComponentRunnerPanel ComponentTypes="_componentTypes"/>
             }
         </StateHasChangedBoundary>
