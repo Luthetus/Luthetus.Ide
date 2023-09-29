@@ -10,24 +10,21 @@ public partial record InputFileSync
     public Task HandleRequestInputFileStateFormAction(
         RequestInputFileStateFormAction requestInputFileStateFormAction)
     {
-        if (_luthetusIdeComponentRenderers.InputFileRendererType is not null)
+        Dispatcher.Dispatch(new StartInputFileStateFormAction(
+               requestInputFileStateFormAction));
+
+        var inputFileDialog = new DialogRecord(
+            DialogFacts.InputFileDialogKey,
+            "Input File",
+            _luthetusIdeComponentRenderers.InputFileRendererType,
+            null,
+            HtmlFacts.Classes.DIALOG_PADDING_0)
         {
-            Dispatcher.Dispatch(new StartInputFileStateFormAction(
-                requestInputFileStateFormAction));
+            IsResizable = true
+        };
 
-            var inputFileDialog = new DialogRecord(
-                DialogFacts.InputFileDialogKey,
-                "Input File",
-                _luthetusIdeComponentRenderers.InputFileRendererType,
-                null,
-                HtmlFacts.Classes.DIALOG_PADDING_0)
-            {
-                IsResizable = true
-            };
-
-            Dispatcher.Dispatch(new DialogState.RegisterAction(
-                inputFileDialog));
-        }
+        Dispatcher.Dispatch(new DialogState.RegisterAction(
+            inputFileDialog));
 
         return Task.CompletedTask;
     }

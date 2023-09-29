@@ -13,7 +13,7 @@
             <input class="luth_ide_input luth_ide_input-text"
                        style="height: 2em;"
                        placeholder="Solution name"
-                       @bind="Viewable.SolutionName"
+                       @bind="_solutionName"
                        @bind:event="oninput"/>
         </div>
     </div>
@@ -29,11 +29,11 @@
             <input class="luth_ide_input luth_ide_input-text"
                    style="height: 2em;"
                    placeholder="Parent directory"
-                   @bind="Viewable.ParentDirectoryName"
+                   @bind="_parentDirectoryName"
                    @bind:event="oninput"/>
 
             <button class="luth_button"
-                    @onclick="async () => RequestInputFileForParentDirectory()">
+                    @onclick="RequestInputFileForParentDirectory">
                 <IconFolder/>
             </button>
         </div>
@@ -43,7 +43,7 @@
         Solution&nbsp;Name:
         <div>
             <em class="luth_em">
-                @SolutionName
+                @DisplaySolutionName
             </em>.sln
         </div>
     </div>
@@ -52,7 +52,7 @@
         Directory&nbsp;Absolute&nbsp;File&nbsp;Path:
         <div>
             <em class="luth_em">
-                @ParentDirectoryName
+                @DisplayParentDirectoryName
             </em>
         </div>
     </div>
@@ -72,5 +72,5 @@
     </button>
     
     <TerminalOutputDisplay TerminalSessionKey="TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY" 
-                           TerminalCommandKey="Viewable.NewDotNetSolutionTerminalCommandKey" />
+                           TerminalCommandKey="NewDotNetSolutionTerminalCommandKey" />
 </div>

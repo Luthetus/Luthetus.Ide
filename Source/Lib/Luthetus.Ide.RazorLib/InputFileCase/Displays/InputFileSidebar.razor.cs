@@ -52,41 +52,44 @@ public partial class InputFileSidebar : ComponentBase
 
     private TreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
 
-    protected override void OnInitialized()
+    protected override Task OnAfterRenderAsync(bool firstRender)
     {
-        var directoryHomeNode = new TreeViewAbsolutePath(
-            EnvironmentProvider.HomeDirectoryAbsolutePath,
-            LuthetusIdeComponentRenderers,
-            LuthetusCommonComponentRenderers,
-            FileSystemProvider,
-            EnvironmentProvider,
-            true,
-            false);
-
-        var directoryRootNode = new TreeViewAbsolutePath(
-            EnvironmentProvider.RootDirectoryAbsolutePath,
-            LuthetusIdeComponentRenderers,
-            LuthetusCommonComponentRenderers,
-            FileSystemProvider,
-            EnvironmentProvider,
-            true,
-            false);
-
-        var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(
-            directoryHomeNode,
-            directoryRootNode);
-
-        if (!TreeViewService.TryGetTreeViewState(
-                TreeViewInputFileSidebarStateKey, out var treeViewState))
+        if (firstRender)
         {
-            TreeViewService.RegisterTreeViewState(new TreeViewContainer(
-                TreeViewInputFileSidebarStateKey,
-                adhocRootNode,
+            var directoryHomeNode = new TreeViewAbsolutePath(
+                EnvironmentProvider.HomeDirectoryAbsolutePath,
+                LuthetusIdeComponentRenderers,
+                LuthetusCommonComponentRenderers,
+                FileSystemProvider,
+                EnvironmentProvider,
+                true,
+                false);
+
+            var directoryRootNode = new TreeViewAbsolutePath(
+                EnvironmentProvider.RootDirectoryAbsolutePath,
+                LuthetusIdeComponentRenderers,
+                LuthetusCommonComponentRenderers,
+                FileSystemProvider,
+                EnvironmentProvider,
+                true,
+                false);
+
+            var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(
                 directoryHomeNode,
-                ImmutableList<TreeViewNoType>.Empty));
+                directoryRootNode);
+
+            if (!TreeViewService.TryGetTreeViewState(
+                    TreeViewInputFileSidebarStateKey, out var treeViewState))
+            {
+                TreeViewService.RegisterTreeViewState(new TreeViewContainer(
+                    TreeViewInputFileSidebarStateKey,
+                    adhocRootNode,
+                    directoryHomeNode,
+                    ImmutableList<TreeViewNoType>.Empty));
+            }
         }
 
-        base.OnInitialized();
+        return base.OnAfterRenderAsync(firstRender);
     }
 
     private async Task OnTreeViewContextMenuFunc(TreeViewCommandParameter treeViewCommandParameter)
