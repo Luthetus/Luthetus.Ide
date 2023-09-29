@@ -9,7 +9,6 @@
 
     <ItemGroup>
         <Content Remove="wwwroot\README.md" />
-        <Content Remove="wwwroot\Themes\README.md" />
     </ItemGroup>
 
     <ItemGroup>

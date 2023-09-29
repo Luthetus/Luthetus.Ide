@@ -39,22 +39,6 @@
             }
             else
             {
-                <div style="height: calc(100% - 58px);">
-                    @if (_textEditorViewModelKey == Key<TextEditorViewModel>.Empty)
-                    {
-                        <button class="luth_button"
-                                @onclick="GetTextEditorViewModelAsync">
-                            GetTextEditorViewModelAsync
-                        </button>
-                    }
-                    else
-                    {
-                        <TextEditorViewModelDisplay TextEditorViewModelKey="_textEditorViewModelKey" />
-                    }
-                </div>
-
-                <hr/>
-
                 <ComponentRunnerPanel ComponentTypes="_componentTypes"/>
             }
         </StateHasChangedBoundary>

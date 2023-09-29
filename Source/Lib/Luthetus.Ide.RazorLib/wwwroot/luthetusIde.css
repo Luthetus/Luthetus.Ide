@@ -310,7 +310,7 @@ button.luth_ide_input-file-address-hierarchy-entry {
 
 .luth_ide_panel-tabs {
     position: relative;
-    background-color: var(--luth_ide_footer-background-color);
+    background-color: var(--luth_ide_panel-background-color);
 }
 
 .luth_ide_panel-tabs-justify-end {
@@ -421,4 +421,57 @@ button.luth_ide_input-file-address-hierarchy-entry {
 
 .luth_ide_dialog-padding-0 .luth_dialog-display-body {
     padding: 0 !important;
+}
+
+:root {
+    /* Sizes IDE */
+    --luth_ide_section-title-font-size: 1.25em;
+    --luth_ide_section-title-height: 2rem;
+    --luth_ide_section-title-padding: 0 5px;
+    --luth_ide_section-body-padding: 5px;
+    --luth_ide_input-file-display-top-nav-bar-height: 2.5rem;
+    --luth_ide_input-file-display-bottom-controls-height: 5.5rem;
+    --luth_ide_input-file-display-body-height: calc(100% - var(--luth_ide_input-file-display-top-nav-bar-height) - var(--luth_ide_input-file-display-bottom-controls-height));
+    --luth_ide_checkbox-size: 1.75rem;
+    --luth_ide_header-border-bottom-size: 4px;
+    --luth_ide_header-height: 3rem;
+    --luth_ide_input-file-display-side-bar-margin-right: 10px;
+    --luth_ide_input-file-display-content-margin-left: 10px;
+    --luth_ide_input-padding-height: 2px;
+    --luth_ide_input-padding-width: 3px;
+    --luth_ide_input-focus-outline-size: 2px;
+    --luth_ide_input-focus-box-shadow-blur-radius: 21px;
+    --luth_ide_input-file-search-height: calc(100% - 4px);
+    --luth_ide_input-file-search-margin-bottom: 1px;
+    --luth_ide_input-file-display-top-nav-bar-buttons-width: 120px;
+    --luth_ide_input-file-display-top-nav-bar-search-width: 220px;
+    --luth_ide_input-file-display-top-nav-bar-address-hierarchy-width: calc(100% - var(--luth_ide_input-file-display-top-nav-bar-buttons-width) - var(--luth_ide_input-file-display-top-nav-bar-search-width));
+    --luth_ide_text-editor-display-height: calc(100% - var(--luth_tabs-bar-height) - var(--luth_tabs-bar-margin-bottom));
+    --luth_ide_input-file-display-bottom-controls-non-text-width: 12rem;
+    --luth_ide_input-file-display-bottom-controls-non-text-margin-left: 15px;
+    --luth_ide_input-file-display-bottom-controls-non-text-buttons-margin-left: 15px;
+    --luth_ide_input-file-display-bottom-controls-text-input-width: calc(100% - var(--luth_ide_input-file-display-bottom-controls-non-text-width) - var(--luth_ide_input-file-display-bottom-controls-non-text-margin-left));
+    --luth_ide_input-file-display-bottom-controls-text-input-padding-left: 5px;
+    --luth_ide_panel-tabs-font-size: 0.85em;
+    --luth_ide_panel-tabs-margin: 4px;
+    --luth_ide_panel-tabs-bug-are-not-aligning-need-to-fix-todo: 0.7em;
+}
+
+:root {
+    /* Dark-Theme is the default */
+    --luth_ide_header-background-color: #2a2a2e;
+    --luth_ide_body-background-color: #1E1E1E;
+    --luth_ide_panel-background-color: #2b2d2d;
+    --luth_ide_input-background-color: #232d32;
+    --luth_ide_input-font-color: #dcdcdc;
+    --luth_ide_section-title-background-color: #033a00;
+}
+
+.luth_visual-studio-light-theme-clone {
+    --luth_ide_header-background-color: #cad5eb;
+    --luth_ide_body-background-color: rgb(253, 253, 253);
+    --luth_ide_panel-background-color: #d4d4d4;
+    --luth_ide_input-background-color: rgb(250, 250, 250);
+    --luth_ide_input-font-color: #000000;
+    --luth_ide_section-title-background-color: #c7e9c2;
 }

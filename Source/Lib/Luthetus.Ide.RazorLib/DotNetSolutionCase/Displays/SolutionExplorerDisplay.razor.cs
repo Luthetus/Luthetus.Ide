@@ -8,7 +8,6 @@ using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
-using Luthetus.Ide.RazorLib.DotNetSolutionCase.Scenes;
 using Luthetus.Ide.RazorLib.EditorCase.States;
 using Luthetus.Ide.RazorLib.MenuCase.Models;
 using Microsoft.AspNetCore.Components;
@@ -82,13 +81,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             Key<DialogRecord>.NewKey(),
             "New .NET Solution",
             typeof(DotNetSolutionFormDisplay),
-            new Dictionary<string, object?>
-            {
-                {
-                    nameof(DotNetSolutionFormDisplay.Viewable),
-                    new DotNetSolutionFormScene()
-                }
-            },
+            null,
             null)
         {
             IsResizable = true

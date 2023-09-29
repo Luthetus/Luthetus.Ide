@@ -7,7 +7,6 @@ using Luthetus.Ide.RazorLib.CommandLineCase.Models;
 using Luthetus.Ide.RazorLib.FileSystemCase.Models;
 using Luthetus.Ide.RazorLib.TerminalCase.Models;
 using Luthetus.Ide.RazorLib.TerminalCase.States;
-using Luthetus.Ide.RazorLib.DotNetSolutionCase.Scenes;
 using Luthetus.Ide.RazorLib.InputFileCase.States;
 using Luthetus.Ide.RazorLib.InputFileCase.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
@@ -16,6 +15,7 @@ using Luthetus.Common.RazorLib.FileSystem.Models;
 using Luthetus.Common.RazorLib.Notification.Models;
 using Luthetus.Common.RazorLib.Installation.Models;
 using Luthetus.Common.RazorLib.Dialog.States;
+using Luthetus.Common.RazorLib.KeyCase.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.Displays;
 
@@ -40,19 +40,22 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
 
     [CascadingParameter]
     public DialogRecord DialogRecord { get; set; } = null!;
-    
-    [Parameter, EditorRequired]
-    public DotNetSolutionFormScene Viewable { get; set; } = null!;
 
-    private string SolutionName => string.IsNullOrWhiteSpace(Viewable.SolutionName)
+    private string _solutionName = string.Empty;
+    private string _parentDirectoryName = string.Empty;
+
+    public Key<TerminalCommand> NewDotNetSolutionTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
+    public CancellationTokenSource NewDotNetSolutionCancellationTokenSource { get; set; } = new();
+
+    private string DisplaySolutionName => string.IsNullOrWhiteSpace(_solutionName)
         ? "{enter solution name}"
-        : Viewable.SolutionName;
+        : _solutionName;
 
-    private string ParentDirectoryName => string.IsNullOrWhiteSpace(Viewable.ParentDirectoryName)
+    private string DisplayParentDirectoryName => string.IsNullOrWhiteSpace(_parentDirectoryName)
         ? "{enter parent directory name}"
-        : Viewable.ParentDirectoryName;
+        : _parentDirectoryName;
 
-    private FormattedCommand FormattedCommand => DotNetCliCommandFormatter.FormatDotnetNewSln(Viewable.SolutionName);
+    private FormattedCommand FormattedCommand => DotNetCliCommandFormatter.FormatDotnetNewSln(_solutionName);
 
     private void RequestInputFileForParentDirectory()
     {
@@ -64,7 +67,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                 if (afp is null)
                     return;
 
-                Viewable.ParentDirectoryName = afp.FormattedInput;
+                _parentDirectoryName = afp.FormattedInput;
 
                 await InvokeAsync(StateHasChanged);
             },
@@ -84,8 +87,8 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
     private async Task StartNewDotNetSolutionCommandOnClick()
     {
         var localFormattedCommand = FormattedCommand;
-        var localSolutionName = Viewable.SolutionName;
-        var localParentDirectoryName = Viewable.ParentDirectoryName;
+        var localSolutionName = _solutionName;
+        var localParentDirectoryName = _parentDirectoryName;
 
         if (string.IsNullOrWhiteSpace(localSolutionName) ||
             string.IsNullOrWhiteSpace(localParentDirectoryName))
@@ -102,10 +105,10 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
         else
         {
             var newDotNetSolutionCommand = new TerminalCommand(
-                Viewable.NewDotNetSolutionTerminalCommandKey,
+                NewDotNetSolutionTerminalCommandKey,
                 localFormattedCommand,
-                Viewable.ParentDirectoryName,
-                Viewable.NewDotNetSolutionCancellationTokenSource.Token,
+                _parentDirectoryName,
+                NewDotNetSolutionCancellationTokenSource.Token,
                 () =>
                 {
                     // Close Dialog
@@ -167,7 +170,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
 
         await FileSystemProvider.File.WriteAllTextAsync(
             solutionAbsolutePathString,
-            DotNetSolutionFormScene.HackForWebsite_NEW_SOLUTION_TEMPLATE);
+            HackForWebsite_NEW_SOLUTION_TEMPLATE);
 
         // Close Dialog
         Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.Key));
@@ -183,4 +186,29 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
             solutionAbsolutePath,
             DotNetSolutionSync));
     }
+
+    public const string HackForWebsite_NEW_SOLUTION_TEMPLATE = @"
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34018.315
+MinimumVisualStudioVersion = 10.0.40219.1
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EC571C96-8996-402C-B44A-264F84598795}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC571C96-8996-402C-B44A-264F84598795}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC571C96-8996-402C-B44A-264F84598795}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC571C96-8996-402C-B44A-264F84598795}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CC0E8FC7-3D42-4480-BAF6-86D1E2F2289E}
+	EndGlobalSection
+EndGlobal
+";
 }
