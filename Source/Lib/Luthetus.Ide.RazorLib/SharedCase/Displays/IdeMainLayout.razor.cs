@@ -46,6 +46,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     {
         DragStateWrap.StateChanged += DragStateWrapOnStateChanged;
         AppOptionsStateWrap.StateChanged += AppOptionsStateWrapOnStateChanged;
+        TextEditorService.OptionsStateWrap.StateChanged += TextEditorOptionsStateWrap_StateChanged;
 
         var bodyHeight = _bodyElementDimensions.DimensionAttributes
             .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Height);
@@ -111,9 +112,15 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         }
     }
 
+    private async void TextEditorOptionsStateWrap_StateChanged(object? sender, EventArgs e)
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+
     public void Dispose()
     {
         DragStateWrap.StateChanged -= DragStateWrapOnStateChanged;
         AppOptionsStateWrap.StateChanged -= AppOptionsStateWrapOnStateChanged;
+        TextEditorService.OptionsStateWrap.StateChanged -= TextEditorOptionsStateWrap_StateChanged;
     }
 }
