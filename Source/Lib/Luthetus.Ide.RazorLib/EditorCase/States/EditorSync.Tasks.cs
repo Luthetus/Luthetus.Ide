@@ -9,80 +9,16 @@ using Luthetus.Ide.RazorLib.FileSystemCase.Models;
 using Luthetus.Ide.RazorLib.InputFileCase.Models;
 using Luthetus.Ide.RazorLib.InputFileCase.States;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
+using Luthetus.TextEditor.RazorLib.Group.Models;
 using Luthetus.TextEditor.RazorLib.Lexing.Models;
 using Luthetus.TextEditor.RazorLib.TextEditorCase.Model;
 using Luthetus.TextEditor.RazorLib.TextEditorCase.Scenes;
 using System.Collections.Immutable;
-using static Luthetus.Ide.RazorLib.EditorCase.States.EditorState;
 
 namespace Luthetus.Ide.RazorLib.EditorCase.States;
 
 public partial class EditorSync
 {
-    public Task ShowInputFile(ShowInputFileAction showInputFileAction)
-    {
-        Dispatcher.Dispatch(new InputFileState.RequestInputFileStateFormAction(
-            _inputFileSync,
-            "TextEditor",
-            async afp => await OpenInEditor(new OpenInEditorAction(this, afp, true)),
-            afp =>
-            {
-                if (afp is null || afp.IsDirectory)
-                    return Task.FromResult(false);
-
-                return Task.FromResult(true);
-            },
-            new[]
-            {
-                    new InputFilePattern("File", afp => !afp.IsDirectory)
-            }.ToImmutableArray()));
-
-        return Task.CompletedTask;
-    }
-
-    public async Task OpenInEditor(OpenInEditorAction openInEditorAction)
-    {
-        var editorTextEditorGroupKey =
-            openInEditorAction.EditorTextEditorGroupKey ?? EditorTextEditorGroupKey;
-
-        if (openInEditorAction.AbsolutePath is null ||
-            openInEditorAction.AbsolutePath.IsDirectory)
-        {
-            return;
-        }
-
-        _textEditorService.Group.Register(editorTextEditorGroupKey);
-
-        var inputFileAbsolutePathString = openInEditorAction.AbsolutePath.FormattedInput;
-
-        var textEditorModel = await GetOrCreateTextEditorModelAsync(
-            openInEditorAction.AbsolutePath,
-            inputFileAbsolutePathString);
-
-        if (textEditorModel is null)
-            return;
-
-        await CheckIfContentsWereModifiedAsync(
-            Dispatcher,
-            inputFileAbsolutePathString,
-            textEditorModel);
-
-        var viewModel = GetOrCreateTextEditorViewModel(
-            openInEditorAction.AbsolutePath,
-            openInEditorAction.ShouldSetFocusToEditor,
-            Dispatcher,
-            textEditorModel,
-            inputFileAbsolutePathString);
-
-        _textEditorService.Group.AddViewModel(
-            editorTextEditorGroupKey,
-            viewModel);
-
-        _textEditorService.Group.SetActiveViewModel(
-            editorTextEditorGroupKey,
-            viewModel);
-    }
-
     private async Task<TextEditorModel?> GetOrCreateTextEditorModelAsync(
         IAbsolutePath absolutePath,
         string absolutePathString)
@@ -278,5 +214,84 @@ public partial class EditorSync
 
             dispatcher.Dispatch(saveFileAction);
         }
+    }
+
+    public void ShowInputFile()
+    {
+        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+            "ShowInputFile",
+            () => 
+            {
+                Dispatcher.Dispatch(new InputFileState.RequestInputFileStateFormAction(
+                    _inputFileSync,
+                    "TextEditor",
+                    afp => 
+                    {
+                        OpenInEditor(afp, true);
+                        return Task.CompletedTask;
+                    },
+                    afp =>
+                    {
+                        if (afp is null || afp.IsDirectory)
+                            return Task.FromResult(false);
+
+                        return Task.FromResult(true);
+                    },
+                    new[]
+                    {
+                            new InputFilePattern("File", afp => !afp.IsDirectory)
+                    }.ToImmutableArray()));
+
+                return Task.CompletedTask;
+            });
+    }
+
+    public void OpenInEditor(
+        IAbsolutePath? absolutePath,
+        bool shouldSetFocusToEditor,
+        Key<TextEditorGroup>? editorTextEditorGroupKey = null)
+    {
+        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+            "OpenInEditor",
+            async () => 
+            {
+                editorTextEditorGroupKey ??= EditorTextEditorGroupKey;
+
+                if (absolutePath is null || absolutePath.IsDirectory)
+                {
+                    return;
+                }
+
+                _textEditorService.Group.Register(editorTextEditorGroupKey.Value);
+
+                var inputFileAbsolutePathString = absolutePath.FormattedInput;
+
+                var textEditorModel = await GetOrCreateTextEditorModelAsync(
+                    absolutePath,
+                    inputFileAbsolutePathString);
+
+                if (textEditorModel is null)
+                    return;
+
+                await CheckIfContentsWereModifiedAsync(
+                    Dispatcher,
+                    inputFileAbsolutePathString,
+                    textEditorModel);
+
+                var viewModel = GetOrCreateTextEditorViewModel(
+                    absolutePath,
+                    shouldSetFocusToEditor,
+                    Dispatcher,
+                    textEditorModel,
+                    inputFileAbsolutePathString);
+
+                _textEditorService.Group.AddViewModel(
+                    editorTextEditorGroupKey.Value,
+                    viewModel);
+
+                _textEditorService.Group.SetActiveViewModel(
+                    editorTextEditorGroupKey.Value,
+                    viewModel);
+            });
     }
 }

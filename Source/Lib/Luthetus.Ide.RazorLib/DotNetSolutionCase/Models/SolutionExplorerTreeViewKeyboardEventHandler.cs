@@ -196,11 +196,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         if (activeNode is not TreeViewNamespacePath treeViewNamespacePath)
             return;
 
-        _editorSync.Dispatcher.Dispatch(new EditorState.OpenInEditorAction(
-            _editorSync,
-            treeViewNamespacePath.Item.AbsolutePath,
-            shouldSetFocusToEditor));
-
+        _editorSync.OpenInEditor(treeViewNamespacePath.Item.AbsolutePath, shouldSetFocusToEditor);
         return;
     }
 

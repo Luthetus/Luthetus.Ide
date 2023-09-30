@@ -65,7 +65,7 @@ public partial class IdeHeader : FluxorComponent
             var menuOptionOpenFile = new MenuOptionRecord(
                 "File",
                 MenuOptionKind.Other,
-                () => Dispatcher.Dispatch(new EditorState.ShowInputFileAction(EditorSync)));
+                () => EditorSync.ShowInputFile());
 
             var menuOptionOpenDirectory = new MenuOptionRecord(
                 "Directory",
@@ -75,7 +75,7 @@ public partial class IdeHeader : FluxorComponent
             var menuOptionOpenCSharpProject = new MenuOptionRecord(
                 "C# Project - TODO: Adhoc Sln",
                 MenuOptionKind.Other,
-                () => Dispatcher.Dispatch(new EditorState.ShowInputFileAction(EditorSync)));
+                () => EditorSync.ShowInputFile());
 
             var menuOptionOpenDotNetSolution = new MenuOptionRecord(
                 ".NET Solution",

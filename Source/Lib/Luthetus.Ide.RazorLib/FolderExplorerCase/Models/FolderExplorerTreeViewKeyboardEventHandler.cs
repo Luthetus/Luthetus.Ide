@@ -197,11 +197,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         if (activeNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return;
 
-        _editorSync.Dispatcher.Dispatch(new EditorState.OpenInEditorAction(
-            _editorSync,
-            treeViewAbsolutePath.Item,
-            shouldSetFocusToEditor));
-
+        _editorSync.OpenInEditor(treeViewAbsolutePath.Item, shouldSetFocusToEditor);
         return;
     }
 

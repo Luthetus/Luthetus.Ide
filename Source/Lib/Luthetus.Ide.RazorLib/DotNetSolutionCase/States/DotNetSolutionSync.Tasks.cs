@@ -10,60 +10,137 @@ using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.TextEditor.RazorLib.TextEditorCase.States;
 using Luthetus.TextEditor.RazorLib.Lexing.Models;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
+using Luthetus.Common.RazorLib.KeyCase.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 
 public partial class DotNetSolutionSync
 {
-    public async Task<DotNetSolutionModel?> SetDotNetSolutionAsync(SetDotNetSolutionTask setDotNetSolutionAction)
+    public void AddExistingProjectToSolutionAction(
+        Key<DotNetSolutionModel> dotNetSolutionModelKey,
+        string localProjectTemplateShortName,
+        string localCSharpProjectName,
+        IAbsolutePath cSharpProjectAbsolutePath,
+        IEnvironmentProvider environmentProvider)
     {
-        var dotNetSolutionAbsolutePathString = setDotNetSolutionAction.SolutionAbsolutePath.FormattedInput;
+        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+            "AddExistingProjectToSolutionAction",
+            async () => {
+                var inDotNetSolutionModel = _dotNetSolutionStateWrap.Value.DotNetSolutions.FirstOrDefault(
+                    x => x.DotNetSolutionModelKey == dotNetSolutionModelKey);
 
-        var content = await _fileSystemProvider.File.ReadAllTextAsync(
-            dotNetSolutionAbsolutePathString,
-            CancellationToken.None);
+                if (inDotNetSolutionModel is null)
+                    return;
 
-        var solutionAbsolutePath = new AbsolutePath(
-            dotNetSolutionAbsolutePathString,
-            false,
-            _environmentProvider);
+                var projectTypeGuid = WebsiteProjectTemplateFacts.GetProjectTypeGuid(
+                    localProjectTemplateShortName);
 
-        var solutionNamespacePath = new NamespacePath(
-            string.Empty,
-            solutionAbsolutePath);
+                var relativePathFromSlnToProject = PathHelper.GetRelativeFromTwoAbsolutes(
+                    inDotNetSolutionModel.NamespacePath.AbsolutePath,
+                    cSharpProjectAbsolutePath,
+                    environmentProvider);
 
-        var dotNetSolution = DotNetSolutionLexer.Lex(
-            content,
-            solutionNamespacePath,
-            _environmentProvider);
+                var projectIdGuid = Guid.NewGuid();
 
-        // TODO: If somehow model was registered already this won't write the state
-        Dispatcher.Dispatch(new RegisterAction(dotNetSolution, this));
+                var cSharpProject = new CSharpProject(
+                    localCSharpProjectName,
+                    projectTypeGuid,
+                    relativePathFromSlnToProject,
+                    projectIdGuid);
 
-        Dispatcher.Dispatch(new WithAction(
-            inDotNetSolutionState => inDotNetSolutionState with
-            {
-                DotNetSolutionModelKey = dotNetSolution.DotNetSolutionModelKey
-            }));
+                cSharpProject.SetAbsolutePath(cSharpProjectAbsolutePath);
 
-        // TODO: Putting a hack for now to overwrite if somehow model was registered already
-        Dispatcher.Dispatch(ConstructModelReplacement(
-            dotNetSolution.DotNetSolutionModelKey,
-            dotNetSolution));
+                var dotNetSolutionBuilder = inDotNetSolutionModel.AddDotNetProject(
+                    cSharpProject,
+                    environmentProvider);
 
-        return await SetDotNetSolutionTreeViewAsync(new SetDotNetSolutionTreeViewTask(dotNetSolution.DotNetSolutionModelKey, this));
+                var outDotNetSolutionModel = dotNetSolutionBuilder.Build();
+
+                await _fileSystemProvider.File.WriteAllTextAsync(
+                    inDotNetSolutionModel.NamespacePath.AbsolutePath.FormattedInput,
+                    inDotNetSolutionModel.SolutionFileContents);
+
+                var solutionTextEditorModel = _textEditorService.Model.FindOrDefaultByResourceUri(
+                    new ResourceUri(inDotNetSolutionModel.NamespacePath.AbsolutePath.FormattedInput));
+
+                if (solutionTextEditorModel is not null)
+                {
+                    Dispatcher.Dispatch(new TextEditorModelState.ReloadAction(
+                        solutionTextEditorModel.ModelKey,
+                        inDotNetSolutionModel.SolutionFileContents,
+                        DateTime.UtcNow));
+                }
+
+                // TODO: Putting a hack for now to overwrite if somehow model was registered already
+                Dispatcher.Dispatch(ConstructModelReplacement(
+                    outDotNetSolutionModel.DotNetSolutionModelKey,
+                    outDotNetSolutionModel));
+
+                await SetDotNetSolutionTreeViewAsync(outDotNetSolutionModel.DotNetSolutionModelKey);
+            });
     }
 
-    public async Task<DotNetSolutionModel?> SetDotNetSolutionTreeViewAsync(
-        SetDotNetSolutionTreeViewTask setDotNetSolutionTreeViewAction)
+    public void SetDotNetSolution(IAbsolutePath inSolutionAbsolutePath)
+    {
+        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+            "SetDotNetSolution",
+            async () => {
+
+                var dotNetSolutionAbsolutePathString = inSolutionAbsolutePath.FormattedInput;
+
+                var content = await _fileSystemProvider.File.ReadAllTextAsync(
+                    dotNetSolutionAbsolutePathString,
+                    CancellationToken.None);
+
+                var solutionAbsolutePath = new AbsolutePath(
+                    dotNetSolutionAbsolutePathString,
+                    false,
+                    _environmentProvider);
+
+                var solutionNamespacePath = new NamespacePath(
+                    string.Empty,
+                    solutionAbsolutePath);
+
+                var dotNetSolution = DotNetSolutionLexer.Lex(
+                    content,
+                    solutionNamespacePath,
+                    _environmentProvider);
+
+                // TODO: If somehow model was registered already this won't write the state
+                Dispatcher.Dispatch(new RegisterAction(dotNetSolution, this));
+
+                Dispatcher.Dispatch(new WithAction(
+                    inDotNetSolutionState => inDotNetSolutionState with
+                    {
+                        DotNetSolutionModelKey = dotNetSolution.DotNetSolutionModelKey
+                    }));
+
+                // TODO: Putting a hack for now to overwrite if somehow model was registered already
+                Dispatcher.Dispatch(ConstructModelReplacement(
+                    dotNetSolution.DotNetSolutionModelKey,
+                    dotNetSolution));
+
+                await SetDotNetSolutionTreeViewAsync(dotNetSolution.DotNetSolutionModelKey);
+            });
+    }
+
+    public void SetDotNetSolutionTreeView(Key<DotNetSolutionModel> dotNetSolutionModelKey)
+    {
+        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+            "SetDotNetSolutionTreeViewAsync",
+            async () => await SetDotNetSolutionTreeViewAsync(dotNetSolutionModelKey));
+    }
+
+    private async Task SetDotNetSolutionTreeViewAsync(Key<DotNetSolutionModel> dotNetSolutionModelKey)
     {
         var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
 
         var dotNetSolutionModel = dotNetSolutionState.DotNetSolutions.FirstOrDefault(
-            x => x.DotNetSolutionModelKey == setDotNetSolutionTreeViewAction.DotNetSolutionModelKey);
+            x => x.DotNetSolutionModelKey == dotNetSolutionModelKey);
 
         if (dotNetSolutionModel is null)
-            return null;
+            return;
 
         var rootNode = new TreeViewSolution(
             dotNetSolutionModel,
@@ -90,61 +167,11 @@ public partial class DotNetSolutionSync
             _treeViewService.SetActiveNode(TreeViewSolutionExplorerStateKey, rootNode);
         }
 
-        return dotNetSolutionModel;
-    }
-    
-    public async Task<DotNetSolutionModel?> AddExistingProjectToSolutionAsync(AddExistingProjectToSolutionTask addExistingProjectToSolutionTask)
-    {
-        var inDotNetSolutionModel = _dotNetSolutionStateWrap.Value.DotNetSolutions.FirstOrDefault(
-            x => x.DotNetSolutionModelKey == addExistingProjectToSolutionTask.DotNetSolutionModelKey);
+        if (dotNetSolutionModel is null)
+            return;
 
-        if (inDotNetSolutionModel is null)
-            return null;
-
-        var projectTypeGuid = WebsiteProjectTemplateFacts.GetProjectTypeGuid(
-            addExistingProjectToSolutionTask.LocalProjectTemplateShortName);
-
-        var relativePathFromSlnToProject = PathHelper.GetRelativeFromTwoAbsolutes(
-            inDotNetSolutionModel.NamespacePath.AbsolutePath,
-            addExistingProjectToSolutionTask.CSharpProjectAbsolutePath,
-            addExistingProjectToSolutionTask.EnvironmentProvider);
-
-        var projectIdGuid = Guid.NewGuid();
-
-        var cSharpProject = new CSharpProject(
-            addExistingProjectToSolutionTask.LocalCSharpProjectName,
-            projectTypeGuid,
-            relativePathFromSlnToProject,
-            projectIdGuid);
-
-        cSharpProject.SetAbsolutePath(addExistingProjectToSolutionTask.CSharpProjectAbsolutePath);
-
-        var dotNetSolutionBuilder = inDotNetSolutionModel.AddDotNetProject(
-            cSharpProject,
-            addExistingProjectToSolutionTask.EnvironmentProvider);
-
-        var outDotNetSolutionModel = dotNetSolutionBuilder.Build();
-
-        await _fileSystemProvider.File.WriteAllTextAsync(
-            inDotNetSolutionModel.NamespacePath.AbsolutePath.FormattedInput,
-            inDotNetSolutionModel.SolutionFileContents);
-
-        var solutionTextEditorModel = _textEditorService.Model.FindOrDefaultByResourceUri(
-            new ResourceUri(inDotNetSolutionModel.NamespacePath.AbsolutePath.FormattedInput));
-
-        if (solutionTextEditorModel is not null)
-        {
-            Dispatcher.Dispatch(new TextEditorModelState.ReloadAction(
-                solutionTextEditorModel.ModelKey,
-                inDotNetSolutionModel.SolutionFileContents,
-                DateTime.UtcNow));
-        }
-
-        // TODO: Putting a hack for now to overwrite if somehow model was registered already
         Dispatcher.Dispatch(ConstructModelReplacement(
-            outDotNetSolutionModel.DotNetSolutionModelKey,
-            outDotNetSolutionModel));
-        
-        return await SetDotNetSolutionTreeViewAsync(new SetDotNetSolutionTreeViewTask(outDotNetSolutionModel.DotNetSolutionModelKey, this));
+            dotNetSolutionModel.DotNetSolutionModelKey,
+            dotNetSolutionModel));
     }
 }

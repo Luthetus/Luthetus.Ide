@@ -24,11 +24,7 @@ public class CompilerServiceExplorerTreeViewMouseEventHandler : TreeViewMouseEve
         if (treeViewCommandParameter.TargetNode is not TreeViewNamespacePath treeViewNamespacePath)
             return Task.CompletedTask;
 
-        _editorSync.Dispatcher.Dispatch(new EditorState.OpenInEditorAction(
-            _editorSync,
-            treeViewNamespacePath.Item.AbsolutePath,
-            true));
-
+        _editorSync.OpenInEditor(treeViewNamespacePath.Item.AbsolutePath, true);
         return Task.CompletedTask;
     }
 }

@@ -43,7 +43,7 @@ public partial record DotNetSolutionState(
             afp =>
             {
                 if (afp is not null)
-                    sync.Dispatcher.Dispatch(new SetDotNetSolutionTask(afp, sync));
+                    sync.SetDotNetSolution(afp);
 
                 return Task.CompletedTask;
             },

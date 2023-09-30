@@ -155,13 +155,12 @@ public partial class PersonSimpleDisplay : ComponentBase
             TextEditorService.Model.RegisterCustom(textEditorModel);
             CSharpCompilerService.RegisterModel(textEditorModel);
 
-            EditorSync.Dispatcher.Dispatch(new EditorState.OpenInEditorAction(
-                EditorSync,
-                new AbsolutePath(
-                    RAZOR_FILE_PATH_STRING,
-                    false,
-                    EnvironmentProvider),
-                false));
+            var razorFileAbsolutePath = new AbsolutePath(
+                RAZOR_FILE_PATH_STRING,
+                false,
+                EnvironmentProvider);
+
+            EditorSync.OpenInEditor(razorFileAbsolutePath, false);
         }
 
         await base.OnAfterRenderAsync(firstRender);

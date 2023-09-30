@@ -1,6 +1,8 @@
 using Fluxor;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Dropdown.States;
+using Luthetus.Common.RazorLib.KeyCase.Models;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
@@ -101,8 +103,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 
     private void ReloadOnClick()
     {
-        Dispatcher.Dispatch(new SetCompilerServiceExplorerTreeViewTask(
-            CompilerServiceExplorerSync));
+        CompilerServiceExplorerSync.SetCompilerServiceExplorerTreeView(CompilerServiceExplorerSync);
     }
 
     public void Dispose()
