@@ -13,31 +13,18 @@ namespace Luthetus.Ide.RazorLib.InputFileCase.States;
 
 public partial record InputFileSync
 {
-    private Task HandleRequestInputFileStateFormActionAsync(
+    public void RequestInputFileStateForm(
         string message,
         Func<IAbsolutePath?, Task> onAfterSubmitFunc,
         Func<IAbsolutePath?, Task<bool>> selectionIsValidFunc,
         ImmutableArray<InputFilePattern> inputFilePatterns)
     {
-        Dispatcher.Dispatch(new StartInputFileStateFormAction(
-            message,
-            onAfterSubmitFunc,
-            selectionIsValidFunc,
-            inputFilePatterns));
-
-        var inputFileDialog = new DialogRecord(
-            DialogFacts.InputFileDialogKey,
-            "Input File",
-            _luthetusIdeComponentRenderers.InputFileRendererType,
-            null,
-            HtmlFacts.Classes.DIALOG_PADDING_0)
-        {
-            IsResizable = true
-        };
-
-        Dispatcher.Dispatch(new DialogState.RegisterAction(
-            inputFileDialog));
-
-        return Task.CompletedTask;
+        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+            "Request InputFileState Form",
+            async () => await HandleRequestInputFileStateFormActionAsync(
+                message,
+                onAfterSubmitFunc,
+                selectionIsValidFunc,
+                inputFilePatterns));
     }
 }

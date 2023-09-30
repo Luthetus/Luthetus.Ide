@@ -13,7 +13,7 @@ public partial class CompilerServiceExplorerSync
     public void SetCompilerServiceExplorerTreeView()
     {
         BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
-            "SetDotNetSolutionAsync",
+            "Set CompilerServiceExplorer TreeView",
             async () => 
             {
                 var compilerServiceExplorerState = _compilerServiceExplorerStateWrap.Value;

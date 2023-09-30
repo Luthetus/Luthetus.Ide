@@ -5,36 +5,11 @@ using Luthetus.Ide.RazorLib.GitCase.Models;
 using Luthetus.Ide.RazorLib.TerminalCase.Models;
 using Luthetus.Common.RazorLib.FileSystem.Models;
 using static Luthetus.Ide.RazorLib.GitCase.States.GitState;
-using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
-using Luthetus.Common.RazorLib.KeyCase.Models;
 
 namespace Luthetus.Ide.RazorLib.GitCase.States;
 
 public partial class GitSync
 {
-    public void RefreshGit(CancellationToken cancellationToken)
-    {
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
-            "RefreshGit",
-            async () => await RefreshGitAsync(cancellationToken));
-    }
-
-    public void GitInit(CancellationToken cancellationToken)
-    {
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
-            "GitInit",
-            async () => await GitInitAsync(cancellationToken));
-    }
-
-    public void TryFindGitFolderInDirectory(
-        IAbsolutePath directoryAbsolutePath,
-        CancellationToken cancellationToken)
-    {
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
-            "TryFindGitFolderInDirectory",
-            async () => await TryFindGitFolderInDirectoryAsync(directoryAbsolutePath, cancellationToken));
-    }
-
     private async Task RefreshGitAsync(CancellationToken cancellationToken)
     {
         var handleRefreshGitTask = new GitTask(

@@ -6,9 +6,7 @@ using Luthetus.Common.RazorLib.Notification.Models;
 using Luthetus.Common.RazorLib.Notification.States;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
 using Luthetus.Ide.RazorLib.FileSystemCase.Models;
-using Luthetus.Ide.RazorLib.FileSystemCase.States;
 using Luthetus.Ide.RazorLib.InputFileCase.Models;
-using Luthetus.Ide.RazorLib.InputFileCase.States;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.Group.Models;
 using Luthetus.TextEditor.RazorLib.Lexing.Models;
@@ -214,73 +212,45 @@ public partial class EditorSync
         }
     }
 
-    public void ShowInputFile()
-    {
-        _inputFileSync.RequestInputFileStateForm("TextEditor",
-            afp =>
-            {
-                OpenInEditor(afp, true);
-                return Task.CompletedTask;
-            },
-            afp =>
-            {
-                if (afp is null || afp.IsDirectory)
-                    return Task.FromResult(false);
-
-                return Task.FromResult(true);
-            },
-            new[]
-            {
-                    new InputFilePattern("File", afp => !afp.IsDirectory)
-            }.ToImmutableArray());
-    }
-
-    public void OpenInEditor(
+    private async Task OpenInEditorAsync(
         IAbsolutePath? absolutePath,
         bool shouldSetFocusToEditor,
         Key<TextEditorGroup>? editorTextEditorGroupKey = null)
     {
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
-            "OpenInEditor",
-            async () => 
-            {
-                editorTextEditorGroupKey ??= EditorTextEditorGroupKey;
+        editorTextEditorGroupKey ??= EditorTextEditorGroupKey;
 
-                if (absolutePath is null || absolutePath.IsDirectory)
-                {
-                    return;
-                }
+        if (absolutePath is null || absolutePath.IsDirectory)
+            return;
 
-                _textEditorService.Group.Register(editorTextEditorGroupKey.Value);
+        _textEditorService.Group.Register(editorTextEditorGroupKey.Value);
 
-                var inputFileAbsolutePathString = absolutePath.FormattedInput;
+        var inputFileAbsolutePathString = absolutePath.FormattedInput;
 
-                var textEditorModel = await GetOrCreateTextEditorModelAsync(
-                    absolutePath,
-                    inputFileAbsolutePathString);
+        var textEditorModel = await GetOrCreateTextEditorModelAsync(
+            absolutePath,
+            inputFileAbsolutePathString);
 
-                if (textEditorModel is null)
-                    return;
+        if (textEditorModel is null)
+            return;
 
-                await CheckIfContentsWereModifiedAsync(
-                    Dispatcher,
-                    inputFileAbsolutePathString,
-                    textEditorModel);
+        await CheckIfContentsWereModifiedAsync(
+            Dispatcher,
+            inputFileAbsolutePathString,
+            textEditorModel);
 
-                var viewModel = GetOrCreateTextEditorViewModel(
-                    absolutePath,
-                    shouldSetFocusToEditor,
-                    Dispatcher,
-                    textEditorModel,
-                    inputFileAbsolutePathString);
+        var viewModel = GetOrCreateTextEditorViewModel(
+            absolutePath,
+            shouldSetFocusToEditor,
+            Dispatcher,
+            textEditorModel,
+            inputFileAbsolutePathString);
 
-                _textEditorService.Group.AddViewModel(
-                    editorTextEditorGroupKey.Value,
-                    viewModel);
+        _textEditorService.Group.AddViewModel(
+            editorTextEditorGroupKey.Value,
+            viewModel);
 
-                _textEditorService.Group.SetActiveViewModel(
-                    editorTextEditorGroupKey.Value,
-                    viewModel);
-            });
+        _textEditorService.Group.SetActiveViewModel(
+            editorTextEditorGroupKey.Value,
+            viewModel);
     }
 }

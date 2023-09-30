@@ -292,7 +292,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     {
         var cSharpAbsolutePath = new AbsolutePath(cSharpProjectAbsolutePathString, false, EnvironmentProvider);
 
-        DotNetSolutionSync.AddExistingProjectToSolutionAction(
+        DotNetSolutionSync.AddExistingProjectToSolution(
             immutableView.DotNetSolutionModel.DotNetSolutionModelKey,
             immutableView.ProjectTemplateShortNameValue,
             immutableView.CSharpProjectNameValue,
