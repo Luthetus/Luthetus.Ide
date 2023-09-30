@@ -82,7 +82,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
     private void RequestInputFileForParentDirectory(string message)
     {
-        Dispatcher.Dispatch(new InputFileState.RequestInputFileStateFormAction(InputFileSync, message,
+        InputFileSync.RequestInputFileStateForm(message,
             async afp =>
             {
                 if (afp is null)
@@ -101,7 +101,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             new[]
             {
                 new InputFilePattern("Directory", afp => afp.IsDirectory)
-            }.ToImmutableArray()));
+            }.ToImmutableArray());
     }
 
     private async Task ReadProjectTemplates()

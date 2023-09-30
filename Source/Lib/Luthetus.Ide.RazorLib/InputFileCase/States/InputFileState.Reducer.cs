@@ -17,17 +17,11 @@ public partial record InputFileState
         {
             return inInputFileState with
             {
-                SelectionIsValidFunc = startInputFileStateFormAction
-                    .RequestInputFileStateFormAction.SelectionIsValidFunc,
-                OnAfterSubmitFunc = startInputFileStateFormAction
-                    .RequestInputFileStateFormAction.OnAfterSubmitFunc,
-                InputFilePatterns = startInputFileStateFormAction
-                    .RequestInputFileStateFormAction.InputFilePatterns,
-                SelectedInputFilePattern = startInputFileStateFormAction
-                    .RequestInputFileStateFormAction.InputFilePatterns
-                    .First(),
-                Message = startInputFileStateFormAction
-                    .RequestInputFileStateFormAction.Message
+                SelectionIsValidFunc = startInputFileStateFormAction.SelectionIsValidFunc,
+                OnAfterSubmitFunc = startInputFileStateFormAction.OnAfterSubmitFunc,
+                InputFilePatterns = startInputFileStateFormAction.InputFilePatterns,
+                SelectedInputFilePattern = startInputFileStateFormAction.InputFilePatterns.First(),
+                Message = startInputFileStateFormAction.Message
             };
         }
 

@@ -70,7 +70,7 @@ public partial class IdeHeader : FluxorComponent
             var menuOptionOpenDirectory = new MenuOptionRecord(
                 "Directory",
                 MenuOptionKind.Other,
-                () => FolderExplorerState.ShowInputFile(FolderExplorerSync));
+                () => FolderExplorerSync.ShowInputFile());
 
             var menuOptionOpenCSharpProject = new MenuOptionRecord(
                 "C# Project - TODO: Adhoc Sln",

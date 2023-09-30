@@ -359,9 +359,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
     private void AddExistingProjectToSolution(DotNetSolutionModel dotNetSolutionModel)
     {
-        Dispatcher.Dispatch(new InputFileState.RequestInputFileStateFormAction(
-            InputFileSync,
-            "Existing C# Project to add to solution",
+        InputFileSync.RequestInputFileStateForm("Existing C# Project to add to solution",
             async afp =>
             {
                 if (afp is null)
@@ -401,7 +399,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 new InputFilePattern(
                     "C# Project",
                     afp => afp.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
-            }.ToImmutableArray()));
+            }.ToImmutableArray());
     }
 
     /// <summary>

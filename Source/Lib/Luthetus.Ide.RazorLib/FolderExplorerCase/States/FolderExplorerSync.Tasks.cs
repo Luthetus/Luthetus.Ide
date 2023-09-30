@@ -29,9 +29,7 @@ public partial class FolderExplorerSync
 
     public void ShowInputFile()
     {
-        Dispatcher.Dispatch(new InputFileState.RequestInputFileStateFormAction(
-            InputFileSync,
-            "Folder Explorer",
+        InputFileSync.RequestInputFileStateForm("Folder Explorer",
             async afp =>
             {
                 if (afp is not null)
@@ -47,7 +45,7 @@ public partial class FolderExplorerSync
             new[]
             {
                 new InputFilePattern("Directory", afp => afp.IsDirectory)
-            }.ToImmutableArray()));
+            }.ToImmutableArray());
     }
 
     private async Task SetFolderExplorerAsync(IAbsolutePath folderAbsolutePath)

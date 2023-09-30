@@ -216,32 +216,23 @@ public partial class EditorSync
 
     public void ShowInputFile()
     {
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
-            "ShowInputFile",
-            () => 
+        _inputFileSync.RequestInputFileStateForm("TextEditor",
+            afp =>
             {
-                Dispatcher.Dispatch(new InputFileState.RequestInputFileStateFormAction(
-                    _inputFileSync,
-                    "TextEditor",
-                    afp => 
-                    {
-                        OpenInEditor(afp, true);
-                        return Task.CompletedTask;
-                    },
-                    afp =>
-                    {
-                        if (afp is null || afp.IsDirectory)
-                            return Task.FromResult(false);
-
-                        return Task.FromResult(true);
-                    },
-                    new[]
-                    {
-                            new InputFilePattern("File", afp => !afp.IsDirectory)
-                    }.ToImmutableArray()));
-
+                OpenInEditor(afp, true);
                 return Task.CompletedTask;
-            });
+            },
+            afp =>
+            {
+                if (afp is null || afp.IsDirectory)
+                    return Task.FromResult(false);
+
+                return Task.FromResult(true);
+            },
+            new[]
+            {
+                    new InputFilePattern("File", afp => !afp.IsDirectory)
+            }.ToImmutableArray());
     }
 
     public void OpenInEditor(

@@ -41,8 +41,8 @@ public partial record InputFileState
         IBackgroundTaskService BackgroundTaskService);
 
     public record StartInputFileStateFormAction(
-        string message,
-        Func<IAbsolutePath?, Task> onAfterSubmitFunc,
-        Func<IAbsolutePath?, Task<bool>> selectionIsValidFunc,
-        ImmutableArray<InputFilePattern> inputFilePatterns);
+        string Message,
+        Func<IAbsolutePath?, Task> OnAfterSubmitFunc,
+        Func<IAbsolutePath?, Task<bool>> SelectionIsValidFunc,
+        ImmutableArray<InputFilePattern> InputFilePatterns);
 }

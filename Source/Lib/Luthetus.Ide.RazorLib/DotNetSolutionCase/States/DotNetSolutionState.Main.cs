@@ -37,9 +37,7 @@ public partial record DotNetSolutionState(
 
     public static void ShowInputFile(DotNetSolutionSync sync)
     {
-        sync.Dispatcher.Dispatch(new InputFileState.RequestInputFileStateFormAction(
-            sync.InputFileSync,
-            "Solution Explorer",
+        sync.InputFileSync.RequestInputFileStateForm("Solution Explorer",
             afp =>
             {
                 if (afp is not null)
@@ -60,6 +58,6 @@ public partial record DotNetSolutionState(
                 new InputFilePattern(
                     ".NET Solution",
                     afp => afp.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
-            }.ToImmutableArray()));
+            }.ToImmutableArray());
     }
 }
