@@ -89,9 +89,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                     false,
                     EnvironmentProvider);
 
-                Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionTask(
-                    absolutePath,
-                    DotNetSolutionSync));
+                DotNetSolutionSync.SetDotNetSolution(absolutePath);
             }
         }
 

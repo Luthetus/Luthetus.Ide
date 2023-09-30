@@ -218,10 +218,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 Dispatcher,
                 () =>
                 {
-                    Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionTask(
-                        treeViewSolution.Item.NamespacePath.AbsolutePath,
-                        DotNetSolutionSync));
-
+                    DotNetSolutionSync.SetDotNetSolution(treeViewSolution.Item.NamespacePath.AbsolutePath);
                     return Task.CompletedTask;
                 }),
             new MenuOptionRecord(
@@ -238,10 +235,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 Dispatcher,
                 () =>
                 {
-                    Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionTask(
-                        treeViewSolution.Item.NamespacePath.AbsolutePath,
-                        DotNetSolutionSync));
-
+                    DotNetSolutionSync.SetDotNetSolution(treeViewSolution.Item.NamespacePath.AbsolutePath);
                     return Task.CompletedTask;
                 }),
         };
@@ -385,10 +379,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     CancellationToken.None,
                     () =>
                     {
-                        Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionTask(
-                            dotNetSolutionModel.NamespacePath.AbsolutePath,
-                            DotNetSolutionSync));
-
+                        DotNetSolutionSync.SetDotNetSolution(dotNetSolutionModel.NamespacePath.AbsolutePath);
                         return Task.CompletedTask;
                     });
 

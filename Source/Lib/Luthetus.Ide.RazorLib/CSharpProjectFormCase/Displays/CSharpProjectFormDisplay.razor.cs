@@ -241,7 +241,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                         () =>
                         {
                             Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.Key));
-                            Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionTask(immutableView.DotNetSolutionModel.NamespacePath.AbsolutePath, DotNetSolutionSync));
+                            DotNetSolutionSync.SetDotNetSolution(immutableView.DotNetSolutionModel.NamespacePath.AbsolutePath);
                             return Task.CompletedTask;
                         });
 
@@ -292,12 +292,11 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     {
         var cSharpAbsolutePath = new AbsolutePath(cSharpProjectAbsolutePathString, false, EnvironmentProvider);
 
-        Dispatcher.Dispatch(new DotNetSolutionState.AddExistingProjectToSolutionTask(
+        DotNetSolutionSync.AddExistingProjectToSolutionAction(
             immutableView.DotNetSolutionModel.DotNetSolutionModelKey,
             immutableView.ProjectTemplateShortNameValue,
             immutableView.CSharpProjectNameValue,
             cSharpAbsolutePath,
-            EnvironmentProvider,
-            DotNetSolutionSync));
+            EnvironmentProvider);
     }
 }

@@ -6,6 +6,7 @@ using Luthetus.Common.RazorLib.Notification.Models;
 using Luthetus.Common.RazorLib.Notification.States;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
 using Luthetus.Ide.RazorLib.FileSystemCase.Models;
+using Luthetus.Ide.RazorLib.FileSystemCase.States;
 using Luthetus.Ide.RazorLib.InputFileCase.Models;
 using Luthetus.Ide.RazorLib.InputFileCase.States;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
@@ -196,8 +197,7 @@ public partial class EditorSync
 
             var cancellationToken = textEditorModel.TextEditorSaveFileHelper.GetCancellationToken();
 
-            var saveFileAction = new FileSystemCase.States.FileSystemState.SaveFileAction(
-                _fileSystemSync,
+            _fileSystemSync.SaveFile(
                 absolutePath,
                 innerContent,
                 writtenDateTime =>
@@ -211,8 +211,6 @@ public partial class EditorSync
                     }
                 },
                 cancellationToken);
-
-            dispatcher.Dispatch(saveFileAction);
         }
     }
 

@@ -21,33 +21,4 @@ public partial record FolderExplorerState(
     {
 
     }
-
-    public static void ShowInputFile(FolderExplorerSync folderExplorerSync)
-    {
-        folderExplorerSync.Dispatcher.Dispatch(new InputFileState.RequestInputFileStateFormAction(
-            folderExplorerSync.InputFileSync,
-            "Folder Explorer",
-            afp =>
-            {
-                if (afp is not null)
-                {
-                    folderExplorerSync.Dispatcher.Dispatch(new SetFolderExplorerAction(
-                        folderExplorerSync,
-                        afp));
-                }
-
-                return Task.CompletedTask;
-            },
-            afp =>
-            {
-                if (afp is null || !afp.IsDirectory)
-                    return Task.FromResult(false);
-
-                return Task.FromResult(true);
-            },
-            new[]
-            {
-                new InputFilePattern("Directory", afp => afp.IsDirectory)
-            }.ToImmutableArray()));
-    }
 }

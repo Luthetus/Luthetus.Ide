@@ -199,17 +199,5 @@ public partial record InputFileState
                 SearchQuery = setSearchQueryAction.SearchQuery
             };
         }
-
-        [ReducerMethod]
-        public static InputFileState ReduceRequestInputFileStateFormAction(
-            InputFileState inState,
-            RequestInputFileStateFormAction inTask)
-        {
-            inTask.Sync.BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
-                "SetDotNetSolutionAsync",
-                async () => await inTask.Sync.HandleRequestInputFileStateFormAction(inTask));
-
-            return inState;
-        }
     }
 }

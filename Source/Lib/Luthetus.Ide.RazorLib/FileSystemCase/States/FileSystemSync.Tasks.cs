@@ -1,16 +1,37 @@
-﻿using static Luthetus.Ide.RazorLib.FileSystemCase.States.FileSystemState;
-using Luthetus.Common.RazorLib.Notification.Models;
+﻿using Luthetus.Common.RazorLib.Notification.Models;
+using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
+using Luthetus.Common.RazorLib.KeyCase.Models;
+using Luthetus.Common.RazorLib.FileSystem.Models;
 
 namespace Luthetus.Ide.RazorLib.FileSystemCase.States;
 
 public partial class FileSystemSync
 {
-    public async Task SaveFile(SaveFileAction saveFileAction)
+    public void SaveFile(
+        IAbsolutePath absolutePath,
+        string content,
+        Action<DateTime?> onAfterSaveCompletedWrittenDateTimeAction,
+        CancellationToken cancellationToken = default)
     {
-        if (saveFileAction.CancellationToken.IsCancellationRequested)
+        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+            "Handle Save File Action",
+            async () => await SaveFileAsync(
+                absolutePath,
+                content,
+                onAfterSaveCompletedWrittenDateTimeAction,
+                cancellationToken));
+    }
+
+    private async Task SaveFileAsync(
+        IAbsolutePath absolutePath,
+        string content,
+        Action<DateTime?> onAfterSaveCompletedWrittenDateTimeAction,
+        CancellationToken cancellationToken = default)
+    {
+        if (cancellationToken.IsCancellationRequested)
             return;
 
-        var absolutePathString = saveFileAction.AbsolutePath.FormattedInput;
+        var absolutePathString = absolutePath.FormattedInput;
 
         string notificationMessage;
 
@@ -19,7 +40,7 @@ public partial class FileSystemSync
         {
             await _fileSystemProvider.File.WriteAllTextAsync(
                 absolutePathString,
-                saveFileAction.Content);
+                content);
 
             notificationMessage = $"successfully saved: {absolutePathString}";
         }
@@ -41,6 +62,6 @@ public partial class FileSystemSync
                     CancellationToken.None);
         }
 
-        saveFileAction.OnAfterSaveCompletedWrittenDateTimeAction?.Invoke(fileLastWriteTime);
+        onAfterSaveCompletedWrittenDateTimeAction?.Invoke(fileLastWriteTime);
     }
 }

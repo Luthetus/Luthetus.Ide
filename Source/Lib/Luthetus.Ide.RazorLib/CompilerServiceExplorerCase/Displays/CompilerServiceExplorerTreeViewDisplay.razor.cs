@@ -103,7 +103,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 
     private void ReloadOnClick()
     {
-        CompilerServiceExplorerSync.SetCompilerServiceExplorerTreeView(CompilerServiceExplorerSync);
+        CompilerServiceExplorerSync.SetCompilerServiceExplorerTreeView();
     }
 
     public void Dispose()

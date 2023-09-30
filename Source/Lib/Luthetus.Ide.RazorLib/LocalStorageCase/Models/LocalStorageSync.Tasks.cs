@@ -1,16 +1,22 @@
+using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
+using Luthetus.Common.RazorLib.KeyCase.Models;
 using Microsoft.JSInterop;
-using static Luthetus.Ide.RazorLib.LocalStorageCase.Models.LocalStorageState;
 
 namespace Luthetus.Ide.RazorLib.LocalStorageCase.Models;
 
 public partial class LocalStorageSync
 {
-    public async Task LocalStorageSetItem(
-        LocalStorageSetItemTask localStorageSetItemTask)
+    public void ReduceLocalStorageSetItemTask(string key, string value)
     {
-        await _jsRuntime.InvokeVoidAsync(
-            "luthetusIde.localStorageSetItem",
-            localStorageSetItemTask.Key,
-            localStorageSetItemTask.Value);
+        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+            "RefreshGit",
+            async () => await LocalStorageSetItemAsync(key, value));
+    }
+
+    private async Task LocalStorageSetItemAsync(string key, string value)
+    {
+        await _jsRuntime.InvokeVoidAsync("luthetusIde.localStorageSetItem",
+            key,
+            value);
     }
 }

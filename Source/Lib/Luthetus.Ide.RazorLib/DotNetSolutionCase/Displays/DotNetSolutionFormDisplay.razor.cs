@@ -133,10 +133,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                         false,
                         EnvironmentProvider);
 
-                    Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionTask(
-                        solutionAbsolutePath,
-                        DotNetSolutionSync));
-
+                    DotNetSolutionSync.SetDotNetSolution(solutionAbsolutePath);
                     return Task.CompletedTask;
                 });
 
@@ -182,9 +179,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
             false,
             EnvironmentProvider);
 
-        Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionTask(
-            solutionAbsolutePath,
-            DotNetSolutionSync));
+        DotNetSolutionSync.SetDotNetSolution(solutionAbsolutePath);
     }
 
     public const string HackForWebsite_NEW_SOLUTION_TEMPLATE = @"
