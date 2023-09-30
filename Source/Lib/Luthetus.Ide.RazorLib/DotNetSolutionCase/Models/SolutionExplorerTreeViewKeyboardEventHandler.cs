@@ -32,33 +32,35 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         _treeViewService = treeViewService;
     }
 
-    public override void OnKeyDown(TreeViewCommandParameter treeViewCommandParameter)
+    public override Task OnKeyDownAsync(TreeViewCommandParameter treeViewCommandParameter)
     {
         if (treeViewCommandParameter.KeyboardEventArgs is null)
-            return;
+            return Task.CompletedTask;
 
-        base.OnKeyDown(treeViewCommandParameter);
+        base.OnKeyDownAsync(treeViewCommandParameter);
 
         switch (treeViewCommandParameter.KeyboardEventArgs.Code)
         {
             case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
                 InvokeOpenInEditor(treeViewCommandParameter, true);
-                return;
+                return Task.CompletedTask;
             case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
                 InvokeOpenInEditor(treeViewCommandParameter, false);
-                return;
+                return Task.CompletedTask;
         }
 
         if (treeViewCommandParameter.KeyboardEventArgs.CtrlKey)
         {
             CtrlModifiedKeymap(treeViewCommandParameter);
-            return;
+            return Task.CompletedTask;
         }
         else if (treeViewCommandParameter.KeyboardEventArgs.AltKey)
         {
             AltModifiedKeymap(treeViewCommandParameter);
-            return;
+            return Task.CompletedTask;
         }
+
+        return Task.CompletedTask;
     }
 
     private void CtrlModifiedKeymap(TreeViewCommandParameter treeViewCommandParameter)

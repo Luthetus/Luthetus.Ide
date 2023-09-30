@@ -51,21 +51,21 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         _backgroundTaskService = backgroundTaskService;
     }
 
-    public override void OnKeyDown(TreeViewCommandParameter treeViewCommandParameter)
+    public override Task OnKeyDownAsync(TreeViewCommandParameter treeViewCommandParameter)
     {
-        base.OnKeyDown(treeViewCommandParameter);
+        base.OnKeyDownAsync(treeViewCommandParameter);
 
         if (treeViewCommandParameter.KeyboardEventArgs is null)
-            return;
+            return Task.CompletedTask;
 
         switch (treeViewCommandParameter.KeyboardEventArgs.Code)
         {
             case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
                 SetInputFileContentTreeViewRoot(treeViewCommandParameter);
-                return;
+                return Task.CompletedTask;
             case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
                 SetSelectedTreeViewModel(treeViewCommandParameter);
-                return;
+                return Task.CompletedTask;
         }
 
         switch (treeViewCommandParameter.KeyboardEventArgs.Key)
@@ -77,22 +77,24 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
             case "/":
             case "?":
                 MoveFocusToSearchBar(treeViewCommandParameter);
-                return;
+                return Task.CompletedTask;
                 // TODO: Add move to next match and move to previous match
                 //
                 // case "*":
                 //     treeViewCommand = new TreeViewCommand(SetNextMatchAsActiveTreeViewNode);
-                //     return true;
+                //     return Task.CompletedTask true;
                 // case "#":
                 //     treeViewCommand = new TreeViewCommand(SetPreviousMatchAsActiveTreeViewNode);
-                //     return true;
+                //     return Task.CompletedTask true;
         }
 
         if (treeViewCommandParameter.KeyboardEventArgs.AltKey)
         {
             AltModifiedKeymap(treeViewCommandParameter);
-            return;
+            return Task.CompletedTask;
         }
+
+        return Task.CompletedTask;
     }
 
     private void AltModifiedKeymap(TreeViewCommandParameter treeViewCommandParameter)
