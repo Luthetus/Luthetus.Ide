@@ -59,9 +59,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
 
     private void RequestInputFileForParentDirectory()
     {
-        Dispatcher.Dispatch(new InputFileState.RequestInputFileStateFormAction(
-            InputFileSync,
-            "Directory for new .NET Solution",
+        InputFileSync.RequestInputFileStateForm("Directory for new .NET Solution",
             async afp =>
             {
                 if (afp is null)
@@ -81,7 +79,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
             new[]
             {
                 new InputFilePattern("Directory", afp => afp.IsDirectory)
-            }.ToImmutableArray()));
+            }.ToImmutableArray());
     }
 
     private async Task StartNewDotNetSolutionCommandOnClick()
@@ -133,10 +131,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                         false,
                         EnvironmentProvider);
 
-                    Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionTask(
-                        solutionAbsolutePath,
-                        DotNetSolutionSync));
-
+                    DotNetSolutionSync.SetDotNetSolution(solutionAbsolutePath);
                     return Task.CompletedTask;
                 });
 
@@ -182,9 +177,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
             false,
             EnvironmentProvider);
 
-        Dispatcher.Dispatch(new DotNetSolutionState.SetDotNetSolutionTask(
-            solutionAbsolutePath,
-            DotNetSolutionSync));
+        DotNetSolutionSync.SetDotNetSolution(solutionAbsolutePath);
     }
 
     public const string HackForWebsite_NEW_SOLUTION_TEMPLATE = @"

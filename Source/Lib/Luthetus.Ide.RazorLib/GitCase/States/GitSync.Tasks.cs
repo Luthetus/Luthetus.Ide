@@ -10,18 +10,14 @@ namespace Luthetus.Ide.RazorLib.GitCase.States;
 
 public partial class GitSync
 {
-    public async Task RefreshGit(RefreshGitTask refreshGitAction)
+    private async Task RefreshGitAsync(CancellationToken cancellationToken)
     {
         var handleRefreshGitTask = new GitTask(
             Guid.NewGuid(),
             nameof(RefreshGit),
-            refreshGitAction,
-            refreshGitAction.CancellationToken);
+            cancellationToken);
 
-        if (refreshGitAction.CancellationToken.IsCancellationRequested)
-            return;
-
-        if (refreshGitAction.CancellationToken.IsCancellationRequested)
+        if (cancellationToken.IsCancellationRequested)
             return;
 
         var gitState = _gitStateWrap.Value;
@@ -125,19 +121,14 @@ public partial class GitSync
         }
     }
 
-    public async Task GitInit(GitInitTask gitInitAction)
+    private async Task GitInitAsync(CancellationToken cancellationToken)
     {
         var handleHandleGitInitAction = new GitTask(
             Guid.NewGuid(),
             nameof(RefreshGit),
-            gitInitAction,
-            gitInitAction.CancellationToken);
+            cancellationToken);
 
-        if (gitInitAction.CancellationToken.IsCancellationRequested)
-            return;
-
-        
-        if (gitInitAction.CancellationToken.IsCancellationRequested)
+        if (cancellationToken.IsCancellationRequested)
             return;
 
         Dispatcher.Dispatch(new SetGitStateWithAction(withGitState =>
@@ -153,7 +144,7 @@ public partial class GitSync
 
         var gitState = _gitStateWrap.Value;
 
-        if (gitState.MostRecentTryFindGitFolderInDirectoryAction is null)
+        if (gitState.GitFolderAbsolutePath is null)
             return;
 
         var formattedCommand = new FormattedCommand(
@@ -166,16 +157,9 @@ public partial class GitSync
         var gitInitCommand = new TerminalCommand(
             GitFacts.GitInitTerminalCommandKey,
             formattedCommand,
-            gitState.MostRecentTryFindGitFolderInDirectoryAction.DirectoryAbsolutePath.FormattedInput,
+            gitState.GitFolderAbsolutePath.FormattedInput,
             CancellationToken.None,
-            () =>
-            {
-                Dispatcher.Dispatch(new RefreshGitTask(
-                    this,
-                    gitInitAction.CancellationToken));
-
-                return Task.CompletedTask;
-            });
+            async () => await RefreshGitAsync(cancellationToken));
 
         var generalTerminalSession = _terminalSessionStateWrap.Value.TerminalSessionMap[
             TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
@@ -194,18 +178,16 @@ public partial class GitSync
         }));
     }
 
-    public async Task TryFindGitFolderInDirectory(TryFindGitFolderInDirectoryTask tryFindGitFolderInDirectoryAction)
+    private async Task TryFindGitFolderInDirectoryAsync(
+        IAbsolutePath directoryAbsolutePath,
+        CancellationToken cancellationToken)
     {
         var handleTryFindGitFolderInDirectoryAction = new GitTask(
             Guid.NewGuid(),
             nameof(RefreshGit),
-            tryFindGitFolderInDirectoryAction,
-            tryFindGitFolderInDirectoryAction.CancellationToken);
+            cancellationToken);
 
-        if (tryFindGitFolderInDirectoryAction.CancellationToken.IsCancellationRequested)
-            return;
-
-        if (tryFindGitFolderInDirectoryAction.CancellationToken.IsCancellationRequested)
+        if (cancellationToken.IsCancellationRequested)
             return;
 
         Dispatcher.Dispatch(new SetGitStateWithAction(withGitState =>
@@ -219,16 +201,13 @@ public partial class GitSync
             };
         }));
 
-        if (!tryFindGitFolderInDirectoryAction.DirectoryAbsolutePath.IsDirectory)
+        if (!directoryAbsolutePath.IsDirectory)
             return;
 
-        var directoryAbsolutePathString =
-            tryFindGitFolderInDirectoryAction.DirectoryAbsolutePath
-                .FormattedInput;
+        var directoryAbsolutePathString = directoryAbsolutePath.FormattedInput;
 
-        var childDirectoryAbsolutePathStrings = await _fileSystemProvider.Directory
-            .GetDirectoriesAsync(
-                directoryAbsolutePathString);
+        var childDirectoryAbsolutePathStrings = await _fileSystemProvider.Directory.GetDirectoriesAsync(
+            directoryAbsolutePathString);
 
         var gitFolderAbsolutePathString = childDirectoryAbsolutePathStrings.FirstOrDefault(
             x => x.EndsWith(GitFacts.GIT_FOLDER_NAME));
@@ -244,12 +223,9 @@ public partial class GitSync
                 withGitState => withGitState with
                 {
                     GitFolderAbsolutePath = gitFolderAbsolutePath,
-                    MostRecentTryFindGitFolderInDirectoryAction = tryFindGitFolderInDirectoryAction
                 }));
 
-            Dispatcher.Dispatch(new RefreshGitTask(
-                this,
-                tryFindGitFolderInDirectoryAction.CancellationToken));
+            await RefreshGitAsync(cancellationToken);
         }
         else
         {
@@ -257,7 +233,6 @@ public partial class GitSync
                 withGitState => withGitState with
                 {
                     GitFolderAbsolutePath = null,
-                    MostRecentTryFindGitFolderInDirectoryAction = tryFindGitFolderInDirectoryAction
                 }));
         }
         Dispatcher.Dispatch(new SetGitStateWithAction(

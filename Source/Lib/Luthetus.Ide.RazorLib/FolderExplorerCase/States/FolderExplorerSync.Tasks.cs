@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using Luthetus.Common.RazorLib.FileSystem.Models;
 using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
 using static Luthetus.Ide.RazorLib.FolderExplorerCase.States.FolderExplorerState;
@@ -7,26 +8,19 @@ namespace Luthetus.Ide.RazorLib.FolderExplorerCase.States;
 
 public partial class FolderExplorerSync
 {
-    public Task SetFolderExplorer(SetFolderExplorerAction setFolderExplorerAction)
+    private async Task SetFolderExplorerAsync(IAbsolutePath folderAbsolutePath)
     {
         Dispatcher.Dispatch(new WithAction(
             inFolderExplorerState => inFolderExplorerState with
             {
-                AbsolutePath = setFolderExplorerAction.FolderAbsolutePath
+                AbsolutePath = folderAbsolutePath
             }));
 
-        Dispatcher.Dispatch(new SetFolderExplorerTreeViewAction(
-            this,
-            setFolderExplorerAction.FolderAbsolutePath));
-
-        return Task.CompletedTask;
+        await SetFolderExplorerTreeViewAsync(folderAbsolutePath);
     }
 
-    public async Task SetFolderExplorerTreeView(SetFolderExplorerTreeViewAction inTask)
+    private async Task SetFolderExplorerTreeViewAsync(IAbsolutePath folderAbsolutePath)
     {
-        if (inTask.FolderAbsolutePath is null)
-            return;
-
         Dispatcher.Dispatch(new WithAction(inFolderExplorerState =>
             inFolderExplorerState with
             {
@@ -34,7 +28,7 @@ public partial class FolderExplorerSync
             }));
 
         var rootNode = new TreeViewAbsolutePath(
-            inTask.FolderAbsolutePath,
+            folderAbsolutePath,
             _luthetusIdeComponentRenderers,
             _luthetusCommonComponentRenderers,
             _fileSystemProvider,

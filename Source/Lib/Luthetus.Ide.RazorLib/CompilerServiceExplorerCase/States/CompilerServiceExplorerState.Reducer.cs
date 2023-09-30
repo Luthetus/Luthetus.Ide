@@ -9,18 +9,6 @@ public partial class CompilerServiceExplorerState
     private class Reducer
     {
         [ReducerMethod]
-        public CompilerServiceExplorerState ReduceSetCompilerServiceExplorerTreeViewTask(
-            CompilerServiceExplorerState inState,
-            SetCompilerServiceExplorerTreeViewTask inTask)
-        {
-            inTask.Sync.BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
-                "SetDotNetSolutionAsync",
-                async () => await inTask.Sync.SetCompilerServiceExplorerTreeView());
-
-            return inState;
-        }
-
-        [ReducerMethod]
         public CompilerServiceExplorerState ReduceNewAction(
             CompilerServiceExplorerState inCompilerServiceExplorerState,
             NewAction newAction)

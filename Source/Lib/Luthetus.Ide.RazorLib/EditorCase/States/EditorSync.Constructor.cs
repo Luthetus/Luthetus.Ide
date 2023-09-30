@@ -1,6 +1,7 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
 using Luthetus.Common.RazorLib.FileSystem.Models;
+using Luthetus.Common.RazorLib.KeyCase.Models;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.CSharpProject.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.Css;
@@ -15,11 +16,14 @@ using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
 using Luthetus.Ide.RazorLib.FileSystemCase.States;
 using Luthetus.Ide.RazorLib.InputFileCase.States;
 using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.Group.Models;
 
 namespace Luthetus.Ide.RazorLib.EditorCase.States;
 
 public partial class EditorSync
 {
+    public static readonly Key<TextEditorGroup> EditorTextEditorGroupKey = Key<TextEditorGroup>.NewKey();
+
     private readonly ITextEditorService _textEditorService;
     private readonly ILuthetusIdeComponentRenderers _luthetusIdeComponentRenderers;
     private readonly IFileSystemProvider _fileSystemProvider;

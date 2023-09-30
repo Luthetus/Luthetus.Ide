@@ -17,16 +17,14 @@ public class FolderExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
         _editorSync = editorSync;
     }
 
-    public override void OnDoubleClick(TreeViewCommandParameter treeViewCommandParameter)
+    public override Task OnDoubleClickAsync(TreeViewCommandParameter treeViewCommandParameter)
     {
-        base.OnDoubleClick(treeViewCommandParameter);
+        base.OnDoubleClickAsync(treeViewCommandParameter);
 
         if (treeViewCommandParameter.TargetNode is not TreeViewAbsolutePath treeViewAbsolutePath)
-            return;
+            return Task.CompletedTask;
 
-        _editorSync.Dispatcher.Dispatch(new EditorState.OpenInEditorAction(
-            _editorSync,
-            treeViewAbsolutePath.Item,
-            true));
+        _editorSync.OpenInEditor(treeViewAbsolutePath.Item, true);
+        return Task.CompletedTask;
     }
 }

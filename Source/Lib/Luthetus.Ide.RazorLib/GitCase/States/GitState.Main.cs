@@ -16,13 +16,11 @@ namespace Luthetus.Ide.RazorLib.GitCase.States;
 [FeatureState]
 public partial record GitState(
     IAbsolutePath? GitFolderAbsolutePath,
-    GitState.TryFindGitFolderInDirectoryTask? MostRecentTryFindGitFolderInDirectoryAction,
     ImmutableList<GitFile> GitFilesList,
     ImmutableList<GitTask> ActiveGitTasks)
 {
     public GitState() : this(
-        default(IAbsolutePath?),
-        default(TryFindGitFolderInDirectoryTask?),
+        null,
         ImmutableList<GitFile>.Empty,
         ImmutableList<GitTask>.Empty)
     {

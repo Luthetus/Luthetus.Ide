@@ -10,13 +10,6 @@ namespace Luthetus.Ide.RazorLib.InputFileCase.States;
 
 public partial record InputFileState
 {
-    public record RequestInputFileStateFormAction(
-        InputFileSync Sync,
-        string Message,
-        Func<IAbsolutePath?, Task> OnAfterSubmitFunc,
-        Func<IAbsolutePath?, Task<bool>> SelectionIsValidFunc,
-        ImmutableArray<InputFilePattern> InputFilePatterns);
-
     public record SetSelectedTreeViewModelAction(
         TreeViewAbsolutePath? SelectedTreeViewModel);
 
@@ -48,5 +41,8 @@ public partial record InputFileState
         IBackgroundTaskService BackgroundTaskService);
 
     public record StartInputFileStateFormAction(
-        RequestInputFileStateFormAction RequestInputFileStateFormAction);
+        string Message,
+        Func<IAbsolutePath?, Task> OnAfterSubmitFunc,
+        Func<IAbsolutePath?, Task<bool>> SelectionIsValidFunc,
+        ImmutableArray<InputFilePattern> InputFilePatterns);
 }

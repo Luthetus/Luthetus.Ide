@@ -571,54 +571,43 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         InputFileSync inputFileSync,
         Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
-            "Add Project Reference to Project",
-            () =>
+        inputFileSync.RequestInputFileStateForm($"Add Project reference to {projectReceivingReference.Item.AbsolutePath.NameWithExtension}",
+            async referencedProject =>
             {
-                var requestInputFileStateFormAction = new InputFileState.RequestInputFileStateFormAction(
-                    inputFileSync,
-                    $"Add Project reference to {projectReceivingReference.Item.AbsolutePath.NameWithExtension}",
-                    async referencedProject =>
+                if (referencedProject is null)
+                    return;
+
+                var formattedCommand = DotNetCliCommandFormatter.FormatAddProjectToProjectReference(
+                    projectReceivingReference.Item.AbsolutePath.FormattedInput,
+                    referencedProject.FormattedInput);
+
+                var terminalCommand = new TerminalCommand(
+                    Key<TerminalCommand>.NewKey(),
+                    formattedCommand,
+                    null,
+                    CancellationToken.None,
+                    async () =>
                     {
-                        if (referencedProject is null)
-                            return;
+                        NotificationHelper.DispatchInformative("Add Project Reference", $"Modified {projectReceivingReference.Item.AbsolutePath.NameWithExtension} to have a reference to {referencedProject.NameWithExtension}", _luthetusCommonComponentRenderers, dispatcher);
+                        await onAfterCompletion.Invoke();
+                    });
 
-                        var formattedCommand = DotNetCliCommandFormatter.FormatAddProjectToProjectReference(
-                            projectReceivingReference.Item.AbsolutePath.FormattedInput,
-                            referencedProject.FormattedInput);
+                await terminalSession.EnqueueCommandAsync(terminalCommand);
+            },
+            afp =>
+            {
+                if (afp is null || afp.IsDirectory)
+                    return Task.FromResult(false);
 
-                        var terminalCommand = new TerminalCommand(
-                            Key<TerminalCommand>.NewKey(),
-                            formattedCommand,
-                            null,
-                            CancellationToken.None,
-                            async () =>
-                            {
-                                NotificationHelper.DispatchInformative("Add Project Reference", $"Modified {projectReceivingReference.Item.AbsolutePath.NameWithExtension} to have a reference to {referencedProject.NameWithExtension}", _luthetusCommonComponentRenderers, dispatcher);
-                                await onAfterCompletion.Invoke();
-                            });
-
-                        await terminalSession.EnqueueCommandAsync(terminalCommand);
-                    },
-                    afp =>
-                    {
-                        if (afp is null || afp.IsDirectory)
-                            return Task.FromResult(false);
-
-                        return Task.FromResult(
-                            afp.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT));
-                    },
-                    (new[]
-                    {
-                        new InputFilePattern(
-                            "C# Project",
-                            afp => afp.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
-                    }).ToImmutableArray());
-
-                dispatcher.Dispatch(requestInputFileStateFormAction);
-
-                return Task.CompletedTask;
-            });
+                return Task.FromResult(
+                    afp.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT));
+            },
+            (new[]
+            {
+                new InputFilePattern(
+                    "C# Project",
+                    afp => afp.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
+            }).ToImmutableArray());
     }
 
     public void PerformRemoveProjectToProjectReferenceAction(
