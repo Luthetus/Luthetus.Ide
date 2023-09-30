@@ -35,13 +35,15 @@ public class InputFileTreeViewMouseEventHandler : TreeViewMouseEventHandler
         _dispatcher.Dispatch(setSelectedTreeViewModelAction);
     }
 
-    public override void OnDoubleClick(TreeViewCommandParameter treeViewCommandParameter)
+    public override Task OnDoubleClickAsync(TreeViewCommandParameter treeViewCommandParameter)
     {
-        base.OnDoubleClick(treeViewCommandParameter);
+        base.OnDoubleClickAsync(treeViewCommandParameter);
 
         if (treeViewCommandParameter.TargetNode is not TreeViewAbsolutePath treeViewAbsolutePath)
-            return;
+            return Task.CompletedTask;
 
         _setInputFileContentTreeViewRootFunc.Invoke(treeViewAbsolutePath.Item);
+
+        return Task.CompletedTask;
     }
 }
