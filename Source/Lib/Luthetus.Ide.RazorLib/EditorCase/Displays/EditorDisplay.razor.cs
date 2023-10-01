@@ -1,5 +1,5 @@
 using Luthetus.Common.RazorLib.Dimensions;
-using Luthetus.TextEditor.RazorLib.TextEditorCase.Scenes.InternalClasses;
+using Luthetus.TextEditor.RazorLib.TextEditorCase.Models.Internals;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 
