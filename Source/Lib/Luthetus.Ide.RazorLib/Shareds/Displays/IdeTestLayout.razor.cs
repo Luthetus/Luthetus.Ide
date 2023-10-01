@@ -114,7 +114,7 @@ public partial class IdeTestLayout : LayoutComponentBase, IDisposable
 
             _componentTypes = new();
 
-            foreach (var assembly in ComponentRunnerOptions.AssembliesToScan)
+            foreach (var assembly in ComponentRunnerOptions.AssembliesToScanBag)
             {
                 _componentTypes.AddRange(assembly
                     .GetTypes()
