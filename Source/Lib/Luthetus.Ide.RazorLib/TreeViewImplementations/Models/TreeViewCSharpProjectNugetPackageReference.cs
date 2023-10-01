@@ -58,7 +58,7 @@ public class TreeViewCSharpProjectNugetPackageReference : TreeViewWithType<CShar
             });
     }
 
-    public override Task LoadChildrenAsync()
+    public override Task LoadChildBagAsync()
     {
         TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
         return Task.CompletedTask;

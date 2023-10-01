@@ -113,10 +113,10 @@ public partial record InputFileState
             TreeViewAbsolutePath? parentDirectoryTreeViewModel = null;
 
             // If has a ParentDirectory select it
-            if (currentSelection.Item.AncestorDirectories.Any())
+            if (currentSelection.Item.AncestorDirectoryBag.Any())
             {
                 var parentDirectoryAbsolutePath =
-                    currentSelection.Item.AncestorDirectories.Last();
+                    currentSelection.Item.AncestorDirectoryBag.Last();
 
                 parentDirectoryTreeViewModel = new TreeViewAbsolutePath(
                     (IAbsolutePath)parentDirectoryAbsolutePath,
@@ -131,7 +131,7 @@ public partial record InputFileState
                     "Open Parent Directory",
                     async () =>
                     {
-                        await parentDirectoryTreeViewModel.LoadChildrenAsync();
+                        await parentDirectoryTreeViewModel.LoadChildBagAsync();
                     });
             }
 
@@ -157,13 +157,13 @@ public partial record InputFileState
             var currentSelection = inInputFileState
                 .OpenedTreeViewModelHistory[inInputFileState.IndexInHistory];
 
-            currentSelection.Children.Clear();
+            currentSelection.ChildBag.Clear();
 
             refreshCurrentSelectionAction.BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
                 "Refresh Current Selection",
                 async () =>
                 {
-                    await currentSelection.LoadChildrenAsync();
+                    await currentSelection.LoadChildBagAsync();
                 });
 
             return inInputFileState;
@@ -178,7 +178,7 @@ public partial record InputFileState
                 .OpenedTreeViewModelHistory[
                     inInputFileState.IndexInHistory];
 
-            foreach (var treeViewModel in openedTreeViewModel.Children)
+            foreach (var treeViewModel in openedTreeViewModel.ChildBag)
             {
                 var treeViewAbsolutePath = (TreeViewAbsolutePath)treeViewModel;
 

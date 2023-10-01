@@ -64,13 +64,13 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolutionModel>
             });
     }
 
-    public override async Task LoadChildrenAsync()
+    public override async Task LoadChildBagAsync()
     {
         try
         {
             var newChildren = await this.DotNetSolutionLoadChildrenAsync();
 
-            var oldChildrenMap = Children.ToDictionary(child => child);
+            var oldChildrenMap = ChildBag.ToDictionary(child => child);
 
             foreach (var newChild in newChildren)
             {
@@ -80,7 +80,7 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolutionModel>
                     newChild.IsExpandable = oldChild.IsExpandable;
                     newChild.IsHidden = oldChild.IsHidden;
                     newChild.Key = oldChild.Key;
-                    newChild.Children = oldChild.Children;
+                    newChild.ChildBag = oldChild.ChildBag;
                 }
             }
 
@@ -93,11 +93,11 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolutionModel>
                 newChild.TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
             }
 
-            Children = newChildren;
+            ChildBag = newChildren;
         }
         catch (Exception exception)
         {
-            Children = new List<TreeViewNoType>
+            ChildBag = new List<TreeViewNoType>
         {
             new TreeViewException(
                 exception,

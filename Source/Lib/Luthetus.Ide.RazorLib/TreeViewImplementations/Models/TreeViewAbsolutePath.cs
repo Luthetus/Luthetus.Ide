@@ -62,7 +62,7 @@ public class TreeViewAbsolutePath : TreeViewWithType<IAbsolutePath>
             });
     }
 
-    public override async Task LoadChildrenAsync()
+    public override async Task LoadChildBagAsync()
     {
         try
         {
@@ -74,7 +74,7 @@ public class TreeViewAbsolutePath : TreeViewWithType<IAbsolutePath>
                     .LoadChildrenForDirectoryAsync(this);
             }
 
-            var oldChildrenMap = Children
+            var oldChildrenMap = ChildBag
                 .ToDictionary(child => child);
 
             foreach (var newChild in newChildren)
@@ -85,7 +85,7 @@ public class TreeViewAbsolutePath : TreeViewWithType<IAbsolutePath>
                     newChild.IsExpandable = oldChild.IsExpandable;
                     newChild.IsHidden = oldChild.IsHidden;
                     newChild.Key = oldChild.Key;
-                    newChild.Children = oldChild.Children;
+                    newChild.ChildBag = oldChild.ChildBag;
                 }
             }
 
@@ -98,11 +98,11 @@ public class TreeViewAbsolutePath : TreeViewWithType<IAbsolutePath>
                 newChild.TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
             }
 
-            Children = newChildren;
+            ChildBag = newChildren;
         }
         catch (Exception exception)
         {
-            Children = new List<TreeViewNoType>
+            ChildBag = new List<TreeViewNoType>
         {
             new TreeViewException(
                 exception,

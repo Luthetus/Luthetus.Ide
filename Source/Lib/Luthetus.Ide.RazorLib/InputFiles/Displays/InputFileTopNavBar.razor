@@ -44,7 +44,7 @@
                     }
                     else
                     {
-                        foreach (var directory in openedTreeView.Item.AncestorDirectories)
+                        foreach (var directory in openedTreeView.Item.AncestorDirectoryBag)
                         {
                             if (directory is IAbsolutePath absolutePath)
                             {

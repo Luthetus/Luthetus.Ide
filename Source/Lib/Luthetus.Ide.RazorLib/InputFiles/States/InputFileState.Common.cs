@@ -40,7 +40,7 @@ public partial record InputFileState
 
         selectionClone.IsExpanded = true;
 
-        selectionClone.Children = selectedTreeViewModel.Children;
+        selectionClone.ChildBag = selectedTreeViewModel.ChildBag;
 
         var nextHistory =
             inInputFileState.OpenedTreeViewModelHistory;

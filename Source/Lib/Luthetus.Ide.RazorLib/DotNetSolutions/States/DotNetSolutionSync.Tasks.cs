@@ -135,7 +135,7 @@ public partial class DotNetSolutionSync
             true,
             true);
 
-        await rootNode.LoadChildrenAsync();
+        await rootNode.LoadChildBagAsync();
 
         if (!_treeViewService.TryGetTreeViewState(TreeViewSolutionExplorerStateKey, out _))
         {

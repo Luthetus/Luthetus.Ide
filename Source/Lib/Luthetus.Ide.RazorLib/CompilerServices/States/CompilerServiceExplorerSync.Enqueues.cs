@@ -61,7 +61,7 @@ public partial class CompilerServiceExplorerSync
                     new TreeViewReflectionWithView(typeScriptCompilerServiceWatchWindowObjectWrap, true, false, _luthetusIdeComponentRenderers, _luthetusCommonComponentRenderers),
                     new TreeViewReflectionWithView(jsonCompilerServiceWatchWindowObjectWrap, true, false, _luthetusIdeComponentRenderers, _luthetusCommonComponentRenderers));
 
-                await rootNode.LoadChildrenAsync();
+                await rootNode.LoadChildBagAsync();
 
                 if (!_treeViewService.TryGetTreeViewState(
                         TreeViewCompilerServiceExplorerContentStateKey,

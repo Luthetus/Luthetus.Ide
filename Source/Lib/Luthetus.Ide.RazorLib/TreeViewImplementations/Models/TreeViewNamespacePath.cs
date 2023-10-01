@@ -63,7 +63,7 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
             });
     }
 
-    public override async Task LoadChildrenAsync()
+    public override async Task LoadChildBagAsync()
     {
         try
         {
@@ -88,7 +88,7 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
                 }
             }
 
-            var oldChildrenMap = Children.ToDictionary(child => child);
+            var oldChildrenMap = ChildBag.ToDictionary(child => child);
 
             foreach (var newChild in newChildren)
             {
@@ -98,7 +98,7 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
                     newChild.IsExpandable = oldChild.IsExpandable;
                     newChild.IsHidden = oldChild.IsHidden;
                     newChild.Key = oldChild.Key;
-                    newChild.Children = oldChild.Children;
+                    newChild.ChildBag = oldChild.ChildBag;
                 }
             }
 
@@ -111,11 +111,11 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
                 newChild.TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
             }
 
-            Children = newChildren;
+            ChildBag = newChildren;
         }
         catch (Exception exception)
         {
-            Children = new List<TreeViewNoType>
+            ChildBag = new List<TreeViewNoType>
         {
             new TreeViewException(
                 exception,

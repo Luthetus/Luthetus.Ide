@@ -54,7 +54,7 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
             null);
     }
 
-    public override async Task LoadChildrenAsync()
+    public override async Task LoadChildBagAsync()
     {
         var content = await FileSystemProvider.File.ReadAllTextAsync(
             Item.CSharpProjectNamespacePath.AbsolutePath.FormattedInput);
@@ -129,7 +129,7 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
             newChild.TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
         }
 
-        Children = newChildren;
+        ChildBag = newChildren;
         TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
     }
 

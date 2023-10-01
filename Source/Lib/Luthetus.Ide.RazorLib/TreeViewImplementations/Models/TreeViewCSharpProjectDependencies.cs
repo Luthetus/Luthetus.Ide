@@ -52,7 +52,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
             null);
     }
 
-    public override Task LoadChildrenAsync()
+    public override Task LoadChildBagAsync()
     {
         var treeViewCSharpProjectNugetPackageReferences = new TreeViewCSharpProjectNugetPackageReferences(
             new CSharpProjectNugetPackageReferences(Item.CSharpProjectNamespacePath),
@@ -91,7 +91,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
             newChild.TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
         }
 
-        Children = newChildren;
+        ChildBag = newChildren;
         TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
         return Task.CompletedTask;
     }

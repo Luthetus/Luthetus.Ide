@@ -25,13 +25,13 @@ public class TreeViewReflectionWithView : TreeViewReflection
     public ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; }
     public ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; }
 
-    public override async Task LoadChildrenAsync()
+    public override async Task LoadChildBagAsync()
     {
-        var oldChildrenMap = Children.ToDictionary(child => child);
+        var oldChildrenMap = ChildBag.ToDictionary(child => child);
 
-        Children.Clear();
+        ChildBag.Clear();
 
-        await base.LoadChildrenAsync();
+        await base.LoadChildBagAsync();
 
         try
         {
@@ -49,23 +49,23 @@ public class TreeViewReflectionWithView : TreeViewReflection
         }
         catch (Exception e)
         {
-            Children.Clear();
-            Children.Add(new TreeViewException(
+            ChildBag.Clear();
+            ChildBag.Add(new TreeViewException(
                 e,
                 false,
                 false,
                 LuthetusCommonComponentRenderers));
         }
 
-        for (int i = 0; i < Children.Count; i++)
+        for (int i = 0; i < ChildBag.Count; i++)
         {
-            var child = Children[i];
+            var child = ChildBag[i];
 
             child.Parent = this;
             child.IndexAmongSiblings = i;
         }
 
-        foreach (var newChild in Children)
+        foreach (var newChild in ChildBag)
         {
             if (oldChildrenMap.TryGetValue(newChild, out var oldChild))
             {
@@ -73,7 +73,7 @@ public class TreeViewReflectionWithView : TreeViewReflection
                 newChild.IsExpandable = oldChild.IsExpandable;
                 newChild.IsHidden = oldChild.IsHidden;
                 newChild.Key = oldChild.Key;
-                newChild.Children = oldChild.Children;
+                newChild.ChildBag = oldChild.ChildBag;
             }
         }
     }

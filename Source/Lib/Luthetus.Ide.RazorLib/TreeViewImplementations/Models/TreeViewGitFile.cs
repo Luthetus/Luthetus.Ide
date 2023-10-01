@@ -48,7 +48,7 @@ public class TreeViewGitFile : TreeViewWithType<GitFile>
             });
     }
 
-    public override Task LoadChildrenAsync()
+    public override Task LoadChildBagAsync()
     {
         return Task.CompletedTask;
     }

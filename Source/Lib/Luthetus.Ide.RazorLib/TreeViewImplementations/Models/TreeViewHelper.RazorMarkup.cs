@@ -17,7 +17,7 @@ public partial class TreeViewHelper
             return new();
 
         var parentDirectoryOfRazorMarkup = (IAbsolutePath)
-            razorMarkupTreeView.Item.AbsolutePath.AncestorDirectories
+            razorMarkupTreeView.Item.AbsolutePath.AncestorDirectoryBag
                 .Last();
 
         var parentAbsolutePathString = parentDirectoryOfRazorMarkup.FormattedInput;
@@ -53,14 +53,14 @@ public partial class TreeViewHelper
             razorMarkupTreeView,
             childFileTreeViewModels);
 
-        return razorMarkupTreeView.Children;
+        return razorMarkupTreeView.ChildBag;
     }
 
     public static void RazorMarkupFindRelatedFiles(
         TreeViewNamespacePath razorMarkupTreeView,
         List<TreeViewNoType> siblingsAndSelfTreeViews)
     {
-        razorMarkupTreeView.Children.Clear();
+        razorMarkupTreeView.ChildBag.Clear();
 
         // .razor files look to remove .razor.cs and .razor.css files
 
@@ -92,7 +92,7 @@ public partial class TreeViewHelper
             relatedFile.IndexAmongSiblings = index;
             relatedFile.TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
 
-            razorMarkupTreeView.Children.Add(relatedFile);
+            razorMarkupTreeView.ChildBag.Add(relatedFile);
         }
 
         razorMarkupTreeView.IsExpandable = true;

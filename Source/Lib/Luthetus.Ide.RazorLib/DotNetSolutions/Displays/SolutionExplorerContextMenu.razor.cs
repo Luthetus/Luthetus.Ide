@@ -155,7 +155,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     private MenuOptionRecord[] GetCSharpProjectMenuOptions(
         TreeViewNamespacePath treeViewModel)
     {
-        var parentDirectory = treeViewModel.Item.AbsolutePath.AncestorDirectories.Last();
+        var parentDirectory = treeViewModel.Item.AbsolutePath.AncestorDirectoryBag.Last();
 
         var treeViewSolution = treeViewModel.Parent as TreeViewSolution;
 
@@ -418,7 +418,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         if (treeViewModel is null)
             return;
 
-        await treeViewModel.LoadChildrenAsync();
+        await treeViewModel.LoadChildBagAsync();
 
         TreeViewService.ReRenderNode(
             DotNetSolutionState.TreeViewSolutionExplorerStateKey,

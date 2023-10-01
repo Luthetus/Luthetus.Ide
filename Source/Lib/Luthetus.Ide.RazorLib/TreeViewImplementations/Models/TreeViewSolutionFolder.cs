@@ -65,7 +65,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
             });
     }
 
-    public override Task LoadChildrenAsync()
+    public override Task LoadChildBagAsync()
     {
         if (Item is null)
             return Task.CompletedTask;
@@ -75,7 +75,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
         }
         catch (Exception exception)
         {
-            Children = new List<TreeViewNoType>
+            ChildBag = new List<TreeViewNoType>
         {
             new TreeViewException(
                 exception,
@@ -184,7 +184,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
                 }
             }
 
-            Children = childTreeViews;
+            ChildBag = childTreeViews;
         }
 
         return;

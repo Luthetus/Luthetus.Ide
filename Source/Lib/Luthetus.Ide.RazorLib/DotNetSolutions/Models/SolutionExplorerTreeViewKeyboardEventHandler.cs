@@ -145,7 +145,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         else
         {
             var parentDirectory = treeViewNamespacePath
-                .Item.AbsolutePath.AncestorDirectories.Last();
+                .Item.AbsolutePath.AncestorDirectoryBag.Last();
 
             pasteMenuOptionRecord = _menuOptionsFactory.PasteClipboard(
                 parentDirectory,
@@ -206,7 +206,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         if (treeViewModel is null)
             return;
 
-        await treeViewModel.LoadChildrenAsync();
+        await treeViewModel.LoadChildBagAsync();
 
         _treeViewService.ReRenderNode(
             DotNetSolutionState.TreeViewSolutionExplorerStateKey,

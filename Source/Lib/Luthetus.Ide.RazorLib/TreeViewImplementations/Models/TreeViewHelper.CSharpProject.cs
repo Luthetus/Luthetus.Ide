@@ -15,7 +15,7 @@ public partial class TreeViewHelper
         this TreeViewNamespacePath cSharpProjectTreeView)
     {
         var parentDirectoryOfCSharpProject = (IAbsolutePath)
-            cSharpProjectTreeView.Item.AbsolutePath.AncestorDirectories
+            cSharpProjectTreeView.Item.AbsolutePath.AncestorDirectoryBag
                 .Last();
 
         var parentAbsolutePathString = parentDirectoryOfCSharpProject.FormattedInput;

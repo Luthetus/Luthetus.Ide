@@ -53,17 +53,17 @@ public class TreeViewCompilerService : TreeViewWithType<ICompilerService>
             });
     }
 
-    public override Task LoadChildrenAsync()
+    public override Task LoadChildBagAsync()
     {
-        var oldChildrenMap = Children.ToDictionary(child => child);
+        var oldChildrenMap = ChildBag.ToDictionary(child => child);
 
         try
         {
-            Children.Clear();
+            ChildBag.Clear();
 
             if (Item is CSharpCompilerService cSharpCompilerService)
             {
-                Children.Add(new TreeViewCompilerService(
+                ChildBag.Add(new TreeViewCompilerService(
                     cSharpCompilerService,
                     LuthetusIdeComponentRenderers,
                     LuthetusCommonComponentRenderers,
@@ -73,23 +73,23 @@ public class TreeViewCompilerService : TreeViewWithType<ICompilerService>
         }
         catch (Exception e)
         {
-            Children.Clear();
-            Children.Add(new TreeViewException(
+            ChildBag.Clear();
+            ChildBag.Add(new TreeViewException(
                 e,
                 false,
                 false,
                 LuthetusCommonComponentRenderers));
         }
 
-        for (int i = 0; i < Children.Count; i++)
+        for (int i = 0; i < ChildBag.Count; i++)
         {
-            var child = Children[i];
+            var child = ChildBag[i];
 
             child.Parent = this;
             child.IndexAmongSiblings = i;
         }
 
-        foreach (var newChild in Children)
+        foreach (var newChild in ChildBag)
         {
             if (oldChildrenMap.TryGetValue(newChild, out var oldChild))
             {
@@ -97,7 +97,7 @@ public class TreeViewCompilerService : TreeViewWithType<ICompilerService>
                 newChild.IsExpandable = oldChild.IsExpandable;
                 newChild.IsHidden = oldChild.IsHidden;
                 newChild.Key = oldChild.Key;
-                newChild.Children = oldChild.Children;
+                newChild.ChildBag = oldChild.ChildBag;
             }
         }
 

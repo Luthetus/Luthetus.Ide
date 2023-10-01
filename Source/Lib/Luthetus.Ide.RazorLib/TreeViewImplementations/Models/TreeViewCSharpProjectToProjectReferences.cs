@@ -53,7 +53,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
             null);
     }
 
-    public override async Task LoadChildrenAsync()
+    public override async Task LoadChildBagAsync()
     {
         var content = await FileSystemProvider.File.ReadAllTextAsync(
             Item.CSharpProjectNamespacePath.AbsolutePath.FormattedInput);
@@ -131,7 +131,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
             newChild.TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
         }
 
-        Children = newChildren;
+        ChildBag = newChildren;
         TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
     }
 

@@ -49,7 +49,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     {
         return new MenuOptionRecord("New Empty File", MenuOptionKind.Create,
             WidgetRendererType: _luthetusIdeComponentRenderers.FileFormRendererType,
-            WidgetParameters: new Dictionary<string, object?>
+            WidgetParameterMap: new Dictionary<string, object?>
             {
                 { nameof(IFileFormRendererType.FileName), string.Empty },
                 { nameof(IFileFormRendererType.CheckForTemplates), false },
@@ -71,7 +71,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     {
         return new MenuOptionRecord("New Templated File", MenuOptionKind.Create,
             WidgetRendererType: _luthetusIdeComponentRenderers.FileFormRendererType,
-            WidgetParameters: new Dictionary<string, object?>
+            WidgetParameterMap: new Dictionary<string, object?>
             {
                 { nameof(IFileFormRendererType.FileName), string.Empty },
                 { nameof(IFileFormRendererType.CheckForTemplates), true },
@@ -93,7 +93,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     {
         return new MenuOptionRecord("New Directory", MenuOptionKind.Create,
             WidgetRendererType: _luthetusIdeComponentRenderers.FileFormRendererType,
-            WidgetParameters: new Dictionary<string, object?>
+            WidgetParameterMap: new Dictionary<string, object?>
             {
                 { nameof(IFileFormRendererType.FileName), string.Empty },
                 { nameof(IFileFormRendererType.IsDirectory), true },
@@ -110,7 +110,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     {
         return new MenuOptionRecord("Delete", MenuOptionKind.Delete,
             WidgetRendererType: _luthetusIdeComponentRenderers.DeleteFileFormRendererType,
-            WidgetParameters: new Dictionary<string, object?>
+            WidgetParameterMap: new Dictionary<string, object?>
             {
                 { nameof(IDeleteFileFormRendererType.AbsolutePath), absolutePath },
                 { nameof(IDeleteFileFormRendererType.IsDirectory), true },
@@ -128,7 +128,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     {
         return new MenuOptionRecord("Rename", MenuOptionKind.Update,
             WidgetRendererType: _luthetusIdeComponentRenderers.FileFormRendererType,
-            WidgetParameters: new Dictionary<string, object?>
+            WidgetParameterMap: new Dictionary<string, object?>
             {
                 {
                     nameof(IFileFormRendererType.FileName),
@@ -174,7 +174,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     {
         return new MenuOptionRecord("Remove (no files are deleted)", MenuOptionKind.Delete,
             WidgetRendererType: _luthetusIdeComponentRenderers.RemoveCSharpProjectFromSolutionRendererType,
-            WidgetParameters: new Dictionary<string, object?>
+            WidgetParameterMap: new Dictionary<string, object?>
             {
                 {
                     nameof(IRemoveCSharpProjectFromSolutionRendererType.AbsolutePath),
@@ -231,7 +231,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     {
         return new MenuOptionRecord("Move to Solution Folder", MenuOptionKind.Other,
             WidgetRendererType: _luthetusIdeComponentRenderers.FileFormRendererType,
-            WidgetParameters: new Dictionary<string, object?>
+            WidgetParameterMap: new Dictionary<string, object?>
             {
                 { nameof(IFileFormRendererType.FileName), string.Empty },
                 { nameof(IFileFormRendererType.IsDirectory), false },
@@ -512,7 +512,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         }
 
         var sourceAbsolutePathString = sourceAbsolutePath.FormattedInput;
-        var parentOfSource = sourceAbsolutePath.AncestorDirectories.Last();
+        var parentOfSource = sourceAbsolutePath.AncestorDirectoryBag.Last();
         var destinationAbsolutePathString = parentOfSource.FormattedInput + nextName;
 
         try

@@ -131,10 +131,10 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
 
     private void InitializeElementDimensions()
     {
-        var navMenuWidth = _sidebarElementDimensions.DimensionAttributes
+        var navMenuWidth = _sidebarElementDimensions.DimensionAttributeBag
             .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
 
-        navMenuWidth.DimensionUnits.AddRange(new[]
+        navMenuWidth.DimensionUnitBag.AddRange(new[]
         {
         new DimensionUnit
         {
@@ -149,10 +149,10 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
         }
     });
 
-        var contentWidth = _contentElementDimensions.DimensionAttributes
+        var contentWidth = _contentElementDimensions.DimensionAttributeBag
             .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
 
-        contentWidth.DimensionUnits.AddRange(new[]
+        contentWidth.DimensionUnitBag.AddRange(new[]
         {
         new DimensionUnit
         {
@@ -179,17 +179,17 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
             true,
             false);
 
-        await pseudoRootNode.LoadChildrenAsync();
+        await pseudoRootNode.LoadChildBagAsync();
 
         var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(
-            pseudoRootNode.Children.ToArray());
+            pseudoRootNode.ChildBag.ToArray());
 
-        foreach (var child in adhocRootNode.Children)
+        foreach (var child in adhocRootNode.ChildBag)
         {
             child.IsExpandable = false;
         }
 
-        var activeNode = adhocRootNode.Children.FirstOrDefault();
+        var activeNode = adhocRootNode.ChildBag.FirstOrDefault();
 
         if (!TreeViewService.TryGetTreeViewState(
                 InputFileContent.TreeViewInputFileContentStateKey,
@@ -212,7 +212,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
                 activeNode);
         }
 
-        await pseudoRootNode.LoadChildrenAsync();
+        await pseudoRootNode.LoadChildBagAsync();
 
         var setOpenedTreeViewModelAction = new InputFileState.SetOpenedTreeViewModelAction(
             pseudoRootNode,
