@@ -4,7 +4,6 @@ using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
 using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
 using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.Common.RazorLib.KeyCase.Models;
-using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
 using Luthetus.Common.RazorLib.FileSystem.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution;

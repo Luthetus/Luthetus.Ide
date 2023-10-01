@@ -6,7 +6,6 @@ using Luthetus.Common.RazorLib.Notification.Models;
 using Luthetus.Common.RazorLib.Notification.States;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
 using Luthetus.Ide.RazorLib.FileSystemCase.Models;
-using Luthetus.Ide.RazorLib.InputFileCase.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.Group.Models;
 using Luthetus.TextEditor.RazorLib.Lexing.Models;

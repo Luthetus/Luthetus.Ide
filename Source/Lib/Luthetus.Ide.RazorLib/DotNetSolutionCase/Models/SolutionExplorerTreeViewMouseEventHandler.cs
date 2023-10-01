@@ -1,5 +1,4 @@
-﻿using Fluxor;
-using Luthetus.Common.RazorLib.Commands.Models;
+﻿using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.TreeView.Models;
 using Luthetus.Ide.RazorLib.EditorCase.States;
 using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
