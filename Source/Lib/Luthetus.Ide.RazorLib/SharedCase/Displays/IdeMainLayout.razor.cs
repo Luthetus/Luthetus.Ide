@@ -9,6 +9,7 @@ using Luthetus.Common.RazorLib.Resize.Displays;
 using Luthetus.Common.RazorLib.StateHasChangedBoundaryCase.Displays;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.SharedCase.Displays;

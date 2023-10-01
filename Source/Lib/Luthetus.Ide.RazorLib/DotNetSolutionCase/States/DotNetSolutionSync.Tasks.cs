@@ -9,8 +9,8 @@ using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution;
 using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
 using Luthetus.Ide.RazorLib.WebsiteProjectTemplatesCase.Models;
-using Luthetus.TextEditor.RazorLib.Lexing.Models;
-using Luthetus.TextEditor.RazorLib.TextEditorCase.States;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.States;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 

@@ -7,8 +7,8 @@ using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.Models;
 using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.States;
 using Luthetus.Ide.RazorLib.EditorCase.States;
-using Luthetus.TextEditor.RazorLib.Group.States;
-using Luthetus.TextEditor.RazorLib.TextEditorCase.States;
+using Luthetus.TextEditor.RazorLib.Groups.States;
+using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.Displays;

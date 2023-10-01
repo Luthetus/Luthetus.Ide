@@ -2,7 +2,7 @@
 using Luthetus.Common.RazorLib.ComponentRunner;
 using Luthetus.Common.RazorLib.Installation.Models;
 using Luthetus.Ide.RazorLib.InstallationCase.Models;
-using Luthetus.TextEditor.RazorLib.Installation.Models;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Photino.Blazor;
 using System;

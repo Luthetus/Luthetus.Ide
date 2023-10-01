@@ -22,6 +22,7 @@ using Luthetus.Common.RazorLib.Installation.Models;
 using Luthetus.Common.RazorLib.Dialog.States;
 using Luthetus.Ide.RazorLib.CSharpProjectFormCase.Scenes;
 using Luthetus.Common.RazorLib.KeyCase.Models;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
 
 namespace Luthetus.Ide.RazorLib.CSharpProjectFormCase.Displays;
 

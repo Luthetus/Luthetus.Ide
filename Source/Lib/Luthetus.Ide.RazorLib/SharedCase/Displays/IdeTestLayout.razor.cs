@@ -11,13 +11,15 @@ using Luthetus.Common.RazorLib.Resize.Displays;
 using Luthetus.Common.RazorLib.StateHasChangedBoundaryCase.Displays;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 using Luthetus.TextEditor.RazorLib;
-using Luthetus.TextEditor.RazorLib.CompilerServiceCase.GenericLexer.Decoration;
-using Luthetus.TextEditor.RazorLib.Lexing.Models;
-using Luthetus.TextEditor.RazorLib.TextEditorCase.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Microsoft.AspNetCore.Components;
 using Luthetus.CompilerServices.Lang.Razor.CompilerServiceCase;
 using Luthetus.Ide.RazorLib.EditorCase.States;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
 
 namespace Luthetus.Ide.RazorLib.SharedCase.Displays;
 

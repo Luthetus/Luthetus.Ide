@@ -1,6 +1,6 @@
 ﻿using Luthetus.Ide.RazorLib.WebsiteProjectTemplatesCase.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
-using Luthetus.TextEditor.RazorLib.Lexing.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Text;
 
 namespace Luthetus.Ide.RazorLib.CommandLineCase.Models;

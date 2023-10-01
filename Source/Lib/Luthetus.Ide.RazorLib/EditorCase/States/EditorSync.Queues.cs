@@ -2,7 +2,7 @@
 using Luthetus.Common.RazorLib.FileSystem.Models;
 using Luthetus.Common.RazorLib.KeyCase.Models;
 using Luthetus.Ide.RazorLib.InputFileCase.Models;
-using Luthetus.TextEditor.RazorLib.Group.Models;
+using Luthetus.TextEditor.RazorLib.Groups.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.EditorCase.States;

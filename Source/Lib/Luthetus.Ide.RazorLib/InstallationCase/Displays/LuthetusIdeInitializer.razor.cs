@@ -20,10 +20,10 @@ using Luthetus.Common.RazorLib.Panel.States;
 using Luthetus.Common.RazorLib.Theme.States;
 using Luthetus.Common.RazorLib.Icons.Displays.Codicon;
 using Luthetus.Common.RazorLib.TabCase.States;
-using Luthetus.TextEditor.RazorLib.Installation.Models;
-using Luthetus.TextEditor.RazorLib.Find.States;
+using Luthetus.TextEditor.RazorLib.Finds.States;
 using Luthetus.Common.RazorLib.CommandCase.Models.Ide;
 using Luthetus.Common.RazorLib.KeyCase.Models;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
 
 namespace Luthetus.Ide.RazorLib.InstallationCase.Displays;
 
