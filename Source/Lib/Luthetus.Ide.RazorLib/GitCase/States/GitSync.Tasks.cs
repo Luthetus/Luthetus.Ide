@@ -5,6 +5,7 @@ using Luthetus.Ide.RazorLib.GitCase.Models;
 using Luthetus.Ide.RazorLib.TerminalCase.Models;
 using Luthetus.Common.RazorLib.FileSystem.Models;
 using static Luthetus.Ide.RazorLib.GitCase.States.GitState;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 
 namespace Luthetus.Ide.RazorLib.GitCase.States;
 

@@ -1,8 +1,8 @@
 ﻿using Fluxor;
-using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
-using Luthetus.Common.RazorLib.FileSystem.Models;
-using Luthetus.Common.RazorLib.Notification.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
 using Luthetus.Ide.RazorLib.InputFileCase.States;
 using Microsoft.AspNetCore.Components;

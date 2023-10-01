@@ -1,5 +1,5 @@
 ﻿using Fluxor;
-using Luthetus.Common.RazorLib.KeyCase.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.TerminalCase.Models;
 using System.Collections.Immutable;
 

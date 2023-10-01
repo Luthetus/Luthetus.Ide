@@ -1,7 +1,7 @@
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
-using Luthetus.Common.RazorLib.TabCase.Models;
 using Luthetus.Common.RazorLib.TabCase.States;
+using Luthetus.Common.RazorLib.Tabs.Models;
 using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.States;
 using Microsoft.AspNetCore.Components;
 

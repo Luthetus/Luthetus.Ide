@@ -1,5 +1,5 @@
-﻿using Luthetus.Common.RazorLib.Dialog.Models;
-using Luthetus.Common.RazorLib.KeyCase.Models;
+﻿using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.SettingsCase.Displays;

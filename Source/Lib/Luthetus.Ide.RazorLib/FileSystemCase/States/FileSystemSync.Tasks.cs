@@ -1,5 +1,5 @@
-﻿using Luthetus.Common.RazorLib.Notification.Models;
-using Luthetus.Common.RazorLib.FileSystem.Models;
+﻿using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
 
 namespace Luthetus.Ide.RazorLib.FileSystemCase.States;
 

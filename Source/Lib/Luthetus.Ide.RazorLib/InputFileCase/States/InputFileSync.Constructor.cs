@@ -1,5 +1,5 @@
 ﻿using Fluxor;
-using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
 
 namespace Luthetus.Ide.RazorLib.InputFileCase.States;

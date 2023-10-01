@@ -1,6 +1,6 @@
 ﻿using Fluxor;
 using Fluxor.Blazor.Web.Components;
-using Luthetus.Common.RazorLib.TreeView.Models;
+using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
 using Luthetus.Ide.RazorLib.GitCase.States;
 using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;

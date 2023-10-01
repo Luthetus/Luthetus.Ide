@@ -1,5 +1,5 @@
 ﻿using Luthetus.Common.RazorLib.ComponentRenderers.Models;
-using Luthetus.Common.RazorLib.WatchWindow.Models;
+using Luthetus.Common.RazorLib.WatchWindows.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;

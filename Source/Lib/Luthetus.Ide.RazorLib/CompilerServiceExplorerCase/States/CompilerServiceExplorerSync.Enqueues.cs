@@ -1,6 +1,7 @@
-﻿using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
-using Luthetus.Common.RazorLib.KeyCase.Models;
+﻿using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeView.Models;
+using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.WatchWindow.Models;
 using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
 using System.Collections.Immutable;

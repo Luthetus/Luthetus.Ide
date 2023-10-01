@@ -1,9 +1,9 @@
 ﻿using Luthetus.Common.RazorLib.Commands.Models;
-using Luthetus.Common.RazorLib.Dimensions;
-using Luthetus.Common.RazorLib.Dropdown.Models;
-using Luthetus.Common.RazorLib.KeyCase.Models;
-using Luthetus.Common.RazorLib.Menu.Models;
-using Luthetus.Common.RazorLib.TreeView.Models;
+using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Dropdowns.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Menus.Models;
+using Luthetus.Common.RazorLib.TreeViews.Models;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.Displays;

@@ -1,5 +1,5 @@
-﻿using Luthetus.Common.RazorLib.KeyCase.Models;
-using Luthetus.Common.RazorLib.TreeView.Models;
+﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
 using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
 using Microsoft.AspNetCore.Components;

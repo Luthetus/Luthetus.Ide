@@ -1,6 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
 using Luthetus.Common.RazorLib.ComponentRunner;
-using Luthetus.Common.RazorLib.Installation.Models;
+using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Ide.RazorLib.InstallationCase.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Microsoft.Extensions.DependencyInjection;

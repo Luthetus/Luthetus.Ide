@@ -1,5 +1,5 @@
 using Fluxor;
-using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Microsoft.JSInterop;
 
 namespace Luthetus.Ide.RazorLib.LocalStorageCase.Models;

@@ -1,14 +1,8 @@
 ﻿using Fluxor;
-using Luthetus.Common.RazorLib.ComponentRunner;
-using Luthetus.Common.RazorLib.Dimensions;
 using Luthetus.Common.RazorLib.Drag.Displays;
-using Luthetus.Common.RazorLib.FileSystem.Models;
-using Luthetus.Common.RazorLib.KeyCase.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.Panel.States;
-using Luthetus.Common.RazorLib.Resize.Displays;
-using Luthetus.Common.RazorLib.StateHasChangedBoundaryCase.Displays;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
@@ -20,6 +14,12 @@ using Luthetus.Ide.RazorLib.EditorCase.States;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.ComponentRunners;
+using Luthetus.Common.RazorLib.Resizes.Displays;
+using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.StateHasChangedBoundaries.Displays;
 
 namespace Luthetus.Ide.RazorLib.SharedCase.Displays;
 

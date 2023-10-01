@@ -1,4 +1,4 @@
-using Luthetus.Common.RazorLib.Dimensions;
+using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;

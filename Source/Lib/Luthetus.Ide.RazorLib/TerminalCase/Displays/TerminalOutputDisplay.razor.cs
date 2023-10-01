@@ -1,7 +1,7 @@
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
-using Luthetus.Common.RazorLib.Keyboard.Models;
-using Luthetus.Common.RazorLib.KeyCase.Models;
+using Luthetus.Common.RazorLib.Keyboards.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.CommandLineCase.Models;
 using Luthetus.Ide.RazorLib.HtmlCase.Models;
 using Luthetus.Ide.RazorLib.TerminalCase.Models;

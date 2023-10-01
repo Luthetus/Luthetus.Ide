@@ -1,5 +1,5 @@
 ﻿using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
-using Luthetus.Common.RazorLib.KeyCase.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 

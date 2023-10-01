@@ -1,6 +1,6 @@
 ﻿using Fluxor;
-using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
-using Luthetus.Common.RazorLib.FileSystem.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.TerminalCase.States;
 
 namespace Luthetus.Ide.RazorLib.GitCase.States;

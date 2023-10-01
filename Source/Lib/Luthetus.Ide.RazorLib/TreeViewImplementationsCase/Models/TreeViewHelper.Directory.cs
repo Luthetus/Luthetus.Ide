@@ -1,7 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.FileSystem.Models;
-using Luthetus.Common.RazorLib.KeyCase.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
-using Luthetus.Common.RazorLib.TreeView.Models;
+using Luthetus.Common.RazorLib.TreeViews.Models;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
 

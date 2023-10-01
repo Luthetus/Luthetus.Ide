@@ -3,8 +3,8 @@ using System.Collections.Immutable;
 using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
 using Luthetus.Ide.RazorLib.FileSystemCase.Models;
 using Luthetus.Ide.RazorLib.InputFileCase.Models;
-using Luthetus.Common.RazorLib.TreeView.Models;
-using Luthetus.Common.RazorLib.KeyCase.Models;
+using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 

@@ -1,6 +1,6 @@
 ﻿using Fluxor;
-using Luthetus.Common.RazorLib.Dialog.Models;
 using Luthetus.Common.RazorLib.Dialog.States;
+using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Ide.RazorLib.InputFileCase.States;
 using Microsoft.AspNetCore.Components;
 

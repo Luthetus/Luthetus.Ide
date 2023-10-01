@@ -1,7 +1,7 @@
 using Fluxor;
-using Luthetus.Common.RazorLib.KeyCase.Models;
-using Luthetus.Common.RazorLib.TabCase.Models;
-using Luthetus.Common.RazorLib.TreeView.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Tabs.Models;
+using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.Models;
 using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.Scenes;
 

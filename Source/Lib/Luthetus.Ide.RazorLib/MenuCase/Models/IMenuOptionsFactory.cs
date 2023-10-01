@@ -1,6 +1,6 @@
 ﻿using Fluxor;
-using Luthetus.Common.RazorLib.FileSystem.Models;
-using Luthetus.Common.RazorLib.Menu.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Ide.RazorLib.InputFileCase.States;
 using Luthetus.Ide.RazorLib.TerminalCase.Models;

@@ -1,7 +1,7 @@
-﻿using Luthetus.Common.RazorLib.Dimensions;
-using Luthetus.Common.RazorLib.FileSystem.Models;
-using Luthetus.Common.RazorLib.KeyCase.Models;
-using Luthetus.Common.RazorLib.TreeView.Models;
+﻿using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Ide.RazorLib.InputFileCase.Models;
 using Luthetus.Ide.RazorLib.InputFileCase.States;
 using Microsoft.AspNetCore.Components;

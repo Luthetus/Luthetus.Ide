@@ -2,7 +2,8 @@
 using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
 using Luthetus.Common.RazorLib.Clipboard.Models;
 using Luthetus.Common.RazorLib.FileSystem.Models;
-using Luthetus.Common.RazorLib.Installation.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Storage.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Microsoft.Extensions.DependencyInjection;
