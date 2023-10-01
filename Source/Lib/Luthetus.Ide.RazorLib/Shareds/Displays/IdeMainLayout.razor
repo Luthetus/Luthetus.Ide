@@ -1,0 +1,45 @@
+﻿@    using Luthetus.Common.RazorLib.Contexts.Displays
+@    using Luthetus.Common.RazorLib.Contexts.Models;
+@    using Luthetus.Common.RazorLib.Dimensions.Models;
+@    using Luthetus.Common.RazorLib.Installations.Displays
+@    using Luthetus.Common.RazorLib.Panels.Displays
+@    using Luthetus.Common.RazorLib.Panels.Models;
+@    using Luthetus.Common.RazorLib.Resizes.Displays
+@    using Luthetus.Common.RazorLib.StateHasChangedBoundaries.Displays;
+@    using Luthetus.Common.RazorLib.ShouldRenderBoundaries.Displays
+@    using Luthetus.Ide.RazorLib.InstallationCase.Displays
+@    using Luthetus.TextEditor.RazorLib.Installations.Displays
+
+@inherits LayoutComponentBase
+
+<ContextBoundary ContextRecord="ContextFacts.GlobalContext"
+                 ClassCssString="@($"luth_ide_main-layout {UnselectableClassCss} {AppOptionsService.ThemeCssClassString} {TextEditorService.ThemeCssClassString}")"
+                 StyleCssString="@($"{AppOptionsService.FontSizeCssStyleString} {AppOptionsService.FontFamilyCssStyleString}")">
+
+    <LuthetusCommonInitializer />
+    <LuthetusTextEditorInitializer />
+    <LuthetusIdeInitializer />
+
+    <ShouldRenderBoundary>
+        <IdeHeader/>
+
+        <StateHasChangedBoundary @ref="_bodyAndFooterStateHasChangedBoundaryComponent">
+            <IdeBody BodyElementDimensions="_bodyElementDimensions" />
+
+            <ResizableRow TopElementDimensions="_bodyElementDimensions"
+                          BottomElementDimensions="PanelFacts.GetBottomPanelRecord(PanelsStateWrap.Value).ElementDimensions"
+                          ReRenderFuncAsync="_bodyAndFooterStateHasChangedBoundaryComponent.InvokeStateHasChangedAsync" />
+
+            <PanelDisplay PanelGroupKey="PanelFacts.BottomPanelRecordKey"
+                          CssClassString="luth_ide_footer"
+                          AdjacentElementDimensions="_bodyElementDimensions"
+                          DimensionAttributeKind="DimensionAttributeKind.Height"
+                          ReRenderSelfAndAdjacentElementDimensionsFunc="_bodyAndFooterStateHasChangedBoundaryComponent.InvokeStateHasChangedAsync">
+
+                <JustifyEndRenderFragment>
+                    <Luthetus.Common.RazorLib.Notifications.Displays.NotificationsInteractiveIconDisplay/>
+                </JustifyEndRenderFragment>
+            </PanelDisplay>
+        </StateHasChangedBoundary>
+    </ShouldRenderBoundary>
+</ContextBoundary>
