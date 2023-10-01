@@ -1,5 +1,5 @@
 ﻿using Fluxor;
-using static Luthetus.Ide.RazorLib.DotNetSolutionCase.States.DotNetSolutionSync;
+using static Luthetus.Ide.RazorLib.DotNetSolutions.States.DotNetSolutionSync;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.States;
 

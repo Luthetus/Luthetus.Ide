@@ -1,8 +1,8 @@
 ﻿using Fluxor;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
-using Luthetus.Ide.RazorLib.TerminalCase.States;
-using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.States;
+using Luthetus.Ide.RazorLib.Terminals.States;
+using Luthetus.Ide.RazorLib.CompilerServices.States;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Themes.States;

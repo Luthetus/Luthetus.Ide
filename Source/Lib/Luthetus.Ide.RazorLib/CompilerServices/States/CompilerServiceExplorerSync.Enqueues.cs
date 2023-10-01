@@ -3,9 +3,9 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.WatchWindows.Models;
-using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
+using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using System.Collections.Immutable;
-using static Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.States.CompilerServiceExplorerState;
+using static Luthetus.Ide.RazorLib.CompilerServices.States.CompilerServiceExplorerState;
 
 namespace Luthetus.Ide.RazorLib.CompilerServices.States;
 

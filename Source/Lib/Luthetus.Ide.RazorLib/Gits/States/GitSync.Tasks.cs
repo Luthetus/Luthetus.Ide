@@ -1,12 +1,12 @@
 ﻿using System.Text;
 using System.Collections.Immutable;
-using Luthetus.Ide.RazorLib.GitCase.Models;
+using Luthetus.Ide.RazorLib.Gits.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
-using static Luthetus.Ide.RazorLib.GitCase.States.GitState;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.Gits.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
+using static Luthetus.Ide.RazorLib.Gits.States.GitState;
 
 namespace Luthetus.Ide.RazorLib.Gits.States;
 

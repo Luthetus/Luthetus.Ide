@@ -4,9 +4,9 @@ using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
+using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
-using Luthetus.Ide.RazorLib.EditorCase.States;
+using Luthetus.Ide.RazorLib.Editors.States;
 using Luthetus.Ide.RazorLib.Menus.Models;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 

@@ -2,8 +2,8 @@
 using Fluxor.Blazor.Web.Components;
 using Luthetus.CompilerServices.Lang.DotNetSolution;
 using Microsoft.AspNetCore.Components;
-using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
-using Luthetus.Ide.RazorLib.NugetCase.States;
+using Luthetus.Ide.RazorLib.DotNetSolutions.States;
+using Luthetus.Ide.RazorLib.Nugets.States;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;

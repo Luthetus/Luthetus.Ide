@@ -1,7 +1,7 @@
 ﻿using Fluxor;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
-using Luthetus.Ide.RazorLib.FolderExplorerCase.States;
+using Luthetus.Ide.RazorLib.FolderExplorers.States;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Menus.Models;

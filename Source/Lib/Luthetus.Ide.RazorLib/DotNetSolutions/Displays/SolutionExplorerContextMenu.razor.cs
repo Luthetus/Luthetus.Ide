@@ -2,11 +2,11 @@
 using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
-using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
-using Luthetus.Ide.RazorLib.TerminalCase.States;
-using Luthetus.Ide.RazorLib.ProgramExecutionCase.States;
-using Luthetus.Ide.RazorLib.InputFileCase.States;
-using Luthetus.Ide.RazorLib.InputFileCase.Models;
+using Luthetus.Ide.RazorLib.DotNetSolutions.States;
+using Luthetus.Ide.RazorLib.Terminals.States;
+using Luthetus.Ide.RazorLib.ProgramExecutions.States;
+using Luthetus.Ide.RazorLib.InputFiles.States;
+using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;

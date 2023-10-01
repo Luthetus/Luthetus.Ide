@@ -1,7 +1,7 @@
 using Fluxor;
 using Microsoft.AspNetCore.Components;
-using Luthetus.Ide.RazorLib.FolderExplorerCase.States;
-using Luthetus.Ide.RazorLib.EditorCase.States;
+using Luthetus.Ide.RazorLib.FolderExplorers.States;
+using Luthetus.Ide.RazorLib.Editors.States;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.Dropdowns.States;

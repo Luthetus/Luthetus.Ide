@@ -1,7 +1,7 @@
 ﻿using Fluxor;
 using System.Collections.Immutable;
 using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
-using Luthetus.Ide.RazorLib.InputFileCase.Models;
+using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;

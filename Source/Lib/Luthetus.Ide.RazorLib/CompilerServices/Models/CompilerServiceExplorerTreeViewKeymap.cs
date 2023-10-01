@@ -1,7 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.Ide.RazorLib.EditorCase.States;
+using Luthetus.Ide.RazorLib.Editors.States;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 
 namespace Luthetus.Ide.RazorLib.CompilerServices.Models;

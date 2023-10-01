@@ -1,8 +1,8 @@
 ﻿using Fluxor;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
-using Luthetus.Ide.RazorLib.InputFileCase.States;
-using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
+using Luthetus.Ide.RazorLib.InputFiles.States;
+using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Commands.Models;

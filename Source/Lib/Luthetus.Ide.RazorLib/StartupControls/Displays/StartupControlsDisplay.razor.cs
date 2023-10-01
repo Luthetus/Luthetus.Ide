@@ -2,8 +2,8 @@
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
-using Luthetus.Ide.RazorLib.ProgramExecutionCase.States;
-using Luthetus.Ide.RazorLib.TerminalCase.States;
+using Luthetus.Ide.RazorLib.ProgramExecutions.States;
+using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Microsoft.AspNetCore.Components;
 

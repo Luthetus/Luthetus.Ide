@@ -1,9 +1,9 @@
 ﻿using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
-using Luthetus.Ide.RazorLib.HtmlCase.Models;
+using Luthetus.Ide.RazorLib.Htmls.Models;
 using System.Collections.Immutable;
-using static Luthetus.Ide.RazorLib.InputFileCase.States.InputFileState;
+using static Luthetus.Ide.RazorLib.InputFiles.States.InputFileState;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
 
 namespace Luthetus.Ide.RazorLib.InputFiles.States;

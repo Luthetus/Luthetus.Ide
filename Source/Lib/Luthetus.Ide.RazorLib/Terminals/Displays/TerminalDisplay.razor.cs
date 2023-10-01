@@ -1,6 +1,6 @@
 ﻿using Fluxor;
 using Fluxor.Blazor.Web.Components;
-using Luthetus.Ide.RazorLib.TerminalCase.States;
+using Luthetus.Ide.RazorLib.Terminals.States;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Displays;

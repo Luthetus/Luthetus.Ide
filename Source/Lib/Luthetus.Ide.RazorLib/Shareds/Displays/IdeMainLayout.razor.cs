@@ -7,7 +7,7 @@ using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Resizes.Displays;
 using Luthetus.Common.RazorLib.StateHasChangedBoundaries.Displays;
-using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
+using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Microsoft.AspNetCore.Components;

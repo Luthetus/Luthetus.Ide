@@ -2,7 +2,7 @@
 using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
-using Luthetus.Ide.RazorLib.InputFileCase.States;
+using Luthetus.Ide.RazorLib.InputFiles.States;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;

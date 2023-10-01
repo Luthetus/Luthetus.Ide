@@ -4,7 +4,7 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
-using Luthetus.Ide.RazorLib.InputFileCase.States;
+using Luthetus.Ide.RazorLib.InputFiles.States;
 
 namespace Luthetus.Ide.RazorLib.FolderExplorers.States;
 

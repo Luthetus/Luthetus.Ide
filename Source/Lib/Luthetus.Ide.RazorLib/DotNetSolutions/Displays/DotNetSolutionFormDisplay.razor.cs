@@ -2,10 +2,10 @@
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
-using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
-using Luthetus.Ide.RazorLib.TerminalCase.States;
-using Luthetus.Ide.RazorLib.InputFileCase.States;
-using Luthetus.Ide.RazorLib.InputFileCase.Models;
+using Luthetus.Ide.RazorLib.DotNetSolutions.States;
+using Luthetus.Ide.RazorLib.Terminals.States;
+using Luthetus.Ide.RazorLib.InputFiles.States;
+using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Dialogs.Models;

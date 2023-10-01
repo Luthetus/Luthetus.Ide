@@ -1,7 +1,7 @@
 ﻿using System.Collections.Immutable;
-using static Luthetus.Ide.RazorLib.DotNetSolutionCase.States.DotNetSolutionState;
+using static Luthetus.Ide.RazorLib.DotNetSolutions.States.DotNetSolutionState;
 using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
-using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
+using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution;

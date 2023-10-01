@@ -1,7 +1,7 @@
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Ide.RazorLib.TerminalCase.States;
+using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Microsoft.AspNetCore.Components;
 
