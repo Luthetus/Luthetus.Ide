@@ -8,7 +8,6 @@ using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Ide.RazorLib.States.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Reactive.Linq;
