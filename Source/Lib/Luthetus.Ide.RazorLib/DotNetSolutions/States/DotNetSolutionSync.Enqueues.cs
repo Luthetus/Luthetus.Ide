@@ -3,7 +3,7 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 
-namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
+namespace Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
 public partial class DotNetSolutionSync
 {

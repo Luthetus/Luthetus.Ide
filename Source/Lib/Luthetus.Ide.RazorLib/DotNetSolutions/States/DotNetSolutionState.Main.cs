@@ -6,7 +6,7 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
 
-namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
+namespace Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
 /// <summary>
 /// Only allow ImmutableEntry replacement calculations via DotNetSolutionSync.Tasks.cs.<br/><br/>

@@ -3,7 +3,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using System.Collections.Immutable;
 
-namespace Luthetus.Ide.RazorLib.TerminalCase.States;
+namespace Luthetus.Ide.RazorLib.Terminals.States;
 
 [FeatureState]
 public partial record TerminalSessionState(ImmutableDictionary<Key<TerminalSession>, TerminalSession> TerminalSessionMap)

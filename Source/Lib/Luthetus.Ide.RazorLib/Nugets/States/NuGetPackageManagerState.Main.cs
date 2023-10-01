@@ -3,7 +3,7 @@ using Luthetus.CompilerServices.Lang.DotNetSolution;
 using Luthetus.Ide.RazorLib.Nugets.Models;
 using System.Collections.Immutable;
 
-namespace Luthetus.Ide.RazorLib.NugetCase.States;
+namespace Luthetus.Ide.RazorLib.Nugets.States;
 
 [FeatureState]
 public partial record NuGetPackageManagerState(

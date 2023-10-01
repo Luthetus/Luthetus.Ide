@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
+﻿namespace Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 
 public static partial class TreeViewHelper
 {

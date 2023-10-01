@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Ide.RazorLib.WebsiteProjectTemplatesCase.Models;
+﻿namespace Luthetus.Ide.RazorLib.WebsiteProjectTemplates.Models;
 
 public partial class RazorClassLibFacts
 {

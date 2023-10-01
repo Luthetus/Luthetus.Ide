@@ -5,7 +5,7 @@ using Luthetus.Ide.RazorLib.InputFileCase.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using System.Collections.Immutable;
 
-namespace Luthetus.Ide.RazorLib.EditorCase.States;
+namespace Luthetus.Ide.RazorLib.Editors.States;
 
 public partial class EditorSync
 {

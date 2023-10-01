@@ -1,7 +1,7 @@
 ﻿using Fluxor;
 using static Luthetus.Ide.RazorLib.DotNetSolutionCase.States.DotNetSolutionSync;
 
-namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
+namespace Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
 public partial record DotNetSolutionState
 {

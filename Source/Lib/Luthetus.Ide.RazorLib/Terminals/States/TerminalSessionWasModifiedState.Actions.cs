@@ -2,7 +2,7 @@
 using Luthetus.Ide.RazorLib.States.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 
-namespace Luthetus.Ide.RazorLib.TerminalCase.States;
+namespace Luthetus.Ide.RazorLib.Terminals.States;
 
 public partial record TerminalSessionWasModifiedState
 {

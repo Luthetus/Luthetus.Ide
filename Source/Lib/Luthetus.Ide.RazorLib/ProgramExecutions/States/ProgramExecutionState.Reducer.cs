@@ -1,6 +1,6 @@
 ﻿using Fluxor;
 
-namespace Luthetus.Ide.RazorLib.ProgramExecutionCase.States;
+namespace Luthetus.Ide.RazorLib.ProgramExecutions.States;
 
 public partial record ProgramExecutionState
 {

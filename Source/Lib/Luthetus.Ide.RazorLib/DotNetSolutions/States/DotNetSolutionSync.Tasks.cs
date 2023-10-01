@@ -13,7 +13,7 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.WebsiteProjectTemplates.Models;
 
-namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
+namespace Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
 public partial class DotNetSolutionSync
 {

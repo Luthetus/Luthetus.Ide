@@ -4,7 +4,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
 using System.Collections.Immutable;
 
-namespace Luthetus.Ide.RazorLib.InputFileCase.States;
+namespace Luthetus.Ide.RazorLib.InputFiles.States;
 
 public partial record InputFileSync
 {

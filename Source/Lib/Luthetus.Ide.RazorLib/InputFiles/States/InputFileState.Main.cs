@@ -4,7 +4,7 @@ using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using System.Collections.Immutable;
 
-namespace Luthetus.Ide.RazorLib.InputFileCase.States;
+namespace Luthetus.Ide.RazorLib.InputFiles.States;
 
 [FeatureState]
 public partial record InputFileState(

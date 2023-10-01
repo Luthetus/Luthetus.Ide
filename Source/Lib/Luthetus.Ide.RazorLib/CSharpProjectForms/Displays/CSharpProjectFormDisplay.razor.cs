@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 using Luthetus.Ide.RazorLib.TerminalCase.States;
-using Luthetus.Ide.RazorLib.InputFileCase.Models;
+using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.InputFileCase.States;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;

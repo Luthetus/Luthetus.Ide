@@ -2,7 +2,7 @@
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 
-namespace Luthetus.Ide.RazorLib.FileSystemCase.States;
+namespace Luthetus.Ide.RazorLib.FileSystems.States;
 
 public partial class FileSystemSync
 {

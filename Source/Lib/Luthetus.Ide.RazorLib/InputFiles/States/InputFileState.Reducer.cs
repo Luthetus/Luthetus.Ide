@@ -4,7 +4,7 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 
-namespace Luthetus.Ide.RazorLib.InputFileCase.States;
+namespace Luthetus.Ide.RazorLib.InputFiles.States;
 
 public partial record InputFileState
 {

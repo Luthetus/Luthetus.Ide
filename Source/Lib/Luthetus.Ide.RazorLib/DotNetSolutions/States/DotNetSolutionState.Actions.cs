@@ -1,7 +1,7 @@
 ﻿using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
 using Luthetus.Common.RazorLib.Keys.Models;
 
-namespace Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
+namespace Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
 public partial record DotNetSolutionState
 {

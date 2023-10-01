@@ -12,7 +12,7 @@ using System.Collections.Immutable;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
 
-namespace Luthetus.Ide.RazorLib.EditorCase.States;
+namespace Luthetus.Ide.RazorLib.Editors.States;
 
 public partial class EditorSync
 {

@@ -3,7 +3,7 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.Gits.Models;
 using System.Collections.Immutable;
 
-namespace Luthetus.Ide.RazorLib.GitCase.States;
+namespace Luthetus.Ide.RazorLib.Gits.States;
 
 /// <summary>
 /// The Folder, ".git" may be in the following locations:<br/>

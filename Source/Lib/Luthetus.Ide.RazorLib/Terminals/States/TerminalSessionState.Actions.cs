@@ -1,7 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 
-namespace Luthetus.Ide.RazorLib.TerminalCase.States;
+namespace Luthetus.Ide.RazorLib.Terminals.States;
 
 public partial record TerminalSessionState
 {

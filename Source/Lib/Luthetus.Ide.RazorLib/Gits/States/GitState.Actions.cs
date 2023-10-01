@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Ide.RazorLib.GitCase.States;
+﻿namespace Luthetus.Ide.RazorLib.Gits.States;
 
 public partial record GitState
 {

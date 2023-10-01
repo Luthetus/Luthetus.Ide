@@ -6,7 +6,7 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.InputFileCase.States;
 
-namespace Luthetus.Ide.RazorLib.FolderExplorerCase.States;
+namespace Luthetus.Ide.RazorLib.FolderExplorers.States;
 
 public partial class FolderExplorerSync
 {

@@ -1,6 +1,6 @@
 ﻿using Fluxor;
 
-namespace Luthetus.Ide.RazorLib.TerminalCase.States;
+namespace Luthetus.Ide.RazorLib.Terminals.States;
 
 public partial record TerminalSessionWasModifiedState
 {

@@ -1,4 +1,4 @@
-namespace Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.States;
+namespace Luthetus.Ide.RazorLib.CompilerServices.States;
 
 public partial class CompilerServiceExplorerState
 {

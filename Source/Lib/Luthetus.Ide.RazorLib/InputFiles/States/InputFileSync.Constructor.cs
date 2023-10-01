@@ -2,7 +2,7 @@
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 
-namespace Luthetus.Ide.RazorLib.InputFileCase.States;
+namespace Luthetus.Ide.RazorLib.InputFiles.States;
 
 public partial record InputFileSync
 {

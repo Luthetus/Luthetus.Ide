@@ -8,7 +8,7 @@ using Luthetus.Ide.RazorLib.Gits.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 
-namespace Luthetus.Ide.RazorLib.GitCase.States;
+namespace Luthetus.Ide.RazorLib.Gits.States;
 
 public partial class GitSync
 {

@@ -19,7 +19,7 @@ using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 
-namespace Luthetus.Ide.RazorLib.EditorCase.States;
+namespace Luthetus.Ide.RazorLib.Editors.States;
 
 public partial class EditorSync
 {

@@ -1,7 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 
-namespace Luthetus.Ide.RazorLib.FileSystemCase.States;
+namespace Luthetus.Ide.RazorLib.FileSystems.States;
 
 public partial class FileSystemSync
 {

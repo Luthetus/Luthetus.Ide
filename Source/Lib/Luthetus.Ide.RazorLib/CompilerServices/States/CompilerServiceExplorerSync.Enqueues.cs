@@ -7,7 +7,7 @@ using Luthetus.Ide.RazorLib.TreeViewImplementationsCase.Models;
 using System.Collections.Immutable;
 using static Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.States.CompilerServiceExplorerState;
 
-namespace Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.States;
+namespace Luthetus.Ide.RazorLib.CompilerServices.States;
 
 public partial class CompilerServiceExplorerSync
 {

@@ -1,6 +1,6 @@
 using Microsoft.JSInterop;
 
-namespace Luthetus.Ide.RazorLib.LocalStorageCase.Models;
+namespace Luthetus.Ide.RazorLib.LocalStorages.Models;
 
 public partial class LocalStorageSync
 {

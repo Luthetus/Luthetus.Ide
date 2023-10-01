@@ -1,7 +1,7 @@
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 
-namespace Luthetus.Ide.RazorLib.LocalStorageCase.Models;
+namespace Luthetus.Ide.RazorLib.LocalStorages.Models;
 
 public partial class LocalStorageSync
 {

@@ -5,7 +5,7 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Ide.RazorLib.CompilerServices.Models;
 using Luthetus.Ide.RazorLib.CompilerServices.Scenes;
 
-namespace Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.States;
+namespace Luthetus.Ide.RazorLib.CompilerServices.States;
 
 [FeatureState]
 public partial class CompilerServiceExplorerState

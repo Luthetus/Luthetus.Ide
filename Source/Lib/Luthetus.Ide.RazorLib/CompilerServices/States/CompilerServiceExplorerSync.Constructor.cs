@@ -14,7 +14,7 @@ using Luthetus.CompilerServices.Lang.TypeScript;
 using Luthetus.CompilerServices.Lang.Xml;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 
-namespace Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.States;
+namespace Luthetus.Ide.RazorLib.CompilerServices.States;
 
 public partial class CompilerServiceExplorerSync
 {

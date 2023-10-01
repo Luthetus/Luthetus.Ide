@@ -1,4 +1,4 @@
-namespace Luthetus.Ide.RazorLib.FolderExplorerCase.States;
+namespace Luthetus.Ide.RazorLib.FolderExplorers.States;
 
 public partial record FolderExplorerState
 {
