@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 using Luthetus.Ide.RazorLib.CommandLineCase.Models;
 using Luthetus.Ide.RazorLib.GitCase.Models;
 using Luthetus.Ide.RazorLib.TerminalCase.Models;
-using Luthetus.Common.RazorLib.FileSystem.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using static Luthetus.Ide.RazorLib.GitCase.States.GitState;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 

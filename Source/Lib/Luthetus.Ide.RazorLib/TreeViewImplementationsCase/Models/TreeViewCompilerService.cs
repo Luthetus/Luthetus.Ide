@@ -1,7 +1,7 @@
 ﻿using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.Ide.RazorLib.ComponentRenderersCase.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
-using Luthetus.Common.RazorLib.WatchWindow.Models;
+using Luthetus.Common.RazorLib.WatchWindows.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 

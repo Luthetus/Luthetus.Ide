@@ -26,7 +26,7 @@ using Luthetus.Ide.RazorLib.CompilerServiceExplorerCase.States;
 using Luthetus.Ide.RazorLib.EditorCase.States;
 using Luthetus.Ide.RazorLib.FileSystemCase.States;
 using Luthetus.Ide.RazorLib.FolderExplorerCase.States;
-using Luthetus.Common.RazorLib.FileSystem.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.InputFileCase.States;
 using Luthetus.Ide.RazorLib.LocalStorageCase.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;

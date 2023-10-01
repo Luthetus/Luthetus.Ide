@@ -1,14 +1,14 @@
-﻿@    using Luthetus.Common.RazorLib.ContextCase.Displays
-@    using Luthetus.Common.RazorLib.ContextCase.Models;
-@    using Luthetus.Common.RazorLib.Dimensions;
-@    using Luthetus.Common.RazorLib.Installation.Displays
-@    using Luthetus.Common.RazorLib.Panel.Displays
-@    using Luthetus.Common.RazorLib.Panel.Models;
-@    using Luthetus.Common.RazorLib.Resize.Displays
-@    using Luthetus.Common.RazorLib.StateHasChangedBoundaryCase.Displays;
-@    using Luthetus.Common.RazorLib.ShouldRenderBoundaryCase.Displays
-@    using Luthetus.Ide.RazorLib.InstallationCase.Displays
-@    using Luthetus.TextEditor.RazorLib.Installations.Displays
+﻿@using Luthetus.Common.RazorLib.Contexts.Displays
+@using Luthetus.Common.RazorLib.Contexts.Models;
+@using Luthetus.Common.RazorLib.Dimensions.Models;
+@using Luthetus.Common.RazorLib.Installations.Displays
+@using Luthetus.Common.RazorLib.Panels.Displays
+@using Luthetus.Common.RazorLib.Panels.Models;
+@using Luthetus.Common.RazorLib.Resizes.Displays
+@using Luthetus.Common.RazorLib.StateHasChangedBoundaries.Displays;
+@using Luthetus.Common.RazorLib.ShouldRenderBoundaries.Displays
+@using Luthetus.Ide.RazorLib.InstallationCase.Displays
+@using Luthetus.TextEditor.RazorLib.Installations.Displays
 
 @inherits LayoutComponentBase
 
@@ -37,7 +37,7 @@
                           ReRenderSelfAndAdjacentElementDimensionsFunc="_bodyAndFooterStateHasChangedBoundaryComponent.InvokeStateHasChangedAsync">
 
                 <JustifyEndRenderFragment>
-                    <Luthetus.Common.RazorLib.Notification.Displays.NotificationsInteractiveIconDisplay/>
+                    <Luthetus.Common.RazorLib.Notifications.Displays.NotificationsInteractiveIconDisplay/>
                 </JustifyEndRenderFragment>
             </PanelDisplay>
         </StateHasChangedBoundary>

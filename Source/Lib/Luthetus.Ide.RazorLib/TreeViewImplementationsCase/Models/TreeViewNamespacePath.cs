@@ -2,7 +2,7 @@
 using Luthetus.Ide.RazorLib.FileSystemCase.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
-using Luthetus.Common.RazorLib.WatchWindow.Models;
+using Luthetus.Common.RazorLib.WatchWindows.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;

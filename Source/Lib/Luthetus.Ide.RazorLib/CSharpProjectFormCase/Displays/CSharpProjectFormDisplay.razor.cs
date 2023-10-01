@@ -15,7 +15,7 @@ using Luthetus.Ide.RazorLib.WebsiteProjectTemplatesCase.Models;
 using Luthetus.Ide.RazorLib.InputFileCase.Models;
 using Luthetus.Ide.RazorLib.InputFileCase.States;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
-using Luthetus.Common.RazorLib.Dialog.States;
+using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Ide.RazorLib.CSharpProjectFormCase.Scenes;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;

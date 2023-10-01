@@ -1,8 +1,8 @@
 ﻿using Fluxor;
-using Luthetus.Common.RazorLib.Drag.Displays;
+using Luthetus.Common.RazorLib.Drags.Displays;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Options.States;
-using Luthetus.Common.RazorLib.Panel.States;
+using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Ide.RazorLib.DotNetSolutionCase.States;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;

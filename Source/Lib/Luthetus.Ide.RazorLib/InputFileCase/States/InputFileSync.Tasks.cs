@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Dialog.States;
+﻿using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.HtmlCase.Models;

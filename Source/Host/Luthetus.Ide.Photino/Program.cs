@@ -1,5 +1,5 @@
-﻿using Luthetus.Common.RazorLib.BackgroundTaskCase.Models;
-using Luthetus.Common.RazorLib.ComponentRunner;
+﻿using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.ComponentRunners;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Ide.RazorLib.InstallationCase.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
