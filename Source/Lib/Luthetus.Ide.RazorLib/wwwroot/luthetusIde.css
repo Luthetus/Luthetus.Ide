@@ -201,16 +201,6 @@ input[type="checkbox"]{
     height: var(--luth_ide_text-editor-display-height) !important;
 }
 
-.luth_ide_startup-controls-display {
-    display: flex;
-    margin-left: 10px;
-}
-
-.luth_ide_startup-controls-display-entry {
-    display: flex;
-    align-items: center;
-}
-
 .luth_ide_form {
     width: 100%;
     height: 100%;

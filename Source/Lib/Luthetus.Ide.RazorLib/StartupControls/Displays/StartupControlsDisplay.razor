@@ -2,17 +2,17 @@
 
 <div class="luth_ide_startup-controls-display">
    <div class="luth_ide_startup-controls-display-entry">
-      MSBuild:&nbsp;  
+       StartupProject:
+       &nbsp;
+       @(ProgramExecutionStateWrap.Value.StartupProjectAbsolutePath?.NameNoExtension ?? "null")
+       &nbsp;
    </div>
    <div class="luth_ide_startup-controls-display-entry">
-      StartupProject:&nbsp;
-      @(ProgramExecutionStateWrap.Value.StartupProjectAbsolutePath?.NameNoExtension ?? "null")   
-   </div>
-   <div class="luth_ide_startup-controls-display-entry">
-      <button @onclick="StartProgramWithoutDebuggingOnClick"
+       <button @onclick="StartProgramWithoutDebuggingOnClick"
               class="luth_button"
               disabled=@(ProgramExecutionStateWrap.Value.StartupProjectAbsolutePath is null)>
-         <IconStartWithoutDebugging/>
-      </button>
+           
+           <IconStartWithoutDebugging/>
+       </button>
    </div>
 </div>

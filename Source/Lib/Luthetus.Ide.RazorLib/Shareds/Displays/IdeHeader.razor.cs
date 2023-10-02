@@ -131,4 +131,19 @@ public partial class IdeHeader : FluxorComponent
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
     }
+
+    private void OpenInfoDialogOnClick()
+    {
+        var dialogRecord = new DialogRecord(
+            Key<DialogRecord>.NewKey(),
+            "Info",
+            typeof(IdeInfoDisplay),
+            null,
+            null)
+        {
+            IsResizable = true
+        };
+
+        Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
+    }
 }

@@ -1,8 +1,6 @@
 ﻿<div>
     
-    @{
-        var displayText = TreeViewAbsolutePath.Item.NameWithExtension;
-    }
+    @{ var displayText = TreeViewAbsolutePath.Item.NameWithExtension; }
     
     @if (!String.IsNullOrWhiteSpace(SearchQuery))
     {
@@ -20,8 +18,7 @@
 
             if (localSearchMatchTuples is not null)
             {
-                localSearchMatchTuples.Add(
-                    (TreeViewState.Key, TreeViewAbsolutePath));
+                localSearchMatchTuples.Add((TreeViewState.Key, TreeViewAbsolutePath));
             }
             
             string splitStart = string.Empty;
@@ -30,24 +27,19 @@
 
             if (indexOfSearchQuery > 0)
             {
-                splitStart = displayText.Substring(
-                    0,
-                    indexOfSearchQuery);
+                splitStart = displayText.Substring(0, indexOfSearchQuery);
             }
             
-            splitMiddle = displayText.Substring(
-                indexOfSearchQuery, 
-                SearchQuery.Length);
+            splitMiddle = displayText.Substring(indexOfSearchQuery, SearchQuery.Length);
 
             var remainingIndices = displayText.Length - indexOfSearchQuery - SearchQuery.Length;
             
             if (remainingIndices > 0)
             {
-                splitEnd = displayText.Substring(
-                    indexOfSearchQuery + SearchQuery.Length);
+                splitEnd = displayText.Substring(indexOfSearchQuery + SearchQuery.Length);
             }
-            
-            <text>@splitStart<span class="luth_ide_search-match">@splitMiddle</span>@splitEnd</text>
+
+            @: @splitStart<span class="luth_ide_search-match">@splitMiddle</span>@splitEnd
         }
     }
     else

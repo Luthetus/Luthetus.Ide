@@ -13,54 +13,53 @@
 <ContextBoundary ContextRecord="ContextFacts.SolutionExplorerContext"
                  ClassCssString="luth_ide_solution-explorer-display"
                  StyleCssString="height: 100%">
-    @{
-        var dotNetSolutionState = DotNetSolutionStateWrap.Value;
 
-        <div class="luth_ide_section-title">
-            Solution Explorer
+    @{ var dotNetSolutionState = DotNetSolutionStateWrap.Value; }
 
-            @if (dotNetSolutionState.IsExecutingAsyncTaskLinks > 0)
-            {
-                <IconLoading/>
-            }
-        </div>
+    <div class="luth_ide_section-title">
+        Solution Explorer
 
-        <div class="luth_ide_section-body">
-            @if (dotNetSolutionState.DotNetSolutionModel is null)
-            {
-                <button class="luth_button"
-                        style="display: inline; margin-right: 12px; margin-bottom: 12px;"
-                        @onclick="() => DotNetSolutionState.ShowInputFile(DotNetSolutionSync)">
-                    Open Solution
-                </button>
+        @if (dotNetSolutionState.IsExecutingAsyncTaskLinks > 0)
+        {
+            <IconLoading />
+        }
+    </div>
 
-                <button class="luth_button"
-                        style="display: inline;"
-                        @onclick="OpenNewDotNetSolutionDialog">
-                    New Solution
-                </button>
-            }
-            else
-            {
-                <CascadingValue Name="LuthetusTreeViewIconWidth" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
-                    <CascadingValue Name="LuthetusTreeViewIconHeight" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
-                        <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
-                            <TreeViewStateDisplay TreeViewStateKey="DotNetSolutionState.TreeViewSolutionExplorerStateKey"
-                                                  CssStyleString="height: 100%;"
-                                                  OnContextMenuFunc="OnTreeViewContextMenuFunc"
-                                                  TreeViewKeyboardEventHandler="_solutionExplorerTreeViewKeymap"
-                                                  TreeViewMouseEventHandler="_solutionExplorerTreeViewMouseEventHandler"/>
-                        </CascadingValue>
+    <div class="luth_ide_section-body">
+        @if (dotNetSolutionState.DotNetSolutionModel is null)
+        {
+            <button class="luth_button"
+                    style="display: inline; margin-right: 12px; margin-bottom: 12px;"
+            @onclick="() => DotNetSolutionState.ShowInputFile(DotNetSolutionSync)">
+                Open Solution
+            </button>
+
+            <button class="luth_button"
+                    style="display: inline;"
+            @onclick="OpenNewDotNetSolutionDialog">
+                New Solution
+            </button>
+        }
+        else
+        {
+            <CascadingValue Name="LuthetusTreeViewIconWidth" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
+                <CascadingValue Name="LuthetusTreeViewIconHeight" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
+                    <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
+                        <TreeViewStateDisplay TreeViewStateKey="DotNetSolutionState.TreeViewSolutionExplorerStateKey"
+                                              CssStyleString="height: 100%;"
+                                              OnContextMenuFunc="OnTreeViewContextMenuFunc"
+                                              TreeViewKeyboardEventHandler="_solutionExplorerTreeViewKeymap"
+                                              TreeViewMouseEventHandler="_solutionExplorerTreeViewMouseEventHandler" />
                     </CascadingValue>
                 </CascadingValue>
+            </CascadingValue>
 
-                <DropdownDisplay DropdownKey="SolutionExplorerContextMenu.ContextMenuEventDropdownKey"
-                                 DropdownPositionKind="DropdownPositionKind.Unset"
-                                 CssStyleString="@SolutionExplorerContextMenu.GetContextMenuCssStyleString(_mostRecentTreeViewCommandParameter)">
+            <DropdownDisplay DropdownKey="SolutionExplorerContextMenu.ContextMenuEventDropdownKey"
+                             DropdownPositionKind="DropdownPositionKind.Unset"
+                             CssStyleString="@SolutionExplorerContextMenu.GetContextMenuCssStyleString(_mostRecentTreeViewCommandParameter)">
 
-                    <SolutionExplorerContextMenu TreeViewCommandParameter="_mostRecentTreeViewCommandParameter"/>
-                </DropdownDisplay>
-            }
-        </div>
-    }
+                <SolutionExplorerContextMenu TreeViewCommandParameter="_mostRecentTreeViewCommandParameter" />
+            </DropdownDisplay>
+        }
+    </div>
 </ContextBoundary>

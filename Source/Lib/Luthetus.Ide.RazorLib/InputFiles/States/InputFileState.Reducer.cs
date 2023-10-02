@@ -19,7 +19,7 @@ public partial record InputFileState
             {
                 SelectionIsValidFunc = startInputFileStateFormAction.SelectionIsValidFunc,
                 OnAfterSubmitFunc = startInputFileStateFormAction.OnAfterSubmitFunc,
-                InputFilePatterns = startInputFileStateFormAction.InputFilePatterns,
+                InputFilePatternsBag = startInputFileStateFormAction.InputFilePatterns,
                 SelectedInputFilePattern = startInputFileStateFormAction.InputFilePatterns.First(),
                 Message = startInputFileStateFormAction.Message
             };
@@ -89,7 +89,7 @@ public partial record InputFileState
             InputFileState inState,
             OpenParentDirectoryAction openParentDirectoryAction)
         {
-            var currentSelection = inState.OpenedTreeViewModelHistory[inState.IndexInHistory];
+            var currentSelection = inState.OpenedTreeViewModelHistoryBag[inState.IndexInHistory];
 
             TreeViewAbsolutePath? parentDirectoryTreeViewModel = null;
 
@@ -134,7 +134,7 @@ public partial record InputFileState
             InputFileState inState,
             RefreshCurrentSelectionAction refreshCurrentSelectionAction)
         {
-            var currentSelection = inState.OpenedTreeViewModelHistory[inState.IndexInHistory];
+            var currentSelection = inState.OpenedTreeViewModelHistoryBag[inState.IndexInHistory];
             currentSelection.ChildBag.Clear();
 
             refreshCurrentSelectionAction.BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
@@ -152,7 +152,7 @@ public partial record InputFileState
             InputFileState inState,
             SetSearchQueryAction setSearchQueryAction)
         {
-            var openedTreeViewModel = inState.OpenedTreeViewModelHistory[inState.IndexInHistory];
+            var openedTreeViewModel = inState.OpenedTreeViewModelHistoryBag[inState.IndexInHistory];
 
             foreach (var treeViewModel in openedTreeViewModel.ChildBag)
             {

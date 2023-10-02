@@ -4,7 +4,6 @@
 
 @{
     var gitFile = TreeViewGitFile.Item;
-
     var cssClass = "luth_ide_git-file"; 
 }
 
@@ -17,7 +16,7 @@
         string shortenedParentDirectoryPathString = gitFile.AbsolutePath.FormattedInput;
 
         if (gitFile.AbsolutePath.ParentDirectory is not null &&
-        gitState.GitFolderAbsolutePath?.ParentDirectory is not null)
+            gitState.GitFolderAbsolutePath?.ParentDirectory is not null)
         {
         }
     }

@@ -8,20 +8,16 @@
         
         <div style="margin-left: 2ch; padding-left: 5px; border-left: 1px solid var(--luth_primary-border-color)">
             <select @onchange="SelectedNugetVersionChanged">
-                @{
-                    foreach (var version in _nugetPackageVersionsOrdered)
-                    {
-                        <option value="@version.Version"
-                                selected="@(_nugetPackageVersionString == version.Version)">
-                            @version.Version
-                        </option>
-                    }
+                @foreach (var version in _nugetPackageVersionsOrdered)
+                {
+                    <option value="@version.Version"
+                            selected="@(_nugetPackageVersionString == version.Version)">
+                        @version.Version
+                    </option>
                 }
             </select>
             
-            @{
-                var buttonIsDisabled = !ValidateSolutionContainsSelectedProject();
-            }
+            @{ var buttonIsDisabled = !ValidateSolutionContainsSelectedProject(); }
             
             <button @onclick="AddNugetPackageReferenceOnClick"
                     class="luth_button"

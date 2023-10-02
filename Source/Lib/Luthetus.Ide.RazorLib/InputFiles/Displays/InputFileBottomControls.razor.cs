@@ -3,6 +3,7 @@ using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Ide.RazorLib.InputFiles.States;
 using Microsoft.AspNetCore.Components;
+using Luthetus.Ide.RazorLib.InputFiles.Models;
 
 namespace Luthetus.Ide.RazorLib.InputFiles.Displays;
 
@@ -22,7 +23,7 @@ public partial class InputFileBottomControls : ComponentBase
     {
         var patternName = (string)(changeEventArgs.Value ?? string.Empty);
 
-        var pattern = InputFileState.InputFilePatterns
+        var pattern = InputFileState.InputFilePatternsBag
             .FirstOrDefault(x => x.PatternName == patternName);
 
         if (pattern is not null)
@@ -65,5 +66,11 @@ public partial class InputFileBottomControls : ComponentBase
             Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.Key));
 
         return Task.CompletedTask;
+    }
+    
+    private bool GetInputFilePatternIsSelected(InputFilePattern inputFilePattern, InputFileState localInputFileState)
+    {
+        return (localInputFileState.SelectedInputFilePattern?.PatternName ?? string.Empty) ==
+            inputFilePattern.PatternName;
     }
 }

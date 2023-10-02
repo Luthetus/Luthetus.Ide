@@ -30,7 +30,7 @@
         <div class="luth_ide_input-file-display-top-nav-bar-address-hierarchy"
              @onclick="() => _showInputTextEditForAddress = true">
             
-            @if (InputFileState.IndexInHistory < InputFileState.OpenedTreeViewModelHistory.Count)
+            @if (InputFileState.IndexInHistory < InputFileState.OpenedTreeViewModelHistoryBag.Count)
             {
                 var openedTreeView = InputFileState.GetOpenedTreeView();
 
@@ -46,10 +46,7 @@
                     {
                         foreach (var directory in openedTreeView.Item.AncestorDirectoryBag)
                         {
-                            if (directory is IAbsolutePath absolutePath)
-                            {
-                                <InputFileAddressHierarchyEntry AbsolutePath="absolutePath"/>
-                            }
+                            <InputFileAddressHierarchyEntry AbsolutePath="directory" />
                         }
 
                         <InputFileAddressHierarchyEntry AbsolutePath="openedTreeView.Item"/>
