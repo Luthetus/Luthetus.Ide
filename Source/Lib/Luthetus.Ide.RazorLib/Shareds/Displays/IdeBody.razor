@@ -1,0 +1,36 @@
+@using Luthetus.Common.RazorLib.Dimensions.Models;
+@using Luthetus.Common.RazorLib.Panels.Displays
+@using Luthetus.Common.RazorLib.Panels.Models;
+@using Luthetus.Common.RazorLib.Resizes.Displays
+@using Luthetus.Ide.RazorLib.Editors.Displays
+@using Luthetus.Common.RazorLib.StateHasChangedBoundaries.Displays
+
+<div class="luth_ide_body"
+     style="@BodyElementDimensions.StyleString">
+
+    <StateHasChangedBoundary @ref="_leftPanelStateHasChangedBoundaryComponent">
+        <PanelDisplay PanelGroupKey="PanelFacts.LeftPanelRecordKey"
+                      AdjacentElementDimensions="_editorElementDimensions"
+                      DimensionAttributeKind="DimensionAttributeKind.Width"
+                      ReRenderSelfAndAdjacentElementDimensionsFunc="ReRenderLeftPanelAndEditor" />
+     </StateHasChangedBoundary>
+
+    <ResizableColumn LeftElementDimensions="@PanelFacts.GetLeftPanelRecord(PanelsStateWrap.Value).ElementDimensions"
+                     RightElementDimensions="_editorElementDimensions"
+                     ReRenderFuncAsync="ReRenderLeftPanelAndEditor" />
+
+    <StateHasChangedBoundary @ref="_editorStateHasChangedBoundaryComponent">
+        <EditorDisplay EditorElementDimensions="_editorElementDimensions" />
+    </StateHasChangedBoundary>
+    
+    <ResizableColumn LeftElementDimensions="_editorElementDimensions"
+                     RightElementDimensions="@PanelFacts.GetRightPanelRecord(PanelsStateWrap.Value).ElementDimensions"
+                     ReRenderFuncAsync="ReRenderEditorAndRightPanel" />
+
+    <StateHasChangedBoundary @ref="_rightPanelStateHasChangedBoundaryComponent">
+        <PanelDisplay PanelGroupKey="PanelFacts.RightPanelRecordKey"
+                      AdjacentElementDimensions="_editorElementDimensions"
+                      DimensionAttributeKind="DimensionAttributeKind.Width"
+                      ReRenderSelfAndAdjacentElementDimensionsFunc="ReRenderEditorAndRightPanel" />
+    </StateHasChangedBoundary>
+</div>

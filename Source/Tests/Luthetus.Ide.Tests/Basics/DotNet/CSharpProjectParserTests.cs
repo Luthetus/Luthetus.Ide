@@ -1,9 +1,9 @@
-﻿using Luthetus.Common.RazorLib.FileSystem.Models;
-using Luthetus.Common.RazorLib.KeyCase.Models;
-using Luthetus.Common.RazorLib.RenderStateCase.Models;
+﻿using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
 using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxActors;
-using Luthetus.TextEditor.RazorLib.Lexing.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Xunit;
 
 namespace Luthetus.Ide.Tests.Basics.DotNet;
