@@ -10,11 +10,11 @@ public partial class TreeViewHelper
     public static Task<List<TreeViewNoType>> DotNetSolutionLoadChildrenAsync(
         this TreeViewSolution treeViewSolution)
     {
-        var childSolutionFolders = treeViewSolution.Item.SolutionFolders
-            .Select(x => (TreeViewNoType)new TreeViewSolutionFolder(
+        var childSolutionFolders = treeViewSolution.Item.SolutionFolders.Select(
+            x => (TreeViewNoType)new TreeViewSolutionFolder(
                 x,
-                treeViewSolution.LuthetusIdeComponentRenderers,
-                treeViewSolution.LuthetusCommonComponentRenderers,
+                treeViewSolution.IdeComponentRenderers,
+                treeViewSolution.CommonComponentRenderers,
                 treeViewSolution.FileSystemProvider,
                 treeViewSolution.EnvironmentProvider,
                 true,
@@ -29,14 +29,10 @@ public partial class TreeViewHelper
             .Where(x => x.ProjectTypeGuid != DotNetSolutionFolder.SolutionFolderProjectTypeGuid)
             .Select(x =>
             {
-                var namespacePath = new NamespacePath(
-                    x.AbsolutePath.NameNoExtension,
-                    x.AbsolutePath);
-
                 return (TreeViewNoType)new TreeViewNamespacePath(
-                    namespacePath,
-                    treeViewSolution.LuthetusIdeComponentRenderers,
-                    treeViewSolution.LuthetusCommonComponentRenderers,
+                    new NamespacePath(x.AbsolutePath.NameNoExtension, x.AbsolutePath),
+                    treeViewSolution.IdeComponentRenderers,
+                    treeViewSolution.CommonComponentRenderers,
                     treeViewSolution.FileSystemProvider,
                     treeViewSolution.EnvironmentProvider,
                     true,
@@ -48,9 +44,7 @@ public partial class TreeViewHelper
             .OrderBy(x => ((TreeViewNamespacePath)x).Item.AbsolutePath.NameNoExtension)
             .ToList();
 
-        var children = childSolutionFolders
-            .Union(childProjects)
-            .ToList();
+        var children = childSolutionFolders.Union(childProjects).ToList();
 
         var copyOfChildrenToFindRelatedFiles = new List<TreeViewNoType>(children);
 
@@ -58,12 +52,16 @@ public partial class TreeViewHelper
         // foreach for child.RemoveRelatedFilesFromParent(...)
         // cannot be combined.
         foreach (var child in children)
+        {
             child.Parent = treeViewSolution;
+        }
 
+        // The foreach for child.Parent and the
+        // foreach for child.RemoveRelatedFilesFromParent(...)
+        // cannot be combined.
         foreach (var child in children)
         {
-            child.RemoveRelatedFilesFromParent(
-                copyOfChildrenToFindRelatedFiles);
+            child.RemoveRelatedFilesFromParent(copyOfChildrenToFindRelatedFiles);
         }
 
         // The parent directory gets what is left over after the

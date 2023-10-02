@@ -9,23 +9,23 @@ namespace Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 public class TreeViewMarkupString : TreeViewWithType<MarkupString>
 {
     public TreeViewMarkupString(
-        MarkupString markupString,
-        ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
-        IFileSystemProvider fileSystemProvider,
-        IEnvironmentProvider environmentProvider,
-        bool isExpandable,
-        bool isExpanded)
-            : base(
-                markupString,
-                isExpandable,
-                isExpanded)
+            MarkupString markupString,
+            ILuthetusIdeComponentRenderers ideComponentRenderers,
+            IFileSystemProvider fileSystemProvider,
+            IEnvironmentProvider environmentProvider,
+            bool isExpandable,
+            bool isExpanded)
+        : base(
+            markupString,
+            isExpandable,
+            isExpanded)
     {
-        LuthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
+        IdeComponentRenderers = ideComponentRenderers;
         FileSystemProvider = fileSystemProvider;
         EnvironmentProvider = environmentProvider;
     }
 
-    public ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; }
+    public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
     public IFileSystemProvider FileSystemProvider { get; }
     public IEnvironmentProvider EnvironmentProvider { get; }
 
@@ -47,10 +47,10 @@ public class TreeViewMarkupString : TreeViewWithType<MarkupString>
             typeof(TreeViewMarkupStringDisplay),
             new Dictionary<string, object?>
             {
-            {
-                nameof(TreeViewMarkupStringDisplay.MarkupString),
-                Item
-            },
+                {
+                    nameof(TreeViewMarkupStringDisplay.MarkupString),
+                    Item
+                },
             });
     }
 

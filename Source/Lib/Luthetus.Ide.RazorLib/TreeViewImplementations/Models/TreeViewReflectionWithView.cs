@@ -7,23 +7,19 @@ namespace Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 public class TreeViewReflectionWithView : TreeViewReflection
 {
     public TreeViewReflectionWithView(
-        WatchWindowObjectWrap watchWindowObjectWrap,
-        bool isExpandable,
-        bool isExpanded,
-        ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
-        ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers)
-        : base(
-            watchWindowObjectWrap,
-            isExpandable,
-            isExpanded,
-            luthetusCommonComponentRenderers)
+            WatchWindowObjectWrap watchWindowObjectWrap,
+            bool isExpandable,
+            bool isExpanded,
+            ILuthetusIdeComponentRenderers ideComponentRenderers,
+            ILuthetusCommonComponentRenderers commonComponentRenderers)
+    : base(watchWindowObjectWrap, isExpandable, isExpanded, commonComponentRenderers)
     {
-        LuthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
-        LuthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
+        IdeComponentRenderers = ideComponentRenderers;
+        CommonComponentRenderers = commonComponentRenderers;
     }
 
-    public ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; }
-    public ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; }
+    public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
+    public ILuthetusCommonComponentRenderers CommonComponentRenderers { get; }
 
     public override async Task LoadChildBagAsync()
     {
@@ -50,11 +46,7 @@ public class TreeViewReflectionWithView : TreeViewReflection
         catch (Exception e)
         {
             ChildBag.Clear();
-            ChildBag.Add(new TreeViewException(
-                e,
-                false,
-                false,
-                LuthetusCommonComponentRenderers));
+            ChildBag.Add(new TreeViewException(e, false, false, CommonComponentRenderers));
         }
 
         for (int i = 0; i < ChildBag.Count; i++)

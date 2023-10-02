@@ -31,8 +31,8 @@ public partial class TreeViewHelper
                     absolutePath.NameNoExtension;
 
                 return new TreeViewNamespacePath(new NamespacePath(namespaceString, absolutePath),
-                    cSharpProjectTreeView.LuthetusIdeComponentRenderers,
-                    cSharpProjectTreeView.LuthetusCommonComponentRenderers,
+                    cSharpProjectTreeView.IdeComponentRenderers,
+                    cSharpProjectTreeView.CommonComponentRenderers,
                     cSharpProjectTreeView.FileSystemProvider,
                     cSharpProjectTreeView.EnvironmentProvider,
                     true,
@@ -69,8 +69,8 @@ public partial class TreeViewHelper
                 var namespaceString = cSharpProjectTreeView.Item.Namespace;
 
                 return (TreeViewNoType)new TreeViewNamespacePath(new NamespacePath(namespaceString, absolutePath),
-                    cSharpProjectTreeView.LuthetusIdeComponentRenderers,
-                    cSharpProjectTreeView.LuthetusCommonComponentRenderers,
+                    cSharpProjectTreeView.IdeComponentRenderers,
+                    cSharpProjectTreeView.CommonComponentRenderers,
                     cSharpProjectTreeView.FileSystemProvider,
                     cSharpProjectTreeView.EnvironmentProvider,
                     false,
@@ -82,7 +82,7 @@ public partial class TreeViewHelper
 
         var cSharpProjectDependenciesTreeViewNode = new TreeViewCSharpProjectDependencies(
             new CSharpProjectDependencies(cSharpProjectTreeView.Item),
-            cSharpProjectTreeView.LuthetusIdeComponentRenderers,
+            cSharpProjectTreeView.IdeComponentRenderers,
             cSharpProjectTreeView.FileSystemProvider,
             cSharpProjectTreeView.EnvironmentProvider,
             true,

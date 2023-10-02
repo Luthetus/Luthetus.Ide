@@ -499,8 +499,8 @@ public static class WebsiteProjectTemplateFacts
 
     public static Guid GetProjectTypeGuid(string projectTemplateShortName)
     {
-        // I'm not going to DRY up the string "FAE04EC0-301F-11D3-BF4B-00C04F79EFBC"
-        // for now, because I don't fully understand its purpose.
+        // I'm not going to DRY up the string "FAE04EC0-301F-11D3-BF4B-00C04F79EFBC" for now,
+        // because I don't fully understand its purpose.
 
         if (projectTemplateShortName == BlazorWasmEmptyProjectTemplate.ShortName)
             return Guid.Parse("FAE04EC0-301F-11D3-BF4B-00C04F79EFBC");

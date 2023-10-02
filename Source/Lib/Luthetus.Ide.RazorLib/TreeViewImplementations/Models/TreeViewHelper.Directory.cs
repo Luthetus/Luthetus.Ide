@@ -7,147 +7,121 @@ namespace Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 
 public partial class TreeViewHelper
 {
+    /// <summary>Used with <see cref="TreeViewNamespacePath"/></summary>
     public static async Task<List<TreeViewNoType>> DirectoryLoadChildrenAsync(
         this TreeViewNamespacePath directoryTreeView)
     {
-        var directoryAbsolutePathString = directoryTreeView.Item.AbsolutePath
-            .FormattedInput;
+        var directoryAbsolutePathString = directoryTreeView.Item.AbsolutePath.FormattedInput;
 
-        var childDirectoryTreeViewModels =
-            (await directoryTreeView.FileSystemProvider
-                .Directory.GetDirectoriesAsync(directoryAbsolutePathString))
-                .OrderBy(pathString => pathString)
-                .Select(x =>
+        var directoryPathStringsBag = await directoryTreeView.FileSystemProvider.Directory
+            .GetDirectoriesAsync(directoryAbsolutePathString);
+
+        var childDirectoryTreeViewModels = directoryPathStringsBag
+            .OrderBy(pathString => pathString)
+            .Select(x =>
+            {
+                var absolutePath = new AbsolutePath(x, true, directoryTreeView.EnvironmentProvider);
+
+                var namespaceString = directoryTreeView.Item.Namespace +
+                    NAMESPACE_DELIMITER +
+                    absolutePath.NameNoExtension;
+
+                return (TreeViewNoType)new TreeViewNamespacePath(
+                    new NamespacePath(namespaceString, absolutePath),
+                    directoryTreeView.IdeComponentRenderers,
+                    directoryTreeView.CommonComponentRenderers,
+                    directoryTreeView.FileSystemProvider,
+                    directoryTreeView.EnvironmentProvider,
+                    true,
+                    false)
                 {
-                    var absolutePath = new AbsolutePath(
-                        x,
-                        true,
-                        directoryTreeView.EnvironmentProvider);
+                    TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
+                };
+            });
 
-                    var namespaceString = directoryTreeView.Item.Namespace +
-                                          NAMESPACE_DELIMITER +
-                                          absolutePath.NameNoExtension;
+        var filePathStringsBag = await directoryTreeView.FileSystemProvider.Directory
+            .GetFilesAsync(directoryAbsolutePathString);
 
-                    var namespacePath = new NamespacePath(
-                        namespaceString,
-                        absolutePath);
+        var childFileTreeViewModels = filePathStringsBag
+            .OrderBy(pathString => pathString)
+            .Select(x =>
+            {
+                var absolutePath = new AbsolutePath(x, false, directoryTreeView.EnvironmentProvider);
+                var namespaceString = directoryTreeView.Item.Namespace;
 
-                    return (TreeViewNoType)new TreeViewNamespacePath(
-                        namespacePath,
-                        directoryTreeView.LuthetusIdeComponentRenderers,
-                        directoryTreeView.LuthetusCommonComponentRenderers,
-                        directoryTreeView.FileSystemProvider,
-                        directoryTreeView.EnvironmentProvider,
-                        true,
-                        false)
-                    {
-                        TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
-                    };
-                });
-
-        var childFileTreeViewModels =
-            (await directoryTreeView.FileSystemProvider
-                .Directory.GetFilesAsync(directoryAbsolutePathString))
-                .OrderBy(pathString => pathString)
-                .Select(x =>
+                return (TreeViewNoType)new TreeViewNamespacePath(
+                    new NamespacePath(namespaceString, absolutePath),
+                    directoryTreeView.IdeComponentRenderers,
+                    directoryTreeView.CommonComponentRenderers,
+                    directoryTreeView.FileSystemProvider,
+                    directoryTreeView.EnvironmentProvider,
+                    false,
+                    false)
                 {
-                    var absolutePath = new AbsolutePath(
-                        x,
-                        false,
-                        directoryTreeView.EnvironmentProvider);
-
-                    var namespaceString = directoryTreeView.Item.Namespace;
-
-                    var namespacePath = new NamespacePath(
-                        namespaceString,
-                        absolutePath);
-
-                    return (TreeViewNoType)new TreeViewNamespacePath(
-                        namespacePath,
-                        directoryTreeView.LuthetusIdeComponentRenderers,
-                        directoryTreeView.LuthetusCommonComponentRenderers,
-                        directoryTreeView.FileSystemProvider,
-                        directoryTreeView.EnvironmentProvider,
-                        false,
-                        false)
-                    {
-                        TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
-                    };
-                }).ToList();
+                    TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
+                };
+            }).ToList();
 
         var copyOfChildrenToFindRelatedFiles = new List<TreeViewNoType>(childFileTreeViewModels);
 
         foreach (var child in childFileTreeViewModels)
         {
-            child.RemoveRelatedFilesFromParent(
-                copyOfChildrenToFindRelatedFiles);
+            child.RemoveRelatedFilesFromParent(copyOfChildrenToFindRelatedFiles);
         }
 
         // The parent directory gets what is left over after the
         // children take their respective 'code behinds'
         childFileTreeViewModels = copyOfChildrenToFindRelatedFiles;
 
-        return childDirectoryTreeViewModels
-            .Union(childFileTreeViewModels)
-            .ToList();
+        return childDirectoryTreeViewModels.Union(childFileTreeViewModels).ToList();
     }
 
+    /// <summary>Used with <see cref="TreeViewAbsolutePath"/></summary>
     public static async Task<List<TreeViewNoType>> LoadChildrenForDirectoryAsync(
         TreeViewAbsolutePath directoryTreeView)
     {
-        var directoryAbsolutePathString = directoryTreeView.Item
-            .FormattedInput;
+        var directoryAbsolutePathString = directoryTreeView.Item.FormattedInput;
 
-        var childDirectoryTreeViewModels =
-            (await directoryTreeView.FileSystemProvider
-                .Directory.GetDirectoriesAsync(directoryAbsolutePathString))
-                .OrderBy(pathString => pathString)
-                .Select(x =>
+        var directoryPathStringsBag = await directoryTreeView.FileSystemProvider.Directory
+            .GetDirectoriesAsync(directoryAbsolutePathString);
+
+        var childDirectoryTreeViewModels = directoryPathStringsBag
+            .OrderBy(pathString => pathString)
+            .Select(x =>
+            {
+                return (TreeViewNoType)new TreeViewAbsolutePath(
+                    new AbsolutePath(x, true, directoryTreeView.EnvironmentProvider),
+                    directoryTreeView.IdeComponentRenderers,
+                    directoryTreeView.CommonComponentRenderers,
+                    directoryTreeView.FileSystemProvider,
+                    directoryTreeView.EnvironmentProvider,
+                    true,
+                    false)
                 {
-                    var absolutePath = new AbsolutePath(
-                        x,
-                        true,
-                        directoryTreeView.EnvironmentProvider);
+                    TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
+                };
+            });
 
-                    return (TreeViewNoType)new TreeViewAbsolutePath(
-                        absolutePath,
-                        directoryTreeView.IdeComponentRenderers,
-                        directoryTreeView.CommonComponentRenderers,
-                        directoryTreeView.FileSystemProvider,
-                        directoryTreeView.EnvironmentProvider,
-                        true,
-                        false)
-                    {
-                        TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
-                    };
-                });
+        var filePathStringsBag = await directoryTreeView.FileSystemProvider.Directory
+            .GetFilesAsync(directoryAbsolutePathString);
 
-        var childFileTreeViewModels =
-            (await directoryTreeView.FileSystemProvider
-                .Directory.GetFilesAsync(directoryAbsolutePathString))
-                .OrderBy(pathString => pathString)
-                .Select(x =>
+        var childFileTreeViewModels = filePathStringsBag
+            .OrderBy(pathString => pathString)
+            .Select(x =>
+            {
+                return (TreeViewNoType)new TreeViewAbsolutePath(
+                    new AbsolutePath(x, false, directoryTreeView.EnvironmentProvider),
+                    directoryTreeView.IdeComponentRenderers,
+                    directoryTreeView.CommonComponentRenderers,
+                    directoryTreeView.FileSystemProvider,
+                    directoryTreeView.EnvironmentProvider,
+                    false,
+                    false)
                 {
-                    var absolutePath = new AbsolutePath(
-                        x,
-                        false,
-                        directoryTreeView.EnvironmentProvider);
+                    TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
+                };
+            });
 
-                    return (TreeViewNoType)new TreeViewAbsolutePath(
-                        absolutePath,
-                        directoryTreeView.IdeComponentRenderers,
-                        directoryTreeView.CommonComponentRenderers,
-                        directoryTreeView.FileSystemProvider,
-                        directoryTreeView.EnvironmentProvider,
-                        false,
-                        false)
-                    {
-                        TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
-                    };
-                });
-
-        return childDirectoryTreeViewModels
-            .Union(childFileTreeViewModels)
-            .ToList();
+        return childDirectoryTreeViewModels.Union(childFileTreeViewModels).ToList();
     }
 }

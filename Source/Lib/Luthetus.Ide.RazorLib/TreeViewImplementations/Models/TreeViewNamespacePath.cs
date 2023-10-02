@@ -12,26 +12,23 @@ namespace Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
 {
     public TreeViewNamespacePath(
-        NamespacePath namespacePath,
-        ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
-        ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
-        IFileSystemProvider fileSystemProvider,
-        IEnvironmentProvider environmentProvider,
-        bool isExpandable,
-        bool isExpanded)
-            : base(
-                namespacePath,
-                isExpandable,
-                isExpanded)
+            NamespacePath namespacePath,
+            ILuthetusIdeComponentRenderers ideComponentRenderers,
+            ILuthetusCommonComponentRenderers commonComponentRenderers,
+            IFileSystemProvider fileSystemProvider,
+            IEnvironmentProvider environmentProvider,
+            bool isExpandable,
+            bool isExpanded)
+        : base(namespacePath, isExpandable, isExpanded)
     {
-        LuthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
-        LuthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
+        IdeComponentRenderers = ideComponentRenderers;
+        CommonComponentRenderers = commonComponentRenderers;
         FileSystemProvider = fileSystemProvider;
         EnvironmentProvider = environmentProvider;
     }
 
-    public ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; }
-    public ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; }
+    public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
+    public ILuthetusCommonComponentRenderers CommonComponentRenderers { get; }
     public IFileSystemProvider FileSystemProvider { get; }
     public IEnvironmentProvider EnvironmentProvider { get; }
 
@@ -44,15 +41,12 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
                Item.AbsolutePath.FormattedInput;
     }
 
-    public override int GetHashCode()
-    {
-        return Item.AbsolutePath.FormattedInput.GetHashCode();
-    }
+    public override int GetHashCode() => Item.AbsolutePath.FormattedInput.GetHashCode();
 
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            LuthetusIdeComponentRenderers.LuthetusIdeTreeViews.TreeViewNamespacePathRendererType,
+            IdeComponentRenderers.LuthetusIdeTreeViews.TreeViewNamespacePathRendererType,
             new Dictionary<string, object?>
             {
                 {
@@ -66,11 +60,11 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
     {
         try
         {
-            var newChildren = new List<TreeViewNoType>();
+            var newChildBag = new List<TreeViewNoType>();
 
             if (Item.AbsolutePath.IsDirectory)
             {
-                newChildren = await this.DirectoryLoadChildrenAsync();
+                newChildBag = await this.DirectoryLoadChildrenAsync();
             }
             else
             {
@@ -79,17 +73,17 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
                     case ExtensionNoPeriodFacts.DOT_NET_SOLUTION:
                         return;
                     case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
-                        newChildren = await this.CSharpProjectLoadChildrenAsync();
+                        newChildBag = await this.CSharpProjectLoadChildrenAsync();
                         break;
                     case ExtensionNoPeriodFacts.RAZOR_MARKUP:
-                        newChildren = await this.RazorMarkupLoadChildrenAsync();
+                        newChildBag = await this.RazorMarkupLoadChildrenAsync();
                         break;
                 }
             }
 
             var oldChildrenMap = ChildBag.ToDictionary(child => child);
 
-            foreach (var newChild in newChildren)
+            foreach (var newChild in newChildBag)
             {
                 if (oldChildrenMap.TryGetValue(newChild, out var oldChild))
                 {
@@ -101,31 +95,27 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
                 }
             }
 
-            for (int i = 0; i < newChildren.Count; i++)
+            for (int i = 0; i < newChildBag.Count; i++)
             {
-                var newChild = newChildren[i];
+                var newChild = newChildBag[i];
 
                 newChild.IndexAmongSiblings = i;
                 newChild.Parent = this;
                 newChild.TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
             }
 
-            ChildBag = newChildren;
+            ChildBag = newChildBag;
         }
         catch (Exception exception)
         {
             ChildBag = new List<TreeViewNoType>
-        {
-            new TreeViewException(
-                exception,
-                false,
-                false,
-                LuthetusCommonComponentRenderers)
             {
-                Parent = this,
-                IndexAmongSiblings = 0,
-            }
-        };
+                new TreeViewException(exception, false, false, CommonComponentRenderers)
+                {
+                    Parent = this,
+                    IndexAmongSiblings = 0,
+                }
+            };
         }
 
         TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
@@ -137,12 +127,7 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
     /// </summary>
     public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
     {
-        if (Item.AbsolutePath.ExtensionNoPeriod
-            .EndsWith(ExtensionNoPeriodFacts.RAZOR_MARKUP))
-        {
-            TreeViewHelper.RazorMarkupFindRelatedFiles(
-                this,
-                siblingsAndSelfTreeViews);
-        }
+        if (Item.AbsolutePath.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.RAZOR_MARKUP))
+            TreeViewHelper.RazorMarkupFindRelatedFiles(this, siblingsAndSelfTreeViews);
     }
 }

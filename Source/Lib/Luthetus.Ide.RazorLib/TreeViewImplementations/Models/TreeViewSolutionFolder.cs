@@ -13,26 +13,23 @@ namespace Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
 {
     public TreeViewSolutionFolder(
-        DotNetSolutionFolder dotNetSolutionFolder,
-        ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
-        ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
-        IFileSystemProvider fileSystemProvider,
-        IEnvironmentProvider environmentProvider,
-        bool isExpandable,
-        bool isExpanded)
-            : base(
-                dotNetSolutionFolder,
-                isExpandable,
-                isExpanded)
+            DotNetSolutionFolder dotNetSolutionFolder,
+            ILuthetusIdeComponentRenderers ideComponentRenderers,
+            ILuthetusCommonComponentRenderers commonComponentRenderers,
+            IFileSystemProvider fileSystemProvider,
+            IEnvironmentProvider environmentProvider,
+            bool isExpandable,
+            bool isExpanded)
+        : base(dotNetSolutionFolder, isExpandable, isExpanded)
     {
-        LuthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
-        LuthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
+        IdeComponentRenderers = ideComponentRenderers;
+        CommonComponentRenderers = commonComponentRenderers;
         FileSystemProvider = fileSystemProvider;
         EnvironmentProvider = environmentProvider;
     }
 
-    public ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; }
-    public ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; }
+    public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
+    public ILuthetusCommonComponentRenderers CommonComponentRenderers { get; }
     public IFileSystemProvider FileSystemProvider { get; }
     public IEnvironmentProvider EnvironmentProvider { get; }
 
@@ -41,21 +38,15 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
         if (obj is not TreeViewSolutionFolder treeViewSolutionFolder)
             return false;
 
-        return treeViewSolutionFolder.Item.AbsolutePath.FormattedInput ==
-               Item.AbsolutePath.FormattedInput;
+        return treeViewSolutionFolder.Item.AbsolutePath.FormattedInput == Item.AbsolutePath.FormattedInput;
     }
 
-    public override int GetHashCode()
-    {
-        return Item.AbsolutePath
-            .FormattedInput
-            .GetHashCode();
-    }
+    public override int GetHashCode() => Item.AbsolutePath.FormattedInput.GetHashCode();
 
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            LuthetusIdeComponentRenderers.LuthetusIdeTreeViews.TreeViewSolutionFolderRendererType,
+            IdeComponentRenderers.LuthetusIdeTreeViews.TreeViewSolutionFolderRendererType,
             new Dictionary<string, object?>
             {
                 {
@@ -76,17 +67,13 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
         catch (Exception exception)
         {
             ChildBag = new List<TreeViewNoType>
-        {
-            new TreeViewException(
-                exception,
-                false,
-                false,
-                LuthetusCommonComponentRenderers)
             {
-                Parent = this,
-                IndexAmongSiblings = 0,
-            }
-        };
+                new TreeViewException(exception, false, false, CommonComponentRenderers)
+                {
+                    Parent = this,
+                    IndexAmongSiblings = 0,
+                }
+            };
         }
 
         TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
@@ -94,8 +81,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
         return Task.CompletedTask;
     }
 
-    public override void RemoveRelatedFilesFromParent(
-        List<TreeViewNoType> siblingsAndSelfTreeViews)
+    public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
     {
         var ancestorNode = Parent;
 
@@ -104,8 +90,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
             if (ancestorNode.Parent is null)
                 return;
 
-            while (ancestorNode is not TreeViewSolution &&
-                   ancestorNode.Parent is not null)
+            while (ancestorNode is not TreeViewSolution && ancestorNode.Parent is not null)
             {
                 ancestorNode = ancestorNode.Parent;
             }
@@ -120,27 +105,19 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
                 .Where(x => x.SolutionFolderIdGuid == Item.ProjectIdGuid)
                 .ToArray();
 
-            var childProjectIds = nestedProjectEntries
-                .Select(x => x.ChildProjectIdGuid)
+            var childProjectIds = nestedProjectEntries.Select(x => x.ChildProjectIdGuid).ToArray();
+
+            var childProjects = treeViewSolution.Item.DotNetProjects
+                .Where(x => childProjectIds.Contains(x.ProjectIdGuid))
                 .ToArray();
 
-            var childProjects =
-                treeViewSolution.Item.DotNetProjects
-                    .Where(x => childProjectIds.Contains(x.ProjectIdGuid))
-                    .ToArray();
-
-            var childTreeViews = childProjects
-                .Select(x =>
-                {
-                    if (x.DotNetProjectKind == DotNetProjectKind.SolutionFolder)
-                    {
-                        return ConstructTreeViewSolutionFolder((DotNetSolutionFolder)x);
-                    }
-                    else
-                    {
-                        return ConstructTreeViewCSharpProject((CSharpProject)x);
-                    }
-                }).ToList();
+            var childTreeViews = childProjects.Select(x =>
+            {
+                if (x.DotNetProjectKind == DotNetProjectKind.SolutionFolder)
+                    return ConstructTreeViewSolutionFolder((DotNetSolutionFolder)x);
+                else
+                    return ConstructTreeViewCSharpProject((CSharpProject)x);
+            }).ToList();
 
             for (int siblingsIndex = siblingsAndSelfTreeViews.Count - 1; siblingsIndex >= 0; siblingsIndex--)
             {
@@ -190,13 +167,12 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
         return;
     }
 
-    private TreeViewNoType ConstructTreeViewSolutionFolder(
-        DotNetSolutionFolder dotNetSolutionFolder)
+    private TreeViewNoType ConstructTreeViewSolutionFolder(DotNetSolutionFolder dotNetSolutionFolder)
     {
         return new TreeViewSolutionFolder(
             dotNetSolutionFolder,
-            LuthetusIdeComponentRenderers,
-            LuthetusCommonComponentRenderers,
+            IdeComponentRenderers,
+            CommonComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,
             true,
@@ -206,8 +182,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
         };
     }
 
-    private TreeViewNoType ConstructTreeViewCSharpProject(
-        CSharpProject cSharpProject)
+    private TreeViewNoType ConstructTreeViewCSharpProject(CSharpProject cSharpProject)
     {
         var namespacePath = new NamespacePath(
             cSharpProject.AbsolutePath.NameNoExtension,
@@ -215,8 +190,8 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
 
         return new TreeViewNamespacePath(
             namespacePath,
-            LuthetusIdeComponentRenderers,
-            LuthetusCommonComponentRenderers,
+            IdeComponentRenderers,
+            CommonComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,
             true,
