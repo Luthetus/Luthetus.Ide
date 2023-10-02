@@ -52,7 +52,7 @@ public static class ServiceCollectionExtensions
         {
             services.AddLuthetusTextEditor(hostingInformation, inTextEditorOptions => inTextEditorOptions with
             {
-                CustomThemeRecords = LuthetusTextEditorCustomThemeFacts.AllCustomThemes,
+                CustomThemeRecordBag = LuthetusTextEditorCustomThemeFacts.AllCustomThemesBag,
                 InitialThemeKey = ThemeFacts.VisualStudioDarkThemeClone.Key,
             });
         }

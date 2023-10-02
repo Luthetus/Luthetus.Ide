@@ -48,16 +48,16 @@ public partial class LuthetusIdeInitializer : ComponentBase
     {
         if (firstRender)
         {
-            if (LuthetusTextEditorOptions.CustomThemeRecords is not null)
+            if (LuthetusTextEditorOptions.CustomThemeRecordBag is not null)
             {
-                foreach (var themeRecord in LuthetusTextEditorOptions.CustomThemeRecords)
+                foreach (var themeRecord in LuthetusTextEditorOptions.CustomThemeRecordBag)
                 {
                     Dispatcher.Dispatch(new ThemeState.RegisterAction(
                         themeRecord));
                 }
             }
 
-            foreach (var findProvider in LuthetusTextEditorOptions.FindProviders)
+            foreach (var findProvider in LuthetusTextEditorOptions.FindProviderBag)
             {
                 Dispatcher.Dispatch(new TextEditorFindProviderState.RegisterAction(
                     findProvider));
