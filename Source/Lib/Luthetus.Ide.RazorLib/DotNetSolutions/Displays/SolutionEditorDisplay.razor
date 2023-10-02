@@ -1,8 +1,18 @@
-﻿@using Luthetus.TextEditor.RazorLib.Lexes.Models;
+﻿@using Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
+@using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 <div class="luth_ide_solution-editor-display">
     @{
-        var aaa = DotNetSolutionCompilerService.CompilerServiceResources.Where(
-            x => x.ResourceUri == new ResourceUri(string.Empty));
+        var compilerServiceResource = DotNetSolutionCompilerService
+            .GetCompilerServiceResourceFor(DotNetSolutionResourceUri);
+    }
+
+    @if (compilerServiceResource is not null)
+    {
+        var dotNetSolutionResource = (DotNetSolutionResource)compilerServiceResource;
+
+        <div>
+            dotNetSolutionResource
+        </div>
     }
 </div>

@@ -24,6 +24,7 @@ using Luthetus.Ide.RazorLib.Menus.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 
@@ -367,6 +368,10 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 {
                     nameof(SolutionEditorDisplay.DotNetSolutionModelKey),
                     dotNetSolutionModel.DotNetSolutionModelKey
+                },
+                {
+                    nameof(SolutionEditorDisplay.DotNetSolutionResourceUri),
+                    new ResourceUri(dotNetSolutionModel.NamespacePath.AbsolutePath.FormattedInput)
                 },
             },
             null)
