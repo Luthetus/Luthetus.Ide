@@ -177,7 +177,7 @@ public partial class EditorSync
                     OnSaveRequested = HandleOnSaveRequested,
                     GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension,
                     ShouldSetFocusAfterNextRender = shouldSetFocusToEditor,
-                    FirstPresentationLayerKeys = presentationKeys.ToImmutableList()
+                    FirstPresentationLayerKeysBag = presentationKeys.ToImmutableList()
                 });
         }
         else
