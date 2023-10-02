@@ -1,16 +1,16 @@
 ﻿using System.Collections.Immutable;
 using static Luthetus.Ide.RazorLib.DotNetSolutions.States.DotNetSolutionState;
-using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
-using Luthetus.CompilerServices.Lang.DotNetSolution;
 using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.WebsiteProjectTemplates.Models;
+using Luthetus.CompilerServices.Lang.DotNetSolution.Obsolete.RewriteForImmutability;
+using Luthetus.CompilerServices.Lang.DotNetSolution.Obsolete;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.States;
 

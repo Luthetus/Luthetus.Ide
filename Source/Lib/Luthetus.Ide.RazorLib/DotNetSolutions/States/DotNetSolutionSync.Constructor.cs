@@ -1,5 +1,4 @@
 ﻿using Fluxor;
-using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.InputFiles.States;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
@@ -8,6 +7,7 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
+using Luthetus.CompilerServices.Lang.DotNetSolution.Obsolete.RewriteForImmutability;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.States;
 

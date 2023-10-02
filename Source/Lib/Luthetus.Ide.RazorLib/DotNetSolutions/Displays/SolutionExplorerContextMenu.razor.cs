@@ -1,5 +1,4 @@
 ﻿using Fluxor;
-using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
@@ -25,6 +24,7 @@ using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.CompilerServices.Lang.DotNetSolution.Obsolete.RewriteForImmutability;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 
@@ -128,19 +128,21 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             MenuOptionKind.Other,
             () => AddExistingProjectToSolution(treeViewSolution.Item));
 
+        var createOptions = new MenuOptionRecord("Add", MenuOptionKind.Create,
+            SubMenu: new MenuRecord(new[]
+            {
+                addNewCSharpProject,
+                addExistingCSharpProject,
+            }.ToImmutableArray()));
+
         var openSolutionEditor = new MenuOptionRecord(
             "Open Solution Editor",
-            MenuOptionKind.Other,
+            MenuOptionKind.Update,
             () => Aaa(treeViewSolution.Item));
 
         return new[]
         {
-            new MenuOptionRecord("Add", MenuOptionKind.Other,
-                SubMenu: new MenuRecord(new[]
-                {
-                    addNewCSharpProject,
-                    addExistingCSharpProject,
-                }.ToImmutableArray())),
+            createOptions,
             openSolutionEditor,
         };
     }

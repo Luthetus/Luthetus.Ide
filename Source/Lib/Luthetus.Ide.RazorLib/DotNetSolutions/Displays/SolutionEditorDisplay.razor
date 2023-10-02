@@ -12,7 +12,12 @@
         var dotNetSolutionResource = (DotNetSolutionResource)compilerServiceResource;
 
         <div>
-            dotNetSolutionResource
+            @foreach (var textSpan in dotNetSolutionResource.SyntacticTextSpanBag)
+            {
+                <div>
+                    @textSpan.GetText()
+                </div>
+            }
         </div>
     }
 </div>
