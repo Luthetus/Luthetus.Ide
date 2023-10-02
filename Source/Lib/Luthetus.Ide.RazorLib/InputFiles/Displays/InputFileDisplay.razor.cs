@@ -21,9 +21,9 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
-    private ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; set; } = null!;
+    private ILuthetusIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
     [Inject]
-    private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
+    private ILuthetusCommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
@@ -101,8 +101,8 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
             TreeViewService,
             InputFileStateWrap,
             Dispatcher,
-            LuthetusIdeComponentRenderers,
-            LuthetusCommonComponentRenderers,
+            IdeComponentRenderers,
+            CommonComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,
             SetInputFileContentTreeViewRootFunc,
@@ -136,44 +136,44 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
 
         navMenuWidth.DimensionUnitBag.AddRange(new[]
         {
-        new DimensionUnit
-        {
-            Value = 40,
-            DimensionUnitKind = DimensionUnitKind.Percentage
-        },
-        new DimensionUnit
-        {
-            Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
-            DimensionUnitKind = DimensionUnitKind.Pixels,
-            DimensionOperatorKind = DimensionOperatorKind.Subtract
-        }
-    });
+            new DimensionUnit
+            {
+                Value = 40,
+                DimensionUnitKind = DimensionUnitKind.Percentage
+            },
+            new DimensionUnit
+            {
+                Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionOperatorKind = DimensionOperatorKind.Subtract
+            }
+        });
 
         var contentWidth = _contentElementDimensions.DimensionAttributeBag
             .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
 
         contentWidth.DimensionUnitBag.AddRange(new[]
         {
-        new DimensionUnit
-        {
-            Value = 60,
-            DimensionUnitKind = DimensionUnitKind.Percentage
-        },
-        new DimensionUnit
-        {
-            Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
-            DimensionUnitKind = DimensionUnitKind.Pixels,
-            DimensionOperatorKind = DimensionOperatorKind.Subtract
-        }
-    });
+            new DimensionUnit
+            {
+                Value = 60,
+                DimensionUnitKind = DimensionUnitKind.Percentage
+            },
+            new DimensionUnit
+            {
+                Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionOperatorKind = DimensionOperatorKind.Subtract
+            }
+        });
     }
 
     private async Task SetInputFileContentTreeViewRootFunc(IAbsolutePath absolutePath)
     {
         var pseudoRootNode = new TreeViewAbsolutePath(
             absolutePath,
-            LuthetusIdeComponentRenderers,
-            LuthetusCommonComponentRenderers,
+            IdeComponentRenderers,
+            CommonComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,
             true,
@@ -181,8 +181,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
 
         await pseudoRootNode.LoadChildBagAsync();
 
-        var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(
-            pseudoRootNode.ChildBag.ToArray());
+        var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(pseudoRootNode.ChildBag.ToArray());
 
         foreach (var child in adhocRootNode.ChildBag)
         {
@@ -191,33 +190,26 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
 
         var activeNode = adhocRootNode.ChildBag.FirstOrDefault();
 
-        if (!TreeViewService.TryGetTreeViewState(
-                InputFileContent.TreeViewInputFileContentStateKey,
-                out var treeViewState))
+        if (!TreeViewService.TryGetTreeViewState(InputFileContent.TreeViewStateKey, out var treeViewState))
         {
             TreeViewService.RegisterTreeViewState(new TreeViewContainer(
-                InputFileContent.TreeViewInputFileContentStateKey,
+                InputFileContent.TreeViewStateKey,
                 adhocRootNode,
                 activeNode,
                 ImmutableList<TreeViewNoType>.Empty));
         }
         else
         {
-            TreeViewService.SetRoot(
-                InputFileContent.TreeViewInputFileContentStateKey,
-                adhocRootNode);
-
-            TreeViewService.SetActiveNode(
-                InputFileContent.TreeViewInputFileContentStateKey,
-                activeNode);
+            TreeViewService.SetRoot(InputFileContent.TreeViewStateKey, adhocRootNode);
+            TreeViewService.SetActiveNode(InputFileContent.TreeViewStateKey, activeNode);
         }
 
         await pseudoRootNode.LoadChildBagAsync();
 
         var setOpenedTreeViewModelAction = new InputFileState.SetOpenedTreeViewModelAction(
             pseudoRootNode,
-            LuthetusIdeComponentRenderers,
-            LuthetusCommonComponentRenderers,
+            IdeComponentRenderers,
+            CommonComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider);
 

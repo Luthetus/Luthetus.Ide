@@ -19,10 +19,7 @@ public partial record GitState(
     ImmutableList<GitFile> GitFilesList,
     ImmutableList<GitTask> ActiveGitTasks)
 {
-    public GitState() : this(
-        null,
-        ImmutableList<GitFile>.Empty,
-        ImmutableList<GitTask>.Empty)
+    public GitState() : this(null, ImmutableList<GitFile>.Empty, ImmutableList<GitTask>.Empty)
     {
 
     }

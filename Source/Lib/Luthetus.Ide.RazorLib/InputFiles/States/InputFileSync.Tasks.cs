@@ -14,26 +14,25 @@ public partial record InputFileSync
         string message,
         Func<IAbsolutePath?, Task> onAfterSubmitFunc,
         Func<IAbsolutePath?, Task<bool>> selectionIsValidFunc,
-        ImmutableArray<InputFilePattern> inputFilePatterns)
+        ImmutableArray<InputFilePattern> inputFilePatternsBag)
     {
         Dispatcher.Dispatch(new StartInputFileStateFormAction(
             message,
             onAfterSubmitFunc,
             selectionIsValidFunc,
-            inputFilePatterns));
+            inputFilePatternsBag));
 
         var inputFileDialog = new DialogRecord(
             DialogFacts.InputFileDialogKey,
             "Input File",
-            _luthetusIdeComponentRenderers.InputFileRendererType,
+            _ideComponentRenderers.InputFileRendererType,
             null,
             HtmlFacts.Classes.DIALOG_PADDING_0)
         {
             IsResizable = true
         };
 
-        Dispatcher.Dispatch(new DialogState.RegisterAction(
-            inputFileDialog));
+        Dispatcher.Dispatch(new DialogState.RegisterAction(inputFileDialog));
 
         return Task.CompletedTask;
     }

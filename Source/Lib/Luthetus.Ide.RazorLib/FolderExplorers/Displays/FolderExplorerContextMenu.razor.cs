@@ -134,11 +134,11 @@ public partial class FolderExplorerContextMenu : ComponentBase
         await treeViewModel.LoadChildBagAsync();
 
         TreeViewService.ReRenderNode(
-            FolderExplorerState.TreeViewFolderExplorerContentStateKey,
+            FolderExplorerState.TreeViewContentStateKey,
             treeViewModel);
 
         TreeViewService.MoveUp(
-            FolderExplorerState.TreeViewFolderExplorerContentStateKey,
+            FolderExplorerState.TreeViewContentStateKey,
             false);
     }
 

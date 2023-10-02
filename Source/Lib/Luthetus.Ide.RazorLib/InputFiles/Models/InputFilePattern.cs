@@ -4,9 +4,7 @@ namespace Luthetus.Ide.RazorLib.InputFiles.Models;
 
 public class InputFilePattern
 {
-    public InputFilePattern(
-        string patternName,
-        Func<IAbsolutePath, bool> matchesPatternFunc)
+    public InputFilePattern(string patternName, Func<IAbsolutePath, bool> matchesPatternFunc)
     {
         PatternName = patternName;
         MatchesPatternFunc = matchesPatternFunc;

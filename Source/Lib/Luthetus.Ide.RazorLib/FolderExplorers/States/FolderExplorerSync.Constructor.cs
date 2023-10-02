@@ -12,15 +12,15 @@ public partial class FolderExplorerSync
 {
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IEnvironmentProvider _environmentProvider;
-    private readonly ILuthetusIdeComponentRenderers _luthetusIdeComponentRenderers;
-    private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
+    private readonly ILuthetusIdeComponentRenderers _ideComponentRenderers;
+    private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
     private readonly ITreeViewService _treeViewService;
 
     public FolderExplorerSync(
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
-        ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
-        ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
+        ILuthetusIdeComponentRenderers ideComponentRenderers,
+        ILuthetusCommonComponentRenderers commonComponentRenderers,
         ITreeViewService treeViewService,
         InputFileSync inputFileSync,
         IBackgroundTaskService backgroundTaskService,
@@ -28,8 +28,8 @@ public partial class FolderExplorerSync
     {
         _fileSystemProvider = fileSystemProvider;
         _environmentProvider = environmentProvider;
-        _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
-        _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
+        _ideComponentRenderers = ideComponentRenderers;
+        _commonComponentRenderers = commonComponentRenderers;
         _treeViewService = treeViewService;
 
         InputFileSync = inputFileSync;

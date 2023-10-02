@@ -29,17 +29,12 @@ public partial class InputFileContent : ComponentBase
     [Parameter, EditorRequired]
     public Action<IAbsolutePath?> SetSelectedAbsolutePath { get; set; } = null!;
 
-    public static readonly Key<TreeViewContainer> TreeViewInputFileContentStateKey = Key<TreeViewContainer>.NewKey();
+    public static readonly Key<TreeViewContainer> TreeViewStateKey = Key<TreeViewContainer>.NewKey();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!TreeViewService.TryGetTreeViewState(
-                TreeViewInputFileContentStateKey,
-                out _))
-        {
-            await SetInputFileContentTreeViewRootFunc.Invoke(
-                EnvironmentProvider.HomeDirectoryAbsolutePath);
-        }
+        if (!TreeViewService.TryGetTreeViewState(TreeViewStateKey, out _))
+            await SetInputFileContentTreeViewRootFunc.Invoke(EnvironmentProvider.HomeDirectoryAbsolutePath);
 
         await base.OnAfterRenderAsync(firstRender);
     }

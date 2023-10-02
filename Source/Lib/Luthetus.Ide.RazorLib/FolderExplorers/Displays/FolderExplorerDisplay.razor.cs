@@ -31,8 +31,8 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     [Inject]
     private FolderExplorerSync FolderExplorerSync { get; set; } = null!;
 
-    private FolderExplorerTreeViewMouseEventHandler _folderExplorerTreeViewMouseEventHandler = null!;
-    private FolderExplorerTreeViewKeyboardEventHandler _folderExplorerTreeViewKeyboardEventHandler = null!;
+    private FolderExplorerTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
+    private FolderExplorerTreeViewKeyboardEventHandler _treeViewKeyboardEventHandler = null!;
     private TreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
 
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
@@ -40,14 +40,14 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        FolderExplorerStateWrap.StateChanged += FolderExplorerStateWrapOnStateChanged;
-        AppOptionsStateWrap.StateChanged += AppOptionsStateWrapOnStateChanged;
+        FolderExplorerStateWrap.StateChanged += OnStateChanged;
+        AppOptionsStateWrap.StateChanged += OnStateChanged;
 
-        _folderExplorerTreeViewMouseEventHandler = new FolderExplorerTreeViewMouseEventHandler(
+        _treeViewMouseEventHandler = new FolderExplorerTreeViewMouseEventHandler(
             EditorSync,
             TreeViewService);
 
-        _folderExplorerTreeViewKeyboardEventHandler = new FolderExplorerTreeViewKeyboardEventHandler(
+        _treeViewKeyboardEventHandler = new FolderExplorerTreeViewKeyboardEventHandler(
             EditorSync,
             MenuOptionsFactory,
             LuthetusCommonComponentRenderers,
@@ -56,15 +56,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
         base.OnInitialized();
     }
 
-    private async void FolderExplorerStateWrapOnStateChanged(object? sender, EventArgs e)
-    {
-        await InvokeAsync(StateHasChanged);
-    }
-
-    private async void AppOptionsStateWrapOnStateChanged(object? sender, EventArgs e)
-    {
-        await InvokeAsync(StateHasChanged);
-    }
+    private async void OnStateChanged(object? sender, EventArgs e) => await InvokeAsync(StateHasChanged);
 
     private async Task OnTreeViewContextMenuFunc(TreeViewCommandParameter treeViewCommandParameter)
     {
@@ -78,7 +70,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        FolderExplorerStateWrap.StateChanged -= FolderExplorerStateWrapOnStateChanged;
-        AppOptionsStateWrap.StateChanged -= AppOptionsStateWrapOnStateChanged;
+        FolderExplorerStateWrap.StateChanged -= OnStateChanged;
+        AppOptionsStateWrap.StateChanged -= OnStateChanged;
     }
 }

@@ -8,14 +8,11 @@ namespace Luthetus.Ide.RazorLib.InputFiles.States;
 public partial record InputFileState
 {
     public bool CanMoveBackwardsInHistory => IndexInHistory > 0;
-
-    public bool CanMoveForwardsInHistory => IndexInHistory <
-        OpenedTreeViewModelHistory.Count - 1;
+    public bool CanMoveForwardsInHistory => IndexInHistory < OpenedTreeViewModelHistory.Count - 1;
 
     public TreeViewAbsolutePath? GetOpenedTreeView()
     {
-        if (IndexInHistory == -1 ||
-            IndexInHistory >= OpenedTreeViewModelHistory.Count)
+        if (IndexInHistory == -1 || IndexInHistory >= OpenedTreeViewModelHistory.Count)
             return null;
 
         return OpenedTreeViewModelHistory[IndexInHistory];
@@ -39,27 +36,24 @@ public partial record InputFileState
             true);
 
         selectionClone.IsExpanded = true;
-
         selectionClone.ChildBag = selectedTreeViewModel.ChildBag;
-
-        var nextHistory =
-            inInputFileState.OpenedTreeViewModelHistory;
+        
+        var nextHistory = inInputFileState.OpenedTreeViewModelHistory;
 
         // If not at end of history the more recent history is
         // replaced by the to be selected TreeViewModel
-        if (inInputFileState.IndexInHistory !=
-            inInputFileState.OpenedTreeViewModelHistory.Count - 1)
+        if (inInputFileState.IndexInHistory != inInputFileState.OpenedTreeViewModelHistory.Count - 1)
         {
             var historyCount = inInputFileState.OpenedTreeViewModelHistory.Count;
             var startingIndexToRemove = inInputFileState.IndexInHistory + 1;
             var countToRemove = historyCount - startingIndexToRemove;
 
-            nextHistory = inInputFileState.OpenedTreeViewModelHistory
-                .RemoveRange(startingIndexToRemove, countToRemove);
+            nextHistory = inInputFileState.OpenedTreeViewModelHistory.RemoveRange(
+                startingIndexToRemove,
+                countToRemove);
         }
 
-        nextHistory = nextHistory
-            .Add(selectionClone);
+        nextHistory = nextHistory.Add(selectionClone);
 
         return inInputFileState with
         {

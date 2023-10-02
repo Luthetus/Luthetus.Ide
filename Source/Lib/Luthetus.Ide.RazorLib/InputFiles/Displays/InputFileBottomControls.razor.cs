@@ -26,10 +26,7 @@ public partial class InputFileBottomControls : ComponentBase
             .FirstOrDefault(x => x.PatternName == patternName);
 
         if (pattern is not null)
-        {
-            Dispatcher.Dispatch(new InputFileState.SetSelectedInputFilePatternAction(
-                pattern));
-        }
+            Dispatcher.Dispatch(new InputFileState.SetSelectedInputFilePatternAction(pattern));
     }
 
     private string GetSelectedTreeViewModelAbsolutePathString(InputFileState inputFileState)
@@ -50,30 +47,22 @@ public partial class InputFileBottomControls : ComponentBase
         if (valid)
         {
             if (DialogRecord is not null)
-            {
-                Dispatcher.Dispatch(new DialogState.DisposeAction(
-                    DialogRecord.Key));
-            }
+                Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.Key));
 
-            await InputFileState.OnAfterSubmitFunc
-                .Invoke(InputFileState.SelectedTreeViewModel?.Item);
+            await InputFileState.OnAfterSubmitFunc.Invoke(InputFileState.SelectedTreeViewModel?.Item);
         }
     }
 
     private bool OnAfterSubmitIsDisabled()
     {
-        return !InputFileState.SelectionIsValidFunc.Invoke(
-                InputFileState.SelectedTreeViewModel?.Item)
+        return !InputFileState.SelectionIsValidFunc.Invoke(InputFileState.SelectedTreeViewModel?.Item)
             .Result;
     }
 
     private Task CancelOnClick()
     {
         if (DialogRecord is not null)
-        {
-            Dispatcher.Dispatch(new DialogState.DisposeAction(
-                DialogRecord.Key));
-        }
+            Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.Key));
 
         return Task.CompletedTask;
     }

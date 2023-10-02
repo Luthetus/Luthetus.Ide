@@ -14,9 +14,9 @@ public partial class InputFileTopNavBar : ComponentBase
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
-    private ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; set; } = null!;
+    private ILuthetusIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
     [Inject]
-    private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
+    private ILuthetusCommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
@@ -28,36 +28,34 @@ public partial class InputFileTopNavBar : ComponentBase
     public Func<IAbsolutePath, Task> SetInputFileContentTreeViewRootFunc { get; set; } = null!;
     [CascadingParameter]
     public InputFileState InputFileState { get; set; } = null!;
+    
+    private bool _showInputTextEditForAddress;
 
     public ElementReference? SearchElementReference { get; private set; }
-    private bool _showInputTextEditForAddress;
 
     public string SearchQuery
     {
         get => InputFileState.SearchQuery;
-        set => Dispatcher.Dispatch(new InputFileState.SetSearchQueryAction(
-                   value));
+        set => Dispatcher.Dispatch(new InputFileState.SetSearchQueryAction(value));
     }
 
     private async Task HandleBackButtonOnClick()
     {
         Dispatcher.Dispatch(new InputFileState.MoveBackwardsInHistoryAction());
-
         await ChangeContentRootToOpenedTreeView(InputFileState);
     }
 
     private async Task HandleForwardButtonOnClick()
     {
         Dispatcher.Dispatch(new InputFileState.MoveForwardsInHistoryAction());
-
         await ChangeContentRootToOpenedTreeView(InputFileState);
     }
 
     private async Task HandleUpwardButtonOnClick()
     {
         Dispatcher.Dispatch(new InputFileState.OpenParentDirectoryAction(
-            LuthetusIdeComponentRenderers,
-            LuthetusCommonComponentRenderers,
+            IdeComponentRenderers,
+            CommonComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,
             BackgroundTaskService));
@@ -67,9 +65,7 @@ public partial class InputFileTopNavBar : ComponentBase
 
     private async Task HandleRefreshButtonOnClick()
     {
-        Dispatcher.Dispatch(new InputFileState.RefreshCurrentSelectionAction(
-            BackgroundTaskService));
-
+        Dispatcher.Dispatch(new InputFileState.RefreshCurrentSelectionAction(BackgroundTaskService));
         await ChangeContentRootToOpenedTreeView(InputFileState);
     }
 
@@ -91,8 +87,7 @@ public partial class InputFileTopNavBar : ComponentBase
         }
     }
 
-    private async Task ChangeContentRootToOpenedTreeView(
-        InputFileState inputFileState)
+    private async Task ChangeContentRootToOpenedTreeView(InputFileState inputFileState)
     {
         var openedTreeView = InputFileState.GetOpenedTreeView();
 
@@ -107,27 +102,19 @@ public partial class InputFileTopNavBar : ComponentBase
             if (!await FileSystemProvider.Directory.ExistsAsync(address))
             {
                 if (await FileSystemProvider.File.ExistsAsync(address))
-                {
-                    throw new ApplicationException(
-                        $"Address provided was a file. Provide a directory instead. {address}");
-                }
+                    throw new ApplicationException($"Address provided was a file. Provide a directory instead. {address}");
 
-                throw new ApplicationException(
-                    $"Address provided does not exist. {address}");
+                throw new ApplicationException($"Address provided does not exist. {address}");
             }
 
-            var absolutePath = new AbsolutePath(
-                address,
-                true,
-                EnvironmentProvider);
-
+            var absolutePath = new AbsolutePath(address, true, EnvironmentProvider);
             _showInputTextEditForAddress = false;
 
             await SetInputFileContentTreeViewRootFunc.Invoke(absolutePath);
         }
         catch (Exception exception)
         {
-            NotificationHelper.DispatchError($"ERROR: {nameof(InputFileTopNavBar)}", exception.ToString(), LuthetusCommonComponentRenderers, Dispatcher);
+            NotificationHelper.DispatchError($"ERROR: {nameof(InputFileTopNavBar)}", exception.ToString(), CommonComponentRenderers, Dispatcher);
         }
     }
 

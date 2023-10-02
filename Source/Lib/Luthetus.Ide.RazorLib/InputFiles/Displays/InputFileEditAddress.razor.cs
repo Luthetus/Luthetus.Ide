@@ -56,7 +56,6 @@ public partial class InputFileEditAddress : ComponentBase
         if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
         {
             _isCancelled = true;
-
             await OnEscapeKeyDownCallbackAsync.Invoke();
         }
         else if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)

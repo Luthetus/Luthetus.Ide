@@ -22,22 +22,17 @@ public partial class GitSync
 
         var gitState = _gitStateWrap.Value;
 
-        Dispatcher.Dispatch(new SetGitStateWithAction(withGitState =>
+        Dispatcher.Dispatch(new SetGitStateWithAction(inGitState =>
         {
-            var nextActiveGitTasks = withGitState.ActiveGitTasks.Add(
-                handleRefreshGitTask);
-
-            return withGitState with
-            {
-                ActiveGitTasks = nextActiveGitTasks,
-            };
+            var nextActiveGitTasks = inGitState.ActiveGitTasks.Add(handleRefreshGitTask);
+            return inGitState with { ActiveGitTasks = nextActiveGitTasks };
         }));
 
         // Do not combine this following Dispatch for GitFilesList replacement
         // with the Dispatch for ActiveGitTasks replacement.
         // It could cause confusion in the future when one gets removed
         // without realizing the other was also part of the Dispatch replacement.
-        Dispatcher.Dispatch(new SetGitStateWithAction(withGitState => withGitState with
+        Dispatcher.Dispatch(new SetGitStateWithAction(inGitState => inGitState with
         {
             GitFilesList = ImmutableList<GitFile>.Empty
         }));
@@ -52,12 +47,10 @@ public partial class GitSync
         var generalTerminalSession = _terminalSessionStateWrap.Value.TerminalSessionMap[
             TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
 
-        var formattedCommand = new FormattedCommand(
-            GitCliFacts.TARGET_FILE_NAME,
-            new[]
-            {
-                    GitCliFacts.STATUS_COMMAND
-            });
+        var formattedCommand = new FormattedCommand(GitCliFacts.TARGET_FILE_NAME, new[]
+        {
+                GitCliFacts.STATUS_COMMAND
+        });
 
         var gitStatusCommand = new TerminalCommand(
             GitFacts.GitStatusTerminalCommandKey,
@@ -89,34 +82,27 @@ public partial class GitSync
 
         await generalTerminalSession.EnqueueCommandAsync(gitStatusCommand);
 
-        Dispatcher.Dispatch(new SetGitStateWithAction(withGitState =>
+        Dispatcher.Dispatch(new SetGitStateWithAction(inGitState =>
         {
-            var nextActiveGitTasks = withGitState.ActiveGitTasks.Remove(
-                handleRefreshGitTask);
-
-            return withGitState with
-            {
-                ActiveGitTasks = nextActiveGitTasks,
-            };
+            var nextActiveGitTasks = inGitState.ActiveGitTasks.Remove(handleRefreshGitTask);
+            return inGitState with { ActiveGitTasks = nextActiveGitTasks };
         }));
 
         void UntrackedFilesOnAfterCompletedAction(ImmutableList<GitFile> gitFiles)
         {
-            Dispatcher.Dispatch(new SetGitStateWithAction(withGitState =>
+            Dispatcher.Dispatch(new SetGitStateWithAction(inGitState =>
             {
-                var nextGitFilesList = withGitState.GitFilesList.AddRange(gitFiles);
-
-                return withGitState with { GitFilesList = nextGitFilesList };
+                var nextGitFilesList = inGitState.GitFilesList.AddRange(gitFiles);
+                return inGitState with { GitFilesList = nextGitFilesList };
             }));
         }
 
         void ChangesNotStagedOnAfterCompletedAction(ImmutableList<GitFile> gitFiles)
         {
-            Dispatcher.Dispatch(new SetGitStateWithAction(withGitState =>
+            Dispatcher.Dispatch(new SetGitStateWithAction(inGitState =>
             {
-                var nextGitFilesList = withGitState.GitFilesList.AddRange(gitFiles);
-
-                return withGitState with { GitFilesList = nextGitFilesList };
+                var nextGitFilesList = inGitState.GitFilesList.AddRange(gitFiles);
+                return inGitState with { GitFilesList = nextGitFilesList };
             }));
         }
     }
@@ -131,15 +117,10 @@ public partial class GitSync
         if (cancellationToken.IsCancellationRequested)
             return;
 
-        Dispatcher.Dispatch(new SetGitStateWithAction(withGitState =>
+        Dispatcher.Dispatch(new SetGitStateWithAction(inGitState =>
         {
-            var nextActiveGitTasks = withGitState.ActiveGitTasks.Add(
-                handleHandleGitInitAction);
-
-            return withGitState with
-            {
-                ActiveGitTasks = nextActiveGitTasks,
-            };
+            var nextActiveGitTasks = inGitState.ActiveGitTasks.Add(handleHandleGitInitAction);
+            return inGitState with { ActiveGitTasks = nextActiveGitTasks };
         }));
 
         var gitState = _gitStateWrap.Value;
@@ -147,12 +128,10 @@ public partial class GitSync
         if (gitState.GitFolderAbsolutePath is null)
             return;
 
-        var formattedCommand = new FormattedCommand(
-            GitCliFacts.TARGET_FILE_NAME,
-            new[]
-            {
-                    GitCliFacts.INIT_COMMAND
-            });
+        var formattedCommand = new FormattedCommand(GitCliFacts.TARGET_FILE_NAME, new[]
+        {
+                GitCliFacts.INIT_COMMAND
+        });
 
         var gitInitCommand = new TerminalCommand(
             GitFacts.GitInitTerminalCommandKey,
@@ -166,15 +145,10 @@ public partial class GitSync
 
         await generalTerminalSession.EnqueueCommandAsync(gitInitCommand);
 
-        Dispatcher.Dispatch(new SetGitStateWithAction(withGitState =>
+        Dispatcher.Dispatch(new SetGitStateWithAction(inGitState =>
         {
-            var nextActiveGitTasks = withGitState.ActiveGitTasks.Remove(
-                handleHandleGitInitAction);
-
-            return withGitState with
-            {
-                ActiveGitTasks = nextActiveGitTasks,
-            };
+            var nextActiveGitTasks = inGitState.ActiveGitTasks.Remove(handleHandleGitInitAction);
+            return inGitState with { ActiveGitTasks = nextActiveGitTasks };
         }));
     }
 
@@ -190,15 +164,10 @@ public partial class GitSync
         if (cancellationToken.IsCancellationRequested)
             return;
 
-        Dispatcher.Dispatch(new SetGitStateWithAction(withGitState =>
+        Dispatcher.Dispatch(new SetGitStateWithAction(inGitState =>
         {
-            var nextActiveGitTasks = withGitState.ActiveGitTasks.Add(
-                handleTryFindGitFolderInDirectoryAction);
-
-            return withGitState with
-            {
-                ActiveGitTasks = nextActiveGitTasks,
-            };
+            var nextActiveGitTasks = inGitState.ActiveGitTasks.Add(handleTryFindGitFolderInDirectoryAction);
+            return inGitState with { ActiveGitTasks = nextActiveGitTasks };
         }));
 
         if (!directoryAbsolutePath.IsDirectory)
@@ -219,33 +188,25 @@ public partial class GitSync
                 true,
                 _environmentProvider);
 
-            Dispatcher.Dispatch(new SetGitStateWithAction(
-                withGitState => withGitState with
-                {
-                    GitFolderAbsolutePath = gitFolderAbsolutePath,
-                }));
+            Dispatcher.Dispatch(new SetGitStateWithAction(inGitState => inGitState with
+            {
+                GitFolderAbsolutePath = gitFolderAbsolutePath
+            }));
 
             await RefreshGitAsync(cancellationToken);
         }
         else
         {
-            Dispatcher.Dispatch(new SetGitStateWithAction(
-                withGitState => withGitState with
-                {
-                    GitFolderAbsolutePath = null,
-                }));
-        }
-        Dispatcher.Dispatch(new SetGitStateWithAction(
-            withGitState =>
+            Dispatcher.Dispatch(new SetGitStateWithAction(inGitState => inGitState with
             {
-                var nextActiveGitTasks = withGitState.ActiveGitTasks.Remove(
-                    handleTryFindGitFolderInDirectoryAction);
-
-                return withGitState with
-                {
-                    ActiveGitTasks = nextActiveGitTasks,
-                };
+                GitFolderAbsolutePath = null,
             }));
+        }
+        Dispatcher.Dispatch(new SetGitStateWithAction(inGitState =>
+        {
+            var nextActiveGitTasks = inGitState.ActiveGitTasks.Remove(handleTryFindGitFolderInDirectoryAction);
+            return inGitState with { ActiveGitTasks = nextActiveGitTasks };
+        }));
     }
 
     private async Task GetGitOutputSectionAsync(
@@ -265,7 +226,7 @@ public partial class GitSync
         if (indexOfChangesNotStagedForCommitTextStart != -1)
         {
             var startOfChangesNotStagedForCommitIndex = indexOfChangesNotStagedForCommitTextStart +
-                                                        sectionStart.Length;
+                sectionStart.Length;
 
             var gitStatusOutputReader = new StringReader(
                 gitStatusOutput.Substring(startOfChangesNotStagedForCommitIndex));

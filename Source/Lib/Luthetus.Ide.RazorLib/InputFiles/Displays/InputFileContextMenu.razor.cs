@@ -22,14 +22,14 @@ public partial class InputFileContextMenu : ComponentBase
     [Inject]
     private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
     [Inject]
-    private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
+    private ILuthetusCommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public TreeViewCommandParameter TreeViewCommandParameter { get; set; } = null!;
 
-    public static readonly Key<DropdownRecord> ContextMenuEventDropdownKey = Key<DropdownRecord>.NewKey();
+    public static readonly Key<DropdownRecord> ContextMenuKey = Key<DropdownRecord>.NewKey();
 
     /// <summary>
     /// The program is currently running using Photino locally on the user's computer
@@ -37,15 +37,14 @@ public partial class InputFileContextMenu : ComponentBase
     /// </summary>
     public static TreeViewNoType? ParentOfCutFile;
 
-    private MenuRecord GetMenuRecord(
-        TreeViewCommandParameter treeViewCommandParameter)
+    private MenuRecord GetMenuRecord(TreeViewCommandParameter commandParameter)
     {
-        if (treeViewCommandParameter.TargetNode is null)
+        if (commandParameter.TargetNode is null)
             return MenuRecord.Empty;
 
-        var menuRecords = new List<MenuOptionRecord>();
+        var menuRecordsBag = new List<MenuOptionRecord>();
 
-        var treeViewModel = treeViewCommandParameter.TargetNode;
+        var treeViewModel = commandParameter.TargetNode;
         var parentTreeViewModel = treeViewModel.Parent;
 
         var parentTreeViewAbsolutePath = parentTreeViewModel as TreeViewAbsolutePath;
@@ -55,39 +54,28 @@ public partial class InputFileContextMenu : ComponentBase
 
         if (treeViewAbsolutePath.Item.IsDirectory)
         {
-            menuRecords.AddRange(
-                GetFileMenuOptions(treeViewAbsolutePath, parentTreeViewAbsolutePath)
-                    .Union(GetDirectoryMenuOptions(treeViewAbsolutePath))
-                    .Union(GetDebugMenuOptions(treeViewAbsolutePath)));
+            menuRecordsBag.AddRange(GetFileMenuOptions(treeViewAbsolutePath, parentTreeViewAbsolutePath)
+                .Union(GetDirectoryMenuOptions(treeViewAbsolutePath))
+                .Union(GetDebugMenuOptions(treeViewAbsolutePath)));
         }
         else
         {
-            menuRecords.AddRange(
-                GetFileMenuOptions(treeViewAbsolutePath, parentTreeViewAbsolutePath)
-                    .Union(GetDebugMenuOptions(treeViewAbsolutePath)));
+            menuRecordsBag.AddRange(GetFileMenuOptions(treeViewAbsolutePath, parentTreeViewAbsolutePath)
+                .Union(GetDebugMenuOptions(treeViewAbsolutePath)));
         }
 
-        return new MenuRecord(
-            menuRecords.ToImmutableArray());
+        return new MenuRecord(menuRecordsBag.ToImmutableArray());
     }
 
     private MenuOptionRecord[] GetDirectoryMenuOptions(TreeViewAbsolutePath treeViewModel)
     {
         return new[]
         {
-        MenuOptionsFactory.NewEmptyFile(
-            treeViewModel.Item,
-            async () => await ReloadTreeViewModel(treeViewModel)),
-        MenuOptionsFactory.NewDirectory(
-            treeViewModel.Item,
-            async () => await ReloadTreeViewModel(treeViewModel)),
-        MenuOptionsFactory.PasteClipboard(
-            treeViewModel.Item,
-            async () =>
+            MenuOptionsFactory.NewEmptyFile(treeViewModel.Item, async () => await ReloadTreeViewModel(treeViewModel)),
+            MenuOptionsFactory.NewDirectory(treeViewModel.Item, async () => await ReloadTreeViewModel(treeViewModel)),
+            MenuOptionsFactory.PasteClipboard(treeViewModel.Item, async () =>
             {
-                var localParentOfCutFile =
-                    ParentOfCutFile;
-
+                var localParentOfCutFile = ParentOfCutFile;
                 ParentOfCutFile = null;
 
                 if (localParentOfCutFile is not null)
@@ -95,7 +83,7 @@ public partial class InputFileContextMenu : ComponentBase
 
                 await ReloadTreeViewModel(treeViewModel);
             }),
-    };
+        };
     }
 
     private MenuOptionRecord[] GetFileMenuOptions(
@@ -105,11 +93,11 @@ public partial class InputFileContextMenu : ComponentBase
         return new[]
         {
             MenuOptionsFactory.CopyFile(treeViewModel.Item, () => {
-                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.NameWithExtension}", LuthetusCommonComponentRenderers, Dispatcher);
+                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.NameWithExtension}", CommonComponentRenderers, Dispatcher);
                 return Task.CompletedTask;
             }),
             MenuOptionsFactory.CutFile(treeViewModel.Item, () => {
-                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.NameWithExtension}", LuthetusCommonComponentRenderers, Dispatcher);
+                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.NameWithExtension}", CommonComponentRenderers, Dispatcher);
                 ParentOfCutFile = parentTreeViewModel;
                 return Task.CompletedTask;
             }),
@@ -118,8 +106,7 @@ public partial class InputFileContextMenu : ComponentBase
         };
     }
 
-    private MenuOptionRecord[] GetDebugMenuOptions(
-        TreeViewAbsolutePath treeViewModel)
+    private MenuOptionRecord[] GetDebugMenuOptions(TreeViewAbsolutePath treeViewModel)
     {
         return new MenuOptionRecord[]
         {
@@ -139,35 +126,32 @@ public partial class InputFileContextMenu : ComponentBase
     /// as the root. But this method erroneously reloads the old root.
     /// </summary>
     /// <param name="treeViewModel"></param>
-    private async Task ReloadTreeViewModel(
-        TreeViewNoType? treeViewModel)
+    private async Task ReloadTreeViewModel(TreeViewNoType? treeViewModel)
     {
         if (treeViewModel is null)
             return;
 
         await treeViewModel.LoadChildBagAsync();
 
-        TreeViewService.ReRenderNode(
-            InputFileSidebar.TreeViewInputFileSidebarStateKey,
-            treeViewModel);
-
-        TreeViewService.MoveUp(
-            InputFileSidebar.TreeViewInputFileSidebarStateKey,
-            false);
+        TreeViewService.ReRenderNode(InputFileSidebar.TreeViewStateKey, treeViewModel);
+        TreeViewService.MoveUp(InputFileSidebar.TreeViewStateKey, false);
     }
 
     public static string GetContextMenuCssStyleString(
-        TreeViewCommandParameter? treeViewCommandParameter,
+        TreeViewCommandParameter? commandParameter,
         DialogRecord dialogRecord)
     {
-        if (treeViewCommandParameter?.ContextMenuFixedPosition is null)
+        if (commandParameter?.ContextMenuFixedPosition is null)
             return "display: none;";
 
         if (dialogRecord.IsMaximized)
+        {
             return
-                $"left: {treeViewCommandParameter.ContextMenuFixedPosition.LeftPositionInPixels.ToCssValue()}px;" +
+                $"left: {commandParameter.ContextMenuFixedPosition.LeftPositionInPixels.ToCssValue()}px;" +
                 " " +
-                $"top: {treeViewCommandParameter.ContextMenuFixedPosition.TopPositionInPixels.ToCssValue()}px;";
+                $"top: {commandParameter.ContextMenuFixedPosition.TopPositionInPixels.ToCssValue()}px;";
+        }
+            
         var dialogLeftDimensionAttribute = dialogRecord
             .ElementDimensions
             .DimensionAttributeBag
@@ -181,7 +165,7 @@ public partial class InputFileContextMenu : ComponentBase
         contextMenuLeftDimensionAttribute.DimensionUnitBag.Add(new DimensionUnit
         {
             DimensionUnitKind = DimensionUnitKind.Pixels,
-            Value = treeViewCommandParameter.ContextMenuFixedPosition.LeftPositionInPixels
+            Value = commandParameter.ContextMenuFixedPosition.LeftPositionInPixels
         });
 
         foreach (var dimensionUnit in dialogLeftDimensionAttribute.DimensionUnitBag)
@@ -208,7 +192,7 @@ public partial class InputFileContextMenu : ComponentBase
         contextMenuTopDimensionAttribute.DimensionUnitBag.Add(new DimensionUnit
         {
             DimensionUnitKind = DimensionUnitKind.Pixels,
-            Value = treeViewCommandParameter.ContextMenuFixedPosition.TopPositionInPixels
+            Value = commandParameter.ContextMenuFixedPosition.TopPositionInPixels
         });
 
         foreach (var dimensionUnit in dialogTopDimensionAttribute.DimensionUnitBag)

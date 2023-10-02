@@ -10,7 +10,7 @@ public partial record FolderExplorerState(
     IAbsolutePath? AbsolutePath,
     bool IsLoadingFolderExplorer)
 {
-    public static readonly Key<TreeViewContainer> TreeViewFolderExplorerContentStateKey = Key<TreeViewContainer>.NewKey();
+    public static readonly Key<TreeViewContainer> TreeViewContentStateKey = Key<TreeViewContainer>.NewKey();
 
     private FolderExplorerState() : this(
         default,

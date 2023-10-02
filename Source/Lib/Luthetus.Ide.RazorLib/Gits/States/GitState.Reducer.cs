@@ -11,8 +11,7 @@ public partial record GitState
             GitState inGitState,
             SetGitStateWithAction setGitStateWithAction)
         {
-            return setGitStateWithAction.GitStateWithFunc.Invoke(
-                inGitState);
+            return setGitStateWithAction.GitStateWithFunc.Invoke(inGitState);
         }
     }
 }
