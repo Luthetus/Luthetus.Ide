@@ -17,7 +17,6 @@ public partial class StartupControlsDisplay : FluxorComponent
     private IState<TerminalSessionState> TerminalSessionStateWrap { get; set; } = null!;
 
     private readonly Key<TerminalCommand> _newDotNetSolutionTerminalCommandKey = Key<TerminalCommand>.NewKey();
-
     private readonly CancellationTokenSource _newDotNetSolutionCancellationTokenSource = new();
 
     private async Task StartProgramWithoutDebuggingOnClick()
@@ -32,9 +31,8 @@ public partial class StartupControlsDisplay : FluxorComponent
         if (parentDirectoryAbsolutePathString is null)
             return;
 
-        var formattedCommand = DotNetCliCommandFormatter
-            .FormatStartProjectWithoutDebugging(
-                programExecutionState.StartupProjectAbsolutePath);
+        var formattedCommand = DotNetCliCommandFormatter.FormatStartProjectWithoutDebugging(
+            programExecutionState.StartupProjectAbsolutePath);
 
         var startProgramWithoutDebuggingCommand = new TerminalCommand(
             _newDotNetSolutionTerminalCommandKey,
@@ -45,7 +43,6 @@ public partial class StartupControlsDisplay : FluxorComponent
         var executionTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[
             TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY];
 
-        await executionTerminalSession
-            .EnqueueCommandAsync(startProgramWithoutDebuggingCommand);
+        await executionTerminalSession.EnqueueCommandAsync(startProgramWithoutDebuggingCommand);
     }
 }

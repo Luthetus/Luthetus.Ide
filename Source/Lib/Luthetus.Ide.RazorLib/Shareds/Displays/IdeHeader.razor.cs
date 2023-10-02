@@ -39,7 +39,7 @@ public partial class IdeHeader : FluxorComponent
 
     private void InitializeMenuFile()
     {
-        var menuOptions = new List<MenuOptionRecord>();
+        var menuOptionsBag = new List<MenuOptionRecord>();
 
         // Menu Option New
         {
@@ -51,13 +51,9 @@ public partial class IdeHeader : FluxorComponent
             var menuOptionNew = new MenuOptionRecord(
                 "New",
                 MenuOptionKind.Other,
-                SubMenu: new MenuRecord(
-                    new[]
-                    {
-                    menuOptionNewDotNetSolution
-                    }.ToImmutableArray()));
+                SubMenu: new MenuRecord(new[] { menuOptionNewDotNetSolution }.ToImmutableArray()));
 
-            menuOptions.Add(menuOptionNew);
+            menuOptionsBag.Add(menuOptionNew);
         }
 
         // Menu Option Open
@@ -85,25 +81,23 @@ public partial class IdeHeader : FluxorComponent
             var menuOptionOpen = new MenuOptionRecord(
                 "Open",
                 MenuOptionKind.Other,
-                SubMenu: new MenuRecord(
-                    new[]
-                    {
+                SubMenu: new MenuRecord(new[]
+                {
                     menuOptionOpenFile,
                     menuOptionOpenDirectory,
                     menuOptionOpenCSharpProject,
                     menuOptionOpenDotNetSolution
-                    }.ToImmutableArray()));
+                }.ToImmutableArray()));
 
-            menuOptions.Add(menuOptionOpen);
+            menuOptionsBag.Add(menuOptionOpen);
         }
 
-        _menuFile = new MenuRecord(menuOptions.ToImmutableArray());
+        _menuFile = new MenuRecord(menuOptionsBag.ToImmutableArray());
     }
 
     private void AddActiveDropdownKey(Key<DropdownRecord> dropdownKey)
     {
-        Dispatcher.Dispatch(new DropdownState.AddActiveAction(
-            dropdownKey));
+        Dispatcher.Dispatch(new DropdownState.AddActiveAction(dropdownKey));
     }
 
     /// <summary>
@@ -114,9 +108,7 @@ public partial class IdeHeader : FluxorComponent
         try
         {
             if (_buttonFileElementReference is not null)
-            {
                 await _buttonFileElementReference.Value.FocusAsync();
-            }
         }
         catch (Exception e)
         {
@@ -137,7 +129,6 @@ public partial class IdeHeader : FluxorComponent
             IsResizable = true
         };
 
-        Dispatcher.Dispatch(new DialogState.RegisterAction(
-            dialogRecord));
+        Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
     }
 }

@@ -8,50 +8,37 @@ public partial record NuGetPackageManagerState
     {
         [ReducerMethod]
         public static NuGetPackageManagerState ReduceSetSelectedProjectToModifyAction(
-            NuGetPackageManagerState inNuGetPackageManagerState,
+            NuGetPackageManagerState inState,
             SetSelectedProjectToModifyAction setSelectedProjectToModifyAction)
         {
-            return inNuGetPackageManagerState with
+            return inState with
             {
-                SelectedProjectToModify =
-                    setSelectedProjectToModifyAction.SelectedProjectToModify
+                SelectedProjectToModify = setSelectedProjectToModifyAction.SelectedProjectToModify
             };
         }
 
         [ReducerMethod]
         public static NuGetPackageManagerState ReduceSetNugetQueryAction(
-            NuGetPackageManagerState inNuGetPackageManagerState,
+            NuGetPackageManagerState inState,
             SetNugetQueryAction setNugetQueryAction)
         {
-            return inNuGetPackageManagerState with
-            {
-                NugetQuery =
-                    setNugetQueryAction.NugetQuery
-            };
+            return inState with { NugetQuery = setNugetQueryAction.NugetQuery };
         }
 
         [ReducerMethod]
         public static NuGetPackageManagerState ReduceSetIncludePrereleaseAction(
-            NuGetPackageManagerState inNuGetPackageManagerState,
+            NuGetPackageManagerState inState,
             SetIncludePrereleaseAction setIncludePrereleaseAction)
         {
-            return inNuGetPackageManagerState with
-            {
-                IncludePrerelease =
-                    setIncludePrereleaseAction.IncludePrerelease
-            };
+            return inState with { IncludePrerelease = setIncludePrereleaseAction.IncludePrerelease };
         }
 
         [ReducerMethod]
         public static NuGetPackageManagerState ReduceSetMostRecentQueryResultAction(
-            NuGetPackageManagerState inNuGetPackageManagerState,
+            NuGetPackageManagerState inState,
             SetMostRecentQueryResultAction setMostRecentQueryResultAction)
         {
-            return inNuGetPackageManagerState with
-            {
-                MostRecentQueryResult =
-                    setMostRecentQueryResultAction.QueryResult
-            };
+            return inState with { QueryResultBag = setMostRecentQueryResultAction.QueryResultBag };
         }
     }
 }

@@ -26,21 +26,15 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
     [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
-    [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
     private DotNetSolutionSync DotNetSolutionSync { get; set; } = null!;
 
-    private string UnselectableClassCss => DragStateWrap.Value.ShouldDisplay
-        ? "balc_unselectable"
-        : string.Empty;
-
     private bool _previousDragStateWrapShouldDisplay;
-
     private ElementDimensions _bodyElementDimensions = new();
-
     private StateHasChangedBoundary _bodyAndFooterStateHasChangedBoundaryComponent = null!;
+
+    private string UnselectableClassCss => DragStateWrap.Value.ShouldDisplay ? "balc_unselectable" : string.Empty;
 
     protected override void OnInitialized()
     {
@@ -48,29 +42,29 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         AppOptionsStateWrap.StateChanged += AppOptionsStateWrapOnStateChanged;
         TextEditorService.OptionsStateWrap.StateChanged += TextEditorOptionsStateWrap_StateChanged;
 
-        var bodyHeight = _bodyElementDimensions.DimensionAttributeBag
-            .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Height);
+        var bodyHeight = _bodyElementDimensions.DimensionAttributeBag.Single(
+            da => da.DimensionAttributeKind == DimensionAttributeKind.Height);
 
         bodyHeight.DimensionUnitBag.AddRange(new[]
         {
-        new DimensionUnit
-        {
-            Value = 78,
-            DimensionUnitKind = DimensionUnitKind.Percentage
-        },
-        new DimensionUnit
-        {
-            Value = ResizableRow.RESIZE_HANDLE_HEIGHT_IN_PIXELS / 2,
-            DimensionUnitKind = DimensionUnitKind.Pixels,
-            DimensionOperatorKind = DimensionOperatorKind.Subtract
-        },
-        new DimensionUnit
-        {
-            Value = SizeFacts.Ide.Header.Height.Value / 2,
-            DimensionUnitKind = SizeFacts.Ide.Header.Height.DimensionUnitKind,
-            DimensionOperatorKind = DimensionOperatorKind.Subtract
-        }
-    });
+            new DimensionUnit
+            {
+                Value = 78,
+                DimensionUnitKind = DimensionUnitKind.Percentage
+            },
+            new DimensionUnit
+            {
+                Value = ResizableRow.RESIZE_HANDLE_HEIGHT_IN_PIXELS / 2,
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionOperatorKind = DimensionOperatorKind.Subtract
+            },
+            new DimensionUnit
+            {
+                Value = SizeFacts.Ide.Header.Height.Value / 2,
+                DimensionUnitKind = SizeFacts.Ide.Header.Height.DimensionUnitKind,
+                DimensionOperatorKind = DimensionOperatorKind.Subtract
+            }
+        });
 
         base.OnInitialized();
     }

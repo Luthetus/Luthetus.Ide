@@ -6,8 +6,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementations.Displays;
 
-public partial class TreeViewAbsolutePathDisplay : ComponentBase,
-    ITreeViewAbsolutePathRendererType
+public partial class TreeViewAbsolutePathDisplay : ComponentBase, ITreeViewAbsolutePathRendererType
 {
     [CascadingParameter]
     public TreeViewContainer TreeViewState { get; set; } = null!;

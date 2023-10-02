@@ -7,44 +7,37 @@ namespace Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 public class TreeViewGitFile : TreeViewWithType<GitFile>
 {
     public TreeViewGitFile(
-        GitFile gitFile,
-        ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
-        bool isExpandable,
-        bool isExpanded)
-            : base(
-                gitFile,
-                isExpandable,
-                isExpanded)
+            GitFile gitFile,
+            ILuthetusIdeComponentRenderers ideComponentRenderers,
+            bool isExpandable,
+            bool isExpanded)
+        : base(gitFile, isExpandable, isExpanded)
     {
-        LuthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
+        IdeComponentRenderers = ideComponentRenderers;
     }
 
-    public ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; }
+    public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
 
     public override bool Equals(object? obj)
     {
         if (obj is not TreeViewGitFile treeViewGitFile)
             return false;
 
-        return treeViewGitFile.Item.AbsolutePath.FormattedInput ==
-               Item.AbsolutePath.FormattedInput;
+        return treeViewGitFile.Item.AbsolutePath.FormattedInput == Item.AbsolutePath.FormattedInput;
     }
 
-    public override int GetHashCode()
-    {
-        return Item.AbsolutePath.FormattedInput.GetHashCode();
-    }
+    public override int GetHashCode() => Item.AbsolutePath.FormattedInput.GetHashCode();
 
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            LuthetusIdeComponentRenderers.LuthetusIdeTreeViews.TreeViewGitFileRendererType,
+            IdeComponentRenderers.LuthetusIdeTreeViews.TreeViewGitFileRendererType,
             new Dictionary<string, object?>
             {
-            {
-                nameof(ITreeViewGitFileRendererType.TreeViewGitFile),
-                this
-            },
+                {
+                    nameof(ITreeViewGitFileRendererType.TreeViewGitFile),
+                    this
+                },
             });
     }
 

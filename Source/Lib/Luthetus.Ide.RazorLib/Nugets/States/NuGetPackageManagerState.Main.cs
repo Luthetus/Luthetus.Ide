@@ -10,14 +10,9 @@ public partial record NuGetPackageManagerState(
     IDotNetProject? SelectedProjectToModify,
     string NugetQuery,
     bool IncludePrerelease,
-    ImmutableArray<NugetPackageRecord> MostRecentQueryResult)
+    ImmutableArray<NugetPackageRecord> QueryResultBag)
 {
-    public NuGetPackageManagerState()
-        : this(
-            default(IDotNetProject?),
-            string.Empty,
-            false,
-            ImmutableArray<NugetPackageRecord>.Empty)
+    public NuGetPackageManagerState() : this(null, string.Empty, false, ImmutableArray<NugetPackageRecord>.Empty)
     {
 
     }

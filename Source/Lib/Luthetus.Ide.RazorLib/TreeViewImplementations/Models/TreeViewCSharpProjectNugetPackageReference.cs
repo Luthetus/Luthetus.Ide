@@ -9,23 +9,20 @@ namespace Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 public class TreeViewCSharpProjectNugetPackageReference : TreeViewWithType<CSharpProjectNugetPackageReference>
 {
     public TreeViewCSharpProjectNugetPackageReference(
-        CSharpProjectNugetPackageReference cSharpProjectNugetPackageReference,
-        ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
-        IFileSystemProvider fileSystemProvider,
-        IEnvironmentProvider environmentProvider,
-        bool isExpandable,
-        bool isExpanded)
-            : base(
-                cSharpProjectNugetPackageReference,
-                isExpandable,
-                isExpanded)
+            CSharpProjectNugetPackageReference cSharpProjectNugetPackageReference,
+            ILuthetusIdeComponentRenderers ideComponentRenderers,
+            IFileSystemProvider fileSystemProvider,
+            IEnvironmentProvider environmentProvider,
+            bool isExpandable,
+            bool isExpanded)
+        : base(cSharpProjectNugetPackageReference, isExpandable, isExpanded)
     {
-        LuthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
+        IdeComponentRenderers = ideComponentRenderers;
         FileSystemProvider = fileSystemProvider;
         EnvironmentProvider = environmentProvider;
     }
 
-    public ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; }
+    public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
     public IFileSystemProvider FileSystemProvider { get; }
     public IEnvironmentProvider EnvironmentProvider { get; }
 
@@ -39,22 +36,20 @@ public class TreeViewCSharpProjectNugetPackageReference : TreeViewWithType<CShar
 
     public override int GetHashCode()
     {
-        var uniqueString = Item.CSharpProjectAbsolutePathString +
-            Item.LightWeightNugetPackageRecord.Id;
-
+        var uniqueString = Item.CSharpProjectAbsolutePathString + Item.LightWeightNugetPackageRecord.Id;
         return uniqueString.GetHashCode();
     }
 
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            LuthetusIdeComponentRenderers.LuthetusIdeTreeViews.TreeViewLightWeightNugetPackageRecordRendererType,
+            IdeComponentRenderers.LuthetusIdeTreeViews.TreeViewLightWeightNugetPackageRecordRendererType,
             new Dictionary<string, object?>
             {
-            {
-                nameof(ITreeViewCSharpProjectNugetPackageReferenceRendererType.CSharpProjectNugetPackageReference),
-                Item
-            },
+                {
+                    nameof(ITreeViewCSharpProjectNugetPackageReferenceRendererType.CSharpProjectNugetPackageReference),
+                    Item
+                },
             });
     }
 

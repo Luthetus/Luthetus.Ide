@@ -10,22 +10,19 @@ namespace Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 public class TreeViewCompilerService : TreeViewWithType<ICompilerService>
 {
     public TreeViewCompilerService(
-        ICompilerService compilerService,
-        ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
-        ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
-        bool isExpandable,
-        bool isExpanded)
-        : base(
-            compilerService,
-            isExpandable,
-            isExpanded)
+            ICompilerService compilerService,
+            ILuthetusIdeComponentRenderers ideComponentRenderers,
+            ILuthetusCommonComponentRenderers commonComponentRenderers,
+            bool isExpandable,
+            bool isExpanded)
+        : base(compilerService, isExpandable, isExpanded)
     {
-        LuthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
-        LuthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
+        IdeComponentRenderers = ideComponentRenderers;
+        CommonComponentRenderers = commonComponentRenderers;
     }
 
-    public ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; }
-    public ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; }
+    public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
+    public ILuthetusCommonComponentRenderers CommonComponentRenderers { get; }
 
     public override bool Equals(object? obj)
     {
@@ -35,21 +32,15 @@ public class TreeViewCompilerService : TreeViewWithType<ICompilerService>
         return treeViewCompilerService.Item == Item;
     }
 
-    public override int GetHashCode()
-    {
-        return Item.GetHashCode();
-    }
+    public override int GetHashCode() => Item.GetHashCode();
 
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            LuthetusIdeComponentRenderers.LuthetusIdeTreeViews.TreeViewCompilerServiceRendererType,
+            IdeComponentRenderers.LuthetusIdeTreeViews.TreeViewCompilerServiceRendererType,
             new Dictionary<string, object?>
             {
-                {
-                    nameof(ITreeViewCompilerServiceRendererType.TreeViewCompilerService),
-                    this
-                },
+                { nameof(ITreeViewCompilerServiceRendererType.TreeViewCompilerService), this },
             });
     }
 
@@ -65,8 +56,8 @@ public class TreeViewCompilerService : TreeViewWithType<ICompilerService>
             {
                 ChildBag.Add(new TreeViewCompilerService(
                     cSharpCompilerService,
-                    LuthetusIdeComponentRenderers,
-                    LuthetusCommonComponentRenderers,
+                    IdeComponentRenderers,
+                    CommonComponentRenderers,
                     true,
                     false));
             }
@@ -74,11 +65,7 @@ public class TreeViewCompilerService : TreeViewWithType<ICompilerService>
         catch (Exception e)
         {
             ChildBag.Clear();
-            ChildBag.Add(new TreeViewException(
-                e,
-                false,
-                false,
-                LuthetusCommonComponentRenderers));
+            ChildBag.Add(new TreeViewException(e, false, false, CommonComponentRenderers));
         }
 
         for (int i = 0; i < ChildBag.Count; i++)

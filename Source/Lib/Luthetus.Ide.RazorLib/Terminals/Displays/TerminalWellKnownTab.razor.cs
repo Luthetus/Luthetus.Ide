@@ -21,56 +21,43 @@ public partial class TerminalWellKnownTab : FluxorComponent
     [Parameter, EditorRequired]
     public Key<TerminalSession> WellKnownTerminalSessionKey { get; set; } = Key<TerminalSession>.Empty;
 
-    private string CssClassString =>
-        $"luth_ide_terminal-tab {ActiveTerminalCommandKeyCssClassString}";
+    private string CssClassString => $"luth_ide_terminal-tab {ActiveTerminalCommandKeyCssClassString}";
 
-    private string ActiveTerminalCommandKeyCssClassString =>
-        IsActiveTerminalCommandKey
-            ? "luth_active"
-            : TerminalSessionWasModifiedStateWrap.Value.EmptyTextHack;
+    private string ActiveTerminalCommandKeyCssClassString => IsActiveTerminalCommandKey
+        ? "luth_active"
+        : TerminalSessionWasModifiedStateWrap.Value.EmptyTextHack;
 
-    private bool IsActiveTerminalCommandKey =>
-        WellKnownTerminalSessionsStateWrap.Value.ActiveTerminalSessionKey ==
-        WellKnownTerminalSessionKey;
+    private bool IsActiveTerminalCommandKey => WellKnownTerminalSessionKey ==
+        WellKnownTerminalSessionsStateWrap.Value.ActiveTerminalSessionKey;
 
     protected override void OnInitialized()
     {
-        TerminalSessionsStateSelection
-            .Select(x =>
-            {
-                if (x.TerminalSessionMap.TryGetValue(
-                        WellKnownTerminalSessionKey, out var wellKnownTerminalSession))
-                {
-                    return wellKnownTerminalSession;
-                }
+        TerminalSessionsStateSelection.Select(x =>
+        {
+            if (x.TerminalSessionMap.TryGetValue(WellKnownTerminalSessionKey, out var wellKnownTerminalSession))
+                return wellKnownTerminalSession;
 
-                return null;
-            });
+            return null;
+        });
 
         base.OnInitialized();
     }
 
     private Task DispatchSetActiveTerminalCommandKeyActionOnClick()
     {
-        Dispatcher.Dispatch(new WellKnownTerminalSessionsState.SetActiveWellKnownTerminalSessionKey(
-            WellKnownTerminalSessionKey));
-
+        Dispatcher.Dispatch(new WellKnownTerminalSessionsState.SetActiveWellKnownTerminalSessionKey(WellKnownTerminalSessionKey));
         return Task.CompletedTask;
     }
 
     private Task ClearStandardOutOnClick()
     {
-        TerminalSessionsStateSelection.Value
-            .ClearStandardOut();
-
+        TerminalSessionsStateSelection.Value.ClearStandardOut();
         return Task.CompletedTask;
     }
 
     private Task KillProcessOnClick()
     {
-        TerminalSessionsStateSelection.Value
-            .KillProcess();
-
+        TerminalSessionsStateSelection.Value.KillProcess();
         return Task.CompletedTask;
     }
 }

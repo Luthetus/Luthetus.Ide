@@ -4,8 +4,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementations.Displays;
 
-public partial class TreeViewSolutionFolderDisplay
-    : ComponentBase, ITreeViewSolutionFolderRendererType
+public partial class TreeViewSolutionFolderDisplay : ComponentBase, ITreeViewSolutionFolderRendererType
 {
     [Parameter, EditorRequired]
     public DotNetSolutionFolder DotNetSolutionFolder { get; set; } = null!;

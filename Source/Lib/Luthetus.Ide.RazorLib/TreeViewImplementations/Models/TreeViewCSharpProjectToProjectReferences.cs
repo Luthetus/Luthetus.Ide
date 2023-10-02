@@ -10,23 +10,20 @@ namespace Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpProjectToProjectReferences>
 {
     public TreeViewCSharpProjectToProjectReferences(
-        CSharpProjectToProjectReferences cSharpProjectToProjectReferences,
-        ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
-        IFileSystemProvider fileSystemProvider,
-        IEnvironmentProvider environmentProvider,
-        bool isExpandable,
-        bool isExpanded)
-            : base(
-                cSharpProjectToProjectReferences,
-                isExpandable,
-                isExpanded)
+            CSharpProjectToProjectReferences cSharpProjectToProjectReferences,
+            ILuthetusIdeComponentRenderers ideComponentRenderers,
+            IFileSystemProvider fileSystemProvider,
+            IEnvironmentProvider environmentProvider,
+            bool isExpandable,
+            bool isExpanded)
+        : base(cSharpProjectToProjectReferences, isExpandable, isExpanded)
     {
-        LuthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
+        IdeComponentRenderers = ideComponentRenderers;
         FileSystemProvider = fileSystemProvider;
         EnvironmentProvider = environmentProvider;
     }
 
-    public ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; }
+    public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
     public IFileSystemProvider FileSystemProvider { get; }
     public IEnvironmentProvider EnvironmentProvider { get; }
 
@@ -38,17 +35,12 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
         return otherTreeView.GetHashCode() == GetHashCode();
     }
 
-    public override int GetHashCode()
-    {
-        return Item.CSharpProjectNamespacePath.AbsolutePath
-            .FormattedInput
-            .GetHashCode();
-    }
+    public override int GetHashCode() => Item.CSharpProjectNamespacePath.AbsolutePath.FormattedInput.GetHashCode();
 
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            LuthetusIdeComponentRenderers.LuthetusIdeTreeViews.TreeViewCSharpProjectToProjectReferencesRendererType,
+            IdeComponentRenderers.LuthetusIdeTreeViews.TreeViewCSharpProjectToProjectReferencesRendererType,
             null);
     }
 
@@ -88,13 +80,12 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
                         .Trim()))
                 .ToArray();
 
-            var includeAttribute = attributeNameValueTuples
-                .FirstOrDefault(x => x.Item1 == "Include");
+            var includeAttribute = attributeNameValueTuples.FirstOrDefault(x => x.Item1 == "Include");
 
             var referenceProjectAbsolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
-                    Item.CSharpProjectNamespacePath.AbsolutePath,
-                    includeAttribute.Item2,
-                    EnvironmentProvider);
+                Item.CSharpProjectNamespacePath.AbsolutePath,
+                includeAttribute.Item2,
+                EnvironmentProvider);
 
             var referenceProjectAbsolutePath = new AbsolutePath(
                 referenceProjectAbsolutePathString,
@@ -108,10 +99,10 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
             cSharpProjectToProjectReferences.Add(cSharpProjectToProjectReference);
         }
 
-        var newChildren = cSharpProjectToProjectReferences
+        var newChildBag = cSharpProjectToProjectReferences
             .Select(x => (TreeViewNoType)new TreeViewCSharpProjectToProjectReference(
                 x,
-                LuthetusIdeComponentRenderers,
+                IdeComponentRenderers,
                 FileSystemProvider,
                 EnvironmentProvider,
                 false,
@@ -121,16 +112,16 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
             })
             .ToList();
 
-        for (int i = 0; i < newChildren.Count; i++)
+        for (int i = 0; i < newChildBag.Count; i++)
         {
-            var newChild = newChildren[i];
+            var newChild = newChildBag[i];
 
             newChild.IndexAmongSiblings = i;
             newChild.Parent = this;
             newChild.TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
         }
 
-        ChildBag = newChildren;
+        ChildBag = newChildBag;
         TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
     }
 

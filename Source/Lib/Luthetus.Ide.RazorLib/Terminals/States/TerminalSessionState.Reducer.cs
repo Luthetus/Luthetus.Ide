@@ -8,62 +8,44 @@ public partial record TerminalSessionState
     {
         [ReducerMethod]
         public static TerminalSessionState ReduceRegisterTerminalSessionAction(
-        TerminalSessionState inTerminalSessionsState,
+        TerminalSessionState inState,
         RegisterTerminalSessionAction registerTerminalSessionAction)
         {
-            if (inTerminalSessionsState.TerminalSessionMap.ContainsKey(
-                    registerTerminalSessionAction.TerminalSession.TerminalSessionKey))
-            {
-                return inTerminalSessionsState;
-            }
+            if (inState.TerminalSessionMap.ContainsKey(registerTerminalSessionAction.TerminalSession.TerminalSessionKey))
+                return inState;
 
-            var nextMap = inTerminalSessionsState.TerminalSessionMap
-                .Add(
-                    registerTerminalSessionAction.TerminalSession.TerminalSessionKey,
-                    registerTerminalSessionAction.TerminalSession);
+            var nextMap = inState.TerminalSessionMap.Add(
+                registerTerminalSessionAction.TerminalSession.TerminalSessionKey,
+                registerTerminalSessionAction.TerminalSession);
 
-            return inTerminalSessionsState with
-            {
-                TerminalSessionMap = nextMap
-            };
+            return inState with { TerminalSessionMap = nextMap };
         }
 
         [ReducerMethod]
         public static TerminalSessionState ReduceUpdateTerminalSessionStateKeyAction(
-            TerminalSessionState inTerminalSessionsState,
+            TerminalSessionState inState,
             UpdateTerminalSessionStateKeyAction updateTerminalSessionStateKeyAction)
         {
-            if (inTerminalSessionsState.TerminalSessionMap.ContainsKey(
-                    updateTerminalSessionStateKeyAction.TerminalSession.TerminalSessionKey))
-            {
-                var nextMap = inTerminalSessionsState.TerminalSessionMap
-                    .SetItem(
-                        updateTerminalSessionStateKeyAction.TerminalSession.TerminalSessionKey,
-                        updateTerminalSessionStateKeyAction.TerminalSession);
+            if (!inState.TerminalSessionMap.ContainsKey(updateTerminalSessionStateKeyAction.TerminalSession.TerminalSessionKey))
+                return inState;
 
-                return inTerminalSessionsState with
-                {
-                    TerminalSessionMap = nextMap
-                };
-            }
-            else
+            var nextMap = inState.TerminalSessionMap.SetItem(
+                updateTerminalSessionStateKeyAction.TerminalSession.TerminalSessionKey,
+                updateTerminalSessionStateKeyAction.TerminalSession);
+
+            return inState with
             {
-                return inTerminalSessionsState;
-            }
+                TerminalSessionMap = nextMap
+            };
         }
 
         [ReducerMethod]
         public static TerminalSessionState ReduceDisposeTerminalSessionAction(
-            TerminalSessionState inTerminalSessionsState,
+            TerminalSessionState inState,
             DisposeTerminalSessionAction disposeTerminalSessionAction)
         {
-            var nextMap = inTerminalSessionsState.TerminalSessionMap
-                .Remove(disposeTerminalSessionAction.TerminalSessionKey);
-
-            return inTerminalSessionsState with
-            {
-                TerminalSessionMap = nextMap
-            };
+            var nextMap = inState.TerminalSessionMap.Remove(disposeTerminalSessionAction.TerminalSessionKey);
+            return inState with { TerminalSessionMap = nextMap };
         }
     }
 }

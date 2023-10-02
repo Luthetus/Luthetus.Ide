@@ -10,6 +10,4 @@ public partial record ProgramExecutionState(IAbsolutePath? StartupProjectAbsolut
     {
 
     }
-
-    public record SetStartupProjectAbsolutePathAction(IAbsolutePath? StartupProjectAbsolutePath);
 }

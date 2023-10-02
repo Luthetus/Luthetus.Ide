@@ -8,10 +8,10 @@ public partial record WellKnownTerminalSessionsState
     {
         [ReducerMethod]
         public static WellKnownTerminalSessionsState ReduceSetActiveTerminalCommandKeyAction(
-            WellKnownTerminalSessionsState inWellKnownTerminalSessionsState,
-            WellKnownTerminalSessionsState.SetActiveWellKnownTerminalSessionKey setActiveWellKnownTerminalSessionKeyAction)
+            WellKnownTerminalSessionsState inState,
+            SetActiveWellKnownTerminalSessionKey setActiveWellKnownTerminalSessionKeyAction)
         {
-            return inWellKnownTerminalSessionsState with
+            return inState with
             {
                 ActiveTerminalSessionKey = setActiveWellKnownTerminalSessionKeyAction.TerminalSessionKey
             };

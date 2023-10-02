@@ -30,20 +30,16 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
     public string NugetQuery
     {
         get => NuGetPackageManagerStateWrap.Value.NugetQuery;
-        set => Dispatcher.Dispatch(new NuGetPackageManagerState.SetNugetQueryAction(
-                   value));
+        set => Dispatcher.Dispatch(new NuGetPackageManagerState.SetNugetQueryAction(value));
     }
 
     public bool IncludePrerelease
     {
         get => NuGetPackageManagerStateWrap.Value.IncludePrerelease;
-        set => Dispatcher.Dispatch(new NuGetPackageManagerState.SetIncludePrereleaseAction(
-                   value));
+        set => Dispatcher.Dispatch(new NuGetPackageManagerState.SetIncludePrereleaseAction(value));
     }
 
-    private void SelectedProjectToModifyChanged(
-        ChangeEventArgs changeEventArgs,
-        DotNetSolutionState dotNetSolutionState)
+    private void SelectedProjectToModifyChanged(ChangeEventArgs changeEventArgs, DotNetSolutionState dotNetSolutionState)
     {
         if (changeEventArgs.Value is null || dotNetSolutionState.DotNetSolutionModel is null)
             return;
@@ -58,47 +54,38 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
                 .SingleOrDefault(x => x.ProjectIdGuid == projectIdGuid);
         }
 
-        Dispatcher.Dispatch(new NuGetPackageManagerState.SetSelectedProjectToModifyAction(
-            selectedProject));
+        Dispatcher.Dispatch(new NuGetPackageManagerState.SetSelectedProjectToModifyAction(selectedProject));
     }
 
-    private bool CheckIfProjectIsSelected(
-        IDotNetProject dotNetProject,
-        NuGetPackageManagerState nuGetPackageManagerState)
+    private bool CheckIfProjectIsSelected(IDotNetProject dotNetProject, NuGetPackageManagerState nuGetPackageManagerState)
     {
         if (nuGetPackageManagerState.SelectedProjectToModify is null)
             return false;
 
-        return nuGetPackageManagerState.SelectedProjectToModify.ProjectIdGuid ==
-               dotNetProject.ProjectIdGuid;
+        return nuGetPackageManagerState.SelectedProjectToModify.ProjectIdGuid == dotNetProject.ProjectIdGuid;
     }
 
-    private bool ValidateSolutionContainsSelectedProject(
-        DotNetSolutionState dotNetSolutionState,
-        NuGetPackageManagerState nuGetPackageManagerState)
+    private bool ValidateSolutionContainsSelectedProject(DotNetSolutionState dotNetSolutionState, NuGetPackageManagerState nuGetPackageManagerState)
     {
-        if (dotNetSolutionState.DotNetSolutionModel is null ||
-            nuGetPackageManagerState.SelectedProjectToModify is null)
-        {
+        if (dotNetSolutionState.DotNetSolutionModel is null || nuGetPackageManagerState.SelectedProjectToModify is null)
             return false;
-        }
 
-        return dotNetSolutionState.DotNetSolutionModel.DotNetProjects
-            .Any(x =>
-                x.ProjectIdGuid == nuGetPackageManagerState.SelectedProjectToModify.ProjectIdGuid);
+        return dotNetSolutionState.DotNetSolutionModel.DotNetProjects.Any(
+            x => x.ProjectIdGuid == nuGetPackageManagerState.SelectedProjectToModify.ProjectIdGuid);
     }
 
     private async Task SubmitNuGetQueryOnClick()
     {
-        var query = NugetPackageManagerProvider
-            .BuildQuery(NugetQuery, IncludePrerelease);
+        var query = NugetPackageManagerProvider.BuildQuery(NugetQuery, IncludePrerelease);
 
         try
         {
-            _exceptionFromNugetQuery = null;
-
-            _performingNugetQuery = true;
-            await InvokeAsync(StateHasChanged);
+            // UI
+            {
+                _exceptionFromNugetQuery = null;
+                _performingNugetQuery = true;
+                await InvokeAsync(StateHasChanged);
+            }
 
             BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
                 "Submit NuGet Query",

@@ -4,8 +4,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementations.Displays;
 
-public partial class TreeViewCSharpProjectToProjectReferenceDisplay :
-    ComponentBase, ITreeViewCSharpProjectToProjectReferenceRendererType
+public partial class TreeViewCSharpProjectToProjectReferenceDisplay : ComponentBase, ITreeViewCSharpProjectToProjectReferenceRendererType
 {
     [Parameter, EditorRequired]
     public CSharpProjectToProjectReference CSharpProjectToProjectReference { get; set; } = null!;

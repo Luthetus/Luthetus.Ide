@@ -9,23 +9,20 @@ namespace Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectDependencies>
 {
     public TreeViewCSharpProjectDependencies(
-        CSharpProjectDependencies cSharpProjectDependencies,
-        ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
-        IFileSystemProvider fileSystemProvider,
-        IEnvironmentProvider environmentProvider,
-        bool isExpandable,
-        bool isExpanded)
-            : base(
-                cSharpProjectDependencies,
-                isExpandable,
-                isExpanded)
+            CSharpProjectDependencies cSharpProjectDependencies,
+            ILuthetusIdeComponentRenderers ideComponentRenderers,
+            IFileSystemProvider fileSystemProvider,
+            IEnvironmentProvider environmentProvider,
+            bool isExpandable,
+            bool isExpanded)
+        : base(cSharpProjectDependencies, isExpandable, isExpanded)
     {
-        LuthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
+        IdeComponentRenderers = ideComponentRenderers;
         FileSystemProvider = fileSystemProvider;
         EnvironmentProvider = environmentProvider;
     }
 
-    public ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; }
+    public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
     public IFileSystemProvider FileSystemProvider { get; }
     public IEnvironmentProvider EnvironmentProvider { get; }
 
@@ -37,17 +34,12 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
         return otherTreeView.GetHashCode() == GetHashCode();
     }
 
-    public override int GetHashCode()
-    {
-        return Item.CSharpProjectNamespacePath.AbsolutePath
-            .FormattedInput
-            .GetHashCode();
-    }
+    public override int GetHashCode() => Item.CSharpProjectNamespacePath.AbsolutePath.FormattedInput.GetHashCode();
 
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            LuthetusIdeComponentRenderers.LuthetusIdeTreeViews.TreeViewCSharpProjectDependenciesRendererType,
+            IdeComponentRenderers.LuthetusIdeTreeViews.TreeViewCSharpProjectDependenciesRendererType,
             null);
     }
 
@@ -55,7 +47,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
     {
         var treeViewCSharpProjectNugetPackageReferences = new TreeViewCSharpProjectNugetPackageReferences(
             new CSharpProjectNugetPackageReferences(Item.CSharpProjectNamespacePath),
-            LuthetusIdeComponentRenderers,
+            IdeComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,
             true,
@@ -66,7 +58,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
 
         var treeViewCSharpProjectToProjectReferences = new TreeViewCSharpProjectToProjectReferences(
             new CSharpProjectToProjectReferences(Item.CSharpProjectNamespacePath),
-            LuthetusIdeComponentRenderers,
+            IdeComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,
             true,
@@ -75,22 +67,22 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
             TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
         };
 
-        var newChildren = new List<TreeViewNoType>
-    {
-        treeViewCSharpProjectNugetPackageReferences,
-        treeViewCSharpProjectToProjectReferences
-    };
-
-        for (int i = 0; i < newChildren.Count; i++)
+        var newChildBag = new List<TreeViewNoType>
         {
-            var newChild = newChildren[i];
+            treeViewCSharpProjectNugetPackageReferences,
+            treeViewCSharpProjectToProjectReferences
+        };
+
+        for (int i = 0; i < newChildBag.Count; i++)
+        {
+            var newChild = newChildBag[i];
 
             newChild.IndexAmongSiblings = i;
             newChild.Parent = this;
             newChild.TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
         }
 
-        ChildBag = newChildren;
+        ChildBag = newChildBag;
         TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
         return Task.CompletedTask;
     }

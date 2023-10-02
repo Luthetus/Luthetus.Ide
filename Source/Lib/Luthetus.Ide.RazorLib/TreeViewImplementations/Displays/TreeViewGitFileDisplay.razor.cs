@@ -8,8 +8,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementations.Displays;
 
-public partial class TreeViewGitFileDisplay
-    : FluxorComponent, ITreeViewGitFileRendererType
+public partial class TreeViewGitFileDisplay : FluxorComponent, ITreeViewGitFileRendererType
 {
     [Inject]
     private IState<GitState> GitStateWrap { get; set; } = null!;

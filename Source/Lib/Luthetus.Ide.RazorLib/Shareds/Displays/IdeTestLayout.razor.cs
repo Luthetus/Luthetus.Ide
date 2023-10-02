@@ -28,13 +28,9 @@ public partial class IdeTestLayout : LayoutComponentBase, IDisposable
     [Inject]
     private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
-    private IState<PanelsState> PanelsStateWrap { get; set; } = null!;
-    [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
@@ -42,17 +38,13 @@ public partial class IdeTestLayout : LayoutComponentBase, IDisposable
     [Inject]
     private ComponentRunnerOptions ComponentRunnerOptions { get; set; } = null!;
     [Inject]
-    private RazorCompilerService RazorCompilerService { get; set; } = null!;
-    [Inject]
     private CSharpCompilerService CSharpCompilerService { get; set; } = null!;
     [Inject]
     private EditorSync EditorSync { get; set; } = null!;
 
     private const string RAZOR_FILE_PATH_STRING = "C:\\Users\\hunte\\Repos\\Demos\\BlazorCrudApp\\Obsolete\\razorFile.razor";
 
-    private string UnselectableClassCss => DragStateWrap.Value.ShouldDisplay
-        ? "balc_unselectable"
-        : string.Empty;
+    private string UnselectableClassCss => DragStateWrap.Value.ShouldDisplay ? "balc_unselectable" : string.Empty;
 
     private bool _previousDragStateWrapShouldDisplay;
     private ElementDimensions _bodyElementDimensions = new();
@@ -66,29 +58,29 @@ public partial class IdeTestLayout : LayoutComponentBase, IDisposable
         AppOptionsStateWrap.StateChanged += AppOptionsStateWrapOnStateChanged;
         TextEditorService.OptionsStateWrap.StateChanged += TextEditorOptionsStateWrap_StateChanged;
 
-        var bodyHeight = _bodyElementDimensions.DimensionAttributeBag
-            .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Height);
+        var bodyHeight = _bodyElementDimensions.DimensionAttributeBag.Single(
+            da => da.DimensionAttributeKind == DimensionAttributeKind.Height);
 
         bodyHeight.DimensionUnitBag.AddRange(new[]
         {
-        new DimensionUnit
-        {
-            Value = 78,
-            DimensionUnitKind = DimensionUnitKind.Percentage
-        },
-        new DimensionUnit
-        {
-            Value = ResizableRow.RESIZE_HANDLE_HEIGHT_IN_PIXELS / 2,
-            DimensionUnitKind = DimensionUnitKind.Pixels,
-            DimensionOperatorKind = DimensionOperatorKind.Subtract
-        },
-        new DimensionUnit
-        {
-            Value = SizeFacts.Ide.Header.Height.Value / 2,
-            DimensionUnitKind = SizeFacts.Ide.Header.Height.DimensionUnitKind,
-            DimensionOperatorKind = DimensionOperatorKind.Subtract
-        }
-    });
+            new DimensionUnit
+            {
+                Value = 78,
+                DimensionUnitKind = DimensionUnitKind.Percentage
+            },
+            new DimensionUnit
+            {
+                Value = ResizableRow.RESIZE_HANDLE_HEIGHT_IN_PIXELS / 2,
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionOperatorKind = DimensionOperatorKind.Subtract
+            },
+            new DimensionUnit
+            {
+                Value = SizeFacts.Ide.Header.Height.Value / 2,
+                DimensionUnitKind = SizeFacts.Ide.Header.Height.DimensionUnitKind,
+                DimensionOperatorKind = DimensionOperatorKind.Subtract
+            }
+        });
 
         base.OnInitialized();
     }

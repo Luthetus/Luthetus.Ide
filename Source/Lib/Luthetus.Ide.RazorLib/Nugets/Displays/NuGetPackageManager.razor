@@ -158,9 +158,9 @@
                     <hr/>
 
                     @{
-                        var nugetResult = NuGetPackageManagerStateWrap.Value.MostRecentQueryResult;
+                        var nugetResult = NuGetPackageManagerStateWrap.Value.QueryResultBag;
 
-                        if (NuGetPackageManagerStateWrap.Value.MostRecentQueryResult.Any())
+                        if (NuGetPackageManagerStateWrap.Value.QueryResultBag.Any())
                         {
                             foreach (var entry in nugetResult)
                             {

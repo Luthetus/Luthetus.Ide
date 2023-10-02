@@ -10,26 +10,23 @@ namespace Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 public class TreeViewAbsolutePath : TreeViewWithType<IAbsolutePath>
 {
     public TreeViewAbsolutePath(
-        IAbsolutePath absolutePath,
-        ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
-        ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
-        IFileSystemProvider fileSystemProvider,
-        IEnvironmentProvider environmentProvider,
-        bool isExpandable,
-        bool isExpanded)
-            : base(
-                absolutePath,
-                isExpandable,
-                isExpanded)
+            IAbsolutePath absolutePath,
+            ILuthetusIdeComponentRenderers ideComponentRenderers,
+            ILuthetusCommonComponentRenderers commonComponentRenderers,
+            IFileSystemProvider fileSystemProvider,
+            IEnvironmentProvider environmentProvider,
+            bool isExpandable,
+            bool isExpanded)
+        : base(absolutePath, isExpandable, isExpanded)
     {
-        LuthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
-        LuthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
+        IdeComponentRenderers = ideComponentRenderers;
+        CommonComponentRenderers = commonComponentRenderers;
         FileSystemProvider = fileSystemProvider;
         EnvironmentProvider = environmentProvider;
     }
 
-    public ILuthetusIdeComponentRenderers LuthetusIdeComponentRenderers { get; }
-    public ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; }
+    public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
+    public ILuthetusCommonComponentRenderers CommonComponentRenderers { get; }
     public IFileSystemProvider FileSystemProvider { get; }
     public IEnvironmentProvider EnvironmentProvider { get; }
 
@@ -38,26 +35,18 @@ public class TreeViewAbsolutePath : TreeViewWithType<IAbsolutePath>
         if (obj is not TreeViewNamespacePath treeViewSolutionExplorer)
             return false;
 
-        return treeViewSolutionExplorer.Item.AbsolutePath
-                   .FormattedInput ==
-               Item.FormattedInput;
+        return treeViewSolutionExplorer.Item.AbsolutePath.FormattedInput == Item.FormattedInput;
     }
 
-    public override int GetHashCode()
-    {
-        return Item.FormattedInput.GetHashCode();
-    }
+    public override int GetHashCode() => Item.FormattedInput.GetHashCode();
 
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            LuthetusIdeComponentRenderers.LuthetusIdeTreeViews.TreeViewAbsolutePathRendererType,
+            IdeComponentRenderers.LuthetusIdeTreeViews.TreeViewAbsolutePathRendererType,
             new Dictionary<string, object?>
             {
-            {
-                nameof(ITreeViewAbsolutePathRendererType.TreeViewAbsolutePath),
-                this
-            },
+                { nameof(ITreeViewAbsolutePathRendererType.TreeViewAbsolutePath), this },
             });
     }
 
@@ -65,18 +54,14 @@ public class TreeViewAbsolutePath : TreeViewWithType<IAbsolutePath>
     {
         try
         {
-            var newChildren = new List<TreeViewNoType>();
+            var newChildBag = new List<TreeViewNoType>();
 
             if (Item.IsDirectory)
-            {
-                newChildren = await TreeViewHelper
-                    .LoadChildrenForDirectoryAsync(this);
-            }
+                newChildBag = await TreeViewHelper.LoadChildrenForDirectoryAsync(this);
 
-            var oldChildrenMap = ChildBag
-                .ToDictionary(child => child);
+            var oldChildrenMap = ChildBag.ToDictionary(child => child);
 
-            foreach (var newChild in newChildren)
+            foreach (var newChild in newChildBag)
             {
                 if (oldChildrenMap.TryGetValue(newChild, out var oldChild))
                 {
@@ -88,31 +73,27 @@ public class TreeViewAbsolutePath : TreeViewWithType<IAbsolutePath>
                 }
             }
 
-            for (int i = 0; i < newChildren.Count; i++)
+            for (int i = 0; i < newChildBag.Count; i++)
             {
-                var newChild = newChildren[i];
+                var newChild = newChildBag[i];
 
                 newChild.IndexAmongSiblings = i;
                 newChild.Parent = this;
                 newChild.TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
             }
 
-            ChildBag = newChildren;
+            ChildBag = newChildBag;
         }
         catch (Exception exception)
         {
             ChildBag = new List<TreeViewNoType>
-        {
-            new TreeViewException(
-                exception,
-                false,
-                false,
-                LuthetusCommonComponentRenderers)
             {
-                Parent = this,
-                IndexAmongSiblings = 0,
-            }
-        };
+                new TreeViewException(exception, false, false, CommonComponentRenderers)
+                {
+                    Parent = this,
+                    IndexAmongSiblings = 0,
+                }
+            };
         }
 
         TreeViewChangedKey = Key<TreeViewChanged>.NewKey();

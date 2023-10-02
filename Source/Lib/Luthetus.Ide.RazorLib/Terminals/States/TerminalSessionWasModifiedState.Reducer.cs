@@ -6,33 +6,24 @@ public partial record TerminalSessionWasModifiedState
 {
     [ReducerMethod]
     public static TerminalSessionWasModifiedState ReduceSetTerminalSessionStateKeyAction(
-        TerminalSessionWasModifiedState inTerminalSessionWasModifiedState,
+        TerminalSessionWasModifiedState inState,
         SetTerminalSessionStateKeyAction setTerminalSessionStateKeyAction)
     {
-        if (inTerminalSessionWasModifiedState.TerminalSessionWasModifiedMap.ContainsKey(
-                setTerminalSessionStateKeyAction.TerminalSessionKey))
+        if (inState.TerminalSessionWasModifiedMap.ContainsKey(setTerminalSessionStateKeyAction.TerminalSessionKey))
         {
-            var nextMap = inTerminalSessionWasModifiedState.TerminalSessionWasModifiedMap
-                .SetItem(
-                    setTerminalSessionStateKeyAction.TerminalSessionKey,
-                    setTerminalSessionStateKeyAction.StateKey);
+            var nextMap = inState.TerminalSessionWasModifiedMap.SetItem(
+                setTerminalSessionStateKeyAction.TerminalSessionKey,
+                setTerminalSessionStateKeyAction.StateKey);
 
-            return inTerminalSessionWasModifiedState with
-            {
-                TerminalSessionWasModifiedMap = nextMap
-            };
+            return inState with { TerminalSessionWasModifiedMap = nextMap };
         }
         else
         {
-            var nextMap = inTerminalSessionWasModifiedState.TerminalSessionWasModifiedMap
-                .Add(
-                    setTerminalSessionStateKeyAction.TerminalSessionKey,
-                    setTerminalSessionStateKeyAction.StateKey);
+            var nextMap = inState.TerminalSessionWasModifiedMap.Add(
+                setTerminalSessionStateKeyAction.TerminalSessionKey,
+                setTerminalSessionStateKeyAction.StateKey);
 
-            return inTerminalSessionWasModifiedState with
-            {
-                TerminalSessionWasModifiedMap = nextMap
-            };
+            return inState with { TerminalSessionWasModifiedMap = nextMap };
         }
     }
 }

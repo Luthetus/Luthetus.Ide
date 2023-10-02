@@ -47,9 +47,8 @@ public partial class NugetPackageDisplay : FluxorComponent
                 .OrderByDescending(x => x.Version)
                 .ToImmutableArray();
 
-            _nugetPackageVersionString = _nugetPackageVersionsOrdered
-                .FirstOrDefault()?
-                .Version ?? string.Empty;
+            _nugetPackageVersionString = _nugetPackageVersionsOrdered.FirstOrDefault()
+                ?.Version ?? string.Empty;
         }
 
         base.OnParametersSet();
@@ -65,14 +64,11 @@ public partial class NugetPackageDisplay : FluxorComponent
         var dotNetSolutionState = DotNetSolutionStateWrap.Value;
         var nuGetPackageManagerState = NuGetPackageManagerStateWrap.Value;
 
-        if (dotNetSolutionState.DotNetSolutionModel is null ||
-            nuGetPackageManagerState.SelectedProjectToModify is null)
-        {
+        if (dotNetSolutionState.DotNetSolutionModel is null || nuGetPackageManagerState.SelectedProjectToModify is null)
             return false;
-        }
 
-        return dotNetSolutionState.DotNetSolutionModel.DotNetProjects.Any(x =>
-            x.ProjectIdGuid == nuGetPackageManagerState.SelectedProjectToModify.ProjectIdGuid);
+        return dotNetSolutionState.DotNetSolutionModel.DotNetProjects.Any(
+            x => x.ProjectIdGuid == nuGetPackageManagerState.SelectedProjectToModify.ProjectIdGuid);
     }
 
     private async Task AddNugetPackageReferenceOnClick()
@@ -81,8 +77,7 @@ public partial class NugetPackageDisplay : FluxorComponent
         var targetNugetPackage = NugetPackageRecord;
         var targetNugetVersion = _nugetPackageVersionString;
 
-        if (!ValidateSolutionContainsSelectedProject() ||
-            targetProject is null)
+        if (!ValidateSolutionContainsSelectedProject() || targetProject is null)
         {
             return;
         }
@@ -110,7 +105,6 @@ public partial class NugetPackageDisplay : FluxorComponent
         var generalTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[
             TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
 
-        await generalTerminalSession
-            .EnqueueCommandAsync(addNugetPackageReferenceCommand);
+        await generalTerminalSession.EnqueueCommandAsync(addNugetPackageReferenceCommand);
     }
 }

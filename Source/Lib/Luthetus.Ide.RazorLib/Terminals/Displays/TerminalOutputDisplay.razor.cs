@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
 using System.Text;
+using Luthetus.TextEditor.RazorLib.Htmls.Models;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Displays;
 
@@ -51,17 +52,13 @@ public partial class TerminalOutputDisplay : FluxorComponent
 
     protected override void OnInitialized()
     {
-        TerminalSessionsStateSelection
-            .Select(x =>
-            {
-                if (x.TerminalSessionMap
-                    .TryGetValue(TerminalSessionKey, out var terminalSession))
-                {
-                    return terminalSession;
-                }
+        TerminalSessionsStateSelection.Select(x =>
+        {
+            if (x.TerminalSessionMap.TryGetValue(TerminalSessionKey, out var terminalSession))
+                return terminalSession;
 
-                return null;
-            });
+            return null;
+        });
 
         base.OnInitialized();
     }
@@ -76,8 +73,7 @@ public partial class TerminalOutputDisplay : FluxorComponent
 
                 if (terminalSession is not null)
                 {
-                    var textEditorModel = TextEditorService.Model
-                        .FindOrDefault(terminalSession.TextEditorModelKey);
+                    var textEditorModel = TextEditorService.Model.FindOrDefault(terminalSession.TextEditorModelKey);
 
                     if (textEditorModel is null)
                     {
@@ -103,15 +99,12 @@ public partial class TerminalOutputDisplay : FluxorComponent
     private static MarkupString ParseHttpLinks(string input)
     {
         var outputBuilder = new StringBuilder();
-
         var indexOfHttp = input.IndexOf("http");
 
         if (indexOfHttp > 0)
         {
             var firstSubstring = input.Substring(0, indexOfHttp);
-
             var httpBuilder = new StringBuilder();
-
             var position = indexOfHttp;
 
             while (position < input.Length)
@@ -124,16 +117,16 @@ public partial class TerminalOutputDisplay : FluxorComponent
             }
 
             var aTag = $"<a href=\"{httpBuilder}\" target=\"_blank\">{httpBuilder}</a>";
-
-            var result = firstSubstring.EscapeHtml()
-                         + aTag;
+            var result = firstSubstring.EscapeHtml() + aTag;
 
             if (position != input.Length - 1) result += input.Substring(position);
 
             outputBuilder.Append(result + "<br />");
         }
         else
+        {
             outputBuilder.Append(input.EscapeHtml() + "<br />");
+        }
 
         return (MarkupString)outputBuilder.ToString();
     }
@@ -155,22 +148,20 @@ public partial class TerminalOutputDisplay : FluxorComponent
 
             var whitespace = new[]
             {
-            KeyboardKeyFacts.WhitespaceCharacters.SPACE,
-            KeyboardKeyFacts.WhitespaceCharacters.TAB,
-            KeyboardKeyFacts.WhitespaceCharacters.NEW_LINE,
-            KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN,
-        };
+                KeyboardKeyFacts.WhitespaceCharacters.SPACE,
+                KeyboardKeyFacts.WhitespaceCharacters.TAB,
+                KeyboardKeyFacts.WhitespaceCharacters.NEW_LINE,
+                KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN,
+            };
 
             var indexOfFirstWordEndingExclusive = text.IndexOfAny(whitespace);
 
-            var targetFileName = text.Substring(
-                0,
-                indexOfFirstWordEndingExclusive);
+            var targetFileName = text.Substring(0, indexOfFirstWordEndingExclusive);
 
             if (targetFileName.StartsWith('.'))
             {
                 targetFileName = (generalTerminalSession.WorkingDirectoryAbsolutePathString ?? string.Empty) +
-                                 targetFileName;
+                    targetFileName;
             }
 
             var arguments = text
@@ -179,9 +170,7 @@ public partial class TerminalOutputDisplay : FluxorComponent
                 .Where(x => !string.IsNullOrWhiteSpace(x))
                 .ToArray();
 
-            var formattedCommand = new FormattedCommand(
-                targetFileName,
-                arguments);
+            var formattedCommand = new FormattedCommand(targetFileName, arguments);
 
             var terminalCommand = new TerminalCommand(
                 Key<TerminalCommand>.NewKey(),
@@ -190,8 +179,7 @@ public partial class TerminalOutputDisplay : FluxorComponent
                 CancellationToken.None,
                 () => Task.CompletedTask);
 
-            await generalTerminalSession
-                .EnqueueCommandAsync(terminalCommand);
+            await generalTerminalSession.EnqueueCommandAsync(terminalCommand);
         }
     }
 }

@@ -19,7 +19,7 @@ public class TerminalSession
 {
     private readonly IDispatcher _dispatcher;
     private readonly IBackgroundTaskService _backgroundTaskService;
-    private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
+    private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
     private readonly List<TerminalCommand> _terminalCommandsHistory = new();
     private CancellationTokenSource _commandCancellationTokenSource = new();
 
@@ -34,16 +34,15 @@ public class TerminalSession
         string? workingDirectoryAbsolutePathString,
         IDispatcher dispatcher,
         IBackgroundTaskService backgroundTaskService,
-        ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers)
+        ILuthetusCommonComponentRenderers commonComponentRenderers)
     {
         _dispatcher = dispatcher;
         _backgroundTaskService = backgroundTaskService;
-        _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
+        _commonComponentRenderers = commonComponentRenderers;
         WorkingDirectoryAbsolutePathString = workingDirectoryAbsolutePathString;
     }
 
-    public Key<TerminalSession> TerminalSessionKey { get; init; } =
-        Key<TerminalSession>.NewKey();
+    public Key<TerminalSession> TerminalSessionKey { get; init; } = Key<TerminalSession>.NewKey();
 
     public Key<TextEditorModel> TextEditorModelKey => new(TerminalSessionKey.Guid);
     public Key<TextEditorViewModel> TextEditorViewModelKey => new(TerminalSessionKey.Guid);
@@ -54,24 +53,20 @@ public class TerminalSession
 
     public ImmutableArray<TerminalCommand> TerminalCommandsHistory => _terminalCommandsHistory.ToImmutableArray();
 
-    // NOTE: the following did not work => _process?.HasExited ?? false;
+    /// <summary>NOTE: the following did not work => _process?.HasExited ?? false;</summary>
     public bool HasExecutingProcess { get; private set; }
 
     public string ReadStandardOut()
     {
-        return string
-            .Join(string.Empty, _standardOutBuilderMap
-                .Select(x => x.Value.ToString())
-                .ToArray());
+        return string.Join(
+            string.Empty,
+            _standardOutBuilderMap.Select(x => x.Value.ToString()).ToArray());
     }
 
     public string? ReadStandardOut(Key<TerminalCommand> terminalCommandKey)
     {
-        if (_standardOutBuilderMap
-            .TryGetValue(terminalCommandKey, out var output))
-        {
+        if (_standardOutBuilderMap.TryGetValue(terminalCommandKey, out var output))
             return output.ToString();
-        }
 
         return null;
     }
@@ -101,31 +96,22 @@ public class TerminalSession
                     command = command.WithArguments(terminalCommand.FormattedCommand.ArgumentsBag);
 
                 if (terminalCommand.ChangeWorkingDirectoryTo is not null)
-                {
-                    command = command
-                        .WithWorkingDirectory(terminalCommand.ChangeWorkingDirectoryTo);
-                }
+                    command = command.WithWorkingDirectory(terminalCommand.ChangeWorkingDirectoryTo);
                 else if (WorkingDirectoryAbsolutePathString is not null)
-                {
-                    command = command
-                        .WithWorkingDirectory(WorkingDirectoryAbsolutePathString);
-                }
+                    command = command.WithWorkingDirectory(WorkingDirectoryAbsolutePathString);
 
                 // Push-based event stream
                 {
                     var terminalCommandKey = terminalCommand.TerminalCommandKey;
 
-                    _standardOutBuilderMap.TryAdd(
-                        terminalCommand.TerminalCommandKey,
-                        new StringBuilder());
+                    _standardOutBuilderMap.TryAdd(terminalCommand.TerminalCommandKey, new StringBuilder());
 
                     HasExecutingProcess = true;
                     DispatchNewStateKey();
 
                     try
                     {
-                        await command
-                            .Observe(_commandCancellationTokenSource.Token)
+                        await command.Observe(_commandCancellationTokenSource.Token)
                             .ForEachAsync(cmdEvent =>
                             {
                                 switch (cmdEvent)
@@ -133,33 +119,27 @@ public class TerminalSession
                                     case StartedCommandEvent started:
                                         _standardOutBuilderMap[terminalCommandKey].AppendLine(
                                             $"> {WorkingDirectoryAbsolutePathString} (PID:{started.ProcessId}) {terminalCommand.FormattedCommand.Value}");
-
-                                        DispatchNewStateKey();
                                         break;
                                     case StandardOutputCommandEvent stdOut:
                                         _standardOutBuilderMap[terminalCommandKey].AppendLine(
                                             $"{stdOut.Text}");
-
-                                        DispatchNewStateKey();
                                         break;
                                     case StandardErrorCommandEvent stdErr:
                                         _standardOutBuilderMap[terminalCommandKey].AppendLine(
                                             $"Err> {stdErr.Text}");
-
-                                        DispatchNewStateKey();
                                         break;
                                     case ExitedCommandEvent exited:
                                         _standardOutBuilderMap[terminalCommandKey].AppendLine(
                                             $"Process exited; Code: {exited.ExitCode}");
-
-                                        DispatchNewStateKey();
                                         break;
                                 }
+
+                                DispatchNewStateKey();
                             });
                     }
                     catch (Exception e)
                     {
-                        NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _luthetusCommonComponentRenderers, _dispatcher);
+                        NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _dispatcher);
                     }
                     finally
                     {

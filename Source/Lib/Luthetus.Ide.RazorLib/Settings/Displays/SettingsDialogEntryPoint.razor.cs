@@ -21,9 +21,6 @@ public partial class SettingsDialogEntryPoint : ComponentBase
         IsResizable = true
     };
 
-    public void DispatchRegisterDialogRecordAction()
-    {
-        Dispatcher.Dispatch(new DialogState.RegisterAction(
-            _dialogRecord));
-    }
+    public void DispatchRegisterDialogRecordAction() =>
+        Dispatcher.Dispatch(new DialogState.RegisterAction(_dialogRecord));
 }

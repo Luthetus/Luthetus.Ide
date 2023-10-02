@@ -8,13 +8,12 @@ public partial record ProgramExecutionState
     {
         [ReducerMethod]
         public static ProgramExecutionState ReduceSetStartupProjectAbsolutePathAction(
-            ProgramExecutionState inProgramExecutionState,
-            ProgramExecutionState.SetStartupProjectAbsolutePathAction setStartupProjectAbsolutePathAction)
+            ProgramExecutionState inState,
+            SetStartupProjectAbsolutePathAction setStartupProjectAbsolutePathAction)
         {
-            return inProgramExecutionState with
+            return inState with
             {
-                StartupProjectAbsolutePath =
-                    setStartupProjectAbsolutePathAction.StartupProjectAbsolutePath
+                StartupProjectAbsolutePath = setStartupProjectAbsolutePathAction.StartupProjectAbsolutePath
             };
         }
     }

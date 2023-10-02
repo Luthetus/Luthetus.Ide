@@ -111,8 +111,8 @@ public partial class TreeViewHelper
 
                     return (TreeViewNoType)new TreeViewAbsolutePath(
                         absolutePath,
-                        directoryTreeView.LuthetusIdeComponentRenderers,
-                        directoryTreeView.LuthetusCommonComponentRenderers,
+                        directoryTreeView.IdeComponentRenderers,
+                        directoryTreeView.CommonComponentRenderers,
                         directoryTreeView.FileSystemProvider,
                         directoryTreeView.EnvironmentProvider,
                         true,
@@ -135,8 +135,8 @@ public partial class TreeViewHelper
 
                     return (TreeViewNoType)new TreeViewAbsolutePath(
                         absolutePath,
-                        directoryTreeView.LuthetusIdeComponentRenderers,
-                        directoryTreeView.LuthetusCommonComponentRenderers,
+                        directoryTreeView.IdeComponentRenderers,
+                        directoryTreeView.CommonComponentRenderers,
                         directoryTreeView.FileSystemProvider,
                         directoryTreeView.EnvironmentProvider,
                         false,
