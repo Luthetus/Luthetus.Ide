@@ -2,13 +2,12 @@
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
-using Luthetus.Ide.RazorLib.CSharpProjectForms.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.WebsiteProjectTemplates.Models;
 
-namespace Luthetus.Ide.RazorLib.CSharpProjectForms.Scenes;
+namespace Luthetus.Ide.RazorLib.CSharpProjectForms.Models;
 
-public record ImmutableCSharpProjectFormScene(
+public record CSharpProjectFormViewModelImmutable(
     DotNetSolutionModel? DotNetSolutionModel,
     IEnvironmentProvider EnvironmentProvider,
     bool IsReadingProjectTemplates,
@@ -16,7 +15,7 @@ public record ImmutableCSharpProjectFormScene(
     string CSharpProjectNameValue,
     string OptionalParametersValue,
     string ParentDirectoryNameValue,
-    List<ProjectTemplate> ProjectTemplateContainer,
+    List<ProjectTemplate> ProjectTemplateBag,
     CSharpProjectFormPanelKind ActivePanelKind,
     string SearchInput,
     ProjectTemplate? SelectedProjectTemplate,

@@ -12,14 +12,11 @@ public partial class FileTemplatesDisplay : ComponentBase
     [Parameter, EditorRequired]
     public string FileName { get; set; } = null!;
 
-    private ImmutableArray<FileTemplatesFormWrapper> _fileTemplatesFormWrappers =
-        ImmutableArray<FileTemplatesFormWrapper>.Empty;
-
+    private ImmutableArray<FileTemplatesFormWrapper> _fileTemplatesFormWrappers = ImmutableArray<FileTemplatesFormWrapper>.Empty;
+    private ImmutableArray<FileTemplatesFormWrapper> _relatedMatchWrappers = ImmutableArray<FileTemplatesFormWrapper>.Empty;
     private FileTemplatesFormWrapper? _exactMatchWrapper;
-    private ImmutableArray<FileTemplatesFormWrapper> _relatedMatchWrappers =
-        ImmutableArray<FileTemplatesFormWrapper>.Empty;
-
     public IFileTemplate? ExactMatchFileTemplate => _exactMatchWrapper?.FileTemplate;
+
     public ImmutableArray<IFileTemplate>? RelatedMatchFileTemplates => _relatedMatchWrappers
         .Where(x => x.IsChecked)
         .Select(x => x.FileTemplate)
@@ -27,7 +24,7 @@ public partial class FileTemplatesDisplay : ComponentBase
 
     protected override void OnInitialized()
     {
-        _fileTemplatesFormWrappers = FileTemplateProvider.FileTemplates
+        _fileTemplatesFormWrappers = FileTemplateProvider.FileTemplatesBag
             .Select(x => new FileTemplatesFormWrapper(x, true))
             .ToImmutableArray();
 
@@ -36,9 +33,7 @@ public partial class FileTemplatesDisplay : ComponentBase
 
     private class FileTemplatesFormWrapper
     {
-        public FileTemplatesFormWrapper(
-            IFileTemplate fileTemplate,
-            bool isChecked)
+        public FileTemplatesFormWrapper(IFileTemplate fileTemplate, bool isChecked)
         {
             FileTemplate = fileTemplate;
             IsChecked = isChecked;
@@ -56,12 +51,10 @@ public partial class FileTemplatesDisplay : ComponentBase
             return;
         }
 
-        var relatedMatches = _exactMatchWrapper
-            .FileTemplate.RelatedFileTemplatesFunc.Invoke(FileName);
+        var relatedMatches = _exactMatchWrapper.FileTemplate.RelatedFileTemplatesFunc.Invoke(FileName);
 
-        _relatedMatchWrappers = relatedMatches.Select(rel =>
-            _fileTemplatesFormWrappers.First(wrap =>
-                rel.Id == wrap.FileTemplate.Id))
+        _relatedMatchWrappers = relatedMatches
+            .Select(rel => _fileTemplatesFormWrappers.First(wrap => rel.Id == wrap.FileTemplate.Id))
             .ToImmutableArray();
     }
 }

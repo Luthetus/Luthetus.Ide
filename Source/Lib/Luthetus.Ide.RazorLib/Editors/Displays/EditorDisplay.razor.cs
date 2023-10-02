@@ -10,7 +10,7 @@ public partial class EditorDisplay : ComponentBase
     [Parameter, EditorRequired]
     public ElementDimensions EditorElementDimensions { get; set; } = null!;
 
-    private static readonly ImmutableArray<TextEditorHeaderButtonKind> TextEditorHeaderButtonKinds =
+    private static readonly ImmutableArray<TextEditorHeaderButtonKind> TextEditorHeaderButtonKindsBag =
         Enum
             .GetValues(typeof(TextEditorHeaderButtonKind))
             .Cast<TextEditorHeaderButtonKind>()

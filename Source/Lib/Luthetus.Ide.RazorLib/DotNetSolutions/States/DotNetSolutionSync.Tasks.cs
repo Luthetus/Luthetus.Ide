@@ -18,19 +18,19 @@ public partial class DotNetSolutionSync
 {
     private async Task AddExistingProjectToSolutionAsync(
         Key<DotNetSolutionModel> dotNetSolutionModelKey,
-        string localProjectTemplateShortName,
-        string localCSharpProjectName,
+        string projectTemplateShortName,
+        string cSharpProjectName,
         IAbsolutePath cSharpProjectAbsolutePath,
         IEnvironmentProvider environmentProvider)
     {
-        var inDotNetSolutionModel = _dotNetSolutionStateWrap.Value.DotNetSolutions.FirstOrDefault(
-                    x => x.DotNetSolutionModelKey == dotNetSolutionModelKey);
+        var inDotNetSolutionModel = _dotNetSolutionStateWrap.Value.DotNetSolutionsBag.FirstOrDefault(
+            x => x.DotNetSolutionModelKey == dotNetSolutionModelKey);
 
         if (inDotNetSolutionModel is null)
             return;
 
         var projectTypeGuid = WebsiteProjectTemplateFacts.GetProjectTypeGuid(
-            localProjectTemplateShortName);
+            projectTemplateShortName);
 
         var relativePathFromSlnToProject = PathHelper.GetRelativeFromTwoAbsolutes(
             inDotNetSolutionModel.NamespacePath.AbsolutePath,
@@ -40,7 +40,7 @@ public partial class DotNetSolutionSync
         var projectIdGuid = Guid.NewGuid();
 
         var cSharpProject = new CSharpProject(
-            localCSharpProjectName,
+            cSharpProjectName,
             projectTypeGuid,
             relativePathFromSlnToProject,
             projectIdGuid);
@@ -119,7 +119,7 @@ public partial class DotNetSolutionSync
     {
         var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
 
-        var dotNetSolutionModel = dotNetSolutionState.DotNetSolutions.FirstOrDefault(
+        var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionsBag.FirstOrDefault(
             x => x.DotNetSolutionModelKey == dotNetSolutionModelKey);
 
         if (dotNetSolutionModel is null)
@@ -127,8 +127,8 @@ public partial class DotNetSolutionSync
 
         var rootNode = new TreeViewSolution(
             dotNetSolutionModel,
-            _luthetusIdeComponentRenderers,
-            _luthetusCommonComponentRenderers,
+            _ideComponentRenderers,
+            _commonComponentRenderers,
             _fileSystemProvider,
             _environmentProvider,
             true,

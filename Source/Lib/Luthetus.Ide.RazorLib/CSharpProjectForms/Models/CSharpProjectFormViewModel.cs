@@ -2,20 +2,19 @@
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.RewriteForImmutability;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
-using Luthetus.Ide.RazorLib.CSharpProjectForms.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.WebsiteProjectTemplates.Models;
 
-namespace Luthetus.Ide.RazorLib.CSharpProjectForms.Scenes;
+namespace Luthetus.Ide.RazorLib.CSharpProjectForms.Models;
 
-public class CSharpProjectFormScene
+public class CSharpProjectFormViewModel
 {
     public readonly Key<TerminalCommand> NewCSharpProjectTerminalCommandKey = Key<TerminalCommand>.NewKey();
     public readonly Key<TerminalCommand> LoadProjectTemplatesTerminalCommandKey = Key<TerminalCommand>.NewKey();
     public readonly CancellationTokenSource NewCSharpProjectCancellationTokenSource = new();
 
-    public CSharpProjectFormScene(
+    public CSharpProjectFormViewModel(
         DotNetSolutionModel? dotNetSolutionModel,
         IEnvironmentProvider environmentProvider)
     {
@@ -30,7 +29,7 @@ public class CSharpProjectFormScene
     public string CSharpProjectNameValue { get; set; } = string.Empty;
     public string OptionalParametersValue { get; set; } = string.Empty;
     public string ParentDirectoryNameValue { get; set; } = string.Empty;
-    public List<ProjectTemplate> ProjectTemplateContainer { get; set; } = new List<ProjectTemplate>();
+    public List<ProjectTemplate> ProjectTemplateBag { get; set; } = new List<ProjectTemplate>();
     public CSharpProjectFormPanelKind ActivePanelKind { get; set; } = CSharpProjectFormPanelKind.Graphical;
     public string SearchInput { get; set; } = string.Empty;
     public ProjectTemplate? SelectedProjectTemplate { get; set; } = null;
@@ -60,9 +59,9 @@ public class CSharpProjectFormScene
         DotNetSolutionModel?.NamespacePath?.AbsolutePath.FormattedInput ?? string.Empty,
         $"{CSharpProjectNameValue}{EnvironmentProvider.DirectorySeparatorChar}{CSharpProjectNameValue}.{ExtensionNoPeriodFacts.C_SHARP_PROJECT}");
 
-    public ImmutableCSharpProjectFormScene TakeSnapshot()
+    public CSharpProjectFormViewModelImmutable TakeSnapshot()
     {
-        return new ImmutableCSharpProjectFormScene(
+        return new CSharpProjectFormViewModelImmutable(
             DotNetSolutionModel,
             EnvironmentProvider,
             IsReadingProjectTemplates,
@@ -70,7 +69,7 @@ public class CSharpProjectFormScene
             CSharpProjectNameValue,
             OptionalParametersValue,
             ParentDirectoryNameValue,
-            ProjectTemplateContainer,
+            ProjectTemplateBag,
             ActivePanelKind,
             SearchInput,
             SelectedProjectTemplate,

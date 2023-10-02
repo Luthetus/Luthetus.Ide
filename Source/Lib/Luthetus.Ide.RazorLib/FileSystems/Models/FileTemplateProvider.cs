@@ -4,18 +4,18 @@ namespace Luthetus.Ide.RazorLib.FileSystems.Models;
 
 public class FileTemplateProvider : IFileTemplateProvider
 {
-    private List<IFileTemplate> _fileTemplates = new();
+    private List<IFileTemplate> _fileTemplatesBag = new();
 
     /// <summary>
-    /// The order of the entries in <see cref="_fileTemplates"/> is important
+    /// The order of the entries in <see cref="_fileTemplatesBag"/> is important
     /// as the .FirstOrDefault(x => ...true...) is used.
     /// </summary>
     public FileTemplateProvider()
     {
-        _fileTemplates.Add(FileTemplateFacts.RazorCodebehind);
-        _fileTemplates.Add(FileTemplateFacts.RazorMarkup);
-        _fileTemplates.Add(FileTemplateFacts.CSharpClass);
+        _fileTemplatesBag.Add(FileTemplateFacts.RazorCodebehind);
+        _fileTemplatesBag.Add(FileTemplateFacts.RazorMarkup);
+        _fileTemplatesBag.Add(FileTemplateFacts.CSharpClass);
     }
 
-    public ImmutableArray<IFileTemplate> FileTemplates => _fileTemplates.ToImmutableArray();
+    public ImmutableArray<IFileTemplate> FileTemplatesBag => _fileTemplatesBag.ToImmutableArray();
 }

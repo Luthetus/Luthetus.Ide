@@ -15,8 +15,8 @@ public partial class DotNetSolutionSync
 {
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IEnvironmentProvider _environmentProvider;
-    private readonly ILuthetusIdeComponentRenderers _luthetusIdeComponentRenderers;
-    private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
+    private readonly ILuthetusIdeComponentRenderers _ideComponentRenderers;
+    private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
     private readonly ITreeViewService _treeViewService;
     private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
     private readonly ITextEditorService _textEditorService;
@@ -24,8 +24,8 @@ public partial class DotNetSolutionSync
     public DotNetSolutionSync(
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
-        ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
-        ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
+        ILuthetusIdeComponentRenderers ideComponentRenderers,
+        ILuthetusCommonComponentRenderers commonComponentRenderers,
         ITreeViewService treeViewService,
         IState<DotNetSolutionState> dotNetSolutionStateWrap,
         ITextEditorService textEditorService,
@@ -35,8 +35,8 @@ public partial class DotNetSolutionSync
     {
         _fileSystemProvider = fileSystemProvider;
         _environmentProvider = environmentProvider;
-        _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
-        _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
+        _ideComponentRenderers = ideComponentRenderers;
+        _commonComponentRenderers = commonComponentRenderers;
         _treeViewService = treeViewService;
         _dotNetSolutionStateWrap = dotNetSolutionStateWrap;
         _textEditorService = textEditorService;
@@ -65,19 +65,19 @@ public partial class DotNetSolutionSync
     {
         return new WithAction(dotNetSolutionState =>
         {
-            var indexOfSln = dotNetSolutionState.DotNetSolutions.FindIndex(
+            var indexOfSln = dotNetSolutionState.DotNetSolutionsBag.FindIndex(
                 sln => sln.DotNetSolutionModelKey == dotNetSolutionModelKey);
 
             if (indexOfSln == -1)
                 return dotNetSolutionState;
 
-            var outDotNetSolutions = dotNetSolutionState.DotNetSolutions.SetItem(
+            var outDotNetSolutions = dotNetSolutionState.DotNetSolutionsBag.SetItem(
                 indexOfSln,
                 outDotNetSolutionModel);
 
             return dotNetSolutionState with
             {
-                DotNetSolutions = outDotNetSolutions
+                DotNetSolutionsBag = outDotNetSolutions
             };
         });
     }

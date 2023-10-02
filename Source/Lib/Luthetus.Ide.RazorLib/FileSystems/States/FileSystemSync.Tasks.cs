@@ -21,10 +21,7 @@ public partial class FileSystemSync
         if (absolutePathString is not null &&
             await _fileSystemProvider.File.ExistsAsync(absolutePathString))
         {
-            await _fileSystemProvider.File.WriteAllTextAsync(
-                absolutePathString,
-                content);
-
+            await _fileSystemProvider.File.WriteAllTextAsync(absolutePathString, content);
             notificationMessage = $"successfully saved: {absolutePathString}";
         }
         else
@@ -39,10 +36,9 @@ public partial class FileSystemSync
 
         if (absolutePathString is not null)
         {
-            fileLastWriteTime = await _fileSystemProvider.File
-                .GetLastWriteTimeAsync(
-                    absolutePathString,
-                    CancellationToken.None);
+            fileLastWriteTime = await _fileSystemProvider.File.GetLastWriteTimeAsync(
+                absolutePathString,
+                CancellationToken.None);
         }
 
         onAfterSaveCompletedWrittenDateTimeAction?.Invoke(fileLastWriteTime);

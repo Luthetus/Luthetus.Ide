@@ -15,7 +15,6 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Ide.RazorLib.CSharpProjectForms.Scenes;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.CSharpProjectForms.Models;
 using Luthetus.Ide.RazorLib.Installations.Models;
@@ -56,14 +55,14 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     [Parameter]
     public Key<DotNetSolutionModel> DotNetSolutionModelKey { get; set; }
 
-    private CSharpProjectFormScene _scene = null!;
+    private CSharpProjectFormViewModel _viewModel = null!;
 
-    private DotNetSolutionModel? DotNetSolutionModel => DotNetSolutionStateWrap.Value.DotNetSolutions.FirstOrDefault(
+    private DotNetSolutionModel? DotNetSolutionModel => DotNetSolutionStateWrap.Value.DotNetSolutionsBag.FirstOrDefault(
         x => x.DotNetSolutionModelKey == DotNetSolutionModelKey);
 
     protected override void OnInitialized()
     {
-        _scene = new(DotNetSolutionModel, EnvironmentProvider);
+        _viewModel = new(DotNetSolutionModel, EnvironmentProvider);
         base.OnInitialized();
     }
 
@@ -78,7 +77,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     }
 
     private string GetIsActiveCssClassString(CSharpProjectFormPanelKind panelKind) =>
-        _scene.ActivePanelKind == panelKind ? "luth_active" : string.Empty;
+        _viewModel.ActivePanelKind == panelKind ? "luth_active" : string.Empty;
 
     private void RequestInputFileForParentDirectory(string message)
     {
@@ -88,7 +87,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                 if (afp is null)
                     return;
 
-                _scene.ParentDirectoryNameValue = afp.FormattedInput;
+                _viewModel.ParentDirectoryNameValue = afp.FormattedInput;
                 await InvokeAsync(StateHasChanged);
             },
             afp =>
@@ -108,7 +107,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     {
         if (LuthetusHostingInformation.LuthetusHostingKind != LuthetusHostingKind.Photino)
         {
-            _scene.ProjectTemplateContainer = WebsiteProjectTemplateFacts.WebsiteProjectTemplatesContainer.ToList();
+            _viewModel.ProjectTemplateBag = WebsiteProjectTemplateFacts.WebsiteProjectTemplatesContainer.ToList();
             await InvokeAsync(StateHasChanged);
         }
         else
@@ -122,7 +121,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         try
         {
             // Render UI loading icon
-            _scene.IsReadingProjectTemplates = true;
+            _viewModel.IsReadingProjectTemplates = true;
             await InvokeAsync(StateHasChanged);
 
             var formattedCommand = DotNetCliCommandFormatter.FormatDotnetNewList();
@@ -130,17 +129,17 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             var generalTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
 
             var newCSharpProjectCommand = new TerminalCommand(
-                _scene.LoadProjectTemplatesTerminalCommandKey,
+                _viewModel.LoadProjectTemplatesTerminalCommandKey,
                 formattedCommand,
                 EnvironmentProvider.HomeDirectoryAbsolutePath.FormattedInput,
-                _scene.NewCSharpProjectCancellationTokenSource.Token,
+                _viewModel.NewCSharpProjectCancellationTokenSource.Token,
                 async () =>
                 {
-                    var output = generalTerminalSession.ReadStandardOut(_scene.LoadProjectTemplatesTerminalCommandKey);
+                    var output = generalTerminalSession.ReadStandardOut(_viewModel.LoadProjectTemplatesTerminalCommandKey);
 
                     if (output is not null)
                     {
-                        _scene.ProjectTemplateContainer = DotNetCliOutputLexer.LexDotNetNewListTerminalOutput(output);
+                        _viewModel.ProjectTemplateBag = DotNetCliOutputLexer.LexDotNetNewListTerminalOutput(output);
                         await InvokeAsync(StateHasChanged);
                     }
                     else
@@ -154,7 +153,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         finally
         {
             // UI loading message
-            _scene.IsReadingProjectTemplates = false;
+            _viewModel.IsReadingProjectTemplates = false;
             await InvokeAsync(StateHasChanged);
         }
     }
@@ -165,24 +164,24 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         try
         {
             // UI loading message
-            _scene.IsReadingProjectTemplates = true;
+            _viewModel.IsReadingProjectTemplates = true;
             await InvokeAsync(StateHasChanged);
 
             var formattedCommand = DotNetCliCommandFormatter.FormatDotnetNewListDeprecated();
             var generalTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
 
             var newCSharpProjectCommand = new TerminalCommand(
-                _scene.LoadProjectTemplatesTerminalCommandKey,
+                _viewModel.LoadProjectTemplatesTerminalCommandKey,
                 formattedCommand,
                 EnvironmentProvider.HomeDirectoryAbsolutePath.FormattedInput,
-                _scene.NewCSharpProjectCancellationTokenSource.Token,
+                _viewModel.NewCSharpProjectCancellationTokenSource.Token,
                 async () =>
                 {
-                    var output = generalTerminalSession.ReadStandardOut(_scene.LoadProjectTemplatesTerminalCommandKey);
+                    var output = generalTerminalSession.ReadStandardOut(_viewModel.LoadProjectTemplatesTerminalCommandKey);
 
                     if (output is not null)
                     {
-                        _scene.ProjectTemplateContainer = DotNetCliOutputLexer.LexDotNetNewListTerminalOutput(output);
+                        _viewModel.ProjectTemplateBag = DotNetCliOutputLexer.LexDotNetNewListTerminalOutput(output);
                         await InvokeAsync(StateHasChanged);
                     }
                     else
@@ -196,7 +195,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         finally
         {
             // UI loading message
-            _scene.IsReadingProjectTemplates = false;
+            _viewModel.IsReadingProjectTemplates = false;
             await InvokeAsync(StateHasChanged);
         }
     }
@@ -213,7 +212,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
     private async Task StartNewCSharpProjectCommandOnClick()
     {
-        var immutableView = _scene.TakeSnapshot();
+        var immutableView = _viewModel.TakeSnapshot();
 
         if (string.IsNullOrWhiteSpace(immutableView.ProjectTemplateShortNameValue) ||
             string.IsNullOrWhiteSpace(immutableView.CSharpProjectNameValue) ||
@@ -257,7 +256,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     }
 
     private async Task Website_StartNewCSharpProjectCommandOnClick(
-        ImmutableCSharpProjectFormScene immutableView)
+        CSharpProjectFormViewModelImmutable immutableView)
     {
         var directoryContainingProject = EnvironmentProvider
             .JoinPaths(immutableView.ParentDirectoryNameValue, immutableView.CSharpProjectNameValue) +
@@ -287,7 +286,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     }
 
     private void Website_AddExistingProjectToSolution(
-        ImmutableCSharpProjectFormScene immutableView,
+        CSharpProjectFormViewModelImmutable immutableView,
         string cSharpProjectAbsolutePathString)
     {
         var cSharpAbsolutePath = new AbsolutePath(cSharpProjectAbsolutePathString, false, EnvironmentProvider);

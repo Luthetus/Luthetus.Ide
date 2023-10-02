@@ -17,11 +17,11 @@ public class CompilerServiceExplorerTreeViewMouseEventHandler : TreeViewMouseEve
         _editorSync = editorSync;
     }
 
-    public override Task OnDoubleClickAsync(TreeViewCommandParameter treeViewCommandParameter)
+    public override Task OnDoubleClickAsync(TreeViewCommandParameter commandParameter)
     {
-        base.OnDoubleClickAsync(treeViewCommandParameter);
+        base.OnDoubleClickAsync(commandParameter);
 
-        if (treeViewCommandParameter.TargetNode is not TreeViewNamespacePath treeViewNamespacePath)
+        if (commandParameter.TargetNode is not TreeViewNamespacePath treeViewNamespacePath)
             return Task.CompletedTask;
 
         _editorSync.OpenInEditor(treeViewNamespacePath.Item.AbsolutePath, true);

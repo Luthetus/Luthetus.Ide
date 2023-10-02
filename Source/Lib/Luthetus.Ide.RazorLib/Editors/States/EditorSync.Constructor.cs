@@ -25,7 +25,7 @@ public partial class EditorSync
     public static readonly Key<TextEditorGroup> EditorTextEditorGroupKey = Key<TextEditorGroup>.NewKey();
 
     private readonly ITextEditorService _textEditorService;
-    private readonly ILuthetusIdeComponentRenderers _luthetusIdeComponentRenderers;
+    private readonly ILuthetusIdeComponentRenderers _ideComponentRenderers;
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly XmlCompilerService _xmlCompilerService;
     private readonly DotNetSolutionCompilerService _dotNetCompilerService;
@@ -42,7 +42,7 @@ public partial class EditorSync
 
     public EditorSync(
         ITextEditorService textEditorService,
-        ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
+        ILuthetusIdeComponentRenderers ideComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         XmlCompilerService xmlCompilerService,
         DotNetSolutionCompilerService dotNetCompilerService,
@@ -60,7 +60,7 @@ public partial class EditorSync
         IDispatcher dispatcher)
     {
         _textEditorService = textEditorService;
-        _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
+        _ideComponentRenderers = ideComponentRenderers;
         _fileSystemProvider = fileSystemProvider;
         _xmlCompilerService = xmlCompilerService;
         _dotNetCompilerService = dotNetCompilerService;

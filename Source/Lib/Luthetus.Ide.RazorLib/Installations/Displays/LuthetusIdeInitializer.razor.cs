@@ -81,8 +81,6 @@ public partial class LuthetusIdeInitializer : ComponentBase
             InitializePanelTabs();
 
             CommandFactory.Initialize();
-
-            await InitializeCompilerServiceExplorerStateAsync();
         }
 
         await base.OnAfterRenderAsync(firstRender);
@@ -194,38 +192,5 @@ public partial class LuthetusIdeInitializer : ComponentBase
         Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(
             bottomPanel.Key,
             terminalPanelTab.Key));
-    }
-
-    private async Task InitializeCompilerServiceExplorerStateAsync()
-    {
-        var tabGroup = new TabGroup(
-            tabGroupLoadTabEntriesParameter =>
-            {
-                var viewKinds = Enum.GetValues<CompilerServiceExplorerViewKind>();
-
-                var tabEntryNoTypes = viewKinds
-                    .Select(viewKind => (TabEntryNoType)
-                        new TabEntryWithType<CompilerServiceExplorerViewKind>(
-                            viewKind,
-                            tab => ((TabEntryWithType<CompilerServiceExplorerViewKind>)tab).Item.ToString(),
-                            tab => { }
-                        ))
-                    .ToImmutableList();
-
-                return Task.FromResult(new TabGroupLoadTabEntriesOutput(tabEntryNoTypes));
-            },
-            CompilerServiceExplorerState.TabGroupKey);
-
-        Dispatcher.Dispatch(new TabState.RegisterTabGroupAction(tabGroup));
-
-        var tabGroupLoadTabEntriesOutput = await tabGroup.LoadEntryBagAsync();
-
-        Dispatcher.Dispatch(new TabState.SetTabEntryBagAction(
-            tabGroup.Key,
-            tabGroupLoadTabEntriesOutput.OutTabEntries));
-
-        Dispatcher.Dispatch(new TabState.SetActiveTabEntryKeyAction(
-            tabGroup.Key,
-            tabGroupLoadTabEntriesOutput.OutTabEntries.Last().TabEntryKey));
     }
 }

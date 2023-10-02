@@ -86,10 +86,10 @@ public class TerminalSession
                     WorkingDirectoryAbsolutePathString = terminalCommand.ChangeWorkingDirectoryTo;
 
                 if (terminalCommand.FormattedCommand.TargetFileName == "cd" &&
-                    terminalCommand.FormattedCommand.Arguments.Any())
+                    terminalCommand.FormattedCommand.ArgumentsBag.Any())
                 {
                     // TODO: Don't keep this logic as it is hacky. I'm trying to set myself up to be able to run "gcc" to compile ".c" files. Then I can work on adding symbol related logic like "go to definition" or etc.
-                    WorkingDirectoryAbsolutePathString = terminalCommand.FormattedCommand.Arguments.ElementAt(0);
+                    WorkingDirectoryAbsolutePathString = terminalCommand.FormattedCommand.ArgumentsBag.ElementAt(0);
                 }
 
                 _terminalCommandsHistory.Add(terminalCommand);
@@ -97,8 +97,8 @@ public class TerminalSession
 
                 var command = Cli.Wrap(terminalCommand.FormattedCommand.TargetFileName);
 
-                if (terminalCommand.FormattedCommand.Arguments.Any())
-                    command = command.WithArguments(terminalCommand.FormattedCommand.Arguments);
+                if (terminalCommand.FormattedCommand.ArgumentsBag.Any())
+                    command = command.WithArguments(terminalCommand.FormattedCommand.ArgumentsBag);
 
                 if (terminalCommand.ChangeWorkingDirectoryTo is not null)
                 {

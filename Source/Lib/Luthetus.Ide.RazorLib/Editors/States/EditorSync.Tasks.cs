@@ -85,14 +85,14 @@ public partial class EditorSync
             inputFileAbsolutePathString);
 
         if (fileLastWriteTime > textEditorModel.ResourceLastWriteTime &&
-            _luthetusIdeComponentRenderers.BooleanPromptOrCancelRendererType is not null)
+            _ideComponentRenderers.BooleanPromptOrCancelRendererType is not null)
         {
             var notificationInformativeKey = Key<NotificationRecord>.NewKey();
 
             var notificationInformative = new NotificationRecord(
                 notificationInformativeKey,
                 "File contents were modified on disk",
-                _luthetusIdeComponentRenderers.BooleanPromptOrCancelRendererType,
+                _ideComponentRenderers.BooleanPromptOrCancelRendererType,
                 new Dictionary<string, object?>
                 {
                         {
@@ -167,8 +167,8 @@ public partial class EditorSync
 
             var presentationKeys = new[]
             {
-                    CompilerServiceDiagnosticPresentationFacts.PresentationKey
-                }.ToImmutableArray();
+                CompilerServiceDiagnosticPresentationFacts.PresentationKey
+            }.ToImmutableArray();
 
             _textEditorService.ViewModel.With(
                 viewModelKey,

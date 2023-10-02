@@ -37,13 +37,12 @@ public partial class FolderExplorerContextMenu : ComponentBase
     /// </summary>
     public static TreeViewNoType? ParentOfCutFile;
 
-    private MenuRecord GetMenuRecord(
-        TreeViewCommandParameter treeViewCommandParameter)
+    private MenuRecord GetMenuRecord(TreeViewCommandParameter treeViewCommandParameter)
     {
         if (treeViewCommandParameter.TargetNode is null)
             return MenuRecord.Empty;
 
-        var menuRecords = new List<MenuOptionRecord>();
+        var menuRecordsBag = new List<MenuOptionRecord>();
 
         var treeViewModel = treeViewCommandParameter.TargetNode;
         var parentTreeViewModel = treeViewModel.Parent;
@@ -55,39 +54,28 @@ public partial class FolderExplorerContextMenu : ComponentBase
 
         if (treeViewAbsolutePath.Item.IsDirectory)
         {
-            menuRecords.AddRange(
-                GetFileMenuOptions(treeViewAbsolutePath, parentTreeViewAbsolutePath)
-                    .Union(GetDirectoryMenuOptions(treeViewAbsolutePath))
-                    .Union(GetDebugMenuOptions(treeViewAbsolutePath)));
+            menuRecordsBag.AddRange(GetFileMenuOptions(treeViewAbsolutePath, parentTreeViewAbsolutePath)
+                .Union(GetDirectoryMenuOptions(treeViewAbsolutePath))
+                .Union(GetDebugMenuOptions(treeViewAbsolutePath)));
         }
         else
         {
-            menuRecords.AddRange(
-                GetFileMenuOptions(treeViewAbsolutePath, parentTreeViewAbsolutePath)
-                    .Union(GetDebugMenuOptions(treeViewAbsolutePath)));
+            menuRecordsBag.AddRange(GetFileMenuOptions(treeViewAbsolutePath, parentTreeViewAbsolutePath)
+                .Union(GetDebugMenuOptions(treeViewAbsolutePath)));
         }
 
-        return new MenuRecord(
-            menuRecords.ToImmutableArray());
+        return new MenuRecord(menuRecordsBag.ToImmutableArray());
     }
 
     private MenuOptionRecord[] GetDirectoryMenuOptions(TreeViewAbsolutePath treeViewModel)
     {
         return new[]
         {
-        MenuOptionsFactory.NewEmptyFile(
-            treeViewModel.Item,
-            async () => await ReloadTreeViewModel(treeViewModel)),
-        MenuOptionsFactory.NewDirectory(
-            treeViewModel.Item,
-            async () => await ReloadTreeViewModel(treeViewModel)),
-        MenuOptionsFactory.PasteClipboard(
-            treeViewModel.Item,
-            async () =>
+            MenuOptionsFactory.NewEmptyFile(treeViewModel.Item, async () => await ReloadTreeViewModel(treeViewModel)),
+            MenuOptionsFactory.NewDirectory(treeViewModel.Item, async () => await ReloadTreeViewModel(treeViewModel)),
+            MenuOptionsFactory.PasteClipboard(treeViewModel.Item, async () => 
             {
-                var localParentOfCutFile =
-                    ParentOfCutFile;
-
+                var localParentOfCutFile = ParentOfCutFile;
                 ParentOfCutFile = null;
 
                 if (localParentOfCutFile is not null)
@@ -95,7 +83,7 @@ public partial class FolderExplorerContextMenu : ComponentBase
 
                 await ReloadTreeViewModel(treeViewModel);
             }),
-    };
+        };
     }
 
     private MenuOptionRecord[] GetFileMenuOptions(
@@ -118,8 +106,7 @@ public partial class FolderExplorerContextMenu : ComponentBase
         };
     }
 
-    private MenuOptionRecord[] GetDebugMenuOptions(
-        TreeViewAbsolutePath treeViewModel)
+    private MenuOptionRecord[] GetDebugMenuOptions(TreeViewAbsolutePath treeViewModel)
     {
         return new MenuOptionRecord[]
         {
@@ -139,8 +126,7 @@ public partial class FolderExplorerContextMenu : ComponentBase
     /// as the root. But this method erroneously reloads the old root.
     /// </summary>
     /// <param name="treeViewModel"></param>
-    private async Task ReloadTreeViewModel(
-        TreeViewNoType? treeViewModel)
+    private async Task ReloadTreeViewModel(TreeViewNoType? treeViewModel)
     {
         if (treeViewModel is null)
             return;

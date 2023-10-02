@@ -16,91 +16,91 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 {
     private readonly EditorSync _editorSync;
     private readonly IMenuOptionsFactory _menuOptionsFactory;
-    private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
+    private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
     private readonly ITreeViewService _treeViewService;
 
     public SolutionExplorerTreeViewKeyboardEventHandler(
         EditorSync editorSync,
         IMenuOptionsFactory menuOptionsFactory,
-        ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
+        ILuthetusCommonComponentRenderers commonComponentRenderers,
         ITreeViewService treeViewService)
         : base(treeViewService)
     {
         _editorSync = editorSync;
         _menuOptionsFactory = menuOptionsFactory;
-        _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
+        _commonComponentRenderers = commonComponentRenderers;
         _treeViewService = treeViewService;
     }
 
-    public override Task OnKeyDownAsync(TreeViewCommandParameter treeViewCommandParameter)
+    public override Task OnKeyDownAsync(TreeViewCommandParameter commandParameter)
     {
-        if (treeViewCommandParameter.KeyboardEventArgs is null)
+        if (commandParameter.KeyboardEventArgs is null)
             return Task.CompletedTask;
 
-        base.OnKeyDownAsync(treeViewCommandParameter);
+        base.OnKeyDownAsync(commandParameter);
 
-        switch (treeViewCommandParameter.KeyboardEventArgs.Code)
+        switch (commandParameter.KeyboardEventArgs.Code)
         {
             case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
-                InvokeOpenInEditor(treeViewCommandParameter, true);
+                InvokeOpenInEditor(commandParameter, true);
                 return Task.CompletedTask;
             case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
-                InvokeOpenInEditor(treeViewCommandParameter, false);
+                InvokeOpenInEditor(commandParameter, false);
                 return Task.CompletedTask;
         }
 
-        if (treeViewCommandParameter.KeyboardEventArgs.CtrlKey)
+        if (commandParameter.KeyboardEventArgs.CtrlKey)
         {
-            CtrlModifiedKeymap(treeViewCommandParameter);
+            CtrlModifiedKeymap(commandParameter);
             return Task.CompletedTask;
         }
-        else if (treeViewCommandParameter.KeyboardEventArgs.AltKey)
+        else if (commandParameter.KeyboardEventArgs.AltKey)
         {
-            AltModifiedKeymap(treeViewCommandParameter);
+            AltModifiedKeymap(commandParameter);
             return Task.CompletedTask;
         }
 
         return Task.CompletedTask;
     }
 
-    private void CtrlModifiedKeymap(TreeViewCommandParameter treeViewCommandParameter)
+    private void CtrlModifiedKeymap(TreeViewCommandParameter commandParameter)
     {
-        if (treeViewCommandParameter.KeyboardEventArgs is null)
+        if (commandParameter.KeyboardEventArgs is null)
             return;
 
-        if (treeViewCommandParameter.KeyboardEventArgs.AltKey)
+        if (commandParameter.KeyboardEventArgs.AltKey)
         {
-            CtrlAltModifiedKeymap(treeViewCommandParameter);
+            CtrlAltModifiedKeymap(commandParameter);
             return;
         }
 
-        switch (treeViewCommandParameter.KeyboardEventArgs.Key)
+        switch (commandParameter.KeyboardEventArgs.Key)
         {
             case "c":
-                InvokeCopyFile(treeViewCommandParameter);
+                InvokeCopyFile(commandParameter);
                 return;
             case "x":
-                InvokeCutFile(treeViewCommandParameter);
+                InvokeCutFile(commandParameter);
                 return;
             case "v":
-                InvokePasteClipboard(treeViewCommandParameter);
+                InvokePasteClipboard(commandParameter);
                 return;
         }
     }
 
-    private void AltModifiedKeymap(TreeViewCommandParameter treeViewCommandParameter)
+    private void AltModifiedKeymap(TreeViewCommandParameter commandParameter)
     {
         return;
     }
 
-    private void CtrlAltModifiedKeymap(TreeViewCommandParameter treeViewCommandParameter)
+    private void CtrlAltModifiedKeymap(TreeViewCommandParameter commandParameter)
     {
         return;
     }
 
-    private void InvokeCopyFile(TreeViewCommandParameter treeViewCommandParameter)
+    private void InvokeCopyFile(TreeViewCommandParameter commandParameter)
     {
-        var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
+        var activeNode = commandParameter.TreeViewState.ActiveNode;
 
         if (activeNode is not TreeViewNamespacePath treeViewNamespacePath)
             return;
@@ -109,16 +109,16 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
             treeViewNamespacePath.Item.AbsolutePath,
             () =>
             {
-                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewNamespacePath.Item.AbsolutePath.NameWithExtension}", _luthetusCommonComponentRenderers, _editorSync.Dispatcher);
+                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewNamespacePath.Item.AbsolutePath.NameWithExtension}", _commonComponentRenderers, _editorSync.Dispatcher);
                 return Task.CompletedTask;
             });
 
         copyFileMenuOption.OnClick?.Invoke();
     }
 
-    private void InvokePasteClipboard(TreeViewCommandParameter treeViewCommandParameter)
+    private void InvokePasteClipboard(TreeViewCommandParameter commandParameter)
     {
-        var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
+        var activeNode = commandParameter.TreeViewState.ActiveNode;
 
         if (activeNode is not TreeViewNamespacePath treeViewNamespacePath)
             return;
@@ -166,9 +166,9 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         pasteMenuOptionRecord.OnClick?.Invoke();
     }
 
-    private void InvokeCutFile(TreeViewCommandParameter treeViewCommandParameter)
+    private void InvokeCutFile(TreeViewCommandParameter commandParameter)
     {
-        var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
+        var activeNode = commandParameter.TreeViewState.ActiveNode;
 
         if (activeNode is not TreeViewNamespacePath treeViewNamespacePath)
             return;
@@ -179,7 +179,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
             treeViewNamespacePath.Item.AbsolutePath,
             () =>
             {
-                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewNamespacePath.Item.AbsolutePath.NameWithExtension}", _luthetusCommonComponentRenderers, _editorSync.Dispatcher);
+                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewNamespacePath.Item.AbsolutePath.NameWithExtension}", _commonComponentRenderers, _editorSync.Dispatcher);
                 SolutionExplorerContextMenu.ParentOfCutFile = parent;
                 return Task.CompletedTask;
             });
@@ -188,10 +188,10 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
     }
 
     private void InvokeOpenInEditor(
-        TreeViewCommandParameter treeViewCommandParameter,
+        TreeViewCommandParameter commandParameter,
         bool shouldSetFocusToEditor)
     {
-        var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
+        var activeNode = commandParameter.TreeViewState.ActiveNode;
 
         if (activeNode is not TreeViewNamespacePath treeViewNamespacePath)
             return;

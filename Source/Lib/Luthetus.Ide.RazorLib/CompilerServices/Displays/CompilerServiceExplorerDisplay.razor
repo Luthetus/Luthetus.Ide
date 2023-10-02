@@ -2,28 +2,12 @@
 @using Luthetus.Common.RazorLib.Contexts.Displays
 @using Luthetus.Common.RazorLib.Contexts.Models;
 @using Luthetus.Ide.RazorLib.CompilerServices.Models;
-@using Luthetus.Common.RazorLib.Contexts.Models;
-@using Luthetus.Ide.RazorLib.CompilerServices.Models;
 
 @inherits FluxorComponent
 
 <ContextBoundary ContextRecord="ContextFacts.CompilerServiceExplorerContext"
                  ClassCssString="luth_ide_compiler-service-explorer"
                  StyleCssString="height: 100%">
-
-    @{
-        var compilerServiceExplorerState = CompilerServiceExplorerStateWrap.Value;
-        var tabGroup = TabStateSelection.Value;
-        var activeTabEntryNoType = tabGroup?.GetActiveEntryNoType();
-
-        CompilerServiceExplorerViewKind compilerServiceExplorerViewKind;
-
-        if (activeTabEntryNoType is null)
-            compilerServiceExplorerViewKind = CompilerServiceExplorerViewKind.Graphical;
-        else
-            compilerServiceExplorerViewKind = (CompilerServiceExplorerViewKind)activeTabEntryNoType.UntypedItem;
-    }
-
     <div class="luth_ide_section-title">
         Compiler Explorer Display
     </div>

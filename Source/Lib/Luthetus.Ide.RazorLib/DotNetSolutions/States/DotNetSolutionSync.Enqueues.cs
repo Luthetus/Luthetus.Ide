@@ -9,8 +9,8 @@ public partial class DotNetSolutionSync
 {
     public void AddExistingProjectToSolution(
         Key<DotNetSolutionModel> dotNetSolutionModelKey,
-        string localProjectTemplateShortName,
-        string localCSharpProjectName,
+        string projectTemplateShortName,
+        string cSharpProjectName,
         IAbsolutePath cSharpProjectAbsolutePath,
         IEnvironmentProvider environmentProvider)
     {
@@ -18,8 +18,8 @@ public partial class DotNetSolutionSync
             "Add Existing-Project To Solution",
             async () => await AddExistingProjectToSolutionAsync(
                 dotNetSolutionModelKey,
-                localProjectTemplateShortName,
-                localCSharpProjectName,
+                projectTemplateShortName,
+                cSharpProjectName,
                 cSharpProjectAbsolutePath,
                 environmentProvider));
     }

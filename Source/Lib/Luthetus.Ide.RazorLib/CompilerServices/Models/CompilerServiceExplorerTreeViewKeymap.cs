@@ -18,70 +18,70 @@ public class CompilerServiceExplorerTreeViewKeyboardEventHandler : TreeViewKeybo
         _editorSync = editorSync;
     }
 
-    public override Task OnKeyDownAsync(TreeViewCommandParameter treeViewCommandParameter)
+    public override Task OnKeyDownAsync(TreeViewCommandParameter commandParameter)
     {
-        if (treeViewCommandParameter.KeyboardEventArgs is null)
+        if (commandParameter.KeyboardEventArgs is null)
             return Task.CompletedTask;
 
-        base.OnKeyDownAsync(treeViewCommandParameter);
+        base.OnKeyDownAsync(commandParameter);
 
-        switch (treeViewCommandParameter.KeyboardEventArgs.Code)
+        switch (commandParameter.KeyboardEventArgs.Code)
         {
             case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
-                InvokeOpenInEditor(treeViewCommandParameter, true);
+                InvokeOpenInEditor(commandParameter, true);
                 return Task.CompletedTask;
             case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
-                InvokeOpenInEditor(treeViewCommandParameter, false);
+                InvokeOpenInEditor(commandParameter, false);
                 return Task.CompletedTask;
         }
 
-        if (treeViewCommandParameter.KeyboardEventArgs.CtrlKey)
+        if (commandParameter.KeyboardEventArgs.CtrlKey)
         {
-            CtrlModifiedKeymap(treeViewCommandParameter);
+            CtrlModifiedKeymap(commandParameter);
             return Task.CompletedTask;
         }
-        else if (treeViewCommandParameter.KeyboardEventArgs.AltKey)
+        else if (commandParameter.KeyboardEventArgs.AltKey)
         {
-            AltModifiedKeymap(treeViewCommandParameter);
+            AltModifiedKeymap(commandParameter);
             return Task.CompletedTask;
         }
 
         return Task.CompletedTask;
     }
 
-    private void CtrlModifiedKeymap(TreeViewCommandParameter treeViewCommandParameter)
+    private void CtrlModifiedKeymap(TreeViewCommandParameter commandParameter)
     {
-        if (treeViewCommandParameter.KeyboardEventArgs is null)
+        if (commandParameter.KeyboardEventArgs is null)
             return;
 
-        if (treeViewCommandParameter.KeyboardEventArgs.AltKey)
+        if (commandParameter.KeyboardEventArgs.AltKey)
         {
-            CtrlAltModifiedKeymap(treeViewCommandParameter);
+            CtrlAltModifiedKeymap(commandParameter);
             return;
         }
 
-        switch (treeViewCommandParameter.KeyboardEventArgs.Key)
+        switch (commandParameter.KeyboardEventArgs.Key)
         {
             default:
                 return;
         }
     }
 
-    private void AltModifiedKeymap(TreeViewCommandParameter treeViewCommandParameter)
+    private void AltModifiedKeymap(TreeViewCommandParameter commandParameter)
     {
         return;
     }
 
-    private void CtrlAltModifiedKeymap(TreeViewCommandParameter treeViewCommandParameter)
+    private void CtrlAltModifiedKeymap(TreeViewCommandParameter commandParameter)
     {
         return;
     }
 
     private void InvokeOpenInEditor(
-        TreeViewCommandParameter treeViewCommandParameter,
+        TreeViewCommandParameter commandParameter,
         bool shouldSetFocusToEditor)
     {
-        var activeNode = treeViewCommandParameter.TreeViewState.ActiveNode;
+        var activeNode = commandParameter.TreeViewState.ActiveNode;
 
         if (activeNode is not TreeViewNamespacePath treeViewNamespacePath)
             return;

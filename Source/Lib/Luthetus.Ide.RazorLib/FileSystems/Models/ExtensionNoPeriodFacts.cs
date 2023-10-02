@@ -39,8 +39,7 @@ public static class ExtensionNoPeriodFacts
     public const string CPP = "cpp";
     public const string HPP = "hpp";
 
-    public static IDecorationMapper GetDecorationMapper(
-        string extensionNoPeriod)
+    public static IDecorationMapper GetDecorationMapper(string extensionNoPeriod)
     {
         return extensionNoPeriod switch
         {

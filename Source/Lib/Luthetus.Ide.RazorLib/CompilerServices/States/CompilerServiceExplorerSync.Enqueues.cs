@@ -84,10 +84,7 @@ public partial class CompilerServiceExplorerSync
                 }
 
                 Dispatcher.Dispatch(new NewAction(inCompilerServiceExplorerState =>
-                    new CompilerServiceExplorerState(
-                        inCompilerServiceExplorerState.Model,
-                        inCompilerServiceExplorerState.GraphicalView,
-                        inCompilerServiceExplorerState.ReflectionView)));
+                    new CompilerServiceExplorerState(inCompilerServiceExplorerState.Model)));
             });
     }
 }

@@ -44,8 +44,7 @@ public static class FileTemplateFacts
     /// }
     /// 
     /// </summary>
-    private static FileTemplateResult CSharpClassCreateFileFunc(
-        FileTemplateParameter templateParameter)
+    private static FileTemplateResult CSharpClassCreateFileFunc(FileTemplateParameter templateParameter)
     {
         var emptyFileAbsolutePathString = templateParameter.ParentDirectory.AbsolutePath.FormattedInput +
             templateParameter.Filename;
@@ -96,8 +95,7 @@ public class {fileNameNoExtension}
     /// }
     /// 
     /// </summary>
-    private static FileTemplateResult RazorMarkupCreateFileFunc(
-        FileTemplateParameter templateParameter)
+    private static FileTemplateResult RazorMarkupCreateFileFunc(FileTemplateParameter templateParameter)
     {
         var emptyFileAbsolutePathString = templateParameter.ParentDirectory.AbsolutePath.FormattedInput +
             templateParameter.Filename;
@@ -146,8 +144,7 @@ public class {fileNameNoExtension}
     ///     
     /// }
     /// </summary>
-    private static FileTemplateResult RazorCodebehindCreateFileFunc(
-        FileTemplateParameter templateParameter)
+    private static FileTemplateResult RazorCodebehindCreateFileFunc(FileTemplateParameter templateParameter)
     {
         string GetContent(string fileNameNoExtension, string namespaceString)
         {

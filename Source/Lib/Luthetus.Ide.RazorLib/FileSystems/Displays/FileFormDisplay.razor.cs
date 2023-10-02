@@ -8,8 +8,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.FileSystems.Displays;
 
-public partial class FileFormDisplay
-    : ComponentBase, IFileFormRendererType
+public partial class FileFormDisplay : ComponentBase, IFileFormRendererType
 {
     [CascadingParameter]
     public MenuOptionWidgetParameters? MenuOptionWidgetParameters { get; set; }
@@ -18,21 +17,18 @@ public partial class FileFormDisplay
     public string FileName { get; set; } = string.Empty;
     [Parameter, EditorRequired]
     public Action<string, IFileTemplate, ImmutableArray<IFileTemplate>> OnAfterSubmitAction { get; set; } = null!;
+    
     [Parameter]
     public bool IsDirectory { get; set; }
     [Parameter]
     public bool CheckForTemplates { get; set; }
 
     private string? _previousFileNameParameter;
-
     private string _fileName = string.Empty;
     private FileTemplatesDisplay? _fileTemplatesDisplay;
     private ElementReference? _inputElementReference;
 
-    private string PlaceholderText => IsDirectory
-        ? "Directory name"
-        : "File name";
-
+    private string PlaceholderText => IsDirectory ? "Directory name" : "File name";
     public string InputFileName => _fileName;
 
     protected override Task OnParametersSetAsync()
@@ -84,8 +80,7 @@ public partial class FileFormDisplay
                     () => OnAfterSubmitAction.Invoke(
                         _fileName,
                         _fileTemplatesDisplay?.ExactMatchFileTemplate,
-                        _fileTemplatesDisplay?.RelatedMatchFileTemplates
-                            ?? ImmutableArray<IFileTemplate>.Empty));
+                        _fileTemplatesDisplay?.RelatedMatchFileTemplates ?? ImmutableArray<IFileTemplate>.Empty));
             }
         }
     }

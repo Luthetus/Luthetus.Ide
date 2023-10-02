@@ -30,7 +30,7 @@ public static class DotNetCliOutputLexer
         int? columnLength = null;
 
         var projectTemplate = new ProjectTemplate(null, null, null, null);
-        var projectTemplateContainer = new List<ProjectTemplate>();
+        var projectTemplateBag = new List<ProjectTemplate>();
 
         while (!stringWalker.IsEof)
         {
@@ -143,7 +143,7 @@ public static class DotNetCliOutputLexer
                         Tags = columnBuilder.ToString().Trim()
                     };
 
-                    projectTemplateContainer.Add(projectTemplate);
+                    projectTemplateBag.Add(projectTemplate);
 
                     projectTemplate = new(null, null, null, null);
                     columnLength = lengthOfTemplateNameColumn;
@@ -155,6 +155,6 @@ public static class DotNetCliOutputLexer
             _ = stringWalker.ReadCharacter();
         }
 
-        return projectTemplateContainer;
+        return projectTemplateBag;
     }
 }

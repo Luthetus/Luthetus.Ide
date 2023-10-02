@@ -7,8 +7,7 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace Luthetus.Ide.RazorLib.FileSystems.Displays;
 
-public partial class DeleteFileFormDisplay
-    : ComponentBase, IDeleteFileFormRendererType
+public partial class DeleteFileFormDisplay : ComponentBase, IDeleteFileFormRendererType
 {
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
@@ -40,10 +39,10 @@ public partial class DeleteFileFormDisplay
 
             if (AbsolutePath.IsDirectory)
             {
-                _countOfImmediateChildren = (await FileSystemProvider.Directory
-                    .EnumerateFileSystemEntriesAsync(
-                        AbsolutePath.FormattedInput))
-                    .Count();
+                var fileSystemEntryBag = await FileSystemProvider.Directory
+                    .EnumerateFileSystemEntriesAsync(AbsolutePath.FormattedInput);
+
+                _countOfImmediateChildren = fileSystemEntryBag.Count();
             }
         }
 
@@ -76,12 +75,10 @@ public partial class DeleteFileFormDisplay
 
     private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
-        if (MenuOptionWidgetParameters is not null)
+        if (MenuOptionWidgetParameters is not null &&
+            keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
         {
-            if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
-            {
-                await MenuOptionWidgetParameters.HideWidgetAsync.Invoke();
-            }
+            await MenuOptionWidgetParameters.HideWidgetAsync.Invoke();
         }
     }
 
@@ -99,8 +96,6 @@ public partial class DeleteFileFormDisplay
     private async Task CancelOnClick()
     {
         if (MenuOptionWidgetParameters is not null)
-        {
             await MenuOptionWidgetParameters.HideWidgetAsync.Invoke();
-        }
     }
 }
