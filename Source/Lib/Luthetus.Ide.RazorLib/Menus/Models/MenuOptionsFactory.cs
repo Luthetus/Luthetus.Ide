@@ -21,23 +21,23 @@ namespace Luthetus.Ide.RazorLib.Menus.Models;
 
 public class MenuOptionsFactory : IMenuOptionsFactory
 {
-    private readonly ILuthetusIdeComponentRenderers _luthetusIdeComponentRenderers;
-    private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
+    private readonly ILuthetusIdeComponentRenderers _ideComponentRenderers;
+    private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly IClipboardService _clipboardService;
     private readonly IBackgroundTaskService _backgroundTaskService;
 
     public MenuOptionsFactory(
-        ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
-        ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
+        ILuthetusIdeComponentRenderers ideComponentRenderers,
+        ILuthetusCommonComponentRenderers commonComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
         IClipboardService clipboardService,
         IBackgroundTaskService backgroundTaskService)
     {
-        _luthetusIdeComponentRenderers = luthetusIdeComponentRenderers;
-        _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
+        _ideComponentRenderers = ideComponentRenderers;
+        _commonComponentRenderers = commonComponentRenderers;
         _fileSystemProvider = fileSystemProvider;
         _environmentProvider = environmentProvider;
         _clipboardService = clipboardService;
@@ -47,7 +47,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     public MenuOptionRecord NewEmptyFile(IAbsolutePath parentDirectory, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("New Empty File", MenuOptionKind.Create,
-            WidgetRendererType: _luthetusIdeComponentRenderers.FileFormRendererType,
+            WidgetRendererType: _ideComponentRenderers.FileFormRendererType,
             WidgetParameterMap: new Dictionary<string, object?>
             {
                 { nameof(IFileFormRendererType.FileName), string.Empty },
@@ -69,7 +69,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     public MenuOptionRecord NewTemplatedFile(NamespacePath parentDirectory, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("New Templated File", MenuOptionKind.Create,
-            WidgetRendererType: _luthetusIdeComponentRenderers.FileFormRendererType,
+            WidgetRendererType: _ideComponentRenderers.FileFormRendererType,
             WidgetParameterMap: new Dictionary<string, object?>
             {
                 { nameof(IFileFormRendererType.FileName), string.Empty },
@@ -91,7 +91,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     public MenuOptionRecord NewDirectory(IAbsolutePath parentDirectory, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("New Directory", MenuOptionKind.Create,
-            WidgetRendererType: _luthetusIdeComponentRenderers.FileFormRendererType,
+            WidgetRendererType: _ideComponentRenderers.FileFormRendererType,
             WidgetParameterMap: new Dictionary<string, object?>
             {
                 { nameof(IFileFormRendererType.FileName), string.Empty },
@@ -108,7 +108,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     public MenuOptionRecord DeleteFile(IAbsolutePath absolutePath, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Delete", MenuOptionKind.Delete,
-            WidgetRendererType: _luthetusIdeComponentRenderers.DeleteFileFormRendererType,
+            WidgetRendererType: _ideComponentRenderers.DeleteFileFormRendererType,
             WidgetParameterMap: new Dictionary<string, object?>
             {
                 { nameof(IDeleteFileFormRendererType.AbsolutePath), absolutePath },
@@ -120,13 +120,10 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             });
     }
 
-    public MenuOptionRecord RenameFile(
-        IAbsolutePath sourceAbsolutePath,
-        IDispatcher dispatcher,
-        Func<Task> onAfterCompletion)
+    public MenuOptionRecord RenameFile(IAbsolutePath sourceAbsolutePath, IDispatcher dispatcher, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Rename", MenuOptionKind.Update,
-            WidgetRendererType: _luthetusIdeComponentRenderers.FileFormRendererType,
+            WidgetRendererType: _ideComponentRenderers.FileFormRendererType,
             WidgetParameterMap: new Dictionary<string, object?>
             {
                 {
@@ -156,9 +153,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             OnClick: () => PerformCutFileAction(absolutePath, onAfterCompletion));
     }
 
-    public MenuOptionRecord PasteClipboard(
-        IAbsolutePath directoryAbsolutePath,
-        Func<Task> onAfterCompletion)
+    public MenuOptionRecord PasteClipboard(IAbsolutePath directoryAbsolutePath, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Paste", MenuOptionKind.Update,
             OnClick: () => PerformPasteFileAction(directoryAbsolutePath, onAfterCompletion));
@@ -172,7 +167,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Remove (no files are deleted)", MenuOptionKind.Delete,
-            WidgetRendererType: _luthetusIdeComponentRenderers.RemoveCSharpProjectFromSolutionRendererType,
+            WidgetRendererType: _ideComponentRenderers.RemoveCSharpProjectFromSolutionRendererType,
             WidgetParameterMap: new Dictionary<string, object?>
             {
                 {
@@ -229,7 +224,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Move to Solution Folder", MenuOptionKind.Other,
-            WidgetRendererType: _luthetusIdeComponentRenderers.FileFormRendererType,
+            WidgetRendererType: _ideComponentRenderers.FileFormRendererType,
             WidgetParameterMap: new Dictionary<string, object?>
             {
                 { nameof(IFileFormRendererType.FileName), string.Empty },
@@ -267,7 +262,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     private void PerformNewFileAction(
         string fileName,
         IFileTemplate? exactMatchFileTemplate,
-        ImmutableArray<IFileTemplate> relatedMatchFileTemplates,
+        ImmutableArray<IFileTemplate> relatedMatchFileTemplatesBag,
         NamespacePath namespacePath,
         Func<Task> onAfterCompletion)
     {
@@ -292,16 +287,13 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 else
                 {
                     var allTemplates = new[] { exactMatchFileTemplate }
-                        .Union(relatedMatchFileTemplates)
+                        .Union(relatedMatchFileTemplatesBag)
                         .ToArray();
 
                     foreach (var fileTemplate in allTemplates)
                     {
                         var templateResult = fileTemplate.ConstructFileContents.Invoke(
-                            new FileTemplateParameter(
-                                fileName,
-                                namespacePath,
-                                _environmentProvider));
+                            new FileTemplateParameter(fileName, namespacePath, _environmentProvider));
 
                         await _fileSystemProvider.File.WriteAllTextAsync(
                             templateResult.FileNamespacePath.AbsolutePath.FormattedInput,
@@ -314,17 +306,10 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             });
     }
 
-    private void PerformNewDirectoryAction(
-        string directoryName,
-        IAbsolutePath parentDirectory,
-        Func<Task> onAfterCompletion)
+    private void PerformNewDirectoryAction(string directoryName, IAbsolutePath parentDirectory, Func<Task> onAfterCompletion)
     {
         var directoryAbsolutePathString = parentDirectory.FormattedInput + directoryName;
-
-        var directoryAbsolutePath = new AbsolutePath(
-            directoryAbsolutePathString,
-            true,
-            _environmentProvider);
+        var directoryAbsolutePath = new AbsolutePath(directoryAbsolutePathString, true, _environmentProvider);
 
         _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
             "New Directory Action",
@@ -338,33 +323,22 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             });
     }
 
-    private void PerformDeleteFileAction(
-        IAbsolutePath absolutePath,
-        Func<Task> onAfterCompletion)
+    private void PerformDeleteFileAction(IAbsolutePath absolutePath, Func<Task> onAfterCompletion)
     {
         _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
             "Delete File Action",
             async () =>
             {
                 if (absolutePath.IsDirectory)
-                {
-                    await _fileSystemProvider.Directory.DeleteAsync(
-                        absolutePath.FormattedInput,
-                        true,
-                        CancellationToken.None);
-                }
+                    await _fileSystemProvider.Directory.DeleteAsync(absolutePath.FormattedInput, true, CancellationToken.None);
                 else
-                {
                     await _fileSystemProvider.File.DeleteAsync(absolutePath.FormattedInput);
-                }
 
                 await onAfterCompletion.Invoke();
             });
     }
 
-    private void PerformCopyFileAction(
-        IAbsolutePath absolutePath,
-        Func<Task> onAfterCompletion)
+    private void PerformCopyFileAction(IAbsolutePath absolutePath, Func<Task> onAfterCompletion)
     {
         _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
             "Copy File Action",
@@ -414,6 +388,8 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                         {
                             IAbsolutePath? clipboardAbsolutePath = null;
 
+                            // Should the if and else if be kept as inline awaits?
+                            // If kept as inline awaits then the else if won't execute if the first one succeeds.
                             if (await _fileSystemProvider.Directory.ExistsAsync(clipboardPhrase.Value))
                             {
                                 clipboardAbsolutePath = new AbsolutePath(
@@ -437,22 +413,17 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                                 {
                                     if (clipboardAbsolutePath.IsDirectory)
                                     {
-                                        var clipboardDirectoryInfo = new DirectoryInfo(
-                                            clipboardAbsolutePath.FormattedInput);
-
-                                        var receivingDirectoryInfo = new DirectoryInfo(
-                                            receivingDirectory.FormattedInput);
+                                        var clipboardDirectoryInfo = new DirectoryInfo(clipboardAbsolutePath.FormattedInput);
+                                        var receivingDirectoryInfo = new DirectoryInfo(receivingDirectory.FormattedInput);
 
                                         CopyFilesRecursively(clipboardDirectoryInfo, receivingDirectoryInfo);
                                     }
                                     else
                                     {
-                                        var destinationAbsolutePathString =
-                                            receivingDirectory.FormattedInput +
+                                        var destinationAbsolutePathString = receivingDirectory.FormattedInput +
                                             clipboardAbsolutePath.NameWithExtension;
 
-                                        var sourceAbsolutePathString = clipboardAbsolutePath
-                                            .FormattedInput;
+                                        var sourceAbsolutePathString = clipboardAbsolutePath.FormattedInput;
 
                                         await _fileSystemProvider.File.CopyAsync(
                                             sourceAbsolutePathString,
@@ -480,16 +451,11 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             });
     }
 
-    private IAbsolutePath? PerformRenameAction(
-        IAbsolutePath sourceAbsolutePath,
-        string nextName,
-        IDispatcher dispatcher,
-        Func<Task> onAfterCompletion)
+    private IAbsolutePath? PerformRenameAction(IAbsolutePath sourceAbsolutePath, string nextName, IDispatcher dispatcher, Func<Task> onAfterCompletion)
     {
         // If the current and next name match when compared
         // with case insensitivity
-        if (string.Compare(sourceAbsolutePath.NameWithExtension, nextName, StringComparison.OrdinalIgnoreCase)
-            == 0)
+        if (0 == string.Compare(sourceAbsolutePath.NameWithExtension, nextName, StringComparison.OrdinalIgnoreCase))
         {
             var temporaryNextName = _environmentProvider.GetRandomFileName();
 
@@ -523,17 +489,14 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         }
         catch (Exception e)
         {
-            NotificationHelper.DispatchError("Rename Action", e.Message, _luthetusCommonComponentRenderers, dispatcher);
+            NotificationHelper.DispatchError("Rename Action", e.Message, _commonComponentRenderers, dispatcher);
             onAfterCompletion.Invoke();
             return null;
         }
 
         onAfterCompletion.Invoke();
 
-        return new AbsolutePath(
-            destinationAbsolutePathString,
-            sourceAbsolutePath.IsDirectory,
-            _environmentProvider);
+        return new AbsolutePath(destinationAbsolutePathString, sourceAbsolutePath.IsDirectory, _environmentProvider);
     }
 
     private void PerformRemoveCSharpProjectReferenceFromSolutionAction(
@@ -588,7 +551,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     CancellationToken.None,
                     async () =>
                     {
-                        NotificationHelper.DispatchInformative("Add Project Reference", $"Modified {projectReceivingReference.Item.AbsolutePath.NameWithExtension} to have a reference to {referencedProject.NameWithExtension}", _luthetusCommonComponentRenderers, dispatcher);
+                        NotificationHelper.DispatchInformative("Add Project Reference", $"Modified {projectReceivingReference.Item.AbsolutePath.NameWithExtension} to have a reference to {referencedProject.NameWithExtension}", _commonComponentRenderers, dispatcher);
                         await onAfterCompletion.Invoke();
                     });
 
@@ -631,7 +594,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     CancellationToken.None,
                     async () =>
                     {
-                        NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsolutePath.NameWithExtension} to have a reference to {treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsolutePath.NameWithExtension}", _luthetusCommonComponentRenderers, dispatcher);
+                        NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsolutePath.NameWithExtension} to have a reference to {treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsolutePath.NameWithExtension}", _commonComponentRenderers, dispatcher);
                         await onAfterCompletion.Invoke();
                     });
 
@@ -663,7 +626,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     CancellationToken.None,
                     async () =>
                     {
-                        NotificationHelper.DispatchInformative("Move Project To Solution Folder", $"Moved {treeViewProjectToMove.Item.AbsolutePath.NameWithExtension} to the Solution Folder path: {solutionFolderPath}", _luthetusCommonComponentRenderers, dispatcher);
+                        NotificationHelper.DispatchInformative("Move Project To Solution Folder", $"Moved {treeViewProjectToMove.Item.AbsolutePath.NameWithExtension} to the Solution Folder path: {solutionFolderPath}", _commonComponentRenderers, dispatcher);
                         await onAfterCompletion.Invoke();
                     });
 
@@ -700,7 +663,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     CancellationToken.None,
                     async () =>
                     {
-                        NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {modifyProjectNamespacePath.AbsolutePath.NameWithExtension} to NOT have a reference to {treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id}", _luthetusCommonComponentRenderers, dispatcher);
+                        NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {modifyProjectNamespacePath.AbsolutePath.NameWithExtension} to NOT have a reference to {treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id}", _commonComponentRenderers, dispatcher);
                         await onAfterCompletion.Invoke();
                     });
 
