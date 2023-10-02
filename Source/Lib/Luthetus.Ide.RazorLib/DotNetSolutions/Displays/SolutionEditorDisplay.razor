@@ -1,0 +1,8 @@
+﻿@using Luthetus.TextEditor.RazorLib.Lexes.Models;
+
+<div class="luth_ide_solution-editor-display">
+    @{
+        var aaa = DotNetSolutionCompilerService.CompilerServiceResources.Where(
+            x => x.ResourceUri == new ResourceUri(string.Empty));
+    }
+</div>

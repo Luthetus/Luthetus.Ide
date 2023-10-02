@@ -36,7 +36,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     [Inject]
     private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
     [Inject]
-    private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
+    private ILuthetusCommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
@@ -55,49 +55,42 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     /// </summary>
     public static TreeViewNoType? ParentOfCutFile;
 
-    private MenuRecord GetMenuRecord(
-        TreeViewCommandParameter treeViewCommandParameter)
+    private MenuRecord GetMenuRecord(TreeViewCommandParameter commandParameter)
     {
-        if (treeViewCommandParameter.TargetNode is null)
+        if (commandParameter.TargetNode is null)
             return MenuRecord.Empty;
 
         var menuRecordsBag = new List<MenuOptionRecord>();
-
-        var treeViewModel = treeViewCommandParameter.TargetNode;
+        var treeViewModel = commandParameter.TargetNode;
         var parentTreeViewModel = treeViewModel.Parent;
-
         var parentTreeViewNamespacePath = parentTreeViewModel as TreeViewNamespacePath;
 
         if (treeViewModel is TreeViewNamespacePath treeViewNamespacePath)
         {
             if (treeViewNamespacePath.Item.AbsolutePath.IsDirectory)
             {
-                menuRecordsBag.AddRange(
-                    GetFileMenuOptions(treeViewNamespacePath, parentTreeViewNamespacePath)
-                        .Union(GetDirectoryMenuOptions(treeViewNamespacePath))
-                        .Union(GetDebugMenuOptions(treeViewNamespacePath)));
+                menuRecordsBag.AddRange(GetFileMenuOptions(treeViewNamespacePath, parentTreeViewNamespacePath)
+                    .Union(GetDirectoryMenuOptions(treeViewNamespacePath))
+                    .Union(GetDebugMenuOptions(treeViewNamespacePath)));
             }
             else
             {
                 switch (treeViewNamespacePath.Item.AbsolutePath.ExtensionNoPeriod)
                 {
                     case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
-                        menuRecordsBag.AddRange(
-                            GetCSharpProjectMenuOptions(treeViewNamespacePath)
-                                .Union(GetDebugMenuOptions(treeViewNamespacePath)));
+                        menuRecordsBag.AddRange(GetCSharpProjectMenuOptions(treeViewNamespacePath)
+                            .Union(GetDebugMenuOptions(treeViewNamespacePath)));
                         break;
                     default:
-                        menuRecordsBag.AddRange(
-                            GetFileMenuOptions(treeViewNamespacePath, parentTreeViewNamespacePath)
-                                .Union(GetDebugMenuOptions(treeViewNamespacePath)));
+                        menuRecordsBag.AddRange(GetFileMenuOptions(treeViewNamespacePath, parentTreeViewNamespacePath)
+                            .Union(GetDebugMenuOptions(treeViewNamespacePath)));
                         break;
                 }
             }
         }
         else if (treeViewModel is TreeViewSolution treeViewSolution)
         {
-            if (treeViewSolution.Item.NamespacePath.AbsolutePath.ExtensionNoPeriod ==
-                ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
+            if (ExtensionNoPeriodFacts.DOT_NET_SOLUTION == treeViewSolution.Item.NamespacePath.AbsolutePath.ExtensionNoPeriod)
             {
                 if (treeViewSolution.Parent is null || treeViewSolution.Parent is TreeViewAdhoc)
                     menuRecordsBag.AddRange(GetDotNetSolutionMenuOptions(treeViewSolution));
@@ -105,26 +98,22 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         }
         else if (treeViewModel is TreeViewCSharpProjectToProjectReference treeViewCSharpProjectToProjectReference)
         {
-            menuRecordsBag.AddRange(
-                GetCSharpProjectToProjectReferenceMenuOptions(
-                    treeViewCSharpProjectToProjectReference));
+            menuRecordsBag.AddRange(GetCSharpProjectToProjectReferenceMenuOptions(
+                treeViewCSharpProjectToProjectReference));
         }
         else if (treeViewModel is TreeViewCSharpProjectNugetPackageReference treeViewCSharpProjectNugetPackageReference)
         {
-            menuRecordsBag.AddRange(
-                GetTreeViewLightWeightNugetPackageRecordMenuOptions(
-                    treeViewCSharpProjectNugetPackageReference));
+            menuRecordsBag.AddRange(GetTreeViewLightWeightNugetPackageRecordMenuOptions(
+                treeViewCSharpProjectNugetPackageReference));
         }
 
         if (!menuRecordsBag.Any())
             return MenuRecord.Empty;
 
-        return new MenuRecord(
-            menuRecordsBag.ToImmutableArray());
+        return new MenuRecord(menuRecordsBag.ToImmutableArray());
     }
 
-    private MenuOptionRecord[] GetDotNetSolutionMenuOptions(
-        TreeViewSolution treeViewSolution)
+    private MenuOptionRecord[] GetDotNetSolutionMenuOptions(TreeViewSolution treeViewSolution)
     {
         // TODO: Add menu options for non C# projects perhaps a more generic option is good
 
@@ -138,37 +127,40 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             MenuOptionKind.Other,
             () => AddExistingProjectToSolution(treeViewSolution.Item));
 
+        var openSolutionEditor = new MenuOptionRecord(
+            "Open Solution Editor",
+            MenuOptionKind.Other,
+            () => Aaa(treeViewSolution.Item));
+
         return new[]
         {
-            new MenuOptionRecord(
-                "Add",
-                MenuOptionKind.Other,
-                SubMenu: new MenuRecord(
-                    new MenuOptionRecord[]
-                    {
-                        addNewCSharpProject,
-                        addExistingCSharpProject
-                    }.ToImmutableArray())),
+            new MenuOptionRecord("Add", MenuOptionKind.Other,
+                SubMenu: new MenuRecord(new[]
+                {
+                    addNewCSharpProject,
+                    addExistingCSharpProject,
+                }.ToImmutableArray())),
+            openSolutionEditor,
         };
     }
 
-    private MenuOptionRecord[] GetCSharpProjectMenuOptions(
-        TreeViewNamespacePath treeViewModel)
+    private MenuOptionRecord[] GetCSharpProjectMenuOptions(TreeViewNamespacePath treeViewModel)
     {
         var parentDirectory = treeViewModel.Item.AbsolutePath.AncestorDirectoryBag.Last();
-
         var treeViewSolution = treeViewModel.Parent as TreeViewSolution;
 
         if (treeViewSolution is null)
         {
             var ancestorTreeView = treeViewModel.Parent;
 
-            if (ancestorTreeView.Parent is null)
+            if (ancestorTreeView?.Parent is null)
                 return Array.Empty<MenuOptionRecord>();
 
             // Parent could be a could be one or many levels of solution folders
             while (ancestorTreeView.Parent is not null)
+            {
                 ancestorTreeView = ancestorTreeView.Parent;
+            }
 
             treeViewSolution = ancestorTreeView as TreeViewSolution;
 
@@ -178,43 +170,29 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
         return new[]
         {
-            MenuOptionsFactory.NewEmptyFile(
-                parentDirectory,
-                async () => await ReloadTreeViewModel(treeViewModel)),
-            MenuOptionsFactory.NewTemplatedFile(
-                new NamespacePath(treeViewModel.Item.Namespace, parentDirectory),
-                async () => await ReloadTreeViewModel(treeViewModel)),
-            MenuOptionsFactory.NewDirectory(
-                parentDirectory,
-                async () => await ReloadTreeViewModel(treeViewModel)),
-            MenuOptionsFactory.PasteClipboard(
-                parentDirectory,
-                async () =>
-                {
-                    var localParentOfCutFile =
-                        ParentOfCutFile;
+            MenuOptionsFactory.NewEmptyFile(parentDirectory, async () => await ReloadTreeViewModel(treeViewModel)),
+            MenuOptionsFactory.NewTemplatedFile(new NamespacePath(treeViewModel.Item.Namespace, parentDirectory), async () => await ReloadTreeViewModel(treeViewModel)),
+            MenuOptionsFactory.NewDirectory(parentDirectory, async () => await ReloadTreeViewModel(treeViewModel)),
+            MenuOptionsFactory.PasteClipboard(parentDirectory, async () =>
+            {
+                var localParentOfCutFile = ParentOfCutFile;
+                ParentOfCutFile = null;
 
-                    ParentOfCutFile = null;
+                if (localParentOfCutFile is not null)
+                    await ReloadTreeViewModel(localParentOfCutFile);
 
-                    if (localParentOfCutFile is not null)
-                        await ReloadTreeViewModel(localParentOfCutFile);
-
-                    await ReloadTreeViewModel(treeViewModel);
-                }),
+                await ReloadTreeViewModel(treeViewModel);
+            }),
             MenuOptionsFactory.AddProjectToProjectReference(
                 treeViewModel,
-                TerminalSessionStateWrap.Value
-                    .TerminalSessionMap[
-                        TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY],
+                TerminalSessionStateWrap.Value.TerminalSessionMap[TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY],
                 Dispatcher,
                 InputFileSync,
                 () => Task.CompletedTask),
             MenuOptionsFactory.MoveProjectToSolutionFolder(
                 treeViewSolution,
                 treeViewModel,
-                TerminalSessionStateWrap.Value
-                    .TerminalSessionMap[
-                        TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY],
+                TerminalSessionStateWrap.Value.TerminalSessionMap[TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY],
                 Dispatcher,
                 () =>
                 {
@@ -224,14 +202,11 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             new MenuOptionRecord(
                 "Set as Startup Project",
                 MenuOptionKind.Other,
-                () => Dispatcher.Dispatch(new ProgramExecutionState.SetStartupProjectAbsolutePathAction(
-                    treeViewModel.Item.AbsolutePath))),
+                () => Dispatcher.Dispatch(new ProgramExecutionState.SetStartupProjectAbsolutePathAction(treeViewModel.Item.AbsolutePath))),
             MenuOptionsFactory.RemoveCSharpProjectReferenceFromSolution(
                 treeViewSolution,
                 treeViewModel,
-                TerminalSessionStateWrap.Value
-                    .TerminalSessionMap[
-                        TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY],
+                TerminalSessionStateWrap.Value.TerminalSessionMap[TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY],
                 Dispatcher,
                 () =>
                 {
@@ -248,9 +223,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         {
             MenuOptionsFactory.RemoveProjectToProjectReference(
                 treeViewCSharpProjectToProjectReference,
-                TerminalSessionStateWrap.Value
-                    .TerminalSessionMap[
-                        TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY],
+                TerminalSessionStateWrap.Value.TerminalSessionMap[TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY],
                 Dispatcher, () => Task.CompletedTask),
         };
     }
@@ -263,37 +236,24 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
         return new[]
         {
-        MenuOptionsFactory.RemoveNuGetPackageReferenceFromProject(
-            treeViewCSharpProjectNugetPackageReferences.Item.CSharpProjectNamespacePath,
-            treeViewCSharpProjectNugetPackageReference,
-            TerminalSessionStateWrap.Value
-                .TerminalSessionMap[
-                    TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY],
-            Dispatcher, () => Task.CompletedTask),
-    };
+            MenuOptionsFactory.RemoveNuGetPackageReferenceFromProject(
+                treeViewCSharpProjectNugetPackageReferences.Item.CSharpProjectNamespacePath,
+                treeViewCSharpProjectNugetPackageReference,
+                TerminalSessionStateWrap.Value.TerminalSessionMap[TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY],
+                Dispatcher, () => Task.CompletedTask),
+        };
     }
 
-    private MenuOptionRecord[] GetDirectoryMenuOptions(
-        TreeViewNamespacePath treeViewModel)
+    private MenuOptionRecord[] GetDirectoryMenuOptions(TreeViewNamespacePath treeViewModel)
     {
         return new[]
         {
-        MenuOptionsFactory.NewEmptyFile(
-            treeViewModel.Item.AbsolutePath,
-            async () => await ReloadTreeViewModel(treeViewModel)),
-        MenuOptionsFactory.NewTemplatedFile(
-            treeViewModel.Item,
-            async () => await ReloadTreeViewModel(treeViewModel)),
-        MenuOptionsFactory.NewDirectory(
-            treeViewModel.Item.AbsolutePath,
-            async () => await ReloadTreeViewModel(treeViewModel)),
-        MenuOptionsFactory.PasteClipboard(
-            treeViewModel.Item.AbsolutePath,
-            async () =>
+            MenuOptionsFactory.NewEmptyFile(treeViewModel.Item.AbsolutePath, async () => await ReloadTreeViewModel(treeViewModel)),
+            MenuOptionsFactory.NewTemplatedFile(treeViewModel.Item, async () => await ReloadTreeViewModel(treeViewModel)),
+            MenuOptionsFactory.NewDirectory(treeViewModel.Item.AbsolutePath, async () => await ReloadTreeViewModel(treeViewModel)),
+            MenuOptionsFactory.PasteClipboard(treeViewModel.Item.AbsolutePath, async () =>
             {
-                var localParentOfCutFile =
-                    ParentOfCutFile;
-
+                var localParentOfCutFile = ParentOfCutFile;
                 ParentOfCutFile = null;
 
                 if (localParentOfCutFile is not null)
@@ -301,7 +261,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
                 await ReloadTreeViewModel(treeViewModel);
             }),
-    };
+        };
     }
 
     private MenuOptionRecord[] GetFileMenuOptions(
@@ -311,12 +271,12 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         return new[]
         {
             MenuOptionsFactory.CopyFile(treeViewModel.Item.AbsolutePath, () => {
-                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.AbsolutePath.NameWithExtension}", LuthetusCommonComponentRenderers, Dispatcher);
+                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.AbsolutePath.NameWithExtension}", CommonComponentRenderers, Dispatcher);
                 return Task.CompletedTask;
             }),
             MenuOptionsFactory.CutFile(treeViewModel.Item.AbsolutePath, () => {
                 ParentOfCutFile = parentTreeViewModel;
-                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.AbsolutePath.NameWithExtension}", LuthetusCommonComponentRenderers, Dispatcher);
+                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.AbsolutePath.NameWithExtension}", CommonComponentRenderers, Dispatcher);
                 return Task.CompletedTask;
             }),
             MenuOptionsFactory.DeleteFile(treeViewModel.Item.AbsolutePath, async () => await ReloadTreeViewModel(parentTreeViewModel)),
@@ -324,8 +284,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         };
     }
 
-    private MenuOptionRecord[] GetDebugMenuOptions(
-        TreeViewNamespacePath treeViewModel)
+    private MenuOptionRecord[] GetDebugMenuOptions(TreeViewNamespacePath treeViewModel)
     {
         return new MenuOptionRecord[]
         {
@@ -353,8 +312,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             IsResizable = true
         };
 
-        Dispatcher.Dispatch(new DialogState.RegisterAction(
-            dialogRecord));
+        Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
     }
 
     private void AddExistingProjectToSolution(DotNetSolutionModel dotNetSolutionModel)
@@ -365,8 +323,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 if (afp is null)
                     return;
 
-                var localFormattedAddExistingProjectToSolutionCommand = DotNetCliCommandFormatter
-                    .FormatAddExistingProjectToSolution(
+                var localFormattedAddExistingProjectToSolutionCommand = DotNetCliCommandFormatter.FormatAddExistingProjectToSolution(
                         dotNetSolutionModel.NamespacePath.AbsolutePath.FormattedInput,
                         afp.FormattedInput);
 
@@ -381,9 +338,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                         return Task.CompletedTask;
                     });
 
-                var generalTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[
-                    TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
-
+                var generalTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
                 await generalTerminalSession.EnqueueCommandAsync(addExistingProjectToSolutionTerminalCommand);
             },
             afp =>
@@ -391,8 +346,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 if (afp is null || afp.IsDirectory)
                     return Task.FromResult(false);
 
-                return Task.FromResult(
-                    afp.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT));
+                return Task.FromResult(afp.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT));
             },
             new[]
             {
@@ -400,6 +354,27 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     "C# Project",
                     afp => afp.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
             }.ToImmutableArray());
+    }
+
+    private void Aaa(DotNetSolutionModel dotNetSolutionModel)
+    {
+        var dialogRecord = new DialogRecord(
+            Key<DialogRecord>.NewKey(),
+            "Solution Editor",
+            typeof(SolutionEditorDisplay),
+            new Dictionary<string, object?>
+            {
+                {
+                    nameof(SolutionEditorDisplay.DotNetSolutionModelKey),
+                    dotNetSolutionModel.DotNetSolutionModelKey
+                },
+            },
+            null)
+        {
+            IsResizable = true
+        };
+
+        Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
     }
 
     /// <summary>
@@ -412,34 +387,27 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     /// as the root. But this method erroneously reloads the old root.
     /// </summary>
     /// <param name="treeViewModel"></param>
-    private async Task ReloadTreeViewModel(
-        TreeViewNoType? treeViewModel)
+    private async Task ReloadTreeViewModel(TreeViewNoType? treeViewModel)
     {
         if (treeViewModel is null)
             return;
 
         await treeViewModel.LoadChildBagAsync();
 
-        TreeViewService.ReRenderNode(
-            DotNetSolutionState.TreeViewSolutionExplorerStateKey,
-            treeViewModel);
-
-        TreeViewService.MoveUp(
-            DotNetSolutionState.TreeViewSolutionExplorerStateKey,
-            false);
+        TreeViewService.ReRenderNode(DotNetSolutionState.TreeViewSolutionExplorerStateKey, treeViewModel);
+        TreeViewService.MoveUp(DotNetSolutionState.TreeViewSolutionExplorerStateKey, false);
     }
 
-    public static string GetContextMenuCssStyleString(
-        TreeViewCommandParameter? treeViewCommandParameter)
+    public static string GetContextMenuCssStyleString(TreeViewCommandParameter? commandParameter)
     {
-        if (treeViewCommandParameter?.ContextMenuFixedPosition is null)
+        if (commandParameter?.ContextMenuFixedPosition is null)
             return "display: none;";
 
         var left =
-            $"left: {treeViewCommandParameter.ContextMenuFixedPosition.LeftPositionInPixels.ToCssValue()}px;";
+            $"left: {commandParameter.ContextMenuFixedPosition.LeftPositionInPixels.ToCssValue()}px;";
 
         var top =
-            $"top: {treeViewCommandParameter.ContextMenuFixedPosition.TopPositionInPixels.ToCssValue()}px;";
+            $"top: {commandParameter.ContextMenuFixedPosition.TopPositionInPixels.ToCssValue()}px;";
 
         return $"{left} {top}";
     }
