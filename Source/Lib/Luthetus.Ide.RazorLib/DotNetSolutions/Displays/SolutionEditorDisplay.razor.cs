@@ -1,7 +1,6 @@
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Obsolete.RewriteForImmutability;
-using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Microsoft.AspNetCore.Components;
