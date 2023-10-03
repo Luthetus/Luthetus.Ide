@@ -26,8 +26,6 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
-    private CSharpCompilerService CSharpCompilerService { get; set; } = null!;
-    [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
     private CompilerServiceExplorerSync CompilerServiceExplorerSync { get; set; } = null!;
@@ -48,10 +46,6 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
         CompilerServiceExplorerStateWrap.StateChanged += RerenderAfterEventWithArgs;
         TextEditorViewModelStateWrap.StateChanged += RerenderAfterEventWithArgs;
         TextEditorGroupStateWrap.StateChanged += RerenderAfterEventWithArgs;
-
-        CSharpCompilerService.ResourceRegistered += RerenderAfterEvent;
-        CSharpCompilerService.ResourceDisposed += RerenderAfterEvent;
-        CSharpCompilerService.ResourceParsed += RerenderAfterEvent;
 
         _compilerServiceExplorerTreeViewKeymap = new CompilerServiceExplorerTreeViewKeyboardEventHandler(
             EditorSync,
@@ -83,11 +77,6 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
         await InvokeAsync(StateHasChanged);
     }
 
-    private async void RerenderAfterEvent()
-    {
-        await InvokeAsync(StateHasChanged);
-    }
-
     private async Task OnTreeViewContextMenuFunc(TreeViewCommandParameter treeViewCommandParameter)
     {
         _mostRecentTreeViewCommandParameter = treeViewCommandParameter;
@@ -108,9 +97,5 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
         CompilerServiceExplorerStateWrap.StateChanged -= RerenderAfterEventWithArgs;
         TextEditorViewModelStateWrap.StateChanged -= RerenderAfterEventWithArgs;
         TextEditorGroupStateWrap.StateChanged -= RerenderAfterEventWithArgs;
-
-        CSharpCompilerService.ResourceRegistered -= RerenderAfterEvent;
-        CSharpCompilerService.ResourceDisposed -= RerenderAfterEvent;
-        CSharpCompilerService.ResourceParsed -= RerenderAfterEvent;
     }
 }
