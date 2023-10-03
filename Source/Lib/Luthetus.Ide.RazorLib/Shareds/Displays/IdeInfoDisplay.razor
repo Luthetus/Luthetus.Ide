@@ -1,12 +1,64 @@
-﻿<div class="luth_ide_info">
-    <div>
-        Version: 0.1.0
+﻿@using System.Reflection;
+<div class="luth_ide_info">
+
+    @{ var ideAssembly = typeof(IdeInfoDisplay).Assembly; }
+
+    <div class="luth_ide_info-main">
+        <div>
+            Version: @ideAssembly.GetName().Version
+        </div>
+        <div>
+            Source Code:
+            <a target="_blank"
+               href="https://github.com/Luthetus/Luthetus.Ide">
+                
+               Luthetus.Ide
+            </a>
+        </div>
     </div>
-    <div>
-        Source Code:
-        <a target="_blank"
-           href="https://github.com/Luthetus/Luthetus.Ide">
-           Luthetus/Luthetus.Ide (github)
-       </a>
+
+    <hr/>
+
+    <div class="luth_ide_info-references">
+        <div>
+            References
+        </div>
+
+        @{
+            var referencedLuthetusAssembliesBag = ideAssembly
+                .GetReferencedAssemblies()
+                .Where(x => x.Name is not null && x.Name.StartsWith("Luthetus"));
+        }
+
+        @foreach (var referencedLuthetusAssembly in referencedLuthetusAssembliesBag)
+        {
+            if (referencedLuthetusAssembly.Name is null)
+                continue;
+
+            var repoName = referencedLuthetusAssembly.Name.Replace(".RazorLib", string.Empty);
+            var hrefForReferencedLuthetusAssembly = $"https://github.com/Luthetus/{repoName}";
+
+            if (referencedLuthetusAssembly.Name.Contains("Luthetus.CompilerServices"))
+            {
+                var compilerServiceRepoBaseHref = "https://github.com/Luthetus/Luthetus.CompilerServices/tree/main/Source/";
+
+                var languageName = referencedLuthetusAssembly.Name.Split('.').Last();
+
+                hrefForReferencedLuthetusAssembly = compilerServiceRepoBaseHref + languageName + "/Source/";
+            }
+
+            <div>
+                v
+                <em class="luth_em" title="Version">
+                    @(referencedLuthetusAssembly.Version)
+                </em>
+                ::
+                <a target="_blank"
+                   href="@hrefForReferencedLuthetusAssembly">
+
+                    @(referencedLuthetusAssembly.Name)
+                </a>
+            </div>
+        }
     </div>
 </div>
