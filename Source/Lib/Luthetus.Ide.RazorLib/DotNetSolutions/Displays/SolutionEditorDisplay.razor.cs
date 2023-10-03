@@ -39,7 +39,7 @@ public partial class SolutionEditorDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        DotNetSolutionCompilerService.ModelParsed += DotNetSolutionCompilerService_ModelParsed;
+        DotNetSolutionCompilerService.ResourceParsed += DotNetSolutionCompilerService_ModelParsed;
         base.OnInitialized();
     }
 
@@ -50,6 +50,6 @@ public partial class SolutionEditorDisplay : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        DotNetSolutionCompilerService.ModelParsed -= DotNetSolutionCompilerService_ModelParsed;
+        DotNetSolutionCompilerService.ResourceParsed -= DotNetSolutionCompilerService_ModelParsed;
     }
 }

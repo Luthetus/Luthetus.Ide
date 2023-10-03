@@ -134,7 +134,7 @@ public partial class PersonSimpleDisplay : ComponentBase
                 new());
 
             TextEditorService.Model.RegisterCustom(textEditorModel);
-            CSharpCompilerService.RegisterModel(textEditorModel);
+            CSharpCompilerService.RegisterResource(textEditorModel.ResourceUri);
 
             var razorFileAbsolutePath = new AbsolutePath(
                 RAZOR_FILE_PATH_STRING,
@@ -172,7 +172,7 @@ public partial class PersonSimpleDisplay : ComponentBase
 
         if (textEditorModel is not null)
         {
-            var textEditorViewModelBag = TextEditorService.Model.GetViewModelsOrEmpty(textEditorModel.ModelKey);
+            var textEditorViewModelBag = TextEditorService.Model.GetViewModelsOrEmpty(textEditorModel.ResourceUri);
 
             var viewModel = textEditorViewModelBag.FirstOrDefault();
 

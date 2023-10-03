@@ -49,9 +49,9 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
         TextEditorViewModelStateWrap.StateChanged += RerenderAfterEventWithArgs;
         TextEditorGroupStateWrap.StateChanged += RerenderAfterEventWithArgs;
 
-        CSharpCompilerService.ModelRegistered += RerenderAfterEvent;
-        CSharpCompilerService.ModelDisposed += RerenderAfterEvent;
-        CSharpCompilerService.ModelParsed += RerenderAfterEvent;
+        CSharpCompilerService.ResourceRegistered += RerenderAfterEvent;
+        CSharpCompilerService.ResourceDisposed += RerenderAfterEvent;
+        CSharpCompilerService.ResourceParsed += RerenderAfterEvent;
 
         _compilerServiceExplorerTreeViewKeymap = new CompilerServiceExplorerTreeViewKeyboardEventHandler(
             EditorSync,
@@ -109,8 +109,8 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
         TextEditorViewModelStateWrap.StateChanged -= RerenderAfterEventWithArgs;
         TextEditorGroupStateWrap.StateChanged -= RerenderAfterEventWithArgs;
 
-        CSharpCompilerService.ModelRegistered -= RerenderAfterEvent;
-        CSharpCompilerService.ModelDisposed -= RerenderAfterEvent;
-        CSharpCompilerService.ModelParsed -= RerenderAfterEvent;
+        CSharpCompilerService.ResourceRegistered -= RerenderAfterEvent;
+        CSharpCompilerService.ResourceDisposed -= RerenderAfterEvent;
+        CSharpCompilerService.ResourceParsed -= RerenderAfterEvent;
     }
 }

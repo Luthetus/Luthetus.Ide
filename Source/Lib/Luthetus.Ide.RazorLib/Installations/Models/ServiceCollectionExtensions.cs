@@ -120,6 +120,7 @@ public static class ServiceCollectionExtensions
             .AddScoped<IJavaScriptCompilerService, JavaScriptCompilerService>()
             .AddScoped<ITypeScriptCompilerService, TypeScriptCompilerService>()
             .AddScoped<IJsonCompilerService, JsonCompilerService>()
+            .AddScoped<ITextEditorDefaultCompilerService, TextEditorDefaultCompilerService> ()
             .AddScoped<CompilerServiceRegistry>()
             .AddScoped<ITextEditorCssDecorationMapper, TextEditorCssDecorationMapper>()
             .AddScoped<ITextEditorJsonDecorationMapper, TextEditorJsonDecorationMapper>()

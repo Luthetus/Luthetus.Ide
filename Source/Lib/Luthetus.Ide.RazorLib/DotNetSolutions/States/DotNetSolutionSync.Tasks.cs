@@ -63,7 +63,7 @@ public partial class DotNetSolutionSync
         if (solutionTextEditorModel is not null)
         {
             Dispatcher.Dispatch(new TextEditorModelState.ReloadAction(
-                solutionTextEditorModel.ModelKey,
+                solutionTextEditorModel.ResourceUri,
                 inDotNetSolutionModel.SolutionFileContents,
                 DateTime.UtcNow));
         }

@@ -71,7 +71,7 @@ public partial class TerminalOutputDisplay : FluxorComponent
 
                 if (terminalSession is not null)
                 {
-                    var textEditorModel = TextEditorService.Model.FindOrDefault(terminalSession.TextEditorModelKey);
+                    var textEditorModel = TextEditorService.Model.FindOrDefault(terminalSession.ResourceUri);
 
                     if (textEditorModel is null)
                     {
@@ -80,13 +80,11 @@ public partial class TerminalOutputDisplay : FluxorComponent
                             new ResourceUri("__terminal-display-name-fallback__"),
                             DateTime.UtcNow,
                             string.Empty,
-                            // "TERMINAL",
-                            terminalSession.TextEditorModelKey,
                             "TERMINAL");
 
                         TextEditorService.ViewModel.Register(
                             terminalSession.TextEditorViewModelKey,
-                            terminalSession.TextEditorModelKey);
+                            terminalSession.ResourceUri);
                     }
                 }
             }
