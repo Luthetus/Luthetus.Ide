@@ -1,6 +1,9 @@
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Obsolete.RewriteForImmutability;
+using Luthetus.Ide.RazorLib.CompilerServices.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Microsoft.AspNetCore.Components;
@@ -10,25 +13,49 @@ namespace Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 public partial class SolutionEditorDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private DotNetSolutionCompilerService DotNetSolutionCompilerService { get; set; } = null!;
+    private ICompilerServiceRegistry InterfaceCompilerServiceRegistry { get; set; } = null!;
+    [Inject]
+    private IDecorationMapperRegistry DecorationMapperRegistry { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
+    [Inject]
+    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Key<DotNetSolutionModel> DotNetSolutionModelKey { get; set; }
     [Parameter, EditorRequired]
     public ResourceUri DotNetSolutionResourceUri { get; set; } = null!;
 
+    private CompilerServiceRegistry _compilerServiceRegistry = null!;
+
+    private readonly HashSet<ResourceUri> _seenDotNetSolutionResourceUris = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var localDotNetSolutionResourceUri = DotNetSolutionResourceUri;
+
+        if (_seenDotNetSolutionResourceUris.Add(localDotNetSolutionResourceUri))
+        {
+            _compilerServiceRegistry = (CompilerServiceRegistry)InterfaceCompilerServiceRegistry;
+
+            var content = await FileSystemProvider.File.ReadAllTextAsync(localDotNetSolutionResourceUri.Value);
+
+            TextEditorService.Model.RegisterTemplated(
+                DecorationMapperRegistry,
+                InterfaceCompilerServiceRegistry,
+                ExtensionNoPeriodFacts.DOT_NET_SOLUTION,
+                localDotNetSolutionResourceUri,
+                DateTime.UtcNow,
+                content);
+
+            _compilerServiceRegistry.DotNetSolutionCompilerService.RegisterResource(localDotNetSolutionResourceUri);
+        }
+
+        await base.OnParametersSetAsync();
+    }
+
     protected override void OnParametersSet()
     {
-        //TextEditorService.Model.RegisterTemplated(
-        //    Key<TextEditorModel>.NewKey(),
-        //    WellKnownModelKind.DotNetSolution,
-        //    DotNetSolutionResourceUri,
-        //    DateTime.UtcNow,
-        //    ".sln",
-        //    );
-
         //var model = TextEditorService.Model.FindOrDefaultByResourceUri(DotNetSolutionResourceUri);
 
         //if (model is not null)
@@ -39,7 +66,10 @@ public partial class SolutionEditorDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        DotNetSolutionCompilerService.ResourceParsed += DotNetSolutionCompilerService_ModelParsed;
+        _compilerServiceRegistry = (CompilerServiceRegistry)InterfaceCompilerServiceRegistry;
+
+        _compilerServiceRegistry.DotNetSolutionCompilerService.ResourceParsed += DotNetSolutionCompilerService_ModelParsed;
+
         base.OnInitialized();
     }
 
@@ -50,6 +80,6 @@ public partial class SolutionEditorDisplay : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        DotNetSolutionCompilerService.ResourceParsed -= DotNetSolutionCompilerService_ModelParsed;
+        _compilerServiceRegistry.DotNetSolutionCompilerService.ResourceParsed -= DotNetSolutionCompilerService_ModelParsed;
     }
 }

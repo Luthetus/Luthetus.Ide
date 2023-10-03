@@ -3,7 +3,7 @@
 
 <div class="luth_ide_solution-editor-display">
     @{
-        var compilerServiceResource = DotNetSolutionCompilerService
+        var compilerServiceResource = _compilerServiceRegistry.DotNetSolutionCompilerService
             .GetCompilerServiceResourceFor(DotNetSolutionResourceUri);
     }
 
