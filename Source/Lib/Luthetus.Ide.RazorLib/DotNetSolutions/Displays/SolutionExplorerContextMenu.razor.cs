@@ -22,9 +22,9 @@ using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Luthetus.Ide.RazorLib.Menus.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Obsolete.RewriteForImmutability;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 

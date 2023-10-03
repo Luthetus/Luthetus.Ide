@@ -18,9 +18,9 @@ using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.CSharpProjectForms.Models;
 using Luthetus.Ide.RazorLib.Installations.Models;
 using Luthetus.Ide.RazorLib.WebsiteProjectTemplates.Models;
-using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Obsolete.RewriteForImmutability;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.Ide.RazorLib.CSharpProjectForms.Displays;
 

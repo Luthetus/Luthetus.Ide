@@ -131,8 +131,8 @@ public partial class PersonSimpleDisplay : ComponentBase
                 DateTime.UtcNow,
                 ".cs",
                 text,
-                CSharpCompilerService,
                 new GenericDecorationMapper(),
+                CSharpCompilerService,
                 null,
                 new());
 

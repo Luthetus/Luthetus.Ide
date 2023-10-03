@@ -78,12 +78,13 @@ public partial class TerminalOutputDisplay : FluxorComponent
                     if (textEditorModel is null)
                     {
                         TextEditorService.Model.RegisterTemplated(
-                            terminalSession.TextEditorModelKey,
-                            WellKnownModelKind.TerminalGeneric,
+                            ExtensionNoPeriodFacts.TXT,
                             new ResourceUri("__terminal-display-name-fallback__"),
                             DateTime.UtcNow,
-                            "TERMINAL",
-                            string.Empty);
+                            string.Empty,
+                            // "TERMINAL",
+                            terminalSession.TextEditorModelKey,
+                            "TERMINAL");
 
                         TextEditorService.ViewModel.Register(
                             terminalSession.TextEditorViewModelKey,

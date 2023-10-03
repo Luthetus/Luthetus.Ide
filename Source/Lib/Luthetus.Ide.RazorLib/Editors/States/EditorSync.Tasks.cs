@@ -10,7 +10,6 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using System.Collections.Immutable;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
-using Luthetus.Ide.RazorLib.FileSystems.Models;
 
 namespace Luthetus.Ide.RazorLib.Editors.States;
 
@@ -33,29 +32,19 @@ public partial class EditorSync
             var content = await _fileSystemProvider.File.ReadAllTextAsync(
                 absolutePathString);
 
-            var compilerService = ExtensionNoPeriodFacts.GetCompilerService(
-                absolutePath.ExtensionNoPeriod,
-                _xmlCompilerService,
-                _dotNetCompilerService,
-                _cSharpProjectCompilerService,
-                _cSharpCompilerService,
-                _razorCompilerService,
-                _cssCompilerService,
-                _fSharpCompilerService,
-                _javaScriptCompilerService,
-                _typeScriptCompilerService,
-                _jsonCompilerService);
+            var decorationMapper = _textEditorService.Model.GetDecorationMapper(absolutePath.ExtensionNoPeriod)
+                ?? _textEditorService.DecorationMapperRegistry.DefaultDecorationMapper;
 
-            var decorationMapper = ExtensionNoPeriodFacts.GetDecorationMapper(
-                absolutePath.ExtensionNoPeriod);
+            var compilerService = _textEditorService.Model.GetCompilerService(absolutePath.ExtensionNoPeriod)
+                ?? _textEditorService.CompilerServiceRegistry.DefaultCompilerService;
 
             textEditorModel = new TextEditorModel(
                 resourceUri,
                 fileLastWriteTime,
                 absolutePath.ExtensionNoPeriod,
                 content,
-                compilerService,
                 decorationMapper,
+                compilerService,
                 null,
                 new(),
                 Key<TextEditorModel>.NewKey()
@@ -69,8 +58,7 @@ public partial class EditorSync
                 textEditorModel.ModelKey,
                 CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
 
-            _ = Task.Run(async () =>
-                await textEditorModel.ApplySyntaxHighlightingAsync());
+            _ = Task.Run(async () => await textEditorModel.ApplySyntaxHighlightingAsync());
         }
 
         return textEditorModel;
