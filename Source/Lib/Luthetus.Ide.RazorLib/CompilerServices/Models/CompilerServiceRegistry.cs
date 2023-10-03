@@ -24,7 +24,7 @@ public class CompilerServiceRegistry : ICompilerServiceRegistry
     public ImmutableDictionary<string, ICompilerService> Map => _map.ToImmutableDictionary();
 
     public CompilerServiceRegistry(
-        TextEditorService textEditorService,
+        ITextEditorService textEditorService,
         IBackgroundTaskService backgroundTaskService,
         IEnvironmentProvider environmentProvider,
         IDispatcher dispatcher)
