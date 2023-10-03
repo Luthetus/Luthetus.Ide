@@ -40,6 +40,20 @@ public class CompilerServiceRegistry : ICompilerServiceRegistry
         TypeScriptCompilerService = new TypeScriptCompilerService(textEditorService, backgroundTaskService, dispatcher);
         XmlCompilerService = new XmlCompilerService(textEditorService, backgroundTaskService, dispatcher);
         DefaultCompilerService = new TextEditorDefaultCompilerService(textEditorService, backgroundTaskService, dispatcher);
+
+        _map.Add(ExtensionNoPeriodFacts.HTML, XmlCompilerService);
+        _map.Add(ExtensionNoPeriodFacts.XML, XmlCompilerService);
+        _map.Add(ExtensionNoPeriodFacts.C_SHARP_PROJECT, CSharpProjectCompilerService);
+        _map.Add(ExtensionNoPeriodFacts.C_SHARP_CLASS, CSharpCompilerService);
+        _map.Add(ExtensionNoPeriodFacts.RAZOR_CODEBEHIND, CSharpCompilerService);
+        _map.Add(ExtensionNoPeriodFacts.RAZOR_MARKUP, RazorCompilerService);
+        _map.Add(ExtensionNoPeriodFacts.CSHTML_CLASS, RazorCompilerService);
+        _map.Add(ExtensionNoPeriodFacts.CSS, CssCompilerService);
+        _map.Add(ExtensionNoPeriodFacts.JAVA_SCRIPT, JavaScriptCompilerService);
+        _map.Add(ExtensionNoPeriodFacts.JSON, JsonCompilerService);
+        _map.Add(ExtensionNoPeriodFacts.TYPE_SCRIPT, TypeScriptCompilerService);
+        _map.Add(ExtensionNoPeriodFacts.F_SHARP, FSharpCompilerService);
+        _map.Add(ExtensionNoPeriodFacts.DOT_NET_SOLUTION, DotNetSolutionCompilerService);
     }
 
     public CSharpCompilerService CSharpCompilerService { get; }
