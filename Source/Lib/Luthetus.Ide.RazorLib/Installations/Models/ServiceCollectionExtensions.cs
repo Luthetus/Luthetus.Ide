@@ -34,12 +34,13 @@ using Luthetus.Ide.RazorLib.FileSystems.Displays;
 using Luthetus.Ide.RazorLib.FormsGenerics.Displays;
 using Luthetus.Ide.RazorLib.CSharpProjectForms.Displays;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Aaa;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.CompilerServices.Lang.Css.Css.Decoration;
 using Luthetus.CompilerServices.Lang.Json.Json.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.CompilerServices.Lang.Xml.Html.Decoration;
+using Luthetus.Ide.RazorLib.Decorations;
+using Luthetus.Ide.RazorLib.CompilerServices.Models;
 
 namespace Luthetus.Ide.RazorLib.Installations.Models;
 
@@ -110,24 +111,8 @@ public static class ServiceCollectionExtensions
     {
         services
             .AddScoped<ICommandFactory, CommandFactory>()
-            .AddScoped<IXmlCompilerService, XmlCompilerService>()
-            .AddScoped<IDotNetSolutionCompilerService, DotNetSolutionCompilerService>()
-            .AddScoped<ICSharpProjectCompilerService, CSharpProjectCompilerService>()
-            .AddScoped<ICSharpCompilerService, CSharpCompilerService>()
-            .AddScoped<IRazorCompilerService, RazorCompilerService>()
-            .AddScoped<ICssCompilerService, CssCompilerService>()
-            .AddScoped<IFSharpCompilerService, FSharpCompilerService>()
-            .AddScoped<IJavaScriptCompilerService, JavaScriptCompilerService>()
-            .AddScoped<ITypeScriptCompilerService, TypeScriptCompilerService>()
-            .AddScoped<IJsonCompilerService, JsonCompilerService>()
-            .AddScoped<ITextEditorDefaultCompilerService, TextEditorDefaultCompilerService> ()
-            .AddScoped<CompilerServiceRegistry>()
-            .AddScoped<ITextEditorCssDecorationMapper, TextEditorCssDecorationMapper>()
-            .AddScoped<ITextEditorJsonDecorationMapper, TextEditorJsonDecorationMapper>()
-            .AddScoped<IGenericDecorationMapper, GenericDecorationMapper>()
-            .AddScoped<ITextEditorHtmlDecorationMapper, TextEditorHtmlDecorationMapper>()
-            .AddScoped<ITextEditorDecorationMapperDefault, TextEditorDecorationMapperDefault>()
-            .AddScoped<DecorationMapperRegistry>()
+            .AddScoped<ICompilerServiceRegistry, CompilerServiceRegistry>()
+            .AddScoped<IDecorationMapperRegistry, DecorationMapperRegistry>()
             .AddScoped<IMenuOptionsFactory, MenuOptionsFactory>()
             .AddScoped<IFileTemplateProvider, FileTemplateProvider>()
             .AddScoped<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>();

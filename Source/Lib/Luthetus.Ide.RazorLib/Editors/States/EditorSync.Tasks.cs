@@ -25,18 +25,11 @@ public partial class EditorSync
         if (textEditorModel is null)
         {
             var resourceUri = new ResourceUri(absolutePathString);
+            var fileLastWriteTime = await _fileSystemProvider.File.GetLastWriteTimeAsync(absolutePathString);
+            var content = await _fileSystemProvider.File.ReadAllTextAsync(absolutePathString);
 
-            var fileLastWriteTime = await _fileSystemProvider.File.GetLastWriteTimeAsync(
-                absolutePathString);
-
-            var content = await _fileSystemProvider.File.ReadAllTextAsync(
-                absolutePathString);
-
-            var decorationMapper = _textEditorService.Model.GetDecorationMapper(absolutePath.ExtensionNoPeriod)
-                ?? _textEditorService.DecorationMapperRegistry.DefaultDecorationMapper;
-
-            var compilerService = _textEditorService.Model.GetCompilerService(absolutePath.ExtensionNoPeriod)
-                ?? _textEditorService.CompilerServiceRegistry.DefaultCompilerService;
+            var decorationMapper = _decorationMapperRegistry.GetDecorationMapper(absolutePath.ExtensionNoPeriod);
+            var compilerService = _compilerServiceRegistry.GetCompilerService(absolutePath.ExtensionNoPeriod);
 
             textEditorModel = new TextEditorModel(
                 resourceUri,
