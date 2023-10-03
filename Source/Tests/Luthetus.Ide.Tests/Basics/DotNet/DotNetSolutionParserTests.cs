@@ -1,6 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
-using Luthetus.CompilerServices.Lang.DotNetSolution;
+using Luthetus.CompilerServices.Lang.DotNetSolution.Obsolete;
 using Xunit;
 
 namespace Luthetus.Ide.Tests.Basics.DotNet;

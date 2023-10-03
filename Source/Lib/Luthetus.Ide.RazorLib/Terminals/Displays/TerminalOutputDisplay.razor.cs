@@ -3,11 +3,9 @@ using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
-using Luthetus.Ide.RazorLib.Htmls.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
-using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -16,6 +14,8 @@ using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
 using System.Text;
 using Luthetus.TextEditor.RazorLib.Htmls.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Displays;
 
@@ -31,6 +31,10 @@ public partial class TerminalOutputDisplay : FluxorComponent
     private IState<TerminalSessionWasModifiedState> TerminalSessionWasModifiedStateWrap { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
+    [Inject]
+    private IDecorationMapperRegistry DecorationMapperRegistry { get; set; } = null!;
+    [Inject]
+    private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
 
     /// <summary>
     /// <see cref="TerminalSessionKey"/> is used to narrow down the terminal
@@ -73,21 +77,22 @@ public partial class TerminalOutputDisplay : FluxorComponent
 
                 if (terminalSession is not null)
                 {
-                    var textEditorModel = TextEditorService.Model.FindOrDefault(terminalSession.TextEditorModelKey);
+                    var textEditorModel = TextEditorService.Model.FindOrDefault(terminalSession.ResourceUri);
 
                     if (textEditorModel is null)
                     {
                         TextEditorService.Model.RegisterTemplated(
-                            terminalSession.TextEditorModelKey,
-                            WellKnownModelKind.TerminalGeneric,
+                            DecorationMapperRegistry,
+                            CompilerServiceRegistry,
+                            ExtensionNoPeriodFacts.TXT,
                             new ResourceUri("__terminal-display-name-fallback__"),
                             DateTime.UtcNow,
-                            "TERMINAL",
-                            string.Empty);
+                            string.Empty,
+                            "TERMINAL");
 
                         TextEditorService.ViewModel.Register(
                             terminalSession.TextEditorViewModelKey,
-                            terminalSession.TextEditorModelKey);
+                            terminalSession.ResourceUri);
                     }
                 }
             }

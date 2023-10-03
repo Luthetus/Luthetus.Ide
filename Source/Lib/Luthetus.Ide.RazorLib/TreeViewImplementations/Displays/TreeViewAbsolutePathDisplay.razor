@@ -39,7 +39,9 @@
                 splitEnd = displayText.Substring(indexOfSearchQuery + SearchQuery.Length);
             }
 
-            @: @splitStart<span class="luth_ide_search-match">@splitMiddle</span>@splitEnd
+            <text>
+                @splitStart<span class="luth_ide_search-match">@splitMiddle</span>@splitEnd
+            </text>
         }
     }
     else

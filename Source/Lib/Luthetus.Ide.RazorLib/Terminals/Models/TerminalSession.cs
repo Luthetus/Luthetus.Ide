@@ -7,6 +7,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Ide.RazorLib.States.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
@@ -44,7 +45,7 @@ public class TerminalSession
 
     public Key<TerminalSession> TerminalSessionKey { get; init; } = Key<TerminalSession>.NewKey();
 
-    public Key<TextEditorModel> TextEditorModelKey => new(TerminalSessionKey.Guid);
+    public ResourceUri ResourceUri => new($"__LUTHETUS_{TerminalSessionKey.Guid}__");
     public Key<TextEditorViewModel> TextEditorViewModelKey => new(TerminalSessionKey.Guid);
 
     public string? WorkingDirectoryAbsolutePathString { get; private set; }

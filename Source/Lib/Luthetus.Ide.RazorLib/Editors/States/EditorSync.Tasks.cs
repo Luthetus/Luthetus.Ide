@@ -10,7 +10,6 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using System.Collections.Immutable;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
-using Luthetus.Ide.RazorLib.FileSystems.Models;
 
 namespace Luthetus.Ide.RazorLib.Editors.States;
 
@@ -26,51 +25,31 @@ public partial class EditorSync
         if (textEditorModel is null)
         {
             var resourceUri = new ResourceUri(absolutePathString);
+            var fileLastWriteTime = await _fileSystemProvider.File.GetLastWriteTimeAsync(absolutePathString);
+            var content = await _fileSystemProvider.File.ReadAllTextAsync(absolutePathString);
 
-            var fileLastWriteTime = await _fileSystemProvider.File.GetLastWriteTimeAsync(
-                absolutePathString);
-
-            var content = await _fileSystemProvider.File.ReadAllTextAsync(
-                absolutePathString);
-
-            var compilerService = ExtensionNoPeriodFacts.GetCompilerService(
-                absolutePath.ExtensionNoPeriod,
-                _xmlCompilerService,
-                _dotNetCompilerService,
-                _cSharpProjectCompilerService,
-                _cSharpCompilerService,
-                _razorCompilerService,
-                _cssCompilerService,
-                _fSharpCompilerService,
-                _javaScriptCompilerService,
-                _typeScriptCompilerService,
-                _jsonCompilerService);
-
-            var decorationMapper = ExtensionNoPeriodFacts.GetDecorationMapper(
-                absolutePath.ExtensionNoPeriod);
+            var decorationMapper = _decorationMapperRegistry.GetDecorationMapper(absolutePath.ExtensionNoPeriod);
+            var compilerService = _compilerServiceRegistry.GetCompilerService(absolutePath.ExtensionNoPeriod);
 
             textEditorModel = new TextEditorModel(
                 resourceUri,
                 fileLastWriteTime,
                 absolutePath.ExtensionNoPeriod,
                 content,
-                compilerService,
                 decorationMapper,
+                compilerService,
                 null,
-                new(),
-                Key<TextEditorModel>.NewKey()
-            );
+                new());
 
-            textEditorModel.CompilerService.RegisterModel(textEditorModel);
+            textEditorModel.CompilerService.RegisterResource(textEditorModel.ResourceUri);
 
             _textEditorService.Model.RegisterCustom(textEditorModel);
 
             _textEditorService.Model.RegisterPresentationModel(
-                textEditorModel.ModelKey,
+                textEditorModel.ResourceUri,
                 CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
 
-            _ = Task.Run(async () =>
-                await textEditorModel.ApplySyntaxHighlightingAsync());
+            _ = Task.Run(async () => await textEditorModel.ApplySyntaxHighlightingAsync());
         }
 
         return textEditorModel;
@@ -118,7 +97,7 @@ public partial class EditorSync
                                             .ReadAllTextAsync(inputFileAbsolutePathString);
 
                                         _textEditorService.Model.Reload(
-                                            textEditorModel.ModelKey,
+                                            textEditorModel.ResourceUri,
                                             content,
                                             fileLastWriteTime);
 
@@ -152,7 +131,7 @@ public partial class EditorSync
         string inputFileAbsolutePathString)
     {
         var viewModel = _textEditorService.Model
-            .GetViewModelsOrEmpty(textEditorModel.ModelKey)
+            .GetViewModelsOrEmpty(textEditorModel.ResourceUri)
             .FirstOrDefault();
 
         var viewModelKey = viewModel?.ViewModelKey ?? Key<TextEditorViewModel>.Empty;
@@ -163,7 +142,7 @@ public partial class EditorSync
 
             _textEditorService.ViewModel.Register(
                 viewModelKey,
-                textEditorModel.ModelKey);
+                textEditorModel.ResourceUri);
 
             var presentationKeys = new[]
             {
@@ -201,7 +180,6 @@ public partial class EditorSync
                     if (writtenDateTime is not null)
                     {
                         _textEditorService.Model.SetResourceData(
-                            innerTextEditor.ModelKey,
                             innerTextEditor.ResourceUri,
                             writtenDateTime.Value);
                     }
