@@ -1,5 +1,9 @@
 ﻿namespace Luthetus.CompilerServices.Lang.C.ParserCase;
 
+// TODO: All C logic is commented out due to breaking changes in the TextEditor API. The...
+// ...C# compiler service is the focus while API decisions are being made, lest twice the code...
+// ...need be modified for every API change (2023-10-04)
+//
 // TODO: Fix CParserSession, it broke on (2023-07-26)
 //
 // public class CParserSession : IParser

@@ -1,4 +1,8 @@
-﻿//using System.Collections.Immutable;
+﻿// TODO: All C logic is commented out due to breaking changes in the TextEditor API. The...
+// ...C# compiler service is the focus while API decisions are being made, lest twice the code...
+// ...need be modified for every API change (2023-10-04)
+//
+//using System.Collections.Immutable;
 //using Luthetus.CompilerServices.Lang.C.Facts;
 //using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
 //using Luthetus.TextEditor.RazorLib.CompilerServiceCase.GenericLexer.Decoration;
