@@ -1,0 +1,12 @@
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<div class="luth_te_text-editor-input-cursor-size @TextEditorService.ThemeCssClassString @TopLevelDivElementCssClassString">
+    <span class="@LabelElementCssClassString">
+        Cursor-Width (px):&nbsp;
+    </span>
+    
+    <input type="number"
+           step="0.01"
+           @bind="TextEditorCursorWidth"
+           class="@CascadingInputElementCssClass @InputElementCssClassString" />
+</div>

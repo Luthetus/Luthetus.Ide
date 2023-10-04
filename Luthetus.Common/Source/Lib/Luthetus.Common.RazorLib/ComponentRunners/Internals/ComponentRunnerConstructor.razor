@@ -1,0 +1,45 @@
+﻿<div class="luth_component-runner-constructor @IsActiveCssClass">
+
+    @if (IsChosenConstructor)
+    {
+        <button class="luth_button"
+                @onclick="InvokeOnUnsetChosenConstructorInfo">
+            <IconClose/>
+        </button>
+    }
+    else
+    {
+        <button class="luth_button"
+                @onclick="InvokeOnClick">
+            <IconCSharpProject/>
+        </button>
+    }
+
+    <span class="luth_te_keyword">
+        new
+    </span>
+    
+    <span class="luth_component-runner-argument-list">
+        (
+
+        @{ var parameterInfoBag = ConstructorInfo.GetParameters(); }
+
+        @for (var i = 0; i < parameterInfoBag.Length; i++)
+        {
+            var index = i;
+            var parameter = parameterInfoBag[index];
+
+            <ComponentRunnerVariable VariableType="parameter.ParameterType"
+                                     VariableName="@parameter.Name"
+                                     ParametersKey="@(ParametersKey + '.' + parameter.Name)"
+                                     IsProperty="false" />
+
+            @if (i != parameterInfoBag.Length - 1)
+            {
+                @: ,&nbsp;
+            }
+        }
+
+        )
+    </span>
+</div>

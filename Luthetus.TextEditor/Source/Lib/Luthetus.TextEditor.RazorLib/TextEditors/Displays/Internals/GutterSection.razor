@@ -1,0 +1,47 @@
+﻿@using Luthetus.Common.RazorLib.Dimensions.Models;
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+@using Luthetus.TextEditor.RazorLib.Virtualizations.Displays
+
+<div class="luth_te_gutter-section"
+     style="@GetGutterSectionStyleCss()"
+     id="@RenderBatch.ViewModel!.GutterElementId">
+    
+    @*
+        VirtualizationDisplay must be rendered first as it will modify the scrollHeight / scrollWidth of the scrollable parent
+        The GutterSection needs to render the "VirtualizationDisplay" in order to increase its ScrollHeight in accordance with the "RowSection".
+        The actual behavior of JavaScript Intersection Observers and invoking a providers func when a boundary comes into view gets turned off for the gutter. This is unlike the "RowSection".
+    *@
+    <VirtualizationDisplay VirtualizationResultWithoutTypeMask="GetVirtualizationResult()"
+                           UseHorizontalVirtualization="false"
+                           UseIntersectionObserver="false"
+                           ItemsProviderFunc="_ => {}"/>
+    
+    @foreach (var virtualizedRow in RenderBatch.ViewModel!.VirtualizationResult.EntryBag)
+    {
+        <div class="luth_te_gutter"
+             style="@GetGutterStyleCss(virtualizedRow.Index)">
+            @(virtualizedRow.Index + 1)
+        </div>
+    }
+    
+    @{
+        var heightOfGutter = RenderBatch.ViewModel!.VirtualizationResult.EntryBag.Length *
+                             RenderBatch.ViewModel!.VirtualizationResult.CharacterWidthAndRowHeight.RowHeightInPixels;
+
+        if (heightOfGutter < RenderBatch.ViewModel!.VirtualizationResult.ElementMeasurementsInPixels.Height)
+        {
+            var remainingHeightToFill = RenderBatch.ViewModel!.VirtualizationResult.ElementMeasurementsInPixels.Height -
+                heightOfGutter +
+                ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
+            
+            var remainingHeightToFillInvariantCulture = remainingHeightToFill.ToCssValue();
+
+            var imaginaryNextIndex = (RenderBatch.ViewModel!.VirtualizationResult.EntryBag.LastOrDefault()?.Index ?? -1) + 
+                1;
+            
+            <div class="luth_te_gutter"
+                 style="@GetGutterStyleCss(imaginaryNextIndex) height: @(remainingHeightToFillInvariantCulture)px;">
+            </div>
+        }
+    }
+</div>

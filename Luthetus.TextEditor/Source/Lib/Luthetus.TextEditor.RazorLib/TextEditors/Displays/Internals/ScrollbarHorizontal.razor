@@ -1,0 +1,20 @@
+﻿@using Luthetus.Common.RazorLib.Dimensions;
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+@using Luthetus.Common.RazorLib.Dimensions.Models;
+
+<div class="luth_te_scrollbar luth_te_scrollbar-horizontal"
+     id="@ScrollbarElementId"
+     style="@GetScrollbarHorizontalStyleCss()"
+     @onmousedown:stopPropagation="true"
+     @onmousedown="HandleOnMouseDownAsync"
+     @onmousemove:stopPropagation="true"
+     @ondblclick:stopPropagation="true"
+     @onclick:stopPropagation="true"
+     @oncontextmenu:stopPropagation="true">
+    
+    <div class="luth_te_scrollbar-slider"
+         id="@ScrollbarSliderElementId"
+         style="bottom: 0; height: @(ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS.ToCssValue())px; @GetSliderHorizontalStyleCss()">
+        
+    </div>
+</div>

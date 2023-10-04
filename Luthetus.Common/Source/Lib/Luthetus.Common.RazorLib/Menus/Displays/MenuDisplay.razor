@@ -1,0 +1,63 @@
+<div class="luth_menu-display"
+     tabindex="-1"
+     @ref="_menuDisplayElementReference"
+     @onclick:stopPropagation="true"
+     @ondblclick:stopPropagation="true"
+     @onkeydownwithpreventscroll:stopPropagation="true"
+     @onkeydown:stopPropagation="true"
+     @onkeydown:preventDefault="true"
+     @onkeydown="HandleOnKeyDown"
+     @oncontextmenu:preventDefault="true"
+     @oncontextmenu:stopPropagation="true">
+
+    <CascadingValue Value="RestoreFocusToThisMenuAsync" Name="ReturnFocusToParentFuncAsync">
+        @{
+            if (GroupByMenuOptionKind)
+            {
+                var menuOptionsGroupedByKindBag = MenuRecord.MenuOptionBag
+                    .GroupBy(x => x.MenuOptionKind)
+                    .ToList();
+
+                var cumulativeIndex = 0;
+                
+                for (int i = 0; i < menuOptionsGroupedByKindBag.Count; i++)
+                {
+                    var groupIndex = i;
+                    
+                    var group = menuOptionsGroupedByKindBag[groupIndex];
+                    
+                    var menuOptionBag = group.ToList();
+                    
+                    for (var j = 0; j < menuOptionBag.Count; j++)
+                    {
+                        var menuOptionIndex = j;
+                        var menuOption = menuOptionBag[menuOptionIndex];
+
+                        <MenuOptionDisplay MenuOptionRecord="@menuOption"
+                                           ActiveMenuOptionRecordIndex="@_activeMenuOptionRecordIndex"
+                                           Index="cumulativeIndex++"
+                                           IconRenderFragment="IconRenderFragment"/>
+                    }
+
+                    if (groupIndex != menuOptionsGroupedByKindBag.Count - 1)
+                    {
+                        <hr class="luth_hr"/>
+                    }
+                }
+            }
+            else
+            {
+                for (var i = 0; i < MenuRecord.MenuOptionBag.Length; i++)
+                {
+                    var index = i;
+                    var menuOption = MenuRecord.MenuOptionBag[index];
+
+                    <MenuOptionDisplay MenuOptionRecord="@menuOption"
+                                       ActiveMenuOptionRecordIndex="@_activeMenuOptionRecordIndex"
+                                       Index="index"
+                                       IconRenderFragment="IconRenderFragment"/>
+                }
+            }
+        }
+    </CascadingValue>
+</div>

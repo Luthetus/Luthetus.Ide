@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Product>Luthetus Common</Product>
+        <Description>A repository containing Blazor Components I've made which I commonly use in other projects.</Description>
+        <PackageId>Luthetus.Common</PackageId>
+        <Version>1.4.0</Version>
+        <Authors>Hunter Freeman</Authors>
+        <Company />
+        <PackageTags>DotNet CSharp Blazor RazorComponents</PackageTags>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Content Remove="wwwroot\luthetusTreeView.css" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+        <SupportedPlatform Include="browser" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Condition="'$(TargetFramework)' == 'net7.0'" Include="Microsoft.AspNetCore.Components.Web" Version="7.0.0" />
+        <PackageReference Condition="'$(TargetFramework)' == 'net6.0'" Include="Microsoft.AspNetCore.Components.Web" Version="6.0.0" />
+        <PackageReference Condition="'$(TargetFramework)' == 'net5.0'" Include="Microsoft.AspNetCore.Components.Web" Version="5.0.0" />
+        <PackageReference Condition="'$(TargetFramework)' != 'net7.0' AND '$(TargetFramework)' != 'net6.0' AND '$(TargetFramework)' != 'net5.0'" Include="Microsoft.AspNetCore.Components.Web" Version="3.1.0" />
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <PackageReference Include="Fluxor.Blazor.Web" Version="5.9.0" />        
+    </ItemGroup>
+    
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\background.png" />
+      <_ContentIncludedByDefault Remove="wwwroot\exampleJsInterop.js" />
+      <_ContentIncludedByDefault Remove="DialogNotification\Dialog\DialogDisplay.razor" />
+      <_ContentIncludedByDefault Remove="DialogNotification\Notification\CommonErrorNotificationDisplay.razor" />
+      <_ContentIncludedByDefault Remove="DialogNotification\Notification\CommonInformativeNotificationDisplay.razor" />
+      <_ContentIncludedByDefault Remove="DialogNotification\Notification\NotificationDisplay.razor" />
+      <_ContentIncludedByDefault Remove="WatchWindow\NavLinks\BalcTreeViewNavLinks.razor" />
+      <_ContentIncludedByDefault Remove="BackgroundTaskCase\BackgroundTaskDisplay.razor" />
+    </ItemGroup>
+
+</Project>

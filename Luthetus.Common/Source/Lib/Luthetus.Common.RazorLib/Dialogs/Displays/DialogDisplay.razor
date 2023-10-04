@@ -1,0 +1,54 @@
+@using Luthetus.Common.RazorLib.Resizes.Displays
+
+<div class="luth_dialog-display @DialogRecord.CssClassString"
+     style="@ElementDimensionsStyleCssString @IsMaximizedStyleCssString">
+
+    @if (DialogRecord.IsResizable && !DialogRecord.IsMaximized)
+    {
+        <ResizableDisplay @ref="_resizableDisplay"
+                          ElementDimensions="DialogRecord.ElementDimensions"
+                          ReRenderFuncAsync="ReRenderAsync"/>
+    }
+
+    <div class="luth_dialog-display-toolbar"
+         @onmousedown="SubscribeMoveHandle">
+        <div class="luth_dialog-display-title luth_unselectable"
+             style="@DialogTitleCssStyleString"
+             title="@DialogRecord.Title">
+            @DialogRecord.Title
+        </div>
+
+        <div class="luth_dialog-display-buttons"
+             @onmousedown:stopPropagation="true">
+            
+            @if (DialogRecord.IsResizable)
+            {
+                <button class="luth_button luth_dialog-display-button-entry"
+                        @onclick="ToggleIsMaximized">
+                    
+                    @if (DialogRecord.IsMaximized)
+                    {
+                        <IconRestore/>
+                    }
+                    else
+                    {
+                        <IconMaximize/>
+                    }
+                </button>
+            }
+            
+            <button class="luth_button luth_dialog-display-button-entry"
+                    @onclick="DispatchDisposeDialogRecordAction">
+                <IconClose/>
+            </button>
+        </div>
+    </div>
+
+    <div class="luth_dialog-display-body">
+        <CascadingValue Value="DialogRecord">
+            <DynamicComponent @key="DialogRecord.Key"
+                              Type="DialogRecord.RendererType"
+                              Parameters="DialogRecord.Parameters"/>
+        </CascadingValue>
+    </div>
+</div>

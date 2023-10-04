@@ -1,0 +1,9 @@
+﻿@{
+    var styling = RenderBatch.Options!.UseMonospaceOptimizations
+          ? TextSelectionStyleCss
+          : _proportionalTextSelectionStyleCss;
+}
+
+<div class="luth_te_text-selection"
+     style="@styling">
+</div>

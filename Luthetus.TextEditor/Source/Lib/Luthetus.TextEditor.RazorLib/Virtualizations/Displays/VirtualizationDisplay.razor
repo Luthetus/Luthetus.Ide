@@ -1,0 +1,20 @@
+<div @ref="_scrollableParentFinder">
+</div>
+
+@if (UseHorizontalVirtualization)
+{
+    <VirtualizationBoundaryDisplay VirtualizationBoundaryDisplayId="@LeftBoundaryElementId"
+                                   VirtualizationBoundary="VirtualizationResultWithoutTypeMask.LeftVirtualizationBoundary"/>
+
+    <VirtualizationBoundaryDisplay VirtualizationBoundaryDisplayId="@RightBoundaryElementId"
+                                   VirtualizationBoundary="VirtualizationResultWithoutTypeMask.RightVirtualizationBoundary"/>
+}
+
+@if (UseVerticalVirtualization)
+{
+    <VirtualizationBoundaryDisplay VirtualizationBoundaryDisplayId="@TopBoundaryElementId"
+                                   VirtualizationBoundary="VirtualizationResultWithoutTypeMask.TopVirtualizationBoundary"/>
+
+    <VirtualizationBoundaryDisplay VirtualizationBoundaryDisplayId="@BottomBoundaryElementId"
+                                   VirtualizationBoundary="VirtualizationResultWithoutTypeMask.BottomVirtualizationBoundary"/>
+}

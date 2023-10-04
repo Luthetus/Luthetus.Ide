@@ -1,0 +1,12 @@
+﻿@using Luthetus.Common.RazorLib.TreeViews.Displays
+
+<div class="luth_ide_input-file-display-content"
+     style="@ElementDimensions.StyleString">
+    
+    <CascadingValue Name="SearchQuery" Value="InputFileState.SearchQuery">
+        <TreeViewStateDisplay TreeViewStateKey="TreeViewStateKey"
+                              CssStyleString="height: 100%;"
+                              TreeViewMouseEventHandler="InputFileTreeViewMouseEventHandler"
+                              TreeViewKeyboardEventHandler="InputFileTreeViewKeyboardEventHandler"/>
+    </CascadingValue>
+</div>

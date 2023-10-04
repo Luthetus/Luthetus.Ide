@@ -1,0 +1,22 @@
+﻿.luth_menu-option-widget {
+    padding-bottom: 10px;
+}
+
+.luth_menu-option-display {
+    position: relative;
+    white-space: nowrap;
+    cursor: default;
+    padding: 0 var(--luth_menu-option-display-padding-width);
+}
+
+.luth_menu-option-display.luth_active {
+    background-color: var(--luth_primary-hover-background-color);
+}
+
+.luth_menu-option-display:hover {
+    background-color: var(--luth_primary-hover-background-color);
+}
+
+.luth_menu-option-display:focus {
+    outline: solid var(--luth_menu-option-display-focus-outline-size) var(--luth_outline-with-focus-color);
+}

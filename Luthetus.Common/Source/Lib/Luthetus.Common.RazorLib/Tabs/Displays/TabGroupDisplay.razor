@@ -1,0 +1,15 @@
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@{ var tabGroup = TabStateSelection.Value; }
+
+<div class="luth_tab-group">
+    @if (tabGroup is not null)
+    {
+        foreach (var tabEntry in tabGroup.EntryBag)
+        {
+            <TabEntryDisplay @key="tabEntry.TabEntryKey"
+                             TabEntryNoType="tabEntry"
+                             TabGroup="tabGroup" />
+        }
+    }
+</div>

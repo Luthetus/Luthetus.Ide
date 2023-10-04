@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33627.172
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.TextEditor.RazorLib", "Lib\Luthetus.TextEditor.RazorLib\Luthetus.TextEditor.RazorLib.csproj", "{B4589067-1E49-4EDB-8212-E6D37E4B1098}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.TextEditor.Tests", "Tests\Luthetus.TextEditor.Tests\Luthetus.TextEditor.Tests.csproj", "{C32D7F3A-5B7A-460A-9450-7D7AFF89E604}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Luthetus.Common", "Luthetus.Common", "{55B48857-5907-4E9E-8C34-E57716A82FA9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.Common.RazorLib", "..\..\Luthetus.Common\Source\Lib\Luthetus.Common.RazorLib\Luthetus.Common.RazorLib.csproj", "{0CC5FE0C-C648-4C3F-9A31-63BF88EAF96C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B4589067-1E49-4EDB-8212-E6D37E4B1098}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4589067-1E49-4EDB-8212-E6D37E4B1098}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4589067-1E49-4EDB-8212-E6D37E4B1098}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4589067-1E49-4EDB-8212-E6D37E4B1098}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C32D7F3A-5B7A-460A-9450-7D7AFF89E604}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C32D7F3A-5B7A-460A-9450-7D7AFF89E604}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C32D7F3A-5B7A-460A-9450-7D7AFF89E604}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C32D7F3A-5B7A-460A-9450-7D7AFF89E604}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CC5FE0C-C648-4C3F-9A31-63BF88EAF96C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CC5FE0C-C648-4C3F-9A31-63BF88EAF96C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CC5FE0C-C648-4C3F-9A31-63BF88EAF96C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CC5FE0C-C648-4C3F-9A31-63BF88EAF96C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0CC5FE0C-C648-4C3F-9A31-63BF88EAF96C} = {55B48857-5907-4E9E-8C34-E57716A82FA9}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,100 @@
+﻿@using System.Text;
+
+<div class="luth_ide_keymap">
+    @{
+        var keymapKvpsBag = Keymap.Map
+            .OrderBy(x => x.Value.DisplayName)
+            .ToArray();
+    }
+
+    <table>
+        <thead>
+            <tr>
+                <th style="padding-right: 10px;">
+                    Command
+                </th>
+                <th>
+                    Keybinding
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var kvp in keymapKvpsBag)
+            {
+                if (kvp.Value.InternalIdentifier == "defaults_do-nothing-discard")
+                {
+                    // TODO: This is hacky but "defaults_do-nothing-discard" fills the UI because its used when filling some empty keybinds for the text editor (2023-10-03)
+                    continue;
+                }
+
+                var keymapArgument = kvp.Key;
+                var commandNoType = kvp.Value;
+
+                var keybindingDisplayStringsBag = new List<string>();
+                var keybindingTitleBuilder = new StringBuilder();
+
+                @if (keymapArgument.CtrlKey)
+                {
+                    if (keybindingTitleBuilder.Length != 0)
+                        keybindingTitleBuilder.Append("+");
+
+                    keybindingDisplayStringsBag.Add("Ctrl");
+                    keybindingTitleBuilder.Append("Control");
+                }
+
+                @if (keymapArgument.ShiftKey)
+                {
+                    if (keybindingTitleBuilder.Length != 0)
+                        keybindingTitleBuilder.Append("+");
+
+                    keybindingDisplayStringsBag.Add("Shift");
+                    keybindingTitleBuilder.Append("Shift");
+                }
+
+                @if (keymapArgument.AltKey)
+                {
+                    if (keybindingTitleBuilder.Length != 0)
+                        keybindingTitleBuilder.Append("+");
+
+                    keybindingDisplayStringsBag.Add("Alt");
+                    keybindingTitleBuilder.Append("Alt");
+                }
+
+                @if (keymapArgument.Code is not null)
+                {
+                    if (keybindingTitleBuilder.Length != 0)
+                        keybindingTitleBuilder.Append("+");
+
+                    keybindingDisplayStringsBag.Add(keymapArgument.Code);
+                    keybindingTitleBuilder.Append(keymapArgument.Code);
+                }
+
+                <tr class="luth_ide_keymap-entry">
+                    <td class="luth_ide_keymap-entry-argument"
+                        style="padding-right: 10px;"
+                        title="@commandNoType.InternalIdentifier">
+
+                        @commandNoType.DisplayName
+                    </td>
+                    <td class="luth_ide_keymap-entry-command"
+                        title="@keybindingTitleBuilder.ToString()">
+
+                        @for (int i = 0; i < keybindingDisplayStringsBag.Count; i++)
+                        {
+                            var index = i;
+
+                            if (index != 0)
+                            {
+                                <text>+</text>
+                            }
+
+                            <em class="luth_em">
+                                @keybindingDisplayStringsBag[index]
+                            </em>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

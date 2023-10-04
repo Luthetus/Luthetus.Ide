@@ -1,0 +1,46 @@
+﻿@using Luthetus.TextEditor.RazorLib.TextEditors.Displays
+
+<div class="luth_te_text-editor-group @CssClassString"
+     style="@CssStyleString">
+
+    @{
+        var textEditorGroup = TextEditorGroupStateWrap.Value.GroupBag.FirstOrDefault(
+            x => x.GroupKey == TextEditorGroupKey);
+    }
+    
+    @if (textEditorGroup is not null)
+    {
+        <div class="luth_te_text-editor-group-tabs-list">
+            @foreach (var viewModelKey in textEditorGroup.ViewModelKeyBag)
+            {
+                <TextEditorGroupTabDisplay @key="viewModelKey"
+                                           TextEditorGroup="textEditorGroup"
+                                           TextEditorViewModelKey="viewModelKey"/>
+            }
+        </div>
+        <div class="luth_te_text-editor-group-active-view-model">
+            @{
+                var textEditorModel = TextEditorService.ViewModel.FindBackingModelOrDefault(
+                    textEditorGroup.ActiveViewModelKey);
+        
+                if (textEditorModel is null)
+                {
+                    <text>No editors are open currently</text>
+                }
+                else
+                {
+                    <TextEditorViewModelDisplay TextEditorViewModelKey="textEditorGroup.ActiveViewModelKey"
+                                                WrapperClassCssString="luth_te_demo-text-editor"
+                                                TabIndex="TabIndex"
+                                                HeaderButtonKinds="HeaderButtonKindBag"/>
+                }
+            }
+        </div>
+    }
+    else
+    {
+        <div>
+            Group not found
+        </div>
+    }
+</div>

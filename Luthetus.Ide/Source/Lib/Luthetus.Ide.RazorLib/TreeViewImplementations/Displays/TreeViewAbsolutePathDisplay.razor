@@ -1,0 +1,51 @@
+﻿<div>
+    
+    @{ var displayText = TreeViewAbsolutePath.Item.NameWithExtension; }
+    
+    @if (!String.IsNullOrWhiteSpace(SearchQuery))
+    {
+        var indexOfSearchQuery = displayText.IndexOf(
+            SearchQuery,
+            StringComparison.InvariantCultureIgnoreCase);
+
+        if (indexOfSearchQuery == -1)
+        {
+            @: @displayText
+        }
+        else
+        {
+            var localSearchMatchTuples = SearchMatchTuples;
+
+            if (localSearchMatchTuples is not null)
+            {
+                localSearchMatchTuples.Add((TreeViewState.Key, TreeViewAbsolutePath));
+            }
+            
+            string splitStart = string.Empty;
+            string splitMiddle = string.Empty;
+            string splitEnd = string.Empty;
+
+            if (indexOfSearchQuery > 0)
+            {
+                splitStart = displayText.Substring(0, indexOfSearchQuery);
+            }
+            
+            splitMiddle = displayText.Substring(indexOfSearchQuery, SearchQuery.Length);
+
+            var remainingIndices = displayText.Length - indexOfSearchQuery - SearchQuery.Length;
+            
+            if (remainingIndices > 0)
+            {
+                splitEnd = displayText.Substring(indexOfSearchQuery + SearchQuery.Length);
+            }
+
+            <text>
+                @splitStart<span class="luth_ide_search-match">@splitMiddle</span>@splitEnd
+            </text>
+        }
+    }
+    else
+    {
+        @: @displayText
+    }
+</div>

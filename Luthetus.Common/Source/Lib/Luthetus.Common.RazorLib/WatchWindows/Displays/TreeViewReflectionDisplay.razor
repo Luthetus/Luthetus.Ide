@@ -1,0 +1,37 @@
+﻿<div style="display: flex;"
+     title="@TreeViewReflection.Key.Guid">
+    
+     @{ var textEditorDebugObjectWrap = TreeViewReflection.Item; }
+    
+    <div class="luth_te_keyword">
+        @(textEditorDebugObjectWrap.IsPubliclyReadable ? "public" : "private")
+        &nbsp;
+    </div>
+    
+    <div class="luth_te_type">
+        @(textEditorDebugObjectWrap.DebugObjectItemType.Name)
+        &nbsp;
+    </div>
+    
+    <div>
+        @(textEditorDebugObjectWrap.DisplayName)
+        &nbsp;
+    </div>
+
+    @if (textEditorDebugObjectWrap.DebugObjectItem is null)
+    {
+        <div class="luth_te_keyword">
+            (null)
+        </div>
+    }
+    else
+    {
+        var toStringResult = textEditorDebugObjectWrap.DebugObjectItem.ToString();
+    
+        <div class="@GetCssStylingForValue(textEditorDebugObjectWrap.DebugObjectItemType)"
+              style="width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; display: inline-block;"
+              title="@toStringResult">
+            @toStringResult
+        </div>
+    }
+</div>

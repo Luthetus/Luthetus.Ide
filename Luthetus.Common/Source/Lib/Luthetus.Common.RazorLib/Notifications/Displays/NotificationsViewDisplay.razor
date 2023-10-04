@@ -1,0 +1,87 @@
+﻿@using Fluxor.Blazor.Web.Components;
+@using Luthetus.Common.RazorLib.Notifications.Models;
+@using System.Collections.Immutable;
+@using Luthetus.Common.RazorLib.Notifications.Models;
+
+@inherits FluxorComponent
+
+@{ var notificationRecordsCollection = NotificationStateWrap.Value; }
+
+<div class="luth_web_notifications-view">
+    <div class="luth_web_notifications-view-tabs">
+        @foreach (var notificationsViewKind in Enum.GetValues<NotificationsViewKind>())
+        {
+            <button class="luth_web_notifications-view-tab-entry luth_button @GetIsActiveCssClass(_chosenNotificationsViewKind, notificationsViewKind)"
+                    @onclick="() => _chosenNotificationsViewKind = notificationsViewKind">
+
+                @notificationsViewKind
+
+                <span class="luth_web_notifications-view-tab-entry-count">
+                    (<!--
+                    -->@switch (notificationsViewKind)
+                    {
+                        case NotificationsViewKind.Notifications:
+                            @: @notificationRecordsCollection.DefaultBag.Count
+                            break;
+                        case NotificationsViewKind.Read:
+                            @: @notificationRecordsCollection.ReadBag.Count
+                            break;
+                        case NotificationsViewKind.Deleted:
+                            @: @notificationRecordsCollection.DeletedBag.Count
+                            break;
+                        case NotificationsViewKind.Archived:
+                            @: @notificationRecordsCollection.ArchivedBag.Count
+                            break;
+                    }<!--
+                    -->)
+                </span>
+            </button>
+        }
+    </div>
+
+    <div class="luth_web_notifications-view-body">
+        @{
+            var entriesToRenderBag = ImmutableList<NotificationRecord>.Empty;
+            var clearOnClick = new Action(() => { });
+
+            switch (_chosenNotificationsViewKind)
+            {
+                case NotificationsViewKind.Notifications:
+                    entriesToRenderBag = notificationRecordsCollection.DefaultBag;
+                    clearOnClick = Clear;
+                    break;
+                case NotificationsViewKind.Read:
+                    entriesToRenderBag = notificationRecordsCollection.ReadBag;
+                    clearOnClick = ClearRead;
+                    break;
+                case NotificationsViewKind.Deleted:
+                    entriesToRenderBag = notificationRecordsCollection.DeletedBag;
+                    clearOnClick = ClearDeleted;
+                    break;
+                case NotificationsViewKind.Archived:
+                    entriesToRenderBag = notificationRecordsCollection.ArchivedBag;
+                    clearOnClick = ClearArchived;
+                    break;
+            }
+
+            <button class="luth_button"
+                    @onclick="clearOnClick">
+                Clear @_chosenNotificationsViewKind
+            </button>
+
+            foreach (var entry in entriesToRenderBag)
+            {
+                <div @key="entry.Key"
+                     class="luth_web_notifications-view-body-entry">
+                    
+                    <CascadingValue Value="entry">
+                        <DynamicComponent Type="entry.RendererType"
+                                          Parameters="entry.ParameterMap" />
+                    </CascadingValue>
+                </div>
+
+                <hr/>
+            }
+        }
+    </div>
+</div>

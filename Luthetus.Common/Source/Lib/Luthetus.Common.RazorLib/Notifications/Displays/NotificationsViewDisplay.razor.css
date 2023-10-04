@@ -1,0 +1,15 @@
+.luth_web_notifications-view-tabs {
+    margin-top: 8px;
+    display: flex;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+    border-bottom: 2px solid var(--luth_primary-border-color);
+}
+
+    .luth_web_notifications-view-tabs .luth_button {
+        margin-right: 8px !important;
+    }
+
+.luth_web_notifications-view-tab-entry-count {
+    margin: 0 5px;
+}

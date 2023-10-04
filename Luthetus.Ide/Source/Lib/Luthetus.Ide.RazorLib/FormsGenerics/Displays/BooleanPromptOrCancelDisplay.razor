@@ -1,0 +1,28 @@
+﻿<div class="luth_ide_boolean-prompt-or-cancel"
+     @onkeydown="HandleOnKeyDown">
+
+    <div>
+        @Message
+    </div>
+
+    <div style="display: flex; justify-content: space-between;">
+        <button class="luth_button"
+                @onclick="async () => OnAfterAcceptAction()">
+            @(AcceptOptionTextOverride ?? "Accept")
+        </button>
+
+        <button class="luth_button"
+                @ref="_declineButtonElementReference"
+                @onclick="async () => OnAfterDeclineAction()">
+            @(DeclineOptionTextOverride ?? "Decline")
+        </button>
+        
+        @if (IncludeCancelOption)
+        {
+            <button class="luth_button"
+                    @onclick="async () => OnAfterCancelAction()">
+                Cancel
+            </button>
+        }
+    </div>
+</div>

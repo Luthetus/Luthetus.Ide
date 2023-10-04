@@ -1,0 +1,54 @@
+@using Luthetus.Common.RazorLib.Dimensions;
+@using Luthetus.TextEditor.RazorLib.Keymaps.Models;
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+@using Luthetus.Common.RazorLib.Dimensions.Models;
+
+@{
+    var leftRelativeToParentInPixelsCssStyle = string.Empty;
+    var textEditorKeymap = (ITextEditorKeymap)RenderBatch.Options!.Keymap!;
+}
+
+@if (!RenderBatch.Options!.UseMonospaceOptimizations)
+{
+    var leftRelativeToParentInPixelsCssValue = _leftRelativeToParentInPixels.ToCssValue();
+    leftRelativeToParentInPixelsCssStyle = $"left: {leftRelativeToParentInPixelsCssValue}px !important;";
+}
+
+<textarea @ref="_cursorDisplayElementReference"
+          @onkeydown="HandleOnKeyDown"
+          id="@CursorDisplayId"
+          tabindex="@GetTabIndex()"
+          class="luth_te_text-editor-cursor @BlinkAnimationCssClass @(textEditorKeymap.GetCursorCssClassString())"
+          style="@CursorStyleCss @leftRelativeToParentInPixelsCssStyle">
+</textarea>
+
+<div class="luth_te_text-editor-caret-row"
+     style="@CaretRowStyleCss">
+</div>
+
+@if (_menuKind != TextEditorMenuKind.None && IncludeContextMenuHelperComponent)
+{
+    <div @onkeydown:stopPropagation="true"
+         @onmousedown:stopPropagation="true"
+         @onmousemove:stopPropagation="true"
+         class="luth_te_text-editor-context-menu"
+         style="@MenuStyleCss">
+
+        <CascadingValue Name="SetShouldDisplayMenuAsync"
+                        Value="new Func<TextEditorMenuKind, bool, Task>(SetShouldDisplayMenuAsync)">
+            <CascadingValue Name="TextEditorMenuShouldTakeFocusFunc"
+                            Value="TextEditorMenuShouldTakeFocus">
+
+                @switch (_menuKind)
+                {
+                    case TextEditorMenuKind.ContextMenu:
+                            @OnContextMenuRenderFragment
+                        break;
+                    case TextEditorMenuKind.AutoCompleteMenu:
+                            @AutoCompleteMenuRenderFragment
+                        break;
+                }
+            </CascadingValue>
+        </CascadingValue>
+    </div>
+}

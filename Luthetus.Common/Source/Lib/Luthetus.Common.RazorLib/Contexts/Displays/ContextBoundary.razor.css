@@ -1,0 +1,5 @@
+.luth_ide_context-boundary:focus {
+    box-shadow: 0 0 8px var(--luth_primary-overlay-box-shadow-color) inset;
+    outline: 8px solid var(--luth_toggled-on-hover-background-color);
+    outline-offset: -8px;
+}

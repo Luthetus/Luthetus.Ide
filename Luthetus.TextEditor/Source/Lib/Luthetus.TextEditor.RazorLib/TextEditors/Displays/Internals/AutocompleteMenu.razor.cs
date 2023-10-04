@@ -1,0 +1,145 @@
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.States;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Luthetus.Common.RazorLib.Menus.Models;
+using Luthetus.Common.RazorLib.Keyboards.Models;
+using Luthetus.Common.RazorLib.Menus.Displays;
+
+namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
+
+public partial class AutocompleteMenu : ComponentBase
+{
+    [Inject]
+    private ITextEditorService TextEditorService { get; set; } = null!;
+    [Inject]
+    private IAutocompleteService AutocompleteService { get; set; } = null!;
+
+    [CascadingParameter]
+    public TextEditorRenderBatch RenderBatch { get; set; } = null!;
+    [CascadingParameter(Name = "SetShouldDisplayMenuAsync")]
+    public Func<TextEditorMenuKind, bool, Task> SetShouldDisplayMenuAsync { get; set; } = null!;
+    [CascadingParameter(Name = "TextEditorMenuShouldTakeFocusFunc")]
+    public Func<bool> TextEditorMenuShouldTakeFocusFunc { get; set; } = null!;
+
+    private ElementReference? _autocompleteMenuElementReference;
+    private MenuDisplay? _autocompleteMenuComponent;
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (TextEditorMenuShouldTakeFocusFunc.Invoke())
+            _autocompleteMenuComponent?.SetFocusToFirstOptionInMenuAsync();
+
+        return base.OnAfterRenderAsync(firstRender);
+    }
+
+    private async Task HandleOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
+    {
+        if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
+            await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None, true);
+    }
+
+    private async Task ReturnFocusToThisAsync()
+    {
+        try
+        {
+            await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None, true);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    private MenuRecord GetMenuRecord()
+    {
+        var cursorSnapshotsBag = TextEditorCursorSnapshot.TakeSnapshots(
+            RenderBatch.ViewModel!.PrimaryCursor);
+
+        var primaryCursorSnapshot = cursorSnapshotsBag.First(
+            x => x.UserCursor.IsPrimaryCursor);
+
+        if (primaryCursorSnapshot.ImmutableCursor.ColumnIndex > 0)
+        {
+            var word = RenderBatch.Model!.ReadPreviousWordOrDefault(
+                primaryCursorSnapshot.ImmutableCursor.RowIndex,
+                primaryCursorSnapshot.ImmutableCursor.ColumnIndex);
+
+            List<MenuOptionRecord> menuOptionRecordsBag = new();
+
+            if (word is not null)
+            {
+                var autocompleteWordsBag = AutocompleteService.GetAutocompleteOptions(word);
+
+                var autocompleteEntryBag = autocompleteWordsBag
+                    .Select(aw => new AutocompleteEntry(aw, AutocompleteEntryKind.Word))
+                    .ToArray();
+
+                // (2023-08-09) Looking into using an ICompilerService for autocompletion.
+                {
+                    var compilerServiceAutocompleteEntryBag = RenderBatch.Model!.CompilerService.GetAutocompleteEntries(
+                        word,
+                        primaryCursorSnapshot);
+
+                    if (compilerServiceAutocompleteEntryBag.Any())
+                        autocompleteEntryBag = compilerServiceAutocompleteEntryBag.ToArray();
+                }
+
+                menuOptionRecordsBag = autocompleteEntryBag.Select(entry => new MenuOptionRecord(
+                    entry.DisplayName,
+                    MenuOptionKind.Other,
+                    () => SelectMenuOption(
+                        () => InsertAutocompleteMenuOption(word, entry, RenderBatch.ViewModel!))))
+                .ToList();
+            }
+
+            if (!menuOptionRecordsBag.Any())
+                menuOptionRecordsBag.Add(new MenuOptionRecord("No results", MenuOptionKind.Other));
+
+            return new MenuRecord(menuOptionRecordsBag.ToImmutableArray());
+        }
+
+        return new MenuRecord(new MenuOptionRecord[]
+        {
+            new("No results", MenuOptionKind.Other)
+        }.ToImmutableArray());
+    }
+
+    private void SelectMenuOption(Func<Task> menuOptionAction)
+    {
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await SetShouldDisplayMenuAsync.Invoke(TextEditorMenuKind.None, true);
+                await menuOptionAction();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }, CancellationToken.None);
+    }
+
+    private Task InsertAutocompleteMenuOption(
+        string word,
+        AutocompleteEntry autocompleteEntry,
+        TextEditorViewModel textEditorViewModel)
+    {
+        var insertTextTextEditorModelAction = new TextEditorModelState.InsertTextAction(
+            textEditorViewModel.ResourceUri,
+            TextEditorCursorSnapshot.TakeSnapshots(textEditorViewModel.PrimaryCursor),
+            autocompleteEntry.DisplayName.Substring(word.Length),
+            CancellationToken.None);
+
+        TextEditorService.Model.InsertText(insertTextTextEditorModelAction);
+
+        return Task.CompletedTask;
+    }
+}

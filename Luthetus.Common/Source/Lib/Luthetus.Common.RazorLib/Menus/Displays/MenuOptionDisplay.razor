@@ -1,0 +1,51 @@
+@using Luthetus.Common.RazorLib.Dropdowns.Displays
+@using Luthetus.Common.RazorLib.Dropdowns.Models;
+@using Luthetus.Common.RazorLib.Dropdowns.Models;
+
+<div class="luth_menu-option-display luth_unselectable @IsActiveCssClass @HasWidgetActiveCssClass"
+     tabindex="-1"
+     @ref="_topmostElementReference"
+     @onclick="HandleOnClick"
+     @onclick:stopPropagation="true"
+     @onkeydown="HandleOnKeyDown"
+     @onkeydown:preventDefault="true"
+     @oncontextmenu:preventDefault="true"
+     @oncontextmenu:stopPropagation="true">
+    
+    @if (IconRenderFragment is not null)
+    {
+        @IconRenderFragment(MenuOptionRecord)
+    }
+    
+    @MenuOptionRecord.DisplayName
+
+    @if (MenuOptionRecord.SubMenu is not null)
+    {
+        <IconChevronRight/>
+
+        <DropdownDisplay DropdownKey="_subMenuDropdownKey"
+                         DropdownPositionKind="DropdownPositionKind.Horizontal"
+                         ShouldDisplayOutOfBoundsClickDisplay="false">
+
+            <div class="luth_dropdown-display-default-background">
+                <MenuDisplay MenuRecord="MenuOptionRecord.SubMenu"/>
+            </div>
+        </DropdownDisplay>
+    }
+
+    @if (DisplayWidget)
+    {
+        <div class="luth_menu-option-widget"
+             @onclick:stopPropagation="true"
+             @ondblclick:stopPropagation="true"
+             @onkeydown:stopPropagation="true"
+             @onkeydownwithpreventscroll:stopPropagation="true"
+             @oncontextmenu:stopPropagation="true">
+
+            <CascadingValue Value="MenuOptionWidgetParameters">
+                <DynamicComponent Type="MenuOptionRecord.WidgetRendererType"
+                                  Parameters="MenuOptionRecord.WidgetParameterMap"/>
+            </CascadingValue>
+        </div>
+    }
+</div>

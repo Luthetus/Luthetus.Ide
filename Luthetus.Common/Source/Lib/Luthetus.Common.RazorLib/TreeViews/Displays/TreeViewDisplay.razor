@@ -1,0 +1,74 @@
+﻿@using Luthetus.Common.RazorLib.Dimensions;
+@using Luthetus.Common.RazorLib.Dimensions.Models;
+
+<div class="luth_tree-view">
+    @if (!TreeViewNoType.IsHidden)
+    {
+        <div id="@TreeViewService.GetNodeElementId(TreeViewNoType)"
+             class="luth_tree-view-title @IsSelectedCssClass @IsActiveCssClass"
+             style="padding-left: @(OffsetInPixels.ToCssValue())px;"
+             tabindex="-1"
+             @onclick:stopPropagation="true"
+             @onclick="HandleOnClick"
+             @ondblclick:stopPropagation="true"
+             @ondblclick="HandleOnDoubleClick"
+             @onmousedown:stopPropagation="true"
+             @onmousedown="HandleOnMouseDown"
+             @oncontextmenu:preventDefault="true"
+             @oncontextmenu:stopPropagation="true"
+             @oncontextmenu="e => ManuallyPropagateOnContextMenu(e, TreeViewState, TreeViewNoType)"
+             @onkeydown="e => HandleOnKeyDown(e)"
+             @ref="_treeViewTitleElementReference">
+            
+            <div class="luth_tree-view-expansion-chevron"
+                 @onclick:stopPropagation="true"
+                 @onmousedown:stopPropagation="true"
+                 @onmousedown="_ => HandleExpansionChevronOnMouseDown(TreeViewNoType)">
+
+                @if (TreeViewNoType.IsExpandable)
+                {
+                    if (TreeViewNoType.IsExpanded)
+                    {
+                        <IconChevronDown/>
+                    }
+                    else
+                    {
+                        <IconChevronRight/>
+                    }
+                }
+                else
+                {
+                    <IconBlank/>
+                }
+            </div>
+
+            <div class="luth_tree-view-title-content"
+                 style="width: calc(100% - @(WidthOfTitleExpansionChevron.ToCssValue())px); height:  100%;">
+                @{
+                    var treeViewRenderer = TreeViewNoType.GetTreeViewRenderer();
+                }
+
+                <DynamicComponent Type="treeViewRenderer.DynamicComponentType"
+                                  Parameters="treeViewRenderer.DynamicComponentParameters"/>
+            </div>
+        </div>
+    }
+
+    @if (TreeViewNoType.IsExpanded) 
+    {
+        <div class="luth_tree-view-children">
+            @foreach (var child in TreeViewNoType.ChildBag)
+            {
+                <TreeViewDisplay TreeViewNoType="child"
+                                 Depth="Depth + 1"/>
+            }
+        
+            @if (!TreeViewNoType.IsHidden)
+            {
+                <div style="margin-left: @((OffsetInPixels + WidthOfTitleExpansionChevron / 2).ToCssValue())px;"
+                     class="luth_tree-view-children-border">
+                </div>
+            }
+        </div>
+    }
+</div>

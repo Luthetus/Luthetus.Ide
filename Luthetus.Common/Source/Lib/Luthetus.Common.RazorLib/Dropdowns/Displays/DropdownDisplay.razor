@@ -1,0 +1,21 @@
+@using Luthetus.Common.RazorLib.OutOfBoundsClicks.Displays
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@if (ShouldDisplay)
+{
+    if (ShouldDisplayOutOfBoundsClickDisplay)
+    {
+        <OutOfBoundsClickDisplay ZIndex="15"
+                                 OnClickCallback="ClearActiveKeyBag" />    
+    }
+    
+    <div class="luth_dropdown-display"
+         @onclick:stopPropagation="true"
+         style="@DropdownPositionKindStyleCss @CssStyleString">
+
+        <CascadingValue Value="DropdownKey">
+            @ChildContent
+        </CascadingValue>
+    </div>
+}

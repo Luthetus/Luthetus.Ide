@@ -1,0 +1,55 @@
+﻿@using Luthetus.Common.RazorLib.Keys.Models;
+@using Luthetus.Common.RazorLib.TreeViews.Models;
+@using Luthetus.Common.RazorLib.TreeViews.Models;
+@using Luthetus.Common.RazorLib.Keys.Models;
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@{
+    var treeViewState = TreeViewStateSelection.Value;
+
+    <div id="@TreeViewService.GetTreeContainerElementId(treeViewState?.Key ?? Key<TreeViewContainer>.Empty)"
+         class="luth_tree-view-state luth_unselectable @GetHasActiveNodeCssClass(treeViewState) @CssClassString"
+         style="@CssStyleString"
+         tabindex="0"
+         @ref="_treeViewStateDisplayElementReference"
+         @onkeydownwithpreventscroll="(e) => HandleTreeViewOnKeyDownWithPreventScroll(e, treeViewState)"
+         @oncontextmenu:preventDefault="true"
+         @oncontextmenu:stopPropagation="true"
+         @oncontextmenu="(e) => HandleTreeViewOnContextMenu(e, treeViewState, null)">
+
+        @if (treeViewState is null)
+        {
+            <div>@nameof(treeViewState) was null</div>
+        }
+        else
+        {
+            <CascadingValue Value="treeViewState">
+                <CascadingValue Name="TreeViewMouseEventHandler" Value="TreeViewMouseEventHandler">
+                    <CascadingValue Name="TreeViewKeyboardEventHandler" Value="TreeViewKeyboardEventHandler">
+                        <CascadingValue Name="HandleTreeViewOnContextMenu" Value="HandleTreeViewOnContextMenu">
+                            <TreeViewDisplay TreeViewNoType="treeViewState.RootNode"
+                                             Depth="GetRootDepth(treeViewState.RootNode)"/>
+                        </CascadingValue>
+                    </CascadingValue>
+                </CascadingValue>
+            </CascadingValue>
+        }
+    </div>
+}
+
+@if (OnContextMenuRenderFragment is not null &&
+     _treeViewContextMenuCommandParameter is not null)
+{
+    <div class="luth_context-menu luth_set-selectable"
+         style="@ContextMenuCssStyleString"
+         @oncontextmenu:stopPropagation="true"
+         @onmousedown:stopPropagation="true"
+         @onclick:stopPropagation="true"
+         @ondblclick:stopPropagation="true"
+         @onkeydown:stopPropagation="true"
+         @onkeydownwithpreventscroll:stopPropagation="true">
+
+        @OnContextMenuRenderFragment(_treeViewContextMenuCommandParameter)
+    </div>
+}

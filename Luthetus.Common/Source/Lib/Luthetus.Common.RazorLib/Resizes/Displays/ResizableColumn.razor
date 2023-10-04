@@ -1,0 +1,8 @@
+@using Luthetus.Common.RazorLib.Dimensions;
+@using Luthetus.Common.RazorLib.Dimensions.Models
+
+<div class="luth_resize-column"
+     style="width: @(RESIZE_HANDLE_WIDTH_IN_PIXELS.ToCssValue())px;"
+     @onmousedown="() => SubscribeToDragEvent(DragEventHandlerResizeHandleAsync)">
+    
+</div>

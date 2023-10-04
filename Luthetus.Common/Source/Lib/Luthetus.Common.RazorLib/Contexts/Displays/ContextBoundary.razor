@@ -1,0 +1,16 @@
+<div id="@ContextRecord.ContextElementId"
+     class="luth_ide_context-boundary @ClassCssString"
+     style="@StyleCssString"
+     tabindex="@TabIndex"
+     @onfocusin="HandleOnFocusIn"
+     @onfocusin:stopPropagation="true"
+     @onkeydown="HandleOnKeyDownAsync"
+     @onkeydown:stopPropagation="true">
+	
+    <CascadingValue Value="this">
+        @ChildContent
+    </CascadingValue>
+
+    <ContextBoundaryMeasurer ContextRecord="ContextRecord"
+                             GetContextBoundaryHeirarchy="() => GetContextBoundaryHeirarchy(new())"/>
+</div>

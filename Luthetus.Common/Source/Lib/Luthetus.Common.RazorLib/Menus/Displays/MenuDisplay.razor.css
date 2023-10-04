@@ -1,0 +1,3 @@
+﻿.luth_menu-display:focus {
+    outline: solid var(--luth_menu-display-focus-outline-size) var(--luth_outline-with-focus-color);
+}

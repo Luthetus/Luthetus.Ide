@@ -1,0 +1,46 @@
+﻿.luth_notification {
+    position: fixed;
+    z-index: var(--luth_notification-display-z-index);
+    color: var(--luth_secondary-foreground-color);
+    background-color: var(--luth_notification-display-background-color);
+    box-shadow: 0 0 var(--luth_notification-display-box-shadow-blur-radius) var(--luth_primary-box-shadow-color);
+}
+
+.luth_notification-toolbar {
+    height: var(--luth_notification-display-toolbar-height);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--luth_tertiary-foreground-color);
+    background-color: var(--luth_notification-display-toolbar-background-color);
+    cursor: default;
+    padding: var(--luth_notification-toolbar-padding);
+}
+
+.luth_notification-title {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.luth_error .luth_notification-toolbar {
+    background-color: var(--luth_error-background-color);
+}
+
+.luth_notification-control-buttons {
+    display: flex;
+    align-items: center;
+}
+
+.luth_notification-button-entry {
+    margin-right: var(--luth_notification-button-entry-margin-right);
+    padding: var(--luth_notification-button-entry-padding);
+    display: inline-flex;
+    height: fit-content;
+}
+
+.luth_notification-body {
+    height: calc(100% - var(--luth_notification-display-toolbar-height));
+    overflow: auto;
+    padding: var(--luth_notification-body-padding);
+}

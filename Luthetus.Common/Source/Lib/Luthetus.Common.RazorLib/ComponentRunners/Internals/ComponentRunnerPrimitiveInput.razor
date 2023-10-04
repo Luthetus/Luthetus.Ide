@@ -1,0 +1,17 @@
+﻿@if (VariableType == typeof(string))
+{
+    <input class="luth_ide_input luth_ide_input-text"
+    @bind="StringInput"
+    @bind:event="oninput" />
+}
+else if (VariableType == typeof(int))
+{
+    <input class="luth_ide_input luth_ide_input-text"
+           type="number"
+    @bind="IntInput"
+    @bind:event="oninput" />
+}
+else
+{
+    <div>The primitive type: '@VariableType.Name' is not supported.</div>
+}

@@ -1,0 +1,44 @@
+﻿@using Luthetus.TextEditor.RazorLib.TextEditors.Displays
+
+<div class="luth_te_text-editor-diff @TextEditorService.ThemeCssClassString @CssClassString"
+     style="@CssStyleString">
+     
+     @{
+          var textEditorDiff = TextEditorService.DiffStateWrap.Value.DiffModelBag.FirstOrDefault(
+              x => x.DiffKey == TextEditorDiffKey);
+     }
+     
+     <div class="luth_te_text-editor-diff-title">
+          Longest Common Subsequence:
+          
+          <span class="luth_te_diff-longest-common-subsequence">
+               @if (_mostRecentDiffResult is not null)
+               {
+                    @_mostRecentDiffResult.LongestCommonSubsequence
+               }
+               else
+               {
+                    @: SAMPLE_TEXT
+               }
+          </span>
+     </div>
+     
+     @if (textEditorDiff is null)
+     {
+          <div>@nameof(textEditorDiff) was null</div>
+     }
+     else
+     {
+          <div class="luth_te_text-editor-diff-body">
+               <div class="luth_te_text-editor-diff-comparison-item">
+                    <TextEditorViewModelDisplay TextEditorViewModelKey="textEditorDiff.BeforeViewModelKey"/>
+               </div>
+
+               <div class="luth_te_text-editor-diff-body-separator"></div>
+
+               <div class="luth_te_text-editor-diff-comparison-item">
+                    <TextEditorViewModelDisplay TextEditorViewModelKey="textEditorDiff.AfterViewModelKey"/>
+               </div>
+          </div>
+     }
+</div>

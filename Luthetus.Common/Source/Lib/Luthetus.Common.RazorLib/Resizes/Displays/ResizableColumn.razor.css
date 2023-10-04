@@ -1,0 +1,5 @@
+﻿.luth_resize-column {
+    background-color: var(--luth_resize-column-background-color);
+    height: 100%;
+    cursor: e-resize;
+}

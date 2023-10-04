@@ -1,0 +1,16 @@
+﻿.luth_tree-view-state {
+    height: 200px;
+    overflow: auto;
+}
+
+.luth_tree-view-state:focus-within .luth_tree-view-title.luth_selected {
+    background-color: var(--luth_active-with-focus-background-color);
+}
+
+.luth_tree-view-state:focus:not(.luth_active) {
+    outline: var(--luth_outline-with-focus-color) inset;
+}
+
+.luth_tree-view-state:focus .luth_tree-view-title.luth_active {
+    background-color: var(--luth_active-with-focus-background-color);
+}

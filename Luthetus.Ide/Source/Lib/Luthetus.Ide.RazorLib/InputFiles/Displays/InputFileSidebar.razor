@@ -1,0 +1,22 @@
+﻿@using Luthetus.Common.RazorLib.Dropdowns.Displays
+@using Luthetus.Common.RazorLib.Dropdowns.Models;
+@using Luthetus.Common.RazorLib.TreeViews.Displays
+
+<div class="luth_ide_input-file-display-side-bar"
+     style="@ElementDimensions.StyleString">
+
+    <CascadingValue Name="SearchQuery" Value="InputFileState.SearchQuery">
+        <TreeViewStateDisplay TreeViewStateKey="TreeViewStateKey"
+                              CssStyleString="height: 100%;"
+                              OnContextMenuFunc="OnTreeViewContextMenuFunc"
+                              TreeViewMouseEventHandler="InputFileTreeViewMouseEventHandler"
+                              TreeViewKeyboardEventHandler="InputFileTreeViewKeyboardEventHandler"/>
+    </CascadingValue>
+
+    <DropdownDisplay DropdownKey="InputFileContextMenu.ContextMenuKey"
+                     DropdownPositionKind="DropdownPositionKind.Unset"
+                     CssStyleString="@InputFileContextMenu.GetContextMenuCssStyleString(_mostRecentTreeViewCommandParameter, DialogRecord)">
+
+        <InputFileContextMenu TreeViewCommandParameter="_mostRecentTreeViewCommandParameter"/>
+    </DropdownDisplay>
+</div>

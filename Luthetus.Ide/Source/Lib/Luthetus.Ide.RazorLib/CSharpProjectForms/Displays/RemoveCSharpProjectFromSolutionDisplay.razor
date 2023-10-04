@@ -1,0 +1,28 @@
+﻿<div class="luth_ide_delete-file-form-display"
+     @onkeydown="HandleOnKeyDown">
+
+    <div>
+        <em class="luth_em">
+            Remove C# Project:
+        </em>
+
+        <div>
+            <em class="luth_em" title="@AbsolutePath.FormattedInput">
+                @AbsolutePath.NameWithExtension
+            </em>
+        </div>
+    </div>
+
+    <div style="display: flex; justify-content: space-between;">
+        <button class="luth_button"
+                @onclick="RemoveCSharpProjectFromSolutionOnClick">
+            Delete
+        </button>
+
+        <button class="luth_button"
+                @ref="_cancelButtonElementReference"
+                @onclick="CancelOnClick">
+            Cancel
+        </button>
+    </div>
+</div>

@@ -1,0 +1,35 @@
+﻿@using Luthetus.TextEditor.RazorLib.Cursors.Models;
+
+<div class="luth_te_text-selection-group">
+    @if (TextEditorSelectionHelper.HasSelectedText(PrimaryCursorSnapshot.ImmutableCursor.ImmutableSelection))
+    {
+        var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(
+            PrimaryCursorSnapshot.ImmutableCursor.ImmutableSelection);
+
+        var selectionBoundsInRowIndexUnits = TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(
+            RenderBatch.Model!,
+            selectionBoundsInPositionIndexUnits);
+
+        for (var i = selectionBoundsInRowIndexUnits.lowerRowIndexInclusive;
+             i < selectionBoundsInRowIndexUnits.upperRowIndexExclusive;
+             i++)
+        {
+            var rowIndex = i;
+
+            var textSelectionStyleCss = string.Empty;
+
+            if (RenderBatch.Options!.UseMonospaceOptimizations)
+            {
+                textSelectionStyleCss = GetTextSelectionStyleCss(
+                    selectionBoundsInPositionIndexUnits.lowerPositionIndexInclusive,
+                    selectionBoundsInPositionIndexUnits.upperPositionIndexExclusive,
+                    rowIndex);
+            }
+            
+            <TextSelectionRow TextSelectionStyleCss="@textSelectionStyleCss"
+                              LowerPositionIndexInclusive="selectionBoundsInPositionIndexUnits.lowerPositionIndexInclusive"
+                              UpperPositionIndexExclusive="selectionBoundsInPositionIndexUnits.upperPositionIndexExclusive"
+                              RowIndex="rowIndex"/>
+        }
+    }
+</div>

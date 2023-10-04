@@ -1,0 +1,44 @@
+﻿@using Fluxor.Blazor.Web.Components;
+@using Luthetus.Common.RazorLib.Keymaps.Displays
+
+@inherits FluxorComponent
+
+<div class="luth_ide_active-context-entry">
+
+    @{ var contextRecord = ContextRecordSelection.Value; }
+
+    <div class="luth_ide_active-context-title">
+        <button class="luth_button"
+                style="display: inline;"
+                @onclick="() => _isExpanded = !_isExpanded">
+        
+            @if (_isExpanded)
+            {
+                <IconChevronDown />
+            }
+            else
+            {
+                <IconChevronRight />
+            }
+        </button>
+
+        <em class="luth_em">
+            @if (contextRecord is not null)
+            {
+                @: @contextRecord.DisplayNameFriendly
+                
+            }
+            else
+            {
+                @: ContextRecord was null
+            }
+        </em>
+    </div>
+
+    <div class="luth_ide_active-context-body">
+        @if (_isExpanded && contextRecord is not null)
+        {
+            <KeymapDisplay Keymap="contextRecord.Keymap" />
+        }
+    </div>
+</div>

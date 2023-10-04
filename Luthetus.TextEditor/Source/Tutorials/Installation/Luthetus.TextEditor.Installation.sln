@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luthetus.TextEditor.Installation.RazorLib", "RazorLib\Luthetus.TextEditor.Installation.RazorLib.csproj", "{6D4F3C88-8983-4520-BB8C-40BC4E6B3209}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luthetus.TextEditor.Installation.ServerSide", "ServerSide\Luthetus.TextEditor.Installation.ServerSide.csproj", "{F0856684-CB58-446A-B5E9-F8CF992D2939}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luthetus.TextEditor.Installation.Wasm", "Wasm\Luthetus.TextEditor.Installation.Wasm.csproj", "{9E6385C7-F744-4C58-AF80-DD2F0BAF0647}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Hosts", "Hosts", "{8C4DCDC9-8F6C-473B-B11D-50676E2E7077}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6D4F3C88-8983-4520-BB8C-40BC4E6B3209}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D4F3C88-8983-4520-BB8C-40BC4E6B3209}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D4F3C88-8983-4520-BB8C-40BC4E6B3209}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D4F3C88-8983-4520-BB8C-40BC4E6B3209}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F0856684-CB58-446A-B5E9-F8CF992D2939}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0856684-CB58-446A-B5E9-F8CF992D2939}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0856684-CB58-446A-B5E9-F8CF992D2939}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0856684-CB58-446A-B5E9-F8CF992D2939}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E6385C7-F744-4C58-AF80-DD2F0BAF0647}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E6385C7-F744-4C58-AF80-DD2F0BAF0647}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E6385C7-F744-4C58-AF80-DD2F0BAF0647}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E6385C7-F744-4C58-AF80-DD2F0BAF0647}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F0856684-CB58-446A-B5E9-F8CF992D2939} = {8C4DCDC9-8F6C-473B-B11D-50676E2E7077}
+		{9E6385C7-F744-4C58-AF80-DD2F0BAF0647} = {8C4DCDC9-8F6C-473B-B11D-50676E2E7077}
+	EndGlobalSection
+EndGlobal

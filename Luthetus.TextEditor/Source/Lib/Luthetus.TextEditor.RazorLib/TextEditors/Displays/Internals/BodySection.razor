@@ -1,0 +1,32 @@
+﻿@using Luthetus.TextEditor.RazorLib.Cursors.Models;
+
+<div class="luth_te_body-section"
+     style="@GetBodyStyleCss()">
+
+    @{
+        var primaryCursorSnapshot = new TextEditorCursorSnapshot(RenderBatch.ViewModel!.PrimaryCursor);
+
+        var tabKeyOutput = "&nbsp;&nbsp;&nbsp;&nbsp;";
+        var spaceKeyOutput = "&nbsp;";
+
+        if (TextEditorService.OptionsStateWrap.Value.Options.ShowWhitespace)
+        {
+            tabKeyOutput = "--->";
+            spaceKeyOutput = "·";
+        }
+    }
+
+    <RowSection @ref="_rowSectionComponent"
+                GlobalShowNewlines="TextEditorService.OptionsStateWrap.Value.Options.ShowNewlines"
+                SpaceKeyOutput="@spaceKeyOutput"
+                TabKeyOutput="@tabKeyOutput"
+                TabIndex="@TabIndex"
+                PrimaryCursorSnapshot="primaryCursorSnapshot"
+                ContextMenuRenderFragmentOverride="ContextMenuRenderFragmentOverride"
+                IncludeContextMenuHelperComponent="IncludeContextMenuHelperComponent"
+                AutoCompleteMenuRenderFragmentOverride="AutoCompleteMenuRenderFragmentOverride"/>
+
+    <ScrollbarSection/>
+
+    <TooltipDisplay/>
+</div>

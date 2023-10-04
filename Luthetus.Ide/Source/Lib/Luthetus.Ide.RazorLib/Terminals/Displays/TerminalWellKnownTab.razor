@@ -1,0 +1,48 @@
+@using Luthetus.Ide.RazorLib.Terminals.Models;
+@using Luthetus.Ide.RazorLib.Terminals.Models;
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@{
+    var wellKnownTerminalSession = TerminalSessionsStateSelection.Value;
+
+    if (wellKnownTerminalSession is not null)
+    {
+        <button class="luth_button @CssClassString"
+                @onclick="DispatchSetActiveTerminalCommandKeyActionOnClick">
+
+            @if (WellKnownTerminalSessionKey == TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY)
+            {
+                @: Execution
+            }
+            else
+            {
+                @: General
+            }
+
+            <button class="luth_button"
+                    @onclick="ClearStandardOutOnClick"
+                    @onclick:stopPropagation="true">
+                Clear
+            </button>
+
+            <button class="luth_button"
+                    disabled=@(!wellKnownTerminalSession.HasExecutingProcess)
+                    @onclick="KillProcessOnClick"
+                    @onclick:stopPropagation="true">
+                Kill
+            </button>
+
+            <div style="margin-left: 15px;">
+                @if (wellKnownTerminalSession.HasExecutingProcess)
+                {
+                    <IconLoading/>
+                }
+                else
+                {
+                    <IconBlank/>
+                }
+            </div>
+        </button>
+    }
+}

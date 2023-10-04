@@ -1,0 +1,46 @@
+﻿<div class="luth_ide_delete-file-form-display"
+     @onkeydown="HandleOnKeyDown">
+
+    <div>
+        @* The text is: "Delete" or "Delete Recursively" *@
+        <em class="luth_em">
+            Delete
+            @if (AbsolutePath.IsDirectory)
+            {
+                <text>&nbsp;Recursively</text>
+            }
+        </em>
+
+        :
+        &nbsp;
+
+        <em class="luth_em" title="@AbsolutePath.FormattedInput">
+            @AbsolutePath.NameWithExtension
+        </em>
+
+        @if (AbsolutePath.IsDirectory)
+        {
+            <div>
+                AND
+                <em class="luth_em">
+                    AT LEAST
+                    @_countOfImmediateChildren
+                </em>
+                child files.
+            </div>
+        }
+    </div>
+
+    <div style="display: flex; justify-content: space-between;">
+        <button class="luth_button"
+                @onclick="DeleteFileOnClick">
+            Delete
+        </button>
+
+        <button class="luth_button"
+                @ref="_cancelButtonElementReference"
+                @onclick="CancelOnClick">
+            Cancel
+        </button>
+    </div>
+</div>

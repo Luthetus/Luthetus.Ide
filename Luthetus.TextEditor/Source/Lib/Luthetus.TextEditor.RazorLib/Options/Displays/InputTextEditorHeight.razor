@@ -1,0 +1,33 @@
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<div class="luth_te_text-editor-input-height @TextEditorService.ThemeCssClassString @TopLevelDivElementCssClassString">
+
+    @{
+        var globalHeightInPixelsValueIsNull = TextEditorService.OptionsStateWrap.Value.Options.TextEditorHeightInPixels
+            is null;
+    }
+    
+    <span class="@LabelElementCssClassString">
+        Toggle "Specify Text Editor Height Input":&nbsp;
+    </span>
+
+    <input type="checkbox"
+           class="@CascadingInputElementCssClass @CheckboxElementCssClassString"
+           checked="@(!globalHeightInPixelsValueIsNull)"
+           @onclick="() => ToggleUseGlobalHeightInPixels(globalHeightInPixelsValueIsNull)"/>
+
+    <div class="luth_te_child-input">
+        <div class="@GetIsDisabledCssClassString(globalHeightInPixelsValueIsNull)"
+             style="margin-left: 15px;">
+
+            <span class="@LabelElementCssClassString">
+                Height in pixels:&nbsp;
+            </span>
+
+            <input type="number"
+                   disabled=@globalHeightInPixelsValueIsNull
+                   @bind="TextEditorHeight"
+                   class="@CascadingInputElementCssClass @InputElementCssClassString"/>
+        </div>
+    </div>
+</div>

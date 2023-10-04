@@ -1,0 +1,8 @@
+﻿.luth_drag-initializer {
+    z-index: var(--luth_drag-initializer-z-index);
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+}

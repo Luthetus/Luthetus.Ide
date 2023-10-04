@@ -1,0 +1,28 @@
+﻿@using Luthetus.Common.RazorLib.Themes.Models;
+@using Luthetus.Common.RazorLib.Themes.Models;
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<div class="luth_te_text-editor-input-theme @TextEditorService.ThemeCssClassString @TopLevelDivElementCssClassString">
+    <span class="@LabelElementCssClassString">
+        Theme:&nbsp;
+    </span>
+
+    <select @onchange="SelectedThemeChanged"
+            class="@InputElementCssClassString">
+        @{
+            var themesBag = ThemeStateWrap.Value.ThemeBag;
+
+            var chosenThemeKey = TextEditorOptionsStateWrap.Value.Options.CommonOptions?.ThemeKey
+                ?? ThemeFacts.VisualStudioDarkThemeClone.Key;
+            
+            foreach (var theme in themesBag)
+            {
+                <option value="@theme.Key.Guid.ToString()"
+                        selected="@(chosenThemeKey == theme.Key)">
+                    @theme.DisplayName
+                </option>
+            }
+        }
+    </select>
+</div>

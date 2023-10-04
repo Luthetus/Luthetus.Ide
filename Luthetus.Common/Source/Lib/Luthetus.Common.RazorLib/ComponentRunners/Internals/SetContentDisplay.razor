@@ -1,0 +1,31 @@
+﻿<div class="luth_set-content">
+    @if (ParameterInfo.ParameterType == typeof(Guid))
+    {
+        <div>
+            <span class="luth_te_type">
+                Guid
+            </span>
+            .
+            <span class="luth_te_method">
+                TryParse
+            </span>
+            (
+                <input class="luth_ide_input luth_ide_input-text"
+                       @bind="Input"
+                       @bind:event="oninput" />
+            )
+        </div>
+
+        <div>
+            (DEBUG: @@TextEditorViewModelKey.Guid: @TextEditorViewModelKey.Guid)
+        </div>
+    }
+    else if (ParameterInfo.ParameterType == typeof(string))
+    {
+        <div>
+            <input class="luth_ide_input luth_ide_input-text"
+                   @bind="Input"
+                   @bind:event="oninput" />
+        </div>
+    }
+</div>

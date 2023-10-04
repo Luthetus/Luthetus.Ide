@@ -1,0 +1,96 @@
+﻿using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+
+namespace Luthetus.CompilerServices.Lang.Razor.CompilerServiceCase;
+
+public record SemanticResultRazor
+{
+    /// <summary>
+    /// The goal is to take a '.razor' file and create a 'behind-the-scenes'
+    /// C# class.
+    /// <br/><br/>
+    /// Any C# logic which exists in an '@code' or '@functions' block
+    /// relates to a C# class's class level code.
+    /// <br/><br/>
+    /// Any C# logic which is NOT within an '@code' or '@functions' block
+    /// is placed within a fabricated C# method.
+    /// <br/><br/>
+    /// This allows the C# Parser to look at the .razor markup
+    /// as if it were just a C# class.
+    /// <br/><br/>
+    /// An issue arises however. One must map each character from the
+    /// fabricated 'behind-the-scenes' C# class to the actual .razor file.
+    /// This way the .razor file has semantic syntax highlighting,
+    /// diagnostics, on hover tooltips, etc...
+    /// </summary>
+    public SemanticResultRazor(
+        CompilationUnit compilationUnit,
+        List<AdhocTextInsertion> codebehindClassInsertions,
+        List<AdhocTextInsertion> codebehindRenderFunctionInsertions,
+        AdhocTextInsertion adhocTextInsertionOfTheRenderFunctionItselfIntoTheCodebehindClass,
+        string classContents)
+    {
+        CompilationUnit = compilationUnit;
+        CodebehindClassInsertions = codebehindClassInsertions;
+        CodebehindRenderFunctionInsertions = codebehindRenderFunctionInsertions;
+        AdhocTextInsertionOfTheRenderFunctionItselfIntoTheCodebehindClass = adhocTextInsertionOfTheRenderFunctionItselfIntoTheCodebehindClass;
+        ClassContents = classContents;
+    }
+
+    public CompilationUnit CompilationUnit { get; }
+    public List<AdhocTextInsertion> CodebehindClassInsertions { get; }
+    public List<AdhocTextInsertion> CodebehindRenderFunctionInsertions { get; }
+    public AdhocTextInsertion AdhocTextInsertionOfTheRenderFunctionItselfIntoTheCodebehindClass { get; }
+    /// <summary>
+    /// After the <see cref="CodebehindClassInsertions"/> and the <see cref="CodebehindRenderFunctionInsertions"/> are combined into
+    /// a single C# class. The resulting string is here.
+    /// </summary>
+    public string ClassContents { get; }
+
+    public ImmutableList<(TextEditorDiagnostic diagnostic, TextEditorTextSpan textSpan)> DiagnosticTextSpanTuples { get; init; } = ImmutableList<(TextEditorDiagnostic diagnostic, TextEditorTextSpan textSpan)>.Empty;
+
+    public ImmutableList<(string message, TextEditorTextSpan textSpan)> SymbolMessageTextSpanTuples { get; init; } = ImmutableList<(string message, TextEditorTextSpan textSpan)>.Empty;
+
+    public TextEditorTextSpan? MapAdhocCSharpTextSpanToSource(
+        ResourceUri sourceResourceUri,
+        string sourceText,
+        TextEditorTextSpan textSpan)
+    {
+        var adhocTextInsertion = CodebehindClassInsertions
+                .SingleOrDefault(x =>
+                    textSpan.StartingIndexInclusive >= x.InsertionStartingIndexInclusive &&
+                    textSpan.EndingIndexExclusive <= x.InsertionEndingIndexExclusive);
+
+        // TODO: Fix for spans that go 2 adhocTextInsertions worth of length?
+        if (adhocTextInsertion is null)
+        {
+            adhocTextInsertion = CodebehindRenderFunctionInsertions
+                .SingleOrDefault(x =>
+                    textSpan.StartingIndexInclusive >= x.InsertionStartingIndexInclusive &&
+                    textSpan.EndingIndexExclusive <= x.InsertionEndingIndexExclusive);
+        }
+
+        if (adhocTextInsertion is null)
+        {
+            // Could not map the text span back to the source file  
+            return null;
+        }
+
+        var symbolSourceTextStartingIndexInclusive =
+                    adhocTextInsertion.SourceTextStartingIndexInclusive +
+                    (textSpan.StartingIndexInclusive - adhocTextInsertion.InsertionStartingIndexInclusive);
+
+        var symbolSourceTextEndingIndexExclusive =
+            symbolSourceTextStartingIndexInclusive +
+            (textSpan.EndingIndexExclusive - textSpan.StartingIndexInclusive);
+
+        return textSpan with
+        {
+            ResourceUri = sourceResourceUri,
+            SourceText = sourceText,
+            StartingIndexInclusive = symbolSourceTextStartingIndexInclusive,
+            EndingIndexExclusive = symbolSourceTextEndingIndexExclusive,
+        };
+    }
+}

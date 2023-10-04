@@ -1,0 +1,51 @@
+﻿<div class="@CssClassString">
+
+    @{
+        var presentationModelsBag = GetTextEditorPresentationModels();
+
+        var presentationLayerOrderedByRankAscending = presentationModelsBag.OrderBy(x => x.Rank).ToList();
+    }
+
+    @foreach (var presentationLayer in presentationLayerOrderedByRankAscending)
+    {
+        var completedCalculation = presentationLayer.CompletedCalculation;
+        var textSpansBag = completedCalculation?.TextEditorTextSpanBag;
+
+        @if (completedCalculation is not null && textSpansBag is not null)
+        {
+            textSpansBag = ShiftTextSpans(completedCalculation.TextModificationsSinceRequestBag, textSpansBag.Value);
+
+            <div class="@presentationLayer.CssClassString">
+                @foreach (var textSpan in textSpansBag)
+                {
+                    var boundsInPositionIndexUnits = (textSpan.StartingIndexInclusive, textSpan.EndingIndexExclusive);
+
+                    var firstRowToSelectDataInclusive = RenderBatch.Model!.FindRowInformation(
+                            boundsInPositionIndexUnits.StartingIndexInclusive)
+                        .rowIndex;
+
+                    var lastRowToSelectDataExclusive = RenderBatch.Model!.FindRowInformation(
+                            boundsInPositionIndexUnits.EndingIndexExclusive)
+                        .rowIndex +
+                        1;
+
+                    var boundsInRowIndexUnits = (firstRowToSelectDataInclusive, lastRowToSelectDataExclusive);
+
+                    for (var i = boundsInRowIndexUnits.firstRowToSelectDataInclusive;
+                         i < boundsInRowIndexUnits.lastRowToSelectDataExclusive;
+                         i++)
+                    {
+                        var rowIndex = i;
+
+                        <div class="@GetCssClass(presentationLayer, textSpan.DecorationByte)"
+                             style="@GetPresentationCssStyleString(
+                                    boundsInPositionIndexUnits.StartingIndexInclusive,
+                                    boundsInPositionIndexUnits.EndingIndexExclusive,
+                                    rowIndex)">
+                        </div>
+                    }
+                }
+            </div>
+        }
+    }
+</div>

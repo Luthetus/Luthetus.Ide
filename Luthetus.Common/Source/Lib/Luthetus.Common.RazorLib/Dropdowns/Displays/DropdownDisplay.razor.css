@@ -1,0 +1,7 @@
+﻿.luth_dropdown-display {
+    z-index: var(--luth_dropdown-display-z-index);
+    position: absolute;
+    color: var(--luth_tertiary-foreground-color);
+    background-color: var(--luth_tertiary-background-color);
+    box-shadow: 0 0 var(--luth_dropdown-display-default-background-box-shadow-blur-radius) var(--luth_primary-box-shadow-color);
+}

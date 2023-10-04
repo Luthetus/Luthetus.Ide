@@ -1,0 +1,5 @@
+﻿.luth_resize-row {
+    background-color: var(--luth_resize-row-background-color);
+    width: 100%;
+    cursor: n-resize;
+}

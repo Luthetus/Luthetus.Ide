@@ -1,0 +1,99 @@
+﻿@using Luthetus.Common.RazorLib.Contexts.Displays
+@using Luthetus.Common.RazorLib.Contexts.Models;
+@using Luthetus.TextEditor.RazorLib.Options.Models;
+@using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+@using Luthetus.Common.RazorLib.Contexts.Models;
+
+@{
+    var renderBatch = _storedRenderBatch;
+
+    var contextBoundaryStyle = $"{renderBatch.FontSizeInPixelsCssStyleString} {renderBatch.FontFamilyCssStyleString} {GetGlobalHeightInPixelsStyling()} {WrapperStyleCssString}";
+    var contextBoundaryClass = $"luth_te_text-editor-css-wrapper {TextEditorService.ThemeCssClassString} {WrapperClassCssString}";
+}
+
+<ContextBoundary ContextRecord="ContextFacts.TextEditorContext"
+                 ClassCssString="@contextBoundaryClass"
+                 StyleCssString="@contextBoundaryStyle">
+
+    @if (renderBatch.IsValid && !renderBatch.Options!.UseMonospaceOptimizations)
+    {
+        <div style="display: flex; position: absolute; visibility: hidden;"
+             id="@ProportionalFontMeasurementsContainerElementId">
+        </div>
+    }
+
+    <CascadingValue Value="renderBatch">
+        <CascadingValue Name="ProportionalFontMeasurementsContainerElementId" Value="ProportionalFontMeasurementsContainerElementId">
+
+            @if (renderBatch.IsValid && IncludeHeaderHelperComponent)
+            {
+                <TextEditorHeader HeaderButtonKinds="HeaderButtonKinds" />
+            }
+
+            <div @onclick="FocusTextEditorAsync"
+            @onkeydown="HandleOnKeyDownAsync"
+            @onkeydown:preventDefault="true"
+            @oncontextmenu="HandleOnContextMenuAsync"
+            @oncontextmenu:preventDefault="true"
+            @onmousedown="HandleContentOnMouseDownAsync"
+            @onmousemove="HandleContentOnMouseMoveAsync"
+            @onmouseout="HandleContentOnMouseOut"
+            @ondblclick="HandleContentOnDoubleClickAsync"
+            @onwheel="HandleOnWheelAsync"
+            @ontouchstart="HandleOnTouchStartAsync"
+            @ontouchmove="HandleOnTouchMoveAsync"
+            @ontouchend="ClearTouchAsync"
+            @ontouchcancel="ClearTouchAsync"
+            @ontouchleave="ClearTouchAsync"
+                 id="@ContentElementId"
+                 style="@TextEditorStyleCssString"
+                 class="luth_te_text-editor luth_unselectable @TextEditorClassCssString"
+                 tabindex="-1">
+
+                <MeasureCharacterWidthAndRowHeight @ref="_measureCharacterWidthAndRowHeightComponent"
+                                                   HtmlElementId="@MeasureCharacterWidthAndRowHeightElementId" />
+
+                @if (renderBatch.IsValid)
+                {
+                    <CascadingValue Value="_tooltipViewModel">
+                        <GutterSection />
+
+                        <BodySection @ref="_bodySectionComponent"
+                                     TabIndex="TabIndex"
+                                     ContextMenuRenderFragmentOverride="ContextMenuRenderFragmentOverride"
+                                     IncludeContextMenuHelperComponent="IncludeContextMenuHelperComponent"
+                                     AutoCompleteMenuRenderFragmentOverride="AutoCompleteMenuRenderFragmentOverride" />
+
+                        @if (renderBatch.ViewModel!.DisplayCommandBar)
+                        {
+                            <CommandBarDisplay RestoreFocusToTextEditor="FocusTextEditorAsync" />
+                        }
+                    </CascadingValue>
+                }
+                else
+                {
+                    if (renderBatch.Model is null)
+                    {
+                        <div>The @nameof(TextEditorModel) was null</div>
+                    }
+                    else if (renderBatch.ViewModel is null)
+                    {
+                        <div>The @nameof(TextEditorViewModel) was null</div>
+                    }
+                    else if (renderBatch.Options is null)
+                    {
+                        <div>The @nameof(TextEditorOptions) was null</div>
+                    }
+                }
+            </div>
+
+            @if (renderBatch.IsValid && IncludeFooterHelperComponent)
+            {
+                <TextEditorFooter />
+            }
+
+        </CascadingValue>
+    </CascadingValue>
+</ContextBoundary>

@@ -1,0 +1,10 @@
+﻿@using Fluxor.Blazor.Web.Components;
+@inherits FluxorComponent
+
+@{ var appOptionsState = AppOptionsStateWrap.Value; }
+
+<div class="luth_web_icon-badge"
+     style="@GetStyleString(appOptionsState)">
+
+    @ChildContent
+</div>
