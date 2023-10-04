@@ -9,7 +9,6 @@ using Luthetus.TextEditor.RazorLib.Finds.States;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Contexts.Displays;
-using Luthetus.Common.RazorLib.Commands.Models.Ide;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -19,6 +18,8 @@ using Luthetus.Ide.RazorLib.CompilerServices.Displays;
 using Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 using Luthetus.Ide.RazorLib.Terminals.Displays;
 using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.Ide.RazorLib.Commands;
+using Luthetus.Common.RazorLib.Contexts.Models;
 
 namespace Luthetus.Ide.RazorLib.Installations.Displays;
 
@@ -95,7 +96,10 @@ public partial class LuthetusIdeInitializer : ComponentBase
             new(),
             typeof(SolutionExplorerDisplay),
             typeof(IconFolder),
-            "Solution Explorer");
+            "Solution Explorer")
+        {
+            ContextRecordKey = ContextFacts.SolutionExplorerContext.ContextKey
+        };
 
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(leftPanel.Key, solutionExplorerPanelTab, false));
 
@@ -105,7 +109,10 @@ public partial class LuthetusIdeInitializer : ComponentBase
             new(),
             typeof(FolderExplorerDisplay),
             typeof(IconFolder),
-            "Folder Explorer");
+            "Folder Explorer")
+        {
+            ContextRecordKey = ContextFacts.FolderExplorerContext.ContextKey
+        };
 
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(leftPanel.Key, folderExplorerPanelTab, false));
 
@@ -122,7 +129,10 @@ public partial class LuthetusIdeInitializer : ComponentBase
             new(),
             typeof(CompilerServiceExplorerDisplay),
             typeof(IconFolder),
-            "Compiler Service Explorer");
+            "Compiler Service Explorer")
+        {
+            ContextRecordKey = ContextFacts.CompilerServiceExplorerContext.ContextKey
+        };
 
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(rightPanel.Key, compilerServiceExplorerPanelTab, false));
     }
@@ -137,7 +147,10 @@ public partial class LuthetusIdeInitializer : ComponentBase
             new(),
             typeof(TerminalDisplay),
             typeof(IconFolder),
-            "Terminal");
+            "Terminal")
+        {
+            ContextRecordKey = ContextFacts.TerminalContext.ContextKey
+        };
 
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, terminalPanelTab, false));
 
@@ -147,7 +160,10 @@ public partial class LuthetusIdeInitializer : ComponentBase
             new(),
             typeof(NuGetPackageManager),
             typeof(IconFolder),
-            "NuGet");
+            "NuGet")
+        {
+            ContextRecordKey = ContextFacts.NuGetPackageManagerContext.ContextKey
+        };
 
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, nuGetPanelTab, false));
 
@@ -157,7 +173,10 @@ public partial class LuthetusIdeInitializer : ComponentBase
             new(),
             typeof(ActiveContextsDisplay),
             typeof(IconFolder),
-            "Active Contexts");
+            "Active Contexts")
+        {
+            ContextRecordKey = ContextFacts.ActiveContextsContext.ContextKey
+        };
 
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, activeContextsPanelTab, false));
 
