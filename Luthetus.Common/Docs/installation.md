@@ -87,7 +87,7 @@ Go to the file that you reference JavaScript files from and add the following Ja
 </Router>
 ```
 
-- In `MainLayout.razor` render the `<Luthetus.Common.RazorLib.LuthetusCommonInitializer/>` Blazor component
+- In `MainLayout.razor` render the `<Luthetus.Common.RazorLib.Installations.Displays.LuthetusCommonInitializer />` Blazor component
 
 > *NOTE:* The placement of the `<Luthetus.Common.RazorLib.Installations.Displays.LuthetusCommonInitializer/>` Blazor component should be wrapped in an encompassing div. This allows one to cascade css. A later tutorial is intended to show this, as to keep the installation tutorial more to the point.
 
