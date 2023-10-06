@@ -36,7 +36,7 @@ private IAppOptionsService AppOptionsService { get; set; } = null!;
 
 - We need to subscribe to the state changes of the IAppOptionsService.
 
-- When subscribing to an event. It is possible to create a memory leak, if you do not unsubscribe from the event at a later point.
+- When subscribing to an event. It is possible to create a memory leak, if one does not unsubscribe from the event at a later point.
 
 - For this reason, I'll perform the steps in an order that ensures my code will not compile if I forget to unsubscribe.
 
@@ -47,7 +47,7 @@ private IAppOptionsService AppOptionsService { get; set; } = null!;
 - At this step, here is the entirety of my `Shared/MainLayout.razor.cs`
 
 ```csharp
-using Luthetus.Common.RazorLib.Options;
+using Luthetus.Common.RazorLib.Options.Models;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Common.Usage.RazorLib.Shared;
@@ -73,8 +73,6 @@ public void Dispose()
 }
 ```
 
-> *NOTE:* The code you have just written will not compile. I feel its always best to write this line first, since it creates a compiler error if you "don't unsubscribe" so to speak. You cannot autocomplete an EventHandler by typing `-=` in Visual Studio, at least I'm unable to given my settings. I wish I could because `+=` is the final thing I want to write. Anyhow, continuing on.
-
 - Override the Blazor lifecycle method named `OnInitialized()`. See this code snippet:
 
 ```csharp
@@ -99,14 +97,25 @@ protected override void OnInitialized()
 
 > *NOTE:* When I was typing out the previously shown line of code, when I typed the `+=` part and hit `space`, I was prompted by Visual Studio to hit `tab` to autocomplete out an EventHandler.
 
-- Now that we have the subscription occurring in the `OnInitialized()`, we can return the `Dispose()` implementation. We had left out the right hand side of the unsubscribe statement. Replace that line with this: `AppOptionsService.AppOptionsStateWrap.StateChanged -= AppOptionsStateWrap_StateChanged;`. Now the code will compile again. My code snippet for `Dispose()` is shown here:
+```csharp
+private void AppOptionsStateWrap_StateChanged(object? sender, EventArgs e)
+{
+    throw new NotImplementedException();
+}
+```
+
+- Now that we have the subscription occurring in the `OnInitialized()`, we can go back to the `Dispose()` implementation. We had left out the right hand side of the unsubscribe statement. Replace that line with this: `AppOptionsService.AppOptionsStateWrap.StateChanged -= AppOptionsStateWrap_StateChanged;`. Now the code will compile again. My code snippet for `MainLayout.razor.cs` is shown here:
 
 ```csharp
-/* Ommitted code for brevity */
+using Luthetus.Common.RazorLib.Options.Models;
+using Microsoft.AspNetCore.Components;
+
+namespace Luthetus.Common.Usage.RazorLib.Shared;
 
 public partial class MainLayout : LayoutComponentBase, IDisposable
 {
-    /* Ommitted code for brevity */
+    [Inject]
+    private IAppOptionsService AppOptionsService { get; set; } = null!;
 
     protected override void OnInitialized()
     {
@@ -115,21 +124,15 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
         base.OnInitialized();
     }
 
-    /* Ommitted code for brevity */
+    private void AppOptionsStateWrap_StateChanged(object? sender, EventArgs e)
+    {
+        throw new NotImplementedException();
+    }
 
     public void Dispose()
     {
         AppOptionsService.AppOptionsStateWrap.StateChanged -= AppOptionsStateWrap_StateChanged;
     }
-}
-```
-
-- The method `AppOptionsStateWrap_StateChanged()` was autocompleted for me by Visual Studio when I was typing the `subscribe` statement. Here is the code snippet for that autocompleted method:
-
-```csharp
-private void AppOptionsStateWrap_StateChanged(object? sender, EventArgs e)
-{
-    throw new NotImplementedException();
 }
 ```
 
@@ -152,7 +155,7 @@ private async void AppOptionsStateWrap_StateChanged(object? sender, EventArgs e)
 
 - `Shared/MainLayout.razor` has a &lt;`div`&gt; HTML element with the css class: `top-row`. Inside this HTML element I will be putting the &lt;`select`&gt; HTML element.
 
-- This &lt;`select`&gt; HTML element already exists within the Luthetus.Common NuGet Package. Inside the previously described &lt;`div`&gt; add the markup: `<Luthetus.Common.RazorLib.Options.InputAppTheme />` as shown in the following snippet:
+- This &lt;`select`&gt; HTML element already exists within the Luthetus.Common NuGet Package. Inside the previously described &lt;`div`&gt; add the markup: `<Luthetus.Common.RazorLib.Options.Displays.InputAppTheme />` as shown in the following snippet:
 
 ```html
 <!-- MainLayout.razor -->
@@ -161,7 +164,7 @@ private async void AppOptionsStateWrap_StateChanged(object? sender, EventArgs e)
 
 <PageTitle>Luthetus.Common.Usage.ServerSide</PageTitle>
 
-<Luthetus.Common.RazorLib.LuthetusCommonInitializer/>
+<Luthetus.Common.RazorLib.Installations.Displays.LuthetusCommonInitializer/>
 
 <div class="page">
     <div class="sidebar">
@@ -170,7 +173,8 @@ private async void AppOptionsStateWrap_StateChanged(object? sender, EventArgs e)
 
     <main>
         <div class="top-row px-4">
-            <Luthetus.Common.RazorLib.Options.InputAppTheme />
+            <!-- Here -->
+            <Luthetus.Common.RazorLib.Options.Displays.InputAppTheme />
             <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
         </div>
 
@@ -185,7 +189,7 @@ Here is a quick GIF as well that shows how the website looks as of this step:
 
 ![tutorial_Usage-InputAppTheme](../Images/Gifs/tutorial_Usage-InputAppTheme.gif)
 
-- When I change my selection in the `<Luthetus.Common.RazorLib.Options.InputAppTheme />`, I want the corresponding CSS class to be applied to the top-most &lt;div&gt; in `MainLayout.razor`. This would then allow me to cascade a color theme to child elements.
+- When I change my selection in the `<Luthetus.Common.RazorLib.Options.Displays.InputAppTheme />`, I want the corresponding CSS class to be applied to the top-most &lt;div&gt; in `MainLayout.razor`. This would then allow me to cascade a color theme to child elements.
 
 - In `MainLayout.razor`, we need to locate the top-most &lt;div&gt;. Following that, we need to interpolate the css class which corresponds to the selected theme. I changed my top-most element's `class` property to `class="page @AppOptionsService.ThemeCssClassString"`. The following is the entirety of my `MainLayout.razor`:
 
@@ -196,7 +200,7 @@ Here is a quick GIF as well that shows how the website looks as of this step:
 
 <PageTitle>Luthetus.Common.Usage.ServerSide</PageTitle>
 
-<Luthetus.Common.RazorLib.LuthetusCommonInitializer/>
+<Luthetus.Common.RazorLib.Installations.Displays.LuthetusCommonInitializer/>
 
 <div class="page @AppOptionsService.ThemeCssClassString">
     <div class="sidebar">
@@ -205,7 +209,7 @@ Here is a quick GIF as well that shows how the website looks as of this step:
 
     <main>
         <div class="top-row px-4">
-            <Luthetus.Common.RazorLib.Options.InputAppTheme />
+            <Luthetus.Common.RazorLib.Options.Displays.InputAppTheme />
             <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
         </div>
 
