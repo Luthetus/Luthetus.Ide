@@ -1,10 +1,6 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.TextEditor.Usage.RazorLib;
-using Luthetus.TextEditor.RazorLib;
-using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
-using Luthetus.TextEditor.RazorLib.HostedServiceCase.CompilerServiceCase;
-using Luthetus.TextEditor.RazorLib.HostedServiceCase.TextEditorCase;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,13 +8,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
-builder.Services.AddLuthetusTextEditorUsageServices();
+var luthetusHostingInformation = new LuthetusHostingInformation(
+    LuthetusHostingKind.ServerSide,
+    new BackgroundTaskService());
 
-builder.Services.AddSingleton<ICompilerServiceBackgroundTaskQueue, CompilerServiceBackgroundTaskQueue>();
-
-builder.Services.AddHostedService<CommonQueuedHostedService>();
-builder.Services.AddHostedService<TextEditorQueuedHostedService>();
-builder.Services.AddHostedService<CompilerServiceQueuedHostedService>();
+builder.Services.AddLuthetusTextEditorUsageServices(luthetusHostingInformation);
 
 var app = builder.Build();
 

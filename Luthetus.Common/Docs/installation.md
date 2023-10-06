@@ -1,9 +1,9 @@
-# Luthetus.Common (v1.3.0)
+# Luthetus.Common (v1.4.0)
 
 ## Installation
 
 ### Source Code
-The .NET Solution: [Luthetus.Common.Installation.sln](../Source/Tutorials/Installation/Luthetus.Common.Installation.sln),
+The .NET Solution: [Luthetus.Common.Usage.sln](../Source/Tutorials/Usage/Luthetus.Common.Usage.sln),
 was made by following steps described here. So, the completed result can be found there.
 
 ### Goal
@@ -13,7 +13,7 @@ was made by following steps described here. So, the completed result can be foun
 - Reference the `CSS`
 - Reference the `JavaScript`
 - In `App.razor` render the `<Fluxor.Blazor.Web.StoreInitializer/>`
-- In `MainLayout.razor` render the `<Luthetus.Common.RazorLib.LuthetusCommonInitializer/>` Blazor component
+- In `MainLayout.razor` render the `<Luthetus.Common.RazorLib.Installations.Displays.LuthetusCommonInitializer/>` Blazor component
 
 ### Steps
 - Reference the `Luthetus.Common` NuGet Package
@@ -29,13 +29,19 @@ Go to the file that you register your services and add the following lines of C#
 > *NOTE:* In many C# Project templates, the services are registered in `Program.cs`.
 
 ```csharp
-using Luthetus.Common.RazorLib;
+// using Luthetus.Common.RazorLib.Installations.Models;
+// using Fluxor;
 
-builder.Services
-    .AddLuthetusCommonServices()
-    .AddFluxor(options => 
-        options.ScanAssemblies(
-            typeof(LuthetusCommonOptions).Assembly));
+var luthetusHostingInformation = new LuthetusHostingInformation(
+    //LuthetusHostingKind.Wasm,
+    // OR
+    // LuthetusHostingKind.ServerSide,
+    new BackgroundTaskService());
+
+return services
+    .AddLuthetusCommonServices(luthetusHostingInformation) // 
+    .AddFluxor(options => options.ScanAssemblies(
+        typeof(LuthetusCommonOptions).Assembly));
 ```
 
 - Reference the `CSS`
@@ -81,16 +87,16 @@ Go to the file that you reference JavaScript files from and add the following Ja
 </Router>
 ```
 
-- In `MainLayout.razor` render the `<Luthetus.Common.RazorLib.LuthetusCommonInitializer/>` Blazor component
+- In `MainLayout.razor` render the `<Luthetus.Common.RazorLib.Installations.Displays.LuthetusCommonInitializer />` Blazor component
 
-> *NOTE:* The placement of the `<Luthetus.Common.RazorLib.LuthetusCommonInitializer/>` Blazor component should be wrapped in an encompassing div. This allows one to cascade css. A later tutorial is intended to show this as to keep the installation tutorial more to the point.
+> *NOTE:* The placement of the `<Luthetus.Common.RazorLib.Installations.Displays.LuthetusCommonInitializer/>` Blazor component should be wrapped in an encompassing div. This allows one to cascade css. A later tutorial is intended to show this, as to keep the installation tutorial more to the point.
 
 ```html
 @inherits LayoutComponentBase
 
 <PageTitle>Luthetus.Common.Installation.ServerSide</PageTitle>
 
-<Luthetus.Common.RazorLib.LuthetusCommonInitializer/>
+<Luthetus.Common.RazorLib.Installations.Displays.LuthetusCommonInitializer/>
 
 <div class="page">
     <div class="sidebar">

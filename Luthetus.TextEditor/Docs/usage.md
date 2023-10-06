@@ -1,4 +1,4 @@
-# Luthetus.TextEditor (v1.3.0)
+# Luthetus.TextEditor (v1.4.0)
 
 ## Usage
 
@@ -31,15 +31,18 @@ public partial class Index : ComponentBase
 
 - First, one needs to make a `TextEditorModel`.
 
-- Then, one needs to make a `TextEditorViewModel` for that previously made `TextEditorModel`.
+- Then, one needs to make a `TextEditorViewModel` for that previously made `model`.
 
 - In Index.razor.cs add the following line of code:
 
 ```csharp
-private static readonly TextEditorModelKey IndexTextEditorModelKey = TextEditorModelKey.NewTextEditorModelKey();
+// using Luthetus.TextEditor.RazorLib.Lexes.Models;
+private static readonly ResourceUri TextEditorResourceUri = new ResourceUri("/index");
 ```
 
-- The `TextEditorModelKey` is a unique identifier for a given `TextEditorModel`.
+- The `ResourceUri` is a unique identifier for a given `TextEditorModel`.
+
+- One might think of a `TextEditorModel` as mapping to a file on their filesystem, as an example.
 
 - Override the Blazor lifecycle method named: `OnInitialized()`
 
@@ -55,6 +58,7 @@ protected override void OnInitialized()
 - We need access to the `ITextEditorService` to register a `TextEditorModel`. So, inject the `ITextEditorService`.
 
 ```csharp
+// using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 [Inject]
 private ITextEditorService TextEditorService { get; set; } = null!;
 ```
@@ -63,21 +67,32 @@ private ITextEditorService TextEditorService { get; set; } = null!;
 
 - By invoking `TextEditorService.Model.RegisterCustom(...);`, we can create register a TextEditorModel. The `RegisterCustom(...)` method takes as a parameter an instance of `TextEditorModel`. So we need to make that instance.
 
-- In the override for `OnInitialized()`, create an instance of a `TextEditorModel`. The, pass it in to the `TextEditorService.Model.RegisterCustom(...)` invocation.
+- In the override for `OnInitialized()`, create an instance of a `TextEditorModel`. Then, pass it in to the `TextEditorService.Model.RegisterCustom(...)` invocation.
+
+- In order to create an instance of the `TextEditorDefaultCompilerService` one needs access to the `IBackgroundTaskService` and `IDispatcher`. These can be injected as shown in the following code snippet.
+
+```csharp
+// using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+[Inject]
+private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+// using Fluxor;
+[Inject]
+private IDispatcher Dispatcher { get; set; } = null!;
+```
 
 ```csharp
 protected override void OnInitialized()
 {
     var textEditorModel = new TextEditorModel(
-        new ResourceUri("uniqueIdentifierGoesHere.cs"),
+        TextEditorResourceUri,
         DateTime.UtcNow,
         ".cs",
         "public class MyClass\n{\n\n}\n",
-        new TextEditorDefaultCompilerService(),
         new GenericDecorationMapper(),
+        new TextEditorDefaultCompilerService(
+            TextEditorService, BackgroundTaskService, Dispatcher),
         null,
-        new(),
-        IndexTextEditorModelKey);
+        new());
 
     TextEditorService.Model.RegisterCustom(textEditorModel);
 
@@ -85,9 +100,9 @@ protected override void OnInitialized()
 }
 ```
 
-- In order to render a `TextEditorModel`, we need a `TextEditorViewModel`. A file on one's operating system would relate to a `TextEditorModel`. Whereas, an open text editor would relate to a `TextEditorViewModel`.
+- In order to render a `TextEditorModel`, we need a `TextEditorViewModel`. A file on one's operating system would relate to a `model`. Whereas, an open text editor would relate to a `viewModel`.
 
-- Many `TextEditorViewModel` can reference an underlying `TextEditorModel`. But, only 1 `TextEditorModel` for a given file on one's operating system can exist.
+- Many `TextEditorViewModel` can reference an underlying `TextEditorModel`. But, only 1 `model` for a given file on one's operating system can exist.
 
 > *NOTE:* I use an example of a operating system's file system but, it is just an example, one can make a TextEditorModel out of "thin air" if they'd like to.
 
@@ -96,27 +111,28 @@ protected override void OnInitialized()
 - Add the following line of code:
 
 ```csharp
-private static readonly TextEditorViewModelKey IndexTextEditorViewModelKey = TextEditorViewModelKey.NewTextEditorViewModelKey();
+private static readonly Key<TextEditorViewModel> TextEditorViewModelKey = Key<TextEditorViewModel>.NewKey();
 ```
 
 - Now, in the override for `OnInitialized()`, invoke `TextEditorService.ViewModel.Register(...)`.
 
 ```csharp
 TextEditorService.ViewModel.Register(
-    IndexTextEditorViewModelKey,
-    IndexTextEditorModelKey);
+    TextEditorViewModelKey,
+    TextEditorResourceUri);
 ```
 
 - My `Pages/Index.razor.cs` file as of this step looks as follows:
 
 ```csharp
-using Luthetus.TextEditor.RazorLib;
-using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
-using Luthetus.TextEditor.RazorLib.CompilerServiceCase.GenericLexer.Decoration;
-using Luthetus.TextEditor.RazorLib.Lexing;
-using Luthetus.TextEditor.RazorLib.Model;
-using Luthetus.TextEditor.RazorLib.ViewModel;
+using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Microsoft.AspNetCore.Components;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Fluxor;
+using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.TextEditor.Usage.RazorLib.Pages;
 
@@ -124,43 +140,47 @@ public partial class Index : ComponentBase
 {
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
+    [Inject]
+    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
 
-    private static readonly TextEditorModelKey IndexTextEditorModelKey = TextEditorModelKey.NewTextEditorModelKey();
-    private static readonly TextEditorViewModelKey IndexTextEditorViewModelKey = TextEditorViewModelKey.NewTextEditorViewModelKey();
+    private static readonly ResourceUri TextEditorResourceUri = new ResourceUri("/index");
+    private static readonly Key<TextEditorViewModel> TextEditorViewModelKey = Key<TextEditorViewModel>.NewKey();
 
     protected override void OnInitialized()
     {
         var textEditorModel = new TextEditorModel(
-            new ResourceUri("uniqueIdentifierGoesHere.cs"),
+            TextEditorResourceUri,
             DateTime.UtcNow,
             ".cs",
             "public class MyClass\n{\n\n}\n",
-            new TextEditorDefaultCompilerService(),
             new GenericDecorationMapper(),
+            new TextEditorDefaultCompilerService(
+                TextEditorService, BackgroundTaskService, Dispatcher),
             null,
-            new(),
-            IndexTextEditorModelKey);
+            new());
 
         TextEditorService.Model.RegisterCustom(textEditorModel);
 
         TextEditorService.ViewModel.Register(
-            IndexTextEditorViewModelKey,
-            IndexTextEditorModelKey);
+            TextEditorViewModelKey,
+            TextEditorResourceUri);
 
         base.OnInitialized();
     }
 }
 ```
 
-- In the .razor markup (`Pages/Index.razor`) render the Blazor component: `<Luthetus.TextEditor.RazorLib.ViewModel.TextEditorViewModelDisplay/>`
+- In the .razor markup (`Pages/Index.razor`) render the Blazor component: `<Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewModelDisplay/>`
 
 - This component takes various parameters, but only one of them is required. The rest of the parameters are for customization.
 
-- Pass in the required parameter `TextEditorViewModelKey` to have the value of `IndexTextEditorViewModelKey`.
+- Pass in the required parameter `TextEditorViewModelKey` to have the value of the `TextEditorViewModelKey` property from the codebehind.
 
 ```csharp
 @page "/"
-@using Luthetus.TextEditor.RazorLib.ViewModel
+@using Luthetus.TextEditor.RazorLib.TextEditors.Displays
 
 <PageTitle>Index</PageTitle>
 
@@ -168,7 +188,7 @@ public partial class Index : ComponentBase
 
 Welcome to your new app.
 
-<TextEditorViewModelDisplay TextEditorViewModelKey="IndexTextEditorViewModelKey"/>
+<TextEditorViewModelDisplay TextEditorViewModelKey="TextEditorViewModelKey" />
 ```
 
 - The following GIF shows how the Text Editor looks at this step.
@@ -191,28 +211,37 @@ services.AddScoped<CSharpCompilerService>();
 
 - In the `Pages/Index.razor.cs` file we now can provide the `CSharpCompilerService` when instantiating a `TextEditorModel`.
 
-- Inject the `CSharpCompilerService`
+- `CSharpCompilerService` is written such that one can re-use a singular instance. This then results in the compiler service understanding the one or many files that have been registered with it.
+
+- Create a private field for an instance of `CSharpCompilerService` with name, `_cSharpCompilerService`.
 
 ```csharp
-[Inject]
-private CSharpCompilerService CSharpCompilerService { get; set; } = null!;
+private CSharpCompilerService _cSharpCompilerService = null!;
 ```
 
-- Then pass in `CSharpCompilerService` instead of `new TextEditorDefaultCompilerService()` when invoking the `TextEditorModel` constructor.
+- In `OnInitialized()` assign to `_cSharpCompilerService` a new instance of the `CSharpCompilerService`.
 
-- One last step, on the line immediately following, `TextEditorService.Model.RegisterCustom(textEditorModel);` add the line: `CSharpCompilerService.RegisterModel(textEditorModel);`
+```csharp
+_cSharpCompilerService = new CSharpCompilerService(
+    TextEditorService, BackgroundTaskService, Dispatcher);
+```
+
+- Then pass in `_cSharpCompilerService` instance instead of `new TextEditorDefaultCompilerService(...)` when invoking the `TextEditorModel` constructor.
+
+- One last step, on the line immediately following, `TextEditorService.Model.RegisterCustom(textEditorModel);` add the line: `_cSharpCompilerService.RegisterResource(textEditorModel.ResourceUri);`
 
 - My `Pages/Index.razor.cs` file as of this step is shown in the following code snippet:
 
 ```csharp
-using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
-using Luthetus.TextEditor.RazorLib;
-using Luthetus.TextEditor.RazorLib.CompilerServiceCase;
-using Luthetus.TextEditor.RazorLib.CompilerServiceCase.GenericLexer.Decoration;
-using Luthetus.TextEditor.RazorLib.Lexing;
-using Luthetus.TextEditor.RazorLib.Model;
-using Luthetus.TextEditor.RazorLib.ViewModel;
+using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Microsoft.AspNetCore.Components;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Fluxor;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 
 namespace Luthetus.TextEditor.Usage.RazorLib.Pages;
 
@@ -221,31 +250,37 @@ public partial class Index : ComponentBase
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
-    private CSharpCompilerService CSharpCompilerService { get; set; } = null!;
+    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
 
-    private static readonly TextEditorModelKey IndexTextEditorModelKey = TextEditorModelKey.NewTextEditorModelKey();
-    private static readonly TextEditorViewModelKey IndexTextEditorViewModelKey = TextEditorViewModelKey.NewTextEditorViewModelKey();
+    private static readonly ResourceUri TextEditorResourceUri = new ResourceUri("/index");
+    private static readonly Key<TextEditorViewModel> TextEditorViewModelKey = Key<TextEditorViewModel>.NewKey();
+
+    private CSharpCompilerService _cSharpCompilerService = null!;
 
     protected override void OnInitialized()
     {
+        _cSharpCompilerService = new CSharpCompilerService(
+            TextEditorService, BackgroundTaskService, Dispatcher);
+
         var textEditorModel = new TextEditorModel(
-            new ResourceUri("uniqueIdentifierGoesHere.cs"),
+            TextEditorResourceUri,
             DateTime.UtcNow,
             ".cs",
             "public class MyClass\n{\n\n}\n",
-            CSharpCompilerService,
             new GenericDecorationMapper(),
+            _cSharpCompilerService,
             null,
-            new(),
-            IndexTextEditorModelKey);
+            new());
 
         TextEditorService.Model.RegisterCustom(textEditorModel);
 
-        CSharpCompilerService.RegisterModel(textEditorModel);
+        _cSharpCompilerService.RegisterResource(textEditorModel.ResourceUri);
 
         TextEditorService.ViewModel.Register(
-            IndexTextEditorViewModelKey,
-            IndexTextEditorModelKey);
+            TextEditorViewModelKey,
+            TextEditorResourceUri);
 
         base.OnInitialized();
     }

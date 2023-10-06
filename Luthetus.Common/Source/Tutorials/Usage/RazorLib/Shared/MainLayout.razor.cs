@@ -1,4 +1,4 @@
-using Luthetus.Common.RazorLib.Options;
+using Luthetus.Common.RazorLib.Options.Models;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Common.Usage.RazorLib.Shared;

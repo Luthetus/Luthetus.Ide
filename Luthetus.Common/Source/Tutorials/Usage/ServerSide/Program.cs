@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.Usage.RazorLib;
-using Luthetus.Common.RazorLib;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Installations.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +10,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
-builder.Services.AddLuthetusCommonUsageServices();
+var luthetusHostingInformation = new LuthetusHostingInformation(
+    LuthetusHostingKind.ServerSide,
+    new BackgroundTaskService());
+
+builder.Services.AddLuthetusCommonUsageServices(
+    luthetusHostingInformation);
 
 var app = builder.Build();
 

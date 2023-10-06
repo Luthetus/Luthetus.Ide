@@ -1,9 +1,9 @@
-# Luthetus.TextEditor (v1.3.0)
+# Luthetus.TextEditor (v1.4.0)
 
 ## Installation
 
 ### Source Code
-The .NET Solution: [Luthetus.TextEditor.Installation.sln](../Source/Tutorials/Installation/Luthetus.TextEditor.Installation.sln),
+The .NET Solution: [Luthetus.TextEditor.Usage.sln](../Source/Tutorials/Usage/Luthetus.TextEditor.Usage.sln),
 was made by following steps described here. So, the completed result can be found there.
 
 ### Goal
@@ -13,7 +13,7 @@ was made by following steps described here. So, the completed result can be foun
 - Reference the `CSS`
 - Reference the `JavaScript`
 - In `App.razor` render the `<Fluxor.Blazor.Web.StoreInitializer/>`
-- In `MainLayout.razor` render the `<Luthetus.TextEditor.RazorLib.LuthetusTextEditorInitializer/>` Blazor component
+- In `MainLayout.razor` render the `<Luthetus.TextEditor.RazorLib.Installations.Displays.LuthetusTextEditorInitializer />` Blazor component
 
 ### Steps
 - Reference the `Luthetus.TextEditor` NuGet Package
@@ -28,78 +28,18 @@ Go to the file that you register your services and add the following lines of C#
 
 > *NOTE:* In many C# Project templates, the services are registered in `Program.cs`.
 
-> *NOTE:* The service registration is incredibly verbose and I intend to improve it in later versions.
-
 ```csharp
-using Luthetus.Common.RazorLib.BackgroundTaskCase.Usage;
-using Luthetus.Common.RazorLib.ComponentRenderers;
-using Luthetus.Common.RazorLib.Notification;
-using Luthetus.Common.RazorLib.WatchWindow.TreeViewDisplays;
-using Luthetus.Common.RazorLib.WatchWindow;
-using Luthetus.Common.RazorLib;
-using Luthetus.TextEditor.RazorLib.HostedServiceCase.CompilerServiceCase;
-using Luthetus.TextEditor.RazorLib.HostedServiceCase.TextEditorCase;
-using Luthetus.TextEditor.RazorLib;
-using Fluxor;
+var luthetusHostingInformation = new LuthetusHostingInformation(
+    // LuthetusHostingKind.Wasm,
+    // OR
+    // LuthetusHostingKind.ServerSide,
+    new BackgroundTaskService());
 
-var watchWindowTreeViewRenderers = new WatchWindowTreeViewRenderers(
-    typeof(TreeViewTextDisplay),
-    typeof(TreeViewReflectionDisplay),
-    typeof(TreeViewPropertiesDisplay),
-    typeof(TreeViewInterfaceImplementationDisplay),
-    typeof(TreeViewFieldsDisplay),
-    typeof(TreeViewExceptionDisplay),
-    typeof(TreeViewEnumerableDisplay));
-
-var commonRendererTypes = new LuthetusCommonComponentRenderers(
-    typeof(CommonBackgroundTaskDisplay),
-    typeof(CommonErrorNotificationDisplay),
-    typeof(CommonInformativeNotificationDisplay),
-    typeof(TreeViewExceptionDisplay),
-    typeof(TreeViewMissingRendererFallbackDisplay),
-    watchWindowTreeViewRenderers,
-    null,
-    typeof(CompilerServiceBackgroundTaskDisplay));
-
-// TODO: Move registration of "ILuthetusCommonComponentRenderers" to LuthetusCommon
-builder.Services.AddSingleton<ILuthetusCommonComponentRenderers>(_ => commonRendererTypes);
-
-builder.Services.AddSingleton<ICommonBackgroundTaskQueue, CommonBackgroundTaskQueue>();
-builder.Services.AddSingleton<ICommonBackgroundTaskMonitor, CommonBackgroundTaskMonitor>();
-
-builder.Services.AddSingleton<ITextEditorBackgroundTaskQueue, TextEditorBackgroundTaskQueue>();
-builder.Services.AddSingleton<ITextEditorBackgroundTaskMonitor, TextEditorBackgroundTaskMonitor>();
-
-builder.Services.AddSingleton<ICompilerServiceBackgroundTaskQueue, CompilerServiceBackgroundTaskQueue>();
-builder.Services.AddSingleton<ICompilerServiceBackgroundTaskMonitor, CompilerServiceBackgroundTaskMonitor>();
-
-builder.Services
-    .AddLuthetusTextEditor()
-    .AddFluxor(options =>
-        options.ScanAssemblies(
-            typeof(LuthetusCommonOptions).Assembly,
-            typeof(LuthetusTextEditorOptions).Assembly));
-```
-
-- If you are running a `Blazor Server Side` Application, also add these lines of code:
-
-```csharp
-builder.Services.AddSingleton<ICompilerServiceBackgroundTaskQueue, CompilerServiceBackgroundTaskQueue>();
-
-builder.Services.AddHostedService<CommonQueuedHostedService>();
-builder.Services.AddHostedService<TextEditorQueuedHostedService>();
-builder.Services.AddHostedService<CompilerServiceQueuedHostedService>();
-```
-
-- If you are running a `Blazor WebAssembly` Application, also add these lines of code:
-```csharp
-builder.Services.AddSingleton<CommonQueuedHostedService>();
-builder.Services.AddSingleton<TextEditorQueuedHostedService>();
-builder.Services.AddSingleton<CompilerServiceQueuedHostedService>();
-
-builder.Services.AddSingleton<ICommonBackgroundTaskQueue, CommonBackgroundTaskQueueSingleThreaded>();
-builder.Services.AddSingleton<ITextEditorBackgroundTaskQueue, TextEditorBackgroundTaskQueueSingleThreaded>();
-builder.Services.AddSingleton<ICompilerServiceBackgroundTaskQueue, CompilerServiceBackgroundTaskQueueSingleThreaded>();
+services
+    .AddLuthetusTextEditor(luthetusHostingInformation)
+    .AddFluxor(options => options.ScanAssemblies(
+        typeof(LuthetusCommonOptions).Assembly,
+        typeof(LuthetusTextEditorOptions).Assembly));
 ```
 
 - Reference the `CSS`
@@ -151,17 +91,17 @@ Go to the file that you reference JavaScript files from and add the following Ja
 </Router>
 ```
 
-- In `MainLayout.razor` render both the `<Luthetus.Common.RazorLib.LuthetusCommonInitializer />` and the  `<Luthetus.TextEditor.RazorLib.LuthetusTextEditorInitializer/>` Blazor component
+- In `MainLayout.razor` render both the `<Luthetus.Common.RazorLib.Installations.Displays.LuthetusCommonInitializer />` and the  `<Luthetus.TextEditor.RazorLib.Installations.Displays.LuthetusTextEditorInitializer />` Blazor component
 
-> *NOTE:* The placement of the `<Luthetus.Common.RazorLib.LuthetusCommonInitializer/>` Blazor component should be wrapped in an encompassing div. This allows one to cascade css. A later tutorial is intended to show this as to keep the installation tutorial more to the point.
+> *NOTE:* The placement of the `<Luthetus.Common.RazorLib.Installations.Displays.LuthetusCommonInitializer />` Blazor component should be wrapped in an encompassing div. This allows one to cascade css. A later tutorial is intended to show this, as to keep the installation tutorial more to the point.
 
 ```html
 @inherits LayoutComponentBase
 
 <PageTitle>Luthetus.Common.Installation.ServerSide</PageTitle>
 
-<Luthetus.Common.RazorLib.LuthetusCommonInitializer />
-<Luthetus.TextEditor.RazorLib.LuthetusTextEditorInitializer />
+<Luthetus.Common.RazorLib.Installations.Displays.LuthetusCommonInitializer />
+<Luthetus.TextEditor.RazorLib.Installations.Displays.LuthetusTextEditorInitializer />
 
 <div class="page">
     <div class="sidebar">
