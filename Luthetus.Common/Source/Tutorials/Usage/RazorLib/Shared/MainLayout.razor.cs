@@ -1,27 +1,7 @@
-using Luthetus.Common.RazorLib.Options;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Common.Usage.RazorLib.Shared;
 
-public partial class MainLayout : LayoutComponentBase, IDisposable
+public partial class MainLayout : LayoutComponentBase
 {
-    [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
-
-    protected override void OnInitialized()
-    {
-        AppOptionsService.AppOptionsStateWrap.StateChanged += AppOptionsStateWrap_StateChanged;
-
-        base.OnInitialized();
-    }
-
-    private async void AppOptionsStateWrap_StateChanged(object? sender, EventArgs e)
-    {
-        await InvokeAsync(StateHasChanged);
-    }
-
-    public void Dispose()
-    {
-        AppOptionsService.AppOptionsStateWrap.StateChanged -= AppOptionsStateWrap_StateChanged;
-    }
 }
