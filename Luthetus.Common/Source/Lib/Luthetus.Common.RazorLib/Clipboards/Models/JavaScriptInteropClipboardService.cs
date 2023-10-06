@@ -14,7 +14,7 @@ public class JavaScriptInteropClipboardService : IClipboardService
 
     public bool IsEnabled { get; }
 
-    public async Task<string> ReadClipboard()
+    public async Task<string> ReadClipboardAsync()
     {
         try
         {
@@ -26,7 +26,7 @@ public class JavaScriptInteropClipboardService : IClipboardService
         }
     }
 
-    public async Task SetClipboard(string value)
+    public async Task SetClipboardAsync(string value)
     {
         try
         {

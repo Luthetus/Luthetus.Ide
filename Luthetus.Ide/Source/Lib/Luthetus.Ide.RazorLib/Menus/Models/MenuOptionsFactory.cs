@@ -345,7 +345,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             "Copy File Action",
             async () =>
             {
-                await _clipboardService.SetClipboard(ClipboardFacts.FormatPhrase(
+                await _clipboardService.SetClipboardAsync(ClipboardFacts.FormatPhrase(
                     ClipboardFacts.CopyCommand,
                     ClipboardFacts.AbsolutePathDataType,
                     absolutePath.FormattedInput));
@@ -362,7 +362,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             "Cut File Action",
             async () =>
             {
-                await _clipboardService.SetClipboard(ClipboardFacts.FormatPhrase(
+                await _clipboardService.SetClipboardAsync(ClipboardFacts.FormatPhrase(
                     ClipboardFacts.CutCommand,
                     ClipboardFacts.AbsolutePathDataType,
                     absolutePath.FormattedInput));
@@ -377,7 +377,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             "Paste File Action",
             async () =>
             {
-                var clipboardContents = await _clipboardService.ReadClipboard();
+                var clipboardContents = await _clipboardService.ReadClipboardAsync();
 
                 if (ClipboardFacts.TryParseString(clipboardContents, out var clipboardPhrase))
                 {

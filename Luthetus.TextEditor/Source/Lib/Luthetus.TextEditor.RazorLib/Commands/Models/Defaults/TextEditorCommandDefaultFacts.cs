@@ -37,7 +37,7 @@ public static class TextEditorCommandDefaultFacts
                 commandParameter.PrimaryCursorSnapshot.ImmutableCursor.RowIndex,
                 1);
 
-            await commandParameter.ClipboardService.SetClipboard(selectedText);
+            await commandParameter.ClipboardService.SetClipboardAsync(selectedText);
             await commandParameter.ViewModel.FocusAsync();
         },
         false,
@@ -80,7 +80,7 @@ public static class TextEditorCommandDefaultFacts
             if (selectedText is null)
                 return; // Should never occur
 
-            await commandParameter.ClipboardService.SetClipboard(selectedText);
+            await commandParameter.ClipboardService.SetClipboardAsync(selectedText);
             await commandParameter.ViewModel.FocusAsync();
 
             commandParameter.TextEditorService.Model.HandleKeyboardEvent(
@@ -99,7 +99,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandParameter = (TextEditorCommandParameter)interfaceCommandParameter;
 
-            var clipboard = await commandParameter.ClipboardService.ReadClipboard();
+            var clipboard = await commandParameter.ClipboardService.ReadClipboardAsync();
 
             commandParameter.TextEditorService.Model.InsertText(
                 new TextEditorModelState.InsertTextAction(

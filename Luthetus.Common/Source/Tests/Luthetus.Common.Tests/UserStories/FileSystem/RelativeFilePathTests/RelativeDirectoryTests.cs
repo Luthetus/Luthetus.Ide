@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Common.Tests.UserStories.FileSystem.RelativePathTests;
+﻿namespace Luthetus.Common.Tests.UserStories.FileSystem.RelativeFilePathTests;
 
 public class RelativeDirectoryTests : PathTestsBase
 {

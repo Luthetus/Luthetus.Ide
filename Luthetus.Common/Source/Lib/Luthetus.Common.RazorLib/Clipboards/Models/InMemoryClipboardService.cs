@@ -11,12 +11,12 @@ public class InMemoryClipboardService : IClipboardService
 
     public bool IsEnabled { get; }
 
-    public Task<string> ReadClipboard()
+    public Task<string> ReadClipboardAsync()
     {
         return Task.FromResult(_clipboard);
     }
 
-    public Task SetClipboard(string value)
+    public Task SetClipboardAsync(string value)
     {
         _clipboard = value;
         return Task.CompletedTask;
