@@ -58,4 +58,11 @@ public class BackgroundTaskServiceSynchronous : IBackgroundTaskService
         // implementation of IBackgroundTaskService
         return;
     }
+
+    public int GetQueueCount(Key<BackgroundTaskQueue> queueKey)
+    {
+        // This method should do nothing for this
+        // implementation of IBackgroundTaskService
+        throw new NotImplementedException();
+    }
 }

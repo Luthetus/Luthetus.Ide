@@ -48,4 +48,10 @@ public class BackgroundTaskService : IBackgroundTaskService
 
         queue.ExecutingBackgroundTask = backgroundTask;
     }
+    
+    public int GetQueueCount(Key<BackgroundTaskQueue> queueKey)
+    {
+        var queue = _queueMap[queueKey];
+        return queue.BackgroundTasks.Count;
+    }
 }

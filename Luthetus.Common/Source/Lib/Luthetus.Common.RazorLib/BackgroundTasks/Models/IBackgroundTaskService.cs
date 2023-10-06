@@ -20,4 +20,6 @@ public interface IBackgroundTaskService
     public void SetExecutingBackgroundTask(
         Key<BackgroundTaskQueue> queueKey,
         IBackgroundTask? backgroundTask);
+
+    public int GetQueueCount(Key<BackgroundTaskQueue> queueKey);
 }
