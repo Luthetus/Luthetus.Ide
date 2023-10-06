@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Luthetus.CompilerServices.CSharp" Version="1.4.0" />
     <PackageReference Include="Luthetus.TextEditor" Version="1.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.10" />
   </ItemGroup>

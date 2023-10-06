@@ -1,4 +1,4 @@
-# Luthetus.Common (v1.3.0)
+# Luthetus.Common (v1.4.0)
 
 ## Installation
 
@@ -35,7 +35,7 @@ Go to the file that you register your services and add the following lines of C#
 var luthetusHostingInformation = new LuthetusHostingInformation(
     //LuthetusHostingKind.Wasm,
     // OR
-    // LuthetusHostingKind.ServerSide
+    // LuthetusHostingKind.ServerSide,
     new BackgroundTaskService());
 
 return services

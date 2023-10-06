@@ -1,9 +1,9 @@
-# Luthetus.TextEditor (v1.3.0)
+# Luthetus.TextEditor (v1.4.0)
 
 ## Installation
 
 ### Source Code
-The .NET Solution: [Luthetus.TextEditor.Installation.sln](../Source/Tutorials/Usage/Luthetus.TextEditor.Usage.sln),
+The .NET Solution: [Luthetus.TextEditor.Usage.sln](../Source/Tutorials/Usage/Luthetus.TextEditor.Usage.sln),
 was made by following steps described here. So, the completed result can be found there.
 
 ### Goal
@@ -32,7 +32,7 @@ Go to the file that you register your services and add the following lines of C#
 var luthetusHostingInformation = new LuthetusHostingInformation(
     // LuthetusHostingKind.Wasm,
     // OR
-    // LuthetusHostingKind.ServerSide
+    // LuthetusHostingKind.ServerSide,
     new BackgroundTaskService());
 
 services

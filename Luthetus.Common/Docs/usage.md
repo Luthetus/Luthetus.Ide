@@ -1,4 +1,4 @@
-# Luthetus.Common (v1.3.0)
+# Luthetus.Common (v1.4.0)
 
 ## Usage
 

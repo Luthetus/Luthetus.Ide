@@ -1,6 +1,6 @@
 ﻿using Fluxor;
-using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
+using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,13 +9,10 @@ namespace Luthetus.TextEditor.Usage.RazorLib;
 public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddLuthetusTextEditorUsageServices(
-        this IServiceCollection services)
+        this IServiceCollection services,
+        LuthetusHostingInformation luthetusHostingInformation)
     {
-        var luthetusHostingInformation = new LuthetusHostingInformation(
-            // LuthetusHostingKind.Wasm,
-            // OR
-            // LuthetusHostingKind.ServerSide
-            new BackgroundTaskService());
+        services.AddScoped<CSharpCompilerService>();
 
         services
             .AddLuthetusTextEditor(luthetusHostingInformation)
