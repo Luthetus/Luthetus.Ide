@@ -20,7 +20,7 @@ directly.
 
 ## Getting started
 
-- Video format: #TODO: Video
+- Video format: [YouTube video](https://youtu.be/03BdNEFIurQ)
 - Markdown format: [installation.md](./Docs/installation.md)
 
 ## Installation
