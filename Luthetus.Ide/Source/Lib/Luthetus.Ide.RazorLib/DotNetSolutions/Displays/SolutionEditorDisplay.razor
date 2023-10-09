@@ -111,7 +111,6 @@
                                     </span>
 
                                     ("{<!--
-
                                     --><span class="luth_te_method">
                                         @project.ProjectTypeGuid
                                     </span><!--
@@ -141,72 +140,58 @@
                 <hr/>
 
                 <div>
-                    DotNetSolutionGlobal
-
-                    <div>
-                        WasFound: @solutionParser.DotNetSolutionGlobal.WasFound
+                    <div class="luth_te_keyword">
+                        @Luthetus.CompilerServices.Lang.DotNetSolution.Facts.LexSolutionFacts.Global.START_TOKEN
                     </div>
-                    <div>
-                        @foreach (var globalSection in solutionParser.DotNetSolutionGlobal.DotNetSolutionGlobalSectionBag)
-                        {
-                            <div>
-                                DotNetSolutionGlobalSection
 
+                    <div style="padding-left: 10px;">
+                        <div style="padding-left: 10px; border-left: 2px solid var(--luth_primary-border-color);">
+                            
+                            @foreach (var globalSection in solutionParser.DotNetSolutionGlobal.DotNetSolutionGlobalSectionBag)
+                            {
                                 <div>
-                                    GlobalSectionArgument: @globalSection.GlobalSectionArgument?.TextSpan.GetText()
-                                </div>
-                                <div>
-                                    GlobalSectionOrder: @globalSection.GlobalSectionOrder?.TextSpan.GetText()
-                                </div>
-                                <div>
-                                    AssociatedEntryGroup
-
-                                    @foreach (var associatedEntry in globalSection.AssociatedEntryGroup.AssociatedEntryBag)
-                                    {
-                                        <div>
-                                            IAssociatedEntry
-
-                                            <div>
-                                                AssociatedEntryKind: @associatedEntry.AssociatedEntryKind
-                                            </div>
-
-                                            @if (associatedEntry is AssociatedEntryPair associatedEntryPair)
+                                    <span class="luth_te_keyword">
+                                        @Luthetus.CompilerServices.Lang.DotNetSolution.Facts.LexSolutionFacts.GlobalSection.START_TOKEN
+                                    </span>
+                                    (
+                                        <span class="luth_te_method">
+                                            @globalSection.GlobalSectionArgument?.TextSpan.GetText()
+                                        </span>
+                                    )
+                                    <span class="luth_te_method">
+                                        @globalSection.GlobalSectionOrder?.TextSpan.GetText()
+                                    </span>
+                                    <div style="padding-left: 10px;">
+                                        <div style="padding-left: 10px; border-left: 2px solid var(--luth_primary-border-color);">
+                                            @foreach (var associatedEntry in globalSection.AssociatedEntryGroup.AssociatedEntryBag)
                                             {
-                                                <div>
-                                                    AssociatedNameToken: @associatedEntryPair.AssociatedNameToken?.TextSpan.GetText()
-                                                </div>
-                                                <div>
-                                                    AssociatedValueToken: @associatedEntryPair.AssociatedValueToken?.TextSpan.GetText()
-                                                </div>
-                                            }
-                                            else if (associatedEntry is AssociatedEntryGroup associatedEntryGroup)
-                                            {
-                                                foreach (var innerEntry in associatedEntryGroup.AssociatedEntryBag)
+                                                var associatedPair = associatedEntry as AssociatedEntryPair;
+
+                                                if (associatedPair is not null)
                                                 {
-                                                    <div>#TODO: this</div>
+                                                    <div>
+                                                        <span class="luth_te_type">
+                                                            @associatedPair.AssociatedNameToken.TextSpan.GetText()
+                                                        </span>
+                                                        <span class="luth_te_method">
+                                                            @associatedPair.AssociatedValueToken.TextSpan.GetText()
+                                                        </span>
+                                                    </div>
                                                 }
                                             }
-                                            else
-                                            {
-                                                <div>Unknown @nameof(AssociatedEntryKind): @associatedEntry.AssociatedEntryKind</div>
-                                            }
                                         </div>
-                                    }
+                                    </div>
+                                    <span class="luth_te_keyword">
+                                        @Luthetus.CompilerServices.Lang.DotNetSolution.Facts.LexSolutionFacts.GlobalSection.END_TOKEN
+                                    </span>
                                 </div>
-                            </div>
-                        }
+                            }
+                        </div>
                     </div>
-                </div>
-            }
-        </div>
 
-        <hr/>
-
-        <div class="luth_ide_solution-editor-syntactic-text-span-bag">
-            @foreach (var textSpan in dotNetSolutionResource.SyntacticTextSpanBag)
-            {
-                <div class="luth_ide_solution-editor-syntactic-text-span">
-                    @textSpan.GetText()
+                    <div class="luth_te_keyword">
+                        @Luthetus.CompilerServices.Lang.DotNetSolution.Facts.LexSolutionFacts.Global.END_TOKEN
+                    </div>
                 </div>
             }
         </div>
