@@ -162,6 +162,11 @@ public class TestDotNetSolutionParser : IParser
 
                 var outBag = _dotNetSolutionGlobal.DotNetSolutionGlobalSectionBag.Add(
                     localDotNetSolutionGlobalSectionBuilder.Build());
+
+                _dotNetSolutionGlobal = _dotNetSolutionGlobal with
+                {
+                    DotNetSolutionGlobalSectionBag = outBag
+                };
             }));
 
             localDotNetSolutionGlobalSectionBuilder.GlobalSectionArgument = 

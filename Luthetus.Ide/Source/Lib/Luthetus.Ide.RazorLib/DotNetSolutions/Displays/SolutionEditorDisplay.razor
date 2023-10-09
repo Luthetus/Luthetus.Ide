@@ -64,30 +64,77 @@
                 <div>
                     @foreach (var project in solutionParser.DotNetSolutionProjectEntryBag)
                     {
-                        @Luthetus.CompilerServices.Lang.DotNetSolution.Facts.LexSolutionFacts.Project.PROJECT_DEFINITION_START_TOKEN
+                        <div class="luth_te_keyword">
+                            @Luthetus.CompilerServices.Lang.DotNetSolution.Facts.LexSolutionFacts.Project.PROJECT_DEFINITION_START_TOKEN
+                        </div>
+
                         <div style="padding-left: 10px;">
                             <div style="padding-left: 10px; border-left: 2px solid var(--luth_primary-border-color);">
                                 <div>
-                                    ProjectTypeGuid: @project.ProjectTypeGuid
+                                    <span class="luth_te_type">
+                                        ProjectTypeGuid:
+                                    </span>
+                                    <span class="luth_te_method">
+                                        @project.ProjectTypeGuid
+                                    </span>
                                 </div>
                                 <div>
-                                    DisplayName: @project.DisplayName
+                                    <span class="luth_te_type">
+                                        DisplayName:
+                                    </span>
+                                    <span class="luth_te_method">
+                                        @project.DisplayName
+                                    </span>
                                 </div>
                                 <div>
-                                    RelativePathFromSolutionFileString: @project.RelativePathFromSolutionFileString
+                                    <span class="luth_te_type">
+                                        RelativePathFromSolutionFileString:
+                                    </span>
+                                    <span class="luth_te_method">
+                                        @project.RelativePathFromSolutionFileString
+                                    </span>
                                 </div>
                                 <div>
-                                    ProjectIdGuid: @project.ProjectIdGuid
+                                    <span class="luth_te_type">
+                                        ProjectIdGuid:
+                                    </span>
+                                    <span class="luth_te_method">
+                                        @project.ProjectIdGuid
+                                    </span>
                                 </div>
 
                                 <hr/>
 
                                 <div>
-                                    SourceText: ("{@project.ProjectTypeGuid}") = "@project.DisplayName", "@project.RelativePathFromSolutionFileString", "{@project.ProjectIdGuid}"
+                                    <span class="luth_te_type">
+                                        SourceText:
+                                    </span>
+
+                                    ("{<!--
+
+                                    --><span class="luth_te_method">
+                                        @project.ProjectTypeGuid
+                                    </span><!--
+                                    -->}") = "<!--
+                                    --><span class="luth_te_method">
+                                        @project.DisplayName
+                                    </span><!--
+                                    -->", "<!--
+                                    --><span class="luth_te_method">
+                                        @project.RelativePathFromSolutionFileString
+                                    </span><!--
+                                    -->", "{<!--
+                                    --><span class="luth_te_method">
+                                        @project.ProjectIdGuid
+                                    </span><!--
+                                    -->}"
                                 </div>
                             </div>
                         </div>
-                        @Luthetus.CompilerServices.Lang.DotNetSolution.Facts.LexSolutionFacts.Project.PROJECT_DEFINITION_END_TOKEN
+
+                        <div class="luth_te_keyword">
+                            @Luthetus.CompilerServices.Lang.DotNetSolution.Facts.LexSolutionFacts.Project.PROJECT_DEFINITION_END_TOKEN
+                        </div>
                     }
                 </div>
 
