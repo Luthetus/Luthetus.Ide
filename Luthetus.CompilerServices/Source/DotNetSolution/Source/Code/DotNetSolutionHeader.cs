@@ -2,11 +2,16 @@
 
 public record DotNetSolutionHeader
 {
+    public DotNetSolutionHeader()
+    {
+    }
+
     public DotNetSolutionHeader(
-        string formatVersionStartToken,
-        string hashtagVisualStudioVersionStartToken,
-        string exactVisualStudioVersionStartToken,
-        string minimumVisualStudioVersionStartToken)
+            AssociatedEntryPair? formatVersionStartToken,
+            AssociatedEntryPair? hashtagVisualStudioVersionStartToken,
+            AssociatedEntryPair? exactVisualStudioVersionStartToken,
+            AssociatedEntryPair? minimumVisualStudioVersionStartToken)
+        : this()
     {
         FormatVersionStartToken = formatVersionStartToken;
         HashtagVisualStudioVersionStartToken = hashtagVisualStudioVersionStartToken;
@@ -14,8 +19,8 @@ public record DotNetSolutionHeader
         MinimumVisualStudioVersionStartToken = minimumVisualStudioVersionStartToken;
     }
 
-    public string FormatVersionStartToken { get; init; }
-    public string HashtagVisualStudioVersionStartToken { get; init; }
-    public string ExactVisualStudioVersionStartToken { get; init; }
-    public string MinimumVisualStudioVersionStartToken { get; init; }
+    public AssociatedEntryPair? FormatVersionStartToken { get; init; }
+    public AssociatedEntryPair? HashtagVisualStudioVersionStartToken { get; init; }
+    public AssociatedEntryPair? ExactVisualStudioVersionStartToken { get; init; }
+    public AssociatedEntryPair? MinimumVisualStudioVersionStartToken { get; init; }
 }

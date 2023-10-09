@@ -74,6 +74,14 @@ public static class TokenFactory
                 return new BadToken(currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.EndOfFileToken:
                 return new EndOfFileToken(currentTextSpan) { IsFabricated = true, };
+            case SyntaxKind.AssociatedNameToken:
+                return new AssociatedNameToken(currentTextSpan) { IsFabricated = true, };
+            case SyntaxKind.AssociatedValueToken:
+                return new AssociatedValueToken(currentTextSpan) { IsFabricated = true, };
+            case SyntaxKind.OpenAssociatedGroupToken:
+                return new OpenAssociatedGroupToken(currentTextSpan) { IsFabricated = true, };
+            case SyntaxKind.CloseAssociatedGroupToken:
+                return new CloseAssociatedGroupToken(currentTextSpan) { IsFabricated = true, };
             default:
                 throw new NotImplementedException($"The {nameof(SyntaxKind)}: '{syntaxKind}' was unrecognized.");
         }
