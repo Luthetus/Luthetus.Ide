@@ -21,49 +21,77 @@
                 var solutionParser = (TestDotNetSolutionParser)parser;
 
                 <div>
-                    DotNetSolutionHeader
-
-                    <div>
-                        FormatVersionPair:
-
-                        <div>
+                    <div style="display: flex;">
+                        <div class="luth_te_type">
                             @solutionParser.DotNetSolutionHeader.FormatVersionPair?.AssociatedNameToken.TextSpan.GetText()
                         </div>
-                        <div>
+                        &nbsp;
+                        <div class="luth_te_method">
                             @solutionParser.DotNetSolutionHeader.FormatVersionPair?.AssociatedValueToken.TextSpan.GetText()
                         </div>
                     </div>
-                    <div>
-                        HashtagVisualStudioVersionPair:
-
-                        <div>
+                    <div style="display: flex;">
+                        <div class="luth_te_type">
                             @solutionParser.DotNetSolutionHeader.HashtagVisualStudioVersionPair?.AssociatedNameToken.TextSpan.GetText()
                         </div>
-                        <div>
+                        &nbsp;
+                        <div class="luth_te_method">
                             @solutionParser.DotNetSolutionHeader.HashtagVisualStudioVersionPair?.AssociatedValueToken.TextSpan.GetText()
                         </div>
                     </div>
-                    <div>
-                        ExactVisualStudioVersionPair:
-
-                        <div>
+                    <div style="display: flex;">
+                        <div class="luth_te_type">
                             @solutionParser.DotNetSolutionHeader.ExactVisualStudioVersionPair?.AssociatedNameToken.TextSpan.GetText()
                         </div>
-                        <div>
+                        &nbsp;
+                        <div class="luth_te_method">
                             @solutionParser.DotNetSolutionHeader.ExactVisualStudioVersionPair?.AssociatedValueToken.TextSpan.GetText()
                         </div>
                     </div>
-                    <div>
-                        MinimumVisualStudioVersionPair:
-
-                        <div>
+                    <div style="display: flex;">
+                        <div class="luth_te_type">
                             @solutionParser.DotNetSolutionHeader.MinimumVisualStudioVersionPair?.AssociatedNameToken.TextSpan.GetText()
                         </div>
-                        <div>
+                        &nbsp;
+                        <div class="luth_te_method">
                             @solutionParser.DotNetSolutionHeader.MinimumVisualStudioVersionPair?.AssociatedValueToken.TextSpan.GetText()
                         </div>
                     </div>
                 </div>
+
+                <hr/>
+
+                <div>
+                    @foreach (var project in solutionParser.DotNetSolutionProjectEntryBag)
+                    {
+                        @Luthetus.CompilerServices.Lang.DotNetSolution.Facts.LexSolutionFacts.Project.PROJECT_DEFINITION_START_TOKEN
+                        <div style="padding-left: 10px;">
+                            <div style="padding-left: 10px; border-left: 2px solid var(--luth_primary-border-color);">
+                                <div>
+                                    ProjectTypeGuid: @project.ProjectTypeGuid
+                                </div>
+                                <div>
+                                    DisplayName: @project.DisplayName
+                                </div>
+                                <div>
+                                    RelativePathFromSolutionFileString: @project.RelativePathFromSolutionFileString
+                                </div>
+                                <div>
+                                    ProjectIdGuid: @project.ProjectIdGuid
+                                </div>
+
+                                <hr/>
+
+                                <div>
+                                    SourceText: ("{@project.ProjectTypeGuid}") = "@project.DisplayName", "@project.RelativePathFromSolutionFileString", "{@project.ProjectIdGuid}"
+                                </div>
+                            </div>
+                        </div>
+                        @Luthetus.CompilerServices.Lang.DotNetSolution.Facts.LexSolutionFacts.Project.PROJECT_DEFINITION_END_TOKEN
+                    }
+                </div>
+
+                <hr/>
 
                 <div>
                     DotNetSolutionGlobal
@@ -125,10 +153,6 @@
             }
         </div>
 
-        <hr/>
-        <hr/>
-        <hr/>
-        <hr/>
         <hr/>
 
         <div class="luth_ide_solution-editor-syntactic-text-span-bag">
