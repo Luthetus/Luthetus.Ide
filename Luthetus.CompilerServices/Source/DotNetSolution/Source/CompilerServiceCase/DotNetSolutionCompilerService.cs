@@ -159,13 +159,18 @@ public class DotNetSolutionCompilerService : ICompilerService
                 var lexer = new TestDotNetSolutionLexer(resourceUri, model.GetAllText());
                 lexer.Lex();
 
+                var parser = new TestDotNetSolutionParser(lexer);
+
+                var compilationUnit = parser.Parse();
+
                 lock (_dotNetSolutionResourceMapLock)
                 {
                     if (!_dotNetSolutionResourceMap.ContainsKey(resourceUri))
                         return;
 
-                    var dotNetResource = _dotNetSolutionResourceMap[resourceUri];
-                    dotNetResource.SyntaxTokenBag = lexer.SyntaxTokens;
+                    var dotNetSolutionResource = _dotNetSolutionResourceMap[resourceUri];
+                    dotNetSolutionResource.SyntaxTokenBag = lexer.SyntaxTokens;
+                    dotNetSolutionResource.CompilationUnit = compilationUnit;
                 }
 
                 await model.ApplySyntaxHighlightingAsync();

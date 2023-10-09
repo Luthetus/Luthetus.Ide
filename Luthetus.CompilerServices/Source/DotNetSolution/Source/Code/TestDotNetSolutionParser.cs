@@ -3,6 +3,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Facts;
+using Luthetus.CompilerServices.Lang.DotNetSolution.Obsolete;
 
 namespace Luthetus.CompilerServices.Lang.DotNetSolution.Code;
 
@@ -16,6 +17,8 @@ public class TestDotNetSolutionParser : IParser
     private bool _hasReadHeader;
     private DotNetSolutionGlobal _dotNetSolutionGlobal = new(ImmutableArray<DotNetSolutionGlobalSection>.Empty);
     private DotNetSolutionGlobalSectionBuilder? _dotNetSolutionGlobalSectionBuilder;
+    
+    private AssociatedEntryGroup? _noParentHavingAssociatedEntryGroup;
 
     public TestDotNetSolutionParser(TestDotNetSolutionLexer lexer)
     {
@@ -25,6 +28,10 @@ public class TestDotNetSolutionParser : IParser
 
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsBag => _diagnosticBag.ToImmutableArray();
     public TestDotNetSolutionLexer Lexer { get; }
+
+    public DotNetSolutionHeader DotNetSolutionHeader => _dotNetSolutionHeader;
+    public DotNetSolutionGlobal DotNetSolutionGlobal => _dotNetSolutionGlobal;
+    public AssociatedEntryGroup? NoParentHavingAssociatedEntryGroup => _noParentHavingAssociatedEntryGroup;
 
     public CompilationUnit Parse()
     {
@@ -56,7 +63,7 @@ public class TestDotNetSolutionParser : IParser
 
         return new CompilationUnit(
             null,
-            null,
+            Lexer,
             this,
             null);
     }
@@ -76,28 +83,28 @@ public class TestDotNetSolutionParser : IParser
                         case LexSolutionFacts.Header.EXACT_VISUAL_STUDIO_VERSION_START_TOKEN:
                             _dotNetSolutionHeader = _dotNetSolutionHeader with
                             {
-                                ExactVisualStudioVersionStartToken = new AssociatedEntryPair(
+                                ExactVisualStudioVersionPair = new AssociatedEntryPair(
                                     associatedNameToken, associatedValueToken),
                             };
                             break;
                         case LexSolutionFacts.Header.FORMAT_VERSION_START_TOKEN:
                             _dotNetSolutionHeader = _dotNetSolutionHeader with
                             {
-                                FormatVersionStartToken = new AssociatedEntryPair(
+                                FormatVersionPair = new AssociatedEntryPair(
                                     associatedNameToken, associatedValueToken),
                             };
                             break;
                         case LexSolutionFacts.Header.HASHTAG_VISUAL_STUDIO_VERSION_START_TOKEN:
                             _dotNetSolutionHeader = _dotNetSolutionHeader with
                             {
-                                HashtagVisualStudioVersionStartToken = new AssociatedEntryPair(
+                                HashtagVisualStudioVersionPair = new AssociatedEntryPair(
                                     associatedNameToken, associatedValueToken),
                             };
                             break;
                         case LexSolutionFacts.Header.MINIMUM_VISUAL_STUDIO_VERSION_START_TOKEN:
                             _dotNetSolutionHeader = _dotNetSolutionHeader with
                             {
-                                MinimumVisualStudioVersionStartToken = new AssociatedEntryPair(
+                                MinimumVisualStudioVersionPair = new AssociatedEntryPair(
                                     associatedNameToken, associatedValueToken),
                             };
                             break;
@@ -124,12 +131,65 @@ public class TestDotNetSolutionParser : IParser
         // Presumption is made here, that the header only contains AssociatedEntryPairs
         _hasReadHeader = true;
 
-        var parent = _associatedEntryGroupBuilderStack.Peek();
-        _associatedEntryGroupBuilderStack.Push(new AssociatedEntryGroupBuilder(parent));
+        var success = _associatedEntryGroupBuilderStack.TryPeek(out var parent);
+
+        if (openAssociatedGroupToken.TextSpan.GetText() == LexSolutionFacts.Global.START_TOKEN)
+        {
+            _dotNetSolutionGlobal = _dotNetSolutionGlobal with
+            {
+                WasFound = true
+            };
+        }
+        else if (openAssociatedGroupToken.TextSpan.GetText() == LexSolutionFacts.GlobalSection.START_TOKEN)
+        {
+            // TODO: Should this be re-written without using a closure hack?
+            var localDotNetSolutionGlobalSectionBuilder = new DotNetSolutionGlobalSectionBuilder();
+            _dotNetSolutionGlobalSectionBuilder = localDotNetSolutionGlobalSectionBuilder;
+
+            _associatedEntryGroupBuilderStack.Push(new AssociatedEntryGroupBuilder(builtGroup =>
+            {
+                localDotNetSolutionGlobalSectionBuilder.AssociatedEntryGroup = builtGroup;
+
+                var outBag = _dotNetSolutionGlobal.DotNetSolutionGlobalSectionBag.Add(
+                    localDotNetSolutionGlobalSectionBuilder.Build());
+            }));
+
+            localDotNetSolutionGlobalSectionBuilder.GlobalSectionArgument = 
+                (AssociatedValueToken)_tokenWalker.Match(SyntaxKind.AssociatedValueToken);
+            
+            localDotNetSolutionGlobalSectionBuilder.GlobalSectionOrder = 
+                (AssociatedValueToken)_tokenWalker.Match(SyntaxKind.AssociatedValueToken);
+        }
+        else
+        {
+            // Case for nested AssociatedEntryGroup(s)
+            _associatedEntryGroupBuilderStack.Push(new AssociatedEntryGroupBuilder(builtGroup =>
+            {
+                if (parent is not null)
+                {
+                    parent.AssociatedEntryBag.Add(builtGroup);
+                }
+                else
+                {
+                    _noParentHavingAssociatedEntryGroup = builtGroup;
+                }
+            }));
+        }
     }
     
     private void ParseCloseAssociatedGroupToken(CloseAssociatedGroupToken closeAssociatedGroupToken)
     {
-        _associatedEntryGroupBuilderStack.Pop().Build();
+        if (closeAssociatedGroupToken.TextSpan.GetText() == LexSolutionFacts.Global.END_TOKEN)
+        {
+            // TODO: Does anything need to be done here?
+        }
+        else if (closeAssociatedGroupToken.TextSpan.GetText() == LexSolutionFacts.GlobalSection.END_TOKEN)
+        {
+            _associatedEntryGroupBuilderStack.Pop().Build();
+        }
+        else
+        {
+            _associatedEntryGroupBuilderStack.Pop().Build();
+        }
     }
 }

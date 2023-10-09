@@ -16,6 +16,10 @@ public class MainDoesParse
 
         lexer.Lex();
 
+        var parser = new TestDotNetSolutionParser(lexer);
+
+        var compilationUnit = parser.Parse();
+
         var i = 0;
 
         // Header

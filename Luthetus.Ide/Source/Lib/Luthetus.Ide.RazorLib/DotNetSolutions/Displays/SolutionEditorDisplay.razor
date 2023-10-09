@@ -1,7 +1,8 @@
-﻿@using Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
+﻿@using Luthetus.CompilerServices.Lang.DotNetSolution.Code;
+@using Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
 @using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
-<div class="luth_ide_solution-editor-display">
+<div class="luth_ide_solution-editor">
     @{
         var compilerServiceResource = _compilerServiceRegistry.DotNetSolutionCompilerService
             .GetCompilerServiceResourceFor(DotNetSolutionResourceUri);
@@ -11,10 +12,129 @@
     {
         var dotNetSolutionResource = (DotNetSolutionResource)compilerServiceResource;
 
-        <div>
+        <div class="luth_ide_solution-editor-compilation-unit">
+
+            @{ var parser = dotNetSolutionResource.CompilationUnit?.Parser; }
+
+            @if (parser is not null)
+            {
+                var solutionParser = (TestDotNetSolutionParser)parser;
+
+                <div>
+                    DotNetSolutionHeader
+
+                    <div>
+                        FormatVersionPair:
+
+                        <div>
+                            @solutionParser.DotNetSolutionHeader.FormatVersionPair?.AssociatedNameToken.TextSpan.GetText()
+                        </div>
+                        <div>
+                            @solutionParser.DotNetSolutionHeader.FormatVersionPair?.AssociatedValueToken.TextSpan.GetText()
+                        </div>
+                    </div>
+                    <div>
+                        HashtagVisualStudioVersionPair:
+
+                        <div>
+                            @solutionParser.DotNetSolutionHeader.HashtagVisualStudioVersionPair?.AssociatedNameToken.TextSpan.GetText()
+                        </div>
+                        <div>
+                            @solutionParser.DotNetSolutionHeader.HashtagVisualStudioVersionPair?.AssociatedValueToken.TextSpan.GetText()
+                        </div>
+                    </div>
+                    <div>
+                        ExactVisualStudioVersionPair:
+
+                        <div>
+                            @solutionParser.DotNetSolutionHeader.ExactVisualStudioVersionPair?.AssociatedNameToken.TextSpan.GetText()
+                        </div>
+                        <div>
+                            @solutionParser.DotNetSolutionHeader.ExactVisualStudioVersionPair?.AssociatedValueToken.TextSpan.GetText()
+                        </div>
+                    </div>
+                    <div>
+                        MinimumVisualStudioVersionPair:
+
+                        <div>
+                            @solutionParser.DotNetSolutionHeader.MinimumVisualStudioVersionPair?.AssociatedNameToken.TextSpan.GetText()
+                        </div>
+                        <div>
+                            @solutionParser.DotNetSolutionHeader.MinimumVisualStudioVersionPair?.AssociatedValueToken.TextSpan.GetText()
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    DotNetSolutionGlobal
+
+                    <div>
+                        WasFound: @solutionParser.DotNetSolutionGlobal.WasFound
+                    </div>
+                    <div>
+                        @foreach (var globalSection in solutionParser.DotNetSolutionGlobal.DotNetSolutionGlobalSectionBag)
+                        {
+                            <div>
+                                DotNetSolutionGlobalSection
+
+                                <div>
+                                    GlobalSectionArgument: @globalSection.GlobalSectionArgument?.TextSpan.GetText()
+                                </div>
+                                <div>
+                                    GlobalSectionOrder: @globalSection.GlobalSectionOrder?.TextSpan.GetText()
+                                </div>
+                                <div>
+                                    AssociatedEntryGroup
+
+                                    @foreach (var associatedEntry in globalSection.AssociatedEntryGroup.AssociatedEntryBag)
+                                    {
+                                        <div>
+                                            IAssociatedEntry
+
+                                            <div>
+                                                AssociatedEntryKind: @associatedEntry.AssociatedEntryKind
+                                            </div>
+
+                                            @if (associatedEntry is AssociatedEntryPair associatedEntryPair)
+                                            {
+                                                <div>
+                                                    AssociatedNameToken: @associatedEntryPair.AssociatedNameToken?.TextSpan.GetText()
+                                                </div>
+                                                <div>
+                                                    AssociatedValueToken: @associatedEntryPair.AssociatedValueToken?.TextSpan.GetText()
+                                                </div>
+                                            }
+                                            else if (associatedEntry is AssociatedEntryGroup associatedEntryGroup)
+                                            {
+                                                foreach (var innerEntry in associatedEntryGroup.AssociatedEntryBag)
+                                                {
+                                                    <div>#TODO: this</div>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <div>Unknown @nameof(AssociatedEntryKind): @associatedEntry.AssociatedEntryKind</div>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+
+        <hr/>
+        <hr/>
+        <hr/>
+        <hr/>
+        <hr/>
+
+        <div class="luth_ide_solution-editor-syntactic-text-span-bag">
             @foreach (var textSpan in dotNetSolutionResource.SyntacticTextSpanBag)
             {
-                <div>
+                <div class="luth_ide_solution-editor-syntactic-text-span">
                     @textSpan.GetText()
                 </div>
             }

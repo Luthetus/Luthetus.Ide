@@ -4,19 +4,19 @@ namespace Luthetus.CompilerServices.Lang.DotNetSolution.Code;
 
 public class AssociatedEntryGroupBuilder
 {
-    public AssociatedEntryGroupBuilder(AssociatedEntryGroupBuilder parent)
+    public AssociatedEntryGroupBuilder(Action<AssociatedEntryGroup> onAfterBuildAction)
     {
-        Parent = parent;
+        OnAfterBuildAction = onAfterBuildAction;
     }
 
+    public Action<AssociatedEntryGroup> OnAfterBuildAction { get; }
     public List<IAssociatedEntry> AssociatedEntryBag { get; } = new();
-    public AssociatedEntryGroupBuilder Parent { get; }
 
-    public AssociatedEntryGroup Build()
+    public virtual AssociatedEntryGroup Build()
     {
         var group = new AssociatedEntryGroup(AssociatedEntryBag.ToImmutableArray());
 
-        Parent.AssociatedEntryBag.Add(group);
+        OnAfterBuildAction.Invoke(group);
         return group;
     }
 }

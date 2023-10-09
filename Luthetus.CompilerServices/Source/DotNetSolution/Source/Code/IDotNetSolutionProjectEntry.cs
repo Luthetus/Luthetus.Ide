@@ -9,5 +9,5 @@ public interface IDotNetSolutionProjectEntry
     public string RelativePathFromSolutionFileString { get; init; }
     public Guid ProjectIdGuid { get; init; }
     public IAbsolutePath AbsolutePath { get; init; }
-    public DotNetProjectKind DotNetProjectKind { get; init; }
+    public DotNetProjectKind DotNetProjectKind { get; }
 }

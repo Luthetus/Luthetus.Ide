@@ -7,20 +7,20 @@ public record DotNetSolutionHeader
     }
 
     public DotNetSolutionHeader(
-            AssociatedEntryPair? formatVersionStartToken,
-            AssociatedEntryPair? hashtagVisualStudioVersionStartToken,
-            AssociatedEntryPair? exactVisualStudioVersionStartToken,
-            AssociatedEntryPair? minimumVisualStudioVersionStartToken)
+            AssociatedEntryPair? formatVersionPair,
+            AssociatedEntryPair? hashtagVisualStudioVersionPair,
+            AssociatedEntryPair? exactVisualStudioVersionPair,
+            AssociatedEntryPair? minimumVisualStudioVersionPair)
         : this()
     {
-        FormatVersionStartToken = formatVersionStartToken;
-        HashtagVisualStudioVersionStartToken = hashtagVisualStudioVersionStartToken;
-        ExactVisualStudioVersionStartToken = exactVisualStudioVersionStartToken;
-        MinimumVisualStudioVersionStartToken = minimumVisualStudioVersionStartToken;
+        FormatVersionPair = formatVersionPair;
+        HashtagVisualStudioVersionPair = hashtagVisualStudioVersionPair;
+        ExactVisualStudioVersionPair = exactVisualStudioVersionPair;
+        MinimumVisualStudioVersionPair = minimumVisualStudioVersionPair;
     }
 
-    public AssociatedEntryPair? FormatVersionStartToken { get; init; }
-    public AssociatedEntryPair? HashtagVisualStudioVersionStartToken { get; init; }
-    public AssociatedEntryPair? ExactVisualStudioVersionStartToken { get; init; }
-    public AssociatedEntryPair? MinimumVisualStudioVersionStartToken { get; init; }
+    public AssociatedEntryPair? FormatVersionPair { get; init; }
+    public AssociatedEntryPair? HashtagVisualStudioVersionPair { get; init; }
+    public AssociatedEntryPair? ExactVisualStudioVersionPair { get; init; }
+    public AssociatedEntryPair? MinimumVisualStudioVersionPair { get; init; }
 }

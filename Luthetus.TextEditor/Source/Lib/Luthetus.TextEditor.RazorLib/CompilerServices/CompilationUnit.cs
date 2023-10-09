@@ -21,10 +21,21 @@ public sealed record CompilationUnit : ISyntaxNode
         Parser = parser;
         Binder = binder;
 
-        DiagnosticsBag = Lexer.DiagnosticsBag
-            .Union(Parser.DiagnosticsBag)
-            .Union(Binder.DiagnosticsBag)
-            .ToImmutableArray();
+        var diagnosticsBagBuilder = new List<TextEditorDiagnostic>();
+
+        // TODO: The .NET Solution compiler service has a null Binder...
+        // ... Should the Binder to be set to a default instance if it is to be null?...
+        // ... Also make decisions about the nullability documentation in this file
+        if (Lexer is not null)
+            diagnosticsBagBuilder.AddRange(Lexer.DiagnosticsBag);
+
+        if (Parser is not null)
+            diagnosticsBagBuilder.AddRange(Parser.DiagnosticsBag);
+
+        if (Binder is not null)
+            diagnosticsBagBuilder.AddRange(Binder.DiagnosticsBag);
+
+        DiagnosticsBag = diagnosticsBagBuilder.ToImmutableArray();
 
         ChildBag = new ISyntax[]
         {
