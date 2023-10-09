@@ -20,11 +20,13 @@ public class GlobalSectionSolutionConfigurationPlatformsDoesLex
 
         Assert.Equal(2, lexer.SyntaxTokens.Length);
 
-        var startToken = (KeywordToken)lexer.SyntaxTokens[0];
-        var startParameterToken = (KeywordToken)lexer.SyntaxTokens[1];
+        var i = 0;
 
-        Assert.Equal(LexSolutionFacts.GlobalSection.START_TOKEN, startToken.TextSpan.GetText());
-        Assert.Equal(LexSolutionFacts.GlobalSectionSolutionConfigurationPlatforms.START_TOKEN, startParameterToken.TextSpan.GetText());
+        var startOpenAssociatedGroupToken = (OpenAssociatedGroupToken)lexer.SyntaxTokens[i++];
+        var startParameterAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+
+        Assert.Equal(LexSolutionFacts.GlobalSection.START_TOKEN, startOpenAssociatedGroupToken.TextSpan.GetText());
+        Assert.Equal(LexSolutionFacts.GlobalSectionSolutionConfigurationPlatforms.START_TOKEN, startParameterAssociatedValueToken.TextSpan.GetText());
     }
 
     [Fact]
@@ -38,28 +40,30 @@ public class GlobalSectionSolutionConfigurationPlatformsDoesLex
 
         Assert.Equal(8, lexer.SyntaxTokens.Length);
 
-        var startToken = (KeywordToken)lexer.SyntaxTokens[0];
-        Assert.Equal(LexSolutionFacts.GlobalSection.START_TOKEN, startToken.TextSpan.GetText());
+        var i = 0;
 
-        var startParameterToken = (KeywordToken)lexer.SyntaxTokens[1];
-        Assert.Equal(LexSolutionFacts.GlobalSectionSolutionConfigurationPlatforms.START_TOKEN, startParameterToken.TextSpan.GetText());
+        var startOpenAssociatedGroupToken = (OpenAssociatedGroupToken)lexer.SyntaxTokens[i++];
+        Assert.Equal(LexSolutionFacts.GlobalSection.START_TOKEN, startOpenAssociatedGroupToken.TextSpan.GetText());
 
-        var startOrderToken = (KeywordToken)lexer.SyntaxTokens[2];
-        Assert.Equal(TestDataGlobalSectionSolutionConfigurationPlatforms.START_TOKEN_ORDER, startOrderToken.TextSpan.GetText());
+        var startParameterAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+        Assert.Equal(LexSolutionFacts.GlobalSectionSolutionConfigurationPlatforms.START_TOKEN, startParameterAssociatedValueToken.TextSpan.GetText());
 
-        var firstPropertyNameToken = (IdentifierToken)lexer.SyntaxTokens[3];
-        Assert.Equal(TestDataGlobalSectionSolutionConfigurationPlatforms.FIRST_PROPERTY_NAME, firstPropertyNameToken.TextSpan.GetText());
+        var startOrderAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+        Assert.Equal(TestDataGlobalSectionSolutionConfigurationPlatforms.START_TOKEN_ORDER, startOrderAssociatedValueToken.TextSpan.GetText());
 
-        var firstPropertyValueToken = (IdentifierToken)lexer.SyntaxTokens[4];
-        Assert.Equal(TestDataGlobalSectionSolutionConfigurationPlatforms.FIRST_PROPERTY_VALUE, firstPropertyValueToken.TextSpan.GetText());
+        var firstPropertyNameAssociatedNameToken = (AssociatedNameToken)lexer.SyntaxTokens[i++];
+        Assert.Equal(TestDataGlobalSectionSolutionConfigurationPlatforms.FIRST_PROPERTY_NAME, firstPropertyNameAssociatedNameToken.TextSpan.GetText());
 
-        var secondPropertyNameToken = (IdentifierToken)lexer.SyntaxTokens[5];
-        Assert.Equal(TestDataGlobalSectionSolutionConfigurationPlatforms.SECOND_PROPERTY_NAME, secondPropertyNameToken.TextSpan.GetText());
+        var firstPropertyValueAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+        Assert.Equal(TestDataGlobalSectionSolutionConfigurationPlatforms.FIRST_PROPERTY_VALUE, firstPropertyValueAssociatedValueToken.TextSpan.GetText());
 
-        var secondPropertyValueToken = (IdentifierToken)lexer.SyntaxTokens[6];
-        Assert.Equal(TestDataGlobalSectionSolutionConfigurationPlatforms.SECOND_PROPERTY_VALUE, secondPropertyValueToken.TextSpan.GetText());
+        var secondPropertyNameAssociatedNameToken = (AssociatedNameToken)lexer.SyntaxTokens[i++];
+        Assert.Equal(TestDataGlobalSectionSolutionConfigurationPlatforms.SECOND_PROPERTY_NAME, secondPropertyNameAssociatedNameToken.TextSpan.GetText());
 
-        var endToken = (KeywordToken)lexer.SyntaxTokens[7];
-        Assert.Equal(LexSolutionFacts.GlobalSection.END_TOKEN, endToken.TextSpan.GetText());
+        var secondPropertyValueAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+        Assert.Equal(TestDataGlobalSectionSolutionConfigurationPlatforms.SECOND_PROPERTY_VALUE, secondPropertyValueAssociatedValueToken.TextSpan.GetText());
+
+        var endCloseAssociatedGroupToken = (CloseAssociatedGroupToken)lexer.SyntaxTokens[i++];
+        Assert.Equal(LexSolutionFacts.GlobalSection.END_TOKEN, endCloseAssociatedGroupToken.TextSpan.GetText());
     }
 }

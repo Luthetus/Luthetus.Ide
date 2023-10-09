@@ -2,15 +2,14 @@
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
-public sealed record KeywordToken : ISyntaxToken
+public sealed record AssociatedValueToken : ISyntaxToken
 {
-    public KeywordToken(TextEditorTextSpan textSpan, SyntaxKind syntaxKind)
+    public AssociatedValueToken(TextEditorTextSpan textSpan)
     {
         TextSpan = textSpan;
-        SyntaxKind = syntaxKind;
     }
 
     public TextEditorTextSpan TextSpan { get; }
-    public SyntaxKind SyntaxKind { get; }
+    public SyntaxKind SyntaxKind => SyntaxKind.AssociatedValueToken;
     public bool IsFabricated { get; init; }
 }

@@ -18,9 +18,11 @@ public class GlobalSectionDoesLex
 
         Assert.Single(lexer.SyntaxTokens);
 
-        var startToken = (KeywordToken)lexer.SyntaxTokens[0];
+        var i = 0;
 
-        Assert.Equal(LexSolutionFacts.GlobalSection.START_TOKEN, startToken.TextSpan.GetText());
+        var startOpenAssociatedGroupToken = (OpenAssociatedGroupToken)lexer.SyntaxTokens[i++];
+
+        Assert.Equal(LexSolutionFacts.GlobalSection.START_TOKEN, startOpenAssociatedGroupToken.TextSpan.GetText());
     }
 
     [Fact]
@@ -36,11 +38,13 @@ public class GlobalSectionDoesLex
 
         Assert.Equal(2, lexer.SyntaxTokens.Length);
 
-        var startToken = (KeywordToken)lexer.SyntaxTokens[0];
-        var startParameterToken = (KeywordToken)lexer.SyntaxTokens[1];
+        var i = 0;
 
-        Assert.Equal(LexSolutionFacts.GlobalSection.START_TOKEN, startToken.TextSpan.GetText());
-        Assert.Equal(TestDataGlobalSection.START_TOKEN_PARAMETER, startParameterToken.TextSpan.GetText());
+        var startOpenAssociatedGroupToken = (OpenAssociatedGroupToken)lexer.SyntaxTokens[i++];
+        var startAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+
+        Assert.Equal(LexSolutionFacts.GlobalSection.START_TOKEN, startOpenAssociatedGroupToken.TextSpan.GetText());
+        Assert.Equal(TestDataGlobalSection.START_TOKEN_PARAMETER, startAssociatedValueToken.TextSpan.GetText());
     }
 
     [Fact]
@@ -55,13 +59,15 @@ public class GlobalSectionDoesLex
 
         Assert.Equal(3, lexer.SyntaxTokens.Length);
 
-        var startToken = (KeywordToken)lexer.SyntaxTokens[0];
-        var startParameterToken = (KeywordToken)lexer.SyntaxTokens[1];
-        var startOrderToken = (KeywordToken)lexer.SyntaxTokens[2];
+        var i = 0;
 
-        Assert.Equal(LexSolutionFacts.GlobalSection.START_TOKEN, startToken.TextSpan.GetText());
-        Assert.Equal(TestDataGlobalSection.START_TOKEN_PARAMETER, startParameterToken.TextSpan.GetText());
-        Assert.Equal(TestDataGlobalSection.START_TOKEN_ORDER, startOrderToken.TextSpan.GetText());
+        var startOpenAssociatedGroupToken = (OpenAssociatedGroupToken)lexer.SyntaxTokens[i++];
+        var startParameterAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+        var startOrderAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+
+        Assert.Equal(LexSolutionFacts.GlobalSection.START_TOKEN, startOpenAssociatedGroupToken.TextSpan.GetText());
+        Assert.Equal(TestDataGlobalSection.START_TOKEN_PARAMETER, startParameterAssociatedValueToken.TextSpan.GetText());
+        Assert.Equal(TestDataGlobalSection.START_TOKEN_ORDER, startOrderAssociatedValueToken.TextSpan.GetText());
     }
 
     [Fact]
@@ -76,14 +82,16 @@ public class GlobalSectionDoesLex
 
         Assert.Equal(4, lexer.SyntaxTokens.Length);
 
-        var startToken = (KeywordToken)lexer.SyntaxTokens[0];
-        var startParameterToken = (KeywordToken)lexer.SyntaxTokens[1];
-        var startOrderToken = (KeywordToken)lexer.SyntaxTokens[2];
-        var endToken = (KeywordToken)lexer.SyntaxTokens[3];
+        var i = 0;
 
-        Assert.Equal(LexSolutionFacts.GlobalSection.START_TOKEN, startToken.TextSpan.GetText());
-        Assert.Equal(TestDataGlobalSection.START_TOKEN_PARAMETER, startParameterToken.TextSpan.GetText());
-        Assert.Equal(TestDataGlobalSection.START_TOKEN_ORDER, startOrderToken.TextSpan.GetText());
-        Assert.Equal(LexSolutionFacts.GlobalSection.END_TOKEN, endToken.TextSpan.GetText());
+        var startOpenAssociatedGroupToken = (OpenAssociatedGroupToken)lexer.SyntaxTokens[i++];
+        var startParameterAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+        var startOrderAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+        var endCloseAssociatedGroupToken = (CloseAssociatedGroupToken)lexer.SyntaxTokens[i++];
+
+        Assert.Equal(LexSolutionFacts.GlobalSection.START_TOKEN, startOpenAssociatedGroupToken.TextSpan.GetText());
+        Assert.Equal(TestDataGlobalSection.START_TOKEN_PARAMETER, startParameterAssociatedValueToken.TextSpan.GetText());
+        Assert.Equal(TestDataGlobalSection.START_TOKEN_ORDER, startOrderAssociatedValueToken.TextSpan.GetText());
+        Assert.Equal(LexSolutionFacts.GlobalSection.END_TOKEN, endCloseAssociatedGroupToken.TextSpan.GetText());
     }
 }

@@ -8,9 +8,6 @@ using System.Collections.Immutable;
 
 namespace Luthetus.CompilerServices.Lang.DotNetSolution.Code;
 
-/// <summary>
-/// As of (2023-09-21) I'm treating all of the .sln as a KeywordToken and IdentifierToken pair.
-/// </summary>
 public class TestDotNetSolutionLexer : ILexer
 {
     private readonly StringWalker _stringWalker;
@@ -62,17 +59,14 @@ public class TestDotNetSolutionLexer : ILexer
         _ = _stringWalker.ReadRange(LexSolutionFacts.Header.FORMAT_VERSION_START_TOKEN.Length);
 
         var formatVersionTextSpan = new TextEditorTextSpan(startingPosition, _stringWalker);
-        _syntaxTokens.Add(new KeywordToken(formatVersionTextSpan, SyntaxKind.UnrecognizedTokenKeyword));
+        _syntaxTokens.Add(new AssociatedNameToken(formatVersionTextSpan));
 
         _ = _stringWalker.ReadWhitespace();
 
         var numericLiteralToken = _stringWalker.ReadUnsignedNumericLiteral();
-        // Taking the numericLiteralToken's TextSpan and constructing an identifier token is odd.
-        // The .sln file doesn't have clear token structure. As of (2023-09-21) I'm treating
-        // all of the .sln as a KeywordToken and IdentifierToken pair.
-        var identifierToken = new IdentifierToken(numericLiteralToken.TextSpan);
+        var associatedValueToken = new AssociatedValueToken(numericLiteralToken.TextSpan);
 
-        _syntaxTokens.Add(identifierToken);
+        _syntaxTokens.Add(associatedValueToken);
     }
 
     private void LexHashtagVisualStudioVersion()
@@ -82,17 +76,14 @@ public class TestDotNetSolutionLexer : ILexer
         _ = _stringWalker.ReadRange(LexSolutionFacts.Header.HASHTAG_VISUAL_STUDIO_VERSION_START_TOKEN.Length);
 
         var vSVersionTextSpan = new TextEditorTextSpan(startingPosition, _stringWalker);
-        _syntaxTokens.Add(new KeywordToken(vSVersionTextSpan, SyntaxKind.UnrecognizedTokenKeyword));
+        _syntaxTokens.Add(new AssociatedNameToken(vSVersionTextSpan));
 
         _ = _stringWalker.ReadWhitespace();
 
         var numericLiteralToken = _stringWalker.ReadUnsignedNumericLiteral();
-        // Taking the numericLiteralToken's TextSpan and constructing an identifier token is odd.
-        // The .sln file doesn't have clear token structure. As of (2023-09-21) I'm treating
-        // all of the .sln as a KeywordToken and IdentifierToken pair.
-        var identifierToken = new IdentifierToken(numericLiteralToken.TextSpan);
+        var associatedValueToken = new AssociatedValueToken(numericLiteralToken.TextSpan);
 
-        _syntaxTokens.Add(identifierToken);
+        _syntaxTokens.Add(associatedValueToken);
     }
 
     private void LexExactVisualStudioVersion()
@@ -102,7 +93,7 @@ public class TestDotNetSolutionLexer : ILexer
         _ = _stringWalker.ReadRange(LexSolutionFacts.Header.EXACT_VISUAL_STUDIO_VERSION_START_TOKEN.Length);
 
         var versionStringTextSpan = new TextEditorTextSpan(stringStartingPosition, _stringWalker);
-        _syntaxTokens.Add(new KeywordToken(versionStringTextSpan, SyntaxKind.UnrecognizedTokenKeyword));
+        _syntaxTokens.Add(new AssociatedNameToken(versionStringTextSpan));
 
         _ = _stringWalker.ReadWhitespace();
 
@@ -119,8 +110,8 @@ public class TestDotNetSolutionLexer : ILexer
             _ = _stringWalker.ReadCharacter();
         }
 
-        var versionIdentifierTextSpan = new TextEditorTextSpan(versionIdentifierStartingPosition, _stringWalker);
-        _syntaxTokens.Add(new IdentifierToken(versionIdentifierTextSpan));
+        var versionTextSpan = new TextEditorTextSpan(versionIdentifierStartingPosition, _stringWalker);
+        _syntaxTokens.Add(new AssociatedValueToken(versionTextSpan));
     }
 
     private void LexMinimumVisualStudioVersion()
@@ -130,7 +121,7 @@ public class TestDotNetSolutionLexer : ILexer
         _ = _stringWalker.ReadRange(LexSolutionFacts.Header.MINIMUM_VISUAL_STUDIO_VERSION_START_TOKEN.Length);
 
         var versionStringTextSpan = new TextEditorTextSpan(stringStartingPosition, _stringWalker);
-        _syntaxTokens.Add(new KeywordToken(versionStringTextSpan, SyntaxKind.UnrecognizedTokenKeyword));
+        _syntaxTokens.Add(new AssociatedNameToken(versionStringTextSpan));
 
         _ = _stringWalker.ReadWhitespace();
 
@@ -147,8 +138,8 @@ public class TestDotNetSolutionLexer : ILexer
             _ = _stringWalker.ReadCharacter();
         }
 
-        var versionIdentifierTextSpan = new TextEditorTextSpan(versionIdentifierStartingPosition, _stringWalker);
-        _syntaxTokens.Add(new IdentifierToken(versionIdentifierTextSpan));
+        var versionTextSpan = new TextEditorTextSpan(versionIdentifierStartingPosition, _stringWalker);
+        _syntaxTokens.Add(new AssociatedValueToken(versionTextSpan));
     }
 
     public void LexProjectDefinitionEntry()
@@ -157,7 +148,7 @@ public class TestDotNetSolutionLexer : ILexer
         _ = _stringWalker.ReadRange(LexSolutionFacts.Project.PROJECT_DEFINITION_START_TOKEN.Length);
 
         var textSpan = new TextEditorTextSpan(startPosition, _stringWalker);
-        _syntaxTokens.Add(new KeywordToken(textSpan, SyntaxKind.UnrecognizedTokenKeyword));
+        _syntaxTokens.Add(new OpenAssociatedGroupToken(textSpan));
 
         while (!_stringWalker.IsEof)
         {
@@ -174,7 +165,7 @@ public class TestDotNetSolutionLexer : ILexer
                 _stringWalker.ReadRange(LexSolutionFacts.Project.PROJECT_DEFINITION_END_TOKEN.Length);
 
                 textSpan = new TextEditorTextSpan(startPosition, _stringWalker);
-                _syntaxTokens.Add(new KeywordToken(textSpan, SyntaxKind.UnrecognizedTokenKeyword));
+                _syntaxTokens.Add(new CloseAssociatedGroupToken(textSpan));
                 break;
             }
 
@@ -199,7 +190,7 @@ public class TestDotNetSolutionLexer : ILexer
         var guidTextSpan = new TextEditorTextSpan(startPosition, _stringWalker);
 
         // guidTextSpan.GetText() == "FAE04EC0-301F-11D3-BF4B-00C04F79EFBC"
-        _syntaxTokens.Add(new IdentifierToken(guidTextSpan));
+        _syntaxTokens.Add(new AssociatedValueToken(guidTextSpan));
 
         _ = _stringWalker.ReadCharacter();
         _ = _stringWalker.ReadCharacter();
@@ -224,7 +215,7 @@ public class TestDotNetSolutionLexer : ILexer
         var textSpan = new TextEditorTextSpan(startPosition, _stringWalker);
 
         // textSpan.GetText() == "ConsoleApp2"
-        _syntaxTokens.Add(new IdentifierToken(textSpan));
+        _syntaxTokens.Add(new AssociatedValueToken(textSpan));
 
         _ = _stringWalker.ReadCharacter();
 
@@ -238,7 +229,7 @@ public class TestDotNetSolutionLexer : ILexer
         _ = _stringWalker.ReadRange(LexSolutionFacts.Global.START_TOKEN.Length);
 
         var textSpan = new TextEditorTextSpan(startPosition, _stringWalker);
-        _syntaxTokens.Add(new KeywordToken(textSpan, SyntaxKind.UnrecognizedTokenKeyword));
+        _syntaxTokens.Add(new OpenAssociatedGroupToken(textSpan));
 
         bool BreakPredicate() => _stringWalker.CheckForSubstring(LexSolutionFacts.Global.END_TOKEN);
 
@@ -250,7 +241,7 @@ public class TestDotNetSolutionLexer : ILexer
                 _stringWalker.ReadRange(LexSolutionFacts.Global.END_TOKEN.Length);
 
                 textSpan = new TextEditorTextSpan(startPosition, _stringWalker);
-                _syntaxTokens.Add(new KeywordToken(textSpan, SyntaxKind.UnrecognizedTokenKeyword));
+                _syntaxTokens.Add(new CloseAssociatedGroupToken(textSpan));
                 break;
             }
             else if (_stringWalker.CheckForSubstring(LexSolutionFacts.GlobalSection.START_TOKEN))
@@ -268,7 +259,7 @@ public class TestDotNetSolutionLexer : ILexer
         _ = _stringWalker.ReadRange(LexSolutionFacts.GlobalSection.START_TOKEN.Length);
 
         var textSpan = new TextEditorTextSpan(startPosition, _stringWalker);
-        _syntaxTokens.Add(new KeywordToken(textSpan, SyntaxKind.UnrecognizedTokenKeyword));
+        _syntaxTokens.Add(new OpenAssociatedGroupToken(textSpan));
 
         bool BreakPredicate() => _stringWalker.CheckForSubstring(LexSolutionFacts.GlobalSection.END_TOKEN);
 
@@ -280,7 +271,7 @@ public class TestDotNetSolutionLexer : ILexer
                 _stringWalker.ReadRange(LexSolutionFacts.GlobalSection.END_TOKEN.Length);
 
                 textSpan = new TextEditorTextSpan(startPosition, _stringWalker);
-                _syntaxTokens.Add(new KeywordToken(textSpan, SyntaxKind.UnrecognizedTokenKeyword));
+                _syntaxTokens.Add(new CloseAssociatedGroupToken(textSpan));
                 break;
             }
             else if (outerLoopBreakPredicate.Invoke())
@@ -294,7 +285,7 @@ public class TestDotNetSolutionLexer : ILexer
                 var globalSectionParameter = _stringWalker.ReadUntil(')');
 
                 textSpan = new TextEditorTextSpan(globalSectionParameterStartPosition, _stringWalker);
-                _syntaxTokens.Add(new KeywordToken(textSpan, SyntaxKind.UnrecognizedTokenKeyword));
+                _syntaxTokens.Add(new AssociatedValueToken(textSpan));
 
                 // START_TOKEN_ORDER: 'preSolution' OR 'postSolution'
                 {
@@ -307,7 +298,7 @@ public class TestDotNetSolutionLexer : ILexer
                     _ = _stringWalker.ReadWhitespace();
 
                     var startOrderTuple = _stringWalker.ReadWordTuple();
-                    _syntaxTokens.Add(new KeywordToken(startOrderTuple.textSpan, SyntaxKind.UnrecognizedTokenKeyword));
+                    _syntaxTokens.Add(new AssociatedValueToken(startOrderTuple.textSpan));
                 }
 
                 LexPropertyNameAndValuePairs(() => BreakPredicate() || outerLoopBreakPredicate.Invoke());
@@ -342,7 +333,7 @@ public class TestDotNetSolutionLexer : ILexer
                 EndingIndexExclusive = propertyNameTextSpan.EndingIndexExclusive - nameTrailingWhitespaceCount
             };
 
-            _syntaxTokens.Add(new IdentifierToken(propertyNameTextSpan));
+            _syntaxTokens.Add(new AssociatedNameToken(propertyNameTextSpan));
 
             if (_stringWalker.IsEof)
                 return;
@@ -364,7 +355,7 @@ public class TestDotNetSolutionLexer : ILexer
                 EndingIndexExclusive = propertyValueTextSpan.EndingIndexExclusive - valueTrailingWhitespaceCount
             };
 
-            _syntaxTokens.Add(new IdentifierToken(propertyValueTextSpan));
+            _syntaxTokens.Add(new AssociatedValueToken(propertyValueTextSpan));
         }
     }
 }
