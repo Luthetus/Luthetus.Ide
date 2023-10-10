@@ -107,6 +107,16 @@ public partial class DotNetSolutionSync
 
         var compilationUnit = parser.Parse();
 
+        foreach (var project in parser.DotNetProjectBag)
+        {
+            var absolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
+                solutionAbsolutePath,
+                project.RelativePathFromSolutionFileString,
+                _environmentProvider);
+
+            project.AbsolutePath = new AbsolutePath(absolutePathString, false, _environmentProvider);
+        }
+
         var dotNetSolutionModel = new DotNetSolutionModel(
             solutionAbsolutePath,
             parser.DotNetSolutionHeader,

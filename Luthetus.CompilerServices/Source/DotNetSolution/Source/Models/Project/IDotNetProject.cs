@@ -19,6 +19,9 @@ public interface IDotNetProject
     /// modified. (2023-10-10))
     /// </summary>
     public CloseAssociatedGroupToken? CloseAssociatedGroupToken { get; set; }
-    public IAbsolutePath AbsolutePath { get; }
+    /// <summary>
+    /// TODO: Remove the "set;" hack.
+    /// </summary>
+    public IAbsolutePath AbsolutePath { get; set; }
     public DotNetProjectKind DotNetProjectKind { get; }
 }

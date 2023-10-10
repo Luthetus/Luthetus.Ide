@@ -31,6 +31,6 @@ public class SolutionFolder : IDotNetProject
     public Guid ProjectIdGuid { get; }
     public OpenAssociatedGroupToken OpenAssociatedGroupToken { get; set; }
     public CloseAssociatedGroupToken? CloseAssociatedGroupToken { get; set; }
-    public IAbsolutePath AbsolutePath { get; private set; }
+    public IAbsolutePath AbsolutePath { get; set; }
     public DotNetProjectKind DotNetProjectKind => DotNetProjectKind.SolutionFolder;
 }

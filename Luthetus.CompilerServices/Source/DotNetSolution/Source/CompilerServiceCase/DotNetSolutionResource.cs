@@ -65,7 +65,7 @@ public class DotNetSolutionResource : ICompilerServiceResource
     {
         var localCompilationUnit = CompilationUnit;
 
-        if (localCompilationUnit is null)
+        if (localCompilationUnit?.Binder is null)
             return ImmutableArray<ITextEditorSymbol>.Empty;
 
         return localCompilationUnit.Binder.SymbolsBag;

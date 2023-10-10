@@ -7,6 +7,7 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Associated;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 
 namespace Luthetus.CompilerServices.Lang.DotNetSolution.SyntaxActors;
 

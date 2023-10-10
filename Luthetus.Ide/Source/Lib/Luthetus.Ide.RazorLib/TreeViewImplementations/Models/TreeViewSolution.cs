@@ -50,7 +50,7 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolutionModel>
             {
                 {
                     nameof(ITreeViewNamespacePathRendererType.NamespacePath),
-                    Item.AbsolutePath
+                    Item.NamespacePath
                 },
             });
     }
