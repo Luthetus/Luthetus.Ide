@@ -1,5 +1,5 @@
-using Luthetus.CompilerServices.Lang.DotNetSolution.Code;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Facts;
+using Luthetus.CompilerServices.Lang.DotNetSolution.SyntaxActors;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Tests.TestData;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
@@ -10,13 +10,13 @@ public class MainDoesParse
     [Fact]
     public void MINIMAL_EXAMPLE_DOES_PARSE()
     {
-        var lexer = new TestDotNetSolutionLexer(
+        var lexer = new DotNetSolutionLexer(
             new(string.Empty),
             TestDataMain.MINIMAL_EXAMPLE);
 
         lexer.Lex();
 
-        var parser = new TestDotNetSolutionParser(lexer);
+        var parser = new DotNetSolutionParser(lexer);
 
         var compilationUnit = parser.Parse();
 

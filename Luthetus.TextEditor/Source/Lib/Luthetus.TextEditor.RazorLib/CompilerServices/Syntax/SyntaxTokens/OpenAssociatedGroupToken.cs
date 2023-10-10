@@ -13,7 +13,7 @@ public sealed record OpenAssociatedGroupToken : ISyntaxToken
         TextSpan = textSpan;
     }
 
-    public TextEditorTextSpan TextSpan { get; }
-    public SyntaxKind SyntaxKind => SyntaxKind.OpenAssociatedGroupToken;
+    public TextEditorTextSpan TextSpan { get; init; }
     public bool IsFabricated { get; init; }
+    public SyntaxKind SyntaxKind => SyntaxKind.OpenAssociatedGroupToken;
 }

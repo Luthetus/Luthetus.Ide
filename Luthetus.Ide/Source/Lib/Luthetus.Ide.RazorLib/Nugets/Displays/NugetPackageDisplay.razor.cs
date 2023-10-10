@@ -67,7 +67,7 @@ public partial class NugetPackageDisplay : FluxorComponent
         if (dotNetSolutionState.DotNetSolutionModel is null || nuGetPackageManagerState.SelectedProjectToModify is null)
             return false;
 
-        return dotNetSolutionState.DotNetSolutionModel.DotNetProjects.Any(
+        return dotNetSolutionState.DotNetSolutionModel.DotNetProjectBag.Any(
             x => x.ProjectIdGuid == nuGetPackageManagerState.SelectedProjectToModify.ProjectIdGuid);
     }
 

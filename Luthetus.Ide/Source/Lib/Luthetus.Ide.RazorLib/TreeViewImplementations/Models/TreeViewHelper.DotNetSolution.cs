@@ -1,7 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.CompilerServices.Lang.DotNetSolution;
+using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 
@@ -10,7 +10,7 @@ public partial class TreeViewHelper
     public static Task<List<TreeViewNoType>> DotNetSolutionLoadChildrenAsync(
         this TreeViewSolution treeViewSolution)
     {
-        var childSolutionFolders = treeViewSolution.Item.SolutionFolders.Select(
+        var childSolutionFolders = treeViewSolution.Item.SolutionFolderBag.Select(
             x => (TreeViewNoType)new TreeViewSolutionFolder(
                 x,
                 treeViewSolution.IdeComponentRenderers,
@@ -25,8 +25,8 @@ public partial class TreeViewHelper
             .OrderBy(x => ((TreeViewSolutionFolder)x).Item.AbsolutePath.NameNoExtension)
             .ToList();
 
-        var childProjects = treeViewSolution.Item.DotNetProjects
-            .Where(x => x.ProjectTypeGuid != DotNetSolutionFolder.SolutionFolderProjectTypeGuid)
+        var childProjects = treeViewSolution.Item.DotNetProjectBag
+            .Where(x => x.ProjectTypeGuid != SolutionFolder.SolutionFolderProjectTypeGuid)
             .Select(x =>
             {
                 return (TreeViewNoType)new TreeViewNamespacePath(

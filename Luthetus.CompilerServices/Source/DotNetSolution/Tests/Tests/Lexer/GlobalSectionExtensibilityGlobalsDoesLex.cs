@@ -1,5 +1,5 @@
-using Luthetus.CompilerServices.Lang.DotNetSolution.Code;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Facts;
+using Luthetus.CompilerServices.Lang.DotNetSolution.SyntaxActors;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Tests.TestData;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
@@ -12,7 +12,7 @@ public class GlobalSectionExtensibilityGlobalsDoesLex
     {
         var sourceText = $"{LexSolutionFacts.GlobalSection.START_TOKEN}({LexSolutionFacts.GlobalSectionExtensibilityGlobals.START_TOKEN})";
 
-        var lexer = new TestDotNetSolutionLexer(
+        var lexer = new DotNetSolutionLexer(
             new(string.Empty),
             sourceText);
 
@@ -32,7 +32,7 @@ public class GlobalSectionExtensibilityGlobalsDoesLex
     [Fact]
     public void FULL_DOES_LEX()
     {
-        var lexer = new TestDotNetSolutionLexer(
+        var lexer = new DotNetSolutionLexer(
             new(string.Empty),
             TestDataGlobalSectionExtensibilityGlobals.FULL);
 

@@ -3,14 +3,14 @@ using static Luthetus.Ide.RazorLib.DotNetSolutions.States.DotNetSolutionState;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
-using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.WebsiteProjectTemplates.Models;
-using Luthetus.CompilerServices.Lang.DotNetSolution.Obsolete.RewriteForImmutability;
-using Luthetus.CompilerServices.Lang.DotNetSolution.Obsolete;
+using Luthetus.CompilerServices.Lang.DotNetSolution.SyntaxActors;
+using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
+using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
@@ -24,7 +24,7 @@ public partial class DotNetSolutionSync
         IEnvironmentProvider environmentProvider)
     {
         var inDotNetSolutionModel = _dotNetSolutionStateWrap.Value.DotNetSolutionsBag.FirstOrDefault(
-            x => x.DotNetSolutionModelKey == dotNetSolutionModelKey);
+            x => x.Key == dotNetSolutionModelKey);
 
         if (inDotNetSolutionModel is null)
             return;
@@ -43,19 +43,23 @@ public partial class DotNetSolutionSync
             cSharpProjectName,
             projectTypeGuid,
             relativePathFromSlnToProject,
-            projectIdGuid);
+            projectIdGuid,
+            null,
+            null,
+            cSharpProjectAbsolutePath);
 
-        cSharpProject.SetAbsolutePath(cSharpProjectAbsolutePath);
+        var outDotNetProjectBag = inDotNetSolutionModel.DotNetProjectBag.Add(cSharpProject);
 
-        var dotNetSolutionBuilder = inDotNetSolutionModel.AddDotNetProject(
-            cSharpProject,
-            environmentProvider);
+        var outDotNetSolutionModel = inDotNetSolutionModel with
+        {
+            DotNetProjectBag = outDotNetProjectBag
+        };
 
-        var outDotNetSolutionModel = dotNetSolutionBuilder.Build();
-
-        await _fileSystemProvider.File.WriteAllTextAsync(
-            inDotNetSolutionModel.NamespacePath.AbsolutePath.FormattedInput,
-            inDotNetSolutionModel.SolutionFileContents);
+        // TODO: WriteAllTextAsync for the new .sln file
+        //
+        //await _fileSystemProvider.File.WriteAllTextAsync(
+        //    outDotNetSolutionModel.NamespacePath.AbsolutePath.FormattedInput,
+        //    outDotNetSolutionModel..SolutionFileContents);
 
         var solutionTextEditorModel = _textEditorService.Model.FindOrDefaultByResourceUri(
             new ResourceUri(inDotNetSolutionModel.NamespacePath.AbsolutePath.FormattedInput));
@@ -70,10 +74,10 @@ public partial class DotNetSolutionSync
 
         // TODO: Putting a hack for now to overwrite if somehow model was registered already
         Dispatcher.Dispatch(ConstructModelReplacement(
-            outDotNetSolutionModel.DotNetSolutionModelKey,
+            outDotNetSolutionModel.Key,
             outDotNetSolutionModel));
 
-        await SetDotNetSolutionTreeViewAsync(outDotNetSolutionModel.DotNetSolutionModelKey);
+        await SetDotNetSolutionTreeViewAsync(outDotNetSolutionModel.Key);
     }
 
     private async Task SetDotNetSolutionAsync(IAbsolutePath inSolutionAbsolutePath)
@@ -93,26 +97,40 @@ public partial class DotNetSolutionSync
             string.Empty,
             solutionAbsolutePath);
 
-        var dotNetSolution = DotNetSolutionLexer.Lex(
-            content,
-            solutionNamespacePath,
-            _environmentProvider);
+        var lexer = new DotNetSolutionLexer(
+            new ResourceUri(solutionAbsolutePath.FormattedInput),
+            content);
+
+        lexer.Lex();
+
+        var parser = new DotNetSolutionParser(lexer);
+
+        var compilationUnit = parser.Parse();
+
+        var dotNetSolutionModel = new DotNetSolutionModel(
+            solutionAbsolutePath,
+            parser.DotNetSolutionHeader,
+            parser.DotNetProjectBag.ToImmutableArray(),
+            ImmutableArray<SolutionFolder>.Empty, // TODO: Pass in these arguments
+            ImmutableArray<NestedProjectEntry>.Empty, // TODO: Pass in these arguments
+            parser.DotNetSolutionGlobal,
+            content);
 
         // TODO: If somehow model was registered already this won't write the state
-        Dispatcher.Dispatch(new RegisterAction(dotNetSolution, this));
+        Dispatcher.Dispatch(new RegisterAction(dotNetSolutionModel, this));
 
         Dispatcher.Dispatch(new WithAction(
             inDotNetSolutionState => inDotNetSolutionState with
             {
-                DotNetSolutionModelKey = dotNetSolution.DotNetSolutionModelKey
+                DotNetSolutionModelKey = dotNetSolutionModel.Key
             }));
 
         // TODO: Putting a hack for now to overwrite if somehow model was registered already
         Dispatcher.Dispatch(ConstructModelReplacement(
-            dotNetSolution.DotNetSolutionModelKey,
-            dotNetSolution));
+            dotNetSolutionModel.Key,
+            dotNetSolutionModel));
 
-        await SetDotNetSolutionTreeViewAsync(dotNetSolution.DotNetSolutionModelKey);
+        await SetDotNetSolutionTreeViewAsync(dotNetSolutionModel.Key);
     }
 
     private async Task SetDotNetSolutionTreeViewAsync(Key<DotNetSolutionModel> dotNetSolutionModelKey)
@@ -120,7 +138,7 @@ public partial class DotNetSolutionSync
         var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
 
         var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionsBag.FirstOrDefault(
-            x => x.DotNetSolutionModelKey == dotNetSolutionModelKey);
+            x => x.Key == dotNetSolutionModelKey);
 
         if (dotNetSolutionModel is null)
             return;
@@ -154,7 +172,7 @@ public partial class DotNetSolutionSync
             return;
 
         Dispatcher.Dispatch(ConstructModelReplacement(
-            dotNetSolutionModel.DotNetSolutionModelKey,
+            dotNetSolutionModel.Key,
             dotNetSolutionModel));
     }
 }

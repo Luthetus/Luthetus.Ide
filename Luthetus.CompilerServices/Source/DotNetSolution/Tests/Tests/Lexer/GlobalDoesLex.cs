@@ -1,7 +1,7 @@
 using Luthetus.CompilerServices.Lang.DotNetSolution.Tests.TestData;
-using Luthetus.CompilerServices.Lang.DotNetSolution.Code;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.CompilerServices.Lang.DotNetSolution.SyntaxActors;
 
 namespace Luthetus.CompilerServices.Lang.DotNetSolution.Tests.Tests.Lexer;
 
@@ -10,7 +10,7 @@ public class GlobalDoesLex
     [Fact]
     public void START_TOKEN_DOES_LEX()
     {
-        var lexer = new TestDotNetSolutionLexer(
+        var lexer = new DotNetSolutionLexer(
             new(string.Empty),
             LexSolutionFacts.Global.START_TOKEN);
 
@@ -33,7 +33,7 @@ public class GlobalDoesLex
     [Fact]
     public void FULL_DOES_LEX()
     {
-        var lexer = new TestDotNetSolutionLexer(
+        var lexer = new DotNetSolutionLexer(
             new(string.Empty),
             TestDataGlobal.FULL);
 

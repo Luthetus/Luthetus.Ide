@@ -1,5 +1,5 @@
-using Luthetus.CompilerServices.Lang.DotNetSolution.Code;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Facts;
+using Luthetus.CompilerServices.Lang.DotNetSolution.SyntaxActors;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Tests.TestData;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
@@ -12,7 +12,7 @@ public class HeaderDoesLex
     {
         var formatVersionValue = "12.00";
 
-        var lexer = new TestDotNetSolutionLexer(
+        var lexer = new DotNetSolutionLexer(
             new(string.Empty),
             TestDataHeader.FORMAT_VERSION_NO_ENDING_NEWLINE);
 
@@ -36,7 +36,7 @@ public class HeaderDoesLex
     {
         var hashtagVersionValue = "17";
 
-        var lexer = new TestDotNetSolutionLexer(
+        var lexer = new DotNetSolutionLexer(
             new(string.Empty),
             TestDataHeader.HASHTAG_VISUAL_STUDIO_VERSION);
 
@@ -60,7 +60,7 @@ public class HeaderDoesLex
     {
         var exactVersionValue = "17.7.34018.315";
 
-        var lexer = new TestDotNetSolutionLexer(
+        var lexer = new DotNetSolutionLexer(
             new(string.Empty),
             TestDataHeader.EXACT_VISUAL_STUDIO_VERSION);
 
@@ -84,7 +84,7 @@ public class HeaderDoesLex
     {
         var minimumVersionValue = "10.0.40219.1";
 
-        var lexer = new TestDotNetSolutionLexer(
+        var lexer = new DotNetSolutionLexer(
             new(string.Empty),
             TestDataHeader.MINIMUM_VISUAL_STUDIO_VERSION);
 
@@ -111,7 +111,7 @@ public class HeaderDoesLex
         var exactVersionValue = "17.7.34018.315";
         var minimumVersionValue = "10.0.40219.1";
 
-        var lexer = new TestDotNetSolutionLexer(
+        var lexer = new DotNetSolutionLexer(
             new(string.Empty),
             TestDataHeader.FULL);
 

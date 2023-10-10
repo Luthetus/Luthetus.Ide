@@ -1,5 +1,6 @@
-﻿@using Luthetus.CompilerServices.Lang.DotNetSolution.Code;
-@using Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
+﻿@using Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
+@using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Associated;
+@using Luthetus.CompilerServices.Lang.DotNetSolution.SyntaxActors;
 @using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 <div class="luth_ide_solution-editor">
@@ -18,7 +19,7 @@
 
             @if (parser is not null)
             {
-                var solutionParser = (TestDotNetSolutionParser)parser;
+                var solutionParser = (DotNetSolutionParser)parser;
 
                 <div>
                     <div style="display: flex;">
@@ -62,7 +63,7 @@
                 <hr/>
 
                 <div>
-                    @foreach (var project in solutionParser.DotNetSolutionProjectEntryBag)
+                    @foreach (var project in solutionParser.DotNetProjectBag)
                     {
                         <div class="luth_te_keyword">
                             @Luthetus.CompilerServices.Lang.DotNetSolution.Facts.LexSolutionFacts.Project.PROJECT_DEFINITION_START_TOKEN

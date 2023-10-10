@@ -1,7 +1,5 @@
-using Luthetus.CompilerServices.Lang.DotNetSolution.Code;
-using Luthetus.CompilerServices.Lang.DotNetSolution.Facts;
+using Luthetus.CompilerServices.Lang.DotNetSolution.SyntaxActors;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Tests.TestData;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
 namespace Luthetus.CompilerServices.Lang.DotNetSolution.Tests.Tests.Parser;
 
@@ -15,13 +13,13 @@ public class HeaderDoesParse
         var exactVersionValue = "17.7.34018.315";
         var minimumVersionValue = "10.0.40219.1";
 
-        var lexer = new TestDotNetSolutionLexer(
+        var lexer = new DotNetSolutionLexer(
             new(string.Empty),
             TestDataHeader.FULL);
 
         lexer.Lex();
 
-        var parser = new TestDotNetSolutionParser(lexer);
+        var parser = new DotNetSolutionParser(lexer);
         var compilationUnit = parser.Parse();
     }
 }

@@ -1,8 +1,8 @@
-﻿using Luthetus.CompilerServices.Lang.DotNetSolution.Obsolete.RewriteForImmutability;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
+﻿using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
+using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
 
 namespace Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
 

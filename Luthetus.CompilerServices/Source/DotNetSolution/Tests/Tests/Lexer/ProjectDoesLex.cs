@@ -1,5 +1,5 @@
-using Luthetus.CompilerServices.Lang.DotNetSolution.Code;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Facts;
+using Luthetus.CompilerServices.Lang.DotNetSolution.SyntaxActors;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Tests.TestData;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
@@ -10,7 +10,7 @@ public class ProjectDoesLex
     [Fact]
     public void START_TOKEN_DOES_LEX()
     {
-        var lexer = new TestDotNetSolutionLexer(
+        var lexer = new DotNetSolutionLexer(
             new(string.Empty),
             LexSolutionFacts.Project.PROJECT_DEFINITION_START_TOKEN);
 
@@ -32,7 +32,7 @@ public class ProjectDoesLex
     {
         var guidValue = "FAE04EC0-301F-11D3-BF4B-00C04F79EFBC";
 
-        var lexer = new TestDotNetSolutionLexer(
+        var lexer = new DotNetSolutionLexer(
             new(string.Empty),
             TestDataProject.GUID);
 
@@ -50,7 +50,7 @@ public class ProjectDoesLex
     {
         var nameNoExtensionValue = "ConsoleApp2";
 
-        var lexer = new TestDotNetSolutionLexer(
+        var lexer = new DotNetSolutionLexer(
             new(string.Empty),
             TestDataProject.NAME_NO_EXTENSION);
 
@@ -68,7 +68,7 @@ public class ProjectDoesLex
     {
         var relativePathFromSlnValue = "ConsoleApp2\\ConsoleApp2.csproj";
 
-        var lexer = new TestDotNetSolutionLexer(
+        var lexer = new DotNetSolutionLexer(
             new(string.Empty),
             TestDataProject.RELATIVE_PATH_FROM_SLN);
 
@@ -89,7 +89,7 @@ public class ProjectDoesLex
         var relativePathFromSlnValue = "ConsoleApp2\\ConsoleApp2.csproj";
         var projectIdGuidValue = "623099D9-D9DE-47E8-8CCD-BC301C82F70F";
 
-        var lexer = new TestDotNetSolutionLexer(
+        var lexer = new DotNetSolutionLexer(
             new(string.Empty),
             TestDataProject.FULL);
 

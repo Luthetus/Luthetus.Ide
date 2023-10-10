@@ -1,19 +1,18 @@
-﻿using Luthetus.CompilerServices.Lang.DotNetSolution;
-using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
-using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+﻿using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.WatchWindows.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
+using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 
-public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
+public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
 {
     public TreeViewSolutionFolder(
-            DotNetSolutionFolder dotNetSolutionFolder,
+            SolutionFolder dotNetSolutionFolder,
             ILuthetusIdeComponentRenderers ideComponentRenderers,
             ILuthetusCommonComponentRenderers commonComponentRenderers,
             IFileSystemProvider fileSystemProvider,
@@ -101,20 +100,20 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
 
         if (ancestorNode is TreeViewSolution treeViewSolution)
         {
-            var nestedProjectEntries = treeViewSolution.Item.NestedProjectEntries
+            var nestedProjectEntries = treeViewSolution.Item.NestedProjectEntryBag
                 .Where(x => x.SolutionFolderIdGuid == Item.ProjectIdGuid)
                 .ToArray();
 
             var childProjectIds = nestedProjectEntries.Select(x => x.ChildProjectIdGuid).ToArray();
 
-            var childProjects = treeViewSolution.Item.DotNetProjects
+            var childProjects = treeViewSolution.Item.DotNetProjectBag
                 .Where(x => childProjectIds.Contains(x.ProjectIdGuid))
                 .ToArray();
 
             var childTreeViews = childProjects.Select(x =>
             {
                 if (x.DotNetProjectKind == DotNetProjectKind.SolutionFolder)
-                    return ConstructTreeViewSolutionFolder((DotNetSolutionFolder)x);
+                    return ConstructTreeViewSolutionFolder((SolutionFolder)x);
                 else
                     return ConstructTreeViewCSharpProject((CSharpProject)x);
             }).ToList();
@@ -167,7 +166,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<DotNetSolutionFolder>
         return;
     }
 
-    private TreeViewNoType ConstructTreeViewSolutionFolder(DotNetSolutionFolder dotNetSolutionFolder)
+    private TreeViewNoType ConstructTreeViewSolutionFolder(SolutionFolder dotNetSolutionFolder)
     {
         return new TreeViewSolutionFolder(
             dotNetSolutionFolder,
