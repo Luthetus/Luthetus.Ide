@@ -7,7 +7,6 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Associated;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
-using Luthetus.Common.RazorLib.FileSystems.Models;
 
 namespace Luthetus.CompilerServices.Lang.DotNetSolution.SyntaxActors;
 
@@ -22,6 +21,7 @@ public class DotNetSolutionParser : IParser
     private DotNetSolutionGlobal _dotNetSolutionGlobal = new();
     private AssociatedEntryGroup? _noParentHavingAssociatedEntryGroup;
     private List<IDotNetProject> _dotNetProjectBag = new();
+    private List<NestedProjectEntry> _nestedProjectEntryBag = new();
 
     public DotNetSolutionParser(DotNetSolutionLexer lexer)
     {
@@ -36,6 +36,7 @@ public class DotNetSolutionParser : IParser
     public DotNetSolutionGlobal DotNetSolutionGlobal => _dotNetSolutionGlobal;
     public AssociatedEntryGroup? NoParentHavingAssociatedEntryGroup => _noParentHavingAssociatedEntryGroup;
     public List<IDotNetProject> DotNetProjectBag => _dotNetProjectBag;
+    public List<NestedProjectEntry> NestedProjectEntryBag => _nestedProjectEntryBag;
 
     public CompilationUnit Parse()
     {
@@ -63,6 +64,42 @@ public class DotNetSolutionParser : IParser
 
             if (consumedToken.SyntaxKind == SyntaxKind.EndOfFileToken)
                 break;
+        }
+
+        var globalSectionNestedProjects = DotNetSolutionGlobal.DotNetSolutionGlobalSectionBag.FirstOrDefault(x =>
+        {
+            return (x.GlobalSectionArgument?.TextSpan.GetText() ?? string.Empty) == 
+                LexSolutionFacts.GlobalSectionNestedProjects.START_TOKEN;
+        });
+
+        if (globalSectionNestedProjects is not null)
+        {
+            foreach (var associatedEntry in globalSectionNestedProjects.AssociatedEntryGroup.AssociatedEntryBag)
+            {
+                switch (associatedEntry.AssociatedEntryKind)
+                {
+                    case AssociatedEntryKind.Pair:
+                        var pair = (AssociatedEntryPair)associatedEntry;
+
+                        if (Guid.TryParse(pair.AssociatedNameToken.TextSpan.GetText(),
+                                out var childProjectIdGuid))
+                        {
+                            if (Guid.TryParse(pair.AssociatedValueToken.TextSpan.GetText(),
+                                    out var solutionFolderIdGuid))
+                            {
+                                var nestedProjectEntry = new NestedProjectEntry(
+                                    childProjectIdGuid,
+                                    solutionFolderIdGuid);
+
+                                _nestedProjectEntryBag.Add(nestedProjectEntry);
+                            }
+                        }
+
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
 
         return new CompilationUnit(
@@ -198,14 +235,32 @@ public class DotNetSolutionParser : IParser
                         var relativePathFromSolutionFileString = relativePathFromSolutionFileStringAssociatedPair.AssociatedValueToken.TextSpan.GetText();
                         _ = Guid.TryParse(projectIdGuidAssociatedPair.AssociatedValueToken.TextSpan.GetText(), out var projectIdGuid);
 
-                        _dotNetProjectBag.Add(new CSharpProject(
-                            displayName,
-                            projectTypeGuid,
-                            relativePathFromSolutionFileString,
-                            projectIdGuid,
-                            builtGroup.OpenAssociatedGroupToken,
-                            builtGroup.CloseAssociatedGroupToken,
-                            null));
+                        IDotNetProject dotNetProject;
+
+                        if (projectTypeGuid == SolutionFolder.SolutionFolderProjectTypeGuid)
+                        {
+                            dotNetProject = new SolutionFolder(
+                                displayName,
+                                projectTypeGuid,
+                                relativePathFromSolutionFileString,
+                                projectIdGuid,
+                                builtGroup.OpenAssociatedGroupToken,
+                                builtGroup.CloseAssociatedGroupToken,
+                                null);
+                        }
+                        else
+                        {
+                            dotNetProject = new CSharpProject(
+                                displayName,
+                                projectTypeGuid,
+                                relativePathFromSolutionFileString,
+                                projectIdGuid,
+                                builtGroup.OpenAssociatedGroupToken,
+                                builtGroup.CloseAssociatedGroupToken,
+                                null);
+                        }
+
+                        _dotNetProjectBag.Add(dotNetProject);
                     }
 
                     _noParentHavingAssociatedEntryGroup = builtGroup;

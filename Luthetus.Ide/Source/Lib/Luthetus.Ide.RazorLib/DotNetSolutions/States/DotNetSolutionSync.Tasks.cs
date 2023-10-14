@@ -117,12 +117,16 @@ public partial class DotNetSolutionSync
             project.AbsolutePath = new AbsolutePath(absolutePathString, false, _environmentProvider);
         }
 
+        var solutionFolderBag = parser.DotNetProjectBag
+            .Where(x => x.DotNetProjectKind == DotNetProjectKind.SolutionFolder)
+            .Select(x => (SolutionFolder)x).ToImmutableArray();
+
         var dotNetSolutionModel = new DotNetSolutionModel(
             solutionAbsolutePath,
             parser.DotNetSolutionHeader,
             parser.DotNetProjectBag.ToImmutableArray(),
-            ImmutableArray<SolutionFolder>.Empty, // TODO: Pass in these arguments
-            ImmutableArray<NestedProjectEntry>.Empty, // TODO: Pass in these arguments
+            solutionFolderBag,
+            parser.NestedProjectEntryBag.ToImmutableArray(),
             parser.DotNetSolutionGlobal,
             content);
 
