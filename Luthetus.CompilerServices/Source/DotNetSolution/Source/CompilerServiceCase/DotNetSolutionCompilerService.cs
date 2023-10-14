@@ -3,8 +3,7 @@ using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
-using Luthetus.CompilerServices.Lang.DotNetSolution.Code;
-using Luthetus.CompilerServices.Lang.DotNetSolution.Obsolete;
+using Luthetus.CompilerServices.Lang.DotNetSolution.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
@@ -156,16 +155,21 @@ public class DotNetSolutionCompilerService : ICompilerService
                 if (pendingCalculation is null)
                     pendingCalculation = new(model.GetAllText());
 
-                var lexer = new TestDotNetSolutionLexer(resourceUri, model.GetAllText());
+                var lexer = new DotNetSolutionLexer(resourceUri, model.GetAllText());
                 lexer.Lex();
+
+                var parser = new DotNetSolutionParser(lexer);
+
+                var compilationUnit = parser.Parse();
 
                 lock (_dotNetSolutionResourceMapLock)
                 {
                     if (!_dotNetSolutionResourceMap.ContainsKey(resourceUri))
                         return;
 
-                    var dotNetResource = _dotNetSolutionResourceMap[resourceUri];
-                    dotNetResource.SyntaxTokenBag = lexer.SyntaxTokens;
+                    var dotNetSolutionResource = _dotNetSolutionResourceMap[resourceUri];
+                    dotNetSolutionResource.SyntaxTokenBag = lexer.SyntaxTokens;
+                    dotNetSolutionResource.CompilationUnit = compilationUnit;
                 }
 
                 await model.ApplySyntaxHighlightingAsync();

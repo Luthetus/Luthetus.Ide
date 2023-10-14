@@ -1,5 +1,5 @@
-using Luthetus.CompilerServices.Lang.DotNetSolution.Code;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Facts;
+using Luthetus.CompilerServices.Lang.DotNetSolution.SyntaxActors;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Tests.TestData;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
@@ -10,7 +10,7 @@ public class ProjectDoesLex
     [Fact]
     public void START_TOKEN_DOES_LEX()
     {
-        var lexer = new TestDotNetSolutionLexer(
+        var lexer = new DotNetSolutionLexer(
             new(string.Empty),
             LexSolutionFacts.Project.PROJECT_DEFINITION_START_TOKEN);
 
@@ -18,10 +18,12 @@ public class ProjectDoesLex
 
         Assert.Equal(2, lexer.SyntaxTokens.Length);
 
-        var startProjectDefinitionKeywordToken = (KeywordToken)lexer.SyntaxTokens[0];
-        var endOfFileToken = (EndOfFileToken)lexer.SyntaxTokens[1];
+        var i = 0;
 
-        Assert.Equal(LexSolutionFacts.Project.PROJECT_DEFINITION_START_TOKEN, startProjectDefinitionKeywordToken.TextSpan.GetText());
+        var startProjectDefinitionOpenAssociatedGroupToken = (OpenAssociatedGroupToken)lexer.SyntaxTokens[i++];
+        var endOfFileToken = (EndOfFileToken)lexer.SyntaxTokens[i++];
+
+        Assert.Equal(LexSolutionFacts.Project.PROJECT_DEFINITION_START_TOKEN, startProjectDefinitionOpenAssociatedGroupToken.TextSpan.GetText());
         Assert.NotNull(endOfFileToken);
     }
 
@@ -30,7 +32,7 @@ public class ProjectDoesLex
     {
         var guidValue = "FAE04EC0-301F-11D3-BF4B-00C04F79EFBC";
 
-        var lexer = new TestDotNetSolutionLexer(
+        var lexer = new DotNetSolutionLexer(
             new(string.Empty),
             TestDataProject.GUID);
 
@@ -38,9 +40,9 @@ public class ProjectDoesLex
 
         Assert.Single(lexer.SyntaxTokens);
 
-        var guidIdentifierToken = (IdentifierToken)lexer.SyntaxTokens.Single();
+        var guidAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens.Single();
 
-        Assert.Equal(guidValue, guidIdentifierToken.TextSpan.GetText());
+        Assert.Equal(guidValue, guidAssociatedValueToken.TextSpan.GetText());
     }
 
     [Fact]
@@ -48,7 +50,7 @@ public class ProjectDoesLex
     {
         var nameNoExtensionValue = "ConsoleApp2";
 
-        var lexer = new TestDotNetSolutionLexer(
+        var lexer = new DotNetSolutionLexer(
             new(string.Empty),
             TestDataProject.NAME_NO_EXTENSION);
 
@@ -56,9 +58,9 @@ public class ProjectDoesLex
 
         Assert.Single(lexer.SyntaxTokens);
 
-        var nameNoExtensionIdentifierToken = (IdentifierToken)lexer.SyntaxTokens.Single();
+        var nameNoExtensionAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens.Single();
 
-        Assert.Equal(nameNoExtensionValue, nameNoExtensionIdentifierToken.TextSpan.GetText());
+        Assert.Equal(nameNoExtensionValue, nameNoExtensionAssociatedValueToken.TextSpan.GetText());
     }
 
     [Fact]
@@ -66,7 +68,7 @@ public class ProjectDoesLex
     {
         var relativePathFromSlnValue = "ConsoleApp2\\ConsoleApp2.csproj";
 
-        var lexer = new TestDotNetSolutionLexer(
+        var lexer = new DotNetSolutionLexer(
             new(string.Empty),
             TestDataProject.RELATIVE_PATH_FROM_SLN);
 
@@ -74,9 +76,9 @@ public class ProjectDoesLex
 
         Assert.Single(lexer.SyntaxTokens);
 
-        var relativePathFromSlnIdentifierToken = (IdentifierToken)lexer.SyntaxTokens.Single();
+        var relativePathFromSlnAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens.Single();
 
-        Assert.Equal(relativePathFromSlnValue, relativePathFromSlnIdentifierToken.TextSpan.GetText());
+        Assert.Equal(relativePathFromSlnValue, relativePathFromSlnAssociatedValueToken.TextSpan.GetText());
     }
 
     [Fact]
@@ -87,7 +89,7 @@ public class ProjectDoesLex
         var relativePathFromSlnValue = "ConsoleApp2\\ConsoleApp2.csproj";
         var projectIdGuidValue = "623099D9-D9DE-47E8-8CCD-BC301C82F70F";
 
-        var lexer = new TestDotNetSolutionLexer(
+        var lexer = new DotNetSolutionLexer(
             new(string.Empty),
             TestDataProject.FULL);
 
@@ -95,25 +97,27 @@ public class ProjectDoesLex
 
         Assert.Equal(7, lexer.SyntaxTokens.Length);
 
-        var startProjectDefinitionKeywordToken = (KeywordToken)lexer.SyntaxTokens[0];
-        Assert.Equal(LexSolutionFacts.Project.PROJECT_DEFINITION_START_TOKEN, startProjectDefinitionKeywordToken.TextSpan.GetText());
+        var i = 0;
 
-        var projectTypeGuidIdentifierToken = (IdentifierToken)lexer.SyntaxTokens[1];
-        Assert.Equal(projectTypeGuidValue, projectTypeGuidIdentifierToken.TextSpan.GetText());
+        var startProjectDefinitionOpenAssociatedGroupToken = (OpenAssociatedGroupToken)lexer.SyntaxTokens[i++];
+        Assert.Equal(LexSolutionFacts.Project.PROJECT_DEFINITION_START_TOKEN, startProjectDefinitionOpenAssociatedGroupToken.TextSpan.GetText());
 
-        var nameNoExtensionIdentifierToken = (IdentifierToken)lexer.SyntaxTokens[2];
-        Assert.Equal(nameNoExtensionValue, nameNoExtensionIdentifierToken.TextSpan.GetText());
+        var projectTypeGuidAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+        Assert.Equal(projectTypeGuidValue, projectTypeGuidAssociatedValueToken.TextSpan.GetText());
 
-        var relativePathFromSlnIdentifierToken = (IdentifierToken)lexer.SyntaxTokens[3];
-        Assert.Equal(relativePathFromSlnValue, relativePathFromSlnIdentifierToken.TextSpan.GetText());
+        var nameNoExtensionAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+        Assert.Equal(nameNoExtensionValue, nameNoExtensionAssociatedValueToken.TextSpan.GetText());
 
-        var projectIdGuidIdentifierToken = (IdentifierToken)lexer.SyntaxTokens[4];
-        Assert.Equal(projectIdGuidValue, projectIdGuidIdentifierToken.TextSpan.GetText());
+        var relativePathFromSlnAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+        Assert.Equal(relativePathFromSlnValue, relativePathFromSlnAssociatedValueToken.TextSpan.GetText());
 
-        var endProjectDefinitionKeywordToken = (KeywordToken)lexer.SyntaxTokens[5];
-        Assert.Equal(LexSolutionFacts.Project.PROJECT_DEFINITION_END_TOKEN, endProjectDefinitionKeywordToken.TextSpan.GetText());
+        var projectIdGuidAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+        Assert.Equal(projectIdGuidValue, projectIdGuidAssociatedValueToken.TextSpan.GetText());
 
-        var endOfFileToken = (EndOfFileToken)lexer.SyntaxTokens[6];
+        var endProjectDefinitionCloseAssociatedGroupToken = (CloseAssociatedGroupToken)lexer.SyntaxTokens[i++];
+        Assert.Equal(LexSolutionFacts.Project.PROJECT_DEFINITION_END_TOKEN, endProjectDefinitionCloseAssociatedGroupToken.TextSpan.GetText());
+
+        var endOfFileToken = (EndOfFileToken)lexer.SyntaxTokens[i++];
         Assert.NotNull(endOfFileToken);
     }
 }

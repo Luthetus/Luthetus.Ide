@@ -1,7 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
-using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
+using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
 using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Xunit;

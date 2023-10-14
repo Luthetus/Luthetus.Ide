@@ -1,4 +1,4 @@
-﻿using Luthetus.CompilerServices.Lang.DotNetSolution.CSharp;
+﻿using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Microsoft.AspNetCore.Components;
 

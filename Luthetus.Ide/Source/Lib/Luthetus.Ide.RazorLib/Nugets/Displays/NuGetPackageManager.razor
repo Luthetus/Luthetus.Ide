@@ -42,7 +42,7 @@
                                     Select a project to modify
                                 </option>
 
-                                @foreach (var project in dotNetSolutionStateWrap.DotNetSolutionModel.DotNetProjects)
+                                @foreach (var project in dotNetSolutionStateWrap.DotNetSolutionModel.DotNetProjectBag)
                                 {
                                     <option value="@project.ProjectIdGuid.ToString()"
                                             selected="@CheckIfProjectIsSelected(project, nuGetPackageManagerState)">

@@ -1,5 +1,5 @@
-using Luthetus.CompilerServices.Lang.DotNetSolution.Code;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Facts;
+using Luthetus.CompilerServices.Lang.DotNetSolution.SyntaxActors;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Tests.TestData;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
@@ -10,7 +10,7 @@ public class MainDoesLex
     [Fact]
     public void MINIMAL_EXAMPLE_DOES_LEX()
     {
-        var lexer = new TestDotNetSolutionLexer(
+        var lexer = new DotNetSolutionLexer(
             new(string.Empty),
             TestDataMain.MINIMAL_EXAMPLE);
 
@@ -25,25 +25,25 @@ public class MainDoesLex
             var exactVersionValue = "17.7.34018.315";
             var minimumVersionValue = "10.0.40219.1";
 
-            var formatVersionKeywordToken = (KeywordToken)lexer.SyntaxTokens[i++];
-            var formatVersionIdentifierToken = (IdentifierToken)lexer.SyntaxTokens[i++];
-            Assert.Equal(LexSolutionFacts.Header.FORMAT_VERSION_START_TOKEN, formatVersionKeywordToken.TextSpan.GetText());
-            Assert.Equal(formatVersionValue, formatVersionIdentifierToken.TextSpan.GetText());
+            var formatVersionAssociatedNameToken = (AssociatedNameToken)lexer.SyntaxTokens[i++];
+            var formatVersionAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+            Assert.Equal(LexSolutionFacts.Header.FORMAT_VERSION_START_TOKEN, formatVersionAssociatedNameToken.TextSpan.GetText());
+            Assert.Equal(formatVersionValue, formatVersionAssociatedValueToken.TextSpan.GetText());
 
-            var hashtagVersionKeywordToken = (KeywordToken)lexer.SyntaxTokens[i++];
-            var hashtagVersionIdentifierToken = (IdentifierToken)lexer.SyntaxTokens[i++];
-            Assert.Equal(LexSolutionFacts.Header.HASHTAG_VISUAL_STUDIO_VERSION_START_TOKEN, hashtagVersionKeywordToken.TextSpan.GetText());
-            Assert.Equal(hashtagVersionValue, hashtagVersionIdentifierToken.TextSpan.GetText());
+            var hashtagVersionAssociatedNameToken = (AssociatedNameToken)lexer.SyntaxTokens[i++];
+            var hashtagVersionAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+            Assert.Equal(LexSolutionFacts.Header.HASHTAG_VISUAL_STUDIO_VERSION_START_TOKEN, hashtagVersionAssociatedNameToken.TextSpan.GetText());
+            Assert.Equal(hashtagVersionValue, hashtagVersionAssociatedValueToken.TextSpan.GetText());
 
-            var exactVersionKeywordToken = (KeywordToken)lexer.SyntaxTokens[i++];
-            var exactVersionIdentifierToken = (IdentifierToken)lexer.SyntaxTokens[i++];
-            Assert.Equal(LexSolutionFacts.Header.EXACT_VISUAL_STUDIO_VERSION_START_TOKEN, exactVersionKeywordToken.TextSpan.GetText());
-            Assert.Equal(exactVersionValue, exactVersionIdentifierToken.TextSpan.GetText());
+            var exactVersionAssociatedNameToken = (AssociatedNameToken)lexer.SyntaxTokens[i++];
+            var exactVersionAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+            Assert.Equal(LexSolutionFacts.Header.EXACT_VISUAL_STUDIO_VERSION_START_TOKEN, exactVersionAssociatedNameToken.TextSpan.GetText());
+            Assert.Equal(exactVersionValue, exactVersionAssociatedValueToken.TextSpan.GetText());
 
-            var minimumVersionKeywordToken = (KeywordToken)lexer.SyntaxTokens[i++];
-            var minimumVersionIdentifierToken = (IdentifierToken)lexer.SyntaxTokens[i++];
-            Assert.Equal(LexSolutionFacts.Header.MINIMUM_VISUAL_STUDIO_VERSION_START_TOKEN, minimumVersionKeywordToken.TextSpan.GetText());
-            Assert.Equal(minimumVersionValue, minimumVersionIdentifierToken.TextSpan.GetText());
+            var minimumVersionAssociatedNameToken = (AssociatedNameToken)lexer.SyntaxTokens[i++];
+            var minimumVersionAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+            Assert.Equal(LexSolutionFacts.Header.MINIMUM_VISUAL_STUDIO_VERSION_START_TOKEN, minimumVersionAssociatedNameToken.TextSpan.GetText());
+            Assert.Equal(minimumVersionValue, minimumVersionAssociatedValueToken.TextSpan.GetText());
         }
 
         // Project
@@ -53,167 +53,167 @@ public class MainDoesLex
             var relativePathFromSlnValue = "ConsoleApp2\\ConsoleApp2.csproj";
             var projectIdGuidValue = "623099D9-D9DE-47E8-8CCD-BC301C82F70F";
 
-            var startProjectDefinitionKeywordToken = (KeywordToken)lexer.SyntaxTokens[i++];
-            Assert.Equal(LexSolutionFacts.Project.PROJECT_DEFINITION_START_TOKEN, startProjectDefinitionKeywordToken.TextSpan.GetText());
+            var startProjectDefinitionOpenAssociatedGroupToken = (OpenAssociatedGroupToken)lexer.SyntaxTokens[i++];
+            Assert.Equal(LexSolutionFacts.Project.PROJECT_DEFINITION_START_TOKEN, startProjectDefinitionOpenAssociatedGroupToken.TextSpan.GetText());
 
-            var projectTypeGuidIdentifierToken = (IdentifierToken)lexer.SyntaxTokens[i++];
-            Assert.Equal(projectTypeGuidValue, projectTypeGuidIdentifierToken.TextSpan.GetText());
+            var projectTypeGuidAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+            Assert.Equal(projectTypeGuidValue, projectTypeGuidAssociatedValueToken.TextSpan.GetText());
 
-            var nameNoExtensionIdentifierToken = (IdentifierToken)lexer.SyntaxTokens[i++];
-            Assert.Equal(nameNoExtensionValue, nameNoExtensionIdentifierToken.TextSpan.GetText());
+            var nameNoExtensionAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+            Assert.Equal(nameNoExtensionValue, nameNoExtensionAssociatedValueToken.TextSpan.GetText());
 
-            var relativePathFromSlnIdentifierToken = (IdentifierToken)lexer.SyntaxTokens[i++];
-            Assert.Equal(relativePathFromSlnValue, relativePathFromSlnIdentifierToken.TextSpan.GetText());
+            var relativePathFromSlnAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+            Assert.Equal(relativePathFromSlnValue, relativePathFromSlnAssociatedValueToken.TextSpan.GetText());
 
-            var projectIdGuidIdentifierToken = (IdentifierToken)lexer.SyntaxTokens[i++];
-            Assert.Equal(projectIdGuidValue, projectIdGuidIdentifierToken.TextSpan.GetText());
+            var projectIdGuidAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+            Assert.Equal(projectIdGuidValue, projectIdGuidAssociatedValueToken.TextSpan.GetText());
 
-            var endProjectDefinitionKeywordToken = (KeywordToken)lexer.SyntaxTokens[i++];
-            Assert.Equal(LexSolutionFacts.Project.PROJECT_DEFINITION_END_TOKEN, endProjectDefinitionKeywordToken.TextSpan.GetText());
+            var endProjectDefinitionCloseAssociatedGroupToken = (CloseAssociatedGroupToken)lexer.SyntaxTokens[i++];
+            Assert.Equal(LexSolutionFacts.Project.PROJECT_DEFINITION_END_TOKEN, endProjectDefinitionCloseAssociatedGroupToken.TextSpan.GetText());
         }
 
         // Global
         {
-            var globalStartToken = (KeywordToken)lexer.SyntaxTokens[i++];
-            Assert.Equal(LexSolutionFacts.Global.START_TOKEN, globalStartToken.TextSpan.GetText());
+            var globalStartOpenAssociatedGroupToken = (OpenAssociatedGroupToken)lexer.SyntaxTokens[i++];
+            Assert.Equal(LexSolutionFacts.Global.START_TOKEN, globalStartOpenAssociatedGroupToken.TextSpan.GetText());
 
             // GlobalSection(SolutionConfigurationPlatforms)
             {
-                var startToken = (KeywordToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(LexSolutionFacts.GlobalSection.START_TOKEN, startToken.TextSpan.GetText());
+                var startOpenAssociatedGroupToken = (OpenAssociatedGroupToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(LexSolutionFacts.GlobalSection.START_TOKEN, startOpenAssociatedGroupToken.TextSpan.GetText());
 
-                var startParameterToken = (KeywordToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(LexSolutionFacts.GlobalSectionSolutionConfigurationPlatforms.START_TOKEN, startParameterToken.TextSpan.GetText());
+                var startParameterAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(LexSolutionFacts.GlobalSectionSolutionConfigurationPlatforms.START_TOKEN, startParameterAssociatedValueToken.TextSpan.GetText());
 
-                var startOrderToken = (KeywordToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(TestDataGlobalSectionSolutionConfigurationPlatforms.START_TOKEN_ORDER, startOrderToken.TextSpan.GetText());
+                var startOrderAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(TestDataGlobalSectionSolutionConfigurationPlatforms.START_TOKEN_ORDER, startOrderAssociatedValueToken.TextSpan.GetText());
 
-                var firstPropertyNameToken = (IdentifierToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(TestDataGlobalSectionSolutionConfigurationPlatforms.FIRST_PROPERTY_NAME, firstPropertyNameToken.TextSpan.GetText());
+                var firstPropertyAssociatedNameToken = (AssociatedNameToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(TestDataGlobalSectionSolutionConfigurationPlatforms.FIRST_PROPERTY_NAME, firstPropertyAssociatedNameToken.TextSpan.GetText());
 
-                var firstPropertyValueToken = (IdentifierToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(TestDataGlobalSectionSolutionConfigurationPlatforms.FIRST_PROPERTY_VALUE, firstPropertyValueToken.TextSpan.GetText());
+                var firstPropertyAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(TestDataGlobalSectionSolutionConfigurationPlatforms.FIRST_PROPERTY_VALUE, firstPropertyAssociatedValueToken.TextSpan.GetText());
 
-                var secondPropertyNameToken = (IdentifierToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(TestDataGlobalSectionSolutionConfigurationPlatforms.SECOND_PROPERTY_NAME, secondPropertyNameToken.TextSpan.GetText());
+                var secondPropertyAssociatedNameToken = (AssociatedNameToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(TestDataGlobalSectionSolutionConfigurationPlatforms.SECOND_PROPERTY_NAME, secondPropertyAssociatedNameToken.TextSpan.GetText());
 
-                var secondPropertyValueToken = (IdentifierToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(TestDataGlobalSectionSolutionConfigurationPlatforms.SECOND_PROPERTY_VALUE, secondPropertyValueToken.TextSpan.GetText());
+                var secondPropertyAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(TestDataGlobalSectionSolutionConfigurationPlatforms.SECOND_PROPERTY_VALUE, secondPropertyAssociatedValueToken.TextSpan.GetText());
 
-                var endToken = (KeywordToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(LexSolutionFacts.GlobalSection.END_TOKEN, endToken.TextSpan.GetText());
+                var endCloseAssociatedGroupToken = (CloseAssociatedGroupToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(LexSolutionFacts.GlobalSection.END_TOKEN, endCloseAssociatedGroupToken.TextSpan.GetText());
             }
 
             // GlobalSection(ProjectConfigurationPlatforms)
             {
-                var startToken = (KeywordToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(LexSolutionFacts.GlobalSection.START_TOKEN, startToken.TextSpan.GetText());
+                var startOpenAssociatedGroupToken = (OpenAssociatedGroupToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(LexSolutionFacts.GlobalSection.START_TOKEN, startOpenAssociatedGroupToken.TextSpan.GetText());
 
-                var startParameterToken = (KeywordToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(LexSolutionFacts.GlobalSectionProjectConfigurationPlatforms.START_TOKEN, startParameterToken.TextSpan.GetText());
+                var startParameterAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(LexSolutionFacts.GlobalSectionProjectConfigurationPlatforms.START_TOKEN, startParameterAssociatedValueToken.TextSpan.GetText());
 
-                var startOrderToken = (KeywordToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(TestDataGlobalSectionProjectConfigurationPlatforms.START_TOKEN_ORDER, startOrderToken.TextSpan.GetText());
+                var startOrderAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(TestDataGlobalSectionProjectConfigurationPlatforms.START_TOKEN_ORDER, startOrderAssociatedValueToken.TextSpan.GetText());
 
-                var firstPropertyNameToken = (IdentifierToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(TestDataGlobalSectionProjectConfigurationPlatforms.FIRST_PROPERTY_NAME, firstPropertyNameToken.TextSpan.GetText());
+                var firstPropertyAssociatedNameToken = (AssociatedNameToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(TestDataGlobalSectionProjectConfigurationPlatforms.FIRST_PROPERTY_NAME, firstPropertyAssociatedNameToken.TextSpan.GetText());
 
-                var firstPropertyValueToken = (IdentifierToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(TestDataGlobalSectionProjectConfigurationPlatforms.FIRST_PROPERTY_VALUE, firstPropertyValueToken.TextSpan.GetText());
+                var firstPropertyAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(TestDataGlobalSectionProjectConfigurationPlatforms.FIRST_PROPERTY_VALUE, firstPropertyAssociatedValueToken.TextSpan.GetText());
 
-                var secondPropertyNameToken = (IdentifierToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(TestDataGlobalSectionProjectConfigurationPlatforms.SECOND_PROPERTY_NAME, secondPropertyNameToken.TextSpan.GetText());
+                var secondPropertyAssociatedNameToken = (AssociatedNameToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(TestDataGlobalSectionProjectConfigurationPlatforms.SECOND_PROPERTY_NAME, secondPropertyAssociatedNameToken.TextSpan.GetText());
 
-                var secondPropertyValueToken = (IdentifierToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(TestDataGlobalSectionProjectConfigurationPlatforms.SECOND_PROPERTY_VALUE, secondPropertyValueToken.TextSpan.GetText());
+                var secondPropertyAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(TestDataGlobalSectionProjectConfigurationPlatforms.SECOND_PROPERTY_VALUE, secondPropertyAssociatedValueToken.TextSpan.GetText());
 
-                var thirdPropertyNameToken = (IdentifierToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(TestDataGlobalSectionProjectConfigurationPlatforms.THIRD_PROPERTY_NAME, thirdPropertyNameToken.TextSpan.GetText());
+                var thirdPropertyAssociatedNameToken = (AssociatedNameToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(TestDataGlobalSectionProjectConfigurationPlatforms.THIRD_PROPERTY_NAME, thirdPropertyAssociatedNameToken.TextSpan.GetText());
 
-                var thirdPropertyValueToken = (IdentifierToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(TestDataGlobalSectionProjectConfigurationPlatforms.THIRD_PROPERTY_VALUE, thirdPropertyValueToken.TextSpan.GetText());
+                var thirdPropertyAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(TestDataGlobalSectionProjectConfigurationPlatforms.THIRD_PROPERTY_VALUE, thirdPropertyAssociatedValueToken.TextSpan.GetText());
 
-                var fourthPropertyNameToken = (IdentifierToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(TestDataGlobalSectionProjectConfigurationPlatforms.FOURTH_PROPERTY_NAME, fourthPropertyNameToken.TextSpan.GetText());
+                var fourthPropertyAssociatedNameToken = (AssociatedNameToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(TestDataGlobalSectionProjectConfigurationPlatforms.FOURTH_PROPERTY_NAME, fourthPropertyAssociatedNameToken.TextSpan.GetText());
 
-                var fourthPropertyValueToken = (IdentifierToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(TestDataGlobalSectionProjectConfigurationPlatforms.FOURTH_PROPERTY_VALUE, fourthPropertyValueToken.TextSpan.GetText());
+                var fourthPropertyAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(TestDataGlobalSectionProjectConfigurationPlatforms.FOURTH_PROPERTY_VALUE, fourthPropertyAssociatedValueToken.TextSpan.GetText());
 
-                var endToken = (KeywordToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(LexSolutionFacts.GlobalSection.END_TOKEN, endToken.TextSpan.GetText());
+                var endCloseAssociatedGroupToken = (CloseAssociatedGroupToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(LexSolutionFacts.GlobalSection.END_TOKEN, endCloseAssociatedGroupToken.TextSpan.GetText());
             }
 
             // GlobalSection(SolutionProperties)
             {
-                var startToken = (KeywordToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(LexSolutionFacts.GlobalSection.START_TOKEN, startToken.TextSpan.GetText());
+                var startOpenAssociatedGroupToken = (OpenAssociatedGroupToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(LexSolutionFacts.GlobalSection.START_TOKEN, startOpenAssociatedGroupToken.TextSpan.GetText());
 
-                var startParameterToken = (KeywordToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(LexSolutionFacts.GlobalSectionSolutionProperties.START_TOKEN, startParameterToken.TextSpan.GetText());
+                var startParameterAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(LexSolutionFacts.GlobalSectionSolutionProperties.START_TOKEN, startParameterAssociatedValueToken.TextSpan.GetText());
 
-                var startOrderToken = (KeywordToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(TestDataGlobalSectionSolutionProperties.START_TOKEN_ORDER, startOrderToken.TextSpan.GetText());
+                var startOrderAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(TestDataGlobalSectionSolutionProperties.START_TOKEN_ORDER, startOrderAssociatedValueToken.TextSpan.GetText());
 
-                var solutionGuidNameToken = (IdentifierToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(LexSolutionFacts.GlobalSectionSolutionProperties.HIDE_SOLUTION_NODE_NAME, solutionGuidNameToken.TextSpan.GetText());
+                var solutionGuidAssociatedNameToken = (AssociatedNameToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(LexSolutionFacts.GlobalSectionSolutionProperties.HIDE_SOLUTION_NODE_NAME, solutionGuidAssociatedNameToken.TextSpan.GetText());
 
-                var solutionGuidValueToken = (IdentifierToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(TestDataGlobalSectionSolutionProperties.HIDE_SOLUTION_NODE_VALUE, solutionGuidValueToken.TextSpan.GetText());
+                var solutionGuidAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(TestDataGlobalSectionSolutionProperties.HIDE_SOLUTION_NODE_VALUE, solutionGuidAssociatedValueToken.TextSpan.GetText());
 
-                var endToken = (KeywordToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(LexSolutionFacts.GlobalSection.END_TOKEN, endToken.TextSpan.GetText());
+                var endCloseAssociatedGroupToken = (CloseAssociatedGroupToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(LexSolutionFacts.GlobalSection.END_TOKEN, endCloseAssociatedGroupToken.TextSpan.GetText());
             }
 
             // NestedProjects
             {
-                var startToken = (KeywordToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(LexSolutionFacts.GlobalSection.START_TOKEN, startToken.TextSpan.GetText());
+                var startOpenAssociatedGroupToken = (OpenAssociatedGroupToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(LexSolutionFacts.GlobalSection.START_TOKEN, startOpenAssociatedGroupToken.TextSpan.GetText());
 
-                var startParameterToken = (KeywordToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(LexSolutionFacts.GlobalSectionNestedProjects.START_TOKEN, startParameterToken.TextSpan.GetText());
+                var startParameterAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(LexSolutionFacts.GlobalSectionNestedProjects.START_TOKEN, startParameterAssociatedValueToken.TextSpan.GetText());
 
-                var startOrderToken = (KeywordToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(TestDataGlobalSectionNestedProjects.START_TOKEN_ORDER, startOrderToken.TextSpan.GetText());
+                var startOrderAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(TestDataGlobalSectionNestedProjects.START_TOKEN_ORDER, startOrderAssociatedValueToken.TextSpan.GetText());
 
-                var firstPropertyNameToken = (IdentifierToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(TestDataGlobalSectionNestedProjects.FIRST_PROPERTY_NAME, firstPropertyNameToken.TextSpan.GetText());
+                var firstPropertyAssociatedNameToken = (AssociatedNameToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(TestDataGlobalSectionNestedProjects.FIRST_PROPERTY_NAME, firstPropertyAssociatedNameToken.TextSpan.GetText());
 
-                var firstPropertyValueToken = (IdentifierToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(TestDataGlobalSectionNestedProjects.FIRST_PROPERTY_VALUE, firstPropertyValueToken.TextSpan.GetText());
+                var firstPropertyAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(TestDataGlobalSectionNestedProjects.FIRST_PROPERTY_VALUE, firstPropertyAssociatedValueToken.TextSpan.GetText());
 
-                var secondPropertyNameToken = (IdentifierToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(TestDataGlobalSectionNestedProjects.SECOND_PROPERTY_NAME, secondPropertyNameToken.TextSpan.GetText());
+                var secondPropertyAssociatedNameToken = (AssociatedNameToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(TestDataGlobalSectionNestedProjects.SECOND_PROPERTY_NAME, secondPropertyAssociatedNameToken.TextSpan.GetText());
 
-                var secondPropertyValueToken = (IdentifierToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(TestDataGlobalSectionNestedProjects.SECOND_PROPERTY_VALUE, secondPropertyValueToken.TextSpan.GetText());
+                var secondPropertyAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(TestDataGlobalSectionNestedProjects.SECOND_PROPERTY_VALUE, secondPropertyAssociatedValueToken.TextSpan.GetText());
 
-                var endToken = (KeywordToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(LexSolutionFacts.GlobalSection.END_TOKEN, endToken.TextSpan.GetText());
+                var endCloseAssociatedGroupToken = (CloseAssociatedGroupToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(LexSolutionFacts.GlobalSection.END_TOKEN, endCloseAssociatedGroupToken.TextSpan.GetText());
             }
 
             // GlobalSection(ExtensibilityGlobals)
             {
-                var startToken = (KeywordToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(LexSolutionFacts.GlobalSection.START_TOKEN, startToken.TextSpan.GetText());
+                var startOpenAssociatedGroupToken = (OpenAssociatedGroupToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(LexSolutionFacts.GlobalSection.START_TOKEN, startOpenAssociatedGroupToken.TextSpan.GetText());
 
-                var startParameterToken = (KeywordToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(LexSolutionFacts.GlobalSectionExtensibilityGlobals.START_TOKEN, startParameterToken.TextSpan.GetText());
+                var startParameterAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(LexSolutionFacts.GlobalSectionExtensibilityGlobals.START_TOKEN, startParameterAssociatedValueToken.TextSpan.GetText());
 
-                var startOrderToken = (KeywordToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(TestDataGlobalSectionExtensibilityGlobals.START_TOKEN_ORDER, startOrderToken.TextSpan.GetText());
+                var startOrderAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(TestDataGlobalSectionExtensibilityGlobals.START_TOKEN_ORDER, startOrderAssociatedValueToken.TextSpan.GetText());
 
-                var firstPropertyNameToken = (IdentifierToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(TestDataGlobalSectionExtensibilityGlobals.FIRST_PROPERTY_NAME, firstPropertyNameToken.TextSpan.GetText());
+                var firstPropertyAssociatedNameToken = (AssociatedNameToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(TestDataGlobalSectionExtensibilityGlobals.FIRST_PROPERTY_NAME, firstPropertyAssociatedNameToken.TextSpan.GetText());
 
-                var firstPropertyValueToken = (IdentifierToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(TestDataGlobalSectionExtensibilityGlobals.FIRST_PROPERTY_VALUE, firstPropertyValueToken.TextSpan.GetText());
+                var firstPropertyAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(TestDataGlobalSectionExtensibilityGlobals.FIRST_PROPERTY_VALUE, firstPropertyAssociatedValueToken.TextSpan.GetText());
 
-                var endToken = (KeywordToken)lexer.SyntaxTokens[i++];
-                Assert.Equal(LexSolutionFacts.GlobalSection.END_TOKEN, endToken.TextSpan.GetText());
+                var endCloseAssociatedGroupToken = (CloseAssociatedGroupToken)lexer.SyntaxTokens[i++];
+                Assert.Equal(LexSolutionFacts.GlobalSection.END_TOKEN, endCloseAssociatedGroupToken.TextSpan.GetText());
             }
 
-            var globalEndToken = (KeywordToken)lexer.SyntaxTokens[i++];
-            Assert.Equal(LexSolutionFacts.Global.END_TOKEN, globalEndToken.TextSpan.GetText());
+            var globalEndCloseAssociatedGroupToken = (CloseAssociatedGroupToken)lexer.SyntaxTokens[i++];
+            Assert.Equal(LexSolutionFacts.Global.END_TOKEN, globalEndCloseAssociatedGroupToken.TextSpan.GetText());
         }
 
         var endOfFileToken = (EndOfFileToken)lexer.SyntaxTokens[i++];

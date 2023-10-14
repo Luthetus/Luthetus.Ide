@@ -6,8 +6,8 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
-using Luthetus.CompilerServices.Lang.DotNetSolution.Obsolete.RewriteForImmutability;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
@@ -66,7 +66,7 @@ public partial class DotNetSolutionSync
         return new WithAction(dotNetSolutionState =>
         {
             var indexOfSln = dotNetSolutionState.DotNetSolutionsBag.FindIndex(
-                sln => sln.DotNetSolutionModelKey == dotNetSolutionModelKey);
+                sln => sln.Key == dotNetSolutionModelKey);
 
             if (indexOfSln == -1)
                 return dotNetSolutionState;

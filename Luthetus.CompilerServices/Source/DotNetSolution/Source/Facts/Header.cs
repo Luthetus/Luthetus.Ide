@@ -1,4 +1,6 @@
-﻿namespace Luthetus.CompilerServices.Lang.DotNetSolution.Facts;
+﻿using System.Collections.Immutable;
+
+namespace Luthetus.CompilerServices.Lang.DotNetSolution.Facts;
 
 public partial class LexSolutionFacts
 {
@@ -15,5 +17,13 @@ public partial class LexSolutionFacts
 
         public const string MINIMUM_VISUAL_STUDIO_VERSION_START_TOKEN =
             @"MinimumVisualStudioVersion =";
+
+        public static readonly ImmutableArray<string> WellKnownAssociatedNamesBag = new[]
+        {
+            FORMAT_VERSION_START_TOKEN,
+            HASHTAG_VISUAL_STUDIO_VERSION_START_TOKEN,
+            EXACT_VISUAL_STUDIO_VERSION_START_TOKEN,
+            MINIMUM_VISUAL_STUDIO_VERSION_START_TOKEN,
+        }.ToImmutableArray();
     }
 }

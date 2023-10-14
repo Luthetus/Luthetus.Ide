@@ -1,8 +1,8 @@
-using Luthetus.CompilerServices.Lang.DotNetSolution;
+using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
 
 namespace Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 
 public interface ITreeViewSolutionFolderRendererType
 {
-    public DotNetSolutionFolder DotNetSolutionFolder { get; set; }
+    public SolutionFolder DotNetSolutionFolder { get; set; }
 }

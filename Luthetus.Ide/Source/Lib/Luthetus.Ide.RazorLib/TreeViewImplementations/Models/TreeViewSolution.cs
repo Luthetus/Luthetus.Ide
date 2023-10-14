@@ -4,7 +4,7 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
-using Luthetus.CompilerServices.Lang.DotNetSolution.Obsolete.RewriteForImmutability;
+using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 
@@ -36,11 +36,11 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolutionModel>
         if (obj is not TreeViewSolution treeViewSolution)
             return false;
 
-        return treeViewSolution.Item.NamespacePath.AbsolutePath.FormattedInput ==
-               Item.NamespacePath.AbsolutePath.FormattedInput;
+        return treeViewSolution.Item.AbsolutePath.FormattedInput ==
+               Item.AbsolutePath.FormattedInput;
     }
 
-    public override int GetHashCode() => Item.NamespacePath.AbsolutePath.FormattedInput.GetHashCode();
+    public override int GetHashCode() => Item.AbsolutePath.FormattedInput.GetHashCode();
 
     public override TreeViewRenderer GetTreeViewRenderer()
     {

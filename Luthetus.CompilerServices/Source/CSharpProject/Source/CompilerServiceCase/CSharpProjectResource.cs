@@ -19,7 +19,7 @@ public class CSharpProjectResource : ICompilerServiceResource
     public CSharpProjectCompilerService DotNetCompilerService { get; }
     public CompilationUnit? CompilationUnit { get; internal set; }
     public ImmutableArray<ISyntaxToken>? SyntaxTokens { get; internal set; }
-    public DotNetSolution.CSharp.CSharpProject? CSharpProject { get; set; }
+    public DotNetSolution.Models.Project.CSharpProject? CSharpProject { get; set; }
 
     public ImmutableArray<TextEditorTextSpan> SyntacticTextSpans { get; set; } = ImmutableArray<TextEditorTextSpan>.Empty;
     public ImmutableArray<ITextEditorSymbol> Symbols => GetSymbols();

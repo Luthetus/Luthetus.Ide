@@ -1,6 +1,5 @@
 ﻿using Fluxor;
 using Fluxor.Blazor.Web.Components;
-using Luthetus.CompilerServices.Lang.DotNetSolution;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.Nugets.States;
@@ -8,6 +7,7 @@ using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Nugets.Models;
+using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
 
 namespace Luthetus.Ide.RazorLib.Nugets.Displays;
 
@@ -50,7 +50,7 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
 
         if (projectIdGuid != Guid.Empty)
         {
-            selectedProject = dotNetSolutionState.DotNetSolutionModel.DotNetProjects
+            selectedProject = dotNetSolutionState.DotNetSolutionModel.DotNetProjectBag
                 .SingleOrDefault(x => x.ProjectIdGuid == projectIdGuid);
         }
 
@@ -70,7 +70,7 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
         if (dotNetSolutionState.DotNetSolutionModel is null || nuGetPackageManagerState.SelectedProjectToModify is null)
             return false;
 
-        return dotNetSolutionState.DotNetSolutionModel.DotNetProjects.Any(
+        return dotNetSolutionState.DotNetSolutionModel.DotNetProjectBag.Any(
             x => x.ProjectIdGuid == nuGetPackageManagerState.SelectedProjectToModify.ProjectIdGuid);
     }
 

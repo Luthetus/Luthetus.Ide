@@ -3,8 +3,8 @@ using System.Collections.Immutable;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.CompilerServices.Lang.DotNetSolution.Obsolete.RewriteForImmutability;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
@@ -32,7 +32,7 @@ public partial record DotNetSolutionState(
     public ImmutableList<DotNetSolutionModel> DotNetSolutionsBag { get; init; } = ImmutableList<DotNetSolutionModel>.Empty;
 
     public DotNetSolutionModel? DotNetSolutionModel => DotNetSolutionsBag.FirstOrDefault(x =>
-        x.DotNetSolutionModelKey == DotNetSolutionModelKey);
+        x.Key == DotNetSolutionModelKey);
 
     public static void ShowInputFile(DotNetSolutionSync sync)
     {

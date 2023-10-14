@@ -1,5 +1,5 @@
-using Luthetus.CompilerServices.Lang.DotNetSolution.Code;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Facts;
+using Luthetus.CompilerServices.Lang.DotNetSolution.SyntaxActors;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Tests.TestData;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
@@ -10,7 +10,7 @@ public class GlobalSectionDoesLex
     [Fact]
     public void START_TOKEN_DOES_LEX()
     {
-        var lexer = new TestDotNetSolutionLexer(
+        var lexer = new DotNetSolutionLexer(
             new(string.Empty),
             LexSolutionFacts.GlobalSection.START_TOKEN);
 
@@ -18,9 +18,11 @@ public class GlobalSectionDoesLex
 
         Assert.Single(lexer.SyntaxTokens);
 
-        var startToken = (KeywordToken)lexer.SyntaxTokens[0];
+        var i = 0;
 
-        Assert.Equal(LexSolutionFacts.GlobalSection.START_TOKEN, startToken.TextSpan.GetText());
+        var startOpenAssociatedGroupToken = (OpenAssociatedGroupToken)lexer.SyntaxTokens[i++];
+
+        Assert.Equal(LexSolutionFacts.GlobalSection.START_TOKEN, startOpenAssociatedGroupToken.TextSpan.GetText());
     }
 
     [Fact]
@@ -28,7 +30,7 @@ public class GlobalSectionDoesLex
     {
         var sourceText = $"{LexSolutionFacts.GlobalSection.START_TOKEN}({TestDataGlobalSection.START_TOKEN_PARAMETER})";
 
-        var lexer = new TestDotNetSolutionLexer(
+        var lexer = new DotNetSolutionLexer(
             new(string.Empty),
             sourceText);
 
@@ -36,18 +38,20 @@ public class GlobalSectionDoesLex
 
         Assert.Equal(2, lexer.SyntaxTokens.Length);
 
-        var startToken = (KeywordToken)lexer.SyntaxTokens[0];
-        var startParameterToken = (KeywordToken)lexer.SyntaxTokens[1];
+        var i = 0;
 
-        Assert.Equal(LexSolutionFacts.GlobalSection.START_TOKEN, startToken.TextSpan.GetText());
-        Assert.Equal(TestDataGlobalSection.START_TOKEN_PARAMETER, startParameterToken.TextSpan.GetText());
+        var startOpenAssociatedGroupToken = (OpenAssociatedGroupToken)lexer.SyntaxTokens[i++];
+        var startAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+
+        Assert.Equal(LexSolutionFacts.GlobalSection.START_TOKEN, startOpenAssociatedGroupToken.TextSpan.GetText());
+        Assert.Equal(TestDataGlobalSection.START_TOKEN_PARAMETER, startAssociatedValueToken.TextSpan.GetText());
     }
 
     [Fact]
     public void START_TOKEN_ORDER_DOES_LEX()
     {
         var sourceText = $"{LexSolutionFacts.GlobalSection.START_TOKEN}({TestDataGlobalSection.START_TOKEN_PARAMETER}) = {TestDataGlobalSection.START_TOKEN_ORDER}";
-        var lexer = new TestDotNetSolutionLexer(
+        var lexer = new DotNetSolutionLexer(
             new(string.Empty),
             sourceText);
 
@@ -55,20 +59,22 @@ public class GlobalSectionDoesLex
 
         Assert.Equal(3, lexer.SyntaxTokens.Length);
 
-        var startToken = (KeywordToken)lexer.SyntaxTokens[0];
-        var startParameterToken = (KeywordToken)lexer.SyntaxTokens[1];
-        var startOrderToken = (KeywordToken)lexer.SyntaxTokens[2];
+        var i = 0;
 
-        Assert.Equal(LexSolutionFacts.GlobalSection.START_TOKEN, startToken.TextSpan.GetText());
-        Assert.Equal(TestDataGlobalSection.START_TOKEN_PARAMETER, startParameterToken.TextSpan.GetText());
-        Assert.Equal(TestDataGlobalSection.START_TOKEN_ORDER, startOrderToken.TextSpan.GetText());
+        var startOpenAssociatedGroupToken = (OpenAssociatedGroupToken)lexer.SyntaxTokens[i++];
+        var startParameterAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+        var startOrderAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+
+        Assert.Equal(LexSolutionFacts.GlobalSection.START_TOKEN, startOpenAssociatedGroupToken.TextSpan.GetText());
+        Assert.Equal(TestDataGlobalSection.START_TOKEN_PARAMETER, startParameterAssociatedValueToken.TextSpan.GetText());
+        Assert.Equal(TestDataGlobalSection.START_TOKEN_ORDER, startOrderAssociatedValueToken.TextSpan.GetText());
     }
 
     [Fact]
     public void FULL_DOES_LEX()
     {
         var sourceText = $"{LexSolutionFacts.GlobalSection.START_TOKEN}({TestDataGlobalSection.START_TOKEN_PARAMETER}) = {TestDataGlobalSection.START_TOKEN_ORDER}\n{LexSolutionFacts.GlobalSection.END_TOKEN}";
-        var lexer = new TestDotNetSolutionLexer(
+        var lexer = new DotNetSolutionLexer(
             new(string.Empty),
             sourceText);
 
@@ -76,14 +82,16 @@ public class GlobalSectionDoesLex
 
         Assert.Equal(4, lexer.SyntaxTokens.Length);
 
-        var startToken = (KeywordToken)lexer.SyntaxTokens[0];
-        var startParameterToken = (KeywordToken)lexer.SyntaxTokens[1];
-        var startOrderToken = (KeywordToken)lexer.SyntaxTokens[2];
-        var endToken = (KeywordToken)lexer.SyntaxTokens[3];
+        var i = 0;
 
-        Assert.Equal(LexSolutionFacts.GlobalSection.START_TOKEN, startToken.TextSpan.GetText());
-        Assert.Equal(TestDataGlobalSection.START_TOKEN_PARAMETER, startParameterToken.TextSpan.GetText());
-        Assert.Equal(TestDataGlobalSection.START_TOKEN_ORDER, startOrderToken.TextSpan.GetText());
-        Assert.Equal(LexSolutionFacts.GlobalSection.END_TOKEN, endToken.TextSpan.GetText());
+        var startOpenAssociatedGroupToken = (OpenAssociatedGroupToken)lexer.SyntaxTokens[i++];
+        var startParameterAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+        var startOrderAssociatedValueToken = (AssociatedValueToken)lexer.SyntaxTokens[i++];
+        var endCloseAssociatedGroupToken = (CloseAssociatedGroupToken)lexer.SyntaxTokens[i++];
+
+        Assert.Equal(LexSolutionFacts.GlobalSection.START_TOKEN, startOpenAssociatedGroupToken.TextSpan.GetText());
+        Assert.Equal(TestDataGlobalSection.START_TOKEN_PARAMETER, startParameterAssociatedValueToken.TextSpan.GetText());
+        Assert.Equal(TestDataGlobalSection.START_TOKEN_ORDER, startOrderAssociatedValueToken.TextSpan.GetText());
+        Assert.Equal(LexSolutionFacts.GlobalSection.END_TOKEN, endCloseAssociatedGroupToken.TextSpan.GetText());
     }
 }

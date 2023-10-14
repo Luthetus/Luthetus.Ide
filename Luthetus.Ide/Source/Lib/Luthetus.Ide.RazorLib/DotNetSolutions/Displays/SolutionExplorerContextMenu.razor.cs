@@ -23,8 +23,8 @@ using Luthetus.Ide.RazorLib.Menus.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.CompilerServices.Lang.DotNetSolution.Obsolete.RewriteForImmutability;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 
@@ -307,7 +307,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             {
                 {
                     nameof(CSharpProjectFormDisplay.DotNetSolutionModelKey),
-                    dotNetSolutionModel.DotNetSolutionModelKey
+                    dotNetSolutionModel.Key
                 },
             },
             null)
@@ -369,7 +369,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             {
                 {
                     nameof(SolutionEditorDisplay.DotNetSolutionModelKey),
-                    dotNetSolutionModel.DotNetSolutionModelKey
+                    dotNetSolutionModel.Key
                 },
                 {
                     nameof(SolutionEditorDisplay.DotNetSolutionResourceUri),

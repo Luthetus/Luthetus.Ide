@@ -18,8 +18,8 @@ using Luthetus.Ide.RazorLib.CSharpProjectForms.Models;
 using Luthetus.Ide.RazorLib.Installations.Models;
 using Luthetus.Ide.RazorLib.WebsiteProjectTemplates.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.CompilerServices.Lang.DotNetSolution.Obsolete.RewriteForImmutability;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
 
 namespace Luthetus.Ide.RazorLib.CSharpProjectForms.Displays;
 
@@ -57,7 +57,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     private CSharpProjectFormViewModel _viewModel = null!;
 
     private DotNetSolutionModel? DotNetSolutionModel => DotNetSolutionStateWrap.Value.DotNetSolutionsBag.FirstOrDefault(
-        x => x.DotNetSolutionModelKey == DotNetSolutionModelKey);
+        x => x.Key == DotNetSolutionModelKey);
 
     protected override void OnInitialized()
     {
@@ -291,7 +291,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         var cSharpAbsolutePath = new AbsolutePath(cSharpProjectAbsolutePathString, false, EnvironmentProvider);
 
         DotNetSolutionSync.AddExistingProjectToSolution(
-            immutableView.DotNetSolutionModel.DotNetSolutionModelKey,
+            immutableView.DotNetSolutionModel.Key,
             immutableView.ProjectTemplateShortNameValue,
             immutableView.CSharpProjectNameValue,
             cSharpAbsolutePath,
