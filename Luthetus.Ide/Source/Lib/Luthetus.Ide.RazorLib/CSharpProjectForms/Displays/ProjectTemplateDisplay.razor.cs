@@ -1,4 +1,4 @@
-using Luthetus.Ide.RazorLib.WebsiteProjectTemplates.Models;
+using Luthetus.Ide.RazorLib.Websites.ProjectTemplates.Models;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.CSharpProjectForms.Displays;
