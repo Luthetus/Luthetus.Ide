@@ -1,4 +1,4 @@
-﻿using Luthetus.Ide.RazorLib.WebsiteProjectTemplates.Models;
+﻿using Luthetus.Ide.RazorLib.Websites.ProjectTemplates.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Text;

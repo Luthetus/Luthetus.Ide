@@ -7,10 +7,11 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Ide.RazorLib.WebsiteProjectTemplates.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.SyntaxActors;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
+using Luthetus.Ide.RazorLib.Websites.ProjectTemplates.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
@@ -48,18 +49,15 @@ public partial class DotNetSolutionSync
             null,
             cSharpProjectAbsolutePath);
 
-        var outDotNetProjectBag = inDotNetSolutionModel.DotNetProjectBag.Add(cSharpProject);
+        var dotNetSolutionModelBuilder = new DotNetSolutionModelBuilder(inDotNetSolutionModel);
 
-        var outDotNetSolutionModel = inDotNetSolutionModel with
-        {
-            DotNetProjectBag = outDotNetProjectBag
-        };
+        dotNetSolutionModelBuilder.AddDotNetProject(cSharpProject, environmentProvider);
 
-        // TODO: WriteAllTextAsync for the new .sln file
-        //
-        //await _fileSystemProvider.File.WriteAllTextAsync(
-        //    outDotNetSolutionModel.NamespacePath.AbsolutePath.FormattedInput,
-        //    outDotNetSolutionModel..SolutionFileContents);
+        var outDotNetSolutionModel = dotNetSolutionModelBuilder.Build();
+
+        await _fileSystemProvider.File.WriteAllTextAsync(
+            outDotNetSolutionModel.NamespacePath.AbsolutePath.FormattedInput,
+            outDotNetSolutionModel.SolutionFileContents);
 
         var solutionTextEditorModel = _textEditorService.Model.FindOrDefaultByResourceUri(
             new ResourceUri(inDotNetSolutionModel.NamespacePath.AbsolutePath.FormattedInput));
@@ -68,7 +66,7 @@ public partial class DotNetSolutionSync
         {
             Dispatcher.Dispatch(new TextEditorModelState.ReloadAction(
                 solutionTextEditorModel.ResourceUri,
-                inDotNetSolutionModel.SolutionFileContents,
+                outDotNetSolutionModel.SolutionFileContents,
                 DateTime.UtcNow));
         }
 
@@ -143,6 +141,12 @@ public partial class DotNetSolutionSync
         Dispatcher.Dispatch(ConstructModelReplacement(
             dotNetSolutionModel.Key,
             dotNetSolutionModel));
+
+        var dotNetSolutionCompilerService = _interfaceCompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.DOT_NET_SOLUTION);
+
+        dotNetSolutionCompilerService.ResourceWasModified(
+            new ResourceUri(solutionAbsolutePath.FormattedInput),
+            ImmutableArray<TextEditorTextSpan>.Empty);
 
         await SetDotNetSolutionTreeViewAsync(dotNetSolutionModel.Key);
     }

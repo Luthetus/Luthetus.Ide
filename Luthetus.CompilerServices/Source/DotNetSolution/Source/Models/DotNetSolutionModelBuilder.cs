@@ -1,6 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
+using Luthetus.CompilerServices.Lang.DotNetSolution.Facts;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
@@ -29,6 +30,17 @@ public record DotNetSolutionModelBuilder : IDotNetSolution
         NestedProjectEntryBag = nestedProjectEntryBag;
         DotNetSolutionGlobal = dotNetSolutionGlobal;
         SolutionFileContents = solutionFileContents;
+    }
+
+    public DotNetSolutionModelBuilder(DotNetSolutionModel dotNetSolutionModel)
+    {
+        AbsolutePath = dotNetSolutionModel.AbsolutePath;
+        DotNetSolutionHeader = dotNetSolutionModel.DotNetSolutionHeader;
+        DotNetProjectBag = dotNetSolutionModel.DotNetProjectBag;
+        SolutionFolderBag = dotNetSolutionModel.SolutionFolderBag;
+        NestedProjectEntryBag = dotNetSolutionModel.NestedProjectEntryBag;
+        DotNetSolutionGlobal = dotNetSolutionModel.DotNetSolutionGlobal;
+        SolutionFileContents = dotNetSolutionModel.SolutionFileContents;
     }
 
     public Key<DotNetSolutionModel> Key { get; init; }
@@ -65,6 +77,7 @@ public record DotNetSolutionModelBuilder : IDotNetSolution
         lock (_tokensLock)
         {
             IDotNetProject? newProjectToken = null;
+            var allTokens = GetAllTokens();
 
             if (DotNetProjectBag.Any())
             {
@@ -90,30 +103,34 @@ public record DotNetSolutionModelBuilder : IDotNetSolution
                 if (lastValidProjectToken is null || lastValidProjectToken.CloseAssociatedGroupToken is null)
                     return this;
 
-                // TODO: The string is being inserted 1 character too early. This relates to the StringWalker logic and when StringWalker.ReadCharacter() gets invoked, vs. using StringWalker.CurrentCharacter. This method needs changed so there isn't a seemingly out of nowehere offset by 1 (2023-08-29)
-                var offsetDueToStringReaderNotHavingReadYet = 1;
+                var openStartingIndexInclusive =
+                    lastValidProjectToken.CloseAssociatedGroupToken.TextSpan.EndingIndexExclusive;
 
-                var newProjectTextSpanStartingIndexInclusive = lastValidProjectToken.CloseAssociatedGroupToken.TextSpan.EndingIndexExclusive + offsetDueToStringReaderNotHavingReadYet;
+                var openEndingIndexExclusive = openStartingIndexInclusive +
+                    LexSolutionFacts.Project.PROJECT_DEFINITION_START_TOKEN.Length;
 
-                var newProjectTextSpan = lastValidProjectToken.CloseAssociatedGroupToken.TextSpan with
+                var openTextSpan = lastValidProjectToken.CloseAssociatedGroupToken.TextSpan with
                 {
-                    StartingIndexInclusive = newProjectTextSpanStartingIndexInclusive,
-                    EndingIndexExclusive = newProjectTextSpanStartingIndexInclusive + solutionProjectEntry.Length
+                    StartingIndexInclusive = openStartingIndexInclusive,
+                    EndingIndexExclusive = openEndingIndexExclusive + solutionProjectEntry.Length
                 };
+                
+                dotNetProject.OpenAssociatedGroupToken = new OpenAssociatedGroupToken(openTextSpan);
+                
+                var closeEndingIndexExclusive =
+                    lastValidProjectToken.CloseAssociatedGroupToken.TextSpan.EndingIndexExclusive +
+                    solutionProjectEntry.Length;
 
+                var closeStartingIndexInclusive = closeEndingIndexExclusive -
+                    LexSolutionFacts.Project.PROJECT_DEFINITION_END_TOKEN.Length;
 
-                if (dotNetProject.CloseAssociatedGroupToken is null)
+                var closeTextSpan = lastValidProjectToken.CloseAssociatedGroupToken.TextSpan with
                 {
-                    dotNetProject.CloseAssociatedGroupToken = new CloseAssociatedGroupToken(
-                        newProjectTextSpan);
-                }
-                else
-                {
-                    dotNetProject.CloseAssociatedGroupToken = dotNetProject.CloseAssociatedGroupToken with
-                    {
-                        TextSpan = newProjectTextSpan
-                    };
-                }
+                    StartingIndexInclusive = closeStartingIndexInclusive,
+                    EndingIndexExclusive = closeEndingIndexExclusive
+                };
+                
+                dotNetProject.CloseAssociatedGroupToken = new CloseAssociatedGroupToken(closeTextSpan);
 
                 newProjectToken = dotNetProject;
             }
@@ -132,18 +149,8 @@ public record DotNetSolutionModelBuilder : IDotNetSolution
                     EndingIndexExclusive = newProjectTextSpanStartingIndexInclusive + solutionProjectEntry.Length
                 };
 
-                if (dotNetProject.CloseAssociatedGroupToken is null)
-                {
-                    dotNetProject.CloseAssociatedGroupToken = new CloseAssociatedGroupToken(
-                        newProjectTextSpan);
-                }
-                else
-                {
-                    dotNetProject.CloseAssociatedGroupToken = dotNetProject.CloseAssociatedGroupToken with
-                    {
-                        TextSpan = newProjectTextSpan
-                    };
-                }
+                dotNetProject.OpenAssociatedGroupToken = new OpenAssociatedGroupToken(newProjectTextSpan);
+                dotNetProject.CloseAssociatedGroupToken = new CloseAssociatedGroupToken(newProjectTextSpan);
 
                 newProjectToken = dotNetProject;
             }
@@ -151,10 +158,12 @@ public record DotNetSolutionModelBuilder : IDotNetSolution
             DotNetProjectBag = DotNetProjectBag.Add(newProjectToken);
 
             SolutionFileContents = SolutionFileContents.Insert(
-                newProjectToken.CloseAssociatedGroupToken.TextSpan.StartingIndexInclusive,
+                newProjectToken.OpenAssociatedGroupToken.TextSpan.StartingIndexInclusive,
                 solutionProjectEntry);
 
-            UnsafeShiftTextAfterInsertion(newProjectToken.CloseAssociatedGroupToken.TextSpan);
+            UnsafeShiftTextAfterInsertion(
+                allTokens,
+                newProjectToken.OpenAssociatedGroupToken.TextSpan);
         }
 
         return this;
@@ -174,13 +183,13 @@ EndProject
 ";
     }
 
-    private void UnsafeShiftTextAfterInsertion(TextEditorTextSpan insertedTextSpan)
+    private void UnsafeShiftTextAfterInsertion(
+        ImmutableArray<(ISyntaxToken token, Func<ISyntaxToken, TextEditorTextSpan, ISyntaxToken?> withFunc)> tokenTuplesToShift,
+        TextEditorTextSpan insertedTextSpan)
     {
-        var allTokens = GetAllTokens();
-
-        for (int i = 0; i < allTokens.Length; i++)
+        for (int i = 0; i < tokenTuplesToShift.Length; i++)
         {
-            var tokenTuple = allTokens[i];
+            var tokenTuple = tokenTuplesToShift[i];
 
             if (tokenTuple.token.TextSpan.StartingIndexInclusive >= insertedTextSpan.StartingIndexInclusive)
             {

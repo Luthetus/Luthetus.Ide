@@ -8,6 +8,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
@@ -20,6 +21,7 @@ public partial class DotNetSolutionSync
     private readonly ITreeViewService _treeViewService;
     private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
     private readonly ITextEditorService _textEditorService;
+    private readonly ICompilerServiceRegistry _interfaceCompilerServiceRegistry;
 
     public DotNetSolutionSync(
         IFileSystemProvider fileSystemProvider,
@@ -31,6 +33,7 @@ public partial class DotNetSolutionSync
         ITextEditorService textEditorService,
         InputFileSync inputFileSync,
         IBackgroundTaskService backgroundTaskService,
+        ICompilerServiceRegistry interfaceCompilerServiceRegistry,
         IDispatcher dispatcher)
     {
         _fileSystemProvider = fileSystemProvider;
@@ -43,6 +46,7 @@ public partial class DotNetSolutionSync
         
         InputFileSync = inputFileSync;
         BackgroundTaskService = backgroundTaskService;
+        _interfaceCompilerServiceRegistry = interfaceCompilerServiceRegistry;
         Dispatcher = dispatcher;
     }
 
