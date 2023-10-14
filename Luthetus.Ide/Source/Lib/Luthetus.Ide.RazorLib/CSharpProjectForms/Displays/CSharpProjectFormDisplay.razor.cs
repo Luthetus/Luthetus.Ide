@@ -20,6 +20,7 @@ using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
 using Luthetus.Ide.RazorLib.Websites.ProjectTemplates.Models;
+using Luthetus.Ide.RazorLib.Websites;
 
 namespace Luthetus.Ide.RazorLib.CSharpProjectForms.Displays;
 
@@ -250,51 +251,14 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
         }
         else
         {
-            await Website_StartNewCSharpProjectCommandOnClick(immutableView);
+            await WebsiteDotNetCliHelper.StartNewCSharpProjectCommand(
+                immutableView,
+                EnvironmentProvider,
+                FileSystemProvider,
+                DotNetSolutionSync,
+                Dispatcher,
+                DialogRecord,
+                LuthetusCommonComponentRenderers);
         }
-    }
-
-    private async Task Website_StartNewCSharpProjectCommandOnClick(
-        CSharpProjectFormViewModelImmutable immutableView)
-    {
-        var directoryContainingProject = EnvironmentProvider
-            .JoinPaths(immutableView.ParentDirectoryNameValue, immutableView.CSharpProjectNameValue) +
-            EnvironmentProvider.DirectorySeparatorChar;
-
-        await FileSystemProvider.Directory.CreateDirectoryAsync(directoryContainingProject);
-
-        var localCSharpProjectNameWithExtension = immutableView.CSharpProjectNameValue +
-            '.' +
-            ExtensionNoPeriodFacts.C_SHARP_PROJECT;
-
-        var cSharpProjectAbsolutePathString = EnvironmentProvider.JoinPaths(
-            directoryContainingProject,
-            localCSharpProjectNameWithExtension);
-
-        await WebsiteProjectTemplateFacts.HandleNewCSharpProjectAsync(
-            immutableView.ProjectTemplateShortNameValue,
-            cSharpProjectAbsolutePathString,
-            FileSystemProvider,
-            EnvironmentProvider);
-
-        Website_AddExistingProjectToSolution(immutableView, cSharpProjectAbsolutePathString);
-
-        // Close Dialog
-        Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.Key));
-        NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", LuthetusCommonComponentRenderers, Dispatcher);
-    }
-
-    private void Website_AddExistingProjectToSolution(
-        CSharpProjectFormViewModelImmutable immutableView,
-        string cSharpProjectAbsolutePathString)
-    {
-        var cSharpAbsolutePath = new AbsolutePath(cSharpProjectAbsolutePathString, false, EnvironmentProvider);
-
-        DotNetSolutionSync.AddExistingProjectToSolution(
-            immutableView.DotNetSolutionModel.Key,
-            immutableView.ProjectTemplateShortNameValue,
-            immutableView.CSharpProjectNameValue,
-            cSharpAbsolutePath,
-            EnvironmentProvider);
     }
 }

@@ -48,18 +48,15 @@ public partial class DotNetSolutionSync
             null,
             cSharpProjectAbsolutePath);
 
-        var outDotNetProjectBag = inDotNetSolutionModel.DotNetProjectBag.Add(cSharpProject);
+        var dotNetSolutionModelBuilder = new DotNetSolutionModelBuilder(inDotNetSolutionModel);
 
-        var outDotNetSolutionModel = inDotNetSolutionModel with
-        {
-            DotNetProjectBag = outDotNetProjectBag
-        };
+        dotNetSolutionModelBuilder.AddDotNetProject(cSharpProject, environmentProvider);
 
-        // TODO: WriteAllTextAsync for the new .sln file
-        //
-        //await _fileSystemProvider.File.WriteAllTextAsync(
-        //    outDotNetSolutionModel.NamespacePath.AbsolutePath.FormattedInput,
-        //    outDotNetSolutionModel..SolutionFileContents);
+        var outDotNetSolutionModel = dotNetSolutionModelBuilder.Build();
+
+        await _fileSystemProvider.File.WriteAllTextAsync(
+            outDotNetSolutionModel.NamespacePath.AbsolutePath.FormattedInput,
+            outDotNetSolutionModel.SolutionFileContents);
 
         var solutionTextEditorModel = _textEditorService.Model.FindOrDefaultByResourceUri(
             new ResourceUri(inDotNetSolutionModel.NamespacePath.AbsolutePath.FormattedInput));
@@ -68,7 +65,7 @@ public partial class DotNetSolutionSync
         {
             Dispatcher.Dispatch(new TextEditorModelState.ReloadAction(
                 solutionTextEditorModel.ResourceUri,
-                inDotNetSolutionModel.SolutionFileContents,
+                outDotNetSolutionModel.SolutionFileContents,
                 DateTime.UtcNow));
         }
 

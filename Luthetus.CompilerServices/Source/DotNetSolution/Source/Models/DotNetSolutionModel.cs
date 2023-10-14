@@ -36,5 +36,4 @@ public record DotNetSolutionModel : IDotNetSolution
     public string SolutionFileContents { get; init; }
 
     public NamespacePath NamespacePath => new(string.Empty, AbsolutePath);
-
 }
