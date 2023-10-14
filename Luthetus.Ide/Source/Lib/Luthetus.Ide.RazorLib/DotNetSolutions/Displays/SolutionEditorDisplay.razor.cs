@@ -54,16 +54,6 @@ public partial class SolutionEditorDisplay : ComponentBase, IDisposable
         await base.OnParametersSetAsync();
     }
 
-    protected override void OnParametersSet()
-    {
-        //var model = TextEditorService.Model.FindOrDefaultByResourceUri(DotNetSolutionResourceUri);
-
-        //if (model is not null)
-        //    DotNetSolutionCompilerService.RegisterModel(model);
-
-        base.OnParametersSet();
-    }
-
     protected override void OnInitialized()
     {
         _compilerServiceRegistry = (CompilerServiceRegistry)InterfaceCompilerServiceRegistry;

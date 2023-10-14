@@ -11,6 +11,7 @@ using Luthetus.CompilerServices.Lang.DotNetSolution.SyntaxActors;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
 using Luthetus.Ide.RazorLib.Websites.ProjectTemplates.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
@@ -140,6 +141,12 @@ public partial class DotNetSolutionSync
         Dispatcher.Dispatch(ConstructModelReplacement(
             dotNetSolutionModel.Key,
             dotNetSolutionModel));
+
+        var dotNetSolutionCompilerService = _interfaceCompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.DOT_NET_SOLUTION);
+
+        dotNetSolutionCompilerService.ResourceWasModified(
+            new ResourceUri(solutionAbsolutePath.FormattedInput),
+            ImmutableArray<TextEditorTextSpan>.Empty);
 
         await SetDotNetSolutionTreeViewAsync(dotNetSolutionModel.Key);
     }
