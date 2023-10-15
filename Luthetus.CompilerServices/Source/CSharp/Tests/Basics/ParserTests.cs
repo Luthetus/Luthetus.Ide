@@ -739,13 +739,44 @@ public partial class ParserTests
     [Fact]
     public void PARSE_FunctionInvocationStatement_WITH_Argument_NumericLiteral()
     {
-        string sourceText = @"void WriteToConsole(int input){} WriteToConsole(31);".ReplaceLineEndings("\n");
+        var methodIdentifier = "WriteToConsole";
+        var methodInvocation = $"{methodIdentifier}(31);";
+        var sourceText = $@"void {methodIdentifier}(int input){{}} {methodInvocation}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
+
+        var topCodeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
+
+        var binder = (CSharpBinder)compilationUnit.Binder;
+
+        var indexForMethodInvocation = sourceText.IndexOf(methodInvocation);
+
+        var textSpanForMethodInvocation = new TextEditorTextSpan(
+            indexForMethodInvocation,
+            indexForMethodInvocation + methodInvocation.Length,
+            0,
+            resourceUri,
+            sourceText);
+
+        var boundScope = binder.GetBoundScope(textSpanForMethodInvocation);
+
+        var success = binder.TryGetFunctionHierarchically(
+            methodIdentifier,
+            out var functionDefinitionNode,
+            boundScope);
+
+        Assert.True(success);
+
+        // ASSERT:
+        // -------
+        // -The function 'WriteToConsole' exists
+        //     -A single argument exists for the function 'WriteToConsole'
+        //         -The single argument is of type 'int'
+
 
         throw new NotImplementedException();
     }
