@@ -147,7 +147,7 @@ public class CSharpBinder : IBinder
 
         literalExpressionNode = BindLiteralExpressionNode(literalExpressionNode);
 
-        if (literalExpressionNode.TypeClauseNode?.ValueType is null ||
+        if (literalExpressionNode.TypeClauseNode.ValueType is null ||
             literalExpressionNode.TypeClauseNode.ValueType != functionArgumentEntryNode.VariableDeclarationStatementNode.TypeClauseNode.ValueType)
         {
             var optionalArgumentTextSpan = functionArgumentEntryNode.VariableDeclarationStatementNode.TypeClauseNode.TypeIdentifier.TextSpan with
@@ -159,7 +159,7 @@ public class CSharpBinder : IBinder
                 optionalArgumentTextSpan,
                 functionArgumentEntryNode.VariableDeclarationStatementNode.IdentifierToken.TextSpan.GetText(),
                 functionArgumentEntryNode.VariableDeclarationStatementNode.TypeClauseNode.ValueType?.Name ?? "null",
-                literalExpressionNode.TypeClauseNode?.ValueType?.Name ?? "null");
+                literalExpressionNode.TypeClauseNode.ValueType?.Name ?? "null");
         }
 
         return new FunctionArgumentEntryNode(

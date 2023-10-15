@@ -387,7 +387,7 @@ public partial class ParserTests
         Assert.Single(topLevelStatementsCodeBlockNode.ChildBag);
 
         var literalExpressionNode = (LiteralExpressionNode)topLevelStatementsCodeBlockNode.ChildBag[0];
-        Assert.Equal(typeof(int), literalExpressionNode.TypeClauseNode?.ValueType);
+        Assert.Equal(typeof(int), literalExpressionNode.TypeClauseNode.ValueType);
         Assert.Equal(3, int.Parse(literalExpressionNode.LiteralSyntaxToken.TextSpan.GetText()));
     }
 
@@ -405,7 +405,7 @@ public partial class ParserTests
         var codeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
 
         var literalExpressionNode = (LiteralExpressionNode)codeBlockNode.ChildBag.Single();
-        Assert.Equal(typeof(string), literalExpressionNode.TypeClauseNode?.ValueType);
+        Assert.Equal(typeof(string), literalExpressionNode.TypeClauseNode.ValueType);
         Assert.Equal(sourceText, literalExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
     }
 
@@ -748,11 +748,8 @@ public partial class ParserTests
         lexer.Lex();
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
-
         var topCodeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
-
         var binder = (CSharpBinder)compilationUnit.Binder;
-
         var indexForMethodInvocation = sourceText.IndexOf(methodInvocation);
 
         var textSpanForMethodInvocation = new TextEditorTextSpan(
@@ -770,15 +767,18 @@ public partial class ParserTests
             boundScope);
 
         Assert.True(success);
+        Assert.NotNull(functionDefinitionNode);
 
-        // ASSERT:
-        // -------
-        // -The function 'WriteToConsole' exists
-        //     -A single argument exists for the function 'WriteToConsole'
-        //         -The single argument is of type 'int'
+        var functionInvocationNode = (FunctionInvocationNode)topCodeBlockNode.ChildBag[1];
 
+        var argument = functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeBag.Single();
+        var parameter = functionInvocationNode.FunctionParametersListingNode.FunctionParameterEntryNodeBag.Single();
 
-        throw new NotImplementedException();
+        Assert.Equal(typeof(int), argument.VariableDeclarationStatementNode.TypeClauseNode.ValueType);
+        Assert.Equal(typeof(int), parameter.ExpressionNode.TypeClauseNode.ValueType);
+        
+        Assert.True(argument.VariableDeclarationStatementNode.TypeClauseNode.ValueType ==
+            parameter.ExpressionNode.TypeClauseNode.ValueType);
     }
 
     [Fact]
@@ -798,15 +798,49 @@ public partial class ParserTests
     [Fact]
     public void PARSE_FunctionInvocationStatement_WITH_Argument_VariableReference()
     {
-        string sourceText = @"int x = 2; void WriteToConsole(int input){} WriteToConsole(x);".ReplaceLineEndings("\n");
+        var typeArgument = "int";
+        var variableIdentifier = "x";
+        var methodIdentifier = "WriteToConsole";
+        var methodInvocation = $"{methodIdentifier}(x);";
+        var sourceText = $@"{typeArgument} {variableIdentifier} = 2; void {methodIdentifier}({typeArgument} input){{}} {methodInvocation}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
+        var topCodeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
+        var binder = (CSharpBinder)compilationUnit.Binder;
 
-        throw new NotImplementedException();
+        var indexForMethodInvocation = sourceText.IndexOf(methodInvocation);
+
+        var textSpanForMethodInvocation = new TextEditorTextSpan(
+            indexForMethodInvocation,
+            indexForMethodInvocation + methodInvocation.Length,
+            0,
+            resourceUri,
+            sourceText);
+
+        var boundScope = binder.GetBoundScope(textSpanForMethodInvocation);
+
+        var success = binder.TryGetFunctionHierarchically(
+            methodIdentifier,
+            out var functionDefinitionNode,
+            boundScope);
+
+        Assert.True(success);
+        Assert.NotNull(functionDefinitionNode);
+
+        var functionInvocationNode = (FunctionInvocationNode)topCodeBlockNode.ChildBag[3];
+
+        var argument = functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeBag.Single();
+        var parameter = functionInvocationNode.FunctionParametersListingNode.FunctionParameterEntryNodeBag.Single();
+
+        Assert.Equal(typeof(int), argument.VariableDeclarationStatementNode.TypeClauseNode.ValueType);
+        Assert.Equal(typeof(int), parameter.ExpressionNode.TypeClauseNode.ValueType);
+
+        Assert.True(argument.VariableDeclarationStatementNode.TypeClauseNode.ValueType ==
+            parameter.ExpressionNode.TypeClauseNode.ValueType);
     }
 
     [Fact]
@@ -1008,10 +1042,10 @@ public partial class ParserTests
         var codeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
         Assert.Single(codeBlockNode.ChildBag);
 
-        var boundBinaryExpressionNode = (BinaryExpressionNode)codeBlockNode.ChildBag[0];
-        Assert.Equal(typeof(int), boundBinaryExpressionNode.LeftExpressionNode.TypeClauseNode?.ValueType);
-        Assert.Equal(typeof(int), boundBinaryExpressionNode.BinaryOperatorNode.TypeClauseNode.ValueType);
-        Assert.Equal(typeof(int), boundBinaryExpressionNode.RightExpressionNode.TypeClauseNode?.ValueType);
+        var binaryExpressionNode = (BinaryExpressionNode)codeBlockNode.ChildBag[0];
+        Assert.Equal(typeof(int), binaryExpressionNode.LeftExpressionNode.TypeClauseNode.ValueType);
+        Assert.Equal(typeof(int), binaryExpressionNode.BinaryOperatorNode.TypeClauseNode.ValueType);
+        Assert.Equal(typeof(int), binaryExpressionNode.RightExpressionNode.TypeClauseNode.ValueType);
     }
 
     [Fact]
