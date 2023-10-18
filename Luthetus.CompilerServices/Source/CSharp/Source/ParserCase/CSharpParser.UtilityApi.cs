@@ -105,8 +105,7 @@ public partial class CSharpParser : IParser
         /// <summary>
         /// The keywords: 'string', 'bool' 'int' and etc... are keywords, but identify a type.
         /// </summary>
-        public bool IsTypeIdentifierKeywordSyntaxKind(
-            SyntaxKind syntaxKind)
+        public bool IsTypeIdentifierKeywordSyntaxKind(SyntaxKind syntaxKind)
         {
             switch (syntaxKind)
             {

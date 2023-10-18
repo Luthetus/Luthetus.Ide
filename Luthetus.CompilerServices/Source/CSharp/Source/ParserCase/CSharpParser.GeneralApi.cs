@@ -5,6 +5,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Statement;
+using Luthetus.CompilerServices.Lang.CSharp.Facts;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 
@@ -83,6 +84,38 @@ public partial class CSharpParser : IParser
 
         public void ParseIdentifierToken(IdentifierToken identifierToken)
         {
+            if (NodeRecent is not null && NodeRecent.SyntaxKind == SyntaxKind.IdentifierReferenceNode)
+            {
+                var identifierReferenceNode = (IdentifierReferenceNode)NodeRecent;
+
+                var expectingTypeCause = false;
+
+                if (TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
+                    expectingTypeCause = true;
+
+                if (TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+                    expectingTypeCause = true;
+
+                if (TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken ||
+                    TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
+                {
+                    expectingTypeCause = true;
+                }
+
+                if (expectingTypeCause)
+                {
+                    if (!Binder.TryGetTypeDefinitionHierarchically(
+                            identifierReferenceNode.IdentifierToken.TextSpan.GetText(),
+                            out var typeDefinitionNode)
+                        || typeDefinitionNode is null)
+                    {
+                        typeDefinitionNode = CSharpLanguageFacts.Types.Undefined;
+                    }
+
+                    NodeRecent = typeDefinitionNode.ToTypeClause();
+                }
+            }
+
             if (NodeRecent is not null && NodeRecent.SyntaxKind == SyntaxKind.TypeClauseNode)
             {
                 bool skippedOverGenericArguments = false;
@@ -98,7 +131,7 @@ public partial class CSharpParser : IParser
                     if (skippedOverGenericArguments)
                         TokenWalker.Backtrack();
 
-                    Specific.HandleFunctionDefinition(identifierToken);
+                    Specific.HandleFunctionDefinition((TypeClauseNode)NodeRecent, identifierToken);
                     return;
                 }
                 else if (TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken ||
@@ -106,10 +139,12 @@ public partial class CSharpParser : IParser
                 {
                     if (TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
                     {
+                        // Expression Bound Property
+                        //
                         // Backtrack to the Property Identifier
                         TokenWalker.Backtrack();
 
-                        Specific.HandlePropertyDefinition(identifierToken);
+                        Specific.HandlePropertyDefinition((TypeClauseNode)NodeRecent, identifierToken);
                         return;
                     }
                     else
@@ -117,7 +152,7 @@ public partial class CSharpParser : IParser
                         if (skippedOverGenericArguments)
                             TokenWalker.Backtrack();
 
-                        Specific.HandleVariableDeclaration(identifierToken);
+                        Specific.HandleVariableDeclaration((TypeClauseNode)NodeRecent, identifierToken);
                         return;
                     }
                 }
@@ -129,7 +164,7 @@ public partial class CSharpParser : IParser
                     // Backtrack to the Property Identifier
                     _ = TokenWalker.Backtrack();
 
-                    Specific.HandlePropertyDefinition(identifierToken);
+                    Specific.HandlePropertyDefinition((TypeClauseNode)NodeRecent, identifierToken);
                     return;
                 }
             }
@@ -180,7 +215,7 @@ public partial class CSharpParser : IParser
                 }
                 else
                 {
-                    if (Binder.TryGetVariableHierarchically(text, out var variableDeclarationStatementNode) &&
+                    if (Binder.TryGetVariableDeclarationHierarchically(text, out var variableDeclarationStatementNode) &&
                         variableDeclarationStatementNode is not null)
                     {
                         Specific.HandleVariableReference(identifierToken, variableDeclarationStatementNode);
@@ -190,7 +225,7 @@ public partial class CSharpParser : IParser
                     {
                         // 'undeclared-variable reference' OR 'static class identifier'
 
-                        if (Binder.TryGetTypeHierarchically(text, out var typeDefinitionNode) &&
+                        if (Binder.TryGetTypeDefinitionHierarchically(text, out var typeDefinitionNode) &&
                             typeDefinitionNode is not null)
                         {
                             Specific.HandleStaticClassIdentifier(identifierToken);

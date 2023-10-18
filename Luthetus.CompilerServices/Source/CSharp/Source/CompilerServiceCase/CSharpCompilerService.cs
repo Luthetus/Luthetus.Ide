@@ -121,7 +121,7 @@ public class CSharpCompilerService : ICompilerService
 
     public ImmutableArray<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorCursorSnapshot cursorSnapshot)
     {
-        if (Binder.TryGetTypeHierarchically(word, out var typeDefinitionNode) &&
+        if (Binder.TryGetTypeDefinitionHierarchically(word, out var typeDefinitionNode) &&
             typeDefinitionNode is not null)
         {
             var functionDefinitionNodes = typeDefinitionNode.GetFunctionDefinitionNodes();

@@ -7,6 +7,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
+using Luthetus.CompilerServices.Lang.CSharp.Facts;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 
@@ -67,7 +68,7 @@ public partial class CSharpParser : IParser
         {
             var identifierReferenceNode = new IdentifierReferenceNode(
                 identifierToken,
-                null);
+                CSharpLanguageFacts.Types.Undefined.ToTypeClause());
 
             Binder.BindTypeIdentifier(identifierToken);
 
@@ -121,10 +122,12 @@ public partial class CSharpParser : IParser
             return functionInvocationNode;
         }
 
-        public VariableDeclarationStatementNode HandleVariableDeclaration(IdentifierToken identifierToken)
+        public VariableDeclarationStatementNode HandleVariableDeclaration(
+            TypeClauseNode typeClauseNode,
+            IdentifierToken identifierToken)
         {
             var variableDeclarationStatementNode = new VariableDeclarationStatementNode(
-                (TypeClauseNode)NodeRecent,
+                typeClauseNode,
                 identifierToken,
                 false);
 
@@ -145,7 +148,9 @@ public partial class CSharpParser : IParser
             return variableDeclarationStatementNode;
         }
 
-        public FunctionDefinitionNode HandleFunctionDefinition(IdentifierToken identifierToken)
+        public FunctionDefinitionNode HandleFunctionDefinition(
+            TypeClauseNode typeClauseNode,
+            IdentifierToken identifierToken)
         {
             GenericArgumentsListingNode? genericArgumentsListingNode = null;
 
@@ -159,7 +164,7 @@ public partial class CSharpParser : IParser
             var functionArgumentsListingNode = HandleFunctionArguments(openParenthesisToken);
 
             var functionDefinitionNode = new FunctionDefinitionNode(
-                (TypeClauseNode)NodeRecent,
+                typeClauseNode,
                 identifierToken,
                 genericArgumentsListingNode,
                 functionArgumentsListingNode,
@@ -431,7 +436,7 @@ public partial class CSharpParser : IParser
         {
             var literalExpressionNode = new LiteralExpressionNode(
                 numericLiteralToken,
-                null);
+                CSharpLanguageFacts.Types.Int.ToTypeClause());
 
             literalExpressionNode = Binder.BindLiteralExpressionNode(literalExpressionNode);
 
@@ -444,7 +449,7 @@ public partial class CSharpParser : IParser
         {
             var literalExpressionNode = new LiteralExpressionNode(
                 stringLiteralToken,
-                null);
+                CSharpLanguageFacts.Types.String.ToTypeClause());
 
             literalExpressionNode = Binder.BindLiteralExpressionNode(literalExpressionNode);
 
@@ -577,6 +582,14 @@ public partial class CSharpParser : IParser
                     {
                         _ = TokenWalker.Consume();
                         hasOutKeyword = true;
+
+                        if (TokenWalker.Peek(1).SyntaxKind == SyntaxKind.IdentifierToken)
+                        {
+                            var outVariableTypeClause = Utility.MatchTypeClause();
+                            var outVariableIdentifier = (IdentifierToken)TokenWalker.Peek(0);
+
+                            HandleVariableDeclaration(outVariableTypeClause, outVariableIdentifier);
+                        }
                     }
                     else if (SyntaxKind.InTokenKeyword == TokenWalker.Current.SyntaxKind)
                     {
@@ -596,10 +609,17 @@ public partial class CSharpParser : IParser
                 {
                     var variableIdentifierToken = (IdentifierToken)TokenWalker.Current;
 
-                    // TODO: Don't pass null to the 'VariableReferenceNode' constructor
+                    if (!Binder.TryGetVariableDeclarationHierarchically(
+                            variableIdentifierToken.TextSpan.GetText(),
+                            out var variableDeclarationNode)
+                        || variableDeclarationNode is null)
+                    {
+                        variableDeclarationNode = CSharpLanguageFacts.Variables.Undefined;
+                    }
+
                     var variableReferenceNode = new VariableReferenceNode(
                         variableIdentifierToken,
-                        null);
+                        variableDeclarationNode);
 
                     variableReferenceNode = Binder.BindVariableReferenceNode(variableReferenceNode);
 
@@ -788,7 +808,6 @@ public partial class CSharpParser : IParser
             return null;
         }
 
-        /// <summary>TODO: Implement HandleExpression() correctly. Until then, skip until the statement delimiter token or end of file token is found.</summary>
         public IExpressionNode HandleExpression(SyntaxKind[]? extraEndOfExpressionDeliminatingSyntaxKinds = null)
         {
             IExpressionNode? topMostExpressionNode = null;
@@ -823,7 +842,15 @@ public partial class CSharpParser : IParser
                 }
             }
 
-            return topMostExpressionNode;
+            return topMostExpressionNode ?? new LiteralExpressionNode(
+                new EndOfFileToken(
+                    new TextEditorTextSpan(
+                        0,
+                        0,
+                        (byte)GenericDecorationKind.None,
+                        new ResourceUri(string.Empty),
+                        string.Empty)),
+                CSharpLanguageFacts.Types.Undefined.ToTypeClause());
         }
 
         /// <summary>TODO: Implement ParseIfStatementExpression() correctly. Until then, skip until the closing parenthesis of the if statement is found.</summary>
@@ -857,24 +884,18 @@ public partial class CSharpParser : IParser
                         (byte)GenericDecorationKind.None,
                         new ResourceUri(string.Empty),
                         string.Empty)),
-                null);
+                CSharpLanguageFacts.Types.Undefined.ToTypeClause());
         }
 
-        /// <summary>Assumes invocation occurs with the property identifier as _cSharpParser._tokenWalker's current token</summary>
-        public void HandlePropertyDefinition(IdentifierToken identifierToken)
+        /// <summary>The current token when invoking this method should be the property's identifier token</summary>
+        public void HandlePropertyDefinition(TypeClauseNode typeClauseNode, IdentifierToken identifierToken)
         {
-            Binder.BindPropertyDeclarationIdentifierToken(identifierToken);
+            var variableDeclarationStatementNode = new VariableDeclarationStatementNode(
+                typeClauseNode,
+                identifierToken,
+                false);
 
-            var propertyTypeClauseToken = TokenWalker.Peek(-1);
-            var propertyIdentifierToken = TokenWalker.Consume();
-
-            // TODO: Fix TryGetClassReferenceHierarchically, it broke on (2023-07-26)
-            //
-            // _ = _cSharpParser.Binder.TryGetClassReferenceHierarchically(propertyTypeClauseToken, null, out var boundClassReferenceNode);
-            //
-            // _cSharpParser.Binder.BindPropertyDeclarationNode(
-            //     boundClassReferenceNode,
-            //     (IdentifierToken)propertyIdentifierToken);
+            Binder.BindPropertyDeclarationNode(variableDeclarationStatementNode);
         }
 
         public void HandleAsTokenKeyword(KeywordToken keywordToken)
@@ -1720,14 +1741,13 @@ public partial class CSharpParser : IParser
 
         public IExpressionNode HandleNumericLiteralToken(NumericLiteralToken numericLiteralToken)
         {
-            /*
-             * ParseNumericLiteralToken() is intended to be used when there is no context, just a token.
-             * HandleNumericLiteralToken() on the other hand in to be used when one has context, in which they are parsing an expression AND have a token.
-             */
+            // ParseNumericLiteralToken() is intended to be used when there is no context, just a token.
+            //
+            // HandleNumericLiteralToken() on the other hand in to be used when one has context, in which they are parsing an expression AND have a token.
 
             var literalExpressionNode = new LiteralExpressionNode(
                 numericLiteralToken,
-                null);
+                CSharpLanguageFacts.Types.Int.ToTypeClause());
 
             literalExpressionNode = Binder.BindLiteralExpressionNode(literalExpressionNode);
 
@@ -1747,7 +1767,7 @@ public partial class CSharpParser : IParser
         {
             var literalExpressionNode = new LiteralExpressionNode(
                 stringLiteralToken,
-                null);
+                CSharpLanguageFacts.Types.String.ToTypeClause());
 
             literalExpressionNode = Binder.BindLiteralExpressionNode(literalExpressionNode);
 

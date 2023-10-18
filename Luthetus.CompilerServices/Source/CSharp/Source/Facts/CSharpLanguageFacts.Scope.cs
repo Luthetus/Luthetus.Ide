@@ -32,6 +32,10 @@ public partial class CSharpLanguageFacts
                 Types.String.TypeIdentifier.TextSpan.GetText(),
                 Types.String
             },
+            {
+                Types.Undefined.TypeIdentifier.TextSpan.GetText(),
+                Types.Undefined
+            },
         };
 
             return new BoundScope(

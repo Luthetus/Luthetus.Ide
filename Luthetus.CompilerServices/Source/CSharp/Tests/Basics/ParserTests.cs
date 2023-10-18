@@ -871,15 +871,48 @@ public partial class ParserTests
     [Fact]
     public void PARSE_FunctionInvocationStatement_WITH_KeywordOut_VariableDeclaration()
     {
-        string sourceText = @"void WriteToConsole(out int input){} WriteToConsole(out int x);".ReplaceLineEndings("\n");
+        var methodIdentifier = "WriteToConsole";
+        var outVariableIdentifier = "x";
+        var methodInvocation = $"{methodIdentifier}(out int {outVariableIdentifier});";
+        var sourceText = $@"void {methodIdentifier}(out int input){{}} {methodInvocation}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
+        var topCodeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
+        var binder = (CSharpBinder)compilationUnit.Binder;
 
-        throw new NotImplementedException();
+        var indexForMethodInvocation = sourceText.IndexOf(methodInvocation);
+
+        var textSpanForMethodInvocation = new TextEditorTextSpan(
+            indexForMethodInvocation,
+            indexForMethodInvocation + methodInvocation.Length,
+            0,
+            resourceUri,
+            sourceText);
+
+        var boundScope = binder.GetBoundScope(textSpanForMethodInvocation);
+
+        var success = binder.TryGetFunctionHierarchically(
+            methodIdentifier,
+            out var functionDefinitionNode,
+            boundScope);
+
+        Assert.True(success);
+        Assert.NotNull(functionDefinitionNode);
+
+        var functionInvocationNode = (FunctionInvocationNode)topCodeBlockNode.ChildBag[2];
+
+        var argument = functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeBag.Single();
+        var parameter = functionInvocationNode.FunctionParametersListingNode.FunctionParameterEntryNodeBag.Single();
+
+        Assert.Equal(typeof(int), argument.VariableDeclarationStatementNode.TypeClauseNode.ValueType);
+        Assert.Equal(typeof(int), parameter.ExpressionNode.TypeClauseNode.ValueType);
+
+        Assert.True(argument.VariableDeclarationStatementNode.TypeClauseNode.ValueType ==
+            parameter.ExpressionNode.TypeClauseNode.ValueType);
     }
 
     [Fact]

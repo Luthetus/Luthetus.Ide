@@ -143,7 +143,7 @@ public class CSharpBinder : IBinder
     {
         var literalExpressionNode = new LiteralExpressionNode(
             compileTimeConstantToken,
-            null);
+            CSharpLanguageFacts.Types.Undefined.ToTypeClause());
 
         literalExpressionNode = BindLiteralExpressionNode(literalExpressionNode);
 
@@ -278,8 +278,7 @@ public class CSharpBinder : IBinder
         throw new NotImplementedException();
     }
 
-    public void BindVariableDeclarationStatementNode(
-        VariableDeclarationStatementNode variableDeclarationStatementNode)
+    public void BindVariableDeclarationStatementNode(VariableDeclarationStatementNode variableDeclarationStatementNode)
     {
         var variableSymbol = new VariableSymbol(variableDeclarationStatementNode.IdentifierToken.TextSpan with
         {
@@ -311,7 +310,7 @@ public class CSharpBinder : IBinder
 
         var text = variableReferenceNode.VariableIdentifierToken.TextSpan.GetText();
 
-        if (TryGetVariableHierarchically(text, out var variableDeclarationStatementNode))
+        if (TryGetVariableDeclarationHierarchically(text, out var variableDeclarationStatementNode))
         {
             variableReferenceNode = new VariableReferenceNode(
                 variableReferenceNode.VariableIdentifierToken,
@@ -339,7 +338,7 @@ public class CSharpBinder : IBinder
 
         var text = variableAssignmentExpressionNode.VariableIdentifierToken.TextSpan.GetText();
 
-        if (TryGetVariableHierarchically(
+        if (TryGetVariableDeclarationHierarchically(
                 text,
                 out var variableDeclarationNode) &&
             variableDeclarationNode is not null)
@@ -360,23 +359,6 @@ public class CSharpBinder : IBinder
         }
     }
 
-    /// <summary>
-    /// TODO: This should be 'BindPropertyDeclarationNode' and take the respective datatype. For now (2023-08-10) just giving an IdentifierToken is easier.
-    /// </summary>
-    public void BindPropertyDeclarationIdentifierToken(
-        IdentifierToken identifierToken)
-    {
-        var propertySymbol = new PropertySymbol(identifierToken.TextSpan with
-        {
-            DecorationByte = (byte)GenericDecorationKind.Property
-        });
-
-        AddSymbolDefinition(propertySymbol);
-    }
-
-    /// <summary>
-    /// TODO: This should be 'BindPropertyDeclarationNode' and take the respective datatype. For now (2023-08-10) just giving an IdentifierToken is easier.
-    /// </summary>
     public void BindConstructorDefinitionIdentifierToken(
         IdentifierToken identifierToken)
     {
@@ -388,8 +370,7 @@ public class CSharpBinder : IBinder
         AddSymbolDefinition(constructorSymbol);
     }
 
-    public void BindPropertyDeclarationNode(
-        VariableDeclarationStatementNode variableDeclarationStatementNode)
+    public void BindPropertyDeclarationNode(VariableDeclarationStatementNode variableDeclarationStatementNode)
     {
         var propertySymbol = new PropertySymbol(variableDeclarationStatementNode.IdentifierToken.TextSpan with
         {
@@ -398,89 +379,17 @@ public class CSharpBinder : IBinder
 
         AddSymbolDefinition(propertySymbol);
 
-        var text = propertySymbol.TextSpan.GetText();
+        var text = variableDeclarationStatementNode.IdentifierToken.TextSpan.GetText();
 
-        if (_currentScope.VariableDeclarationMap.TryGetValue(
+        if (!_currentScope.VariableDeclarationMap.TryAdd(
                 text,
-                out var existingVariableDeclarationStatementNode) ||
-            existingVariableDeclarationStatementNode is null)
+                variableDeclarationStatementNode))
         {
-            // TODO: The property was already declared, so report a diagnostic?
-            // TODO: The property was already declared, so check that the return types match?
-            return;
+            _diagnosticBag.ReportAlreadyDefinedVariable(
+                variableDeclarationStatementNode.IdentifierToken.TextSpan,
+                text);
         }
-
-        var success = _currentScope.VariableDeclarationMap.TryAdd(
-            text,
-            existingVariableDeclarationStatementNode);
-
-        if (!success)
-            _currentScope.VariableDeclarationMap[text] = existingVariableDeclarationStatementNode;
     }
-
-    /// <summary>
-    /// TODO: Fix BindIdentifierReferenceNode, it broke on (2023-07-26)
-    /// </summary>
-    // public BoundIdentifierReferenceNode BindIdentifierReferenceNode(
-    //     IdentifierToken identifierToken)
-    // {
-    //     var text = identifierToken.TextSpan.GetText();
-    //
-    //     if (TryGetVariableHierarchically(
-    //             text,
-    //             out var variableDeclarationNode) &&
-    //         variableDeclarationNode is not null)
-    //     {
-    //         AddSymbolReference(new VariableSymbol(identifierToken.TextSpan with
-    //         {
-    //             DecorationByte = (byte)GenericDecorationKind.Variable
-    //         }));
-    //
-    //         return new BoundIdentifierReferenceNode(
-    //             identifierToken,
-    //             variableDeclarationNode.BoundClassReferenceNode);
-    //     }
-    //     else if (TryGetClassReferenceHierarchically(
-    //                  identifierToken,
-    //                  null,
-    //                  out var boundClassReferenceNode) &&
-    //              boundClassReferenceNode is not null)
-    //     {
-    //         AddSymbolReference(new TypeSymbol(identifierToken.TextSpan with
-    //         {
-    //             DecorationByte = (byte)GenericDecorationKind.Type
-    //         }));
-    //
-    //         return new BoundIdentifierReferenceNode(
-    //             identifierToken,
-    //             boundClassReferenceNode);
-    //     }
-    //     else if (TryGetBoundFunctionDefinitionNodeHierarchically(
-    //                  text,
-    //                  out var boundFunctionDefinitionNode) &&
-    //              boundFunctionDefinitionNode is not null)
-    //     {
-    //         // TODO: Would this conditional branch be for method groups? @onclick="MethodName"
-    //
-    //         AddSymbolReference(new FunctionSymbol(identifierToken.TextSpan with
-    //         {
-    //             DecorationByte = (byte)GenericDecorationKind.Function
-    //         }));
-    //
-    //         return new BoundIdentifierReferenceNode(
-    //             identifierToken,
-    //             // TODO: Null is should not be passed in here
-    //             null);
-    //     }
-    //     else
-    //     {
-    //         // TODO: The identifier was not found, so report a diagnostic?
-    //         return new BoundIdentifierReferenceNode(
-    //             identifierToken,
-    //             // TODO: Null is should not be passed in here
-    //             null);
-    //     }
-    // }
 
     public void BindFunctionInvocationNode(FunctionInvocationNode functionInvocationNode)
     {
@@ -697,7 +606,7 @@ public class CSharpBinder : IBinder
     /// If a match is found, then set the out parameter to it and return true.<br/><br/>
     /// If none of the searched scopes contained a match then set the out parameter to null and return false.
     /// </summary>
-    public bool TryGetTypeHierarchically(
+    public bool TryGetTypeDefinitionHierarchically(
         string text,
         out TypeDefinitionNode? typeDefinitionNode,
         BoundScope? initialScope = null)
@@ -721,7 +630,7 @@ public class CSharpBinder : IBinder
     }
     
     /// <summary>Search hierarchically through all the scopes, starting at the <see cref="_currentScope"/>.<br/><br/>If a match is found, then set the out parameter to it and return true.<br/><br/>If none of the searched scopes contained a match then set the out parameter to null and return false.</summary>
-    public bool TryGetVariableHierarchically(
+    public bool TryGetVariableDeclarationHierarchically(
         string text,
         out VariableDeclarationStatementNode? variableDeclarationStatementNode,
         BoundScope? initialScope = null)
