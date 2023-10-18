@@ -1045,6 +1045,7 @@ public partial class ParserTests
         lexer.Lex();
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
+        var codeBlock = compilationUnit.TopLevelStatementsCodeBlockNode;
 
         throw new NotImplementedException();
     }

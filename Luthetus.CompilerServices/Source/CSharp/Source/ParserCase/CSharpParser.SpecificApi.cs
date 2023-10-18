@@ -1705,7 +1705,37 @@ public partial class CSharpParser : IParser
 
         public void HandleWhereTokenContextualKeyword(KeywordContextualToken keywordContextualToken)
         {
-            // TODO: Implement this method
+            if (NodeRecent is not null && NodeRecent.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
+            {
+                /*
+                 Examples:
+
+                 public T Clone<T>(T item) where T : class
+                 {
+	                 return item;
+                 }
+                 
+                 public T Clone<T>(T item) where T : class => item;
+                */
+
+                // TODO: Implement generic constraints, until then just read until the generic...
+                // ...constraint is finished.
+
+                while (!TokenWalker.IsEof)
+                {
+                    if (TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken ||
+                        TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
+                    {
+                        break;
+                    }
+
+                    _ = TokenWalker.Consume();
+                }
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
         }
 
         public void HandleWithTokenContextualKeyword(KeywordContextualToken keywordContextualToken)

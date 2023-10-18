@@ -379,7 +379,7 @@ public partial class CSharpParser : IParser
                     typeDefinitionNode.ValueType,
                     typeDefinitionNode.GenericArgumentsListingNode,
                     inheritedTypeClauseNode,
-                    typeDefinitionNode.TypeBodyCodeBlockNode); ;
+                    typeDefinitionNode.TypeBodyCodeBlockNode);
             }
             else
             {
