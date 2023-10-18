@@ -44,13 +44,6 @@ public partial class CSharpLanguageFacts
             null,
             null,
             null);
-        
-        public static readonly TypeDefinitionNode Undefined = new(
-            new IdentifierToken(new TextEditorTextSpan(0, "undefined".Length, (byte)GenericDecorationKind.None, new ResourceUri(string.Empty), "undefined")),
-            typeof(void),
-            null,
-            null,
-            null);
 
         public static readonly ImmutableArray<TypeDefinitionNode> TypeDefinitionNodes = new[]
         {

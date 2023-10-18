@@ -84,9 +84,9 @@ public partial class CSharpParser : IParser
 
         public void ParseIdentifierToken(IdentifierToken identifierToken)
         {
-            if (NodeRecent is not null && NodeRecent.SyntaxKind == SyntaxKind.IdentifierReferenceNode)
+            if (NodeRecent is not null && NodeRecent.SyntaxKind == SyntaxKind.AmbiguousIdentifierNode)
             {
-                var identifierReferenceNode = (IdentifierReferenceNode)NodeRecent;
+                var identifierReferenceNode = (AmbiguousIdentifierNode)NodeRecent;
 
                 var expectingTypeCause = false;
 
@@ -109,7 +109,19 @@ public partial class CSharpParser : IParser
                             out var typeDefinitionNode)
                         || typeDefinitionNode is null)
                     {
-                        typeDefinitionNode = CSharpLanguageFacts.Types.Undefined;
+                        var fabricateTypeDefinition = new TypeDefinitionNode(
+                            identifierReferenceNode.IdentifierToken,
+                            null,
+                            null,
+                            null,
+                            null)
+                        { 
+                            IsFabricated = true
+                        };
+
+                        Binder.BindTypeDefinitionNode(fabricateTypeDefinition);
+
+                        typeDefinitionNode = fabricateTypeDefinition;
                     }
 
                     NodeRecent = typeDefinitionNode.ToTypeClause();
@@ -118,20 +130,21 @@ public partial class CSharpParser : IParser
 
             if (NodeRecent is not null && NodeRecent.SyntaxKind == SyntaxKind.TypeClauseNode)
             {
-                bool skippedOverGenericArguments = false;
+                GenericArgumentsListingNode? genericArgumentsListingNode = null;
 
-                if (TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
+                if (SyntaxKind.OpenAngleBracketToken == TokenWalker.Current.SyntaxKind)
                 {
-                    _ = TokenWalker.Consume();
-                    skippedOverGenericArguments = true;
+                    var openAngleBracketToken = (OpenAngleBracketToken)TokenWalker.Consume();
+                    genericArgumentsListingNode = Specific.HandleGenericArguments(openAngleBracketToken);
                 }
 
                 if (TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
                 {
-                    if (skippedOverGenericArguments)
-                        TokenWalker.Backtrack();
+                    Specific.HandleFunctionDefinition(
+                        (TypeClauseNode)NodeRecent,
+                        identifierToken,
+                        genericArgumentsListingNode);
 
-                    Specific.HandleFunctionDefinition((TypeClauseNode)NodeRecent, identifierToken);
                     return;
                 }
                 else if (TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken ||
@@ -139,32 +152,27 @@ public partial class CSharpParser : IParser
                 {
                     if (TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
                     {
-                        // Expression Bound Property
-                        //
-                        // Backtrack to the Property Identifier
-                        TokenWalker.Backtrack();
+                        Specific.HandlePropertyDefinition(
+                            (TypeClauseNode)NodeRecent,
+                            identifierToken);
 
-                        Specific.HandlePropertyDefinition((TypeClauseNode)NodeRecent, identifierToken);
                         return;
                     }
                     else
                     {
-                        if (skippedOverGenericArguments)
-                            TokenWalker.Backtrack();
+                        Specific.HandleVariableDeclaration(
+                            (TypeClauseNode)NodeRecent,
+                            identifierToken);
 
-                        Specific.HandleVariableDeclaration((TypeClauseNode)NodeRecent, identifierToken);
                         return;
                     }
                 }
                 else if (TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
                 {
-                    if (skippedOverGenericArguments)
-                        TokenWalker.Backtrack();
+                    Specific.HandlePropertyDefinition(
+                        (TypeClauseNode)NodeRecent,
+                        identifierToken);
 
-                    // Backtrack to the Property Identifier
-                    _ = TokenWalker.Backtrack();
-
-                    Specific.HandlePropertyDefinition((TypeClauseNode)NodeRecent, identifierToken);
                     return;
                 }
             }
@@ -181,9 +189,9 @@ public partial class CSharpParser : IParser
                 }
 
                 if (NodeRecent is not null &&
-                    NodeRecent.SyntaxKind == SyntaxKind.IdentifierReferenceNode)
+                    NodeRecent.SyntaxKind == SyntaxKind.AmbiguousIdentifierNode)
                 {
-                    var identifierReferenceNode = (IdentifierReferenceNode)NodeRecent;
+                    var identifierReferenceNode = (AmbiguousIdentifierNode)NodeRecent;
 
                     // The unknown identifier reference can now be understood to be the return Type of a function.
                     var typeClauseNode = new TypeClauseNode(identifierReferenceNode.IdentifierToken, null, null);
@@ -261,6 +269,23 @@ public partial class CSharpParser : IParser
                 rightExpressionNode);
 
             NodeRecent = binaryExpressionNode;
+        }
+        
+        public void ParsePlusPlusToken(PlusPlusToken plusPlusToken)
+        {
+            if (NodeRecent is VariableReferenceNode variableReferenceNode)
+            {
+                var unaryOperatorNode = new UnaryOperatorNode(
+                    variableReferenceNode.TypeClauseNode,
+                    plusPlusToken,
+                    variableReferenceNode.TypeClauseNode);
+
+                var unaryExpressionNode = new UnaryExpressionNode(
+                    variableReferenceNode,
+                    unaryOperatorNode);
+
+                CurrentCodeBlockBuilder.ChildBag.Add(unaryExpressionNode);
+            }
         }
 
         public void ParseMinusToken(MinusToken minusToken)

@@ -120,16 +120,17 @@ public partial class ParserTests
         var modelParser = new CSharpParser(lexer);
         var compilationUnit = modelParser.Parse();
 
-        var topLevelStatementsCodeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
-
         var codeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
         Assert.NotNull(codeBlockNode);
 
-        var functionDefinitionNode = (FunctionDefinitionNode)compilationUnit.ChildBag[1];
+        var functionDefinitionNode = (FunctionDefinitionNode)codeBlockNode.ChildBag[1];
         Assert.NotNull(functionDefinitionNode);
+        Assert.NotNull(functionDefinitionNode.FunctionBodyCodeBlockNode);
 
-        var boundIdentifierReferenceNode = (IdentifierReferenceNode)compilationUnit.ChildBag[2];
-        Assert.NotNull(boundIdentifierReferenceNode);
+        var functionBody = functionDefinitionNode.FunctionBodyCodeBlockNode;
+
+        var unaryExpressionNode = (UnaryExpressionNode)functionBody.ChildBag[0];
+        var variableReferenceNode = (VariableReferenceNode)unaryExpressionNode.ChildBag[0];
     }
 
     [Fact]

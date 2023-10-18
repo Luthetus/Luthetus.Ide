@@ -4,25 +4,27 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
-public sealed record IdentifierReferenceNode : IExpressionNode
+/// <summary>
+/// Example usage: One finds a <see cref="IdentifierToken"/>, but must
+/// continue parsing in order to know if it is a reference to a
+/// function, type, variable, or etc...
+/// </summary>
+public sealed record AmbiguousIdentifierNode : ISyntaxNode
 {
-    public IdentifierReferenceNode(IdentifierToken identifierToken, TypeClauseNode typeClauseNode)
+    public AmbiguousIdentifierNode(IdentifierToken identifierToken)
     {
         IdentifierToken = identifierToken;
-        TypeClauseNode = typeClauseNode;
 
         ChildBag = new ISyntax[]
         {
             IdentifierToken,
-            TypeClauseNode,
         }.ToImmutableArray();
     }
 
     public IdentifierToken IdentifierToken { get; }
-    public TypeClauseNode TypeClauseNode { get; }
 
     public ImmutableArray<ISyntax> ChildBag { get; }
 
     public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.IdentifierReferenceNode;
+    public SyntaxKind SyntaxKind => SyntaxKind.AmbiguousIdentifierNode;
 }

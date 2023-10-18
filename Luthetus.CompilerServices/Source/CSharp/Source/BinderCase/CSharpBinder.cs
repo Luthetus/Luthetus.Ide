@@ -141,9 +141,19 @@ public class CSharpBinder : IBinder
         bool hasInKeyword,
         bool hasRefKeyword)
     {
+        var argumentTypeClauseNode = functionArgumentEntryNode.VariableDeclarationStatementNode.TypeClauseNode;
+
+        if (TryGetTypeDefinitionHierarchically(
+                argumentTypeClauseNode.TypeIdentifier.TextSpan.GetText(),
+                out var typeDefinitionNode)
+            || typeDefinitionNode is null)
+        {
+            typeDefinitionNode = CSharpLanguageFacts.Types.Void;
+        }
+
         var literalExpressionNode = new LiteralExpressionNode(
             compileTimeConstantToken,
-            CSharpLanguageFacts.Types.Undefined.ToTypeClause());
+            typeDefinitionNode.ToTypeClause());
 
         literalExpressionNode = BindLiteralExpressionNode(literalExpressionNode);
 

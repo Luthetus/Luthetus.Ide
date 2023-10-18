@@ -64,11 +64,10 @@ public partial class CSharpParser : IParser
             return typeClauseNode;
         }
 
-        public IdentifierReferenceNode HandleUndefinedTypeOrNamespaceReference(IdentifierToken identifierToken)
+        public AmbiguousIdentifierNode HandleUndefinedTypeOrNamespaceReference(IdentifierToken identifierToken)
         {
-            var identifierReferenceNode = new IdentifierReferenceNode(
-                identifierToken,
-                CSharpLanguageFacts.Types.Undefined.ToTypeClause());
+            var identifierReferenceNode = new AmbiguousIdentifierNode(
+                identifierToken);
 
             Binder.BindTypeIdentifier(identifierToken);
 
@@ -87,6 +86,8 @@ public partial class CSharpParser : IParser
             var variableReferenceNode = new VariableReferenceNode(
                 identifierToken,
                 variableDeclarationStatementNode);
+
+            Binder.BindVariableReferenceNode(variableReferenceNode);
 
             NodeRecent = variableReferenceNode;
             return variableReferenceNode;
@@ -122,9 +123,7 @@ public partial class CSharpParser : IParser
             return functionInvocationNode;
         }
 
-        public VariableDeclarationStatementNode HandleVariableDeclaration(
-            TypeClauseNode typeClauseNode,
-            IdentifierToken identifierToken)
+        public VariableDeclarationStatementNode HandleVariableDeclaration(TypeClauseNode typeClauseNode, IdentifierToken identifierToken)
         {
             var variableDeclarationStatementNode = new VariableDeclarationStatementNode(
                 typeClauseNode,
@@ -150,16 +149,9 @@ public partial class CSharpParser : IParser
 
         public FunctionDefinitionNode HandleFunctionDefinition(
             TypeClauseNode typeClauseNode,
-            IdentifierToken identifierToken)
+            IdentifierToken identifierToken,
+            GenericArgumentsListingNode? genericArgumentsListingNode)
         {
-            GenericArgumentsListingNode? genericArgumentsListingNode = null;
-
-            if (SyntaxKind.OpenAngleBracketToken == TokenWalker.Current.SyntaxKind)
-            {
-                var openAngleBracketToken = (OpenAngleBracketToken)TokenWalker.Consume();
-                genericArgumentsListingNode = HandleGenericArguments(openAngleBracketToken);
-            }
-
             var openParenthesisToken = (OpenParenthesisToken)TokenWalker.Consume();
             var functionArgumentsListingNode = HandleFunctionArguments(openParenthesisToken);
 
@@ -588,7 +580,9 @@ public partial class CSharpParser : IParser
                             var outVariableTypeClause = Utility.MatchTypeClause();
                             var outVariableIdentifier = (IdentifierToken)TokenWalker.Peek(0);
 
-                            HandleVariableDeclaration(outVariableTypeClause, outVariableIdentifier);
+                            HandleVariableDeclaration(
+                                outVariableTypeClause,
+                                outVariableIdentifier);
                         }
                     }
                     else if (SyntaxKind.InTokenKeyword == TokenWalker.Current.SyntaxKind)
@@ -607,14 +601,22 @@ public partial class CSharpParser : IParser
 
                 if (SyntaxKind.IdentifierToken == TokenWalker.Current.SyntaxKind)
                 {
-                    var variableIdentifierToken = (IdentifierToken)TokenWalker.Current;
+                    var variableIdentifierToken = (IdentifierToken)TokenWalker.Consume();
 
                     if (!Binder.TryGetVariableDeclarationHierarchically(
                             variableIdentifierToken.TextSpan.GetText(),
                             out var variableDeclarationNode)
                         || variableDeclarationNode is null)
                     {
-                        variableDeclarationNode = CSharpLanguageFacts.Variables.Undefined;
+                        variableDeclarationNode = new(
+                            CSharpLanguageFacts.Types.Void.ToTypeClause(),
+                            variableIdentifierToken,
+                            false)
+                        {
+                            IsFabricated = true
+                        };
+
+                        Binder.BindVariableDeclarationStatementNode(variableDeclarationNode);
                     }
 
                     var variableReferenceNode = new VariableReferenceNode(
@@ -850,7 +852,7 @@ public partial class CSharpParser : IParser
                         (byte)GenericDecorationKind.None,
                         new ResourceUri(string.Empty),
                         string.Empty)),
-                CSharpLanguageFacts.Types.Undefined.ToTypeClause());
+                CSharpLanguageFacts.Types.Void.ToTypeClause());
         }
 
         /// <summary>TODO: Implement ParseIfStatementExpression() correctly. Until then, skip until the closing parenthesis of the if statement is found.</summary>
@@ -884,10 +886,9 @@ public partial class CSharpParser : IParser
                         (byte)GenericDecorationKind.None,
                         new ResourceUri(string.Empty),
                         string.Empty)),
-                CSharpLanguageFacts.Types.Undefined.ToTypeClause());
+                CSharpLanguageFacts.Types.Void.ToTypeClause());
         }
 
-        /// <summary>The current token when invoking this method should be the property's identifier token</summary>
         public void HandlePropertyDefinition(TypeClauseNode typeClauseNode, IdentifierToken identifierToken)
         {
             var variableDeclarationStatementNode = new VariableDeclarationStatementNode(
