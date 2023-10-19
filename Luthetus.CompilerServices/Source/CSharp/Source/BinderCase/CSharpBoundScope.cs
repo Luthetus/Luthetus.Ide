@@ -1,12 +1,14 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+﻿using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
-namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+namespace Luthetus.CompilerServices.Lang.CSharp.BinderCase;
 
-public sealed record BoundScope
+public sealed record CSharpBoundScope : IBoundScope
 {
-    public BoundScope(
-        BoundScope? parent,
+    public CSharpBoundScope(
+        CSharpBoundScope? parent,
         TypeClauseNode? scopeReturnTypeClauseNode,
         int startingIndexInclusive,
         int? endingIndexExclusive,
@@ -26,7 +28,7 @@ public sealed record BoundScope
     }
 
     public BoundScopeKey BoundScopeKey { get; init; } = BoundScopeKey.NewKey();
-    public BoundScope? Parent { get; init; }
+    public CSharpBoundScope? Parent { get; init; }
     /// <summary>A <see cref="ScopeReturnType"/> with the value of "null" means refer to the <see cref="Parent"/> bound scope's <see cref="ScopeReturnType"/></summary>
     public TypeClauseNode? ScopeReturnTypeClauseNode { get; init; }
     public int StartingIndexInclusive { get; init; }

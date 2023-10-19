@@ -168,7 +168,7 @@ public partial class PersonSimpleDisplay : ComponentBase
 
     private async Task GetTextEditorViewModelAsync()
     {
-        var textEditorModel = TextEditorService.Model.FindOrDefaultByResourceUri(new(RAZOR_FILE_PATH_STRING));
+        var textEditorModel = TextEditorService.Model.FindOrDefault(new(RAZOR_FILE_PATH_STRING));
 
         if (textEditorModel is not null)
         {

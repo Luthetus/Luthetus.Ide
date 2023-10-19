@@ -35,14 +35,16 @@ public class DotNetSolutionCompilerService : ICompilerService
         _dispatcher = dispatcher;
     }
 
+    public event Action? ResourceRegistered;
+    public event Action? ResourceParsed;
+    public event Action? ResourceDisposed;
+
+    public IBinder? Binder => null;
+
     public ImmutableArray<ICompilerServiceResource> CompilerServiceResources =>
         _dotNetSolutionResourceMap.Values
             .Select(dnsr => (ICompilerServiceResource)dnsr)
             .ToImmutableArray();
-
-    public event Action? ResourceRegistered;
-    public event Action? ResourceParsed;
-    public event Action? ResourceDisposed;
 
     public void RegisterResource(ResourceUri resourceUri)
     {
@@ -63,7 +65,7 @@ public class DotNetSolutionCompilerService : ICompilerService
 
     public ICompilerServiceResource? GetCompilerServiceResourceFor(ResourceUri resourceUri)
     {
-        var model = _textEditorService.Model.FindOrDefaultByResourceUri(resourceUri);
+        var model = _textEditorService.Model.FindOrDefault(resourceUri);
 
         if (model is null)
             return null;
@@ -130,7 +132,7 @@ public class DotNetSolutionCompilerService : ICompilerService
             ".NET Solution Compiler Service - Parse",
             async () =>
             {
-                var model = _textEditorService.Model.FindOrDefaultByResourceUri(resourceUri);
+                var model = _textEditorService.Model.FindOrDefault(resourceUri);
 
                 if (model is null)
                     return;

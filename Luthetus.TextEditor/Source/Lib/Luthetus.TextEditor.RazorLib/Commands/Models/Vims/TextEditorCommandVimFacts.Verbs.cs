@@ -54,7 +54,10 @@ public static partial class TextEditorCommandVimFacts
                     commandParameter.TextEditorService,
                     commandParameter.ViewModel,
                     commandParameter.HandleMouseStoppedMovingEventAsyncFunc,
-                    commandParameter.JsRuntime);
+                    commandParameter.JsRuntime,
+                    commandParameter.RegisterModelAction,
+                    commandParameter.RegisterViewModelAction,
+                    commandParameter.ShowViewModelAction);
 
                 var motionResult = await VimMotionResult.GetResultAsync(
                     commandParameter,

@@ -678,12 +678,78 @@ public static class TextEditorCommandDefaultFacts
         "defaults_go-to-matching-character");
 
     public static readonly CommandTextEditor GoToDefinition = new(
-        commandParameter =>
+        interfaceCommandParameter =>
         {
-            // TODO: (2023-06-29) I'm rewritting the TextEditor 'ISemanticModel.cs' to be 'ICompilerService.cs'. This method broke in the process and is not high priority to fix yet.
+            var commandParameter = (TextEditorCommandParameter)interfaceCommandParameter;
+
+            if (commandParameter.Model.CompilerService.Binder is null)
+                return Task.CompletedTask;
+
+            var positionIndex = commandParameter.Model.GetCursorPositionIndex(
+                commandParameter.PrimaryCursorSnapshot.ImmutableCursor);
+
+            var wordTextSpan = commandParameter.Model.GetWordAt(positionIndex);
+
+            if (wordTextSpan is null)
+                return Task.CompletedTask;
+
+            var definitionTextSpan = commandParameter.Model.CompilerService.Binder.GetDefinition(
+                wordTextSpan);
+
+            if (definitionTextSpan is null)
+                return Task.CompletedTask;
+
+            var definitionModel = commandParameter.TextEditorService.Model.FindOrDefault(definitionTextSpan.ResourceUri);
+
+            if (definitionModel is null)
+            {
+                if (commandParameter.RegisterModelAction is not null)
+                {
+                    commandParameter.RegisterModelAction.Invoke(definitionTextSpan.ResourceUri);
+                    definitionModel = commandParameter.TextEditorService.Model.FindOrDefault(definitionTextSpan.ResourceUri);
+
+                    if (definitionModel is null)
+                        return Task.CompletedTask;
+                }
+                else
+                {
+                    return Task.CompletedTask;
+                }
+            }
+
+            var definitionViewModels = commandParameter.TextEditorService.Model.GetViewModelsOrEmpty(definitionTextSpan.ResourceUri);
+
+            if (!definitionViewModels.Any())
+            {
+                if (commandParameter.RegisterViewModelAction is not null)
+                {
+                    commandParameter.RegisterViewModelAction.Invoke(definitionTextSpan.ResourceUri);
+                    definitionViewModels = commandParameter.TextEditorService.Model.GetViewModelsOrEmpty(definitionTextSpan.ResourceUri);
+
+                    if (!definitionViewModels.Any())
+                        return Task.CompletedTask;
+                }
+                else
+                {
+                    return Task.CompletedTask;
+                }
+            }
+
+            var firstDefinitionViewModel = definitionViewModels.First();
+            
+            var rowData = definitionModel.FindRowInformation(definitionTextSpan.StartingIndexInclusive);
+
+            var columnIndex = definitionTextSpan.StartingIndexInclusive - rowData.rowStartPositionIndex;
+
+            firstDefinitionViewModel.PrimaryCursor.IndexCoordinates = (rowData.rowIndex, columnIndex);
+            firstDefinitionViewModel.PrimaryCursor.PreferredColumnIndex = columnIndex;
+
+            if (commandParameter.ShowViewModelAction is not null)
+                commandParameter.ShowViewModelAction.Invoke(firstDefinitionViewModel.ViewModelKey);
+
             return Task.CompletedTask;
         },
-        false,
+        true,
         "GoToDefinition",
         "defaults_go-to-definition");
 

@@ -49,7 +49,6 @@ public partial interface ITextEditorService
 
         public void SetUsingRowEndingKind(ResourceUri resourceUri, RowEndingKind rowEndingKind);
         public void UndoEdit(ResourceUri resourceUri);
-        public TextEditorModel? FindOrDefaultByResourceUri(ResourceUri resourceUri);
         public void RegisterPresentationModel(ResourceUri resourceUri, TextEditorPresentationModel emptyPresentationModel);
     }
 
@@ -62,12 +61,6 @@ public partial interface ITextEditorService
         {
             _textEditorService = textEditorService;
             _dispatcher = dispatcher;
-        }
-
-        public TextEditorModel? FindOrDefaultByResourceUri(ResourceUri resourceUri)
-        {
-            return _textEditorService.ModelStateWrap.Value.ModelBag.FirstOrDefault(
-                x => x.ResourceUri == resourceUri);
         }
 
         public void UndoEdit(ResourceUri resourceUri)

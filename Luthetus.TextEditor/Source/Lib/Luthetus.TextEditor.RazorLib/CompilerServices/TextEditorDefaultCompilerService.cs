@@ -24,12 +24,14 @@ public class TextEditorDefaultCompilerService : ICompilerService
         _dispatcher = dispatcher;
     }
 
-    public ImmutableArray<ICompilerServiceResource> CompilerServiceResources =>
-        ImmutableArray<ICompilerServiceResource>.Empty;
-
     public event Action? ResourceRegistered;
     public event Action? ResourceParsed;
     public event Action? ResourceDisposed;
+
+    public IBinder? Binder => null;
+
+    public ImmutableArray<ICompilerServiceResource> CompilerServiceResources =>
+        ImmutableArray<ICompilerServiceResource>.Empty;
 
     public void RegisterResource(ResourceUri resourceUri)
     {

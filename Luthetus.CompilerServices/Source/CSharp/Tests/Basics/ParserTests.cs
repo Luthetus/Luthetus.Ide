@@ -760,7 +760,9 @@ public partial class ParserTests
             resourceUri,
             sourceText);
 
-        var boundScope = binder.GetBoundScope(textSpanForMethodInvocation);
+        var boundScope = binder.GetBoundScope(textSpanForMethodInvocation) as CSharpBoundScope;
+        
+        Assert.NotNull(boundScope);
 
         var success = binder.TryGetFunctionHierarchically(
             methodIdentifier,
@@ -822,7 +824,7 @@ public partial class ParserTests
             resourceUri,
             sourceText);
 
-        var boundScope = binder.GetBoundScope(textSpanForMethodInvocation);
+        var boundScope = binder.GetBoundScope(textSpanForMethodInvocation) as CSharpBoundScope;
 
         var success = binder.TryGetFunctionHierarchically(
             methodIdentifier,
@@ -894,7 +896,7 @@ public partial class ParserTests
             resourceUri,
             sourceText);
 
-        var boundScope = binder.GetBoundScope(textSpanForMethodInvocation);
+        var boundScope = binder.GetBoundScope(textSpanForMethodInvocation) as CSharpBoundScope;
 
         var success = binder.TryGetFunctionHierarchically(
             methodIdentifier,

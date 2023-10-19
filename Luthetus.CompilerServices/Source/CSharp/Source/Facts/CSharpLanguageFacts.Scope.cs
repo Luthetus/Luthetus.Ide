@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+﻿using Luthetus.CompilerServices.Lang.CSharp.BinderCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
@@ -8,7 +8,7 @@ public partial class CSharpLanguageFacts
 {
     public class Scope
     {
-        public static BoundScope GetInitialGlobalScope()
+        public static CSharpBoundScope GetInitialGlobalScope()
         {
             var typeDefinitionMap = new Dictionary<string, TypeDefinitionNode>
         {
@@ -34,7 +34,7 @@ public partial class CSharpLanguageFacts
             },
         };
 
-            return new BoundScope(
+            return new CSharpBoundScope(
                 null,
                 Types.Void.ToTypeClause(),
                 0,

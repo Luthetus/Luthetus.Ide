@@ -45,6 +45,9 @@ public partial class TextEditorHeader : ComponentBase
             TextEditorService,
             viewModel,
             null,
+            null,
+            null,
+            null,
             null);
     }
 

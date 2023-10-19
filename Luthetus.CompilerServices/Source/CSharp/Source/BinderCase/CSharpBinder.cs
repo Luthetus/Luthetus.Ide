@@ -13,14 +13,14 @@ namespace Luthetus.CompilerServices.Lang.CSharp.BinderCase;
 
 public class CSharpBinder : IBinder
 {
-    private readonly BoundScope _globalScope = CSharpLanguageFacts.Scope.GetInitialGlobalScope();
+    private readonly CSharpBoundScope _globalScope = CSharpLanguageFacts.Scope.GetInitialGlobalScope();
     private readonly Dictionary<string, NamespaceStatementNode> _namespaceStatementNodes = CSharpLanguageFacts.Namespaces.GetInitialBoundNamespaceStatementNodes();
     /// <summary>The key for _symbolDefinitions is calculated by <see cref="ISymbol.GetSymbolDefinitionId"/></summary>
     private readonly Dictionary<string, SymbolDefinition> _symbolDefinitions = new();
     private readonly LuthetusDiagnosticBag _diagnosticBag = new();
 
-    private List<BoundScope> _boundScopes = new();
-    private BoundScope _currentScope;
+    private List<CSharpBoundScope> _boundScopes = new();
+    private CSharpBoundScope _currentScope;
 
     public CSharpBinder()
     {
@@ -38,7 +38,7 @@ public class CSharpBinder : IBinder
     public ImmutableDictionary<string, NamespaceStatementNode> BoundNamespaceStatementNodes => _namespaceStatementNodes.ToImmutableDictionary();
     public ImmutableArray<ISymbol> Symbols => _symbolDefinitions.Values.SelectMany(x => x.SymbolReferences).Select(x => x.Symbol).ToImmutableArray();
     public Dictionary<string, SymbolDefinition> SymbolDefinitions => _symbolDefinitions;
-    public ImmutableArray<BoundScope> BoundScopes => _boundScopes.ToImmutableArray();
+    public ImmutableArray<CSharpBoundScope> BoundScopes => _boundScopes.ToImmutableArray();
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsBag => _diagnosticBag.ToImmutableArray();
 
     ImmutableArray<ITextEditorSymbol> IBinder.SymbolsBag => Symbols
@@ -518,7 +518,7 @@ public class CSharpBinder : IBinder
         TypeClauseNode? scopeReturnTypeClauseNode,
         TextEditorTextSpan textEditorTextSpan)
     {
-        var boundScope = new BoundScope(
+        var boundScope = new CSharpBoundScope(
             _currentScope,
             scopeReturnTypeClauseNode,
             textEditorTextSpan.StartingIndexInclusive,
@@ -556,7 +556,7 @@ public class CSharpBinder : IBinder
             _currentScope = _currentScope.Parent;
     }
 
-    public BoundScope? GetBoundScope(TextEditorTextSpan textSpan)
+    public IBoundScope? GetBoundScope(TextEditorTextSpan textSpan)
     {
         var possibleScopes = _boundScopes
             .Where(x => x.ResourceUri == textSpan.ResourceUri)
@@ -571,6 +571,38 @@ public class CSharpBinder : IBinder
             x => textSpan.StartingIndexInclusive - x.StartingIndexInclusive);
     }
 
+    public TextEditorTextSpan? GetDefinition(TextEditorTextSpan textSpan)
+    {
+        var boundScope = GetBoundScope(textSpan) as CSharpBoundScope;
+
+        if (TryGetVariableDeclarationHierarchically(
+                textSpan.GetText(),
+                out var variableDeclarationStatementNode,
+                boundScope)
+            && variableDeclarationStatementNode is not null)
+        {
+            return variableDeclarationStatementNode.IdentifierToken.TextSpan;
+        }
+        else if (TryGetFunctionHierarchically(
+                     textSpan.GetText(),
+                     out var functionDefinitionNode,
+                     boundScope)
+                 && functionDefinitionNode is not null)
+        {
+            return functionDefinitionNode.FunctionIdentifier.TextSpan;
+        }
+        else if (TryGetTypeDefinitionHierarchically(
+                     textSpan.GetText(),
+                     out var typeDefinitionNode,
+                     boundScope)
+                 && typeDefinitionNode is not null)
+        {
+            return typeDefinitionNode.TypeIdentifier.TextSpan;
+        }
+
+        return null;
+    }
+
     /// <summary>
     /// Search hierarchically through all the scopes, starting at the <see cref="initialScope"/>.<br/><br/>
     /// If a match is found, then set the out parameter to it and return true.<br/><br/>
@@ -579,7 +611,7 @@ public class CSharpBinder : IBinder
     public bool TryGetFunctionHierarchically(
         string text,
         out FunctionDefinitionNode? functionDefinitionNode,
-        BoundScope? initialScope = null)
+        CSharpBoundScope? initialScope = null)
     {
         var localScope = initialScope ?? _currentScope;
 
@@ -619,7 +651,7 @@ public class CSharpBinder : IBinder
     public bool TryGetTypeDefinitionHierarchically(
         string text,
         out TypeDefinitionNode? typeDefinitionNode,
-        BoundScope? initialScope = null)
+        CSharpBoundScope? initialScope = null)
     {
         var localScope = initialScope ?? _currentScope;
 
@@ -643,7 +675,7 @@ public class CSharpBinder : IBinder
     public bool TryGetVariableDeclarationHierarchically(
         string text,
         out VariableDeclarationStatementNode? variableDeclarationStatementNode,
-        BoundScope? initialScope = null)
+        CSharpBoundScope? initialScope = null)
     {
         var localScope = initialScope ?? _currentScope;
 

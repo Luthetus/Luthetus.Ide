@@ -4,13 +4,12 @@
 @using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-@using Luthetus.Common.RazorLib.Contexts.Models;
 
 @{
     var renderBatch = _storedRenderBatch;
 
-    var contextBoundaryStyle = $"{renderBatch.FontSizeInPixelsCssStyleString} {renderBatch.FontFamilyCssStyleString} {GetGlobalHeightInPixelsStyling()} {WrapperStyleCssString}";
-    var contextBoundaryClass = $"luth_te_text-editor-css-wrapper {TextEditorService.ThemeCssClassString} {WrapperClassCssString}";
+    var contextBoundaryStyle = $"{renderBatch.FontSizeInPixelsCssStyleString} {renderBatch.FontFamilyCssStyleString} {GetGlobalHeightInPixelsStyling()} {ViewModelDisplayOptions.WrapperStyleCssString}";
+    var contextBoundaryClass = $"luth_te_text-editor-css-wrapper {TextEditorService.ThemeCssClassString} {ViewModelDisplayOptions.WrapperClassCssString}";
 }
 
 <ContextBoundary ContextRecord="ContextFacts.TextEditorContext"
@@ -27,9 +26,9 @@
     <CascadingValue Value="renderBatch">
         <CascadingValue Name="ProportionalFontMeasurementsContainerElementId" Value="ProportionalFontMeasurementsContainerElementId">
 
-            @if (renderBatch.IsValid && IncludeHeaderHelperComponent)
+            @if (renderBatch.IsValid && ViewModelDisplayOptions.IncludeHeaderHelperComponent)
             {
-                <TextEditorHeader HeaderButtonKinds="HeaderButtonKinds" />
+                <TextEditorHeader HeaderButtonKinds="ViewModelDisplayOptions.HeaderButtonKinds" />
             }
 
             <div @onclick="FocusTextEditorAsync"
@@ -48,8 +47,8 @@
             @ontouchcancel="ClearTouchAsync"
             @ontouchleave="ClearTouchAsync"
                  id="@ContentElementId"
-                 style="@TextEditorStyleCssString"
-                 class="luth_te_text-editor luth_unselectable @TextEditorClassCssString"
+                 style="@ViewModelDisplayOptions.TextEditorStyleCssString"
+                 class="luth_te_text-editor luth_unselectable @ViewModelDisplayOptions.TextEditorClassCssString"
                  tabindex="-1">
 
                 <MeasureCharacterWidthAndRowHeight @ref="_measureCharacterWidthAndRowHeightComponent"
@@ -61,10 +60,10 @@
                         <GutterSection />
 
                         <BodySection @ref="_bodySectionComponent"
-                                     TabIndex="TabIndex"
-                                     ContextMenuRenderFragmentOverride="ContextMenuRenderFragmentOverride"
-                                     IncludeContextMenuHelperComponent="IncludeContextMenuHelperComponent"
-                                     AutoCompleteMenuRenderFragmentOverride="AutoCompleteMenuRenderFragmentOverride" />
+                                     TabIndex="ViewModelDisplayOptions.TabIndex"
+                                     ContextMenuRenderFragmentOverride="ViewModelDisplayOptions.ContextMenuRenderFragmentOverride"
+                                     IncludeContextMenuHelperComponent="ViewModelDisplayOptions.IncludeContextMenuHelperComponent"
+                                     AutoCompleteMenuRenderFragmentOverride="ViewModelDisplayOptions.AutoCompleteMenuRenderFragmentOverride" />
 
                         @if (renderBatch.ViewModel!.DisplayCommandBar)
                         {
@@ -89,7 +88,7 @@
                 }
             </div>
 
-            @if (renderBatch.IsValid && IncludeFooterHelperComponent)
+            @if (renderBatch.IsValid && ViewModelDisplayOptions.IncludeFooterHelperComponent)
             {
                 <TextEditorFooter />
             }
