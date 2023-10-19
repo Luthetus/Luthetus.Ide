@@ -160,6 +160,7 @@ public partial class CSharpParser : IParser
                 identifierToken,
                 genericArgumentsListingNode,
                 functionArgumentsListingNode,
+                null,
                 null);
 
             Binder.BindFunctionDefinitionNode(functionDefinitionNode);
@@ -220,6 +221,7 @@ public partial class CSharpParser : IParser
                 identifierToken,
                 genericArgumentsListingNode,
                 functionArgumentsListingNode,
+                null,
                 null);
 
             Binder.BindConstructorDefinitionIdentifierToken(identifierToken);
@@ -1703,10 +1705,12 @@ public partial class CSharpParser : IParser
             // TODO: Implement this method
         }
 
-        public void HandleWhereTokenContextualKeyword(KeywordContextualToken keywordContextualToken)
+        public void HandleWhereTokenContextualKeyword(KeywordContextualToken whereKeywordContextualToken)
         {
             if (NodeRecent is not null && NodeRecent.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
             {
+                var functionDefinitionNode = (FunctionDefinitionNode)NodeRecent;
+
                 /*
                  Examples:
 
@@ -1721,6 +1725,11 @@ public partial class CSharpParser : IParser
                 // TODO: Implement generic constraints, until then just read until the generic...
                 // ...constraint is finished.
 
+                var constraintNodeInnerTokens = new List<ISyntaxToken>
+                {
+                    whereKeywordContextualToken
+                };
+
                 while (!TokenWalker.IsEof)
                 {
                     if (TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken ||
@@ -1729,8 +1738,18 @@ public partial class CSharpParser : IParser
                         break;
                     }
 
-                    _ = TokenWalker.Consume();
+                    constraintNodeInnerTokens.Add(TokenWalker.Consume());
                 }
+
+                var constraintNode = new ConstraintNode(constraintNodeInnerTokens.ToImmutableArray());
+
+                NodeRecent = new FunctionDefinitionNode(
+                    functionDefinitionNode.ReturnTypeClauseNode,
+                    functionDefinitionNode.FunctionIdentifier,
+                    functionDefinitionNode.GenericArgumentsListingNode,
+                    functionDefinitionNode.FunctionArgumentsListingNode,
+                    functionDefinitionNode.FunctionBodyCodeBlockNode,
+                    constraintNode);
             }
             else
             {

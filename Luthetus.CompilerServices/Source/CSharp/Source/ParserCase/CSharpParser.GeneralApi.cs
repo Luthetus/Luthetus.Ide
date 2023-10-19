@@ -440,7 +440,8 @@ public partial class CSharpParser : IParser
                         functionDefinitionNode.FunctionIdentifier,
                         functionDefinitionNode.GenericArgumentsListingNode,
                         functionDefinitionNode.FunctionArgumentsListingNode,
-                        codeBlockNode);
+                        codeBlockNode,
+                        functionDefinitionNode.ConstraintNode);
 
                     closureCurrentCodeBlockBuilder.ChildBag.Add(functionDefinitionNode);
                 });

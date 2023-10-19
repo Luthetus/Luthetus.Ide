@@ -1040,16 +1040,46 @@ public partial class ParserTests
     [Fact]
     public void PARSE_MethodDefinition_WITH_Argument_Generic_WITH_Constraint()
     {
-        var sourceText = @"public T Clone<T>(T item) where T : class { return item; }".ReplaceLineEndings("\n");
+        var functionIdentifierText = "Clone";
+        var genericTypeText = "T";
+        var functionArgumentText = "item";
+        var genericConstraintText = $"where {genericTypeText} : class";
+        var sourceText = $@"public {genericTypeText} {functionIdentifierText}<{genericTypeText}>({genericTypeText} {functionArgumentText}) {genericConstraintText} {{ return {functionArgumentText}; }}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
-        var codeBlock = compilationUnit.TopLevelStatementsCodeBlockNode;
+        var topCodeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
 
-        throw new NotImplementedException();
+        Assert.Single(topCodeBlockNode.ChildBag);
+        var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlockNode.ChildBag.Single();
+
+        var returnTypeClauseNode = (TypeClauseNode)functionDefinitionNode.ChildBag[0];
+        var functionIdentifierToken = (IdentifierToken)functionDefinitionNode.ChildBag[1];
+        var genericArgumentsListingNode = (GenericArgumentsListingNode)functionDefinitionNode.ChildBag[2];
+        var functionArgumentsListingNode = (FunctionArgumentsListingNode)functionDefinitionNode.ChildBag[3];
+        var functionCodeBlockNode = (CodeBlockNode)functionDefinitionNode.ChildBag[4];
+        var constraintNode = (ConstraintNode)functionDefinitionNode.ChildBag[5];
+
+        Assert.Equal(genericTypeText, returnTypeClauseNode.TypeIdentifier.TextSpan.GetText());
+        Assert.Equal(functionIdentifierText, functionIdentifierToken.TextSpan.GetText());
+
+        var genericArgumentEntryNode = genericArgumentsListingNode.GenericArgumentEntryNodeBag.Single();
+        Assert.Equal(genericTypeText, genericArgumentEntryNode.TypeClauseNode.TypeIdentifier.TextSpan.GetText());
+
+        var functionArgumentEntryNode = functionArgumentsListingNode.FunctionArgumentEntryNodeBag.Single();
+        Assert.Equal(genericTypeText, functionArgumentEntryNode.VariableDeclarationStatementNode.TypeClauseNode.TypeIdentifier.TextSpan.GetText());
+        Assert.Equal(functionArgumentText, functionArgumentEntryNode.VariableDeclarationStatementNode.IdentifierToken.TextSpan.GetText());
+
+        var returnStatementNode = (ReturnStatementNode)functionCodeBlockNode.ChildBag.Single();
+        Assert.NotNull(returnStatementNode);
+
+        // Whitespace issues when comparing
+        Assert.Equal(
+            genericConstraintText.Replace(" ", string.Empty),
+            constraintNode.GetTextRecursively().Replace(" ", string.Empty));
     }
 
     [Fact]
