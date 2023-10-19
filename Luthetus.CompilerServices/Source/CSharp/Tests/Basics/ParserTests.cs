@@ -1374,6 +1374,13 @@ public partial class ParserTests
     {
         var classIdentifierText = "Person";
         var sourceText = $"public class {classIdentifierText} {{ public {classIdentifierText}(string firstName, string lastName) {{ FirstName = firstName; LastName = lastName; }} }}";
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
 
         throw new NotImplementedException();
     }
@@ -1385,6 +1392,13 @@ public partial class ParserTests
         var constructorOne = $"public {classIdentifierText}(string firstName, string lastName) {{ FirstName = firstName; LastName = lastName; }}";
         var constructorTwo = $"public {classIdentifierText}(Person person) : this(person.FirstName, person.LastName) {{ }}";
         var sourceText = $"public class {classIdentifierText} {{ {constructorOne} {constructorTwo} }}";
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
 
         throw new NotImplementedException();
     }

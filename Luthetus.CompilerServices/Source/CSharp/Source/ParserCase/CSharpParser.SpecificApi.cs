@@ -227,6 +227,23 @@ public partial class CSharpParser : IParser
             Binder.BindConstructorDefinitionIdentifierToken(identifierToken);
 
             NodeRecent = functionDefinitionNode;
+
+            if (TokenWalker.Current.SyntaxKind == SyntaxKind.ColonToken)
+            {
+                // Constructor invokes some other constructor as well
+
+                while (!TokenWalker.IsEof)
+                {
+                    if (TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken ||
+                        TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
+                    {
+                        break;
+                    }
+
+                    _ = TokenWalker.Consume();
+                }
+            }
+
             return functionDefinitionNode;
         }
 
