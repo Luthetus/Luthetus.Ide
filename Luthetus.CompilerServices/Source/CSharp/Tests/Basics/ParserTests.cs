@@ -1370,6 +1370,26 @@ public partial class ParserTests
     }
 
     [Fact]
+    public void PARSE_ClassDefinition_WITH_Constructor()
+    {
+        var classIdentifierText = "Person";
+        var sourceText = $"public class {classIdentifierText} {{ public {classIdentifierText}(string firstName, string lastName) {{ FirstName = firstName; LastName = lastName; }} }}";
+
+        throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void PARSE_ClassDefinition_WITH_Constructor_Invokes_Constructor()
+    {
+        var classIdentifierText = "Person";
+        var constructorOne = $"public {classIdentifierText}(string firstName, string lastName) {{ FirstName = firstName; LastName = lastName; }}";
+        var constructorTwo = $"public {classIdentifierText}(Person person) : this(person.FirstName, person.LastName) {{ }}";
+        var sourceText = $"public class {classIdentifierText} {{ {constructorOne} {constructorTwo} }}";
+
+        throw new NotImplementedException();
+    }
+
+    [Fact]
     public void PARSE_PropertyAttribute()
     {
         var attributeIdentifier = "Parameter";
