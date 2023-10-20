@@ -1,4 +1,5 @@
 ﻿@using Luthetus.Common.RazorLib.Menus.Displays
+@using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 
 <div @ref="_autocompleteMenuElementReference"
      tab-index="-1"
@@ -10,7 +11,34 @@
         
         <MenuDisplay @ref="_autocompleteMenuComponent" 
                      MenuRecord="GetMenuRecord()"
-                     FocusOnAfterRenderAsync="false"/>
+                     FocusOnAfterRenderAsync="false"
+                     Context="menuOption">
+
+            <IconRenderFragment>
+                @{
+                    if ((menuOption.WidgetParameterMap?.TryGetValue(
+                            nameof(AutocompleteEntry), out var value) ?? false) &&
+                        value is AutocompleteEntry autocompleteEntry)
+                    {
+                        switch (autocompleteEntry.AutocompleteEntryKind)
+                        {
+                            case AutocompleteEntryKind.Word:
+                                <IconSymbolKey/>
+                                break;
+                            case AutocompleteEntryKind.Variable:
+                                <IconSymbolField/>
+                                break;
+                            case AutocompleteEntryKind.Function:
+                                <IconSymbolMethod/>
+                                break;
+                            case AutocompleteEntryKind.Type:
+                                <IconSymbolClass/>
+                                break;
+                        }
+                    }
+                }
+            </IconRenderFragment>
+        </MenuDisplay>
     </CascadingValue>
 
 </div>

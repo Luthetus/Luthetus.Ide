@@ -131,7 +131,7 @@ public class CSharpCompilerService : ICompilerService
         var autocompleteEntryBag = new List<AutocompleteEntry>();
 
         autocompleteEntryBag.AddRange(
-            boundScope.VariableDeclarationMap.Where(x => x.Key.Contains(word))
+            boundScope.VariableDeclarationMap.Where(x => x.Key.Contains(word, StringComparison.InvariantCultureIgnoreCase))
             .Select(x =>
             {
                 return new AutocompleteEntry(
@@ -140,7 +140,7 @@ public class CSharpCompilerService : ICompilerService
             }));
 
         autocompleteEntryBag.AddRange(
-            boundScope.FunctionDefinitionMap.Where(x => x.Key.Contains(word))
+            boundScope.FunctionDefinitionMap.Where(x => x.Key.Contains(word, StringComparison.InvariantCultureIgnoreCase))
             .Select(x =>
             {
                 return new AutocompleteEntry(
@@ -149,7 +149,7 @@ public class CSharpCompilerService : ICompilerService
             }));
 
         autocompleteEntryBag.AddRange(
-            boundScope.TypeDefinitionMap.Where(x => x.Key.Contains(word))
+            boundScope.TypeDefinitionMap.Where(x => x.Key.Contains(word, StringComparison.InvariantCultureIgnoreCase))
             .Select(x =>
             {
                 return new AutocompleteEntry(

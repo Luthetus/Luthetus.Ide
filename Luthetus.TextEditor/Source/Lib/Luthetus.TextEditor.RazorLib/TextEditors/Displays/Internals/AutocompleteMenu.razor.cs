@@ -109,7 +109,14 @@ public partial class AutocompleteMenu : ComponentBase
                     entry.DisplayName,
                     MenuOptionKind.Other,
                     () => SelectMenuOption(
-                        () => InsertAutocompleteMenuOption(word, entry, RenderBatch.ViewModel!))))
+                        () => InsertAutocompleteMenuOption(word, entry, RenderBatch.ViewModel!)),
+                    WidgetParameterMap: new Dictionary<string, object?>
+                    {
+                        {
+                            nameof(AutocompleteEntry),
+                            entry
+                        }
+                    }))
                 .ToList();
             }
 
