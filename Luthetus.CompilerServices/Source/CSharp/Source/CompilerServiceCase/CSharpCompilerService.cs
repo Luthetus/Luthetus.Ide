@@ -121,26 +121,43 @@ public class CSharpCompilerService : ICompilerService
         QueueParseRequest(resourceUri);
     }
 
-    public ImmutableArray<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorCursorSnapshot cursorSnapshot)
+    public ImmutableArray<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorTextSpan textSpan)
     {
-        if (CSharpBinder.TryGetTypeDefinitionHierarchically(word, out var typeDefinitionNode) &&
-            typeDefinitionNode is not null)
-        {
-            var functionDefinitionNodes = typeDefinitionNode.GetFunctionDefinitionNodes();
+        var boundScope = CSharpBinder.GetBoundScope(textSpan) as CSharpBoundScope;
 
-            var matches = functionDefinitionNodes
-                .Where(fdn => fdn.FunctionIdentifier.TextSpan.GetText().Contains(word))
-                .Select(fdn =>
-                {
-                    return new AutocompleteEntry(
-                        fdn.FunctionIdentifier.TextSpan.GetText(),
-                        AutocompleteEntryKind.Function);
-                });
+        if (boundScope is null)
+            return ImmutableArray<AutocompleteEntry>.Empty;
 
-            return matches.ToImmutableArray();
-        }
+        var autocompleteEntryBag = new List<AutocompleteEntry>();
 
-        return ImmutableArray<AutocompleteEntry>.Empty;
+        autocompleteEntryBag.AddRange(
+            boundScope.VariableDeclarationMap.Where(x => x.Key.Contains(word))
+            .Select(x =>
+            {
+                return new AutocompleteEntry(
+                    x.Key,
+                    AutocompleteEntryKind.Variable);
+            }));
+
+        autocompleteEntryBag.AddRange(
+            boundScope.FunctionDefinitionMap.Where(x => x.Key.Contains(word))
+            .Select(x =>
+            {
+                return new AutocompleteEntry(
+                    x.Key,
+                    AutocompleteEntryKind.Function);
+            }));
+
+        autocompleteEntryBag.AddRange(
+            boundScope.TypeDefinitionMap.Where(x => x.Key.Contains(word))
+            .Select(x =>
+            {
+                return new AutocompleteEntry(
+                    x.Key,
+                    AutocompleteEntryKind.Type);
+            }));
+
+        return autocompleteEntryBag.ToImmutableArray();
     }
 
     public void DisposeResource(ResourceUri resourceUri)

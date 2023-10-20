@@ -44,7 +44,7 @@ public interface ICompilerService
     /// When a user types a period ('.') or hits the keybind: { 'Ctrl' + 'Space' }
     /// this method is invoked to populate the autocomplete menu.
     /// </summary>
-    public ImmutableArray<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorCursorSnapshot cursorSnapshot);
+    public ImmutableArray<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorTextSpan textSpan);
 
     /// <summary>Expected to be concurrency safe with <see cref="RegisterResource"/></summary>
     public void DisposeResource(ResourceUri resourceUri);

@@ -559,7 +559,7 @@ public class CSharpBinder : IBinder
     public IBoundScope? GetBoundScope(TextEditorTextSpan textSpan)
     {
         var possibleScopes = _boundScopes
-            .Where(x => x.ResourceUri == textSpan.ResourceUri)
+            .Where(x => x.ResourceUri == textSpan.ResourceUri || x.ResourceUri.Value == string.Empty)
             .Where(x =>
             {
                 return x.StartingIndexInclusive <= textSpan.StartingIndexInclusive &&
