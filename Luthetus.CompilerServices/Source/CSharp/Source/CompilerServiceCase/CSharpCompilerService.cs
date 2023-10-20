@@ -130,32 +130,39 @@ public class CSharpCompilerService : ICompilerService
 
         var autocompleteEntryBag = new List<AutocompleteEntry>();
 
-        autocompleteEntryBag.AddRange(
-            boundScope.VariableDeclarationMap.Where(x => x.Key.Contains(word, StringComparison.InvariantCultureIgnoreCase))
-            .Select(x =>
-            {
-                return new AutocompleteEntry(
-                    x.Key,
-                    AutocompleteEntryKind.Variable);
-            }));
+        var targetScope = boundScope;
 
-        autocompleteEntryBag.AddRange(
-            boundScope.FunctionDefinitionMap.Where(x => x.Key.Contains(word, StringComparison.InvariantCultureIgnoreCase))
-            .Select(x =>
-            {
-                return new AutocompleteEntry(
-                    x.Key,
-                    AutocompleteEntryKind.Function);
-            }));
+        while (targetScope is not null)
+        {
+            autocompleteEntryBag.AddRange(
+                targetScope.VariableDeclarationMap.Where(x => x.Key.Contains(word, StringComparison.InvariantCulture))
+                .Select(x =>
+                {
+                    return new AutocompleteEntry(
+                        x.Key,
+                        AutocompleteEntryKind.Variable);
+                }));
 
-        autocompleteEntryBag.AddRange(
-            boundScope.TypeDefinitionMap.Where(x => x.Key.Contains(word, StringComparison.InvariantCultureIgnoreCase))
-            .Select(x =>
-            {
-                return new AutocompleteEntry(
-                    x.Key,
-                    AutocompleteEntryKind.Type);
-            }));
+            autocompleteEntryBag.AddRange(
+                targetScope.FunctionDefinitionMap.Where(x => x.Key.Contains(word, StringComparison.InvariantCulture))
+                .Select(x =>
+                {
+                    return new AutocompleteEntry(
+                        x.Key,
+                        AutocompleteEntryKind.Function);
+                }));
+
+            autocompleteEntryBag.AddRange(
+                targetScope.TypeDefinitionMap.Where(x => x.Key.Contains(word, StringComparison.InvariantCulture))
+                .Select(x =>
+                {
+                    return new AutocompleteEntry(
+                        x.Key,
+                        AutocompleteEntryKind.Type);
+                }));
+
+            targetScope = targetScope.Parent;
+        }
 
         return autocompleteEntryBag.ToImmutableArray();
     }
