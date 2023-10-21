@@ -55,36 +55,9 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     [Parameter, EditorRequired]
     public Key<TextEditorViewModel> TextEditorViewModelKey { get; set; } = Key<TextEditorViewModel>.Empty;
-
+    
     [Parameter]
-    public string WrapperStyleCssString { get; set; } = string.Empty;
-    [Parameter]
-    public string WrapperClassCssString { get; set; } = string.Empty;
-    [Parameter]
-    public string TextEditorStyleCssString { get; set; } = string.Empty;
-    [Parameter]
-    public string TextEditorClassCssString { get; set; } = string.Empty;
-    /// <summary>TabIndex is used for the html attribute named: 'tabindex'</summary>
-    [Parameter]
-    public int TabIndex { get; set; } = -1;
-    [Parameter]
-    public RenderFragment? ContextMenuRenderFragmentOverride { get; set; }
-    [Parameter]
-    public RenderFragment? AutoCompleteMenuRenderFragmentOverride { get; set; }
-    /// <summary>If left null, the default <see cref="HandleAfterOnKeyDownAsync"/> will be used.</summary>
-    [Parameter]
-    public Func<TextEditorModel, ImmutableArray<TextEditorCursorSnapshot>, KeyboardEventArgs, Func<TextEditorMenuKind, bool, Task>, Task>? AfterOnKeyDownAsync { get; set; }
-    /// <summary>If set to false the <see cref="TextEditorHeader"/> will NOT render above the text editor.</summary>
-    [Parameter]
-    public bool IncludeHeaderHelperComponent { get; set; } = true;
-    /// <summary><see cref="HeaderButtonKinds"/> contains the enum value that represents a button displayed in the optional component: <see cref="TextEditorHeader"/>.</summary>
-    [Parameter]
-    public ImmutableArray<TextEditorHeaderButtonKind>? HeaderButtonKinds { get; set; }
-    /// <summary>If set to false the <see cref="TextEditorFooter"/> will NOT render below the text editor.</summary>
-    [Parameter]
-    public bool IncludeFooterHelperComponent { get; set; } = true;
-    [Parameter]
-    public bool IncludeContextMenuHelperComponent { get; set; } = true;
+    public TextEditorViewModelDisplayOptions ViewModelDisplayOptions { get; set; } = new();
 
     private readonly Guid _textEditorHtmlElementId = Guid.NewGuid();
     private readonly IThrottle _throttleApplySyntaxHighlighting = new Throttle(TimeSpan.FromMilliseconds(500));
@@ -339,7 +312,10 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                     TextEditorService,
                     viewModel,
                     HandleMouseStoppedMovingEventAsync,
-                    JsRuntime));
+                    JsRuntime,
+                    ViewModelDisplayOptions.RegisterModelAction,
+                    ViewModelDisplayOptions.RegisterViewModelAction,
+                    ViewModelDisplayOptions.ShowViewModelAction));
             }
             else
             {
@@ -383,7 +359,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             }
         }
 
-        var afterOnKeyDownAsync = AfterOnKeyDownAsync ?? HandleAfterOnKeyDownAsync;
+        var afterOnKeyDownAsync = ViewModelDisplayOptions.AfterOnKeyDownAsync ?? HandleAfterOnKeyDownAsync;
 
         var cursorDisplay = CursorDisplay;
 

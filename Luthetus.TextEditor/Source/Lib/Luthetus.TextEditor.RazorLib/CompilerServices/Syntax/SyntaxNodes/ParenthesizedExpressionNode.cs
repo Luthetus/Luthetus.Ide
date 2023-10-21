@@ -31,8 +31,7 @@ public sealed record ParenthesizedExpressionNode : IExpressionNode
     public OpenParenthesisToken OpenParenthesisToken { get; }
     public IExpressionNode InnerExpression { get; }
     public CloseParenthesisToken CloseParenthesisToken { get; }
-    public Type? ValueType => InnerExpression?.TypeClauseNode?.ValueType;
-    public TypeClauseNode? TypeClauseNode => InnerExpression?.TypeClauseNode;
+    public TypeClauseNode TypeClauseNode => InnerExpression.TypeClauseNode;
 
     public ImmutableArray<ISyntax> ChildBag { get; }
 

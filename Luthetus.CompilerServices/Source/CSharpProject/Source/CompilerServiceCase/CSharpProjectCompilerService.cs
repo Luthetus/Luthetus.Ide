@@ -30,14 +30,16 @@ public class CSharpProjectCompilerService : ICompilerService
         _dispatcher = dispatcher;
     }
 
+    public event Action? ResourceRegistered;
+    public event Action? ResourceParsed;
+    public event Action? ResourceDisposed;
+
+    public IBinder? Binder => null;
+
     public ImmutableArray<ICompilerServiceResource> CompilerServiceResources =>
         _cSharpProjectResourceMap.Values
             .Select(dnsr => (ICompilerServiceResource)dnsr)
             .ToImmutableArray();
-
-    public event Action? ResourceRegistered;
-    public event Action? ResourceParsed;
-    public event Action? ResourceDisposed;
 
     public void RegisterResource(ResourceUri resourceUri)
     {
@@ -58,7 +60,7 @@ public class CSharpProjectCompilerService : ICompilerService
 
     public ICompilerServiceResource? GetCompilerServiceResourceFor(ResourceUri resourceUri)
     {
-        var model = _textEditorService.Model.FindOrDefaultByResourceUri(resourceUri);
+        var model = _textEditorService.Model.FindOrDefault(resourceUri);
 
         if (model is null)
             return null;
@@ -104,7 +106,7 @@ public class CSharpProjectCompilerService : ICompilerService
         QueueParseRequest(resourceUri);
     }
 
-    public ImmutableArray<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorCursorSnapshot cursorSnapshot)
+    public ImmutableArray<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorTextSpan textSpan)
     {
         return ImmutableArray<AutocompleteEntry>.Empty;
     }
@@ -125,7 +127,7 @@ public class CSharpProjectCompilerService : ICompilerService
             "C# Project Compiler Service - Parse",
             async () =>
             {
-                var model = _textEditorService.Model.FindOrDefaultByResourceUri(resourceUri);
+                var model = _textEditorService.Model.FindOrDefault(resourceUri);
 
                 if (model is null)
                     return;

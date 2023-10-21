@@ -62,6 +62,9 @@ public partial class ContextMenu : ComponentBase
             TextEditorService,
             RenderBatch.ViewModel,
             null,
+            null,
+            null,
+            null,
             null);
     }
 

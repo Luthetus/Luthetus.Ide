@@ -197,6 +197,7 @@ public static class RuntimeAssembliesLoaderFactory
                                     functionIdentifierToken,
                                     genericArgumentsListingNode,
                                     functionArgumentsListingNode,
+                                    null,
                                     null);
 
                                 typeBodyCodeBlockNodeBuilder.ChildBag.Add(functionDefinitionNode);

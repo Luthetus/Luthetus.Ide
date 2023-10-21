@@ -6,11 +6,7 @@
     </span>
     
     <div class="@PreviewElementCssClassString">
-        <TextEditorViewModelDisplay WrapperStyleCssString="height: var(--luth_te_text-editor-content-min-height);"
-                                    TextEditorStyleCssString="height: 100%;"
-                                    IncludeHeaderHelperComponent="false"
-                                    IncludeFooterHelperComponent="false"
-                                    AfterOnKeyDownAsync="(_, _, _, _) => { return Task.CompletedTask; }"
-                                    TextEditorViewModelKey="SettingsPreviewTextEditorViewModelKey"/>
+        <TextEditorViewModelDisplay TextEditorViewModelKey="SettingsPreviewTextEditorViewModelKey"
+                                    ViewModelDisplayOptions="_viewModelDisplayOptions" />
     </div>
 </div>

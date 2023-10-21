@@ -3,6 +3,9 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using static Luthetus.CompilerServices.Lang.CSharp.Facts.CSharpLanguageFacts;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 
@@ -105,8 +108,7 @@ public partial class CSharpParser : IParser
         /// <summary>
         /// The keywords: 'string', 'bool' 'int' and etc... are keywords, but identify a type.
         /// </summary>
-        public bool IsTypeIdentifierKeywordSyntaxKind(
-            SyntaxKind syntaxKind)
+        public bool IsTypeIdentifierKeywordSyntaxKind(SyntaxKind syntaxKind)
         {
             switch (syntaxKind)
             {

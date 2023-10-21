@@ -24,12 +24,14 @@ public class TextEditorDefaultCompilerService : ICompilerService
         _dispatcher = dispatcher;
     }
 
-    public ImmutableArray<ICompilerServiceResource> CompilerServiceResources =>
-        ImmutableArray<ICompilerServiceResource>.Empty;
-
     public event Action? ResourceRegistered;
     public event Action? ResourceParsed;
     public event Action? ResourceDisposed;
+
+    public IBinder? Binder => null;
+
+    public ImmutableArray<ICompilerServiceResource> CompilerServiceResources =>
+        ImmutableArray<ICompilerServiceResource>.Empty;
 
     public void RegisterResource(ResourceUri resourceUri)
     {
@@ -61,7 +63,7 @@ public class TextEditorDefaultCompilerService : ICompilerService
         // Do nothing
     }
 
-    public ImmutableArray<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorCursorSnapshot cursorSnapshot)
+    public ImmutableArray<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorTextSpan textSpan)
     {
         return ImmutableArray<AutocompleteEntry>.Empty;
     }

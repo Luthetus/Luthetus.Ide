@@ -8,7 +8,7 @@ namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basics;
 public partial class EvaluatorTests
 {
     [Fact]
-    public void SHOULD_EVALUATE_NUMERIC_LITERAL_EXPRESSION()
+    public void EVALUATE_Numeric_Literal()
     {
         var x = 3;
         string sourceText = $"{x}".ReplaceLineEndings("\n");
@@ -26,7 +26,7 @@ public partial class EvaluatorTests
     }
 
     [Fact]
-    public void SHOULD_EVALUATE_NUMERIC_BINARY_ADD_EXPRESSION()
+    public void EVALUATE_Numeric_Binary_Add()
     {
         var x = 3;
         var y = 3;
@@ -45,7 +45,7 @@ public partial class EvaluatorTests
     }
     
     [Fact]
-    public void SHOULD_EVALUATE_NUMERIC_BINARY_SUBTRACT_EXPRESSION()
+    public void EVALUATE_Numeric_Binary_Subtract()
     {
         var x = 5;
         var y = 1;
@@ -64,7 +64,7 @@ public partial class EvaluatorTests
     }
     
     [Fact]
-    public void SHOULD_EVALUATE_NUMERIC_BINARY_MULTIPLY_EXPRESSION()
+    public void EVALUATE_Numeric_Binary_Multiply()
     {
         var x = 3;
         var y = 7;
@@ -83,7 +83,7 @@ public partial class EvaluatorTests
     }
     
     [Fact]
-    public void SHOULD_EVALUATE_NUMERIC_BINARY_DIVISION_EXPRESSION()
+    public void EVALUATE_Numeric_Binary_Division()
     {
         var x = 16;
         var y = 4;
@@ -102,7 +102,7 @@ public partial class EvaluatorTests
     }
     
     [Fact]
-    public void SHOULD_EVALUATE_PARENTHESIZED_NUMERIC_LITERAL_EXPRESSION()
+    public void EVALUATE_Numeric_Parenthesized_Literal()
     {
         var x = 6;
         string sourceText = $"({x})".ReplaceLineEndings("\n");
@@ -120,7 +120,7 @@ public partial class EvaluatorTests
     }
     
     [Fact]
-    public void SHOULD_EVALUATE_PARENTHESIZED_NUMERIC_BINARY_ADD_EXPRESSION()
+    public void EVALUATE_Numeric_Parenthesized_BINARY_Add()
     {
         var x = 7;
         var y = 3;
@@ -139,7 +139,7 @@ public partial class EvaluatorTests
     }
     
     [Fact]
-    public void SHOULD_EVALUATE_PARENTHESIZED_NUMERIC_BINARY_SUBTRACT_EXPRESSION()
+    public void EVALUATE_Numeric_Parenthesized_Binary_Subtract()
     {
         var x = 12;
         var y = 1;
@@ -158,7 +158,7 @@ public partial class EvaluatorTests
     }
     
     [Fact]
-    public void SHOULD_EVALUATE_PARENTHESIZED_NUMERIC_BINARY_MULTIPLY_EXPRESSION()
+    public void EVALUATE_Numeric_Parenthesized_Binary_Multiply()
     {
         var x = 6;
         var y = 3;
@@ -177,7 +177,7 @@ public partial class EvaluatorTests
     }
     
     [Fact]
-    public void SHOULD_EVALUATE_PARENTHESIZED_NUMERIC_BINARY_DIVISION_EXPRESSION()
+    public void EVALUATE_Numeric_Parenthesized_Binary_Division()
     {
         var x = 2;
         var y = 2;
@@ -196,7 +196,7 @@ public partial class EvaluatorTests
     }
     
     [Fact]
-    public void SHOULD_EVALUATE_NUMERIC_BINARY_EXPRESSION_RECURSION()
+    public void EVALUATE_Numeric_Binary_Recursive()
     {
         // Perhaps SHOULD_EVALUATE_NUMERIC_BINARY_EXPRESSION_RECURSION is a bad
         // name for this test.
@@ -250,7 +250,7 @@ public partial class EvaluatorTests
     }
 
     [Fact]
-    public void SHOULD_EVALUATE_NUMERIC_BINARY_EXPRESSION_WITH_OPERATOR_PRECEDENCE_IMPACTING()
+    public void EVALUATE_Numeric_Binary_WITH_Operator_Precedence_Impacting()
     {
         // {x} - {y}:
         //
@@ -300,7 +300,7 @@ public partial class EvaluatorTests
     }
     
     [Fact]
-    public void SHOULD_EVALUATE_NUMERIC_BINARY_EXPRESSION_WITH_OPERATOR_PRECEDENCE_NOT_IMPACTING()
+    public void EVALUATE_Numeric_Binary_WITH_Operator_Precedence_NOT_Impacting()
     {
         var x = 3;
         var y = 7;
@@ -320,7 +320,7 @@ public partial class EvaluatorTests
     }
 
     [Fact]
-    public void SHOULD_EVALUATE_STRING_LITERAL_EXPRESSION()
+    public void EVALUATE_String_Literal()
     {
         var x = "123abc";
         string sourceText = $"\"{x}\"".ReplaceLineEndings("\n");
@@ -338,7 +338,7 @@ public partial class EvaluatorTests
     }
     
     [Fact]
-    public void SHOULD_EVALUATE_STRING_BINARY_ADD_EXPRESSION()
+    public void EVALUATE_String_Binary_Add()
     {
         var x = "123";
         var y = "abc";

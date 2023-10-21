@@ -9,6 +9,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Menus.Displays;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -82,19 +83,40 @@ public partial class AutocompleteMenu : ComponentBase
 
                 // (2023-08-09) Looking into using an ICompilerService for autocompletion.
                 {
+                    var positionIndex = RenderBatch.Model.GetCursorPositionIndex(primaryCursorSnapshot.ImmutableCursor);
+
+                    var textSpan = new TextEditorTextSpan(
+                        positionIndex,
+                        positionIndex + 1,
+                        0,
+                        RenderBatch.Model.ResourceUri,
+                        // TODO: RenderBatch.Model.GetAllText() probably isn't needed here. Maybe a useful optimization is to remove it somehow?
+                        RenderBatch.Model.GetAllText());
+
                     var compilerServiceAutocompleteEntryBag = RenderBatch.Model!.CompilerService.GetAutocompleteEntries(
                         word,
-                        primaryCursorSnapshot);
+                        textSpan);
 
                     if (compilerServiceAutocompleteEntryBag.Any())
-                        autocompleteEntryBag = compilerServiceAutocompleteEntryBag.ToArray();
+                    {
+                        autocompleteEntryBag = compilerServiceAutocompleteEntryBag
+                            .AddRange(autocompleteEntryBag)
+                            .ToArray();
+                    }
                 }
 
                 menuOptionRecordsBag = autocompleteEntryBag.Select(entry => new MenuOptionRecord(
                     entry.DisplayName,
                     MenuOptionKind.Other,
                     () => SelectMenuOption(
-                        () => InsertAutocompleteMenuOption(word, entry, RenderBatch.ViewModel!))))
+                        () => InsertAutocompleteMenuOption(word, entry, RenderBatch.ViewModel!)),
+                    WidgetParameterMap: new Dictionary<string, object?>
+                    {
+                        {
+                            nameof(AutocompleteEntry),
+                            entry
+                        }
+                    }))
                 .ToList();
             }
 

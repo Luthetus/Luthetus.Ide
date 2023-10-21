@@ -30,14 +30,16 @@ public class XmlCompilerService : ICompilerService
         _dispatcher = dispatcher;
     }
 
+    public event Action? ResourceRegistered;
+    public event Action? ResourceParsed;
+    public event Action? ResourceDisposed;
+
+    public IBinder? Binder => null;
+
     public ImmutableArray<ICompilerServiceResource> CompilerServiceResources =>
         _xmlResourceMap.Values
             .Select(xr => (ICompilerServiceResource)xr)
             .ToImmutableArray();
-
-    public event Action? ResourceRegistered;
-    public event Action? ResourceParsed;
-    public event Action? ResourceDisposed;
 
     public void RegisterResource(ResourceUri resourceUri)
     {
@@ -58,7 +60,7 @@ public class XmlCompilerService : ICompilerService
 
     public ICompilerServiceResource? GetCompilerServiceResourceFor(ResourceUri resourceUri)
     {
-        var model = _textEditorService.Model.FindOrDefaultByResourceUri(resourceUri);
+        var model = _textEditorService.Model.FindOrDefault(resourceUri);
 
         if (model is null)
             return null;
@@ -99,7 +101,7 @@ public class XmlCompilerService : ICompilerService
         QueueParseRequest(resourceUri);
     }
 
-    public ImmutableArray<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorCursorSnapshot cursorSnapshot)
+    public ImmutableArray<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorTextSpan textSpan)
     {
         return ImmutableArray<AutocompleteEntry>.Empty;
     }
@@ -120,7 +122,7 @@ public class XmlCompilerService : ICompilerService
             "XML Compiler Service - Parse",
             async () =>
             {
-                var model = _textEditorService.Model.FindOrDefaultByResourceUri(resourceUri);
+                var model = _textEditorService.Model.FindOrDefault(resourceUri);
 
                 if (model is null)
                     return;

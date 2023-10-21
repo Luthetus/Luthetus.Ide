@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Fluxor;
-using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -32,12 +31,9 @@ public partial class TextEditorGroupDisplay : IDisposable
     public string CssStyleString { get; set; } = string.Empty;
     [Parameter]
     public string CssClassString { get; set; } = string.Empty;
-    /// <summary>TabIndex is used for the html attribute named: 'tabindex'</summary>
-    [Parameter]
-    public int TabIndex { get; set; } = -1;
     /// <summary><see cref="HeaderButtonKindBag"/> contains the enum value that represents a button displayed in the optional component: <see cref="TextEditorHeader"/>.</summary>
     [Parameter]
-    public ImmutableArray<TextEditorHeaderButtonKind>? HeaderButtonKindBag { get; set; }
+    public TextEditorViewModelDisplayOptions ViewModelDisplayOptions { get; set; } = new();
 
     protected override void OnInitialized()
     {

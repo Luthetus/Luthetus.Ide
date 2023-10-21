@@ -76,6 +76,9 @@ public partial class CSharpParser : IParser
                 case SyntaxKind.PlusToken:
                     _general.ParsePlusToken((PlusToken)consumedToken);
                     break;
+                case SyntaxKind.PlusPlusToken:
+                    _general.ParsePlusPlusToken((PlusPlusToken)consumedToken);
+                    break;
                 case SyntaxKind.MinusToken:
                     _general.ParseMinusToken((MinusToken)consumedToken);
                     break;

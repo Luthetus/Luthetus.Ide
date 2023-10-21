@@ -30,14 +30,16 @@ public class JsonCompilerService : ICompilerService
         _dispatcher = dispatcher;
     }
 
+    public event Action? ResourceRegistered;
+    public event Action? ResourceParsed;
+    public event Action? ResourceDisposed;
+
+    public IBinder? Binder => null;
+
     public ImmutableArray<ICompilerServiceResource> CompilerServiceResources =>
         _jsonResourceMap.Values
             .Select(jr => (ICompilerServiceResource)jr)
             .ToImmutableArray();
-
-    public event Action? ResourceRegistered;
-    public event Action? ResourceParsed;
-    public event Action? ResourceDisposed;
 
     public void RegisterResource(ResourceUri resourceUri)
     {
@@ -58,7 +60,7 @@ public class JsonCompilerService : ICompilerService
 
     public ICompilerServiceResource? GetCompilerServiceResourceFor(ResourceUri resourceUri)
     {
-        var model = _textEditorService.Model.FindOrDefaultByResourceUri(resourceUri);
+        var model = _textEditorService.Model.FindOrDefault(resourceUri);
 
         if (model is null)
             return null;
@@ -99,7 +101,7 @@ public class JsonCompilerService : ICompilerService
         QueueParseRequest(resourceUri);
     }
 
-    public ImmutableArray<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorCursorSnapshot cursorSnapshot)
+    public ImmutableArray<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorTextSpan textSpan)
     {
         return ImmutableArray<AutocompleteEntry>.Empty;
     }
@@ -120,7 +122,7 @@ public class JsonCompilerService : ICompilerService
             "JSON Compiler Service - Parse",
             async () =>
             {
-                var model = _textEditorService.Model.FindOrDefaultByResourceUri(resourceUri);
+                var model = _textEditorService.Model.FindOrDefault(resourceUri);
 
                 if (model is null)
                     return;

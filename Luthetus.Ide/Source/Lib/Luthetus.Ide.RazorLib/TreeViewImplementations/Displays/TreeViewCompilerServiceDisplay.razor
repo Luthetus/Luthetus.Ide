@@ -24,7 +24,7 @@ else if (TreeViewCompilerService.Item is CSharpProjectCompilerService cSharpProj
 else if (TreeViewCompilerService.Item is CSharpCompilerService cSharpCompilerService)
 {
     <div>
-        @cSharpCompilerService.Binder.BoundNamespaceStatementNodes
+        @cSharpCompilerService.CSharpBinder.BoundNamespaceStatementNodes
     </div>
 }
 else if (TreeViewCompilerService.Item is RazorCompilerService razorCompilerService)

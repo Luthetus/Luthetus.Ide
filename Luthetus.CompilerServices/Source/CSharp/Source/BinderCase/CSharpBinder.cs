@@ -13,14 +13,14 @@ namespace Luthetus.CompilerServices.Lang.CSharp.BinderCase;
 
 public class CSharpBinder : IBinder
 {
-    private readonly BoundScope _globalScope = CSharpLanguageFacts.Scope.GetInitialGlobalScope();
+    private readonly CSharpBoundScope _globalScope = CSharpLanguageFacts.Scope.GetInitialGlobalScope();
     private readonly Dictionary<string, NamespaceStatementNode> _namespaceStatementNodes = CSharpLanguageFacts.Namespaces.GetInitialBoundNamespaceStatementNodes();
     /// <summary>The key for _symbolDefinitions is calculated by <see cref="ISymbol.GetSymbolDefinitionId"/></summary>
     private readonly Dictionary<string, SymbolDefinition> _symbolDefinitions = new();
     private readonly LuthetusDiagnosticBag _diagnosticBag = new();
 
-    private List<BoundScope> _boundScopes = new();
-    private BoundScope _currentScope;
+    private List<CSharpBoundScope> _boundScopes = new();
+    private CSharpBoundScope _currentScope;
 
     public CSharpBinder()
     {
@@ -38,7 +38,7 @@ public class CSharpBinder : IBinder
     public ImmutableDictionary<string, NamespaceStatementNode> BoundNamespaceStatementNodes => _namespaceStatementNodes.ToImmutableDictionary();
     public ImmutableArray<ISymbol> Symbols => _symbolDefinitions.Values.SelectMany(x => x.SymbolReferences).Select(x => x.Symbol).ToImmutableArray();
     public Dictionary<string, SymbolDefinition> SymbolDefinitions => _symbolDefinitions;
-    public ImmutableArray<BoundScope> BoundScopes => _boundScopes.ToImmutableArray();
+    public ImmutableArray<CSharpBoundScope> BoundScopes => _boundScopes.ToImmutableArray();
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsBag => _diagnosticBag.ToImmutableArray();
 
     ImmutableArray<ITextEditorSymbol> IBinder.SymbolsBag => Symbols
@@ -133,7 +133,7 @@ public class CSharpBinder : IBinder
                 functionIdentifierText);
         }
     }
-    
+
     public FunctionArgumentEntryNode BindFunctionOptionalArgument(
         FunctionArgumentEntryNode functionArgumentEntryNode,
         ISyntaxToken compileTimeConstantToken,
@@ -141,13 +141,23 @@ public class CSharpBinder : IBinder
         bool hasInKeyword,
         bool hasRefKeyword)
     {
+        var argumentTypeClauseNode = functionArgumentEntryNode.VariableDeclarationStatementNode.TypeClauseNode;
+
+        if (TryGetTypeDefinitionHierarchically(
+                argumentTypeClauseNode.TypeIdentifier.TextSpan.GetText(),
+                out var typeDefinitionNode)
+            || typeDefinitionNode is null)
+        {
+            typeDefinitionNode = CSharpLanguageFacts.Types.Void;
+        }
+
         var literalExpressionNode = new LiteralExpressionNode(
             compileTimeConstantToken,
-            null);
+            typeDefinitionNode.ToTypeClause());
 
         literalExpressionNode = BindLiteralExpressionNode(literalExpressionNode);
-        
-        if (literalExpressionNode.TypeClauseNode?.ValueType is null ||
+
+        if (literalExpressionNode.TypeClauseNode.ValueType is null ||
             literalExpressionNode.TypeClauseNode.ValueType != functionArgumentEntryNode.VariableDeclarationStatementNode.TypeClauseNode.ValueType)
         {
             var optionalArgumentTextSpan = functionArgumentEntryNode.VariableDeclarationStatementNode.TypeClauseNode.TypeIdentifier.TextSpan with
@@ -156,10 +166,10 @@ public class CSharpBinder : IBinder
             };
 
             _diagnosticBag.ReportBadFunctionOptionalArgumentDueToMismatchInType(
-                optionalArgumentTextSpan, 
+                optionalArgumentTextSpan,
                 functionArgumentEntryNode.VariableDeclarationStatementNode.IdentifierToken.TextSpan.GetText(),
                 functionArgumentEntryNode.VariableDeclarationStatementNode.TypeClauseNode.ValueType?.Name ?? "null",
-                literalExpressionNode.TypeClauseNode?.ValueType?.Name ?? "null");
+                literalExpressionNode.TypeClauseNode.ValueType?.Name ?? "null");
         }
 
         return new FunctionArgumentEntryNode(
@@ -226,7 +236,7 @@ public class CSharpBinder : IBinder
             return boundNamespaceStatementNode;
         }
     }
-    
+
     public NamespaceStatementNode RegisterBoundNamespaceEntryNode(
         NamespaceStatementNode inBoundNamespaceStatementNode,
         CodeBlockNode codeBlockNode)
@@ -278,8 +288,7 @@ public class CSharpBinder : IBinder
         throw new NotImplementedException();
     }
 
-    public void BindVariableDeclarationStatementNode(
-        VariableDeclarationStatementNode variableDeclarationStatementNode)
+    public void BindVariableDeclarationStatementNode(VariableDeclarationStatementNode variableDeclarationStatementNode)
     {
         var variableSymbol = new VariableSymbol(variableDeclarationStatementNode.IdentifierToken.TextSpan with
         {
@@ -299,7 +308,7 @@ public class CSharpBinder : IBinder
                 text);
         }
     }
-    
+
     public VariableReferenceNode BindVariableReferenceNode(VariableReferenceNode variableReferenceNode)
     {
         var variableSymbol = new VariableSymbol(variableReferenceNode.VariableIdentifierToken.TextSpan with
@@ -311,7 +320,7 @@ public class CSharpBinder : IBinder
 
         var text = variableReferenceNode.VariableIdentifierToken.TextSpan.GetText();
 
-        if (TryGetVariableHierarchically(text, out var variableDeclarationStatementNode))
+        if (TryGetVariableDeclarationHierarchically(text, out var variableDeclarationStatementNode))
         {
             variableReferenceNode = new VariableReferenceNode(
                 variableReferenceNode.VariableIdentifierToken,
@@ -339,7 +348,7 @@ public class CSharpBinder : IBinder
 
         var text = variableAssignmentExpressionNode.VariableIdentifierToken.TextSpan.GetText();
 
-        if (TryGetVariableHierarchically(
+        if (TryGetVariableDeclarationHierarchically(
                 text,
                 out var variableDeclarationNode) &&
             variableDeclarationNode is not null)
@@ -360,23 +369,6 @@ public class CSharpBinder : IBinder
         }
     }
 
-    /// <summary>
-    /// TODO: This should be 'BindPropertyDeclarationNode' and take the respective datatype. For now (2023-08-10) just giving an IdentifierToken is easier.
-    /// </summary>
-    public void BindPropertyDeclarationIdentifierToken(
-        IdentifierToken identifierToken)
-    {
-        var propertySymbol = new PropertySymbol(identifierToken.TextSpan with
-        {
-            DecorationByte = (byte)GenericDecorationKind.Property
-        });
-
-        AddSymbolDefinition(propertySymbol);
-    }
-    
-    /// <summary>
-    /// TODO: This should be 'BindPropertyDeclarationNode' and take the respective datatype. For now (2023-08-10) just giving an IdentifierToken is easier.
-    /// </summary>
     public void BindConstructorDefinitionIdentifierToken(
         IdentifierToken identifierToken)
     {
@@ -388,8 +380,7 @@ public class CSharpBinder : IBinder
         AddSymbolDefinition(constructorSymbol);
     }
 
-    public void BindPropertyDeclarationNode(
-        VariableDeclarationStatementNode variableDeclarationStatementNode)
+    public void BindPropertyDeclarationNode(VariableDeclarationStatementNode variableDeclarationStatementNode)
     {
         var propertySymbol = new PropertySymbol(variableDeclarationStatementNode.IdentifierToken.TextSpan with
         {
@@ -398,89 +389,17 @@ public class CSharpBinder : IBinder
 
         AddSymbolDefinition(propertySymbol);
 
-        var text = propertySymbol.TextSpan.GetText();
+        var text = variableDeclarationStatementNode.IdentifierToken.TextSpan.GetText();
 
-        if (_currentScope.VariableDeclarationMap.TryGetValue(
+        if (!_currentScope.VariableDeclarationMap.TryAdd(
                 text,
-                out var existingVariableDeclarationStatementNode) ||
-            existingVariableDeclarationStatementNode is null)
+                variableDeclarationStatementNode))
         {
-            // TODO: The property was already declared, so report a diagnostic?
-            // TODO: The property was already declared, so check that the return types match?
-            return;
+            _diagnosticBag.ReportAlreadyDefinedVariable(
+                variableDeclarationStatementNode.IdentifierToken.TextSpan,
+                text);
         }
-
-        var success = _currentScope.VariableDeclarationMap.TryAdd(
-            text,
-            existingVariableDeclarationStatementNode);
-
-        if (!success)
-            _currentScope.VariableDeclarationMap[text] = existingVariableDeclarationStatementNode;
     }
-
-    /// <summary>
-    /// TODO: Fix BindIdentifierReferenceNode, it broke on (2023-07-26)
-    /// </summary>
-    // public BoundIdentifierReferenceNode BindIdentifierReferenceNode(
-    //     IdentifierToken identifierToken)
-    // {
-    //     var text = identifierToken.TextSpan.GetText();
-    //
-    //     if (TryGetVariableHierarchically(
-    //             text,
-    //             out var variableDeclarationNode) &&
-    //         variableDeclarationNode is not null)
-    //     {
-    //         AddSymbolReference(new VariableSymbol(identifierToken.TextSpan with
-    //         {
-    //             DecorationByte = (byte)GenericDecorationKind.Variable
-    //         }));
-    //
-    //         return new BoundIdentifierReferenceNode(
-    //             identifierToken,
-    //             variableDeclarationNode.BoundClassReferenceNode);
-    //     }
-    //     else if (TryGetClassReferenceHierarchically(
-    //                  identifierToken,
-    //                  null,
-    //                  out var boundClassReferenceNode) &&
-    //              boundClassReferenceNode is not null)
-    //     {
-    //         AddSymbolReference(new TypeSymbol(identifierToken.TextSpan with
-    //         {
-    //             DecorationByte = (byte)GenericDecorationKind.Type
-    //         }));
-    //
-    //         return new BoundIdentifierReferenceNode(
-    //             identifierToken,
-    //             boundClassReferenceNode);
-    //     }
-    //     else if (TryGetBoundFunctionDefinitionNodeHierarchically(
-    //                  text,
-    //                  out var boundFunctionDefinitionNode) &&
-    //              boundFunctionDefinitionNode is not null)
-    //     {
-    //         // TODO: Would this conditional branch be for method groups? @onclick="MethodName"
-    //
-    //         AddSymbolReference(new FunctionSymbol(identifierToken.TextSpan with
-    //         {
-    //             DecorationByte = (byte)GenericDecorationKind.Function
-    //         }));
-    //
-    //         return new BoundIdentifierReferenceNode(
-    //             identifierToken,
-    //             // TODO: Null is should not be passed in here
-    //             null);
-    //     }
-    //     else
-    //     {
-    //         // TODO: The identifier was not found, so report a diagnostic?
-    //         return new BoundIdentifierReferenceNode(
-    //             identifierToken,
-    //             // TODO: Null is should not be passed in here
-    //             null);
-    //     }
-    // }
 
     public void BindFunctionInvocationNode(FunctionInvocationNode functionInvocationNode)
     {
@@ -508,7 +427,7 @@ public class CSharpBinder : IBinder
                 functionInvocationIdentifierText);
         }
     }
-    
+
     public void BindNamespaceReference(
         IdentifierToken namespaceIdentifierToken)
     {
@@ -519,7 +438,7 @@ public class CSharpBinder : IBinder
 
         AddSymbolReference(namespaceSymbol);
     }
-    
+
     public TypeClauseNode BindTypeClauseNode(TypeClauseNode typeClauseNode)
     {
         if (typeClauseNode.TypeIdentifier.SyntaxKind == SyntaxKind.IdentifierToken)
@@ -545,7 +464,7 @@ public class CSharpBinder : IBinder
 
         return typeClauseNode;
     }
-    
+
     public void BindTypeIdentifier(IdentifierToken identifierToken)
     {
         if (identifierToken.SyntaxKind == SyntaxKind.IdentifierToken)
@@ -599,7 +518,7 @@ public class CSharpBinder : IBinder
         TypeClauseNode? scopeReturnTypeClauseNode,
         TextEditorTextSpan textEditorTextSpan)
     {
-        var boundScope = new BoundScope(
+        var boundScope = new CSharpBoundScope(
             _currentScope,
             scopeReturnTypeClauseNode,
             textEditorTextSpan.StartingIndexInclusive,
@@ -618,8 +537,7 @@ public class CSharpBinder : IBinder
         _currentScope = boundScope;
     }
 
-    public void AddNamespaceToCurrentScope(
-        NamespaceStatementNode boundNamespaceStatementNode)
+    public void AddNamespaceToCurrentScope(NamespaceStatementNode boundNamespaceStatementNode)
     {
         var typeDefinitionNodes = boundNamespaceStatementNode
             .GetTopLevelTypeDefinitionNodes();
@@ -630,21 +548,72 @@ public class CSharpBinder : IBinder
         }
     }
 
-    public void DisposeBoundScope(
-        TextEditorTextSpan textEditorTextSpan)
+    public void DisposeBoundScope(TextEditorTextSpan textSpan)
     {
-        _currentScope.EndingIndexExclusive = textEditorTextSpan.EndingIndexExclusive;
+        _currentScope.EndingIndexExclusive = textSpan.EndingIndexExclusive;
 
         if (_currentScope.Parent is not null)
             _currentScope = _currentScope.Parent;
     }
 
-    /// <summary>Search hierarchically through all the scopes, starting at the <see cref="_currentScope"/>.<br/><br/>If a match is found, then set the out parameter to it and return true.<br/><br/>If none of the searched scopes contained a match then set the out parameter to null and return false.</summary>
-    public bool TryGetBoundFunctionDefinitionNodeHierarchically(
-        string text,
-        out FunctionDefinitionNode? functionDefinitionNode)
+    public IBoundScope? GetBoundScope(TextEditorTextSpan textSpan)
     {
-        var localScope = _currentScope;
+        var possibleScopes = _boundScopes
+            .Where(x => x.ResourceUri == textSpan.ResourceUri || x.ResourceUri.Value == string.Empty)
+            .Where(x =>
+            {
+                return x.StartingIndexInclusive <= textSpan.StartingIndexInclusive &&
+                       (x.EndingIndexExclusive is null || // Global Scope awkwardly has a null ending index exclusive (2023-10-15)
+                            x.EndingIndexExclusive >= textSpan.StartingIndexInclusive);
+            });
+
+        return possibleScopes.MinBy(
+            x => textSpan.StartingIndexInclusive - x.StartingIndexInclusive);
+    }
+
+    public TextEditorTextSpan? GetDefinition(TextEditorTextSpan textSpan)
+    {
+        var boundScope = GetBoundScope(textSpan) as CSharpBoundScope;
+
+        if (TryGetVariableDeclarationHierarchically(
+                textSpan.GetText(),
+                out var variableDeclarationStatementNode,
+                boundScope)
+            && variableDeclarationStatementNode is not null)
+        {
+            return variableDeclarationStatementNode.IdentifierToken.TextSpan;
+        }
+        else if (TryGetFunctionHierarchically(
+                     textSpan.GetText(),
+                     out var functionDefinitionNode,
+                     boundScope)
+                 && functionDefinitionNode is not null)
+        {
+            return functionDefinitionNode.FunctionIdentifier.TextSpan;
+        }
+        else if (TryGetTypeDefinitionHierarchically(
+                     textSpan.GetText(),
+                     out var typeDefinitionNode,
+                     boundScope)
+                 && typeDefinitionNode is not null)
+        {
+            return typeDefinitionNode.TypeIdentifier.TextSpan;
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Search hierarchically through all the scopes, starting at the <see cref="initialScope"/>.<br/><br/>
+    /// If a match is found, then set the out parameter to it and return true.<br/><br/>
+    /// If none of the searched scopes contained a match then set the out parameter to null and return false.
+    /// </summary>
+    public bool TryGetFunctionHierarchically(
+        string text,
+        out FunctionDefinitionNode? functionDefinitionNode,
+        CSharpBoundScope? initialScope = null)
+    {
+        var localScope = initialScope ?? _currentScope;
 
         while (localScope is not null)
         {
@@ -662,101 +631,6 @@ public class CSharpBinder : IBinder
         return false;
     }
 
-    /// <summary>
-    /// TODO: Fix TryGetClassDefinitionHierarchically, it broke on (2023-07-27)
-    /// 
-    /// Search hierarchically through all the scopes, starting at the <see cref="_currentScope"/>.<br/><br/>If a match is found, then set the out parameter to it and return true.<br/><br/>If none of the searched scopes contained a match then set the out parameter to null and return false.</summary>
-    // public bool TryGetClassDefinitionHierarchically(
-    //     ISyntaxToken typeClauseToken,
-    //     BoundGenericArgumentsNode? boundGenericArgumentsNode,
-    //     out BoundClassDefinitionNode? boundClassDefinitionNode)
-    // {
-    //     var localScope = _currentScope;
-    //
-    //     while (localScope is not null)
-    //     {
-    //         if (localScope.TypeDefinitionMap.TryGetValue(
-    //                 typeClauseToken.TextSpan.GetText(),
-    //                 out boundClassDefinitionNode))
-    //         {
-    //             return true;
-    //         }
-    //
-    //         localScope = localScope.Parent;
-    //     }
-    //
-    //     boundClassDefinitionNode = null;
-    //     return false;
-    // }
-
-    /// <summary>
-    /// TODO: Fix TryGetClassReferenceHierarchically, it broke on (2023-07-26)
-    /// 
-    /// Search hierarchically through all the scopes, starting at the <see cref="_currentScope"/>.<br/><br/>If a match is found, then set the out parameter to it and return true.<br/><br/>If none of the searched scopes contained a match then set the out parameter to a fabricated instance and return false.
-    /// </summary>
-    // public bool TryGetClassReferenceHierarchically(
-    //     ISyntaxToken typeClauseToken,
-    //     BoundGenericArgumentsNode? boundGenericArgumentsNode,
-    //     out BoundClassReferenceNode? boundClassReferenceNode,
-    //     bool shouldCreateTypeSymbolReference = true,
-    //     bool shouldReportUndefinedTypeOrNamespace = true,
-    //     bool shouldCreateClassDefinitionIfUndefined = true)
-    // {
-    //     if (shouldCreateTypeSymbolReference &&
-    //         typeClauseToken.SyntaxKind == SyntaxKind.IdentifierToken)
-    //     {
-    //         AddSymbolReference(new TypeSymbol(typeClauseToken.TextSpan with
-    //         {
-    //             DecorationByte = (byte)GenericDecorationKind.Type
-    //         }));
-    //     }
-    //
-    //     var localScope = _currentScope;
-    //
-    //     while (localScope is not null)
-    //     {
-    //         if (localScope.ClassDefinitionMap.TryGetValue(
-    //                 typeClauseToken.TextSpan.GetText(),
-    //                 out var existingBoundClassDefinitionNode))
-    //         {
-    //             boundClassReferenceNode = new BoundClassReferenceNode(
-    //                 typeClauseToken,
-    //                 existingBoundClassDefinitionNode.Type,
-    //                 boundGenericArgumentsNode);
-    //
-    //             return true;
-    //         }
-    //
-    //         localScope = localScope.Parent;
-    //     }
-    //
-    //     if (shouldReportUndefinedTypeOrNamespace)
-    //     {
-    //         _diagnosticBag.ReportUndefinedTypeOrNamespace(
-    //             typeClauseToken.TextSpan,
-    //             typeClauseToken.TextSpan.GetText());
-    //     }
-    //
-    //     if (shouldCreateClassDefinitionIfUndefined)
-    //     {
-    //         _ = TryBindClassDefinitionNode(
-    //         typeClauseToken,
-    //         boundGenericArgumentsNode,
-    //         out var fabricatedBoundClassDefinitionNode);
-    //
-    //         boundClassReferenceNode = new BoundClassReferenceNode(
-    //             typeClauseToken,
-    //             fabricatedBoundClassDefinitionNode.Type,
-    //             boundGenericArgumentsNode);
-    //     }
-    //     else
-    //     {
-    //         boundClassReferenceNode = null;
-    //     }
-    //
-    //     return false;
-    // }
-
     public void BindTypeDefinitionNode(
         TypeDefinitionNode typeDefinitionNode,
         bool shouldOverwrite = false)
@@ -769,12 +643,17 @@ public class CSharpBinder : IBinder
             _currentScope.TypeDefinitionMap[typeDefinitionNode.TypeIdentifier.TextSpan.GetText()] = typeDefinitionNode;
     }
 
-    /// <summary>Search hierarchically through all the scopes, starting at the <see cref="_currentScope"/>.<br/><br/>If a match is found, then set the out parameter to it and return true.<br/><br/>If none of the searched scopes contained a match then set the out parameter to null and return false.</summary>
-    public bool TryGetTypeHierarchically(
+    /// <summary>
+    /// Search hierarchically through all the scopes, starting at the <see cref="initialScope"/>.<br/><br/>
+    /// If a match is found, then set the out parameter to it and return true.<br/><br/>
+    /// If none of the searched scopes contained a match then set the out parameter to null and return false.
+    /// </summary>
+    public bool TryGetTypeDefinitionHierarchically(
         string text,
-        out TypeDefinitionNode? typeDefinitionNode)
+        out TypeDefinitionNode? typeDefinitionNode,
+        CSharpBoundScope? initialScope = null)
     {
-        var localScope = _currentScope;
+        var localScope = initialScope ?? _currentScope;
 
         while (localScope is not null)
         {
@@ -793,11 +672,12 @@ public class CSharpBinder : IBinder
     }
     
     /// <summary>Search hierarchically through all the scopes, starting at the <see cref="_currentScope"/>.<br/><br/>If a match is found, then set the out parameter to it and return true.<br/><br/>If none of the searched scopes contained a match then set the out parameter to null and return false.</summary>
-    public bool TryGetVariableHierarchically(
+    public bool TryGetVariableDeclarationHierarchically(
         string text,
-        out VariableDeclarationStatementNode? variableDeclarationStatementNode)
+        out VariableDeclarationStatementNode? variableDeclarationStatementNode,
+        CSharpBoundScope? initialScope = null)
     {
-        var localScope = _currentScope;
+        var localScope = initialScope ?? _currentScope;
 
         while (localScope is not null)
         {

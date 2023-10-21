@@ -7,7 +7,7 @@ namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basics;
 public partial class LexerTests
 {
     [Fact]
-    public void SHOULD_LEX_PLUS_TOKEN()
+    public void LEX_PlusToken()
     {
         var plusTokenAsString = "+";
         var sourceText = $"{plusTokenAsString}".ReplaceLineEndings("\n");
@@ -29,7 +29,7 @@ public partial class LexerTests
     }
 
     [Fact]
-    public void SHOULD_LEX_EQUALS_TOKEN()
+    public void LEX_EqualsToken()
     {
         var equalsTokenAsString = "=";
         var sourceText = $"{equalsTokenAsString}".ReplaceLineEndings("\n");
@@ -51,7 +51,7 @@ public partial class LexerTests
     }
     
     [Fact]
-    public void SHOULD_LEX_STAR_TOKEN()
+    public void LEX_StarToken()
     {
         var starTokenAsString = "*";
         var sourceText = $"{starTokenAsString}".ReplaceLineEndings("\n");
@@ -73,7 +73,7 @@ public partial class LexerTests
     }
     
     [Fact]
-    public void SHOULD_LEX_DIVISION_TOKEN()
+    public void LEX_DivisionToken()
     {
         var divisionTokenAsString = "/";
         var sourceText = $"{divisionTokenAsString}".ReplaceLineEndings("\n");
@@ -95,7 +95,7 @@ public partial class LexerTests
     }
 
     [Fact]
-    public void SHOULD_LEX_STATEMENT_DELIMITER_TOKEN()
+    public void LEX_StatementDelimiterToken()
     {
         var statementDelimiterTokenAsString = ";";
         var sourceText = $"{statementDelimiterTokenAsString}".ReplaceLineEndings("\n");
@@ -117,7 +117,7 @@ public partial class LexerTests
     }
 
     [Fact]
-    public void SHOULD_LEX_OPEN_PARENTHESIS_TOKEN()
+    public void LEX_OpenParenthesisToken()
     {
         var openParenthesisTokenAsString = "(";
         var sourceText = $"{openParenthesisTokenAsString}".ReplaceLineEndings("\n");
@@ -139,7 +139,7 @@ public partial class LexerTests
     }
 
     [Fact]
-    public void SHOULD_LEX_CLOSE_PARENTHESIS_TOKEN()
+    public void LEX_CloseParenthesisToken()
     {
         var closeParenthesisTokenAsString = ")";
         var sourceText = $"{closeParenthesisTokenAsString}".ReplaceLineEndings("\n");
@@ -161,7 +161,7 @@ public partial class LexerTests
     }
 
     [Fact]
-    public void SHOULD_LEX_OPEN_BRACE_TOKEN()
+    public void LEX_OpenBraceToken()
     {
         var openBraceTokenAsString = "{";
         var sourceText = $"{openBraceTokenAsString}".ReplaceLineEndings("\n");
@@ -183,7 +183,7 @@ public partial class LexerTests
     }
 
     [Fact]
-    public void SHOULD_LEX_CLOSE_BRACE_TOKEN()
+    public void LEX_CloseBraceToken()
     {
         var closeBraceTokenAsString = "}";
         var sourceText = $"{closeBraceTokenAsString}".ReplaceLineEndings("\n");
@@ -205,7 +205,7 @@ public partial class LexerTests
     }
 
     [Fact]
-    public void SHOULD_LEX_COLON_TOKEN()
+    public void LEX_ColonToken()
     {
         var colonTokenAsString = ":";
         var sourceText = $"{colonTokenAsString}".ReplaceLineEndings("\n");
@@ -227,7 +227,7 @@ public partial class LexerTests
     }
 
     [Fact]
-    public void SHOULD_LEX_MEMBER_ACCESS_TOKEN()
+    public void LEX_MemberAccessToken()
     {
         var memberAccessTokenAsString = ".";
         var sourceText = $"{memberAccessTokenAsString}".ReplaceLineEndings("\n");
@@ -249,7 +249,7 @@ public partial class LexerTests
     }
 
     [Fact]
-    public void SHOULD_LEX_COMMA_TOKEN()
+    public void LEX_CommaToken()
     {
         var commaTokenAsString = ",";
         var sourceText = $"{commaTokenAsString}".ReplaceLineEndings("\n");
@@ -271,7 +271,7 @@ public partial class LexerTests
     }
 
     [Fact]
-    public void SHOULD_LEX_BANG_TOKEN()
+    public void LEX_BangToken()
     {
         var bangTokenAsString = "!";
         var sourceText = $"{bangTokenAsString}".ReplaceLineEndings("\n");
@@ -293,7 +293,7 @@ public partial class LexerTests
     }
 
     [Fact]
-    public void SHOULD_LEX_QUESTION_MARK_TOKEN()
+    public void LEX_QuestionMarkToken()
     {
         var questionMarkTokenAsString = "?";
         var sourceText = $"{questionMarkTokenAsString}".ReplaceLineEndings("\n");
@@ -315,7 +315,7 @@ public partial class LexerTests
     }
 
     [Fact]
-    public void SHOULD_LEX_QUESTION_MARK_QUESTION_MARK_TOKEN()
+    public void LEX_QuestionMarkQuestionMarkToken()
     {
         var questionMarkQuestionMarkTokenAsString = "??";
         var sourceText = $"{questionMarkQuestionMarkTokenAsString}".ReplaceLineEndings("\n");
@@ -337,7 +337,7 @@ public partial class LexerTests
     }
 
     [Fact]
-    public void SHOULD_LEX_OPEN_ANGLE_BRACKET_TOKEN()
+    public void LEX_OpenAngleBracketToken()
     {
         var openAngleBracketTokenAsString = "<";
         var sourceText = $"{openAngleBracketTokenAsString}".ReplaceLineEndings("\n");
@@ -359,7 +359,7 @@ public partial class LexerTests
     }
 
     [Fact]
-    public void SHOULD_LEX_CLOSE_ANGLE_BRACKET_TOKEN()
+    public void LEX_CloseAngleBracketToken()
     {
         var closeAngleBracketTokenAsString = ">";
         var sourceText = $"{closeAngleBracketTokenAsString}".ReplaceLineEndings("\n");
@@ -381,7 +381,7 @@ public partial class LexerTests
     }
 
     [Fact]
-    public void SHOULD_LEX_DOLLAR_SIGN_TOKEN()
+    public void LEX_DollarSignToken()
     {
         var dollarSignTokenAsString = "$";
         var sourceText = $"{dollarSignTokenAsString}".ReplaceLineEndings("\n");
@@ -403,7 +403,7 @@ public partial class LexerTests
     }
 
     [Fact]
-    public void SHOULD_LEX_OPEN_SQUARE_BRACKET_TOKEN()
+    public void LEX_OpenSquareBracketToken()
     {
         var openSquareBracketTokenAsString = "[";
         var sourceText = $"{openSquareBracketTokenAsString}".ReplaceLineEndings("\n");
@@ -425,7 +425,7 @@ public partial class LexerTests
     }
 
     [Fact]
-    public void SHOULD_LEX_CLOSE_SQUARE_BRACKET_TOKEN()
+    public void LEX_CloseSquareBracketToken()
     {
         var closeSquareBracketTokenAsString = "]";
         var sourceText = $"{closeSquareBracketTokenAsString}".ReplaceLineEndings("\n");
@@ -447,7 +447,7 @@ public partial class LexerTests
     }
 
     [Fact]
-    public void SHOULD_LEX_PREPROCESSOR_DIRECTIVE_TOKEN()
+    public void LEX_PreprocessorDirectiveToken()
     {
         var preprocessorDirectiveAsString = "#region regionIdentifierHere";
         var sourceText = $"{preprocessorDirectiveAsString}".ReplaceLineEndings("\n");
@@ -469,7 +469,7 @@ public partial class LexerTests
     }
 
     [Fact]
-    public void SHOULD_LEX_NUMERIC_LITERAL_TOKEN()
+    public void LEX_NumericLiteralToken()
     {
         var numericValue = 4135;
         var sourceText = $"{numericValue}".ReplaceLineEndings("\n");
@@ -491,7 +491,7 @@ public partial class LexerTests
     }
 
     [Fact]
-    public void SHOULD_LEX_STRING_LITERAL_TOKEN()
+    public void LEX_StringLiteralToken()
     {
         var stringValue = "\"Apple Sauce\"";
         var sourceText = $"{stringValue}".ReplaceLineEndings("\n");
@@ -576,7 +576,7 @@ public partial class LexerTests
     [InlineData("ABc")]
     [InlineData("_a")]
     [InlineData("_A")]
-    public void SHOULD_LEX_IDENTIFIER_TOKEN(string identifierAsString)
+    public void LEX_IdentifierToken(string identifierAsString)
     {
         var sourceText = $"{identifierAsString}".ReplaceLineEndings("\n");
 
@@ -597,7 +597,7 @@ public partial class LexerTests
     }
 
     [Fact]
-    public void SHOULD_LEX_COMMENT_SINGLE_LINE_TOKEN_WITH_ENDING_AS_END_OF_FILE()
+    public void LEX_CommentSingleLineToken_WITH_EndingAsEndOfFile()
     {
         var singleLineCommentAsString = @"// C:\Users\hunte\Repos\Aaa\";
         var sourceText = $"{singleLineCommentAsString}".ReplaceLineEndings("\n");
@@ -619,7 +619,7 @@ public partial class LexerTests
     }
 
     [Fact]
-    public void SHOULD_LEX_COMMENT_SINGLE_LINE_TOKEN_WITH_ENDING_AS_NEW_LINE()
+    public void LEX_CommentSingleLineToken_WITH_EndingAsNewLine()
     {
         var singleLineCommentAsString = @"// C:\Users\hunte\Repos\Aaa\";
         var sourceText = $@"{singleLineCommentAsString}
@@ -642,7 +642,7 @@ public partial class LexerTests
     }
 
     [Fact]
-    public void SHOULD_LEX_COMMENT_MULTI_LINE_TOKEN_WRITTEN_ON_MULTIPLE_LINES()
+    public void LEX_CommentMultiLineToken_WITH_SpansMultipleLines()
     {
         var multiLineCommentAsString = @"/*
 	A Multi-Line Comment
@@ -667,7 +667,7 @@ public partial class LexerTests
     }
 
     [Fact]
-    public void SHOULD_LEX_COMMENT_MULTI_LINE_TOKEN_WRITTEN_ON_SINGLE_LINE()
+    public void LEX_CommentMultiLineToken_WITH_SpansSingleLine()
     {
         var multiLineCommentAsString = @"/* Another Multi-Line Comment */"
             .ReplaceLineEndings("\n");
@@ -692,7 +692,7 @@ public partial class LexerTests
 
     // TODO: Fix this unit test that broke due to individual SyntaxKinds being made per keyword.
     // [Fact]
-    // public void SHOULD_LEX_KEYWORD_TOKEN()
+    // public void LEX_KeywordToken()
     // {
     //     var keywordAsString = "int";
     //     var sourceText = $"{keywordAsString}".ReplaceLineEndings("\n");

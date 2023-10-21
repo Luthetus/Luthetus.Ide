@@ -7,6 +7,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
+using Luthetus.CompilerServices.Lang.CSharp.Facts;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 
@@ -63,11 +64,10 @@ public partial class CSharpParser : IParser
             return typeClauseNode;
         }
 
-        public IdentifierReferenceNode HandleUndefinedTypeOrNamespaceReference(IdentifierToken identifierToken)
+        public AmbiguousIdentifierNode HandleUndefinedTypeOrNamespaceReference(IdentifierToken identifierToken)
         {
-            var identifierReferenceNode = new IdentifierReferenceNode(
-                identifierToken,
-                null);
+            var identifierReferenceNode = new AmbiguousIdentifierNode(
+                identifierToken);
 
             Binder.BindTypeIdentifier(identifierToken);
 
@@ -86,6 +86,8 @@ public partial class CSharpParser : IParser
             var variableReferenceNode = new VariableReferenceNode(
                 identifierToken,
                 variableDeclarationStatementNode);
+
+            Binder.BindVariableReferenceNode(variableReferenceNode);
 
             NodeRecent = variableReferenceNode;
             return variableReferenceNode;
@@ -121,10 +123,10 @@ public partial class CSharpParser : IParser
             return functionInvocationNode;
         }
 
-        public VariableDeclarationStatementNode HandleVariableDeclaration(IdentifierToken identifierToken)
+        public VariableDeclarationStatementNode HandleVariableDeclaration(TypeClauseNode typeClauseNode, IdentifierToken identifierToken)
         {
             var variableDeclarationStatementNode = new VariableDeclarationStatementNode(
-                (TypeClauseNode)NodeRecent,
+                typeClauseNode,
                 identifierToken,
                 false);
 
@@ -145,24 +147,20 @@ public partial class CSharpParser : IParser
             return variableDeclarationStatementNode;
         }
 
-        public FunctionDefinitionNode HandleFunctionDefinition(IdentifierToken identifierToken)
+        public FunctionDefinitionNode HandleFunctionDefinition(
+            TypeClauseNode typeClauseNode,
+            IdentifierToken identifierToken,
+            GenericArgumentsListingNode? genericArgumentsListingNode)
         {
-            GenericArgumentsListingNode? genericArgumentsListingNode = null;
-
-            if (SyntaxKind.OpenAngleBracketToken == TokenWalker.Current.SyntaxKind)
-            {
-                var openAngleBracketToken = (OpenAngleBracketToken)TokenWalker.Consume();
-                genericArgumentsListingNode = HandleGenericArguments(openAngleBracketToken);
-            }
-
             var openParenthesisToken = (OpenParenthesisToken)TokenWalker.Consume();
             var functionArgumentsListingNode = HandleFunctionArguments(openParenthesisToken);
 
             var functionDefinitionNode = new FunctionDefinitionNode(
-                (TypeClauseNode)NodeRecent,
+                typeClauseNode,
                 identifierToken,
                 genericArgumentsListingNode,
                 functionArgumentsListingNode,
+                null,
                 null);
 
             Binder.BindFunctionDefinitionNode(functionDefinitionNode);
@@ -223,11 +221,29 @@ public partial class CSharpParser : IParser
                 identifierToken,
                 genericArgumentsListingNode,
                 functionArgumentsListingNode,
+                null,
                 null);
 
             Binder.BindConstructorDefinitionIdentifierToken(identifierToken);
 
             NodeRecent = functionDefinitionNode;
+
+            if (TokenWalker.Current.SyntaxKind == SyntaxKind.ColonToken)
+            {
+                // Constructor invokes some other constructor as well
+
+                while (!TokenWalker.IsEof)
+                {
+                    if (TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken ||
+                        TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
+                    {
+                        break;
+                    }
+
+                    _ = TokenWalker.Consume();
+                }
+            }
+
             return functionDefinitionNode;
         }
 
@@ -431,7 +447,7 @@ public partial class CSharpParser : IParser
         {
             var literalExpressionNode = new LiteralExpressionNode(
                 numericLiteralToken,
-                null);
+                CSharpLanguageFacts.Types.Int.ToTypeClause());
 
             literalExpressionNode = Binder.BindLiteralExpressionNode(literalExpressionNode);
 
@@ -444,7 +460,7 @@ public partial class CSharpParser : IParser
         {
             var literalExpressionNode = new LiteralExpressionNode(
                 stringLiteralToken,
-                null);
+                CSharpLanguageFacts.Types.String.ToTypeClause());
 
             literalExpressionNode = Binder.BindLiteralExpressionNode(literalExpressionNode);
 
@@ -577,6 +593,16 @@ public partial class CSharpParser : IParser
                     {
                         _ = TokenWalker.Consume();
                         hasOutKeyword = true;
+
+                        if (TokenWalker.Peek(1).SyntaxKind == SyntaxKind.IdentifierToken)
+                        {
+                            var outVariableTypeClause = Utility.MatchTypeClause();
+                            var outVariableIdentifier = (IdentifierToken)TokenWalker.Peek(0);
+
+                            HandleVariableDeclaration(
+                                outVariableTypeClause,
+                                outVariableIdentifier);
+                        }
                     }
                     else if (SyntaxKind.InTokenKeyword == TokenWalker.Current.SyntaxKind)
                     {
@@ -594,12 +620,27 @@ public partial class CSharpParser : IParser
 
                 if (SyntaxKind.IdentifierToken == TokenWalker.Current.SyntaxKind)
                 {
-                    var variableIdentifierToken = (IdentifierToken)TokenWalker.Current;
+                    var variableIdentifierToken = (IdentifierToken)TokenWalker.Consume();
 
-                    // TODO: Don't pass null to the 'VariableReferenceNode' constructor
+                    if (!Binder.TryGetVariableDeclarationHierarchically(
+                            variableIdentifierToken.TextSpan.GetText(),
+                            out var variableDeclarationNode)
+                        || variableDeclarationNode is null)
+                    {
+                        variableDeclarationNode = new(
+                            CSharpLanguageFacts.Types.Void.ToTypeClause(),
+                            variableIdentifierToken,
+                            false)
+                        {
+                            IsFabricated = true
+                        };
+
+                        Binder.BindVariableDeclarationStatementNode(variableDeclarationNode);
+                    }
+
                     var variableReferenceNode = new VariableReferenceNode(
                         variableIdentifierToken,
-                        null);
+                        variableDeclarationNode);
 
                     variableReferenceNode = Binder.BindVariableReferenceNode(variableReferenceNode);
 
@@ -788,7 +829,6 @@ public partial class CSharpParser : IParser
             return null;
         }
 
-        /// <summary>TODO: Implement HandleExpression() correctly. Until then, skip until the statement delimiter token or end of file token is found.</summary>
         public IExpressionNode HandleExpression(SyntaxKind[]? extraEndOfExpressionDeliminatingSyntaxKinds = null)
         {
             IExpressionNode? topMostExpressionNode = null;
@@ -823,7 +863,15 @@ public partial class CSharpParser : IParser
                 }
             }
 
-            return topMostExpressionNode;
+            return topMostExpressionNode ?? new LiteralExpressionNode(
+                new EndOfFileToken(
+                    new TextEditorTextSpan(
+                        0,
+                        0,
+                        (byte)GenericDecorationKind.None,
+                        new ResourceUri(string.Empty),
+                        string.Empty)),
+                CSharpLanguageFacts.Types.Void.ToTypeClause());
         }
 
         /// <summary>TODO: Implement ParseIfStatementExpression() correctly. Until then, skip until the closing parenthesis of the if statement is found.</summary>
@@ -857,24 +905,17 @@ public partial class CSharpParser : IParser
                         (byte)GenericDecorationKind.None,
                         new ResourceUri(string.Empty),
                         string.Empty)),
-                null);
+                CSharpLanguageFacts.Types.Void.ToTypeClause());
         }
 
-        /// <summary>Assumes invocation occurs with the property identifier as _cSharpParser._tokenWalker's current token</summary>
-        public void HandlePropertyDefinition(IdentifierToken identifierToken)
+        public void HandlePropertyDefinition(TypeClauseNode typeClauseNode, IdentifierToken identifierToken)
         {
-            Binder.BindPropertyDeclarationIdentifierToken(identifierToken);
+            var variableDeclarationStatementNode = new VariableDeclarationStatementNode(
+                typeClauseNode,
+                identifierToken,
+                false);
 
-            var propertyTypeClauseToken = TokenWalker.Peek(-1);
-            var propertyIdentifierToken = TokenWalker.Consume();
-
-            // TODO: Fix TryGetClassReferenceHierarchically, it broke on (2023-07-26)
-            //
-            // _ = _cSharpParser.Binder.TryGetClassReferenceHierarchically(propertyTypeClauseToken, null, out var boundClassReferenceNode);
-            //
-            // _cSharpParser.Binder.BindPropertyDeclarationNode(
-            //     boundClassReferenceNode,
-            //     (IdentifierToken)propertyIdentifierToken);
+            Binder.BindPropertyDeclarationNode(variableDeclarationStatementNode);
         }
 
         public void HandleAsTokenKeyword(KeywordToken keywordToken)
@@ -1681,9 +1722,56 @@ public partial class CSharpParser : IParser
             // TODO: Implement this method
         }
 
-        public void HandleWhereTokenContextualKeyword(KeywordContextualToken keywordContextualToken)
+        public void HandleWhereTokenContextualKeyword(KeywordContextualToken whereKeywordContextualToken)
         {
-            // TODO: Implement this method
+            if (NodeRecent is not null && NodeRecent.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
+            {
+                var functionDefinitionNode = (FunctionDefinitionNode)NodeRecent;
+
+                /*
+                 Examples:
+
+                 public T Clone<T>(T item) where T : class
+                 {
+	                 return item;
+                 }
+                 
+                 public T Clone<T>(T item) where T : class => item;
+                */
+
+                // TODO: Implement generic constraints, until then just read until the generic...
+                // ...constraint is finished.
+
+                var constraintNodeInnerTokens = new List<ISyntaxToken>
+                {
+                    whereKeywordContextualToken
+                };
+
+                while (!TokenWalker.IsEof)
+                {
+                    if (TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken ||
+                        TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
+                    {
+                        break;
+                    }
+
+                    constraintNodeInnerTokens.Add(TokenWalker.Consume());
+                }
+
+                var constraintNode = new ConstraintNode(constraintNodeInnerTokens.ToImmutableArray());
+
+                NodeRecent = new FunctionDefinitionNode(
+                    functionDefinitionNode.ReturnTypeClauseNode,
+                    functionDefinitionNode.FunctionIdentifier,
+                    functionDefinitionNode.GenericArgumentsListingNode,
+                    functionDefinitionNode.FunctionArgumentsListingNode,
+                    functionDefinitionNode.FunctionBodyCodeBlockNode,
+                    constraintNode);
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
         }
 
         public void HandleWithTokenContextualKeyword(KeywordContextualToken keywordContextualToken)
@@ -1720,14 +1808,13 @@ public partial class CSharpParser : IParser
 
         public IExpressionNode HandleNumericLiteralToken(NumericLiteralToken numericLiteralToken)
         {
-            /*
-             * ParseNumericLiteralToken() is intended to be used when there is no context, just a token.
-             * HandleNumericLiteralToken() on the other hand in to be used when one has context, in which they are parsing an expression AND have a token.
-             */
+            // ParseNumericLiteralToken() is intended to be used when there is no context, just a token.
+            //
+            // HandleNumericLiteralToken() on the other hand in to be used when one has context, in which they are parsing an expression AND have a token.
 
             var literalExpressionNode = new LiteralExpressionNode(
                 numericLiteralToken,
-                null);
+                CSharpLanguageFacts.Types.Int.ToTypeClause());
 
             literalExpressionNode = Binder.BindLiteralExpressionNode(literalExpressionNode);
 
@@ -1747,7 +1834,7 @@ public partial class CSharpParser : IParser
         {
             var literalExpressionNode = new LiteralExpressionNode(
                 stringLiteralToken,
-                null);
+                CSharpLanguageFacts.Types.String.ToTypeClause());
 
             literalExpressionNode = Binder.BindLiteralExpressionNode(literalExpressionNode);
 

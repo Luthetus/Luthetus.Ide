@@ -20,7 +20,7 @@ public partial class EditorSync
         string absolutePathString)
     {
         var textEditorModel = _textEditorService.Model
-            .FindOrDefaultByResourceUri(new(absolutePathString));
+            .FindOrDefault(new(absolutePathString));
 
         if (textEditorModel is null)
         {

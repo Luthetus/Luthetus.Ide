@@ -1,6 +1,5 @@
 @using Luthetus.Common.RazorLib.Dropdowns.Displays
 @using Luthetus.Common.RazorLib.Dropdowns.Models;
-@using Luthetus.Common.RazorLib.Dropdowns.Models;
 
 <div class="luth_menu-option-display luth_unselectable @IsActiveCssClass @HasWidgetActiveCssClass"
      tabindex="-1"
@@ -14,7 +13,10 @@
     
     @if (IconRenderFragment is not null)
     {
-        @IconRenderFragment(MenuOptionRecord)
+        <div class="luth_menu-option-icon">
+            @IconRenderFragment(MenuOptionRecord)
+        </div>
+        
     }
     
     @MenuOptionRecord.DisplayName

@@ -221,7 +221,7 @@ public class RazorSyntaxTree
         InjectedLanguageDefinition injectedLanguageDefinition,
         TextEditorTextSpan textSpan)
     {
-        var boundScopes = _cSharpCompilerService.Binder.BoundScopes;
+        var boundScopes = _cSharpCompilerService.CSharpBinder.BoundScopes;
 
         var text = textSpan.GetText();
 

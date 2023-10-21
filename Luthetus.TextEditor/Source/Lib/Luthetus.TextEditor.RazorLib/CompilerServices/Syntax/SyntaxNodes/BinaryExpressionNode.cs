@@ -26,7 +26,6 @@ public sealed record BinaryExpressionNode : IExpressionNode
     public BinaryOperatorNode BinaryOperatorNode { get; }
     public IExpressionNode RightExpressionNode { get; }
     public TypeClauseNode TypeClauseNode => BinaryOperatorNode.TypeClauseNode;
-    public Type? ValueType => BinaryOperatorNode.TypeClauseNode.ValueType;
 
     public ImmutableArray<ISyntax> ChildBag { get; init; }
 

@@ -10,13 +10,15 @@ public sealed record FunctionDefinitionNode : ISyntaxNode
         IdentifierToken functionIdentifier,
         GenericArgumentsListingNode? genericArgumentsListingNode,
         FunctionArgumentsListingNode functionArgumentsListingNode,
-        CodeBlockNode? functionBodyCodeBlockNode)
+        CodeBlockNode? functionBodyCodeBlockNode,
+        ConstraintNode? constraintNode)
     {
         ReturnTypeClauseNode = returnTypeClauseNode;
         FunctionIdentifier = functionIdentifier;
         GenericArgumentsListingNode = genericArgumentsListingNode;
         FunctionArgumentsListingNode = functionArgumentsListingNode;
         FunctionBodyCodeBlockNode = functionBodyCodeBlockNode;
+        ConstraintNode = constraintNode;
 
         var children = new List<ISyntax>
         {
@@ -31,6 +33,9 @@ public sealed record FunctionDefinitionNode : ISyntaxNode
 
         if (FunctionBodyCodeBlockNode is not null)
             children.Add(FunctionBodyCodeBlockNode);
+        
+        if (ConstraintNode is not null)
+            children.Add(ConstraintNode);
 
         ChildBag = children.ToImmutableArray();
     }
@@ -40,6 +45,7 @@ public sealed record FunctionDefinitionNode : ISyntaxNode
     public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }
     public FunctionArgumentsListingNode FunctionArgumentsListingNode { get; }
     public CodeBlockNode? FunctionBodyCodeBlockNode { get; }
+    public ConstraintNode? ConstraintNode { get; }
 
     public ImmutableArray<ISyntax> ChildBag { get; }
 

@@ -20,3 +20,8 @@
 .luth_menu-option-display:focus {
     outline: solid var(--luth_menu-option-display-focus-outline-size) var(--luth_outline-with-focus-color);
 }
+
+.luth_menu-option-icon {
+    margin-right: var(--luth_menu-option-display-padding-width);
+    display: inline;
+}

@@ -12,7 +12,7 @@ namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basics;
 public partial class ParserTests
 {
     [Fact]
-    public void SHOULD_PARSE_VARIABLE_DECLARATION_STATEMENT()
+    public void PARSE_VariableDeclarationStatement()
     {
         var variableTypeClauseIdentifier = "int";
         var variableIdentifier = "x";
@@ -40,7 +40,7 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_VARIABLE_DECLARATION_STATEMENT_THEN_VARIABLE_ASSIGNMENT_STATEMENT()
+    public void PARSE_VariableDeclarationStatement_THEN_VariableAssignmentStatement()
     {
         string sourceText = @"int x; x = 42;".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
@@ -60,7 +60,7 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_COMPOUND_VARIABLE_DECLARATION_AND_ASSIGNMENT_STATEMENT()
+    public void PARSE_VariableDeclaration_AND_VariableAssignment()
     {
         string sourceText = @"int x = 42;".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
@@ -80,7 +80,7 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_CONDITIONAL_VAR_KEYWORD()
+    public void PARSE_ConditionalKeyword_Var()
     {
         var varString = "var";
         var otherVariableIdentifier = "x";
@@ -110,7 +110,7 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_VARIABLE_REFERENCE()
+    public void PARSE_VariableReference()
     {
         var sourceText = @"private int _count; private void IncrementCountOnClick() { _count++; }".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
@@ -120,22 +120,25 @@ public partial class ParserTests
         var modelParser = new CSharpParser(lexer);
         var compilationUnit = modelParser.Parse();
 
-        var topLevelStatementsCodeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
-
         var codeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
         Assert.NotNull(codeBlockNode);
 
-        var functionDefinitionNode = (FunctionDefinitionNode)compilationUnit.ChildBag[1];
+        var functionDefinitionNode = (FunctionDefinitionNode)codeBlockNode.ChildBag[1];
         Assert.NotNull(functionDefinitionNode);
+        Assert.NotNull(functionDefinitionNode.FunctionBodyCodeBlockNode);
 
-        var boundIdentifierReferenceNode = (IdentifierReferenceNode)compilationUnit.ChildBag[2];
-        Assert.NotNull(boundIdentifierReferenceNode);
+        var functionBody = functionDefinitionNode.FunctionBodyCodeBlockNode;
+
+        var unaryExpressionNode = (UnaryExpressionNode)functionBody.ChildBag[0];
+        var variableReferenceNode = (VariableReferenceNode)unaryExpressionNode.ChildBag[0];
     }
 
-    /// <summary>GOAL: Add "HelloWorld" key to NamespaceDictionary with a single CompilationUnit child which has a CompilationUnit without any children.</summary>
     [Fact]
-    public void SHOULD_PARSE_NAMESPACE_DEFINITION_EMPTY()
+    public void PARSE_NamespaceDefinition_WITH_Empty()
     {
+        // GOAL: Add "HelloWorld" key to NamespaceDictionary with a single CompilationUnit child...
+        // ...which has a CompilationUnit without any children.
+
         string sourceText = @"namespace HelloWorld {}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
@@ -155,7 +158,7 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_NAMESPACE_BLOCK_SCOPED()
+    public void PARSE_NamespaceDefinition_WITH_BlockScope()
     {
         var classIdentifier = "PersonModel";
         var sourceText = @$"namespace PersonCase {{ public class {classIdentifier} {{ }} }}".ReplaceLineEndings("\n");
@@ -179,7 +182,7 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_NAMESPACE_FILE_SCOPED()
+    public void PARSE_NamespaceDefinition_WITH_FileScope()
     {
         var classIdentifier = "PersonModel";
         var sourceText = @$"namespace PersonCase; public class {classIdentifier} {{ }}".ReplaceLineEndings("\n");
@@ -202,10 +205,30 @@ public partial class ParserTests
         Assert.Equal(classIdentifier, personModelKeyValuePair.Key);
     }
 
-    /// <summary>A file scope namespace results in the file not being allowed to have any block namespaces. So this test should result in the proper Diagnostics being reported.</summary>
     [Fact]
-    public void SHOULD_PARSE_NAMESPACE_MIXED_FILE_SCOPE_THEN_BLOCK_SCOPE()
+    public void PARSE_NamespaceDefinition_WITH_BlockScope_THEN_FileScope()
     {
+        // A file scope namespace results in the file not being allowed to have any block...
+        // ...namespaces. So this test should result in the proper Diagnostics being reported.
+        
+        var classIdentifier = "PersonModel";
+        var sourceText = @$"namespace Pages {{ public class {classIdentifier} {{ }} }} namespace PersonCase; public class {classIdentifier} {{ }}".ReplaceLineEndings("\n");
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+
+        throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void PARSE_NamespaceDefinition_WITH_FileScope_THEN_BlockScope()
+    {
+        // A file scope namespace results in the file not being allowed to have any block...
+        // ...namespaces. So this test should result in the proper Diagnostics being reported.
+        
         var classIdentifier = "PersonModel";
         var sourceText = @$"namespace PersonCase; public class {classIdentifier} {{ }} namespace Pages {{ public class {classIdentifier} {{ }} }}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
@@ -218,26 +241,14 @@ public partial class ParserTests
         throw new NotImplementedException();
     }
 
-    /// <summary>A file scope namespace results in the file not being allowed to have any block namespaces. So this test should result in the proper Diagnostics being reported.</summary>
     [Fact]
-    public void SHOULD_PARSE_NAMESPACE_MIXED_BLOCK_SCOPE_THEN_FILE_SCOPE()
+    public void PARSE_NamespaceDefinition_WITH_ManyEntriesCombine()
     {
-        var classIdentifier = "PersonModel";
-        var sourceText = @$"namespace Pages {{ public class {classIdentifier} {{ }} }} namespace PersonCase; public class {classIdentifier} {{ }}".ReplaceLineEndings("\n");
-        var resourceUri = new ResourceUri(string.Empty);
-
-        var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-
-        throw new NotImplementedException();
-    }
-
-    /// <summary>GOAL: Add "PersonCase" key to NamespaceDictionary with two CompilationUnit children: 'PersonModel.cs', and 'PersonDisplay.razor.cs'.<br/><br/>Afterwards convert the Namespace to a BoundScope which would contain the two classes: 'PersonModel', and 'PersonDisplay'</summary>
-    [Fact]
-    public void SHOULD_PARSE_TWO_NAMESPACE_DECLARATIONS_WITH_THE_SAME_IDENTIFIER_INTO_A_SINGLE_SCOPE()
-    {
+        // GOAL: Add "PersonCase" key to NamespaceDictionary with two CompilationUnit...
+        // ...children: 'PersonModel.cs', and 'PersonDisplay.razor.cs'...
+        // ...Afterwards convert the Namespace to a BoundScope which would contain the two...
+        // ...classes: 'PersonModel', and 'PersonDisplay'
+        
         string personModelClassIdentifier = "PersonModel", personDisplayClassIdentifier = "PersonDisplay";
 
         var personModelResourceUri = new ResourceUri("PersonModel.cs");
@@ -272,10 +283,16 @@ public partial class ParserTests
         Assert.True(namespaceScope.TypeDefinitionMap.ContainsKey(personDisplayClassIdentifier));
     }
 
-    /// <summary>GOAL: Add "PersonCase" key to NamespaceDictionary with two CompilationUnit children: PersonModel.cs, and PersonDisplay.razor.cs. Afterwards evaluate the Namespace as a BoundScope which would contain the two classes: PersonModel, and PersonDisplay. Afterwards add "Pages" key to NamespaceDictionary with one CompilationUnit child: PersonPage.razor. Have PersonPage.razor.cs include a using statement that includes the "PersonCase" namespace.</summary>
     [Fact]
-    public void SHOULD_PARSE_USING_STATEMENT()
+    public void PARSE_UsingStatement()
     {
+        // GOAL: Add "PersonCase" key to NamespaceDictionary with two CompilationUnit...
+        // ...children: PersonModel.cs, and PersonDisplay.razor.cs. Afterwards evaluate the...
+        // ...Namespace as a BoundScope which would contain the two classes: PersonModel, and...
+        // ...PersonDisplay. Afterwards add "Pages" key to NamespaceDictionary with one...
+        // ...CompilationUnit child: PersonPage.razor. Have PersonPage.razor.cs include a...
+        // ...using statement that includes the "PersonCase" namespace.
+        
         var personModelResourceUri = new ResourceUri("PersonModel.cs");
         var personModelClassIdentifier = "PersonModel";
         var personModelContent = $@"namespace PersonCase {{ public class {personModelClassIdentifier} {{ }} }}".ReplaceLineEndings("\n");
@@ -313,7 +330,7 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_USING_STATEMENT_CONTAINING_MEMBER_ACCESS_TOKEN()
+    public void PARSE_UsingStatement_WITH_MemberAccessToken()
     {
         var namespaceIdentifier = "Microsoft.AspNetCore.Components";
         var sourceResourceUri = new ResourceUri("PersonPage.razor.cs");
@@ -330,13 +347,13 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_TOP_LEVEL_STATEMENTS()
+    public void PARSE_TopLevelStatements()
     {
         throw new NotImplementedException("(2023-05-30) I am not sure how I want to test this yet.");
     }
 
     [Fact]
-    public void SHOULD_PARSE_NAMESPACE_IDENTIFIER_CONTAINING_MEMBER_ACCESS_TOKEN()
+    public void PARSE_NamespaceIdentifier_WITH_MemberAccessToken()
     {
         var namespaceIdentifier = "BlazorWasmApp.PersonCase";
         var sourceText = @$"namespace {namespaceIdentifier} {{}}".ReplaceLineEndings("\n");
@@ -358,7 +375,7 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_NUMERIC_LITERAL_EXPRESSION()
+    public void PARSE_NumericLiteralExpression()
     {
         string sourceText = "3".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
@@ -371,12 +388,12 @@ public partial class ParserTests
         Assert.Single(topLevelStatementsCodeBlockNode.ChildBag);
 
         var literalExpressionNode = (LiteralExpressionNode)topLevelStatementsCodeBlockNode.ChildBag[0];
-        Assert.Equal(typeof(int), literalExpressionNode.TypeClauseNode?.ValueType);
+        Assert.Equal(typeof(int), literalExpressionNode.TypeClauseNode.ValueType);
         Assert.Equal(3, int.Parse(literalExpressionNode.LiteralSyntaxToken.TextSpan.GetText()));
     }
 
     [Fact]
-    public void SHOULD_PARSE_STRING_LITERAL_EXPRESSION()
+    public void PARSE_StringLiteralExpression()
     {
         string sourceText = $"\"123abc\"".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
@@ -389,12 +406,12 @@ public partial class ParserTests
         var codeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
 
         var literalExpressionNode = (LiteralExpressionNode)codeBlockNode.ChildBag.Single();
-        Assert.Equal(typeof(string), literalExpressionNode.TypeClauseNode?.ValueType);
+        Assert.Equal(typeof(string), literalExpressionNode.TypeClauseNode.ValueType);
         Assert.Equal(sourceText, literalExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
     }
 
     [Fact]
-    public void SHOULD_PARSE_INTERFACE_DEFINITION_WHICH_CONTAINS_A_FUNCTION_DEFINITION()
+    public void PARSE_InterfaceDefinition_WITH_FunctionDefinition()
     {
         var interfaceIdentifierString = "IPersonRepository";
         var methodIdentifierString = "AddPerson";
@@ -429,7 +446,7 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_FUNCTION_DEFINITION_STATEMENT_WITH_KEYWORD_RETURN_TYPE_NO_ARGUMENTS()
+    public void PARSE_FunctionDefinitionStatement_WITH_ReturnType_KeywordVoid()
     {
         string functionIdentifier = "WriteHelloWorldToConsole";
         string sourceText = @$"void {functionIdentifier}(){{}}".ReplaceLineEndings("\n");
@@ -451,7 +468,7 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_FUNCTION_DEFINITION_STATEMENT_WITH_UNDEFINED_RETURN_TYPE()
+    public void PARSE_FunctionDefinitionStatement_WITH_ReturnType_Undefined()
     {
         var returnTypeIdentifier = "IPerson";
         var functionIdentifier = "WriteHelloWorldToConsole";
@@ -480,7 +497,7 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_FUNCTION_DEFINITION_STATEMENT_WITH_UNDEFINED_GENERIC_RETURN_TYPE()
+    public void PARSE_FunctionDefinitionStatement_WITH_ReturnType_UndefinedGeneric()
     {
         var returnTypeIdentifier = "IBox";
         var returnTypeGenericArgument = "string";
@@ -498,7 +515,7 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_FUNCTION_DEFINITION_STATEMENT_WITH_ONE_ARGUMENT()
+    public void PARSE_FunctionDefinitionStatement_WITH_ArgumentCount_One()
     {
         var functionReturnTypeClauseText = "void";
         var functionIdentifierText = "WriteHelloWorldToConsole";
@@ -529,7 +546,7 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_FUNCTION_DEFINITION_STATEMENT_WITH_TWO_ARGUMENTS()
+    public void PARSE_FunctionDefinitionStatement_WITH_ArgumentCount_Two()
     {
         var functionReturnTypeClauseText = "void";
         var functionIdentifierText = "WriteHelloWorldToConsole";
@@ -582,7 +599,7 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_FUNCTION_DEFINITION_STATEMENT_WITH_THREE_ARGUMENTS()
+    public void PARSE_FunctionDefinitionStatement_WITH_ArgumentCount_Three()
     {
         string functionReturnTypeClauseText = "void";
         string functionIdentifierText = "WriteHelloWorldToConsole";
@@ -648,7 +665,7 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_FUNCTION_DEFINITION_STATEMENT_WITH_OPTIONAL_ARGUMENT()
+    public void PARSE_FunctionDefinitionStatement_WITH_Argument_Optional()
     {
         var functionReturnTypeIdentifier = "void";
         var functionIdentifier = "WriteHelloWorldToConsole";
@@ -680,7 +697,7 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_FUNCTION_INVOCATION_STATEMENT_NO_ARGUMENT()
+    public void PARSE_FunctionInvocationStatement_WITH_ArgumentCount_Zero()
     {
         string functionInvocationIdentifier = "WriteToConsole";
         string sourceText = @$"{functionInvocationIdentifier}();".ReplaceLineEndings("\n");
@@ -700,7 +717,7 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_FUNCTION_INVOCATION_STATEMENT_WITH_STRING_LITERAL_ARGUMENT()
+    public void PARSE_FunctionInvocationStatement_WITH_Argument_StringLiteral()
     {
         string sourceText = @"void WriteToConsole(string input){} WriteToConsole(""Aaa"");".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
@@ -721,21 +738,54 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_FUNCTION_INVOCATION_STATEMENT_WITH_NUMERIC_LITERAL_ARGUMENT()
+    public void PARSE_FunctionInvocationStatement_WITH_Argument_NumericLiteral()
     {
-        string sourceText = @"void WriteToConsole(int input){} WriteToConsole(31);".ReplaceLineEndings("\n");
+        var methodIdentifier = "WriteToConsole";
+        var methodInvocation = $"{methodIdentifier}(31);";
+        var sourceText = $@"void {methodIdentifier}(int input){{}} {methodInvocation}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
+        var topCodeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
+        var binder = (CSharpBinder)compilationUnit.Binder;
+        var indexForMethodInvocation = sourceText.IndexOf(methodInvocation);
 
-        throw new NotImplementedException();
+        var textSpanForMethodInvocation = new TextEditorTextSpan(
+            indexForMethodInvocation,
+            indexForMethodInvocation + methodInvocation.Length,
+            0,
+            resourceUri,
+            sourceText);
+
+        var boundScope = binder.GetBoundScope(textSpanForMethodInvocation) as CSharpBoundScope;
+        
+        Assert.NotNull(boundScope);
+
+        var success = binder.TryGetFunctionHierarchically(
+            methodIdentifier,
+            out var functionDefinitionNode,
+            boundScope);
+
+        Assert.True(success);
+        Assert.NotNull(functionDefinitionNode);
+
+        var functionInvocationNode = (FunctionInvocationNode)topCodeBlockNode.ChildBag[1];
+
+        var argument = functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeBag.Single();
+        var parameter = functionInvocationNode.FunctionParametersListingNode.FunctionParameterEntryNodeBag.Single();
+
+        Assert.Equal(typeof(int), argument.VariableDeclarationStatementNode.TypeClauseNode.ValueType);
+        Assert.Equal(typeof(int), parameter.ExpressionNode.TypeClauseNode.ValueType);
+        
+        Assert.True(argument.VariableDeclarationStatementNode.TypeClauseNode.ValueType ==
+            parameter.ExpressionNode.TypeClauseNode.ValueType);
     }
 
     [Fact]
-    public void SHOULD_PARSE_FUNCTION_INVOCATION_STATEMENT_WITH_EXPRESSION_ARGUMENT()
+    public void PARSE_FunctionInvocationStatement_WITH_Argument_Expression()
     {
         string sourceText = @"void WriteToConsole(string input){} WriteToConsole(""a"" + ""b"");".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
@@ -749,21 +799,55 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_FUNCTION_INVOCATION_STATEMENT_WITH_VARIABLE_ARGUMENT()
+    public void PARSE_FunctionInvocationStatement_WITH_Argument_VariableReference()
     {
-        string sourceText = @"int x = 2; void WriteToConsole(int input){} WriteToConsole(x);".ReplaceLineEndings("\n");
+        var typeArgument = "int";
+        var variableIdentifier = "x";
+        var methodIdentifier = "WriteToConsole";
+        var methodInvocation = $"{methodIdentifier}(x);";
+        var sourceText = $@"{typeArgument} {variableIdentifier} = 2; void {methodIdentifier}({typeArgument} input){{}} {methodInvocation}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
+        var topCodeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
+        var binder = (CSharpBinder)compilationUnit.Binder;
 
-        throw new NotImplementedException();
+        var indexForMethodInvocation = sourceText.IndexOf(methodInvocation);
+
+        var textSpanForMethodInvocation = new TextEditorTextSpan(
+            indexForMethodInvocation,
+            indexForMethodInvocation + methodInvocation.Length,
+            0,
+            resourceUri,
+            sourceText);
+
+        var boundScope = binder.GetBoundScope(textSpanForMethodInvocation) as CSharpBoundScope;
+
+        var success = binder.TryGetFunctionHierarchically(
+            methodIdentifier,
+            out var functionDefinitionNode,
+            boundScope);
+
+        Assert.True(success);
+        Assert.NotNull(functionDefinitionNode);
+
+        var functionInvocationNode = (FunctionInvocationNode)topCodeBlockNode.ChildBag[3];
+
+        var argument = functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeBag.Single();
+        var parameter = functionInvocationNode.FunctionParametersListingNode.FunctionParameterEntryNodeBag.Single();
+
+        Assert.Equal(typeof(int), argument.VariableDeclarationStatementNode.TypeClauseNode.ValueType);
+        Assert.Equal(typeof(int), parameter.ExpressionNode.TypeClauseNode.ValueType);
+
+        Assert.True(argument.VariableDeclarationStatementNode.TypeClauseNode.ValueType ==
+            parameter.ExpressionNode.TypeClauseNode.ValueType);
     }
 
     [Fact]
-    public void SHOULD_PARSE_FUNCTION_INVOCATION_STATEMENT_HAVING_OUT_VARIABLE_ARGUMENT_REFERENCE()
+    public void PARSE_FunctionInvocationStatement_WITH_KeywordOut_VariableReference()
     {
         string sourceText = @"int x = 2; void WriteToConsole(out int input){} WriteToConsole(out x);".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
@@ -788,21 +872,54 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_FUNCTION_INVOCATION_STATEMENT_HAVING_OUT_VARIABLE_ARGUMENT_DECLARATION()
+    public void PARSE_FunctionInvocationStatement_WITH_KeywordOut_VariableDeclaration()
     {
-        string sourceText = @"void WriteToConsole(out int input){} WriteToConsole(out int x);".ReplaceLineEndings("\n");
+        var methodIdentifier = "WriteToConsole";
+        var outVariableIdentifier = "x";
+        var methodInvocation = $"{methodIdentifier}(out int {outVariableIdentifier});";
+        var sourceText = $@"void {methodIdentifier}(out int input){{}} {methodInvocation}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
+        var topCodeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
+        var binder = (CSharpBinder)compilationUnit.Binder;
 
-        throw new NotImplementedException();
+        var indexForMethodInvocation = sourceText.IndexOf(methodInvocation);
+
+        var textSpanForMethodInvocation = new TextEditorTextSpan(
+            indexForMethodInvocation,
+            indexForMethodInvocation + methodInvocation.Length,
+            0,
+            resourceUri,
+            sourceText);
+
+        var boundScope = binder.GetBoundScope(textSpanForMethodInvocation) as CSharpBoundScope;
+
+        var success = binder.TryGetFunctionHierarchically(
+            methodIdentifier,
+            out var functionDefinitionNode,
+            boundScope);
+
+        Assert.True(success);
+        Assert.NotNull(functionDefinitionNode);
+
+        var functionInvocationNode = (FunctionInvocationNode)topCodeBlockNode.ChildBag[2];
+
+        var argument = functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeBag.Single();
+        var parameter = functionInvocationNode.FunctionParametersListingNode.FunctionParameterEntryNodeBag.Single();
+
+        Assert.Equal(typeof(int), argument.VariableDeclarationStatementNode.TypeClauseNode.ValueType);
+        Assert.Equal(typeof(int), parameter.ExpressionNode.TypeClauseNode.ValueType);
+
+        Assert.True(argument.VariableDeclarationStatementNode.TypeClauseNode.ValueType ==
+            parameter.ExpressionNode.TypeClauseNode.ValueType);
     }
 
     [Fact]
-    public void SHOULD_PARSE_FUNCTION_INVOCATION_STATEMENT_HAVING_REF_VARIABLE_ARGUMENT_REFERENCE()
+    public void PARSE_FunctionInvocationStatement_WITH_KeywordRef()
     {
         string sourceText = @"int x = 2; void WriteToConsole(ref int input){} WriteToConsole(ref x);".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
@@ -827,7 +944,7 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_FUNCTION_INVOCATION_STATEMENT_WITH_DIAGNOSTIC_FOR_UNDEFINED_FUNCTION()
+    public void PARSE_FunctionInvocationStatement_WITH_Diagnostic_UndefinedFunction()
     {
         string sourceText = @"printf();".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
@@ -846,7 +963,7 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_METHOD_INVOCATION_ON_CLASS_INSTANCE()
+    public void PARSE_MethodInvocation_WITH_ClassInstance()
     {
         var sourceText = @"TODO".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
@@ -860,7 +977,7 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_METHOD_INVOCATION_ON_STATIC_CLASS_WITH_USING_STATEMENT()
+    public void PARSE_MethodInvocation_WITH_StaticClass_WITH_UsingStatement()
     {
         var sourceText = @"using System; Console.WriteLine(""Hello World!"");".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
@@ -874,7 +991,7 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_METHOD_INVOCATION_ON_STATIC_CLASS_WITH_EXPLICIT_NAMESPACE_QUALIFICATION()
+    public void PARSE_MethodInvocation_WITH_StaticClass_WITH_ExplicitNamespaceQualification()
     {
         var sourceText = @"System.Console.WriteLine(""Hello World!"");".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
@@ -888,7 +1005,7 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_METHOD_DEFINITION_WITH_GENERIC_ARGUMENT()
+    public void PARSE_MethodDefinition_WITH_Argument_Generic()
     {
         var genericArgumentIdentifier = "T";
         var functionIdentifier = "Clone";
@@ -921,21 +1038,52 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_METHOD_DEFINITION_WITH_GENERIC_ARGUMENT_CLAUSE()
+    public void PARSE_MethodDefinition_WITH_Argument_Generic_WITH_Constraint()
     {
-        var sourceText = @"public T Clone<T>(T item) where T : class { return item; }".ReplaceLineEndings("\n");
+        var functionIdentifierText = "Clone";
+        var genericTypeText = "T";
+        var functionArgumentText = "item";
+        var genericConstraintText = $"where {genericTypeText} : class";
+        var sourceText = $@"public {genericTypeText} {functionIdentifierText}<{genericTypeText}>({genericTypeText} {functionArgumentText}) {genericConstraintText} {{ return {functionArgumentText}; }}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
+        var topCodeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
 
-        throw new NotImplementedException();
+        Assert.Single(topCodeBlockNode.ChildBag);
+        var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlockNode.ChildBag.Single();
+
+        var returnTypeClauseNode = (TypeClauseNode)functionDefinitionNode.ChildBag[0];
+        var functionIdentifierToken = (IdentifierToken)functionDefinitionNode.ChildBag[1];
+        var genericArgumentsListingNode = (GenericArgumentsListingNode)functionDefinitionNode.ChildBag[2];
+        var functionArgumentsListingNode = (FunctionArgumentsListingNode)functionDefinitionNode.ChildBag[3];
+        var functionCodeBlockNode = (CodeBlockNode)functionDefinitionNode.ChildBag[4];
+        var constraintNode = (ConstraintNode)functionDefinitionNode.ChildBag[5];
+
+        Assert.Equal(genericTypeText, returnTypeClauseNode.TypeIdentifier.TextSpan.GetText());
+        Assert.Equal(functionIdentifierText, functionIdentifierToken.TextSpan.GetText());
+
+        var genericArgumentEntryNode = genericArgumentsListingNode.GenericArgumentEntryNodeBag.Single();
+        Assert.Equal(genericTypeText, genericArgumentEntryNode.TypeClauseNode.TypeIdentifier.TextSpan.GetText());
+
+        var functionArgumentEntryNode = functionArgumentsListingNode.FunctionArgumentEntryNodeBag.Single();
+        Assert.Equal(genericTypeText, functionArgumentEntryNode.VariableDeclarationStatementNode.TypeClauseNode.TypeIdentifier.TextSpan.GetText());
+        Assert.Equal(functionArgumentText, functionArgumentEntryNode.VariableDeclarationStatementNode.IdentifierToken.TextSpan.GetText());
+
+        var returnStatementNode = (ReturnStatementNode)functionCodeBlockNode.ChildBag.Single();
+        Assert.NotNull(returnStatementNode);
+
+        // Whitespace issues when comparing
+        Assert.Equal(
+            genericConstraintText.Replace(" ", string.Empty),
+            constraintNode.GetTextRecursively().Replace(" ", string.Empty));
     }
 
     [Fact]
-    public void SHOULD_PARSE_METHOD_INVOCATION_WITH_GENERIC_ARGUMENT()
+    public void PARSE_MethodInvocation_WITH_Argument_Generic()
     {
         var sourceText = @"Clone<int>(3){}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
@@ -949,7 +1097,7 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_NUMERIC_BINARY_EXPRESSION()
+    public void PARSE_NumericBinaryExpression()
     {
         string sourceText = "3 + 3".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
@@ -961,14 +1109,14 @@ public partial class ParserTests
         var codeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
         Assert.Single(codeBlockNode.ChildBag);
 
-        var boundBinaryExpressionNode = (BinaryExpressionNode)codeBlockNode.ChildBag[0];
-        Assert.Equal(typeof(int), boundBinaryExpressionNode.LeftExpressionNode.TypeClauseNode?.ValueType);
-        Assert.Equal(typeof(int), boundBinaryExpressionNode.BinaryOperatorNode.TypeClauseNode.ValueType);
-        Assert.Equal(typeof(int), boundBinaryExpressionNode.RightExpressionNode.TypeClauseNode?.ValueType);
+        var binaryExpressionNode = (BinaryExpressionNode)codeBlockNode.ChildBag[0];
+        Assert.Equal(typeof(int), binaryExpressionNode.LeftExpressionNode.TypeClauseNode.ValueType);
+        Assert.Equal(typeof(int), binaryExpressionNode.BinaryOperatorNode.TypeClauseNode.ValueType);
+        Assert.Equal(typeof(int), binaryExpressionNode.RightExpressionNode.TypeClauseNode.ValueType);
     }
 
     [Fact]
-    public void SHOULD_PARSE_STRING_INTERPOLATION_EXPRESSION()
+    public void PARSE_StringInterpolationExpression()
     {
         string sourceText = "$\"DisplayName: {FirstName} {LastName}\"".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
@@ -982,7 +1130,7 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_IF_STATEMENT()
+    public void PARSE_IfStatement()
     {
         var sourceText = @"if (true) { }".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
@@ -1000,7 +1148,7 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_NOT_PARSE_COMMENT_SINGLE_LINE_STATEMENT()
+    public void PARSE_CommentSingleLineStatement_NOT()
     {
         string sourceText = @"// C:\Users\hunte\Repos\Aaa\".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
@@ -1015,7 +1163,7 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_CLASS_DEFINITION_EMPTY()
+    public void PARSE_ClassDefinition_WITH_EMPTY()
     {
         string classIdentifier = "PersonModel";
         string sourceText = @$"public class {classIdentifier} {{ }}".ReplaceLineEndings("\n");
@@ -1039,7 +1187,7 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_CLASS_DEFINITION_WHICH_CONTAINS_A_METHOD()
+    public void PARSE_ClassDefinition_WITH_FunctionDeclaration()
     {
         string classIdentifier = "PersonModel";
         string methodIdentifier = "Walk";
@@ -1070,7 +1218,7 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_CLASS_DEFINITION_WHICH_HAS_PARTIAL_MODIFIER()
+    public void PARSE_ClassDefinition_WITH_ModifierPartial()
     {
         string classIdentifier = "PersonModel";
         string sourceText = @$"public partial class {classIdentifier} {{ }}".ReplaceLineEndings("\n");
@@ -1096,7 +1244,7 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_CLASS_DEFINITION_WHICH_IS_INHERITING()
+    public void PARSE_ClassDefinition_WITH_Inheriting()
     {
         string parentClassIdentifier = "IPerson";
         string derivingClassIdentifier = "Person";
@@ -1121,7 +1269,7 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_CLASS_DEFINITION_WHICH_HAS_ONE_GENERIC_ARGUMENT()
+    public void PARSE_ClassDefinition_WITH_GenericArgumentCount_One()
     {
         string classIdentifier = "Box", genericArgumentIdentifier = "T";
         string sourceText = @$"public class {classIdentifier}<{genericArgumentIdentifier}> {{ }}".ReplaceLineEndings("\n");
@@ -1153,7 +1301,7 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_CLASS_DEFINITION_WHICH_HAS_TWO_GENERIC_ARGUMENTS()
+    public void PARSE_ClassDefinition_WITH_GenericArgumentCount_Two()
     {
         string classIdentifier = "Box", genericArgOne = "TItem", genericArgTwo = "TPackager";
         string sourceText = @$"public class {classIdentifier}<{genericArgOne}, {genericArgTwo}> {{ }}".ReplaceLineEndings("\n");
@@ -1186,7 +1334,7 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_CLASS_DEFINITION_WHICH_HAS_THREE_GENERIC_ARGUMENTS()
+    public void PARSE_ClassDefinition_WITH__GenericArgumentCount_Three()
     {
         string classIdentifier = "Box", genericArgOne = "TItem", genericArgTwo = "TPackager", genericArgThree = "TDeliverer";
         string sourceText = @$"public class {classIdentifier}<{genericArgOne}, {genericArgTwo}, {genericArgThree}> : ComponentBase {{ }}".ReplaceLineEndings("\n");
@@ -1222,7 +1370,41 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_PROPERTY_ATTRIBUTE()
+    public void PARSE_ClassDefinition_WITH_Constructor()
+    {
+        var classIdentifierText = "Person";
+        var sourceText = $"public class {classIdentifierText} {{ public {classIdentifierText}(string firstName, string lastName) {{ FirstName = firstName; LastName = lastName; }} }}";
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
+
+        throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void PARSE_ClassDefinition_WITH_Constructor_Invokes_Constructor()
+    {
+        var classIdentifierText = "Person";
+        var constructorOne = $"public {classIdentifierText}(string firstName, string lastName) {{ FirstName = firstName; LastName = lastName; }}";
+        var constructorTwo = $"public {classIdentifierText}(Person person) : this(person.FirstName, person.LastName) {{ }}";
+        var sourceText = $"public class {classIdentifierText} {{ {constructorOne} {constructorTwo} }}";
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
+
+        throw new NotImplementedException();
+    }
+
+    [Fact]
+    public void PARSE_PropertyAttribute()
     {
         var attributeIdentifier = "Parameter";
         string sourceText = @$"public partial class PersonDisplay : ComponentBase {{ [{attributeIdentifier}] public IPersonModel PersonModel {{ get; set; }} }}".ReplaceLineEndings("\n");
@@ -1237,7 +1419,7 @@ public partial class ParserTests
     }
 
     [Fact]
-    public void SHOULD_PARSE_PROPERTY_WITH_TYPE_NOT_FOUND()
+    public void PARSE_Property_WITH_Diagnostic_UndefinedType()
     {
         string sourceText = @"public class Aaa { public IPersonModel MyProperty { get; set; } }".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);

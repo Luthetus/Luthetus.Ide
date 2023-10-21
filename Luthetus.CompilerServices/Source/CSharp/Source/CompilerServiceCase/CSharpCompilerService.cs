@@ -26,7 +26,7 @@ public class CSharpCompilerService : ICompilerService
     /// <summary>
     /// TODO: The CSharpBinder should be private, but for now I'm making it public to be usable in the CompilerServiceExplorer Blazor component.
     /// </summary>
-    public readonly CSharpBinder Binder = new();
+    public readonly CSharpBinder CSharpBinder = new();
 
     public CSharpCompilerService(
         ITextEditorService textEditorService,
@@ -37,17 +37,19 @@ public class CSharpCompilerService : ICompilerService
         _backgroundTaskService = backgroundTaskService;
         _dispatcher = dispatcher;
 
-        RuntimeAssembliesLoaderFactory.LoadDotNet6(Binder);
+        RuntimeAssembliesLoaderFactory.LoadDotNet6(CSharpBinder);
     }
+
+    public event Action? ResourceRegistered;
+    public event Action? ResourceParsed;
+    public event Action? ResourceDisposed;
+
+    public IBinder? Binder => CSharpBinder;
 
     public ImmutableArray<ICompilerServiceResource> CompilerServiceResources =>
         _cSharpResourceMap.Values
             .Select(csr => (ICompilerServiceResource)csr)
             .ToImmutableArray();
-
-    public event Action? ResourceRegistered;
-    public event Action? ResourceParsed;
-    public event Action? ResourceDisposed;
 
     public void RegisterResource(ResourceUri resourceUri)
     {
@@ -67,7 +69,7 @@ public class CSharpCompilerService : ICompilerService
 
     public ICompilerServiceResource? GetCompilerServiceResourceFor(ResourceUri resourceUri)
     {
-        var model = _textEditorService.Model.FindOrDefaultByResourceUri(resourceUri);
+        var model = _textEditorService.Model.FindOrDefault(resourceUri);
 
         if (model is null)
             return null;
@@ -119,26 +121,50 @@ public class CSharpCompilerService : ICompilerService
         QueueParseRequest(resourceUri);
     }
 
-    public ImmutableArray<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorCursorSnapshot cursorSnapshot)
+    public ImmutableArray<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorTextSpan textSpan)
     {
-        if (Binder.TryGetTypeHierarchically(word, out var typeDefinitionNode) &&
-            typeDefinitionNode is not null)
-        {
-            var functionDefinitionNodes = typeDefinitionNode.GetFunctionDefinitionNodes();
+        var boundScope = CSharpBinder.GetBoundScope(textSpan) as CSharpBoundScope;
 
-            var matches = functionDefinitionNodes
-                .Where(fdn => fdn.FunctionIdentifier.TextSpan.GetText().Contains(word))
-                .Select(fdn =>
+        if (boundScope is null)
+            return ImmutableArray<AutocompleteEntry>.Empty;
+
+        var autocompleteEntryBag = new List<AutocompleteEntry>();
+
+        var targetScope = boundScope;
+
+        while (targetScope is not null)
+        {
+            autocompleteEntryBag.AddRange(
+                targetScope.VariableDeclarationMap.Where(x => x.Key.Contains(word, StringComparison.InvariantCulture))
+                .Select(x =>
                 {
                     return new AutocompleteEntry(
-                        fdn.FunctionIdentifier.TextSpan.GetText(),
-                        AutocompleteEntryKind.Function);
-                });
+                        x.Key,
+                        AutocompleteEntryKind.Variable);
+                }));
 
-            return matches.ToImmutableArray();
+            autocompleteEntryBag.AddRange(
+                targetScope.FunctionDefinitionMap.Where(x => x.Key.Contains(word, StringComparison.InvariantCulture))
+                .Select(x =>
+                {
+                    return new AutocompleteEntry(
+                        x.Key,
+                        AutocompleteEntryKind.Function);
+                }));
+
+            autocompleteEntryBag.AddRange(
+                targetScope.TypeDefinitionMap.Where(x => x.Key.Contains(word, StringComparison.InvariantCulture))
+                .Select(x =>
+                {
+                    return new AutocompleteEntry(
+                        x.Key,
+                        AutocompleteEntryKind.Type);
+                }));
+
+            targetScope = targetScope.Parent;
         }
 
-        return ImmutableArray<AutocompleteEntry>.Empty;
+        return autocompleteEntryBag.ToImmutableArray();
     }
 
     public void DisposeResource(ResourceUri resourceUri)
@@ -157,7 +183,7 @@ public class CSharpCompilerService : ICompilerService
             "C# Compiler Service - Parse",
             async () =>
             {
-                var model = _textEditorService.Model.FindOrDefaultByResourceUri(resourceUri);
+                var model = _textEditorService.Model.FindOrDefault(resourceUri);
 
                 if (model is null)
                     return;
@@ -177,7 +203,7 @@ public class CSharpCompilerService : ICompilerService
                 lexer.Lex();
 
                 var parser = new CSharpParser(lexer);
-                var compilationUnit = parser.Parse(Binder, resourceUri);
+                var compilationUnit = parser.Parse(CSharpBinder, resourceUri);
 
                 if (compilationUnit is null)
                     return;
