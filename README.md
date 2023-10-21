@@ -8,6 +8,9 @@
 ## Demo:
 https://luthetus.github.io/Luthetus.Website/
 
+## Donations:
+[![Donate with PayPal](https://raw.githubusercontent.com/Luthetus/paypal-donate-button_Fork/master/paypal-donate-button.png)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RCG8QN3KL623Y)
+
 ## Cloning and locally running the repo
 Clone, then run `Luthetus.Ide.Photino.csproj` (or any of the other Hosts such as WASM or ServerSide).
 
