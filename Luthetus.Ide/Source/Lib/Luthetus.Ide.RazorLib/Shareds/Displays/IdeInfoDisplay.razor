@@ -18,6 +18,17 @@
         <div>
             Recent Changes:
             <div>
+                <div>v <em class="luth_em">0.2.0.0</em> (2023-10-21)</div>
+                <ul>
+                    <li>
+                        C# Autocompletion via Binder
+                    </li>
+                    <li>
+                        C# Parsing improvements
+                    </li>
+                </ul>
+            </div>
+            <div>
                 <div>v <em class="luth_em">0.1.1.0</em> (2023-10-04)</div>
                 <ul>
                     <li>
@@ -74,11 +85,7 @@
                     @(referencedLuthetusAssembly.Version)
                 </em>
                 ::
-                <a target="_blank"
-                   href="@hrefForReferencedLuthetusAssembly">
-
-                    @(referencedLuthetusAssembly.Name)
-                </a>
+                @referencedLuthetusAssembly.Name
             </div>
         }
     </div>
