@@ -1085,15 +1085,32 @@ public partial class ParserTests
     [Fact]
     public void PARSE_MethodInvocation_WITH_Argument_Generic()
     {
-        var sourceText = @"Clone<int>(3){}".ReplaceLineEndings("\n");
+        var functionIdentifierText = "Clone";
+        var genericParameterText = "int";
+        var functionParameterText = "3";
+        var sourceText = $@"{functionIdentifierText}<{genericParameterText}>({functionParameterText})".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
-
         var codeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
+
+        var functionInvocationNode = (FunctionInvocationNode)codeBlockNode.ChildBag.Single();
+
+        var identifierToken = (IdentifierToken)functionInvocationNode.ChildBag[0];
+        var genericParametersListingNode = (GenericParametersListingNode)functionInvocationNode.ChildBag[1];
+        var functionParametersListingNode = (FunctionParametersListingNode)functionInvocationNode.ChildBag[2];
+
+        Assert.Equal(functionIdentifierText, identifierToken.TextSpan.GetText());
+
+        var genericParameterEntryNode = genericParametersListingNode.GenericParameterEntryNodeBag.Single();
+        Assert.Equal(genericParameterText, genericParameterEntryNode.TypeClauseNode.TypeIdentifier.TextSpan.GetText());
+        
+        var functionParameterEntryNode = functionParametersListingNode.FunctionParameterEntryNodeBag.Single();
+        var numericLiteralToken = (NumericLiteralToken)functionParameterEntryNode.ExpressionNode.ChildBag.Single(x => x.SyntaxKind == SyntaxKind.NumericLiteralToken);
+        Assert.Equal(functionParameterText, numericLiteralToken.TextSpan.GetText());
     }
 
     [Fact]
