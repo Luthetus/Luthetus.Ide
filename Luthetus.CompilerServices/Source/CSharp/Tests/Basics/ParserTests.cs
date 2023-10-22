@@ -1093,7 +1093,7 @@ public partial class ParserTests
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
 
-        throw new NotImplementedException();
+        var codeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
     }
 
     [Fact]

@@ -5,7 +5,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using static Luthetus.CompilerServices.Lang.CSharp.Facts.CSharpLanguageFacts;
+using static Luthetus.CompilerServices.Lang.CSharp.Facts.CSharpFacts;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 

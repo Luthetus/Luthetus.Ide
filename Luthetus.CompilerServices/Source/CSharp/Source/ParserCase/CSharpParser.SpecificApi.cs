@@ -208,7 +208,8 @@ public partial class CSharpParser : IParser
 
             if (CurrentCodeBlockBuilder.CodeBlockOwner is not TypeDefinitionNode typeDefinitionNode)
             {
-                throw new ApplicationException("Constructors need to be within a type definition.");
+                DiagnosticBag.ReportConstructorsNeedToBeWithinTypeDefinition(identifierToken.TextSpan);
+                typeDefinitionNode = CSharpFacts.Types.Void;
             }
 
             var typeClauseNode = new TypeClauseNode(
@@ -345,7 +346,11 @@ public partial class CSharpParser : IParser
                 }
 
                 if (matchingOverload is null)
-                    throw new ApplicationException("Handle case where none of the function overloads match the input.");
+                {
+                    DiagnosticBag.ReportTodoException(
+                        functionInvocationIdentifierToken.TextSpan,
+                        "Handle case where none of the function overloads match the input.");
+                }
 
                 // TODO: Don't assume GenericParametersListingNode to be null
                 var functionInvocationNode = new FunctionInvocationNode(
@@ -447,7 +452,7 @@ public partial class CSharpParser : IParser
         {
             var literalExpressionNode = new LiteralExpressionNode(
                 numericLiteralToken,
-                CSharpLanguageFacts.Types.Int.ToTypeClause());
+                CSharpFacts.Types.Int.ToTypeClause());
 
             literalExpressionNode = Binder.BindLiteralExpressionNode(literalExpressionNode);
 
@@ -460,7 +465,7 @@ public partial class CSharpParser : IParser
         {
             var literalExpressionNode = new LiteralExpressionNode(
                 stringLiteralToken,
-                CSharpLanguageFacts.Types.String.ToTypeClause());
+                CSharpFacts.Types.String.ToTypeClause());
 
             literalExpressionNode = Binder.BindLiteralExpressionNode(literalExpressionNode);
 
@@ -628,7 +633,7 @@ public partial class CSharpParser : IParser
                         || variableDeclarationNode is null)
                     {
                         variableDeclarationNode = new(
-                            CSharpLanguageFacts.Types.Void.ToTypeClause(),
+                            CSharpFacts.Types.Void.ToTypeClause(),
                             variableIdentifierToken,
                             false)
                         {
@@ -871,7 +876,7 @@ public partial class CSharpParser : IParser
                         (byte)GenericDecorationKind.None,
                         new ResourceUri(string.Empty),
                         string.Empty)),
-                CSharpLanguageFacts.Types.Void.ToTypeClause());
+                CSharpFacts.Types.Void.ToTypeClause());
         }
 
         /// <summary>TODO: Implement ParseIfStatementExpression() correctly. Until then, skip until the closing parenthesis of the if statement is found.</summary>
@@ -905,7 +910,7 @@ public partial class CSharpParser : IParser
                         (byte)GenericDecorationKind.None,
                         new ResourceUri(string.Empty),
                         string.Empty)),
-                CSharpLanguageFacts.Types.Void.ToTypeClause());
+                CSharpFacts.Types.Void.ToTypeClause());
         }
 
         public void HandlePropertyDefinition(TypeClauseNode typeClauseNode, IdentifierToken identifierToken)
@@ -1814,7 +1819,7 @@ public partial class CSharpParser : IParser
 
             var literalExpressionNode = new LiteralExpressionNode(
                 numericLiteralToken,
-                CSharpLanguageFacts.Types.Int.ToTypeClause());
+                CSharpFacts.Types.Int.ToTypeClause());
 
             literalExpressionNode = Binder.BindLiteralExpressionNode(literalExpressionNode);
 
@@ -1834,7 +1839,7 @@ public partial class CSharpParser : IParser
         {
             var literalExpressionNode = new LiteralExpressionNode(
                 stringLiteralToken,
-                CSharpLanguageFacts.Types.String.ToTypeClause());
+                CSharpFacts.Types.String.ToTypeClause());
 
             literalExpressionNode = Binder.BindLiteralExpressionNode(literalExpressionNode);
 

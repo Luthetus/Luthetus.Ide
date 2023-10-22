@@ -13,8 +13,8 @@ namespace Luthetus.CompilerServices.Lang.CSharp.BinderCase;
 
 public class CSharpBinder : IBinder
 {
-    private readonly CSharpBoundScope _globalScope = CSharpLanguageFacts.Scope.GetInitialGlobalScope();
-    private readonly Dictionary<string, NamespaceStatementNode> _namespaceStatementNodes = CSharpLanguageFacts.Namespaces.GetInitialBoundNamespaceStatementNodes();
+    private readonly CSharpBoundScope _globalScope = CSharpFacts.Scope.GetInitialGlobalScope();
+    private readonly Dictionary<string, NamespaceStatementNode> _namespaceStatementNodes = CSharpFacts.Namespaces.GetInitialBoundNamespaceStatementNodes();
     /// <summary>The key for _symbolDefinitions is calculated by <see cref="ISymbol.GetSymbolDefinitionId"/></summary>
     private readonly Dictionary<string, SymbolDefinition> _symbolDefinitions = new();
     private readonly LuthetusDiagnosticBag _diagnosticBag = new();
@@ -49,8 +49,8 @@ public class CSharpBinder : IBinder
     {
         var typeClauseNode = literalExpressionNode.LiteralSyntaxToken.SyntaxKind switch
         {
-            SyntaxKind.NumericLiteralToken => CSharpLanguageFacts.Types.Int.ToTypeClause(),
-            SyntaxKind.StringLiteralToken => CSharpLanguageFacts.Types.String.ToTypeClause(),
+            SyntaxKind.NumericLiteralToken => CSharpFacts.Types.Int.ToTypeClause(),
+            SyntaxKind.StringLiteralToken => CSharpFacts.Types.String.ToTypeClause(),
             _ => throw new NotImplementedException(),
         };
 
@@ -64,12 +64,6 @@ public class CSharpBinder : IBinder
         ISyntaxToken operatorToken,
         IExpressionNode rightExpressionNode)
     {
-        if (leftExpressionNode.TypeClauseNode is null ||
-            rightExpressionNode.TypeClauseNode is null)
-        {
-            throw new ApplicationException($"TODO: How should one handle an expression with a null {nameof(IExpressionNode.TypeClauseNode)}?");
-        }
-
         if (leftExpressionNode.TypeClauseNode.ValueType == typeof(int) &&
             rightExpressionNode.TypeClauseNode.ValueType == typeof(int))
         {
@@ -83,7 +77,7 @@ public class CSharpBinder : IBinder
                         leftExpressionNode.TypeClauseNode,
                         operatorToken,
                         rightExpressionNode.TypeClauseNode,
-                        CSharpLanguageFacts.Types.Int.ToTypeClause());
+                        CSharpFacts.Types.Int.ToTypeClause());
             }
         }
         else if (leftExpressionNode.TypeClauseNode.ValueType == typeof(string) &&
@@ -96,7 +90,7 @@ public class CSharpBinder : IBinder
                         leftExpressionNode.TypeClauseNode,
                         operatorToken,
                         rightExpressionNode.TypeClauseNode,
-                        CSharpLanguageFacts.Types.String.ToTypeClause());
+                        CSharpFacts.Types.String.ToTypeClause());
             }
         }
 
@@ -148,7 +142,7 @@ public class CSharpBinder : IBinder
                 out var typeDefinitionNode)
             || typeDefinitionNode is null)
         {
-            typeDefinitionNode = CSharpLanguageFacts.Types.Void;
+            typeDefinitionNode = CSharpFacts.Types.Void;
         }
 
         var literalExpressionNode = new LiteralExpressionNode(
@@ -451,7 +445,7 @@ public class CSharpBinder : IBinder
             AddSymbolReference(typeSymbol);
         }
 
-        var matchingTypeDefintionNode = CSharpLanguageFacts.Types.TypeDefinitionNodes.SingleOrDefault(
+        var matchingTypeDefintionNode = CSharpFacts.Types.TypeDefinitionNodes.SingleOrDefault(
             x => x.TypeIdentifier.TextSpan.GetText() == typeClauseNode.TypeIdentifier.TextSpan.GetText());
 
         if (matchingTypeDefintionNode is not null)
