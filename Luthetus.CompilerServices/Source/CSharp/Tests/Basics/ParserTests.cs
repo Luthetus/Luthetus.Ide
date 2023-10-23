@@ -78,6 +78,78 @@ public partial class ParserTests
         var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)compilationUnit.TopLevelStatementsCodeBlockNode.ChildBag[1];
         Assert.Equal(SyntaxKind.VariableAssignmentExpressionNode, variableAssignmentExpressionNode.SyntaxKind);
     }
+    
+    [Fact]
+    public void PARSE_FieldDeclaration()
+    {
+        throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void PARSE_FieldDeclaration_WITH_Initialization()
+    {
+        throw new NotImplementedException();
+    }
+
+    [Fact]
+    public void PARSE_FieldReference()
+    {
+        throw new NotImplementedException();
+    }
+
+    [Fact]
+    public void PARSE_FieldAssignment()
+    {
+        throw new NotImplementedException();
+    }
+
+    [Fact]
+    public void PARSE_PropertyDeclaration()
+    {
+        throw new NotImplementedException();
+    }
+
+    [Fact]
+    public void PARSE_PropertyDeclaration_WITH_Getter()
+    {
+        throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void PARSE_PropertyDeclaration_WITH_Setter()
+    {
+        throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void PARSE_PropertyDeclaration_WITH_Getter_AND_Setter()
+    {
+        throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void PARSE_PropertyDeclaration_WITH_ExpressionBound()
+    {
+        throw new NotImplementedException();
+    }
+
+    [Fact]
+    public void PARSE_PropertyDeclaration_WITH_Initialization()
+    {
+        throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void PARSE_PropertyReference()
+    {
+        throw new NotImplementedException();
+    }
+
+    [Fact]
+    public void PARSE_PropertyAssignment()
+    {
+        throw new NotImplementedException();
+    }
 
     [Fact]
     public void PARSE_ConditionalKeyword_Var()
