@@ -31,3 +31,4 @@ You may be interested in visiting my [youtube channel](https://www.youtube.com/c
 
 ## References I find useful:
   - Scintilla Documentation: [https://www.scintilla.org/ScintillaDoc.html](https://www.scintilla.org/ScintillaDoc.html)
+  - Building a Compiler (video series by Immo Landwerth): [https://youtube.com/playlist?list=PLRAdsfhKI4OWNOSfS7EUu5GRAVmze1t2y&si=V3rbN0lU4n6wDQge](https://youtube.com/playlist?list=PLRAdsfhKI4OWNOSfS7EUu5GRAVmze1t2y&si=V3rbN0lU4n6wDQge)
