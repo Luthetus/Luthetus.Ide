@@ -26,7 +26,7 @@ public partial class BinderTests
 
         // Assert variable declaration parsed
         {
-            var variableDeclarationStatementNode = (VariableDeclarationStatementNode)codeBlockNode.ChildBag.Single();
+            var variableDeclarationStatementNode = (VariableDeclarationNode)codeBlockNode.ChildBag.Single();
 
             Assert.Equal(SyntaxKind.VariableDeclarationStatementNode, variableDeclarationStatementNode.SyntaxKind);
             Assert.Equal(2, variableDeclarationStatementNode.ChildBag.Length);

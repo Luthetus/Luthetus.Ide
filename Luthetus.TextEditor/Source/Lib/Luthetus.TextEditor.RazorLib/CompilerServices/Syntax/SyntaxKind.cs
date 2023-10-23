@@ -220,6 +220,7 @@ public enum SyntaxKind
     ConstructorSymbol,
     FunctionSymbol,
     VariableSymbol,
+    FieldSymbol,
     PropertySymbol,
     StringInterpolationSymbol,
     NamespaceSymbol,

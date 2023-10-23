@@ -103,6 +103,17 @@ public class LuthetusDiagnosticBag : IEnumerable<TextEditorDiagnostic>
             textSpan,
             Guid.Parse("89b61fa8-541d-4154-9425-82c5667842a8"));
     }
+    
+    public void ReportAlreadyDefinedProperty(
+        TextEditorTextSpan textSpan,
+        string alreadyDefinedPropertyIdentifier)
+    {
+        Report(
+            TextEditorDiagnosticLevel.Error,
+            $"Already defined property: '{alreadyDefinedPropertyIdentifier}'",
+            textSpan,
+            Guid.Parse("0f4681e2-abaa-46f6-9b05-56941a07dd98"));
+    }
 
     public void ReportUndefinedFunction(
         TextEditorTextSpan textSpan,

@@ -1,10 +1,12 @@
-﻿using System.Collections.Immutable;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using Luthetus.CompilerServices.Lang.CSharp.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
@@ -282,43 +284,35 @@ public class CSharpBinder : IBinder
         throw new NotImplementedException();
     }
 
-    public void BindVariableDeclarationStatementNode(VariableDeclarationStatementNode variableDeclarationStatementNode)
+    public void BindVariableDeclarationStatementNode(VariableDeclarationNode variableDeclarationNode)
     {
-        var variableSymbol = new VariableSymbol(variableDeclarationStatementNode.IdentifierToken.TextSpan with
-        {
-            DecorationByte = (byte)GenericDecorationKind.Variable
-        });
+        CreateVariableSymbol(variableDeclarationNode.IdentifierToken, variableDeclarationNode.VariableKind);
 
-        AddSymbolDefinition(variableSymbol);
-
-        var text = variableDeclarationStatementNode.IdentifierToken.TextSpan.GetText();
+        var text = variableDeclarationNode.IdentifierToken.TextSpan.GetText();
 
         if (!_currentScope.VariableDeclarationMap.TryAdd(
                 text,
-                variableDeclarationStatementNode))
+                variableDeclarationNode))
         {
             _diagnosticBag.ReportAlreadyDefinedVariable(
-                variableDeclarationStatementNode.IdentifierToken.TextSpan,
+                variableDeclarationNode.IdentifierToken.TextSpan,
                 text);
         }
     }
 
     public VariableReferenceNode BindVariableReferenceNode(VariableReferenceNode variableReferenceNode)
     {
-        var variableSymbol = new VariableSymbol(variableReferenceNode.VariableIdentifierToken.TextSpan with
-        {
-            DecorationByte = (byte)GenericDecorationKind.Variable
-        });
-
-        AddSymbolDefinition(variableSymbol);
-
         var text = variableReferenceNode.VariableIdentifierToken.TextSpan.GetText();
+        VariableKind variableKind = VariableKind.Local;
 
-        if (TryGetVariableDeclarationHierarchically(text, out var variableDeclarationStatementNode))
+        if (TryGetVariableDeclarationHierarchically(text, out var variableDeclarationNode)
+            && variableDeclarationNode is not null)
         {
             variableReferenceNode = new VariableReferenceNode(
                 variableReferenceNode.VariableIdentifierToken,
-                variableDeclarationStatementNode!);
+                variableDeclarationNode!);
+
+            variableKind = variableDeclarationNode.VariableKind;
         }
         else
         {
@@ -327,33 +321,26 @@ public class CSharpBinder : IBinder
                 text);
         }
 
+        CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableKind);
+
         return variableReferenceNode;
     }
 
-    public void BindVariableAssignmentExpressionNode(
-        VariableAssignmentExpressionNode variableAssignmentExpressionNode)
+    public void BindVariableAssignmentExpressionNode(VariableAssignmentExpressionNode variableAssignmentExpressionNode)
     {
-        var variableSymbol = new VariableSymbol(variableAssignmentExpressionNode.VariableIdentifierToken.TextSpan with
-        {
-            DecorationByte = (byte)GenericDecorationKind.Variable
-        });
-
-        AddSymbolReference(variableSymbol);
-
         var text = variableAssignmentExpressionNode.VariableIdentifierToken.TextSpan.GetText();
+        VariableKind variableKind = VariableKind.Local;
 
-        if (TryGetVariableDeclarationHierarchically(
-                text,
-                out var variableDeclarationNode) &&
-            variableDeclarationNode is not null)
+        if (TryGetVariableDeclarationHierarchically(text, out var variableDeclarationNode)
+            && variableDeclarationNode is not null)
         {
-            variableDeclarationNode = new VariableDeclarationStatementNode(
+            variableDeclarationNode = new VariableDeclarationNode(
                 variableDeclarationNode.TypeClauseNode,
                 variableDeclarationNode.IdentifierToken,
+                variableDeclarationNode.VariableKind,
                 true);
 
-            _currentScope.VariableDeclarationMap[text] =
-                variableDeclarationNode;
+            _currentScope.VariableDeclarationMap[text] = variableDeclarationNode;
         }
         else
         {
@@ -361,6 +348,8 @@ public class CSharpBinder : IBinder
                 variableAssignmentExpressionNode.VariableIdentifierToken.TextSpan,
                 text);
         }
+
+        CreateVariableSymbol(variableAssignmentExpressionNode.VariableIdentifierToken, variableKind);
     }
 
     public void BindConstructorDefinitionIdentifierToken(
@@ -372,27 +361,6 @@ public class CSharpBinder : IBinder
         });
 
         AddSymbolDefinition(constructorSymbol);
-    }
-
-    public void BindPropertyDeclarationNode(VariableDeclarationStatementNode variableDeclarationStatementNode)
-    {
-        var propertySymbol = new PropertySymbol(variableDeclarationStatementNode.IdentifierToken.TextSpan with
-        {
-            DecorationByte = (byte)GenericDecorationKind.Property
-        });
-
-        AddSymbolDefinition(propertySymbol);
-
-        var text = variableDeclarationStatementNode.IdentifierToken.TextSpan.GetText();
-
-        if (!_currentScope.VariableDeclarationMap.TryAdd(
-                text,
-                variableDeclarationStatementNode))
-        {
-            _diagnosticBag.ReportAlreadyDefinedVariable(
-                variableDeclarationStatementNode.IdentifierToken.TextSpan,
-                text);
-        }
     }
 
     public void BindFunctionInvocationNode(FunctionInvocationNode functionInvocationNode)
@@ -668,7 +636,7 @@ public class CSharpBinder : IBinder
     /// <summary>Search hierarchically through all the scopes, starting at the <see cref="_currentScope"/>.<br/><br/>If a match is found, then set the out parameter to it and return true.<br/><br/>If none of the searched scopes contained a match then set the out parameter to null and return false.</summary>
     public bool TryGetVariableDeclarationHierarchically(
         string text,
-        out VariableDeclarationStatementNode? variableDeclarationStatementNode,
+        out VariableDeclarationNode? variableDeclarationStatementNode,
         CSharpBoundScope? initialScope = null)
     {
         var localScope = initialScope ?? _currentScope;
@@ -748,6 +716,50 @@ public class CSharpBinder : IBinder
         symbolDefinition.SymbolReferences.Add(new SymbolReference(
             symbol,
             _currentScope.BoundScopeKey));
+    }
+
+    public void CreateVariableSymbol(IdentifierToken identifierToken, VariableKind variableKind)
+    {
+        switch (variableKind)
+        {
+            case VariableKind.Field:
+                {
+                    var symbol = new FieldSymbol(identifierToken.TextSpan with
+                    {
+                        DecorationByte = (byte)GenericDecorationKind.Field
+                    });
+
+                    AddSymbolDefinition(symbol);
+                }
+
+                break;
+            case VariableKind.Property:
+                {
+                    var symbol = new PropertySymbol(identifierToken.TextSpan with
+                    {
+                        DecorationByte = (byte)GenericDecorationKind.Property
+                    });
+
+                    AddSymbolDefinition(symbol);
+                }
+
+                break;
+            case VariableKind.Local:
+                goto default;
+            case VariableKind.Closure:
+                goto default;
+            default:
+                {
+                    var symbol = new VariableSymbol(identifierToken.TextSpan with
+                    {
+                        DecorationByte = (byte)GenericDecorationKind.Variable
+                    });
+
+                    AddSymbolDefinition(symbol);
+                }
+
+                break;
+        }
     }
 
     public void ClearStateByResourceUri(ResourceUri resourceUri)

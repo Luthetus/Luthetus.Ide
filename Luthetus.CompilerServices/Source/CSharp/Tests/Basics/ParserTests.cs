@@ -25,7 +25,7 @@ public partial class ParserTests
         var compilationUnit = parser.Parse();
         var codeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
 
-        var variableDeclarationStatementNode = (VariableDeclarationStatementNode)codeBlockNode.ChildBag.Single();
+        var variableDeclarationStatementNode = (VariableDeclarationNode)codeBlockNode.ChildBag.Single();
 
         Assert.Equal(SyntaxKind.VariableDeclarationStatementNode, variableDeclarationStatementNode.SyntaxKind);
         Assert.Equal(2, variableDeclarationStatementNode.ChildBag.Length);
@@ -72,7 +72,7 @@ public partial class ParserTests
 
         Assert.Equal(2, compilationUnit.TopLevelStatementsCodeBlockNode.ChildBag.Length);
 
-        var variableDeclarationStatementNode = (VariableDeclarationStatementNode)compilationUnit.TopLevelStatementsCodeBlockNode.ChildBag[0];
+        var variableDeclarationStatementNode = (VariableDeclarationNode)compilationUnit.TopLevelStatementsCodeBlockNode.ChildBag[0];
         Assert.Equal(SyntaxKind.VariableDeclarationStatementNode, variableDeclarationStatementNode.SyntaxKind);
 
         var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)compilationUnit.TopLevelStatementsCodeBlockNode.ChildBag[1];
@@ -94,14 +94,14 @@ public partial class ParserTests
 
         var topLevelStatementsCodeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
 
-        var variableDeclarationWithIdentifierVar = (VariableDeclarationStatementNode)topLevelStatementsCodeBlockNode.ChildBag[0];
+        var variableDeclarationWithIdentifierVar = (VariableDeclarationNode)topLevelStatementsCodeBlockNode.ChildBag[0];
         Assert.Equal(varString, variableDeclarationWithIdentifierVar.TypeClauseNode.TypeIdentifier.TextSpan.GetText());
         Assert.Equal(varString, variableDeclarationWithIdentifierVar.IdentifierToken.TextSpan.GetText());
 
         var variableAssignmentWithIdentifierVar = (VariableAssignmentExpressionNode)topLevelStatementsCodeBlockNode.ChildBag[1];
         Assert.NotNull(variableAssignmentWithIdentifierVar);
 
-        var variableDeclarationWithIdentifierX = (VariableDeclarationStatementNode)topLevelStatementsCodeBlockNode.ChildBag[2];
+        var variableDeclarationWithIdentifierX = (VariableDeclarationNode)topLevelStatementsCodeBlockNode.ChildBag[2];
         Assert.Equal(varString, variableDeclarationWithIdentifierX.TypeClauseNode.TypeIdentifier.TextSpan.GetText());
         Assert.Equal(otherVariableIdentifier, variableDeclarationWithIdentifierX.IdentifierToken.TextSpan.GetText());
 
@@ -860,7 +860,7 @@ public partial class ParserTests
 
         Assert.Equal(4, codeBlockNode.ChildBag.Length);
 
-        var variableDeclarationStatementNode = (VariableDeclarationStatementNode)codeBlockNode.ChildBag[0];
+        var variableDeclarationStatementNode = (VariableDeclarationNode)codeBlockNode.ChildBag[0];
         var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)codeBlockNode.ChildBag[1];
         var functionDefinitionNode = (FunctionDefinitionNode)codeBlockNode.ChildBag[2];
         var functionInvocationNode = (FunctionInvocationNode)codeBlockNode.ChildBag[3];
@@ -932,7 +932,7 @@ public partial class ParserTests
 
         Assert.Equal(4, codeBlockNode.ChildBag.Length);
 
-        var variableDeclarationStatementNode = (VariableDeclarationStatementNode)codeBlockNode.ChildBag[0];
+        var variableDeclarationStatementNode = (VariableDeclarationNode)codeBlockNode.ChildBag[0];
         var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)codeBlockNode.ChildBag[1];
         var functionDefinitionNode = (FunctionDefinitionNode)codeBlockNode.ChildBag[2];
         var functionInvocationNode = (FunctionInvocationNode)codeBlockNode.ChildBag[3];
@@ -1422,13 +1422,13 @@ public partial class ParserTests
 
             // Assertions for codeBlockNode
             {
-                var firstNamePropertyAssignmentExpressionNode = (PropertyAssignmentExpressionNode)codeBlockNode.ChildBag[0];
-                var lastNamePropertyAssignmentExpressionNode = (PropertyAssignmentExpressionNode)codeBlockNode.ChildBag[1];
+                var firstNameVariableAssignmentExpressionNode = (VariableAssignmentExpressionNode)codeBlockNode.ChildBag[0];
+                var lastNameVariableAssignmentExpressionNode = (VariableAssignmentExpressionNode)codeBlockNode.ChildBag[1];
             }
         }
 
-        var firstNamePropertyDeclarationStatementNode = (PropertyDeclarationStatementNode)typeBodyCodeBlockNode.ChildBag[1];
-        var lastNamePropertyDeclarationStatementNode = (PropertyDeclarationStatementNode)typeBodyCodeBlockNode.ChildBag[2];
+        var firstNameVariableDeclarationNode = (VariableDeclarationNode)typeBodyCodeBlockNode.ChildBag[1];
+        var lastNameVariableDeclarationNode = (VariableDeclarationNode)typeBodyCodeBlockNode.ChildBag[2];
 
         throw new NotImplementedException();
     }

@@ -8,6 +8,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
 using Luthetus.CompilerServices.Lang.CSharp.Facts;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 
@@ -81,7 +82,7 @@ public partial class CSharpParser : IParser
 
         public VariableReferenceNode HandleVariableReference(
             IdentifierToken identifierToken,
-            VariableDeclarationStatementNode variableDeclarationStatementNode)
+            VariableDeclarationNode variableDeclarationStatementNode)
         {
             var variableReferenceNode = new VariableReferenceNode(
                 identifierToken,
@@ -123,11 +124,15 @@ public partial class CSharpParser : IParser
             return functionInvocationNode;
         }
 
-        public VariableDeclarationStatementNode HandleVariableDeclaration(TypeClauseNode typeClauseNode, IdentifierToken identifierToken)
+        public VariableDeclarationNode HandleVariableDeclaration(
+            TypeClauseNode typeClauseNode,
+            IdentifierToken identifierToken,
+            VariableKind variableKind)
         {
-            var variableDeclarationStatementNode = new VariableDeclarationStatementNode(
+            var variableDeclarationStatementNode = new VariableDeclarationNode(
                 typeClauseNode,
                 identifierToken,
+                variableKind,
                 false);
 
             Binder.BindVariableDeclarationStatementNode(variableDeclarationStatementNode);
@@ -606,7 +611,8 @@ public partial class CSharpParser : IParser
 
                             HandleVariableDeclaration(
                                 outVariableTypeClause,
-                                outVariableIdentifier);
+                                outVariableIdentifier,
+                                VariableKind.Local);
                         }
                     }
                     else if (SyntaxKind.InTokenKeyword == TokenWalker.Current.SyntaxKind)
@@ -635,6 +641,7 @@ public partial class CSharpParser : IParser
                         variableDeclarationNode = new(
                             CSharpFacts.Types.Void.ToTypeClause(),
                             variableIdentifierToken,
+                            VariableKind.Local,
                             false)
                         {
                             IsFabricated = true
@@ -745,9 +752,10 @@ public partial class CSharpParser : IParser
                 if (variableIdentifierToken.IsFabricated)
                     break;
 
-                var variableDeclarationStatementNode = new VariableDeclarationStatementNode(
+                var variableDeclarationStatementNode = new VariableDeclarationNode(
                     typeClauseNode,
                     variableIdentifierToken,
+                    VariableKind.Local,
                     false
                 );
 
@@ -911,16 +919,6 @@ public partial class CSharpParser : IParser
                         new ResourceUri(string.Empty),
                         string.Empty)),
                 CSharpFacts.Types.Void.ToTypeClause());
-        }
-
-        public void HandlePropertyDefinition(TypeClauseNode typeClauseNode, IdentifierToken identifierToken)
-        {
-            var variableDeclarationStatementNode = new VariableDeclarationStatementNode(
-                typeClauseNode,
-                identifierToken,
-                false);
-
-            Binder.BindPropertyDeclarationNode(variableDeclarationStatementNode);
         }
 
         public void HandleAsTokenKeyword(KeywordToken keywordToken)

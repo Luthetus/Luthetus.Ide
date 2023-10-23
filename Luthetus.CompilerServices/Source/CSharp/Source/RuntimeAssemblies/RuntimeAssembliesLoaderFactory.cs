@@ -7,6 +7,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.RuntimeAssemblies;
 
@@ -130,9 +131,10 @@ public static class RuntimeAssembliesLoaderFactory
                                         var argumentTextSpan = TextEditorTextSpan.FabricateTextSpan(functionArgument.Name ?? "luthetus_error_null");
                                         var argumentIdentifierToken = new IdentifierToken(argumentTextSpan);
 
-                                        var variableDeclarationStatementNode = new VariableDeclarationStatementNode(
+                                        var variableDeclarationStatementNode = new VariableDeclarationNode(
                                             typeClauseNode,
                                             argumentIdentifierToken,
+                                            VariableKind.Local,
                                             false);
 
                                         var functionArgumentEntryNode = new FunctionArgumentEntryNode(

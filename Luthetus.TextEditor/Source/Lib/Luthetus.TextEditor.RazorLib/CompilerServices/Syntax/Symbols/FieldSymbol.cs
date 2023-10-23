@@ -2,9 +2,9 @@
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 
-public sealed record PropertySymbol : ISymbol
+public sealed record FieldSymbol : ISymbol
 {
-    public PropertySymbol(TextEditorTextSpan textSpan)
+    public FieldSymbol(TextEditorTextSpan textSpan)
     {
         TextSpan = textSpan;
     }
@@ -12,5 +12,5 @@ public sealed record PropertySymbol : ISymbol
     public TextEditorTextSpan TextSpan { get; }
     public string SymbolKindString => SyntaxKind.ToString();
 
-    public SyntaxKind SyntaxKind => SyntaxKind.PropertySymbol;
+    public SyntaxKind SyntaxKind => SyntaxKind.FieldSymbol;
 }

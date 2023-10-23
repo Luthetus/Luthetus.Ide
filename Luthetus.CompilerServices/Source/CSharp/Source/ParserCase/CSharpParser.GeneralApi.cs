@@ -6,6 +6,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Statement;
 using Luthetus.CompilerServices.Lang.CSharp.Facts;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 
@@ -152,9 +153,10 @@ public partial class CSharpParser : IParser
                 {
                     if (TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
                     {
-                        Specific.HandlePropertyDefinition(
+                        Specific.HandleVariableDeclaration(
                             (TypeClauseNode)NodeRecent,
-                            identifierToken);
+                            identifierToken,
+                            VariableKind.Property);
 
                         return;
                     }
@@ -162,16 +164,18 @@ public partial class CSharpParser : IParser
                     {
                         Specific.HandleVariableDeclaration(
                             (TypeClauseNode)NodeRecent,
-                            identifierToken);
+                            identifierToken,
+                            VariableKind.Field);
 
                         return;
                     }
                 }
                 else if (TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
                 {
-                    Specific.HandlePropertyDefinition(
+                    Specific.HandleVariableDeclaration(
                         (TypeClauseNode)NodeRecent,
-                        identifierToken);
+                        identifierToken,
+                        VariableKind.Property);
 
                     return;
                 }

@@ -1,17 +1,20 @@
 ﻿using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
-public sealed record VariableDeclarationStatementNode : ISyntaxNode
+public sealed record VariableDeclarationNode : ISyntaxNode
 {
-    public VariableDeclarationStatementNode(
+    public VariableDeclarationNode(
         TypeClauseNode typeClauseNode,
         IdentifierToken identifierToken,
+        VariableKind variableKind,
         bool isInitialized)
     {
         TypeClauseNode = typeClauseNode;
         IdentifierToken = identifierToken;
+        VariableKind = variableKind;
         IsInitialized = isInitialized;
 
         ChildBag = new ISyntax[]
@@ -23,6 +26,7 @@ public sealed record VariableDeclarationStatementNode : ISyntaxNode
 
     public TypeClauseNode TypeClauseNode { get; }
     public IdentifierToken IdentifierToken { get; }
+    public VariableKind VariableKind { get; }
     public bool IsInitialized { get; }
 
     public ImmutableArray<ISyntax> ChildBag { get; }
