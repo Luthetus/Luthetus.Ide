@@ -1390,7 +1390,7 @@ public partial class ParserTests
     public void PARSE_ClassDefinition_WITH_Constructor()
     {
         var classIdentifierText = "Person";
-        var sourceText = $"public class {classIdentifierText} {{ public {classIdentifierText}(string firstName, string lastName) {{ FirstName = firstName; LastName = lastName; }} }}";
+        var sourceText = $"public class {classIdentifierText} {{ public {classIdentifierText}(string firstName, string lastName) {{ FirstName = firstName; LastName = lastName; }} public string FirstName {{ get; set; }} public string LastName {{ get; set; }} }}";
         var resourceUri = new ResourceUri(string.Empty);
 
         var lexer = new CSharpLexer(resourceUri, sourceText);
@@ -1398,6 +1398,37 @@ public partial class ParserTests
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
         var topCodeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
+
+        var cSharpBinder = (CSharpBinder)compilationUnit.Binder;
+
+        var success = cSharpBinder.TryGetTypeDefinitionHierarchically(
+            classIdentifierText,
+            out var typeDefinitionNode);
+
+        Assert.True(success);
+        Assert.NotNull(typeDefinitionNode);
+
+        var typeBodyCodeBlockNode = typeDefinitionNode.TypeBodyCodeBlockNode;
+        Assert.NotNull(typeBodyCodeBlockNode);
+
+        var constructorDefinitionNode = (ConstructorDefinitionNode)typeBodyCodeBlockNode.ChildBag[0];
+
+        // Assertions for constructorDefinitionNode
+        {
+            var typeClauseNode = (TypeClauseNode)constructorDefinitionNode.ChildBag[0];
+            var identifierToken = (IdentifierToken)constructorDefinitionNode.ChildBag[1];
+            var functionArgumentsListingNode = (FunctionArgumentsListingNode)constructorDefinitionNode.ChildBag[2];
+            var codeBlockNode = (CodeBlockNode)constructorDefinitionNode.ChildBag[3];
+
+            // Assertions for codeBlockNode
+            {
+                var firstNamePropertyAssignmentExpressionNode = (PropertyAssignmentExpressionNode)codeBlockNode.ChildBag[0];
+                var lastNamePropertyAssignmentExpressionNode = (PropertyAssignmentExpressionNode)codeBlockNode.ChildBag[1];
+            }
+        }
+
+        var firstNamePropertyDeclarationStatementNode = (PropertyDeclarationStatementNode)typeBodyCodeBlockNode.ChildBag[1];
+        var lastNamePropertyDeclarationStatementNode = (PropertyDeclarationStatementNode)typeBodyCodeBlockNode.ChildBag[2];
 
         throw new NotImplementedException();
     }

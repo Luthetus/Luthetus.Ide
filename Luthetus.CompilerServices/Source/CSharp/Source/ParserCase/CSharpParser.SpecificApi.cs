@@ -193,7 +193,7 @@ public partial class CSharpParser : IParser
             return functionDefinitionNode;
         }
 
-        public FunctionDefinitionNode HandleConstructorDefinition(IdentifierToken identifierToken)
+        public ConstructorDefinitionNode HandleConstructorDefinition(IdentifierToken identifierToken)
         {
             GenericArgumentsListingNode? genericArgumentsListingNode = null;
 
@@ -217,7 +217,7 @@ public partial class CSharpParser : IParser
                 null,
                 null);
 
-            var functionDefinitionNode = new FunctionDefinitionNode(
+            var constructorDefinitionNode = new ConstructorDefinitionNode(
                 typeClauseNode,
                 identifierToken,
                 genericArgumentsListingNode,
@@ -227,7 +227,7 @@ public partial class CSharpParser : IParser
 
             Binder.BindConstructorDefinitionIdentifierToken(identifierToken);
 
-            NodeRecent = functionDefinitionNode;
+            NodeRecent = constructorDefinitionNode;
 
             if (TokenWalker.Current.SyntaxKind == SyntaxKind.ColonToken)
             {
@@ -245,7 +245,7 @@ public partial class CSharpParser : IParser
                 }
             }
 
-            return functionDefinitionNode;
+            return constructorDefinitionNode;
         }
 
         public void HandleNamespaceReference(

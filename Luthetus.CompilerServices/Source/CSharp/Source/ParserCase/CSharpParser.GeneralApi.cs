@@ -446,6 +446,26 @@ public partial class CSharpParser : IParser
                     closureCurrentCodeBlockBuilder.ChildBag.Add(functionDefinitionNode);
                 });
             }
+            else if (NodeRecent is not null && NodeRecent.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
+            {
+                var constructorDefinitionNode = (ConstructorDefinitionNode)NodeRecent;
+                nextCodeBlockOwner = constructorDefinitionNode;
+
+                scopeReturnTypeClauseNode = constructorDefinitionNode.ReturnTypeClauseNode;
+
+                _parser._finalizeCodeBlockNodeActionStack.Push(codeBlockNode =>
+                {
+                    constructorDefinitionNode = new ConstructorDefinitionNode(
+                        constructorDefinitionNode.ReturnTypeClauseNode,
+                        constructorDefinitionNode.FunctionIdentifier,
+                        constructorDefinitionNode.GenericArgumentsListingNode,
+                        constructorDefinitionNode.FunctionArgumentsListingNode,
+                        codeBlockNode,
+                        constructorDefinitionNode.ConstraintNode);
+
+                    closureCurrentCodeBlockBuilder.ChildBag.Add(constructorDefinitionNode);
+                });
+            }
             else if (NodeRecent is not null && NodeRecent.SyntaxKind == SyntaxKind.IfStatementNode)
             {
                 var ifStatementNode = (IfStatementNode)NodeRecent;

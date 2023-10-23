@@ -4,31 +4,31 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
-public sealed record VariableAssignmentExpressionNode : ISyntaxNode
+public sealed record PropertyAssignmentExpressionNode : ISyntaxNode
 {
-    public VariableAssignmentExpressionNode(
-        IdentifierToken variableIdentifierToken,
+    public PropertyAssignmentExpressionNode(
+        IdentifierToken propertyIdentifierToken,
         EqualsToken equalsToken,
         IExpressionNode expressionNode)
     {
-        VariableIdentifierToken = variableIdentifierToken;
+        PropertyIdentifierToken = propertyIdentifierToken;
         EqualsToken = equalsToken;
         ExpressionNode = expressionNode;
 
         ChildBag = new ISyntax[]
         {
-            VariableIdentifierToken,
+            PropertyIdentifierToken,
             EqualsToken,
             ExpressionNode,
         }.ToImmutableArray();
     }
 
-    public IdentifierToken VariableIdentifierToken { get; }
+    public IdentifierToken PropertyIdentifierToken { get; }
     public EqualsToken EqualsToken { get; }
     public IExpressionNode ExpressionNode { get; }
 
     public ImmutableArray<ISyntax> ChildBag { get; }
 
     public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.VariableAssignmentExpressionNode;
+    public SyntaxKind SyntaxKind => SyntaxKind.PropertyAssignmentExpressionNode;
 }
