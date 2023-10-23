@@ -82,72 +82,154 @@ public partial class ParserTests
     [Fact]
     public void PARSE_FieldDeclaration()
     {
+        string sourceText = $@"public class MyClass {{ private int _x; }}".ReplaceLineEndings("\n");
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+
         throw new NotImplementedException();
     }
     
     [Fact]
     public void PARSE_FieldDeclaration_WITH_Initialization()
     {
+        string sourceText = $@"public class MyClass {{ private int _x = 17; }}".ReplaceLineEndings("\n");
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+
         throw new NotImplementedException();
     }
 
     [Fact]
     public void PARSE_FieldReference()
     {
+        string sourceText = $@"public class MyClass {{ private int _x = 17; public void MyMethod() {{ var total = 1 + _x; }} }}".ReplaceLineEndings("\n");
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+
         throw new NotImplementedException();
     }
 
     [Fact]
     public void PARSE_FieldAssignment()
     {
-        throw new NotImplementedException();
-    }
+        string sourceText = $@"public class MyClass {{ private int _x = 17; public void MyMethod() {{ _x = 50; }} }}".ReplaceLineEndings("\n");
+        var resourceUri = new ResourceUri(string.Empty);
 
-    [Fact]
-    public void PARSE_PropertyDeclaration()
-    {
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+
         throw new NotImplementedException();
     }
 
     [Fact]
     public void PARSE_PropertyDeclaration_WITH_Getter()
     {
+        string sourceText = $@"public class MyClass {{ private int X {{ get; }} }}".ReplaceLineEndings("\n");
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+
         throw new NotImplementedException();
     }
     
     [Fact]
     public void PARSE_PropertyDeclaration_WITH_Setter()
     {
+        string sourceText = $@"public class MyClass {{ private int X {{ set; }} }}".ReplaceLineEndings("\n");
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+
         throw new NotImplementedException();
     }
     
     [Fact]
     public void PARSE_PropertyDeclaration_WITH_Getter_AND_Setter()
     {
+        string sourceText = $@"public class MyClass {{ private int X {{ get; set; }} }}".ReplaceLineEndings("\n");
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+
         throw new NotImplementedException();
     }
     
     [Fact]
     public void PARSE_PropertyDeclaration_WITH_ExpressionBound()
     {
+        string sourceText = $@"public class MyClass {{ private int X => 3; }}".ReplaceLineEndings("\n");
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+
         throw new NotImplementedException();
     }
 
     [Fact]
     public void PARSE_PropertyDeclaration_WITH_Initialization()
     {
+        string sourceText = $@"public class MyClass {{ private int X {{ get; set; }} = 3; }}".ReplaceLineEndings("\n");
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+
         throw new NotImplementedException();
     }
     
     [Fact]
     public void PARSE_PropertyReference()
     {
+        string sourceText = $@"public class MyClass {{ private int X {{ get; set; }} public void MyMethod() {{ var total = 1 + X; }} }}".ReplaceLineEndings("\n");
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+
         throw new NotImplementedException();
     }
 
     [Fact]
     public void PARSE_PropertyAssignment()
     {
+        string sourceText = $@"public class MyClass {{ private int X {{ get; set; }} public void MyMethod() {{ X = 50; }} }}".ReplaceLineEndings("\n");
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+
         throw new NotImplementedException();
     }
 
