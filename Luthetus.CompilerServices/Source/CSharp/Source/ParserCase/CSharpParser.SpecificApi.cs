@@ -200,6 +200,7 @@ public partial class CSharpParser : IParser
 
                     if (TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
                     {
+                        _ = TokenWalker.Consume();
                         variableDeclarationNode.GetterIsAutoImplemented = true;
                     }
                     else if (TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
@@ -213,6 +214,7 @@ public partial class CSharpParser : IParser
 
                     if (TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
                     {
+                        _ = TokenWalker.Consume();
                         variableDeclarationNode.SetterIsAutoImplemented = true;
                     }
                     else if (TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
