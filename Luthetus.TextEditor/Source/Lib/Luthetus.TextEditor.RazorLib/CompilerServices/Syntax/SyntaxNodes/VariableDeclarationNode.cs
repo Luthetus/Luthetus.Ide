@@ -35,7 +35,15 @@ public sealed record VariableDeclarationNode : ISyntaxNode
     /// <summary>
     /// TODO: Remove the 'set;' on this property
     /// </summary>
+    public bool GetterIsAutoImplemented { get; set; }
+    /// <summary>
+    /// TODO: Remove the 'set;' on this property
+    /// </summary>
     public bool HasSetter { get; set; }
+    /// <summary>
+    /// TODO: Remove the 'set;' on this property
+    /// </summary>
+    public bool SetterIsAutoImplemented { get; set; }
 
     public ImmutableArray<ISyntax> ChildBag { get; }
 

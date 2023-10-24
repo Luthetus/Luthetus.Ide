@@ -162,10 +162,15 @@ public partial class CSharpParser : IParser
                     }
                     else
                     {
+                        var variableKind = VariableKind.Local;
+
+                        if (CurrentCodeBlockBuilder.CodeBlockOwner is TypeDefinitionNode)
+                            variableKind = VariableKind.Field;
+
                         Specific.HandleVariableDeclaration(
                             (TypeClauseNode)NodeRecent,
                             identifierToken,
-                            VariableKind.Field);
+                            variableKind);
 
                         return;
                     }

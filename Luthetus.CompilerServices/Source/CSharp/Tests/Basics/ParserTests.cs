@@ -38,6 +38,8 @@ public partial class ParserTests
         var identifierToken = (IdentifierToken)variableDeclarationStatementNode.ChildBag[1];
         Assert.Equal(SyntaxKind.IdentifierToken, identifierToken.SyntaxKind);
         Assert.Equal(variableIdentifier, identifierToken.TextSpan.GetText());
+
+        Assert.Equal(VariableKind.Local, variableDeclarationStatementNode.VariableKind);
     }
 
     [Fact]
@@ -53,8 +55,9 @@ public partial class ParserTests
 
         Assert.Equal(2, compilationUnit.TopLevelStatementsCodeBlockNode.ChildBag.Length);
 
-        var variableDeclarationStatementNode = compilationUnit.TopLevelStatementsCodeBlockNode.ChildBag[0];
-        Assert.Equal(SyntaxKind.VariableDeclarationStatementNode, variableDeclarationStatementNode.SyntaxKind);
+        var variableDeclarationNode = (VariableDeclarationNode)compilationUnit.TopLevelStatementsCodeBlockNode.ChildBag[0];
+        Assert.Equal(SyntaxKind.VariableDeclarationStatementNode, variableDeclarationNode.SyntaxKind);
+        Assert.Equal(VariableKind.Local, variableDeclarationNode.VariableKind);
 
         var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)compilationUnit.TopLevelStatementsCodeBlockNode.ChildBag[1];
         Assert.Equal(SyntaxKind.VariableAssignmentExpressionNode, variableAssignmentExpressionNode.SyntaxKind);
@@ -73,8 +76,9 @@ public partial class ParserTests
 
         Assert.Equal(2, compilationUnit.TopLevelStatementsCodeBlockNode.ChildBag.Length);
 
-        var variableDeclarationStatementNode = (VariableDeclarationNode)compilationUnit.TopLevelStatementsCodeBlockNode.ChildBag[0];
-        Assert.Equal(SyntaxKind.VariableDeclarationStatementNode, variableDeclarationStatementNode.SyntaxKind);
+        var variableDeclarationNode = (VariableDeclarationNode)compilationUnit.TopLevelStatementsCodeBlockNode.ChildBag[0];
+        Assert.Equal(SyntaxKind.VariableDeclarationStatementNode, variableDeclarationNode.SyntaxKind);
+        Assert.Equal(VariableKind.Local, variableDeclarationNode.VariableKind);
 
         var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)compilationUnit.TopLevelStatementsCodeBlockNode.ChildBag[1];
         Assert.Equal(SyntaxKind.VariableAssignmentExpressionNode, variableAssignmentExpressionNode.SyntaxKind);
@@ -90,10 +94,19 @@ public partial class ParserTests
         lexer.Lex();
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
+        var topCodeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
 
-        throw new NotImplementedException();
+        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlockNode.ChildBag.Single();
+        var typeBodyCodeBlockNode = (CodeBlockNode)typeDefinitionNode.ChildBag[1];
+
+        var variableDeclarationNode = (VariableDeclarationNode)typeBodyCodeBlockNode.ChildBag.Single();
+        Assert.Equal(VariableKind.Field, variableDeclarationNode.VariableKind);
+        Assert.False(variableDeclarationNode.HasGetter);
+        Assert.False(variableDeclarationNode.HasSetter);
+
+        // TODO: This test should be more comprehensive (2023-10-24)
     }
-    
+
     [Fact]
     public void PARSE_FieldDeclaration_WITH_Initialization()
     {
@@ -104,8 +117,21 @@ public partial class ParserTests
         lexer.Lex();
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
+        var topCodeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
 
-        throw new NotImplementedException();
+        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlockNode.ChildBag.Single();
+        var typeBodyCodeBlockNode = (CodeBlockNode)typeDefinitionNode.ChildBag[1];
+
+        var variableDeclarationNode = (VariableDeclarationNode)typeBodyCodeBlockNode.ChildBag[0];
+        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)typeBodyCodeBlockNode.ChildBag[1];
+
+        Assert.Equal(VariableKind.Field, variableDeclarationNode.VariableKind);
+        Assert.False(variableDeclarationNode.HasGetter);
+        Assert.False(variableDeclarationNode.HasSetter);
+
+        Assert.NotNull(variableAssignmentExpressionNode);
+
+        // TODO: This test should be more comprehensive (2023-10-24)
     }
 
     [Fact]
@@ -215,8 +241,17 @@ public partial class ParserTests
         lexer.Lex();
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
+        var topCodeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
 
-        throw new NotImplementedException();
+        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlockNode.ChildBag.Single();
+        var typeBodyCodeBlockNode = (CodeBlockNode)typeDefinitionNode.ChildBag[1];
+
+        var variableDeclarationNode = (VariableDeclarationNode)typeBodyCodeBlockNode.ChildBag.Single();
+        Assert.Equal(VariableKind.Property, variableDeclarationNode.VariableKind);
+        Assert.True(variableDeclarationNode.HasGetter);
+        Assert.False(variableDeclarationNode.HasSetter);
+
+        // TODO: This test should be more comprehensive (2023-10-24)
     }
 
     [Fact]
@@ -229,10 +264,23 @@ public partial class ParserTests
         lexer.Lex();
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
+        var topCodeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
 
-        throw new NotImplementedException();
+        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlockNode.ChildBag.Single();
+        var typeBodyCodeBlockNode = (CodeBlockNode)typeDefinitionNode.ChildBag[1];
+
+        var variableDeclarationNode = (VariableDeclarationNode)typeBodyCodeBlockNode.ChildBag[0];
+        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)typeBodyCodeBlockNode.ChildBag[1];
+
+        Assert.Equal(VariableKind.Property, variableDeclarationNode.VariableKind);
+        Assert.True(variableDeclarationNode.HasSetter);
+        Assert.True(variableDeclarationNode.HasGetter);
+
+        Assert.NotNull(variableAssignmentExpressionNode);
+
+        // TODO: This test should be more comprehensive (2023-10-24)
     }
-    
+
     [Fact]
     public void PARSE_PropertyReference()
     {
@@ -243,8 +291,19 @@ public partial class ParserTests
         lexer.Lex();
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
+        var topCodeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
 
-        throw new NotImplementedException();
+        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlockNode.ChildBag.Single();
+        var typeBodyCodeBlockNode = (CodeBlockNode)typeDefinitionNode.ChildBag[1];
+
+        var variableDeclarationNode = (VariableDeclarationNode)typeBodyCodeBlockNode.ChildBag[0];
+        var functionDefinitionNode = (FunctionDefinitionNode)typeBodyCodeBlockNode.ChildBag[1];
+
+        Assert.Equal(VariableKind.Property, variableDeclarationNode.VariableKind);
+        Assert.True(variableDeclarationNode.HasSetter);
+        Assert.True(variableDeclarationNode.HasGetter);
+
+        var aaa = 2;
     }
 
     [Fact]

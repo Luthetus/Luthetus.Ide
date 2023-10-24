@@ -143,27 +143,34 @@ public partial class CSharpParser : IParser
              *             - A few if statements would fix this but that seems to start creating a mess.
              */
 
-            var variableDeclarationStatementNode = new VariableDeclarationNode(
+            var variableDeclarationNode = new VariableDeclarationNode(
                 typeClauseNode,
                 identifierToken,
                 variableKind,
                 false);
 
-            Binder.BindVariableDeclarationStatementNode(variableDeclarationStatementNode);
+            Binder.BindVariableDeclarationStatementNode(variableDeclarationNode);
 
-            CurrentCodeBlockBuilder.ChildBag.Add(variableDeclarationStatementNode);
+            CurrentCodeBlockBuilder.ChildBag.Add(variableDeclarationNode);
 
-            if (SyntaxKind.EqualsToken == TokenWalker.Current.SyntaxKind)
+            if (TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
             {
-                // Variable initialization occurs here.
-                HandleVariableAssignment(identifierToken);
+                if (TokenWalker.Peek(1).SyntaxKind == SyntaxKind.CloseAngleBracketToken)
+                {
+                    HandlePropertyExpression(variableDeclarationNode);
+                }
+                else
+                {
+                    // Variable initialization occurs here.
+                    HandleVariableAssignment(identifierToken);
+                }
             }
             
             if (variableKind == VariableKind.Property &&
                 TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
             {
                 var openBraceToken = (OpenBraceToken)TokenWalker.Consume();
-                HandlePropertyDeclaration(variableDeclarationStatementNode, openBraceToken);
+                HandlePropertyDeclaration(variableDeclarationNode, openBraceToken);
             }
             else
             {
@@ -171,7 +178,7 @@ public partial class CSharpParser : IParser
             }
 
             NodeRecent = null;
-            return variableDeclarationStatementNode;
+            return variableDeclarationNode;
         }
 
         public void HandlePropertyDeclaration(
@@ -190,10 +197,28 @@ public partial class CSharpParser : IParser
                 else if (token.SyntaxKind == SyntaxKind.GetTokenContextualKeyword)
                 {
                     variableDeclarationNode.HasGetter = true;
+
+                    if (TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
+                    {
+                        variableDeclarationNode.GetterIsAutoImplemented = true;
+                    }
+                    else if (TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+                    {
+                        // TODO: Parse getter body
+                    }
                 }
                 else if (token.SyntaxKind == SyntaxKind.SetTokenContextualKeyword)
                 {
                     variableDeclarationNode.HasSetter = true;
+
+                    if (TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
+                    {
+                        variableDeclarationNode.SetterIsAutoImplemented = true;
+                    }
+                    else if (TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+                    {
+                        // TODO: Parse setter body
+                    }
                 }
                 else if (token.SyntaxKind == SyntaxKind.CloseBraceToken)
                 {
@@ -207,10 +232,21 @@ public partial class CSharpParser : IParser
                 }
             }
 
-            
+            if (TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
+            {
+                // Property initialization occurs here.
+                HandleVariableAssignment(variableDeclarationNode.IdentifierToken);
+            }
+        }
 
-            // Find get and set (remember accessibility modifiers like public, private, etc...)
-            var aaa = 2;
+        public void HandlePropertyExpression(VariableDeclarationNode variableDeclarationNode)
+        {
+            var equalsToken = (EqualsToken)TokenWalker.Consume();
+            var closeAngleBracketToken = (CloseAngleBracketToken)TokenWalker.Consume();
+
+            var expressionNode = HandleExpression();
+
+            variableDeclarationNode.HasGetter = true;
         }
 
         public FunctionDefinitionNode HandleFunctionDefinition(
