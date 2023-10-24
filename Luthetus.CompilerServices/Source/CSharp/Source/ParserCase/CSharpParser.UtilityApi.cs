@@ -164,5 +164,22 @@ public partial class CSharpParser : IParser
                     return false;
             }
         }
+        
+        /// <summary>
+        /// public, private, protected, internal, ....
+        /// </summary>
+        public bool IsAccessibilitySyntaxKind(SyntaxKind syntaxKind)
+        {
+            switch (syntaxKind)
+            {
+                case SyntaxKind.PublicTokenKeyword:
+                case SyntaxKind.PrivateTokenKeyword:
+                case SyntaxKind.ProtectedTokenKeyword:
+                case SyntaxKind.InternalTokenKeyword:
+                    return true;
+                default:
+                    return false;
+            }
+        }
     }
 }

@@ -129,6 +129,20 @@ public partial class CSharpParser : IParser
             IdentifierToken identifierToken,
             VariableKind variableKind)
         {
+            /*
+             * Issues:
+             *     -Should Handle...(...) methods return the node?
+             *         -If one returns the node then they must only ever 
+             *             modify the current code block builder one time.
+             *         -Yet, HandleVariableDeclaration(...) wants to proceed to invoke
+             *             HandleVariableAssignment if an EqualsToken is found.
+             *         -This would result in two nodes needing to be added
+             *             to the current code block builder.
+             *         -Futhermore, HandleVariableDeclaration(...) adds to the current code block
+             *             builder prior to checking if the variable is a property.
+             *             - A few if statements would fix this but that seems to start creating a mess.
+             */
+
             var variableDeclarationStatementNode = new VariableDeclarationNode(
                 typeClauseNode,
                 identifierToken,
@@ -144,12 +158,59 @@ public partial class CSharpParser : IParser
                 // Variable initialization occurs here.
                 HandleVariableAssignment(identifierToken);
             }
-
-            // This conditional branch is for variable declaration, so at this point a StatementDelimiterToken is always expected.
-            _ = TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
+            
+            if (variableKind == VariableKind.Property &&
+                TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+            {
+                var openBraceToken = (OpenBraceToken)TokenWalker.Consume();
+                HandlePropertyDeclaration(variableDeclarationStatementNode, openBraceToken);
+            }
+            else
+            {
+                _ = TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
+            }
 
             NodeRecent = null;
             return variableDeclarationStatementNode;
+        }
+
+        public void HandlePropertyDeclaration(
+            VariableDeclarationNode variableDeclarationNode,
+            OpenBraceToken openBraceToken)
+        {
+            while (!TokenWalker.IsEof)
+            {
+                var token = TokenWalker.Consume();
+
+                if (Utility.IsAccessibilitySyntaxKind(token.SyntaxKind))
+                {
+                    DiagnosticBag.ReportTodoException(token.TextSpan, "TODO: Implement accessibility modifiers for properties.");
+                    continue;
+                }
+                else if (token.SyntaxKind == SyntaxKind.GetTokenContextualKeyword)
+                {
+                    variableDeclarationNode.HasGetter = true;
+                }
+                else if (token.SyntaxKind == SyntaxKind.SetTokenContextualKeyword)
+                {
+                    variableDeclarationNode.HasSetter = true;
+                }
+                else if (token.SyntaxKind == SyntaxKind.CloseBraceToken)
+                {
+                    break;
+                }
+                else
+                {
+                    // TODO: Remove this else block if it is uneccessary
+                    DiagnosticBag.ReportTodoException(token.TextSpan, "TODO: Implement parsing for this property syntax.");
+                    continue;
+                }
+            }
+
+            
+
+            // Find get and set (remember accessibility modifiers like public, private, etc...)
+            var aaa = 2;
         }
 
         public FunctionDefinitionNode HandleFunctionDefinition(
@@ -354,7 +415,7 @@ public partial class CSharpParser : IParser
                 {
                     DiagnosticBag.ReportTodoException(
                         functionInvocationIdentifierToken.TextSpan,
-                        "Handle case where none of the function overloads match the input.");
+                        "TODO: Handle case where none of the function overloads match the input.");
                 }
 
                 // TODO: Don't assume GenericParametersListingNode to be null

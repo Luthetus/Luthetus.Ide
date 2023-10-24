@@ -229,9 +229,9 @@ public class LuthetusDiagnosticBag : IEnumerable<TextEditorDiagnostic>
     /// Used when the C# Parser has not yet implemented the functionality that one would
     /// expect given the situation.
     /// <br/>
-    /// // TODO: Find all references to this method and fix them. Keep this comment so one can search // TODO: and arrive here
+    /// // TODO: Find all references to this method and fix them. 
+    /// Keep this comment so one can search // TODO: and arrive here
     /// </summary>
-    /// <param name="message">Do not include "TODO: " as it will be prepended to the provided message</param>
     public void ReportTodoException(TextEditorTextSpan textSpan, string message)
     {
         Report(

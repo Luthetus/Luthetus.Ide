@@ -4,6 +4,7 @@ using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
@@ -145,8 +146,17 @@ public partial class ParserTests
         lexer.Lex();
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
+        var topCodeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
 
-        throw new NotImplementedException();
+        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlockNode.ChildBag.Single();
+        var typeBodyCodeBlockNode = (CodeBlockNode)typeDefinitionNode.ChildBag[1];
+        
+        var variableDeclarationNode = (VariableDeclarationNode)typeBodyCodeBlockNode.ChildBag.Single();
+        Assert.Equal(VariableKind.Property, variableDeclarationNode.VariableKind);
+        Assert.True(variableDeclarationNode.HasGetter);
+        Assert.False(variableDeclarationNode.HasSetter);
+
+        // TODO: This test should be more comprehensive (2023-10-24)
     }
     
     [Fact]
@@ -159,10 +169,19 @@ public partial class ParserTests
         lexer.Lex();
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
+        var topCodeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
 
-        throw new NotImplementedException();
+        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlockNode.ChildBag.Single();
+        var typeBodyCodeBlockNode = (CodeBlockNode)typeDefinitionNode.ChildBag[1];
+
+        var variableDeclarationNode = (VariableDeclarationNode)typeBodyCodeBlockNode.ChildBag.Single();
+        Assert.Equal(VariableKind.Property, variableDeclarationNode.VariableKind);
+        Assert.True(variableDeclarationNode.HasSetter);
+        Assert.False(variableDeclarationNode.HasGetter);
+
+        // TODO: This test should be more comprehensive (2023-10-24)
     }
-    
+
     [Fact]
     public void PARSE_PropertyDeclaration_WITH_Getter_AND_Setter()
     {
@@ -173,10 +192,19 @@ public partial class ParserTests
         lexer.Lex();
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
+        var topCodeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
 
-        throw new NotImplementedException();
+        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlockNode.ChildBag.Single();
+        var typeBodyCodeBlockNode = (CodeBlockNode)typeDefinitionNode.ChildBag[1];
+
+        var variableDeclarationNode = (VariableDeclarationNode)typeBodyCodeBlockNode.ChildBag.Single();
+        Assert.Equal(VariableKind.Property, variableDeclarationNode.VariableKind);
+        Assert.True(variableDeclarationNode.HasSetter);
+        Assert.True(variableDeclarationNode.HasGetter);
+
+        // TODO: This test should be more comprehensive (2023-10-24)
     }
-    
+
     [Fact]
     public void PARSE_PropertyDeclaration_WITH_ExpressionBound()
     {
