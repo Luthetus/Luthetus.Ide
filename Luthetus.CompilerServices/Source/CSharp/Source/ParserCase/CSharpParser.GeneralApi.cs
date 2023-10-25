@@ -531,12 +531,7 @@ public partial class CSharpParser : IParser
             // Reason: INPUT -> "(6)" THEN -> main while loop would invoke this.
             // Whereas: INPUT -> "SomeMethod()" -> main while loop parses an identifier which then handles a method invocation. This therefore never invoked 'ParseOpenParenthesisToken'
 
-            var parenthesizedExpressionNode = new ParenthesizedExpressionNode(
-                openParenthesisToken,
-                null,
-                null);
-
-            parenthesizedExpressionNode = Specific.HandleParenthesizedExpression(parenthesizedExpressionNode);
+            var parenthesizedExpressionNode = Specific.HandleParenthesizedExpression(openParenthesisToken);
             NodeRecent = parenthesizedExpressionNode;
         }
 

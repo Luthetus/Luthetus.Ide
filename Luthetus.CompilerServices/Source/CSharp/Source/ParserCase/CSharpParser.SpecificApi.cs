@@ -1891,7 +1891,7 @@ public partial class CSharpParser : IParser
             // TODO: Implement this method
         }
 
-        public ParenthesizedExpressionNode HandleParenthesizedExpression(ParenthesizedExpressionNode parenthesizedExpressionNode)
+        public ParenthesizedExpressionNode HandleParenthesizedExpression(OpenParenthesisToken openParenthesisToken)
         {
             // Presumption: One invoked this method because they found an 'OpenParenthesisToken'.
             //              They then determined given the current context that the language specific meaning
@@ -1900,12 +1900,12 @@ public partial class CSharpParser : IParser
             var innerExpression = HandleExpression(new[] { SyntaxKind.CloseParenthesisToken });
             var closeParenthesisToken = (CloseParenthesisToken)TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 
-            var completeParenthesizedExpression = new ParenthesizedExpressionNode(
-                parenthesizedExpressionNode.OpenParenthesisToken,
+            var parenthesizedExpression = new ParenthesizedExpressionNode(
+                openParenthesisToken,
                 innerExpression,
                 closeParenthesisToken);
 
-            return completeParenthesizedExpression;
+            return parenthesizedExpression;
         }
 
         public IExpressionNode HandleNumericLiteralToken(NumericLiteralToken numericLiteralToken)
