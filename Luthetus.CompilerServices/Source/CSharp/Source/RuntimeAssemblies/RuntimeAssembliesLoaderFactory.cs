@@ -219,7 +219,6 @@ public static class RuntimeAssembliesLoaderFactory
                             cSharpBinder.RegisterBoundNamespaceEntryNode(
                                 systemNamespace,
                                 new CodeBlockNode(
-                                    false,
                                     new ISyntax[]{ typeDefinitionNode }.ToImmutableArray()));
                         }
                         catch (FileNotFoundException ex)

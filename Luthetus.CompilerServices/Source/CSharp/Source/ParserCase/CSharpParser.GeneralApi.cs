@@ -39,6 +39,9 @@ public partial class CSharpParser : IParser
         /// <summary>TODO: I don't like this <see cref="Specific"/> property. It points to a private field on a different object. But without this property things are incredibly verbose. I need to remember to come back to this and change how I get access to the object because this doesn't feel right.</summary>
         public SpecificApi Specific => _parser._specific;
 
+        /// <summary>TODO: I don't like this <see cref="ExpressionStack"/> property. It points to a private field on a different object. But without this property things are incredibly verbose. I need to remember to come back to this and change how I get access to the object because this doesn't feel right.</summary>
+        public Stack<ISyntax> ExpressionStack => _parser._expressionStack;
+
         /// <summary>TODO: I don't like this <see cref="NodeRecent"/> property. It points to a private field on a different object. But without this property things are incredibly verbose. I need to remember to come back to this and change how I get access to the object because this doesn't feel right.</summary>
         public ISyntaxNode? NodeRecent
         {
@@ -53,9 +56,19 @@ public partial class CSharpParser : IParser
             set => _parser._currentCodeBlockBuilder = value;
         }
 
-        public LiteralExpressionNode ParseNumericLiteralToken(NumericLiteralToken numericLiteralToken)
+        public void ParseNumericLiteralToken(NumericLiteralToken numericLiteralToken)
         {
-            return Specific.HandleNumericLiteralExpression(numericLiteralToken);
+            TokenWalker.Backtrack();
+
+            var expression = Specific.HandleExpression(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+
+            CurrentCodeBlockBuilder.ChildBag.Add(expression);
         }
 
         public LiteralExpressionNode ParseStringLiteralToken(StringLiteralToken stringLiteralToken)
@@ -265,7 +278,13 @@ public partial class CSharpParser : IParser
             if (localNodeRecent is not IExpressionNode leftExpressionNode)
                 throw new NotImplementedException();
 
-            IExpressionNode rightExpressionNode = Specific.HandleExpression(new[] { SyntaxKind.CloseParenthesisToken });
+            var rightExpressionNode = Specific.HandleExpression(
+                null,
+                null,
+                null,
+                null,
+                null,
+                new[] { SyntaxKind.CloseParenthesisToken });
 
             var binaryOperatorNode = Binder.BindBinaryOperatorNode(
                 leftExpressionNode,
@@ -299,24 +318,13 @@ public partial class CSharpParser : IParser
 
         public void ParseMinusToken(MinusToken minusToken)
         {
-            var localNodeRecent = NodeRecent;
-
-            if (localNodeRecent is not IExpressionNode leftExpressionNode)
-                throw new NotImplementedException();
-
-            IExpressionNode rightExpressionNode = Specific.HandleExpression(new[] { SyntaxKind.CloseParenthesisToken });
-
-            var binaryExpressionNode = Binder.BindBinaryOperatorNode(
-                leftExpressionNode,
-                minusToken,
-                rightExpressionNode);
-
-            var boundBinaryExpressionNode = new BinaryExpressionNode(
-                leftExpressionNode,
-                binaryExpressionNode,
-                rightExpressionNode);
-
-            NodeRecent = boundBinaryExpressionNode;
+            Specific.HandleExpression(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
         }
 
         public void ParseStarToken(StarToken starToken)
@@ -339,7 +347,8 @@ public partial class CSharpParser : IParser
 
             if (matchedToken.SyntaxKind == SyntaxKind.NumericLiteralToken)
             {
-                rightLiteralExpressionNode = ParseNumericLiteralToken((NumericLiteralToken)matchedToken);
+                return;
+                // rightLiteralExpressionNode = ParseNumericLiteralToken((NumericLiteralToken)matchedToken);
             }
             else
             {
@@ -348,17 +357,17 @@ public partial class CSharpParser : IParser
                 return;
             }
 
-            var binaryExpressionNode = Binder.BindBinaryOperatorNode(
+            var binaryOperatorNode = Binder.BindBinaryOperatorNode(
                 leftLiteralExpressionNode,
                 starToken,
                 rightLiteralExpressionNode);
 
-            var boundBinaryExpressionNode = new BinaryExpressionNode(
+            var binaryExpressionNode = new BinaryExpressionNode(
                 leftLiteralExpressionNode,
-                binaryExpressionNode,
+                binaryOperatorNode,
                 rightLiteralExpressionNode);
 
-            NodeRecent = boundBinaryExpressionNode;
+            NodeRecent = binaryExpressionNode;
         }
 
         public void ParseDollarSignToken(DollarSignToken dollarSignToken)

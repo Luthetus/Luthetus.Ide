@@ -203,34 +203,16 @@ public partial class EvaluatorTests
         //
         // This test is for when a numeric binary expression has either its 
         // left or right expression being itself another binary expression.
-
-        // {x} - {y}:
         //
-        //               -
-        //             /   \
-        //            x     y
         // ----------------------
-        // {x} - {y} + {z}: (this is what incorrectly is occurring)
+        // x - y + z:
         //
-        //               -
-        //             /   \
-        //            x     +
-        //                 / \
-        //                y   z
+        //          +
+        //        /   \
+        //       -     z
+        //      / \
+        //     x   y  
         // ----------------------
-        // {x} - {y} + {z}: (Is this what it should be instead?)
-        //
-        //               +
-        //             /   \
-        //            -     z
-        //           / \
-        //          x   y  
-        //                
-        // ----------------------
-        // 
-        // The code is currently incorrectly in a sense making y + 2 parenthesized,
-        // as if the input looked like: {x} - ({y} + {z}) and I'm therefore incorrectly
-        // getting -9 as the result instead of 1.
 
         var x = 3;
         var y = 7;

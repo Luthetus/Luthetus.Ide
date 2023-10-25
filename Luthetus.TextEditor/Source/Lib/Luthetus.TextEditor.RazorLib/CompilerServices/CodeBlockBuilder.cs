@@ -11,7 +11,6 @@ public class CodeBlockBuilder
         CodeBlockOwner = codeBlockOwner;
     }
 
-    public bool IsExpression { get; set; }
     public List<ISyntax> ChildBag { get; } = new();
     public CodeBlockBuilder? Parent { get; }
     /// <summary>
@@ -25,11 +24,11 @@ public class CodeBlockBuilder
 
     public CodeBlockNode Build()
     {
-        return new CodeBlockNode(IsExpression, ChildBag.ToImmutableArray());
+        return new CodeBlockNode(ChildBag.ToImmutableArray());
     }
 
     public CodeBlockNode Build(ImmutableArray<TextEditorDiagnostic> diagnostics)
     {
-        return new CodeBlockNode(IsExpression, ChildBag.ToImmutableArray(), diagnostics);
+        return new CodeBlockNode(ChildBag.ToImmutableArray(), diagnostics);
     }
 }

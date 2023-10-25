@@ -30,16 +30,10 @@ public class CSharpEvaluator
             throw new NotImplementedException("TODO: What should be done when there are error diagnostics?");
         }
 
-        if (_compilationUnit.TopLevelStatementsCodeBlockNode.IsExpression)
-        {
-            var boundExpressionNode = 
-                _compilationUnit.TopLevelStatementsCodeBlockNode.ChildBag
-                    .Single();
-
-            return EvaluateExpression((IExpressionNode)boundExpressionNode);
-        }
-
-        throw new NotImplementedException("TODO: Evaluate non-expression compilation units.");
+        var expressionNode = (IExpressionNode)_compilationUnit.TopLevelStatementsCodeBlockNode.ChildBag
+            .Single();
+        
+        return EvaluateExpression(expressionNode);
     }
 
     private EvaluatorResult EvaluateExpression(IExpressionNode expressionNode)
