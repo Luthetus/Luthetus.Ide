@@ -104,6 +104,13 @@ public class CommandFactory : ICommandFactory
                 ConstructFocusContextElementCommand(
                     ContextFacts.NuGetPackageManagerContext, "Focus: NuGetPackageManager", "focus-nu-get-package-manager"));
         }
+        // CSharpReplContext
+        {
+            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
+                new KeymapArgument("KeyR", false, true, true, Key<KeymapLayer>.Empty),
+                ConstructFocusContextElementCommand(
+                    ContextFacts.SolutionExplorerContext, "Focus: C# REPL", "focus-c-sharp-repl"));
+        }
         // SolutionExplorerContext
         {
             _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(

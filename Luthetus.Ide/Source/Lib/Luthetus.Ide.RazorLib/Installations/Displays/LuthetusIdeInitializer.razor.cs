@@ -20,6 +20,7 @@ using Luthetus.Ide.RazorLib.Terminals.Displays;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Commands;
 using Luthetus.Common.RazorLib.Contexts.Models;
+using Luthetus.Ide.RazorLib.Repls;
 
 namespace Luthetus.Ide.RazorLib.Installations.Displays;
 
@@ -29,8 +30,6 @@ public partial class LuthetusIdeInitializer : ComponentBase
     private IState<PanelsState> PanelsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
-    [Inject]
-    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
     private LuthetusTextEditorOptions LuthetusTextEditorOptions { get; set; } = null!;
     [Inject]
@@ -135,6 +134,21 @@ public partial class LuthetusIdeInitializer : ComponentBase
         };
 
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(rightPanel.Key, compilerServiceExplorerPanelTab, false));
+        
+        var cSharpReplPanelTab = new PanelTab(
+            Key<PanelTab>.NewKey(),
+            rightPanel.ElementDimensions,
+            new(),
+            typeof(CSharpReplDisplay),
+            typeof(IconFolder),
+            "C# REPL")
+        {
+            ContextRecordKey = ContextFacts.CSharpReplContext.ContextKey
+        };
+
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(rightPanel.Key, cSharpReplPanelTab, false));
+        
+        Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(rightPanel.Key, cSharpReplPanelTab.Key));
     }
 
     private void InitializeBottomPanelTabs()

@@ -42,7 +42,7 @@ public class CSharpEvaluator
         throw new NotImplementedException("TODO: Evaluate non-expression compilation units.");
     }
 
-    public EvaluatorResult EvaluateExpression(IExpressionNode expressionNode)
+    private EvaluatorResult EvaluateExpression(IExpressionNode expressionNode)
     {
         switch (expressionNode.SyntaxKind)
         {
@@ -57,7 +57,7 @@ public class CSharpEvaluator
         throw new NotImplementedException();
     }
 
-    public EvaluatorResult EvaluateLiteralExpressionNode(LiteralExpressionNode literalExpressionNode)
+    private EvaluatorResult EvaluateLiteralExpressionNode(LiteralExpressionNode literalExpressionNode)
     {
         if (literalExpressionNode.TypeClauseNode.ValueType == typeof(int))
         {
