@@ -60,7 +60,7 @@ public partial class CSharpParser : IParser
         {
             TokenWalker.Backtrack();
 
-            var expression = Specific.HandleExpression(
+            var completeExpression = Specific.HandleExpression(
                 null,
                 null,
                 null,
@@ -68,12 +68,22 @@ public partial class CSharpParser : IParser
                 null,
                 null);
 
-            CurrentCodeBlockBuilder.ChildBag.Add(expression);
+            CurrentCodeBlockBuilder.ChildBag.Add(completeExpression);
         }
 
-        public LiteralExpressionNode ParseStringLiteralToken(StringLiteralToken stringLiteralToken)
+        public void ParseStringLiteralToken(StringLiteralToken stringLiteralToken)
         {
-            return Specific.HandleStringLiteralExpression(stringLiteralToken);
+            TokenWalker.Backtrack();
+
+            var completeExpression = Specific.HandleExpression(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+
+            CurrentCodeBlockBuilder.ChildBag.Add(completeExpression);
         }
 
         public IStatementNode ParsePreprocessorDirectiveToken(PreprocessorDirectiveToken preprocessorDirectiveToken)
@@ -372,14 +382,17 @@ public partial class CSharpParser : IParser
 
         public void ParseDollarSignToken(DollarSignToken dollarSignToken)
         {
-            if (TokenWalker.Current.SyntaxKind == SyntaxKind.StringLiteralToken)
-            {
-                var stringLiteralToken = TokenWalker.Consume();
+            TokenWalker.Backtrack();
 
-                NodeRecent = ParseStringLiteralToken((StringLiteralToken)stringLiteralToken);
+            var completeExpression = Specific.HandleExpression(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
 
-                Binder.BindStringInterpolationExpression(dollarSignToken);
-            }
+            CurrentCodeBlockBuilder.ChildBag.Add(completeExpression);
         }
 
         public void ParseColonToken(ColonToken colonToken)

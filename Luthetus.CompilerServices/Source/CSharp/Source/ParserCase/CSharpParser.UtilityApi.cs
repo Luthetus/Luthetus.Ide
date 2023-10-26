@@ -181,5 +181,23 @@ public partial class CSharpParser : IParser
                     return false;
             }
         }
+        
+        /// <summary>
+        /// The value '0' is returned if the provided <see cref="SyntaxKind"/> was not an operator.
+        /// </summary>
+        public int GetOperatorPrecedence(SyntaxKind syntaxKind)
+        {
+            switch (syntaxKind)
+            {
+                case SyntaxKind.PlusToken:
+                case SyntaxKind.MinusToken:
+                    return 1;
+                case SyntaxKind.StarToken:
+                case SyntaxKind.DivisionToken:
+                    return 2;
+                default:
+                    return 0;
+            }
+        }
     }
 }

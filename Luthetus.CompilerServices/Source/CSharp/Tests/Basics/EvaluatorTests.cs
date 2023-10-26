@@ -234,35 +234,15 @@ public partial class EvaluatorTests
     [Fact]
     public void EVALUATE_Numeric_Binary_WITH_Operator_Precedence_Impacting()
     {
-        // {x} - {y}:
-        //
-        //               -
-        //             /   \
-        //            x     y
-        // ----------------------
+        // ------------------
         // {x} - {y} * {z}:
         //
-        //               -
-        //             /   \
-        //            x     *
-        //                 / \
-        //                y   z
-        // ----------------------
-        //
-        // 
-        // TODO: I'm getting the correct evaluation of '-32' but
-        //       I'm pretty sure its because I didn't pick input
-        //       that actually has the tree changed by operator precedence?
-        //
-        //       Maybe I need another variable involed?
-        //       I also think I never set _nodeRecent = {x} - {y}
-        //       Therefore _nodeRecent was {y}? I'm not sure
-        //
-        //       The only reason this test passes, is because I wrote
-        //       something wrong. I never added operator precedence yet.
-        //       I wrote this unit test because I just now was going to add it.
-        //       (2023-09-05).
-
+        //        -
+        //      /   \
+        //     x     *
+        //          / \
+        //         y   z
+        // ------------------
 
         var x = 3;
         var y = 7;
@@ -284,6 +264,16 @@ public partial class EvaluatorTests
     [Fact]
     public void EVALUATE_Numeric_Binary_WITH_Operator_Precedence_NOT_Impacting()
     {
+        // ------------------
+        // {x} * {y} - {z}:
+        //
+        //        -
+        //      /   \
+        //     *     z
+        //    / \   
+        //   x   y   
+        // ------------------
+
         var x = 3;
         var y = 7;
         var z = 5;
