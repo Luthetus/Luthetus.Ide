@@ -195,6 +195,8 @@ public partial class CSharpParser : IParser
                 case SyntaxKind.StarToken:
                 case SyntaxKind.DivisionToken:
                     return 2;
+                case SyntaxKind.ParenthesizedExpressionNode:
+                    return 3;
                 default:
                     return 0;
             }

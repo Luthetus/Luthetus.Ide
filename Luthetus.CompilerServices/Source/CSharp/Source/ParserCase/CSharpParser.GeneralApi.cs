@@ -294,7 +294,7 @@ public partial class CSharpParser : IParser
                 null,
                 null,
                 null,
-                new[] { SyntaxKind.CloseParenthesisToken });
+                null);
 
             var binaryOperatorNode = Binder.BindBinaryOperatorNode(
                 leftExpressionNode,
@@ -549,12 +549,35 @@ public partial class CSharpParser : IParser
 
         public void ParseOpenParenthesisToken(OpenParenthesisToken openParenthesisToken)
         {
-            // Presumption: One only arrives at this method when in context of an expression. (2023-09-05)
-            // Reason: INPUT -> "(6)" THEN -> main while loop would invoke this.
-            // Whereas: INPUT -> "SomeMethod()" -> main while loop parses an identifier which then handles a method invocation. This therefore never invoked 'ParseOpenParenthesisToken'
+            TokenWalker.Backtrack();
 
-            var parenthesizedExpressionNode = Specific.HandleParenthesizedExpression(openParenthesisToken);
-            NodeRecent = parenthesizedExpressionNode;
+            var parenthesizedExpression = Specific.HandleExpression(
+                null,
+                null,
+                null,
+                null,
+                null,
+                new[]
+                {
+                    new ExpressionDelimiter(
+                        SyntaxKind.OpenParenthesisToken,
+                        SyntaxKind.CloseParenthesisToken,
+                        openParenthesisToken,
+                        null)
+                });
+
+            // Example: (3 + 4) * 3
+            //
+            // Complete expression would be binary multiplication.
+            var completeExpression = Specific.HandleExpression(
+                parenthesizedExpression,
+                parenthesizedExpression,
+                null,
+                null,
+                null,
+                null);
+
+            CurrentCodeBlockBuilder.ChildBag.Add(completeExpression);
         }
 
         public void ParseCloseParenthesisToken(CloseParenthesisToken closeParenthesisToken)

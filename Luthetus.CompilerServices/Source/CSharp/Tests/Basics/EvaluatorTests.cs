@@ -1,6 +1,8 @@
 ﻿using Luthetus.CompilerServices.Lang.CSharp.EvaluatorCase;
 using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
 using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basics;
@@ -112,6 +114,15 @@ public partial class EvaluatorTests
         lexer.Lex();
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
+
+        var topCodeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
+
+        var parenthesizedExpressionNode = (ParenthesizedExpressionNode)topCodeBlockNode.ChildBag.Single();
+        Assert.Equal(SyntaxKind.ParenthesizedExpressionNode, parenthesizedExpressionNode.SyntaxKind);
+
+        var literalExpressionNode = (LiteralExpressionNode)parenthesizedExpressionNode.InnerExpression;
+        Assert.Equal(SyntaxKind.LiteralExpressionNode, literalExpressionNode.SyntaxKind);
+
         var evaluator = new CSharpEvaluator(compilationUnit, sourceText);
         var evaluatorResult = evaluator.Evaluate();
 
