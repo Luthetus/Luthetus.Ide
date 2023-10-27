@@ -207,6 +207,99 @@ public partial class EvaluatorTests
     }
     
     [Fact]
+    public void EVALUATE_Numeric_Parenthesized_Binary_Recursive_WITH_Parenthesis_Precedence_Impacting()
+    {
+        // ----------------------
+        // (x + y) * z:
+        //
+        //          *
+        //        /   \
+        //      ( )     z
+        //       |
+        //       +
+        //      / \
+        //     x   y  
+        // ----------------------
+
+        var x = 3;
+        var y = 7;
+        var z = 5;
+        string sourceText = $"({x} + {y}) * {z}".ReplaceLineEndings("\n");
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+
+        var topCodeBlock = compilationUnit.TopLevelStatementsCodeBlockNode;
+
+        var completeBinaryExpression = (BinaryExpressionNode)topCodeBlock.ChildBag.Single();
+
+        var parenthesizedExpressionNode = (ParenthesizedExpressionNode)completeBinaryExpression.LeftExpressionNode;
+        var innerBinaryExpression = (BinaryExpressionNode)parenthesizedExpressionNode.InnerExpression;
+        Assert.NotNull(innerBinaryExpression);
+
+        var rightLiteralExpressionNode = (LiteralExpressionNode)completeBinaryExpression.RightExpressionNode;
+        Assert.NotNull(rightLiteralExpressionNode);
+
+        var evaluator = new CSharpEvaluator(compilationUnit, sourceText);
+        var evaluatorResult = evaluator.Evaluate();
+
+        Assert.Equal(typeof(int), evaluatorResult.Type);
+        Assert.Equal((x + y) * z, evaluatorResult.Result);
+    }
+    
+    [Fact]
+    public void EVALUATE_Numeric_Parenthesized_Binary_Recursive_WITH_Parenthesis_Precedence_NOT_Impacting()
+    {
+        // The name of this test has the wording "WITH_Parenthesis_Precedence_NOT_Impacting".
+        //
+        // The reason is because with or without the parenthesis, the multiplication operand would result
+        // in the multiplication step being performed prior to the addition step.
+
+        // ----------------------
+        // x + (y * z):
+        //
+        //          +
+        //        /   \
+        //       x    ( )
+        //             |
+        //             *
+        //            / \
+        //           y   z  
+        // ----------------------
+
+        var x = 3;
+        var y = 7;
+        var z = 5;
+        string sourceText = $"{x} + ({y} * {z})".ReplaceLineEndings("\n");
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+
+        var topCodeBlock = compilationUnit.TopLevelStatementsCodeBlockNode;
+
+        var completeBinaryExpression = (BinaryExpressionNode)topCodeBlock.ChildBag.Single();
+
+        var leftLiteralExpressionNode = (LiteralExpressionNode)completeBinaryExpression.LeftExpressionNode;
+        Assert.NotNull(leftLiteralExpressionNode);
+
+        var parenthesizedExpressionNode = (ParenthesizedExpressionNode)completeBinaryExpression.RightExpressionNode;
+        var innerBinaryExpression = (BinaryExpressionNode)parenthesizedExpressionNode.InnerExpression;
+        Assert.NotNull(innerBinaryExpression);
+
+        var evaluator = new CSharpEvaluator(compilationUnit, sourceText);
+        var evaluatorResult = evaluator.Evaluate();
+
+        Assert.Equal(typeof(int), evaluatorResult.Type);
+        Assert.Equal(x + (y * z), evaluatorResult.Result);
+    }
+    
+    [Fact]
     public void EVALUATE_Numeric_Binary_Recursive()
     {
         // Perhaps SHOULD_EVALUATE_NUMERIC_BINARY_EXPRESSION_RECURSION is a bad

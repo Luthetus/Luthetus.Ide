@@ -557,14 +557,7 @@ public partial class CSharpParser : IParser
                 null,
                 null,
                 null,
-                new[]
-                {
-                    new ExpressionDelimiter(
-                        SyntaxKind.OpenParenthesisToken,
-                        SyntaxKind.CloseParenthesisToken,
-                        openParenthesisToken,
-                        null)
-                });
+                null);
 
             // Example: (3 + 4) * 3
             //

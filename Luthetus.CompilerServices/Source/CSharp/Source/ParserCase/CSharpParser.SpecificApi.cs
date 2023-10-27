@@ -947,7 +947,7 @@ public partial class CSharpParser : IParser
             IExpressionNode? leftExpressionNode,
             ISyntaxToken? operatorToken,
             IExpressionNode? rightExpressionNode,
-            ExpressionDelimiter[]? extraEndExpressionDeliminaters)
+            ExpressionDelimiter[]? extraExpressionDeliminaters)
         {
             while (!TokenWalker.IsEof)
             {
@@ -960,24 +960,61 @@ public partial class CSharpParser : IParser
                 }
                 else
                 {
-                    ExpressionDelimiter? encounteredExtraExpressionDelimiter = null;
+                    ExpressionDelimiter? closeExtraExpressionDelimiterEncountered = extraExpressionDeliminaters
+                        ?.FirstOrDefault(x => x.CloseSyntaxKind == tokenCurrent.SyntaxKind);
 
-                    if (extraEndExpressionDeliminaters is not null)
+                    if (tokenCurrent.SyntaxKind == SyntaxKind.OpenParenthesisToken)
                     {
-                        encounteredExtraExpressionDelimiter = extraEndExpressionDeliminaters.FirstOrDefault(
-                            x => x.CloseSyntaxKind == tokenCurrent.SyntaxKind);
-                    }
+                        var copyExtraExpressionDeliminaters = new List<ExpressionDelimiter>(extraExpressionDeliminaters ?? Array.Empty<ExpressionDelimiter>());
 
-                    if (encounteredExtraExpressionDelimiter is not null)
+                        copyExtraExpressionDeliminaters.Insert(0, new ExpressionDelimiter(
+                            SyntaxKind.OpenParenthesisToken,
+                            SyntaxKind.CloseParenthesisToken,
+                            tokenCurrent,
+                            null));
+
+                        var parenthesizedExpression = HandleExpression(
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            copyExtraExpressionDeliminaters.ToArray());
+
+                        previousInvocationExpressionNode = parenthesizedExpression;
+
+                        if (topMostExpressionNode is null)
+                            topMostExpressionNode = parenthesizedExpression;
+                        else if (leftExpressionNode is null)
+                            leftExpressionNode = parenthesizedExpression;
+                        else if (rightExpressionNode is null)
+                            rightExpressionNode = parenthesizedExpression;
+                        else
+                            throw new ApplicationException("TODO: Why would this occur?");
+
+                        break;
+                    }
+                    else if (closeExtraExpressionDelimiterEncountered is not null)
                     {
                         if (tokenCurrent.SyntaxKind == SyntaxKind.CloseParenthesisToken &&
-                            encounteredExtraExpressionDelimiter.OpenSyntaxToken is not null &&
-                            previousInvocationExpressionNode is not null)
+                            closeExtraExpressionDelimiterEncountered.OpenSyntaxToken is not null) 
                         {
-                            var parenthesizedExpression = new ParenthesizedExpressionNode(
-                                (OpenParenthesisToken)encounteredExtraExpressionDelimiter.OpenSyntaxToken,
-                                previousInvocationExpressionNode,
-                                (CloseParenthesisToken)tokenCurrent);
+                            ParenthesizedExpressionNode parenthesizedExpression;
+                            
+                            if (previousInvocationExpressionNode is not null)
+                            {
+                                parenthesizedExpression = new ParenthesizedExpressionNode(
+                                    (OpenParenthesisToken)closeExtraExpressionDelimiterEncountered.OpenSyntaxToken,
+                                    previousInvocationExpressionNode,
+                                    (CloseParenthesisToken)tokenCurrent);
+                            }
+                            else
+                            {
+                                parenthesizedExpression = new ParenthesizedExpressionNode(
+                                    (OpenParenthesisToken)closeExtraExpressionDelimiterEncountered.OpenSyntaxToken,
+                                    new IdempotentExpressionNode(CSharpFacts.Types.Void.ToTypeClause()),
+                                    (CloseParenthesisToken)tokenCurrent);
+                            }
 
                             return parenthesizedExpression;
                         }
@@ -1045,7 +1082,7 @@ public partial class CSharpParser : IParser
                                             previousBinaryExpressionNode.RightExpressionNode,
                                             tokenCurrent,
                                             null,
-                                            extraEndExpressionDeliminaters);
+                                            extraExpressionDeliminaters);
 
                                         topMostExpressionNode = new BinaryExpressionNode(
                                             previousBinaryExpressionNode.LeftExpressionNode,
@@ -1101,7 +1138,7 @@ public partial class CSharpParser : IParser
                                 leftExpressionNode,
                                 operatorToken,
                                 rightExpressionNode,
-                                extraEndExpressionDeliminaters);
+                                extraExpressionDeliminaters);
                         }
                     }
                 }

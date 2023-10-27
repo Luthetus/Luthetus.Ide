@@ -179,6 +179,7 @@ public enum SyntaxKind
     // Nodes
     LiteralExpressionNode,
     ParenthesizedExpressionNode,
+    IdempotentExpressionNode,
     PreprocessorLibraryReferenceStatementNode,
     TypeDefinitionNode,
     TypeClauseNode,
