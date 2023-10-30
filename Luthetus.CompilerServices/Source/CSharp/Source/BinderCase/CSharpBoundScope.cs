@@ -15,7 +15,7 @@ public sealed record CSharpBoundScope : IBoundScope
         ResourceUri resourceUri,
         Dictionary<string, TypeDefinitionNode> typeDefinitionMap,
         Dictionary<string, FunctionDefinitionNode> functionDefinitionMap,
-        Dictionary<string, VariableDeclarationStatementNode> variableDeclarationMap)
+        Dictionary<string, VariableDeclarationNode> variableDeclarationMap)
     {
         Parent = parent;
         ScopeReturnTypeClauseNode = scopeReturnTypeClauseNode;
@@ -42,5 +42,5 @@ public sealed record CSharpBoundScope : IBoundScope
     /// </summary>
     public Dictionary<string, TypeDefinitionNode> TypeDefinitionMap { get; init; }
     public Dictionary<string, FunctionDefinitionNode> FunctionDefinitionMap { get; init; }
-    public Dictionary<string, VariableDeclarationStatementNode> VariableDeclarationMap { get; init; }
+    public Dictionary<string, VariableDeclarationNode> VariableDeclarationMap { get; init; }
 }

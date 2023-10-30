@@ -10,25 +10,21 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 /// </summary>
 public sealed record CodeBlockNode : ISyntaxNode
 {
-    public CodeBlockNode(bool isExpression, ImmutableArray<ISyntax> childBag)
+    public CodeBlockNode(ImmutableArray<ISyntax> childBag)
     {
-        IsExpression = isExpression;
         ChildBag = childBag;
 
         DiagnosticsBag = ImmutableArray<TextEditorDiagnostic>.Empty;
     }
 
     public CodeBlockNode(
-        bool isExpression,
         ImmutableArray<ISyntax> children,
         ImmutableArray<TextEditorDiagnostic> diagnostics)
     {
-        IsExpression = isExpression;
         ChildBag = children;
         DiagnosticsBag = diagnostics;
     }
 
-    public bool IsExpression { get; init; }
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsBag { get; init; }
 
     public ImmutableArray<ISyntax> ChildBag { get; init; }

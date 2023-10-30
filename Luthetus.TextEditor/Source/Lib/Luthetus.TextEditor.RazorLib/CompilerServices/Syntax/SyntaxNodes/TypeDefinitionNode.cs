@@ -57,10 +57,6 @@ public sealed record TypeDefinitionNode : ISyntaxNode
     /// Then: 'IPerson' is the <see cref="InheritedTypeClauseNode"/>
     /// </summary>
     public TypeClauseNode? InheritedTypeClauseNode { get; }
-    /// <summary>
-    /// Only the null properties and "Children" itself need to have backing fields.
-    /// This is due to the record needing to re-assign Children.
-    /// </summary>
     public CodeBlockNode? TypeBodyCodeBlockNode { get; }
     public bool IsInterface { get; init; }
 

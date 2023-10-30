@@ -3,7 +3,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.Facts;
 
-public partial class CSharpLanguageFacts
+public partial class CSharpFacts
 {
     public class Namespaces
     {

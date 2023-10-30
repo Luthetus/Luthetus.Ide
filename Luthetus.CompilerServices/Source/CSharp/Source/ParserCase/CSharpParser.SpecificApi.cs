@@ -8,6 +8,8 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
 using Luthetus.CompilerServices.Lang.CSharp.Facts;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
+using System.Linq.Expressions;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 
@@ -39,6 +41,9 @@ public partial class CSharpParser : IParser
 
         /// <summary>TODO: I don't like this <see cref="General"/> property. It points to a private field on a different object. But without this property things are incredibly verbose. I need to remember to come back to this and change how I get access to the object because this doesn't feel right.</summary>
         public GeneralApi General => _parser._general;
+
+        /// <summary>TODO: I don't like this <see cref="ExpressionStack"/> property. It points to a private field on a different object. But without this property things are incredibly verbose. I need to remember to come back to this and change how I get access to the object because this doesn't feel right.</summary>
+        public Stack<ISyntax> ExpressionStack => _parser._expressionStack;
 
         /// <summary>TODO: I don't like this <see cref="NodeRecent"/> property. It points to a private field on a different object. But without this property things are incredibly verbose. I need to remember to come back to this and change how I get access to the object because this doesn't feel right.</summary>
         public ISyntaxNode? NodeRecent 
@@ -81,7 +86,7 @@ public partial class CSharpParser : IParser
 
         public VariableReferenceNode HandleVariableReference(
             IdentifierToken identifierToken,
-            VariableDeclarationStatementNode variableDeclarationStatementNode)
+            VariableDeclarationNode variableDeclarationStatementNode)
         {
             var variableReferenceNode = new VariableReferenceNode(
                 identifierToken,
@@ -123,28 +128,137 @@ public partial class CSharpParser : IParser
             return functionInvocationNode;
         }
 
-        public VariableDeclarationStatementNode HandleVariableDeclaration(TypeClauseNode typeClauseNode, IdentifierToken identifierToken)
+        public VariableDeclarationNode HandleVariableDeclaration(
+            TypeClauseNode typeClauseNode,
+            IdentifierToken identifierToken,
+            VariableKind variableKind)
         {
-            var variableDeclarationStatementNode = new VariableDeclarationStatementNode(
+            /*
+             * Issues:
+             *     -Should Handle...(...) methods return the node?
+             *         -If one returns the node then they must only ever 
+             *             modify the current code block builder one time.
+             *         -Yet, HandleVariableDeclaration(...) wants to proceed to invoke
+             *             HandleVariableAssignment if an EqualsToken is found.
+             *         -This would result in two nodes needing to be added
+             *             to the current code block builder.
+             *         -Futhermore, HandleVariableDeclaration(...) adds to the current code block
+             *             builder prior to checking if the variable is a property.
+             *             - A few if statements would fix this but that seems to start creating a mess.
+             */
+
+            var variableDeclarationNode = new VariableDeclarationNode(
                 typeClauseNode,
                 identifierToken,
+                variableKind,
                 false);
 
-            Binder.BindVariableDeclarationStatementNode(variableDeclarationStatementNode);
+            Binder.BindVariableDeclarationStatementNode(variableDeclarationNode);
 
-            CurrentCodeBlockBuilder.ChildBag.Add(variableDeclarationStatementNode);
+            CurrentCodeBlockBuilder.ChildBag.Add(variableDeclarationNode);
 
-            if (SyntaxKind.EqualsToken == TokenWalker.Current.SyntaxKind)
+            if (TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
             {
-                // Variable initialization occurs here.
-                HandleVariableAssignment(identifierToken);
+                if (TokenWalker.Peek(1).SyntaxKind == SyntaxKind.CloseAngleBracketToken)
+                {
+                    HandlePropertyExpression(variableDeclarationNode);
+                }
+                else
+                {
+                    // Variable initialization occurs here.
+                    HandleVariableAssignment(identifierToken);
+                }
+            }
+            
+            if (variableKind == VariableKind.Property &&
+                TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+            {
+                var openBraceToken = (OpenBraceToken)TokenWalker.Consume();
+                HandlePropertyDeclaration(variableDeclarationNode, openBraceToken);
+            }
+            else
+            {
+                _ = TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
             }
 
-            // This conditional branch is for variable declaration, so at this point a StatementDelimiterToken is always expected.
-            _ = TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
-
             NodeRecent = null;
-            return variableDeclarationStatementNode;
+            return variableDeclarationNode;
+        }
+
+        public void HandlePropertyDeclaration(
+            VariableDeclarationNode variableDeclarationNode,
+            OpenBraceToken openBraceToken)
+        {
+            while (!TokenWalker.IsEof)
+            {
+                var token = TokenWalker.Consume();
+
+                if (Utility.IsAccessibilitySyntaxKind(token.SyntaxKind))
+                {
+                    DiagnosticBag.ReportTodoException(token.TextSpan, "TODO: Implement accessibility modifiers for properties.");
+                    continue;
+                }
+                else if (token.SyntaxKind == SyntaxKind.GetTokenContextualKeyword)
+                {
+                    variableDeclarationNode.HasGetter = true;
+
+                    if (TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
+                    {
+                        _ = TokenWalker.Consume();
+                        variableDeclarationNode.GetterIsAutoImplemented = true;
+                    }
+                    else if (TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+                    {
+                        // TODO: Parse getter body
+                    }
+                }
+                else if (token.SyntaxKind == SyntaxKind.SetTokenContextualKeyword)
+                {
+                    variableDeclarationNode.HasSetter = true;
+
+                    if (TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
+                    {
+                        _ = TokenWalker.Consume();
+                        variableDeclarationNode.SetterIsAutoImplemented = true;
+                    }
+                    else if (TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+                    {
+                        // TODO: Parse setter body
+                    }
+                }
+                else if (token.SyntaxKind == SyntaxKind.CloseBraceToken)
+                {
+                    break;
+                }
+                else
+                {
+                    // TODO: Remove this else block if it is uneccessary
+                    DiagnosticBag.ReportTodoException(token.TextSpan, "TODO: Implement parsing for this property syntax.");
+                    continue;
+                }
+            }
+
+            if (TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
+            {
+                // Property initialization occurs here.
+                HandleVariableAssignment(variableDeclarationNode.IdentifierToken);
+            }
+        }
+
+        public void HandlePropertyExpression(VariableDeclarationNode variableDeclarationNode)
+        {
+            var equalsToken = (EqualsToken)TokenWalker.Consume();
+            var closeAngleBracketToken = (CloseAngleBracketToken)TokenWalker.Consume();
+
+            var expressionNode = HandleExpression(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+
+            variableDeclarationNode.HasGetter = true;
         }
 
         public FunctionDefinitionNode HandleFunctionDefinition(
@@ -193,7 +307,7 @@ public partial class CSharpParser : IParser
             return functionDefinitionNode;
         }
 
-        public FunctionDefinitionNode HandleConstructorDefinition(IdentifierToken identifierToken)
+        public ConstructorDefinitionNode HandleConstructorDefinition(IdentifierToken identifierToken)
         {
             GenericArgumentsListingNode? genericArgumentsListingNode = null;
 
@@ -208,7 +322,8 @@ public partial class CSharpParser : IParser
 
             if (CurrentCodeBlockBuilder.CodeBlockOwner is not TypeDefinitionNode typeDefinitionNode)
             {
-                throw new ApplicationException("Constructors need to be within a type definition.");
+                DiagnosticBag.ReportConstructorsNeedToBeWithinTypeDefinition(identifierToken.TextSpan);
+                typeDefinitionNode = CSharpFacts.Types.Void;
             }
 
             var typeClauseNode = new TypeClauseNode(
@@ -216,7 +331,7 @@ public partial class CSharpParser : IParser
                 null,
                 null);
 
-            var functionDefinitionNode = new FunctionDefinitionNode(
+            var constructorDefinitionNode = new ConstructorDefinitionNode(
                 typeClauseNode,
                 identifierToken,
                 genericArgumentsListingNode,
@@ -226,7 +341,7 @@ public partial class CSharpParser : IParser
 
             Binder.BindConstructorDefinitionIdentifierToken(identifierToken);
 
-            NodeRecent = functionDefinitionNode;
+            NodeRecent = constructorDefinitionNode;
 
             if (TokenWalker.Current.SyntaxKind == SyntaxKind.ColonToken)
             {
@@ -244,7 +359,7 @@ public partial class CSharpParser : IParser
                 }
             }
 
-            return functionDefinitionNode;
+            return constructorDefinitionNode;
         }
 
         public void HandleNamespaceReference(
@@ -345,7 +460,11 @@ public partial class CSharpParser : IParser
                 }
 
                 if (matchingOverload is null)
-                    throw new ApplicationException("Handle case where none of the function overloads match the input.");
+                {
+                    DiagnosticBag.ReportTodoException(
+                        functionInvocationIdentifierToken.TextSpan,
+                        "TODO: Handle case where none of the function overloads match the input.");
+                }
 
                 // TODO: Don't assume GenericParametersListingNode to be null
                 var functionInvocationNode = new FunctionInvocationNode(
@@ -375,7 +494,13 @@ public partial class CSharpParser : IParser
             // Move past the EqualsToken
             var equalsToken = (EqualsToken)TokenWalker.Consume();
 
-            var rightHandExpression = HandleExpression();
+            var rightHandExpression = HandleExpression(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
 
             var variableAssignmentExpressionNode = new VariableAssignmentExpressionNode(
                 identifierToken,
@@ -441,32 +566,6 @@ public partial class CSharpParser : IParser
             };
 
             return new IdentifierToken(identifierTextSpan);
-        }
-        
-        public LiteralExpressionNode HandleNumericLiteralExpression(NumericLiteralToken numericLiteralToken)
-        {
-            var literalExpressionNode = new LiteralExpressionNode(
-                numericLiteralToken,
-                CSharpLanguageFacts.Types.Int.ToTypeClause());
-
-            literalExpressionNode = Binder.BindLiteralExpressionNode(literalExpressionNode);
-
-            NodeRecent = literalExpressionNode;
-
-            return literalExpressionNode;
-        }
-        
-        public LiteralExpressionNode HandleStringLiteralExpression(StringLiteralToken stringLiteralToken)
-        {
-            var literalExpressionNode = new LiteralExpressionNode(
-                stringLiteralToken,
-                CSharpLanguageFacts.Types.String.ToTypeClause());
-
-            literalExpressionNode = Binder.BindLiteralExpressionNode(literalExpressionNode);
-
-            NodeRecent = literalExpressionNode;
-
-            return literalExpressionNode;
         }
 
         /// <summary>
@@ -601,7 +700,8 @@ public partial class CSharpParser : IParser
 
                             HandleVariableDeclaration(
                                 outVariableTypeClause,
-                                outVariableIdentifier);
+                                outVariableIdentifier,
+                                VariableKind.Local);
                         }
                     }
                     else if (SyntaxKind.InTokenKeyword == TokenWalker.Current.SyntaxKind)
@@ -628,8 +728,9 @@ public partial class CSharpParser : IParser
                         || variableDeclarationNode is null)
                     {
                         variableDeclarationNode = new(
-                            CSharpLanguageFacts.Types.Void.ToTypeClause(),
+                            CSharpFacts.Types.Void.ToTypeClause(),
                             variableIdentifierToken,
+                            VariableKind.Local,
                             false)
                         {
                             IsFabricated = true
@@ -649,11 +750,21 @@ public partial class CSharpParser : IParser
                 }
                 else
                 {
-                    expression = HandleExpression(new[]
-                    {
-                        SyntaxKind.CommaToken,
-                        SyntaxKind.CloseParenthesisToken
-                    });
+                    expression = HandleExpression(
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        new[]
+                        {
+                            new ExpressionDelimiter(null, SyntaxKind.CommaToken, null, null),
+                            new ExpressionDelimiter(
+                                SyntaxKind.OpenParenthesisToken,
+                                SyntaxKind.CloseParenthesisToken,
+                                openParenthesisToken,
+                                null)
+                        });
                 }
 
                 var functionParameterEntryNode = new FunctionParameterEntryNode(
@@ -681,6 +792,8 @@ public partial class CSharpParser : IParser
                 }
             }
 
+            // The expression logic will consume the CloseParenthesisToken, therefore backtrack once before matching
+            _ = TokenWalker.Backtrack();
             var closeParenthesisToken = (CloseParenthesisToken)TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 
             return new FunctionParametersListingNode(
@@ -740,9 +853,10 @@ public partial class CSharpParser : IParser
                 if (variableIdentifierToken.IsFabricated)
                     break;
 
-                var variableDeclarationStatementNode = new VariableDeclarationStatementNode(
+                var variableDeclarationStatementNode = new VariableDeclarationNode(
                     typeClauseNode,
                     variableIdentifierToken,
+                    VariableKind.Local,
                     false
                 );
 
@@ -829,49 +943,198 @@ public partial class CSharpParser : IParser
             return null;
         }
 
-        public IExpressionNode HandleExpression(SyntaxKind[]? extraEndOfExpressionDeliminatingSyntaxKinds = null)
+        public IExpressionNode HandleExpression(
+            IExpressionNode? topMostExpressionNode,
+            IExpressionNode? previousInvocationExpressionNode,
+            IExpressionNode? leftExpressionNode,
+            ISyntaxToken? operatorToken,
+            IExpressionNode? rightExpressionNode,
+            ExpressionDelimiter[]? extraExpressionDeliminaters)
         {
-            IExpressionNode? topMostExpressionNode = null;
-
-            while (true)
+            while (!TokenWalker.IsEof)
             {
                 var tokenCurrent = TokenWalker.Consume();
 
-                if (tokenCurrent.SyntaxKind == SyntaxKind.EndOfFileToken ||
-                    tokenCurrent.SyntaxKind == SyntaxKind.StatementDelimiterToken)
+                if (tokenCurrent.SyntaxKind == SyntaxKind.EndOfFileToken || tokenCurrent.SyntaxKind == SyntaxKind.StatementDelimiterToken)
                 {
                     TokenWalker.Backtrack();
                     break;
                 }
-                else if (extraEndOfExpressionDeliminatingSyntaxKinds is not null &&
-                         extraEndOfExpressionDeliminatingSyntaxKinds.Contains(tokenCurrent.SyntaxKind))
+
+                ExpressionDelimiter? closeExtraExpressionDelimiterEncountered = 
+                    extraExpressionDeliminaters?.FirstOrDefault(x => x.CloseSyntaxKind == tokenCurrent.SyntaxKind);
+
+                if (tokenCurrent.SyntaxKind == SyntaxKind.CloseParenthesisToken && closeExtraExpressionDelimiterEncountered?.OpenSyntaxToken is not null)
                 {
-                    TokenWalker.Backtrack();
-                    break;
-                }
-                else
-                {
-                    switch (tokenCurrent.SyntaxKind)
+                    ParenthesizedExpressionNode parenthesizedExpression;
+
+                    if (previousInvocationExpressionNode is not null)
                     {
-                        case SyntaxKind.NumericLiteralToken:
-                            topMostExpressionNode = HandleNumericLiteralToken((NumericLiteralToken)tokenCurrent);
-                            break;
-                        case SyntaxKind.StringLiteralToken:
-                            topMostExpressionNode = HandleStringLiteralToken((StringLiteralToken)tokenCurrent);
-                            break;
+                        parenthesizedExpression = new ParenthesizedExpressionNode(
+                            (OpenParenthesisToken)closeExtraExpressionDelimiterEncountered.OpenSyntaxToken,
+                            previousInvocationExpressionNode,
+                            (CloseParenthesisToken)tokenCurrent);
                     }
+                    else
+                    {
+                        parenthesizedExpression = new ParenthesizedExpressionNode(
+                            (OpenParenthesisToken)closeExtraExpressionDelimiterEncountered.OpenSyntaxToken,
+                            new IdempotentExpressionNode(CSharpFacts.Types.Void.ToTypeClause()),
+                            (CloseParenthesisToken)tokenCurrent);
+                    }
+
+                    return parenthesizedExpression;
+                }
+
+                switch (tokenCurrent.SyntaxKind)
+                {
+                    case SyntaxKind.NumericLiteralToken:
+
+                        var numericLiteralExpressionNode = new LiteralExpressionNode(tokenCurrent, CSharpFacts.Types.Int.ToTypeClause());
+
+                        previousInvocationExpressionNode = numericLiteralExpressionNode;
+
+                        if (topMostExpressionNode is null)
+                            topMostExpressionNode = numericLiteralExpressionNode;
+                        else if (leftExpressionNode is null)
+                            leftExpressionNode = numericLiteralExpressionNode;
+                        else if (rightExpressionNode is null)
+                            rightExpressionNode = numericLiteralExpressionNode;
+                        else
+                            throw new ApplicationException("TODO: Why would this occur?");
+
+                        break;
+                    case SyntaxKind.StringLiteralToken:
+                        var stringLiteralExpressionNode = new LiteralExpressionNode(tokenCurrent, CSharpFacts.Types.String.ToTypeClause());
+
+                        previousInvocationExpressionNode = stringLiteralExpressionNode;
+
+                        if (topMostExpressionNode is null)
+                            topMostExpressionNode = stringLiteralExpressionNode;
+                        else if (leftExpressionNode is null)
+                            leftExpressionNode = stringLiteralExpressionNode;
+                        else if (rightExpressionNode is null)
+                            rightExpressionNode = stringLiteralExpressionNode;
+                        else
+                            throw new ApplicationException("TODO: Why would this occur?");
+
+                        break;
+                    case SyntaxKind.PlusToken:
+                    case SyntaxKind.MinusToken:
+                    case SyntaxKind.StarToken:
+                    case SyntaxKind.DivisionToken:
+                        if (leftExpressionNode is null && previousInvocationExpressionNode is not null)
+                            leftExpressionNode = previousInvocationExpressionNode;
+
+                        if (previousInvocationExpressionNode is BinaryExpressionNode previousBinaryExpressionNode)
+                        {
+                            var previousOperatorPrecedence = Utility.GetOperatorPrecedence(previousBinaryExpressionNode.BinaryOperatorNode.OperatorToken.SyntaxKind);
+                            var currentOperatorPrecedence = Utility.GetOperatorPrecedence(tokenCurrent.SyntaxKind);
+
+                            if (currentOperatorPrecedence > previousOperatorPrecedence)
+                            {
+                                // Take the right node from the previous expression.
+                                // Make it the new expression's left node.
+                                //
+                                // Then replace the previous expression's right node with the
+                                // newly formed expression.
+
+                                var modifiedRightExpressionNode = HandleExpression(
+                                    topMostExpressionNode,
+                                    null,
+                                    previousBinaryExpressionNode.RightExpressionNode,
+                                    tokenCurrent,
+                                    null,
+                                    extraExpressionDeliminaters);
+
+                                topMostExpressionNode = new BinaryExpressionNode(
+                                    previousBinaryExpressionNode.LeftExpressionNode,
+                                    previousBinaryExpressionNode.BinaryOperatorNode,
+                                    modifiedRightExpressionNode);
+                            }
+                        }
+
+                        if (operatorToken is null)
+                            operatorToken = tokenCurrent;
+                        else
+                            throw new ApplicationException("TODO: Why would this occur?");
+
+                        break;
+                    case SyntaxKind.OpenParenthesisToken:
+                        var copyExtraExpressionDeliminaters = new List<ExpressionDelimiter>(extraExpressionDeliminaters ?? Array.Empty<ExpressionDelimiter>());
+
+                        copyExtraExpressionDeliminaters.Insert(0, new ExpressionDelimiter(
+                            SyntaxKind.OpenParenthesisToken,
+                            SyntaxKind.CloseParenthesisToken,
+                            tokenCurrent,
+                            null));
+
+                        var parenthesizedExpression = HandleExpression(
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            copyExtraExpressionDeliminaters.ToArray());
+
+                        previousInvocationExpressionNode = parenthesizedExpression;
+
+                        if (topMostExpressionNode is null)
+                            topMostExpressionNode = parenthesizedExpression;
+                        else if (leftExpressionNode is null)
+                            leftExpressionNode = parenthesizedExpression;
+                        else if (rightExpressionNode is null)
+                            rightExpressionNode = parenthesizedExpression;
+                        else
+                            throw new ApplicationException("TODO: Why would this occur?");
+                            break;
+                    default:
+                        if (tokenCurrent.SyntaxKind == SyntaxKind.DollarSignToken)
+                        {
+                            // TODO: Convert DollarSignToken to a function signature...
+                            // ...Then read in the parameters...
+                            // ...Any function invocation logic also would be done here
+
+                            Binder.BindStringInterpolationExpression((DollarSignToken)tokenCurrent);
+                        }
+
+                        break;
+                }
+
+                if (leftExpressionNode is not null && operatorToken is not null && rightExpressionNode is not null)
+                {
+                    var binaryOperatorNode = Binder.BindBinaryOperatorNode(
+                        leftExpressionNode,
+                        operatorToken,
+                        rightExpressionNode);
+
+                    var binaryExpressionNode = new BinaryExpressionNode(
+                        leftExpressionNode,
+                        binaryOperatorNode,
+                        rightExpressionNode);
+
+                    topMostExpressionNode = binaryExpressionNode;
+                    previousInvocationExpressionNode = binaryExpressionNode;
+
+                    leftExpressionNode = null;
+                    operatorToken = null;
+                    rightExpressionNode = null;
+
+                    return HandleExpression(
+                        topMostExpressionNode,
+                        previousInvocationExpressionNode,
+                        leftExpressionNode,
+                        operatorToken,
+                        rightExpressionNode,
+                        extraExpressionDeliminaters);
                 }
             }
 
-            return topMostExpressionNode ?? new LiteralExpressionNode(
-                new EndOfFileToken(
-                    new TextEditorTextSpan(
-                        0,
-                        0,
-                        (byte)GenericDecorationKind.None,
-                        new ResourceUri(string.Empty),
-                        string.Empty)),
-                CSharpLanguageFacts.Types.Void.ToTypeClause());
+            var fallbackExpressionNode = new LiteralExpressionNode(
+                new EndOfFileToken(new(0, 0, (byte)GenericDecorationKind.None, new(string.Empty), string.Empty)),
+                CSharpFacts.Types.Void.ToTypeClause());
+
+            return topMostExpressionNode ?? fallbackExpressionNode;
         }
 
         /// <summary>TODO: Implement ParseIfStatementExpression() correctly. Until then, skip until the closing parenthesis of the if statement is found.</summary>
@@ -905,17 +1168,7 @@ public partial class CSharpParser : IParser
                         (byte)GenericDecorationKind.None,
                         new ResourceUri(string.Empty),
                         string.Empty)),
-                CSharpLanguageFacts.Types.Void.ToTypeClause());
-        }
-
-        public void HandlePropertyDefinition(TypeClauseNode typeClauseNode, IdentifierToken identifierToken)
-        {
-            var variableDeclarationStatementNode = new VariableDeclarationStatementNode(
-                typeClauseNode,
-                identifierToken,
-                false);
-
-            Binder.BindPropertyDeclarationNode(variableDeclarationStatementNode);
+                CSharpFacts.Types.Void.ToTypeClause());
         }
 
         public void HandleAsTokenKeyword(KeywordToken keywordToken)
@@ -1486,9 +1739,17 @@ public partial class CSharpParser : IParser
 
         public void HandleReturnTokenKeyword(KeywordToken keywordToken)
         {
+            var returnExpression = HandleExpression(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+
             var boundReturnStatementNode = Binder.BindReturnStatementNode(
                 keywordToken,
-                HandleExpression());
+                returnExpression);
 
             CurrentCodeBlockBuilder.ChildBag.Add(boundReturnStatementNode);
 
@@ -1787,84 +2048,6 @@ public partial class CSharpParser : IParser
         public void HandleUnrecognizedTokenContextualKeyword(KeywordContextualToken keywordContextualToken)
         {
             // TODO: Implement this method
-        }
-
-        public ParenthesizedExpressionNode HandleParenthesizedExpression(ParenthesizedExpressionNode parenthesizedExpressionNode)
-        {
-            // Presumption: One invoked this method because they found an 'OpenParenthesisToken'.
-            //              They then determined given the current context that the language specific meaning
-            //              is a parenthesized expression has begun.
-
-            var innerExpression = HandleExpression(new[] { SyntaxKind.CloseParenthesisToken });
-            var closeParenthesisToken = (CloseParenthesisToken)TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
-
-            var completeParenthesizedExpression = new ParenthesizedExpressionNode(
-                parenthesizedExpressionNode.OpenParenthesisToken,
-                innerExpression,
-                closeParenthesisToken);
-
-            return completeParenthesizedExpression;
-        }
-
-        public IExpressionNode HandleNumericLiteralToken(NumericLiteralToken numericLiteralToken)
-        {
-            // ParseNumericLiteralToken() is intended to be used when there is no context, just a token.
-            //
-            // HandleNumericLiteralToken() on the other hand in to be used when one has context, in which they are parsing an expression AND have a token.
-
-            var literalExpressionNode = new LiteralExpressionNode(
-                numericLiteralToken,
-                CSharpLanguageFacts.Types.Int.ToTypeClause());
-
-            literalExpressionNode = Binder.BindLiteralExpressionNode(literalExpressionNode);
-
-            if (Utility.IsBinaryOperatorSyntaxKind(TokenWalker.Current.SyntaxKind))
-            {
-                var binaryOperatorToken = TokenWalker.Consume();
-
-                return HandleBinaryOperatorToken(
-                    literalExpressionNode,
-                    binaryOperatorToken);
-            }
-
-            return literalExpressionNode;
-        }
-
-        public IExpressionNode HandleStringLiteralToken(StringLiteralToken stringLiteralToken)
-        {
-            var literalExpressionNode = new LiteralExpressionNode(
-                stringLiteralToken,
-                CSharpLanguageFacts.Types.String.ToTypeClause());
-
-            literalExpressionNode = Binder.BindLiteralExpressionNode(literalExpressionNode);
-
-            if (Utility.IsBinaryOperatorSyntaxKind(TokenWalker.Current.SyntaxKind))
-            {
-                var binaryOperatorToken = TokenWalker.Consume();
-
-                return HandleBinaryOperatorToken(
-                    literalExpressionNode,
-                    binaryOperatorToken);
-            }
-
-            return literalExpressionNode;
-        }
-
-        public IExpressionNode HandleBinaryOperatorToken(
-            IExpressionNode leftExpressionNode,
-            ISyntaxToken binaryOperatorToken)
-        {
-            var rightExpressionNode = HandleExpression(new[] { SyntaxKind.CloseParenthesisToken });
-
-            var binaryOperatorNode = Binder.BindBinaryOperatorNode(
-                leftExpressionNode,
-                binaryOperatorToken,
-                rightExpressionNode);
-
-            return new BinaryExpressionNode(
-                leftExpressionNode,
-                binaryOperatorNode,
-                rightExpressionNode);
         }
     }
 }

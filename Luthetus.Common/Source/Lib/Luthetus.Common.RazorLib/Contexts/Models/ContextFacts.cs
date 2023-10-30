@@ -35,6 +35,12 @@ public static class ContextFacts
         "Compiler Service Explorer",
         "compiler-service-explorer",
         Keymap.Empty);
+    
+    public static readonly ContextRecord CSharpReplContext = new(
+        Key<ContextRecord>.NewKey(),
+        "C# REPL",
+        "c-sharp-repl",
+        Keymap.Empty);
 
     public static readonly ContextRecord BackgroundServicesContext = new(
         Key<ContextRecord>.NewKey(),
@@ -97,6 +103,7 @@ public static class ContextFacts
         FolderExplorerContext,
         SolutionExplorerContext,
         CompilerServiceExplorerContext,
+        CSharpReplContext,
         BackgroundServicesContext,
         DialogDisplayContext,
         MainLayoutHeaderContext,

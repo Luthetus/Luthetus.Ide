@@ -6,6 +6,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Statement;
 using Luthetus.CompilerServices.Lang.CSharp.Facts;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 
@@ -38,6 +39,9 @@ public partial class CSharpParser : IParser
         /// <summary>TODO: I don't like this <see cref="Specific"/> property. It points to a private field on a different object. But without this property things are incredibly verbose. I need to remember to come back to this and change how I get access to the object because this doesn't feel right.</summary>
         public SpecificApi Specific => _parser._specific;
 
+        /// <summary>TODO: I don't like this <see cref="ExpressionStack"/> property. It points to a private field on a different object. But without this property things are incredibly verbose. I need to remember to come back to this and change how I get access to the object because this doesn't feel right.</summary>
+        public Stack<ISyntax> ExpressionStack => _parser._expressionStack;
+
         /// <summary>TODO: I don't like this <see cref="NodeRecent"/> property. It points to a private field on a different object. But without this property things are incredibly verbose. I need to remember to come back to this and change how I get access to the object because this doesn't feel right.</summary>
         public ISyntaxNode? NodeRecent
         {
@@ -52,14 +56,34 @@ public partial class CSharpParser : IParser
             set => _parser._currentCodeBlockBuilder = value;
         }
 
-        public LiteralExpressionNode ParseNumericLiteralToken(NumericLiteralToken numericLiteralToken)
+        public void ParseNumericLiteralToken(NumericLiteralToken numericLiteralToken)
         {
-            return Specific.HandleNumericLiteralExpression(numericLiteralToken);
+            TokenWalker.Backtrack();
+
+            var completeExpression = Specific.HandleExpression(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+
+            CurrentCodeBlockBuilder.ChildBag.Add(completeExpression);
         }
 
-        public LiteralExpressionNode ParseStringLiteralToken(StringLiteralToken stringLiteralToken)
+        public void ParseStringLiteralToken(StringLiteralToken stringLiteralToken)
         {
-            return Specific.HandleStringLiteralExpression(stringLiteralToken);
+            TokenWalker.Backtrack();
+
+            var completeExpression = Specific.HandleExpression(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+
+            CurrentCodeBlockBuilder.ChildBag.Add(completeExpression);
         }
 
         public IStatementNode ParsePreprocessorDirectiveToken(PreprocessorDirectiveToken preprocessorDirectiveToken)
@@ -152,26 +176,34 @@ public partial class CSharpParser : IParser
                 {
                     if (TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
                     {
-                        Specific.HandlePropertyDefinition(
+                        Specific.HandleVariableDeclaration(
                             (TypeClauseNode)NodeRecent,
-                            identifierToken);
+                            identifierToken,
+                            VariableKind.Property);
 
                         return;
                     }
                     else
                     {
+                        var variableKind = VariableKind.Local;
+
+                        if (CurrentCodeBlockBuilder.CodeBlockOwner is TypeDefinitionNode)
+                            variableKind = VariableKind.Field;
+
                         Specific.HandleVariableDeclaration(
                             (TypeClauseNode)NodeRecent,
-                            identifierToken);
+                            identifierToken,
+                            variableKind);
 
                         return;
                     }
                 }
                 else if (TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
                 {
-                    Specific.HandlePropertyDefinition(
+                    Specific.HandleVariableDeclaration(
                         (TypeClauseNode)NodeRecent,
-                        identifierToken);
+                        identifierToken,
+                        VariableKind.Property);
 
                     return;
                 }
@@ -256,7 +288,13 @@ public partial class CSharpParser : IParser
             if (localNodeRecent is not IExpressionNode leftExpressionNode)
                 throw new NotImplementedException();
 
-            IExpressionNode rightExpressionNode = Specific.HandleExpression(new[] { SyntaxKind.CloseParenthesisToken });
+            var rightExpressionNode = Specific.HandleExpression(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
 
             var binaryOperatorNode = Binder.BindBinaryOperatorNode(
                 leftExpressionNode,
@@ -290,24 +328,13 @@ public partial class CSharpParser : IParser
 
         public void ParseMinusToken(MinusToken minusToken)
         {
-            var localNodeRecent = NodeRecent;
-
-            if (localNodeRecent is not IExpressionNode leftExpressionNode)
-                throw new NotImplementedException();
-
-            IExpressionNode rightExpressionNode = Specific.HandleExpression(new[] { SyntaxKind.CloseParenthesisToken });
-
-            var binaryExpressionNode = Binder.BindBinaryOperatorNode(
-                leftExpressionNode,
-                minusToken,
-                rightExpressionNode);
-
-            var boundBinaryExpressionNode = new BinaryExpressionNode(
-                leftExpressionNode,
-                binaryExpressionNode,
-                rightExpressionNode);
-
-            NodeRecent = boundBinaryExpressionNode;
+            Specific.HandleExpression(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
         }
 
         public void ParseStarToken(StarToken starToken)
@@ -330,7 +357,8 @@ public partial class CSharpParser : IParser
 
             if (matchedToken.SyntaxKind == SyntaxKind.NumericLiteralToken)
             {
-                rightLiteralExpressionNode = ParseNumericLiteralToken((NumericLiteralToken)matchedToken);
+                return;
+                // rightLiteralExpressionNode = ParseNumericLiteralToken((NumericLiteralToken)matchedToken);
             }
             else
             {
@@ -339,29 +367,32 @@ public partial class CSharpParser : IParser
                 return;
             }
 
-            var binaryExpressionNode = Binder.BindBinaryOperatorNode(
+            var binaryOperatorNode = Binder.BindBinaryOperatorNode(
                 leftLiteralExpressionNode,
                 starToken,
                 rightLiteralExpressionNode);
 
-            var boundBinaryExpressionNode = new BinaryExpressionNode(
+            var binaryExpressionNode = new BinaryExpressionNode(
                 leftLiteralExpressionNode,
-                binaryExpressionNode,
+                binaryOperatorNode,
                 rightLiteralExpressionNode);
 
-            NodeRecent = boundBinaryExpressionNode;
+            NodeRecent = binaryExpressionNode;
         }
 
         public void ParseDollarSignToken(DollarSignToken dollarSignToken)
         {
-            if (TokenWalker.Current.SyntaxKind == SyntaxKind.StringLiteralToken)
-            {
-                var stringLiteralToken = TokenWalker.Consume();
+            TokenWalker.Backtrack();
 
-                NodeRecent = ParseStringLiteralToken((StringLiteralToken)stringLiteralToken);
+            var completeExpression = Specific.HandleExpression(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
 
-                Binder.BindStringInterpolationExpression(dollarSignToken);
-            }
+            CurrentCodeBlockBuilder.ChildBag.Add(completeExpression);
         }
 
         public void ParseColonToken(ColonToken colonToken)
@@ -446,6 +477,26 @@ public partial class CSharpParser : IParser
                     closureCurrentCodeBlockBuilder.ChildBag.Add(functionDefinitionNode);
                 });
             }
+            else if (NodeRecent is not null && NodeRecent.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
+            {
+                var constructorDefinitionNode = (ConstructorDefinitionNode)NodeRecent;
+                nextCodeBlockOwner = constructorDefinitionNode;
+
+                scopeReturnTypeClauseNode = constructorDefinitionNode.ReturnTypeClauseNode;
+
+                _parser._finalizeCodeBlockNodeActionStack.Push(codeBlockNode =>
+                {
+                    constructorDefinitionNode = new ConstructorDefinitionNode(
+                        constructorDefinitionNode.ReturnTypeClauseNode,
+                        constructorDefinitionNode.FunctionIdentifier,
+                        constructorDefinitionNode.GenericArgumentsListingNode,
+                        constructorDefinitionNode.FunctionArgumentsListingNode,
+                        codeBlockNode,
+                        constructorDefinitionNode.ConstraintNode);
+
+                    closureCurrentCodeBlockBuilder.ChildBag.Add(constructorDefinitionNode);
+                });
+            }
             else if (NodeRecent is not null && NodeRecent.SyntaxKind == SyntaxKind.IfStatementNode)
             {
                 var ifStatementNode = (IfStatementNode)NodeRecent;
@@ -498,17 +549,28 @@ public partial class CSharpParser : IParser
 
         public void ParseOpenParenthesisToken(OpenParenthesisToken openParenthesisToken)
         {
-            // Presumption: One only arrives at this method when in context of an expression. (2023-09-05)
-            // Reason: INPUT -> "(6)" THEN -> main while loop would invoke this.
-            // Whereas: INPUT -> "SomeMethod()" -> main while loop parses an identifier which then handles a method invocation. This therefore never invoked 'ParseOpenParenthesisToken'
+            TokenWalker.Backtrack();
 
-            var parenthesizedExpressionNode = new ParenthesizedExpressionNode(
-                openParenthesisToken,
+            var parenthesizedExpression = Specific.HandleExpression(
+                null,
+                null,
+                null,
+                null,
                 null,
                 null);
 
-            parenthesizedExpressionNode = Specific.HandleParenthesizedExpression(parenthesizedExpressionNode);
-            NodeRecent = parenthesizedExpressionNode;
+            // Example: (3 + 4) * 3
+            //
+            // Complete expression would be binary multiplication.
+            var completeExpression = Specific.HandleExpression(
+                parenthesizedExpression,
+                parenthesizedExpression,
+                null,
+                null,
+                null,
+                null);
+
+            CurrentCodeBlockBuilder.ChildBag.Add(completeExpression);
         }
 
         public void ParseCloseParenthesisToken(CloseParenthesisToken closeParenthesisToken)

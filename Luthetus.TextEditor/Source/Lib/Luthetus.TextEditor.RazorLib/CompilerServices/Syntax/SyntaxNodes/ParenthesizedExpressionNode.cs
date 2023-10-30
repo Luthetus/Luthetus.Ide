@@ -20,10 +20,8 @@ public sealed record ParenthesizedExpressionNode : IExpressionNode
             OpenParenthesisToken,
             InnerExpression,
             CloseParenthesisToken,
+            TypeClauseNode,
         };
-
-        if (TypeClauseNode is not null)
-            children.Add(TypeClauseNode);
 
         ChildBag = children.ToImmutableArray();
     }

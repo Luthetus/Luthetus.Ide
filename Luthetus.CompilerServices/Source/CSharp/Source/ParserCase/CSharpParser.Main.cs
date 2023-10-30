@@ -21,6 +21,7 @@ public partial class CSharpParser : IParser
     private readonly GeneralApi _general;
     private readonly SpecificApi _specific;
     private readonly UtilityApi _utility;
+    private readonly Stack<ISyntax> _expressionStack = new();
 
     public CSharpParser(CSharpLexer lexer)
     {
@@ -133,7 +134,6 @@ public partial class CSharpParser : IParser
                 case SyntaxKind.EndOfFileToken:
                     if (_nodeRecent is IExpressionNode)
                     {
-                        _currentCodeBlockBuilder.IsExpression = true;
                         _currentCodeBlockBuilder.ChildBag.Add(_nodeRecent);
                     }
                     break;

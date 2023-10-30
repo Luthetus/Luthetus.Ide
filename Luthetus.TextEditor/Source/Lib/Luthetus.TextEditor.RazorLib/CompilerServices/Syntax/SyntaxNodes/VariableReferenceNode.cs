@@ -8,7 +8,7 @@ public sealed record VariableReferenceNode : IExpressionNode
 {
     public VariableReferenceNode(
         IdentifierToken variableIdentifierToken,
-        VariableDeclarationStatementNode variableDeclarationStatementNode)
+        VariableDeclarationNode variableDeclarationStatementNode)
     {
         VariableIdentifierToken = variableIdentifierToken;
         VariableDeclarationStatementNode = variableDeclarationStatementNode;
@@ -24,7 +24,7 @@ public sealed record VariableReferenceNode : IExpressionNode
     /// <summary>
     /// The <see cref="VariableDeclarationStatementNode"/> is null when the variable is undeclared
     /// </summary>
-    public VariableDeclarationStatementNode VariableDeclarationStatementNode { get; }
+    public VariableDeclarationNode VariableDeclarationStatementNode { get; }
     public TypeClauseNode TypeClauseNode => VariableDeclarationStatementNode.TypeClauseNode;
 
     public ImmutableArray<ISyntax> ChildBag { get; }

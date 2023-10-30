@@ -45,6 +45,17 @@
                 </span>
             </text>
             break;
+        case "FieldSymbol":
+            <text>
+                <span class="luth_te_keyword">
+                    field
+                </span>
+
+                <span class="@(string.Empty /* Fields do not have their own css class as of (2023-07-20) */)">
+                    @Symbol.TextSpan.GetText()
+                </span>
+            </text>
+            break;
         case "PropertySymbol":
             <text>
                 <span class="luth_te_keyword">

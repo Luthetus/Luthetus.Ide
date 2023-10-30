@@ -1,6 +1,8 @@
 ﻿using Luthetus.CompilerServices.Lang.CSharp.EvaluatorCase;
 using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
 using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basics;
@@ -112,6 +114,15 @@ public partial class EvaluatorTests
         lexer.Lex();
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
+
+        var topCodeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
+
+        var parenthesizedExpressionNode = (ParenthesizedExpressionNode)topCodeBlockNode.ChildBag.Single();
+        Assert.Equal(SyntaxKind.ParenthesizedExpressionNode, parenthesizedExpressionNode.SyntaxKind);
+
+        var literalExpressionNode = (LiteralExpressionNode)parenthesizedExpressionNode.InnerExpression;
+        Assert.Equal(SyntaxKind.LiteralExpressionNode, literalExpressionNode.SyntaxKind);
+
         var evaluator = new CSharpEvaluator(compilationUnit, sourceText);
         var evaluatorResult = evaluator.Evaluate();
 
@@ -196,6 +207,99 @@ public partial class EvaluatorTests
     }
     
     [Fact]
+    public void EVALUATE_Numeric_Parenthesized_Binary_Recursive_WITH_Parenthesis_Precedence_Impacting()
+    {
+        // ----------------------
+        // (x + y) * z:
+        //
+        //          *
+        //        /   \
+        //      ( )     z
+        //       |
+        //       +
+        //      / \
+        //     x   y  
+        // ----------------------
+
+        var x = 3;
+        var y = 7;
+        var z = 5;
+        string sourceText = $"({x} + {y}) * {z}".ReplaceLineEndings("\n");
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+
+        var topCodeBlock = compilationUnit.TopLevelStatementsCodeBlockNode;
+
+        var completeBinaryExpression = (BinaryExpressionNode)topCodeBlock.ChildBag.Single();
+
+        var parenthesizedExpressionNode = (ParenthesizedExpressionNode)completeBinaryExpression.LeftExpressionNode;
+        var innerBinaryExpression = (BinaryExpressionNode)parenthesizedExpressionNode.InnerExpression;
+        Assert.NotNull(innerBinaryExpression);
+
+        var rightLiteralExpressionNode = (LiteralExpressionNode)completeBinaryExpression.RightExpressionNode;
+        Assert.NotNull(rightLiteralExpressionNode);
+
+        var evaluator = new CSharpEvaluator(compilationUnit, sourceText);
+        var evaluatorResult = evaluator.Evaluate();
+
+        Assert.Equal(typeof(int), evaluatorResult.Type);
+        Assert.Equal((x + y) * z, evaluatorResult.Result);
+    }
+    
+    [Fact]
+    public void EVALUATE_Numeric_Parenthesized_Binary_Recursive_WITH_Parenthesis_Precedence_NOT_Impacting()
+    {
+        // The name of this test has the wording "WITH_Parenthesis_Precedence_NOT_Impacting".
+        //
+        // The reason is because with or without the parenthesis, the multiplication operand would result
+        // in the multiplication step being performed prior to the addition step.
+
+        // ----------------------
+        // x + (y * z):
+        //
+        //          +
+        //        /   \
+        //       x    ( )
+        //             |
+        //             *
+        //            / \
+        //           y   z  
+        // ----------------------
+
+        var x = 3;
+        var y = 7;
+        var z = 5;
+        string sourceText = $"{x} + ({y} * {z})".ReplaceLineEndings("\n");
+        var resourceUri = new ResourceUri(string.Empty);
+
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+
+        var topCodeBlock = compilationUnit.TopLevelStatementsCodeBlockNode;
+
+        var completeBinaryExpression = (BinaryExpressionNode)topCodeBlock.ChildBag.Single();
+
+        var leftLiteralExpressionNode = (LiteralExpressionNode)completeBinaryExpression.LeftExpressionNode;
+        Assert.NotNull(leftLiteralExpressionNode);
+
+        var parenthesizedExpressionNode = (ParenthesizedExpressionNode)completeBinaryExpression.RightExpressionNode;
+        var innerBinaryExpression = (BinaryExpressionNode)parenthesizedExpressionNode.InnerExpression;
+        Assert.NotNull(innerBinaryExpression);
+
+        var evaluator = new CSharpEvaluator(compilationUnit, sourceText);
+        var evaluatorResult = evaluator.Evaluate();
+
+        Assert.Equal(typeof(int), evaluatorResult.Type);
+        Assert.Equal(x + (y * z), evaluatorResult.Result);
+    }
+    
+    [Fact]
     public void EVALUATE_Numeric_Binary_Recursive()
     {
         // Perhaps SHOULD_EVALUATE_NUMERIC_BINARY_EXPRESSION_RECURSION is a bad
@@ -203,34 +307,16 @@ public partial class EvaluatorTests
         //
         // This test is for when a numeric binary expression has either its 
         // left or right expression being itself another binary expression.
-
-        // {x} - {y}:
         //
-        //               -
-        //             /   \
-        //            x     y
         // ----------------------
-        // {x} - {y} + {z}: (this is what incorrectly is occurring)
+        // x - y + z:
         //
-        //               -
-        //             /   \
-        //            x     +
-        //                 / \
-        //                y   z
+        //          +
+        //        /   \
+        //       -     z
+        //      / \
+        //     x   y  
         // ----------------------
-        // {x} - {y} + {z}: (Is this what it should be instead?)
-        //
-        //               +
-        //             /   \
-        //            -     z
-        //           / \
-        //          x   y  
-        //                
-        // ----------------------
-        // 
-        // The code is currently incorrectly in a sense making y + 2 parenthesized,
-        // as if the input looked like: {x} - ({y} + {z}) and I'm therefore incorrectly
-        // getting -9 as the result instead of 1.
 
         var x = 3;
         var y = 7;
@@ -252,35 +338,15 @@ public partial class EvaluatorTests
     [Fact]
     public void EVALUATE_Numeric_Binary_WITH_Operator_Precedence_Impacting()
     {
-        // {x} - {y}:
-        //
-        //               -
-        //             /   \
-        //            x     y
-        // ----------------------
+        // ------------------
         // {x} - {y} * {z}:
         //
-        //               -
-        //             /   \
-        //            x     *
-        //                 / \
-        //                y   z
-        // ----------------------
-        //
-        // 
-        // TODO: I'm getting the correct evaluation of '-32' but
-        //       I'm pretty sure its because I didn't pick input
-        //       that actually has the tree changed by operator precedence?
-        //
-        //       Maybe I need another variable involed?
-        //       I also think I never set _nodeRecent = {x} - {y}
-        //       Therefore _nodeRecent was {y}? I'm not sure
-        //
-        //       The only reason this test passes, is because I wrote
-        //       something wrong. I never added operator precedence yet.
-        //       I wrote this unit test because I just now was going to add it.
-        //       (2023-09-05).
-
+        //        -
+        //      /   \
+        //     x     *
+        //          / \
+        //         y   z
+        // ------------------
 
         var x = 3;
         var y = 7;
@@ -302,6 +368,16 @@ public partial class EvaluatorTests
     [Fact]
     public void EVALUATE_Numeric_Binary_WITH_Operator_Precedence_NOT_Impacting()
     {
+        // ------------------
+        // {x} * {y} - {z}:
+        //
+        //        -
+        //      /   \
+        //     *     z
+        //    / \   
+        //   x   y   
+        // ------------------
+
         var x = 3;
         var y = 7;
         var z = 5;

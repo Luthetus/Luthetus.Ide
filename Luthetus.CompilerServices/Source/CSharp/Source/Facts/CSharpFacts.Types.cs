@@ -6,7 +6,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.Facts;
 
-public partial class CSharpLanguageFacts
+public partial class CSharpFacts
 {
     public class Types
     {

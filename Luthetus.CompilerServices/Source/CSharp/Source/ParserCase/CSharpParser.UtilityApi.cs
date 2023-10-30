@@ -5,7 +5,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using static Luthetus.CompilerServices.Lang.CSharp.Facts.CSharpLanguageFacts;
+using static Luthetus.CompilerServices.Lang.CSharp.Facts.CSharpFacts;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 
@@ -162,6 +162,43 @@ public partial class CSharpParser : IParser
                     return true;
                 default:
                     return false;
+            }
+        }
+        
+        /// <summary>
+        /// public, private, protected, internal, ....
+        /// </summary>
+        public bool IsAccessibilitySyntaxKind(SyntaxKind syntaxKind)
+        {
+            switch (syntaxKind)
+            {
+                case SyntaxKind.PublicTokenKeyword:
+                case SyntaxKind.PrivateTokenKeyword:
+                case SyntaxKind.ProtectedTokenKeyword:
+                case SyntaxKind.InternalTokenKeyword:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+        
+        /// <summary>
+        /// The value '0' is returned if the provided <see cref="SyntaxKind"/> was not an operator.
+        /// </summary>
+        public int GetOperatorPrecedence(SyntaxKind syntaxKind)
+        {
+            switch (syntaxKind)
+            {
+                case SyntaxKind.PlusToken:
+                case SyntaxKind.MinusToken:
+                    return 1;
+                case SyntaxKind.StarToken:
+                case SyntaxKind.DivisionToken:
+                    return 2;
+                case SyntaxKind.ParenthesizedExpressionNode:
+                    return 3;
+                default:
+                    return 0;
             }
         }
     }

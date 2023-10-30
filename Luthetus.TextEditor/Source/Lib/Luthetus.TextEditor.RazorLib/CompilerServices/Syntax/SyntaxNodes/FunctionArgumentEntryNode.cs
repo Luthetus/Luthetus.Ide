@@ -5,7 +5,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 public sealed record FunctionArgumentEntryNode : ISyntaxNode
 {
     public FunctionArgumentEntryNode(
-        VariableDeclarationStatementNode variableDeclarationStatementNode,
+        VariableDeclarationNode variableDeclarationStatementNode,
         bool isOptional,
         bool hasOutKeyword,
         bool hasInKeyword,
@@ -25,7 +25,7 @@ public sealed record FunctionArgumentEntryNode : ISyntaxNode
         ChildBag = children.ToImmutableArray();
     }
 
-    public VariableDeclarationStatementNode VariableDeclarationStatementNode { get; }
+    public VariableDeclarationNode VariableDeclarationStatementNode { get; }
     public bool IsOptional { get; }
     public bool HasOutKeyword { get; }
     public bool HasInKeyword { get; }
