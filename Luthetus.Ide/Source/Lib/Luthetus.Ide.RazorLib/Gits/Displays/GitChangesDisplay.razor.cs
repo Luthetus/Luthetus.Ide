@@ -38,7 +38,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                     ExtensionNoPeriodFacts.TXT,
                     BeforeResourceUri,
                     DateTime.UtcNow,
-                    string.Empty,
+                    "BHDEFCK",
                     "Before");
 
                 TextEditorService.ViewModel.Register(
@@ -54,7 +54,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                     ExtensionNoPeriodFacts.TXT,
                     AfterResourceUri,
                     DateTime.UtcNow,
-                    string.Empty,
+                    "ABCDEFK",
                     "After");
 
                 TextEditorService.ViewModel.Register(
