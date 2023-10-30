@@ -958,13 +958,107 @@ public partial class CSharpParser : IParser
                     TokenWalker.Backtrack();
                     break;
                 }
-                else
-                {
-                    ExpressionDelimiter? closeExtraExpressionDelimiterEncountered = extraExpressionDeliminaters
-                        ?.FirstOrDefault(x => x.CloseSyntaxKind == tokenCurrent.SyntaxKind);
 
-                    if (tokenCurrent.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+                ExpressionDelimiter? closeExtraExpressionDelimiterEncountered = 
+                    extraExpressionDeliminaters?.FirstOrDefault(x => x.CloseSyntaxKind == tokenCurrent.SyntaxKind);
+
+                if (tokenCurrent.SyntaxKind == SyntaxKind.CloseParenthesisToken && closeExtraExpressionDelimiterEncountered?.OpenSyntaxToken is not null)
+                {
+                    ParenthesizedExpressionNode parenthesizedExpression;
+
+                    if (previousInvocationExpressionNode is not null)
                     {
+                        parenthesizedExpression = new ParenthesizedExpressionNode(
+                            (OpenParenthesisToken)closeExtraExpressionDelimiterEncountered.OpenSyntaxToken,
+                            previousInvocationExpressionNode,
+                            (CloseParenthesisToken)tokenCurrent);
+                    }
+                    else
+                    {
+                        parenthesizedExpression = new ParenthesizedExpressionNode(
+                            (OpenParenthesisToken)closeExtraExpressionDelimiterEncountered.OpenSyntaxToken,
+                            new IdempotentExpressionNode(CSharpFacts.Types.Void.ToTypeClause()),
+                            (CloseParenthesisToken)tokenCurrent);
+                    }
+
+                    return parenthesizedExpression;
+                }
+
+                switch (tokenCurrent.SyntaxKind)
+                {
+                    case SyntaxKind.NumericLiteralToken:
+
+                        var numericLiteralExpressionNode = new LiteralExpressionNode(tokenCurrent, CSharpFacts.Types.Int.ToTypeClause());
+
+                        previousInvocationExpressionNode = numericLiteralExpressionNode;
+
+                        if (topMostExpressionNode is null)
+                            topMostExpressionNode = numericLiteralExpressionNode;
+                        else if (leftExpressionNode is null)
+                            leftExpressionNode = numericLiteralExpressionNode;
+                        else if (rightExpressionNode is null)
+                            rightExpressionNode = numericLiteralExpressionNode;
+                        else
+                            throw new ApplicationException("TODO: Why would this occur?");
+
+                        break;
+                    case SyntaxKind.StringLiteralToken:
+                        var stringLiteralExpressionNode = new LiteralExpressionNode(tokenCurrent, CSharpFacts.Types.String.ToTypeClause());
+
+                        previousInvocationExpressionNode = stringLiteralExpressionNode;
+
+                        if (topMostExpressionNode is null)
+                            topMostExpressionNode = stringLiteralExpressionNode;
+                        else if (leftExpressionNode is null)
+                            leftExpressionNode = stringLiteralExpressionNode;
+                        else if (rightExpressionNode is null)
+                            rightExpressionNode = stringLiteralExpressionNode;
+                        else
+                            throw new ApplicationException("TODO: Why would this occur?");
+
+                        break;
+                    case SyntaxKind.PlusToken:
+                    case SyntaxKind.MinusToken:
+                    case SyntaxKind.StarToken:
+                    case SyntaxKind.DivisionToken:
+                        if (leftExpressionNode is null && previousInvocationExpressionNode is not null)
+                            leftExpressionNode = previousInvocationExpressionNode;
+
+                        if (previousInvocationExpressionNode is BinaryExpressionNode previousBinaryExpressionNode)
+                        {
+                            var previousOperatorPrecedence = Utility.GetOperatorPrecedence(previousBinaryExpressionNode.BinaryOperatorNode.OperatorToken.SyntaxKind);
+                            var currentOperatorPrecedence = Utility.GetOperatorPrecedence(tokenCurrent.SyntaxKind);
+
+                            if (currentOperatorPrecedence > previousOperatorPrecedence)
+                            {
+                                // Take the right node from the previous expression.
+                                // Make it the new expression's left node.
+                                //
+                                // Then replace the previous expression's right node with the
+                                // newly formed expression.
+
+                                var modifiedRightExpressionNode = HandleExpression(
+                                    topMostExpressionNode,
+                                    null,
+                                    previousBinaryExpressionNode.RightExpressionNode,
+                                    tokenCurrent,
+                                    null,
+                                    extraExpressionDeliminaters);
+
+                                topMostExpressionNode = new BinaryExpressionNode(
+                                    previousBinaryExpressionNode.LeftExpressionNode,
+                                    previousBinaryExpressionNode.BinaryOperatorNode,
+                                    modifiedRightExpressionNode);
+                            }
+                        }
+
+                        if (operatorToken is null)
+                            operatorToken = tokenCurrent;
+                        else
+                            throw new ApplicationException("TODO: Why would this occur?");
+
+                        break;
+                    case SyntaxKind.OpenParenthesisToken:
                         var copyExtraExpressionDeliminaters = new List<ExpressionDelimiter>(extraExpressionDeliminaters ?? Array.Empty<ExpressionDelimiter>());
 
                         copyExtraExpressionDeliminaters.Insert(0, new ExpressionDelimiter(
@@ -991,156 +1085,46 @@ public partial class CSharpParser : IParser
                             rightExpressionNode = parenthesizedExpression;
                         else
                             throw new ApplicationException("TODO: Why would this occur?");
-
-                        break;
-                    }
-                    else if (closeExtraExpressionDelimiterEncountered is not null)
-                    {
-                        if (tokenCurrent.SyntaxKind == SyntaxKind.CloseParenthesisToken &&
-                            closeExtraExpressionDelimiterEncountered.OpenSyntaxToken is not null) 
+                            break;
+                    default:
+                        if (tokenCurrent.SyntaxKind == SyntaxKind.DollarSignToken)
                         {
-                            ParenthesizedExpressionNode parenthesizedExpression;
-                            
-                            if (previousInvocationExpressionNode is not null)
-                            {
-                                parenthesizedExpression = new ParenthesizedExpressionNode(
-                                    (OpenParenthesisToken)closeExtraExpressionDelimiterEncountered.OpenSyntaxToken,
-                                    previousInvocationExpressionNode,
-                                    (CloseParenthesisToken)tokenCurrent);
-                            }
-                            else
-                            {
-                                parenthesizedExpression = new ParenthesizedExpressionNode(
-                                    (OpenParenthesisToken)closeExtraExpressionDelimiterEncountered.OpenSyntaxToken,
-                                    new IdempotentExpressionNode(CSharpFacts.Types.Void.ToTypeClause()),
-                                    (CloseParenthesisToken)tokenCurrent);
-                            }
+                            // TODO: Convert DollarSignToken to a function signature...
+                            // ...Then read in the parameters...
+                            // ...Any function invocation logic also would be done here
 
-                            return parenthesizedExpression;
+                            Binder.BindStringInterpolationExpression((DollarSignToken)tokenCurrent);
                         }
 
                         break;
-                    }
-                    else
-                    {
-                        switch (tokenCurrent.SyntaxKind)
-                        {
-                            case SyntaxKind.NumericLiteralToken:
+                }
 
-                                var numericLiteralExpressionNode = new LiteralExpressionNode(tokenCurrent, CSharpFacts.Types.Int.ToTypeClause());
+                if (leftExpressionNode is not null && operatorToken is not null && rightExpressionNode is not null)
+                {
+                    var binaryOperatorNode = Binder.BindBinaryOperatorNode(
+                        leftExpressionNode,
+                        operatorToken,
+                        rightExpressionNode);
 
-                                previousInvocationExpressionNode = numericLiteralExpressionNode;
+                    var binaryExpressionNode = new BinaryExpressionNode(
+                        leftExpressionNode,
+                        binaryOperatorNode,
+                        rightExpressionNode);
 
-                                if (topMostExpressionNode is null)
-                                    topMostExpressionNode = numericLiteralExpressionNode;
-                                else if (leftExpressionNode is null)
-                                    leftExpressionNode = numericLiteralExpressionNode;
-                                else if (rightExpressionNode is null)
-                                    rightExpressionNode = numericLiteralExpressionNode;
-                                else
-                                    throw new ApplicationException("TODO: Why would this occur?");
+                    topMostExpressionNode = binaryExpressionNode;
+                    previousInvocationExpressionNode = binaryExpressionNode;
 
-                                break;
-                            case SyntaxKind.StringLiteralToken:
-                                var stringLiteralExpressionNode = new LiteralExpressionNode(tokenCurrent, CSharpFacts.Types.String.ToTypeClause());
+                    leftExpressionNode = null;
+                    operatorToken = null;
+                    rightExpressionNode = null;
 
-                                previousInvocationExpressionNode = stringLiteralExpressionNode;
-
-                                if (topMostExpressionNode is null)
-                                    topMostExpressionNode = stringLiteralExpressionNode;
-                                else if (leftExpressionNode is null)
-                                    leftExpressionNode = stringLiteralExpressionNode;
-                                else if (rightExpressionNode is null)
-                                    rightExpressionNode = stringLiteralExpressionNode;
-                                else
-                                    throw new ApplicationException("TODO: Why would this occur?");
-
-                                break;
-                            case SyntaxKind.PlusToken:
-                            case SyntaxKind.MinusToken:
-                            case SyntaxKind.StarToken:
-                            case SyntaxKind.DivisionToken:
-                                if (leftExpressionNode is null && previousInvocationExpressionNode is not null)
-                                    leftExpressionNode = previousInvocationExpressionNode;
-
-                                if (previousInvocationExpressionNode is BinaryExpressionNode previousBinaryExpressionNode)
-                                {
-                                    var previousOperatorPrecedence = Utility.GetOperatorPrecedence(previousBinaryExpressionNode.BinaryOperatorNode.OperatorToken.SyntaxKind);
-                                    var currentOperatorPrecedence = Utility.GetOperatorPrecedence(tokenCurrent.SyntaxKind);
-
-                                    if (currentOperatorPrecedence > previousOperatorPrecedence)
-                                    {
-                                        // Take the right node from the previous expression.
-                                        // Make it the new expression's left node.
-                                        //
-                                        // Then replace the previous expression's right node with the
-                                        // newly formed expression.
-
-                                        var modifiedRightExpressionNode = HandleExpression(
-                                            topMostExpressionNode,
-                                            null,
-                                            previousBinaryExpressionNode.RightExpressionNode,
-                                            tokenCurrent,
-                                            null,
-                                            extraExpressionDeliminaters);
-
-                                        topMostExpressionNode = new BinaryExpressionNode(
-                                            previousBinaryExpressionNode.LeftExpressionNode,
-                                            previousBinaryExpressionNode.BinaryOperatorNode,
-                                            modifiedRightExpressionNode);
-                                    }
-                                }
-
-                                if (operatorToken is null)
-                                    operatorToken = tokenCurrent;
-                                else
-                                    throw new ApplicationException("TODO: Why would this occur?");
-
-                                break;
-                            default:
-                                if (tokenCurrent.SyntaxKind == SyntaxKind.DollarSignToken)
-                                {
-                                    // TODO: Convert DollarSignToken to a function signature...
-                                    // ...Then read in the parameters...
-                                    // ...Any function invocation logic also would be done here
-
-                                    Binder.BindStringInterpolationExpression((DollarSignToken)tokenCurrent);
-                                }
-
-                                break;
-                        }
-
-                        if (leftExpressionNode is not null &&
-                            operatorToken is not null &&
-                            rightExpressionNode is not null)
-                        {
-                            var binaryOperatorNode = Binder.BindBinaryOperatorNode(
-                                leftExpressionNode,
-                                operatorToken,
-                                rightExpressionNode);
-
-                            var binaryExpressionNode = new BinaryExpressionNode(
-                                leftExpressionNode,
-                                binaryOperatorNode,
-                                rightExpressionNode);
-
-                            topMostExpressionNode = binaryExpressionNode;
-
-                            previousInvocationExpressionNode = binaryExpressionNode;
-
-                            leftExpressionNode = null;
-                            operatorToken = null;
-                            rightExpressionNode = null;
-
-                            return HandleExpression(
-                                topMostExpressionNode,
-                                previousInvocationExpressionNode,
-                                leftExpressionNode,
-                                operatorToken,
-                                rightExpressionNode,
-                                extraExpressionDeliminaters);
-                        }
-                    }
+                    return HandleExpression(
+                        topMostExpressionNode,
+                        previousInvocationExpressionNode,
+                        leftExpressionNode,
+                        operatorToken,
+                        rightExpressionNode,
+                        extraExpressionDeliminaters);
                 }
             }
 
