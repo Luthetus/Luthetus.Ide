@@ -792,6 +792,8 @@ public partial class CSharpParser : IParser
                 }
             }
 
+            // The expression logic will consume the CloseParenthesisToken, therefore backtrack once before matching
+            _ = TokenWalker.Backtrack();
             var closeParenthesisToken = (CloseParenthesisToken)TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 
             return new FunctionParametersListingNode(

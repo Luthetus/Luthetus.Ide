@@ -340,6 +340,7 @@ public class CSharpBinder : IBinder
                 variableDeclarationNode.VariableKind,
                 true);
 
+            // TODO: Replace hierarchically (current scope isn't correct, it might be a parent scope)
             _currentScope.VariableDeclarationMap[text] = variableDeclarationNode;
         }
         else
@@ -375,7 +376,7 @@ public class CSharpBinder : IBinder
 
         AddSymbolReference(functionSymbol);
 
-        if (_currentScope.FunctionDefinitionMap.TryGetValue(
+        if (TryGetFunctionHierarchically(
                 functionInvocationIdentifierText,
                 out var functionDefinitionNode) &&
             functionDefinitionNode is not null)
@@ -390,8 +391,7 @@ public class CSharpBinder : IBinder
         }
     }
 
-    public void BindNamespaceReference(
-        IdentifierToken namespaceIdentifierToken)
+    public void BindNamespaceReference(IdentifierToken namespaceIdentifierToken)
     {
         var namespaceSymbol = new NamespaceSymbol(namespaceIdentifierToken.TextSpan with
         {

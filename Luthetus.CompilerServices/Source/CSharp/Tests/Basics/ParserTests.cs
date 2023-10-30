@@ -144,22 +144,72 @@ public partial class ParserTests
         lexer.Lex();
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
+        var topCodeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
 
-        throw new NotImplementedException();
+        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlockNode.ChildBag.Single();
+        var typeBodyCodeBlockNode = (CodeBlockNode)typeDefinitionNode.ChildBag[1];
+
+        var fieldVariableDeclarationNode = (VariableDeclarationNode)typeBodyCodeBlockNode.ChildBag[0];
+        var fieldVariableAssignmentExpressionNode = (VariableAssignmentExpressionNode)typeBodyCodeBlockNode.ChildBag[1];
+        var functionDefinitionNode = (FunctionDefinitionNode)typeBodyCodeBlockNode.ChildBag[2];
+
+        Assert.Equal(VariableKind.Field, fieldVariableDeclarationNode.VariableKind);
+        Assert.False(fieldVariableDeclarationNode.HasGetter);
+        Assert.False(fieldVariableDeclarationNode.HasSetter);
+
+        Assert.NotNull(fieldVariableAssignmentExpressionNode);
+        Assert.NotNull(functionDefinitionNode.FunctionBodyCodeBlockNode);
+
+        var localVariableDeclarationNode = (VariableDeclarationNode)functionDefinitionNode.FunctionBodyCodeBlockNode.ChildBag[0];
+        var localVariableAssignmentExpressionNode = (VariableAssignmentExpressionNode)functionDefinitionNode.FunctionBodyCodeBlockNode.ChildBag[1];
+
+        Assert.NotNull(localVariableDeclarationNode);
+        Assert.NotNull(localVariableAssignmentExpressionNode);
+
+        var expressionNode = (BinaryExpressionNode)localVariableAssignmentExpressionNode.ExpressionNode;
+        Assert.Equal(SyntaxKind.LiteralExpressionNode, expressionNode.LeftExpressionNode.SyntaxKind);
+        Assert.Equal(SyntaxKind.PlusToken, expressionNode.BinaryOperatorNode.OperatorToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.VariableReferenceNode, expressionNode.RightExpressionNode.SyntaxKind);
+
+        // TODO: This test should be more comprehensive (2023-10-24)
     }
 
     [Fact]
     public void PARSE_FieldAssignment()
     {
-        string sourceText = $@"public class MyClass {{ private int _x = 17; public void MyMethod() {{ _x = 50; }} }}".ReplaceLineEndings("\n");
+        var variableIdentifier = "_x";
+        var sourceText = $@"public class MyClass {{ private int {variableIdentifier} = 17; public void MyMethod() {{ {variableIdentifier} = 50; }} }}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
+        var topCodeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
 
-        throw new NotImplementedException();
+        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlockNode.ChildBag.Single();
+        var typeBodyCodeBlockNode = (CodeBlockNode)typeDefinitionNode.ChildBag[1];
+
+        var fieldVariableDeclarationNode = (VariableDeclarationNode)typeBodyCodeBlockNode.ChildBag[0];
+        var fieldVariableAssignmentExpressionNode = (VariableAssignmentExpressionNode)typeBodyCodeBlockNode.ChildBag[1];
+        var functionDefinitionNode = (FunctionDefinitionNode)typeBodyCodeBlockNode.ChildBag[2];
+
+        Assert.Equal(VariableKind.Field, fieldVariableDeclarationNode.VariableKind);
+        Assert.False(fieldVariableDeclarationNode.HasGetter);
+        Assert.False(fieldVariableDeclarationNode.HasSetter);
+
+        Assert.NotNull(fieldVariableAssignmentExpressionNode);
+        Assert.NotNull(functionDefinitionNode.FunctionBodyCodeBlockNode);
+
+        var localVariableAssignmentExpressionNode = (VariableAssignmentExpressionNode)functionDefinitionNode.FunctionBodyCodeBlockNode.ChildBag.Single();
+
+        Assert.NotNull(localVariableAssignmentExpressionNode);
+
+        Assert.Equal(variableIdentifier, localVariableAssignmentExpressionNode.VariableIdentifierToken.TextSpan.GetText());
+        var literalExpressionNode = (LiteralExpressionNode)localVariableAssignmentExpressionNode.ExpressionNode;
+        Assert.NotNull(literalExpressionNode);
+
+        // TODO: This test should be more comprehensive (2023-10-24)
     }
 
     [Fact]
@@ -303,21 +353,56 @@ public partial class ParserTests
         Assert.True(variableDeclarationNode.HasSetter);
         Assert.True(variableDeclarationNode.HasGetter);
 
-        var aaa = 2;
+        Assert.NotNull(functionDefinitionNode.FunctionBodyCodeBlockNode);
+
+        var localVariableDeclarationNode = (VariableDeclarationNode)functionDefinitionNode.FunctionBodyCodeBlockNode.ChildBag[0];
+        var localVariableAssignmentExpressionNode = (VariableAssignmentExpressionNode)functionDefinitionNode.FunctionBodyCodeBlockNode.ChildBag[1];
+
+        Assert.NotNull(localVariableDeclarationNode);
+        Assert.NotNull(localVariableAssignmentExpressionNode);
+
+        var expressionNode = (BinaryExpressionNode)localVariableAssignmentExpressionNode.ExpressionNode;
+        Assert.Equal(SyntaxKind.LiteralExpressionNode, expressionNode.LeftExpressionNode.SyntaxKind);
+        Assert.Equal(SyntaxKind.PlusToken, expressionNode.BinaryOperatorNode.OperatorToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.VariableReferenceNode, expressionNode.RightExpressionNode.SyntaxKind);
+
+        // TODO: This test should be more comprehensive (2023-10-24)
     }
 
     [Fact]
     public void PARSE_PropertyAssignment()
     {
-        string sourceText = $@"public class MyClass {{ private int X {{ get; set; }} public void MyMethod() {{ X = 50; }} }}".ReplaceLineEndings("\n");
+        var variableIdentifier = "X";
+        var sourceText = $@"public class MyClass {{ private int {variableIdentifier} {{ get; set; }} public void MyMethod() {{ {variableIdentifier} = 50; }} }}".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri(string.Empty);
 
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
+        var topCodeBlockNode = compilationUnit.TopLevelStatementsCodeBlockNode;
 
-        throw new NotImplementedException();
+        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlockNode.ChildBag.Single();
+        var typeBodyCodeBlockNode = (CodeBlockNode)typeDefinitionNode.ChildBag[1];
+
+        var variableDeclarationNode = (VariableDeclarationNode)typeBodyCodeBlockNode.ChildBag[0];
+        var functionDefinitionNode = (FunctionDefinitionNode)typeBodyCodeBlockNode.ChildBag[1];
+
+        Assert.Equal(VariableKind.Property, variableDeclarationNode.VariableKind);
+        Assert.True(variableDeclarationNode.HasSetter);
+        Assert.True(variableDeclarationNode.HasGetter);
+
+        Assert.NotNull(functionDefinitionNode.FunctionBodyCodeBlockNode);
+
+        var localVariableAssignmentExpressionNode = (VariableAssignmentExpressionNode)functionDefinitionNode.FunctionBodyCodeBlockNode.ChildBag.Single();
+
+        Assert.NotNull(localVariableAssignmentExpressionNode);
+
+        Assert.Equal(variableIdentifier, localVariableAssignmentExpressionNode.VariableIdentifierToken.TextSpan.GetText());
+        var literalExpressionNode = (LiteralExpressionNode)localVariableAssignmentExpressionNode.ExpressionNode;
+        Assert.NotNull(literalExpressionNode);
+
+        // TODO: This test should be more comprehensive (2023-10-24)
     }
 
     [Fact]
