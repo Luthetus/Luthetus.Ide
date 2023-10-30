@@ -21,6 +21,7 @@ using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Commands;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Ide.RazorLib.Repls;
+using Luthetus.Ide.RazorLib.Gits.Displays;
 
 namespace Luthetus.Ide.RazorLib.Installations.Displays;
 
@@ -135,20 +136,18 @@ public partial class LuthetusIdeInitializer : ComponentBase
 
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(rightPanel.Key, compilerServiceExplorerPanelTab, false));
         
-        var cSharpReplPanelTab = new PanelTab(
+        var gitChangesPanelTab = new PanelTab(
             Key<PanelTab>.NewKey(),
             rightPanel.ElementDimensions,
             new(),
-            typeof(CSharpReplDisplay),
+            typeof(GitChangesDisplay),
             typeof(IconFolder),
-            "C# REPL")
+            "Git")
         {
-            ContextRecordKey = ContextFacts.CSharpReplContext.ContextKey
+            ContextRecordKey = ContextFacts.GitContext.ContextKey
         };
 
-        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(rightPanel.Key, cSharpReplPanelTab, false));
-        
-        Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(rightPanel.Key, cSharpReplPanelTab.Key));
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(rightPanel.Key, gitChangesPanelTab, false));
     }
 
     private void InitializeBottomPanelTabs()
