@@ -5,7 +5,7 @@ namespace Luthetus.CompilerServices.Lang.Xml.Html.ExtensionMethods;
 
 public static class StringWalkerExtensions
 {
-    public static bool CheckForInjectedLanguageCodeBlockTag(
+    public static bool AtInjectedLanguageCodeBlockTag(
         this StringWalker stringWalker,
         InjectedLanguageDefinition injectedLanguageDefinition)
     {

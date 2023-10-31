@@ -220,7 +220,7 @@ public class StringWalker
             _ = ReadCharacter();
         }
 
-        var numericLiteralTextSpan = new TextEditorTextSpan(startingPosition, this);
+        var numericLiteralTextSpan = new TextEditorTextSpan(startingPosition, this, 0);
         return new NumericLiteralToken(numericLiteralTextSpan);
     }
 

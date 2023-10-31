@@ -118,7 +118,7 @@ public partial class TerminalOutputDisplay : FluxorComponent
 
         if (indexOfHttp > 0)
         {
-            var firstSubstring = input.Substring(0, indexOfHttp);
+            var firstSubstring = input[..indexOfHttp];
             var httpBuilder = new StringBuilder();
             var position = indexOfHttp;
 
@@ -134,7 +134,7 @@ public partial class TerminalOutputDisplay : FluxorComponent
             var aTag = $"<a href=\"{httpBuilder}\" target=\"_blank\">{httpBuilder}</a>";
             var result = firstSubstring.EscapeHtml() + aTag;
 
-            if (position != input.Length - 1) result += input.Substring(position);
+            if (position != input.Length - 1) result += input[position..];
 
             outputBuilder.Append(result + "<br />");
         }
@@ -171,7 +171,7 @@ public partial class TerminalOutputDisplay : FluxorComponent
 
             var indexOfFirstWordEndingExclusive = text.IndexOfAny(whitespace);
 
-            var targetFileName = text.Substring(0, indexOfFirstWordEndingExclusive);
+            var targetFileName = text[..indexOfFirstWordEndingExclusive];
 
             if (targetFileName.StartsWith('.'))
             {
@@ -179,8 +179,7 @@ public partial class TerminalOutputDisplay : FluxorComponent
                     targetFileName;
             }
 
-            var arguments = text
-                .Substring(indexOfFirstWordEndingExclusive + 1)
+            var arguments = text[(indexOfFirstWordEndingExclusive + 1)..]
                 .Split(whitespace)
                 .Where(x => !string.IsNullOrWhiteSpace(x))
                 .ToArray();

@@ -61,7 +61,7 @@ public class DotNetSolutionLexer : ILexer
 
         _ = _stringWalker.ReadRange(LexSolutionFacts.Header.FORMAT_VERSION_START_TOKEN.Length);
 
-        var formatVersionTextSpan = new TextEditorTextSpan(startingPosition, _stringWalker);
+        var formatVersionTextSpan = new TextEditorTextSpan(startingPosition, _stringWalker, 0);
         _syntaxTokens.Add(new AssociatedNameToken(formatVersionTextSpan));
 
         _ = _stringWalker.ReadWhitespace();
@@ -78,7 +78,7 @@ public class DotNetSolutionLexer : ILexer
 
         _ = _stringWalker.ReadRange(LexSolutionFacts.Header.HASHTAG_VISUAL_STUDIO_VERSION_START_TOKEN.Length);
 
-        var vSVersionTextSpan = new TextEditorTextSpan(startingPosition, _stringWalker);
+        var vSVersionTextSpan = new TextEditorTextSpan(startingPosition, _stringWalker, 0);
         _syntaxTokens.Add(new AssociatedNameToken(vSVersionTextSpan));
 
         _ = _stringWalker.ReadWhitespace();
@@ -95,7 +95,7 @@ public class DotNetSolutionLexer : ILexer
 
         _ = _stringWalker.ReadRange(LexSolutionFacts.Header.EXACT_VISUAL_STUDIO_VERSION_START_TOKEN.Length);
 
-        var versionStringTextSpan = new TextEditorTextSpan(stringStartingPosition, _stringWalker);
+        var versionStringTextSpan = new TextEditorTextSpan(stringStartingPosition, _stringWalker, 0);
         _syntaxTokens.Add(new AssociatedNameToken(versionStringTextSpan));
 
         _ = _stringWalker.ReadWhitespace();
@@ -113,7 +113,7 @@ public class DotNetSolutionLexer : ILexer
             _ = _stringWalker.ReadCharacter();
         }
 
-        var versionTextSpan = new TextEditorTextSpan(versionIdentifierStartingPosition, _stringWalker);
+        var versionTextSpan = new TextEditorTextSpan(versionIdentifierStartingPosition, _stringWalker, 0);
         _syntaxTokens.Add(new AssociatedValueToken(versionTextSpan));
     }
 
@@ -123,7 +123,7 @@ public class DotNetSolutionLexer : ILexer
 
         _ = _stringWalker.ReadRange(LexSolutionFacts.Header.MINIMUM_VISUAL_STUDIO_VERSION_START_TOKEN.Length);
 
-        var versionStringTextSpan = new TextEditorTextSpan(stringStartingPosition, _stringWalker);
+        var versionStringTextSpan = new TextEditorTextSpan(stringStartingPosition, _stringWalker, 0);
         _syntaxTokens.Add(new AssociatedNameToken(versionStringTextSpan));
 
         _ = _stringWalker.ReadWhitespace();
@@ -141,7 +141,7 @@ public class DotNetSolutionLexer : ILexer
             _ = _stringWalker.ReadCharacter();
         }
 
-        var versionTextSpan = new TextEditorTextSpan(versionIdentifierStartingPosition, _stringWalker);
+        var versionTextSpan = new TextEditorTextSpan(versionIdentifierStartingPosition, _stringWalker, 0);
         _syntaxTokens.Add(new AssociatedValueToken(versionTextSpan));
     }
 
@@ -150,7 +150,7 @@ public class DotNetSolutionLexer : ILexer
         var startPosition = _stringWalker.PositionIndex;
         _ = _stringWalker.ReadRange(LexSolutionFacts.Project.PROJECT_DEFINITION_START_TOKEN.Length);
 
-        var textSpan = new TextEditorTextSpan(startPosition, _stringWalker);
+        var textSpan = new TextEditorTextSpan(startPosition, _stringWalker, 0);
         _syntaxTokens.Add(new OpenAssociatedGroupToken(textSpan));
 
         while (!_stringWalker.IsEof)
@@ -167,7 +167,7 @@ public class DotNetSolutionLexer : ILexer
                 startPosition = _stringWalker.PositionIndex;
                 _stringWalker.ReadRange(LexSolutionFacts.Project.PROJECT_DEFINITION_END_TOKEN.Length);
 
-                textSpan = new TextEditorTextSpan(startPosition, _stringWalker);
+                textSpan = new TextEditorTextSpan(startPosition, _stringWalker, 0);
                 _syntaxTokens.Add(new CloseAssociatedGroupToken(textSpan));
                 break;
             }
@@ -190,7 +190,7 @@ public class DotNetSolutionLexer : ILexer
 
         // "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
         //                                       ^
-        var guidTextSpan = new TextEditorTextSpan(startPosition, _stringWalker);
+        var guidTextSpan = new TextEditorTextSpan(startPosition, _stringWalker, 0);
 
         // guidTextSpan.GetText() == "FAE04EC0-301F-11D3-BF4B-00C04F79EFBC"
         _syntaxTokens.Add(new AssociatedValueToken(guidTextSpan));
@@ -215,7 +215,7 @@ public class DotNetSolutionLexer : ILexer
 
         // "ConsoleApp2"
         //             ^
-        var textSpan = new TextEditorTextSpan(startPosition, _stringWalker);
+        var textSpan = new TextEditorTextSpan(startPosition, _stringWalker, 0);
 
         // textSpan.GetText() == "ConsoleApp2"
         _syntaxTokens.Add(new AssociatedValueToken(textSpan));
@@ -231,7 +231,7 @@ public class DotNetSolutionLexer : ILexer
         var startPosition = _stringWalker.PositionIndex;
         _ = _stringWalker.ReadRange(LexSolutionFacts.Global.START_TOKEN.Length);
 
-        var textSpan = new TextEditorTextSpan(startPosition, _stringWalker);
+        var textSpan = new TextEditorTextSpan(startPosition, _stringWalker, 0);
         _syntaxTokens.Add(new OpenAssociatedGroupToken(textSpan));
 
         bool BreakPredicate() => _stringWalker.CheckForSubstring(LexSolutionFacts.Global.END_TOKEN);
@@ -243,7 +243,7 @@ public class DotNetSolutionLexer : ILexer
                 startPosition = _stringWalker.PositionIndex;
                 _stringWalker.ReadRange(LexSolutionFacts.Global.END_TOKEN.Length);
 
-                textSpan = new TextEditorTextSpan(startPosition, _stringWalker);
+                textSpan = new TextEditorTextSpan(startPosition, _stringWalker, 0);
                 _syntaxTokens.Add(new CloseAssociatedGroupToken(textSpan));
                 break;
             }
@@ -261,7 +261,7 @@ public class DotNetSolutionLexer : ILexer
         var startPosition = _stringWalker.PositionIndex;
         _ = _stringWalker.ReadRange(LexSolutionFacts.GlobalSection.START_TOKEN.Length);
 
-        var textSpan = new TextEditorTextSpan(startPosition, _stringWalker);
+        var textSpan = new TextEditorTextSpan(startPosition, _stringWalker, 0);
         _syntaxTokens.Add(new OpenAssociatedGroupToken(textSpan));
 
         bool BreakPredicate() => _stringWalker.CheckForSubstring(LexSolutionFacts.GlobalSection.END_TOKEN);
@@ -273,7 +273,7 @@ public class DotNetSolutionLexer : ILexer
                 startPosition = _stringWalker.PositionIndex;
                 _stringWalker.ReadRange(LexSolutionFacts.GlobalSection.END_TOKEN.Length);
 
-                textSpan = new TextEditorTextSpan(startPosition, _stringWalker);
+                textSpan = new TextEditorTextSpan(startPosition, _stringWalker, 0);
                 _syntaxTokens.Add(new CloseAssociatedGroupToken(textSpan));
                 break;
             }
@@ -287,7 +287,7 @@ public class DotNetSolutionLexer : ILexer
                 var globalSectionParameterStartPosition = _stringWalker.PositionIndex;
                 var globalSectionParameter = _stringWalker.ReadUntil(')');
 
-                textSpan = new TextEditorTextSpan(globalSectionParameterStartPosition, _stringWalker);
+                textSpan = new TextEditorTextSpan(globalSectionParameterStartPosition, _stringWalker, 0);
                 _syntaxTokens.Add(new AssociatedValueToken(textSpan));
 
                 // START_TOKEN_ORDER: 'preSolution' OR 'postSolution'
@@ -330,7 +330,7 @@ public class DotNetSolutionLexer : ILexer
 
             var nameTrailingWhitespaceCount = name.Length - nameNoWhitespace.Length;
 
-            var propertyNameTextSpan = new TextEditorTextSpan(propertyNameStartPosition, _stringWalker);
+            var propertyNameTextSpan = new TextEditorTextSpan(propertyNameStartPosition, _stringWalker, 0);
             propertyNameTextSpan = propertyNameTextSpan with
             {
                 EndingIndexExclusive = propertyNameTextSpan.EndingIndexExclusive - nameTrailingWhitespaceCount
@@ -351,7 +351,7 @@ public class DotNetSolutionLexer : ILexer
 
             var valueTrailingWhitespaceCount = value.Length - valueNoWhitespace.Length;
 
-            var propertyValueTextSpan = new TextEditorTextSpan(propertyValueStartPosition, _stringWalker);
+            var propertyValueTextSpan = new TextEditorTextSpan(propertyValueStartPosition, _stringWalker, 0);
 
             propertyValueTextSpan = propertyValueTextSpan with
             {

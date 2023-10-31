@@ -9,6 +9,9 @@ public static class SyntaxRepeatVim
 {
     public static bool TryLex(KeymapArgument keymapArgument, bool hasTextSelection, out VimGrammarToken? vimGrammarToken)
     {
+        // Suppress unused parameter warnings because these will likely be used once further Vim emulation is implemented.
+        _ = hasTextSelection;
+
         if (keymapArgument.Code is null)
         {
             vimGrammarToken = null;
