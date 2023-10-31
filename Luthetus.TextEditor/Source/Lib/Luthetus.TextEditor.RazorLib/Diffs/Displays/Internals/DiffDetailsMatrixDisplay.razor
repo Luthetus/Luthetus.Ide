@@ -1,6 +1,5 @@
 @{
     var localDiffResult = DiffResult;
-
     var longestTextLength = Math.Max(localDiffResult.InText.Length, localDiffResult.OutText.Length);
 }
 
@@ -33,10 +32,31 @@
 
             var titleString = $"{inCharacterString} -> {outCharacterString}";
 
-            <div class="luth_diff-details-visualization-cell"
+            var cell = localDiffResult.DiffMatrix[inIndex, outIndex];
+
+            var cssClassString = string.Empty;
+
+            if (cell.IsSourceOfRowWeight)
+                cssClassString = "luth_active";
+
+            <div class="luth_diff-details-visualization-cell @cssClassString"
                  style="@cssStyleString"
                  title="@titleString">
-                ~
+
+                @{
+                    string cellWeightText;
+
+                    if (cell.Weight > 9)
+                    {
+                        cellWeightText = ">9";
+                    }
+                    else
+                    {
+                        cellWeightText = cell.Weight.ToString();
+                    }
+                }
+                
+                @cellWeightText
             </div>
         }
     }
