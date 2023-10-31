@@ -63,36 +63,25 @@ public class TextEditorDiffResult
             {
                 char outCharValue = outText[outIndex];
 
-                var cellSourceWeight = GetCellSourceWeight(
-                    diffMatrix,
-                    inIndex,
-                    outIndex);
+                var weight = GetLargestWeightPriorToCurrentPosition(diffMatrix, inIndex, outIndex);
+                var isSourceWeight = false;
 
-                var rowLargestWeightPriorToCurrentColumn = GetRowLargestWeightPriorToCurrentColumn(
-                    diffMatrix,
-                    inIndex,
-                    outIndex);
-
-                if (inCharValue == outCharValue &&
-                    cellSourceWeight > rowLargestWeightPriorToCurrentColumn)
+                if (inCharValue == outCharValue)
                 {
-                    diffMatrix[inIndex, outIndex] = new TextEditorDiffCell(
-                        inCharValue,
-                        outCharValue,
-                        cellSourceWeight,
-                        true);
+                    var cellSourceWeight = weight + 1;
+
+                    if (cellSourceWeight > weight)
+                    {
+                        weight = cellSourceWeight;
+                        isSourceWeight = true;
+                    }
 
                     if (cellSourceWeight > highestSourceWeightTuple.sourceWeight)
                         highestSourceWeightTuple = (cellSourceWeight, inIndex, outIndex);
                 }
-                else
-                {
-                    diffMatrix[inIndex, outIndex] = new TextEditorDiffCell(
-                        inCharValue,
-                        outCharValue,
-                        rowLargestWeightPriorToCurrentColumn,
-                        false);
-                }
+
+                diffMatrix[inIndex, outIndex] = new TextEditorDiffCell(
+                    inCharValue, outCharValue, weight, isSourceWeight);
             }
 
             for (int fabricatedOutIndex = outText.Length; fabricatedOutIndex < squaredSize; fabricatedOutIndex++)
@@ -100,7 +89,7 @@ public class TextEditorDiffResult
                 // This for loop sets the cells in the fabricated column in order to create a square matrix
                 // in cases where (outTextLength < inTextLength)
 
-                var rowLargestWeightPriorToCurrentColumn = GetRowLargestWeightPriorToCurrentColumn(
+                var rowLargestWeightPriorToCurrentColumn = GetLargestWeightPriorToCurrentPosition(
                     diffMatrix,
                     inIndex,
                     fabricatedOutIndex);
@@ -122,7 +111,7 @@ public class TextEditorDiffResult
 
             for (int fabricatedOutIndex = 0; fabricatedOutIndex < squaredSize; fabricatedOutIndex++)
             {
-                var rowLargestWeightPriorToCurrentColumn = GetRowLargestWeightPriorToCurrentColumn(
+                var rowLargestWeightPriorToCurrentColumn = GetLargestWeightPriorToCurrentPosition(
                     diffMatrix,
                     fabricatedInIndex,
                     fabricatedOutIndex);
@@ -286,26 +275,25 @@ public class TextEditorDiffResult
         return diffResult;
     }
 
-    private static int GetCellSourceWeight(
+    private static int GetLargestWeightPriorToCurrentPosition(
         TextEditorDiffCell[,] diffMatrix,
         int inIndex,
         int outIndex)
     {
-        if (inIndex > 0 && outIndex > 0)
-            return diffMatrix[inIndex - 1, outIndex - 1].Weight + 1;
+        var largestWeight = 0;
 
-        return 1;
-    }
+        for (int rowI = 0; rowI < inIndex; rowI++)
+        {
+            for (int columnI = 0; columnI < outIndex; columnI++)
+            {
+                var currentWeight = diffMatrix[rowI, columnI].Weight;
 
-    private static int GetRowLargestWeightPriorToCurrentColumn(
-        TextEditorDiffCell[,] diffMatrix,
-        int inIndex,
-        int outIndex)
-    {
-        if (outIndex > 0)
-            return diffMatrix[inIndex, outIndex - 1].Weight;
+                if (currentWeight > largestWeight)
+                    largestWeight = currentWeight;
+            }
+        }
 
-        return 0;
+        return largestWeight;
     }
 
     private static List<TextEditorTextSpan> GetTextSpans(
