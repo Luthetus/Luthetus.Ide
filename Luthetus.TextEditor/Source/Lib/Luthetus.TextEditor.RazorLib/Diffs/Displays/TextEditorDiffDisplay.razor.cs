@@ -6,6 +6,8 @@ using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Dialogs.States;
 
 namespace Luthetus.TextEditor.RazorLib.Diffs.Displays;
 
@@ -19,6 +21,8 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
     private IState<TextEditorOptionsState> TextEditorOptionsStateWrap { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
+    [Inject]
+    private IDialogService DialogService { get; set; } = null!;
 
     /// <summary>
     /// If the provided <see cref="TextEditorDiffKey"/> is registered using the
@@ -39,6 +43,16 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
     /// <summary>TabIndex is used for the html attribute named: 'tabindex'</summary>
     [Parameter]
     public int TabIndex { get; set; } = -1;
+
+    private DialogRecord _detailsDialogRecord = new(
+            Key<DialogRecord>.NewKey(),
+            "Diff Details",
+            typeof(DiffDetailsDisplay),
+            null,
+            null)
+    {
+        IsResizable = true,
+    };
 
     private CancellationTokenSource _calculateDiffCancellationTokenSource = new();
     private TextEditorDiffResult? _mostRecentDiffResult;
@@ -81,6 +95,28 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
 
     private async void TextEditorOptionsStateWrapOnStateChanged(object? sender, EventArgs e) =>
         await InvokeAsync(StateHasChanged);
+
+    private void ShowCalculationOnClick()
+    {
+        DialogService.DisposeDialogRecord(_detailsDialogRecord.Key);
+
+        _detailsDialogRecord = _detailsDialogRecord with
+        {
+            Parameters = new Dictionary<string, object?>
+            {
+                {
+                    nameof(DiffDetailsDisplay.DiffModelKey),
+                    TextEditorDiffKey
+                },
+                {
+                    nameof(DiffDetailsDisplay.DiffResult),
+                    _mostRecentDiffResult
+                }
+            }
+        };
+
+        DialogService.RegisterDialogRecord(_detailsDialogRecord);
+    }
 
     public void Dispose()
     {

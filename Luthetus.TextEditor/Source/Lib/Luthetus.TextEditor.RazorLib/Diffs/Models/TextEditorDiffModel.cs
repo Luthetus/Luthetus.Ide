@@ -6,8 +6,8 @@ namespace Luthetus.TextEditor.RazorLib.Diffs.Models;
 
 public record TextEditorDiffModel(
     Key<TextEditorDiffModel> DiffKey,
-    Key<TextEditorViewModel> BeforeViewModelKey,
-    Key<TextEditorViewModel> AfterViewModelKey)
+    Key<TextEditorViewModel> InViewModelKey,
+    Key<TextEditorViewModel> OutViewModelKey)
 {
     public Key<RenderState> RenderStateKey { get; init; } = Key<RenderState>.NewKey();
 }

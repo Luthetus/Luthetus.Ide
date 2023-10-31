@@ -1,0 +1,14 @@
+.luth_diff-details-visualization-grid {
+    position: relative;
+    width: 375px;
+    height: 375px;
+}
+
+::deep .luth_diff-details-visualization-character {
+    width: 2em;
+    height: 2em;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

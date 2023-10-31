@@ -1,0 +1,13 @@
+.luth_diff-details-visualization-cell {
+    position: absolute;
+    width: 2em;
+    height: 2em;
+    outline: 1px solid var(--luth_primary-border-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+    .luth_diff-details-visualization-cell.luth_active {
+        background-color: green;
+    }

@@ -10,6 +10,7 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using System.Collections.Immutable;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
+using Luthetus.TextEditor.RazorLib.Diffs.Models;
 
 namespace Luthetus.Ide.RazorLib.Editors.States;
 
@@ -48,6 +49,14 @@ public partial class EditorSync
             _textEditorService.Model.RegisterPresentationModel(
                 textEditorModel.ResourceUri,
                 CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
+
+            _textEditorService.Model.RegisterPresentationModel(
+                textEditorModel.ResourceUri,
+                DiffPresentationFacts.EmptyInPresentationModel);
+
+            _textEditorService.Model.RegisterPresentationModel(
+                textEditorModel.ResourceUri,
+                DiffPresentationFacts.EmptyOutPresentationModel);
 
             _ = Task.Run(async () => await textEditorModel.ApplySyntaxHighlightingAsync());
         }
@@ -146,7 +155,7 @@ public partial class EditorSync
 
             var presentationKeys = new[]
             {
-                CompilerServiceDiagnosticPresentationFacts.PresentationKey
+                CompilerServiceDiagnosticPresentationFacts.PresentationKey,
             }.ToImmutableArray();
 
             _textEditorService.ViewModel.With(

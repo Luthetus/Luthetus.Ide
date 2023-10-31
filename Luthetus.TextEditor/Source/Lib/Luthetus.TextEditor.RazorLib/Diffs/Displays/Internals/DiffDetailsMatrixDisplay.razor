@@ -1,0 +1,60 @@
+@{
+    var localDiffResult = DiffResult;
+    var longestTextLength = Math.Max(localDiffResult.InText.Length, localDiffResult.OutText.Length);
+}
+
+<div class="luth_diff-details-visualization-matrix">
+    
+    @for (var inI = 0; inI < longestTextLength; inI++)
+    {
+        var inIndex = inI;
+
+        for (var outI = 0; outI < longestTextLength; outI++)
+        {
+            var outIndex = outI;
+
+            char? inChar = null;
+            char? outChar = null;
+
+            if (inIndex < localDiffResult.InText.Length)
+                inChar = localDiffResult.InText[inIndex];
+
+            if (outIndex < localDiffResult.OutText.Length)
+                outChar = localDiffResult.OutText[outIndex];
+
+            var cssStyleString = $"left: {(1 + outIndex) * 2}em; top: {(1 + inIndex) * 2}em;";
+
+            var inCharacterString = inChar?.ToString() ?? "{null}";
+            var outCharacterString = outChar?.ToString() ?? "{null}";
+
+            var titleString = $"{inCharacterString} -> {outCharacterString}";
+
+            var cell = localDiffResult.DiffMatrix[inIndex, outIndex];
+
+            var cssClassString = string.Empty;
+
+            if (cell.IsSourceOfRowWeight)
+                cssClassString = "luth_active";
+
+            <div class="luth_diff-details-visualization-cell @cssClassString"
+                 style="@cssStyleString"
+                 title="@titleString">
+
+                @{
+                    string cellWeightText;
+
+                    if (cell.Weight > 9)
+                    {
+                        cellWeightText = ">9";
+                    }
+                    else
+                    {
+                        cellWeightText = cell.Weight.ToString();
+                    }
+                }
+                
+                @cellWeightText
+            </div>
+        }
+    }
+</div>

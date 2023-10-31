@@ -7,30 +7,30 @@ namespace Luthetus.TextEditor.RazorLib.Diffs.Models;
 public class TextEditorDiffResult
 {
     private TextEditorDiffResult(
-        string beforeText,
-        string afterText,
+        string inText,
+        string outText,
         TextEditorDiffCell[,] diffMatrix,
-        (int sourceWeight, int beforeIndex, int afterIndex) highestSourceWeightTuple,
+        (int sourceWeight, int inIndex, int outIndex) highestSourceWeightTuple,
         string longestCommonSubsequence,
-        ImmutableList<TextEditorTextSpan> beforeLongestCommonSubsequenceTextSpanBag,
-        ImmutableList<TextEditorTextSpan> afterLongestCommonSubsequenceTextSpanBag)
+        ImmutableList<TextEditorTextSpan> inLongestCommonSubsequenceTextSpanBag,
+        ImmutableList<TextEditorTextSpan> outLongestCommonSubsequenceTextSpanBag)
     {
-        BeforeText = beforeText;
-        AfterText = afterText;
+        InText = inText;
+        OutText = outText;
         DiffMatrix = diffMatrix;
         HighestSourceWeightTuple = highestSourceWeightTuple;
         LongestCommonSubsequence = longestCommonSubsequence;
-        BeforeLongestCommonSubsequenceTextSpanBag = beforeLongestCommonSubsequenceTextSpanBag;
-        AfterLongestCommonSubsequenceTextSpanBag = afterLongestCommonSubsequenceTextSpanBag;
+        InResultTextSpanBag = inLongestCommonSubsequenceTextSpanBag;
+        OutResultTextSpanBag = outLongestCommonSubsequenceTextSpanBag;
     }
 
-    public string BeforeText { get; }
-    public string AfterText { get; }
+    public string InText { get; }
+    public string OutText { get; }
     public TextEditorDiffCell[,] DiffMatrix { get; }
     public (int sourceWeight, int beforeIndex, int afterIndex) HighestSourceWeightTuple { get; }
     public string LongestCommonSubsequence { get; }
-    public ImmutableList<TextEditorTextSpan> BeforeLongestCommonSubsequenceTextSpanBag { get; }
-    public ImmutableList<TextEditorTextSpan> AfterLongestCommonSubsequenceTextSpanBag { get; }
+    public ImmutableList<TextEditorTextSpan> InResultTextSpanBag { get; }
+    public ImmutableList<TextEditorTextSpan> OutResultTextSpanBag { get; }
 
     /// <summary>
     /// This method aims to implement the "An O(ND) Difference Algorithm"
@@ -38,108 +38,85 @@ public class TextEditorDiffResult
     /// Watching https://www.youtube.com/watch?v=9n8jI2267MM
     /// </summary>
     public static TextEditorDiffResult Calculate(
-        ResourceUri beforeResourceUri,
-        string beforeSourceText,
-        ResourceUri afterResourceUri,
-        string afterSourceText)
+        ResourceUri inResourceUri,
+        string inText,
+        ResourceUri outResourceUri,
+        string outText)
     {
         // Need to build a square two dimensional array.
         //
-        // Envisioning that 'beforeText' represents the rows
-        // and 'afterText' represents the columns.
-        var beforeTextLength = beforeSourceText.Length;
-        var afterTextLength = afterSourceText.Length;
-
-        var squaredSize = Math.Max(beforeTextLength, afterTextLength);
+        // Envisioning that:
+        //     -Each character of 'inText' represents a row.
+        //     -Each character of 'outText' represents a column.
+        
+        var squaredSize = Math.Max(inText.Length, outText.Length);
 
         var diffMatrix = new TextEditorDiffCell[squaredSize, squaredSize];
 
-        (int sourceWeight, int beforeIndex, int afterIndex) highestSourceWeightTuple = (-1, -1, -1);
+        (int sourceWeight, int inIndex, int outIndex) highestSourceWeightTuple = (-1, -1, -1);
 
-        for (int beforeIndex = 0; beforeIndex < beforeTextLength; beforeIndex++)
+        for (int inIndex = 0; inIndex < inText.Length; inIndex++)
         {
-            char beforeCharValue = beforeSourceText[beforeIndex];
+            char inCharValue = inText[inIndex];
 
-            for (int afterIndex = 0; afterIndex < afterTextLength; afterIndex++)
+            for (int outIndex = 0; outIndex < outText.Length; outIndex++)
             {
-                char afterCharValue = afterSourceText[afterIndex];
+                char outCharValue = outText[outIndex];
 
-                var cellSourceWeight = GetCellSourceWeight(
-                    diffMatrix,
-                    beforeIndex,
-                    afterIndex);
+                var weight = GetLargestWeightPriorToCurrentPosition(diffMatrix, inIndex, outIndex);
+                var isSourceWeight = false;
 
-                var rowLargestWeightPriorToCurrentColumn = GetRowLargestWeightPriorToCurrentColumn(
-                    diffMatrix,
-                    beforeIndex,
-                    afterIndex);
-
-                if (beforeCharValue == afterCharValue &&
-                    cellSourceWeight > rowLargestWeightPriorToCurrentColumn)
+                if (inCharValue == outCharValue)
                 {
-                    diffMatrix[beforeIndex, afterIndex] = new TextEditorDiffCell(
-                        beforeCharValue,
-                        afterCharValue,
-                        cellSourceWeight,
-                        true);
+                    var cellSourceWeight = weight + 1;
+
+                    if (cellSourceWeight > weight)
+                    {
+                        weight = cellSourceWeight;
+                        isSourceWeight = true;
+                    }
 
                     if (cellSourceWeight > highestSourceWeightTuple.sourceWeight)
-                        highestSourceWeightTuple = (cellSourceWeight, beforeIndex, afterIndex);
+                        highestSourceWeightTuple = (cellSourceWeight, inIndex, outIndex);
                 }
-                else
-                {
-                    diffMatrix[beforeIndex, afterIndex] = new TextEditorDiffCell(
-                        beforeCharValue,
-                        afterCharValue,
-                        rowLargestWeightPriorToCurrentColumn,
-                        false);
-                }
+
+                diffMatrix[inIndex, outIndex] = new TextEditorDiffCell(
+                    inCharValue, outCharValue, weight, isSourceWeight);
             }
 
-            for (
-                int fabricatedAfterIndex = afterTextLength;
-                fabricatedAfterIndex < squaredSize;
-                fabricatedAfterIndex++)
+            for (int fabricatedOutIndex = outText.Length; fabricatedOutIndex < squaredSize; fabricatedOutIndex++)
             {
-                // This for loop sets the cells in the fabricated column
-                // in order to create a square matrix
-                // where afterTextLength < beforeTextLength
+                // This for loop sets the cells in the fabricated column in order to create a square matrix
+                // in cases where (outTextLength < inTextLength)
 
-                var rowLargestWeightPriorToCurrentColumn = GetRowLargestWeightPriorToCurrentColumn(
+                var rowLargestWeightPriorToCurrentColumn = GetLargestWeightPriorToCurrentPosition(
                     diffMatrix,
-                    beforeIndex,
-                    fabricatedAfterIndex);
+                    inIndex,
+                    fabricatedOutIndex);
 
-                diffMatrix[beforeIndex, fabricatedAfterIndex] = new TextEditorDiffCell(
-                    beforeCharValue,
+                diffMatrix[inIndex, fabricatedOutIndex] = new TextEditorDiffCell(
+                    inCharValue,
                     null,
                     rowLargestWeightPriorToCurrentColumn,
                     false);
             }
         }
 
-        for (
-            int fabricatedBeforeIndex = beforeTextLength;
-            fabricatedBeforeIndex < squaredSize;
-            fabricatedBeforeIndex++)
+        for (int fabricatedInIndex = inText.Length; fabricatedInIndex < squaredSize; fabricatedInIndex++)
         {
-            // This for loop sets the cells in the fabricated row
-            // in order to create a square matrix
-            // where beforeTextLength < afterTextLength
+            // This for loop sets the cells in the fabricated row in order to create a square matrix
+            // in cases where (inTextLength < outTextLength)
             //
             // TODO: This logic should to be removed. Instead of looking at this algorithm from the perspective of 'before' and 'after' text. It might be best to have the perspective be 'vertical' and 'horizontal' text. Then the 'vertical' text is equal to the longer of the two string inputs. By having the row count defined by the longer of the two strings you only would ever fabricate columns. This would allow for a lot of code to be removed.
 
-            for (
-                int fabricatedAfterIndex = 0;
-                fabricatedAfterIndex < squaredSize;
-                fabricatedAfterIndex++)
+            for (int fabricatedOutIndex = 0; fabricatedOutIndex < squaredSize; fabricatedOutIndex++)
             {
-                var rowLargestWeightPriorToCurrentColumn = GetRowLargestWeightPriorToCurrentColumn(
+                var rowLargestWeightPriorToCurrentColumn = GetLargestWeightPriorToCurrentPosition(
                     diffMatrix,
-                    fabricatedBeforeIndex,
-                    fabricatedAfterIndex);
+                    fabricatedInIndex,
+                    fabricatedOutIndex);
 
-                diffMatrix[fabricatedBeforeIndex, fabricatedAfterIndex] = new TextEditorDiffCell(
+                diffMatrix[fabricatedInIndex, fabricatedOutIndex] = new TextEditorDiffCell(
                     null,
                     null,
                     rowLargestWeightPriorToCurrentColumn,
@@ -147,22 +124,22 @@ public class TextEditorDiffResult
             }
         }
 
-        var longestCommonSubsequenceBuilder = new StringBuilder();
+        // The abbreviation "lcs" is to mean "Longest Common Subsequence"
+        var lcsBuilder = new StringBuilder();
 
-        var beforePositionIndicesOfLongestCommonSubsequenceHashSet = new HashSet<int>();
-        var afterPositionIndicesOfLongestCommonSubsequenceHashSet = new HashSet<int>();
+        var inPositionIndicesLcsHashSet = new HashSet<int>();
+        var outPositionIndicesLcsHashSet = new HashSet<int>();
 
-        var afterPositionIndicesOfInsertionHashSet = new HashSet<int>();
+        var inPositionIndicesOfDeletionHashSet = new HashSet<int>();
+        var outPositionIndicesInsertionHashSet = new HashSet<int>();
 
-        var beforePositionIndicesOfDeletionHashSet = new HashSet<int>();
-
-        var beforePositionIndicesOfModificationHashSet = new HashSet<int>();
-        var afterPositionIndicesOfModificationHashSet = new HashSet<int>();
+        var inPositionIndicesOfModificationHashSet = new HashSet<int>();
+        var outPositionIndicesOfModificationHashSet = new HashSet<int>();
 
         // Read the LongestCommonSubsequence by backtracking to the highest weights
         {
-            var runningRowIndex = highestSourceWeightTuple.beforeIndex;
-            var runningColumnIndex = highestSourceWeightTuple.afterIndex;
+            var runningRowIndex = highestSourceWeightTuple.inIndex;
+            var runningColumnIndex = highestSourceWeightTuple.outIndex;
 
             var targetSourceWeight = highestSourceWeightTuple.sourceWeight;
 
@@ -180,18 +157,17 @@ public class TextEditorDiffResult
                 if (cell.IsSourceOfRowWeight &&
                     cell.Weight == targetSourceWeight)
                 {
-                    if (cell.BeforeCharValue != cell.AfterCharValue)
-                    {
-                        throw new ApplicationException(
-                            $"The {nameof(cell.BeforeCharValue)}:'{cell.BeforeCharValue}' was not equal to the {nameof(cell.AfterCharValue)}:'{cell.AfterCharValue}'");
-                    }
+                    targetSourceWeight--;
 
-                    longestCommonSubsequenceBuilder.Append(cell.BeforeCharValue);
+                    if (cell.BeforeCharValue != cell.AfterCharValue)
+                        throw new ApplicationException($"The {nameof(cell.BeforeCharValue)}:'{cell.BeforeCharValue}' was not equal to the {nameof(cell.AfterCharValue)}:'{cell.AfterCharValue}'");
+
+                    lcsBuilder.Append(cell.BeforeCharValue);
 
                     // Decoration logic for longest common subsequence
                     {
-                        beforePositionIndicesOfLongestCommonSubsequenceHashSet.Add(runningRowIndex);
-                        afterPositionIndicesOfLongestCommonSubsequenceHashSet.Add(runningColumnIndex);
+                        inPositionIndicesLcsHashSet.Add(runningRowIndex);
+                        outPositionIndicesLcsHashSet.Add(runningColumnIndex);
                     }
 
                     restoreColumnIndex = runningColumnIndex - 1;
@@ -203,18 +179,10 @@ public class TextEditorDiffResult
                 {
                     // Decoration logic
                     {
-                        if (afterTextLength > beforeTextLength &&
-                            !afterPositionIndicesOfLongestCommonSubsequenceHashSet.Contains(runningColumnIndex))
-                        {
-                            // Insertion
-                            afterPositionIndicesOfInsertionHashSet.Add(runningColumnIndex);
-                        }
-                        else if (beforeTextLength > afterTextLength &&
-                                 runningRowIndex >= afterTextLength)
-                        {
-                            // Deletion
-                            beforePositionIndicesOfDeletionHashSet.Add(runningRowIndex);
-                        }
+                        if (outText.Length > inText.Length && !outPositionIndicesLcsHashSet.Contains(runningColumnIndex))
+                            outPositionIndicesInsertionHashSet.Add(runningColumnIndex); // Insertion
+                        else if (inText.Length > outText.Length && runningRowIndex >= outText.Length)
+                            inPositionIndicesOfDeletionHashSet.Add(runningRowIndex); // Deletion
                         // TODO: Else if for modification is not working.
                         //
                         // else if (cell.BeforeCharValue != cell.AfterCharValue)
@@ -238,97 +206,96 @@ public class TextEditorDiffResult
             }
         }
 
-        var longestCommonSubsequenceValue = new string(longestCommonSubsequenceBuilder
+        var longestCommonSubsequenceValue = new string(lcsBuilder
             .ToString()
             .Reverse()
             .ToArray());
 
-        var beforeTextSpans = new List<TextEditorTextSpan>();
-        var afterTextSpans = new List<TextEditorTextSpan>();
+        var inTextSpans = new List<TextEditorTextSpan>();
+        var outTextSpans = new List<TextEditorTextSpan>();
 
         // Decoration logic
         {
             // Longest common subsequence
             {
-                beforeTextSpans.AddRange(GetTextSpans(
-                    beforeResourceUri,
-                    beforeSourceText,
-                    beforePositionIndicesOfLongestCommonSubsequenceHashSet,
+                inTextSpans.AddRange(GetTextSpans(
+                    inResourceUri,
+                    inText,
+                    inPositionIndicesLcsHashSet,
                     (byte)TextEditorDiffDecorationKind.LongestCommonSubsequence));
 
-                afterTextSpans.AddRange(GetTextSpans(
-                    afterResourceUri,
-                    afterSourceText,
-                    afterPositionIndicesOfLongestCommonSubsequenceHashSet,
+                outTextSpans.AddRange(GetTextSpans(
+                    outResourceUri,
+                    outText,
+                    outPositionIndicesLcsHashSet,
                     (byte)TextEditorDiffDecorationKind.LongestCommonSubsequence));
             }
 
             // Insertion
             {
-                afterTextSpans.AddRange(GetTextSpans(
-                    afterResourceUri,
-                    afterSourceText,
-                    afterPositionIndicesOfInsertionHashSet,
+                outTextSpans.AddRange(GetTextSpans(
+                    outResourceUri,
+                    outText,
+                    outPositionIndicesInsertionHashSet,
                     (byte)TextEditorDiffDecorationKind.Insertion));
             }
 
             // Deletion
             {
-                beforeTextSpans.AddRange(GetTextSpans(
-                    beforeResourceUri,
-                    beforeSourceText,
-                    beforePositionIndicesOfDeletionHashSet,
+                inTextSpans.AddRange(GetTextSpans(
+                    inResourceUri,
+                    inText,
+                    inPositionIndicesOfDeletionHashSet,
                     (byte)TextEditorDiffDecorationKind.Deletion));
             }
 
             // Modification
             {
-                beforeTextSpans.AddRange(GetTextSpans(
-                    beforeResourceUri,
-                    beforeSourceText,
-                    beforePositionIndicesOfModificationHashSet,
+                inTextSpans.AddRange(GetTextSpans(
+                    inResourceUri,
+                    inText,
+                    inPositionIndicesOfModificationHashSet,
                     (byte)TextEditorDiffDecorationKind.Modification));
 
-                afterTextSpans.AddRange(GetTextSpans(
-                    afterResourceUri,
-                    afterSourceText,
-                    afterPositionIndicesOfModificationHashSet,
+                outTextSpans.AddRange(GetTextSpans(
+                    outResourceUri,
+                    outText,
+                    outPositionIndicesOfModificationHashSet,
                     (byte)TextEditorDiffDecorationKind.Modification));
             }
         }
 
         var diffResult = new TextEditorDiffResult(
-            beforeSourceText,
-            afterSourceText,
+            inText,
+            outText,
             diffMatrix,
             highestSourceWeightTuple,
             longestCommonSubsequenceValue,
-            beforeTextSpans.ToImmutableList(),
-            afterTextSpans.ToImmutableList());
+            inTextSpans.ToImmutableList(),
+            outTextSpans.ToImmutableList());
 
         return diffResult;
     }
 
-    private static int GetCellSourceWeight(
+    private static int GetLargestWeightPriorToCurrentPosition(
         TextEditorDiffCell[,] diffMatrix,
-        int beforeIndex,
-        int afterIndex)
+        int inIndex,
+        int outIndex)
     {
-        if (beforeIndex > 0 && afterIndex > 0)
-            return diffMatrix[beforeIndex - 1, afterIndex - 1].Weight + 1;
+        var largestWeight = 0;
 
-        return 1;
-    }
+        for (int rowI = 0; rowI < inIndex; rowI++)
+        {
+            for (int columnI = 0; columnI < outIndex; columnI++)
+            {
+                var currentWeight = diffMatrix[rowI, columnI].Weight;
 
-    private static int GetRowLargestWeightPriorToCurrentColumn(
-        TextEditorDiffCell[,] diffMatrix,
-        int beforeIndex,
-        int afterIndex)
-    {
-        if (afterIndex > 0)
-            return diffMatrix[beforeIndex, afterIndex - 1].Weight;
+                if (currentWeight > largestWeight)
+                    largestWeight = currentWeight;
+            }
+        }
 
-        return 0;
+        return largestWeight;
     }
 
     private static List<TextEditorTextSpan> GetTextSpans(

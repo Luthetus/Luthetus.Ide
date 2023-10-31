@@ -1,0 +1,16 @@
+﻿@{
+    var localDiffResult = DiffResult;
+}
+
+<div class="luth_diff-details-visualization-out">
+    @for (var i = 0; i < localDiffResult.OutText.Length; i++)
+    {
+        var index = i;
+        var character = localDiffResult.OutText[index];
+
+        <div class="luth_diff-details-visualization-character"
+             style="@($"left: {index * 2}em; top: 0;")">
+            @character
+        </div>
+    }
+</div>

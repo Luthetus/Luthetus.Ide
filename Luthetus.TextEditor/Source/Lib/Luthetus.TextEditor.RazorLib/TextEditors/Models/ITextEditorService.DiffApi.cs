@@ -2,6 +2,9 @@
 using Luthetus.TextEditor.RazorLib.Diffs.States;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using System.Reflection;
+using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -11,8 +14,8 @@ public partial interface ITextEditorService
     {
         public void Register(
             Key<TextEditorDiffModel> diffKey,
-            Key<TextEditorViewModel> beforeViewModelKey,
-            Key<TextEditorViewModel> afterViewModelKey);
+            Key<TextEditorViewModel> inViewModelKey,
+            Key<TextEditorViewModel> outViewModelKey);
         
         public void Dispose(Key<TextEditorDiffModel> diffKey);
 
@@ -33,13 +36,13 @@ public partial interface ITextEditorService
 
         public void Register(
             Key<TextEditorDiffModel> diffKey,
-            Key<TextEditorViewModel> beforeViewModelKey,
-            Key<TextEditorViewModel> afterViewModelKey)
+            Key<TextEditorViewModel> inViewModelKey,
+            Key<TextEditorViewModel> outViewModelKey)
         {
             _dispatcher.Dispatch(new TextEditorDiffState.RegisterAction(
                 diffKey,
-                beforeViewModelKey,
-                afterViewModelKey));
+                inViewModelKey,
+                outViewModelKey));
         }
 
         public TextEditorDiffModel? FindOrDefault(Key<TextEditorDiffModel> diffKey)
@@ -62,31 +65,62 @@ public partial interface ITextEditorService
             if (textEditorDiff is null)
                 return null;
 
-            var beforeViewModel = _textEditorService.ViewModel.FindOrDefault(textEditorDiff.BeforeViewModelKey);
-            var afterViewModel = _textEditorService.ViewModel.FindOrDefault(textEditorDiff.AfterViewModelKey);
+            var inViewModel = _textEditorService.ViewModel.FindOrDefault(textEditorDiff.InViewModelKey);
+            var outViewModel = _textEditorService.ViewModel.FindOrDefault(textEditorDiff.OutViewModelKey);
 
-            if (beforeViewModel is null || afterViewModel is null)
+            if (inViewModel is null || outViewModel is null)
                 return null;
 
-            var beforeModel = _textEditorService.Model.FindOrDefault(beforeViewModel.ResourceUri);
-            var afterModel = _textEditorService.Model.FindOrDefault(afterViewModel.ResourceUri);
+            var inModel = _textEditorService.Model.FindOrDefault(inViewModel.ResourceUri);
+            var outModel = _textEditorService.Model.FindOrDefault(outViewModel.ResourceUri);
 
-            if (beforeModel is null || afterModel is null)
+            if (inModel is null || outModel is null)
                 return null;
 
-            var beforeText = beforeModel.GetAllText();
-            var afterText = afterModel.GetAllText();
+            var inText = inModel.GetAllText();
+            var outText = outModel.GetAllText();
 
             var diffResult = TextEditorDiffResult.Calculate(
-                beforeModel.ResourceUri,
-                beforeText,
-                afterModel.ResourceUri,
-                afterText);
+                inModel.ResourceUri,
+                inText,
+                outModel.ResourceUri,
+                outText);
 
-            // TODO: Register a presentation with the text editor instead of using ChangeFirstPresentationLayer(...) (2023-09-11) 
-            //
-            // ChangeFirstPresentationLayer(beforeViewModel.ViewModelKey, diffResult.BeforeLongestCommonSubsequenceTextSpans);
-            // ChangeFirstPresentationLayer(afterViewModel.ViewModelKey, diffResult.AfterLongestCommonSubsequenceTextSpans);
+            // inModel Diff Presentation Model
+            {
+                var presentationModel = inModel.PresentationModelsBag.FirstOrDefault(x =>
+                    x.TextEditorPresentationKey == DiffPresentationFacts.InPresentationKey);
+
+                if (presentationModel is not null)
+                {
+                    if (presentationModel.PendingCalculation is null)
+                        presentationModel.PendingCalculation = new(inModel.GetAllText());
+
+                    presentationModel.PendingCalculation.TextEditorTextSpanBag =
+                        diffResult.InResultTextSpanBag.ToImmutableArray();
+
+                    (presentationModel.CompletedCalculation, presentationModel.PendingCalculation) =
+                        (presentationModel.PendingCalculation, presentationModel.CompletedCalculation);
+                }
+            }
+
+            // outModel Diff Presentation Model
+            {
+                var presentationModel = outModel.PresentationModelsBag.FirstOrDefault(x =>
+                    x.TextEditorPresentationKey == DiffPresentationFacts.OutPresentationKey);
+
+                if (presentationModel is not null)
+                {
+                    if (presentationModel.PendingCalculation is null)
+                        presentationModel.PendingCalculation = new(outModel.GetAllText());
+
+                    presentationModel.PendingCalculation.TextEditorTextSpanBag =
+                        diffResult.OutResultTextSpanBag.ToImmutableArray();
+
+                    (presentationModel.CompletedCalculation, presentationModel.PendingCalculation) =
+                        (presentationModel.PendingCalculation, presentationModel.CompletedCalculation);
+                }
+            }
 
             return diffResult;
         }
