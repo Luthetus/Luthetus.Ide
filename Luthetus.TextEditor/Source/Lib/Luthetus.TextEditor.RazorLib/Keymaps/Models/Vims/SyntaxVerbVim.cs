@@ -15,14 +15,6 @@ public static class SyntaxVerbVim
 
         var isGrammarToken = false;
 
-        if (keymapArgument.CtrlKey)
-        {
-            switch (keymapArgument.Code)
-            {
-
-            }
-        }
-
         switch (keymapArgument.Code)
         {
             case "KeyD":

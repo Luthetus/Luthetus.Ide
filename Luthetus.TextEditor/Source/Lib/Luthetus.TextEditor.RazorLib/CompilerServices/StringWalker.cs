@@ -32,7 +32,7 @@ public class StringWalker
     public char NextCharacter => PeekCharacter(1);
 
     /// <summary>Starting with <see cref="PeekCharacter" /> evaluated at 0 return that and the rest of the <see cref="SourceText" /><br /><br /><see cref="RemainingText" /> => SourceText.Substring(PositionIndex);</summary>
-    public string RemainingText => SourceText.Substring(PositionIndex);
+    public string RemainingText => SourceText[PositionIndex..];
 
     /// <summary>Returns if the current character is the end of file character</summary>
     public bool IsEof => CurrentCharacter == ParserFacts.END_OF_FILE;

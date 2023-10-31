@@ -491,6 +491,10 @@ public static class HtmlSyntaxTree
             LuthetusDiagnosticBag diagnosticBag,
             InjectedLanguageDefinition? injectedLanguageDefinition)
         {
+            // Suppress these unused parameters because all 'Parse...()' methods should take them for consistency.
+            _ = diagnosticBag;
+            _ = injectedLanguageDefinition;
+
             var startingPositionIndex = stringWalker.PositionIndex;
 
             // Move to the first non-whitespace which follows the HtmlFacts.SEPARATOR_FOR_ATTRIBUTE_NAME_AND_ATTRIBUTE_VALUE
@@ -573,6 +577,10 @@ public static class HtmlSyntaxTree
             LuthetusDiagnosticBag diagnosticBag,
             InjectedLanguageDefinition? injectedLanguageDefinition)
         {
+            // Suppress these unused parameters because all 'Parse...()' methods should take them for consistency.
+            _ = diagnosticBag;
+            _ = injectedLanguageDefinition;
+
             var startingPositionIndex = stringWalker.PositionIndex;
 
             while (!stringWalker.IsEof)
