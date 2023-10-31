@@ -8,4 +8,7 @@
     width: 2em;
     height: 2em;
     position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

@@ -1,7 +1,7 @@
-.luth_diff-details-visualization-after {
+.luth_diff-details-visualization-out {
     position: absolute;
-    left: 0;
-    top: 2em;
-    height: calc(100% - 2em);
-    width: 2em;
+    left: 2em;
+    top: 0;
+    height: 2em;
+    width: calc(100% - 2em);
 }
