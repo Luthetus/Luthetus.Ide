@@ -6,6 +6,7 @@
 </div>
 
 <hr />
+
 @{
     var localDiffResult = DiffResult;
 }
@@ -24,6 +25,8 @@
                 <CascadingValue Value="localDiffResult">
                     <DiffDetailsBeforeTextDisplay />
                     <DiffDetailsAfterTextDisplay />
+                    
+                    <DiffDetailsMatrixDisplay />
                 </CascadingValue>
             </div>
         </div>

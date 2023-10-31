@@ -1,0 +1,24 @@
+@{
+    var localDiffResult = DiffResult;
+
+    var longestTextLength = Math.Max(localDiffResult.BeforeText.Length, localDiffResult.AfterText.Length);
+}
+
+<div class="luth_diff-details-visualization-matrix">
+    @for (var afterI = 0; afterI < longestTextLength; afterI++)
+    {
+        var afterIndex = afterI;
+        var afterCharacter = localDiffResult.AfterText[afterIndex];
+
+        @for (var beforeI = 0; beforeI < longestTextLength; beforeI++)
+        {
+            var beforeIndex = beforeI;
+            var beforeCharacter = localDiffResult.BeforeText[beforeIndex];
+
+            <div class="luth_diff-details-visualization-cell"
+                 style="@($"left: {(1 + beforeIndex) * 2}em; top: {(1 + afterIndex) * 2}em;")">
+                ~
+            </div>
+        }
+    }
+</div>
