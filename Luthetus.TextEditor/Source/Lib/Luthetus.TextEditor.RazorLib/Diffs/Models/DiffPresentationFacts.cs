@@ -1,9 +1,10 @@
 ﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Diffs.Models;
 
-public static class DiffFacts
+public static class DiffPresentationFacts
 {
     public const string CssClassString = "luth_te_diff-presentation";
 

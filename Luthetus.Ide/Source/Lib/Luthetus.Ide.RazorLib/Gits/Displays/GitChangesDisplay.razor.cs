@@ -6,6 +6,7 @@ using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Microsoft.AspNetCore.Components;
+using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.Gits.Displays;
 
@@ -41,9 +42,25 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                     "ABCDEFK",
                     "Before");
 
+                TextEditorService.Model.RegisterPresentationModel(
+                    BeforeResourceUri,
+                    DiffPresentationFacts.EmptyPresentationModel);
+
                 TextEditorService.ViewModel.Register(
                     BeforeViewModelKey,
                     BeforeResourceUri);
+
+                var presentationKeys = new[]
+                {
+                    DiffPresentationFacts.PresentationKey
+                };
+
+                TextEditorService.ViewModel.With(
+                    BeforeViewModelKey,
+                    textEditorViewModel => textEditorViewModel with
+                    {
+                        FirstPresentationLayerKeysBag = presentationKeys.ToImmutableList()
+                    });
             }
             
             // "After" Registrations
@@ -57,9 +74,25 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                     "BHDEFCK",
                     "After");
 
+                TextEditorService.Model.RegisterPresentationModel(
+                    AfterResourceUri,
+                    DiffPresentationFacts.EmptyPresentationModel);
+
                 TextEditorService.ViewModel.Register(
                     AfterViewModelKey,
                     AfterResourceUri);
+
+                var presentationKeys = new[]
+                {
+                    DiffPresentationFacts.PresentationKey
+                };
+
+                TextEditorService.ViewModel.With(
+                    AfterViewModelKey,
+                    textEditorViewModel => textEditorViewModel with
+                    {
+                        FirstPresentationLayerKeysBag = presentationKeys.ToImmutableList()
+                    });
             }
 
             TextEditorService.Diff.Register(

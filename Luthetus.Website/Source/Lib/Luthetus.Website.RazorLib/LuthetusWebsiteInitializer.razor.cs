@@ -21,6 +21,7 @@ using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
+using Luthetus.TextEditor.RazorLib.Diffs.Models;
 
 namespace Luthetus.Website.RazorLib;
 
@@ -156,6 +157,10 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
             TextEditorService.Model.RegisterPresentationModel(
                     textEditorModel.ResourceUri,
                     CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
+
+            TextEditorService.Model.RegisterPresentationModel(
+                textEditorModel.ResourceUri,
+                DiffPresentationFacts.EmptyPresentationModel);
 
             await textEditorModel.ApplySyntaxHighlightingAsync();
         }

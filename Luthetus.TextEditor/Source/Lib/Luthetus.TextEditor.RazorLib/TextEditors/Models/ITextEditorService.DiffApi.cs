@@ -2,6 +2,9 @@
 using Luthetus.TextEditor.RazorLib.Diffs.States;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using System.Reflection;
+using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -83,10 +86,41 @@ public partial interface ITextEditorService
                 outModel.ResourceUri,
                 outText);
 
-            // TODO: Register a presentation with the text editor instead of using ChangeFirstPresentationLayer(...) (2023-09-11) 
-            //
-            // ChangeFirstPresentationLayer(beforeViewModel.ViewModelKey, diffResult.BeforeLongestCommonSubsequenceTextSpans);
-            // ChangeFirstPresentationLayer(afterViewModel.ViewModelKey, diffResult.AfterLongestCommonSubsequenceTextSpans);
+            // inModel Diff Presentation Model
+            {
+                var presentationModel = inModel.PresentationModelsBag.FirstOrDefault(x =>
+                    x.TextEditorPresentationKey == DiffPresentationFacts.PresentationKey);
+
+                if (presentationModel is not null)
+                {
+                    if (presentationModel.PendingCalculation is null)
+                        presentationModel.PendingCalculation = new(inModel.GetAllText());
+
+                    presentationModel.PendingCalculation.TextEditorTextSpanBag =
+                        diffResult.InResultTextSpanBag.ToImmutableArray();
+
+                    (presentationModel.CompletedCalculation, presentationModel.PendingCalculation) =
+                        (presentationModel.PendingCalculation, presentationModel.CompletedCalculation);
+                }
+            }
+
+            // outModel Diff Presentation Model
+            {
+                var presentationModel = outModel.PresentationModelsBag.FirstOrDefault(x =>
+                    x.TextEditorPresentationKey == DiffPresentationFacts.PresentationKey);
+
+                if (presentationModel is not null)
+                {
+                    if (presentationModel.PendingCalculation is null)
+                        presentationModel.PendingCalculation = new(outModel.GetAllText());
+
+                    presentationModel.PendingCalculation.TextEditorTextSpanBag =
+                        diffResult.OutResultTextSpanBag.ToImmutableArray();
+
+                    (presentationModel.CompletedCalculation, presentationModel.PendingCalculation) =
+                        (presentationModel.PendingCalculation, presentationModel.CompletedCalculation);
+                }
+            }
 
             return diffResult;
         }

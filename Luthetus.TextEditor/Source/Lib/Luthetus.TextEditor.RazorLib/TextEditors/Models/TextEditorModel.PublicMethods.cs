@@ -293,7 +293,9 @@ public partial class TextEditorModel
 
     public TextEditorModel PerformRegisterPresentationModelAction(RegisterPresentationModelAction registerPresentationModelAction)
     {
-        _presentationModelsBag.Add(registerPresentationModelAction.PresentationModel);
+        if (!_presentationModelsBag.Any(x => x.TextEditorPresentationKey == registerPresentationModelAction.PresentationModel.TextEditorPresentationKey))
+            _presentationModelsBag.Add(registerPresentationModelAction.PresentationModel);
+
         return new TextEditorModel(this);
     }
     
