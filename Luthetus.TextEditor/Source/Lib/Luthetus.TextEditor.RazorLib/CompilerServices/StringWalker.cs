@@ -292,16 +292,4 @@ public class StringWalker
                 SourceText),
             wordBuilder.ToString());
     }
-
-    [Obsolete("Use: 'while (!_stringWalker.IsEof) { ...; _ = ReadCharacter(); }'")]
-    public void WhileNotEndOfFile(Func<bool> shouldBreakFunc)
-    {
-        while (CurrentCharacter != ParserFacts.END_OF_FILE)
-        {
-            if (shouldBreakFunc.Invoke())
-                break;
-
-            _ = ReadCharacter();
-        }
-    }
 }
