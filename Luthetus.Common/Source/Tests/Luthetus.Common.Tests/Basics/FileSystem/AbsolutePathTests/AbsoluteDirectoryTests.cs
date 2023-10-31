@@ -7,7 +7,7 @@ public class AbsoluteDirectoryTests : PathTestsBase
     [Fact]
     public void SHOULD_RESOLVE_DIRECTORY_FROM_ROOT_WITH_ENDING_DIRECTORY_SEPARATOR_USING_FORWARD_SLASH()
     {
-        var absolutePath = new AbsolutePath("/Aaa/Bbb/Ccc/", true, EnvironmentProvider);
+        var absolutePath = new AbsolutePath("/Aaa/Bbb/Ccc/", true, CommonHelper.EnvironmentProvider);
 
         Assert.Equal(3, absolutePath.AncestorDirectoryBag.Count);
 
@@ -30,7 +30,7 @@ public class AbsoluteDirectoryTests : PathTestsBase
     [Fact]
     public void SHOULD_RESOLVE_DIRECTORY_FROM_ROOT_MISSING_ENDING_DIRECTORY_SEPARATOR_USING_FORWARD_SLASH()
     {
-        var absolutePath = new AbsolutePath("/Aaa/Bbb/Ccc", true, EnvironmentProvider);
+        var absolutePath = new AbsolutePath("/Aaa/Bbb/Ccc", true, CommonHelper.EnvironmentProvider);
 
         Assert.Equal(3, absolutePath.AncestorDirectoryBag.Count);
 
@@ -53,7 +53,7 @@ public class AbsoluteDirectoryTests : PathTestsBase
     [Fact]
     public void SHOULD_RESOLVE_DIRECTORY_FROM_ROOT_WITH_ENDING_DIRECTORY_SEPARATOR_USING_BACK_SLASH()
     {
-        var absolutePath = new AbsolutePath("\\Aaa\\Bbb\\Ccc\\", true, EnvironmentProvider);
+        var absolutePath = new AbsolutePath("\\Aaa\\Bbb\\Ccc\\", true, CommonHelper.EnvironmentProvider);
 
         Assert.Equal(3, absolutePath.AncestorDirectoryBag.Count);
 
@@ -76,7 +76,7 @@ public class AbsoluteDirectoryTests : PathTestsBase
     [Fact]
     public void SHOULD_RESOLVE_DIRECTORY_FROM_ROOT_MISSING_ENDING_DIRECTORY_SEPARATOR_USING_BACK_SLASH()
     {
-        var absolutePath = new AbsolutePath("\\Aaa\\Bbb\\Ccc", true, EnvironmentProvider);
+        var absolutePath = new AbsolutePath("\\Aaa\\Bbb\\Ccc", true, CommonHelper.EnvironmentProvider);
 
         Assert.Equal(3, absolutePath.AncestorDirectoryBag.Count);
 
@@ -99,7 +99,7 @@ public class AbsoluteDirectoryTests : PathTestsBase
     [Fact]
     public void SHOULD_RESOLVE_DIRECTORY_FROM_DRIVE_WITH_ENDING_DIRECTORY_SEPARATOR_USING_FORWARD_SLASH()
     {
-        var absolutePath = new AbsolutePath("C:/Users/hunte/Repos/", true, EnvironmentProvider);
+        var absolutePath = new AbsolutePath("C:/Users/hunte/Repos/", true, CommonHelper.EnvironmentProvider);
 
         Assert.NotNull(absolutePath.RootDrive);
         Assert.Equal("C", absolutePath.RootDrive!.DriveNameAsIdentifier);
@@ -125,18 +125,18 @@ public class AbsoluteDirectoryTests : PathTestsBase
     [Fact]
     public void SHOULD_RESOLVE_DIRECTORY_FROM_DRIVE_MISSING_ENDING_DIRECTORY_SEPARATOR_USING_FORWARD_SLASH()
     {
-        var absolutePath = new AbsolutePath("C:/Users/hunte/Repos", true, EnvironmentProvider);
+        var absolutePath = new AbsolutePath("C:/Users/hunte/Repos", true, CommonHelper.EnvironmentProvider);
     }
 
     [Fact]
     public void SHOULD_RESOLVE_DIRECTORY_FROM_DRIVE_WITH_ENDING_DIRECTORY_SEPARATOR_USING_BACK_SLASH()
     {
-        var absolutePath = new AbsolutePath("C:\\Users\\hunte\\Repos\\", true, EnvironmentProvider);
+        var absolutePath = new AbsolutePath("C:\\Users\\hunte\\Repos\\", true, CommonHelper.EnvironmentProvider);
     }
 
     [Fact]
     public void SHOULD_RESOLVE_DIRECTORY_FROM_DRIVE_MISSING_ENDING_DIRECTORY_SEPARATOR_USING_BACK_SLASH()
     {
-        var absolutePath = new AbsolutePath("C:\\Users\\hunte\\Repos", true, EnvironmentProvider);
+        var absolutePath = new AbsolutePath("C:\\Users\\hunte\\Repos", true, CommonHelper.EnvironmentProvider);
     }
 }
