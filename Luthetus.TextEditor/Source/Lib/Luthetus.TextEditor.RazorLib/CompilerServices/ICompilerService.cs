@@ -1,5 +1,4 @@
 ﻿using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
-using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
 

@@ -5,7 +5,6 @@ using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Statement;
-using Luthetus.CompilerServices.Lang.CSharp.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase;

@@ -4,7 +4,6 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.CompilerServices.Lang.JavaScript.JavaScript.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
@@ -137,8 +136,7 @@ public class JavaScriptCompilerService : ICompilerService
                     x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey)
                     ?.PendingCalculation;
 
-                if (pendingCalculation is null)
-                    pendingCalculation = new(model.GetAllText());
+                pendingCalculation ??= new(model.GetAllText());
 
                 var lexer = new TextEditorJavaScriptLexer(model.ResourceUri);
                 var lexResult = await lexer.Lex(text, model.RenderStateKey);
