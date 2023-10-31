@@ -21,7 +21,7 @@ public class TextEditorDefaultCompilerService : ICompilerService
 
     public void RegisterResource(ResourceUri resourceUri)
     {
-        // Do nothing
+        ResourceRegistered?.Invoke();
     }
 
     public ICompilerServiceResource? GetCompilerServiceResourceFor(ResourceUri resourceUri)
@@ -46,7 +46,7 @@ public class TextEditorDefaultCompilerService : ICompilerService
 
     public void ResourceWasModified(ResourceUri resourceUri, ImmutableArray<TextEditorTextSpan> editTextSpansBag)
     {
-        // Do nothing
+        ResourceParsed?.Invoke();
     }
 
     public ImmutableArray<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorTextSpan textSpan)
@@ -56,6 +56,6 @@ public class TextEditorDefaultCompilerService : ICompilerService
 
     public void DisposeResource(ResourceUri resourceUri)
     {
-        // Do nothing
+        ResourceDisposed?.Invoke();
     }
 }

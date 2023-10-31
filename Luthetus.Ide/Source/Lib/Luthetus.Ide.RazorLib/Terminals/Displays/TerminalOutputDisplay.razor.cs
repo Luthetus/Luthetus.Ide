@@ -54,8 +54,18 @@ public partial class TerminalOutputDisplay : FluxorComponent
     [Parameter]
     public bool AllowInput { get; set; }
 
+    private TextEditorViewModelDisplayOptions _textEditorViewModelDisplayOptions = null!;
+
     protected override void OnInitialized()
     {
+        _textEditorViewModelDisplayOptions = new()
+        {
+            IncludeHeaderHelperComponent = false,
+            IncludeFooterHelperComponent = false,
+            IncludeContextMenuHelperComponent = false,
+            AfterOnKeyDownAsync = TextEditorAfterOnKeyDownAsync,
+        };
+
         TerminalSessionsStateSelection.Select(x =>
         {
             if (x.TerminalSessionMap.TryGetValue(TerminalSessionKey, out var terminalSession))
