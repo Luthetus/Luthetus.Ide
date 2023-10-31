@@ -157,6 +157,8 @@ public class TextEditorDiffResult
                 if (cell.IsSourceOfRowWeight &&
                     cell.Weight == targetSourceWeight)
                 {
+                    targetSourceWeight--;
+
                     if (cell.BeforeCharValue != cell.AfterCharValue)
                         throw new ApplicationException($"The {nameof(cell.BeforeCharValue)}:'{cell.BeforeCharValue}' was not equal to the {nameof(cell.AfterCharValue)}:'{cell.AfterCharValue}'");
 
