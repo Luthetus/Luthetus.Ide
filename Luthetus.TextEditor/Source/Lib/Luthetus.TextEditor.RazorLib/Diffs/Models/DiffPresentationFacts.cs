@@ -8,10 +8,17 @@ public static class DiffPresentationFacts
 {
     public const string CssClassString = "luth_te_diff-presentation";
 
-    public static readonly Key<TextEditorPresentationModel> PresentationKey = Key<TextEditorPresentationModel>.NewKey();
+    public static readonly Key<TextEditorPresentationModel> InPresentationKey = Key<TextEditorPresentationModel>.NewKey();
+    public static readonly Key<TextEditorPresentationModel> OutPresentationKey = Key<TextEditorPresentationModel>.NewKey();
 
-    public static readonly TextEditorPresentationModel EmptyPresentationModel = new(
-        PresentationKey,
+    public static readonly TextEditorPresentationModel EmptyInPresentationModel = new(
+        InPresentationKey,
+        0,
+        CssClassString,
+        new TextEditorDiffDecorationMapper());
+    
+    public static readonly TextEditorPresentationModel EmptyOutPresentationModel = new(
+        OutPresentationKey,
         0,
         CssClassString,
         new TextEditorDiffDecorationMapper());

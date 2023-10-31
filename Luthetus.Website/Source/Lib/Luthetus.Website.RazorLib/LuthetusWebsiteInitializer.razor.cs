@@ -160,7 +160,11 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
 
             TextEditorService.Model.RegisterPresentationModel(
                 textEditorModel.ResourceUri,
-                DiffPresentationFacts.EmptyPresentationModel);
+                DiffPresentationFacts.EmptyInPresentationModel);
+            
+            TextEditorService.Model.RegisterPresentationModel(
+                textEditorModel.ResourceUri,
+                DiffPresentationFacts.EmptyOutPresentationModel);
 
             await textEditorModel.ApplySyntaxHighlightingAsync();
         }

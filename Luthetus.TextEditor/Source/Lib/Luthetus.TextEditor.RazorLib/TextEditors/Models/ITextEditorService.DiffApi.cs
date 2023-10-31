@@ -89,7 +89,7 @@ public partial interface ITextEditorService
             // inModel Diff Presentation Model
             {
                 var presentationModel = inModel.PresentationModelsBag.FirstOrDefault(x =>
-                    x.TextEditorPresentationKey == DiffPresentationFacts.PresentationKey);
+                    x.TextEditorPresentationKey == DiffPresentationFacts.InPresentationKey);
 
                 if (presentationModel is not null)
                 {
@@ -107,7 +107,7 @@ public partial interface ITextEditorService
             // outModel Diff Presentation Model
             {
                 var presentationModel = outModel.PresentationModelsBag.FirstOrDefault(x =>
-                    x.TextEditorPresentationKey == DiffPresentationFacts.PresentationKey);
+                    x.TextEditorPresentationKey == DiffPresentationFacts.OutPresentationKey);
 
                 if (presentationModel is not null)
                 {

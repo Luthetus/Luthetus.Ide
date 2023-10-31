@@ -52,7 +52,11 @@ public partial class EditorSync
 
             _textEditorService.Model.RegisterPresentationModel(
                 textEditorModel.ResourceUri,
-                DiffPresentationFacts.EmptyPresentationModel);
+                DiffPresentationFacts.EmptyInPresentationModel);
+
+            _textEditorService.Model.RegisterPresentationModel(
+                textEditorModel.ResourceUri,
+                DiffPresentationFacts.EmptyOutPresentationModel);
 
             _ = Task.Run(async () => await textEditorModel.ApplySyntaxHighlightingAsync());
         }
