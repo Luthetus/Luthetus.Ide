@@ -26,12 +26,12 @@
             if (outIndex < localDiffResult.OutText.Length)
                 outChar = localDiffResult.OutText[outIndex];
 
-            var cssStyleString = $"left: {(1 + inIndex) * 2}em; top: {(1 + outIndex) * 2}em;";
+            var cssStyleString = $"left: {(1 + outIndex) * 2}em; top: {(1 + inIndex) * 2}em;";
 
-            var afterCharacterString = outChar?.ToString() ?? "{null}";
-            var beforeCharacterString = inChar?.ToString() ?? "{null}";
+            var inCharacterString = inChar?.ToString() ?? "{null}";
+            var outCharacterString = outChar?.ToString() ?? "{null}";
 
-            var titleString = $"{beforeCharacterString} -> {afterCharacterString}";
+            var titleString = $"{inCharacterString} -> {outCharacterString}";
 
             <div class="luth_diff-details-visualization-cell"
                  style="@cssStyleString"
