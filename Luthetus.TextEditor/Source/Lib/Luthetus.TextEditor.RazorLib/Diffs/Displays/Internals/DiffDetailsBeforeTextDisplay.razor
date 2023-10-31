@@ -1,0 +1,12 @@
+﻿@{
+    var localDiffResult = DiffResult;
+}
+
+<div class="luth_diff-details-visualization-before">
+    @foreach (var character in localDiffResult.BeforeText)
+    {
+        <div class="luth_diff-details-visualization-character">
+            @character
+        </div>
+    }
+</div>

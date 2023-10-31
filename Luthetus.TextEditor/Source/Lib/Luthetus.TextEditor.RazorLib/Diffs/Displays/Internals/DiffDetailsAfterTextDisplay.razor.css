@@ -1,0 +1,8 @@
+.luth_diff-details-visualization-after {
+    position: absolute;
+    left: 0;
+    top: 2em;
+    height: calc(100% - 2em);
+    width: 2em;
+    background-color: orange;
+}

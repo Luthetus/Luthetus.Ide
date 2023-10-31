@@ -1,6 +1,64 @@
-﻿<h3>DiffDetailsDisplay</h3>
+﻿@using Luthetus.TextEditor.RazorLib.Diffs.Displays.Internals
+<h3>DiffDetailsDisplay</h3>
 
 <div>
     @DiffModelKey.Guid
-</div>    
+</div>
 
+<hr />
+@{
+    var localDiffResult = DiffResult;
+}
+
+<div>
+    @if (localDiffResult is null)
+    {
+        @: localDiffResult is null
+    }
+    else
+    {
+        <div class="luth_diff-details-visualization">
+            Visualization
+
+            <div class="luth_diff-details-visualization-grid">
+                <CascadingValue Value="localDiffResult">
+                    <DiffDetailsBeforeTextDisplay />
+                    <DiffDetailsAfterTextDisplay />
+                </CascadingValue>
+            </div>
+        </div>
+
+        <hr/>
+
+        <div class="luth_diff-details-dump">
+            <div>
+                <span>BeforeText:&nbsp;</span>
+                @localDiffResult.BeforeText
+            </div>
+            <div>
+                <span>AfterText:&nbsp;</span>
+                @localDiffResult.AfterText
+            </div>
+            <div>
+                <span>DiffMatrix:&nbsp;</span>
+                @localDiffResult.DiffMatrix
+            </div>
+            <div>
+                <span>HighestSourceWeightTuple:&nbsp;</span>
+                @localDiffResult.HighestSourceWeightTuple
+            </div>
+            <div>
+                <span>LongestCommonSubsequence:&nbsp;</span>
+                @localDiffResult.LongestCommonSubsequence
+            </div>
+            <div>
+                <span>BeforeLongestCommonSubsequenceTextSpanBag:&nbsp;</span>
+                @localDiffResult.BeforeLongestCommonSubsequenceTextSpanBag
+            </div>
+            <div>
+                <span>AfterLongestCommonSubsequenceTextSpanBag:&nbsp;</span>
+                @localDiffResult.AfterLongestCommonSubsequenceTextSpanBag
+            </div>
+        </div>
+    }
+</div>

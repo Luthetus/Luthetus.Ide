@@ -23,8 +23,6 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private IDialogService DialogService { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
 
     /// <summary>
     /// If the provided <see cref="TextEditorDiffKey"/> is registered using the
@@ -109,6 +107,10 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
                 {
                     nameof(DiffDetailsDisplay.DiffModelKey),
                     TextEditorDiffKey
+                },
+                {
+                    nameof(DiffDetailsDisplay.DiffResult),
+                    _mostRecentDiffResult
                 }
             }
         };
