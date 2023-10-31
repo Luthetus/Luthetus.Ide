@@ -10,18 +10,8 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 
 public class TextEditorDefaultCompilerService : ICompilerService
 {
-    private readonly ITextEditorService _textEditorService;
-    private readonly IBackgroundTaskService _backgroundTaskService;
-    private readonly IDispatcher _dispatcher;
-
-    public TextEditorDefaultCompilerService(
-        ITextEditorService textEditorService,
-        IBackgroundTaskService backgroundTaskService,
-        IDispatcher dispatcher)
+    public TextEditorDefaultCompilerService()
     {
-        _textEditorService = textEditorService;
-        _backgroundTaskService = backgroundTaskService;
-        _dispatcher = dispatcher;
     }
 
     public event Action? ResourceRegistered;

@@ -16,7 +16,7 @@ public partial class FileFormDisplay : ComponentBase, IFileFormRendererType
     [Parameter, EditorRequired]
     public string FileName { get; set; } = string.Empty;
     [Parameter, EditorRequired]
-    public Action<string, IFileTemplate, ImmutableArray<IFileTemplate>> OnAfterSubmitAction { get; set; } = null!;
+    public Action<string, IFileTemplate?, ImmutableArray<IFileTemplate>> OnAfterSubmitAction { get; set; } = null!;
     
     [Parameter]
     public bool IsDirectory { get; set; }

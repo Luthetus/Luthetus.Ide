@@ -28,24 +28,24 @@ public static class ClipboardFacts
         if (clipboardContents.StartsWith(Tag))
         {
             // Skip Tag
-            clipboardContents = clipboardContents.Substring(Tag.Length);
+            clipboardContents = clipboardContents[Tag.Length..];
             // Skip Delimiter following the Tag
-            clipboardContents = clipboardContents.Substring(FieldDelimiter.Length);
+            clipboardContents = clipboardContents[FieldDelimiter.Length..];
 
             var nextDelimiter = clipboardContents.IndexOf(FieldDelimiter, StringComparison.Ordinal);
 
             // Take Command
-            var command = clipboardContents.Substring(0, nextDelimiter);
+            var command = clipboardContents[..nextDelimiter];
 
-            clipboardContents = clipboardContents.Substring(nextDelimiter + 1);
+            clipboardContents = clipboardContents[(nextDelimiter + 1)..];
 
             nextDelimiter = clipboardContents.IndexOf(FieldDelimiter, StringComparison.Ordinal);
 
             // Take DataType
-            var dataType = clipboardContents.Substring(0, nextDelimiter);
+            var dataType = clipboardContents[..nextDelimiter];
 
             // Value is whatever remains in the string
-            var value = clipboardContents.Substring(nextDelimiter + 1);
+            var value = clipboardContents[(nextDelimiter + 1)..];
 
             clipboardPhrase = new ClipboardPhrase(command, dataType, value);
 
