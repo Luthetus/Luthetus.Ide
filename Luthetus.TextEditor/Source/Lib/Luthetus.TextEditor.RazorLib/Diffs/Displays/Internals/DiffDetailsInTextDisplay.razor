@@ -3,10 +3,10 @@
 }
 
 <div class="luth_diff-details-visualization-before">
-    @for (var i = 0; i < localDiffResult.BeforeText.Length; i++)
+    @for (var i = 0; i < localDiffResult.InText.Length; i++)
     {
         var index = i;
-        var character = localDiffResult.BeforeText[index];
+        var character = localDiffResult.InText[index];
 
         <div class="luth_diff-details-visualization-character"
              style="@($"left: {index * 2}em; top: 0;")">

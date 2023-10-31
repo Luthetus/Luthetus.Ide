@@ -123,14 +123,14 @@ public class DiffTests
     private void AssertSumOfAllTextSpanLengthsIsEqualToLengthOfLongestCommonSubsequence(
         TextEditorDiffResult diffResult)
     {
-        var sumOfAllBeforeTextSpanLengths = diffResult.BeforeLongestCommonSubsequenceTextSpanBag
+        var sumOfAllBeforeTextSpanLengths = diffResult.InResultTextSpanBag
             .Sum(x => x.EndingIndexExclusive - x.StartingIndexInclusive);
 
         Assert.Equal(
             sumOfAllBeforeTextSpanLengths,
             diffResult.LongestCommonSubsequence.Length);
 
-        var sumOfAllAfterTextSpanLengths = diffResult.AfterLongestCommonSubsequenceTextSpanBag
+        var sumOfAllAfterTextSpanLengths = diffResult.OutResultTextSpanBag
             .Sum(x => x.EndingIndexExclusive - x.StartingIndexInclusive);
 
         Assert.Equal(

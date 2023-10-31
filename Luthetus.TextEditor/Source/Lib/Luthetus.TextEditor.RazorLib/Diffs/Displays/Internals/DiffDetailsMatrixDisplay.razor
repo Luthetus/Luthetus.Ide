@@ -1,22 +1,41 @@
 @{
     var localDiffResult = DiffResult;
 
-    var longestTextLength = Math.Max(localDiffResult.BeforeText.Length, localDiffResult.AfterText.Length);
+    var longestTextLength = Math.Max(localDiffResult.InText.Length, localDiffResult.OutText.Length);
 }
 
 <div class="luth_diff-details-visualization-matrix">
-    @for (var afterI = 0; afterI < longestTextLength; afterI++)
-    {
-        var afterIndex = afterI;
-        var afterCharacter = localDiffResult.AfterText[afterIndex];
 
-        @for (var beforeI = 0; beforeI < longestTextLength; beforeI++)
+    @* TODO: Ensure each character of "before" corresponds to a row all throughout the Solution. *@
+    @* TODO: Use wording "in" and "out", instead of "before" and "after", all throughout the Solution. *@
+
+    @for (var inI = 0; inI < longestTextLength; inI++)
+    {
+        var inIndex = inI;
+
+        for (var outI = 0; outI < longestTextLength; outI++)
         {
-            var beforeIndex = beforeI;
-            var beforeCharacter = localDiffResult.BeforeText[beforeIndex];
+            var outIndex = outI;
+
+            char? inChar = null;
+            char? outChar = null;
+
+            if (inIndex < localDiffResult.InText.Length)
+                inChar = localDiffResult.InText[inIndex];
+
+            if (outIndex < localDiffResult.OutText.Length)
+                outChar = localDiffResult.OutText[outIndex];
+
+            var cssStyleString = $"left: {(1 + inIndex) * 2}em; top: {(1 + outIndex) * 2}em;";
+
+            var afterCharacterString = outChar?.ToString() ?? "{null}";
+            var beforeCharacterString = inChar?.ToString() ?? "{null}";
+
+            var titleString = $"{beforeCharacterString} -> {afterCharacterString}";
 
             <div class="luth_diff-details-visualization-cell"
-                 style="@($"left: {(1 + beforeIndex) * 2}em; top: {(1 + afterIndex) * 2}em;")">
+                 style="@cssStyleString"
+                 title="@titleString">
                 ~
             </div>
         }
