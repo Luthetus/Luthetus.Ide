@@ -510,8 +510,6 @@ public static class HtmlSyntaxTree
                 HtmlFacts.OPEN_TAG_ENDING_OPTIONS,
                 out _);
 
-            bool firstLoop = true;
-
             if (!foundOpenTagEnding)
             {
                 var beganWithAttributeValueStarting =

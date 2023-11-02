@@ -22,7 +22,7 @@ public partial class ScrollbarHorizontal : ComponentBase, IDisposable
     public TextEditorRenderBatch RenderBatch { get; set; } = null!;
 
     private bool _thinksLeftMouseButtonIsDown;
-    private RelativeCoordinates _relativeCoordinatesOnMouseDown;
+    private RelativeCoordinates _relativeCoordinatesOnMouseDown = new(0, 0, 0, 0);
     private readonly Guid _scrollbarGuid = Guid.NewGuid();
 
     private Func<(MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), Task>? _dragEventHandler;

@@ -180,7 +180,7 @@ public class DotNetSolutionCompilerService : ICompilerService
                 var presentationModel = model.PresentationModelsBag.FirstOrDefault(x =>
                     x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
 
-                if (presentationModel is not null)
+                if (presentationModel?.PendingCalculation is not null)
                 {
                     presentationModel.PendingCalculation.TextEditorTextSpanBag =
                         GetDiagnosticsFor(model.ResourceUri)

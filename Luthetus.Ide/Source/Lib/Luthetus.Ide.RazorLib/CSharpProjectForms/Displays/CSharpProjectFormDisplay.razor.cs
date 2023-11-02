@@ -211,7 +211,11 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
     private async Task StartNewCSharpProjectCommandOnClick()
     {
-        var immutableView = _viewModel.TakeSnapshot();
+        if (!_viewModel.TryTakeSnapshot(out var immutableView) ||
+            immutableView is null)
+        {
+            return;
+        }
 
         if (string.IsNullOrWhiteSpace(immutableView.ProjectTemplateShortNameValue) ||
             string.IsNullOrWhiteSpace(immutableView.CSharpProjectNameValue) ||

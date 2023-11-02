@@ -3,9 +3,9 @@
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 @{
-    var wellKnownTerminalSession = TerminalSessionsStateSelection.Value;
+    var terminalSession = TerminalSessionsStateSelection.Value;
 
-    if (wellKnownTerminalSession is not null)
+    if (terminalSession is not null)
     {
         <button class="luth_button @CssClassString"
                 @onclick="DispatchSetActiveTerminalCommandKeyActionOnClick">
@@ -20,22 +20,22 @@
             }
 
             <button class="luth_button"
-                    @onclick="ClearStandardOutOnClick"
+                    @onclick="() => terminalSession.ClearStandardOut()"
                     @onclick:stopPropagation="true">
                 Clear
             </button>
 
-            @{ var isKillProcessDisabled = !wellKnownTerminalSession.HasExecutingProcess; }
+            @{ var isKillProcessDisabled = !terminalSession.HasExecutingProcess; }
 
             <button class="luth_button"
                     disabled=@isKillProcessDisabled
-                    @onclick="KillProcessOnClick"
+                    @onclick="() => terminalSession.KillProcess()"
                     @onclick:stopPropagation="true">
                 Kill
             </button>
 
             <div style="margin-left: 15px;">
-                @if (wellKnownTerminalSession.HasExecutingProcess)
+                @if (terminalSession.HasExecutingProcess)
                 {
                     <IconLoading/>
                 }

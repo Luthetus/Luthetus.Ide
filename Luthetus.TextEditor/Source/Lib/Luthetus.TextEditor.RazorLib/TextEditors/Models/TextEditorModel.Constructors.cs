@@ -15,16 +15,16 @@ public partial class TextEditorModel
         DateTime resourceLastWriteTime,
         string fileExtension,
         string content,
-        IDecorationMapper decorationMapper,
-        ICompilerService compilerService,
+        IDecorationMapper? decorationMapper,
+        ICompilerService? compilerService,
         Keymap? textEditorKeymap,
         TextEditorSaveFileHelper textEditorSaveFileHelper)
     {
         ResourceUri = resourceUri;
         ResourceLastWriteTime = resourceLastWriteTime;
         FileExtension = fileExtension;
-        DecorationMapper = decorationMapper ?? throw new ArgumentNullException(nameof(decorationMapper));
-        CompilerService = compilerService ?? throw new ArgumentNullException(nameof(compilerService));
+        DecorationMapper = decorationMapper ?? new TextEditorDecorationMapperDefault();
+        CompilerService = compilerService ?? new TextEditorDefaultCompilerService();
         TextEditorKeymap = textEditorKeymap ?? new TextEditorKeymapDefault();
         TextEditorSaveFileHelper = textEditorSaveFileHelper;
 

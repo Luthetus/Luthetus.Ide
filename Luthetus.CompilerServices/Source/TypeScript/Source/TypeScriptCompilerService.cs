@@ -123,6 +123,9 @@ public class TypeScriptCompilerService : ICompilerService
             {
                 var model = _textEditorService.Model.FindOrDefault(resourceUri);
 
+                if (model is null)
+                    return;
+
                 var text = model.GetAllText();
 
                 _dispatcher.Dispatch(new TextEditorModelState.CalculatePresentationModelAction(
@@ -155,7 +158,7 @@ public class TypeScriptCompilerService : ICompilerService
                 var presentationModel = model.PresentationModelsBag.FirstOrDefault(x =>
                     x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
 
-                if (presentationModel is not null)
+                if (presentationModel?.PendingCalculation is not null)
                 {
                     presentationModel.PendingCalculation.TextEditorTextSpanBag =
                         GetDiagnosticsFor(model.ResourceUri)

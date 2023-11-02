@@ -1,5 +1,4 @@
 ﻿using System.Collections.Immutable;
-using System.Diagnostics.Contracts;
 using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
@@ -7,7 +6,8 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 namespace Luthetus.Common.RazorLib.TreeViews.States;
 
 /// <summary>
-/// TODO: Short circuit record value comparison by learning the order that values are compared, then put something obvious as the first comparison. (2023-09-11)
+/// TODO: Short circuit record value comparison by learning the order that values are compared,...
+/// ...then put something obvious as the first comparison. (2023-09-11)
 /// </summary>
 public partial record TreeViewState
 {
@@ -15,8 +15,7 @@ public partial record TreeViewState
     {
         [ReducerMethod]
         public static TreeViewState ReduceRegisterContainerAction(
-            TreeViewState inState,
-            RegisterContainerAction registerContainerAction)
+            TreeViewState inState, RegisterContainerAction registerContainerAction)
         {
             var inContainer = inState.ContainerBag.FirstOrDefault(
                 x => x.Key == registerContainerAction.Container.Key);
@@ -31,8 +30,7 @@ public partial record TreeViewState
 
         [ReducerMethod]
         public static TreeViewState ReduceDisposeContainerAction(
-            TreeViewState inState,
-            DisposeContainerAction disposeContainerAction)
+            TreeViewState inState, DisposeContainerAction disposeContainerAction)
         {
             var inContainer = inState.ContainerBag.FirstOrDefault(
                 x => x.Key == disposeContainerAction.ContainerKey);
@@ -47,8 +45,7 @@ public partial record TreeViewState
 
         [ReducerMethod]
         public static TreeViewState ReduceWithRootNodeAction(
-            TreeViewState inState,
-            WithRootNodeAction withRootNodeAction)
+            TreeViewState inState, WithRootNodeAction withRootNodeAction)
         {
             var inContainer = inState.ContainerBag.FirstOrDefault(
                 x => x.Key == withRootNodeAction.ContainerKey);
@@ -59,7 +56,7 @@ public partial record TreeViewState
             var outContainer = inContainer with
             {
                 RootNode = withRootNodeAction.Node,
-                ActiveNode = withRootNodeAction.Node
+                SelectedNodeBag = new TreeViewNoType[] { withRootNodeAction.Node }.ToImmutableList()
             };
 
             var outContainerBag = inState.ContainerBag.Replace(inContainer, outContainer);
@@ -69,8 +66,7 @@ public partial record TreeViewState
 
         [ReducerMethod]
         public static TreeViewState ReduceAddChildNodeAction(
-            TreeViewState inState,
-            AddChildNodeAction addChildNodeAction)
+            TreeViewState inState, AddChildNodeAction addChildNodeAction)
         {
             var inContainer = inState.ContainerBag.FirstOrDefault(
                 x => x.Key == addChildNodeAction.ContainerKey);
@@ -98,8 +94,7 @@ public partial record TreeViewState
 
         [ReducerMethod]
         public static TreeViewState ReduceReRenderNodeAction(
-            TreeViewState inState,
-            ReRenderNodeAction reRenderNodeAction)
+            TreeViewState inState, ReRenderNodeAction reRenderNodeAction)
         {
             var inContainer = inState.ContainerBag.FirstOrDefault(
                 x => x.Key == reRenderNodeAction.ContainerKey);
@@ -118,8 +113,7 @@ public partial record TreeViewState
 
         [ReducerMethod]
         public static TreeViewState ReduceSetActiveNodeAction(
-            TreeViewState inState,
-            SetActiveNodeAction setActiveNodeAction)
+            TreeViewState inState, SetActiveNodeAction setActiveNodeAction)
         {
             var inContainer = inState.ContainerBag.FirstOrDefault(
                 x => x.Key == setActiveNodeAction.ContainerKey);
@@ -135,7 +129,9 @@ public partial record TreeViewState
 
             var outContainerBag = inState.ContainerBag.Replace(inContainer, inContainer with
             {
-                ActiveNode = setActiveNodeAction.NextActiveNode
+                SelectedNodeBag = setActiveNodeAction.NextActiveNode is null
+                    ? ImmutableList<TreeViewNoType>.Empty
+                    : new TreeViewNoType[] { setActiveNodeAction.NextActiveNode }.ToImmutableList()
             });
 
             return inState with { ContainerBag = outContainerBag };
@@ -143,8 +139,7 @@ public partial record TreeViewState
 
         [ReducerMethod]
         public static TreeViewState ReduceAddSelectedNodeAction(
-            TreeViewState inState,
-            AddSelectedNodeAction addSelectedNodeAction)
+            TreeViewState inState, AddSelectedNodeAction addSelectedNodeAction)
         {
             var inContainer = inState.ContainerBag.FirstOrDefault(
                 x => x.Key == addSelectedNodeAction.ContainerKey);
@@ -163,8 +158,7 @@ public partial record TreeViewState
 
         [ReducerMethod]
         public static TreeViewState ReduceRemoveSelectedNodeAction(
-            TreeViewState inState,
-            RemoveSelectedNodeAction removeSelectedNodeAction)
+            TreeViewState inState, RemoveSelectedNodeAction removeSelectedNodeAction)
         {
             var inContainer = inState.ContainerBag.FirstOrDefault(
                 x => x.Key == removeSelectedNodeAction.ContainerKey);
@@ -192,8 +186,7 @@ public partial record TreeViewState
 
         [ReducerMethod]
         public static TreeViewState ReduceClearSelectedNodeBagAction(
-            TreeViewState inState,
-            ClearSelectedNodeBagAction clearSelectedNodeBagAction)
+            TreeViewState inState, ClearSelectedNodeBagAction clearSelectedNodeBagAction)
         {
             var inContainer = inState.ContainerBag.FirstOrDefault(
                 x => x.Key == clearSelectedNodeBagAction.ContainerKey);
@@ -209,8 +202,7 @@ public partial record TreeViewState
 
         [ReducerMethod]
         public static TreeViewState ReduceMoveLeftAction(
-            TreeViewState inState,
-            MoveLeftAction moveLeftAction)
+            TreeViewState inState, MoveLeftAction moveLeftAction)
         {
             var inContainer = inState.ContainerBag.FirstOrDefault(
                 x => x.Key == moveLeftAction.ContainerKey);
@@ -262,8 +254,7 @@ public partial record TreeViewState
 
         [ReducerMethod]
         public static TreeViewState ReduceMoveDownAction(
-            TreeViewState inState,
-            MoveDownAction moveDownAction)
+            TreeViewState inState, MoveDownAction moveDownAction)
         {
             var inContainer = inState.ContainerBag.FirstOrDefault(
                 x => x.Key == moveDownAction.ContainerKey);
@@ -352,31 +343,34 @@ public partial record TreeViewState
 
         [ReducerMethod]
         public static TreeViewState ReduceMoveUpAction(
-            TreeViewState inState,
-            MoveUpAction moveUpAction)
+            TreeViewState inState, MoveUpAction moveUpAction)
         {
             var inContainer = inState.ContainerBag.FirstOrDefault(
                 x => x.Key == moveUpAction.ContainerKey);
 
-            if (inContainer is null || inContainer.ActiveNode is null)
+            if (inContainer is null)
                 return inState;
 
-            var outContainer = inContainer;
+            var refContainer = inContainer;
 
-            if (outContainer.ActiveNode.Parent is null)
+            if (refContainer?.ActiveNode?.Parent is null)
                 return inState;
 
             if (!moveUpAction.ShiftKey)
             {
-                outContainer = PerformClearSelectedNodes(outContainer);
+                refContainer = PerformClearSelectedNodes(refContainer);
 
-                if (outContainer.ActiveNode is null)
+                // Another null check here is awkward, but the 'PerformClearSelectedNodes(...)'
+                // invocation might return a new refContainer with null members.
+                //
+                // TODO: Perhaps rewriting some logic is necessary here to avoid awkward null checks
+                if (refContainer.ActiveNode?.Parent is null)
                     return inState;
             }
 
-            if (outContainer.ActiveNode.IndexAmongSiblings == 0)
+            if (refContainer.ActiveNode.IndexAmongSiblings == 0)
             {
-                var nextActiveNode = outContainer.ActiveNode.Parent!;
+                var nextActiveNode = refContainer.ActiveNode.Parent;
 
                 if (moveUpAction.ShiftKey)
                 {
@@ -384,23 +378,23 @@ public partial record TreeViewState
                         moveUpAction.ContainerKey,
                         nextActiveNode);
 
-                    outContainer = PerformAddSelectedNode(
-                        outContainer,
+                    refContainer = PerformAddSelectedNode(
+                        refContainer,
                         addSelectedNodeAction);
                 }
 
                 var setActiveNodeAction = new SetActiveNodeAction(
-                    outContainer.Key,
-                    outContainer.ActiveNode!.Parent);
+                    refContainer.Key,
+                    refContainer.ActiveNode!.Parent);
 
-                outContainer = PerformSetActiveNode(
-                    outContainer,
+                refContainer = PerformSetActiveNode(
+                    refContainer,
                     setActiveNodeAction);
             }
             else
             {
-                var target = outContainer.ActiveNode.Parent.ChildBag[
-                    outContainer.ActiveNode.IndexAmongSiblings - 1];
+                var target = refContainer.ActiveNode.Parent.ChildBag[
+                    refContainer.ActiveNode.IndexAmongSiblings - 1];
 
                 while (true)
                 {
@@ -410,8 +404,8 @@ public partial record TreeViewState
                             moveUpAction.ContainerKey,
                             target);
 
-                        outContainer = PerformAddSelectedNode(
-                            outContainer,
+                        refContainer = PerformAddSelectedNode(
+                            refContainer,
                             addSelectedNodeAction);
                     }
 
@@ -427,23 +421,22 @@ public partial record TreeViewState
                 }
 
                 var setActiveNodeAction = new SetActiveNodeAction(
-                    outContainer.Key,
+                    refContainer.Key,
                     target);
 
-                outContainer = PerformSetActiveNode(
-                    outContainer,
+                refContainer = PerformSetActiveNode(
+                    refContainer,
                     setActiveNodeAction);
             }
 
-            var outContainerBag = inState.ContainerBag.Replace(inContainer, outContainer);
+            var outContainerBag = inState.ContainerBag.Replace(inContainer, refContainer);
 
             return inState with { ContainerBag = outContainerBag };
         }
 
         [ReducerMethod]
         public static TreeViewState ReduceMoveRightAction(
-            TreeViewState inState,
-            MoveRightAction moveRightAction)
+            TreeViewState inState, MoveRightAction moveRightAction)
         {
             var inContainer = inState.ContainerBag.FirstOrDefault(
                 x => x.Key == moveRightAction.ContainerKey);
@@ -493,8 +486,7 @@ public partial record TreeViewState
 
         [ReducerMethod]
         public static TreeViewState ReduceMoveHomeAction(
-            TreeViewState inState,
-            MoveHomeAction moveHomeAction)
+            TreeViewState inState, MoveHomeAction moveHomeAction)
         {
             var inContainer = inState.ContainerBag.FirstOrDefault(
                 x => x.Key == moveHomeAction.ContainerKey);
@@ -552,8 +544,7 @@ public partial record TreeViewState
 
         [ReducerMethod]
         public static TreeViewState ReduceMoveEndAction(
-            TreeViewState inState,
-            MoveEndAction moveEndAction)
+            TreeViewState inState, MoveEndAction moveEndAction)
         {
             var inContainer = inState.ContainerBag.FirstOrDefault(
                 x => x.Key == moveEndAction.ContainerKey);
@@ -602,9 +593,6 @@ public partial record TreeViewState
             return inState with { ContainerBag = outContainerBag };
         }
 
-        /// <summary>
-        /// Mutates state, does not return anything.
-        /// </summary>
         private static void PerformMarkForRerender(TreeViewNoType node)
         {
             var markForRerenderTarget = node;
@@ -616,10 +604,8 @@ public partial record TreeViewState
             }
         }
 
-        [Pure]
         private static TreeViewContainer PerformAddSelectedNode(
-            TreeViewContainer inContainer,
-            AddSelectedNodeAction addSelectedNodeAction)
+            TreeViewContainer inContainer, AddSelectedNodeAction addSelectedNodeAction)
         {
             if (inContainer.ActiveNode is null)
                 return inContainer;
@@ -650,10 +636,8 @@ public partial record TreeViewState
             };
         }
 
-        [Pure]
         private static TreeViewContainer PerformSetActiveNode(
-            TreeViewContainer inContainer,
-            SetActiveNodeAction setActiveNodeAction)
+            TreeViewContainer inContainer, SetActiveNodeAction setActiveNodeAction)
         {
             if (inContainer.ActiveNode is not null)
                 PerformMarkForRerender(inContainer.ActiveNode);
@@ -663,13 +647,13 @@ public partial record TreeViewState
 
             return inContainer with
             {
-                ActiveNode = setActiveNodeAction.NextActiveNode
+                SelectedNodeBag = setActiveNodeAction.NextActiveNode is null
+                    ? ImmutableList<TreeViewNoType>.Empty
+                    : new TreeViewNoType[] { setActiveNodeAction.NextActiveNode }.ToImmutableList()
             };
         }
 
-        [Pure]
-        private static TreeViewContainer PerformClearSelectedNodes(
-            TreeViewContainer inContainer)
+        private static TreeViewContainer PerformClearSelectedNodes(TreeViewContainer inContainer)
         {
             if (!inContainer.SelectedNodeBag.Any())
                 return inContainer;

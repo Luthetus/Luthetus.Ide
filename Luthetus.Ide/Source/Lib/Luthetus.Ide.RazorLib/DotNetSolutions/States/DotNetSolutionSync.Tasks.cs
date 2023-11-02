@@ -17,7 +17,7 @@ namespace Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
 public partial class DotNetSolutionSync
 {
-    private async Task AddExistingProjectToSolutionAsync(
+    private async Task Website_AddExistingProjectToSolutionAsync(
         Key<DotNetSolutionModel> dotNetSolutionModelKey,
         string projectTemplateShortName,
         string cSharpProjectName,
@@ -40,16 +40,17 @@ public partial class DotNetSolutionSync
 
         var projectIdGuid = Guid.NewGuid();
 
+        var dotNetSolutionModelBuilder = new DotNetSolutionModelBuilder(inDotNetSolutionModel);
+        
         var cSharpProject = new CSharpProject(
             cSharpProjectName,
             projectTypeGuid,
             relativePathFromSlnToProject,
             projectIdGuid,
-            null,
+            // TODO: 'openAssociatedGroupToken' gets set when 'AddDotNetProject(...)' is ran, which is hacky and should be changed. Until then passing in 'null!'
+            null!, 
             null,
             cSharpProjectAbsolutePath);
-
-        var dotNetSolutionModelBuilder = new DotNetSolutionModelBuilder(inDotNetSolutionModel);
 
         dotNetSolutionModelBuilder.AddDotNetProject(cSharpProject, environmentProvider);
 
@@ -177,8 +178,7 @@ public partial class DotNetSolutionSync
             _treeViewService.RegisterTreeViewState(new TreeViewContainer(
                 TreeViewSolutionExplorerStateKey,
                 rootNode,
-                rootNode,
-                ImmutableList<TreeViewNoType>.Empty));
+                new TreeViewNoType[] { rootNode }.ToImmutableList()));
         }
         else
         {

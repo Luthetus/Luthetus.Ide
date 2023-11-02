@@ -59,10 +59,18 @@ public class CSharpProjectFormViewModel
         DotNetSolutionModel?.NamespacePath?.AbsolutePath.FormattedInput ?? string.Empty,
         $"{CSharpProjectNameValue}{EnvironmentProvider.DirectorySeparatorChar}{CSharpProjectNameValue}.{ExtensionNoPeriodFacts.C_SHARP_PROJECT}");
 
-    public CSharpProjectFormViewModelImmutable TakeSnapshot()
+    public bool TryTakeSnapshot(out CSharpProjectFormViewModelImmutable? viewModelImmutable)
     {
-        return new CSharpProjectFormViewModelImmutable(
-            DotNetSolutionModel,
+        var localDotNetSolutionModel = DotNetSolutionModel;
+
+        if (localDotNetSolutionModel is null)
+        {
+            viewModelImmutable = null;
+            return false;
+        }
+
+        viewModelImmutable = new CSharpProjectFormViewModelImmutable(
+            localDotNetSolutionModel,
             EnvironmentProvider,
             IsReadingProjectTemplates,
             ProjectTemplateShortNameValue,
@@ -83,5 +91,7 @@ public class CSharpProjectFormViewModel
             NewCSharpProjectTerminalCommandKey,
             LoadProjectTemplatesTerminalCommandKey,
             NewCSharpProjectCancellationTokenSource);
+
+        return true;
     }
 }

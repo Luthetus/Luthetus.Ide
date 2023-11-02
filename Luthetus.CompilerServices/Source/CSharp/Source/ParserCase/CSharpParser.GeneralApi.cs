@@ -338,45 +338,13 @@ public partial class CSharpParser : IParser
 
         public void ParseStarToken(StarToken starToken)
         {
-            var localNodeRecent = NodeRecent;
-
-            if (localNodeRecent is not LiteralExpressionNode leftLiteralExpressionNode)
-                throw new NotImplementedException();
-
-            var validMatches = new SyntaxKind[]
-            {
-            SyntaxKind.NumericLiteralToken,
-            };
-
-            var matchedToken = TokenWalker.MatchRange(
-                validMatches,
-                SyntaxKind.BadToken);
-
-            LiteralExpressionNode rightLiteralExpressionNode;
-
-            if (matchedToken.SyntaxKind == SyntaxKind.NumericLiteralToken)
-            {
-                return;
-                // rightLiteralExpressionNode = ParseNumericLiteralToken((NumericLiteralToken)matchedToken);
-            }
-            else
-            {
-                // TODO: I'm not sure what to do when the matchedToken is unexpected. For now I'll "simplify" the binary expression to be the left operand alone.
-                NodeRecent = leftLiteralExpressionNode;
-                return;
-            }
-
-            var binaryOperatorNode = Binder.BindBinaryOperatorNode(
-                leftLiteralExpressionNode,
-                starToken,
-                rightLiteralExpressionNode);
-
-            var binaryExpressionNode = new BinaryExpressionNode(
-                leftLiteralExpressionNode,
-                binaryOperatorNode,
-                rightLiteralExpressionNode);
-
-            NodeRecent = binaryExpressionNode;
+            Specific.HandleExpression(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
         }
 
         public void ParseDollarSignToken(DollarSignToken dollarSignToken)
@@ -638,7 +606,7 @@ public partial class CSharpParser : IParser
 
         public void ParseCloseSquareBracketToken(CloseSquareBracketToken closeSquareBracketToken)
         {
-            var z = 2;
+            return;
         }
 
         public void ParseMemberAccessToken(MemberAccessToken memberAccessToken)

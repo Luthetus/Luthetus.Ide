@@ -16,15 +16,6 @@ public static class FileTemplateFacts
         true,
         CSharpClassCreateFileFunc);
 
-    public static readonly IFileTemplate RazorMarkup = new FileTemplate(
-        "Razor markup",
-        "luth_ide_razor-markup-class",
-        FileTemplateKind.Razor,
-        filename => filename.EndsWith('.' + ExtensionNoPeriodFacts.RAZOR_MARKUP),
-        _ => new[] { RazorCodebehind }.ToImmutableArray(),
-        true,
-        RazorMarkupCreateFileFunc);
-
     public static readonly IFileTemplate RazorCodebehind = new FileTemplate(
         "Razor codebehind",
         "luth_ide_razor-codebehind-class",
@@ -33,6 +24,15 @@ public static class FileTemplateFacts
         _ => ImmutableArray<IFileTemplate>.Empty,
         true,
         RazorCodebehindCreateFileFunc);
+
+    public static readonly IFileTemplate RazorMarkup = new FileTemplate(
+        "Razor markup",
+        "luth_ide_razor-markup-class",
+        FileTemplateKind.Razor,
+        filename => filename.EndsWith('.' + ExtensionNoPeriodFacts.RAZOR_MARKUP),
+        _ => new[] { RazorCodebehind }.ToImmutableArray(),
+        true,
+        RazorMarkupCreateFileFunc);
 
     /// <summary>
     /// Template should be:
