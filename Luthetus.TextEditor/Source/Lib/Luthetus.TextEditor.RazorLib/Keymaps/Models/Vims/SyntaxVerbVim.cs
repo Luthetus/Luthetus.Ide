@@ -10,15 +10,10 @@ public static class SyntaxVerbVim
 {
     public static bool TryLex(KeymapArgument keymapArgument, bool hasTextSelection, out VimGrammarToken? vimGrammarToken)
     {
+        // Suppress unused parameter warnings because these will likely be used once further Vim emulation is implemented.
+        _ = hasTextSelection;
+
         var isGrammarToken = false;
-
-        if (keymapArgument.CtrlKey)
-        {
-            switch (keymapArgument.Code)
-            {
-
-            }
-        }
 
         switch (keymapArgument.Code)
         {

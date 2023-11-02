@@ -32,7 +32,7 @@ public partial class NugetPackageDisplay : FluxorComponent
 
     private static readonly Key<TerminalCommand> AddNugetPackageTerminalCommandKey = Key<TerminalCommand>.NewKey();
 
-    private string _nugetPackageVersionString;
+    private string _nugetPackageVersionString = string.Empty;
 
     private ImmutableArray<NugetPackageVersionRecord> _nugetPackageVersionsOrdered = ImmutableArray<NugetPackageVersionRecord>.Empty;
     private string? _previousNugetPackageId;
@@ -59,11 +59,10 @@ public partial class NugetPackageDisplay : FluxorComponent
         _nugetPackageVersionString = changeEventArgs.Value?.ToString() ?? string.Empty;
     }
 
-    private bool ValidateSolutionContainsSelectedProject()
+    private bool ValidateSolutionContainsSelectedProject(
+        DotNetSolutionState dotNetSolutionState,
+        NuGetPackageManagerState nuGetPackageManagerState)
     {
-        var dotNetSolutionState = DotNetSolutionStateWrap.Value;
-        var nuGetPackageManagerState = NuGetPackageManagerStateWrap.Value;
-
         if (dotNetSolutionState.DotNetSolutionModel is null || nuGetPackageManagerState.SelectedProjectToModify is null)
             return false;
 
@@ -71,13 +70,17 @@ public partial class NugetPackageDisplay : FluxorComponent
             x => x.ProjectIdGuid == nuGetPackageManagerState.SelectedProjectToModify.ProjectIdGuid);
     }
 
-    private async Task AddNugetPackageReferenceOnClick()
+    private async Task AddNugetPackageReferenceOnClick(
+        DotNetSolutionState dotNetSolutionState,
+        NuGetPackageManagerState nuGetPackageManagerState)
     {
-        var targetProject = NuGetPackageManagerStateWrap.Value.SelectedProjectToModify;
+        var targetProject = nuGetPackageManagerState.SelectedProjectToModify;
         var targetNugetPackage = NugetPackageRecord;
         var targetNugetVersion = _nugetPackageVersionString;
 
-        if (!ValidateSolutionContainsSelectedProject() || targetProject is null)
+        var isValid = ValidateSolutionContainsSelectedProject(dotNetSolutionState, nuGetPackageManagerState);
+
+        if (!isValid || targetProject is null)
         {
             return;
         }

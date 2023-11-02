@@ -5,74 +5,86 @@ namespace Luthetus.Common.Tests.Basics.FileSystem.RelativePathTests;
 public class RelativeDirectoryTests : PathTestsBase
 {
     [Fact]
-    public void SHOULD_RESOLVE_DIRECTORY_FROM_CURRENT_WITH_ENDING_DIRECTORY_SEPARATOR_USING_FORWARD_SLASH()
+    public void Directory_FROM_Current_WITH_ForwardSlash()
     {
-        var absolutePath = new AbsolutePath("./Aaa/", true, EnvironmentProvider);
+        var absolutePath = new AbsolutePath("./Aaa/", true, CommonHelper.EnvironmentProvider);
+        throw new NotImplementedException();
     }
     
     [Fact]
-    public void SHOULD_RESOLVE_DIRECTORY_FROM_CURRENT_MISSING_ENDING_DIRECTORY_SEPARATOR_USING_FORWARD_SLASH()
+    public void Directory_FROM_Current_WITH_ForwardSlash_AND_MissingEnd()
     {
-        var absolutePath = new AbsolutePath("./Aaa", true, EnvironmentProvider);
+        var absolutePath = new AbsolutePath("./Aaa", true, CommonHelper.EnvironmentProvider);
+        throw new NotImplementedException();
     }
     
     [Fact]
-    public void SHOULD_RESOLVE_DIRECTORY_FROM_CURRENT_WITH_ENDING_DIRECTORY_SEPARATOR_USING_BACK_SLASH()
+    public void Directory_FROM_Current_WITH_BackSlash()
     {
-        var absolutePath = new AbsolutePath(".\\Aaa\\", true, EnvironmentProvider);
+        var absolutePath = new AbsolutePath(".\\Aaa\\", true, CommonHelper.EnvironmentProvider);
+        throw new NotImplementedException();
     }
     
     [Fact]
-    public void SHOULD_RESOLVE_DIRECTORY_FROM_CURRENT_MISSING_ENDING_DIRECTORY_SEPARATOR_USING_BACK_SLASH()
+    public void Directory_FROM_Current_WITH_BackSlash_AND_MissingEnd()
     {
-        var absolutePath = new AbsolutePath(".\\Aaa", true, EnvironmentProvider);
+        var absolutePath = new AbsolutePath(".\\Aaa", true, CommonHelper.EnvironmentProvider);
+        throw new NotImplementedException();
     }
 
     [Fact]
-    public void SHOULD_RESOLVE_DIRECTORY_FROM_ONE_UP_DIR_DIRECTIVES_WITH_ENDING_DIRECTORY_SEPARATOR_USING_FORWARD_SLASH()
+    public void Directory_FROM_UpDir_WITH_ForwardSlash()
     {
-        var absolutePath = new AbsolutePath("../Todos/", true, EnvironmentProvider);
+        var absolutePath = new AbsolutePath("../Todos/", true, CommonHelper.EnvironmentProvider);
+        throw new NotImplementedException();
     }
     
     [Fact]
-    public void SHOULD_RESOLVE_DIRECTORY_FROM_ONE_UP_DIR_DIRECTIVES_MISSING_ENDING_DIRECTORY_SEPARATOR_USING_FORWARD_SLASH()
+    public void Directory_FROM_UpDir_WITH_ForwardSlash_AND_MissingEnd()
     {
-        var absolutePath = new AbsolutePath("../Todos", true, EnvironmentProvider);
+        var absolutePath = new AbsolutePath("../Todos", true, CommonHelper.EnvironmentProvider);
+        throw new NotImplementedException();
     }
     
     [Fact]
-    public void SHOULD_RESOLVE_DIRECTORY_FROM_ONE_UP_DIR_DIRECTIVES_WITH_ENDING_DIRECTORY_SEPARATOR_USING_BACK_SLASH()
+    public void Directory_FROM_UpDir_WITH_BackSlash()
     {
-        var absolutePath = new AbsolutePath("..\\Todos\\", true, EnvironmentProvider);
+        var absolutePath = new AbsolutePath("..\\Todos\\", true, CommonHelper.EnvironmentProvider);
+        throw new NotImplementedException();
     }
     
     [Fact]
-    public void SHOULD_RESOLVE_DIRECTORY_FROM_ONE_UP_DIR_DIRECTIVES_MISSING_ENDING_DIRECTORY_SEPARATOR_USING_BACK_SLASH()
+    public void Directory_FROM_UpDir_WITH_BackSlash_AND_MissingEnd()
     {
-        var absolutePath = new AbsolutePath("..\\Todos", true, EnvironmentProvider);
+        var absolutePath = new AbsolutePath("..\\Todos", true, CommonHelper.EnvironmentProvider);
+        throw new NotImplementedException();
     }
     
     [Fact]
-    public void SHOULD_RESOLVE_DIRECTORY_FROM_THREE_UP_DIR_DIRECTIVES_WITH_ENDING_DIRECTORY_SEPARATOR_USING_FORWARD_SLASH()
+    public void Directory_FROM_Three_UpDir_WITH_ForwardSlash()
     {
-        var absolutePath = new AbsolutePath("../../../Homework/Math/", true, EnvironmentProvider);
+        var absolutePath = new AbsolutePath("../../../Homework/Math/", true, CommonHelper.EnvironmentProvider);
+        throw new NotImplementedException();
     }
 
     [Fact]
-    public void SHOULD_RESOLVE_DIRECTORY_FROM_THREE_UP_DIR_DIRECTIVES_MISSING_ENDING_DIRECTORY_SEPARATOR_USING_FORWARD_SLASH()
+    public void Directory_FROM_Three_UpDir_WITH_ForwardSlash_AND_MissingEnd()
     {
-        var absolutePath = new AbsolutePath("../../../Homework/Math", true, EnvironmentProvider);
+        var absolutePath = new AbsolutePath("../../../Homework/Math", true, CommonHelper.EnvironmentProvider);
+        throw new NotImplementedException();
     }
     
     [Fact]
-    public void SHOULD_RESOLVE_DIRECTORY_FROM_THREE_UP_DIR_DIRECTIVES_WITH_ENDING_DIRECTORY_SEPARATOR_USING_BACK_SLASH()
+    public void Directory_FROM_Three_UpDir_WITH_BackSlash()
     {
-        var absolutePath = new AbsolutePath("..\\..\\..\\Homework\\Math\\", true, EnvironmentProvider);
+        var absolutePath = new AbsolutePath("..\\..\\..\\Homework\\Math\\", true, CommonHelper.EnvironmentProvider);
+        throw new NotImplementedException();
     }
 
     [Fact]
-    public void SHOULD_RESOLVE_DIRECTORY_FROM_THREE_UP_DIR_DIRECTIVES_MISSING_ENDING_DIRECTORY_SEPARATOR_USING_BACK_SLASH()
+    public void Directory_FROM_Three_UpDir_WITH_BackSlash_AND_MissingEnd()
     {
-        var absolutePath = new AbsolutePath("..\\..\\..\\Homework\\Math", true, EnvironmentProvider);
+        var absolutePath = new AbsolutePath("..\\..\\..\\Homework\\Math", true, CommonHelper.EnvironmentProvider);
+        throw new NotImplementedException();
     }
 }

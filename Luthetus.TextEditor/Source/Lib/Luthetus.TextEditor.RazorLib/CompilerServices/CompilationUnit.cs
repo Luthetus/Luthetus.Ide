@@ -11,29 +11,21 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 public sealed record CompilationUnit : ISyntaxNode
 {
     public CompilationUnit(
-        CodeBlockNode topLevelStatementsCodeBlockNode,
-        ILexer lexer,
-        IParser parser,
-        IBinder binder)
+        CodeBlockNode? rootCodeBlockNode,
+        ILexer? lexer,
+        IParser? parser,
+        IBinder? binder)
     {
-        TopLevelStatementsCodeBlockNode = topLevelStatementsCodeBlockNode;
-        Lexer = lexer;
-        Parser = parser;
-        Binder = binder;
+        TopLevelStatementsCodeBlockNode = rootCodeBlockNode ?? new CodeBlockNode(ImmutableArray<ISyntax>.Empty);
+        Lexer = lexer ?? new TextEditorDefaultLexer();
+        Parser = parser ?? new TextEditorDefaultParser();
+        Binder = binder ?? new TextEditorDefaultBinder();
 
         var diagnosticsBagBuilder = new List<TextEditorDiagnostic>();
-
-        // TODO: The .NET Solution compiler service has a null Binder...
-        // ... Should the Binder to be set to a default instance if it is to be null?...
-        // ... Also make decisions about the nullability documentation in this file
-        if (Lexer is not null)
-            diagnosticsBagBuilder.AddRange(Lexer.DiagnosticsBag);
-
-        if (Parser is not null)
-            diagnosticsBagBuilder.AddRange(Parser.DiagnosticsBag);
-
-        if (Binder is not null)
-            diagnosticsBagBuilder.AddRange(Binder.DiagnosticsBag);
+        
+        diagnosticsBagBuilder.AddRange(Lexer.DiagnosticsBag);
+        diagnosticsBagBuilder.AddRange(Parser.DiagnosticsBag);
+        diagnosticsBagBuilder.AddRange(Binder.DiagnosticsBag);
 
         DiagnosticsBag = diagnosticsBagBuilder.ToImmutableArray();
 

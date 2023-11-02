@@ -57,8 +57,7 @@ public partial class WatchWindowDisplay : FluxorComponent
                 TreeViewService.RegisterTreeViewState(new TreeViewContainer(
                     TreeViewStateKey,
                     rootNode,
-                    rootNode,
-                    ImmutableList<TreeViewNoType>.Empty));
+                    new TreeViewNoType[] { rootNode }.ToImmutableList()));
             }
         }
 

@@ -7,7 +7,7 @@ namespace Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
 public partial class DotNetSolutionSync
 {
-    public void AddExistingProjectToSolution(
+    public void Website_AddExistingProjectToSolution(
         Key<DotNetSolutionModel> dotNetSolutionModelKey,
         string projectTemplateShortName,
         string cSharpProjectName,
@@ -16,7 +16,7 @@ public partial class DotNetSolutionSync
     {
         BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
             "Add Existing-Project To Solution",
-            async () => await AddExistingProjectToSolutionAsync(
+            async () => await Website_AddExistingProjectToSolutionAsync(
                 dotNetSolutionModelKey,
                 projectTemplateShortName,
                 cSharpProjectName,

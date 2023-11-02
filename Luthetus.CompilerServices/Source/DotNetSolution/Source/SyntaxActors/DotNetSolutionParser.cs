@@ -15,13 +15,13 @@ public class DotNetSolutionParser : IParser
     private readonly TokenWalker _tokenWalker;
     private readonly LuthetusDiagnosticBag _diagnosticBag = new();
     private readonly Stack<AssociatedEntryGroupBuilder> _associatedEntryGroupBuilderStack = new();
+    private readonly List<IDotNetProject> _dotNetProjectBag = new();
+    private readonly List<NestedProjectEntry> _nestedProjectEntryBag = new();
 
     private DotNetSolutionHeader _dotNetSolutionHeader = new();
     private bool _hasReadHeader;
     private DotNetSolutionGlobal _dotNetSolutionGlobal = new();
     private AssociatedEntryGroup? _noParentHavingAssociatedEntryGroup;
-    private List<IDotNetProject> _dotNetProjectBag = new();
-    private List<NestedProjectEntry> _nestedProjectEntryBag = new();
 
     public DotNetSolutionParser(DotNetSolutionLexer lexer)
     {

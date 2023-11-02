@@ -47,7 +47,7 @@ public class WebsiteDotNetCliHelper
             false,
             environmentProvider);
 
-        dotNetSolutionSync.AddExistingProjectToSolution(
+        dotNetSolutionSync.Website_AddExistingProjectToSolution(
             immutableView.DotNetSolutionModel.Key,
             immutableView.ProjectTemplateShortNameValue,
             immutableView.CSharpProjectNameValue,

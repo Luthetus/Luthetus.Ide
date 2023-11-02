@@ -7,7 +7,6 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
-using System.Reflection.Metadata.Ecma335;
 
 namespace Luthetus.Ide.RazorLib.Editors.Displays;
 

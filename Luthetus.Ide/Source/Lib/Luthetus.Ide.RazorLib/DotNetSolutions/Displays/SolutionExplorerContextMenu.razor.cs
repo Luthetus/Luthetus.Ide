@@ -234,9 +234,12 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     private MenuOptionRecord[] GetTreeViewLightWeightNugetPackageRecordMenuOptions(
         TreeViewCSharpProjectNugetPackageReference treeViewCSharpProjectNugetPackageReference)
     {
-        var treeViewCSharpProjectNugetPackageReferences =
-            treeViewCSharpProjectNugetPackageReference.Parent as TreeViewCSharpProjectNugetPackageReferences;
-
+        if (treeViewCSharpProjectNugetPackageReference.Parent 
+                is not TreeViewCSharpProjectNugetPackageReferences treeViewCSharpProjectNugetPackageReferences)
+        {
+            return MenuRecord.Empty.MenuOptionBag.ToArray();
+        }
+        
         return new[]
         {
             MenuOptionsFactory.RemoveNuGetPackageReferenceFromProject(

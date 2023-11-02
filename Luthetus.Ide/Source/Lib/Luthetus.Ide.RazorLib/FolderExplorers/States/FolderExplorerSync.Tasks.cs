@@ -44,8 +44,7 @@ public partial class FolderExplorerSync
             _treeViewService.RegisterTreeViewState(new TreeViewContainer(
                 TreeViewContentStateKey,
                 rootNode,
-                rootNode,
-                ImmutableList<TreeViewNoType>.Empty));
+                new TreeViewNoType[] { rootNode }.ToImmutableList()));
         }
         else
         {

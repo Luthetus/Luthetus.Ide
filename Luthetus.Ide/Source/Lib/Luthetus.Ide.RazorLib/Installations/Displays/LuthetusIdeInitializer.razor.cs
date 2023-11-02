@@ -7,7 +7,6 @@ using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.Common.RazorLib.Icons.Displays.Codicon;
 using Luthetus.TextEditor.RazorLib.Finds.States;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
-using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Contexts.Displays;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -20,7 +19,6 @@ using Luthetus.Ide.RazorLib.Terminals.Displays;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Commands;
 using Luthetus.Common.RazorLib.Contexts.Models;
-using Luthetus.Ide.RazorLib.Repls;
 using Luthetus.Ide.RazorLib.Gits.Displays;
 
 namespace Luthetus.Ide.RazorLib.Installations.Displays;

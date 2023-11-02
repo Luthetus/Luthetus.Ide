@@ -2,6 +2,11 @@
 
 <div class="luth_ide_nuget-package-display">
     
+    @{
+        var dotNetSolutionState = DotNetSolutionStateWrap.Value;
+        var nuGetPackageManagerState = NuGetPackageManagerStateWrap.Value;
+    }
+
     <div>
         @NugetPackageRecord.Title
         <span title="Total Downloads">(@($"{NugetPackageRecord.TotalDownloads:N0}") Downloads)</span>
@@ -17,14 +22,18 @@
                 }
             </select>
             
-            @{ var buttonIsDisabled = !ValidateSolutionContainsSelectedProject(); }
+            @{
+                var buttonIsDisabled = !ValidateSolutionContainsSelectedProject(
+                    dotNetSolutionState,
+                    nuGetPackageManagerState);
+            }
             
-            <button @onclick="AddNugetPackageReferenceOnClick"
+            <button @onclick="() => AddNugetPackageReferenceOnClick(dotNetSolutionState, nuGetPackageManagerState)"
                     class="luth_button"
                     style="display: inline-flex; margin-left: 5px;"
-                    disabled=@(buttonIsDisabled)>
+                    disabled=@buttonIsDisabled>
                 
-                @if (buttonIsDisabled)
+                @if (buttonIsDisabled || nuGetPackageManagerState.SelectedProjectToModify is null)
                 {
                     <text>
                         Must select a Project to Modify
@@ -33,7 +42,7 @@
                 else
                 {
                     <text>
-                        Add to @NuGetPackageManagerStateWrap.Value.SelectedProjectToModify.DisplayName
+                        Add to @nuGetPackageManagerState.SelectedProjectToModify.DisplayName
                     </text>
                 }
             </button>

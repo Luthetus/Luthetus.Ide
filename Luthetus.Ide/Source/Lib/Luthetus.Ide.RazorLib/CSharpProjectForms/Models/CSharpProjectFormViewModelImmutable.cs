@@ -8,7 +8,7 @@ using Luthetus.Ide.RazorLib.Websites.ProjectTemplates.Models;
 namespace Luthetus.Ide.RazorLib.CSharpProjectForms.Models;
 
 public record CSharpProjectFormViewModelImmutable(
-    DotNetSolutionModel? DotNetSolutionModel,
+    DotNetSolutionModel DotNetSolutionModel,
     IEnvironmentProvider EnvironmentProvider,
     bool IsReadingProjectTemplates,
     string ProjectTemplateShortNameValue,

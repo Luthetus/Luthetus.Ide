@@ -42,13 +42,13 @@ public partial class InputFileTopNavBar : ComponentBase
     private async Task HandleBackButtonOnClick()
     {
         Dispatcher.Dispatch(new InputFileState.MoveBackwardsInHistoryAction());
-        await ChangeContentRootToOpenedTreeView(InputFileState);
+        await ChangeContentRootToOpenedTreeView();
     }
 
     private async Task HandleForwardButtonOnClick()
     {
         Dispatcher.Dispatch(new InputFileState.MoveForwardsInHistoryAction());
-        await ChangeContentRootToOpenedTreeView(InputFileState);
+        await ChangeContentRootToOpenedTreeView();
     }
 
     private async Task HandleUpwardButtonOnClick()
@@ -60,14 +60,17 @@ public partial class InputFileTopNavBar : ComponentBase
             EnvironmentProvider,
             BackgroundTaskService));
 
-        await ChangeContentRootToOpenedTreeView(InputFileState);
+        await ChangeContentRootToOpenedTreeView();
     }
 
     private async Task HandleRefreshButtonOnClick()
     {
         Dispatcher.Dispatch(new InputFileState.RefreshCurrentSelectionAction(BackgroundTaskService));
-        await ChangeContentRootToOpenedTreeView(InputFileState);
+        await ChangeContentRootToOpenedTreeView();
     }
+
+    private bool GetHandleBackButtonIsDisabled() => !InputFileState.CanMoveBackwardsInHistory;
+    private bool GetHandleForwardButtonIsDisabled() => !InputFileState.CanMoveForwardsInHistory;
 
     private async Task FocusSearchElementReferenceOnClickAsync()
     {
@@ -87,7 +90,7 @@ public partial class InputFileTopNavBar : ComponentBase
         }
     }
 
-    private async Task ChangeContentRootToOpenedTreeView(InputFileState inputFileState)
+    private async Task ChangeContentRootToOpenedTreeView()
     {
         var openedTreeView = InputFileState.GetOpenedTreeView();
 

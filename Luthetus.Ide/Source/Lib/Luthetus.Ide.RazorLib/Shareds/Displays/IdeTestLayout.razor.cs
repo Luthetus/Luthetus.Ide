@@ -166,24 +166,6 @@ public partial class PersonSimpleDisplay : ComponentBase
         await InvokeAsync(StateHasChanged);
     }
 
-    private async Task GetTextEditorViewModelAsync()
-    {
-        var textEditorModel = TextEditorService.Model.FindOrDefault(new(RAZOR_FILE_PATH_STRING));
-
-        if (textEditorModel is not null)
-        {
-            var textEditorViewModelBag = TextEditorService.Model.GetViewModelsOrEmpty(textEditorModel.ResourceUri);
-
-            var viewModel = textEditorViewModelBag.FirstOrDefault();
-
-            if (viewModel is not null)
-            {
-                _textEditorViewModelKey = viewModel.ViewModelKey;
-                await _bodyAndFooterStateHasChangedBoundaryComponent.InvokeStateHasChangedAsync();
-            }
-        }
-    }
-
     public void Dispose()
     {
         DragStateWrap.StateChanged -= DragStateWrapOnStateChanged;

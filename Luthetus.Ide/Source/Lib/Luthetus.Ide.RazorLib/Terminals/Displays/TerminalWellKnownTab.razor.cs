@@ -43,21 +43,8 @@ public partial class TerminalWellKnownTab : FluxorComponent
         base.OnInitialized();
     }
 
-    private Task DispatchSetActiveTerminalCommandKeyActionOnClick()
+    private void DispatchSetActiveTerminalCommandKeyActionOnClick()
     {
         Dispatcher.Dispatch(new WellKnownTerminalSessionsState.SetActiveWellKnownTerminalSessionKey(WellKnownTerminalSessionKey));
-        return Task.CompletedTask;
-    }
-
-    private Task ClearStandardOutOnClick()
-    {
-        TerminalSessionsStateSelection.Value.ClearStandardOut();
-        return Task.CompletedTask;
-    }
-
-    private Task KillProcessOnClick()
-    {
-        TerminalSessionsStateSelection.Value.KillProcess();
-        return Task.CompletedTask;
     }
 }

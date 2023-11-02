@@ -32,7 +32,7 @@ public class StringWalker
     public char NextCharacter => PeekCharacter(1);
 
     /// <summary>Starting with <see cref="PeekCharacter" /> evaluated at 0 return that and the rest of the <see cref="SourceText" /><br /><br /><see cref="RemainingText" /> => SourceText.Substring(PositionIndex);</summary>
-    public string RemainingText => SourceText.Substring(PositionIndex);
+    public string RemainingText => SourceText[PositionIndex..];
 
     /// <summary>Returns if the current character is the end of file character</summary>
     public bool IsEof => CurrentCharacter == ParserFacts.END_OF_FILE;
@@ -220,7 +220,7 @@ public class StringWalker
             _ = ReadCharacter();
         }
 
-        var numericLiteralTextSpan = new TextEditorTextSpan(startingPosition, this);
+        var numericLiteralTextSpan = new TextEditorTextSpan(startingPosition, this, 0);
         return new NumericLiteralToken(numericLiteralTextSpan);
     }
 
@@ -291,17 +291,5 @@ public class StringWalker
                 ResourceUri,
                 SourceText),
             wordBuilder.ToString());
-    }
-
-    [Obsolete("Use: 'while (!_stringWalker.IsEof) { ...; _ = ReadCharacter(); }'")]
-    public void WhileNotEndOfFile(Func<bool> shouldBreakFunc)
-    {
-        while (CurrentCharacter != ParserFacts.END_OF_FILE)
-        {
-            if (shouldBreakFunc.Invoke())
-                break;
-
-            _ = ReadCharacter();
-        }
     }
 }

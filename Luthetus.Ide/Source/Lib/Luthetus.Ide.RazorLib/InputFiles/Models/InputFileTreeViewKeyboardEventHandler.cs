@@ -163,7 +163,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
     {
         var openedTreeView = inputFileState.GetOpenedTreeView();
 
-        if (openedTreeView.Item is not null)
+        if (openedTreeView?.Item is not null)
             _setInputFileContentTreeViewRootFunc.Invoke(openedTreeView.Item);
     }
 

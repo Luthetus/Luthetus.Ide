@@ -4,7 +4,6 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
@@ -159,7 +158,7 @@ public class XmlCompilerService : ICompilerService
                 var presentationModel = model.PresentationModelsBag.FirstOrDefault(x =>
                     x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
 
-                if (presentationModel is not null)
+                if (presentationModel?.PendingCalculation is not null)
                 {
                     presentationModel.PendingCalculation.TextEditorTextSpanBag =
                         GetDiagnosticsFor(model.ResourceUri)

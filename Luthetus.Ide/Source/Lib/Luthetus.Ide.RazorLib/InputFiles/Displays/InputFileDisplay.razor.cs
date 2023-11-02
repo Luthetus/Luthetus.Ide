@@ -195,8 +195,9 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
             TreeViewService.RegisterTreeViewState(new TreeViewContainer(
                 InputFileContent.TreeViewStateKey,
                 adhocRootNode,
-                activeNode,
-                ImmutableList<TreeViewNoType>.Empty));
+                activeNode is null
+                    ? ImmutableList<TreeViewNoType>.Empty
+                    : new TreeViewNoType[] { activeNode }.ToImmutableList()));
         }
         else
         {

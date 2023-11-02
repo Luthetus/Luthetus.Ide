@@ -9,7 +9,6 @@ using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
 using Luthetus.CompilerServices.Lang.CSharp.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
-using System.Linq.Expressions;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 

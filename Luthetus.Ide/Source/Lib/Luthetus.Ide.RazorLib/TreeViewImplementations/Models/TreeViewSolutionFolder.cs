@@ -84,9 +84,10 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
     {
         var ancestorNode = Parent;
 
+        // First, find the TreeViewSolution
         if (ancestorNode is not TreeViewSolution)
         {
-            if (ancestorNode.Parent is null)
+            if (ancestorNode?.Parent is null)
                 return;
 
             while (ancestorNode is not TreeViewSolution && ancestorNode.Parent is not null)

@@ -19,7 +19,7 @@ namespace Luthetus.Ide.RazorLib.CompilerServices.Models;
 
 public class CompilerServiceRegistry : ICompilerServiceRegistry
 {
-    private Dictionary<string, ICompilerService> _map { get; } = new();
+    private readonly Dictionary<string, ICompilerService> _map = new();
 
     public ImmutableDictionary<string, ICompilerService> Map => _map.ToImmutableDictionary();
 
@@ -39,7 +39,7 @@ public class CompilerServiceRegistry : ICompilerServiceRegistry
         RazorCompilerService = new RazorCompilerService(textEditorService, backgroundTaskService, CSharpCompilerService, environmentProvider, dispatcher);
         TypeScriptCompilerService = new TypeScriptCompilerService(textEditorService, backgroundTaskService, dispatcher);
         XmlCompilerService = new XmlCompilerService(textEditorService, backgroundTaskService, dispatcher);
-        DefaultCompilerService = new TextEditorDefaultCompilerService(textEditorService, backgroundTaskService, dispatcher);
+        DefaultCompilerService = new TextEditorDefaultCompilerService();
 
         _map.Add(ExtensionNoPeriodFacts.HTML, XmlCompilerService);
         _map.Add(ExtensionNoPeriodFacts.XML, XmlCompilerService);

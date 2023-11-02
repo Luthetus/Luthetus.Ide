@@ -1,27 +1,13 @@
-﻿using Fluxor;
-using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
-using Luthetus.TextEditor.RazorLib.Cursors.Models;
+﻿using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 
 public class TextEditorDefaultCompilerService : ICompilerService
 {
-    private readonly ITextEditorService _textEditorService;
-    private readonly IBackgroundTaskService _backgroundTaskService;
-    private readonly IDispatcher _dispatcher;
-
-    public TextEditorDefaultCompilerService(
-        ITextEditorService textEditorService,
-        IBackgroundTaskService backgroundTaskService,
-        IDispatcher dispatcher)
+    public TextEditorDefaultCompilerService()
     {
-        _textEditorService = textEditorService;
-        _backgroundTaskService = backgroundTaskService;
-        _dispatcher = dispatcher;
     }
 
     public event Action? ResourceRegistered;
@@ -35,7 +21,7 @@ public class TextEditorDefaultCompilerService : ICompilerService
 
     public void RegisterResource(ResourceUri resourceUri)
     {
-        // Do nothing
+        ResourceRegistered?.Invoke();
     }
 
     public ICompilerServiceResource? GetCompilerServiceResourceFor(ResourceUri resourceUri)
@@ -60,7 +46,7 @@ public class TextEditorDefaultCompilerService : ICompilerService
 
     public void ResourceWasModified(ResourceUri resourceUri, ImmutableArray<TextEditorTextSpan> editTextSpansBag)
     {
-        // Do nothing
+        ResourceParsed?.Invoke();
     }
 
     public ImmutableArray<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorTextSpan textSpan)
@@ -70,6 +56,6 @@ public class TextEditorDefaultCompilerService : ICompilerService
 
     public void DisposeResource(ResourceUri resourceUri)
     {
-        // Do nothing
+        ResourceDisposed?.Invoke();
     }
 }

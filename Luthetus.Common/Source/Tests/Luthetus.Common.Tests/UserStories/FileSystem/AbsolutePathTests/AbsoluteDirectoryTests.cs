@@ -7,7 +7,7 @@ public class AbsoluteDirectoryTests : PathTestsBase
     [Fact]
     public void ROOT_DIR()
     {
-        var absolutePath = new AbsolutePath("/", true, EnvironmentProvider);
+        var absolutePath = new AbsolutePath("/", true, CommonHelper.EnvironmentProvider);
 
         var zzz = absolutePath.FormattedInput;
     }

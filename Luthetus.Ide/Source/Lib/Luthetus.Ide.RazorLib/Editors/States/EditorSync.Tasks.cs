@@ -135,9 +135,7 @@ public partial class EditorSync
     private Key<TextEditorViewModel> GetOrCreateTextEditorViewModel(
         IAbsolutePath absolutePath,
         bool shouldSetFocusToEditor,
-        IDispatcher dispatcher,
-        TextEditorModel textEditorModel,
-        string inputFileAbsolutePathString)
+        TextEditorModel textEditorModel)
     {
         var viewModel = _textEditorService.Model
             .GetViewModelsOrEmpty(textEditorModel.ResourceUri)
@@ -226,9 +224,7 @@ public partial class EditorSync
         var viewModel = GetOrCreateTextEditorViewModel(
             absolutePath,
             shouldSetFocusToEditor,
-            Dispatcher,
-            textEditorModel,
-            inputFileAbsolutePathString);
+            textEditorModel);
 
         _textEditorService.Group.AddViewModel(
             editorTextEditorGroupKey.Value,

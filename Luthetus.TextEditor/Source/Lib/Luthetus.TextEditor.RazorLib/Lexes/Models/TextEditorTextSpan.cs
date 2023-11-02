@@ -10,17 +10,18 @@ public record TextEditorTextSpan(
     string SourceText)
 {
     /// <summary>
-    /// This constructor is used for text spans that don't have a decoration,
-    /// and their <see cref="EndingIndexExclusive"/> is the current position
+    /// This constructor is used for text spans where their
+    /// <see cref="EndingIndexExclusive"/> is the current position
     /// of a <see cref="StringWalker"/>.
     /// </summary>
     public TextEditorTextSpan(
             int StartingIndexInclusive,
-            StringWalker stringWalker)
+            StringWalker stringWalker,
+            byte decorationByte)
         : this(
               StartingIndexInclusive,
               stringWalker.PositionIndex,
-              0,
+              decorationByte,
               stringWalker.ResourceUri,
               stringWalker.SourceText)
     {

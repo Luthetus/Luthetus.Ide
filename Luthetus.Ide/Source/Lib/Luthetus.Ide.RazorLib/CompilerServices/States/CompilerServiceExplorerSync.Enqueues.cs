@@ -69,8 +69,7 @@ public partial class CompilerServiceExplorerSync
                     _treeViewService.RegisterTreeViewState(new TreeViewContainer(
                         TreeViewCompilerServiceExplorerContentStateKey,
                         rootNode,
-                        rootNode,
-                        ImmutableList<TreeViewNoType>.Empty));
+                        new TreeViewNoType[] { rootNode }.ToImmutableList()));
                 }
                 else
                 {

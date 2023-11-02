@@ -150,29 +150,22 @@ public static class HtmlSyntaxTree
 
                     var closeTagNameBuilder = new StringBuilder();
 
-                    stringWalker.WhileNotEndOfFile(() =>
+                    while (!stringWalker.IsEof)
                     {
-                        if (stringWalker.CheckForSubstring(
-                                HtmlFacts.CLOSE_TAG_WITH_CHILD_CONTENT_ENDING))
+                        if (stringWalker.CheckForSubstring(HtmlFacts.CLOSE_TAG_WITH_CHILD_CONTENT_ENDING))
                         {
                             tagBuilder.CloseTagNameSyntax = new TagNameNode(
-                                new TextEditorTextSpan(
-                                    closeTagNameStartingPositionIndex,
-                                    stringWalker.PositionIndex,
-                                    (byte)HtmlDecorationKind.TagName,
-                                    stringWalker.ResourceUri,
-                                    stringWalker.SourceText));
+                                new(closeTagNameStartingPositionIndex, stringWalker, (byte)HtmlDecorationKind.TagName));
 
-                            _ = stringWalker.ReadRange(
-                                    HtmlFacts.CLOSE_TAG_WITH_CHILD_CONTENT_ENDING
-                                        .Length);
+                            _ = stringWalker.ReadRange(HtmlFacts.CLOSE_TAG_WITH_CHILD_CONTENT_ENDING.Length);
 
-                            return true;
+                            break;
                         }
 
                         closeTagNameBuilder.Append(stringWalker.CurrentCharacter);
-                        return false;
-                    });
+
+                        _ = stringWalker.ReadCharacter();
+                    }
 
                     if (tagBuilder.CloseTagNameSyntax is null)
                     {
@@ -197,12 +190,7 @@ public static class HtmlSyntaxTree
                 }
                 else
                 {
-                    // Attribute
-                    var attributeSyntax = ParseAttribute(
-                        stringWalker,
-                        diagnosticBag,
-                        injectedLanguageDefinition);
-
+                    var attributeSyntax = ParseAttribute(stringWalker, diagnosticBag, injectedLanguageDefinition);
                     tagBuilder.AttributeSyntaxes.Add(attributeSyntax);
                 }
             }
@@ -218,17 +206,15 @@ public static class HtmlSyntaxTree
 
             var tagNameBuilder = new StringBuilder();
 
-            stringWalker.WhileNotEndOfFile(() =>
+            while (!stringWalker.IsEof)
             {
-                if (stringWalker.CheckForSubstringRange(
-                        HtmlFacts.TAG_NAME_STOP_DELIMITERS,
-                        out var matchedOn))
-                    return true;
+                if (stringWalker.CheckForSubstringRange(HtmlFacts.TAG_NAME_STOP_DELIMITERS, out var matchedOn))
+                    break;
 
                 tagNameBuilder.Append(stringWalker.CurrentCharacter);
 
-                return false;
-            });
+                _ = stringWalker.ReadCharacter();
+            }
 
             var tagName = tagNameBuilder.ToString();
 
@@ -306,69 +292,48 @@ public static class HtmlSyntaxTree
                 textNodeStartingPositionIndex = null;
             }
 
-            stringWalker.WhileNotEndOfFile(() =>
+            while (!stringWalker.IsEof)
             {
-                if (stringWalker.CheckForSubstring(
-                        HtmlFacts.CLOSE_TAG_WITH_CHILD_CONTENT_BEGINNING))
-                    return true;
+                if (stringWalker.CheckForSubstring(HtmlFacts.CLOSE_TAG_WITH_CHILD_CONTENT_BEGINNING))
+                    break;
 
-                if (stringWalker.CurrentCharacter ==
-                    HtmlFacts.OPEN_TAG_BEGINNING)
+                if (stringWalker.CurrentCharacter == HtmlFacts.OPEN_TAG_BEGINNING)
                 {
                     // If there is text in textNodeBuilder add a new TextNode to the List of TagSyntax
                     AddTextNode();
 
-                    if (stringWalker.CheckForSubstring(
-                            HtmlFacts.COMMENT_TAG_BEGINNING))
+                    if (stringWalker.CheckForSubstring(HtmlFacts.COMMENT_TAG_BEGINNING))
                     {
-                        htmlSyntaxes.Add(
-                            ParseComment(
-                                stringWalker,
-                                diagnosticBag,
-                                injectedLanguageDefinition));
+                        var node = ParseComment(stringWalker, diagnosticBag, injectedLanguageDefinition);
+                        htmlSyntaxes.Add(node);
                     }
                     else
                     {
-                        htmlSyntaxes.Add(
-                            ParseTag(
-                                stringWalker,
-                                diagnosticBag,
-                                injectedLanguageDefinition));
+                        var node = ParseTag(stringWalker, diagnosticBag, injectedLanguageDefinition);
+                        htmlSyntaxes.Add(node);
                     }
 
-                    return false;
+                    continue;
                 }
 
-                if (injectedLanguageDefinition is not null && stringWalker
-                        .CheckForInjectedLanguageCodeBlockTag(injectedLanguageDefinition))
+                if (injectedLanguageDefinition is not null && stringWalker.AtInjectedLanguageCodeBlockTag(injectedLanguageDefinition))
                 {
                     // If there is text in textNodeBuilder add a new TextNode to the List of TagSyntax
                     AddTextNode();
 
-                    htmlSyntaxes.AddRange(
-                        ParseInjectedLanguageCodeBlock(
-                            stringWalker,
-                            diagnosticBag,
-                            injectedLanguageDefinition));
+                    var nodeBag = ParseInjectedLanguageCodeBlock(stringWalker, diagnosticBag, injectedLanguageDefinition);
+                    htmlSyntaxes.AddRange(nodeBag);
 
-                    return false;
+                    continue;
                 }
 
                 textNodeStartingPositionIndex ??= stringWalker.PositionIndex;
 
-                return false;
-            });
+                _ = stringWalker.ReadCharacter();
+            }
 
             if (stringWalker.CurrentCharacter == ParserFacts.END_OF_FILE)
-            {
-                diagnosticBag.ReportEndOfFileUnexpected(
-                    new TextEditorTextSpan(
-                        startingPositionIndex,
-                        stringWalker.PositionIndex,
-                        (byte)HtmlDecorationKind.Error,
-                        stringWalker.ResourceUri,
-                        stringWalker.SourceText));
-            }
+                diagnosticBag.ReportEndOfFileUnexpected(new(startingPositionIndex, stringWalker, (byte)HtmlDecorationKind.Error));
 
             // If there is text in textNodeBuilder add a new TextNode to the List of TagSyntax
             AddTextNode();
@@ -450,7 +415,7 @@ public static class HtmlSyntaxTree
                     firstLoop = false;
 
                     if (injectedLanguageDefinition?.ParseAttributeName is not null &&
-                        stringWalker.CheckForInjectedLanguageCodeBlockTag(injectedLanguageDefinition))
+                        stringWalker.AtInjectedLanguageCodeBlockTag(injectedLanguageDefinition))
                     {
                         return injectedLanguageDefinition.ParseAttributeName
                             .Invoke(
@@ -526,6 +491,10 @@ public static class HtmlSyntaxTree
             LuthetusDiagnosticBag diagnosticBag,
             InjectedLanguageDefinition? injectedLanguageDefinition)
         {
+            // Suppress these unused parameters because all 'Parse...()' methods should take them for consistency.
+            _ = diagnosticBag;
+            _ = injectedLanguageDefinition;
+
             var startingPositionIndex = stringWalker.PositionIndex;
 
             // Move to the first non-whitespace which follows the HtmlFacts.SEPARATOR_FOR_ATTRIBUTE_NAME_AND_ATTRIBUTE_VALUE
@@ -540,8 +509,6 @@ public static class HtmlSyntaxTree
             var foundOpenTagEnding = stringWalker.CheckForSubstringRange(
                 HtmlFacts.OPEN_TAG_ENDING_OPTIONS,
                 out _);
-
-            bool firstLoop = true;
 
             if (!foundOpenTagEnding)
             {
@@ -608,6 +575,10 @@ public static class HtmlSyntaxTree
             LuthetusDiagnosticBag diagnosticBag,
             InjectedLanguageDefinition? injectedLanguageDefinition)
         {
+            // Suppress these unused parameters because all 'Parse...()' methods should take them for consistency.
+            _ = diagnosticBag;
+            _ = injectedLanguageDefinition;
+
             var startingPositionIndex = stringWalker.PositionIndex;
 
             while (!stringWalker.IsEof)

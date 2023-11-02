@@ -11,7 +11,6 @@ using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
-using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.CSharpProjectForms.Models;
@@ -212,7 +211,11 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
     private async Task StartNewCSharpProjectCommandOnClick()
     {
-        var immutableView = _viewModel.TakeSnapshot();
+        if (!_viewModel.TryTakeSnapshot(out var immutableView) ||
+            immutableView is null)
+        {
+            return;
+        }
 
         if (string.IsNullOrWhiteSpace(immutableView.ProjectTemplateShortNameValue) ||
             string.IsNullOrWhiteSpace(immutableView.CSharpProjectNameValue) ||
