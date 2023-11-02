@@ -9,8 +9,9 @@ using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.CompilerServices.Lang.CSharp.Tests.Misc;
 
-namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Misc;
+namespace Luthetus.CompilerServices.Lang.CSharp.Tests;
 
 public class CSharpCompilerServiceTestsBase
 {

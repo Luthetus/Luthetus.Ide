@@ -1,6 +1,6 @@
 ﻿using Microsoft.JSInterop;
 
-namespace Luthetus.TextEditor.Tests;
+namespace Luthetus.Common.RazorLib.Misc;
 
 public class DoNothingJsRuntime : IJSRuntime
 {
