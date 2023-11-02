@@ -8,7 +8,7 @@ namespace Luthetus.Common.RazorLib.TreeViews.Models;
 /// </summary>
 public class TreeViewMouseEventHandler
 {
-    private readonly ITreeViewService _treeViewService;
+    protected readonly ITreeViewService _treeViewService;
 
     public TreeViewMouseEventHandler(ITreeViewService treeViewService)
     {
