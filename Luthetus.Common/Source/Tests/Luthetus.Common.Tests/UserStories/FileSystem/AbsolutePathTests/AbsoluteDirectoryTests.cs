@@ -1,8 +1,9 @@
 ﻿using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.TextEditor.Tests;
 
 namespace Luthetus.Common.Tests.UserStories.FileSystem.AbsolutePathTests;
 
-public class AbsoluteDirectoryTests : PathTestsBase
+public class AbsoluteDirectoryTests : CommonTestingBase
 {
     [Fact]
     public void ROOT_DIR()

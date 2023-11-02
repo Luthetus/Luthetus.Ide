@@ -19,8 +19,10 @@ public partial record TreeViewState
     public record AddSelectedNodeAction(Key<TreeViewContainer> ContainerKey, TreeViewNoType SelectedNode);
     public record RemoveSelectedNodeAction(Key<TreeViewContainer> ContainerKey, Key<TreeViewNoType> NodeKey);
 
-    /// <summary>If a movement is performed on the TreeView without the "ShiftKey" being held.
-    /// Then the selected nodes are cleared.</summary>
+    /// <summary>
+    /// If a movement is performed on the TreeView without the "ShiftKey" being held.
+    /// Then the selected nodes are cleared.
+    /// </summary>
     public record ClearSelectedNodeBagAction(Key<TreeViewContainer> ContainerKey);
     public record MoveLeftAction(Key<TreeViewContainer> ContainerKey, bool ShiftKey);
     public record MoveDownAction(Key<TreeViewContainer> ContainerKey, bool ShiftKey);

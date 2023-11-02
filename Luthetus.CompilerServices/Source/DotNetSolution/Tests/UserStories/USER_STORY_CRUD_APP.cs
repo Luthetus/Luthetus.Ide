@@ -1,0 +1,49 @@
+﻿using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
+using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+
+namespace Luthetus.CompilerServices.Lang.CSharp.Tests.UserStories;
+
+/// <summary>
+/// User Story Description:
+/// User wants to type up a CRUD App which
+/// has a variety of files such as: "PersonModel.cs" and
+/// "PersonRepository.cs". A semantic model of the .NET Solution should be
+/// created, which includes a semantic model foreach of the C# Projects,
+/// then the projects have semantic models for all their source files.
+/// </summary>
+public class USER_STORY_CRUD_APP
+{
+    [Fact]
+    public void Enact()
+    {
+        string sourceText = @"namespace BlazorWasmApp.PersonCase;
+
+public class PersonModel
+{
+	public PersonModel()
+	{
+	}
+
+	public string FirstName { get; set; }
+	public string LastName { get; set; }
+
+	public string DisplayName => $""{FirstName} + {LastName}"";
+}
+".ReplaceLineEndings("\n");
+
+        var resourceUri = new ResourceUri("PersonModel.cs");
+
+        var lexer = new CSharpLexer(
+            resourceUri,
+            sourceText);
+
+        lexer.Lex();
+
+        var parser = new CSharpParser(lexer);
+
+        var compilationUnit = parser.Parse();
+
+        throw new NotImplementedException("TODO: Perform assertions");
+    }
+}

@@ -10,9 +10,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Compile Remove="Basics\Xml\**" />
-      <EmbeddedResource Remove="Basics\Xml\**" />
-      <None Remove="Basics\Xml\**" />
+      <Compile Remove="Basis\Xml\**" />
+      <EmbeddedResource Remove="Basis\Xml\**" />
+      <None Remove="Basis\Xml\**" />
     </ItemGroup>
 
     <ItemGroup>

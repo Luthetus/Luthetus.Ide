@@ -1,5 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Notifications.Displays;
 using Luthetus.Common.RazorLib.Storages.States;
 using Luthetus.Common.RazorLib.Themes.Models;
@@ -50,35 +51,48 @@ public static class ServiceCollectionExtensions
             .AddSingleton(hostingInformation.BackgroundTaskService)
             .AddSingleton<ILuthetusCommonComponentRenderers>(_ => _commonRendererTypes)
             .AddScoped<IThemeRecordsCollectionService, ThemeRecordsCollectionService>()
-            .AddLuthetusCommonFactories(commonOptions)
+            .AddCommonFactories(hostingInformation, commonOptions)
             .AddScoped<StorageSync>();
 
         return services;
     }
 
-    private static IServiceCollection AddLuthetusCommonFactories(
+    private static IServiceCollection AddCommonFactories(
         this IServiceCollection services,
-        LuthetusCommonOptions luthetusCommonOptions)
+        LuthetusHostingInformation hostingInformation,
+        LuthetusCommonOptions commonOptions)
     {
-        return services
-            .AddScoped(serviceProvider =>
-                luthetusCommonOptions.LuthetusCommonFactories.ClipboardServiceFactory.Invoke(serviceProvider))
-            .AddScoped(serviceProvider =>
-                luthetusCommonOptions.LuthetusCommonFactories.DialogServiceFactory.Invoke(serviceProvider))
-            .AddScoped(serviceProvider =>
-                luthetusCommonOptions.LuthetusCommonFactories.NotificationServiceFactory.Invoke(serviceProvider))
-            .AddScoped(serviceProvider =>
-                luthetusCommonOptions.LuthetusCommonFactories.DragServiceFactory.Invoke(serviceProvider))
-            .AddScoped(serviceProvider =>
-                luthetusCommonOptions.LuthetusCommonFactories.DropdownServiceFactory.Invoke(serviceProvider))
-            .AddScoped(serviceProvider =>
-                luthetusCommonOptions.LuthetusCommonFactories.AppOptionsServiceFactory.Invoke(serviceProvider))
-            .AddScoped(serviceProvider =>
-                luthetusCommonOptions.LuthetusCommonFactories.StorageServiceFactory.Invoke(serviceProvider))
-            .AddScoped(serviceProvider =>
-                luthetusCommonOptions.LuthetusCommonFactories.ThemeServiceFactory.Invoke(serviceProvider))
-            .AddScoped(serviceProvider =>
-                luthetusCommonOptions.LuthetusCommonFactories.TreeViewServiceFactory.Invoke(serviceProvider)); ;
+        services
+            .AddScoped(sp => commonOptions.CommonFactories.ClipboardServiceFactory.Invoke(sp))
+            .AddScoped(sp => commonOptions.CommonFactories.DialogServiceFactory.Invoke(sp))
+            .AddScoped(sp => commonOptions.CommonFactories.NotificationServiceFactory.Invoke(sp))
+            .AddScoped(sp => commonOptions.CommonFactories.DragServiceFactory.Invoke(sp))
+            .AddScoped(sp => commonOptions.CommonFactories.DropdownServiceFactory.Invoke(sp))
+            .AddScoped(sp => commonOptions.CommonFactories.AppOptionsServiceFactory.Invoke(sp))
+            .AddScoped(sp => commonOptions.CommonFactories.StorageServiceFactory.Invoke(sp))
+            .AddScoped(sp => commonOptions.CommonFactories.ThemeServiceFactory.Invoke(sp))
+            .AddScoped(sp => commonOptions.CommonFactories.TreeViewServiceFactory.Invoke(sp));
+
+        if (commonOptions.CommonFactories.EnvironmentProviderFactory is not null)
+        {
+            services.AddScoped(sp => commonOptions.CommonFactories.EnvironmentProviderFactory.Invoke(sp));
+        }
+        else
+        {
+            switch (hostingInformation.LuthetusHostingKind)
+            {
+                case LuthetusHostingKind.Photino:
+                    services.AddSingleton<IEnvironmentProvider, LocalEnvironmentProvider>();
+                    services.AddSingleton<IFileSystemProvider, LocalFileSystemProvider>();
+                    break;
+                default:
+                    services.AddScoped<IEnvironmentProvider, InMemoryEnvironmentProvider>();
+                    services.AddScoped<IFileSystemProvider, InMemoryFileSystemProvider>();
+                    break;
+            }
+        }
+
+        return services;
     }
 
     private static readonly LuthetusCommonTreeViews _commonTreeViews = new(

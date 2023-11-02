@@ -51,7 +51,7 @@ public static class ServiceCollectionExtensions
             });
         }
 
-        return services
+        services
             .AddSingleton(ideOptions)
             .AddSingleton<ILuthetusIdeComponentRenderers>(_ideComponentRenderers)
             .AddScoped<DotNetSolutionSync>()
@@ -61,41 +61,6 @@ public static class ServiceCollectionExtensions
             .AddScoped<FolderExplorerSync>()
             .AddScoped<InputFileSync>()
             .AddScoped<LocalStorageSync>()
-            .AddLuthetusIdeFileSystem(hostingInformation, ideOptions)
-            .AddLuthetusIdeClassLibServices(hostingInformation);
-    }
-
-    private static IServiceCollection AddLuthetusIdeFileSystem(
-        this IServiceCollection services,
-        LuthetusHostingInformation hostingInformation,
-        LuthetusIdeOptions ideOptions)
-    {
-        Func<IServiceProvider, IEnvironmentProvider> environmentProviderFactory;
-        Func<IServiceProvider, IFileSystemProvider> fileSystemProviderFactory;
-
-        if (hostingInformation.LuthetusHostingKind == LuthetusHostingKind.Photino)
-        {
-            environmentProviderFactory = _ => new LocalEnvironmentProvider();
-            fileSystemProviderFactory = _ => new LocalFileSystemProvider();
-        }
-        else
-        {
-            environmentProviderFactory = _ => new InMemoryEnvironmentProvider();
-
-            fileSystemProviderFactory = serviceProvider => new InMemoryFileSystemProvider(
-                serviceProvider.GetRequiredService<IEnvironmentProvider>());
-        }
-
-        return services
-            .AddSingleton(environmentProviderFactory.Invoke)
-            .AddSingleton(fileSystemProviderFactory.Invoke);
-    }
-
-    public static IServiceCollection AddLuthetusIdeClassLibServices(
-        this IServiceCollection services,
-        LuthetusHostingInformation hostingInformation)
-    {
-        services
             .AddScoped<ICommandFactory, CommandFactory>()
             .AddScoped<ICompilerServiceRegistry, CompilerServiceRegistry>()
             .AddScoped<IDecorationMapperRegistry, DecorationMapperRegistry>()
@@ -103,12 +68,10 @@ public static class ServiceCollectionExtensions
             .AddScoped<IFileTemplateProvider, FileTemplateProvider>()
             .AddScoped<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>();
 
-        services
-            .AddFluxor(options =>
-                options.ScanAssemblies(
-                    typeof(ServiceCollectionExtensions).Assembly,
-                    typeof(LuthetusCommonOptions).Assembly,
-                    typeof(LuthetusTextEditorOptions).Assembly));
+        services.AddFluxor(options => options.ScanAssemblies(
+            typeof(ServiceCollectionExtensions).Assembly,
+            typeof(LuthetusCommonOptions).Assembly,
+            typeof(LuthetusTextEditorOptions).Assembly));
 
         return services;
     }

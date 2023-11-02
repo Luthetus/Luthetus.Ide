@@ -17,6 +17,7 @@ using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 
 namespace Luthetus.Common.RazorLib.Installations.Models;
 
@@ -73,4 +74,16 @@ public record LuthetusCommonFactories
             true,
             serviceProvider.GetRequiredService<IState<TreeViewState>>(),
             serviceProvider.GetRequiredService<IDispatcher>());
+
+    /// <summary>
+    /// The default value for <see cref="EnvironmentProviderFactory"/> is based on the <see cref="LuthetusHostingKind"/>.
+    /// Therefore, the uninitialized value is null, then an if statement is performed to determine what it should default to when adding services.
+    /// </summary>
+    public Func<IServiceProvider, IEnvironmentProvider>? EnvironmentProviderFactory { get; init; }
+
+    /// <summary>
+    /// The default value for <see cref="FileSystemProviderFactory"/> is based on the <see cref="LuthetusHostingKind"/>.
+    /// Therefore, the uninitialized value is null, then an if statement is performed to determine what it should default to when adding services.
+    /// </summary>
+    public Func<IServiceProvider, IFileSystemProvider>? FileSystemProviderFactory { get; init; }
 }

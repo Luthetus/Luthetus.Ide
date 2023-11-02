@@ -1,5 +1,7 @@
-﻿namespace Luthetus.Common.Tests.UserStories.FileSystem.RelativePathTests;
+﻿using Luthetus.TextEditor.Tests;
 
-public class RelativeDirectoryTests : PathTestsBase
+namespace Luthetus.Common.Tests.UserStories.FileSystem.RelativePathTests;
+
+public class RelativeDirectoryTests : CommonTestingBase
 {
 }

@@ -34,7 +34,7 @@ public class CSharpCompilerServiceTestsBase
 
         services.AddLuthetusCommonServices(hostingInformation, commonOptions =>
         {
-            var outLuthetusCommonFactories = commonOptions.LuthetusCommonFactories with
+            var outLuthetusCommonFactories = commonOptions.CommonFactories with
             {
                 ClipboardServiceFactory = _ => new InMemoryClipboardService(true),
                 StorageServiceFactory = _ => new DoNothingStorageService(true)
@@ -42,7 +42,7 @@ public class CSharpCompilerServiceTestsBase
 
             return commonOptions with
             {
-                LuthetusCommonFactories = outLuthetusCommonFactories
+                CommonFactories = outLuthetusCommonFactories
             };
         });
 
