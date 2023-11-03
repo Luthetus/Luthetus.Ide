@@ -2,59 +2,41 @@
 
 namespace Luthetus.Common.RazorLib.Dialogs.States;
 
-public partial record DialogStateTests
+public partial record DialogStateReducerTests
 {
-    private record Reducer
+    [Fact]
+    public void ReduceRegisterAction()
     {
+        /*
         [ReducerMethod]
         public static DialogState ReduceRegisterAction(
-            DialogState inState,
-            RegisterAction registerAction)
-        {
-            if (inState.DialogBag.Any(x => x.Key == registerAction.Entry.Key))
-                return inState;
+            DialogState inState, RegisterAction registerAction)
+         */
 
-            var outDialogBag = inState.DialogBag.Add(registerAction.Entry);
+        throw new NotImplementedException();
+    }
 
-            return new DialogState { DialogBag = outDialogBag };
-        }
-
+    [Fact]
+    public void ReduceSetIsMaximizedAction()
+    {
+        /*
         [ReducerMethod]
         public static DialogState ReduceSetIsMaximizedAction(
-            DialogState inState,
-            SetIsMaximizedAction setIsMaximizedAction)
-        {
-            var inDialog = inState.DialogBag.FirstOrDefault(
-                x => x.Key == setIsMaximizedAction.Key);
+            DialogState inState, SetIsMaximizedAction setIsMaximizedAction)
+         */
 
-            if (inDialog is null)
-                return inState;
+        throw new NotImplementedException();
+    }
 
-            var outDialogBag = inState.DialogBag.Replace(inDialog, inDialog with
-            {
-                IsMaximized = setIsMaximizedAction.IsMaximized
-            });
-
-            return new DialogState { DialogBag = outDialogBag };
-        }
-
+    [Fact]
+    public void ReduceDisposeAction()
+    {
+        /*
         [ReducerMethod]
         public static DialogState ReduceDisposeAction(
-            DialogState inState,
-            DisposeAction disposeAction)
-        {
-            var inDialog = inState.DialogBag.FirstOrDefault(
-                x => x.Key == disposeAction.Key);
+            DialogState inState, DisposeAction disposeAction)
+         */
 
-            if (inDialog is null)
-                return inState;
-
-            var outDialogBag = inState.DialogBag.Remove(inDialog);
-
-            return new DialogState
-            {
-                DialogBag = outDialogBag
-            };
-        }
+        throw new NotImplementedException();
     }
 }

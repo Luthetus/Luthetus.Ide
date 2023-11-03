@@ -3,35 +3,191 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 
 namespace Luthetus.Common.RazorLib.TreeViews.States;
 
-public partial record TreeViewStateTests
+public class TreeViewStateActionsTests
 {
-    public record RegisterContainerAction(TreeViewContainer Container);
-    public record DisposeContainerAction(Key<TreeViewContainer> ContainerKey);
-    public record WithRootNodeAction(Key<TreeViewContainer> ContainerKey, TreeViewNoType Node);
-    public record TryGetContainerAction(Key<TreeViewContainer> ContainerKey);
-    public record ReplaceContainerAction(Key<TreeViewContainer> ContainerKey, TreeViewContainer Container);
+    [Fact]
+    public void RegisterContainerAction()
+    {
+        /*
+        public record RegisterContainerAction(TreeViewContainer Container);
+         */
 
-    public record AddChildNodeAction(
-        Key<TreeViewContainer> ContainerKey, TreeViewNoType ParentNode, TreeViewNoType ChildNode);
+        throw new NotImplementedException();
+    }
 
-    public record ReRenderNodeAction(Key<TreeViewContainer> ContainerKey, TreeViewNoType Node);
-    public record SetActiveNodeAction(Key<TreeViewContainer> ContainerKey, TreeViewNoType? NextActiveNode);
-    public record AddSelectedNodeAction(Key<TreeViewContainer> ContainerKey, TreeViewNoType SelectedNode);
-    public record RemoveSelectedNodeAction(Key<TreeViewContainer> ContainerKey, Key<TreeViewNoType> NodeKey);
+    [Fact]
+    public void DisposeContainerAction()
+    {
+        /*
+        public record DisposeContainerAction(Key<TreeViewContainer> ContainerKey);
+         */
 
-    /// <summary>
-    /// If a movement is performed on the TreeView without the "ShiftKey" being held.
-    /// Then the selected nodes are cleared.
-    /// </summary>
-    public record ClearSelectedNodeBagAction(Key<TreeViewContainer> ContainerKey);
-    public record MoveLeftAction(Key<TreeViewContainer> ContainerKey, bool ShiftKey);
-    public record MoveDownAction(Key<TreeViewContainer> ContainerKey, bool ShiftKey);
-    public record MoveUpAction(Key<TreeViewContainer> ContainerKey, bool ShiftKey);
+        throw new NotImplementedException();
+    }
 
-    public record MoveRightAction(
-        Key<TreeViewContainer> ContainerKey, bool ShiftKey, Action<TreeViewNoType> LoadChildBagAction);
+    [Fact]
+    public void WithRootNodeAction()
+    {
+        /*
+        public record WithRootNodeAction(Key<TreeViewContainer> ContainerKey, TreeViewNoType Node);
+         */
 
-    public record MoveHomeAction(Key<TreeViewContainer> ContainerKey, bool ShiftKey);
-    public record MoveEndAction(Key<TreeViewContainer> ContainerKey, bool ShiftKey);
-    public record LoadChildBagAction(Key<TreeViewContainer> ContainerKey, TreeViewNoType Node);
+        throw new NotImplementedException();
+    }
+
+    [Fact]
+    public void TryGetContainerAction()
+    {
+        /*
+        public record TryGetContainerAction(Key<TreeViewContainer> ContainerKey);
+         */
+
+        throw new NotImplementedException();
+    }
+
+    [Fact]
+    public void ReplaceContainerAction()
+    {
+        /*
+        public record ReplaceContainerAction(Key<TreeViewContainer> ContainerKey, TreeViewContainer Container);
+         */
+
+        throw new NotImplementedException();
+    }
+
+    [Fact]
+    public void AddChildNodeAction()
+    {
+        /*
+        public record AddChildNodeAction(
+            Key<TreeViewContainer> ContainerKey, TreeViewNoType ParentNode, TreeViewNoType ChildNode);
+         */
+
+        throw new NotImplementedException();
+    }
+
+    
+    [Fact]
+    public void ReRenderNodeAction()
+    {
+        /*
+        public record ReRenderNodeAction(Key<TreeViewContainer> ContainerKey, TreeViewNoType Node);
+         */
+
+	    throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void SetActiveNodeAction()
+    {
+        /*
+        public record SetActiveNodeAction(Key<TreeViewContainer> ContainerKey, TreeViewNoType? NextActiveNode);
+         */
+
+	    throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void AddSelectedNodeAction()
+    {
+        /*
+        public record AddSelectedNodeAction(Key<TreeViewContainer> ContainerKey, TreeViewNoType SelectedNode);
+         */
+
+	    throw new NotImplementedException();
+    }
+
+    [Fact]
+    public void RemoveSelectedNodeAction()
+    {
+        /*
+        public record RemoveSelectedNodeAction(Key<TreeViewContainer> ContainerKey, Key<TreeViewNoType> NodeKey);
+         */
+
+        throw new NotImplementedException();
+    }
+
+
+    [Fact]
+    public void ClearSelectedNodeBagAction()
+    {
+        /*
+        public record ClearSelectedNodeBagAction(Key<TreeViewContainer> ContainerKey);
+         */
+
+        throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void MoveLeftAction()
+    {
+        /*
+        public record MoveLeftAction(Key<TreeViewContainer> ContainerKey, bool ShiftKey);
+     
+         */
+
+	    throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void MoveDownAction()
+    {
+        /*
+        public record MoveDownAction(Key<TreeViewContainer> ContainerKey, bool ShiftKey);
+         */
+
+	    throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void MoveUpAction()
+    {
+        /*
+        public record MoveUpAction(Key<TreeViewContainer> ContainerKey, bool ShiftKey);
+         */
+
+	    throw new NotImplementedException();
+    }
+
+    [Fact]
+    public void MoveRightAction()
+    {
+        /*
+        public record MoveRightAction(
+            Key<TreeViewContainer> ContainerKey, bool ShiftKey, Action<TreeViewNoType> LoadChildBagAction);
+         */
+
+        throw new NotImplementedException();
+    }
+
+    
+    [Fact]
+    public void MoveHomeAction()
+    {
+        /*
+        public record MoveHomeAction(Key<TreeViewContainer> ContainerKey, bool ShiftKey);
+         */
+
+	    throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void MoveEndAction()
+    {
+        /*
+        public record MoveEndAction(Key<TreeViewContainer> ContainerKey, bool ShiftKey);
+         */
+
+	    throw new NotImplementedException();
+    }
+
+    [Fact]
+    public void LoadChildBagAction()
+    {
+        /*
+        public record LoadChildBagAction(Key<TreeViewContainer> ContainerKey, TreeViewNoType Node);
+         */
+
+        throw new NotImplementedException();
+    }
 }

@@ -2,146 +2,89 @@
 
 namespace Luthetus.Common.RazorLib.Panels.States;
 
-public partial record PanelsStateTests
+public partial record PanelsStateReducerTests
 {
-    private class Reducer
+    [Fact]
+    public void ReduceRegisterPanelGroupAction()
     {
+        /*
         [ReducerMethod]
         public static PanelsState ReduceRegisterPanelGroupAction(
-            PanelsState inState,
-            RegisterPanelGroupAction registerPanelGroupAction)
-        {
-            if (inState.PanelGroupBag.Any(x => x.Key == registerPanelGroupAction.PanelGroup.Key))
-                return inState;
+            PanelsState inState, RegisterPanelGroupAction registerPanelGroupAction)
+         */
 
-            var outPanelGroupBag = inState.PanelGroupBag.Add(registerPanelGroupAction.PanelGroup);
+        throw new NotImplementedException();
+    }
 
-            return inState with { PanelGroupBag = outPanelGroupBag };
-        }
-
+    [Fact]
+    public void ReduceDisposePanelGroupAction()
+    {
+        /*
         [ReducerMethod]
         public static PanelsState ReduceDisposePanelGroupAction(
-            PanelsState inState,
-            DisposePanelGroupAction disposePanelGroupAction)
-        {
-            var inPanelGroup = inState.PanelGroupBag.FirstOrDefault(
-                x => x.Key == disposePanelGroupAction.PanelGroupKey);
+            PanelsState inState, DisposePanelGroupAction disposePanelGroupAction)
+         */
 
-            if (inPanelGroup is null)
-                return inState;
+        throw new NotImplementedException();
+    }
 
-            var outPanelGroupBag = inState.PanelGroupBag.Remove(inPanelGroup);
-
-            return inState with { PanelGroupBag = outPanelGroupBag };
-        }
-
+    [Fact]
+    public void ReduceRegisterPanelTabAction()
+    {
+        /*
         [ReducerMethod]
         public static PanelsState ReduceRegisterPanelTabAction(
-            PanelsState inState,
-            RegisterPanelTabAction registerPanelTabAction)
-        {
-            var inPanelGroup = inState.PanelGroupBag.FirstOrDefault(
-                x => x.Key == registerPanelTabAction.PanelGroupKey);
+            PanelsState inState, RegisterPanelTabAction registerPanelTabAction)
+         */
 
-            if (inPanelGroup is null)
-                return inState;
+        throw new NotImplementedException();
+    }
 
-            var outTabBag = inPanelGroup.TabBag;
-
-            var insertionPoint = registerPanelTabAction.InsertAtIndexZero
-                ? 0
-                : inPanelGroup.TabBag.Length;
-
-            outTabBag = inPanelGroup.TabBag.Insert(insertionPoint, registerPanelTabAction.PanelTab);
-
-            var outPanelGroupBag = inState.PanelGroupBag.Replace(inPanelGroup, inPanelGroup with
-            {
-                TabBag = outTabBag
-            });
-
-            return inState with
-            {
-                PanelGroupBag = outPanelGroupBag
-            };
-        }
-
+    [Fact]
+    public void ReduceDisposePanelTabAction()
+    {
+        /*
         [ReducerMethod]
         public static PanelsState ReduceDisposePanelTabAction(
-            PanelsState inState,
-            DisposePanelTabAction disposePanelTabAction)
-        {
-            var inPanelGroup = inState.PanelGroupBag.FirstOrDefault(
-                x => x.Key == disposePanelTabAction.PanelGroupKey);
+            PanelsState inState, DisposePanelTabAction disposePanelTabAction)
+         */
 
-            if (inPanelGroup is null)
-                return inState;
+        throw new NotImplementedException();
+    }
 
-            var panelTab = inPanelGroup.TabBag.FirstOrDefault(
-                x => x.Key == disposePanelTabAction.PanelTabKey);
-
-            if (panelTab is null)
-                return inState;
-
-            var outTabBag = inPanelGroup.TabBag.Remove(panelTab);
-
-            var outPanelGroupBag = inState.PanelGroupBag.Replace(inPanelGroup, inPanelGroup with
-            {
-                TabBag = outTabBag
-            });
-
-            return inState with { PanelGroupBag = outPanelGroupBag };
-        }
-
+    [Fact]
+    public void ReduceSetActivePanelTabAction()
+    {
+        /*
         [ReducerMethod]
         public static PanelsState ReduceSetActivePanelTabAction(
-            PanelsState inState,
-            SetActivePanelTabAction setActivePanelTabAction)
-        {
-            var inPanelGroup = inState.PanelGroupBag.FirstOrDefault(
-                x => x.Key == setActivePanelTabAction.PanelGroupKey);
+            PanelsState inState, SetActivePanelTabAction setActivePanelTabAction)
+         */
 
-            if (inPanelGroup is null)
-                return inState;
+        throw new NotImplementedException();
+    }
 
-            var outPanelGroupBag = inState.PanelGroupBag.Replace(inPanelGroup, inPanelGroup with
-            {
-                ActiveTabKey = setActivePanelTabAction.PanelTabKey
-            });
-
-            return inState with { PanelGroupBag = outPanelGroupBag };
-        }
-
+    [Fact]
+    public void ReduceSetPanelTabAsActiveByContextRecordKeyAction()
+    {
+        /*
         [ReducerMethod]
         public static PanelsState ReduceSetPanelTabAsActiveByContextRecordKeyAction(
-            PanelsState inState,
-            SetPanelTabAsActiveByContextRecordKeyAction setPanelTabAsActiveByContextRecordKeyAction)
-        {
-            var inPanelGroup = inState.PanelGroupBag.FirstOrDefault(x => x.TabBag
-                .Any(y => y.ContextRecordKey == setPanelTabAsActiveByContextRecordKeyAction.ContextRecordKey));
+            PanelsState inState, SetPanelTabAsActiveByContextRecordKeyAction setPanelTabAsActiveByContextRecordKeyAction)
+         */
 
-            if (inPanelGroup is null)
-                return inState;
+        throw new NotImplementedException();
+    }
 
-            var inPanelTab = inPanelGroup.TabBag.FirstOrDefault(
-                x => x.ContextRecordKey == setPanelTabAsActiveByContextRecordKeyAction.ContextRecordKey);
-
-            if (inPanelTab is null)
-                return inState;
-
-            return ReduceSetActivePanelTabAction(inState, new SetActivePanelTabAction(
-                inPanelGroup.Key,
-                inPanelTab.Key));
-        }
-
+    [Fact]
+    public void ReduceSetDragEventArgsAction()
+    {
+        /*
         [ReducerMethod]
         public static PanelsState ReduceSetDragEventArgsAction(
-            PanelsState inState,
-            SetDragEventArgsAction setDragEventArgsAction)
-        {
-            return inState with
-            {
-                DragEventArgs = setDragEventArgsAction.DragEventArgs
-            };
-        }
+            PanelsState inState, SetDragEventArgsAction setDragEventArgsAction)
+         */
+
+        throw new NotImplementedException();
     }
 }

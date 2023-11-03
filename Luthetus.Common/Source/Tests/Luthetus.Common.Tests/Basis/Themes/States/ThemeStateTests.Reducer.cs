@@ -2,40 +2,29 @@
 
 namespace Luthetus.Common.RazorLib.Themes.States;
 
-public partial record ThemeStateTests
+public class ThemeStateReducerTests
 {
-    private class Reducer
+    [Fact]
+    public void ReduceRegisterAction()
     {
+        /*
         [ReducerMethod]
         public ThemeState ReduceRegisterAction(
-            ThemeState inState,
-            RegisterAction registerAction)
-        {
-            var inTheme = inState.ThemeBag.FirstOrDefault(
-                x => x.Key == registerAction.Theme.Key);
+            ThemeState inState, RegisterAction registerAction)
+         */
 
-            if (inTheme is not null)
-                return inState;
+        throw new NotImplementedException();
+    }
 
-            var outThemeBag = inState.ThemeBag.Add(registerAction.Theme);
-
-            return new ThemeState { ThemeBag = outThemeBag };
-        }
-
+    [Fact]
+    public void ReduceDisposeAction()
+    {
+        /*
         [ReducerMethod]
         public ThemeState ReduceDisposeAction(
-            ThemeState inState,
-            DisposeAction disposeAction)
-        {
-            var inTheme = inState.ThemeBag.FirstOrDefault(
-                x => x.Key == disposeAction.ThemeKey);
+            ThemeState inState, DisposeAction disposeAction)
+         */
 
-            if (inTheme is null)
-                return inState;
-
-            var outThemeBag = inState.ThemeBag.Remove(inTheme);
-
-            return new ThemeState { ThemeBag = outThemeBag };
-        }
+        throw new NotImplementedException();
     }
 }

@@ -17,7 +17,7 @@ public class TreeViewAdhocTests
     }
 
     [Fact]
-    public void Equals()
+    public void Equals_Test()
     {
         /*
         public override bool Equals(object? obj)
@@ -27,7 +27,7 @@ public class TreeViewAdhocTests
     }
 
     [Fact]
-    public void GetHashCode()
+    public void GetHashCode_Test()
     {
         /*
         public override int GetHashCode()

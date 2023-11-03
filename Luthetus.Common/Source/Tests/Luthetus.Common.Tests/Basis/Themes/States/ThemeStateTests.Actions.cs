@@ -3,8 +3,25 @@ using Luthetus.Common.RazorLib.Themes.Models;
 
 namespace Luthetus.Common.RazorLib.Themes.States;
 
-public partial record ThemeStateTests
+public class ThemeStateActionsTests
 {
-    public record RegisterAction(ThemeRecord Theme);
-    public record DisposeAction(Key<ThemeRecord> ThemeKey);
+    [Fact]
+    public void RegisterAction()
+    {
+        /*
+        public record RegisterAction(ThemeRecord Theme);
+         */
+
+        throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void DisposeAction()
+    {
+        /*
+        public record DisposeAction(Key<ThemeRecord> ThemeKey);
+         */
+
+        throw new NotImplementedException();
+    }
 }

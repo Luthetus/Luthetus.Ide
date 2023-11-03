@@ -2,16 +2,17 @@
 
 namespace Luthetus.Common.RazorLib.Options.States;
 
-public partial record AppOptionsStateTests
+public partial record AppOptionsStateReducerTests
 {
-    private record Reducer
+    [Fact]
+    public void ReduceWithAction()
     {
+        /*
         [ReducerMethod]
         public static AppOptionsState ReduceWithAction(
-            AppOptionsState inState,
-            WithAction withAction)
-        {
-            return withAction.WithFunc.Invoke(inState);
-        }
+            AppOptionsState inState, WithAction withAction)
+         */
+
+        throw new NotImplementedException();
     }
 }

@@ -2,65 +2,41 @@
 
 namespace Luthetus.Common.RazorLib.ComponentRunners.States;
 
-public partial record ComponentRunnerStateTests
+public class ComponentRunnerStateReducerTests
 {
-    private record Reducer
+    [Fact]
+    public void ReduceRegisterAction()
     {
+        /*
         [ReducerMethod]
         public static ComponentRunnerState ReduceRegisterAction(
-            ComponentRunnerState inState,
-            RegisterAction registerAction)
-        {
-            if (inState.ComponentRunnerDisplayStateBag.Any(x => x.Key == registerAction.Entry.Key))
-                return inState;
+            ComponentRunnerState inState, RegisterAction registerAction)
+            */
 
-            var insertionIndex = 0;
+        throw new NotImplementedException();
+    }
 
-            if (registerAction.InsertionIndex >= 0 && registerAction.InsertionIndex < 1 + inState.ComponentRunnerDisplayStateBag.Count)
-                insertionIndex = registerAction.InsertionIndex;
-
-            var outDisplayStateBag = inState.ComponentRunnerDisplayStateBag.Insert(
-                insertionIndex,
-                registerAction.Entry);
-
-            return new ComponentRunnerState { ComponentRunnerDisplayStateBag = outDisplayStateBag };
-        }
-
+    [Fact]
+    public void ReduceWithAction()
+    {
+        /*
         [ReducerMethod]
         public static ComponentRunnerState ReduceWithAction(
-            ComponentRunnerState inState,
-            WithAction withAction)
-        {
-            var inDisplayState = inState.ComponentRunnerDisplayStateBag.FirstOrDefault(
-                x => x.Key == withAction.Key);
+            ComponentRunnerState inState, WithAction withAction)
+            */
 
-            if (inDisplayState is null)
-                return inState;
+        throw new NotImplementedException();
+    }
 
-            var outDisplayStateBag = inState.ComponentRunnerDisplayStateBag.Replace(
-                inDisplayState,
-                withAction.WithFunc.Invoke(inDisplayState));
-
-            return new ComponentRunnerState { ComponentRunnerDisplayStateBag = outDisplayStateBag };
-        }
-
+    [Fact]
+    public void ReduceDisposeAction()
+    {
+        /*
         [ReducerMethod]
         public static ComponentRunnerState ReduceDisposeAction(
-            ComponentRunnerState inState,
-            DisposeAction disposeAction)
-        {
-            var inDisplayState = inState.ComponentRunnerDisplayStateBag.FirstOrDefault(
-                x => x.Key == disposeAction.Key);
+            ComponentRunnerState inState, DisposeAction disposeAction)
+            */
 
-            if (inDisplayState is null)
-                return inState;
-
-            var outDisplayStateBag = inState.ComponentRunnerDisplayStateBag.Remove(inDisplayState);
-
-            return new ComponentRunnerState
-            {
-                ComponentRunnerDisplayStateBag = outDisplayStateBag
-            };
-        }
+        throw new NotImplementedException();
     }
 }

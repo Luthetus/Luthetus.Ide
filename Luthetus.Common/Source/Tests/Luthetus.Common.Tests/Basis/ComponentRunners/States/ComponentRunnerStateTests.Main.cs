@@ -7,10 +7,27 @@ namespace Luthetus.Common.RazorLib.ComponentRunners.States;
 [FeatureState]
 public partial record ComponentRunnerStateTests
 {
-    private ComponentRunnerState()
+    [Fact]
+    public void Constructor()
     {
-        ComponentRunnerDisplayStateBag = ImmutableList<ComponentRunnerDisplayState>.Empty;
+        /*
+        private ComponentRunnerState()
+        {
+            ComponentRunnerDisplayStateBag = ImmutableList<ComponentRunnerDisplayState>.Empty;
+        }
+         */
+
+        throw new NotImplementedException();
     }
 
-    public ImmutableList<ComponentRunnerDisplayState> ComponentRunnerDisplayStateBag { get; init; }
+
+    [Fact]
+    public void ComponentRunnerDisplayStateBag()
+    {
+        /*
+        public ImmutableList<ComponentRunnerDisplayState> ComponentRunnerDisplayStateBag { get; init; }
+         */
+
+        throw new NotImplementedException();
+    }
 }

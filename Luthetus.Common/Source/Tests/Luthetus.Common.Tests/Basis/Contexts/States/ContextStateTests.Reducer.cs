@@ -4,113 +4,89 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Common.RazorLib.Contexts.States;
 
-public partial record ContextStateTests
+public class ContextStateReducerTests
 {
-    private class Reducer
+    [Fact]
+    public void ReduceSetActiveContextRecordsAction()
     {
+        /*
         [ReducerMethod]
         public static ContextState ReduceSetActiveContextRecordsAction(
-            ContextState inContextStates,
-            SetActiveContextRecordsAction setActiveContextRecordsAction)
-        {
-            return inContextStates with
-            {
-                FocusedKeyHeirarchyBag = setActiveContextRecordsAction.TargetContextRecordKeyAndHeirarchyBag
-            };
-        }
-        
+            ContextState inContextStates, SetActiveContextRecordsAction setActiveContextRecordsAction)
+         */
+
+        throw new NotImplementedException();
+    }
+
+    [Fact]
+    public void ReduceToggleInspectAction()
+    {
+        /*
         [ReducerMethod(typeof(ToggleSelectInspectionTargetAction))]
         public static ContextState ReduceToggleInspectAction(
             ContextState inContextStates)
-        {
-            var outIsSelectingInspectionTarget = !inContextStates.IsSelectingInspectionTarget;
+         */
 
-            var outInspectableHeirarchyBag = inContextStates.InspectableKeyHeirarchyBag;
-            var outInspectedTargetContextRecords = inContextStates.InspectedKeyHeirarchyBag;
+        throw new NotImplementedException();
+    }
 
-            if (!outIsSelectingInspectionTarget)
-            {
-                outInspectableHeirarchyBag = ImmutableArray<InspectContextRecordEntry>.Empty;
-                outInspectedTargetContextRecords = null;
-            }
-
-            return inContextStates with
-            {
-                IsSelectingInspectionTarget = !inContextStates.IsSelectingInspectionTarget,
-                InspectedKeyHeirarchyBag = outInspectedTargetContextRecords,
-                InspectableKeyHeirarchyBag = outInspectableHeirarchyBag,
-            };
-        }
-        
+    [Fact]
+    public void ReduceSetSelectInspectionTargetTrueAction()
+    {
+        /*
         [ReducerMethod(typeof(SetSelectInspectionTargetTrueAction))]
         public static ContextState ReduceSetSelectInspectionTargetTrueAction(
             ContextState inContextStates)
-        {
-            return inContextStates with
-            {
-                IsSelectingInspectionTarget = true
-            };
-        }
-        
+         */
+
+        throw new NotImplementedException();
+    }
+
+    [Fact]
+    public void ReduceSetSelectInspectionTargetFalseAction()
+    {
+        /*
         [ReducerMethod(typeof(SetSelectInspectionTargetFalseAction))]
         public static ContextState ReduceSetSelectInspectionTargetFalseAction(
             ContextState inContextStates)
-        {
-            return inContextStates with
-            {
-                IsSelectingInspectionTarget = false,
-                InspectedKeyHeirarchyBag = null,
-                InspectableKeyHeirarchyBag = ImmutableArray<InspectContextRecordEntry>.Empty,
-            };
-        }
-        
+         */
+
+        throw new NotImplementedException();
+    }
+
+    [Fact]
+    public void ReduceSetInspectionTargetAction()
+    {
+        /*
         [ReducerMethod]
         public static ContextState ReduceSetInspectionTargetAction(
-            ContextState inContextStates,
-            SetInspectionTargetAction setInspectionTargetAction)
-        {
-            return inContextStates with
-            {
-                IsSelectingInspectionTarget = false,
-                InspectedKeyHeirarchyBag = setInspectionTargetAction.TargetContextRecordKeyAndHeirarchyBag,
-                InspectableKeyHeirarchyBag = ImmutableArray<InspectContextRecordEntry>.Empty
-            };
-        }
-        
+            ContextState inContextStates, SetInspectionTargetAction setInspectionTargetAction)
+         */
+
+        throw new NotImplementedException();
+    }
+
+    [Fact]
+    public void ReduceAddInspectContextRecordEntryAction()
+    {
+        /*
         [ReducerMethod]
         public static ContextState ReduceAddInspectContextRecordEntryAction(
-            ContextState inContextStates,
-            AddInspectContextRecordEntryAction addInspectContextRecordEntryAction)
-        {
-            var outList = inContextStates.InspectableKeyHeirarchyBag.Add(
-                addInspectContextRecordEntryAction.InspectContextRecordEntry);
+            ContextState inContextStates, AddInspectContextRecordEntryAction addInspectContextRecordEntryAction)
+         */
 
-            return inContextStates with
-            {
-                InspectableKeyHeirarchyBag = outList,
-            };
-        }
-        
+        throw new NotImplementedException();
+    }
+
+    [Fact]
+    public void ReduceSetContextKeymapAction()
+    {
+        /*
         [ReducerMethod]
         public static ContextState ReduceSetContextKeymapAction(
-            ContextState inContextStates,
-            SetContextKeymapAction setContextKeymapAction)
-        {
-            var inContextRecord = inContextStates.AllContextRecordsBag.FirstOrDefault(
-                x => x.ContextKey == setContextKeymapAction.ContextRecordKey);
+            ContextState inContextStates, SetContextKeymapAction setContextKeymapAction)
+         */
 
-            if (inContextRecord is null)
-                return inContextStates;
-
-            var outList = inContextStates.AllContextRecordsBag.Replace(inContextRecord, inContextRecord with
-            {
-                Keymap = setContextKeymapAction.Keymap
-            });
-
-            return inContextStates with
-            {
-                AllContextRecordsBag = outList,
-            };
-        }
+        throw new NotImplementedException();
     }
 }

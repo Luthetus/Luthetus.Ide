@@ -4,10 +4,15 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Common.RazorLib.Tabs.States;
 
-[FeatureState]
-public partial record TabStateTests(ImmutableList<TabGroup> TabGroupBag)
+public class TabStateMainTests
 {
-    private TabState() : this(ImmutableList<TabGroup>.Empty)
+    [Fact]
+    public void Constructor()
     {
+        /*
+        private TabState() : this(ImmutableList<TabGroup>.Empty)
+         */
+
+        throw new NotImplementedException();
     }
 }

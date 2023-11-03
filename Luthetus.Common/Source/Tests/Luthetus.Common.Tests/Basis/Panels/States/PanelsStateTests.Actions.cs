@@ -4,16 +4,75 @@ using Luthetus.Common.RazorLib.Panels.Models;
 
 namespace Luthetus.Common.RazorLib.Panels.States;
 
-public partial record PanelsStateTests
+public class PanelsStateActionsTests
 {
-    public record RegisterPanelGroupAction(PanelGroup PanelGroup);
-    public record DisposePanelGroupAction(Key<PanelGroup> PanelGroupKey);
+    [Fact]
+    public void RegisterPanelGroupAction()
+    {
+        /*
+        public record RegisterPanelGroupAction(PanelGroup PanelGroup);
+         */
 
-    public record RegisterPanelTabAction(Key<PanelGroup> PanelGroupKey, PanelTab PanelTab, bool InsertAtIndexZero);
-    public record DisposePanelTabAction(Key<PanelGroup> PanelGroupKey, Key<PanelTab> PanelTabKey);
+        throw new NotImplementedException();
+    }
 
-    public record SetActivePanelTabAction(Key<PanelGroup> PanelGroupKey, Key<PanelTab> PanelTabKey);
-    public record SetPanelTabAsActiveByContextRecordKeyAction(Key<ContextRecord> ContextRecordKey);
+    [Fact]
+    public void DisposePanelGroupAction()
+    {
+        /*
+        public record DisposePanelGroupAction(Key<PanelGroup> PanelGroupKey);
+         */
 
-    public record SetDragEventArgsAction((PanelTab PanelTab, PanelGroup PanelGroup)? DragEventArgs);
+        throw new NotImplementedException();
+    }
+
+    [Fact]
+    public void RegisterPanelTabAction()
+    {
+        /*
+        public record RegisterPanelTabAction(Key<PanelGroup> PanelGroupKey, PanelTab PanelTab, bool InsertAtIndexZero);
+         */
+
+        throw new NotImplementedException();
+    }
+
+    [Fact]
+    public void DisposePanelTabAction()
+    {
+        /*
+        public record DisposePanelTabAction(Key<PanelGroup> PanelGroupKey, Key<PanelTab> PanelTabKey);
+         */
+
+        throw new NotImplementedException();
+    }
+
+    [Fact]
+    public void SetActivePanelTabAction()
+    {
+        /*
+        public record SetActivePanelTabAction(Key<PanelGroup> PanelGroupKey, Key<PanelTab> PanelTabKey);
+         */
+
+        throw new NotImplementedException();
+    }
+
+    [Fact]
+    public void SetPanelTabAsActiveByContextRecordKeyAction()
+    {
+        /*
+        public record SetPanelTabAsActiveByContextRecordKeyAction(Key<ContextRecord> ContextRecordKey);
+         */
+
+        throw new NotImplementedException();
+    }
+
+    [Fact]
+    public void SetDragEventArgsAction()
+    {
+        /*
+        public record SetDragEventArgsAction((PanelTab PanelTab, PanelGroup PanelGroup)? DragEventArgs);
+         */
+
+        throw new NotImplementedException();
+    }
 }

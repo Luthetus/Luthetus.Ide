@@ -2,16 +2,17 @@
 
 namespace Luthetus.Common.RazorLib.Drags.Displays;
 
-public partial record DragStateTests
+public partial record DragStateReducerTests
 {
-    private class Reducer
+    [Fact]
+    public void ReduceWithAction()
     {
+        /*
         [ReducerMethod]
         public static DragState ReduceWithAction(
-            DragState inState,
-            WithAction withAction)
-        {
-            return withAction.WithFunc.Invoke(inState);
-        }
+            DragState inState, WithAction withAction)
+         */
+
+        throw new NotImplementedException();
     }
 }

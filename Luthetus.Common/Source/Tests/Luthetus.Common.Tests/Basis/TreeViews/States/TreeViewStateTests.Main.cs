@@ -4,10 +4,15 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 
 namespace Luthetus.Common.RazorLib.TreeViews.States;
 
-[FeatureState]
-public partial record TreeViewStateTests(ImmutableList<TreeViewContainer> ContainerBag)
+public class TreeViewStateMainTests
 {
-    private TreeViewState() : this(ImmutableList<TreeViewContainer>.Empty)
+    [Fact]
+    public void Constructor()
     {
+        /*
+        private TreeViewState() : this(ImmutableList<TreeViewContainer>.Empty)
+         */
+
+        throw new NotImplementedException();
     }
 }

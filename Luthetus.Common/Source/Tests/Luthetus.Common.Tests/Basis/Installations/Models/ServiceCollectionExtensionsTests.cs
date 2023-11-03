@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Luthetus.Common.RazorLib.Installations.Models;
 
-public static class ServiceCollectionExtensionsTests
+public class ServiceCollectionExtensionsTests
 {
     [Fact]
     public void AddLuthetusCommonServices()

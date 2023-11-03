@@ -3,13 +3,15 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace Luthetus.Common.RazorLib.Drags.Displays;
 
-[FeatureState]
-public partial record DragStateTests(
-    bool ShouldDisplay,
-    MouseEventArgs? MouseEventArgs)
+public class DragStateMainTests
 {
-    private DragState() : this (false, null)
+    [Fact]
+    public void Aaa()
     {
-        
+        /*
+        private DragState() : this (false, null)
+         */
+
+        throw new NotImplementedException();
     }
 }

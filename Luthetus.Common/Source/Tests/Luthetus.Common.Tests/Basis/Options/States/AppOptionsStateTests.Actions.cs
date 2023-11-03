@@ -1,6 +1,14 @@
 ﻿namespace Luthetus.Common.RazorLib.Options.States;
 
-public partial record AppOptionsStateTests
+public class AppOptionsStateActionTests
 {
-    public record WithAction(Func<AppOptionsState, AppOptionsState> WithFunc);
+    [Fact]
+    public void WithAction()
+    {
+        /*
+        public record WithAction(Func<AppOptionsState, AppOptionsState> WithFunc);
+         */
+
+        throw new NotImplementedException();
+    }
 }

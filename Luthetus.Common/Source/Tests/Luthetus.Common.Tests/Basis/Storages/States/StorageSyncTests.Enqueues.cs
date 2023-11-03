@@ -5,16 +5,14 @@ namespace Luthetus.Common.RazorLib.Storages.States;
 
 public partial class StorageSyncTests
 {
-    public void WriteToLocalStorage(
-        string key,
-        object value)
+    [Fact]
+    public void WriteToLocalStorage()
     {
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
-            "WriteToStorage",
-            async () => 
-            {
-                var valueJson = System.Text.Json.JsonSerializer.Serialize(value);
-                await _storageService.SetValue(key, valueJson);
-            });
+        /*
+        public void WriteToLocalStorage(
+            string key, object value)
+         */
+
+        throw new NotImplementedException();
     }
 }

@@ -5,11 +5,15 @@ using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Common.RazorLib.Dropdowns.States;
 
-[FeatureState]
-public partial record DropdownStateTests(ImmutableList<Key<DropdownRecord>> ActiveKeyBag)
+public class DropdownStateMainTests
 {
-    private DropdownState() : this(ImmutableList<Key<DropdownRecord>>.Empty)
+    [Fact]
+    public void Constructor()
     {
+        /*
+        private DropdownState() : this(ImmutableList<Key<DropdownRecord>>.Empty)
+         */
 
+        throw new NotImplementedException();
     }
 }

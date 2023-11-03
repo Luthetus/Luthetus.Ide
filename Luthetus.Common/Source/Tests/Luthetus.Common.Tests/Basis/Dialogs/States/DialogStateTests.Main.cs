@@ -7,10 +7,23 @@ namespace Luthetus.Common.RazorLib.Dialogs.States;
 [FeatureState]
 public partial record DialogStateTests
 {
-    private DialogState()
+    [Fact]
+    public void Constructor()
     {
-        DialogBag = ImmutableList<DialogRecord>.Empty;
+        /*
+        private DialogState()
+         */
+
+        throw new NotImplementedException();
     }
 
-    public ImmutableList<DialogRecord> DialogBag { get; init; }
+    [Fact]
+    public void DialogBag()
+    {
+        /*
+        public ImmutableList<DialogRecord> DialogBag { get; init; }
+         */
+
+        throw new NotImplementedException();
+    }
 }

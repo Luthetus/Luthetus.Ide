@@ -15,7 +15,15 @@ public class BackgroundTaskQueueTests
          public BackgroundTaskQueue(Key<BackgroundTaskQueue> key, string displayName)
          */
 
-        throw new NotImplementedException();
+        var key = Key<BackgroundTaskQueue>.NewKey();
+        var displayName = "Continuous";
+
+        var backgroundTaskQueue = new BackgroundTaskQueue(
+            key,
+            displayName);
+
+        Assert.Equal(key, backgroundTaskQueue.Key);
+        Assert.Equal(displayName, backgroundTaskQueue.DisplayName);
     }
 
     [Fact]

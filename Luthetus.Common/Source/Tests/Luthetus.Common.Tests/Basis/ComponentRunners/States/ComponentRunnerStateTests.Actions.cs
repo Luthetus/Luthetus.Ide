@@ -5,10 +5,37 @@ namespace Luthetus.Common.RazorLib.ComponentRunners.States;
 
 public partial record ComponentRunnerStateTests
 {
-    public record RegisterAction(ComponentRunnerDisplayState Entry, int InsertionIndex);
-    public record DisposeAction(Key<ComponentRunnerDisplayState> Key);
+    [Fact]
+    public void RegisterAction()
+    {
+        /*
+        public record RegisterAction(ComponentRunnerDisplayState Entry, int InsertionIndex);
+         */
 
-    public record WithAction(
-        Key<ComponentRunnerDisplayState> Key,
-        Func<ComponentRunnerDisplayState, ComponentRunnerDisplayState> WithFunc);
+        throw new NotImplementedException();
+    }
+    
+
+    [Fact]
+    public void DisposeAction()
+    {
+        /*
+        public record DisposeAction(Key<ComponentRunnerDisplayState> Key);
+         */
+
+        throw new NotImplementedException();
+    }
+    
+
+    [Fact]
+    public void WithAction()
+    {
+        /*
+        public record WithAction(
+            Key<ComponentRunnerDisplayState> Key, Func<ComponentRunnerDisplayState, ComponentRunnerDisplayState> WithFunc);
+         */
+
+        throw new NotImplementedException();
+    }
+    
 }

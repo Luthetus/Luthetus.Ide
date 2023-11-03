@@ -4,21 +4,29 @@ using Luthetus.Common.RazorLib.Themes.Models;
 
 namespace Luthetus.Common.RazorLib.Options.States;
 
-[FeatureState]
-public partial record AppOptionsStateTests(CommonOptions Options)
+public class AppOptionsStateMainTests
 {
-    public const int DEFAULT_FONT_SIZE_IN_PIXELS = 20;
-    public const int DEFAULT_ICON_SIZE_IN_PIXELS = 18;
-    public const int MINIMUM_FONT_SIZE_IN_PIXELS = 5;
-    public const int MINIMUM_ICON_SIZE_IN_PIXELS = 5;
-
-    public static readonly CommonOptions DefaultCommonOptions = new(
-        DEFAULT_FONT_SIZE_IN_PIXELS,
-        DEFAULT_ICON_SIZE_IN_PIXELS,
-        ThemeFacts.VisualStudioDarkThemeClone.Key,
-        null);
-
-    private AppOptionsState() : this(DefaultCommonOptions)
+    [Fact]
+    public void DefaultCommonOptions()
     {
+        /*
+        public static readonly CommonOptions DefaultCommonOptions = new(
+            DEFAULT_FONT_SIZE_IN_PIXELS,
+            DEFAULT_ICON_SIZE_IN_PIXELS,
+            ThemeFacts.VisualStudioDarkThemeClone.Key,
+            null);
+         */
+
+        throw new NotImplementedException();
+    }
+
+    [Fact]
+    public void Constructor()
+    {
+        /*
+        private AppOptionsState() : this(DefaultCommonOptions)
+         */
+
+        throw new NotImplementedException();
     }
 }
