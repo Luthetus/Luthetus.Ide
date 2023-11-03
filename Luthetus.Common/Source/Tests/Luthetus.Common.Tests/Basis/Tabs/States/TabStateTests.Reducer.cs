@@ -1,6 +1,4 @@
-﻿using Fluxor;
-
-namespace Luthetus.Common.RazorLib.Tabs.States;
+﻿namespace Luthetus.Common.RazorLib.Tabs.States;
 
 public partial record TabStateTests
 {

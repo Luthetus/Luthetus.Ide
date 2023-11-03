@@ -1,6 +1,4 @@
-﻿using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-
-namespace Luthetus.Common.RazorLib.Installations.Models;
+﻿namespace Luthetus.Common.RazorLib.Installations.Models;
 
 public record LuthetusHostingInformationTests
 {

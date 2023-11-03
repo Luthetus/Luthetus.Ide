@@ -1,6 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
-
-namespace Luthetus.Common.RazorLib.Keymaps.Models;
+﻿namespace Luthetus.Common.RazorLib.Keymaps.Models;
 
 public class KeymapArgumentTests
 {

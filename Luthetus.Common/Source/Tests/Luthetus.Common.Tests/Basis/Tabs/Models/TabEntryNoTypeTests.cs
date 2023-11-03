@@ -1,6 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
-
-namespace Luthetus.Common.RazorLib.Tabs.Models;
+﻿namespace Luthetus.Common.RazorLib.Tabs.Models;
 
 public class TabEntryNoTypeTests
 {

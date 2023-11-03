@@ -1,6 +1,4 @@
-﻿using Luthetus.Common.RazorLib.FileSystems.Models;
-
-namespace Luthetus.Common.RazorLib.Namespaces.Models;
+﻿namespace Luthetus.Common.RazorLib.Namespaces.Models;
 
 public class NamespacePathTests
 {

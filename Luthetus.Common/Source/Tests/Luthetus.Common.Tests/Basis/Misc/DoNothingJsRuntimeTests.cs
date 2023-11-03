@@ -1,6 +1,4 @@
-﻿using Microsoft.JSInterop;
-
-namespace Luthetus.Common.RazorLib.Misc;
+﻿namespace Luthetus.Common.RazorLib.Misc;
 
 public class DoNothingJsRuntimeTests
 {

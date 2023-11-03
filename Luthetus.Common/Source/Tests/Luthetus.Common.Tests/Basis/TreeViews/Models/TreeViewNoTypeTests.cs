@@ -1,6 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
-
-namespace Luthetus.Common.RazorLib.TreeViews.Models;
+﻿namespace Luthetus.Common.RazorLib.TreeViews.Models;
 
 public abstract class TreeViewNoTypeTests
 {

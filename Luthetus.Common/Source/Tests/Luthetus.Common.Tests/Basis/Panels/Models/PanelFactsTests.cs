@@ -1,7 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Panels.States;
-
-namespace Luthetus.Common.RazorLib.Panels.Models;
+﻿namespace Luthetus.Common.RazorLib.Panels.Models;
 
 public class PanelFactsTests
 {

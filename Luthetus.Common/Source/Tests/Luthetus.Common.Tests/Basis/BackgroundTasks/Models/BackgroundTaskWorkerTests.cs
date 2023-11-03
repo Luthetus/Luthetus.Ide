@@ -1,7 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
-using Microsoft.Extensions.Logging;
-
-namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
+﻿namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 public class BackgroundTaskWorkerTests
 {

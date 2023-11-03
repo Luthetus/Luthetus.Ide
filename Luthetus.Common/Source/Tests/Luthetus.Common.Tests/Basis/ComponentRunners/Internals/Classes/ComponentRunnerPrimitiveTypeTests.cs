@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-
-namespace Luthetus.Common.RazorLib.ComponentRunners.Internals.Classes;
+﻿namespace Luthetus.Common.RazorLib.ComponentRunners.Internals.Classes;
 
 public class ComponentRunnerPrimitiveTypeTests
 {

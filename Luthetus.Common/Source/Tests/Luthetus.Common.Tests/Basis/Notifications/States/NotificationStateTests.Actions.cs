@@ -1,7 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Notifications.Models;
-
-namespace Luthetus.Common.RazorLib.Notifications.States;
+﻿namespace Luthetus.Common.RazorLib.Notifications.States;
 
 public class NotificationStateActionsTests
 {

@@ -1,7 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Dialogs.Models;
-using Luthetus.Common.RazorLib.Keys.Models;
-
-namespace Luthetus.Common.RazorLib.Dialogs.States;
+﻿namespace Luthetus.Common.RazorLib.Dialogs.States;
 
 public partial record DialogStateTests
 {

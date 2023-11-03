@@ -1,6 +1,4 @@
-﻿using Microsoft.JSInterop;
-
-namespace Luthetus.Common.RazorLib.Storages.Models;
+﻿namespace Luthetus.Common.RazorLib.Storages.Models;
 
 public class LocalStorageServiceTests
 {

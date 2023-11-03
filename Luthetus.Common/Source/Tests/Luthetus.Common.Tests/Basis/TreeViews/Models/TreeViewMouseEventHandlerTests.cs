@@ -1,6 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Commands.Models;
-
-namespace Luthetus.Common.RazorLib.TreeViews.Models;
+﻿namespace Luthetus.Common.RazorLib.TreeViews.Models;
 
 public class TreeViewMouseEventHandlerTests
 {
