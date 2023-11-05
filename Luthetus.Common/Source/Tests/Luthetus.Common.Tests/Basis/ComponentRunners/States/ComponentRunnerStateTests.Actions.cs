@@ -1,6 +1,11 @@
-﻿namespace Luthetus.Common.RazorLib.ComponentRunners.States;
+﻿using Luthetus.Common.RazorLib.ComponentRunners.States;
 
-public partial record ComponentRunnerStateTests
+namespace Luthetus.Common.Tests.Basis.ComponentRunners.States;
+
+/// <summary>
+/// <see cref="ComponentRunnerState"/>
+/// </summary>
+public class ComponentRunnerStateActionTests
 {
     [Fact]
     public void RegisterAction()

@@ -1,5 +1,10 @@
-﻿namespace Luthetus.Common.RazorLib.ComponentRunners.States;
+﻿using Luthetus.Common.RazorLib.ComponentRunners.States;
 
+namespace Luthetus.Common.Tests.Basis.ComponentRunners.States;
+
+/// <summary>
+/// <see cref="ComponentRunnerState"/>
+/// </summary>
 public class ComponentRunnerStateReducerTests
 {
     [Fact]

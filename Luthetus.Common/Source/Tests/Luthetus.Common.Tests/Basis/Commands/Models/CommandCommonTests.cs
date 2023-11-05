@@ -1,15 +1,18 @@
-﻿namespace Luthetus.Common.RazorLib.Commands.Models;
+﻿using Luthetus.Common.RazorLib.Commands.Models;
 
+namespace Luthetus.Common.Tests.Basis.Commands.Models;
+
+/// <summary>
+/// <see cref="CommandCommon"/>
+/// </summary>
 public class CommandCommonTests
 {
+    /// <summary>
+    /// <see cref="CommandCommon(Func{ICommandParameter, Task}, string, string, bool)"/>
+    /// </summary>
     [Fact]
     public async Task Constructor()
     {
-        /*
-        public CommandCommon(
-            Func<ICommandParameter, Task> doAsyncFunc, string displayName, string internalIdentifier, bool shouldBubble)
-         */
-
         var number = 0;
         
         var displayName = "Increment Number";

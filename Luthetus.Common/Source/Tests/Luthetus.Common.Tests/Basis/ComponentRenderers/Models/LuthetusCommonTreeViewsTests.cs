@@ -1,5 +1,10 @@
-﻿namespace Luthetus.Common.RazorLib.ComponentRenderers.Models;
+﻿using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 
+namespace Luthetus.Common.Tests.Basis.ComponentRenderers.Models;
+
+/// <summary>
+/// <see cref="LuthetusCommonTreeViews"/>
+/// </summary>
 public class LuthetusCommonTreeViewsTests
 {
     [Fact]

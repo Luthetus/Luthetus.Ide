@@ -1,56 +1,54 @@
-﻿namespace Luthetus.Common.RazorLib.ComponentRunners.Internals.Classes;
+﻿using Luthetus.Common.RazorLib.ComponentRunners.Internals.Classes;
 
+namespace Luthetus.Common.Tests.Basis.ComponentRunners.Internals.Classes;
+
+/// <summary>
+/// <see cref="ComponentRunnerDisplayState"/>
+/// </summary>
 public class ComponentRunnerDisplayStateTests
 {
+    /// <summary>
+    /// <see cref="ComponentRunnerDisplayState.ChosenComponentType"/>
+    /// </summary>
     [Fact]
     public void ChosenComponentType()
     {
-        /*
-        public Type? ChosenComponentType => ComponentTypeBag
-            .FirstOrDefault(x => x.GUID == ChosenTypeGuid);
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="ComponentRunnerDisplayState.GetComponentRunnerType(string, IComponentRunnerType)"/>
+    /// </summary>
     [Fact]
     public void GetComponentRunnerType()
     {
-        /*
-        public IComponentRunnerType GetComponentRunnerType(string name, IComponentRunnerType defaultValueIfKeyNotExists)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="ComponentRunnerDisplayState.SetComponentRunnerType(string, IComponentRunnerType)"/>
+    /// </summary>
     [Fact]
     public void SetComponentRunnerType()
     {
-        /*
-        public void SetComponentRunnerType(string name, IComponentRunnerType value)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="ComponentRunnerDisplayState.ConstructBlazorParameters()"/>
+    /// </summary>
     [Fact]
     public void ConstructBlazorParameters()
     {
-        /*
-        public Dictionary<string, object?>? ConstructBlazorParameters()
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="ComponentRunnerDisplayState.InvokeConstructorRecursively(string, System.Reflection.ParameterInfo)"/>
+    /// </summary>
     [Fact]
     public void InvokeConstructorRecursively()
     {
-        /*
-        public object? InvokeConstructorRecursively(
-            string parameterKey, ParameterInfo parameterInfo)
-         */
-
         throw new NotImplementedException();
     }
 }

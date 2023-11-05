@@ -1,55 +1,54 @@
-﻿namespace Luthetus.Common.RazorLib.Commands.Models;
+﻿using Luthetus.Common.RazorLib.Commands.Models;
 
-public abstract class CommandNoTypeTests
+namespace Luthetus.Common.Tests.Basis.Commands.Models;
+
+/// <summary>
+/// <see cref="CommandNoType"/>
+/// </summary>
+public class CommandNoTypeTests
 {
+    /// <summary>
+    /// <see cref="CommandNoType(Func{ICommandParameter, Task}, string, string, bool)"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        public CommandNoType(
-            Func<ICommandParameter, Task> doAsyncFunc, string displayName, string internalIdentifier, bool shouldBubble)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="CommandNoType.DoAsyncFunc"/>
+    /// </summary>
     [Fact]
     public void DoAsyncFunc()
     {
-        /*
-        public Func<ICommandParameter, Task> DoAsyncFunc { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="CommandNoType.DisplayName"/>
+    /// </summary>
     [Fact]
     public void DisplayName()
     {
-        /*
-        public string DisplayName { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="CommandNoType.InternalIdentifier"/>
+    /// </summary>
     [Fact]
     public void InternalIdentifier()
     {
-        /*
-        public string InternalIdentifier { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="CommandNoType.ShouldBubble"/>
+    /// </summary>
     [Fact]
     public void ShouldBubble()
     {
-        /*
-        public bool ShouldBubble { get; }
-         */
-
         throw new NotImplementedException();
     }
 }

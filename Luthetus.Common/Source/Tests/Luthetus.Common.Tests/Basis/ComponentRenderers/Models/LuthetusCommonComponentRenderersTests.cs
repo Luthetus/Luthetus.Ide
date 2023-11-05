@@ -1,45 +1,45 @@
-﻿namespace Luthetus.Common.RazorLib.ComponentRenderers.Models;
+﻿using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 
+namespace Luthetus.Common.Tests.Basis.ComponentRenderers.Models;
+
+/// <summary>
+/// <see cref="LuthetusCommonComponentRenderers"/>
+/// </summary>
 public class LuthetusCommonComponentRenderersTests
 {
+    /// <summary>
+    /// <see cref="LuthetusCommonComponentRenderers(Type, Type, RazorLib.ComponentRenderers.Models.LuthetusCommonTreeViews)"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        public LuthetusCommonComponentRenderers(
-            Type errorNotificationRendererType, Type informativeNotificationRendererType, LuthetusCommonTreeViews luthetusCommonTreeViews)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="LuthetusCommonComponentRenderers.ErrorNotificationRendererType"/>
+    /// </summary>
     [Fact]
     public void ErrorNotificationRendererType()
     {
-        /*
-        public Type ErrorNotificationRendererType { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="LuthetusCommonComponentRenderers.InformativeNotificationRendererType"/>
+    /// </summary>
     [Fact]
     public void InformativeNotificationRendererType()
     {
-        /*
-        public Type InformativeNotificationRendererType { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="LuthetusCommonComponentRenderers.LuthetusCommonTreeViews"/>
+    /// </summary>
     [Fact]
     public void LuthetusCommonTreeViews()
     {
-        /*
-        public LuthetusCommonTreeViews LuthetusCommonTreeViews { get; }
-         */
-
         throw new NotImplementedException();
     }
 }

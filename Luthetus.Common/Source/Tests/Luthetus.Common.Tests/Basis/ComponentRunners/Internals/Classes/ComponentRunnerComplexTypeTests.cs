@@ -1,65 +1,63 @@
-﻿namespace Luthetus.Common.RazorLib.ComponentRunners.Internals.Classes;
+﻿using Luthetus.Common.RazorLib.ComponentRunners.Internals.Classes;
 
+namespace Luthetus.Common.Tests.Basis.ComponentRunners.Internals.Classes;
+
+/// <summary>
+/// <see cref="ComponentRunnerComplexType"/>
+/// </summary>
 public record ComponentRunnerComplexTypeTests
 {
+    /// <summary>
+    /// <see cref="ComponentRunnerComplexType(System.Reflection.ConstructorInfo?, Func{object?}?, object?, System.Type)"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        public ComponentRunnerComplexType(
-            ConstructorInfo? chosenConstructorInfo, Func<object?>? constructValueFunc, object? value, Type type)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="ComponentRunnerComplexType.ChosenConstructorInfo"/>
+    /// </summary>
     [Fact]
     public void ChosenConstructorInfo()
     {
-        /*
-        public ConstructorInfo? ChosenConstructorInfo { get; set; }
-         */
-
         throw new NotImplementedException();
     }
-    
+
+    /// <summary>
+    /// <see cref="ComponentRunnerComplexType.ConstructValueFunc"/>
+    /// </summary>
     [Fact]
     public void ConstructValueFunc()
     {
-        /*
-        public Func<object?>? ConstructValueFunc { get; set; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="ComponentRunnerComplexType.Value"/>
+    /// </summary>
     [Fact]
     public void Value()
     {
-        /*
-        public object? Value { get; set; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="ComponentRunnerComplexType.Type"/>
+    /// </summary>
     [Fact]
     public void Type()
     {
-        /*
-        public Type Type { get; set; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="ComponentRunnerComplexType.ComponentRunnerTypeKind"/>
+    /// </summary>
     [Fact]
     public void ComponentRunnerTypeKind()
     {
-        /*
-        public ComponentRunnerTypeKind ComponentRunnerTypeKind => ComponentRunnerTypeKind.Complex;
-         */
-
         throw new NotImplementedException();
     }
 }

@@ -1,9 +1,11 @@
-﻿using Fluxor;
+﻿using Luthetus.Common.RazorLib.ComponentRunners.States;
 
-namespace Luthetus.Common.RazorLib.ComponentRunners.States;
+namespace Luthetus.Common.Tests.Basis.ComponentRunners.States;
 
-[FeatureState]
-public partial record ComponentRunnerStateTests
+/// <summary>
+/// <see cref="ComponentRunnerState"/>
+/// </summary>
+public class ComponentRunnerStateMainTests
 {
     [Fact]
     public void Constructor()
