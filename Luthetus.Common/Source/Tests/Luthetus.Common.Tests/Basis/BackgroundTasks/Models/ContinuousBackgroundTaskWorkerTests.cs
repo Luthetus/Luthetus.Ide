@@ -1,20 +1,22 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 
-namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
+namespace Luthetus.Common.Tests.Basis.BackgroundTasks.Models;
 
+/// <summary>
+/// <see cref="ContinuousBackgroundTaskWorker"/>
+/// </summary>
 public class ContinuousBackgroundTaskWorkerTests
 {
+    /// <summary>
+    /// <see cref="ContinuousBackgroundTaskWorker(Key{BackgroundTaskQueue}, IBackgroundTaskService, ILoggerFactory)"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        public ContinuousBackgroundTaskWorker(
-                Key<BackgroundTaskQueue> queueKey, IBackgroundTaskService backgroundTaskService, ILoggerFactory loggerFactory)
-            : base(queueKey, backgroundTaskService, loggerFactory)
-         */
-
         var services = new ServiceCollection()
             .AddSingleton<ILoggerFactory, NullLoggerFactory>();
 

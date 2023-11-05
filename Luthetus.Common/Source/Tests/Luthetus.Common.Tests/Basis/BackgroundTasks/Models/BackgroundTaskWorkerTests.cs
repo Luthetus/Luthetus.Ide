@@ -1,19 +1,25 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 
-namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
+namespace Luthetus.Common.Tests.Basis.BackgroundTasks.Models;
 
+/// <summary>
+/// <see cref="BackgroundTaskWorker"/>
+/// </summary>
 public class BackgroundTaskWorkerTests
 {
+    /// <summary>
+    /// <see cref="BackgroundTaskWorker(Key{BackgroundTaskQueue}, IBackgroundTaskService, ILoggerFactory)"/>
+    /// <br/>----<br/>
+    /// <see cref="BackgroundTaskWorker.QueueKey"/>
+    /// <see cref="BackgroundTaskWorker.BackgroundTaskService"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        public BackgroundTaskWorker(
-            Key<BackgroundTaskQueue> queueKey, IBackgroundTaskService backgroundTaskService, ILoggerFactory loggerFactory)
-         */
-
         var services = new ServiceCollection()
             .AddSingleton<ILoggerFactory, NullLoggerFactory>();
 
@@ -26,12 +32,7 @@ public class BackgroundTaskWorkerTests
             sp.GetRequiredService<IBackgroundTaskService>(),
             sp.GetRequiredService<ILoggerFactory>());
 
-        // [Fact]
-        // public void QueueKey()
         Assert.Equal(queueKey, backgroundTaskWorker.QueueKey);
-
-        // [Fact]
-        // public void BackgroundTaskService()
         Assert.NotNull(backgroundTaskWorker.BackgroundTaskService);
 
         var startCancellationTokenSource = new CancellationTokenSource();

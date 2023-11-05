@@ -1,97 +1,91 @@
-﻿namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
+﻿using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 
+namespace Luthetus.Common.Tests.Basis.BackgroundTasks.Models;
+
+/// <summary>
+/// <see cref="BackgroundTaskServiceSynchronous"/>
+/// </summary>
 public class BackgroundTaskServiceSynchronousTests
 {
+    /// <summary>
+    /// <see cref="BackgroundTaskServiceSynchronous.ExecutingBackgroundTask"/>
+    /// </summary>
     [Fact]
     public void ExecutingBackgroundTask()
     {
-        /*
-        public IBackgroundTask? ExecutingBackgroundTask => throw new NotImplementedException();
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="BackgroundTaskServiceSynchronous.PendingBackgroundTasks"/>
+    /// </summary>
     [Fact]
     public void PendingBackgroundTasks()
     {
-        /*
-        public ImmutableArray<IBackgroundTask> PendingBackgroundTasks => throw new NotImplementedException();
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="BackgroundTaskServiceSynchronous.CompletedBackgroundTasks"/>
+    /// </summary>
     [Fact]
     public void CompletedBackgroundTasks()
     {
-        /*
-        public ImmutableArray<IBackgroundTask> CompletedBackgroundTasks => throw new NotImplementedException();
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="BackgroundTaskServiceSynchronous.ExecutingBackgroundTaskChanged"/>
+    /// </summary>
     [Fact]
     public void ExecutingBackgroundTaskChanged()
     {
-        /*
-        public event Action? ExecutingBackgroundTaskChanged;
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="BackgroundTaskServiceSynchronous.Enqueue(IBackgroundTask)"/>
+    /// </summary>
     [Fact]
     public void EnqueueA()
     {
-        /*
-        public void Enqueue(IBackgroundTask backgroundTask)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="BackgroundTaskServiceSynchronous.Enqueue(Key{BackgroundTask}, Key{BackgroundTaskQueue}, string, Func{Task})"/>
+    /// </summary>
     [Fact]
     public void EnqueueB()
     {
-        /*
-        public void Enqueue(
-            Key<BackgroundTask> taskKey, Key<BackgroundTaskQueue> queueKey, string name, Func<Task> runFunc)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="BackgroundTaskServiceSynchronous.DequeueAsync(Key{BackgroundTaskQueue}, CancellationToken)"/>
+    /// </summary>
     [Fact]
     public void DequeueAsync()
     {
-        /*
-        public Task<IBackgroundTask?> DequeueAsync(
-            Key<BackgroundTaskQueue> queueKey, CancellationToken cancellationToken)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="BackgroundTaskServiceSynchronous.SetExecutingBackgroundTask(Key{BackgroundTaskQueue}, IBackgroundTask?)"/>
+    /// </summary>
     [Fact]
     public void SetExecutingBackgroundTask()
     {
-        /*
-        public void SetExecutingBackgroundTask(
-            Key<BackgroundTaskQueue> queueKey, IBackgroundTask? backgroundTask)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="BackgroundTaskServiceSynchronous.RegisterQueue(BackgroundTaskQueue)"/>
+    /// </summary>
     [Fact]
     public void RegisterQueue()
     {
-        /*
-        public void RegisterQueue(BackgroundTaskQueue queue)
-         */
-
         throw new NotImplementedException();
     }
 }

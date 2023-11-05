@@ -1,17 +1,23 @@
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
-namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
+namespace Luthetus.Common.Tests.Basis.BackgroundTasks.Models;
 
+/// <summary>
+/// <see cref="BackgroundTask"/>
+/// </summary>
 public class BackgroundTaskTests
 {
+    /// <summary>
+    /// <see cref="BackgroundTask(Key{BackgroundTask}, Key{BackgroundTaskQueue}, string, Func{Task})"/>
+    /// <br/>----<br/>
+    /// <see cref="BackgroundTask.BackgroundTaskKey"/>
+    /// <see cref="BackgroundTask.QueueKey"/>
+    /// <see cref="BackgroundTask.Name"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        public BackgroundTask(
-            Key<BackgroundTask> backgroundTaskKey, Key<BackgroundTaskQueue> queueKey, string name, Func<Task> runFunc)
-         */
-
         var taskKey = Key<BackgroundTask>.NewKey();
         var taskQueueKey = Key<BackgroundTaskQueue>.NewKey();
         var name = "Write \"Hello World!\" to the console";
@@ -26,36 +32,26 @@ public class BackgroundTaskTests
                 return Task.CompletedTask;
             });
 
-        // [Fact]
-        // public void BackgroundTaskKey()
         Assert.Equal(taskKey, backgroundTask.BackgroundTaskKey);
-
-        // [Fact]
-        // public void QueueKey()
         Assert.Equal(taskQueueKey, backgroundTask.QueueKey);
-
-        // [Fact]
-        // public void Name()
         Assert.Equal(name, backgroundTask.Name);
     }
 
+    /// <summary>
+    /// <see cref="BackgroundTask.WorkProgress"/>
+    /// </summary>
     [Fact]
     public void WorkProgress()
     {
-        /*
-        public Task? WorkProgress { get; private set; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="BackgroundTask.InvokeWorkItem(CancellationToken)"/>
+    /// </summary>
     [Fact]
     public void InvokeWorkItem()
     {
-        /*
-        public Task InvokeWorkItem(CancellationToken cancellationToken)
-         */
-
         throw new NotImplementedException();
     }
 }
