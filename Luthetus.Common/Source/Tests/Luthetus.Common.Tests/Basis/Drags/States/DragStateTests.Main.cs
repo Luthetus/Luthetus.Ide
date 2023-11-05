@@ -1,14 +1,18 @@
-namespace Luthetus.Common.RazorLib.Drags.Displays;
+using Luthetus.Common.RazorLib.Drags.Displays;
 
+namespace Luthetus.Common.Tests.Basis.Drags.States;
+
+/// <summary>
+/// <see cref="DragState"/>
+/// </summary>
 public class DragStateMainTests
 {
+    /// <summary>
+    /// <see cref="DragState()"/>
+    /// </summary>
     [Fact]
-    public void Aaa()
+    public void Constructor()
     {
-        /*
-        private DragState() : this (false, null)
-         */
-
         throw new NotImplementedException();
     }
 }

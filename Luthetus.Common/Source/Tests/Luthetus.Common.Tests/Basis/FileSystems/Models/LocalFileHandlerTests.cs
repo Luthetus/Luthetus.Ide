@@ -1,81 +1,72 @@
-namespace Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 
+namespace Luthetus.Common.Tests.Basis.FileSystems.Models;
+
+/// <summary>
+/// <see cref="LocalFileHandler"/>
+/// </summary>
 public class LocalFileHandlerTests
 {
+    /// <summary>
+    /// <see cref="LocalFileHandler.ExistsAsync(string, CancellationToken)"/>
+    /// </summary>
     [Fact]
     public void ExistsAsync()
     {
-        /*
-        public Task<bool> ExistsAsync(
-            string absolutePathString, CancellationToken cancellationToken = default)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="LocalFileHandler.DeleteAsync(string, CancellationToken)"/>
+    /// </summary>
     [Fact]
     public void DeleteAsync()
     {
-        /*
-        public Task DeleteAsync(
-            string absolutePathString, CancellationToken cancellationToken = default)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="LocalFileHandler.CopyAsync(string, string, CancellationToken)"/>
+    /// </summary>
     [Fact]
     public void CopyAsync()
     {
-        /*
-        public Task CopyAsync(
-            string sourceAbsolutePathString, string destinationAbsolutePathString, CancellationToken cancellationToken = default)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="LocalFileHandler.MoveAsync(string, string, CancellationToken)"/>
+    /// </summary>
     [Fact]
     public void MoveAsync()
     {
-        /*
-        public Task MoveAsync(
-            string sourceAbsolutePathString, string destinationAbsolutePathString, CancellationToken cancellationToken = default)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="LocalFileHandler.GetLastWriteTimeAsync(string, CancellationToken)"/>
+    /// </summary>
     [Fact]
     public void GetLastWriteTimeAsync()
     {
-        /*
-        public Task<DateTime> GetLastWriteTimeAsync(
-            string absolutePathString, CancellationToken cancellationToken = default)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="LocalFileHandler.ReadAllTextAsync(string, CancellationToken)"/>
+    /// </summary>
     [Fact]
     public void ReadAllTextAsync()
     {
-        /*
-        public async Task<string> ReadAllTextAsync(
-            string absolutePathString, CancellationToken cancellationToken = default)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="LocalFileHandler.WriteAllTextAsync(string, string, CancellationToken)"/>
+    /// </summary>
     [Fact]
     public void WriteAllTextAsync()
     {
-        /*
-        public async Task WriteAllTextAsync(
-            string absolutePathString, string contents, CancellationToken cancellationToken = default)
-         */
-
         throw new NotImplementedException();
     }
 }

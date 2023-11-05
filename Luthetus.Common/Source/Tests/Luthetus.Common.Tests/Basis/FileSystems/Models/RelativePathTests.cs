@@ -1,125 +1,117 @@
-﻿namespace Luthetus.Common.RazorLib.FileSystems.Models;
+﻿using Luthetus.Common.RazorLib.FileSystems.Models;
 
+namespace Luthetus.Common.Tests.Basis.FileSystems.Models;
+
+/// <summary>
+/// <see cref="RelativePath"/>
+/// </summary>
 public class RelativePathTests
 {
+    /// <summary>
+    /// <see cref="RelativePath(string, bool, IEnvironmentProvider)"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        public RelativePath(
-            string relativePathString, bool isDirectory, IEnvironmentProvider environmentProvider)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="RelativePath.PathType"/>
+    /// </summary>
     [Fact]
     public void PathType()
     {
-        /*
-        public PathType PathType { get; } = PathType.RelativePath;
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="RelativePath.IsDirectory"/>
+    /// </summary>
     [Fact]
     public void IsDirectory()
     {
-        /*
-        public bool IsDirectory { get; protected set; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="RelativePath.EnvironmentProvider"/>
+    /// </summary>
     [Fact]
     public void EnvironmentProvider()
     {
-        /*
-        public IEnvironmentProvider EnvironmentProvider { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="RelativePath.AncestorDirectoryBag"/>
+    /// </summary>
     [Fact]
     public void AncestorDirectoryBag()
     {
-        /*
-        public List<IRelativePath> AncestorDirectoryBag { get; } = new();
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="RelativePath.NameNoExtension"/>
+    /// </summary>
     [Fact]
     public void NameNoExtension()
     {
-        /*
-        public string NameNoExtension { get; protected set; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="RelativePath.ExtensionNoPeriod"/>
+    /// </summary>
     [Fact]
     public void ExtensionNoPeriod()
     {
-        /*
-        public string ExtensionNoPeriod { get; protected set; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="RelativePath.UpDirDirectiveCount"/>
+    /// </summary>
     [Fact]
     public void UpDirDirectiveCount()
     {
-        /*
-        public int UpDirDirectiveCount { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="RelativePath.ExactInput"/>
+    /// </summary>
     [Fact]
     public void ExactInput()
     {
-        /*
-        public string? ExactInput { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="RelativePath.FormattedInput"/>
+    /// </summary>
     [Fact]
     public void FormattedInput()
     {
-        /*
-        public string FormattedInput => _formattedInput ??= CalculateFormattedInput();
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="RelativePath.NameWithExtension"/>
+    /// </summary>
     [Fact]
     public void NameWithExtension()
     {
-        /*
-        public string NameWithExtension => _nameWithExtension ??= PathHelper.CalculateNameWithExtension(NameNoExtension, ExtensionNoPeriod, IsDirectory);
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="RelativePath.UsedDirectorySeparatorChar"/>
+    /// </summary>
     [Fact]
     public void UsedDirectorySeparatorChar()
     {
-        /*
-        public char UsedDirectorySeparatorChar => throw new NotImplementedException();
-         */
-
         throw new NotImplementedException();
     }
 }

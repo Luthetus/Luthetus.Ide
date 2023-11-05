@@ -1,44 +1,45 @@
-﻿namespace Luthetus.Common.RazorLib.FileSystems.Models;
+﻿using Luthetus.Common.RazorLib.FileSystems.Models;
 
+namespace Luthetus.Common.Tests.Basis.FileSystems.Models;
+
+/// <summary>
+/// <see cref="InMemoryFileSystemProvider"/>
+/// </summary>
 public partial class InMemoryFileSystemProviderTests
 {
+    /// <summary>
+    /// <see cref="InMemoryFileSystemProvider(IEnvironmentProvider)"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        public InMemoryFileSystemProvider(IEnvironmentProvider environmentProvider)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="InMemoryFileSystemProvider.Files"/>
+    /// </summary>
     [Fact]
     public void Files()
     {
-        /*
-        public ImmutableArray<InMemoryFile> Files => _files.ToImmutableArray();
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="InMemoryFileSystemProvider.File"/>
+    /// </summary>
     [Fact]
     public void File()
     {
-        /*
-        public IFileHandler File => _file;
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="InMemoryFileSystemProvider.Directory"/>
+    /// </summary>
     [Fact]
     public void Directory()
     {
-        /*
-        public IDirectoryHandler Directory => _directory;
-         */
-
         throw new NotImplementedException();
     }
 }

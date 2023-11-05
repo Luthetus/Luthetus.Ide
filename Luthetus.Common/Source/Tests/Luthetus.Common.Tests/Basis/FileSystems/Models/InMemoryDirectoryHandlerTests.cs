@@ -1,5 +1,10 @@
-﻿namespace Luthetus.Common.RazorLib.FileSystems.Models;
+﻿using Luthetus.Common.RazorLib.FileSystems.Models;
 
+namespace Luthetus.Common.Tests.Basis.FileSystems.Models;
+
+/// <summary>
+/// <see cref="InMemoryFileSystemProvider.Directory"/>
+/// </summary>
 public class InMemoryDirectoryHandlerTests
 {
     [Fact]

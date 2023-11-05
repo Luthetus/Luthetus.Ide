@@ -1,34 +1,36 @@
-﻿namespace Luthetus.Common.RazorLib.Dropdowns.States;
+﻿using Luthetus.Common.RazorLib.Dropdowns.States;
 
-public class DropdownStateTests
+namespace Luthetus.Common.Tests.Basis.Dropdowns.States;
+
+/// <summary>
+/// <see cref="DropdownState"/>
+/// </summary>
+public class DropdownStateActionsTests
 {
+    /// <summary>
+    /// <see cref="DropdownState.AddActiveAction"/>
+    /// </summary>
     [Fact]
     public void AddActiveAction()
     {
-        /*
-        public record AddActiveAction(Key<DropdownRecord> Key);
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="DropdownState.RemoveActiveAction"/>
+    /// </summary>
     [Fact]
     public void RemoveActiveAction()
     {
-        /*
-        public record RemoveActiveAction(Key<DropdownRecord> Key);
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="DropdownState.ClearActivesAction"/>
+    /// </summary>
     [Fact]
     public void ClearActivesAction()
     {
-        /*
-        public record ClearActivesAction;
-         */
-
         throw new NotImplementedException();
     }
 }

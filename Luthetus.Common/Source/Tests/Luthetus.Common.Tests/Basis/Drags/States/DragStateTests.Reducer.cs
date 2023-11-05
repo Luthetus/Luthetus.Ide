@@ -1,6 +1,11 @@
-﻿namespace Luthetus.Common.RazorLib.Drags.Displays;
+﻿using Luthetus.Common.RazorLib.Drags.Displays;
 
-public partial record DragStateReducerTests
+namespace Luthetus.Common.Tests.Basis.Drags.States;
+
+/// <summary>
+/// <see cref="DragState"/>
+/// </summary>
+public class DragStateReducerTests
 {
     [Fact]
     public void ReduceWithAction()

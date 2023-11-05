@@ -1,98 +1,96 @@
-﻿namespace Luthetus.Common.RazorLib.FileSystems.Models;
+﻿using Luthetus.Common.RazorLib.FileSystems.Models;
 
+namespace Luthetus.Common.Tests.Basis.FileSystems.Models;
+
+/// <summary>
+/// <see cref="AbsolutePath"/>
+/// </summary>
 public class AbsolutePathTests
 {
+    /// <summary>
+    /// <see cref="AbsolutePath(string, bool, IEnvironmentProvider)"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        public AbsolutePath(
-            string absolutePathString, bool isDirectory, IEnvironmentProvider environmentProvider)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="AbsolutePath.ParentDirectory"/>
+    /// </summary>
     [Fact]
     public void ParentDirectory()
     {
-        /*
-        public IAbsolutePath? ParentDirectory => AncestorDirectoryBag.LastOrDefault();
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="AbsolutePath.ExactInput"/>
+    /// </summary>
     [Fact]
     public void ExactInput()
     {
-        /*
-        public string? ExactInput { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="AbsolutePath.UsedDirectorySeparatorChar"/>
+    /// </summary>
     [Fact]
     public void UsedDirectorySeparatorChar()
     {
-        /*
-        public char UsedDirectorySeparatorChar { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="AbsolutePath.PathType"/>
+    /// </summary>
     [Fact]
     public void PathType()
     {
-        /*
-        public PathType PathType { get; } = PathType.AbsolutePath;
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="AbsolutePath.IsDirectory"/>
+    /// </summary>
     [Fact]
     public void IsDirectory()
     {
-        /*
-        public bool IsDirectory { get; protected set; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="AbsolutePath.EnvironmentProvider"/>
+    /// </summary>
     [Fact]
     public void EnvironmentProvider()
     {
-        /*
-        public IEnvironmentProvider EnvironmentProvider { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="AbsolutePath.AncestorDirectoryBag"/>
+    /// </summary>
     [Fact]
     public void AncestorDirectoryBag()
     {
-        /*
-        public List<IAbsolutePath> AncestorDirectoryBag { get; } = new();
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="AbsolutePath.NameNoExtension"/>
+    /// </summary>
     [Fact]
     public void NameNoExtension()
     {
-        /*
-        public string NameNoExtension { get; protected set; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="AbsolutePath.ExtensionNoPeriod"/>
+    /// </summary>
     [Fact]
     public void ExtensionNoPeriod()
     {
@@ -103,6 +101,9 @@ public class AbsolutePathTests
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="AbsolutePath.RootDrive"/>
+    /// </summary>
     [Fact]
     public void RootDrive()
     {
@@ -113,6 +114,9 @@ public class AbsolutePathTests
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="AbsolutePath.FormattedInput"/>
+    /// </summary>
     [Fact]
     public void FormattedInput()
     {
@@ -123,6 +127,9 @@ public class AbsolutePathTests
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="AbsolutePath.NameWithExtension"/>
+    /// </summary>
     [Fact]
     public void NameWithExtension()
     {
@@ -133,6 +140,9 @@ public class AbsolutePathTests
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="AbsolutePath.IsRootDirectory"/>
+    /// </summary>
     [Fact]
     public void IsRootDirectory()
     {

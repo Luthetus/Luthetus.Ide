@@ -1,34 +1,36 @@
-namespace Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 
+namespace Luthetus.Common.Tests.Basis.FileSystems.Models;
+
+/// <summary>
+/// <see cref="LocalFileSystemProvider"/>
+/// </summary>
 public class LocalFileSystemProviderTests
 {
+    /// <summary>
+    /// <see cref="LocalFileSystemProvider()"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        public LocalFileSystemProvider()
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="LocalFileSystemProvider.File"/>
+    /// </summary>
     [Fact]
     public void File()
     {
-        /*
-        public IFileHandler File { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="LocalFileSystemProvider.Directory"/>
+    /// </summary>
     [Fact]
     public void Directory()
     {
-        /*
-        public IDirectoryHandler Directory { get; }
-         */
-
         throw new NotImplementedException();
     }
 }

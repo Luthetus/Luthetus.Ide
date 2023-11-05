@@ -1,87 +1,81 @@
-﻿namespace Luthetus.Common.RazorLib.FileSystems.Models;
+﻿using Luthetus.Common.RazorLib.FileSystems.Models;
 
+namespace Luthetus.Common.Tests.Basis.FileSystems.Models;
+
+/// <summary>
+/// <see cref="InMemoryEnvironmentProvider"/>
+/// </summary>
 public class InMemoryEnvironmentProviderTests
 {
+    /// <summary>
+    /// <see cref="InMemoryEnvironmentProvider()"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        public InMemoryEnvironmentProvider()
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="InMemoryEnvironmentProvider.RootDirectoryAbsolutePath"/>
+    /// </summary>
     [Fact]
     public void RootDirectoryAbsolutePath()
     {
-        /*
-        public IAbsolutePath RootDirectoryAbsolutePath { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="InMemoryEnvironmentProvider.HomeDirectoryAbsolutePath"/>
+    /// </summary>
     [Fact]
     public void HomeDirectoryAbsolutePath()
     {
-        /*
-        public IAbsolutePath HomeDirectoryAbsolutePath { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="InMemoryEnvironmentProvider.DirectorySeparatorChar"/>
+    /// </summary>
     [Fact]
     public void DirectorySeparatorChar()
     {
-        /*
-        public char DirectorySeparatorChar => '/';
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="InMemoryEnvironmentProvider.AltDirectorySeparatorChar"/>
+    /// </summary>
     [Fact]
     public void AltDirectorySeparatorChar()
     {
-        /*
-        public char AltDirectorySeparatorChar => '\\';
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="InMemoryEnvironmentProvider.IsDirectorySeparator(char)"/>
+    /// </summary>
     [Fact]
     public void IsDirectorySeparator()
     {
-        /*
-        public bool IsDirectorySeparator(char character) =>
-            character == DirectorySeparatorChar || character == AltDirectorySeparatorChar;
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="InMemoryEnvironmentProvider.GetRandomFileName()"/>
+    /// </summary>
     [Fact]
     public void GetRandomFileName()
     {
-        /*
-        public string GetRandomFileName() => Guid.NewGuid().ToString();
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="InMemoryEnvironmentProvider.JoinPaths(string, string)"/>
+    /// </summary>
     [Fact]
     public void JoinPaths()
     {
-        /*
-        public string JoinPaths(string pathOne, string pathTwo)
-        {
-        }
-         */
-
         throw new NotImplementedException();
     }
 }

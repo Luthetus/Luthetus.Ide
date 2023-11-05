@@ -1,93 +1,81 @@
-namespace Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 
+namespace Luthetus.Common.Tests.Basis.FileSystems.Models;
+
+/// <summary>
+/// <see cref="LocalDirectoryHandler"/>
+/// </summary>
 public class LocalDirectoryHandlerTests
 {
+    /// <summary>
+    /// <see cref="LocalDirectoryHandler.CreateDirectoryAsync(string, CancellationToken)"/>
+    /// </summary>
     [Fact]
     public void CreateDirectoryAsync()
     {
-        /*
-        public Task CreateDirectoryAsync(
-            string absolutePathString, CancellationToken cancellationToken = default)
-         */
-
         throw new NotImplementedException();
     }
-    
 
+    /// <summary>
+    /// <see cref="LocalDirectoryHandler.DeleteAsync(string, bool, CancellationToken)"/>
+    /// </summary>
     [Fact]
     public void DeleteAsync()
     {
-        /*
-        public Task DeleteAsync(
-            string absolutePathString, bool recursive, CancellationToken cancellationToken = default)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="LocalDirectoryHandler.ExistsAsync(string, CancellationToken)"/>
+    /// </summary>
     [Fact]
     public void ExistsAsync()
     {
-        /*
-        public Task<bool> ExistsAsync(
-            string absolutePathString, CancellationToken cancellationToken = default)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="LocalDirectoryHandler.CopyAsync(string, string, CancellationToken)"/>
+    /// </summary>
     [Fact]
     public void CopyAsync()
     {
-        /*
-        public Task CopyAsync(
-            string sourceAbsolutePathString, string destinationAbsolutePathString, CancellationToken cancellationToken = default)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="LocalDirectoryHandler.MoveAsync(string, string, CancellationToken)"/>
+    /// </summary>
     [Fact]
     public void MoveAsync()
     {
-        /*
-        public Task MoveAsync(
-            string sourceAbsolutePathString, string destinationAbsolutePathString, CancellationToken cancellationToken = default)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="LocalDirectoryHandler.GetDirectoriesAsync(string, CancellationToken)"/>
+    /// </summary>
     [Fact]
     public void GetDirectoriesAsync()
     {
-        /*
-        public Task<string[]> GetDirectoriesAsync(
-            string absolutePathString, CancellationToken cancellationToken = default)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="LocalDirectoryHandler.GetFilesAsync(string, CancellationToken)"/>
+    /// </summary>
     [Fact]
     public void GetFilesAsync()
     {
-        /*
-        public Task<string[]> GetFilesAsync(
-            string absolutePathString, CancellationToken cancellationToken = default)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="LocalDirectoryHandler.EnumerateFileSystemEntriesAsync(string, CancellationToken)"/>
+    /// </summary>
     [Fact]
     public void EnumerateFileSystemEntriesAsync()
     {
-        /*
-        public Task<IEnumerable<string>> EnumerateFileSystemEntriesAsync(
-            string absolutePathString, CancellationToken cancellationToken = default)
-         */
-
         throw new NotImplementedException();
     }
 }
