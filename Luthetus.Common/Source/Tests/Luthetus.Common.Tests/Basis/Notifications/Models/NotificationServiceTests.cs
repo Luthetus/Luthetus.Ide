@@ -7,17 +7,7 @@ public class NotificationServiceTests
     {
         /*
         public NotificationService(
-            bool isEnabled, IDispatcher dispatcher, IState<NotificationState> notificationState)
-         */
-
-        throw new NotImplementedException();
-    }
-
-    [Fact]
-    public void IsEnabled()
-    {
-        /*
-        public bool IsEnabled { get; }
+            IDispatcher dispatcher, IState<NotificationState> notificationState)
          */
 
         throw new NotImplementedException();

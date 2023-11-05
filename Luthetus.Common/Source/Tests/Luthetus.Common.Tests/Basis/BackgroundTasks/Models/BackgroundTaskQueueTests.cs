@@ -21,28 +21,13 @@ public class BackgroundTaskQueueTests
             key,
             displayName);
 
+        // [Fact]
+        // public void Key()
         Assert.Equal(key, backgroundTaskQueue.Key);
+
+        // [Fact]
+        // public void DisplayName()
         Assert.Equal(displayName, backgroundTaskQueue.DisplayName);
-    }
-
-    [Fact]
-    public void Key()
-    {
-        /*
-        public Key<BackgroundTaskQueue> Key { get; }
-         */
-
-        throw new NotImplementedException();
-    }
-
-    [Fact]
-    public void DisplayName()
-    {
-        /*
-         public string DisplayName { get; }
-         */
-
-        throw new NotImplementedException();
     }
 
     [Fact]

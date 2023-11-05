@@ -7,17 +7,7 @@ public class TreeViewServiceTests
     {
         /*
         public TreeViewService(
-            bool isEnabled, IState<TreeViewState> treeViewStateWrap, IDispatcher dispatcher)
-         */
-
-        throw new NotImplementedException();
-    }
-
-    [Fact]
-    public void IsEnabled()
-    {
-        /*
-        public bool IsEnabled { get; }
+            IState<TreeViewState> treeViewStateWrap, IDispatcher dispatcher)
          */
 
         throw new NotImplementedException();

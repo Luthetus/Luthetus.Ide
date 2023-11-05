@@ -7,17 +7,7 @@ public class DialogServiceTests
     {
         /*
         public DialogService(
-            bool isEnabled, IDispatcher dispatcher, IState<DialogState> dialogStateWrap)
-         */
-
-        throw new NotImplementedException();
-    }
-
-    [Fact]
-    public void IsEnabled()
-    {
-        /*
-        public bool IsEnabled { get; }
+            IDispatcher dispatcher, IState<DialogState> dialogStateWrap)
          */
 
         throw new NotImplementedException();

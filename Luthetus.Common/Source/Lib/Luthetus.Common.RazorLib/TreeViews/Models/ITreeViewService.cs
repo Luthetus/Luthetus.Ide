@@ -1,11 +1,10 @@
 ﻿using Fluxor;
-using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.States;
 
 namespace Luthetus.Common.RazorLib.TreeViews.Models;
 
-public interface ITreeViewService : ILuthetusCommonService
+public interface ITreeViewService
 {
     public IState<TreeViewState> TreeViewStateWrap { get; }
 

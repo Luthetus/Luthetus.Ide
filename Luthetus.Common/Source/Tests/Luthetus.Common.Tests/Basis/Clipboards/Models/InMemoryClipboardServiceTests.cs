@@ -6,17 +6,7 @@ public class InMemoryClipboardServiceTests
     public void Constructor()
     {
         /*
-        public InMemoryClipboardService(bool isEnabled)
-         */
-
-        throw new NotImplementedException();
-    }
-
-    [Fact]
-    public void IsEnabled()
-    {
-        /*
-        public bool IsEnabled { get; }
+        public InMemoryClipboardService()
          */
 
         throw new NotImplementedException();

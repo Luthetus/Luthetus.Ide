@@ -3,20 +3,10 @@
 public class LocalStorageServiceTests
 {
     [Fact]
-    public void IsEnabled()
-    {
-        /*
-        public bool IsEnabled { get; }
-         */
-
-        throw new NotImplementedException();
-    }
-
-    [Fact]
     public void Constructor()
     {
         /*
-        public LocalStorageService(bool isEnabled, IJSRuntime jsRuntime)
+        public LocalStorageService(IJSRuntime jsRuntime)
          */
 
         throw new NotImplementedException();

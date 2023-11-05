@@ -7,17 +7,7 @@ public class DropdownServiceTests
     {
         /*
         public DropdownService(
-            bool isEnabled, IDispatcher dispatcher, IState<DropdownState> dropdownStateWrap)
-         */
-
-        throw new NotImplementedException();
-    }
-
-    [Fact]
-    public void IsEnabled()
-    {
-        /*
-        public bool IsEnabled { get; }
+            IDispatcher dispatcher, IState<DropdownState> dropdownStateWrap)
          */
 
         throw new NotImplementedException();

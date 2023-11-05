@@ -17,14 +17,12 @@ public class AppOptionsService : IAppOptionsService
     private readonly StorageSync _storageSync;
 
     public AppOptionsService(
-        bool isEnabled,
         IState<AppOptionsState> appOptionsStateWrap,
         IState<ThemeState> themeStateWrap,
         IDispatcher dispatcher,
         IStorageService storageService,
         StorageSync storageSync)
     {
-        IsEnabled = isEnabled;
         AppOptionsStateWrap = appOptionsStateWrap;
         ThemeStateWrap = themeStateWrap;
         _dispatcher = dispatcher;
@@ -32,7 +30,6 @@ public class AppOptionsService : IAppOptionsService
         _storageSync = storageSync;
     }
 
-    public bool IsEnabled { get; }
     public IState<AppOptionsState> AppOptionsStateWrap { get; }
     public IState<ThemeState> ThemeStateWrap { get; }
 

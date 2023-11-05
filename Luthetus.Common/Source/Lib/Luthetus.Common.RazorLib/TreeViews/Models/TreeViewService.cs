@@ -9,16 +9,13 @@ public class TreeViewService : ITreeViewService
     private readonly IDispatcher _dispatcher;
 
     public TreeViewService(
-        bool isEnabled,
         IState<TreeViewState> treeViewStateWrap,
         IDispatcher dispatcher)
     {
-        IsEnabled = isEnabled;
         TreeViewStateWrap = treeViewStateWrap;
         _dispatcher = dispatcher;
     }
 
-    public bool IsEnabled { get; }
     public IState<TreeViewState> TreeViewStateWrap { get; }
 
     public void RegisterTreeViewState(TreeViewContainer treeViewState)

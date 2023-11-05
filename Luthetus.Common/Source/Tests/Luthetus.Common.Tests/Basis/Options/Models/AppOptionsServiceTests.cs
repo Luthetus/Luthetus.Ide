@@ -7,17 +7,7 @@ public class AppOptionsServiceTests
     {
         /*
         public AppOptionsService(
-            bool isEnabled, IState<AppOptionsState> appOptionsStateWrap, IState<ThemeState> themeStateWrap, IDispatcher dispatcher, IStorageService storageService, StorageSync storageSync)
-         */
-
-        throw new NotImplementedException();
-    }
-
-    [Fact]
-    public void IsEnabled()
-    {
-        /*
-        public bool IsEnabled { get; }
+            IState<AppOptionsState> appOptionsStateWrap, IState<ThemeState> themeStateWrap, IDispatcher dispatcher, IStorageService storageService, StorageSync storageSync)
          */
 
         throw new NotImplementedException();

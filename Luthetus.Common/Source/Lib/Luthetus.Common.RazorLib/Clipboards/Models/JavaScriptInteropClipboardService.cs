@@ -6,13 +6,10 @@ public class JavaScriptInteropClipboardService : IClipboardService
 {
     private readonly IJSRuntime _jsRuntime;
 
-    public JavaScriptInteropClipboardService(bool isEnabled, IJSRuntime jsRuntime)
+    public JavaScriptInteropClipboardService(IJSRuntime jsRuntime)
     {
-        IsEnabled = isEnabled;
         _jsRuntime = jsRuntime;
     }
-
-    public bool IsEnabled { get; }
 
     public async Task<string> ReadClipboard()
     {

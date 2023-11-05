@@ -6,17 +6,7 @@ public class JavaScriptInteropClipboardServiceTests
     public void Constructor()
     {
         /*
-        public JavaScriptInteropClipboardService(bool isEnabled, IJSRuntime jsRuntime)
-         */
-
-        throw new NotImplementedException();
-    }
-
-    [Fact]
-    public void IsEnabled()
-    {
-        /*
-        public bool IsEnabled { get; }
+        public JavaScriptInteropClipboardService(IJSRuntime jsRuntime)
          */
 
         throw new NotImplementedException();

@@ -9,16 +9,13 @@ public class DialogService : IDialogService
     private readonly IDispatcher _dispatcher;
 
     public DialogService(
-        bool isEnabled,
         IDispatcher dispatcher,
         IState<DialogState> dialogStateWrap)
     {
         _dispatcher = dispatcher;
-        IsEnabled = isEnabled;
         DialogStateWrap = dialogStateWrap;
     }
 
-    public bool IsEnabled { get; }
     public IState<DialogState> DialogStateWrap { get; }
 
     public void RegisterDialogRecord(DialogRecord dialogRecord)

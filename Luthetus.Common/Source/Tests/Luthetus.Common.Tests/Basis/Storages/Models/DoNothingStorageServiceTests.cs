@@ -6,17 +6,7 @@ public class DoNothingStorageServiceTests
     public void Constructor()
     {
         /*
-        public DoNothingStorageService(bool isEnabled)
-         */
-
-        throw new NotImplementedException();
-    }
-
-    [Fact]
-    public void IsEnabled()
-    {
-        /*
-        public bool IsEnabled { get; }
+        public DoNothingStorageService()
          */
 
         throw new NotImplementedException();

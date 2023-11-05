@@ -7,17 +7,7 @@ public class ThemeServiceTests
     {
         /*
         public ThemeService(
-            bool isEnabled, IState<ThemeState> themeStateWrap, IDispatcher dispatcher)
-         */
-
-        throw new NotImplementedException();
-    }
-
-    [Fact]
-    public void IsEnabled()
-    {
-        /*
-        public bool IsEnabled { get; }
+            IState<ThemeState> themeStateWrap, IDispatcher dispatcher)
          */
 
         throw new NotImplementedException();

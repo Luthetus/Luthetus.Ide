@@ -1,3 +1,5 @@
+using Luthetus.Common.RazorLib.Keys.Models;
+
 namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 public class BackgroundTaskTests
@@ -10,37 +12,31 @@ public class BackgroundTaskTests
             Key<BackgroundTask> backgroundTaskKey, Key<BackgroundTaskQueue> queueKey, string name, Func<Task> runFunc)
          */
 
-        throw new NotImplementedException();
-    }
+        var taskKey = Key<BackgroundTask>.NewKey();
+        var taskQueueKey = Key<BackgroundTaskQueue>.NewKey();
+        var name = "Write \"Hello World!\" to the console";
 
-    [Fact]
-    public void BackgroundTaskKey()
-    {
-        /*
-        public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
-         */
+        var backgroundTask = new BackgroundTask(
+            taskKey,
+            taskQueueKey,
+            name,
+            () =>
+            {
+                Console.WriteLine("Hello World!");
+                return Task.CompletedTask;
+            });
 
-        throw new NotImplementedException();
-    }
+        // [Fact]
+        // public void BackgroundTaskKey()
+        Assert.Equal(taskKey, backgroundTask.BackgroundTaskKey);
 
-    [Fact]
-    public void QueueKey()
-    {
-        /*
-        public Key<BackgroundTaskQueue> QueueKey { get; }
-         */
+        // [Fact]
+        // public void QueueKey()
+        Assert.Equal(taskQueueKey, backgroundTask.QueueKey);
 
-        throw new NotImplementedException();
-    }
-
-    [Fact]
-    public void Name()
-    {
-        /*
-        public string Name { get; }
-         */
-
-        throw new NotImplementedException();
+        // [Fact]
+        // public void Name()
+        Assert.Equal(name, backgroundTask.Name);
     }
 
     [Fact]

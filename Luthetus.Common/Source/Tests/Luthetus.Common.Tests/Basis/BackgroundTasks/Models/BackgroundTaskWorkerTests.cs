@@ -1,35 +1,45 @@
-﻿namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+
+namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 public class BackgroundTaskWorkerTests
 {
     [Fact]
-    public void Constructor()
+    public async Task Constructor()
     {
         /*
         public BackgroundTaskWorker(
             Key<BackgroundTaskQueue> queueKey, IBackgroundTaskService backgroundTaskService, ILoggerFactory loggerFactory)
          */
 
-        throw new NotImplementedException();
-    }
+        var services = new ServiceCollection()
+            .AddSingleton<ILoggerFactory, NullLoggerFactory>();
 
-    [Fact]
-    public void QueueKey()
-    {
-        /*
-        public Key<BackgroundTaskQueue> QueueKey { get; }
-         */
+        var sp = services.BuildServiceProvider();
 
-        throw new NotImplementedException();
-    }
+        var queueKey = ContinuousBackgroundTaskWorker.Queue.Key;
 
-    [Fact]
-    public void BackgroundTaskService()
-    {
-        /*
-        public IBackgroundTaskService BackgroundTaskService { get; }
-         */
+        var backgroundTaskWorker = new ContinuousBackgroundTaskWorker(
+            queueKey,
+            sp.GetRequiredService<IBackgroundTaskService>(),
+            sp.GetRequiredService<ILoggerFactory>());
 
-        throw new NotImplementedException();
+        // [Fact]
+        // public void QueueKey()
+        Assert.Equal(queueKey, backgroundTaskWorker.QueueKey);
+
+        // [Fact]
+        // public void BackgroundTaskService()
+        Assert.NotNull(backgroundTaskWorker.BackgroundTaskService);
+
+        var startCancellationTokenSource = new CancellationTokenSource();
+        _ = Task.Run(async () =>  await backgroundTaskWorker.StartAsync(startCancellationTokenSource.Token));
+        
+        var stopCancellationTokenSource = new CancellationTokenSource();
+        _ = Task.Run(async () => await backgroundTaskWorker.StopAsync(stopCancellationTokenSource.Token));
+
+        throw new NotImplementedException("TODO: Testing");
     }
 }

@@ -4,12 +4,10 @@ namespace Luthetus.Common.RazorLib.Storages.Models;
 
 public class LocalStorageService : IStorageService
 {
-    public bool IsEnabled { get; }
     private readonly IJSRuntime _jsRuntime;
 
-    public LocalStorageService(bool isEnabled, IJSRuntime jsRuntime)
+    public LocalStorageService(IJSRuntime jsRuntime)
     {
-        IsEnabled = isEnabled;
         _jsRuntime = jsRuntime;
     }
 
