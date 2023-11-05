@@ -3,32 +3,22 @@
 public class InMemoryClipboardServiceTests
 {
     [Fact]
-    public void Constructor()
+    public async Task Constructor()
     {
         /*
         public InMemoryClipboardService()
          */
 
-        throw new NotImplementedException();
-    }
+        var inMemoryClipboardService = new InMemoryClipboardService();
 
-    [Fact]
-    public void ReadClipboard()
-    {
-        /*
-        public Task<string> ReadClipboard()
-         */
+        var text = "Hello World!";
 
-        throw new NotImplementedException();
-    }
+        // [Fact]
+        // public void ReadClipboard()
+        await inMemoryClipboardService.SetClipboard(text);
 
-    [Fact]
-    public void SetClipboard()
-    {
-        /*
-        public Task SetClipboard(string value)
-         */
-
-        throw new NotImplementedException();
+        // [Fact]
+        // public void SetClipboard()
+        Assert.Equal(text, await inMemoryClipboardService.ReadClipboard());
     }
 }

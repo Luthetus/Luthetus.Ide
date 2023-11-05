@@ -3,21 +3,21 @@ namespace Luthetus.Common.RazorLib.Storages.States;
 public partial class StorageSyncTests
 {
     [Fact]
-    public void StorageService()
+    public void Constructor()
     {
         /*
-        private readonly IStorageService _storageService;
+        public StorageSync(
+            IStorageService storageService, IBackgroundTaskService backgroundTaskService, IDispatcher dispatcher)
          */
 
         throw new NotImplementedException();
     }
 
     [Fact]
-    public void Constructor()
+    public void StorageService()
     {
         /*
-        public StorageSync(
-            IStorageService storageService, IBackgroundTaskService backgroundTaskService, IDispatcher dispatcher)
+        private readonly IStorageService _storageService;
          */
 
         throw new NotImplementedException();

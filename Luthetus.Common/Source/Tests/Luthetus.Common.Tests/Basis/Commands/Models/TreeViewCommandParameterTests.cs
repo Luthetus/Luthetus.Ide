@@ -1,4 +1,5 @@
-﻿namespace Luthetus.Common.RazorLib.Commands.Models;
+﻿
+namespace Luthetus.Common.RazorLib.Commands.Models;
 
 public class TreeViewCommandParameterTests
 {

@@ -3,7 +3,7 @@ namespace Luthetus.Common.RazorLib.Resizes.Models;
 public class ResizeHelperTests
 {
     [Fact]
-    public void Aaa()
+    public void ResizeNorth()
     {
         /*
         public static void ResizeNorth(

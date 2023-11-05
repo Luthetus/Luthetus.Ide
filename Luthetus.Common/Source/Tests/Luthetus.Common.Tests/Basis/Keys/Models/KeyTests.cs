@@ -1,6 +1,6 @@
 ﻿namespace Luthetus.Common.RazorLib.Keys.Models;
 
-public record struct KeyTests<T>(Guid Guid)
+public class KeyTests
 {
     [Fact]
     public void Empty()

@@ -13,7 +13,7 @@ public class PanelTabTests
     }
 
     [Fact]
-    public void Aaa()
+    public void ContextRecordKey()
     {
         /*
         public Key<ContextRecord>? ContextRecordKey { get; set; }

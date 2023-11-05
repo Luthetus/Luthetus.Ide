@@ -7,7 +7,7 @@ namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 public class BackgroundTaskWorkerTests
 {
     [Fact]
-    public async Task Constructor()
+    public void Constructor()
     {
         /*
         public BackgroundTaskWorker(
