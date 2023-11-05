@@ -1,7 +1,15 @@
-﻿namespace Luthetus.Common.RazorLib.Panels.States;
+﻿using Luthetus.Common.RazorLib.Panels.States;
 
+namespace Luthetus.Common.Tests.Basis.Panels.States;
+
+/// <summary>
+/// <see cref="PanelsState"/>
+/// </summary>
 public class PanelsStateMainTests
 {
+    /// <summary>
+    /// <see cref="PanelsState()"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
@@ -12,41 +20,14 @@ public class PanelsStateMainTests
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="PanelsState.DragEventArgs"/>
+    /// </summary>
     [Fact]
     public void DragEventArgs()
     {
         /*
-        public (PanelTab PanelTab, PanelGroup PanelGroup)? DragEventArgs { get; set; }
-         */
-
-        throw new NotImplementedException();
-    }
-
-    [Fact]
-    public void ConstructTopLeftGroup()
-    {
-        /*
-        private static PanelGroup ConstructTopLeftGroup()
-         */
-
-        throw new NotImplementedException();
-    }
-
-    [Fact]
-    public void ConstructTopRightGroup()
-    {
-        /*
-        private static PanelGroup ConstructTopRightGroup()
-         */
-
-        throw new NotImplementedException();
-    }
-
-    [Fact]
-    public void ConstructBottomGroup()
-    {
-        /*
-        private static PanelGroup ConstructBottomGroup()
+        public (PanelTab PanelTab, PanelGroup PanelGroup)?  { get; set; }
          */
 
         throw new NotImplementedException();

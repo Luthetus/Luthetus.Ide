@@ -1,26 +1,27 @@
-﻿namespace Luthetus.Common.RazorLib.Notifications.Models;
+﻿using Luthetus.Common.RazorLib.Notifications.Models;
 
+namespace Luthetus.Common.Tests.Basis.Notifications.Models;
+
+/// <summary>
+/// <see cref="NotificationHelper"/>
+/// </summary>
 public class NotificationHelperTests
 {
+    /// <summary>
+    /// <see cref="NotificationHelper.DispatchInformative(string, string, RazorLib.ComponentRenderers.Models.ILuthetusCommonComponentRenderers, Fluxor.IDispatcher)"/>
+    /// </summary>
     [Fact]
     public void DispatchInformative()
     {
-        /*
-        public static void DispatchInformative(
-            string title, string message, ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers, IDispatcher dispatcher)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="NotificationHelper.DispatchError(string, string, RazorLib.ComponentRenderers.Models.ILuthetusCommonComponentRenderers, Fluxor.IDispatcher)"/>
+    /// </summary>
     [Fact]
     public void DispatchError()
     {
-        /*
-        public static void DispatchError(
-            string title, string message, ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers, IDispatcher dispatcher)
-         */
-
         throw new NotImplementedException();
     }
 }

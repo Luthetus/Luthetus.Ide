@@ -1,26 +1,27 @@
-﻿namespace Luthetus.Common.RazorLib.Options.Models;
+﻿using Luthetus.Common.RazorLib.Options.Models;
 
+namespace Luthetus.Common.Tests.Basis.Options.Models;
+
+/// <summary>
+/// <see cref="CommonOptionsJsonDto"/>
+/// </summary>
 public class CommonOptionsJsonDtoTests
 {
+    /// <summary>
+    /// <see cref="CommonOptionsJsonDto()"/>
+    /// </summary>
     [Fact]
     public void ConstructorA()
     {
-        /*
-        public CommonOptionsJsonDto()
-            : this(null, null, null, null)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="CommonOptionsJsonDto(CommonOptionsJsonDto)"/>
+    /// </summary>
     [Fact]
     public void ConstructorB()
     {
-        /*
-        public CommonOptionsJsonDto(CommonOptions options)
-            : this(options.FontSizeInPixels, options.IconSizeInPixels, options.ThemeKey, options.FontFamily)
-         */
-
         throw new NotImplementedException();
     }
 }

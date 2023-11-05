@@ -1,34 +1,36 @@
-﻿namespace Luthetus.Common.RazorLib.Storages.Models;
+﻿using Luthetus.Common.RazorLib.Storages.Models;
 
+namespace Luthetus.Common.Tests.Basis.Storages.Models;
+
+/// <summary>
+/// <see cref="DoNothingStorageService"/>
+/// </summary>
 public class DoNothingStorageServiceTests
 {
+    /// <summary>
+    /// <see cref="DoNothingStorageService()"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        public DoNothingStorageService()
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="DoNothingStorageService.SetValue(string, object?)"/>
+    /// </summary>
     [Fact]
     public void SetValue()
     {
-        /*
-        public ValueTask SetValue(string key, object? value)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="DoNothingStorageService.GetValue(string)"/>
+    /// </summary>
     [Fact]
     public void GetValue()
     {
-        /*
-        public ValueTask<object?> GetValue(string key)
-         */
-
         throw new NotImplementedException();
     }
 }

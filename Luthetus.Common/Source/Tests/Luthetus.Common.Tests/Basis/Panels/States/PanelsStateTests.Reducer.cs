@@ -1,6 +1,11 @@
-﻿namespace Luthetus.Common.RazorLib.Panels.States;
+﻿using Luthetus.Common.RazorLib.Panels.States;
 
-public partial record PanelsStateReducerTests
+namespace Luthetus.Common.Tests.Basis.Panels.States;
+
+/// <summary>
+/// <see cref="PanelsState"/>
+/// </summary>
+public class PanelsStateReducerTests
 {
     [Fact]
     public void ReduceRegisterPanelGroupAction()

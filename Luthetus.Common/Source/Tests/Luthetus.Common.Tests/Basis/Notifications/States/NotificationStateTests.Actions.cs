@@ -1,124 +1,117 @@
-﻿namespace Luthetus.Common.RazorLib.Notifications.States;
+﻿using Luthetus.Common.RazorLib.Notifications.States;
 
+namespace Luthetus.Common.Tests.Basis.Notifications.States;
+
+/// <summary>
+/// <see cref="NotificationState"/>
+/// </summary>
 public class NotificationStateActionsTests
 {
+    /// <summary>
+    /// <see cref="NotificationState.RegisterAction"/>
+    /// </summary>
     [Fact]
     public void RegisterAction()
     {
-        /*
-        public record RegisterAction(NotificationRecord Notification);
-         */
-
 	    throw new NotImplementedException();
     }
-    
+
+    /// <summary>
+    /// <see cref="NotificationState.DisposeAction"/>
+    /// </summary>
     [Fact]
     public void DisposeAction()
     {
-        /*
-        public record DisposeAction(Key<NotificationRecord> Key);
-         */
-
 	    throw new NotImplementedException();
     }
-    
+
+    /// <summary>
+    /// <see cref="NotificationState.MakeReadAction"/>
+    /// </summary>
     [Fact]
     public void MakeReadAction()
     {
-        /*
-        public record MakeReadAction(Key<NotificationRecord> Key);
-         */
-
 	    throw new NotImplementedException();
     }
-    
+
+    /// <summary>
+    /// <see cref="NotificationState.UndoMakeReadAction"/>
+    /// </summary>
     [Fact]
     public void UndoMakeReadAction()
     {
-        /*
-        public record UndoMakeReadAction(Key<NotificationRecord> Key);
-         */
-
 	    throw new NotImplementedException();
     }
-    
+
+    /// <summary>
+    /// <see cref="NotificationState.MakeDeletedAction"/>
+    /// </summary>
     [Fact]
     public void MakeDeletedAction()
     {
-        /*
-        public record MakeDeletedAction(Key<NotificationRecord> Key);
-         */
-
 	    throw new NotImplementedException();
     }
-    
+
+    /// <summary>
+    /// <see cref="NotificationState.UndoMakeDeletedAction"/>
+    /// </summary>
     [Fact]
     public void UndoMakeDeletedAction()
     {
-        /*
-        public record UndoMakeDeletedAction(Key<NotificationRecord> Key);
-         */
-
 	    throw new NotImplementedException();
     }
-    
+
+    /// <summary>
+    /// <see cref="NotificationState.MakeArchivedAction"/>
+    /// </summary>
     [Fact]
     public void MakeArchivedAction()
     {
-        /*
-        public record MakeArchivedAction(Key<NotificationRecord> Key);
-         */
-
 	    throw new NotImplementedException();
     }
-    
+
+    /// <summary>
+    /// <see cref="NotificationState.UndoMakeArchivedAction"/>
+    /// </summary>
     [Fact]
     public void UndoMakeArchivedAction()
     {
-        /*
-        public record UndoMakeArchivedAction(Key<NotificationRecord> Key);
-         */
-
 	    throw new NotImplementedException();
     }
-    
+
+    /// <summary>
+    /// <see cref="NotificationState.ClearDefaultAction"/>
+    /// </summary>
     [Fact]
     public void ClearDefaultAction()
     {
-        /*
-        public record ClearDefaultAction();
-         */
-
 	    throw new NotImplementedException();
     }
-    
+
+    /// <summary>
+    /// <see cref="NotificationState.ClearReadAction"/>
+    /// </summary>
     [Fact]
     public void ClearReadAction()
     {
-        /*
-        public record ClearReadAction();
-         */
-
 	    throw new NotImplementedException();
     }
-    
+
+    /// <summary>
+    /// <see cref="NotificationState.ClearDeletedAction"/>
+    /// </summary>
     [Fact]
     public void ClearDeletedAction()
     {
-        /*
-        public record ClearDeletedAction();
-         */
-
 	    throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="NotificationState.ClearArchivedAction"/>
+    /// </summary>
     [Fact]
     public void ClearArchivedAction()
     {
-        /*
-        public record ClearArchivedAction();
-         */
-
         throw new NotImplementedException();
     }
 }

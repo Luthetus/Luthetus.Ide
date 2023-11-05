@@ -1,5 +1,10 @@
-namespace Luthetus.Common.RazorLib.Storages.States;
+using Luthetus.Common.RazorLib.Storages.States;
 
+namespace Luthetus.Common.Tests.Basis.Storages.States;
+
+/// <summary>
+/// <see cref="StorageSync"/>
+/// </summary>
 public partial class StorageSyncTests
 {
     [Fact]

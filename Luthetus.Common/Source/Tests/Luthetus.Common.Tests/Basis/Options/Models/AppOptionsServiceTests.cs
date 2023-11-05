@@ -1,158 +1,135 @@
-﻿namespace Luthetus.Common.RazorLib.Options.Models;
+﻿using Luthetus.Common.RazorLib.Options.Models;
 
+namespace Luthetus.Common.Tests.Basis.Options.Models;
+
+/// <summary>
+/// <see cref="AppOptionsService"/>
+/// </summary>
 public class AppOptionsServiceTests
 {
+    /// <summary>
+    /// <see cref="AppOptionsService(Fluxor.IState{RazorLib.Options.States.AppOptionsState}, Fluxor.IState{RazorLib.Themes.States.ThemeState}, Fluxor.IDispatcher, RazorLib.Storages.Models.IStorageService, RazorLib.Storages.States.StorageSync)"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        public AppOptionsService(
-            IState<AppOptionsState> appOptionsStateWrap, IState<ThemeState> themeStateWrap, IDispatcher dispatcher, IStorageService storageService, StorageSync storageSync)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="AppOptionsService.AppOptionsStateWrap"/>
+    /// </summary>
     [Fact]
     public void AppOptionsStateWrap()
     {
-        /*
-        public IState<AppOptionsState> AppOptionsStateWrap { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="AppOptionsService.ThemeStateWrap"/>
+    /// </summary>
     [Fact]
     public void ThemeStateWrap()
     {
-        /*
-        public IState<ThemeState> ThemeStateWrap { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="AppOptionsService.StorageKey"/>
+    /// </summary>
     [Fact]
     public void StorageKey()
     {
-        /*
-        public string StorageKey => "luthetus-common_theme-storage-key";
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="AppOptionsService.ThemeCssClassString"/>
+    /// </summary>
     [Fact]
     public void ThemeCssClassString()
     {
-        /*
-        public string ThemeCssClassString => ThemeStateWrap.Value.ThemeBag.FirstOrDefault(
-            x => x.Key == AppOptionsStateWrap.Value.Options.ThemeKey)
-            ?.CssClassString
-                ?? ThemeFacts.VisualStudioDarkThemeClone.CssClassString;
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="AppOptionsService.FontFamilyCssStyleString"/>
+    /// </summary>
     [Fact]
     public void FontFamilyCssStyleString()
     {
-        /*
-        public string? FontFamilyCssStyleString
-        {
-            get
-            {
-            }
-        }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="AppOptionsService.FontSizeCssStyleString"/>
+    /// </summary>
     [Fact]
     public void FontSizeCssStyleString()
     {
-        /*
-        public string FontSizeCssStyleString
-        {
-            get
-            {
-            }
-        }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="AppOptionsService.SetActiveThemeRecordKey(RazorLib.Keys.Models.Key{RazorLib.Themes.Models.ThemeRecord}, bool)"/>
+    /// </summary>
     [Fact]
     public void SetActiveThemeRecordKey()
     {
-        /*
-        public void SetActiveThemeRecordKey(Key<ThemeRecord> themeKey, bool updateStorage = true)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="AppOptionsService.SetTheme(RazorLib.Themes.Models.ThemeRecord, bool)"/>
+    /// </summary>
     [Fact]
     public void SetTheme()
     {
-        /*
-        public void SetTheme(ThemeRecord theme, bool updateStorage = true)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="AppOptionsService.SetFontFamily(string?, bool)"/>
+    /// </summary>
     [Fact]
     public void SetFontFamily()
     {
-        /*
-        public void SetFontFamily(string? fontFamily, bool updateStorage = true)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="AppOptionsService.SetFontSize(int, bool)"/>
+    /// </summary>
     [Fact]
     public void SetFontSize()
     {
-        /*
-        public void SetFontSize(int fontSizeInPixels, bool updateStorage = true)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="AppOptionsService.SetIconSize(int, bool)"/>
+    /// </summary>
     [Fact]
     public void SetIconSize()
     {
-        /*
-        public void SetIconSize(int iconSizeInPixels, bool updateStorage = true)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="AppOptionsService.SetFromLocalStorageAsync()"/>
+    /// </summary>
     [Fact]
     public void SetFromLocalStorageAsync()
     {
-        /*
-        public async Task SetFromLocalStorageAsync()
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="AppOptionsService.WriteToStorage()"/>
+    /// </summary>
     [Fact]
     public void WriteToStorage()
     {
-        /*
-        public void WriteToStorage()
-         */
-
         throw new NotImplementedException();
     }
 }

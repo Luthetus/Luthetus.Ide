@@ -1,103 +1,90 @@
-namespace Luthetus.Common.RazorLib.Resizes.Models;
+using Luthetus.Common.RazorLib.Resizes.Models;
 
+namespace Luthetus.Common.Tests.Basis.Resizes.Models;
+
+/// <summary>
+/// <see cref="ResizeHelper"/>
+/// </summary>
 public class ResizeHelperTests
 {
+    /// <summary>
+    /// <see cref="ResizeHelper.ResizeNorth(RazorLib.Dimensions.Models.ElementDimensions, Microsoft.AspNetCore.Components.Web.MouseEventArgs, Microsoft.AspNetCore.Components.Web.MouseEventArgs)"/>
+    /// </summary>
     [Fact]
     public void ResizeNorth()
     {
-        /*
-        public static void ResizeNorth(
-            ElementDimensions elementDimensions, MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="ResizeHelper.ResizeEast(RazorLib.Dimensions.Models.ElementDimensions, Microsoft.AspNetCore.Components.Web.MouseEventArgs, Microsoft.AspNetCore.Components.Web.MouseEventArgs)"/>
+    /// </summary>
     [Fact]
     public void ResizeEast()
     {
-        /*
-        public static void ResizeEast(
-            ElementDimensions elementDimensions, MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="ResizeHelper.ResizeSouth(RazorLib.Dimensions.Models.ElementDimensions, Microsoft.AspNetCore.Components.Web.MouseEventArgs, Microsoft.AspNetCore.Components.Web.MouseEventArgs)"/>
+    /// </summary>
     [Fact]
     public void ResizeSouth()
     {
-        /*
-        public static void ResizeSouth(
-            ElementDimensions elementDimensions, MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="ResizeHelper.ResizeWest(RazorLib.Dimensions.Models.ElementDimensions, Microsoft.AspNetCore.Components.Web.MouseEventArgs, Microsoft.AspNetCore.Components.Web.MouseEventArgs)"/>
+    /// </summary>
     [Fact]
     public void ResizeWest()
     {
-        /*
-        public static void ResizeWest(
-            ElementDimensions elementDimensions, MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="ResizeHelper.ResizeNorthEast(RazorLib.Dimensions.Models.ElementDimensions, Microsoft.AspNetCore.Components.Web.MouseEventArgs, Microsoft.AspNetCore.Components.Web.MouseEventArgs)"/>
+    /// </summary>
     [Fact]
     public void ResizeNorthEast()
     {
-        /*
-        public static void ResizeNorthEast(
-            ElementDimensions elementDimensions, MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="ResizeHelper.ResizeSouthEast(RazorLib.Dimensions.Models.ElementDimensions, Microsoft.AspNetCore.Components.Web.MouseEventArgs, Microsoft.AspNetCore.Components.Web.MouseEventArgs)"/>
+    /// </summary>
     [Fact]
     public void ResizeSouthEast()
     {
-        /*
-        public static void ResizeSouthEast(
-            ElementDimensions elementDimensions, MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="ResizeHelper.ResizeSouthWest(RazorLib.Dimensions.Models.ElementDimensions, Microsoft.AspNetCore.Components.Web.MouseEventArgs, Microsoft.AspNetCore.Components.Web.MouseEventArgs)"/>
+    /// </summary>
     [Fact]
     public void ResizeSouthWest()
     {
-        /*
-        public static void ResizeSouthWest(
-            ElementDimensions elementDimensions, MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="ResizeHelper.ResizeNorthWest(RazorLib.Dimensions.Models.ElementDimensions, Microsoft.AspNetCore.Components.Web.MouseEventArgs, Microsoft.AspNetCore.Components.Web.MouseEventArgs)"/>
+    /// </summary>
     [Fact]
     public void ResizeNorthWest()
     {
-        /*
-        public static void ResizeNorthWest(
-            ElementDimensions elementDimensions, MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="ResizeHelper.Move(RazorLib.Dimensions.Models.ElementDimensions, Microsoft.AspNetCore.Components.Web.MouseEventArgs, Microsoft.AspNetCore.Components.Web.MouseEventArgs)"/>
+    /// </summary>
     [Fact]
     public void Move()
     {
-        /*
-        public static void Move(
-            ElementDimensions elementDimensions, MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs)
-         */
-
         throw new NotImplementedException();
     }
 }

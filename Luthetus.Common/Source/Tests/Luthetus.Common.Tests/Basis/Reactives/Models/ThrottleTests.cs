@@ -1,44 +1,45 @@
-﻿namespace Luthetus.Common.RazorLib.Reactives.Models;
+﻿using Luthetus.Common.RazorLib.Reactives.Models;
 
+namespace Luthetus.Common.Tests.Basis.Reactives.Models;
+
+/// <summary>
+/// <see cref="Throttle"/>
+/// </summary>
 public class ThrottleTests
 {
+    /// <summary>
+    /// <see cref="Throttle(TimeSpan)"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        public Throttle(TimeSpan throttleTimeSpan)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="Throttle.ThrottleTimeSpan"/>
+    /// </summary>
     [Fact]
     public void ThrottleTimeSpan()
     {
-        /*
-        public TimeSpan ThrottleTimeSpan { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="Throttle.FireAsync(Func{Task})"/>
+    /// </summary>
     [Fact]
     public void FireAsync()
     {
-        /*
-        public async Task FireAsync(Func<Task> workItem)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="Throttle.Dispose()"/>
+    /// </summary>
     [Fact]
     public void Dispose()
     {
-        /*
-        public void Dispose()
-         */
-
         throw new NotImplementedException();
     }
 }

@@ -1,30 +1,27 @@
-﻿namespace Luthetus.Common.RazorLib.Misc;
+﻿using Luthetus.Common.RazorLib.Misc;
 
+namespace Luthetus.Common.Tests.Basis.Misc;
+
+/// <summary>
+/// <see cref="DoNothingJsRuntime"/>
+/// </summary>
 public class DoNothingJsRuntimeTests
 {
+    /// <summary>
+    /// <see cref="DoNothingJsRuntime.InvokeAsync{TValue}(string, object?[]?)"/>
+    /// </summary>
     [Fact]
     public void InvokeAsyncA()
     {
-        /*
-        public ValueTask<TValue> InvokeAsync<TValue>(string identifier, object?[]? args)
-        {
-            return default;
-        }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="DoNothingJsRuntime.InvokeAsync{TValue}(string, CancellationToken, object?[]?)"/>
+    /// </summary>
     [Fact]
     public void InvokeAsyncB()
     {
-        /*
-        public ValueTask<TValue> InvokeAsync<TValue>(string identifier, CancellationToken cancellationToken, object?[]? args)
-        {
-            return default;
-        }
-         */
-
         throw new NotImplementedException();
     }
 }

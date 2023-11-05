@@ -1,35 +1,36 @@
-﻿namespace Luthetus.Common.RazorLib.Menus.Models;
+﻿using Luthetus.Common.RazorLib.Menus.Models;
 
+namespace Luthetus.Common.Tests.Basis.Menus.Models;
+
+/// <summary>
+/// <see cref="MenuOptionWidgetParameters"/>
+/// </summary>
 public class MenuOptionWidgetParametersTests
 {
+    /// <summary>
+    /// <see cref="MenuOptionWidgetParameters(Func{Task}, Func{Action, Task})"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        public MenuOptionWidgetParameters(
-            Func<Task> hideWidgetAsync, Func<Action, Task> completeWidgetAsync)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="MenuOptionWidgetParameters.HideWidgetAsync"/>
+    /// </summary>
     [Fact]
     public void HideWidgetAsync()
     {
-        /*
-        public Func<Task> HideWidgetAsync { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="MenuOptionWidgetParameters.CompleteWidgetAsync"/>
+    /// </summary>
     [Fact]
     public void CompleteWidgetAsync()
     {
-        /*
-        public Func<Action, Task> CompleteWidgetAsync { get; }
-         */
-
         throw new NotImplementedException();
     }
 }

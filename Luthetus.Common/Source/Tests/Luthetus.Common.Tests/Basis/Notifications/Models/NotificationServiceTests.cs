@@ -1,45 +1,45 @@
-﻿namespace Luthetus.Common.RazorLib.Notifications.Models;
+﻿using Luthetus.Common.RazorLib.Notifications.Models;
 
+namespace Luthetus.Common.Tests.Basis.Notifications.Models;
+
+/// <summary>
+/// <see cref="NotificationService"/>
+/// </summary>
 public class NotificationServiceTests
 {
+    /// <summary>
+    /// <see cref="NotificationService(Fluxor.IDispatcher, Fluxor.IState{RazorLib.Notifications.States.NotificationState})"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        public NotificationService(
-            IDispatcher dispatcher, IState<NotificationState> notificationState)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="NotificationService.NotificationStateWrap"/>
+    /// </summary>
     [Fact]
     public void NotificationStateWrap()
     {
-        /*
-        public IState<NotificationState> NotificationStateWrap { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="NotificationService.RegisterNotificationRecord(NotificationRecord)"/>
+    /// </summary>
     [Fact]
     public void RegisterNotificationRecord()
     {
-        /*
-        public void RegisterNotificationRecord(NotificationRecord notificationRecord)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="NotificationService.DisposeNotificationRecord(RazorLib.Keys.Models.Key{NotificationRecord})"/>
+    /// </summary>
     [Fact]
     public void DisposeNotificationRecord()
     {
-        /*
-        public void DisposeNotificationRecord(Key<NotificationRecord> notificationKey)
-         */
-
         throw new NotImplementedException();
     }
 }

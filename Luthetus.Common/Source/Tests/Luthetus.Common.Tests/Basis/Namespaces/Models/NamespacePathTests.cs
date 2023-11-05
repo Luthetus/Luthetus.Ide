@@ -1,34 +1,36 @@
-﻿namespace Luthetus.Common.RazorLib.Namespaces.Models;
+﻿using Luthetus.Common.RazorLib.Namespaces.Models;
 
+namespace Luthetus.Common.Tests.Basis.Namespaces.Models;
+
+/// <summary>
+/// <see cref="NamespacePath"/>
+/// </summary>
 public class NamespacePathTests
 {
+    /// <summary>
+    /// <see cref="NamespacePath(string, RazorLib.FileSystems.Models.IAbsolutePath)"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        public NamespacePath(string namespaceString, IAbsolutePath absolutePath)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="NamespacePath.Namespace"/>
+    /// </summary>
     [Fact]
     public void Namespace()
     {
-        /*
-        public string Namespace { get; set; }
-         */
-
         throw new NotImplementedException();
     }
-    
+
+    /// <summary>
+    /// <see cref="NamespacePath.AbsolutePath"/>
+    /// </summary>
     [Fact]
     public void AbsolutePath()
     {
-        /*
-        public IAbsolutePath AbsolutePath { get; set; }
-         */
-
         throw new NotImplementedException();
     }
 }

@@ -1,18 +1,18 @@
-namespace Luthetus.Common.RazorLib.Menus.Models;
+using Luthetus.Common.RazorLib.Menus.Models;
 
+namespace Luthetus.Common.Tests.Basis.Menus.Models;
+
+/// <summary>
+/// <see cref="MenuRecord"/>
+/// </summary>
 public class MenuRecordTests
 {
+    /// <summary>
+    /// <see cref="MenuRecord.Empty"/>
+    /// </summary>
     [Fact]
     public void Empty()
     {
-        /*
-        public static readonly MenuRecord Empty = new MenuRecord(
-            new MenuOptionRecord[]
-            {
-                new("No menu options exist for this item.", MenuOptionKind.Other)
-            }.ToImmutableArray());
-         */
-
         throw new NotImplementedException();
     }
 }

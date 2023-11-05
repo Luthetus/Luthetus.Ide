@@ -1,24 +1,27 @@
-﻿namespace Luthetus.Common.RazorLib.Panels.Models;
+﻿using Luthetus.Common.RazorLib.Panels.Models;
 
+namespace Luthetus.Common.Tests.Basis.Panels.Models;
+
+/// <summary>
+/// <see cref="PanelTab"/>
+/// </summary>
 public class PanelTabTests
 {
+    /// <summary>
+    /// <see cref="PanelTab.IsBeingDragged"/>
+    /// </summary>
     [Fact]
     public void IsBeingDragged()
     {
-        /*
-        public bool IsBeingDragged { get; set; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="PanelTab.ContextRecordKey"/>
+    /// </summary>
     [Fact]
     public void ContextRecordKey()
     {
-        /*
-        public Key<ContextRecord>? ContextRecordKey { get; set; }
-         */
-
         throw new NotImplementedException();
     }
 }
