@@ -1,55 +1,54 @@
-﻿namespace Luthetus.Common.RazorLib.Dialogs.Models;
+﻿using Luthetus.Common.RazorLib.Dialogs.Models;
 
+namespace Luthetus.Common.Tests.Basis.Dialogs.Models;
+
+/// <summary>
+/// <see cref="DialogService"/>
+/// </summary>
 public class DialogServiceTests
 {
+    /// <summary>
+    /// <see cref="DialogService(Fluxor.IDispatcher, Fluxor.IState{RazorLib.Dialogs.States.DialogState})"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        public DialogService(
-            IDispatcher dispatcher, IState<DialogState> dialogStateWrap)
-         */
-
         throw new NotImplementedException();
     }
-    
+
+    /// <summary>
+    /// <see cref="DialogService.DialogStateWrap"/>
+    /// </summary>
     [Fact]
     public void DialogStateWrap()
     {
-        /*
-        public IState<DialogState> DialogStateWrap { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="DialogService.RegisterDialogRecord(DialogRecord)"/>
+    /// </summary>
     [Fact]
     public void RegisterDialogRecord()
     {
-        /*
-        public void RegisterDialogRecord(DialogRecord dialogRecord)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="DialogService.SetDialogRecordIsMaximized(RazorLib.Keys.Models.Key{DialogRecord}, bool)"/>
+    /// </summary>
     [Fact]
     public void SetDialogRecordIsMaximized()
     {
-        /*
-        public void SetDialogRecordIsMaximized(Key<DialogRecord> dialogKey, bool isMaximized)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="DialogService.DisposeDialogRecord(RazorLib.Keys.Models.Key{DialogRecord})"/>
+    /// </summary>
     [Fact]
     public void DisposeDialogRecord()
     {
-        /*
-        public void DisposeDialogRecord(Key<DialogRecord> dialogKey)
-         */
-
         throw new NotImplementedException();
     }
 }

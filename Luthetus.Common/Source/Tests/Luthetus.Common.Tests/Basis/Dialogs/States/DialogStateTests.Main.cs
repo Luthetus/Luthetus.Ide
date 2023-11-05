@@ -1,27 +1,27 @@
-﻿using Fluxor;
+﻿using Luthetus.Common.RazorLib.Dialogs.States;
 
-namespace Luthetus.Common.RazorLib.Dialogs.States;
+namespace Luthetus.Common.Tests.Basis.Dialogs.States;
 
-[FeatureState]
-public partial record DialogStateTests
+/// <summary>
+/// <see cref="DialogState"/>
+/// </summary>
+public class DialogStateMainTests
 {
+    /// <summary>
+    /// <see cref="DialogState()"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        private DialogState()
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="DialogState.DialogBag"/>
+    /// </summary>
     [Fact]
     public void DialogBag()
     {
-        /*
-        public ImmutableList<DialogRecord> DialogBag { get; init; }
-         */
-
         throw new NotImplementedException();
     }
 }

@@ -1,54 +1,54 @@
-namespace Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Dialogs.Models;
 
+namespace Luthetus.Common.Tests.Basis.Dialogs.Models;
+
+/// <summary>
+/// <see cref="DialogRecord"/>
+/// </summary>
 public class DialogRecordTests
 {
+    /// <summary>
+    /// <see cref="DialogRecord.ElementDimensions"/>
+    /// </summary>
     [Fact]
     public void ElementDimensions()
     {
-        /*
-        public ElementDimensions ElementDimensions { get; init; } = ConstructDefaultDialogDimensions();
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="DialogRecord.IsMinimized"/>
+    /// </summary>
     [Fact]
     public void IsMinimized()
     {
-        /*
-        public bool IsMinimized { get; set; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="DialogRecord.IsMaximized"/>
+    /// </summary>
     [Fact]
     public void IsMaximized()
     {
-        /*
-        public bool IsMaximized { get; set; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="DialogRecord.IsResizable"/>
+    /// </summary>
     [Fact]
     public void IsResizable()
     {
-        /*
-        public bool IsResizable { get; set; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="DialogRecord.ConstructDefaultDialogDimensions()"/>
+    /// </summary>
     [Fact]
     public void ConstructDefaultDialogDimensions()
     {
-        /*
-        public static ElementDimensions ConstructDefaultDialogDimensions()
-         */
-
         throw new NotImplementedException();
     }
 }

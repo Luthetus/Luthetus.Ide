@@ -1,74 +1,72 @@
-namespace Luthetus.Common.RazorLib.Contexts.States;
+using Luthetus.Common.RazorLib.Contexts.States;
 
+namespace Luthetus.Common.Tests.Basis.Contexts.States;
+
+/// <summary>
+/// <see cref="ContextState"/>
+/// </summary>
 public class ContextStateActionsTests
 {
+    /// <summary>
+    /// <see cref="ContextState.SetActiveContextRecordsAction"/>
+    /// </summary>
     [Fact]
     public void SetActiveContextRecordsAction()
     {
-        /*
-        public record SetActiveContextRecordsAction(TargetContextRecordKeyAndHeirarchyBag TargetContextRecordKeyAndHeirarchyBag);
-         */
-
         throw new NotImplementedException();
     }
-    
+
+    /// <summary>
+    /// <see cref="ContextState.ToggleSelectInspectionTargetAction"/>
+    /// </summary>
     [Fact]
     public void ToggleSelectInspectionTargetAction()
     {
-        /*
-        public record ToggleSelectInspectionTargetAction;
-         */
-
-	    throw new NotImplementedException();
+        throw new NotImplementedException();
     }
-    
+
+    /// <summary>
+    /// <see cref="ContextState.SetSelectInspectionTargetTrueAction"/>
+    /// </summary>
     [Fact]
     public void SetSelectInspectionTargetTrueAction()
     {
-        /*
-        public record SetSelectInspectionTargetTrueAction;
-         */
-
-	    throw new NotImplementedException();
+        throw new NotImplementedException();
     }
-    
+
+    /// <summary>
+    /// <see cref="ContextState.SetSelectInspectionTargetFalseAction"/>
+    /// </summary>
     [Fact]
     public void SetSelectInspectionTargetFalseAction()
     {
-        /*
-        public record SetSelectInspectionTargetFalseAction;
-         */
-
-	    throw new NotImplementedException();
+        throw new NotImplementedException();
     }
-    
+
+    /// <summary>
+    /// <see cref="ContextState.SetInspectionTargetAction"/>
+    /// </summary>
     [Fact]
     public void SetInspectionTargetAction()
     {
-        /*
-        public record SetInspectionTargetAction(TargetContextRecordKeyAndHeirarchyBag? TargetContextRecordKeyAndHeirarchyBag);
-         */
-
-	    throw new NotImplementedException();
+        throw new NotImplementedException();
     }
-    
+
+    /// <summary>
+    /// <see cref="ContextState.AddInspectContextRecordEntryAction"/>
+    /// </summary>
     [Fact]
     public void AddInspectContextRecordEntryAction()
     {
-        /*
-        public record AddInspectContextRecordEntryAction(InspectContextRecordEntry InspectContextRecordEntry);
-         */
-
-	    throw new NotImplementedException();
+        throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="ContextState.SetContextKeymapAction"/>
+    /// </summary>
     [Fact]
     public void SetContextKeymapAction()
     {
-        /*
-        public record SetContextKeymapAction(Key<ContextRecord> ContextRecordKey, Keymap Keymap);
-         */
-
         throw new NotImplementedException();
     }
 }

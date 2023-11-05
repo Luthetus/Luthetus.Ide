@@ -1,6 +1,11 @@
-﻿namespace Luthetus.Common.RazorLib.Dialogs.States;
+﻿using Luthetus.Common.RazorLib.Dialogs.States;
 
-public partial record DialogStateReducerTests
+namespace Luthetus.Common.Tests.Basis.Dialogs.States;
+
+/// <summary>
+/// <see cref="DialogState"/>
+/// </summary>
+public class DialogStateReducerTests
 {
     [Fact]
     public void ReduceRegisterAction()

@@ -1,14 +1,18 @@
-namespace Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Dimensions.Models;
 
+namespace Luthetus.Common.Tests.Basis.Dimensions.Models;
+
+/// <summary>
+/// <see cref="DimensionOperatorKindExtensions"/>
+/// </summary>
 public class DimensionOperatorKindExtensionsTests
 {
+    /// <summary>
+    /// <see cref="DimensionOperatorKindExtensions.GetStyleString(DimensionOperatorKind)"/>
+    /// </summary>
     [Fact]
     public void GetStyleString()
     {
-        /*
-        public static string GetStyleString(this DimensionOperatorKind dimensionOperatorKind)
-         */
-
         throw new NotImplementedException();
     }
 }

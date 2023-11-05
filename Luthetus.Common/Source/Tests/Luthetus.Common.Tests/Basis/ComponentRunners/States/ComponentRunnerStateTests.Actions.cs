@@ -7,36 +7,30 @@ namespace Luthetus.Common.Tests.Basis.ComponentRunners.States;
 /// </summary>
 public class ComponentRunnerStateActionTests
 {
+    /// <summary>
+    /// <see cref="ComponentRunnerState.RegisterAction"/>
+    /// </summary>
     [Fact]
     public void RegisterAction()
     {
-        /*
-        public record RegisterAction(ComponentRunnerDisplayState Entry, int InsertionIndex);
-         */
-
         throw new NotImplementedException();
     }
-    
 
+    /// <summary>
+    /// <see cref="ComponentRunnerState.DisposeAction"/>
+    /// </summary>
     [Fact]
     public void DisposeAction()
     {
-        /*
-        public record DisposeAction(Key<ComponentRunnerDisplayState> Key);
-         */
-
         throw new NotImplementedException();
     }
-    
 
+    /// <summary>
+    /// <see cref="ComponentRunnerState.WithAction"/>
+    /// </summary>
     [Fact]
     public void WithAction()
     {
-        /*
-        public record WithAction(
-            Key<ComponentRunnerDisplayState> Key, Func<ComponentRunnerDisplayState, ComponentRunnerDisplayState> WithFunc);
-         */
-
         throw new NotImplementedException();
     }
     

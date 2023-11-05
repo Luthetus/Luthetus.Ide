@@ -1,48 +1,45 @@
-﻿namespace Luthetus.Common.RazorLib.Dimensions.Models;
+﻿using Luthetus.Common.RazorLib.Dimensions.Models;
 
+namespace Luthetus.Common.Tests.Basis.Dimensions.Models;
+
+/// <summary>
+/// <see cref="CssInterpolation"/>
+/// </summary>
 public class CssInterpolationTests
 {
+    /// <summary>
+    /// <see cref="CssInterpolation.ToCssValue(double)"/>
+    /// </summary>
     [Fact]
     public void ToCssValueDouble()
     {
-        /*
-        public static string ToCssValue(this double value) =>
-            value.ToString(System.Globalization.CultureInfo.InvariantCulture);
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="CssInterpolation.ToCssValue(decimal)"/>
+    /// </summary>
     [Fact]
     public void ToCssValueDecimal()
     {
-        /*
-        public static string ToCssValue(this decimal value) =>
-            value.ToString(System.Globalization.CultureInfo.InvariantCulture);
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="CssInterpolation.ToCssValue(float)"/>
+    /// </summary>
     [Fact]
     public void ToCssValueFloat()
     {
-        /*
-        public static string ToCssValue(this float value) =>
-            value.ToString(System.Globalization.CultureInfo.InvariantCulture);
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="CssInterpolation.ToCssValue(int)"/>
+    /// </summary>
     [Fact]
     public void ToCssValueInt()
     {
-        /*
-        public static string ToCssValue(this int value) =>
-            value.ToString(System.Globalization.CultureInfo.InvariantCulture);
-         */
-
         throw new NotImplementedException();
     }
 }

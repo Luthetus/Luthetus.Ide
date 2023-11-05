@@ -1,15 +1,18 @@
-namespace Luthetus.Common.RazorLib.Contexts.States;
+using Luthetus.Common.RazorLib.Contexts.States;
 
+namespace Luthetus.Common.Tests.Basis.Contexts.States;
+
+/// <summary>
+/// <see cref="ContextState"/>
+/// </summary>
 public class ContextStateTests
 {
+    /// <summary>
+    /// <see cref="ContextState()"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        private ContextState() : this(
-            ImmutableArray<ContextRecord>.Empty, new(ImmutableArray<Key<ContextRecord>>.Empty), null, ImmutableArray<InspectContextRecordEntry>.Empty, false)
-         */
-
         throw new NotImplementedException();
     }
 }

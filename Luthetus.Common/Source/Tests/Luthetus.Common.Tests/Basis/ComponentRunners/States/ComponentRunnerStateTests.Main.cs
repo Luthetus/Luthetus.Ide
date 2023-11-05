@@ -7,27 +7,21 @@ namespace Luthetus.Common.Tests.Basis.ComponentRunners.States;
 /// </summary>
 public class ComponentRunnerStateMainTests
 {
+    /// <summary>
+    /// <see cref="ComponentRunnerState()"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        private ComponentRunnerState()
-        {
-            ComponentRunnerDisplayStateBag = ImmutableList<ComponentRunnerDisplayState>.Empty;
-        }
-         */
-
         throw new NotImplementedException();
     }
 
-
+    /// <summary>
+    /// <see cref="ComponentRunnerState.ComponentRunnerDisplayStateBag"/>
+    /// </summary>
     [Fact]
     public void ComponentRunnerDisplayStateBag()
     {
-        /*
-        public ImmutableList<ComponentRunnerDisplayState> ComponentRunnerDisplayStateBag { get; init; }
-         */
-
         throw new NotImplementedException();
     }
 }

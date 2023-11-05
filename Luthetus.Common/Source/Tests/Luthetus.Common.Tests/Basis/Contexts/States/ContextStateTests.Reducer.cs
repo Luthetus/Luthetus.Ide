@@ -1,5 +1,10 @@
-namespace Luthetus.Common.RazorLib.Contexts.States;
+using Luthetus.Common.RazorLib.Contexts.States;
 
+namespace Luthetus.Common.Tests.Basis.Contexts.States;
+
+/// <summary>
+/// <see cref="ContextState"/>
+/// </summary>
 public class ContextStateReducerTests
 {
     [Fact]

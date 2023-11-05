@@ -1,44 +1,45 @@
-namespace Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Dimensions.Models;
 
+namespace Luthetus.Common.Tests.Basis.Dimensions.Models;
+
+/// <summary>
+/// <see cref="ElementDimensions"/>
+/// </summary>
 public class ElementDimensionsTests
 {
+    /// <summary>
+    /// <see cref="ElementDimensions()"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        public ElementDimensions()
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="ElementDimensions.DimensionAttributeBag"/>
+    /// </summary>
     [Fact]
     public void DimensionAttributeBag()
     {
-        /*
-        public List<DimensionAttribute> DimensionAttributeBag { get; } = new();
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="ElementDimensions.ElementPositionKind"/>
+    /// </summary>
     [Fact]
     public void ElementPositionKind()
     {
-        /*
-        public ElementPositionKind ElementPositionKind { get; set; } = ElementPositionKind.Static;
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="ElementDimensions.StyleString"/>
+    /// </summary>
     [Fact]
     public void StyleString()
     {
-        /*
-        public string StyleString => GetStyleString();
-         */
-
         throw new NotImplementedException();
     }
 }

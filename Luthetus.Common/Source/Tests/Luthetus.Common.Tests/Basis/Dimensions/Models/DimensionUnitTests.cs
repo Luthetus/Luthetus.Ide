@@ -1,44 +1,45 @@
-namespace Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Dimensions.Models;
 
+namespace Luthetus.Common.Tests.Basis.Dimensions.Models;
+
+/// <summary>
+/// <see cref="DimensionUnit"/>
+/// </summary>
 public class DimensionUnitTests
 {
+    /// <summary>
+    /// <see cref="DimensionUnit.Value"/>
+    /// </summary>
     [Fact]
     public void Value()
     {
-        /*
-        public double Value { get; set; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="DimensionUnit.DimensionUnitKind"/>
+    /// </summary>
     [Fact]
     public void DimensionUnitKind()
     {
-        /*
-        public DimensionUnitKind DimensionUnitKind { get; set; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="DimensionUnit.DimensionOperatorKind"/>
+    /// </summary>
     [Fact]
     public void DimensionOperatorKind()
     {
-        /*
-        public DimensionOperatorKind DimensionOperatorKind { get; set; } = DimensionOperatorKind.Add;
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="DimensionUnit.Purpose"/>
+    /// </summary>
     [Fact]
     public void Purpose()
     {
-        /*
-        public string Purpose { get; set; } = string.Empty;
-         */
-
         throw new NotImplementedException();
     }
 }

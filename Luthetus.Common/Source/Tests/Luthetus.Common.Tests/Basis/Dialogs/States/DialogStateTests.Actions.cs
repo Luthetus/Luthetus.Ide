@@ -1,34 +1,36 @@
-﻿namespace Luthetus.Common.RazorLib.Dialogs.States;
+﻿using Luthetus.Common.RazorLib.Dialogs.States;
 
-public partial record DialogStateTests
+namespace Luthetus.Common.Tests.Basis.Dialogs.States;
+
+/// <summary>
+/// <see cref="DialogState"/>
+/// </summary>
+public class DialogStateActionsTests
 {
+    /// <summary>
+    /// <see cref="DialogState.RegisterAction"/>
+    /// </summary>
     [Fact]
     public void RegisterAction()
     {
-        /*
-        public record RegisterAction(DialogRecord Entry);
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="DialogState.DisposeAction"/>
+    /// </summary>
     [Fact]
     public void DisposeAction()
     {
-        /*
-        public record DisposeAction(Key<DialogRecord> Key);
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="DialogState.SetIsMaximizedAction"/>
+    /// </summary>
     [Fact]
     public void SetIsMaximizedAction()
     {
-        /*
-        public record SetIsMaximizedAction(Key<DialogRecord> Key, bool IsMaximized);
-         */
-
         throw new NotImplementedException();
     }
 }
