@@ -1,40 +1,36 @@
-﻿namespace Luthetus.Common.RazorLib.Installations.Models;
+﻿using Luthetus.Common.RazorLib.Installations.Models;
 
+namespace Luthetus.Common.Tests.Basis.Installations.Models;
+
+/// <summary>
+/// <see cref="LuthetusHostingInformation"/>
+/// </summary>
 public record LuthetusHostingInformationTests
 {
+    /// <summary>
+    /// <see cref="LuthetusHostingInformation(RazorLib.Installations.Models.LuthetusHostingKind, RazorLib.BackgroundTasks.Models.IBackgroundTaskService)"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        public LuthetusHostingInformation(
-            LuthetusHostingKind luthetusHostingKind,
-            IBackgroundTaskService backgroundTaskService)
-        {
-            LuthetusHostingKind = luthetusHostingKind;
-            BackgroundTaskService = backgroundTaskService;
-        }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="LuthetusHostingInformation.LuthetusHostingKind"/>
+    /// </summary>
     [Fact]
     public void LuthetusHostingKind()
     {
-        /*
-        public LuthetusHostingKind LuthetusHostingKind { get; init; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="LuthetusHostingInformation.BackgroundTaskService"/>
+    /// </summary>
     [Fact]
     public void BackgroundTaskService()
     {
-        /*
-        public IBackgroundTaskService BackgroundTaskService { get; init; }
-         */
-
         throw new NotImplementedException();
     }
 }

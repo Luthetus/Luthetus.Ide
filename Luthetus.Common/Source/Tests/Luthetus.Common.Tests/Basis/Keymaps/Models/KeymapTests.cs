@@ -1,64 +1,63 @@
-﻿namespace Luthetus.Common.RazorLib.Keymaps.Models;
+﻿using Luthetus.Common.RazorLib.Keymaps.Models;
 
+namespace Luthetus.Common.Tests.Basis.Keymaps.Models;
+
+/// <summary>
+/// <see cref="Keymap"/>
+/// </summary>
 public class KeymapTests
 {
-    [Fact]
-    public void Empty()
-    {
-        /*
-        public static readonly Keymap Empty = new Keymap(Key<Keymap>.Empty, string.Empty);
-         */
-
-        throw new NotImplementedException();
-    }
-
+    /// <summary>
+    /// <see cref="Keymap(RazorLib.Keys.Models.Key{Keymap}, string)"/>
+    /// </summary>
     [Fact]
     public void ConstructorA()
     {
-        /*
-        public Keymap(Key<Keymap> key, string keymapDisplayName)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="Keymap()"/>
+    /// </summary>
     [Fact]
     public void ConstructorB()
     {
-        /*
-        public Keymap()
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="Keymap.Empty"/>
+    /// </summary>
+    [Fact]
+    public void Empty()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="Keymap.Map"/>
+    /// </summary>
     [Fact]
     public void Map()
     {
-        /*
-        public Dictionary<KeymapArgument, CommandNoType> Map { get; set; } = new();
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="Keymap.Key"/>
+    /// </summary>
     [Fact]
     public void Key()
     {
-        /*
-        public Key<Keymap> Key { get; set; } = Key<Keymap>.Empty;
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="Keymap.DisplayName"/>
+    /// </summary>
     [Fact]
     public void DisplayName()
     {
-        /*
-        public string DisplayName { get; set; } = string.Empty;
-         */
-
         throw new NotImplementedException();
     }
 }

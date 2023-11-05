@@ -1,196 +1,126 @@
-namespace Luthetus.Common.RazorLib.Keyboards.Models;
+using Luthetus.Common.RazorLib.Keyboards.Models;
 
+namespace Luthetus.Common.Tests.Basis.Keyboards.Models;
+
+/// <summary>
+/// <see cref="KeyboardKeyFacts"/>
+/// </summary>
 public class KeyboardKeyFactsTests
 {
+    /// <summary>
+    /// <see cref="KeyboardKeyFacts.IsMetaKey(Microsoft.AspNetCore.Components.Web.KeyboardEventArgs)"/>
+    /// </summary>
     [Fact]
     public void IsMetaKeyA()
     {
-        /*
-        public static bool IsMetaKey(KeyboardEventArgs keyboardEventArgs)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="KeyboardKeyFacts.IsMetaKey(string, string)"/>
+    /// </summary>
     [Fact]
     public void IsMetaKeyB()
     {
-        /*
-        public static bool IsMetaKey(string key, string code)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="KeyboardKeyFacts.IsWhitespaceCharacter(char)"/>
+    /// </summary>
     [Fact]
     public void IsWhitespaceCharacter()
     {
-        /*
-        public static bool IsWhitespaceCharacter(char character)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="KeyboardKeyFacts.IsPunctuationCharacter(char)"/>
+    /// </summary>
     [Fact]
     public void IsPunctuationCharacter()
     {
-        /*
-        public static bool IsPunctuationCharacter(char character)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="KeyboardKeyFacts.MatchPunctuationCharacter(char)"/>
+    /// </summary>
     [Fact]
     public void MatchPunctuationCharacter()
     {
-        /*
-        public static char? MatchPunctuationCharacter(char character)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="KeyboardKeyFacts.DirectionToFindMatchMatchingPunctuationCharacter(char)"/>
+    /// </summary>
     [Fact]
     public void DirectionToFindMatchMatchingPunctuationCharacter()
     {
-        /*
-        public static int? DirectionToFindMatchMatchingPunctuationCharacter(char character)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="KeyboardKeyFacts.IsWhitespaceCode(string)"/>
+    /// </summary>
     [Fact]
     public void IsWhitespaceCode()
     {
-        /*
-        public static bool IsWhitespaceCode(string code)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="KeyboardKeyFacts.CheckIsAlternateContextMenuEvent(string, string, bool, bool)"/>
+    /// </summary>
     [Fact]
     public void CheckIsAlternateContextMenuEvent()
     {
-        /*
-        public static bool CheckIsAlternateContextMenuEvent(
-            string key, string code, bool shiftWasPressed, bool altWasPressed)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="KeyboardKeyFacts.CheckIsContextMenuEvent(string, string, bool, bool)"/>
+    /// </summary>
     [Fact]
     public void CheckIsContextMenuEventA()
     {
-        /*
-        public static bool CheckIsContextMenuEvent(string key, string code, bool shiftWasPressed, bool altWasPressed)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="KeyboardKeyFacts.CheckIsContextMenuEvent(Microsoft.AspNetCore.Components.Web.KeyboardEventArgs)"/>
+    /// </summary>
     [Fact]
     public void CheckIsContextMenuEventB()
     {
-        /*
-        public static bool CheckIsContextMenuEvent(KeyboardEventArgs keyboardEventArgs)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="KeyboardKeyFacts.IsMovementKey(string)"/>
+    /// </summary>
     [Fact]
     public void IsMovementKey()
     {
-        /*
-        public static bool IsMovementKey(string key)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="KeyboardKeyFacts.ConvertWhitespaceCodeToCharacter(string)"/>
+    /// </summary>
     [Fact]
     public void ConvertWhitespaceCodeToCharacter()
     {
-        /*
-        public static char ConvertWhitespaceCodeToCharacter(string code)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="KeyboardKeyFacts.IsLineEndingCharacter(char)"/>
+    /// </summary>
     [Fact]
     public void IsLineEndingCharacter()
     {
-        /*
-        public static bool IsLineEndingCharacter(char character)
-         */
-
-        throw new NotImplementedException();
-    }
-
-    [Fact]
-    public void MetaKeys()
-    {
-        /*
-        public static class MetaKeys
-         */
-
-        throw new NotImplementedException();
-    }
-
-    [Fact]
-    public void WhitespaceCharacters()
-    {
-        /*
-        public static class WhitespaceCharacters
-         */
-
-        throw new NotImplementedException();
-    }
-
-    [Fact]
-    public void WhitespaceCodes()
-    {
-        /*
-        public static class WhitespaceCodes
-         */
-
-        throw new NotImplementedException();
-    }
-
-    [Fact]
-    public void PunctuationCharacters()
-    {
-        /*
-        public static class PunctuationCharacters
-         */
-
-        throw new NotImplementedException();
-    }
-    
-
-    [Fact]
-    public void MovementKeys()
-    {
-        /*
-        public static class MovementKeys
-         */
-
-        throw new NotImplementedException();
-    }
-
-    [Fact]
-    public void AlternateMovementKeys()
-    {
-        /*
-        public static class AlternateMovementKeys
-         */
-
         throw new NotImplementedException();
     }
 }
