@@ -1,55 +1,54 @@
-﻿namespace Luthetus.Common.RazorLib.WatchWindows.Models;
+﻿using Luthetus.Common.RazorLib.WatchWindows.Models;
 
+namespace Luthetus.Common.Tests.Basis.WatchWindows.Models;
+
+/// <summary>
+/// <see cref="WatchWindowObjectWrap"/>
+/// </summary>
 public class WatchWindowObjectWrapTests
 {
+    /// <summary>
+    /// <see cref="WatchWindowObjectWrap.WatchWindowObjectWrap"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        public WatchWindowObjectWrap(
-            object? debugObjectItem, Type debugObjectItemType, string displayName, bool isPubliclyReadable)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="WatchWindowObjectWrap.DebugObjectItem"/>
+    /// </summary>
     [Fact]
     public void DebugObjectItem()
     {
-        /*
-        public object? DebugObjectItem { get; set; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="WatchWindowObjectWrap.DebugObjectItemType"/>
+    /// </summary>
     [Fact]
     public void DebugObjectItemType()
     {
-        /*
-        public Type DebugObjectItemType { get; set; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="WatchWindowObjectWrap.DisplayName"/>
+    /// </summary>
     [Fact]
     public void DisplayName()
     {
-        /*
-        public string DisplayName { get; set; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="WatchWindowObjectWrap.IsPubliclyReadable"/>
+    /// </summary>
     [Fact]
     public void IsPubliclyReadable()
     {
-        /*
-        public bool IsPubliclyReadable { get; set; }
-         */
-
         throw new NotImplementedException();
     }
 }

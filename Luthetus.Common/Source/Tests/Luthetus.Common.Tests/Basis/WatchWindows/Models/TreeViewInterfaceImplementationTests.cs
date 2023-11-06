@@ -1,26 +1,27 @@
-﻿namespace Luthetus.Common.RazorLib.WatchWindows.Models;
+﻿using Luthetus.Common.RazorLib.WatchWindows.Models;
 
+namespace Luthetus.Common.Tests.Basis.WatchWindows.Models;
+
+/// <summary>
+/// <see cref="TreeViewInterfaceImplementation"/>
+/// </summary>
 public class TreeViewInterfaceImplementationTests
 {
+    /// <summary>
+    /// <see cref="TreeViewInterfaceImplementation(WatchWindowObjectWrap, bool, bool, RazorLib.ComponentRenderers.Models.ILuthetusCommonComponentRenderers)"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        public TreeViewInterfaceImplementation(
-                WatchWindowObjectWrap watchWindowObjectWrap, bool isExpandable, bool isExpanded, ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers)
-            : base(watchWindowObjectWrap, isExpandable, isExpanded, luthetusCommonComponentRenderers)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewInterfaceImplementation.GetTreeViewRenderer()"/>
+    /// </summary>
     [Fact]
     public void GetTreeViewRenderer()
     {
-        /*
-        public override TreeViewRenderer GetTreeViewRenderer()
-         */
-
         throw new NotImplementedException();
     }
 }

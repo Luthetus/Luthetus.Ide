@@ -1,57 +1,54 @@
-﻿namespace Luthetus.Common.RazorLib.WatchWindows.Models;
+﻿using Luthetus.Common.RazorLib.WatchWindows.Models;
 
+namespace Luthetus.Common.Tests.Basis.WatchWindows.Models;
+
+/// <summary>
+/// <see cref="TreeViewEnumerable"/>
+/// </summary>
 public class TreeViewEnumerableTests
 {
+    /// <summary>
+    /// <see cref="TreeViewEnumerable(WatchWindowObjectWrap, bool, bool, RazorLib.ComponentRenderers.Models.ILuthetusCommonComponentRenderers)"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        public TreeViewEnumerable(
-                WatchWindowObjectWrap watchWindowObjectWrap, bool isExpandable, bool isExpanded, ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers)
-            : base(watchWindowObjectWrap, isExpandable, isExpanded)
-
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewEnumerable.Equals(object?)"/>
+    /// </summary>
     [Fact]
     public void Equals_Test()
     {
-        /*
-        public override bool Equals(object? obj)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewEnumerable.GetHashCode()"/>
+    /// </summary>
     [Fact]
     public void GetHashCode_Test()
     {
-        /*
-        public override int GetHashCode()
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewEnumerable.GetTreeViewRenderer()"/>
+    /// </summary>
     [Fact]
     public void GetTreeViewRenderer()
     {
-        /*
-        public override TreeViewRenderer GetTreeViewRenderer()
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewEnumerable.LoadChildBagAsync()"/>
+    /// </summary>
     [Fact]
     public void LoadChildBagAsync()
     {
-        /*
-        public override Task LoadChildBagAsync()
-         */
-
         throw new NotImplementedException();
     }
 }

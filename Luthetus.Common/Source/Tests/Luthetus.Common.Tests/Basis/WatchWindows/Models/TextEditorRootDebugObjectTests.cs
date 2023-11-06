@@ -1,14 +1,18 @@
-﻿namespace Luthetus.Common.RazorLib.WatchWindows.Models;
+﻿using Luthetus.Common.RazorLib.WatchWindows.Models;
 
+namespace Luthetus.Common.Tests.Basis.WatchWindows.Models;
+
+/// <summary>
+/// <see cref="TextEditorRootDebugObject"/>
+/// </summary>
 public class TextEditorRootDebugObjectTests
 {
+    /// <summary>
+    /// <see cref="TextEditorRootDebugObject()"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        public TextEditorRootDebugObject()
-         */
-
         throw new NotImplementedException();
     }
 }

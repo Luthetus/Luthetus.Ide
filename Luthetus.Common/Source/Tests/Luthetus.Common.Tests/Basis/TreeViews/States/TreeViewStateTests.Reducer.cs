@@ -1,5 +1,10 @@
-﻿namespace Luthetus.Common.RazorLib.TreeViews.States;
+﻿using Luthetus.Common.RazorLib.TreeViews.States;
 
+namespace Luthetus.Common.Tests.Basis.TreeViews.States;
+
+/// <summary>
+/// <see cref="TreeViewState"/>
+/// </summary>
 public class TreeViewStateReducerTests
 {
     [Fact]
