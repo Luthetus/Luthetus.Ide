@@ -54,23 +54,8 @@ window.luthetusTextEditor = {
         let fontWidth = element.offsetWidth / amountOfCharactersRendered;
 
         return {
-            CharacterWidthInPixels: fontWidth,
-            RowHeightInPixels: element.offsetHeight
-        }
-    },
-    measureWidthAndHeightOfTextEditor: function (elementId) {
-        let element = document.getElementById(elementId);
-
-        if (!element) {
-            return {
-                WidthInPixels: 0,
-                HeightInPixels: 0
-            }
-        }
-        
-        return {
-            WidthInPixels: element.offsetWidth,
-            HeightInPixels: element.offsetHeight
+            CharacterWidth: fontWidth,
+            RowHeight: element.offsetHeight
         }
     },
     escapeHtml: function(input)
