@@ -5,46 +5,32 @@ namespace Luthetus.Common.Tests.Basis.Storages.States;
 /// <summary>
 /// <see cref="StorageSync"/>
 /// </summary>
-public partial class StorageSyncTests
+public partial class StorageSyncConstructorTests
 {
+    /// <summary>
+    /// <see cref="StorageSync(RazorLib.Storages.Models.IStorageService, RazorLib.BackgroundTasks.Models.IBackgroundTaskService, Fluxor.IDispatcher)"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        public StorageSync(
-            IStorageService storageService, IBackgroundTaskService backgroundTaskService, IDispatcher dispatcher)
-         */
-
         throw new NotImplementedException();
     }
 
-    [Fact]
-    public void StorageService()
-    {
-        /*
-        private readonly IStorageService _storageService;
-         */
-
-        throw new NotImplementedException();
-    }
-
+    /// <summary>
+    /// <see cref="StorageSync.BackgroundTaskService"/>
+    /// </summary>
     [Fact]
     public void BackgroundTaskService()
     {
-        /*
-        public IBackgroundTaskService BackgroundTaskService { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="StorageSync.Dispatcher"/>
+    /// </summary>
     [Fact]
     public void Dispatcher()
     {
-        /*
-        public IDispatcher Dispatcher { get; }
-         */
-
         throw new NotImplementedException();
     }
 }

@@ -1,28 +1,27 @@
-﻿namespace Luthetus.Common.RazorLib.Themes.States;
+﻿using Luthetus.Common.RazorLib.Themes.States;
 
+namespace Luthetus.Common.Tests.Basis.Themes.States;
+
+/// <summary>
+/// <see cref="ThemeState"/>
+/// </summary>
 public class ThemeStateMainTests
 {
+    /// <summary>
+    /// <see cref="ThemeState()"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        private ThemeState() : this(DefaultThemeRecordsBag)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="ThemeState.DefaultThemeRecordsBag"/>
+    /// </summary>
     [Fact]
     public void DefaultThemeRecordsBag()
     {
-        /*
-        public static readonly ImmutableList<ThemeRecord> DefaultThemeRecordsBag = new[]
-        {
-            ThemeFacts.VisualStudioDarkThemeClone,
-            ThemeFacts.VisualStudioLightThemeClone,
-        }.ToImmutableList();
-         */
-
         throw new NotImplementedException();
     }
 }

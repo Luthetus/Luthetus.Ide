@@ -1,54 +1,54 @@
-﻿namespace Luthetus.Common.RazorLib.Tabs.Models;
+﻿using Luthetus.Common.RazorLib.Tabs.Models;
 
+namespace Luthetus.Common.Tests.Basis.Tabs.Models;
+
+/// <summary>
+/// <see cref="TabEntryNoType"/>
+/// </summary>
 public class TabEntryNoTypeTests
 {
+    /// <summary>
+    /// <see cref="TabEntryNoType.UntypedItem"/>
+    /// </summary>
     [Fact]
     public void UntypedItem()
     {
-        /*
-        public abstract object UntypedItem { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TabEntryNoType.ItemType"/>
+    /// </summary>
     [Fact]
     public void ItemType()
     {
-        /*
-        public abstract Type ItemType { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TabEntryNoType.GetDisplayNameFunc"/>
+    /// </summary>
     [Fact]
     public void GetDisplayNameFunc()
     {
-        /*
-        public abstract Func<TabEntryNoType, string> GetDisplayNameFunc { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TabEntryNoType.OnSetActiveFunc"/>
+    /// </summary>
     [Fact]
     public void OnSetActiveFunc()
     {
-        /*
-        public abstract Action<TabEntryNoType> OnSetActiveFunc { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TabEntryNoType.TabEntryKey"/>
+    /// </summary>
     [Fact]
     public void TabEntryKey()
     {
-        /*
-        public Key<TabEntryNoType> TabEntryKey { get; } = Key<TabEntryNoType>.NewKey();
-         */
-
         throw new NotImplementedException();
     }
 }

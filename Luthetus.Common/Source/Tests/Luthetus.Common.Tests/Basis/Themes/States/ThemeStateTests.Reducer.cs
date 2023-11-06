@@ -1,5 +1,10 @@
-﻿namespace Luthetus.Common.RazorLib.Themes.States;
+﻿using Luthetus.Common.RazorLib.Themes.States;
 
+namespace Luthetus.Common.Tests.Basis.Themes.States;
+
+/// <summary>
+/// <see cref="ThemeState"/>
+/// </summary>
 public class ThemeStateReducerTests
 {
     [Fact]

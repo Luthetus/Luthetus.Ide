@@ -1,54 +1,54 @@
-﻿namespace Luthetus.Common.RazorLib.TreeViews.Models;
+﻿using Luthetus.Common.RazorLib.TreeViews.Models;
 
+namespace Luthetus.Common.Tests.Basis.TreeViews.Models;
+
+/// <summary>
+/// <see cref="TreeViewMouseEventHandler"/>
+/// </summary>
 public class TreeViewMouseEventHandlerTests
 {
+    /// <summary>
+    /// <see cref="TreeViewMouseEventHandler(ITreeViewService)"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        public TreeViewMouseEventHandler(ITreeViewService treeViewService)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewMouseEventHandler.OnClick(RazorLib.Commands.Models.TreeViewCommandParameter)"/>
+    /// </summary>
     [Fact]
     public void OnClick()
     {
-        /*
-        public virtual void OnClick(TreeViewCommandParameter commandParameter)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewMouseEventHandler.OnDoubleClick(RazorLib.Commands.Models.TreeViewCommandParameter)"/>
+    /// </summary>
     [Fact]
     public void OnDoubleClick()
     {
-        /*
-        public virtual void OnDoubleClick(TreeViewCommandParameter commandParameter)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewMouseEventHandler.OnDoubleClickAsync(RazorLib.Commands.Models.TreeViewCommandParameter)"/>
+    /// </summary>
     [Fact]
     public void OnDoubleClickAsync()
     {
-        /*
-        public virtual Task OnDoubleClickAsync(TreeViewCommandParameter commandParameter)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewMouseEventHandler.OnMouseDown(RazorLib.Commands.Models.TreeViewCommandParameter)"/>
+    /// </summary>
     [Fact]
     public void OnMouseDown()
     {
-        /*
-        public virtual void OnMouseDown(TreeViewCommandParameter commandParameter)
-         */
-
         throw new NotImplementedException();
     }
 }

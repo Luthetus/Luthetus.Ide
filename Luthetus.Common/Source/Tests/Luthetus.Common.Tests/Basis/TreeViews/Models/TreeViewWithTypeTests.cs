@@ -1,44 +1,45 @@
-﻿namespace Luthetus.Common.RazorLib.TreeViews.Models;
+﻿using Luthetus.Common.RazorLib.TreeViews.Models;
 
+namespace Luthetus.Common.Tests.Basis.TreeViews.Models;
+
+/// <summary>
+/// <see cref="TreeViewWithType{T}"/>
+/// </summary>
 public class TreeViewWithTypeTests
 {
+    /// <summary>
+    /// <see cref="TreeViewWithType{T}.TreeViewWithType(T, bool, bool)"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        public TreeViewWithType(T item, bool isExpandable, bool isExpanded)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewWithType{T}.Item"/>
+    /// </summary>
     [Fact]
     public void Item()
     {
-        /*
-        public T Item { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewWithType{T}.UntypedItem"/>
+    /// </summary>
     [Fact]
     public void UntypedItem()
     {
-        /*
-        public override object UntypedItem => Item;
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewWithType{T}.ItemType"/>
+    /// </summary>
     [Fact]
     public void ItemType()
     {
-        /*
-        public override Type ItemType => typeof(T);
-         */
-
         throw new NotImplementedException();
     }
 }

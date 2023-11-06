@@ -1,65 +1,63 @@
-﻿namespace Luthetus.Common.RazorLib.TreeViews.Models;
+﻿using Luthetus.Common.RazorLib.TreeViews.Models;
 
+namespace Luthetus.Common.Tests.Basis.TreeViews.Models;
+
+/// <summary>
+/// <see cref="TreeViewContainer"/>
+/// </summary>
 public record TreeViewContainerTests
 {
+    /// <summary>
+    /// <see cref="TreeViewContainer(RazorLib.Keys.Models.Key{TreeViewContainer}, TreeViewNoType?, System.Collections.Immutable.ImmutableList{TreeViewNoType})"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        public TreeViewContainer(
-            Key<TreeViewContainer> key, TreeViewNoType? rootNode, ImmutableList<TreeViewNoType> selectedNodeBag)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewContainer.Key"/>
+    /// </summary>
     [Fact]
     public void Key()
     {
-        /*
-        public Key<TreeViewContainer> Key { get; init; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewContainer.RootNode"/>
+    /// </summary>
     [Fact]
     public void RootNode()
     {
-        /*
-        public TreeViewNoType RootNode { get; init; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewContainer.ActiveNode"/>
+    /// </summary>
     [Fact]
     public void ActiveNode()
     {
-        /*
-        public TreeViewNoType? ActiveNode => SelectedNodeBag.LastOrDefault();
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewContainer.SelectedNodeBag"/>
+    /// </summary>
     [Fact]
     public void SelectedNodeBag()
     {
-        /*
-        public ImmutableList<TreeViewNoType> SelectedNodeBag { get; init; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewContainer.StateId"/>
+    /// </summary>
     [Fact]
     public void StateId()
     {
-        /*
-        public Guid StateId { get; init; } = Guid.NewGuid();
-         */
-
         throw new NotImplementedException();
     }
 }

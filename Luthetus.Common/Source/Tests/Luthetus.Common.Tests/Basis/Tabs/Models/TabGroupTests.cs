@@ -1,65 +1,63 @@
-﻿namespace Luthetus.Common.RazorLib.Tabs.Models;
+﻿using Luthetus.Common.RazorLib.Tabs.Models;
 
+namespace Luthetus.Common.Tests.Basis.Tabs.Models;
+
+/// <summary>
+/// <see cref="TabGroup"/>
+/// </summary>
 public class TabGroupTests
 {
+    /// <summary>
+    /// <see cref="TabGroup(Func{TabGroupLoadTabEntriesParameter, Task{TabGroupLoadTabEntriesOutput}}, RazorLib.Keys.Models.Key{TabGroup})"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        public TabGroup(Func<TabGroupLoadTabEntriesParameter, Task<TabGroupLoadTabEntriesOutput>> loadEntryBagAsyncFunc, Key<TabGroup> groupKey)
-            : this(loadEntryBagAsyncFunc)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TabGroup.EntryBag"/>
+    /// </summary>
     [Fact]
     public void EntryBag()
     {
-        /*
-        public ImmutableList<TabEntryNoType> EntryBag { get; init; } = ImmutableList<TabEntryNoType>.Empty;
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TabGroup.ActiveEntryKey"/>
+    /// </summary>
     [Fact]
     public void ActiveEntryKey()
     {
-        /*
-        public Key<TabEntryNoType> ActiveEntryKey { get; init; } = Key<TabEntryNoType>.Empty;
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TabGroup.Key"/>
+    /// </summary>
     [Fact]
     public void Key()
     {
-        /*
-        public Key<TabGroup> Key { get; } = Key<TabGroup>.NewKey();
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TabGroup.LoadEntryBagAsync()"/>
+    /// </summary>
     [Fact]
     public void LoadEntryBagAsync()
     {
-        /*
-        public async Task<TabGroupLoadTabEntriesOutput> LoadEntryBagAsync()
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TabGroup.GetActiveEntryNoType()"/>
+    /// </summary>
     [Fact]
     public void GetActiveEntryNoType()
     {
-        /*
-        public TabEntryNoType? GetActiveEntryNoType()
-         */
-
         throw new NotImplementedException();
     }
 }

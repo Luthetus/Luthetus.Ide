@@ -1,65 +1,63 @@
-﻿namespace Luthetus.Common.RazorLib.Tabs.Models;
+﻿using Luthetus.Common.RazorLib.Tabs.Models;
 
+namespace Luthetus.Common.Tests.Basis.Tabs.Models;
+
+/// <summary>
+/// <see cref="TabEntryWithType{T}"/>
+/// </summary>
 public class TabEntryWithTypeTests
 {
+    /// <summary>
+    /// <see cref="TabEntryWithType{T}.TabEntryWithType(T, Func{TabEntryNoType, string}, Action{TabEntryNoType})"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        public TabEntryWithType(
-            T item, Func<TabEntryNoType, string> getDisplayNameFunc, Action<TabEntryNoType> onSetActiveFunc)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TabEntryWithType{T}.Item"/>
+    /// </summary>
     [Fact]
     public void Item()
     {
-        /*
-        public T Item { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TabEntryWithType{T}.UntypedItem"/>
+    /// </summary>
     [Fact]
     public void UntypedItem()
     {
-        /*
-        public override object UntypedItem => Item!;
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TabEntryWithType{T}.ItemType"/>
+    /// </summary>
     [Fact]
     public void ItemType()
     {
-        /*
-        public override Type ItemType => typeof(T);
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TabEntryWithType{T}.GetDisplayNameFunc"/>
+    /// </summary>
     [Fact]
     public void GetDisplayNameFunc()
     {
-        /*
-        public override Func<TabEntryNoType, string> GetDisplayNameFunc { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TabEntryWithType{T}.OnSetActiveFunc"/>
+    /// </summary>
     [Fact]
     public void OnSetActiveFunc()
     {
-        /*
-        public override Action<TabEntryNoType> OnSetActiveFunc { get; }
-         */
-
         throw new NotImplementedException();
     }
 }

@@ -2,16 +2,17 @@ using Luthetus.Common.RazorLib.Storages.States;
 
 namespace Luthetus.Common.Tests.Basis.Storages.States;
 
-public partial class StorageSyncTests
+/// <summary>
+/// <see cref="StorageSync"/>
+/// </summary>
+public class StorageSyncEnqueuesTests
 {
+    /// <summary>
+    /// <see cref="StorageSync.WriteToLocalStorage(string, object)"/>
+    /// </summary>
     [Fact]
     public void WriteToLocalStorage()
     {
-        /*
-        public void WriteToLocalStorage(
-            string key, object value)
-         */
-
         throw new NotImplementedException();
     }
 }

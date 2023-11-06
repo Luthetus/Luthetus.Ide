@@ -1,144 +1,135 @@
-﻿namespace Luthetus.Common.RazorLib.TreeViews.Models;
+﻿using Luthetus.Common.RazorLib.TreeViews.Models;
 
-public abstract class TreeViewNoTypeTests
+namespace Luthetus.Common.Tests.Basis.TreeViews.Models;
+
+/// <summary>
+/// <see cref="TreeViewNoType"/>
+/// </summary>
+public class TreeViewNoTypeTests
 {
+    /// <summary>
+    /// <see cref="TreeViewNoType.UntypedItem"/>
+    /// </summary>
     [Fact]
     public void UntypedItem()
     {
-        /*
-        public abstract object UntypedItem { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewNoType.ItemType"/>
+    /// </summary>
     [Fact]
     public void ItemType()
     {
-        /*
-        public abstract Type ItemType { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewNoType.Parent"/>
+    /// </summary>
     [Fact]
     public void Parent()
     {
-        /*
-        public TreeViewNoType? Parent { get; set; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewNoType.ChildBag"/>
+    /// </summary>
     [Fact]
     public void ChildBag()
     {
-        /*
-        public List<TreeViewNoType> ChildBag { get; set; } = new();
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewNoType.IndexAmongSiblings"/>
+    /// </summary>
     [Fact]
     public void IndexAmongSiblings()
     {
-        /*
-        public int IndexAmongSiblings { get; set; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewNoType.IsRoot"/>
+    /// </summary>
     [Fact]
     public void IsRoot()
     {
-        /*
-        public bool IsRoot { get; set; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewNoType.IsHidden"/>
+    /// </summary>
     [Fact]
     public void IsHidden()
     {
-        /*
-        public bool IsHidden { get; set; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewNoType.IsExpandable"/>
+    /// </summary>
     [Fact]
     public void IsExpandable()
     {
-        /*
-        public bool IsExpandable { get; set; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewNoType.IsExpanded"/>
+    /// </summary>
     [Fact]
     public void IsExpanded()
     {
-        /*
-        public bool IsExpanded { get; set; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewNoType.TreeViewChangedKey"/>
+    /// </summary>
     [Fact]
     public void TreeViewChangedKey()
     {
-        /*
-        public Key<TreeViewChanged> TreeViewChangedKey { get; set; } = Key<TreeViewChanged>.NewKey();
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewNoType.Key"/>
+    /// </summary>
     [Fact]
     public void Key()
     {
-        /*
-        public Key<TreeViewNoType> Key { get; set; } = Key<TreeViewNoType>.NewKey();
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewNoType.GetTreeViewRenderer()"/>
+    /// </summary>
     [Fact]
     public void GetTreeViewRenderer()
     {
-        /*
-        public abstract TreeViewRenderer GetTreeViewRenderer();
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewNoType.LoadChildBagAsync()"/>
+    /// </summary>
     [Fact]
     public void LoadChildBagAsync()
     {
-        /*
-        public abstract Task LoadChildBagAsync();
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewNoType.RemoveRelatedFilesFromParent(List{TreeViewNoType})"/>
+    /// </summary>
     [Fact]
     public void RemoveRelatedFilesFromParent()
     {
-        /*
-        public virtual void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
-         */
-
         throw new NotImplementedException();
     }
 }

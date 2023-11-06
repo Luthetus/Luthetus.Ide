@@ -1,6 +1,11 @@
-﻿namespace Luthetus.Common.RazorLib.Tabs.States;
+﻿using Luthetus.Common.RazorLib.Tabs.States;
 
-public partial record TabStateTests
+namespace Luthetus.Common.Tests.Basis.Tabs.States;
+
+/// <summary>
+/// <see cref="TabState"/>
+/// </summary>
+public class TabStateReducerTests
 {
     [Fact]
     public void ReduceRegisterTabGroupAction()

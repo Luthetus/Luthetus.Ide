@@ -1,44 +1,45 @@
-﻿namespace Luthetus.Common.RazorLib.Tabs.States;
+﻿using Luthetus.Common.RazorLib.Tabs.States;
 
+namespace Luthetus.Common.Tests.Basis.Tabs.States;
+
+/// <summary>
+/// <see cref="TabState"/>
+/// </summary>
 public class TabStateActionsTests
 {
+    /// <summary>
+    /// <see cref="TabState.RegisterTabGroupAction"/>
+    /// </summary>
     [Fact]
     public void RegisterTabGroupAction()
     {
-        /*
-        public record RegisterTabGroupAction(TabGroup TabGroup);
-         */
-
 	    throw new NotImplementedException();
     }
-    
+
+    /// <summary>
+    /// <see cref="TabState.DisposeTabGroupAction"/>
+    /// </summary>
     [Fact]
     public void DisposeTabGroupAction()
     {
-        /*
-        public record DisposeTabGroupAction(Key<TabGroup> TabGroupKey);
-         */
-
 	    throw new NotImplementedException();
     }
-    
+
+    /// <summary>
+    /// <see cref="TabState.SetTabEntryBagAction"/>
+    /// </summary>
     [Fact]
     public void SetTabEntryBagAction()
     {
-        /*
-        public record SetTabEntryBagAction(Key<TabGroup> TabGroupKey, ImmutableList<TabEntryNoType> TabEntryBag);
-         */
-
 	    throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TabState.SetActiveTabEntryKeyAction"/>
+    /// </summary>
     [Fact]
     public void SetActiveTabEntryKeyAction()
     {
-        /*
-        public record SetActiveTabEntryKeyAction(Key<TabGroup> TabGroupKey, Key<TabEntryNoType> TabEntryKey);
-         */
-
         throw new NotImplementedException();
     }
 }
