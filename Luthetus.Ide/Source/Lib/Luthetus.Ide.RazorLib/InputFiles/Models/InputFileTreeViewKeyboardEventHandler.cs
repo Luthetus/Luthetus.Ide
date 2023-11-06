@@ -121,7 +121,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
 
     private void SetInputFileContentTreeViewRoot(TreeViewCommandArgs commandArgs)
     {
-        var activeNode = commandArgs.TreeViewState.ActiveNode;
+        var activeNode = commandArgs.TreeViewContainer.ActiveNode;
 
         if (activeNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return;
@@ -169,7 +169,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
 
     private void SetSelectedTreeViewModel(TreeViewCommandArgs commandArgs)
     {
-        var activeNode = commandArgs.TreeViewState.ActiveNode;
+        var activeNode = commandArgs.TreeViewContainer.ActiveNode;
         var treeViewAbsolutePath = activeNode as TreeViewAbsolutePath;
 
         if (treeViewAbsolutePath is null)

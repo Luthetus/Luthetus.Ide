@@ -100,7 +100,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 
     private void InvokeCopyFile(TreeViewCommandArgs commandArgs)
     {
-        var activeNode = commandArgs.TreeViewState.ActiveNode;
+        var activeNode = commandArgs.TreeViewContainer.ActiveNode;
 
         if (activeNode is not TreeViewNamespacePath treeViewNamespacePath)
             return;
@@ -118,7 +118,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 
     private void InvokePasteClipboard(TreeViewCommandArgs commandArgs)
     {
-        var activeNode = commandArgs.TreeViewState.ActiveNode;
+        var activeNode = commandArgs.TreeViewContainer.ActiveNode;
 
         if (activeNode is not TreeViewNamespacePath treeViewNamespacePath)
             return;
@@ -168,7 +168,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 
     private void InvokeCutFile(TreeViewCommandArgs commandArgs)
     {
-        var activeNode = commandArgs.TreeViewState.ActiveNode;
+        var activeNode = commandArgs.TreeViewContainer.ActiveNode;
 
         if (activeNode is not TreeViewNamespacePath treeViewNamespacePath)
             return;
@@ -189,7 +189,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 
     private void InvokeOpenInEditor(TreeViewCommandArgs commandArgs, bool shouldSetFocusToEditor)
     {
-        var activeNode = commandArgs.TreeViewState.ActiveNode;
+        var activeNode = commandArgs.TreeViewContainer.ActiveNode;
 
         if (activeNode is not TreeViewNamespacePath treeViewNamespacePath)
             return;

@@ -26,7 +26,7 @@ public class TreeViewServiceTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewService.RegisterTreeViewState(TreeViewContainer)"/>
+    /// <see cref="TreeViewService.RegisterTreeViewContainer(TreeViewContainer)"/>
     /// </summary>
     [Fact]
     public void RegisterTreeViewState()
@@ -35,7 +35,7 @@ public class TreeViewServiceTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewService.DisposeTreeViewState(RazorLib.Keys.Models.Key{TreeViewContainer})"/>
+    /// <see cref="TreeViewService.DisposeTreeViewContainer(RazorLib.Keys.Models.Key{TreeViewContainer})"/>
     /// </summary>
     [Fact]
     public void DisposeTreeViewState()
@@ -44,7 +44,7 @@ public class TreeViewServiceTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewService.ReplaceTreeViewState(RazorLib.Keys.Models.Key{TreeViewContainer}, TreeViewContainer)"/>
+    /// <see cref="TreeViewService.ReplaceTreeViewContainer(RazorLib.Keys.Models.Key{TreeViewContainer}, TreeViewContainer)"/>
     /// </summary>
     [Fact]
     public void ReplaceTreeViewState()
@@ -62,7 +62,7 @@ public class TreeViewServiceTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewService.TryGetTreeViewState(RazorLib.Keys.Models.Key{TreeViewContainer}, out TreeViewContainer?)"/>
+    /// <see cref="TreeViewService.TryGetTreeViewContainer(RazorLib.Keys.Models.Key{TreeViewContainer}, out TreeViewContainer?)"/>
     /// </summary>
     [Fact]
     public void TryGetTreeViewState()

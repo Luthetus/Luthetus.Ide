@@ -7,12 +7,4 @@ namespace Luthetus.Common.Tests.Basis.Commands.Models;
 /// </summary>
 public abstract class CommandWithTypeTests
 {
-    /// <summary>
-    /// <see cref="CommandWithType{T}.CommandWithType(Func{ICommandArgs, Task}, string, string, bool)"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
 }

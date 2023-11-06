@@ -23,7 +23,7 @@ public class TreeViewMouseEventHandler
             commandArgs.TargetNode is not null)
         {
             _treeViewService.AddSelectedNode(
-                commandArgs.TreeViewState.Key,
+                commandArgs.TreeViewContainer.Key,
                 commandArgs.TargetNode);
         }
 
@@ -50,7 +50,7 @@ public class TreeViewMouseEventHandler
             return;
 
         _treeViewService.SetActiveNode(
-            commandArgs.TreeViewState.Key,
+            commandArgs.TreeViewContainer.Key,
             commandArgs.TargetNode);
 
         // Cases where one should not clear the selected nodes
@@ -68,7 +68,7 @@ public class TreeViewMouseEventHandler
             if (commandArgs.MouseEventArgs is not null &&
                 (commandArgs.MouseEventArgs.Buttons & 1) != 1 &&
                 commandArgs.TargetNode is not null &&
-                commandArgs.TreeViewState.SelectedNodeBag.Any(x => x.Key == commandArgs.TargetNode.Key))
+                commandArgs.TreeViewContainer.SelectedNodeBag.Any(x => x.Key == commandArgs.TargetNode.Key))
             {
                 // Not pressing the left mouse button
                 // so assume ContextMenu is desired result.
@@ -76,6 +76,6 @@ public class TreeViewMouseEventHandler
             }
         }
 
-        _treeViewService.ClearSelectedNodes(commandArgs.TreeViewState.Key);
+        _treeViewService.ClearSelectedNodes(commandArgs.TreeViewContainer.Key);
     }
 }

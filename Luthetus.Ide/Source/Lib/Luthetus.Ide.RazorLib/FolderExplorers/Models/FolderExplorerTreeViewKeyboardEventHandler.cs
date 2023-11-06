@@ -102,7 +102,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
 
     private void CopyFile(TreeViewCommandArgs commandArgs)
     {
-        var activeNode = commandArgs.TreeViewState.ActiveNode;
+        var activeNode = commandArgs.TreeViewContainer.ActiveNode;
 
         if (activeNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return;
@@ -120,7 +120,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
 
     private Task PasteClipboard(TreeViewCommandArgs commandArgs)
     {
-        var activeNode = commandArgs.TreeViewState.ActiveNode;
+        var activeNode = commandArgs.TreeViewContainer.ActiveNode;
 
         if (activeNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return Task.CompletedTask;
@@ -166,7 +166,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
 
     private void CutFile(TreeViewCommandArgs commandArgs)
     {
-        var activeNode = commandArgs.TreeViewState.ActiveNode;
+        var activeNode = commandArgs.TreeViewContainer.ActiveNode;
 
         if (activeNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return;
@@ -187,7 +187,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
 
     private void InvokeOpenInEditor(TreeViewCommandArgs commandArgs, bool shouldSetFocusToEditor)
     {
-        var activeNode = commandArgs.TreeViewState.ActiveNode;
+        var activeNode = commandArgs.TreeViewContainer.ActiveNode;
 
         if (activeNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return;

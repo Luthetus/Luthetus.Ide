@@ -190,9 +190,9 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
 
         var activeNode = adhocRootNode.ChildBag.FirstOrDefault();
 
-        if (!TreeViewService.TryGetTreeViewState(InputFileContent.TreeViewStateKey, out var treeViewState))
+        if (!TreeViewService.TryGetTreeViewContainer(InputFileContent.TreeViewStateKey, out var treeViewState))
         {
-            TreeViewService.RegisterTreeViewState(new TreeViewContainer(
+            TreeViewService.RegisterTreeViewContainer(new TreeViewContainer(
                 InputFileContent.TreeViewStateKey,
                 adhocRootNode,
                 activeNode is null

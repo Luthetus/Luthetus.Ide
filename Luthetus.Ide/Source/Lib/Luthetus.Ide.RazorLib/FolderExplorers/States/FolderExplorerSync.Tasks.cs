@@ -37,11 +37,11 @@ public partial class FolderExplorerSync
 
         await rootNode.LoadChildBagAsync();
 
-        if (!_treeViewService.TryGetTreeViewState(
+        if (!_treeViewService.TryGetTreeViewContainer(
                 TreeViewContentStateKey,
                 out var treeViewState))
         {
-            _treeViewService.RegisterTreeViewState(new TreeViewContainer(
+            _treeViewService.RegisterTreeViewContainer(new TreeViewContainer(
                 TreeViewContentStateKey,
                 rootNode,
                 new TreeViewNoType[] { rootNode }.ToImmutableList()));

@@ -173,9 +173,9 @@ public partial class DotNetSolutionSync
 
         await rootNode.LoadChildBagAsync();
 
-        if (!_treeViewService.TryGetTreeViewState(TreeViewSolutionExplorerStateKey, out _))
+        if (!_treeViewService.TryGetTreeViewContainer(TreeViewSolutionExplorerStateKey, out _))
         {
-            _treeViewService.RegisterTreeViewState(new TreeViewContainer(
+            _treeViewService.RegisterTreeViewContainer(new TreeViewContainer(
                 TreeViewSolutionExplorerStateKey,
                 rootNode,
                 new TreeViewNoType[] { rootNode }.ToImmutableList()));

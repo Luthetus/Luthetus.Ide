@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace Luthetus.Common.RazorLib.TreeViews.Displays;
 
-public partial class TreeViewDisplay : ComponentBase
+public partial class TreeViewNodeDisplay : ComponentBase
 {
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;

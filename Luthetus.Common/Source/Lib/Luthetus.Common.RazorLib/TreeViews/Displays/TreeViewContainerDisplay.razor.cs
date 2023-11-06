@@ -16,7 +16,7 @@ namespace Luthetus.Common.RazorLib.TreeViews.Displays;
 /// TODO: SphagettiCode - The context menu logic feels scuffed. A field is used to track the
 /// "_mostRecentContextMenuEvent". This feels quite wrong and should be looked into. (2023-09-19)
 /// </summary>
-public partial class TreeViewStateDisplay : FluxorComponent
+public partial class TreeViewContainerDisplay : FluxorComponent
 {
     [Inject]
     private IStateSelection<TreeViewState, TreeViewContainer?> TreeViewStateSelection { get; set; } = null!;
