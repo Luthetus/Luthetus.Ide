@@ -613,7 +613,7 @@
     --luth_te_json-property-key-color: var(--luth_te_associated-key-color);
     --luth_te_json-property-value-color: var(--luth_te_associated-value-color);
     --luth_te_text-editor-gutter-border-color: #273840;
-    --luth_te_text-editor-gutter-background-color: #1f2229;
+    --luth_te_text-editor-gutter-background-color: rgb(43 41 55);
     --luth_te_secondary-font-color: #d1d2ca;
     --luth_te_secondary-background-color: #2d2f34;
     --luth_te_primary-overlay-box-shadow-color: #ffffff;
@@ -696,7 +696,7 @@
     --luth_te_json-property-key-color: var(--luth_te_associated-key-color);
     --luth_te_json-property-value-color: var(--luth_te_associated-value-color);
     --luth_te_text-editor-gutter-border-color: #273840;
-    --luth_te_text-editor-gutter-background-color: #1f2229;
+    --luth_te_text-editor-gutter-background-color: rgb(43 41 55);
     --luth_te_secondary-font-color: #d1d2ca;
     --luth_te_secondary-background-color: #2d2f34;
     --luth_te_primary-overlay-box-shadow-color: #ffffff;
