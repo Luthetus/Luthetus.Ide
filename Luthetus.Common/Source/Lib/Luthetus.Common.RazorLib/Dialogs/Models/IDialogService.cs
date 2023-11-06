@@ -1,11 +1,10 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Installations.Models;
 
 namespace Luthetus.Common.RazorLib.Dialogs.Models;
 
-public interface IDialogService : ILuthetusCommonService
+public interface IDialogService
 {
     public IState<DialogState> DialogStateWrap { get; }
 

@@ -9,16 +9,13 @@ public class NotificationService : INotificationService
     private readonly IDispatcher _dispatcher;
 
     public NotificationService(
-        bool isEnabled,
         IDispatcher dispatcher,
         IState<NotificationState> notificationState)
     {
         _dispatcher = dispatcher;
-        IsEnabled = isEnabled;
         NotificationStateWrap = notificationState;
     }
 
-    public bool IsEnabled { get; }
     public IState<NotificationState> NotificationStateWrap { get; }
 
     public void RegisterNotificationRecord(NotificationRecord notificationRecord)

@@ -1,8 +1,6 @@
-﻿using Luthetus.Common.RazorLib.Installations.Models;
+﻿namespace Luthetus.Common.RazorLib.Clipboards.Models;
 
-namespace Luthetus.Common.RazorLib.Clipboards.Models;
-
-public interface IClipboardService : ILuthetusCommonService
+public interface IClipboardService
 {
     public Task<string> ReadClipboard();
     public Task SetClipboard(string value);

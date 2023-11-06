@@ -25,4 +25,8 @@
       <ProjectReference Include="..\..\Lib\Luthetus.Common.RazorLib\Luthetus.Common.RazorLib.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Bugs\" />
+    </ItemGroup>
+
 </Project>

@@ -44,5 +44,9 @@
       <_ContentIncludedByDefault Remove="WatchWindow\NavLinks\BalcTreeViewNavLinks.razor" />
       <_ContentIncludedByDefault Remove="BackgroundTaskCase\BackgroundTaskDisplay.razor" />
     </ItemGroup>
+    
+    <ItemGroup>
+      <Folder Include="ShouldRenderBoundaries\" />
+    </ItemGroup>
 
 </Project>

@@ -8,11 +8,9 @@ public class ThemeService : IThemeService
     private readonly IDispatcher _dispatcher;
 
     public ThemeService(
-        bool isEnabled,
         IState<ThemeState> themeStateWrap,
         IDispatcher dispatcher)
     {
-        IsEnabled = isEnabled;
         ThemeStateWrap = themeStateWrap;
         _dispatcher = dispatcher;
     }

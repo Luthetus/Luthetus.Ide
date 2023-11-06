@@ -106,7 +106,7 @@ public class AbsolutePath : IAbsolutePath
     /// </summary>
     public List<IAbsolutePath> AncestorDirectoryBag { get; } = new();
     /// <summary>
-    /// The <see cref="NameNoExtension"/> for a directory does not end with a directory separator char.
+    /// The <see cref="NameNoExtension"/> for a directory does NOT end with a directory separator char.
     /// </summary>
     public string NameNoExtension { get; protected set; }
     /// <summary>

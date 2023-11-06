@@ -5,10 +5,6 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 
 namespace Luthetus.Common.RazorLib.TreeViews.States;
 
-/// <summary>
-/// TODO: Short circuit record value comparison by learning the order that values are compared,...
-/// ...then put something obvious as the first comparison. (2023-09-11)
-/// </summary>
 public partial record TreeViewState
 {
     private class Reducer
