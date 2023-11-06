@@ -5,7 +5,7 @@ namespace Luthetus.Common.Tests.Basis.Commands.Models;
 /// <summary>
 /// <see cref="TreeViewCommandArgs"/>
 /// </summary>
-public class TreeViewCommandParameterTests
+public class TreeViewCommandArgsTests
 {
     /// <summary>
     /// <see cref="TreeViewCommandArgs(RazorLib.TreeViews.Models.ITreeViewService, RazorLib.TreeViews.Models.TreeViewContainer, RazorLib.TreeViews.Models.TreeViewNoType?, Func{Task}, RazorLib.JavaScriptObjects.Models.ContextMenuFixedPosition?, Microsoft.AspNetCore.Components.Web.MouseEventArgs?, Microsoft.AspNetCore.Components.Web.KeyboardEventArgs?)"/>

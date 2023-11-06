@@ -49,7 +49,7 @@ public partial class InputFileSidebar : ComponentBase
 
     public static readonly Key<TreeViewContainer> TreeViewStateKey = Key<TreeViewContainer>.NewKey();
 
-    private TreeViewCommandArgs? _mostRecentTreeViewCommandParameter;
+    private TreeViewCommandArgs? _mostRecentTreeViewCommandArgs;
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
@@ -89,9 +89,9 @@ public partial class InputFileSidebar : ComponentBase
         return base.OnAfterRenderAsync(firstRender);
     }
 
-    private async Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandParameter)
+    private async Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
     {
-        _mostRecentTreeViewCommandParameter = treeViewCommandParameter;
+        _mostRecentTreeViewCommandArgs = treeViewCommandArgs;
 
         Dispatcher.Dispatch(new DropdownState.AddActiveAction(InputFileContextMenu.ContextMenuKey));
 

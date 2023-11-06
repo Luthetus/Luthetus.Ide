@@ -43,7 +43,7 @@ public partial class TreeViewStateDisplay : FluxorComponent
     [Parameter]
     public Func<TreeViewCommandArgs, Task>? OnContextMenuFunc { get; set; }
 
-    private TreeViewCommandArgs? _treeViewContextMenuCommandParameter;
+    private TreeViewCommandArgs? _treeViewContextMenuCommandArgs;
     private ElementReference? _treeViewStateDisplayElementReference;
 
     private string ContextMenuCssStyleString => GetContextMenuCssStyleString();
@@ -69,13 +69,13 @@ public partial class TreeViewStateDisplay : FluxorComponent
         if (treeViewState is null)
             return;
 
-        var treeViewCommandParameter = new TreeViewCommandArgs(
+        var treeViewCommandArgs = new TreeViewCommandArgs(
             TreeViewService,
             treeViewState,
             null,
             async () =>
             {
-                _treeViewContextMenuCommandParameter = null;
+                _treeViewContextMenuCommandArgs = null;
                 await InvokeAsync(StateHasChanged);
 
                 var localTreeViewStateDisplayElementReference = _treeViewStateDisplayElementReference;
@@ -97,7 +97,7 @@ public partial class TreeViewStateDisplay : FluxorComponent
             null,
             keyboardEventArgs);
 
-        TreeViewKeyboardEventHandler.OnKeyDown(treeViewCommandParameter);
+        TreeViewKeyboardEventHandler.OnKeyDown(treeViewCommandArgs);
     }
 
     private async Task HandleTreeViewOnContextMenu(
@@ -144,13 +144,13 @@ public partial class TreeViewStateDisplay : FluxorComponent
             contextMenuTargetTreeViewNoType = treeViewMouseWasOver;
         }
 
-        _treeViewContextMenuCommandParameter = new TreeViewCommandArgs(
+        _treeViewContextMenuCommandArgs = new TreeViewCommandArgs(
             TreeViewService,
             treeViewState,
             contextMenuTargetTreeViewNoType,
             async () =>
             {
-                _treeViewContextMenuCommandParameter = null;
+                _treeViewContextMenuCommandArgs = null;
                 await InvokeAsync(StateHasChanged);
 
                 var localTreeViewStateDisplayElementReference = _treeViewStateDisplayElementReference;
@@ -173,7 +173,7 @@ public partial class TreeViewStateDisplay : FluxorComponent
             null);
 
         if (OnContextMenuFunc is not null)
-            await OnContextMenuFunc.Invoke(_treeViewContextMenuCommandParameter);
+            await OnContextMenuFunc.Invoke(_treeViewContextMenuCommandArgs);
 
         await InvokeAsync(StateHasChanged);
     }
@@ -188,17 +188,17 @@ public partial class TreeViewStateDisplay : FluxorComponent
 
     private string GetContextMenuCssStyleString()
     {
-        if (_treeViewContextMenuCommandParameter?.ContextMenuFixedPosition is null)
+        if (_treeViewContextMenuCommandArgs?.ContextMenuFixedPosition is null)
         {
             // This should never happen.
             return "display: none;";
         }
 
         var left =
-            $"left: {_treeViewContextMenuCommandParameter.ContextMenuFixedPosition.LeftPositionInPixels.ToCssValue()}px;";
+            $"left: {_treeViewContextMenuCommandArgs.ContextMenuFixedPosition.LeftPositionInPixels.ToCssValue()}px;";
 
         var top =
-            $"top: {_treeViewContextMenuCommandParameter.ContextMenuFixedPosition.TopPositionInPixels.ToCssValue()}px;";
+            $"top: {_treeViewContextMenuCommandArgs.ContextMenuFixedPosition.TopPositionInPixels.ToCssValue()}px;";
 
         return $"{left} {top}";
     }

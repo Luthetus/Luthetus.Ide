@@ -30,7 +30,7 @@ public partial class TextEditorHeader : ComponentBase
     [Parameter]
     public ImmutableArray<TextEditorHeaderButtonKind>? HeaderButtonKinds { get; set; }
 
-    private TextEditorCommandArgs ConstructCommandParameter(
+    private TextEditorCommandArgs ConstructCommandArgs(
         TextEditorModel textEditorModel,
         TextEditorViewModel viewModel)
     {
@@ -73,8 +73,8 @@ public partial class TextEditorHeader : ComponentBase
         if (model is null || viewModel is null)
             return;
 
-        var commandParameter = ConstructCommandParameter(model, viewModel);
-        await TextEditorCommandDefaultFacts.Copy.DoAsyncFunc.Invoke(commandParameter);
+        var commandArgs = ConstructCommandArgs(model, viewModel);
+        await TextEditorCommandDefaultFacts.Copy.DoAsyncFunc.Invoke(commandArgs);
     }
 
     private async Task DoCutOnClick(MouseEventArgs arg)
@@ -85,8 +85,8 @@ public partial class TextEditorHeader : ComponentBase
         if (model is null || viewModel is null)
             return;
 
-        var commandParameter = ConstructCommandParameter(model, viewModel);
-        await TextEditorCommandDefaultFacts.Cut.DoAsyncFunc.Invoke(commandParameter);
+        var commandArgs = ConstructCommandArgs(model, viewModel);
+        await TextEditorCommandDefaultFacts.Cut.DoAsyncFunc.Invoke(commandArgs);
     }
 
     private async Task DoPasteOnClick(MouseEventArgs arg)
@@ -97,8 +97,8 @@ public partial class TextEditorHeader : ComponentBase
         if (model is null || viewModel is null)
             return;
 
-        var commandParameter = ConstructCommandParameter(model, viewModel);
-        await TextEditorCommandDefaultFacts.Paste.DoAsyncFunc.Invoke(commandParameter);
+        var commandArgs = ConstructCommandArgs(model, viewModel);
+        await TextEditorCommandDefaultFacts.Paste.DoAsyncFunc.Invoke(commandArgs);
     }
 
     private async Task DoRedoOnClick(MouseEventArgs arg)
@@ -109,8 +109,8 @@ public partial class TextEditorHeader : ComponentBase
         if (model is null || viewModel is null)
             return;
 
-        var commandParameter = ConstructCommandParameter(model, viewModel);
-        await TextEditorCommandDefaultFacts.Redo.DoAsyncFunc.Invoke(commandParameter);
+        var commandArgs = ConstructCommandArgs(model, viewModel);
+        await TextEditorCommandDefaultFacts.Redo.DoAsyncFunc.Invoke(commandArgs);
     }
 
     private async Task DoSaveOnClick(MouseEventArgs arg)
@@ -121,8 +121,8 @@ public partial class TextEditorHeader : ComponentBase
         if (model is null || viewModel is null)
             return;
 
-        var commandParameter = ConstructCommandParameter(model, viewModel);
-        await TextEditorCommandDefaultFacts.Save.DoAsyncFunc.Invoke(commandParameter);
+        var commandArgs = ConstructCommandArgs(model, viewModel);
+        await TextEditorCommandDefaultFacts.Save.DoAsyncFunc.Invoke(commandArgs);
     }
 
     private async Task DoUndoOnClick(MouseEventArgs arg)
@@ -133,8 +133,8 @@ public partial class TextEditorHeader : ComponentBase
         if (model is null || viewModel is null)
             return;
 
-        var commandParameter = ConstructCommandParameter(model, viewModel);
-        await TextEditorCommandDefaultFacts.Undo.DoAsyncFunc.Invoke(commandParameter);
+        var commandArgs = ConstructCommandArgs(model, viewModel);
+        await TextEditorCommandDefaultFacts.Undo.DoAsyncFunc.Invoke(commandArgs);
     }
 
     private async Task DoSelectAllOnClick(MouseEventArgs arg)
@@ -145,8 +145,8 @@ public partial class TextEditorHeader : ComponentBase
         if (model is null || viewModel is null)
             return;
 
-        var commandParameter = ConstructCommandParameter(model, viewModel);
-        await TextEditorCommandDefaultFacts.SelectAll.DoAsyncFunc.Invoke(commandParameter);
+        var commandArgs = ConstructCommandArgs(model, viewModel);
+        await TextEditorCommandDefaultFacts.SelectAll.DoAsyncFunc.Invoke(commandArgs);
     }
 
     private async Task DoRemeasureOnClick(MouseEventArgs arg)
@@ -157,8 +157,8 @@ public partial class TextEditorHeader : ComponentBase
         if (model is null || viewModel is null)
             return;
 
-        var commandParameter = ConstructCommandParameter(model, viewModel);
-        await TextEditorCommandDefaultFacts.Remeasure.DoAsyncFunc.Invoke(commandParameter);
+        var commandArgs = ConstructCommandArgs(model, viewModel);
+        await TextEditorCommandDefaultFacts.Remeasure.DoAsyncFunc.Invoke(commandArgs);
     }
 
     private void ShowWatchWindowDisplayDialogOnClick()
@@ -201,8 +201,8 @@ public partial class TextEditorHeader : ComponentBase
         if (model is null || viewModel is null)
             return;
 
-        var commandParameter = ConstructCommandParameter(model, viewModel);
-        await TextEditorCommandDefaultFacts.Remeasure.DoAsyncFunc.Invoke(commandParameter);
+        var commandArgs = ConstructCommandArgs(model, viewModel);
+        await TextEditorCommandDefaultFacts.Remeasure.DoAsyncFunc.Invoke(commandArgs);
     }
 
     /// <summary>

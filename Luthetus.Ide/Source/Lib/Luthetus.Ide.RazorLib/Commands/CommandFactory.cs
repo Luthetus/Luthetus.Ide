@@ -140,7 +140,7 @@ public class CommandFactory : ICommandFactory
     {
         return new CommonCommand(
             displayName, internalIdentifier, false,
-            async commandParameter =>
+            async commandArgs =>
             {
                 var success = await TrySetFocus();
 

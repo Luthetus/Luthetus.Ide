@@ -49,7 +49,7 @@ public partial class ContextMenu : ComponentBase
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    private TextEditorCommandArgs ConstructCommandParameter()
+    private TextEditorCommandArgs ConstructCommandArgs()
     {
         var cursorSnapshotsBag = TextEditorCursorSnapshot.TakeSnapshots(RenderBatch.ViewModel!.PrimaryCursor);
         var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorSnapshotsBag.FirstOrDefault()!.ImmutableCursor.ImmutableSelection);
@@ -125,19 +125,19 @@ public partial class ContextMenu : ComponentBase
 
     private async Task CutMenuOption()
     {
-        var commandParameter = ConstructCommandParameter();
-        await TextEditorCommandDefaultFacts.Cut.DoAsyncFunc.Invoke(commandParameter);
+        var commandArgs = ConstructCommandArgs();
+        await TextEditorCommandDefaultFacts.Cut.DoAsyncFunc.Invoke(commandArgs);
     }
 
     private async Task CopyMenuOption()
     {
-        var commandParameter = ConstructCommandParameter();
-        await TextEditorCommandDefaultFacts.Copy.DoAsyncFunc.Invoke(commandParameter);
+        var commandArgs = ConstructCommandArgs();
+        await TextEditorCommandDefaultFacts.Copy.DoAsyncFunc.Invoke(commandArgs);
     }
 
     private async Task PasteMenuOption()
     {
-        var commandParameter = ConstructCommandParameter();
-        await TextEditorCommandDefaultFacts.Paste.DoAsyncFunc.Invoke(commandParameter);
+        var commandArgs = ConstructCommandArgs();
+        await TextEditorCommandDefaultFacts.Paste.DoAsyncFunc.Invoke(commandArgs);
     }
 }

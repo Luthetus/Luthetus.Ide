@@ -16,59 +16,59 @@ public class TreeViewMouseEventHandler
     }
 
     /// <summary>Used for handing "onclick" events within the user interface</summary>
-    public virtual void OnClick(TreeViewCommandArgs commandParameter)
+    public virtual void OnClick(TreeViewCommandArgs commandArgs)
     {
-        if (commandParameter.MouseEventArgs is not null &&
-            commandParameter.MouseEventArgs.CtrlKey &&
-            commandParameter.TargetNode is not null)
+        if (commandArgs.MouseEventArgs is not null &&
+            commandArgs.MouseEventArgs.CtrlKey &&
+            commandArgs.TargetNode is not null)
         {
             _treeViewService.AddSelectedNode(
-                commandParameter.TreeViewState.Key,
-                commandParameter.TargetNode);
+                commandArgs.TreeViewState.Key,
+                commandArgs.TargetNode);
         }
 
         return;
     }
 
     /// <summary>Used for handing "ondblclick" events within the user interface</summary>
-    public virtual void OnDoubleClick(TreeViewCommandArgs commandParameter)
+    public virtual void OnDoubleClick(TreeViewCommandArgs commandArgs)
     {
-        _ = Task.Run(async () => await OnDoubleClickAsync(commandParameter));
+        _ = Task.Run(async () => await OnDoubleClickAsync(commandArgs));
         return;
     }
 
     /// <summary>Used for handing "ondblclick" events within the user interface</summary>
-    public virtual Task OnDoubleClickAsync(TreeViewCommandArgs commandParameter)
+    public virtual Task OnDoubleClickAsync(TreeViewCommandArgs commandArgs)
     {
         return Task.CompletedTask;
     }
 
     /// <summary>Used for handing "onmousedown" events within the user interface</summary>
-    public virtual void OnMouseDown(TreeViewCommandArgs commandParameter)
+    public virtual void OnMouseDown(TreeViewCommandArgs commandArgs)
     {
-        if (commandParameter.TargetNode is null)
+        if (commandArgs.TargetNode is null)
             return;
 
         _treeViewService.SetActiveNode(
-            commandParameter.TreeViewState.Key,
-            commandParameter.TargetNode);
+            commandArgs.TreeViewState.Key,
+            commandArgs.TargetNode);
 
         // Cases where one should not clear the selected nodes
         {
             // { "Ctrl" + "LeftMouseButton" } => MultiSelection;
-            if (commandParameter.MouseEventArgs is not null &&
-                commandParameter.MouseEventArgs.CtrlKey &&
-                commandParameter.TargetNode is not null)
+            if (commandArgs.MouseEventArgs is not null &&
+                commandArgs.MouseEventArgs.CtrlKey &&
+                commandArgs.TargetNode is not null)
             {
                 return;
             }
 
             // { "LeftMouseButton" } => ContextMenu; &&
             // TargetNode is selected
-            if (commandParameter.MouseEventArgs is not null &&
-                (commandParameter.MouseEventArgs.Buttons & 1) != 1 &&
-                commandParameter.TargetNode is not null &&
-                commandParameter.TreeViewState.SelectedNodeBag.Any(x => x.Key == commandParameter.TargetNode.Key))
+            if (commandArgs.MouseEventArgs is not null &&
+                (commandArgs.MouseEventArgs.Buttons & 1) != 1 &&
+                commandArgs.TargetNode is not null &&
+                commandArgs.TreeViewState.SelectedNodeBag.Any(x => x.Key == commandArgs.TargetNode.Key))
             {
                 // Not pressing the left mouse button
                 // so assume ContextMenu is desired result.
@@ -76,6 +76,6 @@ public class TreeViewMouseEventHandler
             }
         }
 
-        _treeViewService.ClearSelectedNodes(commandParameter.TreeViewState.Key);
+        _treeViewService.ClearSelectedNodes(commandArgs.TreeViewState.Key);
     }
 }

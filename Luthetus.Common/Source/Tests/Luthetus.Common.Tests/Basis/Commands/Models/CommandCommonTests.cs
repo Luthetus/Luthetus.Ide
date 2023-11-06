@@ -23,7 +23,7 @@ public class CommandCommonTests
             displayName,
             internalIdentifier,
             shouldBubble,
-            commandParameter => 
+            commandArgs => 
             {
                 number++;
                 return Task.CompletedTask;

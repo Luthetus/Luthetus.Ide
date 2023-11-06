@@ -8,7 +8,7 @@ namespace Luthetus.Common.Tests.Basis.Commands.Models;
 public class CommandTreeViewTests
 {
     /// <summary>
-    /// <see cref="TreeViewCommand(Func{ICommandArgs, Task}, string, string, bool)"/>
+    /// <see cref="TreeViewCommand(string, string, bool, Func{ICommandArgs, Task})"/>
     /// </summary>
     [Fact]
     public void Constructor()

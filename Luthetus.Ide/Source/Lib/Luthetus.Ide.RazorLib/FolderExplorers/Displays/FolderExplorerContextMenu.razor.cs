@@ -27,7 +27,7 @@ public partial class FolderExplorerContextMenu : ComponentBase
     private ITreeViewService TreeViewService { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public TreeViewCommandArgs TreeViewCommandParameter { get; set; } = null!;
+    public TreeViewCommandArgs TreeViewCommandArgs { get; set; } = null!;
 
     public static readonly Key<DropdownRecord> ContextMenuEventDropdownKey = Key<DropdownRecord>.NewKey();
 
@@ -37,14 +37,14 @@ public partial class FolderExplorerContextMenu : ComponentBase
     /// </summary>
     public static TreeViewNoType? ParentOfCutFile;
 
-    private MenuRecord GetMenuRecord(TreeViewCommandArgs treeViewCommandParameter)
+    private MenuRecord GetMenuRecord(TreeViewCommandArgs treeViewCommandArgs)
     {
-        if (treeViewCommandParameter.TargetNode is null)
+        if (treeViewCommandArgs.TargetNode is null)
             return MenuRecord.Empty;
 
         var menuRecordsBag = new List<MenuOptionRecord>();
 
-        var treeViewModel = treeViewCommandParameter.TargetNode;
+        var treeViewModel = treeViewCommandArgs.TargetNode;
         var parentTreeViewModel = treeViewModel.Parent;
 
         var parentTreeViewAbsolutePath = parentTreeViewModel as TreeViewAbsolutePath;
@@ -142,16 +142,16 @@ public partial class FolderExplorerContextMenu : ComponentBase
             false);
     }
 
-    public static string GetContextMenuCssStyleString(TreeViewCommandArgs? treeViewCommandParameter)
+    public static string GetContextMenuCssStyleString(TreeViewCommandArgs? treeViewCommandArgs)
     {
-        if (treeViewCommandParameter?.ContextMenuFixedPosition is null)
+        if (treeViewCommandArgs?.ContextMenuFixedPosition is null)
             return "display: none;";
 
         var left =
-            $"left: {treeViewCommandParameter.ContextMenuFixedPosition.LeftPositionInPixels.ToCssValue()}px;";
+            $"left: {treeViewCommandArgs.ContextMenuFixedPosition.LeftPositionInPixels.ToCssValue()}px;";
 
         var top =
-            $"top: {treeViewCommandParameter.ContextMenuFixedPosition.TopPositionInPixels.ToCssValue()}px;";
+            $"top: {treeViewCommandArgs.ContextMenuFixedPosition.TopPositionInPixels.ToCssValue()}px;";
 
         return $"{left} {top}";
     }

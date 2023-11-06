@@ -12,20 +12,20 @@ public partial class WatchWindowContextMenuDisplay : ComponentBase
     private ITreeViewService TreeViewService { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public TreeViewCommandArgs TreeViewCommandParameter { get; set; } = null!;
+    public TreeViewCommandArgs TreeViewCommandArgs { get; set; } = null!;
 
-    public static string GetContextMenuCssStyleString(TreeViewCommandArgs? commandParameter)
+    public static string GetContextMenuCssStyleString(TreeViewCommandArgs? commandArgs)
     {
-        if (commandParameter?.ContextMenuFixedPosition is null)
+        if (commandArgs?.ContextMenuFixedPosition is null)
             return "display: none;";
 
-        var left = $"left: {commandParameter.ContextMenuFixedPosition.LeftPositionInPixels}px;";
-        var top = $"top: {commandParameter.ContextMenuFixedPosition.TopPositionInPixels}px;";
+        var left = $"left: {commandArgs.ContextMenuFixedPosition.LeftPositionInPixels}px;";
+        var top = $"top: {commandArgs.ContextMenuFixedPosition.TopPositionInPixels}px;";
 
         return $"{left} {top} position: fixed;";
     }
 
-    private MenuRecord GetMenuRecord(TreeViewCommandArgs treeViewCommandParameter)
+    private MenuRecord GetMenuRecord(TreeViewCommandArgs treeViewCommandArgs)
     {
         var menuOptionRecordBag = new List<MenuOptionRecord>();
 
@@ -41,14 +41,14 @@ public partial class WatchWindowContextMenuDisplay : ComponentBase
                     {
                         try
                         {
-                            if (treeViewCommandParameter.TargetNode is null)
+                            if (treeViewCommandArgs.TargetNode is null)
                                 return;
 
-                            await treeViewCommandParameter.TargetNode.LoadChildBagAsync();
+                            await treeViewCommandArgs.TargetNode.LoadChildBagAsync();
 
                             TreeViewService.ReRenderNode(
                                 WatchWindowDisplay.TreeViewStateKey,
-                                treeViewCommandParameter.TargetNode);
+                                treeViewCommandArgs.TargetNode);
 
                             await InvokeAsync(StateHasChanged);
                         }

@@ -35,7 +35,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     [Inject]
     private EditorSync EditorSync { get; set; } = null!;
 
-    private TreeViewCommandArgs? _mostRecentTreeViewCommandParameter;
+    private TreeViewCommandArgs? _mostRecentTreeViewCommandArgs;
     private SolutionExplorerTreeViewKeyboardEventHandler _solutionExplorerTreeViewKeymap = null!;
     private SolutionExplorerTreeViewMouseEventHandler _solutionExplorerTreeViewMouseEventHandler = null!;
     private bool _disposed;
@@ -65,9 +65,9 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         await InvokeAsync(StateHasChanged);
     }
 
-    private async Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandParameter)
+    private async Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
     {
-        _mostRecentTreeViewCommandParameter = treeViewCommandParameter;
+        _mostRecentTreeViewCommandArgs = treeViewCommandArgs;
 
         Dispatcher.Dispatch(new DropdownState.AddActiveAction(
             SolutionExplorerContextMenu.ContextMenuEventDropdownKey));

@@ -114,7 +114,7 @@ public partial class TreeViewDisplay : ComponentBase
         TreeViewContainer? treeViewState,
         TreeViewNoType treeViewNoType)
     {
-        var treeViewCommandParameter = new TreeViewCommandArgs(
+        var treeViewCommandArgs = new TreeViewCommandArgs(
             TreeViewService,
             TreeViewState,
             TreeViewNoType,
@@ -123,7 +123,7 @@ public partial class TreeViewDisplay : ComponentBase
             mouseEventArgs,
             null);
 
-        TreeViewMouseEventHandler.OnMouseDown(treeViewCommandParameter);
+        TreeViewMouseEventHandler.OnMouseDown(treeViewCommandArgs);
 
         _ = Task.Run(async () => await HandleTreeViewOnContextMenu.Invoke(
             mouseEventArgs,
@@ -133,7 +133,7 @@ public partial class TreeViewDisplay : ComponentBase
 
     private void HandleOnClick(MouseEventArgs? mouseEventArgs)
     {
-        var treeViewCommandParameter = new TreeViewCommandArgs(
+        var treeViewCommandArgs = new TreeViewCommandArgs(
             TreeViewService,
             TreeViewState,
             TreeViewNoType,
@@ -142,12 +142,12 @@ public partial class TreeViewDisplay : ComponentBase
             mouseEventArgs,
             null);
 
-        TreeViewMouseEventHandler.OnClick(treeViewCommandParameter);
+        TreeViewMouseEventHandler.OnClick(treeViewCommandArgs);
     }
 
     private void HandleOnDoubleClick(MouseEventArgs? mouseEventArgs)
     {
-        var treeViewCommandParameter = new TreeViewCommandArgs(
+        var treeViewCommandArgs = new TreeViewCommandArgs(
             TreeViewService,
             TreeViewState,
             TreeViewNoType,
@@ -156,12 +156,12 @@ public partial class TreeViewDisplay : ComponentBase
             mouseEventArgs,
             null);
 
-        TreeViewMouseEventHandler.OnDoubleClick(treeViewCommandParameter);
+        TreeViewMouseEventHandler.OnDoubleClick(treeViewCommandArgs);
     }
 
     private void HandleOnMouseDown(MouseEventArgs? mouseEventArgs)
     {
-        var treeViewCommandParameter = new TreeViewCommandArgs(
+        var treeViewCommandArgs = new TreeViewCommandArgs(
             TreeViewService,
             TreeViewState,
             TreeViewNoType,
@@ -170,7 +170,7 @@ public partial class TreeViewDisplay : ComponentBase
             mouseEventArgs,
             null);
 
-        TreeViewMouseEventHandler.OnMouseDown(treeViewCommandParameter);
+        TreeViewMouseEventHandler.OnMouseDown(treeViewCommandArgs);
     }
 
     private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)

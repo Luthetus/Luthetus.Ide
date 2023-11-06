@@ -32,75 +32,75 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         _treeViewService = treeViewService;
     }
 
-    public override Task OnKeyDownAsync(TreeViewCommandArgs commandParameter)
+    public override Task OnKeyDownAsync(TreeViewCommandArgs commandArgs)
     {
-        if (commandParameter.KeyboardEventArgs is null)
+        if (commandArgs.KeyboardEventArgs is null)
             return Task.CompletedTask;
 
-        base.OnKeyDownAsync(commandParameter);
+        base.OnKeyDownAsync(commandArgs);
 
-        switch (commandParameter.KeyboardEventArgs.Code)
+        switch (commandArgs.KeyboardEventArgs.Code)
         {
             case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
-                InvokeOpenInEditor(commandParameter, true);
+                InvokeOpenInEditor(commandArgs, true);
                 return Task.CompletedTask;
             case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
-                InvokeOpenInEditor(commandParameter, false);
+                InvokeOpenInEditor(commandArgs, false);
                 return Task.CompletedTask;
         }
 
-        if (commandParameter.KeyboardEventArgs.CtrlKey)
+        if (commandArgs.KeyboardEventArgs.CtrlKey)
         {
-            CtrlModifiedKeymap(commandParameter);
+            CtrlModifiedKeymap(commandArgs);
             return Task.CompletedTask;
         }
-        else if (commandParameter.KeyboardEventArgs.AltKey)
+        else if (commandArgs.KeyboardEventArgs.AltKey)
         {
-            AltModifiedKeymap(commandParameter);
+            AltModifiedKeymap(commandArgs);
             return Task.CompletedTask;
         }
 
         return Task.CompletedTask;
     }
 
-    private void CtrlModifiedKeymap(TreeViewCommandArgs commandParameter)
+    private void CtrlModifiedKeymap(TreeViewCommandArgs commandArgs)
     {
-        if (commandParameter.KeyboardEventArgs is null)
+        if (commandArgs.KeyboardEventArgs is null)
             return;
 
-        if (commandParameter.KeyboardEventArgs.AltKey)
+        if (commandArgs.KeyboardEventArgs.AltKey)
         {
-            CtrlAltModifiedKeymap(commandParameter);
+            CtrlAltModifiedKeymap(commandArgs);
             return;
         }
 
-        switch (commandParameter.KeyboardEventArgs.Key)
+        switch (commandArgs.KeyboardEventArgs.Key)
         {
             case "c":
-                InvokeCopyFile(commandParameter);
+                InvokeCopyFile(commandArgs);
                 return;
             case "x":
-                InvokeCutFile(commandParameter);
+                InvokeCutFile(commandArgs);
                 return;
             case "v":
-                InvokePasteClipboard(commandParameter);
+                InvokePasteClipboard(commandArgs);
                 return;
         }
     }
 
-    private void AltModifiedKeymap(TreeViewCommandArgs commandParameter)
+    private void AltModifiedKeymap(TreeViewCommandArgs commandArgs)
     {
         return;
     }
 
-    private void CtrlAltModifiedKeymap(TreeViewCommandArgs commandParameter)
+    private void CtrlAltModifiedKeymap(TreeViewCommandArgs commandArgs)
     {
         return;
     }
 
-    private void InvokeCopyFile(TreeViewCommandArgs commandParameter)
+    private void InvokeCopyFile(TreeViewCommandArgs commandArgs)
     {
-        var activeNode = commandParameter.TreeViewState.ActiveNode;
+        var activeNode = commandArgs.TreeViewState.ActiveNode;
 
         if (activeNode is not TreeViewNamespacePath treeViewNamespacePath)
             return;
@@ -116,9 +116,9 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         copyFileMenuOption.OnClick?.Invoke();
     }
 
-    private void InvokePasteClipboard(TreeViewCommandArgs commandParameter)
+    private void InvokePasteClipboard(TreeViewCommandArgs commandArgs)
     {
-        var activeNode = commandParameter.TreeViewState.ActiveNode;
+        var activeNode = commandArgs.TreeViewState.ActiveNode;
 
         if (activeNode is not TreeViewNamespacePath treeViewNamespacePath)
             return;
@@ -166,9 +166,9 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         pasteMenuOptionRecord.OnClick?.Invoke();
     }
 
-    private void InvokeCutFile(TreeViewCommandArgs commandParameter)
+    private void InvokeCutFile(TreeViewCommandArgs commandArgs)
     {
-        var activeNode = commandParameter.TreeViewState.ActiveNode;
+        var activeNode = commandArgs.TreeViewState.ActiveNode;
 
         if (activeNode is not TreeViewNamespacePath treeViewNamespacePath)
             return;
@@ -187,11 +187,9 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         cutFileOptionRecord.OnClick?.Invoke();
     }
 
-    private void InvokeOpenInEditor(
-        TreeViewCommandArgs commandParameter,
-        bool shouldSetFocusToEditor)
+    private void InvokeOpenInEditor(TreeViewCommandArgs commandArgs, bool shouldSetFocusToEditor)
     {
-        var activeNode = commandParameter.TreeViewState.ActiveNode;
+        var activeNode = commandArgs.TreeViewState.ActiveNode;
 
         if (activeNode is not TreeViewNamespacePath treeViewNamespacePath)
             return;
@@ -200,8 +198,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         return;
     }
 
-    private async Task ReloadTreeViewModel(
-        TreeViewNoType? treeViewModel)
+    private async Task ReloadTreeViewModel(TreeViewNoType? treeViewModel)
     {
         if (treeViewModel is null)
             return;

@@ -78,9 +78,9 @@ public static class SyntaxTextObjectVim
                         // Move the cursor 1 column to the left
                         textEditorCommand = new TextEditorCommand(
                             "Vim::h", "vim_h", false, true, TextEditKind.None, null,
-                            interfaceCommandParameter =>
+                            interfaceCommandArgs =>
                             {
-                                var commandParameter = (TextEditorCommandArgs)interfaceCommandParameter;
+                                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
                                 TextEditorCursor.MoveCursor(
                                     new KeyboardEventArgs
@@ -88,8 +88,8 @@ public static class SyntaxTextObjectVim
                                         Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
                                         ShiftKey = shiftKey
                                     },
-                                    commandParameter.PrimaryCursorSnapshot.UserCursor,
-                                    commandParameter.Model);
+                                    commandArgs.PrimaryCursorSnapshot.UserCursor,
+                                    commandArgs.Model);
 
                                 return Task.CompletedTask;
                             });
@@ -101,9 +101,9 @@ public static class SyntaxTextObjectVim
                         // Move the cursor 1 row down
                         textEditorCommand = new TextEditorCommand(
                             "Vim::j", "vim_j", false, true, TextEditKind.None, null,
-                            interfaceCommandParameter =>
+                            interfaceCommandArgs =>
                             {
-                                var commandParameter = (TextEditorCommandArgs)interfaceCommandParameter;
+                                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
                                 TextEditorCursor.MoveCursor(
                                     new KeyboardEventArgs
@@ -111,8 +111,8 @@ public static class SyntaxTextObjectVim
                                         Key = KeyboardKeyFacts.MovementKeys.ARROW_DOWN,
                                         ShiftKey = shiftKey
                                     },
-                                    commandParameter.PrimaryCursorSnapshot.UserCursor,
-                                    commandParameter.Model);
+                                    commandArgs.PrimaryCursorSnapshot.UserCursor,
+                                    commandArgs.Model);
 
                                 return Task.CompletedTask;
                             });
@@ -124,9 +124,9 @@ public static class SyntaxTextObjectVim
                         // Move the cursor 1 row up
                         textEditorCommand = new TextEditorCommand(
                             "Vim::k", "vim_k", false, true, TextEditKind.None, null,
-                            interfaceCommandParameter =>
+                            interfaceCommandArgs =>
                             {
-                                var commandParameter = (TextEditorCommandArgs)interfaceCommandParameter;
+                                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
                                 TextEditorCursor.MoveCursor(
                                     new KeyboardEventArgs
@@ -134,8 +134,8 @@ public static class SyntaxTextObjectVim
                                         Key = KeyboardKeyFacts.MovementKeys.ARROW_UP,
                                         ShiftKey = shiftKey
                                     },
-                                    commandParameter.PrimaryCursorSnapshot.UserCursor,
-                                    commandParameter.Model);
+                                    commandArgs.PrimaryCursorSnapshot.UserCursor,
+                                    commandArgs.Model);
 
                                 return Task.CompletedTask;
                             });
@@ -147,9 +147,9 @@ public static class SyntaxTextObjectVim
                         // Move the cursor 1 column to the right
                         textEditorCommand = new TextEditorCommand(
                             "Vim::l", "vim_l", false, true, TextEditKind.None, null,
-                            interfaceCommandParameter =>
+                            interfaceCommandArgs =>
                             {
-                                var commandParameter = (TextEditorCommandArgs)interfaceCommandParameter;
+                                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
                                 TextEditorCursor.MoveCursor(
                                     new KeyboardEventArgs
@@ -157,8 +157,8 @@ public static class SyntaxTextObjectVim
                                         Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                                         ShiftKey = shiftKey
                                     },
-                                    commandParameter.PrimaryCursorSnapshot.UserCursor,
-                                    commandParameter.Model);
+                                    commandArgs.PrimaryCursorSnapshot.UserCursor,
+                                    commandArgs.Model);
 
                                 return Task.CompletedTask;
                             });
@@ -176,9 +176,9 @@ public static class SyntaxTextObjectVim
                         // Move the cursor to the end of the current line.
                         textEditorCommand = new TextEditorCommand(
                             "Vim::$", "vim_$", false, true, TextEditKind.None, null,
-                            interfaceCommandParameter =>
+                            interfaceCommandArgs =>
                             {
-                                var commandParameter = (TextEditorCommandArgs)interfaceCommandParameter;
+                                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
                                 TextEditorCursor.MoveCursor(
                                     new KeyboardEventArgs
@@ -186,8 +186,8 @@ public static class SyntaxTextObjectVim
                                         Key = KeyboardKeyFacts.MovementKeys.END,
                                         ShiftKey = shiftKey
                                     },
-                                    commandParameter.PrimaryCursorSnapshot.UserCursor,
-                                    commandParameter.Model);
+                                    commandArgs.PrimaryCursorSnapshot.UserCursor,
+                                    commandArgs.Model);
 
                                 return Task.CompletedTask;
                             });
@@ -199,9 +199,9 @@ public static class SyntaxTextObjectVim
                         // Move the cursor to the start of the current line.
                         textEditorCommand = new TextEditorCommand(
                             "Vim::0", "vim_0", false, true, TextEditKind.None, null,
-                            interfaceCommandParameter =>
+                            interfaceCommandArgs =>
                             {
-                                var commandParameter = (TextEditorCommandArgs)interfaceCommandParameter;
+                                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
                                 TextEditorCursor.MoveCursor(
                                     new KeyboardEventArgs
@@ -209,8 +209,8 @@ public static class SyntaxTextObjectVim
                                         Key = KeyboardKeyFacts.MovementKeys.HOME,
                                         ShiftKey = shiftKey
                                     },
-                                    commandParameter.PrimaryCursorSnapshot.UserCursor,
-                                    commandParameter.Model);
+                                    commandArgs.PrimaryCursorSnapshot.UserCursor,
+                                    commandArgs.Model);
 
                                 return Task.CompletedTask;
                             });

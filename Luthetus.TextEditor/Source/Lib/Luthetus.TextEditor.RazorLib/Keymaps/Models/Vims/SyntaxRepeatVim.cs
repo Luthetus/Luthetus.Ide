@@ -70,11 +70,11 @@ public static class SyntaxRepeatVim
             // Repeat the inner TextEditorCommand using a for loop
             textEditorCommand = new TextEditorCommand(
                 textEditorCommandDisplayName, textEditorCommandDisplayName, false, true, TextEditKind.None, null,
-                async textEditorCommandParameter =>
+                async textEditorCommandArgs =>
                 {
                     for (int index = 0; index < intValue; index++)
                     {
-                        await innerTextEditorCommand.DoAsyncFunc.Invoke(textEditorCommandParameter);
+                        await innerTextEditorCommand.DoAsyncFunc.Invoke(textEditorCommandArgs);
                     }
                 });
         }

@@ -22,15 +22,15 @@ public static partial class TextEditorCommandVimFacts
             "Vim::Change(Line)", "Vim::Change(Line)", false, true, TextEditKind.None, null,
             async interfaceCommandArgs =>
             {
-                var commandParameter = (TextEditorCommandArgs)interfaceCommandArgs;
+                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                var activeKeymap = commandParameter.TextEditorService.OptionsStateWrap.Value.Options.Keymap
+                var activeKeymap = commandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
                     ?? TextEditorKeymapFacts.DefaultKeymap;
 
                 if (activeKeymap is not TextEditorKeymapVim vimKeymap)
                     return;
 
-                await DeleteLine.DoAsyncFunc.Invoke(commandParameter);
+                await DeleteLine.DoAsyncFunc.Invoke(commandArgs);
                 vimKeymap.ActiveVimMode = VimMode.Insert;
             });
 
@@ -44,7 +44,7 @@ public static partial class TextEditorCommandVimFacts
                     commandArgs.PrimaryCursorSnapshot.UserCursor.IndexCoordinates,
                     true);
 
-                var textEditorCommandParameterForMotion = new TextEditorCommandArgs(
+                var textEditorCommandArgsForMotion = new TextEditorCommandArgs(
                     commandArgs.Model,
                     TextEditorCursorSnapshot.TakeSnapshots(textEditorCursorForMotion),
                     commandArgs.HasTextSelection,
@@ -61,7 +61,7 @@ public static partial class TextEditorCommandVimFacts
                     commandArgs,
                     textEditorCursorForMotion,
                     async () => await innerTextEditorCommand.DoAsyncFunc
-                        .Invoke(textEditorCommandParameterForMotion));
+                        .Invoke(textEditorCommandArgsForMotion));
 
                 var cursorForDeletion = new TextEditorCursor(
                     motionResult.LowerPositionIndexImmutableCursor,

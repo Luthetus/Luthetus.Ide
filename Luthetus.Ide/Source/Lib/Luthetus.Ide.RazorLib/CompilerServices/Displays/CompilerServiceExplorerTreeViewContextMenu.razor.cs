@@ -10,26 +10,25 @@ namespace Luthetus.Ide.RazorLib.CompilerServices.Displays;
 public partial class CompilerServiceExplorerTreeViewContextMenu : ComponentBase
 {
     [Parameter, EditorRequired]
-    public TreeViewCommandArgs TreeViewCommandParameter { get; set; } = null!;
+    public TreeViewCommandArgs TreeViewCommandArgs { get; set; } = null!;
 
     public static readonly Key<DropdownRecord> ContextMenuEventDropdownKey = Key<DropdownRecord>.NewKey();
 
-    private MenuRecord GetMenuRecord(TreeViewCommandArgs treeViewCommandParameter)
+    private MenuRecord GetMenuRecord(TreeViewCommandArgs treeViewCommandArgs)
     {
         return MenuRecord.Empty;
     }
 
-    public static string GetContextMenuCssStyleString(
-        TreeViewCommandArgs? treeViewCommandParameter)
+    public static string GetContextMenuCssStyleString(TreeViewCommandArgs? treeViewCommandArgs)
     {
-        if (treeViewCommandParameter?.ContextMenuFixedPosition is null)
+        if (treeViewCommandArgs?.ContextMenuFixedPosition is null)
             return "display: none;";
 
         var left =
-            $"left: {treeViewCommandParameter.ContextMenuFixedPosition.LeftPositionInPixels.ToCssValue()}px;";
+            $"left: {treeViewCommandArgs.ContextMenuFixedPosition.LeftPositionInPixels.ToCssValue()}px;";
 
         var top =
-            $"top: {treeViewCommandParameter.ContextMenuFixedPosition.TopPositionInPixels.ToCssValue()}px;";
+            $"top: {treeViewCommandArgs.ContextMenuFixedPosition.TopPositionInPixels.ToCssValue()}px;";
 
         return $"{left} {top}";
     }

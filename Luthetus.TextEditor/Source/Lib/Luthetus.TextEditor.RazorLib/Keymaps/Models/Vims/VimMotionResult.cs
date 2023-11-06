@@ -11,21 +11,21 @@ public record VimMotionResult(
     int PositionIndexDisplacement)
 {
     public static async Task<VimMotionResult> GetResultAsync(
-        TextEditorCommandArgs textEditorCommandParameter,
+        TextEditorCommandArgs textEditorCommandArgs,
         TextEditorCursor textEditorCursorForMotion,
-        Func<Task> motionCommandParameter)
+        Func<Task> motionCommandArgs)
     {
-        await motionCommandParameter.Invoke();
+        await motionCommandArgs.Invoke();
 
-        var beforeMotionImmutableCursor = textEditorCommandParameter.PrimaryCursorSnapshot.ImmutableCursor;
+        var beforeMotionImmutableCursor = textEditorCommandArgs.PrimaryCursorSnapshot.ImmutableCursor;
 
-        var beforeMotionPositionIndex = textEditorCommandParameter.Model.GetPositionIndex(
+        var beforeMotionPositionIndex = textEditorCommandArgs.Model.GetPositionIndex(
             beforeMotionImmutableCursor.RowIndex,
             beforeMotionImmutableCursor.ColumnIndex);
 
         var afterMotionImmutableCursor = new ImmutableTextEditorCursor(textEditorCursorForMotion);
 
-        var afterMotionPositionIndex = textEditorCommandParameter.Model.GetPositionIndex(
+        var afterMotionPositionIndex = textEditorCommandArgs.Model.GetPositionIndex(
             afterMotionImmutableCursor.RowIndex,
             afterMotionImmutableCursor.ColumnIndex);
 
