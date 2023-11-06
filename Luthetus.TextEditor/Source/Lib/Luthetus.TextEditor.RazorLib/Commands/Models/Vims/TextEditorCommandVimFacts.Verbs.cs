@@ -11,18 +11,18 @@ public static partial class TextEditorCommandVimFacts
     public static class Verbs
     {
         public static readonly TextEditorCommand DeleteLine = new(
-            async commandParameter =>
+            async commandArgs =>
             {
-                await TextEditorCommandDefaultFacts.Cut.DoAsyncFunc.Invoke(commandParameter);
+                await TextEditorCommandDefaultFacts.Cut.DoAsyncFunc.Invoke(commandArgs);
             },
             true,
             "Vim::Delete(Line)",
             "Vim::Delete(Line)");
 
         public static readonly TextEditorCommand ChangeLine = new(
-            async interfaceCommandParameter =>
+            async interfaceCommandArgs =>
             {
-                var commandParameter = (TextEditorCommandArgs)interfaceCommandParameter;
+                var commandParameter = (TextEditorCommandArgs)interfaceCommandArgs;
 
                 var activeKeymap = commandParameter.TextEditorService.OptionsStateWrap.Value.Options.Keymap
                     ?? TextEditorKeymapFacts.DefaultKeymap;
@@ -38,29 +38,29 @@ public static partial class TextEditorCommandVimFacts
             "Vim::Change(Line)");
 
         public static TextEditorCommand GetDeleteMotion(TextEditorCommand innerTextEditorCommand) => new(
-            async interfaceCommandParameter =>
+            async interfaceCommandArgs =>
             {
-                var commandParameter = (TextEditorCommandArgs)interfaceCommandParameter;
+                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
                 var textEditorCursorForMotion = new TextEditorCursor(
-                    commandParameter.PrimaryCursorSnapshot.UserCursor.IndexCoordinates,
+                    commandArgs.PrimaryCursorSnapshot.UserCursor.IndexCoordinates,
                     true);
 
                 var textEditorCommandParameterForMotion = new TextEditorCommandArgs(
-                    commandParameter.Model,
+                    commandArgs.Model,
                     TextEditorCursorSnapshot.TakeSnapshots(textEditorCursorForMotion),
-                    commandParameter.HasTextSelection,
-                    commandParameter.ClipboardService,
-                    commandParameter.TextEditorService,
-                    commandParameter.ViewModel,
-                    commandParameter.HandleMouseStoppedMovingEventAsyncFunc,
-                    commandParameter.JsRuntime,
-                    commandParameter.RegisterModelAction,
-                    commandParameter.RegisterViewModelAction,
-                    commandParameter.ShowViewModelAction);
+                    commandArgs.HasTextSelection,
+                    commandArgs.ClipboardService,
+                    commandArgs.TextEditorService,
+                    commandArgs.ViewModel,
+                    commandArgs.HandleMouseStoppedMovingEventAsyncFunc,
+                    commandArgs.JsRuntime,
+                    commandArgs.RegisterModelAction,
+                    commandArgs.RegisterViewModelAction,
+                    commandArgs.ShowViewModelAction);
 
                 var motionResult = await VimMotionResult.GetResultAsync(
-                    commandParameter,
+                    commandArgs,
                     textEditorCursorForMotion,
                     async () => await innerTextEditorCommand.DoAsyncFunc
                         .Invoke(textEditorCommandParameterForMotion));
@@ -70,23 +70,23 @@ public static partial class TextEditorCommandVimFacts
                     true);
 
                 var deleteTextTextEditorModelAction = new TextEditorModelState.DeleteTextByRangeAction(
-                    commandParameter.Model.ResourceUri,
+                    commandArgs.Model.ResourceUri,
                     TextEditorCursorSnapshot.TakeSnapshots(cursorForDeletion),
                     motionResult.PositionIndexDisplacement,
                     CancellationToken.None);
 
-                commandParameter.TextEditorService.Model.DeleteTextByRange(deleteTextTextEditorModelAction);
+                commandArgs.TextEditorService.Model.DeleteTextByRange(deleteTextTextEditorModelAction);
             },
             true,
             $"Vim::Delete({innerTextEditorCommand.DisplayName})",
             $"Vim::Delete({innerTextEditorCommand.DisplayName})");
 
         public static TextEditorCommand GetChangeMotion(TextEditorCommand innerTextEditorCommand) => new(
-            async interfaceCommandParameter =>
+            async interfaceCommandArgs =>
             {
-                var commandParameter = (TextEditorCommandArgs)interfaceCommandParameter;
+                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                var activeKeymap = commandParameter.TextEditorService.OptionsStateWrap.Value.Options.Keymap
+                var activeKeymap = commandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
                     ?? TextEditorKeymapFacts.DefaultKeymap;
 
                 if (activeKeymap is not TextEditorKeymapVim textEditorKeymapVim)
@@ -94,7 +94,7 @@ public static partial class TextEditorCommandVimFacts
 
                 var deleteMotion = GetDeleteMotion(innerTextEditorCommand);
 
-                await deleteMotion.DoAsyncFunc.Invoke(commandParameter);
+                await deleteMotion.DoAsyncFunc.Invoke(commandArgs);
                 textEditorKeymapVim.ActiveVimMode = VimMode.Insert;
             },
             true,
@@ -102,17 +102,17 @@ public static partial class TextEditorCommandVimFacts
             $"Vim::Change({innerTextEditorCommand.DisplayName})");
 
         public static readonly TextEditorCommand ChangeSelection = new(
-            async interfaceCommandParameter =>
+            async interfaceCommandArgs =>
             {
-                var commandParameter = (TextEditorCommandArgs)interfaceCommandParameter;
+                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                var activeKeymap = commandParameter.TextEditorService.OptionsStateWrap.Value.Options.Keymap
+                var activeKeymap = commandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
                     ?? TextEditorKeymapFacts.DefaultKeymap;
 
                 if (activeKeymap is not TextEditorKeymapVim textEditorKeymapVim)
                     return;
 
-                await TextEditorCommandDefaultFacts.Cut.DoAsyncFunc.Invoke(commandParameter);
+                await TextEditorCommandDefaultFacts.Cut.DoAsyncFunc.Invoke(commandArgs);
                 textEditorKeymapVim.ActiveVimMode = VimMode.Insert;
             },
             true,
@@ -120,27 +120,27 @@ public static partial class TextEditorCommandVimFacts
             "Vim::Change(Selection)");
 
         public static readonly TextEditorCommand Yank = new(
-            async commandParameter =>
+            async commandArgs =>
             {
-                await TextEditorCommandDefaultFacts.Copy.DoAsyncFunc.Invoke(commandParameter);
-                await TextEditorCommandDefaultFacts.ClearTextSelection.DoAsyncFunc.Invoke(commandParameter);
+                await TextEditorCommandDefaultFacts.Copy.DoAsyncFunc.Invoke(commandArgs);
+                await TextEditorCommandDefaultFacts.ClearTextSelection.DoAsyncFunc.Invoke(commandArgs);
             },
             true,
             "Vim::Change(Selection)",
             "Vim::Change(Selection)");
 
         public static readonly TextEditorCommand NewLineBelow = new(
-            async interfaceCommandParameter =>
+            async interfaceCommandArgs =>
             {
-                var commandParameter = (TextEditorCommandArgs)interfaceCommandParameter;
+                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                var activeKeymap = commandParameter.TextEditorService.OptionsStateWrap.Value.Options.Keymap
+                var activeKeymap = commandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
                     ?? TextEditorKeymapFacts.DefaultKeymap;
 
                 if (activeKeymap is not TextEditorKeymapVim textEditorKeymapVim)
                     return;
 
-                await TextEditorCommandDefaultFacts.NewLineBelow.DoAsyncFunc.Invoke(commandParameter);
+                await TextEditorCommandDefaultFacts.NewLineBelow.DoAsyncFunc.Invoke(commandArgs);
                 textEditorKeymapVim.ActiveVimMode = VimMode.Insert;
             },
             true,
@@ -148,17 +148,17 @@ public static partial class TextEditorCommandVimFacts
             "Vim::NewLineBelow()");
 
         public static readonly TextEditorCommand NewLineAbove = new(
-            async interfaceCommandParameter =>
+            async interfaceCommandArgs =>
             {
-                var commandParameter = (TextEditorCommandArgs)interfaceCommandParameter;
+                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                var activeKeymap = commandParameter.TextEditorService.OptionsStateWrap.Value.Options.Keymap
+                var activeKeymap = commandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
                     ?? TextEditorKeymapFacts.DefaultKeymap;
 
                 if (activeKeymap is not TextEditorKeymapVim textEditorKeymapVim)
                     return;
 
-                await TextEditorCommandDefaultFacts.NewLineAbove.DoAsyncFunc.Invoke(commandParameter);
+                await TextEditorCommandDefaultFacts.NewLineAbove.DoAsyncFunc.Invoke(commandArgs);
                 textEditorKeymapVim.ActiveVimMode = VimMode.Insert;
             },
             true,
