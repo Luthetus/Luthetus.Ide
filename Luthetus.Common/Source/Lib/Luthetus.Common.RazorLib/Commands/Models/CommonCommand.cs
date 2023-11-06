@@ -3,11 +3,11 @@
 public class CommonCommand : CommandWithType<CommonCommandArgs>
 {
     public CommonCommand(
-            Func<ICommandArgs, Task> doAsyncFunc,
             string displayName,
             string internalIdentifier,
-            bool shouldBubble)
-        : base(doAsyncFunc, displayName, internalIdentifier, shouldBubble)
+            bool shouldBubble,
+            Func<ICommandArgs, Task> doAsyncFunc)
+        : base(displayName, internalIdentifier, shouldBubble, doAsyncFunc)
     {
     }
 }

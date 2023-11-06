@@ -20,14 +20,14 @@ public class CommandCommonTests
         var shouldBubble = false;
 
         var commandCommon = new CommonCommand(
+            displayName,
+            internalIdentifier,
+            shouldBubble,
             commandParameter => 
             {
                 number++;
                 return Task.CompletedTask;
-            },
-            displayName,
-            internalIdentifier,
-            shouldBubble);
+            });
 
         await commandCommon.DoAsyncFunc.Invoke(new CommonCommandArgs());
 

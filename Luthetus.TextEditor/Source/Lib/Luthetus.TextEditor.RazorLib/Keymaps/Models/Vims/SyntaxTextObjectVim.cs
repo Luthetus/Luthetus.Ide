@@ -6,6 +6,7 @@ using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
+using Luthetus.TextEditor.RazorLib.Edits.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 
@@ -76,24 +77,22 @@ public static class SyntaxTextObjectVim
                     {
                         // Move the cursor 1 column to the left
                         textEditorCommand = new TextEditorCommand(
-                                interfaceCommandParameter =>
-                                {
-                                    var commandParameter = (TextEditorCommandArgs)interfaceCommandParameter;
+                            "Vim::h", "vim_h", false, true, TextEditKind.None, null,
+                            interfaceCommandParameter =>
+                            {
+                                var commandParameter = (TextEditorCommandArgs)interfaceCommandParameter;
 
-                                    TextEditorCursor.MoveCursor(
-                                        new KeyboardEventArgs
-                                        {
-                                            Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
-                                            ShiftKey = shiftKey
-                                        },
-                                        commandParameter.PrimaryCursorSnapshot.UserCursor,
-                                        commandParameter.Model);
+                                TextEditorCursor.MoveCursor(
+                                    new KeyboardEventArgs
+                                    {
+                                        Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
+                                        ShiftKey = shiftKey
+                                    },
+                                    commandParameter.PrimaryCursorSnapshot.UserCursor,
+                                    commandParameter.Model);
 
-                                    return Task.CompletedTask;
-                                },
-                                true,
-                                "Vim::h",
-                                "vim_h");
+                                return Task.CompletedTask;
+                            });
 
                         return true;
                     }
@@ -101,6 +100,7 @@ public static class SyntaxTextObjectVim
                     {
                         // Move the cursor 1 row down
                         textEditorCommand = new TextEditorCommand(
+                            "Vim::j", "vim_j", false, true, TextEditKind.None, null,
                             interfaceCommandParameter =>
                             {
                                 var commandParameter = (TextEditorCommandArgs)interfaceCommandParameter;
@@ -115,10 +115,7 @@ public static class SyntaxTextObjectVim
                                     commandParameter.Model);
 
                                 return Task.CompletedTask;
-                            },
-                            true,
-                            "Vim::j",
-                            "vim_j");
+                            });
 
                         return true;
                     }
@@ -126,6 +123,7 @@ public static class SyntaxTextObjectVim
                     {
                         // Move the cursor 1 row up
                         textEditorCommand = new TextEditorCommand(
+                            "Vim::k", "vim_k", false, true, TextEditKind.None, null,
                             interfaceCommandParameter =>
                             {
                                 var commandParameter = (TextEditorCommandArgs)interfaceCommandParameter;
@@ -140,10 +138,7 @@ public static class SyntaxTextObjectVim
                                     commandParameter.Model);
 
                                 return Task.CompletedTask;
-                            },
-                            true,
-                            "Vim::k",
-                            "vim_k");
+                            });
 
                         return true;
                     }
@@ -151,6 +146,7 @@ public static class SyntaxTextObjectVim
                     {
                         // Move the cursor 1 column to the right
                         textEditorCommand = new TextEditorCommand(
+                            "Vim::l", "vim_l", false, true, TextEditKind.None, null,
                             interfaceCommandParameter =>
                             {
                                 var commandParameter = (TextEditorCommandArgs)interfaceCommandParameter;
@@ -165,10 +161,7 @@ public static class SyntaxTextObjectVim
                                     commandParameter.Model);
 
                                 return Task.CompletedTask;
-                            },
-                            true,
-                            "Vim::l",
-                            "vim_l");
+                            });
 
                         return true;
                     }
@@ -182,6 +175,7 @@ public static class SyntaxTextObjectVim
                         }
                         // Move the cursor to the end of the current line.
                         textEditorCommand = new TextEditorCommand(
+                            "Vim::$", "vim_$", false, true, TextEditKind.None, null,
                             interfaceCommandParameter =>
                             {
                                 var commandParameter = (TextEditorCommandArgs)interfaceCommandParameter;
@@ -196,10 +190,7 @@ public static class SyntaxTextObjectVim
                                     commandParameter.Model);
 
                                 return Task.CompletedTask;
-                            },
-                            true,
-                            "Vim::$",
-                            "vim_$");
+                            });
 
                         return true;
                     }
@@ -207,6 +198,7 @@ public static class SyntaxTextObjectVim
                     {
                         // Move the cursor to the start of the current line.
                         textEditorCommand = new TextEditorCommand(
+                            "Vim::0", "vim_0", false, true, TextEditKind.None, null,
                             interfaceCommandParameter =>
                             {
                                 var commandParameter = (TextEditorCommandArgs)interfaceCommandParameter;
@@ -221,10 +213,7 @@ public static class SyntaxTextObjectVim
                                     commandParameter.Model);
 
                                 return Task.CompletedTask;
-                            },
-                            true,
-                            "Vim::0",
-                            "vim_0");
+                            });
 
                         return true;
                     }

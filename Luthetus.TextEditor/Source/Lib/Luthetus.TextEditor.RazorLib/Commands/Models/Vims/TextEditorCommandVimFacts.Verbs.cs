@@ -1,5 +1,6 @@
 ﻿using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
@@ -11,15 +12,14 @@ public static partial class TextEditorCommandVimFacts
     public static class Verbs
     {
         public static readonly TextEditorCommand DeleteLine = new(
+            "Vim::Delete(Line)", "Vim::Delete(Line)", false, true, TextEditKind.None, null,
             async commandArgs =>
             {
                 await TextEditorCommandDefaultFacts.Cut.DoAsyncFunc.Invoke(commandArgs);
-            },
-            true,
-            "Vim::Delete(Line)",
-            "Vim::Delete(Line)");
+            });
 
         public static readonly TextEditorCommand ChangeLine = new(
+            "Vim::Change(Line)", "Vim::Change(Line)", false, true, TextEditKind.None, null,
             async interfaceCommandArgs =>
             {
                 var commandParameter = (TextEditorCommandArgs)interfaceCommandArgs;
@@ -32,12 +32,10 @@ public static partial class TextEditorCommandVimFacts
 
                 await DeleteLine.DoAsyncFunc.Invoke(commandParameter);
                 vimKeymap.ActiveVimMode = VimMode.Insert;
-            },
-            true,
-            "Vim::Change(Line)",
-            "Vim::Change(Line)");
+            });
 
         public static TextEditorCommand GetDeleteMotion(TextEditorCommand innerTextEditorCommand) => new(
+            $"Vim::Delete({innerTextEditorCommand.DisplayName})", $"Vim::Delete({innerTextEditorCommand.DisplayName})", false, true, TextEditKind.None, null,
             async interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
@@ -76,12 +74,10 @@ public static partial class TextEditorCommandVimFacts
                     CancellationToken.None);
 
                 commandArgs.TextEditorService.Model.DeleteTextByRange(deleteTextTextEditorModelAction);
-            },
-            true,
-            $"Vim::Delete({innerTextEditorCommand.DisplayName})",
-            $"Vim::Delete({innerTextEditorCommand.DisplayName})");
+            });
 
         public static TextEditorCommand GetChangeMotion(TextEditorCommand innerTextEditorCommand) => new(
+            $"Vim::Change({innerTextEditorCommand.DisplayName})", $"Vim::Change({innerTextEditorCommand.DisplayName})", false, true, TextEditKind.None, null,
             async interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
@@ -96,12 +92,10 @@ public static partial class TextEditorCommandVimFacts
 
                 await deleteMotion.DoAsyncFunc.Invoke(commandArgs);
                 textEditorKeymapVim.ActiveVimMode = VimMode.Insert;
-            },
-            true,
-            $"Vim::Change({innerTextEditorCommand.DisplayName})",
-            $"Vim::Change({innerTextEditorCommand.DisplayName})");
+            });
 
         public static readonly TextEditorCommand ChangeSelection = new(
+            "Vim::Change(Selection)", "Vim::Change(Selection)", false, true, TextEditKind.None, null,
             async interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
@@ -114,22 +108,23 @@ public static partial class TextEditorCommandVimFacts
 
                 await TextEditorCommandDefaultFacts.Cut.DoAsyncFunc.Invoke(commandArgs);
                 textEditorKeymapVim.ActiveVimMode = VimMode.Insert;
-            },
-            true,
-            "Vim::Change(Selection)",
-            "Vim::Change(Selection)");
+            });
 
         public static readonly TextEditorCommand Yank = new(
+            "Vim::Change(Selection)",
+            "Vim::Change(Selection)",
+            false,
+            true,
+            TextEditKind.None,
+            null,
             async commandArgs =>
             {
                 await TextEditorCommandDefaultFacts.Copy.DoAsyncFunc.Invoke(commandArgs);
                 await TextEditorCommandDefaultFacts.ClearTextSelection.DoAsyncFunc.Invoke(commandArgs);
-            },
-            true,
-            "Vim::Change(Selection)",
-            "Vim::Change(Selection)");
+            });
 
         public static readonly TextEditorCommand NewLineBelow = new(
+            "Vim::NewLineBelow()", "Vim::NewLineBelow()", false, true, TextEditKind.None, null,
             async interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
@@ -142,12 +137,10 @@ public static partial class TextEditorCommandVimFacts
 
                 await TextEditorCommandDefaultFacts.NewLineBelow.DoAsyncFunc.Invoke(commandArgs);
                 textEditorKeymapVim.ActiveVimMode = VimMode.Insert;
-            },
-            true,
-            "Vim::NewLineBelow()",
-            "Vim::NewLineBelow()");
+            });
 
         public static readonly TextEditorCommand NewLineAbove = new(
+            "Vim::NewLineAbove()", "Vim::NewLineAbove()", false, true, TextEditKind.None, null,
             async interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
@@ -160,9 +153,6 @@ public static partial class TextEditorCommandVimFacts
 
                 await TextEditorCommandDefaultFacts.NewLineAbove.DoAsyncFunc.Invoke(commandArgs);
                 textEditorKeymapVim.ActiveVimMode = VimMode.Insert;
-            },
-            true,
-            "Vim::NewLineAbove()",
-            "Vim::NewLineAbove()");
+            });
     }
 }

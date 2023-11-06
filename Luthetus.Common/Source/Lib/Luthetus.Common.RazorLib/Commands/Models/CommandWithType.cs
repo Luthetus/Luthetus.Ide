@@ -3,11 +3,11 @@
 public abstract class CommandWithType<T> : CommandNoType where T : notnull
 {
     protected CommandWithType(
-            Func<ICommandArgs, Task> doAsyncFunc,
             string displayName,
             string internalIdentifier,
-            bool shouldBubble) 
-        : base(doAsyncFunc, displayName, internalIdentifier, shouldBubble)
+            bool shouldBubble,
+            Func<ICommandArgs, Task> doAsyncFunc) 
+        : base(displayName, internalIdentifier, shouldBubble, doAsyncFunc)
     {
     }
 }

@@ -16,12 +16,11 @@ namespace Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 public static class TextEditorCommandDefaultFacts
 {
     public static readonly TextEditorCommand DoNothingDiscard = new(
-        _ => Task.CompletedTask,
-        false,
-        "DoNothingDiscard",
-        "defaults_do-nothing-discard");
+        "DoNothingDiscard", "defaults_do-nothing-discard", false, false, TextEditKind.None, null,
+        _ => Task.CompletedTask);
 
     public static readonly TextEditorCommand Copy = new(
+        "Copy", "defaults_copy", false, false, TextEditKind.None, null,
         async interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
@@ -36,12 +35,10 @@ public static class TextEditorCommandDefaultFacts
 
             await commandArgs.ClipboardService.SetClipboard(selectedText);
             await commandArgs.ViewModel.FocusAsync();
-        },
-        false,
-        "Copy",
-        "defaults_copy");
+        });
 
     public static readonly TextEditorCommand Cut = new(
+        "Cut", "defaults_cut", false, true, TextEditKind.None, null,
         async interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
@@ -83,12 +80,10 @@ public static class TextEditorCommandDefaultFacts
                     cursorSnapshotsBag,
                     new KeyboardEventArgs { Key = KeyboardKeyFacts.MetaKeys.DELETE },
                     CancellationToken.None));
-        },
-        true,
-        "Cut",
-        "defaults_cut");
+        });
 
     public static readonly TextEditorCommand Paste = new(
+        "Paste", "defaults_paste", false, true, TextEditKind.Other, "defaults_paste",
         async interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
@@ -101,14 +96,15 @@ public static class TextEditorCommandDefaultFacts
                     new[] { commandArgs.PrimaryCursorSnapshot }.ToImmutableArray(),
                     clipboard,
                     CancellationToken.None));
-        },
-        true,
-        "Paste",
-        "defaults_paste",
-        TextEditKind.Other,
-        "defaults_paste");
+        });
 
     public static readonly TextEditorCommand Save = new(
+        "Save",
+        "defaults_save",
+        false,
+        false,
+        TextEditKind.None,
+        null,
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
@@ -125,18 +121,16 @@ public static class TextEditorCommandDefaultFacts
             }
 
             return Task.CompletedTask;
-        },
-        false,
-        "Save",
-        "defaults_save");
+        });
 
     public static readonly TextEditorCommand SelectAll = new(
+        "Select All", "defaults_select-all", false, false, TextEditKind.None, null,
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
             var primaryCursor = commandArgs.PrimaryCursorSnapshot.UserCursor;
-            
+
             primaryCursor.Selection.AnchorPositionIndex = 0;
             primaryCursor.Selection.EndingPositionIndex = commandArgs.Model.DocumentLength;
 
@@ -145,107 +139,87 @@ public static class TextEditorCommandDefaultFacts
                 previousViewModel => previousViewModel with { }); // "with { }" is a Hack to re-render
 
             return Task.CompletedTask;
-        },
-        false,
-        "Select All",
-        "defaults_select-all");
+        });
 
     public static readonly TextEditorCommand Undo = new(
+        "Undo", "defaults_undo", false, true, TextEditKind.None, null,
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
             commandArgs.TextEditorService.Model.UndoEdit(commandArgs.Model.ResourceUri);
             return Task.CompletedTask;
-        },
-        true,
-        "Undo",
-        "defaults_undo");
+        });
 
     public static readonly TextEditorCommand Redo = new(
+        "Redo", "defaults_redo", false, true, TextEditKind.None, null,
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
             commandArgs.TextEditorService.Model.RedoEdit(commandArgs.Model.ResourceUri);
             return Task.CompletedTask;
-        },
-        true,
-        "Redo",
-        "defaults_redo");
+        });
 
     public static readonly TextEditorCommand Remeasure = new(
+        "Remeasure", "defaults_remeasure", false, false, TextEditKind.None, null,
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
             commandArgs.TextEditorService.Options.SetRenderStateKey(Key<RenderState>.NewKey());
             return Task.CompletedTask;
-        },
-        false,
-        "Remeasure",
-        "defaults_remeasure");
+        });
 
     public static readonly TextEditorCommand ScrollLineDown = new(
+        "Scroll Line Down", "defaults_scroll-line-down", false, false, TextEditKind.None, null,
         async interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
             await commandArgs.ViewModel.MutateScrollVerticalPositionByLinesAsync(1);
-        },
-        false,
-        "Scroll Line Down",
-        "defaults_scroll-line-down");
+        });
 
     public static readonly TextEditorCommand ScrollLineUp = new(
+        "Scroll Line Up", "defaults_scroll-line-up", false, false, TextEditKind.None, null,
         async interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
             await commandArgs.ViewModel.MutateScrollVerticalPositionByLinesAsync(-1);
-        },
-        false,
-        "Scroll Line Up",
-        "defaults_scroll-line-up");
+        });
 
     public static readonly TextEditorCommand ScrollPageDown = new(
+        "Scroll Page Down", "defaults_scroll-page-down", false, false, TextEditKind.None, null,
         async interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
             await commandArgs.ViewModel.MutateScrollVerticalPositionByPagesAsync(1);
-        },
-        false,
-        "Scroll Page Down",
-        "defaults_scroll-page-down");
+        });
 
     public static readonly TextEditorCommand ScrollPageUp = new(
+        "Scroll Page Up", "defaults_scroll-page-up", false, false, TextEditKind.None, null,
         async interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
             await commandArgs.ViewModel.MutateScrollVerticalPositionByPagesAsync(-1);
-        },
-        false,
-        "Scroll Page Up",
-        "defaults_scroll-page-up");
+        });
 
     public static readonly TextEditorCommand CursorMovePageBottom = new(
+        "Move Cursor to Bottom of the Page", "defaults_cursor-move-page-bottom", false, false, TextEditKind.None, null,
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
             commandArgs.ViewModel.CursorMovePageBottom();
             return Task.CompletedTask;
-        },
-        false,
-        "Move Cursor to Bottom of the Page",
-        "defaults_cursor-move-page-bottom");
+        });
 
     public static readonly TextEditorCommand CursorMovePageTop = new(
+        "Move Cursor to Top of the Page", "defaults_cursor-move-page-top", false, false, TextEditKind.None, null,
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
             commandArgs.ViewModel.CursorMovePageTop();
             return Task.CompletedTask;
-        },
-        false,
-        "Move Cursor to Top of the Page",
-        "defaults_cursor-move-page-top");
+        });
 
     public static readonly TextEditorCommand Duplicate = new(
+        "Duplicate", "defaults_duplicate", false, false, TextEditKind.None, null,
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
@@ -283,12 +257,10 @@ public static class TextEditorCommandDefaultFacts
 
             commandArgs.TextEditorService.Model.InsertText(insertTextAction);
             return Task.CompletedTask;
-        },
-        false,
-        "Duplicate",
-        "defaults_duplicate");
+        });
 
     public static readonly TextEditorCommand IndentMore = new(
+        "Indent More", "defaults_indent-more", false, false, TextEditKind.None, null,
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
@@ -344,16 +316,14 @@ public static class TextEditorCommandDefaultFacts
                 (userCursorIndexCoordinates.rowIndex, userCursorIndexCoordinates.columnIndex + 1);
 
             return Task.CompletedTask;
-        },
-        false,
-        "Indent More",
-        "defaults_indent-more");
+        });
 
     public static readonly TextEditorCommand IndentLess = new(
+        "Indent Less", "defaults_indent-less", false, false, TextEditKind.None, null,
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-            
+
             var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(
                 commandArgs.PrimaryCursorSnapshot.ImmutableCursor.ImmutableSelection);
 
@@ -457,23 +427,19 @@ public static class TextEditorCommandDefaultFacts
             }
 
             return Task.CompletedTask;
-        },
-        false,
-        "Indent Less",
-        "defaults_indent-less");
+        });
 
     public static readonly TextEditorCommand ClearTextSelection = new(
+        "ClearTextSelection", "defaults_clear-text-selection", false, false, TextEditKind.None, null,
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
             commandArgs.PrimaryCursorSnapshot.UserCursor.Selection.AnchorPositionIndex = null;
             return Task.CompletedTask;
-        },
-        false,
-        "ClearTextSelection",
-        "defaults_clear-text-selection");
+        });
 
     public static readonly TextEditorCommand NewLineBelow = new(
+        "NewLineBelow", "defaults_new-line-below", false, false, TextEditKind.None, null,
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
@@ -495,12 +461,10 @@ public static class TextEditorCommandDefaultFacts
                     CancellationToken.None));
 
             return Task.CompletedTask;
-        },
-        false,
-        "NewLineBelow",
-        "defaults_new-line-below");
+        });
 
     public static readonly TextEditorCommand NewLineAbove = new(
+        "NewLineBelow", "defaults_new-line-below", false, false, TextEditKind.None, null,
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
@@ -527,16 +491,19 @@ public static class TextEditorCommandDefaultFacts
             }
 
             return Task.CompletedTask;
-        },
-        false,
-        "NewLineBelow",
-        "defaults_new-line-below");
+        });
 
     public static TextEditorCommand GoToMatchingCharacterFactory(bool shouldSelectText) => new(
+        "GoToMatchingCharacter",
+        "defaults_go-to-matching-character",
+        false,
+        true,
+        TextEditKind.None,
+        null,
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-            
+
             var cursorPositionIndex = commandArgs.Model.GetCursorPositionIndex(
                 commandArgs.PrimaryCursorSnapshot.UserCursor);
 
@@ -648,12 +615,10 @@ public static class TextEditorCommandDefaultFacts
             commandArgs.PrimaryCursorSnapshot.UserCursor.IndexCoordinates = temporaryCursor.IndexCoordinates;
 
             return Task.CompletedTask;
-        },
-        true,
-        "GoToMatchingCharacter",
-        "defaults_go-to-matching-character");
+        });
 
     public static readonly TextEditorCommand GoToDefinition = new(
+        "GoToDefinition", "defaults_go-to-definition", false, true, TextEditKind.None, null,
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
@@ -722,32 +687,28 @@ public static class TextEditorCommandDefaultFacts
                 commandArgs.ShowViewModelAction.Invoke(firstDefinitionViewModel.ViewModelKey);
 
             return Task.CompletedTask;
-        },
-        true,
-        "GoToDefinition",
-        "defaults_go-to-definition");
+        });
 
     public static readonly TextEditorCommand ShowFindDialog = new(
+        "OpenFindDialog", "defaults_open-find-dialog", false, false, TextEditKind.None, null,
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
             commandArgs.TextEditorService.Options.ShowFindDialog();
             return Task.CompletedTask;
-        },
-        false,
-        "OpenFindDialog",
-        "defaults_open-find-dialog");
+        });
 
     /// <summary>
     /// <see cref="ShowTooltipByCursorPosition"/> is to fire the @onmouseover event
     /// so to speak. Such that a tooltip appears if one were to have moused over a symbol or etc...
     /// </summary>
     public static readonly TextEditorCommand ShowTooltipByCursorPosition = new(
+        "ShowTooltipByCursorPosition", "defaults_show-tooltip-by-cursor-position", false, true, TextEditKind.None, null,
         async interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            if (commandArgs.JsRuntime is null || 
+            if (commandArgs.JsRuntime is null ||
                 commandArgs.HandleMouseStoppedMovingEventAsyncFunc is null)
             {
                 return;
@@ -759,7 +720,7 @@ public static class TextEditorCommandDefaultFacts
 
             elementPositionInPixels = elementPositionInPixels with
             {
-                Top = elementPositionInPixels.Top + 
+                Top = elementPositionInPixels.Top +
                     (.9 * commandArgs.ViewModel.VirtualizationResult.CharAndRowMeasurements.RowHeight)
             };
 
@@ -768,8 +729,5 @@ public static class TextEditorCommandDefaultFacts
                 ClientX = elementPositionInPixels.Left,
                 ClientY = elementPositionInPixels.Top
             });
-        },
-        true,
-        "ShowTooltipByCursorPosition",
-        "defaults_show-tooltip-by-cursor-position");
+        });
 }

@@ -1,5 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
+using Luthetus.TextEditor.RazorLib.Edits.Models;
 using System.Collections.Immutable;
 using System.Text;
 
@@ -68,16 +69,14 @@ public static class SyntaxRepeatVim
 
             // Repeat the inner TextEditorCommand using a for loop
             textEditorCommand = new TextEditorCommand(
+                textEditorCommandDisplayName, textEditorCommandDisplayName, false, true, TextEditKind.None, null,
                 async textEditorCommandParameter =>
                 {
                     for (int index = 0; index < intValue; index++)
                     {
                         await innerTextEditorCommand.DoAsyncFunc.Invoke(textEditorCommandParameter);
                     }
-                },
-                true,
-                textEditorCommandDisplayName,
-                textEditorCommandDisplayName);
+                });
         }
         else
         {

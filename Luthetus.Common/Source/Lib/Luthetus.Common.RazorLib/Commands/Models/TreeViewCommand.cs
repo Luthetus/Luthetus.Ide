@@ -3,11 +3,11 @@
 public class TreeViewCommand : CommandWithType<TreeViewCommandArgs>
 {
     public TreeViewCommand(
-            Func<ICommandArgs, Task> doAsyncFunc,
             string displayName,
             string internalIdentifier,
-            bool shouldBubble)
-        : base(doAsyncFunc, displayName, internalIdentifier, shouldBubble)
+            bool shouldBubble,
+            Func<ICommandArgs, Task> doAsyncFunc)
+        : base(displayName, internalIdentifier, shouldBubble, doAsyncFunc)
     {
     }
 }
