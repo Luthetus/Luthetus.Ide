@@ -59,7 +59,12 @@ public class TreeViewCommandArgsTests
 
         var treeViewCommandArgs = new TreeViewCommandArgs(
             treeViewService,
-            treeViewContainer,);
+            treeViewContainer,
+            null,
+            () => Task.CompletedTask,
+            null,
+            null,
+            null);
 
         throw new NotImplementedException();
     }
@@ -68,7 +73,7 @@ public class TreeViewCommandArgsTests
     /// <see cref="TreeViewCommandArgs.TreeViewContainer"/>
     /// </summary>
     [Fact]
-    public void TreeViewState()
+    public void TreeViewContainer()
     {
         throw new NotImplementedException();
     }
