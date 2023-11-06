@@ -12,9 +12,9 @@ public partial class WatchWindowContextMenuDisplay : ComponentBase
     private ITreeViewService TreeViewService { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public TreeViewCommandParameter TreeViewCommandParameter { get; set; } = null!;
+    public TreeViewCommandArgs TreeViewCommandParameter { get; set; } = null!;
 
-    public static string GetContextMenuCssStyleString(TreeViewCommandParameter? commandParameter)
+    public static string GetContextMenuCssStyleString(TreeViewCommandArgs? commandParameter)
     {
         if (commandParameter?.ContextMenuFixedPosition is null)
             return "display: none;";
@@ -25,7 +25,7 @@ public partial class WatchWindowContextMenuDisplay : ComponentBase
         return $"{left} {top} position: fixed;";
     }
 
-    private MenuRecord GetMenuRecord(TreeViewCommandParameter treeViewCommandParameter)
+    private MenuRecord GetMenuRecord(TreeViewCommandArgs treeViewCommandParameter)
     {
         var menuOptionRecordBag = new List<MenuOptionRecord>();
 

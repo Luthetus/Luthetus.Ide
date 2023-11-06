@@ -1,9 +1,9 @@
 ﻿namespace Luthetus.Common.RazorLib.Commands.Models;
 
-public class CommandTreeView : CommandWithType<TreeViewCommandParameter>
+public class TreeViewCommand : CommandWithType<TreeViewCommandArgs>
 {
-    protected CommandTreeView(
-            Func<ICommandParameter, Task> doAsyncFunc,
+    public TreeViewCommand(
+            Func<ICommandArgs, Task> doAsyncFunc,
             string displayName,
             string internalIdentifier,
             bool shouldBubble)

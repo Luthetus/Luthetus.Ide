@@ -2,9 +2,9 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
-using Luthetus.TextEditor.RazorLib.Measurements.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -13,9 +13,9 @@ public partial interface ITextEditorService
     public interface IViewModelApi
     {
         public void Dispose(Key<TextEditorViewModel> textEditorViewModelKey);
-        public Task<ElementMeasurementsInPixels> MeasureElementInPixelsAsync(string elementId);
+        public Task<TextEditorMeasurements> GetTextEditorMeasurementsAsync(string elementId);
         
-        public Task<CharacterWidthAndRowHeight> MeasureCharacterWidthAndRowHeightAsync(
+        public Task<CharAndRowMeasurements> MeasureCharacterWidthAndRowHeightAsync(
             string measureCharacterWidthAndRowHeightElementId,
             int countOfTestCharacters);
 
@@ -208,17 +208,17 @@ public partial interface ITextEditorService
                 x => x.ViewModelKey == textEditorViewModelKey);
         }
 
-        public async Task<ElementMeasurementsInPixels> MeasureElementInPixelsAsync(string elementId)
+        public async Task<TextEditorMeasurements> GetTextEditorMeasurementsAsync(string elementId)
         {
-            return await _jsRuntime.InvokeAsync<ElementMeasurementsInPixels>("luthetusTextEditor.getElementMeasurementsInPixelsById",
+            return await _jsRuntime.InvokeAsync<TextEditorMeasurements>("luthetusTextEditor.getTextEditorMeasurementsInPixelsById",
                 elementId);
         }
 
-        public async Task<CharacterWidthAndRowHeight> MeasureCharacterWidthAndRowHeightAsync(
+        public async Task<CharAndRowMeasurements> MeasureCharacterWidthAndRowHeightAsync(
             string measureCharacterWidthAndRowHeightElementId,
             int countOfTestCharacters)
         {
-            return await _jsRuntime.InvokeAsync<CharacterWidthAndRowHeight>("luthetusTextEditor.measureCharacterWidthAndRowHeight",
+            return await _jsRuntime.InvokeAsync<CharAndRowMeasurements>("luthetusTextEditor.getCharAndRowMeasurementsInPixelsById",
                 measureCharacterWidthAndRowHeightElementId,
                 countOfTestCharacters);
         }

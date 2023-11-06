@@ -8,15 +8,6 @@ namespace Luthetus.Common.Tests.Basis.Commands.Models;
 public class CommandNoTypeTests
 {
     /// <summary>
-    /// <see cref="CommandNoType(Func{ICommandParameter, Task}, string, string, bool)"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="CommandNoType.DoAsyncFunc"/>
     /// </summary>
     [Fact]

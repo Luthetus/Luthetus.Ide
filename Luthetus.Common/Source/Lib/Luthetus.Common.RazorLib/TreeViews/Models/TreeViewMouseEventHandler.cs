@@ -16,7 +16,7 @@ public class TreeViewMouseEventHandler
     }
 
     /// <summary>Used for handing "onclick" events within the user interface</summary>
-    public virtual void OnClick(TreeViewCommandParameter commandParameter)
+    public virtual void OnClick(TreeViewCommandArgs commandParameter)
     {
         if (commandParameter.MouseEventArgs is not null &&
             commandParameter.MouseEventArgs.CtrlKey &&
@@ -31,20 +31,20 @@ public class TreeViewMouseEventHandler
     }
 
     /// <summary>Used for handing "ondblclick" events within the user interface</summary>
-    public virtual void OnDoubleClick(TreeViewCommandParameter commandParameter)
+    public virtual void OnDoubleClick(TreeViewCommandArgs commandParameter)
     {
         _ = Task.Run(async () => await OnDoubleClickAsync(commandParameter));
         return;
     }
 
     /// <summary>Used for handing "ondblclick" events within the user interface</summary>
-    public virtual Task OnDoubleClickAsync(TreeViewCommandParameter commandParameter)
+    public virtual Task OnDoubleClickAsync(TreeViewCommandArgs commandParameter)
     {
         return Task.CompletedTask;
     }
 
     /// <summary>Used for handing "onmousedown" events within the user interface</summary>
-    public virtual void OnMouseDown(TreeViewCommandParameter commandParameter)
+    public virtual void OnMouseDown(TreeViewCommandArgs commandParameter)
     {
         if (commandParameter.TargetNode is null)
             return;

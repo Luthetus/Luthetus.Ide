@@ -3,10 +3,10 @@ using Luthetus.TextEditor.RazorLib.Edits.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models;
 
-public class CommandTextEditor : CommandWithType<TextEditorCommandParameter>
+public class TextEditorCommand : CommandWithType<TextEditorCommandArgs>
 {
-    public CommandTextEditor(
-            Func<ICommandParameter, Task> doAsyncFunc,
+    public TextEditorCommand(
+            Func<ICommandArgs, Task> doAsyncFunc,
             bool shouldScrollCursorIntoView,
             string displayName,
             string internalIdentifier,

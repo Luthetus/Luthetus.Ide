@@ -27,7 +27,7 @@ public partial class FolderExplorerContextMenu : ComponentBase
     private ITreeViewService TreeViewService { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public TreeViewCommandParameter TreeViewCommandParameter { get; set; } = null!;
+    public TreeViewCommandArgs TreeViewCommandParameter { get; set; } = null!;
 
     public static readonly Key<DropdownRecord> ContextMenuEventDropdownKey = Key<DropdownRecord>.NewKey();
 
@@ -37,7 +37,7 @@ public partial class FolderExplorerContextMenu : ComponentBase
     /// </summary>
     public static TreeViewNoType? ParentOfCutFile;
 
-    private MenuRecord GetMenuRecord(TreeViewCommandParameter treeViewCommandParameter)
+    private MenuRecord GetMenuRecord(TreeViewCommandArgs treeViewCommandParameter)
     {
         if (treeViewCommandParameter.TargetNode is null)
             return MenuRecord.Empty;
@@ -142,7 +142,7 @@ public partial class FolderExplorerContextMenu : ComponentBase
             false);
     }
 
-    public static string GetContextMenuCssStyleString(TreeViewCommandParameter? treeViewCommandParameter)
+    public static string GetContextMenuCssStyleString(TreeViewCommandArgs? treeViewCommandParameter)
     {
         if (treeViewCommandParameter?.ContextMenuFixedPosition is null)
             return "display: none;";

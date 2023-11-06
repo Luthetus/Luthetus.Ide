@@ -17,7 +17,7 @@ public class CompilerServiceExplorerTreeViewMouseEventHandler : TreeViewMouseEve
         _editorSync = editorSync;
     }
 
-    public override Task OnDoubleClickAsync(TreeViewCommandParameter commandParameter)
+    public override Task OnDoubleClickAsync(TreeViewCommandArgs commandParameter)
     {
         base.OnDoubleClickAsync(commandParameter);
 

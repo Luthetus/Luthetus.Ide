@@ -1,4 +1,8 @@
 ﻿using Luthetus.Common.RazorLib.Clipboards.Models;
+using Luthetus.Common.RazorLib.Misc;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.JSInterop;
 
 namespace Luthetus.Common.Tests.Basis.Clipboards.Models;
@@ -14,7 +18,14 @@ public class JavaScriptInteropClipboardServiceTests
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
+        var services = new ServiceCollection()
+            .AddSingleton<ILoggerFactory, NullLoggerFactory>()
+            .AddSingleton<IJSRuntime, DoNothingJsRuntime>();
+
+        var sp = services.BuildServiceProvider();
+
+        var javaScriptInteropClipboardService = new JavaScriptInteropClipboardService(
+            sp.GetRequiredService<IJSRuntime>());
     }
 
     /// <summary>

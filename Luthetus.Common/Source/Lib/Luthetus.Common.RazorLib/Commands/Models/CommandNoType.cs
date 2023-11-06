@@ -3,7 +3,7 @@
 public abstract class CommandNoType
 {
     public CommandNoType(
-        Func<ICommandParameter, Task> doAsyncFunc,
+        Func<ICommandArgs, Task> doAsyncFunc,
         string displayName,
         string internalIdentifier,
         bool shouldBubble)
@@ -14,7 +14,7 @@ public abstract class CommandNoType
         ShouldBubble = shouldBubble;
     }
 
-    public Func<ICommandParameter, Task> DoAsyncFunc { get; }
+    public Func<ICommandArgs, Task> DoAsyncFunc { get; }
     public string DisplayName { get; }
     public string InternalIdentifier { get; }
     public bool ShouldBubble { get; }

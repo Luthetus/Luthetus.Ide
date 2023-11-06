@@ -3,12 +3,12 @@
 namespace Luthetus.Common.Tests.Basis.Commands.Models;
 
 /// <summary>
-/// <see cref="CommandTreeView"/>
+/// <see cref="TreeViewCommand"/>
 /// </summary>
 public class CommandTreeViewTests
 {
     /// <summary>
-    /// <see cref="CommandTreeView(Func{ICommandParameter, Task}, string, string, bool)"/>
+    /// <see cref="TreeViewCommand(Func{ICommandArgs, Task}, string, string, bool)"/>
     /// </summary>
     [Fact]
     public void Constructor()

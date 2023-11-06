@@ -18,7 +18,8 @@ public class ContinuousBackgroundTaskWorkerTests
     public void Constructor()
     {
         var services = new ServiceCollection()
-            .AddSingleton<ILoggerFactory, NullLoggerFactory>();
+            .AddSingleton<ILoggerFactory, NullLoggerFactory>()
+            .AddSingleton<IBackgroundTaskService, BackgroundTaskServiceSynchronous>();
 
         var sp = services.BuildServiceProvider();
 
@@ -28,7 +29,5 @@ public class ContinuousBackgroundTaskWorkerTests
             queueKey,
             sp.GetRequiredService<IBackgroundTaskService>(),
             sp.GetRequiredService<ILoggerFactory>());
-
-        throw new NotImplementedException("TODO: Testing");
     }
 }

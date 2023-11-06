@@ -10,17 +10,17 @@ namespace Luthetus.Ide.RazorLib.CompilerServices.Displays;
 public partial class CompilerServiceExplorerTreeViewContextMenu : ComponentBase
 {
     [Parameter, EditorRequired]
-    public TreeViewCommandParameter TreeViewCommandParameter { get; set; } = null!;
+    public TreeViewCommandArgs TreeViewCommandParameter { get; set; } = null!;
 
     public static readonly Key<DropdownRecord> ContextMenuEventDropdownKey = Key<DropdownRecord>.NewKey();
 
-    private MenuRecord GetMenuRecord(TreeViewCommandParameter treeViewCommandParameter)
+    private MenuRecord GetMenuRecord(TreeViewCommandArgs treeViewCommandParameter)
     {
         return MenuRecord.Empty;
     }
 
     public static string GetContextMenuCssStyleString(
-        TreeViewCommandParameter? treeViewCommandParameter)
+        TreeViewCommandArgs? treeViewCommandParameter)
     {
         if (treeViewCommandParameter?.ContextMenuFixedPosition is null)
             return "display: none;";

@@ -41,7 +41,7 @@ window.luthetusTextEditor = {
             passive: false,
         });
     },
-    measureCharacterWidthAndRowHeight: function (elementId, amountOfCharactersRendered) {
+    getCharAndRowMeasurementsInPixelsById: function (elementId, amountOfCharactersRendered) {
         let element = document.getElementById(elementId);
 
         if (!element) {
@@ -354,7 +354,7 @@ window.luthetusTextEditor = {
 
         textEditorGutter.scrollTop = scrollTop;
     },
-    getElementMeasurementsInPixelsById: function (elementId) {
+    getTextEditorMeasurementsInPixelsById: function (elementId) {
         let elementReference = document.getElementById(elementId);
 
         // The function "getElementMeasurementsInPixelsByElementReference"

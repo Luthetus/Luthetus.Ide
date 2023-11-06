@@ -9,9 +9,9 @@ public static partial class TextEditorCommandVimFacts
 {
     public static class Motions
     {
-        public static readonly CommandTextEditor Word = new(interfaceCommandParameter =>
+        public static readonly TextEditorCommand Word = new(interfaceCommandParameter =>
             {
-                var commandParameter = (TextEditorCommandParameter)interfaceCommandParameter;
+                var commandParameter = (TextEditorCommandArgs)interfaceCommandParameter;
                 var textEditorCursor = commandParameter.PrimaryCursorSnapshot.UserCursor;
                 var textEditorModel = commandParameter.Model;
 
@@ -64,14 +64,14 @@ public static partial class TextEditorCommandVimFacts
             "Vim::Word()",
             "Vim::Word()");
 
-        public static readonly CommandTextEditor End = new(
-            async interfaceCommandParameter => await PerformEnd((TextEditorCommandParameter)interfaceCommandParameter),
+        public static readonly TextEditorCommand End = new(
+            async interfaceCommandParameter => await PerformEnd((TextEditorCommandArgs)interfaceCommandParameter),
             true,
             "Vim::End()",
             "Vim::End()");
 
         public static async Task PerformEnd(
-            TextEditorCommandParameter commandParameter,
+            TextEditorCommandArgs commandParameter,
             bool isRecursiveCall = false)
         {
             var textEditorCursor = commandParameter.PrimaryCursorSnapshot.UserCursor;
@@ -156,9 +156,9 @@ public static partial class TextEditorCommandVimFacts
             }
         }
 
-        public static readonly CommandTextEditor Back = new(interfaceCommandParameter =>
+        public static readonly TextEditorCommand Back = new(interfaceCommandParameter =>
             {
-                var commandParameter = (TextEditorCommandParameter)interfaceCommandParameter;
+                var commandParameter = (TextEditorCommandArgs)interfaceCommandParameter;
 
                 var textEditorCursor = commandParameter.PrimaryCursorSnapshot.UserCursor;
                 var textEditorModel = commandParameter.Model;
@@ -214,13 +214,13 @@ public static partial class TextEditorCommandVimFacts
             "Vim::Back()",
             "Vim::Back()");
 
-        public static CommandTextEditor GetVisual(
-            CommandTextEditor textEditorCommandMotion,
+        public static TextEditorCommand GetVisual(
+            TextEditorCommand textEditorCommandMotion,
             string displayName)
         {
-            return new CommandTextEditor(async interfaceCommandParameter =>
+            return new TextEditorCommand(async interfaceCommandParameter =>
             {
-                var commandParameter = (TextEditorCommandParameter)interfaceCommandParameter;
+                var commandParameter = (TextEditorCommandArgs)interfaceCommandParameter;
 
                 var activeKeymap = commandParameter.TextEditorService.OptionsStateWrap.Value.Options.Keymap
                     ?? TextEditorKeymapFacts.DefaultKeymap;
@@ -270,13 +270,13 @@ public static partial class TextEditorCommandVimFacts
             $"Vim::GetVisual({displayName})");
         }
 
-        public static CommandTextEditor GetVisualLine(
-            CommandTextEditor textEditorCommandMotion,
+        public static TextEditorCommand GetVisualLine(
+            TextEditorCommand textEditorCommandMotion,
             string displayName)
         {
-            return new CommandTextEditor(async interfaceCommandParameter =>
+            return new TextEditorCommand(async interfaceCommandParameter =>
             {
-                var commandParameter = (TextEditorCommandParameter)interfaceCommandParameter;
+                var commandParameter = (TextEditorCommandArgs)interfaceCommandParameter;
 
                 var activeKeymap = commandParameter.TextEditorService.OptionsStateWrap.Value.Options.Keymap
                     ?? TextEditorKeymapFacts.DefaultKeymap;

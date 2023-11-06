@@ -26,11 +26,11 @@
     
     @{
         var heightOfGutter = RenderBatch.ViewModel!.VirtualizationResult.EntryBag.Length *
-                             RenderBatch.ViewModel!.VirtualizationResult.CharacterWidthAndRowHeight.RowHeightInPixels;
+                             RenderBatch.ViewModel!.VirtualizationResult.CharAndRowMeasurements.RowHeight;
 
-        if (heightOfGutter < RenderBatch.ViewModel!.VirtualizationResult.ElementMeasurementsInPixels.Height)
+        if (heightOfGutter < RenderBatch.ViewModel!.VirtualizationResult.TextEditorMeasurements.Height)
         {
-            var remainingHeightToFill = RenderBatch.ViewModel!.VirtualizationResult.ElementMeasurementsInPixels.Height -
+            var remainingHeightToFill = RenderBatch.ViewModel!.VirtualizationResult.TextEditorMeasurements.Height -
                 heightOfGutter +
                 ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
             

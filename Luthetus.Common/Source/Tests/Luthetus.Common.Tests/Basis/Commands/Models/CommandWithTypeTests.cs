@@ -8,7 +8,7 @@ namespace Luthetus.Common.Tests.Basis.Commands.Models;
 public abstract class CommandWithTypeTests
 {
     /// <summary>
-    /// <see cref="CommandWithType{T}.CommandWithType(Func{ICommandParameter, Task}, string, string, bool)"/>
+    /// <see cref="CommandWithType{T}.CommandWithType(Func{ICommandArgs, Task}, string, string, bool)"/>
     /// </summary>
     [Fact]
     public void Constructor()

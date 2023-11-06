@@ -17,7 +17,7 @@ public class TreeViewKeyboardEventHandler
     }
 
     /// <summary>Used for handling "onkeydownwithpreventscroll" events within the user interface</summary>
-    public virtual void OnKeyDown(TreeViewCommandParameter commandParameter)
+    public virtual void OnKeyDown(TreeViewCommandArgs commandParameter)
     {
         if (commandParameter.KeyboardEventArgs is null)
             return;
@@ -62,7 +62,7 @@ public class TreeViewKeyboardEventHandler
     }
 
     /// <summary>Used for handling "onkeydownwithpreventscroll" events within the user interface</summary>
-    public virtual Task OnKeyDownAsync(TreeViewCommandParameter commandParameter)
+    public virtual Task OnKeyDownAsync(TreeViewCommandArgs commandParameter)
     {
         return Task.CompletedTask;
     }

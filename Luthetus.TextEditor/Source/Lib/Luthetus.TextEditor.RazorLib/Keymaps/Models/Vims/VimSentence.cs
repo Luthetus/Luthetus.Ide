@@ -16,7 +16,7 @@ public class VimSentence
         TextEditorKeymapVim textEditorKeymapVim,
         KeymapArgument keymapArgument,
         bool hasTextSelection,
-        out CommandTextEditor? textEditorCommand)
+        out TextEditorCommand? textEditorCommand)
     {
         bool sentenceIsSyntacticallyComplete;
 
@@ -199,7 +199,7 @@ public class VimSentence
         int indexInSentence,
         KeymapArgument keymapArgument,
         bool hasTextSelection,
-        out CommandTextEditor? command)
+        out TextEditorCommand? command)
     {
         if (indexInSentence >= sentenceSnapshotBag.Length)
         {

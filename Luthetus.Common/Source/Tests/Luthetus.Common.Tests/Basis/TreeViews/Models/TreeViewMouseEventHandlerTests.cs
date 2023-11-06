@@ -17,7 +17,7 @@ public class TreeViewMouseEventHandlerTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewMouseEventHandler.OnClick(RazorLib.Commands.Models.TreeViewCommandParameter)"/>
+    /// <see cref="TreeViewMouseEventHandler.OnClick(RazorLib.Commands.Models.TreeViewCommandArgs)"/>
     /// </summary>
     [Fact]
     public void OnClick()
@@ -26,7 +26,7 @@ public class TreeViewMouseEventHandlerTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewMouseEventHandler.OnDoubleClick(RazorLib.Commands.Models.TreeViewCommandParameter)"/>
+    /// <see cref="TreeViewMouseEventHandler.OnDoubleClick(RazorLib.Commands.Models.TreeViewCommandArgs)"/>
     /// </summary>
     [Fact]
     public void OnDoubleClick()
@@ -35,7 +35,7 @@ public class TreeViewMouseEventHandlerTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewMouseEventHandler.OnDoubleClickAsync(RazorLib.Commands.Models.TreeViewCommandParameter)"/>
+    /// <see cref="TreeViewMouseEventHandler.OnDoubleClickAsync(RazorLib.Commands.Models.TreeViewCommandArgs)"/>
     /// </summary>
     [Fact]
     public void OnDoubleClickAsync()
@@ -44,7 +44,7 @@ public class TreeViewMouseEventHandlerTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewMouseEventHandler.OnMouseDown(RazorLib.Commands.Models.TreeViewCommandParameter)"/>
+    /// <see cref="TreeViewMouseEventHandler.OnMouseDown(RazorLib.Commands.Models.TreeViewCommandArgs)"/>
     /// </summary>
     [Fact]
     public void OnMouseDown()

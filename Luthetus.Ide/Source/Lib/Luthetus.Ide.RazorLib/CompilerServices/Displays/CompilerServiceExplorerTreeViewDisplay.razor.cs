@@ -31,7 +31,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
     [Inject]
     private EditorSync EditorSync { get; set; } = null!;
 
-    private TreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
+    private TreeViewCommandArgs? _mostRecentTreeViewCommandParameter;
     private CompilerServiceExplorerTreeViewKeyboardEventHandler _compilerServiceExplorerTreeViewKeymap = null!;
     private CompilerServiceExplorerTreeViewMouseEventHandler _compilerServiceExplorerTreeViewMouseEventHandler = null!;
 
@@ -76,7 +76,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
         await InvokeAsync(StateHasChanged);
     }
 
-    private async Task OnTreeViewContextMenuFunc(TreeViewCommandParameter treeViewCommandParameter)
+    private async Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandParameter)
     {
         _mostRecentTreeViewCommandParameter = treeViewCommandParameter;
 

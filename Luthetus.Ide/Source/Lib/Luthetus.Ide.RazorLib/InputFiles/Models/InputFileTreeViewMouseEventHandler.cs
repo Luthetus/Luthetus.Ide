@@ -22,7 +22,7 @@ public class InputFileTreeViewMouseEventHandler : TreeViewMouseEventHandler
         _setInputFileContentTreeViewRootFunc = setInputFileContentTreeViewRootFunc;
     }
 
-    public override void OnClick(TreeViewCommandParameter commandParameter)
+    public override void OnClick(TreeViewCommandArgs commandParameter)
     {
         base.OnClick(commandParameter);
 
@@ -34,7 +34,7 @@ public class InputFileTreeViewMouseEventHandler : TreeViewMouseEventHandler
         _dispatcher.Dispatch(setSelectedTreeViewModelAction);
     }
 
-    public override Task OnDoubleClickAsync(TreeViewCommandParameter commandParameter)
+    public override Task OnDoubleClickAsync(TreeViewCommandArgs commandParameter)
     {
         base.OnDoubleClickAsync(commandParameter);
 

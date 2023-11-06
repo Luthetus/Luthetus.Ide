@@ -49,12 +49,12 @@ public partial class ContextMenu : ComponentBase
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    private TextEditorCommandParameter ConstructCommandParameter()
+    private TextEditorCommandArgs ConstructCommandParameter()
     {
         var cursorSnapshotsBag = TextEditorCursorSnapshot.TakeSnapshots(RenderBatch.ViewModel!.PrimaryCursor);
         var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorSnapshotsBag.FirstOrDefault()!.ImmutableCursor.ImmutableSelection);
 
-        return new TextEditorCommandParameter(
+        return new TextEditorCommandArgs(
             RenderBatch.Model!,
             cursorSnapshotsBag,
             hasSelection,

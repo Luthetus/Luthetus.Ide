@@ -1,4 +1,4 @@
-using Luthetus.TextEditor.RazorLib.Measurements.Models;
+using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 
@@ -8,5 +8,5 @@ public interface IVirtualizationResultWithoutTypeMask
     public VirtualizationBoundary RightVirtualizationBoundary { get; init; }
     public VirtualizationBoundary TopVirtualizationBoundary { get; init; }
     public VirtualizationBoundary BottomVirtualizationBoundary { get; init; }
-    public ElementMeasurementsInPixels ElementMeasurementsInPixels { get; init; }
+    public TextEditorMeasurements TextEditorMeasurements { get; init; }
 }

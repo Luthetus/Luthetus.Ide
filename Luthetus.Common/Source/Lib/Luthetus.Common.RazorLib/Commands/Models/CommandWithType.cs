@@ -3,7 +3,7 @@
 public abstract class CommandWithType<T> : CommandNoType where T : notnull
 {
     protected CommandWithType(
-            Func<ICommandParameter, Task> doAsyncFunc,
+            Func<ICommandArgs, Task> doAsyncFunc,
             string displayName,
             string internalIdentifier,
             bool shouldBubble) 

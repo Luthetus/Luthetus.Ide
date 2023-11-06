@@ -53,7 +53,7 @@ public static class SyntaxVerbVim
         int indexInSentence,
         KeymapArgument keymapArgument,
         bool hasTextSelection,
-        out CommandTextEditor? textEditorCommand)
+        out TextEditorCommand? textEditorCommand)
     {
         bool verbWasTypedTwoTimesInARow = false;
 

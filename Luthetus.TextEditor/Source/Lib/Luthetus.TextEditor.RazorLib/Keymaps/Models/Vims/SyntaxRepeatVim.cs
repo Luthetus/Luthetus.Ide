@@ -35,7 +35,7 @@ public static class SyntaxRepeatVim
         int indexInSentence,
         KeymapArgument keymapArgument,
         bool hasTextSelection,
-        out CommandTextEditor? textEditorCommand)
+        out TextEditorCommand? textEditorCommand)
     {
         int modifiedIndexInSentence = indexInSentence;
 
@@ -67,7 +67,7 @@ public static class SyntaxRepeatVim
             var textEditorCommandDisplayName = $"Vim::Repeat(count: {intValue}, arg: {innerTextEditorCommand.DisplayName})";
 
             // Repeat the inner TextEditorCommand using a for loop
-            textEditorCommand = new CommandTextEditor(
+            textEditorCommand = new TextEditorCommand(
                 async textEditorCommandParameter =>
                 {
                     for (int index = 0; index < intValue; index++)

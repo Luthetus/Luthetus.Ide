@@ -3,12 +3,12 @@
 namespace Luthetus.Common.Tests.Basis.Commands.Models;
 
 /// <summary>
-/// <see cref="TreeViewCommandParameter"/>
+/// <see cref="TreeViewCommandArgs"/>
 /// </summary>
 public class TreeViewCommandParameterTests
 {
     /// <summary>
-    /// <see cref="TreeViewCommandParameter(RazorLib.TreeViews.Models.ITreeViewService, RazorLib.TreeViews.Models.TreeViewContainer, RazorLib.TreeViews.Models.TreeViewNoType?, Func{Task}, RazorLib.JavaScriptObjects.Models.ContextMenuFixedPosition?, Microsoft.AspNetCore.Components.Web.MouseEventArgs?, Microsoft.AspNetCore.Components.Web.KeyboardEventArgs?)"/>
+    /// <see cref="TreeViewCommandArgs(RazorLib.TreeViews.Models.ITreeViewService, RazorLib.TreeViews.Models.TreeViewContainer, RazorLib.TreeViews.Models.TreeViewNoType?, Func{Task}, RazorLib.JavaScriptObjects.Models.ContextMenuFixedPosition?, Microsoft.AspNetCore.Components.Web.MouseEventArgs?, Microsoft.AspNetCore.Components.Web.KeyboardEventArgs?)"/>
     /// </summary>
     [Fact]
     public void Constructor()
@@ -17,7 +17,7 @@ public class TreeViewCommandParameterTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewCommandParameter.TreeViewService"/>
+    /// <see cref="TreeViewCommandArgs.TreeViewService"/>
     /// </summary>
     [Fact]
     public void TreeViewService()
@@ -26,7 +26,7 @@ public class TreeViewCommandParameterTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewCommandParameter.TreeViewState"/>
+    /// <see cref="TreeViewCommandArgs.TreeViewState"/>
     /// </summary>
     [Fact]
     public void TreeViewState()
@@ -35,7 +35,7 @@ public class TreeViewCommandParameterTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewCommandParameter.TargetNode"/>
+    /// <see cref="TreeViewCommandArgs.TargetNode"/>
     /// </summary>
     [Fact]
     public void TargetNode()
@@ -44,7 +44,7 @@ public class TreeViewCommandParameterTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewCommandParameter.RestoreFocusToTreeView"/>
+    /// <see cref="TreeViewCommandArgs.RestoreFocusToTreeView"/>
     /// </summary>
     [Fact]
     public void RestoreFocusToTreeView()
@@ -53,7 +53,7 @@ public class TreeViewCommandParameterTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewCommandParameter.ContextMenuFixedPosition"/>
+    /// <see cref="TreeViewCommandArgs.ContextMenuFixedPosition"/>
     /// </summary>
     [Fact]
     public void ContextMenuFixedPosition()
@@ -62,7 +62,7 @@ public class TreeViewCommandParameterTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewCommandParameter.MouseEventArgs"/>
+    /// <see cref="TreeViewCommandArgs.MouseEventArgs"/>
     /// </summary>
     [Fact]
     public void MouseEventArgs()
@@ -71,7 +71,7 @@ public class TreeViewCommandParameterTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewCommandParameter.KeyboardEventArgs"/>
+    /// <see cref="TreeViewCommandArgs.KeyboardEventArgs"/>
     /// </summary>
     [Fact]
     public void KeyboardEventArgs()

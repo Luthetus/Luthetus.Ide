@@ -69,12 +69,12 @@ public partial class TextSelectionRow : ComponentBase
             fullWidthOfRowIsSelected = false;
         }
 
-        var charMeasurements = RenderBatch.ViewModel!.VirtualizationResult.CharacterWidthAndRowHeight;
+        var charMeasurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndRowMeasurements;
 
-        var topInPixelsInvariantCulture = (rowIndex * charMeasurements.RowHeightInPixels).ToCssValue();
+        var topInPixelsInvariantCulture = (rowIndex * charMeasurements.RowHeight).ToCssValue();
         var top = $"top: {topInPixelsInvariantCulture}px;";
 
-        var heightInPixelsInvariantCulture = charMeasurements.RowHeightInPixels.ToCssValue();
+        var heightInPixelsInvariantCulture = charMeasurements.RowHeight.ToCssValue();
         var height = $"height: {heightInPixelsInvariantCulture}px;";
 
         // _selectionStartingLeftRelativeToParentInPixels
@@ -144,7 +144,7 @@ public partial class TextSelectionRow : ComponentBase
 
         var widthCssStyleString = "width: ";
 
-        var elementMeasurements = RenderBatch.ViewModel!.VirtualizationResult.ElementMeasurementsInPixels;
+        var elementMeasurements = RenderBatch.ViewModel!.VirtualizationResult.TextEditorMeasurements;
 
         var fullWidthValue = elementMeasurements.ScrollWidth;
 

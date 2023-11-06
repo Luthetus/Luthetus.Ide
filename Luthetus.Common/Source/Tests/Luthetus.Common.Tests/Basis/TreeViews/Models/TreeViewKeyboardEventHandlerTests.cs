@@ -17,7 +17,7 @@ public class TreeViewKeyboardEventHandlerTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewKeyboardEventHandler.OnKeyDown(RazorLib.Commands.Models.TreeViewCommandParameter)"/>
+    /// <see cref="TreeViewKeyboardEventHandler.OnKeyDown(RazorLib.Commands.Models.TreeViewCommandArgs)"/>
     /// </summary>
     [Fact]
     public void OnKeyDown()
@@ -26,7 +26,7 @@ public class TreeViewKeyboardEventHandlerTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewKeyboardEventHandler.OnKeyDownAsync(RazorLib.Commands.Models.TreeViewCommandParameter)"/>
+    /// <see cref="TreeViewKeyboardEventHandler.OnKeyDownAsync(RazorLib.Commands.Models.TreeViewCommandArgs)"/>
     /// </summary>
     [Fact]
     public void OnKeyDownAsync()

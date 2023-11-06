@@ -1,9 +1,9 @@
 ﻿namespace Luthetus.Common.RazorLib.Commands.Models;
 
-public class CommandCommon : CommandWithType<CommonCommandParameter>
+public class CommonCommand : CommandWithType<CommonCommandArgs>
 {
-    public CommandCommon(
-            Func<ICommandParameter, Task> doAsyncFunc,
+    public CommonCommand(
+            Func<ICommandArgs, Task> doAsyncFunc,
             string displayName,
             string internalIdentifier,
             bool shouldBubble)

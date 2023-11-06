@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace Luthetus.Common.RazorLib.Commands.Models;
 
-public class TreeViewCommandParameter : ICommandParameter
+public class TreeViewCommandArgs : ICommandArgs
 {
-    public TreeViewCommandParameter(
+    public TreeViewCommandArgs(
         ITreeViewService treeViewService,
         TreeViewContainer treeViewState,
         TreeViewNoType? focusNode,

@@ -3,7 +3,7 @@
 namespace Luthetus.Common.Tests.Basis.Commands.Models;
 
 /// <summary>
-/// <see cref="CommonCommandParameter"/>
+/// <see cref="CommonCommandArgs"/>
 /// </summary>
 public class CommonCommandParameterTests
 {

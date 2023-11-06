@@ -16,7 +16,7 @@ public partial class TextEditorModel
     private void EnsureUndoPoint(TextEditKind textEditKind, string? otherTextEditKindIdentifier = null)
     {
         if (textEditKind == TextEditKind.Other && otherTextEditKindIdentifier is null)
-            CommandTextEditor.ThrowOtherTextEditKindIdentifierWasExpectedException(textEditKind);
+            TextEditorCommand.ThrowOtherTextEditKindIdentifierWasExpectedException(textEditKind);
 
         var mostRecentEditBlock = _editBlocksPersistedBag.LastOrDefault();
 

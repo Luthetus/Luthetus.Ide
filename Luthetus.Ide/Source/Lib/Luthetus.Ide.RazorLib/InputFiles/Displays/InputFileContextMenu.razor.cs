@@ -27,7 +27,7 @@ public partial class InputFileContextMenu : ComponentBase
     private ITreeViewService TreeViewService { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public TreeViewCommandParameter TreeViewCommandParameter { get; set; } = null!;
+    public TreeViewCommandArgs TreeViewCommandParameter { get; set; } = null!;
 
     public static readonly Key<DropdownRecord> ContextMenuKey = Key<DropdownRecord>.NewKey();
 
@@ -37,7 +37,7 @@ public partial class InputFileContextMenu : ComponentBase
     /// </summary>
     public static TreeViewNoType? ParentOfCutFile;
 
-    private MenuRecord GetMenuRecord(TreeViewCommandParameter commandParameter)
+    private MenuRecord GetMenuRecord(TreeViewCommandArgs commandParameter)
     {
         if (commandParameter.TargetNode is null)
             return MenuRecord.Empty;
@@ -138,7 +138,7 @@ public partial class InputFileContextMenu : ComponentBase
     }
 
     public static string GetContextMenuCssStyleString(
-        TreeViewCommandParameter? commandParameter,
+        TreeViewCommandArgs? commandParameter,
         DialogRecord dialogRecord)
     {
         if (commandParameter?.ContextMenuFixedPosition is null)

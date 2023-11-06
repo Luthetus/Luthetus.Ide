@@ -63,7 +63,7 @@ public partial class ContextBoundary : ComponentBase
         var success = ContextRecord.Keymap.Map.TryGetValue(keymapArgument, out var command);
 
         if (success && command is not null)
-            await command.DoAsyncFunc(new CommonCommandParameter());
+            await command.DoAsyncFunc(new CommonCommandArgs());
         else if (ParentContextBoundary is not null)
             await ParentContextBoundary.HandleKeymapArgumentAsync(keymapArgument);
     }

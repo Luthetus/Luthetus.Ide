@@ -51,7 +51,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         _backgroundTaskService = backgroundTaskService;
     }
 
-    public override Task OnKeyDownAsync(TreeViewCommandParameter commandParameter)
+    public override Task OnKeyDownAsync(TreeViewCommandArgs commandParameter)
     {
         base.OnKeyDownAsync(commandParameter);
 
@@ -97,7 +97,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         return Task.CompletedTask;
     }
 
-    private void AltModifiedKeymap(TreeViewCommandParameter commandParameter)
+    private void AltModifiedKeymap(TreeViewCommandArgs commandParameter)
     {
         if (commandParameter.KeyboardEventArgs is null)
             return;
@@ -119,7 +119,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         }
     }
 
-    private void SetInputFileContentTreeViewRoot(TreeViewCommandParameter commandParameter)
+    private void SetInputFileContentTreeViewRoot(TreeViewCommandArgs commandParameter)
     {
         var activeNode = commandParameter.TreeViewState.ActiveNode;
 
@@ -129,19 +129,19 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         _setInputFileContentTreeViewRootFunc.Invoke(treeViewAbsolutePath.Item);
     }
 
-    private void HandleBackButtonOnClick(TreeViewCommandParameter commandParameter)
+    private void HandleBackButtonOnClick(TreeViewCommandArgs commandParameter)
     {
         _dispatcher.Dispatch(new InputFileState.MoveBackwardsInHistoryAction());
         ChangeContentRootToOpenedTreeView(_inputFileStateWrap.Value);
     }
 
-    private void HandleForwardButtonOnClick(TreeViewCommandParameter commandParameter)
+    private void HandleForwardButtonOnClick(TreeViewCommandArgs commandParameter)
     {
         _dispatcher.Dispatch(new InputFileState.MoveForwardsInHistoryAction());
         ChangeContentRootToOpenedTreeView(_inputFileStateWrap.Value);
     }
 
-    private void HandleUpwardButtonOnClick(TreeViewCommandParameter commandParameter)
+    private void HandleUpwardButtonOnClick(TreeViewCommandArgs commandParameter)
     {
         _dispatcher.Dispatch(new InputFileState.OpenParentDirectoryAction(
             _ideComponentRenderers,
@@ -153,7 +153,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         ChangeContentRootToOpenedTreeView(_inputFileStateWrap.Value);
     }
 
-    private void HandleRefreshButtonOnClick(TreeViewCommandParameter commandParameter)
+    private void HandleRefreshButtonOnClick(TreeViewCommandArgs commandParameter)
     {
         _dispatcher.Dispatch(new InputFileState.RefreshCurrentSelectionAction(_backgroundTaskService));
         ChangeContentRootToOpenedTreeView(_inputFileStateWrap.Value);
@@ -167,7 +167,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
             _setInputFileContentTreeViewRootFunc.Invoke(openedTreeView.Item);
     }
 
-    private void SetSelectedTreeViewModel(TreeViewCommandParameter commandParameter)
+    private void SetSelectedTreeViewModel(TreeViewCommandArgs commandParameter)
     {
         var activeNode = commandParameter.TreeViewState.ActiveNode;
         var treeViewAbsolutePath = activeNode as TreeViewAbsolutePath;
@@ -181,7 +181,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         return;
     }
 
-    private void MoveFocusToSearchBar(TreeViewCommandParameter commandParameter)
+    private void MoveFocusToSearchBar(TreeViewCommandArgs commandParameter)
     {
         Task.Run(async () => await _focusSearchInputElementFunc.Invoke());
     }

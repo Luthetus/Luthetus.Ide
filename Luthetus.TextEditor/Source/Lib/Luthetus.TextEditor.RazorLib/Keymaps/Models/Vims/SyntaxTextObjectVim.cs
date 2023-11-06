@@ -52,7 +52,7 @@ public static class SyntaxTextObjectVim
         int indexInSentence,
         KeymapArgument keymapArgument,
         bool hasTextSelection,
-        out CommandTextEditor? textEditorCommand)
+        out TextEditorCommand? textEditorCommand)
     {
         var currentToken = sentenceSnapshotBag[indexInSentence];
 
@@ -75,10 +75,10 @@ public static class SyntaxTextObjectVim
                 case "KeyH":
                     {
                         // Move the cursor 1 column to the left
-                        textEditorCommand = new CommandTextEditor(
+                        textEditorCommand = new TextEditorCommand(
                                 interfaceCommandParameter =>
                                 {
-                                    var commandParameter = (TextEditorCommandParameter)interfaceCommandParameter;
+                                    var commandParameter = (TextEditorCommandArgs)interfaceCommandParameter;
 
                                     TextEditorCursor.MoveCursor(
                                         new KeyboardEventArgs
@@ -100,10 +100,10 @@ public static class SyntaxTextObjectVim
                 case "KeyJ":
                     {
                         // Move the cursor 1 row down
-                        textEditorCommand = new CommandTextEditor(
+                        textEditorCommand = new TextEditorCommand(
                             interfaceCommandParameter =>
                             {
-                                var commandParameter = (TextEditorCommandParameter)interfaceCommandParameter;
+                                var commandParameter = (TextEditorCommandArgs)interfaceCommandParameter;
 
                                 TextEditorCursor.MoveCursor(
                                     new KeyboardEventArgs
@@ -125,10 +125,10 @@ public static class SyntaxTextObjectVim
                 case "KeyK":
                     {
                         // Move the cursor 1 row up
-                        textEditorCommand = new CommandTextEditor(
+                        textEditorCommand = new TextEditorCommand(
                             interfaceCommandParameter =>
                             {
-                                var commandParameter = (TextEditorCommandParameter)interfaceCommandParameter;
+                                var commandParameter = (TextEditorCommandArgs)interfaceCommandParameter;
 
                                 TextEditorCursor.MoveCursor(
                                     new KeyboardEventArgs
@@ -150,10 +150,10 @@ public static class SyntaxTextObjectVim
                 case "KeyL":
                     {
                         // Move the cursor 1 column to the right
-                        textEditorCommand = new CommandTextEditor(
+                        textEditorCommand = new TextEditorCommand(
                             interfaceCommandParameter =>
                             {
-                                var commandParameter = (TextEditorCommandParameter)interfaceCommandParameter;
+                                var commandParameter = (TextEditorCommandArgs)interfaceCommandParameter;
 
                                 TextEditorCursor.MoveCursor(
                                     new KeyboardEventArgs
@@ -181,10 +181,10 @@ public static class SyntaxTextObjectVim
                             return true;
                         }
                         // Move the cursor to the end of the current line.
-                        textEditorCommand = new CommandTextEditor(
+                        textEditorCommand = new TextEditorCommand(
                             interfaceCommandParameter =>
                             {
-                                var commandParameter = (TextEditorCommandParameter)interfaceCommandParameter;
+                                var commandParameter = (TextEditorCommandArgs)interfaceCommandParameter;
 
                                 TextEditorCursor.MoveCursor(
                                     new KeyboardEventArgs
@@ -206,10 +206,10 @@ public static class SyntaxTextObjectVim
                 case "Digit0":
                     {
                         // Move the cursor to the start of the current line.
-                        textEditorCommand = new CommandTextEditor(
+                        textEditorCommand = new TextEditorCommand(
                             interfaceCommandParameter =>
                             {
-                                var commandParameter = (TextEditorCommandParameter)interfaceCommandParameter;
+                                var commandParameter = (TextEditorCommandArgs)interfaceCommandParameter;
 
                                 TextEditorCursor.MoveCursor(
                                     new KeyboardEventArgs

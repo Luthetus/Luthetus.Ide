@@ -114,7 +114,7 @@ public partial class TreeViewDisplay : ComponentBase
         TreeViewContainer? treeViewState,
         TreeViewNoType treeViewNoType)
     {
-        var treeViewCommandParameter = new TreeViewCommandParameter(
+        var treeViewCommandParameter = new TreeViewCommandArgs(
             TreeViewService,
             TreeViewState,
             TreeViewNoType,
@@ -133,7 +133,7 @@ public partial class TreeViewDisplay : ComponentBase
 
     private void HandleOnClick(MouseEventArgs? mouseEventArgs)
     {
-        var treeViewCommandParameter = new TreeViewCommandParameter(
+        var treeViewCommandParameter = new TreeViewCommandArgs(
             TreeViewService,
             TreeViewState,
             TreeViewNoType,
@@ -147,7 +147,7 @@ public partial class TreeViewDisplay : ComponentBase
 
     private void HandleOnDoubleClick(MouseEventArgs? mouseEventArgs)
     {
-        var treeViewCommandParameter = new TreeViewCommandParameter(
+        var treeViewCommandParameter = new TreeViewCommandArgs(
             TreeViewService,
             TreeViewState,
             TreeViewNoType,
@@ -161,7 +161,7 @@ public partial class TreeViewDisplay : ComponentBase
 
     private void HandleOnMouseDown(MouseEventArgs? mouseEventArgs)
     {
-        var treeViewCommandParameter = new TreeViewCommandParameter(
+        var treeViewCommandParameter = new TreeViewCommandArgs(
             TreeViewService,
             TreeViewState,
             TreeViewNoType,

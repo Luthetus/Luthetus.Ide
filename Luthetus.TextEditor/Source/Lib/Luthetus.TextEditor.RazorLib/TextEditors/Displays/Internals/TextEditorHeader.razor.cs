@@ -30,14 +30,14 @@ public partial class TextEditorHeader : ComponentBase
     [Parameter]
     public ImmutableArray<TextEditorHeaderButtonKind>? HeaderButtonKinds { get; set; }
 
-    private TextEditorCommandParameter ConstructCommandParameter(
+    private TextEditorCommandArgs ConstructCommandParameter(
         TextEditorModel textEditorModel,
         TextEditorViewModel viewModel)
     {
         var cursorSnapshotsBag = TextEditorCursorSnapshot.TakeSnapshots(viewModel.PrimaryCursor);
         var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorSnapshotsBag.FirstOrDefault()!.ImmutableCursor.ImmutableSelection);
 
-        return new TextEditorCommandParameter(
+        return new TextEditorCommandArgs(
             textEditorModel,
             cursorSnapshotsBag,
             hasSelection,

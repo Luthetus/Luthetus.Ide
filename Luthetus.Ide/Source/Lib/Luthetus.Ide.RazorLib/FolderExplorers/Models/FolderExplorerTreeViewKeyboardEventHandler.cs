@@ -32,7 +32,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         _treeViewService = treeViewService;
     }
 
-    public override Task OnKeyDownAsync(TreeViewCommandParameter commandParameter)
+    public override Task OnKeyDownAsync(TreeViewCommandArgs commandParameter)
     {
         if (commandParameter.KeyboardEventArgs is null)
             return Task.CompletedTask;
@@ -57,7 +57,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         return Task.CompletedTask;
     }
 
-    private void CtrlModifiedKeymap(TreeViewCommandParameter commandParameter)
+    private void CtrlModifiedKeymap(TreeViewCommandArgs commandParameter)
     {
         if (commandParameter.KeyboardEventArgs is null)
             return;
@@ -90,17 +90,17 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
     /// <br /><br />
     /// As otherwise, we'd have to permute over all the possible keyboard modifier keys and have a method for each permutation.
     /// </summary>
-    private void AltModifiedKeymap(TreeViewCommandParameter commandParameter)
+    private void AltModifiedKeymap(TreeViewCommandArgs commandParameter)
     {
         return;
     }
 
-    private void CtrlAltModifiedKeymap(TreeViewCommandParameter commandParameter)
+    private void CtrlAltModifiedKeymap(TreeViewCommandArgs commandParameter)
     {
         return;
     }
 
-    private void CopyFile(TreeViewCommandParameter commandParameter)
+    private void CopyFile(TreeViewCommandArgs commandParameter)
     {
         var activeNode = commandParameter.TreeViewState.ActiveNode;
 
@@ -118,7 +118,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         copyFileMenuOption.OnClick?.Invoke();
     }
 
-    private Task PasteClipboard(TreeViewCommandParameter commandParameter)
+    private Task PasteClipboard(TreeViewCommandArgs commandParameter)
     {
         var activeNode = commandParameter.TreeViewState.ActiveNode;
 
@@ -164,7 +164,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         return Task.CompletedTask;
     }
 
-    private void CutFile(TreeViewCommandParameter commandParameter)
+    private void CutFile(TreeViewCommandArgs commandParameter)
     {
         var activeNode = commandParameter.TreeViewState.ActiveNode;
 
@@ -185,7 +185,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         cutFileOptionRecord.OnClick?.Invoke();
     }
 
-    private void InvokeOpenInEditor(TreeViewCommandParameter commandParameter, bool shouldSetFocusToEditor)
+    private void InvokeOpenInEditor(TreeViewCommandArgs commandParameter, bool shouldSetFocusToEditor)
     {
         var activeNode = commandParameter.TreeViewState.ActiveNode;
 

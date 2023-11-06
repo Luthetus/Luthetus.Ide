@@ -43,8 +43,8 @@ public partial class PresentationLayerGroup : ComponentBase
         int upperPositionIndexExclusive,
         int rowIndex)
     {
-        var charMeasurements = RenderBatch.ViewModel!.VirtualizationResult.CharacterWidthAndRowHeight;
-        var elementMeasurements = RenderBatch.ViewModel!.VirtualizationResult.ElementMeasurementsInPixels;
+        var charMeasurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndRowMeasurements;
+        var elementMeasurements = RenderBatch.ViewModel!.VirtualizationResult.TextEditorMeasurements;
 
         if (rowIndex >= RenderBatch.Model!.RowEndingPositionsBag.Length)
             return string.Empty;
@@ -69,15 +69,15 @@ public partial class PresentationLayerGroup : ComponentBase
             fullWidthOfRowIsSelected = false;
         }
 
-        var topInPixelsInvariantCulture = (rowIndex * charMeasurements.RowHeightInPixels).ToCssValue();
+        var topInPixelsInvariantCulture = (rowIndex * charMeasurements.RowHeight).ToCssValue();
 
         var top = $"top: {topInPixelsInvariantCulture}px;";
 
-        var heightInPixelsInvariantCulture = charMeasurements.RowHeightInPixels.ToCssValue();
+        var heightInPixelsInvariantCulture = charMeasurements.RowHeight.ToCssValue();
 
         var height = $"height: {heightInPixelsInvariantCulture}px;";
 
-        var startInPixels = startingColumnIndex * charMeasurements.CharacterWidthInPixels;
+        var startInPixels = startingColumnIndex * charMeasurements.CharacterWidth;
 
         // startInPixels offset from Tab keys a width of many characters
         {
@@ -88,13 +88,13 @@ public partial class PresentationLayerGroup : ComponentBase
             // 1 of the character width is already accounted for
             var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
 
-            startInPixels += extraWidthPerTabKey * tabsOnSameRowBeforeCursor * charMeasurements.CharacterWidthInPixels;
+            startInPixels += extraWidthPerTabKey * tabsOnSameRowBeforeCursor * charMeasurements.CharacterWidth;
         }
 
         var startInPixelsInvariantCulture = startInPixels.ToCssValue();
         var left = $"left: {startInPixelsInvariantCulture}px;";
 
-        var widthInPixels = endingColumnIndex * charMeasurements.CharacterWidthInPixels - startInPixels;
+        var widthInPixels = endingColumnIndex * charMeasurements.CharacterWidth - startInPixels;
 
         // Tab keys a width of many characters
         {
@@ -105,7 +105,7 @@ public partial class PresentationLayerGroup : ComponentBase
             // 1 of the character width is already accounted for
             var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
 
-            widthInPixels += extraWidthPerTabKey * tabsOnSameRowBeforeCursor * charMeasurements.CharacterWidthInPixels;
+            widthInPixels += extraWidthPerTabKey * tabsOnSameRowBeforeCursor * charMeasurements.CharacterWidth;
         }
 
         var widthCssStyleString = "width: ";

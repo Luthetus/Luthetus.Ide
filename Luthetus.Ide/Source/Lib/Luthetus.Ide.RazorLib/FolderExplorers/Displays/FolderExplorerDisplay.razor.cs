@@ -33,7 +33,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 
     private FolderExplorerTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
     private FolderExplorerTreeViewKeyboardEventHandler _treeViewKeyboardEventHandler = null!;
-    private TreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
+    private TreeViewCommandArgs? _mostRecentTreeViewCommandParameter;
 
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
         AppOptionsStateWrap.Value.Options.IconSizeInPixels * (2.0 / 3.0));
@@ -58,7 +58,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 
     private async void OnStateChanged(object? sender, EventArgs e) => await InvokeAsync(StateHasChanged);
 
-    private async Task OnTreeViewContextMenuFunc(TreeViewCommandParameter treeViewCommandParameter)
+    private async Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandParameter)
     {
         _mostRecentTreeViewCommandParameter = treeViewCommandParameter;
 

@@ -304,7 +304,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         {
             if (command is not null)
             {
-                await command.DoAsyncFunc.Invoke(new TextEditorCommandParameter(
+                await command.DoAsyncFunc.Invoke(new TextEditorCommandArgs(
                     model,
                     cursorSnapshots,
                     hasSelection,
@@ -352,7 +352,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             keyboardEventArgs.Key != "Alt")
         {
             if (command is null ||
-                command is CommandTextEditor commandTextEditor &&
+                command is TextEditorCommand commandTextEditor &&
                 commandTextEditor.ShouldScrollCursorIntoView)
             {
                 primaryCursorSnapshot.UserCursor.ShouldRevealCursor = true;
@@ -583,7 +583,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (model is null || viewModel is null)
             return (0, 0);
 
-        var charMeasurements = viewModel.VirtualizationResult.CharacterWidthAndRowHeight;
+        var charMeasurements = viewModel.VirtualizationResult.CharAndRowMeasurements;
 
         var relativeCoordinatesOnClick = await JsRuntime.InvokeAsync<RelativeCoordinates>("luthetusTextEditor.getRelativePosition",
             viewModel.BodyElementId,
@@ -599,7 +599,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             positionY += relativeCoordinatesOnClick.RelativeScrollTop;
         }
 
-        var rowIndex = (int)(positionY / charMeasurements.RowHeightInPixels);
+        var rowIndex = (int)(positionY / charMeasurements.RowHeight);
 
         rowIndex = rowIndex > model.RowCount - 1
             ? model.RowCount - 1
@@ -616,18 +616,18 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                 $"luth_te_proportional-font-measurement-parent_{_textEditorHtmlElementId}_{guid}",
                 $"luth_te_proportional-font-measurement-cursor_{_textEditorHtmlElementId}_{guid}",
                 positionX,
-                charMeasurements.CharacterWidthInPixels,
+                charMeasurements.CharacterWidth,
                 model.GetTextOnRow(rowIndex));
 
             if (columnIndexInt == -1)
             {
-                var columnIndexDouble = positionX / charMeasurements.CharacterWidthInPixels;
+                var columnIndexDouble = positionX / charMeasurements.CharacterWidth;
                 columnIndexInt = (int)Math.Round(columnIndexDouble, MidpointRounding.AwayFromZero);
             }
         }
         else
         {
-            var columnIndexDouble = positionX / charMeasurements.CharacterWidthInPixels;
+            var columnIndexDouble = positionX / charMeasurements.CharacterWidth;
             columnIndexInt = (int)Math.Round(columnIndexDouble, MidpointRounding.AwayFromZero);
         }
 

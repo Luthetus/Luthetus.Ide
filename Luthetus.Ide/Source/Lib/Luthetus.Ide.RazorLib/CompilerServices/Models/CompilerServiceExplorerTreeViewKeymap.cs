@@ -18,7 +18,7 @@ public class CompilerServiceExplorerTreeViewKeyboardEventHandler : TreeViewKeybo
         _editorSync = editorSync;
     }
 
-    public override Task OnKeyDownAsync(TreeViewCommandParameter commandParameter)
+    public override Task OnKeyDownAsync(TreeViewCommandArgs commandParameter)
     {
         if (commandParameter.KeyboardEventArgs is null)
             return Task.CompletedTask;
@@ -49,7 +49,7 @@ public class CompilerServiceExplorerTreeViewKeyboardEventHandler : TreeViewKeybo
         return Task.CompletedTask;
     }
 
-    private void CtrlModifiedKeymap(TreeViewCommandParameter commandParameter)
+    private void CtrlModifiedKeymap(TreeViewCommandArgs commandParameter)
     {
         if (commandParameter.KeyboardEventArgs is null)
             return;
@@ -67,18 +67,18 @@ public class CompilerServiceExplorerTreeViewKeyboardEventHandler : TreeViewKeybo
         }
     }
 
-    private void AltModifiedKeymap(TreeViewCommandParameter commandParameter)
+    private void AltModifiedKeymap(TreeViewCommandArgs commandParameter)
     {
         return;
     }
 
-    private void CtrlAltModifiedKeymap(TreeViewCommandParameter commandParameter)
+    private void CtrlAltModifiedKeymap(TreeViewCommandArgs commandParameter)
     {
         return;
     }
 
     private void InvokeOpenInEditor(
-        TreeViewCommandParameter commandParameter,
+        TreeViewCommandArgs commandParameter,
         bool shouldSetFocusToEditor)
     {
         var activeNode = commandParameter.TreeViewState.ActiveNode;

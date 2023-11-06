@@ -38,12 +38,12 @@ public partial class TreeViewStateDisplay : FluxorComponent
     public string CssStyleString { get; set; } = string.Empty;
     /// <summary>If a consumer of the TreeView component does not have logic for their own DropdownComponent, then one can provide a RenderFragment and a dropdown will be rendered for the consumer and their RenderFragment is rendered within that dropdown.<br/><br/>If one has their own DropdownComponent, then it is recommended that they use <see cref="OnContextMenuFunc"/> instead.</summary>
     [Parameter]
-    public RenderFragment<TreeViewCommandParameter>? OnContextMenuRenderFragment { get; set; }
-    /// <summary>If a consumer of the TreeView component does not have logic for their own DropdownComponent, then it is recommended to use <see cref="OnContextMenuRenderFragment"/><br/><br/> <see cref="OnContextMenuFunc"/> allows one to be notified of the ContextMenu event along with the necessary parameters by being given <see cref="TreeViewCommandParameter"/></summary>
+    public RenderFragment<TreeViewCommandArgs>? OnContextMenuRenderFragment { get; set; }
+    /// <summary>If a consumer of the TreeView component does not have logic for their own DropdownComponent, then it is recommended to use <see cref="OnContextMenuRenderFragment"/><br/><br/> <see cref="OnContextMenuFunc"/> allows one to be notified of the ContextMenu event along with the necessary parameters by being given <see cref="TreeViewCommandArgs"/></summary>
     [Parameter]
-    public Func<TreeViewCommandParameter, Task>? OnContextMenuFunc { get; set; }
+    public Func<TreeViewCommandArgs, Task>? OnContextMenuFunc { get; set; }
 
-    private TreeViewCommandParameter? _treeViewContextMenuCommandParameter;
+    private TreeViewCommandArgs? _treeViewContextMenuCommandParameter;
     private ElementReference? _treeViewStateDisplayElementReference;
 
     private string ContextMenuCssStyleString => GetContextMenuCssStyleString();
@@ -69,7 +69,7 @@ public partial class TreeViewStateDisplay : FluxorComponent
         if (treeViewState is null)
             return;
 
-        var treeViewCommandParameter = new TreeViewCommandParameter(
+        var treeViewCommandParameter = new TreeViewCommandArgs(
             TreeViewService,
             treeViewState,
             null,
@@ -144,7 +144,7 @@ public partial class TreeViewStateDisplay : FluxorComponent
             contextMenuTargetTreeViewNoType = treeViewMouseWasOver;
         }
 
-        _treeViewContextMenuCommandParameter = new TreeViewCommandParameter(
+        _treeViewContextMenuCommandParameter = new TreeViewCommandArgs(
             TreeViewService,
             treeViewState,
             contextMenuTargetTreeViewNoType,

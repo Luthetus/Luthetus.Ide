@@ -46,7 +46,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     private InputFileSync InputFileSync { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public TreeViewCommandParameter TreeViewCommandParameter { get; set; } = null!;
+    public TreeViewCommandArgs TreeViewCommandParameter { get; set; } = null!;
 
     public static readonly Key<DropdownRecord> ContextMenuEventDropdownKey = Key<DropdownRecord>.NewKey();
 
@@ -56,7 +56,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     /// </summary>
     public static TreeViewNoType? ParentOfCutFile;
 
-    private MenuRecord GetMenuRecord(TreeViewCommandParameter commandParameter)
+    private MenuRecord GetMenuRecord(TreeViewCommandArgs commandParameter)
     {
         if (commandParameter.TargetNode is null)
             return MenuRecord.Empty;
@@ -408,7 +408,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         TreeViewService.MoveUp(DotNetSolutionState.TreeViewSolutionExplorerStateKey, false);
     }
 
-    public static string GetContextMenuCssStyleString(TreeViewCommandParameter? commandParameter)
+    public static string GetContextMenuCssStyleString(TreeViewCommandArgs? commandParameter)
     {
         if (commandParameter?.ContextMenuFixedPosition is null)
             return "display: none;";
