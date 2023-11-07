@@ -1,4 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.Notifications.Displays;
+using Luthetus.Common.RazorLib.WatchWindows.Displays;
 
 namespace Luthetus.Common.Tests.Basis.ComponentRenderers.Models;
 
@@ -13,7 +15,21 @@ public class LuthetusCommonComponentRenderersTests
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
+        var luthetusCommonTreeViews = new LuthetusCommonTreeViews(
+            typeof(TreeViewExceptionDisplay),
+            typeof(TreeViewMissingRendererFallbackDisplay),
+            typeof(TreeViewTextDisplay),
+            typeof(TreeViewReflectionDisplay),
+            typeof(TreeViewPropertiesDisplay),
+            typeof(TreeViewInterfaceImplementationDisplay),
+            typeof(TreeViewFieldsDisplay),
+            typeof(TreeViewExceptionDisplay),
+            typeof(TreeViewEnumerableDisplay));
+
+        var luthetusCommonComponentRenderers = new LuthetusCommonComponentRenderers(
+            typeof(CommonErrorNotificationDisplay),
+            typeof(CommonInformativeNotificationDisplay),
+            luthetusCommonTreeViews);
     }
 
     /// <summary>

@@ -1,4 +1,11 @@
 ﻿using Luthetus.Common.RazorLib.Dialogs.Models;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Fluxor;
+using Luthetus.Common.RazorLib.Notifications.Displays;
 
 namespace Luthetus.Common.Tests.Basis.Dialogs.Models;
 
@@ -8,12 +15,19 @@ namespace Luthetus.Common.Tests.Basis.Dialogs.Models;
 public class DialogServiceTests
 {
     /// <summary>
-    /// <see cref="DialogService(Fluxor.IDispatcher, Fluxor.IState{RazorLib.Dialogs.States.DialogState})"/>
+    /// <see cref="DialogService(IDispatcher, IState{RazorLib.Dialogs.States.DialogState})"/>
     /// </summary>
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
+        var services = new ServiceCollection()
+            .AddScoped<IDialogService, DialogService>()
+            .AddFluxor(options => options.ScanAssemblies(typeof(IDialogService).Assembly));
+
+        var serviceProvider = services.BuildServiceProvider();
+        var dialogService = serviceProvider.GetRequiredService<IDialogService>();
+
+        Assert.NotNull(dialogService);
     }
 
     /// <summary>
@@ -22,7 +36,14 @@ public class DialogServiceTests
     [Fact]
     public void DialogStateWrap()
     {
-        throw new NotImplementedException();
+        var services = new ServiceCollection()
+            .AddScoped<IDialogService, DialogService>()
+            .AddFluxor(options => options.ScanAssemblies(typeof(IDialogService).Assembly));
+
+        var serviceProvider = services.BuildServiceProvider();
+        var dialogService = serviceProvider.GetRequiredService<IDialogService>();
+
+        Assert.NotNull(dialogService.DialogStateWrap);
     }
 
     /// <summary>
@@ -31,11 +52,40 @@ public class DialogServiceTests
     [Fact]
     public void RegisterDialogRecord()
     {
-        throw new NotImplementedException();
+        var dialogRecord = new DialogRecord(
+            Key<DialogRecord>.NewKey(),
+            "Test Dialog",
+            typeof(CommonInformativeNotificationDisplay),
+            new Dictionary<string, object?>
+            {
+                {
+                    nameof(CommonInformativeNotificationDisplay.Message),
+                    "Test to register a dialog record"
+                }
+            },
+            null);
+
+        var services = new ServiceCollection()
+            .AddScoped<IDialogService, DialogService>()
+            .AddFluxor(options => options.ScanAssemblies(typeof(IDialogService).Assembly));
+
+        var serviceProvider = services.BuildServiceProvider();
+
+        var store = serviceProvider.GetRequiredService<IStore>();
+        store.InitializeAsync().Wait();
+
+        var dialogService = serviceProvider.GetRequiredService<IDialogService>();
+
+        Assert.Empty(dialogService.DialogStateWrap.Value.DialogBag);
+
+        dialogService.RegisterDialogRecord(dialogRecord);
+
+        Assert.NotEmpty(dialogService.DialogStateWrap.Value.DialogBag);
+        Assert.Contains(dialogService.DialogStateWrap.Value.DialogBag, x => x == dialogRecord);
     }
 
     /// <summary>
-    /// <see cref="DialogService.SetDialogRecordIsMaximized(RazorLib.Keys.Models.Key{DialogRecord}, bool)"/>
+    /// <see cref="DialogService.SetDialogRecordIsMaximized(Key{DialogRecord}, bool)"/>
     /// </summary>
     [Fact]
     public void SetDialogRecordIsMaximized()
@@ -44,11 +94,44 @@ public class DialogServiceTests
     }
 
     /// <summary>
-    /// <see cref="DialogService.DisposeDialogRecord(RazorLib.Keys.Models.Key{DialogRecord})"/>
+    /// <see cref="DialogService.DisposeDialogRecord(Key{DialogRecord})"/>
     /// </summary>
     [Fact]
     public void DisposeDialogRecord()
     {
-        throw new NotImplementedException();
+        var dialogRecord = new DialogRecord(
+            Key<DialogRecord>.NewKey(),
+            "Test Dialog",
+            typeof(CommonInformativeNotificationDisplay),
+            new Dictionary<string, object?>
+            {
+                {
+                    nameof(CommonInformativeNotificationDisplay.Message),
+                    "Test to register a dialog record"
+                }
+            },
+            null);
+
+        var services = new ServiceCollection()
+            .AddScoped<IDialogService, DialogService>()
+            .AddFluxor(options => options.ScanAssemblies(typeof(IDialogService).Assembly));
+
+        var serviceProvider = services.BuildServiceProvider();
+
+        var store = serviceProvider.GetRequiredService<IStore>();
+        store.InitializeAsync().Wait();
+
+        var dialogService = serviceProvider.GetRequiredService<IDialogService>();
+
+        Assert.Empty(dialogService.DialogStateWrap.Value.DialogBag);
+
+        dialogService.RegisterDialogRecord(dialogRecord);
+
+        Assert.NotEmpty(dialogService.DialogStateWrap.Value.DialogBag);
+        Assert.Contains(dialogService.DialogStateWrap.Value.DialogBag, x => x == dialogRecord);
+
+        dialogService.DisposeDialogRecord(dialogRecord.Key);
+        
+        Assert.Empty(dialogService.DialogStateWrap.Value.DialogBag);
     }
 }

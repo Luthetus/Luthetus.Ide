@@ -13,7 +13,18 @@ public record ComponentRunnerComplexTypeTests
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
+        var sampleComplexType = new SampleComplexType("John", "Doe");
+
+        var constructor = typeof(SampleComplexType).GetConstructor(
+            new[] { typeof(string), typeof(string) });
+
+        Assert.NotNull(constructor);
+
+        var componentRunnerComplexType = new ComponentRunnerComplexType(
+            constructor,
+            null,
+            sampleComplexType,
+            typeof(SampleComplexType));
     }
 
     /// <summary>
@@ -59,5 +70,19 @@ public record ComponentRunnerComplexTypeTests
     public void ComponentRunnerTypeKind()
     {
         throw new NotImplementedException();
+    }
+
+    public class SampleComplexType
+    {
+        public SampleComplexType(string firstName, string lastName)
+        {
+            FirstName = firstName;
+            LastName = lastName;
+        }
+
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+
+        public string DisplayName => $"{FirstName} {LastName}";
     }
 }

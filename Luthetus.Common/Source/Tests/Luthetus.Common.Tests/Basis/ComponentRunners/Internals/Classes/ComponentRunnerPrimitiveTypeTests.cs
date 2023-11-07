@@ -13,6 +13,12 @@ public class ComponentRunnerPrimitiveTypeTests
     [Fact]
     public void Constructor()
     {
+        var componentRunnerPrimitiveType = new ComponentRunnerPrimitiveType(
+            null,
+            null,
+            null,
+            typeof(int));
+
         throw new NotImplementedException();
     }
 

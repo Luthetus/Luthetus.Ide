@@ -3,12 +3,12 @@
 namespace Luthetus.Common.Tests.Basis.Installations.Models;
 
 /// <summary>
-/// <see cref="Luthetus.Common.RazorLib.Installations.Models.ServiceCollectionExtensions"/>
+/// <see cref="ServiceCollectionExtensions"/>
 /// </summary>
 public class ServiceCollectionExtensionsTests
 {
     /// <summary>
-    /// <see cref="Luthetus.Common.RazorLib.Installations.Models.ServiceCollectionExtensions.AddLuthetusCommonServices(Microsoft.Extensions.DependencyInjection.IServiceCollection, LuthetusHostingInformation, Func{LuthetusCommonOptions, LuthetusCommonOptions}?)"/>
+    /// <see cref="ServiceCollectionExtensions.AddLuthetusCommonServices(Microsoft.Extensions.DependencyInjection.IServiceCollection, LuthetusHostingInformation, Func{LuthetusCommonOptions, LuthetusCommonOptions}?)"/>
     /// </summary>
     [Fact]
     public void AddLuthetusCommonServices()

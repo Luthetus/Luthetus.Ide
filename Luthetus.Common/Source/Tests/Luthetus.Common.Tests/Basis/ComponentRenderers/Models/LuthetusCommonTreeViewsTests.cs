@@ -1,4 +1,5 @@
 ﻿using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.WatchWindows.Displays;
 
 namespace Luthetus.Common.Tests.Basis.ComponentRenderers.Models;
 
@@ -7,104 +8,102 @@ namespace Luthetus.Common.Tests.Basis.ComponentRenderers.Models;
 /// </summary>
 public class LuthetusCommonTreeViewsTests
 {
+    /// <summary>
+    /// <see cref="LuthetusCommonTreeViews(Type, Type, Type, Type, Type, Type, Type, Type, Type)"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        public LuthetusCommonTreeViews(
-            Type treeViewExceptionRendererType, Type treeViewMissingRendererFallbackType, Type treeViewTextRenderer, Type treeViewReflectionRenderer, Type treeViewPropertiesRenderer, Type treeViewInterfaceImplementationRenderer, Type treeViewFieldsRenderer, Type treeViewExceptionRenderer, Type treeViewEnumerableRenderer)
-         */
-
-        throw new NotImplementedException();
+        var luthetusCommonTreeViews = new LuthetusCommonTreeViews(
+            typeof(TreeViewExceptionDisplay),
+            typeof(TreeViewMissingRendererFallbackDisplay),
+            typeof(TreeViewTextDisplay),
+            typeof(TreeViewReflectionDisplay),
+            typeof(TreeViewPropertiesDisplay),
+            typeof(TreeViewInterfaceImplementationDisplay),
+            typeof(TreeViewFieldsDisplay),
+            typeof(TreeViewExceptionDisplay),
+            typeof(TreeViewEnumerableDisplay));
     }
 
+    /// <summary>
+    /// <see cref="LuthetusCommonTreeViews.TreeViewExceptionRendererType"/>
+    /// </summary>
     [Fact]
     public void TreeViewExceptionRendererType()
     {
-        /*
-        public Type TreeViewExceptionRendererType { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="LuthetusCommonTreeViews.TreeViewMissingRendererFallbackType"/>
+    /// </summary>
     [Fact]
     public void TreeViewMissingRendererFallbackType()
     {
-        /*
-        public Type TreeViewMissingRendererFallbackType { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="LuthetusCommonTreeViews.TreeViewTextRenderer"/>
+    /// </summary>
     [Fact]
     public void TreeViewTextRenderer()
     {
-        /*
-        public Type TreeViewTextRenderer { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="LuthetusCommonTreeViews.TreeViewReflectionRenderer"/>
+    /// </summary>
     [Fact]
     public void TreeViewReflectionRenderer()
     {
-        /*
-        public Type TreeViewReflectionRenderer { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="LuthetusCommonTreeViews.TreeViewPropertiesRenderer"/>
+    /// </summary>
     [Fact]
     public void TreeViewPropertiesRenderer()
     {
-        /*
-        public Type TreeViewPropertiesRenderer { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="LuthetusCommonTreeViews.TreeViewInterfaceImplementationRenderer"/>
+    /// </summary>
     [Fact]
     public void TreeViewInterfaceImplementationRenderer()
     {
-        /*
-        public Type TreeViewInterfaceImplementationRenderer { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="LuthetusCommonTreeViews.TreeViewFieldsRenderer"/>
+    /// </summary>
     [Fact]
     public void TreeViewFieldsRenderer()
     {
-        /*
-        public Type TreeViewFieldsRenderer { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="LuthetusCommonTreeViews.TreeViewExceptionRenderer"/>
+    /// </summary>
     [Fact]
     public void TreeViewExceptionRenderer()
     {
-        /*
-        public Type TreeViewExceptionRenderer { get; }
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="LuthetusCommonTreeViews.TreeViewEnumerableRenderer"/>
+    /// </summary>
     [Fact]
     public void TreeViewEnumerableRenderer()
     {
-        /*
-        public Type TreeViewEnumerableRenderer { get; }
-         */
-
         throw new NotImplementedException();
     }
 }
