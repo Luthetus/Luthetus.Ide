@@ -1,4 +1,8 @@
-﻿using Luthetus.Common.RazorLib.Notifications.Models;
+﻿using Fluxor;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Notifications.Displays;
+using Luthetus.Common.RazorLib.Notifications.Models;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Luthetus.Common.Tests.Basis.Notifications.Models;
 
@@ -13,7 +17,14 @@ public class NotificationServiceTests
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
+        var services = new ServiceCollection()
+            .AddScoped<INotificationService, NotificationService>()
+            .AddFluxor(options => options.ScanAssemblies(typeof(INotificationService).Assembly));
+
+        var serviceProvider = services.BuildServiceProvider();
+        var notificationService = serviceProvider.GetRequiredService<INotificationService>();
+
+        Assert.NotNull(notificationService);
     }
 
     /// <summary>
@@ -22,7 +33,14 @@ public class NotificationServiceTests
     [Fact]
     public void NotificationStateWrap()
     {
-        throw new NotImplementedException();
+        var services = new ServiceCollection()
+            .AddScoped<INotificationService, NotificationService>()
+            .AddFluxor(options => options.ScanAssemblies(typeof(INotificationService).Assembly));
+
+        var serviceProvider = services.BuildServiceProvider();
+        var notificationService = serviceProvider.GetRequiredService<INotificationService>();
+
+        Assert.NotNull(notificationService.NotificationStateWrap);
     }
 
     /// <summary>
@@ -31,7 +49,40 @@ public class NotificationServiceTests
     [Fact]
     public void RegisterNotificationRecord()
     {
-        throw new NotImplementedException();
+        var services = new ServiceCollection()
+            .AddScoped<INotificationService, NotificationService>()
+            .AddFluxor(options => options.ScanAssemblies(typeof(INotificationService).Assembly));
+
+        var serviceProvider = services.BuildServiceProvider();
+
+        var store = serviceProvider.GetRequiredService<IStore>();
+        store.InitializeAsync().Wait();
+
+        var notificationService = serviceProvider.GetRequiredService<INotificationService>();
+
+        Assert.Empty(notificationService.NotificationStateWrap.Value.DefaultBag);
+
+        var notificationRecord = new NotificationRecord(
+            Key<NotificationRecord>.NewKey(),
+            "Test",
+            typeof(CommonInformativeNotificationDisplay),
+            new Dictionary<string, object?>
+            {
+                {
+                    nameof(CommonInformativeNotificationDisplay.Message),
+                    "Message testing"
+                }
+            },
+            null,
+            true,
+            null);
+
+        notificationService.RegisterNotificationRecord(notificationRecord);
+
+        Assert.NotEmpty(notificationService.NotificationStateWrap.Value.DefaultBag);
+
+        Assert.Contains(notificationService.NotificationStateWrap.Value.DefaultBag,
+            x => x == notificationRecord);
     }
 
     /// <summary>
@@ -40,6 +91,43 @@ public class NotificationServiceTests
     [Fact]
     public void DisposeNotificationRecord()
     {
-        throw new NotImplementedException();
+        var services = new ServiceCollection()
+            .AddScoped<INotificationService, NotificationService>()
+            .AddFluxor(options => options.ScanAssemblies(typeof(INotificationService).Assembly));
+
+        var serviceProvider = services.BuildServiceProvider();
+
+        var store = serviceProvider.GetRequiredService<IStore>();
+        store.InitializeAsync().Wait();
+
+        var notificationService = serviceProvider.GetRequiredService<INotificationService>();
+
+        Assert.Empty(notificationService.NotificationStateWrap.Value.DefaultBag);
+
+        var notificationRecord = new NotificationRecord(
+            Key<NotificationRecord>.NewKey(),
+            "Test",
+            typeof(CommonInformativeNotificationDisplay),
+            new Dictionary<string, object?>
+            {
+                {
+                    nameof(CommonInformativeNotificationDisplay.Message),
+                    "Message testing"
+                }
+            },
+            null,
+            true,
+            null);
+
+        notificationService.RegisterNotificationRecord(notificationRecord);
+
+        Assert.NotEmpty(notificationService.NotificationStateWrap.Value.DefaultBag);
+
+        Assert.Contains(notificationService.NotificationStateWrap.Value.DefaultBag,
+            x => x == notificationRecord);
+
+        notificationService.DisposeNotificationRecord(notificationRecord.Key);
+
+        Assert.Empty(notificationService.NotificationStateWrap.Value.DefaultBag);
     }
 }
