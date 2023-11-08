@@ -1,4 +1,6 @@
-﻿using Luthetus.Common.RazorLib.Dropdowns.States;
+﻿using Luthetus.Common.RazorLib.Dropdowns.Models;
+using Luthetus.Common.RazorLib.Dropdowns.States;
+using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Common.Tests.Basis.Dropdowns.States;
 
@@ -13,7 +15,10 @@ public class DropdownStateActionsTests
     [Fact]
     public void AddActiveAction()
     {
-        throw new NotImplementedException();
+        var key = Key<DropdownRecord>.NewKey();
+        var addActiveAction = new DropdownState.AddActiveAction(key);
+        
+        Assert.Equal(key, addActiveAction.Key);
     }
 
     /// <summary>
@@ -22,7 +27,10 @@ public class DropdownStateActionsTests
     [Fact]
     public void RemoveActiveAction()
     {
-        throw new NotImplementedException();
+        var key = Key<DropdownRecord>.NewKey();
+        var removeActiveAction = new DropdownState.RemoveActiveAction(key);
+
+        Assert.Equal(key, removeActiveAction.Key);
     }
 
     /// <summary>
@@ -31,6 +39,7 @@ public class DropdownStateActionsTests
     [Fact]
     public void ClearActivesAction()
     {
-        throw new NotImplementedException();
+        var clearActivesAction = new DropdownState.ClearActivesAction();
+        Assert.NotNull(clearActivesAction);
     }
 }

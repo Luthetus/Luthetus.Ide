@@ -7,7 +7,7 @@ namespace Luthetus.Common.RazorLib.Dialogs.States;
 [FeatureState]
 public partial record DialogState
 {
-    private DialogState()
+    public DialogState()
     {
         DialogBag = ImmutableList<DialogRecord>.Empty;
     }

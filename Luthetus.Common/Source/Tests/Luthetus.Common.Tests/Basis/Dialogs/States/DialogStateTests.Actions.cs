@@ -1,4 +1,9 @@
-﻿using Luthetus.Common.RazorLib.Dialogs.States;
+﻿using Fluxor;
+using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Dialogs.States;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Notifications.Displays;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Luthetus.Common.Tests.Basis.Dialogs.States;
 
@@ -13,7 +18,10 @@ public class DialogStateActionsTests
     [Fact]
     public void RegisterAction()
     {
-        throw new NotImplementedException();
+        InitializeDialogStateActionsTests(out var dialogRecord);
+
+        var registerAction = new DialogState.RegisterAction(dialogRecord);
+        Assert.Equal(dialogRecord, registerAction.Entry);
     }
 
     /// <summary>
@@ -22,7 +30,10 @@ public class DialogStateActionsTests
     [Fact]
     public void DisposeAction()
     {
-        throw new NotImplementedException();
+        InitializeDialogStateActionsTests(out var dialogRecord);
+
+        var disposeAction = new DialogState.DisposeAction(dialogRecord.Key);
+        Assert.Equal(dialogRecord.Key, disposeAction.Key);
     }
 
     /// <summary>
@@ -31,6 +42,35 @@ public class DialogStateActionsTests
     [Fact]
     public void SetIsMaximizedAction()
     {
-        throw new NotImplementedException();
+        InitializeDialogStateActionsTests(out var dialogRecord);
+
+        // true
+        {
+            var setIsMaximizedAction = new DialogState.SetIsMaximizedAction(dialogRecord.Key, true);
+            Assert.Equal(dialogRecord.Key, setIsMaximizedAction.Key);
+            Assert.True(setIsMaximizedAction.IsMaximized);
+        }
+        
+        // false
+        {
+            var setIsMaximizedAction = new DialogState.SetIsMaximizedAction(dialogRecord.Key, false);
+            Assert.Equal(dialogRecord.Key, setIsMaximizedAction.Key);
+            Assert.False(setIsMaximizedAction.IsMaximized);
+        }
+    }
+
+    private void InitializeDialogStateActionsTests(
+        out DialogRecord sampleDialogRecord)
+    {
+        sampleDialogRecord = new DialogRecord(Key<DialogRecord>.NewKey(), "Test title",
+            typeof(CommonInformativeNotificationDisplay),
+            new Dictionary<string, object?>
+            {
+                {
+                    nameof(CommonInformativeNotificationDisplay.Message),
+                    "Test message"
+                }
+            },
+            null);
     }
 }
