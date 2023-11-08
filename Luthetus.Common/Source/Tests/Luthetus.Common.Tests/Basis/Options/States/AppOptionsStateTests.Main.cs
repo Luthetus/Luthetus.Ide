@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Common.RazorLib.Options.States;
+﻿namespace Luthetus.Common.Tests.Basis.Options.States;
 
 public class AppOptionsStateMainTests
 {

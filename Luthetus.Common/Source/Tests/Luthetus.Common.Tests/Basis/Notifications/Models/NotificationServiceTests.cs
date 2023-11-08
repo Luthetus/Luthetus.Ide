@@ -12,7 +12,7 @@ namespace Luthetus.Common.Tests.Basis.Notifications.Models;
 public class NotificationServiceTests
 {
     /// <summary>
-    /// <see cref="NotificationService(Fluxor.IDispatcher, Fluxor.IState{RazorLib.Notifications.States.NotificationState})"/>
+    /// <see cref="NotificationService(IDispatcher, IState{RazorLib.Notifications.States.NotificationState})"/>
     /// </summary>
     [Fact]
     public void Constructor()
@@ -22,6 +22,10 @@ public class NotificationServiceTests
             .AddFluxor(options => options.ScanAssemblies(typeof(INotificationService).Assembly));
 
         var serviceProvider = services.BuildServiceProvider();
+
+        var store = serviceProvider.GetRequiredService<IStore>();
+        store.InitializeAsync().Wait();
+
         var notificationService = serviceProvider.GetRequiredService<INotificationService>();
 
         Assert.NotNull(notificationService);
@@ -38,6 +42,10 @@ public class NotificationServiceTests
             .AddFluxor(options => options.ScanAssemblies(typeof(INotificationService).Assembly));
 
         var serviceProvider = services.BuildServiceProvider();
+        
+        var store = serviceProvider.GetRequiredService<IStore>();
+        store.InitializeAsync().Wait();
+
         var notificationService = serviceProvider.GetRequiredService<INotificationService>();
 
         Assert.NotNull(notificationService.NotificationStateWrap);
@@ -86,7 +94,7 @@ public class NotificationServiceTests
     }
 
     /// <summary>
-    /// <see cref="NotificationService.DisposeNotificationRecord(RazorLib.Keys.Models.Key{NotificationRecord})"/>
+    /// <see cref="NotificationService.DisposeNotificationRecord(Key{NotificationRecord})"/>
     /// </summary>
     [Fact]
     public void DisposeNotificationRecord()

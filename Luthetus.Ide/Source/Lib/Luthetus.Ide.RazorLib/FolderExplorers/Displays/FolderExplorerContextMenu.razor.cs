@@ -93,11 +93,11 @@ public partial class FolderExplorerContextMenu : ComponentBase
         return new[]
         {
             MenuOptionsFactory.CopyFile(treeViewModel.Item, () => {
-                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.NameWithExtension}", LuthetusCommonComponentRenderers, Dispatcher);
+                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.NameWithExtension}", LuthetusCommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(7));
                 return Task.CompletedTask;
             }),
             MenuOptionsFactory.CutFile(treeViewModel.Item, () => {
-                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.NameWithExtension}", LuthetusCommonComponentRenderers, Dispatcher);
+                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.NameWithExtension}", LuthetusCommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(7));
                 ParentOfCutFile = parentTreeViewModel;
                 return Task.CompletedTask;
             }),

@@ -170,7 +170,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
         // Close Dialog
         Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.Key));
 
-        NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", LuthetusCommonComponentRenderers, Dispatcher);
+        NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", LuthetusCommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(7));
 
         var solutionAbsolutePath = new AbsolutePath(
             solutionAbsolutePathString,

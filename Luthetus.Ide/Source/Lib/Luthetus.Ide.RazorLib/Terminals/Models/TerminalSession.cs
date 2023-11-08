@@ -140,7 +140,7 @@ public class TerminalSession
                     }
                     catch (Exception e)
                     {
-                        NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _dispatcher);
+                        NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _dispatcher, TimeSpan.FromSeconds(14));
                     }
                     finally
                     {

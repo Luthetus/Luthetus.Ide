@@ -30,7 +30,7 @@ public partial class FileSystemSync
             notificationMessage = "File not found. TODO: Save As";
         }
 
-        NotificationHelper.DispatchInformative("Save Action", notificationMessage, _luthetusCommonComponentRenderers, Dispatcher);
+        NotificationHelper.DispatchInformative("Save Action", notificationMessage, _luthetusCommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(7));
 
         DateTime? fileLastWriteTime = null;
 

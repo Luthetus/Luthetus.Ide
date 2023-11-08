@@ -1,4 +1,9 @@
-﻿using Luthetus.Common.RazorLib.Notifications.Models;
+﻿using Fluxor;
+using Luthetus.Common.RazorLib.Notifications.Models;
+using Microsoft.Extensions.DependencyInjection;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.Notifications.Displays;
+using Luthetus.Common.RazorLib.WatchWindows.Displays;
 
 namespace Luthetus.Common.Tests.Basis.Notifications.Models;
 
@@ -13,7 +18,45 @@ public class NotificationHelperTests
     [Fact]
     public void DispatchInformative()
     {
-        throw new NotImplementedException();
+        var services = new ServiceCollection()
+            .AddScoped<INotificationService, NotificationService>()
+            .AddFluxor(options => options.ScanAssemblies(typeof(INotificationService).Assembly));
+
+        var serviceProvider = services.BuildServiceProvider();
+
+        var store = serviceProvider.GetRequiredService<IStore>();
+        store.InitializeAsync().Wait();
+        
+        var dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
+
+        var notificationService = serviceProvider.GetRequiredService<INotificationService>();
+
+        var luthetusCommonTreeViews = new LuthetusCommonTreeViews(
+            typeof(TreeViewExceptionDisplay),
+            typeof(TreeViewMissingRendererFallbackDisplay),
+            typeof(TreeViewTextDisplay),
+            typeof(TreeViewReflectionDisplay),
+            typeof(TreeViewPropertiesDisplay),
+            typeof(TreeViewInterfaceImplementationDisplay),
+            typeof(TreeViewFieldsDisplay),
+            typeof(TreeViewExceptionDisplay),
+            typeof(TreeViewEnumerableDisplay));
+
+        var luthetusCommonComponentRenderers = new LuthetusCommonComponentRenderers(
+            typeof(CommonErrorNotificationDisplay),
+            typeof(CommonInformativeNotificationDisplay),
+            luthetusCommonTreeViews);
+
+        Assert.Empty(notificationService.NotificationStateWrap.Value.DefaultBag);
+
+        NotificationHelper.DispatchInformative(
+            "Test",
+            "Message testing",
+            luthetusCommonComponentRenderers,
+            dispatcher,
+            null);
+
+        Assert.NotEmpty(notificationService.NotificationStateWrap.Value.DefaultBag);
     }
 
     /// <summary>
@@ -22,6 +65,44 @@ public class NotificationHelperTests
     [Fact]
     public void DispatchError()
     {
-        throw new NotImplementedException();
+        var services = new ServiceCollection()
+            .AddScoped<INotificationService, NotificationService>()
+            .AddFluxor(options => options.ScanAssemblies(typeof(INotificationService).Assembly));
+
+        var serviceProvider = services.BuildServiceProvider();
+
+        var store = serviceProvider.GetRequiredService<IStore>();
+        store.InitializeAsync().Wait();
+
+        var dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
+
+        var notificationService = serviceProvider.GetRequiredService<INotificationService>();
+
+        var luthetusCommonTreeViews = new LuthetusCommonTreeViews(
+            typeof(TreeViewExceptionDisplay),
+            typeof(TreeViewMissingRendererFallbackDisplay),
+            typeof(TreeViewTextDisplay),
+            typeof(TreeViewReflectionDisplay),
+            typeof(TreeViewPropertiesDisplay),
+            typeof(TreeViewInterfaceImplementationDisplay),
+            typeof(TreeViewFieldsDisplay),
+            typeof(TreeViewExceptionDisplay),
+            typeof(TreeViewEnumerableDisplay));
+
+        var luthetusCommonComponentRenderers = new LuthetusCommonComponentRenderers(
+            typeof(CommonErrorNotificationDisplay),
+            typeof(CommonInformativeNotificationDisplay),
+            luthetusCommonTreeViews);
+
+        Assert.Empty(notificationService.NotificationStateWrap.Value.DefaultBag);
+
+        NotificationHelper.DispatchError(
+            "Test",
+            "Message testing",
+            luthetusCommonComponentRenderers,
+            dispatcher,
+            null);
+
+        Assert.NotEmpty(notificationService.NotificationStateWrap.Value.DefaultBag);
     }
 }

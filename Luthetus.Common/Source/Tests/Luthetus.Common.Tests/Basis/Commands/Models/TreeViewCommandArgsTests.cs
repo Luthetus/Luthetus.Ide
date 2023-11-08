@@ -20,6 +20,8 @@ public class TreeViewCommandArgsTests
     /// <see cref="TreeViewCommandArgs(ITreeViewService, RazorLib.TreeViews.Models.TreeViewContainer, RazorLib.TreeViews.Models.TreeViewNoType?, Func{Task}, RazorLib.JavaScriptObjects.Models.ContextMenuFixedPosition?, Microsoft.AspNetCore.Components.Web.MouseEventArgs?, Microsoft.AspNetCore.Components.Web.KeyboardEventArgs?)"/>
     /// <br/>----<br/>
     /// <see cref="TreeViewCommandArgs.TreeViewService"/>
+    /// <see cref="TreeViewCommandArgs.TreeViewContainer"/>
+    /// <see cref="TreeViewCommandArgs.TargetNode"/>
     /// </summary>
     [Fact]
     public void Constructor()
@@ -29,8 +31,6 @@ public class TreeViewCommandArgsTests
         var hostingInformation = new LuthetusHostingInformation(
             LuthetusHostingKind.UnitTesting,
             new BackgroundTaskServiceSynchronous());
-
-        CommonUnitTestHelper.AddLuthetusCommonServicesUnitTesting(services, hostingInformation);
 
         services.AddFluxor(options => options.ScanAssemblies(
             typeof(LuthetusCommonOptions).Assembly));
@@ -57,32 +57,18 @@ public class TreeViewCommandArgsTests
 
         treeViewService.RegisterTreeViewContainer(treeViewContainer);
 
+        TreeViewNoType? targetNode = null;
+
         var treeViewCommandArgs = new TreeViewCommandArgs(
             treeViewService,
             treeViewContainer,
-            null,
+            targetNode,
             () => Task.CompletedTask,
             null,
             null,
             null);
-    }
 
-    /// <summary>
-    /// <see cref="TreeViewCommandArgs.TreeViewContainer"/>
-    /// </summary>
-    [Fact]
-    public void TreeViewContainer()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TreeViewCommandArgs.TargetNode"/>
-    /// </summary>
-    [Fact]
-    public void TargetNode()
-    {
-        throw new NotImplementedException();
+        Assert.True(targetNode == treeViewCommandArgs.TargetNode);
     }
 
     /// <summary>

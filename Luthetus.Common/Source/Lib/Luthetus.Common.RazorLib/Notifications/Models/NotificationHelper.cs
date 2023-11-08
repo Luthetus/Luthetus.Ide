@@ -11,7 +11,8 @@ public static class NotificationHelper
         string title,
         string message,
         ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
-        IDispatcher dispatcher)
+        IDispatcher dispatcher,
+        TimeSpan? notificationOverlayLifespan)
     {
         var notificationInformative = new NotificationRecord(
             Key<NotificationRecord>.NewKey(),
@@ -24,7 +25,7 @@ public static class NotificationHelper
                     message
                 },
             },
-            TimeSpan.FromSeconds(7),
+            notificationOverlayLifespan,
             true,
             null);
 
@@ -35,7 +36,8 @@ public static class NotificationHelper
         string title,
         string message,
         ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
-        IDispatcher dispatcher)
+        IDispatcher dispatcher,
+        TimeSpan? notificationOverlayLifespan)
     {
         var notificationError = new NotificationRecord(Key<NotificationRecord>.NewKey(),
             title,
@@ -44,7 +46,7 @@ public static class NotificationHelper
             {
                 { nameof(IErrorNotificationRendererType.Message), $"ERROR: {message}" },
             },
-            TimeSpan.FromSeconds(15),
+            notificationOverlayLifespan,
             true,
             IErrorNotificationRendererType.CSS_CLASS_STRING);
 

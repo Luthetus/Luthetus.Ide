@@ -9,67 +9,40 @@ public record ComponentRunnerComplexTypeTests
 {
     /// <summary>
     /// <see cref="ComponentRunnerComplexType(System.Reflection.ConstructorInfo?, Func{object?}?, object?, System.Type)"/>
+    /// <br/>----<br/>
+    /// <see cref="ComponentRunnerComplexType.ChosenConstructorInfo"/>
+    /// <see cref="ComponentRunnerComplexType.ConstructValueFunc"/>
+    /// <see cref="ComponentRunnerComplexType.Value"/>
+    /// <see cref="ComponentRunnerComplexType.Type"/>
+    /// <see cref="ComponentRunnerComplexType.ComponentRunnerTypeKind"/>
     /// </summary>
     [Fact]
     public void Constructor()
     {
         var sampleComplexType = new SampleComplexType("John", "Doe");
 
-        var constructor = typeof(SampleComplexType).GetConstructor(
+        var constructorInfo = typeof(SampleComplexType).GetConstructor(
             new[] { typeof(string), typeof(string) });
 
-        Assert.NotNull(constructor);
+        Func<object?>? constructValueFunc = null;
+
+        var type = typeof(SampleComplexType);
+
+        var componentRunnerTypeKind = ComponentRunnerTypeKind.Complex;
+
+        Assert.NotNull(constructorInfo);
 
         var componentRunnerComplexType = new ComponentRunnerComplexType(
-            constructor,
+            constructorInfo,
             null,
             sampleComplexType,
-            typeof(SampleComplexType));
-    }
+            type);
 
-    /// <summary>
-    /// <see cref="ComponentRunnerComplexType.ChosenConstructorInfo"/>
-    /// </summary>
-    [Fact]
-    public void ChosenConstructorInfo()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="ComponentRunnerComplexType.ConstructValueFunc"/>
-    /// </summary>
-    [Fact]
-    public void ConstructValueFunc()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="ComponentRunnerComplexType.Value"/>
-    /// </summary>
-    [Fact]
-    public void Value()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="ComponentRunnerComplexType.Type"/>
-    /// </summary>
-    [Fact]
-    public void Type()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="ComponentRunnerComplexType.ComponentRunnerTypeKind"/>
-    /// </summary>
-    [Fact]
-    public void ComponentRunnerTypeKind()
-    {
-        throw new NotImplementedException();
+        Assert.True(constructorInfo == componentRunnerComplexType.ChosenConstructorInfo);
+        Assert.True(constructValueFunc == componentRunnerComplexType.ConstructValueFunc);
+        Assert.True(sampleComplexType == componentRunnerComplexType.Value);
+        Assert.True(type == componentRunnerComplexType.Type);
+        Assert.True(componentRunnerTypeKind == componentRunnerComplexType.ComponentRunnerTypeKind);
     }
 
     public class SampleComplexType

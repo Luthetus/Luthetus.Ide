@@ -9,7 +9,7 @@ public class TreeViewCommandArgs : ICommandArgs
     public TreeViewCommandArgs(
         ITreeViewService treeViewService,
         TreeViewContainer treeViewContainer,
-        TreeViewNoType? focusNode,
+        TreeViewNoType? targetNode,
         Func<Task> restoreFocusToTreeView,
         ContextMenuFixedPosition? contextMenuFixedPosition,
         MouseEventArgs? mouseEventArgs,
@@ -17,7 +17,7 @@ public class TreeViewCommandArgs : ICommandArgs
     {
         TreeViewService = treeViewService;
         TreeViewContainer = treeViewContainer;
-        TargetNode = focusNode;
+        TargetNode = targetNode;
         RestoreFocusToTreeView = restoreFocusToTreeView;
         ContextMenuFixedPosition = contextMenuFixedPosition;
         MouseEventArgs = mouseEventArgs;
