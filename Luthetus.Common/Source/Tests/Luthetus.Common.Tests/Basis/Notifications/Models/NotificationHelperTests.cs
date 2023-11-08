@@ -13,7 +13,7 @@ namespace Luthetus.Common.Tests.Basis.Notifications.Models;
 public class NotificationHelperTests
 {
     /// <summary>
-    /// <see cref="NotificationHelper.DispatchInformative(string, string, RazorLib.ComponentRenderers.Models.ILuthetusCommonComponentRenderers, Fluxor.IDispatcher)"/>
+    /// <see cref="NotificationHelper.DispatchInformative(string, string, ILuthetusCommonComponentRenderers, IDispatcher)"/>
     /// </summary>
     [Fact]
     public void DispatchInformative()
@@ -60,7 +60,7 @@ public class NotificationHelperTests
     }
 
     /// <summary>
-    /// <see cref="NotificationHelper.DispatchError(string, string, RazorLib.ComponentRenderers.Models.ILuthetusCommonComponentRenderers, Fluxor.IDispatcher)"/>
+    /// <see cref="NotificationHelper.DispatchError(string, string, ILuthetusCommonComponentRenderers, IDispatcher)"/>
     /// </summary>
     [Fact]
     public void DispatchError()

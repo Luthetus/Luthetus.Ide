@@ -16,7 +16,7 @@ public partial record NotificationState(
     ImmutableList<NotificationRecord> ArchivedBag,
     ImmutableList<NotificationRecord> DeletedBag)
 {
-    private NotificationState() : this(
+    public NotificationState() : this(
         ImmutableList<NotificationRecord>.Empty,
         ImmutableList<NotificationRecord>.Empty,
         ImmutableList<NotificationRecord>.Empty,

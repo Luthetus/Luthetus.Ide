@@ -1,4 +1,10 @@
-﻿using Luthetus.Common.RazorLib.Options.Models;
+﻿using Fluxor;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Options.Models;
+using Luthetus.Common.RazorLib.Storages.Models;
+using Luthetus.Common.RazorLib.Storages.States;
+using Luthetus.Common.RazorLib.Themes.Models;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Luthetus.Common.Tests.Basis.Options.Models;
 
@@ -8,84 +14,71 @@ namespace Luthetus.Common.Tests.Basis.Options.Models;
 public class AppOptionsServiceTests
 {
     /// <summary>
-    /// <see cref="AppOptionsService(Fluxor.IState{RazorLib.Options.States.AppOptionsState}, Fluxor.IState{RazorLib.Themes.States.ThemeState}, Fluxor.IDispatcher, RazorLib.Storages.Models.IStorageService, RazorLib.Storages.States.StorageSync)"/>
+    /// <see cref="AppOptionsService(IState{RazorLib.Options.States.AppOptionsState}, IState{RazorLib.Themes.States.ThemeState}, IDispatcher, IStorageService, StorageSync)"/>
+    /// <br/>----<br/>
+    /// <see cref="AppOptionsService.AppOptionsStateWrap"/>
+    /// <see cref="AppOptionsService.StorageKey"/>
+    /// <see cref="AppOptionsService.ThemeCssClassString"/>
+    /// <see cref="AppOptionsService.FontSizeCssStyleString"/>
     /// </summary>
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
+        InitializeAppOptionsServiceTests(out var appOptionsService, out _);
+
+        Assert.NotNull(appOptionsService);
+        Assert.NotNull(appOptionsService.AppOptionsStateWrap);
+        Assert.NotNull(appOptionsService.StorageKey);
+        Assert.NotNull(appOptionsService.ThemeCssClassString);
+        Assert.NotNull(appOptionsService.FontSizeCssStyleString);
     }
 
     /// <summary>
-    /// <see cref="AppOptionsService.AppOptionsStateWrap"/>
-    /// </summary>
-    [Fact]
-    public void AppOptionsStateWrap()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="AppOptionsService.ThemeStateWrap"/>
-    /// </summary>
-    [Fact]
-    public void ThemeStateWrap()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="AppOptionsService.StorageKey"/>
-    /// </summary>
-    [Fact]
-    public void StorageKey()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="AppOptionsService.ThemeCssClassString"/>
-    /// </summary>
-    [Fact]
-    public void ThemeCssClassString()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="AppOptionsService.FontFamilyCssStyleString"/>
-    /// </summary>
-    [Fact]
-    public void FontFamilyCssStyleString()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="AppOptionsService.FontSizeCssStyleString"/>
-    /// </summary>
-    [Fact]
-    public void FontSizeCssStyleString()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="AppOptionsService.SetActiveThemeRecordKey(RazorLib.Keys.Models.Key{RazorLib.Themes.Models.ThemeRecord}, bool)"/>
+    /// <see cref="AppOptionsService.SetActiveThemeRecordKey(RazorLib.Keys.Models.Key{ThemeRecord}, bool)"/>
     /// </summary>
     [Fact]
     public void SetActiveThemeRecordKey()
     {
-        throw new NotImplementedException();
+        InitializeAppOptionsServiceTests(out var appOptionsService, out _);
+
+        var notCurrentlyChosenTheme = 
+            appOptionsService.AppOptionsStateWrap.Value.Options.ThemeKey == ThemeFacts.VisualStudioDarkThemeClone.Key
+                ? ThemeFacts.VisualStudioLightThemeClone
+                : ThemeFacts.VisualStudioDarkThemeClone;
+
+        Assert.NotEqual(
+            notCurrentlyChosenTheme.Key,
+            appOptionsService.AppOptionsStateWrap.Value.Options.ThemeKey);
+        
+        appOptionsService.SetActiveThemeRecordKey(notCurrentlyChosenTheme.Key);
+        
+        Assert.Equal(
+            notCurrentlyChosenTheme.Key,
+            appOptionsService.AppOptionsStateWrap.Value.Options.ThemeKey);
     }
 
     /// <summary>
-    /// <see cref="AppOptionsService.SetTheme(RazorLib.Themes.Models.ThemeRecord, bool)"/>
+    /// <see cref="AppOptionsService.SetTheme(ThemeRecord, bool)"/>
     /// </summary>
     [Fact]
     public void SetTheme()
     {
-        throw new NotImplementedException();
+        InitializeAppOptionsServiceTests(out var appOptionsService, out _);
+
+        var notCurrentlyChosenTheme =
+            appOptionsService.AppOptionsStateWrap.Value.Options.ThemeKey == ThemeFacts.VisualStudioDarkThemeClone.Key
+                ? ThemeFacts.VisualStudioLightThemeClone
+                : ThemeFacts.VisualStudioDarkThemeClone;
+
+        Assert.NotEqual(
+            notCurrentlyChosenTheme.Key,
+            appOptionsService.AppOptionsStateWrap.Value.Options.ThemeKey);
+
+        appOptionsService.SetTheme(notCurrentlyChosenTheme);
+
+        Assert.Equal(
+            notCurrentlyChosenTheme.Key,
+            appOptionsService.AppOptionsStateWrap.Value.Options.ThemeKey);
     }
 
     /// <summary>
@@ -94,7 +87,15 @@ public class AppOptionsServiceTests
     [Fact]
     public void SetFontFamily()
     {
-        throw new NotImplementedException();
+        InitializeAppOptionsServiceTests(out var appOptionsService, out _);
+
+        var fontFamily = "monospace";
+
+        Assert.NotEqual(fontFamily, appOptionsService.AppOptionsStateWrap.Value.Options.FontFamily);
+
+        appOptionsService.SetFontFamily(fontFamily);
+
+        Assert.Equal(fontFamily, appOptionsService.AppOptionsStateWrap.Value.Options.FontFamily);
     }
 
     /// <summary>
@@ -103,7 +104,13 @@ public class AppOptionsServiceTests
     [Fact]
     public void SetFontSize()
     {
-        throw new NotImplementedException();
+        InitializeAppOptionsServiceTests(out var appOptionsService, out _);
+
+        var fontSize = appOptionsService.AppOptionsStateWrap.Value.Options.FontSizeInPixels + 5;
+
+        appOptionsService.SetFontSize(fontSize);
+
+        Assert.Equal(fontSize, appOptionsService.AppOptionsStateWrap.Value.Options.FontSizeInPixels);
     }
 
     /// <summary>
@@ -112,7 +119,13 @@ public class AppOptionsServiceTests
     [Fact]
     public void SetIconSize()
     {
-        throw new NotImplementedException();
+        InitializeAppOptionsServiceTests(out var appOptionsService, out _);
+
+        var iconSize = appOptionsService.AppOptionsStateWrap.Value.Options.IconSizeInPixels + 3;
+
+        appOptionsService.SetIconSize(iconSize);
+
+        Assert.Equal(iconSize, appOptionsService.AppOptionsStateWrap.Value.Options.IconSizeInPixels);
     }
 
     /// <summary>
@@ -131,5 +144,24 @@ public class AppOptionsServiceTests
     public void WriteToStorage()
     {
         throw new NotImplementedException();
+    }
+
+    private void InitializeAppOptionsServiceTests(
+        out IAppOptionsService appOptionsService,
+        out ServiceProvider serviceProvider)
+    {
+        var services = new ServiceCollection()
+            .AddScoped<IAppOptionsService, AppOptionsService>()
+            .AddScoped<IStorageService, DoNothingStorageService>()
+            .AddScoped<StorageSync>()
+            .AddScoped<IBackgroundTaskService, BackgroundTaskServiceSynchronous>()
+            .AddFluxor(options => options.ScanAssemblies(typeof(IAppOptionsService).Assembly));
+
+        serviceProvider = services.BuildServiceProvider();
+
+        var store = serviceProvider.GetRequiredService<IStore>();
+        store.InitializeAsync().Wait();
+
+        appOptionsService = serviceProvider.GetRequiredService<IAppOptionsService>();
     }
 }

@@ -8,7 +8,7 @@ namespace Luthetus.Common.Tests.Basis.ComponentRunners.Internals.Classes;
 public record ComponentRunnerComplexTypeTests
 {
     /// <summary>
-    /// <see cref="ComponentRunnerComplexType(System.Reflection.ConstructorInfo?, Func{object?}?, object?, System.Type)"/>
+    /// <see cref="ComponentRunnerComplexType(System.Reflection.ConstructorInfo?, Func{object?}?, object?, Type)"/>
     /// <br/>----<br/>
     /// <see cref="ComponentRunnerComplexType.ChosenConstructorInfo"/>
     /// <see cref="ComponentRunnerComplexType.ConstructValueFunc"/>

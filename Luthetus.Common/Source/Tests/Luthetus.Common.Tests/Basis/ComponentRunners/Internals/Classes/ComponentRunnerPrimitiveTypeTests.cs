@@ -9,7 +9,7 @@ namespace Luthetus.Common.Tests.Basis.ComponentRunners.Internals.Classes;
 public class ComponentRunnerPrimitiveTypeTests
 {
     /// <summary>
-    /// <see cref="ComponentRunnerPrimitiveType(System.Reflection.ConstructorInfo?, Func{object?}?, object?, System.Type)"/>
+    /// <see cref="ComponentRunnerPrimitiveType(System.Reflection.ConstructorInfo?, Func{object?}?, object?, Type)"/>
     /// <br/>----<br/>
     /// <see cref="ComponentRunnerPrimitiveType.ChosenConstructorInfo"/>
     /// <see cref="ComponentRunnerPrimitiveType.ConstructValueFunc"/>

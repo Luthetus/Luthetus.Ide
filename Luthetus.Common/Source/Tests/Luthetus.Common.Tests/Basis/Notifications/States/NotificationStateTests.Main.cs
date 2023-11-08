@@ -1,4 +1,6 @@
-﻿using Luthetus.Common.RazorLib.Notifications.States;
+﻿using Luthetus.Common.RazorLib.Notifications.Models;
+using Luthetus.Common.RazorLib.Notifications.States;
+using System.Collections.Immutable;
 
 namespace Luthetus.Common.Tests.Basis.Notifications.States;
 
@@ -13,6 +15,11 @@ public class NotificationStateTests
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
+        var notificationState = new NotificationState();
+
+        Assert.Equal(ImmutableList<NotificationRecord>.Empty, notificationState.DefaultBag);
+        Assert.Equal(ImmutableList<NotificationRecord>.Empty, notificationState.ReadBag);
+        Assert.Equal(ImmutableList<NotificationRecord>.Empty, notificationState.ArchivedBag);
+        Assert.Equal(ImmutableList<NotificationRecord>.Empty, notificationState.DeletedBag);
     }
 }
