@@ -50,7 +50,7 @@ public static class ServiceCollectionExtensions
             .AddSingleton(hostingInformation)
             .AddSingleton(hostingInformation.BackgroundTaskService)
             .AddSingleton<ILuthetusCommonComponentRenderers>(_ => _commonRendererTypes)
-            .AddScoped<IThemeRecordsCollectionService, ThemeRecordsCollectionService>()
+            .AddScoped<IThemeService, ThemeService>()
             .AddCommonFactories(hostingInformation, commonOptions)
             .AddScoped<StorageSync>();
 

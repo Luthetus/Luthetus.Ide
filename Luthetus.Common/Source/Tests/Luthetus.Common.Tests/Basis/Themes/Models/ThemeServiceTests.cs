@@ -1,4 +1,8 @@
-﻿using Luthetus.Common.RazorLib.Themes.Models;
+﻿using Fluxor;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Themes.Models;
+using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Immutable;
 
 namespace Luthetus.Common.Tests.Basis.Themes.Models;
 
@@ -8,20 +12,73 @@ namespace Luthetus.Common.Tests.Basis.Themes.Models;
 public class ThemeServiceTests
 {
     /// <summary>
-    /// <see cref="ThemeService(Fluxor.IState{RazorLib.Themes.States.ThemeState}, Fluxor.IDispatcher)"/>
+    /// <see cref="ThemeService(IState{RazorLib.Themes.States.ThemeState}, IDispatcher)"/>
+    /// <br/>----<br/>
+    /// <see cref="ThemeService.ThemeStateWrap"/>
     /// </summary>
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
+        InitializeThemeServiceTests(out var themeService, out var themeRecord, out _);
+
+        Assert.NotNull(themeService);
+        Assert.NotNull(themeService.ThemeStateWrap);
     }
 
     /// <summary>
-    /// <see cref="ThemeService.ThemeStateWrap"/>
+    /// <see cref="ThemeService.RegisterThemeRecord(ThemeRecord)"/>
     /// </summary>
     [Fact]
-    public void ThemeStateWrap()
+    public void RegisterThemeRecord()
     {
-        throw new NotImplementedException();
+        InitializeThemeServiceTests(out var themeService, out var themeRecord, out _);
+
+        Assert.DoesNotContain(themeService.ThemeStateWrap.Value.ThemeBag, x => x == themeRecord);
+
+        themeService.RegisterThemeRecord(themeRecord);
+        Assert.NotEmpty(themeService.ThemeStateWrap.Value.ThemeBag);
+        Assert.Contains(themeService.ThemeStateWrap.Value.ThemeBag, x => x == themeRecord);
+    }
+
+    /// <summary>
+    /// <see cref="ThemeService.DisposeThemeRecord(Key{ThemeRecord})"/>
+    /// </summary>
+    [Fact]
+    public void DisposeThemeRecord()
+    {
+        InitializeThemeServiceTests(out var themeService, out var themeRecord, out _);
+
+        Assert.DoesNotContain(themeService.ThemeStateWrap.Value.ThemeBag, x => x == themeRecord);
+
+        themeService.RegisterThemeRecord(themeRecord);
+        Assert.Contains(themeService.ThemeStateWrap.Value.ThemeBag, x => x == themeRecord);
+
+        themeService.DisposeThemeRecord(themeRecord.Key);
+        Assert.DoesNotContain(themeService.ThemeStateWrap.Value.ThemeBag, x => x == themeRecord);
+    }
+
+    private void InitializeThemeServiceTests(
+        out IThemeService themeService,
+        out ThemeRecord sampleThemeRecord,
+        out ServiceProvider serviceProvider)
+    {
+        var services = new ServiceCollection()
+            .AddScoped<IThemeService, ThemeService>()
+            .AddFluxor(options => options.ScanAssemblies(typeof(IThemeService).Assembly));
+
+        serviceProvider = services.BuildServiceProvider();
+
+        var store = serviceProvider.GetRequiredService<IStore>();
+        store.InitializeAsync().Wait();
+
+        themeService = serviceProvider.GetRequiredService<IThemeService>();
+
+        sampleThemeRecord = new ThemeRecord(
+            Key<ThemeRecord>.NewKey(),
+            "Test Dark Theme",
+            "test_dark-theme",
+            ThemeContrastKind.Default,
+            ThemeColorKind.Dark,
+            new ThemeScope[] { ThemeScope.App, ThemeScope.TextEditor }.ToImmutableList());
     }
 }

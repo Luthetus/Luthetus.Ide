@@ -7,7 +7,7 @@ namespace Luthetus.Common.RazorLib.Themes.States;
 [FeatureState]
 public partial record ThemeState(ImmutableList<ThemeRecord> ThemeBag)
 {
-    private ThemeState() : this(DefaultThemeRecordsBag)
+    public ThemeState() : this(DefaultThemeRecordsBag)
     {
         
     }
