@@ -45,7 +45,7 @@
 
         @if (displayState.ChosenTypeGuid != Guid.Empty)
         {
-            foreach (var parameter in displayState.ComponentParameterInfoBag)
+            foreach (var parameter in displayState.ComponentPropertyInfoBag)
             {
                 <CascadingValue Value="displayState">
                     <ComponentRunnerVariable VariableType="parameter.PropertyType"

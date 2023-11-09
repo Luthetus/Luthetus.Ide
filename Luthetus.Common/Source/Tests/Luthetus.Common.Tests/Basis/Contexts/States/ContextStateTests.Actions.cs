@@ -1,4 +1,7 @@
+using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Contexts.States;
+using Luthetus.Common.RazorLib.Keys.Models;
+using System.Collections.Immutable;
 
 namespace Luthetus.Common.Tests.Basis.Contexts.States;
 
@@ -13,7 +16,17 @@ public class ContextStateActionsTests
     [Fact]
     public void SetActiveContextRecordsAction()
     {
-        throw new NotImplementedException();
+        var contextRecordKeyHeirarchy = new ContextRecordKeyHeirarchy(
+            new Key<ContextRecord>[] 
+            {
+                ContextFacts.ActiveContextsContext.ContextKey,
+                ContextFacts.GlobalContext.ContextKey,
+            }.ToImmutableArray());
+
+        var setActiveContextRecordsAction = new ContextState.SetActiveContextRecordsAction(
+            contextRecordKeyHeirarchy);
+
+        Assert.Equal(contextRecordKeyHeirarchy, setActiveContextRecordsAction.ContextRecordKeyHeirarchy);
     }
 
     /// <summary>

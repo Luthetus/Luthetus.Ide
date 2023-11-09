@@ -59,61 +59,7 @@ public partial class ComponentRunnerDisplay : ComponentBase
 
         var stringValue = changeEventArgs.Value as string;
 
-        if (string.IsNullOrWhiteSpace(stringValue) ||
-            stringValue == Guid.Empty.ToString() ||
-            !Guid.TryParse(stringValue, out var chosenTypeGuid))
-        {
-            displayState = displayState with
-            {
-                ChosenTypeGuid = Guid.Empty
-            };
-        }
-        else
-        {
-            displayState = displayState with
-            {
-                ChosenTypeGuid = chosenTypeGuid
-            };
-        }
-
-        if (displayState.PreviousTypeGuid != displayState.ChosenTypeGuid)
-        {
-            displayState = displayState with
-            {
-                PreviousTypeGuid = displayState.ChosenTypeGuid
-            };
-
-            _chosenComponentChangeCounter++;
-
-            var type = displayState.ChosenComponentType;
-
-            if (type is not null)
-            {
-                displayState = displayState with
-                {
-                    ComponentParameterInfoBag = type
-                        .GetProperties()
-                        .Where(x => Attribute.IsDefined(x, typeof(ParameterAttribute)))
-                        .ToArray()
-                };
-            }
-            else
-            {
-                displayState = displayState with
-                {
-                    ComponentParameterInfoBag = Array.Empty<PropertyInfo>()
-                };
-            }
-        }
-
-        Dispatcher.Dispatch(new ComponentRunnerState.WithAction(
-            displayState.Key, inDisplayState => inDisplayState with
-            {
-                ChosenTypeGuid = displayState.ChosenTypeGuid,
-                PreviousTypeGuid = displayState.PreviousTypeGuid,
-                ComponentParameterInfoBag = displayState.ComponentParameterInfoBag,
-                ComponentRunnerTypeParameterMap = new(),
-            }));
+        displayState.CalculateComponentPropertyInfoBag(stringValue, ref _chosenComponentChangeCounter);
     }
 
     private void WrapRecover()

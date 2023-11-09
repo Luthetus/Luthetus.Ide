@@ -3,12 +3,12 @@
 namespace Luthetus.Common.Tests.Basis.Contexts.Models;
 
 /// <summary>
-/// <see cref="TargetContextRecordKeyAndHeirarchyBag"/>
+/// <see cref="ContextRecordKeyHeirarchy"/>
 /// </summary>
-public class TargetContextRecordKeyAndHeirarchyBagTests
+public class ContextRecordKeyHeirarchyTests
 {
     /// <summary>
-    /// <see cref="TargetContextRecordKeyAndHeirarchyBag.TargetKey"/>
+    /// <see cref="ContextRecordKeyHeirarchy.TargetKey"/>
     /// </summary>
     [Fact]
     public void TargetKey()

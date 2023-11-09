@@ -13,7 +13,7 @@ public partial class ActiveContextsDisplay : FluxorComponent
     private IDispatcher Dispatcher { get; set; } = null!;
 
     private bool GetIsInspecting(ContextState localContextStates) =>
-        localContextStates.InspectedKeyHeirarchyBag is not null;
+        localContextStates.InspectedContextRecordKeyHeirarchy is not null;
 
     private void DispatchToggleInspectActionOnClick(bool isInspecting)
     {

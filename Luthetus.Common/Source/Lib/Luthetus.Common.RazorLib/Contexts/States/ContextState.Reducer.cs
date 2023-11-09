@@ -15,7 +15,7 @@ public partial record ContextState
         {
             return inContextStates with
             {
-                FocusedKeyHeirarchyBag = setActiveContextRecordsAction.TargetContextRecordKeyAndHeirarchyBag
+                FocusedContextRecordKeyHeirarchy = setActiveContextRecordsAction.ContextRecordKeyHeirarchy
             };
         }
         
@@ -26,7 +26,7 @@ public partial record ContextState
             var outIsSelectingInspectionTarget = !inContextStates.IsSelectingInspectionTarget;
 
             var outInspectableHeirarchyBag = inContextStates.InspectableKeyHeirarchyBag;
-            var outInspectedTargetContextRecords = inContextStates.InspectedKeyHeirarchyBag;
+            var outInspectedTargetContextRecords = inContextStates.InspectedContextRecordKeyHeirarchy;
 
             if (!outIsSelectingInspectionTarget)
             {
@@ -37,7 +37,7 @@ public partial record ContextState
             return inContextStates with
             {
                 IsSelectingInspectionTarget = !inContextStates.IsSelectingInspectionTarget,
-                InspectedKeyHeirarchyBag = outInspectedTargetContextRecords,
+                InspectedContextRecordKeyHeirarchy = outInspectedTargetContextRecords,
                 InspectableKeyHeirarchyBag = outInspectableHeirarchyBag,
             };
         }
@@ -59,7 +59,7 @@ public partial record ContextState
             return inContextStates with
             {
                 IsSelectingInspectionTarget = false,
-                InspectedKeyHeirarchyBag = null,
+                InspectedContextRecordKeyHeirarchy = null,
                 InspectableKeyHeirarchyBag = ImmutableArray<InspectContextRecordEntry>.Empty,
             };
         }
@@ -72,7 +72,7 @@ public partial record ContextState
             return inContextStates with
             {
                 IsSelectingInspectionTarget = false,
-                InspectedKeyHeirarchyBag = setInspectionTargetAction.TargetContextRecordKeyAndHeirarchyBag,
+                InspectedContextRecordKeyHeirarchy = setInspectionTargetAction.ContextRecordKeyHeirarchy,
                 InspectableKeyHeirarchyBag = ImmutableArray<InspectContextRecordEntry>.Empty
             };
         }

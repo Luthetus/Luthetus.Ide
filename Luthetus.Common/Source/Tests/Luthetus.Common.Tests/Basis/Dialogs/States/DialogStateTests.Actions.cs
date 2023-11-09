@@ -57,8 +57,7 @@ public class DialogStateActionsTests
         }
     }
 
-    private void InitializeDialogStateActionsTests(
-        out DialogRecord sampleDialogRecord)
+    private void InitializeDialogStateActionsTests(out DialogRecord sampleDialogRecord)
     {
         sampleDialogRecord = new DialogRecord(Key<DialogRecord>.NewKey(), "Test title",
             typeof(CommonInformativeNotificationDisplay),

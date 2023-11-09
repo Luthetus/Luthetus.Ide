@@ -22,6 +22,7 @@ public class TreeViewCommandArgsTests
     /// <see cref="TreeViewCommandArgs.TreeViewService"/>
     /// <see cref="TreeViewCommandArgs.TreeViewContainer"/>
     /// <see cref="TreeViewCommandArgs.TargetNode"/>
+    /// <see cref="TreeViewCommandArgs.RestoreFocusToTreeView"/>
     /// </summary>
     [Fact]
     public void Constructor()
@@ -69,41 +70,6 @@ public class TreeViewCommandArgsTests
             null);
 
         Assert.True(targetNode == treeViewCommandArgs.TargetNode);
-    }
-
-    /// <summary>
-    /// <see cref="TreeViewCommandArgs.RestoreFocusToTreeView"/>
-    /// </summary>
-    [Fact]
-    public void RestoreFocusToTreeView()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TreeViewCommandArgs.ContextMenuFixedPosition"/>
-    /// </summary>
-    [Fact]
-    public void ContextMenuFixedPosition()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TreeViewCommandArgs.MouseEventArgs"/>
-    /// </summary>
-    [Fact]
-    public void MouseEventArgs()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="TreeViewCommandArgs.KeyboardEventArgs"/>
-    /// </summary>
-    [Fact]
-    public void KeyboardEventArgs()
-    {
-        throw new NotImplementedException();
+        Assert.NotNull(treeViewCommandArgs.RestoreFocusToTreeView);
     }
 }

@@ -27,6 +27,6 @@ public partial class ContextBoundaryOverlay : ComponentBase
     private void DispatchSetInspectionTargetActionOnClick()
     {
         Dispatcher.Dispatch(new ContextState.SetInspectionTargetAction(
-            InspectContextRecordEntry.TargetContextRecordKeyAndHeirarchyBag));
+            InspectContextRecordEntry.ContextRecordKeyHeirarchy));
     }
 }

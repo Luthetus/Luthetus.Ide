@@ -33,8 +33,8 @@
     <div class="luth_ide_section-body">
 
         @{
-            var keysToRender = contextState.InspectedKeyHeirarchyBag
-                ?? contextState.FocusedKeyHeirarchyBag;
+            var keysToRender = contextState.InspectedContextRecordKeyHeirarchy
+            ?? contextState.FocusedContextRecordKeyHeirarchy;
         }
 
         @foreach (var contextKey in keysToRender.KeyHeirarchyBag)

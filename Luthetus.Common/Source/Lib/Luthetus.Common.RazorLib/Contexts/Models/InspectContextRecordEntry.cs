@@ -3,5 +3,5 @@
 namespace Luthetus.Common.RazorLib.Contexts.Models;
 
 public record InspectContextRecordEntry(
-    TargetContextRecordKeyAndHeirarchyBag TargetContextRecordKeyAndHeirarchyBag,
+    ContextRecordKeyHeirarchy ContextRecordKeyHeirarchy,
     MeasuredHtmlElementDimensions TargetContextRecordMeasuredHtmlElementDimensions);
