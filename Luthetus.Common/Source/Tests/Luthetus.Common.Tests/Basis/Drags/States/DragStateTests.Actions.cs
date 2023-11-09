@@ -13,6 +13,12 @@ public class DragStateActionsTests
     [Fact]
     public void WithAction()
     {
-        throw new NotImplementedException();
+        var withAction = new DragState.WithAction(x => x with
+        {
+            ShouldDisplay = true,
+            MouseEventArgs = new(),
+        });
+
+        Assert.NotNull(withAction.WithFunc);
     }
 }

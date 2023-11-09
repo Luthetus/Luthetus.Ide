@@ -13,6 +13,9 @@ public class DragStateMainTests
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
+        var dragState = new DragState();
+
+        Assert.False(dragState.ShouldDisplay);
+        Assert.Null(dragState.MouseEventArgs);
     }
 }

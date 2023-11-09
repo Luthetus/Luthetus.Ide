@@ -8,7 +8,7 @@ public partial record DragState(
     bool ShouldDisplay,
     MouseEventArgs? MouseEventArgs)
 {
-    private DragState() : this (false, null)
+    public DragState() : this (false, null)
     {
         
     }
