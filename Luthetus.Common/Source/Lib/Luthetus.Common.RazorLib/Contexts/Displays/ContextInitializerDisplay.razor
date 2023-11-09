@@ -8,7 +8,7 @@
 
     @if (contextStates.IsSelectingInspectionTarget)
     {
-        foreach (var inspectContextRecordEntry in contextStates.InspectableKeyHeirarchyBag)
+        foreach (var inspectContextRecordEntry in contextStates.InspectContextRecordEntryBag)
         {
             // TODO: App crashes when using: @key="inspectContextRecordEntry.ContextRecordKeyHeirarchy.TargetKey"
             <ContextBoundaryOverlay InspectContextRecordEntry="inspectContextRecordEntry"/>

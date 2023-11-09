@@ -25,12 +25,12 @@ public partial record ContextState
         {
             var outIsSelectingInspectionTarget = !inContextStates.IsSelectingInspectionTarget;
 
-            var outInspectableHeirarchyBag = inContextStates.InspectableKeyHeirarchyBag;
+            var outInspectContextRecordEntryBag = inContextStates.InspectContextRecordEntryBag;
             var outInspectedTargetContextRecords = inContextStates.InspectedContextRecordKeyHeirarchy;
 
             if (!outIsSelectingInspectionTarget)
             {
-                outInspectableHeirarchyBag = ImmutableArray<InspectContextRecordEntry>.Empty;
+                outInspectContextRecordEntryBag = ImmutableArray<InspectContextRecordEntry>.Empty;
                 outInspectedTargetContextRecords = null;
             }
 
@@ -38,7 +38,7 @@ public partial record ContextState
             {
                 IsSelectingInspectionTarget = !inContextStates.IsSelectingInspectionTarget,
                 InspectedContextRecordKeyHeirarchy = outInspectedTargetContextRecords,
-                InspectableKeyHeirarchyBag = outInspectableHeirarchyBag,
+                InspectContextRecordEntryBag = outInspectContextRecordEntryBag,
             };
         }
         
@@ -60,7 +60,7 @@ public partial record ContextState
             {
                 IsSelectingInspectionTarget = false,
                 InspectedContextRecordKeyHeirarchy = null,
-                InspectableKeyHeirarchyBag = ImmutableArray<InspectContextRecordEntry>.Empty,
+                InspectContextRecordEntryBag = ImmutableArray<InspectContextRecordEntry>.Empty,
             };
         }
         
@@ -73,7 +73,7 @@ public partial record ContextState
             {
                 IsSelectingInspectionTarget = false,
                 InspectedContextRecordKeyHeirarchy = setInspectionTargetAction.ContextRecordKeyHeirarchy,
-                InspectableKeyHeirarchyBag = ImmutableArray<InspectContextRecordEntry>.Empty
+                InspectContextRecordEntryBag = ImmutableArray<InspectContextRecordEntry>.Empty
             };
         }
         
@@ -82,12 +82,12 @@ public partial record ContextState
             ContextState inContextStates,
             AddInspectContextRecordEntryAction addInspectContextRecordEntryAction)
         {
-            var outList = inContextStates.InspectableKeyHeirarchyBag.Add(
+            var outList = inContextStates.InspectContextRecordEntryBag.Add(
                 addInspectContextRecordEntryAction.InspectContextRecordEntry);
 
             return inContextStates with
             {
-                InspectableKeyHeirarchyBag = outList,
+                InspectContextRecordEntryBag = outList,
             };
         }
         

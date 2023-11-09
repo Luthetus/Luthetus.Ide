@@ -1,6 +1,7 @@
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Contexts.States;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
+using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using System.Collections.Immutable;
 
@@ -108,6 +109,14 @@ public class ContextStateActionsTests
     [Fact]
     public void SetContextKeymapAction()
     {
-        throw new NotImplementedException();
+        var contextRecordKey = ContextFacts.GlobalContext.ContextKey;
+        var keymap = Keymap.Empty;
+
+        var setContextKeymapAction = new ContextState.SetContextKeymapAction(
+            contextRecordKey,
+            keymap);
+
+        Assert.Equal(contextRecordKey, setContextKeymapAction.ContextRecordKey);
+        Assert.Equal(keymap, setContextKeymapAction.Keymap);
     }
 }

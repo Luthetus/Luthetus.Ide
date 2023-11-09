@@ -5,18 +5,15 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Common.RazorLib.Contexts.States;
 
-/// <summary>
-/// TODO: SphagettiCode - Do the member names need to be so obnoxiously long? (2023-09-19)
-/// </summary>
 [FeatureState]
 public partial record ContextState(
     ImmutableArray<ContextRecord> AllContextRecordsBag,
     ContextRecordKeyHeirarchy FocusedContextRecordKeyHeirarchy,
     ContextRecordKeyHeirarchy? InspectedContextRecordKeyHeirarchy,
-    ImmutableArray<InspectContextRecordEntry> InspectableKeyHeirarchyBag,
+    ImmutableArray<InspectContextRecordEntry> InspectContextRecordEntryBag,
     bool IsSelectingInspectionTarget)
 {
-    private ContextState() : this(
+    public ContextState() : this(
         ImmutableArray<ContextRecord>.Empty,
         new(ImmutableArray<Key<ContextRecord>>.Empty),
         null,
