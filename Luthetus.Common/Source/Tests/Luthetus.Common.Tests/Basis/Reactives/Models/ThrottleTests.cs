@@ -13,7 +13,11 @@ public class ThrottleTests
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
+        var timeSpan = TimeSpan.FromMilliseconds(500);
+
+        var throttle = new Throttle(timeSpan);
+
+        Assert.Equal(timeSpan, throttle.ThrottleTimeSpan);
     }
 
     /// <summary>

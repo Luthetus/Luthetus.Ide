@@ -1,4 +1,7 @@
-﻿using Luthetus.Common.RazorLib.Keymaps.Models;
+﻿using Luthetus.Common.RazorLib.Keyboards.Models;
+using Luthetus.Common.RazorLib.Keymaps.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace Luthetus.Common.Tests.Basis.Keymaps.Models;
 
@@ -13,6 +16,39 @@ public class KeyboardEventArgsExtensionsTests
     [Fact]
     public void ToKeymapArgument()
     {
-        throw new NotImplementedException();
+        // No modifiers (shift key, etc...)
+        {
+            var keyboardEventArgs = new KeyboardEventArgs
+            {
+                Code = KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE,
+            };
+
+            var keymapArgument = keyboardEventArgs.ToKeymapArgument();
+
+            Assert.Equal(keyboardEventArgs.Code, keymapArgument.Code);
+            Assert.Equal(keyboardEventArgs.ShiftKey, keymapArgument.ShiftKey);
+            Assert.Equal(keyboardEventArgs.CtrlKey, keymapArgument.CtrlKey);
+            Assert.Equal(keyboardEventArgs.AltKey, keymapArgument.AltKey);
+            Assert.Equal(Key<KeymapLayer>.Empty, keymapArgument.LayerKey);
+        }
+
+        // With modifiers (shift key, etc...)
+        {
+            var keyboardEventArgs = new KeyboardEventArgs
+            {
+                Code = KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE,
+                ShiftKey = true,
+                CtrlKey = true,
+                AltKey = true,
+            };
+
+            var keymapArgument = keyboardEventArgs.ToKeymapArgument();
+
+            Assert.Equal(keyboardEventArgs.Code, keymapArgument.Code);
+            Assert.Equal(keyboardEventArgs.ShiftKey, keymapArgument.ShiftKey);
+            Assert.Equal(keyboardEventArgs.CtrlKey, keymapArgument.CtrlKey);
+            Assert.Equal(keyboardEventArgs.AltKey, keymapArgument.AltKey);
+            Assert.Equal(Key<KeymapLayer>.Empty, keymapArgument.LayerKey);
+        }
     }
 }

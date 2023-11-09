@@ -74,7 +74,21 @@ public class KeyboardKeyFactsTests
     [Fact]
     public void IsPunctuationCharacter()
     {
-        throw new NotImplementedException();
+        foreach (var punctuationCharacter in PunctuationCharacters.AllBag)
+        {
+            Assert.True(KeyboardKeyFacts.IsPunctuationCharacter(punctuationCharacter));
+        }
+
+        foreach (var whitespaceCharacter in WhitespaceCharacters.AllBag)
+        {
+            Assert.False(KeyboardKeyFacts.IsPunctuationCharacter(whitespaceCharacter));
+        }
+
+        // Letter
+        Assert.False(KeyboardKeyFacts.IsPunctuationCharacter('a'));
+
+        // Digit
+        Assert.False(KeyboardKeyFacts.IsPunctuationCharacter('5'));
     }
 
     /// <summary>
@@ -101,7 +115,31 @@ public class KeyboardKeyFactsTests
     [Fact]
     public void IsWhitespaceCode()
     {
-        throw new NotImplementedException();
+        foreach (var whitespaceCode in WhitespaceCodes.AllBag)
+        {
+            Assert.True(KeyboardKeyFacts.IsWhitespaceCode(whitespaceCode));
+        }
+
+        foreach (var movementKey in MovementKeys.AllBag)
+        {
+            Assert.False(KeyboardKeyFacts.IsWhitespaceCode(movementKey));
+        }
+
+        foreach (var punctuationCharacter in PunctuationCharacters.AllBag)
+        {
+            Assert.False(KeyboardKeyFacts.IsWhitespaceCode(punctuationCharacter.ToString()));
+        }
+
+        foreach (var whitespaceCharacter in WhitespaceCharacters.AllBag)
+        {
+            Assert.False(KeyboardKeyFacts.IsWhitespaceCode(whitespaceCharacter.ToString()));
+        }
+
+        // Letter
+        Assert.False(KeyboardKeyFacts.IsWhitespaceCode("a"));
+
+        // Digit
+        Assert.False(KeyboardKeyFacts.IsWhitespaceCode("5"));
     }
 
     /// <summary>
@@ -137,7 +175,31 @@ public class KeyboardKeyFactsTests
     [Fact]
     public void IsMovementKey()
     {
-        throw new NotImplementedException();
+        foreach (var movementKey in MovementKeys.AllBag)
+        {
+            Assert.True(KeyboardKeyFacts.IsMovementKey(movementKey));
+        }
+
+        foreach (var whitespaceCode in WhitespaceCodes.AllBag)
+        {
+            Assert.False(KeyboardKeyFacts.IsMovementKey(whitespaceCode));
+        }
+
+        foreach (var punctuationCharacter in PunctuationCharacters.AllBag)
+        {
+            Assert.False(KeyboardKeyFacts.IsMovementKey(punctuationCharacter.ToString()));
+        }
+
+        foreach (var whitespaceCharacter in WhitespaceCharacters.AllBag)
+        {
+            Assert.False(KeyboardKeyFacts.IsMovementKey(whitespaceCharacter.ToString()));
+        }
+
+        // Letter
+        Assert.False(KeyboardKeyFacts.IsMovementKey("a"));
+
+        // Digit
+        Assert.False(KeyboardKeyFacts.IsMovementKey("5"));
     }
 
     /// <summary>
