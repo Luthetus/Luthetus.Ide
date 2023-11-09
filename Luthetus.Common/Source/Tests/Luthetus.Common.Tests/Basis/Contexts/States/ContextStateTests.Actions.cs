@@ -1,5 +1,6 @@
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Contexts.States;
+using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using System.Collections.Immutable;
 
@@ -35,7 +36,8 @@ public class ContextStateActionsTests
     [Fact]
     public void ToggleSelectInspectionTargetAction()
     {
-        throw new NotImplementedException();
+        var toggleSelectInspectionTargetAction = new ContextState.ToggleSelectInspectionTargetAction();
+        Assert.NotNull(toggleSelectInspectionTargetAction);
     }
 
     /// <summary>
@@ -44,7 +46,8 @@ public class ContextStateActionsTests
     [Fact]
     public void SetSelectInspectionTargetTrueAction()
     {
-        throw new NotImplementedException();
+        var setSelectInspectionTargetTrueAction = new ContextState.SetSelectInspectionTargetTrueAction();
+        Assert.NotNull(setSelectInspectionTargetTrueAction);
     }
 
     /// <summary>
@@ -53,7 +56,8 @@ public class ContextStateActionsTests
     [Fact]
     public void SetSelectInspectionTargetFalseAction()
     {
-        throw new NotImplementedException();
+        var setSelectInspectionTargetFalseAction = new ContextState.SetSelectInspectionTargetFalseAction();
+        Assert.NotNull(setSelectInspectionTargetFalseAction);
     }
 
     /// <summary>
@@ -62,7 +66,17 @@ public class ContextStateActionsTests
     [Fact]
     public void SetInspectionTargetAction()
     {
-        throw new NotImplementedException();
+        var contextRecordKeyHeirarchy = new ContextRecordKeyHeirarchy(
+            new Key<ContextRecord>[]
+            {
+                ContextFacts.ActiveContextsContext.ContextKey,
+                ContextFacts.GlobalContext.ContextKey,
+            }.ToImmutableArray());
+
+        var setInspectionTargetAction = new ContextState.SetInspectionTargetAction(
+            contextRecordKeyHeirarchy);
+
+        Assert.Equal(contextRecordKeyHeirarchy, setInspectionTargetAction.ContextRecordKeyHeirarchy);
     }
 
     /// <summary>
@@ -71,7 +85,21 @@ public class ContextStateActionsTests
     [Fact]
     public void AddInspectContextRecordEntryAction()
     {
-        throw new NotImplementedException();
+        var activeContextsContextKeyHeirarchy = new ContextRecordKeyHeirarchy(
+            new Key<ContextRecord>[]
+            {
+                ContextFacts.ActiveContextsContext.ContextKey,
+                ContextFacts.GlobalContext.ContextKey,
+            }.ToImmutableArray());
+
+        var activeContextsContextInspectEntry = new InspectContextRecordEntry(
+            activeContextsContextKeyHeirarchy,
+            new MeasuredHtmlElementDimensions(0, 0, 0, 0, 0));
+
+        var setInspectionTargetAction = new ContextState.AddInspectContextRecordEntryAction(
+            activeContextsContextInspectEntry);
+
+        Assert.Equal(activeContextsContextInspectEntry, setInspectionTargetAction.InspectContextRecordEntry);
     }
 
     /// <summary>
