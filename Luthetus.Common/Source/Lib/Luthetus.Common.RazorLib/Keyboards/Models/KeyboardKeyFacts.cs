@@ -130,7 +130,6 @@ public static class KeyboardKeyFacts
         switch (code)
         {
             case WhitespaceCodes.TAB_CODE:
-            case WhitespaceCodes.CARRIAGE_RETURN_CODE:
             case WhitespaceCodes.ENTER_CODE:
             case WhitespaceCodes.SPACE_CODE:
                 return true;
@@ -197,8 +196,6 @@ public static class KeyboardKeyFacts
                 return '\n';
             case WhitespaceCodes.SPACE_CODE:
                 return ' ';
-            case WhitespaceCodes.CARRIAGE_RETURN_CODE:
-                return '\r';
             default:
                 throw new ApplicationException($"Unrecognized Whitespace code of: {code}");
         }
@@ -222,6 +219,16 @@ public static class KeyboardKeyFacts
         public const string F10 = "F10";
         public const string PAGE_UP = "PageUp";
         public const string PAGE_DOWN = "PageDown";
+
+        public static readonly ImmutableArray<string> AllBag = new string[]
+        {
+            BACKSPACE,
+            ESCAPE,
+            DELETE,
+            F10,
+            PAGE_UP,
+            PAGE_DOWN,
+        }.ToImmutableArray();
     }
 
     public static class WhitespaceCharacters
@@ -230,6 +237,14 @@ public static class KeyboardKeyFacts
         public const char CARRIAGE_RETURN = '\r';
         public const char NEW_LINE = '\n';
         public const char SPACE = ' ';
+
+        public static readonly ImmutableArray<char> AllBag = new char[]
+        {
+            TAB,
+            CARRIAGE_RETURN,
+            NEW_LINE,
+            SPACE,
+        }.ToImmutableArray();
     }
 
     public static class WhitespaceCodes
@@ -237,9 +252,17 @@ public static class KeyboardKeyFacts
         public const string TAB_CODE = "Tab";
 
         // TODO: Get CARRIAGE_RETURN_CODE code
-        public const string CARRIAGE_RETURN_CODE = "";
+        // public const string CARRIAGE_RETURN_CODE = "";
+
         public const string ENTER_CODE = "Enter";
         public const string SPACE_CODE = "Space";
+
+        public static readonly ImmutableArray<string> AllBag = new string[]
+        {
+            TAB_CODE,
+            ENTER_CODE,
+            SPACE_CODE,
+        }.ToImmutableArray();
     }
 
     /// <summary>
@@ -328,6 +351,16 @@ public static class KeyboardKeyFacts
         public const string ARROW_RIGHT = "ArrowRight";
         public const string HOME = "Home";
         public const string END = "End";
+
+        public static readonly ImmutableArray<string> AllBag = new string[]
+        {
+            ARROW_LEFT,
+            ARROW_DOWN,
+            ARROW_UP,
+            ARROW_RIGHT,
+            HOME,
+            END,
+        }.ToImmutableArray();
     }
 
     public static class AlternateMovementKeys
@@ -336,5 +369,13 @@ public static class KeyboardKeyFacts
         public const string ARROW_DOWN = "j";
         public const string ARROW_UP = "k";
         public const string ARROW_RIGHT = "l";
+
+        public static readonly ImmutableArray<string> AllBag = new string[]
+        {
+            ARROW_LEFT,
+            ARROW_DOWN,
+            ARROW_UP,
+            ARROW_RIGHT,
+        }.ToImmutableArray();
     }
 }

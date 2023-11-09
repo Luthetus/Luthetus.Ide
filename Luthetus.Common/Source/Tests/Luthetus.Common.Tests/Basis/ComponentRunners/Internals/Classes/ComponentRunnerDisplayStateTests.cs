@@ -15,7 +15,7 @@ namespace Luthetus.Common.Tests.Basis.ComponentRunners.Internals.Classes;
 public class ComponentRunnerDisplayStateTests
 {
     /// <summary>
-    /// <see cref="ComponentRunnerDisplayState(Key{ComponentRunnerDisplayState}, List{Type}, Guid, Guid, System.Reflection.PropertyInfo[], Dictionary{string, IComponentRunnerType}, Fluxor.IDispatcher)"/>
+    /// <see cref="ComponentRunnerDisplayState(Key{ComponentRunnerDisplayState}, List{Type}, Guid, Guid, System.Reflection.PropertyInfo[], Dictionary{string, IComponentRunnerType}, IDispatcher)"/>
     /// <br/>----<br/>
     /// <see cref="ComponentRunnerDisplayState.ChosenComponentType"/>
     /// </summary>

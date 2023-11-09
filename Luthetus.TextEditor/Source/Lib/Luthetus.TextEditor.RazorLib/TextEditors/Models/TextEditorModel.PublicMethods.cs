@@ -221,7 +221,7 @@ public partial class TextEditorModel
 
             var code = character switch
             {
-                '\r' => KeyboardKeyFacts.WhitespaceCodes.CARRIAGE_RETURN_CODE,
+                '\r' => KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE,
                 '\n' => KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE,
                 '\t' => KeyboardKeyFacts.WhitespaceCodes.TAB_CODE,
                 ' ' => KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE,
