@@ -8,6 +8,90 @@ namespace Luthetus.Common.Tests.Basis.FileSystems.Models;
 /// </summary>
 public class PathHelperTests
 {
+    /*
+     * PathHelper.GetAbsoluteFromAbsoluteAndRelative needs to be broken down into many tests.
+     * 
+     * (directoryAbsolutePath, directoryRelativePath) => (directoryRelativePath)
+     * (directoryAbsolutePath, directoryRelativePath) => (fileRelativePath)
+     * (directoryAbsolutePath, fileRelativePath) => (directoryRelativePath)
+     * (directoryAbsolutePath, fileRelativePath) => (fileRelativePath)
+     * (fileAbsolutePath, directoryRelativePath) => (directoryRelativePath)
+     * (fileAbsolutePath, directoryRelativePath) => (fileRelativePath)
+     * (fileAbsolutePath, fileRelativePath) => (fileRelativePath)
+     * (fileAbsolutePath, fileRelativePath) => (directoryRelativePath)
+     *
+     * -------------------------------------------------------------------------
+     * 
+     * (d, d) => (d)
+     * (d, d) => (f)
+     * (d, f) => (d)
+     * (d, f) => (f)
+     * (f, d) => (d)
+     * (f, d) => (f)
+     * (f, f) => (f)
+     * (f, f) => (d)
+     *
+     * -------------------------------------------------------------------------
+     * 
+     * Explanation of thought:
+     * 
+     * Take in a directory absolute path, and a directory relative path.
+     * Then have the result be a directory absolute path.
+     * (d, d) => (d)
+     * 
+     * Take in a directory absolute path, and a directory relative path.
+     * Then have the result be a file absolute path.
+     * (d, d) => (f)
+     * 
+     * Take in a directory absolute path, and a file relative path.
+     * Then have the result be a directory absolute path.
+     * (d, f) => (d)
+     *
+     * -------------------------------------------------------------------------
+     * 
+     * More ideas:
+     * 
+     * I don't believe it the case that a relative path is accurrate, nor that an
+     * absolute path is accurate.
+     * 
+     * -Root
+     *     -Homework
+     *         -Math
+     *             -addition.txt
+     *             -subtraction.txt
+     *         -Biology
+     *             -nervousSystem.txt
+     *             -skeletalSystem.txt
+     *
+     * =============================================
+     *
+     * -Root
+     *     -Homework
+     *         -Math <---------------------------------
+     *             -addition.txt                       ^ 
+     *             -subtraction.txt                    |
+     *         -Biology ------------------------------>
+     *             -nervousSystem.txt
+     *             -skeletalSystem.txt  
+     *             
+     * This goes from:
+     *     "/Homework/Biology/"
+     *         to
+     *     "/Homework/Math/"
+     *     
+     * The relative path would be "../Math/"
+     *
+     * There are two main situations I'm thinking about:
+     *     -"Biology" is directory and all is as expected
+     *     -"Biology" is a file and....?
+     *     
+     * The relative path states that the resulting absolute path
+     * should be a directory.
+     * 
+     * What is to be done in the case that the resulting absolute path does
+     * not match what the relative path has as its 'IsDirectory' property?
+     */
+
     /// <summary>
     /// <see cref="PathHelper.GetAbsoluteFromAbsoluteAndRelative(IAbsolutePath, string, IEnvironmentProvider)"/>
     /// </summary>
@@ -133,6 +217,69 @@ public class PathHelperTests
 
                 Assert.False(actualAbsolutePath.IsRootDirectory);
             }
+        }
+
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="PathHelper.GetAbsoluteFromAbsoluteAndRelative(IAbsolutePath, string, IEnvironmentProvider)"/>
+    /// ---------------------------------------------
+    /// -Root
+    ///     -Homework
+    ///         -Math
+    ///             -addition.txt
+    ///             -subtraction.txt
+    ///         -Biology
+    ///             -nervousSystem.txt
+    ///             -skeletalSystem.txt
+    /// </summary>
+    [Fact]
+    public void GetAbsoluteFromAbsoluteAndRelative_Aaa()
+    {
+        FileSystemsTestsHelper.InitializeFileSystemsTests(
+            out InMemoryEnvironmentProvider environmentProvider,
+            out InMemoryFileSystemProvider fileSystemProvider,
+            out ServiceProvider serviceProvider);
+
+        // UpDir directive performs differently when starting on a file vs a directory
+        {
+            // If one starts on a directory, then the immediate parent is the answer.
+            //
+            // BUT if one starts on a file, the file's parent is the upper directory.
+            // Instead it would be one ancestor further.
+        }
+
+        // File to file with UpDir directives.
+        {
+            var start = "/Homework/Biology/nervousSystem.txt";
+            var relativePath = "../Math/addition.txt";
+
+            var output = "/Homework/Math/addition.txt";
+        }
+
+        // File to file NOT-USING any UpDir directives.
+        {
+            var start = "/Homework/Biology/nervousSystem.txt";
+            var relativePath = "./skeletalSystem.txt";
+
+            var output = "/Homework/Biology/skeletalSystem.txt";
+        }
+
+        // A single UpDir directive from a file.
+        {
+            var start = "/Homework/Biology/nervousSystem.txt";
+            var relativePath = "../";
+
+            var output = "/Homework/";
+        }
+
+        // A single UpDir directive from a directory.
+        {
+            var start = "/Homework/Biology/";
+            var relativePath = "../";
+
+            var output = "/Homework/";
         }
 
         throw new NotImplementedException();

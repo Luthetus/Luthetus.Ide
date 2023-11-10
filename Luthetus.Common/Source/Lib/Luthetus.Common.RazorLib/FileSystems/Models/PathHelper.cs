@@ -19,9 +19,10 @@ public static class PathHelper
             environmentProvider.AltDirectorySeparatorChar,
             environmentProvider.DirectorySeparatorChar);
 
-        var indexOfUpperDirectory = -1;
         var upperDirectoryCount = 0;
         var moveUpDirectoryToken = $"..{environmentProvider.DirectorySeparatorChar}";
+
+        int indexOfUpperDirectory;
 
         while ((indexOfUpperDirectory = upperDirectoryString.IndexOf(
             moveUpDirectoryToken, StringComparison.InvariantCulture)) != -1)
@@ -33,7 +34,7 @@ public static class PathHelper
                 moveUpDirectoryToken.Length);
         }
 
-        if (string.IsNullOrWhiteSpace(upperDirectoryString))
+        if (absolutePath.IsDirectory && string.IsNullOrWhiteSpace(upperDirectoryString))
             upperDirectoryCount--; // nearest shared ancestor is the directory itself
 
         var sharedAncestorDirectories = absolutePath.AncestorDirectoryBag
