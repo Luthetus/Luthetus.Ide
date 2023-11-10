@@ -95,7 +95,6 @@ public class AbsolutePath : IAbsolutePath
 
     public IAbsolutePath? ParentDirectory => AncestorDirectoryBag.LastOrDefault();
     public string? ExactInput { get; }
-    public char UsedDirectorySeparatorChar { get; }
     public PathType PathType { get; } = PathType.AbsolutePath;
     public bool IsDirectory { get; protected set; }
     public IEnvironmentProvider EnvironmentProvider { get; }
