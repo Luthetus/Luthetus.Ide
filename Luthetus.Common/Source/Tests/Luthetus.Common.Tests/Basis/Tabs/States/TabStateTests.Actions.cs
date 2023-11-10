@@ -1,4 +1,9 @@
-﻿using Luthetus.Common.RazorLib.Tabs.States;
+﻿using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Notifications.Displays;
+using Luthetus.Common.RazorLib.Tabs.Models;
+using Luthetus.Common.RazorLib.Tabs.States;
+using System.Collections.Immutable;
 
 namespace Luthetus.Common.Tests.Basis.Tabs.States;
 
@@ -13,7 +18,10 @@ public class TabStateActionsTests
     [Fact]
     public void RegisterTabGroupAction()
     {
-	    throw new NotImplementedException();
+        //var tabGroup = new TabGroup();
+        //var aaa = new TabState.RegisterTabGroupAction();
+
+        throw new NotImplementedException();
     }
 
     /// <summary>
@@ -41,5 +49,25 @@ public class TabStateActionsTests
     public void SetActiveTabEntryKeyAction()
     {
         throw new NotImplementedException();
+    }
+
+    private void InitializeTabStateActionsTests(out TabGroup sampleTabGroup)
+    {
+        sampleTabGroup = new TabGroup(
+            loadTabEntriesArgs =>
+            {
+                var tabEntry = new TabEntryWithType<bool>(
+                    true,
+                    _ => string.Empty,
+                    _ => { });
+
+                var aaa = new TabEntryNoType[] 
+                {
+                   tabEntry
+                }.ToImmutableList();
+
+                return Task.FromResult(new TabGroupLoadTabEntriesOutput(aaa));
+            },
+            Key<TabGroup>.NewKey());
     }
 }
