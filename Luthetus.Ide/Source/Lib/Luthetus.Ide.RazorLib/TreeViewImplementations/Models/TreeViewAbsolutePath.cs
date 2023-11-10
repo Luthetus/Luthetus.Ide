@@ -35,10 +35,10 @@ public class TreeViewAbsolutePath : TreeViewWithType<IAbsolutePath>
         if (obj is not TreeViewNamespacePath treeViewSolutionExplorer)
             return false;
 
-        return treeViewSolutionExplorer.Item.AbsolutePath.FormattedInput == Item.FormattedInput;
+        return treeViewSolutionExplorer.Item.AbsolutePath.Value == Item.Value;
     }
 
-    public override int GetHashCode() => Item.FormattedInput.GetHashCode();
+    public override int GetHashCode() => Item.Value.GetHashCode();
 
     public override TreeViewRenderer GetTreeViewRenderer()
     {

@@ -15,7 +15,7 @@ public partial class TreeViewHelper
             return new();
 
         var parentDirectoryOfRazorMarkup = razorMarkupTreeView.Item.AbsolutePath.AncestorDirectoryBag.Last();
-        var parentAbsolutePathString = parentDirectoryOfRazorMarkup.FormattedInput;
+        var parentAbsolutePathString = parentDirectoryOfRazorMarkup.Value;
 
         var filePathStringsBag = await razorMarkupTreeView.FileSystemProvider.Directory
             .GetFilesAsync(parentAbsolutePathString);

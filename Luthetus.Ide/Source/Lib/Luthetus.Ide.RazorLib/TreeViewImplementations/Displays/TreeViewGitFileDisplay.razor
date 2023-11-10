@@ -13,7 +13,7 @@
     @{
         var gitState = GitStateWrap.Value;
 
-        string shortenedParentDirectoryPathString = gitFile.AbsolutePath.FormattedInput;
+        string shortenedParentDirectoryPathString = gitFile.AbsolutePath.Value;
 
         if (gitFile.AbsolutePath.ParentDirectory is not null &&
             gitState.GitFolderAbsolutePath?.ParentDirectory is not null)

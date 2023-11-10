@@ -47,7 +47,7 @@ public static class FileTemplateFacts
     /// </summary>
     private static FileTemplateResult CSharpClassCreateFileFunc(FileTemplateParameter templateParameter)
     {
-        var emptyFileAbsolutePathString = templateParameter.ParentDirectory.AbsolutePath.FormattedInput +
+        var emptyFileAbsolutePathString = templateParameter.ParentDirectory.AbsolutePath.Value +
             templateParameter.Filename;
 
         // Create AbsolutePath as to leverage it for knowing the file extension and other details
@@ -60,7 +60,7 @@ public static class FileTemplateFacts
             emptyFileAbsolutePath.NameNoExtension,
             templateParameter.ParentDirectory.Namespace);
 
-        var templatedFileAbsolutePathString = templateParameter.ParentDirectory.AbsolutePath.FormattedInput +
+        var templatedFileAbsolutePathString = templateParameter.ParentDirectory.AbsolutePath.Value +
             emptyFileAbsolutePath.NameNoExtension +
             '.' +
             ExtensionNoPeriodFacts.C_SHARP_CLASS;
@@ -98,7 +98,7 @@ public class {fileNameNoExtension}
     /// </summary>
     private static FileTemplateResult RazorMarkupCreateFileFunc(FileTemplateParameter templateParameter)
     {
-        var emptyFileAbsolutePathString = templateParameter.ParentDirectory.AbsolutePath.FormattedInput +
+        var emptyFileAbsolutePathString = templateParameter.ParentDirectory.AbsolutePath.Value +
             templateParameter.Filename;
 
         // Create AbsolutePath as to leverage it for knowing the file extension and other details
@@ -109,7 +109,7 @@ public class {fileNameNoExtension}
 
         var templatedFileContent = GetContent(emptyFileAbsolutePath.NameNoExtension);
 
-        var templatedFileAbsolutePathString = templateParameter.ParentDirectory.AbsolutePath.FormattedInput +
+        var templatedFileAbsolutePathString = templateParameter.ParentDirectory.AbsolutePath.Value +
             emptyFileAbsolutePath.NameNoExtension +
             '.' +
             ExtensionNoPeriodFacts.RAZOR_MARKUP;
@@ -163,7 +163,7 @@ public partial class {className} : ComponentBase
             return interpolatedResult;
         }
 
-        var emptyFileAbsolutePathString = templateParameter.ParentDirectory.AbsolutePath.FormattedInput +
+        var emptyFileAbsolutePathString = templateParameter.ParentDirectory.AbsolutePath.Value +
             templateParameter.Filename;
 
         // Create AbsolutePath as to leverage it for knowing the file extension and other details
@@ -176,7 +176,7 @@ public partial class {className} : ComponentBase
             emptyFileAbsolutePath.NameNoExtension,
             templateParameter.ParentDirectory.Namespace);
 
-        var templatedFileAbsolutePathString = templateParameter.ParentDirectory.AbsolutePath.FormattedInput +
+        var templatedFileAbsolutePathString = templateParameter.ParentDirectory.AbsolutePath.Value +
             emptyFileAbsolutePath.NameNoExtension;
 
         if (templatedFileAbsolutePathString.EndsWith('.' + ExtensionNoPeriodFacts.RAZOR_MARKUP))

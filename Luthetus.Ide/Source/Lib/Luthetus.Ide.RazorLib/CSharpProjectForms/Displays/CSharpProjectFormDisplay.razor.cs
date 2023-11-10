@@ -86,7 +86,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                 if (afp is null)
                     return;
 
-                _viewModel.ParentDirectoryNameValue = afp.FormattedInput;
+                _viewModel.ParentDirectoryNameValue = afp.Value;
                 await InvokeAsync(StateHasChanged);
             },
             afp =>
@@ -130,7 +130,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             var newCSharpProjectCommand = new TerminalCommand(
                 _viewModel.LoadProjectTemplatesTerminalCommandKey,
                 formattedCommand,
-                EnvironmentProvider.HomeDirectoryAbsolutePath.FormattedInput,
+                EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
                 _viewModel.NewCSharpProjectCancellationTokenSource.Token,
                 async () =>
                 {
@@ -172,7 +172,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
             var newCSharpProjectCommand = new TerminalCommand(
                 _viewModel.LoadProjectTemplatesTerminalCommandKey,
                 formattedCommand,
-                EnvironmentProvider.HomeDirectoryAbsolutePath.FormattedInput,
+                EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
                 _viewModel.NewCSharpProjectCancellationTokenSource.Token,
                 async () =>
                 {

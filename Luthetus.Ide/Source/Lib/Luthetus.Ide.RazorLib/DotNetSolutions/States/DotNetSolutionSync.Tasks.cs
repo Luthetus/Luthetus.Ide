@@ -57,11 +57,11 @@ public partial class DotNetSolutionSync
         var outDotNetSolutionModel = dotNetSolutionModelBuilder.Build();
 
         await _fileSystemProvider.File.WriteAllTextAsync(
-            outDotNetSolutionModel.NamespacePath.AbsolutePath.FormattedInput,
+            outDotNetSolutionModel.NamespacePath.AbsolutePath.Value,
             outDotNetSolutionModel.SolutionFileContents);
 
         var solutionTextEditorModel = _textEditorService.Model.FindOrDefault(
-            new ResourceUri(inDotNetSolutionModel.NamespacePath.AbsolutePath.FormattedInput));
+            new ResourceUri(inDotNetSolutionModel.NamespacePath.AbsolutePath.Value));
 
         if (solutionTextEditorModel is not null)
         {
@@ -81,7 +81,7 @@ public partial class DotNetSolutionSync
 
     private async Task SetDotNetSolutionAsync(IAbsolutePath inSolutionAbsolutePath)
     {
-        var dotNetSolutionAbsolutePathString = inSolutionAbsolutePath.FormattedInput;
+        var dotNetSolutionAbsolutePathString = inSolutionAbsolutePath.Value;
 
         var content = await _fileSystemProvider.File.ReadAllTextAsync(
             dotNetSolutionAbsolutePathString,
@@ -97,7 +97,7 @@ public partial class DotNetSolutionSync
             solutionAbsolutePath);
 
         var lexer = new DotNetSolutionLexer(
-            new ResourceUri(solutionAbsolutePath.FormattedInput),
+            new ResourceUri(solutionAbsolutePath.Value),
             content);
 
         lexer.Lex();
@@ -146,7 +146,7 @@ public partial class DotNetSolutionSync
         var dotNetSolutionCompilerService = _interfaceCompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.DOT_NET_SOLUTION);
 
         dotNetSolutionCompilerService.ResourceWasModified(
-            new ResourceUri(solutionAbsolutePath.FormattedInput),
+            new ResourceUri(solutionAbsolutePath.Value),
             ImmutableArray<TextEditorTextSpan>.Empty);
 
         await SetDotNetSolutionTreeViewAsync(dotNetSolutionModel.Key);

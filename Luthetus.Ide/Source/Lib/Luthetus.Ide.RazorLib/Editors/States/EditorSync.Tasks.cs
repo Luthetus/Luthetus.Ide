@@ -207,7 +207,7 @@ public partial class EditorSync
 
         _textEditorService.Group.Register(editorTextEditorGroupKey.Value);
 
-        var inputFileAbsolutePathString = absolutePath.FormattedInput;
+        var inputFileAbsolutePathString = absolutePath.Value;
 
         var textEditorModel = await GetOrCreateTextEditorModelAsync(
             absolutePath,

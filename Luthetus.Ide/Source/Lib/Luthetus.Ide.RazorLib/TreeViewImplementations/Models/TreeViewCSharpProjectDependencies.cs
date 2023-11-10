@@ -34,7 +34,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
         return otherTreeView.GetHashCode() == GetHashCode();
     }
 
-    public override int GetHashCode() => Item.CSharpProjectNamespacePath.AbsolutePath.FormattedInput.GetHashCode();
+    public override int GetHashCode() => Item.CSharpProjectNamespacePath.AbsolutePath.Value.GetHashCode();
 
     public override TreeViewRenderer GetTreeViewRenderer()
     {

@@ -330,8 +330,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     return;
 
                 var localFormattedAddExistingProjectToSolutionCommand = DotNetCliCommandFormatter.FormatAddExistingProjectToSolution(
-                        dotNetSolutionModel.NamespacePath.AbsolutePath.FormattedInput,
-                        afp.FormattedInput);
+                        dotNetSolutionModel.NamespacePath.AbsolutePath.Value,
+                        afp.Value);
 
                 var addExistingProjectToSolutionTerminalCommand = new TerminalCommand(
                     Key<TerminalCommand>.NewKey(),
@@ -376,7 +376,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 },
                 {
                     nameof(SolutionEditorDisplay.DotNetSolutionResourceUri),
-                    new ResourceUri(dotNetSolutionModel.NamespacePath.AbsolutePath.FormattedInput)
+                    new ResourceUri(dotNetSolutionModel.NamespacePath.AbsolutePath.Value)
                 },
             },
             null)

@@ -14,7 +14,7 @@ public partial class FileSystemSync
         if (cancellationToken.IsCancellationRequested)
             return;
 
-        var absolutePathString = absolutePath.FormattedInput;
+        var absolutePathString = absolutePath.Value;
 
         string notificationMessage;
 

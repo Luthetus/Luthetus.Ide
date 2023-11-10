@@ -11,7 +11,7 @@ public partial class TreeViewHelper
     public static async Task<List<TreeViewNoType>> DirectoryLoadChildrenAsync(
         this TreeViewNamespacePath directoryTreeView)
     {
-        var directoryAbsolutePathString = directoryTreeView.Item.AbsolutePath.FormattedInput;
+        var directoryAbsolutePathString = directoryTreeView.Item.AbsolutePath.Value;
 
         var directoryPathStringsBag = await directoryTreeView.FileSystemProvider.Directory
             .GetDirectoriesAsync(directoryAbsolutePathString);
@@ -80,7 +80,7 @@ public partial class TreeViewHelper
     public static async Task<List<TreeViewNoType>> LoadChildrenForDirectoryAsync(
         TreeViewAbsolutePath directoryTreeView)
     {
-        var directoryAbsolutePathString = directoryTreeView.Item.FormattedInput;
+        var directoryAbsolutePathString = directoryTreeView.Item.Value;
 
         var directoryPathStringsBag = await directoryTreeView.FileSystemProvider.Directory
             .GetDirectoriesAsync(directoryAbsolutePathString);

@@ -91,14 +91,14 @@ public partial class NugetPackageDisplay : FluxorComponent
             return;
 
         var formattedCommand = DotNetCliCommandFormatter.FormatAddNugetPackageReferenceToProject(
-            targetProject.AbsolutePath.FormattedInput,
+            targetProject.AbsolutePath.Value,
             targetNugetPackage.Id,
             targetNugetVersion);
 
         var addNugetPackageReferenceCommand = new TerminalCommand(
             AddNugetPackageTerminalCommandKey,
             formattedCommand,
-            parentDirectory.FormattedInput,
+            parentDirectory.Value,
             CancellationToken.None, () =>
             {
                 NotificationHelper.DispatchInformative("Add Nuget Package Reference", $"{targetNugetPackage.Title}, {targetNugetVersion} was added to {targetProject.DisplayName}", LuthetusCommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(7));
