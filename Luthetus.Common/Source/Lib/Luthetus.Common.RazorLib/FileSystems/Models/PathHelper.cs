@@ -34,6 +34,11 @@ public static class PathHelper
                 moveUpDirectoryToken.Length);
         }
 
+        var sameDirectoryDirective = $".{environmentProvider.DirectorySeparatorChar}";
+
+        if (upperDirectoryCount == 0 && upperDirectoryString.StartsWith(sameDirectoryDirective))
+            upperDirectoryString = upperDirectoryString[sameDirectoryDirective.Length..];
+
         if (absolutePath.IsDirectory && string.IsNullOrWhiteSpace(upperDirectoryString))
             upperDirectoryCount--; // nearest shared ancestor is the directory itself
 
@@ -123,13 +128,9 @@ public static class PathHelper
         else
         {
             if (string.IsNullOrWhiteSpace(extensionNoPeriod))
-            {
                 return nameNoExtension;
-            }
             else
-            {
                 return nameNoExtension + '.' + extensionNoPeriod;
-            }
         }
     }
 }
