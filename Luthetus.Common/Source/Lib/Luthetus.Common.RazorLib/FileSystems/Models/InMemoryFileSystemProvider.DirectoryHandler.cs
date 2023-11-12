@@ -2,7 +2,7 @@
 
 public partial class InMemoryFileSystemProvider : IFileSystemProvider
 {
-    private class InMemoryDirectoryHandler : IDirectoryHandler
+    public class InMemoryDirectoryHandler : IDirectoryHandler
     {
         private readonly InMemoryFileSystemProvider _inMemoryFileSystemProvider;
         private readonly IEnvironmentProvider _environmentProvider;
@@ -126,16 +126,18 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             string absolutePathString,
             CancellationToken cancellationToken = default)
         {
-            return Task.FromResult(_inMemoryFileSystemProvider._files.Any(
-                f => f.AbsolutePath.Value == absolutePathString));
+            return Task.FromResult(_inMemoryFileSystemProvider._files.Any(f =>
+                f.AbsolutePath.Value == absolutePathString &&
+                f.IsDirectory));
         }
 
         public Task UnsafeCreateDirectoryAsync(
             string absolutePathString,
             CancellationToken cancellationToken = default)
         {
-            var existingFile = _inMemoryFileSystemProvider._files.FirstOrDefault(
-                f => f.AbsolutePath.Value == absolutePathString);
+            var existingFile = _inMemoryFileSystemProvider._files.FirstOrDefault(f =>
+                f.AbsolutePath.Value == absolutePathString &&
+                f.IsDirectory);
 
             if (existingFile is not null)
                 return Task.CompletedTask;
@@ -148,7 +150,8 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             var outDirectory = new InMemoryFile(
                 string.Empty,
                 absolutePath,
-                DateTime.UtcNow);
+                DateTime.UtcNow,
+                true);
 
             _inMemoryFileSystemProvider._files.Add(outDirectory);
 
@@ -166,8 +169,9 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                 return;
             }
 
-            var indexOfExistingFile = _inMemoryFileSystemProvider._files.FindIndex(
-                f => f.AbsolutePath.Value == absolutePathString);
+            var indexOfExistingFile = _inMemoryFileSystemProvider._files.FindIndex(f =>
+                f.AbsolutePath.Value == absolutePathString &&
+                f.IsDirectory);
 
             if (indexOfExistingFile == -1)
                 return;
@@ -177,9 +181,19 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
 
             foreach (var child in childFileBag)
             {
-                await _inMemoryFileSystemProvider._file.UnsafeDeleteAsync(
-                    child.AbsolutePath.Value,
-                    cancellationToken);
+                if (child.IsDirectory)
+                {
+                    await _inMemoryFileSystemProvider._directory.UnsafeDeleteAsync(
+                        child.AbsolutePath.Value,
+                        false,
+                        cancellationToken);
+                }
+                else
+                {
+                    await _inMemoryFileSystemProvider._file.UnsafeDeleteAsync(
+                        child.AbsolutePath.Value,
+                        cancellationToken);
+                }
             }
 
             _inMemoryFileSystemProvider._files.RemoveAt(indexOfExistingFile);
@@ -190,8 +204,9 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             string destinationAbsolutePathString,
             CancellationToken cancellationToken = default)
         {
-            var indexOfExistingFile = _inMemoryFileSystemProvider._files.FindIndex(
-                f => f.AbsolutePath.Value == sourceAbsolutePathString);
+            var indexOfExistingFile = _inMemoryFileSystemProvider._files.FindIndex(f =>
+                f.AbsolutePath.Value == sourceAbsolutePathString &&
+                f.IsDirectory);
 
             if (indexOfExistingFile == -1)
                 return;
@@ -207,7 +222,8 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             var destinationFile = new InMemoryFile(
                 string.Empty,
                 destinationAbsolutePath,
-                DateTime.UtcNow);
+                DateTime.UtcNow,
+                true);
 
             _inMemoryFileSystemProvider._files.Add(destinationFile);
 
@@ -217,10 +233,20 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                     destinationAbsolutePathString,
                     child.AbsolutePath.NameWithExtension);
 
-                await _inMemoryFileSystemProvider._file.UnsafeCopyAsync(
-                    child.AbsolutePath.Value,
-                    destinationChild,
-                    cancellationToken);
+                if (child.IsDirectory)
+                {
+                    await _inMemoryFileSystemProvider._directory.UnsafeCopyAsync(
+                        child.AbsolutePath.Value,
+                        destinationChild,
+                        cancellationToken);
+                }
+                else
+                {
+                    await _inMemoryFileSystemProvider._file.UnsafeCopyAsync(
+                        child.AbsolutePath.Value,
+                        destinationChild,
+                        cancellationToken);
+                }
             }
         }
 
@@ -238,8 +264,9 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                 return;
             }
 
-            var indexOfExistingFile = _inMemoryFileSystemProvider._files.FindIndex(
-                f => f.AbsolutePath.Value == sourceAbsolutePathString);
+            var indexOfExistingFile = _inMemoryFileSystemProvider._files.FindIndex(f =>
+                f.AbsolutePath.Value == sourceAbsolutePathString &&
+                f.IsDirectory);
 
             if (indexOfExistingFile == -1)
                 return;
@@ -255,7 +282,8 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             var destinationFile = new InMemoryFile(
                 string.Empty,
                 destinationAbsolutePath,
-                DateTime.UtcNow);
+                DateTime.UtcNow,
+                true);
 
             _inMemoryFileSystemProvider._files.Add(destinationFile);
 
@@ -265,10 +293,21 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                     destinationAbsolutePathString,
                     child.AbsolutePath.NameWithExtension);
 
-                await _inMemoryFileSystemProvider._file.UnsafeMoveAsync(
-                    child.AbsolutePath.Value,
-                    destinationChild,
-                    cancellationToken);
+                if (child.IsDirectory)
+                {
+                    await _inMemoryFileSystemProvider._directory.UnsafeMoveAsync(
+                        child.AbsolutePath.Value,
+                        destinationChild,
+                        cancellationToken);
+                }
+                else
+                {
+                    await _inMemoryFileSystemProvider._file.UnsafeMoveAsync(
+                        child.AbsolutePath.Value,
+                        destinationChild,
+                        cancellationToken);
+                }
+
             }
 
             _inMemoryFileSystemProvider._files.RemoveAt(indexOfExistingFile);
@@ -278,8 +317,9 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             string absolutePathString,
             CancellationToken cancellationToken = default)
         {
-            var existingFile = _inMemoryFileSystemProvider._files.FirstOrDefault(
-                f => f.AbsolutePath.Value == absolutePathString);
+            var existingFile = _inMemoryFileSystemProvider._files.FirstOrDefault(f =>
+                f.AbsolutePath.Value == absolutePathString &&
+                f.IsDirectory);
 
             if (existingFile is null)
                 return Task.FromResult(Array.Empty<string>());
@@ -310,8 +350,9 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             string absolutePathString,
             CancellationToken cancellationToken = default)
         {
-            var existingFile = _inMemoryFileSystemProvider._files.FirstOrDefault(
-                f => f.AbsolutePath.Value == absolutePathString);
+            var existingFile = _inMemoryFileSystemProvider._files.FirstOrDefault(f =>
+                f.AbsolutePath.Value == absolutePathString &&
+                f.IsDirectory);
 
             if (existingFile is null)
                 return Task.FromResult(Array.Empty<string>());

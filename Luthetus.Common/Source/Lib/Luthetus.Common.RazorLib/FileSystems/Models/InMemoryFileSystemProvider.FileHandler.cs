@@ -117,16 +117,18 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             string absolutePathString,
             CancellationToken cancellationToken = default)
         {
-            return Task.FromResult(_inMemoryFileSystemProvider._files.Any(
-                imf => imf.AbsolutePath.Value == absolutePathString));
+            return Task.FromResult(_inMemoryFileSystemProvider._files.Any(imf =>
+                imf.AbsolutePath.Value == absolutePathString &&
+                !imf.IsDirectory));
         }
 
         public Task UnsafeDeleteAsync(
             string absolutePathString,
             CancellationToken cancellationToken = default)
         {
-            var indexOfExistingFile = _inMemoryFileSystemProvider._files.FindIndex(
-                f => f.AbsolutePath.Value == absolutePathString);
+            var indexOfExistingFile = _inMemoryFileSystemProvider._files.FindIndex(f =>
+                f.AbsolutePath.Value == absolutePathString &&
+                !f.IsDirectory);
 
             if (indexOfExistingFile == -1)
                 return Task.CompletedTask;
@@ -143,8 +145,9 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
         {
             // Source
             {
-                var indexOfSource = _inMemoryFileSystemProvider._files.FindIndex(
-                    f => f.AbsolutePath.Value == sourceAbsolutePathString);
+                var indexOfSource = _inMemoryFileSystemProvider._files.FindIndex(f =>
+                    f.AbsolutePath.Value == sourceAbsolutePathString &&
+                    !f.IsDirectory);
 
                 if (indexOfSource == -1)
                     throw new ApplicationException($"Source file: {sourceAbsolutePathString} was not found.");
@@ -152,8 +155,9 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
 
             // Destination
             { 
-                var indexOfDestination = _inMemoryFileSystemProvider._files.FindIndex(
-                    f => f.AbsolutePath.Value == destinationAbsolutePathString);
+                var indexOfDestination = _inMemoryFileSystemProvider._files.FindIndex(f =>
+                    f.AbsolutePath.Value == destinationAbsolutePathString &&
+                    !f.IsDirectory);
 
                 if (indexOfDestination != -1)
                     throw new ApplicationException($"A file already exists with the path: {sourceAbsolutePathString}.");
@@ -186,8 +190,9 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             string absolutePathString,
             CancellationToken cancellationToken = default)
         {
-            var existingFile = _inMemoryFileSystemProvider._files.FirstOrDefault(
-                f => f.AbsolutePath.Value == absolutePathString);
+            var existingFile = _inMemoryFileSystemProvider._files.FirstOrDefault(f =>
+                f.AbsolutePath.Value == absolutePathString &&
+                !f.IsDirectory);
 
             if (existingFile is null)
                 return Task.FromResult(default(DateTime));
@@ -199,8 +204,9 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             string absolutePathString,
             CancellationToken cancellationToken = default)
         {
-            var existingFile = _inMemoryFileSystemProvider._files.FirstOrDefault(
-                f => f.AbsolutePath.Value == absolutePathString);
+            var existingFile = _inMemoryFileSystemProvider._files.FirstOrDefault(f =>
+                f.AbsolutePath.Value == absolutePathString &&
+                !f.IsDirectory);
 
             if (existingFile is null)
                 return Task.FromResult(string.Empty);
@@ -213,8 +219,9 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             string contents,
             CancellationToken cancellationToken = default)
         {
-            var indexOfExistingFile = _inMemoryFileSystemProvider._files.FindIndex(
-                f => f.AbsolutePath.Value == absolutePathString);
+            var indexOfExistingFile = _inMemoryFileSystemProvider._files.FindIndex(f =>
+                f.AbsolutePath.Value == absolutePathString &&
+                !f.IsDirectory);
 
             if (indexOfExistingFile != -1)
             {
@@ -258,7 +265,8 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             var outFile = new InMemoryFile(
                 contents,
                 absolutePath,
-                DateTime.UtcNow);
+                DateTime.UtcNow,
+                false);
 
             _inMemoryFileSystemProvider._files.Add(outFile);
 

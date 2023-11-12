@@ -1,4 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.FileSystems.Models;
+using Microsoft.Extensions.DependencyInjection;
+using static Luthetus.Common.RazorLib.FileSystems.Models.InMemoryFileSystemProvider;
+using static Luthetus.Common.Tests.Basis.FileSystems.FileSystemsTestsHelper;
 
 namespace Luthetus.Common.Tests.Basis.FileSystems.Models;
 
@@ -15,18 +18,35 @@ public class InMemoryDirectoryHandlerTests
             InMemoryFileSystemProvider inMemoryFileSystemProvider, IEnvironmentProvider environmentProvider)
          */
 
-        throw new NotImplementedException();
+        FileSystemsTestsHelper.InitializeFileSystemsTests(
+            out InMemoryEnvironmentProvider environmentProvider,
+            out InMemoryFileSystemProvider fileSystemProvider,
+            out ServiceProvider serviceProvider);
+
+        // This assertion presumes that FileSystemsTestsHelper.InitializeFileSystemsTests
+        // is returning as an out variable, an instance of InMemoryDirectoryHandler
+        Assert.IsType<InMemoryDirectoryHandler>(fileSystemProvider);
     }
 
     [Fact]
-    public void ExistsAsync()
+    public async Task ExistsAsync()
     {
         /*
         public Task<bool> ExistsAsync(
             string absolutePathString, CancellationToken cancellationToken = default)
          */
 
-        throw new NotImplementedException();
+        InitializeFileSystemsTests(
+            out InMemoryEnvironmentProvider environmentProvider,
+            out InMemoryFileSystemProvider fileSystemProvider,
+            out ServiceProvider serviceProvider);
+
+        Assert.True(await fileSystemProvider.Directory.ExistsAsync(WellKnownPaths.Directories.Math));
+        Assert.False(await fileSystemProvider.Directory.ExistsAsync(WellKnownPaths.Directories.NonExistingDirectory));
+
+        // This is false because, 'WellKnownPaths.Files.AdditionTxt' is a file
+        Assert.False(await fileSystemProvider.Directory.ExistsAsync(WellKnownPaths.Files.AdditionTxt));
+        Assert.False(await fileSystemProvider.Directory.ExistsAsync(WellKnownPaths.Files.NonExistingFile));
     }
 
     [Fact]
