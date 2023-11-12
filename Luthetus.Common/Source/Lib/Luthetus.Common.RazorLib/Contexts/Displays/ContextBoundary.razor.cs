@@ -37,7 +37,7 @@ public partial class ContextBoundary : ComponentBase
         if (ParentContextBoundary is not null)
             ParentContextBoundary.DispatchSetActiveContextStatesAction(contextRecordKeyBag);
         else
-            Dispatcher.Dispatch(new ContextState.SetActiveContextRecordsAction(new(contextRecordKeyBag.ToImmutableArray())));
+            Dispatcher.Dispatch(new ContextState.SetFocusedContextHeirarchyAction(new(contextRecordKeyBag.ToImmutableArray())));
     }
 
     public void HandleOnFocusIn()

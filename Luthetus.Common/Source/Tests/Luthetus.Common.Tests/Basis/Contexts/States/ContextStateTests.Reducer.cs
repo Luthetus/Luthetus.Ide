@@ -1,4 +1,9 @@
+using Fluxor;
+using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Contexts.States;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Immutable;
 
 namespace Luthetus.Common.Tests.Basis.Contexts.States;
 
@@ -15,6 +20,17 @@ public class ContextStateReducerTests
         public static ContextState ReduceSetActiveContextRecordsAction(
             ContextState inContextStates, SetActiveContextRecordsAction setActiveContextRecordsAction)
          */
+
+        InitializeContextStateReducerTests(
+            out var serviceProvider,
+            out var contextStateWrap,
+            out var dispatcher,
+            out var contextRecordKeyHeirarchy);
+
+        var setActiveContextRecordsAction = new ContextState.SetFocusedContextHeirarchyAction(
+            contextRecordKeyHeirarchy);
+
+        dispatcher.Dispatch(setActiveContextRecordsAction);
 
         throw new NotImplementedException();
     }
@@ -89,5 +105,31 @@ public class ContextStateReducerTests
          */
 
         throw new NotImplementedException();
+    }
+
+    private void InitializeContextStateReducerTests(
+        out ServiceProvider serviceProvider,
+        out IState<ContextState> contextStateWrap,
+        out IDispatcher dispatcher,
+        out ContextHeirarchy sampleContextRecordKeyHeirarchy)
+    {
+        var services = new ServiceCollection()
+            .AddFluxor(options => options.ScanAssemblies(typeof(ContextState).Assembly));
+
+        serviceProvider = services.BuildServiceProvider();
+
+        var store = serviceProvider.GetRequiredService<IStore>();
+        store.InitializeAsync().Wait();
+
+        contextStateWrap = serviceProvider.GetRequiredService<IState<ContextState>>();
+
+        dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
+
+        sampleContextRecordKeyHeirarchy = new ContextHeirarchy(
+            new Key<ContextRecord>[]
+            {
+                ContextFacts.ActiveContextsContext.ContextKey,
+                ContextFacts.GlobalContext.ContextKey,
+            }.ToImmutableArray());
     }
 }

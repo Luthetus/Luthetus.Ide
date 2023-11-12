@@ -1,6 +1,5 @@
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Contexts.States;
-using Luthetus.Common.RazorLib.Keys.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.Common.Tests.Basis.Contexts.States;
@@ -18,16 +17,16 @@ public class ContextStateTests
     {
         var contextState = new ContextState();
 
-        var allContextRecordsBag = ContextFacts.AllContextRecordsBag;
+        var allContextRecordsBag = ContextFacts.AllContextsBag;
 
-        var inspectedContextRecordKeyHeirarchy = (ContextRecordKeyHeirarchy?)null;
-        var inspectContextRecordEntryBag = ImmutableArray<InspectContextRecordEntry>.Empty;
+        var inspectedContextRecordKeyHeirarchy = (ContextHeirarchy?)null;
+        var inspectContextRecordEntryBag = ImmutableArray<InspectableContext>.Empty;
         var isSelectingInspectionTarget = false;
 
-        Assert.Equal(allContextRecordsBag, contextState.AllContextRecordsBag);
-        Assert.NotNull(contextState.FocusedContextRecordKeyHeirarchy);
-        Assert.True(inspectedContextRecordKeyHeirarchy == contextState.InspectedContextRecordKeyHeirarchy);
-        Assert.Equal(inspectContextRecordEntryBag, contextState.InspectContextRecordEntryBag);
+        Assert.Equal(allContextRecordsBag, contextState.AllContextsBag);
+        Assert.NotNull(contextState.FocusedContextHeirarchy);
+        Assert.True(inspectedContextRecordKeyHeirarchy == contextState.InspectedContextHeirarchy);
+        Assert.Equal(inspectContextRecordEntryBag, contextState.InspectableContextBag);
         Assert.Equal(isSelectingInspectionTarget, contextState.IsSelectingInspectionTarget);
     }
 }

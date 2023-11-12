@@ -3,18 +3,18 @@
 namespace Luthetus.Common.Tests.Basis.Contexts.Models;
 
 /// <summary>
-/// <see cref="ContextRecordKeyHeirarchy"/>
+/// <see cref="ContextHeirarchy"/>
 /// </summary>
 public class ContextRecordKeyHeirarchyTests
 {
     /// <summary>
-    /// <see cref="ContextRecordKeyHeirarchy.TargetKey"/>
+    /// <see cref="ContextHeirarchy.NearestAncestorKey"/>
     /// </summary>
     [Fact]
     public void TargetKey()
     {
         /*
-        public Key<ContextRecord> TargetKey => KeyHeirarchyBag[0];
+        public Key<ContextRecord> TargetKey => KeyBag[0];
          */
 
         throw new NotImplementedException();

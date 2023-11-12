@@ -11,22 +11,22 @@ public partial class ContextBoundaryOverlay : ComponentBase
     private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public InspectContextRecordEntry InspectContextRecordEntry { get; set; } = null!;
+    public InspectableContext InspectableContext { get; set; } = null!;
 
     private string GetCssStyleString()
     {
-        var width = $"width: {InspectContextRecordEntry.TargetContextRecordMeasuredHtmlElementDimensions.WidthInPixels}px;";
-        var height = $"height: {InspectContextRecordEntry.TargetContextRecordMeasuredHtmlElementDimensions.HeightInPixels}px;";
-        var left = $"left: {InspectContextRecordEntry.TargetContextRecordMeasuredHtmlElementDimensions.LeftInPixels}px;";
-        var top = $"top: {InspectContextRecordEntry.TargetContextRecordMeasuredHtmlElementDimensions.TopInPixels}px;";
-        var zIndex = $"z-index: {InspectContextRecordEntry.TargetContextRecordMeasuredHtmlElementDimensions.ZIndex};";
+        var width = $"width: {InspectableContext.TargetContextRecordMeasuredHtmlElementDimensions.WidthInPixels}px;";
+        var height = $"height: {InspectableContext.TargetContextRecordMeasuredHtmlElementDimensions.HeightInPixels}px;";
+        var left = $"left: {InspectableContext.TargetContextRecordMeasuredHtmlElementDimensions.LeftInPixels}px;";
+        var top = $"top: {InspectableContext.TargetContextRecordMeasuredHtmlElementDimensions.TopInPixels}px;";
+        var zIndex = $"z-index: {InspectableContext.TargetContextRecordMeasuredHtmlElementDimensions.ZIndex};";
 
         return $"{width} {height} {left} {top} {zIndex}";
     }
 
     private void DispatchSetInspectionTargetActionOnClick()
     {
-        Dispatcher.Dispatch(new ContextState.SetInspectionTargetAction(
-            InspectContextRecordEntry.ContextRecordKeyHeirarchy));
+        Dispatcher.Dispatch(new ContextState.SetInspectedContextHeirarchyAction(
+            InspectableContext.ContextHeirarchy));
     }
 }

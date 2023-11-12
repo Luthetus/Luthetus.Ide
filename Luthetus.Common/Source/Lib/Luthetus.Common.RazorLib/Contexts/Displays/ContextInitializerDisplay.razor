@@ -8,10 +8,10 @@
 
     @if (contextStates.IsSelectingInspectionTarget)
     {
-        foreach (var inspectContextRecordEntry in contextStates.InspectContextRecordEntryBag)
+        foreach (var inspectableContext in contextStates.InspectableContextBag)
         {
-            // TODO: App crashes when using: @key="inspectContextRecordEntry.ContextRecordKeyHeirarchy.TargetKey"
-            <ContextBoundaryOverlay InspectContextRecordEntry="inspectContextRecordEntry"/>
+            // TODO: App crashes when using: @key="inspectableContext.ContextHeirarchy.NearestAncestorKey"
+            <ContextBoundaryOverlay InspectableContext="inspectableContext" />
         }
     }
 </div>

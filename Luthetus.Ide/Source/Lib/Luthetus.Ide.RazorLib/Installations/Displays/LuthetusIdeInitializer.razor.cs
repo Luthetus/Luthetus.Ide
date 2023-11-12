@@ -182,7 +182,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
             Key<PanelTab>.NewKey(),
             bottomPanel.ElementDimensions,
             new(),
-            typeof(ActiveContextsDisplay),
+            typeof(ContextsPanelDisplay),
             typeof(IconFolder),
             "Active Contexts")
         {
