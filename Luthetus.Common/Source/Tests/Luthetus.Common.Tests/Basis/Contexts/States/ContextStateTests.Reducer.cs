@@ -1,6 +1,9 @@
 using Fluxor;
+using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Contexts.States;
+using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
+using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Immutable;
@@ -25,14 +28,24 @@ public class ContextStateReducerTests
             out var serviceProvider,
             out var contextStateWrap,
             out var dispatcher,
-            out var contextRecordKeyHeirarchy);
+            out var contextHeirarchy);
+        
+        Assert.Equal(
+            contextStateWrap.Value.FocusedContextHeirarchy.KeyBag.Single(),
+            ContextFacts.GlobalContext.ContextKey);
 
         var setFocusedContextHeirarchyAction = new ContextState.SetFocusedContextHeirarchyAction(
-            contextRecordKeyHeirarchy);
+            contextHeirarchy);
 
         dispatcher.Dispatch(setFocusedContextHeirarchyAction);
 
-        throw new NotImplementedException();
+        Assert.Equal(
+            contextStateWrap.Value.FocusedContextHeirarchy.KeyBag[0],
+            ContextFacts.ActiveContextsContext.ContextKey);
+        
+        Assert.Equal(
+            contextStateWrap.Value.FocusedContextHeirarchy.KeyBag[1],
+            ContextFacts.GlobalContext.ContextKey);
     }
 
     [Fact]
@@ -44,11 +57,25 @@ public class ContextStateReducerTests
             ContextState inContextStates)
          */
 
-        throw new NotImplementedException();
+        InitializeContextStateReducerTests(
+            out var serviceProvider,
+            out var contextStateWrap,
+            out var dispatcher,
+            out var contextHeirarchy);
+
+        var toggleSelectInspectedContextHeirarchyAction = new ContextState.ToggleSelectInspectedContextHeirarchyAction();
+
+        var inIsSelectingInspectionTarget = contextStateWrap.Value.IsSelectingInspectionTarget;
+
+        dispatcher.Dispatch(toggleSelectInspectedContextHeirarchyAction);
+
+        Assert.NotEqual(
+            inIsSelectingInspectionTarget,
+            contextStateWrap.Value.IsSelectingInspectionTarget);
     }
 
     [Fact]
-    public void ReduceIsSelectingInspectableContextHeirarchyAction_True()
+    public void ReduceIsSelectingInspectableContextHeirarchyAction()
     {
         /*
         [ReducerMethod]
@@ -57,20 +84,21 @@ public class ContextStateReducerTests
             IsSelectingInspectableContextHeirarchyAction isSelectingInspectableContextHeirarchyAction)
          */
 
-        throw new NotImplementedException();
-    }
+        InitializeContextStateReducerTests(
+            out var serviceProvider,
+            out var contextStateWrap,
+            out var dispatcher,
+            out var contextHeirarchy);
 
-    [Fact]
-    public void ReduceIsSelectingInspectableContextHeirarchyAction_False()
-    {
-        /*
-        [ReducerMethod]
-        public static ContextState ReduceIsSelectingInspectableContextHeirarchyAction(
-            ContextState inContextStates,
-            IsSelectingInspectableContextHeirarchyAction isSelectingInspectableContextHeirarchyAction)
-         */
+        dispatcher.Dispatch(new ContextState.IsSelectingInspectableContextHeirarchyAction(
+            true));
 
-        throw new NotImplementedException();
+        Assert.True(contextStateWrap.Value.IsSelectingInspectionTarget);
+        
+        dispatcher.Dispatch(new ContextState.IsSelectingInspectableContextHeirarchyAction(
+            false));
+
+        Assert.False(contextStateWrap.Value.IsSelectingInspectionTarget);
     }
 
     [Fact]
@@ -83,7 +111,22 @@ public class ContextStateReducerTests
             SetInspectedContextHeirarchyAction setInspectedContextHeirarchyAction)
          */
 
-        throw new NotImplementedException();
+        InitializeContextStateReducerTests(
+            out var serviceProvider,
+            out var contextStateWrap,
+            out var dispatcher,
+            out var contextHeirarchy);
+
+        Assert.Null(contextStateWrap.Value.InspectedContextHeirarchy);
+
+        var setInspectedContextHeirarchyAction = new ContextState.SetInspectedContextHeirarchyAction(
+            contextHeirarchy);
+
+        dispatcher.Dispatch(setInspectedContextHeirarchyAction);
+
+        Assert.Equal(
+            setInspectedContextHeirarchyAction.InspectedContextHeirarchy,
+            contextStateWrap.Value.InspectedContextHeirarchy);
     }
 
     [Fact]
@@ -96,7 +139,26 @@ public class ContextStateReducerTests
             AddInspectableContextAction addInspectableContextAction)
          */
 
-        throw new NotImplementedException();
+        InitializeContextStateReducerTests(
+            out var serviceProvider,
+            out var contextStateWrap,
+            out var dispatcher,
+            out var contextHeirarchy);
+
+        Assert.Empty(contextStateWrap.Value.InspectableContextBag);
+
+        var inspectableContext = new InspectableContext(
+            contextHeirarchy,
+            new MeasuredHtmlElementDimensions(0, 0, 0, 0, 0));
+
+        var addInspectableContextAction = new ContextState.AddInspectableContextAction(
+            inspectableContext);
+
+        dispatcher.Dispatch(addInspectableContextAction);
+
+        Assert.Equal(
+            addInspectableContextAction.InspectableContext, 
+            contextStateWrap.Value.InspectableContextBag.Single());
     }
 
     [Fact]
@@ -109,7 +171,38 @@ public class ContextStateReducerTests
             SetContextKeymapAction setContextKeymapAction)
          */
 
-        throw new NotImplementedException();
+        InitializeContextStateReducerTests(
+            out var serviceProvider,
+            out var contextStateWrap,
+            out var dispatcher,
+            out var contextHeirarchy);
+
+        var globalContext = contextStateWrap.Value.AllContextsBag.Single(
+            x => x.ContextKey == ContextFacts.GlobalContext.ContextKey);
+
+        Assert.Equal(Keymap.Empty, globalContext.Keymap);
+
+        var command = new CommonCommand(
+            "Test SetContextKeymap Action", "test-set-context-keymap-action", false,
+            commandArgs => Task.CompletedTask);
+
+        var keymap = new Keymap(Key<Keymap>.NewKey(), "Unit Test");
+
+        _ = keymap.Map.TryAdd(
+                new KeymapArgument("KeyF", false, true, true, Key<KeymapLayer>.Empty),
+                command);
+
+        var setContextKeymapAction = new ContextState.SetContextKeymapAction(
+            ContextFacts.GlobalContext.ContextKey,
+            keymap);
+
+        dispatcher.Dispatch(setContextKeymapAction);
+
+        globalContext = contextStateWrap.Value.AllContextsBag.Single(
+            x => x.ContextKey == ContextFacts.GlobalContext.ContextKey);
+
+        Assert.NotEqual(Keymap.Empty, globalContext.Keymap);
+        Assert.Equal(keymap, globalContext.Keymap);
     }
 
     private void InitializeContextStateReducerTests(
