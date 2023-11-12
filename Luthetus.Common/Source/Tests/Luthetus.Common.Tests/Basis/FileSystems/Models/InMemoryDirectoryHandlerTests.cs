@@ -18,7 +18,7 @@ public class InMemoryDirectoryHandlerTests
             InMemoryFileSystemProvider inMemoryFileSystemProvider, IEnvironmentProvider environmentProvider)
          */
 
-        FileSystemsTestsHelper.InitializeFileSystemsTests(
+        InitializeFileSystemsTests(
             out InMemoryEnvironmentProvider environmentProvider,
             out InMemoryFileSystemProvider fileSystemProvider,
             out ServiceProvider serviceProvider);
@@ -50,25 +50,87 @@ public class InMemoryDirectoryHandlerTests
     }
 
     [Fact]
-    public void CreateDirectoryAsync()
+    public async Task CreateDirectoryAsync()
     {
         /*
         public async Task CreateDirectoryAsync(
             string absolutePathString, CancellationToken cancellationToken = default)
          */
 
-        throw new NotImplementedException();
+        InitializeFileSystemsTests(
+            out InMemoryEnvironmentProvider environmentProvider,
+            out InMemoryFileSystemProvider fileSystemProvider,
+            out ServiceProvider serviceProvider);
+
+        var dirExists = await fileSystemProvider.Directory.ExistsAsync(WellKnownPaths.Directories.NonExistingDirectory);
+        var fileExists = await fileSystemProvider.File.ExistsAsync(WellKnownPaths.Directories.NonExistingDirectory);
+
+        Assert.False(dirExists && fileExists);
+
+        await fileSystemProvider.Directory.CreateDirectoryAsync(WellKnownPaths.Directories.NonExistingDirectory);
+
+        dirExists = await fileSystemProvider.Directory.ExistsAsync(WellKnownPaths.Directories.NonExistingDirectory);
+        fileExists = await fileSystemProvider.File.ExistsAsync(WellKnownPaths.Directories.NonExistingDirectory);
+
+        Assert.True(dirExists && !fileExists);
     }
 
     [Fact]
-    public void DeleteAsync()
+    public async Task DeleteAsync()
     {
         /*
         public async Task DeleteAsync(
             string absolutePathString, bool recursive, CancellationToken cancellationToken = default)
          */
 
-        throw new NotImplementedException();
+        InitializeFileSystemsTests(
+            out InMemoryEnvironmentProvider environmentProvider,
+            out InMemoryFileSystemProvider fileSystemProvider,
+            out ServiceProvider serviceProvider);
+
+        var dirExists = await fileSystemProvider.Directory.ExistsAsync(WellKnownPaths.Directories.Homework);
+        Assert.True(dirExists);
+
+        // There are a few files written out to the in-memory filesystem when 'InitializeFileSystemsTests'
+        // is invoked. In this code block a check for the existence of the child files will be done. (2023-11-12)
+        {
+            {
+                Assert.True(
+                    await fileSystemProvider.Directory.ExistsAsync(WellKnownPaths.Directories.Math) &&
+                    await fileSystemProvider.File.ExistsAsync(WellKnownPaths.Files.AdditionTxt) &&
+                    await fileSystemProvider.File.ExistsAsync(WellKnownPaths.Files.SubtractionTxt));
+            }
+
+            {
+                Assert.True(
+                    await fileSystemProvider.Directory.ExistsAsync(WellKnownPaths.Directories.Biology) &&
+                    await fileSystemProvider.File.ExistsAsync(WellKnownPaths.Files.NervousSystemTxt) &&
+                    await fileSystemProvider.File.ExistsAsync(WellKnownPaths.Files.SkeletalSystemTxt));
+            }
+        }
+
+        await fileSystemProvider.Directory.DeleteAsync(WellKnownPaths.Directories.Homework, true);
+
+        dirExists = await fileSystemProvider.Directory.ExistsAsync(WellKnownPaths.Directories.Homework);
+        Assert.False(dirExists);
+
+        // There are a few files written out to the in-memory filesystem when 'InitializeFileSystemsTests'
+        // is invoked. In this code block a check for the existence of the child files will be done. (2023-11-12)
+        {
+            {
+                Assert.False(
+                    await fileSystemProvider.Directory.ExistsAsync(WellKnownPaths.Directories.Math) &&
+                    await fileSystemProvider.File.ExistsAsync(WellKnownPaths.Files.AdditionTxt) &&
+                    await fileSystemProvider.File.ExistsAsync(WellKnownPaths.Files.SubtractionTxt));
+            }
+
+            {
+                Assert.False(
+                    await fileSystemProvider.Directory.ExistsAsync(WellKnownPaths.Directories.Biology) &&
+                    await fileSystemProvider.File.ExistsAsync(WellKnownPaths.Files.NervousSystemTxt) &&
+                    await fileSystemProvider.File.ExistsAsync(WellKnownPaths.Files.SkeletalSystemTxt));
+            }
+        }
     }
 
     [Fact]

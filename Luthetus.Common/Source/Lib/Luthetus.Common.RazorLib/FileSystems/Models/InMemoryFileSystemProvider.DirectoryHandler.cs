@@ -177,7 +177,9 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                 return;
 
             var childFileBag = _inMemoryFileSystemProvider._files.Where(imf =>
-                imf.AbsolutePath.Value.StartsWith(absolutePathString));
+                    imf.AbsolutePath.Value.StartsWith(absolutePathString) &&
+                    imf.AbsolutePath.Value != absolutePathString)
+                .ToArray();
 
             foreach (var child in childFileBag)
             {
