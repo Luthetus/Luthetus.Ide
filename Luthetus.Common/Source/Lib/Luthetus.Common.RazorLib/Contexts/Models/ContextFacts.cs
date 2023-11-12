@@ -96,7 +96,7 @@ public static class ContextFacts
         "git",
         Keymap.Empty);
 
-    public static readonly ImmutableArray<ContextRecord> AllContextRecordsBag = new[]
+    public static readonly ImmutableArray<ContextRecord> AllContextsBag = new[]
     {
         GlobalContext,
         ActiveContextsContext,

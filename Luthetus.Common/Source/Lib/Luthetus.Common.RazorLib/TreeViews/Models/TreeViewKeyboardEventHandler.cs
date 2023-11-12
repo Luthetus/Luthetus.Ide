@@ -17,52 +17,52 @@ public class TreeViewKeyboardEventHandler
     }
 
     /// <summary>Used for handling "onkeydownwithpreventscroll" events within the user interface</summary>
-    public virtual void OnKeyDown(TreeViewCommandParameter commandParameter)
+    public virtual void OnKeyDown(TreeViewCommandArgs commandArgs)
     {
-        if (commandParameter.KeyboardEventArgs is null)
+        if (commandArgs.KeyboardEventArgs is null)
             return;
 
-        switch (commandParameter.KeyboardEventArgs.Key)
+        switch (commandArgs.KeyboardEventArgs.Key)
         {
             case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
                 TreeViewService.MoveLeft(
-                    commandParameter.TreeViewState.Key,
-                    commandParameter.KeyboardEventArgs.ShiftKey);
+                    commandArgs.TreeViewContainer.Key,
+                    commandArgs.KeyboardEventArgs.ShiftKey);
                 break;
             case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
                 TreeViewService.MoveDown(
-                    commandParameter.TreeViewState.Key,
-                    commandParameter.KeyboardEventArgs.ShiftKey);
+                    commandArgs.TreeViewContainer.Key,
+                    commandArgs.KeyboardEventArgs.ShiftKey);
                 break;
             case KeyboardKeyFacts.MovementKeys.ARROW_UP:
                 TreeViewService.MoveUp(
-                    commandParameter.TreeViewState.Key,
-                    commandParameter.KeyboardEventArgs.ShiftKey);
+                    commandArgs.TreeViewContainer.Key,
+                    commandArgs.KeyboardEventArgs.ShiftKey);
                 break;
             case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
                 TreeViewService.MoveRight(
-                    commandParameter.TreeViewState.Key,
-                    commandParameter.KeyboardEventArgs.ShiftKey);
+                    commandArgs.TreeViewContainer.Key,
+                    commandArgs.KeyboardEventArgs.ShiftKey);
                 break;
             case KeyboardKeyFacts.MovementKeys.HOME:
                 TreeViewService.MoveHome(
-                    commandParameter.TreeViewState.Key,
-                    commandParameter.KeyboardEventArgs.ShiftKey);
+                    commandArgs.TreeViewContainer.Key,
+                    commandArgs.KeyboardEventArgs.ShiftKey);
                 break;
             case KeyboardKeyFacts.MovementKeys.END:
                 TreeViewService.MoveEnd(
-                    commandParameter.TreeViewState.Key,
-                    commandParameter.KeyboardEventArgs.ShiftKey);
+                    commandArgs.TreeViewContainer.Key,
+                    commandArgs.KeyboardEventArgs.ShiftKey);
                 break;
             default:
                 break;
         }
 
-        _ = Task.Run(async () => await OnKeyDownAsync(commandParameter));
+        _ = Task.Run(async () => await OnKeyDownAsync(commandArgs));
     }
 
     /// <summary>Used for handling "onkeydownwithpreventscroll" events within the user interface</summary>
-    public virtual Task OnKeyDownAsync(TreeViewCommandParameter commandParameter)
+    public virtual Task OnKeyDownAsync(TreeViewCommandArgs commandArgs)
     {
         return Task.CompletedTask;
     }

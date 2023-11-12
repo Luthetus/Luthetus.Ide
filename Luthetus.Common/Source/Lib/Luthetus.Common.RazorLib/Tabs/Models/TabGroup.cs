@@ -10,10 +10,10 @@ namespace Luthetus.Common.RazorLib.Tabs.Models;
 /// </summary>
 public record TabGroup(
 
-    Func<TabGroupLoadTabEntriesParameter, Task<TabGroupLoadTabEntriesOutput>> LoadEntryBagAsyncFunc)
+    Func<TabGroupLoadTabEntriesArgs, Task<TabGroupLoadTabEntriesOutput>> LoadEntryBagAsyncFunc)
 {
     public TabGroup(
-            Func<TabGroupLoadTabEntriesParameter, Task<TabGroupLoadTabEntriesOutput>> loadEntryBagAsyncFunc,
+            Func<TabGroupLoadTabEntriesArgs, Task<TabGroupLoadTabEntriesOutput>> loadEntryBagAsyncFunc,
             Key<TabGroup> groupKey)
         : this(loadEntryBagAsyncFunc)
     {
@@ -26,9 +26,9 @@ public record TabGroup(
 
     public async Task<TabGroupLoadTabEntriesOutput> LoadEntryBagAsync()
     {
-        var tabGroupLoadTabEntriesParameter = new TabGroupLoadTabEntriesParameter(EntryBag);
+        var tabGroupLoadTabEntriesArgs = new TabGroupLoadTabEntriesArgs(EntryBag);
 
-        return await LoadEntryBagAsyncFunc.Invoke(tabGroupLoadTabEntriesParameter);
+        return await LoadEntryBagAsyncFunc.Invoke(tabGroupLoadTabEntriesArgs);
     }
 
     public TabEntryNoType? GetActiveEntryNoType()

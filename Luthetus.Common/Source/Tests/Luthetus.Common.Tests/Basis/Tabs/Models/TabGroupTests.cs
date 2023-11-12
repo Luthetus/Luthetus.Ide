@@ -8,7 +8,7 @@ namespace Luthetus.Common.Tests.Basis.Tabs.Models;
 public class TabGroupTests
 {
     /// <summary>
-    /// <see cref="TabGroup(Func{TabGroupLoadTabEntriesParameter, Task{TabGroupLoadTabEntriesOutput}}, RazorLib.Keys.Models.Key{TabGroup})"/>
+    /// <see cref="TabGroup(Func{TabGroupLoadTabEntriesArgs, Task{TabGroupLoadTabEntriesOutput}}, RazorLib.Keys.Models.Key{TabGroup})"/>
     /// </summary>
     [Fact]
     public void Constructor()

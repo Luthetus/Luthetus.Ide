@@ -4,20 +4,20 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace Luthetus.Common.RazorLib.Commands.Models;
 
-public class TreeViewCommandParameter : ICommandParameter
+public class TreeViewCommandArgs : ICommandArgs
 {
-    public TreeViewCommandParameter(
+    public TreeViewCommandArgs(
         ITreeViewService treeViewService,
-        TreeViewContainer treeViewState,
-        TreeViewNoType? focusNode,
+        TreeViewContainer treeViewContainer,
+        TreeViewNoType? targetNode,
         Func<Task> restoreFocusToTreeView,
         ContextMenuFixedPosition? contextMenuFixedPosition,
         MouseEventArgs? mouseEventArgs,
         KeyboardEventArgs? keyboardEventArgs)
     {
         TreeViewService = treeViewService;
-        TreeViewState = treeViewState;
-        TargetNode = focusNode;
+        TreeViewContainer = treeViewContainer;
+        TargetNode = targetNode;
         RestoreFocusToTreeView = restoreFocusToTreeView;
         ContextMenuFixedPosition = contextMenuFixedPosition;
         MouseEventArgs = mouseEventArgs;
@@ -25,7 +25,7 @@ public class TreeViewCommandParameter : ICommandParameter
     }
 
     public ITreeViewService TreeViewService { get; }
-    public TreeViewContainer TreeViewState { get; }
+    public TreeViewContainer TreeViewContainer { get; }
     public TreeViewNoType? TargetNode { get; }
     public Func<Task> RestoreFocusToTreeView { get; }
     public ContextMenuFixedPosition? ContextMenuFixedPosition { get; }

@@ -37,7 +37,7 @@ public partial class ContextBoundary : ComponentBase
         if (ParentContextBoundary is not null)
             ParentContextBoundary.DispatchSetActiveContextStatesAction(contextRecordKeyBag);
         else
-            Dispatcher.Dispatch(new ContextState.SetActiveContextRecordsAction(new(contextRecordKeyBag.ToImmutableArray())));
+            Dispatcher.Dispatch(new ContextState.SetFocusedContextHeirarchyAction(new(contextRecordKeyBag.ToImmutableArray())));
     }
 
     public void HandleOnFocusIn()
@@ -63,7 +63,7 @@ public partial class ContextBoundary : ComponentBase
         var success = ContextRecord.Keymap.Map.TryGetValue(keymapArgument, out var command);
 
         if (success && command is not null)
-            await command.DoAsyncFunc(new CommonCommandParameter());
+            await command.DoAsyncFunc(new CommonCommandArgs());
         else if (ParentContextBoundary is not null)
             await ParentContextBoundary.HandleKeymapArgumentAsync(keymapArgument);
     }

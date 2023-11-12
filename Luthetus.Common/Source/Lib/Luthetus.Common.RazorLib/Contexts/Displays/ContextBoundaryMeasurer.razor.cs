@@ -57,8 +57,8 @@ public partial class ContextBoundaryMeasurer : FluxorComponent
                     ZIndex = contextBoundaryHeirarchy.Length
                 };
 
-                Dispatcher.Dispatch(new ContextState.AddInspectContextRecordEntryAction(
-                    new InspectContextRecordEntry(
+                Dispatcher.Dispatch(new ContextState.AddInspectableContextAction(
+                    new InspectableContext(
                         new(contextBoundaryHeirarchy),
                         measuredHtmlElementDimensions)));
             }

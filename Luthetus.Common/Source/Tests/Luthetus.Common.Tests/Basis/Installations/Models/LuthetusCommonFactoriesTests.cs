@@ -1,4 +1,23 @@
-﻿using Luthetus.Common.RazorLib.Installations.Models;
+﻿using Fluxor;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Clipboards.Models;
+using Luthetus.Common.RazorLib.Contexts.Models;
+using Luthetus.Common.RazorLib.Contexts.States;
+using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Drags.Models;
+using Luthetus.Common.RazorLib.Dropdowns.Models;
+using Luthetus.Common.RazorLib.Installations.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Misc;
+using Luthetus.Common.RazorLib.Notifications.Models;
+using Luthetus.Common.RazorLib.Options.Models;
+using Luthetus.Common.RazorLib.Storages.Models;
+using Luthetus.Common.RazorLib.Storages.States;
+using Luthetus.Common.RazorLib.Themes.Models;
+using Luthetus.Common.RazorLib.TreeViews.Models;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.JSInterop;
+using System.Collections.Immutable;
 
 namespace Luthetus.Common.Tests.Basis.Installations.Models;
 
@@ -8,84 +27,52 @@ namespace Luthetus.Common.Tests.Basis.Installations.Models;
 public record LuthetusCommonFactoriesTests
 {
     /// <summary>
+    /// <see cref="LuthetusCommonOptions.CommonFactories"/>
+    /// <br/>----<br/>
     /// <see cref="LuthetusCommonFactories.DragServiceFactory"/>
-    /// </summary>
-    [Fact]
-    public void DragServiceFactory()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="LuthetusCommonFactories.ClipboardServiceFactory"/>
-    /// </summary>
-    [Fact]
-    public void ClipboardServiceFactory()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="LuthetusCommonFactories.DialogServiceFactory"/>
-    /// </summary>
-    [Fact]
-    public void DialogServiceFactory()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="LuthetusCommonFactories.NotificationServiceFactory"/>
-    /// </summary>
-    [Fact]
-    public void NotificationServiceFactory()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="LuthetusCommonFactories.DropdownServiceFactory"/>
-    /// </summary>
-    [Fact]
-    public void DropdownServiceFactory()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="LuthetusCommonFactories.StorageServiceFactory"/>
-    /// </summary>
-    [Fact]
-    public void StorageServiceFactory()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="LuthetusCommonFactories.AppOptionsServiceFactory"/>
-    /// </summary>
-    [Fact]
-    public void AppOptionsServiceFactory()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="LuthetusCommonFactories.ThemeServiceFactory"/>
-    /// </summary>
-    [Fact]
-    public void ThemeServiceFactory()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="LuthetusCommonFactories.TreeViewServiceFactory"/>
     /// </summary>
     [Fact]
-    public void TreeViewServiceFactory()
+    public void CommonFactories()
     {
-        throw new NotImplementedException();
+        var commonOptions = new LuthetusCommonOptions();
+
+        var services = new ServiceCollection()
+            .AddScoped(sp => commonOptions.CommonFactories.ClipboardServiceFactory.Invoke(sp))
+            .AddScoped(sp => commonOptions.CommonFactories.DialogServiceFactory.Invoke(sp))
+            .AddScoped(sp => commonOptions.CommonFactories.NotificationServiceFactory.Invoke(sp))
+            .AddScoped(sp => commonOptions.CommonFactories.DragServiceFactory.Invoke(sp))
+            .AddScoped(sp => commonOptions.CommonFactories.DropdownServiceFactory.Invoke(sp))
+            .AddScoped(sp => commonOptions.CommonFactories.AppOptionsServiceFactory.Invoke(sp))
+            .AddScoped(sp => commonOptions.CommonFactories.StorageServiceFactory.Invoke(sp))
+            .AddScoped(sp => commonOptions.CommonFactories.ThemeServiceFactory.Invoke(sp))
+            .AddScoped(sp => commonOptions.CommonFactories.TreeViewServiceFactory.Invoke(sp))
+            .AddScoped<IJSRuntime>(_ => new DoNothingJsRuntime())
+            .AddFluxor(options => options.ScanAssemblies(typeof(LuthetusCommonOptions).Assembly))
+            .AddScoped<StorageSync>()
+            .AddScoped<IBackgroundTaskService>(sp => new BackgroundTaskServiceSynchronous());
+
+        var serviceProvider = services.BuildServiceProvider();
+
+        var store = serviceProvider.GetRequiredService<IStore>();
+        store.InitializeAsync().Wait();
+
+        Assert.IsType<JavaScriptInteropClipboardService>(serviceProvider.GetRequiredService<IClipboardService>());
+        Assert.IsType<DialogService>(serviceProvider.GetRequiredService<IDialogService>());
+        Assert.IsType<NotificationService>(serviceProvider.GetRequiredService<INotificationService>());
+        Assert.IsType<DragService>(serviceProvider.GetRequiredService<IDragService>());
+        Assert.IsType<DropdownService>(serviceProvider.GetRequiredService<IDropdownService>());
+        Assert.IsType<AppOptionsService>(serviceProvider.GetRequiredService<IAppOptionsService>());
+        Assert.IsType<LocalStorageService>(serviceProvider.GetRequiredService<IStorageService>());
+        Assert.IsType<ThemeService>(serviceProvider.GetRequiredService<IThemeService>());
+        Assert.IsType<TreeViewService>(serviceProvider.GetRequiredService<ITreeViewService>());
     }
 
     /// <summary>

@@ -43,8 +43,9 @@ public interface IPath
     /// </summary>
     public string? ExactInput { get; }
     /// <summary>
-    /// This is equal to <see cref="ExactInput"/> after replacing all instances
-    /// of the AltDirectorySeparator with the DirectorySeparator.
+    /// <see cref="Value"/> is the path as a string, but with all
+    /// directory separating characters having been standardized
+    /// to be <see cref="IEnvironmentProvider.DirectorySeparatorChar"/>.
     /// </summary>
-    public string FormattedInput { get; }
+    public string Value { get; }
 }

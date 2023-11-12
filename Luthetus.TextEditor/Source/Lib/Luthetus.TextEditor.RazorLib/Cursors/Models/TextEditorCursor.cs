@@ -18,6 +18,13 @@ public class TextEditorCursor
         PreferredColumnIndex = IndexCoordinates.columnIndex;
     }
 
+    public TextEditorCursor(ImmutableTextEditorCursor immutableTextEditorCursor, bool isPrimaryCursor)
+        : this(
+            (immutableTextEditorCursor.RowIndex, immutableTextEditorCursor.ColumnIndex),
+            isPrimaryCursor)
+    {
+    }
+
     public (int rowIndex, int columnIndex) IndexCoordinates { get; set; }
     public int PreferredColumnIndex { get; set; }
     public TextEditorSelection Selection { get; } = new();

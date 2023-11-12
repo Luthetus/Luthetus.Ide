@@ -3,16 +3,17 @@ using Luthetus.TextEditor.RazorLib.Edits.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models;
 
-public class CommandTextEditor : CommandWithType<TextEditorCommandParameter>
+public class TextEditorCommand : CommandWithType<TextEditorCommandArgs>
 {
-    public CommandTextEditor(
-            Func<ICommandParameter, Task> doAsyncFunc,
-            bool shouldScrollCursorIntoView,
+    public TextEditorCommand(
             string displayName,
             string internalIdentifier,
-            TextEditKind textEditKind = TextEditKind.None,
-            string? otherTextEditKindIdentifier = null)
-        : base(doAsyncFunc, displayName, internalIdentifier, false)
+            bool shouldBubble,
+            bool shouldScrollCursorIntoView,
+            TextEditKind textEditKind,
+            string? otherTextEditKindIdentifier,
+            Func<ICommandArgs, Task> doAsyncFunc)
+        : base(displayName, internalIdentifier, shouldBubble, doAsyncFunc)
     {
         if (textEditKind == TextEditKind.Other && otherTextEditKindIdentifier is null)
             ThrowOtherTextEditKindIdentifierWasExpectedException(textEditKind);

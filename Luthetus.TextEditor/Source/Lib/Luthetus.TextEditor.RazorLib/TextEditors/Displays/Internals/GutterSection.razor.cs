@@ -21,24 +21,24 @@ public partial class GutterSection : ComponentBase
         // TODO: Does 'SetGutterScrollTopAsync' need to be throttled? 
         TextEditorService.ViewModel.SetGutterScrollTopAsync(
             viewModel.GutterElementId,
-            viewModel.VirtualizationResult.ElementMeasurementsInPixels.ScrollTop);
+            viewModel.VirtualizationResult.TextEditorMeasurements.ScrollTop);
 
         return base.OnAfterRenderAsync(firstRender);
     }
 
     private string GetGutterStyleCss(int index)
     {
-        var measurements = RenderBatch.ViewModel!.VirtualizationResult.CharacterWidthAndRowHeight;
+        var measurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndRowMeasurements;
 
-        var topInPixelsInvariantCulture = (index * measurements.RowHeightInPixels).ToCssValue();
+        var topInPixelsInvariantCulture = (index * measurements.RowHeight).ToCssValue();
         var top = $"top: {topInPixelsInvariantCulture}px;";
 
-        var heightInPixelsInvariantCulture = measurements.RowHeightInPixels.ToCssValue();
+        var heightInPixelsInvariantCulture = measurements.RowHeight.ToCssValue();
         var height = $"height: {heightInPixelsInvariantCulture}px;";
 
         var mostDigitsInARowLineNumber = RenderBatch.Model!.RowCount.ToString().Length;
 
-        var widthInPixels = mostDigitsInARowLineNumber * measurements.CharacterWidthInPixels;
+        var widthInPixels = mostDigitsInARowLineNumber * measurements.CharacterWidth;
         widthInPixels += TextEditorModel.GUTTER_PADDING_LEFT_IN_PIXELS + TextEditorModel.GUTTER_PADDING_RIGHT_IN_PIXELS;
 
         var widthInPixelsInvariantCulture = widthInPixels.ToCssValue();
@@ -58,7 +58,7 @@ public partial class GutterSection : ComponentBase
         var mostDigitsInARowLineNumber = RenderBatch.Model!.RowCount.ToString().Length;
 
         var widthInPixels = mostDigitsInARowLineNumber *
-            RenderBatch.ViewModel!.VirtualizationResult.CharacterWidthAndRowHeight.CharacterWidthInPixels;
+            RenderBatch.ViewModel!.VirtualizationResult.CharAndRowMeasurements.CharacterWidth;
 
         widthInPixels += TextEditorModel.GUTTER_PADDING_LEFT_IN_PIXELS + TextEditorModel.GUTTER_PADDING_RIGHT_IN_PIXELS;
 
@@ -73,7 +73,7 @@ public partial class GutterSection : ComponentBase
         var mostDigitsInARowLineNumber = RenderBatch.Model!.RowCount.ToString().Length;
 
         var widthOfGutterInPixels = mostDigitsInARowLineNumber *
-            RenderBatch.ViewModel!.VirtualizationResult.CharacterWidthAndRowHeight.CharacterWidthInPixels;
+            RenderBatch.ViewModel!.VirtualizationResult.CharAndRowMeasurements.CharacterWidth;
 
         widthOfGutterInPixels += TextEditorModel.GUTTER_PADDING_LEFT_IN_PIXELS + TextEditorModel.GUTTER_PADDING_RIGHT_IN_PIXELS;
 

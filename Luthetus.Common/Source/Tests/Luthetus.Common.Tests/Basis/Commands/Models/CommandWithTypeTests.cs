@@ -5,14 +5,38 @@ namespace Luthetus.Common.Tests.Basis.Commands.Models;
 /// <summary>
 /// <see cref="CommandWithType{T}"/>
 /// </summary>
-public abstract class CommandWithTypeTests
+public class CommandWithTypeTests
 {
     /// <summary>
-    /// <see cref="CommandWithType{T}.CommandWithType(Func{ICommandParameter, Task}, string, string, bool)"/>
+    /// <see cref="CommandNoType.DisplayName"/>
+    /// <see cref="CommandNoType.InternalIdentifier"/>
+    /// <see cref="CommandNoType.ShouldBubble"/>
+    /// <see cref="CommandNoType.DoAsyncFunc"/>
     /// </summary>
     [Fact]
-    public void Constructor()
+    public async Task DoAsyncFunc()
     {
-        throw new NotImplementedException();
+        var number = 0;
+
+        var displayName = "Increment Number";
+        var internalIdentifier = "increment-number";
+        var shouldBubble = false;
+
+        var commandWithType = (CommandWithType<CommonCommandArgs>)new CommonCommand(
+            displayName,
+            internalIdentifier,
+            shouldBubble,
+            commandArgs =>
+            {
+                number++;
+                return Task.CompletedTask;
+            });
+
+        await commandWithType.DoAsyncFunc.Invoke(new CommonCommandArgs());
+
+        Assert.Equal(1, number);
+        Assert.Equal(displayName, commandWithType.DisplayName);
+        Assert.Equal(internalIdentifier, commandWithType.InternalIdentifier);
+        Assert.Equal(shouldBubble, commandWithType.ShouldBubble);
     }
 }

@@ -36,11 +36,11 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolutionModel>
         if (obj is not TreeViewSolution treeViewSolution)
             return false;
 
-        return treeViewSolution.Item.AbsolutePath.FormattedInput ==
-               Item.AbsolutePath.FormattedInput;
+        return treeViewSolution.Item.AbsolutePath.Value ==
+               Item.AbsolutePath.Value;
     }
 
-    public override int GetHashCode() => Item.AbsolutePath.FormattedInput.GetHashCode();
+    public override int GetHashCode() => Item.AbsolutePath.Value.GetHashCode();
 
     public override TreeViewRenderer GetTreeViewRenderer()
     {

@@ -8,47 +8,35 @@ namespace Luthetus.Common.Tests.Basis.Commands.Models;
 public class CommandNoTypeTests
 {
     /// <summary>
-    /// <see cref="CommandNoType(Func{ICommandParameter, Task}, string, string, bool)"/>
-    /// </summary>
-    [Fact]
-    public void Constructor()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <see cref="CommandNoType.DisplayName"/>
+    /// <see cref="CommandNoType.InternalIdentifier"/>
+    /// <see cref="CommandNoType.ShouldBubble"/>
     /// <see cref="CommandNoType.DoAsyncFunc"/>
     /// </summary>
     [Fact]
-    public void DoAsyncFunc()
+    public async Task DoAsyncFunc()
     {
-        throw new NotImplementedException();
-    }
+        var number = 0;
 
-    /// <summary>
-    /// <see cref="CommandNoType.DisplayName"/>
-    /// </summary>
-    [Fact]
-    public void DisplayName()
-    {
-        throw new NotImplementedException();
-    }
+        var displayName = "Increment Number";
+        var internalIdentifier = "increment-number";
+        var shouldBubble = false;
 
-    /// <summary>
-    /// <see cref="CommandNoType.InternalIdentifier"/>
-    /// </summary>
-    [Fact]
-    public void InternalIdentifier()
-    {
-        throw new NotImplementedException();
-    }
+        var commandNoType = (CommandNoType)new CommonCommand(
+            displayName,
+            internalIdentifier,
+            shouldBubble,
+            commandArgs =>
+            {
+                number++;
+                return Task.CompletedTask;
+            });
+        
+        await commandNoType.DoAsyncFunc.Invoke(new CommonCommandArgs());
 
-    /// <summary>
-    /// <see cref="CommandNoType.ShouldBubble"/>
-    /// </summary>
-    [Fact]
-    public void ShouldBubble()
-    {
-        throw new NotImplementedException();
+        Assert.Equal(1, number);
+        Assert.Equal(displayName, commandNoType.DisplayName);
+        Assert.Equal(internalIdentifier, commandNoType.InternalIdentifier);
+        Assert.Equal(shouldBubble, commandNoType.ShouldBubble);
     }
 }

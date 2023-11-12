@@ -14,7 +14,7 @@ public partial class FileSystemSync
         if (cancellationToken.IsCancellationRequested)
             return;
 
-        var absolutePathString = absolutePath.FormattedInput;
+        var absolutePathString = absolutePath.Value;
 
         string notificationMessage;
 
@@ -30,7 +30,7 @@ public partial class FileSystemSync
             notificationMessage = "File not found. TODO: Save As";
         }
 
-        NotificationHelper.DispatchInformative("Save Action", notificationMessage, _luthetusCommonComponentRenderers, Dispatcher);
+        NotificationHelper.DispatchInformative("Save Action", notificationMessage, _luthetusCommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(7));
 
         DateTime? fileLastWriteTime = null;
 

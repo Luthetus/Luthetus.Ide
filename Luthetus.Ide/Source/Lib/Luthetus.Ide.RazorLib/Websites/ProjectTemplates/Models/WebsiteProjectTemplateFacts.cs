@@ -96,7 +96,7 @@ public static class WebsiteProjectTemplateFacts
         if (parentDirectoryOfProject is null)
             throw new NotImplementedException();
 
-        var parentDirectoryOfProjectAbsolutePathString = parentDirectoryOfProject.FormattedInput;
+        var parentDirectoryOfProjectAbsolutePathString = parentDirectoryOfProject.Value;
 
         // AppCss
         {
@@ -194,7 +194,7 @@ public static class WebsiteProjectTemplateFacts
         if (parentDirectoryOfProject is null)
             throw new NotImplementedException();
 
-        var parentDirectoryOfProjectAbsolutePathString = parentDirectoryOfProject.FormattedInput;
+        var parentDirectoryOfProjectAbsolutePathString = parentDirectoryOfProject.Value;
 
         // AppRazor
         {
@@ -325,7 +325,7 @@ public static class WebsiteProjectTemplateFacts
         if (parentDirectoryOfProject is null)
             throw new NotImplementedException();
 
-        var parentDirectoryOfProjectAbsolutePathString = parentDirectoryOfProject.FormattedInput;
+        var parentDirectoryOfProjectAbsolutePathString = parentDirectoryOfProject.Value;
 
         // Class1Cs
         {
@@ -357,7 +357,7 @@ public static class WebsiteProjectTemplateFacts
         if (parentDirectoryOfProject is null)
             throw new NotImplementedException();
 
-        var parentDirectoryOfProjectAbsolutePathString = parentDirectoryOfProject.FormattedInput;
+        var parentDirectoryOfProjectAbsolutePathString = parentDirectoryOfProject.Value;
 
         // Component1Razor
         {
@@ -433,7 +433,7 @@ public static class WebsiteProjectTemplateFacts
         if (parentDirectoryOfProject is null)
             throw new NotImplementedException();
 
-        var parentDirectoryOfProjectAbsolutePathString = parentDirectoryOfProject.FormattedInput;
+        var parentDirectoryOfProjectAbsolutePathString = parentDirectoryOfProject.Value;
 
         // ProgramCs
         {
@@ -465,7 +465,7 @@ public static class WebsiteProjectTemplateFacts
         if (parentDirectoryOfProject is null)
             throw new NotImplementedException();
 
-        var parentDirectoryOfProjectAbsolutePathString = parentDirectoryOfProject.FormattedInput;
+        var parentDirectoryOfProjectAbsolutePathString = parentDirectoryOfProject.Value;
 
         // Csproj
         {

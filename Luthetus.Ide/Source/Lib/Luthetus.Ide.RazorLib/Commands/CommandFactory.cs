@@ -138,8 +138,9 @@ public class CommandFactory : ICommandFactory
         string displayName,
         string internalIdentifier)
     {
-        return new CommandCommon(
-            async commandParameter =>
+        return new CommonCommand(
+            displayName, internalIdentifier, false,
+            async commandArgs =>
             {
                 var success = await TrySetFocus();
 
@@ -150,10 +151,7 @@ public class CommandFactory : ICommandFactory
 
                     _ = await TrySetFocus();
                 }
-            },
-            displayName,
-            internalIdentifier,
-            false);
+            });
 
         async Task<bool> TrySetFocus()
         {

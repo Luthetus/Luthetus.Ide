@@ -33,7 +33,7 @@ public partial class InputFileContent : ComponentBase
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!TreeViewService.TryGetTreeViewState(TreeViewStateKey, out _))
+        if (!TreeViewService.TryGetTreeViewContainer(TreeViewStateKey, out _))
             await SetInputFileContentTreeViewRootFunc.Invoke(EnvironmentProvider.HomeDirectoryAbsolutePath);
 
         await base.OnAfterRenderAsync(firstRender);

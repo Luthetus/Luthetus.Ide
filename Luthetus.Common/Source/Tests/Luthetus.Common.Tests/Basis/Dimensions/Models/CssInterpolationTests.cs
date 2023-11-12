@@ -13,7 +13,10 @@ public class CssInterpolationTests
     [Fact]
     public void ToCssValueDouble()
     {
-        throw new NotImplementedException();
+        var originalNumber = (double)1.257;
+        var cssValue = originalNumber.ToCssValue();
+
+        Assert.Equal(originalNumber.ToString(), cssValue);
     }
 
     /// <summary>
@@ -22,7 +25,10 @@ public class CssInterpolationTests
     [Fact]
     public void ToCssValueDecimal()
     {
-        throw new NotImplementedException();
+        var originalNumber = (decimal)1.257;
+        var cssValue = originalNumber.ToCssValue();
+
+        Assert.Equal(originalNumber.ToString(), cssValue);
     }
 
     /// <summary>
@@ -31,7 +37,10 @@ public class CssInterpolationTests
     [Fact]
     public void ToCssValueFloat()
     {
-        throw new NotImplementedException();
+        var originalNumber = (float)1.257;
+        var cssValue = originalNumber.ToCssValue();
+
+        Assert.Equal(originalNumber.ToString(), cssValue);
     }
 
     /// <summary>
@@ -40,6 +49,9 @@ public class CssInterpolationTests
     [Fact]
     public void ToCssValueInt()
     {
-        throw new NotImplementedException();
+        var originalNumber = 1;
+        var cssValue = originalNumber.ToCssValue();
+
+        Assert.Equal(originalNumber.ToString(), cssValue);
     }
 }

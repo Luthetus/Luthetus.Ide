@@ -27,7 +27,7 @@ public partial class InputFileContextMenu : ComponentBase
     private ITreeViewService TreeViewService { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public TreeViewCommandParameter TreeViewCommandParameter { get; set; } = null!;
+    public TreeViewCommandArgs TreeViewCommandArgs { get; set; } = null!;
 
     public static readonly Key<DropdownRecord> ContextMenuKey = Key<DropdownRecord>.NewKey();
 
@@ -37,14 +37,14 @@ public partial class InputFileContextMenu : ComponentBase
     /// </summary>
     public static TreeViewNoType? ParentOfCutFile;
 
-    private MenuRecord GetMenuRecord(TreeViewCommandParameter commandParameter)
+    private MenuRecord GetMenuRecord(TreeViewCommandArgs commandArgs)
     {
-        if (commandParameter.TargetNode is null)
+        if (commandArgs.TargetNode is null)
             return MenuRecord.Empty;
 
         var menuRecordsBag = new List<MenuOptionRecord>();
 
-        var treeViewModel = commandParameter.TargetNode;
+        var treeViewModel = commandArgs.TargetNode;
         var parentTreeViewModel = treeViewModel.Parent;
 
         var parentTreeViewAbsolutePath = parentTreeViewModel as TreeViewAbsolutePath;
@@ -93,11 +93,11 @@ public partial class InputFileContextMenu : ComponentBase
         return new[]
         {
             MenuOptionsFactory.CopyFile(treeViewModel.Item, () => {
-                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.NameWithExtension}", CommonComponentRenderers, Dispatcher);
+                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.NameWithExtension}", CommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(7));
                 return Task.CompletedTask;
             }),
             MenuOptionsFactory.CutFile(treeViewModel.Item, () => {
-                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.NameWithExtension}", CommonComponentRenderers, Dispatcher);
+                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.NameWithExtension}", CommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(7));
                 ParentOfCutFile = parentTreeViewModel;
                 return Task.CompletedTask;
             }),
@@ -138,18 +138,18 @@ public partial class InputFileContextMenu : ComponentBase
     }
 
     public static string GetContextMenuCssStyleString(
-        TreeViewCommandParameter? commandParameter,
+        TreeViewCommandArgs? commandArgs,
         DialogRecord dialogRecord)
     {
-        if (commandParameter?.ContextMenuFixedPosition is null)
+        if (commandArgs?.ContextMenuFixedPosition is null)
             return "display: none;";
 
         if (dialogRecord.IsMaximized)
         {
             return
-                $"left: {commandParameter.ContextMenuFixedPosition.LeftPositionInPixels.ToCssValue()}px;" +
+                $"left: {commandArgs.ContextMenuFixedPosition.LeftPositionInPixels.ToCssValue()}px;" +
                 " " +
-                $"top: {commandParameter.ContextMenuFixedPosition.TopPositionInPixels.ToCssValue()}px;";
+                $"top: {commandArgs.ContextMenuFixedPosition.TopPositionInPixels.ToCssValue()}px;";
         }
             
         var dialogLeftDimensionAttribute = dialogRecord
@@ -165,7 +165,7 @@ public partial class InputFileContextMenu : ComponentBase
         contextMenuLeftDimensionAttribute.DimensionUnitBag.Add(new DimensionUnit
         {
             DimensionUnitKind = DimensionUnitKind.Pixels,
-            Value = commandParameter.ContextMenuFixedPosition.LeftPositionInPixels
+            Value = commandArgs.ContextMenuFixedPosition.LeftPositionInPixels
         });
 
         foreach (var dimensionUnit in dialogLeftDimensionAttribute.DimensionUnitBag)
@@ -192,7 +192,7 @@ public partial class InputFileContextMenu : ComponentBase
         contextMenuTopDimensionAttribute.DimensionUnitBag.Add(new DimensionUnit
         {
             DimensionUnitKind = DimensionUnitKind.Pixels,
-            Value = commandParameter.ContextMenuFixedPosition.TopPositionInPixels
+            Value = commandArgs.ContextMenuFixedPosition.TopPositionInPixels
         });
 
         foreach (var dimensionUnit in dialogTopDimensionAttribute.DimensionUnitBag)

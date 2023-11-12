@@ -2,7 +2,7 @@
 
 namespace Luthetus.Common.Tests.Basis.WatchWindows.Models;
 
-/// <summary>
+/// <summary> 
 /// <see cref="WatchWindowObjectWrap"/>
 /// </summary>
 public class WatchWindowObjectWrapTests

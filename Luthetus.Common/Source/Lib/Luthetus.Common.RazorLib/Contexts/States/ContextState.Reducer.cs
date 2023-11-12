@@ -9,85 +9,86 @@ public partial record ContextState
     private class Reducer
     {
         [ReducerMethod]
-        public static ContextState ReduceSetActiveContextRecordsAction(
+        public static ContextState ReduceSetFocusedContextHeirarchyAction(
             ContextState inContextStates,
-            SetActiveContextRecordsAction setActiveContextRecordsAction)
+            SetFocusedContextHeirarchyAction setFocusedContextHeirarchyAction)
         {
             return inContextStates with
             {
-                FocusedKeyHeirarchyBag = setActiveContextRecordsAction.TargetContextRecordKeyAndHeirarchyBag
+                FocusedContextHeirarchy = setFocusedContextHeirarchyAction.FocusedContextHeirarchy
             };
         }
         
-        [ReducerMethod(typeof(ToggleSelectInspectionTargetAction))]
-        public static ContextState ReduceToggleInspectAction(
+        [ReducerMethod(typeof(ToggleSelectInspectedContextHeirarchyAction))]
+        public static ContextState ReduceToggleSelectInspectedContextHeirarchyAction(
             ContextState inContextStates)
         {
             var outIsSelectingInspectionTarget = !inContextStates.IsSelectingInspectionTarget;
 
-            var outInspectableHeirarchyBag = inContextStates.InspectableKeyHeirarchyBag;
-            var outInspectedTargetContextRecords = inContextStates.InspectedKeyHeirarchyBag;
+            var outInspectableContextBag = inContextStates.InspectableContextBag;
+            var outInspectedContextHeirarchy = inContextStates.InspectedContextHeirarchy;
 
             if (!outIsSelectingInspectionTarget)
             {
-                outInspectableHeirarchyBag = ImmutableArray<InspectContextRecordEntry>.Empty;
-                outInspectedTargetContextRecords = null;
+                outInspectableContextBag = ImmutableArray<InspectableContext>.Empty;
+                outInspectedContextHeirarchy = null;
             }
 
             return inContextStates with
             {
                 IsSelectingInspectionTarget = !inContextStates.IsSelectingInspectionTarget,
-                InspectedKeyHeirarchyBag = outInspectedTargetContextRecords,
-                InspectableKeyHeirarchyBag = outInspectableHeirarchyBag,
-            };
-        }
-        
-        [ReducerMethod(typeof(SetSelectInspectionTargetTrueAction))]
-        public static ContextState ReduceSetSelectInspectionTargetTrueAction(
-            ContextState inContextStates)
-        {
-            return inContextStates with
-            {
-                IsSelectingInspectionTarget = true
-            };
-        }
-        
-        [ReducerMethod(typeof(SetSelectInspectionTargetFalseAction))]
-        public static ContextState ReduceSetSelectInspectionTargetFalseAction(
-            ContextState inContextStates)
-        {
-            return inContextStates with
-            {
-                IsSelectingInspectionTarget = false,
-                InspectedKeyHeirarchyBag = null,
-                InspectableKeyHeirarchyBag = ImmutableArray<InspectContextRecordEntry>.Empty,
+                InspectableContextBag = outInspectableContextBag,
+                InspectedContextHeirarchy = outInspectedContextHeirarchy,
             };
         }
         
         [ReducerMethod]
-        public static ContextState ReduceSetInspectionTargetAction(
+        public static ContextState ReduceIsSelectingInspectableContextHeirarchyAction(
             ContextState inContextStates,
-            SetInspectionTargetAction setInspectionTargetAction)
+            IsSelectingInspectableContextHeirarchyAction isSelectingInspectableContextHeirarchyAction)
+        {
+            if (isSelectingInspectableContextHeirarchyAction.Value)
+            {
+                return inContextStates with
+                {
+                    IsSelectingInspectionTarget = true
+                };
+            }
+            else
+            {
+                return inContextStates with
+                {
+                    IsSelectingInspectionTarget = false,
+                    InspectableContextBag = ImmutableArray<InspectableContext>.Empty,
+                    InspectedContextHeirarchy = null,
+                };
+            }
+        }
+        
+        [ReducerMethod]
+        public static ContextState ReduceSetInspectedContextHeirarchyAction(
+            ContextState inContextStates,
+            SetInspectedContextHeirarchyAction setInspectedContextHeirarchyAction)
         {
             return inContextStates with
             {
                 IsSelectingInspectionTarget = false,
-                InspectedKeyHeirarchyBag = setInspectionTargetAction.TargetContextRecordKeyAndHeirarchyBag,
-                InspectableKeyHeirarchyBag = ImmutableArray<InspectContextRecordEntry>.Empty
+                InspectableContextBag = ImmutableArray<InspectableContext>.Empty,
+                InspectedContextHeirarchy = setInspectedContextHeirarchyAction.InspectedContextHeirarchy,
             };
         }
         
         [ReducerMethod]
-        public static ContextState ReduceAddInspectContextRecordEntryAction(
+        public static ContextState ReduceAddInspectableContextAction(
             ContextState inContextStates,
-            AddInspectContextRecordEntryAction addInspectContextRecordEntryAction)
+            AddInspectableContextAction addInspectableContextAction)
         {
-            var outList = inContextStates.InspectableKeyHeirarchyBag.Add(
-                addInspectContextRecordEntryAction.InspectContextRecordEntry);
+            var outList = inContextStates.InspectableContextBag.Add(
+                addInspectableContextAction.InspectableContext);
 
             return inContextStates with
             {
-                InspectableKeyHeirarchyBag = outList,
+                InspectableContextBag = outList,
             };
         }
         
@@ -96,20 +97,20 @@ public partial record ContextState
             ContextState inContextStates,
             SetContextKeymapAction setContextKeymapAction)
         {
-            var inContextRecord = inContextStates.AllContextRecordsBag.FirstOrDefault(
-                x => x.ContextKey == setContextKeymapAction.ContextRecordKey);
+            var inContextRecord = inContextStates.AllContextsBag.FirstOrDefault(
+                x => x.ContextKey == setContextKeymapAction.ContextKey);
 
             if (inContextRecord is null)
                 return inContextStates;
 
-            var outList = inContextStates.AllContextRecordsBag.Replace(inContextRecord, inContextRecord with
+            var outList = inContextStates.AllContextsBag.Replace(inContextRecord, inContextRecord with
             {
                 Keymap = setContextKeymapAction.Keymap
             });
 
             return inContextStates with
             {
-                AllContextRecordsBag = outList,
+                AllContextsBag = outList,
             };
         }
     }

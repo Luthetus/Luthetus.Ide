@@ -42,15 +42,15 @@ public partial class TextSelectionGroup : ComponentBase
             fullWidthOfRowIsSelected = false;
         }
 
-        var charMeasurements = RenderBatch.ViewModel!.VirtualizationResult.CharacterWidthAndRowHeight;
+        var charMeasurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndRowMeasurements;
 
-        var topInPixelsInvariantCulture = (rowIndex * charMeasurements.RowHeightInPixels).ToCssValue();
+        var topInPixelsInvariantCulture = (rowIndex * charMeasurements.RowHeight).ToCssValue();
         var top = $"top: {topInPixelsInvariantCulture}px;";
 
-        var heightInPixelsInvariantCulture = charMeasurements.RowHeightInPixels.ToCssValue();
+        var heightInPixelsInvariantCulture = charMeasurements.RowHeight.ToCssValue();
         var height = $"height: {heightInPixelsInvariantCulture}px;";
 
-        var selectionStartInPixels = selectionStartingColumnIndex * charMeasurements.CharacterWidthInPixels;
+        var selectionStartInPixels = selectionStartingColumnIndex * charMeasurements.CharacterWidth;
 
         // selectionStartInPixels offset from Tab keys a width of many characters
         {
@@ -61,17 +61,15 @@ public partial class TextSelectionGroup : ComponentBase
             // 1 of the character width is already accounted for
             var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
 
-            selectionStartInPixels += extraWidthPerTabKey *
-                tabsOnSameRowBeforeCursor *
-                charMeasurements.CharacterWidthInPixels;
+            selectionStartInPixels += 
+                extraWidthPerTabKey * tabsOnSameRowBeforeCursor * charMeasurements.CharacterWidth;
         }
 
         var selectionStartInPixelsInvariantCulture = selectionStartInPixels.ToCssValue();
         var left = $"left: {selectionStartInPixelsInvariantCulture}px;";
 
-        var selectionWidthInPixels = selectionEndingColumnIndex *
-            charMeasurements.CharacterWidthInPixels -
-            selectionStartInPixels;
+        var selectionWidthInPixels = 
+            selectionEndingColumnIndex * charMeasurements.CharacterWidth - selectionStartInPixels;
 
         // Tab keys a width of many characters
         {
@@ -82,17 +80,17 @@ public partial class TextSelectionGroup : ComponentBase
             // 1 of the character width is already accounted for
             var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
 
-            selectionWidthInPixels += extraWidthPerTabKey * tabsOnSameRowBeforeCursor * charMeasurements.CharacterWidthInPixels;
+            selectionWidthInPixels += extraWidthPerTabKey * tabsOnSameRowBeforeCursor * charMeasurements.CharacterWidth;
         }
 
         var widthCssStyleString = "width: ";
-        var fullWidthValue = RenderBatch.ViewModel.VirtualizationResult.ElementMeasurementsInPixels.ScrollWidth;
+        var fullWidthValue = RenderBatch.ViewModel.VirtualizationResult.TextEditorMeasurements.ScrollWidth;
 
-        if (RenderBatch.ViewModel.VirtualizationResult.ElementMeasurementsInPixels.Width >
-            RenderBatch.ViewModel.VirtualizationResult.ElementMeasurementsInPixels.ScrollWidth)
+        if (RenderBatch.ViewModel.VirtualizationResult.TextEditorMeasurements.Width >
+            RenderBatch.ViewModel.VirtualizationResult.TextEditorMeasurements.ScrollWidth)
         {
             // If content does not fill the viewable width of the Text Editor User Interface
-            fullWidthValue = RenderBatch.ViewModel.VirtualizationResult.ElementMeasurementsInPixels.Width;
+            fullWidthValue = RenderBatch.ViewModel.VirtualizationResult.TextEditorMeasurements.Width;
         }
 
         var fullWidthValueInPixelsInvariantCulture = fullWidthValue.ToCssValue();

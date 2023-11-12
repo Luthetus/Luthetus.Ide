@@ -19,22 +19,33 @@ public class BackgroundTaskQueueTests
     {
         var key = Key<BackgroundTaskQueue>.NewKey();
         var displayName = "Continuous";
+        
+        var queue = new BackgroundTaskQueue(key, displayName);
 
-        var backgroundTaskQueue = new BackgroundTaskQueue(
-            key,
-            displayName);
+        Assert.Equal(key, queue.Key);
+        Assert.Equal(displayName, queue.DisplayName);
 
-        Assert.Equal(key, backgroundTaskQueue.Key);
-        Assert.Equal(displayName, backgroundTaskQueue.DisplayName);
-    }
+        var taskKey = Key<BackgroundTask>.NewKey();
+        var taskQueueKey = Key<BackgroundTaskQueue>.NewKey();
+        var name = "Write \"Hello World!\" to the console";
 
-    /// <summary>
-    /// <see cref="BackgroundTaskQueue.BackgroundTasks"/>
-    /// </summary>
-    [Fact]
-    public void BackgroundTasks()
-    {
-        throw new NotImplementedException();
+        var backgroundTask = new BackgroundTask(
+            taskKey,
+            taskQueueKey,
+            name,
+            () =>
+            {
+                Console.WriteLine("Hello World!");
+                return Task.CompletedTask;
+            });
+        
+        Assert.Empty(queue.BackgroundTasks);
+        Assert.Equal(0, queue.CountOfBackgroundTasks);
+
+        queue.BackgroundTasks.Enqueue(backgroundTask);
+        
+        Assert.NotEmpty(queue.BackgroundTasks);
+        Assert.Equal(1, queue.CountOfBackgroundTasks);
     }
 
     /// <summary>
@@ -51,15 +62,6 @@ public class BackgroundTaskQueueTests
     /// </summary>
     [Fact]
     public void ExecutingBackgroundTask()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="BackgroundTaskQueue.CountOfBackgroundTasks"/>
-    /// </summary>
-    [Fact]
-    public void CountOfBackgroundTasks()
     {
         throw new NotImplementedException();
     }

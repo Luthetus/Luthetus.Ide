@@ -20,20 +20,20 @@
             <CascadingValue Name="LuthetusTreeViewIconWidth" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
                 <CascadingValue Name="LuthetusTreeViewIconHeight" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
                     <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
-                        <TreeViewStateDisplay TreeViewStateKey="CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey"
-                                                CssStyleString="height: 100%;"
-                                                OnContextMenuFunc="OnTreeViewContextMenuFunc"
-                                                TreeViewKeyboardEventHandler="_compilerServiceExplorerTreeViewKeymap"
-                                                TreeViewMouseEventHandler="_compilerServiceExplorerTreeViewMouseEventHandler"/>
+                        <TreeViewContainerDisplay TreeViewStateKey="CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey"
+                                                  CssStyleString="height: 100%;"
+                                                  OnContextMenuFunc="OnTreeViewContextMenuFunc"
+                                                  TreeViewKeyboardEventHandler="_compilerServiceExplorerTreeViewKeymap"
+                                                  TreeViewMouseEventHandler="_compilerServiceExplorerTreeViewMouseEventHandler"/>
                     </CascadingValue>
                 </CascadingValue>
             </CascadingValue>
 
             <DropdownDisplay DropdownKey="CompilerServiceExplorerTreeViewContextMenu.ContextMenuEventDropdownKey"
                              DropdownPositionKind="DropdownPositionKind.Unset"
-                             CssStyleString="@CompilerServiceExplorerTreeViewContextMenu.GetContextMenuCssStyleString(_mostRecentTreeViewCommandParameter)">
+                             CssStyleString="@CompilerServiceExplorerTreeViewContextMenu.GetContextMenuCssStyleString(_mostRecentTreeViewCommandArgs)">
 
-                <CompilerServiceExplorerTreeViewContextMenu TreeViewCommandParameter="_mostRecentTreeViewCommandParameter" />
+                <CompilerServiceExplorerTreeViewContextMenu TreeViewCommandArgs="_mostRecentTreeViewCommandArgs" />
             </DropdownDisplay>
         </div>
     }

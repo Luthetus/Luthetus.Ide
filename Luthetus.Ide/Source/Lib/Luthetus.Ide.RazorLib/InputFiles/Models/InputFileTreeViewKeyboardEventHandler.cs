@@ -51,24 +51,24 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         _backgroundTaskService = backgroundTaskService;
     }
 
-    public override Task OnKeyDownAsync(TreeViewCommandParameter commandParameter)
+    public override Task OnKeyDownAsync(TreeViewCommandArgs commandArgs)
     {
-        base.OnKeyDownAsync(commandParameter);
+        base.OnKeyDownAsync(commandArgs);
 
-        if (commandParameter.KeyboardEventArgs is null)
+        if (commandArgs.KeyboardEventArgs is null)
             return Task.CompletedTask;
 
-        switch (commandParameter.KeyboardEventArgs.Code)
+        switch (commandArgs.KeyboardEventArgs.Code)
         {
             case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
-                SetInputFileContentTreeViewRoot(commandParameter);
+                SetInputFileContentTreeViewRoot(commandArgs);
                 return Task.CompletedTask;
             case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
-                SetSelectedTreeViewModel(commandParameter);
+                SetSelectedTreeViewModel(commandArgs);
                 return Task.CompletedTask;
         }
 
-        switch (commandParameter.KeyboardEventArgs.Key)
+        switch (commandArgs.KeyboardEventArgs.Key)
         {
             // Tried to have { "Ctrl" + "f" } => MoveFocusToSearchBar however, the webview was ending up taking over
             // and displaying its search bar with focus being set to it.
@@ -76,7 +76,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
             // Doing preventDefault just for this one case would be a can of worms as JSInterop is needed, as well a custom Blazor event.
             case "/":
             case "?":
-                MoveFocusToSearchBar(commandParameter);
+                MoveFocusToSearchBar(commandArgs);
                 return Task.CompletedTask;
                 // TODO: Add move to next match and move to previous match
                 //
@@ -88,40 +88,40 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
                 //     return Task.CompletedTask true;
         }
 
-        if (commandParameter.KeyboardEventArgs.AltKey)
+        if (commandArgs.KeyboardEventArgs.AltKey)
         {
-            AltModifiedKeymap(commandParameter);
+            AltModifiedKeymap(commandArgs);
             return Task.CompletedTask;
         }
 
         return Task.CompletedTask;
     }
 
-    private void AltModifiedKeymap(TreeViewCommandParameter commandParameter)
+    private void AltModifiedKeymap(TreeViewCommandArgs commandArgs)
     {
-        if (commandParameter.KeyboardEventArgs is null)
+        if (commandArgs.KeyboardEventArgs is null)
             return;
 
-        switch (commandParameter.KeyboardEventArgs.Key)
+        switch (commandArgs.KeyboardEventArgs.Key)
         {
             case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
-                HandleBackButtonOnClick(commandParameter);
+                HandleBackButtonOnClick(commandArgs);
                 break;
             case KeyboardKeyFacts.MovementKeys.ARROW_UP:
-                HandleUpwardButtonOnClick(commandParameter);
+                HandleUpwardButtonOnClick(commandArgs);
                 break;
             case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
-                HandleForwardButtonOnClick(commandParameter);
+                HandleForwardButtonOnClick(commandArgs);
                 break;
             case "r":
-                HandleRefreshButtonOnClick(commandParameter);
+                HandleRefreshButtonOnClick(commandArgs);
                 break;
         }
     }
 
-    private void SetInputFileContentTreeViewRoot(TreeViewCommandParameter commandParameter)
+    private void SetInputFileContentTreeViewRoot(TreeViewCommandArgs commandArgs)
     {
-        var activeNode = commandParameter.TreeViewState.ActiveNode;
+        var activeNode = commandArgs.TreeViewContainer.ActiveNode;
 
         if (activeNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return;
@@ -129,19 +129,19 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         _setInputFileContentTreeViewRootFunc.Invoke(treeViewAbsolutePath.Item);
     }
 
-    private void HandleBackButtonOnClick(TreeViewCommandParameter commandParameter)
+    private void HandleBackButtonOnClick(TreeViewCommandArgs commandArgs)
     {
         _dispatcher.Dispatch(new InputFileState.MoveBackwardsInHistoryAction());
         ChangeContentRootToOpenedTreeView(_inputFileStateWrap.Value);
     }
 
-    private void HandleForwardButtonOnClick(TreeViewCommandParameter commandParameter)
+    private void HandleForwardButtonOnClick(TreeViewCommandArgs commandArgs)
     {
         _dispatcher.Dispatch(new InputFileState.MoveForwardsInHistoryAction());
         ChangeContentRootToOpenedTreeView(_inputFileStateWrap.Value);
     }
 
-    private void HandleUpwardButtonOnClick(TreeViewCommandParameter commandParameter)
+    private void HandleUpwardButtonOnClick(TreeViewCommandArgs commandArgs)
     {
         _dispatcher.Dispatch(new InputFileState.OpenParentDirectoryAction(
             _ideComponentRenderers,
@@ -153,7 +153,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         ChangeContentRootToOpenedTreeView(_inputFileStateWrap.Value);
     }
 
-    private void HandleRefreshButtonOnClick(TreeViewCommandParameter commandParameter)
+    private void HandleRefreshButtonOnClick(TreeViewCommandArgs commandArgs)
     {
         _dispatcher.Dispatch(new InputFileState.RefreshCurrentSelectionAction(_backgroundTaskService));
         ChangeContentRootToOpenedTreeView(_inputFileStateWrap.Value);
@@ -167,9 +167,9 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
             _setInputFileContentTreeViewRootFunc.Invoke(openedTreeView.Item);
     }
 
-    private void SetSelectedTreeViewModel(TreeViewCommandParameter commandParameter)
+    private void SetSelectedTreeViewModel(TreeViewCommandArgs commandArgs)
     {
-        var activeNode = commandParameter.TreeViewState.ActiveNode;
+        var activeNode = commandArgs.TreeViewContainer.ActiveNode;
         var treeViewAbsolutePath = activeNode as TreeViewAbsolutePath;
 
         if (treeViewAbsolutePath is null)
@@ -181,7 +181,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         return;
     }
 
-    private void MoveFocusToSearchBar(TreeViewCommandParameter commandParameter)
+    private void MoveFocusToSearchBar(TreeViewCommandArgs commandArgs)
     {
         Task.Run(async () => await _focusSearchInputElementFunc.Invoke());
     }

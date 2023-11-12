@@ -37,10 +37,10 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
         if (obj is not TreeViewSolutionFolder treeViewSolutionFolder)
             return false;
 
-        return treeViewSolutionFolder.Item.AbsolutePath.FormattedInput == Item.AbsolutePath.FormattedInput;
+        return treeViewSolutionFolder.Item.AbsolutePath.Value == Item.AbsolutePath.Value;
     }
 
-    public override int GetHashCode() => Item.AbsolutePath.FormattedInput.GetHashCode();
+    public override int GetHashCode() => Item.AbsolutePath.Value.GetHashCode();
 
     public override TreeViewRenderer GetTreeViewRenderer()
     {

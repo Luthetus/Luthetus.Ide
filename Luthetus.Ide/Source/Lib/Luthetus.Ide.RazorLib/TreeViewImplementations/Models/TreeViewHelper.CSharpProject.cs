@@ -14,7 +14,7 @@ public partial class TreeViewHelper
         this TreeViewNamespacePath cSharpProjectTreeView)
     {
         var parentDirectoryOfCSharpProject = cSharpProjectTreeView.Item.AbsolutePath.AncestorDirectoryBag.Last();
-        var parentAbsolutePathString = parentDirectoryOfCSharpProject.FormattedInput;
+        var parentAbsolutePathString = parentDirectoryOfCSharpProject.Value;
         var hiddenFiles = HiddenFileFacts.GetHiddenFilesByContainerFileExtension(ExtensionNoPeriodFacts.C_SHARP_PROJECT);
 
         var directoryPathStringsBag = await cSharpProjectTreeView.FileSystemProvider.Directory

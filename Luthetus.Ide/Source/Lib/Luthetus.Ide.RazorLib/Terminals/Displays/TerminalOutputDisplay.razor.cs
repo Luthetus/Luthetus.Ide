@@ -152,8 +152,7 @@ public partial class TerminalOutputDisplay : FluxorComponent
         KeyboardEventArgs keyboardEventArgs,
         Func<TextEditorMenuKind, bool, Task> setTextEditorMenuKind)
     {
-        if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE ||
-            keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.CARRIAGE_RETURN_CODE)
+        if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
         {
             var text = textEditor.GetAllText();
             textEditor.SetContent(string.Empty);

@@ -16,7 +16,7 @@ namespace Luthetus.Common.RazorLib.TreeViews.Displays;
 /// TODO: SphagettiCode - The context menu logic feels scuffed. A field is used to track the
 /// "_mostRecentContextMenuEvent". This feels quite wrong and should be looked into. (2023-09-19)
 /// </summary>
-public partial class TreeViewStateDisplay : FluxorComponent
+public partial class TreeViewContainerDisplay : FluxorComponent
 {
     [Inject]
     private IStateSelection<TreeViewState, TreeViewContainer?> TreeViewStateSelection { get; set; } = null!;
@@ -38,12 +38,12 @@ public partial class TreeViewStateDisplay : FluxorComponent
     public string CssStyleString { get; set; } = string.Empty;
     /// <summary>If a consumer of the TreeView component does not have logic for their own DropdownComponent, then one can provide a RenderFragment and a dropdown will be rendered for the consumer and their RenderFragment is rendered within that dropdown.<br/><br/>If one has their own DropdownComponent, then it is recommended that they use <see cref="OnContextMenuFunc"/> instead.</summary>
     [Parameter]
-    public RenderFragment<TreeViewCommandParameter>? OnContextMenuRenderFragment { get; set; }
-    /// <summary>If a consumer of the TreeView component does not have logic for their own DropdownComponent, then it is recommended to use <see cref="OnContextMenuRenderFragment"/><br/><br/> <see cref="OnContextMenuFunc"/> allows one to be notified of the ContextMenu event along with the necessary parameters by being given <see cref="TreeViewCommandParameter"/></summary>
+    public RenderFragment<TreeViewCommandArgs>? OnContextMenuRenderFragment { get; set; }
+    /// <summary>If a consumer of the TreeView component does not have logic for their own DropdownComponent, then it is recommended to use <see cref="OnContextMenuRenderFragment"/><br/><br/> <see cref="OnContextMenuFunc"/> allows one to be notified of the ContextMenu event along with the necessary parameters by being given <see cref="TreeViewCommandArgs"/></summary>
     [Parameter]
-    public Func<TreeViewCommandParameter, Task>? OnContextMenuFunc { get; set; }
+    public Func<TreeViewCommandArgs, Task>? OnContextMenuFunc { get; set; }
 
-    private TreeViewCommandParameter? _treeViewContextMenuCommandParameter;
+    private TreeViewCommandArgs? _treeViewContextMenuCommandArgs;
     private ElementReference? _treeViewStateDisplayElementReference;
 
     private string ContextMenuCssStyleString => GetContextMenuCssStyleString();
@@ -69,13 +69,13 @@ public partial class TreeViewStateDisplay : FluxorComponent
         if (treeViewState is null)
             return;
 
-        var treeViewCommandParameter = new TreeViewCommandParameter(
+        var treeViewCommandArgs = new TreeViewCommandArgs(
             TreeViewService,
             treeViewState,
             null,
             async () =>
             {
-                _treeViewContextMenuCommandParameter = null;
+                _treeViewContextMenuCommandArgs = null;
                 await InvokeAsync(StateHasChanged);
 
                 var localTreeViewStateDisplayElementReference = _treeViewStateDisplayElementReference;
@@ -97,7 +97,7 @@ public partial class TreeViewStateDisplay : FluxorComponent
             null,
             keyboardEventArgs);
 
-        TreeViewKeyboardEventHandler.OnKeyDown(treeViewCommandParameter);
+        TreeViewKeyboardEventHandler.OnKeyDown(treeViewCommandArgs);
     }
 
     private async Task HandleTreeViewOnContextMenu(
@@ -144,13 +144,13 @@ public partial class TreeViewStateDisplay : FluxorComponent
             contextMenuTargetTreeViewNoType = treeViewMouseWasOver;
         }
 
-        _treeViewContextMenuCommandParameter = new TreeViewCommandParameter(
+        _treeViewContextMenuCommandArgs = new TreeViewCommandArgs(
             TreeViewService,
             treeViewState,
             contextMenuTargetTreeViewNoType,
             async () =>
             {
-                _treeViewContextMenuCommandParameter = null;
+                _treeViewContextMenuCommandArgs = null;
                 await InvokeAsync(StateHasChanged);
 
                 var localTreeViewStateDisplayElementReference = _treeViewStateDisplayElementReference;
@@ -173,7 +173,7 @@ public partial class TreeViewStateDisplay : FluxorComponent
             null);
 
         if (OnContextMenuFunc is not null)
-            await OnContextMenuFunc.Invoke(_treeViewContextMenuCommandParameter);
+            await OnContextMenuFunc.Invoke(_treeViewContextMenuCommandArgs);
 
         await InvokeAsync(StateHasChanged);
     }
@@ -188,17 +188,17 @@ public partial class TreeViewStateDisplay : FluxorComponent
 
     private string GetContextMenuCssStyleString()
     {
-        if (_treeViewContextMenuCommandParameter?.ContextMenuFixedPosition is null)
+        if (_treeViewContextMenuCommandArgs?.ContextMenuFixedPosition is null)
         {
             // This should never happen.
             return "display: none;";
         }
 
         var left =
-            $"left: {_treeViewContextMenuCommandParameter.ContextMenuFixedPosition.LeftPositionInPixels.ToCssValue()}px;";
+            $"left: {_treeViewContextMenuCommandArgs.ContextMenuFixedPosition.LeftPositionInPixels.ToCssValue()}px;";
 
         var top =
-            $"top: {_treeViewContextMenuCommandParameter.ContextMenuFixedPosition.TopPositionInPixels.ToCssValue()}px;";
+            $"top: {_treeViewContextMenuCommandArgs.ContextMenuFixedPosition.TopPositionInPixels.ToCssValue()}px;";
 
         return $"{left} {top}";
     }

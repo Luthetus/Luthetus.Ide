@@ -16,7 +16,7 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
-    private IThemeRecordsCollectionService ThemeRecordsCollectionService { get; set; } = null!;
+    private IThemeService ThemeRecordsCollectionService { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
 

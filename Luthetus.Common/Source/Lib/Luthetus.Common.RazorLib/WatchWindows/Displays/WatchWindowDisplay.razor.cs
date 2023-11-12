@@ -30,7 +30,7 @@ public partial class WatchWindowDisplay : FluxorComponent
     public static Key<TreeViewContainer> TreeViewStateKey { get; } = Key<TreeViewContainer>.NewKey();
     public static Key<DropdownRecord> WatchWindowContextMenuDropdownKey { get; } = Key<DropdownRecord>.NewKey();
 
-    private TreeViewCommandParameter? _mostRecentTreeViewContextMenuCommandParameter;
+    private TreeViewCommandArgs? _mostRecentTreeViewContextMenuCommandArgs;
     private TreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
     private TreeViewKeyboardEventHandler _treeViewKeyboardEventHandler = null!;
     private bool _disposed;
@@ -46,7 +46,7 @@ public partial class WatchWindowDisplay : FluxorComponent
     {
         if (firstRender)
         {
-            if (!TreeViewService.TryGetTreeViewState(TreeViewStateKey, out var treeViewState))
+            if (!TreeViewService.TryGetTreeViewContainer(TreeViewStateKey, out var treeViewState))
             {
                 var rootNode = new TreeViewReflection(
                     WatchWindowObjectWrap,
@@ -54,7 +54,7 @@ public partial class WatchWindowDisplay : FluxorComponent
                     false,
                     LuthetusCommonComponentRenderers);
 
-                TreeViewService.RegisterTreeViewState(new TreeViewContainer(
+                TreeViewService.RegisterTreeViewContainer(new TreeViewContainer(
                     TreeViewStateKey,
                     rootNode,
                     new TreeViewNoType[] { rootNode }.ToImmutableList()));
@@ -64,9 +64,9 @@ public partial class WatchWindowDisplay : FluxorComponent
         return base.OnAfterRenderAsync(firstRender);
     }
 
-    private async Task OnTreeViewContextMenuFunc(TreeViewCommandParameter commandParameter)
+    private async Task OnTreeViewContextMenuFunc(TreeViewCommandArgs commandArgs)
     {
-        _mostRecentTreeViewContextMenuCommandParameter = commandParameter;
+        _mostRecentTreeViewContextMenuCommandArgs = commandArgs;
 
         DropdownService.AddActiveDropdownKey(WatchWindowContextMenuDropdownKey);
 
@@ -84,7 +84,7 @@ public partial class WatchWindowDisplay : FluxorComponent
         {
             _disposed = true;
 
-            TreeViewService.DisposeTreeViewState(TreeViewStateKey);
+            TreeViewService.DisposeTreeViewContainer(TreeViewStateKey);
         }
 
         base.Dispose(disposing);

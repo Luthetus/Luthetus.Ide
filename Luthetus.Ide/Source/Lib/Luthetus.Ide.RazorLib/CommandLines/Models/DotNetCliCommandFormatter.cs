@@ -12,7 +12,7 @@ public static class DotNetCliCommandFormatter
 
     public static FormattedCommand FormatStartProjectWithoutDebugging(IAbsolutePath projectAbsolutePath)
     {
-        return FormatStartProjectWithoutDebugging(projectAbsolutePath.FormattedInput);
+        return FormatStartProjectWithoutDebugging(projectAbsolutePath.Value);
     }
 
     public static FormattedCommand FormatStartProjectWithoutDebugging(string projectPath)

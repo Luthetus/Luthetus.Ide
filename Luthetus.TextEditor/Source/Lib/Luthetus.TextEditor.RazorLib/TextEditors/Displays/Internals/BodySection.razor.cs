@@ -32,7 +32,7 @@ public partial class BodySection : ComponentBase
         var mostDigitsInARowLineNumber = RenderBatch.Model!.RowCount.ToString().Length;
 
         var gutterWidthInPixels = mostDigitsInARowLineNumber *
-            RenderBatch.ViewModel!.VirtualizationResult.CharacterWidthAndRowHeight.CharacterWidthInPixels;
+            RenderBatch.ViewModel!.VirtualizationResult.CharAndRowMeasurements.CharacterWidth;
 
         gutterWidthInPixels += TextEditorModel.GUTTER_PADDING_LEFT_IN_PIXELS +
             TextEditorModel.GUTTER_PADDING_RIGHT_IN_PIXELS;

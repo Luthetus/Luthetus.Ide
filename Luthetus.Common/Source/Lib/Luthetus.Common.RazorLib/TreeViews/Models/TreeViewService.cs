@@ -18,115 +18,115 @@ public class TreeViewService : ITreeViewService
 
     public IState<TreeViewState> TreeViewStateWrap { get; }
 
-    public void RegisterTreeViewState(TreeViewContainer treeViewState)
+    public void RegisterTreeViewContainer(TreeViewContainer container)
     {
-        var registerTreeViewStateAction = new TreeViewState.RegisterContainerAction(treeViewState);
-        _dispatcher.Dispatch(registerTreeViewStateAction);
+        var registerContainerAction = new TreeViewState.RegisterContainerAction(container);
+        _dispatcher.Dispatch(registerContainerAction);
     }
 
-    public void DisposeTreeViewState(Key<TreeViewContainer> treeViewStateKey)
+    public void DisposeTreeViewContainer(Key<TreeViewContainer> containerKey)
     {
-        var disposeTreeViewStateAction = new TreeViewState.DisposeContainerAction(treeViewStateKey);
-        _dispatcher.Dispatch(disposeTreeViewStateAction);
+        var disposeContainerAction = new TreeViewState.DisposeContainerAction(containerKey);
+        _dispatcher.Dispatch(disposeContainerAction);
     }
 
-    public void ReplaceTreeViewState(Key<TreeViewContainer> treeViewStateKey, TreeViewContainer treeViewState)
+    public void ReplaceTreeViewContainer(Key<TreeViewContainer> containerKey, TreeViewContainer container)
     {
-        var replaceTreeViewStateAction = new TreeViewState.ReplaceContainerAction(
-            treeViewStateKey,
-            treeViewState);
+        var replaceContainerAction = new TreeViewState.ReplaceContainerAction(
+            containerKey,
+            container);
 
-        _dispatcher.Dispatch(replaceTreeViewStateAction);
+        _dispatcher.Dispatch(replaceContainerAction);
     }
 
-    public void SetRoot(Key<TreeViewContainer> treeViewStateKey, TreeViewNoType treeViewNoType)
+    public void SetRoot(Key<TreeViewContainer> containerKey, TreeViewNoType node)
     {
-        var withRootAction = new TreeViewState.WithRootNodeAction(treeViewStateKey, treeViewNoType);
-        _dispatcher.Dispatch(withRootAction);
+        var withRootNodeAction = new TreeViewState.WithRootNodeAction(containerKey, node);
+        _dispatcher.Dispatch(withRootNodeAction);
     }
 
-    public bool TryGetTreeViewState(Key<TreeViewContainer> treeViewStateKey, out TreeViewContainer? treeViewState)
+    public bool TryGetTreeViewContainer(Key<TreeViewContainer> containerKey, out TreeViewContainer? container)
     {
-        treeViewState = TreeViewStateWrap.Value.ContainerBag.FirstOrDefault(
-            x => x.Key == treeViewStateKey);
+        container = TreeViewStateWrap.Value.ContainerBag.FirstOrDefault(
+            x => x.Key == containerKey);
 
-        return treeViewState is not null;
+        return container is not null;
     }
 
-    public void ReRenderNode(Key<TreeViewContainer> treeViewStateKey, TreeViewNoType node)
+    public void ReRenderNode(Key<TreeViewContainer> containerKey, TreeViewNoType node)
     {
-        var replaceNodeAction = new TreeViewState.ReRenderNodeAction(treeViewStateKey, node);
-        _dispatcher.Dispatch(replaceNodeAction);
+        var reRenderNodeAction = new TreeViewState.ReRenderNodeAction(containerKey, node);
+        _dispatcher.Dispatch(reRenderNodeAction);
     }
 
     public void AddChildNode(
-        Key<TreeViewContainer> treeViewStateKey,
+        Key<TreeViewContainer> containerKey,
         TreeViewNoType parent,
         TreeViewNoType child)
     {
         var addChildNodeAction = new TreeViewState.AddChildNodeAction(
-            treeViewStateKey,
+            containerKey,
             parent,
             child);
 
         _dispatcher.Dispatch(addChildNodeAction);
     }
 
-    public void SetActiveNode(Key<TreeViewContainer> treeViewStateKey, TreeViewNoType? nextActiveNode)
+    public void SetActiveNode(Key<TreeViewContainer> containerKey, TreeViewNoType? nextActiveNode)
     {
         var setActiveNodeAction = new TreeViewState.SetActiveNodeAction(
-            treeViewStateKey,
+            containerKey,
             nextActiveNode);
 
         _dispatcher.Dispatch(setActiveNodeAction);
     }
 
-    public void AddSelectedNode(Key<TreeViewContainer> treeViewStateKey, TreeViewNoType nodeSelection)
+    public void AddSelectedNode(Key<TreeViewContainer> containerKey, TreeViewNoType nodeSelection)
     {
         var addSelectedNodeAction = new TreeViewState.AddSelectedNodeAction(
-            treeViewStateKey,
+            containerKey,
             nodeSelection);
 
         _dispatcher.Dispatch(addSelectedNodeAction);
     }
 
-    public void RemoveSelectedNode(Key<TreeViewContainer> treeViewStateKey, Key<TreeViewNoType> treeViewNodeKey)
+    public void RemoveSelectedNode(Key<TreeViewContainer> containerKey, Key<TreeViewNoType> nodeKey)
     {
         var removeSelectedNodeAction = new TreeViewState.RemoveSelectedNodeAction(
-            treeViewStateKey,
-            treeViewNodeKey);
+            containerKey,
+            nodeKey);
 
         _dispatcher.Dispatch(removeSelectedNodeAction);
     }
 
-    public void ClearSelectedNodes(Key<TreeViewContainer> treeViewStateKey)
+    public void ClearSelectedNodes(Key<TreeViewContainer> containerKey)
     {
-        var clearSelectedNodesAction = new TreeViewState.ClearSelectedNodeBagAction(treeViewStateKey);
-        _dispatcher.Dispatch(clearSelectedNodesAction);
+        var clearSelectedNodeBagAction = new TreeViewState.ClearSelectedNodeBagAction(containerKey);
+        _dispatcher.Dispatch(clearSelectedNodeBagAction);
     }
 
-    public void MoveLeft(Key<TreeViewContainer> treeViewStateKey, bool shiftKey)
+    public void MoveLeft(Key<TreeViewContainer> containerKey, bool shiftKey)
     {
-        var moveActiveSelectionLeftAction = new TreeViewState.MoveLeftAction(treeViewStateKey, shiftKey);
-        _dispatcher.Dispatch(moveActiveSelectionLeftAction);
+        var moveLeftAction = new TreeViewState.MoveLeftAction(containerKey, shiftKey);
+        _dispatcher.Dispatch(moveLeftAction);
     }
 
-    public void MoveDown(Key<TreeViewContainer> treeViewStateKey, bool shiftKey)
+    public void MoveDown(Key<TreeViewContainer> containerKey, bool shiftKey)
     {
-        var moveActiveSelectionDownAction = new TreeViewState.MoveDownAction(treeViewStateKey, shiftKey);
-        _dispatcher.Dispatch(moveActiveSelectionDownAction);
+        var moveDownAction = new TreeViewState.MoveDownAction(containerKey, shiftKey);
+        _dispatcher.Dispatch(moveDownAction);
     }
 
-    public void MoveUp(Key<TreeViewContainer> treeViewStateKey, bool shiftKey)
+    public void MoveUp(Key<TreeViewContainer> containerKey, bool shiftKey)
     {
-        var moveActiveSelectionUpAction = new TreeViewState.MoveUpAction(treeViewStateKey, shiftKey);
-        _dispatcher.Dispatch(moveActiveSelectionUpAction);
+        var moveUpAction = new TreeViewState.MoveUpAction(containerKey, shiftKey);
+        _dispatcher.Dispatch(moveUpAction);
     }
 
-    public void MoveRight(Key<TreeViewContainer> treeViewStateKey, bool shiftKey)
+    public void MoveRight(Key<TreeViewContainer> containerKey, bool shiftKey)
     {
-        var moveActiveSelectionRightAction = new TreeViewState.MoveRightAction(
-            treeViewStateKey,
+        var moveRightAction = new TreeViewState.MoveRightAction(
+            containerKey,
             shiftKey,
             treeViewNoType =>
             {
@@ -136,11 +136,11 @@ public class TreeViewService : ITreeViewService
                     {
                         await treeViewNoType.LoadChildBagAsync().ConfigureAwait(false);
 
-                        var reRenderActiveNodeAction = new TreeViewState.ReRenderNodeAction(
-                            treeViewStateKey,
+                        var reRenderNodeAction = new TreeViewState.ReRenderNodeAction(
+                            containerKey,
                             treeViewNoType);
 
-                        _dispatcher.Dispatch(reRenderActiveNodeAction);
+                        _dispatcher.Dispatch(reRenderNodeAction);
                     }
                     catch (Exception e)
                     {
@@ -150,28 +150,28 @@ public class TreeViewService : ITreeViewService
                 }, CancellationToken.None);
             });
 
-        _dispatcher.Dispatch(moveActiveSelectionRightAction);
+        _dispatcher.Dispatch(moveRightAction);
     }
 
-    public void MoveHome(Key<TreeViewContainer> treeViewStateKey, bool shiftKey)
+    public void MoveHome(Key<TreeViewContainer> containerKey, bool shiftKey)
     {
-        var moveActiveSelectionHomeAction = new TreeViewState.MoveHomeAction(treeViewStateKey, shiftKey);
-        _dispatcher.Dispatch(moveActiveSelectionHomeAction);
+        var moveHomeAction = new TreeViewState.MoveHomeAction(containerKey, shiftKey);
+        _dispatcher.Dispatch(moveHomeAction);
     }
 
-    public void MoveEnd(Key<TreeViewContainer> treeViewStateKey, bool shiftKey)
+    public void MoveEnd(Key<TreeViewContainer> containerKey, bool shiftKey)
     {
-        var moveActiveSelectionEndAction = new TreeViewState.MoveEndAction(treeViewStateKey, shiftKey);
-        _dispatcher.Dispatch(moveActiveSelectionEndAction);
+        var moveEndAction = new TreeViewState.MoveEndAction(containerKey, shiftKey);
+        _dispatcher.Dispatch(moveEndAction);
     }
 
-    public string GetNodeElementId(TreeViewNoType treeViewNoType)
+    public string GetNodeElementId(TreeViewNoType node)
     {
-        return $"luth_node-{treeViewNoType.Key}";
+        return $"luth_node-{node.Key}";
     }
 
-    public string GetTreeContainerElementId(Key<TreeViewContainer> treeViewStateKey)
+    public string GetTreeContainerElementId(Key<TreeViewContainer> containerKey)
     {
-        return $"luth_tree-container-{treeViewStateKey.Guid}";
+        return $"luth_tree-container-{containerKey.Guid}";
     }
 }

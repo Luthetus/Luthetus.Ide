@@ -59,8 +59,8 @@
         <div class="luth_tree-view-children">
             @foreach (var child in TreeViewNoType.ChildBag)
             {
-                <TreeViewDisplay TreeViewNoType="child"
-                                 Depth="Depth + 1"/>
+                <TreeViewNodeDisplay TreeViewNoType="child"
+                                     Depth="Depth + 1"/>
             }
         
             @if (!TreeViewNoType.IsHidden)

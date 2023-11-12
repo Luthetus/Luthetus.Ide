@@ -2,116 +2,124 @@
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 <div class="luth_te_text-editor-footer @TextEditorService.ThemeCssClassString">
-    @{
-        var model = RenderBatch.Model;
-        var viewModel = RenderBatch.ViewModel;
-        
-        if (model is not null && viewModel is not null)
-        {
-            if (!string.IsNullOrWhiteSpace(model.FileExtension))
+    <div class="luth_te_text-editor-footer-listing">
+        @{
+            var model = RenderBatch.Model;
+            var viewModel = RenderBatch.ViewModel;
+
+            if (model is not null && viewModel is not null)
             {
+                if (!string.IsNullOrWhiteSpace(model.FileExtension))
+                {
+                    <div class="luth_te_text-editor-footer-entry">
+                        @model.FileExtension
+                    </div>
+                }
+
                 <div class="luth_te_text-editor-footer-entry">
-                    @model.FileExtension
+                    <div class="luth_te_text-editor-footer-name-value-pair">
+                        <div class="luth_te_text-editor-footer-name">
+                            length:
+                        </div>
+                        <div class="luth_te_text-editor-footer-value"
+                             style="@StyleMinWidthFromMaxLengthOfValue(model.DocumentLength)">
+                            @($"{model.DocumentLength}")
+                        </div>
+                    </div>
+
+                    <div class="luth_te_text-editor-footer-name-value-pair">
+                        <div class="luth_te_text-editor-footer-name">
+                            lines:
+                        </div>
+                        <div class="luth_te_text-editor-footer-value"
+                             style="@StyleMinWidthFromMaxLengthOfValue(model.RowCount)">
+                            @($"{model.RowCount}")
+                        </div>
+                    </div>
+                </div>
+
+                <div class="luth_te_text-editor-footer-entry">
+                    <div class="luth_te_text-editor-footer-name-value-pair">
+                        <div class="luth_te_text-editor-footer-name">
+                            Ln:
+                        </div>
+
+                        @{
+                            var rowNumber = viewModel.PrimaryCursor.IndexCoordinates.rowIndex + 1;
+                        }
+
+                        <div class="luth_te_text-editor-footer-value"
+                             style="@StyleMinWidthFromMaxLengthOfValue(model.RowCount)">
+                            @($"{rowNumber}")
+                        </div>
+                    </div>
+
+                    <div class="luth_te_text-editor-footer-name-value-pair">
+                        <div class="luth_te_text-editor-footer-name">
+                            Col:
+                        </div>
+
+                        @{
+                            var columnNumber = viewModel.PrimaryCursor.IndexCoordinates.columnIndex + 1;
+                        }
+
+                        <div class="luth_te_text-editor-footer-value"
+                             style="@StyleMinWidthFromMaxLengthOfValue(model.MostCharactersOnASingleRowTuple.rowLength)">
+                            @($"{columnNumber}")
+                        </div>
+                    </div>
+
+                    <div class="luth_te_text-editor-footer-name-value-pair">
+                        <div class="luth_te_text-editor-footer-name">
+                            Pos:
+                        </div>
+
+                        @{
+                            var positionNumber = model.GetCursorPositionIndex(viewModel.PrimaryCursor) + 1;
+                        }
+
+                        <div class="luth_te_text-editor-footer-value"
+                             style="@StyleMinWidthFromMaxLengthOfValue(model.DocumentLength)">
+                            @($"{positionNumber}")
+                        </div>
+                    </div>
+                </div>
+
+                <div class="luth_te_text-editor-footer-entry">
+                    @if (model.OnlyRowEndingKind is null)
+                    {
+                        <text>has:mixed </text>
+                    }
+                    else
+                    {
+                        <text>has:@model.OnlyRowEndingKind.Value.AsFriendlyName() </text>
+                    }
+
+                    use:
+                    <select @onchange="SelectRowEndingKindOnChange">
+                        @foreach (var rowEndingKind in RowEndingKind.Linefeed.GetRowEndingsUserAllowedToUse())
+                        {
+                            <option value="@rowEndingKind.ToString()"
+                                    selected="@(model.UsingRowEndingKind == rowEndingKind)">
+                                @rowEndingKind.AsFriendlyName()
+                            </option>
+                        }
+                    </select>
                 </div>
             }
-
-            <div class="luth_te_text-editor-footer-entry">
-                <div class="luth_te_text-editor-footer-name-value-pair">
-                    <div class="luth_te_text-editor-footer-name">
-                        length:
-                    </div>
-                    <div class="luth_te_text-editor-footer-value"
-                          style="@StyleMinWidthFromMaxLengthOfValue(model.DocumentLength)">
-                        @($"{model.DocumentLength}")
-                    </div>
-                </div>
-                
-                <div class="luth_te_text-editor-footer-name-value-pair">
-                    <div class="luth_te_text-editor-footer-name">
-                        lines:
-                    </div>
-                    <div class="luth_te_text-editor-footer-value"
-                          style="@StyleMinWidthFromMaxLengthOfValue(model.RowCount)">
-                        @($"{model.RowCount}")
-                    </div>
-                </div>
-            </div>
-
-            <div class="luth_te_text-editor-footer-entry">
-                <div class="luth_te_text-editor-footer-name-value-pair">
-                    <div class="luth_te_text-editor-footer-name">
-                        Ln:
-                    </div>
-
-                    @{ var rowNumber = viewModel.PrimaryCursor.IndexCoordinates.rowIndex + 1; }
-                    
-                    <div class="luth_te_text-editor-footer-value"
-                          style="@StyleMinWidthFromMaxLengthOfValue(model.RowCount)">
-                        @($"{rowNumber}")
-                    </div>
-                </div>
-                
-                <div class="luth_te_text-editor-footer-name-value-pair">
-                    <div class="luth_te_text-editor-footer-name">
-                        Col:
-                    </div>
-
-                    @{ var columnNumber = viewModel.PrimaryCursor.IndexCoordinates.columnIndex + 1; }
-                    
-                    <div class="luth_te_text-editor-footer-value"
-                          style="@StyleMinWidthFromMaxLengthOfValue(model.MostCharactersOnASingleRowTuple.rowLength)">
-                        @($"{columnNumber}")
-                    </div>
-                </div>
-                
-                <div class="luth_te_text-editor-footer-name-value-pair">
-                    <div class="luth_te_text-editor-footer-name">
-                        Pos:
-                    </div>
-
-                    @{ var positionNumber = model.GetCursorPositionIndex(viewModel.PrimaryCursor) + 1; }
-                    
-                    <div class="luth_te_text-editor-footer-value"
-                          style="@StyleMinWidthFromMaxLengthOfValue(model.DocumentLength)">
-                        @($"{positionNumber}")
-                    </div>
-                </div>
-            </div>
-
-            <div class="luth_te_text-editor-footer-entry">
-                @if (model.OnlyRowEndingKind is null)
-                {
-                    <text>has:mixed </text>
-                }
-                else
-                {
-                    <text>has:@model.OnlyRowEndingKind.Value.AsFriendlyName() </text>
-                }
-
-                use:
-                <select @onchange="SelectRowEndingKindOnChange">
-                    @foreach (var rowEndingKind in RowEndingKind.Linefeed.GetRowEndingsUserAllowedToUse())
+            else
+            {
+                <div class="luth_te_text-editor-footer-entry luth_te_text-editor-footer-file-sizing">
+                    @if (model is null)
                     {
-                        <option value="@rowEndingKind.ToString()"
-                                selected="@(model.UsingRowEndingKind == rowEndingKind)">
-                            @rowEndingKind.AsFriendlyName()
-                        </option>
+                        <div>The @nameof(TextEditorModel) was null</div>
                     }
-                </select>
-            </div>
+                    else if (viewModel is not null)
+                    {
+                        <div>The @nameof(TextEditorViewModel) was null</div>
+                    }
+                </div>
+            }
         }
-        else
-        {
-            <div class="luth_te_text-editor-footer-entry luth_te_text-editor-footer-file-sizing">
-                @if (model is null)
-                {
-                    <div>The @nameof(TextEditorModel) was null</div>
-                }
-                else if (viewModel is not null)
-                {
-                    <div>The @nameof(TextEditorViewModel) was null</div>
-                }
-            </div>
-        }
-    }
+    </div>
 </div>

@@ -6,17 +6,17 @@
      style="@ElementDimensions.StyleString">
 
     <CascadingValue Name="SearchQuery" Value="InputFileState.SearchQuery">
-        <TreeViewStateDisplay TreeViewStateKey="TreeViewStateKey"
-                              CssStyleString="height: 100%;"
-                              OnContextMenuFunc="OnTreeViewContextMenuFunc"
-                              TreeViewMouseEventHandler="InputFileTreeViewMouseEventHandler"
-                              TreeViewKeyboardEventHandler="InputFileTreeViewKeyboardEventHandler"/>
+        <TreeViewContainerDisplay TreeViewStateKey="TreeViewStateKey"
+                                  CssStyleString="height: 100%;"
+                                  OnContextMenuFunc="OnTreeViewContextMenuFunc"
+                                  TreeViewMouseEventHandler="InputFileTreeViewMouseEventHandler"
+                                  TreeViewKeyboardEventHandler="InputFileTreeViewKeyboardEventHandler"/>
     </CascadingValue>
 
     <DropdownDisplay DropdownKey="InputFileContextMenu.ContextMenuKey"
                      DropdownPositionKind="DropdownPositionKind.Unset"
-                     CssStyleString="@InputFileContextMenu.GetContextMenuCssStyleString(_mostRecentTreeViewCommandParameter, DialogRecord)">
+                     CssStyleString="@InputFileContextMenu.GetContextMenuCssStyleString(_mostRecentTreeViewCommandArgs, DialogRecord)">
 
-        <InputFileContextMenu TreeViewCommandParameter="_mostRecentTreeViewCommandParameter"/>
+        <InputFileContextMenu TreeViewCommandArgs="_mostRecentTreeViewCommandArgs"/>
     </DropdownDisplay>
 </div>

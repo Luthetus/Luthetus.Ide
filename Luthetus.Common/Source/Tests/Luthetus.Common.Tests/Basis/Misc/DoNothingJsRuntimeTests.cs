@@ -1,4 +1,5 @@
 ﻿using Luthetus.Common.RazorLib.Misc;
+using Microsoft.JSInterop;
 
 namespace Luthetus.Common.Tests.Basis.Misc;
 
@@ -11,17 +12,25 @@ public class DoNothingJsRuntimeTests
     /// <see cref="DoNothingJsRuntime.InvokeAsync{TValue}(string, object?[]?)"/>
     /// </summary>
     [Fact]
-    public void InvokeAsyncA()
+    public async Task InvokeAsyncA()
     {
-        throw new NotImplementedException();
+        var doNothingJsRuntime = new DoNothingJsRuntime();
+        
+        var defaultResult = await doNothingJsRuntime.InvokeAsync<string>(string.Empty);
+
+        Assert.Equal(default, defaultResult);
     }
 
     /// <summary>
     /// <see cref="DoNothingJsRuntime.InvokeAsync{TValue}(string, CancellationToken, object?[]?)"/>
     /// </summary>
     [Fact]
-    public void InvokeAsyncB()
+    public async Task InvokeAsyncB()
     {
-        throw new NotImplementedException();
+        var doNothingJsRuntime = new DoNothingJsRuntime();
+
+        var defaultResult = await doNothingJsRuntime.InvokeAsync<string>(string.Empty, CancellationToken.None);
+
+        Assert.Equal(default, defaultResult);
     }
 }

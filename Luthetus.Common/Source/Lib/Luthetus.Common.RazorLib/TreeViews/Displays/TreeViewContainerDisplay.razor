@@ -26,8 +26,8 @@
                 <CascadingValue Name="TreeViewMouseEventHandler" Value="TreeViewMouseEventHandler">
                     <CascadingValue Name="TreeViewKeyboardEventHandler" Value="TreeViewKeyboardEventHandler">
                         <CascadingValue Name="HandleTreeViewOnContextMenu" Value="HandleTreeViewOnContextMenu">
-                            <TreeViewDisplay TreeViewNoType="treeViewState.RootNode"
-                                             Depth="GetRootDepth(treeViewState.RootNode)"/>
+                            <TreeViewNodeDisplay TreeViewNoType="treeViewState.RootNode"
+                                                 Depth="GetRootDepth(treeViewState.RootNode)"/>
                         </CascadingValue>
                     </CascadingValue>
                 </CascadingValue>
@@ -37,7 +37,7 @@
 }
 
 @if (OnContextMenuRenderFragment is not null &&
-     _treeViewContextMenuCommandParameter is not null)
+     _treeViewContextMenuCommandArgs is not null)
 {
     <div class="luth_context-menu luth_set-selectable"
          style="@ContextMenuCssStyleString"
@@ -48,6 +48,6 @@
          @onkeydown:stopPropagation="true"
          @onkeydownwithpreventscroll:stopPropagation="true">
 
-        @OnContextMenuRenderFragment(_treeViewContextMenuCommandParameter)
+        @OnContextMenuRenderFragment(_treeViewContextMenuCommandArgs)
     </div>
 }

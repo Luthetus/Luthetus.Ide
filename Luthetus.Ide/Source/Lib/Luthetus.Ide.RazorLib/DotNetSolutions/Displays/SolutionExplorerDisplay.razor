@@ -43,20 +43,20 @@
             <CascadingValue Name="LuthetusTreeViewIconWidth" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
                 <CascadingValue Name="LuthetusTreeViewIconHeight" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
                     <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
-                        <TreeViewStateDisplay TreeViewStateKey="DotNetSolutionState.TreeViewSolutionExplorerStateKey"
-                                              CssStyleString="height: 100%;"
-                                              OnContextMenuFunc="OnTreeViewContextMenuFunc"
-                                              TreeViewKeyboardEventHandler="_solutionExplorerTreeViewKeymap"
-                                              TreeViewMouseEventHandler="_solutionExplorerTreeViewMouseEventHandler" />
+                        <TreeViewContainerDisplay TreeViewStateKey="DotNetSolutionState.TreeViewSolutionExplorerStateKey"
+                                                  CssStyleString="height: 100%;"
+                                                  OnContextMenuFunc="OnTreeViewContextMenuFunc"
+                                                  TreeViewKeyboardEventHandler="_solutionExplorerTreeViewKeymap"
+                                                  TreeViewMouseEventHandler="_solutionExplorerTreeViewMouseEventHandler" />
                     </CascadingValue>
                 </CascadingValue>
             </CascadingValue>
 
             <DropdownDisplay DropdownKey="SolutionExplorerContextMenu.ContextMenuEventDropdownKey"
                              DropdownPositionKind="DropdownPositionKind.Unset"
-                             CssStyleString="@SolutionExplorerContextMenu.GetContextMenuCssStyleString(_mostRecentTreeViewCommandParameter)">
+                             CssStyleString="@SolutionExplorerContextMenu.GetContextMenuCssStyleString(_mostRecentTreeViewCommandArgs)">
 
-                <SolutionExplorerContextMenu TreeViewCommandParameter="_mostRecentTreeViewCommandParameter" />
+                <SolutionExplorerContextMenu TreeViewCommandArgs="_mostRecentTreeViewCommandArgs" />
             </DropdownDisplay>
         }
     </div>

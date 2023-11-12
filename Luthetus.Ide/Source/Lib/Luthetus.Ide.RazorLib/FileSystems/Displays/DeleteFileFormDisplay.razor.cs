@@ -30,8 +30,8 @@ public partial class DeleteFileFormDisplay : ComponentBase, IDeleteFileFormRende
     protected override async Task OnParametersSetAsync()
     {
         if (_previousAbsolutePath is null ||
-            _previousAbsolutePath.FormattedInput !=
-            AbsolutePath.FormattedInput)
+            _previousAbsolutePath.Value !=
+            AbsolutePath.Value)
         {
             _countOfImmediateChildren = null;
 
@@ -40,7 +40,7 @@ public partial class DeleteFileFormDisplay : ComponentBase, IDeleteFileFormRende
             if (AbsolutePath.IsDirectory)
             {
                 var fileSystemEntryBag = await FileSystemProvider.Directory
-                    .EnumerateFileSystemEntriesAsync(AbsolutePath.FormattedInput);
+                    .EnumerateFileSystemEntriesAsync(AbsolutePath.Value);
 
                 _countOfImmediateChildren = fileSystemEntryBag.Count();
             }

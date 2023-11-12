@@ -5,15 +5,15 @@
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-<TreeViewStateDisplay TreeViewStateKey="TreeViewStateKey"
-                        CssStyleString="height: 100%;"
-                        OnContextMenuFunc="OnTreeViewContextMenuFunc"
-                        TreeViewMouseEventHandler="_treeViewMouseEventHandler"
-                        TreeViewKeyboardEventHandler="_treeViewKeyboardEventHandler" />
+<TreeViewContainerDisplay TreeViewStateKey="TreeViewStateKey"
+                          CssStyleString="height: 100%;"
+                          OnContextMenuFunc="OnTreeViewContextMenuFunc"
+                          TreeViewMouseEventHandler="_treeViewMouseEventHandler"
+                          TreeViewKeyboardEventHandler="_treeViewKeyboardEventHandler" />
     
     <DropdownDisplay DropdownKey="WatchWindowContextMenuDropdownKey"
                     DropdownPositionKind="DropdownPositionKind.Unset"
-                    CssStyleString="@WatchWindowContextMenuDisplay.GetContextMenuCssStyleString(_mostRecentTreeViewContextMenuCommandParameter)">
+                    CssStyleString="@WatchWindowContextMenuDisplay.GetContextMenuCssStyleString(_mostRecentTreeViewContextMenuCommandArgs)">
 
-    <WatchWindowContextMenuDisplay TreeViewCommandParameter="_mostRecentTreeViewContextMenuCommandParameter"/>
+    <WatchWindowContextMenuDisplay TreeViewCommandArgs="_mostRecentTreeViewContextMenuCommandArgs"/>
 </DropdownDisplay>

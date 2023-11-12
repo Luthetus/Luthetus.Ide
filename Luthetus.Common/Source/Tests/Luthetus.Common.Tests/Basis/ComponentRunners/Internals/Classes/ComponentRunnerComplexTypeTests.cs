@@ -8,56 +8,54 @@ namespace Luthetus.Common.Tests.Basis.ComponentRunners.Internals.Classes;
 public record ComponentRunnerComplexTypeTests
 {
     /// <summary>
-    /// <see cref="ComponentRunnerComplexType(System.Reflection.ConstructorInfo?, Func{object?}?, object?, System.Type)"/>
+    /// <see cref="ComponentRunnerComplexType(System.Reflection.ConstructorInfo?, Func{object?}?, object?, Type)"/>
+    /// <br/>----<br/>
+    /// <see cref="ComponentRunnerComplexType.ChosenConstructorInfo"/>
+    /// <see cref="ComponentRunnerComplexType.ConstructValueFunc"/>
+    /// <see cref="ComponentRunnerComplexType.Value"/>
+    /// <see cref="ComponentRunnerComplexType.Type"/>
+    /// <see cref="ComponentRunnerComplexType.ComponentRunnerTypeKind"/>
     /// </summary>
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
+        var sampleComplexType = new SampleComplexType("John", "Doe");
+
+        var constructorInfo = typeof(SampleComplexType).GetConstructor(
+            new[] { typeof(string), typeof(string) });
+
+        Func<object?>? constructValueFunc = null;
+
+        var type = typeof(SampleComplexType);
+
+        var componentRunnerTypeKind = ComponentRunnerTypeKind.Complex;
+
+        Assert.NotNull(constructorInfo);
+
+        var componentRunnerComplexType = new ComponentRunnerComplexType(
+            constructorInfo,
+            null,
+            sampleComplexType,
+            type);
+
+        Assert.True(constructorInfo == componentRunnerComplexType.ChosenConstructorInfo);
+        Assert.True(constructValueFunc == componentRunnerComplexType.ConstructValueFunc);
+        Assert.True(sampleComplexType == componentRunnerComplexType.Value);
+        Assert.True(type == componentRunnerComplexType.Type);
+        Assert.True(componentRunnerTypeKind == componentRunnerComplexType.ComponentRunnerTypeKind);
     }
 
-    /// <summary>
-    /// <see cref="ComponentRunnerComplexType.ChosenConstructorInfo"/>
-    /// </summary>
-    [Fact]
-    public void ChosenConstructorInfo()
+    public class SampleComplexType
     {
-        throw new NotImplementedException();
-    }
+        public SampleComplexType(string firstName, string lastName)
+        {
+            FirstName = firstName;
+            LastName = lastName;
+        }
 
-    /// <summary>
-    /// <see cref="ComponentRunnerComplexType.ConstructValueFunc"/>
-    /// </summary>
-    [Fact]
-    public void ConstructValueFunc()
-    {
-        throw new NotImplementedException();
-    }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
 
-    /// <summary>
-    /// <see cref="ComponentRunnerComplexType.Value"/>
-    /// </summary>
-    [Fact]
-    public void Value()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="ComponentRunnerComplexType.Type"/>
-    /// </summary>
-    [Fact]
-    public void Type()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="ComponentRunnerComplexType.ComponentRunnerTypeKind"/>
-    /// </summary>
-    [Fact]
-    public void ComponentRunnerTypeKind()
-    {
-        throw new NotImplementedException();
+        public string DisplayName => $"{FirstName} {LastName}";
     }
 }

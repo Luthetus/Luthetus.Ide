@@ -13,7 +13,15 @@ public class KeyTests
     [Fact]
     public void Empty()
     {
-        throw new NotImplementedException();
+        var keyIntEmpty = Key<int>.Empty;
+        Assert.Equal(Guid.Empty, keyIntEmpty.Guid);
+
+        var keyStringEmpty = Key<string>.Empty;
+        Assert.Equal(Guid.Empty, keyStringEmpty.Guid);
+
+        Assert.False(keyIntEmpty.Equals(keyStringEmpty));
+        // Same assertion but reversed
+        Assert.False(keyStringEmpty.Equals(keyIntEmpty));
     }
 
     /// <summary>
@@ -22,6 +30,14 @@ public class KeyTests
     [Fact]
     public void NewKey()
     {
-        throw new NotImplementedException();
+        var keyInt = Key<int>.NewKey();
+        Assert.NotEqual(Guid.Empty, keyInt.Guid);
+
+        var keyString = Key<string>.NewKey();
+        Assert.NotEqual(Guid.Empty, keyString.Guid);
+
+        Assert.False(keyInt.Equals(keyString));
+        // Same assertion but reversed
+        Assert.False(keyString.Equals(keyInt));
     }
 }

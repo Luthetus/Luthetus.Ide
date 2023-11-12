@@ -56,6 +56,6 @@ public class WebsiteDotNetCliHelper
 
         // Close Dialog
         dispatcher.Dispatch(new DialogState.DisposeAction(dialogRecord.Key));
-        NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", luthetusCommonComponentRenderers, dispatcher);
+        NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", luthetusCommonComponentRenderers, dispatcher, TimeSpan.FromSeconds(7));
     }
 }

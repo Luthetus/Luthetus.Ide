@@ -3,12 +3,12 @@
 namespace Luthetus.Common.Tests.Basis.Commands.Models;
 
 /// <summary>
-/// <see cref="CommandCommon"/>
+/// <see cref="CommonCommand"/>
 /// </summary>
 public class CommandCommonTests
 {
     /// <summary>
-    /// <see cref="CommandCommon(Func{ICommandParameter, Task}, string, string, bool)"/>
+    /// <see cref="CommonCommand(Func{ICommandArgs, Task}, string, string, bool)"/>
     /// </summary>
     [Fact]
     public async Task Constructor()
@@ -19,17 +19,17 @@ public class CommandCommonTests
         var internalIdentifier = "increment-number";
         var shouldBubble = false;
 
-        var commandCommon = new CommandCommon(
-            commandParameter => 
+        var commandCommon = new CommonCommand(
+            displayName,
+            internalIdentifier,
+            shouldBubble,
+            commandArgs => 
             {
                 number++;
                 return Task.CompletedTask;
-            },
-            displayName,
-            internalIdentifier,
-            shouldBubble);
+            });
 
-        await commandCommon.DoAsyncFunc.Invoke(new CommonCommandParameter());
+        await commandCommon.DoAsyncFunc.Invoke(new CommonCommandArgs());
 
         Assert.Equal(1, number);
         Assert.Equal(displayName, commandCommon.DisplayName);

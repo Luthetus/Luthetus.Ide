@@ -21,7 +21,8 @@ public class BackgroundTaskWorkerTests
     public void Constructor()
     {
         var services = new ServiceCollection()
-            .AddSingleton<ILoggerFactory, NullLoggerFactory>();
+            .AddSingleton<ILoggerFactory, NullLoggerFactory>()
+            .AddSingleton<IBackgroundTaskService, BackgroundTaskServiceSynchronous>();
 
         var sp = services.BuildServiceProvider();
 
@@ -40,7 +41,5 @@ public class BackgroundTaskWorkerTests
         
         var stopCancellationTokenSource = new CancellationTokenSource();
         _ = Task.Run(async () => await backgroundTaskWorker.StopAsync(stopCancellationTokenSource.Token));
-
-        throw new NotImplementedException("TODO: Testing");
     }
 }

@@ -65,7 +65,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                 if (afp is null)
                     return;
 
-                _parentDirectoryName = afp.FormattedInput;
+                _parentDirectoryName = afp.Value;
 
                 await InvokeAsync(StateHasChanged);
             },
@@ -119,7 +119,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                         EnvironmentProvider);
 
                     var solutionAbsolutePathString =
-                        parentDirectoryAbsolutePath.FormattedInput +
+                        parentDirectoryAbsolutePath.Value +
                         localSolutionName +
                         EnvironmentProvider.DirectorySeparatorChar +
                         localSolutionName +
@@ -170,7 +170,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
         // Close Dialog
         Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.Key));
 
-        NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", LuthetusCommonComponentRenderers, Dispatcher);
+        NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", LuthetusCommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(7));
 
         var solutionAbsolutePath = new AbsolutePath(
             solutionAbsolutePathString,

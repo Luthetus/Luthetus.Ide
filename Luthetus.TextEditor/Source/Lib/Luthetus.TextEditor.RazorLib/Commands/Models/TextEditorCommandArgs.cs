@@ -10,9 +10,9 @@ using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models;
 
-public class TextEditorCommandParameter : ICommandParameter
+public class TextEditorCommandArgs : ICommandArgs
 {
-    public TextEditorCommandParameter(
+    public TextEditorCommandArgs(
         TextEditorModel textEditor,
         ImmutableArray<TextEditorCursorSnapshot> cursorSnapshotsBag,
         bool hasTextSelection,

@@ -1,5 +1,6 @@
 ﻿using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 
@@ -9,11 +10,13 @@ public static partial class TextEditorCommandVimFacts
 {
     public static class Motions
     {
-        public static readonly CommandTextEditor Word = new(interfaceCommandParameter =>
+        public static readonly TextEditorCommand Word = new(
+            "Vim::Word()", "Vim::Word()", false, true, TextEditKind.None, null,
+            interfaceCommandArgs =>
             {
-                var commandParameter = (TextEditorCommandParameter)interfaceCommandParameter;
-                var textEditorCursor = commandParameter.PrimaryCursorSnapshot.UserCursor;
-                var textEditorModel = commandParameter.Model;
+                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+                var textEditorCursor = commandArgs.PrimaryCursorSnapshot.UserCursor;
+                var textEditorModel = commandArgs.Model;
 
                 var localIndexCoordinates = textEditorCursor.IndexCoordinates;
                 var localPreferredColumnIndex = textEditorCursor.PreferredColumnIndex;
@@ -59,23 +62,18 @@ public static partial class TextEditorCommandVimFacts
 
                 textEditorCursor.PreferredColumnIndex = localPreferredColumnIndex;
                 return Task.CompletedTask;
-            },
-            true,
-            "Vim::Word()",
-            "Vim::Word()");
+            });
 
-        public static readonly CommandTextEditor End = new(
-            async interfaceCommandParameter => await PerformEnd((TextEditorCommandParameter)interfaceCommandParameter),
-            true,
-            "Vim::End()",
-            "Vim::End()");
+        public static readonly TextEditorCommand End = new(
+            "Vim::End()", "Vim::End()", false, true, TextEditKind.None, null,
+            async interfaceCommandArgs => await PerformEnd((TextEditorCommandArgs)interfaceCommandArgs));
 
         public static async Task PerformEnd(
-            TextEditorCommandParameter commandParameter,
+            TextEditorCommandArgs commandArgs,
             bool isRecursiveCall = false)
         {
-            var textEditorCursor = commandParameter.PrimaryCursorSnapshot.UserCursor;
-            var textEditorModel = commandParameter.Model;
+            var textEditorCursor = commandArgs.PrimaryCursorSnapshot.UserCursor;
+            var textEditorModel = commandArgs.Model;
 
             var localIndexCoordinates = textEditorCursor.IndexCoordinates;
             var localPreferredColumnIndex = textEditorCursor.PreferredColumnIndex;
@@ -137,7 +135,7 @@ public static partial class TextEditorCommandVimFacts
                              * will erroneously be at the start of the next word otherwise.
                              */
 
-                            await PerformEnd(commandParameter, isRecursiveCall: true);
+                            await PerformEnd(commandArgs, isRecursiveCall: true);
 
                             // Leave method early as all is finished.
                             return;
@@ -156,12 +154,14 @@ public static partial class TextEditorCommandVimFacts
             }
         }
 
-        public static readonly CommandTextEditor Back = new(interfaceCommandParameter =>
+        public static readonly TextEditorCommand Back = new(
+            "Vim::Back()", "Vim::Back()", false, true, TextEditKind.None, null,
+            interfaceCommandArgs =>
             {
-                var commandParameter = (TextEditorCommandParameter)interfaceCommandParameter;
+                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                var textEditorCursor = commandParameter.PrimaryCursorSnapshot.UserCursor;
-                var textEditorModel = commandParameter.Model;
+                var textEditorCursor = commandArgs.PrimaryCursorSnapshot.UserCursor;
+                var textEditorModel = commandArgs.Model;
 
                 var localIndexCoordinates = textEditorCursor.IndexCoordinates;
                 var localPreferredColumnIndex = textEditorCursor.PreferredColumnIndex;
@@ -209,138 +209,123 @@ public static partial class TextEditorCommandVimFacts
                 }
 
                 return Task.CompletedTask;
-            },
-            true,
-            "Vim::Back()",
-            "Vim::Back()");
+            });
 
-        public static CommandTextEditor GetVisual(
-            CommandTextEditor textEditorCommandMotion,
+        public static TextEditorCommand GetVisual(
+            TextEditorCommand textEditorCommandMotion,
             string displayName)
         {
-            return new CommandTextEditor(async interfaceCommandParameter =>
-            {
-                var commandParameter = (TextEditorCommandParameter)interfaceCommandParameter;
-
-                var activeKeymap = commandParameter.TextEditorService.OptionsStateWrap.Value.Options.Keymap
-                    ?? TextEditorKeymapFacts.DefaultKeymap;
-
-                if (activeKeymap is not TextEditorKeymapVim keymapVim)
-                    return;
-
-                var previousAnchorPositionIndex = commandParameter
-                    .PrimaryCursorSnapshot.UserCursor.Selection.AnchorPositionIndex;
-
-                var previousEndingPositionIndex = commandParameter
-                    .PrimaryCursorSnapshot.UserCursor.Selection.EndingPositionIndex;
-
-                await textEditorCommandMotion.DoAsyncFunc.Invoke(commandParameter);
-
-                var nextEndingPositionIndex = commandParameter
-                    .PrimaryCursorSnapshot.UserCursor.Selection.EndingPositionIndex;
-
-                if (nextEndingPositionIndex < commandParameter
-                        .PrimaryCursorSnapshot.UserCursor.Selection.AnchorPositionIndex)
+            return new TextEditorCommand(
+                $"Vim::GetVisual({displayName})", $"Vim::GetVisual({displayName})", false, true, TextEditKind.None, null,
+                async interfaceCommandArgs =>
                 {
-                    if (previousAnchorPositionIndex < previousEndingPositionIndex)
+                    var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+
+                    var activeKeymap = commandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
+                        ?? TextEditorKeymapFacts.DefaultKeymap;
+
+                    if (activeKeymap is not TextEditorKeymapVim keymapVim)
+                        return;
+
+                    var previousAnchorPositionIndex = commandArgs
+                        .PrimaryCursorSnapshot.UserCursor.Selection.AnchorPositionIndex;
+
+                    var previousEndingPositionIndex = commandArgs
+                        .PrimaryCursorSnapshot.UserCursor.Selection.EndingPositionIndex;
+
+                    await textEditorCommandMotion.DoAsyncFunc.Invoke(commandArgs);
+
+                    var nextEndingPositionIndex = commandArgs
+                        .PrimaryCursorSnapshot.UserCursor.Selection.EndingPositionIndex;
+
+                    if (nextEndingPositionIndex < commandArgs.PrimaryCursorSnapshot.UserCursor.Selection.AnchorPositionIndex)
                     {
-                        // Anchor went from being the lower bound to the upper bound.
-
-                        commandParameter
-                            .PrimaryCursorSnapshot.UserCursor.Selection.AnchorPositionIndex += 1;
+                        if (previousAnchorPositionIndex < previousEndingPositionIndex)
+                        {
+                            // Anchor went from being the lower bound to the upper bound.
+                            commandArgs.PrimaryCursorSnapshot.UserCursor.Selection.AnchorPositionIndex += 1;
+                        }
                     }
-                }
-                else if (nextEndingPositionIndex >= commandParameter
-                                .PrimaryCursorSnapshot.UserCursor.Selection.AnchorPositionIndex)
-                {
-                    if (previousAnchorPositionIndex > previousEndingPositionIndex)
+                    else if (nextEndingPositionIndex >= commandArgs.PrimaryCursorSnapshot.UserCursor.Selection.AnchorPositionIndex)
                     {
-                        // Anchor went from being the upper bound to the lower bound.
+                        if (previousAnchorPositionIndex > previousEndingPositionIndex)
+                        {
+                            // Anchor went from being the upper bound to the lower bound.
+                            commandArgs.PrimaryCursorSnapshot.UserCursor.Selection.AnchorPositionIndex -= 1;
+                        }
 
-                        commandParameter
-                            .PrimaryCursorSnapshot.UserCursor.Selection.AnchorPositionIndex -= 1;
+                        commandArgs.PrimaryCursorSnapshot.UserCursor.Selection.EndingPositionIndex += 1;
                     }
-
-                    commandParameter.PrimaryCursorSnapshot.UserCursor.Selection
-                        .EndingPositionIndex += 1;
-                }
-            },
-            true,
-            $"Vim::GetVisual({displayName})",
-            $"Vim::GetVisual({displayName})");
+                });
         }
 
-        public static CommandTextEditor GetVisualLine(
-            CommandTextEditor textEditorCommandMotion,
+        public static TextEditorCommand GetVisualLine(
+            TextEditorCommand textEditorCommandMotion,
             string displayName)
         {
-            return new CommandTextEditor(async interfaceCommandParameter =>
-            {
-                var commandParameter = (TextEditorCommandParameter)interfaceCommandParameter;
-
-                var activeKeymap = commandParameter.TextEditorService.OptionsStateWrap.Value.Options.Keymap
-                    ?? TextEditorKeymapFacts.DefaultKeymap;
-
-                if (activeKeymap is not TextEditorKeymapVim keymapVim)
-                    return;
-
-                var previousAnchorPositionIndex = commandParameter
-                    .PrimaryCursorSnapshot.UserCursor.Selection.AnchorPositionIndex;
-
-                var previousEndingPositionIndex = commandParameter
-                    .PrimaryCursorSnapshot.UserCursor.Selection.EndingPositionIndex;
-
-                await textEditorCommandMotion.DoAsyncFunc.Invoke(commandParameter);
-
-                var nextEndingPositionIndex = commandParameter
-                    .PrimaryCursorSnapshot.UserCursor.Selection.EndingPositionIndex;
-
-                if (nextEndingPositionIndex < commandParameter
-                        .PrimaryCursorSnapshot.UserCursor.Selection.AnchorPositionIndex)
+            return new TextEditorCommand(
+                $"Vim::GetVisual({displayName})", $"Vim::GetVisual({displayName})", false, true, TextEditKind.None, null,
+                async interfaceCommandArgs =>
                 {
-                    if (previousAnchorPositionIndex < previousEndingPositionIndex)
+                    var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+
+                    var activeKeymap = commandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
+                        ?? TextEditorKeymapFacts.DefaultKeymap;
+
+                    if (activeKeymap is not TextEditorKeymapVim keymapVim)
+                        return;
+
+                    var previousAnchorPositionIndex = commandArgs
+                        .PrimaryCursorSnapshot.UserCursor.Selection.AnchorPositionIndex;
+
+                    var previousEndingPositionIndex = commandArgs
+                        .PrimaryCursorSnapshot.UserCursor.Selection.EndingPositionIndex;
+
+                    await textEditorCommandMotion.DoAsyncFunc.Invoke(commandArgs);
+
+                    var nextEndingPositionIndex = commandArgs
+                        .PrimaryCursorSnapshot.UserCursor.Selection.EndingPositionIndex;
+
+                    if (nextEndingPositionIndex < commandArgs.PrimaryCursorSnapshot.UserCursor.Selection.AnchorPositionIndex)
                     {
-                        // Anchor went from being the lower bound to the upper bound.
+                        if (previousAnchorPositionIndex < previousEndingPositionIndex)
+                        {
+                            // Anchor went from being the lower bound to the upper bound.
 
-                        var rowDataAnchorIsOn = commandParameter.Model.FindRowInformation(
-                            previousAnchorPositionIndex.Value);
+                            var rowDataAnchorIsOn = commandArgs.Model.FindRowInformation(previousAnchorPositionIndex.Value);
 
-                        commandParameter.PrimaryCursorSnapshot.UserCursor.Selection.AnchorPositionIndex =
-                            commandParameter.Model.RowEndingPositionsBag[rowDataAnchorIsOn.rowIndex].positionIndex;
+                            commandArgs.PrimaryCursorSnapshot.UserCursor.Selection.AnchorPositionIndex =
+                                commandArgs.Model.RowEndingPositionsBag[rowDataAnchorIsOn.rowIndex].positionIndex;
+                        }
+
+                        var startingPositionOfRow =
+                            commandArgs.Model.GetStartOfRowTuple(commandArgs.PrimaryCursorSnapshot.UserCursor.IndexCoordinates.rowIndex)
+                            .positionIndex;
+
+                        commandArgs.PrimaryCursorSnapshot.UserCursor.Selection.EndingPositionIndex =
+                            startingPositionOfRow;
                     }
-
-                    var startingPositionOfRow = commandParameter.Model.GetStartOfRowTuple(
-                            commandParameter.PrimaryCursorSnapshot.UserCursor.IndexCoordinates.rowIndex)
-                        .positionIndex;
-
-                    commandParameter.PrimaryCursorSnapshot.UserCursor.Selection.EndingPositionIndex =
-                        startingPositionOfRow;
-                }
-                else if (nextEndingPositionIndex >= commandParameter.PrimaryCursorSnapshot.UserCursor.Selection.AnchorPositionIndex)
-                {
-                    if (previousAnchorPositionIndex > previousEndingPositionIndex)
+                    else if (nextEndingPositionIndex >= commandArgs.PrimaryCursorSnapshot.UserCursor.Selection.AnchorPositionIndex)
                     {
-                        // Anchor went from being the upper bound to the lower bound.
+                        if (previousAnchorPositionIndex > previousEndingPositionIndex)
+                        {
+                            // Anchor went from being the upper bound to the lower bound.
 
-                        var rowDataAnchorIsOn = commandParameter.Model.FindRowInformation(
-                            previousAnchorPositionIndex.Value);
+                            var rowDataAnchorIsOn = commandArgs.Model.FindRowInformation(previousAnchorPositionIndex.Value);
 
-                        commandParameter.PrimaryCursorSnapshot.UserCursor.Selection.AnchorPositionIndex =
-                            commandParameter.Model.GetStartOfRowTuple(rowDataAnchorIsOn.rowIndex - 1)
+                            commandArgs.PrimaryCursorSnapshot.UserCursor.Selection.AnchorPositionIndex =
+                                commandArgs.Model.GetStartOfRowTuple(rowDataAnchorIsOn.rowIndex - 1)
                                 .positionIndex;
+                        }
+
+                        var endingPositionOfRow = commandArgs.Model.RowEndingPositionsBag[
+                                commandArgs.PrimaryCursorSnapshot.UserCursor.IndexCoordinates.rowIndex]
+                            .positionIndex;
+
+                        commandArgs.PrimaryCursorSnapshot.UserCursor.Selection.EndingPositionIndex =
+                            endingPositionOfRow;
                     }
-
-                    var endingPositionOfRow = commandParameter.Model.RowEndingPositionsBag[
-                            commandParameter.PrimaryCursorSnapshot.UserCursor.IndexCoordinates.rowIndex]
-                        .positionIndex;
-
-                    commandParameter.PrimaryCursorSnapshot.UserCursor.Selection.EndingPositionIndex =
-                        endingPositionOfRow;
-                }
-            },
-            true,
-            $"Vim::GetVisual({displayName})",
-            $"Vim::GetVisual({displayName})");
+                });
         }
     }
 }

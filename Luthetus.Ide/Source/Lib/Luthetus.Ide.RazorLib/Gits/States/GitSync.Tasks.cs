@@ -38,7 +38,7 @@ public partial class GitSync
         }));
 
         if (gitState.GitFolderAbsolutePath is null ||
-            !await _fileSystemProvider.Directory.ExistsAsync(gitState.GitFolderAbsolutePath.FormattedInput) ||
+            !await _fileSystemProvider.Directory.ExistsAsync(gitState.GitFolderAbsolutePath.Value) ||
             gitState.GitFolderAbsolutePath.ParentDirectory is null)
         {
             return;
@@ -55,7 +55,7 @@ public partial class GitSync
         var gitStatusCommand = new TerminalCommand(
             GitFacts.GitStatusTerminalCommandKey,
             formattedCommand,
-            gitState.GitFolderAbsolutePath.ParentDirectory.FormattedInput,
+            gitState.GitFolderAbsolutePath.ParentDirectory.Value,
             CancellationToken.None,
             async () =>
             {
@@ -136,7 +136,7 @@ public partial class GitSync
         var gitInitCommand = new TerminalCommand(
             GitFacts.GitInitTerminalCommandKey,
             formattedCommand,
-            gitState.GitFolderAbsolutePath.FormattedInput,
+            gitState.GitFolderAbsolutePath.Value,
             CancellationToken.None,
             async () => await RefreshGitAsync(cancellationToken));
 
@@ -173,7 +173,7 @@ public partial class GitSync
         if (!directoryAbsolutePath.IsDirectory)
             return;
 
-        var directoryAbsolutePathString = directoryAbsolutePath.FormattedInput;
+        var directoryAbsolutePathString = directoryAbsolutePath.Value;
 
         var childDirectoryAbsolutePathStrings = await _fileSystemProvider.Directory.GetDirectoriesAsync(
             directoryAbsolutePathString);
@@ -316,7 +316,7 @@ public partial class GitSync
                 .Select(x =>
                 {
                     var absolutePathString =
-                        gitState.GitFolderAbsolutePath.ParentDirectory.FormattedInput +
+                        gitState.GitFolderAbsolutePath.ParentDirectory.Value +
                         x.relativePath;
 
                     var isDirectory = _environmentProvider.IsDirectorySeparator(x.relativePath.LastOrDefault());

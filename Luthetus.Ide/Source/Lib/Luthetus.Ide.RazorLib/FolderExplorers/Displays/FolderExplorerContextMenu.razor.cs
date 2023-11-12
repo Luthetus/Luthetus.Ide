@@ -27,7 +27,7 @@ public partial class FolderExplorerContextMenu : ComponentBase
     private ITreeViewService TreeViewService { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public TreeViewCommandParameter TreeViewCommandParameter { get; set; } = null!;
+    public TreeViewCommandArgs TreeViewCommandArgs { get; set; } = null!;
 
     public static readonly Key<DropdownRecord> ContextMenuEventDropdownKey = Key<DropdownRecord>.NewKey();
 
@@ -37,14 +37,14 @@ public partial class FolderExplorerContextMenu : ComponentBase
     /// </summary>
     public static TreeViewNoType? ParentOfCutFile;
 
-    private MenuRecord GetMenuRecord(TreeViewCommandParameter treeViewCommandParameter)
+    private MenuRecord GetMenuRecord(TreeViewCommandArgs treeViewCommandArgs)
     {
-        if (treeViewCommandParameter.TargetNode is null)
+        if (treeViewCommandArgs.TargetNode is null)
             return MenuRecord.Empty;
 
         var menuRecordsBag = new List<MenuOptionRecord>();
 
-        var treeViewModel = treeViewCommandParameter.TargetNode;
+        var treeViewModel = treeViewCommandArgs.TargetNode;
         var parentTreeViewModel = treeViewModel.Parent;
 
         var parentTreeViewAbsolutePath = parentTreeViewModel as TreeViewAbsolutePath;
@@ -93,11 +93,11 @@ public partial class FolderExplorerContextMenu : ComponentBase
         return new[]
         {
             MenuOptionsFactory.CopyFile(treeViewModel.Item, () => {
-                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.NameWithExtension}", LuthetusCommonComponentRenderers, Dispatcher);
+                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.NameWithExtension}", LuthetusCommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(7));
                 return Task.CompletedTask;
             }),
             MenuOptionsFactory.CutFile(treeViewModel.Item, () => {
-                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.NameWithExtension}", LuthetusCommonComponentRenderers, Dispatcher);
+                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.NameWithExtension}", LuthetusCommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(7));
                 ParentOfCutFile = parentTreeViewModel;
                 return Task.CompletedTask;
             }),
@@ -142,16 +142,16 @@ public partial class FolderExplorerContextMenu : ComponentBase
             false);
     }
 
-    public static string GetContextMenuCssStyleString(TreeViewCommandParameter? treeViewCommandParameter)
+    public static string GetContextMenuCssStyleString(TreeViewCommandArgs? treeViewCommandArgs)
     {
-        if (treeViewCommandParameter?.ContextMenuFixedPosition is null)
+        if (treeViewCommandArgs?.ContextMenuFixedPosition is null)
             return "display: none;";
 
         var left =
-            $"left: {treeViewCommandParameter.ContextMenuFixedPosition.LeftPositionInPixels.ToCssValue()}px;";
+            $"left: {treeViewCommandArgs.ContextMenuFixedPosition.LeftPositionInPixels.ToCssValue()}px;";
 
         var top =
-            $"top: {treeViewCommandParameter.ContextMenuFixedPosition.TopPositionInPixels.ToCssValue()}px;";
+            $"top: {treeViewCommandArgs.ContextMenuFixedPosition.TopPositionInPixels.ToCssValue()}px;";
 
         return $"{left} {top}";
     }

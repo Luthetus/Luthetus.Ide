@@ -37,7 +37,7 @@ public partial class InputFileBottomControls : ComponentBase
         if (selectedAbsolutePath is null)
             return "Selection is null";
 
-        return selectedAbsolutePath.FormattedInput;
+        return selectedAbsolutePath.Value;
     }
 
     private async Task FireOnAfterSubmit()

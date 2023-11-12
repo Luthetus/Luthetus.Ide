@@ -1,5 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
+using Luthetus.TextEditor.RazorLib.Edits.Models;
 using System.Collections.Immutable;
 using System.Text;
 
@@ -35,7 +36,7 @@ public static class SyntaxRepeatVim
         int indexInSentence,
         KeymapArgument keymapArgument,
         bool hasTextSelection,
-        out CommandTextEditor? textEditorCommand)
+        out TextEditorCommand? textEditorCommand)
     {
         int modifiedIndexInSentence = indexInSentence;
 
@@ -67,17 +68,15 @@ public static class SyntaxRepeatVim
             var textEditorCommandDisplayName = $"Vim::Repeat(count: {intValue}, arg: {innerTextEditorCommand.DisplayName})";
 
             // Repeat the inner TextEditorCommand using a for loop
-            textEditorCommand = new CommandTextEditor(
-                async textEditorCommandParameter =>
+            textEditorCommand = new TextEditorCommand(
+                textEditorCommandDisplayName, textEditorCommandDisplayName, false, true, TextEditKind.None, null,
+                async textEditorCommandArgs =>
                 {
                     for (int index = 0; index < intValue; index++)
                     {
-                        await innerTextEditorCommand.DoAsyncFunc.Invoke(textEditorCommandParameter);
+                        await innerTextEditorCommand.DoAsyncFunc.Invoke(textEditorCommandArgs);
                     }
-                },
-                true,
-                textEditorCommandDisplayName,
-                textEditorCommandDisplayName);
+                });
         }
         else
         {

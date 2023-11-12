@@ -27,7 +27,7 @@ public static class SyntaxModifierVim
         int indexInSentence,
         KeymapArgument keymapArgument,
         bool hasTextSelection,
-        out CommandTextEditor? textEditorCommand)
+        out TextEditorCommand? textEditorCommand)
     {
         textEditorCommand = TextEditorCommandDefaultFacts.DoNothingDiscard;
         return true;

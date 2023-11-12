@@ -9,20 +9,17 @@ public class ThrottleTests
 {
     /// <summary>
     /// <see cref="Throttle(TimeSpan)"/>
+    /// <br/>----<br/>
+    /// <see cref="Throttle.ThrottleTimeSpan"/>
     /// </summary>
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
-    }
+        var timeSpan = TimeSpan.FromMilliseconds(500);
 
-    /// <summary>
-    /// <see cref="Throttle.ThrottleTimeSpan"/>
-    /// </summary>
-    [Fact]
-    public void ThrottleTimeSpan()
-    {
-        throw new NotImplementedException();
+        var throttle = new Throttle(timeSpan);
+
+        Assert.Equal(timeSpan, throttle.ThrottleTimeSpan);
     }
 
     /// <summary>

@@ -59,7 +59,7 @@
             @if (GlobalShowNewlines && virtualizedRow.Index < RenderBatch.Model!.RowCount - 1)
             {
                 var amountOfLeftInCharacterWidthUnits = virtualizedRow.LeftInPixels /
-                    RenderBatch.ViewModel.VirtualizationResult!.CharacterWidthAndRowHeight.CharacterWidthInPixels;
+                    RenderBatch.ViewModel.VirtualizationResult!.CharAndRowMeasurements.CharacterWidth;
 
                 var lengthOfRow = RenderBatch.Model!.GetLengthOfRow(virtualizedRow.Index, true);
 

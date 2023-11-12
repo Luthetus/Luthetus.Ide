@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Common.RazorLib.Contexts.Displays;
 
-public partial class ActiveContextsDisplay : FluxorComponent
+public partial class ContextsPanelDisplay : FluxorComponent
 {
     [Inject]
     private IState<ContextState> ContextStateWrap { get; set; } = null!;
@@ -13,13 +13,13 @@ public partial class ActiveContextsDisplay : FluxorComponent
     private IDispatcher Dispatcher { get; set; } = null!;
 
     private bool GetIsInspecting(ContextState localContextStates) =>
-        localContextStates.InspectedKeyHeirarchyBag is not null;
+        localContextStates.InspectedContextHeirarchy is not null;
 
     private void DispatchToggleInspectActionOnClick(bool isInspecting)
     {
         if (isInspecting)
-            Dispatcher.Dispatch(new ContextState.SetSelectInspectionTargetFalseAction());
+            Dispatcher.Dispatch(new ContextState.IsSelectingInspectableContextHeirarchyAction(false));
         else
-            Dispatcher.Dispatch(new ContextState.SetSelectInspectionTargetTrueAction());
+            Dispatcher.Dispatch(new ContextState.IsSelectingInspectableContextHeirarchyAction(true));
     }
 }

@@ -49,7 +49,7 @@ public partial class InputFileSidebar : ComponentBase
 
     public static readonly Key<TreeViewContainer> TreeViewStateKey = Key<TreeViewContainer>.NewKey();
 
-    private TreeViewCommandParameter? _mostRecentTreeViewCommandParameter;
+    private TreeViewCommandArgs? _mostRecentTreeViewCommandArgs;
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
@@ -75,9 +75,9 @@ public partial class InputFileSidebar : ComponentBase
 
             var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(directoryHomeNode, directoryRootNode);
 
-            if (!TreeViewService.TryGetTreeViewState(TreeViewStateKey, out var treeViewState))
+            if (!TreeViewService.TryGetTreeViewContainer(TreeViewStateKey, out var treeViewState))
             {
-                TreeViewService.RegisterTreeViewState(new TreeViewContainer(
+                TreeViewService.RegisterTreeViewContainer(new TreeViewContainer(
                     TreeViewStateKey,
                     adhocRootNode,
                     directoryHomeNode is null
@@ -89,9 +89,9 @@ public partial class InputFileSidebar : ComponentBase
         return base.OnAfterRenderAsync(firstRender);
     }
 
-    private async Task OnTreeViewContextMenuFunc(TreeViewCommandParameter treeViewCommandParameter)
+    private async Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
     {
-        _mostRecentTreeViewCommandParameter = treeViewCommandParameter;
+        _mostRecentTreeViewCommandArgs = treeViewCommandArgs;
 
         Dispatcher.Dispatch(new DropdownState.AddActiveAction(InputFileContextMenu.ContextMenuKey));
 

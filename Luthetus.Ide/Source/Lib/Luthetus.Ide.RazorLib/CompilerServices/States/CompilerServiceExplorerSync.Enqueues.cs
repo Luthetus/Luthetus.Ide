@@ -62,11 +62,11 @@ public partial class CompilerServiceExplorerSync
 
                 await rootNode.LoadChildBagAsync();
 
-                if (!_treeViewService.TryGetTreeViewState(
+                if (!_treeViewService.TryGetTreeViewContainer(
                         TreeViewCompilerServiceExplorerContentStateKey,
                         out var treeViewState))
                 {
-                    _treeViewService.RegisterTreeViewState(new TreeViewContainer(
+                    _treeViewService.RegisterTreeViewContainer(new TreeViewContainer(
                         TreeViewCompilerServiceExplorerContentStateKey,
                         rootNode,
                         new TreeViewNoType[] { rootNode }.ToImmutableList()));

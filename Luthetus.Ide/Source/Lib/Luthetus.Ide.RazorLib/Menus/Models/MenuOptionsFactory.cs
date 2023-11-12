@@ -273,7 +273,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             {
                 if (exactMatchFileTemplate is null)
                 {
-                    var emptyFileAbsolutePathString = namespacePath.AbsolutePath.FormattedInput + fileName;
+                    var emptyFileAbsolutePathString = namespacePath.AbsolutePath.Value + fileName;
 
                     var emptyFileAbsolutePath = new AbsolutePath(
                         emptyFileAbsolutePathString,
@@ -281,7 +281,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                         _environmentProvider);
 
                     await _fileSystemProvider.File.WriteAllTextAsync(
-                        emptyFileAbsolutePath.FormattedInput,
+                        emptyFileAbsolutePath.Value,
                         string.Empty,
                         CancellationToken.None);
                 }
@@ -297,7 +297,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                             new FileTemplateParameter(fileName, namespacePath, _environmentProvider));
 
                         await _fileSystemProvider.File.WriteAllTextAsync(
-                            templateResult.FileNamespacePath.AbsolutePath.FormattedInput,
+                            templateResult.FileNamespacePath.AbsolutePath.Value,
                             templateResult.Contents,
                             CancellationToken.None);
                     }
@@ -309,7 +309,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
 
     private void PerformNewDirectoryAction(string directoryName, IAbsolutePath parentDirectory, Func<Task> onAfterCompletion)
     {
-        var directoryAbsolutePathString = parentDirectory.FormattedInput + directoryName;
+        var directoryAbsolutePathString = parentDirectory.Value + directoryName;
         var directoryAbsolutePath = new AbsolutePath(directoryAbsolutePathString, true, _environmentProvider);
 
         _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
@@ -317,7 +317,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             async () =>
             {
                 await _fileSystemProvider.Directory.CreateDirectoryAsync(
-                    directoryAbsolutePath.FormattedInput,
+                    directoryAbsolutePath.Value,
                     CancellationToken.None);
 
                 await onAfterCompletion.Invoke();
@@ -331,9 +331,9 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             async () =>
             {
                 if (absolutePath.IsDirectory)
-                    await _fileSystemProvider.Directory.DeleteAsync(absolutePath.FormattedInput, true, CancellationToken.None);
+                    await _fileSystemProvider.Directory.DeleteAsync(absolutePath.Value, true, CancellationToken.None);
                 else
-                    await _fileSystemProvider.File.DeleteAsync(absolutePath.FormattedInput);
+                    await _fileSystemProvider.File.DeleteAsync(absolutePath.Value);
 
                 await onAfterCompletion.Invoke();
             });
@@ -348,7 +348,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 await _clipboardService.SetClipboard(ClipboardFacts.FormatPhrase(
                     ClipboardFacts.CopyCommand,
                     ClipboardFacts.AbsolutePathDataType,
-                    absolutePath.FormattedInput));
+                    absolutePath.Value));
 
                 await onAfterCompletion.Invoke();
             });
@@ -365,7 +365,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 await _clipboardService.SetClipboard(ClipboardFacts.FormatPhrase(
                     ClipboardFacts.CutCommand,
                     ClipboardFacts.AbsolutePathDataType,
-                    absolutePath.FormattedInput));
+                    absolutePath.Value));
 
                 await onAfterCompletion.Invoke();
             });
@@ -414,17 +414,17 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                                 {
                                     if (clipboardAbsolutePath.IsDirectory)
                                     {
-                                        var clipboardDirectoryInfo = new DirectoryInfo(clipboardAbsolutePath.FormattedInput);
-                                        var receivingDirectoryInfo = new DirectoryInfo(receivingDirectory.FormattedInput);
+                                        var clipboardDirectoryInfo = new DirectoryInfo(clipboardAbsolutePath.Value);
+                                        var receivingDirectoryInfo = new DirectoryInfo(receivingDirectory.Value);
 
                                         CopyFilesRecursively(clipboardDirectoryInfo, receivingDirectoryInfo);
                                     }
                                     else
                                     {
-                                        var destinationAbsolutePathString = receivingDirectory.FormattedInput +
+                                        var destinationAbsolutePathString = receivingDirectory.Value +
                                             clipboardAbsolutePath.NameWithExtension;
 
-                                        var sourceAbsolutePathString = clipboardAbsolutePath.FormattedInput;
+                                        var sourceAbsolutePathString = clipboardAbsolutePath.Value;
 
                                         await _fileSystemProvider.File.CopyAsync(
                                             sourceAbsolutePathString,
@@ -477,9 +477,9 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             }
         }
 
-        var sourceAbsolutePathString = sourceAbsolutePath.FormattedInput;
+        var sourceAbsolutePathString = sourceAbsolutePath.Value;
         var parentOfSource = sourceAbsolutePath.AncestorDirectoryBag.Last();
-        var destinationAbsolutePathString = parentOfSource.FormattedInput + nextName;
+        var destinationAbsolutePathString = parentOfSource.Value + nextName;
 
         try
         {
@@ -490,7 +490,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         }
         catch (Exception e)
         {
-            NotificationHelper.DispatchError("Rename Action", e.Message, _commonComponentRenderers, dispatcher);
+            NotificationHelper.DispatchError("Rename Action", e.Message, _commonComponentRenderers, dispatcher, TimeSpan.FromSeconds(14));
             onAfterCompletion.Invoke();
             return null;
         }
@@ -514,13 +514,13 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 var workingDirectory = treeViewSolution.Item.NamespacePath.AbsolutePath.ParentDirectory!;
 
                 var formattedCommand = DotNetCliCommandFormatter.FormatRemoveCSharpProjectReferenceFromSolutionAction(
-                    treeViewSolution.Item.NamespacePath.AbsolutePath.FormattedInput,
-                    projectNode.Item.AbsolutePath.FormattedInput);
+                    treeViewSolution.Item.NamespacePath.AbsolutePath.Value,
+                    projectNode.Item.AbsolutePath.Value);
 
                 var terminalCommand = new TerminalCommand(
                     Key<TerminalCommand>.NewKey(),
                     formattedCommand,
-                    workingDirectory.FormattedInput,
+                    workingDirectory.Value,
                     CancellationToken.None,
                     async () => await onAfterCompletion.Invoke());
 
@@ -542,8 +542,8 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     return;
 
                 var formattedCommand = DotNetCliCommandFormatter.FormatAddProjectToProjectReference(
-                    projectReceivingReference.Item.AbsolutePath.FormattedInput,
-                    referencedProject.FormattedInput);
+                    projectReceivingReference.Item.AbsolutePath.Value,
+                    referencedProject.Value);
 
                 var terminalCommand = new TerminalCommand(
                     Key<TerminalCommand>.NewKey(),
@@ -552,7 +552,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     CancellationToken.None,
                     async () =>
                     {
-                        NotificationHelper.DispatchInformative("Add Project Reference", $"Modified {projectReceivingReference.Item.AbsolutePath.NameWithExtension} to have a reference to {referencedProject.NameWithExtension}", _commonComponentRenderers, dispatcher);
+                        NotificationHelper.DispatchInformative("Add Project Reference", $"Modified {projectReceivingReference.Item.AbsolutePath.NameWithExtension} to have a reference to {referencedProject.NameWithExtension}", _commonComponentRenderers, dispatcher, TimeSpan.FromSeconds(7));
                         await onAfterCompletion.Invoke();
                     });
 
@@ -585,8 +585,8 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             async () =>
             {
                 var formattedCommand = DotNetCliCommandFormatter.FormatRemoveProjectToProjectReference(
-                    treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsolutePath.FormattedInput,
-                    treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsolutePath.FormattedInput);
+                    treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsolutePath.Value,
+                    treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsolutePath.Value);
 
                 var removeProjectToProjectReferenceTerminalCommand = new TerminalCommand(
                     Key<TerminalCommand>.NewKey(),
@@ -595,7 +595,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     CancellationToken.None,
                     async () =>
                     {
-                        NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsolutePath.NameWithExtension} to have a reference to {treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsolutePath.NameWithExtension}", _commonComponentRenderers, dispatcher);
+                        NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsolutePath.NameWithExtension} to have a reference to {treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsolutePath.NameWithExtension}", _commonComponentRenderers, dispatcher, TimeSpan.FromSeconds(7));
                         await onAfterCompletion.Invoke();
                     });
 
@@ -616,8 +616,8 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             () =>
             {
                 var formattedCommand = DotNetCliCommandFormatter.FormatMoveProjectToSolutionFolder(
-                    treeViewSolution.Item.NamespacePath.AbsolutePath.FormattedInput,
-                    treeViewProjectToMove.Item.AbsolutePath.FormattedInput,
+                    treeViewSolution.Item.NamespacePath.AbsolutePath.Value,
+                    treeViewProjectToMove.Item.AbsolutePath.Value,
                     solutionFolderPath);
 
                 var moveProjectToSolutionFolderTerminalCommand = new TerminalCommand(
@@ -627,7 +627,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     CancellationToken.None,
                     async () =>
                     {
-                        NotificationHelper.DispatchInformative("Move Project To Solution Folder", $"Moved {treeViewProjectToMove.Item.AbsolutePath.NameWithExtension} to the Solution Folder path: {solutionFolderPath}", _commonComponentRenderers, dispatcher);
+                        NotificationHelper.DispatchInformative("Move Project To Solution Folder", $"Moved {treeViewProjectToMove.Item.AbsolutePath.NameWithExtension} to the Solution Folder path: {solutionFolderPath}", _commonComponentRenderers, dispatcher, TimeSpan.FromSeconds(7));
                         await onAfterCompletion.Invoke();
                     });
 
@@ -654,7 +654,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             async () =>
             {
                 var formattedCommand = DotNetCliCommandFormatter.FormatRemoveNugetPackageReferenceFromProject(
-                    modifyProjectNamespacePath.AbsolutePath.FormattedInput,
+                    modifyProjectNamespacePath.AbsolutePath.Value,
                     treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id);
 
                 var removeNugetPackageReferenceFromProjectTerminalCommand = new TerminalCommand(
@@ -664,7 +664,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     CancellationToken.None,
                     async () =>
                     {
-                        NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {modifyProjectNamespacePath.AbsolutePath.NameWithExtension} to NOT have a reference to {treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id}", _commonComponentRenderers, dispatcher);
+                        NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {modifyProjectNamespacePath.AbsolutePath.NameWithExtension} to NOT have a reference to {treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id}", _commonComponentRenderers, dispatcher, TimeSpan.FromSeconds(7));
                         await onAfterCompletion.Invoke();
                     });
 

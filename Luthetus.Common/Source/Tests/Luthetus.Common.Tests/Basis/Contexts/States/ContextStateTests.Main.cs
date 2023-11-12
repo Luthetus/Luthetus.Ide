@@ -1,4 +1,6 @@
+using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Contexts.States;
+using System.Collections.Immutable;
 
 namespace Luthetus.Common.Tests.Basis.Contexts.States;
 
@@ -13,6 +15,18 @@ public class ContextStateTests
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
+        var contextState = new ContextState();
+
+        var allContextRecordsBag = ContextFacts.AllContextsBag;
+
+        var inspectedContextRecordKeyHeirarchy = (ContextHeirarchy?)null;
+        var inspectContextRecordEntryBag = ImmutableArray<InspectableContext>.Empty;
+        var isSelectingInspectionTarget = false;
+
+        Assert.Equal(allContextRecordsBag, contextState.AllContextsBag);
+        Assert.NotNull(contextState.FocusedContextHeirarchy);
+        Assert.True(inspectedContextRecordKeyHeirarchy == contextState.InspectedContextHeirarchy);
+        Assert.Equal(inspectContextRecordEntryBag, contextState.InspectableContextBag);
+        Assert.Equal(isSelectingInspectionTarget, contextState.IsSelectingInspectionTarget);
     }
 }

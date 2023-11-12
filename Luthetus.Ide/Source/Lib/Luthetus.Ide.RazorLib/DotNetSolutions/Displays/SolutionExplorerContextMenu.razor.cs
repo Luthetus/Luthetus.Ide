@@ -46,7 +46,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     private InputFileSync InputFileSync { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public TreeViewCommandParameter TreeViewCommandParameter { get; set; } = null!;
+    public TreeViewCommandArgs TreeViewCommandArgs { get; set; } = null!;
 
     public static readonly Key<DropdownRecord> ContextMenuEventDropdownKey = Key<DropdownRecord>.NewKey();
 
@@ -56,13 +56,13 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     /// </summary>
     public static TreeViewNoType? ParentOfCutFile;
 
-    private MenuRecord GetMenuRecord(TreeViewCommandParameter commandParameter)
+    private MenuRecord GetMenuRecord(TreeViewCommandArgs commandArgs)
     {
-        if (commandParameter.TargetNode is null)
+        if (commandArgs.TargetNode is null)
             return MenuRecord.Empty;
 
         var menuRecordsBag = new List<MenuOptionRecord>();
-        var treeViewModel = commandParameter.TargetNode;
+        var treeViewModel = commandArgs.TargetNode;
         var parentTreeViewModel = treeViewModel.Parent;
         var parentTreeViewNamespacePath = parentTreeViewModel as TreeViewNamespacePath;
 
@@ -277,12 +277,12 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         return new[]
         {
             MenuOptionsFactory.CopyFile(treeViewModel.Item.AbsolutePath, () => {
-                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.AbsolutePath.NameWithExtension}", CommonComponentRenderers, Dispatcher);
+                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.AbsolutePath.NameWithExtension}", CommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(7));
                 return Task.CompletedTask;
             }),
             MenuOptionsFactory.CutFile(treeViewModel.Item.AbsolutePath, () => {
                 ParentOfCutFile = parentTreeViewModel;
-                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.AbsolutePath.NameWithExtension}", CommonComponentRenderers, Dispatcher);
+                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.AbsolutePath.NameWithExtension}", CommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(7));
                 return Task.CompletedTask;
             }),
             MenuOptionsFactory.DeleteFile(treeViewModel.Item.AbsolutePath, async () => await ReloadTreeViewModel(parentTreeViewModel)),
@@ -330,8 +330,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     return;
 
                 var localFormattedAddExistingProjectToSolutionCommand = DotNetCliCommandFormatter.FormatAddExistingProjectToSolution(
-                        dotNetSolutionModel.NamespacePath.AbsolutePath.FormattedInput,
-                        afp.FormattedInput);
+                        dotNetSolutionModel.NamespacePath.AbsolutePath.Value,
+                        afp.Value);
 
                 var addExistingProjectToSolutionTerminalCommand = new TerminalCommand(
                     Key<TerminalCommand>.NewKey(),
@@ -376,7 +376,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 },
                 {
                     nameof(SolutionEditorDisplay.DotNetSolutionResourceUri),
-                    new ResourceUri(dotNetSolutionModel.NamespacePath.AbsolutePath.FormattedInput)
+                    new ResourceUri(dotNetSolutionModel.NamespacePath.AbsolutePath.Value)
                 },
             },
             null)
@@ -408,16 +408,16 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         TreeViewService.MoveUp(DotNetSolutionState.TreeViewSolutionExplorerStateKey, false);
     }
 
-    public static string GetContextMenuCssStyleString(TreeViewCommandParameter? commandParameter)
+    public static string GetContextMenuCssStyleString(TreeViewCommandArgs? commandArgs)
     {
-        if (commandParameter?.ContextMenuFixedPosition is null)
+        if (commandArgs?.ContextMenuFixedPosition is null)
             return "display: none;";
 
         var left =
-            $"left: {commandParameter.ContextMenuFixedPosition.LeftPositionInPixels.ToCssValue()}px;";
+            $"left: {commandArgs.ContextMenuFixedPosition.LeftPositionInPixels.ToCssValue()}px;";
 
         var top =
-            $"top: {commandParameter.ContextMenuFixedPosition.TopPositionInPixels.ToCssValue()}px;";
+            $"top: {commandArgs.ContextMenuFixedPosition.TopPositionInPixels.ToCssValue()}px;";
 
         return $"{left} {top}";
     }

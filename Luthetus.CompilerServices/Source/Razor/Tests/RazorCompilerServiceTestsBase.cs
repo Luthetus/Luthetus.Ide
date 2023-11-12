@@ -43,8 +43,8 @@ public class RazorCompilerServiceTestsBase
         {
             var outLuthetusCommonFactories = commonOptions.CommonFactories with
             {
-                ClipboardServiceFactory = _ => new InMemoryClipboardService(true),
-                StorageServiceFactory = _ => new DoNothingStorageService(true)
+                ClipboardServiceFactory = _ => new InMemoryClipboardService(),
+                StorageServiceFactory = _ => new DoNothingStorageService()
             };
 
             return commonOptions with

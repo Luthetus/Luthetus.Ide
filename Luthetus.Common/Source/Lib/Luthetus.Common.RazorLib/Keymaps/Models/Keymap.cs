@@ -15,6 +15,7 @@ public class Keymap
     }
 
     /// <summary>This constructor is used for JSON deserialization</summary>
+    [Obsolete("This constructor is used for JSON deserialization")]
     public Keymap()
     {
     }

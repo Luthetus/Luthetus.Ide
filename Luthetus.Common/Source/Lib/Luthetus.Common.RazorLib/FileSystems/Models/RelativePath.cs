@@ -7,7 +7,7 @@ public class RelativePath : IRelativePath
     private readonly StringBuilder _tokenBuilder = new();
 
     private int _position;
-    private string? _formattedInput;
+    private string? _value;
     private string? _nameWithExtension;
 
     public RelativePath(
@@ -94,7 +94,7 @@ public class RelativePath : IRelativePath
     public string ExtensionNoPeriod { get; protected set; }
     public int UpDirDirectiveCount { get; }
     public string? ExactInput { get; }
-    public string FormattedInput => _formattedInput ??= CalculateFormattedInput();
+    public string Value => _value ??= CalculateValue();
     public string NameWithExtension => _nameWithExtension ??= PathHelper.CalculateNameWithExtension(NameNoExtension, ExtensionNoPeriod, IsDirectory);
     public char UsedDirectorySeparatorChar => throw new NotImplementedException();
 
@@ -111,7 +111,7 @@ public class RelativePath : IRelativePath
         _tokenBuilder.Clear();
     }
 
-    private string CalculateFormattedInput()
+    private string CalculateValue()
     {
         StringBuilder absolutePathStringBuilder = new();
 

@@ -19,9 +19,10 @@ public static class PathHelper
             environmentProvider.AltDirectorySeparatorChar,
             environmentProvider.DirectorySeparatorChar);
 
-        var indexOfUpperDirectory = -1;
         var upperDirectoryCount = 0;
         var moveUpDirectoryToken = $"..{environmentProvider.DirectorySeparatorChar}";
+
+        int indexOfUpperDirectory;
 
         while ((indexOfUpperDirectory = upperDirectoryString.IndexOf(
             moveUpDirectoryToken, StringComparison.InvariantCulture)) != -1)
@@ -33,6 +34,14 @@ public static class PathHelper
                 moveUpDirectoryToken.Length);
         }
 
+        var sameDirectoryDirective = $".{environmentProvider.DirectorySeparatorChar}";
+
+        if (upperDirectoryCount == 0 && upperDirectoryString.StartsWith(sameDirectoryDirective))
+            upperDirectoryString = upperDirectoryString[sameDirectoryDirective.Length..];
+
+        if (absolutePath.IsDirectory && string.IsNullOrWhiteSpace(upperDirectoryString))
+            upperDirectoryCount--; // nearest shared ancestor is the directory itself
+
         var sharedAncestorDirectories = absolutePath.AncestorDirectoryBag
             .SkipLast(upperDirectoryCount)
             .ToArray();
@@ -40,7 +49,7 @@ public static class PathHelper
         if (sharedAncestorDirectories.Length > 0)
         {
             var nearestSharedAncestor = sharedAncestorDirectories.Last();
-            var nearestSharedAncestorAbsolutePathString = nearestSharedAncestor.FormattedInput;
+            var nearestSharedAncestorAbsolutePathString = nearestSharedAncestor.Value;
 
             return nearestSharedAncestorAbsolutePathString + upperDirectoryString;
         }
@@ -62,17 +71,17 @@ public static class PathHelper
         IEnvironmentProvider environmentProvider)
     {
         var pathBuilder = new StringBuilder();
-        var commonPath = startingPath.AncestorDirectoryBag.First().FormattedInput;
+        var commonPath = startingPath.AncestorDirectoryBag.First().Value;
 
-        if ((startingPath.ParentDirectory?.FormattedInput ?? string.Empty) ==
-            (endingPath.ParentDirectory?.FormattedInput ?? string.Empty))
+        if ((startingPath.ParentDirectory?.Value ?? string.Empty) ==
+            (endingPath.ParentDirectory?.Value ?? string.Empty))
         {
             // TODO: Will this code break when the mounted drives are different, and parent directories share same name?
 
             // Use './' because they share the same parent directory.
             pathBuilder.Append($".{environmentProvider.DirectorySeparatorChar}");
 
-            commonPath = startingPath.AncestorDirectoryBag.Last().FormattedInput;
+            commonPath = startingPath.AncestorDirectoryBag.Last().Value;
         }
         else
         {
@@ -89,7 +98,7 @@ public static class PathHelper
                 var endingPathAncestor = endingPath.AncestorDirectoryBag[i];
 
                 if (startingPathAncestor.NameWithExtension == endingPathAncestor.NameWithExtension)
-                    commonPath = startingPathAncestor.FormattedInput;
+                    commonPath = startingPathAncestor.Value;
                 else
                     break;
             }
@@ -102,7 +111,7 @@ public static class PathHelper
             }
         }
 
-        var notCommonPath = new string(endingPath.FormattedInput.Skip(commonPath.Length).ToArray());
+        var notCommonPath = new string(endingPath.Value.Skip(commonPath.Length).ToArray());
 
         return pathBuilder.Append(notCommonPath).ToString();
     }
@@ -119,13 +128,9 @@ public static class PathHelper
         else
         {
             if (string.IsNullOrWhiteSpace(extensionNoPeriod))
-            {
                 return nameNoExtension;
-            }
             else
-            {
                 return nameNoExtension + '.' + extensionNoPeriod;
-            }
         }
     }
 }

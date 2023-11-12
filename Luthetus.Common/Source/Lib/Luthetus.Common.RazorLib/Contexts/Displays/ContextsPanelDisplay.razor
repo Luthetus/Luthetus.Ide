@@ -33,14 +33,14 @@
     <div class="luth_ide_section-body">
 
         @{
-            var keysToRender = contextState.InspectedKeyHeirarchyBag
-                ?? contextState.FocusedKeyHeirarchyBag;
+            var contextKeysToRender = contextState.InspectedContextHeirarchy
+                ?? contextState.FocusedContextHeirarchy;
         }
 
-        @foreach (var contextKey in keysToRender.KeyHeirarchyBag)
+        @foreach (var contextKey in contextKeysToRender.KeyBag)
         {
-            <ActiveContextEntryDisplay @key="contextKey"
-                                       ContextRecordKey="contextKey" />
+            <ContextDisplay @key="contextKey"
+                            ContextKey="contextKey" />
             <hr />
         }
     </div>

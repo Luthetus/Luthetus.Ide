@@ -3,16 +3,39 @@
 namespace Luthetus.Common.Tests.Basis.Commands.Models;
 
 /// <summary>
-/// <see cref="CommandTreeView"/>
+/// <see cref="TreeViewCommand"/>
 /// </summary>
 public class CommandTreeViewTests
 {
     /// <summary>
-    /// <see cref="CommandTreeView(Func{ICommandParameter, Task}, string, string, bool)"/>
+    /// <see cref="TreeViewCommand(string, string, bool, Func{ICommandArgs, Task})"/>
     /// </summary>
     [Fact]
-    public void Constructor()
+    public async Task Constructor()
     {
-        throw new NotImplementedException();
+        var displayName = "";
+        var internalIdentifier = "";
+        var shouldBubble = false;
+
+        var incrementThisNumberToOne = 0;
+
+        var doAsyncFunc = new Func<ICommandArgs, Task>(commandArgs =>
+        {
+            incrementThisNumberToOne++;
+            return Task.CompletedTask;
+        });
+
+        var treeViewCommand = new TreeViewCommand(
+            displayName,
+            internalIdentifier,
+            shouldBubble,
+            doAsyncFunc);
+
+        await treeViewCommand.DoAsyncFunc.Invoke(new CommonCommandArgs());
+
+        Assert.Equal(displayName, treeViewCommand.DisplayName);
+        Assert.Equal(internalIdentifier, treeViewCommand.InternalIdentifier);
+        Assert.Equal(shouldBubble, treeViewCommand.ShouldBubble);
+        Assert.Equal(1, incrementThisNumberToOne);
     }
 }

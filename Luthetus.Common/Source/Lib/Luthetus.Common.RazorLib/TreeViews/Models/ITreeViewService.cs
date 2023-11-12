@@ -9,22 +9,22 @@ public interface ITreeViewService
     public IState<TreeViewState> TreeViewStateWrap { get; }
 
     /// <summary>Duplicate keys do NOT throw an exception.</summary>
-    public void RegisterTreeViewState(TreeViewContainer treeViewState);
-    public void DisposeTreeViewState(Key<TreeViewContainer> treeViewStateKey);
-    public void SetRoot(Key<TreeViewContainer> treeViewStateKey, TreeViewNoType treeViewNoType);
-    public bool TryGetTreeViewState(Key<TreeViewContainer> treeViewStateKey, out TreeViewContainer? treeViewState);
-    public void ReRenderNode(Key<TreeViewContainer> treeViewStateKey, TreeViewNoType node);
-    public void AddChildNode(Key<TreeViewContainer> treeViewStateKey, TreeViewNoType parent, TreeViewNoType child);
-    public void SetActiveNode(Key<TreeViewContainer> treeViewStateKey, TreeViewNoType? nextActiveNode);
-    public void AddSelectedNode(Key<TreeViewContainer> treeViewStateKey, TreeViewNoType nodeSelection);
-    public void RemoveSelectedNode(Key<TreeViewContainer> treeViewStateKey, Key<TreeViewNoType> treeViewNodeKey);
-    public void ClearSelectedNodes(Key<TreeViewContainer> treeViewStateKey);
-    public void MoveLeft(Key<TreeViewContainer> treeViewStateKey, bool shiftKey);
-    public void MoveDown(Key<TreeViewContainer> treeViewStateKey, bool shiftKey);
-    public void MoveUp(Key<TreeViewContainer> treeViewStateKey, bool shiftKey);
-    public void MoveRight(Key<TreeViewContainer> treeViewStateKey, bool shiftKey);
-    public void MoveHome(Key<TreeViewContainer> treeViewStateKey, bool shiftKey);
-    public void MoveEnd(Key<TreeViewContainer> treeViewStateKey, bool shiftKey);
-    public string GetNodeElementId(TreeViewNoType treeViewNoType);
-    public string GetTreeContainerElementId(Key<TreeViewContainer> treeViewStateKey);
+    public void RegisterTreeViewContainer(TreeViewContainer container);
+    public void DisposeTreeViewContainer(Key<TreeViewContainer> containerKey);
+    public void SetRoot(Key<TreeViewContainer> containerKey, TreeViewNoType node);
+    public bool TryGetTreeViewContainer(Key<TreeViewContainer> containerKey, out TreeViewContainer? container);
+    public void ReRenderNode(Key<TreeViewContainer> containerKey, TreeViewNoType node);
+    public void AddChildNode(Key<TreeViewContainer> containerKey, TreeViewNoType parent, TreeViewNoType child);
+    public void SetActiveNode(Key<TreeViewContainer> containerKey, TreeViewNoType? nextActiveNode);
+    public void AddSelectedNode(Key<TreeViewContainer> containerKey, TreeViewNoType nodeSelection);
+    public void RemoveSelectedNode(Key<TreeViewContainer> containerKey, Key<TreeViewNoType> nodeKey);
+    public void ClearSelectedNodes(Key<TreeViewContainer> containerKey);
+    public void MoveLeft(Key<TreeViewContainer> containerKey, bool shiftKey);
+    public void MoveDown(Key<TreeViewContainer> containerKey, bool shiftKey);
+    public void MoveUp(Key<TreeViewContainer> containerKey, bool shiftKey);
+    public void MoveRight(Key<TreeViewContainer> containerKey, bool shiftKey);
+    public void MoveHome(Key<TreeViewContainer> containerKey, bool shiftKey);
+    public void MoveEnd(Key<TreeViewContainer> containerKey, bool shiftKey);
+    public string GetNodeElementId(TreeViewNoType node);
+    public string GetTreeContainerElementId(Key<TreeViewContainer> containerKey);
 }

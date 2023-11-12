@@ -26,7 +26,7 @@ public partial class StartupControlsDisplay : FluxorComponent
         if (programExecutionState.StartupProjectAbsolutePath is null)
             return;
 
-        var parentDirectoryAbsolutePathString = programExecutionState.StartupProjectAbsolutePath.ParentDirectory?.FormattedInput;
+        var parentDirectoryAbsolutePathString = programExecutionState.StartupProjectAbsolutePath.ParentDirectory?.Value;
 
         if (parentDirectoryAbsolutePathString is null)
             return;

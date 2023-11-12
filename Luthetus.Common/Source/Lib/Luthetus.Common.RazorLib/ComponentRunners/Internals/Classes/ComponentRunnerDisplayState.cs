@@ -1,6 +1,7 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRunners.States;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Microsoft.AspNetCore.Components;
 using System.Reflection;
 
 namespace Luthetus.Common.RazorLib.ComponentRunners.Internals.Classes;
@@ -10,7 +11,7 @@ public record ComponentRunnerDisplayState(
     List<Type> ComponentTypeBag,
     Guid ChosenTypeGuid,
     Guid PreviousTypeGuid,
-    PropertyInfo[] ComponentParameterInfoBag,
+    PropertyInfo[] ComponentPropertyInfoBag,
     Dictionary<string, IComponentRunnerType> ComponentRunnerTypeParameterMap,
     IDispatcher Dispatcher) // This is gonna be a hack for re-rendering temporarily
 {
@@ -54,7 +55,7 @@ public record ComponentRunnerDisplayState(
     {
         var blazorParameters = new Dictionary<string, object?>();
 
-        foreach (var parameterInfo in ComponentParameterInfoBag)
+        foreach (var parameterInfo in ComponentPropertyInfoBag)
         {
             var parameterKey = parameterInfo.Name;
 
@@ -93,10 +94,71 @@ public record ComponentRunnerDisplayState(
         return blazorParameters;
     }
 
+    public void CalculateComponentPropertyInfoBag(string? stringValue, ref int chosenComponentChangeCounter)
+    {
+        var refDisplayState = this;
+
+        if (string.IsNullOrWhiteSpace(stringValue) ||
+            stringValue == Guid.Empty.ToString() ||
+            !Guid.TryParse(stringValue, out var chosenTypeGuid))
+        {
+            refDisplayState = refDisplayState with
+            {
+                ChosenTypeGuid = Guid.Empty
+            };
+        }
+        else
+        {
+            refDisplayState = refDisplayState with
+            {
+                ChosenTypeGuid = chosenTypeGuid
+            };
+        }
+
+        if (refDisplayState.PreviousTypeGuid != refDisplayState.ChosenTypeGuid)
+        {
+            refDisplayState = refDisplayState with
+            {
+                PreviousTypeGuid = refDisplayState.ChosenTypeGuid
+            };
+
+            chosenComponentChangeCounter++;
+
+            var type = refDisplayState.ChosenComponentType;
+
+            if (type is not null)
+            {
+                refDisplayState = refDisplayState with
+                {
+                    ComponentPropertyInfoBag = type
+                        .GetProperties()
+                        .Where(x => Attribute.IsDefined(x, typeof(ParameterAttribute)))
+                        .ToArray()
+                };
+            }
+            else
+            {
+                refDisplayState = refDisplayState with
+                {
+                    ComponentPropertyInfoBag = Array.Empty<PropertyInfo>()
+                };
+            }
+        }
+
+        Dispatcher.Dispatch(new ComponentRunnerState.WithAction(
+            refDisplayState.Key, inDisplayState => inDisplayState with
+            {
+                ChosenTypeGuid = refDisplayState.ChosenTypeGuid,
+                PreviousTypeGuid = refDisplayState.PreviousTypeGuid,
+                ComponentPropertyInfoBag = refDisplayState.ComponentPropertyInfoBag,
+                ComponentRunnerTypeParameterMap = new(),
+            }));
+    }
+
     /// <summary>
     /// TODO: Don't duplicate this logic, it is similar to <see cref="ConstructBlazorParameters"/>
     /// </summary>
-    public object? InvokeConstructorRecursively(
+    private object? InvokeConstructorRecursively(
         string parameterKey,
         ParameterInfo parameterInfo)
     {
@@ -132,25 +194,10 @@ public record ComponentRunnerDisplayState(
         }
 
         return objectInstance;
-    }
+    }    
 
     private void BubbleUpValue(string name, IComponentRunnerType value)
     {
-        // What is the output of these tests?
-        {
-            // new[] { "" }
-            var test1 = string.Empty.Split('.');
-
-            // new[] { "", "" }
-            var test2 = ".".Split('.');
-
-            // new[] { "", "FirstName" }
-            var test3 = ".FirstName".Split('.');
-
-            // new[] { "Person", "FirstName" }
-            var test4 = "Person.FirstName".Split('.');
-        }
-
         var splitName = name.Split('.');
 
         for (int i = 0; i < splitName.Length; i++)

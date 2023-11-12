@@ -7,21 +7,21 @@ using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Common.RazorLib.Contexts.Displays;
 
-public partial class ActiveContextEntryDisplay : FluxorComponent
+public partial class ContextDisplay : FluxorComponent
 {
     [Inject]
     private IStateSelection<ContextState, ContextRecord?> ContextRecordSelection { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public Key<ContextRecord> ContextRecordKey { get; set; }
+    public Key<ContextRecord> ContextKey { get; set; }
 
     private bool _isExpanded;
 
     protected override void OnInitialized()
     {
         ContextRecordSelection
-            .Select(contextState => contextState.AllContextRecordsBag
-                .FirstOrDefault(x => x.ContextKey == ContextRecordKey));
+            .Select(contextState => contextState.AllContextsBag
+                .FirstOrDefault(x => x.ContextKey == ContextKey));
 
         base.OnInitialized();
     }

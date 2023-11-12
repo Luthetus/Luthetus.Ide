@@ -1,4 +1,5 @@
 ﻿using Luthetus.Common.RazorLib.FileSystems.Models;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Luthetus.Common.Tests.Basis.FileSystems.Models;
 
@@ -9,147 +10,94 @@ public class AbsolutePathTests
 {
     /// <summary>
     /// <see cref="AbsolutePath(string, bool, IEnvironmentProvider)"/>
+    /// <br/>----<br/>
+    /// <see cref="AbsolutePath.ParentDirectory"/>
+    /// <see cref="AbsolutePath.ExactInput"/>
+    /// <see cref="AbsolutePath.PathType"/>
+    /// <see cref="AbsolutePath.IsDirectory"/>
+    /// <see cref="AbsolutePath.EnvironmentProvider"/>
+    /// <see cref="AbsolutePath.AncestorDirectoryBag"/>
+    /// <see cref="AbsolutePath.NameNoExtension"/>
+    /// <see cref="AbsolutePath.ExtensionNoPeriod"/>
+    /// <see cref="AbsolutePath.RootDrive"/>
+    /// <see cref="AbsolutePath.Value"/>
+    /// <see cref="AbsolutePath.NameWithExtension"/>
+    /// <see cref="AbsolutePath.IsRootDirectory"/>
     /// </summary>
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
-    }
+        FileSystemsTestsHelper.InitializeFileSystemsTests(
+            out InMemoryEnvironmentProvider environmentProvider,
+            out InMemoryFileSystemProvider fileSystemProvider,
+            out ServiceProvider serviceProvider);
 
-    /// <summary>
-    /// <see cref="AbsolutePath.ParentDirectory"/>
-    /// </summary>
-    [Fact]
-    public void ParentDirectory()
-    {
-        throw new NotImplementedException();
-    }
+        // Directory
+        {
+            // 'simple' input
+            {
+                var dirName = "homework";
+                var dirPath = $@"/{dirName}/";
+                var isDirectory = true;
+                var dirAbsolutePath = new AbsolutePath(dirPath, isDirectory, environmentProvider);
 
-    /// <summary>
-    /// <see cref="AbsolutePath.ExactInput"/>
-    /// </summary>
-    [Fact]
-    public void ExactInput()
-    {
-        throw new NotImplementedException();
-    }
+                if (dirAbsolutePath.ParentDirectory is null)
+                    throw new Exception();
 
-    /// <summary>
-    /// <see cref="AbsolutePath.UsedDirectorySeparatorChar"/>
-    /// </summary>
-    [Fact]
-    public void UsedDirectorySeparatorChar()
-    {
-        throw new NotImplementedException();
-    }
+                Assert.Equal("/", dirAbsolutePath.ParentDirectory.Value);
+                Assert.Equal(dirPath, dirAbsolutePath.ExactInput);
+                Assert.Equal(PathType.AbsolutePath, dirAbsolutePath.PathType);
+                Assert.Equal(isDirectory, dirAbsolutePath.IsDirectory);
+                Assert.Equal(environmentProvider, dirAbsolutePath.EnvironmentProvider);
+                Assert.Single(dirAbsolutePath.AncestorDirectoryBag);
+                Assert.Equal(dirName, dirAbsolutePath.NameNoExtension);
 
-    /// <summary>
-    /// <see cref="AbsolutePath.PathType"/>
-    /// </summary>
-    [Fact]
-    public void PathType()
-    {
-        throw new NotImplementedException();
-    }
+                Assert.Equal(
+                    environmentProvider.DirectorySeparatorChar.ToString(),
+                    dirAbsolutePath.ExtensionNoPeriod);
 
-    /// <summary>
-    /// <see cref="AbsolutePath.IsDirectory"/>
-    /// </summary>
-    [Fact]
-    public void IsDirectory()
-    {
-        throw new NotImplementedException();
-    }
+                Assert.Null(dirAbsolutePath.RootDrive);
+                Assert.Equal(dirPath, dirAbsolutePath.Value);
 
-    /// <summary>
-    /// <see cref="AbsolutePath.EnvironmentProvider"/>
-    /// </summary>
-    [Fact]
-    public void EnvironmentProvider()
-    {
-        throw new NotImplementedException();
-    }
+                Assert.Equal(
+                    dirName + environmentProvider.DirectorySeparatorChar,
+                    dirAbsolutePath.NameWithExtension);
 
-    /// <summary>
-    /// <see cref="AbsolutePath.AncestorDirectoryBag"/>
-    /// </summary>
-    [Fact]
-    public void AncestorDirectoryBag()
-    {
-        throw new NotImplementedException();
-    }
+                Assert.False(dirAbsolutePath.IsRootDirectory);
+            }
+        }
+        
+        // File 
+        {
+            // 'simple' input
+            {
+                var fileName = "math";
+                var fileExtension = "txt";
+                var parentDirectoryName = "homework";
+                var filePath = $@"/{parentDirectoryName}/{fileName}.{fileExtension}";
+                var isDirectory = false;
+                var fileAbsolutePath = new AbsolutePath(filePath, isDirectory, environmentProvider);
 
-    /// <summary>
-    /// <see cref="AbsolutePath.NameNoExtension"/>
-    /// </summary>
-    [Fact]
-    public void NameNoExtension()
-    {
-        throw new NotImplementedException();
-    }
+                if (fileAbsolutePath.ParentDirectory is null)
+                    throw new Exception();
 
-    /// <summary>
-    /// <see cref="AbsolutePath.ExtensionNoPeriod"/>
-    /// </summary>
-    [Fact]
-    public void ExtensionNoPeriod()
-    {
-        /*
-        public string ExtensionNoPeriod { get; protected set; }
-         */
+                Assert.Equal($@"/{parentDirectoryName}/", fileAbsolutePath.ParentDirectory.Value);
+                Assert.Equal(filePath, fileAbsolutePath.ExactInput);
+                Assert.Equal(PathType.AbsolutePath, fileAbsolutePath.PathType);
+                Assert.Equal(isDirectory, fileAbsolutePath.IsDirectory);
+                Assert.Equal(environmentProvider, fileAbsolutePath.EnvironmentProvider);
+                Assert.Equal(2, fileAbsolutePath.AncestorDirectoryBag.Count);
+                Assert.Equal(fileName, fileAbsolutePath.NameNoExtension);
+                Assert.Equal(fileExtension, fileAbsolutePath.ExtensionNoPeriod);
+                Assert.Null(fileAbsolutePath.RootDrive);
+                Assert.Equal(filePath, fileAbsolutePath.Value);
 
-        throw new NotImplementedException();
-    }
+                Assert.Equal(
+                    fileName + '.' + fileExtension,
+                    fileAbsolutePath.NameWithExtension);
 
-    /// <summary>
-    /// <see cref="AbsolutePath.RootDrive"/>
-    /// </summary>
-    [Fact]
-    public void RootDrive()
-    {
-        /*
-        public IFileSystemDrive? RootDrive { get; private set; }
-         */
-
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="AbsolutePath.FormattedInput"/>
-    /// </summary>
-    [Fact]
-    public void FormattedInput()
-    {
-        /*
-        public string FormattedInput => _formattedInput ??= CalculateFormattedInput();
-         */
-
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="AbsolutePath.NameWithExtension"/>
-    /// </summary>
-    [Fact]
-    public void NameWithExtension()
-    {
-        /*
-        public string NameWithExtension => _nameWithExtension ??= PathHelper.CalculateNameWithExtension(NameNoExtension, ExtensionNoPeriod, IsDirectory);
-         */
-
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="AbsolutePath.IsRootDirectory"/>
-    /// </summary>
-    [Fact]
-    public void IsRootDirectory()
-    {
-        /*
-        public bool IsRootDirectory => AncestorDirectoryBag.Count == 0;
-         */
-
-        throw new NotImplementedException();
+                Assert.False(fileAbsolutePath.IsRootDirectory);
+            }
+        }
     }
 }

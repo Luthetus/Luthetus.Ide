@@ -37,11 +37,11 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
         if (obj is not TreeViewNamespacePath treeViewSolutionExplorer)
             return false;
 
-        return treeViewSolutionExplorer.Item.AbsolutePath.FormattedInput ==
-               Item.AbsolutePath.FormattedInput;
+        return treeViewSolutionExplorer.Item.AbsolutePath.Value ==
+               Item.AbsolutePath.Value;
     }
 
-    public override int GetHashCode() => Item.AbsolutePath.FormattedInput.GetHashCode();
+    public override int GetHashCode() => Item.AbsolutePath.Value.GetHashCode();
 
     public override TreeViewRenderer GetTreeViewRenderer()
     {

@@ -18,11 +18,11 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
         _directory = new InMemoryDirectoryHandler(this, _environmentProvider);
 
         Directory
-            .CreateDirectoryAsync(_environmentProvider.RootDirectoryAbsolutePath.FormattedInput)
+            .CreateDirectoryAsync(_environmentProvider.RootDirectoryAbsolutePath.Value)
             .Wait();
 
         Directory
-            .CreateDirectoryAsync(_environmentProvider.HomeDirectoryAbsolutePath.FormattedInput)
+            .CreateDirectoryAsync(_environmentProvider.HomeDirectoryAbsolutePath.Value)
             .Wait();
     }
 

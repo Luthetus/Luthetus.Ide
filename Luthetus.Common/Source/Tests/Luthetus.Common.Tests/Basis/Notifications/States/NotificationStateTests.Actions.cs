@@ -1,4 +1,9 @@
-﻿using Luthetus.Common.RazorLib.Notifications.States;
+﻿using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Dialogs.States;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Notifications.Displays;
+using Luthetus.Common.RazorLib.Notifications.Models;
+using Luthetus.Common.RazorLib.Notifications.States;
 
 namespace Luthetus.Common.Tests.Basis.Notifications.States;
 
@@ -13,7 +18,10 @@ public class NotificationStateActionsTests
     [Fact]
     public void RegisterAction()
     {
-	    throw new NotImplementedException();
+        InitializeNotificationStateActionsTests(out var notificationRecord);
+
+        var registerAction = new NotificationState.RegisterAction(notificationRecord);
+        Assert.Equal(notificationRecord, registerAction.Notification);
     }
 
     /// <summary>
@@ -113,5 +121,24 @@ public class NotificationStateActionsTests
     public void ClearArchivedAction()
     {
         throw new NotImplementedException();
+    }
+
+    private void InitializeNotificationStateActionsTests(
+        out NotificationRecord sampleNotificationRecord)
+    {
+        sampleNotificationRecord = new NotificationRecord(
+            Key<NotificationRecord>.NewKey(),
+            "Test title",
+            typeof(CommonInformativeNotificationDisplay),
+            new Dictionary<string, object?>
+            {
+                {
+                    nameof(CommonInformativeNotificationDisplay.Message),
+                    "Test message"
+                }
+            },
+            null,
+            true,
+            null);
     }
 }

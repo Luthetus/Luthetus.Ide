@@ -7,7 +7,7 @@ public class AbsolutePath : IAbsolutePath
     private readonly StringBuilder _tokenBuilder = new();
 
     private int _position;
-    private string? _formattedInput;
+    private string? _value;
     private string? _nameWithExtension;
 
     public AbsolutePath(
@@ -95,7 +95,6 @@ public class AbsolutePath : IAbsolutePath
 
     public IAbsolutePath? ParentDirectory => AncestorDirectoryBag.LastOrDefault();
     public string? ExactInput { get; }
-    public char UsedDirectorySeparatorChar { get; }
     public PathType PathType { get; } = PathType.AbsolutePath;
     public bool IsDirectory { get; protected set; }
     public IEnvironmentProvider EnvironmentProvider { get; }
@@ -115,7 +114,7 @@ public class AbsolutePath : IAbsolutePath
     public string ExtensionNoPeriod { get; protected set; }
     public IFileSystemDrive? RootDrive { get; private set; }
 
-    public string FormattedInput => _formattedInput ??= CalculateFormattedInput();
+    public string Value => _value ??= CalculateValue();
     public string NameWithExtension => _nameWithExtension ??= PathHelper.CalculateNameWithExtension(NameNoExtension, ExtensionNoPeriod, IsDirectory);
     public bool IsRootDirectory => AncestorDirectoryBag.Count == 0;
 
@@ -139,7 +138,7 @@ public class AbsolutePath : IAbsolutePath
         _tokenBuilder.Clear();
     }
 
-    private string CalculateFormattedInput()
+    private string CalculateValue()
     {
         StringBuilder absolutePathStringBuilder = new(RootDrive?.DriveNameAsPath ?? string.Empty);
 

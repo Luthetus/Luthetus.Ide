@@ -1,4 +1,9 @@
+using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Contexts.States;
+using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
+using Luthetus.Common.RazorLib.Keymaps.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using System.Collections.Immutable;
 
 namespace Luthetus.Common.Tests.Basis.Contexts.States;
 
@@ -8,57 +13,94 @@ namespace Luthetus.Common.Tests.Basis.Contexts.States;
 public class ContextStateActionsTests
 {
     /// <summary>
-    /// <see cref="ContextState.SetActiveContextRecordsAction"/>
+    /// <see cref="ContextState.SetFocusedContextHeirarchyAction"/>
     /// </summary>
     [Fact]
-    public void SetActiveContextRecordsAction()
+    public void SetFocusedContextHeirarchyAction()
     {
-        throw new NotImplementedException();
+        var contextRecordKeyHeirarchy = new ContextHeirarchy(
+            new Key<ContextRecord>[] 
+            {
+                ContextFacts.ActiveContextsContext.ContextKey,
+                ContextFacts.GlobalContext.ContextKey,
+            }.ToImmutableArray());
+
+        var setFocusedContextHeirarchyAction = new ContextState.SetFocusedContextHeirarchyAction(
+            contextRecordKeyHeirarchy);
+
+        Assert.Equal(contextRecordKeyHeirarchy, setFocusedContextHeirarchyAction.FocusedContextHeirarchy);
     }
 
     /// <summary>
-    /// <see cref="ContextState.ToggleSelectInspectionTargetAction"/>
+    /// <see cref="ContextState.ToggleSelectInspectedContextHeirarchyAction"/>
     /// </summary>
     [Fact]
-    public void ToggleSelectInspectionTargetAction()
+    public void ToggleSelectInspectedContextHeirarchyAction()
     {
-        throw new NotImplementedException();
+        var toggleSelectInspectedContextHeirarchyAction = new ContextState.ToggleSelectInspectedContextHeirarchyAction();
+        Assert.NotNull(toggleSelectInspectedContextHeirarchyAction);
     }
 
     /// <summary>
-    /// <see cref="ContextState.SetSelectInspectionTargetTrueAction"/>
+    /// <see cref="ContextState.IsSelectingInspectableContextHeirarchyAction"/>
     /// </summary>
     [Fact]
-    public void SetSelectInspectionTargetTrueAction()
+    public void SetSelectInspectedContextHeirarchyAction_True()
     {
-        throw new NotImplementedException();
+        var setSelectInspectedContextHeirarchyAction = new ContextState.IsSelectingInspectableContextHeirarchyAction(true);
+        Assert.NotNull(setSelectInspectedContextHeirarchyAction);
     }
 
     /// <summary>
-    /// <see cref="ContextState.SetSelectInspectionTargetFalseAction"/>
+    /// <see cref="ContextState.IsSelectingInspectableContextHeirarchyAction"/>
     /// </summary>
     [Fact]
-    public void SetSelectInspectionTargetFalseAction()
+    public void SetSelectInspectedContextHeirarchyAction_False()
     {
-        throw new NotImplementedException();
+        var setSelectInspectionTargetFalseAction = new ContextState.IsSelectingInspectableContextHeirarchyAction(false);
+        Assert.NotNull(setSelectInspectionTargetFalseAction);
     }
 
     /// <summary>
-    /// <see cref="ContextState.SetInspectionTargetAction"/>
+    /// <see cref="ContextState.SetInspectedContextHeirarchyAction"/>
     /// </summary>
     [Fact]
-    public void SetInspectionTargetAction()
+    public void SetInspectedContextHeirarchyAction()
     {
-        throw new NotImplementedException();
+        var contextRecordKeyHeirarchy = new ContextHeirarchy(
+            new Key<ContextRecord>[]
+            {
+                ContextFacts.ActiveContextsContext.ContextKey,
+                ContextFacts.GlobalContext.ContextKey,
+            }.ToImmutableArray());
+
+        var setInspectedContextHeirarchyAction = new ContextState.SetInspectedContextHeirarchyAction(
+            contextRecordKeyHeirarchy);
+
+        Assert.Equal(contextRecordKeyHeirarchy, setInspectedContextHeirarchyAction.InspectedContextHeirarchy);
     }
 
     /// <summary>
-    /// <see cref="ContextState.AddInspectContextRecordEntryAction"/>
+    /// <see cref="ContextState.AddInspectableContextAction"/>
     /// </summary>
     [Fact]
-    public void AddInspectContextRecordEntryAction()
+    public void AddInspectableContextAction()
     {
-        throw new NotImplementedException();
+        var activeContextsContextKeyHeirarchy = new ContextHeirarchy(
+            new Key<ContextRecord>[]
+            {
+                ContextFacts.ActiveContextsContext.ContextKey,
+                ContextFacts.GlobalContext.ContextKey,
+            }.ToImmutableArray());
+
+        var inspectableContext = new InspectableContext(
+            activeContextsContextKeyHeirarchy,
+            new MeasuredHtmlElementDimensions(0, 0, 0, 0, 0));
+
+        var addInspectableContextAction = new ContextState.AddInspectableContextAction(
+            inspectableContext);
+
+        Assert.Equal(inspectableContext, addInspectableContextAction.InspectableContext);
     }
 
     /// <summary>
@@ -67,6 +109,14 @@ public class ContextStateActionsTests
     [Fact]
     public void SetContextKeymapAction()
     {
-        throw new NotImplementedException();
+        var contextRecordKey = ContextFacts.GlobalContext.ContextKey;
+        var keymap = Keymap.Empty;
+
+        var setContextKeymapAction = new ContextState.SetContextKeymapAction(
+            contextRecordKey,
+            keymap);
+
+        Assert.Equal(contextRecordKey, setContextKeymapAction.ContextKey);
+        Assert.Equal(keymap, setContextKeymapAction.Keymap);
     }
 }

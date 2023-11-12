@@ -32,52 +32,52 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         _treeViewService = treeViewService;
     }
 
-    public override Task OnKeyDownAsync(TreeViewCommandParameter commandParameter)
+    public override Task OnKeyDownAsync(TreeViewCommandArgs commandArgs)
     {
-        if (commandParameter.KeyboardEventArgs is null)
+        if (commandArgs.KeyboardEventArgs is null)
             return Task.CompletedTask;
 
-        base.OnKeyDownAsync(commandParameter);
+        base.OnKeyDownAsync(commandArgs);
 
-        switch (commandParameter.KeyboardEventArgs.Code)
+        switch (commandArgs.KeyboardEventArgs.Code)
         {
             case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
-                InvokeOpenInEditor(commandParameter, true);
+                InvokeOpenInEditor(commandArgs, true);
                 return Task.CompletedTask;
             case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
-                InvokeOpenInEditor(commandParameter, false);
+                InvokeOpenInEditor(commandArgs, false);
                 return Task.CompletedTask;
         }
 
-        if (commandParameter.KeyboardEventArgs.CtrlKey)
-            CtrlModifiedKeymap(commandParameter);
-        else if (commandParameter.KeyboardEventArgs.AltKey)
-            AltModifiedKeymap(commandParameter);
+        if (commandArgs.KeyboardEventArgs.CtrlKey)
+            CtrlModifiedKeymap(commandArgs);
+        else if (commandArgs.KeyboardEventArgs.AltKey)
+            AltModifiedKeymap(commandArgs);
 
         return Task.CompletedTask;
     }
 
-    private void CtrlModifiedKeymap(TreeViewCommandParameter commandParameter)
+    private void CtrlModifiedKeymap(TreeViewCommandArgs commandArgs)
     {
-        if (commandParameter.KeyboardEventArgs is null)
+        if (commandArgs.KeyboardEventArgs is null)
             return;
 
-        if (commandParameter.KeyboardEventArgs.AltKey)
+        if (commandArgs.KeyboardEventArgs.AltKey)
         {
-            CtrlAltModifiedKeymap(commandParameter);
+            CtrlAltModifiedKeymap(commandArgs);
         }
         else
         {
-            switch (commandParameter.KeyboardEventArgs.Key)
+            switch (commandArgs.KeyboardEventArgs.Key)
             {
                 case "c":
-                    CopyFile(commandParameter);
+                    CopyFile(commandArgs);
                     return;
                 case "x":
-                    CutFile(commandParameter);
+                    CutFile(commandArgs);
                     return;
                 case "v":
-                    PasteClipboard(commandParameter);
+                    PasteClipboard(commandArgs);
                     return;
             }
         }
@@ -90,19 +90,19 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
     /// <br /><br />
     /// As otherwise, we'd have to permute over all the possible keyboard modifier keys and have a method for each permutation.
     /// </summary>
-    private void AltModifiedKeymap(TreeViewCommandParameter commandParameter)
+    private void AltModifiedKeymap(TreeViewCommandArgs commandArgs)
     {
         return;
     }
 
-    private void CtrlAltModifiedKeymap(TreeViewCommandParameter commandParameter)
+    private void CtrlAltModifiedKeymap(TreeViewCommandArgs commandArgs)
     {
         return;
     }
 
-    private void CopyFile(TreeViewCommandParameter commandParameter)
+    private void CopyFile(TreeViewCommandArgs commandArgs)
     {
-        var activeNode = commandParameter.TreeViewState.ActiveNode;
+        var activeNode = commandArgs.TreeViewContainer.ActiveNode;
 
         if (activeNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return;
@@ -111,16 +111,16 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
             treeViewAbsolutePath.Item,
             () =>
             {
-                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewAbsolutePath.Item.NameWithExtension}", _commonComponentRenderers, _editorSync.Dispatcher);
+                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewAbsolutePath.Item.NameWithExtension}", _commonComponentRenderers, _editorSync.Dispatcher, TimeSpan.FromSeconds(7));
                 return Task.CompletedTask;
             });
 
         copyFileMenuOption.OnClick?.Invoke();
     }
 
-    private Task PasteClipboard(TreeViewCommandParameter commandParameter)
+    private Task PasteClipboard(TreeViewCommandArgs commandArgs)
     {
-        var activeNode = commandParameter.TreeViewState.ActiveNode;
+        var activeNode = commandArgs.TreeViewContainer.ActiveNode;
 
         if (activeNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return Task.CompletedTask;
@@ -164,9 +164,9 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         return Task.CompletedTask;
     }
 
-    private void CutFile(TreeViewCommandParameter commandParameter)
+    private void CutFile(TreeViewCommandArgs commandArgs)
     {
-        var activeNode = commandParameter.TreeViewState.ActiveNode;
+        var activeNode = commandArgs.TreeViewContainer.ActiveNode;
 
         if (activeNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return;
@@ -178,16 +178,16 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
             () =>
             {
                 SolutionExplorerContextMenu.ParentOfCutFile = parent;
-                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewAbsolutePath.Item.NameWithExtension}", _commonComponentRenderers, _editorSync.Dispatcher);
+                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewAbsolutePath.Item.NameWithExtension}", _commonComponentRenderers, _editorSync.Dispatcher, TimeSpan.FromSeconds(7));
                 return Task.CompletedTask;
             });
 
         cutFileOptionRecord.OnClick?.Invoke();
     }
 
-    private void InvokeOpenInEditor(TreeViewCommandParameter commandParameter, bool shouldSetFocusToEditor)
+    private void InvokeOpenInEditor(TreeViewCommandArgs commandArgs, bool shouldSetFocusToEditor)
     {
-        var activeNode = commandParameter.TreeViewState.ActiveNode;
+        var activeNode = commandArgs.TreeViewContainer.ActiveNode;
 
         if (activeNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return;

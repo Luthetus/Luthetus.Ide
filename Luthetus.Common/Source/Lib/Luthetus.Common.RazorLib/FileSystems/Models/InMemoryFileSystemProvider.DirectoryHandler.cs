@@ -127,7 +127,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             CancellationToken cancellationToken = default)
         {
             return Task.FromResult(_inMemoryFileSystemProvider._files.Any(
-                f => f.AbsolutePath.FormattedInput == absolutePathString));
+                f => f.AbsolutePath.Value == absolutePathString));
         }
 
         public Task UnsafeCreateDirectoryAsync(
@@ -135,7 +135,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             CancellationToken cancellationToken = default)
         {
             var existingFile = _inMemoryFileSystemProvider._files.FirstOrDefault(
-                f => f.AbsolutePath.FormattedInput == absolutePathString);
+                f => f.AbsolutePath.Value == absolutePathString);
 
             if (existingFile is not null)
                 return Task.CompletedTask;
@@ -160,25 +160,25 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             bool recursive,
             CancellationToken cancellationToken = default)
         {
-            if (absolutePathString == _environmentProvider.RootDirectoryAbsolutePath.FormattedInput ||
-                absolutePathString == _environmentProvider.HomeDirectoryAbsolutePath.FormattedInput)
+            if (absolutePathString == _environmentProvider.RootDirectoryAbsolutePath.Value ||
+                absolutePathString == _environmentProvider.HomeDirectoryAbsolutePath.Value)
             {
                 return;
             }
 
             var indexOfExistingFile = _inMemoryFileSystemProvider._files.FindIndex(
-                f => f.AbsolutePath.FormattedInput == absolutePathString);
+                f => f.AbsolutePath.Value == absolutePathString);
 
             if (indexOfExistingFile == -1)
                 return;
 
             var childFileBag = _inMemoryFileSystemProvider._files.Where(imf =>
-                imf.AbsolutePath.FormattedInput.StartsWith(absolutePathString));
+                imf.AbsolutePath.Value.StartsWith(absolutePathString));
 
             foreach (var child in childFileBag)
             {
                 await _inMemoryFileSystemProvider._file.UnsafeDeleteAsync(
-                    child.AbsolutePath.FormattedInput,
+                    child.AbsolutePath.Value,
                     cancellationToken);
             }
 
@@ -191,13 +191,13 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             CancellationToken cancellationToken = default)
         {
             var indexOfExistingFile = _inMemoryFileSystemProvider._files.FindIndex(
-                f => f.AbsolutePath.FormattedInput == sourceAbsolutePathString);
+                f => f.AbsolutePath.Value == sourceAbsolutePathString);
 
             if (indexOfExistingFile == -1)
                 return;
 
             var childFileBag = _inMemoryFileSystemProvider._files.Where(imf =>
-                imf.AbsolutePath.FormattedInput.StartsWith(sourceAbsolutePathString));
+                imf.AbsolutePath.Value.StartsWith(sourceAbsolutePathString));
 
             var destinationAbsolutePath = new AbsolutePath(
                 destinationAbsolutePathString,
@@ -218,7 +218,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                     child.AbsolutePath.NameWithExtension);
 
                 await _inMemoryFileSystemProvider._file.UnsafeCopyAsync(
-                    child.AbsolutePath.FormattedInput,
+                    child.AbsolutePath.Value,
                     destinationChild,
                     cancellationToken);
             }
@@ -232,20 +232,20 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             string destinationAbsolutePathString,
             CancellationToken cancellationToken = default)
         {
-            if (sourceAbsolutePathString == _environmentProvider.RootDirectoryAbsolutePath.FormattedInput ||
-                sourceAbsolutePathString == _environmentProvider.HomeDirectoryAbsolutePath.FormattedInput)
+            if (sourceAbsolutePathString == _environmentProvider.RootDirectoryAbsolutePath.Value ||
+                sourceAbsolutePathString == _environmentProvider.HomeDirectoryAbsolutePath.Value)
             {
                 return;
             }
 
             var indexOfExistingFile = _inMemoryFileSystemProvider._files.FindIndex(
-                f => f.AbsolutePath.FormattedInput == sourceAbsolutePathString);
+                f => f.AbsolutePath.Value == sourceAbsolutePathString);
 
             if (indexOfExistingFile == -1)
                 return;
 
             var childFileBag = _inMemoryFileSystemProvider._files.Where(imf =>
-                imf.AbsolutePath.FormattedInput.StartsWith(sourceAbsolutePathString));
+                imf.AbsolutePath.Value.StartsWith(sourceAbsolutePathString));
 
             var destinationAbsolutePath = new AbsolutePath(
                 destinationAbsolutePathString,
@@ -266,7 +266,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                     child.AbsolutePath.NameWithExtension);
 
                 await _inMemoryFileSystemProvider._file.UnsafeMoveAsync(
-                    child.AbsolutePath.FormattedInput,
+                    child.AbsolutePath.Value,
                     destinationChild,
                     cancellationToken);
             }
@@ -279,28 +279,28 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             CancellationToken cancellationToken = default)
         {
             var existingFile = _inMemoryFileSystemProvider._files.FirstOrDefault(
-                f => f.AbsolutePath.FormattedInput == absolutePathString);
+                f => f.AbsolutePath.Value == absolutePathString);
 
             if (existingFile is null)
                 return Task.FromResult(Array.Empty<string>());
 
             var childrenFromAllGenerationsBag = _inMemoryFileSystemProvider._files.Where(
-                f => f.AbsolutePath.FormattedInput.StartsWith(absolutePathString) &&
-                     f.AbsolutePath.FormattedInput != absolutePathString)
+                f => f.AbsolutePath.Value.StartsWith(absolutePathString) &&
+                     f.AbsolutePath.Value != absolutePathString)
                 .ToArray();
 
             var directChildren = childrenFromAllGenerationsBag.Where(
                 f =>
                 {
                     var withoutParentPrefix = new string(
-                        f.AbsolutePath.FormattedInput
+                        f.AbsolutePath.Value
                             .Skip(absolutePathString.Length)
                             .ToArray());
 
                     return withoutParentPrefix.EndsWith("/") &&
                            withoutParentPrefix.Count(x => x == '/') == 1;
                 })
-                .Select(f => f.AbsolutePath.FormattedInput)
+                .Select(f => f.AbsolutePath.Value)
                 .ToArray();
 
             return Task.FromResult(directChildren);
@@ -311,26 +311,26 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             CancellationToken cancellationToken = default)
         {
             var existingFile = _inMemoryFileSystemProvider._files.FirstOrDefault(
-                f => f.AbsolutePath.FormattedInput == absolutePathString);
+                f => f.AbsolutePath.Value == absolutePathString);
 
             if (existingFile is null)
                 return Task.FromResult(Array.Empty<string>());
 
             var childrenFromAllGenerationsBag = _inMemoryFileSystemProvider._files.Where(
-                f => f.AbsolutePath.FormattedInput.StartsWith(absolutePathString) &&
-                     f.AbsolutePath.FormattedInput != absolutePathString);
+                f => f.AbsolutePath.Value.StartsWith(absolutePathString) &&
+                     f.AbsolutePath.Value != absolutePathString);
 
             var directChildrenBag = childrenFromAllGenerationsBag.Where(
                 f =>
                 {
                     var withoutParentPrefix = new string(
-                        f.AbsolutePath.FormattedInput
+                        f.AbsolutePath.Value
                             .Skip(absolutePathString.Length)
                             .ToArray());
 
                     return withoutParentPrefix.Count(x => x == '/') == 0;
                 })
-                .Select(f => f.AbsolutePath.FormattedInput)
+                .Select(f => f.AbsolutePath.Value)
                 .ToArray();
 
             return Task.FromResult(directChildrenBag);

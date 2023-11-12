@@ -1,4 +1,5 @@
 ﻿using Luthetus.Common.RazorLib.ComponentRunners.Internals.Classes;
+using System.Reflection;
 
 namespace Luthetus.Common.Tests.Basis.ComponentRunners.Internals.Classes;
 
@@ -8,56 +9,37 @@ namespace Luthetus.Common.Tests.Basis.ComponentRunners.Internals.Classes;
 public class ComponentRunnerPrimitiveTypeTests
 {
     /// <summary>
-    /// <see cref="ComponentRunnerPrimitiveType(System.Reflection.ConstructorInfo?, Func{object?}?, object?, System.Type)"/>
+    /// <see cref="ComponentRunnerPrimitiveType(System.Reflection.ConstructorInfo?, Func{object?}?, object?, Type)"/>
+    /// <br/>----<br/>
+    /// <see cref="ComponentRunnerPrimitiveType.ChosenConstructorInfo"/>
+    /// <see cref="ComponentRunnerPrimitiveType.ConstructValueFunc"/>
+    /// <see cref="ComponentRunnerPrimitiveType.Value"/>
+    /// <see cref="ComponentRunnerPrimitiveType.Type"/>
+    /// <see cref="ComponentRunnerPrimitiveType.ComponentRunnerTypeKind"/>
     /// </summary>
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
-    }
+        var samplePrimitiveType = 37;
 
-    /// <summary>
-    /// <see cref="ComponentRunnerPrimitiveType.ChosenConstructorInfo"/>
-    /// </summary>
-    [Fact]
-    public void ChosenConstructorInfo()
-    {
-        throw new NotImplementedException();
-    }
+        ConstructorInfo? constructorInfo = null;
 
-    /// <summary>
-    /// <see cref="ComponentRunnerPrimitiveType.ConstructValueFunc"/>
-    /// </summary>
-    [Fact]
-    public void ConstructValueFunc()
-    {
-        throw new NotImplementedException();
-    }
+        Func<object?>? constructValueFunc = () => default;
 
-    /// <summary>
-    /// <see cref="ComponentRunnerPrimitiveType.Value"/>
-    /// </summary>
-    [Fact]
-    public void Value()
-    {
-        throw new NotImplementedException();
-    }
+        var type = typeof(int);
 
-    /// <summary>
-    /// <see cref="ComponentRunnerPrimitiveType.Type"/>
-    /// </summary>
-    [Fact]
-    public void Type()
-    {
-        throw new NotImplementedException();
-    }
+        var componentRunnerTypeKind = ComponentRunnerTypeKind.Primitive;
 
-    /// <summary>
-    /// <see cref="ComponentRunnerPrimitiveType.ComponentRunnerTypeKind"/>
-    /// </summary>
-    [Fact]
-    public void ComponentRunnerTypeKind()
-    {
-        throw new NotImplementedException();
+        var componentRunnerComplexType = new ComponentRunnerPrimitiveType(
+            constructorInfo,
+            constructValueFunc,
+            samplePrimitiveType,
+            type);
+
+        Assert.True(constructorInfo == componentRunnerComplexType.ChosenConstructorInfo);
+        Assert.True(constructValueFunc == componentRunnerComplexType.ConstructValueFunc);
+        Assert.True(samplePrimitiveType == (int)(componentRunnerComplexType.Value ?? 0));
+        Assert.True(type == componentRunnerComplexType.Type);
+        Assert.True(componentRunnerTypeKind == componentRunnerComplexType.ComponentRunnerTypeKind);
     }
 }
