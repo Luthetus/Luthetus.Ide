@@ -1,4 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.Contexts.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using System.Collections.Immutable;
 
 namespace Luthetus.Common.Tests.Basis.Contexts.Models;
 
@@ -14,9 +16,18 @@ public class ContextRecordKeyHeirarchyTests
     public void TargetKey()
     {
         /*
-        public Key<ContextRecord> TargetKey => KeyBag[0];
+        public Key<ContextRecord> NearestAncestorKey => KeyBag[0];
          */
 
-        throw new NotImplementedException();
+        var contextRecordKeyHeirarchy = new ContextHeirarchy(
+            new Key<ContextRecord>[]
+            {
+                ContextFacts.ActiveContextsContext.ContextKey,
+                ContextFacts.GlobalContext.ContextKey,
+            }.ToImmutableArray());
+
+        Assert.Equal(
+            ContextFacts.ActiveContextsContext.ContextKey,
+            contextRecordKeyHeirarchy.NearestAncestorKey);
     }
 }
