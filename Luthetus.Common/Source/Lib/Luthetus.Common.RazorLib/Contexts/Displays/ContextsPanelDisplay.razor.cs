@@ -18,8 +18,8 @@ public partial class ContextsPanelDisplay : FluxorComponent
     private void DispatchToggleInspectActionOnClick(bool isInspecting)
     {
         if (isInspecting)
-            Dispatcher.Dispatch(new ContextState.SetSelectInspectedContextHeirarchyAction(false));
+            Dispatcher.Dispatch(new ContextState.IsSelectingInspectableContextHeirarchyAction(false));
         else
-            Dispatcher.Dispatch(new ContextState.SetSelectInspectedContextHeirarchyAction(true));
+            Dispatcher.Dispatch(new ContextState.IsSelectingInspectableContextHeirarchyAction(true));
     }
 }

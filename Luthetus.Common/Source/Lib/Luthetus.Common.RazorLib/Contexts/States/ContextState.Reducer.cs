@@ -43,11 +43,11 @@ public partial record ContextState
         }
         
         [ReducerMethod]
-        public static ContextState ReduceSetSelectInspectedContextHeirarchyAction(
+        public static ContextState ReduceIsSelectingInspectableContextHeirarchyAction(
             ContextState inContextStates,
-            SetSelectInspectedContextHeirarchyAction setSelectInspectedContextHeirarchyAction)
+            IsSelectingInspectableContextHeirarchyAction isSelectingInspectableContextHeirarchyAction)
         {
-            if (setSelectInspectedContextHeirarchyAction.Value)
+            if (isSelectingInspectableContextHeirarchyAction.Value)
             {
                 return inContextStates with
                 {

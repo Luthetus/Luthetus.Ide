@@ -13,12 +13,12 @@ namespace Luthetus.Common.Tests.Basis.Contexts.States;
 public class ContextStateReducerTests
 {
     [Fact]
-    public void ReduceSetActiveContextRecordsAction()
+    public void ReduceSetFocusedContextHeirarchyAction()
     {
         /*
         [ReducerMethod]
-        public static ContextState ReduceSetActiveContextRecordsAction(
-            ContextState inContextStates, SetActiveContextRecordsAction setActiveContextRecordsAction)
+        public static ContextState ReduceSetFocusedContextHeirarchyAction(
+            ContextState inContextStates, SetFocusedContextHeirarchyAction setFocusedContextHeirarchyAction)
          */
 
         InitializeContextStateReducerTests(
@@ -27,20 +27,20 @@ public class ContextStateReducerTests
             out var dispatcher,
             out var contextRecordKeyHeirarchy);
 
-        var setActiveContextRecordsAction = new ContextState.SetFocusedContextHeirarchyAction(
+        var setFocusedContextHeirarchyAction = new ContextState.SetFocusedContextHeirarchyAction(
             contextRecordKeyHeirarchy);
 
-        dispatcher.Dispatch(setActiveContextRecordsAction);
+        dispatcher.Dispatch(setFocusedContextHeirarchyAction);
 
         throw new NotImplementedException();
     }
 
     [Fact]
-    public void ReduceToggleInspectAction()
+    public void ReduceToggleSelectInspectedContextHeirarchyAction()
     {
         /*
-        [ReducerMethod(typeof(ToggleSelectInspectionTargetAction))]
-        public static ContextState ReduceToggleInspectAction(
+        [ReducerMethod(typeof(ToggleSelectInspectedContextHeirarchyAction))]
+        public static ContextState ReduceToggleSelectInspectedContextHeirarchyAction(
             ContextState inContextStates)
          */
 
@@ -48,48 +48,52 @@ public class ContextStateReducerTests
     }
 
     [Fact]
-    public void ReduceSetSelectInspectionTargetTrueAction()
-    {
-        /*
-        [ReducerMethod(typeof(SetSelectInspectionTargetTrueAction))]
-        public static ContextState ReduceSetSelectInspectionTargetTrueAction(
-            ContextState inContextStates)
-         */
-
-        throw new NotImplementedException();
-    }
-
-    [Fact]
-    public void ReduceSetSelectInspectionTargetFalseAction()
-    {
-        /*
-        [ReducerMethod(typeof(SetSelectInspectionTargetFalseAction))]
-        public static ContextState ReduceSetSelectInspectionTargetFalseAction(
-            ContextState inContextStates)
-         */
-
-        throw new NotImplementedException();
-    }
-
-    [Fact]
-    public void ReduceSetInspectionTargetAction()
+    public void ReduceIsSelectingInspectableContextHeirarchyAction_True()
     {
         /*
         [ReducerMethod]
-        public static ContextState ReduceSetInspectionTargetAction(
-            ContextState inContextStates, SetInspectionTargetAction setInspectionTargetAction)
+        public static ContextState ReduceIsSelectingInspectableContextHeirarchyAction(
+            ContextState inContextStates,
+            IsSelectingInspectableContextHeirarchyAction isSelectingInspectableContextHeirarchyAction)
          */
 
         throw new NotImplementedException();
     }
 
     [Fact]
-    public void ReduceAddInspectContextRecordEntryAction()
+    public void ReduceIsSelectingInspectableContextHeirarchyAction_False()
     {
         /*
         [ReducerMethod]
-        public static ContextState ReduceAddInspectContextRecordEntryAction(
-            ContextState inContextStates, AddInspectContextRecordEntryAction addInspectContextRecordEntryAction)
+        public static ContextState ReduceIsSelectingInspectableContextHeirarchyAction(
+            ContextState inContextStates,
+            IsSelectingInspectableContextHeirarchyAction isSelectingInspectableContextHeirarchyAction)
+         */
+
+        throw new NotImplementedException();
+    }
+
+    [Fact]
+    public void ReduceSetInspectedContextHeirarchyAction()
+    {
+        /*
+        [ReducerMethod]
+        public static ContextState ReduceSetInspectedContextHeirarchyAction(
+            ContextState inContextStates,
+            SetInspectedContextHeirarchyAction setInspectedContextHeirarchyAction)
+         */
+
+        throw new NotImplementedException();
+    }
+
+    [Fact]
+    public void ReduceAddInspectableContextAction()
+    {
+        /*
+        [ReducerMethod]
+        public static ContextState ReduceAddInspectableContextAction(
+            ContextState inContextStates,
+            AddInspectableContextAction addInspectableContextAction)
          */
 
         throw new NotImplementedException();
@@ -101,7 +105,8 @@ public class ContextStateReducerTests
         /*
         [ReducerMethod]
         public static ContextState ReduceSetContextKeymapAction(
-            ContextState inContextStates, SetContextKeymapAction setContextKeymapAction)
+            ContextState inContextStates,
+            SetContextKeymapAction setContextKeymapAction)
          */
 
         throw new NotImplementedException();
