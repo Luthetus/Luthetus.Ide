@@ -4,7 +4,7 @@ namespace Luthetus.Common.RazorLib.FileSystems.Models;
 
 public partial class InMemoryFileSystemProvider : IFileSystemProvider
 {
-    private class InMemoryFileHandler : IFileHandler
+    public class InMemoryFileHandler : IFileHandler
     {
         private readonly InMemoryFileSystemProvider _inMemoryFileSystemProvider;
         private readonly IEnvironmentProvider _environmentProvider;
