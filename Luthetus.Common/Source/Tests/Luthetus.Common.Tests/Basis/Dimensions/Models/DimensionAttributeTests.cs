@@ -8,29 +8,51 @@ namespace Luthetus.Common.Tests.Basis.Dimensions.Models;
 public class DimensionAttributeTests
 {
     /// <summary>
-    /// <see cref="DimensionAttribute.DimensionUnitBag"/>
-    /// </summary>
-    [Fact]
-    public void DimensionUnitBag()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="DimensionAttribute.DimensionAttributeKind"/>
+    /// <br/>----<br/>
+    /// <see cref="DimensionAttribute.DimensionUnitBag"/>
+    /// <see cref="DimensionAttribute.StyleString"/>
     /// </summary>
     [Fact]
     public void DimensionAttributeKind()
     {
-        throw new NotImplementedException();
-    }
+        // Single DimensionUnit
+        {
+            var dimensionAttribute = new DimensionAttribute
+            {
+                DimensionAttributeKind = RazorLib.Dimensions.Models.DimensionAttributeKind.Width,
+            };
 
-    /// <summary>
-    /// <see cref="DimensionAttribute.StyleString"/>
-    /// </summary>
-    [Fact]
-    public void StyleString()
-    {
-        throw new NotImplementedException();
+            dimensionAttribute.DimensionUnitBag.Add(new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = 5
+            });
+
+            Assert.Equal("width: calc(5px);", dimensionAttribute.StyleString);
+        }
+
+        // Two DimensionUnit
+        {
+            var dimensionAttribute = new DimensionAttribute
+            {
+                DimensionAttributeKind = RazorLib.Dimensions.Models.DimensionAttributeKind.Width,
+            };
+
+            dimensionAttribute.DimensionUnitBag.Add(new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.ViewportWidth,
+                Value = 60
+            });
+
+            dimensionAttribute.DimensionUnitBag.Add(new DimensionUnit
+            {
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                Value = 33.333,
+                DimensionOperatorKind = DimensionOperatorKind.Subtract,
+            });
+
+            Assert.Equal("width: calc(60vw - 33.333px);", dimensionAttribute.StyleString);
+        }
     }
 }
