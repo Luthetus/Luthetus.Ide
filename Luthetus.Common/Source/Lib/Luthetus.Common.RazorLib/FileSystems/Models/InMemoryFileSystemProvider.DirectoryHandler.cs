@@ -228,8 +228,6 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
 
             var children = childDirectories.Union(childFiles);
 
-            var filePathStrings = children.Select(x => x.Value).ToArray();
-
             var destinationExists = await UnsafeExistsAsync(destinationAbsolutePathString, cancellationToken);
 
             if (!destinationExists)
@@ -296,46 +294,8 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             if (indexOfExistingFile == -1)
                 return;
 
-            var childFileBag = _inMemoryFileSystemProvider._files.Where(imf =>
-                imf.AbsolutePath.Value.StartsWith(sourceAbsolutePathString));
-
-            var destinationAbsolutePath = new AbsolutePath(
-                destinationAbsolutePathString,
-                true,
-                _environmentProvider);
-
-            var destinationFile = new InMemoryFile(
-                string.Empty,
-                destinationAbsolutePath,
-                DateTime.UtcNow,
-                true);
-
-            _inMemoryFileSystemProvider._files.Add(destinationFile);
-
-            foreach (var child in childFileBag)
-            {
-                var destinationChild = _environmentProvider.JoinPaths(
-                    destinationAbsolutePathString,
-                    child.AbsolutePath.NameWithExtension);
-
-                if (child.IsDirectory)
-                {
-                    await _inMemoryFileSystemProvider._directory.UnsafeMoveAsync(
-                        child.AbsolutePath.Value,
-                        destinationChild,
-                        cancellationToken);
-                }
-                else
-                {
-                    await _inMemoryFileSystemProvider._file.UnsafeMoveAsync(
-                        child.AbsolutePath.Value,
-                        destinationChild,
-                        cancellationToken);
-                }
-
-            }
-
-            _inMemoryFileSystemProvider._files.RemoveAt(indexOfExistingFile);
+            await UnsafeCopyAsync(sourceAbsolutePathString, destinationAbsolutePathString, cancellationToken);
+            await UnsafeDeleteAsync(sourceAbsolutePathString, true, cancellationToken);
         }
 
         public Task<string[]> UnsafeGetDirectoriesAsync(

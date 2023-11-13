@@ -203,8 +203,6 @@ public class InMemoryDirectoryHandlerTests
             {
                 Assert.True(await fileSystemProvider.Directory.ExistsAsync("/ShoppingLists/"));
 
-                var filePathStrings = fileSystemProvider.Files.Select(x => x.AbsolutePath.Value).ToArray();
-
                 Assert.True(
                     await fileSystemProvider.Directory.ExistsAsync("/ShoppingLists/Homework/Math/") &&
                     await fileSystemProvider.File.ExistsAsync("/ShoppingLists/Homework/Math/addition.txt") &&
@@ -219,14 +217,86 @@ public class InMemoryDirectoryHandlerTests
     }
 
     [Fact]
-    public void MoveAsync()
+    public async Task MoveAsync()
     {
         /*
         public async Task MoveAsync(
             string sourceAbsolutePathString, string destinationAbsolutePathString, CancellationToken cancellationToken = default)
          */
 
-        throw new NotImplementedException();
+        InitializeFileSystemsTests(
+            out InMemoryEnvironmentProvider environmentProvider,
+            out InMemoryFileSystemProvider fileSystemProvider,
+            out ServiceProvider serviceProvider);
+
+        Assert.True(await fileSystemProvider.Directory.ExistsAsync(WellKnownPaths.Directories.Homework));
+
+        // There are a few files written out to the in-memory filesystem when 'InitializeFileSystemsTests'
+        // is invoked. In this code block a check for the existence of the child files will be done. (2023-11-12)
+        {
+            // Ensure that the source files do exist
+            {
+                Assert.True(
+                    await fileSystemProvider.Directory.ExistsAsync(WellKnownPaths.Directories.Math) &&
+                    await fileSystemProvider.File.ExistsAsync(WellKnownPaths.Files.AdditionTxt) &&
+                    await fileSystemProvider.File.ExistsAsync(WellKnownPaths.Files.SubtractionTxt));
+
+                Assert.True(
+                    await fileSystemProvider.Directory.ExistsAsync(WellKnownPaths.Directories.Biology) &&
+                    await fileSystemProvider.File.ExistsAsync(WellKnownPaths.Files.NervousSystemTxt) &&
+                    await fileSystemProvider.File.ExistsAsync(WellKnownPaths.Files.SkeletalSystemTxt));
+            }
+
+            // Ensure that the destination files do NOT exist
+            {
+                Assert.False(await fileSystemProvider.Directory.ExistsAsync("/ShoppingLists/"));
+
+                Assert.False(
+                    await fileSystemProvider.Directory.ExistsAsync("/ShoppingLists/Homework/Math/") &&
+                    await fileSystemProvider.File.ExistsAsync("/ShoppingLists/Homework/Math/addition.txt") &&
+                    await fileSystemProvider.File.ExistsAsync("/ShoppingLists/Homework/Math/subtraction.txt"));
+
+                Assert.False(
+                    await fileSystemProvider.Directory.ExistsAsync("/ShoppingLists/Homework/Biology/") &&
+                    await fileSystemProvider.File.ExistsAsync("/ShoppingLists/Homework/Biology/nervousSystem.txt") &&
+                    await fileSystemProvider.File.ExistsAsync("/ShoppingLists/Homework/Biology/skeletalSystem.txt"));
+            }
+        }
+
+        // TODO: an empty dir or sub-dir which is empty copy invoke might not work -- check this
+        await fileSystemProvider.Directory.MoveAsync(WellKnownPaths.Directories.Homework, "/ShoppingLists/");
+
+        // There are a few files written out to the in-memory filesystem when 'InitializeFileSystemsTests'
+        // is invoked. In this code block a check for the existence of the child files will be done. (2023-11-12)
+        {
+            // Ensure that the source NO longer exist
+            {
+                Assert.False(
+                    await fileSystemProvider.Directory.ExistsAsync(WellKnownPaths.Directories.Math) &&
+                    await fileSystemProvider.File.ExistsAsync(WellKnownPaths.Files.AdditionTxt) &&
+                    await fileSystemProvider.File.ExistsAsync(WellKnownPaths.Files.SubtractionTxt));
+
+                Assert.False(
+                    await fileSystemProvider.Directory.ExistsAsync(WellKnownPaths.Directories.Biology) &&
+                    await fileSystemProvider.File.ExistsAsync(WellKnownPaths.Files.NervousSystemTxt) &&
+                    await fileSystemProvider.File.ExistsAsync(WellKnownPaths.Files.SkeletalSystemTxt));
+            }
+
+            // Ensure that the destinations now exist
+            {
+                Assert.True(await fileSystemProvider.Directory.ExistsAsync("/ShoppingLists/"));
+
+                Assert.True(
+                    await fileSystemProvider.Directory.ExistsAsync("/ShoppingLists/Homework/Math/") &&
+                    await fileSystemProvider.File.ExistsAsync("/ShoppingLists/Homework/Math/addition.txt") &&
+                    await fileSystemProvider.File.ExistsAsync("/ShoppingLists/Homework/Math/subtraction.txt"));
+
+                Assert.True(
+                    await fileSystemProvider.Directory.ExistsAsync("/ShoppingLists/Homework/Biology/") &&
+                    await fileSystemProvider.File.ExistsAsync("/ShoppingLists/Homework/Biology/nervousSystem.txt") &&
+                    await fileSystemProvider.File.ExistsAsync("/ShoppingLists/Homework/Biology/skeletalSystem.txt"));
+            }
+        }
     }
 
     [Fact]
