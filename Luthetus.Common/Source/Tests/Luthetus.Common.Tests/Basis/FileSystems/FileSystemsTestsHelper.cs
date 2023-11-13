@@ -83,6 +83,7 @@ public class FileSystemsTestsHelper
     {
         public class Directories
         {
+            public const string Root = "/";
             public const string Homework = "/Homework/";
             public const string Math = "/Homework/Math/";
             public const string Biology = "/Homework/Biology/";

@@ -115,8 +115,6 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             string absolutePathString,
             CancellationToken cancellationToken = default)
         {
-            await _inMemoryFileSystemProvider._modificationSemaphore.WaitAsync();
-
             return await UnsafeEnumerateFileSystemEntriesAsync(
                 absolutePathString,
                 cancellationToken);

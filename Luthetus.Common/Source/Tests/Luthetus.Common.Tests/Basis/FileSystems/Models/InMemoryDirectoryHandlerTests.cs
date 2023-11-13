@@ -300,35 +300,140 @@ public class InMemoryDirectoryHandlerTests
     }
 
     [Fact]
-    public void GetDirectoriesAsync()
+    public async Task GetDirectoriesAsync()
     {
         /*
         public Task<string[]> GetDirectoriesAsync(
             string absolutePathString, CancellationToken cancellationToken = default)
          */
 
-        throw new NotImplementedException();
+        InitializeFileSystemsTests(
+            out InMemoryEnvironmentProvider environmentProvider,
+            out InMemoryFileSystemProvider fileSystemProvider,
+            out ServiceProvider serviceProvider);
+
+        {
+            Assert.True(await fileSystemProvider.Directory.ExistsAsync(WellKnownPaths.Directories.Homework));
+
+            var childDirectoryPaths = await fileSystemProvider.Directory.GetDirectoriesAsync(WellKnownPaths.Directories.Homework);
+
+            Assert.Contains(childDirectoryPaths, x => x == WellKnownPaths.Directories.Math);
+            Assert.Contains(childDirectoryPaths, x => x == WellKnownPaths.Directories.Biology);
+
+            Assert.DoesNotContain(childDirectoryPaths, x => x == WellKnownPaths.Files.AdditionTxt);
+            Assert.DoesNotContain(childDirectoryPaths, x => x == WellKnownPaths.Files.SubtractionTxt);
+            Assert.DoesNotContain(childDirectoryPaths, x => x == WellKnownPaths.Files.NervousSystemTxt);
+            Assert.DoesNotContain(childDirectoryPaths, x => x == WellKnownPaths.Files.SkeletalSystemTxt);
+        }
+
+        {
+            Assert.True(await fileSystemProvider.Directory.ExistsAsync(WellKnownPaths.Directories.Root));
+
+            var childDirectoryPaths = await fileSystemProvider.Directory.GetDirectoriesAsync(WellKnownPaths.Directories.Root);
+
+            Assert.Contains(childDirectoryPaths, x => x == WellKnownPaths.Directories.Homework);
+
+            Assert.DoesNotContain(childDirectoryPaths, x => x == WellKnownPaths.Directories.Math);
+            Assert.DoesNotContain(childDirectoryPaths, x => x == WellKnownPaths.Directories.Biology);
+
+            Assert.DoesNotContain(childDirectoryPaths, x => x == WellKnownPaths.Files.AdditionTxt);
+            Assert.DoesNotContain(childDirectoryPaths, x => x == WellKnownPaths.Files.SubtractionTxt);
+            Assert.DoesNotContain(childDirectoryPaths, x => x == WellKnownPaths.Files.NervousSystemTxt);
+            Assert.DoesNotContain(childDirectoryPaths, x => x == WellKnownPaths.Files.SkeletalSystemTxt);
+        }
     }
 
     [Fact]
-    public void GetFilesAsync()
+    public async Task GetFilesAsync()
     {
         /*
         public Task<string[]> GetFilesAsync(
             string absolutePathString, CancellationToken cancellationToken = default)
          */
 
-        throw new NotImplementedException();
+        InitializeFileSystemsTests(
+            out InMemoryEnvironmentProvider environmentProvider,
+            out InMemoryFileSystemProvider fileSystemProvider,
+            out ServiceProvider serviceProvider);
+
+        {
+            Assert.True(await fileSystemProvider.Directory.ExistsAsync(WellKnownPaths.Directories.Math));
+
+            var childFilePaths = await fileSystemProvider.Directory.GetFilesAsync(WellKnownPaths.Directories.Math);
+
+            Assert.Contains(childFilePaths, x => x == WellKnownPaths.Files.AdditionTxt);
+            Assert.Contains(childFilePaths, x => x == WellKnownPaths.Files.SubtractionTxt);
+
+            Assert.DoesNotContain(childFilePaths, x => x == WellKnownPaths.Files.NervousSystemTxt);
+            Assert.DoesNotContain(childFilePaths, x => x == WellKnownPaths.Files.SkeletalSystemTxt);
+        }
+
+        {
+            Assert.True(await fileSystemProvider.Directory.ExistsAsync(WellKnownPaths.Directories.Root));
+
+            var childFilePaths = await fileSystemProvider.Directory.GetFilesAsync(WellKnownPaths.Directories.Root);
+
+            Assert.Empty(childFilePaths);
+        }
     }
 
+    /// <summary>
+    /// TODO: Create a case where there exists both a directory and a file.
+    /// </summary>
+    /// <returns></returns>
     [Fact]
-    public void EnumerateFileSystemEntriesAsync()
+    public async Task EnumerateFileSystemEntriesAsync()
     {
         /*
         public async Task<IEnumerable<string>> EnumerateFileSystemEntriesAsync(
             string absolutePathString, CancellationToken cancellationToken = default)
          */
 
-        throw new NotImplementedException();
+        InitializeFileSystemsTests(
+            out InMemoryEnvironmentProvider environmentProvider,
+            out InMemoryFileSystemProvider fileSystemProvider,
+            out ServiceProvider serviceProvider);
+
+        {
+            Assert.True(await fileSystemProvider.Directory.ExistsAsync(WellKnownPaths.Directories.Homework));
+
+            var childPaths = await fileSystemProvider.Directory.EnumerateFileSystemEntriesAsync(WellKnownPaths.Directories.Homework);
+
+            Assert.Contains(childPaths, x => x == WellKnownPaths.Directories.Math);
+            Assert.Contains(childPaths, x => x == WellKnownPaths.Directories.Biology);
+
+            Assert.DoesNotContain(childPaths, x => x == WellKnownPaths.Files.AdditionTxt);
+            Assert.DoesNotContain(childPaths, x => x == WellKnownPaths.Files.SubtractionTxt);
+            Assert.DoesNotContain(childPaths, x => x == WellKnownPaths.Files.NervousSystemTxt);
+            Assert.DoesNotContain(childPaths, x => x == WellKnownPaths.Files.SkeletalSystemTxt);
+        }
+
+        {
+            Assert.True(await fileSystemProvider.Directory.ExistsAsync(WellKnownPaths.Directories.Root));
+
+            var childPaths = await fileSystemProvider.Directory.EnumerateFileSystemEntriesAsync(WellKnownPaths.Directories.Root);
+
+            Assert.Contains(childPaths, x => x == WellKnownPaths.Directories.Homework);
+
+            Assert.DoesNotContain(childPaths, x => x == WellKnownPaths.Directories.Math);
+            Assert.DoesNotContain(childPaths, x => x == WellKnownPaths.Directories.Biology);
+
+            Assert.DoesNotContain(childPaths, x => x == WellKnownPaths.Files.AdditionTxt);
+            Assert.DoesNotContain(childPaths, x => x == WellKnownPaths.Files.SubtractionTxt);
+            Assert.DoesNotContain(childPaths, x => x == WellKnownPaths.Files.NervousSystemTxt);
+            Assert.DoesNotContain(childPaths, x => x == WellKnownPaths.Files.SkeletalSystemTxt);
+        }
+
+        {
+            Assert.True(await fileSystemProvider.Directory.ExistsAsync(WellKnownPaths.Directories.Math));
+
+            var childPaths = await fileSystemProvider.Directory.EnumerateFileSystemEntriesAsync(WellKnownPaths.Directories.Math);
+
+            Assert.Contains(childPaths, x => x == WellKnownPaths.Files.AdditionTxt);
+            Assert.Contains(childPaths, x => x == WellKnownPaths.Files.SubtractionTxt);
+
+            Assert.DoesNotContain(childPaths, x => x == WellKnownPaths.Files.NervousSystemTxt);
+            Assert.DoesNotContain(childPaths, x => x == WellKnownPaths.Files.SkeletalSystemTxt);
+        }
     }
 }
