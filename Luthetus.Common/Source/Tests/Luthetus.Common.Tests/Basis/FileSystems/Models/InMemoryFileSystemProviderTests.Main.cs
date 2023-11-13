@@ -1,4 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.FileSystems.Models;
+using Microsoft.Extensions.DependencyInjection;
+using static Luthetus.Common.RazorLib.FileSystems.Models.InMemoryFileSystemProvider;
+using static Luthetus.Common.Tests.Basis.FileSystems.FileSystemsTestsHelper;
 
 namespace Luthetus.Common.Tests.Basis.FileSystems.Models;
 
@@ -9,37 +12,24 @@ public partial class InMemoryFileSystemProviderTests
 {
     /// <summary>
     /// <see cref="InMemoryFileSystemProvider(IEnvironmentProvider)"/>
+    /// <br/>----<br/>
+    /// <see cref="InMemoryFileSystemProvider.File"/>
+    /// <see cref="InMemoryFileSystemProvider.Directory"/>
+    /// <see cref="InMemoryFileSystemProvider.Files"/>
     /// </summary>
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
-    }
+        InitializeFileSystemsTests(
+            out InMemoryEnvironmentProvider environmentProvider,
+            out InMemoryFileSystemProvider fileSystemProvider,
+            out ServiceProvider serviceProvider);
 
-    /// <summary>
-    /// <see cref="InMemoryFileSystemProvider.Files"/>
-    /// </summary>
-    [Fact]
-    public void Files()
-    {
-        throw new NotImplementedException();
-    }
+        Assert.IsType<InMemoryFileSystemProvider>(fileSystemProvider);
+        Assert.IsType<InMemoryDirectoryHandler>(fileSystemProvider.Directory);
+        Assert.IsType<InMemoryFileHandler>(fileSystemProvider.File);
 
-    /// <summary>
-    /// <see cref="InMemoryFileSystemProvider.File"/>
-    /// </summary>
-    [Fact]
-    public void File()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="InMemoryFileSystemProvider.Directory"/>
-    /// </summary>
-    [Fact]
-    public void Directory()
-    {
-        throw new NotImplementedException();
+        Assert.Contains(fileSystemProvider.Files, x => x.AbsolutePath.Value == WellKnownPaths.Directories.Biology);
+        Assert.Contains(fileSystemProvider.Files, x => x.AbsolutePath.Value == WellKnownPaths.Files.NervousSystemTxt);
     }
 }
