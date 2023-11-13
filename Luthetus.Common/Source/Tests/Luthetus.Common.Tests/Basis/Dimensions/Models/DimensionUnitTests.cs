@@ -9,37 +9,30 @@ public class DimensionUnitTests
 {
     /// <summary>
     /// <see cref="DimensionUnit.Value"/>
+    /// <br/>----<br/>
+    /// <see cref="DimensionUnit.DimensionUnitKind"/>
+    /// <see cref="DimensionUnit.DimensionOperatorKind"/>
+    /// <see cref="DimensionUnit.Purpose"/>
     /// </summary>
     [Fact]
     public void Value()
     {
-        throw new NotImplementedException();
-    }
+        var value = 5;
+        var dimensionOperatorKind = DimensionOperatorKind.Add;
+        var purpose = "displacement";
+        var dimensionUnitKind = DimensionUnitKind.Pixels;
 
-    /// <summary>
-    /// <see cref="DimensionUnit.DimensionUnitKind"/>
-    /// </summary>
-    [Fact]
-    public void DimensionUnitKind()
-    {
-        throw new NotImplementedException();
-    }
+        var dimensionUnit = new DimensionUnit
+        {
+            Value = value,
+            DimensionOperatorKind = dimensionOperatorKind,
+            Purpose = purpose,
+            DimensionUnitKind = dimensionUnitKind,
+        };
 
-    /// <summary>
-    /// <see cref="DimensionUnit.DimensionOperatorKind"/>
-    /// </summary>
-    [Fact]
-    public void DimensionOperatorKind()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="DimensionUnit.Purpose"/>
-    /// </summary>
-    [Fact]
-    public void Purpose()
-    {
-        throw new NotImplementedException();
+        Assert.Equal(value, dimensionUnit.Value);
+        Assert.Equal(dimensionOperatorKind, dimensionUnit.DimensionOperatorKind);
+        Assert.Equal(purpose, dimensionUnit.Purpose);
+        Assert.Equal(dimensionUnitKind, dimensionUnit.DimensionUnitKind);
     }
 }

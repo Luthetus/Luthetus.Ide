@@ -9,37 +9,52 @@ public class ElementDimensionsTests
 {
     /// <summary>
     /// <see cref="ElementDimensions()"/>
+    /// <br/>----<br/>
+    /// <see cref="ElementDimensions.DimensionAttributeBag"/>
+    /// <see cref="ElementDimensions.ElementPositionKind"/>
+    /// <see cref="ElementDimensions.StyleString"/>
     /// </summary>
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
-    }
+        var elementDimensions = new ElementDimensions();
 
-    /// <summary>
-    /// <see cref="ElementDimensions.DimensionAttributeBag"/>
-    /// </summary>
-    [Fact]
-    public void DimensionAttributeBag()
-    {
-        throw new NotImplementedException();
-    }
+        Assert.Single(elementDimensions.DimensionAttributeBag, x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
+        Assert.Single(elementDimensions.DimensionAttributeBag, x => x.DimensionAttributeKind == DimensionAttributeKind.Height);
+        Assert.Single(elementDimensions.DimensionAttributeBag, x => x.DimensionAttributeKind == DimensionAttributeKind.Left);
+        Assert.Single(elementDimensions.DimensionAttributeBag, x => x.DimensionAttributeKind == DimensionAttributeKind.Right);
+        Assert.Single(elementDimensions.DimensionAttributeBag, x => x.DimensionAttributeKind == DimensionAttributeKind.Top);
+        Assert.Single(elementDimensions.DimensionAttributeBag, x => x.DimensionAttributeKind == DimensionAttributeKind.Bottom);
 
-    /// <summary>
-    /// <see cref="ElementDimensions.ElementPositionKind"/>
-    /// </summary>
-    [Fact]
-    public void ElementPositionKind()
-    {
-        throw new NotImplementedException();
-    }
+        Assert.Equal(ElementPositionKind.Static, elementDimensions.ElementPositionKind);
+        Assert.Equal("position: static; ", elementDimensions.StyleString);
 
-    /// <summary>
-    /// <see cref="ElementDimensions.StyleString"/>
-    /// </summary>
-    [Fact]
-    public void StyleString()
-    {
-        throw new NotImplementedException();
+        // Test setter
+        {
+            elementDimensions.ElementPositionKind = ElementPositionKind.Fixed;
+
+            Assert.Equal(ElementPositionKind.Fixed, elementDimensions.ElementPositionKind);
+            Assert.Equal("position: fixed; ", elementDimensions.StyleString);
+        }
+
+        var widthDimensionAttribute = elementDimensions.DimensionAttributeBag.Single(x =>
+            x.DimensionAttributeKind == DimensionAttributeKind.Width);
+
+        widthDimensionAttribute.DimensionUnitBag.Add(new DimensionUnit
+        {
+            Value = 60,
+            DimensionUnitKind = DimensionUnitKind.ViewportWidth,
+        });
+
+        var heightDimensionAttribute = elementDimensions.DimensionAttributeBag.Single(x =>
+            x.DimensionAttributeKind == DimensionAttributeKind.Height);
+
+        widthDimensionAttribute.DimensionUnitBag.Add(new DimensionUnit
+        {
+            Value = 60,
+            DimensionUnitKind = DimensionUnitKind.ViewportHeight,
+        });
+
+        Assert.Equal("position: fixed; width: calc(60vw + 60vh);", elementDimensions.StyleString);
     }
 }

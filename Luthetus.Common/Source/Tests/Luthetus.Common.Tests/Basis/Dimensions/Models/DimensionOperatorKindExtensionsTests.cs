@@ -13,6 +13,9 @@ public class DimensionOperatorKindExtensionsTests
     [Fact]
     public void GetStyleString()
     {
-        throw new NotImplementedException();
+        Assert.Equal("+", DimensionOperatorKind.Add.GetStyleString());
+        Assert.Equal("-", DimensionOperatorKind.Subtract.GetStyleString());
+        Assert.Equal("*", DimensionOperatorKind.Multiply.GetStyleString());
+        Assert.Equal("/", DimensionOperatorKind.Divide.GetStyleString());
     }
 }

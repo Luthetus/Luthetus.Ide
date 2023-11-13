@@ -213,39 +213,62 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             if (indexOfExistingFile == -1)
                 return;
 
-            var childFileBag = _inMemoryFileSystemProvider._files.Where(imf =>
-                imf.AbsolutePath.Value.StartsWith(sourceAbsolutePathString));
+            var sourceAbsolutePath = new AbsolutePath(
+                sourceAbsolutePathString,
+                true,
+                _environmentProvider);
 
-            var destinationAbsolutePath = new AbsolutePath(
+            var childDirectories = (await GetDirectoriesAsync(sourceAbsolutePathString, cancellationToken))
+                .Select(x => new AbsolutePath(x, true, _environmentProvider))
+                .ToArray();
+
+            var childFiles = (await GetFilesAsync(sourceAbsolutePathString, cancellationToken))
+                .Select(x => new AbsolutePath(x, false, _environmentProvider))
+                .ToArray();
+
+            var children = childDirectories.Union(childFiles);
+
+            var filePathStrings = children.Select(x => x.Value).ToArray();
+
+            var destinationExists = await UnsafeExistsAsync(destinationAbsolutePathString, cancellationToken);
+
+            if (!destinationExists)
+            {
+                var destinationAbsolutePath = new AbsolutePath(
                 destinationAbsolutePathString,
                 true,
                 _environmentProvider);
 
-            var destinationFile = new InMemoryFile(
-                string.Empty,
-                destinationAbsolutePath,
-                DateTime.UtcNow,
-                true);
+                var destinationFile = new InMemoryFile(
+                    string.Empty,
+                    destinationAbsolutePath,
+                    DateTime.UtcNow,
+                    true);
 
-            _inMemoryFileSystemProvider._files.Add(destinationFile);
+                _inMemoryFileSystemProvider._files.Add(destinationFile);
+            }
 
-            foreach (var child in childFileBag)
+            foreach (var child in children)
             {
-                var destinationChild = _environmentProvider.JoinPaths(
+                var innerDestinationPath = _environmentProvider.JoinPaths(
                     destinationAbsolutePathString,
-                    child.AbsolutePath.NameWithExtension);
+                    sourceAbsolutePath.NameWithExtension);
+
+                var destinationChild = _environmentProvider.JoinPaths(
+                    innerDestinationPath,
+                    child.NameWithExtension);
 
                 if (child.IsDirectory)
                 {
                     await _inMemoryFileSystemProvider._directory.UnsafeCopyAsync(
-                        child.AbsolutePath.Value,
-                        destinationChild,
+                        child.Value,
+                        innerDestinationPath,
                         cancellationToken);
                 }
                 else
                 {
                     await _inMemoryFileSystemProvider._file.UnsafeCopyAsync(
-                        child.AbsolutePath.Value,
+                        child.Value,
                         destinationChild,
                         cancellationToken);
                 }

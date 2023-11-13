@@ -13,6 +13,13 @@ public class DimensionUnitKindExtensionsTests
     [Fact]
     public void GetStyleString()
     {
-        throw new NotImplementedException();
+        Assert.Equal("px", DimensionUnitKind.Pixels.GetStyleString());
+        Assert.Equal("vw", DimensionUnitKind.ViewportWidth.GetStyleString());
+        Assert.Equal("vh", DimensionUnitKind.ViewportHeight.GetStyleString());
+        Assert.Equal("%", DimensionUnitKind.Percentage.GetStyleString());
+        Assert.Equal("rch", DimensionUnitKind.RootCharacterWidth.GetStyleString());
+        Assert.Equal("rem", DimensionUnitKind.RootCharacterHeight.GetStyleString());
+        Assert.Equal("ch", DimensionUnitKind.CharacterWidth.GetStyleString());
+        Assert.Equal("em", DimensionUnitKind.CharacterHeight.GetStyleString());
     }
 }
