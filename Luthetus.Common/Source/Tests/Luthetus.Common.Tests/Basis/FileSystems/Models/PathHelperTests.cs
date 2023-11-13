@@ -1,5 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.FileSystems.Models;
 using Microsoft.Extensions.DependencyInjection;
+using static Luthetus.Common.Tests.Basis.FileSystems.FileSystemsTestsHelper;
 
 namespace Luthetus.Common.Tests.Basis.FileSystems.Models;
 
@@ -108,7 +109,98 @@ public class PathHelperTests
     [Fact]
     public void GetRelativeFromTwoAbsolutes()
     {
-        throw new NotImplementedException();
+        InitializeFileSystemsTests(
+            out InMemoryEnvironmentProvider environmentProvider,
+            out InMemoryFileSystemProvider fileSystemProvider,
+            out ServiceProvider serviceProvider);
+
+        // File to file with UpDir directives.
+        {
+            var startAbsolutePath = new AbsolutePath(
+                WellKnownPaths.Files.NervousSystemTxt,
+                false,
+                environmentProvider);
+
+            var endAbsolutePath = new AbsolutePath(
+                WellKnownPaths.Files.AdditionTxt,
+                false,
+                environmentProvider);
+
+            var expectedRelativePathString = "../Math/addition.txt";
+
+            var outputRelativePathString = PathHelper.GetRelativeFromTwoAbsolutes(
+                startAbsolutePath,
+                endAbsolutePath,
+                environmentProvider);
+
+            Assert.Equal(expectedRelativePathString, outputRelativePathString);
+        }
+
+        // File to file NOT-USING any UpDir directives.
+        {
+            var startAbsolutePath = new AbsolutePath(
+                WellKnownPaths.Files.NervousSystemTxt,
+                false,
+                environmentProvider);
+
+            var endAbsolutePath = new AbsolutePath(
+                WellKnownPaths.Files.SkeletalSystemTxt,
+                false,
+                environmentProvider);
+
+            var expectedRelativePathString = "./skeletalSystem.txt";
+
+            var outputRelativePathString = PathHelper.GetRelativeFromTwoAbsolutes(
+                startAbsolutePath,
+                endAbsolutePath,
+                environmentProvider);
+
+            Assert.Equal(expectedRelativePathString, outputRelativePathString);
+        }
+
+        // A single UpDir directive from a file.
+        {
+            var startAbsolutePath = new AbsolutePath(
+                WellKnownPaths.Files.NervousSystemTxt,
+                false,
+                environmentProvider);
+
+            var endAbsolutePath = new AbsolutePath(
+                WellKnownPaths.Directories.Homework,
+                false,
+                environmentProvider);
+
+            var expectedRelativePathString = "../";
+
+            var outputRelativePathString = PathHelper.GetRelativeFromTwoAbsolutes(
+                startAbsolutePath,
+                endAbsolutePath,
+                environmentProvider);
+
+            Assert.Equal(expectedRelativePathString, outputRelativePathString);
+        }
+
+        // A single UpDir directive from a directory.
+        {
+            var startAbsolutePath = new AbsolutePath(
+                WellKnownPaths.Directories.Biology,
+                false,
+                environmentProvider);
+
+            var endAbsolutePath = new AbsolutePath(
+                WellKnownPaths.Directories.Homework,
+                false,
+                environmentProvider);
+
+            var expectedRelativePathString = "../";
+
+            var outputRelativePathString = PathHelper.GetRelativeFromTwoAbsolutes(
+                startAbsolutePath,
+                endAbsolutePath,
+                environmentProvider);
+
+            Assert.Equal(expectedRelativePathString, outputRelativePathString);
+        }
     }
 
     /// <summary>
