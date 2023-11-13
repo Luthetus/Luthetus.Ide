@@ -96,7 +96,6 @@ public class RelativePath : IRelativePath
     public string? ExactInput { get; }
     public string Value => _value ??= CalculateValue();
     public string NameWithExtension => _nameWithExtension ??= PathHelper.CalculateNameWithExtension(NameNoExtension, ExtensionNoPeriod, IsDirectory);
-    public char UsedDirectorySeparatorChar => throw new NotImplementedException();
 
     private void ConsumeTokenAsDirectory()
     {

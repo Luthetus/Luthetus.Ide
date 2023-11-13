@@ -1,5 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.FileSystems.Models;
 using Microsoft.Extensions.DependencyInjection;
+using System.IO;
 using static Luthetus.Common.Tests.Basis.FileSystems.FileSystemsTestsHelper;
 
 namespace Luthetus.Common.Tests.Basis.FileSystems.Models;
@@ -25,7 +26,7 @@ public class PathHelperTests
     [Fact]
     public void GetAbsoluteFromAbsoluteAndRelative()
     {
-        FileSystemsTestsHelper.InitializeFileSystemsTests(
+        InitializeFileSystemsTests(
             out InMemoryEnvironmentProvider environmentProvider,
             out InMemoryFileSystemProvider fileSystemProvider,
             out ServiceProvider serviceProvider);
@@ -209,6 +210,29 @@ public class PathHelperTests
     [Fact]
     public void CalculateNameWithExtension()
     {
-        throw new NotImplementedException();
+        InitializeFileSystemsTests(
+            out InMemoryEnvironmentProvider environmentProvider,
+            out InMemoryFileSystemProvider fileSystemProvider,
+            out ServiceProvider serviceProvider);
+
+        Assert.Equal("MyClass.cs", PathHelper.CalculateNameWithExtension(
+            "MyClass",
+            "cs",
+            false));
+
+        Assert.Equal("MyClass", PathHelper.CalculateNameWithExtension(
+            "MyClass",
+            string.Empty,
+            false));
+
+        Assert.Equal("MyClass/", PathHelper.CalculateNameWithExtension(
+            "MyClass",
+            environmentProvider.DirectorySeparatorChar.ToString(),
+            true));
+        
+        Assert.Equal("MyClass.cs/", PathHelper.CalculateNameWithExtension(
+            "MyClass.cs",
+            environmentProvider.DirectorySeparatorChar.ToString(),
+            true));
     }
 }
