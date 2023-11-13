@@ -1,4 +1,10 @@
-﻿using Luthetus.Common.RazorLib.Tabs.States;
+﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Tabs.Models;
+using Luthetus.Common.RazorLib.Tabs.States;
+using static Luthetus.Common.Tests.Basis.Tabs.States.TabStateActionsTests;
+using System.Collections.Immutable;
+using Fluxor;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Luthetus.Common.Tests.Basis.Tabs.States;
 
@@ -16,7 +22,26 @@ public class TabStateReducerTests
             TabState inState, RegisterTabGroupAction registerTabGroupAction)
          */
 
-        throw new NotImplementedException();
+        InitializeTabStateReducerTests(
+            out var dispatcher,
+            out var tabStateWrap,
+            out var tabGroup,
+            out _,
+            out _,
+            out _,
+            out _);
+
+        var registerTabGroupAction = new TabState.RegisterTabGroupAction(tabGroup);
+
+        Assert.DoesNotContain(
+            tabStateWrap.Value.TabGroupBag,
+            x => x.Key == tabGroup.Key);
+
+        dispatcher.Dispatch(registerTabGroupAction);
+
+        Assert.Contains(
+            tabStateWrap.Value.TabGroupBag,
+            x => x.Key == tabGroup.Key);
     }
 
     [Fact]
@@ -28,7 +53,28 @@ public class TabStateReducerTests
             TabState inState, DisposeTabGroupAction disposeTabGroupAction)
          */
 
-        throw new NotImplementedException();
+        InitializeTabStateReducerTests(
+            out var dispatcher,
+            out var tabStateWrap,
+            out var tabGroup,
+            out _,
+            out _,
+            out _,
+            out _);
+
+        var registerTabGroupAction = new TabState.RegisterTabGroupAction(tabGroup);
+        dispatcher.Dispatch(registerTabGroupAction);
+
+        Assert.Contains(
+            tabStateWrap.Value.TabGroupBag,
+            x => x.Key == tabGroup.Key);
+
+        var disposeTabGroupAction = new TabState.DisposeTabGroupAction(tabGroup.Key);
+        dispatcher.Dispatch(disposeTabGroupAction);
+
+        Assert.DoesNotContain(
+            tabStateWrap.Value.TabGroupBag,
+            x => x.Key == tabGroup.Key);
     }
 
     [Fact]
@@ -40,7 +86,35 @@ public class TabStateReducerTests
             TabState inState, SetTabEntryBagAction setTabEntryBagAction)
          */
 
-        throw new NotImplementedException();
+        InitializeTabStateReducerTests(
+            out var dispatcher,
+            out var tabStateWrap,
+            out var tabGroup,
+            out _,
+            out _,
+            out _,
+            out var tabEntries);
+
+        var registerTabGroupAction = new TabState.RegisterTabGroupAction(tabGroup);
+        dispatcher.Dispatch(registerTabGroupAction);
+
+        Assert.Contains(tabStateWrap.Value.TabGroupBag, x => x.Key == tabGroup.Key);
+
+        dispatcher.Dispatch(new TabState.SetTabEntryBagAction(
+            tabGroup.Key,
+            tabEntries));
+
+        tabGroup = tabStateWrap.Value.TabGroupBag.Single(x => x.Key == tabGroup.Key);
+
+        var emptyTabEntries = ImmutableList<TabEntryNoType>.Empty;
+        Assert.NotEqual(emptyTabEntries, tabGroup.EntryBag);
+
+        dispatcher.Dispatch(new TabState.SetTabEntryBagAction(
+            tabGroup.Key,
+            emptyTabEntries));
+
+        tabGroup = tabStateWrap.Value.TabGroupBag.Single(x => x.Key == tabGroup.Key);
+        Assert.Equal(emptyTabEntries, tabGroup.EntryBag);
     }
 
     [Fact]
@@ -52,6 +126,82 @@ public class TabStateReducerTests
             TabState inState, SetActiveTabEntryKeyAction setActiveTabEntryKeyAction)
          */
 
-        throw new NotImplementedException();
+        InitializeTabStateReducerTests(
+            out var dispatcher,
+            out var tabStateWrap,
+            out var tabGroup,
+            out _,
+            out _,
+            out var blueTabEntry,
+            out var tabEntries);
+
+        var registerTabGroupAction = new TabState.RegisterTabGroupAction(tabGroup);
+        dispatcher.Dispatch(registerTabGroupAction);
+
+        Assert.Contains(tabStateWrap.Value.TabGroupBag, x => x.Key == tabGroup.Key);
+
+        dispatcher.Dispatch(new TabState.SetTabEntryBagAction(
+            tabGroup.Key,
+            tabEntries));
+
+        tabGroup = tabStateWrap.Value.TabGroupBag.Single(x => x.Key == tabGroup.Key);
+
+        var emptyTabEntries = ImmutableList<TabEntryNoType>.Empty;
+        Assert.NotEqual(emptyTabEntries, tabGroup.EntryBag);
+
+        dispatcher.Dispatch(new TabState.SetActiveTabEntryKeyAction(
+            tabGroup.Key,
+            blueTabEntry.TabEntryKey));
+
+        tabGroup = tabStateWrap.Value.TabGroupBag.Single(x => x.Key == tabGroup.Key);
+        Assert.Equal(blueTabEntry.TabEntryKey, tabGroup.ActiveEntryKey);
+    }
+
+    private void InitializeTabStateReducerTests(
+        out IDispatcher dispatcher,
+        out IState<TabState> tabStateWrap,
+        out TabGroup sampleTabGroup,
+        out TabEntryWithType<ColorKind> redTabEntry,
+        out TabEntryWithType<ColorKind> greenTabEntry,
+        out TabEntryWithType<ColorKind> blueTabEntry,
+        out ImmutableList<TabEntryNoType> tabEntries)
+    {
+        var services = new ServiceCollection()
+            .AddFluxor(options => options.ScanAssemblies(typeof(TabState).Assembly));
+
+        var serviceProvider = services.BuildServiceProvider();
+
+        var store = serviceProvider.GetRequiredService<IStore>();
+        store.InitializeAsync().Wait();
+
+        tabStateWrap = serviceProvider.GetRequiredService<IState<TabState>>();
+
+        dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
+
+        redTabEntry = new TabEntryWithType<ColorKind>(
+            ColorKind.Red,
+            tabEntry => ((TabEntryWithType<ColorKind>)tabEntry).Item.ToString(),
+            _ => { });
+
+        greenTabEntry = new TabEntryWithType<ColorKind>(
+            ColorKind.Green,
+            tabEntry => ((TabEntryWithType<ColorKind>)tabEntry).Item.ToString(),
+            _ => { });
+
+        blueTabEntry = new TabEntryWithType<ColorKind>(
+            ColorKind.Blue,
+            tabEntry => ((TabEntryWithType<ColorKind>)tabEntry).Item.ToString(),
+            _ => { });
+
+        var temporaryTabEntries = tabEntries = new TabEntryNoType[]
+        {
+            redTabEntry,
+            greenTabEntry,
+            blueTabEntry,
+        }.ToImmutableList();
+
+        sampleTabGroup = new TabGroup(
+            loadTabEntriesArgs => Task.FromResult(new TabGroupLoadTabEntriesOutput(temporaryTabEntries)),
+            Key<TabGroup>.NewKey());
     }
 }

@@ -1,4 +1,6 @@
-﻿using Luthetus.Common.RazorLib.Tabs.States;
+﻿using Luthetus.Common.RazorLib.Tabs.Models;
+using Luthetus.Common.RazorLib.Tabs.States;
+using System.Collections.Immutable;
 
 namespace Luthetus.Common.Tests.Basis.Tabs.States;
 
@@ -13,6 +15,8 @@ public class TabStateMainTests
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
+        var tabState = new TabState();
+
+        Assert.Equal(ImmutableList<TabGroup>.Empty, tabState.TabGroupBag);
     }
 }

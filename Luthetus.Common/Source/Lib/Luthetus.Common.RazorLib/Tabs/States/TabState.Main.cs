@@ -7,7 +7,7 @@ namespace Luthetus.Common.RazorLib.Tabs.States;
 [FeatureState]
 public partial record TabState(ImmutableList<TabGroup> TabGroupBag)
 {
-    private TabState() : this(ImmutableList<TabGroup>.Empty)
+    public TabState() : this(ImmutableList<TabGroup>.Empty)
     {
     }
 }

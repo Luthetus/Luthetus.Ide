@@ -16,10 +16,15 @@ public class TabStateActionsTests
     [Fact]
     public void RegisterTabGroupAction()
     {
-        //var tabGroup = new TabGroup();
-        //var aaa = new TabState.RegisterTabGroupAction();
+        InitializeTabStateActionsTests(
+            out var tabGroup,
+            out _,
+            out _,
+            out _,
+            out _);
 
-        throw new NotImplementedException();
+        var registerTabGroupAction = new TabState.RegisterTabGroupAction(tabGroup);
+        Assert.Equal(tabGroup, registerTabGroupAction.TabGroup);
     }
 
     /// <summary>
@@ -28,7 +33,15 @@ public class TabStateActionsTests
     [Fact]
     public void DisposeTabGroupAction()
     {
-	    throw new NotImplementedException();
+        InitializeTabStateActionsTests(
+            out var tabGroup,
+            out _,
+            out _,
+            out _,
+            out _);
+
+        var disposeTabGroupAction = new TabState.DisposeTabGroupAction(tabGroup.Key);
+        Assert.Equal(tabGroup.Key, disposeTabGroupAction.TabGroupKey);
     }
 
     /// <summary>
@@ -37,7 +50,21 @@ public class TabStateActionsTests
     [Fact]
     public void SetTabEntryBagAction()
     {
-	    throw new NotImplementedException();
+        InitializeTabStateActionsTests(
+            out var tabGroup,
+            out _,
+            out _,
+            out _,
+            out _);
+
+        var emptyTabEntries = ImmutableList<TabEntryNoType>.Empty;
+
+        var setTabEntryBagAction = new TabState.SetTabEntryBagAction(
+            tabGroup.Key,
+            emptyTabEntries);
+
+        Assert.Equal(tabGroup.Key, setTabEntryBagAction.TabGroupKey);
+        Assert.Equal(emptyTabEntries, setTabEntryBagAction.TabEntryBag);
     }
 
     /// <summary>
@@ -46,26 +73,59 @@ public class TabStateActionsTests
     [Fact]
     public void SetActiveTabEntryKeyAction()
     {
-        throw new NotImplementedException();
+        InitializeTabStateActionsTests(
+            out var tabGroup,
+            out var redTabEntry,
+            out _,
+            out _,
+            out _);
+
+        var setActiveTabEntryKeyAction = new TabState.SetActiveTabEntryKeyAction(
+            tabGroup.Key,
+            redTabEntry.TabEntryKey);
+
+        Assert.Equal(tabGroup.Key, setActiveTabEntryKeyAction.TabGroupKey);
+        Assert.Equal(redTabEntry.TabEntryKey, setActiveTabEntryKeyAction.TabEntryKey);
     }
 
-    private void InitializeTabStateActionsTests(out TabGroup sampleTabGroup)
+    public enum ColorKind
     {
+        Red,
+        Green,
+        Blue,
+    }
+
+    private void InitializeTabStateActionsTests(
+        out TabGroup sampleTabGroup,
+        out TabEntryWithType<ColorKind> redTabEntry,
+        out TabEntryWithType<ColorKind> greenTabEntry,
+        out TabEntryWithType<ColorKind> blueTabEntry,
+        out ImmutableList<TabEntryNoType> tabEntries)
+    {
+        redTabEntry = new TabEntryWithType<ColorKind>(
+            ColorKind.Red,
+            tabEntry => ((TabEntryWithType<ColorKind>)tabEntry).Item.ToString(),
+            _ => { });
+
+        greenTabEntry = new TabEntryWithType<ColorKind>(
+            ColorKind.Green,
+            tabEntry => ((TabEntryWithType<ColorKind>)tabEntry).Item.ToString(),
+            _ => { });
+
+        blueTabEntry = new TabEntryWithType<ColorKind>(
+            ColorKind.Blue,
+            tabEntry => ((TabEntryWithType<ColorKind>)tabEntry).Item.ToString(),
+            _ => { });
+
+        var temporaryTabEntries = tabEntries = new TabEntryNoType[] 
+        { 
+            redTabEntry,
+            greenTabEntry,
+            blueTabEntry,
+        }.ToImmutableList();
+
         sampleTabGroup = new TabGroup(
-            loadTabEntriesArgs =>
-            {
-                var tabEntry = new TabEntryWithType<bool>(
-                    true,
-                    _ => string.Empty,
-                    _ => { });
-
-                var aaa = new TabEntryNoType[] 
-                {
-                   tabEntry
-                }.ToImmutableList();
-
-                return Task.FromResult(new TabGroupLoadTabEntriesOutput(aaa));
-            },
+            loadTabEntriesArgs => Task.FromResult(new TabGroupLoadTabEntriesOutput(temporaryTabEntries)),
             Key<TabGroup>.NewKey());
     }
 }
