@@ -320,18 +320,6 @@ public class TreeViewAdhocTests
     [Fact]
     public void GetTreeViewRenderer()
     {
-        /*
-         return new TreeViewRenderer(
-            typeof(TreeViewAdhocDisplay),
-            new Dictionary<string, object?>
-            {
-                {
-                    nameof(TreeViewAdhocDisplay.TreeViewNoTypeAdhoc),
-                    this
-                },
-            });
-         */
-
         var treeViewAdhoc = TreeViewAdhoc.ConstructTreeViewAdhoc();
 
         var treeViewRenderer = treeViewAdhoc.GetTreeViewRenderer();
