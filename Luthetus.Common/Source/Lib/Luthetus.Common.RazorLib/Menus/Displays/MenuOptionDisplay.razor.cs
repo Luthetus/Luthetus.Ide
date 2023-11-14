@@ -42,7 +42,7 @@ public partial class MenuOptionDisplay : ComponentBase
             ? "luth_active"
             : string.Empty;
 
-    private MenuOptionWidgetParameters MenuOptionWidgetParameters => new(
+    private MenuOptionCallbacks MenuOptionCallbacks => new(
         () => HideWidgetAsync(null),
         HideWidgetAsync);
 

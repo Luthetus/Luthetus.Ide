@@ -1,8 +1,8 @@
 ﻿namespace Luthetus.Common.RazorLib.Menus.Models;
 
-public class MenuOptionWidgetParameters
+public class MenuOptionCallbacks
 {
-    public MenuOptionWidgetParameters(
+    public MenuOptionCallbacks(
         Func<Task> hideWidgetAsync,
         Func<Action, Task> completeWidgetAsync)
     {
