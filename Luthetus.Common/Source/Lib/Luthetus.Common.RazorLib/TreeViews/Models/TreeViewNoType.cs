@@ -15,8 +15,8 @@ public abstract class TreeViewNoType
     public List<TreeViewNoType> ChildBag { get; set; } = new();
 
     /// <summary>
-    /// <see cref="IndexAmongSiblings"/> refers to in the Parent tree view entry's
-    /// list of children at what index does this tree view exist at?
+    /// <see cref="IndexAmongSiblings"/> refers to the index which this <see cref="TreeViewNoType"/>
+    /// is found at within their <see cref="Parent"/>'s <see cref="ChildBag"/>
     /// </summary>
     public int IndexAmongSiblings { get; set; }
     public bool IsRoot { get; set; }

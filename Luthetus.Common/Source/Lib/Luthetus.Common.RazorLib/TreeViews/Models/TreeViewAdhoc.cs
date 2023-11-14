@@ -20,12 +20,12 @@ public class TreeViewAdhoc : TreeViewWithType<byte>
         if (obj is not TreeViewAdhoc treeViewAdhoc)
             return false;
 
-        return treeViewAdhoc.Item == Item;
+        return treeViewAdhoc.Key == Key;
     }
 
     public override int GetHashCode()
     {
-        return Item;
+        return Key.GetHashCode();
     }
 
     public static TreeViewAdhoc ConstructTreeViewAdhoc()
@@ -82,5 +82,6 @@ public class TreeViewAdhoc : TreeViewWithType<byte>
     public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
     {
         // This method is meant to do nothing in this case.
+        return;
     }
 }
