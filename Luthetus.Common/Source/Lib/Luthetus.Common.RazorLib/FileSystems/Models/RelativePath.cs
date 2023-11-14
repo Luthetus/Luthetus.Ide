@@ -15,21 +15,56 @@ public class RelativePath : IRelativePath
         bool isDirectory,
         IEnvironmentProvider environmentProvider)
     {
-        // TODO: Handle ../../myFile.c
-
         ExactInput = relativePathString;
         IsDirectory = isDirectory;
         EnvironmentProvider = environmentProvider;
 
-        if (relativePathString.StartsWith('.'))
+        // UpDirDirectiveCount
         {
-            while (_position < relativePathString.Length)
-            {
-                char currentCharacter = relativePathString[_position++];
+            var upperDirectoryString = relativePathString.Replace(
+                environmentProvider.AltDirectorySeparatorChar,
+                environmentProvider.DirectorySeparatorChar);
 
-                if (EnvironmentProvider.IsDirectorySeparator(currentCharacter))
-                    break;
+            UpDirDirectiveCount = 0;
+            var moveUpDirectoryToken = $"..{environmentProvider.DirectorySeparatorChar}";
+
+            int indexOfUpperDirectory;
+
+            while ((indexOfUpperDirectory = upperDirectoryString.IndexOf(
+                moveUpDirectoryToken, StringComparison.InvariantCulture)) != -1)
+            {
+                UpDirDirectiveCount++;
+
+                upperDirectoryString = upperDirectoryString.Remove(
+                    indexOfUpperDirectory,
+                    moveUpDirectoryToken.Length);
             }
+
+            _position += moveUpDirectoryToken.Length * UpDirDirectiveCount;
+        }
+        
+        // './' or no starting '/' to indicate same directory as current
+        if (UpDirDirectiveCount == 0)
+        {
+            var remainingRelativePath = relativePathString.Replace(
+                environmentProvider.AltDirectorySeparatorChar,
+                environmentProvider.DirectorySeparatorChar);
+
+            var currentDirectoryToken = $".{environmentProvider.DirectorySeparatorChar}";
+
+            if (remainingRelativePath.IndexOf(currentDirectoryToken, StringComparison.InvariantCulture)
+                != -1)
+            {
+                _position += currentDirectoryToken.Length;
+            }
+        }
+
+        if (IsDirectory)
+        {
+            // Strip the last character if this is a directory, where the exact input ended in a directory separator char.
+            // Reasoning: This standardizes what a directory looks like within the scope of this method.
+            if (EnvironmentProvider.IsDirectorySeparator(relativePathString.LastOrDefault()))
+                relativePathString = relativePathString[..^1];
         }
 
         while (_position < relativePathString.Length)
@@ -42,32 +77,72 @@ public class RelativePath : IRelativePath
                 _tokenBuilder.Append(currentCharacter);
         }
 
-        var fileNameWithExtension = _tokenBuilder.ToString();
-        var splitFileName = fileNameWithExtension.Split('.');
+        var fileNameAmbiguous = _tokenBuilder.ToString();
 
-        if (splitFileName.Length == 2)
+        if (!IsDirectory)
         {
-            NameNoExtension = splitFileName[0];
-            ExtensionNoPeriod = splitFileName[1];
-        }
-        else if (splitFileName.Length == 1)
-        {
-            NameNoExtension = splitFileName[0];
-            ExtensionNoPeriod = string.Empty;
+            var splitFileNameAmiguous = fileNameAmbiguous.Split('.');
+
+            if (splitFileNameAmiguous.Length == 2)
+            {
+                NameNoExtension = splitFileNameAmiguous[0];
+                ExtensionNoPeriod = splitFileNameAmiguous[1];
+            }
+            else if (splitFileNameAmiguous.Length == 1)
+            {
+                NameNoExtension = splitFileNameAmiguous[0];
+                ExtensionNoPeriod = string.Empty;
+            }
+            else
+            {
+                StringBuilder fileNameBuilder = new();
+
+                foreach (var split in splitFileNameAmiguous.SkipLast(1))
+                {
+                    fileNameBuilder.Append($"{split}.");
+                }
+
+                fileNameBuilder.Remove(fileNameBuilder.Length - 1, 1);
+
+                NameNoExtension = fileNameBuilder.ToString();
+                ExtensionNoPeriod = splitFileNameAmiguous.Last();
+            }
         }
         else
         {
-            StringBuilder fileNameBuilder = new();
+            NameNoExtension = fileNameAmbiguous;
+            ExtensionNoPeriod = EnvironmentProvider.DirectorySeparatorChar.ToString();
+        }
 
-            foreach (var split in splitFileName.SkipLast(1))
-            {
-                fileNameBuilder.Append($"{split}.");
-            }
+        // TODO: Delete this old code
+        {
+            //var fileNameWithExtension = _tokenBuilder.ToString();
+            //var splitFileName = fileNameWithExtension.Split('.');
 
-            fileNameBuilder.Remove(fileNameBuilder.Length - 1, 1);
+            //if (splitFileName.Length == 2)
+            //{
+            //    NameNoExtension = splitFileName[0];
+            //    ExtensionNoPeriod = splitFileName[1];
+            //}
+            //else if (splitFileName.Length == 1)
+            //{
+            //    NameNoExtension = splitFileName[0];
+            //    ExtensionNoPeriod = string.Empty;
+            //}
+            //else
+            //{
+            //    StringBuilder fileNameBuilder = new();
 
-            NameNoExtension = fileNameBuilder.ToString();
-            ExtensionNoPeriod = splitFileName.Last();
+            //    foreach (var split in splitFileName.SkipLast(1))
+            //    {
+            //        fileNameBuilder.Append($"{split}.");
+            //    }
+
+            //    fileNameBuilder.Remove(fileNameBuilder.Length - 1, 1);
+
+            //    NameNoExtension = fileNameBuilder.ToString();
+            //    ExtensionNoPeriod = splitFileName.Last();
+            //}
         }
     }
 
@@ -112,12 +187,38 @@ public class RelativePath : IRelativePath
 
     private string CalculateValue()
     {
-        StringBuilder absolutePathStringBuilder = new();
+        StringBuilder relativePathStringBuilder = new();
 
-        if (AncestorDirectoryBag.Any())
-            absolutePathStringBuilder.Append(AncestorDirectoryBag.Select(d => d.NameWithExtension));
+        if (UpDirDirectiveCount > 0)
+        {
+            var moveUpDirectoryToken = $"..{EnvironmentProvider.DirectorySeparatorChar}";
 
-        absolutePathStringBuilder.Append(NameWithExtension);
-        return absolutePathStringBuilder.ToString();
+            for (var i = 0; i < UpDirDirectiveCount; i++)
+            {
+                relativePathStringBuilder.Append(moveUpDirectoryToken);
+            }
+        }
+        else
+        {
+            var currentDirectoryToken = $".{EnvironmentProvider.DirectorySeparatorChar}";
+            relativePathStringBuilder.Append(currentDirectoryToken);
+        }
+
+        foreach (var directory in AncestorDirectoryBag)
+        {
+            relativePathStringBuilder.Append(directory.NameWithExtension);
+        }
+
+        relativePathStringBuilder.Append(NameWithExtension);
+
+        var relativePathString = relativePathStringBuilder.ToString();
+
+        if (relativePathString.EndsWith(new string(EnvironmentProvider.DirectorySeparatorChar, 2))  ||
+            relativePathString.EndsWith(new string(EnvironmentProvider.AltDirectorySeparatorChar, 2)))
+        {
+            relativePathString = relativePathString[..^1];
+        }
+
+        return relativePathString;
     }
 }

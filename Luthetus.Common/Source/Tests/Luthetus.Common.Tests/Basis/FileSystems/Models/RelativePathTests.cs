@@ -31,12 +31,31 @@ public class RelativePathTests
             out ServiceProvider serviceProvider);
 
         {
-            var relativePathString = "../Math/addition.txt";
-            var startingAbsolutePathString = "/Homework/Biology/nervousSystem.txt";
-            var expectedEndingAbsolutePathString = "/Homework/Math/addition.txt";
+            // This path is silly because it currently is going one UpDir directive too many
+            // just to arive at the same ending location.
+            //
+            // That being said, I need to parse more than one UpDir directive, and
+            // am using this for that purpose.
+            var relativePathString = "../../Homework/Math/";
+            var relativePath = new RelativePath(relativePathString, true, environmentProvider);
 
+            Assert.Equal(PathType.RelativePath, relativePath.PathType);
+            Assert.True(relativePath.IsDirectory);
+            Assert.Equal(environmentProvider, relativePath.EnvironmentProvider);
+            Assert.Equal("Math", relativePath.NameNoExtension);
+            Assert.Equal("/", relativePath.ExtensionNoPeriod);
+            Assert.Equal(2, relativePath.UpDirDirectiveCount);
+            Assert.Equal(relativePathString, relativePath.ExactInput);
+            Assert.Equal(relativePathString, relativePath.Value);
+            Assert.Equal("Math/", relativePath.NameWithExtension);
+
+            var homeworkDirectory = relativePath.AncestorDirectoryBag[0];
+            Assert.Equal("Homework", homeworkDirectory.NameNoExtension);
+        }
+
+        {
+            var relativePathString = "../Math/addition.txt";
             var relativePath = new RelativePath(relativePathString, false, environmentProvider);
-            var startingAbsolutePath = new AbsolutePath(startingAbsolutePathString, false, environmentProvider);
 
             Assert.Equal(PathType.RelativePath, relativePath.PathType);
             Assert.False(relativePath.IsDirectory);
@@ -48,83 +67,59 @@ public class RelativePathTests
             Assert.Equal(relativePathString, relativePath.Value);
             Assert.Equal("addition.txt", relativePath.NameWithExtension);
 
-            {
-                // Assert.Equal(, relativePath.AncestorDirectoryBag); // How to handle testing this?
-                Assert.True(false); // See AncestorDirectoryBag. How to handle this?
-            }
+            var mathDirectory = relativePath.AncestorDirectoryBag[0];
+            Assert.Equal("Math", mathDirectory.NameNoExtension);
         }
 
         {
             var relativePathString = "./skeletalSystem.txt";
-            var startingAbsolutePathString = "/Homework/Biology/nervousSystem.txt";
-            var expectedEndingAbsolutePathString = "/Homework/Biology/skeletalSystem.txt";
-
             var relativePath = new RelativePath(relativePathString, false, environmentProvider);
-            var startingAbsolutePath = new AbsolutePath(startingAbsolutePathString, false, environmentProvider);
 
             Assert.Equal(PathType.RelativePath, relativePath.PathType);
             Assert.False(relativePath.IsDirectory);
             Assert.Equal(environmentProvider, relativePath.EnvironmentProvider);
-            Assert.Equal("addition", relativePath.NameNoExtension);
+            Assert.Equal("skeletalSystem", relativePath.NameNoExtension);
             Assert.Equal("txt", relativePath.ExtensionNoPeriod);
-            Assert.Equal(1, relativePath.UpDirDirectiveCount);
+            Assert.Equal(0, relativePath.UpDirDirectiveCount);
             Assert.Equal(relativePathString, relativePath.ExactInput);
             Assert.Equal(relativePathString, relativePath.Value);
-            Assert.Equal("addition.txt", relativePath.NameWithExtension);
+            Assert.Equal("skeletalSystem.txt", relativePath.NameWithExtension);
 
-            {
-                // Assert.Equal(, relativePath.AncestorDirectoryBag); // How to handle testing this?
-                Assert.True(false); // See AncestorDirectoryBag. How to handle this?
-            }
+            Assert.Empty(relativePath.AncestorDirectoryBag);
         }
 
         {
             var relativePathString = "../";
-            var startingAbsolutePathString = "/Homework/Biology/nervousSystem.txt";
-            var expectedEndingAbsolutePathString = "/Homework/";
-
-            var relativePath = new RelativePath(relativePathString, false, environmentProvider);
-            var startingAbsolutePath = new AbsolutePath(startingAbsolutePathString, false, environmentProvider);
+            var relativePath = new RelativePath(relativePathString, true, environmentProvider);
 
             Assert.Equal(PathType.RelativePath, relativePath.PathType);
-            Assert.False(relativePath.IsDirectory);
+            Assert.True(relativePath.IsDirectory);
             Assert.Equal(environmentProvider, relativePath.EnvironmentProvider);
-            Assert.Equal("addition", relativePath.NameNoExtension);
-            Assert.Equal("txt", relativePath.ExtensionNoPeriod);
+            Assert.Equal(string.Empty, relativePath.NameNoExtension);
+            Assert.Equal("/", relativePath.ExtensionNoPeriod);
             Assert.Equal(1, relativePath.UpDirDirectiveCount);
             Assert.Equal(relativePathString, relativePath.ExactInput);
             Assert.Equal(relativePathString, relativePath.Value);
-            Assert.Equal("addition.txt", relativePath.NameWithExtension);
+            Assert.Equal("/", relativePath.NameWithExtension);
 
-            {
-                // Assert.Equal(, relativePath.AncestorDirectoryBag); // How to handle testing this?
-                Assert.True(false); // See AncestorDirectoryBag. How to handle this?
-            }
+            Assert.Empty(relativePath.AncestorDirectoryBag);
         }
 
         {
             var relativePathString = "../";
-            var startingAbsolutePathString = "/Homework/Biology/";
-            var expectedEndingAbsolutePathString = "/Homework/";
-
-            var relativePath = new RelativePath(relativePathString, false, environmentProvider);
-            var startingAbsolutePath = new AbsolutePath(startingAbsolutePathString, false, environmentProvider);
+            var relativePath = new RelativePath(relativePathString, true, environmentProvider);
 
             Assert.Equal(PathType.RelativePath, relativePath.PathType);
-            Assert.False(relativePath.IsDirectory);
+            Assert.True(relativePath.IsDirectory);
             Assert.Equal(environmentProvider, relativePath.EnvironmentProvider);
-            Assert.Equal("addition", relativePath.NameNoExtension);
-            Assert.Equal("txt", relativePath.ExtensionNoPeriod);
+            Assert.Equal(string.Empty, relativePath.NameNoExtension);
+            Assert.Equal("/", relativePath.ExtensionNoPeriod);
             Assert.Equal(1, relativePath.UpDirDirectiveCount);
             Assert.Equal(relativePathString, relativePath.ExactInput);
             Assert.Equal(relativePathString, relativePath.Value);
-            Assert.Equal("addition.txt", relativePath.NameWithExtension);
+            Assert.Equal("/", relativePath.NameWithExtension);
 
-            {
-                // Assert.Equal(, relativePath.AncestorDirectoryBag); // How to handle testing this?
-                Assert.True(false); // See AncestorDirectoryBag. How to handle this?
-            }
+            Assert.Empty(relativePath.AncestorDirectoryBag);
         }
-
     }
 }
