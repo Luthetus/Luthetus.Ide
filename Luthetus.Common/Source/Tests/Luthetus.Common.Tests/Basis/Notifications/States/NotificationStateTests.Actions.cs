@@ -28,7 +28,10 @@ public class NotificationStateActionsTests
     [Fact]
     public void DisposeAction()
     {
-	    throw new NotImplementedException();
+        InitializeNotificationStateActionsTests(out var notificationRecord);
+
+        var disposeAction = new NotificationState.DisposeAction(notificationRecord.Key);
+        Assert.Equal(notificationRecord.Key, disposeAction.Key);
     }
 
     /// <summary>
@@ -37,7 +40,10 @@ public class NotificationStateActionsTests
     [Fact]
     public void MakeReadAction()
     {
-	    throw new NotImplementedException();
+        InitializeNotificationStateActionsTests(out var notificationRecord);
+
+        var makeReadAction = new NotificationState.MakeReadAction(notificationRecord.Key);
+        Assert.Equal(notificationRecord.Key, makeReadAction.Key);
     }
 
     /// <summary>
@@ -46,7 +52,10 @@ public class NotificationStateActionsTests
     [Fact]
     public void UndoMakeReadAction()
     {
-	    throw new NotImplementedException();
+        InitializeNotificationStateActionsTests(out var notificationRecord);
+
+        var undoMakeReadAction = new NotificationState.UndoMakeReadAction(notificationRecord.Key);
+        Assert.Equal(notificationRecord.Key, undoMakeReadAction.Key);
     }
 
     /// <summary>
@@ -55,7 +64,10 @@ public class NotificationStateActionsTests
     [Fact]
     public void MakeDeletedAction()
     {
-	    throw new NotImplementedException();
+        InitializeNotificationStateActionsTests(out var notificationRecord);
+
+        var makeDeletedAction = new NotificationState.MakeDeletedAction(notificationRecord.Key);
+        Assert.Equal(notificationRecord.Key, makeDeletedAction.Key);
     }
 
     /// <summary>
@@ -64,7 +76,10 @@ public class NotificationStateActionsTests
     [Fact]
     public void UndoMakeDeletedAction()
     {
-	    throw new NotImplementedException();
+        InitializeNotificationStateActionsTests(out var notificationRecord);
+
+        var undoMakeDeletedAction = new NotificationState.UndoMakeDeletedAction(notificationRecord.Key);
+        Assert.Equal(notificationRecord.Key, undoMakeDeletedAction.Key);
     }
 
     /// <summary>
@@ -73,7 +88,10 @@ public class NotificationStateActionsTests
     [Fact]
     public void MakeArchivedAction()
     {
-	    throw new NotImplementedException();
+        InitializeNotificationStateActionsTests(out var notificationRecord);
+
+        var makeArchivedAction = new NotificationState.MakeArchivedAction(notificationRecord.Key);
+        Assert.Equal(notificationRecord.Key, makeArchivedAction.Key);
     }
 
     /// <summary>
@@ -82,7 +100,10 @@ public class NotificationStateActionsTests
     [Fact]
     public void UndoMakeArchivedAction()
     {
-	    throw new NotImplementedException();
+        InitializeNotificationStateActionsTests(out var notificationRecord);
+
+        var undoMakeArchivedAction = new NotificationState.UndoMakeArchivedAction(notificationRecord.Key);
+        Assert.Equal(notificationRecord.Key, undoMakeArchivedAction.Key);
     }
 
     /// <summary>
@@ -91,7 +112,10 @@ public class NotificationStateActionsTests
     [Fact]
     public void ClearDefaultAction()
     {
-	    throw new NotImplementedException();
+        InitializeNotificationStateActionsTests(out var notificationRecord);
+
+        var clearDefaultAction = new NotificationState.ClearDefaultAction();
+        Assert.NotNull(clearDefaultAction);
     }
 
     /// <summary>
@@ -100,7 +124,10 @@ public class NotificationStateActionsTests
     [Fact]
     public void ClearReadAction()
     {
-	    throw new NotImplementedException();
+        InitializeNotificationStateActionsTests(out var notificationRecord);
+
+        var clearReadAction = new NotificationState.ClearReadAction();
+        Assert.NotNull(clearReadAction);
     }
 
     /// <summary>
@@ -109,7 +136,10 @@ public class NotificationStateActionsTests
     [Fact]
     public void ClearDeletedAction()
     {
-	    throw new NotImplementedException();
+        InitializeNotificationStateActionsTests(out var notificationRecord);
+
+        var clearDeletedAction = new NotificationState.ClearDeletedAction();
+        Assert.NotNull(clearDeletedAction);
     }
 
     /// <summary>
@@ -118,7 +148,10 @@ public class NotificationStateActionsTests
     [Fact]
     public void ClearArchivedAction()
     {
-        throw new NotImplementedException();
+        InitializeNotificationStateActionsTests(out var notificationRecord);
+
+        var clearArchivedAction = new NotificationState.ClearArchivedAction();
+        Assert.NotNull(clearArchivedAction);
     }
 
     private void InitializeNotificationStateActionsTests(

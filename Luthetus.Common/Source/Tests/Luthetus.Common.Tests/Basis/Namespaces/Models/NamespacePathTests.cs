@@ -1,4 +1,5 @@
-﻿using Luthetus.Common.RazorLib.Namespaces.Models;
+﻿using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.Namespaces.Models;
 
 namespace Luthetus.Common.Tests.Basis.Namespaces.Models;
 
@@ -8,29 +9,25 @@ namespace Luthetus.Common.Tests.Basis.Namespaces.Models;
 public class NamespacePathTests
 {
     /// <summary>
-    /// <see cref="NamespacePath(string, RazorLib.FileSystems.Models.IAbsolutePath)"/>
+    /// <see cref="NamespacePath(string, IAbsolutePath)"/>
+    /// <br/>----<br/>
+    /// <see cref="NamespacePath.Namespace"/>
+    /// <see cref="NamespacePath.AbsolutePath"/>
     /// </summary>
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
-    }
+        var namespaceString = "BlazorCrudApp.RazorLib.Pages";
 
-    /// <summary>
-    /// <see cref="NamespacePath.Namespace"/>
-    /// </summary>
-    [Fact]
-    public void Namespace()
-    {
-        throw new NotImplementedException();
-    }
+        var absolutePathString = "/BlazorCrudApp/BlazorCrudApp.RazorLib/Pages/";
+        var isDirectory = true;
+        var inMemoryEnvironmentProvider = new InMemoryEnvironmentProvider();
 
-    /// <summary>
-    /// <see cref="NamespacePath.AbsolutePath"/>
-    /// </summary>
-    [Fact]
-    public void AbsolutePath()
-    {
-        throw new NotImplementedException();
+        var absolutePath = new AbsolutePath(absolutePathString, isDirectory, inMemoryEnvironmentProvider);
+
+        var namespacePath = new NamespacePath(namespaceString, absolutePath);
+
+        Assert.Equal(namespaceString, namespacePath.Namespace);
+        Assert.Equal(absolutePath, namespacePath.AbsolutePath);
     }
 }
