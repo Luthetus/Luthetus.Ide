@@ -13,7 +13,7 @@ namespace Luthetus.Common.RazorLib.Panels.States;
 [FeatureState]
 public partial record PanelsState(ImmutableArray<PanelGroup> PanelGroupBag)
 {
-    private PanelsState() : this(ImmutableArray<PanelGroup>.Empty)
+    public PanelsState() : this(ImmutableArray<PanelGroup>.Empty)
     {
         var topLeftGroup = ConstructTopLeftGroup();
         var topRightGroup = ConstructTopRightGroup();

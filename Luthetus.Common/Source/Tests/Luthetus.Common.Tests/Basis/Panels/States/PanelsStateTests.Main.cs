@@ -1,4 +1,5 @@
 ﻿using Luthetus.Common.RazorLib.Panels.States;
+using System.Collections.Immutable;
 
 namespace Luthetus.Common.Tests.Basis.Panels.States;
 
@@ -9,27 +10,15 @@ public class PanelsStateMainTests
 {
     /// <summary>
     /// <see cref="PanelsState()"/>
+    /// <br/>----<br/>
+    /// <see cref="PanelsState.DragEventArgs"/>
     /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        private PanelsState() : this(ImmutableArray<PanelGroup>.Empty)
-         */
+        var panelState = new PanelsState();
 
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="PanelsState.DragEventArgs"/>
-    /// </summary>
-    [Fact]
-    public void DragEventArgs()
-    {
-        /*
-        public (PanelTab PanelTab, PanelGroup PanelGroup)?  { get; set; }
-         */
-
-        throw new NotImplementedException();
+        Assert.Equal(3, panelState.PanelGroupBag.Length);
+        Assert.Null(panelState.DragEventArgs);
     }
 }

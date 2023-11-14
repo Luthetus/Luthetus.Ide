@@ -1,4 +1,13 @@
-﻿using Luthetus.Common.RazorLib.Panels.States;
+﻿using Fluxor;
+using Luthetus.Common.RazorLib.Contexts.Models;
+using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Icons.Displays.Codicon;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Panels.Models;
+using Luthetus.Common.RazorLib.Panels.States;
+using Luthetus.Common.RazorLib.Resizes.Displays;
+using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Immutable;
 
 namespace Luthetus.Common.Tests.Basis.Panels.States;
 
@@ -16,7 +25,17 @@ public class PanelsStateReducerTests
             PanelsState inState, RegisterPanelGroupAction registerPanelGroupAction)
          */
 
-        throw new NotImplementedException();
+        InitializePanelsStateReducerTests(
+            out var serviceProvider,
+            out var panelsStateWrap,
+            out var dispatcher,
+            out var panelGroup,
+            out var panelTab);
+
+        Assert.DoesNotContain(panelsStateWrap.Value.PanelGroupBag, x => x == panelGroup);
+        
+        dispatcher.Dispatch(new PanelsState.RegisterPanelGroupAction(panelGroup));
+        Assert.Contains(panelsStateWrap.Value.PanelGroupBag, x => x == panelGroup);
     }
 
     [Fact]
@@ -28,7 +47,20 @@ public class PanelsStateReducerTests
             PanelsState inState, DisposePanelGroupAction disposePanelGroupAction)
          */
 
-        throw new NotImplementedException();
+        InitializePanelsStateReducerTests(
+            out var serviceProvider,
+            out var panelsStateWrap,
+            out var dispatcher,
+            out var panelGroup,
+            out var panelTab);
+
+        Assert.DoesNotContain(panelsStateWrap.Value.PanelGroupBag, x => x == panelGroup);
+
+        dispatcher.Dispatch(new PanelsState.RegisterPanelGroupAction(panelGroup));
+        Assert.Contains(panelsStateWrap.Value.PanelGroupBag, x => x == panelGroup);
+
+        dispatcher.Dispatch(new PanelsState.DisposePanelGroupAction(panelGroup.Key));
+        Assert.DoesNotContain(panelsStateWrap.Value.PanelGroupBag, x => x == panelGroup);
     }
 
     [Fact]
@@ -40,7 +72,83 @@ public class PanelsStateReducerTests
             PanelsState inState, RegisterPanelTabAction registerPanelTabAction)
          */
 
-        throw new NotImplementedException();
+        InitializePanelsStateReducerTests(
+            out var serviceProvider,
+            out var panelsStateWrap,
+            out var dispatcher,
+            out var panelGroup,
+            out var panelTab);
+
+        dispatcher.Dispatch(new PanelsState.RegisterPanelGroupAction(panelGroup));
+        Assert.Contains(panelsStateWrap.Value.PanelGroupBag, x => x == panelGroup);
+
+        // Ensure the panelGroup is not empty.
+        // This allows one to test the 'insertAtIndexZero' logic.
+        // That is to say, insert at start or end logic.
+        {
+            dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
+                panelGroup.Key,
+                panelTab,
+                true));
+
+            var localPanelGroup = panelsStateWrap.Value.PanelGroupBag.Single(x => x.Key == panelGroup.Key);
+            Assert.Contains(localPanelGroup.TabBag, x => x == panelTab);
+            Assert.NotEmpty(localPanelGroup.TabBag);
+        }
+
+        // InsertAtIndexZero == false
+        {
+            var insertAtIndexZero = false;
+
+            var localPanelTab = new PanelTab(
+                    Key<PanelTab>.NewKey(),
+                    panelGroup.ElementDimensions,
+                    new(),
+                    // Awkwardly need to provide a type here. Will provide an Icon but this usually
+                    // would be more along the lines of "typeof(SolutionExplorerDisplay)"
+                    typeof(IconCSharpClass),
+                    typeof(IconFolder),
+                    "Solution Explorer")
+            {
+                ContextRecordKey = ContextFacts.SolutionExplorerContext.ContextKey
+            };
+
+            dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
+                panelGroup.Key,
+                localPanelTab,
+                insertAtIndexZero));
+
+            var localPanelGroup = panelsStateWrap.Value.PanelGroupBag.Single(x => x.Key == panelGroup.Key);
+            Assert.Contains(localPanelGroup.TabBag, x => x == localPanelTab);
+            Assert.Equal(localPanelGroup.TabBag.Last(), localPanelTab);
+        }
+
+        // InsertAtIndexZero == true
+        {
+            var insertAtIndexZero = true;
+
+            var localPanelTab = new PanelTab(
+                    Key<PanelTab>.NewKey(),
+                    panelGroup.ElementDimensions,
+                    new(),
+                    // Awkwardly need to provide a type here. Will provide an Icon but this usually
+                    // would be more along the lines of "typeof(SolutionExplorerDisplay)"
+                    typeof(IconCSharpClass),
+                    typeof(IconFolder),
+                    "Solution Explorer")
+            {
+                ContextRecordKey = ContextFacts.SolutionExplorerContext.ContextKey
+            };
+
+            dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
+                panelGroup.Key,
+                localPanelTab,
+                insertAtIndexZero));
+
+            var localPanelGroup = panelsStateWrap.Value.PanelGroupBag.Single(x => x.Key == panelGroup.Key);
+            Assert.Contains(localPanelGroup.TabBag, x => x == localPanelTab);
+            Assert.Equal(localPanelGroup.TabBag.First(), localPanelTab);
+        }
     }
 
     [Fact]
@@ -52,7 +160,34 @@ public class PanelsStateReducerTests
             PanelsState inState, DisposePanelTabAction disposePanelTabAction)
          */
 
-        throw new NotImplementedException();
+        InitializePanelsStateReducerTests(
+            out var serviceProvider,
+            out var panelsStateWrap,
+            out var dispatcher,
+            out var panelGroup,
+            out var panelTab);
+
+        Assert.Empty(panelGroup.TabBag);
+
+        dispatcher.Dispatch(new PanelsState.RegisterPanelGroupAction(panelGroup));
+        Assert.Contains(panelsStateWrap.Value.PanelGroupBag, x => x == panelGroup);
+
+        dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
+                panelGroup.Key,
+                panelTab,
+                true));
+
+        var localPanelGroup = panelsStateWrap.Value.PanelGroupBag.Single(x => x.Key == panelGroup.Key);
+        Assert.Contains(localPanelGroup.TabBag, x => x == panelTab);
+        Assert.NotEmpty(localPanelGroup.TabBag);
+
+        dispatcher.Dispatch(new PanelsState.DisposePanelTabAction(
+            panelGroup.Key,
+            panelTab.Key));
+
+        localPanelGroup = panelsStateWrap.Value.PanelGroupBag.Single(x => x.Key == panelGroup.Key);
+        Assert.DoesNotContain(localPanelGroup.TabBag, x => x == panelTab);
+        Assert.Empty(localPanelGroup.TabBag);
     }
 
     [Fact]
@@ -64,7 +199,35 @@ public class PanelsStateReducerTests
             PanelsState inState, SetActivePanelTabAction setActivePanelTabAction)
          */
 
-        throw new NotImplementedException();
+        InitializePanelsStateReducerTests(
+            out var serviceProvider,
+            out var panelsStateWrap,
+            out var dispatcher,
+            out var panelGroup,
+            out var panelTab);
+
+        Assert.Empty(panelGroup.TabBag);
+
+        dispatcher.Dispatch(new PanelsState.RegisterPanelGroupAction(panelGroup));
+        Assert.Contains(panelsStateWrap.Value.PanelGroupBag, x => x == panelGroup);
+
+        dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
+                panelGroup.Key,
+                panelTab,
+                true));
+
+        var localPanelGroup = panelsStateWrap.Value.PanelGroupBag.Single(x => x.Key == panelGroup.Key);
+        Assert.Contains(localPanelGroup.TabBag, x => x == panelTab);
+        Assert.NotEmpty(localPanelGroup.TabBag);
+
+        Assert.NotEqual(panelTab.Key, localPanelGroup.ActiveTabKey);
+
+        dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(
+            panelGroup.Key,
+            panelTab.Key));
+        
+        localPanelGroup = panelsStateWrap.Value.PanelGroupBag.Single(x => x.Key == panelGroup.Key);
+        Assert.Equal(panelTab.Key, localPanelGroup.ActiveTabKey);
     }
 
     [Fact]
@@ -75,6 +238,16 @@ public class PanelsStateReducerTests
         public static PanelsState ReduceSetPanelTabAsActiveByContextRecordKeyAction(
             PanelsState inState, SetPanelTabAsActiveByContextRecordKeyAction setPanelTabAsActiveByContextRecordKeyAction)
          */
+
+        InitializePanelsStateReducerTests(
+            out var serviceProvider,
+            out var panelsStateWrap,
+            out var dispatcher,
+            out var panelGroup,
+            out var panelTab);
+
+        dispatcher.Dispatch(new PanelsState.SetPanelTabAsActiveByContextRecordKeyAction(
+            ContextFacts.SolutionExplorerContext.ContextKey));
 
         throw new NotImplementedException();
     }
@@ -88,6 +261,73 @@ public class PanelsStateReducerTests
             PanelsState inState, SetDragEventArgsAction setDragEventArgsAction)
          */
 
+        InitializePanelsStateReducerTests(
+            out var serviceProvider,
+            out var panelsStateWrap,
+            out var dispatcher,
+            out var panelGroup,
+            out var panelTab);
+
+        dispatcher.Dispatch(new PanelsState.SetDragEventArgsAction(
+            (panelTab, panelGroup)));
+
         throw new NotImplementedException();
+    }
+
+    private void InitializePanelsStateReducerTests(
+        out ServiceProvider serviceProvider,
+        out IState<PanelsState> panelsStateWrap,
+        out IDispatcher dispatcher,
+        out PanelGroup samplePanelGroup,
+        out PanelTab samplePanelTab)
+    {
+        var services = new ServiceCollection()
+            .AddFluxor(options => options.ScanAssemblies(typeof(PanelsState).Assembly));
+
+        serviceProvider = services.BuildServiceProvider();
+
+        var store = serviceProvider.GetRequiredService<IStore>();
+        store.InitializeAsync().Wait();
+
+        panelsStateWrap = serviceProvider.GetRequiredService<IState<PanelsState>>();
+
+        dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
+
+        samplePanelGroup = new PanelGroup(
+                Key<PanelGroup>.NewKey(),
+                Key<PanelTab>.Empty,
+                new ElementDimensions(),
+                ImmutableArray<PanelTab>.Empty);
+
+        var samplePanelGroupWidth = samplePanelGroup.ElementDimensions.DimensionAttributeBag
+            .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
+
+        samplePanelGroupWidth.DimensionUnitBag.AddRange(new[]
+        {
+            new DimensionUnit
+            {
+                Value = 33.3333,
+                DimensionUnitKind = DimensionUnitKind.Percentage
+            },
+            new DimensionUnit
+            {
+                Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionOperatorKind = DimensionOperatorKind.Subtract
+            }
+        });
+
+        samplePanelTab = new PanelTab(
+            Key<PanelTab>.NewKey(),
+            samplePanelGroup.ElementDimensions,
+            new(),
+            // Awkwardly need to provide a type here. Will provide an Icon but this usually
+            // would be more along the lines of "typeof(SolutionExplorerDisplay)"
+            typeof(IconCSharpClass),
+            typeof(IconFolder),
+            "Solution Explorer")
+        {
+            ContextRecordKey = ContextFacts.SolutionExplorerContext.ContextKey
+        };
     }
 }
