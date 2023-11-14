@@ -8,6 +8,7 @@ using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Resizes.Displays;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Immutable;
+using System.Security.Cryptography;
 
 namespace Luthetus.Common.Tests.Basis.Panels.States;
 
@@ -246,10 +247,49 @@ public class PanelsStateReducerTests
             out var panelGroup,
             out var panelTab);
 
-        dispatcher.Dispatch(new PanelsState.SetPanelTabAsActiveByContextRecordKeyAction(
-            ContextFacts.SolutionExplorerContext.ContextKey));
+        Assert.Empty(panelGroup.TabBag);
 
-        throw new NotImplementedException();
+        dispatcher.Dispatch(new PanelsState.RegisterPanelGroupAction(panelGroup));
+        Assert.Contains(panelsStateWrap.Value.PanelGroupBag, x => x == panelGroup);
+
+        List<(ContextRecord contextRecord, PanelTab panelTab)> panelTabTupleBag = new();
+
+        foreach (var context in ContextFacts.AllContextsBag)
+        {
+            var localPanelTab = new PanelTab(
+                Key<PanelTab>.NewKey(),
+                panelGroup.ElementDimensions,
+                new(),
+                // Awkwardly need to provide a type here. Will provide an Icon but this usually
+                // would be more along the lines of "typeof(SolutionExplorerDisplay)"
+                typeof(IconCSharpClass),
+                typeof(IconFolder),
+                "Solution Explorer")
+            {
+                ContextRecordKey = context.ContextKey
+            };
+
+            panelTabTupleBag.Add((context, localPanelTab));
+
+            dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
+                panelGroup.Key,
+                localPanelTab,
+                false));
+
+            var localPanelGroup = panelsStateWrap.Value.PanelGroupBag.Single(x => x.Key == panelGroup.Key);
+            Assert.Contains(localPanelGroup.TabBag, x => x == localPanelTab);
+        }
+
+        panelTabTupleBag.Reverse();
+
+        foreach (var panelTabTuple in panelTabTupleBag)
+        {
+            dispatcher.Dispatch(new PanelsState.SetPanelTabAsActiveByContextRecordKeyAction(
+                panelTabTuple.contextRecord.ContextKey));
+
+            var localPanelGroup = panelsStateWrap.Value.PanelGroupBag.Single(x => x.Key == panelGroup.Key);
+            Assert.Equal(panelTabTuple.panelTab.Key, localPanelGroup.ActiveTabKey);
+        }
     }
 
     [Fact]
@@ -268,10 +308,22 @@ public class PanelsStateReducerTests
             out var panelGroup,
             out var panelTab);
 
-        dispatcher.Dispatch(new PanelsState.SetDragEventArgsAction(
-            (panelTab, panelGroup)));
+        Assert.Empty(panelGroup.TabBag);
 
-        throw new NotImplementedException();
+        dispatcher.Dispatch(new PanelsState.RegisterPanelGroupAction(panelGroup));
+        Assert.Contains(panelsStateWrap.Value.PanelGroupBag, x => x == panelGroup);
+
+        dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
+            panelGroup.Key,
+            panelTab,
+            false));
+
+        Assert.Null(panelsStateWrap.Value.DragEventArgs);
+
+        var dragEventArgs = (panelTab, panelGroup);
+        
+        dispatcher.Dispatch(new PanelsState.SetDragEventArgsAction(dragEventArgs));
+        Assert.Equal(panelsStateWrap.Value.DragEventArgs, dragEventArgs);
     }
 
     private void InitializePanelsStateReducerTests(
