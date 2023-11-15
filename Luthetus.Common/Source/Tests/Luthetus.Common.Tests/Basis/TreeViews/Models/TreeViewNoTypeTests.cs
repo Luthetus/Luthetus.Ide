@@ -31,7 +31,7 @@ public class TreeViewNoTypeTests
     [Fact]
     public void UntypedItem()
     {
-        InitializeTreeViewContainerTests(out var commonTreeViews, out var commonComponentRenderers);
+        InitializeTreeViewNoTypeTests(out var commonTreeViews, out var commonComponentRenderers);
 
         var item = "Hello World!";
         var isExpandable = true;
@@ -87,7 +87,7 @@ public class TreeViewNoTypeTests
         }
     }
 
-    private void InitializeTreeViewContainerTests(
+    private void InitializeTreeViewNoTypeTests(
         out LuthetusCommonTreeViews commonTreeViews,
         out LuthetusCommonComponentRenderers commonComponentRenderers)
     {
