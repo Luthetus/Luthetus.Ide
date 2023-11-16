@@ -38,6 +38,7 @@ public class TreeViewCommandArgsTests
         services.AddScoped<ITreeViewService, TreeViewService>(
             serviceProvider => new TreeViewService(
                 serviceProvider.GetRequiredService<IState<TreeViewState>>(),
+                serviceProvider.GetRequiredService<IBackgroundTaskService>(),
                 serviceProvider.GetRequiredService<IDispatcher>()));
 
         var serviceProvider = services.BuildServiceProvider();
