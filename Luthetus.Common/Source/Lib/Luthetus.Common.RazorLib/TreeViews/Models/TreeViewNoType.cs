@@ -27,16 +27,10 @@ public abstract class TreeViewNoType
     public Key<TreeViewNoType> Key { get; set; } = Key<TreeViewNoType>.NewKey();
 
     public abstract TreeViewRenderer GetTreeViewRenderer();
-    /// <summary>
-    /// TODO: SphagettiCode - <see cref="LoadChildBagAsync"/> has the same logic over
-    /// and over prior to returning. That is, 'foreach (var newChild in Children)'.
-    /// Inside the foreach a check for a previous instance is made so the IsExpanded state and
-    /// etc... can be remembered. This logic should be generalized into a reusable method?(2023-09-19)
-    /// </summary>
     public abstract Task LoadChildBagAsync();
 
     /// <summary>
-    /// <see cref="LinkChildren"/> will set foreach child: child.Parent = this;
+    /// Sets foreach child: child.Parent = this;
     /// As well it sets the child.IndexAmongSiblings, and maintains expanded state.
     /// </summary>
     public virtual void LinkChildren(
