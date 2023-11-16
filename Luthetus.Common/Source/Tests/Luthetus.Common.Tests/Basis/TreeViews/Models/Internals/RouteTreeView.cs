@@ -19,6 +19,8 @@ public class RouteTreeView : TreeViewWithType<RouteWrapper>
 
     public override Task LoadChildBagAsync()
     {
+        var previousChildren = new List<TreeViewNoType>(ChildBag);
+
         var websiteServer = Item.WebsiteServerState.WebsiteServerMap[Item.WebsiteServerName];
 
         var childRouteBag = websiteServer.Routes.Where(x => x.StartsWith(Item.Name));
@@ -31,6 +33,8 @@ public class RouteTreeView : TreeViewWithType<RouteWrapper>
                 Item.WebsiteServerState,
                 Item.WebsiteServerName));
         }
+
+        LinkChildren(previousChildren, ChildBag);
 
         return Task.CompletedTask;
     }

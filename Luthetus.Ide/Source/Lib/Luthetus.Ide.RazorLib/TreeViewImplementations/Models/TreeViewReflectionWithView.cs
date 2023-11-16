@@ -1,4 +1,5 @@
 ﻿using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.WatchWindows.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 
@@ -23,7 +24,7 @@ public class TreeViewReflectionWithView : TreeViewReflection
 
     public override async Task LoadChildBagAsync()
     {
-        var oldChildrenMap = ChildBag.ToDictionary(child => child);
+        var previousChildren = new List<TreeViewNoType>(ChildBag);
 
         ChildBag.Clear();
 
@@ -49,24 +50,6 @@ public class TreeViewReflectionWithView : TreeViewReflection
             ChildBag.Add(new TreeViewException(e, false, false, CommonComponentRenderers));
         }
 
-        for (int i = 0; i < ChildBag.Count; i++)
-        {
-            var child = ChildBag[i];
-
-            child.Parent = this;
-            child.IndexAmongSiblings = i;
-        }
-
-        foreach (var newChild in ChildBag)
-        {
-            if (oldChildrenMap.TryGetValue(newChild, out var oldChild))
-            {
-                newChild.IsExpanded = oldChild.IsExpanded;
-                newChild.IsExpandable = oldChild.IsExpandable;
-                newChild.IsHidden = oldChild.IsHidden;
-                newChild.Key = oldChild.Key;
-                newChild.ChildBag = oldChild.ChildBag;
-            }
-        }
+        LinkChildren(previousChildren, ChildBag);
     }
 }

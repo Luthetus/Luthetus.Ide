@@ -36,6 +36,37 @@ public abstract class TreeViewNoType
     public abstract Task LoadChildBagAsync();
 
     /// <summary>
+    /// <see cref="LinkChildren"/> will set foreach child: child.Parent = this;
+    /// As well it sets the child.IndexAmongSiblings, and maintains expanded state.
+    /// </summary>
+    public virtual void LinkChildren(
+        List<TreeViewNoType> previousChildren,
+        List<TreeViewNoType> nextChildren)
+    {
+        var oldChildrenMap = previousChildren.ToDictionary(child => child);
+
+        for (int i = 0; i < nextChildren.Count; i++)
+        {
+            var child = nextChildren[i];
+
+            child.Parent = this;
+            child.IndexAmongSiblings = i;
+        }
+
+        foreach (var newChild in nextChildren)
+        {
+            if (oldChildrenMap.TryGetValue(newChild, out var oldChild))
+            {
+                newChild.IsExpanded = oldChild.IsExpanded;
+                newChild.IsExpandable = oldChild.IsExpandable;
+                newChild.IsHidden = oldChild.IsHidden;
+                newChild.Key = oldChild.Key;
+                newChild.ChildBag = oldChild.ChildBag;
+            }
+        }
+    }
+
+    /// <summary>
     /// <see cref="RemoveRelatedFilesFromParent"/> is used for showing codebehinds such that a file on
     /// the filesystem can be displayed as having children in the TreeView.<br/><br/>
     /// In the case of a directory loading its children. After the directory loads all its children it

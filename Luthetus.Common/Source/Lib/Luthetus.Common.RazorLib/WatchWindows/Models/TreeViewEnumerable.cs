@@ -46,7 +46,7 @@ public class TreeViewEnumerable : TreeViewWithType<WatchWindowObjectWrap>
 
     public override Task LoadChildBagAsync()
     {
-        var oldChildrenMap = ChildBag.ToDictionary(child => child);
+        var previousChildren = new List<TreeViewNoType>(ChildBag);
 
         try
         {
@@ -100,25 +100,7 @@ public class TreeViewEnumerable : TreeViewWithType<WatchWindowObjectWrap>
                 _luthetusCommonComponentRenderers));
         }
 
-        for (int i = 0; i < ChildBag.Count; i++)
-        {
-            var child = ChildBag[i];
-
-            child.Parent = this;
-            child.IndexAmongSiblings = i;
-        }
-
-        foreach (var newChild in ChildBag)
-        {
-            if (oldChildrenMap.TryGetValue(newChild, out var oldChild))
-            {
-                newChild.IsExpanded = oldChild.IsExpanded;
-                newChild.IsExpandable = oldChild.IsExpandable;
-                newChild.IsHidden = oldChild.IsHidden;
-                newChild.Key = oldChild.Key;
-                newChild.ChildBag = oldChild.ChildBag;
-            }
-        }
+        LinkChildren(previousChildren, ChildBag);
 
         return Task.CompletedTask;
     }

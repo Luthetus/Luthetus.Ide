@@ -23,6 +23,8 @@ public class WebsiteServerTreeView : TreeViewWithType<WebsiteServer>
 
         var routeWrapperBag = new List<RouteWrapper>();
 
+        var previousChildren = ChildBag;
+
         ChildBag = new()
         {
             new RouteTreeView(
@@ -33,6 +35,8 @@ public class WebsiteServerTreeView : TreeViewWithType<WebsiteServer>
                 true,
                 false)
         };
+
+        LinkChildren(previousChildren, ChildBag);
 
         return Task.CompletedTask;
     }
