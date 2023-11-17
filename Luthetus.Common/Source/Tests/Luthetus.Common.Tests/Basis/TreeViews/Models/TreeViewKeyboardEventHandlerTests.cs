@@ -48,7 +48,95 @@ public class TreeViewKeyboardEventHandlerTests
     [Fact]
     public void OnKeyDown_MoveLeft()
     {
-        throw new NotImplementedException();
+        InitializeTreeViewKeyboardEventHandlerTests(
+            out var dispatcher,
+            out var commonTreeViews,
+            out var commonComponentRenderers,
+            out var treeViewStateWrap,
+            out var treeViewService,
+            out var backgroundTaskService,
+            out var websiteServerState,
+            out var websiteServer,
+            out var websiteServerTreeView,
+            out var websiteServerTreeViewContainer,
+            out var keyboardEventHandler);
+
+        Assert.Equal(websiteServerTreeViewContainer.ActiveNode, websiteServerTreeView);
+
+        // Test Setup
+        {
+            // The 'InitializeTreeViewKeyboardEventHandlerTests' method provides an unexpanded
+            // node. Therefore, make the node expanded.
+            keyboardEventHandler.OnKeyDown(new TreeViewCommandArgs(
+                treeViewService,
+                websiteServerTreeViewContainer,
+                websiteServerTreeView,
+                () => Task.CompletedTask,
+                null,
+                null,
+                new KeyboardEventArgs
+                {
+                    Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
+                    Code = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
+                }));
+
+            // Set active node to root's first child
+            keyboardEventHandler.OnKeyDown(new TreeViewCommandArgs(
+                treeViewService,
+                websiteServerTreeViewContainer,
+                websiteServerTreeView,
+                () => Task.CompletedTask,
+                null,
+                null,
+                new KeyboardEventArgs
+                {
+                    Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
+                    Code = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
+                }));
+        }
+
+        Assert.True(treeViewService.TryGetTreeViewContainer(
+            websiteServerTreeViewContainer.Key,
+            out websiteServerTreeViewContainer!));
+        
+        Assert.Equal(websiteServerTreeView.ChildBag.First(), websiteServerTreeViewContainer.ActiveNode);
+
+        // Move to parent of active node. (this results in root being the active node)
+        keyboardEventHandler.OnKeyDown(new TreeViewCommandArgs(
+            treeViewService,
+            websiteServerTreeViewContainer,
+            websiteServerTreeView,
+            () => Task.CompletedTask,
+            null,
+            null,
+            new KeyboardEventArgs
+            {
+                Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
+                Code = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
+            }));
+
+        Assert.True(treeViewService.TryGetTreeViewContainer(
+            websiteServerTreeViewContainer.Key,
+            out websiteServerTreeViewContainer!));
+        
+        Assert.Equal(websiteServerTreeView, websiteServerTreeViewContainer.ActiveNode);
+        Assert.True(websiteServerTreeView.IsExpanded);
+
+        // Collapse the root node
+        keyboardEventHandler.OnKeyDown(new TreeViewCommandArgs(
+            treeViewService,
+            websiteServerTreeViewContainer,
+            websiteServerTreeView,
+            () => Task.CompletedTask,
+            null,
+            null,
+            new KeyboardEventArgs
+            {
+                Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
+                Code = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
+            }));
+        
+        Assert.False(websiteServerTreeView.IsExpanded);
     }
 
     /// <summary>
@@ -70,11 +158,10 @@ public class TreeViewKeyboardEventHandlerTests
             out var websiteServerTreeViewContainer,
             out var keyboardEventHandler);
 
-
         // Test Setup
         {
             // The 'InitializeTreeViewKeyboardEventHandlerTests' method provides an unexpanded
-            // node. Therefore, cause the node to be expanded in this code block.
+            // node. Therefore, make the node expanded.
             keyboardEventHandler.OnKeyDown(new TreeViewCommandArgs(
                 treeViewService,
                 websiteServerTreeViewContainer,
@@ -109,7 +196,6 @@ public class TreeViewKeyboardEventHandlerTests
             out websiteServerTreeViewContainer));
 
         Assert.NotNull(websiteServerTreeViewContainer);
-
         Assert.Equal(websiteServerTreeView.ChildBag.First(), websiteServerTreeViewContainer!.ActiveNode);
     }
 
@@ -135,7 +221,7 @@ public class TreeViewKeyboardEventHandlerTests
         // Test Setup
         {
             // The 'InitializeTreeViewKeyboardEventHandlerTests' method provides an unexpanded
-            // node. Therefore, cause the node to be expanded in this code block.
+            // node. Therefore, make the node expanded.
             keyboardEventHandler.OnKeyDown(new TreeViewCommandArgs(
                 treeViewService,
                 websiteServerTreeViewContainer,
@@ -188,7 +274,6 @@ public class TreeViewKeyboardEventHandlerTests
             out websiteServerTreeViewContainer));
 
         Assert.NotNull(websiteServerTreeViewContainer);
-
         Assert.Equal(websiteServerTreeView, websiteServerTreeViewContainer!.ActiveNode);
 
         // TODO: Add testing for more complex cases
@@ -214,9 +299,7 @@ public class TreeViewKeyboardEventHandlerTests
             out var keyboardEventHandler);
 
         Assert.Equal(websiteServerTreeViewContainer.ActiveNode, websiteServerTreeView);
-
         Assert.Empty(websiteServerTreeView.ChildBag);
-
         Assert.True(websiteServerTreeView.IsExpandable);
         Assert.False(websiteServerTreeView.IsExpanded);
 
@@ -256,11 +339,10 @@ public class TreeViewKeyboardEventHandlerTests
             out var websiteServerTreeViewContainer,
             out var keyboardEventHandler);
 
-
         // Test Setup
         {
             // The 'InitializeTreeViewKeyboardEventHandlerTests' method provides an unexpanded
-            // node. Therefore, cause the node to be expanded in this code block.
+            // node. Therefore, make the node expanded.
             keyboardEventHandler.OnKeyDown(new TreeViewCommandArgs(
                 treeViewService,
                 websiteServerTreeViewContainer,
@@ -296,7 +378,6 @@ public class TreeViewKeyboardEventHandlerTests
             out websiteServerTreeViewContainer));
 
         Assert.NotNull(websiteServerTreeViewContainer);
-
         Assert.Equal(websiteServerTreeView.ChildBag.First(), websiteServerTreeViewContainer!.ActiveNode);
     }
 
@@ -322,7 +403,7 @@ public class TreeViewKeyboardEventHandlerTests
         // Test Setup
         {
             // The 'InitializeTreeViewKeyboardEventHandlerTests' method provides an unexpanded
-            // node. Therefore, cause the node to be expanded in this code block.
+            // node. Therefore, make the node expanded.
             keyboardEventHandler.OnKeyDown(new TreeViewCommandArgs(
                 treeViewService,
                 websiteServerTreeViewContainer,
@@ -375,7 +456,6 @@ public class TreeViewKeyboardEventHandlerTests
             out websiteServerTreeViewContainer));
 
         Assert.NotNull(websiteServerTreeViewContainer);
-
         Assert.Equal(websiteServerTreeView, websiteServerTreeViewContainer!.ActiveNode);
         
         // TODO: Add testing for more complex cases
