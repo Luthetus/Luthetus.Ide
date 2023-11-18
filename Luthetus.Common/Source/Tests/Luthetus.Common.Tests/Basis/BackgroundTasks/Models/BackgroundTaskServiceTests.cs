@@ -13,6 +13,8 @@ public class BackgroundTaskServiceTests
 {
     /// <summary>
     /// <see cref="BackgroundTaskService.Enqueue(IBackgroundTask)"/>
+    /// <br/>----<br/>
+    /// <see cref="BackgroundTaskService.RegisterQueue(BackgroundTaskQueue)"/>
     /// </summary>
     [Fact]
     public void EnqueueA()
@@ -48,15 +50,6 @@ public class BackgroundTaskServiceTests
     }
 
     /// <summary>
-    /// <see cref="BackgroundTaskService.RegisterQueue(BackgroundTaskQueue)"/>
-    /// </summary>
-    [Fact]
-    public void RegisterQueue()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="BackgroundTaskService.SetExecutingBackgroundTask(Key{BackgroundTaskQueue}, IBackgroundTask?)"/>
     /// </summary>
     [Fact]
@@ -66,7 +59,7 @@ public class BackgroundTaskServiceTests
     }
 
     private void InitializeBackgroundTaskServiceTests(
-        out IBackgroundTaskService backgroundTaskService,
+        out BackgroundTaskService backgroundTaskService,
         out BackgroundTaskWorker continuousWorker,
         out BackgroundTaskQueue continuousQueue,
         out CancellationTokenSource continuousCancellationTokenSource,
@@ -91,7 +84,7 @@ public class BackgroundTaskServiceTests
         var store = serviceProvider.GetRequiredService<IStore>();
         store.InitializeAsync().Wait();
 
-        backgroundTaskService = serviceProvider.GetRequiredService<IBackgroundTaskService>();
+        backgroundTaskService = (BackgroundTaskService)serviceProvider.GetRequiredService<IBackgroundTaskService>();
 
         var temporaryContinuousWorker =
             continuousWorker =
