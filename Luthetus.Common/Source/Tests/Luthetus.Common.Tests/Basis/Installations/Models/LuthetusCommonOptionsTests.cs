@@ -1,4 +1,6 @@
-﻿using Luthetus.Common.RazorLib.Installations.Models;
+﻿using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Installations.Models;
+using Luthetus.Common.RazorLib.Themes.Models;
 
 namespace Luthetus.Common.Tests.Basis.Installations.Models;
 
@@ -7,18 +9,48 @@ namespace Luthetus.Common.Tests.Basis.Installations.Models;
 /// </summary>
 public record LuthetusCommonOptionsTests
 {
-
     /// <summary>
     /// <see cref="LuthetusCommonOptions.InitialThemeKey"/>
     /// </summary>
     [Fact]
     public void InitialThemeKey()
     {
-        /*
-        public Key<ThemeRecord> InitialThemeKey { get; init; } = ThemeFacts.VisualStudioDarkThemeClone.Key;
-         */
+        // Use default value
+        {
+            var initialThemeKeyDefault = ThemeFacts.VisualStudioDarkThemeClone.Key;
+            var luthetusCommonOptions = new LuthetusCommonOptions();
 
-        throw new NotImplementedException();
+            Assert.Equal(initialThemeKeyDefault, luthetusCommonOptions.InitialThemeKey);
+        }
+        
+        // Init value
+        {
+            var initialThemeKey = ThemeFacts.VisualStudioLightThemeClone.Key;
+            
+            var luthetusCommonOptions = new LuthetusCommonOptions
+            {
+                InitialThemeKey = initialThemeKey
+            };
+
+            Assert.Equal(initialThemeKey, luthetusCommonOptions.InitialThemeKey);
+        }
+        
+        // With value
+        {
+            var initialThemeKeyDefault = ThemeFacts.VisualStudioDarkThemeClone.Key;
+            var luthetusCommonOptions = new LuthetusCommonOptions();
+
+            Assert.Equal(initialThemeKeyDefault, luthetusCommonOptions.InitialThemeKey);
+            
+            var initialThemeKey = ThemeFacts.VisualStudioLightThemeClone.Key;
+
+            luthetusCommonOptions = luthetusCommonOptions with
+            {
+                InitialThemeKey = initialThemeKey
+            };
+
+            Assert.Equal(initialThemeKey, luthetusCommonOptions.InitialThemeKey);
+        }
     }
 
     /// <summary>
@@ -36,6 +68,50 @@ public record LuthetusCommonOptionsTests
     [Fact]
     public void DialogServiceOptions()
     {
-        throw new NotImplementedException();
+        // Use default value
+        {
+            var dialogServiceOptionsDefault = new DialogServiceOptions();
+            var luthetusCommonOptions = new LuthetusCommonOptions();
+
+            Assert.Equal(dialogServiceOptionsDefault, luthetusCommonOptions.DialogServiceOptions);
+        }
+
+        // Init value
+        {
+            var isMaximizedStyleCssString = "abc123";
+
+            var dialogServiceOptions = new DialogServiceOptions
+            {
+                IsMaximizedStyleCssString = isMaximizedStyleCssString
+            };
+
+            var luthetusCommonOptions = new LuthetusCommonOptions
+            {
+                DialogServiceOptions = dialogServiceOptions
+            };
+
+            Assert.Equal(dialogServiceOptions, luthetusCommonOptions.DialogServiceOptions);
+        }
+
+        // With value
+        {
+            var dialogServiceOptions = new DialogServiceOptions();
+            var luthetusCommonOptions = new LuthetusCommonOptions();
+            Assert.Equal(dialogServiceOptions, luthetusCommonOptions.DialogServiceOptions);
+
+            var isMaximizedStyleCssString = "abc123";
+            
+            dialogServiceOptions = dialogServiceOptions with
+            {
+                IsMaximizedStyleCssString = isMaximizedStyleCssString
+            };
+
+            luthetusCommonOptions = luthetusCommonOptions with
+            {
+                DialogServiceOptions = dialogServiceOptions
+            };
+
+            Assert.Equal(dialogServiceOptions, luthetusCommonOptions.DialogServiceOptions);
+        }
     }
 }
