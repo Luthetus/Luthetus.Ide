@@ -113,8 +113,8 @@ public class BackgroundTaskQueueTests
 
     private void InitializeBackgroundTaskQueueTests(
         out IBackgroundTaskService backgroundTaskService,
-        out BackgroundTaskQueue continuousBackgroundTaskWorker,
-        out BackgroundTaskQueue blockingBackgroundTaskWorker)
+        out BackgroundTaskQueue continuousQueue,
+        out BackgroundTaskQueue blockingQueue)
     {
         var services = new ServiceCollection()
             .AddScoped<IBackgroundTaskService>(_ => new BackgroundTaskServiceSynchronous())
@@ -127,10 +127,10 @@ public class BackgroundTaskQueueTests
 
         backgroundTaskService = serviceProvider.GetRequiredService<IBackgroundTaskService>();
 
-        continuousBackgroundTaskWorker = ContinuousBackgroundTaskWorker.Queue;
-        backgroundTaskService.RegisterQueue(continuousBackgroundTaskWorker);
+        continuousQueue = ContinuousBackgroundTaskWorker.Queue;
+        backgroundTaskService.RegisterQueue(continuousQueue);
 
-        blockingBackgroundTaskWorker = BlockingBackgroundTaskWorker.Queue;
-        backgroundTaskService.RegisterQueue(blockingBackgroundTaskWorker);
+        blockingQueue = BlockingBackgroundTaskWorker.Queue;
+        backgroundTaskService.RegisterQueue(blockingQueue);
     }
 }
