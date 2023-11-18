@@ -4,6 +4,8 @@ namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 public interface IBackgroundTaskService
 {
+    public event Action? ExecutingBackgroundTaskChanged;
+
     public void Enqueue(
         Key<BackgroundTask> taskKey,
         Key<BackgroundTaskQueue> queueKey,

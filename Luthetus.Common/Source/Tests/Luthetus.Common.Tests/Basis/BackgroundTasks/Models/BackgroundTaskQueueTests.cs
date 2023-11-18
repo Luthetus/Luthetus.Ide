@@ -1,5 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Fluxor;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Luthetus.Common.Tests.Basis.BackgroundTasks.Models;
 
@@ -59,19 +61,76 @@ public class BackgroundTaskQueueTests
 
     /// <summary>
     /// <see cref="BackgroundTaskQueue.ExecutingBackgroundTask"/>
+    /// <br/>----<br/>
+    /// <see cref="BackgroundTaskQueue.ExecutingBackgroundTaskChanged"/>
     /// </summary>
     [Fact]
     public void ExecutingBackgroundTask()
     {
-        throw new NotImplementedException();
+        InitializeBackgroundTaskQueueTests(
+            out var backgroundTaskService,
+            out var queue,
+            out _);
+
+        Assert.Null(queue.ExecutingBackgroundTask);
+
+        var number = 0;
+        Assert.Equal(0, number);
+
+        var backgroundTaskKey = Key<BackgroundTask>.NewKey();
+
+        // number += 2; from the event.
+        // Set executing to the task is +1, then set the executing to null is another +1
+        void OnExecutingBackgroundTaskChanged() 
+        {
+            number++;
+        }
+
+        queue.ExecutingBackgroundTaskChanged += OnExecutingBackgroundTaskChanged;
+
+        var backgroundTask = new BackgroundTask(
+            backgroundTaskKey,
+            queue.Key,
+            "Abc",
+            () =>
+            {
+                Assert.NotNull(queue.ExecutingBackgroundTask);
+                Assert.Equal(backgroundTaskKey, queue.ExecutingBackgroundTask!.BackgroundTaskKey);
+
+                // number += 1; from the task.
+                number++;
+
+                return Task.CompletedTask;
+            });
+        
+        backgroundTaskService.Enqueue(backgroundTask);
+
+        Assert.Equal(3, number);
+        Assert.Null(queue.ExecutingBackgroundTask);
+        
+        queue.ExecutingBackgroundTaskChanged -= OnExecutingBackgroundTaskChanged;
     }
 
-    /// <summary>
-    /// <see cref="BackgroundTaskQueue.ExecutingBackgroundTaskChanged"/>
-    /// </summary>
-    [Fact]
-    public void ExecutingBackgroundTaskChanged()
+    private void InitializeBackgroundTaskQueueTests(
+        out IBackgroundTaskService backgroundTaskService,
+        out BackgroundTaskQueue continuousBackgroundTaskWorker,
+        out BackgroundTaskQueue blockingBackgroundTaskWorker)
     {
-        throw new NotImplementedException();
+        var services = new ServiceCollection()
+            .AddScoped<IBackgroundTaskService>(_ => new BackgroundTaskServiceSynchronous())
+            .AddFluxor(options => options.ScanAssemblies(typeof(IBackgroundTaskService).Assembly));
+
+        var serviceProvider = services.BuildServiceProvider();
+
+        var store = serviceProvider.GetRequiredService<IStore>();
+        store.InitializeAsync().Wait();
+
+        backgroundTaskService = serviceProvider.GetRequiredService<IBackgroundTaskService>();
+
+        continuousBackgroundTaskWorker = ContinuousBackgroundTaskWorker.Queue;
+        backgroundTaskService.RegisterQueue(continuousBackgroundTaskWorker);
+
+        blockingBackgroundTaskWorker = BlockingBackgroundTaskWorker.Queue;
+        backgroundTaskService.RegisterQueue(blockingBackgroundTaskWorker);
     }
 }

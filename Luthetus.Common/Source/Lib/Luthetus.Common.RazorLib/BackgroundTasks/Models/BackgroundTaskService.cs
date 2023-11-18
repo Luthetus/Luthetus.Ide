@@ -6,6 +6,8 @@ public class BackgroundTaskService : IBackgroundTaskService
 {
     private readonly Dictionary<Key<BackgroundTaskQueue>, BackgroundTaskQueue> _queueMap = new();
 
+    public event Action? ExecutingBackgroundTaskChanged;
+
     public void Enqueue(IBackgroundTask backgroundTask)
     {
         var queue = _queueMap[backgroundTask.QueueKey];
@@ -47,5 +49,6 @@ public class BackgroundTaskService : IBackgroundTaskService
         var queue = _queueMap[queueKey];
 
         queue.ExecutingBackgroundTask = backgroundTask;
+        ExecutingBackgroundTaskChanged?.Invoke();
     }
 }
