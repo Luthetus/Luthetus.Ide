@@ -3,4 +3,5 @@
 public record InMemoryFile(
     string Data,
     IAbsolutePath AbsolutePath,
-    DateTime LastModifiedDateTime);
+    DateTime LastModifiedDateTime,
+    bool IsDirectory);

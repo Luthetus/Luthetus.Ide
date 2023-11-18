@@ -7,13 +7,17 @@ namespace Luthetus.Common.Tests.Basis.Storages.Models;
 /// </summary>
 public class DoNothingStorageServiceTests
 {
+    private const string DoNothingKey = "abc";
+    private const int DoNothingValue = 123;
+
     /// <summary>
     /// <see cref="DoNothingStorageService()"/>
     /// </summary>
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
+        var doNothingStorageService = new DoNothingStorageService();
+        Assert.NotNull(doNothingStorageService);
     }
 
     /// <summary>
@@ -22,7 +26,10 @@ public class DoNothingStorageServiceTests
     [Fact]
     public void SetValue()
     {
-        throw new NotImplementedException();
+        var doNothingStorageService = new DoNothingStorageService();
+
+        doNothingStorageService.SetValue(DoNothingKey, DoNothingValue);
+        Assert.NotNull(doNothingStorageService);
     }
 
     /// <summary>
@@ -31,6 +38,9 @@ public class DoNothingStorageServiceTests
     [Fact]
     public void GetValue()
     {
-        throw new NotImplementedException();
+        var doNothingStorageService = new DoNothingStorageService();
+
+        var value = doNothingStorageService.GetValue(DoNothingKey);
+        Assert.NotNull(doNothingStorageService);
     }
 }

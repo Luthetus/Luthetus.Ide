@@ -1,5 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.FileSystems.Models;
 using Microsoft.Extensions.DependencyInjection;
+using static Luthetus.Common.Tests.Basis.FileSystems.FileSystemsTestsHelper;
 
 namespace Luthetus.Common.Tests.Basis.FileSystems.Models;
 
@@ -10,199 +11,115 @@ public class RelativePathTests
 {
     /// <summary>
     /// <see cref="RelativePath(string, bool, IEnvironmentProvider)"/>
+    /// <see cref="RelativePath.PathType"/>
+    /// <see cref="RelativePath.IsDirectory"/>
+    /// <see cref="RelativePath.EnvironmentProvider"/>
+    /// <see cref="RelativePath.AncestorDirectoryBag"/>
+    /// <see cref="RelativePath.NameNoExtension"/>
+    /// <see cref="RelativePath.ExtensionNoPeriod"/>
+    /// <see cref="RelativePath.UpDirDirectiveCount"/>
+    /// <see cref="RelativePath.ExactInput"/>
+    /// <see cref="RelativePath.Value"/>
+    /// <see cref="RelativePath.NameWithExtension"/>
     /// </summary>
     [Fact]
     public void Constructor()
     {
-        FileSystemsTestsHelper.InitializeFileSystemsTests(
+        InitializeFileSystemsTests(
             out InMemoryEnvironmentProvider environmentProvider,
             out InMemoryFileSystemProvider fileSystemProvider,
             out ServiceProvider serviceProvider);
 
-        //var firstDirName = string.Empty;
-        //var secondDirName = "school";
-        //var thirdDirName = "homework";
-        //var fourthDirName = "math";
+        {
+            // This path is silly because it currently is going one UpDir directive too many
+            // just to arive at the same ending location.
+            //
+            // That being said, I need to parse more than one UpDir directive, and
+            // am using this for that purpose.
+            var relativePathString = "../../Homework/Math/";
+            var relativePath = new RelativePath(relativePathString, true, environmentProvider);
 
-        //// var workingDirPath = "/school/homework/math/";
-        //var workingDirPath = $"{firstDirName}/{secondDirName}/{thirdDirName}/{fourthDirName}/";
-        //var workingDirAbsolutePath = new AbsolutePath(workingDirPath, true, environmentProvider);
+            Assert.Equal(PathType.RelativePath, relativePath.PathType);
+            Assert.True(relativePath.IsDirectory);
+            Assert.Equal(environmentProvider, relativePath.EnvironmentProvider);
+            Assert.Equal("Math", relativePath.NameNoExtension);
+            Assert.Equal("/", relativePath.ExtensionNoPeriod);
+            Assert.Equal(2, relativePath.UpDirDirectiveCount);
+            Assert.Equal(relativePathString, relativePath.ExactInput);
+            Assert.Equal(relativePathString, relativePath.Value);
+            Assert.Equal("Math/", relativePath.NameWithExtension);
 
-        //// Directory
-        //{
-        //    // 'simple' input
-        //    {
-        //        var relativePathString = $@"../";
-        //        var isDirectory = true;
-        //        var relativePath = new RelativePath(relativePathString, isDirectory, environmentProvider);
+            var homeworkDirectory = relativePath.AncestorDirectoryBag[0];
+            Assert.Equal("Homework", homeworkDirectory.NameNoExtension);
+        }
 
-        //        var actualAbsolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
-        //            workingDirAbsolutePath,
-        //            relativePathString,
-        //            environmentProvider);
+        {
+            var relativePathString = "../Math/addition.txt";
+            var relativePath = new RelativePath(relativePathString, false, environmentProvider);
 
-        //        var actualAbsolutePath = new AbsolutePath(actualAbsolutePathString, true, environmentProvider);
+            Assert.Equal(PathType.RelativePath, relativePath.PathType);
+            Assert.False(relativePath.IsDirectory);
+            Assert.Equal(environmentProvider, relativePath.EnvironmentProvider);
+            Assert.Equal("addition", relativePath.NameNoExtension);
+            Assert.Equal("txt", relativePath.ExtensionNoPeriod);
+            Assert.Equal(1, relativePath.UpDirDirectiveCount);
+            Assert.Equal(relativePathString, relativePath.ExactInput);
+            Assert.Equal(relativePathString, relativePath.Value);
+            Assert.Equal("addition.txt", relativePath.NameWithExtension);
 
-        //        if (actualAbsolutePath.ParentDirectory is null)
-        //            throw new Exception();
+            var mathDirectory = relativePath.AncestorDirectoryBag[0];
+            Assert.Equal("Math", mathDirectory.NameNoExtension);
+        }
 
-        //        var expectedPathString = $"/school/homework/";
-        //        var expectedAbsolutePath = new AbsolutePath(expectedPathString, true, environmentProvider);
+        {
+            var relativePathString = "./skeletalSystem.txt";
+            var relativePath = new RelativePath(relativePathString, false, environmentProvider);
 
-        //        Assert.Equal(expectedPathString, actualAbsolutePath.Value);
-        //        Assert.Null(actualAbsolutePath.ExactInput);
-        //        Assert.Equal(isDirectory, actualAbsolutePath.IsDirectory);
-        //        Assert.Equal(environmentProvider, actualAbsolutePath.EnvironmentProvider);
-        //        Assert.Equal(2, actualAbsolutePath.AncestorDirectoryBag.Count);
-        //        Assert.Equal(expectedDirName, actualAbsolutePath.NameNoExtension);
+            Assert.Equal(PathType.RelativePath, relativePath.PathType);
+            Assert.False(relativePath.IsDirectory);
+            Assert.Equal(environmentProvider, relativePath.EnvironmentProvider);
+            Assert.Equal("skeletalSystem", relativePath.NameNoExtension);
+            Assert.Equal("txt", relativePath.ExtensionNoPeriod);
+            Assert.Equal(0, relativePath.UpDirDirectiveCount);
+            Assert.Equal(relativePathString, relativePath.ExactInput);
+            Assert.Equal(relativePathString, relativePath.Value);
+            Assert.Equal("skeletalSystem.txt", relativePath.NameWithExtension);
 
-        //        Assert.Equal(
-        //            environmentProvider.DirectorySeparatorChar.ToString(),
-        //            actualAbsolutePath.ExtensionNoPeriod);
+            Assert.Empty(relativePath.AncestorDirectoryBag);
+        }
 
-        //        Assert.Null(actualAbsolutePath.RootDrive);
-        //        Assert.Equal(actualAbsolutePathString, actualAbsolutePath.Value);
+        {
+            var relativePathString = "../";
+            var relativePath = new RelativePath(relativePathString, true, environmentProvider);
 
-        //        Assert.Equal(
-        //            expectedDirName + environmentProvider.DirectorySeparatorChar,
-        //            actualAbsolutePath.NameWithExtension);
+            Assert.Equal(PathType.RelativePath, relativePath.PathType);
+            Assert.True(relativePath.IsDirectory);
+            Assert.Equal(environmentProvider, relativePath.EnvironmentProvider);
+            Assert.Equal(string.Empty, relativePath.NameNoExtension);
+            Assert.Equal("/", relativePath.ExtensionNoPeriod);
+            Assert.Equal(1, relativePath.UpDirDirectiveCount);
+            Assert.Equal(relativePathString, relativePath.ExactInput);
+            Assert.Equal(relativePathString, relativePath.Value);
+            Assert.Equal("/", relativePath.NameWithExtension);
 
-        //        Assert.False(actualAbsolutePath.IsRootDirectory);
-        //    }
-        //}
-        
-        //// File 
-        //{
-        //    // 'simple' input
-        //    {
-        //        var fileName = "math";
-        //        var fileExtension = "txt";
-        //        var parentDirectoryName = "homework";
-        //        var filePath = $@"/{parentDirectoryName}/{fileName}.{fileExtension}";
-        //        var isDirectory = false;
-        //        var fileAbsolutePath = new AbsolutePath(filePath, isDirectory, environmentProvider);
+            Assert.Empty(relativePath.AncestorDirectoryBag);
+        }
 
-        //        if (fileAbsolutePath.ParentDirectory is null)
-        //            throw new Exception();
+        {
+            var relativePathString = "../";
+            var relativePath = new RelativePath(relativePathString, true, environmentProvider);
 
-        //        Assert.Equal($@"/{parentDirectoryName}/", fileAbsolutePath.ParentDirectory.Value);
-        //        Assert.Equal(filePath, fileAbsolutePath.ExactInput);
-        //        Assert.Equal(PathType.AbsolutePath, fileAbsolutePath.PathType);
-        //        Assert.Equal(isDirectory, fileAbsolutePath.IsDirectory);
-        //        Assert.Equal(environmentProvider, fileAbsolutePath.EnvironmentProvider);
-        //        Assert.Equal(2, fileAbsolutePath.AncestorDirectoryBag.Count);
-        //        Assert.Equal(fileName, fileAbsolutePath.NameNoExtension);
-        //        Assert.Equal(fileExtension, fileAbsolutePath.ExtensionNoPeriod);
-        //        Assert.Null(fileAbsolutePath.RootDrive);
-        //        Assert.Equal(filePath, fileAbsolutePath.Value);
+            Assert.Equal(PathType.RelativePath, relativePath.PathType);
+            Assert.True(relativePath.IsDirectory);
+            Assert.Equal(environmentProvider, relativePath.EnvironmentProvider);
+            Assert.Equal(string.Empty, relativePath.NameNoExtension);
+            Assert.Equal("/", relativePath.ExtensionNoPeriod);
+            Assert.Equal(1, relativePath.UpDirDirectiveCount);
+            Assert.Equal(relativePathString, relativePath.ExactInput);
+            Assert.Equal(relativePathString, relativePath.Value);
+            Assert.Equal("/", relativePath.NameWithExtension);
 
-        //        Assert.Equal(
-        //            fileName + '.' + fileExtension,
-        //            fileAbsolutePath.NameWithExtension);
-
-        //        Assert.False(fileAbsolutePath.IsRootDirectory);
-        //    }
-        //}
-
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="RelativePath.PathType"/>
-    /// </summary>
-    [Fact]
-    public void PathType()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="RelativePath.IsDirectory"/>
-    /// </summary>
-    [Fact]
-    public void IsDirectory()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="RelativePath.EnvironmentProvider"/>
-    /// </summary>
-    [Fact]
-    public void EnvironmentProvider()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="RelativePath.AncestorDirectoryBag"/>
-    /// </summary>
-    [Fact]
-    public void AncestorDirectoryBag()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="RelativePath.NameNoExtension"/>
-    /// </summary>
-    [Fact]
-    public void NameNoExtension()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="RelativePath.ExtensionNoPeriod"/>
-    /// </summary>
-    [Fact]
-    public void ExtensionNoPeriod()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="RelativePath.UpDirDirectiveCount"/>
-    /// </summary>
-    [Fact]
-    public void UpDirDirectiveCount()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="RelativePath.ExactInput"/>
-    /// </summary>
-    [Fact]
-    public void ExactInput()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="RelativePath.Value"/>
-    /// </summary>
-    [Fact]
-    public void FormattedInput()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="RelativePath.NameWithExtension"/>
-    /// </summary>
-    [Fact]
-    public void NameWithExtension()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="RelativePath.UsedDirectorySeparatorChar"/>
-    /// </summary>
-    [Fact]
-    public void UsedDirectorySeparatorChar()
-    {
-        throw new NotImplementedException();
+            Assert.Empty(relativePath.AncestorDirectoryBag);
+        }
     }
 }

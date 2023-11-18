@@ -11,7 +11,7 @@ namespace Luthetus.Common.Tests.Basis.Keymaps.Models;
 public class KeyboardEventArgsExtensionsTests
 {
     /// <summary>
-    /// <see cref="KeyboardEventArgsExtensions.ToKeymapArgument(Microsoft.AspNetCore.Components.Web.KeyboardEventArgs)"/>
+    /// <see cref="KeyboardEventArgsExtensions.ToKeymapArgument(KeyboardEventArgs)"/>
     /// </summary>
     [Fact]
     public void ToKeymapArgument()

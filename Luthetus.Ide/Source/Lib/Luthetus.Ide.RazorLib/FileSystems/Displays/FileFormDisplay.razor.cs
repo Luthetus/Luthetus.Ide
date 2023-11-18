@@ -11,7 +11,7 @@ namespace Luthetus.Ide.RazorLib.FileSystems.Displays;
 public partial class FileFormDisplay : ComponentBase, IFileFormRendererType
 {
     [CascadingParameter]
-    public MenuOptionWidgetParameters? MenuOptionWidgetParameters { get; set; }
+    public MenuOptionCallbacks? MenuOptionCallbacks { get; set; }
 
     [Parameter, EditorRequired]
     public string FileName { get; set; } = string.Empty;
@@ -46,7 +46,7 @@ public partial class FileFormDisplay : ComponentBase, IFileFormRendererType
     {
         if (firstRender)
         {
-            if (MenuOptionWidgetParameters is not null &&
+            if (MenuOptionCallbacks is not null &&
                 _inputElementReference is not null)
             {
                 try
@@ -68,15 +68,15 @@ public partial class FileFormDisplay : ComponentBase, IFileFormRendererType
 
     private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
-        if (MenuOptionWidgetParameters is not null)
+        if (MenuOptionCallbacks is not null)
         {
             if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
             {
-                await MenuOptionWidgetParameters.HideWidgetAsync.Invoke();
+                await MenuOptionCallbacks.HideWidgetAsync.Invoke();
             }
             else if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
             {
-                await MenuOptionWidgetParameters.CompleteWidgetAsync.Invoke(
+                await MenuOptionCallbacks.CompleteWidgetAsync.Invoke(
                     () => OnAfterSubmitAction.Invoke(
                         _fileName,
                         _fileTemplatesDisplay?.ExactMatchFileTemplate,

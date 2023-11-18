@@ -128,24 +128,6 @@ public class AppOptionsServiceTests
         Assert.Equal(iconSize, appOptionsService.AppOptionsStateWrap.Value.Options.IconSizeInPixels);
     }
 
-    /// <summary>
-    /// <see cref="AppOptionsService.SetFromLocalStorageAsync()"/>
-    /// </summary>
-    [Fact]
-    public void SetFromLocalStorageAsync()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="AppOptionsService.WriteToStorage()"/>
-    /// </summary>
-    [Fact]
-    public void WriteToStorage()
-    {
-        throw new NotImplementedException();
-    }
-
     private void InitializeAppOptionsServiceTests(
         out IAppOptionsService appOptionsService,
         out ServiceProvider serviceProvider)

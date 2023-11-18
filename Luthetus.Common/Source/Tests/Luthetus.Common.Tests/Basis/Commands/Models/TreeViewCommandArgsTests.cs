@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
-using Luthetus.Common.RazorLib.UnitTesting;
 using Luthetus.Common.RazorLib.TreeViews.States;
 using Luthetus.Common.RazorLib.Keys.Models;
 using System.Collections.Immutable;
@@ -39,6 +38,7 @@ public class TreeViewCommandArgsTests
         services.AddScoped<ITreeViewService, TreeViewService>(
             serviceProvider => new TreeViewService(
                 serviceProvider.GetRequiredService<IState<TreeViewState>>(),
+                serviceProvider.GetRequiredService<IBackgroundTaskService>(),
                 serviceProvider.GetRequiredService<IDispatcher>()));
 
         var serviceProvider = services.BuildServiceProvider();

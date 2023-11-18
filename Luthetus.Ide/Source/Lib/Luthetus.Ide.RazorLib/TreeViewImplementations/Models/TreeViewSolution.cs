@@ -59,31 +59,12 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolutionModel>
     {
         try
         {
+            var previousChildren = new List<TreeViewNoType>(ChildBag);
+
             var newChildBag = await this.DotNetSolutionLoadChildrenAsync();
-            var oldChildrenMap = ChildBag.ToDictionary(child => child);
-
-            foreach (var newChild in newChildBag)
-            {
-                if (oldChildrenMap.TryGetValue(newChild, out var oldChild))
-                {
-                    newChild.IsExpanded = oldChild.IsExpanded;
-                    newChild.IsExpandable = oldChild.IsExpandable;
-                    newChild.IsHidden = oldChild.IsHidden;
-                    newChild.Key = oldChild.Key;
-                    newChild.ChildBag = oldChild.ChildBag;
-                }
-            }
-
-            for (int i = 0; i < newChildBag.Count; i++)
-            {
-                var newChild = newChildBag[i];
-
-                newChild.IndexAmongSiblings = i;
-                newChild.Parent = this;
-                newChild.TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
-            }
 
             ChildBag = newChildBag;
+            LinkChildren(previousChildren, ChildBag);
         }
         catch (Exception exception)
         {

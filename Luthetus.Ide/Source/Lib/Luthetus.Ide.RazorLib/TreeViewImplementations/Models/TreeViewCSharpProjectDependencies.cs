@@ -45,6 +45,8 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
 
     public override Task LoadChildBagAsync()
     {
+        var previousChildren = new List<TreeViewNoType>(ChildBag);
+
         var treeViewCSharpProjectNugetPackageReferences = new TreeViewCSharpProjectNugetPackageReferences(
             new CSharpProjectNugetPackageReferences(Item.CSharpProjectNamespacePath),
             IdeComponentRenderers,
@@ -73,16 +75,9 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
             treeViewCSharpProjectToProjectReferences
         };
 
-        for (int i = 0; i < newChildBag.Count; i++)
-        {
-            var newChild = newChildBag[i];
-
-            newChild.IndexAmongSiblings = i;
-            newChild.Parent = this;
-            newChild.TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
-        }
-
         ChildBag = newChildBag;
+        LinkChildren(previousChildren, ChildBag);
+
         TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
         return Task.CompletedTask;
     }

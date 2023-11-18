@@ -13,6 +13,15 @@ public class MenuRecordTests
     [Fact]
     public void Empty()
     {
-        throw new NotImplementedException();
+        Assert.Single(MenuRecord.Empty.MenuOptionBag);
+
+        var menuOption = MenuRecord.Empty.MenuOptionBag.Single();
+
+        Assert.Equal("No menu options exist for this item.", menuOption.DisplayName);
+        Assert.Equal(MenuOptionKind.Other, menuOption.MenuOptionKind);
+        Assert.Null(menuOption.OnClick);
+        Assert.Null(menuOption.SubMenu);
+        Assert.Null(menuOption.WidgetRendererType);
+        Assert.Null(menuOption.WidgetParameterMap);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Luthetus.Common.RazorLib.FileSystems.Models;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Luthetus.Common.Tests.Basis.FileSystems.Models;
 
@@ -9,37 +10,66 @@ public class FileSystemDriveTests
 {
     /// <summary>
     /// <see cref="FileSystemDrive(string, IEnvironmentProvider)"/>
+    /// <br/>----<br/>
+    /// <see cref="FileSystemDrive.DriveNameAsIdentifier"/>
+    /// <see cref="FileSystemDrive.DriveNameAsPath"/>
+    /// <see cref="FileSystemDrive.EnvironmentProvider"/>
     /// </summary>
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
-    }
+        FileSystemsTestsHelper.InitializeFileSystemsTests(
+            out InMemoryEnvironmentProvider environmentProvider,
+            out InMemoryFileSystemProvider fileSystemProvider,
+            out ServiceProvider serviceProvider);
 
-    /// <summary>
-    /// <see cref="FileSystemDrive.DriveNameAsIdentifier"/>
-    /// </summary>
-    [Fact]
-    public void DriveNameAsIdentifier()
-    {
-        throw new NotImplementedException();
-    }
+        var directorySeparatorCharBag = new[]
+        {
+            environmentProvider.DirectorySeparatorChar,
+            environmentProvider.AltDirectorySeparatorChar,
+        };
 
-    /// <summary>
-    /// <see cref="FileSystemDrive.EnvironmentProvider"/>
-    /// </summary>
-    [Fact]
-    public void EnvironmentProvider()
-    {
-        throw new NotImplementedException();
-    }
+        foreach (var dsc in directorySeparatorCharBag)
+        {
+            // Root
+            {
+                var absolutePath = new AbsolutePath($@"C:{dsc}", true, environmentProvider);
 
-    /// <summary>
-    /// <see cref="FileSystemDrive.DriveNameAsPath"/>
-    /// </summary>
-    [Fact]
-    public void DriveNameAsPath()
-    {
-        throw new NotImplementedException();
+                if (absolutePath.RootDrive is null)
+                    throw new Exception($"{nameof(absolutePath.RootDrive)} was null, test failed");
+
+                Assert.Equal("C", absolutePath.RootDrive.DriveNameAsIdentifier);
+                Assert.Equal("C:", absolutePath.RootDrive.DriveNameAsPath);
+            }
+
+            // Directory
+            {
+                var absolutePath = new AbsolutePath($@"C:{dsc}Homework{dsc}Math{dsc}", true, environmentProvider);
+
+                if (absolutePath.RootDrive is null)
+                    throw new Exception($"{nameof(absolutePath.RootDrive)} was null, test failed");
+
+                Assert.Equal("C", absolutePath.RootDrive.DriveNameAsIdentifier);
+                Assert.Equal("C:", absolutePath.RootDrive.DriveNameAsPath);
+            }
+
+            // File
+            {
+                var absolutePath = new AbsolutePath($@"C:{dsc}Homework{dsc}Math{dsc}addition.txt", false, environmentProvider);
+
+                if (absolutePath.RootDrive is null)
+                    throw new Exception($"{nameof(absolutePath.RootDrive)} was null, test failed");
+
+                Assert.Equal("C", absolutePath.RootDrive.DriveNameAsIdentifier);
+                Assert.Equal("C:", absolutePath.RootDrive.DriveNameAsPath);
+            }
+
+            // No drive provided
+            {
+                var absolutePath = new AbsolutePath($@"{dsc}Homework{dsc}Math{dsc}addition.txt", false, environmentProvider);
+
+                Assert.Null(absolutePath.RootDrive);
+            }
+        }
     }
 }

@@ -15,8 +15,8 @@ public abstract class TreeViewNoType
     public List<TreeViewNoType> ChildBag { get; set; } = new();
 
     /// <summary>
-    /// <see cref="IndexAmongSiblings"/> refers to in the Parent tree view entry's
-    /// list of children at what index does this tree view exist at?
+    /// <see cref="IndexAmongSiblings"/> refers to the index which this <see cref="TreeViewNoType"/>
+    /// is found at within their <see cref="Parent"/>'s <see cref="ChildBag"/>
     /// </summary>
     public int IndexAmongSiblings { get; set; }
     public bool IsRoot { get; set; }
@@ -27,13 +27,38 @@ public abstract class TreeViewNoType
     public Key<TreeViewNoType> Key { get; set; } = Key<TreeViewNoType>.NewKey();
 
     public abstract TreeViewRenderer GetTreeViewRenderer();
-    /// <summary>
-    /// TODO: SphagettiCode - <see cref="LoadChildBagAsync"/> has the same logic over
-    /// and over prior to returning. That is, 'foreach (var newChild in Children)'.
-    /// Inside the foreach a check for a previous instance is made so the IsExpanded state and
-    /// etc... can be remembered. This logic should be generalized into a reusable method?(2023-09-19)
-    /// </summary>
     public abstract Task LoadChildBagAsync();
+
+    /// <summary>
+    /// Sets foreach child: child.Parent = this;
+    /// As well it sets the child.IndexAmongSiblings, and maintains expanded state.
+    /// </summary>
+    public virtual void LinkChildren(
+        List<TreeViewNoType> previousChildren,
+        List<TreeViewNoType> nextChildren)
+    {
+        var oldChildrenMap = previousChildren.ToDictionary(child => child);
+
+        for (int i = 0; i < nextChildren.Count; i++)
+        {
+            var child = nextChildren[i];
+
+            child.Parent = this;
+            child.IndexAmongSiblings = i;
+        }
+
+        foreach (var newChild in nextChildren)
+        {
+            if (oldChildrenMap.TryGetValue(newChild, out var oldChild))
+            {
+                newChild.IsExpanded = oldChild.IsExpanded;
+                newChild.IsExpandable = oldChild.IsExpandable;
+                newChild.IsHidden = oldChild.IsHidden;
+                newChild.Key = oldChild.Key;
+                newChild.ChildBag = oldChild.ChildBag;
+            }
+        }
+    }
 
     /// <summary>
     /// <see cref="RemoveRelatedFilesFromParent"/> is used for showing codebehinds such that a file on

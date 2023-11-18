@@ -62,13 +62,13 @@ public partial record NotificationState
             NotificationState inState,
             UndoMakeReadAction undoMakeReadAction)
         {
-            var inNotificationIndex = inState.DefaultBag.FindIndex(
+            var inNotificationIndex = inState.ReadBag.FindIndex(
                 x => x.Key == undoMakeReadAction.Key);
 
             if (inNotificationIndex == -1)
                 return inState;
 
-            var inNotification = inState.DefaultBag[inNotificationIndex];
+            var inNotification = inState.ReadBag[inNotificationIndex];
 
             var outReadBag = inState.ReadBag.RemoveAt(inNotificationIndex);
             var outDefaultBag = inState.DefaultBag.Add(inNotification);
@@ -108,13 +108,13 @@ public partial record NotificationState
             NotificationState inState,
             UndoMakeDeletedAction undoMakeDeletedAction)
         {
-            var inNotificationIndex = inState.DefaultBag.FindIndex(
+            var inNotificationIndex = inState.DeletedBag.FindIndex(
                 x => x.Key == undoMakeDeletedAction.Key);
 
             if (inNotificationIndex == -1)
                 return inState;
 
-            var inNotification = inState.DefaultBag[inNotificationIndex];
+            var inNotification = inState.DeletedBag[inNotificationIndex];
 
             var outDeletedBag = inState.DeletedBag.RemoveAt(inNotificationIndex);
             var outDefaultBag = inState.DefaultBag.Add(inNotification);
@@ -154,13 +154,13 @@ public partial record NotificationState
             NotificationState inState,
             UndoMakeArchivedAction undoMakeArchivedAction)
         {
-            var inNotificationIndex = inState.DefaultBag.FindIndex(
+            var inNotificationIndex = inState.ArchivedBag.FindIndex(
                 x => x.Key == undoMakeArchivedAction.Key);
 
             if (inNotificationIndex == -1)
                 return inState;
 
-            var inNotification = inState.DefaultBag[inNotificationIndex];
+            var inNotification = inState.ArchivedBag[inNotificationIndex];
 
             var outArchivedBag = inState.ArchivedBag.RemoveAt(inNotificationIndex);
             var outDefaultBag = inState.DefaultBag.Add(inNotification);

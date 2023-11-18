@@ -1,4 +1,5 @@
 ﻿using Fluxor;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.States;
 
@@ -6,13 +7,16 @@ namespace Luthetus.Common.RazorLib.TreeViews.Models;
 
 public class TreeViewService : ITreeViewService
 {
+    private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IDispatcher _dispatcher;
 
     public TreeViewService(
         IState<TreeViewState> treeViewStateWrap,
+        IBackgroundTaskService backgroundTaskService,
         IDispatcher dispatcher)
     {
         TreeViewStateWrap = treeViewStateWrap;
+        _backgroundTaskService = backgroundTaskService;
         _dispatcher = dispatcher;
     }
 
@@ -130,24 +134,30 @@ public class TreeViewService : ITreeViewService
             shiftKey,
             treeViewNoType =>
             {
-                _ = Task.Run(async () =>
-                {
-                    try
+                var backgroundTask = new BackgroundTask(
+                    Key<BackgroundTask>.NewKey(),
+                    ContinuousBackgroundTaskWorker.Queue.Key,
+                    "TreeView.LoadChildBagAsync()",
+                    async () =>
                     {
-                        await treeViewNoType.LoadChildBagAsync().ConfigureAwait(false);
+                        try
+                        {
+                            await treeViewNoType.LoadChildBagAsync().ConfigureAwait(false);
 
-                        var reRenderNodeAction = new TreeViewState.ReRenderNodeAction(
-                            containerKey,
-                            treeViewNoType);
+                            var reRenderNodeAction = new TreeViewState.ReRenderNodeAction(
+                                containerKey,
+                                treeViewNoType);
 
-                        _dispatcher.Dispatch(reRenderNodeAction);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e);
-                        throw;
-                    }
-                }, CancellationToken.None);
+                            _dispatcher.Dispatch(reRenderNodeAction);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e);
+                            throw;
+                        }
+                    });
+
+                _backgroundTaskService.Enqueue(backgroundTask);
             });
 
         _dispatcher.Dispatch(moveRightAction);

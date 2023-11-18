@@ -19,6 +19,7 @@ using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Drags.Displays;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Installations.Models;
 
@@ -68,6 +69,7 @@ public record LuthetusCommonFactories
     public Func<IServiceProvider, ITreeViewService> TreeViewServiceFactory { get; init; } =
         serviceProvider => new TreeViewService(
             serviceProvider.GetRequiredService<IState<TreeViewState>>(),
+            serviceProvider.GetRequiredService<IBackgroundTaskService>(),
             serviceProvider.GetRequiredService<IDispatcher>());
 
     /// <summary>

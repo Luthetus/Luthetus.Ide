@@ -1,4 +1,9 @@
+using Fluxor;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.Storages.States;
+using Microsoft.Extensions.DependencyInjection;
+using System.Data.SqlTypes;
 
 namespace Luthetus.Common.Tests.Basis.Storages.States;
 
@@ -8,29 +13,43 @@ namespace Luthetus.Common.Tests.Basis.Storages.States;
 public partial class StorageSyncConstructorTests
 {
     /// <summary>
-    /// <see cref="StorageSync(RazorLib.Storages.Models.IStorageService, RazorLib.BackgroundTasks.Models.IBackgroundTaskService, Fluxor.IDispatcher)"/>
+    /// <see cref="StorageSync(IStorageService, IBackgroundTaskService, IDispatcher)"/>
+    /// <br/>----<br/>
+    /// <see cref="StorageSync.BackgroundTaskService"/>
+    /// <see cref="StorageSync.Dispatcher"/>
     /// </summary>
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
+        InitializeStorageSyncConstructorTests(
+            out var dispatcher,
+            out var backgroundTaskService,
+            out var storageService);
+
+        var storageSync = new StorageSync(storageService, backgroundTaskService, dispatcher);
+
+        Assert.Equal(dispatcher, storageSync.Dispatcher);
+        Assert.Equal(backgroundTaskService, storageSync.BackgroundTaskService);
     }
 
-    /// <summary>
-    /// <see cref="StorageSync.BackgroundTaskService"/>
-    /// </summary>
-    [Fact]
-    public void BackgroundTaskService()
+    private void InitializeStorageSyncConstructorTests(
+        out IDispatcher dispatcher,
+        out IBackgroundTaskService backgroundTaskService,
+        out DoNothingStorageService doNothingStorageService)
     {
-        throw new NotImplementedException();
-    }
+        var services = new ServiceCollection()
+            .AddScoped<IBackgroundTaskService>(sp => new BackgroundTaskServiceSynchronous())
+            .AddScoped<IStorageService, DoNothingStorageService>()
+            .AddFluxor(options => options.ScanAssemblies(typeof(StorageState).Assembly));
 
-    /// <summary>
-    /// <see cref="StorageSync.Dispatcher"/>
-    /// </summary>
-    [Fact]
-    public void Dispatcher()
-    {
-        throw new NotImplementedException();
+        var serviceProvider = services.BuildServiceProvider();
+
+        var store = serviceProvider.GetRequiredService<IStore>();
+        store.InitializeAsync().Wait();
+
+        backgroundTaskService = serviceProvider.GetRequiredService<IBackgroundTaskService>();
+        doNothingStorageService = (DoNothingStorageService)serviceProvider.GetRequiredService<IStorageService>();
+
+        dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
     }
 }

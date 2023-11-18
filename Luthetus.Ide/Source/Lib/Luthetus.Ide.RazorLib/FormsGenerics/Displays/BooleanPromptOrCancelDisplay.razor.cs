@@ -9,7 +9,7 @@ namespace Luthetus.Ide.RazorLib.FormsGenerics.Displays;
 public partial class BooleanPromptOrCancelDisplay : ComponentBase, IBooleanPromptOrCancelRendererType
 {
     [CascadingParameter]
-    public MenuOptionWidgetParameters? MenuOptionWidgetParameters { get; set; }
+    public MenuOptionCallbacks? MenuOptionCallbacks { get; set; }
 
     [Parameter, EditorRequired]
     public bool IncludeCancelOption { get; set; }
@@ -53,11 +53,11 @@ public partial class BooleanPromptOrCancelDisplay : ComponentBase, IBooleanPromp
 
     private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
-        if (MenuOptionWidgetParameters is not null)
+        if (MenuOptionCallbacks is not null)
         {
             if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
             {
-                await MenuOptionWidgetParameters.HideWidgetAsync.Invoke();
+                await MenuOptionCallbacks.HideWidgetAsync.Invoke();
             }
         }
     }

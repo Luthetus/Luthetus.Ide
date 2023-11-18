@@ -9,73 +9,86 @@ public class InMemoryEnvironmentProviderTests
 {
     /// <summary>
     /// <see cref="InMemoryEnvironmentProvider()"/>
+    /// <br/>----<br/>
+    /// <see cref="InMemoryEnvironmentProvider.RootDirectoryAbsolutePath"/>
+    /// <see cref="InMemoryEnvironmentProvider.HomeDirectoryAbsolutePath"/>
+    /// <see cref="InMemoryEnvironmentProvider.DirectorySeparatorChar"/>
+    /// <see cref="InMemoryEnvironmentProvider.AltDirectorySeparatorChar"/>
+    /// <see cref="InMemoryEnvironmentProvider.IsDirectorySeparator(char)"/>
+    /// <see cref="InMemoryEnvironmentProvider.GetRandomFileName()"/>
+    /// <see cref="InMemoryEnvironmentProvider.JoinPaths(string, string)"/>
     /// </summary>
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
-    }
+        var inMemoryEnvironmentProvider = new InMemoryEnvironmentProvider();
 
-    /// <summary>
-    /// <see cref="InMemoryEnvironmentProvider.RootDirectoryAbsolutePath"/>
-    /// </summary>
-    [Fact]
-    public void RootDirectoryAbsolutePath()
-    {
-        throw new NotImplementedException();
-    }
+        Assert.Equal("/", inMemoryEnvironmentProvider.RootDirectoryAbsolutePath.ExactInput);
+        Assert.True(inMemoryEnvironmentProvider.RootDirectoryAbsolutePath.IsDirectory);
 
-    /// <summary>
-    /// <see cref="InMemoryEnvironmentProvider.HomeDirectoryAbsolutePath"/>
-    /// </summary>
-    [Fact]
-    public void HomeDirectoryAbsolutePath()
-    {
-        throw new NotImplementedException();
-    }
+        Assert.Equal("/Repos/", inMemoryEnvironmentProvider.HomeDirectoryAbsolutePath.ExactInput);
+        Assert.True(inMemoryEnvironmentProvider.HomeDirectoryAbsolutePath.IsDirectory);
 
-    /// <summary>
-    /// <see cref="InMemoryEnvironmentProvider.DirectorySeparatorChar"/>
-    /// </summary>
-    [Fact]
-    public void DirectorySeparatorChar()
-    {
-        throw new NotImplementedException();
-    }
+        Assert.Equal('/', inMemoryEnvironmentProvider.DirectorySeparatorChar);
+        Assert.Equal('\\', inMemoryEnvironmentProvider.AltDirectorySeparatorChar);
 
-    /// <summary>
-    /// <see cref="InMemoryEnvironmentProvider.AltDirectorySeparatorChar"/>
-    /// </summary>
-    [Fact]
-    public void AltDirectorySeparatorChar()
-    {
-        throw new NotImplementedException();
-    }
+        Assert.True(inMemoryEnvironmentProvider.IsDirectorySeparator('/'));
+        Assert.True(inMemoryEnvironmentProvider.IsDirectorySeparator('\\'));
+        
+        Assert.False(inMemoryEnvironmentProvider.IsDirectorySeparator('a'));
+        Assert.False(inMemoryEnvironmentProvider.IsDirectorySeparator('5'));
+        Assert.False(inMemoryEnvironmentProvider.IsDirectorySeparator('@'));
 
-    /// <summary>
-    /// <see cref="InMemoryEnvironmentProvider.IsDirectorySeparator(char)"/>
-    /// </summary>
-    [Fact]
-    public void IsDirectorySeparator()
-    {
-        throw new NotImplementedException();
-    }
+        Assert.NotEqual(inMemoryEnvironmentProvider.GetRandomFileName(), inMemoryEnvironmentProvider.GetRandomFileName());
 
-    /// <summary>
-    /// <see cref="InMemoryEnvironmentProvider.GetRandomFileName()"/>
-    /// </summary>
-    [Fact]
-    public void GetRandomFileName()
-    {
-        throw new NotImplementedException();
-    }
+        // From root join a directory
+        {
+            var pathOne = "/";
+            var pathTwo = "Homework/";
 
-    /// <summary>
-    /// <see cref="InMemoryEnvironmentProvider.JoinPaths(string, string)"/>
-    /// </summary>
-    [Fact]
-    public void JoinPaths()
-    {
-        throw new NotImplementedException();
+            var jointPath = inMemoryEnvironmentProvider.JoinPaths(pathOne, pathTwo);
+
+            Assert.Equal("/Homework/", jointPath);
+        }
+        
+        // From root join a file
+        {
+            var pathOne = "/";
+            var pathTwo = "todo.txt";
+
+            var jointPath = inMemoryEnvironmentProvider.JoinPaths(pathOne, pathTwo);
+
+            Assert.Equal("/todo.txt", jointPath);
+        }
+
+        // Join directory and directory
+        {
+            var pathOne = "/Homework/";
+            var pathTwo = "Math/";
+
+            var jointPath = inMemoryEnvironmentProvider.JoinPaths(pathOne, pathTwo);
+
+            Assert.Equal("/Homework/Math/", jointPath);
+        }
+        
+        // Join directory and file
+        {
+            var pathOne = "/Homework/Math/";
+            var pathTwo = "addition.txt";
+
+            var jointPath = inMemoryEnvironmentProvider.JoinPaths(pathOne, pathTwo);
+
+            Assert.Equal("/Homework/Math/addition.txt", jointPath);
+        }
+        
+        // Join directory and file (but with a directory as part of the file's ancestors)
+        {
+            var pathOne = "/Homework/";
+            var pathTwo = "Math/addition.txt";
+
+            var jointPath = inMemoryEnvironmentProvider.JoinPaths(pathOne, pathTwo);
+
+            Assert.Equal("/Homework/Math/addition.txt", jointPath);
+        }
     }
 }

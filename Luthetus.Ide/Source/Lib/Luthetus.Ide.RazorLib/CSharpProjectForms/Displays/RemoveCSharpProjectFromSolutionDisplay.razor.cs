@@ -11,7 +11,7 @@ public partial class RemoveCSharpProjectFromSolutionDisplay : ComponentBase,
     IRemoveCSharpProjectFromSolutionRendererType
 {
     [CascadingParameter]
-    public MenuOptionWidgetParameters? MenuOptionWidgetParameters { get; set; }
+    public MenuOptionCallbacks? MenuOptionCallbacks { get; set; }
 
     [Parameter, EditorRequired]
     public IAbsolutePath AbsolutePath { get; set; } = null!;
@@ -36,7 +36,7 @@ public partial class RemoveCSharpProjectFromSolutionDisplay : ComponentBase,
     {
         if (firstRender)
         {
-            if (MenuOptionWidgetParameters is not null && _cancelButtonElementReference is not null)
+            if (MenuOptionCallbacks is not null && _cancelButtonElementReference is not null)
             {
                 try
                 {
@@ -57,10 +57,10 @@ public partial class RemoveCSharpProjectFromSolutionDisplay : ComponentBase,
 
     private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
-        if (MenuOptionWidgetParameters is not null &&
+        if (MenuOptionCallbacks is not null &&
             keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
         {
-            await MenuOptionWidgetParameters.HideWidgetAsync.Invoke();
+            await MenuOptionCallbacks.HideWidgetAsync.Invoke();
         }
     }
 
@@ -68,16 +68,16 @@ public partial class RemoveCSharpProjectFromSolutionDisplay : ComponentBase,
     {
         var localAbsolutePath = AbsolutePath;
 
-        if (MenuOptionWidgetParameters is not null)
+        if (MenuOptionCallbacks is not null)
         {
-            await MenuOptionWidgetParameters.CompleteWidgetAsync.Invoke(
+            await MenuOptionCallbacks.CompleteWidgetAsync.Invoke(
                 () => OnAfterSubmitAction.Invoke(localAbsolutePath));
         }
     }
 
     private async Task CancelOnClick()
     {
-        if (MenuOptionWidgetParameters is not null)
-            await MenuOptionWidgetParameters.HideWidgetAsync.Invoke();
+        if (MenuOptionCallbacks is not null)
+            await MenuOptionCallbacks.HideWidgetAsync.Invoke();
     }
 }
