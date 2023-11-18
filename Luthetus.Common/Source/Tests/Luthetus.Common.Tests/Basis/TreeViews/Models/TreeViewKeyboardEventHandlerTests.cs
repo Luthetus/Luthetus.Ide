@@ -467,7 +467,59 @@ public class TreeViewKeyboardEventHandlerTests
     [Fact]
     public void OnKeyDown_MoveEnd()
     {
-        throw new NotImplementedException();
+        InitializeTreeViewKeyboardEventHandlerTests(
+            out var dispatcher,
+            out var commonTreeViews,
+            out var commonComponentRenderers,
+            out var treeViewStateWrap,
+            out var treeViewService,
+            out var backgroundTaskService,
+            out var websiteServerState,
+            out var websiteServer,
+            out var websiteServerTreeView,
+            out var websiteServerTreeViewContainer,
+            out var keyboardEventHandler);
+
+        // Test Setup
+        {
+            // The 'InitializeTreeViewKeyboardEventHandlerTests' method provides an unexpanded
+            // node. Therefore, make the node expanded.
+            keyboardEventHandler.OnKeyDown(new TreeViewCommandArgs(
+                treeViewService,
+                websiteServerTreeViewContainer,
+                websiteServerTreeView,
+                () => Task.CompletedTask,
+                null,
+                null,
+                new KeyboardEventArgs
+                {
+                    Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
+                    Code = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
+                }));
+        }
+
+        Assert.Equal(websiteServerTreeView, websiteServerTreeViewContainer.ActiveNode);
+
+        // Move from root node to the only child
+        keyboardEventHandler.OnKeyDown(new TreeViewCommandArgs(
+            treeViewService,
+            websiteServerTreeViewContainer,
+            websiteServerTreeView,
+            () => Task.CompletedTask,
+            null,
+            null,
+            new KeyboardEventArgs
+            {
+                Key = KeyboardKeyFacts.MovementKeys.END,
+                Code = KeyboardKeyFacts.MovementKeys.END,
+            }));
+
+        Assert.True(treeViewService.TryGetTreeViewContainer(
+            websiteServerTreeViewContainer.Key,
+            out websiteServerTreeViewContainer));
+
+        Assert.NotNull(websiteServerTreeViewContainer);
+        Assert.Equal(websiteServerTreeView.ChildBag.First(), websiteServerTreeViewContainer!.ActiveNode);
     }
 
     /// <summary>

@@ -1,4 +1,9 @@
-﻿using Luthetus.Common.RazorLib.TreeViews.Models;
+﻿using Fluxor;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.Common.RazorLib.TreeViews.States;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Luthetus.Common.Tests.Basis.TreeViews.Models;
 
@@ -8,21 +13,17 @@ namespace Luthetus.Common.Tests.Basis.TreeViews.Models;
 public class TreeViewServiceTests
 {
     /// <summary>
-    /// <see cref="TreeViewService(Fluxor.IState{RazorLib.TreeViews.States.TreeViewState}, Fluxor.IDispatcher)"/>
+    /// <see cref="TreeViewService(IState{TreeViewState}, IDispatcher)"/>
+    /// <br/>----<br/>
+    /// <see cref="TreeViewService.TreeViewStateWrap"/>
     /// </summary>
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
-    }
+        InitializeTreeViewServiceTests(out var treeViewService, out var backgroundTaskService);
 
-    /// <summary>
-    /// <see cref="TreeViewService.TreeViewStateWrap"/>
-    /// </summary>
-    [Fact]
-    public void TreeViewStateWrap()
-    {
-        throw new NotImplementedException();
+        Assert.NotNull(treeViewService);
+        Assert.NotNull(treeViewService.TreeViewStateWrap);
     }
 
     /// <summary>
@@ -194,5 +195,23 @@ public class TreeViewServiceTests
     public void GetTreeContainerElementId()
     {
         throw new NotImplementedException();
+    }
+
+    private void InitializeTreeViewServiceTests(
+        out ITreeViewService treeViewService,
+        out IBackgroundTaskService backgroundTaskService)
+    {
+        var services = new ServiceCollection()
+            .AddScoped<ITreeViewService, TreeViewService>()
+            .AddScoped<IBackgroundTaskService>(sp => new BackgroundTaskServiceSynchronous())
+            .AddFluxor(options => options.ScanAssemblies(typeof(TreeViewState).Assembly));
+
+        var serviceProvider = services.BuildServiceProvider();
+
+        var store = serviceProvider.GetRequiredService<IStore>();
+        store.InitializeAsync().Wait();
+
+        treeViewService = serviceProvider.GetRequiredService<ITreeViewService>();
+        backgroundTaskService = serviceProvider.GetRequiredService<IBackgroundTaskService>();
     }
 }
