@@ -35,6 +35,8 @@ public class TreeViewCommandArgsTests
         services.AddFluxor(options => options.ScanAssemblies(
             typeof(LuthetusCommonOptions).Assembly));
 
+        services.AddScoped(_ => hostingInformation.BackgroundTaskService);
+
         services.AddScoped<ITreeViewService, TreeViewService>(
             serviceProvider => new TreeViewService(
                 serviceProvider.GetRequiredService<IState<TreeViewState>>(),
