@@ -73,9 +73,11 @@ public static class ServiceCollectionExtensions
             .AddScoped(sp => commonOptions.CommonFactories.ThemeServiceFactory.Invoke(sp))
             .AddScoped(sp => commonOptions.CommonFactories.TreeViewServiceFactory.Invoke(sp));
 
-        if (commonOptions.CommonFactories.EnvironmentProviderFactory is not null)
+        if (commonOptions.CommonFactories.EnvironmentProviderFactory is not null &&
+            commonOptions.CommonFactories.FileSystemProviderFactory is not null)
         {
             services.AddScoped(sp => commonOptions.CommonFactories.EnvironmentProviderFactory.Invoke(sp));
+            services.AddScoped(sp => commonOptions.CommonFactories.FileSystemProviderFactory.Invoke(sp));
         }
         else
         {
