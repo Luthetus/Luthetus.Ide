@@ -15,7 +15,10 @@ public class BackgroundTaskServiceTests
     /// <summary>
     /// <see cref="BackgroundTaskService.Enqueue(IBackgroundTask)"/>
     /// <br/>----<br/>
+    /// <see cref="BackgroundTaskService.Enqueue(Key{BackgroundTask}, Key{BackgroundTaskQueue}, string, Func{Task})"/>
     /// <see cref="BackgroundTaskService.RegisterQueue(BackgroundTaskQueue)"/>
+    /// <see cref="BackgroundTaskService.DequeueAsync(Key{BackgroundTaskQueue}, CancellationToken)"/>
+    /// <see cref="BackgroundTaskService.SetExecutingBackgroundTask(Key{BackgroundTaskQueue}, IBackgroundTask?)"/>
     /// </summary>
     [Fact]
     public async void EnqueueA()
@@ -69,8 +72,8 @@ public class BackgroundTaskServiceTests
         // 2nd backgroundTask
         {
             var secondBackgroundTaskKey = Key<BackgroundTask>.NewKey();
-
-            var secondBackgroundTask = new BackgroundTask(
+            
+            backgroundTaskService.Enqueue(
                 secondBackgroundTaskKey,
                 queue.Key,
                 "Zyx",
@@ -88,8 +91,6 @@ public class BackgroundTaskServiceTests
 
                     return Task.CompletedTask;
                 });
-            
-            backgroundTaskService.Enqueue(secondBackgroundTask);
         }
 
         await worker.StopAsync(CancellationToken.None);
@@ -97,33 +98,6 @@ public class BackgroundTaskServiceTests
         queue.ExecutingBackgroundTaskChanged -= OnExecutingBackgroundTaskChanged;
         Assert.Null(queue.ExecutingBackgroundTask);
         Assert.Equal(6, number);
-    }
-
-    /// <summary>
-    /// <see cref="BackgroundTaskService.Enqueue(Key{BackgroundTask}, Key{BackgroundTaskQueue}, string, Func{Task})"/>
-    /// </summary>
-    [Fact]
-    public void EnqueueB()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="BackgroundTaskService.DequeueAsync(Key{BackgroundTaskQueue}, CancellationToken)"/>
-    /// </summary>
-    [Fact]
-    public void DequeueAsync()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="BackgroundTaskService.SetExecutingBackgroundTask(Key{BackgroundTaskQueue}, IBackgroundTask?)"/>
-    /// </summary>
-    [Fact]
-    public void SetExecutingBackgroundTask()
-    {
-        throw new NotImplementedException();
     }
 
     private void InitializeBackgroundTaskServiceTests(

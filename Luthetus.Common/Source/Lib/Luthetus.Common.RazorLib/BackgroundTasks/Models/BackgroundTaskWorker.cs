@@ -67,7 +67,7 @@ public class BackgroundTaskWorker : BackgroundService
 
             // TODO: Polling solution for now, perhaps change to a more optimal solution? (2023-11-19)
             while (BackgroundTaskService.Queues.Any(x => x.ExecutingBackgroundTask is not null) ||
-                   !_hasActiveExecutionActive ||
+                   _hasActiveExecutionActive ||
                    // TODO: Here a check is done for if there are background tasks pending for a hacky-concurrency solution
                    BackgroundTaskService.Queues.SelectMany(x => x.BackgroundTasks).Any())
             {
