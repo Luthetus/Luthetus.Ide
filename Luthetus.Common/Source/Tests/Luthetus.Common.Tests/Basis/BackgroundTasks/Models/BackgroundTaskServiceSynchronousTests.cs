@@ -78,7 +78,52 @@ public class BackgroundTaskServiceSynchronousTests
     [Fact]
     public void EnqueueB()
     {
-        throw new NotImplementedException();
+        InitializeBackgroundTaskServiceSynchronousTests(
+            out var backgroundTaskService,
+            out var queue,
+            out _);
+
+        Assert.Null(queue.ExecutingBackgroundTask);
+
+        var number = 0;
+        Assert.Equal(0, number);
+
+        var backgroundTaskKey = Key<BackgroundTask>.NewKey();
+
+        // number += 2; from the event.
+        // Set executing to the task is +1, then set the executing to null is another +1
+        void OnExecutingBackgroundTaskChanged()
+        {
+            number++;
+        }
+
+        queue.ExecutingBackgroundTaskChanged += OnExecutingBackgroundTaskChanged;
+
+        backgroundTaskService.Enqueue(
+            backgroundTaskKey,
+            queue.Key,
+            "Abc",
+            () =>
+            {
+                Assert.NotNull(queue.ExecutingBackgroundTask);
+                Assert.Equal(backgroundTaskKey, queue.ExecutingBackgroundTask!.BackgroundTaskKey);
+
+                // number += 1; from the task.
+                number++;
+
+                return Task.CompletedTask;
+            });
+
+        Assert.Equal(3, number);
+        Assert.Null(queue.ExecutingBackgroundTask);
+
+        queue.ExecutingBackgroundTaskChanged -= OnExecutingBackgroundTaskChanged;
+
+        // For the 'BackgroundTaskServiceSynchronous', the DequeueAsync method should
+        // do nothing. This is because once enqueued the task is immediately invoked.
+        backgroundTaskService
+            .DequeueAsync(queue.Key, CancellationToken.None)
+            .Wait();
     }
 
     private void InitializeBackgroundTaskServiceSynchronousTests(
@@ -97,10 +142,16 @@ public class BackgroundTaskServiceSynchronousTests
 
         backgroundTaskService = serviceProvider.GetRequiredService<IBackgroundTaskService>();
 
-        continuousQueue = ContinuousBackgroundTaskWorker.Queue;
+        continuousQueue = new BackgroundTaskQueue(
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            ContinuousBackgroundTaskWorker.QUEUE_DISPLAY_NAME);
+
         backgroundTaskService.RegisterQueue(continuousQueue);
 
-        blockingQueue = BlockingBackgroundTaskWorker.Queue;
+        blockingQueue = new BackgroundTaskQueue(
+            BlockingBackgroundTaskWorker.GetQueueKey(),
+            BlockingBackgroundTaskWorker.QUEUE_DISPLAY_NAME);
+
         backgroundTaskService.RegisterQueue(blockingQueue);
     }
 }

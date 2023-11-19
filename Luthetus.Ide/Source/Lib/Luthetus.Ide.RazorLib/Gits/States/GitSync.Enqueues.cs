@@ -8,14 +8,14 @@ public partial class GitSync
 {
     public void RefreshGit(CancellationToken cancellationToken)
     {
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Git Refresh",
             async () => await RefreshGitAsync(cancellationToken));
     }
 
     public void GitInit(CancellationToken cancellationToken)
     {
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Git Init",
             async () => await GitInitAsync(cancellationToken));
     }
@@ -24,7 +24,7 @@ public partial class GitSync
         IAbsolutePath directoryAbsolutePath,
         CancellationToken cancellationToken)
     {
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Git Find '.git' Folder",
             async () => await TryFindGitFolderInDirectoryAsync(directoryAbsolutePath, cancellationToken));
     }

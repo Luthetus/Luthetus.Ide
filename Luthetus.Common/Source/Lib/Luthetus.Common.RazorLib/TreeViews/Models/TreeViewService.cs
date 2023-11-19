@@ -136,7 +136,7 @@ public class TreeViewService : ITreeViewService
             {
                 var backgroundTask = new BackgroundTask(
                     Key<BackgroundTask>.NewKey(),
-                    ContinuousBackgroundTaskWorker.Queue.Key,
+                    ContinuousBackgroundTaskWorker.GetQueueKey(),
                     "TreeView.LoadChildBagAsync()",
                     async () =>
                     {

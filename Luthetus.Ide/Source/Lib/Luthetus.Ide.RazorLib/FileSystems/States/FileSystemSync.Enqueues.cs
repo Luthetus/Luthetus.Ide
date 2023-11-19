@@ -12,7 +12,7 @@ public partial class FileSystemSync
         Action<DateTime?> onAfterSaveCompletedWrittenDateTimeAction,
         CancellationToken cancellationToken = default)
     {
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Save File",
             async () => await SaveFileAsync(
                 absolutePath,

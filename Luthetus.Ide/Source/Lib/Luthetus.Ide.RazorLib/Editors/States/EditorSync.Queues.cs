@@ -14,7 +14,7 @@ public partial class EditorSync
         bool shouldSetFocusToEditor,
         Key<TextEditorGroup>? editorTextEditorGroupKey = null)
     {
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "OpenInEditor",
             async () => await OpenInEditorAsync(
                 absolutePath,

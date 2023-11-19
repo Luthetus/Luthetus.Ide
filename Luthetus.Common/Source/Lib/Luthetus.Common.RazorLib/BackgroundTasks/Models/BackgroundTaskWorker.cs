@@ -7,6 +7,7 @@ namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 public class BackgroundTaskWorker : BackgroundService
 {
     private readonly ILogger _logger;
+    private bool _hasActiveExecutionActive;
 
     public BackgroundTaskWorker(
         Key<BackgroundTaskQueue> queueKey,
@@ -33,6 +34,8 @@ public class BackgroundTaskWorker : BackgroundService
             {
                 try
                 {
+                    _hasActiveExecutionActive = true;
+
                     BackgroundTaskService.SetExecutingBackgroundTask(QueueKey, backgroundTask);
                     await backgroundTask.InvokeWorkItem(cancellationToken);
                 }
@@ -47,10 +50,33 @@ public class BackgroundTaskWorker : BackgroundService
                 finally
                 {
                     BackgroundTaskService.SetExecutingBackgroundTask(QueueKey, null);
+                    
+                    _hasActiveExecutionActive = false;
                 }
             }
         }
 
         _logger.LogInformation("Queued Hosted Service is stopping.");
+    }
+
+    public override async Task StopAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            await BackgroundTaskService.StopAsync(CancellationToken.None);
+
+            // TODO: Polling solution for now, perhaps change to a more optimal solution? (2023-11-19)
+            while (BackgroundTaskService.Queues.Any(x => x.ExecutingBackgroundTask is not null) ||
+                   !_hasActiveExecutionActive ||
+                   // TODO: Here a check is done for if there are background tasks pending for a hacky-concurrency solution
+                   BackgroundTaskService.Queues.SelectMany(x => x.BackgroundTasks).Any())
+            {
+                await Task.Delay(TimeSpan.FromMilliseconds(100), cancellationToken);
+            }
+        }
+        finally
+        {
+            await base.StopAsync(cancellationToken);
+        }
     }
 }

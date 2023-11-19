@@ -39,7 +39,7 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
     {
         if (firstRender)
         {
-            BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+            BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
                 "Initialize Website",
                 async () =>
                 {

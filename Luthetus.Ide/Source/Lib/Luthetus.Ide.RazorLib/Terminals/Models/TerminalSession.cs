@@ -74,7 +74,7 @@ public class TerminalSession
 
     public Task EnqueueCommandAsync(TerminalCommand terminalCommand)
     {
-        _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), BlockingBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), BlockingBackgroundTaskWorker.GetQueueKey(),
             "Enqueue Command",
             async () =>
             {

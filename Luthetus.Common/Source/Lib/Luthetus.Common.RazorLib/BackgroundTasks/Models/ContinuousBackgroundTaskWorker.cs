@@ -10,15 +10,16 @@ namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 /// </summary>
 public class ContinuousBackgroundTaskWorker : BackgroundTaskWorker
 {
-    public static BackgroundTaskQueue Queue { get; } = new BackgroundTaskQueue(
-        Key<BackgroundTaskQueue>.NewKey(),
-        "ContinuousBackgroundTaskWorker");
+    public const string QUEUE_DISPLAY_NAME = "ContinuousBackgroundTaskWorker";
+
+    private static readonly Key<BackgroundTaskQueue> _queueKey = new(Guid.Parse("78912ee9-1b3f-4bc3-ab8b-5681fbf0b131"));
 
     public ContinuousBackgroundTaskWorker(
-            Key<BackgroundTaskQueue> queueKey,
             IBackgroundTaskService backgroundTaskService,
             ILoggerFactory loggerFactory)
-        : base(queueKey, backgroundTaskService, loggerFactory)
+        : base(_queueKey, backgroundTaskService, loggerFactory)
     {
     }
+
+    public static Key<BackgroundTaskQueue> GetQueueKey() => _queueKey;
 }

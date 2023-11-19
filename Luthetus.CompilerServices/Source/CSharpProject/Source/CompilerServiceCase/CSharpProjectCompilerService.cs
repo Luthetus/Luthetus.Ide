@@ -122,7 +122,7 @@ public class CSharpProjectCompilerService : ICompilerService
 
     private void QueueParseRequest(ResourceUri resourceUri)
     {
-        _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "C# Project Compiler Service - Parse",
             async () =>
             {

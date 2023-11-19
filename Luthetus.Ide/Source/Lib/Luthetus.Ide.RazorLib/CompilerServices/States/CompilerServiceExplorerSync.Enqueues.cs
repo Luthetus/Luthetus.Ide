@@ -12,7 +12,7 @@ public partial class CompilerServiceExplorerSync
 {
     public void SetCompilerServiceExplorerTreeView()
     {
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Set CompilerServiceExplorer TreeView",
             async () => 
             {

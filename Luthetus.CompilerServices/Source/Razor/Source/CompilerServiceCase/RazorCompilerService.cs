@@ -129,7 +129,7 @@ public class RazorCompilerService : ICompilerService
 
     private void QueueParseRequest(ResourceUri resourceUri)
     {
-        _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Razor Compiler Service - Parse",
             async () =>
             {

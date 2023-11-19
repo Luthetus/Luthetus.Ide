@@ -7,14 +7,16 @@ public class BackgroundTaskServiceSynchronous : IBackgroundTaskService
 {
     private readonly Dictionary<Key<BackgroundTaskQueue>, BackgroundTaskQueue> _queueMap = new();
 
-    /// <summary><see cref="BackgroundTaskServiceSynchronous"/> is used for unit testing. 
-    /// As such, un-needed members are throwing a <see cref="NotImplementedException"/>.</summary>
-    public IBackgroundTask? ExecutingBackgroundTask => throw new NotImplementedException();
+    private bool _enqueuesAreDisabled;
 
-    public event Action? ExecutingBackgroundTaskChanged;
+    public ImmutableArray<BackgroundTaskQueue> Queues => _queueMap.Values.ToImmutableArray();
 
     public void Enqueue(IBackgroundTask backgroundTask)
     {
+        // TODO: Could there be concurrency issues regarding '_enqueuesAreDisabled'? (2023-11-19)
+        if (_enqueuesAreDisabled)
+            return;
+
         var queue = _queueMap[backgroundTask.QueueKey];
 
         queue.BackgroundTasks.Enqueue(backgroundTask);
@@ -49,8 +51,6 @@ public class BackgroundTaskServiceSynchronous : IBackgroundTaskService
         _queueMap.Add(queue.Key, queue);
     }
 
-    /// <summary><see cref="BackgroundTaskServiceSynchronous"/> is used for unit testing. 
-    /// As such, un-needed members are throwing a <see cref="NotImplementedException"/>.</summary>
     public void SetExecutingBackgroundTask(
         Key<BackgroundTaskQueue> queueKey,
         IBackgroundTask? backgroundTask)
@@ -58,6 +58,21 @@ public class BackgroundTaskServiceSynchronous : IBackgroundTaskService
         var queue = _queueMap[queueKey];
 
         queue.ExecutingBackgroundTask = backgroundTask;
-        ExecutingBackgroundTaskChanged?.Invoke();
+    }
+
+    public BackgroundTaskQueue GetQueue(Key<BackgroundTaskQueue> queueKey)
+    {
+        return _queueMap[queueKey];
+    }
+
+    public async Task StopAsync(CancellationToken cancellationToken)
+    {
+        _enqueuesAreDisabled = true;
+
+        // TODO: Polling solution for now, perhaps change to a more optimal solution? (2023-11-19)
+        while (_queueMap.Values.SelectMany(x => x.BackgroundTasks).Any())
+        {
+            await Task.Delay(TimeSpan.FromMilliseconds(100), cancellationToken);
+        }
     }
 }

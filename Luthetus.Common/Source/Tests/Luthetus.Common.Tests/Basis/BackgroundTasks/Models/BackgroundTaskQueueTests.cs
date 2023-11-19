@@ -127,10 +127,16 @@ public class BackgroundTaskQueueTests
 
         backgroundTaskService = serviceProvider.GetRequiredService<IBackgroundTaskService>();
 
-        continuousQueue = ContinuousBackgroundTaskWorker.Queue;
+        continuousQueue = new BackgroundTaskQueue(
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            ContinuousBackgroundTaskWorker.QUEUE_DISPLAY_NAME);
+
         backgroundTaskService.RegisterQueue(continuousQueue);
 
-        blockingQueue = BlockingBackgroundTaskWorker.Queue;
+        blockingQueue = new BackgroundTaskQueue(
+            BlockingBackgroundTaskWorker.GetQueueKey(),
+            BlockingBackgroundTaskWorker.QUEUE_DISPLAY_NAME);
+
         backgroundTaskService.RegisterQueue(blockingQueue);
     }
 }

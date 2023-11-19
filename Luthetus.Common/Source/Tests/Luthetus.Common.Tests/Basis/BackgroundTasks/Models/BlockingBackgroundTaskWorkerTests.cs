@@ -23,10 +23,9 @@ public class BlockingBackgroundTaskWorkerTests
 
         var sp = services.BuildServiceProvider();
 
-        var queueKey = BlockingBackgroundTaskWorker.Queue.Key;
+        var queueKey = BlockingBackgroundTaskWorker.GetQueueKey();
 
         var blockingBackgroundTaskWorker =  new BlockingBackgroundTaskWorker(
-            queueKey,
             sp.GetRequiredService<IBackgroundTaskService>(),
             sp.GetRequiredService<ILoggerFactory>());
     }

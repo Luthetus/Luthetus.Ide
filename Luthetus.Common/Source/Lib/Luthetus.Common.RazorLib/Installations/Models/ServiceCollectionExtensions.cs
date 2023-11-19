@@ -26,16 +26,19 @@ public static class ServiceCollectionExtensions
         if (configure is not null)
             commonOptions = configure.Invoke(commonOptions);
 
-        hostingInformation.BackgroundTaskService.RegisterQueue(ContinuousBackgroundTaskWorker.Queue);
-        hostingInformation.BackgroundTaskService.RegisterQueue(BlockingBackgroundTaskWorker.Queue);
+        hostingInformation.BackgroundTaskService.RegisterQueue(new BackgroundTaskQueue(
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            ContinuousBackgroundTaskWorker.QUEUE_DISPLAY_NAME));
+
+        hostingInformation.BackgroundTaskService.RegisterQueue(new BackgroundTaskQueue(
+            BlockingBackgroundTaskWorker.GetQueueKey(),
+            BlockingBackgroundTaskWorker.QUEUE_DISPLAY_NAME));
 
         services.AddSingleton(sp => new ContinuousBackgroundTaskWorker(
-            ContinuousBackgroundTaskWorker.Queue.Key,
             sp.GetRequiredService<IBackgroundTaskService>(),
             sp.GetRequiredService<ILoggerFactory>()));
 
         services.AddSingleton(sp => new BlockingBackgroundTaskWorker(
-            BlockingBackgroundTaskWorker.Queue.Key,
             sp.GetRequiredService<IBackgroundTaskService>(),
             sp.GetRequiredService<ILoggerFactory>()));
 

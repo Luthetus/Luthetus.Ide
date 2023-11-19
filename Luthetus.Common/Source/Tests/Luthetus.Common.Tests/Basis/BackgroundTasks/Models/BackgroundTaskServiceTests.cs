@@ -3,6 +3,7 @@ using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Luthetus.Common.Tests.Basis.BackgroundTasks.Models;
 
@@ -17,7 +18,7 @@ public class BackgroundTaskServiceTests
     /// <see cref="BackgroundTaskService.RegisterQueue(BackgroundTaskQueue)"/>
     /// </summary>
     [Fact]
-    public void EnqueueA()
+    public async void EnqueueA()
     {
         InitializeBackgroundTaskServiceTests(
             out var backgroundTaskService,
@@ -28,7 +29,74 @@ public class BackgroundTaskServiceTests
             out _,
             out _);
 
-        throw new NotImplementedException();
+        Assert.Null(queue.ExecutingBackgroundTask);
+
+        var number = 0;
+        Assert.Equal(0, number);
+
+        // foreach backgroundTask (number += 2); from the event.
+        // Set executing to the task is +1, then set the executing to null is another +1
+        void OnExecutingBackgroundTaskChanged()
+        {
+            number++;
+        }
+
+        queue.ExecutingBackgroundTaskChanged += OnExecutingBackgroundTaskChanged;
+
+        // 1st backgroundTask
+        {
+            var firstBackgroundTaskKey = Key<BackgroundTask>.NewKey();
+
+            var firstBackgroundTask = new BackgroundTask(
+                firstBackgroundTaskKey,
+                queue.Key,
+                "Abc",
+                async () =>
+                {
+                    // Have both backgroundTasks enqueue'd by invoking 'await Task.Yield();'
+                    await Task.Yield();
+
+                    Assert.NotNull(queue.ExecutingBackgroundTask);
+                    Assert.Equal(firstBackgroundTaskKey, queue.ExecutingBackgroundTask!.BackgroundTaskKey);
+
+                    // number += 1; from the task.
+                    number++;
+                });
+
+            backgroundTaskService.Enqueue(firstBackgroundTask);
+        }
+
+        // 2nd backgroundTask
+        {
+            var secondBackgroundTaskKey = Key<BackgroundTask>.NewKey();
+
+            var secondBackgroundTask = new BackgroundTask(
+                secondBackgroundTaskKey,
+                queue.Key,
+                "Zyx",
+                () =>
+                {
+                    // Assert that the first backgroundTask is finished.
+                    // (4 happens to be the result given the current unorganized state-mutations that I wrote | (2023-11-19))
+                    Assert.Equal(4, number);
+
+                    Assert.NotNull(queue.ExecutingBackgroundTask);
+                    Assert.Equal(secondBackgroundTaskKey, queue.ExecutingBackgroundTask!.BackgroundTaskKey);
+
+                    // number += 1; from the task.
+                    number++;
+
+                    return Task.CompletedTask;
+                });
+            
+            backgroundTaskService.Enqueue(secondBackgroundTask);
+        }
+
+        await worker.StopAsync(CancellationToken.None);
+
+        queue.ExecutingBackgroundTaskChanged -= OnExecutingBackgroundTaskChanged;
+        Assert.Null(queue.ExecutingBackgroundTask);
+        Assert.Equal(6, number);
     }
 
     /// <summary>
@@ -68,13 +136,12 @@ public class BackgroundTaskServiceTests
         out CancellationTokenSource blockingCancellationTokenSource)
     {
         var services = new ServiceCollection()
+            .AddScoped<ILoggerFactory, NullLoggerFactory>()
             .AddScoped<IBackgroundTaskService>(_ => new BackgroundTaskService())
             .AddScoped(sp => new ContinuousBackgroundTaskWorker(
-                ContinuousBackgroundTaskWorker.Queue.Key,
                 sp.GetRequiredService<IBackgroundTaskService>(),
                 sp.GetRequiredService<ILoggerFactory>()))
             .AddScoped(sp => new BlockingBackgroundTaskWorker(
-                BlockingBackgroundTaskWorker.Queue.Key,
                 sp.GetRequiredService<IBackgroundTaskService>(),
                 sp.GetRequiredService<ILoggerFactory>()))
             .AddFluxor(options => options.ScanAssemblies(typeof(IBackgroundTaskService).Assembly));
@@ -90,15 +157,21 @@ public class BackgroundTaskServiceTests
             continuousWorker =
             serviceProvider.GetRequiredService<ContinuousBackgroundTaskWorker>();
 
-        continuousQueue = ContinuousBackgroundTaskWorker.Queue;
-        backgroundTaskService.RegisterQueue(ContinuousBackgroundTaskWorker.Queue);
+        continuousQueue = new BackgroundTaskQueue(
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            ContinuousBackgroundTaskWorker.QUEUE_DISPLAY_NAME);
+
+        backgroundTaskService.RegisterQueue(continuousQueue);
 
         var temporaryBlockingWorker =
             blockingWorker =
             serviceProvider.GetRequiredService<BlockingBackgroundTaskWorker>();
 
-        blockingQueue = BlockingBackgroundTaskWorker.Queue;
-        backgroundTaskService.RegisterQueue(BlockingBackgroundTaskWorker.Queue);
+        blockingQueue = new BackgroundTaskQueue(
+            BlockingBackgroundTaskWorker.GetQueueKey(),
+            BlockingBackgroundTaskWorker.QUEUE_DISPLAY_NAME);
+
+        backgroundTaskService.RegisterQueue(blockingQueue);
 
         continuousCancellationTokenSource = new CancellationTokenSource();
         var continuousCancellationToken = continuousCancellationTokenSource.Token;

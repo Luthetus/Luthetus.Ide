@@ -117,7 +117,7 @@ public class JavaScriptCompilerService : ICompilerService
 
     private void QueueParseRequest(ResourceUri resourceUri)
     {
-        _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+        _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "JavaScript Compiler Service - Parse",
             async () =>
             {
