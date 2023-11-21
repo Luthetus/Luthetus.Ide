@@ -66,7 +66,7 @@ public static class KeyboardKeyFacts
             case PunctuationCharacters.DOUBLE_QUOTE:
             case PunctuationCharacters.SINGLE_QUOTE:
             case PunctuationCharacters.OPEN_ARROW_BRACKET:
-            case PunctuationCharacters.END_ARROW_BRACKET:
+            case PunctuationCharacters.CLOSE_ARROW_BRACKET:
             case PunctuationCharacters.FORWARD_SLASH:
             case PunctuationCharacters.BACK_SLASH:
                 return true;
@@ -92,15 +92,15 @@ public static class KeyboardKeyFacts
             case PunctuationCharacters.CLOSE_SQUARE_BRACKET:
                 return PunctuationCharacters.OPEN_SQUARE_BRACKET;
             case PunctuationCharacters.OPEN_ARROW_BRACKET:
-                return PunctuationCharacters.END_ARROW_BRACKET;
-            case PunctuationCharacters.END_ARROW_BRACKET:
+                return PunctuationCharacters.CLOSE_ARROW_BRACKET;
+            case PunctuationCharacters.CLOSE_ARROW_BRACKET:
                 return PunctuationCharacters.OPEN_ARROW_BRACKET;
             default:
                 return null;
         }
     }
 
-    public static int? DirectionToFindMatchMatchingPunctuationCharacter(char character)
+    public static int? DirectionToFindMatchingPunctuationCharacter(char character)
     {
         switch (character)
         {
@@ -118,7 +118,7 @@ public static class KeyboardKeyFacts
                 return -1;
             case PunctuationCharacters.OPEN_ARROW_BRACKET:
                 return 1;
-            case PunctuationCharacters.END_ARROW_BRACKET:
+            case PunctuationCharacters.CLOSE_ARROW_BRACKET:
                 return -1;
             default:
                 return null;
@@ -138,26 +138,19 @@ public static class KeyboardKeyFacts
         }
     }
 
-    public static bool CheckIsAlternateContextMenuEvent(string key, string code, bool shiftWasPressed,
-        bool altWasPressed)
+    public static bool CheckIsAlternateContextMenuEvent(
+        string key, string code, bool shiftWasPressed, bool altWasPressed)
     {
-        var keyOne = "F10";
-        var keyTwo = "f10";
-
-        var wasShiftF10 = (key == keyOne || key == keyTwo)
+        var wasShiftF10 = (key == "F10" || key == "f10")
                           && shiftWasPressed;
 
-        var wasAltPeriod = key == "."
-                           && altWasPressed;
-
-        return wasShiftF10 || wasAltPeriod;
+        return wasShiftF10;
     }
 
-    public static bool CheckIsContextMenuEvent(string key, string code, bool shiftWasPressed, bool altWasPressed)
+    public static bool CheckIsContextMenuEvent(
+        string key, string code, bool shiftWasPressed, bool altWasPressed)
     {
-        var keyOne = "ContextMenu";
-
-        return key == keyOne ||
+        return key == "ContextMenu" ||
                CheckIsAlternateContextMenuEvent(key, code, shiftWasPressed, altWasPressed);
     }
 
@@ -301,7 +294,7 @@ public static class KeyboardKeyFacts
         public const char DOUBLE_QUOTE = '\"';
         public const char SINGLE_QUOTE = '\'';
         public const char OPEN_ARROW_BRACKET = '<';
-        public const char END_ARROW_BRACKET = '>';
+        public const char CLOSE_ARROW_BRACKET = '>';
         public const char FORWARD_SLASH = '/';
         public const char BACK_SLASH = '\\';
 
@@ -337,7 +330,7 @@ public static class KeyboardKeyFacts
             DOUBLE_QUOTE,
             SINGLE_QUOTE,
             OPEN_ARROW_BRACKET,
-            END_ARROW_BRACKET,
+            CLOSE_ARROW_BRACKET,
             FORWARD_SLASH,
             BACK_SLASH,
         }.ToImmutableArray();
