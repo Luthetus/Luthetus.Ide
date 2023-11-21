@@ -56,6 +56,33 @@ public class BackgroundTaskQueueTests
     [Fact]
     public void WorkItemsQueueSemaphoreSlim()
     {
+        /*
+        Thoughts for this test as of (2023-11-20)
+        ------------------------------------------
+
+        Async Parallel Task library to enqueue many work items
+        to the same queue.
+        ======================================================
+
+        But would it have to be async parallel?
+        ======================================================
+
+        Would something like this work?:
+        // C#
+        {
+            var backgroundTaskBag = new List<BackgroundTask>();
+
+            // Add many things to backgroundTaskBag
+
+            var queue = new BackgroundTaskQueue();
+
+            Parallel.Foreach(backgroundTaskBag, bt => 
+            {
+                queue.Enqueue(backgroundTaskBag);
+            })
+        }
+         */
+
         throw new NotImplementedException();
     }
 

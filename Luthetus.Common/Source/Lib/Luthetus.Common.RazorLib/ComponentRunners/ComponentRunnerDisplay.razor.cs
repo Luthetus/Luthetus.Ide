@@ -57,9 +57,9 @@ public partial class ComponentRunnerDisplay : ComponentBase
         if (displayState is null)
             return;
 
-        var stringValue = changeEventArgs.Value as string;
+        var chosenTypeGuidString = changeEventArgs.Value as string;
 
-        displayState.CalculateComponentPropertyInfoBag(stringValue, ref _chosenComponentChangeCounter);
+        displayState.CalculateComponentPropertyInfoBag(chosenTypeGuidString, ref _chosenComponentChangeCounter);
     }
 
     private void WrapRecover()

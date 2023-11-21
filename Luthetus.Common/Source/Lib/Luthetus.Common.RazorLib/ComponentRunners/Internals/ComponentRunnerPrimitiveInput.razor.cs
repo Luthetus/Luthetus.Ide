@@ -19,29 +19,23 @@ public partial class ComponentRunnerPrimitiveInput : ComponentBase
     {
         get
         {
-            var componentRunnerType = DisplayState
-                .GetComponentRunnerType(ParametersKey, new ComponentRunnerPrimitiveType(
-                    null,
-                    () => null,
-                    null,
-                    typeof(string)));
+            var componentRunnerParameter = DisplayState.GetParameter(
+                ParametersKey,
+                ComponentRunnerParameter.ConstructString());
 
-            return componentRunnerType.Value is null
+            return componentRunnerParameter.Value is null
                 ? string.Empty
-                : (string)componentRunnerType.Value;
+                : (string)componentRunnerParameter.Value;
         }
         set
         {
-            var componentRunnerType = DisplayState
-                .GetComponentRunnerType(ParametersKey, new ComponentRunnerPrimitiveType(
-                    null,
-                    () => null,
-                    null,
-                    typeof(string)));
+            var componentRunnerParameter = DisplayState.GetParameter(
+                ParametersKey,
+                ComponentRunnerParameter.ConstructString());
 
-            componentRunnerType.Value = value;
+            componentRunnerParameter.Value = value;
 
-            DisplayState.SetComponentRunnerType(ParametersKey, componentRunnerType);
+            DisplayState.SetParameter(ParametersKey, componentRunnerParameter);
         }
     }
 
@@ -49,29 +43,23 @@ public partial class ComponentRunnerPrimitiveInput : ComponentBase
     {
         get
         {
-            var componentRunnerType = DisplayState
-                .GetComponentRunnerType(ParametersKey, new ComponentRunnerPrimitiveType(
-                    null,
-                    () => default,
-                    default,
-                    typeof(int)));
+            var componentRunnerParameter = DisplayState.GetParameter(
+                ParametersKey,
+                ComponentRunnerParameter.ConstructInt());
 
-            return componentRunnerType.Value is null
+            return componentRunnerParameter.Value is null
                 ? 0
-                : (int)componentRunnerType.Value;
+                : (int)componentRunnerParameter.Value;
         }
         set
         {
-            var componentRunnerType = DisplayState
-                .GetComponentRunnerType(ParametersKey, new ComponentRunnerPrimitiveType(
-                    null,
-                    () => default,
-                    default,
-                    typeof(int)));
+            var componentRunnerParameter = DisplayState.GetParameter(
+                ParametersKey,
+                ComponentRunnerParameter.ConstructInt());
 
-            componentRunnerType.Value = value;
+            componentRunnerParameter.Value = value;
 
-            DisplayState.SetComponentRunnerType(ParametersKey, componentRunnerType);
+            DisplayState.SetParameter(ParametersKey, componentRunnerParameter);
         }
     }
 }

@@ -4,21 +4,21 @@ using System.Reflection;
 namespace Luthetus.Common.Tests.Basis.ComponentRunners.Internals.Classes;
 
 /// <summary>
-/// <see cref="ComponentRunnerPrimitiveType"/>
+/// <see cref="ComponentRunnerParameter"/>
 /// </summary>
 public class ComponentRunnerPrimitiveTypeTests
 {
     /// <summary>
-    /// <see cref="ComponentRunnerPrimitiveType(System.Reflection.ConstructorInfo?, Func{object?}?, object?, Type)"/>
+    /// <see cref="ComponentRunnerParameter(System.Reflection.ConstructorInfo?, Func{object?}?, object?, Type)"/>
     /// <br/>----<br/>
-    /// <see cref="ComponentRunnerPrimitiveType.ChosenConstructorInfo"/>
-    /// <see cref="ComponentRunnerPrimitiveType.ConstructValueFunc"/>
-    /// <see cref="ComponentRunnerPrimitiveType.Value"/>
-    /// <see cref="ComponentRunnerPrimitiveType.Type"/>
-    /// <see cref="ComponentRunnerPrimitiveType.ComponentRunnerTypeKind"/>
+    /// <see cref="ComponentRunnerParameter.ChosenConstructorInfo"/>
+    /// <see cref="ComponentRunnerParameter.ConstructValueFunc"/>
+    /// <see cref="ComponentRunnerParameter.Value"/>
+    /// <see cref="ComponentRunnerParameter.Type"/>
+    /// <see cref="ComponentRunnerParameter.ComponentRunnerParameterKind"/>
     /// </summary>
     [Fact]
-    public void Constructor()
+    public void Constructor_WITH_PrimitiveType()
     {
         var samplePrimitiveType = 37;
 
@@ -28,18 +28,70 @@ public class ComponentRunnerPrimitiveTypeTests
 
         var type = typeof(int);
 
-        var componentRunnerTypeKind = ComponentRunnerTypeKind.Primitive;
+        var componentRunnerParameterKind = ComponentRunnerParameterKind.Primitive;
 
-        var componentRunnerComplexType = new ComponentRunnerPrimitiveType(
+        var componentRunnerParameter = new ComponentRunnerParameter(
             constructorInfo,
             constructValueFunc,
             samplePrimitiveType,
             type);
 
-        Assert.True(constructorInfo == componentRunnerComplexType.ChosenConstructorInfo);
-        Assert.True(constructValueFunc == componentRunnerComplexType.ConstructValueFunc);
-        Assert.True(samplePrimitiveType == (int)(componentRunnerComplexType.Value ?? 0));
-        Assert.True(type == componentRunnerComplexType.Type);
-        Assert.True(componentRunnerTypeKind == componentRunnerComplexType.ComponentRunnerTypeKind);
+        Assert.True(constructorInfo == componentRunnerParameter.ChosenConstructorInfo);
+        Assert.True(constructValueFunc == componentRunnerParameter.ConstructValueFunc);
+        Assert.True(samplePrimitiveType == (int)(componentRunnerParameter.Value ?? 0));
+        Assert.True(type == componentRunnerParameter.Type);
+        Assert.True(componentRunnerParameterKind == componentRunnerParameter.ComponentRunnerParameterKind);
+    }
+
+    /// <summary>
+    /// <see cref="ComponentRunnerParameter(System.Reflection.ConstructorInfo?, Func{object?}?, object?, Type)"/>
+    /// <br/>----<br/>
+    /// <see cref="ComponentRunnerParameter.ChosenConstructorInfo"/>
+    /// <see cref="ComponentRunnerParameter.ConstructValueFunc"/>
+    /// <see cref="ComponentRunnerParameter.Value"/>
+    /// <see cref="ComponentRunnerParameter.Type"/>
+    /// <see cref="ComponentRunnerParameter.ComponentRunnerParameterKind"/>
+    /// </summary>
+    [Fact]
+    public void Constructor_WITH_ComplexType()
+    {
+        var sampleComplexType = new SampleComplexType("John", "Doe");
+
+        var constructorInfo = typeof(SampleComplexType).GetConstructor(
+            new[] { typeof(string), typeof(string) });
+
+        Func<object?>? constructValueFunc = null;
+
+        var type = typeof(SampleComplexType);
+
+        var componentRunnerParameterKind = ComponentRunnerParameterKind.Complex;
+
+        Assert.NotNull(constructorInfo);
+
+        var componentRunnerParameter = new ComponentRunnerParameter(
+            constructorInfo,
+            null,
+            sampleComplexType,
+            type);
+
+        Assert.True(constructorInfo == componentRunnerParameter.ChosenConstructorInfo);
+        Assert.True(constructValueFunc == componentRunnerParameter.ConstructValueFunc);
+        Assert.True(sampleComplexType == componentRunnerParameter.Value);
+        Assert.True(type == componentRunnerParameter.Type);
+        Assert.True(componentRunnerParameterKind == componentRunnerParameter.ComponentRunnerParameterKind);
+    }
+
+    public class SampleComplexType
+    {
+        public SampleComplexType(string firstName, string lastName)
+        {
+            FirstName = firstName;
+            LastName = lastName;
+        }
+
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+
+        public string DisplayName => $"{FirstName} {LastName}";
     }
 }

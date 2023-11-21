@@ -28,12 +28,12 @@
                 <div style="border-left: 2px solid var(--luth_primary-border-color); padding-left: 8px; margin-bottom: 4px;">
 
                     @{
-                        var componentRunnerType = GetComponentRunnerType(DisplayState);
+                        var componentRunnerParameter = GetComponentRunnerParameter(DisplayState);
                     }
 
-                    @if (componentRunnerType?.ChosenConstructorInfo is not null)
+                    @if (componentRunnerParameter?.ChosenConstructorInfo is not null)
                     {
-                        <ComponentRunnerConstructor ConstructorInfo="componentRunnerType.ChosenConstructorInfo"
+                        <ComponentRunnerConstructor ConstructorInfo="componentRunnerParameter.ChosenConstructorInfo"
                                                     IsChosenConstructor="true"
                                                     OnClick="_ => {}"
                                                     OnUnsetChosenConstructorInfo="HandleOnUnsetChosenConstructorInfo"

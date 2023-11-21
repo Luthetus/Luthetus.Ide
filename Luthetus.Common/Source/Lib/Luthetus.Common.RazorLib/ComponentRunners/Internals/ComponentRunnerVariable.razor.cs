@@ -26,53 +26,37 @@ public partial class ComponentRunnerVariable : ComponentBase
     private void HandleConstructorOnClick(ConstructorInfo constructorInfo)
     {
         var localDisplayState = DisplayState;
-        var componentRunnerType = GetComponentRunnerType(localDisplayState);
+        var componentRunnerParameter = GetComponentRunnerParameter(localDisplayState);
 
-        componentRunnerType.ChosenConstructorInfo = constructorInfo;
+        componentRunnerParameter.ChosenConstructorInfo = constructorInfo;
 
-        DisplayState.SetComponentRunnerType(ParametersKey, componentRunnerType);
+        DisplayState.SetParameter(ParametersKey, componentRunnerParameter);
     }
 
     private void HandleOnUnsetChosenConstructorInfo()
     {
         var localDisplayState = DisplayState;
-        var componentRunnerType = GetComponentRunnerType(localDisplayState);
+        var componentRunnerParameter = GetComponentRunnerParameter(localDisplayState);
 
-        componentRunnerType.ChosenConstructorInfo = null;
+        componentRunnerParameter.ChosenConstructorInfo = null;
 
-        DisplayState.SetComponentRunnerType(ParametersKey, componentRunnerType);
+        DisplayState.SetParameter(ParametersKey, componentRunnerParameter);
     }
 
-    private IComponentRunnerType GetComponentRunnerType(
+    private IComponentRunnerParameter GetComponentRunnerParameter(
         ComponentRunnerDisplayState localDisplayState)
     {
-        IComponentRunnerType defaultValueIfNotExists = new ComponentRunnerPrimitiveType(
-            null,
-            () => null,
-            null,
-            VariableType);
+        IComponentRunnerParameter defaultValueIfNotExists = ComponentRunnerParameter.ConstructOther(VariableType);
 
         if (VariableType.IsPrimitive || VariableType == typeof(string))
         {
             if (VariableType == typeof(string))
-            {
-                defaultValueIfNotExists = new ComponentRunnerPrimitiveType(
-                    null,
-                    () => null,
-                    null,
-                    typeof(string));
-            }
+                defaultValueIfNotExists = ComponentRunnerParameter.ConstructString();
             else if (VariableType == typeof(int))
-            {
-                defaultValueIfNotExists = new ComponentRunnerPrimitiveType(
-                    null,
-                    () => default,
-                    default,
-                    typeof(int));
-            }
+                defaultValueIfNotExists = ComponentRunnerParameter.ConstructInt();
         }
 
-        return localDisplayState.GetComponentRunnerType(
+        return localDisplayState.GetParameter(
             ParametersKey,
             defaultValueIfNotExists);
     }

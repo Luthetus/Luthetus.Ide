@@ -38,20 +38,35 @@ public class BackgroundTaskTests
     }
 
     /// <summary>
+    /// <see cref="BackgroundTask.InvokeWorkItem(CancellationToken)"/>
+    /// <br/>----<br/>
     /// <see cref="BackgroundTask.WorkProgress"/>
     /// </summary>
     [Fact]
-    public void WorkProgress()
+    public async Task InvokeWorkItem()
     {
-        throw new NotImplementedException();
-    }
+        var number = 0;
+        Assert.Equal(0, number);
 
-    /// <summary>
-    /// <see cref="BackgroundTask.InvokeWorkItem(CancellationToken)"/>
-    /// </summary>
-    [Fact]
-    public void InvokeWorkItem()
-    {
-        throw new NotImplementedException();
+        var backgroundTaskKey = Key<BackgroundTask>.NewKey();
+
+        var backgroundTask = new BackgroundTask(
+            backgroundTaskKey,
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            "Abc",
+            () =>
+            {
+                // number += 1; from the task.
+                number++;
+                return Task.CompletedTask;
+            });
+
+        Assert.Null(backgroundTask.WorkProgress);
+
+        await backgroundTask.InvokeWorkItem(CancellationToken.None);
+
+        Assert.NotNull(backgroundTask.WorkProgress);
+
+        Assert.Equal(1, number);
     }
 }

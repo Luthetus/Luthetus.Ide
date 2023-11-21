@@ -7,7 +7,7 @@ namespace Luthetus.Common.RazorLib.ComponentRunners.States;
 [FeatureState]
 public partial record ComponentRunnerState
 {
-    private ComponentRunnerState()
+    public ComponentRunnerState()
     {
         ComponentRunnerDisplayStateBag = ImmutableList<ComponentRunnerDisplayState>.Empty;
     }

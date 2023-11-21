@@ -12,7 +12,7 @@ public record ComponentRunnerDisplayState(
     Guid ChosenTypeGuid,
     Guid PreviousTypeGuid,
     PropertyInfo[] ComponentPropertyInfoBag,
-    Dictionary<string, IComponentRunnerType> ComponentRunnerTypeParameterMap,
+    Dictionary<string, IComponentRunnerParameter> ComponentRunnerParameterMap,
     IDispatcher Dispatcher) // This is gonna be a hack for re-rendering temporarily
 {
     public Type? ChosenComponentType => ComponentTypeBag
@@ -20,27 +20,27 @@ public record ComponentRunnerDisplayState(
 
     private readonly object _parametersLock = new();
 
-    public IComponentRunnerType GetComponentRunnerType(string name, IComponentRunnerType defaultValueIfKeyNotExists)
+    public IComponentRunnerParameter GetParameter(string variableName, IComponentRunnerParameter defaultValueIfKeyNotExists)
     {
         lock (_parametersLock)
         {
-            if (!ComponentRunnerTypeParameterMap.TryGetValue(name, out var value))
+            if (!ComponentRunnerParameterMap.TryGetValue(variableName, out var value))
             {
                 value = defaultValueIfKeyNotExists;
-                ComponentRunnerTypeParameterMap.Add(name, value);
+                ComponentRunnerParameterMap.Add(variableName, value);
             }
 
             return value;
         }
     }
 
-    public void SetComponentRunnerType(string name, IComponentRunnerType value)
+    public void SetParameter(string name, IComponentRunnerParameter value)
     {
         lock (_parametersLock)
         {
-            if (!ComponentRunnerTypeParameterMap.TryAdd(name, value))
+            if (!ComponentRunnerParameterMap.TryAdd(name, value))
             {
-                ComponentRunnerTypeParameterMap[name] = value;
+                ComponentRunnerParameterMap[name] = value;
             }
         }
 
@@ -62,14 +62,14 @@ public record ComponentRunnerDisplayState(
             if (parameterInfo.PropertyType.IsPrimitive ||
                 parameterInfo.PropertyType == typeof(string))
             {
-                if (ComponentRunnerTypeParameterMap.TryGetValue(parameterKey, out var value))
+                if (ComponentRunnerParameterMap.TryGetValue(parameterKey, out var value))
                 {
                     blazorParameters.Add(parameterKey, value.Value);
                 }
             }
             else
             {
-                if (ComponentRunnerTypeParameterMap.TryGetValue(parameterKey, out var value) &&
+                if (ComponentRunnerParameterMap.TryGetValue(parameterKey, out var value) &&
                     value.ChosenConstructorInfo is not null)
                 {
                     var topLevelConstructorArgs = new List<object?>();
@@ -94,13 +94,13 @@ public record ComponentRunnerDisplayState(
         return blazorParameters;
     }
 
-    public void CalculateComponentPropertyInfoBag(string? stringValue, ref int chosenComponentChangeCounter)
+    public void CalculateComponentPropertyInfoBag(string? chosenTypeGuidString, ref int chosenComponentChangeCounter)
     {
         var refDisplayState = this;
 
-        if (string.IsNullOrWhiteSpace(stringValue) ||
-            stringValue == Guid.Empty.ToString() ||
-            !Guid.TryParse(stringValue, out var chosenTypeGuid))
+        if (string.IsNullOrWhiteSpace(chosenTypeGuidString) ||
+            chosenTypeGuidString == Guid.Empty.ToString() ||
+            !Guid.TryParse(chosenTypeGuidString, out var chosenTypeGuid))
         {
             refDisplayState = refDisplayState with
             {
@@ -151,7 +151,7 @@ public record ComponentRunnerDisplayState(
                 ChosenTypeGuid = refDisplayState.ChosenTypeGuid,
                 PreviousTypeGuid = refDisplayState.PreviousTypeGuid,
                 ComponentPropertyInfoBag = refDisplayState.ComponentPropertyInfoBag,
-                ComponentRunnerTypeParameterMap = new(),
+                ComponentRunnerParameterMap = new(),
             }));
     }
 
@@ -169,12 +169,12 @@ public record ComponentRunnerDisplayState(
         if (parameterInfo.ParameterType.IsPrimitive ||
             parameterInfo.ParameterType == typeof(string))
         {
-            if (ComponentRunnerTypeParameterMap.TryGetValue(parameterKey, out var value))
+            if (ComponentRunnerParameterMap.TryGetValue(parameterKey, out var value))
                 objectInstance = value.Value;
         }
         else
         {
-            if (ComponentRunnerTypeParameterMap.TryGetValue(parameterKey, out var value) &&
+            if (ComponentRunnerParameterMap.TryGetValue(parameterKey, out var value) &&
                 value.ChosenConstructorInfo is not null)
             {
                 var topLevelConstructorArgs = new List<object?>();
@@ -196,7 +196,7 @@ public record ComponentRunnerDisplayState(
         return objectInstance;
     }    
 
-    private void BubbleUpValue(string name, IComponentRunnerType value)
+    private void BubbleUpValue(string name, IComponentRunnerParameter value)
     {
         var splitName = name.Split('.');
 
@@ -208,8 +208,8 @@ public record ComponentRunnerDisplayState(
             var parentKey = string.Join('.', splitName.Take(i + 1));
             var childKey = string.Join('.', splitName.Take(i + 2));
 
-            if (!ComponentRunnerTypeParameterMap.TryGetValue(parentKey, out var parentValue) ||
-                !ComponentRunnerTypeParameterMap.TryGetValue(childKey, out var childValue))
+            if (!ComponentRunnerParameterMap.TryGetValue(parentKey, out var parentValue) ||
+                !ComponentRunnerParameterMap.TryGetValue(childKey, out var childValue))
                 continue;
 
             if (parentValue.ChosenConstructorInfo is null ||

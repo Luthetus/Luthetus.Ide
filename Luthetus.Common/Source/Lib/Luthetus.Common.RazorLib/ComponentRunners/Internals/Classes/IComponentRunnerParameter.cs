@@ -2,9 +2,9 @@
 
 namespace Luthetus.Common.RazorLib.ComponentRunners.Internals.Classes;
 
-public interface IComponentRunnerType
+public interface IComponentRunnerParameter
 {
-    public ComponentRunnerTypeKind ComponentRunnerTypeKind { get; }
+    public ComponentRunnerParameterKind ComponentRunnerParameterKind { get; }
     public ConstructorInfo? ChosenConstructorInfo { get; set; }
     public object? Value { get; set; }
     public Type Type { get; set; }
