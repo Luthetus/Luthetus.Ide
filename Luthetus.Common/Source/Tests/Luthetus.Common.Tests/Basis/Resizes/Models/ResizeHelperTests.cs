@@ -1,4 +1,7 @@
+using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Resizes.Models;
+using Luthetus.Common.RazorLib.Dimensions.Models;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace Luthetus.Common.Tests.Basis.Resizes.Models;
 
@@ -8,83 +11,383 @@ namespace Luthetus.Common.Tests.Basis.Resizes.Models;
 public class ResizeHelperTests
 {
     /// <summary>
-    /// <see cref="ResizeHelper.ResizeNorth(RazorLib.Dimensions.Models.ElementDimensions, Microsoft.AspNetCore.Components.Web.MouseEventArgs, Microsoft.AspNetCore.Components.Web.MouseEventArgs)"/>
+    /// <see cref="ResizeHelper.ResizeNorth(ElementDimensions, MouseEventArgs)"/>
     /// </summary>
     [Fact]
     public void ResizeNorth()
     {
-        throw new NotImplementedException();
+        var elementDimensions = DialogRecord.ConstructDefaultDialogDimensions();
+
+        var mouseEventArgs = new MouseEventArgs { /* ... */ };
+
+        // deltaX
+        {
+            // positive
+            {
+                // No effect
+                throw new NotImplementedException();
+            }
+
+            // negative
+            {
+                // No effect
+                throw new NotImplementedException();
+            }
+        }
+
+        // deltaY
+        {
+            // positive
+            {
+                // Height decreases
+                // Top increases
+                throw new NotImplementedException();
+            }
+
+            // negative
+            {
+                // Height increases
+                // Top decreases
+                throw new NotImplementedException();
+            }
+        }
     }
 
     /// <summary>
-    /// <see cref="ResizeHelper.ResizeEast(RazorLib.Dimensions.Models.ElementDimensions, Microsoft.AspNetCore.Components.Web.MouseEventArgs, Microsoft.AspNetCore.Components.Web.MouseEventArgs)"/>
+    /// <see cref="ResizeHelper.ResizeEast(ElementDimensions, MouseEventArgs)"/>
     /// </summary>
     [Fact]
     public void ResizeEast()
     {
-        throw new NotImplementedException();
+        var elementDimensions = DialogRecord.ConstructDefaultDialogDimensions();
+
+        var mouseEventArgs = new MouseEventArgs { /* ... */ };
+
+        // deltaX
+        {
+            // positive
+            {
+                // Width increases
+                throw new NotImplementedException();
+            }
+
+            // negative
+            {
+                // Width decreases
+                throw new NotImplementedException();
+            }
+        }
+
+        // deltaY
+        {
+            // positive
+            {
+                // No effect
+                throw new NotImplementedException();
+            }
+
+            // negative
+            {
+                // No effect
+                throw new NotImplementedException();
+            }
+        }
     }
 
     /// <summary>
-    /// <see cref="ResizeHelper.ResizeSouth(RazorLib.Dimensions.Models.ElementDimensions, Microsoft.AspNetCore.Components.Web.MouseEventArgs, Microsoft.AspNetCore.Components.Web.MouseEventArgs)"/>
+    /// <see cref="ResizeHelper.ResizeSouth(ElementDimensions, MouseEventArgs)"/>
     /// </summary>
     [Fact]
     public void ResizeSouth()
     {
-        throw new NotImplementedException();
+        var elementDimensions = DialogRecord.ConstructDefaultDialogDimensions();
+
+        var mouseEventArgs = new MouseEventArgs { /* ... */ };
+
+        // deltaX
+        {
+            // positive
+            {
+                // No effect
+                throw new NotImplementedException();
+            }
+
+            // negative
+            {
+                // No effect
+                throw new NotImplementedException();
+            }
+        }
+
+        // deltaY
+        {
+            // positive
+            {
+                // Height increases
+                throw new NotImplementedException();
+            }
+
+            // negative
+            {
+                // Height decreases
+                throw new NotImplementedException();
+            }
+        }
     }
 
     /// <summary>
-    /// <see cref="ResizeHelper.ResizeWest(RazorLib.Dimensions.Models.ElementDimensions, Microsoft.AspNetCore.Components.Web.MouseEventArgs, Microsoft.AspNetCore.Components.Web.MouseEventArgs)"/>
+    /// <see cref="ResizeHelper.ResizeWest(ElementDimensions, MouseEventArgs)"/>
     /// </summary>
     [Fact]
     public void ResizeWest()
     {
-        throw new NotImplementedException();
+        var elementDimensions = DialogRecord.ConstructDefaultDialogDimensions();
+
+        var mouseEventArgs = new MouseEventArgs { /* ... */ };
+
+        // deltaX
+        {
+            // positive
+            {
+                // Width decreases
+                // Left increases
+                throw new NotImplementedException();
+            }
+
+            // negative
+            {
+                // Width increases
+                // Left decreases
+                throw new NotImplementedException();
+            }
+        }
+
+        // deltaY
+        {
+            // positive
+            {
+                // No effect
+                throw new NotImplementedException();
+            }
+
+            // negative
+            {
+                // No effect
+                throw new NotImplementedException();
+            }
+        }
     }
 
     /// <summary>
-    /// <see cref="ResizeHelper.ResizeNorthEast(RazorLib.Dimensions.Models.ElementDimensions, Microsoft.AspNetCore.Components.Web.MouseEventArgs, Microsoft.AspNetCore.Components.Web.MouseEventArgs)"/>
+    /// <see cref="ResizeHelper.ResizeNorthEast(ElementDimensions, MouseEventArgs)"/>
     /// </summary>
     [Fact]
     public void ResizeNorthEast()
     {
-        throw new NotImplementedException();
+        var elementDimensions = DialogRecord.ConstructDefaultDialogDimensions();
+
+        var mouseEventArgs = new MouseEventArgs { /* ... */ };
+
+        // deltaX
+        {
+            // positive
+            {
+                // Width increases
+                throw new NotImplementedException();
+            }
+
+            // negative
+            {
+                // Width decreases
+                throw new NotImplementedException();
+            }
+        }
+
+        // deltaY
+        {
+            // positive
+            {
+                // Height decreases
+                // Top increases
+                throw new NotImplementedException();
+            }
+
+            // negative
+            {
+                // Height increases
+                // Top decreases
+                throw new NotImplementedException();
+            }
+        }
     }
 
     /// <summary>
-    /// <see cref="ResizeHelper.ResizeSouthEast(RazorLib.Dimensions.Models.ElementDimensions, Microsoft.AspNetCore.Components.Web.MouseEventArgs, Microsoft.AspNetCore.Components.Web.MouseEventArgs)"/>
+    /// <see cref="ResizeHelper.ResizeSouthEast(ElementDimensions, MouseEventArgs)"/>
     /// </summary>
     [Fact]
     public void ResizeSouthEast()
     {
-        throw new NotImplementedException();
+        var elementDimensions = DialogRecord.ConstructDefaultDialogDimensions();
+
+        var mouseEventArgs = new MouseEventArgs { /* ... */ };
+
+        // deltaX
+        {
+            // positive
+            {
+                // Width increases
+                throw new NotImplementedException();
+            }
+
+            // negative
+            {
+                // Width decreases
+                throw new NotImplementedException();
+            }
+        }
+
+        // deltaY
+        {
+            // positive
+            {
+                // Height increases
+                throw new NotImplementedException();
+            }
+
+            // negative
+            {
+                // Height decreases
+                throw new NotImplementedException();
+            }
+        }
     }
 
     /// <summary>
-    /// <see cref="ResizeHelper.ResizeSouthWest(RazorLib.Dimensions.Models.ElementDimensions, Microsoft.AspNetCore.Components.Web.MouseEventArgs, Microsoft.AspNetCore.Components.Web.MouseEventArgs)"/>
+    /// <see cref="ResizeHelper.ResizeSouthWest(ElementDimensions, MouseEventArgs)"/>
     /// </summary>
     [Fact]
     public void ResizeSouthWest()
     {
-        throw new NotImplementedException();
+        var elementDimensions = DialogRecord.ConstructDefaultDialogDimensions();
+
+        var mouseEventArgs = new MouseEventArgs { /* ... */ };
+
+        // deltaX
+        {
+            // positive
+            {
+                // Width decreases
+                // Left increases
+                throw new NotImplementedException();
+            }
+
+            // negative
+            {
+                // Width increases
+                // Left decreases
+                throw new NotImplementedException();
+            }
+        }
+
+        // deltaY
+        {
+            // positive
+            {
+                // Height increases
+                throw new NotImplementedException();
+            }
+
+            // negative
+            {
+                // Height decreases
+                throw new NotImplementedException();
+            }
+        }
     }
 
     /// <summary>
-    /// <see cref="ResizeHelper.ResizeNorthWest(RazorLib.Dimensions.Models.ElementDimensions, Microsoft.AspNetCore.Components.Web.MouseEventArgs, Microsoft.AspNetCore.Components.Web.MouseEventArgs)"/>
+    /// <see cref="ResizeHelper.ResizeNorthWest(ElementDimensions, MouseEventArgs)"/>
     /// </summary>
     [Fact]
     public void ResizeNorthWest()
     {
-        throw new NotImplementedException();
+        var elementDimensions = DialogRecord.ConstructDefaultDialogDimensions();
+
+        var mouseEventArgs = new MouseEventArgs { /* ... */ };
+
+        // deltaX
+        {
+            // positive
+            {
+                // Width decreases
+                // Left increases
+                throw new NotImplementedException();
+            }
+
+            // negative
+            {
+                // Width increases
+                // Left decreases
+                throw new NotImplementedException();
+            }
+        }
+
+        // deltaY
+        {
+            // positive
+            {
+                // Height decreases
+                // Top increases
+                throw new NotImplementedException();
+            }
+
+            // negative
+            {
+                // Height increases
+                // Top decreases
+                throw new NotImplementedException();
+            }
+        }
     }
 
     /// <summary>
-    /// <see cref="ResizeHelper.Move(RazorLib.Dimensions.Models.ElementDimensions, Microsoft.AspNetCore.Components.Web.MouseEventArgs, Microsoft.AspNetCore.Components.Web.MouseEventArgs)"/>
+    /// <see cref="ResizeHelper.Move(ElementDimensions, MouseEventArgs)"/>
     /// </summary>
     [Fact]
     public void Move()
     {
-        throw new NotImplementedException();
+        var elementDimensions = DialogRecord.ConstructDefaultDialogDimensions();
+
+        var mouseEventArgs = new MouseEventArgs { /* ... */ };
+
+        // deltaX
+        {
+            // positive
+            {
+                // Left increases
+                throw new NotImplementedException();
+            }
+
+            // negative
+            {
+                // Left decreases
+                throw new NotImplementedException();
+            }
+        }
+
+        // deltaY
+        {
+            // positive
+            {
+                // Top increases
+                throw new NotImplementedException();
+            }
+
+            // negative
+            {
+                // Top decreases
+                throw new NotImplementedException();
+            }
+        }
     }
 }
