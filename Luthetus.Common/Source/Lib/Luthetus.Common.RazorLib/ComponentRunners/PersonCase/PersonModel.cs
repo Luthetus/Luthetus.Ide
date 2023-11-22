@@ -1,5 +1,9 @@
-﻿namespace Luthetus.Common.RazorLib.ComponentRunners.Internals.PersonCase;
+﻿namespace Luthetus.Common.RazorLib.ComponentRunners.PersonCase;
 
+/// <summary>
+/// <see cref="PersonModel"/> is used from within the unit tests,
+/// in order to keep around an un-changing Type for the ComponentRunners.
+/// </summary>
 public class PersonModel
 {
     public PersonModel(string firstName, string lastName)

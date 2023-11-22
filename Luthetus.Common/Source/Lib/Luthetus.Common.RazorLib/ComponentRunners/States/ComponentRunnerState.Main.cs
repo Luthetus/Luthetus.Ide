@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 using Fluxor;
-using Luthetus.Common.RazorLib.ComponentRunners.Internals.Classes;
+using Luthetus.Common.RazorLib.ComponentRunners.Models;
 
 namespace Luthetus.Common.RazorLib.ComponentRunners.States;
 

@@ -1,6 +1,7 @@
 ﻿using Fluxor;
-using Luthetus.Common.RazorLib.ComponentRunners.Internals.Classes;
 using Luthetus.Common.RazorLib.ComponentRunners.Internals.PersonCase;
+using Luthetus.Common.RazorLib.ComponentRunners.Models;
+using Luthetus.Common.RazorLib.ComponentRunners.PersonCase;
 using Luthetus.Common.RazorLib.ComponentRunners.States;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Microsoft.Extensions.DependencyInjection;
@@ -61,35 +62,26 @@ public class ComponentRunnerDisplayStateTests
     }
 
     /// <summary>
-    /// <see cref="ComponentRunnerDisplayState.GetParameter(string, IComponentRunnerParameter)"/>
-    /// </summary>
-    [Fact]
-    public void GetParameter()
-    {
-        InitializeComponentRunnerDisplayStateTests(out var dispatcher, out var componentRunnerDisplayState);
-        
-        var componentRunnerParameter = componentRunnerDisplayState.GetParameter(
-            nameof(PersonDisplay.PersonModel),
-            ComponentRunnerParameter.ConstructOther(typeof(PersonModel)));
-
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="ComponentRunnerDisplayState.SetParameter(string, IComponentRunnerParameter)"/>
-    /// </summary>
-    [Fact]
-    public void SetParameter()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="ComponentRunnerDisplayState.ConstructBlazorParameters()"/>
+    /// <br/>----<br/>
+    /// <see cref="ComponentRunnerDisplayState.GetParameter(string, IComponentRunnerParameter)"/>
+    /// <see cref="ComponentRunnerDisplayState.SetParameter(string, IComponentRunnerParameter)"/>
     /// </summary>
     [Fact]
     public void ConstructBlazorParameters()
     {
+        InitializeComponentRunnerDisplayStateTests(out var dispatcher, out var componentRunnerDisplayState);
+
+        var componentRunnerParameter = componentRunnerDisplayState.GetParameter(
+            nameof(PersonDisplay.PersonModel),
+            ComponentRunnerParameter.ConstructOther(typeof(PersonModel)));
+
+        Assert.Null(componentRunnerParameter.Value);
+
+        componentRunnerDisplayState.SetParameter(
+            nameof(PersonDisplay.PersonModel),
+            ComponentRunnerParameter.ConstructOther(typeof(PersonModel)));
+
         throw new NotImplementedException();
     }
 

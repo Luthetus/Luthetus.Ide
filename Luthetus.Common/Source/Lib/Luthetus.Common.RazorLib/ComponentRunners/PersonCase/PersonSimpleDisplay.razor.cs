@@ -1,7 +1,11 @@
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Common.RazorLib.ComponentRunners.Internals.PersonCase;
+namespace Luthetus.Common.RazorLib.ComponentRunners.PersonCase;
 
+/// <summary>
+/// <see cref="PersonSimpleDisplay"/> is used from within the unit tests,
+/// in order to keep around an un-changing component for the ComponentRunners.
+/// </summary>
 public partial class PersonSimpleDisplay : ComponentBase
 {
     [Parameter, EditorRequired]

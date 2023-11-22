@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Luthetus.Common.RazorLib.ComponentRunners.Internals.Classes;
+namespace Luthetus.Common.RazorLib.ComponentRunners.Models;
 
 public class ComponentRunnerParameter : IComponentRunnerParameter
 {
@@ -35,7 +35,7 @@ public class ComponentRunnerParameter : IComponentRunnerParameter
             null,
             typeof(string));
     }
-    
+
     public static ComponentRunnerParameter ConstructInt()
     {
         return new ComponentRunnerParameter(
@@ -44,7 +44,7 @@ public class ComponentRunnerParameter : IComponentRunnerParameter
             default,
             typeof(int));
     }
-    
+
     public static ComponentRunnerParameter ConstructOther<VariableType>()
     {
         return new ComponentRunnerParameter(
@@ -53,7 +53,7 @@ public class ComponentRunnerParameter : IComponentRunnerParameter
             null,
             typeof(VariableType));
     }
-    
+
     public static ComponentRunnerParameter ConstructOther(Type variableType)
     {
         return new ComponentRunnerParameter(

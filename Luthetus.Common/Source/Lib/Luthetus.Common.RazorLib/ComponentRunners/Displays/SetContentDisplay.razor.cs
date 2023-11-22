@@ -2,7 +2,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Microsoft.AspNetCore.Components;
 using System.Reflection;
 
-namespace Luthetus.Common.RazorLib.ComponentRunners.Internals;
+namespace Luthetus.Common.RazorLib.ComponentRunners.Displays;
 
 public partial class SetContentDisplay : ComponentBase
 {

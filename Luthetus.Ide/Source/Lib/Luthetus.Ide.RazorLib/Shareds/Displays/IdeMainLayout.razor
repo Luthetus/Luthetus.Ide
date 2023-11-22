@@ -21,25 +21,45 @@
     <LuthetusIdeInitializer />
 
     <ShouldRenderBoundary>
-        <IdeHeader/>
+        @{
+            // The 'useDevelopmentDisplay' boolean is odd.
+            // 
+            // I want to isolate a component that I'm developing,
+            // yet maintain much of the existing Ide logic.
+            // 
+            // There are various ways that can accomplish something similar to this.
+            // 
+            // But, this is a simple way, and the if statement evaluation
+            // when this UI StateHasChanged, is expected to be negligible.
+            var useDevelopmentDisplay = true;
+        }
 
-        <StateHasChangedBoundary @ref="_bodyAndFooterStateHasChangedBoundaryComponent">
-            <IdeBody BodyElementDimensions="_bodyElementDimensions" />
+        @if (!useDevelopmentDisplay)
+        {
+            <IdeHeader/>
 
-            <ResizableRow TopElementDimensions="_bodyElementDimensions"
-                          BottomElementDimensions="PanelFacts.GetBottomPanelRecord(PanelsStateWrap.Value).ElementDimensions"
-                          ReRenderFuncAsync="_bodyAndFooterStateHasChangedBoundaryComponent.InvokeStateHasChangedAsync" />
+            <StateHasChangedBoundary @ref="_bodyAndFooterStateHasChangedBoundaryComponent">
+                <IdeBody BodyElementDimensions="_bodyElementDimensions" />
 
-            <PanelDisplay PanelGroupKey="PanelFacts.BottomPanelRecordKey"
-                          CssClassString="luth_ide_footer"
-                          AdjacentElementDimensions="_bodyElementDimensions"
-                          DimensionAttributeKind="DimensionAttributeKind.Height"
-                          ReRenderSelfAndAdjacentElementDimensionsFunc="_bodyAndFooterStateHasChangedBoundaryComponent.InvokeStateHasChangedAsync">
+                <ResizableRow TopElementDimensions="_bodyElementDimensions"
+                              BottomElementDimensions="PanelFacts.GetBottomPanelRecord(PanelsStateWrap.Value).ElementDimensions"
+                              ReRenderFuncAsync="_bodyAndFooterStateHasChangedBoundaryComponent.InvokeStateHasChangedAsync" />
 
-                <JustifyEndRenderFragment>
-                    <Luthetus.Common.RazorLib.Notifications.Displays.NotificationsInteractiveIconDisplay/>
-                </JustifyEndRenderFragment>
-            </PanelDisplay>
-        </StateHasChangedBoundary>
+                <PanelDisplay PanelGroupKey="PanelFacts.BottomPanelRecordKey"
+                              CssClassString="luth_ide_footer"
+                              AdjacentElementDimensions="_bodyElementDimensions"
+                              DimensionAttributeKind="DimensionAttributeKind.Height"
+                              ReRenderSelfAndAdjacentElementDimensionsFunc="_bodyAndFooterStateHasChangedBoundaryComponent.InvokeStateHasChangedAsync">
+
+                    <JustifyEndRenderFragment>
+                        <Luthetus.Common.RazorLib.Notifications.Displays.NotificationsInteractiveIconDisplay/>
+                    </JustifyEndRenderFragment>
+                </PanelDisplay>
+            </StateHasChangedBoundary>
+        }
+        else
+        {
+            <IdeDevelopmentDisplay/>
+        }
     </ShouldRenderBoundary>
 </ContextBoundary>

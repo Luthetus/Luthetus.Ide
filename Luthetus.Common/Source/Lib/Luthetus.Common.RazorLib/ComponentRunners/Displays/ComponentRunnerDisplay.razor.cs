@@ -1,12 +1,12 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRunners.States;
-using Luthetus.Common.RazorLib.ComponentRunners.Internals.Classes;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using System.Reflection;
+using Luthetus.Common.RazorLib.ComponentRunners.Models;
 
-namespace Luthetus.Common.RazorLib.ComponentRunners;
+namespace Luthetus.Common.RazorLib.ComponentRunners.Displays;
 
 public partial class ComponentRunnerDisplay : ComponentBase
 {

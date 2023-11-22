@@ -1,7 +1,7 @@
-using Luthetus.Common.RazorLib.ComponentRunners.Internals.Classes;
+using Luthetus.Common.RazorLib.ComponentRunners.Models;
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Common.RazorLib.ComponentRunners.Internals;
+namespace Luthetus.Common.RazorLib.ComponentRunners.Displays;
 
 public partial class ComponentRunnerPrimitiveInput : ComponentBase
 {

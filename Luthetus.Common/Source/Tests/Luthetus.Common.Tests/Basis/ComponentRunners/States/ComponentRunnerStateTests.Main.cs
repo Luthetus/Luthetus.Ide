@@ -1,6 +1,6 @@
 ﻿using Fluxor;
-using Luthetus.Common.RazorLib.ComponentRunners.Internals.Classes;
 using Luthetus.Common.RazorLib.ComponentRunners.Internals.PersonCase;
+using Luthetus.Common.RazorLib.ComponentRunners.Models;
 using Luthetus.Common.RazorLib.ComponentRunners.States;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Microsoft.Extensions.DependencyInjection;

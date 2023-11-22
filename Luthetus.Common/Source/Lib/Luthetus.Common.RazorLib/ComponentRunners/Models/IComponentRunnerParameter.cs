@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Luthetus.Common.RazorLib.ComponentRunners.Internals.Classes;
+namespace Luthetus.Common.RazorLib.ComponentRunners.Models;
 
 public interface IComponentRunnerParameter
 {

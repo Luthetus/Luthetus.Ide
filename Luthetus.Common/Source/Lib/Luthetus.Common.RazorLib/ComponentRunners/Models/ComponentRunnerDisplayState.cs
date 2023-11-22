@@ -4,7 +4,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Microsoft.AspNetCore.Components;
 using System.Reflection;
 
-namespace Luthetus.Common.RazorLib.ComponentRunners.Internals.Classes;
+namespace Luthetus.Common.RazorLib.ComponentRunners.Models;
 
 public record ComponentRunnerDisplayState(
     Key<ComponentRunnerDisplayState> Key,
@@ -194,7 +194,7 @@ public record ComponentRunnerDisplayState(
         }
 
         return objectInstance;
-    }    
+    }
 
     private void BubbleUpValue(string name, IComponentRunnerParameter value)
     {

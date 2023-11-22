@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.ComponentRunners.Internals.Classes;
+﻿using Luthetus.Common.RazorLib.ComponentRunners.Models;
 using System.Reflection;
 
 namespace Luthetus.Common.Tests.Basis.ComponentRunners.Internals.Classes;
