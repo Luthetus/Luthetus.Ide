@@ -1,7 +1,7 @@
-.luth_component-runner-constructor {
+.luth_reflective-constructor {
     display: flex;
 }
 
-.luth_component-runner-argument-list {
+.luth_reflective-argument-list {
     display: inline-flex;
 }
