@@ -1,0 +1,25 @@
+﻿@using Fluxor.Blazor.Web.Components
+
+@inherits FluxorComponent
+
+@{ var reflectiveState = ReflectiveStateWrap.Value; }
+
+<div class="luth_component-runner-panel">
+
+    <button class="luth_button" @onclick="DispatchRegisterActionOnClick">
+        Add Component
+    </button>
+
+    @for (var i = 0; i < reflectiveState.ReflectiveModelBag.Count; i++)
+    {
+        var index = i;
+        var model = reflectiveState.ReflectiveModelBag[index];
+
+        <ReflectiveDisplay @key="model.Key"
+                                ReflectiveModelKey="model.Key"
+                                Index="index"
+                                ComponentTypeBag="ComponentTypeBag" />
+
+        <hr/>
+    }
+</div>

@@ -1,11 +1,11 @@
 ﻿using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using Luthetus.Common.RazorLib.ComponentRunners;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Ide.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Photino.Blazor;
 using System;
+using Luthetus.Common.RazorLib.Reflectives.Models;
 
 namespace Luthetus.Ide.Photino;
 
@@ -24,7 +24,7 @@ class Program
 
         appBuilder.Services.AddLuthetusIdeRazorLibServices(hostingInformation);
 
-        appBuilder.Services.AddSingleton(new ComponentRunnerOptions(
+        appBuilder.Services.AddSingleton(new ReflectiveOptions(
             typeof(LuthetusCommonOptions).Assembly,
             typeof(LuthetusTextEditorOptions).Assembly,
             typeof(LuthetusIdeOptions).Assembly));

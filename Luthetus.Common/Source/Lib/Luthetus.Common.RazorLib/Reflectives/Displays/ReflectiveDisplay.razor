@@ -1,0 +1,105 @@
+﻿@using Luthetus.Common.RazorLib.Reflectives.Models;
+
+<div class="luth_component-runner">
+
+    @{ var model = ReflectiveStateSelection.Value; }
+
+    @if (model is not null)
+    {
+        <div style="display: flex;">
+            <button class="luth_button"
+                    title="Add Component Before"
+                    @onclick="() => DispatchRegisterAction(Index)">
+                <IconArrowUp />
+            </button>
+
+            <button class="luth_button"
+                    title="Add Component After"
+                    @onclick="() => DispatchRegisterAction(Index + 1)">
+                <IconArrowDown />
+            </button>
+
+            <button class="luth_button"
+                    @onclick="() => DispatchDisposeAction(model)">
+                <IconClose />
+            </button>
+        </div>
+
+        <select @onchange="OnSelectChanged" @ref="_selectElementReference">
+            
+            <option value="@Guid.Empty"
+                    selected="@GetIsOptionSelected(model, Guid.Empty)">
+                Select a type
+            </option>
+
+            @foreach (var type in model.ComponentTypeBag)
+            {
+                <option title="@type.FullName"
+                        value="@type.GUID"
+                        selected="@GetIsOptionSelected(model, type.GUID)">
+                    @type.Name
+                </option>
+            }
+        </select>
+
+        @if (model.ChosenTypeGuid != Guid.Empty)
+        {
+            foreach (var parameter in model.ComponentPropertyInfoBag)
+            {
+                <CascadingValue Value="model">
+                    <ReflectiveVariable VariableType="parameter.PropertyType"
+                                             VariableName="@parameter.Name"
+                                             ParametersKey="@parameter.Name"
+                                             IsProperty="true" />
+                </CascadingValue>
+            }
+        }
+
+        <ErrorBoundary @ref="_errorBoundaryComponent"
+                       Context="error">
+            <ChildContent>
+                @{
+                    var type = model.ChosenType;
+
+                    if (type is not null)
+                    {
+                        <DynamicComponent Type="type"
+                                          Parameters="model.ConstructBlazorParameters()"/>
+                    }
+                }
+            </ChildContent>
+            <ErrorContent>
+                <div class="luth_tree-view-exception">
+
+                    <button class="luth_button"
+                            title="Recover from error"
+                            @onclick="WrapRecover">
+                        <IconRefresh />
+                    </button>
+
+                    @if (model.ChosenTypeGuid != Guid.Empty)
+                    {
+                        var type = model.ChosenType;
+
+                        if (type is not null)
+                        {
+                            @: @type.Name, had an exception:
+                        }
+                    }
+                    else
+                    {
+                        @: Unknown type, had an exception:
+                    }
+                </div>
+
+                @error.ToString()
+            </ErrorContent>
+        </ErrorBoundary>
+    }
+    else
+    {
+        <div>
+            @nameof(ReflectiveModel) was null
+        </div>
+    }
+</div>
