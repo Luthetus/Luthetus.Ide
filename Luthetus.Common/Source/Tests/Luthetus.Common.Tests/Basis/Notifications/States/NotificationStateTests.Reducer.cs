@@ -8,19 +8,16 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Luthetus.Common.Tests.Basis.Notifications.States;
 
 /// <summary>
-/// <see cref="NotificationState"/>
+/// <see cref="NotificationState.Reducer"/>
 /// </summary>
 public class NotificationStateReducerTests
 {
+    /// <summary>
+    /// <see cref="NotificationState.Reducer.ReduceRegisterAction(NotificationState, NotificationState.RegisterAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceRegisterAction()
     {
-        /*
-        [ReducerMethod]
-        public static NotificationState ReduceRegisterAction(
-            NotificationState inState, RegisterAction registerAction)
-         */
-
         InitializeNotificationStateReducerTests(
             out var serviceProvider,
             out var notificationStateWrap,
@@ -35,15 +32,12 @@ public class NotificationStateReducerTests
         Assert.Contains(notificationStateWrap.Value.DefaultBag, x => x == notificationRecord);
     }
 
+    /// <summary>
+    /// <see cref="NotificationState.Reducer.ReduceDisposeAction(NotificationState, NotificationState.DisposeAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceDisposeAction()
     {
-        /*
-        [ReducerMethod]
-        public static NotificationState ReduceDisposeAction(
-            NotificationState inState, DisposeAction disposeAction)
-         */
-
         InitializeNotificationStateReducerTests(
             out var serviceProvider,
             out var notificationStateWrap,
@@ -60,15 +54,12 @@ public class NotificationStateReducerTests
         Assert.Empty(notificationStateWrap.Value.DefaultBag);
     }
 
+    /// <summary>
+    /// <see cref="NotificationState.Reducer.ReduceMakeReadAction(NotificationState, NotificationState.MakeReadAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceMakeReadAction()
     {
-        /*
-        [ReducerMethod]
-        public static NotificationState ReduceMakeReadAction(
-            NotificationState inState, MakeReadAction makeReadAction)
-         */
-
         InitializeNotificationStateReducerTests(
             out var serviceProvider,
             out var notificationStateWrap,
@@ -88,15 +79,12 @@ public class NotificationStateReducerTests
         Assert.Contains(notificationStateWrap.Value.ReadBag, x => x == notificationRecord);
     }
 
+    /// <summary>
+    /// <see cref="NotificationState.Reducer.ReduceUndoMakeReadAction(NotificationState, NotificationState.UndoMakeReadAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceUndoMakeReadAction()
     {
-        /*
-        [ReducerMethod]
-        public static NotificationState ReduceUndoMakeReadAction(
-            NotificationState inState, UndoMakeReadAction undoMakeReadAction)
-         */
-
         InitializeNotificationStateReducerTests(
             out var serviceProvider,
             out var notificationStateWrap,
@@ -123,15 +111,12 @@ public class NotificationStateReducerTests
         Assert.Contains(notificationStateWrap.Value.DefaultBag, x => x == notificationRecord);
     }
 
+    /// <summary>
+    /// <see cref="NotificationState.Reducer.ReduceMakeDeletedAction(NotificationState, NotificationState.MakeDeletedAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceMakeDeletedAction()
     {
-        /*
-        [ReducerMethod]
-        public static NotificationState ReduceMakeDeletedAction(
-            NotificationState inState, MakeDeletedAction makeDeletedAction)
-         */
-
         InitializeNotificationStateReducerTests(
             out var serviceProvider,
             out var notificationStateWrap,
@@ -151,15 +136,12 @@ public class NotificationStateReducerTests
         Assert.Contains(notificationStateWrap.Value.DeletedBag, x => x == notificationRecord);
     }
 
+    /// <summary>
+    /// <see cref="NotificationState.Reducer.ReduceUndoMakeDeletedAction(NotificationState, NotificationState.UndoMakeDeletedAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceUndoMakeDeletedAction()
     {
-        /*
-        [ReducerMethod]
-        public static NotificationState ReduceUndoMakeDeletedAction(
-            NotificationState inState, UndoMakeDeletedAction undoMakeDeletedAction)
-         */
-
         InitializeNotificationStateReducerTests(
             out var serviceProvider,
             out var notificationStateWrap,
@@ -186,15 +168,12 @@ public class NotificationStateReducerTests
         Assert.Contains(notificationStateWrap.Value.DefaultBag, x => x == notificationRecord);
     }
 
+    /// <summary>
+    /// <see cref="NotificationState.Reducer.ReduceMakeArchivedAction(NotificationState, NotificationState.MakeArchivedAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceMakeArchivedAction()
     {
-        /*
-        [ReducerMethod]
-        public static NotificationState ReduceMakeArchivedAction(
-            NotificationState inState, MakeArchivedAction makeArchivedAction)
-         */
-
         InitializeNotificationStateReducerTests(
             out var serviceProvider,
             out var notificationStateWrap,
@@ -214,15 +193,12 @@ public class NotificationStateReducerTests
         Assert.Contains(notificationStateWrap.Value.ArchivedBag, x => x == notificationRecord);
     }
 
+    /// <summary>
+    /// <see cref="NotificationState.Reducer.ReduceUndoMakeArchivedAction(NotificationState, NotificationState.UndoMakeArchivedAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceUndoMakeArchivedAction()
     {
-        /*
-        [ReducerMethod]
-        public static NotificationState ReduceUndoMakeArchivedAction(
-            NotificationState inState, UndoMakeArchivedAction undoMakeArchivedAction)
-         */
-
         InitializeNotificationStateReducerTests(
             out var serviceProvider,
             out var notificationStateWrap,
@@ -249,15 +225,12 @@ public class NotificationStateReducerTests
         Assert.Contains(notificationStateWrap.Value.DefaultBag, x => x == notificationRecord);
     }
 
+    /// <summary>
+    /// <see cref="NotificationState.Reducer.ReduceClearDefaultAction(NotificationState)"/>
+    /// </summary>
     [Fact]
     public void ReduceClearDefaultAction()
     {
-        /*
-        [ReducerMethod(typeof(ClearDefaultAction))]
-        public static NotificationState ReduceClearDefaultAction(
-            NotificationState inState)
-         */
-
         InitializeNotificationStateReducerTests(
             out var serviceProvider,
             out var notificationStateWrap,
@@ -375,15 +348,12 @@ public class NotificationStateReducerTests
         }
     }
 
+    /// <summary>
+    /// <see cref="NotificationState.Reducer.ReduceClearReadAction(NotificationState)"/>
+    /// </summary>
     [Fact]
     public void ReduceClearReadAction()
     {
-        /*
-        [ReducerMethod(typeof(ClearReadAction))]
-        public static NotificationState ReduceClearReadAction(
-            NotificationState inState)
-         */
-
         InitializeNotificationStateReducerTests(
             out var serviceProvider,
             out var notificationStateWrap,
@@ -507,15 +477,12 @@ public class NotificationStateReducerTests
         }
     }
 
+    /// <summary>
+    /// <see cref="NotificationState.Reducer.ReduceClearDeletedAction(NotificationState)"/>
+    /// </summary>
     [Fact]
     public void ReduceClearDeletedAction()
     {
-        /*
-        [ReducerMethod(typeof(ClearDeletedAction))]
-        public static NotificationState ReduceClearDeletedAction(
-            NotificationState inState)
-         */
-
         InitializeNotificationStateReducerTests(
             out var serviceProvider,
             out var notificationStateWrap,
@@ -639,15 +606,12 @@ public class NotificationStateReducerTests
         }
     }
 
+    /// <summary>
+    /// <see cref="NotificationState.Reducer.ReduceClearArchivedAction(NotificationState)"/>
+    /// </summary>
     [Fact]
     public void ReduceClearArchivedAction()
     {
-        /*
-        [ReducerMethod(typeof(ClearArchivedAction))]
-        public static NotificationState ReduceClearArchivedAction(
-            NotificationState inState)
-         */
-
         InitializeNotificationStateReducerTests(
             out var serviceProvider,
             out var notificationStateWrap,

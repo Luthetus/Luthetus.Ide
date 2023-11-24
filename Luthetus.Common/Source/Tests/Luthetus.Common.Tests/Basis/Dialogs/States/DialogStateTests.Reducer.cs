@@ -8,19 +8,16 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Luthetus.Common.Tests.Basis.Dialogs.States;
 
 /// <summary>
-/// <see cref="DialogState"/>
+/// <see cref="DialogState.Reducer"/>
 /// </summary>
 public class DialogStateReducerTests
 {
+    /// <summary>
+    /// <see cref="DialogState.Reducer.ReduceRegisterAction(DialogState, DialogState.RegisterAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceRegisterAction()
     {
-        /*
-        [ReducerMethod]
-        public static DialogState ReduceRegisterAction(
-            DialogState inState, RegisterAction registerAction)
-         */
-
         InitializeDialogStateReducerTests(
             out var _, out var dialogStateWrap, out var dispatcher, out var dialogRecord);
 
@@ -32,15 +29,12 @@ public class DialogStateReducerTests
         Assert.Contains(dialogStateWrap.Value.DialogBag, x => x == dialogRecord);
     }
 
+    /// <summary>
+    /// <see cref="DialogState.Reducer.ReduceSetIsMaximizedAction(DialogState, DialogState.SetIsMaximizedAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceSetIsMaximizedAction()
     {
-        /*
-        [ReducerMethod]
-        public static DialogState ReduceSetIsMaximizedAction(
-            DialogState inState, SetIsMaximizedAction setIsMaximizedAction)
-         */
-
         InitializeDialogStateReducerTests(
             out var _, out var dialogStateWrap, out var dispatcher, out var dialogRecord);
 
@@ -58,15 +52,12 @@ public class DialogStateReducerTests
         Assert.True(dialogRecord.IsMaximized);
     }
 
+    /// <summary>
+    /// <see cref="DialogState.Reducer.ReduceDisposeAction(DialogState, DialogState.DisposeAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceDisposeAction()
     {
-        /*
-        [ReducerMethod]
-        public static DialogState ReduceDisposeAction(
-            DialogState inState, DisposeAction disposeAction)
-         */
-
         InitializeDialogStateReducerTests(
             out var _, out var dialogStateWrap, out var dispatcher, out var dialogRecord);
 

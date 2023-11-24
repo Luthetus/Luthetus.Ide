@@ -7,19 +7,16 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Luthetus.Common.Tests.Basis.Dropdowns.States;
 
 /// <summary>
-/// <see cref="DropdownState"/>
+/// <see cref="DropdownState.Reducer"/>
 /// </summary>
 public class DropdownStateReducerTests
 {
+    /// <summary>
+    /// <see cref="DropdownState.Reducer.ReduceAddActiveAction(DropdownState, DropdownState.AddActiveAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceAddActiveAction()
     {
-        /*
-        [ReducerMethod]
-        public static DropdownState ReduceAddActiveAction(
-            DropdownState inState, AddActiveAction addActiveAction)
-         */
-
         InitializeDropdownStateReducerTests(
             out _,
             out var dropdownStateWrap,
@@ -38,15 +35,12 @@ public class DropdownStateReducerTests
             x => x == dropdownKey);
     }
 
+    /// <summary>
+    /// <see cref="DropdownState.Reducer.ReduceRemoveActiveAction(DropdownState, DropdownState.RemoveActiveAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceRemoveActiveAction()
     {
-        /*
-        [ReducerMethod]
-        public static DropdownState ReduceRemoveActiveAction(
-            DropdownState inState, RemoveActiveAction removeActiveAction)
-         */
-
         InitializeDropdownStateReducerTests(
             out _,
             out var dropdownStateWrap,
@@ -68,15 +62,12 @@ public class DropdownStateReducerTests
         Assert.Empty(dropdownStateWrap.Value.ActiveKeyBag);
     }
 
+    /// <summary>
+    /// <see cref="DropdownState.Reducer.ReduceClearActivesAction(DropdownState)"/>
+    /// </summary>
     [Fact]
     public void ReduceClearActivesAction()
     {
-        /*
-        [ReducerMethod(typeof(ClearActivesAction))]
-        public static DropdownState ReduceClearActivesAction(
-            DropdownState inState)
-         */
-
         InitializeDropdownStateReducerTests(
             out _,
             out var dropdownStateWrap,
