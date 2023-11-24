@@ -4,7 +4,7 @@ namespace Luthetus.Common.RazorLib.Drags.Displays;
 
 public partial record DragState
 {
-    private class Reducer
+    public class Reducer
     {
         [ReducerMethod]
         public static DragState ReduceWithAction(

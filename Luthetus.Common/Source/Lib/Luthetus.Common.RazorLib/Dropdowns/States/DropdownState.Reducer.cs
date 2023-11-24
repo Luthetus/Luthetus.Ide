@@ -4,7 +4,7 @@ namespace Luthetus.Common.RazorLib.Dropdowns.States;
 
 public partial record DropdownState
 {
-    private class Reducer
+    public class Reducer
     {
         [ReducerMethod]
         public static DropdownState ReduceAddActiveAction(

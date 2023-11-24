@@ -4,7 +4,7 @@ namespace Luthetus.Common.RazorLib.Tabs.States;
 
 public partial record TabState
 {
-    private class Reducer
+    public class Reducer
     {
         [ReducerMethod]
         public static TabState ReduceRegisterTabGroupAction(

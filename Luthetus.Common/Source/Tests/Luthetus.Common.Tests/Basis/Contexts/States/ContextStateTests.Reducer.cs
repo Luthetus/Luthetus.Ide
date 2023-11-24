@@ -11,19 +11,16 @@ using System.Collections.Immutable;
 namespace Luthetus.Common.Tests.Basis.Contexts.States;
 
 /// <summary>
-/// <see cref="ContextState"/>
+/// <see cref="ContextState.Reducer"/>
 /// </summary>
 public class ContextStateReducerTests
 {
+    /// <summary>
+    /// <see cref="ContextState.Reducer.ReduceSetFocusedContextHeirarchyAction(ContextState, ContextState.SetFocusedContextHeirarchyAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceSetFocusedContextHeirarchyAction()
     {
-        /*
-        [ReducerMethod]
-        public static ContextState ReduceSetFocusedContextHeirarchyAction(
-            ContextState inContextStates, SetFocusedContextHeirarchyAction setFocusedContextHeirarchyAction)
-         */
-
         InitializeContextStateReducerTests(
             out var serviceProvider,
             out var contextStateWrap,
@@ -48,15 +45,12 @@ public class ContextStateReducerTests
             ContextFacts.GlobalContext.ContextKey);
     }
 
+    /// <summary>
+    /// <see cref="ContextState.Reducer.ReduceToggleSelectInspectedContextHeirarchyAction(ContextState)"/>
+    /// </summary>
     [Fact]
     public void ReduceToggleSelectInspectedContextHeirarchyAction()
     {
-        /*
-        [ReducerMethod(typeof(ToggleSelectInspectedContextHeirarchyAction))]
-        public static ContextState ReduceToggleSelectInspectedContextHeirarchyAction(
-            ContextState inContextStates)
-         */
-
         InitializeContextStateReducerTests(
             out var serviceProvider,
             out var contextStateWrap,
@@ -74,16 +68,13 @@ public class ContextStateReducerTests
             contextStateWrap.Value.IsSelectingInspectionTarget);
     }
 
+
+    /// <summary>
+    /// <see cref="ContextState.Reducer.ReduceIsSelectingInspectableContextHeirarchyAction(ContextState, ContextState.IsSelectingInspectableContextHeirarchyAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceIsSelectingInspectableContextHeirarchyAction()
     {
-        /*
-        [ReducerMethod]
-        public static ContextState ReduceIsSelectingInspectableContextHeirarchyAction(
-            ContextState inContextStates,
-            IsSelectingInspectableContextHeirarchyAction isSelectingInspectableContextHeirarchyAction)
-         */
-
         InitializeContextStateReducerTests(
             out var serviceProvider,
             out var contextStateWrap,
@@ -101,16 +92,13 @@ public class ContextStateReducerTests
         Assert.False(contextStateWrap.Value.IsSelectingInspectionTarget);
     }
 
+
+    /// <summary>
+    /// <see cref="ContextState.Reducer.ReduceSetInspectedContextHeirarchyAction(ContextState, ContextState.SetInspectedContextHeirarchyAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceSetInspectedContextHeirarchyAction()
     {
-        /*
-        [ReducerMethod]
-        public static ContextState ReduceSetInspectedContextHeirarchyAction(
-            ContextState inContextStates,
-            SetInspectedContextHeirarchyAction setInspectedContextHeirarchyAction)
-         */
-
         InitializeContextStateReducerTests(
             out var serviceProvider,
             out var contextStateWrap,
@@ -129,16 +117,12 @@ public class ContextStateReducerTests
             contextStateWrap.Value.InspectedContextHeirarchy);
     }
 
+    /// <summary>
+    /// <see cref="ContextState.Reducer.ReduceAddInspectableContextAction(ContextState, ContextState.AddInspectableContextAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceAddInspectableContextAction()
     {
-        /*
-        [ReducerMethod]
-        public static ContextState ReduceAddInspectableContextAction(
-            ContextState inContextStates,
-            AddInspectableContextAction addInspectableContextAction)
-         */
-
         InitializeContextStateReducerTests(
             out var serviceProvider,
             out var contextStateWrap,
@@ -161,16 +145,13 @@ public class ContextStateReducerTests
             contextStateWrap.Value.InspectableContextBag.Single());
     }
 
+
+    /// <summary>
+    /// <see cref="ContextState.Reducer.ReduceSetContextKeymapAction(ContextState, ContextState.SetContextKeymapAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceSetContextKeymapAction()
     {
-        /*
-        [ReducerMethod]
-        public static ContextState ReduceSetContextKeymapAction(
-            ContextState inContextStates,
-            SetContextKeymapAction setContextKeymapAction)
-         */
-
         InitializeContextStateReducerTests(
             out var serviceProvider,
             out var contextStateWrap,

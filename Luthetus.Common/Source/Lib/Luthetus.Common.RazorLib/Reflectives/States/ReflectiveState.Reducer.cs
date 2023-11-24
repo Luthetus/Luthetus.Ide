@@ -4,7 +4,7 @@ namespace Luthetus.Common.RazorLib.Reflectives.States;
 
 public partial record ReflectiveState
 {
-    private record Reducer
+    public class Reducer
     {
         [ReducerMethod]
         public static ReflectiveState ReduceRegisterAction(
