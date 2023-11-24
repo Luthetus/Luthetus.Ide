@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Luthetus.Common.Tests.Basis.WatchWindows;
 
-public class PersonTest
+public class PersonTest : IPersonTest
 {
-    public PersonTest(string firstName, string lastName, List<PersonTest> relatives)
+    public PersonTest(string firstName, string lastName, List<IPersonTest> relatives)
     {
         FirstName = firstName;
         LastName = lastName;
@@ -22,7 +22,7 @@ public class PersonTest
 
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
-    public List<PersonTest> Relatives { get; set; } = new();
+    public List<IPersonTest> Relatives { get; set; } = new();
 
     public string DisplayName => $"{FirstName} {LastName}";
 }
