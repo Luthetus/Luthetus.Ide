@@ -69,15 +69,13 @@ public record LuthetusCommonOptionsTests
         // Assert that 'LocalStorageService' is used for the default CommonFactories
         {
             var hostingInformation = new LuthetusHostingInformation(
-            LuthetusHostingKind.UnitTesting,
-            new BackgroundTaskServiceSynchronous());
+                LuthetusHostingKind.UnitTesting,
+                new BackgroundTaskServiceSynchronous());
 
             var services = new ServiceCollection()
                 .AddLuthetusCommonServices(hostingInformation)
                 .AddScoped<IJSRuntime>(_ => new DoNothingJsRuntime())
-                .AddFluxor(options => options.ScanAssemblies(typeof(LuthetusCommonOptions).Assembly))
-                .AddScoped<StorageSync>()
-                .AddScoped<IBackgroundTaskService>(sp => new BackgroundTaskServiceSynchronous());
+                .AddFluxor(options => options.ScanAssemblies(typeof(LuthetusCommonOptions).Assembly));
 
             var serviceProvider = services.BuildServiceProvider();
 
@@ -108,9 +106,7 @@ public record LuthetusCommonOptionsTests
                     };
                 })
                 .AddScoped<IJSRuntime>(_ => new DoNothingJsRuntime())
-                .AddFluxor(options => options.ScanAssemblies(typeof(LuthetusCommonOptions).Assembly))
-                .AddScoped<StorageSync>()
-                .AddScoped<IBackgroundTaskService>(sp => new BackgroundTaskServiceSynchronous());
+                .AddFluxor(options => options.ScanAssemblies(typeof(LuthetusCommonOptions).Assembly));
 
             var serviceProvider = services.BuildServiceProvider();
 

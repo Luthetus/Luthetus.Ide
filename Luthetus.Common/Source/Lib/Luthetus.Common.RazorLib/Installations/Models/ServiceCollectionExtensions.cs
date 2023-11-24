@@ -53,7 +53,6 @@ public static class ServiceCollectionExtensions
             .AddSingleton(hostingInformation)
             .AddSingleton(hostingInformation.BackgroundTaskService)
             .AddSingleton<ILuthetusCommonComponentRenderers>(_ => _commonRendererTypes)
-            .AddScoped<IThemeService, ThemeService>()
             .AddCommonFactories(hostingInformation, commonOptions)
             .AddScoped<StorageSync>();
 
