@@ -4,16 +4,16 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 
 namespace Luthetus.Common.RazorLib.WatchWindows.Models;
 
-public class TreeViewFields : TreeViewWithType<WatchWindowObjectWrap>
+public class TreeViewFields : TreeViewWithType<WatchWindowObject>
 {
     private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
 
     public TreeViewFields(
-            WatchWindowObjectWrap watchWindowObjectWrap,
+            WatchWindowObject watchWindowObject,
             bool isExpandable,
             bool isExpanded,
             ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers)
-        : base(watchWindowObjectWrap, isExpandable, isExpanded)
+        : base(watchWindowObject, isExpandable, isExpanded)
     {
         _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
     }
@@ -52,7 +52,7 @@ public class TreeViewFields : TreeViewWithType<WatchWindowObjectWrap>
         {
             ChildBag.Clear();
 
-            var fieldInfoBag = Item.DebugObjectItemType.GetFields(
+            var fieldInfoBag = Item.ItemType.GetFields(
                 BindingFlags.Public |
                 BindingFlags.NonPublic |
                 BindingFlags.Instance |
@@ -60,13 +60,13 @@ public class TreeViewFields : TreeViewWithType<WatchWindowObjectWrap>
 
             foreach (var fieldInfo in fieldInfoBag)
             {
-                var childValue = Item.DebugObjectItem is null
+                var childValue = Item.Item is null
                     ? null
-                    : fieldInfo.GetValue(Item.DebugObjectItem);
+                    : fieldInfo.GetValue(Item.Item);
 
                 var childType = fieldInfo.FieldType;
 
-                var childNode = new WatchWindowObjectWrap(
+                var childNode = new WatchWindowObject(
                     childValue,
                     childType,
                     fieldInfo.Name,

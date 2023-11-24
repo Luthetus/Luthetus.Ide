@@ -4,16 +4,16 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 
 namespace Luthetus.Common.RazorLib.WatchWindows.Models;
 
-public class TreeViewReflection : TreeViewWithType<WatchWindowObjectWrap>
+public class TreeViewReflection : TreeViewWithType<WatchWindowObject>
 {
     private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
 
     public TreeViewReflection(
-            WatchWindowObjectWrap watchWindowObjectWrap,
+            WatchWindowObject watchWindowObject,
             bool isExpandable,
             bool isExpanded,
             ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers)
-        : base(watchWindowObjectWrap, isExpandable, isExpanded)
+        : base(watchWindowObject, isExpandable, isExpanded)
     {
         _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
     }
@@ -64,19 +64,20 @@ public class TreeViewReflection : TreeViewWithType<WatchWindowObjectWrap>
                 false,
                 _luthetusCommonComponentRenderers));
 
-            if (Item.DebugObjectItem is IEnumerable)
+            if (Item.Item is IEnumerable)
             {
-                ChildBag.Add(new TreeViewEnumerable(Item,
+                ChildBag.Add(new TreeViewEnumerable(
+                    Item,
                     true,
                     false,
                     _luthetusCommonComponentRenderers));
             }
 
-            if (Item.DebugObjectItemType.IsInterface && Item.DebugObjectItem is not null)
+            if (Item.ItemType.IsInterface && Item.Item is not null)
             {
-                var interfaceImplementation = new WatchWindowObjectWrap(
-                    Item.DebugObjectItem,
-                    Item.DebugObjectItem.GetType(),
+                var interfaceImplementation = new WatchWindowObject(
+                    Item.Item,
+                    Item.Item.GetType(),
                     "InterfaceImplementation",
                     false);
 

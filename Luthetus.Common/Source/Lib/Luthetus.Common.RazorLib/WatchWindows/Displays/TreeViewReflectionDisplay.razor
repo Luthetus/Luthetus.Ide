@@ -9,7 +9,7 @@
     </div>
     
     <div class="luth_te_type">
-        @(textEditorDebugObjectWrap.DebugObjectItemType.Name)
+        @(textEditorDebugObjectWrap.ItemType.Name)
         &nbsp;
     </div>
     
@@ -18,7 +18,7 @@
         &nbsp;
     </div>
 
-    @if (textEditorDebugObjectWrap.DebugObjectItem is null)
+    @if (textEditorDebugObjectWrap.Item is null)
     {
         <div class="luth_te_keyword">
             (null)
@@ -26,9 +26,9 @@
     }
     else
     {
-        var toStringResult = textEditorDebugObjectWrap.DebugObjectItem.ToString();
+        var toStringResult = textEditorDebugObjectWrap.Item.ToString();
     
-        <div class="@GetCssStylingForValue(textEditorDebugObjectWrap.DebugObjectItemType)"
+        <div class="@GetCssStylingForValue(textEditorDebugObjectWrap.ItemType)"
               style="width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; display: inline-block;"
               title="@toStringResult">
             @toStringResult

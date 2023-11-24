@@ -18,47 +18,47 @@ public partial class CompilerServiceExplorerSync
             {
                 var compilerServiceExplorerState = _compilerServiceExplorerStateWrap.Value;
 
-                var xmlCompilerServiceWatchWindowObjectWrap = new WatchWindowObjectWrap(
+                var xmlCompilerServiceWatchWindowObject = new WatchWindowObject(
                     _compilerServiceRegistry.XmlCompilerService, _compilerServiceRegistry.XmlCompilerService.GetType(), "XML", true);
 
-                var dotNetSolutionCompilerServiceWatchWindowObjectWrap = new WatchWindowObjectWrap(
+                var dotNetSolutionCompilerServiceWatchWindowObject = new WatchWindowObject(
                     _compilerServiceRegistry.DotNetSolutionCompilerService, _compilerServiceRegistry.DotNetSolutionCompilerService.GetType(), ".NET Solution", true);
 
-                var cSharpProjectCompilerServiceWatchWindowObjectWrap = new WatchWindowObjectWrap(
+                var cSharpProjectCompilerServiceWatchWindowObject = new WatchWindowObject(
                     _compilerServiceRegistry.CSharpProjectCompilerService, _compilerServiceRegistry.CSharpProjectCompilerService.GetType(), "C# Project", true);
 
-                var cSharpCompilerServiceWatchWindowObjectWrap = new WatchWindowObjectWrap(
+                var cSharpCompilerServiceWatchWindowObject = new WatchWindowObject(
                     _compilerServiceRegistry.CSharpCompilerService, _compilerServiceRegistry.CSharpCompilerService.GetType(), "C#", true);
 
-                var razorCompilerServiceWatchWindowObjectWrap = new WatchWindowObjectWrap(
+                var razorCompilerServiceWatchWindowObject = new WatchWindowObject(
                     _compilerServiceRegistry.RazorCompilerService, _compilerServiceRegistry.RazorCompilerService.GetType(), "Razor", true);
 
-                var cssCompilerServiceWatchWindowObjectWrap = new WatchWindowObjectWrap(
+                var cssCompilerServiceWatchWindowObject = new WatchWindowObject(
                     _compilerServiceRegistry.CssCompilerService, _compilerServiceRegistry.CssCompilerService.GetType(), "Css", true);
 
-                var fSharpCompilerServiceWatchWindowObjectWrap = new WatchWindowObjectWrap(
+                var fSharpCompilerServiceWatchWindowObject = new WatchWindowObject(
                     _compilerServiceRegistry.FSharpCompilerService, _compilerServiceRegistry.FSharpCompilerService.GetType(), "F#", true);
 
-                var javaScriptCompilerServiceWatchWindowObjectWrap = new WatchWindowObjectWrap(
+                var javaScriptCompilerServiceWatchWindowObject = new WatchWindowObject(
                     _compilerServiceRegistry.JavaScriptCompilerService, _compilerServiceRegistry.JavaScriptCompilerService.GetType(), "JavaScript", true);
 
-                var typeScriptCompilerServiceWatchWindowObjectWrap = new WatchWindowObjectWrap(
+                var typeScriptCompilerServiceWatchWindowObject = new WatchWindowObject(
                     _compilerServiceRegistry.TypeScriptCompilerService, _compilerServiceRegistry.TypeScriptCompilerService.GetType(), "TypeScript", true);
 
-                var jsonCompilerServiceWatchWindowObjectWrap = new WatchWindowObjectWrap(
+                var jsonCompilerServiceWatchWindowObject = new WatchWindowObject(
                     _compilerServiceRegistry.JsonCompilerService, _compilerServiceRegistry.JsonCompilerService.GetType(), "JSON", true);
 
                 var rootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(
-                    new TreeViewReflectionWithView(xmlCompilerServiceWatchWindowObjectWrap, true, false, _luthetusIdeComponentRenderers, _luthetusCommonComponentRenderers),
-                    new TreeViewReflectionWithView(dotNetSolutionCompilerServiceWatchWindowObjectWrap, true, false, _luthetusIdeComponentRenderers, _luthetusCommonComponentRenderers),
-                    new TreeViewReflectionWithView(cSharpProjectCompilerServiceWatchWindowObjectWrap, true, false, _luthetusIdeComponentRenderers, _luthetusCommonComponentRenderers),
-                    new TreeViewReflectionWithView(cSharpCompilerServiceWatchWindowObjectWrap, true, false, _luthetusIdeComponentRenderers, _luthetusCommonComponentRenderers),
-                    new TreeViewReflectionWithView(razorCompilerServiceWatchWindowObjectWrap, true, false, _luthetusIdeComponentRenderers, _luthetusCommonComponentRenderers),
-                    new TreeViewReflectionWithView(cssCompilerServiceWatchWindowObjectWrap, true, false, _luthetusIdeComponentRenderers, _luthetusCommonComponentRenderers),
-                    new TreeViewReflectionWithView(fSharpCompilerServiceWatchWindowObjectWrap, true, false, _luthetusIdeComponentRenderers, _luthetusCommonComponentRenderers),
-                    new TreeViewReflectionWithView(javaScriptCompilerServiceWatchWindowObjectWrap, true, false, _luthetusIdeComponentRenderers, _luthetusCommonComponentRenderers),
-                    new TreeViewReflectionWithView(typeScriptCompilerServiceWatchWindowObjectWrap, true, false, _luthetusIdeComponentRenderers, _luthetusCommonComponentRenderers),
-                    new TreeViewReflectionWithView(jsonCompilerServiceWatchWindowObjectWrap, true, false, _luthetusIdeComponentRenderers, _luthetusCommonComponentRenderers));
+                    new TreeViewReflectionWithView(xmlCompilerServiceWatchWindowObject, true, false, _luthetusIdeComponentRenderers, _luthetusCommonComponentRenderers),
+                    new TreeViewReflectionWithView(dotNetSolutionCompilerServiceWatchWindowObject, true, false, _luthetusIdeComponentRenderers, _luthetusCommonComponentRenderers),
+                    new TreeViewReflectionWithView(cSharpProjectCompilerServiceWatchWindowObject, true, false, _luthetusIdeComponentRenderers, _luthetusCommonComponentRenderers),
+                    new TreeViewReflectionWithView(cSharpCompilerServiceWatchWindowObject, true, false, _luthetusIdeComponentRenderers, _luthetusCommonComponentRenderers),
+                    new TreeViewReflectionWithView(razorCompilerServiceWatchWindowObject, true, false, _luthetusIdeComponentRenderers, _luthetusCommonComponentRenderers),
+                    new TreeViewReflectionWithView(cssCompilerServiceWatchWindowObject, true, false, _luthetusIdeComponentRenderers, _luthetusCommonComponentRenderers),
+                    new TreeViewReflectionWithView(fSharpCompilerServiceWatchWindowObject, true, false, _luthetusIdeComponentRenderers, _luthetusCommonComponentRenderers),
+                    new TreeViewReflectionWithView(javaScriptCompilerServiceWatchWindowObject, true, false, _luthetusIdeComponentRenderers, _luthetusCommonComponentRenderers),
+                    new TreeViewReflectionWithView(typeScriptCompilerServiceWatchWindowObject, true, false, _luthetusIdeComponentRenderers, _luthetusCommonComponentRenderers),
+                    new TreeViewReflectionWithView(jsonCompilerServiceWatchWindowObject, true, false, _luthetusIdeComponentRenderers, _luthetusCommonComponentRenderers));
 
                 await rootNode.LoadChildBagAsync();
 

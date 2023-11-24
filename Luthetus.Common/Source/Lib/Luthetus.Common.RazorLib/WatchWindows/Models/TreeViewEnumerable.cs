@@ -4,16 +4,16 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 
 namespace Luthetus.Common.RazorLib.WatchWindows.Models;
 
-public class TreeViewEnumerable : TreeViewWithType<WatchWindowObjectWrap>
+public class TreeViewEnumerable : TreeViewWithType<WatchWindowObject>
 {
     private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
 
     public TreeViewEnumerable(
-            WatchWindowObjectWrap watchWindowObjectWrap,
+            WatchWindowObject watchWindowObject,
             bool isExpandable,
             bool isExpanded,
             ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers)
-        : base(watchWindowObjectWrap, isExpandable, isExpanded)
+        : base(watchWindowObject, isExpandable, isExpanded)
     {
         _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
     }
@@ -52,17 +52,17 @@ public class TreeViewEnumerable : TreeViewWithType<WatchWindowObjectWrap>
         {
             ChildBag.Clear();
 
-            if (Item.DebugObjectItem is IEnumerable enumerable)
+            if (Item.Item is IEnumerable enumerable)
             {
                 var enumerator = enumerable.GetEnumerator();
 
-                var genericArgument = GetGenericArgument(Item.DebugObjectItem.GetType());
+                var genericArgument = GetGenericArgument(Item.Item.GetType());
 
                 while (enumerator.MoveNext())
                 {
                     var entry = enumerator.Current;
 
-                    var childNode = new WatchWindowObjectWrap(
+                    var childNode = new WatchWindowObject(
                         entry,
                         genericArgument,
                         genericArgument.Name,
@@ -77,7 +77,7 @@ public class TreeViewEnumerable : TreeViewWithType<WatchWindowObjectWrap>
             }
             else
             {
-                throw new ApplicationException($"Unexpected failed cast to the Type {nameof(IEnumerable)}. {nameof(TreeViewEnumerable)} are to have a {nameof(Item.DebugObjectItem)} which is castable as {nameof(IEnumerable)}");
+                throw new ApplicationException($"Unexpected failed cast to the Type {nameof(IEnumerable)}. {nameof(TreeViewEnumerable)} are to have a {nameof(Item.Item)} which is castable as {nameof(IEnumerable)}");
             }
 
             if (ChildBag.Count == 0)

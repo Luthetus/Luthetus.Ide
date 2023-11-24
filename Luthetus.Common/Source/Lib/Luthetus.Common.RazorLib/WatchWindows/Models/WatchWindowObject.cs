@@ -1,24 +1,24 @@
 ﻿namespace Luthetus.Common.RazorLib.WatchWindows.Models;
 
-public class WatchWindowObjectWrap
+public class WatchWindowObject
 {
     /// <summary>
     /// Cannot use reflection on a null item therefore, provide the item AND the item's type.
     /// </summary>
-    public WatchWindowObjectWrap(
-        object? debugObjectItem,
-        Type debugObjectItemType,
+    public WatchWindowObject(
+        object? item,
+        Type itemType,
         string displayName,
         bool isPubliclyReadable)
     {
-        DebugObjectItem = debugObjectItem;
-        DebugObjectItemType = debugObjectItemType;
+        Item = item;
+        ItemType = itemType;
         DisplayName = displayName;
         IsPubliclyReadable = isPubliclyReadable;
     }
 
-    public object? DebugObjectItem { get; set; }
-    public Type DebugObjectItemType { get; set; }
+    public object? Item { get; set; }
+    public Type ItemType { get; set; }
     public string DisplayName { get; set; }
     public bool IsPubliclyReadable { get; set; }
 }

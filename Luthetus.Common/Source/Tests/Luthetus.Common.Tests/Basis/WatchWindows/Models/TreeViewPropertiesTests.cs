@@ -8,7 +8,7 @@ namespace Luthetus.Common.Tests.Basis.WatchWindows.Models;
 public class TreeViewPropertiesTests
 {
     /// <summary>
-    /// <see cref="TreeViewProperties(WatchWindowObjectWrap, bool, bool, RazorLib.ComponentRenderers.Models.ILuthetusCommonComponentRenderers)"/>
+    /// <see cref="TreeViewProperties(WatchWindowObject, bool, bool, RazorLib.ComponentRenderers.Models.ILuthetusCommonComponentRenderers)"/>
     /// </summary>
     [Fact]
     public void Constructor()
