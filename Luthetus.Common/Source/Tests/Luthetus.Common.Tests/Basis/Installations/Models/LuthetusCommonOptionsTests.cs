@@ -1,6 +1,24 @@
-﻿using Luthetus.Common.RazorLib.Dialogs.Models;
+﻿using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Clipboards.Models;
+using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Drags.Models;
+using Luthetus.Common.RazorLib.Dropdowns.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.Installations.Models;
+using Luthetus.Common.RazorLib.Misc;
+using Luthetus.Common.RazorLib.Notifications.Models;
+using Luthetus.Common.RazorLib.Options.Models;
+using Luthetus.Common.RazorLib.Storages.Models;
+using Luthetus.Common.RazorLib.Storages.States;
+using Luthetus.Common.RazorLib.Themes.Models;
+using Luthetus.Common.RazorLib.TreeViews.Models;
+using Fluxor;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.JSInterop;
 
 namespace Luthetus.Common.Tests.Basis.Installations.Models;
 
@@ -59,7 +77,59 @@ public record LuthetusCommonOptionsTests
     [Fact]
     public void CommonFactories()
     {
-        throw new NotImplementedException();
+        // Assert that 'LocalStorageService' is used for the default CommonFactories
+        {
+            var hostingInformation = new LuthetusHostingInformation(
+            LuthetusHostingKind.UnitTesting,
+            new BackgroundTaskServiceSynchronous());
+
+            var services = new ServiceCollection()
+                .AddLuthetusCommonServices(hostingInformation)
+                .AddScoped<IJSRuntime>(_ => new DoNothingJsRuntime())
+                .AddFluxor(options => options.ScanAssemblies(typeof(LuthetusCommonOptions).Assembly))
+                .AddScoped<StorageSync>()
+                .AddScoped<IBackgroundTaskService>(sp => new BackgroundTaskServiceSynchronous());
+
+            var serviceProvider = services.BuildServiceProvider();
+
+            var store = serviceProvider.GetRequiredService<IStore>();
+            store.InitializeAsync().Wait();
+
+            Assert.IsType<LocalStorageService>(serviceProvider.GetRequiredService<IStorageService>());
+        }
+
+        // Then assert that modifying the CommonFactories properties to use
+        // 'DoNothingStorageService' in place of 'LocalStorageService' works.
+        {
+            var hostingInformation = new LuthetusHostingInformation(
+                LuthetusHostingKind.UnitTesting,
+                new BackgroundTaskServiceSynchronous());
+
+            var services = new ServiceCollection()
+                .AddLuthetusCommonServices(hostingInformation, options =>
+                {
+                    var outCommonFactories = options.CommonFactories with
+                    {
+                        StorageServiceFactory = sp => new DoNothingStorageService()
+                    };
+
+                    return options with
+                    {
+                        CommonFactories = outCommonFactories
+                    };
+                })
+                .AddScoped<IJSRuntime>(_ => new DoNothingJsRuntime())
+                .AddFluxor(options => options.ScanAssemblies(typeof(LuthetusCommonOptions).Assembly))
+                .AddScoped<StorageSync>()
+                .AddScoped<IBackgroundTaskService>(sp => new BackgroundTaskServiceSynchronous());
+
+            var serviceProvider = services.BuildServiceProvider();
+
+            var store = serviceProvider.GetRequiredService<IStore>();
+            store.InitializeAsync().Wait();
+
+            Assert.IsType<DoNothingStorageService>(serviceProvider.GetRequiredService<IStorageService>());
+        }
     }
 
     /// <summary>
