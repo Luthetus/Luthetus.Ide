@@ -13,7 +13,25 @@ public class TreeViewExceptionTests
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
+        WatchWindowsTestsHelper.InitializeWatchWindowsTests(
+            out var johnDoe,
+            out var janeDoe,
+            out var bobSmith,
+            out var commonComponentRenderers);
+
+        var item = new Exception("Abc123");
+        var isExpandable = false;
+        var isExpanded = false;
+
+        var treeViewException = new TreeViewException(
+            item,
+            isExpandable,
+            isExpanded,
+            commonComponentRenderers);
+
+        Assert.Equal(item, treeViewException.Item);
+        Assert.Equal(isExpandable, treeViewException.IsExpandable);
+        Assert.Equal(isExpanded, treeViewException.IsExpanded);
     }
 
     /// <summary>
@@ -22,7 +40,42 @@ public class TreeViewExceptionTests
     [Fact]
     public void Equals_Test()
     {
-        throw new NotImplementedException();
+        WatchWindowsTestsHelper.InitializeWatchWindowsTests(
+            out var johnDoe,
+            out var janeDoe,
+            out var bobSmith,
+            out var commonComponentRenderers);
+
+        var abc123Exception = new Exception("Abc123");
+        var abc123ExceptionIsExpandable = false;
+        var abc123ExceptionIsExpanded = false;
+
+        var abc123ExceptionTreeViewException = new TreeViewException(
+            abc123Exception,
+            abc123ExceptionIsExpandable,
+            abc123ExceptionIsExpanded,
+            commonComponentRenderers);
+        
+        var helloWorldException = new Exception("Hello World!");
+        var helloWorldExceptionIsExpandable = false;
+        var helloWorldExceptionIsExpanded = false;
+
+        var helloWorldExceptionTreeViewException = new TreeViewException(
+            helloWorldException,
+            helloWorldExceptionIsExpandable,
+            helloWorldExceptionIsExpanded,
+            commonComponentRenderers);
+
+        // Compare against self
+        Assert.True(abc123ExceptionTreeViewException.Equals(abc123ExceptionTreeViewException));
+
+        // Compare against a different object with the same Type
+        Assert.False(abc123ExceptionTreeViewException.Equals(helloWorldExceptionTreeViewException));
+
+        var treeViewText = new TreeViewText("Hello World!", true, false, commonComponentRenderers);
+
+        // Compare against a different object NOT having the same Type
+        Assert.False(abc123ExceptionTreeViewException.Equals(treeViewText));
     }
 
     /// <summary>
@@ -31,7 +84,23 @@ public class TreeViewExceptionTests
     [Fact]
     public void GetHashCode_Test()
     {
-        throw new NotImplementedException();
+        WatchWindowsTestsHelper.InitializeWatchWindowsTests(
+            out var johnDoe,
+            out var janeDoe,
+            out var bobSmith,
+            out var commonComponentRenderers);
+        
+        var abc123Exception = new Exception("Abc123");
+        var abc123ExceptionIsExpandable = false;
+        var abc123ExceptionIsExpanded = false;
+
+        var treeViewException = new TreeViewException(
+            abc123Exception,
+            abc123ExceptionIsExpandable,
+            abc123ExceptionIsExpanded,
+            commonComponentRenderers);
+
+        Assert.Equal(abc123Exception.GetHashCode(), treeViewException.GetHashCode());
     }
 
     /// <summary>
@@ -40,7 +109,34 @@ public class TreeViewExceptionTests
     [Fact]
     public void GetTreeViewRenderer()
     {
-        throw new NotImplementedException();
+        WatchWindowsTestsHelper.InitializeWatchWindowsTests(
+            out var johnDoe,
+            out var janeDoe,
+            out var bobSmith,
+            out var commonComponentRenderers);
+
+        var abc123Exception = new Exception("Abc123");
+        var abc123ExceptionIsExpandable = false;
+        var abc123ExceptionIsExpanded = false;
+
+        var treeViewException = new TreeViewException(
+            abc123Exception,
+            abc123ExceptionIsExpandable,
+            abc123ExceptionIsExpanded,
+            commonComponentRenderers);
+
+        var treeViewRenderer = treeViewException.GetTreeViewRenderer();
+
+        Assert.Equal(
+            commonComponentRenderers.LuthetusCommonTreeViews.TreeViewExceptionRendererType,
+            treeViewRenderer.DynamicComponentType);
+
+        Assert.NotNull(treeViewRenderer.DynamicComponentParameters);
+
+        var parameter = treeViewRenderer.DynamicComponentParameters!.Single();
+
+        Assert.Equal(nameof(TreeViewException), parameter.Key);
+        Assert.Equal(treeViewException, parameter.Value);
     }
 
     /// <summary>
