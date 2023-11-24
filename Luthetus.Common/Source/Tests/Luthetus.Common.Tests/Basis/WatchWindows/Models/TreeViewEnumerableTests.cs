@@ -19,16 +19,11 @@ public class TreeViewEnumerableTests
             out var bobSmith,
             out var commonComponentRenderers);
 
-        var item = johnDoe.Relatives;
-        var itemType = johnDoe.Relatives.GetType();
-        var displayName = nameof(PersonTest.Relatives);
-        var isPubliclyReadable = true;
-
         var johnDoeRelativesWatchWindowObject = new WatchWindowObject(
-            item,
-            itemType,
-            displayName,
-            isPubliclyReadable);
+            johnDoe.Relatives,
+            johnDoe.Relatives.GetType(),
+            nameof(PersonTest.Relatives),
+            true);
 
         var isExpandable = true;
         var isExpanded = false;
@@ -104,16 +99,11 @@ public class TreeViewEnumerableTests
             out var bobSmith,
             out var commonComponentRenderers);
 
-        var item = johnDoe.Relatives;
-        var itemType = johnDoe.Relatives.GetType();
-        var displayName = nameof(PersonTest.Relatives);
-        var isPubliclyReadable = true;
-
         var johnDoeRelativesWatchWindowObject = new WatchWindowObject(
-            item,
-            itemType,
-            displayName,
-            isPubliclyReadable);
+            johnDoe.Relatives,
+            johnDoe.Relatives.GetType(),
+            nameof(PersonTest.Relatives),
+            true);
 
         var treeViewEnumberable = new TreeViewEnumerable(
             johnDoeRelativesWatchWindowObject,
@@ -136,16 +126,11 @@ public class TreeViewEnumerableTests
             out var bobSmith,
             out var commonComponentRenderers);
 
-        var item = johnDoe.Relatives;
-        var itemType = johnDoe.Relatives.GetType();
-        var displayName = nameof(PersonTest.Relatives);
-        var isPubliclyReadable = true;
-
         var johnDoeRelativesWatchWindowObject = new WatchWindowObject(
-            item,
-            itemType,
-            displayName,
-            isPubliclyReadable);
+            johnDoe.Relatives,
+            johnDoe.Relatives.GetType(),
+            nameof(PersonTest.Relatives),
+            true);
 
         var treeViewEnumberable = new TreeViewEnumerable(
             johnDoeRelativesWatchWindowObject,

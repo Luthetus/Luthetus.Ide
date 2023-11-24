@@ -61,13 +61,10 @@ public class TreeViewInterfaceImplementationTests
             "InterfaceImplementation",
             false);
 
-        var isExpandable = true;
-        var isExpanded = false;
-
         var treeViewInterfaceImplementation = new TreeViewInterfaceImplementation(
             interfaceImplementationWatchWindowObject,
-            isExpandable,
-            isExpanded,
+            true,
+            false,
             commonComponentRenderers);
 
         var treeViewRenderer = treeViewInterfaceImplementation.GetTreeViewRenderer();
