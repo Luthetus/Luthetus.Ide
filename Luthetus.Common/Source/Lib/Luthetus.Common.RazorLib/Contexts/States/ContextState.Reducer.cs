@@ -6,7 +6,7 @@ namespace Luthetus.Common.RazorLib.Contexts.States;
 
 public partial record ContextState
 {
-    private class Reducer
+    public class Reducer
     {
         [ReducerMethod]
         public static ContextState ReduceSetFocusedContextHeirarchyAction(

@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Drags.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Misc;
 using Luthetus.Common.RazorLib.Notifications.Models;
@@ -73,19 +74,29 @@ public record LuthetusCommonFactoriesTests
 
     /// <summary>
     /// <see cref="LuthetusCommonFactories.EnvironmentProviderFactory"/>
+    /// <br/>----<br/>
+    /// <see cref="LuthetusCommonFactories.FileSystemProviderFactory"/>
     /// </summary>
     [Fact]
     public void EnvironmentProviderFactory()
     {
-        throw new NotImplementedException();
-    }
+        var commonOptions = new LuthetusCommonOptions();
 
-    /// <summary>
-    /// <see cref="LuthetusCommonFactories.FileSystemProviderFactory"/>
-    /// </summary>
-    [Fact]
-    public void FileSystemProviderFactory()
-    {
-        throw new NotImplementedException();
+        var hostingInformation = new LuthetusHostingInformation(
+            LuthetusHostingKind.UnitTesting,
+            new BackgroundTaskServiceSynchronous());
+
+        var services = new ServiceCollection()
+            .AddScoped<IJSRuntime>(_ => new DoNothingJsRuntime())
+            .AddFluxor(options => options.ScanAssemblies(typeof(LuthetusCommonOptions).Assembly))
+            .AddLuthetusCommonServices(hostingInformation);
+
+        var serviceProvider = services.BuildServiceProvider();
+
+        var store = serviceProvider.GetRequiredService<IStore>();
+        store.InitializeAsync().Wait();
+
+        Assert.IsType<InMemoryEnvironmentProvider>(serviceProvider.GetRequiredService<IEnvironmentProvider>());
+        Assert.IsType<InMemoryFileSystemProvider>(serviceProvider.GetRequiredService<IFileSystemProvider>());
     }
 }

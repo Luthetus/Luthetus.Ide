@@ -95,7 +95,7 @@ public partial class EditorSync
                             nameof(IBooleanPromptOrCancelRendererType.OnAfterAcceptAction),
                             new Action(() =>
                             {
-                                BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+                                BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
                                     "Check If Contexts Were Modified",
                                     async () =>
                                     {

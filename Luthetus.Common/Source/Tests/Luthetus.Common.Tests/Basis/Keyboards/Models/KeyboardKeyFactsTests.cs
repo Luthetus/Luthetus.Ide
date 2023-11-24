@@ -97,16 +97,54 @@ public class KeyboardKeyFactsTests
     [Fact]
     public void MatchPunctuationCharacter()
     {
-        throw new NotImplementedException();
+        Assert.Equal(PunctuationCharacters.CLOSE_CURLY_BRACE, KeyboardKeyFacts.MatchPunctuationCharacter(PunctuationCharacters.OPEN_CURLY_BRACE));
+        Assert.Equal(PunctuationCharacters.OPEN_CURLY_BRACE, KeyboardKeyFacts.MatchPunctuationCharacter(PunctuationCharacters.CLOSE_CURLY_BRACE));
+        Assert.Equal(PunctuationCharacters.CLOSE_PARENTHESIS, KeyboardKeyFacts.MatchPunctuationCharacter(PunctuationCharacters.OPEN_PARENTHESIS));
+        Assert.Equal(PunctuationCharacters.OPEN_PARENTHESIS, KeyboardKeyFacts.MatchPunctuationCharacter(PunctuationCharacters.CLOSE_PARENTHESIS));
+        Assert.Equal(PunctuationCharacters.CLOSE_SQUARE_BRACKET, KeyboardKeyFacts.MatchPunctuationCharacter(PunctuationCharacters.OPEN_SQUARE_BRACKET));
+        Assert.Equal(PunctuationCharacters.OPEN_SQUARE_BRACKET, KeyboardKeyFacts.MatchPunctuationCharacter(PunctuationCharacters.CLOSE_SQUARE_BRACKET));
+        Assert.Equal(PunctuationCharacters.CLOSE_ARROW_BRACKET, KeyboardKeyFacts.MatchPunctuationCharacter(PunctuationCharacters.OPEN_ARROW_BRACKET));
+        Assert.Equal(PunctuationCharacters.OPEN_ARROW_BRACKET, KeyboardKeyFacts.MatchPunctuationCharacter(PunctuationCharacters.CLOSE_ARROW_BRACKET));
+        
+        // Letter
+        Assert.Null(KeyboardKeyFacts.MatchPunctuationCharacter('a'));
+
+        // Digit
+        Assert.Null(KeyboardKeyFacts.MatchPunctuationCharacter('1'));
+
+        // Punctuation
+        Assert.Null(KeyboardKeyFacts.MatchPunctuationCharacter('/'));
+
+        // Whitespace
+        Assert.Null(KeyboardKeyFacts.MatchPunctuationCharacter(WhitespaceCharacters.SPACE));
     }
 
     /// <summary>
-    /// <see cref="KeyboardKeyFacts.DirectionToFindMatchMatchingPunctuationCharacter(char)"/>
+    /// <see cref="KeyboardKeyFacts.DirectionToFindMatchingPunctuationCharacter(char)"/>
     /// </summary>
     [Fact]
     public void DirectionToFindMatchMatchingPunctuationCharacter()
     {
-        throw new NotImplementedException();
+        Assert.Equal(1, DirectionToFindMatchingPunctuationCharacter(PunctuationCharacters.OPEN_CURLY_BRACE));
+        Assert.Equal(-1, DirectionToFindMatchingPunctuationCharacter(PunctuationCharacters.CLOSE_CURLY_BRACE));
+        Assert.Equal(1, DirectionToFindMatchingPunctuationCharacter(PunctuationCharacters.OPEN_PARENTHESIS));
+        Assert.Equal(-1, DirectionToFindMatchingPunctuationCharacter(PunctuationCharacters.CLOSE_PARENTHESIS));
+        Assert.Equal(1, DirectionToFindMatchingPunctuationCharacter(PunctuationCharacters.OPEN_SQUARE_BRACKET));
+        Assert.Equal(-1, DirectionToFindMatchingPunctuationCharacter(PunctuationCharacters.CLOSE_SQUARE_BRACKET));
+        Assert.Equal(1, DirectionToFindMatchingPunctuationCharacter(PunctuationCharacters.OPEN_ARROW_BRACKET));
+        Assert.Equal(-1, DirectionToFindMatchingPunctuationCharacter(PunctuationCharacters.CLOSE_ARROW_BRACKET));
+
+        // Letter
+        Assert.Null(DirectionToFindMatchingPunctuationCharacter('a'));
+
+        // Digit
+        Assert.Null(DirectionToFindMatchingPunctuationCharacter('1'));
+
+        // Punctuation
+        Assert.Null(DirectionToFindMatchingPunctuationCharacter('/'));
+        
+        // Whitespace
+        Assert.Null(DirectionToFindMatchingPunctuationCharacter(WhitespaceCharacters.SPACE));
     }
 
     /// <summary>
@@ -148,7 +186,47 @@ public class KeyboardKeyFactsTests
     [Fact]
     public void CheckIsAlternateContextMenuEvent()
     {
-        throw new NotImplementedException();
+        // Presuming the code remains as: { "F10" + ShiftKey }
+        // where "F10" is the Key (2023-11-20)
+
+        Assert.True(KeyboardKeyFacts.CheckIsAlternateContextMenuEvent(
+            "F10",
+            string.Empty,
+            true,
+            false));
+
+        Assert.False(KeyboardKeyFacts.CheckIsAlternateContextMenuEvent(
+            "F10",
+            string.Empty,
+            false,
+            false));
+
+        Assert.False(KeyboardKeyFacts.CheckIsAlternateContextMenuEvent(
+            "a",
+            "KeyA",
+            true,
+            false));
+
+        Assert.False(KeyboardKeyFacts.CheckIsAlternateContextMenuEvent(
+            "a",
+            "KeyA",
+            false,
+            false));
+
+        // "ContextMenu" key is not the alternative, therefore these are false
+        {
+            Assert.False(KeyboardKeyFacts.CheckIsAlternateContextMenuEvent(
+                "ContextMenu",
+                "ContextMenu",
+                true,
+                false));
+
+            Assert.False(KeyboardKeyFacts.CheckIsAlternateContextMenuEvent(
+                "ContextMenu",
+                "ContextMenu",
+                false,
+                false));
+        }
     }
 
     /// <summary>
@@ -157,7 +235,50 @@ public class KeyboardKeyFactsTests
     [Fact]
     public void CheckIsContextMenuEventA()
     {
-        throw new NotImplementedException();
+        // Default contextmenu
+        {
+            Assert.True(CheckIsContextMenuEvent(
+                "ContextMenu",
+                "ContextMenu",
+                false,
+                false));
+
+            Assert.True(CheckIsContextMenuEvent(
+                "ContextMenu",
+                "ContextMenu",
+                true,
+                false));
+        }
+
+        // Alternate contextmenu
+        {
+            Assert.False(CheckIsContextMenuEvent(
+                "F10",
+                string.Empty,
+                false,
+                false));
+
+            Assert.True(CheckIsContextMenuEvent(
+                "F10",
+                string.Empty,
+                true,
+                false));
+        }
+
+        // NOT-contextmenu
+        {
+            Assert.False(CheckIsContextMenuEvent(
+                "a",
+                "KeyA",
+                false,
+                false));
+
+            Assert.False(CheckIsContextMenuEvent(
+                "a",
+                "KeyA",
+                true,
+                false));
+        }
     }
 
     /// <summary>
@@ -166,7 +287,62 @@ public class KeyboardKeyFactsTests
     [Fact]
     public void CheckIsContextMenuEventB()
     {
-        throw new NotImplementedException();
+        // Default contextmenu
+        {
+            Assert.True(CheckIsContextMenuEvent(new KeyboardEventArgs
+            {
+                Key = "ContextMenu",
+                Code = "ContextMenu",
+                ShiftKey = false,
+                AltKey = false,
+            }));
+
+            Assert.True(CheckIsContextMenuEvent(new KeyboardEventArgs
+            {
+                Key = "ContextMenu",
+                Code = "ContextMenu",
+                ShiftKey = true,
+                AltKey = false,
+            }));
+        }
+
+        // Alternate contextmenu
+        {
+            Assert.False(CheckIsContextMenuEvent(new KeyboardEventArgs
+            {
+                Key = "F10",
+                Code = string.Empty,
+                ShiftKey = false,
+                AltKey = false,
+            }));
+
+            Assert.True(CheckIsContextMenuEvent(new KeyboardEventArgs
+            {
+                Key = "F10",
+                Code = string.Empty,
+                ShiftKey = true,
+                AltKey = false,
+            }));
+        }
+
+        // NOT-contextmenu
+        {
+            Assert.False(CheckIsContextMenuEvent(new KeyboardEventArgs
+            {
+                Key = "a",
+                Code = "KeyA",
+                ShiftKey = false,
+                AltKey = false,
+            }));
+
+            Assert.False(CheckIsContextMenuEvent(new KeyboardEventArgs
+            {
+                Key = "a",
+                Code = "KeyA",
+                ShiftKey = true,
+                AltKey = false,
+            }));
+        }
     }
 
     /// <summary>
@@ -208,7 +384,29 @@ public class KeyboardKeyFactsTests
     [Fact]
     public void ConvertWhitespaceCodeToCharacter()
     {
-        throw new NotImplementedException();
+        Assert.Equal('\t', KeyboardKeyFacts.ConvertWhitespaceCodeToCharacter(WhitespaceCodes.TAB_CODE));
+        Assert.Equal('\n', KeyboardKeyFacts.ConvertWhitespaceCodeToCharacter(WhitespaceCodes.ENTER_CODE));
+        Assert.Equal(' ', KeyboardKeyFacts.ConvertWhitespaceCodeToCharacter(WhitespaceCodes.SPACE_CODE));
+
+        // Letter
+        Assert.ThrowsAny<Exception>(
+            () => KeyboardKeyFacts.ConvertWhitespaceCodeToCharacter("KeyA"));
+
+        // Digit
+        Assert.ThrowsAny<Exception>(
+            () => KeyboardKeyFacts.ConvertWhitespaceCodeToCharacter("Digit1"));
+        
+        // Punctuation
+        Assert.ThrowsAny<Exception>(
+            () => KeyboardKeyFacts.ConvertWhitespaceCodeToCharacter("Slash"));
+        
+        // Modifier
+        Assert.ThrowsAny<Exception>(
+            () => KeyboardKeyFacts.ConvertWhitespaceCodeToCharacter("ControlLeft"));
+        
+        // F-Key
+        Assert.ThrowsAny<Exception>(
+            () => KeyboardKeyFacts.ConvertWhitespaceCodeToCharacter("F1"));
     }
 
     /// <summary>

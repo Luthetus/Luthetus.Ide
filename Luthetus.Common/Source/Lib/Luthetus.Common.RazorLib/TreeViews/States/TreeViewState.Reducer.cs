@@ -7,7 +7,7 @@ namespace Luthetus.Common.RazorLib.TreeViews.States;
 
 public partial record TreeViewState
 {
-    private class Reducer
+    public class Reducer
     {
         [ReducerMethod]
         public static TreeViewState ReduceRegisterContainerAction(

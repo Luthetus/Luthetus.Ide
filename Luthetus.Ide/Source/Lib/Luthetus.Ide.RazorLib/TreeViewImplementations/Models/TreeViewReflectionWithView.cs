@@ -8,12 +8,12 @@ namespace Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 public class TreeViewReflectionWithView : TreeViewReflection
 {
     public TreeViewReflectionWithView(
-            WatchWindowObjectWrap watchWindowObjectWrap,
+            WatchWindowObject watchWindowObject,
             bool isExpandable,
             bool isExpanded,
             ILuthetusIdeComponentRenderers ideComponentRenderers,
             ILuthetusCommonComponentRenderers commonComponentRenderers)
-    : base(watchWindowObjectWrap, isExpandable, isExpanded, commonComponentRenderers)
+    : base(watchWindowObject, isExpandable, isExpanded, commonComponentRenderers)
     {
         IdeComponentRenderers = ideComponentRenderers;
         CommonComponentRenderers = commonComponentRenderers;

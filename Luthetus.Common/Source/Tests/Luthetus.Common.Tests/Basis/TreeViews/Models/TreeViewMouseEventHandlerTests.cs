@@ -10,7 +10,6 @@ using System.Collections.Immutable;
 using Luthetus.Common.Tests.Basis.TreeViews.Models.Internals;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
-using Luthetus.Common.RazorLib.Keyboards.Models;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace Luthetus.Common.Tests.Basis.TreeViews.Models;
@@ -128,8 +127,18 @@ public class TreeViewMouseEventHandlerTests
         out TreeViewMouseEventHandler mouseEventHandler)
     {
         var temporaryBackgroundTaskService = backgroundTaskService = new BackgroundTaskServiceSynchronous();
-        temporaryBackgroundTaskService.RegisterQueue(ContinuousBackgroundTaskWorker.Queue);
-        temporaryBackgroundTaskService.RegisterQueue(BlockingBackgroundTaskWorker.Queue);
+
+        var continuousQueue = new BackgroundTaskQueue(
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            ContinuousBackgroundTaskWorker.QUEUE_DISPLAY_NAME);
+
+        backgroundTaskService.RegisterQueue(continuousQueue);
+
+        var blockingQueue = new BackgroundTaskQueue(
+            BlockingBackgroundTaskWorker.GetQueueKey(),
+            BlockingBackgroundTaskWorker.QUEUE_DISPLAY_NAME);
+
+        backgroundTaskService.RegisterQueue(blockingQueue);
 
         var services = new ServiceCollection()
             .AddScoped<ITreeViewService, TreeViewService>()

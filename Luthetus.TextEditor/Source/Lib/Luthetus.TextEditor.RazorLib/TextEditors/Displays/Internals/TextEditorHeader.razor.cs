@@ -168,7 +168,7 @@ public partial class TextEditorHeader : ComponentBase
         if (model is null)
             return;
 
-        var watchWindowObjectWrap = new WatchWindowObjectWrap(
+        var watchWindowObject = new WatchWindowObject(
             model,
             typeof(TextEditorModel),
             "TextEditorModel",
@@ -181,8 +181,8 @@ public partial class TextEditorHeader : ComponentBase
             new Dictionary<string, object?>
             {
                 {
-                    nameof(WatchWindowDisplay.WatchWindowObjectWrap),
-                    watchWindowObjectWrap
+                    nameof(WatchWindowDisplay.WatchWindowObject),
+                    watchWindowObject
                 }
             },
             null)

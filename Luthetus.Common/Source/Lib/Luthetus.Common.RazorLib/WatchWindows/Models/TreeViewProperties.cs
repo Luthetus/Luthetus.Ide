@@ -4,16 +4,16 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 
 namespace Luthetus.Common.RazorLib.WatchWindows.Models;
 
-public class TreeViewProperties : TreeViewWithType<WatchWindowObjectWrap>
+public class TreeViewProperties : TreeViewWithType<WatchWindowObject>
 {
     private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
 
     public TreeViewProperties(
-            WatchWindowObjectWrap watchWindowObjectWrap,
+            WatchWindowObject watchWindowObject,
             bool isExpandable,
             bool isExpanded,
             ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers)
-        : base(watchWindowObjectWrap, isExpandable, isExpanded)
+        : base(watchWindowObject, isExpandable, isExpanded)
     {
         _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
     }
@@ -52,7 +52,7 @@ public class TreeViewProperties : TreeViewWithType<WatchWindowObjectWrap>
         {
             ChildBag.Clear();
 
-            var propertyInfoBag = Item.DebugObjectItemType.GetProperties(
+            var propertyInfoBag = Item.ItemType.GetProperties(
                 BindingFlags.Public |
                 BindingFlags.NonPublic |
                 BindingFlags.Instance |
@@ -62,9 +62,9 @@ public class TreeViewProperties : TreeViewWithType<WatchWindowObjectWrap>
             {
                 try
                 {
-                    var childValue = Item.DebugObjectItem is null
+                    var childValue = Item.Item is null
                         ? null
-                        : propertyInfo.GetValue(Item.DebugObjectItem);
+                        : propertyInfo.GetValue(Item.Item);
 
                     var childType = propertyInfo.PropertyType;
 
@@ -73,7 +73,7 @@ public class TreeViewProperties : TreeViewWithType<WatchWindowObjectWrap>
                     var hasPublicGetter = propertyInfo.CanRead &&
                         (propertyInfo.GetGetMethod( /*nonPublic*/ true)?.IsPublic ?? false);
 
-                    var childNode = new WatchWindowObjectWrap(
+                    var childNode = new WatchWindowObject(
                         childValue,
                         childType,
                         propertyInfo.Name,

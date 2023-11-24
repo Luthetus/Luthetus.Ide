@@ -4,7 +4,7 @@ namespace Luthetus.Common.RazorLib.Panels.States;
 
 public partial record PanelsState
 {
-    private class Reducer
+    public class Reducer
     {
         [ReducerMethod]
         public static PanelsState ReduceRegisterPanelGroupAction(

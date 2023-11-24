@@ -26,10 +26,9 @@ public class BackgroundTaskWorkerTests
 
         var sp = services.BuildServiceProvider();
 
-        var queueKey = ContinuousBackgroundTaskWorker.Queue.Key;
+        var queueKey = ContinuousBackgroundTaskWorker.GetQueueKey();
 
         var backgroundTaskWorker = new ContinuousBackgroundTaskWorker(
-            queueKey,
             sp.GetRequiredService<IBackgroundTaskService>(),
             sp.GetRequiredService<ILoggerFactory>());
 

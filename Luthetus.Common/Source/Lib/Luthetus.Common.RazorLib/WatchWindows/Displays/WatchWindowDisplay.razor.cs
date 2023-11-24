@@ -25,7 +25,7 @@ public partial class WatchWindowDisplay : FluxorComponent
     private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public WatchWindowObjectWrap WatchWindowObjectWrap { get; set; } = null!;
+    public WatchWindowObject WatchWindowObject { get; set; } = null!;
 
     public static Key<TreeViewContainer> TreeViewStateKey { get; } = Key<TreeViewContainer>.NewKey();
     public static Key<DropdownRecord> WatchWindowContextMenuDropdownKey { get; } = Key<DropdownRecord>.NewKey();
@@ -49,7 +49,7 @@ public partial class WatchWindowDisplay : FluxorComponent
             if (!TreeViewService.TryGetTreeViewContainer(TreeViewStateKey, out var treeViewState))
             {
                 var rootNode = new TreeViewReflection(
-                    WatchWindowObjectWrap,
+                    WatchWindowObject,
                     true,
                     false,
                     LuthetusCommonComponentRenderers);

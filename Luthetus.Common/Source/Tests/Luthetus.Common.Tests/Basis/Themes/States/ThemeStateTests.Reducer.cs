@@ -8,19 +8,16 @@ using System.Collections.Immutable;
 namespace Luthetus.Common.Tests.Basis.Themes.States;
 
 /// <summary>
-/// <see cref="ThemeState"/>
+/// <see cref="ThemeState.Reducer"/>
 /// </summary>
 public class ThemeStateReducerTests
 {
+    /// <summary>
+    /// <see cref="ThemeState.Reducer.ReduceRegisterAction(ThemeState, ThemeState.RegisterAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceRegisterAction()
     {
-        /*
-        [ReducerMethod]
-        public ThemeState ReduceRegisterAction(
-            ThemeState inState, RegisterAction registerAction)
-         */
-
         InitializeThemeStateReducerTests(
             out var _, out var themeStateWrap, out var dispatcher, out var themeRecord);
 
@@ -31,15 +28,12 @@ public class ThemeStateReducerTests
         Assert.Contains(themeStateWrap.Value.ThemeBag, x => x == themeRecord);
     }
 
+    /// <summary>
+    /// <see cref="ThemeState.Reducer.ReduceDisposeAction(ThemeState, ThemeState.DisposeAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceDisposeAction()
     {
-        /*
-        [ReducerMethod]
-        public ThemeState ReduceDisposeAction(
-            ThemeState inState, DisposeAction disposeAction)
-         */
-
         InitializeThemeStateReducerTests(
             out var _, out var themeStateWrap, out var dispatcher, out var themeRecord);
 

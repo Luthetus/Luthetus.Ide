@@ -4,7 +4,7 @@ namespace Luthetus.Common.RazorLib.Options.States;
 
 public partial record AppOptionsState
 {
-    private record Reducer
+    public class Reducer
     {
         [ReducerMethod]
         public static AppOptionsState ReduceWithAction(

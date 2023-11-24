@@ -4,7 +4,7 @@ namespace Luthetus.Common.RazorLib.Themes.States;
 
 public partial record ThemeState
 {
-    private class Reducer
+    public class Reducer
     {
         [ReducerMethod]
         public ThemeState ReduceRegisterAction(

@@ -5,19 +5,16 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Luthetus.Common.Tests.Basis.Drags.States;
 
 /// <summary>
-/// <see cref="DragState"/>
+/// <see cref="DragState.Reducer"/>
 /// </summary>
 public class DragStateReducerTests
 {
+    /// <summary>
+    /// <see cref="DragState.Reducer.ReduceWithAction(DragState, DragState.WithAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceWithAction()
     {
-        /*
-        [ReducerMethod]
-        public static DragState ReduceWithAction(
-            DragState inState, WithAction withAction)
-         */
-
         InitializeDragStateReducerTests(out _, out var dragStateWrap, out var dispatcher);
 
         Assert.False(dragStateWrap.Value.ShouldDisplay);

@@ -5,25 +5,29 @@ namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 public class BackgroundTaskServiceSynchronous : IBackgroundTaskService
 {
-    /// <summary><see cref="BackgroundTaskServiceSynchronous"/> is used for unit testing. 
-    /// As such, un-needed members are throwing a <see cref="NotImplementedException"/>.</summary>
-    public IBackgroundTask? ExecutingBackgroundTask => throw new NotImplementedException();
+    private readonly Dictionary<Key<BackgroundTaskQueue>, BackgroundTaskQueue> _queueMap = new();
 
-    /// <summary><see cref="BackgroundTaskServiceSynchronous"/> is used for unit testing. 
-    /// As such, un-needed members are throwing a <see cref="NotImplementedException"/>.</summary>
-    public ImmutableArray<IBackgroundTask> PendingBackgroundTasks => throw new NotImplementedException();
+    private bool _enqueuesAreDisabled;
 
-    /// <summary><see cref="BackgroundTaskServiceSynchronous"/> is used for unit testing. 
-    /// As such, un-needed members are throwing a <see cref="NotImplementedException"/>.</summary>
-    public ImmutableArray<IBackgroundTask> CompletedBackgroundTasks => throw new NotImplementedException();
-
-    public event Action? ExecutingBackgroundTaskChanged;
+    public ImmutableArray<BackgroundTaskQueue> Queues => _queueMap.Values.ToImmutableArray();
 
     public void Enqueue(IBackgroundTask backgroundTask)
     {
+        // TODO: Could there be concurrency issues regarding '_enqueuesAreDisabled'? (2023-11-19)
+        if (_enqueuesAreDisabled)
+            return;
+
+        var queue = _queueMap[backgroundTask.QueueKey];
+
+        queue.BackgroundTasks.Enqueue(backgroundTask);
+
+        SetExecutingBackgroundTask(backgroundTask.QueueKey, backgroundTask);
+
         backgroundTask
             .InvokeWorkItem(CancellationToken.None)
             .Wait();
+
+        SetExecutingBackgroundTask(backgroundTask.QueueKey, null);
     }
 
     public void Enqueue(
@@ -42,20 +46,33 @@ public class BackgroundTaskServiceSynchronous : IBackgroundTaskService
         return Task.FromResult(default(IBackgroundTask?));
     }
 
-    /// <summary><see cref="BackgroundTaskServiceSynchronous"/> is used for unit testing. 
-    /// As such, un-needed members are throwing a <see cref="NotImplementedException"/>.</summary>
+    public void RegisterQueue(BackgroundTaskQueue queue)
+    {
+        _queueMap.Add(queue.Key, queue);
+    }
+
     public void SetExecutingBackgroundTask(
         Key<BackgroundTaskQueue> queueKey,
         IBackgroundTask? backgroundTask)
     {
-        ExecutingBackgroundTaskChanged?.Invoke();
-        throw new NotImplementedException();
+        var queue = _queueMap[queueKey];
+
+        queue.ExecutingBackgroundTask = backgroundTask;
     }
 
-    public void RegisterQueue(BackgroundTaskQueue queue)
+    public BackgroundTaskQueue GetQueue(Key<BackgroundTaskQueue> queueKey)
     {
-        // This method should do nothing for this
-        // implementation of IBackgroundTaskService
-        return;
+        return _queueMap[queueKey];
+    }
+
+    public async Task StopAsync(CancellationToken cancellationToken)
+    {
+        _enqueuesAreDisabled = true;
+
+        // TODO: Polling solution for now, perhaps change to a more optimal solution? (2023-11-19)
+        while (_queueMap.Values.SelectMany(x => x.BackgroundTasks).Any())
+        {
+            await Task.Delay(TimeSpan.FromMilliseconds(100), cancellationToken);
+        }
     }
 }

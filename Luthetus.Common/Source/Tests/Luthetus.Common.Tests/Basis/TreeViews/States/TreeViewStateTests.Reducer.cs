@@ -3,187 +3,142 @@
 namespace Luthetus.Common.Tests.Basis.TreeViews.States;
 
 /// <summary>
-/// <see cref="TreeViewState"/>
+/// <see cref="TreeViewState.Reducer"/>
 /// </summary>
 public class TreeViewStateReducerTests
 {
+    /// <summary>
+    /// <see cref="TreeViewState.Reducer.ReduceRegisterContainerAction(TreeViewState, TreeViewState.RegisterContainerAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceRegisterContainerAction()
     {
-        /*
-        [ReducerMethod]
-        public static TreeViewState ReduceRegisterContainerAction(
-            TreeViewState inState, RegisterContainerAction registerContainerAction)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewState.Reducer.ReduceDisposeContainerAction(TreeViewState, TreeViewState.DisposeContainerAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceDisposeContainerAction()
     {
-        /*
-        [ReducerMethod]
-        public static TreeViewState ReduceDisposeContainerAction(
-            TreeViewState inState, DisposeContainerAction disposeContainerAction)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewState.Reducer.ReduceWithRootNodeAction(TreeViewState, TreeViewState.WithRootNodeAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceWithRootNodeAction()
     {
-        /*
-        [ReducerMethod]
-        public static TreeViewState ReduceWithRootNodeAction(
-            TreeViewState inState, WithRootNodeAction withRootNodeAction)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewState.Reducer.ReduceAddChildNodeAction(TreeViewState, TreeViewState.AddChildNodeAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceAddChildNodeAction()
     {
-        /*
-        [ReducerMethod]
-        public static TreeViewState ReduceAddChildNodeAction(
-            TreeViewState inState, AddChildNodeAction addChildNodeAction)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewState.Reducer.ReduceReRenderNodeAction(TreeViewState, TreeViewState.ReRenderNodeAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceReRenderNodeAction()
     {
-        /*
-        [ReducerMethod]
-        public static TreeViewState ReduceReRenderNodeAction(
-            TreeViewState inState, ReRenderNodeAction reRenderNodeAction)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewState.Reducer.ReduceSetActiveNodeAction(TreeViewState, TreeViewState.SetActiveNodeAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceSetActiveNodeAction()
     {
-        /*
-        [ReducerMethod]
-        public static TreeViewState ReduceSetActiveNodeAction(
-            TreeViewState inState, SetActiveNodeAction setActiveNodeAction)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewState.Reducer.ReduceAddSelectedNodeAction(TreeViewState, TreeViewState.AddSelectedNodeAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceAddSelectedNodeAction()
     {
-        /*
-        [ReducerMethod]
-        public static TreeViewState ReduceAddSelectedNodeAction(
-            TreeViewState inState, AddSelectedNodeAction addSelectedNodeAction)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewState.Reducer.ReduceRemoveSelectedNodeAction(TreeViewState, TreeViewState.RemoveSelectedNodeAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceRemoveSelectedNodeAction()
     {
-        /*
-        [ReducerMethod]
-        public static TreeViewState ReduceRemoveSelectedNodeAction(
-            TreeViewState inState, RemoveSelectedNodeAction removeSelectedNodeAction)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewState.Reducer.ReduceClearSelectedNodeBagAction(TreeViewState, TreeViewState.ClearSelectedNodeBagAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceClearSelectedNodeBagAction()
     {
-        /*
-        [ReducerMethod]
-        public static TreeViewState ReduceClearSelectedNodeBagAction(
-            TreeViewState inState, ClearSelectedNodeBagAction clearSelectedNodeBagAction)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewState.Reducer.ReduceMoveLeftAction(TreeViewState, TreeViewState.MoveLeftAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceMoveLeftAction()
     {
-        /*
-        [ReducerMethod]
-        public static TreeViewState ReduceMoveLeftAction(
-            TreeViewState inState, MoveLeftAction moveLeftAction)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewState.Reducer.ReduceMoveDownAction(TreeViewState, TreeViewState.MoveDownAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceMoveDownAction()
     {
-        /*
-        [ReducerMethod]
-        public static TreeViewState ReduceMoveDownAction(
-            TreeViewState inState, MoveDownAction moveDownAction)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewState.Reducer.ReduceMoveUpAction(TreeViewState, TreeViewState.MoveUpAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceMoveUpAction()
     {
-        /*
-        [ReducerMethod]
-        public static TreeViewState ReduceMoveUpAction(
-            TreeViewState inState, MoveUpAction moveUpAction)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewState.Reducer.ReduceMoveRightAction(TreeViewState, TreeViewState.MoveRightAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceMoveRightAction()
     {
-        /*
-        [ReducerMethod]
-        public static TreeViewState ReduceMoveRightAction(
-            TreeViewState inState, MoveRightAction moveRightAction)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewState.Reducer.ReduceMoveHomeAction(TreeViewState, TreeViewState.MoveHomeAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceMoveHomeAction()
     {
-        /*
-        [ReducerMethod]
-        public static TreeViewState ReduceMoveHomeAction(
-            TreeViewState inState, MoveHomeAction moveHomeAction)
-         */
-
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// <see cref="TreeViewState.Reducer.ReduceMoveEndAction(TreeViewState, TreeViewState.MoveEndAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceMoveEndAction()
     {
-        /*
-        [ReducerMethod]
-        public static TreeViewState ReduceMoveEndAction(
-            TreeViewState inState, MoveEndAction moveEndAction)
-         */
-
         throw new NotImplementedException();
     }
 }

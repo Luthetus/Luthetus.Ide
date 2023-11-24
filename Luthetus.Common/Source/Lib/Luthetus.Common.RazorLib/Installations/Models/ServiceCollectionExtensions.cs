@@ -26,16 +26,19 @@ public static class ServiceCollectionExtensions
         if (configure is not null)
             commonOptions = configure.Invoke(commonOptions);
 
-        hostingInformation.BackgroundTaskService.RegisterQueue(ContinuousBackgroundTaskWorker.Queue);
-        hostingInformation.BackgroundTaskService.RegisterQueue(BlockingBackgroundTaskWorker.Queue);
+        hostingInformation.BackgroundTaskService.RegisterQueue(new BackgroundTaskQueue(
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            ContinuousBackgroundTaskWorker.QUEUE_DISPLAY_NAME));
+
+        hostingInformation.BackgroundTaskService.RegisterQueue(new BackgroundTaskQueue(
+            BlockingBackgroundTaskWorker.GetQueueKey(),
+            BlockingBackgroundTaskWorker.QUEUE_DISPLAY_NAME));
 
         services.AddSingleton(sp => new ContinuousBackgroundTaskWorker(
-            ContinuousBackgroundTaskWorker.Queue.Key,
             sp.GetRequiredService<IBackgroundTaskService>(),
             sp.GetRequiredService<ILoggerFactory>()));
 
         services.AddSingleton(sp => new BlockingBackgroundTaskWorker(
-            BlockingBackgroundTaskWorker.Queue.Key,
             sp.GetRequiredService<IBackgroundTaskService>(),
             sp.GetRequiredService<ILoggerFactory>()));
 
@@ -50,7 +53,6 @@ public static class ServiceCollectionExtensions
             .AddSingleton(hostingInformation)
             .AddSingleton(hostingInformation.BackgroundTaskService)
             .AddSingleton<ILuthetusCommonComponentRenderers>(_ => _commonRendererTypes)
-            .AddScoped<IThemeService, ThemeService>()
             .AddCommonFactories(hostingInformation, commonOptions)
             .AddScoped<StorageSync>();
 
@@ -73,9 +75,11 @@ public static class ServiceCollectionExtensions
             .AddScoped(sp => commonOptions.CommonFactories.ThemeServiceFactory.Invoke(sp))
             .AddScoped(sp => commonOptions.CommonFactories.TreeViewServiceFactory.Invoke(sp));
 
-        if (commonOptions.CommonFactories.EnvironmentProviderFactory is not null)
+        if (commonOptions.CommonFactories.EnvironmentProviderFactory is not null &&
+            commonOptions.CommonFactories.FileSystemProviderFactory is not null)
         {
             services.AddScoped(sp => commonOptions.CommonFactories.EnvironmentProviderFactory.Invoke(sp));
+            services.AddScoped(sp => commonOptions.CommonFactories.FileSystemProviderFactory.Invoke(sp));
         }
         else
         {

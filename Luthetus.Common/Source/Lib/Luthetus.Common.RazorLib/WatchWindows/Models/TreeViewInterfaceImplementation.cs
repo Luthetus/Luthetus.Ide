@@ -8,11 +8,11 @@ public class TreeViewInterfaceImplementation : TreeViewReflection
     private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
 
     public TreeViewInterfaceImplementation(
-            WatchWindowObjectWrap watchWindowObjectWrap,
+            WatchWindowObject watchWindowObject,
             bool isExpandable,
             bool isExpanded,
             ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers)
-        : base(watchWindowObjectWrap, isExpandable, isExpanded, luthetusCommonComponentRenderers)
+        : base(watchWindowObject, isExpandable, isExpanded, luthetusCommonComponentRenderers)
     {
         _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
     }

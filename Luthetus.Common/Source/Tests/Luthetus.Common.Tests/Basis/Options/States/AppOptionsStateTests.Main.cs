@@ -1,28 +1,41 @@
-﻿namespace Luthetus.Common.Tests.Basis.Options.States;
+﻿using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Themes.Models;
 
+namespace Luthetus.Common.Tests.Basis.Options.States;
+
+/// <summary>
+/// <see cref="AppOptionsState"/>
+/// </summary>
 public class AppOptionsStateMainTests
 {
-    [Fact]
-    public void DefaultCommonOptions()
-    {
-        /*
-        public static readonly CommonOptions DefaultCommonOptions = new(
-            DEFAULT_FONT_SIZE_IN_PIXELS,
-            DEFAULT_ICON_SIZE_IN_PIXELS,
-            ThemeFacts.VisualStudioDarkThemeClone.Key,
-            null);
-         */
-
-        throw new NotImplementedException();
-    }
-
+    /// <summary>
+    /// <see cref="AppOptionsState()"/>
+    /// </summary>
     [Fact]
     public void Constructor()
     {
-        /*
-        private AppOptionsState() : this(DefaultCommonOptions)
-         */
+        var appOptionsState = new AppOptionsState();
+        Assert.Equal(AppOptionsState.DefaultCommonOptions, appOptionsState.Options);
+    }
 
-        throw new NotImplementedException();
+    /// <summary>
+    /// <see cref="AppOptionsState.DefaultCommonOptions"/>
+    /// </summary>
+    [Fact]
+    public void DefaultCommonOptions()
+    {
+        Assert.Equal(
+            AppOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS,
+            AppOptionsState.DefaultCommonOptions.FontSizeInPixels);
+        
+        Assert.Equal(
+            AppOptionsState.DEFAULT_ICON_SIZE_IN_PIXELS,
+            AppOptionsState.DefaultCommonOptions.IconSizeInPixels);
+
+        Assert.Equal(
+            ThemeFacts.VisualStudioDarkThemeClone.Key,
+            AppOptionsState.DefaultCommonOptions.ThemeKey);
+
+        Assert.Null(AppOptionsState.DefaultCommonOptions.FontFamily);
     }
 }

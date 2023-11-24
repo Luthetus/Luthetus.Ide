@@ -1,4 +1,5 @@
 ﻿using Luthetus.Common.RazorLib.Keys.Models;
+using System.Collections.Immutable;
 
 namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
@@ -6,8 +7,16 @@ public class BackgroundTaskService : IBackgroundTaskService
 {
     private readonly Dictionary<Key<BackgroundTaskQueue>, BackgroundTaskQueue> _queueMap = new();
 
+    private bool _enqueuesAreDisabled;
+
+    public ImmutableArray<BackgroundTaskQueue> Queues => _queueMap.Values.ToImmutableArray();
+
     public void Enqueue(IBackgroundTask backgroundTask)
     {
+        // TODO: Could there be concurrency issues regarding '_enqueuesAreDisabled'? (2023-11-19)
+        if (_enqueuesAreDisabled)
+            return;
+
         var queue = _queueMap[backgroundTask.QueueKey];
 
         queue.BackgroundTasks.Enqueue(backgroundTask);
@@ -47,5 +56,21 @@ public class BackgroundTaskService : IBackgroundTaskService
         var queue = _queueMap[queueKey];
 
         queue.ExecutingBackgroundTask = backgroundTask;
+    }
+    
+    public BackgroundTaskQueue GetQueue(Key<BackgroundTaskQueue> queueKey)
+    {
+        return _queueMap[queueKey];
+    }
+
+    public async Task StopAsync(CancellationToken cancellationToken)
+    {
+        _enqueuesAreDisabled = true;
+
+        // TODO: Polling solution for now, perhaps change to a more optimal solution? (2023-11-19)
+        while (_queueMap.Values.SelectMany(x => x.BackgroundTasks).Any())
+        {
+            await Task.Delay(TimeSpan.FromMilliseconds(100), cancellationToken);
+        }
     }
 }

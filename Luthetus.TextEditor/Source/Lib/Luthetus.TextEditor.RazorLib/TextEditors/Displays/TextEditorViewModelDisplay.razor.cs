@@ -332,7 +332,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
                 _tooltipViewModel = null;
 
-                BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+                BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
                     "HandleOnKeyDownAsync",
                     () =>
                     {
@@ -944,7 +944,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (localRefCurrentRenderBatch.ViewModel is null || localRefCurrentRenderBatch.Options is null)
             return;
 
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "TextEditor Remeasure",
             async () =>
             {
@@ -970,7 +970,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (localCurrentRenderBatch.ViewModel is null || localCurrentRenderBatch.Options is null)
             return;
 
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "TextEditor CalculateVirtualizationResult",
             async () =>
             {

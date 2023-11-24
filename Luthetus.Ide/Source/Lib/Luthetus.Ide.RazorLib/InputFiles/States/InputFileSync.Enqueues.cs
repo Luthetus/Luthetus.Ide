@@ -14,7 +14,7 @@ public partial record InputFileSync
         Func<IAbsolutePath?, Task<bool>> selectionIsValidFunc,
         ImmutableArray<InputFilePattern> inputFilePatterns)
     {
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Request InputFileState Form",
             async () => await HandleRequestInputFileStateFormActionAsync(
                 message,

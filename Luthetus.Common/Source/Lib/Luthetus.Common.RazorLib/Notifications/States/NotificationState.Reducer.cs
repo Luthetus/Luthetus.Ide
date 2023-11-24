@@ -6,7 +6,7 @@ namespace Luthetus.Common.RazorLib.Notifications.States;
 
 public partial record NotificationState
 {
-    private class Reducer
+    public class Reducer
     {
         [ReducerMethod]
         public static NotificationState ReduceRegisterAction(

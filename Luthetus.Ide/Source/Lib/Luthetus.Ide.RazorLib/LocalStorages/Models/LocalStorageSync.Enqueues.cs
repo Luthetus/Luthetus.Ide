@@ -7,7 +7,7 @@ public partial class LocalStorageSync
 {
     public void LocalStorageSetItem(string key, string value)
     {
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "LocalStorage SetItem",
             async () => await LocalStorageSetItemAsync(key, value));
     }

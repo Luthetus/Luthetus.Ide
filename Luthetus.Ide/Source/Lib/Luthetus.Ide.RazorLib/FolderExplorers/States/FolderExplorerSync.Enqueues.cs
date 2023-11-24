@@ -11,14 +11,14 @@ public partial class FolderExplorerSync
 {
     public void SetFolderExplorerState(IAbsolutePath folderAbsolutePath)
     {
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Set FolderExplorer State",
             async () => await SetFolderExplorerAsync(folderAbsolutePath));
     }
 
     public void SetFolderExplorerTreeView(IAbsolutePath folderAbsolutePath)
     {
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Set FolderExplorer TreeView",
             async () => await SetFolderExplorerTreeViewAsync(folderAbsolutePath));
     }

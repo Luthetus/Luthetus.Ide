@@ -132,11 +132,13 @@ public class AppOptionsServiceTests
         out IAppOptionsService appOptionsService,
         out ServiceProvider serviceProvider)
     {
+        var backgroundTaskService = new BackgroundTaskServiceSynchronous();
+
         var services = new ServiceCollection()
             .AddScoped<IAppOptionsService, AppOptionsService>()
             .AddScoped<IStorageService, DoNothingStorageService>()
             .AddScoped<StorageSync>()
-            .AddScoped<IBackgroundTaskService, BackgroundTaskServiceSynchronous>()
+            .AddScoped<IBackgroundTaskService>(_ => backgroundTaskService)
             .AddFluxor(options => options.ScanAssemblies(typeof(IAppOptionsService).Assembly));
 
         serviceProvider = services.BuildServiceProvider();
@@ -145,5 +147,11 @@ public class AppOptionsServiceTests
         store.InitializeAsync().Wait();
 
         appOptionsService = serviceProvider.GetRequiredService<IAppOptionsService>();
+
+        var continuousQueue = new BackgroundTaskQueue(
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            ContinuousBackgroundTaskWorker.QUEUE_DISPLAY_NAME);
+
+        backgroundTaskService.RegisterQueue(continuousQueue);
     }
 }

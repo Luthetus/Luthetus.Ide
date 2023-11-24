@@ -552,10 +552,10 @@ public static class TextEditorCommandDefaultFacts
             if (characterToMatch is null || match is null)
                 return Task.CompletedTask;
 
-            var directionToFindMatchMatchingPunctuationCharacter =
-                KeyboardKeyFacts.DirectionToFindMatchMatchingPunctuationCharacter(characterToMatch.Value);
+            var directionToFindMatchingPunctuationCharacter =
+                KeyboardKeyFacts.DirectionToFindMatchingPunctuationCharacter(characterToMatch.Value);
 
-            if (directionToFindMatchMatchingPunctuationCharacter is null)
+            if (directionToFindMatchingPunctuationCharacter is null)
                 return Task.CompletedTask;
 
             var temporaryCursor = new TextEditorCursor(
@@ -563,7 +563,7 @@ public static class TextEditorCommandDefaultFacts
                 commandArgs.PrimaryCursorSnapshot.UserCursor.IsPrimaryCursor);
 
             var unmatchedCharacters =
-                fallbackToPreviousCharacter && directionToFindMatchMatchingPunctuationCharacter == -1
+                fallbackToPreviousCharacter && directionToFindMatchingPunctuationCharacter == -1
                     ? 0
                     : 1;
 
@@ -571,7 +571,7 @@ public static class TextEditorCommandDefaultFacts
             {
                 KeyboardEventArgs keyboardEventArgs;
 
-                if (directionToFindMatchMatchingPunctuationCharacter == -1)
+                if (directionToFindMatchingPunctuationCharacter == -1)
                 {
                     keyboardEventArgs = new KeyboardEventArgs
                     {

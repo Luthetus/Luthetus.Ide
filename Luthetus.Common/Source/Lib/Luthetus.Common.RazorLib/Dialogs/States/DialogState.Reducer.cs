@@ -4,7 +4,7 @@ namespace Luthetus.Common.RazorLib.Dialogs.States;
 
 public partial record DialogState
 {
-    private record Reducer
+    public class Reducer
     {
         [ReducerMethod]
         public static DialogState ReduceRegisterAction(

@@ -1,14 +1,23 @@
-﻿namespace Luthetus.Common.Tests.Basis.Options.States;
+﻿using Luthetus.Common.RazorLib.Options.States;
 
+namespace Luthetus.Common.Tests.Basis.Options.States;
+
+/// <summary>
+/// <see cref="AppOptionsState"/>
+/// </summary>
 public class AppOptionsStateActionTests
 {
+    /// <summary>
+    /// <see cref="AppOptionsState.WithAction"/>
+    /// </summary>
     [Fact]
     public void WithAction()
     {
-        /*
-        public record WithAction(Func<AppOptionsState, AppOptionsState> WithFunc);
-         */
+        var withFunc = new Func<AppOptionsState, AppOptionsState>(
+            inAppOptionsState => inAppOptionsState);
 
-        throw new NotImplementedException();
+        var withAction = new AppOptionsState.WithAction(withFunc);
+
+        Assert.Equal(withFunc, withAction.WithFunc);
     }
 }

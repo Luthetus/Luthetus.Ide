@@ -106,7 +106,7 @@ public partial record InputFileState
                     false,
                     true);
 
-                openParentDirectoryAction.BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+                openParentDirectoryAction.BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
                     "Open Parent Directory",
                     async () =>
                     {
@@ -136,7 +136,7 @@ public partial record InputFileState
             var currentSelection = inState.OpenedTreeViewModelHistoryBag[inState.IndexInHistory];
             currentSelection.ChildBag.Clear();
 
-            refreshCurrentSelectionAction.BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.Queue.Key,
+            refreshCurrentSelectionAction.BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
                 "Refresh Current Selection",
                 async () =>
                 {
