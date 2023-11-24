@@ -8,10 +8,10 @@ public class Keymap
 {
     public static readonly Keymap Empty = new Keymap(Key<Keymap>.Empty, string.Empty);
 
-    public Keymap(Key<Keymap> key, string keymapDisplayName)
+    public Keymap(Key<Keymap> key, string displayName)
     {
         Key = key;
-        DisplayName = keymapDisplayName;
+        DisplayName = displayName;
     }
 
     /// <summary>This constructor is used for JSON deserialization</summary>

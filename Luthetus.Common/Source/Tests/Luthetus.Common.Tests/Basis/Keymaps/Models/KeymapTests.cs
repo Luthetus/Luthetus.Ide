@@ -1,4 +1,6 @@
-﻿using Luthetus.Common.RazorLib.Keymaps.Models;
+﻿using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.Common.RazorLib.Keymaps.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Common.Tests.Basis.Keymaps.Models;
 
@@ -8,21 +10,38 @@ namespace Luthetus.Common.Tests.Basis.Keymaps.Models;
 public class KeymapTests
 {
     /// <summary>
-    /// <see cref="Keymap(RazorLib.Keys.Models.Key{Keymap}, string)"/>
+    /// <see cref="Keymap(Key{Keymap}, string)"/>
+    /// <br/>----<br/>
+    /// <see cref="Keymap.Key"/>
+    /// <see cref="Keymap.DisplayName"/>
     /// </summary>
     [Fact]
     public void ConstructorA()
     {
-        throw new NotImplementedException();
+        var key = Key<Keymap>.NewKey();
+        var displayName = "displayName";
+
+        var keymap = new Keymap(key, displayName);
+
+        Assert.Equal(key, keymap.Key);
+        Assert.Equal(displayName, keymap.DisplayName);
     }
 
     /// <summary>
     /// <see cref="Keymap()"/>
+    /// <br/>----<br/>
+    /// <see cref="Keymap.Key"/>
+    /// <see cref="Keymap.DisplayName"/>
     /// </summary>
     [Fact]
     public void ConstructorB()
     {
-        throw new NotImplementedException();
+#pragma warning disable CS0618 // Type or member is obsolete
+        var keymap = new Keymap();
+#pragma warning restore CS0618 // Type or member is obsolete
+
+        Assert.Equal(Key<Keymap>.Empty, keymap.Key);
+        Assert.Equal(string.Empty, keymap.DisplayName);
     }
 
     /// <summary>
@@ -31,7 +50,8 @@ public class KeymapTests
     [Fact]
     public void Empty()
     {
-        throw new NotImplementedException();
+        Assert.Equal(Key<Keymap>.Empty, Keymap.Empty.Key);
+        Assert.Equal(string.Empty, Keymap.Empty.DisplayName);
     }
 
     /// <summary>
@@ -40,24 +60,21 @@ public class KeymapTests
     [Fact]
     public void Map()
     {
-        throw new NotImplementedException();
-    }
+        var inCommand = new CommonCommand("Test Map", "test-map", false,
+            commandArgs => Task.CompletedTask);
 
-    /// <summary>
-    /// <see cref="Keymap.Key"/>
-    /// </summary>
-    [Fact]
-    public void Key()
-    {
-        throw new NotImplementedException();
-    }
+        var keymap = new Keymap(Key<Keymap>.NewKey(), "Unit Test");
 
-    /// <summary>
-    /// <see cref="Keymap.DisplayName"/>
-    /// </summary>
-    [Fact]
-    public void DisplayName()
-    {
-        throw new NotImplementedException();
+        var keymapArgument = new KeymapArgument("KeyF", false, true, true, Key<KeymapLayer>.Empty);
+        
+        _ = keymap.Map.TryAdd(keymapArgument, inCommand);
+
+        var outCommand = keymap.Map[keymapArgument];
+
+        Assert.Equal(inCommand, outCommand);
+        Assert.Equal(inCommand.DisplayName, outCommand.DisplayName);
+        Assert.Equal(inCommand.InternalIdentifier, outCommand.InternalIdentifier);
+        Assert.Equal(inCommand.ShouldBubble, outCommand.ShouldBubble);
+        Assert.Equal(inCommand.DoAsyncFunc, outCommand.DoAsyncFunc);
     }
 }

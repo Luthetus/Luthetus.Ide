@@ -18,7 +18,7 @@ public partial record AppOptionsState(CommonOptions Options)
         ThemeFacts.VisualStudioDarkThemeClone.Key,
         null);
 
-    private AppOptionsState() : this(DefaultCommonOptions)
+    public AppOptionsState() : this(DefaultCommonOptions)
     {
     }
 }
