@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Luthetus.Common.Tests.Basis.WatchWindows;
+﻿namespace Luthetus.Common.Tests.Basis.WatchWindows;
 
 public class PersonTest : IPersonTest
 {
