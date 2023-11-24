@@ -4,17 +4,17 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Luthetus.Common.Tests.Basis.Options.States;
 
+/// <summary>
+/// <see cref="AppOptionsState.Reducer"/>
+/// </summary>
 public partial record AppOptionsStateReducerTests
 {
+    /// <summary>
+    /// <see cref="AppOptionsState.Reducer.ReduceWithAction(AppOptionsState, AppOptionsState.WithAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceWithAction()
     {
-        /*
-        [ReducerMethod]
-        public static AppOptionsState ReduceWithAction(
-            AppOptionsState inState, WithAction withAction)
-         */
-
         InitializeAppOptionsStateReducerTests(out var appOptionsStateWrap, out var dispatcher);
 
         var inFontSize = appOptionsStateWrap.Value.Options.FontSizeInPixels;

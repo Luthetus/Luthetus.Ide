@@ -2,6 +2,9 @@
 
 namespace Luthetus.Common.Tests.Basis.Options.States;
 
+/// <summary>
+/// <see cref="AppOptionsState"/>
+/// </summary>
 public class AppOptionsStateActionTests
 {
     /// <summary>

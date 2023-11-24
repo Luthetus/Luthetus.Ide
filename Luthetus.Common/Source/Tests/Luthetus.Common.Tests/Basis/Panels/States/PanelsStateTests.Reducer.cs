@@ -12,19 +12,16 @@ using System.Collections.Immutable;
 namespace Luthetus.Common.Tests.Basis.Panels.States;
 
 /// <summary>
-/// <see cref="PanelsState"/>
+/// <see cref="PanelsState.Reducer"/>
 /// </summary>
 public class PanelsStateReducerTests
 {
+    /// <summary>
+    /// <see cref="PanelsState.Reducer.ReduceRegisterPanelGroupAction(PanelsState, PanelsState.RegisterPanelGroupAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceRegisterPanelGroupAction()
     {
-        /*
-        [ReducerMethod]
-        public static PanelsState ReduceRegisterPanelGroupAction(
-            PanelsState inState, RegisterPanelGroupAction registerPanelGroupAction)
-         */
-
         InitializePanelsStateReducerTests(
             out var serviceProvider,
             out var panelsStateWrap,
@@ -38,15 +35,12 @@ public class PanelsStateReducerTests
         Assert.Contains(panelsStateWrap.Value.PanelGroupBag, x => x == panelGroup);
     }
 
+    /// <summary>
+    /// <see cref="PanelsState.Reducer.ReduceDisposePanelGroupAction(PanelsState, PanelsState.DisposePanelGroupAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceDisposePanelGroupAction()
     {
-        /*
-        [ReducerMethod]
-        public static PanelsState ReduceDisposePanelGroupAction(
-            PanelsState inState, DisposePanelGroupAction disposePanelGroupAction)
-         */
-
         InitializePanelsStateReducerTests(
             out var serviceProvider,
             out var panelsStateWrap,
@@ -63,15 +57,12 @@ public class PanelsStateReducerTests
         Assert.DoesNotContain(panelsStateWrap.Value.PanelGroupBag, x => x == panelGroup);
     }
 
+    /// <summary>
+    /// <see cref="PanelsState.Reducer.ReduceRegisterPanelTabAction(PanelsState, PanelsState.RegisterPanelTabAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceRegisterPanelTabAction()
     {
-        /*
-        [ReducerMethod]
-        public static PanelsState ReduceRegisterPanelTabAction(
-            PanelsState inState, RegisterPanelTabAction registerPanelTabAction)
-         */
-
         InitializePanelsStateReducerTests(
             out var serviceProvider,
             out var panelsStateWrap,
@@ -151,15 +142,12 @@ public class PanelsStateReducerTests
         }
     }
 
+    /// <summary>
+    /// <see cref="PanelsState.Reducer.ReduceDisposePanelTabAction(PanelsState, PanelsState.DisposePanelTabAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceDisposePanelTabAction()
     {
-        /*
-        [ReducerMethod]
-        public static PanelsState ReduceDisposePanelTabAction(
-            PanelsState inState, DisposePanelTabAction disposePanelTabAction)
-         */
-
         InitializePanelsStateReducerTests(
             out var serviceProvider,
             out var panelsStateWrap,
@@ -190,15 +178,12 @@ public class PanelsStateReducerTests
         Assert.Empty(localPanelGroup.TabBag);
     }
 
+    /// <summary>
+    /// <see cref="PanelsState.Reducer.ReduceSetActivePanelTabAction(PanelsState, PanelsState.SetActivePanelTabAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceSetActivePanelTabAction()
     {
-        /*
-        [ReducerMethod]
-        public static PanelsState ReduceSetActivePanelTabAction(
-            PanelsState inState, SetActivePanelTabAction setActivePanelTabAction)
-         */
-
         InitializePanelsStateReducerTests(
             out var serviceProvider,
             out var panelsStateWrap,
@@ -230,15 +215,12 @@ public class PanelsStateReducerTests
         Assert.Equal(panelTab.Key, localPanelGroup.ActiveTabKey);
     }
 
+    /// <summary>
+    /// <see cref="PanelsState.Reducer.ReduceSetPanelTabAsActiveByContextRecordKeyAction(PanelsState, PanelsState.SetPanelTabAsActiveByContextRecordKeyAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceSetPanelTabAsActiveByContextRecordKeyAction()
     {
-        /*
-        [ReducerMethod]
-        public static PanelsState ReduceSetPanelTabAsActiveByContextRecordKeyAction(
-            PanelsState inState, SetPanelTabAsActiveByContextRecordKeyAction setPanelTabAsActiveByContextRecordKeyAction)
-         */
-
         InitializePanelsStateReducerTests(
             out var serviceProvider,
             out var panelsStateWrap,
@@ -291,15 +273,12 @@ public class PanelsStateReducerTests
         }
     }
 
+    /// <summary>
+    /// <see cref="PanelsState.Reducer.ReduceSetDragEventArgsAction(PanelsState, PanelsState.SetDragEventArgsAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceSetDragEventArgsAction()
     {
-        /*
-        [ReducerMethod]
-        public static PanelsState ReduceSetDragEventArgsAction(
-            PanelsState inState, SetDragEventArgsAction setDragEventArgsAction)
-         */
-
         InitializePanelsStateReducerTests(
             out var serviceProvider,
             out var panelsStateWrap,

@@ -9,19 +9,16 @@ using System.Reflection;
 namespace Luthetus.Common.Tests.Basis.Reflectives.States;
 
 /// <summary>
-/// <see cref="ReflectiveState"/>
+/// <see cref="ReflectiveState.Reducer"/>
 /// </summary>
 public class ReflectiveStateReducerTests
 {
+    /// <summary>
+    /// <see cref="ReflectiveState.Reducer.ReduceRegisterAction(ReflectiveState, ReflectiveState.RegisterAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceRegisterAction()
     {
-        /*
-        [ReducerMethod]
-        public static ReflectiveState ReduceRegisterAction(
-            ReflectiveState inState, RegisterAction registerAction)
-            */
-
         InitializeReflectiveStateReducerTests(
             out var dispatcher,
             out var reflectiveStateWrap,
@@ -41,15 +38,12 @@ public class ReflectiveStateReducerTests
             x => x == model);
     }
 
+    /// <summary>
+    /// <see cref="ReflectiveState.Reducer.ReduceWithAction(ReflectiveState, ReflectiveState.WithAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceWithAction()
     {
-        /*
-        [ReducerMethod]
-        public static ReflectiveState ReduceWithAction(
-            ReflectiveState inState, WithAction withAction)
-            */
-
         InitializeReflectiveStateReducerTests(
             out var dispatcher,
             out var reflectiveStateWrap,
@@ -89,15 +83,12 @@ public class ReflectiveStateReducerTests
         Assert.Equal(type.GUID, model.ChosenTypeGuid);
     }
 
+    /// <summary>
+    /// <see cref="ReflectiveState.Reducer.ReduceDisposeAction(ReflectiveState, ReflectiveState.DisposeAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceDisposeAction()
     {
-        /*
-        [ReducerMethod]
-        public static ReflectiveState ReduceDisposeAction(
-            ReflectiveState inState, DisposeAction disposeAction)
-            */
-
         InitializeReflectiveStateReducerTests(
             out var dispatcher,
             out var reflectiveStateWrap,

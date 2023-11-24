@@ -9,19 +9,16 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Luthetus.Common.Tests.Basis.Tabs.States;
 
 /// <summary>
-/// <see cref="TabState"/>
+/// <see cref="TabState.Reducer"/>
 /// </summary>
 public class TabStateReducerTests
 {
+    /// <summary>
+    /// <see cref="TabState.Reducer.ReduceRegisterTabGroupAction(TabState, TabState.RegisterTabGroupAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceRegisterTabGroupAction()
     {
-        /*
-        [ReducerMethod]
-        public static TabState ReduceRegisterTabGroupAction(
-            TabState inState, RegisterTabGroupAction registerTabGroupAction)
-         */
-
         InitializeTabStateReducerTests(
             out var dispatcher,
             out var tabStateWrap,
@@ -44,15 +41,12 @@ public class TabStateReducerTests
             x => x.Key == tabGroup.Key);
     }
 
+    /// <summary>
+    /// <see cref="TabState.Reducer.ReduceDisposeTabGroupAction(TabState, TabState.DisposeTabGroupAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceDisposeTabGroupAction()
     {
-        /*
-        [ReducerMethod]
-        public static TabState ReduceDisposeTabGroupAction(
-            TabState inState, DisposeTabGroupAction disposeTabGroupAction)
-         */
-
         InitializeTabStateReducerTests(
             out var dispatcher,
             out var tabStateWrap,
@@ -77,15 +71,12 @@ public class TabStateReducerTests
             x => x.Key == tabGroup.Key);
     }
 
+    /// <summary>
+    /// <see cref="TabState.Reducer.ReduceSetTabEntryBagAction(TabState, TabState.SetTabEntryBagAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceSetTabEntryBagAction()
     {
-        /*
-        [ReducerMethod]
-        public static TabState ReduceSetTabEntryBagAction(
-            TabState inState, SetTabEntryBagAction setTabEntryBagAction)
-         */
-
         InitializeTabStateReducerTests(
             out var dispatcher,
             out var tabStateWrap,
@@ -117,15 +108,12 @@ public class TabStateReducerTests
         Assert.Equal(emptyTabEntries, tabGroup.EntryBag);
     }
 
+    /// <summary>
+    /// <see cref="TabState.Reducer.ReduceSetActiveTabEntryKeyAction(TabState, TabState.SetActiveTabEntryKeyAction)"/>
+    /// </summary>
     [Fact]
     public void ReduceSetActiveTabEntryKeyAction()
     {
-        /*
-        [ReducerMethod]
-        public static TabState ReduceSetActiveTabEntryKeyAction(
-            TabState inState, SetActiveTabEntryKeyAction setActiveTabEntryKeyAction)
-         */
-
         InitializeTabStateReducerTests(
             out var dispatcher,
             out var tabStateWrap,
