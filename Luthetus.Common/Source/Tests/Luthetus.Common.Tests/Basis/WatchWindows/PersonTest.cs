@@ -13,7 +13,12 @@ public class PersonTest
         FirstName = firstName;
         LastName = lastName;
         Relatives = relatives;
+
+        // Supress unused field warning
+        _ = Id;
     }
+
+    public Guid Id = Guid.NewGuid();
 
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;

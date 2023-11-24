@@ -1,4 +1,5 @@
 ﻿using Luthetus.Common.RazorLib.WatchWindows.Models;
+using System.Reflection;
 
 namespace Luthetus.Common.Tests.Basis.WatchWindows.Models;
 
@@ -13,7 +14,30 @@ public class TreeViewFieldsTests
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
+        WatchWindowsTestsHelper.InitializeWatchWindowsTests(
+            out var johnDoe,
+            out var janeDoe,
+            out var bobSmith,
+            out var commonComponentRenderers);
+        
+        var johnDoeWatchWindowObject = new WatchWindowObject(
+            johnDoe.Id,
+            johnDoe.Id.GetType(),
+            nameof(PersonTest.Id),
+            true);
+
+        var isExpandable = true;
+        var isExpanded = false;
+
+        var treeViewFields = new TreeViewFields(
+            johnDoeWatchWindowObject,
+            isExpandable,
+            isExpanded,
+            commonComponentRenderers);
+
+        Assert.Equal(johnDoeWatchWindowObject, treeViewFields.Item);
+        Assert.Equal(isExpandable, treeViewFields.IsExpandable);
+        Assert.Equal(isExpanded, treeViewFields.IsExpanded);
     }
 
     /// <summary>
@@ -22,7 +46,46 @@ public class TreeViewFieldsTests
     [Fact]
     public void Equals_Test()
     {
-        throw new NotImplementedException();
+        WatchWindowsTestsHelper.InitializeWatchWindowsTests(
+            out var johnDoe,
+            out var janeDoe,
+            out var bobSmith,
+            out var commonComponentRenderers);
+
+        var johnDoeWatchWindowObject = new WatchWindowObject(
+            johnDoe.Id,
+            johnDoe.Id.GetType(),
+            nameof(PersonTest.Id),
+            true);
+
+        var johnDoeTreeViewFields = new TreeViewFields(
+            johnDoeWatchWindowObject,
+            true,
+            false,
+            commonComponentRenderers);
+        
+        var janeDoeWatchWindowObject = new WatchWindowObject(
+            janeDoe.Id,
+            janeDoe.Id.GetType(),
+            nameof(PersonTest.Id),
+            true);
+
+        var janeDoeTreeViewFields = new TreeViewFields(
+            janeDoeWatchWindowObject,
+            true,
+            false,
+            commonComponentRenderers);
+
+        // Compare against self
+        Assert.True(johnDoeTreeViewFields.Equals(johnDoeTreeViewFields));
+
+        // Compare against a different object with the same Type
+        Assert.False(johnDoeTreeViewFields.Equals(janeDoeTreeViewFields));
+
+        var treeViewText = new TreeViewText("Hello World!", true, false, commonComponentRenderers);
+
+        // Compare against a different object NOT having the same Type
+        Assert.False(johnDoeTreeViewFields.Equals(treeViewText));
     }
 
     /// <summary>
@@ -31,7 +94,25 @@ public class TreeViewFieldsTests
     [Fact]
     public void GetHashCode_Test()
     {
-        throw new NotImplementedException();
+        WatchWindowsTestsHelper.InitializeWatchWindowsTests(
+            out var johnDoe,
+            out var janeDoe,
+            out var bobSmith,
+            out var commonComponentRenderers);
+
+        var johnDoeWatchWindowObject = new WatchWindowObject(
+            johnDoe.Id,
+            johnDoe.Id.GetType(),
+            nameof(PersonTest.Id),
+            true);
+
+        var johnDoeTreeViewFields = new TreeViewFields(
+            johnDoeWatchWindowObject,
+            true,
+            false,
+            commonComponentRenderers);
+
+        Assert.Equal(johnDoeWatchWindowObject.GetHashCode(), johnDoeTreeViewFields.GetHashCode());
     }
 
     /// <summary>
@@ -40,7 +121,36 @@ public class TreeViewFieldsTests
     [Fact]
     public void GetTreeViewRenderer()
     {
-        throw new NotImplementedException();
+        WatchWindowsTestsHelper.InitializeWatchWindowsTests(
+            out var johnDoe,
+            out var janeDoe,
+            out var bobSmith,
+            out var commonComponentRenderers);
+
+        var johnDoeWatchWindowObject = new WatchWindowObject(
+            johnDoe.Id,
+            johnDoe.Id.GetType(),
+            nameof(PersonTest.Id),
+            true);
+
+        var treeViewFields = new TreeViewFields(
+            johnDoeWatchWindowObject,
+            true,
+            false,
+            commonComponentRenderers);
+
+        var treeViewRenderer = treeViewFields.GetTreeViewRenderer();
+
+        Assert.Equal(
+            commonComponentRenderers.LuthetusCommonTreeViews.TreeViewFieldsRenderer,
+            treeViewRenderer.DynamicComponentType);
+
+        Assert.NotNull(treeViewRenderer.DynamicComponentParameters);
+
+        var parameter = treeViewRenderer.DynamicComponentParameters!.Single();
+
+        Assert.Equal(nameof(TreeViewFields), parameter.Key);
+        Assert.Equal(treeViewFields, parameter.Value);
     }
 
     /// <summary>

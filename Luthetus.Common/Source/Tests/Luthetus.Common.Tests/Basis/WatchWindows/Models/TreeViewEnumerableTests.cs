@@ -62,13 +62,10 @@ public class TreeViewEnumerableTests
             nameof(PersonTest.Relatives),
             true);
 
-        var johnDoeIsExpandable = true;
-        var johnDoeIsExpanded = false;
-
         var johnDoeRelativesTreeViewEnumberable = new TreeViewEnumerable(
             johnDoeRelativesWatchWindowObject,
-            johnDoeIsExpandable,
-            johnDoeIsExpanded,
+            true,
+            false,
             commonComponentRenderers);
         
         var janeDoeRelativesWatchWindowObject = new WatchWindowObject(
@@ -77,13 +74,10 @@ public class TreeViewEnumerableTests
             nameof(PersonTest.Relatives),
             true);
 
-        var janeDoeIsExpandable = true;
-        var janeDoeIsExpanded = false;
-
         var janeDoeRelativesTreeViewEnumberable = new TreeViewEnumerable(
             janeDoeRelativesWatchWindowObject,
-            janeDoeIsExpandable,
-            janeDoeIsExpanded,
+            true,
+            false,
             commonComponentRenderers);
 
         // Compare against self
@@ -121,13 +115,10 @@ public class TreeViewEnumerableTests
             displayName,
             isPubliclyReadable);
 
-        var isExpandable = true;
-        var isExpanded = false;
-
         var treeViewEnumberable = new TreeViewEnumerable(
             johnDoeRelativesWatchWindowObject,
-            isExpandable,
-            isExpanded,
+            true,
+            false,
             commonComponentRenderers);
 
         Assert.Equal(johnDoeRelativesWatchWindowObject.GetHashCode(), treeViewEnumberable.GetHashCode());
@@ -156,13 +147,10 @@ public class TreeViewEnumerableTests
             displayName,
             isPubliclyReadable);
 
-        var isExpandable = true;
-        var isExpanded = false;
-
         var treeViewEnumberable = new TreeViewEnumerable(
             johnDoeRelativesWatchWindowObject,
-            isExpandable,
-            isExpanded,
+            true,
+            false,
             commonComponentRenderers);
 
         var treeViewRenderer = treeViewEnumberable.GetTreeViewRenderer();

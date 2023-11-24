@@ -47,23 +47,19 @@ public class TreeViewExceptionTests
             out var commonComponentRenderers);
 
         var abc123Exception = new Exception("Abc123");
-        var abc123ExceptionIsExpandable = false;
-        var abc123ExceptionIsExpanded = false;
 
         var abc123ExceptionTreeViewException = new TreeViewException(
             abc123Exception,
-            abc123ExceptionIsExpandable,
-            abc123ExceptionIsExpanded,
+            false,
+            false,
             commonComponentRenderers);
         
         var helloWorldException = new Exception("Hello World!");
-        var helloWorldExceptionIsExpandable = false;
-        var helloWorldExceptionIsExpanded = false;
 
         var helloWorldExceptionTreeViewException = new TreeViewException(
             helloWorldException,
-            helloWorldExceptionIsExpandable,
-            helloWorldExceptionIsExpanded,
+            false,
+            false,
             commonComponentRenderers);
 
         // Compare against self
@@ -91,13 +87,11 @@ public class TreeViewExceptionTests
             out var commonComponentRenderers);
         
         var abc123Exception = new Exception("Abc123");
-        var abc123ExceptionIsExpandable = false;
-        var abc123ExceptionIsExpanded = false;
 
         var treeViewException = new TreeViewException(
             abc123Exception,
-            abc123ExceptionIsExpandable,
-            abc123ExceptionIsExpanded,
+            false,
+            false,
             commonComponentRenderers);
 
         Assert.Equal(abc123Exception.GetHashCode(), treeViewException.GetHashCode());
@@ -116,13 +110,11 @@ public class TreeViewExceptionTests
             out var commonComponentRenderers);
 
         var abc123Exception = new Exception("Abc123");
-        var abc123ExceptionIsExpandable = false;
-        var abc123ExceptionIsExpanded = false;
 
         var treeViewException = new TreeViewException(
             abc123Exception,
-            abc123ExceptionIsExpandable,
-            abc123ExceptionIsExpanded,
+            false,
+            false,
             commonComponentRenderers);
 
         var treeViewRenderer = treeViewException.GetTreeViewRenderer();
