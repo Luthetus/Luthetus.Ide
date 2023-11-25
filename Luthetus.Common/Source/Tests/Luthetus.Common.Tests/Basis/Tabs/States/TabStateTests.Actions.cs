@@ -1,6 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Tabs.Models;
 using Luthetus.Common.RazorLib.Tabs.States;
+using Luthetus.Common.Tests.Basis.WatchWindows;
 using System.Collections.Immutable;
 
 namespace Luthetus.Common.Tests.Basis.Tabs.States;
@@ -8,7 +9,7 @@ namespace Luthetus.Common.Tests.Basis.Tabs.States;
 /// <summary>
 /// <see cref="TabState"/>
 /// </summary>
-public class TabStateActionsTests
+public partial class TabStateActionsTests
 {
     /// <summary>
     /// <see cref="TabState.RegisterTabGroupAction"/>
@@ -16,7 +17,7 @@ public class TabStateActionsTests
     [Fact]
     public void RegisterTabGroupAction()
     {
-        InitializeTabStateActionsTests(
+        TabsTestsHelper.InitializeTabStateActionsTests(
             out var tabGroup,
             out _,
             out _,
@@ -33,7 +34,7 @@ public class TabStateActionsTests
     [Fact]
     public void DisposeTabGroupAction()
     {
-        InitializeTabStateActionsTests(
+        TabsTestsHelper.InitializeTabStateActionsTests(
             out var tabGroup,
             out _,
             out _,
@@ -50,7 +51,7 @@ public class TabStateActionsTests
     [Fact]
     public void SetTabEntryBagAction()
     {
-        InitializeTabStateActionsTests(
+        TabsTestsHelper.InitializeTabStateActionsTests(
             out var tabGroup,
             out _,
             out _,
@@ -73,7 +74,7 @@ public class TabStateActionsTests
     [Fact]
     public void SetActiveTabEntryKeyAction()
     {
-        InitializeTabStateActionsTests(
+        TabsTestsHelper.InitializeTabStateActionsTests(
             out var tabGroup,
             out var redTabEntry,
             out _,
@@ -86,46 +87,5 @@ public class TabStateActionsTests
 
         Assert.Equal(tabGroup.Key, setActiveTabEntryKeyAction.TabGroupKey);
         Assert.Equal(redTabEntry.TabEntryKey, setActiveTabEntryKeyAction.TabEntryKey);
-    }
-
-    public enum ColorKind
-    {
-        Red,
-        Green,
-        Blue,
-    }
-
-    private void InitializeTabStateActionsTests(
-        out TabGroup sampleTabGroup,
-        out TabEntryWithType<ColorKind> redTabEntry,
-        out TabEntryWithType<ColorKind> greenTabEntry,
-        out TabEntryWithType<ColorKind> blueTabEntry,
-        out ImmutableList<TabEntryNoType> tabEntries)
-    {
-        redTabEntry = new TabEntryWithType<ColorKind>(
-            ColorKind.Red,
-            tabEntry => ((TabEntryWithType<ColorKind>)tabEntry).Item.ToString(),
-            _ => { });
-
-        greenTabEntry = new TabEntryWithType<ColorKind>(
-            ColorKind.Green,
-            tabEntry => ((TabEntryWithType<ColorKind>)tabEntry).Item.ToString(),
-            _ => { });
-
-        blueTabEntry = new TabEntryWithType<ColorKind>(
-            ColorKind.Blue,
-            tabEntry => ((TabEntryWithType<ColorKind>)tabEntry).Item.ToString(),
-            _ => { });
-
-        var temporaryTabEntries = tabEntries = new TabEntryNoType[] 
-        { 
-            redTabEntry,
-            greenTabEntry,
-            blueTabEntry,
-        }.ToImmutableList();
-
-        sampleTabGroup = new TabGroup(
-            loadTabEntriesArgs => Task.FromResult(new TabGroupLoadTabEntriesOutput(temporaryTabEntries)),
-            Key<TabGroup>.NewKey());
     }
 }

@@ -149,9 +149,9 @@ public class TabStateReducerTests
         out IDispatcher dispatcher,
         out IState<TabState> tabStateWrap,
         out TabGroup sampleTabGroup,
-        out TabEntryWithType<ColorKind> redTabEntry,
-        out TabEntryWithType<ColorKind> greenTabEntry,
-        out TabEntryWithType<ColorKind> blueTabEntry,
+        out TabEntryWithType<ColorKindTest> redTabEntry,
+        out TabEntryWithType<ColorKindTest> greenTabEntry,
+        out TabEntryWithType<ColorKindTest> blueTabEntry,
         out ImmutableList<TabEntryNoType> tabEntries)
     {
         var services = new ServiceCollection()
@@ -166,19 +166,19 @@ public class TabStateReducerTests
 
         dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
 
-        redTabEntry = new TabEntryWithType<ColorKind>(
-            ColorKind.Red,
-            tabEntry => ((TabEntryWithType<ColorKind>)tabEntry).Item.ToString(),
+        redTabEntry = new TabEntryWithType<ColorKindTest>(
+            ColorKindTest.Red,
+            tabEntry => ((TabEntryWithType<ColorKindTest>)tabEntry).Item.ToString(),
             _ => { });
 
-        greenTabEntry = new TabEntryWithType<ColorKind>(
-            ColorKind.Green,
-            tabEntry => ((TabEntryWithType<ColorKind>)tabEntry).Item.ToString(),
+        greenTabEntry = new TabEntryWithType<ColorKindTest>(
+            ColorKindTest.Green,
+            tabEntry => ((TabEntryWithType<ColorKindTest>)tabEntry).Item.ToString(),
             _ => { });
 
-        blueTabEntry = new TabEntryWithType<ColorKind>(
-            ColorKind.Blue,
-            tabEntry => ((TabEntryWithType<ColorKind>)tabEntry).Item.ToString(),
+        blueTabEntry = new TabEntryWithType<ColorKindTest>(
+            ColorKindTest.Blue,
+            tabEntry => ((TabEntryWithType<ColorKindTest>)tabEntry).Item.ToString(),
             _ => { });
 
         var temporaryTabEntries = tabEntries = new TabEntryNoType[]
