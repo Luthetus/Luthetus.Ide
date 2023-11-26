@@ -108,9 +108,16 @@ public partial class DotNetSolutionSync
 
         foreach (var project in parser.DotNetProjectBag)
         {
+            var relativePathFromSolutionFileString = project.RelativePathFromSolutionFileString;
+            
+            // Solution Folders do not exist on the filesystem. Therefore their absolute path is not guaranteed to be unique
+            // One can use the ProjectIdGuid however, when working with a SolutionFolder to make the absolute path unique.
+            if (project.DotNetProjectKind == DotNetProjectKind.SolutionFolder)
+                relativePathFromSolutionFileString = $"{project.ProjectIdGuid}_{relativePathFromSolutionFileString}";
+
             var absolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
                 solutionAbsolutePath,
-                project.RelativePathFromSolutionFileString,
+                relativePathFromSolutionFileString,
                 _environmentProvider);
 
             project.AbsolutePath = new AbsolutePath(absolutePathString, false, _environmentProvider);

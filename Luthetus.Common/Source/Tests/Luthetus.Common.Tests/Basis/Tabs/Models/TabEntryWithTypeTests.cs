@@ -1,4 +1,6 @@
-﻿using Luthetus.Common.RazorLib.Tabs.Models;
+﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Tabs.Models;
+using Luthetus.Common.Tests.Basis.WatchWindows;
 
 namespace Luthetus.Common.Tests.Basis.Tabs.Models;
 
@@ -9,55 +11,51 @@ public class TabEntryWithTypeTests
 {
     /// <summary>
     /// <see cref="TabEntryWithType{T}.TabEntryWithType(T, Func{TabEntryNoType, string}, Action{TabEntryNoType})"/>
+    /// <br/>----<br/>
+    /// <see cref="TabEntryWithType{T}.Item"/>
+    /// <see cref="TabEntryWithType{T}.UntypedItem"/>
+    /// <see cref="TabEntryWithType{T}.ItemType"/>
+    /// <see cref="TabEntryWithType{T}.GetDisplayNameFunc"/>
+    /// <see cref="TabEntryWithType{T}.OnSetActiveFunc"/>
     /// </summary>
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
-    }
+        TabsTestsHelper.InitializeTabStateActionsTests(
+            out _,
+            out _,
+            out _,
+            out _,
+            out _);
 
-    /// <summary>
-    /// <see cref="TabEntryWithType{T}.Item"/>
-    /// </summary>
-    [Fact]
-    public void Item()
-    {
-        throw new NotImplementedException();
-    }
+        var item = ColorKindTest.Red;
 
-    /// <summary>
-    /// <see cref="TabEntryWithType{T}.UntypedItem"/>
-    /// </summary>
-    [Fact]
-    public void UntypedItem()
-    {
-        throw new NotImplementedException();
-    }
+        var getDisplayNameFunc = new Func<TabEntryNoType, string>(
+            tabEntry => ((TabEntryWithType<ColorKindTest>)tabEntry).Item.ToString());
 
-    /// <summary>
-    /// <see cref="TabEntryWithType{T}.ItemType"/>
-    /// </summary>
-    [Fact]
-    public void ItemType()
-    {
-        throw new NotImplementedException();
-    }
+        var onSetActiveFunc = new Action<TabEntryNoType>(_ => { });
 
-    /// <summary>
-    /// <see cref="TabEntryWithType{T}.GetDisplayNameFunc"/>
-    /// </summary>
-    [Fact]
-    public void GetDisplayNameFunc()
-    {
-        throw new NotImplementedException();
-    }
+        var tabEntryWithType = new TabEntryWithType<ColorKindTest>(
+            item,
+            getDisplayNameFunc,
+            onSetActiveFunc);
 
-    /// <summary>
-    /// <see cref="TabEntryWithType{T}.OnSetActiveFunc"/>
-    /// </summary>
-    [Fact]
-    public void OnSetActiveFunc()
-    {
-        throw new NotImplementedException();
+        Assert.Equal(item, tabEntryWithType.Item);
+        Assert.Equal(item, tabEntryWithType.UntypedItem);
+        Assert.Equal(item.GetType(), tabEntryWithType.ItemType);
+        Assert.Equal(getDisplayNameFunc, tabEntryWithType.GetDisplayNameFunc);
+        Assert.Equal(onSetActiveFunc, tabEntryWithType.OnSetActiveFunc);
+
+        Assert.NotEqual(Key<TabEntryNoType>.Empty, tabEntryWithType.TabEntryKey);
+
+        // Make another tab entry, then assert that they have different keys
+        {
+            var otherTabEntryWithType = new TabEntryWithType<ColorKindTest>(
+                item,
+                getDisplayNameFunc,
+                onSetActiveFunc);
+
+            Assert.NotEqual(otherTabEntryWithType.TabEntryKey, tabEntryWithType.TabEntryKey);
+        }
     }
 }

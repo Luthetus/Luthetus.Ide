@@ -19,22 +19,22 @@ public class TreeViewReflectionTests
             out var bobSmith,
             out var commonComponentRenderers);
 
-        var johnDoeRelativesWatchWindowObject = new WatchWindowObject(
+        var johnDoeWatchWindowObject = new WatchWindowObject(
             johnDoe,
             johnDoe.GetType(),
-            nameof(PersonTest),
+            johnDoe.DisplayName,
             true);
 
         var isExpandable = true;
         var isExpanded = false;
 
         var treeViewReflection = new TreeViewReflection(
-            johnDoeRelativesWatchWindowObject,
+            johnDoeWatchWindowObject,
             isExpandable,
             isExpanded,
             commonComponentRenderers);
 
-        Assert.Equal(johnDoeRelativesWatchWindowObject, treeViewReflection.Item);
+        Assert.Equal(johnDoeWatchWindowObject, treeViewReflection.Item);
         Assert.Equal(isExpandable, treeViewReflection.IsExpandable);
         Assert.Equal(isExpanded, treeViewReflection.IsExpanded);
     }
@@ -51,26 +51,26 @@ public class TreeViewReflectionTests
             out var bobSmith,
             out var commonComponentRenderers);
 
-        var johnDoeRelativesWatchWindowObject = new WatchWindowObject(
+        var johnDoeWatchWindowObject = new WatchWindowObject(
             johnDoe,
             johnDoe.GetType(),
-            nameof(PersonTest.Relatives),
+            johnDoe.DisplayName,
             true);
 
         var johnDoeTreeViewReflection = new TreeViewReflection(
-            johnDoeRelativesWatchWindowObject,
+            johnDoeWatchWindowObject,
             true,
             false,
             commonComponentRenderers);
 
-        var janeDoeRelativesWatchWindowObject = new WatchWindowObject(
+        var janeDoeWatchWindowObject = new WatchWindowObject(
             janeDoe,
             janeDoe.GetType(),
-            nameof(PersonTest.Relatives),
+            janeDoe.DisplayName,
             true);
 
         var janeDoeTreeViewReflection = new TreeViewReflection(
-            janeDoeRelativesWatchWindowObject,
+            janeDoeWatchWindowObject,
             true,
             false,
             commonComponentRenderers);
@@ -93,7 +93,25 @@ public class TreeViewReflectionTests
     [Fact]
     public void GetHashCode_Test()
     {
-        throw new NotImplementedException();
+        WatchWindowsTestsHelper.InitializeWatchWindowsTests(
+            out var johnDoe,
+            out var janeDoe,
+            out var bobSmith,
+            out var commonComponentRenderers);
+
+        var watchWindowObject = new WatchWindowObject(
+            johnDoe,
+            johnDoe.GetType(),
+            johnDoe.DisplayName,
+            true);
+
+        var treeViewReflection = new TreeViewReflection(
+            watchWindowObject,
+            true,
+            false,
+            commonComponentRenderers);
+
+        Assert.Equal(watchWindowObject.GetHashCode(), treeViewReflection.GetHashCode());
     }
 
     /// <summary>
@@ -102,7 +120,36 @@ public class TreeViewReflectionTests
     [Fact]
     public void GetTreeViewRenderer()
     {
-        throw new NotImplementedException();
+        WatchWindowsTestsHelper.InitializeWatchWindowsTests(
+            out var johnDoe,
+            out var janeDoe,
+            out var bobSmith,
+            out var commonComponentRenderers);
+
+        var watchWindowObject = new WatchWindowObject(
+            johnDoe,
+            johnDoe.GetType(),
+            johnDoe.DisplayName,
+            true);
+
+        var treeViewReflection = new TreeViewReflection(
+            watchWindowObject,
+            true,
+            false,
+            commonComponentRenderers);
+
+        var treeViewRenderer = treeViewReflection.GetTreeViewRenderer();
+
+        Assert.Equal(
+            commonComponentRenderers.LuthetusCommonTreeViews.TreeViewReflectionRenderer,
+            treeViewRenderer.DynamicComponentType);
+
+        Assert.NotNull(treeViewRenderer.DynamicComponentParameters);
+
+        var parameter = treeViewRenderer.DynamicComponentParameters!.Single();
+
+        Assert.Equal(nameof(TreeViewReflection), parameter.Key);
+        Assert.Equal(treeViewReflection, parameter.Value);
     }
 
     /// <summary>

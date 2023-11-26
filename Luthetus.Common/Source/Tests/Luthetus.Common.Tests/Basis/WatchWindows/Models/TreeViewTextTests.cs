@@ -13,7 +13,25 @@ public class TreeViewTextTests
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
+        WatchWindowsTestsHelper.InitializeWatchWindowsTests(
+            out var johnDoe,
+            out var janeDoe,
+            out var bobSmith,
+            out var commonComponentRenderers);
+
+        var text = johnDoe.DisplayName;
+        var isExpandable = true;
+        var isExpanded = false;
+
+        var treeViewReflection = new TreeViewText(
+            text,
+            isExpandable,
+            isExpanded,
+            commonComponentRenderers);
+
+        Assert.Equal(text, treeViewReflection.Item);
+        Assert.Equal(isExpandable, treeViewReflection.IsExpandable);
+        Assert.Equal(isExpanded, treeViewReflection.IsExpanded);
     }
 
     /// <summary>
@@ -22,7 +40,34 @@ public class TreeViewTextTests
     [Fact]
     public void Equals_Test()
     {
-        throw new NotImplementedException();
+        WatchWindowsTestsHelper.InitializeWatchWindowsTests(
+            out var johnDoe,
+            out var janeDoe,
+            out var bobSmith,
+            out var commonComponentRenderers);
+
+        var johnDoeTreeViewText = new TreeViewText(
+            johnDoe.DisplayName,
+            true,
+            false,
+            commonComponentRenderers);
+
+        var janeDoeTreeViewText = new TreeViewText(
+            janeDoe.DisplayName,
+            true,
+            false,
+            commonComponentRenderers);
+
+        // Compare against self
+        Assert.True(johnDoeTreeViewText.Equals(johnDoeTreeViewText));
+
+        // Compare against a different object with the same Type
+        Assert.False(johnDoeTreeViewText.Equals(janeDoeTreeViewText));
+
+        var treeViewText = new TreeViewText("Hello World!", true, false, commonComponentRenderers);
+
+        // Compare against a different object NOT having the same Type
+        Assert.False(johnDoeTreeViewText.Equals(treeViewText));
     }
 
     /// <summary>
@@ -31,7 +76,21 @@ public class TreeViewTextTests
     [Fact]
     public void GetHashCode_Test()
     {
-        throw new NotImplementedException();
+        WatchWindowsTestsHelper.InitializeWatchWindowsTests(
+            out var johnDoe,
+            out var janeDoe,
+            out var bobSmith,
+            out var commonComponentRenderers);
+
+        var text = johnDoe.DisplayName;
+
+        var treeViewText = new TreeViewText(
+            text,
+            true,
+            false,
+            commonComponentRenderers);
+
+        Assert.Equal(text.GetHashCode(), treeViewText.GetHashCode());
     }
 
     /// <summary>
@@ -40,7 +99,30 @@ public class TreeViewTextTests
     [Fact]
     public void GetTreeViewRenderer()
     {
-        throw new NotImplementedException();
+        WatchWindowsTestsHelper.InitializeWatchWindowsTests(
+            out var johnDoe,
+            out var janeDoe,
+            out var bobSmith,
+            out var commonComponentRenderers);
+
+        var treeViewText = new TreeViewText(
+            johnDoe.DisplayName,
+            true,
+            false,
+            commonComponentRenderers);
+
+        var treeViewRenderer = treeViewText.GetTreeViewRenderer();
+
+        Assert.Equal(
+            commonComponentRenderers.LuthetusCommonTreeViews.TreeViewTextRenderer,
+            treeViewRenderer.DynamicComponentType);
+
+        Assert.NotNull(treeViewRenderer.DynamicComponentParameters);
+
+        var parameter = treeViewRenderer.DynamicComponentParameters!.Single();
+
+        Assert.Equal(nameof(TreeViewText), parameter.Key);
+        Assert.Equal(treeViewText, parameter.Value);
     }
 
     /// <summary>

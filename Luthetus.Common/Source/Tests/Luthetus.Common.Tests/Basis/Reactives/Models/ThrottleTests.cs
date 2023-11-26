@@ -26,7 +26,7 @@ public class ThrottleTests
     /// <see cref="Throttle.FireAsync(Func{Task})"/>
     /// </summary>
     [Fact]
-    public void FireAsync()
+    public async Task FireAsync()
     {
         throw new NotImplementedException();
     }
@@ -35,8 +35,33 @@ public class ThrottleTests
     /// <see cref="Throttle.Dispose()"/>
     /// </summary>
     [Fact]
-    public void Dispose()
+    public async Task DisposeAsync()
     {
-        throw new NotImplementedException();
+        var throttle = new Throttle(TimeSpan.FromMilliseconds(1_000));
+
+        var counter = 0;
+
+        await throttle.FireAsync(throttleCancellationToken =>
+        {
+            counter++;
+            return Task.CompletedTask;
+        });
+
+        Assert.Equal(1, counter);
+
+        await throttle.FireAsync(throttleCancellationToken =>
+        {
+            throttle.Dispose();
+
+            if (throttleCancellationToken.IsCancellationRequested)
+                return Task.CompletedTask;
+
+            // Cancel the task prior to this incrementation
+            counter++;
+            return Task.CompletedTask;
+        });
+
+        // The second incrementation was cancelled by invoking 'Dispose()'
+        Assert.Equal(1, counter);
     }
 }
