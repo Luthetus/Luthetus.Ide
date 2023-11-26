@@ -3,7 +3,7 @@
 
 - Runs on Linux, Windows, and Mac
 
-![Example GIF](./Images/Rewrite/introductoryGifLuthetusIde.gif)
+![Example GIF](./Images/Gifs/ide0.3.0.gif)
 
 ## Demo:
 https://luthetus.github.io/Luthetus.Website/
