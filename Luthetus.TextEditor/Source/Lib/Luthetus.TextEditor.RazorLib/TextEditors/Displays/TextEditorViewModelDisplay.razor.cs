@@ -691,7 +691,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         }
         else if (IsSyntaxHighlightingInvoker(keyboardEventArgs))
         {
-            await _throttleApplySyntaxHighlighting.FireAsync(async () =>
+            await _throttleApplySyntaxHighlighting.FireAsync(async _ =>
             {
                 // The TextEditorModel may have been changed by the time this logic is ran and
                 // thus the local variables must be updated accordingly.

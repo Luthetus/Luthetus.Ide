@@ -82,89 +82,78 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
 
     public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
     {
-        var ancestorNode = Parent;
+        var currentNode = (TreeViewNoType)this;
 
         // First, find the TreeViewSolution
-        if (ancestorNode is not TreeViewSolution)
+        while (currentNode is not TreeViewSolution && currentNode.Parent is not null)
         {
-            if (ancestorNode?.Parent is null)
-                return;
-
-            while (ancestorNode is not TreeViewSolution && ancestorNode.Parent is not null)
-            {
-                ancestorNode = ancestorNode.Parent;
-            }
-
-            if (ancestorNode is not TreeViewSolution)
-                return;
+            currentNode = currentNode.Parent;
         }
+        
+        if (currentNode is not TreeViewSolution treeViewSolution)
+            return;
 
-        if (ancestorNode is TreeViewSolution treeViewSolution)
-        {
-            var nestedProjectEntries = treeViewSolution.Item.NestedProjectEntryBag
+        var nestedProjectEntries = treeViewSolution.Item.NestedProjectEntryBag
                 .Where(x => x.SolutionFolderIdGuid == Item.ProjectIdGuid)
                 .ToArray();
 
-            var childProjectIds = nestedProjectEntries.Select(x => x.ChildProjectIdGuid).ToArray();
+        var childProjectIds = nestedProjectEntries.Select(x => x.ChildProjectIdGuid).ToArray();
 
-            var childProjects = treeViewSolution.Item.DotNetProjectBag
-                .Where(x => childProjectIds.Contains(x.ProjectIdGuid))
-                .ToArray();
+        var childProjects = treeViewSolution.Item.DotNetProjectBag
+            .Where(x => childProjectIds.Contains(x.ProjectIdGuid))
+            .ToArray();
 
-            var childTreeViews = childProjects.Select(x =>
+        var childTreeViews = childProjects.Select(x =>
+        {
+            if (x.DotNetProjectKind == DotNetProjectKind.SolutionFolder)
+                return ConstructTreeViewSolutionFolder((SolutionFolder)x);
+            else
+                return ConstructTreeViewCSharpProject((CSharpProject)x);
+        }).ToList();
+
+        for (int siblingsIndex = siblingsAndSelfTreeViews.Count - 1; siblingsIndex >= 0; siblingsIndex--)
+        {
+            var siblingOrSelf = siblingsAndSelfTreeViews[siblingsIndex];
+
+            for (var childrensIndex = 0; childrensIndex < childTreeViews.Count; childrensIndex++)
             {
-                if (x.DotNetProjectKind == DotNetProjectKind.SolutionFolder)
-                    return ConstructTreeViewSolutionFolder((SolutionFolder)x);
-                else
-                    return ConstructTreeViewCSharpProject((CSharpProject)x);
-            }).ToList();
+                var childTreeView = childTreeViews[childrensIndex];
 
-            for (int siblingsIndex = siblingsAndSelfTreeViews.Count - 1; siblingsIndex >= 0; siblingsIndex--)
-            {
-                var siblingOrSelf = siblingsAndSelfTreeViews[siblingsIndex];
-
-                for (var childrensIndex = 0; childrensIndex < childTreeViews.Count; childrensIndex++)
+                if (siblingOrSelf.Equals(childTreeView))
                 {
-                    var childTreeView = childTreeViews[childrensIndex];
+                    // What i'm doing here is super confusing and needs changed.
+                    // In lines above I re-created a TreeView node for a second time.
+                    //
+                    // Now I have to figure out where that re-created TreeView node
+                    // existed originally because it will have its
+                    // "RemoveRelatedFilesFromParent" invoked.
+                    //
+                    // Without this logic a:
+                    //     solution folder -> solution folder -> project
+                    //
+                    // Will not render the project.
+                    //
+                    // TODO: Revisit this logic.
+                    var originalTreeView = siblingsAndSelfTreeViews[siblingsIndex];
 
-                    if (siblingOrSelf.Equals(childTreeView))
-                    {
-                        // What i'm doing here is super confusing and needs changed.
-                        // In lines above I re-created a TreeView node for a second time.
-                        //
-                        // Now I have to figure out where that re-created TreeView node
-                        // existed originally because it will have its
-                        // "RemoveRelatedFilesFromParent" invoked.
-                        //
-                        // Without this logic a:
-                        //     solution folder -> solution folder -> project
-                        //
-                        // Will not render the project.
-                        //
-                        // TODO: Revisit this logic.
-                        var originalTreeView = siblingsAndSelfTreeViews[siblingsIndex];
+                    originalTreeView.Parent = this;
+                    originalTreeView.IndexAmongSiblings = childrensIndex;
+                    originalTreeView.TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
 
-                        originalTreeView.Parent = this;
-                        originalTreeView.IndexAmongSiblings = childrensIndex;
-                        originalTreeView.TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
+                    siblingsAndSelfTreeViews.RemoveAt(siblingsIndex);
 
-                        siblingsAndSelfTreeViews.RemoveAt(siblingsIndex);
-
-                        childTreeViews[childrensIndex] = originalTreeView;
-                    }
-                    else
-                    {
-                        childTreeView.Parent = this;
-                        childTreeView.IndexAmongSiblings = childrensIndex;
-                        childTreeView.TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
-                    }
+                    childTreeViews[childrensIndex] = originalTreeView;
+                }
+                else
+                {
+                    childTreeView.Parent = this;
+                    childTreeView.IndexAmongSiblings = childrensIndex;
+                    childTreeView.TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
                 }
             }
-
-            ChildBag = childTreeViews;
         }
 
-        return;
+        ChildBag = childTreeViews;
     }
 
     private TreeViewNoType ConstructTreeViewSolutionFolder(SolutionFolder dotNetSolutionFolder)

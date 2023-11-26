@@ -76,10 +76,12 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             await TextEditorService.Options.SetFromLocalStorageAsync();
             await AppOptionsService.SetFromLocalStorageAsync();
 
-            if (File.Exists("C:\\Users\\hunte\\Repos\\Demos\\BlazorCrudApp\\BlazorCrudApp.sln"))
+            var personalTestPath = "C:\\Users\\hunte\\Repos\\Luthetus.Ide_Fork\\Luthetus.Ide.sln";
+
+            if (File.Exists(personalTestPath))
             {
                 var absolutePath = new AbsolutePath(
-                    "C:\\Users\\hunte\\Repos\\Demos\\BlazorCrudApp\\BlazorCrudApp.sln",
+                    personalTestPath,
                     false,
                     EnvironmentProvider);
 

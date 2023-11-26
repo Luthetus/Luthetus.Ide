@@ -105,7 +105,7 @@ public record TextEditorViewModel : IDisposable
     {
         _batchScrollEvents.MutateScrollHorizontalPositionByPixels += pixels;
 
-        await _batchScrollEvents.ThrottleMutateScrollHorizontalPositionByPixels.FireAsync(async () =>
+        await _batchScrollEvents.ThrottleMutateScrollHorizontalPositionByPixels.FireAsync(async _ =>
         {
             var batch = _batchScrollEvents.MutateScrollHorizontalPositionByPixels;
             _batchScrollEvents.MutateScrollHorizontalPositionByPixels -= batch;
@@ -121,7 +121,7 @@ public record TextEditorViewModel : IDisposable
     {
         _batchScrollEvents.MutateScrollVerticalPositionByPixels += pixels;
 
-        await _batchScrollEvents.ThrottleMutateScrollVerticalPositionByPixels.FireAsync(async () =>
+        await _batchScrollEvents.ThrottleMutateScrollVerticalPositionByPixels.FireAsync(async _ =>
         {
             var batch = _batchScrollEvents.MutateScrollVerticalPositionByPixels;
             _batchScrollEvents.MutateScrollVerticalPositionByPixels -= batch;
@@ -148,7 +148,7 @@ public record TextEditorViewModel : IDisposable
     /// <summary>If a parameter is null the JavaScript will not modify that value</summary>
     public async Task SetScrollPositionAsync(double? scrollLeft, double? scrollTop)
     {
-        await _batchScrollEvents.ThrottleSetScrollPosition.FireAsync(async () =>
+        await _batchScrollEvents.ThrottleSetScrollPosition.FireAsync(async _ =>
         {
             await TextEditorService.ViewModel.SetScrollPositionAsync(
                 BodyElementId,
@@ -169,7 +169,7 @@ public record TextEditorViewModel : IDisposable
         int countOfTestCharacters,
         CancellationToken cancellationToken)
     {
-        await ThrottleRemeasure.FireAsync(async () =>
+        await ThrottleRemeasure.FireAsync(async _ =>
         {
             lock (_trackingOfUniqueIdentifiersLock)
             {
@@ -217,7 +217,7 @@ public record TextEditorViewModel : IDisposable
         if (!SeenOptionsRenderStateKeysBag.Any())
             return;
 
-        await ThrottleCalculateVirtualizationResult.FireAsync(async () =>
+        await ThrottleCalculateVirtualizationResult.FireAsync(async _ =>
         {
             if (model is null)
                 return;
