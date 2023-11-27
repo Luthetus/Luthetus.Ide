@@ -1,3 +1,8 @@
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+
 namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis;
 
 public class LexerTests
@@ -197,7 +202,16 @@ public class LexerTests
 	[Fact]
 	public void LEX_PlusToken()
 	{
-		throw new NotImplementedException();
+		var resourceUri = new ResourceUri("UnitTests");
+		var sourceText = "+";
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+		lexer.Lex();
+
+		Assert.Equal(2, lexer.SyntaxTokens.Length);
+		var plusToken = (PlusToken)lexer.SyntaxTokens[0];
+		var endOfFileToken = (EndOfFileToken)lexer.SyntaxTokens[1];
+
+		Assert.Equal(SyntaxKind.PlusToken, plusToken.SyntaxKind);
 	}
 
 	[Fact]
