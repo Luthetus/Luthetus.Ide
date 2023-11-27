@@ -205,10 +205,70 @@ public class LexerTests
 		Assert.Equal(SyntaxKind.EqualsToken, equalsToken.SyntaxKind);
 	}
 
-	[Fact]
-	public void LEX_IdentifierToken()
+	[Theory]
+	[InlineData("a")]
+	[InlineData("b")]
+	[InlineData("c")]
+	[InlineData("d")]
+	[InlineData("e")]
+	[InlineData("f")]
+	[InlineData("g")]
+	[InlineData("h")]
+	[InlineData("i")]
+	[InlineData("j")]
+	[InlineData("k")]
+	[InlineData("l")]
+	[InlineData("m")]
+	[InlineData("n")]
+	[InlineData("o")]
+	[InlineData("p")]
+	[InlineData("q")]
+	[InlineData("r")]
+	[InlineData("s")]
+	[InlineData("t")]
+	[InlineData("u")]
+	[InlineData("v")]
+	[InlineData("w")]
+	[InlineData("x")]
+	[InlineData("y")]
+	[InlineData("z")]
+	[InlineData("A")]
+	[InlineData("B")]
+	[InlineData("C")]
+	[InlineData("D")]
+	[InlineData("E")]
+	[InlineData("F")]
+	[InlineData("G")]
+	[InlineData("H")]
+	[InlineData("I")]
+	[InlineData("J")]
+	[InlineData("K")]
+	[InlineData("L")]
+	[InlineData("M")]
+	[InlineData("N")]
+	[InlineData("O")]
+	[InlineData("P")]
+	[InlineData("Q")]
+	[InlineData("R")]
+	[InlineData("S")]
+	[InlineData("T")]
+	[InlineData("U")]
+	[InlineData("V")]
+	[InlineData("W")]
+	[InlineData("X")]
+	[InlineData("Y")]
+	[InlineData("Z")]
+	public void LEX_IdentifierToken(string sourceText)
 	{
-		throw new NotImplementedException();
+		var resourceUri = new ResourceUri("UnitTests");
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+		lexer.Lex();
+
+		Assert.Equal(2, lexer.SyntaxTokens.Length);
+		var identifierToken = (IdentifierToken)lexer.SyntaxTokens[0];
+		var endOfFileToken = (EndOfFileToken)lexer.SyntaxTokens[1];
+
+		Assert.Equal(SyntaxKind.IdentifierToken, identifierToken.SyntaxKind);
 	}
 
 	[Fact]
@@ -454,7 +514,16 @@ public class LexerTests
 	[Fact]
 	public void LEX_StringLiteralToken()
 	{
-		throw new NotImplementedException();
+		var resourceUri = new ResourceUri("UnitTests");
+		var sourceText = "\"Hello World!\"";
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+		lexer.Lex();
+
+		Assert.Equal(2, lexer.SyntaxTokens.Length);
+		var stringLiteralToken = (StringLiteralToken)lexer.SyntaxTokens[0];
+		var endOfFileToken = (EndOfFileToken)lexer.SyntaxTokens[1];
+
+		Assert.Equal(SyntaxKind.StringLiteralToken, stringLiteralToken.SyntaxKind);
 	}
 
 	[Fact]
