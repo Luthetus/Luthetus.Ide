@@ -172,4 +172,12 @@ public static class DotNetCliCommandFormatter
             "test",
             "-t",
         });
+
+	public static FormattedCommand FormatDotNetTestByFullyQualifiedName(string fullyQualifiedName) =>
+        new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
+        {
+            "test",
+            "--filter",
+            $"FullyQualifiedName={fullyQualifiedName}",
+        });
 }

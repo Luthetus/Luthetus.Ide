@@ -24,6 +24,7 @@ public partial class TestExplorerDisplay : FluxorComponent
 	private List<string> _dotNetTestListTestsCommandOutput = new();
 
     public Key<TerminalCommand> DotNetTestListTestsTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
+    public Key<TerminalCommand> DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
     public CancellationTokenSource DotNetTestListTestsCancellationTokenSource { get; set; } = new();
 
     private FormattedCommand FormattedCommand => DotNetCliCommandFormatter.FormatDotNetTestListTests();
@@ -79,9 +80,27 @@ public partial class TestExplorerDisplay : FluxorComponent
             }.ToImmutableArray());
     }
 
-	private void RunTestByFullyQualifiedName(string output)
+	private async Task RunTestByFullyQualifiedName(string fullyQualifiedName)
 	{
-		
+		var dotNetTestByFullyQualifiedNameFormattedCommand = DotNetCliCommandFormatter.FormatDotNetTestByFullyQualifiedName(fullyQualifiedName);
+
+		if (String.IsNullOrWhiteSpace(_directoryNameForTestDiscovery) ||
+			String.IsNullOrWhiteSpace(fullyQualifiedName))
+		{
+			return;
+		}
+
+		var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
+            TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
+
+        var dotNetTestByFullyQualifiedNameTerminalCommand = new TerminalCommand(
+            DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey,
+            dotNetTestByFullyQualifiedNameFormattedCommand,
+            _directoryNameForTestDiscovery,
+            CancellationToken.None,
+            () => Task.CompletedTask);
+
+        await generalTerminalSession.EnqueueCommandAsync(dotNetTestByFullyQualifiedNameTerminalCommand);
 	}
 }
  
