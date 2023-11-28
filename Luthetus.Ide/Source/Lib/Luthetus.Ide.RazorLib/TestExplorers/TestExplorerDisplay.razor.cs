@@ -21,6 +21,7 @@ public partial class TestExplorerDisplay : FluxorComponent
 	private const string DOTNET_TEST_LIST_TESTS_COMMAND = "dotnet test -t";
 
 	private string _directoryNameForTestDiscovery = string.Empty;
+	private List<string> _dotNetTestListTestsCommandOutput = new();
 
     public Key<TerminalCommand> DotNetTestListTestsTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
     public CancellationTokenSource DotNetTestListTestsCancellationTokenSource { get; set; } = new();
@@ -31,18 +32,26 @@ public partial class TestExplorerDisplay : FluxorComponent
     {
         var localFormattedCommand = FormattedCommand;
 
+		if (String.IsNullOrWhiteSpace(_directoryNameForTestDiscovery))
+			return;
+
+		var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
+            TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
+
         var dotNetTestListTestsCommand = new TerminalCommand(
-                DotNetTestListTestsTerminalCommandKey,
-                localFormattedCommand,
-                _directoryNameForTestDiscovery,
-                DotNetTestListTestsCancellationTokenSource.Token,
-                () => Task.CompletedTask);
+            DotNetTestListTestsTerminalCommandKey,
+            localFormattedCommand,
+            _directoryNameForTestDiscovery,
+            DotNetTestListTestsCancellationTokenSource.Token,
+            async () => 
+			{
+				var output = generalTerminalSession.ReadStandardOut(DotNetTestListTestsTerminalCommandKey);
 
-            var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
-                TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
+				_dotNetTestListTestsCommandOutput = DotNetCliOutputLexer.LexDotNetTestListTestsTerminalOutput(output);
+                await InvokeAsync(StateHasChanged);
+			});
 
-            await generalTerminalSession
-                .EnqueueCommandAsync(dotNetTestListTestsCommand);
+        await generalTerminalSession.EnqueueCommandAsync(dotNetTestListTestsCommand);
     }
 
 	private void RequestInputFileForTestDiscovery()
@@ -69,6 +78,11 @@ public partial class TestExplorerDisplay : FluxorComponent
                 new InputFilePattern("Directory", afp => afp.IsDirectory)
             }.ToImmutableArray());
     }
+
+	private void RunTestByFullyQualifiedName(string output)
+	{
+		
+	}
 }
  
     

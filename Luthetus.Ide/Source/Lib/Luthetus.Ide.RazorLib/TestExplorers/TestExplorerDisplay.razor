@@ -2,6 +2,7 @@
 @using Luthetus.Common.RazorLib.Contexts.Models
 @using Luthetus.Ide.RazorLib.Terminals.Displays
 @using Luthetus.Ide.RazorLib.Terminals.Models
+@using System.Collections.Immutable
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
@@ -57,7 +58,35 @@
 
 		<hr/>
 
-		<TerminalOutputDisplay TerminalSessionKey="TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY" 
-                               TerminalCommandKey="DotNetTestListTestsTerminalCommandKey" />
+		@{
+			var localDotNetTestListTestsCommandOutput = _dotNetTestListTestsCommandOutput
+				?.ToImmutableArray() ?? Array.Empty<string>().ToImmutableArray();
+			
+			if (localDotNetTestListTestsCommandOutput.Length == 0)
+			{
+				<div>NO OUTPUT</div>
+			}
+
+			foreach (var output in localDotNetTestListTestsCommandOutput)
+			{
+				<div style="margin-bottom: 15px;">
+					<button class="luth_button"
+							style="display: inline;"
+							@onclick="() => RunTestByFullyQualifiedName(output)">
+						Run:&nbsp;
+					</button>
+
+					@output
+				</div>
+			}
+		}
+
+		<hr/>
+		
+		<div style="height: 150px;">
+			<div>Terminal Output:</div>
+			<TerminalOutputDisplay TerminalSessionKey="TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY" 
+                                   TerminalCommandKey="DotNetTestListTestsTerminalCommandKey" />
+		</div>
     </div>
 </ContextBoundary>

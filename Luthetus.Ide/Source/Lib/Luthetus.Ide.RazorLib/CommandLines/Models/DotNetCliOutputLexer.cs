@@ -1,4 +1,4 @@
-﻿using Luthetus.Ide.RazorLib.Websites.ProjectTemplates.Models;
+using Luthetus.Ide.RazorLib.Websites.ProjectTemplates.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Text;
@@ -157,4 +157,29 @@ public static class DotNetCliOutputLexer
 
         return projectTemplateBag;
     }
+
+	public static List<string> LexDotNetTestListTestsTerminalOutput(string output)
+	{
+		if (output is null)
+			return new();
+
+		var textIndicatorForTheList = "The following Tests are available:";
+		var indicatorIndex = output.IndexOf(textIndicatorForTheList);
+		var remainingText = output[indicatorIndex..];
+
+		var lineBag = new List<string>();
+
+		using (var reader = new StringReader(remainingText))
+        {
+			var line = (string?)null;
+
+			while ((line = reader.ReadLine()) is not null)
+			{
+				if (line.StartsWith("\t") || line.StartsWith(" "))
+					lineBag.Add(line);
+			}
+        }
+	
+		return lineBag;
+	}
 }
