@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;

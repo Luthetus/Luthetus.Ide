@@ -145,7 +145,16 @@ public class ParserTests
 	[Fact]
 	public void PARSE_LiteralExpressionNode()
 	{
-		throw new NotImplementedException();
+		var resourceUri = new ResourceUri("UnitTests");
+		var sourceText = "3";
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+		lexer.Lex();
+		var parser = new CSharpParser(lexer);
+		var compilationUnit = parser.Parse();
+		var topCodeBlock = compilationUnit.TopLevelStatementsCodeBlockNode;
+
+		var literalExpressionNode = (LiteralExpressionNode)topCodeBlock.ChildBag.Single();
+		Assert.Equal(typeof(int), literalExpressionNode.TypeClauseNode.ValueType);
 	}
 	
 	[Fact]
@@ -157,7 +166,16 @@ public class ParserTests
 	[Fact]
 	public void PARSE_NamespaceStatementNode()
 	{
-		throw new NotImplementedException();
+		var resourceUri = new ResourceUri("UnitTests");
+		var sourceText = "namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis;";
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+		lexer.Lex();
+		var parser = new CSharpParser(lexer);
+		var compilationUnit = parser.Parse();
+		var topCodeBlock = compilationUnit.TopLevelStatementsCodeBlockNode;
+
+		var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildBag.Single();
+		Assert.Equal(SyntaxKind.NamespaceStatementNode, namespaceStatementNode.SyntaxKind);
 	}
 	
 	[Fact]
@@ -209,9 +227,18 @@ public class ParserTests
 	}
 	
 	[Fact]
-	public void PARSE_UsingDeclarationNode()
+	public void PARSE_UsingStatementNode()
 	{
-		throw new NotImplementedException();
+		var resourceUri = new ResourceUri("UnitTests");
+		var sourceText = "using Luthetus.TextEditor.RazorLib.Lexes.Models;";
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+		lexer.Lex();
+		var parser = new CSharpParser(lexer);
+		var compilationUnit = parser.Parse();
+		var topCodeBlock = compilationUnit.TopLevelStatementsCodeBlockNode;
+
+		var usingStatementNode = (UsingStatementNode)topCodeBlock.ChildBag.Single();
+		Assert.Equal(SyntaxKind.UsingStatementNode, usingStatementNode.SyntaxKind);
 	}
 	
 	[Fact]
