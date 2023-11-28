@@ -18,6 +18,20 @@ public class ParserTests
 	[Fact]
 	public void PARSE_AttributeNode()
 	{
+		var resourceUri = new ResourceUri("UnitTests");
+		var sourceText = @"public class MyComponent
+{
+	[Parameter]
+	public int MyParameter { get; set; }
+}";
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+		lexer.Lex();
+		var parser = new CSharpParser(lexer);
+		var compilationUnit = parser.Parse();
+		var topCodeBlock = compilationUnit.TopLevelStatementsCodeBlockNode;
+
+		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.ChildBag.Single();
+
 		throw new NotImplementedException();
 	}
 	
