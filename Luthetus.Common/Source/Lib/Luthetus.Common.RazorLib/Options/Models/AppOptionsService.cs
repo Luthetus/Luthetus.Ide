@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using System.Text.Json;
 using Luthetus.Common.RazorLib.Storages.States;
 using Luthetus.Common.RazorLib.Options.States;
@@ -33,7 +33,11 @@ public class AppOptionsService : IAppOptionsService
     public IState<AppOptionsState> AppOptionsStateWrap { get; }
     public IState<ThemeState> ThemeStateWrap { get; }
 
+#if DEBUG
+    public string StorageKey => "luthetus-common_theme-storage-key-debug"; 
+#else
     public string StorageKey => "luthetus-common_theme-storage-key";
+#endif
 
     public string ThemeCssClassString => ThemeStateWrap.Value.ThemeBag.FirstOrDefault(
         x => x.Key == AppOptionsStateWrap.Value.Options.ThemeKey)

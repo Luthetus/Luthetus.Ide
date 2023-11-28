@@ -1,4 +1,4 @@
-﻿using CliWrap;
+using CliWrap;
 using CliWrap.EventStream;
 using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -22,6 +22,8 @@ public class TerminalSession
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
     private readonly List<TerminalCommand> _terminalCommandsHistory = new();
+    private readonly object _standardOutBuilderMapLock = new();
+
     private CancellationTokenSource _commandCancellationTokenSource = new();
 
     private readonly ConcurrentQueue<TerminalCommand> _terminalCommandsConcurrentQueue = new();
@@ -59,17 +61,29 @@ public class TerminalSession
 
     public string ReadStandardOut()
     {
-        return string.Join(
-            string.Empty,
-            _standardOutBuilderMap.Select(x => x.Value.ToString()).ToArray());
+		var output = string.Empty;
+
+		lock(_standardOutBuilderMapLock)
+		{
+			output = string.Join(
+	            string.Empty,
+	            _standardOutBuilderMap.Select(x => x.Value.ToString()).ToArray());
+		}
+
+        return output;
     }
 
     public string? ReadStandardOut(Key<TerminalCommand> terminalCommandKey)
     {
-        if (_standardOutBuilderMap.TryGetValue(terminalCommandKey, out var output))
-            return output.ToString();
+		var output = (string?)null;
 
-        return null;
+		lock(_standardOutBuilderMapLock)
+		{
+			if (_standardOutBuilderMap.TryGetValue(terminalCommandKey, out var outputBuilder))
+	            output = outputBuilder.ToString();
+		}
+
+        return output;
     }
 
     public Task EnqueueCommandAsync(TerminalCommand terminalCommand)
@@ -104,8 +118,11 @@ public class TerminalSession
                 // Push-based event stream
                 {
                     var terminalCommandKey = terminalCommand.TerminalCommandKey;
-
-                    _standardOutBuilderMap.TryAdd(terminalCommand.TerminalCommandKey, new StringBuilder());
+					
+					lock(_standardOutBuilderMapLock)
+					{
+						_standardOutBuilderMap.TryAdd(terminalCommand.TerminalCommandKey, new StringBuilder());
+					}
 
                     HasExecutingProcess = true;
                     DispatchNewStateKey();
@@ -115,25 +132,31 @@ public class TerminalSession
                         await command.Observe(_commandCancellationTokenSource.Token)
                             .ForEachAsync(cmdEvent =>
                             {
+								var output = (string?)null;
+
                                 switch (cmdEvent)
                                 {
                                     case StartedCommandEvent started:
-                                        _standardOutBuilderMap[terminalCommandKey].AppendLine(
-                                            $"> {WorkingDirectoryAbsolutePathString} (PID:{started.ProcessId}) {terminalCommand.FormattedCommand.Value}");
+                                        output = $"> {WorkingDirectoryAbsolutePathString} (PID:{started.ProcessId}) {terminalCommand.FormattedCommand.Value}";
                                         break;
                                     case StandardOutputCommandEvent stdOut:
-                                        _standardOutBuilderMap[terminalCommandKey].AppendLine(
-                                            $"{stdOut.Text}");
+                                        output = $"{stdOut.Text}";
                                         break;
                                     case StandardErrorCommandEvent stdErr:
-                                        _standardOutBuilderMap[terminalCommandKey].AppendLine(
-                                            $"Err> {stdErr.Text}");
+                                        output = $"Err> {stdErr.Text}";
                                         break;
                                     case ExitedCommandEvent exited:
-                                        _standardOutBuilderMap[terminalCommandKey].AppendLine(
-                                            $"Process exited; Code: {exited.ExitCode}");
+                                        output = $"Process exited; Code: {exited.ExitCode}";
                                         break;
                                 }
+
+								if (output is not null)
+								{
+									lock(_standardOutBuilderMapLock)
+									{
+										_standardOutBuilderMap[terminalCommandKey].AppendLine(output);
+									}
+								}
 
                                 DispatchNewStateKey();
                             });
@@ -158,21 +181,13 @@ public class TerminalSession
 
     public void ClearStandardOut()
     {
-        // TODO: Rewrite this - see contiguous comment block
-        //
-        // This is awkward but concurrency exceptions I believe might occur
-        // otherwise given the current way the code is written (2022-02-11)
-        //
-        // If one tries to write to standard out dictionary they need a key value entry
-        // to exist or they add one
-        // 
-        // If one sees a key value entry exists they can use the existing StringBuilder
-        // but I am tempted to write _standardOutBuilderMap.Clear() thereby
-        // clearing all the key value pairs as they write to the StringBuilder.
-        foreach (var stringBuilder in _standardOutBuilderMap.Values)
-        {
-            stringBuilder.Clear();
-        }
+		lock(_standardOutBuilderMapLock)
+		{
+			foreach (var stringBuilder in _standardOutBuilderMap.Values)
+	        {
+	            stringBuilder.Clear();
+	        }
+		}
 
         DispatchNewStateKey();
     }
