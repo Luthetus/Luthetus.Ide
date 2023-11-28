@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 
 namespace Luthetus.Ide.RazorLib.CommandLines.Models;
 
@@ -164,5 +164,12 @@ public static class DotNetCliCommandFormatter
         {
             "new",
             "--list",
+        });
+	
+	public static FormattedCommand FormatDotNetTestListTests() =>
+        new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
+        {
+            "test",
+            "-t",
         });
 }
