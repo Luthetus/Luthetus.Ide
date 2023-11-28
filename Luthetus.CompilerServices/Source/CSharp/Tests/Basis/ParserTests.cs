@@ -1,3 +1,10 @@
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+
 namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis;
 
 public class ParserTests
@@ -17,7 +24,26 @@ public class ParserTests
 	[Fact]
 	public void PARSE_BinaryExpressionNode()
 	{
-		throw new NotImplementedException();
+		var resourceUri = new ResourceUri("UnitTests");
+		var sourceText = "2 + 2";
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+		lexer.Lex();
+		var parser = new CSharpParser(lexer);
+		var compilationUnit = parser.Parse();
+		var topCodeBlock = compilationUnit.TopLevelStatementsCodeBlockNode;
+
+		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.ChildBag.Single();
+
+		var leftLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.LeftExpressionNode;
+		var binaryOperatorNode = (BinaryOperatorNode)binaryExpressionNode.BinaryOperatorNode;
+		var rightLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.RightExpressionNode;
+
+		Assert.Equal(typeof(int), leftLiteralExpressionNode.TypeClauseNode.ValueType);
+
+		Assert.Equal(typeof(int), binaryOperatorNode.TypeClauseNode.ValueType);
+		Assert.Equal(SyntaxKind.PlusToken, binaryOperatorNode.OperatorToken.SyntaxKind);
+
+		Assert.Equal(typeof(int), rightLiteralExpressionNode.TypeClauseNode.ValueType);
 	}
 	
 	[Fact]

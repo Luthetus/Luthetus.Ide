@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
@@ -25,6 +25,9 @@ public sealed record BinaryOperatorNode : ISyntaxNode
     public TypeClauseNode LeftOperandTypeClauseNode { get; }
     public ISyntaxToken OperatorToken { get; }
     public TypeClauseNode RightOperandTypeClauseNode { get; }
+	/// <summary>
+	/// TypeClauseNode refers to the return type of the binary expression.
+	/// </summary>
     public TypeClauseNode TypeClauseNode { get; }
 
     public ImmutableArray<ISyntax> ChildBag { get; }
