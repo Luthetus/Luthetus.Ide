@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
@@ -7,6 +7,7 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.WatchWindows.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.WatchWindows.Displays;
 
@@ -23,6 +24,8 @@ public partial class WatchWindowDisplay : FluxorComponent
     private IDropdownService DropdownService { get; set; } = null!;
     [Inject]
     private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
+	[Inject]
+    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public WatchWindowObject WatchWindowObject { get; set; } = null!;
@@ -37,8 +40,8 @@ public partial class WatchWindowDisplay : FluxorComponent
 
     protected override void OnInitialized()
     {
-        _treeViewMouseEventHandler = new(TreeViewService);
-        _treeViewKeyboardEventHandler = new(TreeViewService);
+        _treeViewMouseEventHandler = new(TreeViewService, BackgroundTaskService);
+        _treeViewKeyboardEventHandler = new(TreeViewService, BackgroundTaskService);
         base.OnInitialized();
     }
 

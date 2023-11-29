@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -9,6 +9,7 @@ using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.TreeViews.Displays;
 
@@ -22,6 +23,8 @@ public partial class TreeViewContainerDisplay : FluxorComponent
     private IStateSelection<TreeViewState, TreeViewContainer?> TreeViewStateSelection { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
+	[Inject]
+    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
 
@@ -173,7 +176,12 @@ public partial class TreeViewContainerDisplay : FluxorComponent
             null);
 
         if (OnContextMenuFunc is not null)
-            await OnContextMenuFunc.Invoke(_treeViewContextMenuCommandArgs);
+		{
+			BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+	        	"TreeView.HandleTreeViewOnContextMenu",
+				async () => await OnContextMenuFunc
+					.Invoke(_treeViewContextMenuCommandArgs));
+		}
 
         await InvokeAsync(StateHasChanged);
     }

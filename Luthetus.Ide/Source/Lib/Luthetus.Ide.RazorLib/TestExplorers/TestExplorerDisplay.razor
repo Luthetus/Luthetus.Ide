@@ -3,6 +3,10 @@
 @using Luthetus.Ide.RazorLib.Terminals.Displays
 @using Luthetus.Ide.RazorLib.Terminals.Models
 @using System.Collections.Immutable
+@using Luthetus.Common.RazorLib.Dropdowns.Displays
+@using Luthetus.Common.RazorLib.Dropdowns.Models;
+@using Luthetus.Common.RazorLib.TreeViews.Displays
+@using Luthetus.Common.RazorLib.TreeViews.Models;
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
@@ -56,28 +60,41 @@
 			DOTNET_TEST_LIST_TESTS_COMMAND
 		</button>
 
+		<button class="luth_button"
+				style="margin-top: 15px;"
+				@onclick="SetTreeViewAsync">
+			SetTreeViewAsync @(RootStringFragmentMap.Count) @(_firstIf)
+		</button>
+
 		<hr/>
 
 		@{
-			var localDotNetTestListTestsCommandOutput = _dotNetTestListTestsCommandOutput
-				?.ToImmutableArray() ?? Array.Empty<string>().ToImmutableArray();
+			var localRootStringFragmentMap = RootStringFragmentMap;
 			
-			if (localDotNetTestListTestsCommandOutput.Length == 0)
+			if (localRootStringFragmentMap.Count == 0)
 			{
 				<div>NO OUTPUT</div>
 			}
-
-			foreach (var output in localDotNetTestListTestsCommandOutput)
+			else
 			{
-				<div style="margin-bottom: 15px;">
-					<button class="luth_button"
-							style="display: inline;"
-							@onclick="() => RunTestByFullyQualifiedName(output)">
-						Run:&nbsp;
-					</button>
+				<CascadingValue Name="LuthetusTreeViewIconWidth" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
+	                <CascadingValue Name="LuthetusTreeViewIconHeight" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
+	                    <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
+	                        <TreeViewContainerDisplay TreeViewStateKey="TreeViewTestExplorerKey"
+	                                                  CssStyleString="height: 100%;"
+	                                                  OnContextMenuFunc="OnTreeViewContextMenuFunc"
+	                                                  TreeViewKeyboardEventHandler="_treeViewKeyboardEventHandler"
+	                                                  TreeViewMouseEventHandler="_treeViewMouseEventHandler" />
+	                    </CascadingValue>
+	                </CascadingValue>
+	            </CascadingValue>
 
-					@output
-				</div>
+				<DropdownDisplay DropdownKey="TestExplorerContextMenu.ContextMenuEventDropdownKey"
+	                             DropdownPositionKind="DropdownPositionKind.Unset"
+	                             CssStyleString="@TestExplorerContextMenu.GetContextMenuCssStyleString(_mostRecentTreeViewCommandArgs)">
+	
+	                <TestExplorerContextMenu TreeViewCommandArgs="_mostRecentTreeViewCommandArgs" />
+	            </DropdownDisplay>
 			}
 		}
 

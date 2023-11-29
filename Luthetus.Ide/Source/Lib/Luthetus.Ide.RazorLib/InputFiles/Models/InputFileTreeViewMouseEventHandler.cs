@@ -1,9 +1,10 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Ide.RazorLib.InputFiles.States;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.InputFiles.Models;
 
@@ -15,8 +16,9 @@ public class InputFileTreeViewMouseEventHandler : TreeViewMouseEventHandler
     public InputFileTreeViewMouseEventHandler(
         ITreeViewService treeViewService,
         IDispatcher dispatcher,
-        Func<IAbsolutePath, Task> setInputFileContentTreeViewRootFunc)
-        : base(treeViewService)
+        Func<IAbsolutePath, Task> setInputFileContentTreeViewRootFunc,
+		IBackgroundTaskService backgroundTaskService)
+        : base(treeViewService, backgroundTaskService)
     {
         _dispatcher = dispatcher;
         _setInputFileContentTreeViewRootFunc = setInputFileContentTreeViewRootFunc;

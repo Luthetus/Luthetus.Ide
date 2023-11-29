@@ -1,4 +1,6 @@
-﻿using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Common.RazorLib.TreeViews.Models;
 
@@ -8,11 +10,15 @@ namespace Luthetus.Common.RazorLib.TreeViews.Models;
 /// </summary>
 public class TreeViewMouseEventHandler
 {
-    protected readonly ITreeViewService _treeViewService;
+    protected readonly ITreeViewService TreeViewService;
+    protected readonly IBackgroundTaskService BackgroundTaskService;
 
-    public TreeViewMouseEventHandler(ITreeViewService treeViewService)
+    public TreeViewMouseEventHandler(
+		ITreeViewService treeViewService,
+		IBackgroundTaskService backgroundTaskService)
     {
-        _treeViewService = treeViewService;
+        TreeViewService = treeViewService;
+		BackgroundTaskService = backgroundTaskService;
     }
 
     /// <summary>Used for handing "onclick" events within the user interface</summary>
@@ -22,7 +28,7 @@ public class TreeViewMouseEventHandler
             commandArgs.MouseEventArgs.CtrlKey &&
             commandArgs.TargetNode is not null)
         {
-            _treeViewService.AddSelectedNode(
+            TreeViewService.AddSelectedNode(
                 commandArgs.TreeViewContainer.Key,
                 commandArgs.TargetNode);
         }
@@ -33,7 +39,9 @@ public class TreeViewMouseEventHandler
     /// <summary>Used for handing "ondblclick" events within the user interface</summary>
     public virtual void OnDoubleClick(TreeViewCommandArgs commandArgs)
     {
-        _ = Task.Run(async () => await OnDoubleClickAsync(commandArgs));
+		BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+        	"TreeView.OnKeyDown",
+			async () => await OnDoubleClickAsync(commandArgs));
         return;
     }
 
@@ -49,7 +57,7 @@ public class TreeViewMouseEventHandler
         if (commandArgs.TargetNode is null)
             return;
 
-        _treeViewService.SetActiveNode(
+        TreeViewService.SetActiveNode(
             commandArgs.TreeViewContainer.Key,
             commandArgs.TargetNode);
 
@@ -76,6 +84,6 @@ public class TreeViewMouseEventHandler
             }
         }
 
-        _treeViewService.ClearSelectedNodes(commandArgs.TreeViewContainer.Key);
+        TreeViewService.ClearSelectedNodes(commandArgs.TreeViewContainer.Key);
     }
 }

@@ -23,6 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\..\..\Luthetus.Ide\Source\Tests\Luthetus.Ide.Tests\Luthetus.Ide.Tests.csproj" />
       <ProjectReference Include="..\..\Lib\Luthetus.TextEditor.RazorLib\Luthetus.TextEditor.RazorLib.csproj" />
     </ItemGroup>
 

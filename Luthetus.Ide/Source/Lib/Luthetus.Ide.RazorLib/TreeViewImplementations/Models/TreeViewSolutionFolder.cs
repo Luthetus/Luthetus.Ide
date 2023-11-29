@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.WatchWindows.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -62,6 +62,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
 
         try
         {
+			LinkChildren(ChildBag, ChildBag);
         }
         catch (Exception exception)
         {

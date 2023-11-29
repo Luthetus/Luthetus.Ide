@@ -8,6 +8,13 @@ using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.InputFiles.States;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
+using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.Dropdowns.States;
 
 namespace Luthetus.Ide.RazorLib.TestExplorers;
 
@@ -17,17 +24,79 @@ public partial class TestExplorerDisplay : FluxorComponent
     private IState<TerminalSessionState> TerminalSessionsStateWrap { get; set; } = null!;
 	[Inject]
     private InputFileSync InputFileSync { get; set; } = null!;
+	[Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
+	[Inject]
+    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+	[Inject]
+    private ITreeViewService TreeViewService { get; set; } = null!;
+	[Inject]
+    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+	[Inject]
+    private ILuthetusCommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
 
 	private const string DOTNET_TEST_LIST_TESTS_COMMAND = "dotnet test -t";
+	
+	public static readonly Key<TreeViewContainer> TreeViewTestExplorerKey = Key<TreeViewContainer>.NewKey();
 
 	private string _directoryNameForTestDiscovery = string.Empty;
 	private List<string> _dotNetTestListTestsCommandOutput = new();
+	private Dictionary<string, StringFragment> RootStringFragmentMap = new();
+    private TreeViewCommandArgs? _mostRecentTreeViewCommandArgs;
+	private TreeViewKeyboardEventHandler _treeViewKeyboardEventHandler = null!;
+    private TreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
+	private bool _firstIf = false;
 
     public Key<TerminalCommand> DotNetTestListTestsTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
     public Key<TerminalCommand> DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
     public CancellationTokenSource DotNetTestListTestsCancellationTokenSource { get; set; } = new();
 
     private FormattedCommand FormattedCommand => DotNetCliCommandFormatter.FormatDotNetTestListTests();
+	
+	private int OffsetPerDepthInPixels => (int)Math.Ceiling(
+        AppOptionsStateWrap.Value.Options.IconSizeInPixels * (2.0 / 3.0));
+
+	protected override void OnInitialized()
+    {
+        _treeViewKeyboardEventHandler = new TreeViewKeyboardEventHandler(
+            TreeViewService,
+			BackgroundTaskService);
+
+        _treeViewMouseEventHandler = new TreeViewMouseEventHandler(
+            TreeViewService,
+			BackgroundTaskService);
+
+        base.OnInitialized();
+    }
+
+	private async Task SetTreeViewAsync()
+    {
+		var rootStringFragment = new StringFragment(string.Empty);
+		rootStringFragment.Map = RootStringFragmentMap;
+
+        var rootNode = new TreeViewStringFragment(
+            rootStringFragment,
+            CommonComponentRenderers,
+            true,
+            true);
+
+        await rootNode.LoadChildBagAsync();
+
+        if (!TreeViewService.TryGetTreeViewContainer(TreeViewTestExplorerKey, out _))
+        {
+			_firstIf = true;
+
+            TreeViewService.RegisterTreeViewContainer(new TreeViewContainer(
+                TreeViewTestExplorerKey,
+                rootNode,
+                new TreeViewNoType[] { rootNode }.ToImmutableList()));
+        }
+        else
+        {
+            TreeViewService.SetRoot(TreeViewTestExplorerKey, rootNode);
+            TreeViewService.SetActiveNode(TreeViewTestExplorerKey, rootNode);
+        }
+    }
 
 	private async Task StartDotNetTestListTestsCommandOnClick()
     {
@@ -49,7 +118,8 @@ public partial class TestExplorerDisplay : FluxorComponent
 				var output = generalTerminalSession.ReadStandardOut(DotNetTestListTestsTerminalCommandKey);
 
 				_dotNetTestListTestsCommandOutput = DotNetCliOutputLexer.LexDotNetTestListTestsTerminalOutput(output);
-                await InvokeAsync(StateHasChanged);
+    			THINKING_ABOUT_TREE_VIEW();
+				await InvokeAsync(StateHasChanged);
 			});
 
         await generalTerminalSession.EnqueueCommandAsync(dotNetTestListTestsCommand);
@@ -102,6 +172,41 @@ public partial class TestExplorerDisplay : FluxorComponent
 
         await generalTerminalSession.EnqueueCommandAsync(dotNetTestByFullyQualifiedNameTerminalCommand);
 	}
+
+	private void THINKING_ABOUT_TREE_VIEW()
+	{
+		var splitOutputBag = _dotNetTestListTestsCommandOutput
+			.Select(x => x.Split('.'));
+
+		foreach (var splitOutput in splitOutputBag)
+		{
+			var targetMap = RootStringFragmentMap;
+			var lastSeenStringFragment = (StringFragment?)null;
+
+			foreach (var fragment in splitOutput)
+			{
+				if (!targetMap.ContainsKey(fragment))
+					targetMap.Add(fragment, new(fragment));
+
+				lastSeenStringFragment = targetMap[fragment];
+				targetMap = lastSeenStringFragment.Map;
+			}
+			
+			lastSeenStringFragment.IsEndpoint = true;
+		}
+	}
+
+	private async Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
+    {
+        _mostRecentTreeViewCommandArgs = treeViewCommandArgs;
+
+        Dispatcher.Dispatch(new DropdownState.AddActiveAction(
+            TestExplorerContextMenu.ContextMenuEventDropdownKey));
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+	
 }
  
     

@@ -1,5 +1,7 @@
-﻿using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Common.RazorLib.TreeViews.Models;
 
@@ -10,10 +12,14 @@ namespace Luthetus.Common.RazorLib.TreeViews.Models;
 public class TreeViewKeyboardEventHandler
 {
     protected readonly ITreeViewService TreeViewService;
+    protected readonly IBackgroundTaskService BackgroundTaskService;
 
-    public TreeViewKeyboardEventHandler(ITreeViewService treeViewService)
+    public TreeViewKeyboardEventHandler(
+		ITreeViewService treeViewService,
+		IBackgroundTaskService backgroundTaskService)
     {
         TreeViewService = treeViewService;
+		BackgroundTaskService = backgroundTaskService;
     }
 
     /// <summary>Used for handling "onkeydownwithpreventscroll" events within the user interface</summary>
@@ -58,7 +64,9 @@ public class TreeViewKeyboardEventHandler
                 break;
         }
 
-        _ = Task.Run(async () => await OnKeyDownAsync(commandArgs));
+		BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+        	"TreeView.OnKeyDown",
+			async () => await OnKeyDownAsync(commandArgs));
     }
 
     /// <summary>Used for handling "onkeydownwithpreventscroll" events within the user interface</summary>
