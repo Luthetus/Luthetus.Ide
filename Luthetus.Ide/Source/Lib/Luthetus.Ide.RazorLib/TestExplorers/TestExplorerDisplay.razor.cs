@@ -74,13 +74,47 @@ public partial class TestExplorerDisplay : FluxorComponent
 		var rootStringFragment = new StringFragment(string.Empty);
 		rootStringFragment.Map = RootStringFragmentMap;
 
-        var rootNode = new TreeViewStringFragment(
-            rootStringFragment,
-            CommonComponentRenderers,
-            true,
-            true);
+		var adhocChildren = rootStringFragment.Map.Select(kvp => 
+			(TreeViewNoType)new TreeViewStringFragment(
+	            kvp.Value,
+	            CommonComponentRenderers,
+	            true,
+	            true))
+			.ToArray();
 
-        await rootNode.LoadChildBagAsync();
+		for (var i = 0; i < adhocChildren.Length; i++)
+		{
+			var child = (TreeViewStringFragment)adhocChildren[i];
+			await child.LoadChildBagAsync();
+
+			if (child.ChildBag.Count == 1)
+			{
+				// Merge parent and child
+
+				var singleInnerChild = (TreeViewStringFragment)child.ChildBag.Single();
+
+				var mergedStringFragment = new StringFragment(
+					$"{child.Item.Value}.{singleInnerChild.Item.Value}");
+
+				mergedStringFragment.Map = singleInnerChild.Item.Map;
+
+				var mergedTreeView = new TreeViewStringFragment(
+		            mergedStringFragment,
+		            CommonComponentRenderers,
+		            child.IsExpandable,
+		            child.IsExpanded);
+
+				adhocChildren[i] = mergedTreeView;
+			}
+		}
+
+        var adhocRoot = TreeViewAdhoc.ConstructTreeViewAdhoc(adhocChildren);
+
+		var firstNode = adhocChildren.FirstOrDefault();
+
+		var activeNodes = firstNode is null
+			? Array.Empty<TreeViewNoType>()
+			: new TreeViewNoType[] { firstNode };
 
         if (!TreeViewService.TryGetTreeViewContainer(TreeViewTestExplorerKey, out _))
         {
@@ -88,13 +122,13 @@ public partial class TestExplorerDisplay : FluxorComponent
 
             TreeViewService.RegisterTreeViewContainer(new TreeViewContainer(
                 TreeViewTestExplorerKey,
-                rootNode,
-                new TreeViewNoType[] { rootNode }.ToImmutableList()));
+                adhocRoot,
+                activeNodes.ToImmutableList()));
         }
         else
         {
-            TreeViewService.SetRoot(TreeViewTestExplorerKey, rootNode);
-            TreeViewService.SetActiveNode(TreeViewTestExplorerKey, rootNode);
+            TreeViewService.SetRoot(TreeViewTestExplorerKey, adhocRoot);
+            TreeViewService.SetActiveNode(TreeViewTestExplorerKey, firstNode);
         }
     }
 
