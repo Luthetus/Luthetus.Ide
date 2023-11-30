@@ -63,6 +63,12 @@ public class TreeViewStringFragment : TreeViewWithType<StringFragment>
 			{
 				var child = (TreeViewStringFragment)newChildBag[i];
 				await child.LoadChildBagAsync();
+
+				if (child.ChildBag.Count == 0)
+				{
+					child.IsExpandable = false;
+					child.IsExpanded = false;
+				}
 			}
 	
 			if (newChildBag.Count == 1)
@@ -73,13 +79,15 @@ public class TreeViewStringFragment : TreeViewWithType<StringFragment>
 
 				Item.Value = $"{Item.Value}.{child.Item.Value}";
 				Item.Map = child.Item.Map;
+
+				newChildBag = child.ChildBag;
 			}
 
-			newChildBag = Item.Map.Select(kvp => (TreeViewNoType)new TreeViewStringFragment(
-				kvp.Value,
-				CommonComponentRenderers,
-				true,
-				false)).ToList();
+			// newChildBag = Item.Map.Select(kvp => (TreeViewNoType)new TreeViewStringFragment(
+			// 	kvp.Value,
+			// 	CommonComponentRenderers,
+			// 	true,
+			// 	false)).ToList();
 
             ChildBag = newChildBag;
             LinkChildren(previousChildren, ChildBag);

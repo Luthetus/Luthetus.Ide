@@ -88,13 +88,15 @@
 	                    </CascadingValue>
 	                </CascadingValue>
 	            </CascadingValue>
-
-				<DropdownDisplay DropdownKey="TestExplorerContextMenu.ContextMenuEventDropdownKey"
-	                             DropdownPositionKind="DropdownPositionKind.Unset"
-	                             CssStyleString="@TestExplorerContextMenu.GetContextMenuCssStyleString(_mostRecentTreeViewCommandArgs)">
-	
-	                <TestExplorerContextMenu TreeViewCommandArgs="_mostRecentTreeViewCommandArgs" />
-	            </DropdownDisplay>
+				
+				<CascadingValue Value="_directoryNameForTestDiscovery" Name="DirectoryNameForTestDiscovery">
+					<DropdownDisplay DropdownKey="TestExplorerContextMenu.ContextMenuEventDropdownKey"
+		                             DropdownPositionKind="DropdownPositionKind.Unset"
+		                             CssStyleString="@TestExplorerContextMenu.GetContextMenuCssStyleString(_mostRecentTreeViewCommandArgs)">
+		
+		                <TestExplorerContextMenu TreeViewCommandArgs="_mostRecentTreeViewCommandArgs" />
+		            </DropdownDisplay>
+				</CascadingValue>
 			}
 		}
 
@@ -102,14 +104,14 @@
 		
 		<div style="height: 150px;">
 			<div>DotNetTestListTestsTerminalCommandKey Terminal Output:</div>
-			<TerminalOutputDisplay TerminalSessionKey="TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY" 
+			<TerminalOutputDisplay TerminalSessionKey="TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY" 
                                    TerminalCommandKey="DotNetTestListTestsTerminalCommandKey" />
 		</div>
 		
 		<div style="height: 150px;">
 			<div>DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey Terminal Output:</div>
-			<TerminalOutputDisplay TerminalSessionKey="TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY" 
-                                   TerminalCommandKey="DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey" />
+			<TerminalOutputDisplay TerminalSessionKey="TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY" 
+                                   TerminalCommandKey="TestExplorerContextMenu.DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey" />
 		</div>
     </div>
 </ContextBoundary>

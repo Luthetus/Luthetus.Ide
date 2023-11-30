@@ -48,7 +48,6 @@ public partial class TestExplorerDisplay : FluxorComponent
 	private bool _firstIf = false;
 
     public Key<TerminalCommand> DotNetTestListTestsTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
-    public Key<TerminalCommand> DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
     public CancellationTokenSource DotNetTestListTestsCancellationTokenSource { get; set; } = new();
 
     private FormattedCommand FormattedCommand => DotNetCliCommandFormatter.FormatDotNetTestListTests();
@@ -119,8 +118,8 @@ public partial class TestExplorerDisplay : FluxorComponent
 		if (String.IsNullOrWhiteSpace(_directoryNameForTestDiscovery))
 			return;
 
-		var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
-            TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
+		var executionTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
+            TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY];
 
         var dotNetTestListTestsCommand = new TerminalCommand(
             DotNetTestListTestsTerminalCommandKey,
@@ -129,14 +128,14 @@ public partial class TestExplorerDisplay : FluxorComponent
             DotNetTestListTestsCancellationTokenSource.Token,
             async () => 
 			{
-				var output = generalTerminalSession.ReadStandardOut(DotNetTestListTestsTerminalCommandKey);
+				var output = executionTerminalSession.ReadStandardOut(DotNetTestListTestsTerminalCommandKey);
 
 				_dotNetTestListTestsCommandOutput = DotNetCliOutputLexer.LexDotNetTestListTestsTerminalOutput(output);
     			THINKING_ABOUT_TREE_VIEW();
 				await InvokeAsync(StateHasChanged);
 			});
 
-        await generalTerminalSession.EnqueueCommandAsync(dotNetTestListTestsCommand);
+        await executionTerminalSession.EnqueueCommandAsync(dotNetTestListTestsCommand);
     }
 
 	private void RequestInputFileForTestDiscovery()
@@ -163,29 +162,6 @@ public partial class TestExplorerDisplay : FluxorComponent
                 new InputFilePattern("Directory", afp => afp.IsDirectory)
             }.ToImmutableArray());
     }
-
-	private async Task RunTestByFullyQualifiedName(string fullyQualifiedName)
-	{
-		var dotNetTestByFullyQualifiedNameFormattedCommand = DotNetCliCommandFormatter.FormatDotNetTestByFullyQualifiedName(fullyQualifiedName);
-
-		if (String.IsNullOrWhiteSpace(_directoryNameForTestDiscovery) ||
-			String.IsNullOrWhiteSpace(fullyQualifiedName))
-		{
-			return;
-		}
-
-		var generalTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
-            TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
-
-        var dotNetTestByFullyQualifiedNameTerminalCommand = new TerminalCommand(
-            DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey,
-            dotNetTestByFullyQualifiedNameFormattedCommand,
-            _directoryNameForTestDiscovery,
-            CancellationToken.None,
-            () => Task.CompletedTask);
-
-        await generalTerminalSession.EnqueueCommandAsync(dotNetTestByFullyQualifiedNameTerminalCommand);
-	}
 
 	private void THINKING_ABOUT_TREE_VIEW()
 	{
