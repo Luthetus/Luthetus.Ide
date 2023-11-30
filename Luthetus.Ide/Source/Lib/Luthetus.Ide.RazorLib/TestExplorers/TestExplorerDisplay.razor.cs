@@ -84,28 +84,8 @@ public partial class TestExplorerDisplay : FluxorComponent
 
 		for (var i = 0; i < adhocChildren.Length; i++)
 		{
-			var child = (TreeViewStringFragment)adhocChildren[i];
-			await child.LoadChildBagAsync();
-
-			if (child.ChildBag.Count == 1)
-			{
-				// Merge parent and child
-
-				var singleInnerChild = (TreeViewStringFragment)child.ChildBag.Single();
-
-				var mergedStringFragment = new StringFragment(
-					$"{child.Item.Value}.{singleInnerChild.Item.Value}");
-
-				mergedStringFragment.Map = singleInnerChild.Item.Map;
-
-				var mergedTreeView = new TreeViewStringFragment(
-		            mergedStringFragment,
-		            CommonComponentRenderers,
-		            child.IsExpandable,
-		            child.IsExpanded);
-
-				adhocChildren[i] = mergedTreeView;
-			}
+			var node = (TreeViewStringFragment)adhocChildren[i];
+			await node.LoadChildBagAsync();
 		}
 
         var adhocRoot = TreeViewAdhoc.ConstructTreeViewAdhoc(adhocChildren);

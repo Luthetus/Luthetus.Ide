@@ -59,6 +59,28 @@ public class TreeViewStringFragment : TreeViewWithType<StringFragment>
 				true,
 				false)).ToList();
 
+			for (var i = 0; i < newChildBag.Count; i++)
+			{
+				var child = (TreeViewStringFragment)newChildBag[i];
+				await child.LoadChildBagAsync();
+			}
+	
+			if (newChildBag.Count == 1)
+			{
+				// Merge parent and child
+
+				var child = (TreeViewStringFragment)newChildBag.Single();
+
+				Item.Value = $"{Item.Value}.{child.Item.Value}";
+				Item.Map = child.Item.Map;
+			}
+
+			newChildBag = Item.Map.Select(kvp => (TreeViewNoType)new TreeViewStringFragment(
+				kvp.Value,
+				CommonComponentRenderers,
+				true,
+				false)).ToList();
+
             ChildBag = newChildBag;
             LinkChildren(previousChildren, ChildBag);
         }
