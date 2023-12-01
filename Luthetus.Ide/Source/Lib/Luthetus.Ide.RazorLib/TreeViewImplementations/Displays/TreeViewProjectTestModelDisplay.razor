@@ -1,1 +1,7 @@
-@TreeViewProjectTestModel.Item.AbsolutePath.NameWithExtension
+<span title="@TreeViewProjectTestModel.Item.DirectoryNameForTestDiscovery">
+	@TreeViewProjectTestModel.Item.AbsolutePath.NameWithExtension
+
+	COUNT:@TreeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput.Count
+
+	@(string.Join('z', TreeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput))
+</span>

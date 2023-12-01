@@ -33,13 +33,6 @@
 		else
 		{
 			<div>@dotNetSolutionModel.AbsolutePath.Value</div>
-			
-			<div>
-				@foreach (var project in dotNetSolutionModel.DotNetProjectBag)
-				{
-					<div>@project.DisplayName</div>
-				}
-			</div>
 
 			<CascadingValue Name="LuthetusTreeViewIconWidth" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
                 <CascadingValue Name="LuthetusTreeViewIconHeight" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">

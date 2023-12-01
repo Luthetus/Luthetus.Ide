@@ -11,6 +11,7 @@ public class ProjectTestModel
 	public Dictionary<string, StringFragment> RootStringFragmentMap { get; set; } = new();
 	public IAbsolutePath AbsolutePath { get; set; }
 	public Key<TerminalCommand> DotNetTestListTestsTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
+	public Func<Task> EnqueueDiscoverTestsFunc { get; set; }
 	
-	public string DirectoryNameForTestDiscovery => AbsolutePath.Value;
+	public string DirectoryNameForTestDiscovery => AbsolutePath.ParentDirectory?.Value ?? string.Empty;
 }

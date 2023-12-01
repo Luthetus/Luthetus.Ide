@@ -49,6 +49,8 @@ public class TreeViewProjectTestModel : TreeViewWithType<ProjectTestModel>
 
     public override async Task LoadChildBagAsync()
     {
+		await Item.EnqueueDiscoverTestsFunc();
+		
         try
         {
             var previousChildren = new List<TreeViewNoType>(ChildBag);
