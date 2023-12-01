@@ -50,9 +50,6 @@ public partial class TestExplorerContextMenu : ComponentBase
 	[Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 
-    [CascadingParameter(Name="DirectoryNameForTestDiscovery")]
-    public string DirectoryNameForTestDiscovery { get; set; } = null!;
-
 	[Parameter, EditorRequired]
     public TreeViewCommandArgs TreeViewCommandArgs { get; set; } = null!;
 
@@ -106,25 +103,27 @@ public partial class TestExplorerContextMenu : ComponentBase
 
 	private async Task RunTestByFullyQualifiedName(TreeViewStringFragment treeViewStringFragment, string fullyQualifiedName)
 	{
-		var dotNetTestByFullyQualifiedNameFormattedCommand = DotNetCliCommandFormatter.FormatDotNetTestByFullyQualifiedName(fullyQualifiedName);
+		/*
+			var dotNetTestByFullyQualifiedNameFormattedCommand = DotNetCliCommandFormatter.FormatDotNetTestByFullyQualifiedName(fullyQualifiedName);
 
-		if (String.IsNullOrWhiteSpace(DirectoryNameForTestDiscovery) ||
-			String.IsNullOrWhiteSpace(fullyQualifiedName))
-		{
-			return;
-		}
-
-		var executionTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[
-            TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY];
-
-        var dotNetTestByFullyQualifiedNameTerminalCommand = new TerminalCommand(
-            DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey,
-            dotNetTestByFullyQualifiedNameFormattedCommand,
-            DirectoryNameForTestDiscovery,
-            CancellationToken.None,
-            () => Task.CompletedTask);
-
-        await executionTerminalSession.EnqueueCommandAsync(dotNetTestByFullyQualifiedNameTerminalCommand);
+			if (String.IsNullOrWhiteSpace(DirectoryNameForTestDiscovery) ||
+				String.IsNullOrWhiteSpace(fullyQualifiedName))
+			{
+				return;
+			}
+	
+			var executionTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[
+	            TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY];
+	
+	        var dotNetTestByFullyQualifiedNameTerminalCommand = new TerminalCommand(
+	            DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey,
+	            dotNetTestByFullyQualifiedNameFormattedCommand,
+	            DirectoryNameForTestDiscovery,
+	            CancellationToken.None,
+	            () => Task.CompletedTask);
+	
+	        await executionTerminalSession.EnqueueCommandAsync(dotNetTestByFullyQualifiedNameTerminalCommand);
+		*/		
 	}
 
     private MenuOptionRecord[] GetDebugMenuOptions(TreeViewNamespacePath treeViewModel)

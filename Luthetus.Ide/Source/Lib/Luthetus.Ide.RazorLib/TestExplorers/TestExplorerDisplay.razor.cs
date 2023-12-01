@@ -15,19 +15,23 @@ using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dropdowns.States;
+using Luthetus.Ide.RazorLib.DotNetSolutions.States;
+using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
 
 namespace Luthetus.Ide.RazorLib.TestExplorers;
 
-public partial class TestExplorerDisplay : FluxorComponent
+public partial class TestExplorerDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-    private IState<TerminalSessionState> TerminalSessionsStateWrap { get; set; } = null!;
+    private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
+	[Inject]
+    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;	
+	[Inject]
+    private IState<TerminalSessionState> TerminalSessionStateWrap { get; set; } = null!;
 	[Inject]
     private InputFileSync InputFileSync { get; set; } = null!;
 	[Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
-	[Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
 	[Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
 	[Inject]
@@ -39,18 +43,14 @@ public partial class TestExplorerDisplay : FluxorComponent
 	
 	public static readonly Key<TreeViewContainer> TreeViewTestExplorerKey = Key<TreeViewContainer>.NewKey();
 
-	private string _directoryNameForTestDiscovery = string.Empty;
-	private List<string> _dotNetTestListTestsCommandOutput = new();
-	private Dictionary<string, StringFragment> RootStringFragmentMap = new();
+	private readonly List<ProjectTestModel> _projectTestModelBag = new();
+
     private TreeViewCommandArgs? _mostRecentTreeViewCommandArgs;
 	private TreeViewKeyboardEventHandler _treeViewKeyboardEventHandler = null!;
     private TreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
-	private bool _firstIf = false;
 
     public Key<TerminalCommand> DotNetTestListTestsTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
     public CancellationTokenSource DotNetTestListTestsCancellationTokenSource { get; set; } = new();
-
-    private FormattedCommand FormattedCommand => DotNetCliCommandFormatter.FormatDotNetTestListTests();
 	
 	private int OffsetPerDepthInPixels => (int)Math.Ceiling(
         AppOptionsStateWrap.Value.Options.IconSizeInPixels * (2.0 / 3.0));
@@ -65,126 +65,11 @@ public partial class TestExplorerDisplay : FluxorComponent
             TreeViewService,
 			BackgroundTaskService);
 
+		DotNetSolutionStateWrap.StateChanged += DotNetSolutionStateWrap_StateChanged;
+		AppOptionsStateWrap.StateChanged += AppOptionsStateWrap_StateChanged;
+
         base.OnInitialized();
     }
-
-	private async Task SetTreeViewAsync()
-    {
-		var rootStringFragment = new StringFragment(string.Empty);
-		rootStringFragment.Map = RootStringFragmentMap;
-
-		var adhocChildren = rootStringFragment.Map.Select(kvp => 
-			(TreeViewNoType)new TreeViewStringFragment(
-	            kvp.Value,
-	            CommonComponentRenderers,
-	            true,
-	            true))
-			.ToArray();
-
-		for (var i = 0; i < adhocChildren.Length; i++)
-		{
-			var node = (TreeViewStringFragment)adhocChildren[i];
-			await node.LoadChildBagAsync();
-		}
-
-        var adhocRoot = TreeViewAdhoc.ConstructTreeViewAdhoc(adhocChildren);
-
-		var firstNode = adhocChildren.FirstOrDefault();
-
-		var activeNodes = firstNode is null
-			? Array.Empty<TreeViewNoType>()
-			: new TreeViewNoType[] { firstNode };
-
-        if (!TreeViewService.TryGetTreeViewContainer(TreeViewTestExplorerKey, out _))
-        {
-			_firstIf = true;
-
-            TreeViewService.RegisterTreeViewContainer(new TreeViewContainer(
-                TreeViewTestExplorerKey,
-                adhocRoot,
-                activeNodes.ToImmutableList()));
-        }
-        else
-        {
-            TreeViewService.SetRoot(TreeViewTestExplorerKey, adhocRoot);
-            TreeViewService.SetActiveNode(TreeViewTestExplorerKey, firstNode);
-        }
-    }
-
-	private async Task StartDotNetTestListTestsCommandOnClick()
-    {
-        var localFormattedCommand = FormattedCommand;
-
-		if (String.IsNullOrWhiteSpace(_directoryNameForTestDiscovery))
-			return;
-
-		var executionTerminalSession = TerminalSessionsStateWrap.Value.TerminalSessionMap[
-            TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY];
-
-        var dotNetTestListTestsCommand = new TerminalCommand(
-            DotNetTestListTestsTerminalCommandKey,
-            localFormattedCommand,
-            _directoryNameForTestDiscovery,
-            DotNetTestListTestsCancellationTokenSource.Token,
-            async () => 
-			{
-				var output = executionTerminalSession.ReadStandardOut(DotNetTestListTestsTerminalCommandKey);
-
-				_dotNetTestListTestsCommandOutput = DotNetCliOutputLexer.LexDotNetTestListTestsTerminalOutput(output);
-    			THINKING_ABOUT_TREE_VIEW();
-				await InvokeAsync(StateHasChanged);
-			});
-
-        await executionTerminalSession.EnqueueCommandAsync(dotNetTestListTestsCommand);
-    }
-
-	private void RequestInputFileForTestDiscovery()
-    {
-        InputFileSync.RequestInputFileStateForm("Directory for Test Discovery",
-            async afp =>
-            {
-                if (afp is null)
-                    return;
-
-                _directoryNameForTestDiscovery = afp.Value;
-
-                await InvokeAsync(StateHasChanged);
-            },
-            afp =>
-            {
-                if (afp is null || !afp.IsDirectory)
-                    return Task.FromResult(false);
-
-                return Task.FromResult(true);
-            },
-            new[]
-            {
-                new InputFilePattern("Directory", afp => afp.IsDirectory)
-            }.ToImmutableArray());
-    }
-
-	private void THINKING_ABOUT_TREE_VIEW()
-	{
-		var splitOutputBag = _dotNetTestListTestsCommandOutput
-			.Select(x => x.Split('.'));
-
-		foreach (var splitOutput in splitOutputBag)
-		{
-			var targetMap = RootStringFragmentMap;
-			var lastSeenStringFragment = (StringFragment?)null;
-
-			foreach (var fragment in splitOutput)
-			{
-				if (!targetMap.ContainsKey(fragment))
-					targetMap.Add(fragment, new(fragment));
-
-				lastSeenStringFragment = targetMap[fragment];
-				targetMap = lastSeenStringFragment.Map;
-			}
-			
-			lastSeenStringFragment.IsEndpoint = true;
-		}
-	}
 
 	private async Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
     {
@@ -196,7 +81,120 @@ public partial class TestExplorerDisplay : FluxorComponent
         await InvokeAsync(StateHasChanged);
     }
 
+	private async void DotNetSolutionStateWrap_StateChanged(object? sender, EventArgs e)
+	{
+		await InvokeAsync(StateHasChanged);
+
+		var dotNetSolutionState = DotNetSolutionStateWrap.Value;
+		var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
+
+		_projectTestModelBag.Clear();
+		
+		if (dotNetSolutionModel is null)
+			return;
+
+		var localFormattedCommand = DotNetCliCommandFormatter.FormatDotNetTestListTests();
+
+		foreach (var project in dotNetSolutionModel.DotNetProjectBag
+				 	.Where(x => x.DotNetProjectKind == DotNetProjectKind.CSharpProject))
+		{
+			var projectTestModel = new ProjectTestModel
+			{
+				ProjectIdGuid = project.ProjectIdGuid,
+				AbsolutePath = project.AbsolutePath
+			};
+
+			_projectTestModelBag.Add(projectTestModel);
+
+			if (String.IsNullOrWhiteSpace(projectTestModel.DirectoryNameForTestDiscovery))
+				return;
 	
+			var executionTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[
+	            TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY];
+	
+	        var dotNetTestListTestsCommand = new TerminalCommand(
+	            projectTestModel.DotNetTestListTestsTerminalCommandKey,
+	            localFormattedCommand,
+	            projectTestModel.DirectoryNameForTestDiscovery,
+	            DotNetTestListTestsCancellationTokenSource.Token,
+	            async () => 
+				{
+					var output = executionTerminalSession.ReadStandardOut(DotNetTestListTestsTerminalCommandKey);
+	
+					projectTestModel.DotNetTestListTestsCommandOutput = DotNetCliOutputLexer.LexDotNetTestListTestsTerminalOutput(output);
+	
+	    			// THINKING_ABOUT_TREE_VIEW();
+					{
+						var splitOutputBag = projectTestModel.DotNetTestListTestsCommandOutput
+							.Select(x => x.Split('.'));
+				
+						foreach (var splitOutput in splitOutputBag)
+						{
+							var targetMap = projectTestModel.RootStringFragmentMap;
+							var lastSeenStringFragment = (StringFragment?)null;
+				
+							foreach (var fragment in splitOutput)
+							{
+								if (!targetMap.ContainsKey(fragment))
+									targetMap.Add(fragment, new(fragment));
+				
+								lastSeenStringFragment = targetMap[fragment];
+								targetMap = lastSeenStringFragment.Map;
+							}
+							
+							lastSeenStringFragment.IsEndpoint = true;
+						}
+					}
+					
+					await InvokeAsync(StateHasChanged);
+				});
+	
+	        await executionTerminalSession.EnqueueCommandAsync(dotNetTestListTestsCommand);
+		}
+
+		var adhocChildren = _projectTestModelBag.Select(x =>
+		{
+			var treeViewProjectTestModel = (TreeViewNoType)new TreeViewProjectTestModel(
+				x,
+				CommonComponentRenderers,
+				true,
+				false);
+
+			return treeViewProjectTestModel;
+		}).ToArray();
+
+		var adhocRoot = TreeViewAdhoc.ConstructTreeViewAdhoc(adhocChildren);
+
+		var firstNode = adhocChildren.FirstOrDefault();
+
+		var activeNodes = firstNode is null
+			? Array.Empty<TreeViewNoType>()
+			: new []{ firstNode };
+			
+		if (!TreeViewService.TryGetTreeViewContainer(TreeViewTestExplorerKey, out _))
+        {
+            TreeViewService.RegisterTreeViewContainer(new TreeViewContainer(
+                TreeViewTestExplorerKey,
+                adhocRoot,
+                activeNodes.ToImmutableList()));
+        }
+        else
+        {
+            TreeViewService.SetRoot(TreeViewTestExplorerKey, adhocRoot);
+            TreeViewService.SetActiveNode(TreeViewTestExplorerKey, firstNode);
+        }		
+	}
+
+	private async void AppOptionsStateWrap_StateChanged(object? sender, EventArgs e)
+	{
+		await InvokeAsync(StateHasChanged);
+	}
+
+	public void Dispose()
+	{
+		DotNetSolutionStateWrap.StateChanged -= DotNetSolutionStateWrap_StateChanged;
+		AppOptionsStateWrap.StateChanged -= AppOptionsStateWrap_StateChanged;
+	}
 }
  
     
