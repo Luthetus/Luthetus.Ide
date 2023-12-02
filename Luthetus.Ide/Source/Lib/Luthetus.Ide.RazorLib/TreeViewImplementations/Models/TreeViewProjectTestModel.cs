@@ -91,6 +91,17 @@ public class TreeViewProjectTestModel : TreeViewWithType<ProjectTestModel>
 		
 		            ChildBag = newChildBag.ToList();
 				}
+				else
+				{
+					ChildBag = new List<TreeViewNoType>
+		            {
+		                new TreeViewException(new Exception("No results"), false, false, CommonComponentRenderers)
+		                {
+		                    Parent = this,
+		                    IndexAmongSiblings = 0,
+		                }
+		            };
+				}
 
 	            LinkChildren(previousChildren, ChildBag);
 	        }
