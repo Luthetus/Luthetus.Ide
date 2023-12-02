@@ -49,45 +49,66 @@ public class TreeViewProjectTestModel : TreeViewWithType<ProjectTestModel>
 
     public override async Task LoadChildBagAsync()
     {
-		await Item.EnqueueDiscoverTestsFunc();
+		var previousChildren = new List<TreeViewNoType>(ChildBag);
 		
-        try
-        {
-            var previousChildren = new List<TreeViewNoType>(ChildBag);
-			
-			var rootStringFragment = new StringFragment(string.Empty);
-			rootStringFragment.Map = Item.RootStringFragmentMap;
-	
-			var newChildBag = rootStringFragment.Map.Select(kvp => 
-				(TreeViewNoType)new TreeViewStringFragment(
-		            kvp.Value,
-		            CommonComponentRenderers,
-		            true,
-		            true))
-				.ToArray();
-	
-			for (var i = 0; i < newChildBag.Length; i++)
-			{
-				var node = (TreeViewStringFragment)newChildBag[i];
-				await node.LoadChildBagAsync();
-			}
-
-            ChildBag = newChildBag.ToList();
-            LinkChildren(previousChildren, ChildBag);
-        }
-        catch (Exception exception)
-        {
-            ChildBag = new List<TreeViewNoType>
-            {
-                new TreeViewException(exception, false, false, CommonComponentRenderers)
-                {
-                    Parent = this,
-                    IndexAmongSiblings = 0,
-                }
-            };
-        }
-
+		ChildBag = new []
+		{
+			(TreeViewNoType)new TreeViewSpinner(
+				Item.ProjectIdGuid,
+				CommonComponentRenderers,
+				false,
+				false)
+		}.ToList();
+		
+		LinkChildren(previousChildren, ChildBag);	
+		
         TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
+
+		await Item.EnqueueDiscoverTestsFunc(async rootStringFragmentMap => 
+		{
+			try
+	        {
+				previousChildren = new List<TreeViewNoType>(ChildBag);
+
+				if (rootStringFragmentMap.Values.Any())
+				{
+					var rootStringFragment = new StringFragment(string.Empty);
+					rootStringFragment.Map = rootStringFragmentMap;
+			
+					var newChildBag = rootStringFragment.Map.Select(kvp => 
+						(TreeViewNoType)new TreeViewStringFragment(
+				            kvp.Value,
+				            CommonComponentRenderers,
+				            true,
+				            true))
+						.ToArray();
+			
+					for (var i = 0; i < newChildBag.Length; i++)
+					{
+						var node = (TreeViewStringFragment)newChildBag[i];
+						await node.LoadChildBagAsync();
+					}
+		
+		            ChildBag = newChildBag.ToList();
+				}
+
+	            LinkChildren(previousChildren, ChildBag);
+	        }
+	        catch (Exception exception)
+	        {
+	            ChildBag = new List<TreeViewNoType>
+	            {
+	                new TreeViewException(exception, false, false, CommonComponentRenderers)
+	                {
+	                    Parent = this,
+	                    IndexAmongSiblings = 0,
+	                }
+	            };
+	        }
+	
+	        TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
+			Item.ReRenderNodeAction.Invoke(this);
+		});
     }
 
     public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)

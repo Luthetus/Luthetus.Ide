@@ -91,86 +91,98 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 		{
 			await _projectTestModelBagSemaphoreSlim.WaitAsync();
 
-			var localProjectTestModelBag = new List<ProjectTestModel>();
-		
 			if (dotNetSolutionModel is null)
 				return;
-	
+
+			var localDotNetProjectBag = dotNetSolutionModel.DotNetProjectBag
+				.Where(x => x.DotNetProjectKind == DotNetProjectKind.CSharpProject);
+
+			var localProjectTestModelBag = localDotNetProjectBag.Select(x => new ProjectTestModel
+			{
+				ProjectIdGuid = x.ProjectIdGuid,
+				AbsolutePath = x.AbsolutePath,
+				EnqueueDiscoverTestsFunc = callback => Task.CompletedTask,
+				ReRenderNodeAction = node => TreeViewService.ReRenderNode(
+					TreeViewTestExplorerKey,
+					node)
+			});
+
 			var localFormattedCommand = DotNetCliCommandFormatter.FormatDotNetTestListTests();
 	
-			foreach (var project in dotNetSolutionModel.DotNetProjectBag
-					 	.Where(x => x.DotNetProjectKind == DotNetProjectKind.CSharpProject))
+			var localTreeViewProjectTestModelBag = localProjectTestModelBag.Select(x =>
+					(TreeViewNoType)new TreeViewProjectTestModel(
+						x,
+						CommonComponentRenderers,
+						true,
+						false))
+				.ToArray();
+
+			foreach (var entry in localTreeViewProjectTestModelBag)
 			{
-				var projectTestModel = new ProjectTestModel
-				{
-					ProjectIdGuid = project.ProjectIdGuid,
-					AbsolutePath = project.AbsolutePath,
-					EnqueueDiscoverTestsFunc = () => Task.CompletedTask,
-				};
-	
-				localProjectTestModelBag.Add(projectTestModel);
-	
-				if (String.IsNullOrWhiteSpace(projectTestModel.DirectoryNameForTestDiscovery))
+				var treeViewProjectTestModel = (TreeViewProjectTestModel)entry;
+				
+				if (String.IsNullOrWhiteSpace(treeViewProjectTestModel.Item.DirectoryNameForTestDiscovery))
 					return;
 
-				projectTestModel.EnqueueDiscoverTestsFunc = async () =>
+				treeViewProjectTestModel.Item.EnqueueDiscoverTestsFunc = async callback =>
 				{
 					var executionTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[
-		            TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY];
+		            	TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY];
 		
 			        var dotNetTestListTestsCommand = new TerminalCommand(
-			            projectTestModel.DotNetTestListTestsTerminalCommandKey,
+			            treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey,
 			            localFormattedCommand,
-			            projectTestModel.DirectoryNameForTestDiscovery,
+			            treeViewProjectTestModel.Item.DirectoryNameForTestDiscovery,
 			            DotNetTestListTestsCancellationTokenSource.Token,
 			            async () => 
 						{
-							var output = executionTerminalSession.ReadStandardOut(projectTestModel.DotNetTestListTestsTerminalCommandKey);
-			
-							projectTestModel.DotNetTestListTestsCommandOutput = DotNetCliOutputLexer.LexDotNetTestListTestsTerminalOutput(output);
-			
-			    			// THINKING_ABOUT_TREE_VIEW();
+							try
 							{
-								var splitOutputBag = projectTestModel.DotNetTestListTestsCommandOutput
-									.Select(x => x.Split('.'));
-						
-								foreach (var splitOutput in splitOutputBag)
+								var output = executionTerminalSession.ReadStandardOut(treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey);
+			
+								treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput = DotNetCliOutputLexer.LexDotNetTestListTestsTerminalOutput(output);
+				
+				    			// THINKING_ABOUT_TREE_VIEW();
 								{
-									var targetMap = projectTestModel.RootStringFragmentMap;
-									var lastSeenStringFragment = (StringFragment?)null;
-						
-									foreach (var fragment in splitOutput)
+									var splitOutputBag = treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput
+										.Select(x => x.Split('.'));
+							
+									var rootMap = new Dictionary<string, StringFragment>();
+	
+									foreach (var splitOutput in splitOutputBag)
 									{
-										if (!targetMap.ContainsKey(fragment))
-											targetMap.Add(fragment, new(fragment));
-						
-										lastSeenStringFragment = targetMap[fragment];
-										targetMap = lastSeenStringFragment.Map;
+										var targetMap = rootMap;
+										var lastSeenStringFragment = (StringFragment?)null;
+							
+										foreach (var fragment in splitOutput)
+										{
+											if (!targetMap.ContainsKey(fragment))
+												targetMap.Add(fragment, new(fragment));
+							
+											lastSeenStringFragment = targetMap[fragment];
+											targetMap = lastSeenStringFragment.Map;
+										}
+										
+										lastSeenStringFragment.IsEndpoint = true;
 									}
-									
-									lastSeenStringFragment.IsEndpoint = true;
+	
+									treeViewProjectTestModel.Item.RootStringFragmentMap = rootMap;
+									await callback.Invoke(rootMap);
 								}
 							}
+							catch (Exception)
+							{
+								await callback.Invoke(new());
+								throw;
+							}
 						});
-			
+
 			        await executionTerminalSession.EnqueueCommandAsync(dotNetTestListTestsCommand);
 				};				
 			}
 	
-			var adhocChildren = _projectTestModelBag.Select(x =>
-			{
-				var treeViewProjectTestModel = (TreeViewNoType)new TreeViewProjectTestModel(
-					x,
-					CommonComponentRenderers,
-					true,
-					false);
-	
-				return treeViewProjectTestModel;
-			}).ToArray();
-	
-			var adhocRoot = TreeViewAdhoc.ConstructTreeViewAdhoc(adhocChildren);
-	
-			var firstNode = adhocChildren.FirstOrDefault();
+			var adhocRoot = TreeViewAdhoc.ConstructTreeViewAdhoc(localTreeViewProjectTestModelBag);
+			var firstNode = localTreeViewProjectTestModelBag.FirstOrDefault();
 	
 			var activeNodes = firstNode is null
 				? Array.Empty<TreeViewNoType>()
@@ -189,7 +201,7 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 	            TreeViewService.SetActiveNode(TreeViewTestExplorerKey, firstNode);
 	        }
 
-			_projectTestModelBag = localProjectTestModelBag;
+			_projectTestModelBag = localProjectTestModelBag.ToList();
 		}
 		finally
 		{
