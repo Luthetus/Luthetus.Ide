@@ -7,6 +7,7 @@
 @using Luthetus.Common.RazorLib.Dropdowns.Models;
 @using Luthetus.Common.RazorLib.TreeViews.Displays
 @using Luthetus.Common.RazorLib.TreeViews.Models;
+@using Luthetus.Ide.RazorLib.TestExplorers.States;
 
 <ContextBoundary ContextRecord="ContextFacts.TestExplorerContext"
                  ClassCssString="luth_ide_test-explorer"
@@ -37,7 +38,7 @@
 			<CascadingValue Name="LuthetusTreeViewIconWidth" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
                 <CascadingValue Name="LuthetusTreeViewIconHeight" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
                     <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
-                        <TreeViewContainerDisplay TreeViewStateKey="TreeViewTestExplorerKey"
+                        <TreeViewContainerDisplay TreeViewStateKey="TestExplorerState.TreeViewTestExplorerKey"
                                                   CssStyleString="height: 100%;"
                                                   OnContextMenuFunc="OnTreeViewContextMenuFunc"
                                                   TreeViewKeyboardEventHandler="_treeViewKeyboardEventHandler"

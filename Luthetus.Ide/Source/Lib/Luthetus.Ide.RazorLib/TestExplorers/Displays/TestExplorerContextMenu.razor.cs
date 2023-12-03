@@ -29,7 +29,7 @@ using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using System.Text;
 
-namespace Luthetus.Ide.RazorLib.TestExplorers;
+namespace Luthetus.Ide.RazorLib.TestExplorers.Displays;
 
 public partial class TestExplorerContextMenu : ComponentBase
 {

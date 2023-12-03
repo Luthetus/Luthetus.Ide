@@ -1,4 +1,4 @@
-namespace Luthetus.Ide.RazorLib.TestExplorers;
+namespace Luthetus.Ide.RazorLib.TestExplorers.Models;
 
 public class StringFragment
 {
