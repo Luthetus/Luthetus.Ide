@@ -1,13 +1,6 @@
 @using Luthetus.Common.RazorLib.Contexts.Displays
 @using Luthetus.Common.RazorLib.Contexts.Models
-@using Luthetus.Ide.RazorLib.Terminals.Displays
-@using Luthetus.Ide.RazorLib.Terminals.Models
-@using System.Collections.Immutable
-@using Luthetus.Common.RazorLib.Dropdowns.Displays
-@using Luthetus.Common.RazorLib.Dropdowns.Models;
-@using Luthetus.Common.RazorLib.TreeViews.Displays
-@using Luthetus.Common.RazorLib.TreeViews.Models;
-@using Luthetus.Ide.RazorLib.TestExplorers.States;
+@using Luthetus.Common.RazorLib.Resizes.Displays
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
@@ -20,25 +13,14 @@
     </div>
 
     <div class="luth_ide_section-body"
-         style="width: 100%;">
+         style="width: 100%; display: flex;">
 
-		<CascadingValue Name="LuthetusTreeViewIconWidth" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
-            <CascadingValue Name="LuthetusTreeViewIconHeight" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
-                <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
-                    <TreeViewContainerDisplay TreeViewStateKey="TestExplorerState.TreeViewTestExplorerKey"
-                                              CssStyleString="height: 100%;"
-                                              OnContextMenuFunc="OnTreeViewContextMenuFunc"
-                                              TreeViewKeyboardEventHandler="_treeViewKeyboardEventHandler"
-                                              TreeViewMouseEventHandler="_treeViewMouseEventHandler" />
-                </CascadingValue>
-            </CascadingValue>
-        </CascadingValue>
-		
-		<DropdownDisplay DropdownKey="TestExplorerContextMenu.ContextMenuEventDropdownKey"
-                         DropdownPositionKind="DropdownPositionKind.Unset"
-                         CssStyleString="@TestExplorerContextMenu.GetContextMenuCssStyleString(_mostRecentTreeViewCommandArgs)">
+		<TestExplorerTreeViewDisplay ElementDimensions="_treeViewElementDimensions"/>
 
-            <TestExplorerContextMenu TreeViewCommandArgs="_mostRecentTreeViewCommandArgs" />
-        </DropdownDisplay>
+		<ResizableColumn LeftElementDimensions="_treeViewElementDimensions"
+		                 RightElementDimensions="_detailsElementDimensions"
+		                 ReRenderFuncAsync="async () => await InvokeAsync(StateHasChanged)" />
+
+		<TestExplorerDetailsDisplay ElementDimensions="_detailsElementDimensions"/>
     </div>
 </ContextBoundary>

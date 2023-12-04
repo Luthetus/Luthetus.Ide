@@ -23,62 +23,51 @@ using Luthetus.Common.RazorLib.Resizes.Displays;
 
 namespace Luthetus.Ide.RazorLib.TestExplorers.Displays;
 
-public partial class TestExplorerDisplay : FluxorComponent
+public partial class TestExplorerTreeViewDisplay : ComponentBase
 {
 	[Inject]
     private IState<TestExplorerState> TestExplorerStateWrap { get; set; } = null!;
 	[Inject]
     private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+	[Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
+	[Inject]
+    private ITreeViewService TreeViewService { get; set; } = null!;
+	[Inject]
+    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+	
+	[Parameter, EditorRequired]
+    public ElementDimensions ElementDimensions { get; set; } = null!;
 
+    private TreeViewCommandArgs? _mostRecentTreeViewCommandArgs;
+	private TreeViewKeyboardEventHandler _treeViewKeyboardEventHandler = null!;
+    private TreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
 	private ElementDimensions _treeViewElementDimensions = new();
 	private ElementDimensions _detailsElementDimensions = new();
 
+	private int OffsetPerDepthInPixels => (int)Math.Ceiling(
+        AppOptionsStateWrap.Value.Options.IconSizeInPixels * (2.0 / 3.0));
+
 	protected override void OnInitialized()
     {
-        // TreeView ElementDimensions
-		{
-			var treeViewWidth = _treeViewElementDimensions.DimensionAttributeBag.Single(
-	            da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
-	
-	        treeViewWidth.DimensionUnitBag.AddRange(new[]
-	        {
-	            new DimensionUnit
-	            {
-	                Value = 60,
-	                DimensionUnitKind = DimensionUnitKind.Percentage
-	            },
-	            new DimensionUnit
-	            {
-	                Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
-	                DimensionUnitKind = DimensionUnitKind.Pixels,
-	                DimensionOperatorKind = DimensionOperatorKind.Subtract
-	            }
-	        });
-		}
+        _treeViewKeyboardEventHandler = new TreeViewKeyboardEventHandler(
+            TreeViewService,
+			BackgroundTaskService);
 
-		// Details ElementDimensions
-		{
-			var detailsWidth = _detailsElementDimensions.DimensionAttributeBag.Single(
-	            da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
-	
-	        detailsWidth.DimensionUnitBag.AddRange(new[]
-	        {
-	            new DimensionUnit
-	            {
-	                Value = 40,
-	                DimensionUnitKind = DimensionUnitKind.Percentage
-	            },
-	            new DimensionUnit
-	            {
-	                Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
-	                DimensionUnitKind = DimensionUnitKind.Pixels,
-	                DimensionOperatorKind = DimensionOperatorKind.Subtract
-	            }
-	        });
-		}
+        _treeViewMouseEventHandler = new TreeViewMouseEventHandler(
+            TreeViewService,
+			BackgroundTaskService);
 
         base.OnInitialized();
     }
+
+	private async Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
+    {
+        _mostRecentTreeViewCommandArgs = treeViewCommandArgs;
+
+        Dispatcher.Dispatch(new DropdownState.AddActiveAction(
+            TestExplorerContextMenu.ContextMenuEventDropdownKey));
+
+        await InvokeAsync(StateHasChanged);
+    }
 }
- 
-    
