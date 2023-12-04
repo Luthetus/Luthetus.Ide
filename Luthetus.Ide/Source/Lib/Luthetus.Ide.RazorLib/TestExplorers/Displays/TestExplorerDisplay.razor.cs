@@ -17,29 +17,22 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
+using Luthetus.Ide.RazorLib.TestExplorers.States;
 
 namespace Luthetus.Ide.RazorLib.TestExplorers.Displays;
 
-public partial class TestExplorerDisplay : ComponentBase, IDisposable
+public partial class TestExplorerDisplay : FluxorComponent
 {
 	[Inject]
-    private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
+    private IState<TestExplorerState> TestExplorerStateWrap { get; set; } = null!;
 	[Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;	
-	[Inject]
-    private IState<TerminalSessionState> TerminalSessionStateWrap { get; set; } = null!;
-	[Inject]
-    private InputFileSync InputFileSync { get; set; } = null!;
+    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
 	[Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
 	[Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
-	[Inject]
-    private ILuthetusCommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-
-	private readonly SemaphoreSlim _projectTestModelBagSemaphoreSlim = new(1, 1);
 
     private TreeViewCommandArgs? _mostRecentTreeViewCommandArgs;
 	private TreeViewKeyboardEventHandler _treeViewKeyboardEventHandler = null!;
@@ -58,9 +51,6 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
             TreeViewService,
 			BackgroundTaskService);
 
-		DotNetSolutionStateWrap.StateChanged += DotNetSolutionStateWrap_StateChanged;
-		AppOptionsStateWrap.StateChanged += AppOptionsStateWrap_StateChanged;
-
         base.OnInitialized();
     }
 
@@ -73,19 +63,6 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 
         await InvokeAsync(StateHasChanged);
     }
-
-	
-
-	private async void AppOptionsStateWrap_StateChanged(object? sender, EventArgs e)
-	{
-		await InvokeAsync(StateHasChanged);
-	}
-
-	public void Dispose()
-	{
-		DotNetSolutionStateWrap.StateChanged -= DotNetSolutionStateWrap_StateChanged;
-		AppOptionsStateWrap.StateChanged -= AppOptionsStateWrap_StateChanged;
-	}
 }
  
     

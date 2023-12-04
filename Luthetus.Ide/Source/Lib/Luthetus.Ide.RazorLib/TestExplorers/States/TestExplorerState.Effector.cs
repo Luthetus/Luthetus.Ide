@@ -1,8 +1,9 @@
+using Fluxor;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
 namespace Luthetus.Ide.RazorLib.TestExplorers.States;
 
-public class TestExplorerState
+public partial record TestExplorerState
 {
 	public class Effector
 	{

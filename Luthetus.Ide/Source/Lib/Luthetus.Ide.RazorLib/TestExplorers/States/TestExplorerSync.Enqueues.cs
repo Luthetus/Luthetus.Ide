@@ -9,22 +9,8 @@ public partial class TestExplorerSync
 {
     public void DotNetSolutionStateWrap_StateChanged()
     {
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+        _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Refresh TestExplorer",
             async () => await DotNetSolutionStateWrap_StateChangedAsync());
-    }
-
-    public void SetDotNetSolution(IAbsolutePath inSolutionAbsolutePath)
-    {
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
-            "Set .NET Solution",
-            async () => await SetDotNetSolutionAsync(inSolutionAbsolutePath));
-    }
-
-    public void SetDotNetSolutionTreeView(Key<DotNetSolutionModel> dotNetSolutionModelKey)
-    {
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
-            "Set .NET Solution TreeView",
-            async () => await SetDotNetSolutionTreeViewAsync(dotNetSolutionModelKey));
     }
 }

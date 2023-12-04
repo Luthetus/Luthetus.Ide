@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Fluxor;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.CompilerServices.States;
@@ -26,6 +26,7 @@ using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.Ide.RazorLib.Decorations;
 using Luthetus.Ide.RazorLib.CompilerServices.Models;
 using Luthetus.Ide.RazorLib.Commands;
+using Luthetus.Ide.RazorLib.TestExplorers.States;
 
 namespace Luthetus.Ide.RazorLib.Installations.Models;
 
@@ -60,6 +61,7 @@ public static class ServiceCollectionExtensions
             .AddScoped<FolderExplorerSync>()
             .AddScoped<InputFileSync>()
             .AddScoped<LocalStorageSync>()
+            .AddScoped<TestExplorerSync>()
             .AddScoped<ICommandFactory, CommandFactory>()
             .AddScoped<ICompilerServiceRegistry, CompilerServiceRegistry>()
             .AddScoped<IDecorationMapperRegistry, DecorationMapperRegistry>()

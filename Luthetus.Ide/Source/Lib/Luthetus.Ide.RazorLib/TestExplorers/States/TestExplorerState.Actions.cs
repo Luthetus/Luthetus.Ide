@@ -5,6 +5,5 @@ namespace Luthetus.Ide.RazorLib.TestExplorers.States;
 
 public partial record TestExplorerState
 {
-    public record RegisterAction(DotNetSolutionModel DotNetSolutionModel, DotNetSolutionSync Sync);
-    public record DisposeAction(Key<DotNetSolutionModel> DotNetSolutionModelKey, DotNetSolutionSync Sync);
+    public record WithAction(Func<TestExplorerState, TestExplorerState> WithFunc);
 }

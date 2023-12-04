@@ -9,6 +9,8 @@
 @using Luthetus.Common.RazorLib.TreeViews.Models;
 @using Luthetus.Ide.RazorLib.TestExplorers.States;
 
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
 <ContextBoundary ContextRecord="ContextFacts.TestExplorerContext"
                  ClassCssString="luth_ide_test-explorer"
                  StyleCssString="height: 100%; width: 100%;">
@@ -20,39 +22,23 @@
     <div class="luth_ide_section-body"
          style="width: 100%;">
 
-		@{ 
-			var dotNetSolutionState = DotNetSolutionStateWrap.Value;
-			var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
-		}
-  
-		<hr/>
-		
-		@if (dotNetSolutionModel is null)
-		{
-			@: No solution has been chosen yet.
-		}
-		else
-		{
-			<div>@dotNetSolutionModel.AbsolutePath.Value</div>
-
-			<CascadingValue Name="LuthetusTreeViewIconWidth" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
-                <CascadingValue Name="LuthetusTreeViewIconHeight" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
-                    <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
-                        <TreeViewContainerDisplay TreeViewStateKey="TestExplorerState.TreeViewTestExplorerKey"
-                                                  CssStyleString="height: 100%;"
-                                                  OnContextMenuFunc="OnTreeViewContextMenuFunc"
-                                                  TreeViewKeyboardEventHandler="_treeViewKeyboardEventHandler"
-                                                  TreeViewMouseEventHandler="_treeViewMouseEventHandler" />
-                    </CascadingValue>
+		<CascadingValue Name="LuthetusTreeViewIconWidth" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
+            <CascadingValue Name="LuthetusTreeViewIconHeight" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
+                <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
+                    <TreeViewContainerDisplay TreeViewStateKey="TestExplorerState.TreeViewTestExplorerKey"
+                                              CssStyleString="height: 100%;"
+                                              OnContextMenuFunc="OnTreeViewContextMenuFunc"
+                                              TreeViewKeyboardEventHandler="_treeViewKeyboardEventHandler"
+                                              TreeViewMouseEventHandler="_treeViewMouseEventHandler" />
                 </CascadingValue>
             </CascadingValue>
-			
-			<DropdownDisplay DropdownKey="TestExplorerContextMenu.ContextMenuEventDropdownKey"
-                             DropdownPositionKind="DropdownPositionKind.Unset"
-                             CssStyleString="@TestExplorerContextMenu.GetContextMenuCssStyleString(_mostRecentTreeViewCommandArgs)">
+        </CascadingValue>
+		
+		<DropdownDisplay DropdownKey="TestExplorerContextMenu.ContextMenuEventDropdownKey"
+                         DropdownPositionKind="DropdownPositionKind.Unset"
+                         CssStyleString="@TestExplorerContextMenu.GetContextMenuCssStyleString(_mostRecentTreeViewCommandArgs)">
 
-                <TestExplorerContextMenu TreeViewCommandArgs="_mostRecentTreeViewCommandArgs" />
-            </DropdownDisplay>
-		}
+            <TestExplorerContextMenu TreeViewCommandArgs="_mostRecentTreeViewCommandArgs" />
+        </DropdownDisplay>
     </div>
 </ContextBoundary>

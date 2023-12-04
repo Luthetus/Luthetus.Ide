@@ -7,6 +7,7 @@ using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
 using Luthetus.Ide.RazorLib.TestExplorers;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Displays;
+using Luthetus.Ide.RazorLib.TestExplorers.Models;
 
 namespace Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 
