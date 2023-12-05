@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using System.Collections.Immutable;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;

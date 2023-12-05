@@ -196,6 +196,8 @@ public class TreeViewMouseEventHandlerTests
 
         treeViewService.RegisterTreeViewContainer(websiteServerTreeViewContainer);
 
-        mouseEventHandler = new TreeViewMouseEventHandler(treeViewService);
+        mouseEventHandler = new TreeViewMouseEventHandler(
+            treeViewService,
+            backgroundTaskService);
     }
 }

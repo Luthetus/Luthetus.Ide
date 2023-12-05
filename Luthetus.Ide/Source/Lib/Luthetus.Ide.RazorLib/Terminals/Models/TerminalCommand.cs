@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
@@ -8,4 +8,5 @@ public record TerminalCommand(
     FormattedCommand FormattedCommand,
     string? ChangeWorkingDirectoryTo = null,
     CancellationToken CancellationToken = default,
-    Func<Task>? ContinueWith = null);
+    Func<Task>? ContinueWith = null,
+	Func<Task>? BeginWith = null);

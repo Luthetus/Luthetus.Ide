@@ -1,8 +1,9 @@
-﻿using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Ide.RazorLib.Editors.States;
 using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.CompilerServices.Models;
 
@@ -12,8 +13,9 @@ public class CompilerServiceExplorerTreeViewKeyboardEventHandler : TreeViewKeybo
 
     public CompilerServiceExplorerTreeViewKeyboardEventHandler(
         EditorSync editorSync,
-        ITreeViewService treeViewService)
-        : base(treeViewService)
+        ITreeViewService treeViewService,
+		IBackgroundTaskService backgroundTaskService)
+        : base(treeViewService, backgroundTaskService)
     {
         _editorSync = editorSync;
     }

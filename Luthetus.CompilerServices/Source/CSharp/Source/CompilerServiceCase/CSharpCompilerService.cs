@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.CompilerServices.Lang.CSharp.BinderCase;
@@ -134,29 +134,29 @@ public class CSharpCompilerService : ICompilerService
         while (targetScope is not null)
         {
             autocompleteEntryBag.AddRange(
-                targetScope.VariableDeclarationMap.Where(x => x.Key.Contains(word, StringComparison.InvariantCulture))
+                targetScope.VariableDeclarationMap.Keys.ToArray().Where(x => x.Contains(word, StringComparison.InvariantCulture))
                 .Select(x =>
                 {
                     return new AutocompleteEntry(
-                        x.Key,
+                        x,
                         AutocompleteEntryKind.Variable);
                 }));
 
             autocompleteEntryBag.AddRange(
-                targetScope.FunctionDefinitionMap.Where(x => x.Key.Contains(word, StringComparison.InvariantCulture))
+                targetScope.FunctionDefinitionMap.Keys.ToArray().Where(x => x.Contains(word, StringComparison.InvariantCulture))
                 .Select(x =>
                 {
                     return new AutocompleteEntry(
-                        x.Key,
+                        x,
                         AutocompleteEntryKind.Function);
                 }));
 
             autocompleteEntryBag.AddRange(
-                targetScope.TypeDefinitionMap.Where(x => x.Key.Contains(word, StringComparison.InvariantCulture))
+                targetScope.TypeDefinitionMap.Keys.ToArray().Where(x => x.Contains(word, StringComparison.InvariantCulture))
                 .Select(x =>
                 {
                     return new AutocompleteEntry(
-                        x.Key,
+                        x,
                         AutocompleteEntryKind.Type);
                 }));
 

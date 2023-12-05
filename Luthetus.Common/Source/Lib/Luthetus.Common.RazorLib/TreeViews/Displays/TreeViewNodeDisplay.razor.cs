@@ -1,8 +1,9 @@
-﻿using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.TreeViews.Displays;
 
@@ -10,6 +11,8 @@ public partial class TreeViewNodeDisplay : ComponentBase
 {
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
+	[Inject]
+    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 
     [CascadingParameter]
     public TreeViewContainer TreeViewState { get; set; } = null!;
@@ -96,12 +99,13 @@ public partial class TreeViewNodeDisplay : ComponentBase
 
         if (localTreeViewNoType.IsExpanded)
         {
-            _ = Task.Run(async () =>
-            {
-                await localTreeViewNoType.LoadChildBagAsync();
-
-                TreeViewService.ReRenderNode(TreeViewState.Key, localTreeViewNoType);
-            });
+			BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+            	"TreeView.HandleExpansionChevronOnMouseDown",
+				async () => 
+				{
+					await localTreeViewNoType.LoadChildBagAsync();
+	                TreeViewService.ReRenderNode(TreeViewState.Key, localTreeViewNoType);
+				});
         }
         else
         {
@@ -124,11 +128,13 @@ public partial class TreeViewNodeDisplay : ComponentBase
             null);
 
         TreeViewMouseEventHandler.OnMouseDown(treeViewCommandArgs);
-
-        _ = Task.Run(async () => await HandleTreeViewOnContextMenu.Invoke(
-            mouseEventArgs,
-            treeViewState,
-            treeViewNoType));
+	
+		BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+        	"TreeView.ManuallyPropagateOnContextMenu",
+			async () => await HandleTreeViewOnContextMenu.Invoke(
+	            mouseEventArgs,
+	            treeViewState,
+	            treeViewNoType));
     }
 
     private void HandleOnClick(MouseEventArgs? mouseEventArgs)

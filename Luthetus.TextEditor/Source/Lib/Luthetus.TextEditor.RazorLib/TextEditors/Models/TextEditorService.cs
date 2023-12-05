@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.Storages.States;
 using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.Themes.States;
@@ -67,7 +67,12 @@ public class TextEditorService : ITextEditorService
     public IState<TextEditorOptionsState> OptionsStateWrap { get; }
     public IState<TextEditorFindProviderState> FindProviderStateWrap { get; }
 
+    
+#if DEBUG
+    public string StorageKey => "luth_te_text-editor-options-debug";
+#else
     public string StorageKey => "luth_te_text-editor-options";
+#endif
 
     public string ThemeCssClassString => ThemeStateWrap.Value.ThemeBag.FirstOrDefault(
         x => x.Key == OptionsStateWrap.Value.Options.CommonOptions.ThemeKey)

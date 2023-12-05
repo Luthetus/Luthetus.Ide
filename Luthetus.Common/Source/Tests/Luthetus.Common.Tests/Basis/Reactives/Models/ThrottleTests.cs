@@ -23,10 +23,10 @@ public class ThrottleTests
     }
 
     /// <summary>
-    /// <see cref="Throttle.FireAsync(Func{Task})"/>
+    /// <see cref="Throttle.FireAsync(Func{CancellationToken, Task})"/>
     /// </summary>
     [Fact]
-    public async Task FireAsync()
+    public void FireAsync()
     {
         throw new NotImplementedException();
     }

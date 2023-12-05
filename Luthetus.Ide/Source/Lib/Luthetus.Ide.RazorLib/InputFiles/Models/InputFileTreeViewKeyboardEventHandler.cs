@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
@@ -37,7 +37,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         Func<Task> focusSearchInputElementFunc,
         Func<List<(Key<TreeViewContainer> treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)>> getSearchMatchTuplesFunc,
         IBackgroundTaskService backgroundTaskService)
-        : base(treeViewService)
+        : base(treeViewService, backgroundTaskService)
     {
         _inputFileStateWrap = inputFileStateWrap;
         _dispatcher = dispatcher;

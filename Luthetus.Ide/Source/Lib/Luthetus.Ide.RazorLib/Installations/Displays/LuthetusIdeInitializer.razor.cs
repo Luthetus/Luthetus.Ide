@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
@@ -18,6 +18,7 @@ using Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 using Luthetus.Ide.RazorLib.Terminals.Displays;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Commands;
+using Luthetus.Ide.RazorLib.TestExplorers.Displays;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Ide.RazorLib.Gits.Displays;
 
@@ -191,6 +192,19 @@ public partial class LuthetusIdeInitializer : ComponentBase
 
         Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, activeContextsPanelTab, false));
 
-        Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(bottomPanel.Key, terminalPanelTab.Key));
+		var testExplorerPanelTab = new PanelTab(
+            Key<PanelTab>.NewKey(),
+            bottomPanel.ElementDimensions,
+            new(),
+            typeof(TestExplorerDisplay),
+            typeof(IconFolder),
+            "Test Explorer")
+        {
+            ContextRecordKey = ContextFacts.TestExplorerContext.ContextKey
+        };
+
+        Dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(bottomPanel.Key, testExplorerPanelTab, false));
+
+        Dispatcher.Dispatch(new PanelsState.SetActivePanelTabAction(bottomPanel.Key, testExplorerPanelTab.Key));
     }
 }

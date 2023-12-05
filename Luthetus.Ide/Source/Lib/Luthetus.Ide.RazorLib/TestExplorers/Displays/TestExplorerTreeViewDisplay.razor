@@ -1,0 +1,31 @@
+@using Luthetus.Ide.RazorLib.Terminals.Displays
+@using Luthetus.Ide.RazorLib.Terminals.Models
+@using System.Collections.Immutable
+@using Luthetus.Common.RazorLib.Dropdowns.Displays
+@using Luthetus.Common.RazorLib.Dropdowns.Models
+@using Luthetus.Common.RazorLib.TreeViews.Displays
+@using Luthetus.Common.RazorLib.TreeViews.Models
+@using Luthetus.Ide.RazorLib.TestExplorers.States
+
+<div class="luth_ide_test-explorer-tree-view"
+	 style="@ElementDimensions.StyleString">
+
+	<CascadingValue Name="LuthetusTreeViewIconWidth" Value="RenderBatch.AppOptionsState.Options.IconSizeInPixels">
+        <CascadingValue Name="LuthetusTreeViewIconHeight" Value="RenderBatch.AppOptionsState.Options.IconSizeInPixels">
+            <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
+                <TreeViewContainerDisplay TreeViewStateKey="TestExplorerState.TreeViewTestExplorerKey"
+                                          CssStyleString="height: 100%;"
+                                          OnContextMenuFunc="OnTreeViewContextMenuFunc"
+                                          TreeViewKeyboardEventHandler="_treeViewKeyboardEventHandler"
+                                          TreeViewMouseEventHandler="_treeViewMouseEventHandler" />
+            </CascadingValue>
+        </CascadingValue>
+    </CascadingValue>
+	
+	<DropdownDisplay DropdownKey="TestExplorerContextMenu.ContextMenuEventDropdownKey"
+                     DropdownPositionKind="DropdownPositionKind.Unset"
+                     CssStyleString="@TestExplorerContextMenu.GetContextMenuCssStyleString(_mostRecentTreeViewCommandArgs)">
+
+        <TestExplorerContextMenu TreeViewCommandArgs="_mostRecentTreeViewCommandArgs" />
+    </DropdownDisplay>
+</div>

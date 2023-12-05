@@ -614,6 +614,8 @@ public class TreeViewKeyboardEventHandlerTests
 
         treeViewService.RegisterTreeViewContainer(websiteServerTreeViewContainer);
 
-        keyboardEventHandler = new TreeViewKeyboardEventHandler(treeViewService);
+        keyboardEventHandler = new TreeViewKeyboardEventHandler(
+            treeViewService,
+            backgroundTaskService);
     }
 }

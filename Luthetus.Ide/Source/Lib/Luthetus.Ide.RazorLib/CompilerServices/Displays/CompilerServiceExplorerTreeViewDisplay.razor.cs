@@ -9,6 +9,7 @@ using Luthetus.Ide.RazorLib.Editors.States;
 using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Microsoft.AspNetCore.Components;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.CompilerServices.Displays;
 
@@ -30,6 +31,8 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
     private CompilerServiceExplorerSync CompilerServiceExplorerSync { get; set; } = null!;
     [Inject]
     private EditorSync EditorSync { get; set; } = null!;
+	[Inject]
+    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 
     private TreeViewCommandArgs? _mostRecentTreeViewCommandArgs;
     private CompilerServiceExplorerTreeViewKeyboardEventHandler _compilerServiceExplorerTreeViewKeymap = null!;
@@ -48,11 +51,13 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 
         _compilerServiceExplorerTreeViewKeymap = new CompilerServiceExplorerTreeViewKeyboardEventHandler(
             EditorSync,
-            TreeViewService);
+            TreeViewService,
+			BackgroundTaskService);
 
         _compilerServiceExplorerTreeViewMouseEventHandler = new CompilerServiceExplorerTreeViewMouseEventHandler(
             EditorSync,
-            TreeViewService);
+            TreeViewService,
+			BackgroundTaskService);
 
         base.OnInitialized();
     }

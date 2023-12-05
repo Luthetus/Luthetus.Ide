@@ -35,6 +35,12 @@ public static class ContextFacts
         "Compiler Service Explorer",
         "compiler-service-explorer",
         Keymap.Empty);
+
+	public static readonly ContextRecord TestExplorerContext = new(
+        Key<ContextRecord>.NewKey(),
+        "Test Explorer",
+        "test-explorer",
+        Keymap.Empty);
     
     public static readonly ContextRecord CSharpReplContext = new(
         Key<ContextRecord>.NewKey(),

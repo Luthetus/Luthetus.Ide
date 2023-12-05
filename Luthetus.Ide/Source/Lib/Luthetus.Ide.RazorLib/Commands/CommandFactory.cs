@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
@@ -123,6 +123,13 @@ public class CommandFactory : ICommandFactory
                 new KeymapArgument("KeyT", false, true, true, Key<KeymapLayer>.Empty),
                 ConstructFocusContextElementCommand(
                     ContextFacts.TerminalContext, "Focus: Terminal", "focus-terminal"));
+        }
+        // TestExplorerContext
+        {
+            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
+                new KeymapArgument("KeyT", true, true, true, Key<KeymapLayer>.Empty),
+                ConstructFocusContextElementCommand(
+                    ContextFacts.TestExplorerContext, "Focus: Test Explorer", "focus-test-explorer"));
         }
         // TextEditorContext
         {
