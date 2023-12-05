@@ -6,7 +6,7 @@ namespace Luthetus.Ide.RazorLib.TestExplorers.Models;
 
 public interface ITestExplorerRenderBatch
 {
-	public TestExplorerState TestExplorerState { get; set; }
-	public AppOptionsState AppOptionsState { get; set; }
-	public TreeViewContainer? TreeViewContainer { get; set; }
+	public TestExplorerState TestExplorerState { get; }
+	public AppOptionsState AppOptionsState { get; }
+	public TreeViewContainer? TreeViewContainer { get; }
 }

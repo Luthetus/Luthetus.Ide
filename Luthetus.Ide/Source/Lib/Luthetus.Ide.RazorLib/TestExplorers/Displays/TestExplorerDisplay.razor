@@ -17,12 +17,10 @@
 		treeViewContainer = null;
 	}
 
-	var renderBatch = _testExplorerRenderBatch = new TestExplorerRenderBatch
-	{
-		TestExplorerState = testExplorerState,
-		AppOptionsState = appOptionsState,
-		TreeViewContainer = treeViewContainer,
-	};
+	var renderBatch = new TestExplorerRenderBatch(
+		testExplorerState,
+		appOptionsState,
+		treeViewContainer);
 }
 
 <ContextBoundary ContextRecord="ContextFacts.TestExplorerContext"

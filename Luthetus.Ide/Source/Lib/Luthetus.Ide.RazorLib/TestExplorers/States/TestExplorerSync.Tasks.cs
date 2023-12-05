@@ -11,26 +11,22 @@ namespace Luthetus.Ide.RazorLib.TestExplorers.States;
 
 public partial class TestExplorerSync
 {
-	private async Task DotNetSolutionStateWrap_StateChangedAsync()
-	{
-		var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
+	private Task DotNetSolutionStateWrap_StateChangedAsync()
+    {
+        var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
 		var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
 
 		if (dotNetSolutionModel is null)
-				return;
+            return Task.CompletedTask;
 
-		var localDotNetProjectBag = dotNetSolutionModel.DotNetProjectBag
+        var localDotNetProjectBag = dotNetSolutionModel.DotNetProjectBag
 			.Where(x => x.DotNetProjectKind == DotNetProjectKind.CSharpProject);
 
-		var localProjectTestModelBag = localDotNetProjectBag.Select(x => new ProjectTestModel
-		{
-			ProjectIdGuid = x.ProjectIdGuid,
-			AbsolutePath = x.AbsolutePath,
-			EnqueueDiscoverTestsFunc = callback => Task.CompletedTask,
-			ReRenderNodeAction = node => _treeViewService.ReRenderNode(
-				TestExplorerState.TreeViewTestExplorerKey,
-				node)
-		});
+		var localProjectTestModelBag = localDotNetProjectBag.Select(x => new ProjectTestModel(
+			x.ProjectIdGuid,
+			x.AbsolutePath,
+			callback => Task.CompletedTask,
+			node => _treeViewService.ReRenderNode(TreeViewTestExplorerKey, node)));
 
 		var localFormattedCommand = DotNetCliCommandFormatter.FormatDotNetTestListTests();
 
@@ -46,10 +42,10 @@ public partial class TestExplorerSync
 		{
 			var treeViewProjectTestModel = (TreeViewProjectTestModel)entry;
 			
-			if (String.IsNullOrWhiteSpace(treeViewProjectTestModel.Item.DirectoryNameForTestDiscovery))
-				return;
+			if (string.IsNullOrWhiteSpace(treeViewProjectTestModel.Item.DirectoryNameForTestDiscovery))
+                return Task.CompletedTask;
 
-			treeViewProjectTestModel.Item.EnqueueDiscoverTestsFunc = async callback =>
+            treeViewProjectTestModel.Item.EnqueueDiscoverTestsFunc = async callback =>
 			{
 				var executionTerminalSession = _terminalSessionStateWrap.Value.TerminalSessionMap[
 	            	TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY];
@@ -64,7 +60,10 @@ public partial class TestExplorerSync
 						try
 						{
 							var output = executionTerminalSession.ReadStandardOut(treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey);
-		
+
+							if (output is null)
+								return;
+
 							treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput = DotNetCliOutputLexer.LexDotNetTestListTestsTerminalOutput(output);
 			
 			    			// THINKING_ABOUT_TREE_VIEW();
@@ -78,7 +77,7 @@ public partial class TestExplorerSync
 								{
 									var targetMap = rootMap;
 									var lastSeenStringFragment = (StringFragment?)null;
-						
+
 									foreach (var fragment in splitOutput)
 									{
 										if (!targetMap.ContainsKey(fragment))
@@ -88,7 +87,8 @@ public partial class TestExplorerSync
 										targetMap = lastSeenStringFragment.Map;
 									}
 									
-									lastSeenStringFragment.IsEndpoint = true;
+									if (lastSeenStringFragment is not null)
+										lastSeenStringFragment.IsEndpoint = true;
 								}
 
 								treeViewProjectTestModel.Item.RootStringFragmentMap = rootMap;
@@ -101,11 +101,12 @@ public partial class TestExplorerSync
 							throw;
 						}
 					},
-					async () =>
-					{
-						executionTerminalSession.ClearStandardOut(
+                    () => {
+                        executionTerminalSession.ClearStandardOut(
 							treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey);
-					});
+
+                        return Task.CompletedTask;
+                    });
 
 		        await executionTerminalSession.EnqueueCommandAsync(dotNetTestListTestsCommand);
 			};				
@@ -121,19 +122,21 @@ public partial class TestExplorerSync
 		if (!_treeViewService.TryGetTreeViewContainer(TreeViewTestExplorerKey, out _))
         {
             _treeViewService.RegisterTreeViewContainer(new TreeViewContainer(
-                TestExplorerState.TreeViewTestExplorerKey,
+                TreeViewTestExplorerKey,
                 adhocRoot,
                 activeNodes.ToImmutableList()));
         }
         else
         {
-            _treeViewService.SetRoot(TestExplorerState.TreeViewTestExplorerKey, adhocRoot);
-            _treeViewService.SetActiveNode(TestExplorerState.TreeViewTestExplorerKey, firstNode);
+            _treeViewService.SetRoot(TreeViewTestExplorerKey, adhocRoot);
+            _treeViewService.SetActiveNode(TreeViewTestExplorerKey, firstNode);
         }
 
 		_dispatcher.Dispatch(new WithAction(inState => inState with
 		{
 			ProjectTestModelBag = localProjectTestModelBag.ToImmutableList()
 		}));
-	}
+
+        return Task.CompletedTask;
+    }
 }

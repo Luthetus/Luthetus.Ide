@@ -18,9 +18,13 @@
 			<TerminalOutputDisplay TerminalSessionKey="TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY"
 								   TerminalCommandKey="@treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey"/>
 		}
-		else
+		else if (activeNode is not null)
 		{
 			<text>@(activeNode.GetType().Name)</text>
+		}
+		else
+		{
+			<text>activeNode is null</text>
 		}
 	</div>
 </div>

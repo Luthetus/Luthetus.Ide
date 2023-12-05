@@ -8,10 +8,10 @@ public partial record DotNetSolutionState
 	public class Effector
 	{
 		[EffectMethod(typeof(IWithAction))]
-		public async Task NotifyDotNetSolutionStateStateHasChanged(
-			IDispatcher dispatcher)
+		public Task NotifyDotNetSolutionStateStateHasChanged(IDispatcher dispatcher)
 		{
-			dispatcher.Dispatch(new DotNetSolutionState.StateHasChanged());
+			dispatcher.Dispatch(new StateHasChanged());
+			return Task.CompletedTask;
 		}
 	}
 }

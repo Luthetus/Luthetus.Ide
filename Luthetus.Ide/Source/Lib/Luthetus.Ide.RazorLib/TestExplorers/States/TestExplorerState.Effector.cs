@@ -7,19 +7,20 @@ public partial record TestExplorerState
 {
 	public class Effector
 	{
-		private TestExplorerSync _testExplorerSync;
+		private readonly TestExplorerSync _testExplorerSync;
 
 		public Effector(TestExplorerSync testExplorerSync)
 		{
 			_testExplorerSync = testExplorerSync;
 		}
 
-		[EffectMethod]
-		public async Task HandleDotNetSolutionStateStateHasChanged(
-			DotNetSolutionState.StateHasChanged dotNetSolutionStateStateHasChanged,
-			IDispatcher dispatcher)
+		[EffectMethod(typeof(DotNetSolutionState.StateHasChanged))]
+		public Task HandleDotNetSolutionStateStateHasChanged(IDispatcher dispatcher)
 		{
-			_testExplorerSync.DotNetSolutionStateWrap_StateChanged();
+			_ = dispatcher; // Suppress unused parameter
+
+            _testExplorerSync.DotNetSolutionStateWrap_StateChanged();
+			return Task.CompletedTask;
 		}
 	}
 }

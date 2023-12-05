@@ -22,9 +22,8 @@ public partial class TestExplorerDisplay : FluxorComponent
 	[Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
 
-	private ElementDimensions _treeViewElementDimensions = new();
-	private ElementDimensions _detailsElementDimensions = new();
-	private TestExplorerRenderBatch _testExplorerRenderBatch;
+	private readonly ElementDimensions _treeViewElementDimensions = new();
+	private readonly ElementDimensions _detailsElementDimensions = new();
 
 	protected override void OnInitialized()
     {

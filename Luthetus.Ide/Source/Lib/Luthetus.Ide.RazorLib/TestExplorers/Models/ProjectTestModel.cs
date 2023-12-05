@@ -7,13 +7,26 @@ namespace Luthetus.Ide.RazorLib.TestExplorers.Models;
 
 public class ProjectTestModel
 {
-	public Guid ProjectIdGuid { get; set; }
+	public ProjectTestModel(
+		Guid projectIdGuid,
+		IAbsolutePath absolutePath,
+		Func<Func<Dictionary<string, StringFragment>, Task>, Task> enqueueDiscoverTestsFunc,
+		Action<TreeViewNoType> reRenderNodeAction)
+	{
+		ProjectIdGuid = projectIdGuid;
+		AbsolutePath = absolutePath;
+		EnqueueDiscoverTestsFunc = enqueueDiscoverTestsFunc;
+		ReRenderNodeAction = reRenderNodeAction;
+	}
+
 	public List<string>? DotNetTestListTestsCommandOutput { get; set; }
-	public Dictionary<string, StringFragment> RootStringFragmentMap { get; set; } = new();
-	public IAbsolutePath AbsolutePath { get; set; }
-	public Key<TerminalCommand> DotNetTestListTestsTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
 	public Func<Func<Dictionary<string, StringFragment>, Task>, Task> EnqueueDiscoverTestsFunc { get; set; }
-	public Action<TreeViewNoType> ReRenderNodeAction { get; set; }
+	public Dictionary<string, StringFragment> RootStringFragmentMap { get; set; } = new();
+
+	public Guid ProjectIdGuid { get; }
+	public IAbsolutePath AbsolutePath { get; }
+	public Key<TerminalCommand> DotNetTestListTestsTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
+	public Action<TreeViewNoType> ReRenderNodeAction { get; }
 	
 	public string DirectoryNameForTestDiscovery => AbsolutePath.ParentDirectory?.Value ?? string.Empty;
 }

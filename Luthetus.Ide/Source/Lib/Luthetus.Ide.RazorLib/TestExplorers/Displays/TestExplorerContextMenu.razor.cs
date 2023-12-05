@@ -25,18 +25,6 @@ public partial class TestExplorerContextMenu : ComponentBase
 {
     [Inject]
     private IState<TerminalSessionState> TerminalSessionStateWrap { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
-    [Inject]
-    private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
-    [Inject]
-    private ILuthetusCommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-    [Inject]
-    private ITreeViewService TreeViewService { get; set; } = null!;
-    [Inject]
-    private DotNetSolutionSync DotNetSolutionSync { get; set; } = null!;
-    [Inject]
-    private InputFileSync InputFileSync { get; set; } = null!;
 	[Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 
@@ -48,12 +36,6 @@ public partial class TestExplorerContextMenu : ComponentBase
 
     public static readonly Key<DropdownRecord> ContextMenuEventDropdownKey = Key<DropdownRecord>.NewKey();
     public static readonly Key<TerminalCommand> DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey = Key<TerminalCommand>.NewKey();
-
-    /// <summary>
-    /// The program is currently running using Photino locally on the user's computer
-    /// therefore this static solution works without leaking any information.
-    /// </summary>
-    public static TreeViewNoType? ParentOfCutFile;
 
     private MenuRecord GetMenuRecord(TreeViewCommandArgs commandArgs)
     {
@@ -88,7 +70,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 				            async () => await RunTestByFullyQualifiedName(
 								treeViewStringFragment,
 								fullyQualifiedName,
-								treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory.Value));
+								treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory?.Value));
 					});
 	
 				menuRecordsBag.Add(menuOptionRecord);
@@ -112,12 +94,12 @@ public partial class TestExplorerContextMenu : ComponentBase
 	private async Task RunTestByFullyQualifiedName(
 		TreeViewStringFragment treeViewStringFragment,
 		string fullyQualifiedName,
-		string directoryNameForTestDiscovery)
+		string? directoryNameForTestDiscovery)
 	{
 		var dotNetTestByFullyQualifiedNameFormattedCommand = DotNetCliCommandFormatter.FormatDotNetTestByFullyQualifiedName(fullyQualifiedName);
 
-		if (String.IsNullOrWhiteSpace(directoryNameForTestDiscovery) ||
-			String.IsNullOrWhiteSpace(fullyQualifiedName))
+		if (string.IsNullOrWhiteSpace(directoryNameForTestDiscovery) ||
+			string.IsNullOrWhiteSpace(fullyQualifiedName))
 		{
 			return;
 		}
@@ -131,45 +113,16 @@ public partial class TestExplorerContextMenu : ComponentBase
             directoryNameForTestDiscovery,
             CancellationToken.None,
             () => Task.CompletedTask,
-			async () =>
+			() =>
 			{
 				executionTerminalSession.ClearStandardOut(
 					treeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey);
+
+                return Task.CompletedTask;
 			});
 
         await executionTerminalSession.EnqueueCommandAsync(dotNetTestByFullyQualifiedNameTerminalCommand);
 	}
-
-    private MenuOptionRecord[] GetDebugMenuOptions(TreeViewNamespacePath treeViewModel)
-    {
-        return new MenuOptionRecord[]
-        {
-            // new MenuOptionRecord(
-            //     $"namespace: {treeViewModel.Item.Namespace}",
-            //     MenuOptionKind.Read)
-        };
-    }
-
-    /// <summary>
-    /// This method I believe is causing bugs
-    /// <br/><br/>
-    /// For example, when removing a C# Project the
-    /// solution is reloaded and a new root is made.
-    /// <br/><br/>
-    /// Then there is a timing issue where the new root is made and set
-    /// as the root. But this method erroneously reloads the old root.
-    /// </summary>
-    /// <param name="treeViewModel"></param>
-    private async Task ReloadTreeViewModel(TreeViewNoType? treeViewModel)
-    {
-        if (treeViewModel is null)
-            return;
-
-        await treeViewModel.LoadChildBagAsync();
-
-        TreeViewService.ReRenderNode(DotNetSolutionState.TreeViewSolutionExplorerStateKey, treeViewModel);
-        TreeViewService.MoveUp(DotNetSolutionState.TreeViewSolutionExplorerStateKey, false);
-    }
 
     public static string GetContextMenuCssStyleString(TreeViewCommandArgs? commandArgs)
     {
