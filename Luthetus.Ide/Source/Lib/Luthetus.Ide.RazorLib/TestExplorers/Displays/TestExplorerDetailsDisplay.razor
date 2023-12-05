@@ -1,4 +1,6 @@
 @using Luthetus.Ide.RazorLib.TreeViewImplementations.Models
+@using Luthetus.Ide.RazorLib.Terminals.Models;
+@using Luthetus.Ide.RazorLib.Terminals.Displays;
 
 <div class="luth_ide_test-explorer-details"
 	 style="@ElementDimensions.StyleString">
@@ -11,7 +13,10 @@
 	}
 	else if (activeNode is TreeViewProjectTestModel treeViewProjectTestModel)
 	{
-		<text>@treeViewProjectTestModel.Item.AbsolutePath.NameWithExtension</text>
+		<div>
+			<TerminalOutputDisplay TerminalSessionKey="TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY"
+								   TerminalCommandKey="@treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey"/>
+		</div>
 	}
 	else
 	{

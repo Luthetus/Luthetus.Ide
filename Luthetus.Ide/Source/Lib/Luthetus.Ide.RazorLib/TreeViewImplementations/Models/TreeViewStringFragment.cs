@@ -80,15 +80,10 @@ public class TreeViewStringFragment : TreeViewWithType<StringFragment>
 
 				Item.Value = $"{Item.Value}.{child.Item.Value}";
 				Item.Map = child.Item.Map;
+				Item.IsEndpoint = child.Item.IsEndpoint;
 
 				newChildBag = child.ChildBag;
 			}
-
-			// newChildBag = Item.Map.Select(kvp => (TreeViewNoType)new TreeViewStringFragment(
-			// 	kvp.Value,
-			// 	CommonComponentRenderers,
-			// 	true,
-			// 	false)).ToList();
 
             ChildBag = newChildBag;
             LinkChildren(previousChildren, ChildBag);

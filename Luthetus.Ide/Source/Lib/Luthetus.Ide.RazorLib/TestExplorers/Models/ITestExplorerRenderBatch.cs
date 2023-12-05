@@ -8,5 +8,5 @@ public interface ITestExplorerRenderBatch
 {
 	public TestExplorerState TestExplorerState { get; set; }
 	public AppOptionsState AppOptionsState { get; set; }
-	public TreeViewContainer TreeViewContainer { get; set; }
+	public TreeViewContainer? TreeViewContainer { get; set; }
 }
