@@ -1,5 +1,20 @@
+@using Luthetus.Ide.RazorLib.TreeViewImplementations.Models
+
 <div class="luth_ide_test-explorer-details"
 	 style="@ElementDimensions.StyleString">
 
-	luth_ide_test-explorer-details
+	@{ var activeNode = RenderBatch.TreeViewContainer.ActiveNode; }
+
+	@if (activeNode is TreeViewStringFragment treeViewStringFragment)
+	{
+		<text>@treeViewStringFragment.Item.Value</text>
+	}
+	else if (activeNode is TreeViewProjectTestModel treeViewProjectTestModel)
+	{
+		<text>@treeViewProjectTestModel.Item.AbsolutePath.NameWithExtension</text>
+	}
+	else
+	{
+		<text>@(activeNode.GetType().Name)</text>
+	}
 </div>

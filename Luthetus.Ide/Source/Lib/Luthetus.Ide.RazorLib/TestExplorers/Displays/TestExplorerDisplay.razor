@@ -1,8 +1,29 @@
 @using Luthetus.Common.RazorLib.Contexts.Displays
 @using Luthetus.Common.RazorLib.Contexts.Models
 @using Luthetus.Common.RazorLib.Resizes.Displays
+@using Luthetus.Ide.RazorLib.TestExplorers.States
+@using Luthetus.Ide.RazorLib.TestExplorers.Models
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@{
+	var testExplorerState = TestExplorerStateWrap.Value;
+	var appOptionsState = AppOptionsStateWrap.Value;
+
+	if (!TreeViewService.TryGetTreeViewContainer(
+			TestExplorerState.TreeViewTestExplorerKey,
+			out var treeViewContainer))
+	{
+		treeViewContainer = null;
+	}
+
+	var renderBatch = _testExplorerRenderBatch = new TestExplorerRenderBatch
+	{
+		TestExplorerState = testExplorerState,
+		AppOptionsState = appOptionsState,
+		TreeViewContainer = treeViewContainer,
+	};
+}
 
 <ContextBoundary ContextRecord="ContextFacts.TestExplorerContext"
                  ClassCssString="luth_ide_test-explorer"
@@ -15,12 +36,24 @@
     <div class="luth_ide_section-body"
          style="width: 100%; display: flex;">
 
-		<TestExplorerTreeViewDisplay ElementDimensions="_treeViewElementDimensions"/>
+		@if (renderBatch.TreeViewContainer is null)
+		{
+			<div>renderBatch.TreeViewContainer is null</div>
+		}
+		else
+		{
+			var renderBatchValidated = new TestExplorerRenderBatchValidated(renderBatch);
 
-		<ResizableColumn LeftElementDimensions="_treeViewElementDimensions"
-		                 RightElementDimensions="_detailsElementDimensions"
-		                 ReRenderFuncAsync="async () => await InvokeAsync(StateHasChanged)" />
+			<CascadingValue Value="renderBatchValidated">
 
-		<TestExplorerDetailsDisplay ElementDimensions="_detailsElementDimensions"/>
+				<TestExplorerTreeViewDisplay ElementDimensions="_treeViewElementDimensions"/>
+	
+				<ResizableColumn LeftElementDimensions="_treeViewElementDimensions"
+				                 RightElementDimensions="_detailsElementDimensions"
+				                 ReRenderFuncAsync="async () => await InvokeAsync(StateHasChanged)" />
+		
+				<TestExplorerDetailsDisplay ElementDimensions="_detailsElementDimensions"/>
+			</CascadingValue>
+		}
     </div>
 </ContextBoundary>

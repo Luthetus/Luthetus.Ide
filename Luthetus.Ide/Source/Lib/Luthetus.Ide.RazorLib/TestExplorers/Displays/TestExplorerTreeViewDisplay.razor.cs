@@ -20,15 +20,12 @@ using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
 using Luthetus.Ide.RazorLib.TestExplorers.States;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Resizes.Displays;
+using Luthetus.Ide.RazorLib.TestExplorers.Models;
 
 namespace Luthetus.Ide.RazorLib.TestExplorers.Displays;
 
 public partial class TestExplorerTreeViewDisplay : ComponentBase
 {
-	[Inject]
-    private IState<TestExplorerState> TestExplorerStateWrap { get; set; } = null!;
-	[Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
 	[Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
@@ -36,6 +33,9 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
 	[Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	
+	[CascadingParameter]
+    public TestExplorerRenderBatchValidated RenderBatch { get; set; } = null!;
+
 	[Parameter, EditorRequired]
     public ElementDimensions ElementDimensions { get; set; } = null!;
 
@@ -46,7 +46,7 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
 	private ElementDimensions _detailsElementDimensions = new();
 
 	private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-        AppOptionsStateWrap.Value.Options.IconSizeInPixels * (2.0 / 3.0));
+        RenderBatch.AppOptionsState.Options.IconSizeInPixels * (2.0 / 3.0));
 
 	protected override void OnInitialized()
     {
