@@ -7,19 +7,20 @@
 
 	@{ var activeNode = RenderBatch.TreeViewContainer.ActiveNode; }
 
-	@if (activeNode is TreeViewStringFragment treeViewStringFragment)
-	{
-		<text>@treeViewStringFragment.Item.Value</text>
-	}
-	else if (activeNode is TreeViewProjectTestModel treeViewProjectTestModel)
-	{
-		<div>
+	<div style="height: 100%;">
+		@if (activeNode is TreeViewStringFragment treeViewStringFragment)
+		{
+			<TerminalOutputDisplay TerminalSessionKey="TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY"
+								   TerminalCommandKey="@treeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey"/>
+		}
+		else if (activeNode is TreeViewProjectTestModel treeViewProjectTestModel)
+		{
 			<TerminalOutputDisplay TerminalSessionKey="TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY"
 								   TerminalCommandKey="@treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey"/>
-		</div>
-	}
-	else
-	{
-		<text>@(activeNode.GetType().Name)</text>
-	}
+		}
+		else
+		{
+			<text>@(activeNode.GetType().Name)</text>
+		}
+	</div>
 </div>

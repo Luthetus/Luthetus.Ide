@@ -137,7 +137,7 @@ public partial class TestExplorerContextMenu : ComponentBase
             TerminalSessionFacts.EXECUTION_TERMINAL_SESSION_KEY];
 
         var dotNetTestByFullyQualifiedNameTerminalCommand = new TerminalCommand(
-            DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey,
+            treeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey,
             dotNetTestByFullyQualifiedNameFormattedCommand,
             directoryNameForTestDiscovery,
             CancellationToken.None,
