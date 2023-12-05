@@ -56,7 +56,7 @@ public partial class TestExplorerDisplay : FluxorComponent
 	        {
 	            new DimensionUnit
 	            {
-	                Value = 60,
+	                Value = 50,
 	                DimensionUnitKind = DimensionUnitKind.Percentage
 	            },
 	            new DimensionUnit
@@ -77,7 +77,7 @@ public partial class TestExplorerDisplay : FluxorComponent
 	        {
 	            new DimensionUnit
 	            {
-	                Value = 40,
+	                Value = 50,
 	                DimensionUnitKind = DimensionUnitKind.Percentage
 	            },
 	            new DimensionUnit

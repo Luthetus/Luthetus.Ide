@@ -109,6 +109,11 @@ public partial class TestExplorerSync
 							await callback.Invoke(new());
 							throw;
 						}
+					},
+					async () =>
+					{
+						executionTerminalSession.ClearStandardOut(
+							treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey);
 					});
 
 		        await executionTerminalSession.EnqueueCommandAsync(dotNetTestListTestsCommand);

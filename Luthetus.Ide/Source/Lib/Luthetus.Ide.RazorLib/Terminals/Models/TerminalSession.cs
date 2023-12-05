@@ -129,6 +129,9 @@ public class TerminalSession
 
                     try
                     {
+						if (terminalCommand.BeginWith is not null)
+                            await terminalCommand.BeginWith.Invoke();
+						
                         await command.Observe(_commandCancellationTokenSource.Token)
                             .ForEachAsync(cmdEvent =>
                             {
@@ -187,6 +190,16 @@ public class TerminalSession
 	        {
 	            stringBuilder.Clear();
 	        }
+		}
+
+        DispatchNewStateKey();
+    }
+
+	public void ClearStandardOut(Key<TerminalCommand> terminalCommandKey)
+    {
+		lock(_standardOutBuilderMapLock)
+		{
+			_standardOutBuilderMap[terminalCommandKey].Clear();
 		}
 
         DispatchNewStateKey();
