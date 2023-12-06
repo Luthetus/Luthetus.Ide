@@ -241,25 +241,136 @@ public class ParserTests
 	[Fact]
 	public void PARSE_FunctionInvocationNode()
 	{
-		throw new NotImplementedException();
+		var resourceUri = new ResourceUri("UnitTests");
+		var functionName = "MyFunction";
+		var sourceText = $@"{functionName}()";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+		lexer.Lex();
+		var parser = new CSharpParser(lexer);
+		var compilationUnit = parser.Parse();
+		var topCodeBlock = compilationUnit.TopLevelStatementsCodeBlockNode;
+
+		var functionInvocationNode = 
+			(FunctionInvocationNode)topCodeBlock.ChildBag.Single();
+		
+		Assert.Equal(functionName,
+			functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.GetText());
+		
+		// The corresponding FunctionDefinitionNode should be null because,
+		// the function was never defined.
+		Assert.Null(functionInvocationNode.FunctionDefinitionNode);
+
+		Assert.Null(functionInvocationNode.GenericParametersListingNode);
+		Assert.Empty(functionInvocationNode.FunctionParametersListingNode.FunctionParameterEntryNodeBag);
+		
+		Assert.False(functionInvocationNode.IsFabricated);
+		Assert.Equal(SyntaxKind.FunctionInvocationNode, functionInvocationNode.SyntaxKind);
 	}
 	
 	[Fact]
 	public void PARSE_FunctionParameterEntryNode()
 	{
-		throw new NotImplementedException();
+		var resourceUri = new ResourceUri("UnitTests");
+		var functionName = "MyFunction";
+		var sourceText = $@"{functionName}(3)";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+		lexer.Lex();
+		var parser = new CSharpParser(lexer);
+		var compilationUnit = parser.Parse();
+		var topCodeBlock = compilationUnit.TopLevelStatementsCodeBlockNode;
+
+		var functionParameterEntryNode = 
+			((FunctionInvocationNode)topCodeBlock.ChildBag.Single())
+			.FunctionParametersListingNode
+			.FunctionParameterEntryNodeBag.Single();
+
+	    Assert.False(functionParameterEntryNode.HasOutKeyword);
+	    Assert.False(functionParameterEntryNode.HasInKeyword);
+	    Assert.False(functionParameterEntryNode.HasRefKeyword);
+		Assert.False(functionParameterEntryNode.IsFabricated);
+		Assert.Equal(SyntaxKind.FunctionParameterEntryNode, functionParameterEntryNode.SyntaxKind);
+
+		var expressionNode = functionParameterEntryNode.ExpressionNode;
+		Assert.IsType<LiteralExpressionNode>(expressionNode);
+
+		// TODO: Continue working on this test
+		throw new NotImplementedException(@"Error Message:
+   Assert.IsType() Failure
+Expected: Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.LiteralExpressionNode
+Actual:   Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.ParenthesizedExpressionNode");
 	}
 	
 	[Fact]
 	public void PARSE_FunctionParametersListingNode()
 	{
-		throw new NotImplementedException();
+		var resourceUri = new ResourceUri("UnitTests");
+		var functionName = "MyFunction";
+		var sourceText = $@"{functionName}(3, 4)";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+		lexer.Lex();
+		var parser = new CSharpParser(lexer);
+		var compilationUnit = parser.Parse();
+		var topCodeBlock = compilationUnit.TopLevelStatementsCodeBlockNode;
+
+		var functionParameterEntryNode = 
+			((FunctionInvocationNode)topCodeBlock.ChildBag.Single())
+			.FunctionParametersListingNode;
+
+		Assert.NotNull(functionParameterEntryNode.OpenParenthesisToken);
+		Assert.Equal(2, functionParameterEntryNode.FunctionParameterEntryNodeBag.Length);
+		Assert.NotNull(functionParameterEntryNode.CloseParenthesisToken);
+
+		Assert.False(functionParameterEntryNode.IsFabricated);
+		Assert.Equal(SyntaxKind.FunctionParameterEntryNode, functionParameterEntryNode.SyntaxKind);
+
+		// TODO: Continue working on this test
+		throw new NotImplementedException(@"Error Message:
+   Assert.Equal() Failure
+Expected: 2
+Actual:   1");
 	}
 	
 	[Fact]
 	public void PARSE_GenericArgumentEntryNode()
 	{
-		throw new NotImplementedException();
+		var resourceUri = new ResourceUri("UnitTests");
+		var genericArgumentText = "int";
+		var genericArgumentValueType = typeof(int);
+		var sourceText = $@"List<{genericArgumentText}> myList = new List<{genericArgumentText}>();";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+		lexer.Lex();
+		var parser = new CSharpParser(lexer);
+		var compilationUnit = parser.Parse();
+		var topCodeBlock = compilationUnit.TopLevelStatementsCodeBlockNode;
+
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildBag[0];
+		
+		var genericArgumentEntryNode = variableDeclarationNode
+			.TypeClauseNode.GenericParametersListingNode.GenericParameterEntryNodeBag.Single();
+
+		Assert.False(genericArgumentEntryNode.IsFabricated);
+		Assert.Equal(SyntaxKind.GenericArgumentEntryNode, genericArgumentEntryNode.SyntaxKind);
+
+		// TypeClauseNode assertions
+		{
+			var typeClauseNode = genericArgumentEntryNode.TypeClauseNode;
+			
+			Assert.Equal(genericArgumentText,
+				genericArgumentEntryNode.TypeClauseNode.TypeIdentifier.TextSpan.GetText());
+		    
+			Assert.Equal(genericArgumentValueType, genericArgumentEntryNode.TypeClauseNode.ValueType);
+
+		    Assert.Null(genericArgumentEntryNode.TypeClauseNode.GenericParametersListingNode);
+		    Assert.False(genericArgumentEntryNode.TypeClauseNode.IsFabricated);
+		}
+
+		// TODO: Continue working on this test
+		throw new NotImplementedException(@"Error Message:
+   System.InvalidCastException : Unable to cast object of type 'Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.FunctionInvocationNode' to type 'Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.VariableDeclarationNode'.");
 	}
 	
 	[Fact]
