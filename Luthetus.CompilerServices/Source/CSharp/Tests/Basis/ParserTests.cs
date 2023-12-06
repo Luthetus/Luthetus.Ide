@@ -376,12 +376,43 @@ Actual:   1");
 	[Fact]
 	public void PARSE_GenericArgumentsListingNode()
 	{
-		throw new NotImplementedException();
+		var resourceUri = new ResourceUri("UnitTests");
+		var sourceText = $@"Dictionary<string, int> myMap = new Dictionary<string, int>();";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+		lexer.Lex();
+		var parser = new CSharpParser(lexer);
+		var compilationUnit = parser.Parse();
+		var topCodeBlock = compilationUnit.TopLevelStatementsCodeBlockNode;
+
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildBag[0];
+		
+		var genericParametersListingNode = variableDeclarationNode
+			.TypeClauseNode.GenericParametersListingNode;
+
+		Assert.Equal(2, genericParametersListingNode.GenericParameterEntryNodeBag.Length);
+		Assert.False(genericParametersListingNode.IsFabricated);
+		Assert.Equal(SyntaxKind.GenericParametersListingNode, genericParametersListingNode.SyntaxKind);
+
+		// TODO: Continue working on this test
+		throw new NotImplementedException(@"Error Message:
+   System.InvalidCastException : Unable to cast object of type 'Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.FunctionInvocationNode' to type 'Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.VariableDeclarationNode'.");
 	}
 	
 	[Fact]
 	public void PARSE_GenericParameterEntryNode()
 	{
+		var resourceUri = new ResourceUri("UnitTests");
+		var sourceText = $@"s";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+		lexer.Lex();
+		var parser = new CSharpParser(lexer);
+		var compilationUnit = parser.Parse();
+		var topCodeBlock = compilationUnit.TopLevelStatementsCodeBlockNode;
+
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildBag[0];
+
 		throw new NotImplementedException();
 	}
 	
