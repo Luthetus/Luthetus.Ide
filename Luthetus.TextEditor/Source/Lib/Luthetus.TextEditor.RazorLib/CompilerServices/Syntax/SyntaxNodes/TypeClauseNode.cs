@@ -28,11 +28,19 @@ public sealed record TypeClauseNode : ISyntaxNode
     }
 
     /// <summary>
-    /// Given: 'string x = 2;'<br/>
-    /// Then: 'string' is the <see cref="TypeIdentifier"/>
+    /// Given: 'int x = 2;'<br/>
+    /// Then: 'int' is the <see cref="TypeIdentifier"/>
     /// And: <see cref="GenericParametersListingNode"/> would be null
     /// </summary>
     public ISyntaxToken TypeIdentifier { get; }
+	/// <summary>
+    /// Given: 'int x = 2;'<br/>
+    /// Then: 'typeof(int)' is the <see cref="ValueType"/>
+    /// And: <see cref="GenericParametersListingNode"/> would be null
+	///<br/>
+	/// In short, <see cref="ValueType"/> is non-null when the
+	/// <see cref="TypeIdentifier"/> maps to a C# primitive type.
+    /// </summary>
     public Type? ValueType { get; }
     /// <summary>
     /// Given: 'int[] x = 2;'<br/>
