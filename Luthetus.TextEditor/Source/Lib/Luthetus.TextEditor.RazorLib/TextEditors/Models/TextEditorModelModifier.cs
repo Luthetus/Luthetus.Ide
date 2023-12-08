@@ -1,0 +1,1628 @@
+﻿using Luthetus.Common.RazorLib.Keyboards.Models;
+using Luthetus.Common.RazorLib.Keymaps.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.RenderStates.Models;
+using Luthetus.TextEditor.RazorLib.Characters.Models;
+using Luthetus.TextEditor.RazorLib.Commands.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
+using Luthetus.TextEditor.RazorLib.Edits.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Options.Models;
+using Luthetus.TextEditor.RazorLib.Rows.Models;
+using Microsoft.AspNetCore.Components.Web;
+using System.Collections.Immutable;
+using static Luthetus.TextEditor.RazorLib.TextEditors.States.TextEditorModelState;
+
+namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
+
+/// <summary>
+/// Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value
+///
+/// When reading state, if the state had been 'null coallesce assigned' then the field will
+/// be read. Otherwise, the existing TextEditorModel's value will be read.
+/// <br/>
+/// A large amount of this file is going to be deleted. I copied over everything from
+/// <see cref="TextEditorModel"/>, and I need to think about how I want to simplify things.
+/// </summary>
+public partial record TextEditorModelModifier
+{
+    private readonly TextEditorModel _textEditorModel;
+
+    public TextEditorModelModifier(TextEditorModel textEditorModel)
+    {
+        _textEditorModel = textEditorModel;
+	}
+
+	private List<RichCharacter>? _contentBag;
+	private List<EditBlock>? _editBlocksBag;
+	private List<(int positionIndex, RowEndingKind rowEndingKind)>? _rowEndingPositionsBag;
+    private List<(RowEndingKind rowEndingKind, int count)>? _rowEndingKindCountsBag;
+    private List<TextEditorPresentationModel>? _presentationModelsBag;
+	private List<int>? _tabKeyPositionsBag;
+
+    private RowEndingKind? _onlyRowEndingKind;
+	/// <summary>
+	/// Awkward special case here: <see cref="_onlyRowEndingKind"/> is allowed to be null.
+	/// So, the design of this class where null means unmodified, doesn't work well here.
+	/// </summary>
+	private bool _onlyRowEndingKindWasModified;
+
+    private RowEndingKind? _usingRowEndingKind;
+    private ResourceUri? _resourceUri;
+    private DateTime? _resourceLastWriteTime;
+	private string? _fileExtension;
+    private IDecorationMapper? _decorationMapper;
+    private ICompilerService? _compilerService;
+    private TextEditorSaveFileHelper? _textEditorSaveFileHelper;
+    private int? _editBlockIndex;
+	private (int rowIndex, int rowLength)? _mostCharactersOnASingleRowTuple;
+    private Key<RenderState>? _renderStateKey = Key<RenderState>.NewKey();
+    private Keymap? _textEditorKeymap;
+	private TextEditorOptions? _textEditorOptions;
+	
+	private IList<RichCharacter> ContentBag => _contentBag is null ? _textEditorModel.ContentBag : _contentBag;
+	private IList<EditBlock> EditBlocksBag => _editBlocksBag is null ? _textEditorModel.EditBlocksBag : _editBlocksBag;
+	private IList<(int positionIndex, RowEndingKind rowEndingKind)> RowEndingPositionsBag => _rowEndingPositionsBag is null ? _textEditorModel.RowEndingPositionsBag : _rowEndingPositionsBag;
+    private IList<(RowEndingKind rowEndingKind, int count)> RowEndingKindCountsBag => _rowEndingKindCountsBag is null ? _textEditorModel.RowEndingKindCountsBag : _rowEndingKindCountsBag;
+    private IList<TextEditorPresentationModel> PresentationModelsBag => _presentationModelsBag is null ? _textEditorModel.PresentationModelsBag : _presentationModelsBag;
+	private IList<int> TabKeyPositionsBag => _tabKeyPositionsBag is null ? _textEditorModel.TabKeyPositionsBag : _tabKeyPositionsBag;
+    private RowEndingKind? OnlyRowEndingKind => _onlyRowEndingKindWasModified ? _onlyRowEndingKind : _textEditorModel.OnlyRowEndingKind;
+    private RowEndingKind UsingRowEndingKind => _usingRowEndingKind ?? _textEditorModel.UsingRowEndingKind;
+    private ResourceUri ResourceUri => _resourceUri ?? _textEditorModel.ResourceUri;
+    private DateTime ResourceLastWriteTime => _resourceLastWriteTime ?? _textEditorModel.ResourceLastWriteTime;
+	private string FileExtension => _fileExtension ?? _textEditorModel.FileExtension;
+    private IDecorationMapper DecorationMapper => _decorationMapper ?? _textEditorModel.DecorationMapper;
+    private ICompilerService CompilerService => _compilerService ?? _textEditorModel.CompilerService;
+    private TextEditorSaveFileHelper TextEditorSaveFileHelper => _textEditorSaveFileHelper ?? _textEditorModel.TextEditorSaveFileHelper;
+    private int EditBlockIndex => _editBlockIndex ?? _textEditorModel.EditBlockIndex;
+	private (int rowIndex, int rowLength) MostCharactersOnASingleRowTuple => _mostCharactersOnASingleRowTuple ?? _textEditorModel.MostCharactersOnASingleRowTuple;
+    private Key<RenderState> RenderStateKey  => _renderStateKey  ?? _textEditorModel.RenderStateKey;
+    private Keymap TextEditorKeymap => _textEditorKeymap ?? _textEditorModel.TextEditorKeymap;
+	private TextEditorOptions? TextEditorOptions => _textEditorOptions ?? _textEditorModel.TextEditorOptions;
+
+	public TextEditorModel ToTextEditorModel()
+	{
+		return _textEditorModel with
+		{
+			ContentBag = _contentBag is null ? _textEditorModel.ContentBag : _contentBag.ToImmutableList(),
+			EditBlocksBag = _editBlocksBag is null ? _textEditorModel.EditBlocksBag : _editBlocksBag.ToImmutableList(),
+			RowEndingPositionsBag = _rowEndingPositionsBag is null ? _textEditorModel.RowEndingPositionsBag : _rowEndingPositionsBag.ToImmutableList(),
+			RowEndingKindCountsBag = _rowEndingKindCountsBag is null ? _textEditorModel.RowEndingKindCountsBag : _rowEndingKindCountsBag.ToImmutableList(),
+			PresentationModelsBag = _presentationModelsBag is null ? _textEditorModel.PresentationModelsBag : _presentationModelsBag.ToImmutableList(),
+			TabKeyPositionsBag = _tabKeyPositionsBag is null ? _textEditorModel.TabKeyPositionsBag : _tabKeyPositionsBag.ToImmutableList(),
+			OnlyRowEndingKind = _onlyRowEndingKindWasModified ? _onlyRowEndingKind : _textEditorModel.OnlyRowEndingKind,
+			UsingRowEndingKind = _usingRowEndingKind ?? _textEditorModel.UsingRowEndingKind,
+			ResourceUri = _resourceUri ?? _textEditorModel.ResourceUri,
+			ResourceLastWriteTime = _resourceLastWriteTime ?? _textEditorModel.ResourceLastWriteTime,
+			FileExtension = _fileExtension ?? _textEditorModel.FileExtension,
+			DecorationMapper = _decorationMapper ?? _textEditorModel.DecorationMapper,
+			CompilerService = _compilerService ?? _textEditorModel.CompilerService,
+			TextEditorSaveFileHelper = _textEditorSaveFileHelper ?? _textEditorModel.TextEditorSaveFileHelper,
+			EditBlockIndex = _editBlockIndex ?? _textEditorModel.EditBlockIndex,
+			MostCharactersOnASingleRowTuple = _mostCharactersOnASingleRowTuple ?? _textEditorModel.MostCharactersOnASingleRowTuple,
+			RenderStateKey = _renderStateKey ?? _textEditorModel.RenderStateKey,
+			TextEditorKeymap = _textEditorKeymap ?? _textEditorModel.TextEditorKeymap,
+			TextEditorOptions = _textEditorOptions ?? _textEditorModel.TextEditorOptions,
+		};
+	}
+
+    public void ModifyContentBag()
+	{
+		throw new NotImplementedException();
+	}
+	
+	public void ClearContentBag()
+	{
+		_contentBag = new();
+	}
+
+	public void ModifyEditBlocksBag()
+	{
+		throw new NotImplementedException();
+	}
+
+	public void ModifyRowEndingPositionsBag()
+	{
+		throw new NotImplementedException();
+	}
+	
+	public void ClearRowEndingPositionsBag()
+	{
+		_rowEndingPositionsBag = new();
+	}
+
+	public void ModifyRowEndingKindCountsBag()
+	{
+		throw new NotImplementedException();
+	}
+	
+	public void ClearRowEndingKindCountsBag()
+	{
+		_rowEndingKindCountsBag = new();
+	}
+
+	public void ModifyPresentationModelsBag()
+	{
+		throw new NotImplementedException();
+	}
+
+	public void ModifyTabKeyPositionsBag()
+	{
+		throw new NotImplementedException();
+	}
+	
+	public void ClearTabKeyPositionsBag()
+	{
+		_tabKeyPositionsBag = new();
+	}
+
+	public void ModifyOnlyRowEndingKind()
+	{
+		_onlyRowEndingKind = null;
+		_onlyRowEndingKindWasModified = true;
+	}
+
+	public void ModifyUsingRowEndingKind(RowEndingKind rowEndingKind)
+	{
+		_usingRowEndingKind = rowEndingKind;
+	}
+
+	public void ModifyResourceUri()
+	{
+		throw new NotImplementedException();
+	}
+
+    public void ModifyResourceLastWriteTime()
+	{
+		throw new NotImplementedException();
+	}
+	
+	public void ModifyResourceData(ResourceUri resourceUri, DateTime resourceLastWriteTime)
+	{
+		_resourceUri = resourceUri;
+		_resourceLastWriteTime = resourceLastWriteTime;
+	}
+
+	public void ModifyFileExtension()
+	{
+		throw new NotImplementedException();
+	}
+
+    public void ModifyDecorationMapper(IDecorationMapper decorationMapper)
+	{
+		_decorationMapper = decorationMapper;
+	}
+
+    public void ModifyCompilerService(ICompilerService compilerService)
+	{
+		_compilerService = compilerService;
+	}
+
+    public void ModifyTextEditorSaveFileHelper(TextEditorSaveFileHelper textEditorSaveFileHelper)
+	{
+		_textEditorSaveFileHelper = textEditorSaveFileHelper;
+	}
+
+	public void ModifyEditBlockIndex()
+	{
+		throw new NotImplementedException();
+	}
+
+	public void ModifyMostCharactersOnASingleRowTuple()
+	{
+		throw new NotImplementedException();
+	}
+
+	public void ModifyRenderStateKey()
+	{
+		throw new NotImplementedException();
+	}
+
+	public void ModifyTextEditorKeymap()
+	{
+		throw new NotImplementedException();
+	}
+
+	public void ModifyTextEditorOptions()
+	{
+		throw new NotImplementedException();
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////
+
+	private void EnsureUndoPoint(TextEditKind textEditKind, string? otherTextEditKindIdentifier = null)
+	{
+		// Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value
+		//
+		// When reading state, if the state had been 'null coallesce assigned' then the field will
+		// be read. Otherwise, the existing TextEditorModel's value will be read.
+		{
+			_editBlocksBag ??= _textEditorModel.EditBlocksBag.ToList();
+			_editBlockIndex ??= _textEditorModel.EditBlockIndex;
+		}
+
+		if (textEditKind == TextEditKind.Other && otherTextEditKindIdentifier is null)
+			TextEditorCommand.ThrowOtherTextEditKindIdentifierWasExpectedException(textEditKind);
+
+		var mostRecentEditBlock = EditBlocksBag.LastOrDefault();
+
+		if (mostRecentEditBlock is null || mostRecentEditBlock.TextEditKind != textEditKind)
+		{
+			var newEditBlockIndex = EditBlockIndex;
+
+			EditBlocksBag.Insert(newEditBlockIndex, new EditBlock(
+				textEditKind,
+				textEditKind.ToString(),
+				GetAllText(),
+				otherTextEditKindIdentifier));
+
+			var removeBlocksStartingAt = newEditBlockIndex + 1;
+
+			_editBlocksBag.RemoveRange(removeBlocksStartingAt, EditBlocksBag.Count - removeBlocksStartingAt);
+
+			_editBlockIndex++;
+		}
+
+		while (EditBlocksBag.Count > TextEditorModel.MAXIMUM_EDIT_BLOCKS && EditBlocksBag.Count != 0)
+		{
+			_editBlockIndex--;
+			EditBlocksBag.RemoveAt(0);
+		}
+	}
+
+	private void PerformInsertions(KeyboardEventAction keyboardEventAction)
+	{
+		// Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value
+		//
+		// When reading state, if the state had been 'null coallesce assigned' then the field will
+		// be read. Otherwise, the existing TextEditorModel's value will be read.
+		{
+			_contentBag ??= _textEditorModel.ContentBag.ToList();
+			_rowEndingPositionsBag ??= _textEditorModel.RowEndingPositionsBag.ToList();
+			_tabKeyPositionsBag ??= _textEditorModel.TabKeyPositionsBag.ToList();
+			_mostCharactersOnASingleRowTuple ??= _textEditorModel.MostCharactersOnASingleRowTuple;
+		}
+
+		EnsureUndoPoint(TextEditKind.Insertion);
+
+		foreach (var cursorSnapshot in keyboardEventAction.CursorSnapshotsBag)
+		{
+			if (TextEditorSelectionHelper.HasSelectedText(cursorSnapshot.ImmutableCursor.ImmutableSelection))
+			{
+				PerformDeletions(keyboardEventAction);
+
+				var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorSnapshot.ImmutableCursor.ImmutableSelection);
+
+				var lowerRowData = FindRowInformation(selectionBounds.lowerPositionIndexInclusive);
+
+				var lowerColumnIndex = selectionBounds.lowerPositionIndexInclusive - lowerRowData.rowStartPositionIndex;
+
+				// Move cursor to lower bound of text selection
+				cursorSnapshot.UserCursor.IndexCoordinates = (lowerRowData.rowIndex, lowerColumnIndex);
+
+				var nextEdit = keyboardEventAction with
+				{
+					CursorSnapshotsBag = new[]
+					{
+						new TextEditorCursorSnapshot(cursorSnapshot.UserCursor)
+					}.ToImmutableArray()
+				};
+
+				// Because one cannot move reference of foreach variable,
+				// one has to re-invoke the method with different paramters
+				PerformInsertions(nextEdit);
+				return;
+			}
+
+			var startOfRowPositionIndex = GetStartOfRowTuple(cursorSnapshot.ImmutableCursor.RowIndex).positionIndex;
+			var cursorPositionIndex = startOfRowPositionIndex + cursorSnapshot.ImmutableCursor.ColumnIndex;
+
+			// If cursor is out of bounds then continue
+			if (cursorPositionIndex > ContentBag.Count)
+				continue;
+
+			var wasTabCode = false;
+			var wasEnterCode = false;
+
+			var characterValueToInsert = keyboardEventAction.KeyboardEventArgs.Key.First();
+
+			if (KeyboardKeyFacts.IsWhitespaceCode(keyboardEventAction.KeyboardEventArgs.Code))
+			{
+				characterValueToInsert = KeyboardKeyFacts.ConvertWhitespaceCodeToCharacter(keyboardEventAction.KeyboardEventArgs.Code);
+
+				wasTabCode = KeyboardKeyFacts.WhitespaceCodes.TAB_CODE == keyboardEventAction.KeyboardEventArgs.Code;
+				wasEnterCode = KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == keyboardEventAction.KeyboardEventArgs.Code;
+			}
+
+			var characterCountInserted = 1;
+
+			if (wasEnterCode)
+			{
+				var rowEndingKindToInsert = UsingRowEndingKind;
+
+				var richCharacters = rowEndingKindToInsert.AsCharacters().Select(character => new RichCharacter
+				{
+					Value = character,
+					DecorationByte = default,
+				});
+
+				characterCountInserted = rowEndingKindToInsert.AsCharacters().Length;
+
+				_contentBag.InsertRange(cursorPositionIndex, richCharacters);
+
+				RowEndingPositionsBag.Insert(cursorSnapshot.ImmutableCursor.RowIndex,
+					(cursorPositionIndex + characterCountInserted, rowEndingKindToInsert));
+
+				MutateRowEndingKindCount(UsingRowEndingKind, 1);
+
+				var indexCoordinates = cursorSnapshot.UserCursor.IndexCoordinates;
+
+				cursorSnapshot.UserCursor.IndexCoordinates = (indexCoordinates.rowIndex + 1, 0);
+
+				cursorSnapshot.UserCursor.PreferredColumnIndex = cursorSnapshot.UserCursor.IndexCoordinates.columnIndex;
+			}
+			else
+			{
+				if (wasTabCode)
+				{
+					var index = _tabKeyPositionsBag.FindIndex(x => x >= cursorPositionIndex);
+
+					if (index == -1)
+					{
+						TabKeyPositionsBag.Add(cursorPositionIndex);
+					}
+					else
+					{
+						for (var i = index; i < TabKeyPositionsBag.Count; i++)
+						{
+							_tabKeyPositionsBag[i]++;
+						}
+
+						TabKeyPositionsBag.Insert(index, cursorPositionIndex);
+					}
+				}
+
+				var richCharacterToInsert = new RichCharacter
+				{
+					Value = characterValueToInsert,
+					DecorationByte = default,
+				};
+
+				ContentBag.Insert(cursorPositionIndex, richCharacterToInsert);
+
+				var indexCoordinates = cursorSnapshot.UserCursor.IndexCoordinates;
+
+				cursorSnapshot.UserCursor.IndexCoordinates = (indexCoordinates.rowIndex, indexCoordinates.columnIndex + 1);
+				cursorSnapshot.UserCursor.PreferredColumnIndex = cursorSnapshot.UserCursor.IndexCoordinates.columnIndex;
+			}
+
+			var firstRowIndexToModify = wasEnterCode
+				? cursorSnapshot.ImmutableCursor.RowIndex + 1
+				: cursorSnapshot.ImmutableCursor.RowIndex;
+
+			for (var i = firstRowIndexToModify; i < RowEndingPositionsBag.Count; i++)
+			{
+				var rowEndingTuple = RowEndingPositionsBag[i];
+				RowEndingPositionsBag[i] = (rowEndingTuple.positionIndex + characterCountInserted, rowEndingTuple.rowEndingKind);
+			}
+
+			if (!wasTabCode)
+			{
+				var firstTabKeyPositionIndexToModify = _tabKeyPositionsBag.FindIndex(x => x >= cursorPositionIndex);
+
+				if (firstTabKeyPositionIndexToModify != -1)
+				{
+					for (var i = firstTabKeyPositionIndexToModify; i < TabKeyPositionsBag.Count; i++)
+					{
+						TabKeyPositionsBag[i] += characterCountInserted;
+					}
+				}
+			}
+
+			// Reposition the Diagnostic Squigglies
+			{
+				var textSpanForInsertion = new TextEditorTextSpan(
+					cursorPositionIndex,
+					cursorPositionIndex + characterCountInserted,
+					0,
+					new(string.Empty),
+					string.Empty);
+
+				var textModification = new TextEditorTextModification(true, textSpanForInsertion);
+
+				foreach (var presentationModel in PresentationModelsBag)
+				{
+					if (presentationModel.CompletedCalculation is not null)
+						presentationModel.CompletedCalculation.TextModificationsSinceRequestBag.Add(textModification);
+
+					if (presentationModel.PendingCalculation is not null)
+						presentationModel.PendingCalculation.TextModificationsSinceRequestBag.Add(textModification);
+				}
+			}
+		}
+
+		// TODO: Fix tracking the MostCharactersOnASingleRowTuple this way is possibly inefficient - should instead only check the rows that changed
+		{
+			(int rowIndex, int rowLength) localMostCharactersOnASingleRowTuple = (0, 0);
+
+			for (var i = 0; i < RowEndingPositionsBag.Count; i++)
+			{
+				var lengthOfRow = GetLengthOfRow(i);
+
+				if (lengthOfRow > localMostCharactersOnASingleRowTuple.rowLength)
+				{
+					localMostCharactersOnASingleRowTuple = (i, lengthOfRow);
+				}
+			}
+
+			localMostCharactersOnASingleRowTuple = (localMostCharactersOnASingleRowTuple.rowIndex,
+				localMostCharactersOnASingleRowTuple.rowLength + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
+
+			_mostCharactersOnASingleRowTuple = localMostCharactersOnASingleRowTuple;
+		}
+	}
+
+	private void PerformDeletions(KeyboardEventAction keyboardEventAction)
+	{
+		// Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value
+		//
+		// When reading state, if the state had been 'null coallesce assigned' then the field will
+		// be read. Otherwise, the existing TextEditorModel's value will be read.
+		{
+			_rowEndingPositionsBag ??= _textEditorModel.RowEndingPositionsBag.ToList();
+			_tabKeyPositionsBag ??= _textEditorModel.TabKeyPositionsBag.ToList();
+			_contentBag ??= _textEditorModel.ContentBag.ToList();
+			_mostCharactersOnASingleRowTuple ??= _textEditorModel.MostCharactersOnASingleRowTuple;
+		}
+
+		EnsureUndoPoint(TextEditKind.Deletion);
+
+		foreach (var cursorSnapshot in keyboardEventAction.CursorSnapshotsBag)
+		{
+			var startOfRowPositionIndex = GetStartOfRowTuple(cursorSnapshot.ImmutableCursor.RowIndex).positionIndex;
+			var cursorPositionIndex = startOfRowPositionIndex + cursorSnapshot.ImmutableCursor.ColumnIndex;
+
+			// If cursor is out of bounds then continue
+			if (cursorPositionIndex > ContentBag.Count)
+				continue;
+
+			int startingPositionIndexToRemoveInclusive;
+			int countToRemove;
+			bool moveBackwards;
+
+			// Cannot calculate this after text was deleted - it would be wrong
+			int? selectionUpperBoundRowIndex = null;
+			// Needed for when text selection is deleted
+			(int rowIndex, int columnIndex)? selectionLowerBoundIndexCoordinates = null;
+
+			// TODO: The deletion logic should be the same whether it be 'Delete' 'Backspace' 'CtrlModified' or 'DeleteSelection'. What should change is one needs to calculate the starting and ending index appropriately foreach case.
+			if (TextEditorSelectionHelper.HasSelectedText(cursorSnapshot.ImmutableCursor.ImmutableSelection))
+			{
+				var lowerPositionIndexInclusiveBound = cursorSnapshot.ImmutableCursor.ImmutableSelection.AnchorPositionIndex ?? 0;
+				var upperPositionIndexExclusive = cursorSnapshot.ImmutableCursor.ImmutableSelection.EndingPositionIndex;
+
+				if (lowerPositionIndexInclusiveBound > upperPositionIndexExclusive)
+					(lowerPositionIndexInclusiveBound, upperPositionIndexExclusive) = (upperPositionIndexExclusive, lowerPositionIndexInclusiveBound);
+
+				var lowerRowMetaData = FindRowInformation(lowerPositionIndexInclusiveBound);
+				var upperRowMetaData = FindRowInformation(upperPositionIndexExclusive);
+
+				// Value is needed when knowing what row ending positions to update after deletion is done
+				selectionUpperBoundRowIndex = upperRowMetaData.rowIndex;
+
+				// Value is needed when knowing where to position the cursor after deletion is done
+				selectionLowerBoundIndexCoordinates = (lowerRowMetaData.rowIndex,
+					lowerPositionIndexInclusiveBound - lowerRowMetaData.rowStartPositionIndex);
+
+				startingPositionIndexToRemoveInclusive = upperPositionIndexExclusive - 1;
+				countToRemove = upperPositionIndexExclusive - lowerPositionIndexInclusiveBound;
+				moveBackwards = true;
+
+				cursorSnapshot.UserCursor.Selection.AnchorPositionIndex = null;
+			}
+			else if (KeyboardKeyFacts.MetaKeys.BACKSPACE == keyboardEventAction.KeyboardEventArgs.Key)
+			{
+				moveBackwards = true;
+
+				if (keyboardEventAction.KeyboardEventArgs.CtrlKey)
+				{
+					var columnIndexOfCharacterWithDifferingKind = GetColumnIndexOfCharacterWithDifferingKind(
+						cursorSnapshot.ImmutableCursor.RowIndex,
+						cursorSnapshot.ImmutableCursor.ColumnIndex,
+						moveBackwards);
+
+					columnIndexOfCharacterWithDifferingKind = columnIndexOfCharacterWithDifferingKind == -1
+						? 0
+						: columnIndexOfCharacterWithDifferingKind;
+
+					countToRemove = cursorSnapshot.ImmutableCursor.ColumnIndex -
+						columnIndexOfCharacterWithDifferingKind;
+
+					countToRemove = countToRemove == 0
+						? 1
+						: countToRemove;
+				}
+				else
+				{
+					countToRemove = 1;
+				}
+
+				startingPositionIndexToRemoveInclusive = cursorPositionIndex - 1;
+			}
+			else if (KeyboardKeyFacts.MetaKeys.DELETE == keyboardEventAction.KeyboardEventArgs.Key)
+			{
+				moveBackwards = false;
+
+				if (keyboardEventAction.KeyboardEventArgs.CtrlKey)
+				{
+					var columnIndexOfCharacterWithDifferingKind = GetColumnIndexOfCharacterWithDifferingKind(
+						cursorSnapshot.ImmutableCursor.RowIndex,
+						cursorSnapshot.ImmutableCursor.ColumnIndex,
+						moveBackwards);
+
+					columnIndexOfCharacterWithDifferingKind = columnIndexOfCharacterWithDifferingKind == -1
+						? GetLengthOfRow(cursorSnapshot.ImmutableCursor.RowIndex)
+						: columnIndexOfCharacterWithDifferingKind;
+
+					countToRemove = columnIndexOfCharacterWithDifferingKind -
+						cursorSnapshot.ImmutableCursor.ColumnIndex;
+
+					countToRemove = countToRemove == 0
+						? 1
+						: countToRemove;
+				}
+				else
+				{
+					countToRemove = 1;
+				}
+
+				startingPositionIndexToRemoveInclusive = cursorPositionIndex;
+			}
+			else
+			{
+				throw new ApplicationException($"The keyboard key: {keyboardEventAction.KeyboardEventArgs.Key} was not recognized");
+			}
+
+			var charactersRemovedCount = 0;
+			var rowsRemovedCount = 0;
+
+			var indexToRemove = startingPositionIndexToRemoveInclusive;
+
+			while (countToRemove-- > 0)
+			{
+				if (indexToRemove < 0 || indexToRemove > ContentBag.Count - 1)
+					break;
+
+				var characterToDelete = ContentBag[indexToRemove];
+
+				int startingIndexToRemoveRange;
+				int countToRemoveRange;
+
+				if (KeyboardKeyFacts.IsLineEndingCharacter(characterToDelete.Value))
+				{
+					rowsRemovedCount++;
+
+					// rep.positionIndex == indexToRemove + 1
+					//     ^is for backspace
+					//
+					// rep.positionIndex == indexToRemove + 2
+					//     ^is for delete
+					var rowEndingTupleIndex = _rowEndingPositionsBag.FindIndex(rep =>
+						rep.positionIndex == indexToRemove + 1 ||
+						rep.positionIndex == indexToRemove + 2);
+
+					var rowEndingTuple = RowEndingPositionsBag[rowEndingTupleIndex];
+
+					RowEndingPositionsBag.RemoveAt(rowEndingTupleIndex);
+
+					var lengthOfRowEnding = rowEndingTuple.rowEndingKind.AsCharacters().Length;
+
+					if (moveBackwards)
+						startingIndexToRemoveRange = indexToRemove - (lengthOfRowEnding - 1);
+					else
+						startingIndexToRemoveRange = indexToRemove;
+
+					countToRemove -= lengthOfRowEnding - 1;
+					countToRemoveRange = lengthOfRowEnding;
+
+					MutateRowEndingKindCount(rowEndingTuple.rowEndingKind, -1);
+				}
+				else
+				{
+					if (characterToDelete.Value == KeyboardKeyFacts.WhitespaceCharacters.TAB)
+						TabKeyPositionsBag.Remove(indexToRemove);
+
+					startingIndexToRemoveRange = indexToRemove;
+					countToRemoveRange = 1;
+				}
+
+				charactersRemovedCount += countToRemoveRange;
+
+				_contentBag.RemoveRange(startingIndexToRemoveRange, countToRemoveRange);
+
+				if (moveBackwards)
+					indexToRemove -= countToRemoveRange;
+			}
+
+			if (charactersRemovedCount == 0 && rowsRemovedCount == 0)
+				return;
+
+			if (moveBackwards && !selectionUpperBoundRowIndex.HasValue)
+			{
+				var modifyRowsBy = -1 * rowsRemovedCount;
+
+				var startOfCurrentRowPositionIndex = GetStartOfRowTuple(cursorSnapshot.ImmutableCursor.RowIndex + modifyRowsBy)
+					.positionIndex;
+
+				var modifyPositionIndexBy = -1 * charactersRemovedCount;
+
+				var endingPositionIndex = cursorPositionIndex + modifyPositionIndexBy;
+
+				var columnIndex = endingPositionIndex - startOfCurrentRowPositionIndex;
+
+				var indexCoordinates = cursorSnapshot.UserCursor.IndexCoordinates;
+
+				cursorSnapshot.UserCursor.IndexCoordinates = (indexCoordinates.rowIndex + modifyRowsBy, columnIndex);
+			}
+
+			int firstRowIndexToModify;
+
+			if (selectionUpperBoundRowIndex.HasValue)
+			{
+				firstRowIndexToModify = selectionLowerBoundIndexCoordinates!.Value.rowIndex;
+				cursorSnapshot.UserCursor.IndexCoordinates = selectionLowerBoundIndexCoordinates!.Value;
+			}
+			else if (moveBackwards)
+			{
+				firstRowIndexToModify = cursorSnapshot.ImmutableCursor.RowIndex - rowsRemovedCount;
+			}
+			else
+			{
+				firstRowIndexToModify = cursorSnapshot.ImmutableCursor.RowIndex;
+			}
+
+			for (var i = firstRowIndexToModify; i < RowEndingPositionsBag.Count; i++)
+			{
+				var rowEndingTuple = RowEndingPositionsBag[i];
+				_rowEndingPositionsBag[i] = (rowEndingTuple.positionIndex - charactersRemovedCount, rowEndingTuple.rowEndingKind);
+			}
+
+			var firstTabKeyPositionIndexToModify = _tabKeyPositionsBag.FindIndex(x => x >= startingPositionIndexToRemoveInclusive);
+
+			if (firstTabKeyPositionIndexToModify != -1)
+			{
+				for (var i = firstTabKeyPositionIndexToModify; i < TabKeyPositionsBag.Count; i++)
+				{
+					TabKeyPositionsBag[i] -= charactersRemovedCount;
+				}
+			}
+
+			// Reposition the Diagnostic Squigglies
+			{
+				var textSpanForInsertion = new TextEditorTextSpan(
+					cursorPositionIndex,
+					cursorPositionIndex + charactersRemovedCount,
+					0,
+					new(string.Empty),
+					string.Empty);
+
+				var textModification = new TextEditorTextModification(false, textSpanForInsertion);
+
+				foreach (var presentationModel in PresentationModelsBag)
+				{
+					if (presentationModel.CompletedCalculation is not null)
+					{
+						presentationModel.CompletedCalculation.TextModificationsSinceRequestBag.Add(textModification);
+					}
+
+					if (presentationModel.PendingCalculation is not null)
+					{
+						presentationModel.PendingCalculation.TextModificationsSinceRequestBag.Add(textModification);
+					}
+				}
+			}
+		}
+
+		// TODO: Fix tracking the MostCharactersOnASingleRowTuple this way is possibly inefficient - should instead only check the rows that changed
+		{
+			(int rowIndex, int rowLength) localMostCharactersOnASingleRowTuple = (0, 0);
+
+			for (var i = 0; i < RowEndingPositionsBag.Count; i++)
+			{
+				var lengthOfRow = GetLengthOfRow(i);
+
+				if (lengthOfRow > localMostCharactersOnASingleRowTuple.rowLength)
+				{
+					localMostCharactersOnASingleRowTuple = (i, lengthOfRow);
+				}
+			}
+
+			localMostCharactersOnASingleRowTuple = (localMostCharactersOnASingleRowTuple.rowIndex,
+				localMostCharactersOnASingleRowTuple.rowLength + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
+
+			_mostCharactersOnASingleRowTuple = localMostCharactersOnASingleRowTuple;
+		}
+	}
+
+	private void MutateRowEndingKindCount(RowEndingKind rowEndingKind, int changeBy)
+	{
+		// Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value
+		//
+		// When reading state, if the state had been 'null coallesce assigned' then the field will
+		// be read. Otherwise, the existing TextEditorModel's value will be read.
+		{
+			_rowEndingKindCountsBag ??= _textEditorModel.RowEndingKindCountsBag.ToList();
+		}
+
+		var indexOfRowEndingKindCount = _rowEndingKindCountsBag.FindIndex(x => x.rowEndingKind == rowEndingKind);
+		var currentRowEndingKindCount = RowEndingKindCountsBag[indexOfRowEndingKindCount].count;
+
+		RowEndingKindCountsBag[indexOfRowEndingKindCount] = (rowEndingKind, currentRowEndingKindCount + changeBy);
+
+		CheckRowEndingPositions(false);
+	}
+
+	private void CheckRowEndingPositions(bool setUsingRowEndingKind)
+	{
+		// Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value
+		//
+		// When reading state, if the state had been 'null coallesce assigned' then the field will
+		// be read. Otherwise, the existing TextEditorModel's value will be read.
+		{
+			_rowEndingKindCountsBag ??= _textEditorModel.RowEndingKindCountsBag.ToList();
+			_onlyRowEndingKind ??= _textEditorModel.OnlyRowEndingKind;
+			_usingRowEndingKind ??= _textEditorModel.UsingRowEndingKind;
+		}
+
+		var existingRowEndingsBag = RowEndingKindCountsBag
+			.Where(x => x.count > 0)
+			.ToArray();
+
+		if (!existingRowEndingsBag.Any())
+		{
+			_onlyRowEndingKind = RowEndingKind.Unset;
+			_usingRowEndingKind = RowEndingKind.Linefeed;
+		}
+		else
+		{
+			if (existingRowEndingsBag.Length == 1)
+			{
+				var rowEndingKind = existingRowEndingsBag.Single().rowEndingKind;
+
+				if (setUsingRowEndingKind)
+					_usingRowEndingKind = rowEndingKind;
+
+				_onlyRowEndingKind = rowEndingKind;
+			}
+			else
+			{
+				if (setUsingRowEndingKind)
+					_usingRowEndingKind = existingRowEndingsBag.MaxBy(x => x.count).rowEndingKind;
+
+				_onlyRowEndingKind = null;
+			}
+		}
+	}
+
+	public void ModifyContent(string content)
+	{
+		// Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value
+		//
+		// When reading state, if the state had been 'null coallesce assigned' then the field will
+		// be read. Otherwise, the existing TextEditorModel's value will be read.
+		{
+			_mostCharactersOnASingleRowTuple ??= _textEditorModel.MostCharactersOnASingleRowTuple;
+			_rowEndingPositionsBag ??= _textEditorModel.RowEndingPositionsBag.ToList();
+			_tabKeyPositionsBag ??= _textEditorModel.TabKeyPositionsBag.ToList();
+			_contentBag ??= _textEditorModel.ContentBag.ToList();
+			_rowEndingKindCountsBag ??= _textEditorModel.RowEndingKindCountsBag.ToList();
+		}
+
+		ModifyResetStateButNotEditHistory();
+
+		var rowIndex = 0;
+		var previousCharacter = '\0';
+
+		var charactersOnRow = 0;
+
+		var carriageReturnCount = 0;
+		var linefeedCount = 0;
+		var carriageReturnLinefeedCount = 0;
+
+		for (var index = 0; index < content.Length; index++)
+		{
+			var character = content[index];
+
+			charactersOnRow++;
+
+			if (character == KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN)
+			{
+				if (charactersOnRow > MostCharactersOnASingleRowTuple.rowLength - TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN)
+					_mostCharactersOnASingleRowTuple = (rowIndex, charactersOnRow + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
+
+				RowEndingPositionsBag.Add((index + 1, RowEndingKind.CarriageReturn));
+				rowIndex++;
+
+				charactersOnRow = 0;
+
+				carriageReturnCount++;
+			}
+			else if (character == KeyboardKeyFacts.WhitespaceCharacters.NEW_LINE)
+			{
+				if (charactersOnRow > MostCharactersOnASingleRowTuple.rowLength - TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN)
+					_mostCharactersOnASingleRowTuple = (rowIndex, charactersOnRow + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
+
+				if (previousCharacter == KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN)
+				{
+					var lineEnding = RowEndingPositionsBag[rowIndex - 1];
+
+					RowEndingPositionsBag[rowIndex - 1] = (lineEnding.positionIndex + 1, RowEndingKind.CarriageReturnLinefeed);
+
+					carriageReturnCount--;
+					carriageReturnLinefeedCount++;
+				}
+				else
+				{
+					RowEndingPositionsBag.Add((index + 1, RowEndingKind.Linefeed));
+					rowIndex++;
+
+					linefeedCount++;
+				}
+
+				charactersOnRow = 0;
+			}
+
+			if (character == KeyboardKeyFacts.WhitespaceCharacters.TAB)
+				TabKeyPositionsBag.Add(index);
+
+			previousCharacter = character;
+
+			ContentBag.Add(new RichCharacter
+			{
+				Value = character,
+				DecorationByte = default,
+			});
+		}
+
+		_rowEndingKindCountsBag.AddRange(new List<(RowEndingKind rowEndingKind, int count)>
+		{
+			(RowEndingKind.CarriageReturn, carriageReturnCount),
+			(RowEndingKind.Linefeed, linefeedCount),
+			(RowEndingKind.CarriageReturnLinefeed, carriageReturnLinefeedCount),
+		});
+
+		CheckRowEndingPositions(true);
+
+		RowEndingPositionsBag.Add((content.Length, RowEndingKind.EndOfFile));
+	}
+
+	private void ModifyResetStateButNotEditHistory()
+	{
+		ClearContentBag();
+		ClearRowEndingKindCountsBag();
+		ClearRowEndingPositionsBag();
+		ClearTabKeyPositionsBag();
+		ModifyOnlyRowEndingKind();
+		ModifyUsingRowEndingKind(RowEndingKind.Unset);
+	}
+
+	/// <summary>The cursor is a separate Blazor Component and at times will try to access out of bounds locations.<br/><br/>When cursor accesses out of bounds location return the final RowIndex, and that row's final ColumnIndex</summary>
+	public (int positionIndex, RowEndingKind rowEndingKind) GetStartOfRowTuple(int rowIndex)
+	{
+		if (rowIndex > RowEndingPositionsBag.Count - 1)
+			rowIndex = RowEndingPositionsBag.Count - 1;
+
+		if (rowIndex > 0)
+			return RowEndingPositionsBag[rowIndex - 1];
+
+		return (0, RowEndingKind.StartOfFile);
+	}
+
+	/// <summary>Returns the Length of a row however it does not include the line ending characters by default. To include line ending characters the parameter <see cref="includeLineEndingCharacters" /> must be true.</summary>
+	public int GetLengthOfRow(int rowIndex, bool includeLineEndingCharacters = false)
+	{
+		if (!RowEndingPositionsBag.Any())
+			return 0;
+
+		if (rowIndex > RowEndingPositionsBag.Count - 1)
+			rowIndex = RowEndingPositionsBag.Count - 1;
+
+		if (rowIndex < 0)
+			rowIndex = 0;
+
+		var startOfRowTupleInclusive = GetStartOfRowTuple(rowIndex);
+
+		// TODO: Index was out of range exception on 2023-04-18
+		var endOfRowTupleExclusive = RowEndingPositionsBag[rowIndex];
+
+		var lengthOfRowWithLineEndings = endOfRowTupleExclusive.positionIndex - startOfRowTupleInclusive.positionIndex;
+
+		if (includeLineEndingCharacters)
+			return lengthOfRowWithLineEndings;
+
+		return lengthOfRowWithLineEndings - endOfRowTupleExclusive.rowEndingKind.AsCharacters().Length;
+	}
+
+	/// <param name="startingRowIndex">The starting index of the rows to return</param>
+	/// <param name="count">count of 0 returns 0 rows. count of 1 returns the startingRowIndex.</param>
+	public List<List<RichCharacter>> GetRows(int startingRowIndex, int count)
+	{
+		var rowCountAvailable = RowEndingPositionsBag.Count - startingRowIndex;
+
+		var rowCountToReturn = count < rowCountAvailable
+			? count
+			: rowCountAvailable;
+
+		var endingRowIndexExclusive = startingRowIndex + rowCountToReturn;
+
+		var rowsBag = new List<List<RichCharacter>>();
+
+		for (var i = startingRowIndex; i < endingRowIndexExclusive; i++)
+		{
+			// Previous row's line ending position is this row's start.
+			var startOfRowInclusive = GetStartOfRowTuple(i).positionIndex;
+
+			var endOfRowExclusive = RowEndingPositionsBag[i].positionIndex;
+
+			var row = ContentBag
+				.Skip(startOfRowInclusive)
+				.Take(endOfRowExclusive - startOfRowInclusive)
+				.ToList();
+
+			rowsBag.Add(row);
+		}
+
+		return rowsBag;
+	}
+
+	public int GetTabsCountOnSameRowBeforeCursor(int rowIndex, int columnIndex)
+	{
+		var startOfRowPositionIndex = GetStartOfRowTuple(rowIndex).positionIndex;
+
+		var tabs = TabKeyPositionsBag
+			.SkipWhile(positionIndex => positionIndex < startOfRowPositionIndex)
+			.TakeWhile(positionIndex => positionIndex < startOfRowPositionIndex + columnIndex);
+
+		return tabs.Count();
+	}
+
+	public void PerformEditTextEditorAction(KeyboardEventAction keyboardEventAction)
+	{
+		if (KeyboardKeyFacts.IsMetaKey(keyboardEventAction.KeyboardEventArgs))
+		{
+			if (KeyboardKeyFacts.MetaKeys.BACKSPACE == keyboardEventAction.KeyboardEventArgs.Key ||
+				KeyboardKeyFacts.MetaKeys.DELETE == keyboardEventAction.KeyboardEventArgs.Key)
+			{
+				PerformDeletions(keyboardEventAction);
+			}
+		}
+		else
+		{
+			var cursorSnapshotsBag = TextEditorCursorSnapshot.TakeSnapshots(
+				keyboardEventAction.CursorSnapshotsBag.Select(x => x.UserCursor).ToArray());
+
+			var primaryCursorSnapshot = cursorSnapshotsBag.FirstOrDefault(x => x.UserCursor.IsPrimaryCursor);
+
+			if (primaryCursorSnapshot is null)
+				return;
+
+			/*
+             * TODO: 2022-11-18 one must not use the UserCursor while
+             * calculating but instead make a copy of the mutable cursor
+             * by looking at the snapshot and mutate that local 'userCursor'
+             * then once the transaction is done offer the 'userCursor' to the
+             * user interface such that it can choose to move the actual user cursor
+             * to that position
+             */
+
+			// TODO: start making a mutable copy of their immutable cursor snapshot
+			// so if the user moves the cursor
+			// while calculating nothing can go wrong causing exception
+			//
+			// See the var localCursor in this contiguous code block.
+			//
+			// var localCursor = new TextEditorCursor(
+			//     (primaryCursorSnapshot.ImmutableCursor.RowIndex, primaryCursorSnapshot.ImmutableCursor.ColumnIndex), 
+			//     true);
+
+			if (TextEditorSelectionHelper.HasSelectedText(primaryCursorSnapshot.ImmutableCursor.ImmutableSelection))
+			{
+				PerformDeletions(new KeyboardEventAction(
+					keyboardEventAction.ResourceUri,
+					cursorSnapshotsBag,
+					new KeyboardEventArgs
+					{
+						Code = KeyboardKeyFacts.MetaKeys.DELETE,
+						Key = KeyboardKeyFacts.MetaKeys.DELETE,
+					},
+					CancellationToken.None));
+			}
+
+			var innerCursorSnapshotsBag = TextEditorCursorSnapshot.TakeSnapshots(
+				keyboardEventAction.CursorSnapshotsBag.Select(x => x.UserCursor).ToArray());
+
+			PerformInsertions(keyboardEventAction with
+			{
+				CursorSnapshotsBag = innerCursorSnapshotsBag
+			});
+		}
+	}
+
+	public void PerformEditTextEditorAction(InsertTextAction insertTextAction)
+	{
+		var cursorSnapshotsBag = TextEditorCursorSnapshot.TakeSnapshots(
+			insertTextAction.CursorSnapshotsBag.Select(x => x.UserCursor).ToArray());
+
+		var primaryCursorSnapshot = cursorSnapshotsBag.FirstOrDefault(x => x.UserCursor.IsPrimaryCursor);
+
+		if (primaryCursorSnapshot is null)
+			return;
+
+		/*
+         * TODO: 2022-11-18 one must not use the UserCursor while
+         * calculating but instead make a copy of the mutable cursor
+         * by looking at the snapshot and mutate that local 'userCursor'
+         * then once the transaction is done offer the 'userCursor' to the
+         * user interface such that it can choose to move the actual user cursor
+         * to that position
+         */
+
+		// TODO: start making a mutable copy of their immutable cursor snapshot
+		// so if the user moves the cursor
+		// while calculating nothing can go wrong causing exception
+		//
+		// See the var localCursor in this contiguous code block.
+		//
+		// var localCursor = new TextEditorCursor(
+		//     (primaryCursorSnapshot.ImmutableCursor.RowIndex, primaryCursorSnapshot.ImmutableCursor.ColumnIndex), 
+		//     true);
+
+		if (TextEditorSelectionHelper.HasSelectedText(primaryCursorSnapshot.ImmutableCursor.ImmutableSelection))
+		{
+			PerformDeletions(new KeyboardEventAction(
+				insertTextAction.ResourceUri,
+				cursorSnapshotsBag,
+				new KeyboardEventArgs
+				{
+					Code = KeyboardKeyFacts.MetaKeys.DELETE,
+					Key = KeyboardKeyFacts.MetaKeys.DELETE,
+				},
+				CancellationToken.None));
+		}
+
+		var localContent = insertTextAction.Content.Replace("\r\n", "\n");
+
+		foreach (var character in localContent)
+		{
+			// TODO: This needs to be rewritten everything should be inserted at the same time not a foreach loop insertion for each character
+			//
+			// Need innerCursorSnapshots because need
+			// after every loop of the foreach that the
+			// cursor snapshots are updated
+			var innerCursorSnapshotsBag = TextEditorCursorSnapshot.TakeSnapshots(
+				insertTextAction.CursorSnapshotsBag.Select(x => x.UserCursor).ToArray());
+
+			var code = character switch
+			{
+				'\r' => KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE,
+				'\n' => KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE,
+				'\t' => KeyboardKeyFacts.WhitespaceCodes.TAB_CODE,
+				' ' => KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE,
+				_ => character.ToString(),
+			};
+
+			var keyboardEventTextEditorModelAction = new KeyboardEventAction(
+				insertTextAction.ResourceUri,
+				innerCursorSnapshotsBag,
+				new KeyboardEventArgs
+				{
+					Code = code,
+					Key = character.ToString(),
+				},
+				CancellationToken.None);
+
+			PerformEditTextEditorAction(keyboardEventTextEditorModelAction);
+		}
+	}
+
+	public void PerformEditTextEditorAction(DeleteTextByMotionAction deleteTextByMotionAction)
+	{
+		var keyboardEventArgs = deleteTextByMotionAction.MotionKind switch
+		{
+			MotionKind.Backspace => new KeyboardEventArgs { Key = KeyboardKeyFacts.MetaKeys.BACKSPACE },
+			MotionKind.Delete => new KeyboardEventArgs { Key = KeyboardKeyFacts.MetaKeys.DELETE },
+			_ => throw new ApplicationException($"The {nameof(MotionKind)}: {deleteTextByMotionAction.MotionKind} was not recognized.")
+		};
+
+		var keyboardEventTextEditorModelAction = new KeyboardEventAction(
+			deleteTextByMotionAction.ResourceUri,
+			deleteTextByMotionAction.CursorSnapshotsBag,
+			keyboardEventArgs,
+			CancellationToken.None);
+
+		PerformEditTextEditorAction(keyboardEventTextEditorModelAction);
+	}
+
+	public void PerformEditTextEditorAction(DeleteTextByRangeAction deleteTextByRangeAction)
+	{
+		// TODO: This needs to be rewritten everything should be deleted at the same time not a foreach loop for each character
+		for (var i = 0; i < deleteTextByRangeAction.Count; i++)
+		{
+			// Need innerCursorSnapshots because need
+			// after every loop of the foreach that the
+			// cursor snapshots are updated
+			var innerCursorSnapshotsBag = TextEditorCursorSnapshot.TakeSnapshots(
+				deleteTextByRangeAction.CursorSnapshotsBag.Select(x => x.UserCursor).ToArray());
+
+			var keyboardEventTextEditorModelAction = new KeyboardEventAction(
+				deleteTextByRangeAction.ResourceUri,
+				innerCursorSnapshotsBag,
+				new KeyboardEventArgs
+				{
+					Code = KeyboardKeyFacts.MetaKeys.DELETE,
+					Key = KeyboardKeyFacts.MetaKeys.DELETE,
+				},
+				CancellationToken.None);
+
+			PerformEditTextEditorAction(keyboardEventTextEditorModelAction);
+		}
+	}
+
+	public void PerformRegisterPresentationModelAction(RegisterPresentationModelAction registerPresentationModelAction)
+	{
+		// Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value
+		//
+		// When reading state, if the state had been 'null coallesce assigned' then the field will
+		// be read. Otherwise, the existing TextEditorModel's value will be read.
+		{
+			_presentationModelsBag ??= _textEditorModel.PresentationModelsBag.ToList();
+		}
+
+		if (!PresentationModelsBag.Any(x => x.TextEditorPresentationKey == registerPresentationModelAction.PresentationModel.TextEditorPresentationKey))
+			PresentationModelsBag.Add(registerPresentationModelAction.PresentationModel);
+	}
+
+	public void PerformCalculatePresentationModelAction(CalculatePresentationModelAction calculatePresentationModelAction)
+	{
+		// Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value
+		//
+		// When reading state, if the state had been 'null coallesce assigned' then the field will
+		// be read. Otherwise, the existing TextEditorModel's value will be read.
+		{
+			_presentationModelsBag ??= _textEditorModel.PresentationModelsBag.ToList();
+		}
+
+		var indexOfPresentationModel = _presentationModelsBag.FindIndex(
+			x => x.TextEditorPresentationKey == calculatePresentationModelAction.PresentationKey);
+
+		if (indexOfPresentationModel == -1)
+			return;
+
+		var presentationModel = PresentationModelsBag[indexOfPresentationModel];
+
+		presentationModel.PendingCalculation = new(GetAllText());
+	}
+
+	/// <summary>If applying syntax highlighting it may be preferred to use <see cref="ApplySyntaxHighlightingAsync" />. It is effectively just invoking the lexer and then <see cref="ApplyDecorationRange" /></summary>
+	public void ApplyDecorationRange(IEnumerable<TextEditorTextSpan> textEditorTextSpans)
+	{
+		var localContent = ContentBag;
+
+		var positionsPainted = new HashSet<int>();
+
+		foreach (var textEditorTextSpan in textEditorTextSpans)
+		{
+			for (var i = textEditorTextSpan.StartingIndexInclusive; i < textEditorTextSpan.EndingIndexExclusive; i++)
+			{
+				if (i >= localContent.Count)
+					continue;
+
+				localContent[i].DecorationByte = textEditorTextSpan.DecorationByte;
+
+				positionsPainted.Add(i);
+			}
+		}
+
+		for (var i = 0; i < localContent.Count - 1; i++)
+		{
+			if (!positionsPainted.Contains(i))
+			{
+				// DecorationByte of 0 is to be 'None'
+				localContent[i].DecorationByte = 0;
+			}
+		}
+	}
+
+	public Task ApplySyntaxHighlightingAsync()
+	{
+		var syntacticTextSpansBag = CompilerService.GetSyntacticTextSpansFor(ResourceUri);
+		var symbolsBag = CompilerService.GetSymbolsFor(ResourceUri);
+
+		var symbolTextSpansBag = symbolsBag.Select(s => s.TextSpan);
+
+		ApplyDecorationRange(syntacticTextSpansBag.Union(symbolTextSpansBag));
+
+		return Task.CompletedTask;
+	}
+
+	public string GetAllText()
+	{
+		return new string(ContentBag.Select(rc => rc.Value).ToArray());
+	}
+
+	public int GetCursorPositionIndex(TextEditorCursor textEditorCursor)
+	{
+		return GetPositionIndex(textEditorCursor.IndexCoordinates.rowIndex, textEditorCursor.IndexCoordinates.columnIndex);
+	}
+
+	public int GetCursorPositionIndex(ImmutableTextEditorCursor immutableTextEditorCursor)
+	{
+		return GetPositionIndex(immutableTextEditorCursor.RowIndex, immutableTextEditorCursor.ColumnIndex);
+	}
+
+	public int GetPositionIndex(int rowIndex, int columnIndex)
+	{
+		var startOfRowPositionIndex = GetStartOfRowTuple(rowIndex).positionIndex;
+		return startOfRowPositionIndex + columnIndex;
+	}
+
+	public char GetTextAt(int positionIndex)
+	{
+		if (positionIndex < 0 || positionIndex >= ContentBag.Count)
+			return ParserFacts.END_OF_FILE;
+
+		return ContentBag[positionIndex].Value;
+	}
+
+	public string GetTextRange(int startingPositionIndex, int count)
+	{
+		return new string(ContentBag
+			.Skip(startingPositionIndex)
+			.Take(count)
+			.Select(rc => rc.Value)
+			.ToArray());
+	}
+
+	public string GetLinesRange(int startingRowIndex, int count)
+	{
+		var startingPositionIndexInclusive = GetPositionIndex(startingRowIndex, 0);
+		var lastRowIndexExclusive = startingRowIndex + count;
+		var endingPositionIndexExclusive = GetPositionIndex(lastRowIndexExclusive, 0);
+
+		return GetTextRange(
+			startingPositionIndexInclusive,
+			endingPositionIndexExclusive - startingPositionIndexInclusive);
+	}
+
+	/// <summary>Given a <see cref="TextEditorModel"/> with a preference for the right side of the cursor, the following conditional branch will play out.<br/><br/>-IF the cursor is amongst a word, that word will be returned.<br/><br/>-ELSE IF the start of a word is to the right of the cursor that word will be returned.<br/><br/>-ELSE IF the end of a word is to the left of the cursor that word will be returned.</summary>
+	public TextEditorTextSpan? GetWordAt(int positionIndex)
+	{
+		var previousCharacter = GetTextAt(positionIndex - 1);
+		var currentCharacter = GetTextAt(positionIndex);
+
+		var previousCharacterKind = CharacterKindHelper.CharToCharacterKind(previousCharacter);
+		var currentCharacterKind = CharacterKindHelper.CharToCharacterKind(currentCharacter);
+
+		var rowInformation = FindRowInformation(positionIndex);
+
+		var columnIndex = positionIndex - rowInformation.rowStartPositionIndex;
+
+		if (previousCharacterKind == CharacterKind.LetterOrDigit && currentCharacterKind == CharacterKind.LetterOrDigit)
+		{
+			var wordColumnIndexStartInclusive = GetColumnIndexOfCharacterWithDifferingKind(
+				rowInformation.rowIndex,
+				columnIndex,
+				true);
+
+			if (wordColumnIndexStartInclusive == -1)
+				wordColumnIndexStartInclusive = 0;
+
+			var wordColumnIndexEndExclusive = GetColumnIndexOfCharacterWithDifferingKind(
+				rowInformation.rowIndex,
+				columnIndex,
+				false);
+
+			if (wordColumnIndexEndExclusive == -1)
+				wordColumnIndexEndExclusive = GetLengthOfRow(rowInformation.rowIndex);
+
+			return new TextEditorTextSpan(
+				wordColumnIndexStartInclusive + rowInformation.rowStartPositionIndex,
+				wordColumnIndexEndExclusive + rowInformation.rowStartPositionIndex,
+				0,
+				ResourceUri,
+				GetAllText());
+		}
+		else if (currentCharacterKind == CharacterKind.LetterOrDigit)
+		{
+			var wordColumnIndexEndExclusive = GetColumnIndexOfCharacterWithDifferingKind(
+				rowInformation.rowIndex,
+				columnIndex,
+				false);
+
+			if (wordColumnIndexEndExclusive == -1)
+				wordColumnIndexEndExclusive = GetLengthOfRow(rowInformation.rowIndex);
+
+			return new TextEditorTextSpan(
+				columnIndex + rowInformation.rowStartPositionIndex,
+				wordColumnIndexEndExclusive + rowInformation.rowStartPositionIndex,
+				0,
+				ResourceUri,
+				GetAllText());
+		}
+		else if (previousCharacterKind == CharacterKind.LetterOrDigit)
+		{
+			var wordColumnIndexStartInclusive = GetColumnIndexOfCharacterWithDifferingKind(
+				rowInformation.rowIndex,
+				columnIndex,
+				true);
+
+			if (wordColumnIndexStartInclusive == -1)
+				wordColumnIndexStartInclusive = 0;
+
+			return new TextEditorTextSpan(
+				wordColumnIndexStartInclusive + rowInformation.rowStartPositionIndex,
+				columnIndex + rowInformation.rowStartPositionIndex,
+				0,
+				ResourceUri,
+				GetAllText());
+		}
+
+		return null;
+	}
+
+	public (int rowIndex, int rowStartPositionIndex, (int positionIndex, RowEndingKind rowEndingKind) rowEndingTuple)
+		FindRowInformation(int positionIndex)
+	{
+		for (var i = RowEndingPositionsBag.Count - 1; i >= 0; i--)
+		{
+			var rowEndingTuple = RowEndingPositionsBag[i];
+
+			if (positionIndex >= rowEndingTuple.positionIndex)
+			{
+				return (i + 1, rowEndingTuple.positionIndex,
+					i == RowEndingPositionsBag.Count - 1
+						? rowEndingTuple
+						: RowEndingPositionsBag[i + 1]);
+			}
+		}
+
+		return (0, 0, RowEndingPositionsBag[0]);
+	}
+
+	/// <summary>
+	/// <see cref="moveBackwards"/> is to mean earlier in the document
+	/// (lower column index or lower row index depending on position) 
+	/// </summary>
+	/// <returns>Will return -1 if no valid result was found.</returns>
+	public int GetColumnIndexOfCharacterWithDifferingKind(int rowIndex, int columnIndex, bool moveBackwards)
+	{
+		var iterateBy = moveBackwards
+			? -1
+			: 1;
+
+		var startOfRowPositionIndex = GetStartOfRowTuple(rowIndex).positionIndex;
+
+		if (rowIndex > RowEndingPositionsBag.Count - 1)
+			return -1;
+
+		var lastPositionIndexOnRow = RowEndingPositionsBag[rowIndex].positionIndex - 1;
+
+		var positionIndex = GetPositionIndex(rowIndex, columnIndex);
+
+		if (moveBackwards)
+		{
+			if (positionIndex <= startOfRowPositionIndex)
+				return -1;
+
+			positionIndex -= 1;
+		}
+
+		if (positionIndex < 0 || positionIndex >= ContentBag.Count)
+			return -1;
+
+		var startingCharacterKind = ContentBag[positionIndex].GetCharacterKind();
+
+		while (true)
+		{
+			if (positionIndex >= ContentBag.Count ||
+				positionIndex > lastPositionIndexOnRow ||
+				positionIndex < startOfRowPositionIndex)
+			{
+				return -1;
+			}
+
+			var currentCharacterKind = ContentBag[positionIndex].GetCharacterKind();
+
+			if (currentCharacterKind != startingCharacterKind)
+				break;
+
+			positionIndex += iterateBy;
+		}
+
+		if (moveBackwards)
+			positionIndex += 1;
+
+		return positionIndex - startOfRowPositionIndex;
+	}
+
+	public ImmutableArray<RichCharacter> GetAllRichCharacters()
+	{
+		return ContentBag.ToImmutableArray();
+	}
+
+	public void ClearEditBlocks()
+	{
+		// Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value
+		//
+		// When reading state, if the state had been 'null coallesce assigned' then the field will
+		// be read. Otherwise, the existing TextEditorModel's value will be read.
+		{
+			_editBlocksBag ??= _textEditorModel.EditBlocksBag.ToList();
+			_editBlockIndex ??= _textEditorModel.EditBlockIndex;
+		}
+
+		_editBlockIndex = 0;
+		EditBlocksBag.Clear();
+	}
+
+	public bool CanUndoEdit()
+	{
+		return EditBlockIndex > 0;
+	}
+
+	public bool CanRedoEdit()
+	{
+		return EditBlockIndex < EditBlocksBag.Count - 1;
+	}
+
+	/// <summary>The "if (EditBlockIndex == _editBlocksPersisted.Count)"<br/><br/>Is done because the active EditBlock is not yet persisted.<br/><br/>The active EditBlock is instead being 'created' as the user continues to make edits of the same <see cref="TextEditKind"/><br/><br/>For complete clarity, this comment refers to one possibly expecting to see "if (EditBlockIndex == _editBlocksPersisted.Count - 1)"</summary>
+	public void UndoEdit()
+	{
+		// Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value
+		//
+		// When reading state, if the state had been 'null coallesce assigned' then the field will
+		// be read. Otherwise, the existing TextEditorModel's value will be read.
+		{
+			_editBlocksBag ??= _textEditorModel.EditBlocksBag.ToList();
+			_editBlockIndex ??= _textEditorModel.EditBlockIndex;
+		}
+
+		if (!CanUndoEdit())
+			return;
+
+		if (EditBlockIndex == EditBlocksBag.Count)
+		{
+			// If the edit block is pending then persist it
+			// before reverting back to the previous persisted edit block.
+
+			EnsureUndoPoint(TextEditKind.ForcePersistEditBlock);
+			_editBlockIndex--;
+		}
+
+		_editBlockIndex--;
+
+		var restoreEditBlock = EditBlocksBag[EditBlockIndex];
+
+		ModifyContent(restoreEditBlock.ContentSnapshot);
+	}
+
+	public void RedoEdit()
+	{
+		// Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value
+		//
+		// When reading state, if the state had been 'null coallesce assigned' then the field will
+		// be read. Otherwise, the existing TextEditorModel's value will be read.
+		{
+			_editBlocksBag ??= _textEditorModel.EditBlocksBag.ToList();
+			_editBlockIndex ??= _textEditorModel.EditBlockIndex;
+		}
+
+		if (!CanRedoEdit())
+			return;
+
+		_editBlockIndex++;
+
+		var restoreEditBlock = EditBlocksBag[EditBlockIndex];
+
+		ModifyContent(restoreEditBlock.ContentSnapshot);
+	}
+
+	public CharacterKind GetCharacterKindAt(int positionIndex)
+	{
+		try
+		{
+			return ContentBag[positionIndex].GetCharacterKind();
+		}
+		catch (ArgumentOutOfRangeException)
+		{
+			// The text editor's cursor is is likely
+			// to have this occur at times
+		}
+
+		return CharacterKind.Bad;
+	}
+
+	public string? ReadPreviousWordOrDefault(int rowIndex, int columnIndex, bool isRecursiveCall = false)
+	{
+		var wordPositionIndexEndExclusive = GetPositionIndex(rowIndex, columnIndex);
+		var wordCharacterKind = GetCharacterKindAt(wordPositionIndexEndExclusive - 1);
+
+		if (wordCharacterKind == CharacterKind.Punctuation && !isRecursiveCall)
+		{
+			// If previous previous word is a punctuation character, then perhaps
+			// the user hit { 'Ctrl' + 'Space' } to trigger the autocomplete
+			// and was at a MemberAccessToken (or a period '.')
+			//
+			// So, read the word previous to the punctuation.
+
+			var anotherAttemptColumnIndex = columnIndex - 1;
+
+			if (anotherAttemptColumnIndex >= 0)
+				return ReadPreviousWordOrDefault(rowIndex, anotherAttemptColumnIndex, true);
+		}
+
+		if (wordCharacterKind == CharacterKind.LetterOrDigit)
+		{
+			var wordColumnIndexStartInclusive = GetColumnIndexOfCharacterWithDifferingKind(
+				rowIndex,
+				columnIndex,
+				true);
+
+			if (wordColumnIndexStartInclusive == -1)
+				wordColumnIndexStartInclusive = 0;
+
+			var wordLength = columnIndex - wordColumnIndexStartInclusive;
+
+			var wordPositionIndexStartInclusive = wordPositionIndexEndExclusive - wordLength;
+
+			return GetTextRange(wordPositionIndexStartInclusive, wordLength);
+		}
+
+		return null;
+	}
+
+	public string? ReadNextWordOrDefault(int rowIndex, int columnIndex)
+	{
+		var wordPositionIndexStartInclusive = GetPositionIndex(rowIndex, columnIndex);
+
+		var wordCharacterKind = GetCharacterKindAt(wordPositionIndexStartInclusive);
+
+		if (wordCharacterKind == CharacterKind.LetterOrDigit)
+		{
+			var wordColumnIndexEndExclusive = GetColumnIndexOfCharacterWithDifferingKind(
+				rowIndex,
+				columnIndex,
+				false);
+
+			if (wordColumnIndexEndExclusive == -1)
+				wordColumnIndexEndExclusive = GetLengthOfRow(rowIndex);
+
+			var wordLength = wordColumnIndexEndExclusive - columnIndex;
+
+			return GetTextRange(wordPositionIndexStartInclusive, wordLength);
+		}
+
+		return null;
+	}
+
+	/// <summary>This method returns the text to the left of the cursor in most cases. The method name is as such because of right to left written texts.<br/><br/>One uses this method most often to measure the position of the cursor when rendering the UI for a font-family which is proportional (i.e. not monospace).</summary>
+	public string GetTextOffsettingCursor(TextEditorCursor textEditorCursor)
+	{
+		var cursorPositionIndex = GetCursorPositionIndex(textEditorCursor);
+		var startOfRowTuple = GetStartOfRowTuple(textEditorCursor.IndexCoordinates.rowIndex);
+
+		return GetTextRange(startOfRowTuple.positionIndex, cursorPositionIndex - startOfRowTuple.positionIndex);
+	}
+
+	public string GetTextOnRow(int rowIndex)
+	{
+		var startOfRowTuple = GetStartOfRowTuple(rowIndex);
+		var lengthOfRow = GetLengthOfRow(rowIndex);
+
+		return GetTextRange(startOfRowTuple.positionIndex, lengthOfRow);
+	}
+}

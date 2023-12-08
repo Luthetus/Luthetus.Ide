@@ -61,8 +61,7 @@ public class TextEditorTestingBase
             string.Empty,
             null,
             null,
-            null,
-            new());
+            null);
 
         TextEditorHelper.TextEditorService.Model.RegisterCustom(textEditor);
         TextEditorHelper.TextEditorService.ViewModel.Register(TextEditorViewModelKey, ResourceUri);

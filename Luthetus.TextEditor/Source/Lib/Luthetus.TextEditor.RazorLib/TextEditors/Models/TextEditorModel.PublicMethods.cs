@@ -1,7 +1,5 @@
 ﻿using System.Collections.Immutable;
-using Microsoft.AspNetCore.Components.Web;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using static Luthetus.TextEditor.RazorLib.TextEditors.States.TextEditorModelState;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
@@ -9,20 +7,19 @@ using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.Common.RazorLib.Keyboards.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
-public partial class TextEditorModel
+public partial record TextEditorModel
 {
     /// <summary>The cursor is a separate Blazor Component and at times will try to access out of bounds locations.<br/><br/>When cursor accesses out of bounds location return the final RowIndex, and that row's final ColumnIndex</summary>
     public (int positionIndex, RowEndingKind rowEndingKind) GetStartOfRowTuple(int rowIndex)
     {
-        if (rowIndex > _rowEndingPositionsBag.Count - 1)
-            rowIndex = _rowEndingPositionsBag.Count - 1;
+        if (rowIndex > RowEndingPositionsBag.Count - 1)
+            rowIndex = RowEndingPositionsBag.Count - 1;
 
         if (rowIndex > 0)
-            return _rowEndingPositionsBag[rowIndex - 1];
+            return RowEndingPositionsBag[rowIndex - 1];
 
         return (0, RowEndingKind.StartOfFile);
     }
@@ -30,11 +27,11 @@ public partial class TextEditorModel
     /// <summary>Returns the Length of a row however it does not include the line ending characters by default. To include line ending characters the parameter <see cref="includeLineEndingCharacters" /> must be true.</summary>
     public int GetLengthOfRow(int rowIndex, bool includeLineEndingCharacters = false)
     {
-        if (!_rowEndingPositionsBag.Any())
+        if (!RowEndingPositionsBag.Any())
             return 0;
 
-        if (rowIndex > _rowEndingPositionsBag.Count - 1)
-            rowIndex = _rowEndingPositionsBag.Count - 1;
+        if (rowIndex > RowEndingPositionsBag.Count - 1)
+            rowIndex = RowEndingPositionsBag.Count - 1;
 
         if (rowIndex < 0)
             rowIndex = 0;
@@ -42,7 +39,7 @@ public partial class TextEditorModel
         var startOfRowTupleInclusive = GetStartOfRowTuple(rowIndex);
 
         // TODO: Index was out of range exception on 2023-04-18
-        var endOfRowTupleExclusive = _rowEndingPositionsBag[rowIndex];
+        var endOfRowTupleExclusive = RowEndingPositionsBag[rowIndex];
 
         var lengthOfRowWithLineEndings = endOfRowTupleExclusive.positionIndex - startOfRowTupleInclusive.positionIndex;
 
@@ -56,7 +53,7 @@ public partial class TextEditorModel
     /// <param name="count">count of 0 returns 0 rows. count of 1 returns the startingRowIndex.</param>
     public List<List<RichCharacter>> GetRows(int startingRowIndex, int count)
     {
-        var rowCountAvailable = _rowEndingPositionsBag.Count - startingRowIndex;
+        var rowCountAvailable = RowEndingPositionsBag.Count - startingRowIndex;
 
         var rowCountToReturn = count < rowCountAvailable
             ? count
@@ -71,9 +68,9 @@ public partial class TextEditorModel
             // Previous row's line ending position is this row's start.
             var startOfRowInclusive = GetStartOfRowTuple(i).positionIndex;
 
-            var endOfRowExclusive = _rowEndingPositionsBag[i].positionIndex;
+            var endOfRowExclusive = RowEndingPositionsBag[i].positionIndex;
 
-            var row = _contentBag
+            var row = ContentBag
                 .Skip(startOfRowInclusive)
                 .Take(endOfRowExclusive - startOfRowInclusive)
                 .ToList();
@@ -88,236 +85,64 @@ public partial class TextEditorModel
     {
         var startOfRowPositionIndex = GetStartOfRowTuple(rowIndex).positionIndex;
 
-        var tabs = _tabKeyPositionsBag
+        var tabs = TabKeyPositionsBag
             .SkipWhile(positionIndex => positionIndex < startOfRowPositionIndex)
             .TakeWhile(positionIndex => positionIndex < startOfRowPositionIndex + columnIndex);
 
         return tabs.Count();
     }
 
-    public TextEditorModel PerformForceRerenderAction(TextEditorModelState.ForceRerenderAction forceRerenderAction)
+    public TextEditorModel PerformForceRerenderAction(ForceRerenderAction forceRerenderAction)
     {
         return new TextEditorModel(this);
     }
 
-    public TextEditorModel PerformEditTextEditorAction(
-        TextEditorModelState.KeyboardEventAction keyboardEventAction)
+    public TextEditorModel PerformEditTextEditorAction(KeyboardEventAction keyboardEventAction)
     {
-        if (KeyboardKeyFacts.IsMetaKey(keyboardEventAction.KeyboardEventArgs))
-        {
-            if (KeyboardKeyFacts.MetaKeys.BACKSPACE == keyboardEventAction.KeyboardEventArgs.Key ||
-                KeyboardKeyFacts.MetaKeys.DELETE == keyboardEventAction.KeyboardEventArgs.Key)
-            {
-                PerformDeletions(keyboardEventAction);
-            }
-        }
-        else
-        {
-            var cursorSnapshotsBag = TextEditorCursorSnapshot.TakeSnapshots(
-                keyboardEventAction.CursorSnapshotsBag.Select(x => x.UserCursor).ToArray());
-
-            var primaryCursorSnapshot = cursorSnapshotsBag.FirstOrDefault(x => x.UserCursor.IsPrimaryCursor);
-
-            if (primaryCursorSnapshot is null)
-                return new TextEditorModel(this);
-
-            /*
-             * TODO: 2022-11-18 one must not use the UserCursor while
-             * calculating but instead make a copy of the mutable cursor
-             * by looking at the snapshot and mutate that local 'userCursor'
-             * then once the transaction is done offer the 'userCursor' to the
-             * user interface such that it can choose to move the actual user cursor
-             * to that position
-             */
-
-            // TODO: start making a mutable copy of their immutable cursor snapshot
-            // so if the user moves the cursor
-            // while calculating nothing can go wrong causing exception
-            //
-            // See the var localCursor in this contiguous code block.
-            //
-            // var localCursor = new TextEditorCursor(
-            //     (primaryCursorSnapshot.ImmutableCursor.RowIndex, primaryCursorSnapshot.ImmutableCursor.ColumnIndex), 
-            //     true);
-
-            if (TextEditorSelectionHelper.HasSelectedText(primaryCursorSnapshot.ImmutableCursor.ImmutableSelection))
-            {
-                PerformDeletions(new KeyboardEventAction(
-                    keyboardEventAction.ResourceUri,
-                    cursorSnapshotsBag,
-                    new KeyboardEventArgs
-                    {
-                        Code = KeyboardKeyFacts.MetaKeys.DELETE,
-                        Key = KeyboardKeyFacts.MetaKeys.DELETE,
-                    },
-                    CancellationToken.None));
-            }
-
-            var innerCursorSnapshotsBag = TextEditorCursorSnapshot.TakeSnapshots(
-                keyboardEventAction.CursorSnapshotsBag.Select(x => x.UserCursor).ToArray());
-
-            PerformInsertions(keyboardEventAction with
-            {
-                CursorSnapshotsBag = innerCursorSnapshotsBag
-            });
-        }
-
-        return new TextEditorModel(this);
+        var modelModifier = new TextEditorModelModifier(this);
+        modelModifier.PerformEditTextEditorAction(keyboardEventAction);
+		return modelModifier.ToTextEditorModel();
     }
 
-    public TextEditorModel PerformEditTextEditorAction(TextEditorModelState.InsertTextAction insertTextAction)
+    public TextEditorModel PerformEditTextEditorAction(InsertTextAction insertTextAction)
     {
-        var cursorSnapshotsBag = TextEditorCursorSnapshot.TakeSnapshots(
-            insertTextAction.CursorSnapshotsBag.Select(x => x.UserCursor).ToArray());
-
-        var primaryCursorSnapshot = cursorSnapshotsBag.FirstOrDefault(x => x.UserCursor.IsPrimaryCursor);
-
-        if (primaryCursorSnapshot is null)
-            return new TextEditorModel(this);
-
-        /*
-         * TODO: 2022-11-18 one must not use the UserCursor while
-         * calculating but instead make a copy of the mutable cursor
-         * by looking at the snapshot and mutate that local 'userCursor'
-         * then once the transaction is done offer the 'userCursor' to the
-         * user interface such that it can choose to move the actual user cursor
-         * to that position
-         */
-
-        // TODO: start making a mutable copy of their immutable cursor snapshot
-        // so if the user moves the cursor
-        // while calculating nothing can go wrong causing exception
-        //
-        // See the var localCursor in this contiguous code block.
-        //
-        // var localCursor = new TextEditorCursor(
-        //     (primaryCursorSnapshot.ImmutableCursor.RowIndex, primaryCursorSnapshot.ImmutableCursor.ColumnIndex), 
-        //     true);
-
-        if (TextEditorSelectionHelper.HasSelectedText(primaryCursorSnapshot.ImmutableCursor.ImmutableSelection))
-        {
-            PerformDeletions(new KeyboardEventAction(
-                insertTextAction.ResourceUri,
-                cursorSnapshotsBag,
-                new KeyboardEventArgs
-                {
-                    Code = KeyboardKeyFacts.MetaKeys.DELETE,
-                    Key = KeyboardKeyFacts.MetaKeys.DELETE,
-                },
-                CancellationToken.None));
-        }
-
-        var localContent = insertTextAction.Content.Replace("\r\n", "\n");
-
-        foreach (var character in localContent)
-        {
-            // TODO: This needs to be rewritten everything should be inserted at the same time not a foreach loop insertion for each character
-            //
-            // Need innerCursorSnapshots because need
-            // after every loop of the foreach that the
-            // cursor snapshots are updated
-            var innerCursorSnapshotsBag = TextEditorCursorSnapshot.TakeSnapshots(
-                insertTextAction.CursorSnapshotsBag.Select(x => x.UserCursor).ToArray());
-
-            var code = character switch
-            {
-                '\r' => KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE,
-                '\n' => KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE,
-                '\t' => KeyboardKeyFacts.WhitespaceCodes.TAB_CODE,
-                ' ' => KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE,
-                _ => character.ToString(),
-            };
-
-            var keyboardEventTextEditorModelAction = new KeyboardEventAction(
-                insertTextAction.ResourceUri,
-                innerCursorSnapshotsBag,
-                new KeyboardEventArgs
-                {
-                    Code = code,
-                    Key = character.ToString(),
-                },
-                CancellationToken.None);
-
-            PerformEditTextEditorAction(keyboardEventTextEditorModelAction);
-        }
-
-        return new TextEditorModel(this);
+		var modelModifier = new TextEditorModelModifier(this);
+		modelModifier.PerformEditTextEditorAction(insertTextAction);
+		return modelModifier.ToTextEditorModel();
     }
 
     public TextEditorModel PerformEditTextEditorAction(DeleteTextByMotionAction deleteTextByMotionAction)
     {
-        var keyboardEventArgs = deleteTextByMotionAction.MotionKind switch
-        {
-            MotionKind.Backspace => new KeyboardEventArgs { Key = KeyboardKeyFacts.MetaKeys.BACKSPACE },
-            MotionKind.Delete => new KeyboardEventArgs { Key = KeyboardKeyFacts.MetaKeys.DELETE },
-            _ => throw new ApplicationException($"The {nameof(MotionKind)}: {deleteTextByMotionAction.MotionKind} was not recognized.")
-        };
-
-        var keyboardEventTextEditorModelAction = new KeyboardEventAction(
-            deleteTextByMotionAction.ResourceUri,
-            deleteTextByMotionAction.CursorSnapshotsBag,
-            keyboardEventArgs,
-            CancellationToken.None);
-
-        PerformEditTextEditorAction(keyboardEventTextEditorModelAction);
-
-        return new TextEditorModel(this);
+		var modelModifier = new TextEditorModelModifier(this);
+		modelModifier.PerformEditTextEditorAction(deleteTextByMotionAction);
+		return modelModifier.ToTextEditorModel();
     }
 
     public TextEditorModel PerformEditTextEditorAction(DeleteTextByRangeAction deleteTextByRangeAction)
     {
-        // TODO: This needs to be rewritten everything should be deleted at the same time not a foreach loop for each character
-        for (var i = 0; i < deleteTextByRangeAction.Count; i++)
-        {
-            // Need innerCursorSnapshots because need
-            // after every loop of the foreach that the
-            // cursor snapshots are updated
-            var innerCursorSnapshotsBag = TextEditorCursorSnapshot.TakeSnapshots(
-                deleteTextByRangeAction.CursorSnapshotsBag.Select(x => x.UserCursor).ToArray());
-
-            var keyboardEventTextEditorModelAction = new KeyboardEventAction(
-                deleteTextByRangeAction.ResourceUri,
-                innerCursorSnapshotsBag,
-                new KeyboardEventArgs
-                {
-                    Code = KeyboardKeyFacts.MetaKeys.DELETE,
-                    Key = KeyboardKeyFacts.MetaKeys.DELETE,
-                },
-                CancellationToken.None);
-
-            PerformEditTextEditorAction(keyboardEventTextEditorModelAction);
-        }
-
-        return new TextEditorModel(this);
+		var modelModifier = new TextEditorModelModifier(this);
+        modelModifier.PerformEditTextEditorAction(deleteTextByRangeAction);
+		return modelModifier.ToTextEditorModel();
     }
 
     public TextEditorModel PerformRegisterPresentationModelAction(RegisterPresentationModelAction registerPresentationModelAction)
     {
-        if (!_presentationModelsBag.Any(x => x.TextEditorPresentationKey == registerPresentationModelAction.PresentationModel.TextEditorPresentationKey))
-            _presentationModelsBag.Add(registerPresentationModelAction.PresentationModel);
-
-        return new TextEditorModel(this);
+		var modelModifier = new TextEditorModelModifier(this);
+		modelModifier.PerformRegisterPresentationModelAction(registerPresentationModelAction);
+		return modelModifier.ToTextEditorModel();
     }
     
     public TextEditorModel PerformCalculatePresentationModelAction(CalculatePresentationModelAction calculatePresentationModelAction)
     {
-        var indexOfPresentationModel = _presentationModelsBag.FindIndex(
-            x => x.TextEditorPresentationKey == calculatePresentationModelAction.PresentationKey);
-
-        if (indexOfPresentationModel == -1)
-            return new TextEditorModel(this);
-
-        var presentationModel = _presentationModelsBag[indexOfPresentationModel];
-
-        presentationModel.PendingCalculation = new(GetAllText());
-
-        return new TextEditorModel(this);
+		var modelModifier = new TextEditorModelModifier(this);
+		modelModifier.PerformCalculatePresentationModelAction(calculatePresentationModelAction);
+		return modelModifier.ToTextEditorModel();
     }
 
     /// <summary>If applying syntax highlighting it may be preferred to use <see cref="ApplySyntaxHighlightingAsync" />. It is effectively just invoking the lexer and then <see cref="ApplyDecorationRange" /></summary>
     public void ApplyDecorationRange(IEnumerable<TextEditorTextSpan> textEditorTextSpans)
     {
-        var localContent = _contentBag;
+        var localContent = ContentBag;
 
         var positionsPainted = new HashSet<int>();
 
@@ -358,7 +183,7 @@ public partial class TextEditorModel
 
     public string GetAllText()
     {
-        return new string(_contentBag.Select(rc => rc.Value).ToArray());
+        return new string(ContentBag.Select(rc => rc.Value).ToArray());
     }
 
     public int GetCursorPositionIndex(TextEditorCursor textEditorCursor)
@@ -379,15 +204,15 @@ public partial class TextEditorModel
 
     public char GetTextAt(int positionIndex)
     {
-        if (positionIndex < 0 || positionIndex >= _contentBag.Count)
+        if (positionIndex < 0 || positionIndex >= ContentBag.Count)
             return ParserFacts.END_OF_FILE;
 
-        return _contentBag[positionIndex].Value;
+        return ContentBag[positionIndex].Value;
     }
 
     public string GetTextRange(int startingPositionIndex, int count)
     {
-        return new string(_contentBag
+        return new string(ContentBag
             .Skip(startingPositionIndex)
             .Take(count)
             .Select(rc => rc.Value)
@@ -484,20 +309,20 @@ public partial class TextEditorModel
     public (int rowIndex, int rowStartPositionIndex, (int positionIndex, RowEndingKind rowEndingKind) rowEndingTuple)
         FindRowInformation(int positionIndex)
     {
-        for (var i = _rowEndingPositionsBag.Count - 1; i >= 0; i--)
+        for (var i = RowEndingPositionsBag.Count - 1; i >= 0; i--)
         {
-            var rowEndingTuple = _rowEndingPositionsBag[i];
+            var rowEndingTuple = RowEndingPositionsBag[i];
 
             if (positionIndex >= rowEndingTuple.positionIndex)
             {
                 return (i + 1, rowEndingTuple.positionIndex,
-                    i == _rowEndingPositionsBag.Count - 1
+                    i == RowEndingPositionsBag.Count - 1
                         ? rowEndingTuple
-                        : _rowEndingPositionsBag[i + 1]);
+                        : RowEndingPositionsBag[i + 1]);
             }
         }
 
-        return (0, 0, _rowEndingPositionsBag[0]);
+        return (0, 0, RowEndingPositionsBag[0]);
     }
 
     /// <summary>
@@ -513,10 +338,10 @@ public partial class TextEditorModel
 
         var startOfRowPositionIndex = GetStartOfRowTuple(rowIndex).positionIndex;
 
-        if (rowIndex > _rowEndingPositionsBag.Count - 1)
+        if (rowIndex > RowEndingPositionsBag.Count - 1)
             return -1;
 
-        var lastPositionIndexOnRow = _rowEndingPositionsBag[rowIndex].positionIndex - 1;
+        var lastPositionIndexOnRow = RowEndingPositionsBag[rowIndex].positionIndex - 1;
 
         var positionIndex = GetPositionIndex(rowIndex, columnIndex);
 
@@ -528,21 +353,21 @@ public partial class TextEditorModel
             positionIndex -= 1;
         }
 
-        if (positionIndex < 0 || positionIndex >= _contentBag.Count)
+        if (positionIndex < 0 || positionIndex >= ContentBag.Count)
             return -1;
 
-        var startingCharacterKind = _contentBag[positionIndex].GetCharacterKind();
+        var startingCharacterKind = ContentBag[positionIndex].GetCharacterKind();
 
         while (true)
         {
-            if (positionIndex >= _contentBag.Count ||
+            if (positionIndex >= ContentBag.Count ||
                 positionIndex > lastPositionIndexOnRow ||
                 positionIndex < startOfRowPositionIndex)
             {
                 return -1;
             }
 
-            var currentCharacterKind = _contentBag[positionIndex].GetCharacterKind();
+            var currentCharacterKind = ContentBag[positionIndex].GetCharacterKind();
 
             if (currentCharacterKind != startingCharacterKind)
                 break;
@@ -556,43 +381,51 @@ public partial class TextEditorModel
         return positionIndex - startOfRowPositionIndex;
     }
 
-    public void SetDecorationMapper(IDecorationMapper? decorationMapper)
+    public TextEditorModel SetDecorationMapper(IDecorationMapper decorationMapper)
     {
-        DecorationMapper = decorationMapper ?? new TextEditorDecorationMapperDefault();
-        // TODO: Invoke an event?
+		var modelModifier = new TextEditorModelModifier(this);
+		modelModifier.ModifyDecorationMapper(decorationMapper);
+		return modelModifier.ToTextEditorModel();
     }
 
-    public void SetCompilerService(ICompilerService compilerService)
+    public TextEditorModel SetCompilerService(ICompilerService compilerService)
     {
-        CompilerService = compilerService;
-        // TODO: Invoke an event?
+		var modelModifier = new TextEditorModelModifier(this);
+		modelModifier.ModifyCompilerService(compilerService);
+		return modelModifier.ToTextEditorModel();
+    }
+    
+    public TextEditorModel SetTextEditorSaveFileHelper(TextEditorSaveFileHelper textEditorSaveFileHelper)
+    {
+		var modelModifier = new TextEditorModelModifier(this);
+		modelModifier.ModifyTextEditorSaveFileHelper(textEditorSaveFileHelper);
+		return modelModifier.ToTextEditorModel();
     }
 
     public TextEditorModel SetResourceData(ResourceUri resourceUri, DateTime resourceLastWriteTime)
     {
-        var nextTextEditor = new TextEditorModel(this);
-
-        nextTextEditor.ResourceUri = resourceUri;
-        nextTextEditor.ResourceLastWriteTime = resourceLastWriteTime;
-
-        return nextTextEditor;
+		var modelModifier = new TextEditorModelModifier(this);
+		modelModifier.ModifyResourceData(resourceUri, resourceLastWriteTime);
+		return modelModifier.ToTextEditorModel();
     }
 
     public TextEditorModel SetUsingRowEndingKind(RowEndingKind rowEndingKind)
     {
-        UsingRowEndingKind = rowEndingKind;
-        return new TextEditorModel(this);
+		var modelModifier = new TextEditorModelModifier(this);
+		modelModifier.ModifyUsingRowEndingKind(rowEndingKind);
+		return modelModifier.ToTextEditorModel();
     }
 
     public ImmutableArray<RichCharacter> GetAllRichCharacters()
     {
-        return _contentBag.ToImmutableArray();
+        return ContentBag.ToImmutableArray();
     }
 
-    public void ClearEditBlocks()
+    public TextEditorModel ClearEditBlocks()
     {
-        EditBlockIndex = 0;
-        _editBlocksPersistedBag.Clear();
+		var modelModifier = new TextEditorModelModifier(this);
+		modelModifier.ClearEditBlocks();
+		return modelModifier.ToTextEditorModel();
     }
 
     public bool CanUndoEdit()
@@ -602,52 +435,29 @@ public partial class TextEditorModel
 
     public bool CanRedoEdit()
     {
-        return EditBlockIndex < _editBlocksPersistedBag.Count - 1;
+        return EditBlockIndex < EditBlocksBag.Count - 1;
     }
 
     /// <summary>The "if (EditBlockIndex == _editBlocksPersisted.Count)"<br/><br/>Is done because the active EditBlock is not yet persisted.<br/><br/>The active EditBlock is instead being 'created' as the user continues to make edits of the same <see cref="TextEditKind"/><br/><br/>For complete clarity, this comment refers to one possibly expecting to see "if (EditBlockIndex == _editBlocksPersisted.Count - 1)"</summary>
     public TextEditorModel UndoEdit()
     {
-        if (!CanUndoEdit())
-            return this;
-
-        if (EditBlockIndex == _editBlocksPersistedBag.Count)
-        {
-            // If the edit block is pending then persist it
-            // before reverting back to the previous persisted edit block.
-
-            EnsureUndoPoint(TextEditKind.ForcePersistEditBlock);
-            EditBlockIndex--;
-        }
-
-        EditBlockIndex--;
-
-        var restoreEditBlock = _editBlocksPersistedBag[EditBlockIndex];
-
-        SetContent(restoreEditBlock.ContentSnapshot);
-
-        return new TextEditorModel(this);
+		var modelModifier = new TextEditorModelModifier(this);
+		modelModifier.UndoEdit();
+		return modelModifier.ToTextEditorModel();
     }
 
     public TextEditorModel RedoEdit()
     {
-        if (!CanRedoEdit())
-            return this;
-
-        EditBlockIndex++;
-
-        var restoreEditBlock = _editBlocksPersistedBag[EditBlockIndex];
-
-        SetContent(restoreEditBlock.ContentSnapshot);
-
-        return new TextEditorModel(this);
+		var modelModifier = new TextEditorModelModifier(this);
+		modelModifier.RedoEdit();
+		return modelModifier.ToTextEditorModel();
     }
 
     public CharacterKind GetCharacterKindAt(int positionIndex)
     {
         try
         {
-            return _contentBag[positionIndex].GetCharacterKind();
+            return ContentBag[positionIndex].GetCharacterKind();
         }
         catch (ArgumentOutOfRangeException)
         {

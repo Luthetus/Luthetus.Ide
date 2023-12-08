@@ -44,7 +44,7 @@ public partial class TextSelectionRow : ComponentBase
         int upperPositionIndexExclusive = UpperPositionIndexExclusive;
         int rowIndex = RowIndex;
 
-        if (rowIndex >= RenderBatch.Model!.RowEndingPositionsBag.Length)
+        if (rowIndex >= RenderBatch.Model!.RowEndingPositionsBag.Count)
             return;
 
         bool stateHasChanged = false;

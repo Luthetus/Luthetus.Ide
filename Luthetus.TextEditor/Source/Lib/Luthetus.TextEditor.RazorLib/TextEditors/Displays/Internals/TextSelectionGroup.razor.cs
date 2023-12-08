@@ -19,7 +19,7 @@ public partial class TextSelectionGroup : ComponentBase
         int upperPositionIndexExclusive,
         int rowIndex)
     {
-        if (rowIndex >= RenderBatch.Model!.RowEndingPositionsBag.Length)
+        if (rowIndex >= RenderBatch.Model!.RowEndingPositionsBag.Count)
             return string.Empty;
 
         var startOfRowTuple = RenderBatch.Model!.GetStartOfRowTuple(rowIndex);

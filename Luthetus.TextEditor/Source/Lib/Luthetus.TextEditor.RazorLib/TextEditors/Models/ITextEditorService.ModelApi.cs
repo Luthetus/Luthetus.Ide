@@ -113,8 +113,7 @@ public partial interface ITextEditorService
                 initialContent,
                 decorationMapperRegistry.GetDecorationMapper(extensionNoPeriod),
                 compilerServiceRegistry.GetCompilerService(extensionNoPeriod),
-                null,
-                new());
+                null);
 
             // ICommonBackgroundTaskQueue does not work well here because
             // this Task does not need to be tracked.

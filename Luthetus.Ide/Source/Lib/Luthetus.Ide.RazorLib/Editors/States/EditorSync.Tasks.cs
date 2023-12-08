@@ -39,8 +39,7 @@ public partial class EditorSync
                 content,
                 decorationMapper,
                 compilerService,
-                null,
-                new());
+                null);
 
             textEditorModel.CompilerService.RegisterResource(textEditorModel.ResourceUri);
 

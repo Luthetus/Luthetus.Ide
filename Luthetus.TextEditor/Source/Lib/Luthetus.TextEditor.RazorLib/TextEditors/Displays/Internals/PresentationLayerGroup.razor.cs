@@ -46,7 +46,7 @@ public partial class PresentationLayerGroup : ComponentBase
         var charMeasurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndRowMeasurements;
         var elementMeasurements = RenderBatch.ViewModel!.VirtualizationResult.TextEditorMeasurements;
 
-        if (rowIndex >= RenderBatch.Model!.RowEndingPositionsBag.Length)
+        if (rowIndex >= RenderBatch.Model!.RowEndingPositionsBag.Count)
             return string.Empty;
 
         var startOfRowTuple = RenderBatch.Model!.GetStartOfRowTuple(rowIndex);

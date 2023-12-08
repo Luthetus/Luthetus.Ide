@@ -152,47 +152,50 @@ public partial class TerminalOutputDisplay : FluxorComponent
         KeyboardEventArgs keyboardEventArgs,
         Func<TextEditorMenuKind, bool, Task> setTextEditorMenuKind)
     {
-        if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
-        {
-            var text = textEditor.GetAllText();
-            textEditor.SetContent(string.Empty);
+        // TODO: I am commenting this code out as of (2023-12-07). I am currently rewriting the...
+        // ...text editor to be immutable. I don't know why this method is here and it isn't used?
+        //
+        //if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
+        //{
+        //    var text = textEditor.GetAllText();
+        //    textEditor.WithContent(string.Empty);
 
-            var generalTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[
-                TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
+        //    var generalTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[
+        //        TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
 
-            var whitespace = new[]
-            {
-                KeyboardKeyFacts.WhitespaceCharacters.SPACE,
-                KeyboardKeyFacts.WhitespaceCharacters.TAB,
-                KeyboardKeyFacts.WhitespaceCharacters.NEW_LINE,
-                KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN,
-            };
+        //    var whitespace = new[]
+        //    {
+        //        KeyboardKeyFacts.WhitespaceCharacters.SPACE,
+        //        KeyboardKeyFacts.WhitespaceCharacters.TAB,
+        //        KeyboardKeyFacts.WhitespaceCharacters.NEW_LINE,
+        //        KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN,
+        //    };
 
-            var indexOfFirstWordEndingExclusive = text.IndexOfAny(whitespace);
+        //    var indexOfFirstWordEndingExclusive = text.IndexOfAny(whitespace);
 
-            var targetFileName = text[..indexOfFirstWordEndingExclusive];
+        //    var targetFileName = text[..indexOfFirstWordEndingExclusive];
 
-            if (targetFileName.StartsWith('.'))
-            {
-                targetFileName = (generalTerminalSession.WorkingDirectoryAbsolutePathString ?? string.Empty) +
-                    targetFileName;
-            }
+        //    if (targetFileName.StartsWith('.'))
+        //    {
+        //        targetFileName = (generalTerminalSession.WorkingDirectoryAbsolutePathString ?? string.Empty) +
+        //            targetFileName;
+        //    }
 
-            var arguments = text[(indexOfFirstWordEndingExclusive + 1)..]
-                .Split(whitespace)
-                .Where(x => !string.IsNullOrWhiteSpace(x))
-                .ToArray();
+        //    var arguments = text[(indexOfFirstWordEndingExclusive + 1)..]
+        //        .Split(whitespace)
+        //        .Where(x => !string.IsNullOrWhiteSpace(x))
+        //        .ToArray();
 
-            var formattedCommand = new FormattedCommand(targetFileName, arguments);
+        //    var formattedCommand = new FormattedCommand(targetFileName, arguments);
 
-            var terminalCommand = new TerminalCommand(
-                Key<TerminalCommand>.NewKey(),
-                formattedCommand,
-                null,
-                CancellationToken.None,
-                () => Task.CompletedTask);
+        //    var terminalCommand = new TerminalCommand(
+        //        Key<TerminalCommand>.NewKey(),
+        //        formattedCommand,
+        //        null,
+        //        CancellationToken.None,
+        //        () => Task.CompletedTask);
 
-            await generalTerminalSession.EnqueueCommandAsync(terminalCommand);
-        }
+        //    await generalTerminalSession.EnqueueCommandAsync(terminalCommand);
+        //}
     }
 }

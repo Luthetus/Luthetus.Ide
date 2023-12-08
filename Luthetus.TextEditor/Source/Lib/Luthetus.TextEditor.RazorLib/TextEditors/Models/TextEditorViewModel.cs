@@ -259,8 +259,8 @@ public record TextEditorViewModel : IDisposable
             {
                 verticalStartingIndex = Math.Max(0, verticalStartingIndex);
 
-                if (verticalStartingIndex + verticalTake > model.RowEndingPositionsBag.Length)
-                    verticalTake = model.RowEndingPositionsBag.Length - verticalStartingIndex;
+                if (verticalStartingIndex + verticalTake > model.RowEndingPositionsBag.Count)
+                    verticalTake = model.RowEndingPositionsBag.Count - verticalStartingIndex;
 
                 verticalTake = Math.Max(0, verticalTake);
             }
@@ -331,7 +331,7 @@ public record TextEditorViewModel : IDisposable
             var totalWidth = model.MostCharactersOnASingleRowTuple.rowLength *
                 localCharacterWidthAndRowHeight.CharacterWidth;
 
-            var totalHeight = model.RowEndingPositionsBag.Length *
+            var totalHeight = model.RowEndingPositionsBag.Count *
                 localCharacterWidthAndRowHeight.RowHeight;
 
             // Add vertical margin so the user can scroll beyond the final row of content
