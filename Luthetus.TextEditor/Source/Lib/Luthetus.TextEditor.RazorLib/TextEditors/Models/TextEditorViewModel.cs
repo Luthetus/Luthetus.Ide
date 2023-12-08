@@ -10,6 +10,7 @@ using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
+using Luthetus.Common.RazorLib.Keyboards.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -275,15 +276,18 @@ public record TextEditorViewModel : IDisposable
 
             var virtualizedEntryBag = model
                 .GetRows(verticalStartingIndex, verticalTake)
-                .Select((row, index) =>
+                .Select((row, rowIndex) =>
                 {
-                    index += verticalStartingIndex;
+                    rowIndex += verticalStartingIndex;
 
                     var localHorizontalStartingIndex = horizontalStartingIndex;
                     var localHorizontalTake = horizontalTake;
 
-                    // Adjust for tab key width
-                    {
+					// 1 of the character width is already accounted for
+					var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+
+					// Adjust for tab key width
+					{
                         var maxValidColumnIndex = row.Count - 1;
 
                         var parameterForGetTabsCountOnSameRowBeforeCursor =
@@ -292,11 +296,8 @@ public record TextEditorViewModel : IDisposable
                                 : localHorizontalStartingIndex;
 
                         var tabsOnSameRowBeforeCursor = model.GetTabsCountOnSameRowBeforeCursor(
-                            index,
+                            rowIndex,
                             parameterForGetTabsCountOnSameRowBeforeCursor);
-
-                        // 1 of the character width is already accounted for
-                        var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
 
                         localHorizontalStartingIndex -= extraWidthPerTabKey * tabsOnSameRowBeforeCursor;
                     }
@@ -304,23 +305,48 @@ public record TextEditorViewModel : IDisposable
                     if (localHorizontalStartingIndex + localHorizontalTake > row.Count)
                         localHorizontalTake = row.Count - localHorizontalStartingIndex;
 
-                    localHorizontalTake = Math.Max(0, localHorizontalTake);
+					localHorizontalStartingIndex = Math.Max(0, localHorizontalStartingIndex);
+					localHorizontalTake = Math.Max(0, localHorizontalTake);
 
                     var horizontallyVirtualizedRow = row
                         .Skip(localHorizontalStartingIndex)
                         .Take(localHorizontalTake)
                         .ToList();
 
-                    var widthInPixels = horizontallyVirtualizedRow.Count *
+                    var countTabKeysInVirtualizedRow = horizontallyVirtualizedRow
+                        .Where(x => x.Value == KeyboardKeyFacts.WhitespaceCharacters.TAB)
+                        .Count();
+
+					var widthInPixels = (horizontallyVirtualizedRow.Count + (extraWidthPerTabKey * countTabKeysInVirtualizedRow)) *
                         localCharacterWidthAndRowHeight.CharacterWidth;
 
-                    var leftInPixels = horizontalStartingIndex * // do not change this to localHorizontalStartingIndex
+					var leftInPixels = localHorizontalStartingIndex *
                         localCharacterWidthAndRowHeight.CharacterWidth;
 
-                    var topInPixels = index * localCharacterWidthAndRowHeight.RowHeight;
+					// Adjust for tab key width
+					{
+						var maxValidColumnIndex = row.Count - 1;
+
+						var parameterForGetTabsCountOnSameRowBeforeCursor =
+							localHorizontalStartingIndex > maxValidColumnIndex
+								? maxValidColumnIndex
+								: localHorizontalStartingIndex;
+
+						var tabsOnSameRowBeforeCursor = model.GetTabsCountOnSameRowBeforeCursor(
+							rowIndex,
+							parameterForGetTabsCountOnSameRowBeforeCursor);
+
+						leftInPixels += (extraWidthPerTabKey *
+                            tabsOnSameRowBeforeCursor *
+                            localCharacterWidthAndRowHeight.CharacterWidth);
+					}
+
+					leftInPixels = Math.Max(0, leftInPixels);
+
+					var topInPixels = rowIndex * localCharacterWidthAndRowHeight.RowHeight;
 
                     return new VirtualizationEntry<List<RichCharacter>>(
-                        index,
+                        rowIndex,
                         horizontallyVirtualizedRow,
                         widthInPixels,
                         localCharacterWidthAndRowHeight.RowHeight,
