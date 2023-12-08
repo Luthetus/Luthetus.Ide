@@ -26,7 +26,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 /// A large amount of this file is going to be deleted. I copied over everything from
 /// <see cref="TextEditorModel"/>, and I need to think about how I want to simplify things.
 /// </summary>
-public partial record TextEditorModelModifier
+public partial class TextEditorModelModifier
 {
     private readonly TextEditorModel _textEditorModel;
 
@@ -84,28 +84,26 @@ public partial record TextEditorModelModifier
 
 	public TextEditorModel ToTextEditorModel()
 	{
-		return _textEditorModel with
-		{
-			ContentBag = _contentBag is null ? _textEditorModel.ContentBag : _contentBag.ToImmutableList(),
-			EditBlocksBag = _editBlocksBag is null ? _textEditorModel.EditBlocksBag : _editBlocksBag.ToImmutableList(),
-			RowEndingPositionsBag = _rowEndingPositionsBag is null ? _textEditorModel.RowEndingPositionsBag : _rowEndingPositionsBag.ToImmutableList(),
-			RowEndingKindCountsBag = _rowEndingKindCountsBag is null ? _textEditorModel.RowEndingKindCountsBag : _rowEndingKindCountsBag.ToImmutableList(),
-			PresentationModelsBag = _presentationModelsBag is null ? _textEditorModel.PresentationModelsBag : _presentationModelsBag.ToImmutableList(),
-			TabKeyPositionsBag = _tabKeyPositionsBag is null ? _textEditorModel.TabKeyPositionsBag : _tabKeyPositionsBag.ToImmutableList(),
-			OnlyRowEndingKind = _onlyRowEndingKindWasModified ? _onlyRowEndingKind : _textEditorModel.OnlyRowEndingKind,
-			UsingRowEndingKind = _usingRowEndingKind ?? _textEditorModel.UsingRowEndingKind,
-			ResourceUri = _resourceUri ?? _textEditorModel.ResourceUri,
-			ResourceLastWriteTime = _resourceLastWriteTime ?? _textEditorModel.ResourceLastWriteTime,
-			FileExtension = _fileExtension ?? _textEditorModel.FileExtension,
-			DecorationMapper = _decorationMapper ?? _textEditorModel.DecorationMapper,
-			CompilerService = _compilerService ?? _textEditorModel.CompilerService,
-			TextEditorSaveFileHelper = _textEditorSaveFileHelper ?? _textEditorModel.TextEditorSaveFileHelper,
-			EditBlockIndex = _editBlockIndex ?? _textEditorModel.EditBlockIndex,
-			MostCharactersOnASingleRowTuple = _mostCharactersOnASingleRowTuple ?? _textEditorModel.MostCharactersOnASingleRowTuple,
-			RenderStateKey = _renderStateKey ?? _textEditorModel.RenderStateKey,
-			TextEditorKeymap = _textEditorKeymap ?? _textEditorModel.TextEditorKeymap,
-			TextEditorOptions = _textEditorOptions ?? _textEditorModel.TextEditorOptions,
-		};
+		return new TextEditorModel(
+			_contentBag is null ? _textEditorModel.ContentBag : _contentBag.ToImmutableList(),
+			_editBlocksBag is null ? _textEditorModel.EditBlocksBag : _editBlocksBag.ToImmutableList(),
+			_rowEndingPositionsBag is null ? _textEditorModel.RowEndingPositionsBag : _rowEndingPositionsBag.ToImmutableList(),
+			_rowEndingKindCountsBag is null ? _textEditorModel.RowEndingKindCountsBag : _rowEndingKindCountsBag.ToImmutableList(),
+			_presentationModelsBag is null ? _textEditorModel.PresentationModelsBag : _presentationModelsBag.ToImmutableList(),
+			_tabKeyPositionsBag is null ? _textEditorModel.TabKeyPositionsBag : _tabKeyPositionsBag.ToImmutableList(),
+			_onlyRowEndingKindWasModified ? _onlyRowEndingKind : _textEditorModel.OnlyRowEndingKind,
+			_usingRowEndingKind ?? _textEditorModel.UsingRowEndingKind,
+			_resourceUri ?? _textEditorModel.ResourceUri,
+			_resourceLastWriteTime ?? _textEditorModel.ResourceLastWriteTime,
+			_fileExtension ?? _textEditorModel.FileExtension,
+			_decorationMapper ?? _textEditorModel.DecorationMapper,
+			_compilerService ?? _textEditorModel.CompilerService,
+			_textEditorSaveFileHelper ?? _textEditorModel.TextEditorSaveFileHelper,
+			_editBlockIndex ?? _textEditorModel.EditBlockIndex,
+			_mostCharactersOnASingleRowTuple ?? _textEditorModel.MostCharactersOnASingleRowTuple,
+			_renderStateKey ?? _textEditorModel.RenderStateKey,
+			_textEditorKeymap ?? _textEditorModel.TextEditorKeymap,
+			_textEditorOptions ?? _textEditorModel.TextEditorOptions);
 	}
 
     public void ModifyContentBag()

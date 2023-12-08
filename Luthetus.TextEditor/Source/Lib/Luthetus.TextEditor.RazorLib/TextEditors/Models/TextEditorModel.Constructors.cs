@@ -7,6 +7,10 @@ using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.Options.Models;
+using Luthetus.TextEditor.RazorLib.Edits.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.RenderStates.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -16,7 +20,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 /// Therefore, if one has a text file named "myHomework.txt", then only one TextEditorModel
 /// can exist with the resource uri of "myHomework.txt".
 /// </summary>
-public partial record TextEditorModel
+public partial class TextEditorModel
 {
     public TextEditorModel(
         ResourceUri resourceUri,
@@ -155,5 +159,48 @@ public partial record TextEditorModel
 		OnlyRowEndingKind = onlyRowEndingKind;
 		UsingRowEndingKind = usingRowEndingKind;
 		MostCharactersOnASingleRowTuple = mostCharactersOnASingleRowTuple;
+	}
+
+	public TextEditorModel(
+		ImmutableList<RichCharacter> contentBag,
+		ImmutableList<EditBlock> editBlocksBag,
+		ImmutableList<(int positionIndex, RowEndingKind rowEndingKind)> rowEndingPositionsBag,
+		ImmutableList<(RowEndingKind rowEndingKind, int count)> rowEndingKindCountsBag,
+		ImmutableList<TextEditorPresentationModel> presentationModelsBag,
+		ImmutableList<int> tabKeyPositionsBag,
+		RowEndingKind? onlyRowEndingKind,
+		RowEndingKind usingRowEndingKind,
+		ResourceUri resourceUri,
+		DateTime resourceLastWriteTime,
+		string fileExtension,
+		IDecorationMapper decorationMapper,
+		ICompilerService compilerService,
+		TextEditorSaveFileHelper textEditorSaveFileHelper,
+		int editBlockIndex,
+		(int rowIndex, int rowLength) mostCharactersOnASingleRowTuple,
+		Key<RenderState>  renderStateKey,
+		Keymap textEditorKeymap,
+		TextEditorOptions? textEditorOptions)
+	{
+
+		ContentBag = contentBag;
+		EditBlocksBag = editBlocksBag;
+		RowEndingPositionsBag = rowEndingPositionsBag;
+		RowEndingKindCountsBag = rowEndingKindCountsBag;
+		PresentationModelsBag = presentationModelsBag;
+		TabKeyPositionsBag = tabKeyPositionsBag;
+		OnlyRowEndingKind = onlyRowEndingKind;
+		UsingRowEndingKind = usingRowEndingKind;
+		ResourceUri = resourceUri;
+		ResourceLastWriteTime = resourceLastWriteTime;
+		FileExtension = fileExtension;
+		DecorationMapper = decorationMapper;
+		CompilerService = compilerService;
+		TextEditorSaveFileHelper = textEditorSaveFileHelper;
+		EditBlockIndex = editBlockIndex;
+		MostCharactersOnASingleRowTuple = mostCharactersOnASingleRowTuple;
+		RenderStateKey = renderStateKey;
+		TextEditorKeymap = textEditorKeymap;
+		TextEditorOptions = textEditorOptions;
 	}
 }

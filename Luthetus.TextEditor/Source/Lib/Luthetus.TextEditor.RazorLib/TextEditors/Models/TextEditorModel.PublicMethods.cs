@@ -10,7 +10,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
-public partial record TextEditorModel
+public partial class TextEditorModel
 {
     /// <summary>The cursor is a separate Blazor Component and at times will try to access out of bounds locations.<br/><br/>When cursor accesses out of bounds location return the final RowIndex, and that row's final ColumnIndex</summary>
     public (int positionIndex, RowEndingKind rowEndingKind) GetStartOfRowTuple(int rowIndex)
@@ -94,7 +94,8 @@ public partial record TextEditorModel
 
     public TextEditorModel PerformForceRerenderAction(ForceRerenderAction forceRerenderAction)
     {
-        return new TextEditorModel(this);
+        var modelModifier = new TextEditorModelModifier(this);
+        return modelModifier.ToTextEditorModel();
     }
 
     public TextEditorModel PerformEditTextEditorAction(KeyboardEventAction keyboardEventAction)
