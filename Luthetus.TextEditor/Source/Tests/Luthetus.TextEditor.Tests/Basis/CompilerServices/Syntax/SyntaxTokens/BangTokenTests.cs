@@ -2,7 +2,7 @@
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
-public sealed record BangToken : ISyntaxToken
+public sealed record BangTokenTests
 {
     public BangToken(TextEditorTextSpan textSpan)
     {

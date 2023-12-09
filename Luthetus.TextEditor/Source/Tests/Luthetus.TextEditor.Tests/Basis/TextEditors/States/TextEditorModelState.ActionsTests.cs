@@ -10,7 +10,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.States;
 
-public partial class TextEditorModelState
+public partial class TextEditorModelStateTests
 {
     public record RegisterAction(TextEditorModel Model);
     public record DisposeAction(ResourceUri ResourceUri);

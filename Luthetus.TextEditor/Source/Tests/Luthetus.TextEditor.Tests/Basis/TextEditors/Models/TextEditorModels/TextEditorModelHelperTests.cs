@@ -7,7 +7,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
-public static class TextEditorModelHelper
+public static class TextEditorModelHelperTests
 {
 	/// <summary>The cursor is a separate Blazor Component and at times will try to access out of bounds locations.<br/><br/>When cursor accesses out of bounds location return the final RowIndex, and that row's final ColumnIndex</summary>
 	public static (int positionIndex, RowEndingKind rowEndingKind) GetStartOfRowTuple(

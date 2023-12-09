@@ -2,7 +2,7 @@
 
 namespace Luthetus.TextEditor.RazorLib.Finds.Models;
 
-public static class FindFacts
+public static class FindFactsTests
 {
     public static readonly ImmutableArray<ITextEditorFindProvider> DefaultFindProvidersBag = new ITextEditorFindProvider[]
     {

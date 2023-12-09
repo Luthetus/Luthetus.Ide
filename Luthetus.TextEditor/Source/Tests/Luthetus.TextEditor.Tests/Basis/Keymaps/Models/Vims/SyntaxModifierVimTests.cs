@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 
-public static class SyntaxModifierVim
+public static class SyntaxModifierVimTests
 {
     public static bool TryLex(KeymapArgument keymapArgument, bool hasTextSelection, out VimGrammarToken? vimGrammarToken)
     {

@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.States;
 
-public partial class TextEditorModelState
+public partial class TextEditorModelStateTests
 {
     private class Reducer
     {

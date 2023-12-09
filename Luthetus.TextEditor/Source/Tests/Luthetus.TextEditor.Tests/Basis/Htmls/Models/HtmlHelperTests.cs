@@ -2,7 +2,7 @@
 
 namespace Luthetus.TextEditor.RazorLib.Htmls.Models;
 
-public static class HtmlHelper
+public static class HtmlHelperTests
 {
     private static readonly string SpaceString = "&nbsp;";
     private static readonly string TabString = "&nbsp;&nbsp;&nbsp;&nbsp;";

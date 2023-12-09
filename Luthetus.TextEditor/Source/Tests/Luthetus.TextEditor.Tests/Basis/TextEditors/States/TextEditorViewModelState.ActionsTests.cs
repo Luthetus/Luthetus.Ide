@@ -5,7 +5,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.States;
 
-public partial class TextEditorViewModelState
+public partial class TextEditorViewModelStateTests
 {
     public record DisposeAction(Key<TextEditorViewModel> ViewModelKey);
 

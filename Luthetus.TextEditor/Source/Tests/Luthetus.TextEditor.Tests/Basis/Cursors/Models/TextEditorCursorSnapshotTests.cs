@@ -2,7 +2,7 @@
 
 namespace Luthetus.TextEditor.RazorLib.Cursors.Models;
 
-public class TextEditorCursorSnapshot
+public class TextEditorCursorSnapshotTests
 {
     public TextEditorCursorSnapshot(TextEditorCursor userCursor)
         : this(new ImmutableTextEditorCursor(userCursor), userCursor)

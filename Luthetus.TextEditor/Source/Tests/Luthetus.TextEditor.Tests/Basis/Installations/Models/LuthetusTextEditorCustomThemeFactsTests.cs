@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.Installations.Models;
 
-public class LuthetusTextEditorCustomThemeFacts
+public class LuthetusTextEditorCustomThemeFactsTests
 {
     public static readonly ThemeRecord LightTheme = new ThemeRecord(
         new Key<ThemeRecord>(Guid.Parse("8165209b-0cea-45b4-b6dd-e5661b319c73")),

@@ -2,4 +2,4 @@
 
 namespace Luthetus.TextEditor.RazorLib.Decorations.Models;
 
-public record TextEditorTextModification(bool WasInsertion, TextEditorTextSpan TextEditorTextSpan);
+public record TextEditorTextModificationTests(bool WasInsertion, TextEditorTextSpan TextEditorTextSpan);

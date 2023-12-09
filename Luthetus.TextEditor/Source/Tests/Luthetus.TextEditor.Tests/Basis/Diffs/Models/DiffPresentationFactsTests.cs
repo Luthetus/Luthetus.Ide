@@ -3,7 +3,7 @@ using Luthetus.TextEditor.RazorLib.Decorations.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Diffs.Models;
 
-public static class DiffPresentationFacts
+public static class DiffPresentationFactsTests
 {
     public const string CssClassString = "luth_te_diff-presentation";
 

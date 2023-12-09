@@ -2,7 +2,7 @@
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
-public static class TokenFactory
+public static class TokenFactoryTests
 {
     public static ISyntaxToken FabricateToken(this TokenWalker tokenWalker, SyntaxKind syntaxKind)
     {

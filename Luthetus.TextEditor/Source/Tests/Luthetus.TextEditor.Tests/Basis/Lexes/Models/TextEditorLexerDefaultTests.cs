@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.Lexes.Models;
 
-public class TextEditorLexerDefault
+public class TextEditorLexerDefaultTests
 {
     public TextEditorLexerDefault(ResourceUri resourceUri)
     {

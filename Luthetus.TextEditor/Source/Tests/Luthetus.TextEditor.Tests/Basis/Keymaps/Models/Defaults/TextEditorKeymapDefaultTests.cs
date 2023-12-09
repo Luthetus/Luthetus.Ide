@@ -9,7 +9,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 
-public class TextEditorKeymapDefault : Keymap, ITextEditorKeymap
+public class TextEditorKeymapDefaultTests
 {
     public TextEditorKeymapDefault()
         : base(

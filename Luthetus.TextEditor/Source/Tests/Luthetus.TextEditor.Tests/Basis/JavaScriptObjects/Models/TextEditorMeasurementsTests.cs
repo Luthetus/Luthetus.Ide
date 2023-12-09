@@ -10,7 +10,7 @@
 /// <param name="MarginScrollHeight">The unit of measurement is Pixels (px)</param>
 /// <param name="Width">The unit of measurement is Pixels (px)</param>
 /// <param name="Height">The unit of measurement is Pixels (px)</param>
-public record TextEditorMeasurements(
+public record TextEditorMeasurementsTests(
     double ScrollLeft,
     double ScrollTop,
     double ScrollWidth,

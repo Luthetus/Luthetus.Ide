@@ -2,7 +2,7 @@
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
-public sealed record LibraryReferenceToken : ISyntaxToken
+public sealed record LibraryReferenceTokenTests
 {
     public LibraryReferenceToken(TextEditorTextSpan textSpan, bool isAbsolutePath)
     {

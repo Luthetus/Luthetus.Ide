@@ -1,6 +1,6 @@
 ﻿namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 
-public class EvaluatorResult
+public class EvaluatorResultTests
 {
     public EvaluatorResult(Type type, object result)
     {

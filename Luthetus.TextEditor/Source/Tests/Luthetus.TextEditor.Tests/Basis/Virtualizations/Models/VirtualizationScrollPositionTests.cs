@@ -14,7 +14,7 @@
 /// The comment about <see cref="ScrollWidthInPixels"/> also applies to
 /// the height for <see cref="ScrollHeightInPixels"/>
 /// </summary>
-public record VirtualizationScrollPosition(
+public record VirtualizationScrollPositionTests(
     double ScrollLeftInPixels,
     double ScrollTopInPixels,
     double ScrollWidthInPixels,

@@ -2,7 +2,7 @@
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
-public sealed record BadToken : ISyntaxToken
+public sealed record BadTokenTests
 {
     public BadToken(TextEditorTextSpan textSpan)
     {

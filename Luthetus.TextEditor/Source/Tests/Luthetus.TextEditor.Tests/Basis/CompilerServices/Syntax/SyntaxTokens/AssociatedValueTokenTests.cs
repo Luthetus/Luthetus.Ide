@@ -2,7 +2,7 @@
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
-public sealed record AssociatedValueToken : ISyntaxToken
+public sealed record AssociatedValueTokenTests
 {
     public AssociatedValueToken(TextEditorTextSpan textSpan)
     {

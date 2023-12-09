@@ -15,7 +15,7 @@ using static Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices.
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
-public class TextEditorService : ITextEditorService
+public class TextEditorServiceTests
 {
     private readonly IDispatcher _dispatcher;
     private readonly LuthetusTextEditorOptions _luthetusTextEditorOptions;

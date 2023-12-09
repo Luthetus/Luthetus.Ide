@@ -10,7 +10,7 @@ namespace Luthetus.TextEditor.RazorLib.Diffs.States;
 /// if the <see cref="FeatureStateAttribute"/> has been replaced.
 /// </summary>
 [FeatureState]
-public partial class TextEditorDiffState
+public partial class TextEditorDiffStateTests
 {
     private TextEditorDiffState()
     {

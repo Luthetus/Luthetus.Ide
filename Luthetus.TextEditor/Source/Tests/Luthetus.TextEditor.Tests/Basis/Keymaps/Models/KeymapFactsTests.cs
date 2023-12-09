@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.Keymaps.Models;
 
-public static class TextEditorKeymapFacts
+public static class TextEditorKeymapFactsTests
 {
     public static readonly Keymap DefaultKeymap = new TextEditorKeymapDefault();
 

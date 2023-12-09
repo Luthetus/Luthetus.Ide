@@ -2,7 +2,7 @@
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
-public sealed record EqualsEqualsToken : ISyntaxToken
+public sealed record EqualsEqualsTokenTests
 {
     public EqualsEqualsToken(TextEditorTextSpan textSpan)
     {

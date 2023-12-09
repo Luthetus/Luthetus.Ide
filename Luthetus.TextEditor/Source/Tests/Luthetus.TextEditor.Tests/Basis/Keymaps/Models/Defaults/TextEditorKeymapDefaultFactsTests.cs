@@ -3,7 +3,7 @@ using Luthetus.Common.RazorLib.Keymaps.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 
-public static class TextEditorKeymapDefaultFacts
+public static class TextEditorKeymapDefaultFactsTests
 {
     public static readonly KeymapLayer DefaultLayer = new KeymapLayer(
         new Key<KeymapLayer>(Guid.Parse("d0ac9354-6671-44fd-b281-e652a6aa1f56")),

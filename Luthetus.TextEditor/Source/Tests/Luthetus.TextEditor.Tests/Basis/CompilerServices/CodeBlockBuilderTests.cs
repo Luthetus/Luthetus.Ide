@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 
-public class CodeBlockBuilder
+public class CodeBlockBuilderTests
 {
     public CodeBlockBuilder(CodeBlockBuilder? parent, ISyntaxNode? codeBlockOwner)
     {

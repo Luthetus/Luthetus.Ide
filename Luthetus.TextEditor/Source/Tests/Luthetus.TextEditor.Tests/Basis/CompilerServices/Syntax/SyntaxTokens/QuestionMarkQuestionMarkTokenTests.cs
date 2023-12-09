@@ -2,7 +2,7 @@
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
-public sealed record QuestionMarkQuestionMarkToken : ISyntaxToken
+public sealed record QuestionMarkQuestionMarkTokenTests
 {
     public QuestionMarkQuestionMarkToken(TextEditorTextSpan textSpan)
     {

@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 
-public class LuthetusDiagnosticBag : IEnumerable<TextEditorDiagnostic>
+public class LuthetusDiagnosticBagTests
 {
     private readonly List<TextEditorDiagnostic> _diagnosticsBag = new();
 

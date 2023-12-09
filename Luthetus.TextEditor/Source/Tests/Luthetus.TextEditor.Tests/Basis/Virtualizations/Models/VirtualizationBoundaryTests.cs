@@ -1,6 +1,6 @@
 ﻿namespace Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 
-public record VirtualizationBoundary(
+public record VirtualizationBoundaryTests(
     double? WidthInPixels,
     double? HeightInPixels,
     double? LeftInPixels,

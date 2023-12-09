@@ -2,7 +2,7 @@
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
-public sealed record TriviaToken : ISyntaxToken
+public sealed record TriviaTokenTests
 {
     public TriviaToken(TextEditorTextSpan textSpan)
     {

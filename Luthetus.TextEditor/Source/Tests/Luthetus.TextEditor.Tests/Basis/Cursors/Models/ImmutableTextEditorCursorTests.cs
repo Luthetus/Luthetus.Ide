@@ -1,6 +1,6 @@
 namespace Luthetus.TextEditor.RazorLib.Cursors.Models;
 
-public record ImmutableTextEditorCursor(
+public record ImmutableTextEditorCursorTests(
     int RowIndex,
     int ColumnIndex,
     int PreferredColumnIndex,

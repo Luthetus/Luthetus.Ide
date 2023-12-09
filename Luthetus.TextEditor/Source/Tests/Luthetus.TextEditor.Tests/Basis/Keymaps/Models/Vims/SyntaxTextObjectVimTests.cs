@@ -10,7 +10,7 @@ using Luthetus.TextEditor.RazorLib.Edits.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 
-public static class SyntaxTextObjectVim
+public static class SyntaxTextObjectVimTests
 {
     public static bool TryLex(KeymapArgument keymapArgument, bool hasTextSelection, out VimGrammarToken? vimGrammarToken)
     {

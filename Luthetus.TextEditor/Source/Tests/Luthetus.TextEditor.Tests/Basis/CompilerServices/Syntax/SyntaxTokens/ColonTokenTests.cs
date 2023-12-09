@@ -2,7 +2,7 @@
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
-public sealed record ColonToken : ISyntaxToken
+public sealed record ColonTokenTests
 {
     public ColonToken(TextEditorTextSpan textSpan)
     {

@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Luthetus.TextEditor.RazorLib.Installations.Models;
 
-public static class ServiceCollectionExtensions
+public static class ServiceCollectionExtensionsTests
 {
     public static IServiceCollection AddLuthetusTextEditor(
         this IServiceCollection services,

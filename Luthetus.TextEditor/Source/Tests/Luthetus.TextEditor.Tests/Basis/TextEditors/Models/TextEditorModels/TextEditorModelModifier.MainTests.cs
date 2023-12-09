@@ -26,7 +26,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels.TextE
 /// A large amount of this file is going to be deleted. I copied over everything from
 /// <see cref="TextEditorModel"/>, and I need to think about how I want to simplify things.
 /// </summary>
-public partial class TextEditorModelModifier
+public partial class TextEditorModelModifierTests
 {
     private readonly TextEditorModel _textEditorModel;
 

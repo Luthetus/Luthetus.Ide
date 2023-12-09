@@ -2,7 +2,7 @@
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
-public class BatchScrollEvents
+public class BatchScrollEventsTests
 {
     public IThrottle ThrottleMutateScrollHorizontalPositionByPixels { get; } = new Throttle(IThrottle.DefaultThrottleTimeSpan);
     public IThrottle ThrottleMutateScrollVerticalPositionByPixels { get; } = new Throttle(IThrottle.DefaultThrottleTimeSpan);

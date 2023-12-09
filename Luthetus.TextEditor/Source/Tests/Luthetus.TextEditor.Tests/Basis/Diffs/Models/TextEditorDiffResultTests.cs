@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Luthetus.TextEditor.RazorLib.Diffs.Models;
 
-public class TextEditorDiffResult
+public class TextEditorDiffResultTests
 {
     private TextEditorDiffResult(
         string inText,

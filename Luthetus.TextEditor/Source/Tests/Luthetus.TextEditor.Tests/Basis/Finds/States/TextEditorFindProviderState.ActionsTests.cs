@@ -3,7 +3,7 @@ using Luthetus.TextEditor.RazorLib.Finds.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Finds.States;
 
-public partial class TextEditorFindProviderState
+public partial class TextEditorFindProviderStateTests
 {
     public record RegisterAction(ITextEditorFindProvider FindProvider);
     public record DisposeAction(Key<ITextEditorFindProvider> FindProviderKey);

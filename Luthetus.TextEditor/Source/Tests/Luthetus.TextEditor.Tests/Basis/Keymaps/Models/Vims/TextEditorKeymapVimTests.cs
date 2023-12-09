@@ -14,7 +14,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 
-public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
+public class TextEditorKeymapVimTests
 {
     public TextEditorKeymapVim()
         : base(

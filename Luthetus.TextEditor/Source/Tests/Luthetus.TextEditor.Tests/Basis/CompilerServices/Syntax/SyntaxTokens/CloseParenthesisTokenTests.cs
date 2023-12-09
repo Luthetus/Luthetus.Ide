@@ -2,7 +2,7 @@
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
-public sealed record CloseParenthesisToken : ISyntaxToken
+public sealed record CloseParenthesisTokenTests
 {
     public CloseParenthesisToken(TextEditorTextSpan textSpan)
     {

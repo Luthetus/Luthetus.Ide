@@ -2,7 +2,7 @@
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
-public static class FunctionHelper
+public static class FunctionHelperTests
 {
     /// <summary>
     /// When one has many function overloads, they can use this method

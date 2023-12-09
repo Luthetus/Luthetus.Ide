@@ -3,7 +3,7 @@ using Luthetus.Common.RazorLib.Keymaps.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 
-public static class TextEditorKeymapVimFacts
+public static class TextEditorKeymapVimFactsTests
 {
     public static readonly KeymapLayer InsertLayer = new KeymapLayer(
         new Key<KeymapLayer>(Guid.Parse("2a7956f0-757d-4a8d-93b9-1a3478d9dce4")),

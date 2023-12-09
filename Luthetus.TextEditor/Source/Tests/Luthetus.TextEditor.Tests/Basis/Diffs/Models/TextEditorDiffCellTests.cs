@@ -1,6 +1,6 @@
 ﻿namespace Luthetus.TextEditor.RazorLib.Diffs.Models;
 
-public class TextEditorDiffCell
+public class TextEditorDiffCellTests
 {
     public TextEditorDiffCell(
         char? beforeCharValue,

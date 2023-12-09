@@ -11,7 +11,7 @@ using Luthetus.TextEditor.RazorLib.Rows.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels.TextEditorModels;
 
-public partial class TextEditorModelModifier : ITextEditorModel
+public partial class TextEditorModelModifierTests
 {
 	public IList<RichCharacter> ContentBag => _contentBag is null ? _textEditorModel.ContentBag : _contentBag;
 	public IList<EditBlock> EditBlocksBag => _editBlocksBag is null ? _textEditorModel.EditBlocksBag : _editBlocksBag;

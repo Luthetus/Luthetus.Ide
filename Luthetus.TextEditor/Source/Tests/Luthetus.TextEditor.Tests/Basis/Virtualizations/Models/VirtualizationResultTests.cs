@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 
-public record VirtualizationResult<T> : IVirtualizationResultWithoutTypeMask
+public record VirtualizationResultTests<T> : IVirtualizationResultWithoutTypeMask
 {
     public VirtualizationResult(
         ImmutableArray<VirtualizationEntry<T>> entries,

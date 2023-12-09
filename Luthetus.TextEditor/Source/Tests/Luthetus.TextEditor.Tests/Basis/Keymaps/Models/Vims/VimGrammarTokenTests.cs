@@ -2,6 +2,6 @@
 
 namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 
-public record VimGrammarToken(
+public record VimGrammarTokenTests(
     VimGrammarKind VimGrammarKind,
     KeymapArgument KeymapArgument);

@@ -2,7 +2,7 @@
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 
-public class TextEditorDefaultParser : IParser
+public class TextEditorDefaultParserTests
 {
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsBag { get; } = ImmutableArray<TextEditorDiagnostic>.Empty;
 }

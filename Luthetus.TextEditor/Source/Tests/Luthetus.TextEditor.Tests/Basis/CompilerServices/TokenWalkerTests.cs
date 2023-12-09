@@ -4,7 +4,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 
-public class TokenWalker
+public class TokenWalkerTests
 {
     private readonly ImmutableArray<ISyntaxToken> _tokenBag;
     private readonly LuthetusDiagnosticBag _diagnosticBag;

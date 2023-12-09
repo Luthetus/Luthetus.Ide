@@ -2,7 +2,7 @@
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
-public sealed record KeywordContextualToken : ISyntaxToken
+public sealed record KeywordContextualTokenTests
 {
     public KeywordContextualToken(TextEditorTextSpan textSpan, SyntaxKind syntaxKind)
     {

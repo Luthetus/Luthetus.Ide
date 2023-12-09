@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Luthetus.TextEditor.RazorLib.UnitTesting;
 
-public class TextEditorUnitTestHelper
+public class TextEditorUnitTestHelperTests
 {
     /// <summary>
     /// To create an instance of <see cref="TextEditorUnitTestHelper"/>,

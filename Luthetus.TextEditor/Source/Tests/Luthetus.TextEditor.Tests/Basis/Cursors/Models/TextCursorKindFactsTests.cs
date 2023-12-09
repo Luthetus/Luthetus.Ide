@@ -1,6 +1,6 @@
 namespace Luthetus.TextEditor.RazorLib.Cursors.Models;
 
-public class TextCursorKindFacts
+public class TextCursorKindFactsTests
 {
     public const string BeamCssClassString = "luth_te_cursor-beam";
     public const string BlockCssClassString = "luth_te_cursor-block";

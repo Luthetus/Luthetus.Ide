@@ -5,7 +5,7 @@ using Luthetus.Common.RazorLib.Themes.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Options.States;
 
-public partial class TextEditorOptionsState
+public partial class TextEditorOptionsStateTests
 {
     public record SetFontFamilyAction(string? FontFamily);
     public record SetFontSizeAction(int FontSizeInPixels);

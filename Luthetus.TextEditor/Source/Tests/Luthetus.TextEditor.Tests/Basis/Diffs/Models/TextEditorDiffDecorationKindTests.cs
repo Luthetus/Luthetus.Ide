@@ -1,6 +1,6 @@
 ﻿namespace Luthetus.TextEditor.RazorLib.Diffs.Models;
 
-public enum TextEditorDiffDecorationKind
+public enum TextEditorDiffDecorationKindTests
 {
     None,
     LongestCommonSubsequence,

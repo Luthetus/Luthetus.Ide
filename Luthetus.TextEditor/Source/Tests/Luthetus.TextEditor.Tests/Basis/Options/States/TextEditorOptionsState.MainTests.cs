@@ -12,7 +12,7 @@ namespace Luthetus.TextEditor.RazorLib.Options.States;
 /// if the <see cref="FeatureStateAttribute"/> has been replaced.
 /// </summary>
 [FeatureState]
-public partial class TextEditorOptionsState
+public partial class TextEditorOptionsStateTests
 {
     private TextEditorOptionsState()
     {

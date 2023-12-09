@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace Luthetus.TextEditor.RazorLib.Cursors.Models;
 
-public class TextEditorCursor
+public class TextEditorCursorTests
 {
     public TextEditorCursor(bool isPrimaryCursor)
     {

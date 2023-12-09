@@ -1,6 +1,6 @@
 ﻿namespace Luthetus.TextEditor.RazorLib.Decorations.Models;
 
-public class TextEditorDecorationMapperDefault : IDecorationMapper
+public class TextEditorDecorationMapperDefaultTests
 {
     public string Map(byte decorationByte)
     {

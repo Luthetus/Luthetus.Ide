@@ -23,7 +23,7 @@ namespace Luthetus.TextEditor.RazorLib.Cursors.Models;
 /// If <see cref="AnchorPositionIndex" /> is null then
 /// no selection is active.
 /// </summary>
-public class TextEditorSelection
+public class TextEditorSelectionTests
 {
     public int? AnchorPositionIndex { get; set; }
     public int EndingPositionIndex { get; set; }

@@ -2,7 +2,7 @@
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
-public sealed record CommentSingleLineToken : ISyntaxToken
+public sealed record CommentSingleLineTokenTests
 {
     public CommentSingleLineToken(TextEditorTextSpan textSpan)
     {

@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 
-public static class WhitespaceFacts
+public static class WhitespaceFactsTests
 {
     public const char SPACE = ' ';
     public const char TAB = '\t';

@@ -3,7 +3,7 @@ using Luthetus.TextEditor.RazorLib.Diffs.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Diffs.States;
 
-public partial class TextEditorDiffState
+public partial class TextEditorDiffStateTests
 {
     private class Reducer
     {

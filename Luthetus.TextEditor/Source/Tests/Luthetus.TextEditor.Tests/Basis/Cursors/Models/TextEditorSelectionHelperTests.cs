@@ -3,7 +3,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 namespace Luthetus.TextEditor.RazorLib.Cursors.Models;
 
-public static class TextEditorSelectionHelper
+public static class TextEditorSelectionHelperTests
 {
     public static bool HasSelectedText(TextEditorSelection textEditorSelection)
     {

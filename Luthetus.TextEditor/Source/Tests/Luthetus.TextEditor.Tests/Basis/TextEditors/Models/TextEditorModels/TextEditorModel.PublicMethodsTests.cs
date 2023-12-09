@@ -8,7 +8,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels.TextEdito
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
-public partial class TextEditorModel
+public partial class TextEditorModelTests
 {
     public TextEditorModel PerformForceRerenderAction(ForceRerenderAction forceRerenderAction)
     {

@@ -3,7 +3,7 @@ using Luthetus.TextEditor.RazorLib.Decorations.Models;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 
-public static class CompilerServiceDiagnosticPresentationFacts
+public static class CompilerServiceDiagnosticPresentationFactsTests
 {
     public const string CssClassString = "luth_te_compiler-service-diagnostic-presentation";
 

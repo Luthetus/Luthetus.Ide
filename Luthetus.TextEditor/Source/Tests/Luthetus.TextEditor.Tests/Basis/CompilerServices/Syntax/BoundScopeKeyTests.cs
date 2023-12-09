@@ -1,6 +1,6 @@
 ﻿namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
-public sealed record BoundScopeKey(Guid Guid)
+public sealed record BoundScopeKeyTests(Guid Guid)
 {
     public static readonly BoundScopeKey Empty = new BoundScopeKey(Guid.Empty);
 

@@ -2,7 +2,7 @@
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
-public sealed record OpenSquareBracketToken : ISyntaxToken
+public sealed record OpenSquareBracketTokenTests
 {
     public OpenSquareBracketToken(TextEditorTextSpan textSpan)
     {

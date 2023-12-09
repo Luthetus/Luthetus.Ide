@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.Lexes.Models;
 
-public interface TextEditorLexerResult
+public interface TextEditorLexerResultTests
 {
     public ImmutableArray<TextEditorTextSpan> TextSpanBag { get; }
     public string ResourceUri { get; }

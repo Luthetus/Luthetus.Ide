@@ -2,7 +2,7 @@
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
-public sealed record EndOfFileToken : ISyntaxToken
+public sealed record EndOfFileTokenTests
 {
     public EndOfFileToken(TextEditorTextSpan textSpan)
     {

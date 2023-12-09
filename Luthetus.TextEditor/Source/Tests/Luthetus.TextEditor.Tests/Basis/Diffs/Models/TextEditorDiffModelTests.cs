@@ -4,7 +4,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Diffs.Models;
 
-public record TextEditorDiffModel(
+public record TextEditorDiffModelTests(
     Key<TextEditorDiffModel> DiffKey,
     Key<TextEditorViewModel> InViewModelKey,
     Key<TextEditorViewModel> OutViewModelKey)

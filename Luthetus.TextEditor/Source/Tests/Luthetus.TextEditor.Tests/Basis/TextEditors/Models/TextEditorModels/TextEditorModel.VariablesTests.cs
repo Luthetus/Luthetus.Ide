@@ -12,7 +12,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
-public partial class TextEditorModel
+public partial class TextEditorModelTests
 {
     public const int TAB_WIDTH = 4;
     public const int GUTTER_PADDING_LEFT_IN_PIXELS = 5;

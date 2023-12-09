@@ -10,7 +10,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.States;
 /// if the <see cref="FeatureStateAttribute"/> has been replaced.
 /// </summary>
 [FeatureState]
-public partial class TextEditorViewModelState
+public partial class TextEditorViewModelStateTests
 {
     private TextEditorViewModelState()
     {

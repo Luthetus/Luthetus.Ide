@@ -2,7 +2,7 @@
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
-public record TooltipViewModel(
+public record TooltipViewModelTests(
     Type RendererType,
     Dictionary<string, object?>? ParameterMap,
     RelativeCoordinates RelativeCoordinates,

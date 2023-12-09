@@ -2,7 +2,7 @@
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
-public sealed record CommaToken : ISyntaxToken
+public sealed record CommaTokenTests
 {
     public CommaToken(TextEditorTextSpan textSpan)
     {

@@ -3,7 +3,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Finds.Models;
 
-public class RenderedViewModelsFindProvider : ITextEditorFindProvider
+public class RenderedViewModelsFindProviderTests
 {
     public Key<ITextEditorFindProvider> FindProviderKey { get; } =
         new Key<ITextEditorFindProvider>(Guid.Parse("9bdad472-04eb-488b-88cc-e1b6e3686399"));

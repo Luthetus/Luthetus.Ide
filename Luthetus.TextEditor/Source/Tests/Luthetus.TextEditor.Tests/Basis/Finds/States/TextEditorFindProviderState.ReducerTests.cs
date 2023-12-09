@@ -2,7 +2,7 @@
 
 namespace Luthetus.TextEditor.RazorLib.Finds.States;
 
-public partial class TextEditorFindProviderState
+public partial class TextEditorFindProviderStateTests
 {
     private class Reducer
     {

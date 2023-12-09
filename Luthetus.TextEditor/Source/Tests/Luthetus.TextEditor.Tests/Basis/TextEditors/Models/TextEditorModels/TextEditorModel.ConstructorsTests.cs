@@ -21,7 +21,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 /// Therefore, if one has a text file named "myHomework.txt", then only one TextEditorModel
 /// can exist with the resource uri of "myHomework.txt".
 /// </summary>
-public partial class TextEditorModel
+public partial class TextEditorModelTests
 {
     public TextEditorModel(
         ResourceUri resourceUri,

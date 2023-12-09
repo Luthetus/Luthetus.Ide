@@ -2,7 +2,7 @@
 
 namespace Luthetus.TextEditor.RazorLib.Diffs.Models;
 
-public class TextEditorDiffDecorationMapper : IDecorationMapper
+public class TextEditorDiffDecorationMapperTests
 {
     public string Map(byte decorationByte)
     {

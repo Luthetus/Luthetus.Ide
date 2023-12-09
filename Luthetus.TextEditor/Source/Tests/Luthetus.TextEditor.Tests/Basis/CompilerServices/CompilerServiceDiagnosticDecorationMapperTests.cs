@@ -2,7 +2,7 @@
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 
-public class CompilerServiceDiagnosticDecorationMapper : IDecorationMapper
+public class CompilerServiceDiagnosticDecorationMapperTests : IDecorationMapper
 {
     public string Map(byte decorationByte)
     {

@@ -2,7 +2,7 @@
 
 namespace Luthetus.TextEditor.RazorLib.Lexes.Models;
 
-public record TextEditorTextSpan(
+public record TextEditorTextSpanTests(
     int StartingIndexInclusive,
     int EndingIndexExclusive,
     byte DecorationByte,

@@ -4,7 +4,7 @@ using Luthetus.Common.RazorLib.RenderStates.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Options.States;
 
-public partial class TextEditorOptionsState
+public partial class TextEditorOptionsStateTests
 {
     private class Reducer
     {

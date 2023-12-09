@@ -5,7 +5,7 @@ using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.States;
 
-public partial class TextEditorViewModelState
+public partial class TextEditorViewModelStateTests
 {
     private class Reducer
     {

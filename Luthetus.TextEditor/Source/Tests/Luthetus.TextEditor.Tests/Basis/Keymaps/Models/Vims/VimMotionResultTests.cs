@@ -4,7 +4,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 
-public record VimMotionResult(
+public record VimMotionResultTests(
     ImmutableTextEditorCursor LowerPositionIndexImmutableCursor,
     int LowerPositionIndex,
     ImmutableTextEditorCursor HigherPositionIndexImmutableCursor,

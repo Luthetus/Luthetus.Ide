@@ -2,7 +2,7 @@
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
-public sealed record DivisionToken : ISyntaxToken
+public sealed record DivisionTokenTests
 {
     public DivisionToken(TextEditorTextSpan textSpan)
     {

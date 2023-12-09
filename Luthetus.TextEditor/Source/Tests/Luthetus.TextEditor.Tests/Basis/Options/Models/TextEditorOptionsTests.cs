@@ -5,7 +5,7 @@ using Luthetus.Common.RazorLib.RenderStates.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Options.Models;
 
-public record TextEditorOptions(
+public record TextEditorOptionsTests(
     CommonOptions CommonOptions,
     bool ShowWhitespace,
     bool ShowNewlines,

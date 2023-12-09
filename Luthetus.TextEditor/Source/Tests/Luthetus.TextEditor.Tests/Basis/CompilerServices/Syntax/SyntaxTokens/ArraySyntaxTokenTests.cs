@@ -2,7 +2,7 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
-public sealed record ArraySyntaxToken : ISyntaxToken
+public sealed record ArraySyntaxTokenTests
 {
     public ArraySyntaxToken(TextEditorTextSpan textSpan)
     {

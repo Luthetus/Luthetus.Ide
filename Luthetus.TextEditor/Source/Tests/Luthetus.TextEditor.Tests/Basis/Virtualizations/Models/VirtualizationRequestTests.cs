@@ -1,5 +1,5 @@
 ﻿namespace Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 
-public record VirtualizationRequest(
+public record VirtualizationRequestTests(
     VirtualizationScrollPosition ScrollPosition,
     CancellationToken CancellationToken);

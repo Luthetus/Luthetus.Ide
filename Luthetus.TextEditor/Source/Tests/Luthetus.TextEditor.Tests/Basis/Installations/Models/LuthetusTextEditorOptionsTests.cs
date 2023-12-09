@@ -12,7 +12,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.Installations.Models;
 
-public record LuthetusTextEditorOptions
+public record LuthetusTextEditorOptionsTests
 {
     public Key<ThemeRecord>? InitialThemeKey { get; init; }
     public ImmutableArray<ThemeRecord>? CustomThemeRecordBag { get; init; } = LuthetusTextEditorCustomThemeFacts.AllCustomThemesBag;

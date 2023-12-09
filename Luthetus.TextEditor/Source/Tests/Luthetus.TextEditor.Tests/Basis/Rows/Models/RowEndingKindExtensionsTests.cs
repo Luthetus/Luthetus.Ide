@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.Rows.Models;
 
-public static class RowEndingKindExtensions
+public static class RowEndingKindExtensionsTests
 {
     /// <summary>
     /// In order to not override the ToString() method in a possibly unexpected way <see cref="AsCharacters" /> was made

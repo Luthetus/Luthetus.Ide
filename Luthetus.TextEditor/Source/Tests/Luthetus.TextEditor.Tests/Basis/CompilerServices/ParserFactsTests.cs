@@ -1,6 +1,6 @@
 ﻿namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 
-public static class ParserFacts
+public static class ParserFactsTests
 {
     /// <summary>
     /// The character to indicate an out of bounds read having

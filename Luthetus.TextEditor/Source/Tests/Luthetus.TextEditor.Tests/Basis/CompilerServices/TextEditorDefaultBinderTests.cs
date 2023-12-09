@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 
-public class TextEditorDefaultBinder : IBinder
+public class TextEditorDefaultBinderTests
 {
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsBag { get; } = ImmutableArray<TextEditorDiagnostic>.Empty;
     public ImmutableArray<ITextEditorSymbol> SymbolsBag { get; } = ImmutableArray<ITextEditorSymbol>.Empty;

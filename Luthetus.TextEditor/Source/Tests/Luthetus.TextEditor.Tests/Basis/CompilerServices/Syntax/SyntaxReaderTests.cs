@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
-public static class SyntaxReader
+public static class SyntaxReaderTests
 {
     /// <summary>
     /// This method builds a string of all <see cref="ISyntaxToken"/>(s)

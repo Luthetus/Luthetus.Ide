@@ -1,6 +1,6 @@
 ﻿namespace Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
 
-public class LuthetusTextEditorComponentRenderers : ILuthetusTextEditorComponentRenderers
+public class LuthetusTextEditorComponentRenderersTests
 {
     public LuthetusTextEditorComponentRenderers(Type symbolRendererType, Type diagnosticRendererType)
     {

@@ -11,7 +11,7 @@ namespace Luthetus.TextEditor.RazorLib.Finds.States;
 /// if the <see cref="FeatureStateAttribute"/> has been replaced.
 /// </summary>
 [FeatureState]
-public partial class TextEditorFindProviderState
+public partial class TextEditorFindProviderStateTests
 {
     private TextEditorFindProviderState()
     {

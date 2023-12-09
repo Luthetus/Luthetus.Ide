@@ -8,7 +8,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 /// expression-statement).<br/><br/>
 /// Perhaps one might use <see cref="CodeBlockNode"/> for the body of a class definition, for example.
 /// </summary>
-public sealed record CodeBlockNode : ISyntaxNode
+public sealed record CodeBlockNodeTests : ISyntaxNode
 {
     public CodeBlockNode(ImmutableArray<ISyntax> childBag)
     {

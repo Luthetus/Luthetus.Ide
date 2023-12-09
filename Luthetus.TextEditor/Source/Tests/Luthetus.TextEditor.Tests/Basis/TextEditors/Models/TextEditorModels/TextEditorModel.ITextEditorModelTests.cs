@@ -5,7 +5,7 @@ using Luthetus.TextEditor.RazorLib.Rows.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
-public partial class TextEditorModel : ITextEditorModel
+public partial class TextEditorModelTests
 {
 	IList<RichCharacter> ITextEditorModel.ContentBag => ContentBag;
 	IList<EditBlock> ITextEditorModel.EditBlocksBag => EditBlocksBag;

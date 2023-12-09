@@ -1,7 +1,7 @@
 ﻿namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 /// <summary>The constants do not start with a period</summary>
-public static class ExtensionNoPeriodFacts
+public static class ExtensionNoPeriodFactsTests
 {
     public const string DOT_NET_SOLUTION = "sln";
     public const string C_SHARP_PROJECT = "csproj";

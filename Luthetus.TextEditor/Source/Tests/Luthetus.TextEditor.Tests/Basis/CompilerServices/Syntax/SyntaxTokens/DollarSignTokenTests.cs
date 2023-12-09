@@ -2,7 +2,7 @@
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
-public sealed record DollarSignToken : ISyntaxToken
+public sealed record DollarSignTokenTests
 {
     public DollarSignToken(TextEditorTextSpan textSpan)
     {

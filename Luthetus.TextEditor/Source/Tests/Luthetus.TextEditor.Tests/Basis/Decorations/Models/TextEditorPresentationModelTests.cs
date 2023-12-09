@@ -7,7 +7,7 @@ namespace Luthetus.TextEditor.RazorLib.Decorations.Models;
 /// <param name="CssClassString">A div is rendered with this css class. Inside this div are the divs gotten from the text spans. One likely only will use this css class as an identifier while viewing the browser's debugging tools.</param>
 /// <param name="DecorationMapper">The decoration mapper that is responsible for converting a decoration byte to a css class</param>
 /// <param name="TextEditorTextSpans">The list of position indices that are to painted with certain decoration bytes.</param>
-public record TextEditorPresentationModel(
+public record TextEditorPresentationModelTests(
     Key<TextEditorPresentationModel> TextEditorPresentationKey,
     int Rank,
     string CssClassString,

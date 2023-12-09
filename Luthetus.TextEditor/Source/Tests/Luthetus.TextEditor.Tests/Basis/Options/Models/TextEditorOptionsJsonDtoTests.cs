@@ -9,7 +9,7 @@ namespace Luthetus.TextEditor.RazorLib.Options.Models;
 /// This type needs to exist so the <see cref="TextEditorOptions"/> properties can be nullable, as in they were not
 /// already in local storage. Whereas throughout the app they should never be null.
 /// </summary>
-public record TextEditorOptionsJsonDto(
+public record TextEditorOptionsJsonDtoTests(
     CommonOptionsJsonDto? CommonOptionsJsonDto,
     bool? ShowWhitespace,
     bool? ShowNewlines,

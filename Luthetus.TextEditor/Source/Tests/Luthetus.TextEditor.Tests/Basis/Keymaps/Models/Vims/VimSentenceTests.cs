@@ -6,7 +6,7 @@ using Luthetus.Common.RazorLib.Keymaps.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 
-public class VimSentence
+public class VimSentenceTests
 {
     private readonly List<VimGrammarToken> _pendingSentenceBag = new();
 

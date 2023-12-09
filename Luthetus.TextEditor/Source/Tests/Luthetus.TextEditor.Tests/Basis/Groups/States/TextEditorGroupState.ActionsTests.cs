@@ -4,7 +4,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Groups.States;
 
-public partial class TextEditorGroupState
+public partial class TextEditorGroupStateTests
 {
     public record RegisterAction(TextEditorGroup Group);
     public record DisposeAction(Key<TextEditorGroup> GroupKey);

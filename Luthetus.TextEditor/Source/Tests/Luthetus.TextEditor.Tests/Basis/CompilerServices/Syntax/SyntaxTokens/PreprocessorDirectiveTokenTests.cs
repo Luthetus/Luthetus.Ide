@@ -5,7 +5,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 /// <summary>
 /// TODO: For C# need to implement: Preprocessor directives must be the first non whitespace character on the line.
 /// </summary>
-public sealed record PreprocessorDirectiveToken : ISyntaxToken
+public sealed record PreprocessorDirectiveTokenTests
 {
     public PreprocessorDirectiveToken(TextEditorTextSpan textSpan)
     {

@@ -7,7 +7,7 @@ using System.Text;
 namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 
 /// <summary>Provides common API that can be used when implementing an <see cref="ITextEditorLexer" /> for the <see cref="TextEditorModel" />.<br /><br />The marker for an out of bounds read is <see cref="ParserFacts.END_OF_FILE" />.</summary>
-public class StringWalker
+public class StringWalkerTests
 {
     /// <summary>Pass in the <see cref="ResourceUri"/> of a file, and its text. One can pass in <see cref="string.Empty"/> for the <see cref="ResourceUri"/> if they are only working with the text itself.</summary>
     public StringWalker(ResourceUri resourceUri, string sourceText)
