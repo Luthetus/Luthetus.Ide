@@ -3,7 +3,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels.TextEditorModels;
 using System.Collections.Immutable;
 
-namespace Luthetus.TextEditor.RazorLib.TextEditors.States;
+namespace Luthetus.TextEditor.Tests.Basis.TextEditors.States;
 
 public partial class TextEditorModelStateTests
 {

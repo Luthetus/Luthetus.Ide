@@ -1,7 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Finds.Models;
 
-namespace Luthetus.TextEditor.RazorLib.Finds.States;
+namespace Luthetus.TextEditor.Tests.Basis.Finds.States;
 
 public partial class TextEditorFindProviderStateTests
 {

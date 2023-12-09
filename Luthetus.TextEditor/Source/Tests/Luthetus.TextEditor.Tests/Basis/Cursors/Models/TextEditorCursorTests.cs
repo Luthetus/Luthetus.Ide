@@ -3,7 +3,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Microsoft.AspNetCore.Components.Web;
 
-namespace Luthetus.TextEditor.RazorLib.Cursors.Models;
+namespace Luthetus.TextEditor.Tests.Basis.Cursors.Models;
 
 public class TextEditorCursorTests
 {

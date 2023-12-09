@@ -5,7 +5,7 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using System.Collections.Immutable;
 
-namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorModels;
 
 public static class TextEditorModelHelperTests
 {

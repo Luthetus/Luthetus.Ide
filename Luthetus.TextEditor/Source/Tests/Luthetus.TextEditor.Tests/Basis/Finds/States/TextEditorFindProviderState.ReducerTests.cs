@@ -1,6 +1,6 @@
 ﻿using Fluxor;
 
-namespace Luthetus.TextEditor.RazorLib.Finds.States;
+namespace Luthetus.TextEditor.Tests.Basis.Finds.States;
 
 public partial class TextEditorFindProviderStateTests
 {

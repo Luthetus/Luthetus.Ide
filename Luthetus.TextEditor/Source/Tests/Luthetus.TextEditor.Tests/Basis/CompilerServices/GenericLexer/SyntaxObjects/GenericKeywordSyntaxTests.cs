@@ -2,7 +2,7 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxEnums;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
-namespace Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxObjects;
+namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.GenericLexer.SyntaxObjects;
 
 public class GenericKeywordSyntaxTests
 {

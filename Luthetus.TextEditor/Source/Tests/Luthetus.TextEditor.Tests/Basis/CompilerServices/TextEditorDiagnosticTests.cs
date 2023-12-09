@@ -1,6 +1,6 @@
 ﻿using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
-namespace Luthetus.TextEditor.RazorLib.CompilerServices;
+namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
 /// <summary>
 /// Use the <see cref="Id"/> to determine if two diagnostics

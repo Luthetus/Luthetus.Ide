@@ -1,7 +1,7 @@
 ﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 using System.Text;
 
-namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax;
 
 public static class SyntaxReaderTests
 {

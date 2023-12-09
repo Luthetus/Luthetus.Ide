@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer;
+namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.GenericLexer;
 
 public class GenericLanguageDefinitionTests
 {

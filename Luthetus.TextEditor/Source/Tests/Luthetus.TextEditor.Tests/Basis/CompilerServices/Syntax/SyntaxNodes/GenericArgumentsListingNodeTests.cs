@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
-namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
 public sealed record GenericArgumentsListingNodeTests
 {

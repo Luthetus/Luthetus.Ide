@@ -4,7 +4,7 @@ using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Options.Models;
 
-namespace Luthetus.TextEditor.RazorLib.Options.States;
+namespace Luthetus.TextEditor.Tests.Basis.Options.States;
 
 /// <summary>
 /// Keep the <see cref="TextEditorOptionsState"/> as a class

@@ -12,7 +12,7 @@ using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
-namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
+namespace Luthetus.TextEditor.Tests.Basis.Keymaps.Models.Vims;
 
 public class TextEditorKeymapVimTests
 {

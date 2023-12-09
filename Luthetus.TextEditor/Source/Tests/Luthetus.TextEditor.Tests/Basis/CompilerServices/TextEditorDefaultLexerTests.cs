@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace Luthetus.TextEditor.RazorLib.CompilerServices;
+namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
 public class TextEditorDefaultLexerTests
 {

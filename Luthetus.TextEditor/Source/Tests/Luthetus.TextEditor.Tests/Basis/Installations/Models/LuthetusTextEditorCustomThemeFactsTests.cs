@@ -2,7 +2,7 @@
 using Luthetus.Common.RazorLib.Themes.Models;
 using System.Collections.Immutable;
 
-namespace Luthetus.TextEditor.RazorLib.Installations.Models;
+namespace Luthetus.TextEditor.Tests.Basis.Installations.Models;
 
 public class LuthetusTextEditorCustomThemeFactsTests
 {

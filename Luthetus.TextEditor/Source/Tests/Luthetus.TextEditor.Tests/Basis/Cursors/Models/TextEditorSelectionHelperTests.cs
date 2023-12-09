@@ -1,7 +1,7 @@
 ﻿using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
-namespace Luthetus.TextEditor.RazorLib.Cursors.Models;
+namespace Luthetus.TextEditor.Tests.Basis.Cursors.Models;
 
 public static class TextEditorSelectionHelperTests
 {

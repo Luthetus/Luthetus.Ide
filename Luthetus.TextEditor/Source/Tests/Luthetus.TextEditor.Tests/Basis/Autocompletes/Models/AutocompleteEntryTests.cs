@@ -1,13 +1,28 @@
-﻿namespace Luthetus.TextEditor.RazorLib.Autocompletes.Models;
+﻿using Xunit;
+
+namespace Luthetus.TextEditor.Tests.Basis.Autocompletes.Models;
 
 public class AutocompleteEntryTests
 {
-    public AutocompleteEntryTests(string displayName, AutocompleteEntryKind autocompleteEntryKind)
+    [Fact]
+    public void Constructor()
     {
-        DisplayName = displayName;
-        AutocompleteEntryKind = autocompleteEntryKind;
+		//public AutocompleteEntryTests(string displayName, AutocompleteEntryKind autocompleteEntryKind)
+		//{
+		//	DisplayName = displayName;
+		//	AutocompleteEntryKind = autocompleteEntryKind;
+		//}
     }
 
-    public string DisplayName { get; }
-    public AutocompleteEntryKind AutocompleteEntryKind { get; }
+	[Fact]
+	public void DisplayName()
+	{
+		//public string DisplayName { get; }
+	}
+
+	[Fact]
+	public void AutocompleteEntryKind()
+	{
+		//public AutocompleteEntryKind AutocompleteEntryKind { get; }
+	}
 }

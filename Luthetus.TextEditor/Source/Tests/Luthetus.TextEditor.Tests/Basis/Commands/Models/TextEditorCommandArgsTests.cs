@@ -10,7 +10,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
-namespace Luthetus.TextEditor.RazorLib.Commands.Models;
+namespace Luthetus.TextEditor.Tests.Basis.Commands.Models;
 
 public class TextEditorCommandArgsTests
 {

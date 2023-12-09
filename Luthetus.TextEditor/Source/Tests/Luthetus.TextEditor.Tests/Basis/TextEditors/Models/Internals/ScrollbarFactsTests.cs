@@ -1,4 +1,4 @@
-﻿namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+﻿namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.Internals;
 
 public static class ScrollbarFactsTests
 {

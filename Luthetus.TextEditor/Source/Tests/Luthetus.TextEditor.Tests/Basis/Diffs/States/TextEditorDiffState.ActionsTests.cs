@@ -2,7 +2,7 @@
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
-namespace Luthetus.TextEditor.RazorLib.Diffs.States;
+namespace Luthetus.TextEditor.Tests.Basis.Diffs.States;
 
 public partial class TextEditorDiffStateTests
 {

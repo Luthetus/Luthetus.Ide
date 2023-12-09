@@ -2,7 +2,7 @@
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
-namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
+namespace Luthetus.TextEditor.Tests.Basis.Keymaps.Models.Vims;
 
 public record VimMotionResultTests(
     ImmutableTextEditorCursor LowerPositionIndexImmutableCursor,

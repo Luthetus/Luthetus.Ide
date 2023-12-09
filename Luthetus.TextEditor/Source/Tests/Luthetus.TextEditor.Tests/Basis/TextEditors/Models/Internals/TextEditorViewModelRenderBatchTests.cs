@@ -2,7 +2,7 @@
 using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
-namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.Internals;
 
 public record TextEditorRenderBatchTests(
     TextEditorModel? Model,

@@ -2,7 +2,7 @@
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using System.Collections.Immutable;
 
-namespace Luthetus.TextEditor.RazorLib.TextEditors.States;
+namespace Luthetus.TextEditor.Tests.Basis.TextEditors.States;
 
 /// <summary>
 /// Keep the <see cref="TextEditorViewModelState"/> as a class

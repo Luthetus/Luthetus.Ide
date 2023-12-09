@@ -1,7 +1,18 @@
-namespace Luthetus.TextEditor.RazorLib.Characters.Models;
+using Xunit;
+
+namespace Luthetus.TextEditor.Tests.Basis.Characters.Models;
 
 public class RichCharacterTests
 {
-    public char Value { get; init; }
-    public byte DecorationByte { get; set; }
+	[Fact]
+	public void Aaa()
+	{
+		//public char Value { get; init; }
+	}
+
+	[Fact]
+	public void Aaa()
+	{
+		//public byte DecorationByte { get; set; }
+	}
 }

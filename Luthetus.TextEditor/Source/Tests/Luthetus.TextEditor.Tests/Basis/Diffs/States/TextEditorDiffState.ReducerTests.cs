@@ -1,7 +1,7 @@
 ﻿using Fluxor;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 
-namespace Luthetus.TextEditor.RazorLib.Diffs.States;
+namespace Luthetus.TextEditor.Tests.Basis.Diffs.States;
 
 public partial class TextEditorDiffStateTests
 {

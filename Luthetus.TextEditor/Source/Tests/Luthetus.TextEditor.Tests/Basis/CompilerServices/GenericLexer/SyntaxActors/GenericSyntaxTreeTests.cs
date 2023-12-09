@@ -5,7 +5,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxObjects;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
-namespace Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxActors;
+namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.GenericLexer.SyntaxActors;
 
 public class GenericSyntaxTreeTests
 {

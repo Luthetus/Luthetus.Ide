@@ -15,7 +15,7 @@ using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
 using static Luthetus.TextEditor.RazorLib.TextEditors.States.TextEditorModelState;
 
-namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels.TextEditorModels;
+namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorModels.TextEditorModels;
 
 /// <summary>
 /// Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value

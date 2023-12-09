@@ -1,7 +1,7 @@
 ﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 using System.Collections.Immutable;
 
-namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
 /// <summary>TODO: Correctly implement this node. For now, just skip over it when parsing.</summary>
 public sealed record ObjectInitializationNodeTests

@@ -1,7 +1,7 @@
 ﻿using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections;
 
-namespace Luthetus.TextEditor.RazorLib.CompilerServices;
+namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
 public class LuthetusDiagnosticBagTests
 {

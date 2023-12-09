@@ -1,7 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 
-namespace Luthetus.TextEditor.RazorLib.CompilerServices;
+namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
 public static class CompilerServiceDiagnosticPresentationFactsTests
 {

@@ -3,7 +3,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
 
-namespace Luthetus.TextEditor.RazorLib.Options.States;
+namespace Luthetus.TextEditor.Tests.Basis.Options.States;
 
 public partial class TextEditorOptionsStateTests
 {

@@ -6,7 +6,7 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
-namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.Internals;
 
 public class TextEditorViewModelDisplayOptionsTests
 {

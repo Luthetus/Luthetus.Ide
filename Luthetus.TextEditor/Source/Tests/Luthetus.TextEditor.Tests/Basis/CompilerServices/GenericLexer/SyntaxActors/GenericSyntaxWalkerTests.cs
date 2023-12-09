@@ -1,7 +1,7 @@
 ﻿using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxEnums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxObjects;
 
-namespace Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxActors;
+namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.GenericLexer.SyntaxActors;
 
 public class GenericSyntaxWalkerTests
 {

@@ -1,6 +1,6 @@
 ﻿using Luthetus.TextEditor.RazorLib.Decorations.Models;
 
-namespace Luthetus.TextEditor.RazorLib.CompilerServices;
+namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
 public class CompilerServiceDiagnosticDecorationMapperTests : IDecorationMapper
 {

@@ -1,6 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.Reactives.Models;
 
-namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.Internals;
 
 public class BatchScrollEventsTests
 {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace Luthetus.TextEditor.RazorLib.Cursors.Models;
+namespace Luthetus.TextEditor.Tests.Basis.Cursors.Models;
 
 public class TextEditorCursorSnapshotTests
 {

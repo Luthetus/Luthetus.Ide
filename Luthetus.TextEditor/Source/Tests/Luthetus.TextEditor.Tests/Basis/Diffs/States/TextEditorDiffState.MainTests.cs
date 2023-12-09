@@ -2,7 +2,7 @@
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using System.Collections.Immutable;
 
-namespace Luthetus.TextEditor.RazorLib.Diffs.States;
+namespace Luthetus.TextEditor.Tests.Basis.Diffs.States;
 
 /// <summary>
 /// Keep the <see cref="TextEditorDiffState"/> as a class

@@ -2,7 +2,7 @@
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using System.Collections.Immutable;
 
-namespace Luthetus.TextEditor.RazorLib.Groups.States;
+namespace Luthetus.TextEditor.Tests.Basis.Groups.States;
 
 /// <summary>
 /// Keep the <see cref="TextEditorGroupState"/> as a class

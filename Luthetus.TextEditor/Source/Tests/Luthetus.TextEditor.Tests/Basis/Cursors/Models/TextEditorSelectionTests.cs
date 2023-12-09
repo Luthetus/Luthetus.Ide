@@ -1,4 +1,4 @@
-namespace Luthetus.TextEditor.RazorLib.Cursors.Models;
+namespace Luthetus.TextEditor.Tests.Basis.Cursors.Models;
 
 /// <summary>
 /// To select the first character in a TextEditor one would

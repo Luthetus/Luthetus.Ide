@@ -1,7 +1,7 @@
 ﻿using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
 
-namespace Luthetus.TextEditor.RazorLib.Decorations.Models;
+namespace Luthetus.TextEditor.Tests.Basis.Decorations.Models;
 
 /// <summary>
 /// In a concurrent safe manner, get the content from the TextEditorModel

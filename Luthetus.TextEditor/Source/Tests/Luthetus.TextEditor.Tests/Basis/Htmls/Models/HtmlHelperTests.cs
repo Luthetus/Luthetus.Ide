@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Luthetus.TextEditor.RazorLib.Htmls.Models;
+namespace Luthetus.TextEditor.Tests.Basis.Htmls.Models;
 
 public static class HtmlHelperTests
 {

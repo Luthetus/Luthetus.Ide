@@ -2,7 +2,7 @@
 using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 using System.Collections.Immutable;
 
-namespace Luthetus.TextEditor.RazorLib.Virtualizations.Models;
+namespace Luthetus.TextEditor.Tests.Basis.Virtualizations.Models;
 
 public record VirtualizationResultTests<T> : IVirtualizationResultWithoutTypeMask
 {

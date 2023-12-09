@@ -2,7 +2,7 @@
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using System.Collections.Immutable;
 
-namespace Luthetus.TextEditor.RazorLib.Lexes.Models;
+namespace Luthetus.TextEditor.Tests.Basis.Lexes.Models;
 
 public interface TextEditorLexerResultTests
 {

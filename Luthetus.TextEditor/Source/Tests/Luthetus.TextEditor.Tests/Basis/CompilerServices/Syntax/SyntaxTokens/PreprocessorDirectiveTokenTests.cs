@@ -1,6 +1,6 @@
 ﻿using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
-namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 
 /// <summary>
 /// TODO: For C# need to implement: Preprocessor directives must be the first non whitespace character on the line.

@@ -1,7 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 
-namespace Luthetus.TextEditor.RazorLib.Diffs.Models;
+namespace Luthetus.TextEditor.Tests.Basis.Diffs.Models;
 
 public static class DiffPresentationFactsTests
 {

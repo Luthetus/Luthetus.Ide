@@ -1,4 +1,4 @@
-﻿namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
+﻿namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 
 /// <summary>The constants do not start with a period</summary>
 public static class ExtensionNoPeriodFactsTests

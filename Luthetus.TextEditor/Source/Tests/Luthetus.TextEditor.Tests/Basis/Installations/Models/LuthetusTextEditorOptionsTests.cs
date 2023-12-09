@@ -10,7 +10,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Immutable;
 
-namespace Luthetus.TextEditor.RazorLib.Installations.Models;
+namespace Luthetus.TextEditor.Tests.Basis.Installations.Models;
 
 public record LuthetusTextEditorOptionsTests
 {

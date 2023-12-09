@@ -3,43 +3,58 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
+using Xunit;
 
-namespace Luthetus.TextEditor.RazorLib.Autocompletes.Models;
+namespace Luthetus.TextEditor.Tests.Basis.Autocompletes.Models;
 
 public class WordAutocompleteIndexerTests : IAutocompleteIndexer
 {
-    private readonly ITextEditorService _textEditorService;
-    private readonly ConcurrentBag<string> _indexedStringsBag = new();
+	[Fact]
+	public void Aaa()
+	{
+		//public WordAutocompleteIndexer(ITextEditorService textEditorService)
+		//{
+		//	_textEditorService = textEditorService;
 
-    public WordAutocompleteIndexer(ITextEditorService textEditorService)
-    {
-        _textEditorService = textEditorService;
+		//	_textEditorService.ModelStateWrap.StateChanged += ModelsCollectionWrapOnStateChanged;
+		//}
+	}
 
-        _textEditorService.ModelStateWrap.StateChanged += ModelsCollectionWrapOnStateChanged;
-    }
+	[Fact]
+	public void Aaa()
+	{
+		//public ImmutableArray<string> IndexedStringsBag => _indexedStringsBag.ToImmutableArray();
+	}
 
-    private void ModelsCollectionWrapOnStateChanged(object? sender, EventArgs e)
-    {
-        // TODO: When should the indexer re-index or incrementally do so
-    }
 
-    public ImmutableArray<string> IndexedStringsBag => _indexedStringsBag.ToImmutableArray();
+	[Fact]
+	public void Aaa()
+	{
+		//public Task IndexTextEditorAsync(TextEditorModel textEditorModel)
+		//{
+		//	return Task.CompletedTask;
+		//}
+	}
 
-    public Task IndexTextEditorAsync(TextEditorModel textEditorModel)
-    {
-        return Task.CompletedTask;
-    }
 
-    public Task IndexWordAsync(string word)
-    {
-        if (!_indexedStringsBag.Contains(word))
-            _indexedStringsBag.Add(word);
+	[Fact]
+	public void Aaa()
+	{
+		//public Task IndexWordAsync(string word)
+		//{
+		//	if (!_indexedStringsBag.Contains(word))
+		//		_indexedStringsBag.Add(word);
 
-        return Task.CompletedTask;
-    }
+		//	return Task.CompletedTask;
+		//}
+	}
 
-    public void Dispose()
-    {
-        _textEditorService.ModelStateWrap.StateChanged -= ModelsCollectionWrapOnStateChanged;
-    }
+	[Fact]
+	public void Aaa()
+	{
+		public void Dispose()
+		{
+			_textEditorService.ModelStateWrap.StateChanged -= ModelsCollectionWrapOnStateChanged;
+		}
+	}
 }

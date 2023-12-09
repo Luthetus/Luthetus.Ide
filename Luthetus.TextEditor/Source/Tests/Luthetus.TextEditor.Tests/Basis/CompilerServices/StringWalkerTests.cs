@@ -4,7 +4,7 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
 using System.Text;
 
-namespace Luthetus.TextEditor.RazorLib.CompilerServices;
+namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
 /// <summary>Provides common API that can be used when implementing an <see cref="ITextEditorLexer" /> for the <see cref="TextEditorModel" />.<br /><br />The marker for an out of bounds read is <see cref="ParserFacts.END_OF_FILE" />.</summary>
 public class StringWalkerTests

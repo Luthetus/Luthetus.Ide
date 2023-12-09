@@ -13,7 +13,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels.TextEditorModels;
 
-namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorModels;
 
 /// <summary>
 /// Stores the <see cref="RichCharacter"/> class instances that represent the text.<br/><br/>

@@ -1,6 +1,6 @@
 ﻿using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxObjects;
 
-namespace Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer;
+namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.GenericLexer;
 
 public class GenericSyntaxUnitTests
 {

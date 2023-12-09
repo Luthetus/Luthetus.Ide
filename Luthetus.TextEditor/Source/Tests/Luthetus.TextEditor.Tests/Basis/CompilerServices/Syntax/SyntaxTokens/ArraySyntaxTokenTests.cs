@@ -1,6 +1,6 @@
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
-namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 
 public sealed record ArraySyntaxTokenTests
 {

@@ -1,4 +1,4 @@
-namespace Luthetus.TextEditor.RazorLib.Virtualizations.Models;
+namespace Luthetus.TextEditor.Tests.Basis.Virtualizations.Models;
 
 public record VirtualizationEntryTests<T>( // Wraps the item the consumer of the component wants to render
     int Index, // The index of the item to render

@@ -1,7 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 
-namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
+namespace Luthetus.TextEditor.Tests.Basis.Keymaps.Models.Defaults;
 
 public static class TextEditorKeymapDefaultFactsTests
 {

@@ -1,4 +1,4 @@
-namespace Luthetus.TextEditor.RazorLib.Edits.Models;
+namespace Luthetus.TextEditor.Tests.Basis.Edits.Models;
 
 public record EditBlockTests(
     TextEditKind TextEditKind,

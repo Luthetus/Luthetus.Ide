@@ -1,4 +1,4 @@
-﻿namespace Luthetus.TextEditor.RazorLib.Diffs.Models;
+﻿namespace Luthetus.TextEditor.Tests.Basis.Diffs.Models;
 
 public class TextEditorDiffCellTests
 {

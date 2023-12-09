@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
+namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.Symbols;
 
 public sealed record SymbolDefinitionTests
 {

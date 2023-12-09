@@ -1,6 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.Keys.Models;
 
-namespace Luthetus.TextEditor.RazorLib.Decorations.Models;
+namespace Luthetus.TextEditor.Tests.Basis.Decorations.Models;
 
 /// <param name="TextEditorPresentationKey">Unique Identifier. Perhaps one wants to repaint the Diff presentation only. They use this to identify the Diff presentation</param>
 /// <param name="Rank">The order the presentations get rendered. A given a ranks of [ 7, -3, 1, 2 ] the rendering order is ascending therefore it will be reordered as [ -3, 1, 2, 7 ] when iterating over the containing presentation layer</param>

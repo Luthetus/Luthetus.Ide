@@ -3,7 +3,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Finds.Models;
 using System.Collections.Immutable;
 
-namespace Luthetus.TextEditor.RazorLib.Finds.States;
+namespace Luthetus.TextEditor.Tests.Basis.Finds.States;
 
 /// <summary>
 /// Keep the <see cref="TextEditorFindProviderState"/> as a class

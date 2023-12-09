@@ -2,7 +2,7 @@
 using System.Collections.Immutable;
 using System.Text;
 
-namespace Luthetus.TextEditor.RazorLib.Diffs.Models;
+namespace Luthetus.TextEditor.Tests.Basis.Diffs.Models;
 
 public class TextEditorDiffResultTests
 {

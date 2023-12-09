@@ -1,7 +1,7 @@
 ﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using System.Collections.Immutable;
 
-namespace Luthetus.TextEditor.RazorLib.CompilerServices;
+namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
 /// <summary>
 /// The <see cref="CodeBlockNode"/> is used for storing a sequence of statements (or a single

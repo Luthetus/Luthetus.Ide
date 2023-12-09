@@ -1,4 +1,4 @@
-﻿namespace Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
+﻿namespace Luthetus.TextEditor.Tests.Basis.ComponentRenderers.Models;
 
 public class LuthetusTextEditorComponentRenderersTests
 {

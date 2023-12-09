@@ -3,7 +3,7 @@ using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 using System.Collections.Immutable;
 
-namespace Luthetus.TextEditor.RazorLib.Keymaps.Models;
+namespace Luthetus.TextEditor.Tests.Basis.Keymaps.Models;
 
 public static class TextEditorKeymapFactsTests
 {

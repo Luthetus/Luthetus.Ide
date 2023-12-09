@@ -3,7 +3,7 @@ using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 
-namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorModels;
 
 public partial class TextEditorModelTests
 {

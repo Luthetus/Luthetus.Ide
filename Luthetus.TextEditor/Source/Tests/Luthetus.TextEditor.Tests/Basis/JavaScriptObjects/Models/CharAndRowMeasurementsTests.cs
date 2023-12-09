@@ -1,4 +1,4 @@
-namespace Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
+namespace Luthetus.TextEditor.Tests.Basis.JavaScriptObjects.Models;
 
 /// <summary>
 /// The unit of measurement is Pixels (px)

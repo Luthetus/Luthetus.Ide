@@ -1,6 +1,6 @@
 ﻿using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 
-namespace Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer;
+namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.GenericLexer;
 
 /// <summary>
 /// An example of usage would be for the C language's preprocessor.

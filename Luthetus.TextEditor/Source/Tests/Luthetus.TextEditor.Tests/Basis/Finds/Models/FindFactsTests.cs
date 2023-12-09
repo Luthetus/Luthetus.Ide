@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace Luthetus.TextEditor.RazorLib.Finds.Models;
+namespace Luthetus.TextEditor.Tests.Basis.Finds.Models;
 
 public static class FindFactsTests
 {

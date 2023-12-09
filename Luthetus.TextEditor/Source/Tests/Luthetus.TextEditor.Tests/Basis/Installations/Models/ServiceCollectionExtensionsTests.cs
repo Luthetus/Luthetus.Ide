@@ -5,7 +5,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Luthetus.TextEditor.RazorLib.Installations.Models;
+namespace Luthetus.TextEditor.Tests.Basis.Installations.Models;
 
 public static class ServiceCollectionExtensionsTests
 {

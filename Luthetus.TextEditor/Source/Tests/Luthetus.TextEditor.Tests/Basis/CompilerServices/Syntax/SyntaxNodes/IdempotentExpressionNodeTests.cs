@@ -1,7 +1,7 @@
 ﻿using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
 
-namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
 /// <summary>
 /// One usage of the <see cref="IdempotentExpressionNode"/> is for a <see cref="ParenthesizedExpressionNode"/>

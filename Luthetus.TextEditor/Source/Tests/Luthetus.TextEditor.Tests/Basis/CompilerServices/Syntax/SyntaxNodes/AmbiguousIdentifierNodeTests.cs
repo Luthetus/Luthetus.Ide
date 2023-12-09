@@ -1,7 +1,7 @@
 ﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 using System.Collections.Immutable;
 
-namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
 /// <summary>
 /// Example usage: One finds a <see cref="IdentifierToken"/>, but must

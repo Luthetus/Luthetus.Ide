@@ -1,6 +1,6 @@
 ﻿using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
-namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
+namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.Symbols;
 
 public sealed record InjectedLanguageComponentSymbolTests
 {

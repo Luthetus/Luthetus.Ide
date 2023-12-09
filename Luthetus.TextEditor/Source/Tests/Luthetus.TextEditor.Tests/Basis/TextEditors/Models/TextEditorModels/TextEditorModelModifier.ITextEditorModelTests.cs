@@ -9,7 +9,7 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 
-namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels.TextEditorModels;
+namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorModels.TextEditorModels;
 
 public partial class TextEditorModelModifierTests
 {

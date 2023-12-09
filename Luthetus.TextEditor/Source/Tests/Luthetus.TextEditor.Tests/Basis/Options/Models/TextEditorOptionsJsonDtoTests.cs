@@ -3,7 +3,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 
-namespace Luthetus.TextEditor.RazorLib.Options.Models;
+namespace Luthetus.TextEditor.Tests.Basis.Options.Models;
 
 /// <summary>
 /// This type needs to exist so the <see cref="TextEditorOptions"/> properties can be nullable, as in they were not

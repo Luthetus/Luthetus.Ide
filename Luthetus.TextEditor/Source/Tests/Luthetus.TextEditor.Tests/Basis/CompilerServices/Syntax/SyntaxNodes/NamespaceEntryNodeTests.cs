@@ -1,7 +1,7 @@
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
 
-namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
 /// <summary>
 /// TODO: Rewrite 'namespace node' logic (2023-11-27)

@@ -1,7 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.Icons.Displays.Codicon;
 using Luthetus.Common.RazorLib.Keys.Models;
 
-namespace Luthetus.TextEditor.RazorLib.Finds.Models;
+namespace Luthetus.TextEditor.Tests.Basis.Finds.Models;
 
 public class RegisteredViewModelsFindProviderTests
 {

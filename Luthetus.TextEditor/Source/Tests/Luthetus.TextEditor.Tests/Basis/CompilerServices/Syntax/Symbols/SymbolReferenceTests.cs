@@ -1,4 +1,4 @@
-﻿namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
+﻿namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.Symbols;
 
 public sealed class SymbolReferenceTests
 {

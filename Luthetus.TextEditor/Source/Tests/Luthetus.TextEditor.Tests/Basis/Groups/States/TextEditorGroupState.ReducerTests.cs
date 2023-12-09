@@ -2,7 +2,7 @@
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
-namespace Luthetus.TextEditor.RazorLib.Groups.States;
+namespace Luthetus.TextEditor.Tests.Basis.Groups.States;
 
 public partial class TextEditorGroupStateTests
 {

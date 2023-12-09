@@ -2,7 +2,7 @@
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
-namespace Luthetus.TextEditor.RazorLib.Diffs.Models;
+namespace Luthetus.TextEditor.Tests.Basis.Diffs.Models;
 
 public record TextEditorDiffModelTests(
     Key<TextEditorDiffModel> DiffKey,

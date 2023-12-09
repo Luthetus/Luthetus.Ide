@@ -1,4 +1,4 @@
-﻿namespace Luthetus.TextEditor.RazorLib.Decorations.Models;
+﻿namespace Luthetus.TextEditor.Tests.Basis.Decorations.Models;
 
 public class TextEditorDecorationMapperDefaultTests
 {

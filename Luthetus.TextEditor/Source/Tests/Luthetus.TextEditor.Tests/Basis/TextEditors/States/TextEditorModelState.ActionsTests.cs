@@ -8,7 +8,7 @@ using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
-namespace Luthetus.TextEditor.RazorLib.TextEditors.States;
+namespace Luthetus.TextEditor.Tests.Basis.TextEditors.States;
 
 public partial class TextEditorModelStateTests
 {

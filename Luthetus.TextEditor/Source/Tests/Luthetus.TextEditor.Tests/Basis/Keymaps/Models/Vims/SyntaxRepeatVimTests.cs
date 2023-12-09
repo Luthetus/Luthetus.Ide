@@ -4,7 +4,7 @@ using Luthetus.TextEditor.RazorLib.Edits.Models;
 using System.Collections.Immutable;
 using System.Text;
 
-namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
+namespace Luthetus.TextEditor.Tests.Basis.Keymaps.Models.Vims;
 
 public static class SyntaxRepeatVimTests
 {

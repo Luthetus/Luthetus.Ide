@@ -8,7 +8,7 @@ using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 
-namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
+namespace Luthetus.TextEditor.Tests.Basis.Keymaps.Models.Vims;
 
 public static class SyntaxTextObjectVimTests
 {

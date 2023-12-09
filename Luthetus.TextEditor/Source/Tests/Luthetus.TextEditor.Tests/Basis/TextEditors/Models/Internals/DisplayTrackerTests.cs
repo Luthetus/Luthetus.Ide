@@ -2,7 +2,7 @@
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 
-namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.Internals;
 
 /// <summary>
 /// One must track whether the ViewModel is currently being rendered.
