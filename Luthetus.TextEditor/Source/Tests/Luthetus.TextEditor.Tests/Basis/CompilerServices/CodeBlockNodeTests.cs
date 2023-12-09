@@ -1,33 +1,50 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using System.Collections.Immutable;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
-/// <summary>
-/// The <see cref="CodeBlockNode"/> is used for storing a sequence of statements (or a single
-/// expression-statement).<br/><br/>
-/// Perhaps one might use <see cref="CodeBlockNode"/> for the body of a class definition, for example.
-/// </summary>
-public sealed record CodeBlockNodeTests : ISyntaxNode
+public class CodeBlockNodeTests
 {
-    public CodeBlockNode(ImmutableArray<ISyntax> childBag)
-    {
-        ChildBag = childBag;
+	[Fact]
+	public void CodeBlockNode_A()
+	{
+		//public CodeBlockNode(ImmutableArray<ISyntax> childBag)
+		throw new NotImplementedException();
+	}
 
-        DiagnosticsBag = ImmutableArray<TextEditorDiagnostic>.Empty;
-    }
+	[Fact]
+	public void CodeBlockNode_B()
+	{
+		//public CodeBlockNode(
+	//       ImmutableArray<ISyntax> children,
+	//       ImmutableArray<TextEditorDiagnostic> diagnostics)
+		throw new NotImplementedException();
+	}
 
-    public CodeBlockNode(
-        ImmutableArray<ISyntax> children,
-        ImmutableArray<TextEditorDiagnostic> diagnostics)
-    {
-        ChildBag = children;
-        DiagnosticsBag = diagnostics;
-    }
+	[Fact]
+	public void DiagnosticsBag()
+	{
+		//public ImmutableArray<TextEditorDiagnostic> DiagnosticsBag { get; init; }
+		throw new NotImplementedException();
+	}
 
-    public ImmutableArray<TextEditorDiagnostic> DiagnosticsBag { get; init; }
+	[Fact]
+	public void ChildBag()
+	{
+		//public ImmutableArray<ISyntax> ChildBag { get; init; }
+		throw new NotImplementedException();
+	}
 
-    public ImmutableArray<ISyntax> ChildBag { get; init; }
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.CodeBlockNode;
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.CodeBlockNode;
+		throw new NotImplementedException();
+	}
 }

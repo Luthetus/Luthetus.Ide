@@ -1,17 +1,31 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.TextEditor.RazorLib.Decorations.Models;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
-public static class CompilerServiceDiagnosticPresentationFactsTests
+public class CompilerServiceDiagnosticPresentationFactsTests
 {
-    public const string CssClassString = "luth_te_compiler-service-diagnostic-presentation";
+	[Fact]
+	public void CssClassString()
+	{
+		//public const string CssClassString = "luth_te_compiler-service-diagnostic-presentation";
+		throw new NotImplementedException();
+	}
 
-    public static readonly Key<TextEditorPresentationModel> PresentationKey = Key<TextEditorPresentationModel>.NewKey();
+	[Fact]
+	public void PresentationKey()
+	{
+		//public static readonly Key<TextEditorPresentationModel> PresentationKey = Key<TextEditorPresentationModel>.NewKey();
+		throw new NotImplementedException();
+	}
 
-    public static readonly TextEditorPresentationModel EmptyPresentationModel = new(
-        PresentationKey,
-        0,
-        CssClassString,
-        new CompilerServiceDiagnosticDecorationMapper());
+	[Fact]
+	public void EmptyPresentationModel()
+	{
+		//public static readonly TextEditorPresentationModel EmptyPresentationModel = new(
+	 //       PresentationKey,
+	 //       0,
+	 //       CssClassString,
+	 //       new CompilerServiceDiagnosticDecorationMapper());
+		throw new NotImplementedException();
+	}
 }

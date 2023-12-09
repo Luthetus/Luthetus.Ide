@@ -1,34 +1,48 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using System.Collections.Immutable;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
 public class CodeBlockBuilderTests
 {
-    public CodeBlockBuilder(CodeBlockBuilder? parent, ISyntaxNode? codeBlockOwner)
-    {
-        Parent = parent;
-        CodeBlockOwner = codeBlockOwner;
-    }
+	[Fact]
+	public void CodeBlockBuilder()
+	{
+		//public CodeBlockBuilder(CodeBlockBuilder? parent, ISyntaxNode? codeBlockOwner)
+		throw new NotImplementedException();
+	}
 
-    public List<ISyntax> ChildBag { get; } = new();
-    public CodeBlockBuilder? Parent { get; }
-    /// <summary>
-    /// Given: "public class MyClass { ... }"<br/><br/>Then: The 'MyClass' body-code-block would
-    /// have an owner of 'TypeDefinitionNode'.<br/><br/>
-    /// Purpose: When parsing a class definition's constructor. I need to know if the code block I
-    /// exist in is one which a class owns. Furthermore, I need to verify that the code-block-owner's
-    /// Identifier is equal to the constructor's identifier.
-    /// </summary>
-    public ISyntaxNode? CodeBlockOwner { get; }
+	[Fact]
+	public void ChildBag()
+	{
+		//public List<ISyntax> ChildBag { get; } = new();
+		throw new NotImplementedException();
+	}
 
-    public CodeBlockNode Build()
-    {
-        return new CodeBlockNode(ChildBag.ToImmutableArray());
-    }
+	[Fact]
+	public void Parent()
+	{
+		//public CodeBlockBuilder? Parent { get; }
+		throw new NotImplementedException();
+	}
 
-    public CodeBlockNode Build(ImmutableArray<TextEditorDiagnostic> diagnostics)
-    {
-        return new CodeBlockNode(ChildBag.ToImmutableArray(), diagnostics);
-    }
+	[Fact]
+	public void CodeBlockOwner()
+	{
+		//public ISyntaxNode? CodeBlockOwner { get; }
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void Build()
+	{
+		//public CodeBlockNode Build()
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void Build()
+	{
+		//public CodeBlockNode Build(ImmutableArray<TextEditorDiagnostic> diagnostics)
+		throw new NotImplementedException();
+	}
 }

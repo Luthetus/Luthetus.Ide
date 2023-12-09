@@ -1,20 +1,34 @@
-﻿using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using System.Collections.Immutable;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
 public class TextEditorDefaultBinderTests
 {
-    public ImmutableArray<TextEditorDiagnostic> DiagnosticsBag { get; } = ImmutableArray<TextEditorDiagnostic>.Empty;
-    public ImmutableArray<ITextEditorSymbol> SymbolsBag { get; } = ImmutableArray<ITextEditorSymbol>.Empty;
+	[Fact]
+	public void DiagnosticsBag()
+	{
+		//public ImmutableArray<TextEditorDiagnostic> DiagnosticsBag { get; } = ImmutableArray<TextEditorDiagnostic>.Empty;
+		throw new NotImplementedException();
+	}
 
-    public TextEditorTextSpan? GetDefinition(TextEditorTextSpan textSpan)
-    {
-        return null;
-    }
+	[Fact]
+	public void SymbolsBag()
+	{
+		//public ImmutableArray<ITextEditorSymbol> SymbolsBag { get; } = ImmutableArray<ITextEditorSymbol>.Empty;
+		throw new NotImplementedException();
+	}
 
-    public IBoundScope? GetBoundScope(TextEditorTextSpan textSpan)
-    {
-        return null;
-    }
+	[Fact]
+	public void GetDefinition()
+	{
+		//public TextEditorTextSpan? GetDefinition(TextEditorTextSpan textSpan)
+		throw new NotImplementedException();
+	}
+    
+	[Fact]
+	public void GetBoundScope()
+	{
+		//public IBoundScope? GetBoundScope(TextEditorTextSpan textSpan)
+		throw new NotImplementedException();
+	}
 }

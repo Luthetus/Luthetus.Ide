@@ -1,13 +1,27 @@
-﻿namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
+﻿using Xunit;
+
+namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
 public class EvaluatorResultTests
 {
-    public EvaluatorResult(Type type, object result)
-    {
-        Type = type;
-        Result = result;
-    }
+	[Fact]
+	public void EvaluatorResult()
+	{
+		//public EvaluatorResult(Type type, object result)
+		throw new NotImplementedException();
+	}
 
-    public Type Type { get; }
-    public object Result { get; }
+	[Fact]
+	public void Type()
+	{
+		//public Type Type { get; }
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void Result()
+	{
+		//public object Result { get; }
+		throw new NotImplementedException();
+	}
 }

@@ -1,47 +1,73 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using System.Collections.Immutable;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
-/// <summary>
-/// The <see cref="CompilationUnit"/> is used to represent
-/// a singular C# resource file (that is to say a singular file on the user's file system).<br/><br/>
-/// TODO: How should <see cref="CompilationUnit"/> work in regards to the C# 'partial' keyword, would many C# resource files need be stitched together into a single <see cref="CompilationUnit"/>?
-/// </summary>
-public sealed record CompilationUnitTests : ISyntaxNode
+public class CompilationUnitTests
 {
-    public CompilationUnit(
-        CodeBlockNode? rootCodeBlockNode,
-        ILexer? lexer,
-        IParser? parser,
-        IBinder? binder)
-    {
-        TopLevelStatementsCodeBlockNode = rootCodeBlockNode ?? new CodeBlockNode(ImmutableArray<ISyntax>.Empty);
-        Lexer = lexer ?? new TextEditorDefaultLexer();
-        Parser = parser ?? new TextEditorDefaultParser();
-        Binder = binder ?? new TextEditorDefaultBinder();
+	[Fact]
+	public void CompilationUnit()
+	{
+		//public CompilationUnit(
+	 //       CodeBlockNode? rootCodeBlockNode,
+	 //       ILexer? lexer,
+	 //       IParser? parser,
+	 //       IBinder? binder)
+		throw new NotImplementedException();
+	}
 
-        var diagnosticsBagBuilder = new List<TextEditorDiagnostic>();
-        
-        diagnosticsBagBuilder.AddRange(Lexer.DiagnosticsBag);
-        diagnosticsBagBuilder.AddRange(Parser.DiagnosticsBag);
-        diagnosticsBagBuilder.AddRange(Binder.DiagnosticsBag);
+	[Fact]
+	public void TopLevelStatementsCodeBlockNode()
+	{
+		//public CodeBlockNode TopLevelStatementsCodeBlockNode { get; }
+		throw new NotImplementedException();
+	}
 
-        DiagnosticsBag = diagnosticsBagBuilder.ToImmutableArray();
+	[Fact]
+	public void Lexer()
+	{
+		//public ILexer Lexer { get; }
+		throw new NotImplementedException();
+	}
 
-        ChildBag = new ISyntax[]
-        {
-            TopLevelStatementsCodeBlockNode
-        }.ToImmutableArray();
-    }
+	[Fact]
+	public void Parser()
+	{
+		//public IParser Parser { get; }
+		throw new NotImplementedException();
+	}
 
-    public CodeBlockNode TopLevelStatementsCodeBlockNode { get; }
-    public ILexer Lexer { get; }
-    public IParser Parser { get; }
-    public IBinder Binder { get; }
-    public ImmutableArray<TextEditorDiagnostic> DiagnosticsBag { get; init; }
+	[Fact]
+	public void Binder()
+	{
+		//public IBinder Binder { get; }
+		throw new NotImplementedException();
+	}
 
-    public ImmutableArray<ISyntax> ChildBag { get; init; }
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.CompilationUnit;
+	[Fact]
+	public void DiagnosticsBag()
+	{
+		//public ImmutableArray<TextEditorDiagnostic> DiagnosticsBag { get; init; }
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void ChildBag()
+	{
+		//public ImmutableArray<ISyntax> ChildBag { get; init; }
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.CompilationUnit;
+		throw new NotImplementedException();
+	}
 }

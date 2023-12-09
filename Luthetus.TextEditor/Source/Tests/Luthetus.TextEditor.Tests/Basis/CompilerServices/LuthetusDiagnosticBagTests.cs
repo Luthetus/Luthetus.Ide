@@ -1,279 +1,213 @@
-﻿using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using System.Collections;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
 public class LuthetusDiagnosticBagTests
 {
-    private readonly List<TextEditorDiagnostic> _diagnosticsBag = new();
+	[Fact]
+	public void GetEnumerator_A()
+	{
+		//public IEnumerator<TextEditorDiagnostic> GetEnumerator()
+		throw new NotImplementedException();
+	}
 
-    public IEnumerator<TextEditorDiagnostic> GetEnumerator()
-    {
-        return _diagnosticsBag.GetEnumerator();
-    }
+	[Fact]
+	public void GetEnumerator_B()
+	{
+		//IEnumerator IEnumerable.GetEnumerator()
+		throw new NotImplementedException();
+	}
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
+	[Fact]
+	public void ReportEndOfFileUnexpected()
+	{
+		//public void ReportEndOfFileUnexpected(TextEditorTextSpan textSpan)
+		throw new NotImplementedException();
+	}
 
-    public void ReportEndOfFileUnexpected(TextEditorTextSpan textSpan)
-    {
-        Report(
-            TextEditorDiagnosticLevel.Error,
-            "'End of file' was unexpected.",
-            textSpan,
-            Guid.Parse("37a0a353-cd10-4b9d-b7c1-ab820d1b2fee"));
-    }
+	[Fact]
+	public void ReportUnexpectedToken_A()
+	{
+		//public void ReportUnexpectedToken(
+	 //       TextEditorTextSpan textSpan,
+	 //       string unexpectedToken,
+	 //       string expectedToken)
+		throw new NotImplementedException();
+	}
 
-    public void ReportUnexpectedToken(
-        TextEditorTextSpan textSpan,
-        string unexpectedToken,
-        string expectedToken)
-    {
-        Report(
-            TextEditorDiagnosticLevel.Error,
-            $"Unexpected token: '{unexpectedToken}' | expected: '{expectedToken}'",
-            textSpan,
-            Guid.Parse("94a34c1f-e490-4d22-8bd9-98a100ea7487"));
-    }
+	[Fact]
+	public void ReportUnexpectedToken_B()
+	{
+		//public void ReportUnexpectedToken(
+		//	TextEditorTextSpan textSpan,
+		//	string unexpectedToken)
+		throw new NotImplementedException();
+	}
 
-    public void ReportUnexpectedToken(
-        TextEditorTextSpan textSpan,
-        string unexpectedToken)
-    {
-        Report(
-            TextEditorDiagnosticLevel.Error,
-            $"Unexpected token: '{unexpectedToken}'",
-            textSpan,
-            Guid.Parse("f3c26886-e1eb-4e63-82e6-33e5f6105b5d"));
-    }
+	[Fact]
+	public void ReportUndefinedClass()
+	{
+		//public void ReportUndefinedClass(
+	 //       TextEditorTextSpan textSpan,
+	 //       string undefinedClassIdentifier)
+		throw new NotImplementedException();
+	}
 
-    public void ReportUndefinedClass(
-        TextEditorTextSpan textSpan,
-        string undefinedClassIdentifier)
-    {
-        Report(
-            TextEditorDiagnosticLevel.Error,
-            $"Undefined class: '{undefinedClassIdentifier}'",
-            textSpan,
-            Guid.Parse("4bf6a7f1-c344-4ca4-828c-a0a4f7f91341"));
-    }
+	[Fact]
+	public void ReportUndefinedTypeOrNamespace()
+	{
+		//public void ReportUndefinedTypeOrNamespace(
+	 //       TextEditorTextSpan textSpan,
+	 //       string undefinedTypeOrNamespaceIdentifier)
+		throw new NotImplementedException();
+	}
 
-    public void ReportUndefinedTypeOrNamespace(
-        TextEditorTextSpan textSpan,
-        string undefinedTypeOrNamespaceIdentifier)
-    {
-        Report(
-            TextEditorDiagnosticLevel.Error,
-            $"Undefined type or namespace: '{undefinedTypeOrNamespaceIdentifier}'",
-            textSpan,
-            Guid.Parse("856e27dc-2721-4645-821c-88dcb57a2516"));
-    }
+	[Fact]
+	public void ReportAlreadyDefinedType()
+	{
+		//public void ReportAlreadyDefinedType(
+	 //       TextEditorTextSpan textSpan,
+	 //       string alreadyDefinedTypeIdentifier)
+		throw new NotImplementedException();
+	}
 
-    public void ReportAlreadyDefinedType(
-        TextEditorTextSpan textSpan,
-        string alreadyDefinedTypeIdentifier)
-    {
-        Report(
-            TextEditorDiagnosticLevel.Error,
-            $"Already defined type: '{alreadyDefinedTypeIdentifier}'",
-            textSpan,
-            Guid.Parse("9987db65-1054-4b64-ba64-761b75c4e5da"));
-    }
+	[Fact]
+	public void ReportUndefinedVariable()
+	{
+		//public void ReportUndefinedVariable(
+	 //       TextEditorTextSpan textSpan,
+	 //       string undefinedVariableIdentifier)
+		throw new NotImplementedException();
+	}
 
-    public void ReportUndefinedVariable(
-        TextEditorTextSpan textSpan,
-        string undefinedVariableIdentifier)
-    {
-        Report(
-            TextEditorDiagnosticLevel.Error,
-            $"Undefined type or namespace: '{undefinedVariableIdentifier}'",
-            textSpan,
-            Guid.Parse("a72619a5-a7f4-4084-acc8-2fb2c76cdac4"));
-    }
+	[Fact]
+	public void ReportAlreadyDefinedVariable()
+	{
+		//public void ReportAlreadyDefinedVariable(
+	 //       TextEditorTextSpan textSpan,
+	 //       string alreadyDefinedVariableIdentifier)
+		throw new NotImplementedException();
+	}
 
-    public void ReportAlreadyDefinedVariable(
-        TextEditorTextSpan textSpan,
-        string alreadyDefinedVariableIdentifier)
-    {
-        Report(
-            TextEditorDiagnosticLevel.Error,
-            $"Already defined variable: '{alreadyDefinedVariableIdentifier}'",
-            textSpan,
-            Guid.Parse("89b61fa8-541d-4154-9425-82c5667842a8"));
-    }
+	[Fact]
+	public void ReportAlreadyDefinedProperty()
+	{
+		//public void ReportAlreadyDefinedProperty(
+	 //       TextEditorTextSpan textSpan,
+	 //       string alreadyDefinedPropertyIdentifier)
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void ReportUndefinedFunction()
+	{
+		//public void ReportUndefinedFunction(
+	 //       TextEditorTextSpan textSpan,
+	 //       string undefinedFunctionIdentifier)
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void ReportAlreadyDefinedFunction()
+	{
+		//public void ReportAlreadyDefinedFunction(
+	//       TextEditorTextSpan textSpan,
+	//       string alreadyDefinedFunctionIdentifier)
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void ReportBadFunctionOptionalArgumentDueToMismatchInType()
+	{
+		//public void ReportBadFunctionOptionalArgumentDueToMismatchInType(
+	 //       TextEditorTextSpan optionalArgumentTextSpan,
+	 //       string optionalArgumentVariableIdentifier,
+	 //       string typeExpectedIdentifierString,
+	 //       string typeActualIdentifierString)
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void ReportReturnStatementsAreStillBeingImplemented()
+	{
+		//public void ReportReturnStatementsAreStillBeingImplemented(TextEditorTextSpan textSpan)
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void ReportTagNameMissing()
+	{
+		//public void ReportTagNameMissing(TextEditorTextSpan textSpan)
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void ReportOpenTagWithUnMatchedCloseTag()
+	{
+		//public void ReportOpenTagWithUnMatchedCloseTag(
+	 //       string openTagName,
+	 //       string closeTagName,
+	 //       TextEditorTextSpan textSpan)
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void ReportRazorExplicitExpressionPredicateWasExpected()
+	{
+		//public void ReportRazorExplicitExpressionPredicateWasExpected(
+	 //       string transitionSubstring,
+	 //       string keywordText,
+	 //       TextEditorTextSpan textSpan)
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void ReportRazorCodeBlockWasExpectedToFollowRazorKeyword()
+	{
+		//public void ReportRazorCodeBlockWasExpectedToFollowRazorKeyword(
+	 //       string transitionSubstring,
+	 //       string keywordText,
+	 //       TextEditorTextSpan textSpan)
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void ReportRazorWhitespaceImmediatelyFollowingTransitionCharacterIsUnexpected()
+	{
+		//public void ReportRazorWhitespaceImmediatelyFollowingTransitionCharacterIsUnexpected(
+	 //       TextEditorTextSpan textSpan)
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void ReportConstructorsNeedToBeWithinTypeDefinition()
+	{
+		//public void ReportConstructorsNeedToBeWithinTypeDefinition(TextEditorTextSpan textSpan)
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void ReportTodoException()
+	{
+		//public void ReportTodoException(TextEditorTextSpan textSpan, string message)
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void Report()
+	{
+		//private void Report(
+	//       TextEditorDiagnosticLevel diagnosticLevel,
+	//       string message,
+	//       TextEditorTextSpan textSpan,
+	//       Guid diagnosticId)
+		throw new NotImplementedException();
+	}
     
-    public void ReportAlreadyDefinedProperty(
-        TextEditorTextSpan textSpan,
-        string alreadyDefinedPropertyIdentifier)
-    {
-        Report(
-            TextEditorDiagnosticLevel.Error,
-            $"Already defined property: '{alreadyDefinedPropertyIdentifier}'",
-            textSpan,
-            Guid.Parse("0f4681e2-abaa-46f6-9b05-56941a07dd98"));
-    }
-
-    public void ReportUndefinedFunction(
-        TextEditorTextSpan textSpan,
-        string undefinedFunctionIdentifier)
-    {
-        Report(
-            TextEditorDiagnosticLevel.Error,
-            $"Undefined function: '{undefinedFunctionIdentifier}'",
-            textSpan,
-            Guid.Parse("8703a2f9-fab3-46c2-8f50-05d8152a1510"));
-    }
-
-    public void ReportAlreadyDefinedFunction(
-        TextEditorTextSpan textSpan,
-        string alreadyDefinedFunctionIdentifier)
-    {
-        Report(
-            TextEditorDiagnosticLevel.Error,
-            $"Already defined function: '{alreadyDefinedFunctionIdentifier}'",
-            textSpan,
-            Guid.Parse("44193527-d94f-49bd-a588-cf75a18bc0f5"));
-    }
-
-    public void ReportBadFunctionOptionalArgumentDueToMismatchInType(
-        TextEditorTextSpan optionalArgumentTextSpan,
-        string optionalArgumentVariableIdentifier,
-        string typeExpectedIdentifierString,
-        string typeActualIdentifierString)
-    {
-        Report(
-            TextEditorDiagnosticLevel.Error,
-            $"The optional argument: '{optionalArgumentVariableIdentifier}'" +
-                $" expects the type: '{typeExpectedIdentifierString}'" +
-                $", but received the type: '{typeActualIdentifierString}'",
-            optionalArgumentTextSpan,
-            Guid.Parse("ea78765d-13b6-4aef-87b8-838d94daa82a"));
-    }
-
-    public void ReportReturnStatementsAreStillBeingImplemented(TextEditorTextSpan textSpan)
-    {
-        Report(
-            TextEditorDiagnosticLevel.Hint,
-            $"Parsing of return statements is still being implemented.",
-            textSpan,
-            Guid.Parse("3fb8071a-bd97-4bc5-97af-c7b147648e67"));
-    }
-
-    public void ReportTagNameMissing(TextEditorTextSpan textSpan)
-    {
-        Report(
-            TextEditorDiagnosticLevel.Error,
-            "Missing tag name.",
-            textSpan,
-            Guid.Parse("d567ff67-dfaa-41a4-8953-962e7d596d3c"));
-    }
-
-    public void ReportOpenTagWithUnMatchedCloseTag(
-        string openTagName,
-        string closeTagName,
-        TextEditorTextSpan textSpan)
-    {
-        Report(
-            TextEditorDiagnosticLevel.Error,
-            $"Open tag: '{openTagName}' has an unmatched close tag: {closeTagName}.",
-            textSpan,
-            Guid.Parse("755ccccd-736c-4c72-b828-939ffa244c97"));
-    }
-
-    public void ReportRazorExplicitExpressionPredicateWasExpected(
-        string transitionSubstring,
-        string keywordText,
-        TextEditorTextSpan textSpan)
-    {
-        Report(
-            TextEditorDiagnosticLevel.Error,
-            $"An explicit expression predicate was expected to follow the {transitionSubstring}{keywordText} razor keyword.",
-            textSpan,
-            Guid.Parse("44c42198-66fd-4b8b-b8e1-4a55ab2aa8c1"));
-    }
-
-    public void ReportRazorCodeBlockWasExpectedToFollowRazorKeyword(
-        string transitionSubstring,
-        string keywordText,
-        TextEditorTextSpan textSpan)
-    {
-        Report(
-            TextEditorDiagnosticLevel.Error,
-            $"A code block was expected to follow the {transitionSubstring}{keywordText} razor keyword.",
-            textSpan,
-            Guid.Parse("0d5b940d-d993-4607-9c4c-0452e8f8914c"));
-    }
-
-    public void ReportRazorWhitespaceImmediatelyFollowingTransitionCharacterIsUnexpected(
-        TextEditorTextSpan textSpan)
-    {
-        Report(
-            TextEditorDiagnosticLevel.Error,
-            "Whitespace immediately following the Razor transition character is unexpected.",
-            textSpan,
-            Guid.Parse("20b5922a-2b25-49ce-baf7-132006de3401"));
-    }
-
-    public void ReportConstructorsNeedToBeWithinTypeDefinition(TextEditorTextSpan textSpan)
-    {
-        Report(
-            TextEditorDiagnosticLevel.Error,
-            "Constructors need to be within a type definition.",
-            textSpan,
-            Guid.Parse("7ba92f4f-9d7e-49f8-b377-8e754d6a5f53"));
-    }
-
-    /// <summary>
-    /// Used when the C# Parser has not yet implemented the functionality that one would
-    /// expect given the situation.
-    /// <br/>
-    /// // TODO: Find all references to this method and fix them. 
-    /// Keep this comment so one can search // TODO: and arrive here
-    /// </summary>
-    public void ReportTodoException(TextEditorTextSpan textSpan, string message)
-    {
-        Report(
-            TextEditorDiagnosticLevel.Hint,
-            $"TODO: {message}",
-            textSpan,
-            Guid.Parse("a595d93d-e4c7-4d30-9373-1b246b2668bf"));
-    }
-
-    private void Report(
-        TextEditorDiagnosticLevel diagnosticLevel,
-        string message,
-        TextEditorTextSpan textSpan,
-        Guid diagnosticId)
-    {
-        var compilerServiceDiagnosticDecorationKind = diagnosticLevel switch
-        {
-            TextEditorDiagnosticLevel.Hint => CompilerServiceDiagnosticDecorationKind.DiagnosticHint,
-            TextEditorDiagnosticLevel.Suggestion => CompilerServiceDiagnosticDecorationKind.DiagnosticSuggestion,
-            TextEditorDiagnosticLevel.Warning => CompilerServiceDiagnosticDecorationKind.DiagnosticWarning,
-            TextEditorDiagnosticLevel.Error => CompilerServiceDiagnosticDecorationKind.DiagnosticError,
-            TextEditorDiagnosticLevel.Other => CompilerServiceDiagnosticDecorationKind.DiagnosticOther,
-            _ => CompilerServiceDiagnosticDecorationKind.DiagnosticOther,
-        };
-
-        textSpan = textSpan with
-        {
-            DecorationByte = (byte)compilerServiceDiagnosticDecorationKind
-        };
-
-        _diagnosticsBag.Add(new TextEditorDiagnostic(
-            diagnosticLevel,
-            message,
-            textSpan,
-            diagnosticId));
-    }
-
-    public void ClearByResourceUri(ResourceUri resourceUri)
-    {
-        var keep = _diagnosticsBag.Where(x => x.TextSpan.ResourceUri != resourceUri);
-
-        _diagnosticsBag.Clear();
-        _diagnosticsBag.AddRange(keep);
-    }
+	[Fact]
+	public void ClearByResourceUri()
+	{
+		//public void ClearByResourceUri(ResourceUri resourceUri)
+		throw new NotImplementedException();
+	}
 }

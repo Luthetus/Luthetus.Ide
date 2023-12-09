@@ -1,106 +1,99 @@
-﻿using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
 public class TokenWalkerTests
 {
-    private readonly ImmutableArray<ISyntaxToken> _tokenBag;
-    private readonly LuthetusDiagnosticBag _diagnosticBag;
+	[Fact]
+	public void TokenWalker()
+	{
+		//public TokenWalker(ImmutableArray<ISyntaxToken> tokens, LuthetusDiagnosticBag diagnosticBag)
+		throw new NotImplementedException();
+	}
 
-    private int _index;
+	[Fact]
+	public void Tokens()
+	{
+		//public ImmutableArray<ISyntaxToken> Tokens => _tokenBag;
+		throw new NotImplementedException();
+	}
 
-    public TokenWalker(ImmutableArray<ISyntaxToken> tokens, LuthetusDiagnosticBag diagnosticBag)
-    {
-        _tokenBag = tokens;
-        _diagnosticBag = diagnosticBag;
-    }
+	[Fact]
+	public void Current()
+	{
+		//public ISyntaxToken Current => Peek(0);
+		throw new NotImplementedException();
+	}
 
-    public ImmutableArray<ISyntaxToken> Tokens => _tokenBag;
-    public ISyntaxToken Current => Peek(0);
-    public ISyntaxToken Next => Peek(1);
-    public ISyntaxToken Previous => Peek(-1);
-    public bool IsEof => Current.SyntaxKind == SyntaxKind.EndOfFileToken;
+	[Fact]
+	public void Next()
+	{
+		//public ISyntaxToken Next => Peek(1);
+		throw new NotImplementedException();
+	}
 
-    /// <summary>If there are any tokens, then assume the final token is the end of file token. Otherwise, fabricate an end of file token.</summary>
-    private ISyntaxToken EOF => _tokenBag.Length > 0
-        ? _tokenBag[_tokenBag.Length - 1]
-        : new EndOfFileToken(new(0, 0, 0, new(string.Empty), string.Empty));
+	[Fact]
+	public void Previous()
+	{
+		//public ISyntaxToken Previous => Peek(-1);
+		throw new NotImplementedException();
+	}
 
-    /// <summary>The input to this method can be positive OR negative.<br/><br/>Returns <see cref="BadToken"/> when an index out of bounds error would've occurred.</summary>
-    public ISyntaxToken Peek(int offset)
-    {
-        var index = _index + offset;
+	[Fact]
+	public void IsEof()
+	{
+		//public bool IsEof => Current.SyntaxKind == SyntaxKind.EndOfFileToken;
+		throw new NotImplementedException();
+	}
 
-        if (index < 0)
-            return GetBadToken();
-        else if (index >= _tokenBag.Length)
-            return EOF; // Return the end of file token (the last token)
+	[Fact]
+	public void EOF()
+	{
+		//private ISyntaxToken EOF => _tokenBag.Length > 0
+	 //       ? _tokenBag[_tokenBag.Length - 1]
+	 //       : new EndOfFileToken(new(0, 0, 0, new(string.Empty), string.Empty));
+		throw new NotImplementedException();
+	}
 
-        return _tokenBag[index];
-    }
+	[Fact]
+	public void Peek()
+	{
+		//public ISyntaxToken Peek(int offset)
+		throw new NotImplementedException();
+	}
 
-    public ISyntaxToken Consume()
-    {
-        if (_index >= _tokenBag.Length)
-            return EOF; // Return the end of file token (the last token)
+	[Fact]
+	public void Consume()
+	{
+		//public ISyntaxToken Consume()
+		throw new NotImplementedException();
+	}
 
-        var consumedToken = _tokenBag[_index++];
+	[Fact]
+	public void Backtrack()
+	{
+		//public ISyntaxToken Backtrack()
+		throw new NotImplementedException();
+	}
 
-        return consumedToken;
-    }
+	[Fact]
+	public void Match()
+	{
+		//public ISyntaxToken Match(SyntaxKind expectedSyntaxKind)
+		throw new NotImplementedException();
+	}
 
-    public ISyntaxToken Backtrack()
-    {
-        if (_index > 0)
-            _index--;
+	[Fact]
+	public void MatchRange()
+	{
+		//public ISyntaxToken MatchRange(IEnumerable<SyntaxKind> validSyntaxKinds, SyntaxKind fabricationKind)
+		throw new NotImplementedException();
+	}
 
-        return Peek(_index);
-    }
-
-    /// <summary>If the syntaxKind passed in does not match the current token, then a syntax token with that syntax kind will be fabricated and then returned instead.</summary>
-    public ISyntaxToken Match(SyntaxKind expectedSyntaxKind)
-    {
-        var currentToken = Peek(0);
-
-        // TODO: Checking for the text 'args' is likely not a good solution. When parsing a main method, it might have the method arguments: 'string[] args'. The issue here is that 'args' comes up as a keyword while being the identifier for that method argument.
-        if (currentToken.TextSpan.GetText() == "args" && expectedSyntaxKind == SyntaxKind.IdentifierToken)
-        {
-            _ = Consume();
-            return new IdentifierToken(currentToken.TextSpan);
-        }
-
-        if (currentToken.SyntaxKind == expectedSyntaxKind)
-            return Consume();
-
-        var fabricatedToken = this.FabricateToken(expectedSyntaxKind);
-
-        _diagnosticBag.ReportUnexpectedToken(
-            fabricatedToken.TextSpan,
-            currentToken.SyntaxKind.ToString(),
-            expectedSyntaxKind.ToString());
-
-        return fabricatedToken;
-    }
-
-    /// <summary>If the syntaxKind passed in does not match the current token, then a syntax token with that syntax kind will be fabricated and then returned instead.</summary>
-    public ISyntaxToken MatchRange(IEnumerable<SyntaxKind> validSyntaxKinds, SyntaxKind fabricationKind)
-    {
-        var currentToken = Peek(0);
-
-        if (validSyntaxKinds.Contains(currentToken.SyntaxKind))
-            return Consume();
-
-        var fabricatedToken = this.FabricateToken(fabricationKind);
-
-        _diagnosticBag.ReportUnexpectedToken(
-            fabricatedToken.TextSpan,
-            currentToken.SyntaxKind.ToString(),
-            fabricationKind.ToString());
-
-        return fabricatedToken;
-    }
-
-    private BadToken GetBadToken() => new BadToken(new(0, 0, 0, new(string.Empty), string.Empty));
+	[Fact]
+	public void GetBadToken()
+	{
+		//private BadToken GetBadToken() => new BadToken(new(0, 0, 0, new(string.Empty), string.Empty));
+		throw new NotImplementedException();
+	}
 }

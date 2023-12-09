@@ -1,10 +1,13 @@
-﻿namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
+﻿using Xunit;
 
-public static class ParserFactsTests
+namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
+
+public class ParserFactsTests
 {
-    /// <summary>
-    /// The character to indicate an out of bounds read having
-    /// been performed on a string.
-    /// </summary>
-    public const char END_OF_FILE = '\0';
+	[Fact]
+	public void END_OF_FILE()
+	{
+		//public const char END_OF_FILE = '\0';
+		throw new NotImplementedException();
+	}
 }

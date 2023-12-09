@@ -1,25 +1,48 @@
-using System.Collections.Immutable;
+using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
-public static class WhitespaceFactsTests
+public class WhitespaceFactsTests
 {
-    public const char SPACE = ' ';
-    public const char TAB = '\t';
-    public const char CARRIAGE_RETURN = '\r';
-    public const char LINE_FEED = '\n';
+	[Fact]
+	public void SPACE()
+	{
+		//public const char SPACE = ' ';
+		throw new NotImplementedException();
+	}
 
-    public static readonly ImmutableArray<char> ALL_BAG = new[]
-    {
-        SPACE,
-        TAB,
-        CARRIAGE_RETURN,
-        LINE_FEED,
-    }.ToImmutableArray();
+	[Fact]
+	public void TAB()
+	{
+		//public const char TAB = '\t';
+		throw new NotImplementedException();
+	}
 
-    public static readonly ImmutableArray<char> LINE_ENDING_CHARACTERS = new[]
-    {
-        CARRIAGE_RETURN,
-        LINE_FEED,
-    }.ToImmutableArray();
+	[Fact]
+	public void CARRIAGE_RETURN()
+	{
+		//public const char CARRIAGE_RETURN = '\r';
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void LINE_FEED()
+	{
+		//public const char LINE_FEED = '\n';
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void ALL_BAG()
+	{
+		//public static readonly ImmutableArray<char> ALL_BAG = new[]
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void LINE_ENDING_CHARACTERS()
+	{
+		//public static readonly ImmutableArray<char> LINE_ENDING_CHARACTERS = new[]
+		throw new NotImplementedException();
+	}
 }

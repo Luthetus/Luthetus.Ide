@@ -1,11 +1,27 @@
-﻿namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax;
+﻿using Xunit;
 
-public sealed record BoundScopeKeyTests(Guid Guid)
+namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax;
+
+public class BoundScopeKeyTests
 {
-    public static readonly BoundScopeKey Empty = new BoundScopeKey(Guid.Empty);
+	[Fact]
+	public void Constructor()
+	{
+		// BoundScopeKeyTests(Guid Guid)
+		throw new NotImplementedException();
+	}
 
-    public static BoundScopeKey NewKey()
-    {
-        return new BoundScopeKey(Guid.NewGuid());
-    }
+	[Fact]
+	public void Empty()
+	{
+		//public static readonly BoundScopeKey Empty = new BoundScopeKey(Guid.Empty);
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void NewKey()
+	{
+		//public static BoundScopeKey NewKey()
+		throw new NotImplementedException();
+	}
 }

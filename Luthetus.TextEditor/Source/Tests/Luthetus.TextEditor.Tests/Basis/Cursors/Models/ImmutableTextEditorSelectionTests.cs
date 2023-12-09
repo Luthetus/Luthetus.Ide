@@ -1,9 +1,34 @@
-﻿namespace Luthetus.TextEditor.Tests.Basis.Cursors.Models;
+﻿using Xunit;
 
-public record ImmutableTextEditorSelectionTests(int? AnchorPositionIndex, int EndingPositionIndex)
+namespace Luthetus.TextEditor.Tests.Basis.Cursors.Models;
+
+public class ImmutableTextEditorSelectionTests
 {
-    public ImmutableTextEditorSelection(TextEditorSelection textEditorSelection)
-        : this(textEditorSelection.AnchorPositionIndex, textEditorSelection.EndingPositionIndex)
-    {
-    }
+	[Fact]
+	public void ImmutableTextEditorSelection_A()
+	{
+		// record ImmutableTextEditorSelectionTests(int? AnchorPositionIndex, int EndingPositionIndex)
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void ImmutableTextEditorSelection_B()
+	{
+		//public ImmutableTextEditorSelection(TextEditorSelection textEditorSelection)
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void AnchorPositionIndex()
+	{
+		// int? AnchorPositionIndex
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void EndingPositionIndex()
+	{
+		// int EndingPositionIndex
+		throw new NotImplementedException();
+	}
 }

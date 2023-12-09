@@ -1,14 +1,45 @@
-﻿using Luthetus.TextEditor.RazorLib.Lexes.Models;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
-/// <summary>
-/// Use the <see cref="Id"/> to determine if two diagnostics
-/// are reporting the same diagnostic but perhaps with differing
-/// messages due to variable interpolation into the string.
-/// </summary>
-public record TextEditorDiagnosticTests(
-    TextEditorDiagnosticLevel DiagnosticLevel,
-    string Message,
-    TextEditorTextSpan TextSpan,
-    Guid Id);
+public class TextEditorDiagnosticTests
+{
+	[Fact]
+	public void TextEditorDiagnostic()
+	{
+		//	public record TextEditorDiagnostic(
+		//		TextEditorDiagnosticLevel DiagnosticLevel,
+		//		string Message,
+		//		TextEditorTextSpan TextSpan,
+		//		Guid Id)
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void DiagnosticLevel()
+	{
+		//TextEditorDiagnosticLevel DiagnosticLevel,
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void Message()
+	{
+	    //string Message,
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void TextSpan()
+	{
+	    //TextEditorTextSpan TextSpan,
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void Id()
+	{
+		//Guid Id
+		throw new NotImplementedException();
+	}
+}

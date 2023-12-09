@@ -1,14 +1,34 @@
-﻿using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using System.Collections.Immutable;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.Decorations.Models;
 
-/// <summary>
-/// In a concurrent safe manner, get the content from the TextEditorModel
-/// such that no insertions or deletions can occur during the setting of this property.
-/// </summary>
-public record TextEditorPresentationModelCalculationTests(string ContentAtRequest)
+public class TextEditorPresentationModelCalculationTests
 {
-    public List<TextEditorTextModification> TextModificationsSinceRequestBag { get; set; } = new();
-    public ImmutableArray<TextEditorTextSpan> TextEditorTextSpanBag { get; set; } = ImmutableArray<TextEditorTextSpan>.Empty;
+	[Fact]
+	public void TextEditorPresentationModelCalculation()
+	{
+		// record TextEditorPresentationModelCalculationTests(string ContentAtRequest)
+		throw new NotImplementedException();
+	}
+	
+	[Fact]
+	public void ContentAtRequest()
+	{
+		// string ContentAtRequest
+		throw new NotImplementedException();
+	}
+	
+	[Fact]
+	public void TextModificationsSinceRequestBag()
+	{
+		//public List<TextEditorTextModification> TextModificationsSinceRequestBag { get; set; } = new();
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void TextEditorTextSpanBag()
+	{
+		//public ImmutableArray<TextEditorTextSpan> TextEditorTextSpanBag { get; set; } = ImmutableArray<TextEditorTextSpan>.Empty;
+		throw new NotImplementedException();
+	}
 }

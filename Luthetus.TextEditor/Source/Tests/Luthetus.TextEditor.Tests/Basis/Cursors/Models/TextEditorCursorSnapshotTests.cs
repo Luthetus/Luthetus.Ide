@@ -1,25 +1,41 @@
-﻿using System.Collections.Immutable;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.Cursors.Models;
 
 public class TextEditorCursorSnapshotTests
 {
-    public TextEditorCursorSnapshot(TextEditorCursor userCursor)
-        : this(new ImmutableTextEditorCursor(userCursor), userCursor)
-    {
-    }
+	[Fact]
+	public void TextEditorCursorSnapshot_A()
+	{
+	    //public TextEditorCursorSnapshot(TextEditorCursor userCursor)
+		throw new NotImplementedException();
+	}
 
-    public TextEditorCursorSnapshot(ImmutableTextEditorCursor immutableCursor, TextEditorCursor userCursor)
-    {
-        ImmutableCursor = immutableCursor;
-        UserCursor = userCursor;
-    }
+	[Fact]
+	public void TextEditorCursorSnapshot_B()
+	{
+		//public TextEditorCursorSnapshot(ImmutableTextEditorCursor immutableCursor, TextEditorCursor userCursor)
+		throw new NotImplementedException();
+	}
 
-    public ImmutableTextEditorCursor ImmutableCursor { get; }
-    public TextEditorCursor UserCursor { get; }
+	[Fact]
+	public void ImmutableCursor()
+	{
+		//public ImmutableTextEditorCursor ImmutableCursor { get; }
+		throw new NotImplementedException();
+	}
 
-    public static ImmutableArray<TextEditorCursorSnapshot> TakeSnapshots(params TextEditorCursor[] cursorBag)
-    {
-        return cursorBag.Select(c => new TextEditorCursorSnapshot(c)).ToImmutableArray();
-    }
+	[Fact]
+	public void UserCursor()
+	{
+		//public TextEditorCursor UserCursor { get; }
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void TakeSnapshots()
+	{
+		//public static ImmutableArray<TextEditorCursorSnapshot> TakeSnapshots(params TextEditorCursor[] cursorBag)
+		throw new NotImplementedException();
+	}
 }
