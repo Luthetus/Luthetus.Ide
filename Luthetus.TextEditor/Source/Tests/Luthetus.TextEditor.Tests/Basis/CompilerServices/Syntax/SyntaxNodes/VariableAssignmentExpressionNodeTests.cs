@@ -1,34 +1,51 @@
-﻿using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
 public sealed record VariableAssignmentExpressionNodeTests
 {
-    public VariableAssignmentExpressionNode(
-        IdentifierToken variableIdentifierToken,
-        EqualsToken equalsToken,
-        IExpressionNode expressionNode)
-    {
-        VariableIdentifierToken = variableIdentifierToken;
-        EqualsToken = equalsToken;
-        ExpressionNode = expressionNode;
+	[Fact]
+	public void VariableAssignmentExpressionNode()
+	{
+		//public VariableAssignmentExpressionNode(
+	 //       IdentifierToken variableIdentifierToken,
+	 //       EqualsToken equalsToken,
+	 //       IExpressionNode expressionNode)
+	}
 
-        ChildBag = new ISyntax[]
-        {
-            VariableIdentifierToken,
-            EqualsToken,
-            ExpressionNode,
-        }.ToImmutableArray();
-    }
+	[Fact]
+	public void VariableIdentifierToken()
+	{
+		//public IdentifierToken VariableIdentifierToken { get; }
+	}
 
-    public IdentifierToken VariableIdentifierToken { get; }
-    public EqualsToken EqualsToken { get; }
-    public IExpressionNode ExpressionNode { get; }
+	[Fact]
+	public void EqualsToken()
+	{
+		//public EqualsToken EqualsToken { get; }
+	}
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+	[Fact]
+	public void ExpressionNode()
+	{
+		//public IExpressionNode ExpressionNode { get; }
+	}
 
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.VariableAssignmentExpressionNode;
+	[Fact]
+	public void ChildBag()
+	{
+		//public ImmutableArray<ISyntax> ChildBag { get; }
+	}
+
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+	}
+
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.VariableAssignmentExpressionNode;
+	}
 }

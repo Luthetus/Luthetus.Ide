@@ -1,29 +1,44 @@
-﻿using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Statement;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
 public sealed record PreprocessorLibraryReferenceStatementNodeTests
 {
-    public PreprocessorLibraryReferenceStatementNode(
-        ISyntaxToken includeDirectiveSyntaxToken,
-        ISyntaxToken libraryReferenceSyntaxToken)
-    {
-        IncludeDirectiveSyntaxToken = includeDirectiveSyntaxToken;
-        LibraryReferenceSyntaxToken = libraryReferenceSyntaxToken;
+	[Fact]
+	public void PreprocessorLibraryReferenceStatementNode()
+	{
+		//public PreprocessorLibraryReferenceStatementNode(
+	 //       ISyntaxToken includeDirectiveSyntaxToken,
+	 //       ISyntaxToken libraryReferenceSyntaxToken)
+	}
 
-        ChildBag = new ISyntax[]
-        {
-            IncludeDirectiveSyntaxToken,
-            LibraryReferenceSyntaxToken,
-        }.ToImmutableArray();
-    }
+	[Fact]
+	public void IncludeDirectiveSyntaxToken()
+	{
+		//public ISyntaxToken IncludeDirectiveSyntaxToken { get; }
+	}
 
-    public ISyntaxToken IncludeDirectiveSyntaxToken { get; }
-    public ISyntaxToken LibraryReferenceSyntaxToken { get; }
+	[Fact]
+	public void LibraryReferenceSyntaxToken()
+	{
+		//public ISyntaxToken LibraryReferenceSyntaxToken { get; }
+	}
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+	[Fact]
+	public void ChildBag()
+	{
+		//public ImmutableArray<ISyntax> ChildBag { get; }
+	}
 
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.PreprocessorLibraryReferenceStatementNode;
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+	}
+
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.PreprocessorLibraryReferenceStatementNode;
+	}
 }

@@ -1,19 +1,36 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
-using System.Collections.Immutable;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
 public class VariableExpressionNodeTests
 {
-    public VariableExpressionNode(TypeClauseNode typeClauseNode)
-    {
-        TypeClauseNode = typeClauseNode;
-    }
+	[Fact]
+	public void VariableExpressionNode()
+	{
+		//public VariableExpressionNode(TypeClauseNode typeClauseNode)
+	}
 
-    public TypeClauseNode TypeClauseNode { get; }
+	[Fact]
+	public void TypeClauseNode()
+	{
+		//public TypeClauseNode TypeClauseNode { get; }
+	}
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+	[Fact]
+	public void ChildBag()
+	{
+		//public ImmutableArray<ISyntax> ChildBag { get; }
+	}
 
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.VariableExpressionNode;
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+	}
+
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.VariableExpressionNode;
+	}
 }

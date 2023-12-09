@@ -1,33 +1,51 @@
-﻿using System.Collections.Immutable;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
 public sealed record UnaryOperatorNodeTests
 {
-    public UnaryOperatorNode(
-        TypeClauseNode operandTypeClauseNode,
-        ISyntaxToken operatorToken,
-        TypeClauseNode resultTypeClauseNode)
-    {
-        OperandTypeClauseNode = operandTypeClauseNode;
-        OperatorToken = operatorToken;
-        ResultTypeClauseNode = resultTypeClauseNode;
+	[Fact]
+	public void UnaryOperatorNode()
+	{
+		//public UnaryOperatorNode(
+	 //       TypeClauseNode operandTypeClauseNode,
+	 //       ISyntaxToken operatorToken,
+	 //       TypeClauseNode resultTypeClauseNode)
+	}
 
-        ChildBag = new ISyntax[]
-        {
-            OperandTypeClauseNode,
-            OperatorToken,
-            ResultTypeClauseNode,
-        }
-        .ToImmutableArray();
-    }
+	[Fact]
+	public void OperandTypeClauseNode()
+	{
+		//public TypeClauseNode OperandTypeClauseNode { get; }
+	}
 
-    public TypeClauseNode OperandTypeClauseNode { get; }
-    public ISyntaxToken OperatorToken { get; }
-    public TypeClauseNode ResultTypeClauseNode { get; }
+	[Fact]
+	public void OperatorToken()
+	{
+		//public ISyntaxToken OperatorToken { get; }
+	}
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+	[Fact]
+	public void ResultTypeClauseNode()
+	{
+		//public TypeClauseNode ResultTypeClauseNode { get; }
+	}
 
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.UnaryOperatorNode;
+	[Fact]
+	public void ChildBag()
+	{
+		//public ImmutableArray<ISyntax> ChildBag { get; }
+	}
+
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+	}
+
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.UnaryOperatorNode;
+	}
 }

@@ -1,27 +1,42 @@
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
-using System.Collections.Immutable;
+using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
 public sealed record UsingStatementNodeTests
 {
-    public UsingStatementNode(KeywordToken keywordToken, IdentifierToken namespaceIdentifier)
-    {
-        KeywordToken = keywordToken;
-        NamespaceIdentifier = namespaceIdentifier;
+	[Fact]
+	public void UsingStatementNode()
+	{
+		//public UsingStatementNode(KeywordToken keywordToken, IdentifierToken namespaceIdentifier)
+	}
 
-        ChildBag = new ISyntax[]
-        {
-            KeywordToken,
-            NamespaceIdentifier
-        }.ToImmutableArray();
-    }
+	[Fact]
+	public void KeywordToken()
+	{
+		//public KeywordToken KeywordToken { get; }
+	}
 
-    public KeywordToken KeywordToken { get; }
-    public IdentifierToken NamespaceIdentifier { get; }
+	[Fact]
+	public void NamespaceIdentifier()
+	{
+		//public IdentifierToken NamespaceIdentifier { get; }
+	}
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+	[Fact]
+	public void ChildBag()
+	{
+		//public ImmutableArray<ISyntax> ChildBag { get; }
+	}
 
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.UsingStatementNode;
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+	}
+
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.UsingStatementNode;
+	}
 }

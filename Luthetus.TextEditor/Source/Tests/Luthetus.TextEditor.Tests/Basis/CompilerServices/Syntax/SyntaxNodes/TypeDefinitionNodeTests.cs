@@ -1,86 +1,83 @@
-using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
-/// <summary>
-/// <see cref="TypeDefinitionNode"/> is used anywhere a type is defined.
-/// </summary>
 public sealed record TypeDefinitionNodeTests
 {
-    public TypeDefinitionNode(
-        IdentifierToken typeIdentifier,
-        Type? valueType,
-        GenericArgumentsListingNode? genericArgumentsListingNode,
-        TypeClauseNode? inheritedTypeClauseNode,
-        CodeBlockNode? typeBodyCodeBlockNode)
-    {
-        TypeIdentifier = typeIdentifier;
-        ValueType = valueType;
-        GenericArgumentsListingNode = genericArgumentsListingNode;
-        InheritedTypeClauseNode = inheritedTypeClauseNode;
-        TypeBodyCodeBlockNode = typeBodyCodeBlockNode;
+	[Fact]
+	public void TypeDefinitionNode()
+	{
+		//public TypeDefinitionNode(
+	 //       IdentifierToken typeIdentifier,
+	 //       Type? valueType,
+	 //       GenericArgumentsListingNode? genericArgumentsListingNode,
+	 //       TypeClauseNode? inheritedTypeClauseNode,
+	 //       CodeBlockNode? typeBodyCodeBlockNode)
+	}
 
-        var children = new List<ISyntax>
-        {
-            TypeIdentifier,
-        };
+	[Fact]
+	public void TypeIdentifier()
+	{
+		//public IdentifierToken TypeIdentifier { get; }
+	}
 
-        if (GenericArgumentsListingNode is not null)
-            children.Add(GenericArgumentsListingNode);
+	[Fact]
+	public void ValueType()
+	{
+		//public Type? ValueType { get; }
+	}
 
-        if (InheritedTypeClauseNode is not null)
-            children.Add(InheritedTypeClauseNode);
+	[Fact]
+	public void GenericArgumentsListingNode()
+	{
+		//public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }
+	}
 
-        if (TypeBodyCodeBlockNode is not null)
-            children.Add(TypeBodyCodeBlockNode);
+	[Fact]
+	public void InheritedTypeClauseNode()
+	{
+		//public TypeClauseNode? InheritedTypeClauseNode { get; }
+	}
 
-        ChildBag = children.ToImmutableArray();
-    }
+	[Fact]
+	public void TypeBodyCodeBlockNode()
+	{
+		//public CodeBlockNode? TypeBodyCodeBlockNode { get; }
+	}
 
-    /// <summary>
-    /// Given: 'public class Person { /* class definition here */ }'<br/>
-    /// Then: 'Person' is the <see cref="TypeIdentifier"/><br/>
-    /// And: <see cref="GenericArgumentsListingNode"/> would be null
-    /// </summary>
-    public IdentifierToken TypeIdentifier { get; }
-    public Type? ValueType { get; }
-    /// <summary>
-    /// Given: 'public struct Array&lt;T&gt; { /* struct definition here */ }'<br/>
-    /// Then: 'Array&lt;T&gt;' is the <see cref="TypeIdentifier"/><br/>
-    /// And: '&lt;T&gt;' is the <see cref="GenericArgumentsListingNode"/>
-    /// </summary>
-    public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }
-    /// <summary>
-    /// Given:<br/>
-    /// public class Person : IPerson { ... }<br/><br/>
-    /// Then: 'IPerson' is the <see cref="InheritedTypeClauseNode"/>
-    /// </summary>
-    public TypeClauseNode? InheritedTypeClauseNode { get; }
-    public CodeBlockNode? TypeBodyCodeBlockNode { get; }
-    public bool IsInterface { get; init; }
+	[Fact]
+	public void IsInterface()
+	{
+		//public bool IsInterface { get; init; }
+	}
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+	[Fact]
+	public void ChildBag()
+	{
+		//public ImmutableArray<ISyntax> ChildBag { get; }
+	}
 
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.TypeDefinitionNode;
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+	}
 
-    public ImmutableArray<FunctionDefinitionNode> GetFunctionDefinitionNodes()
-    {
-        if (TypeBodyCodeBlockNode is null)
-            return ImmutableArray<FunctionDefinitionNode>.Empty;
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.TypeDefinitionNode;
+	}
 
-        return TypeBodyCodeBlockNode.ChildBag
-            .Where(child => child.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
-            .Select(fd => (FunctionDefinitionNode)fd)
-            .ToImmutableArray();
-    }
+	[Fact]
+	public void GetFunctionDefinitionNodes()
+	{
+		//public ImmutableArray<FunctionDefinitionNode> GetFunctionDefinitionNodes()
+	}
 
-    public TypeClauseNode ToTypeClause()
-    {
-        return new TypeClauseNode(
-            TypeIdentifier,
-            ValueType,
-            null);
-    }
+	[Fact]
+	public void ToTypeClause()
+	{
+		//public TypeClauseNode ToTypeClause()
+	}
 }

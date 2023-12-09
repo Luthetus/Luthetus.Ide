@@ -1,34 +1,50 @@
-﻿using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
 public sealed record VariableReferenceNodeTests
 {
-    public VariableReferenceNode(
-        IdentifierToken variableIdentifierToken,
-        VariableDeclarationNode variableDeclarationStatementNode)
-    {
-        VariableIdentifierToken = variableIdentifierToken;
-        VariableDeclarationStatementNode = variableDeclarationStatementNode;
+	[Fact]
+	public void VariableReferenceNode()
+	{
+		//public VariableReferenceNode(
+	 //       IdentifierToken variableIdentifierToken,
+	 //       VariableDeclarationNode variableDeclarationStatementNode)
+	}
 
-        ChildBag = new ISyntax[]
-        {
-            VariableIdentifierToken,
-            VariableDeclarationStatementNode,
-        }.ToImmutableArray();
-    }
+	[Fact]
+	public void VariableIdentifierToken()
+	{
+		//public IdentifierToken VariableIdentifierToken { get; }
+	}
 
-    public IdentifierToken VariableIdentifierToken { get; }
-    /// <summary>
-    /// The <see cref="VariableDeclarationStatementNode"/> is null when the variable is undeclared
-    /// </summary>
-    public VariableDeclarationNode VariableDeclarationStatementNode { get; }
-    public TypeClauseNode TypeClauseNode => VariableDeclarationStatementNode.TypeClauseNode;
+	[Fact]
+	public void VariableDeclarationStatementNode()
+	{
+		//public VariableDeclarationNode VariableDeclarationStatementNode { get; }
+	}
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+	[Fact]
+	public void TypeClauseNode()
+	{
+		//public TypeClauseNode TypeClauseNode => VariableDeclarationStatementNode.TypeClauseNode;
+	}
 
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.VariableReferenceNode;
+	[Fact]
+	public void ChildBag()
+	{
+		//public ImmutableArray<ISyntax> ChildBag { get; }
+	}
+
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+	}
+
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.VariableReferenceNode;
+	}
 }

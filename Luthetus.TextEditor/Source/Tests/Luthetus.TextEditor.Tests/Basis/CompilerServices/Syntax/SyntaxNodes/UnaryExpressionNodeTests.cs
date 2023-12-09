@@ -1,30 +1,50 @@
-﻿using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
 public sealed record UnaryExpressionNodeTests
 {
-    public UnaryExpressionNode(
-        IExpressionNode expression,
-        UnaryOperatorNode unaryOperatorNode)
-    {
-        Expression = expression;
-        UnaryOperatorNode = unaryOperatorNode;
+	[Fact]
+	public void UnaryExpressionNode()
+	{
+		//public UnaryExpressionNode(
+	 //       IExpressionNode expression,
+	 //       UnaryOperatorNode unaryOperatorNode)
+	}
 
-        ChildBag = new ISyntax[]
-        {
-            Expression,
-            UnaryOperatorNode,
-        }.ToImmutableArray();
-    }
+	[Fact]
+	public void Expression()
+	{
+		//public IExpressionNode Expression { get; }
+	}
 
-    public IExpressionNode Expression { get; }
-    public UnaryOperatorNode UnaryOperatorNode { get; }
-    public TypeClauseNode TypeClauseNode => UnaryOperatorNode.ResultTypeClauseNode;
+	[Fact]
+	public void UnaryOperatorNode()
+	{
+		//public UnaryOperatorNode UnaryOperatorNode { get; }
+	}
 
-    public ImmutableArray<ISyntax> ChildBag { get; init; }
+	[Fact]
+	public void TypeClauseNode()
+	{
+		//public TypeClauseNode TypeClauseNode => UnaryOperatorNode.ResultTypeClauseNode;
+	}
 
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.UnaryExpressionNode;
+	[Fact]
+	public void ChildBag()
+	{
+		//public ImmutableArray<ISyntax> ChildBag { get; init; }
+	}
+
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+	}
+
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.UnaryExpressionNode;
+	}
 }

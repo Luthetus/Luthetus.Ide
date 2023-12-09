@@ -5,37 +5,37 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 public sealed record ObjectInitializationNodeTests
 {
 	[Fact]
-	public void Aaa()
+	public void ObjectInitializationNode()
 	{
 		//public ObjectInitializationNode(OpenBraceToken openBraceToken, CloseBraceToken closeBraceToken)
 	}
 
 	[Fact]
-	public void Aaa()
+	public void OpenBraceToken()
 	{
 		//public OpenBraceToken OpenBraceToken { get; }
 	}
 
 	[Fact]
-	public void Aaa()
+	public void CloseBraceToken()
 	{
 		//public CloseBraceToken CloseBraceToken { get; }
 	}
 
 	[Fact]
-	public void Aaa()
+	public void ChildBag()
 	{
 		//public ImmutableArray<ISyntax> ChildBag { get; }
 	}
 
 	[Fact]
-	public void Aaa()
+	public void IsFabricated()
 	{
 		//public bool IsFabricated { get; init; }
 	}
 
 	[Fact]
-	public void Aaa()
+	public void SyntaxKind()
 	{
 		//public SyntaxKind SyntaxKind => SyntaxKind.ObjectInitializationNode;
 	}

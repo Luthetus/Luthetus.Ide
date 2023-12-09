@@ -1,38 +1,57 @@
-﻿using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
 public sealed record ParenthesizedExpressionNodeTests
 {
-    public ParenthesizedExpressionNode(
-        OpenParenthesisToken openParenthesisToken,
-        IExpressionNode innerExpression,
-        CloseParenthesisToken closeParenthesisToken)
-    {
-        OpenParenthesisToken = openParenthesisToken;
-        InnerExpression = innerExpression;
-        CloseParenthesisToken = closeParenthesisToken;
+	[Fact]
+	public void ParenthesizedExpressionNode()
+	{
+		//public ParenthesizedExpressionNode(
+		//	OpenParenthesisToken openParenthesisToken,
+		//	IExpressionNode innerExpression,
+		//	CloseParenthesisToken closeParenthesisToken)
+	}
 
-        var children = new List<ISyntax>
-        {
-            OpenParenthesisToken,
-            InnerExpression,
-            CloseParenthesisToken,
-            TypeClauseNode,
-        };
+	[Fact]
+	public void OpenParenthesisToken()
+	{
+		//public OpenParenthesisToken OpenParenthesisToken { get; }
+	}
 
-        ChildBag = children.ToImmutableArray();
-    }
+	[Fact]
+	public void InnerExpression()
+	{
+		//public IExpressionNode InnerExpression { get; }
+	}
 
-    public OpenParenthesisToken OpenParenthesisToken { get; }
-    public IExpressionNode InnerExpression { get; }
-    public CloseParenthesisToken CloseParenthesisToken { get; }
-    public TypeClauseNode TypeClauseNode => InnerExpression.TypeClauseNode;
+	[Fact]
+	public void CloseParenthesisToken()
+	{
+		//public CloseParenthesisToken CloseParenthesisToken { get; }
+	}
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+	[Fact]
+	public void TypeClauseNode()
+	{
+		//public TypeClauseNode TypeClauseNode => InnerExpression.TypeClauseNode;
+	}
 
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.ParenthesizedExpressionNode;
+	[Fact]
+	public void ChildBag()
+	{
+		//public ImmutableArray<ISyntax> ChildBag { get; }
+	}
+
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+	}
+
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.ParenthesizedExpressionNode;
+	}
 }

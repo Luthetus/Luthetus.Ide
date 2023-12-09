@@ -1,52 +1,82 @@
-﻿using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
 public sealed record VariableDeclarationNodeTests
 {
-    public VariableDeclarationNode(
-        TypeClauseNode typeClauseNode,
-        IdentifierToken identifierToken,
-        VariableKind variableKind,
-        bool isInitialized)
-    {
-        TypeClauseNode = typeClauseNode;
-        IdentifierToken = identifierToken;
-        VariableKind = variableKind;
-        IsInitialized = isInitialized;
+	[Fact]
+	public void VariableDeclarationNode()
+	{
+		//public VariableDeclarationNode(
+	 //       TypeClauseNode typeClauseNode,
+	 //       IdentifierToken identifierToken,
+	 //       VariableKind variableKind,
+	 //       bool isInitialized)
+	}
 
-        ChildBag = new ISyntax[]
-        {
-            TypeClauseNode,
-            IdentifierToken,
-        }.ToImmutableArray();
-    }
+	[Fact]
+	public void TypeClauseNode()
+	{
+		//public TypeClauseNode TypeClauseNode { get; }
+	}
 
-    public TypeClauseNode TypeClauseNode { get; }
-    public IdentifierToken IdentifierToken { get; }
-    public VariableKind VariableKind { get; }
-    public bool IsInitialized { get; }
-    /// <summary>
-    /// TODO: Remove the 'set;' on this property
-    /// </summary>
-    public bool HasGetter { get; set; }
-    /// <summary>
-    /// TODO: Remove the 'set;' on this property
-    /// </summary>
-    public bool GetterIsAutoImplemented { get; set; }
-    /// <summary>
-    /// TODO: Remove the 'set;' on this property
-    /// </summary>
-    public bool HasSetter { get; set; }
-    /// <summary>
-    /// TODO: Remove the 'set;' on this property
-    /// </summary>
-    public bool SetterIsAutoImplemented { get; set; }
+	[Fact]
+	public void IdentifierToken()
+	{
+		//public IdentifierToken IdentifierToken { get; }
+	}
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+	[Fact]
+	public void VariableKind()
+	{
+		//public VariableKind VariableKind { get; }
+	}
 
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.VariableDeclarationStatementNode;
+	[Fact]
+	public void IsInitialized()
+	{
+		//public bool IsInitialized { get; }
+	}
+
+	[Fact]
+	public void HasGetter()
+	{
+		//public bool HasGetter { get; set; }
+	}
+
+	[Fact]
+	public void GetterIsAutoImplemented()
+	{
+		//public bool GetterIsAutoImplemented { get; set; }
+	}
+
+	[Fact]
+	public void HasSetter()
+	{
+		//public bool HasSetter { get; set; }
+	}
+
+	[Fact]
+	public void SetterIsAutoImplemented()
+	{
+		//public bool SetterIsAutoImplemented { get; set; }
+	}
+
+	[Fact]
+	public void ChildBag()
+	{
+		//public ImmutableArray<ISyntax> ChildBag { get; }
+	}
+
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+	}
+
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.VariableDeclarationStatementNode;
+	}
 }

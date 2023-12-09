@@ -1,28 +1,42 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
-using System.Collections.Immutable;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
 public sealed record ReturnStatementNodeTests
 {
-    public ReturnStatementNode(KeywordToken keywordToken, IExpressionNode expressionNode)
-    {
-        KeywordToken = keywordToken;
-        ExpressionNode = expressionNode;
+	[Fact]
+	public void ReturnStatementNode()
+	{
+		//public ReturnStatementNode(KeywordToken keywordToken, IExpressionNode expressionNode)
+	}
 
-        ChildBag = new ISyntax[]
-        {
-            KeywordToken,
-            ExpressionNode
-        }.ToImmutableArray();
-    }
+	[Fact]
+	public void KeywordToken()
+	{
+		//public KeywordToken KeywordToken { get; }
+	}
 
-    public KeywordToken KeywordToken { get; }
-    public IExpressionNode ExpressionNode { get; }
+	[Fact]
+	public void ExpressionNode()
+	{
+		//public IExpressionNode ExpressionNode { get; }
+	}
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+	[Fact]
+	public void ChildBag()
+	{
+		//public ImmutableArray<ISyntax> ChildBag { get; }
+	}
 
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.ReturnStatementNode;
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+	}
+
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.ReturnStatementNode;
+	}
 }
