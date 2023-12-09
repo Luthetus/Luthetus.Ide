@@ -1,3 +1,20 @@
-﻿namespace Luthetus.TextEditor.Tests.Basis.Lexes.Models;
+﻿using Xunit;
 
-public record ResourceUriTests(string Value);
+namespace Luthetus.TextEditor.Tests.Basis.Lexes.Models;
+
+public record ResourceUriTests
+{
+	[Fact]
+	public void ResourceUri()
+	{
+		//record ResourceUri(string Value)
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void Value()
+	{
+		// string Value
+		throw new NotImplementedException();
+	}
+}

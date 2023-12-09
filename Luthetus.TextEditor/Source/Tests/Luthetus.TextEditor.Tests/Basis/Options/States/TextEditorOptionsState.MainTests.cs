@@ -1,41 +1,20 @@
-﻿using Fluxor;
-using Luthetus.Common.RazorLib.Options.Models;
-using Luthetus.Common.RazorLib.Themes.Models;
-using Luthetus.TextEditor.RazorLib.Keymaps.Models;
-using Luthetus.TextEditor.RazorLib.Options.Models;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.Options.States;
 
-/// <summary>
-/// Keep the <see cref="TextEditorOptionsState"/> as a class
-/// as to avoid record value comparisons when Fluxor checks
-/// if the <see cref="FeatureStateAttribute"/> has been replaced.
-/// </summary>
-[FeatureState]
-public partial class TextEditorOptionsStateTests
+public class TextEditorOptionsStateMainTests
 {
-    private TextEditorOptionsState()
-    {
-        Options = new TextEditorOptions(
-            new CommonOptions(
-                DEFAULT_FONT_SIZE_IN_PIXELS,
-                DEFAULT_ICON_SIZE_IN_PIXELS,
-                ThemeFacts.VisualStudioDarkThemeClone.Key,
-                null),
-            false,
-            false,
-            null,
-            DEFAULT_CURSOR_WIDTH_IN_PIXELS,
-            TextEditorKeymapFacts.DefaultKeymap,
-            true);
-    }
+	[Fact]
+	public void TextEditorOptionsState()
+	{
+		//private TextEditorOptionsState()
+		throw new NotImplementedException();
+	}
 
-    public const int DEFAULT_FONT_SIZE_IN_PIXELS = 20;
-    public const int DEFAULT_ICON_SIZE_IN_PIXELS = 18;
-    public const double DEFAULT_CURSOR_WIDTH_IN_PIXELS = 2.5;
-
-    public const int MINIMUM_FONT_SIZE_IN_PIXELS = 5;
-    public const int MINIMUM_ICON_SIZE_IN_PIXELS = 5;
-
-    public TextEditorOptions Options { get; set; }
+	[Fact]
+	public void Options()
+	{
+		//public TextEditorOptions Options { get; set; }
+		throw new NotImplementedException();
+	}
 }

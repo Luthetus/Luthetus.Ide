@@ -1,61 +1,34 @@
-using System.Collections.Immutable;
+using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.Rows.Models;
 
-public static class RowEndingKindExtensionsTests
+public class RowEndingKindExtensionsTests
 {
-    /// <summary>
-    /// In order to not override the ToString() method in a possibly unexpected way <see cref="AsCharacters" /> was made
-    /// to convert a <see cref="RowEndingKind" /> to its character(s) representation.
-    /// <br /><br />
-    /// Example: <see cref="RowEndingKind.Linefeed" /> would return '\n'
-    /// </summary>
-    public static string AsCharacters(this RowEndingKind rowEndingKind)
-    {
-        return rowEndingKind switch
-        {
-            RowEndingKind.CarriageReturn => "\r",
-            RowEndingKind.Linefeed => "\n",
-            RowEndingKind.CarriageReturnLinefeed => "\r\n",
-            RowEndingKind.StartOfFile or RowEndingKind.EndOfFile or RowEndingKind.Unset => string.Empty,
-            _ => throw new ApplicationException($"Unexpected {nameof(RowEndingKind)} of: {rowEndingKind}"),
-        };
-    }
+	[Fact]
+	public void AsCharacters()
+	{
+    	//public static string AsCharacters(this RowEndingKind rowEndingKind)
+		throw new NotImplementedException();
+	}
 
-    public static string AsCharactersHtmlEscaped(this RowEndingKind rowEndingKind)
-    {
-        return rowEndingKind switch
-        {
-            RowEndingKind.CarriageReturn => "\\r",
-            RowEndingKind.Linefeed => "\\n",
-            RowEndingKind.CarriageReturnLinefeed => "\\r\\n",
-            RowEndingKind.StartOfFile => "SOF",
-            RowEndingKind.EndOfFile => "EOF",
-            _ => throw new ApplicationException($"Unexpected {nameof(RowEndingKind)} of: {rowEndingKind}"),
-        };
-    }
+	[Fact]
+	public void AsCharactersHtmlEscaped()
+	{
+    	//public static string AsCharactersHtmlEscaped(this RowEndingKind rowEndingKind)
+		throw new NotImplementedException();
+	}
 
-    public static string AsFriendlyName(this RowEndingKind rowEndingKind)
-    {
-        return rowEndingKind switch
-        {
-            RowEndingKind.CarriageReturn => "CR",
-            RowEndingKind.Linefeed => "LF",
-            RowEndingKind.CarriageReturnLinefeed => "CRLF",
-            RowEndingKind.Unset => "Unset",
-            RowEndingKind.StartOfFile => "SOF",
-            RowEndingKind.EndOfFile => "EOF",
-            _ => throw new ApplicationException($"Unexpected {nameof(RowEndingKind)} of: {rowEndingKind}"),
-        };
-    }
+	[Fact]
+	public void AsFriendlyName()
+	{
+		//public static string AsFriendlyName(this RowEndingKind rowEndingKind)
+		throw new NotImplementedException();
+	}
 
-    public static ImmutableArray<RowEndingKind> GetRowEndingsUserAllowedToUse(this RowEndingKind rowEndingKind)
-    {
-        return new[]
-        {
-            RowEndingKind.CarriageReturn,
-            RowEndingKind.Linefeed,
-            RowEndingKind.CarriageReturnLinefeed,
-        }.ToImmutableArray();
-    }
+	[Fact]
+	public void GetRowEndingsUserAllowedToUse()
+	{
+		//public static ImmutableArray<RowEndingKind> GetRowEndingsUserAllowedToUse(this RowEndingKind rowEndingKind)
+		throw new NotImplementedException();
+	}
 }

@@ -1,169 +1,96 @@
-﻿using Fluxor;
-using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.RenderStates.Models;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.Options.States;
 
-public partial class TextEditorOptionsStateTests
+public partial class TextEditorOptionsStateReducerTests
 {
-    private class Reducer
-    {
-        [ReducerMethod]
-        public static TextEditorOptionsState ReduceSetFontFamilyAction(
-            TextEditorOptionsState inState,
-            SetFontFamilyAction setFontFamilyAction)
-        {
-            return new TextEditorOptionsState
-            {
-                Options = inState.Options with
-                {
-                    CommonOptions = inState.Options.CommonOptions with
-                    {
-                        FontFamily = setFontFamilyAction.FontFamily
-                    },
-                    RenderStateKey = Key<RenderState>.NewKey(),
-                },
-            };
-        }
+	[Fact]
+	public void ReduceSetFontFamilyAction()
+	{
+		//public static TextEditorOptionsState ReduceSetFontFamilyAction(
+	 //       TextEditorOptionsState inState,
+	 //       SetFontFamilyAction setFontFamilyAction)
+		throw new NotImplementedException();
+	}
 
-        [ReducerMethod]
-        public static TextEditorOptionsState ReduceSetFontSizeAction(
-            TextEditorOptionsState inState,
-            SetFontSizeAction setFontSizeAction)
-        {
-            return new TextEditorOptionsState
-            {
-                Options = inState.Options with
-                {
-                    CommonOptions = inState.Options.CommonOptions with
-                    {
-                        FontSizeInPixels = setFontSizeAction.FontSizeInPixels
-                    },
-                    RenderStateKey = Key<RenderState>.NewKey(),
-                },
-            };
-        }
+	[Fact]
+	public void ReduceSetFontSizeAction()
+	{
+		//public static TextEditorOptionsState ReduceSetFontSizeAction(
+	 //       TextEditorOptionsState inState,
+	 //       SetFontSizeAction setFontSizeAction)
+		throw new NotImplementedException();
+	}
 
-        [ReducerMethod]
-        public static TextEditorOptionsState ReduceSetRenderStateKeyAction(
-            TextEditorOptionsState inState,
-            SetRenderStateKeyAction setRenderStateKeyAction)
-        {
-            return new TextEditorOptionsState
-            {
-                Options = inState.Options with
-                {
-                    RenderStateKey = setRenderStateKeyAction.RenderStateKey
-                },
-            };
-        }
+	[Fact]
+	public void ReduceSetRenderStateKeyAction()
+	{
+		//public static TextEditorOptionsState ReduceSetRenderStateKeyAction(
+	 //       TextEditorOptionsState inState,
+	 //       SetRenderStateKeyAction setRenderStateKeyAction)
+		throw new NotImplementedException();
+	}
 
-        [ReducerMethod]
-        public static TextEditorOptionsState ReduceSetCursorWidthAction(
-            TextEditorOptionsState inState,
-            SetCursorWidthAction setCursorWidthAction)
-        {
-            return new TextEditorOptionsState
-            {
-                Options = inState.Options with
-                {
-                    CursorWidthInPixels = setCursorWidthAction.CursorWidthInPixels,
-                    RenderStateKey = Key<RenderState>.NewKey(),
-                },
-            };
-        }
+	[Fact]
+	public void ReduceSetCursorWidthAction()
+	{
+		//public static TextEditorOptionsState ReduceSetCursorWidthAction(
+	 //       TextEditorOptionsState inState,
+	 //       SetCursorWidthAction setCursorWidthAction)
+		throw new NotImplementedException();
+	}
 
-        [ReducerMethod]
-        public static TextEditorOptionsState ReduceSetHeightAction(
-            TextEditorOptionsState inState,
-            SetHeightAction setHeightAction)
-        {
-            return new TextEditorOptionsState
-            {
-                Options = inState.Options with
-                {
-                    TextEditorHeightInPixels = setHeightAction.HeightInPixels,
-                    RenderStateKey = Key<RenderState>.NewKey(),
-                },
-            };
-        }
+	[Fact]
+	public void ReduceSetHeightAction()
+	{
+		//public static TextEditorOptionsState ReduceSetHeightAction(
+	 //       TextEditorOptionsState inState,
+	 //       SetHeightAction setHeightAction)
+		throw new NotImplementedException();
+	}
 
-        [ReducerMethod]
-        public static TextEditorOptionsState ReduceSetThemeAction(
-            TextEditorOptionsState inState,
-            SetThemeAction setThemeAction)
-        {
-            return new TextEditorOptionsState
-            {
-                Options = inState.Options with
-                {
-                    CommonOptions = inState.Options.CommonOptions with
-                    {
-                        ThemeKey = setThemeAction.Theme.Key
-                    },
-                    RenderStateKey = Key<RenderState>.NewKey(),
-                },
-            };
-        }
+	[Fact]
+	public void ReduceSetThemeAction()
+	{
+		//public static TextEditorOptionsState ReduceSetThemeAction(
+	 //       TextEditorOptionsState inState,
+	 //       SetThemeAction setThemeAction)
+		throw new NotImplementedException();
+	}
 
-        [ReducerMethod]
-        public static TextEditorOptionsState ReduceSetKeymapAction(
-            TextEditorOptionsState inState,
-            SetKeymapAction setKeymapAction)
-        {
-            return new TextEditorOptionsState
-            {
-                Options = inState.Options with
-                {
-                    Keymap = setKeymapAction.Keymap,
-                    RenderStateKey = Key<RenderState>.NewKey(),
-                },
-            };
-        }
+	[Fact]
+	public void ReduceSetKeymapAction()
+	{
+		//public static TextEditorOptionsState ReduceSetKeymapAction(
+	 //       TextEditorOptionsState inState,
+	 //       SetKeymapAction setKeymapAction)
+		throw new NotImplementedException();
+	}
 
-        [ReducerMethod]
-        public static TextEditorOptionsState ReduceSetShowWhitespaceAction(
-            TextEditorOptionsState inState,
-            SetShowWhitespaceAction setShowWhitespaceAction)
-        {
-            return new TextEditorOptionsState
-            {
-                Options = inState.Options with
-                {
-                    ShowWhitespace = setShowWhitespaceAction.ShowWhitespace,
-                    RenderStateKey = Key<RenderState>.NewKey(),
-                },
-            };
-        }
+	[Fact]
+	public void ReduceSetShowWhitespaceAction()
+	{
+		//public static TextEditorOptionsState ReduceSetShowWhitespaceAction(
+	 //       TextEditorOptionsState inState,
+	 //       SetShowWhitespaceAction setShowWhitespaceAction)
+		throw new NotImplementedException();
+	}
 
-        [ReducerMethod]
-        public static TextEditorOptionsState ReduceSetShowNewlinesAction(
-            TextEditorOptionsState inState,
-            SetShowNewlinesAction setShowNewlinesAction)
-        {
-            return new TextEditorOptionsState
-            {
-                Options = inState.Options with
-                {
-                    ShowNewlines = setShowNewlinesAction.ShowNewlines,
-                    RenderStateKey = Key<RenderState>.NewKey(),
-                },
-            };
-        }
+	[Fact]
+	public void ReduceSetShowNewlinesAction()
+	{
+		//public static TextEditorOptionsState ReduceSetShowNewlinesAction(
+	 //       TextEditorOptionsState inState,
+	 //       SetShowNewlinesAction setShowNewlinesAction)
+		throw new NotImplementedException();
+	}
 
-        [ReducerMethod]
-        public static TextEditorOptionsState ReduceSetUseMonospaceOptimizationsAction(
-            TextEditorOptionsState inState,
-            SetUseMonospaceOptimizationsAction setUseMonospaceOptimizationsAction)
-        {
-            return new TextEditorOptionsState
-            {
-                Options = inState.Options with
-                {
-                    UseMonospaceOptimizations = setUseMonospaceOptimizationsAction.UseMonospaceOptimizations,
-                    RenderStateKey = Key<RenderState>.NewKey(),
-                },
-            };
-        }
-    }
+	[Fact]
+	public void ReduceSetUseMonospaceOptimizationsAction()
+	{
+		//public static TextEditorOptionsState ReduceSetUseMonospaceOptimizationsAction(
+	 //       TextEditorOptionsState inState,
+	 //       SetUseMonospaceOptimizationsAction setUseMonospaceOptimizationsAction)
+		throw new NotImplementedException();
+	}
 }

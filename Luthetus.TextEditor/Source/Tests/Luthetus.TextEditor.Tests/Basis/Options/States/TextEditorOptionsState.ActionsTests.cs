@@ -1,27 +1,76 @@
-﻿using Luthetus.Common.RazorLib.Keymaps.Models;
-using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.RenderStates.Models;
-using Luthetus.Common.RazorLib.Themes.Models;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.Options.States;
 
-public partial class TextEditorOptionsStateTests
+public class TextEditorOptionsStateActionsTests
 {
-    public record SetFontFamilyAction(string? FontFamily);
-    public record SetFontSizeAction(int FontSizeInPixels);
-    public record SetCursorWidthAction(double CursorWidthInPixels);
-    public record SetRenderStateKeyAction(Key<RenderState> RenderStateKey);
-    public record SetHeightAction(int? HeightInPixels);
-    /// <summary>
-    /// This is setting the TextEditor's theme specifically.
-    /// This is not to be confused with the AppOptions Themes which
-    /// get applied at an application level.
-    /// <br/><br/>
-    /// This allows for a "DarkTheme-Application" that has a "LightTheme-TextEditor"
-    /// </summary>
-    public record SetThemeAction(ThemeRecord Theme);
-    public record SetKeymapAction(Keymap Keymap);
-    public record SetShowWhitespaceAction(bool ShowWhitespace);
-    public record SetShowNewlinesAction(bool ShowNewlines);
-    public record SetUseMonospaceOptimizationsAction(bool UseMonospaceOptimizations);
+	[Fact]
+	public void SetFontFamilyAction()
+	{
+		//public record SetFontFamilyAction(string? FontFamily);
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void SetFontSizeAction()
+	{
+		//public record SetFontSizeAction(int FontSizeInPixels);
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void SetCursorWidthAction()
+	{
+		//public record SetCursorWidthAction(double CursorWidthInPixels);
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void SetRenderStateKeyAction()
+	{
+		//public record SetRenderStateKeyAction(Key<RenderState> RenderStateKey);
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void SetHeightAction()
+	{
+		//public record SetHeightAction(int? HeightInPixels);
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void SetThemeAction()
+	{
+		//public record SetThemeAction(ThemeRecord Theme);
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void SetKeymapAction()
+	{
+		//public record SetKeymapAction(Keymap Keymap);
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void SetShowWhitespaceAction()
+	{
+		//public record SetShowWhitespaceAction(bool ShowWhitespace);
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void SetShowNewlinesAction()
+	{
+		//public record SetShowNewlinesAction(bool ShowNewlines);
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void SetUseMonospaceOptimizationsAction()
+	{
+		//public record SetUseMonospaceOptimizationsAction(bool UseMonospaceOptimizations);
+		throw new NotImplementedException();
+	}
 }

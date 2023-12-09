@@ -1,22 +1,34 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.RenderStates.Models;
-using System.Collections.Immutable;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.Lexes.Models;
 
 public class TextEditorLexerDefaultTests
 {
-    public TextEditorLexerDefault(ResourceUri resourceUri)
-    {
-        ResourceUri = resourceUri;
-    }
+	[Fact]
+	public void TextEditorLexerDefault()
+	{
+		//public TextEditorLexerDefault(ResourceUri resourceUri)
+		throw new NotImplementedException();
+	}
 
-    public Key<RenderState> ModelRenderStateKey { get; private set; } = Key<RenderState>.Empty;
+	[Fact]
+	public void ModelRenderStateKey()
+	{
+		//public Key<RenderState> ModelRenderStateKey { get; private set; } = Key<RenderState>.Empty;
+		throw new NotImplementedException();
+	}
 
-    public ResourceUri ResourceUri { get; }
+	[Fact]
+	public void ResourceUri()
+	{
+		//public ResourceUri ResourceUri { get; }
+		throw new NotImplementedException();
+	}
 
-    public Task<ImmutableArray<TextEditorTextSpan>> Lex(string sourceText, Key<RenderState> modelRenderStateKey)
-    {
-        return Task.FromResult(ImmutableArray<TextEditorTextSpan>.Empty);
-    }
+	[Fact]
+	public void Lex()
+	{
+		//public Task<ImmutableArray<TextEditorTextSpan>> Lex(string sourceText, Key<RenderState> modelRenderStateKey)
+		throw new NotImplementedException();
+	}
 }

@@ -1,23 +1,74 @@
-﻿using Luthetus.Common.RazorLib.Dimensions.Models;
-using Luthetus.TextEditor.RazorLib.Options.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.Internals;
 
-public record TextEditorRenderBatchTests(
-    TextEditorModel? Model,
-    TextEditorViewModel? ViewModel,
-    TextEditorOptions? Options,
-    string FontFamily,
-    int FontSizeInPixels)
+public class TextEditorRenderBatchTests
 {
-    public const string DEFAULT_FONT_FAMILY = "monospace";
+	[Fact]
+	public void TextEditorRenderBatch()
+	{
+		//	record TextEditorRenderBatch(
+		//		TextEditorModel? Model,
+		//		TextEditorViewModel? ViewModel,
+		//		TextEditorOptions? Options,
+		//		string FontFamily,
+		//		int FontSizeInPixels)
+		throw new NotImplementedException();
+	}
 
-    public string FontFamilyCssStyleString => $"font-family: {FontFamily};";
-    public string FontSizeInPixelsCssStyleString => $"font-size: {FontSizeInPixels.ToCssValue()}px;";
+	[Fact]
+	public void Model()
+	{
+		// TextEditorModel? Model
+		throw new NotImplementedException();
+	}
 
-    public bool IsValid =>
-        Model is not null &&
-        ViewModel is not null &&
-        Options is not null;
+	[Fact]
+	public void ViewModel()
+	{
+		// TextEditorViewModel? ViewModel
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void Options()
+	{
+		// TextEditorOptions? Options
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void FontFamily()
+	{
+		// string FontFamily
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void FontSizeInPixels()
+	{
+		// int FontSizeInPixels
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void FontFamilyCssStyleString()
+	{
+		//public string FontFamilyCssStyleString => $"font-family: {FontFamily};";
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void FontSizeInPixelsCssStyleString()
+	{
+		//public string FontSizeInPixelsCssStyleString => $"font-size: {FontSizeInPixels.ToCssValue()}px;";
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void IsValid()
+	{
+		//public bool IsValid;
+		throw new NotImplementedException();
+	}
 }
