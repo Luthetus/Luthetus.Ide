@@ -1,52 +1,57 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
-using System.Collections.Immutable;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
 public sealed record NamespaceStatementNodeTests
 {
-    public NamespaceStatementNode(
-        KeywordToken keywordToken,
-        IdentifierToken identifierToken,
-        ImmutableArray<NamespaceEntryNode> namespaceEntryNodes)
-    {
-        KeywordToken = keywordToken;
-        IdentifierToken = identifierToken;
-        NamespaceEntryNodeBag = namespaceEntryNodes;
+	[Fact]
+	public void NamespaceStatementNode()
+	{
+		//public NamespaceStatementNode(
+	 //       KeywordToken keywordToken,
+	 //       IdentifierToken identifierToken,
+	 //       ImmutableArray<NamespaceEntryNode> namespaceEntryNodes)
+	}
 
-        var children = new List<ISyntax>
-        {
-            keywordToken,
-            identifierToken,
-        };
+	[Fact]
+	public void KeywordToken()
+	{
+		//public KeywordToken KeywordToken { get; }
+	}
 
-        children.AddRange(namespaceEntryNodes);
+	[Fact]
+	public void IdentifierToken()
+	{
+		//public IdentifierToken IdentifierToken { get; }
+	}
 
-        ChildBag = children.ToImmutableArray();
-    }
+	[Fact]
+	public void NamespaceEntryNodeBag()
+	{
+		//public ImmutableArray<NamespaceEntryNode> NamespaceEntryNodeBag { get; }
+	}
 
-    public KeywordToken KeywordToken { get; }
-    public IdentifierToken IdentifierToken { get; }
-    public ImmutableArray<NamespaceEntryNode> NamespaceEntryNodeBag { get; }
+	[Fact]
+	public void ChildBag()
+	{
+		//public ImmutableArray<ISyntax> ChildBag { get; }
+	}
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+	}
 
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.NamespaceStatementNode;
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.NamespaceStatementNode;
+	}
 
-    /// <summary>
-    /// <see cref="GetTopLevelTypeDefinitionNodes"/> provides a collection
-    /// which contains all top level type definitions of the namespace.
-    /// <br/><br/>
-    /// This is to say that, any type definitions which are nested, would not
-    /// be in this collection.
-    /// </summary>
-    public ImmutableArray<TypeDefinitionNode> GetTopLevelTypeDefinitionNodes()
-    {
-        return NamespaceEntryNodeBag
-            .SelectMany(bne => bne.CodeBlockNode.ChildBag)
-            .Where(innerC => innerC.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-            .Select(td => (TypeDefinitionNode)td)
-            .ToImmutableArray();
-    }
+	[Fact]
+	public void GetTopLevelTypeDefinitionNodes()
+	{
+		//public ImmutableArray<TypeDefinitionNode> GetTopLevelTypeDefinitionNodes()
+	}
 }

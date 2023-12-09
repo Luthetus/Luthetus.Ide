@@ -1,38 +1,51 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
-using System.Collections.Immutable;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
 public sealed record IfStatementNodeTests
 {
-    public IfStatementNode(
-        KeywordToken keywordToken,
-        IExpressionNode expressionNode,
-        CodeBlockNode? ifStatementBodyCodeBlockNode)
-    {
-        KeywordToken = keywordToken;
-        ExpressionNode = expressionNode;
-        IfStatementBodyCodeBlockNode = ifStatementBodyCodeBlockNode;
+	[Fact]
+	public void IfStatementNode()
+	{
+		//public IfStatementNode(
+	 //       KeywordToken keywordToken,
+	 //       IExpressionNode expressionNode,
+	 //       CodeBlockNode? ifStatementBodyCodeBlockNode)
+	}
 
-        var childrenList = new List<ISyntax>
-        {
-            KeywordToken,
-            ExpressionNode,
-        };
+	[Fact]
+	public void KeywordToken()
+	{
+		//public KeywordToken KeywordToken { get; }
+	}
 
-        if (IfStatementBodyCodeBlockNode is not null)
-            childrenList.Add(IfStatementBodyCodeBlockNode);
+	[Fact]
+	public void ExpressionNode()
+	{
+		//public IExpressionNode ExpressionNode { get; }
+	}
 
-        ChildBag = childrenList.ToImmutableArray();
-    }
+	[Fact]
+	public void IfStatementBodyCodeBlockNode()
+	{
+		//public CodeBlockNode? IfStatementBodyCodeBlockNode { get; }
+	}
 
-    public KeywordToken KeywordToken { get; }
-    public IExpressionNode ExpressionNode { get; }
-    public CodeBlockNode? IfStatementBodyCodeBlockNode { get; }
+	[Fact]
+	public void ChildBag()
+	{
+		//public ImmutableArray<ISyntax> ChildBag { get; }
+	}
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+	}
 
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.IfStatementNode;
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.IfStatementNode;
+	}
 }

@@ -1,36 +1,58 @@
-using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
+using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
 public sealed record FunctionParameterEntryNodeTests
 {
-    public FunctionParameterEntryNode(
-        IExpressionNode expressionNode,
-        bool hasOutKeyword,
-        bool hasInKeyword,
-        bool hasRefKeyword)
-    {
-        ExpressionNode = expressionNode;
-        HasOutKeyword = hasOutKeyword;
-        HasInKeyword = hasInKeyword;
-        HasRefKeyword = hasRefKeyword;
+	[Fact]
+	public void FunctionParameterEntryNode()
+	{
+		//public FunctionParameterEntryNode(
+		//	IExpressionNode expressionNode,
+		//	bool hasOutKeyword,
+		//	bool hasInKeyword,
+		//	bool hasRefKeyword)
+	}
 
-        var children = new List<ISyntax>
-        {
-            ExpressionNode
-        };
+	[Fact]
+	public void ExpressionNode()
+	{
+		//public IExpressionNode ExpressionNode { get; }
+	}
+	
+	[Fact]
+	public void HasOutKeyword()
+	{
+		//public bool HasOutKeyword { get; }
+	}
 
-        ChildBag = children.ToImmutableArray();
-    }
+	[Fact]
+	public void HasInKeyword()
+	{
+		//public bool HasInKeyword { get; }
+	}
 
-    public IExpressionNode ExpressionNode { get; }
-    public bool HasOutKeyword { get; }
-    public bool HasInKeyword { get; }
-    public bool HasRefKeyword { get; }
+	[Fact]
+	public void HasRefKeyword()
+	{
+		//public bool HasRefKeyword { get; }
+	}
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+	[Fact]
+	public void ChildBag()
+	{
+		//public ImmutableArray<ISyntax> ChildBag { get; }
+	}
 
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.FunctionParameterEntryNode;
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+	}
+
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.FunctionParameterEntryNode;
+	}
 }

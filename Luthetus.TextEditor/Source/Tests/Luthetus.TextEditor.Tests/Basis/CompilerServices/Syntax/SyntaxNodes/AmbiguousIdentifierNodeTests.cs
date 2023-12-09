@@ -1,29 +1,36 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
-using System.Collections.Immutable;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
-/// <summary>
-/// Example usage: One finds a <see cref="IdentifierToken"/>, but must
-/// continue parsing in order to know if it is a reference to a
-/// function, type, variable, or etc...
-/// </summary>
 public sealed record AmbiguousIdentifierNodeTests
 {
-    public AmbiguousIdentifierNode(IdentifierToken identifierToken)
-    {
-        IdentifierToken = identifierToken;
+	[Fact]
+	public void AmbiguousIdentifierNode()
+	{
+		//public AmbiguousIdentifierNode(IdentifierToken identifierToken)
+	}
 
-        ChildBag = new ISyntax[]
-        {
-            IdentifierToken,
-        }.ToImmutableArray();
-    }
+    [Fact]
+	public void IdentifierToken()
+	{
+		//public IdentifierToken IdentifierToken { get; }
+	}
 
-    public IdentifierToken IdentifierToken { get; }
+	[Fact]
+	public void ChildBag()
+	{
+		//public ImmutableArray<ISyntax> ChildBag { get; }
+	}
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+	}
 
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.AmbiguousIdentifierNode;
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.AmbiguousIdentifierNode;
+	}
 }

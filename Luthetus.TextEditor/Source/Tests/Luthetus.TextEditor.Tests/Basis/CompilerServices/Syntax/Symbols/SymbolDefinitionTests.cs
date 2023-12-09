@@ -1,30 +1,52 @@
-﻿using System.Collections.Immutable;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.Symbols;
 
 public sealed record SymbolDefinitionTests
 {
-    public SymbolDefinition(BoundScopeKey boundScopeKey, ISymbol symbol)
-    {
-        BoundScopeKey = boundScopeKey;
-        Symbol = symbol;
-    }
+	[Fact]
+	public void SymbolDefinition_A()
+	{
+		//public SymbolDefinition(BoundScopeKey boundScopeKey, ISymbol symbol)
+	}
 
-    public SymbolDefinition(
-            BoundScopeKey boundScopeKey,
-            ISymbol symbol,
-            List<SymbolReference> symbolReferences)
-        : this(boundScopeKey, symbol)
-    {
-        SymbolReferences = symbolReferences;
-    }
+	[Fact]
+	public void SymbolDefinition_B()
+	{
+		//public SymbolDefinition(
+	 //           BoundScopeKey boundScopeKey,
+	 //           ISymbol symbol,
+	 //           List<SymbolReference> symbolReferences)
+	 //       : this(boundScopeKey, symbol)
+	}
 
-    public List<SymbolReference> SymbolReferences { get; init; } = new();
+	[Fact]
+	public void SymbolReferences()
+	{
+		//public List<SymbolReference> SymbolReferences { get; init; } = new();
+	}
 
-    public BoundScopeKey BoundScopeKey { get; }
-    public ISymbol Symbol { get; }
-    /// <summary>If a reference to a symbol is parsed prior to the definition, <see cref="IsFabricated"/> will be set to true. If later the definition is found, then this instance of <see cref="SymbolDefinition"/> will be overwritten to have this property with value of false.</summary>
-    public bool IsFabricated { get; init; }
+	[Fact]
+	public void BoundScopeKey()
+	{
+		//public BoundScopeKey BoundScopeKey { get; }
+	}
 
-    public ImmutableArray<SymbolReference> GetSymbolReferences() => SymbolReferences.ToImmutableArray();
+	[Fact]
+	public void Symbol()
+	{
+		//public ISymbol Symbol { get; }
+	}
+
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+	}
+
+	[Fact]
+	public void GetSymbolReferences()
+	{
+		//public ImmutableArray<SymbolReference> GetSymbolReferences() => SymbolReferences.ToImmutableArray();
+	}
 }

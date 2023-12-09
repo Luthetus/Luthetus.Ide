@@ -1,44 +1,89 @@
-﻿using System.Collections.Immutable;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.GenericLexer;
 
 public class GenericLanguageDefinitionTests
 {
-    public GenericLanguageDefinition(
-        string stringStart,
-        string stringEnd,
-        string functionInvocationStart,
-        string functionInvocationEnd,
-        string memberAccessToken,
-        string commentSingleLineStart,
-        ImmutableArray<string> commentSingleLineEndingsBag,
-        string commentMultiLineStart,
-        string commentMultiLineEnd,
-        ImmutableArray<string> keywordsBag,
-        GenericPreprocessorDefinition preprocessorDefinition)
-    {
-        StringStart = stringStart;
-        StringEnd = stringEnd;
-        FunctionInvocationStart = functionInvocationStart;
-        FunctionInvocationEnd = functionInvocationEnd;
-        MemberAccessToken = memberAccessToken;
-        CommentSingleLineStart = commentSingleLineStart;
-        CommentSingleLineEndingsBag = commentSingleLineEndingsBag;
-        CommentMultiLineStart = commentMultiLineStart;
-        CommentMultiLineEnd = commentMultiLineEnd;
-        KeywordsBag = keywordsBag;
-        PreprocessorDefinition = preprocessorDefinition;
-    }
+	[Fact]
+	public void GenericLanguageDefinition()
+	{
+		//public GenericLanguageDefinition(
+		//	string stringStart,
+		//	string stringEnd,
+		//	string functionInvocationStart,
+		//	string functionInvocationEnd,
+		//	string memberAccessToken,
+		//	string commentSingleLineStart,
+		//	ImmutableArray<string> commentSingleLineEndingsBag,
+		//	string commentMultiLineStart,
+		//	string commentMultiLineEnd,
+		//	ImmutableArray<string> keywordsBag,
+		//	GenericPreprocessorDefinition preprocessorDefinition)
+	}
 
-    public string StringStart { get; }
-    public string StringEnd { get; }
-    public string FunctionInvocationStart { get; }
-    public string FunctionInvocationEnd { get; }
-    public string MemberAccessToken { get; }
-    public string CommentSingleLineStart { get; }
-    public ImmutableArray<string> CommentSingleLineEndingsBag { get; }
-    public string CommentMultiLineStart { get; }
-    public string CommentMultiLineEnd { get; }
-    public ImmutableArray<string> KeywordsBag { get; }
-    public GenericPreprocessorDefinition PreprocessorDefinition { get; }
+	[Fact]
+	public void StringStart()
+	{
+		//public string StringStart { get; }
+	}
+
+	[Fact]
+	public void StringEnd()
+	{
+		//public string StringEnd { get; }
+	}
+
+	[Fact]
+	public void FunctionInvocationStart()
+	{
+		//public string FunctionInvocationStart { get; }
+	}
+
+	[Fact]
+	public void FunctionInvocationEnd()
+	{
+		//public string FunctionInvocationEnd { get; }
+	}
+
+	[Fact]
+	public void MemberAccessToken()
+	{
+		//public string MemberAccessToken { get; }
+	}
+
+	[Fact]
+	public void CommentSingleLineStart()
+	{
+		//public string CommentSingleLineStart { get; }
+	}
+
+	[Fact]
+	public void CommentSingleLineEndingsBag()
+	{
+		//public ImmutableArray<string> CommentSingleLineEndingsBag { get; }
+	}
+
+	[Fact]
+	public void CommentMultiLineStart()
+	{
+		//public string CommentMultiLineStart { get; }
+	}
+
+	[Fact]
+	public void CommentMultiLineEnd()
+	{
+		//public string CommentMultiLineEnd { get; }
+	}
+
+	[Fact]
+	public void KeywordsBag()
+	{
+		//public ImmutableArray<string> KeywordsBag { get; }
+	}
+
+	[Fact]
+	public void PreprocessorDefinition()
+	{
+		//public GenericPreprocessorDefinition PreprocessorDefinition { get; }
+	}
 }

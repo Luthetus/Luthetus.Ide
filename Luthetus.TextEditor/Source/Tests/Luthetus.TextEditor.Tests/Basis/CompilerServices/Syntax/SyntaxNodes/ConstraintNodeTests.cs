@@ -1,37 +1,37 @@
-using System.Collections.Immutable;
+using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
-/// <summary>
-/// Examples:<br/>
-/// 
-/// public T Clone&lt;T&gt;(T item) where T : class<br/>
-/// {<br/>
-/// &#9;return item;<br/>
-/// }<br/>
-/// 
-/// public T Clone&lt;T&gt;(T item) where T : class => item;<br/>
-/// </summary>
 public sealed record ConstraintNodeTests
 {
-    public ConstraintNode(ImmutableArray<ISyntaxToken> innerTokens)
-    {
-        InnerTokens = innerTokens;
+	[Fact]
+	public void ConstraintNode()
+	{
+		//public ConstraintNode(ImmutableArray<ISyntaxToken> innerTokens)
+	}
 
-        var children = new List<ISyntax>();
-        children.AddRange(InnerTokens);
 
-        ChildBag = children.ToImmutableArray();
-    }
+	[Fact]
+	public void InnerTokens()
+	{
+		//public ImmutableArray<ISyntaxToken> InnerTokens { get; }
+	}
 
-    /// <summary>
-    /// TODO: For now, just grab all tokens and put them in an array...
-    /// ...In the future parse the tokens. (2023-10-19)
-    /// </summary>
-    public ImmutableArray<ISyntaxToken> InnerTokens { get; }
+	[Fact]
+	public void ChildBag()
+	{
+		//public ImmutableArray<ISyntax> ChildBag { get; }
+	}
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+	}
 
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.TypeClauseNode;
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.TypeClauseNode;
+	}
 }

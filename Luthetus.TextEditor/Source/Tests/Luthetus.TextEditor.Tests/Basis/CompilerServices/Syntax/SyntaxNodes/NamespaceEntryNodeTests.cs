@@ -1,29 +1,42 @@
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using System.Collections.Immutable;
+using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
-/// <summary>
-/// TODO: Rewrite 'namespace node' logic (2023-11-27)
-/// </summary>
 public sealed record NamespaceEntryNodeTests
 {
-    public NamespaceEntryNode(ResourceUri resourceUri, CodeBlockNode codeBlockNode)
-    {
-        ResourceUri = resourceUri;
-        CodeBlockNode = codeBlockNode;
+	[Fact]
+	public void NamespaceEntryNode()
+	{
+		//public NamespaceEntryNode(ResourceUri resourceUri, CodeBlockNode codeBlockNode)
+	}
 
-        ChildBag = (new ISyntax[]
-        {
-            CodeBlockNode
-        }).ToImmutableArray();
-    }
+	[Fact]
+	public void ResourceUri()
+	{
+		//public ResourceUri ResourceUri { get; }
+	}
 
-    public ResourceUri ResourceUri { get; }
-    public CodeBlockNode CodeBlockNode { get; }
+	[Fact]
+	public void CodeBlockNode()
+	{
+		//public CodeBlockNode CodeBlockNode { get; }
+	}
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+	[Fact]
+	public void ChildBag()
+	{
+		//public ImmutableArray<ISyntax> ChildBag { get; }
+	}
 
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.NamespaceEntryNode;
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+	}
+
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.NamespaceEntryNode;
+	}
 }

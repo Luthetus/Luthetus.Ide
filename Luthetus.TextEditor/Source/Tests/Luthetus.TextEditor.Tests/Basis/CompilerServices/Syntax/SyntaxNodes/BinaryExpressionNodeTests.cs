@@ -1,34 +1,58 @@
-﻿using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
 public sealed record BinaryExpressionNodeTests
 {
-    public BinaryExpressionNode(
-        IExpressionNode leftExpressionNode,
-        BinaryOperatorNode binaryOperatorNode,
-        IExpressionNode rightExpressionNode)
-    {
-        LeftExpressionNode = leftExpressionNode;
-        BinaryOperatorNode = binaryOperatorNode;
-        RightExpressionNode = rightExpressionNode;
+	[Fact]
+	public void BinaryExpressionNode()
+	{
+		//public BinaryExpressionNode(
+	 //       IExpressionNode leftExpressionNode,
+	 //       BinaryOperatorNode binaryOperatorNode,
+	 //       IExpressionNode rightExpressionNode)
+	}
 
-        ChildBag = new ISyntax[]
-        {
-            LeftExpressionNode,
-            BinaryOperatorNode,
-            RightExpressionNode
-        }.ToImmutableArray();
-    }
 
-    public IExpressionNode LeftExpressionNode { get; }
-    public BinaryOperatorNode BinaryOperatorNode { get; }
-    public IExpressionNode RightExpressionNode { get; }
-    public TypeClauseNode TypeClauseNode => BinaryOperatorNode.TypeClauseNode;
+	[Fact]
+	public void LeftExpressionNode()
+	{
+		//public IExpressionNode LeftExpressionNode { get; }
+	}
 
-    public ImmutableArray<ISyntax> ChildBag { get; init; }
+	[Fact]
+	public void BinaryOperatorNode()
+	{
+		//public BinaryOperatorNode BinaryOperatorNode { get; }
+	}
 
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.BinaryExpressionNode;
+	[Fact]
+	public void RightExpressionNode()
+	{
+		//public IExpressionNode RightExpressionNode { get; }
+	}
+
+	[Fact]
+	public void TypeClauseNode()
+	{
+		//public TypeClauseNode TypeClauseNode => BinaryOperatorNode.TypeClauseNode;
+	}
+
+	[Fact]
+	public void ChildBag()
+	{
+		//public ImmutableArray<ISyntax> ChildBag { get; init; }
+	}
+
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+	}
+
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.BinaryExpressionNode;
+	}
 }

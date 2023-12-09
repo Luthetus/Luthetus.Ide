@@ -1,37 +1,51 @@
-﻿using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
 public sealed record FunctionArgumentsListingNodeTests
 {
-    public FunctionArgumentsListingNode(
-        OpenParenthesisToken openParenthesisToken,
-        ImmutableArray<FunctionArgumentEntryNode> functionArgumentEntryNodes,
-        CloseParenthesisToken closeParenthesisToken)
-    {
-        OpenParenthesisToken = openParenthesisToken;
-        FunctionArgumentEntryNodeBag = functionArgumentEntryNodes;
-        CloseParenthesisToken = closeParenthesisToken;
+	[Fact]
+	public void FunctionArgumentsListingNode()
+	{
+		//public FunctionArgumentsListingNode(
+		//	OpenParenthesisToken openParenthesisToken,
+		//	ImmutableArray<FunctionArgumentEntryNode> functionArgumentEntryNodes,
+		//	CloseParenthesisToken closeParenthesisToken)
+	}
 
-        var children = new List<ISyntax>
-        {
-            OpenParenthesisToken
-        };
+	[Fact]
+	public void OpenParenthesisToken()
+	{
+		//public OpenParenthesisToken OpenParenthesisToken { get; }
+	}
 
-        children.AddRange(FunctionArgumentEntryNodeBag);
+	[Fact]
+	public void FunctionArgumentEntryNodeBag()
+	{
+		//public ImmutableArray<FunctionArgumentEntryNode> FunctionArgumentEntryNodeBag { get; }
+	}
 
-        children.Add(CloseParenthesisToken);
+	[Fact]
+	public void CloseParenthesisToken()
+	{
+		//public CloseParenthesisToken CloseParenthesisToken { get; }
+	}
 
-        ChildBag = children.ToImmutableArray();
-    }
+	[Fact]
+	public void ChildBag()
+	{
+		//public ImmutableArray<ISyntax> ChildBag { get; }
+	}
 
-    public OpenParenthesisToken OpenParenthesisToken { get; }
-    public ImmutableArray<FunctionArgumentEntryNode> FunctionArgumentEntryNodeBag { get; }
-    public CloseParenthesisToken CloseParenthesisToken { get; }
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+	}
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
-
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.FunctionArgumentsListingNode;
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.FunctionArgumentsListingNode;
+	}
 }

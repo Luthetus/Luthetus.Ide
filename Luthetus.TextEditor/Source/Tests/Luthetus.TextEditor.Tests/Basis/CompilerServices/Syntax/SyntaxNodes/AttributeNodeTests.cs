@@ -1,29 +1,44 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
-using System.Collections.Immutable;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
 public sealed record AttributeNodeTests
 {
-    public AttributeNode(
-        OpenSquareBracketToken openSquareBracketToken,
-        CloseSquareBracketToken closeSquareBracketToken)
-    {
-        OpenSquareBracketToken = openSquareBracketToken;
-        CloseSquareBracketToken = closeSquareBracketToken;
+	[Fact]
+	public void AttributeNode()
+	{
+		//public AttributeNode(
+	 //       OpenSquareBracketToken openSquareBracketToken,
+	 //       CloseSquareBracketToken closeSquareBracketToken)
+	}
 
-        ChildBag = new ISyntax[]
-        {
-            OpenSquareBracketToken,
-            CloseSquareBracketToken,
-        }.ToImmutableArray();
-    }
+	[Fact]
+	public void OpenSquareBracketToken()
+	{
+		//public OpenSquareBracketToken OpenSquareBracketToken { get; }
+	}
 
-    public OpenSquareBracketToken OpenSquareBracketToken { get; }
-    public CloseSquareBracketToken CloseSquareBracketToken { get; }
+	[Fact]
+	public void CloseSquareBracketToken()
+	{
+		//public CloseSquareBracketToken CloseSquareBracketToken { get; }
+	}
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+	[Fact]
+	public void ChildBag()
+	{
+		//public ImmutableArray<ISyntax> ChildBag { get; }
+	}
 
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.AttributeNode;
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+	}
+
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.AttributeNode;
+	}
 }

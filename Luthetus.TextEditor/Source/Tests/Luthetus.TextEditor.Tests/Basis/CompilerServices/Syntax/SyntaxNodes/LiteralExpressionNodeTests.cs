@@ -1,29 +1,42 @@
-﻿using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
 public sealed record LiteralExpressionNodeTests
 {
-    public LiteralExpressionNode(ISyntaxToken literalSyntaxToken, TypeClauseNode typeClauseNode)
-    {
-        LiteralSyntaxToken = literalSyntaxToken;
-        TypeClauseNode = typeClauseNode;
+	[Fact]
+	public void LiteralExpressionNode()
+	{
+		//public LiteralExpressionNode(ISyntaxToken literalSyntaxToken, TypeClauseNode typeClauseNode)
+	}
 
-        var children = new List<ISyntax>
-        {
-            LiteralSyntaxToken,
-            TypeClauseNode
-        };
+	[Fact]
+	public void LiteralSyntaxToken()
+	{
+		//public ISyntaxToken LiteralSyntaxToken { get; }
+	}
 
-        ChildBag = children.ToImmutableArray();
-    }
+	[Fact]
+	public void TypeClauseNode()
+	{
+		//public TypeClauseNode TypeClauseNode { get; }
+	}
 
-    public ISyntaxToken LiteralSyntaxToken { get; }
-    public TypeClauseNode TypeClauseNode { get; }
+	[Fact]
+	public void ChildBag()
+	{
+		//public ImmutableArray<ISyntax> ChildBag { get; }
+	}
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+	}
 
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.LiteralExpressionNode;
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.LiteralExpressionNode;
+	}
 }

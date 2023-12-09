@@ -1,17 +1,30 @@
-﻿using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxEnums;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.GenericLexer.SyntaxObjects;
 
 public class GenericCommentMultiLineSyntaxTests
 {
-    public GenericCommentMultiLineSyntax(TextEditorTextSpan textSpan)
-    {
-        TextSpan = textSpan;
-    }
-
-    public TextEditorTextSpan TextSpan { get; }
-    public ImmutableArray<IGenericSyntax> ChildBag => ImmutableArray<IGenericSyntax>.Empty;
-    public GenericSyntaxKind GenericSyntaxKind => GenericSyntaxKind.CommentMultiLine;
+	[Fact]
+	public void GenericCommentMultiLineSyntax()
+	{
+		//public GenericCommentMultiLineSyntax(TextEditorTextSpan textSpan)
+	}
+    
+	[Fact]
+	public void TextSpan()
+	{
+		//public TextEditorTextSpan TextSpan { get; }
+	}
+    
+	[Fact]
+	public void ChildBag()
+	{
+		//public ImmutableArray<IGenericSyntax> ChildBag => ImmutableArray<IGenericSyntax>.Empty;
+	}
+    
+	[Fact]
+	public void GenericSyntaxKind()
+	{
+		//public GenericSyntaxKind GenericSyntaxKind => GenericSyntaxKind.CommentMultiLine;
+	}
 }

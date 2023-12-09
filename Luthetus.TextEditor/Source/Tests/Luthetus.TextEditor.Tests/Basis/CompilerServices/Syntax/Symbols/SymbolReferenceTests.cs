@@ -1,13 +1,24 @@
-﻿namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.Symbols;
+﻿using Xunit;
+
+namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.Symbols;
 
 public sealed class SymbolReferenceTests
 {
-    public SymbolReference(ISymbol symbol, BoundScopeKey boundScopeKey)
-    {
-        Symbol = symbol;
-        BoundScopeKey = boundScopeKey;
-    }
+	[Fact]
+	public void SymbolReference()
+	{
+		//public SymbolReference(ISymbol symbol, BoundScopeKey boundScopeKey)
+	}
 
-    public ISymbol Symbol { get; }
-    public BoundScopeKey BoundScopeKey { get; }
+	[Fact]
+	public void Symbol()
+	{
+		//public ISymbol Symbol { get; }
+	}
+
+	[Fact]
+	public void BoundScopeKey()
+	{
+		//public BoundScopeKey BoundScopeKey { get; }
+	}
 }

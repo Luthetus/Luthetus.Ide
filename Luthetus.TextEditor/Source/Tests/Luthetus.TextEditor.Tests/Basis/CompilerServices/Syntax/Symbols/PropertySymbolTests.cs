@@ -1,16 +1,30 @@
-﻿using Luthetus.TextEditor.RazorLib.Lexes.Models;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.Symbols;
 
 public sealed record PropertySymbolTests
 {
-    public PropertySymbol(TextEditorTextSpan textSpan)
-    {
-        TextSpan = textSpan;
-    }
+	[Fact]
+	public void PropertySymbol()
+	{
+		//public PropertySymbol(TextEditorTextSpan textSpan)
+	}
+    
+	[Fact]
+	public void TextSpan()
+	{
+		//public TextEditorTextSpan TextSpan { get; }
+	}
 
-    public TextEditorTextSpan TextSpan { get; }
-    public string SymbolKindString => SyntaxKind.ToString();
+	[Fact]
+	public void SymbolKindString()
+	{
+		//public string SymbolKindString => SyntaxKind.ToString();
+	}
 
-    public SyntaxKind SyntaxKind => SyntaxKind.PropertySymbol;
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.PropertySymbol;
+	}
 }

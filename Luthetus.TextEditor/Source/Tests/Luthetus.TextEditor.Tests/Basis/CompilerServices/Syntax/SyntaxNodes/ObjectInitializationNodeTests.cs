@@ -1,28 +1,42 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
-using System.Collections.Immutable;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
-/// <summary>TODO: Correctly implement this node. For now, just skip over it when parsing.</summary>
 public sealed record ObjectInitializationNodeTests
 {
-    public ObjectInitializationNode(OpenBraceToken openBraceToken, CloseBraceToken closeBraceToken)
-    {
-        OpenBraceToken = openBraceToken;
-        CloseBraceToken = closeBraceToken;
+	[Fact]
+	public void Aaa()
+	{
+		//public ObjectInitializationNode(OpenBraceToken openBraceToken, CloseBraceToken closeBraceToken)
+	}
 
-        ChildBag = new ISyntax[]
-        {
-            OpenBraceToken,
-            CloseBraceToken,
-        }.ToImmutableArray();
-    }
+	[Fact]
+	public void Aaa()
+	{
+		//public OpenBraceToken OpenBraceToken { get; }
+	}
 
-    public OpenBraceToken OpenBraceToken { get; }
-    public CloseBraceToken CloseBraceToken { get; }
+	[Fact]
+	public void Aaa()
+	{
+		//public CloseBraceToken CloseBraceToken { get; }
+	}
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+	[Fact]
+	public void Aaa()
+	{
+		//public ImmutableArray<ISyntax> ChildBag { get; }
+	}
 
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.ObjectInitializationNode;
+	[Fact]
+	public void Aaa()
+	{
+		//public bool IsFabricated { get; init; }
+	}
+
+	[Fact]
+	public void Aaa()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.ObjectInitializationNode;
+	}
 }

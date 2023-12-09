@@ -1,44 +1,58 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
-using System.Collections.Immutable;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
 public sealed record FunctionInvocationNodeTests
 {
-    public FunctionInvocationNode(
-        IdentifierToken functionInvocationIdentifierToken,
-        FunctionDefinitionNode? functionDefinitionNode,
-        GenericParametersListingNode? genericParametersListingNode,
-        FunctionParametersListingNode functionParametersListingNode)
-    {
-        FunctionInvocationIdentifierToken = functionInvocationIdentifierToken;
-        FunctionDefinitionNode = functionDefinitionNode;
-        GenericParametersListingNode = genericParametersListingNode;
-        FunctionParametersListingNode = functionParametersListingNode;
+	[Fact]
+	public void FunctionInvocationNode()
+	{
+		//public FunctionInvocationNode(
+		//	IdentifierToken functionInvocationIdentifierToken,
+		//	FunctionDefinitionNode? functionDefinitionNode,
+		//	GenericParametersListingNode? genericParametersListingNode,
+		//	FunctionParametersListingNode functionParametersListingNode)
+	}
 
-        var children = new List<ISyntax>
-        {
-            FunctionInvocationIdentifierToken
-        };
+	[Fact]
+	public void FunctionInvocationIdentifierToken()
+	{
+		//public IdentifierToken FunctionInvocationIdentifierToken { get; }
+	}
 
-        if (FunctionDefinitionNode is not null)
-            children.Add(FunctionDefinitionNode);
+	[Fact]
+	public void FunctionDefinitionNode()
+	{
+		//public FunctionDefinitionNode? FunctionDefinitionNode { get; }
+	}
 
-        if (GenericParametersListingNode is not null)
-            children.Add(GenericParametersListingNode);
+	[Fact]
+	public void GenericParametersListingNode()
+	{
+		//public GenericParametersListingNode? GenericParametersListingNode { get; }
+	}
 
-        children.Add(FunctionParametersListingNode);
+	[Fact]
+	public void FunctionParametersListingNode()
+	{
+		//public FunctionParametersListingNode FunctionParametersListingNode { get; }
+	}
 
-        ChildBag = children.ToImmutableArray();
-    }
+	[Fact]
+	public void ChildBag()
+	{
+		//public ImmutableArray<ISyntax> ChildBag { get; }
+	}
 
-    public IdentifierToken FunctionInvocationIdentifierToken { get; }
-    public FunctionDefinitionNode? FunctionDefinitionNode { get; }
-    public GenericParametersListingNode? GenericParametersListingNode { get; }
-    public FunctionParametersListingNode FunctionParametersListingNode { get; }
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+	}
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
-
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.FunctionInvocationNode;
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.FunctionInvocationNode;
+	}
 }

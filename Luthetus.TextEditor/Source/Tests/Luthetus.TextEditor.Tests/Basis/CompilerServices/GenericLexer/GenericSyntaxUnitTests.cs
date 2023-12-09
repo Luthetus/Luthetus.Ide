@@ -1,17 +1,26 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxObjects;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.GenericLexer;
 
 public class GenericSyntaxUnitTests
 {
-    public GenericSyntaxUnit(
-        GenericDocumentSyntax genericDocumentSyntax,
-        LuthetusDiagnosticBag diagnosticBag)
-    {
-        GenericDocumentSyntax = genericDocumentSyntax;
-        DiagnosticBag = diagnosticBag;
-    }
+	[Fact]
+	public void GenericSyntaxUnit()
+	{
+		//public GenericSyntaxUnit(
+		//	GenericDocumentSyntax genericDocumentSyntax,
+		//	LuthetusDiagnosticBag diagnosticBag)
+	}
 
-    public GenericDocumentSyntax GenericDocumentSyntax { get; }
-    public LuthetusDiagnosticBag DiagnosticBag { get; }
+	[Fact]
+	public void GenericDocumentSyntax()
+	{
+		//public GenericDocumentSyntax GenericDocumentSyntax { get; }
+	}
+
+	[Fact]
+	public void DiagnosticBag()
+	{
+		//public LuthetusDiagnosticBag DiagnosticBag { get; }
+	}
 }

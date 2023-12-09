@@ -1,25 +1,36 @@
-using System.Collections.Immutable;
+using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
 public sealed record GenericParameterEntryNodeTests
 {
-    public GenericParameterEntryNode(TypeClauseNode typeClauseNode)
-    {
-        TypeClauseNode = typeClauseNode;
+	[Fact]
+	public void GenericParameterEntryNode()
+	{
+		//public GenericParameterEntryNode(TypeClauseNode typeClauseNode)
+	}
 
-        var children = new List<ISyntax>
-        {
-            TypeClauseNode
-        };
+	[Fact]
+	public void TypeClauseNode()
+	{
+		//public TypeClauseNode TypeClauseNode { get; }
+	}
 
-        ChildBag = children.ToImmutableArray();
-    }
+	[Fact]
+	public void ChildBag()
+	{
+		//public ImmutableArray<ISyntax> ChildBag { get; }
+	}
 
-    public TypeClauseNode TypeClauseNode { get; }
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+	}
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
-
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.GenericParameterEntryNode;
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.GenericParameterEntryNode;
+	}
 }

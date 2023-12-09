@@ -1,37 +1,58 @@
-using System.Collections.Immutable;
+using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
 public sealed record BinaryOperatorNodeTests
 {
-    public BinaryOperatorNode(
-        TypeClauseNode leftOperandTypeClauseNode,
-        ISyntaxToken operatorToken,
-        TypeClauseNode rightOperandTypeClauseNode,
-        TypeClauseNode typeClauseNode)
-    {
-        LeftOperandTypeClauseNode = leftOperandTypeClauseNode;
-        OperatorToken = operatorToken;
-        RightOperandTypeClauseNode = rightOperandTypeClauseNode;
-        TypeClauseNode = typeClauseNode;
+	[Fact]
+	public void BinaryOperatorNode()
+	{
+		//public BinaryOperatorNode(
+	 //       TypeClauseNode leftOperandTypeClauseNode,
+	 //       ISyntaxToken operatorToken,
+	 //       TypeClauseNode rightOperandTypeClauseNode,
+	 //       TypeClauseNode typeClauseNode)
+	}
 
-        ChildBag = new ISyntax[]
-        {
-            OperatorToken
-        }
-        .ToImmutableArray();
-    }
+	[Fact]
+	public void LeftOperandTypeClauseNode()
+	{
+		//public TypeClauseNode LeftOperandTypeClauseNode { get; }
+	}
 
-    public TypeClauseNode LeftOperandTypeClauseNode { get; }
-    public ISyntaxToken OperatorToken { get; }
-    public TypeClauseNode RightOperandTypeClauseNode { get; }
-	/// <summary>
-	/// TypeClauseNode refers to the return type of the binary expression.
-	/// </summary>
-    public TypeClauseNode TypeClauseNode { get; }
+	[Fact]
+	public void OperatorToken()
+	{
+		//public ISyntaxToken OperatorToken { get; }
+	}
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+	[Fact]
+	public void RightOperandTypeClauseNode()
+	{
+		//public TypeClauseNode RightOperandTypeClauseNode { get; }
+	}
 
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.BinaryOperatorNode;
+	[Fact]
+	public void TypeClauseNode()
+	{
+		//public TypeClauseNode TypeClauseNode { get; }
+	}
+
+	[Fact]
+	public void ChildBag()
+	{
+		//public ImmutableArray<ISyntax> ChildBag { get; }
+	}
+
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+	}
+
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.BinaryOperatorNode;
+	}
 }

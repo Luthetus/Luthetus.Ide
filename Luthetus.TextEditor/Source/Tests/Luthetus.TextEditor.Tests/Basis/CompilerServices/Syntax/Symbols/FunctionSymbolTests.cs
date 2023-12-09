@@ -1,16 +1,30 @@
-﻿using Luthetus.TextEditor.RazorLib.Lexes.Models;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.Symbols;
 
 public sealed record FunctionSymbolTests
 {
-    public FunctionSymbol(TextEditorTextSpan textSpan)
-    {
-        TextSpan = textSpan;
-    }
+	[Fact]
+	public void FunctionSymbol()
+	{
+		//public FunctionSymbol(TextEditorTextSpan textSpan)
+	}
 
-    public TextEditorTextSpan TextSpan { get; }
-    public string SymbolKindString => SyntaxKind.ToString();
+	[Fact]
+	public void TextSpan()
+	{
+		//public TextEditorTextSpan TextSpan { get; }
+	}
 
-    public SyntaxKind SyntaxKind => SyntaxKind.FunctionSymbol;
+	[Fact]
+	public void SymbolKindString()
+	{
+		//public string SymbolKindString => SyntaxKind.ToString();
+	}
+
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.FunctionSymbol;
+	}
 }

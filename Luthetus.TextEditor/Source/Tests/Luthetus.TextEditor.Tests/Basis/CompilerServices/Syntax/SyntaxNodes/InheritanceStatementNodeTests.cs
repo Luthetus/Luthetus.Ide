@@ -1,23 +1,36 @@
-﻿using System.Collections.Immutable;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
 public sealed record InheritanceStatementNodeTests
 {
-    public InheritanceStatementNode(TypeClauseNode parentTypeClauseNode)
-    {
-        ParentTypeClauseNode = parentTypeClauseNode;
+	[Fact]
+	public void InheritanceStatementNode()
+	{
+		//public InheritanceStatementNode(TypeClauseNode parentTypeClauseNode)
+	}
 
-        ChildBag = new ISyntax[]
-        {
-            ParentTypeClauseNode
-        }.ToImmutableArray();
-    }
+	[Fact]
+	public void ParentTypeClauseNode()
+	{
+		//public TypeClauseNode ParentTypeClauseNode { get; }
+	}
 
-    public TypeClauseNode ParentTypeClauseNode { get; }
+	[Fact]
+	public void ChildBag()
+	{
+		//public ImmutableArray<ISyntax> ChildBag { get; }
+	}
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+	}
 
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.InheritanceStatementNode;
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.InheritanceStatementNode;
+	}
 }

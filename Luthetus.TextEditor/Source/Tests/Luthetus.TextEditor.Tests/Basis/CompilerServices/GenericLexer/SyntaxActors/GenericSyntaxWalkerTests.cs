@@ -1,83 +1,97 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxEnums;
-using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxObjects;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.GenericLexer.SyntaxActors;
 
 public class GenericSyntaxWalkerTests
 {
-    public List<GenericStringSyntax> StringSyntaxBag { get; } = new();
-    public List<GenericCommentSingleLineSyntax> CommentSingleLineSyntaxBag { get; } = new();
-    public List<GenericCommentMultiLineSyntax> CommentMultiLineSyntaxBag { get; } = new();
-    public List<GenericKeywordSyntax> KeywordSyntaxBag { get; } = new();
-    public List<GenericFunctionSyntax> FunctionSyntaxBag { get; } = new();
-    public List<GenericPreprocessorDirectiveSyntax> PreprocessorDirectiveSyntaxBag { get; } = new();
-    public List<GenericDeliminationExtendedSyntax> DeliminationExtendedSyntaxBag { get; } = new();
-
-    public void Visit(IGenericSyntax node)
+    [Fact]
+    public void StringSyntaxBag()
     {
-        foreach (var child in node.ChildBag)
-        {
-            Visit(child);
-        }
-
-        switch (node.GenericSyntaxKind)
-        {
-            case GenericSyntaxKind.StringLiteral:
-                VisitStringSyntax((GenericStringSyntax)node);
-                break;
-            case GenericSyntaxKind.CommentSingleLine:
-                VisitCommentSingleLineSyntax((GenericCommentSingleLineSyntax)node);
-                break;
-            case GenericSyntaxKind.CommentMultiLine:
-                VisitCommentMultiLineSyntax((GenericCommentMultiLineSyntax)node);
-                break;
-            case GenericSyntaxKind.Keyword:
-                VisitKeywordSyntax((GenericKeywordSyntax)node);
-                break;
-            case GenericSyntaxKind.Function:
-                VisitFunctionSyntax((GenericFunctionSyntax)node);
-                break;
-            case GenericSyntaxKind.PreprocessorDirective:
-                VisitPreprocessorDirectiveSyntax((GenericPreprocessorDirectiveSyntax)node);
-                break;
-            case GenericSyntaxKind.DeliminationExtended:
-                VisitDeliminationExtendedSyntax((GenericDeliminationExtendedSyntax)node);
-                break;
-        }
+        //public List<GenericStringSyntax> StringSyntaxBag { get; } = new();
     }
 
-    private void VisitStringSyntax(GenericStringSyntax node)
+    [Fact]
+    public void CommentSingleLineSyntaxBag()
     {
-        StringSyntaxBag.Add(node);
+        //public List<GenericCommentSingleLineSyntax> CommentSingleLineSyntaxBag { get; } = new();
     }
 
-    private void VisitCommentSingleLineSyntax(GenericCommentSingleLineSyntax node)
+    [Fact]
+    public void CommentMultiLineSyntaxBag()
     {
-        CommentSingleLineSyntaxBag.Add(node);
+        //public List<GenericCommentMultiLineSyntax> CommentMultiLineSyntaxBag { get; } = new();
     }
 
-    private void VisitCommentMultiLineSyntax(GenericCommentMultiLineSyntax node)
+    [Fact]
+    public void KeywordSyntaxBag()
     {
-        CommentMultiLineSyntaxBag.Add(node);
+		//public List<GenericKeywordSyntax> KeywordSyntaxBag { get; } = new();
+	}
+
+    [Fact]
+    public void FunctionSyntaxBag()
+    {
+        //public List<GenericFunctionSyntax> FunctionSyntaxBag { get; } = new();
     }
 
-    private void VisitKeywordSyntax(GenericKeywordSyntax node)
+    [Fact]
+    public void PreprocessorDirectiveSyntaxBag()
     {
-        KeywordSyntaxBag.Add(node);
+        // public List<GenericPreprocessorDirectiveSyntax> PreprocessorDirectiveSyntaxBag { get; } = new();
     }
 
-    private void VisitFunctionSyntax(GenericFunctionSyntax node)
-    {
-        FunctionSyntaxBag.Add(node);
-    }
+	[Fact]
+	public void DeliminationExtendedSyntaxBag()
+	{
+	    // public List<GenericDeliminationExtendedSyntax> DeliminationExtendedSyntaxBag { get; } = new();
+	}
 
-    private void VisitPreprocessorDirectiveSyntax(GenericPreprocessorDirectiveSyntax node)
-    {
-        PreprocessorDirectiveSyntaxBag.Add(node);
-    }
+	[Fact]
+	public void Visit()
+	{
+	    //public void Visit(IGenericSyntax node)
+	}
 
-    private void VisitDeliminationExtendedSyntax(GenericDeliminationExtendedSyntax node)
-    {
-        DeliminationExtendedSyntaxBag.Add(node);
-    }
+	[Fact]
+	public void VisitStringSyntax()
+	{
+	    //private void VisitStringSyntax(GenericStringSyntax node)
+	}
+
+
+	[Fact]
+	public void VisitCommentSingleLineSyntax()
+	{
+        //private void VisitCommentSingleLineSyntax(GenericCommentSingleLineSyntax node)
+	}
+    
+	[Fact]
+	public void VisitCommentMultiLineSyntax()
+	{
+		// private void VisitCommentMultiLineSyntax(GenericCommentMultiLineSyntax node)
+	}
+
+	[Fact]
+	public void VisitKeywordSyntax()
+	{
+		// private void VisitKeywordSyntax(GenericKeywordSyntax node)
+	}
+
+	[Fact]
+	public void VisitFunctionSyntax()
+	{
+		//private void VisitFunctionSyntax(GenericFunctionSyntax node)
+	}
+
+	[Fact]
+	public void VisitPreprocessorDirectiveSyntax()
+	{
+		//private void VisitPreprocessorDirectiveSyntax(GenericPreprocessorDirectiveSyntax node)
+	}
+
+	[Fact]
+	public void VisitDeliminationExtendedSyntax()
+	{
+		// private void VisitDeliminationExtendedSyntax(GenericDeliminationExtendedSyntax node)
+	}
 }

@@ -1,37 +1,51 @@
-using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
 public sealed record GenericArgumentsListingNodeTests
 {
-    public GenericArgumentsListingNode(
-        OpenAngleBracketToken openAngleBracketToken,
-        ImmutableArray<GenericArgumentEntryNode> genericArgumentEntryNodes,
-        CloseAngleBracketToken closeAngleBracketToken)
-    {
-        OpenAngleBracketToken = openAngleBracketToken;
-        GenericArgumentEntryNodeBag = genericArgumentEntryNodes;
-        CloseAngleBracketToken = closeAngleBracketToken;
+	[Fact]
+	public void GenericArgumentsListingNode()
+	{
+		//public GenericArgumentsListingNode(
+	 //       OpenAngleBracketToken openAngleBracketToken,
+	 //       ImmutableArray<GenericArgumentEntryNode> genericArgumentEntryNodes,
+	 //       CloseAngleBracketToken closeAngleBracketToken)
+	}
 
-        var children = new List<ISyntax>
-        {
-            OpenAngleBracketToken,
-        };
+	[Fact]
+	public void OpenAngleBracketToken()
+	{
+		//public OpenAngleBracketToken OpenAngleBracketToken { get; }
+	}
 
-        children.AddRange(GenericArgumentEntryNodeBag);
+	[Fact]
+	public void GenericArgumentEntryNodeBag()
+	{
+		//public ImmutableArray<GenericArgumentEntryNode> GenericArgumentEntryNodeBag { get; }
+	}
 
-        children.Add(CloseAngleBracketToken);
+	[Fact]
+	public void CloseAngleBracketToken()
+	{
+		//public CloseAngleBracketToken CloseAngleBracketToken { get; }
+	}
 
-        ChildBag = children.ToImmutableArray();
-    }
+	[Fact]
+	public void ChildBag()
+	{
+		//public ImmutableArray<ISyntax> ChildBag { get; }
+	}
 
-    public OpenAngleBracketToken OpenAngleBracketToken { get; }
-    public ImmutableArray<GenericArgumentEntryNode> GenericArgumentEntryNodeBag { get; }
-    public CloseAngleBracketToken CloseAngleBracketToken { get; }
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+	}
 
-    public ImmutableArray<ISyntax> ChildBag { get; }
-
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.GenericArgumentsListingNode;
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.GenericArgumentsListingNode;
+	}
 }
