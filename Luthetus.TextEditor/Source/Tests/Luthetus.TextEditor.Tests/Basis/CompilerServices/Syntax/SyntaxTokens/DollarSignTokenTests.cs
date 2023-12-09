@@ -1,15 +1,30 @@
-﻿using Luthetus.TextEditor.RazorLib.Lexes.Models;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 
 public sealed record DollarSignTokenTests
 {
-    public DollarSignToken(TextEditorTextSpan textSpan)
-    {
-        TextSpan = textSpan;
-    }
+	[Fact]
+	public void DollarSignToken()
+	{
+		//public DollarSignToken(TextEditorTextSpan textSpan)
+	}
 
-    public TextEditorTextSpan TextSpan { get; }
-    public SyntaxKind SyntaxKind => SyntaxKind.DollarSignToken;
-    public bool IsFabricated { get; init; }
+	[Fact]
+	public void TextSpan()
+	{
+		//public TextEditorTextSpan TextSpan { get; }
+	}
+
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.DollarSignToken;
+	}
+
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+	}
 }

@@ -1,19 +1,34 @@
-﻿using Luthetus.TextEditor.RazorLib.Lexes.Models;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 
-/// <summary>
-/// Making types related to JSON key-value pairs.
-/// Group is for when the value is a grouping of multiple values
-/// </summary>
 public sealed record OpenAssociatedGroupTokenTests
 {
-    public OpenAssociatedGroupToken(TextEditorTextSpan textSpan)
-    {
-        TextSpan = textSpan;
-    }
+	[Fact]
+	public void OpenAssociatedGroupToken()
+	{
+		//public OpenAssociatedGroupToken(TextEditorTextSpan textSpan)
+		throw new NotImplementedException();
+	}
 
-    public TextEditorTextSpan TextSpan { get; init; }
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.OpenAssociatedGroupToken;
+	[Fact]
+	public void TextSpan()
+	{
+		//public TextEditorTextSpan TextSpan { get; init; }
+		throw new NotImplementedException();
+	}
+	
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.OpenAssociatedGroupToken;
+		throw new NotImplementedException();
+	}
 }

@@ -1,15 +1,34 @@
-﻿using Luthetus.TextEditor.RazorLib.Lexes.Models;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 
 public sealed record OpenAngleBracketTokenTests
 {
-    public OpenAngleBracketToken(TextEditorTextSpan textSpan)
-    {
-        TextSpan = textSpan;
-    }
+	[Fact]
+	public void OpenAngleBracketToken()
+	{
+		//public OpenAngleBracketToken(TextEditorTextSpan textSpan)
+		throw new NotImplementedException();
+	}
 
-    public TextEditorTextSpan TextSpan { get; }
-    public SyntaxKind SyntaxKind => SyntaxKind.OpenAngleBracketToken;
-    public bool IsFabricated { get; init; }
+	[Fact]
+	public void TextSpan()
+	{
+		//public TextEditorTextSpan TextSpan { get; }
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.OpenAngleBracketToken;
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+		throw new NotImplementedException();
+	}
 }

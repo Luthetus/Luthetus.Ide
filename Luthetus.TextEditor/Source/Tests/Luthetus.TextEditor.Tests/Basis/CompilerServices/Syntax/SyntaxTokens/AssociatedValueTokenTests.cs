@@ -1,15 +1,30 @@
-﻿using Luthetus.TextEditor.RazorLib.Lexes.Models;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 
 public sealed record AssociatedValueTokenTests
 {
-    public AssociatedValueToken(TextEditorTextSpan textSpan)
-    {
-        TextSpan = textSpan;
-    }
+	[Fact]
+	public void AssociatedValueToken()
+	{
+		//public AssociatedValueToken(TextEditorTextSpan textSpan)
+	}
 
-    public TextEditorTextSpan TextSpan { get; }
-    public SyntaxKind SyntaxKind => SyntaxKind.AssociatedValueToken;
-    public bool IsFabricated { get; init; }
+	[Fact]
+	public void TextSpan()
+	{
+		//public TextEditorTextSpan TextSpan { get; }
+	}
+
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.AssociatedValueToken;
+	}
+
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+	}
 }

@@ -1,15 +1,30 @@
-﻿using Luthetus.TextEditor.RazorLib.Lexes.Models;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 
 public sealed record BangTokenTests
 {
-    public BangToken(TextEditorTextSpan textSpan)
-    {
-        TextSpan = textSpan;
-    }
+	[Fact]
+	public void BangToken()
+	{
+		//public BangToken(TextEditorTextSpan textSpan)
+	}
 
-    public TextEditorTextSpan TextSpan { get; }
-    public SyntaxKind SyntaxKind => SyntaxKind.BangToken;
-    public bool IsFabricated { get; init; }
+	[Fact]
+	public void TextSpan()
+	{
+		//public TextEditorTextSpan TextSpan { get; }
+	}
+
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.BangToken;
+	}
+
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+	}
 }

@@ -1,18 +1,34 @@
-﻿using Luthetus.TextEditor.RazorLib.Lexes.Models;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 
-/// <summary>
-/// TODO: For C# need to implement: Preprocessor directives must be the first non whitespace character on the line.
-/// </summary>
 public sealed record PreprocessorDirectiveTokenTests
 {
-    public PreprocessorDirectiveToken(TextEditorTextSpan textSpan)
-    {
-        TextSpan = textSpan;
-    }
+	[Fact]
+	public void PreprocessorDirectiveToken()
+	{
+		//public PreprocessorDirectiveToken(TextEditorTextSpan textSpan)
+		throw new NotImplementedException();
+	}
 
-    public TextEditorTextSpan TextSpan { get; }
-    public SyntaxKind SyntaxKind => SyntaxKind.PreprocessorDirectiveToken;
-    public bool IsFabricated { get; init; }
+	[Fact]
+	public void TextSpan()
+	{
+		//public TextEditorTextSpan TextSpan { get; }
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.PreprocessorDirectiveToken;
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+		throw new NotImplementedException();
+	}
 }

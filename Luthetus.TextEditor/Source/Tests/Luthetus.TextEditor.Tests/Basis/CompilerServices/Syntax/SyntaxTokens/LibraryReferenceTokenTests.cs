@@ -1,17 +1,36 @@
-﻿using Luthetus.TextEditor.RazorLib.Lexes.Models;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 
 public sealed record LibraryReferenceTokenTests
 {
-    public LibraryReferenceToken(TextEditorTextSpan textSpan, bool isAbsolutePath)
-    {
-        TextSpan = textSpan;
-        IsAbsolutePath = isAbsolutePath;
-    }
+	[Fact]
+	public void LibraryReferenceToken()
+	{
+		//public LibraryReferenceToken(TextEditorTextSpan textSpan, bool isAbsolutePath)
+	}
 
-    public TextEditorTextSpan TextSpan { get; }
-    public SyntaxKind SyntaxKind => SyntaxKind.LibraryReferenceToken;
-    public bool IsAbsolutePath { get; }
-    public bool IsFabricated { get; init; }
+	[Fact]
+	public void TextSpan()
+	{
+		//public TextEditorTextSpan TextSpan { get; }
+	}
+
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind => SyntaxKind.LibraryReferenceToken;
+	}
+
+	[Fact]
+	public void IsAbsolutePath()
+	{
+		//public bool IsAbsolutePath { get; }
+	}
+
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+	}
 }

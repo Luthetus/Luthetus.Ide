@@ -1,16 +1,30 @@
-﻿using Luthetus.TextEditor.RazorLib.Lexes.Models;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 
 public sealed record KeywordContextualTokenTests
 {
-    public KeywordContextualToken(TextEditorTextSpan textSpan, SyntaxKind syntaxKind)
-    {
-        TextSpan = textSpan;
-        SyntaxKind = syntaxKind;
-    }
+	[Fact]
+	public void KeywordContextualToken()
+	{
+		//public KeywordContextualToken(TextEditorTextSpan textSpan, SyntaxKind syntaxKind)
+	}
 
-    public TextEditorTextSpan TextSpan { get; }
-    public SyntaxKind SyntaxKind { get; }
-    public bool IsFabricated { get; init; }
+	[Fact]
+	public void TextSpan()
+	{
+		//public TextEditorTextSpan TextSpan { get; }
+	}
+
+	[Fact]
+	public void SyntaxKind()
+	{
+		//public SyntaxKind SyntaxKind { get; }
+	}
+
+	[Fact]
+	public void IsFabricated()
+	{
+		//public bool IsFabricated { get; init; }
+	}
 }
