@@ -1,50 +1,63 @@
-﻿using Luthetus.TextEditor.RazorLib.Commands.Models;
-using Luthetus.TextEditor.RazorLib.Cursors.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.Keymaps.Models.Vims;
 
-public record VimMotionResultTests(
-    ImmutableTextEditorCursor LowerPositionIndexImmutableCursor,
-    int LowerPositionIndex,
-    ImmutableTextEditorCursor HigherPositionIndexImmutableCursor,
-    int HigherPositionIndex,
-    int PositionIndexDisplacement)
+public class VimMotionResultTests
 {
-    public static async Task<VimMotionResult> GetResultAsync(
-        TextEditorCommandArgs textEditorCommandArgs,
-        TextEditorCursor textEditorCursorForMotion,
-        Func<Task> motionCommandArgs)
-    {
-        await motionCommandArgs.Invoke();
+	[Fact]
+	public void VimMotionResult()
+	{
+		//	record VimMotionResult(
+		//		ImmutableTextEditorCursor LowerPositionIndexImmutableCursor,
+		//		int LowerPositionIndex,
+		//		ImmutableTextEditorCursor HigherPositionIndexImmutableCursor,
+		//		int HigherPositionIndex,
+		//		int PositionIndexDisplacement)
+		throw new NotImplementedException();
+	}
 
-        var beforeMotionImmutableCursor = textEditorCommandArgs.PrimaryCursorSnapshot.ImmutableCursor;
+	[Fact]
+	public void LowerPositionIndexImmutableCursor()
+	{
+		// ImmutableTextEditorCursor LowerPositionIndexImmutableCursor
+		throw new NotImplementedException();
+	}
 
-        var beforeMotionPositionIndex = textEditorCommandArgs.Model.GetPositionIndex(
-            beforeMotionImmutableCursor.RowIndex,
-            beforeMotionImmutableCursor.ColumnIndex);
+	[Fact]
+	public void LowerPositionIndex()
+	{
+		// int LowerPositionIndex
+		throw new NotImplementedException();
+	}
 
-        var afterMotionImmutableCursor = new ImmutableTextEditorCursor(textEditorCursorForMotion);
+	[Fact]
+	public void HigherPositionIndexImmutableCursor()
+	{
+		// ImmutableTextEditorCursor HigherPositionIndexImmutableCursor
+		throw new NotImplementedException();
+	}
 
-        var afterMotionPositionIndex = textEditorCommandArgs.Model.GetPositionIndex(
-            afterMotionImmutableCursor.RowIndex,
-            afterMotionImmutableCursor.ColumnIndex);
+	[Fact]
+	public void HigherPositionIndex()
+	{
+		// int HigherPositionIndex
+		throw new NotImplementedException();
+	}
 
-        if (beforeMotionPositionIndex > afterMotionPositionIndex)
-        {
-            return new VimMotionResult(
-                afterMotionImmutableCursor,
-                afterMotionPositionIndex,
-                beforeMotionImmutableCursor,
-                beforeMotionPositionIndex,
-                beforeMotionPositionIndex - afterMotionPositionIndex);
-        }
+	[Fact]
+	public void PositionIndexDisplacement()
+	{
+		// int PositionIndexDisplacement
+		throw new NotImplementedException();
+	}
 
-        return new VimMotionResult(
-            beforeMotionImmutableCursor,
-            beforeMotionPositionIndex,
-            afterMotionImmutableCursor,
-            afterMotionPositionIndex,
-            afterMotionPositionIndex - beforeMotionPositionIndex);
-    }
+	[Fact]
+	public void GetResultAsync()
+	{
+		//public static async Task<VimMotionResult> GetResultAsync(
+	 //       TextEditorCommandArgs textEditorCommandArgs,
+	 //       TextEditorCursor textEditorCursorForMotion,
+	 //       Func<Task> motionCommandArgs)
+		throw new NotImplementedException();
+	}
 }
