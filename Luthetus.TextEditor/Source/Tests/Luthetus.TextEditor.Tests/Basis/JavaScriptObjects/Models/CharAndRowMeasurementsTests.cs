@@ -1,10 +1,29 @@
+using Xunit;
+
 namespace Luthetus.TextEditor.Tests.Basis.JavaScriptObjects.Models;
 
-/// <summary>
-/// The unit of measurement is Pixels (px)
-/// </summary>
-/// <param name="CharacterWidth">The unit of measurement is Pixels (px)</param>
-/// <param name="RowHeight">The unit of measurement is Pixels (px)</param>
-public record CharAndRowMeasurementsTests(
-    double CharacterWidth,
-    double RowHeight);
+public class CharAndRowMeasurementsTests
+{
+	[Fact]
+	public void CharAndRowMeasurements()
+	{
+	//	record CharAndRowMeasurements(
+	//		double CharacterWidth,
+	//		double RowHeight)
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void CharacterWidth()
+	{
+		// double CharacterWidth
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void RowHeight()
+	{
+		// double RowHeight
+		throw new NotImplementedException();
+	}
+}

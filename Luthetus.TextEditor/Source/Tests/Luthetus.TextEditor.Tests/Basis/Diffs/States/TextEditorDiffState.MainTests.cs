@@ -1,21 +1,20 @@
-﻿using Fluxor;
-using Luthetus.TextEditor.RazorLib.Diffs.Models;
-using System.Collections.Immutable;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.Diffs.States;
 
-/// <summary>
-/// Keep the <see cref="TextEditorDiffState"/> as a class
-/// as to avoid record value comparisons when Fluxor checks
-/// if the <see cref="FeatureStateAttribute"/> has been replaced.
-/// </summary>
-[FeatureState]
-public partial class TextEditorDiffStateTests
+public class TextEditorDiffStateMainTests
 {
-    private TextEditorDiffState()
-    {
-        DiffModelBag = ImmutableList<TextEditorDiffModel>.Empty;
-    }
-
-    public ImmutableList<TextEditorDiffModel> DiffModelBag { get; init; }
+	[Fact]
+	public void TextEditorDiffState()
+	{
+		//private TextEditorDiffState()
+		throw new NotImplementedException();
+	}
+    
+	[Fact]
+	public void DiffModelBag()
+	{
+		//public ImmutableList<TextEditorDiffModel> DiffModelBag { get; init; }
+		throw new NotImplementedException();
+	}
 }

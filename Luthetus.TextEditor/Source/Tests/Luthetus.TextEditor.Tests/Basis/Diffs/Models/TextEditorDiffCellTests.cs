@@ -1,21 +1,45 @@
-﻿namespace Luthetus.TextEditor.Tests.Basis.Diffs.Models;
+﻿using Xunit;
+
+namespace Luthetus.TextEditor.Tests.Basis.Diffs.Models;
 
 public class TextEditorDiffCellTests
 {
-    public TextEditorDiffCell(
-        char? beforeCharValue,
-        char? afterCharValue,
-        int weight,
-        bool isSourceOfRowWeight)
-    {
-        BeforeCharValue = beforeCharValue;
-        AfterCharValue = afterCharValue;
-        Weight = weight;
-        IsSourceOfRowWeight = isSourceOfRowWeight;
-    }
+	[Fact]
+	public void TextEditorDiffCell()
+	{
+		//public TextEditorDiffCell(
+	 //       char? beforeCharValue,
+	 //       char? afterCharValue,
+	 //       int weight,
+	 //       bool isSourceOfRowWeight)
+		throw new NotImplementedException();
+	}
 
-    public char? BeforeCharValue { get; }
-    public char? AfterCharValue { get; }
-    public int Weight { get; set; }
-    public bool IsSourceOfRowWeight { get; }
+	[Fact]
+	public void BeforeCharValue()
+	{
+		//public char? BeforeCharValue { get; }
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void AfterCharValue()
+	{
+		//public char? AfterCharValue { get; }
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void Weight()
+	{
+		//public int Weight { get; set; }
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void IsSourceOfRowWeight()
+	{
+		//public bool IsSourceOfRowWeight { get; }
+		throw new NotImplementedException();
+	}
 }

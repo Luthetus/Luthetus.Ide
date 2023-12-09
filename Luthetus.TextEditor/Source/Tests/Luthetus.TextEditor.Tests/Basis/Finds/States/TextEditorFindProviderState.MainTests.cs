@@ -1,41 +1,51 @@
-﻿using Fluxor;
-using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.TextEditor.RazorLib.Finds.Models;
-using System.Collections.Immutable;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.Finds.States;
 
-/// <summary>
-/// Keep the <see cref="TextEditorFindProviderState"/> as a class
-/// as to avoid record value comparisons when Fluxor checks
-/// if the <see cref="FeatureStateAttribute"/> has been replaced.
-/// </summary>
-[FeatureState]
-public partial class TextEditorFindProviderStateTests
+public class TextEditorFindProviderStateMainTests
 {
-    private TextEditorFindProviderState()
-    {
-        FindProviderBag = ImmutableList<ITextEditorFindProvider>.Empty;
-        ActiveFindProviderKey = Key<ITextEditorFindProvider>.Empty;
-        SearchQuery = string.Empty;
-    }
+	[Fact]
+	public void TextEditorFindProviderState_A()
+	{
+		//private TextEditorFindProviderState()
+		throw new NotImplementedException();
+	}
 
-    private TextEditorFindProviderState(
-        ImmutableList<ITextEditorFindProvider> findProviderBag,
-        Key<ITextEditorFindProvider> activeTextEditorFindProviderKey,
-        string searchQuery)
-    {
-        FindProviderBag = findProviderBag;
-        ActiveFindProviderKey = activeTextEditorFindProviderKey;
-        SearchQuery = searchQuery;
-    }
+	[Fact]
+	public void TextEditorFindProviderState_B()
+	{
+		//private TextEditorFindProviderState(
+	//       ImmutableList<ITextEditorFindProvider> findProviderBag,
+	//       Key<ITextEditorFindProvider> activeTextEditorFindProviderKey,
+	//       string searchQuery)
+		throw new NotImplementedException();
+	}
 
-    public ImmutableList<ITextEditorFindProvider> FindProviderBag { get; init; }
-    public Key<ITextEditorFindProvider> ActiveFindProviderKey { get; init; }
-    public string SearchQuery { get; init; }
+	[Fact]
+	public void FindProviderBag()
+	{
+		//public ImmutableList<ITextEditorFindProvider> FindProviderBag { get; init; }
+		throw new NotImplementedException();
+	}
 
-    public ITextEditorFindProvider? ActiveFindProviderOrDefault()
-    {
-        return FindProviderBag.FirstOrDefault(x => x.FindProviderKey == ActiveFindProviderKey);
-    }
+	[Fact]
+	public void ActiveFindProviderKey()
+	{
+		//public Key<ITextEditorFindProvider> ActiveFindProviderKey { get; init; }
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void SearchQuery()
+	{
+		//public string SearchQuery { get; init; }
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void ActiveFindProviderOrDefault()
+	{
+		//public ITextEditorFindProvider? ActiveFindProviderOrDefault()
+		throw new NotImplementedException();
+	}
 }

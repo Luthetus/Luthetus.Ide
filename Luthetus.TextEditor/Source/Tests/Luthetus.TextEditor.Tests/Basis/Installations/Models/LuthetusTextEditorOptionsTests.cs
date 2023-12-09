@@ -1,31 +1,83 @@
-﻿using Luthetus.Common.RazorLib.Installations.Models;
-using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Themes.Models;
-using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
-using Luthetus.TextEditor.RazorLib.Finds.Displays;
-using Luthetus.TextEditor.RazorLib.Finds.Models;
-using Luthetus.TextEditor.RazorLib.Options.Displays;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
-using Microsoft.Extensions.DependencyInjection;
-using System.Collections.Immutable;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.Installations.Models;
 
 public record LuthetusTextEditorOptionsTests
 {
-    public Key<ThemeRecord>? InitialThemeKey { get; init; }
-    public ImmutableArray<ThemeRecord>? CustomThemeRecordBag { get; init; } = LuthetusTextEditorCustomThemeFacts.AllCustomThemesBag;
-    public ThemeRecord InitialTheme { get; init; } = ThemeFacts.VisualStudioDarkThemeClone;
-    /// <summary>Default value if left null is: <see cref="WordAutocompleteService"/></summary>
-    public Func<IServiceProvider, IAutocompleteService> AutocompleteServiceFactory { get; init; } = serviceProvider => new WordAutocompleteService(serviceProvider.GetRequiredService<IAutocompleteIndexer>());
-    /// <summary>Default value if left null is: <see cref="WordAutocompleteIndexer"/></summary>
-    public Func<IServiceProvider, IAutocompleteIndexer> AutocompleteIndexerFactory { get; init; } = serviceProvider => new WordAutocompleteIndexer(serviceProvider.GetRequiredService<ITextEditorService>());
-    public Type SettingsComponentRendererType { get; init; } = typeof(TextEditorSettings);
-    public bool SettingsDialogComponentIsResizable { get; init; } = true;
-    public Type FindComponentRendererType { get; init; } = typeof(TextEditorFindDisplay);
-    public bool FindDialogComponentIsResizable { get; init; } = true;
-    public ImmutableArray<ITextEditorFindProvider> FindProviderBag { get; init; } = FindFacts.DefaultFindProvidersBag;
-    /// <summary>Default value is <see cref="true"/>. If one wishes to configure Luthetus.Common themselves, then set this to false, and invoke <see cref="Common.RazorLib.Installations.Models.ServiceCollectionExtensions.AddLuthetusCommonServices(IServiceCollection, Func{LuthetusCommonOptions, LuthetusCommonOptions}?)"/> prior to invoking Luthetus.TextEditor's</summary>
-    public bool AddLuthetusCommon { get; init; } = true;
+	[Fact]
+	public void InitialThemeKey()
+	{
+		//public Key<ThemeRecord>? InitialThemeKey { get; init; }
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void CustomThemeRecordBag()
+	{
+		//public ImmutableArray<ThemeRecord>? CustomThemeRecordBag { get; init; } = LuthetusTextEditorCustomThemeFacts.AllCustomThemesBag;
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void InitialTheme()
+	{
+		//public ThemeRecord InitialTheme { get; init; } = ThemeFacts.VisualStudioDarkThemeClone;
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void AutocompleteServiceFactory()
+	{
+		//public Func<IServiceProvider, IAutocompleteService> AutocompleteServiceFactory { get; init; } = serviceProvider => new WordAutocompleteService(serviceProvider.GetRequiredService<IAutocompleteIndexer>());
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void AutocompleteIndexerFactory()
+	{
+		//public Func<IServiceProvider, IAutocompleteIndexer> AutocompleteIndexerFactory { get; init; } = serviceProvider => new WordAutocompleteIndexer(serviceProvider.GetRequiredService<ITextEditorService>());
+		throw new NotImplementedException();
+	}
+	
+	[Fact]
+	public void SettingsComponentRendererType()
+	{
+		//public Type SettingsComponentRendererType { get; init; } = typeof(TextEditorSettings);
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void SettingsDialogComponentIsResizable()
+	{
+		//public bool SettingsDialogComponentIsResizable { get; init; } = true;
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void FindComponentRendererType()
+	{
+		//public Type FindComponentRendererType { get; init; } = typeof(TextEditorFindDisplay);
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void FindDialogComponentIsResizable()
+	{
+		//public bool FindDialogComponentIsResizable { get; init; } = true;
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void FindProviderBag()
+	{
+		//public ImmutableArray<ITextEditorFindProvider> FindProviderBag { get; init; } = FindFacts.DefaultFindProvidersBag;
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void AddLuthetusCommon()
+	{
+		//public bool AddLuthetusCommon { get; init; } = true;
+		throw new NotImplementedException();
+	}
 }

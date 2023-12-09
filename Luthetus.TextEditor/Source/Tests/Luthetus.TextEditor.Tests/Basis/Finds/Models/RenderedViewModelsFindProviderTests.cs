@@ -1,18 +1,34 @@
-﻿using Luthetus.Common.RazorLib.Icons.Displays.Codicon;
-using Luthetus.Common.RazorLib.Keys.Models;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.Finds.Models;
 
 public class RenderedViewModelsFindProviderTests
 {
-    public Key<ITextEditorFindProvider> FindProviderKey { get; } =
-        new Key<ITextEditorFindProvider>(Guid.Parse("9bdad472-04eb-488b-88cc-e1b6e3686399"));
+	[Fact]
+	public void FindProviderKey()
+	{
+		//public Key<ITextEditorFindProvider> FindProviderKey { get; } =
+		throw new NotImplementedException();
+	}
 
-    public Type IconComponentRendererType { get; } = typeof(IconArrowDown);
-    public string DisplayName { get; } = "Rendered ViewModels";
+	[Fact]
+	public void IconComponentRendererType()
+	{
+		//public Type IconComponentRendererType { get; } = typeof(IconArrowDown);
+		throw new NotImplementedException();
+	}
 
-    public async Task SearchAsync(string searchQuery, CancellationToken cancellationToken = default)
-    {
-        await Task.Delay(3_000);
-    }
+	[Fact]
+	public void DisplayName()
+	{
+		//public string DisplayName { get; } = "Rendered ViewModels";
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void SearchAsync()
+	{
+		//public async Task SearchAsync(string searchQuery, CancellationToken cancellationToken = default)
+		throw new NotImplementedException();
+	}
 }

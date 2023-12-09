@@ -1,12 +1,34 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.TextEditor.RazorLib.Finds.Models;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.Finds.States;
 
-public partial class TextEditorFindProviderStateTests
+public class TextEditorFindProviderStateActionsTests
 {
-    public record RegisterAction(ITextEditorFindProvider FindProvider);
-    public record DisposeAction(Key<ITextEditorFindProvider> FindProviderKey);
-    public record SetActiveFindProviderAction(Key<ITextEditorFindProvider> FindProviderKey);
-    public record SetSearchQueryAction(string SearchQuery);
+	[Fact]
+	public void RegisterAction()
+	{
+		//public record RegisterAction(ITextEditorFindProvider FindProvider);
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void DisposeAction()
+	{
+		//public record DisposeAction(Key<ITextEditorFindProvider> FindProviderKey);
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void SetActiveFindProviderAction()
+	{
+		//public record SetActiveFindProviderAction(Key<ITextEditorFindProvider> FindProviderKey);
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void SetSearchQueryAction()
+	{
+		//public record SetSearchQueryAction(string SearchQuery);
+		throw new NotImplementedException();
+	}
 }

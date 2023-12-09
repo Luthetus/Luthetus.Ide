@@ -1,15 +1,23 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.TextEditor.RazorLib.Diffs.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.Diffs.States;
 
-public partial class TextEditorDiffStateTests
+public partial class TextEditorDiffStateActionsTests
 {
-    public record RegisterAction(
-        Key<TextEditorDiffModel> DiffKey,
-        Key<TextEditorViewModel> BeforeViewModelKey,
-        Key<TextEditorViewModel> AfterViewModelKey);
+	[Fact]
+	public void RegisterAction()
+	{
+		//public record RegisterAction(
+	 //       Key<TextEditorDiffModel> DiffKey,
+	 //       Key<TextEditorViewModel> BeforeViewModelKey,
+	 //       Key<TextEditorViewModel> AfterViewModelKey);
+		throw new NotImplementedException();
+	}
 
-    public record DisposeAction(Key<TextEditorDiffModel> DiffKey);
+	[Fact]
+	public void DisposeAction()
+	{
+		//public record DisposeAction(Key<TextEditorDiffModel> DiffKey);
+		throw new NotImplementedException();
+	}
 }

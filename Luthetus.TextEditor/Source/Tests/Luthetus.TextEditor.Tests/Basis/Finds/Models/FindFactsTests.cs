@@ -1,12 +1,13 @@
-﻿using System.Collections.Immutable;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.Finds.Models;
 
-public static class FindFactsTests
+public class FindFactsTests
 {
-    public static readonly ImmutableArray<ITextEditorFindProvider> DefaultFindProvidersBag = new ITextEditorFindProvider[]
-    {
-        new RegisteredViewModelsFindProvider(),
-        new RenderedViewModelsFindProvider(),
-    }.ToImmutableArray();
+	[Fact]
+	public void Aaa()
+	{
+		//public static readonly ImmutableArray<ITextEditorFindProvider> DefaultFindProvidersBag = new ITextEditorFindProvider[]
+		throw new NotImplementedException();
+	}
 }

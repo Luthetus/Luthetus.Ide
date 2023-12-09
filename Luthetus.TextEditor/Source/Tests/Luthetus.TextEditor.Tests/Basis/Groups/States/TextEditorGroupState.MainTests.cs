@@ -1,21 +1,20 @@
-﻿using Fluxor;
-using Luthetus.TextEditor.RazorLib.Groups.Models;
-using System.Collections.Immutable;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.Groups.States;
 
-/// <summary>
-/// Keep the <see cref="TextEditorGroupState"/> as a class
-/// as to avoid record value comparisons when Fluxor checks
-/// if the <see cref="FeatureStateAttribute"/> has been replaced.
-/// </summary>
-[FeatureState]
-public partial class TextEditorGroupStateTests
+public class TextEditorGroupStateMainTests
 {
-    private TextEditorGroupState()
-    {
-        GroupBag = ImmutableList<TextEditorGroup>.Empty;
-    }
+	[Fact]
+	public void TextEditorGroupState()
+	{
+		//private TextEditorGroupState()
+		throw new NotImplementedException();
+	}
 
-    public ImmutableList<TextEditorGroup> GroupBag { get; init; }
+	[Fact]
+	public void GroupBag()
+	{
+		//public ImmutableList<TextEditorGroup> GroupBag { get; init; }
+		throw new NotImplementedException();
+	}
 }

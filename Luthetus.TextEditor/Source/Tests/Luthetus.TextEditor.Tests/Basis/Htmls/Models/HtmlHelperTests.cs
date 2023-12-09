@@ -1,40 +1,83 @@
-﻿using System.Text;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.Htmls.Models;
 
-public static class HtmlHelperTests
+public class HtmlHelperTests
 {
-    private static readonly string SpaceString = "&nbsp;";
-    private static readonly string TabString = "&nbsp;&nbsp;&nbsp;&nbsp;";
-    private static readonly string NewLineString = "<br/>";
-    private static readonly string AmpersandString = "&amp;";
-    private static readonly string LeftAngleBracketString = "&lt;";
-    private static readonly string RightAngleBracketString = "&gt;";
-    private static readonly string DoubleQuoteString = "&quot;";
-    private static readonly string SingleQuoteString = "&#39;";
+	[Fact]
+	public void SpaceString()
+	{
+		//private static readonly string SpaceString = "&nbsp;";
+		throw new NotImplementedException();
+	}
 
-    public static string EscapeHtml(this char input)
-    {
-        return input.ToString().EscapeHtml();
-    }
+	[Fact]
+	public void TabString()
+	{
+		//private static readonly string TabString = "&nbsp;&nbsp;&nbsp;&nbsp;";
+		throw new NotImplementedException();
+	}
 
-    public static string EscapeHtml(this StringBuilder input)
-    {
-        return input.ToString().EscapeHtml();
-    }
+	[Fact]
+	public void NewLineString()
+	{
+		//private static readonly string NewLineString = "<br/>";
+		throw new NotImplementedException();
+	}
 
-    public static string EscapeHtml(this string input)
-    {
-        return input
-            .Replace("&", AmpersandString)
-            .Replace("<", LeftAngleBracketString)
-            .Replace(">", RightAngleBracketString)
-            .Replace("\t", TabString)
-            .Replace(" ", SpaceString)
-            .Replace("\r\n", NewLineString)
-            .Replace("\n", NewLineString)
-            .Replace("\r", NewLineString)
-            .Replace("\"", DoubleQuoteString)
-            .Replace("'", SingleQuoteString);
-    }
+	[Fact]
+	public void AmpersandString()
+	{
+		//private static readonly string AmpersandString = "&amp;";
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void LeftAngleBracketString()
+	{
+		//private static readonly string LeftAngleBracketString = "&lt;";
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void RightAngleBracketString()
+	{
+		//private static readonly string RightAngleBracketString = "&gt;";
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void DoubleQuoteString()
+	{
+		//private static readonly string DoubleQuoteString = "&quot;";
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void SingleQuoteString()
+	{
+		//private static readonly string SingleQuoteString = "&#39;";
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void EscapeHtml_A()
+	{
+		//public static string EscapeHtml(this char input)
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void EscapeHtml_B()
+	{
+		//public static string EscapeHtml(this StringBuilder input)
+		throw new NotImplementedException();
+	}
+	
+	[Fact]
+	public void EscapeHtml_C()
+	{
+		//public static string EscapeHtml(this string input)
+		throw new NotImplementedException();
+	}
 }

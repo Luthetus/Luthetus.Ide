@@ -1,23 +1,47 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.TextEditor.RazorLib.Groups.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.Groups.States;
 
-public partial class TextEditorGroupStateTests
+public class TextEditorGroupStateActionsTests
 {
-    public record RegisterAction(TextEditorGroup Group);
-    public record DisposeAction(Key<TextEditorGroup> GroupKey);
+	[Fact]
+	public void RegisterAction()
+	{
+		//public record RegisterAction(TextEditorGroup Group);
+		throw new NotImplementedException();
+	}
 
-    public record AddViewModelToGroupAction(
-        Key<TextEditorGroup> GroupKey,
-        Key<TextEditorViewModel> ViewModelKey);
-    
-    public record RemoveViewModelFromGroupAction(
-        Key<TextEditorGroup> GroupKey,
-        Key<TextEditorViewModel> ViewModelKey);
-    
-    public record SetActiveViewModelOfGroupAction(
-        Key<TextEditorGroup> GroupKey,
-        Key<TextEditorViewModel> ViewModelKey);
+	[Fact]
+	public void DisposeAction()
+	{
+		//public record DisposeAction(Key<TextEditorGroup> GroupKey);
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void AddViewModelToGroupAction()
+	{
+		//public record AddViewModelToGroupAction(
+	//       Key<TextEditorGroup> GroupKey,
+	//       Key<TextEditorViewModel> ViewModelKey);
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void RemoveViewModelFromGroupAction()
+	{
+		//public record RemoveViewModelFromGroupAction(
+	 //       Key<TextEditorGroup> GroupKey,
+	 //       Key<TextEditorViewModel> ViewModelKey);
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void SetActiveViewModelOfGroupAction()
+	{
+		//public record SetActiveViewModelOfGroupAction(
+	//       Key<TextEditorGroup> GroupKey,
+	//       Key<TextEditorViewModel> ViewModelKey);
+		throw new NotImplementedException();
+	}
 }
