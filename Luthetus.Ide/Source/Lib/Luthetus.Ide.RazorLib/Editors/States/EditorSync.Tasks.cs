@@ -11,6 +11,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using System.Collections.Immutable;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 namespace Luthetus.Ide.RazorLib.Editors.States;
 

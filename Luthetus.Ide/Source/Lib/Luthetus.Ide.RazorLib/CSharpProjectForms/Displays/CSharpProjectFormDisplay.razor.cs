@@ -20,6 +20,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
 using Luthetus.Ide.RazorLib.Websites.ProjectTemplates.Models;
 using Luthetus.Ide.RazorLib.Websites;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 namespace Luthetus.Ide.RazorLib.CSharpProjectForms.Displays;
 

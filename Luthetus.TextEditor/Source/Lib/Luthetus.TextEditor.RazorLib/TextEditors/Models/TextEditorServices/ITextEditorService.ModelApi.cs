@@ -5,8 +5,9 @@ using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
-namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
+namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 public partial interface ITextEditorService
 {

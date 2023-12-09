@@ -6,6 +6,7 @@ using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
 using Microsoft.AspNetCore.Components;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 namespace Luthetus.TextEditor.RazorLib.Options.Displays;
 

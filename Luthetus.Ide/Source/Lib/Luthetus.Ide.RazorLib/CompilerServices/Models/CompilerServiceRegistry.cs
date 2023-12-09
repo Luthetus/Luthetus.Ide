@@ -13,6 +13,7 @@ using Luthetus.CompilerServices.Lang.TypeScript;
 using Luthetus.CompilerServices.Lang.Xml;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.CompilerServices.Models;

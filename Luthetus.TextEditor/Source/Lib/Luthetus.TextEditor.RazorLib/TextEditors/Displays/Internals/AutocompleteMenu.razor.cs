@@ -10,6 +10,8 @@ using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Menus.Displays;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 

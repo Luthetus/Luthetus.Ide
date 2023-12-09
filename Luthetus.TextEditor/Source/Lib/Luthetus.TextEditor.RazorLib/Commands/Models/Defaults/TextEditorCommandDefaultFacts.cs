@@ -10,6 +10,7 @@ using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Microsoft.JSInterop;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 

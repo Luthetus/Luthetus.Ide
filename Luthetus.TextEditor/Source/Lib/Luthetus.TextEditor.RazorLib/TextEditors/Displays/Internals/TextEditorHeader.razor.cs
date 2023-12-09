@@ -12,6 +12,8 @@ using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.WatchWindows.Displays;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 

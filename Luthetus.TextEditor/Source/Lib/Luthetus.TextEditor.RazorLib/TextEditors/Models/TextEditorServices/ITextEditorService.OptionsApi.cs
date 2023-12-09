@@ -15,7 +15,7 @@ using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 
-namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
+namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 public partial interface ITextEditorService
 {

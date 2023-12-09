@@ -3,7 +3,7 @@ using Luthetus.TextEditor.RazorLib.Finds.States;
 using Luthetus.TextEditor.RazorLib.Finds.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 
-namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
+namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 public partial interface ITextEditorService
 {

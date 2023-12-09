@@ -16,6 +16,8 @@ using System.Text;
 using Luthetus.TextEditor.RazorLib.Htmls.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Displays;
 

@@ -6,6 +6,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Displays;

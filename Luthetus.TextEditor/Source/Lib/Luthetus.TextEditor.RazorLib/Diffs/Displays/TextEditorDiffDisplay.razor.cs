@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 namespace Luthetus.TextEditor.RazorLib.Diffs.Displays;
 

@@ -9,6 +9,7 @@ using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.States;
 

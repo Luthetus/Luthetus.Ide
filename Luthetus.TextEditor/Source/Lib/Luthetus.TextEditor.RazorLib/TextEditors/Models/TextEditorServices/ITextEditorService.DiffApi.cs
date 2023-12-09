@@ -3,8 +3,9 @@ using Luthetus.TextEditor.RazorLib.Diffs.States;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
-namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
+namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 public partial interface ITextEditorService
 {

@@ -6,7 +6,7 @@ using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 
-namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
+namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 public partial interface ITextEditorService
 {

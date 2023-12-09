@@ -7,6 +7,7 @@ using Luthetus.Common.RazorLib.UnitTesting;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.UnitTesting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
