@@ -1,34 +1,46 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxObjects;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.GenericLexer.SyntaxObjects;
 
+/// <summary>
+/// <see cref="GenericDeliminationExtendedSyntax"/>
+/// </summary>
 public class GenericDeliminationExtendedSyntaxTests
 {
+	/// <summary>
+	/// <see cref="GenericDeliminationExtendedSyntax(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
+	/// </summary>
 	[Fact]
-	public void GenericDeliminationExtendedSyntax()
+	public void Constructor()
 	{
-		//public GenericDeliminationExtendedSyntax(TextEditorTextSpan textSpan)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericDeliminationExtendedSyntax.TextSpan"/>
+	/// </summary>
 	[Fact]
 	public void TextSpan()
 	{
-		//public TextEditorTextSpan TextSpan { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericDeliminationExtendedSyntax.ChildBag"/>
+	/// </summary>
 	[Fact]
 	public void ChildBag()
 	{
-		//public ImmutableArray<IGenericSyntax> ChildBag => ImmutableArray<IGenericSyntax>.Empty;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericDeliminationExtendedSyntax.GenericSyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void GenericSyntaxKind()
 	{
-		//public GenericSyntaxKind GenericSyntaxKind => GenericSyntaxKind.DeliminationExtended;
 		throw new NotImplementedException();
 	}
 }

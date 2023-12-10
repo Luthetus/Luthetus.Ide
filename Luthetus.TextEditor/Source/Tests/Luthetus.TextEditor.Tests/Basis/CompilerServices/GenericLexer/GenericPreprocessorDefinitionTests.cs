@@ -1,30 +1,37 @@
-﻿using System.Collections.Immutable;
-using Xunit;
+﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.GenericLexer;
 
+/// <summary>
+/// <see cref="GenericPreprocessorDefinition"/>
+/// </summary>
 public class GenericPreprocessorDefinitionTests
 {
+	/// <summary>
+	/// <see cref="GenericPreprocessorDefinition(string, System.Collections.Immutable.ImmutableArray{DeliminationExtendedSyntaxDefinition})"/>
+	/// </summary>
 	[Fact]
-	public void GenericPreprocessorDefinition()
+	public void Constructor()
 	{
-		//public GenericPreprocessorDefinition(
-		//	string transitionSubstring,
-		//	ImmutableArray<DeliminationExtendedSyntaxDefinition> deliminationExtendedSyntaxBag)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericPreprocessorDefinition.TransitionSubstring"/>
+	/// </summary>
 	[Fact]
 	public void TransitionSubstring()
 	{
-		//public string TransitionSubstring { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericPreprocessorDefinition.DeliminationExtendedSyntaxBag"/>
+	/// </summary>
 	[Fact]
 	public void DeliminationExtendedSyntaxBag()
 	{
-		//public ImmutableArray<DeliminationExtendedSyntaxDefinition> DeliminationExtendedSyntaxBag { get; }
 		throw new NotImplementedException();
 	}
 }

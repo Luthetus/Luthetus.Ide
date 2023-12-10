@@ -1,34 +1,46 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.Symbols;
 
-public sealed record PropertySymbolTests
+/// <summary>
+/// <see cref="PropertySymbol"/>
+/// </summary>
+public class PropertySymbolTests
 {
+	/// <summary>
+	/// <see cref="PropertySymbol(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
+	/// </summary>
 	[Fact]
-	public void PropertySymbol()
+	public void Constructor()
 	{
-		//public PropertySymbol(TextEditorTextSpan textSpan)
 		throw new NotImplementedException();
 	}
-    
+
+	/// <summary>
+	/// <see cref="PropertySymbol.TextSpan"/>
+	/// </summary>
 	[Fact]
 	public void TextSpan()
 	{
-		//public TextEditorTextSpan TextSpan { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="PropertySymbol.SymbolKindString"/>
+	/// </summary>
 	[Fact]
 	public void SymbolKindString()
 	{
-		//public string SymbolKindString => SyntaxKind.ToString();
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="PropertySymbol.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.PropertySymbol;
 		throw new NotImplementedException();
 	}
 }

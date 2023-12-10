@@ -1,108 +1,138 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Commands.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Clipboards.Models;
+using System.Collections.Immutable;
+using Microsoft.JSInterop;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace Luthetus.TextEditor.Tests.Basis.Commands.Models;
 
+/// <summary>
+/// <see cref="TextEditorCommandArgs"/>
+/// </summary>
 public class TextEditorCommandArgsTests
 {
+	/// <summary>
+	/// <see cref="TextEditorCommandArgs(TextEditorModel, ImmutableArray{TextEditorCursorSnapshot}, bool, IClipboardService, ITextEditorService, TextEditorViewModel, Func{MouseEventArgs, Task}?, IJSRuntime?, Action{ResourceUri}?, Action{ResourceUri}?, Action{Key{TextEditorViewModel}}?)"/>
+	/// </summary>
 	[Fact]
 	public void Constructor()
 	{
-		//public TextEditorCommandArgs(
-		//       TextEditorModel textEditor,
-		//       ImmutableArray<TextEditorCursorSnapshot> cursorSnapshotsBag,
-		//       bool hasTextSelection,
-		//       IClipboardService clipboardService,
-		//       ITextEditorService textEditorService,
-		//       TextEditorViewModel textEditorViewModel,
-		//       Func<MouseEventArgs, Task>? handleMouseStoppedMovingEventAsyncFunc,
-		//       IJSRuntime? jsRuntime,
-		//       Action<ResourceUri>? registerModelAction,
-		//       Action<ResourceUri>? registerViewModelAction,
-		//       Action<Key<TextEditorViewModel>>? showViewModelAction)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorCommandArgs.Model"/>
+	/// </summary>
 	[Fact]
 	public void Model()
 	{
-		//public TextEditorModel Model { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorCommandArgs.PrimaryCursorSnapshot"/>
+	/// </summary>
 	[Fact]
 	public void PrimaryCursorSnapshot()
 	{
-		//public TextEditorCursorSnapshot PrimaryCursorSnapshot
 		throw new NotImplementedException();
 	}
 
-    [Fact]
+	/// <summary>
+	/// <see cref="TextEditorCommandArgs.CursorSnapshotsBag"/>
+	/// </summary>
+	[Fact]
     public void CursorSnapshotsBag()
     {
-		//public ImmutableArray<TextEditorCursorSnapshot> CursorSnapshotsBag
 		throw new NotImplementedException();
 	}
 
-    [Fact]
+	/// <summary>
+	/// <see cref="TextEditorCommandArgs.ClipboardService"/>
+	/// </summary>
+	[Fact]
     public void ClipboardService()
     {
-		//public IClipboardService ClipboardService
 		throw new NotImplementedException();
 	}
 
-    [Fact]
+	/// <summary>
+	/// <see cref="TextEditorCommandArgs.TextEditorService"/>
+	/// </summary>
+	[Fact]
     public void TextEditorService()
     {
-		//public ITextEditorService TextEditorService { get; }
 		throw new NotImplementedException();
 	}
 
-    [Fact]
+	/// <summary>
+	/// <see cref="TextEditorCommandArgs.ViewModel"/>
+	/// </summary>
+	[Fact]
     public void ViewModel()
     {
-		//public TextEditorViewModel ViewModel { get; }
 		throw new NotImplementedException();
 	}
 
-    [Fact]
+	/// <summary>
+	/// <see cref="TextEditorCommandArgs.HandleMouseStoppedMovingEventAsyncFunc"/>
+	/// </summary>
+	[Fact]
     public void HandleMouseStoppedMovingEventAsyncFunc()
     {
-		//public Func<MouseEventArgs, Task>? HandleMouseStoppedMovingEventAsyncFunc { get; }
 		throw new NotImplementedException();
 	}
 
-    [Fact]
+	/// <summary>
+	/// <see cref="TextEditorCommandArgs.JsRuntime"/>
+	/// </summary>
+	[Fact]
     public void JsRuntime()
     {
 		//public IJSRuntime? JsRuntime { get; }
 		throw new NotImplementedException();
 	}
 
-    [Fact]
+	/// <summary>
+	/// <see cref="TextEditorCommandArgs.HasTextSelection"/>
+	/// </summary>
+	[Fact]
     public void HasTextSelection()
     {
-		//public bool HasTextSelection { get; set; }
 		throw new NotImplementedException();
 	}
 
-    [Fact]
+	/// <summary>
+	/// <see cref="TextEditorCommandArgs.RegisterModelAction"/>
+	/// </summary>
+	[Fact]
     public void RegisterModelAction()
     {
-		//public Action<ResourceUri>? RegisterModelAction { get; set; }
 		throw new NotImplementedException();
 	}
 
-    [Fact]
+	/// <summary>
+	/// <see cref="TextEditorCommandArgs.RegisterViewModelAction"/>
+	/// </summary>
+	[Fact]
     public void RegisterViewModelAction()
     {
-		//public Action<ResourceUri>? RegisterViewModelAction { get; set; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorCommandArgs.ShowViewModelAction"/>
+	/// </summary>
 	[Fact]
 	public void ShowViewModelAction()
 	{
-		//public Action<Key<TextEditorViewModel>>? ShowViewModelAction { get; set; }
 		throw new NotImplementedException();
 	}
 }

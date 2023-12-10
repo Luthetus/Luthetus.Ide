@@ -1,101 +1,118 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.GenericLexer;
 
+/// <summary>
+/// <see cref="GenericLanguageDefinition"/>
+/// </summary>
 public class GenericLanguageDefinitionTests
 {
+	/// <summary>
+	/// <see cref="GenericLanguageDefinition(string, string, string, string, string, string, System.Collections.Immutable.ImmutableArray{string}, string, string, System.Collections.Immutable.ImmutableArray{string}, GenericPreprocessorDefinition)"/>
+	/// </summary>
 	[Fact]
-	public void GenericLanguageDefinition()
+	public void Constructor()
 	{
-		//public GenericLanguageDefinition(
-		//	string stringStart,
-		//	string stringEnd,
-		//	string functionInvocationStart,
-		//	string functionInvocationEnd,
-		//	string memberAccessToken,
-		//	string commentSingleLineStart,
-		//	ImmutableArray<string> commentSingleLineEndingsBag,
-		//	string commentMultiLineStart,
-		//	string commentMultiLineEnd,
-		//	ImmutableArray<string> keywordsBag,
-		//	GenericPreprocessorDefinition preprocessorDefinition)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericLanguageDefinition.StringStart"/>
+	/// </summary>
 	[Fact]
 	public void StringStart()
 	{
-		//public string StringStart { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericLanguageDefinition.StringEnd"/>
+	/// </summary>
 	[Fact]
 	public void StringEnd()
 	{
-		//public string StringEnd { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericLanguageDefinition.FunctionInvocationStart"/>
+	/// </summary>
 	[Fact]
 	public void FunctionInvocationStart()
 	{
-		//public string FunctionInvocationStart { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericLanguageDefinition.FunctionInvocationEnd"/>
+	/// </summary>
 	[Fact]
 	public void FunctionInvocationEnd()
 	{
-		//public string FunctionInvocationEnd { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericLanguageDefinition.MemberAccessToken"/>
+	/// </summary>
 	[Fact]
 	public void MemberAccessToken()
 	{
-		//public string MemberAccessToken { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericLanguageDefinition.CommentSingleLineStart"/>
+	/// </summary>
 	[Fact]
 	public void CommentSingleLineStart()
 	{
-		//public string CommentSingleLineStart { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericLanguageDefinition.CommentSingleLineEndingsBag"/>
+	/// </summary>
 	[Fact]
 	public void CommentSingleLineEndingsBag()
 	{
-		//public ImmutableArray<string> CommentSingleLineEndingsBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericLanguageDefinition.CommentMultiLineStart"/>
+	/// </summary>
 	[Fact]
 	public void CommentMultiLineStart()
 	{
-		//public string CommentMultiLineStart { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericLanguageDefinition.CommentMultiLineEnd"/>
+	/// </summary>
 	[Fact]
 	public void CommentMultiLineEnd()
 	{
-		//public string CommentMultiLineEnd { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericLanguageDefinition.KeywordsBag"/>
+	/// </summary>
 	[Fact]
 	public void KeywordsBag()
 	{
-		//public ImmutableArray<string> KeywordsBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericLanguageDefinition.PreprocessorDefinition"/>
+	/// </summary>
 	[Fact]
 	public void PreprocessorDefinition()
 	{
-		//public GenericPreprocessorDefinition PreprocessorDefinition { get; }
 		throw new NotImplementedException();
 	}
 }

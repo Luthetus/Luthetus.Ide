@@ -1,93 +1,66 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxActors;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.GenericLexer.SyntaxActors;
 
+/// <summary>
+/// <see cref="GenericSyntaxTree"/>
+/// </summary>
 public class GenericSyntaxTreeTests
 {
+	/// <summary>
+	/// <see cref="GenericSyntaxTree(GenericLanguageDefinition)"/>
+	/// </summary>
 	[Fact]
 	public void Constructor()
 	{
-		//public GenericSyntaxTree(GenericLanguageDefinition genericLanguageDefinition)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericSyntaxTree.GenericLanguageDefinition"/>
+	/// </summary>
 	[Fact]
 	public void GenericLanguageDefinition()
 	{
-		//public GenericLanguageDefinition GenericLanguageDefinition { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericSyntaxTree.ParseText(ResourceUri, string)"/>
+	/// </summary>
 	[Fact]
 	public void ParseText()
 	{
-		//public virtual GenericSyntaxUnit ParseText(ResourceUri resourceUri, string content)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericSyntaxTree.ParseCommentSingleLine(RazorLib.CompilerServices.StringWalker, RazorLib.CompilerServices.LuthetusDiagnosticBag)"/>
+	/// </summary>
 	[Fact]
 	public void ParseCommentSingleLine()
 	{
-		//public virtual GenericCommentSingleLineSyntax ParseCommentSingleLine(
-		//	StringWalker stringWalker,
-		//	LuthetusDiagnosticBag diagnosticBag)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericSyntaxTree.ParseCommentMultiLine(RazorLib.CompilerServices.StringWalker, RazorLib.CompilerServices.LuthetusDiagnosticBag)"/>
+	/// </summary>
 	[Fact]
 	public void ParseCommentMultiLine()
 	{
-		//public virtual GenericCommentMultiLineSyntax ParseCommentMultiLine(
-		//       StringWalker stringWalker,
-		//       LuthetusDiagnosticBag diagnosticBag)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericSyntaxTree.ParseString(RazorLib.CompilerServices.StringWalker, RazorLib.CompilerServices.LuthetusDiagnosticBag)"/>
+	/// </summary>
 	[Fact]
 	public void ParseString()
 	{
-		//public virtual GenericStringSyntax ParseString(
-		//	StringWalker stringWalker,
-		//	LuthetusDiagnosticBag diagnosticBag)
-		throw new NotImplementedException();
-	}
-
-	[Fact]
-	public void TryParseKeyword()
-	{
-		//private bool TryParseKeyword(
-		//	StringWalker stringWalker,
-		//	LuthetusDiagnosticBag diagnosticBag,
-		//	out GenericKeywordSyntax? genericKeywordSyntax)
-		throw new NotImplementedException();
-	}
-
-	[Fact]
-	public void TryParseFunctionIdentifier()
-	{
-		//private bool TryParseFunctionIdentifier(
-		//	StringWalker stringWalker,
-		//	LuthetusDiagnosticBag diagnosticBag,
-		//	out GenericFunctionSyntax? genericFunctionSyntax)
-		throw new NotImplementedException();
-	}
-
-	[Fact]
-	public void ParsePreprocessorDirective()
-	{
-		//private GenericPreprocessorDirectiveSyntax ParsePreprocessorDirective(
-		//	StringWalker stringWalker,
-		//	LuthetusDiagnosticBag diagnosticBag)
-		throw new NotImplementedException();
-	}
-
-	[Fact]
-	public void TryParsePreprocessorDirectiveDeliminationExtendedSyntaxes()
-	{
-		//private bool TryParsePreprocessorDirectiveDeliminationExtendedSyntaxes(
-		//	StringWalker stringWalker,
-		//	LuthetusDiagnosticBag diagnosticBag,
-		//	out IGenericSyntax? genericSyntax)
 		throw new NotImplementedException();
 	}
 }

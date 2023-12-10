@@ -1,36 +1,46 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxObjects;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.GenericLexer.SyntaxObjects;
 
+/// <summary>
+/// <see cref="GenericDocumentSyntax"/>
+/// </summary>
 public class GenericDocumentSyntaxTests
 {
+	/// <summary>
+	/// <see cref="GenericDocumentSyntax(RazorLib.Lexes.Models.TextEditorTextSpan, System.Collections.Immutable.ImmutableArray{RazorLib.CompilerServices.GenericLexer.IGenericSyntax})"/>
+	/// </summary>
 	[Fact]
-	public void GenericDocumentSyntax()
+	public void Constructor()
 	{
-		//public GenericDocumentSyntax(
-		//	TextEditorTextSpan textSpan,
-		//	ImmutableArray<IGenericSyntax> childBag)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericDocumentSyntax.TextSpan"/>
+	/// </summary>
 	[Fact]
 	public void TextSpan()
 	{
-		//public TextEditorTextSpan TextSpan { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericDocumentSyntax.ChildBag"/>
+	/// </summary>
 	[Fact]
 	public void ChildBag()
 	{
-		//public ImmutableArray<IGenericSyntax> ChildBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericDocumentSyntax.GenericSyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void GenericSyntaxKind()
 	{
-		//public GenericSyntaxKind GenericSyntaxKind => GenericSyntaxKind.Document;
 		throw new NotImplementedException();
 	}
 }

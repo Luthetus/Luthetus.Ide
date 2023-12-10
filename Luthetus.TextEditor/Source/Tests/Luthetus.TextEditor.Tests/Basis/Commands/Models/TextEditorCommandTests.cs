@@ -1,48 +1,57 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Commands.Models;
+using Luthetus.TextEditor.RazorLib.Edits.Models;
+using Luthetus.Common.RazorLib.Commands.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Commands.Models;
 
+/// <summary>
+/// <see cref="TextEditorCommand"/>
+/// </summary>
 public class TextEditorCommandTests
 {
+	/// <summary>
+	/// <see cref="TextEditorCommand(string, string, bool, bool, TextEditKind, string?, Func{ICommandArgs, Task})"/>
+	/// </summary>
 	[Fact]
 	public void Constructor()
 	{
-		//public TextEditorCommand(
-		//		string displayName,
-		//		string internalIdentifier,
-		//		bool shouldBubble,
-		//		bool shouldScrollCursorIntoView,
-		//		TextEditKind textEditKind,
-		//		string? otherTextEditKindIdentifier,
-		//		Func<ICommandArgs, Task> doAsyncFunc)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorCommand.ShouldScrollCursorIntoView"/>
+	/// </summary>
 	[Fact]
 	public void ShouldScrollCursorIntoView()
 	{
-		//public bool ShouldScrollCursorIntoView { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorCommand.TextEditKind"/>
+	/// </summary>
 	[Fact]
 	public void TextEditKind()
 	{
-		//public TextEditKind TextEditKind { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorCommand.OtherTextEditKindIdentifier"/>
+	/// </summary>
 	[Fact]
 	public void OtherTextEditKindIdentifier()
 	{
-		//public string? OtherTextEditKindIdentifier { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorCommand.ThrowOtherTextEditKindIdentifierWasExpectedException(TextEditKind)"/>
+	/// </summary>
 	[Fact]
 	public void ThrowOtherTextEditKindIdentifierWasExpectedException()
 	{
-		//public static ApplicationException ThrowOtherTextEditKindIdentifierWasExpectedException(TextEditKind textEditKind)
 		throw new NotImplementedException();
 	}
 }

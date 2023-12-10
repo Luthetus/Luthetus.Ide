@@ -1,34 +1,46 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxObjects;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.GenericLexer.SyntaxObjects;
 
+/// <summary>
+/// <see cref="GenericKeywordSyntax"/>
+/// </summary>
 public class GenericKeywordSyntaxTests
 {
+	/// <summary>
+	/// <see cref="GenericKeywordSyntax(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
+	/// </summary>
 	[Fact]
-	public void GenericKeywordSyntax()
+	public void Constructor()
 	{
-		//public GenericKeywordSyntax(TextEditorTextSpan textSpan)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericKeywordSyntax.TextSpan"/>
+	/// </summary>
 	[Fact]
 	public void TextSpan()
 	{
-		//public TextEditorTextSpan TextSpan { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericKeywordSyntax.ChildBag"/>
+	/// </summary>
 	[Fact]
 	public void ChildBag()
 	{
-		//public ImmutableArray<IGenericSyntax> ChildBag => ImmutableArray<IGenericSyntax>.Empty;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericKeywordSyntax.GenericSyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void GenericSyntaxKind()
 	{
-		//public GenericSyntaxKind GenericSyntaxKind => GenericSyntaxKind.Keyword;
 		throw new NotImplementedException();
 	}
 }

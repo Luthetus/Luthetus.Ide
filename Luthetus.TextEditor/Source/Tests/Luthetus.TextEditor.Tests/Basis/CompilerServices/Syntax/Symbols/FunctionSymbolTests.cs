@@ -1,34 +1,46 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.Symbols;
 
-public sealed record FunctionSymbolTests
+/// <summary>
+/// <see cref="FunctionSymbol"/>
+/// </summary>
+public class FunctionSymbolTests
 {
+	/// <summary>
+	/// <see cref="FunctionSymbol(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
+	/// </summary>
 	[Fact]
-	public void FunctionSymbol()
+	public void Constructor()
 	{
-		//public FunctionSymbol(TextEditorTextSpan textSpan)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="FunctionSymbol.TextSpan"/>
+	/// </summary>
 	[Fact]
 	public void TextSpan()
 	{
-		//public TextEditorTextSpan TextSpan { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="FunctionSymbol.SymbolKindString"/>
+	/// </summary>
 	[Fact]
 	public void SymbolKindString()
 	{
-		//public string SymbolKindString => SyntaxKind.ToString();
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="FunctionSymbol.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.FunctionSymbol;
 		throw new NotImplementedException();
 	}
 }

@@ -1,62 +1,84 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Commands.Models.Vims;
+using Luthetus.TextEditor.RazorLib.Commands.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Commands.Models.Vims;
 
+/// <summary>
+/// <see cref="TextEditorCommandVimFacts.Verbs"/>
+/// </summary>
 public class TextEditorCommandVimFactsVerbsTests
 {
+
+	/// <summary>
+	/// <see cref="TextEditorCommandVimFacts.Verbs.DeleteLine"/>
+	/// </summary>
 	[Fact]
 	public void DeleteLine()
 	{
-		//public static readonly TextEditorCommand DeleteLine
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorCommandVimFacts.Verbs.ChangeLine"/>
+	/// </summary>
 	[Fact]
 	public void ChangeLine()
 	{
-		//public static readonly TextEditorCommand ChangeLine
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorCommandVimFacts.Verbs.GetDeleteMotion(TextEditorCommand)"/>
+	/// </summary>
 	[Fact]
 	public void GetDeleteMotion()
 	{
-		//public static TextEditorCommand GetDeleteMotion(TextEditorCommand innerTextEditorCommand)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorCommandVimFacts.Verbs.GetChangeMotion(TextEditorCommand)"/>
+	/// </summary>
 	[Fact]
 	public void GetChangeMotion()
 	{
-		//public static TextEditorCommand GetChangeMotion(TextEditorCommand innerTextEditorCommand)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorCommandVimFacts.Verbs.ChangeSelection"/>
+	/// </summary>
 	[Fact]
 	public void ChangeSelection()
 	{
-		//public static readonly TextEditorCommand ChangeSelection
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorCommandVimFacts.Verbs.Yank"/>
+	/// </summary>
 	[Fact]
 	public void Yank()
 	{
-		//public static readonly TextEditorCommand Yank
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorCommandVimFacts.Verbs.NewLineBelow"/>
+	/// </summary>
 	[Fact]
 	public void NewLineBelow()
 	{
-		//public static readonly TextEditorCommand NewLineBelow
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorCommandVimFacts.Verbs.NewLineAbove"/>
+	/// </summary>
 	[Fact]
 	public void NewLineAbove()
 	{
-		//public static readonly TextEditorCommand NewLineAbove
 		throw new NotImplementedException();
 	}
 }

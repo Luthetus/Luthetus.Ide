@@ -1,54 +1,66 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Commands.Models.Vims;
+using Luthetus.TextEditor.RazorLib.Commands.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Commands.Models.Vims;
 
+/// <summary>
+/// <see cref="TextEditorCommandVimFacts.Motions"/>
+/// </summary>
 public class TextEditorCommandVimFactsMotionsTests
 {
+
+	/// <summary>
+	/// <see cref="TextEditorCommandVimFacts.Motions.Word"/>
+	/// </summary>
 	[Fact]
 	public void Word()
 	{
-		//public static readonly TextEditorCommand Word;
 		throw new NotImplementedException();
 	}
 
-    [Fact]
+	/// <summary>
+	/// <see cref="TextEditorCommandVimFacts.Motions.End"/>
+	/// </summary>
+	[Fact]
     public void End()
     {
-		//public static readonly TextEditorCommand End = new;
 		throw new NotImplementedException();
 	}
 
-    [Fact]
+	/// <summary>
+	/// <see cref="TextEditorCommandVimFacts.Motions.PerformEnd(TextEditorCommandArgs, bool)"/>
+	/// </summary>
+	[Fact]
     public void PerformEnd()
     {
-		//public static async Task PerformEnd(
-		//    TextEditorCommandArgs commandArgs,
-		//    bool isRecursiveCall = false)
 		throw new NotImplementedException();
 	}
 
-    [Fact]
+	/// <summary>
+	/// <see cref="TextEditorCommandVimFacts.Motions.Back"/>
+	/// </summary>
+	[Fact]
     public void Back()
     {
-		//public static readonly TextEditorCommand Back = new;
 		throw new NotImplementedException();
 	}
 
-    [Fact]
+	/// <summary>
+	/// <see cref="TextEditorCommandVimFacts.Motions.GetVisual(TextEditorCommand, string)"/>
+	/// </summary>
+	[Fact]
     public void GetVisual()
     {
-		//public static TextEditorCommand GetVisual(
-		//    TextEditorCommand textEditorCommandMotion,
-		//    string displayName)
 		throw new NotImplementedException();
 	}
 
-    [Fact]
+	/// <summary>
+	/// <see cref="TextEditorCommandVimFacts.Motions.GetVisualLine(TextEditorCommand, string)"/>
+	/// </summary>
+	[Fact]
     public void GetVisualLine()
     {
-		//public static TextEditorCommand GetVisualLine(
-		//    TextEditorCommand textEditorCommandMotion,
-		//    string displayName)
 		throw new NotImplementedException();
 	}
 }

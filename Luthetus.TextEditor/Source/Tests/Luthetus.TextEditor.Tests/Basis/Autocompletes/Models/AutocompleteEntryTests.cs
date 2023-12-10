@@ -1,31 +1,37 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Autocompletes.Models;
 
+/// <summary>
+/// <see cref="AutocompleteEntry"/>
+/// </summary>
 public class AutocompleteEntryTests
 {
-    [Fact]
+	/// <summary>
+	/// <see cref="AutocompleteEntry(string, RazorLib.Autocompletes.Models.AutocompleteEntryKind)"/>
+	/// </summary>
+	[Fact]
     public void Constructor()
     {
-		//public AutocompleteEntryTests(string displayName, AutocompleteEntryKind autocompleteEntryKind)
-		//{
-		//	DisplayName = displayName;
-		//	AutocompleteEntryKind = autocompleteEntryKind;
-		//}
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="AutocompleteEntry.DisplayName"/>
+	/// </summary>
 	[Fact]
 	public void DisplayName()
 	{
-		//public string DisplayName { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="AutocompleteEntry.AutocompleteEntryKind"/>
+	/// </summary>
 	[Fact]
 	public void AutocompleteEntryKind()
 	{
-		//public AutocompleteEntryKind AutocompleteEntryKind { get; }
 		throw new NotImplementedException();
 	}
 }

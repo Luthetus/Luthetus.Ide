@@ -1,189 +1,236 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 
 namespace Luthetus.TextEditor.Tests.Basis.Commands.Models.Defaults;
 
+/// <summary>
+/// <see cref="TextEditorCommandDefaultFacts"/>
+/// </summary>
 public class TextEditorCommandDefaultFactsTests
 {
-    [Fact]
+
+	/// <summary>
+	/// <see cref="TextEditorCommandDefaultFacts.DoNothingDiscard"/>
+	/// </summary>
+	[Fact]
     public void DoNothingDiscard()
     {
-		//public static readonly TextEditorCommand DoNothingDiscard
-		throw new NotImplementedException();
-	}
-    
-    [Fact]
-    public void Copy()
-    {
-		//public static readonly TextEditorCommand Copy
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorCommandDefaultFacts.Copy"/>
+	/// </summary>
+	[Fact]
+    public void Copy()
+    {
+		throw new NotImplementedException();
+	}
+
+	/// <summary>
+	/// <see cref="TextEditorCommandDefaultFacts.Cut"/>
+	/// </summary>
 	[Fact]
 	public void Cut()
 	{
-		//public static readonly TextEditorCommand Cut
 		throw new NotImplementedException();
 	}
 
-    
-    [Fact]
+	/// <summary>
+	/// <see cref="TextEditorCommandDefaultFacts.Paste"/>
+	/// </summary>
+	[Fact]
     public void Paste()
     {
-		//public static readonly TextEditorCommand Paste
 		throw new NotImplementedException();
 	}
 
-    
-    [Fact]
+	/// <summary>
+	/// <see cref="TextEditorCommandDefaultFacts.Save"/>
+	/// </summary>
+	[Fact]
     public void Save()
     {
-		//public static readonly TextEditorCommand Save
 		throw new NotImplementedException();
 	}
-    
-    [Fact]
+
+	/// <summary>
+	/// <see cref="TextEditorCommandDefaultFacts.SelectAll"/>
+	/// </summary>
+	[Fact]
     public void SelectAll()
     {
-		//public static readonly TextEditorCommand SelectAll
 		throw new NotImplementedException();
 	}
-    
-    [Fact]
+
+	/// <summary>
+	/// <see cref="TextEditorCommandDefaultFacts.Undo"/>
+	/// </summary>
+	[Fact]
     public void Undo()
     {
-		//public static readonly TextEditorCommand Undo
 		throw new NotImplementedException();
 	}
-    
-    [Fact]
+
+	/// <summary>
+	/// <see cref="TextEditorCommandDefaultFacts.Redo"/>
+	/// </summary>
+	[Fact]
     public void Redo()
     {
-		//public static readonly TextEditorCommand Redo
 		throw new NotImplementedException();
 	}
 
-    
-    [Fact]
+	/// <summary>
+	/// <see cref="TextEditorCommandDefaultFacts.Remeasure"/>
+	/// </summary>
+	[Fact]
     public void Remeasure()
     {
-		//public static readonly TextEditorCommand Remeasure
 		throw new NotImplementedException();
 	}
 
-    [Fact]
+	/// <summary>
+	/// <see cref="TextEditorCommandDefaultFacts.ScrollLineDown"/>
+	/// </summary>
+	[Fact]
     public void ScrollLineDown()
     {
-		//public static readonly TextEditorCommand ScrollLineDown
 		throw new NotImplementedException();
 	}
 
-    
-    [Fact]
+	/// <summary>
+	/// <see cref="TextEditorCommandDefaultFacts.ScrollLineUp"/>
+	/// </summary>
+	[Fact]
     public void ScrollLineUp()
     {
-		//public static readonly TextEditorCommand ScrollLineUp
 		throw new NotImplementedException();
 	}
 
-    
-    [Fact]
+	/// <summary>
+	/// <see cref="TextEditorCommandDefaultFacts.ScrollPageDown"/>
+	/// </summary>
+	[Fact]
     public void ScrollPageDown()
     {
-		//public static readonly TextEditorCommand ScrollPageDown
 		throw new NotImplementedException();
 	}
 
-    
-    [Fact]
+	/// <summary>
+	/// <see cref="TextEditorCommandDefaultFacts.ScrollPageUp"/>
+	/// </summary>
+	[Fact]
     public void ScrollPageUp()
     {
-		//public static readonly TextEditorCommand ScrollPageUp
 		throw new NotImplementedException();
 	}
-    
-    [Fact]
+
+	/// <summary>
+	/// <see cref="TextEditorCommandDefaultFacts.CursorMovePageBottom"/>
+	/// </summary>
+	[Fact]
     public void CursorMovePageBottom()
     {
-		//public static readonly TextEditorCommand CursorMovePageBottom
 		throw new NotImplementedException();
 	}
-    
-    [Fact]
+
+	/// <summary>
+	/// <see cref="TextEditorCommandDefaultFacts.CursorMovePageTop"/>
+	/// </summary>
+	[Fact]
     public void CursorMovePageTop()
     {
-		//public static readonly TextEditorCommand CursorMovePageTop
 		throw new NotImplementedException();
 	}
-    
-    [Fact]
+
+	/// <summary>
+	/// <see cref="TextEditorCommandDefaultFacts.Duplicate"/>
+	/// </summary>
+	[Fact]
     public void Duplicate()
     {
-		//public static readonly TextEditorCommand Duplicate
 		throw new NotImplementedException();
 	}
-    
-    [Fact]
+
+	/// <summary>
+	/// <see cref="TextEditorCommandDefaultFacts.IndentMore"/>
+	/// </summary>
+	[Fact]
     public void IndentMore()
     {
-		//public static readonly TextEditorCommand IndentMore
 		throw new NotImplementedException();
 	}
-    
-    [Fact]
+
+	/// <summary>
+	/// <see cref="TextEditorCommandDefaultFacts.IndentLess"/>
+	/// </summary>
+	[Fact]
     public void IndentLess()
     {
-		//public static readonly TextEditorCommand IndentLess
 		throw new NotImplementedException();
 	}
-    
-    [Fact]
+
+	/// <summary>
+	/// <see cref="TextEditorCommandDefaultFacts.ClearTextSelection"/>
+	/// </summary>
+	[Fact]
     public void ClearTextSelection()
     {
-		//public static readonly TextEditorCommand ClearTextSelection
 		throw new NotImplementedException();
 	}
 
-    
-    [Fact]
+	/// <summary>
+	/// <see cref="TextEditorCommandDefaultFacts.NewLineBelow"/>
+	/// </summary>
+	[Fact]
     public void NewLineBelow()
     {
-		//public static readonly TextEditorCommand NewLineBelow
 		throw new NotImplementedException();
 	}
 
-    
-    [Fact]
+	/// <summary>
+	/// <see cref="TextEditorCommandDefaultFacts.NewLineAbove"/>
+	/// </summary>
+	[Fact]
     public void NewLineAbove()
     {
-		//public static readonly TextEditorCommand NewLineAbove
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorCommandDefaultFacts.GoToMatchingCharacterFactory(bool)"/>
+	/// </summary>
 	[Fact]
 	public void GoToMatchingCharacterFactory()
 	{
-		//public static TextEditorCommand GoToMatchingCharacterFactory(bool shouldSelectText)
 		throw new NotImplementedException();
 	}
 
-    [Fact]
+	/// <summary>
+	/// <see cref="TextEditorCommandDefaultFacts.GoToDefinition"/>
+	/// </summary>
+	[Fact]
     public void GoToDefinition()
     {
-		//public static readonly TextEditorCommand GoToDefinition
-		throw new NotImplementedException();
-	}
-    
-    [Fact]
-    public void ShowFindDialog()
-    {
-		//public static readonly TextEditorCommand ShowFindDialog
 		throw new NotImplementedException();
 	}
 
-    [Fact]
+	/// <summary>
+	/// <see cref="TextEditorCommandDefaultFacts.ShowFindDialog"/>
+	/// </summary>
+	[Fact]
+    public void ShowFindDialog()
+    {
+		throw new NotImplementedException();
+	}
+
+	/// <summary>
+	/// <see cref="TextEditorCommandDefaultFacts.ShowTooltipByCursorPosition"/>
+	/// </summary>
+	[Fact]
     public void ShowTooltipByCursorPosition()
     {
-		//public static readonly TextEditorCommand ShowTooltipByCursorPosition
 		throw new NotImplementedException();
 	}
 }

@@ -1,34 +1,46 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.Symbols;
 
-public sealed record VariableSymbolTests
+/// <summary>
+/// <see cref="VariableSymbol"/>
+/// </summary>
+public class VariableSymbolTests
 {
+	/// <summary>
+	/// <see cref="VariableSymbol(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
+	/// </summary>
 	[Fact]
-	public void VariableSymbol()
+	public void Constructor()
 	{
-		//public VariableSymbol(TextEditorTextSpan textSpan)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="VariableSymbol.TextSpan"/>
+	/// </summary>
 	[Fact]
 	public void TextSpan()
 	{
-		//public TextEditorTextSpan TextSpan { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="VariableSymbol.SymbolKindString"/>
+	/// </summary>
 	[Fact]
 	public void SymbolKindString()
 	{
-		//public string SymbolKindString => SyntaxKind.ToString();
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="VariableSymbol.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.VariableSymbol;
 		throw new NotImplementedException();
 	}
 }

@@ -1,37 +1,46 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxObjects;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.GenericLexer.SyntaxObjects;
 
+/// <summary>
+/// <see cref="GenericPreprocessorDirectiveSyntax"/>
+/// </summary>
 public class GenericPreprocessorDirectiveSyntaxTests
 {
+	/// <summary>
+	/// <see cref="GenericPreprocessorDirectiveSyntax(RazorLib.Lexes.Models.TextEditorTextSpan, System.Collections.Immutable.ImmutableArray{RazorLib.CompilerServices.GenericLexer.IGenericSyntax})"/>
+	/// </summary>
 	[Fact]
-	public void GenericPreprocessorDirectiveSyntax()
+	public void Constructor()
 	{
-		//public GenericPreprocessorDirectiveSyntax(
-		//	TextEditorTextSpan textSpan,
-		//	ImmutableArray<IGenericSyntax> childBag)
 		throw new NotImplementedException();
 	}
-    
 
+	/// <summary>
+	/// <see cref="GenericPreprocessorDirectiveSyntax.TextSpan"/>
+	/// </summary>
 	[Fact]
 	public void TextSpan()
 	{
-		//public TextEditorTextSpan TextSpan { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericPreprocessorDirectiveSyntax.ChildBag"/>
+	/// </summary>
 	[Fact]
 	public void ChildBag()
 	{
-		//public ImmutableArray<IGenericSyntax> ChildBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericPreprocessorDirectiveSyntax.GenericSyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void GenericSyntaxKind()
 	{
-		//public GenericSyntaxKind GenericSyntaxKind => GenericSyntaxKind.PreprocessorDirective;
 		throw new NotImplementedException();
 	}
 }

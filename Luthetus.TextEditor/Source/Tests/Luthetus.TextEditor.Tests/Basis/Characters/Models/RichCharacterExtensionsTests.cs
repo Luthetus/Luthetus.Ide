@@ -1,20 +1,19 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Characters.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Characters.Models;
 
+/// <summary>
+/// <see cref="RichCharacterExtensions"/>
+/// </summary>
 public class RichCharacterExtensionsTests
 {
+	/// <summary>
+	/// <see cref="RichCharacterExtensions.GetCharacterKind(RichCharacter)"/>
+	/// </summary>
 	[Fact]
 	public void GetCharacterKind()
 	{
-		//public static CharacterKind GetCharacterKind(this RichCharacter richCharacter)
-		//   {
-		//       if (KeyboardKeyFacts.IsWhitespaceCharacter(richCharacter.Value))
-		//           return CharacterKind.Whitespace;
-		//       if (KeyboardKeyFacts.IsPunctuationCharacter(richCharacter.Value))
-		//           return CharacterKind.Punctuation;
-		//       return CharacterKind.LetterOrDigit;
-		//   }
 		throw new NotImplementedException();
 	}
 }

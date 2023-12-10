@@ -1,23 +1,28 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Autocompletes.Models;
 
+/// <summary>
+/// <see cref="WordAutocompleteService"/>
+/// </summary>
 public class WordAutocompleteServiceTests
 {
+	/// <summary>
+	/// <see cref="WordAutocompleteService(IAutocompleteIndexer)"/>
+	/// </summary>
 	[Fact]
-	public void WordAutocompleteService()
+	public void Constructor()
 	{
-		//public WordAutocompleteService(IAutocompleteIndexer autocompleteIndexer)
-		//{
-		//	_autocompleteIndexer = autocompleteIndexer;
-		//}
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="WordAutocompleteService.GetAutocompleteOptions(string)"/>
+	/// </summary>
 	[Fact]
 	public void GetAutocompleteOptions()
 	{
-		//public List<string> GetAutocompleteOptions(string word)
 		throw new NotImplementedException();
 	}
 }

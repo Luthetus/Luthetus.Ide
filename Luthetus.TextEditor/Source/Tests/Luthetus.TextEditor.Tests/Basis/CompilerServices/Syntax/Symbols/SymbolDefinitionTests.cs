@@ -1,59 +1,73 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.Symbols;
 
-public sealed record SymbolDefinitionTests
+/// <summary>
+/// <see cref="SymbolDefinition"/>
+/// </summary>
+public class SymbolDefinitionTests
 {
+	/// <summary>
+	/// <see cref="SymbolDefinition(RazorLib.CompilerServices.Syntax.BoundScopeKey, ISymbol)"/>
+	/// </summary>
 	[Fact]
-	public void SymbolDefinition_A()
+	public void Constructor_A()
 	{
-		//public SymbolDefinition(BoundScopeKey boundScopeKey, ISymbol symbol)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="SymbolDefinition(RazorLib.CompilerServices.Syntax.BoundScopeKey, ISymbol, List{SymbolReference})"/>
+	/// </summary>
 	[Fact]
-	public void SymbolDefinition_B()
+	public void Constructor_B()
 	{
-		//public SymbolDefinition(
-		//           BoundScopeKey boundScopeKey,
-		//           ISymbol symbol,
-		//           List<SymbolReference> symbolReferences)
-		//       : this(boundScopeKey, symbol)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="SymbolDefinition.SymbolReferences"/>
+	/// </summary>
 	[Fact]
 	public void SymbolReferences()
 	{
-		//public List<SymbolReference> SymbolReferences { get; init; } = new();
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="SymbolDefinition.BoundScopeKey"/>
+	/// </summary>
 	[Fact]
 	public void BoundScopeKey()
 	{
-		//public BoundScopeKey BoundScopeKey { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="SymbolDefinition.Symbol"/>
+	/// </summary>
 	[Fact]
 	public void Symbol()
 	{
-		//public ISymbol Symbol { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="SymbolDefinition.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="SymbolDefinition.GetSymbolReferences()"/>
+	/// </summary>
 	[Fact]
 	public void GetSymbolReferences()
 	{
-		//public ImmutableArray<SymbolReference> GetSymbolReferences() => SymbolReferences.ToImmutableArray();
 		throw new NotImplementedException();
 	}
 }

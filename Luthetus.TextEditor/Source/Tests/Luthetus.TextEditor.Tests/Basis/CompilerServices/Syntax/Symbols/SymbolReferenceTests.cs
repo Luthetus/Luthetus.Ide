@@ -1,27 +1,37 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.Symbols;
 
-public sealed class SymbolReferenceTests
+/// <summary>
+/// <see cref="SymbolReference"/>
+/// </summary>
+public class SymbolReferenceTests
 {
+	/// <summary>
+	/// <see cref="SymbolReference(ISymbol, RazorLib.CompilerServices.Syntax.BoundScopeKey)"/>
+	/// </summary>
 	[Fact]
-	public void SymbolReference()
+	public void Constructor()
 	{
-		//public SymbolReference(ISymbol symbol, BoundScopeKey boundScopeKey)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="SymbolReference.Symbol"/>
+	/// </summary>
 	[Fact]
 	public void Symbol()
 	{
-		//public ISymbol Symbol { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="SymbolReference.BoundScopeKey"/>
+	/// </summary>
 	[Fact]
 	public void BoundScopeKey()
 	{
-		//public BoundScopeKey BoundScopeKey { get; }
 		throw new NotImplementedException();
 	}
 }

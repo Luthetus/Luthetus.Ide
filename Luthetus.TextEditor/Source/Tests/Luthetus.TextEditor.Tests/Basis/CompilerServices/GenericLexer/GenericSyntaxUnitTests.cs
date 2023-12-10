@@ -1,29 +1,37 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.GenericLexer;
 
+/// <summary>
+/// <see cref="GenericSyntaxUnit"/>
+/// </summary>
 public class GenericSyntaxUnitTests
 {
+	/// <summary>
+	/// <see cref="GenericSyntaxUnit(RazorLib.CompilerServices.GenericLexer.SyntaxObjects.GenericDocumentSyntax, RazorLib.CompilerServices.LuthetusDiagnosticBag)"/>
+	/// </summary>
 	[Fact]
-	public void GenericSyntaxUnit()
+	public void Constructor()
 	{
-		//public GenericSyntaxUnit(
-		//	GenericDocumentSyntax genericDocumentSyntax,
-		//	LuthetusDiagnosticBag diagnosticBag)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericSyntaxUnit.GenericDocumentSyntax"/>
+	/// </summary>
 	[Fact]
 	public void GenericDocumentSyntax()
 	{
-		//public GenericDocumentSyntax GenericDocumentSyntax { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericSyntaxUnit.DiagnosticBag"/>
+	/// </summary>
 	[Fact]
 	public void DiagnosticBag()
 	{
-		//public LuthetusDiagnosticBag DiagnosticBag { get; }
 		throw new NotImplementedException();
 	}
 }
