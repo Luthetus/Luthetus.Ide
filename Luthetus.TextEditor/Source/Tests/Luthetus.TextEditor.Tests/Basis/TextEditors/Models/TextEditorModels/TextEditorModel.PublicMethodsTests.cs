@@ -1,117 +1,115 @@
-﻿using Luthetus.TextEditor.RazorLib.Rows.Models;
-using static Luthetus.TextEditor.RazorLib.TextEditors.States.TextEditorModelState;
-using Luthetus.TextEditor.RazorLib.Decorations.Models;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.Edits.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels.TextEditorModels;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorModels;
 
-public partial class TextEditorModelTests
+public class TextEditorModelPublicMethodsTests
 {
-    public TextEditorModel PerformForceRerenderAction(ForceRerenderAction forceRerenderAction)
-    {
-        var modelModifier = new TextEditorModelModifier(this);
-        return modelModifier.ToTextEditorModel();
-    }
+	[Fact]
+	public void PerformForceRerenderAction()
+	{
+		//public TextEditorModel PerformForceRerenderAction(ForceRerenderAction forceRerenderAction)
+		throw new NotImplementedException();
+	}
 
-    public TextEditorModel PerformEditTextEditorAction(KeyboardEventAction keyboardEventAction)
-    {
-        var modelModifier = new TextEditorModelModifier(this);
-        modelModifier.PerformEditTextEditorAction(keyboardEventAction);
-		return modelModifier.ToTextEditorModel();
-    }
+	[Fact]
+	public void PerformEditTextEditorAction_A()
+	{
+		//public TextEditorModel PerformEditTextEditorAction(KeyboardEventAction keyboardEventAction)
+		throw new NotImplementedException();
+	}
 
-    public TextEditorModel PerformEditTextEditorAction(InsertTextAction insertTextAction)
-    {
-		var modelModifier = new TextEditorModelModifier(this);
-		modelModifier.PerformEditTextEditorAction(insertTextAction);
-		return modelModifier.ToTextEditorModel();
-    }
+	[Fact]
+	public void PerformEditTextEditorAction_B()
+	{
+		//public TextEditorModel PerformEditTextEditorAction(InsertTextAction insertTextAction)
+		throw new NotImplementedException();
+	}
 
-    public TextEditorModel PerformEditTextEditorAction(DeleteTextByMotionAction deleteTextByMotionAction)
-    {
-		var modelModifier = new TextEditorModelModifier(this);
-		modelModifier.PerformEditTextEditorAction(deleteTextByMotionAction);
-		return modelModifier.ToTextEditorModel();
-    }
 
-    public TextEditorModel PerformEditTextEditorAction(DeleteTextByRangeAction deleteTextByRangeAction)
-    {
-		var modelModifier = new TextEditorModelModifier(this);
-        modelModifier.PerformEditTextEditorAction(deleteTextByRangeAction);
-		return modelModifier.ToTextEditorModel();
-    }
+	[Fact]
+	public void PerformEditTextEditorAction_C()
+	{
+		//public TextEditorModel PerformEditTextEditorAction(DeleteTextByMotionAction deleteTextByMotionAction)
+		throw new NotImplementedException();
+	}
 
-    public TextEditorModel PerformRegisterPresentationModelAction(RegisterPresentationModelAction registerPresentationModelAction)
-    {
-		var modelModifier = new TextEditorModelModifier(this);
-		modelModifier.PerformRegisterPresentationModelAction(registerPresentationModelAction);
-		return modelModifier.ToTextEditorModel();
-    }
-    
-    public TextEditorModel PerformCalculatePresentationModelAction(CalculatePresentationModelAction calculatePresentationModelAction)
-    {
-		var modelModifier = new TextEditorModelModifier(this);
-		modelModifier.PerformCalculatePresentationModelAction(calculatePresentationModelAction);
-		return modelModifier.ToTextEditorModel();
-    }
+	[Fact]
+	public void PerformEditTextEditorAction_D()
+	{
+		//public TextEditorModel PerformEditTextEditorAction(DeleteTextByRangeAction deleteTextByRangeAction)
+		throw new NotImplementedException();
+	}
 
-    public TextEditorModel SetDecorationMapper(IDecorationMapper decorationMapper)
-    {
-		var modelModifier = new TextEditorModelModifier(this);
-		modelModifier.ModifyDecorationMapper(decorationMapper);
-		return modelModifier.ToTextEditorModel();
-    }
+	[Fact]
+	public void PerformRegisterPresentationModelAction()
+	{
+		//public TextEditorModel PerformRegisterPresentationModelAction(RegisterPresentationModelAction registerPresentationModelAction)
+		throw new NotImplementedException();
+	}
 
-    public TextEditorModel SetCompilerService(ICompilerService compilerService)
-    {
-		var modelModifier = new TextEditorModelModifier(this);
-		modelModifier.ModifyCompilerService(compilerService);
-		return modelModifier.ToTextEditorModel();
-    }
-    
-    public TextEditorModel SetTextEditorSaveFileHelper(TextEditorSaveFileHelper textEditorSaveFileHelper)
-    {
-		var modelModifier = new TextEditorModelModifier(this);
-		modelModifier.ModifyTextEditorSaveFileHelper(textEditorSaveFileHelper);
-		return modelModifier.ToTextEditorModel();
-    }
+	[Fact]
+	public void PerformCalculatePresentationModelAction()
+	{
+		//public TextEditorModel PerformCalculatePresentationModelAction(CalculatePresentationModelAction calculatePresentationModelAction)
+		throw new NotImplementedException();
+	}
 
-    public TextEditorModel SetResourceData(ResourceUri resourceUri, DateTime resourceLastWriteTime)
-    {
-		var modelModifier = new TextEditorModelModifier(this);
-		modelModifier.ModifyResourceData(resourceUri, resourceLastWriteTime);
-		return modelModifier.ToTextEditorModel();
-    }
+	[Fact]
+	public void SetDecorationMapper()
+	{
+		//public TextEditorModel SetDecorationMapper(IDecorationMapper decorationMapper)
+		throw new NotImplementedException();
+	}
 
-    public TextEditorModel SetUsingRowEndingKind(RowEndingKind rowEndingKind)
-    {
-		var modelModifier = new TextEditorModelModifier(this);
-		modelModifier.ModifyUsingRowEndingKind(rowEndingKind);
-		return modelModifier.ToTextEditorModel();
-    }
+	[Fact]
+	public void SetCompilerService()
+	{
+		//public TextEditorModel SetCompilerService(ICompilerService compilerService)
+		throw new NotImplementedException();
+	}
 
-    public TextEditorModel ClearEditBlocks()
-    {
-		var modelModifier = new TextEditorModelModifier(this);
-		modelModifier.ClearEditBlocks();
-		return modelModifier.ToTextEditorModel();
-    }
+	[Fact]
+	public void SetTextEditorSaveFileHelper()
+	{
+		//public TextEditorModel SetTextEditorSaveFileHelper(TextEditorSaveFileHelper textEditorSaveFileHelper)
+		throw new NotImplementedException();
+	}
 
-    /// <summary>The "if (EditBlockIndex == _editBlocksPersisted.Count)"<br/><br/>Is done because the active EditBlock is not yet persisted.<br/><br/>The active EditBlock is instead being 'created' as the user continues to make edits of the same <see cref="TextEditKind"/><br/><br/>For complete clarity, this comment refers to one possibly expecting to see "if (EditBlockIndex == _editBlocksPersisted.Count - 1)"</summary>
-    public TextEditorModel UndoEdit()
-    {
-		var modelModifier = new TextEditorModelModifier(this);
-		modelModifier.UndoEdit();
-		return modelModifier.ToTextEditorModel();
-    }
 
-    public TextEditorModel RedoEdit()
-    {
-		var modelModifier = new TextEditorModelModifier(this);
-		modelModifier.RedoEdit();
-		return modelModifier.ToTextEditorModel();
-    }
+	[Fact]
+	public void SetResourceData()
+	{
+		//public TextEditorModel SetResourceData(ResourceUri resourceUri, DateTime resourceLastWriteTime)
+		throw new NotImplementedException();
+	}
+
+
+	[Fact]
+	public void SetUsingRowEndingKind()
+	{
+		//public TextEditorModel SetUsingRowEndingKind(RowEndingKind rowEndingKind)
+		throw new NotImplementedException();
+	}
+
+
+	[Fact]
+	public void ClearEditBlocks()
+	{
+		//public TextEditorModel ClearEditBlocks()
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void UndoEdit()
+	{
+		//public TextEditorModel UndoEdit()
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void RedoEdit()
+	{
+		//public TextEditorModel RedoEdit()
+		throw new NotImplementedException();
+	}
 }
