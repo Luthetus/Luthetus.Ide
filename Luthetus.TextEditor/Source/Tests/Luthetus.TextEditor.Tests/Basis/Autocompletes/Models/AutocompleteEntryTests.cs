@@ -12,17 +12,20 @@ public class AutocompleteEntryTests
 		//	DisplayName = displayName;
 		//	AutocompleteEntryKind = autocompleteEntryKind;
 		//}
-    }
+		throw new NotImplementedException();
+	}
 
 	[Fact]
 	public void DisplayName()
 	{
 		//public string DisplayName { get; }
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void AutocompleteEntryKind()
 	{
 		//public AutocompleteEntryKind AutocompleteEntryKind { get; }
+		throw new NotImplementedException();
 	}
 }

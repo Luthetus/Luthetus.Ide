@@ -10,17 +10,20 @@ public class GenericSyntaxUnitTests
 		//public GenericSyntaxUnit(
 		//	GenericDocumentSyntax genericDocumentSyntax,
 		//	LuthetusDiagnosticBag diagnosticBag)
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void GenericDocumentSyntax()
 	{
 		//public GenericDocumentSyntax GenericDocumentSyntax { get; }
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void DiagnosticBag()
 	{
 		//public LuthetusDiagnosticBag DiagnosticBag { get; }
+		throw new NotImplementedException();
 	}
 }

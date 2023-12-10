@@ -10,6 +10,7 @@ public class GenericPreprocessorDirectiveSyntaxTests
 		//public GenericPreprocessorDirectiveSyntax(
 		//	TextEditorTextSpan textSpan,
 		//	ImmutableArray<IGenericSyntax> childBag)
+		throw new NotImplementedException();
 	}
     
 
@@ -17,17 +18,20 @@ public class GenericPreprocessorDirectiveSyntaxTests
 	public void TextSpan()
 	{
 		//public TextEditorTextSpan TextSpan { get; }
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void ChildBag()
 	{
 		//public ImmutableArray<IGenericSyntax> ChildBag { get; }
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void GenericSyntaxKind()
 	{
 		//public GenericSyntaxKind GenericSyntaxKind => GenericSyntaxKind.PreprocessorDirective;
+		throw new NotImplementedException();
 	}
 }

@@ -17,9 +17,10 @@ public class TextEditorFindProviderStateReducerTests
 	public void ReduceDisposeAction()
 	{
 		//public static TextEditorFindProviderState ReduceDisposeAction(
-	 //       TextEditorFindProviderState inState,
-	 //       DisposeAction disposeAction)
+		//       TextEditorFindProviderState inState,
+		//       DisposeAction disposeAction)
 		//	throw new NotImplementedException();
+		throw new NotImplementedException();
 	}
 
 	[Fact]

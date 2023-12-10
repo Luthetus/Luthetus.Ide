@@ -5,8 +5,9 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.GenericLexer.Decorati
 public class GenericDecorationMapperTests
 {
 	[Fact]
-	public void Aaa()
+	public void Map()
 	{
 		//public string Map(byte decorationByte)
+		throw new NotImplementedException();
 	}
 }

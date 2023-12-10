@@ -33,14 +33,14 @@ public class CodeBlockBuilderTests
 	}
 
 	[Fact]
-	public void Build()
+	public void Build_A()
 	{
 		//public CodeBlockNode Build()
 		throw new NotImplementedException();
 	}
 
 	[Fact]
-	public void Build()
+	public void Build_B()
 	{
 		//public CodeBlockNode Build(ImmutableArray<TextEditorDiagnostic> diagnostics)
 		throw new NotImplementedException();

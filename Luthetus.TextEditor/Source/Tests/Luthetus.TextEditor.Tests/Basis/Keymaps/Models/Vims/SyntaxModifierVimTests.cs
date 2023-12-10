@@ -2,7 +2,7 @@
 
 namespace Luthetus.TextEditor.Tests.Basis.Keymaps.Models.Vims;
 
-public static class SyntaxModifierVimTests
+public class SyntaxModifierVimTests
 {
 	[Fact]
 	public void TryLex()

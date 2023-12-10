@@ -1,16 +1,11 @@
-﻿using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
-using System.Collections.Concurrent;
-using System.Collections.Immutable;
-using Xunit;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.Autocompletes.Models;
 
-public class WordAutocompleteIndexerTests : IAutocompleteIndexer
+public class WordAutocompleteIndexerTests
 {
 	[Fact]
-	public void Aaa()
+	public void WordAutocompleteIndexer()
 	{
 		//public WordAutocompleteIndexer(ITextEditorService textEditorService)
 		//{
@@ -18,27 +13,30 @@ public class WordAutocompleteIndexerTests : IAutocompleteIndexer
 
 		//	_textEditorService.ModelStateWrap.StateChanged += ModelsCollectionWrapOnStateChanged;
 		//}
+		throw new NotImplementedException();
 	}
 
 	[Fact]
-	public void Aaa()
+	public void IndexedStringsBag()
 	{
 		//public ImmutableArray<string> IndexedStringsBag => _indexedStringsBag.ToImmutableArray();
+		throw new NotImplementedException();
 	}
 
 
 	[Fact]
-	public void Aaa()
+	public void IndexTextEditorAsync()
 	{
 		//public Task IndexTextEditorAsync(TextEditorModel textEditorModel)
 		//{
 		//	return Task.CompletedTask;
 		//}
+		throw new NotImplementedException();
 	}
 
 
 	[Fact]
-	public void Aaa()
+	public void IndexWordAsync()
 	{
 		//public Task IndexWordAsync(string word)
 		//{
@@ -47,14 +45,16 @@ public class WordAutocompleteIndexerTests : IAutocompleteIndexer
 
 		//	return Task.CompletedTask;
 		//}
+		throw new NotImplementedException();
 	}
 
 	[Fact]
-	public void Aaa()
+	public void Dispose()
 	{
-		public void Dispose()
-		{
-			_textEditorService.ModelStateWrap.StateChanged -= ModelsCollectionWrapOnStateChanged;
-		}
+		//public void Dispose()
+		//{
+		//	_textEditorService.ModelStateWrap.StateChanged -= ModelsCollectionWrapOnStateChanged;
+		//}
+		throw new NotImplementedException();
 	}
 }

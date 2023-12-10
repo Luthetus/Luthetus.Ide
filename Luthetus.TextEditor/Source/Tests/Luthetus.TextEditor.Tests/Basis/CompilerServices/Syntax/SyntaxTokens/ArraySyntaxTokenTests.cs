@@ -8,23 +8,27 @@ public sealed record ArraySyntaxTokenTests
 	public void ArraySyntaxToken()
 	{
 		//public ArraySyntaxToken(TextEditorTextSpan textSpan)
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void TextSpan()
 	{
 		//public TextEditorTextSpan TextSpan { get; }
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void SyntaxKind()
 	{
 		//public SyntaxKind SyntaxKind => SyntaxKind.ArraySyntaxToken;
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void IsFabricated()
 	{
 		//public bool IsFabricated { get; init; }
+		throw new NotImplementedException();
 	}
 }

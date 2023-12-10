@@ -8,23 +8,27 @@ public sealed record CloseAngleBracketTokenTests
 	public void CloseAngleBracketToken()
 	{
 		//public CloseAngleBracketToken(TextEditorTextSpan textSpan)
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void TextSpan()
 	{
 		//public TextEditorTextSpan TextSpan { get; }
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void SyntaxKind()
 	{
 		//public SyntaxKind SyntaxKind => SyntaxKind.CloseAngleBracketToken;
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void IsFabricated()
 	{
 		//public bool IsFabricated { get; init; }
+		throw new NotImplementedException();
 	}
 }

@@ -11,23 +11,27 @@ public class DeliminationExtendedSyntaxDefinitionTests
 		//	string syntaxStart,
 		//	string syntaxEnd,
 		//	GenericDecorationKind genericDecorationKind)
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void SyntaxStart()
 	{
 		//public string SyntaxStart { get; }
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void SyntaxEnd()
 	{
 		//public string SyntaxEnd { get; }
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void GenericDecorationKind()
 	{
 		//public GenericDecorationKind GenericDecorationKind { get; }
+		throw new NotImplementedException();
 	}
 }

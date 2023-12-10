@@ -8,37 +8,43 @@ public sealed record AttributeNodeTests
 	public void AttributeNode()
 	{
 		//public AttributeNode(
-	 //       OpenSquareBracketToken openSquareBracketToken,
-	 //       CloseSquareBracketToken closeSquareBracketToken)
+		//       OpenSquareBracketToken openSquareBracketToken,
+		//       CloseSquareBracketToken closeSquareBracketToken)
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void OpenSquareBracketToken()
 	{
 		//public OpenSquareBracketToken OpenSquareBracketToken { get; }
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void CloseSquareBracketToken()
 	{
 		//public CloseSquareBracketToken CloseSquareBracketToken { get; }
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void ChildBag()
 	{
 		//public ImmutableArray<ISyntax> ChildBag { get; }
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void IsFabricated()
 	{
 		//public bool IsFabricated { get; init; }
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void SyntaxKind()
 	{
 		//public SyntaxKind SyntaxKind => SyntaxKind.AttributeNode;
+		throw new NotImplementedException();
 	}
 }

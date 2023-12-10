@@ -2,7 +2,7 @@
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax;
 
-public static class TokenFactoryTests
+public class TokenFactoryTests
 {
 	[Fact]
 	public void FabricateToken()

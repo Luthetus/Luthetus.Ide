@@ -8,6 +8,7 @@ public sealed record ConstraintNodeTests
 	public void ConstraintNode()
 	{
 		//public ConstraintNode(ImmutableArray<ISyntaxToken> innerTokens)
+		throw new NotImplementedException();
 	}
 
 
@@ -15,23 +16,27 @@ public sealed record ConstraintNodeTests
 	public void InnerTokens()
 	{
 		//public ImmutableArray<ISyntaxToken> InnerTokens { get; }
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void ChildBag()
 	{
 		//public ImmutableArray<ISyntax> ChildBag { get; }
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void IsFabricated()
 	{
 		//public bool IsFabricated { get; init; }
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void SyntaxKind()
 	{
 		//public SyntaxKind SyntaxKind => SyntaxKind.TypeClauseNode;
+		throw new NotImplementedException();
 	}
 }

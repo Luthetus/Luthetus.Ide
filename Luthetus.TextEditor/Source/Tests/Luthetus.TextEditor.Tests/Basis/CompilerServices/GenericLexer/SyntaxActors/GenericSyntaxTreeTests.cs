@@ -8,18 +8,21 @@ public class GenericSyntaxTreeTests
 	public void Constructor()
 	{
 		//public GenericSyntaxTree(GenericLanguageDefinition genericLanguageDefinition)
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void GenericLanguageDefinition()
 	{
 		//public GenericLanguageDefinition GenericLanguageDefinition { get; }
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void ParseText()
 	{
 		//public virtual GenericSyntaxUnit ParseText(ResourceUri resourceUri, string content)
+		throw new NotImplementedException();
 	}
 
 	[Fact]
@@ -28,14 +31,16 @@ public class GenericSyntaxTreeTests
 		//public virtual GenericCommentSingleLineSyntax ParseCommentSingleLine(
 		//	StringWalker stringWalker,
 		//	LuthetusDiagnosticBag diagnosticBag)
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void ParseCommentMultiLine()
 	{
 		//public virtual GenericCommentMultiLineSyntax ParseCommentMultiLine(
-	 //       StringWalker stringWalker,
-	 //       LuthetusDiagnosticBag diagnosticBag)
+		//       StringWalker stringWalker,
+		//       LuthetusDiagnosticBag diagnosticBag)
+		throw new NotImplementedException();
 	}
 
 	[Fact]
@@ -44,6 +49,7 @@ public class GenericSyntaxTreeTests
 		//public virtual GenericStringSyntax ParseString(
 		//	StringWalker stringWalker,
 		//	LuthetusDiagnosticBag diagnosticBag)
+		throw new NotImplementedException();
 	}
 
 	[Fact]
@@ -53,6 +59,7 @@ public class GenericSyntaxTreeTests
 		//	StringWalker stringWalker,
 		//	LuthetusDiagnosticBag diagnosticBag,
 		//	out GenericKeywordSyntax? genericKeywordSyntax)
+		throw new NotImplementedException();
 	}
 
 	[Fact]
@@ -62,6 +69,7 @@ public class GenericSyntaxTreeTests
 		//	StringWalker stringWalker,
 		//	LuthetusDiagnosticBag diagnosticBag,
 		//	out GenericFunctionSyntax? genericFunctionSyntax)
+		throw new NotImplementedException();
 	}
 
 	[Fact]
@@ -70,6 +78,7 @@ public class GenericSyntaxTreeTests
 		//private GenericPreprocessorDirectiveSyntax ParsePreprocessorDirective(
 		//	StringWalker stringWalker,
 		//	LuthetusDiagnosticBag diagnosticBag)
+		throw new NotImplementedException();
 	}
 
 	[Fact]
@@ -79,5 +88,6 @@ public class GenericSyntaxTreeTests
 		//	StringWalker stringWalker,
 		//	LuthetusDiagnosticBag diagnosticBag,
 		//	out IGenericSyntax? genericSyntax)
+		throw new NotImplementedException();
 	}
 }

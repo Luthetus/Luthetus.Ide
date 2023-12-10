@@ -2,7 +2,7 @@
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax;
 
-public static class SyntaxReaderTests
+public class SyntaxReaderTests
 {
 	[Fact]
 	public void GetTextRecursively()

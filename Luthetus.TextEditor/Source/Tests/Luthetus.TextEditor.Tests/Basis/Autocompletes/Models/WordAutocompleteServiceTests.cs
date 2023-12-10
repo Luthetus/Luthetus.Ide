@@ -2,26 +2,22 @@
 
 namespace Luthetus.TextEditor.Tests.Basis.Autocompletes.Models;
 
-public class WordAutocompleteServiceTests : IAutocompleteService
+public class WordAutocompleteServiceTests
 {
-
 	[Fact]
-	public void Aaa()
+	public void WordAutocompleteService()
 	{
-		public WordAutocompleteService(IAutocompleteIndexer autocompleteIndexer)
-		{
-			_autocompleteIndexer = autocompleteIndexer;
-		}
+		//public WordAutocompleteService(IAutocompleteIndexer autocompleteIndexer)
+		//{
+		//	_autocompleteIndexer = autocompleteIndexer;
+		//}
+		throw new NotImplementedException();
 	}
 
 	[Fact]
-	public void Aaa()
+	public void GetAutocompleteOptions()
 	{
-		public List<string> GetAutocompleteOptions(string word)
-		{
-			var indexedStrings = _autocompleteIndexer.IndexedStringsBag;
-
-			return new List<string>(indexedStrings.Where(x => x.StartsWith(word)).Take(5));
-		}
+		//public List<string> GetAutocompleteOptions(string word)
+		throw new NotImplementedException();
 	}
 }

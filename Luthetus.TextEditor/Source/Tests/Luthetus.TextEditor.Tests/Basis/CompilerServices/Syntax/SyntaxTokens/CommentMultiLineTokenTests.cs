@@ -8,23 +8,27 @@ public sealed record CommentMultiLineTokenTests
 	public void CommentMultiLineToken()
 	{
 		//public CommentMultiLineToken(TextEditorTextSpan textSpan)
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void TextSpan()
 	{
 		//public TextEditorTextSpan TextSpan { get; }
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void SyntaxKind()
 	{
 		//public SyntaxKind SyntaxKind => SyntaxKind.CommentMultiLineToken;
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void IsFabricated()
 	{
 		//public bool IsFabricated { get; init; }
+		throw new NotImplementedException();
 	}
 }

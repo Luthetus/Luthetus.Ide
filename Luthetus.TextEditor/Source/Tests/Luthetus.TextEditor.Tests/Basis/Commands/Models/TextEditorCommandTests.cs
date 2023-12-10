@@ -15,29 +15,34 @@ public class TextEditorCommandTests
 		//		TextEditKind textEditKind,
 		//		string? otherTextEditKindIdentifier,
 		//		Func<ICommandArgs, Task> doAsyncFunc)
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void ShouldScrollCursorIntoView()
 	{
 		//public bool ShouldScrollCursorIntoView { get; }
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void TextEditKind()
 	{
 		//public TextEditKind TextEditKind { get; }
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void OtherTextEditKindIdentifier()
 	{
 		//public string? OtherTextEditKindIdentifier { get; }
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void ThrowOtherTextEditKindIdentifierWasExpectedException()
 	{
 		//public static ApplicationException ThrowOtherTextEditKindIdentifierWasExpectedException(TextEditKind textEditKind)
+		throw new NotImplementedException();
 	}
 }

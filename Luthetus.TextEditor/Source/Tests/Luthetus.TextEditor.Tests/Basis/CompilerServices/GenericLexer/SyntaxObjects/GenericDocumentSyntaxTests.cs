@@ -10,23 +10,27 @@ public class GenericDocumentSyntaxTests
 		//public GenericDocumentSyntax(
 		//	TextEditorTextSpan textSpan,
 		//	ImmutableArray<IGenericSyntax> childBag)
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void TextSpan()
 	{
 		//public TextEditorTextSpan TextSpan { get; }
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void ChildBag()
 	{
 		//public ImmutableArray<IGenericSyntax> ChildBag { get; }
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void GenericSyntaxKind()
 	{
 		//public GenericSyntaxKind GenericSyntaxKind => GenericSyntaxKind.Document;
+		throw new NotImplementedException();
 	}
 }

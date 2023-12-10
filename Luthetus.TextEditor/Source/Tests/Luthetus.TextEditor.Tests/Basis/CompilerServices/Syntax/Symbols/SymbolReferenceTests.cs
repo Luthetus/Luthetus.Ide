@@ -8,17 +8,20 @@ public sealed class SymbolReferenceTests
 	public void SymbolReference()
 	{
 		//public SymbolReference(ISymbol symbol, BoundScopeKey boundScopeKey)
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void Symbol()
 	{
 		//public ISymbol Symbol { get; }
+		throw new NotImplementedException();
 	}
 
 	[Fact]
 	public void BoundScopeKey()
 	{
 		//public BoundScopeKey BoundScopeKey { get; }
+		throw new NotImplementedException();
 	}
 }
