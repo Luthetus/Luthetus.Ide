@@ -1,5 +1,29 @@
-﻿namespace Luthetus.TextEditor.Tests.Basis.Virtualizations.Models;
+﻿using Xunit;
 
-public record VirtualizationRequestTests(
-    VirtualizationScrollPosition ScrollPosition,
-    CancellationToken CancellationToken);
+namespace Luthetus.TextEditor.Tests.Basis.Virtualizations.Models;
+
+public class VirtualizationRequestTests
+{
+	[Fact]
+	public void VirtualizationRequest()
+	{
+		//	record VirtualizationRequest(
+		//		VirtualizationScrollPosition ScrollPosition,
+		//		CancellationToken CancellationToken)
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void ScrollPosition()
+	{
+		//	VirtualizationScrollPosition ScrollPosition
+		throw new NotImplementedException();
+	}
+	
+	[Fact]
+	public void CancellationToken()
+	{
+		// CancellationToken CancellationToken
+		throw new NotImplementedException();
+	}
+}

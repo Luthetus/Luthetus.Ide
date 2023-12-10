@@ -1,43 +1,76 @@
-﻿using Luthetus.TextEditor.RazorLib.Characters.Models;
-using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
-using System.Collections.Immutable;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.Virtualizations.Models;
 
-public record VirtualizationResultTests<T> : IVirtualizationResultWithoutTypeMask
+public record VirtualizationResultTests
 {
-    public VirtualizationResult(
-        ImmutableArray<VirtualizationEntry<T>> entries,
-        VirtualizationBoundary leftVirtualizationBoundary,
-        VirtualizationBoundary rightVirtualizationBoundary,
-        VirtualizationBoundary topVirtualizationBoundary,
-        VirtualizationBoundary bottomVirtualizationBoundary,
-        TextEditorMeasurements textEditorMeasurements,
-        CharAndRowMeasurements charAndRowMeasurements)
-    {
-        EntryBag = entries;
-        LeftVirtualizationBoundary = leftVirtualizationBoundary;
-        RightVirtualizationBoundary = rightVirtualizationBoundary;
-        TopVirtualizationBoundary = topVirtualizationBoundary;
-        BottomVirtualizationBoundary = bottomVirtualizationBoundary;
-        TextEditorMeasurements = textEditorMeasurements;
-        CharAndRowMeasurements = charAndRowMeasurements;
-    }
+	[Fact]
+	public void VirtualizationResult()
+	{
+	    //public VirtualizationResult(
+     //       ImmutableArray<VirtualizationEntry<T>> entries,
+     //       VirtualizationBoundary leftVirtualizationBoundary,
+     //       VirtualizationBoundary rightVirtualizationBoundary,
+     //       VirtualizationBoundary topVirtualizationBoundary,
+     //       VirtualizationBoundary bottomVirtualizationBoundary,
+     //       TextEditorMeasurements textEditorMeasurements,
+     //       CharAndRowMeasurements charAndRowMeasurements)
+		throw new NotImplementedException();
+	}
 
-    public static VirtualizationResult<List<RichCharacter>> GetEmptyRichCharacters() => new(
-        ImmutableArray<VirtualizationEntry<List<RichCharacter>>>.Empty,
-        new VirtualizationBoundary(0, 0, 0, 0),
-        new VirtualizationBoundary(0, 0, 0, 0),
-        new VirtualizationBoundary(0, 0, 0, 0),
-        new VirtualizationBoundary(0, 0, 0, 0),
-        new TextEditorMeasurements(0, 0, 0, 0, 0, 0, 0, CancellationToken.None),
-        new CharAndRowMeasurements(0, 0));
+	[Fact]
+	public void GetEmptyRichCharacters()
+	{
+	    //public static VirtualizationResult<List<RichCharacter>> GetEmptyRichCharacters()
+		throw new NotImplementedException();
+	}
 
-    public ImmutableArray<VirtualizationEntry<T>> EntryBag { get; init; }
-    public VirtualizationBoundary LeftVirtualizationBoundary { get; init; }
-    public VirtualizationBoundary RightVirtualizationBoundary { get; init; }
-    public VirtualizationBoundary TopVirtualizationBoundary { get; init; }
-    public VirtualizationBoundary BottomVirtualizationBoundary { get; init; }
-    public TextEditorMeasurements TextEditorMeasurements { get; init; }
-    public CharAndRowMeasurements CharAndRowMeasurements { get; set; }
+	[Fact]
+	public void EntryBag()
+	{
+		//public ImmutableArray<VirtualizationEntry<T>> EntryBag { get; init; }
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void LeftVirtualizationBoundary()
+	{
+		//public VirtualizationBoundary LeftVirtualizationBoundary { get; init; }
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void RightVirtualizationBoundary()
+	{
+		//public VirtualizationBoundary RightVirtualizationBoundary { get; init; }
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void TopVirtualizationBoundary()
+	{
+		//public VirtualizationBoundary TopVirtualizationBoundary { get; init; }
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void BottomVirtualizationBoundary()
+	{
+		//public VirtualizationBoundary BottomVirtualizationBoundary { get; init; }
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void TextEditorMeasurements()
+	{
+		//public TextEditorMeasurements TextEditorMeasurements { get; init; }
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void CharAndRowMeasurements()
+	{
+		//public CharAndRowMeasurements CharAndRowMeasurements { get; set; }
+		throw new NotImplementedException();
+	}
 }
