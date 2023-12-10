@@ -1,22 +1,20 @@
-﻿using Fluxor;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
-using System.Collections.Immutable;
+﻿using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.States;
 
-/// <summary>
-/// Keep the <see cref="TextEditorModelState"/> as a class
-/// as to avoid record value comparisons when Fluxor checks
-/// if the <see cref="FeatureStateAttribute"/> has been replaced.
-/// </summary>
-[FeatureState]
-public partial class TextEditorModelStateTests
+public class TextEditorModelStateMainTests
 {
-    private TextEditorModelState()
-    {
-        ModelBag = ImmutableList<TextEditorModel>.Empty;
-    }
+	[Fact]
+	public void TextEditorModelState()
+	{
+		//private TextEditorModelState()
+		throw new NotImplementedException();
+	}
 
-    public ImmutableList<TextEditorModel> ModelBag { get; init; }
+	[Fact]
+	public void ModelBag()
+	{
+		//public ImmutableList<TextEditorModel> ModelBag { get; init; }
+		throw new NotImplementedException();
+	}
 }
