@@ -1,34 +1,46 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Cursors.Models;
 
+/// <summary>
+/// <see cref="ImmutableTextEditorSelection"/>
+/// </summary>
 public class ImmutableTextEditorSelectionTests
 {
+	/// <summary>
+	/// <see cref="ImmutableTextEditorSelection(int?, int)"/>
+	/// </summary>
 	[Fact]
-	public void ImmutableTextEditorSelection_A()
+	public void Constructor_A()
 	{
-		// record ImmutableTextEditorSelectionTests(int? AnchorPositionIndex, int EndingPositionIndex)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="ImmutableTextEditorSelection(TextEditorSelection)"/>
+	/// </summary>
 	[Fact]
-	public void ImmutableTextEditorSelection_B()
+	public void Constructor_B()
 	{
-		//public ImmutableTextEditorSelection(TextEditorSelection textEditorSelection)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="ImmutableTextEditorSelection.AnchorPositionIndex"/>
+	/// </summary>
 	[Fact]
 	public void AnchorPositionIndex()
 	{
-		// int? AnchorPositionIndex
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="ImmutableTextEditorSelection.EndingPositionIndex"/>
+	/// </summary>
 	[Fact]
 	public void EndingPositionIndex()
 	{
-		// int EndingPositionIndex
 		throw new NotImplementedException();
 	}
 }

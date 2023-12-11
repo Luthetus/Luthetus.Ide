@@ -1,79 +1,100 @@
 using Xunit;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Cursors.Models;
 
+/// <summary>
+/// <see cref="TextEditorCursor"/>
+/// </summary>
 public class TextEditorCursorTests
 {
+	/// <summary>
+	/// <see cref="TextEditorCursor(bool)"/>
+	/// </summary>
 	[Fact]
-	public void TextEditorCursor_A()
+	public void Constructor_A()
 	{
-		//public TextEditorCursor(bool isPrimaryCursor)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorCursor(ValueTuple{int, int}, bool)"/>
+	/// </summary>
 	[Fact]
-	public void TextEditorCursor_B()
+	public void Constructor_B()
 	{
-		//public TextEditorCursor((int rowIndex, int columnIndex) rowAndColumnIndex, bool isPrimaryCursor)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorCursor(ImmutableTextEditorCursor, bool)"/>
+	/// </summary>
 	[Fact]
-	public void TextEditorCursor_C()
+	public void Constructor_C()
 	{
-		//public TextEditorCursor(ImmutableTextEditorCursor immutableTextEditorCursor, bool isPrimaryCursor)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorCursor.IndexCoordinates"/>
+	/// </summary>
 	[Fact]
 	public void IndexCoordinates()
 	{
-		//public (int rowIndex, int columnIndex) IndexCoordinates { get; set; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorCursor.PreferredColumnIndex"/>
+	/// </summary>
 	[Fact]
 	public void PreferredColumnIndex()
 	{
-		//public int PreferredColumnIndex { get; set; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorCursor.Selection"/>
+	/// </summary>
 	[Fact]
 	public void Selection()
 	{
-		//public TextEditorSelection Selection { get; } = new();
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorCursor.ShouldRevealCursor"/>
+	/// </summary>
 	[Fact]
 	public void ShouldRevealCursor()
 	{
-		//public bool ShouldRevealCursor { get; set; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorCursor.IsPrimaryCursor"/>
+	/// </summary>
 	[Fact]
 	public void IsPrimaryCursor()
 	{
-		//public bool IsPrimaryCursor { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorCursor.IsIntersecting"/>
+	/// </summary>
 	[Fact]
 	public void IsIntersecting()
 	{
-		//public bool IsIntersecting { get; set; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorCursor.MoveCursor(Microsoft.AspNetCore.Components.Web.KeyboardEventArgs, TextEditorCursor, RazorLib.TextEditors.Models.TextEditorModels.TextEditorModel)"/>
+	/// </summary>
 	[Fact]
 	public void MoveCursor()
 	{
-		//public static void MoveCursor(
-	 //       KeyboardEventArgs keyboardEventArgs,
-	 //       TextEditorCursor textEditorCursor,
-	 //       TextEditorModel textEditorModel)
 		throw new NotImplementedException();
 	}
 }

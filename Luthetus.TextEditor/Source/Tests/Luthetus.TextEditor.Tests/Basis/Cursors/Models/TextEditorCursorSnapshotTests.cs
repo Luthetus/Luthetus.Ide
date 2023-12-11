@@ -1,41 +1,55 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Cursors.Models;
 
+/// <summary>
+/// <see cref="TextEditorCursorSnapshot"/>
+/// </summary>
 public class TextEditorCursorSnapshotTests
 {
+	/// <summary>
+	/// <see cref="TextEditorCursorSnapshot(TextEditorCursor)"/>
+	/// </summary>
 	[Fact]
 	public void TextEditorCursorSnapshot_A()
 	{
-	    //public TextEditorCursorSnapshot(TextEditorCursor userCursor)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorCursorSnapshot(ImmutableTextEditorCursor, TextEditorCursor)"/>
+	/// </summary>
 	[Fact]
 	public void TextEditorCursorSnapshot_B()
 	{
-		//public TextEditorCursorSnapshot(ImmutableTextEditorCursor immutableCursor, TextEditorCursor userCursor)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorCursorSnapshot.ImmutableCursor"/>
+	/// </summary>
 	[Fact]
 	public void ImmutableCursor()
 	{
-		//public ImmutableTextEditorCursor ImmutableCursor { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorCursorSnapshot.UserCursor"/>
+	/// </summary>
 	[Fact]
 	public void UserCursor()
 	{
-		//public TextEditorCursor UserCursor { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorCursorSnapshot.TakeSnapshots(TextEditorCursor[])"/>
+	/// </summary>
 	[Fact]
 	public void TakeSnapshots()
 	{
-		//public static ImmutableArray<TextEditorCursorSnapshot> TakeSnapshots(params TextEditorCursor[] cursorBag)
 		throw new NotImplementedException();
 	}
 }

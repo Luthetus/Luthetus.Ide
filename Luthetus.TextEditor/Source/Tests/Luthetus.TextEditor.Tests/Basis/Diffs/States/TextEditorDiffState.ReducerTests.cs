@@ -1,26 +1,28 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Diffs.States;
 
 namespace Luthetus.TextEditor.Tests.Basis.Diffs.States;
 
+/// <summary>
+/// <see cref="TextEditorDiffState.Reducer"/>
+/// </summary>
 public partial class TextEditorDiffStateReducerTests
 {
-	[Fact]
-	public void ReduceDisposeAction()
-	{
-		//public static TextEditorDiffState ReduceDisposeAction(
-	 //       TextEditorDiffState inState,
-	 //       DisposeAction disposeAction)
-		throw new NotImplementedException();
-	}
-
-
+	/// <summary>
+	/// <see cref="TextEditorDiffState.Reducer.ReduceRegisterAction(TextEditorDiffState, TextEditorDiffState.RegisterAction)"/>
+	/// </summary>
 	[Fact]
 	public void ReduceRegisterAction()
 	{
-		//public static TextEditorDiffState ReduceRegisterAction(
-		//	TextEditorDiffState inState,
-		//	RegisterAction registerAction)
 		throw new NotImplementedException();
 	}
-    
+
+	/// <summary>
+	/// <see cref="TextEditorDiffState.Reducer.ReduceDisposeAction(TextEditorDiffState, TextEditorDiffState.DisposeAction)"/>
+	/// </summary>
+	[Fact]
+	public void ReduceDisposeAction()
+	{
+		throw new NotImplementedException();
+	}
 }

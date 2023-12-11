@@ -1,99 +1,109 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Cursors.Models;
 
+/// <summary>
+/// <see cref="TextEditorSelectionHelper"/>
+/// </summary>
 public class TextEditorSelectionHelperTests
 {
+	/// <summary>
+	/// <see cref="TextEditorSelectionHelper.HasSelectedText(TextEditorSelection)"/>
+	/// </summary>
 	[Fact]
 	public void HasSelectedText_A()
 	{
-		//public static bool HasSelectedText(TextEditorSelection textEditorSelection)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorSelectionHelper.HasSelectedText(ImmutableTextEditorSelection)"/>
+	/// </summary>
 	[Fact]
 	public void HasSelectedText_B()
 	{
-		//public static bool HasSelectedText(ImmutableTextEditorSelection immutableTextEditorSelection)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorSelectionHelper.HasSelectedText(int?, int)"/>
+	/// </summary>
 	[Fact]
 	public void HasSelectedText_C()
 	{
-		//public static bool HasSelectedText(int? anchorPositionIndex, int endingPositionIndex)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorSelectionHelper.GetSelectedText(TextEditorSelection, RazorLib.TextEditors.Models.TextEditorModels.TextEditorModel)"/>
+	/// </summary>
 	[Fact]
 	public void GetSelectedText_A()
 	{
-		//public static string? GetSelectedText(
-	 //       TextEditorSelection textEditorSelection,
-	 //       TextEditorModel textEditorModel)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorSelectionHelper.GetSelectedText(ImmutableTextEditorSelection, RazorLib.TextEditors.Models.TextEditorModels.TextEditorModel)"/>
+	/// </summary>
 	[Fact]
 	public void GetSelectedText_B()
 	{
-		//public static string? GetSelectedText(
-	 //       ImmutableTextEditorSelection immutableTextEditorSelection,
-	 //       TextEditorModel textEditorModel)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorSelectionHelper.GetSelectedText(int?, int, RazorLib.TextEditors.Models.TextEditorModels.TextEditorModel)"/>
+	/// </summary>
 	[Fact]
 	public void GetSelectedText_C()
 	{
-		//public static string? GetSelectedText(
-	 //       int? anchorPositionIndex,
-	 //       int endingPositionIndex,
-	 //       TextEditorModel textEditorModel)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorSelectionHelper.SelectLinesRange(RazorLib.TextEditors.Models.TextEditorModels.TextEditorModel, int, int)"/>
+	/// </summary>
 	[Fact]
 	public void SelectLinesRange()
 	{
-		//public static TextEditorCursor SelectLinesRange(
-	 //       TextEditorModel textEditorModel,
-	 //       int startingRowIndex,
-	 //       int count)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorSelectionHelper.GetSelectionBounds(TextEditorSelection)"/>
+	/// </summary>
 	[Fact]
 	public void GetSelectionBounds_A()
 	{
-		//public static (int lowerPositionIndexInclusive, int upperPositionIndexExclusive) GetSelectionBounds(
-	 //       TextEditorSelection textEditorSelection)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorSelectionHelper.GetSelectionBounds(ImmutableTextEditorSelection)"/>
+	/// </summary>
 	[Fact]
 	public void GetSelectionBounds_B()
 	{
-		//public static (int lowerPositionIndexInclusive, int upperPositionIndexExclusive) GetSelectionBounds(
-	 //       ImmutableTextEditorSelection immutableTextEditorSelection)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorSelectionHelper.GetSelectionBounds(int?, int)"/>
+	/// </summary>
 	[Fact]
 	public void GetSelectionBounds_C()
 	{
-		//public static (int lowerPositionIndexInclusive, int upperPositionIndexExclusive) GetSelectionBounds(
-	 //       int? anchorPositionIndex,
-	 //       int endingPositionIndex)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(RazorLib.TextEditors.Models.TextEditorModels.TextEditorModel, ValueTuple{int, int})"/>
+	/// </summary>
 	[Fact]
 	public void ConvertSelectionOfPositionIndexUnitsToRowIndexUnits()
 	{
-		//public static (int lowerRowIndexInclusive, int upperRowIndexExclusive) ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(
-	 //       TextEditorModel textEditorModel,
-	 //       (int lowerPositionIndexInclusive, int upperPositionIndexExclusive) positionIndexBounds)
 		throw new NotImplementedException();
 	}
 }

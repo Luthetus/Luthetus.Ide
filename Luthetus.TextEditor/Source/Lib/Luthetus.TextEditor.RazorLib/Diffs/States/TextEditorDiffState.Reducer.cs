@@ -5,7 +5,7 @@ namespace Luthetus.TextEditor.RazorLib.Diffs.States;
 
 public partial class TextEditorDiffState
 {
-    private class Reducer
+    public class Reducer
     {
         [ReducerMethod]
         public static TextEditorDiffState ReduceDisposeAction(

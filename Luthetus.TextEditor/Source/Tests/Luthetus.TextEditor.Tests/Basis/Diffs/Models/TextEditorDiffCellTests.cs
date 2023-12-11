@@ -1,45 +1,55 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Diffs.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Diffs.Models;
 
+/// <summary>
+/// <see cref="TextEditorDiffCell"/>
+/// </summary>
 public class TextEditorDiffCellTests
 {
+	/// <summary>
+	/// <see cref="TextEditorDiffCell(char?, char?, int, bool)"/>
+	/// </summary>
 	[Fact]
-	public void TextEditorDiffCell()
+	public void Constructor()
 	{
-		//public TextEditorDiffCell(
-	 //       char? beforeCharValue,
-	 //       char? afterCharValue,
-	 //       int weight,
-	 //       bool isSourceOfRowWeight)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorDiffCell.BeforeCharValue"/>
+	/// </summary>
 	[Fact]
 	public void BeforeCharValue()
 	{
-		//public char? BeforeCharValue { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorDiffCell.AfterCharValue"/>
+	/// </summary>
 	[Fact]
 	public void AfterCharValue()
 	{
-		//public char? AfterCharValue { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorDiffCell.Weight"/>
+	/// </summary>
 	[Fact]
 	public void Weight()
 	{
-		//public int Weight { get; set; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorDiffCell.IsSourceOfRowWeight"/>
+	/// </summary>
 	[Fact]
 	public void IsSourceOfRowWeight()
 	{
-		//public bool IsSourceOfRowWeight { get; }
 		throw new NotImplementedException();
 	}
 }

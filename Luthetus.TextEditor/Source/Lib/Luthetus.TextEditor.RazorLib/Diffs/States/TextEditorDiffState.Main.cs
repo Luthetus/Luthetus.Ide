@@ -12,7 +12,7 @@ namespace Luthetus.TextEditor.RazorLib.Diffs.States;
 [FeatureState]
 public partial class TextEditorDiffState
 {
-    private TextEditorDiffState()
+    public TextEditorDiffState()
     {
         DiffModelBag = ImmutableList<TextEditorDiffModel>.Empty;
     }

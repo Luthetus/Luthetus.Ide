@@ -1,59 +1,73 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Decorations.Models;
 
+/// <summary>
+/// <see cref="TextEditorPresentationModel"/>
+/// </summary>
 public class TextEditorPresentationModelTests
 {
+	/// <summary>
+	/// <see cref="TextEditorPresentationModel(Common.RazorLib.Keys.Models.Key{TextEditorPresentationModel}, int, string, IDecorationMapper)"/>
+	/// </summary>
 	[Fact]
-	public void TextEditorPresentationModel()
+	public void Constructor()
 	{
-		//record TextEditorPresentationModel(
-		//	  Key<TextEditorPresentationModel> TextEditorPresentationKey,
-		//	  int Rank,
-		//	  string CssClassString,
-		//	  IDecorationMapper DecorationMapper)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorPresentationModel.TextEditorPresentationKey"/>
+	/// </summary>
 	[Fact]
 	public void TextEditorPresentationKey()
 	{
-		//Key<TextEditorPresentationModel> TextEditorPresentationKey,
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorPresentationModel.Rank"/>
+	/// </summary>
 	[Fact]
 	public void Rank()
 	{
-		//int Rank,
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorPresentationModel.CssClassString"/>
+	/// </summary>
 	[Fact]
 	public void CssClassString()
 	{
-		//string CssClassString,
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorPresentationModel.DecorationMapper"/>
+	/// </summary>
 	[Fact]
 	public void DecorationMapper()
 	{
-		//IDecorationMapper DecorationMapper
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorPresentationModel.CompletedCalculation"/>
+	/// </summary>
 	[Fact]
 	public void CompletedCalculation()
 	{
-		//public TextEditorPresentationModelCalculation? CompletedCalculation { get; set; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorPresentationModel.PendingCalculation"/>
+	/// </summary>
 	[Fact]
 	public void PendingCalculation()
 	{
-		//public TextEditorPresentationModelCalculation? PendingCalculation { get; set; }
 		throw new NotImplementedException();
 	}
 }

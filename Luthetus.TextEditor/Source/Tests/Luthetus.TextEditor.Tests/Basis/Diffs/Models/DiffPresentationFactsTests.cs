@@ -1,49 +1,56 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Diffs.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Diffs.Models;
 
+/// <summary>
+/// <see cref="DiffPresentationFacts"/>
+/// </summary>
 public class DiffPresentationFactsTests
 {
+	/// <summary>
+	/// <see cref="DiffPresentationFacts.CssClassString"/>
+	/// </summary>
 	[Fact]
 	public void CssClassString()
 	{
-		//public const string CssClassString = "luth_te_diff-presentation";
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="DiffPresentationFacts.InPresentationKey"/>
+	/// </summary>
 	[Fact]
 	public void InPresentationKey()
 	{
-		//public static readonly Key<TextEditorPresentationModel> InPresentationKey = Key<TextEditorPresentationModel>.NewKey();
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="DiffPresentationFacts.OutPresentationKey"/>
+	/// </summary>
 	[Fact]
 	public void OutPresentationKey()
 	{
-		//public static readonly Key<TextEditorPresentationModel> OutPresentationKey = Key<TextEditorPresentationModel>.NewKey();
+		//public static readonly Key<TextEditorPresentationModel>  = Key<TextEditorPresentationModel>.NewKey();
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="DiffPresentationFacts.EmptyInPresentationModel"/>
+	/// </summary>
 	[Fact]
 	public void EmptyInPresentationModel()
 	{
-		//public static readonly TextEditorPresentationModel EmptyInPresentationModel = new(
-	 //       InPresentationKey,
-	 //       0,
-	 //       CssClassString,
-	 //       new TextEditorDiffDecorationMapper());
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="DiffPresentationFacts.EmptyOutPresentationModel"/>
+	/// </summary>
 	[Fact]
 	public void EmptyOutPresentationModel()
 	{
-		//public static readonly TextEditorPresentationModel EmptyOutPresentationModel = new(
-	//       OutPresentationKey,
-	//       0,
-	//       CssClassString,
-	//       new TextEditorDiffDecorationMapper());
 		throw new NotImplementedException();
 	}
 }

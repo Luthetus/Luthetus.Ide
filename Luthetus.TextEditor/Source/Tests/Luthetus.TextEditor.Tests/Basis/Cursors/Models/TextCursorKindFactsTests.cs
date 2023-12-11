@@ -1,27 +1,37 @@
 using Xunit;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Cursors.Models;
 
+/// <summary>
+/// <see cref="TextCursorKindFacts"/>
+/// </summary>
 public class TextCursorKindFactsTests
 {
+	/// <summary>
+	/// <see cref="TextCursorKindFacts.BeamCssClassString"/>
+	/// </summary>
 	[Fact]
 	public void BeamCssClassString()
 	{
-		//public const string BeamCssClassString = "luth_te_cursor-beam";
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextCursorKindFacts.BlockCssClassString"/>
+	/// </summary>
 	[Fact]
 	public void BlockCssClassString()
 	{
-		//public const string BlockCssClassString = "luth_te_cursor-block";
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextCursorKindFacts.ReplaceCssClassString"/>
+	/// </summary>
 	[Fact]
 	public void ReplaceCssClassString()
 	{
-		//public const string ReplaceCssClassString = "luth_te_cursor-replace";
 		throw new NotImplementedException();
 	}
 }

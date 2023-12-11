@@ -1,27 +1,37 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.ComponentRenderers.Models;
 
+/// <summary>
+/// <see cref="LuthetusTextEditorComponentRenderers"/>
+/// </summary>
 public class LuthetusTextEditorComponentRenderersTests
 {
+	/// <summary>
+	/// <see cref="LuthetusTextEditorComponentRenderers(Type, Type)"/>
+	/// </summary>
 	[Fact]
-	public void LuthetusTextEditorComponentRenderers()
+	public void Constructor()
 	{
-		//public LuthetusTextEditorComponentRenderers(Type symbolRendererType, Type diagnosticRendererType)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="LuthetusTextEditorComponentRenderers.SymbolRendererType"/>
+	/// </summary>
 	[Fact]
 	public void SymbolRendererType()
 	{
-		//public Type SymbolRendererType { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="LuthetusTextEditorComponentRenderers.DiagnosticRendererType"/>
+	/// </summary>
 	[Fact]
 	public void DiagnosticRendererType()
 	{
-		//public Type DiagnosticRendererType { get; }
 		throw new NotImplementedException();
 	}
 }

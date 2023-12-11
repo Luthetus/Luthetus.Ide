@@ -1,101 +1,91 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Diffs.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Diffs.Models;
 
+/// <summary>
+/// <see cref="TextEditorDiffResult"/>
+/// </summary>
 public class TextEditorDiffResultTests
 {
+	/// <summary>
+	/// <see cref="TextEditorDiffResult(string, string, TextEditorDiffCell[,], ValueTuple{int, int, int}, string, System.Collections.Immutable.ImmutableList{RazorLib.Lexes.Models.TextEditorTextSpan}, System.Collections.Immutable.ImmutableList{RazorLib.Lexes.Models.TextEditorTextSpan})"/>
+	/// </summary>
 	[Fact]
-	public void TextEditorDiffResult()
+	public void Constructor()
 	{
-		//private TextEditorDiffResult(
-	 //       string inText,
-	 //       string outText,
-	 //       TextEditorDiffCell[,] diffMatrix,
-	 //       (int sourceWeight, int inIndex, int outIndex) highestSourceWeightTuple,
-	 //       string longestCommonSubsequence,
-	 //       ImmutableList<TextEditorTextSpan> inLongestCommonSubsequenceTextSpanBag,
-	 //       ImmutableList<TextEditorTextSpan> outLongestCommonSubsequenceTextSpanBag)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorDiffResult.InText"/>
+	/// </summary>
 	[Fact]
 	public void InText()
 	{
-		//public string InText { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorDiffResult.OutText"/>
+	/// </summary>
 	[Fact]
 	public void OutText()
 	{
-		//public string OutText { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorDiffResult.DiffMatrix"/>
+	/// </summary>
 	[Fact]
 	public void DiffMatrix()
 	{
-		//public TextEditorDiffCell[,] DiffMatrix { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorDiffResult.HighestSourceWeightTuple"/>
+	/// </summary>
 	[Fact]
 	public void HighestSourceWeightTuple()
 	{
-		//public (int sourceWeight, int beforeIndex, int afterIndex) HighestSourceWeightTuple { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorDiffResult.LongestCommonSubsequence"/>
+	/// </summary>
 	[Fact]
 	public void LongestCommonSubsequence()
 	{
-		//public string LongestCommonSubsequence { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorDiffResult.InResultTextSpanBag"/>
+	/// </summary>
 	[Fact]
 	public void InResultTextSpanBag()
 	{
-		//public ImmutableList<TextEditorTextSpan> InResultTextSpanBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorDiffResult.OutResultTextSpanBag"/>
+	/// </summary>
 	[Fact]
 	public void OutResultTextSpanBag()
 	{
-		//public ImmutableList<TextEditorTextSpan> OutResultTextSpanBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorDiffResult.Calculate(RazorLib.Lexes.Models.ResourceUri, string, RazorLib.Lexes.Models.ResourceUri, string)"/>
+	/// </summary>
 	[Fact]
 	public void Calculate()
 	{
-		//public static TextEditorDiffResult Calculate(
-	 //       ResourceUri inResourceUri,
-	 //       string inText,
-	 //       ResourceUri outResourceUri,
-	 //       string outText)
-		throw new NotImplementedException();
-	}
-
-	[Fact]
-	public void GetLargestWeightPriorToCurrentPosition()
-	{
-		//private static int GetLargestWeightPriorToCurrentPosition(
-	 //       TextEditorDiffCell[,] diffMatrix,
-	 //       int inIndex,
-	 //       int outIndex)
-		throw new NotImplementedException();
-	}
-
-	[Fact]
-	public void GetTextSpans()
-	{
-		//private static List<TextEditorTextSpan> GetTextSpans(
-	 //       ResourceUri resourceUri,
-	 //       string sourceText,
-	 //       HashSet<int> positionIndicesHashSet,
-	 //       byte decorationByte)
 		throw new NotImplementedException();
 	}
 }

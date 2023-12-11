@@ -1,27 +1,37 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Decorations.Models;
 
+/// <summary>
+/// <see cref="TextEditorTextModification"/>
+/// </summary>
 public class TextEditorTextModificationTests
 {
+	/// <summary>
+	/// <see cref="TextEditorTextModification(bool, RazorLib.Lexes.Models.TextEditorTextSpan)"/>
+	/// </summary>
 	[Fact]
-	public void TextEditorTextModification()
+	public void Constructor()
 	{
-		// record TextEditorTextModification(bool WasInsertion, TextEditorTextSpan TextEditorTextSpan)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorTextModification.WasInsertion"/>
+	/// </summary>
 	[Fact]
 	public void WasInsertion()
 	{
-		// bool WasInsertion
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorTextModification.TextEditorTextSpan"/>
+	/// </summary>
 	[Fact]
 	public void TextEditorTextSpan()
 	{
-		// TextEditorTextSpan TextEditorTextSpan
 		throw new NotImplementedException();
 	}
 }
