@@ -1,45 +1,55 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
+/// <summary>
+/// <see cref="TextEditorDiagnostic"/>
+/// </summary>
 public class TextEditorDiagnosticTests
 {
+	/// <summary>
+	/// <see cref="TextEditorDiagnostic(TextEditorDiagnosticLevel, string, RazorLib.Lexes.Models.TextEditorTextSpan, Guid)"/>
+	/// </summary>
 	[Fact]
-	public void TextEditorDiagnostic()
+	public void Constructor()
 	{
-		//	public record TextEditorDiagnostic(
-		//		TextEditorDiagnosticLevel DiagnosticLevel,
-		//		string Message,
-		//		TextEditorTextSpan TextSpan,
-		//		Guid Id)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorDiagnostic.DiagnosticLevel"/>
+	/// </summary>
 	[Fact]
 	public void DiagnosticLevel()
 	{
-		//TextEditorDiagnosticLevel DiagnosticLevel,
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorDiagnostic.Message"/>
+	/// </summary>
 	[Fact]
 	public void Message()
 	{
-	    //string Message,
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorDiagnostic.TextSpan"/>
+	/// </summary>
 	[Fact]
 	public void TextSpan()
 	{
-	    //TextEditorTextSpan TextSpan,
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorDiagnostic.Id"/>
+	/// </summary>
 	[Fact]
 	public void Id()
 	{
-		//Guid Id
 		throw new NotImplementedException();
 	}
 }

@@ -1,73 +1,91 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
+/// <summary>
+/// <see cref="CompilationUnit"/>
+/// </summary>
 public class CompilationUnitTests
 {
+	/// <summary>
+	/// <see cref="CompilationUnit(CodeBlockNode?, ILexer?, IParser?, IBinder?)"/>
+	/// </summary>
 	[Fact]
-	public void CompilationUnit()
+	public void Constructor()
 	{
-		//public CompilationUnit(
-	 //       CodeBlockNode? rootCodeBlockNode,
-	 //       ILexer? lexer,
-	 //       IParser? parser,
-	 //       IBinder? binder)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="CompilationUnit.TopLevelStatementsCodeBlockNode"/>
+	/// </summary>
 	[Fact]
 	public void TopLevelStatementsCodeBlockNode()
 	{
-		//public CodeBlockNode TopLevelStatementsCodeBlockNode { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="CompilationUnit.Lexer"/>
+	/// </summary>
 	[Fact]
 	public void Lexer()
 	{
-		//public ILexer Lexer { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="CompilationUnit.Parser"/>
+	/// </summary>
 	[Fact]
 	public void Parser()
 	{
-		//public IParser Parser { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="CompilationUnit.Binder"/>
+	/// </summary>
 	[Fact]
 	public void Binder()
 	{
-		//public IBinder Binder { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="CompilationUnit.DiagnosticsBag"/>
+	/// </summary>
 	[Fact]
 	public void DiagnosticsBag()
 	{
-		//public ImmutableArray<TextEditorDiagnostic> DiagnosticsBag { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="CompilationUnit.ChildBag"/>
+	/// </summary>
 	[Fact]
 	public void ChildBag()
 	{
-		//public ImmutableArray<ISyntax> ChildBag { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="CompilationUnit.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="CompilationUnit.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.CompilationUnit;
 		throw new NotImplementedException();
 	}
 }

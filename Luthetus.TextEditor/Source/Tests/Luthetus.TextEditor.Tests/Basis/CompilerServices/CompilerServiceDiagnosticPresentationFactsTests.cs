@@ -1,31 +1,37 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
+/// <summary>
+/// <see cref="CompilerServiceDiagnosticPresentationFacts"/>
+/// </summary>
 public class CompilerServiceDiagnosticPresentationFactsTests
 {
+	/// <summary>
+	/// <see cref="CompilerServiceDiagnosticPresentationFacts.CssClassString"/>
+	/// </summary>
 	[Fact]
 	public void CssClassString()
 	{
-		//public const string CssClassString = "luth_te_compiler-service-diagnostic-presentation";
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="CompilerServiceDiagnosticPresentationFacts.PresentationKey"/>
+	/// </summary>
 	[Fact]
 	public void PresentationKey()
 	{
-		//public static readonly Key<TextEditorPresentationModel> PresentationKey = Key<TextEditorPresentationModel>.NewKey();
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel"/>
+	/// </summary>
 	[Fact]
 	public void EmptyPresentationModel()
 	{
-		//public static readonly TextEditorPresentationModel EmptyPresentationModel = new(
-	 //       PresentationKey,
-	 //       0,
-	 //       CssClassString,
-	 //       new CompilerServiceDiagnosticDecorationMapper());
 		throw new NotImplementedException();
 	}
 }

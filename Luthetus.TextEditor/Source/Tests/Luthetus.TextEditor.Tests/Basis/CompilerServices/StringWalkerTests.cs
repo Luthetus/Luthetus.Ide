@@ -1,161 +1,208 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
+/// <summary>
+/// <see cref="StringWalker"/>
+/// </summary>
 public class StringWalkerTests
 {
+	/// <summary>
+	/// <see cref="StringWalker(RazorLib.Lexes.Models.ResourceUri, string)"/>
+	/// </summary>
 	[Fact]
-	public void StringWalker()
+	public void Constructor()
 	{
-		//public StringWalker(ResourceUri resourceUri, string sourceText)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="StringWalker.PositionIndex"/>
+	/// </summary>
 	[Fact]
 	public void PositionIndex()
 	{
-		//public int PositionIndex { get; private set; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="StringWalker.ResourceUri"/>
+	/// </summary>
 	[Fact]
 	public void ResourceUri()
 	{
-		//public ResourceUri ResourceUri { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="StringWalker.SourceText"/>
+	/// </summary>
 	[Fact]
 	public void SourceText()
 	{
-		//public string SourceText { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="StringWalker.CurrentCharacter"/>
+	/// </summary>
 	[Fact]
 	public void CurrentCharacter()
 	{
-		//public char CurrentCharacter => PeekCharacter(0);
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="StringWalker.NextCharacter"/>
+	/// </summary>
 	[Fact]
 	public void NextCharacter()
 	{
-		//public char NextCharacter => PeekCharacter(1);
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="StringWalker.RemainingText"/>
+	/// </summary>
 	[Fact]
 	public void RemainingText()
 	{
-		//public string RemainingText => SourceText[PositionIndex..];
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="StringWalker.IsEof"/>
+	/// </summary>
 	[Fact]
 	public void IsEof()
 	{
-		//public bool IsEof => CurrentCharacter == ParserFacts.END_OF_FILE;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="StringWalker.ReadCharacter()"/>
+	/// </summary>
 	[Fact]
 	public void ReadCharacter()
 	{
-		//public char ReadCharacter()
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="StringWalker.PeekCharacter(int)"/>
+	/// </summary>
 	[Fact]
 	public void PeekCharacter()
 	{
-		//public char PeekCharacter(int offset)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="StringWalker.BacktrackCharacter()"/>
+	/// </summary>
 	[Fact]
 	public void BacktrackCharacter()
 	{
-		//public char BacktrackCharacter()
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="StringWalker.ReadRange(int)"/>
+	/// </summary>
 	[Fact]
 	public void ReadRange()
 	{
-		//public string ReadRange(int length)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="StringWalker.PeekRange(int, int)"/>
+	/// </summary>
 	[Fact]
 	public void PeekRange()
 	{
-		//public string PeekRange(int offset, int length)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="StringWalker.BacktrackRange(int)"/>
+	/// </summary>
 	[Fact]
 	public void BacktrackRange()
 	{
-		//public string BacktrackRange(int length)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="StringWalker.PeekNextWord()"/>
+	/// </summary>
 	[Fact]
 	public void PeekNextWord()
 	{
-		//public string PeekNextWord()
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="StringWalker.CheckForSubstring(string)"/>
+	/// </summary>
 	[Fact]
 	public void CheckForSubstring()
 	{
-		//public bool CheckForSubstring(string substring)
 		throw new NotImplementedException();
 	}
 
-
+	/// <summary>
+	/// <see cref="StringWalker.CheckForSubstringRange(System.Collections.Immutable.ImmutableArray{string}, out string?)"/>
+	/// </summary>
 	[Fact]
 	public void CheckForSubstringRange()
 	{
-		//public bool CheckForSubstringRange(ImmutableArray<string> substringsBag, out string? matchedOn)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="StringWalker.ReadWhitespace(IEnumerable{char}?)"/>
+	/// </summary>
 	[Fact]
 	public void ReadWhitespace()
 	{
-		//public string ReadWhitespace(IEnumerable<char>? whitespaceOverrideBag = null)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="StringWalker.ReadUnsignedNumericLiteral()"/>
+	/// </summary>
 	[Fact]
 	public void ReadUnsignedNumericLiteral()
 	{
-		//public NumericLiteralToken ReadUnsignedNumericLiteral()
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="StringWalker.ReadUntil(char)"/>
+	/// </summary>
 	[Fact]
 	public void ReadUntil()
 	{
-		//public string ReadUntil(char deliminator)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="StringWalker.ReadLine()"/>
+	/// </summary>
 	[Fact]
 	public void ReadLine()
 	{
-		//public string ReadLine()
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="StringWalker.ReadWordTuple(System.Collections.Immutable.ImmutableArray{char}?)"/>
+	/// </summary>
 	[Fact]
 	public void ReadWordTuple()
 	{
-		//public (TextEditorTextSpan textSpan, string value) ReadWordTuple(ImmutableArray<char>? additionalCharactersToBreakOnBag = null)
 		throw new NotImplementedException();
 	}
 }

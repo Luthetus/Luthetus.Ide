@@ -1,27 +1,37 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
+/// <summary>
+/// <see cref="EvaluatorResult"/>
+/// </summary>
 public class EvaluatorResultTests
 {
+	/// <summary>
+	/// <see cref="EvaluatorResult(System.Type, object)"/>
+	/// </summary>
 	[Fact]
-	public void EvaluatorResult()
+	public void Constructor()
 	{
-		//public EvaluatorResult(Type type, object result)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="EvaluatorResult.Type"/>
+	/// </summary>
 	[Fact]
 	public void Type()
 	{
-		//public Type Type { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="EvaluatorResult.Result"/>
+	/// </summary>
 	[Fact]
 	public void Result()
 	{
-		//public object Result { get; }
 		throw new NotImplementedException();
 	}
 }

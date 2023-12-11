@@ -1,48 +1,64 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
+/// <summary>
+/// <see cref="CodeBlockBuilder"/>
+/// </summary>
 public class CodeBlockBuilderTests
 {
+	/// <summary>
+	/// <see cref="CodeBlockBuilder(CodeBlockBuilder?, RazorLib.CompilerServices.Syntax.ISyntaxNode?)"/>
+	/// </summary>
 	[Fact]
-	public void CodeBlockBuilder()
+	public void Constructor()
 	{
-		//public CodeBlockBuilder(CodeBlockBuilder? parent, ISyntaxNode? codeBlockOwner)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="CodeBlockBuilder.ChildBag"/>
+	/// </summary>
 	[Fact]
 	public void ChildBag()
 	{
-		//public List<ISyntax> ChildBag { get; } = new();
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="CodeBlockBuilder.Parent"/>
+	/// </summary>
 	[Fact]
 	public void Parent()
 	{
-		//public CodeBlockBuilder? Parent { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="CodeBlockBuilder.CodeBlockOwner"/>
+	/// </summary>
 	[Fact]
 	public void CodeBlockOwner()
 	{
-		//public ISyntaxNode? CodeBlockOwner { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="CodeBlockBuilder.Build()"/>
+	/// </summary>
 	[Fact]
 	public void Build_A()
 	{
-		//public CodeBlockNode Build()
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="CodeBlockBuilder.Build(System.Collections.Immutable.ImmutableArray{TextEditorDiagnostic})"/>
+	/// </summary>
 	[Fact]
 	public void Build_B()
 	{
-		//public CodeBlockNode Build(ImmutableArray<TextEditorDiagnostic> diagnostics)
 		throw new NotImplementedException();
 	}
 }

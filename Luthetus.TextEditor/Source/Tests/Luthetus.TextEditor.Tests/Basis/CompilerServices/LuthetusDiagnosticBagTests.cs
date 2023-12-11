@@ -1,213 +1,219 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
+/// <summary>
+/// <see cref="LuthetusDiagnosticBag"/>
+/// </summary>
 public class LuthetusDiagnosticBagTests
 {
+	/// <summary>
+	/// <see cref="LuthetusDiagnosticBag.GetEnumerator()"/>
+	/// </summary>
 	[Fact]
-	public void GetEnumerator_A()
+	public void GetEnumerator_ClassDefinedMethod()
 	{
 		//public IEnumerator<TextEditorDiagnostic> GetEnumerator()
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="LuthetusDiagnosticBag.GetEnumerator()"/>
+	/// </summary>
 	[Fact]
-	public void GetEnumerator_B()
+	public void GetEnumerator_ExplicitInterfaceImplementation()
 	{
 		//IEnumerator IEnumerable.GetEnumerator()
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="LuthetusDiagnosticBag.ReportEndOfFileUnexpected(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
+	/// </summary>
 	[Fact]
 	public void ReportEndOfFileUnexpected()
 	{
-		//public void ReportEndOfFileUnexpected(TextEditorTextSpan textSpan)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="LuthetusDiagnosticBag.ReportUnexpectedToken(RazorLib.Lexes.Models.TextEditorTextSpan, string, string)"/>
+	/// </summary>
 	[Fact]
 	public void ReportUnexpectedToken_A()
 	{
-		//public void ReportUnexpectedToken(
-	 //       TextEditorTextSpan textSpan,
-	 //       string unexpectedToken,
-	 //       string expectedToken)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="LuthetusDiagnosticBag.ReportUnexpectedToken(RazorLib.Lexes.Models.TextEditorTextSpan, string)"/>
+	/// </summary>
 	[Fact]
 	public void ReportUnexpectedToken_B()
 	{
-		//public void ReportUnexpectedToken(
-		//	TextEditorTextSpan textSpan,
-		//	string unexpectedToken)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="LuthetusDiagnosticBag.ReportUndefinedClass(RazorLib.Lexes.Models.TextEditorTextSpan, string)"/>
+	/// </summary>
 	[Fact]
 	public void ReportUndefinedClass()
 	{
-		//public void ReportUndefinedClass(
-	 //       TextEditorTextSpan textSpan,
-	 //       string undefinedClassIdentifier)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="LuthetusDiagnosticBag.ReportUndefinedTypeOrNamespace(RazorLib.Lexes.Models.TextEditorTextSpan, string)"/>
+	/// </summary>
 	[Fact]
 	public void ReportUndefinedTypeOrNamespace()
 	{
-		//public void ReportUndefinedTypeOrNamespace(
-	 //       TextEditorTextSpan textSpan,
-	 //       string undefinedTypeOrNamespaceIdentifier)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="LuthetusDiagnosticBag.ReportAlreadyDefinedType(RazorLib.Lexes.Models.TextEditorTextSpan, string)"/>
+	/// </summary>
 	[Fact]
 	public void ReportAlreadyDefinedType()
 	{
-		//public void ReportAlreadyDefinedType(
-	 //       TextEditorTextSpan textSpan,
-	 //       string alreadyDefinedTypeIdentifier)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="LuthetusDiagnosticBag.ReportUndefinedVariable(RazorLib.Lexes.Models.TextEditorTextSpan, string)"/>
+	/// </summary>
 	[Fact]
 	public void ReportUndefinedVariable()
 	{
-		//public void ReportUndefinedVariable(
-	 //       TextEditorTextSpan textSpan,
-	 //       string undefinedVariableIdentifier)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="LuthetusDiagnosticBag.ReportAlreadyDefinedVariable(RazorLib.Lexes.Models.TextEditorTextSpan, string)"/>
+	/// </summary>
 	[Fact]
 	public void ReportAlreadyDefinedVariable()
 	{
-		//public void ReportAlreadyDefinedVariable(
-	 //       TextEditorTextSpan textSpan,
-	 //       string alreadyDefinedVariableIdentifier)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="LuthetusDiagnosticBag.ReportAlreadyDefinedProperty(RazorLib.Lexes.Models.TextEditorTextSpan, string)"/>
+	/// </summary>
 	[Fact]
 	public void ReportAlreadyDefinedProperty()
 	{
-		//public void ReportAlreadyDefinedProperty(
-	 //       TextEditorTextSpan textSpan,
-	 //       string alreadyDefinedPropertyIdentifier)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="LuthetusDiagnosticBag.ReportUndefinedFunction(RazorLib.Lexes.Models.TextEditorTextSpan, string)"/>
+	/// </summary>
 	[Fact]
 	public void ReportUndefinedFunction()
 	{
-		//public void ReportUndefinedFunction(
-	 //       TextEditorTextSpan textSpan,
-	 //       string undefinedFunctionIdentifier)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="LuthetusDiagnosticBag.ReportAlreadyDefinedFunction(RazorLib.Lexes.Models.TextEditorTextSpan, string)"/>
+	/// </summary>
 	[Fact]
 	public void ReportAlreadyDefinedFunction()
 	{
-		//public void ReportAlreadyDefinedFunction(
-	//       TextEditorTextSpan textSpan,
-	//       string alreadyDefinedFunctionIdentifier)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="LuthetusDiagnosticBag.ReportBadFunctionOptionalArgumentDueToMismatchInType(RazorLib.Lexes.Models.TextEditorTextSpan, string, string, string)"/>
+	/// </summary>
 	[Fact]
 	public void ReportBadFunctionOptionalArgumentDueToMismatchInType()
 	{
-		//public void ReportBadFunctionOptionalArgumentDueToMismatchInType(
-	 //       TextEditorTextSpan optionalArgumentTextSpan,
-	 //       string optionalArgumentVariableIdentifier,
-	 //       string typeExpectedIdentifierString,
-	 //       string typeActualIdentifierString)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="LuthetusDiagnosticBag.ReportReturnStatementsAreStillBeingImplemented(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
+	/// </summary>
 	[Fact]
 	public void ReportReturnStatementsAreStillBeingImplemented()
 	{
-		//public void ReportReturnStatementsAreStillBeingImplemented(TextEditorTextSpan textSpan)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="LuthetusDiagnosticBag.ReportTagNameMissing(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
+	/// </summary>
 	[Fact]
 	public void ReportTagNameMissing()
 	{
-		//public void ReportTagNameMissing(TextEditorTextSpan textSpan)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="LuthetusDiagnosticBag.ReportOpenTagWithUnMatchedCloseTag(string, string, RazorLib.Lexes.Models.TextEditorTextSpan)"/>
+	/// </summary>
 	[Fact]
 	public void ReportOpenTagWithUnMatchedCloseTag()
 	{
-		//public void ReportOpenTagWithUnMatchedCloseTag(
-	 //       string openTagName,
-	 //       string closeTagName,
-	 //       TextEditorTextSpan textSpan)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="LuthetusDiagnosticBag.ReportRazorExplicitExpressionPredicateWasExpected(string, string, RazorLib.Lexes.Models.TextEditorTextSpan)"/>
+	/// </summary>
 	[Fact]
 	public void ReportRazorExplicitExpressionPredicateWasExpected()
 	{
-		//public void ReportRazorExplicitExpressionPredicateWasExpected(
-	 //       string transitionSubstring,
-	 //       string keywordText,
-	 //       TextEditorTextSpan textSpan)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="LuthetusDiagnosticBag.ReportRazorCodeBlockWasExpectedToFollowRazorKeyword(string, string, RazorLib.Lexes.Models.TextEditorTextSpan)"/>
+	/// </summary>
 	[Fact]
 	public void ReportRazorCodeBlockWasExpectedToFollowRazorKeyword()
 	{
-		//public void ReportRazorCodeBlockWasExpectedToFollowRazorKeyword(
-	 //       string transitionSubstring,
-	 //       string keywordText,
-	 //       TextEditorTextSpan textSpan)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="LuthetusDiagnosticBag.ReportRazorWhitespaceImmediatelyFollowingTransitionCharacterIsUnexpected(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
+	/// </summary>
 	[Fact]
 	public void ReportRazorWhitespaceImmediatelyFollowingTransitionCharacterIsUnexpected()
 	{
-		//public void ReportRazorWhitespaceImmediatelyFollowingTransitionCharacterIsUnexpected(
-	 //       TextEditorTextSpan textSpan)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="LuthetusDiagnosticBag.ReportConstructorsNeedToBeWithinTypeDefinition(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
+	/// </summary>
 	[Fact]
 	public void ReportConstructorsNeedToBeWithinTypeDefinition()
 	{
-		//public void ReportConstructorsNeedToBeWithinTypeDefinition(TextEditorTextSpan textSpan)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="LuthetusDiagnosticBag.ReportTodoException(RazorLib.Lexes.Models.TextEditorTextSpan, string)"/>
+	/// </summary>
 	[Fact]
 	public void ReportTodoException()
 	{
-		//public void ReportTodoException(TextEditorTextSpan textSpan, string message)
 		throw new NotImplementedException();
 	}
 
-	[Fact]
-	public void Report()
-	{
-		//private void Report(
-	//       TextEditorDiagnosticLevel diagnosticLevel,
-	//       string message,
-	//       TextEditorTextSpan textSpan,
-	//       Guid diagnosticId)
-		throw new NotImplementedException();
-	}
-    
+	/// <summary>
+	/// <see cref="LuthetusDiagnosticBag.ClearByResourceUri(RazorLib.Lexes.Models.ResourceUri)"/>
+	/// </summary>
 	[Fact]
 	public void ClearByResourceUri()
 	{
-		//public void ClearByResourceUri(ResourceUri resourceUri)
 		throw new NotImplementedException();
 	}
 }

@@ -1,50 +1,64 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
+/// <summary>
+/// <see cref="CodeBlockNode"/>
+/// </summary>
 public class CodeBlockNodeTests
 {
+	/// <summary>
+	/// <see cref="CodeBlockNode(System.Collections.Immutable.ImmutableArray{RazorLib.CompilerServices.Syntax.ISyntax})"/>
+	/// </summary>
 	[Fact]
 	public void CodeBlockNode_A()
 	{
-		//public CodeBlockNode(ImmutableArray<ISyntax> childBag)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="CodeBlockNode(System.Collections.Immutable.ImmutableArray{RazorLib.CompilerServices.Syntax.ISyntax}, System.Collections.Immutable.ImmutableArray{TextEditorDiagnostic})"/>
+	/// </summary>
 	[Fact]
 	public void CodeBlockNode_B()
 	{
-		//public CodeBlockNode(
-	//       ImmutableArray<ISyntax> children,
-	//       ImmutableArray<TextEditorDiagnostic> diagnostics)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="CodeBlockNode.DiagnosticsBag"/>
+	/// </summary>
 	[Fact]
 	public void DiagnosticsBag()
 	{
-		//public ImmutableArray<TextEditorDiagnostic> DiagnosticsBag { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="CodeBlockNode.ChildBag"/>
+	/// </summary>
 	[Fact]
 	public void ChildBag()
 	{
-		//public ImmutableArray<ISyntax> ChildBag { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="CodeBlockNode.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="CodeBlockNode.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.CodeBlockNode;
 		throw new NotImplementedException();
 	}
 }
