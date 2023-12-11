@@ -1,66 +1,83 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
-public sealed record FunctionInvocationNodeTests
+/// <summary>
+/// <see cref="FunctionInvocationNode"/>
+/// </summary>
+public class FunctionInvocationNodeTests
 {
+
+	/// <summary>
+	/// <see cref="FunctionInvocationNode(RazorLib.CompilerServices.Syntax.SyntaxTokens.IdentifierToken, RazorLib.CompilerServices.Syntax.SyntaxNodes.FunctionDefinitionNode?, RazorLib.CompilerServices.Syntax.SyntaxNodes.GenericParametersListingNode?, RazorLib.CompilerServices.Syntax.SyntaxNodes.FunctionParametersListingNode)"/>
+	/// </summary>
 	[Fact]
-	public void FunctionInvocationNode()
+	public void Constructor()
 	{
-		//public FunctionInvocationNode(
-		//	IdentifierToken functionInvocationIdentifierToken,
-		//	FunctionDefinitionNode? functionDefinitionNode,
-		//	GenericParametersListingNode? genericParametersListingNode,
-		//	FunctionParametersListingNode functionParametersListingNode)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="FunctionInvocationNode.FunctionInvocationIdentifierToken"/>
+	/// </summary>
 	[Fact]
 	public void FunctionInvocationIdentifierToken()
 	{
-		//public IdentifierToken FunctionInvocationIdentifierToken { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="FunctionInvocationNode.FunctionDefinitionNode"/>
+	/// </summary>
 	[Fact]
 	public void FunctionDefinitionNode()
 	{
-		//public FunctionDefinitionNode? FunctionDefinitionNode { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="FunctionInvocationNode.GenericParametersListingNode"/>
+	/// </summary>
 	[Fact]
 	public void GenericParametersListingNode()
 	{
-		//public GenericParametersListingNode? GenericParametersListingNode { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="FunctionInvocationNode.FunctionParametersListingNode"/>
+	/// </summary>
 	[Fact]
 	public void FunctionParametersListingNode()
 	{
-		//public FunctionParametersListingNode FunctionParametersListingNode { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="FunctionInvocationNode.ChildBag"/>
+	/// </summary>
 	[Fact]
 	public void ChildBag()
 	{
-		//public ImmutableArray<ISyntax> ChildBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="FunctionInvocationNode.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="FunctionInvocationNode.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.FunctionInvocationNode;
 		throw new NotImplementedException();
 	}
 }

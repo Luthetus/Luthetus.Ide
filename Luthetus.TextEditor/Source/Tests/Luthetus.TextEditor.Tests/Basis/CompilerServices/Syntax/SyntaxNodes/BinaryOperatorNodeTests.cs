@@ -1,66 +1,82 @@
 using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
-public sealed record BinaryOperatorNodeTests
+/// <summary>
+/// <see cref="BinaryOperatorNode"/>
+/// </summary>
+public class BinaryOperatorNodeTests
 {
+	/// <summary>
+	/// <see cref="BinaryOperatorNode(RazorLib.CompilerServices.Syntax.SyntaxNodes.TypeClauseNode, RazorLib.CompilerServices.Syntax.ISyntaxToken, RazorLib.CompilerServices.Syntax.SyntaxNodes.TypeClauseNode, RazorLib.CompilerServices.Syntax.SyntaxNodes.TypeClauseNode)"/>
+	/// </summary>
 	[Fact]
-	public void BinaryOperatorNode()
+	public void Constructor()
 	{
-		//public BinaryOperatorNode(
-		//       TypeClauseNode leftOperandTypeClauseNode,
-		//       ISyntaxToken operatorToken,
-		//       TypeClauseNode rightOperandTypeClauseNode,
-		//       TypeClauseNode typeClauseNode)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="BinaryOperatorNode.LeftOperandTypeClauseNode"/>
+	/// </summary>
 	[Fact]
 	public void LeftOperandTypeClauseNode()
 	{
-		//public TypeClauseNode LeftOperandTypeClauseNode { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="BinaryOperatorNode.OperatorToken"/>
+	/// </summary>
 	[Fact]
 	public void OperatorToken()
 	{
-		//public ISyntaxToken OperatorToken { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="BinaryOperatorNode.RightOperandTypeClauseNode"/>
+	/// </summary>
 	[Fact]
 	public void RightOperandTypeClauseNode()
 	{
-		//public TypeClauseNode RightOperandTypeClauseNode { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="BinaryOperatorNode.TypeClauseNode"/>
+	/// </summary>
 	[Fact]
 	public void TypeClauseNode()
 	{
-		//public TypeClauseNode TypeClauseNode { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="BinaryOperatorNode.ChildBag"/>
+	/// </summary>
 	[Fact]
 	public void ChildBag()
 	{
-		//public ImmutableArray<ISyntax> ChildBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="BinaryOperatorNode.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="BinaryOperatorNode.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.BinaryOperatorNode;
 		throw new NotImplementedException();
 	}
 }

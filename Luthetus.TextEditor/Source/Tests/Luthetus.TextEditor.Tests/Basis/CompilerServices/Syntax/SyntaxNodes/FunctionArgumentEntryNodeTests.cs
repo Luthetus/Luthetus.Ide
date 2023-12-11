@@ -1,74 +1,91 @@
 using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
-public sealed record FunctionArgumentEntryNodeTests
+/// <summary>
+/// <see cref="FunctionArgumentEntryNode"/>
+/// </summary>
+public class FunctionArgumentEntryNodeTests
 {
+	/// <summary>
+	/// <see cref="FunctionArgumentEntryNode(VariableDeclarationNode, bool, bool, bool, bool)"/>
+	/// </summary>
 	[Fact]
-	public void FunctionArgumentEntryNode()
+	public void Constructor()
 	{
-		//public FunctionArgumentEntryNode(
-		//	VariableDeclarationNode variableDeclarationStatementNode,
-		//	bool isOptional,
-		//	bool hasOutKeyword,
-		//	bool hasInKeyword,
-		//	bool hasRefKeyword)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="FunctionArgumentEntryNode.VariableDeclarationStatementNode"/>
+	/// </summary>
 	[Fact]
 	public void VariableDeclarationStatementNode()
 	{
-		//public VariableDeclarationNode VariableDeclarationStatementNode { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="FunctionArgumentEntryNode.IsOptional"/>
+	/// </summary>
 	[Fact]
 	public void IsOptional()
 	{
-		//public bool IsOptional { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="FunctionArgumentEntryNode.HasOutKeyword"/>
+	/// </summary>
 	[Fact]
 	public void HasOutKeyword()
 	{
-		//public bool HasOutKeyword { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="FunctionArgumentEntryNode.HasInKeyword"/>
+	/// </summary>
 	[Fact]
 	public void HasInKeyword()
 	{
-		//public bool HasInKeyword { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="FunctionArgumentEntryNode.HasRefKeyword"/>
+	/// </summary>
 	[Fact]
 	public void HasRefKeyword()
 	{
-		//public bool HasRefKeyword { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="FunctionArgumentEntryNode.ChildBag"/>
+	/// </summary>
 	[Fact]
 	public void ChildBag()
 	{
-		//public ImmutableArray<ISyntax> ChildBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="FunctionArgumentEntryNode.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="FunctionArgumentEntryNode.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.FunctionArgumentEntryNode;
 		throw new NotImplementedException();
 	}
 }

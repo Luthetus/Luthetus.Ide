@@ -1,58 +1,73 @@
 using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
-public sealed record TypeClauseNodeTests
+/// <summary>
+/// <see cref="TypeClauseNode"/>
+/// </summary>
+public class TypeClauseNodeTests
 {
+	/// <summary>
+	/// <see cref="TypeClauseNode(RazorLib.CompilerServices.Syntax.ISyntaxToken, Type?, RazorLib.CompilerServices.Syntax.SyntaxNodes.GenericParametersListingNode?)"/>
+	/// </summary>
 	[Fact]
-	public void TypeClauseNode()
+	public void Constructor()
 	{
-		//public TypeClauseNode(
-		//       ISyntaxToken typeIdentifier,
-		//       Type? valueType,
-		//       GenericParametersListingNode? genericParametersListingNode)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TypeClauseNode.TypeIdentifier"/>
+	/// </summary>
 	[Fact]
 	public void TypeIdentifier()
 	{
-		//public ISyntaxToken TypeIdentifier { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TypeClauseNode.ValueType"/>
+	/// </summary>
 	[Fact]
 	public void ValueType()
 	{
-		//public Type? ValueType { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TypeClauseNode.GenericParametersListingNode"/>
+	/// </summary>
 	[Fact]
 	public void GenericParametersListingNode()
 	{
-		//public GenericParametersListingNode? GenericParametersListingNode { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TypeClauseNode.ChildBag"/>
+	/// </summary>
 	[Fact]
 	public void ChildBag()
 	{
-		//public ImmutableArray<ISyntax> ChildBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TypeClauseNode.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TypeClauseNode.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.TypeClauseNode;
 		throw new NotImplementedException();
 	}
 }

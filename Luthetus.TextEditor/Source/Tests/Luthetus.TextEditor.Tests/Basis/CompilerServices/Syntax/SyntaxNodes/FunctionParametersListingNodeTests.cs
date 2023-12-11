@@ -1,58 +1,73 @@
 using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
-public sealed record FunctionParametersListingNodeTests
+/// <summary>
+/// <see cref="FunctionParametersListingNode"/>
+/// </summary>
+public class FunctionParametersListingNodeTests
 {
+	/// <summary>
+	/// <see cref="FunctionParametersListingNode(RazorLib.CompilerServices.Syntax.SyntaxTokens.OpenParenthesisToken, System.Collections.Immutable.ImmutableArray{FunctionParameterEntryNode}, RazorLib.CompilerServices.Syntax.SyntaxTokens.CloseParenthesisToken)"/>
+	/// </summary>
 	[Fact]
-	public void FunctionParametersListingNode()
+	public void Constructor()
 	{
-		//public FunctionParametersListingNode(
-		//       OpenParenthesisToken openParenthesisToken,
-		//       ImmutableArray<FunctionParameterEntryNode> functionParameterEntryNodes,
-		//       CloseParenthesisToken closeParenthesisToken)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="FunctionParametersListingNode.OpenParenthesisToken"/>
+	/// </summary>
 	[Fact]
 	public void OpenParenthesisToken()
 	{
-		//public OpenParenthesisToken OpenParenthesisToken { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="FunctionParametersListingNode.FunctionParameterEntryNodeBag"/>
+	/// </summary>
 	[Fact]
 	public void FunctionParameterEntryNodeBag()
 	{
-		//public ImmutableArray<FunctionParameterEntryNode> FunctionParameterEntryNodeBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="FunctionParametersListingNode.CloseParenthesisToken"/>
+	/// </summary>
 	[Fact]
 	public void CloseParenthesisToken()
 	{
-		//public CloseParenthesisToken CloseParenthesisToken { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="FunctionParametersListingNode.ChildBag"/>
+	/// </summary>
 	[Fact]
 	public void ChildBag()
 	{
-		//public ImmutableArray<ISyntax> ChildBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="FunctionParametersListingNode.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="FunctionParametersListingNode.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.FunctionParametersListingNode;
 		throw new NotImplementedException();
 	}
 }

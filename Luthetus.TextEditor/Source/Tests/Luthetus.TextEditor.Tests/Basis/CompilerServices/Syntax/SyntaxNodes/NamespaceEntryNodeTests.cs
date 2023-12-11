@@ -1,48 +1,64 @@
 using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
+/// <summary>
+/// <see cref="NamespaceEntryNode"/>
+/// </summary>
 public sealed record NamespaceEntryNodeTests
 {
+	/// <summary>
+	/// <see cref="NamespaceEntryNode(RazorLib.Lexes.Models.ResourceUri, RazorLib.CompilerServices.CodeBlockNode)"/>
+	/// </summary>
 	[Fact]
-	public void NamespaceEntryNode()
+	public void Constructor()
 	{
-		//public NamespaceEntryNode(ResourceUri resourceUri, CodeBlockNode codeBlockNode)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="NamespaceEntryNode.ResourceUri"/>
+	/// </summary>
 	[Fact]
 	public void ResourceUri()
 	{
-		//public ResourceUri ResourceUri { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="NamespaceEntryNode.CodeBlockNode"/>
+	/// </summary>
 	[Fact]
 	public void CodeBlockNode()
 	{
-		//public CodeBlockNode CodeBlockNode { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="NamespaceEntryNode.ChildBag"/>
+	/// </summary>
 	[Fact]
 	public void ChildBag()
 	{
-		//public ImmutableArray<ISyntax> ChildBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="NamespaceEntryNode.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="NamespaceEntryNode.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.NamespaceEntryNode;
 		throw new NotImplementedException();
 	}
 }

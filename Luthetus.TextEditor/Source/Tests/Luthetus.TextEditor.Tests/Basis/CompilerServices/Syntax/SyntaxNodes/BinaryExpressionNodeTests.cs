@@ -1,66 +1,82 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
-public sealed record BinaryExpressionNodeTests
+/// <summary>
+/// <see cref="BinaryExpressionNode"/>
+/// </summary>
+public class BinaryExpressionNodeTests
 {
+	/// <summary>
+	/// <see cref="BinaryExpressionNode(RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression.IExpressionNode, RazorLib.CompilerServices.Syntax.SyntaxNodes.BinaryOperatorNode, RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression.IExpressionNode)"/>
+	/// </summary>
 	[Fact]
-	public void BinaryExpressionNode()
+	public void Constructor()
 	{
-		//public BinaryExpressionNode(
-		//       IExpressionNode leftExpressionNode,
-		//       BinaryOperatorNode binaryOperatorNode,
-		//       IExpressionNode rightExpressionNode)
 		throw new NotImplementedException();
 	}
 
-
+	/// <summary>
+	/// <see cref="BinaryExpressionNode.LeftExpressionNode"/>
+	/// </summary>
 	[Fact]
 	public void LeftExpressionNode()
 	{
-		//public IExpressionNode LeftExpressionNode { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="BinaryExpressionNode.BinaryOperatorNode"/>
+	/// </summary>
 	[Fact]
 	public void BinaryOperatorNode()
 	{
-		//public BinaryOperatorNode BinaryOperatorNode { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="BinaryExpressionNode.RightExpressionNode"/>
+	/// </summary>
 	[Fact]
 	public void RightExpressionNode()
 	{
-		//public IExpressionNode RightExpressionNode { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="BinaryExpressionNode.TypeClauseNode"/>
+	/// </summary>
 	[Fact]
 	public void TypeClauseNode()
 	{
-		//public TypeClauseNode TypeClauseNode => BinaryOperatorNode.TypeClauseNode;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="BinaryExpressionNode.ChildBag"/>
+	/// </summary>
 	[Fact]
 	public void ChildBag()
 	{
-		//public ImmutableArray<ISyntax> ChildBag { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="BinaryExpressionNode.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="BinaryExpressionNode.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.BinaryExpressionNode;
 		throw new NotImplementedException();
 	}
 }

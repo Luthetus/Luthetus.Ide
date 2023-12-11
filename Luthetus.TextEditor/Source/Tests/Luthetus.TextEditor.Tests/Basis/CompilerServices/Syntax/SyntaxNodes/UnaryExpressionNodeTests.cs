@@ -1,57 +1,73 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
-public sealed record UnaryExpressionNodeTests
+/// <summary>
+/// <see cref="UnaryExpressionNode"/>
+/// </summary>
+public class UnaryExpressionNodeTests
 {
+	/// <summary>
+	/// <see cref="UnaryExpressionNode(RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression.IExpressionNode, RazorLib.CompilerServices.Syntax.SyntaxNodes.UnaryOperatorNode)"/>
+	/// </summary>
 	[Fact]
-	public void UnaryExpressionNode()
+	public void Constructor()
 	{
-		//public UnaryExpressionNode(
-		//       IExpressionNode expression,
-		//       UnaryOperatorNode unaryOperatorNode)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="UnaryExpressionNode.Expression"/>
+	/// </summary>
 	[Fact]
 	public void Expression()
 	{
-		//public IExpressionNode Expression { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="UnaryExpressionNode.UnaryOperatorNode"/>
+	/// </summary>
 	[Fact]
 	public void UnaryOperatorNode()
 	{
-		//public UnaryOperatorNode UnaryOperatorNode { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="UnaryExpressionNode.TypeClauseNode"/>
+	/// </summary>
 	[Fact]
 	public void TypeClauseNode()
 	{
-		//public TypeClauseNode TypeClauseNode => UnaryOperatorNode.ResultTypeClauseNode;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="UnaryExpressionNode.ChildBag"/>
+	/// </summary>
 	[Fact]
 	public void ChildBag()
 	{
-		//public ImmutableArray<ISyntax> ChildBag { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="UnaryExpressionNode.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="UnaryExpressionNode.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.UnaryExpressionNode;
 		throw new NotImplementedException();
 	}
 }

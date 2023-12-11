@@ -1,48 +1,64 @@
 using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
-public sealed record UsingStatementNodeTests
+/// <summary>
+/// <see cref="UsingStatementNode"/>
+/// </summary>
+public class UsingStatementNodeTests
 {
+	/// <summary>
+	/// <see cref="UsingStatementNode(RazorLib.CompilerServices.Syntax.SyntaxTokens.KeywordToken, RazorLib.CompilerServices.Syntax.SyntaxTokens.IdentifierToken)"/>
+	/// </summary>
 	[Fact]
-	public void UsingStatementNode()
+	public void Constructor()
 	{
-		//public UsingStatementNode(KeywordToken keywordToken, IdentifierToken namespaceIdentifier)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="UsingStatementNode.KeywordToken"/>
+	/// </summary>
 	[Fact]
 	public void KeywordToken()
 	{
-		//public KeywordToken KeywordToken { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="UsingStatementNode.NamespaceIdentifier"/>
+	/// </summary>
 	[Fact]
 	public void NamespaceIdentifier()
 	{
-		//public IdentifierToken NamespaceIdentifier { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="UsingStatementNode.ChildBag"/>
+	/// </summary>
 	[Fact]
 	public void ChildBag()
 	{
-		//public ImmutableArray<ISyntax> ChildBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="UsingStatementNode.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="UsingStatementNode.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.UsingStatementNode;
 		throw new NotImplementedException();
 	}
 }

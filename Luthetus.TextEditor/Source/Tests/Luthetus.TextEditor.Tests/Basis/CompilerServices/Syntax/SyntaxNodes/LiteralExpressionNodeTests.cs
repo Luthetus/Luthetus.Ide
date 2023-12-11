@@ -1,48 +1,64 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
-public sealed record LiteralExpressionNodeTests
+/// <summary>
+/// <see cref="LiteralExpressionNode"/>
+/// </summary>
+public class LiteralExpressionNodeTests
 {
+	/// <summary>
+	/// <see cref="LiteralExpressionNode(RazorLib.CompilerServices.Syntax.ISyntaxToken, RazorLib.CompilerServices.Syntax.SyntaxNodes.TypeClauseNode)"/>
+	/// </summary>
 	[Fact]
-	public void LiteralExpressionNode()
+	public void Constructor()
 	{
-		//public LiteralExpressionNode(ISyntaxToken literalSyntaxToken, TypeClauseNode typeClauseNode)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="LiteralExpressionNode.LiteralSyntaxToken"/>
+	/// </summary>
 	[Fact]
 	public void LiteralSyntaxToken()
 	{
-		//public ISyntaxToken LiteralSyntaxToken { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="LiteralExpressionNode.TypeClauseNode"/>
+	/// </summary>
 	[Fact]
 	public void TypeClauseNode()
 	{
-		//public TypeClauseNode TypeClauseNode { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="LiteralExpressionNode.ChildBag"/>
+	/// </summary>
 	[Fact]
 	public void ChildBag()
 	{
-		//public ImmutableArray<ISyntax> ChildBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="LiteralExpressionNode.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="LiteralExpressionNode.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.LiteralExpressionNode;
 		throw new NotImplementedException();
 	}
 }

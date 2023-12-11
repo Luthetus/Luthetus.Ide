@@ -1,41 +1,55 @@
 using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
-public sealed record GenericArgumentEntryNodeTests
+/// <summary>
+/// <see cref="GenericArgumentEntryNode"/>
+/// </summary>
+public class GenericArgumentEntryNodeTests
 {
+	/// <summary>
+	/// <see cref="GenericArgumentEntryNode(RazorLib.CompilerServices.Syntax.SyntaxNodes.TypeClauseNode)"/>
+	/// </summary>
 	[Fact]
-	public void GenericArgumentEntryNode()
+	public void Constructor()
 	{
-		//public GenericArgumentEntryNode(TypeClauseNode typeClauseNode)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericArgumentEntryNode.TypeClauseNode"/>
+	/// </summary>
 	[Fact]
 	public void TypeClauseNode()
 	{
-		//public TypeClauseNode TypeClauseNode { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericArgumentEntryNode.ChildBag"/>
+	/// </summary>
 	[Fact]
 	public void ChildBag()
 	{
-		//public ImmutableArray<ISyntax> ChildBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericArgumentEntryNode.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericArgumentEntryNode.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.GenericArgumentEntryNode;
 		throw new NotImplementedException();
 	}
 }

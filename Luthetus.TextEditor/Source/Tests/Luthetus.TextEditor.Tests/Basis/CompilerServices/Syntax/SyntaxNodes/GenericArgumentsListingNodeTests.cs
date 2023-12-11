@@ -1,58 +1,73 @@
 using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
-public sealed record GenericArgumentsListingNodeTests
+/// <summary>
+/// <see cref="GenericArgumentsListingNode"/>
+/// </summary>
+public class GenericArgumentsListingNodeTests
 {
+	/// <summary>
+	/// <see cref="GenericArgumentsListingNode(RazorLib.CompilerServices.Syntax.SyntaxTokens.OpenAngleBracketToken, System.Collections.Immutable.ImmutableArray{GenericArgumentEntryNode}, RazorLib.CompilerServices.Syntax.SyntaxTokens.CloseAngleBracketToken)"/>
+	/// </summary>
 	[Fact]
-	public void GenericArgumentsListingNode()
+	public void Constructor()
 	{
-		//public GenericArgumentsListingNode(
-		//       OpenAngleBracketToken openAngleBracketToken,
-		//       ImmutableArray<GenericArgumentEntryNode> genericArgumentEntryNodes,
-		//       CloseAngleBracketToken closeAngleBracketToken)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericArgumentsListingNode.OpenAngleBracketToken"/>
+	/// </summary>
 	[Fact]
 	public void OpenAngleBracketToken()
 	{
-		//public OpenAngleBracketToken OpenAngleBracketToken { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericArgumentsListingNode.GenericArgumentEntryNodeBag"/>
+	/// </summary>
 	[Fact]
 	public void GenericArgumentEntryNodeBag()
 	{
-		//public ImmutableArray<GenericArgumentEntryNode> GenericArgumentEntryNodeBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericArgumentsListingNode.CloseAngleBracketToken"/>
+	/// </summary>
 	[Fact]
 	public void CloseAngleBracketToken()
 	{
-		//public CloseAngleBracketToken CloseAngleBracketToken { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericArgumentsListingNode.ChildBag"/>
+	/// </summary>
 	[Fact]
 	public void ChildBag()
 	{
-		//public ImmutableArray<ISyntax> ChildBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericArgumentsListingNode.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericArgumentsListingNode.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.GenericArgumentsListingNode;
 		throw new NotImplementedException();
 	}
 }

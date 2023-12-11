@@ -1,82 +1,100 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
-public sealed record ConstructorDefinitionNodeTests
+/// <summary>
+/// <see cref="ConstructorDefinitionNode"/>
+/// </summary>
+public class ConstructorDefinitionNodeTests
 {
+	/// <summary>
+	/// <see cref="ConstructorDefinitionNode(TypeClauseNode, RazorLib.CompilerServices.Syntax.SyntaxTokens.IdentifierToken, RazorLib.CompilerServices.Syntax.SyntaxNodes.GenericArgumentsListingNode?, RazorLib.CompilerServices.Syntax.SyntaxNodes.FunctionArgumentsListingNode, RazorLib.CompilerServices.CodeBlockNode?, RazorLib.CompilerServices.Syntax.SyntaxNodes.ConstraintNode?)"/>
+	/// </summary>
 	[Fact]
-	public void ConstructorDefinitionNode()
+	public void Constructor()
 	{
-		//public ConstructorDefinitionNode(
-		//       TypeClauseNode returnTypeClauseNode,
-		//       IdentifierToken functionIdentifier,
-		//       GenericArgumentsListingNode? genericArgumentsListingNode,
-		//       FunctionArgumentsListingNode functionArgumentsListingNode,
-		//       CodeBlockNode? functionBodyCodeBlockNode,
-		//       ConstraintNode? constraintNode)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="ConstructorDefinitionNode.ReturnTypeClauseNode"/>
+	/// </summary>
 	[Fact]
 	public void ReturnTypeClauseNode()
 	{
-		//public TypeClauseNode ReturnTypeClauseNode { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="ConstructorDefinitionNode.FunctionIdentifier"/>
+	/// </summary>
 	[Fact]
 	public void FunctionIdentifier()
 	{
-		//public IdentifierToken FunctionIdentifier { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="ConstructorDefinitionNode.GenericArgumentsListingNode"/>
+	/// </summary>
 	[Fact]
 	public void GenericArgumentsListingNode()
 	{
-		//public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="ConstructorDefinitionNode.FunctionArgumentsListingNode"/>
+	/// </summary>
 	[Fact]
 	public void FunctionArgumentsListingNode()
 	{
-		//public FunctionArgumentsListingNode FunctionArgumentsListingNode { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="ConstructorDefinitionNode.FunctionBodyCodeBlockNode"/>
+	/// </summary>
 	[Fact]
 	public void FunctionBodyCodeBlockNode()
 	{
-		//public CodeBlockNode? FunctionBodyCodeBlockNode { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="ConstructorDefinitionNode.ConstraintNode"/>
+	/// </summary>
 	[Fact]
 	public void ConstraintNode()
 	{
-		//public ConstraintNode? ConstraintNode { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="ConstructorDefinitionNode.ChildBag"/>
+	/// </summary>
 	[Fact]
 	public void ChildBag()
 	{
-		//public ImmutableArray<ISyntax> ChildBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="ConstructorDefinitionNode.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="ConstructorDefinitionNode.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.ConstructorDefinitionNode;
 		throw new NotImplementedException();
 	}
 }

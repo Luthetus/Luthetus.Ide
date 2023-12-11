@@ -1,58 +1,73 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
-public sealed record VariableAssignmentExpressionNodeTests
+/// <summary>
+/// <see cref="VariableAssignmentExpressionNode"/>
+/// </summary>
+public class VariableAssignmentExpressionNodeTests
 {
+	/// <summary>
+	/// <see cref="VariableAssignmentExpressionNode(RazorLib.CompilerServices.Syntax.SyntaxTokens.IdentifierToken, RazorLib.CompilerServices.Syntax.SyntaxTokens.EqualsToken, RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression.IExpressionNode)"/>
+	/// </summary>
 	[Fact]
-	public void VariableAssignmentExpressionNode()
+	public void Constructor()
 	{
-		//public VariableAssignmentExpressionNode(
-		//       IdentifierToken variableIdentifierToken,
-		//       EqualsToken equalsToken,
-		//       IExpressionNode expressionNode)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="VariableAssignmentExpressionNode.VariableIdentifierToken"/>
+	/// </summary>
 	[Fact]
 	public void VariableIdentifierToken()
 	{
-		//public IdentifierToken VariableIdentifierToken { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="VariableAssignmentExpressionNode.EqualsToken"/>
+	/// </summary>
 	[Fact]
 	public void EqualsToken()
 	{
-		//public EqualsToken EqualsToken { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="VariableAssignmentExpressionNode.ExpressionNode"/>
+	/// </summary>
 	[Fact]
 	public void ExpressionNode()
 	{
-		//public IExpressionNode ExpressionNode { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="VariableAssignmentExpressionNode.ChildBag"/>
+	/// </summary>
 	[Fact]
 	public void ChildBag()
 	{
-		//public ImmutableArray<ISyntax> ChildBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="VariableAssignmentExpressionNode.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="VariableAssignmentExpressionNode.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.VariableAssignmentExpressionNode;
 		throw new NotImplementedException();
 	}
 }

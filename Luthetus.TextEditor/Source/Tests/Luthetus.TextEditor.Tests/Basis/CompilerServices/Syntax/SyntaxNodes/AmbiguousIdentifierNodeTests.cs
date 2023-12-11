@@ -1,41 +1,55 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
-public sealed record AmbiguousIdentifierNodeTests
+/// <summary>
+/// <see cref="AmbiguousIdentifierNode"/>
+/// </summary>
+public class AmbiguousIdentifierNodeTests
 {
+	/// <summary>
+	/// <see cref="AmbiguousIdentifierNode(RazorLib.CompilerServices.Syntax.SyntaxTokens.IdentifierToken)"/>
+	/// </summary>
 	[Fact]
-	public void AmbiguousIdentifierNode()
+	public void Constructor()
 	{
-		//public AmbiguousIdentifierNode(IdentifierToken identifierToken)
 		throw new NotImplementedException();
 	}
 
-    [Fact]
+	/// <summary>
+	/// <see cref="AmbiguousIdentifierNode.IdentifierToken"/>
+	/// </summary>
+	[Fact]
 	public void IdentifierToken()
 	{
-		//public IdentifierToken IdentifierToken { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="AmbiguousIdentifierNode.ChildBag"/>
+	/// </summary>
 	[Fact]
 	public void ChildBag()
 	{
-		//public ImmutableArray<ISyntax> ChildBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="AmbiguousIdentifierNode.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="AmbiguousIdentifierNode.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.AmbiguousIdentifierNode;
 		throw new NotImplementedException();
 	}
 }

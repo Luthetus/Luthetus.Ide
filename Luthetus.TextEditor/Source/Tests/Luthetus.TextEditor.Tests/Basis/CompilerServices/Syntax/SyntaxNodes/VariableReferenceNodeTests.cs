@@ -1,57 +1,73 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
-public sealed record VariableReferenceNodeTests
+/// <summary>
+/// <see cref="VariableReferenceNode"/>
+/// </summary>
+public class VariableReferenceNodeTests
 {
+	/// <summary>
+	/// <see cref="VariableReferenceNode(RazorLib.CompilerServices.Syntax.SyntaxTokens.IdentifierToken, VariableDeclarationNode)"/>
+	/// </summary>
 	[Fact]
-	public void VariableReferenceNode()
+	public void Constructor()
 	{
-		//public VariableReferenceNode(
-		//       IdentifierToken variableIdentifierToken,
-		//       VariableDeclarationNode variableDeclarationStatementNode)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="VariableReferenceNode.VariableIdentifierToken"/>
+	/// </summary>
 	[Fact]
 	public void VariableIdentifierToken()
 	{
-		//public IdentifierToken VariableIdentifierToken { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="VariableReferenceNode.VariableDeclarationStatementNode"/>
+	/// </summary>
 	[Fact]
 	public void VariableDeclarationStatementNode()
 	{
-		//public VariableDeclarationNode VariableDeclarationStatementNode { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="VariableReferenceNode.TypeClauseNode"/>
+	/// </summary>
 	[Fact]
 	public void TypeClauseNode()
 	{
-		//public TypeClauseNode TypeClauseNode => VariableDeclarationStatementNode.TypeClauseNode;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="VariableReferenceNode.ChildBag"/>
+	/// </summary>
 	[Fact]
 	public void ChildBag()
 	{
-		//public ImmutableArray<ISyntax> ChildBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="VariableReferenceNode.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="VariableReferenceNode.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.VariableReferenceNode;
 		throw new NotImplementedException();
 	}
 }

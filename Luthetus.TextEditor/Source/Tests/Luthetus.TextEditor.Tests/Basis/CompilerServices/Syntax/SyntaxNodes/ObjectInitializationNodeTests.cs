@@ -1,48 +1,65 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
-public sealed record ObjectInitializationNodeTests
+/// <summary>
+/// <see cref="ObjectInitializationNode"/>
+/// </summary>
+public class ObjectInitializationNodeTests
 {
+	/// <summary>
+	/// <see cref="ObjectInitializationNode(RazorLib.CompilerServices.Syntax.SyntaxTokens.OpenBraceToken, RazorLib.CompilerServices.Syntax.SyntaxTokens.CloseBraceToken)"/>
+	/// </summary>
 	[Fact]
-	public void ObjectInitializationNode()
+	public void Constructor()
 	{
-		//public ObjectInitializationNode(OpenBraceToken openBraceToken, CloseBraceToken closeBraceToken)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="ObjectInitializationNode.OpenBraceToken"/>
+	/// </summary>
 	[Fact]
 	public void OpenBraceToken()
 	{
-		//public OpenBraceToken OpenBraceToken { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="ObjectInitializationNode.CloseBraceToken"/>
+	/// </summary>
 	[Fact]
 	public void CloseBraceToken()
 	{
-		//public CloseBraceToken CloseBraceToken { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="ObjectInitializationNode.ChildBag"/>
+	/// </summary>
 	[Fact]
 	public void ChildBag()
 	{
-		//public ImmutableArray<ISyntax> ChildBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="ObjectInitializationNode.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="ObjectInitializationNode.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.ObjectInitializationNode;
+		//public SyntaxKind  => SyntaxKind.ObjectInitializationNode;
 		throw new NotImplementedException();
 	}
 }

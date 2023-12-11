@@ -1,41 +1,55 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
+/// <summary>
+/// <see cref="VariableExpressionNode"/>
+/// </summary>
 public class VariableExpressionNodeTests
 {
+	/// <summary>
+	/// <see cref="VariableExpressionNode(RazorLib.CompilerServices.Syntax.SyntaxNodes.TypeClauseNode)"/>
+	/// </summary>
 	[Fact]
-	public void VariableExpressionNode()
+	public void Constructor()
 	{
-		//public VariableExpressionNode(TypeClauseNode typeClauseNode)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="VariableExpressionNode.TypeClauseNode"/>
+	/// </summary>
 	[Fact]
 	public void TypeClauseNode()
 	{
-		//public TypeClauseNode TypeClauseNode { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="VariableExpressionNode.ChildBag"/>
+	/// </summary>
 	[Fact]
 	public void ChildBag()
 	{
-		//public ImmutableArray<ISyntax> ChildBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="VariableExpressionNode.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="VariableExpressionNode.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.VariableExpressionNode;
 		throw new NotImplementedException();
 	}
 }

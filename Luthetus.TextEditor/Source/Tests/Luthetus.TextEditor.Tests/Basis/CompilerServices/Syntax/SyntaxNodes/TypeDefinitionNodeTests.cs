@@ -1,95 +1,118 @@
 using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
-public sealed record TypeDefinitionNodeTests
+/// <summary>
+/// <see cref="TypeDefinitionNode"/>
+/// </summary>
+public class TypeDefinitionNodeTests
 {
+	/// <summary>
+	/// <see cref="TypeDefinitionNode(RazorLib.CompilerServices.Syntax.SyntaxTokens.IdentifierToken, Type?, RazorLib.CompilerServices.Syntax.SyntaxNodes.GenericArgumentsListingNode?, TypeClauseNode?, RazorLib.CompilerServices.CodeBlockNode?)"/>
+	/// </summary>
 	[Fact]
-	public void TypeDefinitionNode()
+	public void Constructor()
 	{
-		//public TypeDefinitionNode(
-		//       IdentifierToken typeIdentifier,
-		//       Type? valueType,
-		//       GenericArgumentsListingNode? genericArgumentsListingNode,
-		//       TypeClauseNode? inheritedTypeClauseNode,
-		//       CodeBlockNode? typeBodyCodeBlockNode)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TypeDefinitionNode.TypeIdentifier"/>
+	/// </summary>
 	[Fact]
 	public void TypeIdentifier()
 	{
-		//public IdentifierToken TypeIdentifier { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TypeDefinitionNode.ValueType"/>
+	/// </summary>
 	[Fact]
 	public void ValueType()
 	{
-		//public Type? ValueType { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TypeDefinitionNode.GenericArgumentsListingNode"/>
+	/// </summary>
 	[Fact]
 	public void GenericArgumentsListingNode()
 	{
-		//public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TypeDefinitionNode.InheritedTypeClauseNode"/>
+	/// </summary>
 	[Fact]
 	public void InheritedTypeClauseNode()
 	{
-		//public TypeClauseNode? InheritedTypeClauseNode { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TypeDefinitionNode.TypeBodyCodeBlockNode"/>
+	/// </summary>
 	[Fact]
 	public void TypeBodyCodeBlockNode()
 	{
-		//public CodeBlockNode? TypeBodyCodeBlockNode { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TypeDefinitionNode.IsInterface"/>
+	/// </summary>
 	[Fact]
 	public void IsInterface()
 	{
-		//public bool IsInterface { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TypeDefinitionNode.ChildBag"/>
+	/// </summary>
 	[Fact]
 	public void ChildBag()
 	{
-		//public ImmutableArray<ISyntax> ChildBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TypeDefinitionNode.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TypeDefinitionNode.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.TypeDefinitionNode;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TypeDefinitionNode.GetFunctionDefinitionNodes()"/>
+	/// </summary>
 	[Fact]
 	public void GetFunctionDefinitionNodes()
 	{
-		//public ImmutableArray<FunctionDefinitionNode> GetFunctionDefinitionNodes()
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TypeDefinitionNode.ToTypeClause()"/>
+	/// </summary>
 	[Fact]
 	public void ToTypeClause()
 	{
-		//public TypeClauseNode ToTypeClause()
 		throw new NotImplementedException();
 	}
 }

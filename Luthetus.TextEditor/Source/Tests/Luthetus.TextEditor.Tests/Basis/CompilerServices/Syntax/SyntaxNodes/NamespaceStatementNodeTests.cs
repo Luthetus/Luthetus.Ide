@@ -1,65 +1,82 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
-public sealed record NamespaceStatementNodeTests
+/// <summary>
+/// <see cref="NamespaceStatementNode"/>
+/// </summary>
+public class NamespaceStatementNodeTests
 {
+	/// <summary>
+	/// <see cref="NamespaceStatementNode(RazorLib.CompilerServices.Syntax.SyntaxTokens.KeywordToken, RazorLib.CompilerServices.Syntax.SyntaxTokens.IdentifierToken, System.Collections.Immutable.ImmutableArray{NamespaceEntryNode})"/>
+	/// </summary>
 	[Fact]
-	public void NamespaceStatementNode()
+	public void Constructor()
 	{
-		//public NamespaceStatementNode(
-		//       KeywordToken keywordToken,
-		//       IdentifierToken identifierToken,
-		//       ImmutableArray<NamespaceEntryNode> namespaceEntryNodes)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="NamespaceStatementNode.KeywordToken"/>
+	/// </summary>
 	[Fact]
 	public void KeywordToken()
 	{
-		//public KeywordToken KeywordToken { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="NamespaceStatementNode.IdentifierToken"/>
+	/// </summary>
 	[Fact]
 	public void IdentifierToken()
 	{
-		//public IdentifierToken IdentifierToken { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="NamespaceStatementNode.NamespaceEntryNodeBag"/>
+	/// </summary>
 	[Fact]
 	public void NamespaceEntryNodeBag()
 	{
-		//public ImmutableArray<NamespaceEntryNode> NamespaceEntryNodeBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="NamespaceStatementNode.ChildBag"/>
+	/// </summary>
 	[Fact]
 	public void ChildBag()
 	{
-		//public ImmutableArray<ISyntax> ChildBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="NamespaceStatementNode.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="NamespaceStatementNode.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.NamespaceStatementNode;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="NamespaceStatementNode.GetTopLevelTypeDefinitionNodes()"/>
+	/// </summary>
 	[Fact]
 	public void GetTopLevelTypeDefinitionNodes()
 	{
-		//public ImmutableArray<TypeDefinitionNode> GetTopLevelTypeDefinitionNodes()
 		throw new NotImplementedException();
 	}
 }

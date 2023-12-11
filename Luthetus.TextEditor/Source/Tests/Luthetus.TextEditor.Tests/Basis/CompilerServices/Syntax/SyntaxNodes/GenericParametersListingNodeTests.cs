@@ -1,58 +1,73 @@
 using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
-public sealed record GenericParametersListingNodeTests
+/// <summary>
+/// <see cref="GenericParametersListingNode"/>
+/// </summary>
+public class GenericParametersListingNodeTests
 {
+	/// <summary>
+	/// <see cref="GenericParametersListingNode(RazorLib.CompilerServices.Syntax.SyntaxTokens.OpenAngleBracketToken, System.Collections.Immutable.ImmutableArray{GenericParameterEntryNode}, RazorLib.CompilerServices.Syntax.SyntaxTokens.CloseAngleBracketToken)"/>
+	/// </summary>
 	[Fact]
-	public void GenericParametersListingNode()
+	public void Constructor()
 	{
-		//public GenericParametersListingNode(
-		//	OpenAngleBracketToken openAngleBracketToken,
-		//	ImmutableArray<GenericParameterEntryNode> genericParameterEntryNodes,
-		//	CloseAngleBracketToken closeAngleBracketToken)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericParametersListingNode.OpenAngleBracketToken"/>
+	/// </summary>
 	[Fact]
 	public void OpenAngleBracketToken()
 	{
-		//public OpenAngleBracketToken OpenAngleBracketToken { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericParametersListingNode.GenericParameterEntryNodeBag"/>
+	/// </summary>
 	[Fact]
 	public void GenericParameterEntryNodeBag()
 	{
-		//public ImmutableArray<GenericParameterEntryNode> GenericParameterEntryNodeBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericParametersListingNode.CloseAngleBracketToken"/>
+	/// </summary>
 	[Fact]
 	public void CloseAngleBracketToken()
 	{
-		//public CloseAngleBracketToken CloseAngleBracketToken { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericParametersListingNode.ChildBag"/>
+	/// </summary>
 	[Fact]
 	public void ChildBag()
 	{
-		//public ImmutableArray<ISyntax> ChildBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericParametersListingNode.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericParametersListingNode.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.GenericParametersListingNode;
 		throw new NotImplementedException();
 	}
 }

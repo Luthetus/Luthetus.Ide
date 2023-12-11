@@ -1,50 +1,64 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
-public sealed record PreprocessorLibraryReferenceStatementNodeTests
+/// <summary>
+/// <see cref="PreprocessorLibraryReferenceStatementNode"/>
+/// </summary>
+public class PreprocessorLibraryReferenceStatementNodeTests
 {
+	/// <summary>
+	/// <see cref="PreprocessorLibraryReferenceStatementNode(RazorLib.CompilerServices.Syntax.ISyntaxToken, RazorLib.CompilerServices.Syntax.ISyntaxToken)"/>
+	/// </summary>
 	[Fact]
-	public void PreprocessorLibraryReferenceStatementNode()
+	public void Constructor()
 	{
-		//public PreprocessorLibraryReferenceStatementNode(
-		//       ISyntaxToken includeDirectiveSyntaxToken,
-		//       ISyntaxToken libraryReferenceSyntaxToken)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="PreprocessorLibraryReferenceStatementNode.IncludeDirectiveSyntaxToken"/>
+	/// </summary>
 	[Fact]
 	public void IncludeDirectiveSyntaxToken()
 	{
-		//public ISyntaxToken IncludeDirectiveSyntaxToken { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="PreprocessorLibraryReferenceStatementNode.LibraryReferenceSyntaxToken"/>
+	/// </summary>
 	[Fact]
 	public void LibraryReferenceSyntaxToken()
 	{
-		//public ISyntaxToken LibraryReferenceSyntaxToken { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="PreprocessorLibraryReferenceStatementNode.ChildBag"/>
+	/// </summary>
 	[Fact]
 	public void ChildBag()
 	{
-		//public ImmutableArray<ISyntax> ChildBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="PreprocessorLibraryReferenceStatementNode.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="PreprocessorLibraryReferenceStatementNode.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.PreprocessorLibraryReferenceStatementNode;
 		throw new NotImplementedException();
 	}
 }

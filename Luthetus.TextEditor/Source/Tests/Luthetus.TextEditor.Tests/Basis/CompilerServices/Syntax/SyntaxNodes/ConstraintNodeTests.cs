@@ -1,42 +1,55 @@
 using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
-public sealed record ConstraintNodeTests
+/// <summary>
+/// <see cref="ConstraintNode"/>
+/// </summary>
+public class ConstraintNodeTests
 {
+	/// <summary>
+	/// <see cref="ConstraintNode(System.Collections.Immutable.ImmutableArray{RazorLib.CompilerServices.Syntax.ISyntaxToken})"/>
+	/// </summary>
 	[Fact]
-	public void ConstraintNode()
+	public void Constructor()
 	{
-		//public ConstraintNode(ImmutableArray<ISyntaxToken> innerTokens)
 		throw new NotImplementedException();
 	}
 
-
+	/// <summary>
+	/// <see cref="ConstraintNode.InnerTokens"/>
+	/// </summary>
 	[Fact]
 	public void InnerTokens()
 	{
-		//public ImmutableArray<ISyntaxToken> InnerTokens { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="ConstraintNode.ChildBag"/>
+	/// </summary>
 	[Fact]
 	public void ChildBag()
 	{
-		//public ImmutableArray<ISyntax> ChildBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="ConstraintNode.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="ConstraintNode.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.TypeClauseNode;
 		throw new NotImplementedException();
 	}
 }

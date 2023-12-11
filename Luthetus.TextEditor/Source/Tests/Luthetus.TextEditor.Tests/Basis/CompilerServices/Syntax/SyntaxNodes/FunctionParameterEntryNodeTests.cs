@@ -1,66 +1,82 @@
 using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
-public sealed record FunctionParameterEntryNodeTests
+/// <summary>
+/// <see cref="FunctionParameterEntryNode"/>
+/// </summary>
+public class FunctionParameterEntryNodeTests
 {
+	/// <summary>
+	/// <see cref="FunctionParameterEntryNode(RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression.IExpressionNode, bool, bool, bool)"/>
+	/// </summary>
 	[Fact]
-	public void FunctionParameterEntryNode()
+	public void Constructor()
 	{
-		//public FunctionParameterEntryNode(
-		//	IExpressionNode expressionNode,
-		//	bool hasOutKeyword,
-		//	bool hasInKeyword,
-		//	bool hasRefKeyword)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="FunctionParameterEntryNode.ExpressionNode"/>
+	/// </summary>
 	[Fact]
 	public void ExpressionNode()
 	{
-		//public IExpressionNode ExpressionNode { get; }
 		throw new NotImplementedException();
 	}
-	
+
+	/// <summary>
+	/// <see cref="FunctionParameterEntryNode.HasOutKeyword"/>
+	/// </summary>
 	[Fact]
 	public void HasOutKeyword()
 	{
-		//public bool HasOutKeyword { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="FunctionParameterEntryNode.HasInKeyword"/>
+	/// </summary>
 	[Fact]
 	public void HasInKeyword()
 	{
-		//public bool HasInKeyword { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="FunctionParameterEntryNode.HasRefKeyword"/>
+	/// </summary>
 	[Fact]
 	public void HasRefKeyword()
 	{
-		//public bool HasRefKeyword { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="FunctionParameterEntryNode.ChildBag"/>
+	/// </summary>
 	[Fact]
 	public void ChildBag()
 	{
-		//public ImmutableArray<ISyntax> ChildBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="FunctionParameterEntryNode.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="FunctionParameterEntryNode.SyntaxKind.FunctionParameterEntryNode"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.FunctionParameterEntryNode;
 		throw new NotImplementedException();
 	}
 }

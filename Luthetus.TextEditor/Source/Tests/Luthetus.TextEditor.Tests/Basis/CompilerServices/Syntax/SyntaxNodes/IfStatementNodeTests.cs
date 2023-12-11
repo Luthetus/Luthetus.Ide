@@ -1,58 +1,73 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
-public sealed record IfStatementNodeTests
+/// <summary>
+/// <see cref="IfStatementNode"/>
+/// </summary>
+public class IfStatementNodeTests
 {
+	/// <summary>
+	/// <see cref="IfStatementNode(RazorLib.CompilerServices.Syntax.SyntaxTokens.KeywordToken, RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression.IExpressionNode, RazorLib.CompilerServices.CodeBlockNode?)"/>
+	/// </summary>
 	[Fact]
-	public void IfStatementNode()
+	public void Constructor()
 	{
-		//public IfStatementNode(
-		//       KeywordToken keywordToken,
-		//       IExpressionNode expressionNode,
-		//       CodeBlockNode? ifStatementBodyCodeBlockNode)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="IfStatementNode.KeywordToken"/>
+	/// </summary>
 	[Fact]
 	public void KeywordToken()
 	{
-		//public KeywordToken KeywordToken { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="IfStatementNode.ExpressionNode"/>
+	/// </summary>
 	[Fact]
 	public void ExpressionNode()
 	{
-		//public IExpressionNode ExpressionNode { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="IfStatementNode.IfStatementBodyCodeBlockNode"/>
+	/// </summary>
 	[Fact]
 	public void IfStatementBodyCodeBlockNode()
 	{
-		//public CodeBlockNode? IfStatementBodyCodeBlockNode { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="IfStatementNode.ChildBag"/>
+	/// </summary>
 	[Fact]
 	public void ChildBag()
 	{
-		//public ImmutableArray<ISyntax> ChildBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="IfStatementNode.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="IfStatementNode.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.IfStatementNode;
 		throw new NotImplementedException();
 	}
 }

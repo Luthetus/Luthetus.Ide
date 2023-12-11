@@ -1,41 +1,55 @@
 using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
-public sealed record GenericParameterEntryNodeTests
+/// <summary>
+/// <see cref="GenericParameterEntryNode"/>
+/// </summary>
+public class GenericParameterEntryNodeTests
 {
+	/// <summary>
+	/// <see cref="GenericParameterEntryNode(RazorLib.CompilerServices.Syntax.SyntaxNodes.TypeClauseNode)"/>
+	/// </summary>
 	[Fact]
-	public void GenericParameterEntryNode()
+	public void Constructor()
 	{
-		//public GenericParameterEntryNode(TypeClauseNode typeClauseNode)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericParameterEntryNode.TypeClauseNode"/>
+	/// </summary>
 	[Fact]
 	public void TypeClauseNode()
 	{
-		//public TypeClauseNode TypeClauseNode { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericParameterEntryNode.ChildBag"/>
+	/// </summary>
 	[Fact]
 	public void ChildBag()
 	{
-		//public ImmutableArray<ISyntax> ChildBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericParameterEntryNode.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="GenericParameterEntryNode.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.GenericParameterEntryNode;
 		throw new NotImplementedException();
 	}
 }

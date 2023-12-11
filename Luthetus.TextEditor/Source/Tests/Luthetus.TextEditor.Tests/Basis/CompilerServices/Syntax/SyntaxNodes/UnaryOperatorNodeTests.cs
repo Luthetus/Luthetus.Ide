@@ -1,58 +1,73 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
+/// <summary>
+/// <see cref="UnaryOperatorNode"/>
+/// </summary>
 public sealed record UnaryOperatorNodeTests
 {
+	/// <summary>
+	/// <see cref="UnaryOperatorNode(TypeClauseNode, RazorLib.CompilerServices.Syntax.ISyntaxToken, TypeClauseNode)"/>
+	/// </summary>
 	[Fact]
-	public void UnaryOperatorNode()
+	public void Constructor()
 	{
-		//public UnaryOperatorNode(
-		//       TypeClauseNode operandTypeClauseNode,
-		//       ISyntaxToken operatorToken,
-		//       TypeClauseNode resultTypeClauseNode)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="UnaryOperatorNode.OperandTypeClauseNode"/>
+	/// </summary>
 	[Fact]
 	public void OperandTypeClauseNode()
 	{
-		//public TypeClauseNode OperandTypeClauseNode { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="UnaryOperatorNode.OperatorToken"/>
+	/// </summary>
 	[Fact]
 	public void OperatorToken()
 	{
-		//public ISyntaxToken OperatorToken { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="UnaryOperatorNode.ResultTypeClauseNode"/>
+	/// </summary>
 	[Fact]
 	public void ResultTypeClauseNode()
 	{
-		//public TypeClauseNode ResultTypeClauseNode { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="UnaryOperatorNode.ChildBag"/>
+	/// </summary>
 	[Fact]
 	public void ChildBag()
 	{
-		//public ImmutableArray<ISyntax> ChildBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="UnaryOperatorNode.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="UnaryOperatorNode.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.UnaryOperatorNode;
 		throw new NotImplementedException();
 	}
 }
