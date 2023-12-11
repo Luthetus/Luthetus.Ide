@@ -1,34 +1,46 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 
-public sealed record AssociatedNameTokenTests
+/// <summary>
+/// <see cref="AssociatedNameToken"/>
+/// </summary>
+public class AssociatedNameTokenTests
 {
+	/// <summary>
+	/// <see cref="AssociatedNameToken(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
+	/// </summary>
 	[Fact]
-	public void AssociatedNameToken()
+	public void Constructor()
 	{
-		//public AssociatedNameToken(TextEditorTextSpan textSpan)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="AssociatedNameToken.TextSpan"/>
+	/// </summary>
 	[Fact]
 	public void TextSpan()
 	{
-		//public TextEditorTextSpan TextSpan { get;	}
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="AssociatedNameToken.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.AssociatedNameToken;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="AssociatedNameToken.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 }

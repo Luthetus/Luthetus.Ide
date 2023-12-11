@@ -1,41 +1,55 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 
-public sealed record LibraryReferenceTokenTests
+/// <summary>
+/// <see cref="LibraryReferenceToken"/>
+/// </summary>
+public class LibraryReferenceTokenTests
 {
+	/// <summary>
+	/// <see cref="LibraryReferenceToken(RazorLib.Lexes.Models.TextEditorTextSpan, bool)"/>
+	/// </summary>
 	[Fact]
-	public void LibraryReferenceToken()
+	public void Constructor()
 	{
-		//public LibraryReferenceToken(TextEditorTextSpan textSpan, bool isAbsolutePath)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="LibraryReferenceToken.TextSpan"/>
+	/// </summary>
 	[Fact]
 	public void TextSpan()
 	{
-		//public TextEditorTextSpan TextSpan { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="LibraryReferenceToken.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.LibraryReferenceToken;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="LibraryReferenceToken.IsAbsolutePath"/>
+	/// </summary>
 	[Fact]
 	public void IsAbsolutePath()
 	{
-		//public bool IsAbsolutePath { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="LibraryReferenceToken.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 }

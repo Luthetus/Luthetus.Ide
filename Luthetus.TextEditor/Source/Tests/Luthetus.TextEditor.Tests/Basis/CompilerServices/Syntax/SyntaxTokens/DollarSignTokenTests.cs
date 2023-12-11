@@ -1,34 +1,46 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 
-public sealed record DollarSignTokenTests
+/// <summary>
+/// <see cref="DollarSignToken"/>
+/// </summary>
+public class DollarSignTokenTests
 {
+	/// <summary>
+	/// <see cref="DollarSignToken(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
+	/// </summary>
 	[Fact]
-	public void DollarSignToken()
+	public void Constructor()
 	{
-		//public DollarSignToken(TextEditorTextSpan textSpan)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="DollarSignToken.TextSpan"/>
+	/// </summary>
 	[Fact]
 	public void TextSpan()
 	{
-		//public TextEditorTextSpan TextSpan { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="DollarSignToken.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.DollarSignToken;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="DollarSignToken.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 }

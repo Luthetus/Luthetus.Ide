@@ -1,34 +1,46 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 
-public sealed record CloseAngleBracketTokenTests
+/// <summary>
+/// <see cref="CloseAngleBracketToken"/>
+/// </summary>
+public class CloseAngleBracketTokenTests
 {
+	/// <summary>
+	/// <see cref="CloseAngleBracketToken(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
+	/// </summary>
 	[Fact]
-	public void CloseAngleBracketToken()
+	public void Constructor()
 	{
-		//public CloseAngleBracketToken(TextEditorTextSpan textSpan)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="CloseAngleBracketToken.TextSpan"/>
+	/// </summary>
 	[Fact]
 	public void TextSpan()
 	{
-		//public TextEditorTextSpan TextSpan { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="CloseAngleBracketToken.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.CloseAngleBracketToken;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="CloseAngleBracketToken.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 }

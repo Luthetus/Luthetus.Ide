@@ -1,34 +1,46 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 
+/// <summary>
+/// <see cref="BadToken"/>
+/// </summary>
 public sealed record BadTokenTests
 {
+	/// <summary>
+	/// <see cref="BadToken(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
+	/// </summary>
 	[Fact]
-	public void BadToken()
+	public void Constructor()
 	{
-		//public BadToken(TextEditorTextSpan textSpan)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="BadToken.TextSpan"/>
+	/// </summary>
 	[Fact]
 	public void TextSpan()
 	{
-		//public TextEditorTextSpan TextSpan { get; }
-		throw new NotImplementedException();
-	}
-	
-	[Fact]
-	public void SyntaxKind()
-	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.BadToken;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="BadToken.SyntaxKind"/>
+	/// </summary>
+	[Fact]
+	public void SyntaxKind()
+	{
+		throw new NotImplementedException();
+	}
+
+	/// <summary>
+	/// <see cref="BadToken.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 }

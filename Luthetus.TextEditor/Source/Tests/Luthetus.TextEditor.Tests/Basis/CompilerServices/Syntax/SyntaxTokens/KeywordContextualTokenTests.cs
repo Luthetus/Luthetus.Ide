@@ -1,34 +1,46 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 
-public sealed record KeywordContextualTokenTests
+/// <summary>
+/// <see cref="KeywordContextualToken"/>
+/// </summary>
+public class KeywordContextualTokenTests
 {
+	/// <summary>
+	/// <see cref="KeywordContextualToken(RazorLib.Lexes.Models.TextEditorTextSpan, RazorLib.CompilerServices.Syntax.SyntaxKind)"/>
+	/// </summary>
 	[Fact]
-	public void KeywordContextualToken()
+	public void Constructor()
 	{
-		//public KeywordContextualToken(TextEditorTextSpan textSpan, SyntaxKind syntaxKind)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="KeywordContextualToken.TextSpan"/>
+	/// </summary>
 	[Fact]
 	public void TextSpan()
 	{
-		//public TextEditorTextSpan TextSpan { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="KeywordContextualToken.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="KeywordContextualToken.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 }

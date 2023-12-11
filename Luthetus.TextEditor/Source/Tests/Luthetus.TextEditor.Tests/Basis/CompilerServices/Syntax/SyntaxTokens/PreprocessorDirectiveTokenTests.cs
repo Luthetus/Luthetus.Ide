@@ -1,34 +1,46 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 
-public sealed record PreprocessorDirectiveTokenTests
+/// <summary>
+/// <see cref="PreprocessorDirectiveToken"/>
+/// </summary>
+public class PreprocessorDirectiveTokenTests
 {
+	/// <summary>
+	/// <see cref="PreprocessorDirectiveToken(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
+	/// </summary>
 	[Fact]
-	public void PreprocessorDirectiveToken()
+	public void Constructor()
 	{
-		//public PreprocessorDirectiveToken(TextEditorTextSpan textSpan)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="PreprocessorDirectiveToken.TextSpan"/>
+	/// </summary>
 	[Fact]
 	public void TextSpan()
 	{
-		//public TextEditorTextSpan TextSpan { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="PreprocessorDirectiveToken.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.PreprocessorDirectiveToken;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="PreprocessorDirectiveToken.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 }

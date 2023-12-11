@@ -1,34 +1,46 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 
-public sealed record OpenAssociatedGroupTokenTests
+/// <summary>
+/// <see cref="OpenAssociatedGroupToken"/>
+/// </summary>
+public class OpenAssociatedGroupTokenTests
 {
+	/// <summary>
+	/// <see cref="OpenAssociatedGroupToken(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
+	/// </summary>
 	[Fact]
-	public void OpenAssociatedGroupToken()
+	public void Constructor()
 	{
-		//public OpenAssociatedGroupToken(TextEditorTextSpan textSpan)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="OpenAssociatedGroupToken.TextSpan"/>
+	/// </summary>
 	[Fact]
 	public void TextSpan()
 	{
-		//public TextEditorTextSpan TextSpan { get; init; }
-		throw new NotImplementedException();
-	}
-	
-	[Fact]
-	public void IsFabricated()
-	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="OpenAssociatedGroupToken.IsFabricated"/>
+	/// </summary>
+	[Fact]
+	public void IsFabricated()
+	{
+		throw new NotImplementedException();
+	}
+
+	/// <summary>
+	/// <see cref="OpenAssociatedGroupToken.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		//public SyntaxKind SyntaxKind => SyntaxKind.OpenAssociatedGroupToken;
 		throw new NotImplementedException();
 	}
 }

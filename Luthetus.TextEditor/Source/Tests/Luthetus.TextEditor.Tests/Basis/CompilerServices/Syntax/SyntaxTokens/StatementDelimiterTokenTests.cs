@@ -1,34 +1,46 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 
-public sealed record StatementDelimiterTokenTests
+/// <summary>
+/// <see cref="StatementDelimiterToken"/>
+/// </summary>
+public class StatementDelimiterTokenTests
 {
+	/// <summary>
+	/// <see cref="StatementDelimiterToken(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
+	/// </summary>
 	[Fact]
-	public void StatementDelimiterToken()
+	public void Constructor()
 	{
-		// public StatementDelimiterToken(TextEditorTextSpan textSpan)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="StatementDelimiterToken.TextSpan"/>
+	/// </summary>
 	[Fact]
 	public void TextSpan()
 	{
-		// public TextEditorTextSpan TextSpan { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="StatementDelimiterToken.SyntaxKind"/>
+	/// </summary>
 	[Fact]
 	public void SyntaxKind()
 	{
-		// public SyntaxKind SyntaxKind => SyntaxKind.StatementDelimiterToken;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="StatementDelimiterToken.IsFabricated"/>
+	/// </summary>
 	[Fact]
 	public void IsFabricated()
 	{
-		//public bool IsFabricated { get; init; }
 		throw new NotImplementedException();
 	}
 }
