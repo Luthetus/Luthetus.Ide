@@ -3,7 +3,13 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Fluxor;
 using Microsoft.Extensions.DependencyInjection;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
-using Luthetus.Common.RazorLib.Notifications.Models;
+using Luthetus.Common.RazorLib.Installations.Models;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.Common.RazorLib.Storages.Models;
+using Luthetus.Common.RazorLib.Misc;
+using Microsoft.JSInterop;
+using Luthetus.Common.RazorLib.Storages.States;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 
@@ -55,8 +61,16 @@ public class TextEditorServiceTests
 	private void InitializeTextEditorServiceTests(out ITextEditorService textEditorService)
 	{
 		var services = new ServiceCollection()
-			.AddScoped<ITextEditorService, TextEditorService>()
-			.AddFluxor(options => options.ScanAssemblies(typeof(ITextEditorService).Assembly));
+			.AddSingleton<LuthetusCommonOptions>()
+			.AddSingleton<LuthetusTextEditorOptions>()
+			.AddScoped<IStorageService, DoNothingStorageService>()
+			.AddScoped<IJSRuntime, DoNothingJsRuntime>()
+            .AddScoped<StorageSync>()
+            .AddScoped<IBackgroundTaskService>(_ => new BackgroundTaskServiceSynchronous())
+            .AddScoped<ITextEditorService, TextEditorService>()
+			.AddFluxor(options => options.ScanAssemblies(
+                typeof(LuthetusCommonOptions).Assembly,
+                typeof(LuthetusTextEditorOptions).Assembly));
 
 		var serviceProvider = services.BuildServiceProvider();
 
