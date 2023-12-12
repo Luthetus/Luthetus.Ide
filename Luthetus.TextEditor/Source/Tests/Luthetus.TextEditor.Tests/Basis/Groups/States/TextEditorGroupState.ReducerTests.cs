@@ -1,51 +1,55 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Groups.States;
 
 namespace Luthetus.TextEditor.Tests.Basis.Groups.States;
 
+/// <summary>
+/// <see cref="TextEditorGroupState"/>
+/// </summary>
 public partial class TextEditorGroupStateReducerTests
 {
+	/// <summary>
+	/// <see cref="TextEditorGroupState.Reducer.ReduceRegisterAction(TextEditorGroupState, TextEditorGroupState.RegisterAction)"/>
+	/// </summary>
 	[Fact]
 	public void ReduceRegisterAction()
 	{
-		//public static TextEditorGroupState ReduceRegisterAction(
-	 //       TextEditorGroupState inState,
-	 //       RegisterAction registerAction)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorGroupState.Reducer.ReduceAddViewModelToGroupAction(TextEditorGroupState, TextEditorGroupState.AddViewModelToGroupAction)"/>
+	/// </summary>
 	[Fact]
 	public void ReduceAddViewModelToGroupAction()
 	{
-		//public static TextEditorGroupState ReduceAddViewModelToGroupAction(
-	//       TextEditorGroupState inState,
-	//       AddViewModelToGroupAction addViewModelToGroupAction)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorGroupState.Reducer.ReduceRemoveViewModelFromGroupAction(TextEditorGroupState, TextEditorGroupState.RemoveViewModelFromGroupAction)"/>
+	/// </summary>
 	[Fact]
 	public void ReduceRemoveViewModelFromGroupAction()
 	{
-		//public static TextEditorGroupState ReduceRemoveViewModelFromGroupAction(
-	//       TextEditorGroupState inState,
-	//       RemoveViewModelFromGroupAction removeViewModelFromGroupAction)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorGroupState.Reducer.ReduceSetActiveViewModelOfGroupAction(TextEditorGroupState, TextEditorGroupState.SetActiveViewModelOfGroupAction)"/>
+	/// </summary>
 	[Fact]
 	public void ReduceSetActiveViewModelOfGroupAction()
 	{
-		//public static TextEditorGroupState ReduceSetActiveViewModelOfGroupAction(
-	 //       TextEditorGroupState inState,
-	 //       SetActiveViewModelOfGroupAction setActiveViewModelOfGroupAction)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorGroupState.Reducer.ReduceDisposeAction(TextEditorGroupState, TextEditorGroupState.DisposeAction)"/>
+	/// </summary>
 	[Fact]
 	public void ReduceDisposeAction()
 	{
-		//public static TextEditorGroupState ReduceDisposeAction(
-	 //       TextEditorGroupState inState,
-	 //       DisposeAction disposeAction)
 		throw new NotImplementedException();
 	}
 }

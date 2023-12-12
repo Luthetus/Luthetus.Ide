@@ -1,76 +1,100 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Options.States;
 
 namespace Luthetus.TextEditor.Tests.Basis.Options.States;
 
+/// <summary>
+/// <see cref="TextEditorOptionsState"/>
+/// </summary>
 public class TextEditorOptionsStateActionsTests
 {
+	/// <summary>
+	/// <see cref="TextEditorOptionsState.SetFontFamilyAction"/>
+	/// </summary>
 	[Fact]
 	public void SetFontFamilyAction()
 	{
-		//public record SetFontFamilyAction(string? FontFamily);
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorOptionsState.SetFontSizeAction"/>
+	/// </summary>
 	[Fact]
 	public void SetFontSizeAction()
 	{
-		//public record SetFontSizeAction(int FontSizeInPixels);
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorOptionsState.SetCursorWidthAction"/>
+	/// </summary>
 	[Fact]
 	public void SetCursorWidthAction()
 	{
-		//public record SetCursorWidthAction(double CursorWidthInPixels);
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorOptionsState.SetRenderStateKeyAction"/>
+	/// </summary>
 	[Fact]
 	public void SetRenderStateKeyAction()
 	{
-		//public record SetRenderStateKeyAction(Key<RenderState> RenderStateKey);
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorOptionsState.SetHeightAction"/>
+	/// </summary>
 	[Fact]
 	public void SetHeightAction()
 	{
-		//public record SetHeightAction(int? HeightInPixels);
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorOptionsState.SetThemeAction"/>
+	/// </summary>
 	[Fact]
 	public void SetThemeAction()
 	{
-		//public record SetThemeAction(ThemeRecord Theme);
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorOptionsState.SetKeymapAction"/>
+	/// </summary>
 	[Fact]
 	public void SetKeymapAction()
 	{
-		//public record SetKeymapAction(Keymap Keymap);
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorOptionsState.SetShowWhitespaceAction"/>
+	/// </summary>
 	[Fact]
 	public void SetShowWhitespaceAction()
 	{
-		//public record SetShowWhitespaceAction(bool ShowWhitespace);
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorOptionsState.SetShowNewlinesAction"/>
+	/// </summary>
 	[Fact]
 	public void SetShowNewlinesAction()
 	{
-		//public record SetShowNewlinesAction(bool ShowNewlines);
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorOptionsState.SetUseMonospaceOptimizationsAction"/>
+	/// </summary>
 	[Fact]
 	public void SetUseMonospaceOptimizationsAction()
 	{
-		//public record SetUseMonospaceOptimizationsAction(bool UseMonospaceOptimizations);
 		throw new NotImplementedException();
 	}
 }

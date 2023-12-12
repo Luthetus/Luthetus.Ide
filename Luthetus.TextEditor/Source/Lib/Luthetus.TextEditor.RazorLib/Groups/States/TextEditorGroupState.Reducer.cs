@@ -6,7 +6,7 @@ namespace Luthetus.TextEditor.RazorLib.Groups.States;
 
 public partial class TextEditorGroupState
 {
-    private class Reducer
+    public class Reducer
     {
         [ReducerMethod]
         public static TextEditorGroupState ReduceRegisterAction(

@@ -1,20 +1,28 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Groups.States;
 
 namespace Luthetus.TextEditor.Tests.Basis.Groups.States;
 
+/// <summary>
+/// <see cref="TextEditorGroupState"/>
+/// </summary>
 public class TextEditorGroupStateMainTests
 {
+	/// <summary>
+	/// <see cref="TextEditorGroupState()"/>
+	/// </summary>
 	[Fact]
-	public void TextEditorGroupState()
+	public void Constructor()
 	{
-		//private TextEditorGroupState()
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorGroupState.GroupBag"/>
+	/// </summary>
 	[Fact]
 	public void GroupBag()
 	{
-		//public ImmutableList<TextEditorGroup> GroupBag { get; init; }
 		throw new NotImplementedException();
 	}
 }

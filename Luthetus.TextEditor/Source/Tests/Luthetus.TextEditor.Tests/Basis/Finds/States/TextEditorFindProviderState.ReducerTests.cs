@@ -1,43 +1,46 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Finds.States;
 
 namespace Luthetus.TextEditor.Tests.Basis.Finds.States;
 
+/// <summary>
+/// <see cref="TextEditorFindProviderState"/>
+/// </summary>
 public class TextEditorFindProviderStateReducerTests
 {
+	/// <summary>
+	/// <see cref="TextEditorFindProviderState.Reducer.ReduceRegisterAction(TextEditorFindProviderState, TextEditorFindProviderState.RegisterAction)"/>
+	/// </summary>
 	[Fact]
 	public void ReduceRegisterAction()
 	{
-		//public static TextEditorFindProviderState ReduceRegisterAction(
-	 //       TextEditorFindProviderState inState,
-	 //       RegisterAction registerAction)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorFindProviderState.Reducer.ReduceDisposeAction(TextEditorFindProviderState, TextEditorFindProviderState.DisposeAction)"/>
+	/// </summary>
 	[Fact]
 	public void ReduceDisposeAction()
 	{
-		//public static TextEditorFindProviderState ReduceDisposeAction(
-		//       TextEditorFindProviderState inState,
-		//       DisposeAction disposeAction)
-		//	throw new NotImplementedException();
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorFindProviderState.Reducer.ReduceSetActiveFindProviderAction(TextEditorFindProviderState, TextEditorFindProviderState.SetActiveFindProviderAction)"/>
+	/// </summary>
 	[Fact]
 	public void ReduceSetActiveFindProviderAction()
 	{
-		//public static TextEditorFindProviderState ReduceSetActiveFindProviderAction(
-	//       TextEditorFindProviderState inState,
-	//       SetActiveFindProviderAction setActiveFindProviderAction)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorFindProviderState.Reducer.ReduceSetSearchQueryAction(TextEditorFindProviderState, TextEditorFindProviderState.SetSearchQueryAction)"/>
+	/// </summary>
 	[Fact]
 	public void ReduceSetSearchQueryAction()
 	{
-		//public static TextEditorFindProviderState ReduceSetSearchQueryAction(
-	//       TextEditorFindProviderState inState,
-	//       SetSearchQueryAction setSearchQueryAction)
 		throw new NotImplementedException();
 	}
 }

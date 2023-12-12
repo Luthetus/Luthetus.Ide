@@ -1,34 +1,46 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Lexes.Models;
 
+/// <summary>
+/// <see cref="TextEditorLexerDefault"/>
+/// </summary>
 public class TextEditorLexerDefaultTests
 {
+	/// <summary>
+	/// <see cref="TextEditorLexerDefault(RazorLib.Lexes.Models.ResourceUri)"/>
+	/// </summary>
 	[Fact]
-	public void TextEditorLexerDefault()
+	public void Constructor()
 	{
-		//public TextEditorLexerDefault(ResourceUri resourceUri)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorLexerDefault.ModelRenderStateKey"/>
+	/// </summary>
 	[Fact]
 	public void ModelRenderStateKey()
 	{
-		//public Key<RenderState> ModelRenderStateKey { get; private set; } = Key<RenderState>.Empty;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorLexerDefault.ResourceUri"/>
+	/// </summary>
 	[Fact]
 	public void ResourceUri()
 	{
-		//public ResourceUri ResourceUri { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorLexerDefault.Lex(string, Common.RazorLib.Keys.Models.Key{Common.RazorLib.RenderStates.Models.RenderState})"/>
+	/// </summary>
 	[Fact]
 	public void Lex()
 	{
-		//public Task<ImmutableArray<TextEditorTextSpan>> Lex(string sourceText, Key<RenderState> modelRenderStateKey)
 		throw new NotImplementedException();
 	}
 }

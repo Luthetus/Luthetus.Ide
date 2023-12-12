@@ -1,63 +1,73 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 
 namespace Luthetus.TextEditor.Tests.Basis.Keymaps.Models.Vims;
 
+/// <summary>
+/// <see cref="VimMotionResult"/>
+/// </summary>
 public class VimMotionResultTests
 {
+	/// <summary>
+	/// <see cref="VimMotionResult(RazorLib.Cursors.Models.ImmutableTextEditorCursor, int, RazorLib.Cursors.Models.ImmutableTextEditorCursor, int, int)"/>
+	/// </summary>
 	[Fact]
-	public void VimMotionResult()
+	public void Constructor()
 	{
-		//	record VimMotionResult(
-		//		ImmutableTextEditorCursor LowerPositionIndexImmutableCursor,
-		//		int LowerPositionIndex,
-		//		ImmutableTextEditorCursor HigherPositionIndexImmutableCursor,
-		//		int HigherPositionIndex,
-		//		int PositionIndexDisplacement)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="VimMotionResult.LowerPositionIndexImmutableCursor"/>
+	/// </summary>
 	[Fact]
 	public void LowerPositionIndexImmutableCursor()
 	{
-		// ImmutableTextEditorCursor LowerPositionIndexImmutableCursor
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="VimMotionResult.LowerPositionIndex"/>
+	/// </summary>
 	[Fact]
 	public void LowerPositionIndex()
 	{
-		// int LowerPositionIndex
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="VimMotionResult.HigherPositionIndexImmutableCursor"/>
+	/// </summary>
 	[Fact]
 	public void HigherPositionIndexImmutableCursor()
 	{
-		// ImmutableTextEditorCursor HigherPositionIndexImmutableCursor
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="VimMotionResult.HigherPositionIndex"/>
+	/// </summary>
 	[Fact]
 	public void HigherPositionIndex()
 	{
-		// int HigherPositionIndex
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="VimMotionResult.PositionIndexDisplacement"/>
+	/// </summary>
 	[Fact]
 	public void PositionIndexDisplacement()
 	{
-		// int PositionIndexDisplacement
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="VimMotionResult.GetResultAsync(RazorLib.Commands.Models.TextEditorCommandArgs, RazorLib.Cursors.Models.TextEditorCursor, Func{Task})"/>
+	/// </summary>
 	[Fact]
 	public void GetResultAsync()
 	{
-		//public static async Task<VimMotionResult> GetResultAsync(
-	 //       TextEditorCommandArgs textEditorCommandArgs,
-	 //       TextEditorCursor textEditorCursorForMotion,
-	 //       Func<Task> motionCommandArgs)
 		throw new NotImplementedException();
 	}
 }

@@ -1,77 +1,91 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.JavaScriptObjects.Models;
 
+/// <summary>
+/// <see cref="TextEditorMeasurements"/>
+/// </summary>
 public class TextEditorMeasurementsTests
 {
+	/// <summary>
+	/// <see cref="TextEditorMeasurements(double, double, double, double, double, double, double, CancellationToken)"/>
+	/// </summary>
 	[Fact]
-	public void TextEditorMeasurements()
+	public void Constructor()
 	{
-		//	record TextEditorMeasurements(
-		//		double ScrollLeft,
-		//		double ScrollTop,
-		//		double ScrollWidth,
-		//		double ScrollHeight,
-		//		double MarginScrollHeight,
-		//		double Width,
-		//		double Height,
-		//		CancellationToken MeasurementsExpiredCancellationToken)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorMeasurements.ScrollLeft"/>
+	/// </summary>
 	[Fact]
 	public void ScrollLeft()
 	{
-		// double ScrollLeft
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorMeasurements.ScrollTop"/>
+	/// </summary>
 	[Fact]
 	public void ScrollTop()
 	{
-		// double ScrollTop
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorMeasurements.ScrollWidth"/>
+	/// </summary>
 	[Fact]
 	public void ScrollWidth()
 	{
-		// double ScrollWidth
 		throw new NotImplementedException();
 	}
-	
+
+	/// <summary>
+	/// <see cref="TextEditorMeasurements.ScrollHeight"/>
+	/// </summary>
 	[Fact]
 	public void ScrollHeight()
 	{
-		// double ScrollHeight
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorMeasurements.MarginScrollHeight"/>
+	/// </summary>
 	[Fact]
 	public void MarginScrollHeight()
 	{
-		// double MarginScrollHeight
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorMeasurements.Width"/>
+	/// </summary>
 	[Fact]
 	public void Width()
 	{
-		// double Width
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorMeasurements.Height"/>
+	/// </summary>
 	[Fact]
 	public void Height()
 	{
-		// double Height
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorMeasurements.MeasurementsExpiredCancellationToken"/>
+	/// </summary>
 	[Fact]
 	public void MeasurementsExpiredCancellationToken()
 	{
-		// CancellationToken MeasurementsExpiredCancellationToken
 		throw new NotImplementedException();
 	}
 }

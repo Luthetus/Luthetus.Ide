@@ -1,100 +1,64 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 
 namespace Luthetus.TextEditor.Tests.Basis.Keymaps.Models.Vims;
 
+/// <summary>
+/// <see cref="TextEditorKeymapVim"/>
+/// </summary>
 public class TextEditorKeymapVimTests
 {
+	/// <summary>
+	/// <see cref="TextEditorKeymapVim()"/>
+	/// </summary>
 	[Fact]
-	public void TextEditorKeymapVim()
+	public void Constructor()
 	{
-    	//public TextEditorKeymapVim()
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorKeymapVim.ActiveVimMode"/>
+	/// </summary>
 	[Fact]
 	public void ActiveVimMode()
 	{
-        //public VimMode ActiveVimMode { get; set; } = VimMode.Normal;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorKeymapVim.VimSentence"/>
+	/// </summary>
 	[Fact]
 	public void VimSentence()
 	{
-    	//public VimSentence VimSentence { get; } = new();
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorKeymapVim.GetLayer(bool)"/>
+	/// </summary>
 	[Fact]
 	public void GetLayer()
 	{
-    	//public Key<KeymapLayer> GetLayer(bool hasSelection)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorKeymapVim.GetCursorCssClassString()"/>
+	/// </summary>
 	[Fact]
 	public void GetCursorCssClassString()
 	{
-    	//public string GetCursorCssClassString()
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorKeymapVim.GetCursorCssStyleString(RazorLib.TextEditors.Models.TextEditorModels.TextEditorModel, RazorLib.TextEditors.Models.TextEditorViewModel, RazorLib.Options.Models.TextEditorOptions)"/>
+	/// </summary>
 	[Fact]
 	public void GetCursorCssStyleString()
 	{
-	    //public string GetCursorCssStyleString(
-     //       TextEditorModel textEditorModel,
-     //       TextEditorViewModel textEditorViewModel,
-     //       TextEditorOptions textEditorOptions)
-		throw new NotImplementedException();
-	}
-
-	[Fact]
-	public void AddVimMotionToLayer()
-	{
-    	//private void AddVimMotionToLayer(Key<KeymapLayer> keymapLayerKey)
-		throw new NotImplementedException();
-	}
-
-	[Fact]
-	public void AddInsertLayer()
-	{
-    	//private void AddInsertLayer()
-		throw new NotImplementedException();
-	}
-
-	[Fact]
-	public void AddCommandLayer()
-	{
-	    //private void AddCommandLayer()
-		throw new NotImplementedException();
-	}
-
-	[Fact]
-	public void AddMiscLayer()
-	{
-    	//private void AddMiscLayer()
-		throw new NotImplementedException();
-	}
-
-	[Fact]
-	public void BuildCommandTextEditor()
-	{
-	    //private TextEditorCommand BuildCommandTextEditor(KeymapArgument keymapArgument, string displayName, string internalIdentifier)
-		throw new NotImplementedException();
-	}
-
-	[Fact]
-	public void BuildMovementCommand()
-	{
-		//private TextEditorCommand BuildMovementCommand(KeymapArgument keymapArgument, string key)
-		throw new NotImplementedException();
-	}
-
-	[Fact]
-	public void BuildModifiedMovementCommandsFromUnmodified()
-	{
-		//private void BuildModifiedMovementCommandsFromUnmodified(KeymapArgument keymapArgument, string key)
 		throw new NotImplementedException();
 	}
 }

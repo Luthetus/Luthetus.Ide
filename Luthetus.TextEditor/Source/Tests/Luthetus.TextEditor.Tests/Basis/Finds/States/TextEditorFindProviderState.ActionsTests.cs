@@ -1,34 +1,46 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Finds.States;
 
 namespace Luthetus.TextEditor.Tests.Basis.Finds.States;
 
+/// <summary>
+/// <see cref="TextEditorFindProviderState"/>
+/// </summary>
 public class TextEditorFindProviderStateActionsTests
 {
+	/// <summary>
+	/// <see cref="TextEditorFindProviderState.RegisterAction"/>
+	/// </summary>
 	[Fact]
 	public void RegisterAction()
 	{
-		//public record RegisterAction(ITextEditorFindProvider FindProvider);
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorFindProviderState.DisposeAction"/>
+	/// </summary>
 	[Fact]
 	public void DisposeAction()
 	{
-		//public record DisposeAction(Key<ITextEditorFindProvider> FindProviderKey);
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorFindProviderState.SetActiveFindProviderAction"/>
+	/// </summary>
 	[Fact]
 	public void SetActiveFindProviderAction()
 	{
-		//public record SetActiveFindProviderAction(Key<ITextEditorFindProvider> FindProviderKey);
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorFindProviderState.SetSearchQueryAction"/>
+	/// </summary>
 	[Fact]
 	public void SetSearchQueryAction()
 	{
-		//public record SetSearchQueryAction(string SearchQuery);
 		throw new NotImplementedException();
 	}
 }

@@ -1,84 +1,100 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Lexes.Models;
 
+/// <summary>
+/// <see cref="TextEditorTextSpan"/>
+/// </summary>
 public class TextEditorTextSpanTests
 {
+	/// <summary>
+	/// <see cref="TextEditorTextSpan(int, int, byte, RazorLib.Lexes.Models.ResourceUri, string)"/>
+	/// </summary>
 	[Fact]
-	public void TextEditorTextSpan_A()
+	public void Constructor_A()
 	{
-		//	record TextEditorTextSpan(
-		//		int StartingIndexInclusive,
-		//		int EndingIndexExclusive,
-		//		byte DecorationByte,
-		//		ResourceUri ResourceUri,
-		//		string SourceText)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorTextSpan(int, RazorLib.CompilerServices.StringWalker, byte)"/>
+	/// </summary>
 	[Fact]
-	public void TextEditorTextSpan_B()
+	public void Constructor_B()
 	{
-		//public TextEditorTextSpan(
-		//           int StartingIndexInclusive,
-		//           StringWalker stringWalker,
-		//           byte decorationByte)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorTextSpan.StartingIndexInclusive"/>
+	/// </summary>
 	[Fact]
 	public void StartingIndexInclusive()
 	{
-		//	int StartingIndexInclusive
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorTextSpan.EndingIndexExclusive"/>
+	/// </summary>
 	[Fact]
 	public void EndingIndexExclusive()
 	{
-		//	int EndingIndexExclusive
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorTextSpan.DecorationByte"/>
+	/// </summary>
 	[Fact]
 	public void DecorationByte()
 	{
-		//	byte DecorationByte
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorTextSpan.ResourceUri"/>
+	/// </summary>
 	[Fact]
 	public void ResourceUri()
 	{
-		//	ResourceUri ResourceUri
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorTextSpan.SourceText"/>
+	/// </summary>
 	[Fact]
 	public void SourceText()
 	{
-		//	string SourceText
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorTextSpan.Length"/>
+	/// </summary>
 	[Fact]
 	public void Length()
 	{
-    	//public int Length => EndingIndexExclusive - StartingIndexInclusive;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorTextSpan.GetText()"/>
+	/// </summary>
 	[Fact]
 	public void GetText()
 	{
-    	//public string GetText()
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorTextSpan.FabricateTextSpan(string)"/>
+	/// </summary>
 	[Fact]
 	public void FabricateTextSpan()
 	{
-		//public static TextEditorTextSpan FabricateTextSpan(string text)
 		throw new NotImplementedException();
 	}
 }

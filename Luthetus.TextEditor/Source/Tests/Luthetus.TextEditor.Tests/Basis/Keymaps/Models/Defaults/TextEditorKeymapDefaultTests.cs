@@ -1,72 +1,46 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 
 namespace Luthetus.TextEditor.Tests.Basis.Keymaps.Models.Defaults;
 
+/// <summary>
+/// <see cref="TextEditorKeymapDefault"/>
+/// </summary>
 public class TextEditorKeymapDefaultTests
 {
+	/// <summary>
+	/// <see cref="TextEditorKeymapDefault()"/>
+	/// </summary>
 	[Fact]
-	public void TextEditorKeymapDefault()
+	public void Constructor()
 	{
-	    //public TextEditorKeymapDefault()
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorKeymapDefault.GetLayer(bool)"/>
+	/// </summary>
 	[Fact]
 	public void GetLayer()
 	{
-    	//public Key<KeymapLayer> GetLayer(bool hasSelection)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorKeymapDefault.GetCursorCssClassString()"/>
+	/// </summary>
 	[Fact]
 	public void GetCursorCssClassString()
 	{
-    	//public string GetCursorCssClassString()
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorKeymapDefault.GetCursorCssStyleString(RazorLib.TextEditors.Models.TextEditorModels.TextEditorModel, RazorLib.TextEditors.Models.TextEditorViewModel, RazorLib.Options.Models.TextEditorOptions)"/>
+	/// </summary>
 	[Fact]
 	public void GetCursorCssStyleString()
 	{
-	    //public string GetCursorCssStyleString(
-     //       TextEditorModel textEditorModel,
-     //       TextEditorViewModel textEditorViewModel,
-     //       TextEditorOptions textEditorOptions)
-		throw new NotImplementedException();
-	}
-
-	[Fact]
-	public void AddDefaultCtrlModifiedKeymap()
-	{
-    	//private void AddDefaultCtrlModifiedKeymap()
-		throw new NotImplementedException();
-	}
-
-	[Fact]
-	public void AddDefaultAltModifiedKeymap()
-	{
-	    //private void AddDefaultAltModifiedKeymap()
-		throw new NotImplementedException();
-	}
-
-	[Fact]
-	public void AddDefaultHasSelectionLayerModifiedKeymap()
-	{
-    	//private void AddDefaultHasSelectionLayerModifiedKeymap()
-		throw new NotImplementedException();
-	}
-
-	[Fact]
-	public void AddDefaultCtrlAltModifiedKeymap()
-	{
-		//private void AddDefaultCtrlAltModifiedKeymap()
-		throw new NotImplementedException();
-	}
-
-	[Fact]
-	public void AddDefaultMiscKeymap()
-	{
-		//private void AddDefaultMiscKeymap()
 		throw new NotImplementedException();
 	}
 }

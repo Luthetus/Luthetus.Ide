@@ -1,47 +1,55 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Groups.States;
 
 namespace Luthetus.TextEditor.Tests.Basis.Groups.States;
 
+/// <summary>
+/// <see cref="TextEditorGroupState"/>
+/// </summary>
 public class TextEditorGroupStateActionsTests
 {
+	/// <summary>
+	/// <see cref="TextEditorGroupState.RegisterAction"/>
+	/// </summary>
 	[Fact]
 	public void RegisterAction()
 	{
-		//public record RegisterAction(TextEditorGroup Group);
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorGroupState.DisposeAction"/>
+	/// </summary>
 	[Fact]
 	public void DisposeAction()
 	{
-		//public record DisposeAction(Key<TextEditorGroup> GroupKey);
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorGroupState.AddViewModelToGroupAction"/>
+	/// </summary>
 	[Fact]
 	public void AddViewModelToGroupAction()
 	{
-		//public record AddViewModelToGroupAction(
-	//       Key<TextEditorGroup> GroupKey,
-	//       Key<TextEditorViewModel> ViewModelKey);
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorGroupState.RemoveViewModelFromGroupAction"/>
+	/// </summary>
 	[Fact]
 	public void RemoveViewModelFromGroupAction()
 	{
-		//public record RemoveViewModelFromGroupAction(
-	 //       Key<TextEditorGroup> GroupKey,
-	 //       Key<TextEditorViewModel> ViewModelKey);
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorGroupState.SetActiveViewModelOfGroupAction"/>
+	/// </summary>
 	[Fact]
 	public void SetActiveViewModelOfGroupAction()
 	{
-		//public record SetActiveViewModelOfGroupAction(
-	//       Key<TextEditorGroup> GroupKey,
-	//       Key<TextEditorViewModel> ViewModelKey);
 		throw new NotImplementedException();
 	}
 }

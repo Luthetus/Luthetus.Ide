@@ -1,45 +1,55 @@
 using Xunit;
+using Luthetus.TextEditor.RazorLib.Edits.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Edits.Models;
 
+/// <summary>
+/// <see cref="EditBlock"/>
+/// </summary>
 public class EditBlockTests
 {
+	/// <summary>
+	/// <see cref="EditBlock(RazorLib.Edits.Models.TextEditKind, string, string, string?)"/>
+	/// </summary>
 	[Fact]
-	public void EditBlock()
+	public void Constructor()
 	{
-		//	record EditBlockTests(
-		//		TextEditKind TextEditKind,
-		//		string DisplayName,
-		//		string ContentSnapshot,
-		//		string? OtherTextEditKindIdentifier)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="EditBlock.TextEditKind"/>
+	/// </summary>
 	[Fact]
 	public void TextEditKind()
 	{
-		// TextEditKind TextEditKind
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="EditBlock.DisplayName"/>
+	/// </summary>
 	[Fact]
 	public void DisplayName()
 	{
-		// string DisplayName
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="EditBlock.ContentSnapshot"/>
+	/// </summary>
 	[Fact]
 	public void ContentSnapshot()
 	{
-		// string ContentSnapshot
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="EditBlock.OtherTextEditKindIdentifier"/>
+	/// </summary>
 	[Fact]
 	public void OtherTextEditKindIdentifier()
 	{
-		// string? OtherTextEditKindIdentifier
 		throw new NotImplementedException();
 	}
 }

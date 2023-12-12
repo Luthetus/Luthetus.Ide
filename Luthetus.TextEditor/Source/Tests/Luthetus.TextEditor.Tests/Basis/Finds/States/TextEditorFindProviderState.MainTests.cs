@@ -1,51 +1,65 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Finds.States;
 
 namespace Luthetus.TextEditor.Tests.Basis.Finds.States;
 
+/// <summary>
+/// <see cref="TextEditorFindProviderState"/>
+/// </summary>
 public class TextEditorFindProviderStateMainTests
 {
+	/// <summary>
+	/// <see cref="TextEditorFindProviderState()"/>
+	/// </summary>
 	[Fact]
-	public void TextEditorFindProviderState_A()
+	public void Constructor_A()
 	{
-		//private TextEditorFindProviderState()
+		//private 
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorFindProviderState(System.Collections.Immutable.ImmutableList{RazorLib.Finds.Models.ITextEditorFindProvider}, Common.RazorLib.Keys.Models.Key{RazorLib.Finds.Models.ITextEditorFindProvider}, string)"/>
+	/// </summary>
 	[Fact]
-	public void TextEditorFindProviderState_B()
+	public void Constructor_B()
 	{
-		//private TextEditorFindProviderState(
-	//       ImmutableList<ITextEditorFindProvider> findProviderBag,
-	//       Key<ITextEditorFindProvider> activeTextEditorFindProviderKey,
-	//       string searchQuery)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorFindProviderState.FindProviderBag"/>
+	/// </summary>
 	[Fact]
 	public void FindProviderBag()
 	{
-		//public ImmutableList<ITextEditorFindProvider> FindProviderBag { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorFindProviderState.ActiveFindProviderKey"/>
+	/// </summary>
 	[Fact]
 	public void ActiveFindProviderKey()
 	{
-		//public Key<ITextEditorFindProvider> ActiveFindProviderKey { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorFindProviderState.SearchQuery"/>
+	/// </summary>
 	[Fact]
 	public void SearchQuery()
 	{
-		//public string SearchQuery { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorFindProviderState.ActiveFindProviderOrDefault()"/>
+	/// </summary>
 	[Fact]
 	public void ActiveFindProviderOrDefault()
 	{
-		//public ITextEditorFindProvider? ActiveFindProviderOrDefault()
 		throw new NotImplementedException();
 	}
 }

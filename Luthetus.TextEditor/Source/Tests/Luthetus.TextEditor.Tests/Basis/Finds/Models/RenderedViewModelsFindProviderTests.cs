@@ -1,34 +1,46 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Finds.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Finds.Models;
 
+/// <summary>
+/// <see cref="RenderedViewModelsFindProvider"/>
+/// </summary>
 public class RenderedViewModelsFindProviderTests
 {
+	/// <summary>
+	/// <see cref="RenderedViewModelsFindProvider.FindProviderKey"/>
+	/// </summary>
 	[Fact]
 	public void FindProviderKey()
 	{
-		//public Key<ITextEditorFindProvider> FindProviderKey { get; } =
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="RenderedViewModelsFindProvider.IconComponentRendererType"/>
+	/// </summary>
 	[Fact]
 	public void IconComponentRendererType()
 	{
-		//public Type IconComponentRendererType { get; } = typeof(IconArrowDown);
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="RenderedViewModelsFindProvider.DisplayName"/>
+	/// </summary>
 	[Fact]
 	public void DisplayName()
 	{
-		//public string DisplayName { get; } = "Rendered ViewModels";
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="RenderedViewModelsFindProvider.SearchAsync(string, CancellationToken)"/>
+	/// </summary>
 	[Fact]
 	public void SearchAsync()
 	{
-		//public async Task SearchAsync(string searchQuery, CancellationToken cancellationToken = default)
 		throw new NotImplementedException();
 	}
 }

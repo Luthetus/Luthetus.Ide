@@ -1,44 +1,55 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Groups.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Groups.Models;
 
+/// <summary>
+/// <see cref="TextEditorGroup"/>
+/// </summary>
 public class TextEditorGroupTests
 {
+	/// <summary>
+	/// <see cref="TextEditorGroup(Common.RazorLib.Keys.Models.Key{TextEditorGroup}, Common.RazorLib.Keys.Models.Key{RazorLib.TextEditors.Models.TextEditorViewModel}, System.Collections.Immutable.ImmutableList{Common.RazorLib.Keys.Models.Key{RazorLib.TextEditors.Models.TextEditorViewModel}})"/>
+	/// </summary>
 	[Fact]
-	public void TextEditorGroup()
+	public void Constructor()
 	{
-		//	record TextEditorGroup(
-		//		Key<TextEditorGroup> GroupKey,
-		//		Key<TextEditorViewModel> ActiveViewModelKey,
-		//		ImmutableList<Key<TextEditorViewModel>> ViewModelKeyBag)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorGroup.GroupKey"/>
+	/// </summary>
 	[Fact]
 	public void GroupKey()
 	{
-		// Key<TextEditorGroup> GroupKey
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorGroup.ActiveViewModelKey"/>
+	/// </summary>
 	[Fact]
 	public void ActiveViewModelKey()
 	{
-		// Key<TextEditorViewModel> ActiveViewModelKey
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorGroup.ViewModelKeyBag"/>
+	/// </summary>
 	[Fact]
 	public void ViewModelKeyBag()
 	{
-		// ImmutableList<Key<TextEditorViewModel>> ViewModelKeyBag
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorGroup.RenderStateKey"/>
+	/// </summary>
 	[Fact]
 	public void RenderStateKey()
 	{
-		//public Key<RenderState> RenderStateKey { get; init; } = Key<RenderState>.NewKey();
 		throw new NotImplementedException();
 	}
 }

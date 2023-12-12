@@ -1,83 +1,37 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Htmls.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Htmls.Models;
 
+/// <summary>
+/// <see cref="HtmlHelper"/>
+/// </summary>
 public class HtmlHelperTests
 {
+	/// <summary>
+	/// <see cref="HtmlHelper.EscapeHtml(char)"/>
+	/// </summary>
 	[Fact]
-	public void SpaceString()
+	public void EscapeHtml_Char()
 	{
-		//private static readonly string SpaceString = "&nbsp;";
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="HtmlHelper.EscapeHtml(System.Text.StringBuilder)"/>
+	/// </summary>
 	[Fact]
-	public void TabString()
+	public void EscapeHtml_StringBuilder()
 	{
-		//private static readonly string TabString = "&nbsp;&nbsp;&nbsp;&nbsp;";
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="HtmlHelper.EscapeHtml(string)"/>
+	/// </summary>
 	[Fact]
-	public void NewLineString()
+	public void EscapeHtml_String()
 	{
-		//private static readonly string NewLineString = "<br/>";
-		throw new NotImplementedException();
-	}
-
-	[Fact]
-	public void AmpersandString()
-	{
-		//private static readonly string AmpersandString = "&amp;";
-		throw new NotImplementedException();
-	}
-
-	[Fact]
-	public void LeftAngleBracketString()
-	{
-		//private static readonly string LeftAngleBracketString = "&lt;";
-		throw new NotImplementedException();
-	}
-
-	[Fact]
-	public void RightAngleBracketString()
-	{
-		//private static readonly string RightAngleBracketString = "&gt;";
-		throw new NotImplementedException();
-	}
-
-	[Fact]
-	public void DoubleQuoteString()
-	{
-		//private static readonly string DoubleQuoteString = "&quot;";
-		throw new NotImplementedException();
-	}
-
-	[Fact]
-	public void SingleQuoteString()
-	{
-		//private static readonly string SingleQuoteString = "&#39;";
-		throw new NotImplementedException();
-	}
-
-	[Fact]
-	public void EscapeHtml_A()
-	{
-		//public static string EscapeHtml(this char input)
-		throw new NotImplementedException();
-	}
-
-	[Fact]
-	public void EscapeHtml_B()
-	{
-		//public static string EscapeHtml(this StringBuilder input)
-		throw new NotImplementedException();
-	}
-	
-	[Fact]
-	public void EscapeHtml_C()
-	{
-		//public static string EscapeHtml(this string input)
 		throw new NotImplementedException();
 	}
 }

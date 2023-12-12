@@ -1,27 +1,37 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Lexes.Models;
 
+/// <summary>
+/// <see cref="TextEditorLexerResult"/>
+/// </summary>
 public interface TextEditorLexerResultTests
 {
+	/// <summary>
+	/// <see cref="TextEditorLexerResult.TextSpanBag"/>
+	/// </summary>
 	[Fact]
-	public void TextSpanBag()
+	public void Constructor()
 	{
-		//public ImmutableArray<TextEditorTextSpan> TextSpanBag { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorLexerResult.ResourceUri"/>
+	/// </summary>
 	[Fact]
 	public void ResourceUri()
 	{
-		//public string ResourceUri { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorLexerResult.ModelRenderStateKey"/>
+	/// </summary>
 	[Fact]
 	public void ModelRenderStateKey()
 	{
-		//public Key<RenderState> ModelRenderStateKey { get; }
 		throw new NotImplementedException();
 	}
 }

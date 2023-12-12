@@ -1,76 +1,91 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Options.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Options.Models;
 
+/// <summary>
+/// <see cref="TextEditorOptions"/>
+/// </summary>
 public class TextEditorOptionsTests
 {
+	/// <summary>
+	/// <see cref="TextEditorOptions(Common.RazorLib.Options.Models.CommonOptions, bool, bool, int?, double, Common.RazorLib.Keymaps.Models.Keymap, bool)"/>
+	/// </summary>
 	[Fact]
-	public void TextEditorOptions()
+	public void Constructor()
 	{
-		//	record TextEditorOptions(
-		//		CommonOptions CommonOptions,
-		//		bool ShowWhitespace,
-		//		bool ShowNewlines,
-		//		int? TextEditorHeightInPixels,
-		//		double CursorWidthInPixels,
-		//		Keymap Keymap,
-		//		bool UseMonospaceOptimizations)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorOptions.CommonOptions"/>
+	/// </summary>
 	[Fact]
 	public void CommonOptions()
 	{
-		// CommonOptions CommonOptions
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorOptions.ShowWhitespace"/>
+	/// </summary>
 	[Fact]
 	public void ShowWhitespace()
 	{
-		// bool ShowWhitespace
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorOptions.ShowNewlines"/>
+	/// </summary>
 	[Fact]
 	public void ShowNewlines()
 	{
-		// bool ShowNewlines
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorOptions.TextEditorHeightInPixels"/>
+	/// </summary>
 	[Fact]
 	public void TextEditorHeightInPixels()
 	{
-		//	int? TextEditorHeightInPixels
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorOptions.CursorWidthInPixels"/>
+	/// </summary>
 	[Fact]
 	public void CursorWidthInPixels()
 	{
-		// double CursorWidthInPixels
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorOptions.Keymap"/>
+	/// </summary>
 	[Fact]
 	public void Keymap()
 	{
-		// Keymap Keymap
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorOptions.UseMonospaceOptimizations"/>
+	/// </summary>
 	[Fact]
 	public void UseMonospaceOptimizations()
 	{
-		// bool UseMonospaceOptimizations
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorOptions.RenderStateKey"/>
+	/// </summary>
 	[Fact]
 	public void RenderStateKey()
 	{
-    	//public Key<RenderState> RenderStateKey { get; init; } = Key<RenderState>.NewKey();
 		throw new NotImplementedException();
 	}
 }

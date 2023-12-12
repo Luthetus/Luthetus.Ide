@@ -13,14 +13,14 @@ namespace Luthetus.TextEditor.RazorLib.Finds.States;
 [FeatureState]
 public partial class TextEditorFindProviderState
 {
-    private TextEditorFindProviderState()
+    public TextEditorFindProviderState()
     {
         FindProviderBag = ImmutableList<ITextEditorFindProvider>.Empty;
         ActiveFindProviderKey = Key<ITextEditorFindProvider>.Empty;
         SearchQuery = string.Empty;
     }
 
-    private TextEditorFindProviderState(
+	public TextEditorFindProviderState(
         ImmutableList<ITextEditorFindProvider> findProviderBag,
         Key<ITextEditorFindProvider> activeTextEditorFindProviderKey,
         string searchQuery)
