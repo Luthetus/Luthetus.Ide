@@ -21,7 +21,7 @@ public class VirtualizationBoundaryTests
 	/// <see cref="VirtualizationBoundary.WidthInPixels"/>
 	/// </summary>
 	[Fact]
-	public void WidthInPixels()
+	public void WidthInPixels() 
 	{
 		throw new NotImplementedException();
 	}
