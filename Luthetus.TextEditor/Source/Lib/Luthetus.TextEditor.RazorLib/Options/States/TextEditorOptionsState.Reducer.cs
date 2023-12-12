@@ -6,7 +6,7 @@ namespace Luthetus.TextEditor.RazorLib.Options.States;
 
 public partial class TextEditorOptionsState
 {
-    private class Reducer
+    public class Reducer
     {
         [ReducerMethod]
         public static TextEditorOptionsState ReduceSetFontFamilyAction(

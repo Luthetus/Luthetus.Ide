@@ -12,7 +12,7 @@ namespace Luthetus.TextEditor.RazorLib.Groups.States;
 [FeatureState]
 public partial class TextEditorGroupState
 {
-    private TextEditorGroupState()
+    public TextEditorGroupState()
     {
         GroupBag = ImmutableList<TextEditorGroup>.Empty;
     }

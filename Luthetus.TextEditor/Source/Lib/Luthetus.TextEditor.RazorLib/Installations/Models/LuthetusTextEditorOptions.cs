@@ -5,7 +5,7 @@ using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.Finds.Displays;
 using Luthetus.TextEditor.RazorLib.Finds.Models;
 using Luthetus.TextEditor.RazorLib.Options.Displays;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Immutable;
 

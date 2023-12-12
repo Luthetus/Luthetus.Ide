@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -46,7 +46,7 @@ public partial class PresentationLayerGroup : ComponentBase
         var charMeasurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndRowMeasurements;
         var elementMeasurements = RenderBatch.ViewModel!.VirtualizationResult.TextEditorMeasurements;
 
-        if (rowIndex >= RenderBatch.Model!.RowEndingPositionsBag.Length)
+        if (rowIndex >= RenderBatch.Model!.RowEndingPositionsBag.Count)
             return string.Empty;
 
         var startOfRowTuple = RenderBatch.Model!.GetStartOfRowTuple(rowIndex);

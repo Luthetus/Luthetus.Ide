@@ -1,11 +1,11 @@
 ﻿using Fluxor;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.States;
 
 public partial class TextEditorModelState
 {
-    private class Reducer
+    public class Reducer
     {
         [ReducerMethod]
         public static TextEditorModelState ReduceRegisterAction(
@@ -178,11 +178,12 @@ public partial class TextEditorModelState
             if (inModel is null)
                 return inState;
 
-            var outModel = new TextEditorModel(inModel);
-            outModel.SetContent(reloadAction.Content);
+            var modelModifier = new TextEditorModelModifier(inModel);
 
-            outModel = inModel.SetResourceData(outModel.ResourceUri, reloadAction.ResourceLastWriteTime);
-            var outModelBag = inState.ModelBag.Replace(inModel, outModel);
+            modelModifier.ModifyContent(reloadAction.Content);
+			modelModifier.ModifyResourceData(reloadAction.ResourceUri, reloadAction.ResourceLastWriteTime);
+
+            var outModelBag = inState.ModelBag.Replace(inModel, modelModifier.ToTextEditorModel());
 
             return new TextEditorModelState { ModelBag = outModelBag };
         }

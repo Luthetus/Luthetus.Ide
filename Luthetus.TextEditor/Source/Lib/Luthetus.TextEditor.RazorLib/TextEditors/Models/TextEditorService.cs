@@ -10,7 +10,8 @@ using Luthetus.TextEditor.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Microsoft.JSInterop;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
-using static Luthetus.TextEditor.RazorLib.TextEditors.Models.ITextEditorService;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using static Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices.ITextEditorService;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 

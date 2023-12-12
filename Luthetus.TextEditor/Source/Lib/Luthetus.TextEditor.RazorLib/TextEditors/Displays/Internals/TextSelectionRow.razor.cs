@@ -4,6 +4,7 @@ using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Htmls.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -44,7 +45,7 @@ public partial class TextSelectionRow : ComponentBase
         int upperPositionIndexExclusive = UpperPositionIndexExclusive;
         int rowIndex = RowIndex;
 
-        if (rowIndex >= RenderBatch.Model!.RowEndingPositionsBag.Length)
+        if (rowIndex >= RenderBatch.Model!.RowEndingPositionsBag.Count)
             return;
 
         bool stateHasChanged = false;

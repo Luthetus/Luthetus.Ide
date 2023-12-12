@@ -5,7 +5,7 @@ using Luthetus.TextEditor.RazorLib.Finds.States;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
 using Microsoft.AspNetCore.Components;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 namespace Luthetus.TextEditor.RazorLib.Installations.Displays;
 

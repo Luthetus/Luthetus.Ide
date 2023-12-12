@@ -2,7 +2,6 @@ using Luthetus.Ide.Wasm.Facts;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.Editors.States;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -11,6 +10,8 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 namespace Luthetus.Website.RazorLib;
 
@@ -136,8 +137,7 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
                 content,
                 decorationMapper,
                 compilerService,
-                null,
-                new());
+                null);
 
             textEditorModel.CompilerService.RegisterResource(textEditorModel.ResourceUri);
 

@@ -79,7 +79,7 @@ public class TreeViewProjectTestModel : TreeViewWithType<ProjectTestModel>
 				            true,
 				            true))
 						.ToArray();
-			
+		
 					for (var i = 0; i < newChildBag.Length; i++)
 					{
 						var node = (TreeViewStringFragment)newChildBag[i];
