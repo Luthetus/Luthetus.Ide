@@ -41,7 +41,7 @@ public partial class SolutionEditorDisplay : ComponentBase, IDisposable
 
             var content = await FileSystemProvider.File.ReadAllTextAsync(localDotNetSolutionResourceUri.Value);
 
-            TextEditorService.Model.RegisterTemplated(
+            TextEditorService.ModelApi.RegisterTemplated(
                 DecorationMapperRegistry,
                 InterfaceCompilerServiceRegistry,
                 ExtensionNoPeriodFacts.DOT_NET_SOLUTION,

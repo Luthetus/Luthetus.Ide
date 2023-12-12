@@ -19,7 +19,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 public partial interface ITextEditorService
 {
-    public interface IOptionsApi
+    public interface ITextEditorOptionsApi
     {
         public void SetCursorWidth(double cursorWidthInPixels);
         public void SetFontFamily(string? fontFamily);
@@ -38,7 +38,7 @@ public partial interface ITextEditorService
         public void SetRenderStateKey(Key<RenderState> renderStateKey);
     }
 
-    public class OptionsApi : IOptionsApi
+    public class TextEditorOptionsApi : ITextEditorOptionsApi
     {
         private readonly ITextEditorService _textEditorService;
         private readonly LuthetusTextEditorOptions _luthetusTextEditorOptions;
@@ -46,7 +46,7 @@ public partial interface ITextEditorService
         private readonly StorageSync _storageSync;
         private readonly IDispatcher _dispatcher;
 
-        public OptionsApi(
+        public TextEditorOptionsApi(
             ITextEditorService textEditorService,
             LuthetusTextEditorOptions luthetusTextEditorOptions,
             IStorageService storageService,

@@ -73,7 +73,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     {
         if (firstRender)
         {
-            await TextEditorService.Options.SetFromLocalStorageAsync();
+            await TextEditorService.OptionsApi.SetFromLocalStorageAsync();
             await AppOptionsService.SetFromLocalStorageAsync();
 
             var personalTestPath = "C:\\Users\\hunte\\Repos\\Luthetus.Ide_Fork\\Luthetus.Ide.sln";

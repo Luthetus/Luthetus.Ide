@@ -1,7 +1,7 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.TextEditor.RazorLib.Diffs.States;
-using Luthetus.TextEditor.RazorLib.Finds.States;
+using Luthetus.TextEditor.RazorLib.SearchEngines.States;
 using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
@@ -14,12 +14,12 @@ public partial interface ITextEditorService
     public string StorageKey { get; }
     public string ThemeCssClassString { get; }
 
-    public IModelApi Model { get; }
-    public IViewModelApi ViewModel { get; }
-    public IGroupApi Group { get; }
-    public IDiffApi Diff { get; }
-    public IOptionsApi Options { get; }
-    public IFindProviderApi FindProvider { get; }
+    public ITextEditorModelApi ModelApi { get; }
+    public ITextEditorViewModelApi ViewModelApi { get; }
+    public ITextEditorGroupApi GroupApi { get; }
+    public ITextEditorDiffApi DiffApi { get; }
+    public ITextEditorOptionsApi OptionsApi { get; }
+    public ITextEditorSearchEngineApi SearchEngineApi { get; }
 
     public IState<TextEditorModelState> ModelStateWrap { get; }
     public IState<TextEditorViewModelState> ViewModelStateWrap { get; }
@@ -27,5 +27,5 @@ public partial interface ITextEditorService
     public IState<TextEditorDiffState> DiffStateWrap { get; }
     public IState<ThemeState> ThemeStateWrap { get; }
     public IState<TextEditorOptionsState> OptionsStateWrap { get; }
-    public IState<TextEditorFindProviderState> FindProviderStateWrap { get; }
+    public IState<TextEditorSearchEngineState> SearchEngineStateWrap { get; }
 }

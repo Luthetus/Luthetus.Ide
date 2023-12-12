@@ -1,14 +1,14 @@
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
-using Luthetus.TextEditor.RazorLib.Finds.States;
+using Luthetus.TextEditor.RazorLib.SearchEngines.States;
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.TextEditor.RazorLib.Finds.Displays;
+namespace Luthetus.TextEditor.RazorLib.SearchEngines.Displays;
 
-public partial class TextEditorFindDisplay : FluxorComponent
+public partial class TextEditorSearchEngineDisplay : FluxorComponent
 {
     [Inject]
-    private IState<TextEditorFindProviderState> TextEditorFindProviderStateWrap { get; set; } = null!;
+    private IState<TextEditorSearchEngineState> TextEditorSearchEngineStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -18,19 +18,19 @@ public partial class TextEditorFindDisplay : FluxorComponent
 
     private string SearchQuery
     {
-        get => TextEditorFindProviderStateWrap.Value.SearchQuery;
+        get => TextEditorSearchEngineStateWrap.Value.SearchQuery;
         set
         {
             if (value is not null)
-                Dispatcher.Dispatch(new TextEditorFindProviderState.SetSearchQueryAction(value));
+                Dispatcher.Dispatch(new TextEditorSearchEngineState.SetSearchQueryAction(value));
         }
     }
 
-    private async Task DoSearchOnClickAsync(TextEditorFindProviderState findProviderState)
+    private async Task DoSearchOnClickAsync(TextEditorSearchEngineState searchEngineState)
     {
-        var activeFindProvider = findProviderState.ActiveFindProviderOrDefault();
+        var activeSearchEngine = searchEngineState.GetActiveSearchEngineOrDefault();
 
-        if (activeFindProvider is null)
+        if (activeSearchEngine is null)
             return;
 
         try
@@ -43,7 +43,7 @@ public partial class TextEditorFindDisplay : FluxorComponent
 
             var cancellationToken = _doSearchCancellationTokenSource.Token;
 
-            await activeFindProvider.SearchAsync(findProviderState.SearchQuery, cancellationToken);
+            await activeSearchEngine.SearchAsync(searchEngineState.SearchQuery, cancellationToken);
         }
         finally
         {

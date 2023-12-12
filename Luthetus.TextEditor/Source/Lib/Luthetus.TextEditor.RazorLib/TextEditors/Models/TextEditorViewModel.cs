@@ -33,8 +33,8 @@ public record TextEditorViewModel : IDisposable
         DisplayCommandBar = displayCommandBar;
 
         DisplayTracker = new(
-            () => textEditorService.ViewModel.FindOrDefault(viewModelKey),
-            () => textEditorService.ViewModel.FindBackingModelOrDefault(viewModelKey));
+            () => textEditorService.ViewModelApi.FindOrDefault(viewModelKey),
+            () => textEditorService.ViewModelApi.FindBackingModelOrDefault(viewModelKey));
     }
 
     private const int _clearTrackingOfUniqueIdentifiersWhenCountIs = 250;
@@ -90,7 +90,7 @@ public record TextEditorViewModel : IDisposable
     {
         var localMostRecentlyRenderedVirtualizationResult = VirtualizationResult;
 
-        var textEditor = TextEditorService.ViewModel.FindBackingModelOrDefault(
+        var textEditor = TextEditorService.ViewModelApi.FindBackingModelOrDefault(
             ViewModelKey);
 
         if (textEditor is not null &&
@@ -108,32 +108,32 @@ public record TextEditorViewModel : IDisposable
     {
         _batchScrollEvents.MutateScrollHorizontalPositionByPixels += pixels;
 
-        await _batchScrollEvents.ThrottleMutateScrollHorizontalPositionByPixels.FireAsync(async _ =>
+        await _batchScrollEvents.ThrottleMutateScrollHorizontalPositionByPixels.FireAsync((Func<CancellationToken, Task>)(async _ =>
         {
             var batch = _batchScrollEvents.MutateScrollHorizontalPositionByPixels;
-            _batchScrollEvents.MutateScrollHorizontalPositionByPixels -= batch;
+			_batchScrollEvents.MutateScrollHorizontalPositionByPixels -= batch;
 
-            await TextEditorService.ViewModel.MutateScrollHorizontalPositionAsync(
-                BodyElementId,
-                GutterElementId,
+            await TextEditorService.ViewModelApi.MutateScrollHorizontalPositionAsync(
+				BodyElementId,
+				GutterElementId,
                 batch);
-        });
+        }));
     }
 
     public async Task MutateScrollVerticalPositionByPixelsAsync(double pixels)
     {
         _batchScrollEvents.MutateScrollVerticalPositionByPixels += pixels;
 
-        await _batchScrollEvents.ThrottleMutateScrollVerticalPositionByPixels.FireAsync(async _ =>
+        await _batchScrollEvents.ThrottleMutateScrollVerticalPositionByPixels.FireAsync((Func<CancellationToken, Task>)(async _ =>
         {
             var batch = _batchScrollEvents.MutateScrollVerticalPositionByPixels;
-            _batchScrollEvents.MutateScrollVerticalPositionByPixels -= batch;
+			_batchScrollEvents.MutateScrollVerticalPositionByPixels -= batch;
 
-            await TextEditorService.ViewModel.MutateScrollVerticalPositionAsync(
-                BodyElementId,
-                GutterElementId,
+            await TextEditorService.ViewModelApi.MutateScrollVerticalPositionAsync(
+				BodyElementId,
+				GutterElementId,
                 batch);
-        });
+        }));
     }
 
     public async Task MutateScrollVerticalPositionByPagesAsync(double pages)
@@ -151,19 +151,19 @@ public record TextEditorViewModel : IDisposable
     /// <summary>If a parameter is null the JavaScript will not modify that value</summary>
     public async Task SetScrollPositionAsync(double? scrollLeft, double? scrollTop)
     {
-        await _batchScrollEvents.ThrottleSetScrollPosition.FireAsync(async _ =>
+        await _batchScrollEvents.ThrottleSetScrollPosition.FireAsync((Func<CancellationToken, Task>)(async _ =>
         {
-            await TextEditorService.ViewModel.SetScrollPositionAsync(
-                BodyElementId,
-                GutterElementId,
+            await TextEditorService.ViewModelApi.SetScrollPositionAsync(
+				BodyElementId,
+				GutterElementId,
                 scrollLeft,
                 scrollTop);
-        });
+        }));
     }
 
     public async Task FocusAsync()
     {
-        await TextEditorService.ViewModel.FocusPrimaryCursorAsync(PrimaryCursorContentId);
+        await TextEditorService.ViewModelApi.FocusPrimaryCursorAsync(PrimaryCursorContentId);
     }
 
     public async Task RemeasureAsync(
@@ -172,7 +172,7 @@ public record TextEditorViewModel : IDisposable
         int countOfTestCharacters,
         CancellationToken cancellationToken)
     {
-        await ThrottleRemeasure.FireAsync(async _ =>
+        await ThrottleRemeasure.FireAsync((Func<CancellationToken, Task>)(async _ =>
         {
             lock (_trackingOfUniqueIdentifiersLock)
             {
@@ -180,23 +180,23 @@ public record TextEditorViewModel : IDisposable
                     return;
             }
 
-            var characterWidthAndRowHeight = await TextEditorService.ViewModel.MeasureCharacterWidthAndRowHeightAsync(
+            var characterWidthAndRowHeight = await TextEditorService.ViewModelApi.MeasureCharacterWidthAndRowHeightAsync(
                 measureCharacterWidthAndRowHeightElementId,
                 countOfTestCharacters);
 
-            VirtualizationResult.CharAndRowMeasurements = characterWidthAndRowHeight;
+			VirtualizationResult.CharAndRowMeasurements = characterWidthAndRowHeight;
 
             lock (_trackingOfUniqueIdentifiersLock)
             {
                 if (SeenOptionsRenderStateKeysBag.Count > _clearTrackingOfUniqueIdentifiersWhenCountIs)
-                    SeenOptionsRenderStateKeysBag.Clear();
+					SeenOptionsRenderStateKeysBag.Clear();
 
-                SeenOptionsRenderStateKeysBag.Add(options.RenderStateKey);
+				SeenOptionsRenderStateKeysBag.Add(options.RenderStateKey);
             }
 
-            TextEditorService.ViewModel.With(
-                ViewModelKey,
-                previousViewModel => previousViewModel with
+			TextEditorService.ViewModelApi.With(
+				ViewModelKey,
+                (Func<TextEditorViewModel, TextEditorViewModel>)(                previousViewModel => (previousViewModel with
                 {
                     // Clear the SeenModelRenderStateKeys because one needs to recalculate the virtualization result now that the options have changed.
                     SeenModelRenderStateKeysBag = new(),
@@ -204,8 +204,8 @@ public record TextEditorViewModel : IDisposable
                     {
                         CharAndRowMeasurements = characterWidthAndRowHeight
                     }
-                });
-        });
+                })));
+        }));
     }
 
     public async Task CalculateVirtualizationResultAsync(
@@ -220,7 +220,7 @@ public record TextEditorViewModel : IDisposable
         if (!SeenOptionsRenderStateKeysBag.Any())
             return;
 
-        await ThrottleCalculateVirtualizationResult.FireAsync(async _ =>
+        await ThrottleCalculateVirtualizationResult.FireAsync((Func<CancellationToken, Task>)(async _ =>
         {
             if (model is null)
                 return;
@@ -236,9 +236,9 @@ public record TextEditorViewModel : IDisposable
             var localCharacterWidthAndRowHeight = VirtualizationResult.CharAndRowMeasurements;
 
             if (textEditorMeasurements is null)
-                textEditorMeasurements = await TextEditorService.ViewModel.GetTextEditorMeasurementsAsync(BodyElementId);
+                textEditorMeasurements = await TextEditorService.ViewModelApi.GetTextEditorMeasurementsAsync(BodyElementId);
 
-            _mostRecentTextEditorMeasurements = textEditorMeasurements;
+			_mostRecentTextEditorMeasurements = textEditorMeasurements;
 
             textEditorMeasurements = textEditorMeasurements with
             {
@@ -278,7 +278,7 @@ public record TextEditorViewModel : IDisposable
 
             var virtualizedEntryBag = model
                 .GetRows(verticalStartingIndex, verticalTake)
-                .Select((row, rowIndex) =>
+                .Select<List<RichCharacter>, VirtualizationEntry<List<RichCharacter>>>((row, rowIndex) =>
                 {
                     rowIndex += verticalStartingIndex;
 
@@ -311,13 +311,13 @@ public record TextEditorViewModel : IDisposable
 					localHorizontalTake = Math.Max(0, localHorizontalTake);
 
                     var horizontallyVirtualizedRow = row
-                        .Skip(localHorizontalStartingIndex)
-                        .Take(localHorizontalTake)
-                        .ToList();
+                        .Skip<RichCharacter>(localHorizontalStartingIndex)
+                        .Take<RichCharacter>(localHorizontalTake)
+                        .ToList<RichCharacter>();
 
                     var countTabKeysInVirtualizedRow = horizontallyVirtualizedRow
-                        .Where(x => x.Value == KeyboardKeyFacts.WhitespaceCharacters.TAB)
-                        .Count();
+                        .Where<RichCharacter>(x => x.Value == KeyboardKeyFacts.WhitespaceCharacters.TAB)
+                        .Count<RichCharacter>();
 
 					var widthInPixels = (horizontallyVirtualizedRow.Count + (extraWidthPerTabKey * countTabKeysInVirtualizedRow)) *
                         localCharacterWidthAndRowHeight.CharacterWidth;
@@ -354,7 +354,7 @@ public record TextEditorViewModel : IDisposable
                         localCharacterWidthAndRowHeight.RowHeight,
                         leftInPixels,
                         topInPixels);
-                }).ToImmutableArray();
+                }).ToImmutableArray<VirtualizationEntry<List<RichCharacter>>>();
 
             var totalWidth = model.MostCharactersOnASingleRowTuple.rowLength *
                 localCharacterWidthAndRowHeight.CharacterWidth;
@@ -430,18 +430,18 @@ public record TextEditorViewModel : IDisposable
             lock (_trackingOfUniqueIdentifiersLock)
             {
                 if (SeenModelRenderStateKeysBag.Count > _clearTrackingOfUniqueIdentifiersWhenCountIs)
-                    SeenModelRenderStateKeysBag.Clear();
+					SeenModelRenderStateKeysBag.Clear();
 
-                SeenModelRenderStateKeysBag.Add(model.RenderStateKey);
+				SeenModelRenderStateKeysBag.Add(model.RenderStateKey);
             }
 
-            TextEditorService.ViewModel.With(
-                ViewModelKey,
-                previousViewModel => previousViewModel with
+			TextEditorService.ViewModelApi.With(
+				ViewModelKey,
+                (Func<TextEditorViewModel, TextEditorViewModel>)(                previousViewModel => (previousViewModel with
                 {
                     VirtualizationResult = virtualizationResult,
-                });
-        });
+                })));
+        }));
     }
 
     public void Dispose()

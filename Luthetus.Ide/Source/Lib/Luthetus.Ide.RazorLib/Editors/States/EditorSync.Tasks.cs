@@ -21,7 +21,7 @@ public partial class EditorSync
         IAbsolutePath absolutePath,
         string absolutePathString)
     {
-        var textEditorModel = _textEditorService.Model
+        var textEditorModel = _textEditorService.ModelApi
             .FindOrDefault(new(absolutePathString));
 
         if (textEditorModel is null)
@@ -44,17 +44,17 @@ public partial class EditorSync
 
             textEditorModel.CompilerService.RegisterResource(textEditorModel.ResourceUri);
 
-            _textEditorService.Model.RegisterCustom(textEditorModel);
+            _textEditorService.ModelApi.RegisterCustom(textEditorModel);
 
-            _textEditorService.Model.RegisterPresentationModel(
+            _textEditorService.ModelApi.RegisterPresentationModel(
                 textEditorModel.ResourceUri,
                 CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
 
-            _textEditorService.Model.RegisterPresentationModel(
+            _textEditorService.ModelApi.RegisterPresentationModel(
                 textEditorModel.ResourceUri,
                 DiffPresentationFacts.EmptyInPresentationModel);
 
-            _textEditorService.Model.RegisterPresentationModel(
+            _textEditorService.ModelApi.RegisterPresentationModel(
                 textEditorModel.ResourceUri,
                 DiffPresentationFacts.EmptyOutPresentationModel);
 
@@ -95,9 +95,9 @@ public partial class EditorSync
                             nameof(IBooleanPromptOrCancelRendererType.OnAfterAcceptAction),
                             new Action(() =>
                             {
-                                BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+								BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
                                     "Check If Contexts Were Modified",
-                                    async () =>
+                                    (Func<Task>)(async () =>
                                     {
                                         dispatcher.Dispatch(new NotificationState.DisposeAction(
                                             notificationInformativeKey));
@@ -105,13 +105,13 @@ public partial class EditorSync
                                         var content = await _fileSystemProvider.File
                                             .ReadAllTextAsync(inputFileAbsolutePathString);
 
-                                        _textEditorService.Model.Reload(
+										_textEditorService.ModelApi.Reload(
                                             textEditorModel.ResourceUri,
                                             content,
                                             fileLastWriteTime);
 
                                         await textEditorModel.ApplySyntaxHighlightingAsync();
-                                    });
+                                    }));
                             })
                         },
                         {
@@ -137,7 +137,7 @@ public partial class EditorSync
         bool shouldSetFocusToEditor,
         TextEditorModel textEditorModel)
     {
-        var viewModel = _textEditorService.Model
+        var viewModel = _textEditorService.ModelApi
             .GetViewModelsOrEmpty(textEditorModel.ResourceUri)
             .FirstOrDefault();
 
@@ -147,7 +147,7 @@ public partial class EditorSync
         {
             viewModelKey = Key<TextEditorViewModel>.NewKey();
 
-            _textEditorService.ViewModel.Register(
+            _textEditorService.ViewModelApi.Register(
                 viewModelKey,
                 textEditorModel.ResourceUri);
 
@@ -156,7 +156,7 @@ public partial class EditorSync
                 CompilerServiceDiagnosticPresentationFacts.PresentationKey,
             }.ToImmutableArray();
 
-            _textEditorService.ViewModel.With(
+            _textEditorService.ViewModelApi.With(
                 viewModelKey,
                 textEditorViewModel => textEditorViewModel with
                 {
@@ -179,18 +179,18 @@ public partial class EditorSync
 
             var cancellationToken = textEditorModel.TextEditorSaveFileHelper.GetCancellationToken();
 
-            _fileSystemSync.SaveFile(
+			_fileSystemSync.SaveFile(
                 absolutePath,
                 innerContent,
-                writtenDateTime =>
+                (Action<DateTime?>)(                writtenDateTime =>
                 {
                     if (writtenDateTime is not null)
                     {
-                        _textEditorService.Model.SetResourceData(
+						_textEditorService.ModelApi.SetResourceData(
                             innerTextEditor.ResourceUri,
                             writtenDateTime.Value);
                     }
-                },
+                }),
                 cancellationToken);
         }
     }
@@ -205,7 +205,7 @@ public partial class EditorSync
         if (absolutePath is null || absolutePath.IsDirectory)
             return;
 
-        _textEditorService.Group.Register(editorTextEditorGroupKey.Value);
+        _textEditorService.GroupApi.Register(editorTextEditorGroupKey.Value);
 
         var inputFileAbsolutePathString = absolutePath.Value;
 
@@ -226,11 +226,11 @@ public partial class EditorSync
             shouldSetFocusToEditor,
             textEditorModel);
 
-        _textEditorService.Group.AddViewModel(
+        _textEditorService.GroupApi.AddViewModel(
             editorTextEditorGroupKey.Value,
             viewModel);
 
-        _textEditorService.Group.SetActiveViewModel(
+        _textEditorService.GroupApi.SetActiveViewModel(
             editorTextEditorGroupKey.Value,
             viewModel);
     }

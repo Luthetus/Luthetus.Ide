@@ -85,7 +85,7 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
 
         var token = _calculateDiffCancellationTokenSource.Token;
 
-        _mostRecentDiffResult = TextEditorService.Diff.Calculate(
+        _mostRecentDiffResult = TextEditorService.DiffApi.Calculate(
             TextEditorDiffKey,
             token);
 

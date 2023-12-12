@@ -73,7 +73,7 @@ public static partial class TextEditorCommandVimFacts
                     motionResult.PositionIndexDisplacement,
                     CancellationToken.None);
 
-                commandArgs.TextEditorService.Model.DeleteTextByRange(deleteTextTextEditorModelAction);
+                commandArgs.TextEditorService.ModelApi.DeleteTextByRange(deleteTextTextEditorModelAction);
             });
 
         public static TextEditorCommand GetChangeMotion(TextEditorCommand innerTextEditorCommand) => new(

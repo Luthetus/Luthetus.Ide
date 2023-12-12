@@ -1,12 +1,12 @@
 ﻿using Luthetus.Common.RazorLib.Icons.Displays.Codicon;
 using Luthetus.Common.RazorLib.Keys.Models;
 
-namespace Luthetus.TextEditor.RazorLib.Finds.Models;
+namespace Luthetus.TextEditor.RazorLib.SearchEngines.Models;
 
-public class RegisteredViewModelsFindProvider : ITextEditorFindProvider
+public class SearchEngineOverRegisteredViewModels : ITextEditorSearchEngine
 {
-    public Key<ITextEditorFindProvider> FindProviderKey { get; } =
-        new Key<ITextEditorFindProvider>(Guid.Parse("8f82c804-7813-44ea-869a-f77574f2f945"));
+    public Key<ITextEditorSearchEngine> SearchEngineKey { get; } =
+        new Key<ITextEditorSearchEngine>(Guid.Parse("8f82c804-7813-44ea-869a-f77574f2f945"));
 
     public Type IconComponentRendererType { get; } = typeof(IconCopy);
     public string DisplayName { get; } = "Registered ViewModels";

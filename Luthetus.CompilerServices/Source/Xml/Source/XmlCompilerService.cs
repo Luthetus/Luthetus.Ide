@@ -60,7 +60,7 @@ public class XmlCompilerService : ICompilerService
 
     public ICompilerServiceResource? GetCompilerServiceResourceFor(ResourceUri resourceUri)
     {
-        var model = _textEditorService.Model.FindOrDefault(resourceUri);
+        var model = _textEditorService.ModelApi.FindOrDefault(resourceUri);
 
         if (model is null)
             return null;
@@ -122,7 +122,7 @@ public class XmlCompilerService : ICompilerService
             "XML Compiler Service - Parse",
             async () =>
             {
-                var model = _textEditorService.Model.FindOrDefault(resourceUri);
+                var model = _textEditorService.ModelApi.FindOrDefault(resourceUri);
 
                 if (model is null)
                     return;

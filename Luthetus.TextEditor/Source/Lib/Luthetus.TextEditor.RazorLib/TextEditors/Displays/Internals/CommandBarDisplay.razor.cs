@@ -47,7 +47,7 @@ public partial class CommandBarDisplay : FluxorComponent
         {
             await RestoreFocusToTextEditor.Invoke();
 
-            TextEditorService.ViewModel.With(
+            TextEditorService.ViewModelApi.With(
                 RenderBatch.ViewModel!.ViewModelKey,
                 previousViewModel => previousViewModel with
                 {

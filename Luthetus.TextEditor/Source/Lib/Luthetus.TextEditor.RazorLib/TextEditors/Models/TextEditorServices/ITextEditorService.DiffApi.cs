@@ -9,7 +9,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 public partial interface ITextEditorService
 {
-    public interface IDiffApi
+    public interface ITextEditorDiffApi
     {
         public void Register(
             Key<TextEditorDiffModel> diffKey,
@@ -22,12 +22,12 @@ public partial interface ITextEditorService
         public TextEditorDiffModel? FindOrDefault(Key<TextEditorDiffModel> diffKey);
     }
 
-    public class DiffApi : IDiffApi
+    public class TextEditorDiffApi : ITextEditorDiffApi
     {
         private readonly IDispatcher _dispatcher;
         private readonly ITextEditorService _textEditorService;
 
-        public DiffApi(ITextEditorService textEditorService, IDispatcher dispatcher)
+        public TextEditorDiffApi(ITextEditorService textEditorService, IDispatcher dispatcher)
         {
             _textEditorService = textEditorService;
             _dispatcher = dispatcher;
@@ -64,14 +64,14 @@ public partial interface ITextEditorService
             if (textEditorDiff is null)
                 return null;
 
-            var inViewModel = _textEditorService.ViewModel.FindOrDefault(textEditorDiff.InViewModelKey);
-            var outViewModel = _textEditorService.ViewModel.FindOrDefault(textEditorDiff.OutViewModelKey);
+            var inViewModel = _textEditorService.ViewModelApi.FindOrDefault(textEditorDiff.InViewModelKey);
+            var outViewModel = _textEditorService.ViewModelApi.FindOrDefault(textEditorDiff.OutViewModelKey);
 
             if (inViewModel is null || outViewModel is null)
                 return null;
 
-            var inModel = _textEditorService.Model.FindOrDefault(inViewModel.ResourceUri);
-            var outModel = _textEditorService.Model.FindOrDefault(outViewModel.ResourceUri);
+            var inModel = _textEditorService.ModelApi.FindOrDefault(inViewModel.ResourceUri);
+            var outModel = _textEditorService.ModelApi.FindOrDefault(outViewModel.ResourceUri);
 
             if (inModel is null || outModel is null)
                 return null;

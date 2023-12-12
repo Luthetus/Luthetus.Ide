@@ -1,15 +1,15 @@
 ﻿using Xunit;
-using Luthetus.TextEditor.RazorLib.Finds.States;
+using Luthetus.TextEditor.RazorLib.SearchEngines.States;
 
-namespace Luthetus.TextEditor.Tests.Basis.Finds.States;
+namespace Luthetus.TextEditor.Tests.Basis.SearchEngines.States;
 
 /// <summary>
-/// <see cref="TextEditorFindProviderState"/>
+/// <see cref="TextEditorSearchEngineState"/>
 /// </summary>
-public class TextEditorFindProviderStateActionsTests
+public class TextEditorSearchEngineStateActionsTests
 {
 	/// <summary>
-	/// <see cref="TextEditorFindProviderState.RegisterAction"/>
+	/// <see cref="TextEditorSearchEngineState.RegisterAction"/>
 	/// </summary>
 	[Fact]
 	public void RegisterAction()
@@ -18,7 +18,7 @@ public class TextEditorFindProviderStateActionsTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorFindProviderState.DisposeAction"/>
+	/// <see cref="TextEditorSearchEngineState.DisposeAction"/>
 	/// </summary>
 	[Fact]
 	public void DisposeAction()
@@ -27,16 +27,16 @@ public class TextEditorFindProviderStateActionsTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorFindProviderState.SetActiveFindProviderAction"/>
+	/// <see cref="TextEditorSearchEngineState.SetActiveSearchEngineAction"/>
 	/// </summary>
 	[Fact]
-	public void SetActiveFindProviderAction()
+	public void SetActiveSearchEngineAction()
 	{
 		throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorFindProviderState.SetSearchQueryAction"/>
+	/// <see cref="TextEditorSearchEngineState.SetSearchQueryAction"/>
 	/// </summary>
 	[Fact]
 	public void SetSearchQueryAction()

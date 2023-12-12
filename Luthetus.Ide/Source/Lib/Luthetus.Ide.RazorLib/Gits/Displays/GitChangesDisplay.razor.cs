@@ -34,7 +34,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
         {
             // "In" Registrations
             {
-                TextEditorService.Model.RegisterTemplated(
+                TextEditorService.ModelApi.RegisterTemplated(
                     DecorationMapperRegistry,
                     CompilerServiceRegistry,
                     ExtensionNoPeriodFacts.TXT,
@@ -43,15 +43,15 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                     "ABCDEFK",
                     "Before");
 
-                TextEditorService.Model.RegisterPresentationModel(
+                TextEditorService.ModelApi.RegisterPresentationModel(
                     BeforeResourceUri,
                     DiffPresentationFacts.EmptyInPresentationModel);
                 
-                TextEditorService.Model.RegisterPresentationModel(
+                TextEditorService.ModelApi.RegisterPresentationModel(
                     BeforeResourceUri,
                     DiffPresentationFacts.EmptyOutPresentationModel);
 
-                TextEditorService.ViewModel.Register(
+                TextEditorService.ViewModelApi.Register(
                     BeforeViewModelKey,
                     BeforeResourceUri);
 
@@ -60,7 +60,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                     DiffPresentationFacts.InPresentationKey,
                 };
 
-                TextEditorService.ViewModel.With(
+                TextEditorService.ViewModelApi.With(
                     BeforeViewModelKey,
                     textEditorViewModel => textEditorViewModel with
                     {
@@ -70,7 +70,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
             
             // "Out" Registrations
             {
-                TextEditorService.Model.RegisterTemplated(
+                TextEditorService.ModelApi.RegisterTemplated(
                     DecorationMapperRegistry,
                     CompilerServiceRegistry,
                     ExtensionNoPeriodFacts.TXT,
@@ -79,15 +79,15 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                     "BHDEFCK",
                     "After");
 
-                TextEditorService.Model.RegisterPresentationModel(
+                TextEditorService.ModelApi.RegisterPresentationModel(
                     AfterResourceUri,
                     DiffPresentationFacts.EmptyInPresentationModel);
 
-                TextEditorService.Model.RegisterPresentationModel(
+                TextEditorService.ModelApi.RegisterPresentationModel(
                     AfterResourceUri,
                     DiffPresentationFacts.EmptyOutPresentationModel);
 
-                TextEditorService.ViewModel.Register(
+                TextEditorService.ViewModelApi.Register(
                     AfterViewModelKey,
                     AfterResourceUri);
 
@@ -96,7 +96,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                     DiffPresentationFacts.OutPresentationKey,
                 };
 
-                TextEditorService.ViewModel.With(
+                TextEditorService.ViewModelApi.With(
                     AfterViewModelKey,
                     textEditorViewModel => textEditorViewModel with
                     {
@@ -104,7 +104,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                     });
             }
 
-            TextEditorService.Diff.Register(
+            TextEditorService.DiffApi.Register(
                 DiffModelKey,
                 BeforeViewModelKey,
                 AfterViewModelKey);

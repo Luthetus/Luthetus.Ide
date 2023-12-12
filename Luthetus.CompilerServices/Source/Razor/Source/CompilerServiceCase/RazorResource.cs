@@ -48,7 +48,7 @@ public class RazorResource : ICompilerServiceResource
             .Binder
             .SymbolsBag;
 
-        var originalText = _textEditorService.Model.GetAllText(ResourceUri);
+        var originalText = _textEditorService.ModelApi.GetAllText(ResourceUri);
 
         if (originalText is null)
             return ImmutableArray<ITextEditorSymbol>.Empty;

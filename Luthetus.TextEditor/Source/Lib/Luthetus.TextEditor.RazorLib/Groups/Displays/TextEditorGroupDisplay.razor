@@ -20,7 +20,7 @@
         </div>
         <div class="luth_te_text-editor-group-active-view-model">
             @{
-                var textEditorModel = TextEditorService.ViewModel.FindBackingModelOrDefault(
+                var textEditorModel = TextEditorService.ViewModelApi.FindBackingModelOrDefault(
                     textEditorGroup.ActiveViewModelKey);
         
                 if (textEditorModel is null)

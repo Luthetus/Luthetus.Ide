@@ -201,7 +201,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.ViewModel.With(
+                    commandArgs.TextEditorService.ViewModelApi.With(
                         commandArgs.ViewModel.ViewModelKey,
                         previousViewModel => previousViewModel with
                         {
@@ -225,7 +225,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.Model.UndoEdit(commandArgs.Model.ResourceUri);
+                    commandArgs.TextEditorService.ModelApi.UndoEdit(commandArgs.Model.ResourceUri);
                     await commandArgs.Model.ApplySyntaxHighlightingAsync();
                 });
 
@@ -243,7 +243,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.Model.RedoEdit(commandArgs.Model.ResourceUri);
+                    commandArgs.TextEditorService.ModelApi.RedoEdit(commandArgs.Model.ResourceUri);
                     await commandArgs.Model.ApplySyntaxHighlightingAsync();
                 });
 

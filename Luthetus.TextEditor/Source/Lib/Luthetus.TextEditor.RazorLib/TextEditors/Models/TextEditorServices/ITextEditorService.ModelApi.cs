@@ -11,7 +11,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 public partial interface ITextEditorService
 {
-    public interface IModelApi
+    public interface ITextEditorModelApi
     {
         public void DeleteTextByMotion(TextEditorModelState.DeleteTextByMotionAction deleteTextByMotionAction);
         public void DeleteTextByRange(TextEditorModelState.DeleteTextByRangeAction deleteTextByRangeAction);
@@ -53,12 +53,12 @@ public partial interface ITextEditorService
         public void RegisterPresentationModel(ResourceUri resourceUri, TextEditorPresentationModel emptyPresentationModel);
     }
 
-    public class ModelApi : IModelApi
+    public class TextEditorModelApi : ITextEditorModelApi
     {
         private readonly ITextEditorService _textEditorService;
         private readonly IDispatcher _dispatcher;
 
-        public ModelApi(ITextEditorService textEditorService, IDispatcher dispatcher)
+        public TextEditorModelApi(ITextEditorService textEditorService, IDispatcher dispatcher)
         {
             _textEditorService = textEditorService;
             _dispatcher = dispatcher;

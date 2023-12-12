@@ -69,7 +69,7 @@ public class CSharpCompilerService : ICompilerService
 
     public ICompilerServiceResource? GetCompilerServiceResourceFor(ResourceUri resourceUri)
     {
-        var model = _textEditorService.Model.FindOrDefault(resourceUri);
+        var model = _textEditorService.ModelApi.FindOrDefault(resourceUri);
 
         if (model is null)
             return null;
@@ -183,7 +183,7 @@ public class CSharpCompilerService : ICompilerService
             "C# Compiler Service - Parse",
             async () =>
             {
-                var model = _textEditorService.Model.FindOrDefault(resourceUri);
+                var model = _textEditorService.ModelApi.FindOrDefault(resourceUri);
 
                 if (model is null)
                     return;

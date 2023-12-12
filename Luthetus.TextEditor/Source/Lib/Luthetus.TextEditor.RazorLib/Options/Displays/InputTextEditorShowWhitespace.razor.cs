@@ -26,6 +26,6 @@ public partial class InputTextEditorShowWhitespace : FluxorComponent
     public bool GlobalShowWhitespace
     {
         get => TextEditorOptionsStateWrap.Value.Options.ShowWhitespace;
-        set => TextEditorService.Options.SetShowWhitespace(value);
+        set => TextEditorService.OptionsApi.SetShowWhitespace(value);
     }
 }

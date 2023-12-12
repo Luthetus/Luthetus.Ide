@@ -90,10 +90,10 @@ public record LuthetusTextEditorOptionsTests
 	}
 
 	/// <summary>
-	/// <see cref="LuthetusTextEditorOptions.FindProviderBag"/>
+	/// <see cref="LuthetusTextEditorOptions.SearchEngineBag"/>
 	/// </summary>
 	[Fact]
-	public void FindProviderBag()
+	public void SearchEngineBag()
 	{
 		throw new NotImplementedException();
 	}

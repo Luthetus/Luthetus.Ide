@@ -1,25 +1,24 @@
 ﻿using Xunit;
-using Luthetus.TextEditor.RazorLib.Finds.States;
+using Luthetus.TextEditor.RazorLib.SearchEngines.States;
 
-namespace Luthetus.TextEditor.Tests.Basis.Finds.States;
+namespace Luthetus.TextEditor.Tests.Basis.SearchEngines.States;
 
 /// <summary>
-/// <see cref="TextEditorFindProviderState"/>
+/// <see cref="TextEditorSearchEngineState"/>
 /// </summary>
-public class TextEditorFindProviderStateMainTests
+public class TextEditorSearchEngineStateMainTests
 {
 	/// <summary>
-	/// <see cref="TextEditorFindProviderState()"/>
+	/// <see cref="TextEditorSearchEngineState()"/>
 	/// </summary>
 	[Fact]
 	public void Constructor_A()
 	{
-		//private 
 		throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorFindProviderState(System.Collections.Immutable.ImmutableList{RazorLib.Finds.Models.ITextEditorFindProvider}, Common.RazorLib.Keys.Models.Key{RazorLib.Finds.Models.ITextEditorFindProvider}, string)"/>
+	/// <see cref="TextEditorSearchEngineState(System.Collections.Immutable.ImmutableList{RazorLib.Finds.Models.ITextEditorSearchEngine}, Common.RazorLib.Keys.Models.Key{RazorLib.Finds.Models.ITextEditorSearchEngine}, string)"/>
 	/// </summary>
 	[Fact]
 	public void Constructor_B()
@@ -28,25 +27,25 @@ public class TextEditorFindProviderStateMainTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorFindProviderState.FindProviderBag"/>
+	/// <see cref="TextEditorSearchEngineState.SearchEngineBag"/>
 	/// </summary>
 	[Fact]
-	public void FindProviderBag()
+	public void SearchEngineBag()
 	{
 		throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorFindProviderState.ActiveFindProviderKey"/>
+	/// <see cref="TextEditorSearchEngineState.ActiveSearchEngineKey"/>
 	/// </summary>
 	[Fact]
-	public void ActiveFindProviderKey()
+	public void ActiveSearchEngineKey()
 	{
 		throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorFindProviderState.SearchQuery"/>
+	/// <see cref="TextEditorSearchEngineState.SearchQuery"/>
 	/// </summary>
 	[Fact]
 	public void SearchQuery()
@@ -55,10 +54,10 @@ public class TextEditorFindProviderStateMainTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorFindProviderState.ActiveFindProviderOrDefault()"/>
+	/// <see cref="TextEditorSearchEngineState.GetActiveSearchEngineOrDefault()"/>
 	/// </summary>
 	[Fact]
-	public void ActiveFindProviderOrDefault()
+	public void GetActiveSearchEngineOrDefault()
 	{
 		throw new NotImplementedException();
 	}

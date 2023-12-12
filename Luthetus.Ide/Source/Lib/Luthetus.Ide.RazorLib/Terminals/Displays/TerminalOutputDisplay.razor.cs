@@ -87,11 +87,11 @@ public partial class TerminalOutputDisplay : FluxorComponent
 
                 if (terminalSession is not null)
                 {
-                    var textEditorModel = TextEditorService.Model.FindOrDefault(terminalSession.ResourceUri);
+                    var textEditorModel = TextEditorService.ModelApi.FindOrDefault(terminalSession.ResourceUri);
 
                     if (textEditorModel is null)
                     {
-                        TextEditorService.Model.RegisterTemplated(
+                        TextEditorService.ModelApi.RegisterTemplated(
                             DecorationMapperRegistry,
                             CompilerServiceRegistry,
                             ExtensionNoPeriodFacts.TXT,
@@ -100,7 +100,7 @@ public partial class TerminalOutputDisplay : FluxorComponent
                             string.Empty,
                             "TERMINAL");
 
-                        TextEditorService.ViewModel.Register(
+                        TextEditorService.ViewModelApi.Register(
                             terminalSession.TextEditorViewModelKey,
                             terminalSession.ResourceUri);
                     }

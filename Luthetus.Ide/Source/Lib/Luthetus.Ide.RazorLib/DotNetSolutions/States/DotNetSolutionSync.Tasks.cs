@@ -60,7 +60,7 @@ public partial class DotNetSolutionSync
             outDotNetSolutionModel.NamespacePath.AbsolutePath.Value,
             outDotNetSolutionModel.SolutionFileContents);
 
-        var solutionTextEditorModel = _textEditorService.Model.FindOrDefault(
+        var solutionTextEditorModel = _textEditorService.ModelApi.FindOrDefault(
             new ResourceUri(inDotNetSolutionModel.NamespacePath.AbsolutePath.Value));
 
         if (solutionTextEditorModel is not null)

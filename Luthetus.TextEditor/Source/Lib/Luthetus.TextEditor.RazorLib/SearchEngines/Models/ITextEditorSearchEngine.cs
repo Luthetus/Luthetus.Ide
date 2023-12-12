@@ -1,10 +1,10 @@
 ﻿using Luthetus.Common.RazorLib.Keys.Models;
 
-namespace Luthetus.TextEditor.RazorLib.Finds.Models;
+namespace Luthetus.TextEditor.RazorLib.SearchEngines.Models;
 
-public interface ITextEditorFindProvider
+public interface ITextEditorSearchEngine
 {
-    public Key<ITextEditorFindProvider> FindProviderKey { get; }
+    public Key<ITextEditorSearchEngine> SearchEngineKey { get; }
     public Type IconComponentRendererType { get; }
     public string DisplayName { get; }
 

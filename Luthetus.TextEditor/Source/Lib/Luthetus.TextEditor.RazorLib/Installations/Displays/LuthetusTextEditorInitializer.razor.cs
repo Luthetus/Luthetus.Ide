@@ -1,7 +1,7 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.Common.RazorLib.Themes.Models;
-using Luthetus.TextEditor.RazorLib.Finds.States;
+using Luthetus.TextEditor.RazorLib.SearchEngines.States;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
 using Microsoft.AspNetCore.Components;
@@ -36,12 +36,12 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
         if (initialThemeRecord is not null)
             Dispatcher.Dispatch(new TextEditorOptionsState.SetThemeAction(initialThemeRecord));
 
-        foreach (var findProvider in LuthetusTextEditorOptions.FindProviderBag)
+        foreach (var searchEngine in LuthetusTextEditorOptions.SearchEngineBag)
         {
-            Dispatcher.Dispatch(new TextEditorFindProviderState.RegisterAction(findProvider));
+            Dispatcher.Dispatch(new TextEditorSearchEngineState.RegisterAction(searchEngine));
         }
 
-        await TextEditorService.Options.SetFromLocalStorageAsync();
+        await TextEditorService.OptionsApi.SetFromLocalStorageAsync();
 
         await base.OnAfterRenderAsync(firstRender);
     }

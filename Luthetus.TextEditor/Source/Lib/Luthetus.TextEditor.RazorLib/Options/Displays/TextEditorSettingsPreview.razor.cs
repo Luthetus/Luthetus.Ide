@@ -43,7 +43,7 @@ public partial class TextEditorSettingsPreview : ComponentBase
     {
         if (firstRender)
         {
-            TextEditorService.Model.RegisterTemplated(
+            TextEditorService.ModelApi.RegisterTemplated(
                 DecorationMapperRegistry,
                 CompilerServiceRegistry,
                 ExtensionNoPeriodFacts.TXT,
@@ -52,7 +52,7 @@ public partial class TextEditorSettingsPreview : ComponentBase
                 "Preview settings here",
                 "Settings Preview");
 
-            TextEditorService.ViewModel.Register(
+            TextEditorService.ViewModelApi.Register(
                 SettingsPreviewTextEditorViewModelKey,
                 SettingsPreviewTextEditorResourceUri);
 

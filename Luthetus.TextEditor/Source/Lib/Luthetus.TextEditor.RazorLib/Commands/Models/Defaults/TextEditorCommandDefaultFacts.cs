@@ -74,7 +74,7 @@ public static class TextEditorCommandDefaultFacts
             await commandArgs.ClipboardService.SetClipboard(selectedText);
             await commandArgs.ViewModel.FocusAsync();
 
-            commandArgs.TextEditorService.Model.HandleKeyboardEvent(
+            commandArgs.TextEditorService.ModelApi.HandleKeyboardEvent(
                 new TextEditorModelState.KeyboardEventAction(
                     commandArgs.Model.ResourceUri,
                     cursorSnapshotsBag,
@@ -90,7 +90,7 @@ public static class TextEditorCommandDefaultFacts
 
             var clipboard = await commandArgs.ClipboardService.ReadClipboard();
 
-            commandArgs.TextEditorService.Model.InsertText(
+            commandArgs.TextEditorService.ModelApi.InsertText(
                 new TextEditorModelState.InsertTextAction(
                     commandArgs.Model.ResourceUri,
                     new[] { commandArgs.PrimaryCursorSnapshot }.ToImmutableArray(),
@@ -115,7 +115,7 @@ public static class TextEditorCommandDefaultFacts
             {
                 onSaveRequestedFunc.Invoke(commandArgs.Model);
 
-                commandArgs.TextEditorService.ViewModel.With(
+                commandArgs.TextEditorService.ViewModelApi.With(
                     commandArgs.ViewModel.ViewModelKey,
                     previousViewModel => previousViewModel with { }); // "with { }" is a Hack to re-render
             }
@@ -134,7 +134,7 @@ public static class TextEditorCommandDefaultFacts
             primaryCursor.Selection.AnchorPositionIndex = 0;
             primaryCursor.Selection.EndingPositionIndex = commandArgs.Model.DocumentLength;
 
-            commandArgs.TextEditorService.ViewModel.With(
+            commandArgs.TextEditorService.ViewModelApi.With(
                 commandArgs.ViewModel.ViewModelKey,
                 previousViewModel => previousViewModel with { }); // "with { }" is a Hack to re-render
 
@@ -146,7 +146,7 @@ public static class TextEditorCommandDefaultFacts
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-            commandArgs.TextEditorService.Model.UndoEdit(commandArgs.Model.ResourceUri);
+            commandArgs.TextEditorService.ModelApi.UndoEdit(commandArgs.Model.ResourceUri);
             return Task.CompletedTask;
         });
 
@@ -155,7 +155,7 @@ public static class TextEditorCommandDefaultFacts
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-            commandArgs.TextEditorService.Model.RedoEdit(commandArgs.Model.ResourceUri);
+            commandArgs.TextEditorService.ModelApi.RedoEdit(commandArgs.Model.ResourceUri);
             return Task.CompletedTask;
         });
 
@@ -164,7 +164,7 @@ public static class TextEditorCommandDefaultFacts
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-            commandArgs.TextEditorService.Options.SetRenderStateKey(Key<RenderState>.NewKey());
+            commandArgs.TextEditorService.OptionsApi.SetRenderStateKey(Key<RenderState>.NewKey());
             return Task.CompletedTask;
         });
 
@@ -255,7 +255,7 @@ public static class TextEditorCommandDefaultFacts
                 selectedText,
                 CancellationToken.None);
 
-            commandArgs.TextEditorService.Model.InsertText(insertTextAction);
+            commandArgs.TextEditorService.ModelApi.InsertText(insertTextAction);
             return Task.CompletedTask;
         });
 
@@ -284,7 +284,7 @@ public static class TextEditorCommandDefaultFacts
                     KeyboardKeyFacts.WhitespaceCharacters.TAB.ToString(),
                     CancellationToken.None);
 
-                commandArgs.TextEditorService.Model.InsertText(insertTextAction);
+                commandArgs.TextEditorService.ModelApi.InsertText(insertTextAction);
             }
 
             var lowerBoundPositionIndexChange = 1;
@@ -358,7 +358,7 @@ public static class TextEditorCommandDefaultFacts
                         removeCharacterCount, // Delete a single "Tab" character
                         CancellationToken.None);
 
-                    commandArgs.TextEditorService.Model.DeleteTextByRange(deleteTextAction);
+                    commandArgs.TextEditorService.ModelApi.DeleteTextByRange(deleteTextAction);
                 }
                 else if (readResult.StartsWith(KeyboardKeyFacts.WhitespaceCharacters.SPACE))
                 {
@@ -379,7 +379,7 @@ public static class TextEditorCommandDefaultFacts
                         removeCharacterCount,
                         CancellationToken.None);
 
-                    commandArgs.TextEditorService.Model.DeleteTextByRange(deleteTextAction);
+                    commandArgs.TextEditorService.ModelApi.DeleteTextByRange(deleteTextAction);
                 }
 
                 // Modify the lower bound of user's text selection
@@ -453,7 +453,7 @@ public static class TextEditorCommandDefaultFacts
             commandArgs.PrimaryCursorSnapshot.UserCursor.IndexCoordinates =
                 (temporaryIndexCoordinates.rowIndex, lengthOfRow);
 
-            commandArgs.TextEditorService.Model.InsertText(
+            commandArgs.TextEditorService.ModelApi.InsertText(
                 new TextEditorModelState.InsertTextAction(
                     commandArgs.Model.ResourceUri,
                     TextEditorCursorSnapshot.TakeSnapshots(commandArgs.PrimaryCursorSnapshot.UserCursor),
@@ -475,7 +475,7 @@ public static class TextEditorCommandDefaultFacts
             commandArgs.PrimaryCursorSnapshot.UserCursor.IndexCoordinates =
                 (temporaryIndexCoordinates.rowIndex, 0);
 
-            commandArgs.TextEditorService.Model.InsertText(
+            commandArgs.TextEditorService.ModelApi.InsertText(
                 new TextEditorModelState.InsertTextAction(
                     commandArgs.Model.ResourceUri,
                     TextEditorCursorSnapshot.TakeSnapshots(commandArgs.PrimaryCursorSnapshot.UserCursor),
@@ -640,14 +640,14 @@ public static class TextEditorCommandDefaultFacts
             if (definitionTextSpan is null)
                 return Task.CompletedTask;
 
-            var definitionModel = commandArgs.TextEditorService.Model.FindOrDefault(definitionTextSpan.ResourceUri);
+            var definitionModel = commandArgs.TextEditorService.ModelApi.FindOrDefault(definitionTextSpan.ResourceUri);
 
             if (definitionModel is null)
             {
                 if (commandArgs.RegisterModelAction is not null)
                 {
                     commandArgs.RegisterModelAction.Invoke(definitionTextSpan.ResourceUri);
-                    definitionModel = commandArgs.TextEditorService.Model.FindOrDefault(definitionTextSpan.ResourceUri);
+                    definitionModel = commandArgs.TextEditorService.ModelApi.FindOrDefault(definitionTextSpan.ResourceUri);
 
                     if (definitionModel is null)
                         return Task.CompletedTask;
@@ -658,14 +658,14 @@ public static class TextEditorCommandDefaultFacts
                 }
             }
 
-            var definitionViewModels = commandArgs.TextEditorService.Model.GetViewModelsOrEmpty(definitionTextSpan.ResourceUri);
+            var definitionViewModels = commandArgs.TextEditorService.ModelApi.GetViewModelsOrEmpty(definitionTextSpan.ResourceUri);
 
             if (!definitionViewModels.Any())
             {
                 if (commandArgs.RegisterViewModelAction is not null)
                 {
                     commandArgs.RegisterViewModelAction.Invoke(definitionTextSpan.ResourceUri);
-                    definitionViewModels = commandArgs.TextEditorService.Model.GetViewModelsOrEmpty(definitionTextSpan.ResourceUri);
+                    definitionViewModels = commandArgs.TextEditorService.ModelApi.GetViewModelsOrEmpty(definitionTextSpan.ResourceUri);
 
                     if (!definitionViewModels.Any())
                         return Task.CompletedTask;
@@ -694,7 +694,7 @@ public static class TextEditorCommandDefaultFacts
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-            commandArgs.TextEditorService.Options.ShowFindDialog();
+            commandArgs.TextEditorService.OptionsApi.ShowFindDialog();
             return Task.CompletedTask;
         });
 

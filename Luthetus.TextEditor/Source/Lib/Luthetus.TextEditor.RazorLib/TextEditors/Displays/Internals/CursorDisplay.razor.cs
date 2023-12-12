@@ -55,7 +55,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     public string CaretRowStyleCss => GetCaretRowStyleCss();
     public string MenuStyleCss => GetMenuStyleCss();
 
-    public string BlinkAnimationCssClass => TextEditorService.ViewModel.CursorShouldBlink
+    public string BlinkAnimationCssClass => TextEditorService.ViewModelApi.CursorShouldBlink
         ? "luth_te_blink"
         : string.Empty;
 
@@ -63,7 +63,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        TextEditorService.ViewModel.CursorShouldBlinkChanged += ViewModel_CursorShouldBlinkChanged;
+        TextEditorService.ViewModelApi.CursorShouldBlinkChanged += ViewModel_CursorShouldBlinkChanged;
 
         base.OnInitialized();
     }
@@ -280,7 +280,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
     public void PauseBlinkAnimation()
     {
-        TextEditorService.ViewModel.SetCursorShouldBlink(false);
+        TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
     }
 
     private void HandleOnKeyDown()
@@ -328,7 +328,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        TextEditorService.ViewModel.CursorShouldBlinkChanged -= ViewModel_CursorShouldBlinkChanged;
+        TextEditorService.ViewModelApi.CursorShouldBlinkChanged -= ViewModel_CursorShouldBlinkChanged;
 
         if (IsFocusTarget)
         {

@@ -1,50 +1,50 @@
 ﻿using Fluxor;
-using Luthetus.TextEditor.RazorLib.Finds.States;
-using Luthetus.TextEditor.RazorLib.Finds.Models;
+using Luthetus.TextEditor.RazorLib.SearchEngines.States;
+using Luthetus.TextEditor.RazorLib.SearchEngines.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 public partial interface ITextEditorService
 {
-    public interface IFindProviderApi
+    public interface ITextEditorSearchEngineApi
     {
-        public void Register(ITextEditorFindProvider findProvider);
-        public void DisposeAction(Key<ITextEditorFindProvider> findProviderKey);
-        public void SetActiveFindProvider(Key<ITextEditorFindProvider> findProviderKey);
-        public ITextEditorFindProvider? FindOrDefault(Key<ITextEditorFindProvider> findProviderKey);
+        public void Register(ITextEditorSearchEngine searchEngine);
+        public void DisposeAction(Key<ITextEditorSearchEngine> searchEngineKey);
+        public void SetActiveSearchEngine(Key<ITextEditorSearchEngine> searchEngineKey);
+        public ITextEditorSearchEngine? FindOrDefault(Key<ITextEditorSearchEngine> searchEngineKey);
     }
 
-    public class FindProviderApi : IFindProviderApi
+    public class TextEditorSearchEngineApi : ITextEditorSearchEngineApi
     {
         private readonly IDispatcher _dispatcher;
         private readonly ITextEditorService _textEditorService;
 
-        public FindProviderApi(ITextEditorService textEditorService, IDispatcher dispatcher)
+        public TextEditorSearchEngineApi(ITextEditorService textEditorService, IDispatcher dispatcher)
         {
             _textEditorService = textEditorService;
             _dispatcher = dispatcher;
         }
 
-        public void DisposeAction(Key<ITextEditorFindProvider> findProviderKey)
+        public void DisposeAction(Key<ITextEditorSearchEngine> searchEngineKey)
         {
-            _dispatcher.Dispatch(new TextEditorFindProviderState.DisposeAction(findProviderKey));
+            _dispatcher.Dispatch(new TextEditorSearchEngineState.DisposeAction(searchEngineKey));
         }
 
-        public ITextEditorFindProvider? FindOrDefault(Key<ITextEditorFindProvider> findProviderKey)
+        public ITextEditorSearchEngine? FindOrDefault(Key<ITextEditorSearchEngine> searchEngineKey)
         {
-            return _textEditorService.FindProviderStateWrap.Value.FindProviderBag.FirstOrDefault(
-                x => x.FindProviderKey == findProviderKey);
+            return _textEditorService.SearchEngineStateWrap.Value.SearchEngineBag.FirstOrDefault(
+                x => x.SearchEngineKey == searchEngineKey);
         }
 
-        public void Register(ITextEditorFindProvider findProvider)
+        public void Register(ITextEditorSearchEngine searchEngine)
         {
-            _dispatcher.Dispatch(new TextEditorFindProviderState.RegisterAction(findProvider));
+            _dispatcher.Dispatch(new TextEditorSearchEngineState.RegisterAction(searchEngine));
         }
 
-        public void SetActiveFindProvider(Key<ITextEditorFindProvider> findProviderKey)
+        public void SetActiveSearchEngine(Key<ITextEditorSearchEngine> searchEngineKey)
         {
-            _dispatcher.Dispatch(new TextEditorFindProviderState.SetActiveFindProviderAction(findProviderKey));
+            _dispatcher.Dispatch(new TextEditorSearchEngineState.SetActiveSearchEngineAction(searchEngineKey));
         }
     }
 }

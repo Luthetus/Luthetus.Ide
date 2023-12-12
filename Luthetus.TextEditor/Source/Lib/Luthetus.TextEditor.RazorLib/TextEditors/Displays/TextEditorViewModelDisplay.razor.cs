@@ -157,7 +157,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    public TextEditorModel? GetModel() => TextEditorService.ViewModel.FindBackingModelOrDefault(TextEditorViewModelKey);
+    public TextEditorModel? GetModel() => TextEditorService.ViewModelApi.FindBackingModelOrDefault(TextEditorViewModelKey);
 
     public TextEditorViewModel? GetViewModel() => TextEditorViewModelsStateWrap.Value.ViewModelBag.FirstOrDefault(
         x => x.ViewModelKey == TextEditorViewModelKey);
@@ -946,12 +946,12 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (localRefCurrentRenderBatch.ViewModel is null || localRefCurrentRenderBatch.Options is null)
             return;
 
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+		BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "TextEditor Remeasure",
-            async () =>
+            (Func<Task>)(async () =>
             {
                 // Get the most recent instantiation of the ViewModel with the given key.
-                var viewModel = TextEditorService.ViewModel.FindOrDefault(localRefCurrentRenderBatch.ViewModel.ViewModelKey);
+                var viewModel = TextEditorService.ViewModelApi.FindOrDefault(localRefCurrentRenderBatch.ViewModel.ViewModelKey);
 
                 var options = GetOptions();
 
@@ -961,9 +961,9 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                         options,
                         localMeasureCharacterWidthAndRowHeightElementId,
                         localMeasureCharacterWidthAndRowHeightComponent,
-                        CancellationToken.None);
+						CancellationToken.None);
                 }
-            });
+            }));
     }
 
     private void QueueCalculateVirtualizationResultBackgroundTask(
@@ -972,24 +972,24 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (localCurrentRenderBatch.ViewModel is null || localCurrentRenderBatch.Options is null)
             return;
 
-        BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+		BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "TextEditor CalculateVirtualizationResult",
-            async () =>
+            (Func<Task>)(async () =>
             {
                 // Get the most recent instantiation of the ViewModel with the given key.
-                var viewModel = TextEditorService.ViewModel.FindOrDefault(localCurrentRenderBatch.ViewModel.ViewModelKey);
+                var viewModel = TextEditorService.ViewModelApi.FindOrDefault(localCurrentRenderBatch.ViewModel.ViewModelKey);
 
-                var model = TextEditorService.ViewModel.FindBackingModelOrDefault(
+                var model = TextEditorService.ViewModelApi.FindBackingModelOrDefault(
                     localCurrentRenderBatch.ViewModel.ViewModelKey);
 
                 if (viewModel is not null && model is not null)
                 {
                     await localCurrentRenderBatch.ViewModel.CalculateVirtualizationResultAsync(
-                        model,
+                        (TextEditorModel)model,
                         null,
-                        CancellationToken.None);
+						CancellationToken.None);
                 }
-            });
+            }));
     }
 
     public void Dispose()

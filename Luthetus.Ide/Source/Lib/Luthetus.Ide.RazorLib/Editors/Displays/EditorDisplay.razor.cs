@@ -52,6 +52,6 @@ public partial class EditorDisplay : ComponentBase
 
     private void ShowViewModelAction(Key<TextEditorViewModel> viewModelKey)
     {
-        TextEditorService.Group.SetActiveViewModel(EditorSync.EditorTextEditorGroupKey, viewModelKey);
+        TextEditorService.GroupApi.SetActiveViewModel(EditorSync.EditorTextEditorGroupKey, viewModelKey);
     }
 }

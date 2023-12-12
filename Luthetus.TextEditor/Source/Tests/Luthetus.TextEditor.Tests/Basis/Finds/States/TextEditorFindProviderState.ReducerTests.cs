@@ -1,15 +1,15 @@
 ﻿using Xunit;
-using Luthetus.TextEditor.RazorLib.Finds.States;
+using Luthetus.TextEditor.RazorLib.SearchEngines.States;
 
-namespace Luthetus.TextEditor.Tests.Basis.Finds.States;
+namespace Luthetus.TextEditor.Tests.Basis.SearchEngines.States;
 
 /// <summary>
-/// <see cref="TextEditorFindProviderState"/>
+/// <see cref="TextEditorSearchEngineState"/>
 /// </summary>
-public class TextEditorFindProviderStateReducerTests
+public class TextEditorSearchEngineStateReducerTests
 {
 	/// <summary>
-	/// <see cref="TextEditorFindProviderState.Reducer.ReduceRegisterAction(TextEditorFindProviderState, TextEditorFindProviderState.RegisterAction)"/>
+	/// <see cref="TextEditorSearchEngineState.Reducer.ReduceRegisterAction(TextEditorSearchEngineState, TextEditorSearchEngineState.RegisterAction)"/>
 	/// </summary>
 	[Fact]
 	public void ReduceRegisterAction()
@@ -18,7 +18,7 @@ public class TextEditorFindProviderStateReducerTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorFindProviderState.Reducer.ReduceDisposeAction(TextEditorFindProviderState, TextEditorFindProviderState.DisposeAction)"/>
+	/// <see cref="TextEditorSearchEngineState.Reducer.ReduceDisposeAction(TextEditorSearchEngineState, TextEditorSearchEngineState.DisposeAction)"/>
 	/// </summary>
 	[Fact]
 	public void ReduceDisposeAction()
@@ -26,17 +26,17 @@ public class TextEditorFindProviderStateReducerTests
 		throw new NotImplementedException();
 	}
 
-	/// <summary>
-	/// <see cref="TextEditorFindProviderState.Reducer.ReduceSetActiveFindProviderAction(TextEditorFindProviderState, TextEditorFindProviderState.SetActiveFindProviderAction)"/>
-	/// </summary>
-	[Fact]
-	public void ReduceSetActiveFindProviderAction()
+    /// <summary>
+    /// <see cref="TextEditorSearchEngineState.Reducer.ReduceSetActiveSearchEngineAction(TextEditorSearchEngineState, TextEditorSearchEngineState.SetActiveSearchEngineAction)"/>
+    /// </summary>
+    [Fact]
+	public void ReduceSetActiveSearchEngineAction()
 	{
 		throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorFindProviderState.Reducer.ReduceSetSearchQueryAction(TextEditorFindProviderState, TextEditorFindProviderState.SetSearchQueryAction)"/>
+	/// <see cref="TextEditorSearchEngineState.Reducer.ReduceSetSearchQueryAction(TextEditorSearchEngineState, TextEditorSearchEngineState.SetSearchQueryAction)"/>
 	/// </summary>
 	[Fact]
 	public void ReduceSetSearchQueryAction()

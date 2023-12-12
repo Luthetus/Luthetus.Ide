@@ -10,7 +10,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 public partial interface ITextEditorService
 {
-    public interface IViewModelApi
+    public interface ITextEditorViewModelApi
     {
         public void Dispose(Key<TextEditorViewModel> textEditorViewModelKey);
         public Task<TextEditorMeasurements> GetTextEditorMeasurementsAsync(string elementId);
@@ -44,7 +44,7 @@ public partial interface ITextEditorService
         public event Action? CursorShouldBlinkChanged;
     }
 
-    public class ViewModelApi : IViewModelApi
+    public class TextEditorViewModelApi : ITextEditorViewModelApi
     {
         private readonly ITextEditorService _textEditorService;
         private readonly IDispatcher _dispatcher;
@@ -52,7 +52,7 @@ public partial interface ITextEditorService
         // TODO: Perhaps do not reference IJSRuntime but instead wrap it in a 'IUiProvider' or something like that. The 'IUiProvider' would then expose methods that allow the TextEditorViewModel to adjust the scrollbars. 
         private readonly IJSRuntime _jsRuntime;
 
-        public ViewModelApi(
+        public TextEditorViewModelApi(
             ITextEditorService textEditorService,
             IJSRuntime jsRuntime,
             IDispatcher dispatcher)
@@ -184,7 +184,7 @@ public partial interface ITextEditorService
             if (viewModel is null)
                 return null;
 
-            return _textEditorService.Model.FindOrDefault(viewModel.ResourceUri);
+            return _textEditorService.ModelApi.FindOrDefault(viewModel.ResourceUri);
         }
 
         public string? GetAllText(Key<TextEditorViewModel> textEditorViewModelKey)
@@ -193,7 +193,7 @@ public partial interface ITextEditorService
 
             return textEditorModel is null
                 ? null
-                : _textEditorService.Model.GetAllText(textEditorModel.ResourceUri);
+                : _textEditorService.ModelApi.GetAllText(textEditorModel.ResourceUri);
         }
 
         public async Task FocusPrimaryCursorAsync(string primaryCursorContentId)

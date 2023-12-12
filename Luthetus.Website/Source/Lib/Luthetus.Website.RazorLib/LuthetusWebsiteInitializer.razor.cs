@@ -141,17 +141,17 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
 
             textEditorModel.CompilerService.RegisterResource(textEditorModel.ResourceUri);
 
-            TextEditorService.Model.RegisterCustom(textEditorModel);
+            TextEditorService.ModelApi.RegisterCustom(textEditorModel);
 
-            TextEditorService.Model.RegisterPresentationModel(
+            TextEditorService.ModelApi.RegisterPresentationModel(
                     textEditorModel.ResourceUri,
                     CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
 
-            TextEditorService.Model.RegisterPresentationModel(
+            TextEditorService.ModelApi.RegisterPresentationModel(
                 textEditorModel.ResourceUri,
                 DiffPresentationFacts.EmptyInPresentationModel);
             
-            TextEditorService.Model.RegisterPresentationModel(
+            TextEditorService.ModelApi.RegisterPresentationModel(
                 textEditorModel.ResourceUri,
                 DiffPresentationFacts.EmptyOutPresentationModel);
 

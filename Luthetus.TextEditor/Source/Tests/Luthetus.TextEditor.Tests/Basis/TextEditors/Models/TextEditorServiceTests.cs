@@ -1,5 +1,9 @@
 using Xunit;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Fluxor;
+using Microsoft.Extensions.DependencyInjection;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Luthetus.Common.RazorLib.Notifications.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 
@@ -9,137 +13,56 @@ namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 public class TextEditorServiceTests
 {
 	/// <summary>
-	/// <see cref="TextEditorService(Fluxor.IState{RazorLib.TextEditors.States.TextEditorModelState}, Fluxor.IState{RazorLib.TextEditors.States.TextEditorViewModelState}, Fluxor.IState{RazorLib.Groups.States.TextEditorGroupState}, Fluxor.IState{RazorLib.Diffs.States.TextEditorDiffState}, Fluxor.IState{Common.RazorLib.Themes.States.ThemeState}, Fluxor.IState{RazorLib.Options.States.TextEditorOptionsState}, Fluxor.IState{RazorLib.Finds.States.TextEditorFindProviderState}, RazorLib.Installations.Models.LuthetusTextEditorOptions, Common.RazorLib.Storages.Models.IStorageService, Microsoft.JSInterop.IJSRuntime, Common.RazorLib.Storages.States.StorageSync, Fluxor.IDispatcher)"/>
+	/// <see cref="TextEditorService(IState{RazorLib.TextEditors.States.TextEditorModelState}, IState{RazorLib.TextEditors.States.TextEditorViewModelState}, IState{RazorLib.Groups.States.TextEditorGroupState}, IState{RazorLib.Diffs.States.TextEditorDiffState}, IState{Common.RazorLib.Themes.States.ThemeState}, IState{RazorLib.Options.States.TextEditorOptionsState}, IState{RazorLib.Finds.States.TextEditorSearchEngineState}, RazorLib.Installations.Models.LuthetusTextEditorOptions, Common.RazorLib.Storages.Models.IStorageService, Microsoft.JSInterop.IJSRuntime, Common.RazorLib.Storages.States.StorageSync, IDispatcher)"/>
+	/// <br/>----<br/>
+	/// <see cref="TextEditorService.ModelStateWrap"/>
+	/// <see cref="TextEditorService.ViewModelStateWrap"/>
+	/// <see cref="TextEditorService.GroupStateWrap"/>
+	/// <see cref="TextEditorService.DiffStateWrap"/>
+	/// <see cref="TextEditorService.ThemeStateWrap"/>
+	/// <see cref="TextEditorService.OptionsStateWrap"/>
+	/// <see cref="TextEditorService.SearchEngineStateWrap"/>
+	/// <see cref="TextEditorService.ThemeCssClassString"/>
+	/// <see cref="TextEditorService.ModelApi"/>
+	/// <see cref="TextEditorService.ViewModelApi"/>
+	/// <see cref="TextEditorService.GroupApi"/>
+	/// <see cref="TextEditorService.DiffApi"/>
+	/// <see cref="TextEditorService.OptionsApi"/>
+	/// <see cref="TextEditorService.SearchEngineApi"/>
 	/// </summary>
 	[Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
+		InitializeTextEditorServiceTests(out var textEditorService);
+
+		Assert.NotNull(textEditorService);
+		Assert.NotNull(textEditorService.ModelStateWrap);
+		Assert.NotNull(textEditorService.ViewModelStateWrap);
+		Assert.NotNull(textEditorService.GroupStateWrap);
+		Assert.NotNull(textEditorService.DiffStateWrap);
+		Assert.NotNull(textEditorService.ThemeStateWrap);
+		Assert.NotNull(textEditorService.OptionsStateWrap);
+		Assert.NotNull(textEditorService.SearchEngineStateWrap);
+		Assert.NotNull(textEditorService.ThemeCssClassString);
+		Assert.NotNull(textEditorService.ModelApi);
+		Assert.NotNull(textEditorService.ViewModelApi);
+		Assert.NotNull(textEditorService.GroupApi);
+		Assert.NotNull(textEditorService.DiffApi);
+		Assert.NotNull(textEditorService.OptionsApi);
+		Assert.NotNull(textEditorService.SearchEngineApi);
 	}
 
-	/// <summary>
-	/// <see cref="TextEditorService.ModelStateWrap"/>
-	/// </summary>
-	[Fact]
-	public void ModelStateWrap()
+	private void InitializeTextEditorServiceTests(out ITextEditorService textEditorService)
 	{
-		throw new NotImplementedException();
-	}
+		var services = new ServiceCollection()
+			.AddScoped<ITextEditorService, TextEditorService>()
+			.AddFluxor(options => options.ScanAssemblies(typeof(ITextEditorService).Assembly));
 
-	/// <summary>
-	/// <see cref="TextEditorService.ViewModelStateWrap"/>
-	/// </summary>
-	[Fact]
-	public void ViewModelStateWrap()
-	{
-		throw new NotImplementedException();
-	}
+		var serviceProvider = services.BuildServiceProvider();
 
-	/// <summary>
-	/// <see cref="TextEditorService.GroupStateWrap"/>
-	/// </summary>
-	[Fact]
-	public void GroupStateWrap()
-	{
-		throw new NotImplementedException();
-	}
+		var store = serviceProvider.GetRequiredService<IStore>();
+		store.InitializeAsync().Wait();
 
-	/// <summary>
-	/// <see cref="TextEditorService.DiffStateWrap"/>
-	/// </summary>
-	[Fact]
-	public void DiffStateWrap()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorService.ThemeStateWrap"/>
-	/// </summary>
-	[Fact]
-	public void ThemeStateWrap()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorService.OptionsStateWrap"/>
-	/// </summary>
-	[Fact]
-	public void OptionsStateWrap()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorService.FindProviderStateWrap"/>
-	/// </summary>
-	[Fact]
-	public void FindProviderStateWrap()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorService.ThemeCssClassString"/>
-	/// </summary>
-	[Fact]
-	public void ThemeCssClassString()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorService.Model"/>
-	/// </summary>
-	[Fact]
-	public void Model()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorService.ViewModel"/>
-	/// </summary>
-	[Fact]
-	public void ViewModel()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorService.Group"/>
-	/// </summary>
-	[Fact]
-	public void Group()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorService.Diff"/>
-	/// </summary>
-	[Fact]
-	public void Diff()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorService.Options"/>
-	/// </summary>
-	[Fact]
-	public void Options()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorService.FindProvider"/>
-	/// </summary>
-	[Fact]
-	public void FindProvider()
-	{
-		throw new NotImplementedException();
+		textEditorService = serviceProvider.GetRequiredService<ITextEditorService>();
 	}
 }

@@ -34,11 +34,11 @@ public partial class InputTextEditorKeymap : FluxorComponent
             var foundKeymap = allKeymapDefinitionsBag.FirstOrDefault(x => x.Key == chosenKeymapKey);
 
             if (foundKeymap is not null)
-                TextEditorService.Options.SetKeymap(foundKeymap);
+                TextEditorService.OptionsApi.SetKeymap(foundKeymap);
         }
         else
         {
-            TextEditorService.Options.SetKeymap(TextEditorKeymapFacts.DefaultKeymap);
+            TextEditorService.OptionsApi.SetKeymap(TextEditorKeymapFacts.DefaultKeymap);
         }
     }
 }

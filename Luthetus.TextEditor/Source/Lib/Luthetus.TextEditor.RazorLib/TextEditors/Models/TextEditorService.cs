@@ -4,7 +4,7 @@ using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.States;
-using Luthetus.TextEditor.RazorLib.Finds.States;
+using Luthetus.TextEditor.RazorLib.SearchEngines.States;
 using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
@@ -18,7 +18,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 public class TextEditorService : ITextEditorService
 {
     private readonly IDispatcher _dispatcher;
-    private readonly LuthetusTextEditorOptions _luthetusTextEditorOptions;
+    private readonly LuthetusTextEditorOptions _textEditorOptions;
     private readonly IStorageService _storageService;
     // TODO: Perhaps do not reference IJSRuntime but instead wrap it in a 'IUiProvider' or something like that. The 'IUiProvider' would then expose methods that allow the TextEditorViewModel to adjust the scrollbars. 
     private readonly IJSRuntime _jsRuntime;
@@ -31,8 +31,8 @@ public class TextEditorService : ITextEditorService
         IState<TextEditorDiffState> diffStateWrap,
         IState<ThemeState> themeStateWrap,
         IState<TextEditorOptionsState> optionsStateWrap,
-        IState<TextEditorFindProviderState> findProviderStateWrap,
-        LuthetusTextEditorOptions luthetusTextEditorOptions,
+        IState<TextEditorSearchEngineState> searchEngineStateWrap,
+        LuthetusTextEditorOptions textEditorOptions,
         IStorageService storageService,
         IJSRuntime jsRuntime,
         StorageSync storageSync,
@@ -44,20 +44,20 @@ public class TextEditorService : ITextEditorService
         DiffStateWrap = diffStateWrap;
         ThemeStateWrap = themeStateWrap;
         OptionsStateWrap = optionsStateWrap;
-        FindProviderStateWrap = findProviderStateWrap;
+        SearchEngineStateWrap = searchEngineStateWrap;
 
-        _luthetusTextEditorOptions = luthetusTextEditorOptions;
+        _textEditorOptions = textEditorOptions;
         _storageService = storageService;
         _jsRuntime = jsRuntime;
         _storageSync = storageSync;
         _dispatcher = dispatcher;
 
-        Model = new ModelApi(this, _dispatcher);
-        ViewModel = new ViewModelApi(this, _jsRuntime, _dispatcher);
-        Group = new GroupApi(this, _dispatcher);
-        Diff = new DiffApi(this, _dispatcher);
-        Options = new OptionsApi(this, _luthetusTextEditorOptions, _storageService, _storageSync, _dispatcher);
-        FindProvider = new FindProviderApi(this, _dispatcher);
+        ModelApi = new TextEditorModelApi(this, _dispatcher);
+        ViewModelApi = new TextEditorViewModelApi(this, _jsRuntime, _dispatcher);
+        GroupApi = new TextEditorGroupApi(this, _dispatcher);
+        DiffApi = new TextEditorDiffApi(this, _dispatcher);
+        OptionsApi = new TextEditorOptionsApi(this, _textEditorOptions, _storageService, _storageSync, _dispatcher);
+        SearchEngineApi = new TextEditorSearchEngineApi(this, _dispatcher);
     }
 
     public IState<TextEditorModelState> ModelStateWrap { get; }
@@ -66,7 +66,7 @@ public class TextEditorService : ITextEditorService
     public IState<TextEditorDiffState> DiffStateWrap { get; }
     public IState<ThemeState> ThemeStateWrap { get; }
     public IState<TextEditorOptionsState> OptionsStateWrap { get; }
-    public IState<TextEditorFindProviderState> FindProviderStateWrap { get; }
+    public IState<TextEditorSearchEngineState> SearchEngineStateWrap { get; }
 
     
 #if DEBUG
@@ -80,10 +80,10 @@ public class TextEditorService : ITextEditorService
         ?.CssClassString
             ?? ThemeFacts.VisualStudioDarkThemeClone.CssClassString;
 
-    public IModelApi Model { get; }
-    public IViewModelApi ViewModel { get; }
-    public IGroupApi Group { get; }
-    public IDiffApi Diff { get; }
-    public IOptionsApi Options { get; }
-    public IFindProviderApi FindProvider { get; }
+    public ITextEditorModelApi ModelApi { get; }
+    public ITextEditorViewModelApi ViewModelApi { get; }
+    public ITextEditorGroupApi GroupApi { get; }
+    public ITextEditorDiffApi DiffApi { get; }
+    public ITextEditorOptionsApi OptionsApi { get; }
+    public ITextEditorSearchEngineApi SearchEngineApi { get; }
 }

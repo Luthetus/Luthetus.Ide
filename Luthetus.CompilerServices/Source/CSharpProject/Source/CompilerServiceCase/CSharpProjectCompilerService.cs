@@ -60,7 +60,7 @@ public class CSharpProjectCompilerService : ICompilerService
 
     public ICompilerServiceResource? GetCompilerServiceResourceFor(ResourceUri resourceUri)
     {
-        var model = _textEditorService.Model.FindOrDefault(resourceUri);
+        var model = _textEditorService.ModelApi.FindOrDefault(resourceUri);
 
         if (model is null)
             return null;
@@ -123,45 +123,45 @@ public class CSharpProjectCompilerService : ICompilerService
 
     private void QueueParseRequest(ResourceUri resourceUri)
     {
-        _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+		_backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "C# Project Compiler Service - Parse",
-            async () =>
+            (Func<Task>)(async () =>
             {
-                var model = _textEditorService.Model.FindOrDefault(resourceUri);
+                var model = _textEditorService.ModelApi.FindOrDefault(resourceUri);
 
                 if (model is null)
                     return;
 
-                var text = model.GetAllText();
+                var text = TextEditorModelHelper.GetAllText(model);
 
-                _dispatcher.Dispatch(new TextEditorModelState.CalculatePresentationModelAction(
-                    model.ResourceUri,
-                    CompilerServiceDiagnosticPresentationFacts.PresentationKey));
+				_dispatcher.Dispatch(new TextEditorModelState.CalculatePresentationModelAction(
+                    (ResourceUri)model.ResourceUri,
+					CompilerServiceDiagnosticPresentationFacts.PresentationKey));
 
-                var pendingCalculation = model.PresentationModelsBag.FirstOrDefault(x =>
-                    x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey)
+                var pendingCalculation = model.PresentationModelsBag.FirstOrDefault<TextEditor.RazorLib.Decorations.Models.TextEditorPresentationModel>((Func<TextEditor.RazorLib.Decorations.Models.TextEditorPresentationModel, bool>)(x =>
+                    x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey))
                     ?.PendingCalculation;
 
                 if (pendingCalculation is null)
-                    pendingCalculation = new(model.GetAllText());
+                    pendingCalculation = new(TextEditorModelHelper.GetAllText(model));
 
-                var lexer = new TextEditorHtmlLexer(model.ResourceUri);
-                var lexResult = await lexer.Lex(text, model.RenderStateKey);
+                var lexer = new TextEditorHtmlLexer((ResourceUri)model.ResourceUri);
+                var lexResult = await lexer.Lex(text, (Key<Common.RazorLib.RenderStates.Models.RenderState>)model.RenderStateKey);
 
                 lock (_cSharpProjectResourceMapLock)
                 {
                     if (!_cSharpProjectResourceMap.ContainsKey(resourceUri))
                         return;
 
-                    _cSharpProjectResourceMap[resourceUri]
+					_cSharpProjectResourceMap[resourceUri]
                         .SyntacticTextSpans = lexResult;
                 }
 
-                await model.ApplySyntaxHighlightingAsync();
+                await TextEditorModelHelper.ApplySyntaxHighlightingAsync(model);
 
                 ResourceParsed?.Invoke();
 
                 return;
-            });
+            }));
     }
 }

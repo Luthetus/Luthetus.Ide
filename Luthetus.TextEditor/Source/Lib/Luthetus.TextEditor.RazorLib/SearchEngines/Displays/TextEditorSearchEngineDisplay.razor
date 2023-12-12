@@ -2,14 +2,14 @@
 
 @inherits FluxorComponent
 
-@{ var findProviderState = TextEditorFindProviderStateWrap.Value; }
+@{ var searchEngineState = TextEditorSearchEngineStateWrap.Value; }
 
 <div class="luth_te_find">
     <div class="luth_te_find-tabs">
-        @foreach (var findProvider in findProviderState.FindProviderBag)
+        @foreach (var searchEngine in searchEngineState.SearchEngineBag)
         {
-            <FindProviderTabDisplay FindProvider="findProvider"
-                                    IsActive="findProvider.FindProviderKey == findProviderState.ActiveFindProviderKey" />
+            <SearchEngineTabDisplay SearchEngine="searchEngine"
+                                    IsActive="searchEngine.SearchEngineKey == searchEngineState.ActiveSearchEngineKey" />
         }
     </div>
     
@@ -22,19 +22,19 @@
                @bind:event="oninput"/>
 
         <button class="luth_button"
-                @onclick="() => DoSearchOnClickAsync(findProviderState)">
+                @onclick="() => DoSearchOnClickAsync(searchEngineState)">
             Do Search
         </button>
 
-        @{ var activeFindProvider = findProviderState.ActiveFindProviderOrDefault(); }
+        @{ var activeSearchEngine = searchEngineState.GetActiveSearchEngineOrDefault(); }
 
-        @if (activeFindProvider is null)
+        @if (activeSearchEngine is null)
         {
             @: null active find provider
         }
         else
         {
-            @: @activeFindProvider.DisplayName
+            @: @activeSearchEngine.DisplayName
         }
 
         @if (_isSearching)
