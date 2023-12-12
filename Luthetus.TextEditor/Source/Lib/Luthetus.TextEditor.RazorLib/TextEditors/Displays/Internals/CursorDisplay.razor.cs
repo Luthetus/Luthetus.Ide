@@ -1,6 +1,5 @@
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Htmls.Models;

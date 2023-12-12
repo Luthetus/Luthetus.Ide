@@ -16,7 +16,6 @@ using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.CSharpProjectForms.Models;
 using Luthetus.Ide.RazorLib.Installations.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
 using Luthetus.Ide.RazorLib.Websites.ProjectTemplates.Models;
 using Luthetus.Ide.RazorLib.Websites;

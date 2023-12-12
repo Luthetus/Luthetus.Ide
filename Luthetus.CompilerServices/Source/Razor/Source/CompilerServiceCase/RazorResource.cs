@@ -2,7 +2,6 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 

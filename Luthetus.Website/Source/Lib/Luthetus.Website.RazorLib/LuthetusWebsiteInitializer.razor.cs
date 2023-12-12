@@ -2,7 +2,6 @@ using Luthetus.Ide.Wasm.Facts;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.Editors.States;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.Common.RazorLib.FileSystems.Models;

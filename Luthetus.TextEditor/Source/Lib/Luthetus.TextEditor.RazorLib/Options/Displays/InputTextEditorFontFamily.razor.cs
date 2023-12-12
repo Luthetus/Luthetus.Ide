@@ -1,5 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+﻿using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.TextEditor.RazorLib.Options.Displays;
