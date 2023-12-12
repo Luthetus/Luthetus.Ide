@@ -1,115 +1,145 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorModels;
 
+/// <summary>
+/// <see cref="TextEditorModel"/>
+/// </summary>
 public class TextEditorModelPublicMethodsTests
 {
+	/// <summary>
+	/// <see cref="TextEditorModel.PerformForceRerenderAction(RazorLib.TextEditors.States.TextEditorModelState.ForceRerenderAction)"/>
+	/// </summary>
 	[Fact]
 	public void PerformForceRerenderAction()
 	{
-		//public TextEditorModel PerformForceRerenderAction(ForceRerenderAction forceRerenderAction)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModel.PerformEditTextEditorAction(RazorLib.TextEditors.States.TextEditorModelState.KeyboardEventAction)"/>
+	/// </summary>
 	[Fact]
-	public void PerformEditTextEditorAction_A()
+	public void PerformEditTextEditorAction_KeyboardEventAction()
 	{
-		//public TextEditorModel PerformEditTextEditorAction(KeyboardEventAction keyboardEventAction)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModel.PerformEditTextEditorAction(RazorLib.TextEditors.States.TextEditorModelState.InsertTextAction)"/>
+	/// </summary>
 	[Fact]
-	public void PerformEditTextEditorAction_B()
+	public void PerformEditTextEditorAction_InsertTextAction()
 	{
-		//public TextEditorModel PerformEditTextEditorAction(InsertTextAction insertTextAction)
 		throw new NotImplementedException();
 	}
 
-
+	/// <summary>
+	/// <see cref="TextEditorModel.PerformEditTextEditorAction(RazorLib.TextEditors.States.TextEditorModelState.DeleteTextByMotionAction)"/>
+	/// </summary>
 	[Fact]
-	public void PerformEditTextEditorAction_C()
+	public void PerformEditTextEditorAction_DeleteTextByMotionAction()
 	{
-		//public TextEditorModel PerformEditTextEditorAction(DeleteTextByMotionAction deleteTextByMotionAction)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModel.PerformEditTextEditorAction(RazorLib.TextEditors.States.TextEditorModelState.DeleteTextByRangeAction)"/>
+	/// </summary>
 	[Fact]
-	public void PerformEditTextEditorAction_D()
+	public void PerformEditTextEditorAction_DeleteTextByRangeAction()
 	{
-		//public TextEditorModel PerformEditTextEditorAction(DeleteTextByRangeAction deleteTextByRangeAction)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModel.PerformRegisterPresentationModelAction(RazorLib.TextEditors.States.TextEditorModelState.RegisterPresentationModelAction)"/>
+	/// </summary>
 	[Fact]
 	public void PerformRegisterPresentationModelAction()
 	{
-		//public TextEditorModel PerformRegisterPresentationModelAction(RegisterPresentationModelAction registerPresentationModelAction)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModel.PerformCalculatePresentationModelAction(RazorLib.TextEditors.States.TextEditorModelState.CalculatePresentationModelAction)"/>
+	/// </summary>
 	[Fact]
 	public void PerformCalculatePresentationModelAction()
 	{
-		//public TextEditorModel PerformCalculatePresentationModelAction(CalculatePresentationModelAction calculatePresentationModelAction)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModel.SetDecorationMapper(RazorLib.Decorations.Models.IDecorationMapper)"/>
+	/// </summary>
 	[Fact]
 	public void SetDecorationMapper()
 	{
-		//public TextEditorModel SetDecorationMapper(IDecorationMapper decorationMapper)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModel.SetCompilerService(RazorLib.CompilerServices.ICompilerService)"/>
+	/// </summary>
 	[Fact]
 	public void SetCompilerService()
 	{
-		//public TextEditorModel SetCompilerService(ICompilerService compilerService)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModel.SetTextEditorSaveFileHelper(RazorLib.TextEditors.Models.TextEditorSaveFileHelper)"/>
+	/// </summary>
 	[Fact]
 	public void SetTextEditorSaveFileHelper()
 	{
-		//public TextEditorModel SetTextEditorSaveFileHelper(TextEditorSaveFileHelper textEditorSaveFileHelper)
 		throw new NotImplementedException();
 	}
 
-
+	/// <summary>
+	/// <see cref="TextEditorModel.SetResourceData(RazorLib.Lexes.Models.ResourceUri, DateTime)"/>
+	/// </summary>
 	[Fact]
 	public void SetResourceData()
 	{
-		//public TextEditorModel SetResourceData(ResourceUri resourceUri, DateTime resourceLastWriteTime)
 		throw new NotImplementedException();
 	}
 
-
+	/// <summary>
+	/// <see cref="TextEditorModel.SetUsingRowEndingKind(RazorLib.Rows.Models.RowEndingKind)"/>
+	/// </summary>
 	[Fact]
 	public void SetUsingRowEndingKind()
 	{
-		//public TextEditorModel SetUsingRowEndingKind(RowEndingKind rowEndingKind)
 		throw new NotImplementedException();
 	}
 
-
+	/// <summary>
+	/// <see cref="TextEditorModel.ClearEditBlocks()"/>
+	/// </summary>
 	[Fact]
 	public void ClearEditBlocks()
 	{
-		//public TextEditorModel ClearEditBlocks()
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModel.UndoEdit()"/>
+	/// </summary>
 	[Fact]
 	public void UndoEdit()
 	{
-		//public TextEditorModel UndoEdit()
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModel.RedoEdit()"/>
+	/// </summary>
 	[Fact]
 	public void RedoEdit()
 	{
-		//public TextEditorModel RedoEdit()
 		throw new NotImplementedException();
 	}
 }

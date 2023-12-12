@@ -1,126 +1,145 @@
 using Xunit;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 
+/// <summary>
+/// <see cref="TextEditorService"/>
+/// </summary>
 public class TextEditorServiceTests
 {
+	/// <summary>
+	/// <see cref="TextEditorService(Fluxor.IState{RazorLib.TextEditors.States.TextEditorModelState}, Fluxor.IState{RazorLib.TextEditors.States.TextEditorViewModelState}, Fluxor.IState{RazorLib.Groups.States.TextEditorGroupState}, Fluxor.IState{RazorLib.Diffs.States.TextEditorDiffState}, Fluxor.IState{Common.RazorLib.Themes.States.ThemeState}, Fluxor.IState{RazorLib.Options.States.TextEditorOptionsState}, Fluxor.IState{RazorLib.Finds.States.TextEditorFindProviderState}, RazorLib.Installations.Models.LuthetusTextEditorOptions, Common.RazorLib.Storages.Models.IStorageService, Microsoft.JSInterop.IJSRuntime, Common.RazorLib.Storages.States.StorageSync, Fluxor.IDispatcher)"/>
+	/// </summary>
 	[Fact]
-	public void TextEditorService()
+	public void Constructor()
 	{
-		//public TextEditorService(
-	 //       IState<TextEditorModelState> modelStateWrap,
-	 //       IState<TextEditorViewModelState> viewModelStateWrap,
-	 //       IState<TextEditorGroupState> groupStateWrap,
-	 //       IState<TextEditorDiffState> diffStateWrap,
-	 //       IState<ThemeState> themeStateWrap,
-	 //       IState<TextEditorOptionsState> optionsStateWrap,
-	 //       IState<TextEditorFindProviderState> findProviderStateWrap,
-	 //       LuthetusTextEditorOptions luthetusTextEditorOptions,
-	 //       IStorageService storageService,
-	 //       IJSRuntime jsRuntime,
-	 //       StorageSync storageSync,
-	 //       IDispatcher dispatcher)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorService.ModelStateWrap"/>
+	/// </summary>
 	[Fact]
 	public void ModelStateWrap()
 	{
-		//public IState<TextEditorModelState> ModelStateWrap { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorService.ViewModelStateWrap"/>
+	/// </summary>
 	[Fact]
 	public void ViewModelStateWrap()
 	{
-		//public IState<TextEditorViewModelState> ViewModelStateWrap { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorService.GroupStateWrap"/>
+	/// </summary>
 	[Fact]
 	public void GroupStateWrap()
 	{
-		//public IState<TextEditorGroupState> GroupStateWrap { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorService.DiffStateWrap"/>
+	/// </summary>
 	[Fact]
 	public void DiffStateWrap()
 	{
-		//public IState<TextEditorDiffState> DiffStateWrap { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorService.ThemeStateWrap"/>
+	/// </summary>
 	[Fact]
 	public void ThemeStateWrap()
 	{
-		//public IState<ThemeState> ThemeStateWrap { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorService.OptionsStateWrap"/>
+	/// </summary>
 	[Fact]
 	public void OptionsStateWrap()
 	{
-		//public IState<TextEditorOptionsState> OptionsStateWrap { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorService.FindProviderStateWrap"/>
+	/// </summary>
 	[Fact]
 	public void FindProviderStateWrap()
 	{
-		//public IState<TextEditorFindProviderState> FindProviderStateWrap { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorService.ThemeCssClassString"/>
+	/// </summary>
 	[Fact]
 	public void ThemeCssClassString()
 	{
-		//public string ThemeCssClassString => ThemeStateWrap.Value.ThemeBag.FirstOrDefault(
-	 //       x => x.Key == OptionsStateWrap.Value.Options.CommonOptions.ThemeKey)
-	 //       ?.CssClassString
-	 //           ?? ThemeFacts.VisualStudioDarkThemeClone.CssClassString;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorService.Model"/>
+	/// </summary>
 	[Fact]
 	public void Model()
 	{
-		//public IModelApi Model { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorService.ViewModel"/>
+	/// </summary>
 	[Fact]
 	public void ViewModel()
 	{
-		//public IViewModelApi ViewModel { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorService.Group"/>
+	/// </summary>
 	[Fact]
 	public void Group()
 	{
-		//public IGroupApi Group { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorService.Diff"/>
+	/// </summary>
 	[Fact]
 	public void Diff()
 	{
-		//public IDiffApi Diff { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorService.Options"/>
+	/// </summary>
 	[Fact]
 	public void Options()
 	{
-		//public IOptionsApi Options { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorService.FindProvider"/>
+	/// </summary>
 	[Fact]
 	public void FindProvider()
 	{
-		//public IFindProviderApi FindProvider { get; }
 		throw new NotImplementedException();
 	}
 }

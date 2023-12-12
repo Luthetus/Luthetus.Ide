@@ -1,79 +1,91 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.Internals;
 
+/// <summary>
+/// <see cref="DisplayTracker"/>
+/// </summary>
 public class DisplayTrackerTests
 {
+	/// <summary>
+	/// <see cref="DisplayTracker(Func{RazorLib.TextEditors.Models.TextEditorViewModel?}, Func{RazorLib.TextEditors.Models.TextEditorModels.TextEditorModel?})"/>
+	/// </summary>
 	[Fact]
-	public void DisplayTracker()
+	public void Constructor()
 	{
-	    //public DisplayTracker(
-     //       Func<TextEditorViewModel?> getViewModelFunc,
-     //       Func<TextEditorModel?> getModelFunc)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="DisplayTracker.GetViewModelFunc"/>
+	/// </summary>
 	[Fact]
 	public void GetViewModelFunc()
 	{
-		//public Func<TextEditorViewModel?> GetViewModelFunc { get; }
-		throw new NotImplementedException();
-	}
-	
-    [Fact]
-	public void GetModelFunc()
-	{
-		//public Func<TextEditorModel?> GetModelFunc { get; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="DisplayTracker.GetModelFunc"/>
+	/// </summary>
+	[Fact]
+	public void GetModelFunc()
+	{
+		throw new NotImplementedException();
+	}
+
+	/// <summary>
+	/// <see cref="DisplayTracker.Links"/>
+	/// </summary>
 	[Fact]
 	public void Links()
 	{
-		//public int Links { get; private set; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="DisplayTracker.IsFirstDisplay"/>
+	/// </summary>
 	[Fact]
 	public void IsFirstDisplay()
 	{
-		//public bool IsFirstDisplay { get; private set; } = true;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="DisplayTracker.IncrementLinks(Fluxor.IState{RazorLib.TextEditors.States.TextEditorModelState})"/>
+	/// </summary>
 	[Fact]
 	public void IncrementLinks()
 	{
-		//public void IncrementLinks(IState<TextEditorModelState> modelStateWrap)
 		throw new NotImplementedException();
 	}
 
-
+	/// <summary>
+	/// <see cref="DisplayTracker.DecrementLinks(Fluxor.IState{RazorLib.TextEditors.States.TextEditorModelState})"/>
+	/// </summary>
 	[Fact]
 	public void DecrementLinks()
 	{
-		//public void DecrementLinks(IState<TextEditorModelState> modelStateWrap)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="DisplayTracker.ConsumeIsFirstDisplay()"/>
+	/// </summary>
 	[Fact]
 	public void ConsumeIsFirstDisplay()
 	{
-		//public bool ConsumeIsFirstDisplay()
 		throw new NotImplementedException();
 	}
 
-	[Fact]
-	public void ModelsStateWrap_StateChanged()
-	{
-		//private async void ModelsStateWrap_StateChanged(object? sender, EventArgs e)
-		throw new NotImplementedException();
-	}
-
+	/// <summary>
+	/// <see cref="DisplayTracker.Dispose()"/>
+	/// </summary>
 	[Fact]
 	public void Dispose()
 	{
-		//public void Dispose()
 		throw new NotImplementedException();
 	}
 }

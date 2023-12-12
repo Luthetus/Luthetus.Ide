@@ -1,139 +1,182 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
-namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorModels.TextEditorModels;
+namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorModels;
 
+/// <summary>
+/// <see cref="TextEditorModelModifier"/>
+/// </summary>
 public partial class TextEditorModelModifierTests
 {
+	/// <summary>
+	/// <see cref="TextEditorModelModifier.ContentBag"/>
+	/// </summary>
 	[Fact]
 	public void ContentBag()
 	{
-		//public IList<RichCharacter> ContentBag => _contentBag is null ? _textEditorModel.ContentBag : _contentBag;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModelModifier.EditBlocksBag"/>
+	/// </summary>
 	[Fact]
 	public void EditBlocksBag()
 	{
-		//public IList<EditBlock> EditBlocksBag => _editBlocksBag is null ? _textEditorModel.EditBlocksBag : _editBlocksBag;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModelModifier.RowEndingPositionsBag"/>
+	/// </summary>
 	[Fact]
 	public void RowEndingPositionsBag()
 	{
-		//public IList<(int positionIndex, RowEndingKind rowEndingKind)> RowEndingPositionsBag => _rowEndingPositionsBag is null ? _textEditorModel.RowEndingPositionsBag : _rowEndingPositionsBag;
+		//public IList<(int positionIndex, RowEndingKind rowEndingKind)>  => _rowEndingPositionsBag is null ? _textEditorModel.RowEndingPositionsBag : _rowEndingPositionsBag;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModelModifier.RowEndingKindCountsBag"/>
+	/// </summary>
 	[Fact]
 	public void RowEndingKindCountsBag()
 	{
-		//public IList<(RowEndingKind rowEndingKind, int count)> RowEndingKindCountsBag => _rowEndingKindCountsBag is null ? _textEditorModel.RowEndingKindCountsBag : _rowEndingKindCountsBag;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModelModifier.PresentationModelsBag"/>
+	/// </summary>
 	[Fact]
 	public void PresentationModelsBag()
 	{
-		//public IList<TextEditorPresentationModel> PresentationModelsBag => _presentationModelsBag is null ? _textEditorModel.PresentationModelsBag : _presentationModelsBag;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModelModifier.TabKeyPositionsBag"/>
+	/// </summary>
 	[Fact]
 	public void TabKeyPositionsBag()
 	{
-		//public IList<int> TabKeyPositionsBag => _tabKeyPositionsBag is null ? _textEditorModel.TabKeyPositionsBag : _tabKeyPositionsBag;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModelModifier.OnlyRowEndingKind"/>
+	/// </summary>
 	[Fact]
 	public void OnlyRowEndingKind()
 	{
-		//public RowEndingKind? OnlyRowEndingKind => _onlyRowEndingKindWasModified ? _onlyRowEndingKind : _textEditorModel.OnlyRowEndingKind;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModelModifier.UsingRowEndingKind"/>
+	/// </summary>
 	[Fact]
 	public void UsingRowEndingKind()
 	{
-		//public RowEndingKind UsingRowEndingKind => _usingRowEndingKind ?? _textEditorModel.UsingRowEndingKind;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModelModifier.ResourceUri"/>
+	/// </summary>
 	[Fact]
 	public void ResourceUri()
 	{
-		//public ResourceUri ResourceUri => _resourceUri ?? _textEditorModel.ResourceUri;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModelModifier.ResourceLastWriteTime"/>
+	/// </summary>
 	[Fact]
 	public void ResourceLastWriteTime()
 	{
-		//public DateTime ResourceLastWriteTime => _resourceLastWriteTime ?? _textEditorModel.ResourceLastWriteTime;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModelModifier.FileExtension"/>
+	/// </summary>
 	[Fact]
 	public void FileExtension()
 	{
-		//public string FileExtension => _fileExtension ?? _textEditorModel.FileExtension;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModelModifier.DecorationMapper"/>
+	/// </summary>
 	[Fact]
 	public void DecorationMapper()
 	{
-		//public IDecorationMapper DecorationMapper => _decorationMapper ?? _textEditorModel.DecorationMapper;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModelModifier.CompilerService"/>
+	/// </summary>
 	[Fact]
 	public void CompilerService()
 	{
-		//public ICompilerService CompilerService => _compilerService ?? _textEditorModel.CompilerService;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModelModifier.TextEditorSaveFileHelper"/>
+	/// </summary>
 	[Fact]
 	public void TextEditorSaveFileHelper()
 	{
-		//public TextEditorSaveFileHelper TextEditorSaveFileHelper => _textEditorSaveFileHelper ?? _textEditorModel.TextEditorSaveFileHelper;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModelModifier.EditBlockIndex"/>
+	/// </summary>
 	[Fact]
 	public void EditBlockIndex()
 	{
-		//public int EditBlockIndex => _editBlockIndex ?? _textEditorModel.EditBlockIndex;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModelModifier.MostCharactersOnASingleRowTuple"/>
+	/// </summary>
 	[Fact]
 	public void MostCharactersOnASingleRowTuple()
 	{
-		//public (int rowIndex, int rowLength) MostCharactersOnASingleRowTuple => _mostCharactersOnASingleRowTuple ?? _textEditorModel.MostCharactersOnASingleRowTuple;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModelModifier.RenderStateKey"/>
+	/// </summary>
 	[Fact]
 	public void RenderStateKey()
 	{
-		//public Key<RenderState> RenderStateKey => _renderStateKey ?? _textEditorModel.RenderStateKey;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModelModifier.TextEditorKeymap"/>
+	/// </summary>
 	[Fact]
 	public void TextEditorKeymap()
 	{
-		//public Keymap TextEditorKeymap => _textEditorKeymap ?? _textEditorModel.TextEditorKeymap;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModelModifier.TextEditorOptions"/>
+	/// </summary>
 	[Fact]
 	public void TextEditorOptions()
 	{
-		//public TextEditorOptions? TextEditorOptions => _textEditorOptions ?? _textEditorModel.TextEditorOptions;
 		throw new NotImplementedException();
 	}
 }

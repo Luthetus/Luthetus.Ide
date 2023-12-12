@@ -1,74 +1,91 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.Internals;
 
+/// <summary>
+/// <see cref="TextEditorRenderBatch"/>
+/// </summary>
 public class TextEditorRenderBatchTests
 {
+	/// <summary>
+	/// <see cref="TextEditorRenderBatch(RazorLib.TextEditors.Models.TextEditorModels.TextEditorModel?, RazorLib.TextEditors.Models.TextEditorViewModel?, RazorLib.Options.Models.TextEditorOptions?, string, int)"/>
+	/// </summary>
 	[Fact]
-	public void TextEditorRenderBatch()
+	public void Constructor()
 	{
-		//	record TextEditorRenderBatch(
-		//		TextEditorModel? Model,
-		//		TextEditorViewModel? ViewModel,
-		//		TextEditorOptions? Options,
-		//		string FontFamily,
-		//		int FontSizeInPixels)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorRenderBatch.Model"/>
+	/// </summary>
 	[Fact]
 	public void Model()
 	{
-		// TextEditorModel? Model
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorRenderBatch.ViewModel"/>
+	/// </summary>
 	[Fact]
 	public void ViewModel()
 	{
-		// TextEditorViewModel? ViewModel
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorRenderBatch.Options"/>
+	/// </summary>
 	[Fact]
 	public void Options()
 	{
-		// TextEditorOptions? Options
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorRenderBatch.FontFamily"/>
+	/// </summary>
 	[Fact]
 	public void FontFamily()
 	{
-		// string FontFamily
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorRenderBatch.FontSizeInPixels"/>
+	/// </summary>
 	[Fact]
 	public void FontSizeInPixels()
 	{
-		// int FontSizeInPixels
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorRenderBatch.FontFamilyCssStyleString"/>
+	/// </summary>
 	[Fact]
 	public void FontFamilyCssStyleString()
 	{
-		//public string FontFamilyCssStyleString => $"font-family: {FontFamily};";
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorRenderBatch.FontSizeInPixelsCssStyleString"/>
+	/// </summary>
 	[Fact]
 	public void FontSizeInPixelsCssStyleString()
 	{
-		//public string FontSizeInPixelsCssStyleString => $"font-size: {FontSizeInPixels.ToCssValue()}px;";
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorRenderBatch.IsValid"/>
+	/// </summary>
 	[Fact]
 	public void IsValid()
 	{
-		//public bool IsValid;
 		throw new NotImplementedException();
 	}
 }

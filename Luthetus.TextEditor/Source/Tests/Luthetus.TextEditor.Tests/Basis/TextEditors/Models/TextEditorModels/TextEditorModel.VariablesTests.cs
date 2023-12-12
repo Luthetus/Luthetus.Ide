@@ -1,153 +1,199 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorModels;
 
+/// <summary>
+/// <see cref="TextEditorModel"/>
+/// </summary>
 public partial class TextEditorModelVariablesTests
 {
+	/// <summary>
+	/// <see cref="TextEditorModel.ContentBag"/>
+	/// </summary>
 	[Fact]
 	public void ContentBag()
 	{
-		//public ImmutableList<RichCharacter> ContentBag = ImmutableList<RichCharacter>.Empty;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModel.EditBlocksBag"/>
+	/// </summary>
 	[Fact]
 	public void EditBlocksBag()
 	{
-		//public ImmutableList<EditBlock> EditBlocksBag { get; init; } = ImmutableList<EditBlock>.Empty;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModel.RowEndingPositionsBag"/>
+	/// </summary>
 	[Fact]
 	public void RowEndingPositionsBag()
 	{
-		//public ImmutableList<(int positionIndex, RowEndingKind rowEndingKind)> RowEndingPositionsBag { get; init; } = ImmutableList<(int positionIndex, RowEndingKind rowEndingKind)>.Empty;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModel.RowEndingKindCountsBag"/>
+	/// </summary>
 	[Fact]
 	public void RowEndingKindCountsBag()
 	{
-		//public ImmutableList<(RowEndingKind rowEndingKind, int count)> RowEndingKindCountsBag { get; init; } = ImmutableList<(RowEndingKind rowEndingKind, int count)>.Empty;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModel.PresentationModelsBag"/>
+	/// </summary>
 	[Fact]
 	public void PresentationModelsBag()
 	{
-		//public ImmutableList<TextEditorPresentationModel> PresentationModelsBag { get; init; } = ImmutableList<TextEditorPresentationModel>.Empty;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModel.TabKeyPositionsBag"/>
+	/// </summary>
 	[Fact]
 	public void TabKeyPositionsBag()
 	{
-		//public ImmutableList<int> TabKeyPositionsBag = ImmutableList<int>.Empty;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModel.OnlyRowEndingKind"/>
+	/// </summary>
 	[Fact]
 	public void OnlyRowEndingKind()
 	{
-		//public RowEndingKind? OnlyRowEndingKind { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModel.UsingRowEndingKind"/>
+	/// </summary>
 	[Fact]
 	public void UsingRowEndingKind()
 	{
-		//public RowEndingKind UsingRowEndingKind { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModel.ResourceUri"/>
+	/// </summary>
 	[Fact]
 	public void ResourceUri()
 	{
-		//public ResourceUri ResourceUri { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModel.ResourceLastWriteTime"/>
+	/// </summary>
 	[Fact]
 	public void ResourceLastWriteTime()
 	{
-		//public DateTime ResourceLastWriteTime { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModel.FileExtension"/>
+	/// </summary>
 	[Fact]
 	public void FileExtension()
 	{
-		//public string FileExtension { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModel.DecorationMapper"/>
+	/// </summary>
 	[Fact]
 	public void DecorationMapper()
 	{
-		//public IDecorationMapper DecorationMapper { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModel.CompilerService"/>
+	/// </summary>
 	[Fact]
 	public void CompilerService()
 	{
-		//public ICompilerService CompilerService { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModel.TextEditorSaveFileHelper"/>
+	/// </summary>
 	[Fact]
 	public void TextEditorSaveFileHelper()
 	{
-		//public TextEditorSaveFileHelper TextEditorSaveFileHelper { get; init; } = new();
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModel.EditBlockIndex"/>
+	/// </summary>
 	[Fact]
 	public void EditBlockIndex()
 	{
-		//public int EditBlockIndex { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModel.MostCharactersOnASingleRowTuple"/>
+	/// </summary>
 	[Fact]
 	public void MostCharactersOnASingleRowTuple()
 	{
-		//public (int rowIndex, int rowLength) MostCharactersOnASingleRowTuple { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModel.RenderStateKey"/>
+	/// </summary>
 	[Fact]
 	public void RenderStateKey()
 	{
-		//public Key<RenderState> RenderStateKey { get; init; } = Key<RenderState>.NewKey();
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModel.TextEditorKeymap"/>
+	/// </summary>
 	[Fact]
 	public void TextEditorKeymap()
 	{
-		//public Keymap TextEditorKeymap { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModel.TextEditorOptions"/>
+	/// </summary>
 	[Fact]
 	public void TextEditorOptions()
 	{
-		//public TextEditorOptions? TextEditorOptions { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModel.RowCount"/>
+	/// </summary>
 	[Fact]
 	public void RowCount()
 	{
-		//public int RowCount => RowEndingPositionsBag.Count;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModel.DocumentLength"/>
+	/// </summary>
 	[Fact]
 	public void DocumentLength()
 	{
-		//public int DocumentLength => ContentBag.Count;
 		throw new NotImplementedException();
 	}
 }

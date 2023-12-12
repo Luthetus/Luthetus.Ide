@@ -1,34 +1,46 @@
 using Xunit;
+using Luthetus.TextEditor.RazorLib.Rows.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Rows.Models;
 
+/// <summary>
+/// <see cref="RowEndingKindExtensions"/>
+/// </summary>
 public class RowEndingKindExtensionsTests
 {
+	/// <summary>
+	/// <see cref="RowEndingKindExtensions.AsCharacters(RowEndingKind)"/>
+	/// </summary>
 	[Fact]
 	public void AsCharacters()
 	{
-    	//public static string AsCharacters(this RowEndingKind rowEndingKind)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="RowEndingKindExtensions.AsCharactersHtmlEscaped(RowEndingKind)"/>
+	/// </summary>
 	[Fact]
 	public void AsCharactersHtmlEscaped()
 	{
-    	//public static string AsCharactersHtmlEscaped(this RowEndingKind rowEndingKind)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="RowEndingKindExtensions.AsFriendlyName(RowEndingKind)"/>
+	/// </summary>
 	[Fact]
 	public void AsFriendlyName()
 	{
-		//public static string AsFriendlyName(this RowEndingKind rowEndingKind)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="RowEndingKindExtensions.GetRowEndingsUserAllowedToUse(RowEndingKind)"/>
+	/// </summary>
 	[Fact]
 	public void GetRowEndingsUserAllowedToUse()
 	{
-		//public static ImmutableArray<RowEndingKind> GetRowEndingsUserAllowedToUse(this RowEndingKind rowEndingKind)
 		throw new NotImplementedException();
 	}
 }

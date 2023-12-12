@@ -1,111 +1,145 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.Internals;
 
+/// <summary>
+/// <see cref="TextEditorViewModelDisplayOptions"/>
+/// </summary>
 public class TextEditorViewModelDisplayOptionsTests
 {
+	/// <summary>
+	/// <see cref="TextEditorViewModelDisplayOptions.WrapperStyleCssString"/>
+	/// </summary>
 	[Fact]
 	public void WrapperStyleCssString()
 	{
-		//public string WrapperStyleCssString { get; set; } = string.Empty;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorViewModelDisplayOptions.WrapperClassCssString"/>
+	/// </summary>
 	[Fact]
 	public void WrapperClassCssString()
 	{
-		//public string WrapperClassCssString { get; set; } = string.Empty;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorViewModelDisplayOptions.TextEditorStyleCssString"/>
+	/// </summary>
 	[Fact]
 	public void TextEditorStyleCssString()
 	{
-		//public string TextEditorStyleCssString { get; set; } = string.Empty;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorViewModelDisplayOptions.TextEditorClassCssString"/>
+	/// </summary>
 	[Fact]
 	public void TextEditorClassCssString()
 	{
-		//public string TextEditorClassCssString { get; set; } = string.Empty;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorViewModelDisplayOptions.TabIndex"/>
+	/// </summary>
 	[Fact]
 	public void TabIndex()
 	{
-		//public int TabIndex { get; set; } = -1;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorViewModelDisplayOptions.ContextMenuRenderFragmentOverride"/>
+	/// </summary>
 	[Fact]
 	public void ContextMenuRenderFragmentOverride()
 	{
-		//public RenderFragment? ContextMenuRenderFragmentOverride { get; set; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorViewModelDisplayOptions.AutoCompleteMenuRenderFragmentOverride"/>
+	/// </summary>
 	[Fact]
 	public void AutoCompleteMenuRenderFragmentOverride()
 	{
-		//public RenderFragment? AutoCompleteMenuRenderFragmentOverride { get; set; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorViewModelDisplayOptions.AfterOnKeyDownAsync"/>
+	/// </summary>
 	[Fact]
 	public void AfterOnKeyDownAsync()
 	{
-		//public Func<TextEditorModel, ImmutableArray<TextEditorCursorSnapshot>, KeyboardEventArgs, Func<TextEditorMenuKind, bool, Task>, Task>? AfterOnKeyDownAsync { get; set; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorViewModelDisplayOptions.IncludeHeaderHelperComponent"/>
+	/// </summary>
 	[Fact]
 	public void IncludeHeaderHelperComponent()
 	{
-		//public bool IncludeHeaderHelperComponent { get; set; } = true;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorViewModelDisplayOptions.HeaderButtonKinds"/>
+	/// </summary>
 	[Fact]
 	public void HeaderButtonKinds()
 	{
-		//public ImmutableArray<TextEditorHeaderButtonKind>? HeaderButtonKinds { get; set; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorViewModelDisplayOptions.IncludeFooterHelperComponent"/>
+	/// </summary>
 	[Fact]
 	public void IncludeFooterHelperComponent()
 	{
-		//public bool IncludeFooterHelperComponent { get; set; } = true;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorViewModelDisplayOptions.IncludeContextMenuHelperComponent"/>
+	/// </summary>
 	[Fact]
 	public void IncludeContextMenuHelperComponent()
 	{
-		//public bool IncludeContextMenuHelperComponent { get; set; } = true;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorViewModelDisplayOptions.RegisterModelAction"/>
+	/// </summary>
 	[Fact]
 	public void RegisterModelAction()
 	{
-		//public Action<ResourceUri>? RegisterModelAction { get; set; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorViewModelDisplayOptions.RegisterViewModelAction"/>
+	/// </summary>
 	[Fact]
 	public void RegisterViewModelAction()
 	{
-		//public Action<ResourceUri>? RegisterViewModelAction { get; set; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorViewModelDisplayOptions.ShowViewModelAction"/>
+	/// </summary>
 	[Fact]
 	public void ShowViewModelAction()
 	{
-		//public Action<Key<TextEditorViewModel>>? ShowViewModelAction { get; set; }
 		throw new NotImplementedException();
 	}
 }

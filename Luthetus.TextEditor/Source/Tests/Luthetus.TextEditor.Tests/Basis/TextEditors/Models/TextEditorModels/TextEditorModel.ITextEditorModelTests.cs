@@ -1,48 +1,64 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorModels;
 
+/// <summary>
+/// <see cref="TextEditorModel"/>
+/// </summary>
 public class TextEditorModelITextEditorModelTests
 {
+	/// <summary>
+	/// <see cref="TextEditorModel.ContentBag"/>
+	/// </summary>
 	[Fact]
-	public void ContentBag()
+	public void ContentBag_InterfaceImplementation()
 	{
-		//IList<RichCharacter> ITextEditorModel.ContentBag => ContentBag;
-		throw new NotImplementedException();
-	}
-	
-	[Fact]
-	public void EditBlocksBag()
-	{
-		//IList<EditBlock> ITextEditorModel.EditBlocksBag => EditBlocksBag;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModel.EditBlocksBag"/>
+	/// </summary>
 	[Fact]
-	public void RowEndingPositionsBag()
+	public void EditBlocksBag_InterfaceImplementation()
 	{
-		//IList<(int positionIndex, RowEndingKind rowEndingKind)> ITextEditorModel.RowEndingPositionsBag => RowEndingPositionsBag;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModel.RowEndingPositionsBag "/>
+	/// </summary>
 	[Fact]
-	public void RowEndingKindCountsBag()
+	public void RowEndingPositionsBag_InterfaceImplementation()
 	{
-		//IList<(RowEndingKind rowEndingKind, int count)> ITextEditorModel.RowEndingKindCountsBag => RowEndingKindCountsBag;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModel.RowEndingKindCountsBag"/>
+	/// </summary>
 	[Fact]
-	public void PresentationModelsBag()
+	public void RowEndingKindCountsBag_InterfaceImplementation()
 	{
-		//IList<TextEditorPresentationModel> ITextEditorModel.PresentationModelsBag => PresentationModelsBag;
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModel.PresentationModelsBag"/>
+	/// </summary>
 	[Fact]
-	public void TabKeyPositionsBag()
+	public void PresentationModelsBag_InterfaceImplementation()
 	{
-		//IList<int> ITextEditorModel.TabKeyPositionsBag => TabKeyPositionsBag;
+		throw new NotImplementedException();
+	}
+
+	/// <summary>
+	/// <see cref="TextEditorModel.TabKeyPositionsBag"/>
+	/// </summary>
+	[Fact]
+	public void TabKeyPositionsBag_InterfaceImplementation()
+	{
 		throw new NotImplementedException();
 	}
 }

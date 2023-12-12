@@ -1,41 +1,55 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.Internals;
 
+/// <summary>
+/// <see cref="BatchScrollEvents"/>
+/// </summary>
 public class BatchScrollEventsTests
 {
+	/// <summary>
+	/// <see cref="BatchScrollEvents.ThrottleMutateScrollHorizontalPositionByPixels"/>
+	/// </summary>
 	[Fact]
 	public void ThrottleMutateScrollHorizontalPositionByPixels()
 	{
-		//public IThrottle ThrottleMutateScrollHorizontalPositionByPixels { get; } = new Throttle(IThrottle.DefaultThrottleTimeSpan);
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="BatchScrollEvents.ThrottleMutateScrollVerticalPositionByPixels"/>
+	/// </summary>
 	[Fact]
 	public void ThrottleMutateScrollVerticalPositionByPixels()
 	{
-		//public IThrottle ThrottleMutateScrollVerticalPositionByPixels { get; } = new Throttle(IThrottle.DefaultThrottleTimeSpan);
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="BatchScrollEvents.ThrottleSetScrollPosition"/>
+	/// </summary>
 	[Fact]
 	public void ThrottleSetScrollPosition()
 	{
-		//public IThrottle ThrottleSetScrollPosition { get; } = new Throttle(IThrottle.DefaultThrottleTimeSpan);
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="BatchScrollEvents.MutateScrollHorizontalPositionByPixels"/>
+	/// </summary>
 	[Fact]
 	public void MutateScrollHorizontalPositionByPixels()
 	{
-		//public double MutateScrollHorizontalPositionByPixels { get; set; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="BatchScrollEvents.MutateScrollVerticalPositionByPixels"/>
+	/// </summary>
 	[Fact]
 	public void MutateScrollVerticalPositionByPixels()
 	{
-		//public double MutateScrollVerticalPositionByPixels { get; set; }
 		throw new NotImplementedException();
 	}
 }
