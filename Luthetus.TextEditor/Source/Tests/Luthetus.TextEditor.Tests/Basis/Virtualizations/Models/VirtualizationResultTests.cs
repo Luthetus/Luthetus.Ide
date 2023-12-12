@@ -1,76 +1,91 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Virtualizations.Models;
 
+/// <summary>
+/// <see cref="VirtualizationResult{T}"/>
+/// </summary>
 public record VirtualizationResultTests
 {
+	/// <summary>
+	/// <see cref="VirtualizationResult{T}.VirtualizationResult(System.Collections.Immutable.ImmutableArray{VirtualizationEntry{T}}, VirtualizationBoundary, VirtualizationBoundary, VirtualizationBoundary, VirtualizationBoundary, RazorLib.JavaScriptObjects.Models.TextEditorMeasurements, RazorLib.JavaScriptObjects.Models.CharAndRowMeasurements)"/>
+	/// </summary>
 	[Fact]
-	public void VirtualizationResult()
+	public void Constructor()
 	{
-	    //public VirtualizationResult(
-     //       ImmutableArray<VirtualizationEntry<T>> entries,
-     //       VirtualizationBoundary leftVirtualizationBoundary,
-     //       VirtualizationBoundary rightVirtualizationBoundary,
-     //       VirtualizationBoundary topVirtualizationBoundary,
-     //       VirtualizationBoundary bottomVirtualizationBoundary,
-     //       TextEditorMeasurements textEditorMeasurements,
-     //       CharAndRowMeasurements charAndRowMeasurements)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="VirtualizationResult{T}.GetEmptyRichCharacters()"/>
+	/// </summary>
 	[Fact]
 	public void GetEmptyRichCharacters()
 	{
-	    //public static VirtualizationResult<List<RichCharacter>> GetEmptyRichCharacters()
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="VirtualizationResult{T}.EntryBag"/>
+	/// </summary>
 	[Fact]
 	public void EntryBag()
 	{
-		//public ImmutableArray<VirtualizationEntry<T>> EntryBag { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="VirtualizationResult{T}.LeftVirtualizationBoundary"/>
+	/// </summary>
 	[Fact]
 	public void LeftVirtualizationBoundary()
 	{
-		//public VirtualizationBoundary LeftVirtualizationBoundary { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="VirtualizationResult{T}.RightVirtualizationBoundary"/>
+	/// </summary>
 	[Fact]
 	public void RightVirtualizationBoundary()
 	{
-		//public VirtualizationBoundary RightVirtualizationBoundary { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="VirtualizationResult{T}.TopVirtualizationBoundary"/>
+	/// </summary>
 	[Fact]
 	public void TopVirtualizationBoundary()
 	{
-		//public VirtualizationBoundary TopVirtualizationBoundary { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="VirtualizationResult{T}.BottomVirtualizationBoundary"/>
+	/// </summary>
 	[Fact]
 	public void BottomVirtualizationBoundary()
 	{
-		//public VirtualizationBoundary BottomVirtualizationBoundary { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="VirtualizationResult{T}.TextEditorMeasurements"/>
+	/// </summary>
 	[Fact]
 	public void TextEditorMeasurements()
 	{
-		//public TextEditorMeasurements TextEditorMeasurements { get; init; }
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="VirtualizationResult{T}.CharAndRowMeasurements"/>
+	/// </summary>
 	[Fact]
 	public void CharAndRowMeasurements()
 	{
-		//public CharAndRowMeasurements CharAndRowMeasurements { get; set; }
 		throw new NotImplementedException();
 	}
 }

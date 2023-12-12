@@ -1,20 +1,28 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.TextEditors.States;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.States;
 
+/// <summary>
+/// <see cref="TextEditorModelState"/>
+/// </summary>
 public class TextEditorModelStateMainTests
 {
+	/// <summary>
+	/// <see cref="TextEditorModelState()"/>
+	/// </summary>
 	[Fact]
-	public void TextEditorModelState()
+	public void Constructor()
 	{
-		//private TextEditorModelState()
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModelState.ModelBag"/>
+	/// </summary>
 	[Fact]
 	public void ModelBag()
 	{
-		//public ImmutableList<TextEditorModel> ModelBag { get; init; }
 		throw new NotImplementedException();
 	}
 }

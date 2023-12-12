@@ -1,13 +1,12 @@
 ﻿using Fluxor;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels.TextEditorModels;
 using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.States;
 
 public partial class TextEditorModelState
 {
-    private class Reducer
+    public class Reducer
     {
         [ReducerMethod]
         public static TextEditorModelState ReduceRegisterAction(

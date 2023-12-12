@@ -1,132 +1,136 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.TextEditors.States;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.States;
 
+/// <summary>
+/// <see cref="TextEditorModelState"/>
+/// </summary>
 public class TextEditorModelStateReducerTests
 {
+	/// <summary>
+	/// <see cref="TextEditorModelState.Reducer.ReduceRegisterAction(TextEditorModelState, TextEditorModelState.RegisterAction)"/>
+	/// </summary>
 	[Fact]
 	public void ReduceRegisterAction()
 	{
-		//public static TextEditorModelState ReduceRegisterAction(
-	//       TextEditorModelState inState,
-	//       RegisterAction registerAction)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModelState.Reducer.ReduceForceRerenderAction(TextEditorModelState, TextEditorModelState.ForceRerenderAction)"/>
+	/// </summary>
 	[Fact]
 	public void ReduceForceRerenderAction()
 	{
-		//public static TextEditorModelState ReduceForceRerenderAction(
-	//       TextEditorModelState inState,
-	//       ForceRerenderAction forceRerenderAction)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModelState.Reducer.ReduceInsertTextAction(TextEditorModelState, TextEditorModelState.InsertTextAction)"/>
+	/// </summary>
 	[Fact]
 	public void ReduceInsertTextAction()
 	{
-		//public static TextEditorModelState ReduceInsertTextAction(
-	//       TextEditorModelState inState,
-	//       InsertTextAction insertTextAction)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModelState.Reducer.ReduceKeyboardEventAction(TextEditorModelState, TextEditorModelState.KeyboardEventAction)"/>
+	/// </summary>
 	[Fact]
 	public void ReduceKeyboardEventAction()
 	{
-		//public static TextEditorModelState ReduceKeyboardEventAction(
-	 //       TextEditorModelState inState,
-	 //       KeyboardEventAction keyboardEventAction)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModelState.Reducer.ReduceDeleteTextByMotionAction(TextEditorModelState, TextEditorModelState.DeleteTextByMotionAction)"/>
+	/// </summary>
 	[Fact]
 	public void ReduceDeleteTextByMotionAction()
 	{
-		//public static TextEditorModelState ReduceDeleteTextByMotionAction(
-	 //       TextEditorModelState inState,
-	 //       DeleteTextByMotionAction deleteTextByMotionAction)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModelState.Reducer.ReduceDeleteTextByRangeAction(TextEditorModelState, TextEditorModelState.DeleteTextByRangeAction)"/>
+	/// </summary>
 	[Fact]
 	public void ReduceDeleteTextByRangeAction()
 	{
-		//public static TextEditorModelState ReduceDeleteTextByRangeAction(
-	 //       TextEditorModelState inState,
-	 //       DeleteTextByRangeAction deleteTextByRangeAction)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModelState.Reducer.ReduceRegisterPresentationModelAction(TextEditorModelState, TextEditorModelState.RegisterPresentationModelAction)"/>
+	/// </summary>
 	[Fact]
 	public void ReduceRegisterPresentationModelAction()
 	{
-		//public static TextEditorModelState ReduceRegisterPresentationModelAction(
-	//       TextEditorModelState inState,
-	//       RegisterPresentationModelAction registerPresentationModelAction)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModelState.Reducer.ReduceCalculatePresentationModelAction(TextEditorModelState, TextEditorModelState.CalculatePresentationModelAction)"/>
+	/// </summary>
 	[Fact]
 	public void ReduceCalculatePresentationModelAction()
 	{
-		//public static TextEditorModelState ReduceCalculatePresentationModelAction(
-	 //       TextEditorModelState inState,
-	 //       CalculatePresentationModelAction calculatePresentationModelAction)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModelState.Reducer.ReduceUndoEditAction(TextEditorModelState, TextEditorModelState.UndoEditAction)"/>
+	/// </summary>
 	[Fact]
 	public void ReduceUndoEditAction()
 	{
-		//public static TextEditorModelState ReduceUndoEditAction(
-	 //       TextEditorModelState inState,
-	 //       UndoEditAction undoEditAction)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModelState.Reducer.ReduceRedoEditAction(TextEditorModelState, TextEditorModelState.RedoEditAction)"/>
+	/// </summary>
 	[Fact]
 	public void ReduceRedoEditAction()
 	{
-		//public static TextEditorModelState ReduceRedoEditAction(
-	 //       TextEditorModelState inState,
-	 //       RedoEditAction redoEditAction)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModelState.Reducer.ReduceReloadAction(TextEditorModelState, TextEditorModelState.ReloadAction)"/>
+	/// </summary>
 	[Fact]
 	public void ReduceReloadAction()
 	{
-		//public static TextEditorModelState ReduceReloadAction(
-	 //       TextEditorModelState inState,
-	 //       ReloadAction reloadAction
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModelState.Reducer.ReduceSetResourceDataAction(TextEditorModelState, TextEditorModelState.SetResourceDataAction)"/>
+	/// </summary>
 	[Fact]
 	public void ReduceSetResourceDataAction()
 	{
-		//public static TextEditorModelState ReduceSetResourceDataAction(
-	 //       TextEditorModelState inState,
-	 //       SetResourceDataAction setResourceDataAction)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModelState.Reducer.ReduceDisposeAction(TextEditorModelState, TextEditorModelState.DisposeAction)"/>
+	/// </summary>
 	[Fact]
 	public void ReduceDisposeAction()
 	{
-		//public static TextEditorModelState ReduceDisposeAction(
-	 //       TextEditorModelState inState,
-	 //       DisposeAction disposeAction)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorModelState.Reducer.ReduceSetUsingRowEndingKindAction(TextEditorModelState, TextEditorModelState.SetUsingRowEndingKindAction)"/>
+	/// </summary>
 	[Fact]
 	public void ReduceSetUsingRowEndingKindAction()
 	{
-		//public static TextEditorModelState ReduceSetUsingRowEndingKindAction(
-	 //       TextEditorModelState inState,
-	 //       SetUsingRowEndingKindAction setUsingRowEndingKindAction)
 		throw new NotImplementedException();
 	}
 }

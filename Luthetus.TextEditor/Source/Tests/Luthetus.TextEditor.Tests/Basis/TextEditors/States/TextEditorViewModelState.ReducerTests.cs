@@ -1,33 +1,37 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.TextEditors.States;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.States;
 
+/// <summary>
+/// <see cref="TextEditorViewModelState"/>
+/// </summary>
 public class TextEditorViewModelStateReducerTests
 {
+	/// <summary>
+	/// <see cref="TextEditorViewModelState.Reducer.ReduceRegisterAction(TextEditorViewModelState, TextEditorViewModelState.RegisterAction)"/>
+	/// </summary>
 	[Fact]
 	public void ReduceRegisterAction()
 	{
-		//public static TextEditorViewModelState ReduceRegisterAction(
-	//       TextEditorViewModelState inState,
-	//       RegisterAction registerAction)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorViewModelState.Reducer.ReduceDisposeAction(TextEditorViewModelState, TextEditorViewModelState.DisposeAction)"/>
+	/// </summary>
 	[Fact]
 	public void ReduceDisposeAction()
 	{
-		//public static TextEditorViewModelState ReduceDisposeAction(
-	 //       TextEditorViewModelState inState,
-	 //       DisposeAction disposeAction)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorViewModelState.Reducer.ReduceSetViewModelWithAction(TextEditorViewModelState, TextEditorViewModelState.SetViewModelWithAction)"/>
+	/// </summary>
 	[Fact]
 	public void ReduceSetViewModelWithAction()
 	{
-		//public static TextEditorViewModelState ReduceSetViewModelWithAction(
-	 //       TextEditorViewModelState inState,
-	 //       SetViewModelWithAction setViewModelWithAction)
 		throw new NotImplementedException();
 	}
 }

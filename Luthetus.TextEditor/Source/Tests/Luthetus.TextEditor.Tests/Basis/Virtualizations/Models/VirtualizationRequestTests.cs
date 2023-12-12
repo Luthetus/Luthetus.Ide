@@ -1,29 +1,37 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Virtualizations.Models;
 
+/// <summary>
+/// <see cref="VirtualizationRequest"/>
+/// </summary>
 public class VirtualizationRequestTests
 {
+	/// <summary>
+	/// <see cref="VirtualizationRequest(VirtualizationScrollPosition, System.Threading.CancellationToken)"/>
+	/// </summary>
 	[Fact]
-	public void VirtualizationRequest()
+	public void Constructor()
 	{
-		//	record VirtualizationRequest(
-		//		VirtualizationScrollPosition ScrollPosition,
-		//		CancellationToken CancellationToken)
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="VirtualizationRequest.ScrollPosition"/>
+	/// </summary>
 	[Fact]
 	public void ScrollPosition()
 	{
-		//	VirtualizationScrollPosition ScrollPosition
 		throw new NotImplementedException();
 	}
-	
+
+	/// <summary>
+	/// <see cref="VirtualizationRequest.CancellationToken"/>
+	/// </summary>
 	[Fact]
 	public void CancellationToken()
 	{
-		// CancellationToken CancellationToken
 		throw new NotImplementedException();
 	}
 }

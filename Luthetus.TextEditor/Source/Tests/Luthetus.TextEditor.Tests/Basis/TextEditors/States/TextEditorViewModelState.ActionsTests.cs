@@ -1,32 +1,37 @@
 ﻿using Xunit;
+using Luthetus.TextEditor.RazorLib.TextEditors.States;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.States;
 
+/// <summary>
+/// <see cref="TextEditorViewModelState"/>
+/// </summary>
 public class TextEditorViewModelStateActionsTests
 {
+	/// <summary>
+	/// <see cref="TextEditorViewModelState.DisposeAction"/>
+	/// </summary>
 	[Fact]
 	public void DisposeAction()
 	{
-		//public record DisposeAction(Key<TextEditorViewModel> ViewModelKey);
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorViewModelState.RegisterAction"/>
+	/// </summary>
 	[Fact]
 	public void RegisterAction()
 	{
-		//public record RegisterAction(
-	//       Key<TextEditorViewModel> ViewModelKey,
-	//       ResourceUri ResourceUri,
-	//       ITextEditorService TextEditorService);
 		throw new NotImplementedException();
 	}
 
+	/// <summary>
+	/// <see cref="TextEditorViewModelState.SetViewModelWithAction"/>
+	/// </summary>
 	[Fact]
 	public void SetViewModelWithAction()
 	{
-		//public record SetViewModelWithAction(
-	 //       Key<TextEditorViewModel> ViewModelKey,
-	 //       Func<TextEditorViewModel, TextEditorViewModel> WithFunc);
 		throw new NotImplementedException();
 	}
 }

@@ -7,7 +7,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.States;
 
 public partial class TextEditorViewModelState
 {
-    private class Reducer
+    public class Reducer
     {
         [ReducerMethod]
         public static TextEditorViewModelState ReduceRegisterAction(
