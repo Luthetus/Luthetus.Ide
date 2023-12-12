@@ -1,5 +1,5 @@
 ﻿using Fluxor;
-using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.States;
 
