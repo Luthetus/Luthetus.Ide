@@ -267,27 +267,29 @@ public partial class TextEditorModelModifier
 
         EnsureUndoPoint(TextEditKind.Insertion);
 
-        foreach (var cursor in keyboardEventAction.CursorBag)
+        var cursorModifierBag = keyboardEventAction.CursorBag.Select(x => new TextEditorCursorModifier(x));
+
+        foreach (var cursorModifier in cursorModifierBag)
         {
-            if (TextEditorSelectionHelper.HasSelectedText(cursor.Selection))
+            if (TextEditorSelectionHelper.HasSelectedText(cursorModifier))
             {
                 PerformDeletions(keyboardEventAction);
 
-                var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursor.Selection);
+                var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
 
                 var lowerRowData = this.FindRowInformation(selectionBounds.lowerPositionIndexInclusive);
 
                 var lowerColumnIndex = selectionBounds.lowerPositionIndexInclusive - lowerRowData.rowStartPositionIndex;
 
                 // Move cursor to lower bound of text selection
-                cursor.RowIndex = lowerRowData.rowIndex;
-                cursor.ColumnIndex = lowerColumnIndex;
+                cursorModifier.RowIndex = lowerRowData.rowIndex;
+                cursorModifier.ColumnIndex = lowerColumnIndex;
 
                 var nextEdit = keyboardEventAction with
                 {
                     CursorBag = new[]
                     {
-                        cursor
+                        cursorModifier.ToCursor()
                     }.ToImmutableArray()
                 };
 
@@ -297,8 +299,8 @@ public partial class TextEditorModelModifier
                 return;
             }
 
-            var startOfRowPositionIndex = this.GetStartOfRowTuple(cursor.RowIndex).positionIndex;
-            var cursorPositionIndex = startOfRowPositionIndex + cursor.ColumnIndex;
+            var startOfRowPositionIndex = this.GetStartOfRowTuple(cursorModifier.RowIndex).positionIndex;
+            var cursorPositionIndex = startOfRowPositionIndex + cursorModifier.ColumnIndex;
 
             // If cursor is out of bounds then continue
             if (cursorPositionIndex > ContentBag.Count)
@@ -333,17 +335,17 @@ public partial class TextEditorModelModifier
 
                 _contentBag.InsertRange(cursorPositionIndex, richCharacters);
 
-                RowEndingPositionsBag.Insert(cursor.RowIndex,
+                RowEndingPositionsBag.Insert(cursorModifier.RowIndex,
                     (cursorPositionIndex + characterCountInserted, rowEndingKindToInsert));
 
                 MutateRowEndingKindCount(UsingRowEndingKind, 1);
 
-                var rowIndex = cursor.RowIndex;
-                var columnIndex = cursor.ColumnIndex;
+                var rowIndex = cursorModifier.RowIndex;
+                var columnIndex = cursorModifier.ColumnIndex;
 
-                cursor.RowIndex = rowIndex + 1;
-                cursor.ColumnIndex = 0;
-                cursor.PreferredColumnIndex = cursor.ColumnIndex;
+                cursorModifier.RowIndex = rowIndex + 1;
+                cursorModifier.ColumnIndex = 0;
+                cursorModifier.PreferredColumnIndex = cursorModifier.ColumnIndex;
             }
             else
             {
@@ -374,17 +376,17 @@ public partial class TextEditorModelModifier
 
                 ContentBag.Insert(cursorPositionIndex, richCharacterToInsert);
 
-                var rowIndex = cursor.RowIndex;
-                var columnIndex = cursor.ColumnIndex;
+                var rowIndex = cursorModifier.RowIndex;
+                var columnIndex = cursorModifier.ColumnIndex;
 
-                cursor.RowIndex = rowIndex;
-                cursor.ColumnIndex = columnIndex + 1;
-                cursor.PreferredColumnIndex = cursor.ColumnIndex;
+                cursorModifier.RowIndex = rowIndex;
+                cursorModifier.ColumnIndex = columnIndex + 1;
+                cursorModifier.PreferredColumnIndex = cursorModifier.ColumnIndex;
             }
 
             var firstRowIndexToModify = wasEnterCode
-                ? cursor.RowIndex + 1
-                : cursor.RowIndex;
+                ? cursorModifier.RowIndex + 1
+                : cursorModifier.RowIndex;
 
             for (var i = firstRowIndexToModify; i < RowEndingPositionsBag.Count; i++)
             {
@@ -463,10 +465,12 @@ public partial class TextEditorModelModifier
 
         EnsureUndoPoint(TextEditKind.Deletion);
 
-        foreach (var cursor in keyboardEventAction.CursorBag)
+        var cursorModifierBag = keyboardEventAction.CursorBag.Select(x => new TextEditorCursorModifier(x));
+
+        foreach (var cursorModifier in cursorModifierBag)
         {
-            var startOfRowPositionIndex = this.GetStartOfRowTuple(cursor.RowIndex).positionIndex;
-            var cursorPositionIndex = startOfRowPositionIndex + cursor.ColumnIndex;
+            var startOfRowPositionIndex = this.GetStartOfRowTuple(cursorModifier.RowIndex).positionIndex;
+            var cursorPositionIndex = startOfRowPositionIndex + cursorModifier.ColumnIndex;
 
             // If cursor is out of bounds then continue
             if (cursorPositionIndex > ContentBag.Count)
@@ -482,10 +486,10 @@ public partial class TextEditorModelModifier
             (int rowIndex, int columnIndex)? selectionLowerBoundIndexCoordinates = null;
 
             // TODO: The deletion logic should be the same whether it be 'Delete' 'Backspace' 'CtrlModified' or 'DeleteSelection'. What should change is one needs to calculate the starting and ending index appropriately foreach case.
-            if (TextEditorSelectionHelper.HasSelectedText(cursor.Selection))
+            if (TextEditorSelectionHelper.HasSelectedText(cursorModifier))
             {
-                var lowerPositionIndexInclusiveBound = cursor.Selection.AnchorPositionIndex ?? 0;
-                var upperPositionIndexExclusive = cursor.Selection.EndingPositionIndex;
+                var lowerPositionIndexInclusiveBound = cursorModifier.SelectionAnchorPositionIndex ?? 0;
+                var upperPositionIndexExclusive = cursorModifier.SelectionEndingPositionIndex;
 
                 if (lowerPositionIndexInclusiveBound > upperPositionIndexExclusive)
                     (lowerPositionIndexInclusiveBound, upperPositionIndexExclusive) = (upperPositionIndexExclusive, lowerPositionIndexInclusiveBound);
@@ -504,7 +508,7 @@ public partial class TextEditorModelModifier
                 countToRemove = upperPositionIndexExclusive - lowerPositionIndexInclusiveBound;
                 moveBackwards = true;
 
-                cursor.Selection.AnchorPositionIndex = null;
+                cursorModifier.SelectionAnchorPositionIndex = null;
             }
             else if (KeyboardKeyFacts.MetaKeys.BACKSPACE == keyboardEventAction.KeyboardEventArgs.Key)
             {
@@ -513,15 +517,15 @@ public partial class TextEditorModelModifier
                 if (keyboardEventAction.KeyboardEventArgs.CtrlKey)
                 {
                     var columnIndexOfCharacterWithDifferingKind = this.GetColumnIndexOfCharacterWithDifferingKind(
-                        cursor.RowIndex,
-                        cursor.ColumnIndex,
+                        cursorModifier.RowIndex,
+                        cursorModifier.ColumnIndex,
                         moveBackwards);
 
                     columnIndexOfCharacterWithDifferingKind = columnIndexOfCharacterWithDifferingKind == -1
                         ? 0
                         : columnIndexOfCharacterWithDifferingKind;
 
-                    countToRemove = cursor.ColumnIndex -
+                    countToRemove = cursorModifier.ColumnIndex -
                         columnIndexOfCharacterWithDifferingKind;
 
                     countToRemove = countToRemove == 0
@@ -542,16 +546,16 @@ public partial class TextEditorModelModifier
                 if (keyboardEventAction.KeyboardEventArgs.CtrlKey)
                 {
                     var columnIndexOfCharacterWithDifferingKind = this.GetColumnIndexOfCharacterWithDifferingKind(
-                        cursor.RowIndex,
-                        cursor.ColumnIndex,
+                        cursorModifier.RowIndex,
+                        cursorModifier.ColumnIndex,
                         moveBackwards);
 
                     columnIndexOfCharacterWithDifferingKind = columnIndexOfCharacterWithDifferingKind == -1
-                        ? this.GetLengthOfRow(cursor.RowIndex)
+                        ? this.GetLengthOfRow(cursorModifier.RowIndex)
                         : columnIndexOfCharacterWithDifferingKind;
 
                     countToRemove = columnIndexOfCharacterWithDifferingKind -
-                        cursor.ColumnIndex;
+                        cursorModifier.ColumnIndex;
 
                     countToRemove = countToRemove == 0
                         ? 1
@@ -637,7 +641,7 @@ public partial class TextEditorModelModifier
             {
                 var modifyRowsBy = -1 * rowsRemovedCount;
 
-                var startOfCurrentRowPositionIndex = this.GetStartOfRowTuple(cursor.RowIndex + modifyRowsBy)
+                var startOfCurrentRowPositionIndex = this.GetStartOfRowTuple(cursorModifier.RowIndex + modifyRowsBy)
                     .positionIndex;
 
                 var modifyPositionIndexBy = -1 * charactersRemovedCount;
@@ -646,10 +650,10 @@ public partial class TextEditorModelModifier
 
                 var columnIndex = endingPositionIndex - startOfCurrentRowPositionIndex;
 
-                var rowIndex = cursor.RowIndex;
+                var rowIndex = cursorModifier.RowIndex;
 
-                cursor.RowIndex = rowIndex + modifyRowsBy;
-                cursor.ColumnIndex = columnIndex;
+                cursorModifier.RowIndex = rowIndex + modifyRowsBy;
+                cursorModifier.ColumnIndex = columnIndex;
             }
 
             int firstRowIndexToModify;
@@ -657,16 +661,16 @@ public partial class TextEditorModelModifier
             if (selectionUpperBoundRowIndex.HasValue)
             {
                 firstRowIndexToModify = selectionLowerBoundIndexCoordinates!.Value.rowIndex;
-                cursor.RowIndex = selectionLowerBoundIndexCoordinates!.Value.rowIndex;
-                cursor.ColumnIndex = selectionLowerBoundIndexCoordinates!.Value.columnIndex;
+                cursorModifier.RowIndex = selectionLowerBoundIndexCoordinates!.Value.rowIndex;
+                cursorModifier.ColumnIndex = selectionLowerBoundIndexCoordinates!.Value.columnIndex;
             }
             else if (moveBackwards)
             {
-                firstRowIndexToModify = cursor.RowIndex - rowsRemovedCount;
+                firstRowIndexToModify = cursorModifier.RowIndex - rowsRemovedCount;
             }
             else
             {
-                firstRowIndexToModify = cursor.RowIndex;
+                firstRowIndexToModify = cursorModifier.RowIndex;
             }
 
             for (var i = firstRowIndexToModify; i < RowEndingPositionsBag.Count; i++)

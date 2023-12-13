@@ -136,8 +136,9 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                         commandArgs.PrimaryCursor.RowIndex,
                         commandArgs.PrimaryCursor.ColumnIndex);
 
-                    commandArgs.PrimaryCursor.Selection.AnchorPositionIndex = positionIndex;
-                    commandArgs.PrimaryCursor.Selection.EndingPositionIndex = positionIndex + 1;
+                    // TODO: (2023-12-13) Writing immutability for text editor
+                    //commandArgs.PrimaryCursor.Selection.AnchorPositionIndex = positionIndex;
+                    //commandArgs.PrimaryCursor.Selection.EndingPositionIndex = positionIndex + 1;
 
                     return Task.CompletedTask;
                 });
@@ -170,15 +171,17 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                         commandArgs.PrimaryCursor.RowIndex,
                         0);
 
-                    commandArgs.PrimaryCursor.Selection.AnchorPositionIndex =
-                        startOfRowPositionIndexInclusive;
+                    // TODO: (2023-12-13) Writing immutability for text editor
+                    //commandArgs.PrimaryCursor.Selection.AnchorPositionIndex =
+                    //    startOfRowPositionIndexInclusive;
 
                     var endOfRowPositionIndexExclusive = commandArgs.Model.RowEndingPositionsBag[
                             commandArgs.PrimaryCursor.RowIndex]
                         .positionIndex;
 
-                    commandArgs.PrimaryCursor.Selection.EndingPositionIndex =
-                        endOfRowPositionIndexExclusive;
+                    // TODO: (2023-12-13) Writing immutability for text editor
+                    //commandArgs.PrimaryCursor.Selection.EndingPositionIndex =
+                    //    endOfRowPositionIndexExclusive;
 
                     return Task.CompletedTask;
                 });

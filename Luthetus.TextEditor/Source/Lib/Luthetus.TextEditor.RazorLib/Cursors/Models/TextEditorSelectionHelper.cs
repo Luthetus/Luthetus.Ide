@@ -77,17 +77,19 @@ public static class TextEditorSelectionHelper
         var endingPositionIndexExclusive = textEditorModel.GetPositionIndex(lastRowIndexExclusive, 0);
 
         var columnIndex = 0;
-        var textEditorCursor = new TextEditorCursor(
-            startingRowIndex,
-            columnIndex,
-            columnIndex,
-            false,
-            TextEditorSelection.Empty);
+        // TODO: (2023-12-13) Writing immutability for text editor
+        //
+        //var textEditorCursor = new TextEditorCursor(
+        //    startingRowIndex,
+        //    columnIndex,
+        //    columnIndex,
+        //    false,
+        //    TextEditorSelection.Empty);
 
-        textEditorCursor.Selection.AnchorPositionIndex = startingPositionIndexInclusive;
-        textEditorCursor.Selection.EndingPositionIndex = endingPositionIndexExclusive;
+        //textEditorCursor.Selection.AnchorPositionIndex = startingPositionIndexInclusive;
+        //textEditorCursor.Selection.EndingPositionIndex = endingPositionIndexExclusive;
 
-        return textEditorCursor;
+        return TextEditorCursor.Empty; // TODO: (2023-12-13) Writing immutability for text editor
     }
 
     public static (int lowerPositionIndexInclusive, int upperPositionIndexExclusive) GetSelectionBounds(

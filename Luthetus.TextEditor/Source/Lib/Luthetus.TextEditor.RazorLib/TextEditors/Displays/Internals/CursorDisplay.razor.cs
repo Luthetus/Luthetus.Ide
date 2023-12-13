@@ -124,15 +124,17 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
         var rowLength = model.GetLengthOfRow(rowIndex);
 
+        // TODO: (2023-12-13) Writing immutability for text editor
+        // 
         // Ensure cursor stays within the column count index range for the current row
-        if (columnIndex > rowLength)
-            columnIndex = rowLength - 1;
+        //if (columnIndex > rowLength)
+        //    columnIndex = rowLength - 1;
 
-        rowIndex = Math.Max(0, rowIndex);
-        columnIndex = Math.Max(0, columnIndex);
+        //rowIndex = Math.Max(0, rowIndex);
+        //columnIndex = Math.Max(0, columnIndex);
 
-        Cursor.RowIndex = rowIndex;
-        Cursor.ColumnIndex = columnIndex;
+        //Cursor.RowIndex = rowIndex;
+        //Cursor.ColumnIndex = columnIndex;
 
         if (Cursor.ShouldRevealCursor)
         {
