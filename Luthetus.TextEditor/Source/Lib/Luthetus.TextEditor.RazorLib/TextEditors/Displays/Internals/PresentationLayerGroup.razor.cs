@@ -16,7 +16,7 @@ public partial class PresentationLayerGroup : ComponentBase
     public TextEditorRenderBatch RenderBatch { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public TextEditorCursorSnapshot PrimaryCursorSnapshot { get; set; } = null!;
+    public TextEditorCursor PrimaryCursor { get; set; } = null!;
     [Parameter, EditorRequired]
     public string CssClassString { get; set; } = string.Empty;
     [Parameter, EditorRequired]

@@ -4,6 +4,7 @@ using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
+using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models.Vims;
 
@@ -40,13 +41,16 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                var textEditorCursorForMotion = new TextEditorCursor(
-                    commandArgs.PrimaryCursorSnapshot.UserCursor.IndexCoordinates,
-                    true);
+                var cursorForMotion = TextEditorCursor.Empty with 
+                {
+                    RowIndex = commandArgs.PrimaryCursor.RowIndex,
+                    ColumnIndex = commandArgs.PrimaryCursor.ColumnIndex,
+                    IsPrimaryCursor = true,
+                };
 
                 var textEditorCommandArgsForMotion = new TextEditorCommandArgs(
                     commandArgs.Model,
-                    TextEditorCursorSnapshot.TakeSnapshots(textEditorCursorForMotion),
+                    new TextEditorCursor[] { cursorForMotion }.ToImmutableArray(),
                     commandArgs.HasTextSelection,
                     commandArgs.ClipboardService,
                     commandArgs.TextEditorService,
@@ -59,17 +63,20 @@ public static partial class TextEditorCommandVimFacts
 
                 var motionResult = await VimMotionResult.GetResultAsync(
                     commandArgs,
-                    textEditorCursorForMotion,
+                    cursorForMotion,
                     async () => await innerTextEditorCommand.DoAsyncFunc
                         .Invoke(textEditorCommandArgsForMotion));
 
-                var cursorForDeletion = new TextEditorCursor(
-                    motionResult.LowerPositionIndexImmutableCursor,
-                    true);
+                var cursorForDeletion = TextEditorCursor.Empty with
+                {
+                    RowIndex = motionResult.LowerPositionIndexCursor.RowIndex,
+                    ColumnIndex = motionResult.LowerPositionIndexCursor.ColumnIndex,
+                    IsPrimaryCursor = true,
+                };
 
                 var deleteTextTextEditorModelAction = new TextEditorModelState.DeleteTextByRangeAction(
                     commandArgs.Model.ResourceUri,
-                    TextEditorCursorSnapshot.TakeSnapshots(cursorForDeletion),
+                    new TextEditorCursor[] { cursorForDeletion }.ToImmutableArray(),
                     motionResult.PositionIndexDisplacement,
                     CancellationToken.None);
 

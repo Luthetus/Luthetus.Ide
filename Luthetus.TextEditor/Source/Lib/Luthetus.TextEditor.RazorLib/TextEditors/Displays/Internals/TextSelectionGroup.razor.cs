@@ -12,7 +12,7 @@ public partial class TextSelectionGroup : ComponentBase
     public TextEditorRenderBatch RenderBatch { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public TextEditorCursorSnapshot PrimaryCursorSnapshot { get; set; } = null!;
+    public TextEditorCursor PrimaryCursor { get; set; } = null!;
 
     private string GetTextSelectionStyleCss(
         int lowerPositionIndexInclusive,

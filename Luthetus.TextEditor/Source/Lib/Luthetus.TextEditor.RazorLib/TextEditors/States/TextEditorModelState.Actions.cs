@@ -25,25 +25,25 @@ public partial class TextEditorModelState
 
     public record KeyboardEventAction(
         ResourceUri ResourceUri,
-        ImmutableArray<TextEditorCursorSnapshot> CursorSnapshotsBag,
+        ImmutableArray<TextEditorCursor> CursorBag,
         KeyboardEventArgs KeyboardEventArgs,
         CancellationToken CancellationToken);
 
     public record InsertTextAction(
         ResourceUri ResourceUri,
-        ImmutableArray<TextEditorCursorSnapshot> CursorSnapshotsBag,
+        ImmutableArray<TextEditorCursor> CursorBag,
         string Content,
         CancellationToken CancellationToken);
 
     public record DeleteTextByMotionAction(
         ResourceUri ResourceUri,
-        ImmutableArray<TextEditorCursorSnapshot> CursorSnapshotsBag,
+        ImmutableArray<TextEditorCursor> CursorBag,
         MotionKind MotionKind,
         CancellationToken CancellationToken);
 
     public record DeleteTextByRangeAction(
         ResourceUri ResourceUri,
-        ImmutableArray<TextEditorCursorSnapshot> CursorSnapshotsBag,
+        ImmutableArray<TextEditorCursor> CursorBag,
         int Count,
         CancellationToken CancellationToken);
 }

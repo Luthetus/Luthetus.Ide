@@ -32,6 +32,16 @@ public record TextEditorViewModel : IDisposable
         VirtualizationResult = virtualizationResult;
         DisplayCommandBar = displayCommandBar;
 
+        var primaryCursor = TextEditorCursor.Empty with
+        {
+            IsPrimaryCursor = true
+        };
+
+        CursorBag = new TextEditorCursor[]
+        {
+            primaryCursor
+        }.ToImmutableArray();
+
         DisplayTracker = new(
             () => textEditorService.ViewModelApi.FindOrDefault(viewModelKey),
             () => textEditorService.ViewModelApi.FindBackingModelOrDefault(viewModelKey));
@@ -47,7 +57,16 @@ public record TextEditorViewModel : IDisposable
     public IThrottle ThrottleRemeasure { get; } = new Throttle(IThrottle.DefaultThrottleTimeSpan);
     public IThrottle ThrottleCalculateVirtualizationResult { get; } = new Throttle(IThrottle.DefaultThrottleTimeSpan);
 
-    public TextEditorCursor PrimaryCursor { get; } = new(true);
+    /// <summary>
+    /// The first entry of CursorBag should be the PrimaryCursor
+    /// </summary>
+    public TextEditorCursor PrimaryCursor => CursorBag.First();
+
+    /// <summary>
+    /// The first entry of CursorBag should be the PrimaryCursor
+    /// </summary>
+    public ImmutableArray<TextEditorCursor> CursorBag { get; init; }
+
     public DisplayTracker DisplayTracker { get; }
 
     public Key<TextEditorViewModel> ViewModelKey { get; init; }
@@ -73,36 +92,6 @@ public record TextEditorViewModel : IDisposable
     public string BodyElementId => $"luth_te_text-editor-content_{ViewModelKey.Guid}";
     public string PrimaryCursorContentId => $"luth_te_text-editor-content_{ViewModelKey.Guid}_primary-cursor";
     public string GutterElementId => $"luth_te_text-editor-gutter_{ViewModelKey.Guid}";
-
-    public void CursorMovePageTop()
-    {
-        var localMostRecentlyRenderedVirtualizationResult = VirtualizationResult;
-
-        if (localMostRecentlyRenderedVirtualizationResult?.EntryBag.Any() ?? false)
-        {
-            var firstEntry = localMostRecentlyRenderedVirtualizationResult.EntryBag.First();
-
-            PrimaryCursor.IndexCoordinates = (firstEntry.Index, 0);
-        }
-    }
-
-    public void CursorMovePageBottom()
-    {
-        var localMostRecentlyRenderedVirtualizationResult = VirtualizationResult;
-
-        var textEditor = TextEditorService.ViewModelApi.FindBackingModelOrDefault(
-            ViewModelKey);
-
-        if (textEditor is not null &&
-            (localMostRecentlyRenderedVirtualizationResult?.EntryBag.Any() ?? false))
-        {
-            var lastEntry = localMostRecentlyRenderedVirtualizationResult.EntryBag.Last();
-
-            var lastEntriesRowLength = textEditor.GetLengthOfRow(lastEntry.Index);
-
-            PrimaryCursor.IndexCoordinates = (lastEntry.Index, lastEntriesRowLength);
-        }
-    }
 
     public async Task MutateScrollHorizontalPositionByPixelsAsync(double pixels)
     {

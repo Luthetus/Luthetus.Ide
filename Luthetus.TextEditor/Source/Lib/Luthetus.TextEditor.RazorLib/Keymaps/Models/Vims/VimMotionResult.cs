@@ -5,9 +5,9 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 
 public record VimMotionResult(
-    ImmutableTextEditorCursor LowerPositionIndexImmutableCursor,
+    TextEditorCursor LowerPositionIndexCursor,
     int LowerPositionIndex,
-    ImmutableTextEditorCursor HigherPositionIndexImmutableCursor,
+    TextEditorCursor HigherPositionIndexCursor,
     int HigherPositionIndex,
     int PositionIndexDisplacement)
 {
@@ -18,32 +18,32 @@ public record VimMotionResult(
     {
         await motionCommandArgs.Invoke();
 
-        var beforeMotionImmutableCursor = textEditorCommandArgs.PrimaryCursorSnapshot.ImmutableCursor;
+        var beforeMotionCursor = textEditorCommandArgs.PrimaryCursor;
 
         var beforeMotionPositionIndex = textEditorCommandArgs.Model.GetPositionIndex(
-            beforeMotionImmutableCursor.RowIndex,
-            beforeMotionImmutableCursor.ColumnIndex);
+            beforeMotionCursor.RowIndex,
+            beforeMotionCursor.ColumnIndex);
 
-        var afterMotionImmutableCursor = new ImmutableTextEditorCursor(textEditorCursorForMotion);
+        var afterMotionCursor = textEditorCursorForMotion;
 
         var afterMotionPositionIndex = textEditorCommandArgs.Model.GetPositionIndex(
-            afterMotionImmutableCursor.RowIndex,
-            afterMotionImmutableCursor.ColumnIndex);
+            afterMotionCursor.RowIndex,
+            afterMotionCursor.ColumnIndex);
 
         if (beforeMotionPositionIndex > afterMotionPositionIndex)
         {
             return new VimMotionResult(
-                afterMotionImmutableCursor,
+                afterMotionCursor,
                 afterMotionPositionIndex,
-                beforeMotionImmutableCursor,
+                beforeMotionCursor,
                 beforeMotionPositionIndex,
                 beforeMotionPositionIndex - afterMotionPositionIndex);
         }
 
         return new VimMotionResult(
-            beforeMotionImmutableCursor,
+            beforeMotionCursor,
             beforeMotionPositionIndex,
-            afterMotionImmutableCursor,
+            afterMotionCursor,
             afterMotionPositionIndex,
             afterMotionPositionIndex - beforeMotionPositionIndex);
     }

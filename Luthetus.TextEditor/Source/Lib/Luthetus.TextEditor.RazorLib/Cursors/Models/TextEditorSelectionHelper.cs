@@ -11,11 +11,11 @@ public static class TextEditorSelectionHelper
             textEditorSelection.EndingPositionIndex);
     }
 
-    public static bool HasSelectedText(ImmutableTextEditorSelection immutableTextEditorSelection)
+    public static bool HasSelectedText(TextEditorCursorModifier cursorModifier)
     {
         return HasSelectedText(
-            immutableTextEditorSelection.AnchorPositionIndex,
-            immutableTextEditorSelection.EndingPositionIndex);
+            cursorModifier.SelectionAnchorPositionIndex,
+            cursorModifier.SelectionEndingPositionIndex);
     }
 
     public static bool HasSelectedText(int? anchorPositionIndex, int endingPositionIndex)
@@ -35,14 +35,14 @@ public static class TextEditorSelectionHelper
             textEditorSelection.EndingPositionIndex,
             textEditorModel);
     }
-
+    
     public static string? GetSelectedText(
-        ImmutableTextEditorSelection immutableTextEditorSelection,
+        TextEditorCursorModifier cursorModifier,
         TextEditorModel textEditorModel)
     {
         return GetSelectedText(
-            immutableTextEditorSelection.AnchorPositionIndex,
-            immutableTextEditorSelection.EndingPositionIndex,
+            cursorModifier.SelectionAnchorPositionIndex,
+            cursorModifier.SelectionEndingPositionIndex,
             textEditorModel);
     }
 
@@ -76,7 +76,13 @@ public static class TextEditorSelectionHelper
 
         var endingPositionIndexExclusive = textEditorModel.GetPositionIndex(lastRowIndexExclusive, 0);
 
-        var textEditorCursor = new TextEditorCursor((startingRowIndex, 0), false);
+        var columnIndex = 0;
+        var textEditorCursor = new TextEditorCursor(
+            startingRowIndex,
+            columnIndex,
+            columnIndex,
+            false,
+            TextEditorSelection.Empty);
 
         textEditorCursor.Selection.AnchorPositionIndex = startingPositionIndexInclusive;
         textEditorCursor.Selection.EndingPositionIndex = endingPositionIndexExclusive;
@@ -91,13 +97,13 @@ public static class TextEditorSelectionHelper
             textEditorSelection.AnchorPositionIndex,
             textEditorSelection.EndingPositionIndex);
     }
-
+    
     public static (int lowerPositionIndexInclusive, int upperPositionIndexExclusive) GetSelectionBounds(
-        ImmutableTextEditorSelection immutableTextEditorSelection)
+        TextEditorCursorModifier cursorModifier)
     {
         return GetSelectionBounds(
-            immutableTextEditorSelection.AnchorPositionIndex,
-            immutableTextEditorSelection.EndingPositionIndex);
+            cursorModifier.SelectionAnchorPositionIndex,
+            cursorModifier.SelectionEndingPositionIndex);
     }
 
     public static (int lowerPositionIndexInclusive, int upperPositionIndexExclusive) GetSelectionBounds(

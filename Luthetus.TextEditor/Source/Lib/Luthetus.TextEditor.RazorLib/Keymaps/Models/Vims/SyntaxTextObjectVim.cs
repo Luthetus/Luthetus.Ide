@@ -82,14 +82,15 @@ public static class SyntaxTextObjectVim
                             {
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                                TextEditorCursor.MoveCursor(
+                                commandArgs.TextEditorService.ViewModelApi.MoveCursor(
                                     new KeyboardEventArgs
                                     {
                                         Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
                                         ShiftKey = shiftKey
                                     },
-                                    commandArgs.PrimaryCursorSnapshot.UserCursor,
-                                    commandArgs.Model);
+                                    commandArgs.Model.ResourceUri,
+                                    commandArgs.ViewModel.ViewModelKey,
+                                    commandArgs.ViewModel.PrimaryCursor.Key);
 
                                 return Task.CompletedTask;
                             });
@@ -105,14 +106,15 @@ public static class SyntaxTextObjectVim
                             {
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                                TextEditorCursor.MoveCursor(
+                                commandArgs.TextEditorService.ViewModelApi.MoveCursor(
                                     new KeyboardEventArgs
                                     {
                                         Key = KeyboardKeyFacts.MovementKeys.ARROW_DOWN,
                                         ShiftKey = shiftKey
                                     },
-                                    commandArgs.PrimaryCursorSnapshot.UserCursor,
-                                    commandArgs.Model);
+                                    commandArgs.Model.ResourceUri,
+                                    commandArgs.ViewModel.ViewModelKey,
+                                    commandArgs.ViewModel.PrimaryCursor.Key);
 
                                 return Task.CompletedTask;
                             });
@@ -128,14 +130,15 @@ public static class SyntaxTextObjectVim
                             {
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                                TextEditorCursor.MoveCursor(
+                                commandArgs.TextEditorService.ViewModelApi.MoveCursor(
                                     new KeyboardEventArgs
                                     {
                                         Key = KeyboardKeyFacts.MovementKeys.ARROW_UP,
                                         ShiftKey = shiftKey
                                     },
-                                    commandArgs.PrimaryCursorSnapshot.UserCursor,
-                                    commandArgs.Model);
+                                    commandArgs.Model.ResourceUri,
+                                    commandArgs.ViewModel.ViewModelKey,
+                                    commandArgs.ViewModel.PrimaryCursor.Key);
 
                                 return Task.CompletedTask;
                             });
@@ -151,14 +154,15 @@ public static class SyntaxTextObjectVim
                             {
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                                TextEditorCursor.MoveCursor(
+                                commandArgs.TextEditorService.ViewModelApi.MoveCursor(
                                     new KeyboardEventArgs
                                     {
                                         Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                                         ShiftKey = shiftKey
                                     },
-                                    commandArgs.PrimaryCursorSnapshot.UserCursor,
-                                    commandArgs.Model);
+                                    commandArgs.Model.ResourceUri,
+                                    commandArgs.ViewModel.ViewModelKey,
+                                    commandArgs.ViewModel.PrimaryCursor.Key);
 
                                 return Task.CompletedTask;
                             });
@@ -180,14 +184,15 @@ public static class SyntaxTextObjectVim
                             {
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                                TextEditorCursor.MoveCursor(
+                                commandArgs.TextEditorService.ViewModelApi.MoveCursor(
                                     new KeyboardEventArgs
                                     {
                                         Key = KeyboardKeyFacts.MovementKeys.END,
                                         ShiftKey = shiftKey
                                     },
-                                    commandArgs.PrimaryCursorSnapshot.UserCursor,
-                                    commandArgs.Model);
+                                    commandArgs.Model.ResourceUri,
+                                    commandArgs.ViewModel.ViewModelKey,
+                                    commandArgs.ViewModel.PrimaryCursor.Key);
 
                                 return Task.CompletedTask;
                             });
@@ -203,14 +208,15 @@ public static class SyntaxTextObjectVim
                             {
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                                TextEditorCursor.MoveCursor(
+                                commandArgs.TextEditorService.ViewModelApi.MoveCursor(
                                     new KeyboardEventArgs
                                     {
                                         Key = KeyboardKeyFacts.MovementKeys.HOME,
                                         ShiftKey = shiftKey
                                     },
-                                    commandArgs.PrimaryCursorSnapshot.UserCursor,
-                                    commandArgs.Model);
+                                    commandArgs.Model.ResourceUri,
+                                    commandArgs.ViewModel.ViewModelKey,
+                                    commandArgs.ViewModel.PrimaryCursor.Key);
 
                                 return Task.CompletedTask;
                             });

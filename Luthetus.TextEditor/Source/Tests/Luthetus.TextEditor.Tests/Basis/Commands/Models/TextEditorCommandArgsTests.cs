@@ -37,7 +37,7 @@ public class TextEditorCommandArgsTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorCommandArgs.PrimaryCursorSnapshot"/>
+	/// <see cref="TextEditorCommandArgs.PrimaryCursor"/>
 	/// </summary>
 	[Fact]
 	public void PrimaryCursorSnapshot()
@@ -46,7 +46,7 @@ public class TextEditorCommandArgsTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorCommandArgs.CursorSnapshotsBag"/>
+	/// <see cref="TextEditorCommandArgs.CursorBag"/>
 	/// </summary>
 	[Fact]
     public void CursorSnapshotsBag()

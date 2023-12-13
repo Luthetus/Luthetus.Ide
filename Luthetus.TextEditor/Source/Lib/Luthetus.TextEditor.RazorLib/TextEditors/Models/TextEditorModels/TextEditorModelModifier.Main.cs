@@ -267,26 +267,27 @@ public partial class TextEditorModelModifier
 
         EnsureUndoPoint(TextEditKind.Insertion);
 
-        foreach (var cursorSnapshot in keyboardEventAction.CursorSnapshotsBag)
+        foreach (var cursor in keyboardEventAction.CursorBag)
         {
-            if (TextEditorSelectionHelper.HasSelectedText(cursorSnapshot.ImmutableCursor.ImmutableSelection))
+            if (TextEditorSelectionHelper.HasSelectedText(cursor.Selection))
             {
                 PerformDeletions(keyboardEventAction);
 
-                var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorSnapshot.ImmutableCursor.ImmutableSelection);
+                var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursor.Selection);
 
                 var lowerRowData = this.FindRowInformation(selectionBounds.lowerPositionIndexInclusive);
 
                 var lowerColumnIndex = selectionBounds.lowerPositionIndexInclusive - lowerRowData.rowStartPositionIndex;
 
                 // Move cursor to lower bound of text selection
-                cursorSnapshot.UserCursor.IndexCoordinates = (lowerRowData.rowIndex, lowerColumnIndex);
+                cursor.RowIndex = lowerRowData.rowIndex;
+                cursor.ColumnIndex = lowerColumnIndex;
 
                 var nextEdit = keyboardEventAction with
                 {
-                    CursorSnapshotsBag = new[]
+                    CursorBag = new[]
                     {
-                        new TextEditorCursorSnapshot(cursorSnapshot.UserCursor)
+                        cursor
                     }.ToImmutableArray()
                 };
 
@@ -296,8 +297,8 @@ public partial class TextEditorModelModifier
                 return;
             }
 
-            var startOfRowPositionIndex = this.GetStartOfRowTuple(cursorSnapshot.ImmutableCursor.RowIndex).positionIndex;
-            var cursorPositionIndex = startOfRowPositionIndex + cursorSnapshot.ImmutableCursor.ColumnIndex;
+            var startOfRowPositionIndex = this.GetStartOfRowTuple(cursor.RowIndex).positionIndex;
+            var cursorPositionIndex = startOfRowPositionIndex + cursor.ColumnIndex;
 
             // If cursor is out of bounds then continue
             if (cursorPositionIndex > ContentBag.Count)
@@ -332,16 +333,17 @@ public partial class TextEditorModelModifier
 
                 _contentBag.InsertRange(cursorPositionIndex, richCharacters);
 
-                RowEndingPositionsBag.Insert(cursorSnapshot.ImmutableCursor.RowIndex,
+                RowEndingPositionsBag.Insert(cursor.RowIndex,
                     (cursorPositionIndex + characterCountInserted, rowEndingKindToInsert));
 
                 MutateRowEndingKindCount(UsingRowEndingKind, 1);
 
-                var indexCoordinates = cursorSnapshot.UserCursor.IndexCoordinates;
+                var rowIndex = cursor.RowIndex;
+                var columnIndex = cursor.ColumnIndex;
 
-                cursorSnapshot.UserCursor.IndexCoordinates = (indexCoordinates.rowIndex + 1, 0);
-
-                cursorSnapshot.UserCursor.PreferredColumnIndex = cursorSnapshot.UserCursor.IndexCoordinates.columnIndex;
+                cursor.RowIndex = rowIndex + 1;
+                cursor.ColumnIndex = 0;
+                cursor.PreferredColumnIndex = cursor.ColumnIndex;
             }
             else
             {
@@ -372,15 +374,17 @@ public partial class TextEditorModelModifier
 
                 ContentBag.Insert(cursorPositionIndex, richCharacterToInsert);
 
-                var indexCoordinates = cursorSnapshot.UserCursor.IndexCoordinates;
+                var rowIndex = cursor.RowIndex;
+                var columnIndex = cursor.ColumnIndex;
 
-                cursorSnapshot.UserCursor.IndexCoordinates = (indexCoordinates.rowIndex, indexCoordinates.columnIndex + 1);
-                cursorSnapshot.UserCursor.PreferredColumnIndex = cursorSnapshot.UserCursor.IndexCoordinates.columnIndex;
+                cursor.RowIndex = rowIndex;
+                cursor.ColumnIndex = columnIndex + 1;
+                cursor.PreferredColumnIndex = cursor.ColumnIndex;
             }
 
             var firstRowIndexToModify = wasEnterCode
-                ? cursorSnapshot.ImmutableCursor.RowIndex + 1
-                : cursorSnapshot.ImmutableCursor.RowIndex;
+                ? cursor.RowIndex + 1
+                : cursor.RowIndex;
 
             for (var i = firstRowIndexToModify; i < RowEndingPositionsBag.Count; i++)
             {
@@ -459,10 +463,10 @@ public partial class TextEditorModelModifier
 
         EnsureUndoPoint(TextEditKind.Deletion);
 
-        foreach (var cursorSnapshot in keyboardEventAction.CursorSnapshotsBag)
+        foreach (var cursor in keyboardEventAction.CursorBag)
         {
-            var startOfRowPositionIndex = this.GetStartOfRowTuple(cursorSnapshot.ImmutableCursor.RowIndex).positionIndex;
-            var cursorPositionIndex = startOfRowPositionIndex + cursorSnapshot.ImmutableCursor.ColumnIndex;
+            var startOfRowPositionIndex = this.GetStartOfRowTuple(cursor.RowIndex).positionIndex;
+            var cursorPositionIndex = startOfRowPositionIndex + cursor.ColumnIndex;
 
             // If cursor is out of bounds then continue
             if (cursorPositionIndex > ContentBag.Count)
@@ -478,10 +482,10 @@ public partial class TextEditorModelModifier
             (int rowIndex, int columnIndex)? selectionLowerBoundIndexCoordinates = null;
 
             // TODO: The deletion logic should be the same whether it be 'Delete' 'Backspace' 'CtrlModified' or 'DeleteSelection'. What should change is one needs to calculate the starting and ending index appropriately foreach case.
-            if (TextEditorSelectionHelper.HasSelectedText(cursorSnapshot.ImmutableCursor.ImmutableSelection))
+            if (TextEditorSelectionHelper.HasSelectedText(cursor.Selection))
             {
-                var lowerPositionIndexInclusiveBound = cursorSnapshot.ImmutableCursor.ImmutableSelection.AnchorPositionIndex ?? 0;
-                var upperPositionIndexExclusive = cursorSnapshot.ImmutableCursor.ImmutableSelection.EndingPositionIndex;
+                var lowerPositionIndexInclusiveBound = cursor.Selection.AnchorPositionIndex ?? 0;
+                var upperPositionIndexExclusive = cursor.Selection.EndingPositionIndex;
 
                 if (lowerPositionIndexInclusiveBound > upperPositionIndexExclusive)
                     (lowerPositionIndexInclusiveBound, upperPositionIndexExclusive) = (upperPositionIndexExclusive, lowerPositionIndexInclusiveBound);
@@ -500,7 +504,7 @@ public partial class TextEditorModelModifier
                 countToRemove = upperPositionIndexExclusive - lowerPositionIndexInclusiveBound;
                 moveBackwards = true;
 
-                cursorSnapshot.UserCursor.Selection.AnchorPositionIndex = null;
+                cursor.Selection.AnchorPositionIndex = null;
             }
             else if (KeyboardKeyFacts.MetaKeys.BACKSPACE == keyboardEventAction.KeyboardEventArgs.Key)
             {
@@ -509,15 +513,15 @@ public partial class TextEditorModelModifier
                 if (keyboardEventAction.KeyboardEventArgs.CtrlKey)
                 {
                     var columnIndexOfCharacterWithDifferingKind = this.GetColumnIndexOfCharacterWithDifferingKind(
-                        cursorSnapshot.ImmutableCursor.RowIndex,
-                        cursorSnapshot.ImmutableCursor.ColumnIndex,
+                        cursor.RowIndex,
+                        cursor.ColumnIndex,
                         moveBackwards);
 
                     columnIndexOfCharacterWithDifferingKind = columnIndexOfCharacterWithDifferingKind == -1
                         ? 0
                         : columnIndexOfCharacterWithDifferingKind;
 
-                    countToRemove = cursorSnapshot.ImmutableCursor.ColumnIndex -
+                    countToRemove = cursor.ColumnIndex -
                         columnIndexOfCharacterWithDifferingKind;
 
                     countToRemove = countToRemove == 0
@@ -538,16 +542,16 @@ public partial class TextEditorModelModifier
                 if (keyboardEventAction.KeyboardEventArgs.CtrlKey)
                 {
                     var columnIndexOfCharacterWithDifferingKind = this.GetColumnIndexOfCharacterWithDifferingKind(
-                        cursorSnapshot.ImmutableCursor.RowIndex,
-                        cursorSnapshot.ImmutableCursor.ColumnIndex,
+                        cursor.RowIndex,
+                        cursor.ColumnIndex,
                         moveBackwards);
 
                     columnIndexOfCharacterWithDifferingKind = columnIndexOfCharacterWithDifferingKind == -1
-                        ? this.GetLengthOfRow(cursorSnapshot.ImmutableCursor.RowIndex)
+                        ? this.GetLengthOfRow(cursor.RowIndex)
                         : columnIndexOfCharacterWithDifferingKind;
 
                     countToRemove = columnIndexOfCharacterWithDifferingKind -
-                        cursorSnapshot.ImmutableCursor.ColumnIndex;
+                        cursor.ColumnIndex;
 
                     countToRemove = countToRemove == 0
                         ? 1
@@ -633,7 +637,7 @@ public partial class TextEditorModelModifier
             {
                 var modifyRowsBy = -1 * rowsRemovedCount;
 
-                var startOfCurrentRowPositionIndex = this.GetStartOfRowTuple(cursorSnapshot.ImmutableCursor.RowIndex + modifyRowsBy)
+                var startOfCurrentRowPositionIndex = this.GetStartOfRowTuple(cursor.RowIndex + modifyRowsBy)
                     .positionIndex;
 
                 var modifyPositionIndexBy = -1 * charactersRemovedCount;
@@ -642,9 +646,10 @@ public partial class TextEditorModelModifier
 
                 var columnIndex = endingPositionIndex - startOfCurrentRowPositionIndex;
 
-                var indexCoordinates = cursorSnapshot.UserCursor.IndexCoordinates;
+                var rowIndex = cursor.RowIndex;
 
-                cursorSnapshot.UserCursor.IndexCoordinates = (indexCoordinates.rowIndex + modifyRowsBy, columnIndex);
+                cursor.RowIndex = rowIndex + modifyRowsBy;
+                cursor.ColumnIndex = columnIndex;
             }
 
             int firstRowIndexToModify;
@@ -652,15 +657,16 @@ public partial class TextEditorModelModifier
             if (selectionUpperBoundRowIndex.HasValue)
             {
                 firstRowIndexToModify = selectionLowerBoundIndexCoordinates!.Value.rowIndex;
-                cursorSnapshot.UserCursor.IndexCoordinates = selectionLowerBoundIndexCoordinates!.Value;
+                cursor.RowIndex = selectionLowerBoundIndexCoordinates!.Value.rowIndex;
+                cursor.ColumnIndex = selectionLowerBoundIndexCoordinates!.Value.columnIndex;
             }
             else if (moveBackwards)
             {
-                firstRowIndexToModify = cursorSnapshot.ImmutableCursor.RowIndex - rowsRemovedCount;
+                firstRowIndexToModify = cursor.RowIndex - rowsRemovedCount;
             }
             else
             {
-                firstRowIndexToModify = cursorSnapshot.ImmutableCursor.RowIndex;
+                firstRowIndexToModify = cursor.RowIndex;
             }
 
             for (var i = firstRowIndexToModify; i < RowEndingPositionsBag.Count; i++)
@@ -900,10 +906,9 @@ public partial class TextEditorModelModifier
         }
         else
         {
-            var cursorSnapshotsBag = TextEditorCursorSnapshot.TakeSnapshots(
-                keyboardEventAction.CursorSnapshotsBag.Select(x => x.UserCursor).ToArray());
+            var cursorBag = keyboardEventAction.CursorBag;
 
-            var primaryCursorSnapshot = cursorSnapshotsBag.FirstOrDefault(x => x.UserCursor.IsPrimaryCursor);
+            var primaryCursorSnapshot = cursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
 
             if (primaryCursorSnapshot is null)
                 return;
@@ -924,14 +929,14 @@ public partial class TextEditorModelModifier
             // See the var localCursor in this contiguous code block.
             //
             // var localCursor = new TextEditorCursor(
-            //     (primaryCursorSnapshot.ImmutableCursor.RowIndex, primaryCursorSnapshot.ImmutableCursor.ColumnIndex), 
+            //     (primaryCursorSnapshot.RowIndex, primaryCursorSnapshot.ColumnIndex), 
             //     true);
 
-            if (TextEditorSelectionHelper.HasSelectedText(primaryCursorSnapshot.ImmutableCursor.ImmutableSelection))
+            if (TextEditorSelectionHelper.HasSelectedText(primaryCursorSnapshot.Selection))
             {
                 PerformDeletions(new KeyboardEventAction(
                     keyboardEventAction.ResourceUri,
-                    cursorSnapshotsBag,
+                    cursorBag,
                     new KeyboardEventArgs
                     {
                         Code = KeyboardKeyFacts.MetaKeys.DELETE,
@@ -940,24 +945,21 @@ public partial class TextEditorModelModifier
                     CancellationToken.None));
             }
 
-            var innerCursorSnapshotsBag = TextEditorCursorSnapshot.TakeSnapshots(
-                keyboardEventAction.CursorSnapshotsBag.Select(x => x.UserCursor).ToArray());
+            var innerCursorBag = keyboardEventAction.CursorBag;
 
             PerformInsertions(keyboardEventAction with
             {
-                CursorSnapshotsBag = innerCursorSnapshotsBag
+                CursorBag = innerCursorBag
             });
         }
     }
 
     public void PerformEditTextEditorAction(InsertTextAction insertTextAction)
     {
-        var cursorSnapshotsBag = TextEditorCursorSnapshot.TakeSnapshots(
-            insertTextAction.CursorSnapshotsBag.Select(x => x.UserCursor).ToArray());
+        var cursorBag = insertTextAction.CursorBag;
+        var primaryCursor = cursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
 
-        var primaryCursorSnapshot = cursorSnapshotsBag.FirstOrDefault(x => x.UserCursor.IsPrimaryCursor);
-
-        if (primaryCursorSnapshot is null)
+        if (primaryCursor is null)
             return;
 
         /*
@@ -976,14 +978,14 @@ public partial class TextEditorModelModifier
         // See the var localCursor in this contiguous code block.
         //
         // var localCursor = new TextEditorCursor(
-        //     (primaryCursorSnapshot.ImmutableCursor.RowIndex, primaryCursorSnapshot.ImmutableCursor.ColumnIndex), 
+        //     (primaryCursorSnapshot.RowIndex, primaryCursorSnapshot.ColumnIndex), 
         //     true);
 
-        if (TextEditorSelectionHelper.HasSelectedText(primaryCursorSnapshot.ImmutableCursor.ImmutableSelection))
+        if (TextEditorSelectionHelper.HasSelectedText(primaryCursor.Selection))
         {
             PerformDeletions(new KeyboardEventAction(
                 insertTextAction.ResourceUri,
-                cursorSnapshotsBag,
+                cursorBag,
                 new KeyboardEventArgs
                 {
                     Code = KeyboardKeyFacts.MetaKeys.DELETE,
@@ -1001,8 +1003,7 @@ public partial class TextEditorModelModifier
             // Need innerCursorSnapshots because need
             // after every loop of the foreach that the
             // cursor snapshots are updated
-            var innerCursorSnapshotsBag = TextEditorCursorSnapshot.TakeSnapshots(
-                insertTextAction.CursorSnapshotsBag.Select(x => x.UserCursor).ToArray());
+            var innerCursorBag = insertTextAction.CursorBag;
 
             var code = character switch
             {
@@ -1015,7 +1016,7 @@ public partial class TextEditorModelModifier
 
             var keyboardEventTextEditorModelAction = new KeyboardEventAction(
                 insertTextAction.ResourceUri,
-                innerCursorSnapshotsBag,
+                innerCursorBag,
                 new KeyboardEventArgs
                 {
                     Code = code,
@@ -1038,7 +1039,7 @@ public partial class TextEditorModelModifier
 
         var keyboardEventTextEditorModelAction = new KeyboardEventAction(
             deleteTextByMotionAction.ResourceUri,
-            deleteTextByMotionAction.CursorSnapshotsBag,
+            deleteTextByMotionAction.CursorBag,
             keyboardEventArgs,
             CancellationToken.None);
 
@@ -1053,8 +1054,7 @@ public partial class TextEditorModelModifier
             // Need innerCursorSnapshots because need
             // after every loop of the foreach that the
             // cursor snapshots are updated
-            var innerCursorSnapshotsBag = TextEditorCursorSnapshot.TakeSnapshots(
-                deleteTextByRangeAction.CursorSnapshotsBag.Select(x => x.UserCursor).ToArray());
+            var innerCursorSnapshotsBag = deleteTextByRangeAction.CursorBag;
 
             var keyboardEventTextEditorModelAction = new KeyboardEventAction(
                 deleteTextByRangeAction.ResourceUri,

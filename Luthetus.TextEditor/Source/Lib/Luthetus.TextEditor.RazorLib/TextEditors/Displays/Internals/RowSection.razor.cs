@@ -27,7 +27,7 @@ public partial class RowSection : ComponentBase
     [Parameter, EditorRequired]
     public RenderFragment? AutoCompleteMenuRenderFragmentOverride { get; set; }
     [Parameter, EditorRequired]
-    public TextEditorCursorSnapshot PrimaryCursorSnapshot { get; set; } = null!;
+    public TextEditorCursor PrimaryCursor { get; set; } = null!;
 
     [Parameter]
     public bool IncludeContextMenuHelperComponent { get; set; }

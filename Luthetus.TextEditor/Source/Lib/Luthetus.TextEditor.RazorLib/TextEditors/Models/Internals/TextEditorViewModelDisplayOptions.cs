@@ -23,7 +23,7 @@ public class TextEditorViewModelDisplayOptions
     /// <summary>
     /// If left null, the default <see cref="HandleAfterOnKeyDownAsync"/> will be used.
     /// </summary>
-    public Func<TextEditorModel, ImmutableArray<TextEditorCursorSnapshot>, KeyboardEventArgs, Func<TextEditorMenuKind, bool, Task>, Task>? AfterOnKeyDownAsync { get; set; }
+    public Func<TextEditorModel, ImmutableArray<TextEditorCursor>, KeyboardEventArgs, Func<TextEditorMenuKind, bool, Task>, Task>? AfterOnKeyDownAsync { get; set; }
     /// <summary>
     /// If set to false the <see cref="TextEditorHeader"/> will NOT render above the text editor.
     /// </summary>

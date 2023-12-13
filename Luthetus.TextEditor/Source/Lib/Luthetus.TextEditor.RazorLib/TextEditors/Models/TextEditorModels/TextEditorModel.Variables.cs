@@ -62,6 +62,14 @@ public partial class TextEditorModel
     public TextEditorSaveFileHelper TextEditorSaveFileHelper { get; init; } = new();
     public int EditBlockIndex { get; init; }
 	public (int rowIndex, int rowLength) MostCharactersOnASingleRowTuple { get; init; }
+
+    /// <summary>
+    /// <see cref="TextEditorModel"/> uses <see cref="ResourceUri"/> as its unique identifier.
+    /// Throughout this library, one finds <see cref="Key{T}"/> to be a unique identifier.
+    /// However, since <see cref="ResourceUri"/> should be unique,
+    /// <see cref="TextEditorModel"/> is an exception to this pattern.
+    /// </summary>
+    public Key<TextEditorModel> Key  => throw new NotImplementedException($"{nameof(TextEditorModel)} uses {nameof(ResourceUri)} as its unique identifier. Throughout this library, one finds {typeof(Key<>).FullName} to be a unique identifier. However since {typeof(ResourceUri).FullName} should be unique, {nameof(TextEditorModel)} is an exception to this pattern.");
     public Key<RenderState> RenderStateKey { get; init; } = Key<RenderState>.NewKey();
     public Keymap TextEditorKeymap { get; init; }
 	public TextEditorOptions? TextEditorOptions { get; init; }

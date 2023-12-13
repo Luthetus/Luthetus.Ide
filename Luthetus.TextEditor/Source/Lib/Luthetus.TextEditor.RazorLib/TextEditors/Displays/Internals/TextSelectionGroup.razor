@@ -1,10 +1,10 @@
 ﻿@using Luthetus.TextEditor.RazorLib.Cursors.Models;
 
 <div class="luth_te_text-selection-group">
-    @if (TextEditorSelectionHelper.HasSelectedText(PrimaryCursorSnapshot.ImmutableCursor.ImmutableSelection))
+    @if (TextEditorSelectionHelper.HasSelectedText(PrimaryCursor.Selection))
     {
         var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(
-            PrimaryCursorSnapshot.ImmutableCursor.ImmutableSelection);
+            PrimaryCursor.Selection);
 
         var selectionBoundsInRowIndexUnits = TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(
             RenderBatch.Model!,

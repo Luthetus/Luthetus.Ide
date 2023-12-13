@@ -61,17 +61,15 @@ public partial class AutocompleteMenu : ComponentBase
 
     private MenuRecord GetMenuRecord()
     {
-        var cursorSnapshotsBag = TextEditorCursorSnapshot.TakeSnapshots(
-            RenderBatch.ViewModel!.PrimaryCursor);
+        var cursorBag = new TextEditorCursor[] { RenderBatch.ViewModel!.PrimaryCursor }.ToImmutableArray();
 
-        var primaryCursorSnapshot = cursorSnapshotsBag.First(
-            x => x.UserCursor.IsPrimaryCursor);
+        var primaryCursor = cursorBag.First(x => x.IsPrimaryCursor);
 
-        if (primaryCursorSnapshot.ImmutableCursor.ColumnIndex > 0)
+        if (primaryCursor.ColumnIndex > 0)
         {
             var word = RenderBatch.Model!.ReadPreviousWordOrDefault(
-                primaryCursorSnapshot.ImmutableCursor.RowIndex,
-                primaryCursorSnapshot.ImmutableCursor.ColumnIndex);
+                primaryCursor.RowIndex,
+                primaryCursor.ColumnIndex);
 
             List<MenuOptionRecord> menuOptionRecordsBag = new();
 
@@ -85,7 +83,7 @@ public partial class AutocompleteMenu : ComponentBase
 
                 // (2023-08-09) Looking into using an ICompilerService for autocompletion.
                 {
-                    var positionIndex = RenderBatch.Model.GetCursorPositionIndex(primaryCursorSnapshot.ImmutableCursor);
+                    var positionIndex = RenderBatch.Model.GetCursorPositionIndex(primaryCursor);
 
                     var textSpan = new TextEditorTextSpan(
                         positionIndex,
@@ -158,7 +156,7 @@ public partial class AutocompleteMenu : ComponentBase
     {
         var insertTextTextEditorModelAction = new TextEditorModelState.InsertTextAction(
             textEditorViewModel.ResourceUri,
-            TextEditorCursorSnapshot.TakeSnapshots(textEditorViewModel.PrimaryCursor),
+            new TextEditorCursor[] { textEditorViewModel.PrimaryCursor }.ToImmutableArray(),
             autocompleteEntry.DisplayName.Substring(word.Length),
             CancellationToken.None);
 

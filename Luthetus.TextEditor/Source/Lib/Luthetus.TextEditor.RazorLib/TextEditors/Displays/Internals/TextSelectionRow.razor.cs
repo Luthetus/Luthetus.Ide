@@ -80,9 +80,13 @@ public partial class TextSelectionRow : ComponentBase
 
         // _selectionStartingLeftRelativeToParentInPixels
         {
-            var selectionStartingCursor = new TextEditorCursor(
-                (rowIndex, selectionStartingColumnIndex),
-                true);
+            var selectionStartingCursor = TextEditorCursor.Empty with
+            {
+                RowIndex = rowIndex,
+                ColumnIndex = selectionStartingColumnIndex,
+                PreferredColumnIndex = selectionStartingColumnIndex,
+                IsPrimaryCursor = true
+            };
 
             var textOffsettingCursor = RenderBatch.Model!
                 .GetTextOffsettingCursor(selectionStartingCursor)
@@ -114,9 +118,13 @@ public partial class TextSelectionRow : ComponentBase
 
         // _selectionWidthInPixels
         {
-            var selectionEndingCursor = new TextEditorCursor(
-                (rowIndex, selectionEndingColumnIndex),
-                true);
+            var selectionEndingCursor = TextEditorCursor.Empty with
+            {
+                RowIndex = rowIndex,
+                ColumnIndex = selectionEndingColumnIndex,
+                PreferredColumnIndex = selectionEndingColumnIndex,
+                IsPrimaryCursor = true
+            };
 
             var textOffsettingCursor = RenderBatch.Model!
                 .GetTextOffsettingCursor(selectionEndingCursor)

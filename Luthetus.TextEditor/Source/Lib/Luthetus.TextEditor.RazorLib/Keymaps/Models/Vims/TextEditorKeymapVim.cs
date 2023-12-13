@@ -133,14 +133,11 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
                     var positionIndex = commandArgs.Model.GetPositionIndex(
-                        commandArgs.PrimaryCursorSnapshot.ImmutableCursor.RowIndex,
-                        commandArgs.PrimaryCursorSnapshot.ImmutableCursor.ColumnIndex);
+                        commandArgs.PrimaryCursor.RowIndex,
+                        commandArgs.PrimaryCursor.ColumnIndex);
 
-                    commandArgs.PrimaryCursorSnapshot.UserCursor.Selection.AnchorPositionIndex =
-                        positionIndex;
-
-                    commandArgs.PrimaryCursorSnapshot.UserCursor.Selection.EndingPositionIndex =
-                        positionIndex + 1;
+                    commandArgs.PrimaryCursor.Selection.AnchorPositionIndex = positionIndex;
+                    commandArgs.PrimaryCursor.Selection.EndingPositionIndex = positionIndex + 1;
 
                     return Task.CompletedTask;
                 });
@@ -170,17 +167,17 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
                     var startOfRowPositionIndexInclusive = commandArgs.Model.GetPositionIndex(
-                        commandArgs.PrimaryCursorSnapshot.ImmutableCursor.RowIndex,
+                        commandArgs.PrimaryCursor.RowIndex,
                         0);
 
-                    commandArgs.PrimaryCursorSnapshot.UserCursor.Selection.AnchorPositionIndex =
+                    commandArgs.PrimaryCursor.Selection.AnchorPositionIndex =
                         startOfRowPositionIndexInclusive;
 
                     var endOfRowPositionIndexExclusive = commandArgs.Model.RowEndingPositionsBag[
-                            commandArgs.PrimaryCursorSnapshot.ImmutableCursor.RowIndex]
+                            commandArgs.PrimaryCursor.RowIndex]
                         .positionIndex;
 
-                    commandArgs.PrimaryCursorSnapshot.UserCursor.Selection.EndingPositionIndex =
+                    commandArgs.PrimaryCursor.Selection.EndingPositionIndex =
                         endOfRowPositionIndexExclusive;
 
                     return Task.CompletedTask;
@@ -690,12 +687,15 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
                     modifiedCommand = new TextEditorCommand(
                         "MoveCursor", "MoveCursor", false, true, TextEditKind.None, null,
-                        textEditorCommandArgs =>
+                        interfaceCommandArgs =>
                         {
-                            TextEditorCursor.MoveCursor(
+                            var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+
+                            commandArgs.TextEditorService.ViewModelApi.MoveCursor(
                                 keyboardEventArgs,
-                                commandArgs.PrimaryCursorSnapshot.UserCursor,
-                                commandArgs.Model);
+                                commandArgs.Model.ResourceUri,
+                                commandArgs.ViewModel.ViewModelKey,
+                                commandArgs.ViewModel.PrimaryCursor.Key);
 
                             return Task.CompletedTask;
                         });

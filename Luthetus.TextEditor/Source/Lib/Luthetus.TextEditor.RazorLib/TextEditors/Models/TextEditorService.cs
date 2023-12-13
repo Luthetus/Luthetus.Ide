@@ -12,11 +12,13 @@ using Microsoft.JSInterop;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using static Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices.ITextEditorService;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 public class TextEditorService : ITextEditorService
 {
+    private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IDispatcher _dispatcher;
     private readonly LuthetusTextEditorOptions _textEditorOptions;
     private readonly IStorageService _storageService;
@@ -32,6 +34,7 @@ public class TextEditorService : ITextEditorService
         IState<ThemeState> themeStateWrap,
         IState<TextEditorOptionsState> optionsStateWrap,
         IState<TextEditorSearchEngineState> searchEngineStateWrap,
+        IBackgroundTaskService backgroundTaskService,
         LuthetusTextEditorOptions textEditorOptions,
         IStorageService storageService,
         IJSRuntime jsRuntime,
@@ -46,6 +49,7 @@ public class TextEditorService : ITextEditorService
         OptionsStateWrap = optionsStateWrap;
         SearchEngineStateWrap = searchEngineStateWrap;
 
+        _backgroundTaskService = backgroundTaskService;
         _textEditorOptions = textEditorOptions;
         _storageService = storageService;
         _jsRuntime = jsRuntime;
@@ -53,7 +57,7 @@ public class TextEditorService : ITextEditorService
         _dispatcher = dispatcher;
 
         ModelApi = new TextEditorModelApi(this, _dispatcher);
-        ViewModelApi = new TextEditorViewModelApi(this, _jsRuntime, _dispatcher);
+        ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, ViewModelStateWrap, ModelStateWrap, _jsRuntime, _dispatcher);
         GroupApi = new TextEditorGroupApi(this, _dispatcher);
         DiffApi = new TextEditorDiffApi(this, _dispatcher);
         OptionsApi = new TextEditorOptionsApi(this, _textEditorOptions, _storageService, _storageSync, _dispatcher);

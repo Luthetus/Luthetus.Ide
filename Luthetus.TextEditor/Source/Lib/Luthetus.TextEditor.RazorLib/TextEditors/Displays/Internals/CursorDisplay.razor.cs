@@ -114,13 +114,13 @@ public partial class CursorDisplay : ComponentBase, IDisposable
             _previouslyObservedCursorDisplayId = CursorDisplayId;
         }
 
-        var rowIndex = Cursor.IndexCoordinates.rowIndex;
+        var rowIndex = Cursor.RowIndex;
 
         // Ensure cursor stays within the row count index range
         if (rowIndex > model.RowCount - 1)
             rowIndex = model.RowCount - 1;
 
-        var columnIndex = Cursor.IndexCoordinates.columnIndex;
+        var columnIndex = Cursor.ColumnIndex;
 
         var rowLength = model.GetLengthOfRow(rowIndex);
 
@@ -131,7 +131,8 @@ public partial class CursorDisplay : ComponentBase, IDisposable
         rowIndex = Math.Max(0, rowIndex);
         columnIndex = Math.Max(0, columnIndex);
 
-        Cursor.IndexCoordinates = (rowIndex, columnIndex);
+        Cursor.RowIndex = rowIndex;
+        Cursor.ColumnIndex = columnIndex;
 
         if (Cursor.ShouldRevealCursor)
         {
@@ -163,8 +164,8 @@ public partial class CursorDisplay : ComponentBase, IDisposable
         // Tab key column offset
         {
             var tabsOnSameRowBeforeCursor = RenderBatch.Model!.GetTabsCountOnSameRowBeforeCursor(
-                Cursor.IndexCoordinates.rowIndex,
-                Cursor.IndexCoordinates.columnIndex);
+                Cursor.RowIndex,
+                Cursor.ColumnIndex);
 
             // 1 of the character width is already accounted for
 
@@ -175,13 +176,12 @@ public partial class CursorDisplay : ComponentBase, IDisposable
                 measurements.CharacterWidth;
         }
 
-        leftInPixels += measurements.CharacterWidth * Cursor.IndexCoordinates.columnIndex;
+        leftInPixels += measurements.CharacterWidth * Cursor.ColumnIndex;
 
         var leftInPixelsInvariantCulture = leftInPixels.ToCssValue();
         var left = $"left: {leftInPixelsInvariantCulture}px;";
 
-        var topInPixelsInvariantCulture = (measurements.RowHeight *
-                Cursor.IndexCoordinates.rowIndex)
+        var topInPixelsInvariantCulture = (measurements.RowHeight * Cursor.RowIndex)
             .ToCssValue();
 
         var top = $"top: {topInPixelsInvariantCulture}px;";
@@ -204,8 +204,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     {
         var measurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndRowMeasurements;
 
-        var topInPixelsInvariantCulture = (measurements.RowHeight *
-                Cursor.IndexCoordinates.rowIndex)
+        var topInPixelsInvariantCulture = (measurements.RowHeight * Cursor.RowIndex)
             .ToCssValue();
 
         var top = $"top: {topInPixelsInvariantCulture}px;";
@@ -231,8 +230,8 @@ public partial class CursorDisplay : ComponentBase, IDisposable
         // Tab key column offset
         {
             var tabsOnSameRowBeforeCursor = RenderBatch.Model!.GetTabsCountOnSameRowBeforeCursor(
-                Cursor.IndexCoordinates.rowIndex,
-                Cursor.IndexCoordinates.columnIndex);
+                Cursor.RowIndex,
+                Cursor.ColumnIndex);
 
             // 1 of the character width is already accounted for
             var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
@@ -241,13 +240,12 @@ public partial class CursorDisplay : ComponentBase, IDisposable
                 measurements.CharacterWidth;
         }
 
-        leftInPixels += measurements.CharacterWidth * Cursor.IndexCoordinates.columnIndex;
+        leftInPixels += measurements.CharacterWidth * Cursor.ColumnIndex;
 
         var leftInPixelsInvariantCulture = leftInPixels.ToCssValue();
         var left = $"left: {leftInPixelsInvariantCulture}px;";
 
-        var topInPixelsInvariantCulture = 
-            (measurements.RowHeight * (Cursor.IndexCoordinates.rowIndex + 1))
+        var topInPixelsInvariantCulture = (measurements.RowHeight * (Cursor.RowIndex + 1))
             .ToCssValue();
 
         // Top is 1 row further than the cursor so it does not cover text at cursor position.

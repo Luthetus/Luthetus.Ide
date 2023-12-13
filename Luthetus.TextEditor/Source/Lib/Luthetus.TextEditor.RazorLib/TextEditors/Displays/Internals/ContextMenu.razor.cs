@@ -51,8 +51,8 @@ public partial class ContextMenu : ComponentBase
 
     private TextEditorCommandArgs ConstructCommandArgs()
     {
-        var cursorSnapshotsBag = TextEditorCursorSnapshot.TakeSnapshots(RenderBatch.ViewModel!.PrimaryCursor);
-        var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorSnapshotsBag.FirstOrDefault()!.ImmutableCursor.ImmutableSelection);
+        var cursorSnapshotsBag = new TextEditorCursor[] { RenderBatch.ViewModel!.PrimaryCursor }.ToImmutableArray();
+        var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorSnapshotsBag.First(x => x.IsPrimaryCursor).Selection);
 
         return new TextEditorCommandArgs(
             RenderBatch.Model!,

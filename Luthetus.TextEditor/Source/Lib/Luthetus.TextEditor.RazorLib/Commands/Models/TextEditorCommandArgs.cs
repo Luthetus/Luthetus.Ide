@@ -16,7 +16,7 @@ public class TextEditorCommandArgs : ICommandArgs
 {
     public TextEditorCommandArgs(
         TextEditorModel textEditor,
-        ImmutableArray<TextEditorCursorSnapshot> cursorSnapshotsBag,
+        ImmutableArray<TextEditorCursor> cursorBag,
         bool hasTextSelection,
         IClipboardService clipboardService,
         ITextEditorService textEditorService,
@@ -28,7 +28,7 @@ public class TextEditorCommandArgs : ICommandArgs
         Action<Key<TextEditorViewModel>>? showViewModelAction)
     {
         Model = textEditor;
-        CursorSnapshotsBag = cursorSnapshotsBag;
+        CursorBag = cursorBag;
         HasTextSelection = hasTextSelection;
         ClipboardService = clipboardService;
         TextEditorService = textEditorService;
@@ -42,10 +42,15 @@ public class TextEditorCommandArgs : ICommandArgs
 
     public TextEditorModel Model { get; }
 
-    public TextEditorCursorSnapshot PrimaryCursorSnapshot => CursorSnapshotsBag.First(
-        x => x.UserCursor.IsPrimaryCursor);
+    /// <summary>
+    /// The first entry of CursorBag should be the PrimaryCursor
+    /// </summary>
+    public TextEditorCursor PrimaryCursor => CursorBag.First();
 
-    public ImmutableArray<TextEditorCursorSnapshot> CursorSnapshotsBag { get; }
+    /// <summary>
+    /// The first entry of CursorBag should be the PrimaryCursor
+    /// </summary>
+    public ImmutableArray<TextEditorCursor> CursorBag { get; }
     public IClipboardService ClipboardService { get; }
     public ITextEditorService TextEditorService { get; }
     public TextEditorViewModel ViewModel { get; }

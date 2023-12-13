@@ -145,13 +145,13 @@ public static class TextEditorModelHelper
 	public static int GetCursorPositionIndex(
 		this ITextEditorModel model, TextEditorCursor textEditorCursor)
 	{
-		return model.GetPositionIndex(textEditorCursor.IndexCoordinates.rowIndex, textEditorCursor.IndexCoordinates.columnIndex);
+		return model.GetPositionIndex(textEditorCursor.RowIndex, textEditorCursor.ColumnIndex);
 	}
-
+	
 	public static int GetCursorPositionIndex(
-		this ITextEditorModel model, ImmutableTextEditorCursor immutableTextEditorCursor)
+		this ITextEditorModel model, TextEditorCursorModifier textEditorCursorModifier)
 	{
-		return model.GetPositionIndex(immutableTextEditorCursor.RowIndex, immutableTextEditorCursor.ColumnIndex);
+		return model.GetPositionIndex(textEditorCursorModifier.RowIndex, textEditorCursorModifier.ColumnIndex);
 	}
 
 	public static int GetPositionIndex(
@@ -446,7 +446,7 @@ public static class TextEditorModelHelper
 		this ITextEditorModel model, TextEditorCursor textEditorCursor)
 	{
 		var cursorPositionIndex = model.GetCursorPositionIndex(textEditorCursor);
-		var startOfRowTuple = model.GetStartOfRowTuple(textEditorCursor.IndexCoordinates.rowIndex);
+		var startOfRowTuple = model.GetStartOfRowTuple(textEditorCursor.RowIndex);
 
 		return model.GetTextRange(startOfRowTuple.positionIndex, cursorPositionIndex - startOfRowTuple.positionIndex);
 	}
