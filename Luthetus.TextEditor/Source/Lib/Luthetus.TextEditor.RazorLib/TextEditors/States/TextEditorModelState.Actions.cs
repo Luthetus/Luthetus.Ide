@@ -25,25 +25,33 @@ public partial class TextEditorModelState
 
     public record KeyboardEventAction(
         ResourceUri ResourceUri,
+        Key<TextEditorViewModel> ViewModelKey,
         ImmutableArray<TextEditorCursor> CursorBag,
+        ImmutableArray<TextEditorCursorModifier> CursorModifierBag,
         KeyboardEventArgs KeyboardEventArgs,
         CancellationToken CancellationToken);
 
     public record InsertTextAction(
         ResourceUri ResourceUri,
+        Key<TextEditorViewModel> ViewModelKey,
         ImmutableArray<TextEditorCursor> CursorBag,
+        ImmutableArray<TextEditorCursorModifier> CursorModifierBag,
         string Content,
         CancellationToken CancellationToken);
 
     public record DeleteTextByMotionAction(
         ResourceUri ResourceUri,
+        Key<TextEditorViewModel> ViewModelKey,
         ImmutableArray<TextEditorCursor> CursorBag,
+        ImmutableArray<TextEditorCursorModifier> CursorModifierBag,
         MotionKind MotionKind,
         CancellationToken CancellationToken);
 
     public record DeleteTextByRangeAction(
         ResourceUri ResourceUri,
+        Key<TextEditorViewModel> ViewModelKey,
         ImmutableArray<TextEditorCursor> CursorBag,
+        ImmutableArray<TextEditorCursorModifier> CursorModifierBag,
         int Count,
         CancellationToken CancellationToken);
 }

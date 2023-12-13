@@ -6,6 +6,10 @@ using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
@@ -56,11 +60,16 @@ public partial interface ITextEditorService
     public class TextEditorModelApi : ITextEditorModelApi
     {
         private readonly ITextEditorService _textEditorService;
+        private readonly IBackgroundTaskService _backgroundTaskService;
         private readonly IDispatcher _dispatcher;
 
-        public TextEditorModelApi(ITextEditorService textEditorService, IDispatcher dispatcher)
+        public TextEditorModelApi(
+            ITextEditorService textEditorService,
+            IBackgroundTaskService backgroundTaskService,
+            IDispatcher dispatcher)
         {
             _textEditorService = textEditorService;
+            _backgroundTaskService = backgroundTaskService;
             _dispatcher = dispatcher;
         }
 
@@ -147,7 +156,32 @@ public partial interface ITextEditorService
 
         public void HandleKeyboardEvent(TextEditorModelState.KeyboardEventAction keyboardEventAction)
         {
-            _dispatcher.Dispatch(keyboardEventAction);
+            _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+                "HandleOnKeyDownAsync",
+                () =>
+                {
+                    _dispatcher.Dispatch(keyboardEventAction);
+
+                    _textEditorService.ViewModelApi.SetViewModelWith(
+                        keyboardEventAction.ViewModelKey,
+                        inViewModel =>
+                        {
+                            var outCursorBag = new List<TextEditorCursor>();
+
+                            foreach (var cursorModifier in keyboardEventAction.CursorModifierBag)
+                            {
+                                outCursorBag.Add(cursorModifier.ToCursor());
+                            }
+
+                            return Task.FromResult(new Func<TextEditorViewModel, TextEditorViewModel>(
+                                state => state with
+                                {
+                                    CursorBag = outCursorBag.ToImmutableArray()
+                                }));
+                        });
+
+                    return Task.CompletedTask;
+                });
         }
 
         public ImmutableArray<TextEditorViewModel> GetViewModelsOrEmpty(ResourceUri resourceUri)

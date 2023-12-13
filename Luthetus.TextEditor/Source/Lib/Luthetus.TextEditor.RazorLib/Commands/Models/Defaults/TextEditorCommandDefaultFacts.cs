@@ -94,7 +94,9 @@ public static class TextEditorCommandDefaultFacts
                     commandArgs.TextEditorService.ModelApi.HandleKeyboardEvent(
                         new TextEditorModelState.KeyboardEventAction(
                             commandArgs.Model.ResourceUri,
+                            commandArgs.ViewModel.ViewModelKey,
                             cursorSnapshotsBag,
+                            cursorSnapshotsBag.Select(x => new TextEditorCursorModifier(x)).ToImmutableArray(),
                             new KeyboardEventArgs { Key = KeyboardKeyFacts.MetaKeys.DELETE },
                             CancellationToken.None));
 
@@ -126,7 +128,9 @@ public static class TextEditorCommandDefaultFacts
                     commandArgs.TextEditorService.ModelApi.InsertText(
                         new TextEditorModelState.InsertTextAction(
                             commandArgs.Model.ResourceUri,
+                            commandArgs.ViewModel.ViewModelKey,
                             new[] { cursorModifier.ToCursor() }.ToImmutableArray(),
+                            new[] { cursorModifier }.ToImmutableArray(),
                             clipboard,
                             CancellationToken.None));
 
@@ -341,7 +345,9 @@ public static class TextEditorCommandDefaultFacts
 
                     var insertTextAction = new TextEditorModelState.InsertTextAction(
                         commandArgs.Model.ResourceUri,
+                        commandArgs.ViewModel.ViewModelKey,
                         new TextEditorCursor[] { cursorForInsertion }.ToImmutableArray(),
+                        new TextEditorCursorModifier[] { new(cursorForInsertion) }.ToImmutableArray(),
                         selectedText,
                         CancellationToken.None);
 
@@ -392,7 +398,9 @@ public static class TextEditorCommandDefaultFacts
 
                         var insertTextAction = new TextEditorModelState.InsertTextAction(
                             commandArgs.Model.ResourceUri,
+                            commandArgs.ViewModel.ViewModelKey,
                             new TextEditorCursor[] { cursorForInsertion }.ToImmutableArray(),
+                            new TextEditorCursorModifier[] { new(cursorForInsertion) }.ToImmutableArray(),
                             KeyboardKeyFacts.WhitespaceCharacters.TAB.ToString(),
                             CancellationToken.None);
 
@@ -488,7 +496,9 @@ public static class TextEditorCommandDefaultFacts
 
                             var deleteTextAction = new TextEditorModelState.DeleteTextByRangeAction(
                                 commandArgs.Model.ResourceUri,
+                                commandArgs.ViewModel.ViewModelKey,
                                 new TextEditorCursor[] { cursorForDeletion }.ToImmutableArray(),
+                                new TextEditorCursorModifier[] { new(cursorForDeletion) }.ToImmutableArray(),
                                 removeCharacterCount, // Delete a single "Tab" character
                                 CancellationToken.None);
 
@@ -515,7 +525,9 @@ public static class TextEditorCommandDefaultFacts
 
                             var deleteTextAction = new TextEditorModelState.DeleteTextByRangeAction(
                                 commandArgs.Model.ResourceUri,
+                                commandArgs.ViewModel.ViewModelKey,
                                 new TextEditorCursor[] { cursorForDeletion }.ToImmutableArray(),
+                                new TextEditorCursorModifier[] { new(cursorForDeletion) }.ToImmutableArray(),
                                 removeCharacterCount,
                                 CancellationToken.None);
 
@@ -633,7 +645,9 @@ public static class TextEditorCommandDefaultFacts
                     commandArgs.TextEditorService.ModelApi.InsertText(
                         new TextEditorModelState.InsertTextAction(
                             commandArgs.Model.ResourceUri,
+                            commandArgs.ViewModel.ViewModelKey,
                             new TextEditorCursor[] { cursorModifier.ToCursor() }.ToImmutableArray(),
+                            new TextEditorCursorModifier[] { cursorModifier }.ToImmutableArray(),
                             "\n",
                             CancellationToken.None));
 
@@ -673,7 +687,9 @@ public static class TextEditorCommandDefaultFacts
                 commandArgs.TextEditorService.ModelApi.InsertText(
                     new TextEditorModelState.InsertTextAction(
                         commandArgs.Model.ResourceUri,
+                        commandArgs.ViewModel.ViewModelKey,
                         new TextEditorCursor[] { cursorModifier.ToCursor() }.ToImmutableArray(),
+                        new TextEditorCursorModifier[] { cursorModifier }.ToImmutableArray(),
                         "\n",
                         CancellationToken.None));
 

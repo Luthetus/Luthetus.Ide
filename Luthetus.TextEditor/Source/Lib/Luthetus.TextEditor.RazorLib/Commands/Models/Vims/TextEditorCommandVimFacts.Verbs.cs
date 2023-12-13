@@ -76,7 +76,9 @@ public static partial class TextEditorCommandVimFacts
 
                 var deleteTextTextEditorModelAction = new TextEditorModelState.DeleteTextByRangeAction(
                     commandArgs.Model.ResourceUri,
+                    commandArgs.ViewModel.ViewModelKey,
                     new TextEditorCursor[] { cursorForDeletion }.ToImmutableArray(),
+                    new TextEditorCursorModifier[] { new TextEditorCursorModifier(cursorForDeletion) }.ToImmutableArray(),
                     motionResult.PositionIndexDisplacement,
                     CancellationToken.None);
 

@@ -152,11 +152,13 @@ public partial class AutocompleteMenu : ComponentBase
     private Task InsertAutocompleteMenuOption(
         string word,
         AutocompleteEntry autocompleteEntry,
-        TextEditorViewModel textEditorViewModel)
+        TextEditorViewModel viewModel)
     {
         var insertTextTextEditorModelAction = new TextEditorModelState.InsertTextAction(
-            textEditorViewModel.ResourceUri,
-            new TextEditorCursor[] { textEditorViewModel.PrimaryCursor }.ToImmutableArray(),
+            viewModel.ResourceUri,
+            viewModel.ViewModelKey,
+            new TextEditorCursor[] { viewModel.PrimaryCursor }.ToImmutableArray(),
+            new TextEditorCursorModifier[] { new(viewModel.PrimaryCursor) }.ToImmutableArray(),
             autocompleteEntry.DisplayName.Substring(word.Length),
             CancellationToken.None);
 

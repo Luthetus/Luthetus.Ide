@@ -56,7 +56,7 @@ public class TextEditorService : ITextEditorService
         _storageSync = storageSync;
         _dispatcher = dispatcher;
 
-        ModelApi = new TextEditorModelApi(this, _dispatcher);
+        ModelApi = new TextEditorModelApi(this, _backgroundTaskService, _dispatcher);
         ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, ViewModelStateWrap, ModelStateWrap, _jsRuntime, _dispatcher);
         GroupApi = new TextEditorGroupApi(this, _dispatcher);
         DiffApi = new TextEditorDiffApi(this, _dispatcher);

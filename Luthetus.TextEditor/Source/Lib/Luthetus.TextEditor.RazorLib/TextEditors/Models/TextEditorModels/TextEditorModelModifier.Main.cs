@@ -267,7 +267,7 @@ public partial class TextEditorModelModifier
 
         EnsureUndoPoint(TextEditKind.Insertion);
 
-        var cursorModifierBag = keyboardEventAction.CursorBag.Select(x => new TextEditorCursorModifier(x));
+        var cursorModifierBag = keyboardEventAction.CursorModifierBag;
 
         foreach (var cursorModifier in cursorModifierBag)
         {
@@ -940,7 +940,9 @@ public partial class TextEditorModelModifier
             {
                 PerformDeletions(new KeyboardEventAction(
                     keyboardEventAction.ResourceUri,
+                    keyboardEventAction.ViewModelKey,
                     cursorBag,
+                    cursorBag.Select(x => new TextEditorCursorModifier(x)).ToImmutableArray(),
                     new KeyboardEventArgs
                     {
                         Code = KeyboardKeyFacts.MetaKeys.DELETE,
@@ -989,7 +991,9 @@ public partial class TextEditorModelModifier
         {
             PerformDeletions(new KeyboardEventAction(
                 insertTextAction.ResourceUri,
+                insertTextAction.ViewModelKey,
                 cursorBag,
+                cursorBag.Select(x => new TextEditorCursorModifier(x)).ToImmutableArray(),
                 new KeyboardEventArgs
                 {
                     Code = KeyboardKeyFacts.MetaKeys.DELETE,
@@ -1007,7 +1011,7 @@ public partial class TextEditorModelModifier
             // Need innerCursorSnapshots because need
             // after every loop of the foreach that the
             // cursor snapshots are updated
-            var innerCursorBag = insertTextAction.CursorBag;
+            var innerCursorModifierBag = insertTextAction.CursorModifierBag;
 
             var code = character switch
             {
@@ -1020,7 +1024,9 @@ public partial class TextEditorModelModifier
 
             var keyboardEventTextEditorModelAction = new KeyboardEventAction(
                 insertTextAction.ResourceUri,
-                innerCursorBag,
+                insertTextAction.ViewModelKey,
+                innerCursorModifierBag.Select(x => x.ToCursor()).ToImmutableArray(),
+                innerCursorModifierBag,
                 new KeyboardEventArgs
                 {
                     Code = code,
@@ -1043,7 +1049,9 @@ public partial class TextEditorModelModifier
 
         var keyboardEventTextEditorModelAction = new KeyboardEventAction(
             deleteTextByMotionAction.ResourceUri,
+            deleteTextByMotionAction.ViewModelKey,
             deleteTextByMotionAction.CursorBag,
+            deleteTextByMotionAction.CursorModifierBag,
             keyboardEventArgs,
             CancellationToken.None);
 
@@ -1058,11 +1066,13 @@ public partial class TextEditorModelModifier
             // Need innerCursorSnapshots because need
             // after every loop of the foreach that the
             // cursor snapshots are updated
-            var innerCursorSnapshotsBag = deleteTextByRangeAction.CursorBag;
+            var innerCursorModifierBag = deleteTextByRangeAction.CursorModifierBag;
 
             var keyboardEventTextEditorModelAction = new KeyboardEventAction(
                 deleteTextByRangeAction.ResourceUri,
-                innerCursorSnapshotsBag,
+                deleteTextByRangeAction.ViewModelKey,
+                innerCursorModifierBag.Select(x => x.ToCursor()).ToImmutableArray(),
+                innerCursorModifierBag,
                 new KeyboardEventArgs
                 {
                     Code = KeyboardKeyFacts.MetaKeys.DELETE,

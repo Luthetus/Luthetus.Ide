@@ -335,18 +335,13 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
                 _tooltipViewModel = null;
 
-                BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
-                    "HandleOnKeyDownAsync",
-                    () =>
-                    {
-                        Dispatcher.Dispatch(new TextEditorModelState.KeyboardEventAction(
-                            viewModel.ResourceUri,
-                            cursorBag,
-                            keyboardEventArgs,
-                            CancellationToken.None));
-
-                        return Task.CompletedTask;
-                    });
+                TextEditorService.ModelApi.HandleKeyboardEvent(new TextEditorModelState.KeyboardEventAction(
+                    viewModel.ResourceUri,
+                    viewModel.ViewModelKey,
+                    cursorBag,
+                    cursorBag.Select(x => new TextEditorCursorModifier(x)).ToImmutableArray(),
+                    keyboardEventArgs,
+                    CancellationToken.None));
             }
         }
 
