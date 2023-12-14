@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components.Web;
-using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
@@ -11,7 +10,7 @@ using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Microsoft.JSInterop;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Fluxor;
+using static Luthetus.TextEditor.RazorLib.TextEditors.States.TextEditorModelState;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 
@@ -23,164 +22,153 @@ public static class TextEditorCommandDefaultFacts
 
     public static readonly TextEditorCommand Copy = new(
         "Copy", "defaults_copy", false, false, TextEditKind.None, null,
-        async interfaceCommandArgs =>
-        {
-            var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-            commandArgs.TextEditorService.ViewModelApi.SetViewModelWith(
-                commandArgs.ViewModel.ViewModelKey,
-                async inViewModel =>
-                {
-                    var cursorModifier = new TextEditorCursorModifier(commandArgs.PrimaryCursor);
-
-                    var selectedText = TextEditorSelectionHelper.GetSelectedText(
-                        cursorModifier,
-                        commandArgs.Model);
-
-                    selectedText ??= commandArgs.Model.GetLinesRange(
-                        cursorModifier.RowIndex,
-                        1);
-
-                    await commandArgs.ClipboardService.SetClipboard(selectedText);
-                    await commandArgs.ViewModel.FocusAsync();
-
-                    var outCursor = cursorModifier.ToCursor();
-                    var outCursorBag = inViewModel.CursorBag.Replace(inViewModel.PrimaryCursor, outCursor);
-
-                    return new Func<TextEditorViewModel, TextEditorViewModel>(
-                        state => state with
-                        {
-                            CursorBag = outCursorBag
-                        });
-                });
-        });
-
-    public static readonly TextEditorCommand Cut = new(
-        "Cut", "defaults_cut", false, true, TextEditKind.None, null,
-        async interfaceCommandArgs =>
-        {
-            var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-            commandArgs.TextEditorService.ViewModelApi.SetViewModelWith(
-                commandArgs.ViewModel.ViewModelKey,
-                async inViewModel =>
-                {
-                    var cursorModifier = new TextEditorCursorModifier(commandArgs.PrimaryCursor);
-
-                    var selectedText = TextEditorSelectionHelper.GetSelectedText(
-                        cursorModifier,
-                        commandArgs.Model);
-
-                    var cursorSnapshotsBag = commandArgs.CursorBag;
-
-                    if (selectedText is null)
-                    {
-                        var cursor = TextEditorSelectionHelper.SelectLinesRange(
-                            commandArgs.Model,
-                            cursorModifier.RowIndex,
-                            1);
-
-                        selectedText = TextEditorSelectionHelper.GetSelectedText(
-                            cursor.Selection,
-                            commandArgs.Model);
-                    }
-
-                    if (selectedText is null)
-                        return state => state; // Should never occur
-
-                    await commandArgs.ClipboardService.SetClipboard(selectedText);
-                    await commandArgs.ViewModel.FocusAsync();
-
-                    commandArgs.TextEditorService.ModelApi.HandleKeyboardEvent(
-                        new TextEditorModelState.KeyboardEventAction(
-                            commandArgs.Model.ResourceUri,
-                            commandArgs.ViewModel.ViewModelKey,
-                            cursorSnapshotsBag,
-                            cursorSnapshotsBag.Select(x => new TextEditorCursorModifier(x)).ToImmutableArray(),
-                            new KeyboardEventArgs { Key = KeyboardKeyFacts.MetaKeys.DELETE },
-                            CancellationToken.None));
-
-                    var outCursor = cursorModifier.ToCursor();
-                    var outCursorBag = inViewModel.CursorBag.Replace(inViewModel.PrimaryCursor, outCursor);
-
-                    return new Func<TextEditorViewModel, TextEditorViewModel>(
-                        state => state with
-                        {
-                            CursorBag = outCursorBag
-                        });
-                });
-        });
-
-    public static readonly TextEditorCommand Paste = new(
-        "Paste", "defaults_paste", false, true, TextEditKind.Other, "defaults_paste",
-        async interfaceCommandArgs =>
-        {
-            var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-            
-            commandArgs.TextEditorService.ViewModelApi.SetViewModelWith(
-                commandArgs.ViewModel.ViewModelKey,
-                async inViewModel =>
-                {
-                    var cursorModifier = new TextEditorCursorModifier(commandArgs.PrimaryCursor);
-
-                    var clipboard = await commandArgs.ClipboardService.ReadClipboard();
-
-                    commandArgs.TextEditorService.ModelApi.InsertText(
-                        new TextEditorModelState.InsertTextAction(
-                            commandArgs.Model.ResourceUri,
-                            commandArgs.ViewModel.ViewModelKey,
-                            new[] { cursorModifier.ToCursor() }.ToImmutableArray(),
-                            new[] { cursorModifier }.ToImmutableArray(),
-                            clipboard,
-                            CancellationToken.None));
-
-                    var outCursor = cursorModifier.ToCursor();
-                    var outCursorBag = inViewModel.CursorBag.Replace(inViewModel.PrimaryCursor, outCursor);
-
-                    return new Func<TextEditorViewModel, TextEditorViewModel>(
-                        state => state with
-                        {
-                            CursorBag = outCursorBag
-                        });
-                });
-        });
-
-    public static readonly TextEditorCommand Save = new(
-        "Save",
-        "defaults_save",
-        false,
-        false,
-        TextEditKind.None,
-        null,
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.ViewModelApi.SetViewModelWith(
-                commandArgs.ViewModel.ViewModelKey,
-                inViewModel =>
-                {
-                    var cursorModifier = new TextEditorCursorModifier(commandArgs.PrimaryCursor);
+            var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
+                commandArgs.ViewModelKey,
+                new List<TextEditorCursorModifier>());
 
-                    var onSaveRequestedFunc = commandArgs.ViewModel.OnSaveRequested;
+            commandArgs.TextEditorService.EnqueueModification(
+                nameof(Copy),
+                refreshCursorsRequest,
+                async () =>
+                {
+                    var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
+                    var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
+                    var cursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
+
+                    if (viewModel is null || model is null || cursor is null)
+                        return;
+
+                    var selectedText = TextEditorSelectionHelper.GetSelectedText(
+                        cursor,
+                        model);
+
+                    selectedText ??= model.GetLinesRange(
+                        cursor.RowIndex,
+                        1);
+
+                    await commandArgs.ClipboardService.SetClipboard(selectedText);
+                    await viewModel.FocusAsync();
+                });
+
+            return Task.CompletedTask;
+        });
+
+    public static readonly TextEditorCommand Cut = new(
+        "Cut", "defaults_cut", false, true, TextEditKind.None, null,
+        interfaceCommandArgs =>
+        {
+            var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+
+            var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
+                commandArgs.ViewModelKey,
+                new List<TextEditorCursorModifier>());
+
+            commandArgs.TextEditorService.EnqueueModification(
+                nameof(Cut),
+                refreshCursorsRequest,
+                async () =>
+                {
+                    var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
+                    var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
+                    var cursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
+
+                    if (viewModel is null || model is null || cursor is null)
+                        return;
+
+                    var selectedText = TextEditorSelectionHelper.GetSelectedText(
+                        cursor,
+                        model);
+
+                    if (selectedText is null)
+                        return; // Should never occur
+
+                    await commandArgs.ClipboardService.SetClipboard(selectedText);
+                    await viewModel.FocusAsync();
+
+                    commandArgs.Dispatcher.Dispatch(new KeyboardEventAction(
+                        model.ResourceUri,
+                        viewModel.ViewModelKey,
+                        refreshCursorsRequest.CursorBag,
+                        new KeyboardEventArgs { Key = KeyboardKeyFacts.MetaKeys.DELETE },
+                        CancellationToken.None));
+                });
+
+            return Task.CompletedTask;
+        });
+
+    public static readonly TextEditorCommand Paste = new(
+        "Paste", "defaults_paste", false, true, TextEditKind.Other, "defaults_paste",
+        interfaceCommandArgs =>
+        {
+            var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+
+            var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
+                commandArgs.ViewModelKey,
+                new List<TextEditorCursorModifier>());
+
+            commandArgs.TextEditorService.EnqueueModification(
+                nameof(Paste),
+                refreshCursorsRequest,
+                async () =>
+                {
+                    var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
+                    var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
+                    var cursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
+
+                    if (viewModel is null || model is null || cursor is null)
+                        return;
+
+                    var clipboard = await commandArgs.ClipboardService.ReadClipboard();
+
+                    commandArgs.Dispatcher.Dispatch(new InsertTextAction(
+                        model.ResourceUri,
+                        viewModel.ViewModelKey,
+                        refreshCursorsRequest.CursorBag,
+                        clipboard,
+                        CancellationToken.None));
+                });
+
+            return Task.CompletedTask;
+        });
+
+    public static readonly TextEditorCommand Save = new(
+        "Save", "defaults_save", false, false, TextEditKind.None, null,
+        interfaceCommandArgs =>
+        {
+            var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+
+            var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
+                commandArgs.ViewModelKey,
+                new List<TextEditorCursorModifier>());
+
+            commandArgs.TextEditorService.EnqueueModification(
+                nameof(Save),
+                refreshCursorsRequest,
+                () =>
+                {
+                    var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
+                    var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
+                    var cursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
+
+                    if (viewModel is null || model is null || cursor is null)
+                        return Task.CompletedTask;
+
+                    var onSaveRequestedFunc = viewModel.OnSaveRequested;
 
                     if (onSaveRequestedFunc is not null)
                     {
-                        onSaveRequestedFunc.Invoke(commandArgs.Model);
+                        onSaveRequestedFunc.Invoke(model);
 
-                        commandArgs.TextEditorService.ViewModelApi.With(
-                            commandArgs.ViewModel.ViewModelKey,
-                            previousViewModel => previousViewModel with { }); // "with { }" is a Hack to re-render
+                        commandArgs.Dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
+                            viewModel.ViewModelKey,
+                            inState => inState with {})); // "with { }" is a Hack to re-render
                     }
 
-                    var outCursor = cursorModifier.ToCursor();
-                    var outCursorBag = inViewModel.CursorBag.Replace(inViewModel.PrimaryCursor, outCursor);
-
-                    return Task.FromResult(new Func<TextEditorViewModel, TextEditorViewModel>(
-                        state => state with
-                        {
-                            CursorBag = outCursorBag
-                        }));
+                    return Task.CompletedTask;
                 });
 
             return Task.CompletedTask;
@@ -192,23 +180,26 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.ViewModelApi.SetViewModelWith(
-                commandArgs.ViewModel.ViewModelKey,
-                inViewModel =>
+            var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
+                commandArgs.ViewModelKey,
+                new List<TextEditorCursorModifier>());
+
+            commandArgs.TextEditorService.EnqueueModification(
+                nameof(SelectAll),
+                refreshCursorsRequest,
+                () =>
                 {
-                    var cursorModifier = new TextEditorCursorModifier(commandArgs.PrimaryCursor);
+                    var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
+                    var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
+                    var cursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
 
-                    cursorModifier.SelectionAnchorPositionIndex = 0;
-                    cursorModifier.SelectionEndingPositionIndex = commandArgs.Model.DocumentLength;
+                    if (viewModel is null || model is null || cursor is null)
+                        return Task.CompletedTask;
 
-                    var outCursor = cursorModifier.ToCursor();
-                    var outCursorBag = inViewModel.CursorBag.Replace(inViewModel.PrimaryCursor, outCursor);
+                    cursor.SelectionAnchorPositionIndex = 0;
+                    cursor.SelectionEndingPositionIndex = model.DocumentLength;
 
-                    return Task.FromResult(new Func<TextEditorViewModel, TextEditorViewModel>(
-                        state => state with
-                        {
-                            CursorBag = outCursorBag
-                        }));
+                    return Task.CompletedTask;
                 });
 
             return Task.CompletedTask;
@@ -219,7 +210,7 @@ public static class TextEditorCommandDefaultFacts
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-            commandArgs.TextEditorService.ModelApi.UndoEdit(commandArgs.Model.ResourceUri);
+            commandArgs.TextEditorService.ModelApi.UndoEdit(commandArgs.ModelResourceUri);
             return Task.CompletedTask;
         });
 
@@ -228,7 +219,7 @@ public static class TextEditorCommandDefaultFacts
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-            commandArgs.TextEditorService.ModelApi.RedoEdit(commandArgs.Model.ResourceUri);
+            commandArgs.TextEditorService.ModelApi.RedoEdit(commandArgs.ModelResourceUri);
             return Task.CompletedTask;
         });
 
@@ -243,34 +234,114 @@ public static class TextEditorCommandDefaultFacts
 
     public static readonly TextEditorCommand ScrollLineDown = new(
         "Scroll Line Down", "defaults_scroll-line-down", false, false, TextEditKind.None, null,
-        async interfaceCommandArgs =>
+        interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-            await commandArgs.ViewModel.MutateScrollVerticalPositionByLinesAsync(1);
+
+            var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
+                commandArgs.ViewModelKey,
+                new List<TextEditorCursorModifier>());
+
+            commandArgs.TextEditorService.EnqueueModification(
+                nameof(ScrollLineDown),
+                refreshCursorsRequest,
+                async () =>
+                {
+                    var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
+                    var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
+                    var cursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
+
+                    if (viewModel is null || model is null || cursor is null)
+                        return;
+
+                    await viewModel.MutateScrollVerticalPositionByLinesAsync(1);
+                });
+
+            return Task.CompletedTask;
         });
 
     public static readonly TextEditorCommand ScrollLineUp = new(
         "Scroll Line Up", "defaults_scroll-line-up", false, false, TextEditKind.None, null,
-        async interfaceCommandArgs =>
+        interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-            await commandArgs.ViewModel.MutateScrollVerticalPositionByLinesAsync(-1);
+
+            var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
+                commandArgs.ViewModelKey,
+                new List<TextEditorCursorModifier>());
+
+            commandArgs.TextEditorService.EnqueueModification(
+                nameof(ScrollLineUp),
+                refreshCursorsRequest,
+                async () =>
+                {
+                    var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
+                    var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
+                    var cursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
+
+                    if (viewModel is null || model is null || cursor is null)
+                        return;
+
+                    await viewModel.MutateScrollVerticalPositionByLinesAsync(-1);
+                });
+
+            return Task.CompletedTask;
         });
 
     public static readonly TextEditorCommand ScrollPageDown = new(
         "Scroll Page Down", "defaults_scroll-page-down", false, false, TextEditKind.None, null,
-        async interfaceCommandArgs =>
+        interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-            await commandArgs.ViewModel.MutateScrollVerticalPositionByPagesAsync(1);
+
+            var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
+                commandArgs.ViewModelKey,
+                new List<TextEditorCursorModifier>());
+
+            commandArgs.TextEditorService.EnqueueModification(
+                nameof(ScrollPageDown),
+                refreshCursorsRequest,
+                async () =>
+                {
+                    var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
+                    var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
+                    var cursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
+
+                    if (viewModel is null || model is null || cursor is null)
+                        return;
+
+                    await viewModel.MutateScrollVerticalPositionByPagesAsync(1);
+                });
+
+            return Task.CompletedTask;
         });
 
     public static readonly TextEditorCommand ScrollPageUp = new(
         "Scroll Page Up", "defaults_scroll-page-up", false, false, TextEditKind.None, null,
-        async interfaceCommandArgs =>
+        interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-            await commandArgs.ViewModel.MutateScrollVerticalPositionByPagesAsync(-1);
+
+            var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
+                commandArgs.ViewModelKey,
+                new List<TextEditorCursorModifier>());
+
+            commandArgs.TextEditorService.EnqueueModification(
+                nameof(ScrollPageUp),
+                refreshCursorsRequest,
+                async () =>
+                {
+                    var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
+                    var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
+                    var cursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
+
+                    if (viewModel is null || model is null || cursor is null)
+                        return;
+
+                    await viewModel.MutateScrollVerticalPositionByPagesAsync(-1);
+                });
+
+            return Task.CompletedTask;
         });
 
     public static readonly TextEditorCommand CursorMovePageBottom = new(
@@ -279,10 +350,33 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.ViewModelApi.CursorMovePageBottom(
-                commandArgs.Model.ResourceUri,
-                commandArgs.ViewModel.ViewModelKey,
-                commandArgs.ViewModel.PrimaryCursor.Key);
+            var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
+                commandArgs.ViewModelKey,
+                new List<TextEditorCursorModifier>());
+
+            commandArgs.TextEditorService.EnqueueModification(
+                nameof(ScrollPageUp),
+                refreshCursorsRequest,
+                () =>
+                {
+                    var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
+                    var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
+                    var cursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
+
+                    if (viewModel is null || model is null || cursor is null)
+                        return Task.CompletedTask;
+
+                    if (viewModel.VirtualizationResult?.EntryBag.Any() ?? false)
+                    {
+                        var lastEntry = viewModel.VirtualizationResult.EntryBag.Last();
+                        var lastEntriesRowLength = model.GetLengthOfRow(lastEntry.Index);
+
+                        cursor.RowIndex = lastEntry.Index;
+                        cursor.ColumnIndex = lastEntriesRowLength;
+                    }
+
+                    return Task.CompletedTask;
+                });
 
             return Task.CompletedTask;
         });
@@ -293,10 +387,32 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.ViewModelApi.CursorMovePageTop(
-                commandArgs.Model.ResourceUri,
-                commandArgs.ViewModel.ViewModelKey,
-                commandArgs.ViewModel.PrimaryCursor.Key);
+            var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
+                commandArgs.ViewModelKey,
+                new List<TextEditorCursorModifier>());
+
+            commandArgs.TextEditorService.EnqueueModification(
+                nameof(ScrollPageUp),
+                refreshCursorsRequest,
+                () =>
+                {
+                    var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
+                    var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
+                    var cursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
+
+                    if (viewModel is null || model is null || cursor is null)
+                        return Task.CompletedTask;
+
+                    if (viewModel.VirtualizationResult?.EntryBag.Any() ?? false)
+                    {
+                        var firstEntry = viewModel.VirtualizationResult.EntryBag.First();
+
+                        cursor.RowIndex = firstEntry.Index;
+                        cursor.ColumnIndex = 0;
+                    }
+
+                    return Task.CompletedTask;
+                });
 
             return Task.CompletedTask;
         });
@@ -307,60 +423,59 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.ViewModelApi.SetViewModelWith(
-                commandArgs.ViewModel.ViewModelKey,
-                inViewModel =>
+            var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
+                commandArgs.ViewModelKey,
+                new List<TextEditorCursorModifier>());
+
+            commandArgs.TextEditorService.EnqueueModification(
+                nameof(Duplicate),
+                refreshCursorsRequest,
+                () =>
                 {
-                    var cursorModifier = new TextEditorCursorModifier(commandArgs.PrimaryCursor);
+                    var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
+                    var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
+                    var cursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
+
+                    if (viewModel is null || model is null || cursor is null)
+                        return Task.CompletedTask;
 
                     var selectedText = TextEditorSelectionHelper.GetSelectedText(
-                        cursorModifier,
-                        commandArgs.Model);
+                        cursor,
+                        model);
 
                     TextEditorCursor cursorForInsertion;
 
                     if (selectedText is null)
                     {
-                        selectedText = commandArgs.Model.GetLinesRange(
-                            cursorModifier.RowIndex,
-                            1);
+                        // Select line
+                        selectedText = model.GetLinesRange(cursor.RowIndex, 1);
 
                         cursorForInsertion = TextEditorCursor.Empty with
                         {
-                            RowIndex = cursorModifier.RowIndex,
+                            RowIndex = cursor.RowIndex,
                             ColumnIndex = 0,
                             PreferredColumnIndex = 0,
-                            IsPrimaryCursor = cursorModifier.IsPrimaryCursor
+                            IsPrimaryCursor = cursor.IsPrimaryCursor
                         };
                     }
                     else
                     {
                         // Clone the TextEditorCursor to remove the TextEditorSelection otherwise the
                         // selected text to duplicate would be overwritten by itself and do nothing
-                        cursorForInsertion = cursorModifier.ToCursor() with
+                        cursorForInsertion = cursor.ToCursor() with
                         {
                             Selection = TextEditorSelection.Empty
                         };
                     }
 
-                    var insertTextAction = new TextEditorModelState.InsertTextAction(
-                        commandArgs.Model.ResourceUri,
-                        commandArgs.ViewModel.ViewModelKey,
-                        new TextEditorCursor[] { cursorForInsertion }.ToImmutableArray(),
-                        new TextEditorCursorModifier[] { new(cursorForInsertion) }.ToImmutableArray(),
+                    commandArgs.Dispatcher.Dispatch(new InsertTextAction(
+                        model.ResourceUri,
+                        viewModel.ViewModelKey,
+                        new TextEditorCursorModifier[] { new(cursorForInsertion) }.ToList(),
                         selectedText,
-                        CancellationToken.None);
+                        CancellationToken.None));
 
-                    commandArgs.TextEditorService.ModelApi.InsertText(insertTextAction);
-
-                    var outCursor = cursorModifier.ToCursor();
-                    var outCursorBag = inViewModel.CursorBag.Replace(inViewModel.PrimaryCursor, outCursor);
-
-                    return Task.FromResult(new Func<TextEditorViewModel, TextEditorViewModel>(
-                        state => state with
-                        {
-                            CursorBag = outCursorBag
-                        }));
+                    return Task.CompletedTask;
                 });
 
             return Task.CompletedTask;
@@ -372,17 +487,27 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.ViewModelApi.SetViewModelWith(
-                commandArgs.ViewModel.ViewModelKey,
-                inViewModel =>
+            var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
+                commandArgs.ViewModelKey,
+                new List<TextEditorCursorModifier>());
+
+            commandArgs.TextEditorService.EnqueueModification(
+                nameof(IndentMore),
+                refreshCursorsRequest,
+                () =>
                 {
-                    var cursorModifier = new TextEditorCursorModifier(commandArgs.PrimaryCursor);
+                    var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
+                    var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
+                    var cursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
+
+                    if (viewModel is null || model is null || cursor is null)
+                        return Task.CompletedTask;
 
                     var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(
-                        cursorModifier);
+                        cursor);
 
                     var selectionBoundsInRowIndexUnits = TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(
-                        commandArgs.Model,
+                        model,
                         selectionBoundsInPositionIndexUnits);
 
                     for (var i = selectionBoundsInRowIndexUnits.lowerRowIndexInclusive;
@@ -396,15 +521,12 @@ public static class TextEditorCommandDefaultFacts
                             IsPrimaryCursor = true
                         };
 
-                        var insertTextAction = new TextEditorModelState.InsertTextAction(
-                            commandArgs.Model.ResourceUri,
-                            commandArgs.ViewModel.ViewModelKey,
-                            new TextEditorCursor[] { cursorForInsertion }.ToImmutableArray(),
-                            new TextEditorCursorModifier[] { new(cursorForInsertion) }.ToImmutableArray(),
+                        commandArgs.Dispatcher.Dispatch(new InsertTextAction(
+                            model.ResourceUri,
+                            viewModel.ViewModelKey,
+                            refreshCursorsRequest.CursorBag,
                             KeyboardKeyFacts.WhitespaceCharacters.TAB.ToString(),
-                            CancellationToken.None);
-
-                        commandArgs.TextEditorService.ModelApi.InsertText(insertTextAction);
+                            CancellationToken.None));
                     }
 
                     var lowerBoundPositionIndexChange = 1;
@@ -412,38 +534,31 @@ public static class TextEditorCommandDefaultFacts
                     var upperBoundPositionIndexChange = selectionBoundsInRowIndexUnits.upperRowIndexExclusive -
                         selectionBoundsInRowIndexUnits.lowerRowIndexInclusive;
 
-                    if (cursorModifier.SelectionAnchorPositionIndex <
-                        cursorModifier.SelectionEndingPositionIndex)
+                    if (cursor.SelectionAnchorPositionIndex <
+                        cursor.SelectionEndingPositionIndex)
                     {
-                        cursorModifier.SelectionAnchorPositionIndex +=
+                        cursor.SelectionAnchorPositionIndex +=
                             lowerBoundPositionIndexChange;
 
-                        cursorModifier.SelectionEndingPositionIndex +=
+                        cursor.SelectionEndingPositionIndex +=
                             upperBoundPositionIndexChange;
                     }
                     else
                     {
-                        cursorModifier.SelectionAnchorPositionIndex +=
+                        cursor.SelectionAnchorPositionIndex +=
                             upperBoundPositionIndexChange;
 
-                        cursorModifier.SelectionEndingPositionIndex +=
+                        cursor.SelectionEndingPositionIndex +=
                             lowerBoundPositionIndexChange;
                     }
 
-                    var userCursorRowIndex = cursorModifier.RowIndex;
-                    var userCursorColumnIndex = cursorModifier.ColumnIndex;
+                    var userCursorRowIndex = cursor.RowIndex;
+                    var userCursorColumnIndex = cursor.ColumnIndex;
 
-                    cursorModifier.RowIndex = userCursorRowIndex;
-                    cursorModifier.ColumnIndex = userCursorColumnIndex + 1;
+                    cursor.RowIndex = userCursorRowIndex;
+                    cursor.ColumnIndex = userCursorColumnIndex + 1;
 
-                    var outCursor = cursorModifier.ToCursor();
-                    var outCursorBag = inViewModel.CursorBag.Replace(inViewModel.PrimaryCursor, outCursor);
-
-                    return Task.FromResult(new Func<TextEditorViewModel, TextEditorViewModel>(
-                        state => state with
-                        {
-                            CursorBag = outCursorBag
-                        }));
+                    return Task.CompletedTask;
                 });
 
             return Task.CompletedTask;
@@ -455,17 +570,27 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.ViewModelApi.SetViewModelWith(
-                commandArgs.ViewModel.ViewModelKey,
-                inViewModel =>
+            var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
+                commandArgs.ViewModelKey,
+                new List<TextEditorCursorModifier>());
+
+            commandArgs.TextEditorService.EnqueueModification(
+                nameof(IndentLess),
+                refreshCursorsRequest,
+                () =>
                 {
-                    var cursorModifier = new TextEditorCursorModifier(commandArgs.PrimaryCursor);
+                    var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
+                    var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
+                    var cursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
+
+                    if (viewModel is null || model is null || cursor is null)
+                        return Task.CompletedTask;
 
                     var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(
-                        cursorModifier);
+                        cursor);
 
                     var selectionBoundsInRowIndexUnits = TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(
-                        commandArgs.Model,
+                        model,
                         selectionBoundsInPositionIndexUnits);
 
                     bool isFirstLoop = true;
@@ -474,13 +599,13 @@ public static class TextEditorCommandDefaultFacts
                          i < selectionBoundsInRowIndexUnits.upperRowIndexExclusive;
                          i++)
                     {
-                        var rowPositionIndex = commandArgs.Model.GetPositionIndex(i, 0);
+                        var rowPositionIndex = model.GetPositionIndex(i, 0);
                         var characterReadCount = TextEditorModel.TAB_WIDTH;
-                        var lengthOfRow = commandArgs.Model.GetLengthOfRow(i);
+                        var lengthOfRow = model.GetLengthOfRow(i);
 
                         characterReadCount = Math.Min(lengthOfRow, characterReadCount);
 
-                        var readResult = commandArgs.Model.GetTextRange(rowPositionIndex, characterReadCount);
+                        var readResult = model.GetTextRange(rowPositionIndex, characterReadCount);
                         var removeCharacterCount = 0;
 
                         if (readResult.StartsWith(KeyboardKeyFacts.WhitespaceCharacters.TAB))
@@ -494,15 +619,12 @@ public static class TextEditorCommandDefaultFacts
                                 IsPrimaryCursor = true
                             };
 
-                            var deleteTextAction = new TextEditorModelState.DeleteTextByRangeAction(
-                                commandArgs.Model.ResourceUri,
-                                commandArgs.ViewModel.ViewModelKey,
-                                new TextEditorCursor[] { cursorForDeletion }.ToImmutableArray(),
-                                new TextEditorCursorModifier[] { new(cursorForDeletion) }.ToImmutableArray(),
+                            commandArgs.Dispatcher.Dispatch(new DeleteTextByRangeAction(
+                                model.ResourceUri,
+                                viewModel.ViewModelKey,
+                                new TextEditorCursorModifier[] { new(cursorForDeletion) }.ToList(),
                                 removeCharacterCount, // Delete a single "Tab" character
-                                CancellationToken.None);
-
-                            commandArgs.TextEditorService.ModelApi.DeleteTextByRange(deleteTextAction);
+                                CancellationToken.None));
                         }
                         else if (readResult.StartsWith(KeyboardKeyFacts.WhitespaceCharacters.SPACE))
                         {
@@ -523,15 +645,12 @@ public static class TextEditorCommandDefaultFacts
 
                             removeCharacterCount = contiguousSpaceCount;
 
-                            var deleteTextAction = new TextEditorModelState.DeleteTextByRangeAction(
-                                commandArgs.Model.ResourceUri,
-                                commandArgs.ViewModel.ViewModelKey,
-                                new TextEditorCursor[] { cursorForDeletion }.ToImmutableArray(),
-                                new TextEditorCursorModifier[] { new(cursorForDeletion) }.ToImmutableArray(),
+                            commandArgs.Dispatcher.Dispatch(new DeleteTextByRangeAction(
+                                model.ResourceUri,
+                                viewModel.ViewModelKey,
+                                new TextEditorCursorModifier[] { new(cursorForDeletion) }.ToList(),
                                 removeCharacterCount,
-                                CancellationToken.None);
-
-                            commandArgs.TextEditorService.ModelApi.DeleteTextByRange(deleteTextAction);
+                                CancellationToken.None));
                         }
 
                         // Modify the lower bound of user's text selection
@@ -539,54 +658,47 @@ public static class TextEditorCommandDefaultFacts
                         {
                             isFirstLoop = false;
 
-                            if (cursorModifier.SelectionAnchorPositionIndex <
-                                cursorModifier.SelectionEndingPositionIndex)
+                            if (cursor.SelectionAnchorPositionIndex <
+                                cursor.SelectionEndingPositionIndex)
                             {
-                                cursorModifier.SelectionAnchorPositionIndex -=
+                                cursor.SelectionAnchorPositionIndex -=
                                     removeCharacterCount;
                             }
                             else
                             {
-                                cursorModifier.SelectionEndingPositionIndex -=
+                                cursor.SelectionEndingPositionIndex -=
                                     removeCharacterCount;
                             }
                         }
 
                         // Modify the upper bound of user's text selection
-                        if (cursorModifier.SelectionAnchorPositionIndex <
-                            cursorModifier.SelectionEndingPositionIndex)
+                        if (cursor.SelectionAnchorPositionIndex <
+                            cursor.SelectionEndingPositionIndex)
                         {
-                            cursorModifier.SelectionEndingPositionIndex -=
+                            cursor.SelectionEndingPositionIndex -=
                                 removeCharacterCount;
                         }
                         else
                         {
-                            cursorModifier.SelectionAnchorPositionIndex -=
+                            cursor.SelectionAnchorPositionIndex -=
                                 removeCharacterCount;
                         }
 
                         // Modify the column index of user's cursor
-                        if (i == cursorModifier.RowIndex)
+                        if (i == cursor.RowIndex)
                         {
-                            var nextColumnIndex = cursorModifier.ColumnIndex -
+                            var nextColumnIndex = cursor.ColumnIndex -
                                 removeCharacterCount;
 
-                            var userCursorRowIndex = cursorModifier.RowIndex;
-                            var userCursorColumnIndex = cursorModifier.ColumnIndex;
+                            var userCursorRowIndex = cursor.RowIndex;
+                            var userCursorColumnIndex = cursor.ColumnIndex;
 
-                            cursorModifier.RowIndex = userCursorRowIndex;
-                            cursorModifier.ColumnIndex = Math.Max(0, nextColumnIndex);
+                            cursor.RowIndex = userCursorRowIndex;
+                            cursor.ColumnIndex = Math.Max(0, nextColumnIndex);
                         }
                     }
 
-                    var outCursor = cursorModifier.ToCursor();
-                    var outCursorBag = inViewModel.CursorBag.Replace(inViewModel.PrimaryCursor, outCursor);
-
-                    return Task.FromResult(new Func<TextEditorViewModel, TextEditorViewModel>(
-                        state => state with
-                        {
-                            CursorBag = outCursorBag
-                        }));
+                    return Task.CompletedTask;
                 });
 
             return Task.CompletedTask;
@@ -598,22 +710,25 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.ViewModelApi.SetViewModelWith(
-                commandArgs.ViewModel.ViewModelKey,
-                inViewModel =>
+            var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
+                commandArgs.ViewModelKey,
+                new List<TextEditorCursorModifier>());
+
+            commandArgs.TextEditorService.EnqueueModification(
+                nameof(ClearTextSelection),
+                refreshCursorsRequest,
+                () =>
                 {
-                    var cursorModifier = new TextEditorCursorModifier(commandArgs.PrimaryCursor);
+                    var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
+                    var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
+                    var cursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
 
-                    cursorModifier.SelectionAnchorPositionIndex = null;
+                    if (viewModel is null || model is null || cursor is null)
+                        return Task.CompletedTask;
 
-                    var outCursor = cursorModifier.ToCursor();
-                    var outCursorBag = inViewModel.CursorBag.Replace(inViewModel.PrimaryCursor, outCursor);
+                    cursor.SelectionAnchorPositionIndex = null;
 
-                    return Task.FromResult(new Func<TextEditorViewModel, TextEditorViewModel>(
-                        state => state with
-                        {
-                            CursorBag = outCursorBag
-                        }));
+                    return Task.CompletedTask;
                 });
 
             return Task.CompletedTask;
@@ -625,40 +740,40 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.ViewModelApi.SetViewModelWith(
-                commandArgs.ViewModel.ViewModelKey,
-                inViewModel =>
+            var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
+                commandArgs.ViewModelKey,
+                new List<TextEditorCursorModifier>());
+
+            commandArgs.TextEditorService.EnqueueModification(
+                nameof(NewLineBelow),
+                refreshCursorsRequest,
+                () =>
                 {
-                    var cursorModifier = new TextEditorCursorModifier(commandArgs.PrimaryCursor);
+                    var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
+                    var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
+                    var cursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
 
-                    cursorModifier.SelectionAnchorPositionIndex = null;
+                    if (viewModel is null || model is null || cursor is null)
+                        return Task.CompletedTask;
 
-                    var lengthOfRow = commandArgs.Model.GetLengthOfRow(
-                        cursorModifier.RowIndex);
+                    cursor.SelectionAnchorPositionIndex = null;
 
-                    var temporaryRowIndex = cursorModifier.RowIndex;
-                    var temporaryColumnIndex = cursorModifier.ColumnIndex;
+                    var lengthOfRow = model.GetLengthOfRow(cursor.RowIndex);
 
-                    cursorModifier.RowIndex = temporaryRowIndex;
-                    cursorModifier.ColumnIndex = lengthOfRow;
+                    var temporaryRowIndex = cursor.RowIndex;
+                    var temporaryColumnIndex = cursor.ColumnIndex;
 
-                    commandArgs.TextEditorService.ModelApi.InsertText(
-                        new TextEditorModelState.InsertTextAction(
-                            commandArgs.Model.ResourceUri,
-                            commandArgs.ViewModel.ViewModelKey,
-                            new TextEditorCursor[] { cursorModifier.ToCursor() }.ToImmutableArray(),
-                            new TextEditorCursorModifier[] { cursorModifier }.ToImmutableArray(),
-                            "\n",
-                            CancellationToken.None));
+                    cursor.RowIndex = temporaryRowIndex;
+                    cursor.ColumnIndex = lengthOfRow;
 
-                    var outCursor = cursorModifier.ToCursor();
-                    var outCursorBag = inViewModel.CursorBag.Replace(inViewModel.PrimaryCursor, outCursor);
+                    commandArgs.Dispatcher.Dispatch(new InsertTextAction(
+                        model.ResourceUri,
+                        viewModel.ViewModelKey,
+                        refreshCursorsRequest.CursorBag,
+                        "\n",
+                        CancellationToken.None));
 
-                    return Task.FromResult(new Func<TextEditorViewModel, TextEditorViewModel>(
-                        state => state with
-                        {
-                            CursorBag = outCursorBag
-                        }));
+                    return Task.CompletedTask;
                 });
 
             return Task.CompletedTask;
@@ -670,47 +785,48 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.ViewModelApi.SetViewModelWith(
-            commandArgs.ViewModel.ViewModelKey,
-            inViewModel =>
-            {
-                var cursorModifier = new TextEditorCursorModifier(commandArgs.PrimaryCursor);
+            var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
+                commandArgs.ViewModelKey,
+                new List<TextEditorCursorModifier>());
 
-                cursorModifier.SelectionAnchorPositionIndex = null;
+            commandArgs.TextEditorService.EnqueueModification(
+                nameof(NewLineAbove),
+                refreshCursorsRequest,
+                () =>
+                {
+                    var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
+                    var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
+                    var cursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
 
-                var temporaryRowIndex = cursorModifier.RowIndex;
-                var temporaryColumnIndex = cursorModifier.ColumnIndex;
+                    if (viewModel is null || model is null || cursor is null)
+                        return Task.CompletedTask;
 
-                cursorModifier.RowIndex = temporaryRowIndex;
-                cursorModifier.ColumnIndex = 0;
+                    cursor.SelectionAnchorPositionIndex = null;
 
-                commandArgs.TextEditorService.ModelApi.InsertText(
-                    new TextEditorModelState.InsertTextAction(
-                        commandArgs.Model.ResourceUri,
-                        commandArgs.ViewModel.ViewModelKey,
-                        new TextEditorCursor[] { cursorModifier.ToCursor() }.ToImmutableArray(),
-                        new TextEditorCursorModifier[] { cursorModifier }.ToImmutableArray(),
+                    var temporaryRowIndex = cursor.RowIndex;
+                    var temporaryColumnIndex = cursor.ColumnIndex;
+
+                    cursor.RowIndex = temporaryRowIndex;
+                    cursor.ColumnIndex = 0;
+
+                    commandArgs.Dispatcher.Dispatch(new InsertTextAction(
+                        model.ResourceUri,
+                        viewModel.ViewModelKey,
+                        new TextEditorCursorModifier[] { cursor }.ToList(),
                         "\n",
                         CancellationToken.None));
 
-                temporaryRowIndex = cursorModifier.RowIndex;
-                temporaryColumnIndex = cursorModifier.ColumnIndex;
+                    temporaryRowIndex = cursor.RowIndex;
+                    temporaryColumnIndex = cursor.ColumnIndex;
 
-                if (temporaryRowIndex > 1)
-                {
-                    cursorModifier.RowIndex = temporaryRowIndex - 1;
-                    cursorModifier.ColumnIndex = 0;
-                }
-
-                var outCursor = cursorModifier.ToCursor();
-                var outCursorBag = inViewModel.CursorBag.Replace(inViewModel.PrimaryCursor, outCursor);
-
-                return Task.FromResult(new Func<TextEditorViewModel, TextEditorViewModel>(
-                    state => state with
+                    if (temporaryRowIndex > 1)
                     {
-                        CursorBag = outCursorBag
-                    }));
-            });
+                        cursor.RowIndex = temporaryRowIndex - 1;
+                        cursor.ColumnIndex = 0;
+                    }
+
+                    return Task.CompletedTask;
+                });
 
             return Task.CompletedTask;
         });
@@ -726,27 +842,37 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.ViewModelApi.SetViewModelWith(
-                commandArgs.ViewModel.ViewModelKey,
-                inViewModel =>
-                {
-                    var cursorModifier = new TextEditorCursorModifier(commandArgs.PrimaryCursor);
+            var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
+                commandArgs.ViewModelKey,
+                new List<TextEditorCursorModifier>());
 
-                    var cursorPositionIndex = commandArgs.Model.GetCursorPositionIndex(
-                        cursorModifier);
+            commandArgs.TextEditorService.EnqueueModification(
+                nameof(GoToMatchingCharacterFactory),
+                refreshCursorsRequest,
+                () =>
+                {
+                    var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
+                    var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
+                    var cursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
+
+                    if (viewModel is null || model is null || cursor is null)
+                        return Task.CompletedTask;
+
+                    var cursorPositionIndex = model.GetCursorPositionIndex(
+                        cursor);
 
                     if (shouldSelectText)
                     {
-                        if (!TextEditorSelectionHelper.HasSelectedText(cursorModifier))
-                            cursorModifier.SelectionAnchorPositionIndex = cursorPositionIndex;
+                        if (!TextEditorSelectionHelper.HasSelectedText(cursor))
+                            cursor.SelectionAnchorPositionIndex = cursorPositionIndex;
                     }
                     else
                     {
-                        cursorModifier.SelectionAnchorPositionIndex = null;
+                        cursor.SelectionAnchorPositionIndex = null;
                     }
 
-                    var previousCharacter = commandArgs.Model.GetTextAt(cursorPositionIndex - 1);
-                    var currentCharacter = commandArgs.Model.GetTextAt(cursorPositionIndex);
+                    var previousCharacter = model.GetTextAt(cursorPositionIndex - 1);
+                    var currentCharacter = model.GetTextAt(cursorPositionIndex);
 
                     char? characterToMatch = null;
                     char? match = null;
@@ -775,20 +901,20 @@ public static class TextEditorCommandDefaultFacts
                     }
 
                     if (characterToMatch is null || match is null)
-                        return Task.FromResult(new Func<TextEditorViewModel, TextEditorViewModel>(state => state));
+                        return Task.CompletedTask;
 
                     var directionToFindMatchingPunctuationCharacter =
                         KeyboardKeyFacts.DirectionToFindMatchingPunctuationCharacter(characterToMatch.Value);
 
                     if (directionToFindMatchingPunctuationCharacter is null)
-                        return Task.FromResult(new Func<TextEditorViewModel, TextEditorViewModel>(state => state));
+                        return Task.CompletedTask;
 
                     var temporaryCursor = TextEditorCursor.Empty with
                     {
-                        RowIndex = cursorModifier.RowIndex,
-                        ColumnIndex = cursorModifier.ColumnIndex,
-                        PreferredColumnIndex = cursorModifier.PreferredColumnIndex,
-                        IsPrimaryCursor = cursorModifier.IsPrimaryCursor,
+                        RowIndex = cursor.RowIndex,
+                        ColumnIndex = cursor.ColumnIndex,
+                        PreferredColumnIndex = cursor.PreferredColumnIndex,
+                        IsPrimaryCursor = cursor.IsPrimaryCursor,
                     };
 
                     var unmatchedCharacters =
@@ -817,14 +943,14 @@ public static class TextEditorCommandDefaultFacts
 
                         commandArgs.TextEditorService.ViewModelApi.MoveCursor(
                             keyboardEventArgs,
-                            commandArgs.Model.ResourceUri,
-                            commandArgs.ViewModel.ViewModelKey,
-                            commandArgs.ViewModel.PrimaryCursor.Key);
+                            model.ResourceUri,
+                            viewModel.ViewModelKey,
+                            cursor.Key);
 
-                        var temporaryCursorPositionIndex = commandArgs.Model.GetCursorPositionIndex(
+                        var temporaryCursorPositionIndex = model.GetCursorPositionIndex(
                             temporaryCursor);
 
-                        var characterAt = commandArgs.Model.GetTextAt(temporaryCursorPositionIndex);
+                        var characterAt = model.GetTextAt(temporaryCursorPositionIndex);
 
                         if (characterAt == match)
                             unmatchedCharacters--;
@@ -835,27 +961,20 @@ public static class TextEditorCommandDefaultFacts
                             break;
 
                         if (temporaryCursorPositionIndex <= 0 ||
-                            temporaryCursorPositionIndex >= commandArgs.Model.DocumentLength)
+                            temporaryCursorPositionIndex >= model.DocumentLength)
                             break;
                     }
 
                     if (shouldSelectText)
                     {
-                        cursorModifier.SelectionEndingPositionIndex =
-                            commandArgs.Model.GetCursorPositionIndex(temporaryCursor);
+                        cursor.SelectionEndingPositionIndex =
+                            model.GetCursorPositionIndex(temporaryCursor);
                     }
 
-                    cursorModifier.RowIndex = temporaryCursor.RowIndex;
-                    cursorModifier.ColumnIndex = temporaryCursor.ColumnIndex;
+                    cursor.RowIndex = temporaryCursor.RowIndex;
+                    cursor.ColumnIndex = temporaryCursor.ColumnIndex;
 
-                    var outCursor = cursorModifier.ToCursor();
-                    var outCursorBag = inViewModel.CursorBag.Replace(inViewModel.PrimaryCursor, outCursor);
-
-                    return Task.FromResult(new Func<TextEditorViewModel, TextEditorViewModel>(
-                        state => state with
-                        {
-                            CursorBag = outCursorBag
-                        }));
+                    return Task.CompletedTask;
                 });
 
             return Task.CompletedTask;
@@ -867,28 +986,36 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            if (commandArgs.Model.CompilerService.Binder is null)
-                return Task.CompletedTask;
+            var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
+                commandArgs.ViewModelKey,
+                new List<TextEditorCursorModifier>());
 
-            commandArgs.TextEditorService.ViewModelApi.SetViewModelWith(
-                commandArgs.ViewModel.ViewModelKey,
-                inViewModel =>
+            commandArgs.TextEditorService.EnqueueModification(
+                nameof(GoToDefinition),
+                refreshCursorsRequest,
+                () =>
                 {
-                    var cursorModifier = new TextEditorCursorModifier(commandArgs.PrimaryCursor);
+                    var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
+                    var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
+                    var cursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
 
-                    var positionIndex = commandArgs.Model.GetCursorPositionIndex(
-                cursorModifier);
+                    if (viewModel is null || model is null || cursor is null)
+                        return Task.CompletedTask;
 
-                    var wordTextSpan = commandArgs.Model.GetWordAt(positionIndex);
+                    if (model.CompilerService.Binder is null)
+                        return Task.CompletedTask;
+
+                    var positionIndex = model.GetCursorPositionIndex(cursor);
+                    var wordTextSpan = model.GetWordAt(positionIndex);
 
                     if (wordTextSpan is null)
-                        return Task.FromResult(new Func<TextEditorViewModel, TextEditorViewModel>(state => state));
+                        return Task.CompletedTask;
 
-                    var definitionTextSpan = commandArgs.Model.CompilerService.Binder.GetDefinition(
+                    var definitionTextSpan = model.CompilerService.Binder.GetDefinition(
                         wordTextSpan);
 
                     if (definitionTextSpan is null)
-                        return Task.FromResult(new Func<TextEditorViewModel, TextEditorViewModel>(state => state));
+                        return Task.CompletedTask;
 
                     var definitionModel = commandArgs.TextEditorService.ModelApi.GetOrDefault(definitionTextSpan.ResourceUri);
 
@@ -900,11 +1027,11 @@ public static class TextEditorCommandDefaultFacts
                             definitionModel = commandArgs.TextEditorService.ModelApi.GetOrDefault(definitionTextSpan.ResourceUri);
 
                             if (definitionModel is null)
-                                return Task.FromResult(new Func<TextEditorViewModel, TextEditorViewModel>(state => state));
+                                return Task.CompletedTask;
                         }
                         else
                         {
-                            return Task.FromResult(new Func<TextEditorViewModel, TextEditorViewModel>(state => state));
+                            return Task.CompletedTask;
                         }
                     }
 
@@ -918,11 +1045,11 @@ public static class TextEditorCommandDefaultFacts
                             definitionViewModels = commandArgs.TextEditorService.ModelApi.GetViewModelsOrEmpty(definitionTextSpan.ResourceUri);
 
                             if (!definitionViewModels.Any())
-                                return Task.FromResult(new Func<TextEditorViewModel, TextEditorViewModel>(state => state));
+                                return Task.CompletedTask;
                         }
                         else
                         {
-                            return Task.FromResult(new Func<TextEditorViewModel, TextEditorViewModel>(state => state));
+                            return Task.CompletedTask;
                         }
                     }
 
@@ -936,31 +1063,23 @@ public static class TextEditorCommandDefaultFacts
                     firstDefinitionViewModelCursorModifier.ColumnIndex = columnIndex;
                     firstDefinitionViewModelCursorModifier.PreferredColumnIndex = columnIndex;
 
-                    commandArgs.TextEditorService.ViewModelApi.SetViewModelWith(
-                        commandArgs.ViewModel.ViewModelKey,
+                    commandArgs.Dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
+                        viewModel.ViewModelKey,
                         firstDefinitionInViewModel =>
-                    {
-                        var outCursor = firstDefinitionViewModelCursorModifier.ToCursor();
-                        var outCursorBag = firstDefinitionInViewModel.CursorBag.Replace(firstDefinitionInViewModel.PrimaryCursor, outCursor);
+                        {
+                            var outCursor = firstDefinitionViewModelCursorModifier.ToCursor();
+                            var outCursorBag = firstDefinitionInViewModel.CursorBag.Replace(firstDefinitionInViewModel.PrimaryCursor, outCursor);
 
-                        return Task.FromResult(new Func<TextEditorViewModel, TextEditorViewModel>(
-                            state => state with
+                            return firstDefinitionInViewModel with
                             {
                                 CursorBag = outCursorBag
-                            }));
-                    });
+                            };
+                        }));
 
                     if (commandArgs.ShowViewModelAction is not null)
                         commandArgs.ShowViewModelAction.Invoke(firstDefinitionViewModel.ViewModelKey);
 
-                    var outCursor = cursorModifier.ToCursor();
-                    var outCursorBag = inViewModel.CursorBag.Replace(inViewModel.PrimaryCursor, outCursor);
-
-                    return Task.FromResult(new Func<TextEditorViewModel, TextEditorViewModel>(
-                        state => state with
-                        {
-                            CursorBag = outCursorBag
-                        }));
+                    return Task.CompletedTask;
                 });
 
             return Task.CompletedTask;
@@ -981,46 +1100,49 @@ public static class TextEditorCommandDefaultFacts
     /// </summary>
     public static readonly TextEditorCommand ShowTooltipByCursorPosition = new(
         "ShowTooltipByCursorPosition", "defaults_show-tooltip-by-cursor-position", false, true, TextEditKind.None, null,
-        async interfaceCommandArgs =>
+        interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
             if (commandArgs.JsRuntime is null ||
                 commandArgs.HandleMouseStoppedMovingEventAsyncFunc is null)
             {
-                return;
+                return Task.CompletedTask;
             }
 
-            commandArgs.TextEditorService.ViewModelApi.SetViewModelWith(
-                commandArgs.ViewModel.ViewModelKey,
-                async inViewModel =>
+            var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
+                commandArgs.ViewModelKey,
+                new List<TextEditorCursorModifier>());
+
+            commandArgs.TextEditorService.EnqueueModification(
+                nameof(ShowTooltipByCursorPosition),
+                refreshCursorsRequest,
+                async () =>
                 {
-                    var cursorModifier = new TextEditorCursorModifier(commandArgs.PrimaryCursor);
+                    var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
+                    var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
+                    var cursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
+
+                    if (viewModel is null || model is null || cursor is null)
+                        return;
 
                     var elementPositionInPixels = await commandArgs.JsRuntime.InvokeAsync<ElementPositionInPixels>(
                         "luthetusTextEditor.getBoundingClientRect",
-                        commandArgs.ViewModel.PrimaryCursorContentId);
+                        viewModel.PrimaryCursorContentId);
 
-                            elementPositionInPixels = elementPositionInPixels with
-                            {
-                                Top = elementPositionInPixels.Top +
-                                    (.9 * commandArgs.ViewModel.VirtualizationResult.CharAndRowMeasurements.RowHeight)
-                            };
+                    elementPositionInPixels = elementPositionInPixels with
+                    {
+                        Top = elementPositionInPixels.Top +
+                            (.9 * viewModel.VirtualizationResult.CharAndRowMeasurements.RowHeight)
+                    };
 
-                            await commandArgs.HandleMouseStoppedMovingEventAsyncFunc.Invoke(new MouseEventArgs
-                            {
-                                ClientX = elementPositionInPixels.Left,
-                                ClientY = elementPositionInPixels.Top
-                            });
-
-                    var outCursor = cursorModifier.ToCursor();
-                    var outCursorBag = inViewModel.CursorBag.Replace(inViewModel.PrimaryCursor, outCursor);
-
-                    return new Func<TextEditorViewModel, TextEditorViewModel>(
-                        state => state with
-                        {
-                            CursorBag = outCursorBag
-                        });
+                    await commandArgs.HandleMouseStoppedMovingEventAsyncFunc.Invoke(new MouseEventArgs
+                    {
+                        ClientX = elementPositionInPixels.Left,
+                        ClientY = elementPositionInPixels.Top
+                    });
                 });
+
+            return Task.CompletedTask;
         });
 }

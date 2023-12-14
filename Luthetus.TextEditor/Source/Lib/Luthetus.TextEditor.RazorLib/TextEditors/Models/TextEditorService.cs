@@ -14,10 +14,13 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using static Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices.ITextEditorService;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
-public class TextEditorService : ITextEditorService
+public partial class TextEditorService : ITextEditorService
 {
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IDispatcher _dispatcher;
@@ -94,4 +97,44 @@ public class TextEditorService : ITextEditorService
     public ITextEditorDiffApi DiffApi { get; }
     public ITextEditorOptionsApi OptionsApi { get; }
     public ITextEditorSearchEngineApi SearchEngineApi { get; }
+
+    public void EnqueueModification(
+        string modificationName,
+        RefreshCursorsRequest refreshCursorsRequest,
+        Func<Task> funcAsync)
+    {
+        _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(),
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            modificationName,
+            async () =>
+            {
+                if (refreshCursorsRequest is not null)
+                {
+                    var inViewModel = ViewModelStateWrap.Value.ViewModelBag.FirstOrDefault(
+                        x => x.ViewModelKey == refreshCursorsRequest.ViewModelKey);
+
+                    if (inViewModel is not null)
+                    {
+                        refreshCursorsRequest.CursorBag.Clear();
+
+                        refreshCursorsRequest.CursorBag.AddRange(inViewModel.CursorBag
+                            .Select(x => new TextEditorCursorModifier(x)));
+                    }
+                }
+
+                await funcAsync.Invoke();
+
+                if (refreshCursorsRequest is not null)
+                {
+                    _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
+                        refreshCursorsRequest.ViewModelKey,
+                        inState => inState with
+                        {
+                            CursorBag = refreshCursorsRequest.CursorBag
+                                .Select(x => x.ToCursor())
+                                .ToImmutableArray()
+                        }));
+                }
+            });
+    }
 }

@@ -1,7 +1,6 @@
 ﻿using Fluxor;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
@@ -87,74 +86,59 @@ public partial interface ITextEditorService
 
         public void UndoEdit(ResourceUri resourceUri)
         {
-            _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(),
-                ContinuousBackgroundTaskWorker.GetQueueKey(),
-                nameof(UndoEdit),
-                () =>
-                {
-                    _dispatcher.Dispatch(new UndoEditAction(resourceUri));
-                    return Task.CompletedTask;
-                });
+            EnqueueModification(nameof(UndoEdit), () =>
+            {
+                _dispatcher.Dispatch(new UndoEditAction(resourceUri));
+                return Task.CompletedTask;
+            });
         }
 
         public void SetUsingRowEndingKind(ResourceUri resourceUri, RowEndingKind rowEndingKind)
         {
-            _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(),
-                ContinuousBackgroundTaskWorker.GetQueueKey(),
-                nameof(SetUsingRowEndingKind),
-                () =>
-                {
-                    _dispatcher.Dispatch(new SetUsingRowEndingKindAction(
-                        resourceUri,
-                        rowEndingKind));
+            EnqueueModification(nameof(SetUsingRowEndingKind), () =>
+            {
+                _dispatcher.Dispatch(new SetUsingRowEndingKindAction(
+                    resourceUri,
+                    rowEndingKind));
 
-                    return Task.CompletedTask;
-                });
+                return Task.CompletedTask;
+            });
         }
 
         public void SetResourceData(
             ResourceUri resourceUri,
             DateTime resourceLastWriteTime)
         {
-            _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(),
-                ContinuousBackgroundTaskWorker.GetQueueKey(),
-                nameof(SetResourceData),
-                () =>
-                {
-                    _dispatcher.Dispatch(new SetResourceDataAction(
+            EnqueueModification(nameof(SetResourceData), () =>
+            {
+                _dispatcher.Dispatch(new SetResourceDataAction(
                         resourceUri,
                         resourceLastWriteTime));
 
-                    return Task.CompletedTask;
-                });
+                return Task.CompletedTask;
+            });
         }
 
         public void Reload(ResourceUri resourceUri, string content, DateTime resourceLastWriteTime)
         {
-            _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(),
-                ContinuousBackgroundTaskWorker.GetQueueKey(),
-                nameof(Reload),
-                () =>
-                {
-                    _dispatcher.Dispatch(new ReloadAction(
-                        resourceUri,
-                        content,
-                        resourceLastWriteTime));
+            EnqueueModification(nameof(Reload), () =>
+            {
+                _dispatcher.Dispatch(new ReloadAction(
+                    resourceUri,
+                    content,
+                    resourceLastWriteTime));
 
-                    return Task.CompletedTask;
-                });
+                return Task.CompletedTask;
+            });
         }
 
         public void RegisterCustom(TextEditorModel model)
         {
-            _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(),
-                ContinuousBackgroundTaskWorker.GetQueueKey(),
-                nameof(RegisterCustom),
-                () =>
-                {
-                    _dispatcher.Dispatch(new RegisterAction(model));
-                    return Task.CompletedTask;
-                });
+            EnqueueModification(nameof(RegisterCustom), () =>
+            {
+                _dispatcher.Dispatch(new RegisterAction(model));
+                return Task.CompletedTask;
+            });
         }
 
         public void RegisterTemplated(
@@ -164,12 +148,9 @@ public partial interface ITextEditorService
             string initialContent,
             string? overrideDisplayTextForFileExtension = null)
         {
-            _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(),
-                ContinuousBackgroundTaskWorker.GetQueueKey(),
-                nameof(RegisterTemplated),
-                () =>
-                {
-                    var textEditorModel = new TextEditorModel(
+            EnqueueModification(nameof(RegisterTemplated), () =>
+            {
+                var textEditorModel = new TextEditorModel(
                         resourceUri,
                         resourceLastWriteTime,
                         overrideDisplayTextForFileExtension ?? extensionNoPeriod,
@@ -177,255 +158,233 @@ public partial interface ITextEditorService
                         _decorationMapperRegistry.GetDecorationMapper(extensionNoPeriod),
                         _compilerServiceRegistry.GetCompilerService(extensionNoPeriod));
 
-                    _ = Task.Run(async () =>
+                _ = Task.Run(async () =>
+                {
+                    try
                     {
-                        try
-                        {
-                            await textEditorModel.ApplySyntaxHighlightingAsync();
-                            _dispatcher.Dispatch(new ForceRerenderAction(textEditorModel.ResourceUri));
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine(e);
-                            throw;
-                        }
-                    }, CancellationToken.None);
+                        await textEditorModel.ApplySyntaxHighlightingAsync();
+                        _dispatcher.Dispatch(new ForceRerenderAction(textEditorModel.ResourceUri));
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                        throw;
+                    }
+                }, CancellationToken.None);
 
-                    _dispatcher.Dispatch(new RegisterAction(textEditorModel));
+                _dispatcher.Dispatch(new RegisterAction(textEditorModel));
 
-                    return Task.CompletedTask;
-                });
+                return Task.CompletedTask;
+            });
         }
 
         public void RedoEdit(ResourceUri resourceUri)
         {
-            _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(),
-                ContinuousBackgroundTaskWorker.GetQueueKey(),
-                nameof(RedoEdit),
-                () =>
-                {
-                    _dispatcher.Dispatch(new RedoEditAction(resourceUri));
-                    return Task.CompletedTask;
-                });
+            EnqueueModification(nameof(RedoEdit), () =>
+            {
+                _dispatcher.Dispatch(new RedoEditAction(resourceUri));
+                return Task.CompletedTask;
+            });
         }
 
         public void InsertText(InsertTextAction insertTextAction)
         {
-            _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(),
-                ContinuousBackgroundTaskWorker.GetQueueKey(),
-                nameof(InsertText),
-                () =>
+            EnqueueModification(nameof(InsertText), () =>
+            {
+                var cursorBag = insertTextAction.CursorModifierBag;
+
+                if (insertTextAction.ViewModelKey is not null)
                 {
-                    var cursorBag = insertTextAction.CursorBag;
+                    var viewModel = _textEditorService.ViewModelApi.GetOrDefault(
+                        insertTextAction.ViewModelKey.Value);
 
-                    if (insertTextAction.ViewModelKey is not null)
-                    {
-                        var viewModel = _textEditorService.ViewModelApi.GetOrDefault(
-                            insertTextAction.ViewModelKey.Value);
+                    if (viewModel is not null)
+                        cursorBag = viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList();
+                }
 
-                        if (viewModel is not null)
-                            cursorBag = viewModel.CursorBag;
-                    }
+                insertTextAction = insertTextAction with
+                {
+                    CursorModifierBag = cursorBag,
+                };
 
-                    insertTextAction = insertTextAction with
-                    {
-                        CursorBag = cursorBag,
-                        CursorModifierBag = cursorBag.Select(x => new TextEditorCursorModifier(x)).ToImmutableArray(),
-                    };
+                _dispatcher.Dispatch(insertTextAction);
 
-                    _dispatcher.Dispatch(insertTextAction);
+                if (insertTextAction.ViewModelKey is not null)
+                {
+                    _textEditorService.ViewModelApi.WithAsync(
+                            insertTextAction.ViewModelKey.Value,
+                            inViewModel =>
+                            {
+                                var outCursorBag = new List<TextEditorCursor>();
 
-                    if (insertTextAction.ViewModelKey is not null)
-                    {
-                        _textEditorService.ViewModelApi.SetViewModelWith(
-                                insertTextAction.ViewModelKey.Value,
-                                inViewModel =>
+                                foreach (var cursorModifier in insertTextAction.CursorModifierBag)
                                 {
-                                    var outCursorBag = new List<TextEditorCursor>();
+                                    outCursorBag.Add(cursorModifier.ToCursor());
+                                }
 
-                                    foreach (var cursorModifier in insertTextAction.CursorModifierBag)
+                                return Task.FromResult(new Func<TextEditorViewModel, TextEditorViewModel>(
+                                    state => state with
                                     {
-                                        outCursorBag.Add(cursorModifier.ToCursor());
-                                    }
+                                        CursorBag = outCursorBag.ToImmutableArray()
+                                    }));
+                            });
+                }
 
-                                    return Task.FromResult(new Func<TextEditorViewModel, TextEditorViewModel>(
-                                        state => state with
-                                        {
-                                            CursorBag = outCursorBag.ToImmutableArray()
-                                        }));
-                                });
-                    }
-
-                    return Task.CompletedTask;
-                });
+                return Task.CompletedTask;
+            });
         }
 
         public void HandleKeyboardEvent(KeyboardEventAction keyboardEventAction)
         {
-            _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(),
-                ContinuousBackgroundTaskWorker.GetQueueKey(),
-                nameof(HandleKeyboardEvent),
-                () =>
+            EnqueueModification(nameof(HandleKeyboardEvent), () =>
+            {
+                var cursorBag = keyboardEventAction.CursorModifierBag;
+
+                if (keyboardEventAction.ViewModelKey is not null)
                 {
-                    var cursorBag = keyboardEventAction.CursorBag;
+                    var viewModel = _textEditorService.ViewModelApi.GetOrDefault(
+                        keyboardEventAction.ViewModelKey.Value);
 
-                    if (keyboardEventAction.ViewModelKey is not null)
-                    {
-                        var viewModel = _textEditorService.ViewModelApi.GetOrDefault(
-                            keyboardEventAction.ViewModelKey.Value);
+                    if (viewModel is not null)
+                        cursorBag = viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList();
+                }
 
-                        if (viewModel is not null)
-                            cursorBag = viewModel.CursorBag;
-                    }
+                keyboardEventAction = keyboardEventAction with
+                {
+                    CursorModifierBag = cursorBag,
+                };
 
-                    keyboardEventAction = keyboardEventAction with
-                    {
-                        CursorBag = cursorBag,
-                        CursorModifierBag = cursorBag.Select(x => new TextEditorCursorModifier(x)).ToImmutableArray(),
-                    };
+                _dispatcher.Dispatch(keyboardEventAction);
 
-                    _dispatcher.Dispatch(keyboardEventAction);
+                if (keyboardEventAction.ViewModelKey is not null)
+                {
+                    _textEditorService.ViewModelApi.WithAsync(
+                        keyboardEventAction.ViewModelKey.Value,
+                        inViewModel =>
+                        {
+                            var outCursorBag = new List<TextEditorCursor>();
 
-                    if (keyboardEventAction.ViewModelKey is not null)
-                    {
-                        _textEditorService.ViewModelApi.SetViewModelWith(
-                            keyboardEventAction.ViewModelKey.Value,
-                            inViewModel =>
+                            foreach (var cursorModifier in keyboardEventAction.CursorModifierBag)
                             {
-                                var outCursorBag = new List<TextEditorCursor>();
+                                outCursorBag.Add(cursorModifier.ToCursor());
+                            }
 
-                                foreach (var cursorModifier in keyboardEventAction.CursorModifierBag)
+                            return Task.FromResult(new Func<TextEditorViewModel, TextEditorViewModel>(
+                                state => state with
                                 {
-                                    outCursorBag.Add(cursorModifier.ToCursor());
-                                }
+                                    CursorBag = outCursorBag.ToImmutableArray()
+                                }));
+                        });
+                }
 
-                                return Task.FromResult(new Func<TextEditorViewModel, TextEditorViewModel>(
-                                    state => state with
-                                    {
-                                        CursorBag = outCursorBag.ToImmutableArray()
-                                    }));
-                            });
-                    }
-
-                    return Task.CompletedTask;
-                });
+                return Task.CompletedTask;
+            });
         }
 
         public void DeleteTextByRange(DeleteTextByRangeAction deleteTextByRangeAction)
         {
-            _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(),
-                ContinuousBackgroundTaskWorker.GetQueueKey(),
-                nameof(DeleteTextByRange),
-                () =>
+            EnqueueModification(nameof(DeleteTextByRange), () =>
+            {
+                var cursorBag = deleteTextByRangeAction.CursorModifierBag;
+
+                if (deleteTextByRangeAction.ViewModelKey is not null)
                 {
-                    var cursorBag = deleteTextByRangeAction.CursorBag;
+                    var viewModel = _textEditorService.ViewModelApi.GetOrDefault(
+                        deleteTextByRangeAction.ViewModelKey.Value);
 
-                    if (deleteTextByRangeAction.ViewModelKey is not null)
-                    {
-                        var viewModel = _textEditorService.ViewModelApi.GetOrDefault(
-                            deleteTextByRangeAction.ViewModelKey.Value);
+                    if (viewModel is not null)
+                        cursorBag = viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList();
+                }
 
-                        if (viewModel is not null)
-                            cursorBag = viewModel.CursorBag;
-                    }
+                deleteTextByRangeAction = deleteTextByRangeAction with
+                {
+                    CursorModifierBag = cursorBag,
+                };
 
-                    deleteTextByRangeAction = deleteTextByRangeAction with
-                    {
-                        CursorBag = cursorBag,
-                        CursorModifierBag = cursorBag.Select(x => new TextEditorCursorModifier(x)).ToImmutableArray(),
-                    };
+                _dispatcher.Dispatch(deleteTextByRangeAction);
 
-                    _dispatcher.Dispatch(deleteTextByRangeAction);
+                if (deleteTextByRangeAction.ViewModelKey is not null)
+                {
+                    _textEditorService.ViewModelApi.WithAsync(
+                        deleteTextByRangeAction.ViewModelKey.Value,
+                        inViewModel =>
+                        {
+                            var outCursorBag = new List<TextEditorCursor>();
 
-                    if (deleteTextByRangeAction.ViewModelKey is not null)
-                    {
-                        _textEditorService.ViewModelApi.SetViewModelWith(
-                            deleteTextByRangeAction.ViewModelKey.Value,
-                            inViewModel =>
+                            foreach (var cursorModifier in deleteTextByRangeAction.CursorModifierBag)
                             {
-                                var outCursorBag = new List<TextEditorCursor>();
+                                outCursorBag.Add(cursorModifier.ToCursor());
+                            }
 
-                                foreach (var cursorModifier in deleteTextByRangeAction.CursorModifierBag)
+                            return Task.FromResult(new Func<TextEditorViewModel, TextEditorViewModel>(
+                                state => state with
                                 {
-                                    outCursorBag.Add(cursorModifier.ToCursor());
-                                }
+                                    CursorBag = outCursorBag.ToImmutableArray()
+                                }));
+                        });
+                }
 
-                                return Task.FromResult(new Func<TextEditorViewModel, TextEditorViewModel>(
-                                    state => state with
-                                    {
-                                        CursorBag = outCursorBag.ToImmutableArray()
-                                    }));
-                            });
-                    }
-
-                    return Task.CompletedTask;
-                });
+                return Task.CompletedTask;
+            });
         }
 
         public void DeleteTextByMotion(DeleteTextByMotionAction deleteTextByMotionAction)
         {
-            _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(),
-                ContinuousBackgroundTaskWorker.GetQueueKey(),
-                nameof(DeleteTextByRange),
-                () =>
+            EnqueueModification(nameof(DeleteTextByRange), () =>
+            {
+                var cursorBag = deleteTextByMotionAction.CursorModifierBag;
+
+                if (deleteTextByMotionAction.ViewModelKey is not null)
                 {
-                    var cursorBag = deleteTextByMotionAction.CursorBag;
+                    var viewModel = _textEditorService.ViewModelApi.GetOrDefault(
+                        deleteTextByMotionAction.ViewModelKey.Value);
 
-                    if (deleteTextByMotionAction.ViewModelKey is not null)
-                    {
-                        var viewModel = _textEditorService.ViewModelApi.GetOrDefault(
-                            deleteTextByMotionAction.ViewModelKey.Value);
+                    if (viewModel is not null)
+                        cursorBag = viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList();
+                }
 
-                        if (viewModel is not null)
-                            cursorBag = viewModel.CursorBag;
-                    }
+                deleteTextByMotionAction = deleteTextByMotionAction with
+                {
+                    CursorModifierBag = cursorBag,
+                };
 
-                    deleteTextByMotionAction = deleteTextByMotionAction with
-                    {
-                        CursorBag = cursorBag,
-                        CursorModifierBag = cursorBag.Select(x => new TextEditorCursorModifier(x)).ToImmutableArray(),
-                    };
+                _dispatcher.Dispatch(deleteTextByMotionAction);
 
-                    _dispatcher.Dispatch(deleteTextByMotionAction);
+                if (deleteTextByMotionAction.ViewModelKey is not null)
+                {
+                    _textEditorService.ViewModelApi.WithAsync(
+                        deleteTextByMotionAction.ViewModelKey.Value,
+                        inViewModel =>
+                        {
+                            var outCursorBag = new List<TextEditorCursor>();
 
-                    if (deleteTextByMotionAction.ViewModelKey is not null)
-                    {
-                        _textEditorService.ViewModelApi.SetViewModelWith(
-                            deleteTextByMotionAction.ViewModelKey.Value,
-                            inViewModel =>
+                            foreach (var cursorModifier in deleteTextByMotionAction.CursorModifierBag)
                             {
-                                var outCursorBag = new List<TextEditorCursor>();
+                                outCursorBag.Add(cursorModifier.ToCursor());
+                            }
 
-                                foreach (var cursorModifier in deleteTextByMotionAction.CursorModifierBag)
+                            return Task.FromResult(new Func<TextEditorViewModel, TextEditorViewModel>(
+                                state => state with
                                 {
-                                    outCursorBag.Add(cursorModifier.ToCursor());
-                                }
+                                    CursorBag = outCursorBag.ToImmutableArray()
+                                }));
+                        });
+                }
 
-                                return Task.FromResult(new Func<TextEditorViewModel, TextEditorViewModel>(
-                                    state => state with
-                                    {
-                                        CursorBag = outCursorBag.ToImmutableArray()
-                                    }));
-                            });
-                    }
-
-                    return Task.CompletedTask;
-                });
+                return Task.CompletedTask;
+            });
         }
 
         public void RegisterPresentationModel(ResourceUri resourceUri, TextEditorPresentationModel emptyPresentationModel)
         {
-            _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(),
-                ContinuousBackgroundTaskWorker.GetQueueKey(),
-                nameof(RegisterPresentationModel),
-                () =>
-                {
-                    _dispatcher.Dispatch(new RegisterPresentationModelAction(
-                        resourceUri,
-                        emptyPresentationModel));
+            EnqueueModification(nameof(RegisterPresentationModel), () =>
+            {
+                _dispatcher.Dispatch(new RegisterPresentationModelAction(
+                    resourceUri,
+                    emptyPresentationModel));
 
-                    return Task.CompletedTask;
-                });
+                return Task.CompletedTask;
+            });
         }
 
         public ImmutableArray<TextEditorViewModel> GetViewModelsOrEmpty(ResourceUri resourceUri)

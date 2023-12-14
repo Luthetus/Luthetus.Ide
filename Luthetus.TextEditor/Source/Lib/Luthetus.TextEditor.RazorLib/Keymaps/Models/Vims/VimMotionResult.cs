@@ -20,13 +20,13 @@ public record VimMotionResult(
 
         var beforeMotionCursor = textEditorCommandArgs.PrimaryCursor;
 
-        var beforeMotionPositionIndex = textEditorCommandArgs.Model.GetPositionIndex(
+        var beforeMotionPositionIndex = textEditorCommandArgs.ModelResourceUri.GetPositionIndex(
             beforeMotionCursor.RowIndex,
             beforeMotionCursor.ColumnIndex);
 
         var afterMotionCursor = textEditorCursorForMotion;
 
-        var afterMotionPositionIndex = textEditorCommandArgs.Model.GetPositionIndex(
+        var afterMotionPositionIndex = textEditorCommandArgs.ModelResourceUri.GetPositionIndex(
             afterMotionCursor.RowIndex,
             afterMotionCursor.ColumnIndex);
 

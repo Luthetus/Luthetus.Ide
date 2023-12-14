@@ -28,7 +28,7 @@ public class TextEditorCommandArgsTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorCommandArgs.Model"/>
+	/// <see cref="TextEditorCommandArgs.ModelResourceUri"/>
 	/// </summary>
 	[Fact]
 	public void Model()
@@ -73,7 +73,7 @@ public class TextEditorCommandArgsTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorCommandArgs.ViewModel"/>
+	/// <see cref="TextEditorCommandArgs.ViewModelKey"/>
 	/// </summary>
 	[Fact]
     public void ViewModel()

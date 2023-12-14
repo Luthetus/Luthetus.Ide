@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using Microsoft.AspNetCore.Components.Web;
+﻿using Microsoft.AspNetCore.Components.Web;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
@@ -26,32 +25,28 @@ public partial class TextEditorModelState
     public record KeyboardEventAction(
         ResourceUri ResourceUri,
         Key<TextEditorViewModel>? ViewModelKey,
-        ImmutableArray<TextEditorCursor> CursorBag,
-        ImmutableArray<TextEditorCursorModifier> CursorModifierBag,
+        List<TextEditorCursorModifier> CursorModifierBag,
         KeyboardEventArgs KeyboardEventArgs,
         CancellationToken CancellationToken);
 
     public record InsertTextAction(
         ResourceUri ResourceUri,
         Key<TextEditorViewModel>? ViewModelKey,
-        ImmutableArray<TextEditorCursor> CursorBag,
-        ImmutableArray<TextEditorCursorModifier> CursorModifierBag,
+        List<TextEditorCursorModifier> CursorModifierBag,
         string Content,
         CancellationToken CancellationToken);
 
     public record DeleteTextByMotionAction(
         ResourceUri ResourceUri,
         Key<TextEditorViewModel>? ViewModelKey,
-        ImmutableArray<TextEditorCursor> CursorBag,
-        ImmutableArray<TextEditorCursorModifier> CursorModifierBag,
+        List<TextEditorCursorModifier> CursorModifierBag,
         MotionKind MotionKind,
         CancellationToken CancellationToken);
 
     public record DeleteTextByRangeAction(
         ResourceUri ResourceUri,
         Key<TextEditorViewModel>? ViewModelKey,
-        ImmutableArray<TextEditorCursor> CursorBag,
-        ImmutableArray<TextEditorCursorModifier> CursorModifierBag,
+        List<TextEditorCursorModifier> CursorModifierBag,
         int Count,
         CancellationToken CancellationToken);
 }

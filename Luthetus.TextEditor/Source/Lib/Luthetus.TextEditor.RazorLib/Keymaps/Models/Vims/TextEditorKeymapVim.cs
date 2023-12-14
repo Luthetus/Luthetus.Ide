@@ -132,7 +132,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    var positionIndex = commandArgs.Model.GetPositionIndex(
+                    var positionIndex = commandArgs.ModelResourceUri.GetPositionIndex(
                         commandArgs.PrimaryCursor.RowIndex,
                         commandArgs.PrimaryCursor.ColumnIndex);
 
@@ -167,7 +167,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    var startOfRowPositionIndexInclusive = commandArgs.Model.GetPositionIndex(
+                    var startOfRowPositionIndexInclusive = commandArgs.ModelResourceUri.GetPositionIndex(
                         commandArgs.PrimaryCursor.RowIndex,
                         0);
 
@@ -175,7 +175,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                     //commandArgs.PrimaryCursor.Selection.AnchorPositionIndex =
                     //    startOfRowPositionIndexInclusive;
 
-                    var endOfRowPositionIndexExclusive = commandArgs.Model.RowEndingPositionsBag[
+                    var endOfRowPositionIndexExclusive = commandArgs.ModelResourceUri.RowEndingPositionsBag[
                             commandArgs.PrimaryCursor.RowIndex]
                         .positionIndex;
 
@@ -202,7 +202,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
                     commandArgs.TextEditorService.ViewModelApi.With(
-                        commandArgs.ViewModel.ViewModelKey,
+                        commandArgs.ViewModelKey.ViewModelKey,
                         previousViewModel => previousViewModel with
                         {
                             DisplayCommandBar = true
@@ -225,8 +225,8 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.ModelApi.UndoEdit(commandArgs.Model.ResourceUri);
-                    await commandArgs.Model.ApplySyntaxHighlightingAsync();
+                    commandArgs.TextEditorService.ModelApi.UndoEdit(commandArgs.ModelResourceUri.ResourceUri);
+                    await commandArgs.ModelResourceUri.ApplySyntaxHighlightingAsync();
                 });
 
             Map.Add(new KeymapArgument("KeyU")
@@ -243,8 +243,8 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.ModelApi.RedoEdit(commandArgs.Model.ResourceUri);
-                    await commandArgs.Model.ApplySyntaxHighlightingAsync();
+                    commandArgs.TextEditorService.ModelApi.RedoEdit(commandArgs.ModelResourceUri.ResourceUri);
+                    await commandArgs.ModelResourceUri.ApplySyntaxHighlightingAsync();
                 });
 
             Map.Add(new KeymapArgument("KeyR")
@@ -696,9 +696,9 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
                             commandArgs.TextEditorService.ViewModelApi.MoveCursor(
                                 keyboardEventArgs,
-                                commandArgs.Model.ResourceUri,
-                                commandArgs.ViewModel.ViewModelKey,
-                                commandArgs.ViewModel.PrimaryCursor.Key);
+                                commandArgs.ModelResourceUri.ResourceUri,
+                                commandArgs.ViewModelKey.ViewModelKey,
+                                commandArgs.ViewModelKey.PrimaryCursor.Key);
 
                             return Task.CompletedTask;
                         });

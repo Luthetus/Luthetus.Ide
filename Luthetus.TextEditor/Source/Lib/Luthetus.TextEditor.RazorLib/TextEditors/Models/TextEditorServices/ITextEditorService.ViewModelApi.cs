@@ -10,6 +10,7 @@ using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using System.Collections.Immutable;
+using static Luthetus.TextEditor.RazorLib.TextEditors.States.TextEditorModelState;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
@@ -45,7 +46,7 @@ public partial interface ITextEditorService
         
         public void SetCursorShouldBlink(bool cursorShouldBlink);
 
-        public void SetViewModelWith(
+        public void WithAsync(
                Key<TextEditorViewModel> viewModelKey,
                Func<TextEditorViewModel, Task<Func<TextEditorViewModel, TextEditorViewModel>>> withFuncWrap);
 
@@ -163,7 +164,7 @@ public partial interface ITextEditorService
             Key<TextEditorViewModel> viewModelKey,
             Func<TextEditorViewModel, TextEditorViewModel> withFunc)
         {
-            SetViewModelWith(viewModelKey, _ =>
+            WithAsync(viewModelKey, _ =>
             {
                 return Task.FromResult(withFunc);
             });
@@ -265,16 +266,19 @@ public partial interface ITextEditorService
                 countOfTestCharacters);
         }
 
-        public void SetViewModelWith(
+        public void WithAsync(
                Key<TextEditorViewModel> viewModelKey,
                Func<TextEditorViewModel, Task<Func<TextEditorViewModel, TextEditorViewModel>>> withFuncWrap)
         {
-            _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(),
-                ContinuousBackgroundTaskWorker.GetQueueKey(),
-                "Move Cursor",
-                async () => await SetViewModelWithAsync(
+            EnqueueModification(nameof(WithAsync), async () =>
+            {
+                var viewModel = _viewModelStateWrap.Value.ViewModelBag.First(
+                        x => x.ViewModelKey == viewModelKey);
+
+                _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
                     viewModelKey,
-                    withFuncWrap));
+                    await withFuncWrap.Invoke(viewModel)));
+            });
         }
 
         public void MoveCursor(
@@ -283,253 +287,237 @@ public partial interface ITextEditorService
             Key<TextEditorViewModel> viewModelKey,
             Key<TextEditorCursor> cursorKey)
         {
-            _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(),
-                ContinuousBackgroundTaskWorker.GetQueueKey(),
-                "Move Cursor",
-                async () => await MoveCursorAsync(
-                    keyboardEventArgs,
-                    modelResourceUri,
-                    viewModelKey,
-                    cursorKey));
-        }
-
-        private async Task SetViewModelWithAsync(
-            Key<TextEditorViewModel> viewModelKey,
-            Func<TextEditorViewModel, Task<Func<TextEditorViewModel, TextEditorViewModel>>> withFuncWrap)
-        {
-            var viewModel = _viewModelStateWrap.Value.ViewModelBag.First(
-                x => x.ViewModelKey == viewModelKey);
-
-            _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
+            var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
                 viewModelKey,
-                await withFuncWrap.Invoke(viewModel)));
-        }
+                new List<TextEditorCursorModifier>());
 
-        private async Task MoveCursorAsync(
-            KeyboardEventArgs keyboardEventArgs,
-            ResourceUri modelResourceUri,
-            Key<TextEditorViewModel> viewModelKey,
-            Key<TextEditorCursor> cursorKey)
-        {
-            if (!TryGetState(modelResourceUri, viewModelKey, cursorKey,
-                             out var inModel, out var inViewModel, out var inCursor))
-                return;
-
-            var refRowIndex = inCursor.RowIndex;
-            var refColumnIndex = inCursor.ColumnIndex;
-            var refPreferredColumnIndex = inCursor.PreferredColumnIndex;
-            var refTextEditorSelection = inCursor.Selection;
-
-            void MutateIndexCoordinatesAndPreferredColumnIndex(int columnIndex)
-            {
-                refColumnIndex = columnIndex;
-                refPreferredColumnIndex = columnIndex;
-            }
-
-            if (keyboardEventArgs.ShiftKey)
-            {
-                if (inCursor.Selection.AnchorPositionIndex is null ||
-                    inCursor.Selection.EndingPositionIndex == inCursor.Selection.AnchorPositionIndex)
+            _textEditorService.EnqueueModification(
+                nameof(MoveCursor),
+                refreshCursorsRequest,
+                () =>
                 {
-                    var positionIndex = inModel.GetPositionIndex(
-                        refRowIndex,
-                        refColumnIndex);
+                    if (!TryGetState(modelResourceUri, viewModelKey, cursorKey,
+                                 out var inModel, out var inViewModel, out var inCursor))
+                        return Task.CompletedTask;
 
-                    refTextEditorSelection = refTextEditorSelection with
+                    var refRowIndex = inCursor.RowIndex;
+                    var refColumnIndex = inCursor.ColumnIndex;
+                    var refPreferredColumnIndex = inCursor.PreferredColumnIndex;
+                    var refTextEditorSelection = inCursor.Selection;
+
+                    void MutateIndexCoordinatesAndPreferredColumnIndex(int columnIndex)
                     {
-                        AnchorPositionIndex = positionIndex
-                    };
-                }
-            }
-            else
-            {
-                refTextEditorSelection = refTextEditorSelection with
-                {
-                    AnchorPositionIndex = null
-                };
-            }
+                        refColumnIndex = columnIndex;
+                        refPreferredColumnIndex = columnIndex;
+                    }
 
-            int lengthOfRow = 0; // This variable is used in multiple switch cases.
-
-            switch (keyboardEventArgs.Key)
-            {
-                case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
-                    if (TextEditorSelectionHelper.HasSelectedText(refTextEditorSelection) &&
-                        !keyboardEventArgs.ShiftKey)
+                    if (keyboardEventArgs.ShiftKey)
                     {
-                        var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(refTextEditorSelection);
+                        if (inCursor.Selection.AnchorPositionIndex is null ||
+                            inCursor.Selection.EndingPositionIndex == inCursor.Selection.AnchorPositionIndex)
+                        {
+                            var positionIndex = inModel.GetPositionIndex(
+                                refRowIndex,
+                                refColumnIndex);
 
-                        var lowerRowMetaData = inModel.FindRowInformation(
-                            selectionBounds.lowerPositionIndexInclusive);
-
-                        refRowIndex = lowerRowMetaData.rowIndex;
-
-                        refColumnIndex = selectionBounds.lowerPositionIndexInclusive -
-                            lowerRowMetaData.rowStartPositionIndex;
+                            refTextEditorSelection = refTextEditorSelection with
+                            {
+                                AnchorPositionIndex = positionIndex
+                            };
+                        }
                     }
                     else
                     {
-                        if (refColumnIndex == 0)
+                        refTextEditorSelection = refTextEditorSelection with
                         {
-                            if (refRowIndex != 0)
+                            AnchorPositionIndex = null
+                        };
+                    }
+
+                    int lengthOfRow = 0; // This variable is used in multiple switch cases.
+
+                    switch (keyboardEventArgs.Key)
+                    {
+                        case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
+                            if (TextEditorSelectionHelper.HasSelectedText(refTextEditorSelection) &&
+                                !keyboardEventArgs.ShiftKey)
+                            {
+                                var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(refTextEditorSelection);
+
+                                var lowerRowMetaData = inModel.FindRowInformation(
+                                    selectionBounds.lowerPositionIndexInclusive);
+
+                                refRowIndex = lowerRowMetaData.rowIndex;
+
+                                refColumnIndex = selectionBounds.lowerPositionIndexInclusive -
+                                    lowerRowMetaData.rowStartPositionIndex;
+                            }
+                            else
+                            {
+                                if (refColumnIndex == 0)
+                                {
+                                    if (refRowIndex != 0)
+                                    {
+                                        refRowIndex--;
+
+                                        lengthOfRow = inModel.GetLengthOfRow(refRowIndex);
+
+                                        MutateIndexCoordinatesAndPreferredColumnIndex(lengthOfRow);
+                                    }
+                                }
+                                else
+                                {
+                                    if (keyboardEventArgs.CtrlKey)
+                                    {
+                                        var columnIndexOfCharacterWithDifferingKind = inModel.GetColumnIndexOfCharacterWithDifferingKind(
+                                            refRowIndex,
+                                            refColumnIndex,
+                                            true);
+
+                                        if (columnIndexOfCharacterWithDifferingKind == -1)
+                                            MutateIndexCoordinatesAndPreferredColumnIndex(0);
+                                        else
+                                            MutateIndexCoordinatesAndPreferredColumnIndex(columnIndexOfCharacterWithDifferingKind);
+                                    }
+                                    else
+                                    {
+                                        MutateIndexCoordinatesAndPreferredColumnIndex(refColumnIndex - 1);
+                                    }
+                                }
+                            }
+
+                            break;
+                        case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
+                            if (refRowIndex < inModel.RowCount - 1)
+                            {
+                                refRowIndex++;
+
+                                lengthOfRow = inModel.GetLengthOfRow(refRowIndex);
+
+                                refColumnIndex = lengthOfRow < refPreferredColumnIndex
+                                    ? lengthOfRow
+                                    : refPreferredColumnIndex;
+                            }
+
+                            break;
+                        case KeyboardKeyFacts.MovementKeys.ARROW_UP:
+                            if (refRowIndex > 0)
                             {
                                 refRowIndex--;
 
                                 lengthOfRow = inModel.GetLengthOfRow(refRowIndex);
 
-                                MutateIndexCoordinatesAndPreferredColumnIndex(lengthOfRow);
+                                refColumnIndex = lengthOfRow < refPreferredColumnIndex
+                                    ? lengthOfRow
+                                    : refPreferredColumnIndex;
                             }
-                        }
-                        else
-                        {
-                            if (keyboardEventArgs.CtrlKey)
+
+                            break;
+                        case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
+                            if (TextEditorSelectionHelper.HasSelectedText(refTextEditorSelection) && !keyboardEventArgs.ShiftKey)
                             {
-                                var columnIndexOfCharacterWithDifferingKind = inModel.GetColumnIndexOfCharacterWithDifferingKind(
-                                    refRowIndex,
-                                    refColumnIndex,
-                                    true);
+                                var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(refTextEditorSelection);
 
-                                if (columnIndexOfCharacterWithDifferingKind == -1)
-                                    MutateIndexCoordinatesAndPreferredColumnIndex(0);
-                                else
-                                    MutateIndexCoordinatesAndPreferredColumnIndex(columnIndexOfCharacterWithDifferingKind);
-                            }
-                            else
-                            {
-                                MutateIndexCoordinatesAndPreferredColumnIndex(refColumnIndex - 1);
-                            }
-                        }
-                    }
+                                var upperRowMetaData = inModel.FindRowInformation(selectionBounds.upperPositionIndexExclusive);
 
-                    break;
-                case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
-                    if (refRowIndex < inModel.RowCount - 1)
-                    {
-                        refRowIndex++;
+                                refRowIndex = upperRowMetaData.rowIndex;
 
-                        lengthOfRow = inModel.GetLengthOfRow(refRowIndex);
+                                if (refRowIndex >= inModel.RowCount)
+                                {
+                                    refRowIndex = inModel.RowCount - 1;
 
-                        refColumnIndex = lengthOfRow < refPreferredColumnIndex
-                            ? lengthOfRow
-                            : refPreferredColumnIndex;
-                    }
+                                    var upperRowLength = inModel.GetLengthOfRow(refRowIndex);
 
-                    break;
-                case KeyboardKeyFacts.MovementKeys.ARROW_UP:
-                    if (refRowIndex > 0)
-                    {
-                        refRowIndex--;
-
-                        lengthOfRow = inModel.GetLengthOfRow(refRowIndex);
-
-                        refColumnIndex = lengthOfRow < refPreferredColumnIndex
-                            ? lengthOfRow
-                            : refPreferredColumnIndex;
-                    }
-
-                    break;
-                case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
-                    if (TextEditorSelectionHelper.HasSelectedText(refTextEditorSelection) && !keyboardEventArgs.ShiftKey)
-                    {
-                        var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(refTextEditorSelection);
-
-                        var upperRowMetaData = inModel.FindRowInformation(selectionBounds.upperPositionIndexExclusive);
-
-                        refRowIndex = upperRowMetaData.rowIndex;
-
-                        if (refRowIndex >= inModel.RowCount)
-                        {
-                            refRowIndex = inModel.RowCount - 1;
-
-                            var upperRowLength = inModel.GetLengthOfRow(refRowIndex);
-
-                            refColumnIndex = upperRowLength;
-                        }
-                        else
-                        {
-                            refColumnIndex =
-                                selectionBounds.upperPositionIndexExclusive - upperRowMetaData.rowStartPositionIndex;
-                        }
-                    }
-                    else
-                    {
-                        lengthOfRow = inModel.GetLengthOfRow(refRowIndex);
-
-                        if (refColumnIndex == lengthOfRow &&
-                            refRowIndex < inModel.RowCount - 1)
-                        {
-                            MutateIndexCoordinatesAndPreferredColumnIndex(0);
-                            refRowIndex++;
-                        }
-                        else if (refColumnIndex != lengthOfRow)
-                        {
-                            if (keyboardEventArgs.CtrlKey)
-                            {
-                                var columnIndexOfCharacterWithDifferingKind = inModel.GetColumnIndexOfCharacterWithDifferingKind(
-                                    refRowIndex,
-                                    refColumnIndex,
-                                    false);
-
-                                if (columnIndexOfCharacterWithDifferingKind == -1)
-                                    MutateIndexCoordinatesAndPreferredColumnIndex(lengthOfRow);
+                                    refColumnIndex = upperRowLength;
+                                }
                                 else
                                 {
-                                    MutateIndexCoordinatesAndPreferredColumnIndex(
-                                        columnIndexOfCharacterWithDifferingKind);
+                                    refColumnIndex =
+                                        selectionBounds.upperPositionIndexExclusive - upperRowMetaData.rowStartPositionIndex;
                                 }
                             }
                             else
                             {
-                                MutateIndexCoordinatesAndPreferredColumnIndex(refColumnIndex + 1);
+                                lengthOfRow = inModel.GetLengthOfRow(refRowIndex);
+
+                                if (refColumnIndex == lengthOfRow &&
+                                    refRowIndex < inModel.RowCount - 1)
+                                {
+                                    MutateIndexCoordinatesAndPreferredColumnIndex(0);
+                                    refRowIndex++;
+                                }
+                                else if (refColumnIndex != lengthOfRow)
+                                {
+                                    if (keyboardEventArgs.CtrlKey)
+                                    {
+                                        var columnIndexOfCharacterWithDifferingKind = inModel.GetColumnIndexOfCharacterWithDifferingKind(
+                                            refRowIndex,
+                                            refColumnIndex,
+                                            false);
+
+                                        if (columnIndexOfCharacterWithDifferingKind == -1)
+                                            MutateIndexCoordinatesAndPreferredColumnIndex(lengthOfRow);
+                                        else
+                                        {
+                                            MutateIndexCoordinatesAndPreferredColumnIndex(
+                                                columnIndexOfCharacterWithDifferingKind);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        MutateIndexCoordinatesAndPreferredColumnIndex(refColumnIndex + 1);
+                                    }
+                                }
                             }
-                        }
+
+                            break;
+                        case KeyboardKeyFacts.MovementKeys.HOME:
+                            if (keyboardEventArgs.CtrlKey)
+                                refRowIndex = 0;
+
+                            MutateIndexCoordinatesAndPreferredColumnIndex(0);
+
+                            break;
+                        case KeyboardKeyFacts.MovementKeys.END:
+                            if (keyboardEventArgs.CtrlKey)
+                                refRowIndex = inModel.RowCount - 1;
+
+                            lengthOfRow = inModel.GetLengthOfRow(refRowIndex);
+
+                            MutateIndexCoordinatesAndPreferredColumnIndex(lengthOfRow);
+
+                            break;
                     }
 
-                    break;
-                case KeyboardKeyFacts.MovementKeys.HOME:
-                    if (keyboardEventArgs.CtrlKey)
-                        refRowIndex = 0;
+                    var outSelection = inCursor.Selection;
 
-                    MutateIndexCoordinatesAndPreferredColumnIndex(0);
+                    if (keyboardEventArgs.ShiftKey)
+                    {
+                        outSelection = outSelection with
+                        {
+                            EndingPositionIndex = inModel.GetPositionIndex(
+                                refRowIndex,
+                                refColumnIndex)
+                        };
+                    }
 
-                    break;
-                case KeyboardKeyFacts.MovementKeys.END:
-                    if (keyboardEventArgs.CtrlKey)
-                        refRowIndex = inModel.RowCount - 1;
+                    var outCursorBag = inViewModel.CursorBag.Replace(inCursor, inCursor with
+                    {
+                        RowIndex = refRowIndex,
+                        ColumnIndex = refColumnIndex,
+                        PreferredColumnIndex = refPreferredColumnIndex,
+                        Selection = outSelection,
+                    });
 
-                    lengthOfRow = inModel.GetLengthOfRow(refRowIndex);
+                    _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
+                        viewModelKey,
+                        inState => inState with
+                        {
+                            CursorBag = outCursorBag
+                        }));
 
-                    MutateIndexCoordinatesAndPreferredColumnIndex(lengthOfRow);
-
-                    break;
-            }
-
-            var outSelection = inCursor.Selection;
-
-            if (keyboardEventArgs.ShiftKey)
-            {
-                outSelection = outSelection with
-                {
-                    EndingPositionIndex = inModel.GetPositionIndex(
-                        refRowIndex,
-                        refColumnIndex)
-                };
-            }
-
-            var outCursorBag = inViewModel.CursorBag.Replace(inCursor, inCursor with
-            {
-                RowIndex = refRowIndex,
-                ColumnIndex = refColumnIndex,
-                PreferredColumnIndex = refPreferredColumnIndex,
-                Selection = outSelection,
-            });
-
-            _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
-                viewModelKey,
-                inState => inState with
-                {
-                    CursorBag = outCursorBag
-                }));
+                    return Task.CompletedTask;
+                });
         }
 
         public void CursorMovePageTop(
@@ -537,27 +525,34 @@ public partial interface ITextEditorService
             Key<TextEditorViewModel> viewModelKey,
             Key<TextEditorCursor> cursorKey)
         {
-            if (!TryGetState(modelResourceUri, viewModelKey, cursorKey,
-                             out var inModel, out var inViewModel, out var inCursor))
-                return;
+            var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
+                viewModelKey,
+                new List<TextEditorCursorModifier>());
 
-            if (inViewModel.VirtualizationResult?.EntryBag.Any() ?? false)
-            {
-                var firstEntry = inViewModel.VirtualizationResult.EntryBag.First();
-
-                var outCursorBag = inViewModel.CursorBag.Replace(inCursor, inCursor with
+            _textEditorService.EnqueueModification(
+                nameof(CursorMovePageTop),
+                refreshCursorsRequest,
+                () =>
                 {
-                    RowIndex = firstEntry.Index,
-                    ColumnIndex = 0,
-                });
+                    if (!TryGetState(modelResourceUri, viewModelKey, cursorKey,
+                                 out var inModel, out var inViewModel, out var inCursor))
+                        return Task.CompletedTask;
 
-                _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
-                    viewModelKey,
-                    inState => inState with
+                    if (inViewModel.VirtualizationResult?.EntryBag.Any() ?? false)
                     {
-                        CursorBag = outCursorBag
-                    }));
-            }
+                        var firstEntry = inViewModel.VirtualizationResult.EntryBag.First();
+
+                        var cursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.Key == cursorKey);
+
+                        if (cursor is null)
+                            return Task.CompletedTask;
+
+                        cursor.RowIndex = firstEntry.Index;
+                        cursor.ColumnIndex = 0;
+                    }
+
+                    return Task.CompletedTask;
+                });
         }
 
         public void CursorMovePageBottom(
@@ -565,28 +560,35 @@ public partial interface ITextEditorService
             Key<TextEditorViewModel> viewModelKey,
             Key<TextEditorCursor> cursorKey)
         {
-            if (!TryGetState(modelResourceUri, viewModelKey, cursorKey,
-                             out var inModel, out var inViewModel, out var inCursor))
-                return;
+            var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
+                viewModelKey,
+                new List<TextEditorCursorModifier>());
 
-            if ((inViewModel.VirtualizationResult?.EntryBag.Any() ?? false))
-            {
-                var lastEntry = inViewModel.VirtualizationResult.EntryBag.Last();
-                var lastEntriesRowLength = inModel.GetLengthOfRow(lastEntry.Index);
-
-                var outCursorBag = inViewModel.CursorBag.Replace(inCursor, inCursor with
+            _textEditorService.EnqueueModification(
+                nameof(CursorMovePageTop),
+                refreshCursorsRequest,
+                () =>
                 {
-                    RowIndex = lastEntry.Index,
-                    ColumnIndex = lastEntriesRowLength,
-                });
+                    if (!TryGetState(modelResourceUri, viewModelKey, cursorKey,
+                                    out var inModel, out var inViewModel, out var inCursor))
+                        return Task.CompletedTask;
 
-                _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
-                    viewModelKey,
-                    inState => inState with
+                    if ((inViewModel.VirtualizationResult?.EntryBag.Any() ?? false))
                     {
-                        CursorBag = outCursorBag
-                    }));
-            }
+                        var lastEntry = inViewModel.VirtualizationResult.EntryBag.Last();
+                        var lastEntriesRowLength = inModel.GetLengthOfRow(lastEntry.Index);
+
+                        var cursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.Key == cursorKey);
+
+                        if (cursor is null)
+                            return Task.CompletedTask;
+
+                        cursor.RowIndex = lastEntry.Index;
+                        cursor.ColumnIndex = lastEntriesRowLength;
+                    }
+
+                    return Task.CompletedTask;
+                });
         }
 
         /// <summary>

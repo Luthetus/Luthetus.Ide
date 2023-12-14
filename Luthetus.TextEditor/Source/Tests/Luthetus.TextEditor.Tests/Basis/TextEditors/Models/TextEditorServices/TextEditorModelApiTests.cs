@@ -58,7 +58,7 @@ public class TextEditorModelApiTests
         var originalModel = textEditorService.ModelApi.GetModels().Single();
 
         var cursor = new TextEditorCursor(0, 0, 0, true, TextEditorSelection.Empty);
-        var cursorBag = new TextEditorCursor[] { cursor }.ToImmutableArray();
+        var cursorBag = new[] { new TextEditorCursorModifier(cursor) }.ToList();
 
         var insertedText = "I have something to say: ";
 
@@ -66,7 +66,6 @@ public class TextEditorModelApiTests
             resourceUri,
             null,
             cursorBag,
-            cursorBag.Select(x => new TextEditorCursorModifier(x)).ToImmutableArray(),
             insertedText,
             CancellationToken.None));
 
@@ -293,7 +292,7 @@ public class TextEditorModelApiTests
         var originalModel = textEditorService.ModelApi.GetModels().Single();
 
         var cursor = new TextEditorCursor(0, 0, 0, true, TextEditorSelection.Empty);
-        var cursorBag = new TextEditorCursor[] { cursor }.ToImmutableArray();
+        var cursorBag = new[] { new TextEditorCursorModifier(cursor) }.ToList();
 
         var insertedText = "I have something to say: ";
 
@@ -301,7 +300,6 @@ public class TextEditorModelApiTests
             resourceUri,
             null,
             cursorBag,
-            cursorBag.Select(x => new TextEditorCursorModifier(x)).ToImmutableArray(),
             insertedText,
             CancellationToken.None));
 
@@ -347,7 +345,7 @@ public class TextEditorModelApiTests
         var originalModel = textEditorService.ModelApi.GetModels().Single();
 
         var cursor = new TextEditorCursor(0, 0, 0, true, TextEditorSelection.Empty);
-        var cursorBag = new TextEditorCursor[] { cursor }.ToImmutableArray();
+        var cursorBag = new[] { new TextEditorCursorModifier(cursor) }.ToList();
 
         var insertedText = "I have something to say: ";
 
@@ -355,7 +353,6 @@ public class TextEditorModelApiTests
             resourceUri,
             null,
             cursorBag,
-            cursorBag.Select(x => new TextEditorCursorModifier(x)).ToImmutableArray(),
             insertedText,
             CancellationToken.None));
 
@@ -390,7 +387,7 @@ public class TextEditorModelApiTests
         var originalModel = textEditorService.ModelApi.GetModels().Single();
 
         var cursor = new TextEditorCursor(0, 0, 0, true, TextEditorSelection.Empty);
-        var cursorBag = new TextEditorCursor[] { cursor }.ToImmutableArray();
+        var cursorBag = new[] { new TextEditorCursorModifier(cursor) }.ToList();
 
         var key = "a";
 
@@ -403,7 +400,6 @@ public class TextEditorModelApiTests
             resourceUri,
             null,
             cursorBag,
-            cursorBag.Select(x => new TextEditorCursorModifier(x)).ToImmutableArray(),
             keyboardEventArgs,
             CancellationToken.None));
 
@@ -557,13 +553,12 @@ public class TextEditorModelApiTests
         var columnIndex = initialContent.IndexOf(textToDelete);
 
         var cursor = new TextEditorCursor(0, columnIndex, columnIndex, true, TextEditorSelection.Empty);
-        var cursorBag = new TextEditorCursor[] { cursor }.ToImmutableArray();
+        var cursorBag = new[] { new TextEditorCursorModifier(cursor) }.ToList();
 
         textEditorService.ModelApi.DeleteTextByRange(new TextEditorModelState.DeleteTextByRangeAction(
             resourceUri,
             null,
             cursorBag,
-            cursorBag.Select(x => new TextEditorCursorModifier(x)).ToImmutableArray(),
             textToDelete.Length,
             CancellationToken.None));
 
@@ -604,13 +599,12 @@ public class TextEditorModelApiTests
         var columnIndex = initialContent.IndexOf(wordToJoin);
 
         var cursor = new TextEditorCursor(0, columnIndex, columnIndex, true, TextEditorSelection.Empty);
-        var cursorBag = new TextEditorCursor[] { cursor }.ToImmutableArray();
+        var cursorBag = new[] { new TextEditorCursorModifier(cursor) }.ToList();
 
         textEditorService.ModelApi.DeleteTextByMotion(new TextEditorModelState.DeleteTextByMotionAction(
             resourceUri,
             null,
             cursorBag,
-            cursorBag.Select(x => new TextEditorCursorModifier(x)).ToImmutableArray(),
             MotionKind.Backspace,
             CancellationToken.None));
 
@@ -650,13 +644,12 @@ public class TextEditorModelApiTests
         var columnIndex = initialContent.IndexOf(spaceText);
 
         var cursor = new TextEditorCursor(0, columnIndex, columnIndex, true, TextEditorSelection.Empty);
-        var cursorBag = new TextEditorCursor[] { cursor }.ToImmutableArray();
+        var cursorBag = new[] { new TextEditorCursorModifier(cursor) }.ToList();
 
         textEditorService.ModelApi.DeleteTextByMotion(new TextEditorModelState.DeleteTextByMotionAction(
             resourceUri,
             null,
             cursorBag,
-            cursorBag.Select(x => new TextEditorCursorModifier(x)).ToImmutableArray(),
             MotionKind.Delete,
             CancellationToken.None));
 

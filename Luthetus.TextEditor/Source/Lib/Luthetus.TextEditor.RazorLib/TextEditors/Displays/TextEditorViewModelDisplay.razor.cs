@@ -338,8 +338,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                 TextEditorService.ModelApi.HandleKeyboardEvent(new TextEditorModelState.KeyboardEventAction(
                     viewModel.ResourceUri,
                     viewModel.ViewModelKey,
-                    cursorBag,
-                    cursorBag.Select(x => new TextEditorCursorModifier(x)).ToImmutableArray(),
+                    cursorBag.Select(x => new TextEditorCursorModifier(x)).ToList(),
                     keyboardEventArgs,
                     CancellationToken.None));
             }
@@ -385,7 +384,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (viewModel is null)
             return;
 
-        TextEditorService.ViewModelApi.SetViewModelWith(viewModel.ViewModelKey, async inViewModel =>
+        TextEditorService.ViewModelApi.WithAsync(viewModel.ViewModelKey, async inViewModel =>
         {
             var model = GetModel();
             viewModel = GetViewModel();
@@ -481,7 +480,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (viewModel is null)
             return;
 
-        TextEditorService.ViewModelApi.SetViewModelWith(viewModel.ViewModelKey, async inViewModel =>
+        TextEditorService.ViewModelApi.WithAsync(viewModel.ViewModelKey, async inViewModel =>
         {
             var model = GetModel();
             var viewModel = GetViewModel();
@@ -621,7 +620,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         // Buttons is a bit flag '& 1' gets if left mouse button is held
         if (localThinksLeftMouseButtonIsDown && (mouseEventArgs.Buttons & 1) == 1)
         {
-            TextEditorService.ViewModelApi.SetViewModelWith(viewModel.ViewModelKey, async inViewModel =>
+            TextEditorService.ViewModelApi.WithAsync(viewModel.ViewModelKey, async inViewModel =>
             {
                 var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs);
 

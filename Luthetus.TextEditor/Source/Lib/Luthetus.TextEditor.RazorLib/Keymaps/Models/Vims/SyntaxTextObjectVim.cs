@@ -88,9 +88,9 @@ public static class SyntaxTextObjectVim
                                         Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
                                         ShiftKey = shiftKey
                                     },
-                                    commandArgs.Model.ResourceUri,
-                                    commandArgs.ViewModel.ViewModelKey,
-                                    commandArgs.ViewModel.PrimaryCursor.Key);
+                                    commandArgs.ModelResourceUri.ResourceUri,
+                                    commandArgs.ViewModelKey.ViewModelKey,
+                                    commandArgs.ViewModelKey.PrimaryCursor.Key);
 
                                 return Task.CompletedTask;
                             });
@@ -112,9 +112,9 @@ public static class SyntaxTextObjectVim
                                         Key = KeyboardKeyFacts.MovementKeys.ARROW_DOWN,
                                         ShiftKey = shiftKey
                                     },
-                                    commandArgs.Model.ResourceUri,
-                                    commandArgs.ViewModel.ViewModelKey,
-                                    commandArgs.ViewModel.PrimaryCursor.Key);
+                                    commandArgs.ModelResourceUri.ResourceUri,
+                                    commandArgs.ViewModelKey.ViewModelKey,
+                                    commandArgs.ViewModelKey.PrimaryCursor.Key);
 
                                 return Task.CompletedTask;
                             });
@@ -136,9 +136,9 @@ public static class SyntaxTextObjectVim
                                         Key = KeyboardKeyFacts.MovementKeys.ARROW_UP,
                                         ShiftKey = shiftKey
                                     },
-                                    commandArgs.Model.ResourceUri,
-                                    commandArgs.ViewModel.ViewModelKey,
-                                    commandArgs.ViewModel.PrimaryCursor.Key);
+                                    commandArgs.ModelResourceUri.ResourceUri,
+                                    commandArgs.ViewModelKey.ViewModelKey,
+                                    commandArgs.ViewModelKey.PrimaryCursor.Key);
 
                                 return Task.CompletedTask;
                             });
@@ -160,9 +160,9 @@ public static class SyntaxTextObjectVim
                                         Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                                         ShiftKey = shiftKey
                                     },
-                                    commandArgs.Model.ResourceUri,
-                                    commandArgs.ViewModel.ViewModelKey,
-                                    commandArgs.ViewModel.PrimaryCursor.Key);
+                                    commandArgs.ModelResourceUri.ResourceUri,
+                                    commandArgs.ViewModelKey.ViewModelKey,
+                                    commandArgs.ViewModelKey.PrimaryCursor.Key);
 
                                 return Task.CompletedTask;
                             });
@@ -190,9 +190,9 @@ public static class SyntaxTextObjectVim
                                         Key = KeyboardKeyFacts.MovementKeys.END,
                                         ShiftKey = shiftKey
                                     },
-                                    commandArgs.Model.ResourceUri,
-                                    commandArgs.ViewModel.ViewModelKey,
-                                    commandArgs.ViewModel.PrimaryCursor.Key);
+                                    commandArgs.ModelResourceUri.ResourceUri,
+                                    commandArgs.ViewModelKey.ViewModelKey,
+                                    commandArgs.ViewModelKey.PrimaryCursor.Key);
 
                                 return Task.CompletedTask;
                             });
@@ -214,9 +214,9 @@ public static class SyntaxTextObjectVim
                                         Key = KeyboardKeyFacts.MovementKeys.HOME,
                                         ShiftKey = shiftKey
                                     },
-                                    commandArgs.Model.ResourceUri,
-                                    commandArgs.ViewModel.ViewModelKey,
-                                    commandArgs.ViewModel.PrimaryCursor.Key);
+                                    commandArgs.ModelResourceUri.ResourceUri,
+                                    commandArgs.ViewModelKey.ViewModelKey,
+                                    commandArgs.ViewModelKey.PrimaryCursor.Key);
 
                                 return Task.CompletedTask;
                             });

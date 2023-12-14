@@ -5,6 +5,7 @@ using Luthetus.TextEditor.RazorLib.SearchEngines.States;
 using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
+using static Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorService;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
@@ -28,4 +29,9 @@ public partial interface ITextEditorService
     public IState<ThemeState> ThemeStateWrap { get; }
     public IState<TextEditorOptionsState> OptionsStateWrap { get; }
     public IState<TextEditorSearchEngineState> SearchEngineStateWrap { get; }
+
+    public void EnqueueModification(
+        string modificationName,
+        RefreshCursorsRequest refreshCursorsRequest,
+        Func<Task> funcAsync);
 }
