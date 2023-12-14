@@ -13,7 +13,6 @@ using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using static Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices.ITextEditorService;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -23,8 +22,7 @@ public class TextEditorService : ITextEditorService
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IDispatcher _dispatcher;
     private readonly LuthetusTextEditorOptions _textEditorOptions;
-    private readonly IDecorationMapperRegistry _decorationMapperRegistry;
-    private readonly ICompilerServiceRegistry _compilerServiceRegistry;
+    private readonly ITextEditorRegistryWrap _textEditorRegistryWrap;
     private readonly IStorageService _storageService;
     // TODO: Perhaps do not reference IJSRuntime but instead wrap it in a 'IUiProvider' or something like that. The 'IUiProvider' would then expose methods that allow the TextEditorViewModel to adjust the scrollbars. 
     private readonly IJSRuntime _jsRuntime;
@@ -40,8 +38,7 @@ public class TextEditorService : ITextEditorService
         IState<TextEditorSearchEngineState> searchEngineStateWrap,
         IBackgroundTaskService backgroundTaskService,
         LuthetusTextEditorOptions textEditorOptions,
-        IDecorationMapperRegistry decorationMapperRegistry,
-        ICompilerServiceRegistry compilerServiceRegistry,
+        ITextEditorRegistryWrap textEditorRegistryWrap,
         IStorageService storageService,
         IJSRuntime jsRuntime,
         StorageSync storageSync,
@@ -57,14 +54,13 @@ public class TextEditorService : ITextEditorService
 
         _backgroundTaskService = backgroundTaskService;
         _textEditorOptions = textEditorOptions;
-        _decorationMapperRegistry = decorationMapperRegistry;
-        _compilerServiceRegistry = compilerServiceRegistry;
+        _textEditorRegistryWrap = textEditorRegistryWrap;
         _storageService = storageService;
         _jsRuntime = jsRuntime;
         _storageSync = storageSync;
         _dispatcher = dispatcher;
 
-        ModelApi = new TextEditorModelApi(this, _decorationMapperRegistry, _compilerServiceRegistry, _backgroundTaskService, _dispatcher);
+        ModelApi = new TextEditorModelApi(this, _textEditorRegistryWrap.DecorationMapperRegistry, _textEditorRegistryWrap.CompilerServiceRegistry, _backgroundTaskService, _dispatcher);
         ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, ViewModelStateWrap, ModelStateWrap, _jsRuntime, _dispatcher);
         GroupApi = new TextEditorGroupApi(this, _dispatcher);
         DiffApi = new TextEditorDiffApi(this, _dispatcher);

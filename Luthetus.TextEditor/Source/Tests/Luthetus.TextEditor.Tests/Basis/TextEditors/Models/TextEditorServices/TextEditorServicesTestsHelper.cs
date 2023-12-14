@@ -27,6 +27,7 @@ public class TextEditorServicesTestsHelper
             .AddScoped<IJSRuntime, TextEditorTestingJsRuntime>()
             .AddScoped<StorageSync>()
             .AddScoped<IBackgroundTaskService>(_ => new BackgroundTaskServiceSynchronous())
+            .AddScoped<ITextEditorRegistryWrap, TextEditorRegistryWrap>()
             .AddScoped<IDecorationMapperRegistry, DecorationMapperRegistryDefault>()
             .AddScoped<ICompilerServiceRegistry, CompilerServiceRegistryDefault>()
             .AddScoped<ITextEditorService, TextEditorService>()
@@ -52,6 +53,14 @@ public class TextEditorServicesTestsHelper
             BlockingBackgroundTaskWorker.QUEUE_DISPLAY_NAME);
 
         backgroundTaskService.RegisterQueue(blockingQueue);
+
+        var textEditorRegistryWrap = serviceProvider.GetRequiredService<ITextEditorRegistryWrap>();
+
+        textEditorRegistryWrap.DecorationMapperRegistry = serviceProvider
+            .GetRequiredService<IDecorationMapperRegistry>();
+
+        textEditorRegistryWrap.CompilerServiceRegistry = serviceProvider
+            .GetRequiredService<ICompilerServiceRegistry>();
 
         textEditorService = serviceProvider.GetRequiredService<ITextEditorService>();
     }
