@@ -1,4 +1,16 @@
-﻿using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Rows.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Luthetus.TextEditor.RazorLib.TextEditors.States;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Immutable;
 using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
@@ -14,13 +26,15 @@ public class TextEditorModelApiTests
     [Fact]
     public void Constructor()
     {
-        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(out var textEditorService);
+        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+            out var textEditorService,
+            out var serviceProvider);
 
         Assert.NotNull(textEditorService.ModelApi);
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.UndoEdit(RazorLib.Lexes.Models.ResourceUri)"/>
+    /// <see cref="ITextEditorService.TextEditorModelApi.UndoEdit(ResourceUri)"/>
     /// </summary>
     [Fact]
     public void UndoEdit()
@@ -29,56 +43,195 @@ public class TextEditorModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.SetUsingRowEndingKind(RazorLib.Lexes.Models.ResourceUri, RazorLib.Rows.Models.RowEndingKind)"/>
+    /// <see cref="ITextEditorService.TextEditorModelApi.SetUsingRowEndingKind(ResourceUri, RowEndingKind)"/>
     /// </summary>
     [Fact]
     public void SetUsingRowEndingKind()
     {
-        throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+            out var textEditorService,
+            out var serviceProvider);
+
+        Assert.Empty(textEditorService.ModelApi.GetModels());
+
+        var fileExtension = ExtensionNoPeriodFacts.TXT;
+        var resourceUri = new ResourceUri("/unitTesting.txt");
+        var resourceLastWriteTime = DateTime.UtcNow;
+        var initialContent = "Hello World!";
+
+        textEditorService.ModelApi.RegisterTemplated(
+            fileExtension,
+            resourceUri,
+            resourceLastWriteTime,
+            initialContent);
+
+        Assert.Single(textEditorService.ModelApi.GetModels());
+        var existingModel = textEditorService.ModelApi.GetModels().Single();
+
+        var rowEndingKind = RowEndingKind.CarriageReturn;
+
+        // Assert the current values are different from that which will be set.
+        Assert.NotEqual(rowEndingKind, existingModel.UsingRowEndingKind);
+
+        textEditorService.ModelApi.SetUsingRowEndingKind(resourceUri, rowEndingKind);
+        existingModel = textEditorService.ModelApi.GetOrDefault(resourceUri);
+
+        // Assert the value is now set
+        Assert.Equal(rowEndingKind, existingModel!.UsingRowEndingKind);
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.SetResourceData(RazorLib.Lexes.Models.ResourceUri, DateTime)"/>
+    /// <see cref="ITextEditorService.TextEditorModelApi.SetResourceData(ResourceUri, DateTime)"/>
     /// </summary>
     [Fact]
     public void SetResourceData()
     {
-        throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+            out var textEditorService,
+            out var serviceProvider);
+
+        Assert.Empty(textEditorService.ModelApi.GetModels());
+
+        var fileExtension = ExtensionNoPeriodFacts.TXT;
+        var resourceUri = new ResourceUri("/unitTesting.txt");
+        var resourceLastWriteTime = DateTime.UtcNow;
+        var initialContent = "Hello World!";
+
+        textEditorService.ModelApi.RegisterTemplated(
+            fileExtension,
+            resourceUri,
+            resourceLastWriteTime,
+            initialContent);
+
+        Assert.Single(textEditorService.ModelApi.GetModels());
+        var existingModel = textEditorService.ModelApi.GetModels().Single();
+
+        var newResourceLastWriteTime = resourceLastWriteTime.AddDays(1);
+
+        // Assert the current values are different from that which will be set.
+        Assert.NotEqual(newResourceLastWriteTime, existingModel.ResourceLastWriteTime);
+
+        textEditorService.ModelApi.SetResourceData(resourceUri, newResourceLastWriteTime);
+        existingModel = textEditorService.ModelApi.GetOrDefault(resourceUri);
+
+        // Assert the values are now set
+        Assert.Equal(newResourceLastWriteTime, existingModel!.ResourceLastWriteTime);
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.Reload(RazorLib.Lexes.Models.ResourceUri, string, DateTime)"/>
+    /// <see cref="ITextEditorService.TextEditorModelApi.Reload(ResourceUri, string, DateTime)"/>
     /// </summary>
     [Fact]
     public void Reload()
     {
-        throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+            out var textEditorService,
+            out var serviceProvider);
+
+        Assert.Empty(textEditorService.ModelApi.GetModels());
+
+        var fileExtension = ExtensionNoPeriodFacts.TXT;
+        var resourceUri = new ResourceUri("/unitTesting.txt");
+        var resourceLastWriteTime = DateTime.UtcNow;
+        var initialContent = "Hello World!";
+
+        textEditorService.ModelApi.RegisterTemplated(
+            fileExtension,
+            resourceUri,
+            resourceLastWriteTime,
+            initialContent);
+
+        Assert.Single(textEditorService.ModelApi.GetModels());
+        var existingModel = textEditorService.ModelApi.GetModels().Single();
+
+        var newContent = "Alphabet Soup";
+
+        // Assert the current values are different from that which will be set.
+        Assert.NotEqual(newContent, existingModel.GetAllText());
+
+        textEditorService.ModelApi.Reload(resourceUri, newContent, DateTime.UtcNow);
+        existingModel = textEditorService.ModelApi.GetOrDefault(resourceUri);
+
+        // Assert the values are now set
+        Assert.Equal(newContent, existingModel!.GetAllText());
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.RegisterCustom(RazorLib.TextEditors.Models.TextEditorModels.TextEditorModel)"/>
+    /// <see cref="ITextEditorService.TextEditorModelApi.RegisterCustom(TextEditorModel)"/>
     /// </summary>
     [Fact]
     public void RegisterCustom()
     {
-        throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+            out var textEditorService,
+            out var serviceProvider);
+
+        Assert.Empty(textEditorService.ModelApi.GetModels());
+
+        var fileExtension = ExtensionNoPeriodFacts.TXT;
+        var resourceUri = new ResourceUri("/unitTesting.txt");
+        var resourceLastWriteTime = DateTime.UtcNow;
+        var initialContent = "Hello World!";
+
+        var decorationMapperRegistry = serviceProvider.GetRequiredService<IDecorationMapperRegistry>();
+        var compilerServiceRegistry = serviceProvider.GetRequiredService<ICompilerServiceRegistry>();
+
+        var decorationMapper = decorationMapperRegistry.GetDecorationMapper(fileExtension);
+        var compilerService = compilerServiceRegistry.GetCompilerService(fileExtension);
+
+        var model = new TextEditorModel(
+            resourceUri,
+            resourceLastWriteTime,
+            fileExtension,
+            initialContent,
+            decorationMapper,
+            compilerService);
+
+        textEditorService.ModelApi.RegisterCustom(model);
+
+        Assert.Single(textEditorService.ModelApi.GetModels());
+        var existingModel = textEditorService.ModelApi.GetModels().Single();
+
+        Assert.Equal(resourceUri, existingModel.ResourceUri);
+        Assert.Equal(resourceLastWriteTime, existingModel.ResourceLastWriteTime);
+        Assert.Equal(initialContent, existingModel.GetAllText());
+        Assert.Equal(fileExtension, existingModel.FileExtension);
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.RegisterTemplated(RazorLib.Decorations.Models.IDecorationMapperRegistry, RazorLib.CompilerServices.ICompilerServiceRegistry, string, RazorLib.Lexes.Models.ResourceUri, DateTime, string, string?)"/>
+    /// <see cref="ITextEditorService.TextEditorModelApi.RegisterTemplated(RazorLib.Decorations.Models.IDecorationMapperRegistry, RazorLib.CompilerServices.ICompilerServiceRegistry, string, ResourceUri, DateTime, string, string?)"/>
     /// </summary>
     [Fact]
     public void RegisterTemplated()
     {
-        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(out var textEditorService);
+        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+            out var textEditorService,
+            out var serviceProvider);
 
-        // textEditorService.ModelApi.RegisterTemplated();
+        Assert.Empty(textEditorService.ModelApi.GetModels());
 
-        throw new NotImplementedException();
+        var fileExtension = ExtensionNoPeriodFacts.TXT;
+        var resourceUri = new ResourceUri("/unitTesting.txt");
+        var resourceLastWriteTime = DateTime.UtcNow;
+        var initialContent = "Hello World!";
+
+        textEditorService.ModelApi.RegisterTemplated(
+            fileExtension,
+            resourceUri,
+            resourceLastWriteTime,
+            initialContent);
+
+        Assert.Single(textEditorService.ModelApi.GetModels());
+        var existingModel = textEditorService.ModelApi.GetModels().Single();
+
+        Assert.Equal(resourceUri, existingModel.ResourceUri);
+        Assert.Equal(resourceLastWriteTime, existingModel.ResourceLastWriteTime);
+        Assert.Equal(initialContent, existingModel.GetAllText());
+        Assert.Equal(fileExtension, existingModel.FileExtension);
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.RedoEdit(RazorLib.Lexes.Models.ResourceUri)"/>
+    /// <see cref="ITextEditorService.TextEditorModelApi.RedoEdit(ResourceUri)"/>
     /// </summary>
     [Fact]
     public void RedoEdit()
@@ -92,7 +245,41 @@ public class TextEditorModelApiTests
     [Fact]
     public void InsertText()
     {
-        throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+            out var textEditorService,
+            out var serviceProvider);
+
+        var fileExtension = ExtensionNoPeriodFacts.TXT;
+        var resourceUri = new ResourceUri("/unitTesting.txt");
+        var resourceLastWriteTime = DateTime.UtcNow;
+        var initialContent = "Hello World!";
+
+        textEditorService.ModelApi.RegisterTemplated(
+            fileExtension,
+            resourceUri,
+            resourceLastWriteTime,
+            initialContent);
+
+        var originalModel = textEditorService.ModelApi.GetModels().Single();
+
+        var cursor = new TextEditorCursor(0, 0, 0, true, TextEditorSelection.Empty);
+        var cursorBag = new TextEditorCursor[] { cursor }.ToImmutableArray();
+
+        var insertedText = "I have something to say: ";
+
+        textEditorService.ModelApi.InsertText(new TextEditorModelState.InsertTextAction(
+            resourceUri,
+            null,
+            cursorBag,
+            cursorBag.Select(x => new TextEditorCursorModifier(x)).ToImmutableArray(),
+            insertedText,
+            CancellationToken.None));
+
+        var modifiedModel = textEditorService.ModelApi.GetModels().Single();
+
+        Assert.Equal(
+            insertedText + originalModel.GetAllText(),
+            modifiedModel.GetAllText());
     }
 
     /// <summary>
@@ -101,43 +288,158 @@ public class TextEditorModelApiTests
     [Fact]
     public void HandleKeyboardEvent()
     {
-        throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+            out var textEditorService,
+            out var serviceProvider);
+
+        var fileExtension = ExtensionNoPeriodFacts.TXT;
+        var resourceUri = new ResourceUri("/unitTesting.txt");
+        var resourceLastWriteTime = DateTime.UtcNow;
+        var initialContent = "Hello World!";
+
+        textEditorService.ModelApi.RegisterTemplated(
+            fileExtension,
+            resourceUri,
+            resourceLastWriteTime,
+            initialContent);
+
+        var originalModel = textEditorService.ModelApi.GetModels().Single();
+
+        var cursor = new TextEditorCursor(0, 0, 0, true, TextEditorSelection.Empty);
+        var cursorBag = new TextEditorCursor[] { cursor }.ToImmutableArray();
+
+        var key = "a";
+
+        var keyboardEventArgs = new KeyboardEventArgs
+        {
+            Key = key
+        };
+
+        textEditorService.ModelApi.HandleKeyboardEvent(new TextEditorModelState.KeyboardEventAction(
+            resourceUri,
+            null,
+            cursorBag,
+            cursorBag.Select(x => new TextEditorCursorModifier(x)).ToImmutableArray(),
+            keyboardEventArgs,
+            CancellationToken.None));
+
+        var modifiedModel = textEditorService.ModelApi.GetModels().Single();
+
+        Assert.Equal(
+            key + originalModel.GetAllText(),
+            modifiedModel.GetAllText());
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.GetViewModelsOrEmpty(RazorLib.Lexes.Models.ResourceUri)"/>
+    /// <see cref="ITextEditorService.TextEditorModelApi.GetViewModelsOrEmpty(ResourceUri)"/>
     /// </summary>
     [Fact]
     public void GetViewModelsOrEmpty()
     {
-        throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+            out var textEditorService,
+            out var serviceProvider);
+
+        var fileExtension = ExtensionNoPeriodFacts.TXT;
+        var resourceUri = new ResourceUri("/unitTesting.txt");
+        var resourceLastWriteTime = DateTime.UtcNow;
+        var initialContent = "Hello World!";
+
+        textEditorService.ModelApi.RegisterTemplated(
+            fileExtension,
+            resourceUri,
+            resourceLastWriteTime,
+            initialContent);
+
+        var model = textEditorService.ModelApi.GetModels().Single();
+
+        Assert.Empty(textEditorService.ModelApi.GetViewModelsOrEmpty(model.ResourceUri));
+
+        textEditorService.ViewModelApi.Register(
+            Key<TextEditorViewModel>.NewKey(),
+            model.ResourceUri);
+        
+        Assert.Single(textEditorService.ModelApi.GetViewModelsOrEmpty(model.ResourceUri));
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.GetAllText(RazorLib.Lexes.Models.ResourceUri)"/>
+    /// <see cref="ITextEditorService.TextEditorModelApi.GetAllText(ResourceUri)"/>
     /// </summary>
     [Fact]
     public void GetAllText()
     {
-        throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+            out var textEditorService,
+            out var serviceProvider);
+
+        var fileExtension = ExtensionNoPeriodFacts.TXT;
+        var resourceUri = new ResourceUri("/unitTesting.txt");
+        var resourceLastWriteTime = DateTime.UtcNow;
+        var initialContent = "Hello World!";
+
+        textEditorService.ModelApi.RegisterTemplated(
+            fileExtension,
+            resourceUri,
+            resourceLastWriteTime,
+            initialContent);
+
+        var model = textEditorService.ModelApi.GetModels().Single();
+
+        Assert.Equal(initialContent, model.GetAllText());
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.FindOrDefault(RazorLib.Lexes.Models.ResourceUri)"/>
+    /// <see cref="ITextEditorService.TextEditorModelApi.GetOrDefault(ResourceUri)"/>
     /// </summary>
     [Fact]
     public void FindOrDefault()
     {
-        throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+            out var textEditorService,
+            out var serviceProvider);
+
+        var fileExtension = ExtensionNoPeriodFacts.TXT;
+        var resourceUri = new ResourceUri("/unitTesting.txt");
+        var resourceLastWriteTime = DateTime.UtcNow;
+        var initialContent = "Hello World!";
+
+        textEditorService.ModelApi.RegisterTemplated(
+            fileExtension,
+            resourceUri,
+            resourceLastWriteTime,
+            initialContent);
+
+        var model = textEditorService.ModelApi.GetOrDefault(resourceUri);
+        Assert.NotNull(model);
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.Dispose(RazorLib.Lexes.Models.ResourceUri)"/>
+    /// <see cref="ITextEditorService.TextEditorModelApi.Dispose(ResourceUri)"/>
     /// </summary>
     [Fact]
     public void Dispose()
     {
-        throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+            out var textEditorService,
+            out var serviceProvider);
+
+        Assert.Empty(textEditorService.ModelApi.GetModels());
+
+        var fileExtension = ExtensionNoPeriodFacts.TXT;
+        var resourceUri = new ResourceUri("/unitTesting.txt");
+        var resourceLastWriteTime = DateTime.UtcNow;
+        var initialContent = "Hello World!";
+
+        textEditorService.ModelApi.RegisterTemplated(
+            fileExtension,
+            resourceUri,
+            resourceLastWriteTime,
+            initialContent);
+
+        Assert.Single(textEditorService.ModelApi.GetModels());
+
+        textEditorService.ModelApi.Dispose(resourceUri);
+        Assert.Empty(textEditorService.ModelApi.GetModels());
     }
 
     /// <summary>
@@ -146,7 +448,44 @@ public class TextEditorModelApiTests
     [Fact]
     public void DeleteTextByRange()
     {
-        throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+            out var textEditorService,
+            out var serviceProvider);
+
+        Assert.Empty(textEditorService.ModelApi.GetModels());
+
+        var fileExtension = ExtensionNoPeriodFacts.TXT;
+        var resourceUri = new ResourceUri("/unitTesting.txt");
+        var resourceLastWriteTime = DateTime.UtcNow;
+        var initialContent = "Hello World!";
+
+        var textToDelete = " World!";
+        var expectedContent = initialContent.Replace(textToDelete, string.Empty);
+
+        textEditorService.ModelApi.RegisterTemplated(
+            fileExtension,
+            resourceUri,
+            resourceLastWriteTime,
+            initialContent);
+
+        var model = textEditorService.ModelApi.GetOrDefault(resourceUri);
+
+        var columnIndex = initialContent.IndexOf(textToDelete);
+
+        var cursor = new TextEditorCursor(0, columnIndex, columnIndex, true, TextEditorSelection.Empty);
+        var cursorBag = new TextEditorCursor[] { cursor }.ToImmutableArray();
+
+        textEditorService.ModelApi.DeleteTextByRange(new TextEditorModelState.DeleteTextByRangeAction(
+            resourceUri,
+            null,
+            cursorBag,
+            cursorBag.Select(x => new TextEditorCursorModifier(x)).ToImmutableArray(),
+            textToDelete.Length,
+            CancellationToken.None));
+
+        model = textEditorService.ModelApi.GetOrDefault(resourceUri);
+
+        Assert.Equal(expectedContent, model!.GetAllText());
     }
 
     /// <summary>
@@ -159,7 +498,7 @@ public class TextEditorModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.RegisterPresentationModel(RazorLib.Lexes.Models.ResourceUri, RazorLib.Decorations.Models.TextEditorPresentationModel)"/>
+    /// <see cref="ITextEditorService.TextEditorModelApi.RegisterPresentationModel(ResourceUri, RazorLib.Decorations.Models.TextEditorPresentationModel)"/>
     /// </summary>
     [Fact]
     public void RegisterPresentationModel()

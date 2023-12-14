@@ -162,15 +162,6 @@ public partial class TextEditorModelVariablesTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModel.TextEditorKeymap"/>
-	/// </summary>
-	[Fact]
-	public void TextEditorKeymap()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
 	/// <see cref="TextEditorModel.TextEditorOptions"/>
 	/// </summary>
 	[Fact]

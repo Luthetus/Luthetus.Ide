@@ -31,9 +31,11 @@ public class TextEditorServiceTests
 	[Fact]
 	public void Constructor()
 	{
-        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(out var textEditorService);
+        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+            out var textEditorService,
+            out var serviceProvider);
 
-		Assert.NotNull(textEditorService);
+        Assert.NotNull(textEditorService);
 		Assert.NotNull(textEditorService.ModelStateWrap);
 		Assert.NotNull(textEditorService.ViewModelStateWrap);
 		Assert.NotNull(textEditorService.GroupStateWrap);

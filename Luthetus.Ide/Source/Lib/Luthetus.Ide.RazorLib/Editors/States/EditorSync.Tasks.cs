@@ -22,7 +22,7 @@ public partial class EditorSync
         string absolutePathString)
     {
         var textEditorModel = _textEditorService.ModelApi
-            .FindOrDefault(new(absolutePathString));
+            .GetOrDefault(new(absolutePathString));
 
         if (textEditorModel is null)
         {
@@ -39,8 +39,7 @@ public partial class EditorSync
                 absolutePath.ExtensionNoPeriod,
                 content,
                 decorationMapper,
-                compilerService,
-                null);
+                compilerService);
 
             textEditorModel.CompilerService.RegisterResource(textEditorModel.ResourceUri);
 

@@ -890,14 +890,14 @@ public static class TextEditorCommandDefaultFacts
                     if (definitionTextSpan is null)
                         return Task.FromResult(new Func<TextEditorViewModel, TextEditorViewModel>(state => state));
 
-                    var definitionModel = commandArgs.TextEditorService.ModelApi.FindOrDefault(definitionTextSpan.ResourceUri);
+                    var definitionModel = commandArgs.TextEditorService.ModelApi.GetOrDefault(definitionTextSpan.ResourceUri);
 
                     if (definitionModel is null)
                     {
                         if (commandArgs.RegisterModelAction is not null)
                         {
                             commandArgs.RegisterModelAction.Invoke(definitionTextSpan.ResourceUri);
-                            definitionModel = commandArgs.TextEditorService.ModelApi.FindOrDefault(definitionTextSpan.ResourceUri);
+                            definitionModel = commandArgs.TextEditorService.ModelApi.GetOrDefault(definitionTextSpan.ResourceUri);
 
                             if (definitionModel is null)
                                 return Task.FromResult(new Func<TextEditorViewModel, TextEditorViewModel>(state => state));

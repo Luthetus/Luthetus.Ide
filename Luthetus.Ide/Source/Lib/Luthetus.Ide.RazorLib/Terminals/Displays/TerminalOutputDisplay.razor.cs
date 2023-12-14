@@ -12,8 +12,6 @@ using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
 using System.Text;
 using Luthetus.TextEditor.RazorLib.Htmls.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
@@ -23,7 +21,6 @@ public partial class TerminalOutputDisplay : FluxorComponent
 {
     [Inject]
     private IStateSelection<TerminalSessionState, TerminalSession?> TerminalSessionsStateSelection { get; set; } = null!;
-
     // TODO: Don't inject TerminalSessionsStateWrap. It causes too many unnecessary re-renders
     [Inject]
     private IState<TerminalSessionState> TerminalSessionStateWrap { get; set; } = null!;
@@ -31,10 +28,6 @@ public partial class TerminalOutputDisplay : FluxorComponent
     private IState<TerminalSessionWasModifiedState> TerminalSessionWasModifiedStateWrap { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
-    [Inject]
-    private IDecorationMapperRegistry DecorationMapperRegistry { get; set; } = null!;
-    [Inject]
-    private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
 
     /// <summary>
     /// <see cref="TerminalSessionKey"/> is used to narrow down the terminal
@@ -58,6 +51,9 @@ public partial class TerminalOutputDisplay : FluxorComponent
 
     protected override void OnInitialized()
     {
+        // Supress un-used service
+        _ = TerminalSessionStateWrap;
+
         _textEditorViewModelDisplayOptions = new()
         {
             IncludeHeaderHelperComponent = false,
@@ -87,13 +83,11 @@ public partial class TerminalOutputDisplay : FluxorComponent
 
                 if (terminalSession is not null)
                 {
-                    var textEditorModel = TextEditorService.ModelApi.FindOrDefault(terminalSession.ResourceUri);
+                    var textEditorModel = TextEditorService.ModelApi.GetOrDefault(terminalSession.ResourceUri);
 
                     if (textEditorModel is null)
                     {
                         TextEditorService.ModelApi.RegisterTemplated(
-                            DecorationMapperRegistry,
-                            CompilerServiceRegistry,
                             ExtensionNoPeriodFacts.TXT,
                             new ResourceUri("__terminal-display-name-fallback__"),
                             DateTime.UtcNow,

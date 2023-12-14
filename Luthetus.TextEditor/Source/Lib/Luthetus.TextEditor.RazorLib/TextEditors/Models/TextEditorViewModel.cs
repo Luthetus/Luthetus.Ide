@@ -43,8 +43,8 @@ public record TextEditorViewModel : IDisposable
         }.ToImmutableArray();
 
         DisplayTracker = new(
-            () => textEditorService.ViewModelApi.FindOrDefault(viewModelKey),
-            () => textEditorService.ViewModelApi.FindBackingModelOrDefault(viewModelKey));
+            () => textEditorService.ViewModelApi.GetOrDefault(viewModelKey),
+            () => textEditorService.ViewModelApi.GetModelOrDefault(viewModelKey));
     }
 
     private const int _clearTrackingOfUniqueIdentifiersWhenCountIs = 250;

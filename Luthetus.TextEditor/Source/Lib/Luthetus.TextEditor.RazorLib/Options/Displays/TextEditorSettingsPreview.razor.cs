@@ -1,6 +1,4 @@
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -13,10 +11,6 @@ public partial class TextEditorSettingsPreview : ComponentBase
 {
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
-    [Inject]
-    private IDecorationMapperRegistry DecorationMapperRegistry { get; set; } = null!;
-    [Inject]
-    private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
 
     [Parameter]
     public string TopLevelDivElementCssClassString { get; set; } = string.Empty;
@@ -44,8 +38,6 @@ public partial class TextEditorSettingsPreview : ComponentBase
         if (firstRender)
         {
             TextEditorService.ModelApi.RegisterTemplated(
-                DecorationMapperRegistry,
-                CompilerServiceRegistry,
                 ExtensionNoPeriodFacts.TXT,
                 SettingsPreviewTextEditorResourceUri,
                 DateTime.UtcNow,

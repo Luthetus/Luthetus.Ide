@@ -9,6 +9,7 @@ using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Keyboards.Models;
+using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
@@ -16,17 +17,17 @@ public partial interface ITextEditorService
 {
     public interface ITextEditorViewModelApi
     {
-        public void Dispose(Key<TextEditorViewModel> textEditorViewModelKey);
+        public void Dispose(Key<TextEditorViewModel> viewModelKey);
         public Task<TextEditorMeasurements> GetTextEditorMeasurementsAsync(string elementId);
         
         public Task<CharAndRowMeasurements> MeasureCharacterWidthAndRowHeightAsync(
             string measureCharacterWidthAndRowHeightElementId,
             int countOfTestCharacters);
 
-        public TextEditorViewModel? FindOrDefault(Key<TextEditorViewModel> textEditorViewModelKey);
+        public TextEditorViewModel? GetOrDefault(Key<TextEditorViewModel> viewModelKey);
         public Task FocusPrimaryCursorAsync(string primaryCursorContentId);
-        public string? GetAllText(Key<TextEditorViewModel> textEditorViewModelKey);
-        public TextEditorModel? FindBackingModelOrDefault(Key<TextEditorViewModel> textEditorViewModelKey);
+        public string? GetAllText(Key<TextEditorViewModel> viewModelKey);
+        public TextEditorModel? GetModelOrDefault(Key<TextEditorViewModel> viewModelKey);
         public Task MutateScrollHorizontalPositionAsync(string bodyElementId, string gutterElementId, double pixels);
         public Task MutateScrollVerticalPositionAsync(string bodyElementId, string gutterElementId, double pixels);
         public void Register(Key<TextEditorViewModel> textEditorViewModelKey, ResourceUri resourceUri);
@@ -39,7 +40,7 @@ public partial interface ITextEditorService
             double? scrollTopInPixels);
         
         public void With(
-            Key<TextEditorViewModel> textEditorViewModelKey,
+            Key<TextEditorViewModel> viewModelKey,
             Func<TextEditorViewModel, TextEditorViewModel> withFunc);
         
         public void SetCursorShouldBlink(bool cursorShouldBlink);
@@ -63,6 +64,13 @@ public partial interface ITextEditorService
             ResourceUri modelResourceUri,
             Key<TextEditorViewModel> viewModelKey,
             Key<TextEditorCursor> cursorKey);
+
+        /// <summary>
+        /// One should store the result of invoking this method in a variable, then reference that variable.
+        /// If one continually invokes this, there is no guarantee that the data had not changed
+        /// since the previous invocation.
+        /// </summary>
+        public ImmutableList<TextEditorViewModel> GetViewModels();
 
         public bool CursorShouldBlink { get; }
         public event Action? CursorShouldBlinkChanged;
@@ -208,7 +216,7 @@ public partial interface ITextEditorService
                 pixels);
         }
 
-        public TextEditorModel? FindBackingModelOrDefault(Key<TextEditorViewModel> textEditorViewModelKey)
+        public TextEditorModel? GetModelOrDefault(Key<TextEditorViewModel> textEditorViewModelKey)
         {
             var viewModelState = _textEditorService.ViewModelStateWrap.Value;
 
@@ -218,12 +226,12 @@ public partial interface ITextEditorService
             if (viewModel is null)
                 return null;
 
-            return _textEditorService.ModelApi.FindOrDefault(viewModel.ResourceUri);
+            return _textEditorService.ModelApi.GetOrDefault(viewModel.ResourceUri);
         }
 
         public string? GetAllText(Key<TextEditorViewModel> textEditorViewModelKey)
         {
-            var textEditorModel = FindBackingModelOrDefault(textEditorViewModelKey);
+            var textEditorModel = GetModelOrDefault(textEditorViewModelKey);
 
             return textEditorModel is null
                 ? null
@@ -236,7 +244,7 @@ public partial interface ITextEditorService
                 primaryCursorContentId);
         }
 
-        public TextEditorViewModel? FindOrDefault(Key<TextEditorViewModel> textEditorViewModelKey)
+        public TextEditorViewModel? GetOrDefault(Key<TextEditorViewModel> textEditorViewModelKey)
         {
             return _textEditorService.ViewModelStateWrap.Value.ViewModelBag.FirstOrDefault(
                 x => x.ViewModelKey == textEditorViewModelKey);
@@ -603,6 +611,11 @@ public partial interface ITextEditorService
                 return false;
 
             return true;
+        }
+
+        public ImmutableList<TextEditorViewModel> GetViewModels()
+        {
+            return _textEditorService.ViewModelStateWrap.Value.ViewModelBag;
         }
 
         public void Dispose(Key<TextEditorViewModel> textEditorViewModelKey)

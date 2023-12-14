@@ -1,12 +1,10 @@
-﻿using Luthetus.Common.RazorLib.Keymaps.Models;
-using Luthetus.Common.RazorLib.Keys.Models;
+﻿using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
@@ -30,6 +28,4 @@ public partial class TextEditorModelModifier : ITextEditorModel
 	public int EditBlockIndex => _editBlockIndex ?? _textEditorModel.EditBlockIndex;
 	public (int rowIndex, int rowLength) MostCharactersOnASingleRowTuple => _mostCharactersOnASingleRowTuple ?? _textEditorModel.MostCharactersOnASingleRowTuple;
 	public Key<RenderState> RenderStateKey => _renderStateKey ?? _textEditorModel.RenderStateKey;
-	public Keymap TextEditorKeymap => _textEditorKeymap ?? _textEditorModel.TextEditorKeymap;
-	public TextEditorOptions? TextEditorOptions => _textEditorOptions ?? _textEditorModel.TextEditorOptions;
 }

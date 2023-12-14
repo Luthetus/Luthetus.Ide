@@ -19,7 +19,14 @@ public partial interface ITextEditorService
         public void Dispose(Key<TextEditorDiffModel> diffKey);
 
         public TextEditorDiffResult? Calculate(Key<TextEditorDiffModel> diffKey, CancellationToken cancellationToken);
-        public TextEditorDiffModel? FindOrDefault(Key<TextEditorDiffModel> diffKey);
+        public TextEditorDiffModel? GetOrDefault(Key<TextEditorDiffModel> diffKey);
+
+        /// <summary>
+        /// One should store the result of invoking this method in a variable, then reference that variable.
+        /// If one continually invokes this, there is no guarantee that the data had not changed
+        /// since the previous invocation.
+        /// </summary>
+        public ImmutableList<TextEditorDiffModel> GetDiffs();
     }
 
     public class TextEditorDiffApi : ITextEditorDiffApi
@@ -44,7 +51,7 @@ public partial interface ITextEditorService
                 outViewModelKey));
         }
 
-        public TextEditorDiffModel? FindOrDefault(Key<TextEditorDiffModel> diffKey)
+        public TextEditorDiffModel? GetOrDefault(Key<TextEditorDiffModel> diffKey)
         {
             return _textEditorService.DiffStateWrap.Value.DiffModelBag.FirstOrDefault(x => x.DiffKey == diffKey);
         }
@@ -59,19 +66,19 @@ public partial interface ITextEditorService
             if (cancellationToken.IsCancellationRequested)
                 return null;
 
-            var textEditorDiff = FindOrDefault(textEditorDiffKey);
+            var textEditorDiff = GetOrDefault(textEditorDiffKey);
 
             if (textEditorDiff is null)
                 return null;
 
-            var inViewModel = _textEditorService.ViewModelApi.FindOrDefault(textEditorDiff.InViewModelKey);
-            var outViewModel = _textEditorService.ViewModelApi.FindOrDefault(textEditorDiff.OutViewModelKey);
+            var inViewModel = _textEditorService.ViewModelApi.GetOrDefault(textEditorDiff.InViewModelKey);
+            var outViewModel = _textEditorService.ViewModelApi.GetOrDefault(textEditorDiff.OutViewModelKey);
 
             if (inViewModel is null || outViewModel is null)
                 return null;
 
-            var inModel = _textEditorService.ModelApi.FindOrDefault(inViewModel.ResourceUri);
-            var outModel = _textEditorService.ModelApi.FindOrDefault(outViewModel.ResourceUri);
+            var inModel = _textEditorService.ModelApi.GetOrDefault(inViewModel.ResourceUri);
+            var outModel = _textEditorService.ModelApi.GetOrDefault(outViewModel.ResourceUri);
 
             if (inModel is null || outModel is null)
                 return null;
@@ -122,6 +129,11 @@ public partial interface ITextEditorService
             }
 
             return diffResult;
+        }
+
+        public ImmutableList<TextEditorDiffModel> GetDiffs()
+        {
+            return _textEditorService.DiffStateWrap.Value.DiffModelBag;
         }
     }
 }

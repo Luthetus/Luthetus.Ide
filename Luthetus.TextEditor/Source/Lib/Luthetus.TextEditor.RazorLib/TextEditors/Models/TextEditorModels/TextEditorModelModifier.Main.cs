@@ -81,9 +81,7 @@ public partial class TextEditorModelModifier
             _textEditorSaveFileHelper ?? _textEditorModel.TextEditorSaveFileHelper,
             _editBlockIndex ?? _textEditorModel.EditBlockIndex,
             _mostCharactersOnASingleRowTuple ?? _textEditorModel.MostCharactersOnASingleRowTuple,
-            _renderStateKey ?? _textEditorModel.RenderStateKey,
-            _textEditorKeymap ?? _textEditorModel.TextEditorKeymap,
-            _textEditorOptions ?? _textEditorModel.TextEditorOptions);
+            _renderStateKey ?? _textEditorModel.RenderStateKey);
     }
 
     public void ModifyContentBag()

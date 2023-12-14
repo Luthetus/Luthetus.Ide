@@ -1,7 +1,5 @@
 ﻿using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -15,10 +13,6 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
 {
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
-    [Inject]
-    private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
-    [Inject]
-    private IDecorationMapperRegistry DecorationMapperRegistry { get; set; } = null!;
 
     private static readonly Key<TextEditorDiffModel> DiffModelKey = Key<TextEditorDiffModel>.NewKey();
 
@@ -35,8 +29,6 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
             // "In" Registrations
             {
                 TextEditorService.ModelApi.RegisterTemplated(
-                    DecorationMapperRegistry,
-                    CompilerServiceRegistry,
                     ExtensionNoPeriodFacts.TXT,
                     BeforeResourceUri,
                     DateTime.UtcNow,
@@ -71,8 +63,6 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
             // "Out" Registrations
             {
                 TextEditorService.ModelApi.RegisterTemplated(
-                    DecorationMapperRegistry,
-                    CompilerServiceRegistry,
                     ExtensionNoPeriodFacts.TXT,
                     AfterResourceUri,
                     DateTime.UtcNow,

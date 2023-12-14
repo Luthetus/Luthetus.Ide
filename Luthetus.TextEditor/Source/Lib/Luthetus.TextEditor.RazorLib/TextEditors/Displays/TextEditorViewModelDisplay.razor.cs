@@ -157,7 +157,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    public TextEditorModel? GetModel() => TextEditorService.ViewModelApi.FindBackingModelOrDefault(TextEditorViewModelKey);
+    public TextEditorModel? GetModel() => TextEditorService.ViewModelApi.GetModelOrDefault(TextEditorViewModelKey);
 
     public TextEditorViewModel? GetViewModel() => TextEditorViewModelsStateWrap.Value.ViewModelBag.FirstOrDefault(
         x => x.ViewModelKey == TextEditorViewModelKey);
@@ -1055,7 +1055,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             (Func<Task>)(async () =>
             {
                 // Get the most recent instantiation of the ViewModel with the given key.
-                var viewModel = TextEditorService.ViewModelApi.FindOrDefault(localRefCurrentRenderBatch.ViewModel.ViewModelKey);
+                var viewModel = TextEditorService.ViewModelApi.GetOrDefault(localRefCurrentRenderBatch.ViewModel.ViewModelKey);
 
                 var options = GetOptions();
 
@@ -1081,9 +1081,9 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             (Func<Task>)(async () =>
             {
                 // Get the most recent instantiation of the ViewModel with the given key.
-                var viewModel = TextEditorService.ViewModelApi.FindOrDefault(localCurrentRenderBatch.ViewModel.ViewModelKey);
+                var viewModel = TextEditorService.ViewModelApi.GetOrDefault(localCurrentRenderBatch.ViewModel.ViewModelKey);
 
-                var model = TextEditorService.ViewModelApi.FindBackingModelOrDefault(
+                var model = TextEditorService.ViewModelApi.GetModelOrDefault(
                     localCurrentRenderBatch.ViewModel.ViewModelKey);
 
                 if (viewModel is not null && model is not null)

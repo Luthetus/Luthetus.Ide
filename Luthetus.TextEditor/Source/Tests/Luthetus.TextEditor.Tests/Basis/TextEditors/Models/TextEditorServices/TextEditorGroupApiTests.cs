@@ -58,7 +58,7 @@ public class TextEditorGroupApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorGroupApi.FindOrDefault(Key{TextEditorGroup})"/>
+    /// <see cref="ITextEditorService.TextEditorGroupApi.GetOrDefault(Key{TextEditorGroup})"/>
     /// </summary>
     [Fact]
     public void FindOrDefault()

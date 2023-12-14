@@ -28,7 +28,7 @@ public class TextEditorDiffApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorDiffApi.FindOrDefault(Common.RazorLib.Keys.Models.Key{RazorLib.Diffs.Models.TextEditorDiffModel})"/>
+    /// <see cref="ITextEditorService.TextEditorDiffApi.GetOrDefault(Common.RazorLib.Keys.Models.Key{RazorLib.Diffs.Models.TextEditorDiffModel})"/>
     /// </summary>
     [Fact]
     public void FindOrDefault()

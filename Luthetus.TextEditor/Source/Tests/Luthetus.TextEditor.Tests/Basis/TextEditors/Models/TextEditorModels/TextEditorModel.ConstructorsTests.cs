@@ -24,7 +24,6 @@ public class TextEditorModelConstructorsTests
 		var content = "Hello World!";
 		var decorationMapper = new TextEditorDecorationMapperDefault();
 		var compilerService = new TextEditorDefaultCompilerService();
-		var keymap = TextEditorKeymapFacts.DefaultKeymap;
 
         var model = new TextEditorModel(
             resourceUri,
@@ -32,8 +31,7 @@ public class TextEditorModelConstructorsTests
             fileExtension,
             content,
             decorationMapper,
-            compilerService,
-            keymap);
+            compilerService);
 
 		Assert.Equal(resourceUri, model.ResourceUri);
 		Assert.Equal(resourceLastWriteTime, model.ResourceLastWriteTime);
@@ -41,7 +39,6 @@ public class TextEditorModelConstructorsTests
 		Assert.Equal(content, model.GetAllText());
 		Assert.Equal(decorationMapper, model.DecorationMapper);
 		Assert.Equal(compilerService, model.CompilerService);
-		Assert.Equal(keymap, model.TextEditorKeymap);
 	}
 
 	/// <summary>
@@ -56,8 +53,7 @@ public class TextEditorModelConstructorsTests
             ".txt",
             "Hello World!",
             new TextEditorDecorationMapperDefault(),
-            new TextEditorDefaultCompilerService(),
-            TextEditorKeymapFacts.DefaultKeymap);
+            new TextEditorDefaultCompilerService());
 
 		var cloneModel = new TextEditorModel(
 			originalModel.ContentBag,
@@ -76,9 +72,7 @@ public class TextEditorModelConstructorsTests
 			originalModel.TextEditorSaveFileHelper,
 			originalModel.EditBlockIndex,
 			originalModel.MostCharactersOnASingleRowTuple,
-			originalModel.RenderStateKey,
-			originalModel.TextEditorKeymap,
-			originalModel.TextEditorOptions);
+			originalModel.RenderStateKey);
 
         Assert.Equal(originalModel.ContentBag, cloneModel.ContentBag);
 		Assert.Equal(originalModel.EditBlocksBag, cloneModel.EditBlocksBag);
@@ -97,7 +91,5 @@ public class TextEditorModelConstructorsTests
 		Assert.Equal(originalModel.EditBlockIndex, cloneModel.EditBlockIndex);
 		Assert.Equal(originalModel.MostCharactersOnASingleRowTuple, cloneModel.MostCharactersOnASingleRowTuple);
 		Assert.Equal(originalModel.RenderStateKey, cloneModel.RenderStateKey);
-		Assert.Equal(originalModel.TextEditorKeymap, cloneModel.TextEditorKeymap);
-		Assert.Equal(originalModel.TextEditorOptions, cloneModel.TextEditorOptions);
 	}
 }

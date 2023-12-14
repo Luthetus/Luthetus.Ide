@@ -60,7 +60,7 @@ public class JsonCompilerService : ICompilerService
 
     public ICompilerServiceResource? GetCompilerServiceResourceFor(ResourceUri resourceUri)
     {
-        var model = _textEditorService.ModelApi.FindOrDefault(resourceUri);
+        var model = _textEditorService.ModelApi.GetOrDefault(resourceUri);
 
         if (model is null)
             return null;
@@ -122,7 +122,7 @@ public class JsonCompilerService : ICompilerService
             "JSON Compiler Service - Parse",
             async () =>
             {
-                var model = _textEditorService.ModelApi.FindOrDefault(resourceUri);
+                var model = _textEditorService.ModelApi.GetOrDefault(resourceUri);
 
                 if (model is null)
                     return;

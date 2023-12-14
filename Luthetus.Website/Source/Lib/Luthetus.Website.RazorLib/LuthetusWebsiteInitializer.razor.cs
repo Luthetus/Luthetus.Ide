@@ -136,8 +136,7 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
                 absolutePath.ExtensionNoPeriod,
                 content,
                 decorationMapper,
-                compilerService,
-                null);
+                compilerService);
 
             textEditorModel.CompilerService.RegisterResource(textEditorModel.ResourceUri);
 

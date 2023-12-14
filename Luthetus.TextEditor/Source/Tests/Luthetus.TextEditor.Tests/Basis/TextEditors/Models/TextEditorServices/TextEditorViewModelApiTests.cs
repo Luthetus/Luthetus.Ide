@@ -99,7 +99,7 @@ public class TextEditorViewModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.FindBackingModelOrDefault(Common.RazorLib.Keys.Models.Key{RazorLib.TextEditors.Models.TextEditorViewModel})"/>
+    /// <see cref="ITextEditorService.TextEditorViewModelApi.GetModelOrDefault(Common.RazorLib.Keys.Models.Key{RazorLib.TextEditors.Models.TextEditorViewModel})"/>
     /// </summary>
     [Fact]
     public void FindBackingModelOrDefault()
@@ -126,7 +126,7 @@ public class TextEditorViewModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.FindOrDefault(Common.RazorLib.Keys.Models.Key{RazorLib.TextEditors.Models.TextEditorViewModel})"/>
+    /// <see cref="ITextEditorService.TextEditorViewModelApi.GetOrDefault(Common.RazorLib.Keys.Models.Key{RazorLib.TextEditors.Models.TextEditorViewModel})"/>
     /// </summary>
     [Fact]
     public void FindOrDefault()

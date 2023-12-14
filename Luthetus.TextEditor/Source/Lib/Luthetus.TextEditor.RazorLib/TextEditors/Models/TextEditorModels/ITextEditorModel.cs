@@ -6,7 +6,6 @@ using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
@@ -30,6 +29,4 @@ public interface ITextEditorModel
 	public int EditBlockIndex { get; }
 	public (int rowIndex, int rowLength) MostCharactersOnASingleRowTuple { get; }
 	public Key<RenderState> RenderStateKey { get; }
-	public Keymap TextEditorKeymap { get; }
-	public TextEditorOptions? TextEditorOptions { get; }
 }

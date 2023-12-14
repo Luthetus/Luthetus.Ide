@@ -14,6 +14,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
+using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
@@ -36,6 +37,13 @@ public partial interface ITextEditorService
         public void ShowFindDialog(bool? isResizableOverride = null, string? cssClassString = null);
         public void WriteToStorage();
         public void SetRenderStateKey(Key<RenderState> renderStateKey);
+
+        /// <summary>
+        /// One should store the result of invoking this method in a variable, then reference that variable.
+        /// If one continually invokes this, there is no guarantee that the data had not changed
+        /// since the previous invocation.
+        /// </summary>
+        public TextEditorOptions GetOptions();
     }
 
     public class TextEditorOptionsApi : ITextEditorOptionsApi
@@ -224,6 +232,11 @@ public partial interface ITextEditorService
         public void SetRenderStateKey(Key<RenderState> renderStateKey)
         {
             _dispatcher.Dispatch(new TextEditorOptionsState.SetRenderStateKeyAction(renderStateKey));
+        }
+
+        public TextEditorOptions GetOptions()
+        {
+            return _textEditorService.OptionsStateWrap.Value.Options;
         }
     }
 }

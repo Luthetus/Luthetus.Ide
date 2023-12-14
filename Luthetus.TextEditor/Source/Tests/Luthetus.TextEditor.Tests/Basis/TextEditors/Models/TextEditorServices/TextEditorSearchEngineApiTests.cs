@@ -27,7 +27,7 @@ public class TextEditorSearchEngineApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorSearchEngineApi.FindOrDefault(Common.RazorLib.Keys.Models.Key{RazorLib.SearchEngines.Models.ITextEditorSearchEngine})"/>
+    /// <see cref="ITextEditorService.TextEditorSearchEngineApi.GetOrDefault(Common.RazorLib.Keys.Models.Key{RazorLib.SearchEngines.Models.ITextEditorSearchEngine})"/>
     /// </summary>
     [Fact]
     public void FindOrDefault()
