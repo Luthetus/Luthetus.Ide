@@ -97,7 +97,7 @@ public record TextEditorViewModel : IDisposable
     {
         _batchScrollEvents.MutateScrollHorizontalPositionByPixels += pixels;
 
-        await _batchScrollEvents.ThrottleMutateScrollHorizontalPositionByPixels.FireAsync((Func<CancellationToken, Task>)(async _ =>
+        await _batchScrollEvents.ThrottleMutateScrollHorizontalPositionByPixels.FireAsync((async _ =>
         {
             var batch = _batchScrollEvents.MutateScrollHorizontalPositionByPixels;
 			_batchScrollEvents.MutateScrollHorizontalPositionByPixels -= batch;
@@ -113,7 +113,7 @@ public record TextEditorViewModel : IDisposable
     {
         _batchScrollEvents.MutateScrollVerticalPositionByPixels += pixels;
 
-        await _batchScrollEvents.ThrottleMutateScrollVerticalPositionByPixels.FireAsync((Func<CancellationToken, Task>)(async _ =>
+        await _batchScrollEvents.ThrottleMutateScrollVerticalPositionByPixels.FireAsync((async _ =>
         {
             var batch = _batchScrollEvents.MutateScrollVerticalPositionByPixels;
 			_batchScrollEvents.MutateScrollVerticalPositionByPixels -= batch;
@@ -140,7 +140,7 @@ public record TextEditorViewModel : IDisposable
     /// <summary>If a parameter is null the JavaScript will not modify that value</summary>
     public async Task SetScrollPositionAsync(double? scrollLeft, double? scrollTop)
     {
-        await _batchScrollEvents.ThrottleSetScrollPosition.FireAsync((Func<CancellationToken, Task>)(async _ =>
+        await _batchScrollEvents.ThrottleSetScrollPosition.FireAsync((async _ =>
         {
             await TextEditorService.ViewModelApi.SetScrollPositionAsync(
 				BodyElementId,
@@ -161,7 +161,7 @@ public record TextEditorViewModel : IDisposable
         int countOfTestCharacters,
         CancellationToken cancellationToken)
     {
-        await ThrottleRemeasure.FireAsync((Func<CancellationToken, Task>)(async _ =>
+        await ThrottleRemeasure.FireAsync((async _ =>
         {
             lock (_trackingOfUniqueIdentifiersLock)
             {
@@ -185,7 +185,7 @@ public record TextEditorViewModel : IDisposable
 
 			TextEditorService.ViewModelApi.With(
 				ViewModelKey,
-                (Func<TextEditorViewModel, TextEditorViewModel>)(                previousViewModel => (previousViewModel with
+                previousViewModel => (previousViewModel with
                 {
                     // Clear the SeenModelRenderStateKeys because one needs to recalculate the virtualization result now that the options have changed.
                     SeenModelRenderStateKeysBag = new(),
@@ -193,7 +193,7 @@ public record TextEditorViewModel : IDisposable
                     {
                         CharAndRowMeasurements = characterWidthAndRowHeight
                     }
-                })));
+                }));
         }));
     }
 
@@ -267,7 +267,7 @@ public record TextEditorViewModel : IDisposable
 
             var virtualizedEntryBag = model
                 .GetRows(verticalStartingIndex, verticalTake)
-                .Select<List<RichCharacter>, VirtualizationEntry<List<RichCharacter>>>((row, rowIndex) =>
+                .Select((row, rowIndex) =>
                 {
                     rowIndex += verticalStartingIndex;
 
@@ -300,13 +300,13 @@ public record TextEditorViewModel : IDisposable
 					localHorizontalTake = Math.Max(0, localHorizontalTake);
 
                     var horizontallyVirtualizedRow = row
-                        .Skip<RichCharacter>(localHorizontalStartingIndex)
-                        .Take<RichCharacter>(localHorizontalTake)
-                        .ToList<RichCharacter>();
+                        .Skip(localHorizontalStartingIndex)
+                        .Take(localHorizontalTake)
+                        .ToList();
 
                     var countTabKeysInVirtualizedRow = horizontallyVirtualizedRow
-                        .Where<RichCharacter>(x => x.Value == KeyboardKeyFacts.WhitespaceCharacters.TAB)
-                        .Count<RichCharacter>();
+                        .Where(x => x.Value == KeyboardKeyFacts.WhitespaceCharacters.TAB)
+                        .Count();
 
 					var widthInPixels = (horizontallyVirtualizedRow.Count + (extraWidthPerTabKey * countTabKeysInVirtualizedRow)) *
                         localCharacterWidthAndRowHeight.CharacterWidth;
@@ -343,7 +343,7 @@ public record TextEditorViewModel : IDisposable
                         localCharacterWidthAndRowHeight.RowHeight,
                         leftInPixels,
                         topInPixels);
-                }).ToImmutableArray<VirtualizationEntry<List<RichCharacter>>>();
+                }).ToImmutableArray();
 
             var totalWidth = model.MostCharactersOnASingleRowTuple.rowLength *
                 localCharacterWidthAndRowHeight.CharacterWidth;
@@ -426,10 +426,10 @@ public record TextEditorViewModel : IDisposable
 
 			TextEditorService.ViewModelApi.With(
 				ViewModelKey,
-                (Func<TextEditorViewModel, TextEditorViewModel>)(                previousViewModel => (previousViewModel with
+                previousViewModel => (previousViewModel with
                 {
                     VirtualizationResult = virtualizationResult,
-                })));
+                }));
         }));
     }
 

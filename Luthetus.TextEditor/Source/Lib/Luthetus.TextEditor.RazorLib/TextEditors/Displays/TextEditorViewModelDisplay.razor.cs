@@ -380,20 +380,20 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     private async Task HandleContentOnDoubleClickAsync(MouseEventArgs mouseEventArgs)
     {
-        var safeRefViewModel = GetViewModel();
+        var viewModel = GetViewModel();
 
-        if (safeRefViewModel is null)
+        if (viewModel is null)
             return;
 
-        TextEditorService.ViewModelApi.SetViewModelWith(safeRefViewModel.ViewModelKey, async inViewModel =>
+        TextEditorService.ViewModelApi.SetViewModelWith(viewModel.ViewModelKey, async inViewModel =>
         {
-            var safeRefModel = GetModel();
-            safeRefViewModel = GetViewModel();
+            var model = GetModel();
+            viewModel = GetViewModel();
 
-            if (safeRefModel is null || safeRefViewModel is null)
+            if (model is null || viewModel is null)
                 return state => state;
 
-            var primaryCursor = safeRefViewModel.PrimaryCursor;
+            var primaryCursor = viewModel.PrimaryCursor;
             var hasSelectedText = TextEditorSelectionHelper.HasSelectedText(primaryCursor.Selection);
 
             if ((mouseEventArgs.Buttons & 1) != 1 && hasSelectedText)
@@ -404,7 +404,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
             var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs);
 
-            var lowerColumnIndexExpansion = safeRefModel.GetColumnIndexOfCharacterWithDifferingKind(
+            var lowerColumnIndexExpansion = model.GetColumnIndexOfCharacterWithDifferingKind(
                 rowAndColumnIndex.rowIndex,
                 rowAndColumnIndex.columnIndex,
                 true);
@@ -413,13 +413,13 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                 ? 0
                 : lowerColumnIndexExpansion;
 
-            var higherColumnIndexExpansion = safeRefModel.GetColumnIndexOfCharacterWithDifferingKind(
+            var higherColumnIndexExpansion = model.GetColumnIndexOfCharacterWithDifferingKind(
                 rowAndColumnIndex.rowIndex,
                 rowAndColumnIndex.columnIndex,
                 false);
 
             higherColumnIndexExpansion = higherColumnIndexExpansion == -1
-                    ? safeRefModel.GetLengthOfRow(rowAndColumnIndex.rowIndex)
+                    ? model.GetLengthOfRow(rowAndColumnIndex.rowIndex)
                     : higherColumnIndexExpansion;
 
             var refRowIndex = primaryCursor.RowIndex;
@@ -437,7 +437,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
             // Set text selection ending to higher expansion
             {
-                var cursorPositionOfHigherExpansion = safeRefModel.GetPositionIndex(
+                var cursorPositionOfHigherExpansion = model.GetPositionIndex(
                     rowAndColumnIndex.rowIndex,
                     higherColumnIndexExpansion);
 
@@ -446,7 +446,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
             // Set text selection anchor to lower expansion
             {
-                var cursorPositionOfLowerExpansion = safeRefModel.GetPositionIndex(
+                var cursorPositionOfLowerExpansion = model.GetPositionIndex(
                     rowAndColumnIndex.rowIndex,
                     lowerColumnIndexExpansion);
 
@@ -476,20 +476,20 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     private async Task HandleContentOnMouseDownAsync(MouseEventArgs mouseEventArgs)
     {
-        var safeRefViewModel = GetViewModel();
+        var viewModel = GetViewModel();
 
-        if (safeRefViewModel is null)
+        if (viewModel is null)
             return;
 
-        TextEditorService.ViewModelApi.SetViewModelWith(safeRefViewModel.ViewModelKey, async inViewModel =>
+        TextEditorService.ViewModelApi.SetViewModelWith(viewModel.ViewModelKey, async inViewModel =>
         {
-            var safeRefModel = GetModel();
-            var safeRefViewModel = GetViewModel();
+            var model = GetModel();
+            var viewModel = GetViewModel();
 
-            if (safeRefModel is null || safeRefViewModel is null)
+            if (model is null || viewModel is null)
                 return state => state;
 
-            var primaryCursor = safeRefViewModel.PrimaryCursor;
+            var primaryCursor = viewModel.PrimaryCursor;
 
             var hasSelectedText = TextEditorSelectionHelper.HasSelectedText(primaryCursor.Selection);
 
@@ -508,7 +508,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
             CursorDisplay?.PauseBlinkAnimation();
 
-            var cursorPositionIndex = safeRefModel.GetCursorPositionIndex(
+            var cursorPositionIndex = model.GetCursorPositionIndex(
                 TextEditorCursor.Empty with
                 {
                     RowIndex = rowAndColumnIndex.rowIndex,
@@ -521,7 +521,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                 {
                     // If user does not yet have a selection then place the text selection anchor were they were
 
-                    var cursorPositionPriorToMovementOccurring = safeRefModel.GetPositionIndex(
+                    var cursorPositionPriorToMovementOccurring = model.GetPositionIndex(
                         primaryCursor.RowIndex,
                         primaryCursor.ColumnIndex);
 
@@ -605,23 +605,23 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (!_thinksLeftMouseButtonIsDown)
             return;
 
-        var safeRefViewModel = GetViewModel();
+        var viewModel = GetViewModel();
 
-        if (safeRefViewModel is null)
+        if (viewModel is null)
             return;
 
-        var safeRefModel = GetModel();
-        safeRefViewModel = GetViewModel();
+        var model = GetModel();
+        viewModel = GetViewModel();
 
-        if (safeRefModel is null || safeRefViewModel is null)
+        if (model is null || viewModel is null)
             return;
 
-        var primaryCursor = safeRefViewModel.PrimaryCursor;
+        var primaryCursor = viewModel.PrimaryCursor;
 
         // Buttons is a bit flag '& 1' gets if left mouse button is held
         if (localThinksLeftMouseButtonIsDown && (mouseEventArgs.Buttons & 1) == 1)
         {
-            TextEditorService.ViewModelApi.SetViewModelWith(safeRefViewModel.ViewModelKey, async inViewModel =>
+            TextEditorService.ViewModelApi.SetViewModelWith(viewModel.ViewModelKey, async inViewModel =>
             {
                 var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs);
 
@@ -637,7 +637,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
                 CursorDisplay?.PauseBlinkAnimation();
 
-                refSelectionEndingPositionIndex = safeRefModel.GetCursorPositionIndex(
+                refSelectionEndingPositionIndex = model.GetCursorPositionIndex(
                     TextEditorCursor.Empty with
                     {
                         RowIndex = rowAndColumnIndex.rowIndex,

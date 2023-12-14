@@ -160,6 +160,19 @@ public partial interface ITextEditorService
                 "HandleOnKeyDownAsync",
                 () =>
                 {
+                    var viewModel = _textEditorService.ViewModelApi.FindOrDefault(keyboardEventAction.ViewModelKey);
+
+                    if (viewModel is null)
+                        return Task.CompletedTask;
+
+                    var cursorBag = viewModel.CursorBag;
+
+                    keyboardEventAction = keyboardEventAction with
+                    {
+                        CursorBag = cursorBag,
+                        CursorModifierBag = cursorBag.Select(x => new TextEditorCursorModifier(x)).ToImmutableArray(),
+                    };
+
                     _dispatcher.Dispatch(keyboardEventAction);
 
                     _textEditorService.ViewModelApi.SetViewModelWith(
