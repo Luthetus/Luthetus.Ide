@@ -1,15 +1,7 @@
 using Xunit;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Fluxor;
-using Microsoft.Extensions.DependencyInjection;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
-using Luthetus.Common.RazorLib.Installations.Models;
-using Luthetus.TextEditor.RazorLib.Installations.Models;
-using Luthetus.Common.RazorLib.Storages.Models;
-using Luthetus.Common.RazorLib.Misc;
-using Microsoft.JSInterop;
-using Luthetus.Common.RazorLib.Storages.States;
-using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 
@@ -39,7 +31,7 @@ public class TextEditorServiceTests
 	[Fact]
 	public void Constructor()
 	{
-		InitializeTextEditorServiceTests(out var textEditorService);
+        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(out var textEditorService);
 
 		Assert.NotNull(textEditorService);
 		Assert.NotNull(textEditorService.ModelStateWrap);
@@ -56,27 +48,5 @@ public class TextEditorServiceTests
 		Assert.NotNull(textEditorService.DiffApi);
 		Assert.NotNull(textEditorService.OptionsApi);
 		Assert.NotNull(textEditorService.SearchEngineApi);
-	}
-
-	private void InitializeTextEditorServiceTests(out ITextEditorService textEditorService)
-	{
-		var services = new ServiceCollection()
-			.AddSingleton<LuthetusCommonOptions>()
-			.AddSingleton<LuthetusTextEditorOptions>()
-			.AddScoped<IStorageService, DoNothingStorageService>()
-			.AddScoped<IJSRuntime, DoNothingJsRuntime>()
-            .AddScoped<StorageSync>()
-            .AddScoped<IBackgroundTaskService>(_ => new BackgroundTaskServiceSynchronous())
-            .AddScoped<ITextEditorService, TextEditorService>()
-			.AddFluxor(options => options.ScanAssemblies(
-                typeof(LuthetusCommonOptions).Assembly,
-                typeof(LuthetusTextEditorOptions).Assembly));
-
-		var serviceProvider = services.BuildServiceProvider();
-
-		var store = serviceProvider.GetRequiredService<IStore>();
-		store.InitializeAsync().Wait();
-
-		textEditorService = serviceProvider.GetRequiredService<ITextEditorService>();
 	}
 }

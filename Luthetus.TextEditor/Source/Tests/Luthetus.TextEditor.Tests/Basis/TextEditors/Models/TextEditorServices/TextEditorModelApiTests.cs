@@ -14,7 +14,9 @@ public class TextEditorModelApiTests
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(out var textEditorService);
+
+        Assert.NotNull(textEditorService.ModelApi);
     }
 
     /// <summary>
@@ -68,6 +70,10 @@ public class TextEditorModelApiTests
     [Fact]
     public void RegisterTemplated()
     {
+        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(out var textEditorService);
+
+        // textEditorService.ModelApi.RegisterTemplated();
+
         throw new NotImplementedException();
     }
 
