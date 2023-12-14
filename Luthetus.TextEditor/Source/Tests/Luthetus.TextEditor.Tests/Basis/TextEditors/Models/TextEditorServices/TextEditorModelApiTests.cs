@@ -2,6 +2,7 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
+using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -39,7 +40,45 @@ public class TextEditorModelApiTests
     [Fact]
     public void UndoEdit()
     {
-        throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+            out var textEditorService,
+            out var serviceProvider);
+
+        var fileExtension = ExtensionNoPeriodFacts.TXT;
+        var resourceUri = new ResourceUri("/unitTesting.txt");
+        var resourceLastWriteTime = DateTime.UtcNow;
+        var initialContent = "Hello World!";
+
+        textEditorService.ModelApi.RegisterTemplated(
+            fileExtension,
+            resourceUri,
+            resourceLastWriteTime,
+            initialContent);
+
+        var originalModel = textEditorService.ModelApi.GetModels().Single();
+
+        var cursor = new TextEditorCursor(0, 0, 0, true, TextEditorSelection.Empty);
+        var cursorBag = new TextEditorCursor[] { cursor }.ToImmutableArray();
+
+        var insertedText = "I have something to say: ";
+
+        textEditorService.ModelApi.InsertText(new TextEditorModelState.InsertTextAction(
+            resourceUri,
+            null,
+            cursorBag,
+            cursorBag.Select(x => new TextEditorCursorModifier(x)).ToImmutableArray(),
+            insertedText,
+            CancellationToken.None));
+
+        var modifiedModel = textEditorService.ModelApi.GetModels().Single();
+        Assert.Equal(
+            insertedText + originalModel.GetAllText(),
+            modifiedModel.GetAllText());
+
+        textEditorService.ModelApi.UndoEdit(resourceUri);
+
+        modifiedModel = textEditorService.ModelApi.GetModels().Single();
+        Assert.Equal(initialContent, modifiedModel.GetAllText());
     }
 
     /// <summary>
@@ -199,7 +238,7 @@ public class TextEditorModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.RegisterTemplated(RazorLib.Decorations.Models.IDecorationMapperRegistry, RazorLib.CompilerServices.ICompilerServiceRegistry, string, ResourceUri, DateTime, string, string?)"/>
+    /// <see cref="ITextEditorService.TextEditorModelApi.RegisterTemplated(IDecorationMapperRegistry, ICompilerServiceRegistry, string, ResourceUri, DateTime, string, string?)"/>
     /// </summary>
     [Fact]
     public void RegisterTemplated()
@@ -236,11 +275,56 @@ public class TextEditorModelApiTests
     [Fact]
     public void RedoEdit()
     {
-        throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+            out var textEditorService,
+            out var serviceProvider);
+
+        var fileExtension = ExtensionNoPeriodFacts.TXT;
+        var resourceUri = new ResourceUri("/unitTesting.txt");
+        var resourceLastWriteTime = DateTime.UtcNow;
+        var initialContent = "Hello World!";
+
+        textEditorService.ModelApi.RegisterTemplated(
+            fileExtension,
+            resourceUri,
+            resourceLastWriteTime,
+            initialContent);
+
+        var originalModel = textEditorService.ModelApi.GetModels().Single();
+
+        var cursor = new TextEditorCursor(0, 0, 0, true, TextEditorSelection.Empty);
+        var cursorBag = new TextEditorCursor[] { cursor }.ToImmutableArray();
+
+        var insertedText = "I have something to say: ";
+
+        textEditorService.ModelApi.InsertText(new TextEditorModelState.InsertTextAction(
+            resourceUri,
+            null,
+            cursorBag,
+            cursorBag.Select(x => new TextEditorCursorModifier(x)).ToImmutableArray(),
+            insertedText,
+            CancellationToken.None));
+
+        var modifiedModel = textEditorService.ModelApi.GetModels().Single();
+        Assert.Equal(
+            insertedText + originalModel.GetAllText(),
+            modifiedModel.GetAllText());
+
+        textEditorService.ModelApi.UndoEdit(resourceUri);
+
+        modifiedModel = textEditorService.ModelApi.GetModels().Single();
+        Assert.Equal(initialContent, modifiedModel.GetAllText());
+
+        textEditorService.ModelApi.RedoEdit(resourceUri);
+
+        modifiedModel = textEditorService.ModelApi.GetModels().Single();
+        Assert.Equal(
+            insertedText + originalModel.GetAllText(),
+            modifiedModel.GetAllText());
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.InsertText(RazorLib.TextEditors.States.TextEditorModelState.InsertTextAction)"/>
+    /// <see cref="ITextEditorService.TextEditorModelApi.InsertText(TextEditorModelState.InsertTextAction)"/>
     /// </summary>
     [Fact]
     public void InsertText()
@@ -283,7 +367,7 @@ public class TextEditorModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.HandleKeyboardEvent(RazorLib.TextEditors.States.TextEditorModelState.KeyboardEventAction)"/>
+    /// <see cref="ITextEditorService.TextEditorModelApi.HandleKeyboardEvent(TextEditorModelState.KeyboardEventAction)"/>
     /// </summary>
     [Fact]
     public void HandleKeyboardEvent()
@@ -443,7 +527,7 @@ public class TextEditorModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.DeleteTextByRange(RazorLib.TextEditors.States.TextEditorModelState.DeleteTextByRangeAction)"/>
+    /// <see cref="ITextEditorService.TextEditorModelApi.DeleteTextByRange(TextEditorModelState.DeleteTextByRangeAction)"/>
     /// </summary>
     [Fact]
     public void DeleteTextByRange()
@@ -489,20 +573,124 @@ public class TextEditorModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.DeleteTextByMotion(RazorLib.TextEditors.States.TextEditorModelState.DeleteTextByMotionAction)"/>
+    /// <see cref="ITextEditorService.TextEditorModelApi.DeleteTextByMotion(TextEditorModelState.DeleteTextByMotionAction)"/>
     /// </summary>
     [Fact]
-    public void DeleteTextByMotion()
+    public void DeleteTextByMotion_Backspace()
     {
-        throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+            out var textEditorService,
+            out var serviceProvider);
+
+        Assert.Empty(textEditorService.ModelApi.GetModels());
+
+        var fileExtension = ExtensionNoPeriodFacts.TXT;
+        var resourceUri = new ResourceUri("/unitTesting.txt");
+        var resourceLastWriteTime = DateTime.UtcNow;
+        var initialContent = "Hello World!";
+
+        // "Hello World" -> "HelloWorld" is the expected output
+        var wordToJoin = "World!";
+        var expectedContent = "HelloWorld!";
+
+        textEditorService.ModelApi.RegisterTemplated(
+            fileExtension,
+            resourceUri,
+            resourceLastWriteTime,
+            initialContent);
+
+        var model = textEditorService.ModelApi.GetOrDefault(resourceUri);
+
+        var columnIndex = initialContent.IndexOf(wordToJoin);
+
+        var cursor = new TextEditorCursor(0, columnIndex, columnIndex, true, TextEditorSelection.Empty);
+        var cursorBag = new TextEditorCursor[] { cursor }.ToImmutableArray();
+
+        textEditorService.ModelApi.DeleteTextByMotion(new TextEditorModelState.DeleteTextByMotionAction(
+            resourceUri,
+            null,
+            cursorBag,
+            cursorBag.Select(x => new TextEditorCursorModifier(x)).ToImmutableArray(),
+            MotionKind.Backspace,
+            CancellationToken.None));
+
+        model = textEditorService.ModelApi.GetOrDefault(resourceUri);
+        Assert.Equal(expectedContent, model!.GetAllText());
+    }
+    
+    /// <summary>
+    /// <see cref="ITextEditorService.TextEditorModelApi.DeleteTextByMotion(TextEditorModelState.DeleteTextByMotionAction)"/>
+    /// </summary>
+    [Fact]
+    public void DeleteTextByMotion_Delete()
+    {
+        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+            out var textEditorService,
+            out var serviceProvider);
+
+        Assert.Empty(textEditorService.ModelApi.GetModels());
+
+        var fileExtension = ExtensionNoPeriodFacts.TXT;
+        var resourceUri = new ResourceUri("/unitTesting.txt");
+        var resourceLastWriteTime = DateTime.UtcNow;
+        var initialContent = "Hello World!";
+
+        // "Hello World" -> "HelloWorld" is the expected output
+        var spaceText = " ";
+        var expectedContent = "HelloWorld!";
+
+        textEditorService.ModelApi.RegisterTemplated(
+            fileExtension,
+            resourceUri,
+            resourceLastWriteTime,
+            initialContent);
+
+        var model = textEditorService.ModelApi.GetOrDefault(resourceUri);
+
+        var columnIndex = initialContent.IndexOf(spaceText);
+
+        var cursor = new TextEditorCursor(0, columnIndex, columnIndex, true, TextEditorSelection.Empty);
+        var cursorBag = new TextEditorCursor[] { cursor }.ToImmutableArray();
+
+        textEditorService.ModelApi.DeleteTextByMotion(new TextEditorModelState.DeleteTextByMotionAction(
+            resourceUri,
+            null,
+            cursorBag,
+            cursorBag.Select(x => new TextEditorCursorModifier(x)).ToImmutableArray(),
+            MotionKind.Delete,
+            CancellationToken.None));
+
+        model = textEditorService.ModelApi.GetOrDefault(resourceUri);
+        Assert.Equal(expectedContent, model!.GetAllText());
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.RegisterPresentationModel(ResourceUri, RazorLib.Decorations.Models.TextEditorPresentationModel)"/>
+    /// <see cref="ITextEditorService.TextEditorModelApi.RegisterPresentationModel(ResourceUri, TextEditorPresentationModel)"/>
     /// </summary>
     [Fact]
     public void RegisterPresentationModel()
     {
-        throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+            out var textEditorService,
+            out var serviceProvider);
+
+        var fileExtension = ExtensionNoPeriodFacts.TXT;
+        var resourceUri = new ResourceUri("/unitTesting.txt");
+        var resourceLastWriteTime = DateTime.UtcNow;
+        var initialContent = "Hello World!";
+
+        textEditorService.ModelApi.RegisterTemplated(
+            fileExtension,
+            resourceUri,
+            resourceLastWriteTime,
+            initialContent);
+
+        var model = textEditorService.ModelApi.GetOrDefault(resourceUri);
+        Assert.Empty(model!.PresentationModelsBag);
+        
+        textEditorService.ModelApi.RegisterPresentationModel(resourceUri, DiffPresentationFacts.EmptyOutPresentationModel);
+
+        model = textEditorService.ModelApi.GetOrDefault(resourceUri);
+        Assert.NotEmpty(model!.PresentationModelsBag);
     }
 }
