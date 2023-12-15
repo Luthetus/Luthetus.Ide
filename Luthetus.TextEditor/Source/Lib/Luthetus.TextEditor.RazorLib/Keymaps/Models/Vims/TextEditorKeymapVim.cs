@@ -709,7 +709,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                         finalCommand = TextEditorCommandVimFacts.Motions.GetVisual(modifiedCommand, $"{nameof(TextEditorKeymapVim)}");
 
                     if (ActiveVimMode == VimMode.VisualLine)
-                        finalCommand = TextEditorCommandVimFacts.Motions.GetVisualLine(modifiedCommand, $"{nameof(TextEditorKeymapVim)}");
+                        finalCommand = TextEditorCommandVimFacts.Motions.GetVisualLineFactory(modifiedCommand, $"{nameof(TextEditorKeymapVim)}");
 
                     return finalCommand.DoAsyncFunc.Invoke(commandArgs);
                 }

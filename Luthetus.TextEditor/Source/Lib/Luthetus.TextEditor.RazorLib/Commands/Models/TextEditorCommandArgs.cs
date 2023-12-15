@@ -70,4 +70,21 @@ public class TextEditorCommandArgs : ICommandArgs
     /// </summary>
     public Action<ResourceUri>? RegisterViewModelAction { get; set; }
     public Action<Key<TextEditorViewModel>>? ShowViewModelAction { get; set; }
+
+    /// <summary>
+    /// Hack for <see cref="Defaults.TextEditorCommandDefaultFacts.GoToMatchingCharacterFactory(bool)"/>
+    /// to be able to select text. (2023-12-15)
+    /// </summary>
+    public bool ShouldSelectText { get; set; }
+
+    /// <summary>
+    /// Hack for <see cref="Vims.TextEditorCommandVimFacts.Motions.GetVisual(TextEditorCommand, string)"/>
+    /// to be able to select text. (2023-12-15)
+    /// </summary>
+    public TextEditorCommand InnerCommand { get; set; }
+    /// <summary>
+    /// Hack for <see cref="Vims.TextEditorCommandVimFacts.Motions.GetVisual(TextEditorCommand, string)"/>
+    /// to be able to select text. (2023-12-15)
+    /// </summary>
+    public string DisplayName { get; set; }
 }

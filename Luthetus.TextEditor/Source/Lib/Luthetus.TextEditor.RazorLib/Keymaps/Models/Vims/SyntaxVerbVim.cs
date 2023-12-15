@@ -119,10 +119,10 @@ public static class SyntaxVerbVim
                 switch (currentToken.KeymapArgument.Code)
                 {
                     case "KeyD":
-                        textEditorCommand = TextEditorCommandVimFacts.Verbs.GetDeleteMotionCommand(innerCommand);
+                        textEditorCommand = TextEditorCommandVimFacts.Verbs.DeleteMotionCommandFactory(innerCommand);
                         return true;
                     case "KeyC":
-                        textEditorCommand = TextEditorCommandVimFacts.Verbs.GetChangeMotionCommand(innerCommand);
+                        textEditorCommand = TextEditorCommandVimFacts.Verbs.ChangeMotionCommandFactory(innerCommand);
                         return true;
                     case "KeyY":
                         textEditorCommand = TextEditorCommandDefaultFacts.Copy;

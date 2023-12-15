@@ -14,9 +14,9 @@ public record VimMotionResult(
     public static async Task<VimMotionResult> GetResultAsync(
         TextEditorCommandArgs textEditorCommandArgs,
         TextEditorCursor textEditorCursorForMotion,
-        Func<Task> motionCommandArgs)
+        Func<Task> motionCommand)
     {
-        await motionCommandArgs.Invoke();
+        await motionCommand.Invoke();
 
         var beforeMotionCursor = textEditorCommandArgs.PrimaryCursor;
 

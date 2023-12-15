@@ -19,38 +19,13 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                    commandArgs.ViewModelKey,
-                    new List<TextEditorCursorModifier>());
-
                 commandArgs.TextEditorService.EnqueueModification(
                     nameof(ChangeLineCommand),
-                    refreshCursorsRequest,
-                    async () =>
-                    {
-                        var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                        var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
-                        var primaryCursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
-
-                        if (viewModel is null || model is null || primaryCursor is null)
-                            return;
-
-                        await DeleteLineAsync(
-                            commandArgs, model, viewModel, refreshCursorsRequest, primaryCursor);
-                    });
+                    commandArgs,
+                    TextEditorCommandDefaultFunctions.CutAsync);
 
                 return Task.CompletedTask;
             });
-
-        public static Task DeleteLineAsync(
-            TextEditorCommandArgs commandArgs,
-            TextEditorModel model,
-            TextEditorViewModel viewModel,
-            TextEditorService.RefreshCursorsRequest refreshCursorsRequest,
-            TextEditorCursorModifier primaryCursor) 
-        {
-            return TextEditorCommandDefaultFacts.Cut.DoAsyncFunc.Invoke(commandArgs);
-        }
 
         public static readonly TextEditorCommand ChangeLineCommand = new(
             "Vim::Change(Line)", "Vim::Change(Line)", false, true, TextEditKind.None, null,
@@ -58,25 +33,10 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                    commandArgs.ViewModelKey,
-                    new List<TextEditorCursorModifier>());
-
                 commandArgs.TextEditorService.EnqueueModification(
                     nameof(ChangeLineCommand),
-                    refreshCursorsRequest,
-                    async () =>
-                    {
-                        var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                        var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
-                        var primaryCursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
-
-                        if (viewModel is null || model is null || primaryCursor is null)
-                            return;
-
-                        await ChangeLineAsync(
-                            commandArgs, model, viewModel, refreshCursorsRequest, primaryCursor);
-                    });
+                    commandArgs,
+                    ChangeLineAsync);
 
                 return Task.CompletedTask;
             });
@@ -94,42 +54,29 @@ public static partial class TextEditorCommandVimFacts
             if (activeKeymap is not TextEditorKeymapVim vimKeymap)
                 return;
 
-            await DeleteLineAsync(
+            await TextEditorCommandDefaultFunctions.CutAsync(
                 commandArgs, model, viewModel, refreshCursorsRequest, primaryCursor);
 
             vimKeymap.ActiveVimMode = VimMode.Insert;
         }
 
-        public static TextEditorCommand GetDeleteMotionCommand(TextEditorCommand innerTextEditorCommand) => new(
+        public static TextEditorCommand DeleteMotionCommandFactory(TextEditorCommand innerTextEditorCommand) => new(
             $"Vim::Delete({innerTextEditorCommand.DisplayName})", $"Vim::Delete({innerTextEditorCommand.DisplayName})", false, true, TextEditKind.None, null,
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                    commandArgs.ViewModelKey,
-                    new List<TextEditorCursorModifier>());
+                commandArgs.InnerCommand = innerTextEditorCommand;
 
                 commandArgs.TextEditorService.EnqueueModification(
                     nameof(ChangeLineCommand),
-                    refreshCursorsRequest,
-                    async () =>
-                    {
-                        var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                        var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
-                        var primaryCursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
-
-                        if (viewModel is null || model is null || primaryCursor is null)
-                            return;
-
-                        await GetDeleteMotionAsync(
-                            commandArgs, model, viewModel, refreshCursorsRequest, primaryCursor);
-                    });
+                    commandArgs,
+                    DeleteMotionAsync);
 
                 return Task.CompletedTask;
             });
 
-        public static async Task GetDeleteMotionAsync(
+        public static async Task DeleteMotionAsync(
             TextEditorCommandArgs commandArgs,
             TextEditorModel model,
             TextEditorViewModel viewModel,
@@ -159,7 +106,7 @@ public static partial class TextEditorCommandVimFacts
             var motionResult = await VimMotionResult.GetResultAsync(
                 commandArgs,
                 cursorForMotion,
-                async () => await commandArgs.DoAsyncFunc
+                async () => await commandArgs.InnerCommand.DoAsyncFunc
                     .Invoke(textEditorCommandArgsForMotion));
 
             var cursorForDeletion = TextEditorCursor.Empty with
@@ -179,31 +126,18 @@ public static partial class TextEditorCommandVimFacts
             commandArgs.TextEditorService.ModelApi.DeleteTextByRange(deleteTextTextEditorModelAction);
         }
 
-        public static TextEditorCommand GetChangeMotionCommand(TextEditorCommand innerTextEditorCommand) => new(
+        public static TextEditorCommand ChangeMotionCommandFactory(TextEditorCommand innerTextEditorCommand) => new(
             $"Vim::Change({innerTextEditorCommand.DisplayName})", $"Vim::Change({innerTextEditorCommand.DisplayName})", false, true, TextEditKind.None, null,
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                    commandArgs.ViewModelKey,
-                    new List<TextEditorCursorModifier>());
+                commandArgs.InnerCommand = innerTextEditorCommand;
 
                 commandArgs.TextEditorService.EnqueueModification(
-                    nameof(GetChangeMotionCommand),
-                    refreshCursorsRequest,
-                    async () =>
-                    {
-                        var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                        var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
-                        var primaryCursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
-
-                        if (viewModel is null || model is null || primaryCursor is null)
-                            return;
-
-                        await GetChangeMotionAsync(
-                            commandArgs, model, viewModel, refreshCursorsRequest, primaryCursor);
-                    });
+                    nameof(ChangeMotionCommandFactory),
+                    commandArgs,
+                    GetChangeMotionAsync);
 
                 return Task.CompletedTask;
             });
@@ -216,12 +150,12 @@ public static partial class TextEditorCommandVimFacts
             TextEditorCursorModifier primaryCursor)
         {
             var activeKeymap = commandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
-                    ?? TextEditorKeymapFacts.DefaultKeymap;
+                ?? TextEditorKeymapFacts.DefaultKeymap;
 
             if (activeKeymap is not TextEditorKeymapVim textEditorKeymapVim)
                 return;
 
-            var deleteMotion = GetDeleteMotionCommand(innerTextEditorCommand);
+            var deleteMotion = DeleteMotionCommandFactory(commandArgs.InnerCommand);
 
             await deleteMotion.DoAsyncFunc.Invoke(commandArgs);
             textEditorKeymapVim.ActiveVimMode = VimMode.Insert;
@@ -233,25 +167,10 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                    commandArgs.ViewModelKey,
-                    new List<TextEditorCursorModifier>());
-
                 commandArgs.TextEditorService.EnqueueModification(
                     nameof(ChangeSelectionCommand),
-                    refreshCursorsRequest,
-                    async () =>
-                    {
-                        var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                        var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
-                        var primaryCursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
-
-                        if (viewModel is null || model is null || primaryCursor is null)
-                            return;
-
-                        await ChangeSelectionAsync(
-                            commandArgs, model, viewModel, refreshCursorsRequest, primaryCursor);
-                    });
+                    commandArgs,
+                    ChangeSelectionAsync);
 
                 return Task.CompletedTask;
             });
@@ -274,39 +193,15 @@ public static partial class TextEditorCommandVimFacts
         }
 
         public static readonly TextEditorCommand YankCommand = new(
-            "Vim::Change(Selection)",
-            "Vim::Change(Selection)",
-            false,
-            true,
-            TextEditKind.None,
-            null,
+            "Vim::Change(Selection)", "Vim::Change(Selection)", false, true, TextEditKind.None, null,
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                    commandArgs.ViewModelKey,
-                    new List<TextEditorCursorModifier>());
-
                 commandArgs.TextEditorService.EnqueueModification(
                     nameof(YankCommand),
-                    refreshCursorsRequest,
-                    async () =>
-                    {
-                        var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                        var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
-                        var primaryCursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
-
-                        if (viewModel is null || model is null || primaryCursor is null)
-                            return;
-
-                        await YankAsync(
-                            commandArgs,
-                            model,
-                            viewModel,
-                            refreshCursorsRequest,
-                            primaryCursor);
-                    });
+                    commandArgs,
+                    YankAsync);
 
                 return Task.CompletedTask;
             });
@@ -328,29 +223,10 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                    commandArgs.ViewModelKey,
-                    new List<TextEditorCursorModifier>());
-
                 commandArgs.TextEditorService.EnqueueModification(
                     nameof(NewLineBelowCommand),
-                    refreshCursorsRequest,
-                    async () =>
-                    {
-                        var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                        var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
-                        var primaryCursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
-
-                        if (viewModel is null || model is null || primaryCursor is null)
-                            return;
-
-                        await NewLineBelowAsync(
-                            commandArgs,
-                            model,
-                            viewModel,
-                            refreshCursorsRequest,
-                            primaryCursor);
-                    });
+                    commandArgs,
+                    NewLineBelowAsync);
 
                 return Task.CompletedTask;
             });
@@ -363,7 +239,7 @@ public static partial class TextEditorCommandVimFacts
             TextEditorCursorModifier primaryCursor)
         {
             var activeKeymap = commandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
-                    ?? TextEditorKeymapFacts.DefaultKeymap;
+                ?? TextEditorKeymapFacts.DefaultKeymap;
 
             if (activeKeymap is not TextEditorKeymapVim textEditorKeymapVim)
                 return;
@@ -378,29 +254,10 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                    commandArgs.ViewModelKey,
-                    new List<TextEditorCursorModifier>());
-
                 commandArgs.TextEditorService.EnqueueModification(
                     nameof(NewLineAboveCommand),
-                    refreshCursorsRequest,
-                    async () =>
-                    {
-                        var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                        var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
-                        var primaryCursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
-
-                        if (viewModel is null || model is null || primaryCursor is null)
-                            return;
-
-                        await NewLineAboveAsync(
-                            commandArgs,
-                            model,
-                            viewModel,
-                            refreshCursorsRequest,
-                            primaryCursor);
-                    });
+                    commandArgs,
+                    NewLineAboveAsync);
 
                 return Task.CompletedTask;
             });

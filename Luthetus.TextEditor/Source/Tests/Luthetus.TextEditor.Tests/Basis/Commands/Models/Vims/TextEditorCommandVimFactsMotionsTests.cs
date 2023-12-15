@@ -56,7 +56,7 @@ public class TextEditorCommandVimFactsMotionsTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorCommandVimFacts.Motions.GetVisualLine(TextEditorCommand, string)"/>
+	/// <see cref="TextEditorCommandVimFacts.Motions.GetVisualLineFactory(TextEditorCommand, string)"/>
 	/// </summary>
 	[Fact]
     public void GetVisualLine()

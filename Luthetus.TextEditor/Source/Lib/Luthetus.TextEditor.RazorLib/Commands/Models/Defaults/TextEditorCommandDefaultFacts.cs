@@ -309,6 +309,7 @@ public static class TextEditorCommandDefaultFacts
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+            commandArgs.ShouldSelectText = shouldSelectText;
 
             commandArgs.TextEditorService.EnqueueModification(
                 nameof(SelectAll),
