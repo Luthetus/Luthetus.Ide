@@ -55,12 +55,12 @@ public partial class ContextMenu : ComponentBase
         var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorSnapshotsBag.First(x => x.IsPrimaryCursor).Selection);
 
         return new TextEditorCommandArgs(
-            RenderBatch.Model!,
-            cursorSnapshotsBag,
+            RenderBatch.Model!.ResourceUri,
+            RenderBatch.ViewModel.ViewModelKey,
             hasSelection,
             ClipboardService,
             TextEditorService,
-            RenderBatch.ViewModel,
+            null,
             null,
             null,
             null,

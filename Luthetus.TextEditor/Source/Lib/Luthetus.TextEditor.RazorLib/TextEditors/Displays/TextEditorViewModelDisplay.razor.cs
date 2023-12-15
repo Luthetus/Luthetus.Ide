@@ -308,14 +308,14 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             if (command is not null)
             {
                 await command.DoAsyncFunc.Invoke(new TextEditorCommandArgs(
-                    model,
-                    cursorBag,
+                    model.ResourceUri,
+                    viewModel.ViewModelKey,
                     hasSelection,
                     ClipboardService,
                     TextEditorService,
-                    viewModel,
                     HandleMouseStoppedMovingEventAsync,
                     JsRuntime,
+                    Dispatcher,
                     ViewModelDisplayOptions.RegisterModelAction,
                     ViewModelDisplayOptions.RegisterViewModelAction,
                     ViewModelDisplayOptions.ShowViewModelAction));

@@ -104,6 +104,8 @@ public static partial class TextEditorCommandVimFacts
                 commandArgs.ShowViewModelAction);
 
             var motionResult = await VimMotionResult.GetResultAsync(
+                model,
+                viewModel,
                 commandArgs,
                 cursorForMotion,
                 async () => await commandArgs.InnerCommand.DoAsyncFunc
@@ -123,7 +125,7 @@ public static partial class TextEditorCommandVimFacts
                 motionResult.PositionIndexDisplacement,
                 CancellationToken.None);
 
-            commandArgs.TextEditorService.ModelApi.DeleteTextByRange(deleteTextTextEditorModelAction);
+            commandArgs.TextEditorService.ModelApi.DeleteTextByRange(deleteTextTextEditorModelAction, false);
         }
 
         public static TextEditorCommand ChangeMotionCommandFactory(TextEditorCommand innerTextEditorCommand) => new(

@@ -40,12 +40,12 @@ public partial class TextEditorHeader : ComponentBase
         var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorSnapshotsBag.First(x => x.IsPrimaryCursor).Selection);
 
         return new TextEditorCommandArgs(
-            textEditorModel,
-            cursorSnapshotsBag,
+            textEditorModel.ResourceUri,
+            viewModel.ViewModelKey,
             hasSelection,
             ClipboardService,
             TextEditorService,
-            viewModel,
+            null,
             null,
             null,
             null,

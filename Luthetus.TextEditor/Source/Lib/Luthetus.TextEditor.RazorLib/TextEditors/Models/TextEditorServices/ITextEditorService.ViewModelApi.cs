@@ -273,7 +273,7 @@ public partial interface ITextEditorService
             EnqueueModification(nameof(WithAsync), async () =>
             {
                 var viewModel = _viewModelStateWrap.Value.ViewModelBag.First(
-                        x => x.ViewModelKey == viewModelKey);
+                    x => x.ViewModelKey == viewModelKey);
 
                 _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
                     viewModelKey,
