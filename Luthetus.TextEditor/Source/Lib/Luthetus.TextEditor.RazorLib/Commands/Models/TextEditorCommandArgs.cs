@@ -87,4 +87,9 @@ public class TextEditorCommandArgs : ICommandArgs
     /// to be able to select text. (2023-12-15)
     /// </summary>
     public string DisplayName { get; set; }
+
+    /// <summary>
+    /// true if the shift key was down when the event was fired. false otherwise.
+    /// </summary>
+    public bool ShiftKey { get; set; }
 }

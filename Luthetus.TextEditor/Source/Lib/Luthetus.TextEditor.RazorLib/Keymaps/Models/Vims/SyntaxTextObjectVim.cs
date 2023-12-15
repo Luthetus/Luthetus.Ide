@@ -2,12 +2,13 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
-using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
-using static Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorService;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 
@@ -48,6 +49,126 @@ public static class SyntaxTextObjectVim
         vimGrammarToken = null;
         return false;
     }
+    
+    public static Task MOVE_CURSOR_ONE_COLUMN_LEFT(
+            TextEditorCommandArgs commandArgs,
+            TextEditorModel model,
+            TextEditorViewModel viewModel,
+            TextEditorService.RefreshCursorsRequest refreshCursorsRequest,
+            TextEditorCursorModifier primaryCursor)
+    {
+        commandArgs.TextEditorService.ViewModelApi.MoveCursor(
+            new KeyboardEventArgs
+            {
+                Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
+                ShiftKey = commandArgs.ShiftKey
+            },
+            model.ResourceUri,
+            viewModel.ViewModelKey,
+            primaryCursor.Key);
+
+        return Task.CompletedTask;
+    }
+    
+    public static Task MOVE_CURSOR_ONE_ROW_DOWN(
+            TextEditorCommandArgs commandArgs,
+            TextEditorModel model,
+            TextEditorViewModel viewModel,
+            TextEditorService.RefreshCursorsRequest refreshCursorsRequest,
+            TextEditorCursorModifier primaryCursor)
+    {
+        commandArgs.TextEditorService.ViewModelApi.MoveCursor(
+            new KeyboardEventArgs
+            {
+                Key = KeyboardKeyFacts.MovementKeys.ARROW_DOWN,
+                ShiftKey = commandArgs.ShiftKey
+            },
+            model.ResourceUri,
+            viewModel.ViewModelKey,
+            primaryCursor.Key);
+
+        return Task.CompletedTask;
+    }
+    
+    public static Task MOVE_CURSOR_ONE_ROW_UP(
+            TextEditorCommandArgs commandArgs,
+            TextEditorModel model,
+            TextEditorViewModel viewModel,
+            TextEditorService.RefreshCursorsRequest refreshCursorsRequest,
+            TextEditorCursorModifier primaryCursor)
+    {
+        commandArgs.TextEditorService.ViewModelApi.MoveCursor(
+            new KeyboardEventArgs
+            {
+                Key = KeyboardKeyFacts.MovementKeys.ARROW_UP,
+                ShiftKey = commandArgs.ShiftKey
+            },
+            model.ResourceUri,
+            viewModel.ViewModelKey,
+            primaryCursor.Key);
+
+        return Task.CompletedTask;
+    }
+    
+    public static Task MOVE_CURSOR_ONE_COLUMN_RIGHT(
+            TextEditorCommandArgs commandArgs,
+            TextEditorModel model,
+            TextEditorViewModel viewModel,
+            TextEditorService.RefreshCursorsRequest refreshCursorsRequest,
+            TextEditorCursorModifier primaryCursor)
+    {
+        commandArgs.TextEditorService.ViewModelApi.MoveCursor(
+            new KeyboardEventArgs
+            {
+                Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
+                ShiftKey = commandArgs.ShiftKey
+            },
+            model.ResourceUri,
+            viewModel.ViewModelKey,
+            primaryCursor.Key);
+
+        return Task.CompletedTask;
+    }
+    
+    public static Task MOVE_CURSOR_END_CURRENT_LINE(
+            TextEditorCommandArgs commandArgs,
+            TextEditorModel model,
+            TextEditorViewModel viewModel,
+            TextEditorService.RefreshCursorsRequest refreshCursorsRequest,
+            TextEditorCursorModifier primaryCursor)
+    {
+        commandArgs.TextEditorService.ViewModelApi.MoveCursor(
+            new KeyboardEventArgs
+            {
+                Key = KeyboardKeyFacts.MovementKeys.END,
+                ShiftKey = commandArgs.ShiftKey
+            },
+            model.ResourceUri,
+            viewModel.ViewModelKey,
+            primaryCursor.Key);
+
+        return Task.CompletedTask;
+    }
+    
+    public static Task MOVE_CURSOR_START_CURRENT_LINE(
+            TextEditorCommandArgs commandArgs,
+            TextEditorModel model,
+            TextEditorViewModel viewModel,
+            TextEditorService.RefreshCursorsRequest refreshCursorsRequest,
+            TextEditorCursorModifier primaryCursor)
+    {
+        commandArgs.TextEditorService.ViewModelApi.MoveCursor(
+            new KeyboardEventArgs
+            {
+                Key = KeyboardKeyFacts.MovementKeys.HOME,
+                ShiftKey = commandArgs.ShiftKey
+            },
+            model.ResourceUri,
+            viewModel.ViewModelKey,
+            primaryCursor.Key);
+
+        return Task.CompletedTask;
+    }
 
     public static bool TryParse(TextEditorKeymapVim textEditorKeymapVim,
         ImmutableArray<VimGrammarToken> sentenceSnapshotBag,
@@ -82,24 +203,15 @@ public static class SyntaxTextObjectVim
                             interfaceCommandArgs =>
                             {
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+                                commandArgs.ShiftKey = shiftKey;
 
-                                var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                                var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
-
-                                if (viewModel is null || model is null)
-                                    return Task.CompletedTask;
-
-                                commandArgs.TextEditorService.ViewModelApi.MoveCursor(
-                                    new KeyboardEventArgs
-                                    {
-                                        Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
-                                        ShiftKey = shiftKey
-                                    },
-                                    model.ResourceUri,
-                                    viewModel.ViewModelKey,
-                                    commandArgs.ViewModelKey.PrimaryCursor.Key);
+                                commandArgs.TextEditorService.EnqueueModification(
+                                    nameof(MOVE_CURSOR_ONE_COLUMN_LEFT),
+                                    commandArgs,
+                                    MOVE_CURSOR_ONE_COLUMN_LEFT);
 
                                 return Task.CompletedTask;
+                                
                             });
 
                         return true;
@@ -112,16 +224,12 @@ public static class SyntaxTextObjectVim
                             interfaceCommandArgs =>
                             {
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+                                commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.ViewModelApi.MoveCursor(
-                                    new KeyboardEventArgs
-                                    {
-                                        Key = KeyboardKeyFacts.MovementKeys.ARROW_DOWN,
-                                        ShiftKey = shiftKey
-                                    },
-                                    commandArgs.ModelResourceUri.ResourceUri,
-                                    commandArgs.ViewModelKey.ViewModelKey,
-                                    commandArgs.ViewModelKey.PrimaryCursor.Key);
+                                commandArgs.TextEditorService.EnqueueModification(
+                                    nameof(MOVE_CURSOR_ONE_ROW_DOWN),
+                                    commandArgs,
+                                    MOVE_CURSOR_ONE_ROW_DOWN);
 
                                 return Task.CompletedTask;
                             });
@@ -130,22 +238,18 @@ public static class SyntaxTextObjectVim
                     }
                 case "KeyK":
                     {
-                        // Move the cursor 1 row up
+                        // Move the cursor 1 row up 
                         textEditorCommand = new TextEditorCommand(
                             "Vim::k", "vim_k", false, true, TextEditKind.None, null,
                             interfaceCommandArgs =>
                             {
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+                                commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.ViewModelApi.MoveCursor(
-                                    new KeyboardEventArgs
-                                    {
-                                        Key = KeyboardKeyFacts.MovementKeys.ARROW_UP,
-                                        ShiftKey = shiftKey
-                                    },
-                                    commandArgs.ModelResourceUri.ResourceUri,
-                                    commandArgs.ViewModelKey.ViewModelKey,
-                                    commandArgs.ViewModelKey.PrimaryCursor.Key);
+                                commandArgs.TextEditorService.EnqueueModification(
+                                    nameof(MOVE_CURSOR_ONE_ROW_UP),
+                                    commandArgs,
+                                    MOVE_CURSOR_ONE_ROW_UP);
 
                                 return Task.CompletedTask;
                             });
@@ -160,16 +264,12 @@ public static class SyntaxTextObjectVim
                             interfaceCommandArgs =>
                             {
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+                                commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.ViewModelApi.MoveCursor(
-                                    new KeyboardEventArgs
-                                    {
-                                        Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
-                                        ShiftKey = shiftKey
-                                    },
-                                    commandArgs.ModelResourceUri.ResourceUri,
-                                    commandArgs.ViewModelKey.ViewModelKey,
-                                    commandArgs.ViewModelKey.PrimaryCursor.Key);
+                                commandArgs.TextEditorService.EnqueueModification(
+                                    nameof(MOVE_CURSOR_ONE_COLUMN_RIGHT),
+                                    commandArgs,
+                                    MOVE_CURSOR_ONE_COLUMN_RIGHT);
 
                                 return Task.CompletedTask;
                             });
@@ -190,16 +290,12 @@ public static class SyntaxTextObjectVim
                             interfaceCommandArgs =>
                             {
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+                                commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.ViewModelApi.MoveCursor(
-                                    new KeyboardEventArgs
-                                    {
-                                        Key = KeyboardKeyFacts.MovementKeys.END,
-                                        ShiftKey = shiftKey
-                                    },
-                                    commandArgs.ModelResourceUri.ResourceUri,
-                                    commandArgs.ViewModelKey.ViewModelKey,
-                                    commandArgs.ViewModelKey.PrimaryCursor.Key);
+                                commandArgs.TextEditorService.EnqueueModification(
+                                    nameof(MOVE_CURSOR_END_CURRENT_LINE),
+                                    commandArgs,
+                                    MOVE_CURSOR_END_CURRENT_LINE);
 
                                 return Task.CompletedTask;
                             });
@@ -214,16 +310,12 @@ public static class SyntaxTextObjectVim
                             interfaceCommandArgs =>
                             {
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+                                commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.ViewModelApi.MoveCursor(
-                                    new KeyboardEventArgs
-                                    {
-                                        Key = KeyboardKeyFacts.MovementKeys.HOME,
-                                        ShiftKey = shiftKey
-                                    },
-                                    commandArgs.ModelResourceUri.ResourceUri,
-                                    commandArgs.ViewModelKey.ViewModelKey,
-                                    commandArgs.ViewModelKey.PrimaryCursor.Key);
+                                commandArgs.TextEditorService.EnqueueModification(
+                                    nameof(MOVE_CURSOR_START_CURRENT_LINE),
+                                    commandArgs,
+                                    MOVE_CURSOR_START_CURRENT_LINE);
 
                                 return Task.CompletedTask;
                             });
