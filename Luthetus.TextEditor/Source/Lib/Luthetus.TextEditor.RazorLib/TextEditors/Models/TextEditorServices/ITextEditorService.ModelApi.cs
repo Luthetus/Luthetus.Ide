@@ -109,18 +109,21 @@ public partial interface ITextEditorService
         #region CREATE_METHODS
         public void RegisterCustom(TextEditorModel model)
         {
-            var commandArgs = new TextEditorCommandArgs(
-                model.ResourceUri, Key<TextEditorViewModel>.Empty, false, null,
-                _textEditorService, null, null, null, null, null, null);
+            _dispatcher.Dispatch(new RegisterAction(model));
 
-            _textEditorService.EnqueueModification(
-                nameof(RegisterCustom),
-                commandArgs,
-                (_, _, _, _, _) =>
+            _ = Task.Run(async () =>
+            {
+                try
                 {
-                    _dispatcher.Dispatch(new RegisterAction(model));
-                    return Task.CompletedTask;
-                });
+                    await model.ApplySyntaxHighlightingAsync();
+                    _dispatcher.Dispatch(new ForceRerenderAction(model.ResourceUri));
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw;
+                }
+            }, CancellationToken.None);
         }
 
         public void RegisterTemplated(
@@ -130,62 +133,38 @@ public partial interface ITextEditorService
             string initialContent,
             string? overrideDisplayTextForFileExtension = null)
         {
-            var commandArgs = new TextEditorCommandArgs(
-                resourceUri, Key<TextEditorViewModel>.Empty, false, null,
-                _textEditorService, null, null, null, null, null, null);
+            var textEditorModel = new TextEditorModel(
+                resourceUri,
+                resourceLastWriteTime,
+                overrideDisplayTextForFileExtension ?? extensionNoPeriod,
+                initialContent,
+                _decorationMapperRegistry.GetDecorationMapper(extensionNoPeriod),
+                _compilerServiceRegistry.GetCompilerService(extensionNoPeriod));
+            
+            _dispatcher.Dispatch(new RegisterAction(textEditorModel));
 
-            _textEditorService.EnqueueModification(
-                nameof(RegisterTemplated),
-                commandArgs,
-                (_, _, _, _, _) =>
+            _ = Task.Run(async () =>
+            {
+                try
                 {
-                    var textEditorModel = new TextEditorModel(
-                        resourceUri,
-                        resourceLastWriteTime,
-                        overrideDisplayTextForFileExtension ?? extensionNoPeriod,
-                        initialContent,
-                        _decorationMapperRegistry.GetDecorationMapper(extensionNoPeriod),
-                        _compilerServiceRegistry.GetCompilerService(extensionNoPeriod));
-
-                    _ = Task.Run(async () =>
-                    {
-                        try
-                        {
-                            await textEditorModel.ApplySyntaxHighlightingAsync();
-                            _dispatcher.Dispatch(new ForceRerenderAction(textEditorModel.ResourceUri));
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine(e);
-                            throw;
-                        }
-                    }, CancellationToken.None);
-
-                    _dispatcher.Dispatch(new RegisterAction(textEditorModel));
-
-                    return Task.CompletedTask;
-                });
+                    await textEditorModel.ApplySyntaxHighlightingAsync();
+                    _dispatcher.Dispatch(new ForceRerenderAction(textEditorModel.ResourceUri));
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw;
+                }
+            }, CancellationToken.None);
         }
 
         public void RegisterPresentationModel(
             ResourceUri resourceUri,
             TextEditorPresentationModel emptyPresentationModel)
         {
-            var commandArgs = new TextEditorCommandArgs(
-                resourceUri, Key<TextEditorViewModel>.Empty, false, null,
-                _textEditorService, null, null, null, null, null, null);
-
-            _textEditorService.EnqueueModification(
-                nameof(RegisterPresentationModel),
-                commandArgs,
-                (_, _, _, _, _) =>
-                {
-                    _dispatcher.Dispatch(new RegisterPresentationModelAction(
-                        resourceUri,
-                        emptyPresentationModel));
-
-                    return Task.CompletedTask;
-                });
+            _dispatcher.Dispatch(new RegisterPresentationModelAction(
+                resourceUri,
+                emptyPresentationModel));
         }
         #endregion
 
