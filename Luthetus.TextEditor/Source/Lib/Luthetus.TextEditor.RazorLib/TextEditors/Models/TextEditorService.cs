@@ -107,44 +107,49 @@ public partial class TextEditorService : ITextEditorService
         _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             modificationName,
-            async () =>
-            {
-                var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
+            () => ModifyAsync(modificationName, commandArgs, modificationTask));
+    }
+    
+    public async Task ModifyAsync(
+        string modificationName,
+        TextEditorCommandArgs commandArgs,
+        TextEditorCommand.ModificationTask modificationTask)
+    {
+        var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
+        var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
 
-                if (viewModel is null || model is null)
-                    return;
+        if (viewModel is null || model is null)
+            return;
 
-                var refreshCursorsRequest = new RefreshCursorsRequest(
-                    commandArgs.ViewModelKey,
-                    new List<TextEditorCursorModifier>());
+        var refreshCursorsRequest = new RefreshCursorsRequest(
+            commandArgs.ViewModelKey,
+            new List<TextEditorCursorModifier>());
 
-                refreshCursorsRequest.CursorBag.AddRange(viewModel.CursorBag
-                    .Select(x => new TextEditorCursorModifier(x)));
+        refreshCursorsRequest.CursorBag.AddRange(viewModel.CursorBag
+            .Select(x => new TextEditorCursorModifier(x)));
 
-                var primaryCursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
+        var primaryCursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
 
-                if (primaryCursor is null)
-                    return;
+        if (primaryCursor is null)
+            return;
 
-                await modificationTask.Invoke(
-                    commandArgs,
-                    model,
-                    viewModel,
-                    refreshCursorsRequest,
-                    primaryCursor);
+        await modificationTask.Invoke(
+            commandArgs,
+            model,
+            viewModel,
+            refreshCursorsRequest,
+            primaryCursor);
 
-                if (refreshCursorsRequest is not null)
+        if (refreshCursorsRequest is not null)
+        {
+            _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
+                refreshCursorsRequest.ViewModelKey,
+                inState => inState with
                 {
-                    _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
-                        refreshCursorsRequest.ViewModelKey,
-                        inState => inState with
-                        {
-                            CursorBag = refreshCursorsRequest.CursorBag
-                                .Select(x => x.ToCursor())
-                                .ToImmutableArray()
-                        }));
-                }
-            });
+                    CursorBag = refreshCursorsRequest.CursorBag
+                        .Select(x => x.ToCursor())
+                        .ToImmutableArray()
+                }));
+        }
     }
 }

@@ -34,5 +34,10 @@ public partial interface ITextEditorService
         string modificationName,
         TextEditorCommandArgs commandArgs,
         TextEditorCommand.ModificationTask modificationTask);
+    
+    public Task ModifyAsync(
+        string modificationName,
+        TextEditorCommandArgs commandArgs,
+        TextEditorCommand.ModificationTask modificationTask);
 }
 

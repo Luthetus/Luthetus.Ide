@@ -10,7 +10,7 @@ using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using System.Collections.Immutable;
-using static Luthetus.TextEditor.RazorLib.TextEditors.States.TextEditorModelState;
+using Luthetus.TextEditor.RazorLib.Commands.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
@@ -18,60 +18,76 @@ public partial interface ITextEditorService
 {
     public interface ITextEditorViewModelApi
     {
-        public void Dispose(Key<TextEditorViewModel> viewModelKey);
-        public Task<TextEditorMeasurements> GetTextEditorMeasurementsAsync(string elementId);
-        
-        public Task<CharAndRowMeasurements> MeasureCharacterWidthAndRowHeightAsync(
-            string measureCharacterWidthAndRowHeightElementId,
-            int countOfTestCharacters);
-
-        public TextEditorViewModel? GetOrDefault(Key<TextEditorViewModel> viewModelKey);
-        public Task FocusPrimaryCursorAsync(string primaryCursorContentId);
-        public string? GetAllText(Key<TextEditorViewModel> viewModelKey);
-        public TextEditorModel? GetModelOrDefault(Key<TextEditorViewModel> viewModelKey);
-        public Task MutateScrollHorizontalPositionAsync(string bodyElementId, string gutterElementId, double pixels);
-        public Task MutateScrollVerticalPositionAsync(string bodyElementId, string gutterElementId, double pixels);
+        #region CREATE_METHODS
         public void Register(Key<TextEditorViewModel> textEditorViewModelKey, ResourceUri resourceUri);
-        public Task SetGutterScrollTopAsync(string gutterElementId, double scrollTopInPixels);
-        
-        public Task SetScrollPositionAsync(
-            string bodyElementId,
-            string gutterElementId,
-            double? scrollLeftInPixels,
-            double? scrollTopInPixels);
-        
-        public void With(
-            Key<TextEditorViewModel> viewModelKey,
-            Func<TextEditorViewModel, TextEditorViewModel> withFunc);
-        
-        public void SetCursorShouldBlink(bool cursorShouldBlink);
+        #endregion
 
-        public void WithAsync(
-               Key<TextEditorViewModel> viewModelKey,
-               Func<TextEditorViewModel, Task<Func<TextEditorViewModel, TextEditorViewModel>>> withFuncWrap);
-
-        public void MoveCursor(
-            KeyboardEventArgs keyboardEventArgs,
-            ResourceUri modelResourceUri,
-            Key<TextEditorViewModel> viewModelKey,
-            Key<TextEditorCursor> cursorKey);
-
-        public void CursorMovePageTop(
-            ResourceUri modelResourceUri,
-            Key<TextEditorViewModel> viewModelKey,
-            Key<TextEditorCursor> cursorKey);
-
-        public void CursorMovePageBottom(
-            ResourceUri modelResourceUri,
-            Key<TextEditorViewModel> viewModelKey,
-            Key<TextEditorCursor> cursorKey);
-
+        #region READ_METHODS
         /// <summary>
         /// One should store the result of invoking this method in a variable, then reference that variable.
         /// If one continually invokes this, there is no guarantee that the data had not changed
         /// since the previous invocation.
         /// </summary>
         public ImmutableList<TextEditorViewModel> GetViewModels();
+        public TextEditorModel? GetModelOrDefault(Key<TextEditorViewModel> viewModelKey);
+        public Task<TextEditorMeasurements> GetTextEditorMeasurementsAsync(string elementId);
+
+        public Task<CharAndRowMeasurements> MeasureCharacterWidthAndRowHeightAsync(
+            string measureCharacterWidthAndRowHeightElementId,
+            int countOfTestCharacters);
+
+        public TextEditorViewModel? GetOrDefault(Key<TextEditorViewModel> viewModelKey);
+        public string? GetAllText(Key<TextEditorViewModel> viewModelKey);
+        #endregion
+
+        #region UPDATE_METHODS
+        public Task FocusPrimaryCursorAsync(string primaryCursorContentId, bool shouldEnqueue = true);
+        public Task MutateScrollHorizontalPositionAsync(string bodyElementId, string gutterElementId, double pixels, bool shouldEnqueue = true);
+        public Task MutateScrollVerticalPositionAsync(string bodyElementId, string gutterElementId, double pixels, bool shouldEnqueue = true);
+        public Task SetGutterScrollTopAsync(string gutterElementId, double scrollTopInPixels, bool shouldEnqueue = true);
+        
+        public Task SetScrollPositionAsync(
+            string bodyElementId,
+            string gutterElementId,
+            double? scrollLeftInPixels,
+            double? scrollTopInPixels,
+            bool shouldEnqueue = true);
+
+        public void With(
+            Key<TextEditorViewModel> viewModelKey,
+            Func<TextEditorViewModel, TextEditorViewModel> withFunc,
+            bool shouldEnqueue = true);
+
+        public void WithAsync(
+               Key<TextEditorViewModel> viewModelKey,
+               Func<TextEditorViewModel, Task<Func<TextEditorViewModel, TextEditorViewModel>>> withFuncWrap,
+               bool shouldEnqueue = true);
+
+        public void MoveCursor(
+            KeyboardEventArgs keyboardEventArgs,
+            ResourceUri modelResourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            Key<TextEditorCursor> cursorKey,
+            bool shouldEnqueue = true);
+
+        public void CursorMovePageTop(
+            ResourceUri modelResourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            Key<TextEditorCursor> cursorKey,
+            bool shouldEnqueue = true);
+
+        public void CursorMovePageBottom(
+            ResourceUri modelResourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            Key<TextEditorCursor> cursorKey,
+            bool shouldEnqueue = true);
+
+        public void SetCursorShouldBlink(bool cursorShouldBlink, bool shouldEnqueue = true);
+        #endregion
+
+        #region DELETE_METHODS
+        public void Dispose(Key<TextEditorViewModel> viewModelKey);
+        #endregion
 
         public bool CursorShouldBlink { get; }
         public event Action? CursorShouldBlinkChanged;
@@ -112,7 +128,7 @@ public partial interface ITextEditorService
         public event Action? CursorShouldBlinkChanged;
 
         /// <summary>(2023-06-03) Previously this logic was in the TextEditorCursorDisplay itself. The Task.Run() would get re-executed upon each cancellation. With this version, the Task.Run() session is re-used with the while loop. As well, all the text editor cursors are blinking in sync.</summary>
-        public void SetCursorShouldBlink(bool cursorShouldBlink)
+        public void SetCursorShouldBlink(bool cursorShouldBlink, bool shouldEnqueue = true)
         {
             if (!cursorShouldBlink)
             {
@@ -160,39 +176,7 @@ public partial interface ITextEditorService
             }
         }
 
-        public void With(
-            Key<TextEditorViewModel> viewModelKey,
-            Func<TextEditorViewModel, TextEditorViewModel> withFunc)
-        {
-            WithAsync(viewModelKey, _ =>
-            {
-                return Task.FromResult(withFunc);
-            });
-        }
-
-        /// <summary>
-        /// If a parameter is null the JavaScript will not modify that value
-        /// </summary>
-        public async Task SetScrollPositionAsync(
-            string bodyElementId,
-            string gutterElementId,
-            double? scrollLeftInPixels,
-            double? scrollTopInPixels)
-        {
-            await _jsRuntime.InvokeVoidAsync("luthetusTextEditor.setScrollPosition",
-                bodyElementId,
-                gutterElementId,
-                scrollLeftInPixels,
-                scrollTopInPixels);
-        }
-
-        public async Task SetGutterScrollTopAsync(string gutterElementId, double scrollTopInPixels)
-        {
-            await _jsRuntime.InvokeVoidAsync("luthetusTextEditor.setGutterScrollTop",
-                gutterElementId,
-                scrollTopInPixels);
-        }
-
+        #region CREATE_METHODS
         public void Register(Key<TextEditorViewModel> textEditorViewModelKey, ResourceUri resourceUri)
         {
             _dispatcher.Dispatch(new TextEditorViewModelState.RegisterAction(
@@ -200,21 +184,18 @@ public partial interface ITextEditorService
                 resourceUri,
                 _textEditorService));
         }
+        #endregion
 
-        public async Task MutateScrollVerticalPositionAsync(string bodyElementId, string gutterElementId, double pixels)
+        #region READ_METHODS
+        public TextEditorViewModel? GetOrDefault(Key<TextEditorViewModel> textEditorViewModelKey)
         {
-            await _jsRuntime.InvokeVoidAsync("luthetusTextEditor.mutateScrollVerticalPositionByPixels",
-                bodyElementId,
-                gutterElementId,
-                pixels);
+            return _textEditorService.ViewModelStateWrap.Value.ViewModelBag.FirstOrDefault(
+                x => x.ViewModelKey == textEditorViewModelKey);
         }
 
-        public async Task MutateScrollHorizontalPositionAsync(string bodyElementId, string gutterElementId, double pixels)
+        public ImmutableList<TextEditorViewModel> GetViewModels()
         {
-            await _jsRuntime.InvokeVoidAsync("luthetusTextEditor.mutateScrollHorizontalPositionByPixels",
-                bodyElementId,
-                gutterElementId,
-                pixels);
+            return _textEditorService.ViewModelStateWrap.Value.ViewModelBag;
         }
 
         public TextEditorModel? GetModelOrDefault(Key<TextEditorViewModel> textEditorViewModelKey)
@@ -239,18 +220,6 @@ public partial interface ITextEditorService
                 : _textEditorService.ModelApi.GetAllText(textEditorModel.ResourceUri);
         }
 
-        public async Task FocusPrimaryCursorAsync(string primaryCursorContentId)
-        {
-            await _jsRuntime.InvokeVoidAsync("luthetusTextEditor.focusHtmlElementById",
-                primaryCursorContentId);
-        }
-
-        public TextEditorViewModel? GetOrDefault(Key<TextEditorViewModel> textEditorViewModelKey)
-        {
-            return _textEditorService.ViewModelStateWrap.Value.ViewModelBag.FirstOrDefault(
-                x => x.ViewModelKey == textEditorViewModelKey);
-        }
-
         public async Task<TextEditorMeasurements> GetTextEditorMeasurementsAsync(string elementId)
         {
             return await _jsRuntime.InvokeAsync<TextEditorMeasurements>("luthetusTextEditor.getTextEditorMeasurementsInPixelsById",
@@ -265,331 +234,516 @@ public partial interface ITextEditorService
                 measureCharacterWidthAndRowHeightElementId,
                 countOfTestCharacters);
         }
+        #endregion
+
+        #region UPDATE_METHODS
+        public void With(
+            Key<TextEditorViewModel> viewModelKey,
+            Func<TextEditorViewModel, TextEditorViewModel> withFunc,
+            bool shouldEnqueue = true)
+        {
+            TextEditorCommand.ModificationTask modificationTask = (_, _, _, _, _) =>
+                Task.FromResult(withFunc);
+
+            if (shouldEnqueue)
+            {
+                _textEditorService.EnqueueModification(
+                    nameof(With),
+                    null,
+                    modificationTask);
+            }
+            else
+            {
+                // TODO: await this
+                _textEditorService.ModifyAsync(
+                    nameof(With),
+                    null,
+                    modificationTask).Wait();
+            }
+        }
 
         public void WithAsync(
-               Key<TextEditorViewModel> viewModelKey,
-               Func<TextEditorViewModel, Task<Func<TextEditorViewModel, TextEditorViewModel>>> withFuncWrap)
+            Key<TextEditorViewModel> viewModelKey,
+            Func<TextEditorViewModel, Task<Func<TextEditorViewModel, TextEditorViewModel>>> withFuncWrap,
+            bool shouldEnqueue = true)
         {
-            EnqueueModification(nameof(WithAsync), async () =>
+            TextEditorCommand.ModificationTask modificationTask = async (_, _, viewModel, _, _) =>
             {
-                var viewModel = _viewModelStateWrap.Value.ViewModelBag.First(
-                    x => x.ViewModelKey == viewModelKey);
-
                 _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
                     viewModelKey,
                     await withFuncWrap.Invoke(viewModel)));
-            });
+            };
+
+            if (shouldEnqueue)
+            {
+                _textEditorService.EnqueueModification(
+                    nameof(WithAsync),
+                    null,
+                    modificationTask);
+            }
+            else
+            {
+                // TODO: await this
+                _textEditorService.ModifyAsync(
+                    nameof(WithAsync),
+                    null,
+                    modificationTask).Wait();
+            }
+        }
+
+        /// <summary>
+        /// If a parameter is null the JavaScript will not modify that value
+        /// </summary>
+        public async Task SetScrollPositionAsync(
+            string bodyElementId,
+            string gutterElementId,
+            double? scrollLeftInPixels,
+            double? scrollTopInPixels,
+            bool shouldEnqueue = true)
+        {
+            TextEditorCommand.ModificationTask modificationTask = async(_, _, _, _, _) =>
+            {
+                await _jsRuntime.InvokeVoidAsync("luthetusTextEditor.setScrollPosition",
+                    bodyElementId,
+                    gutterElementId,
+                    scrollLeftInPixels,
+                    scrollTopInPixels);
+            };
+
+            if (shouldEnqueue)
+            {
+                _textEditorService.EnqueueModification(
+                    nameof(SetScrollPositionAsync),
+                    null,
+                    modificationTask);
+            }
+            else
+            {
+                // TODO: await this
+                _textEditorService.ModifyAsync(
+                    nameof(SetScrollPositionAsync),
+                    null,
+                    modificationTask).Wait();
+            }
+        }
+
+        public async Task SetGutterScrollTopAsync(
+            string gutterElementId,
+            double scrollTopInPixels,
+            bool shouldEnqueue = true)
+        {
+            TextEditorCommand.ModificationTask modificationTask = async (_, _, _, _, _) =>
+            {
+                await _jsRuntime.InvokeVoidAsync("luthetusTextEditor.setGutterScrollTop",
+                    gutterElementId,
+                    scrollTopInPixels);
+            };
+
+            if (shouldEnqueue)
+            {
+                _textEditorService.EnqueueModification(
+                    nameof(SetGutterScrollTopAsync),
+                    null,
+                    modificationTask);
+            }
+            else
+            {
+                // TODO: await this
+                _textEditorService.ModifyAsync(
+                    nameof(SetGutterScrollTopAsync),
+                    null,
+                    modificationTask).Wait();
+            }
+        }
+
+        public async Task MutateScrollVerticalPositionAsync(
+            string bodyElementId,
+            string gutterElementId,
+            double pixels,
+            bool shouldEnqueue = true)
+        {
+            TextEditorCommand.ModificationTask modificationTask = async (_, _, _, _, _) =>
+            {
+                await _jsRuntime.InvokeVoidAsync("luthetusTextEditor.mutateScrollVerticalPositionByPixels",
+                    bodyElementId,
+                    gutterElementId,
+                    pixels);
+            };
+
+            if (shouldEnqueue)
+            {
+                _textEditorService.EnqueueModification(
+                    nameof(MutateScrollVerticalPositionAsync),
+                    null,
+                    modificationTask);
+            }
+            else
+            {
+                // TODO: await this
+                _textEditorService.ModifyAsync(
+                    nameof(MutateScrollVerticalPositionAsync),
+                    null,
+                    modificationTask).Wait();
+            }
+        }
+
+        public async Task MutateScrollHorizontalPositionAsync(
+            string bodyElementId,
+            string gutterElementId,
+            double pixels,
+            bool shouldEnqueue = true)
+        {
+            TextEditorCommand.ModificationTask modificationTask = async (_, _, _, _, _) =>
+            {
+                await _jsRuntime.InvokeVoidAsync("luthetusTextEditor.mutateScrollHorizontalPositionByPixels",
+                    bodyElementId,
+                    gutterElementId,
+                    pixels);
+            };
+
+            if (shouldEnqueue)
+            {
+                _textEditorService.EnqueueModification(
+                    nameof(MutateScrollHorizontalPositionAsync),
+                    null,
+                    modificationTask);
+            }
+            else
+            {
+                // TODO: await this
+                _textEditorService.ModifyAsync(
+                    nameof(MutateScrollHorizontalPositionAsync),
+                    null,
+                    modificationTask).Wait();
+            }
+        }
+
+        public async Task FocusPrimaryCursorAsync(
+            string primaryCursorContentId,
+            bool shouldEnqueue = true)
+        {
+            TextEditorCommand.ModificationTask modificationTask = async (_, _, _, _, _) =>
+            {
+                await _jsRuntime.InvokeVoidAsync("luthetusTextEditor.focusHtmlElementById",
+                    primaryCursorContentId);
+            };
+
+            if (shouldEnqueue)
+            {
+                _textEditorService.EnqueueModification(
+                    nameof(FocusPrimaryCursorAsync),
+                    null,
+                    modificationTask);
+            }
+            else
+            {
+                // TODO: await this
+                _textEditorService.ModifyAsync(
+                    nameof(FocusPrimaryCursorAsync),
+                    null,
+                    modificationTask).Wait();
+            }
         }
 
         public void MoveCursor(
             KeyboardEventArgs keyboardEventArgs,
             ResourceUri modelResourceUri,
             Key<TextEditorViewModel> viewModelKey,
-            Key<TextEditorCursor> cursorKey)
+            Key<TextEditorCursor> cursorKey,
+            bool shouldEnqueue = true)
         {
-            var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                viewModelKey,
-                new List<TextEditorCursorModifier>());
-
-            _textEditorService.EnqueueModification(
-                nameof(MoveCursor),
-                refreshCursorsRequest,
-                () =>
+            TextEditorCommand.ModificationTask modificationTask = (_, model, _, refreshCursorsRequest, primaryCursor) =>
+            {
+                void MutateIndexCoordinatesAndPreferredColumnIndex(int columnIndex)
                 {
-                    if (!TryGetState(modelResourceUri, viewModelKey, cursorKey,
-                                 out var inModel, out var inViewModel, out var inCursor))
-                        return Task.CompletedTask;
+                    primaryCursor.ColumnIndex = columnIndex;
+                    primaryCursor.PreferredColumnIndex = columnIndex;
+                }
 
-                    var refRowIndex = inCursor.RowIndex;
-                    var refColumnIndex = inCursor.ColumnIndex;
-                    var refPreferredColumnIndex = inCursor.PreferredColumnIndex;
-                    var refTextEditorSelection = inCursor.Selection;
-
-                    void MutateIndexCoordinatesAndPreferredColumnIndex(int columnIndex)
+                if (keyboardEventArgs.ShiftKey)
+                {
+                    if (primaryCursor.SelectionAnchorPositionIndex is null ||
+                        primaryCursor.SelectionEndingPositionIndex == primaryCursor.SelectionAnchorPositionIndex)
                     {
-                        refColumnIndex = columnIndex;
-                        refPreferredColumnIndex = columnIndex;
+                        var positionIndex = model.GetPositionIndex(
+                            primaryCursor.RowIndex,
+                            primaryCursor.ColumnIndex);
+
+                        primaryCursor.SelectionAnchorPositionIndex = positionIndex;
                     }
+                }
+                else
+                {
+                    primaryCursor.SelectionAnchorPositionIndex = null;
+                }
 
-                    if (keyboardEventArgs.ShiftKey)
-                    {
-                        if (inCursor.Selection.AnchorPositionIndex is null ||
-                            inCursor.Selection.EndingPositionIndex == inCursor.Selection.AnchorPositionIndex)
+                int lengthOfRow = 0; // This variable is used in multiple switch cases.
+
+                switch (keyboardEventArgs.Key)
+                {
+                    case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
+                        if (TextEditorSelectionHelper.HasSelectedText(primaryCursor) &&
+                            !keyboardEventArgs.ShiftKey)
                         {
-                            var positionIndex = inModel.GetPositionIndex(
-                                refRowIndex,
-                                refColumnIndex);
+                            var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(primaryCursor);
 
-                            refTextEditorSelection = refTextEditorSelection with
-                            {
-                                AnchorPositionIndex = positionIndex
-                            };
+                            var lowerRowMetaData = model.FindRowInformation(
+                                selectionBounds.lowerPositionIndexInclusive);
+
+                            primaryCursor.RowIndex = lowerRowMetaData.rowIndex;
+
+                            primaryCursor.ColumnIndex = selectionBounds.lowerPositionIndexInclusive -
+                                lowerRowMetaData.rowStartPositionIndex;
                         }
-                    }
-                    else
-                    {
-                        refTextEditorSelection = refTextEditorSelection with
+                        else
                         {
-                            AnchorPositionIndex = null
-                        };
-                    }
-
-                    int lengthOfRow = 0; // This variable is used in multiple switch cases.
-
-                    switch (keyboardEventArgs.Key)
-                    {
-                        case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
-                            if (TextEditorSelectionHelper.HasSelectedText(refTextEditorSelection) &&
-                                !keyboardEventArgs.ShiftKey)
+                            if (primaryCursor.ColumnIndex == 0)
                             {
-                                var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(refTextEditorSelection);
+                                if (primaryCursor.RowIndex != 0)
+                                {
+                                    primaryCursor.RowIndex--;
 
-                                var lowerRowMetaData = inModel.FindRowInformation(
-                                    selectionBounds.lowerPositionIndexInclusive);
+                                    lengthOfRow = model.GetLengthOfRow(primaryCursor.RowIndex);
 
-                                refRowIndex = lowerRowMetaData.rowIndex;
-
-                                refColumnIndex = selectionBounds.lowerPositionIndexInclusive -
-                                    lowerRowMetaData.rowStartPositionIndex;
+                                    MutateIndexCoordinatesAndPreferredColumnIndex(lengthOfRow);
+                                }
                             }
                             else
                             {
-                                if (refColumnIndex == 0)
+                                if (keyboardEventArgs.CtrlKey)
                                 {
-                                    if (refRowIndex != 0)
-                                    {
-                                        refRowIndex--;
+                                    var columnIndexOfCharacterWithDifferingKind = model.GetColumnIndexOfCharacterWithDifferingKind(
+                                        primaryCursor.RowIndex,
+                                        primaryCursor.ColumnIndex,
+                                        true);
 
-                                        lengthOfRow = inModel.GetLengthOfRow(refRowIndex);
+                                    if (columnIndexOfCharacterWithDifferingKind == -1)
+                                        MutateIndexCoordinatesAndPreferredColumnIndex(0);
+                                    else
+                                        MutateIndexCoordinatesAndPreferredColumnIndex(columnIndexOfCharacterWithDifferingKind);
+                                }
+                                else
+                                {
+                                    MutateIndexCoordinatesAndPreferredColumnIndex(primaryCursor.ColumnIndex - 1);
+                                }
+                            }
+                        }
 
+                        break;
+                    case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
+                        if (primaryCursor.RowIndex < model.RowCount - 1)
+                        {
+                            primaryCursor.RowIndex++;
+
+                            lengthOfRow = model.GetLengthOfRow(primaryCursor.RowIndex);
+
+                            primaryCursor.ColumnIndex = lengthOfRow < primaryCursor.PreferredColumnIndex
+                                ? lengthOfRow
+                                : primaryCursor.PreferredColumnIndex;
+                        }
+
+                        break;
+                    case KeyboardKeyFacts.MovementKeys.ARROW_UP:
+                        if (primaryCursor.RowIndex > 0)
+                        {
+                            primaryCursor.RowIndex--;
+
+                            lengthOfRow = model.GetLengthOfRow(primaryCursor.RowIndex);
+
+                            primaryCursor.ColumnIndex = lengthOfRow < primaryCursor.PreferredColumnIndex
+                                ? lengthOfRow
+                                : primaryCursor.PreferredColumnIndex;
+                        }
+
+                        break;
+                    case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
+                        if (TextEditorSelectionHelper.HasSelectedText(primaryCursor) && !keyboardEventArgs.ShiftKey)
+                        {
+                            var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(primaryCursor);
+
+                            var upperRowMetaData = model.FindRowInformation(selectionBounds.upperPositionIndexExclusive);
+
+                            primaryCursor.RowIndex = upperRowMetaData.rowIndex;
+
+                            if (primaryCursor.RowIndex >= model.RowCount)
+                            {
+                                primaryCursor.RowIndex = model.RowCount - 1;
+
+                                var upperRowLength = model.GetLengthOfRow(primaryCursor.RowIndex);
+
+                                primaryCursor.ColumnIndex = upperRowLength;
+                            }
+                            else
+                            {
+                                primaryCursor.ColumnIndex =
+                                    selectionBounds.upperPositionIndexExclusive - upperRowMetaData.rowStartPositionIndex;
+                            }
+                        }
+                        else
+                        {
+                            lengthOfRow = model.GetLengthOfRow(primaryCursor.RowIndex);
+
+                            if (primaryCursor.ColumnIndex == lengthOfRow &&
+                                primaryCursor.RowIndex < model.RowCount - 1)
+                            {
+                                MutateIndexCoordinatesAndPreferredColumnIndex(0);
+                                primaryCursor.RowIndex++;
+                            }
+                            else if (primaryCursor.ColumnIndex != lengthOfRow)
+                            {
+                                if (keyboardEventArgs.CtrlKey)
+                                {
+                                    var columnIndexOfCharacterWithDifferingKind = model.GetColumnIndexOfCharacterWithDifferingKind(
+                                        primaryCursor.RowIndex,
+                                        primaryCursor.ColumnIndex,
+                                        false);
+
+                                    if (columnIndexOfCharacterWithDifferingKind == -1)
                                         MutateIndexCoordinatesAndPreferredColumnIndex(lengthOfRow);
+                                    else
+                                    {
+                                        MutateIndexCoordinatesAndPreferredColumnIndex(
+                                            columnIndexOfCharacterWithDifferingKind);
                                     }
                                 }
                                 else
                                 {
-                                    if (keyboardEventArgs.CtrlKey)
-                                    {
-                                        var columnIndexOfCharacterWithDifferingKind = inModel.GetColumnIndexOfCharacterWithDifferingKind(
-                                            refRowIndex,
-                                            refColumnIndex,
-                                            true);
-
-                                        if (columnIndexOfCharacterWithDifferingKind == -1)
-                                            MutateIndexCoordinatesAndPreferredColumnIndex(0);
-                                        else
-                                            MutateIndexCoordinatesAndPreferredColumnIndex(columnIndexOfCharacterWithDifferingKind);
-                                    }
-                                    else
-                                    {
-                                        MutateIndexCoordinatesAndPreferredColumnIndex(refColumnIndex - 1);
-                                    }
+                                    MutateIndexCoordinatesAndPreferredColumnIndex(primaryCursor.ColumnIndex + 1);
                                 }
                             }
+                        }
 
-                            break;
-                        case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
-                            if (refRowIndex < inModel.RowCount - 1)
-                            {
-                                refRowIndex++;
+                        break;
+                    case KeyboardKeyFacts.MovementKeys.HOME:
+                        if (keyboardEventArgs.CtrlKey)
+                            primaryCursor.RowIndex = 0;
 
-                                lengthOfRow = inModel.GetLengthOfRow(refRowIndex);
+                        MutateIndexCoordinatesAndPreferredColumnIndex(0);
 
-                                refColumnIndex = lengthOfRow < refPreferredColumnIndex
-                                    ? lengthOfRow
-                                    : refPreferredColumnIndex;
-                            }
+                        break;
+                    case KeyboardKeyFacts.MovementKeys.END:
+                        if (keyboardEventArgs.CtrlKey)
+                            primaryCursor.RowIndex = model.RowCount - 1;
 
-                            break;
-                        case KeyboardKeyFacts.MovementKeys.ARROW_UP:
-                            if (refRowIndex > 0)
-                            {
-                                refRowIndex--;
+                        lengthOfRow = model.GetLengthOfRow(primaryCursor.RowIndex);
 
-                                lengthOfRow = inModel.GetLengthOfRow(refRowIndex);
+                        MutateIndexCoordinatesAndPreferredColumnIndex(lengthOfRow);
 
-                                refColumnIndex = lengthOfRow < refPreferredColumnIndex
-                                    ? lengthOfRow
-                                    : refPreferredColumnIndex;
-                            }
+                        break;
+                }
+                
+                if (keyboardEventArgs.ShiftKey)
+                {
+                    primaryCursor.SelectionEndingPositionIndex = model.GetPositionIndex(
+                        primaryCursor.RowIndex,
+                        primaryCursor.ColumnIndex);
+                }
 
-                            break;
-                        case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
-                            if (TextEditorSelectionHelper.HasSelectedText(refTextEditorSelection) && !keyboardEventArgs.ShiftKey)
-                            {
-                                var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(refTextEditorSelection);
+                return Task.CompletedTask;
+            };
 
-                                var upperRowMetaData = inModel.FindRowInformation(selectionBounds.upperPositionIndexExclusive);
-
-                                refRowIndex = upperRowMetaData.rowIndex;
-
-                                if (refRowIndex >= inModel.RowCount)
-                                {
-                                    refRowIndex = inModel.RowCount - 1;
-
-                                    var upperRowLength = inModel.GetLengthOfRow(refRowIndex);
-
-                                    refColumnIndex = upperRowLength;
-                                }
-                                else
-                                {
-                                    refColumnIndex =
-                                        selectionBounds.upperPositionIndexExclusive - upperRowMetaData.rowStartPositionIndex;
-                                }
-                            }
-                            else
-                            {
-                                lengthOfRow = inModel.GetLengthOfRow(refRowIndex);
-
-                                if (refColumnIndex == lengthOfRow &&
-                                    refRowIndex < inModel.RowCount - 1)
-                                {
-                                    MutateIndexCoordinatesAndPreferredColumnIndex(0);
-                                    refRowIndex++;
-                                }
-                                else if (refColumnIndex != lengthOfRow)
-                                {
-                                    if (keyboardEventArgs.CtrlKey)
-                                    {
-                                        var columnIndexOfCharacterWithDifferingKind = inModel.GetColumnIndexOfCharacterWithDifferingKind(
-                                            refRowIndex,
-                                            refColumnIndex,
-                                            false);
-
-                                        if (columnIndexOfCharacterWithDifferingKind == -1)
-                                            MutateIndexCoordinatesAndPreferredColumnIndex(lengthOfRow);
-                                        else
-                                        {
-                                            MutateIndexCoordinatesAndPreferredColumnIndex(
-                                                columnIndexOfCharacterWithDifferingKind);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        MutateIndexCoordinatesAndPreferredColumnIndex(refColumnIndex + 1);
-                                    }
-                                }
-                            }
-
-                            break;
-                        case KeyboardKeyFacts.MovementKeys.HOME:
-                            if (keyboardEventArgs.CtrlKey)
-                                refRowIndex = 0;
-
-                            MutateIndexCoordinatesAndPreferredColumnIndex(0);
-
-                            break;
-                        case KeyboardKeyFacts.MovementKeys.END:
-                            if (keyboardEventArgs.CtrlKey)
-                                refRowIndex = inModel.RowCount - 1;
-
-                            lengthOfRow = inModel.GetLengthOfRow(refRowIndex);
-
-                            MutateIndexCoordinatesAndPreferredColumnIndex(lengthOfRow);
-
-                            break;
-                    }
-
-                    var outSelection = inCursor.Selection;
-
-                    if (keyboardEventArgs.ShiftKey)
-                    {
-                        outSelection = outSelection with
-                        {
-                            EndingPositionIndex = inModel.GetPositionIndex(
-                                refRowIndex,
-                                refColumnIndex)
-                        };
-                    }
-
-                    var outCursorBag = inViewModel.CursorBag.Replace(inCursor, inCursor with
-                    {
-                        RowIndex = refRowIndex,
-                        ColumnIndex = refColumnIndex,
-                        PreferredColumnIndex = refPreferredColumnIndex,
-                        Selection = outSelection,
-                    });
-
-                    _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
-                        viewModelKey,
-                        inState => inState with
-                        {
-                            CursorBag = outCursorBag
-                        }));
-
-                    return Task.CompletedTask;
-                });
+            if (shouldEnqueue)
+            {
+                _textEditorService.EnqueueModification(
+                    nameof(MoveCursor),
+                    null,
+                    modificationTask);
+            }
+            else
+            {
+                // TODO: await this
+                _textEditorService.ModifyAsync(
+                    nameof(MoveCursor),
+                    null,
+                    modificationTask).Wait();
+            }
         }
 
         public void CursorMovePageTop(
             ResourceUri modelResourceUri,
             Key<TextEditorViewModel> viewModelKey,
-            Key<TextEditorCursor> cursorKey)
+            Key<TextEditorCursor> cursorKey,
+            bool shouldEnqueue = true)
         {
-            var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                viewModelKey,
-                new List<TextEditorCursorModifier>());
-
-            _textEditorService.EnqueueModification(
-                nameof(CursorMovePageTop),
-                refreshCursorsRequest,
-                () =>
+            TextEditorCommand.ModificationTask modificationTask = (_, _, viewModel, refreshCursorsRequest, primaryCursor) =>
+            {
+                if (viewModel.VirtualizationResult?.EntryBag.Any() ?? false)
                 {
-                    if (!TryGetState(modelResourceUri, viewModelKey, cursorKey,
-                                 out var inModel, out var inViewModel, out var inCursor))
-                        return Task.CompletedTask;
+                    var firstEntry = viewModel.VirtualizationResult.EntryBag.First();
 
-                    if (inViewModel.VirtualizationResult?.EntryBag.Any() ?? false)
-                    {
-                        var firstEntry = inViewModel.VirtualizationResult.EntryBag.First();
+                    primaryCursor.RowIndex = firstEntry.Index;
+                    primaryCursor.ColumnIndex = 0;
+                }
 
-                        var cursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.Key == cursorKey);
+                return Task.CompletedTask;
+            };
 
-                        if (cursor is null)
-                            return Task.CompletedTask;
-
-                        cursor.RowIndex = firstEntry.Index;
-                        cursor.ColumnIndex = 0;
-                    }
-
-                    return Task.CompletedTask;
-                });
+            if (shouldEnqueue)
+            {
+                _textEditorService.EnqueueModification(
+                    nameof(CursorMovePageTop),
+                    null,
+                    modificationTask);
+            }
+            else
+            {
+                // TODO: await this
+                _textEditorService.ModifyAsync(
+                    nameof(CursorMovePageTop),
+                    null,
+                    modificationTask).Wait();
+            }
         }
 
         public void CursorMovePageBottom(
             ResourceUri modelResourceUri,
             Key<TextEditorViewModel> viewModelKey,
-            Key<TextEditorCursor> cursorKey)
+            Key<TextEditorCursor> cursorKey,
+            bool shouldEnqueue = true)
         {
-            var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                viewModelKey,
-                new List<TextEditorCursorModifier>());
-
-            _textEditorService.EnqueueModification(
-                nameof(CursorMovePageTop),
-                refreshCursorsRequest,
-                () =>
+            TextEditorCommand.ModificationTask modificationTask = (_, model, viewModel, refreshCursorsRequest, primaryCursor) =>
+            {
+                if ((viewModel.VirtualizationResult?.EntryBag.Any() ?? false))
                 {
-                    if (!TryGetState(modelResourceUri, viewModelKey, cursorKey,
-                                    out var inModel, out var inViewModel, out var inCursor))
+                    var lastEntry = viewModel.VirtualizationResult.EntryBag.Last();
+                    var lastEntriesRowLength = model.GetLengthOfRow(lastEntry.Index);
+
+                    var cursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.Key == cursorKey);
+
+                    if (cursor is null)
                         return Task.CompletedTask;
 
-                    if ((inViewModel.VirtualizationResult?.EntryBag.Any() ?? false))
-                    {
-                        var lastEntry = inViewModel.VirtualizationResult.EntryBag.Last();
-                        var lastEntriesRowLength = inModel.GetLengthOfRow(lastEntry.Index);
+                    cursor.RowIndex = lastEntry.Index;
+                    cursor.ColumnIndex = lastEntriesRowLength;
+                }
 
-                        var cursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.Key == cursorKey);
+                return Task.CompletedTask;
+            };
 
-                        if (cursor is null)
-                            return Task.CompletedTask;
-
-                        cursor.RowIndex = lastEntry.Index;
-                        cursor.ColumnIndex = lastEntriesRowLength;
-                    }
-
-                    return Task.CompletedTask;
-                });
+            if (shouldEnqueue)
+            {
+                _textEditorService.EnqueueModification(
+                    nameof(CursorMovePageBottom),
+                    null,
+                    modificationTask);
+            }
+            else
+            {
+                // TODO: await this
+                _textEditorService.ModifyAsync(
+                    nameof(CursorMovePageBottom),
+                    null,
+                    modificationTask).Wait();
+            }
         }
+        #endregion
+
+        #region DELETE_METHODS
+        public void Dispose(Key<TextEditorViewModel> textEditorViewModelKey)
+        {
+            _dispatcher.Dispatch(new TextEditorViewModelState.DisposeAction(textEditorViewModelKey));
+        }
+        #endregion
 
         /// <summary>
         /// This method suppresses nullability checks because there is a presumption that
@@ -601,28 +755,18 @@ public partial interface ITextEditorService
             ResourceUri modelResourceUri,
             Key<TextEditorViewModel> viewModelKey,
             Key<TextEditorCursor> cursorKey,
-            out TextEditorModel inModel,
-            out TextEditorViewModel inViewModel,
-            out TextEditorCursor inCursor)
+            out TextEditorModel model,
+            out TextEditorViewModel viewModel,
+            out TextEditorCursor primaryCursor)
         {
-            inModel = _modelStateWrap.Value.ModelBag.FirstOrDefault(x => x.ResourceUri == modelResourceUri)!;
-            inViewModel = _viewModelStateWrap.Value.ViewModelBag.FirstOrDefault(x => x.ViewModelKey == viewModelKey)!;
-            inCursor = inViewModel?.CursorBag.FirstOrDefault(x => x.Key == cursorKey)!;
+            model = _modelStateWrap.Value.ModelBag.FirstOrDefault(x => x.ResourceUri == modelResourceUri)!;
+            viewModel = _viewModelStateWrap.Value.ViewModelBag.FirstOrDefault(x => x.ViewModelKey == viewModelKey)!;
+            primaryCursor = viewModel?.CursorBag.FirstOrDefault(x => x.Key == cursorKey)!;
 
-            if (inModel is null || inViewModel is null || inCursor is null)
+            if (model is null || viewModel is null || primaryCursor is null)
                 return false;
 
             return true;
-        }
-
-        public ImmutableList<TextEditorViewModel> GetViewModels()
-        {
-            return _textEditorService.ViewModelStateWrap.Value.ViewModelBag;
-        }
-
-        public void Dispose(Key<TextEditorViewModel> textEditorViewModelKey)
-        {
-            _dispatcher.Dispatch(new TextEditorViewModelState.DisposeAction(textEditorViewModelKey));
         }
     }
 }

@@ -220,7 +220,11 @@ public partial interface ITextEditorService
             }
             else
             {
-                modificationTask.Invoke(null, null, null, null, null);
+                // TODO: await this
+                _textEditorService.ModifyAsync(
+                    nameof(UndoEdit),
+                    null,
+                    modificationTask).Wait();
             }
         }
 
@@ -241,13 +245,17 @@ public partial interface ITextEditorService
             if (shouldEnqueue)
             {
                 _textEditorService.EnqueueModification(
-                    nameof(UndoEdit),
+                    nameof(SetUsingRowEndingKind),
                     null,
                     modificationTask);
             }
             else
             {
-                modificationTask.Invoke(null, null, null, null, null);
+                // TODO: await this
+                _textEditorService.ModifyAsync(
+                    nameof(SetUsingRowEndingKind),
+                    null,
+                    modificationTask).Wait();
             }
         }
 
@@ -268,13 +276,17 @@ public partial interface ITextEditorService
             if (shouldEnqueue)
             {
                 _textEditorService.EnqueueModification(
-                    nameof(UndoEdit),
+                    nameof(SetResourceData),
                     null,
                     modificationTask);
             }
             else
             {
-                modificationTask.Invoke(null, null, null, null, null);
+                // TODO: await this
+                _textEditorService.ModifyAsync(
+                    nameof(SetResourceData),
+                    null,
+                    modificationTask).Wait();
             }
         }
 
@@ -297,13 +309,17 @@ public partial interface ITextEditorService
             if (shouldEnqueue)
             {
                 _textEditorService.EnqueueModification(
-                    nameof(UndoEdit),
+                    nameof(Reload),
                     null,
                     modificationTask);
             }
             else
             {
-                modificationTask.Invoke(null, null, null, null, null);
+                // TODO: await this
+                _textEditorService.ModifyAsync(
+                    nameof(Reload),
+                    null,
+                    modificationTask).Wait();
             }
         }
 
@@ -318,13 +334,17 @@ public partial interface ITextEditorService
             if (shouldEnqueue)
             {
                 _textEditorService.EnqueueModification(
-                    nameof(UndoEdit),
+                    nameof(RedoEdit),
                     null,
                     modificationTask);
             }
             else
             {
-                modificationTask.Invoke(null, null, null, null, null);
+                // TODO: await this
+                _textEditorService.ModifyAsync(
+                    nameof(RedoEdit),
+                    null,
+                    modificationTask).Wait();
             }
         }
 
@@ -377,13 +397,17 @@ public partial interface ITextEditorService
             if (shouldEnqueue)
             {
                 _textEditorService.EnqueueModification(
-                    nameof(UndoEdit),
+                    nameof(InsertText),
                     null,
                     modificationTask);
             }
             else
             {
-                modificationTask.Invoke(null, null, null, null, null);
+                // TODO: await this
+                _textEditorService.ModifyAsync(
+                    nameof(InsertText),
+                    null,
+                    modificationTask).Wait();
             }
         }
 
@@ -436,13 +460,17 @@ public partial interface ITextEditorService
             if (shouldEnqueue)
             {
                 _textEditorService.EnqueueModification(
-                    nameof(UndoEdit),
+                    nameof(HandleKeyboardEvent),
                     null,
                     modificationTask);
             }
             else
             {
-                modificationTask.Invoke(null, null, null, null, null);
+                // TODO: await this
+                _textEditorService.ModifyAsync(
+                    nameof(HandleKeyboardEvent),
+                    null,
+                    modificationTask).Wait();
             }
         }
 
@@ -495,13 +523,17 @@ public partial interface ITextEditorService
             if (shouldEnqueue)
             {
                 _textEditorService.EnqueueModification(
-                    nameof(UndoEdit),
+                    nameof(DeleteTextByRange),
                     null,
                     modificationTask);
             }
             else
             {
-                modificationTask.Invoke(null, null, null, null, null);
+                // TODO: await this
+                _textEditorService.ModifyAsync(
+                    nameof(DeleteTextByRange),
+                    null,
+                    modificationTask).Wait();
             }
         }
 
@@ -554,13 +586,17 @@ public partial interface ITextEditorService
             if (shouldEnqueue)
             {
                 _textEditorService.EnqueueModification(
-                    nameof(UndoEdit),
+                    nameof(DeleteTextByMotion),
                     null,
                     modificationTask);
             }
             else
             {
-                modificationTask.Invoke(null, null, null, null, null);
+                // TODO: await this
+                _textEditorService.ModifyAsync(
+                    nameof(DeleteTextByMotion),
+                    null,
+                    modificationTask).Wait();
             }
         }
         #endregion

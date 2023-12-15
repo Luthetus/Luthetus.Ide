@@ -227,7 +227,7 @@ public class VimSentence
         if (success && command is not null)
         {
             if (textEditorKeymapVim.ActiveVimMode == VimMode.Visual)
-                command = TextEditorCommandVimFacts.Motions.GetVisual(command, command.DisplayName);
+                command = TextEditorCommandVimFacts.Motions.GetVisualFactory(command, command.DisplayName);
             if (textEditorKeymapVim.ActiveVimMode == VimMode.VisualLine)
                 command = TextEditorCommandVimFacts.Motions.GetVisualLineFactory(command, command.DisplayName);
         }
