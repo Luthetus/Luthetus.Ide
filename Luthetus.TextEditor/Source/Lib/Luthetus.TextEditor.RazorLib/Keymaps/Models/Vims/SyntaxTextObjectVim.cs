@@ -7,6 +7,7 @@ using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
+using static Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorService;
 
 namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 
@@ -82,14 +83,20 @@ public static class SyntaxTextObjectVim
                             {
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
+                                var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
+                                var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
+
+                                if (viewModel is null || model is null)
+                                    return Task.CompletedTask;
+
                                 commandArgs.TextEditorService.ViewModelApi.MoveCursor(
                                     new KeyboardEventArgs
                                     {
                                         Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
                                         ShiftKey = shiftKey
                                     },
-                                    commandArgs.ModelResourceUri.ResourceUri,
-                                    commandArgs.ViewModelKey.ViewModelKey,
+                                    model.ResourceUri,
+                                    viewModel.ViewModelKey,
                                     commandArgs.ViewModelKey.PrimaryCursor.Key);
 
                                 return Task.CompletedTask;

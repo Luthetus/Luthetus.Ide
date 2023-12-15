@@ -138,6 +138,6 @@ public partial class ContextMenu : ComponentBase
     private async Task PasteMenuOption()
     {
         var commandArgs = ConstructCommandArgs();
-        await TextEditorCommandDefaultFacts.Paste.DoAsyncFunc.Invoke(commandArgs);
+        await TextEditorCommandDefaultFacts.PasteCommand.DoAsyncFunc.Invoke(commandArgs);
     }
 }

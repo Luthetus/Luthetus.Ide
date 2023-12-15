@@ -6,11 +6,9 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using static Luthetus.TextEditor.RazorLib.TextEditors.States.TextEditorModelState;
-using System.Reflection;
+using Luthetus.TextEditor.RazorLib.Commands.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
@@ -18,15 +16,7 @@ public partial interface ITextEditorService
 {
     public interface ITextEditorModelApi
     {
-        public void DeleteTextByMotion(DeleteTextByMotionAction deleteTextByMotionAction);
-        public void DeleteTextByRange(DeleteTextByRangeAction deleteTextByRangeAction);
-        public void Dispose(ResourceUri resourceUri);
-        public TextEditorModel? GetOrDefault(ResourceUri resourceUri);
-        public string? GetAllText(ResourceUri resourceUri);
-        public ImmutableArray<TextEditorViewModel> GetViewModelsOrEmpty(ResourceUri resourceUri);
-        public void HandleKeyboardEvent(KeyboardEventAction keyboardEventAction);
-        public void InsertText(InsertTextAction insertTextAction);
-        public void RedoEdit(ResourceUri resourceUri);
+        #region CREATE_METHODS
         /// <summary>It is recommended to use the <see cref="RegisterTemplated" /> method as it will internally reference the <see cref="ITextEditorLexer" /> and <see cref="IDecorationMapper" /> that correspond to the desired text editor.</summary>
         public void RegisterCustom(TextEditorModel model);
         /// <summary>
@@ -44,22 +34,52 @@ public partial interface ITextEditorService
             string initialContent,
             string? overrideDisplayTextForFileExtension = null);
 
-        public void Reload(ResourceUri resourceUri, string content, DateTime resourceLastWriteTime);
-
-        public void SetResourceData(
+        public void RegisterPresentationModel(
             ResourceUri resourceUri,
-            DateTime resourceLastWriteTime);
+            TextEditorPresentationModel emptyPresentationModel);
+        #endregion
 
-        public void SetUsingRowEndingKind(ResourceUri resourceUri, RowEndingKind rowEndingKind);
-        public void UndoEdit(ResourceUri resourceUri);
-        public void RegisterPresentationModel(ResourceUri resourceUri, TextEditorPresentationModel emptyPresentationModel);
-
+        #region READ_METHODS
         /// <summary>
         /// One should store the result of invoking this method in a variable, then reference that variable.
         /// If one continually invokes this, there is no guarantee that the data had not changed
         /// since the previous invocation.
         /// </summary>
         public ImmutableList<TextEditorModel> GetModels();
+        public TextEditorModel? GetOrDefault(ResourceUri resourceUri);
+        public ImmutableArray<TextEditorViewModel> GetViewModelsOrEmpty(ResourceUri resourceUri);
+        public string? GetAllText(ResourceUri resourceUri);
+        #endregion
+
+        #region UPDATE_METHODS
+        public void DeleteTextByMotion(DeleteTextByMotionAction deleteTextByMotionAction, bool shouldEnqueue = true);
+        public void DeleteTextByRange(DeleteTextByRangeAction deleteTextByRangeAction, bool shouldEnqueue = true);
+        public void HandleKeyboardEvent(KeyboardEventAction keyboardEventAction, bool shouldEnqueue = true);
+        public void InsertText(InsertTextAction insertTextAction, bool shouldEnqueue = true);
+        public void RedoEdit(ResourceUri resourceUri, bool shouldEnqueue = true);
+
+        public void Reload(
+            ResourceUri resourceUri,
+            string content,
+            DateTime resourceLastWriteTime,
+            bool shouldEnqueue = true);
+
+        public void SetResourceData(
+            ResourceUri resourceUri,
+            DateTime resourceLastWriteTime,
+            bool shouldEnqueue = true);
+
+        public void SetUsingRowEndingKind(
+            ResourceUri resourceUri,
+            RowEndingKind rowEndingKind,
+            bool shouldEnqueue = true);
+
+        public void UndoEdit(ResourceUri resourceUri, bool shouldEnqueue = true);
+        #endregion
+
+        #region DELETE_METHODS
+        public void Dispose(ResourceUri resourceUri);
+        #endregion
     }
 
     public class TextEditorModelApi : ITextEditorModelApi
@@ -84,61 +104,17 @@ public partial interface ITextEditorService
             _dispatcher = dispatcher;
         }
 
-        public void UndoEdit(ResourceUri resourceUri)
-        {
-            EnqueueModification(nameof(UndoEdit), () =>
-            {
-                _dispatcher.Dispatch(new UndoEditAction(resourceUri));
-                return Task.CompletedTask;
-            });
-        }
-
-        public void SetUsingRowEndingKind(ResourceUri resourceUri, RowEndingKind rowEndingKind)
-        {
-            EnqueueModification(nameof(SetUsingRowEndingKind), () =>
-            {
-                _dispatcher.Dispatch(new SetUsingRowEndingKindAction(
-                    resourceUri,
-                    rowEndingKind));
-
-                return Task.CompletedTask;
-            });
-        }
-
-        public void SetResourceData(
-            ResourceUri resourceUri,
-            DateTime resourceLastWriteTime)
-        {
-            EnqueueModification(nameof(SetResourceData), () =>
-            {
-                _dispatcher.Dispatch(new SetResourceDataAction(
-                        resourceUri,
-                        resourceLastWriteTime));
-
-                return Task.CompletedTask;
-            });
-        }
-
-        public void Reload(ResourceUri resourceUri, string content, DateTime resourceLastWriteTime)
-        {
-            EnqueueModification(nameof(Reload), () =>
-            {
-                _dispatcher.Dispatch(new ReloadAction(
-                    resourceUri,
-                    content,
-                    resourceLastWriteTime));
-
-                return Task.CompletedTask;
-            });
-        }
-
+        #region CREATE_METHODS
         public void RegisterCustom(TextEditorModel model)
         {
-            EnqueueModification(nameof(RegisterCustom), () =>
-            {
-                _dispatcher.Dispatch(new RegisterAction(model));
-                return Task.CompletedTask;
-            });
+            _textEditorService.EnqueueModification(
+                nameof(RegisterCustom),
+                null,
+                (_, _, _, _, _) =>
+                {
+                    _dispatcher.Dispatch(new RegisterAction(model));
+                    return Task.CompletedTask;
+                });
         }
 
         public void RegisterTemplated(
@@ -148,9 +124,12 @@ public partial interface ITextEditorService
             string initialContent,
             string? overrideDisplayTextForFileExtension = null)
         {
-            EnqueueModification(nameof(RegisterTemplated), () =>
-            {
-                var textEditorModel = new TextEditorModel(
+            _textEditorService.EnqueueModification(
+                nameof(RegisterTemplated),
+                null,
+                (_, _, _, _, _) =>
+                {
+                    var textEditorModel = new TextEditorModel(
                         resourceUri,
                         resourceLastWriteTime,
                         overrideDisplayTextForFileExtension ?? extensionNoPeriod,
@@ -158,38 +137,200 @@ public partial interface ITextEditorService
                         _decorationMapperRegistry.GetDecorationMapper(extensionNoPeriod),
                         _compilerServiceRegistry.GetCompilerService(extensionNoPeriod));
 
-                _ = Task.Run(async () =>
-                {
-                    try
+                    _ = Task.Run(async () =>
                     {
-                        await textEditorModel.ApplySyntaxHighlightingAsync();
-                        _dispatcher.Dispatch(new ForceRerenderAction(textEditorModel.ResourceUri));
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e);
-                        throw;
-                    }
-                }, CancellationToken.None);
+                        try
+                        {
+                            await textEditorModel.ApplySyntaxHighlightingAsync();
+                            _dispatcher.Dispatch(new ForceRerenderAction(textEditorModel.ResourceUri));
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e);
+                            throw;
+                        }
+                    }, CancellationToken.None);
 
-                _dispatcher.Dispatch(new RegisterAction(textEditorModel));
+                    _dispatcher.Dispatch(new RegisterAction(textEditorModel));
 
-                return Task.CompletedTask;
-            });
+                    return Task.CompletedTask;
+                });
         }
 
-        public void RedoEdit(ResourceUri resourceUri)
+        public void RegisterPresentationModel(
+            ResourceUri resourceUri,
+            TextEditorPresentationModel emptyPresentationModel)
         {
-            EnqueueModification(nameof(RedoEdit), () =>
+            _textEditorService.EnqueueModification(
+                nameof(RegisterPresentationModel),
+                null,
+                (_, _, _, _, _) =>
+                {
+                    _dispatcher.Dispatch(new RegisterPresentationModelAction(
+                        resourceUri,
+                        emptyPresentationModel));
+
+                    return Task.CompletedTask;
+                });
+        }
+        #endregion
+
+        #region READ_METHODS
+        public ImmutableArray<TextEditorViewModel> GetViewModelsOrEmpty(ResourceUri resourceUri)
+        {
+            return _textEditorService.ViewModelStateWrap.Value.ViewModelBag
+                .Where(x => x.ResourceUri == resourceUri)
+                .ToImmutableArray();
+        }
+
+        public string? GetAllText(ResourceUri resourceUri)
+        {
+            return _textEditorService.ModelStateWrap.Value.ModelBag
+                .FirstOrDefault(x => x.ResourceUri == resourceUri)
+                ?.GetAllText();
+        }
+
+        public TextEditorModel? GetOrDefault(ResourceUri resourceUri)
+        {
+            return _textEditorService.ModelStateWrap.Value.ModelBag
+                .FirstOrDefault(x => x.ResourceUri == resourceUri);
+        }
+
+        public ImmutableList<TextEditorModel> GetModels()
+        {
+            return _textEditorService.ModelStateWrap.Value.ModelBag;
+        }
+        #endregion
+
+        #region UPDATE_METHODS
+        public void UndoEdit(ResourceUri resourceUri, bool shouldEnqueue = true)
+        {
+            TextEditorCommand.ModificationTask modificationTask = (_, _, _, _, _) =>
+            {
+                _dispatcher.Dispatch(new UndoEditAction(resourceUri));
+                return Task.CompletedTask;
+            };
+
+            if (shouldEnqueue)
+            {
+                _textEditorService.EnqueueModification(
+                    nameof(UndoEdit),
+                    null,
+                    modificationTask);
+            }
+            else
+            {
+                modificationTask.Invoke(null, null, null, null, null);
+            }
+        }
+
+        public void SetUsingRowEndingKind(
+            ResourceUri resourceUri,
+            RowEndingKind rowEndingKind,
+            bool shouldEnqueue = true)
+        {
+            TextEditorCommand.ModificationTask modificationTask = (_, _, _, _, _) =>
+            {
+                _dispatcher.Dispatch(new SetUsingRowEndingKindAction(
+                    resourceUri,
+                    rowEndingKind));
+
+                return Task.CompletedTask;
+            };
+
+            if (shouldEnqueue)
+            {
+                _textEditorService.EnqueueModification(
+                    nameof(UndoEdit),
+                    null,
+                    modificationTask);
+            }
+            else
+            {
+                modificationTask.Invoke(null, null, null, null, null);
+            }
+        }
+
+        public void SetResourceData(
+            ResourceUri resourceUri,
+            DateTime resourceLastWriteTime,
+            bool shouldEnqueue = true)
+        {
+            TextEditorCommand.ModificationTask modificationTask = (_, _, _, _, _) =>
+            {
+                _dispatcher.Dispatch(new SetResourceDataAction(
+                    resourceUri,
+                    resourceLastWriteTime));
+
+                return Task.CompletedTask;
+            };
+
+            if (shouldEnqueue)
+            {
+                _textEditorService.EnqueueModification(
+                    nameof(UndoEdit),
+                    null,
+                    modificationTask);
+            }
+            else
+            {
+                modificationTask.Invoke(null, null, null, null, null);
+            }
+        }
+
+        public void Reload(
+            ResourceUri resourceUri,
+            string content,
+            DateTime resourceLastWriteTime,
+            bool shouldEnqueue = true)
+        {
+            TextEditorCommand.ModificationTask modificationTask = (_, _, _, _, _) =>
+            {
+                _dispatcher.Dispatch(new ReloadAction(
+                    resourceUri,
+                    content,
+                    resourceLastWriteTime));
+
+                return Task.CompletedTask;
+            };
+
+            if (shouldEnqueue)
+            {
+                _textEditorService.EnqueueModification(
+                    nameof(UndoEdit),
+                    null,
+                    modificationTask);
+            }
+            else
+            {
+                modificationTask.Invoke(null, null, null, null, null);
+            }
+        }
+
+        public void RedoEdit(ResourceUri resourceUri, bool shouldEnqueue = true)
+        {
+            TextEditorCommand.ModificationTask modificationTask = (_, _, _, _, _) =>
             {
                 _dispatcher.Dispatch(new RedoEditAction(resourceUri));
                 return Task.CompletedTask;
-            });
+            };
+
+            if (shouldEnqueue)
+            {
+                _textEditorService.EnqueueModification(
+                    nameof(UndoEdit),
+                    null,
+                    modificationTask);
+            }
+            else
+            {
+                modificationTask.Invoke(null, null, null, null, null);
+            }
         }
 
-        public void InsertText(InsertTextAction insertTextAction)
+        public void InsertText(InsertTextAction insertTextAction, bool shouldEnqueue = true)
         {
-            EnqueueModification(nameof(InsertText), () =>
+            TextEditorCommand.ModificationTask modificationTask = (_, _, _, _, _) =>
             {
                 var cursorBag = insertTextAction.CursorModifierBag;
 
@@ -231,12 +372,24 @@ public partial interface ITextEditorService
                 }
 
                 return Task.CompletedTask;
-            });
+            };
+
+            if (shouldEnqueue)
+            {
+                _textEditorService.EnqueueModification(
+                    nameof(UndoEdit),
+                    null,
+                    modificationTask);
+            }
+            else
+            {
+                modificationTask.Invoke(null, null, null, null, null);
+            }
         }
 
-        public void HandleKeyboardEvent(KeyboardEventAction keyboardEventAction)
+        public void HandleKeyboardEvent(KeyboardEventAction keyboardEventAction, bool shouldEnqueue = true)
         {
-            EnqueueModification(nameof(HandleKeyboardEvent), () =>
+            TextEditorCommand.ModificationTask modificationTask = (_, _, _, _, _) =>
             {
                 var cursorBag = keyboardEventAction.CursorModifierBag;
 
@@ -278,12 +431,24 @@ public partial interface ITextEditorService
                 }
 
                 return Task.CompletedTask;
-            });
+            };
+
+            if (shouldEnqueue)
+            {
+                _textEditorService.EnqueueModification(
+                    nameof(UndoEdit),
+                    null,
+                    modificationTask);
+            }
+            else
+            {
+                modificationTask.Invoke(null, null, null, null, null);
+            }
         }
 
-        public void DeleteTextByRange(DeleteTextByRangeAction deleteTextByRangeAction)
+        public void DeleteTextByRange(DeleteTextByRangeAction deleteTextByRangeAction, bool shouldEnqueue = true)
         {
-            EnqueueModification(nameof(DeleteTextByRange), () =>
+            TextEditorCommand.ModificationTask modificationTask = (_, _, _, _, _) =>
             {
                 var cursorBag = deleteTextByRangeAction.CursorModifierBag;
 
@@ -325,12 +490,24 @@ public partial interface ITextEditorService
                 }
 
                 return Task.CompletedTask;
-            });
+            };
+
+            if (shouldEnqueue)
+            {
+                _textEditorService.EnqueueModification(
+                    nameof(UndoEdit),
+                    null,
+                    modificationTask);
+            }
+            else
+            {
+                modificationTask.Invoke(null, null, null, null, null);
+            }
         }
 
-        public void DeleteTextByMotion(DeleteTextByMotionAction deleteTextByMotionAction)
+        public void DeleteTextByMotion(DeleteTextByMotionAction deleteTextByMotionAction, bool shouldEnqueue = true)
         {
-            EnqueueModification(nameof(DeleteTextByRange), () =>
+            TextEditorCommand.ModificationTask modificationTask = (_, _, _, _, _) =>
             {
                 var cursorBag = deleteTextByMotionAction.CursorModifierBag;
 
@@ -372,49 +549,27 @@ public partial interface ITextEditorService
                 }
 
                 return Task.CompletedTask;
-            });
-        }
+            };
 
-        public void RegisterPresentationModel(ResourceUri resourceUri, TextEditorPresentationModel emptyPresentationModel)
-        {
-            EnqueueModification(nameof(RegisterPresentationModel), () =>
+            if (shouldEnqueue)
             {
-                _dispatcher.Dispatch(new RegisterPresentationModelAction(
-                    resourceUri,
-                    emptyPresentationModel));
-
-                return Task.CompletedTask;
-            });
+                _textEditorService.EnqueueModification(
+                    nameof(UndoEdit),
+                    null,
+                    modificationTask);
+            }
+            else
+            {
+                modificationTask.Invoke(null, null, null, null, null);
+            }
         }
+        #endregion
 
-        public ImmutableArray<TextEditorViewModel> GetViewModelsOrEmpty(ResourceUri resourceUri)
-        {
-            return _textEditorService.ViewModelStateWrap.Value.ViewModelBag
-                .Where(x => x.ResourceUri == resourceUri)
-                .ToImmutableArray();
-        }
-
-        public string? GetAllText(ResourceUri resourceUri)
-        {
-            return _textEditorService.ModelStateWrap.Value.ModelBag
-                .FirstOrDefault(x => x.ResourceUri == resourceUri)
-                ?.GetAllText();
-        }
-
-        public TextEditorModel? GetOrDefault(ResourceUri resourceUri)
-        {
-            return _textEditorService.ModelStateWrap.Value.ModelBag
-                .FirstOrDefault(x => x.ResourceUri == resourceUri);
-        }
-
-        public ImmutableList<TextEditorModel> GetModels()
-        {
-            return _textEditorService.ModelStateWrap.Value.ModelBag;
-        }
-
+        #region DELETE_METHODS
         public void Dispose(ResourceUri resourceUri)
         {
             _dispatcher.Dispatch(new DisposeAction(resourceUri));
         }
+        #endregion
     }
 }

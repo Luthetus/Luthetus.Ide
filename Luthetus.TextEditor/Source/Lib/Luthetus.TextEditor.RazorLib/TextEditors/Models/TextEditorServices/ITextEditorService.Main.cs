@@ -5,7 +5,7 @@ using Luthetus.TextEditor.RazorLib.SearchEngines.States;
 using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
-using static Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorService;
+using Luthetus.TextEditor.RazorLib.Commands.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
@@ -32,6 +32,7 @@ public partial interface ITextEditorService
 
     public void EnqueueModification(
         string modificationName,
-        RefreshCursorsRequest refreshCursorsRequest,
-        Func<Task> funcAsync);
+        TextEditorCommandArgs commandArgs,
+        TextEditorCommand.ModificationTask modificationTask);
 }
+

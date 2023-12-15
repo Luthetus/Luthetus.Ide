@@ -327,7 +327,7 @@ public static partial class TextEditorCommandVimFacts
                             var cursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
 
                             if (viewModel is null || model is null || cursor is null)
-                                return Task.CompletedTask;
+                                return;
 
                             var activeKeymap = commandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
                                 ?? TextEditorKeymapFacts.DefaultKeymap;

@@ -100,7 +100,7 @@ public partial class TextEditorHeader : ComponentBase
             return;
 
         var commandArgs = ConstructCommandArgs(model, viewModel);
-        await TextEditorCommandDefaultFacts.Paste.DoAsyncFunc.Invoke(commandArgs);
+        await TextEditorCommandDefaultFacts.PasteCommand.DoAsyncFunc.Invoke(commandArgs);
     }
 
     private async Task DoRedoOnClick(MouseEventArgs arg)

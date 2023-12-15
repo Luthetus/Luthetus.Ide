@@ -260,7 +260,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 "Vim::o", "vim-o", false, true, TextEditKind.None, null,
                 interfaceCommandArgs =>
                 {
-                    return TextEditorCommandVimFacts.Verbs.NewLineBelow.DoAsyncFunc.Invoke(interfaceCommandArgs);
+                    return TextEditorCommandVimFacts.Verbs.NewLineBelowCommand.DoAsyncFunc.Invoke(interfaceCommandArgs);
                 });
 
             Map.Add(new KeymapArgument("KeyO")
@@ -275,7 +275,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 "Vim::O", "vim-O", false, true, TextEditKind.None, null,
                 interfaceCommandArgs =>
                 {
-                    return TextEditorCommandVimFacts.Verbs.NewLineAbove.DoAsyncFunc.Invoke(interfaceCommandArgs);
+                    return TextEditorCommandVimFacts.Verbs.NewLineAboveCommand.DoAsyncFunc.Invoke(interfaceCommandArgs);
                 });
 
             Map.Add(new KeymapArgument("KeyO")

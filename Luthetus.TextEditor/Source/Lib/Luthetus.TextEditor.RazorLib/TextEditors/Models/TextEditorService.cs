@@ -17,6 +17,7 @@ using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.Commands.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -100,29 +101,38 @@ public partial class TextEditorService : ITextEditorService
 
     public void EnqueueModification(
         string modificationName,
-        RefreshCursorsRequest refreshCursorsRequest,
-        Func<Task> funcAsync)
+        TextEditorCommandArgs commandArgs,
+        TextEditorCommand.ModificationTask modificationTask)
     {
         _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             modificationName,
             async () =>
             {
-                if (refreshCursorsRequest is not null)
-                {
-                    var inViewModel = ViewModelStateWrap.Value.ViewModelBag.FirstOrDefault(
-                        x => x.ViewModelKey == refreshCursorsRequest.ViewModelKey);
+                var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
+                var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
 
-                    if (inViewModel is not null)
-                    {
-                        refreshCursorsRequest.CursorBag.Clear();
+                if (viewModel is null || model is null)
+                    return;
 
-                        refreshCursorsRequest.CursorBag.AddRange(inViewModel.CursorBag
-                            .Select(x => new TextEditorCursorModifier(x)));
-                    }
-                }
+                var refreshCursorsRequest = new RefreshCursorsRequest(
+                    commandArgs.ViewModelKey,
+                    new List<TextEditorCursorModifier>());
 
-                await funcAsync.Invoke();
+                refreshCursorsRequest.CursorBag.AddRange(viewModel.CursorBag
+                    .Select(x => new TextEditorCursorModifier(x)));
+
+                var primaryCursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
+
+                if (primaryCursor is null)
+                    return;
+
+                await modificationTask.Invoke(
+                    commandArgs,
+                    model,
+                    viewModel,
+                    refreshCursorsRequest,
+                    primaryCursor);
 
                 if (refreshCursorsRequest is not null)
                 {
