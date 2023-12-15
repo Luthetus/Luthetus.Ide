@@ -18,6 +18,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -115,11 +116,38 @@ public partial class TextEditorService : ITextEditorService
         TextEditorCommandArgs commandArgs,
         TextEditorCommand.ModificationTask modificationTask)
     {
-        var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-        var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
+        var shouldHaveViewModel = commandArgs.ViewModelKey != Key<TextEditorViewModel>.Empty;
+        var shouldHaveModel = commandArgs.ModelResourceUri != null || shouldHaveViewModel;
 
-        if (viewModel is null || model is null)
-            return;
+        var viewModel = (TextEditorViewModel?)null; // Get ViewModel
+        {
+            if (commandArgs.ViewModelKey != Key<TextEditorViewModel>.Empty)
+            {
+                viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
+            }
+
+            if (viewModel is null && shouldHaveViewModel)
+            {
+                return;
+            }
+        }
+
+        var model = (TextEditorModel?)null; // Get Model
+        {
+            if (commandArgs.ModelResourceUri is not null)
+            {
+                model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
+            }
+            else if (commandArgs.ViewModelKey != Key<TextEditorViewModel>.Empty)
+            {
+                model = commandArgs.TextEditorService.ViewModelApi.GetModelOrDefault(commandArgs.ViewModelKey);
+            }
+
+            if (model is null && shouldHaveModel)
+            {
+                return;
+            }
+        }
 
         var refreshCursorsRequest = new RefreshCursorsRequest(
             commandArgs.ViewModelKey,

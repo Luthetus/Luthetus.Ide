@@ -9,6 +9,8 @@ using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using static Luthetus.TextEditor.RazorLib.TextEditors.States.TextEditorModelState;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using System.Reflection;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
@@ -107,9 +109,13 @@ public partial interface ITextEditorService
         #region CREATE_METHODS
         public void RegisterCustom(TextEditorModel model)
         {
+            var commandArgs = new TextEditorCommandArgs(
+                model.ResourceUri, Key<TextEditorViewModel>.Empty, false, null,
+                _textEditorService, null, null, null, null, null, null);
+
             _textEditorService.EnqueueModification(
                 nameof(RegisterCustom),
-                null,
+                commandArgs,
                 (_, _, _, _, _) =>
                 {
                     _dispatcher.Dispatch(new RegisterAction(model));
@@ -124,9 +130,13 @@ public partial interface ITextEditorService
             string initialContent,
             string? overrideDisplayTextForFileExtension = null)
         {
+            var commandArgs = new TextEditorCommandArgs(
+                resourceUri, Key<TextEditorViewModel>.Empty, false, null,
+                _textEditorService, null, null, null, null, null, null);
+
             _textEditorService.EnqueueModification(
                 nameof(RegisterTemplated),
-                null,
+                commandArgs,
                 (_, _, _, _, _) =>
                 {
                     var textEditorModel = new TextEditorModel(
@@ -161,9 +171,13 @@ public partial interface ITextEditorService
             ResourceUri resourceUri,
             TextEditorPresentationModel emptyPresentationModel)
         {
+            var commandArgs = new TextEditorCommandArgs(
+                resourceUri, Key<TextEditorViewModel>.Empty, false, null,
+                _textEditorService, null, null, null, null, null, null);
+
             _textEditorService.EnqueueModification(
                 nameof(RegisterPresentationModel),
-                null,
+                commandArgs,
                 (_, _, _, _, _) =>
                 {
                     _dispatcher.Dispatch(new RegisterPresentationModelAction(
@@ -205,6 +219,10 @@ public partial interface ITextEditorService
         #region UPDATE_METHODS
         public void UndoEdit(ResourceUri resourceUri, bool shouldEnqueue = true)
         {
+            var commandArgs = new TextEditorCommandArgs(
+                resourceUri, Key<TextEditorViewModel>.Empty, false, null,
+                _textEditorService, null, null, null, null, null, null);
+
             TextEditorCommand.ModificationTask modificationTask = (_, _, _, _, _) =>
             {
                 _dispatcher.Dispatch(new UndoEditAction(resourceUri));
@@ -215,7 +233,7 @@ public partial interface ITextEditorService
             {
                 _textEditorService.EnqueueModification(
                     nameof(UndoEdit),
-                    null,
+                    commandArgs,
                     modificationTask);
             }
             else
@@ -223,7 +241,7 @@ public partial interface ITextEditorService
                 // TODO: await this
                 _textEditorService.ModifyAsync(
                     nameof(UndoEdit),
-                    null,
+                    commandArgs,
                     modificationTask).Wait();
             }
         }
@@ -233,6 +251,10 @@ public partial interface ITextEditorService
             RowEndingKind rowEndingKind,
             bool shouldEnqueue = true)
         {
+            var commandArgs = new TextEditorCommandArgs(
+                resourceUri, Key<TextEditorViewModel>.Empty, false, null,
+                _textEditorService, null, null, null, null, null, null);
+
             TextEditorCommand.ModificationTask modificationTask = (_, _, _, _, _) =>
             {
                 _dispatcher.Dispatch(new SetUsingRowEndingKindAction(
@@ -246,7 +268,7 @@ public partial interface ITextEditorService
             {
                 _textEditorService.EnqueueModification(
                     nameof(SetUsingRowEndingKind),
-                    null,
+                    commandArgs,
                     modificationTask);
             }
             else
@@ -254,7 +276,7 @@ public partial interface ITextEditorService
                 // TODO: await this
                 _textEditorService.ModifyAsync(
                     nameof(SetUsingRowEndingKind),
-                    null,
+                    commandArgs,
                     modificationTask).Wait();
             }
         }
@@ -264,6 +286,10 @@ public partial interface ITextEditorService
             DateTime resourceLastWriteTime,
             bool shouldEnqueue = true)
         {
+            var commandArgs = new TextEditorCommandArgs(
+                resourceUri, Key<TextEditorViewModel>.Empty, false, null,
+                _textEditorService, null, null, null, null, null, null);
+
             TextEditorCommand.ModificationTask modificationTask = (_, _, _, _, _) =>
             {
                 _dispatcher.Dispatch(new SetResourceDataAction(
@@ -277,7 +303,7 @@ public partial interface ITextEditorService
             {
                 _textEditorService.EnqueueModification(
                     nameof(SetResourceData),
-                    null,
+                    commandArgs,
                     modificationTask);
             }
             else
@@ -285,7 +311,7 @@ public partial interface ITextEditorService
                 // TODO: await this
                 _textEditorService.ModifyAsync(
                     nameof(SetResourceData),
-                    null,
+                    commandArgs,
                     modificationTask).Wait();
             }
         }
@@ -296,6 +322,10 @@ public partial interface ITextEditorService
             DateTime resourceLastWriteTime,
             bool shouldEnqueue = true)
         {
+            var commandArgs = new TextEditorCommandArgs(
+                resourceUri, Key<TextEditorViewModel>.Empty, false, null,
+                _textEditorService, null, null, null, null, null, null);
+
             TextEditorCommand.ModificationTask modificationTask = (_, _, _, _, _) =>
             {
                 _dispatcher.Dispatch(new ReloadAction(
@@ -310,7 +340,7 @@ public partial interface ITextEditorService
             {
                 _textEditorService.EnqueueModification(
                     nameof(Reload),
-                    null,
+                    commandArgs,
                     modificationTask);
             }
             else
@@ -318,13 +348,17 @@ public partial interface ITextEditorService
                 // TODO: await this
                 _textEditorService.ModifyAsync(
                     nameof(Reload),
-                    null,
+                    commandArgs,
                     modificationTask).Wait();
             }
         }
 
         public void RedoEdit(ResourceUri resourceUri, bool shouldEnqueue = true)
         {
+            var commandArgs = new TextEditorCommandArgs(
+                resourceUri, Key<TextEditorViewModel>.Empty, false, null,
+                _textEditorService, null, null, null, null, null, null);
+
             TextEditorCommand.ModificationTask modificationTask = (_, _, _, _, _) =>
             {
                 _dispatcher.Dispatch(new RedoEditAction(resourceUri));
@@ -335,7 +369,7 @@ public partial interface ITextEditorService
             {
                 _textEditorService.EnqueueModification(
                     nameof(RedoEdit),
-                    null,
+                    commandArgs,
                     modificationTask);
             }
             else
@@ -343,13 +377,17 @@ public partial interface ITextEditorService
                 // TODO: await this
                 _textEditorService.ModifyAsync(
                     nameof(RedoEdit),
-                    null,
+                    commandArgs,
                     modificationTask).Wait();
             }
         }
 
         public void InsertText(InsertTextAction insertTextAction, bool shouldEnqueue = true)
         {
+            var commandArgs = new TextEditorCommandArgs(
+                insertTextAction.ResourceUri, Key<TextEditorViewModel>.Empty, false, null,
+                _textEditorService, null, null, null, null, null, null);
+
             TextEditorCommand.ModificationTask modificationTask = (_, _, _, _, _) =>
             {
                 var cursorBag = insertTextAction.CursorModifierBag;
@@ -398,7 +436,7 @@ public partial interface ITextEditorService
             {
                 _textEditorService.EnqueueModification(
                     nameof(InsertText),
-                    null,
+                    commandArgs,
                     modificationTask);
             }
             else
@@ -406,13 +444,17 @@ public partial interface ITextEditorService
                 // TODO: await this
                 _textEditorService.ModifyAsync(
                     nameof(InsertText),
-                    null,
+                    commandArgs,
                     modificationTask).Wait();
             }
         }
 
         public void HandleKeyboardEvent(KeyboardEventAction keyboardEventAction, bool shouldEnqueue = true)
         {
+            var commandArgs = new TextEditorCommandArgs(
+                keyboardEventAction.ResourceUri, Key<TextEditorViewModel>.Empty, false, null,
+                _textEditorService, null, null, null, null, null, null);
+
             TextEditorCommand.ModificationTask modificationTask = (_, _, _, _, _) =>
             {
                 var cursorBag = keyboardEventAction.CursorModifierBag;
@@ -461,7 +503,7 @@ public partial interface ITextEditorService
             {
                 _textEditorService.EnqueueModification(
                     nameof(HandleKeyboardEvent),
-                    null,
+                    commandArgs,
                     modificationTask);
             }
             else
@@ -469,13 +511,17 @@ public partial interface ITextEditorService
                 // TODO: await this
                 _textEditorService.ModifyAsync(
                     nameof(HandleKeyboardEvent),
-                    null,
+                    commandArgs,
                     modificationTask).Wait();
             }
         }
 
         public void DeleteTextByRange(DeleteTextByRangeAction deleteTextByRangeAction, bool shouldEnqueue = true)
         {
+            var commandArgs = new TextEditorCommandArgs(
+                deleteTextByRangeAction.ResourceUri, Key<TextEditorViewModel>.Empty, false, null,
+                _textEditorService, null, null, null, null, null, null);
+
             TextEditorCommand.ModificationTask modificationTask = (_, _, _, _, _) =>
             {
                 var cursorBag = deleteTextByRangeAction.CursorModifierBag;
@@ -524,7 +570,7 @@ public partial interface ITextEditorService
             {
                 _textEditorService.EnqueueModification(
                     nameof(DeleteTextByRange),
-                    null,
+                    commandArgs,
                     modificationTask);
             }
             else
@@ -532,13 +578,17 @@ public partial interface ITextEditorService
                 // TODO: await this
                 _textEditorService.ModifyAsync(
                     nameof(DeleteTextByRange),
-                    null,
+                    commandArgs,
                     modificationTask).Wait();
             }
         }
 
         public void DeleteTextByMotion(DeleteTextByMotionAction deleteTextByMotionAction, bool shouldEnqueue = true)
         {
+            var commandArgs = new TextEditorCommandArgs(
+                deleteTextByMotionAction.ResourceUri, Key<TextEditorViewModel>.Empty, false, null,
+                _textEditorService, null, null, null, null, null, null);
+
             TextEditorCommand.ModificationTask modificationTask = (_, _, _, _, _) =>
             {
                 var cursorBag = deleteTextByMotionAction.CursorModifierBag;
@@ -587,7 +637,7 @@ public partial interface ITextEditorService
             {
                 _textEditorService.EnqueueModification(
                     nameof(DeleteTextByMotion),
-                    null,
+                    commandArgs,
                     modificationTask);
             }
             else
@@ -595,7 +645,7 @@ public partial interface ITextEditorService
                 // TODO: await this
                 _textEditorService.ModifyAsync(
                     nameof(DeleteTextByMotion),
-                    null,
+                    commandArgs,
                     modificationTask).Wait();
             }
         }

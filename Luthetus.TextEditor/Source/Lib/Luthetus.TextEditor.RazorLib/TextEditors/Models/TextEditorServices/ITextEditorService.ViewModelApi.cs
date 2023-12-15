@@ -242,6 +242,10 @@ public partial interface ITextEditorService
             Func<TextEditorViewModel, TextEditorViewModel> withFunc,
             bool shouldEnqueue = true)
         {
+            var commandArgs = new TextEditorCommandArgs(
+                null, viewModelKey, false, null,
+                _textEditorService, null, null, null, null, null, null);
+
             TextEditorCommand.ModificationTask modificationTask = (_, _, _, _, _) =>
                 Task.FromResult(withFunc);
 
@@ -249,7 +253,7 @@ public partial interface ITextEditorService
             {
                 _textEditorService.EnqueueModification(
                     nameof(With),
-                    null,
+                    commandArgs,
                     modificationTask);
             }
             else
@@ -257,7 +261,7 @@ public partial interface ITextEditorService
                 // TODO: await this
                 _textEditorService.ModifyAsync(
                     nameof(With),
-                    null,
+                    commandArgs,
                     modificationTask).Wait();
             }
         }
@@ -267,6 +271,10 @@ public partial interface ITextEditorService
             Func<TextEditorViewModel, Task<Func<TextEditorViewModel, TextEditorViewModel>>> withFuncWrap,
             bool shouldEnqueue = true)
         {
+            var commandArgs = new TextEditorCommandArgs(
+                null, viewModelKey, false, null,
+                _textEditorService, null, null, null, null, null, null);
+
             TextEditorCommand.ModificationTask modificationTask = async (_, _, viewModel, _, _) =>
             {
                 _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
@@ -278,7 +286,7 @@ public partial interface ITextEditorService
             {
                 _textEditorService.EnqueueModification(
                     nameof(WithAsync),
-                    null,
+                    commandArgs,
                     modificationTask);
             }
             else
@@ -286,7 +294,7 @@ public partial interface ITextEditorService
                 // TODO: await this
                 _textEditorService.ModifyAsync(
                     nameof(WithAsync),
-                    null,
+                    commandArgs,
                     modificationTask).Wait();
             }
         }
@@ -301,6 +309,10 @@ public partial interface ITextEditorService
             double? scrollTopInPixels,
             bool shouldEnqueue = true)
         {
+            var commandArgs = new TextEditorCommandArgs(
+                null, Key<TextEditorViewModel>.Empty, false, null,
+                _textEditorService, null, null, null, null, null, null);
+
             TextEditorCommand.ModificationTask modificationTask = async(_, _, _, _, _) =>
             {
                 await _jsRuntime.InvokeVoidAsync("luthetusTextEditor.setScrollPosition",
@@ -314,7 +326,7 @@ public partial interface ITextEditorService
             {
                 _textEditorService.EnqueueModification(
                     nameof(SetScrollPositionAsync),
-                    null,
+                    commandArgs,
                     modificationTask);
             }
             else
@@ -322,7 +334,7 @@ public partial interface ITextEditorService
                 // TODO: await this
                 _textEditorService.ModifyAsync(
                     nameof(SetScrollPositionAsync),
-                    null,
+                    commandArgs,
                     modificationTask).Wait();
             }
         }
@@ -332,6 +344,10 @@ public partial interface ITextEditorService
             double scrollTopInPixels,
             bool shouldEnqueue = true)
         {
+            var commandArgs = new TextEditorCommandArgs(
+                null, Key<TextEditorViewModel>.Empty, false, null,
+                _textEditorService, null, null, null, null, null, null);
+
             TextEditorCommand.ModificationTask modificationTask = async (_, _, _, _, _) =>
             {
                 await _jsRuntime.InvokeVoidAsync("luthetusTextEditor.setGutterScrollTop",
@@ -343,7 +359,7 @@ public partial interface ITextEditorService
             {
                 _textEditorService.EnqueueModification(
                     nameof(SetGutterScrollTopAsync),
-                    null,
+                    commandArgs,
                     modificationTask);
             }
             else
@@ -351,7 +367,7 @@ public partial interface ITextEditorService
                 // TODO: await this
                 _textEditorService.ModifyAsync(
                     nameof(SetGutterScrollTopAsync),
-                    null,
+                    commandArgs,
                     modificationTask).Wait();
             }
         }
@@ -362,6 +378,10 @@ public partial interface ITextEditorService
             double pixels,
             bool shouldEnqueue = true)
         {
+            var commandArgs = new TextEditorCommandArgs(
+                null, Key<TextEditorViewModel>.Empty, false, null,
+                _textEditorService, null, null, null, null, null, null);
+
             TextEditorCommand.ModificationTask modificationTask = async (_, _, _, _, _) =>
             {
                 await _jsRuntime.InvokeVoidAsync("luthetusTextEditor.mutateScrollVerticalPositionByPixels",
@@ -374,7 +394,7 @@ public partial interface ITextEditorService
             {
                 _textEditorService.EnqueueModification(
                     nameof(MutateScrollVerticalPositionAsync),
-                    null,
+                    commandArgs,
                     modificationTask);
             }
             else
@@ -382,7 +402,7 @@ public partial interface ITextEditorService
                 // TODO: await this
                 _textEditorService.ModifyAsync(
                     nameof(MutateScrollVerticalPositionAsync),
-                    null,
+                    commandArgs,
                     modificationTask).Wait();
             }
         }
@@ -393,6 +413,10 @@ public partial interface ITextEditorService
             double pixels,
             bool shouldEnqueue = true)
         {
+            var commandArgs = new TextEditorCommandArgs(
+                null, Key<TextEditorViewModel>.Empty, false, null,
+                _textEditorService, null, null, null, null, null, null);
+
             TextEditorCommand.ModificationTask modificationTask = async (_, _, _, _, _) =>
             {
                 await _jsRuntime.InvokeVoidAsync("luthetusTextEditor.mutateScrollHorizontalPositionByPixels",
@@ -405,7 +429,7 @@ public partial interface ITextEditorService
             {
                 _textEditorService.EnqueueModification(
                     nameof(MutateScrollHorizontalPositionAsync),
-                    null,
+                    commandArgs,
                     modificationTask);
             }
             else
@@ -413,7 +437,7 @@ public partial interface ITextEditorService
                 // TODO: await this
                 _textEditorService.ModifyAsync(
                     nameof(MutateScrollHorizontalPositionAsync),
-                    null,
+                    commandArgs,
                     modificationTask).Wait();
             }
         }
@@ -422,6 +446,10 @@ public partial interface ITextEditorService
             string primaryCursorContentId,
             bool shouldEnqueue = true)
         {
+            var commandArgs = new TextEditorCommandArgs(
+                null, Key<TextEditorViewModel>.Empty, false, null,
+                _textEditorService, null, null, null, null, null, null);
+
             TextEditorCommand.ModificationTask modificationTask = async (_, _, _, _, _) =>
             {
                 await _jsRuntime.InvokeVoidAsync("luthetusTextEditor.focusHtmlElementById",
@@ -432,7 +460,7 @@ public partial interface ITextEditorService
             {
                 _textEditorService.EnqueueModification(
                     nameof(FocusPrimaryCursorAsync),
-                    null,
+                    commandArgs,
                     modificationTask);
             }
             else
@@ -440,7 +468,7 @@ public partial interface ITextEditorService
                 // TODO: await this
                 _textEditorService.ModifyAsync(
                     nameof(FocusPrimaryCursorAsync),
-                    null,
+                    commandArgs,
                     modificationTask).Wait();
             }
         }
@@ -452,6 +480,10 @@ public partial interface ITextEditorService
             Key<TextEditorCursor> cursorKey,
             bool shouldEnqueue = true)
         {
+            var commandArgs = new TextEditorCommandArgs(
+                null, Key<TextEditorViewModel>.Empty, false, null,
+                _textEditorService, null, null, null, null, null, null);
+
             TextEditorCommand.ModificationTask modificationTask = (_, model, _, refreshCursorsRequest, primaryCursor) =>
             {
                 void MutateIndexCoordinatesAndPreferredColumnIndex(int columnIndex)
@@ -646,7 +678,7 @@ public partial interface ITextEditorService
             {
                 _textEditorService.EnqueueModification(
                     nameof(MoveCursor),
-                    null,
+                    commandArgs,
                     modificationTask);
             }
             else
@@ -654,7 +686,7 @@ public partial interface ITextEditorService
                 // TODO: await this
                 _textEditorService.ModifyAsync(
                     nameof(MoveCursor),
-                    null,
+                    commandArgs,
                     modificationTask).Wait();
             }
         }
@@ -665,6 +697,10 @@ public partial interface ITextEditorService
             Key<TextEditorCursor> cursorKey,
             bool shouldEnqueue = true)
         {
+            var commandArgs = new TextEditorCommandArgs(
+                null, Key<TextEditorViewModel>.Empty, false, null,
+                _textEditorService, null, null, null, null, null, null);
+
             TextEditorCommand.ModificationTask modificationTask = (_, _, viewModel, refreshCursorsRequest, primaryCursor) =>
             {
                 if (viewModel.VirtualizationResult?.EntryBag.Any() ?? false)
@@ -682,7 +718,7 @@ public partial interface ITextEditorService
             {
                 _textEditorService.EnqueueModification(
                     nameof(CursorMovePageTop),
-                    null,
+                    commandArgs,
                     modificationTask);
             }
             else
@@ -690,7 +726,7 @@ public partial interface ITextEditorService
                 // TODO: await this
                 _textEditorService.ModifyAsync(
                     nameof(CursorMovePageTop),
-                    null,
+                    commandArgs,
                     modificationTask).Wait();
             }
         }
@@ -701,6 +737,10 @@ public partial interface ITextEditorService
             Key<TextEditorCursor> cursorKey,
             bool shouldEnqueue = true)
         {
+            var commandArgs = new TextEditorCommandArgs(
+                null, Key<TextEditorViewModel>.Empty, false, null,
+                _textEditorService, null, null, null, null, null, null);
+
             TextEditorCommand.ModificationTask modificationTask = (_, model, viewModel, refreshCursorsRequest, primaryCursor) =>
             {
                 if ((viewModel.VirtualizationResult?.EntryBag.Any() ?? false))
@@ -724,7 +764,7 @@ public partial interface ITextEditorService
             {
                 _textEditorService.EnqueueModification(
                     nameof(CursorMovePageBottom),
-                    null,
+                    commandArgs,
                     modificationTask);
             }
             else
@@ -732,7 +772,7 @@ public partial interface ITextEditorService
                 // TODO: await this
                 _textEditorService.ModifyAsync(
                     nameof(CursorMovePageBottom),
-                    null,
+                    commandArgs,
                     modificationTask).Wait();
             }
         }
@@ -744,29 +784,5 @@ public partial interface ITextEditorService
             _dispatcher.Dispatch(new TextEditorViewModelState.DisposeAction(textEditorViewModelKey));
         }
         #endregion
-
-        /// <summary>
-        /// This method suppresses nullability checks because there is a presumption that
-        /// one will check if 'false' is returned.<br/>
-        /// If 'false' is returned, do not use the out variables.
-        /// If 'true' is returned, the out variables are non-null.
-        /// </summary>
-        private bool TryGetState(
-            ResourceUri modelResourceUri,
-            Key<TextEditorViewModel> viewModelKey,
-            Key<TextEditorCursor> cursorKey,
-            out TextEditorModel model,
-            out TextEditorViewModel viewModel,
-            out TextEditorCursor primaryCursor)
-        {
-            model = _modelStateWrap.Value.ModelBag.FirstOrDefault(x => x.ResourceUri == modelResourceUri)!;
-            viewModel = _viewModelStateWrap.Value.ViewModelBag.FirstOrDefault(x => x.ViewModelKey == viewModelKey)!;
-            primaryCursor = viewModel?.CursorBag.FirstOrDefault(x => x.Key == cursorKey)!;
-
-            if (model is null || viewModel is null || primaryCursor is null)
-                return false;
-
-            return true;
-        }
     }
 }
