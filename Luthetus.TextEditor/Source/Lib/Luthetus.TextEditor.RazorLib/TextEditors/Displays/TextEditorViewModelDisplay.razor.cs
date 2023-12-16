@@ -290,7 +290,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             }
             else
             {
-                TextEditorService.ViewModelApi.MoveCursor(
+                TextEditorService.ViewModelApi.MoveCursorEnqueue(
                     keyboardEventArgs,
                     model.ResourceUri,
                     viewModel.ViewModelKey,
@@ -384,7 +384,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (viewModel is null)
             return;
 
-        TextEditorService.ViewModelApi.WithTask(viewModel.ViewModelKey, async inViewModel =>
+        TextEditorService.ViewModelApi.WithTaskEnqueue(viewModel.ViewModelKey, async inViewModel =>
         {
             var model = GetModel();
             viewModel = GetViewModel();
@@ -480,7 +480,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (viewModel is null)
             return;
 
-        TextEditorService.ViewModelApi.WithTask(viewModel.ViewModelKey, async inViewModel =>
+        TextEditorService.ViewModelApi.WithTaskEnqueue(viewModel.ViewModelKey, async inViewModel =>
         {
             var model = GetModel();
             var viewModel = GetViewModel();
@@ -620,7 +620,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         // Buttons is a bit flag '& 1' gets if left mouse button is held
         if (localThinksLeftMouseButtonIsDown && (mouseEventArgs.Buttons & 1) == 1)
         {
-            TextEditorService.ViewModelApi.WithTask(viewModel.ViewModelKey, async inViewModel =>
+            TextEditorService.ViewModelApi.WithTaskEnqueue(viewModel.ViewModelKey, async inViewModel =>
             {
                 var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs);
 

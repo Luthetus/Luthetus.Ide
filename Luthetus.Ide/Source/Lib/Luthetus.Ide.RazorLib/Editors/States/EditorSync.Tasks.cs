@@ -155,7 +155,7 @@ public partial class EditorSync
                 CompilerServiceDiagnosticPresentationFacts.PresentationKey,
             }.ToImmutableArray();
 
-            _textEditorService.ViewModelApi.WithValue(
+            _textEditorService.ViewModelApi.WithValueEnqueue(
                 viewModelKey,
                 textEditorViewModel => textEditorViewModel with
                 {

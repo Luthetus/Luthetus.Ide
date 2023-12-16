@@ -374,7 +374,7 @@ public partial interface ITextEditorService
 
                 if (insertTextAction.ViewModelKey is not null)
                 {
-                    _textEditorService.ViewModelApi.WithTask(
+                    _textEditorService.ViewModelApi.WithTaskAsync(
                         insertTextAction.ViewModelKey.Value,
                         inViewModel =>
                         {
@@ -430,7 +430,7 @@ public partial interface ITextEditorService
 
                 if (keyboardEventAction.ViewModelKey is not null)
                 {
-                    _textEditorService.ViewModelApi.WithTask(
+                    _textEditorService.ViewModelApi.WithTaskAsync(
                         keyboardEventAction.ViewModelKey.Value,
                         inViewModel =>
                         {
@@ -487,7 +487,7 @@ public partial interface ITextEditorService
 
                 if (deleteTextByRangeAction.ViewModelKey is not null)
                 {
-                    _textEditorService.ViewModelApi.WithTask(
+                    _textEditorService.ViewModelApi.WithTaskAsync(
                         deleteTextByRangeAction.ViewModelKey.Value,
                         inViewModel =>
                         {
@@ -544,7 +544,7 @@ public partial interface ITextEditorService
 
                 if (deleteTextByMotionAction.ViewModelKey is not null)
                 {
-                    _textEditorService.ViewModelApi.WithTask(
+                    _textEditorService.ViewModelApi.WithTaskAsync(
                         deleteTextByMotionAction.ViewModelKey.Value,
                         inViewModel =>
                         {

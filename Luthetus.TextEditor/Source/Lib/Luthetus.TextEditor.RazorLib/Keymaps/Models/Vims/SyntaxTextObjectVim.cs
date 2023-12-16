@@ -57,7 +57,7 @@ public static class SyntaxTextObjectVim
             TextEditorService.RefreshCursorsRequest refreshCursorsRequest,
             TextEditorCursorModifier primaryCursor)
     {
-        commandArgs.TextEditorService.ViewModelApi.MoveCursor(
+        commandArgs.TextEditorService.ViewModelApi.MoveCursorAsync(
             new KeyboardEventArgs
             {
                 Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
@@ -77,7 +77,7 @@ public static class SyntaxTextObjectVim
             TextEditorService.RefreshCursorsRequest refreshCursorsRequest,
             TextEditorCursorModifier primaryCursor)
     {
-        commandArgs.TextEditorService.ViewModelApi.MoveCursor(
+        commandArgs.TextEditorService.ViewModelApi.MoveCursorAsync(
             new KeyboardEventArgs
             {
                 Key = KeyboardKeyFacts.MovementKeys.ARROW_DOWN,
@@ -97,7 +97,7 @@ public static class SyntaxTextObjectVim
             TextEditorService.RefreshCursorsRequest refreshCursorsRequest,
             TextEditorCursorModifier primaryCursor)
     {
-        commandArgs.TextEditorService.ViewModelApi.MoveCursor(
+        commandArgs.TextEditorService.ViewModelApi.MoveCursorAsync(
             new KeyboardEventArgs
             {
                 Key = KeyboardKeyFacts.MovementKeys.ARROW_UP,
@@ -117,7 +117,7 @@ public static class SyntaxTextObjectVim
             TextEditorService.RefreshCursorsRequest refreshCursorsRequest,
             TextEditorCursorModifier primaryCursor)
     {
-        commandArgs.TextEditorService.ViewModelApi.MoveCursor(
+        commandArgs.TextEditorService.ViewModelApi.MoveCursorAsync(
             new KeyboardEventArgs
             {
                 Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
@@ -137,7 +137,7 @@ public static class SyntaxTextObjectVim
             TextEditorService.RefreshCursorsRequest refreshCursorsRequest,
             TextEditorCursorModifier primaryCursor)
     {
-        commandArgs.TextEditorService.ViewModelApi.MoveCursor(
+        commandArgs.TextEditorService.ViewModelApi.MoveCursorAsync(
             new KeyboardEventArgs
             {
                 Key = KeyboardKeyFacts.MovementKeys.END,
@@ -157,7 +157,7 @@ public static class SyntaxTextObjectVim
             TextEditorService.RefreshCursorsRequest refreshCursorsRequest,
             TextEditorCursorModifier primaryCursor)
     {
-        commandArgs.TextEditorService.ViewModelApi.MoveCursor(
+        commandArgs.TextEditorService.ViewModelApi.MoveCursorAsync(
             new KeyboardEventArgs
             {
                 Key = KeyboardKeyFacts.MovementKeys.HOME,

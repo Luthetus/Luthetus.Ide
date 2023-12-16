@@ -102,7 +102,7 @@ public record TextEditorViewModel : IDisposable
             var batch = _batchScrollEvents.MutateScrollHorizontalPositionByPixels;
 			_batchScrollEvents.MutateScrollHorizontalPositionByPixels -= batch;
 
-            await TextEditorService.ViewModelApi.MutateScrollHorizontalPositionAsync(
+            TextEditorService.ViewModelApi.MutateScrollHorizontalPositionEnqueue(
 				BodyElementId,
 				GutterElementId,
                 batch);
@@ -118,7 +118,7 @@ public record TextEditorViewModel : IDisposable
             var batch = _batchScrollEvents.MutateScrollVerticalPositionByPixels;
 			_batchScrollEvents.MutateScrollVerticalPositionByPixels -= batch;
 
-            await TextEditorService.ViewModelApi.MutateScrollVerticalPositionAsync(
+            TextEditorService.ViewModelApi.MutateScrollVerticalPositionEnqueue(
 				BodyElementId,
 				GutterElementId,
                 batch);
@@ -142,7 +142,7 @@ public record TextEditorViewModel : IDisposable
     {
         await _batchScrollEvents.ThrottleSetScrollPosition.FireAsync((async _ =>
         {
-            await TextEditorService.ViewModelApi.SetScrollPosition(
+            TextEditorService.ViewModelApi.SetScrollPositionEnqueue(
 				BodyElementId,
 				GutterElementId,
                 scrollLeft,
@@ -152,7 +152,7 @@ public record TextEditorViewModel : IDisposable
 
     public async Task FocusAsync()
     {
-        await TextEditorService.ViewModelApi.FocusPrimaryCursorAsync(PrimaryCursorContentId);
+        TextEditorService.ViewModelApi.FocusPrimaryCursorEnqueue(PrimaryCursorContentId);
     }
 
     public async Task RemeasureAsync(
@@ -183,7 +183,7 @@ public record TextEditorViewModel : IDisposable
 				SeenOptionsRenderStateKeysBag.Add(options.RenderStateKey);
             }
 
-			TextEditorService.ViewModelApi.WithValue(
+			TextEditorService.ViewModelApi.WithValueEnqueue(
 				ViewModelKey,
                 previousViewModel => (previousViewModel with
                 {
@@ -424,7 +424,7 @@ public record TextEditorViewModel : IDisposable
 				SeenModelRenderStateKeysBag.Add(model.RenderStateKey);
             }
 
-			TextEditorService.ViewModelApi.WithValue(
+			TextEditorService.ViewModelApi.WithValueEnqueue(
 				ViewModelKey,
                 previousViewModel => (previousViewModel with
                 {

@@ -263,7 +263,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                         commandArgs,
                         async (commandArgs, model, viewModel, refreshCursorsRequest, primaryCursor) =>
                         {
-                            commandArgs.TextEditorService.ModelApi.UndoEdit(model.ResourceUri, false);
+                            commandArgs.TextEditorService.ModelApi.UndoEditAsync(model.ResourceUri);
                             await model.ApplySyntaxHighlightingAsync();
                         });
 
@@ -289,7 +289,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                         commandArgs,
                         async (commandArgs, model, viewModel, refreshCursorsRequest, primaryCursor) =>
                         {
-                            commandArgs.TextEditorService.ModelApi.RedoEdit(model.ResourceUri, false);
+                            commandArgs.TextEditorService.ModelApi.RedoEditAsync(model.ResourceUri);
                             await model.ApplySyntaxHighlightingAsync();
                         });
 
@@ -826,7 +826,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                                 {
                                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                                    commandArgs.TextEditorService.ViewModelApi.MoveCursor(
+                                    commandArgs.TextEditorService.ViewModelApi.MoveCursorAsync(
                                         keyboardEventArgs,
                                         model.ResourceUri,
                                         viewModel.ViewModelKey,

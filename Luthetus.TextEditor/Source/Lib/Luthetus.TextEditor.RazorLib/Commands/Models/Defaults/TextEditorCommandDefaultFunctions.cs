@@ -128,7 +128,7 @@ public class TextEditorCommandDefaultFunctions
         RefreshCursorsRequest refreshCursorsRequest,
         TextEditorCursorModifier primaryCursor)
     {
-        commandArgs.TextEditorService.ModelApi.UndoEdit(commandArgs.ModelResourceUri, false);
+        commandArgs.TextEditorService.ModelApi.UndoEditAsync(commandArgs.ModelResourceUri);
         return Task.CompletedTask;
     }
 
@@ -139,7 +139,7 @@ public class TextEditorCommandDefaultFunctions
         RefreshCursorsRequest refreshCursorsRequest,
         TextEditorCursorModifier primaryCursor)
     {
-        commandArgs.TextEditorService.ModelApi.RedoEdit(commandArgs.ModelResourceUri, false);
+        commandArgs.TextEditorService.ModelApi.RedoEditAsync(commandArgs.ModelResourceUri);
         return Task.CompletedTask;
     }
 
@@ -615,7 +615,7 @@ public class TextEditorCommandDefaultFunctions
                 };
             }
 
-            commandArgs.TextEditorService.ViewModelApi.MoveCursor(
+            commandArgs.TextEditorService.ViewModelApi.MoveCursorAsync(
                 keyboardEventArgs,
                 model.ResourceUri,
                 viewModel.ViewModelKey,
