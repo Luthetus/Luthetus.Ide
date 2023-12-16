@@ -21,7 +21,7 @@ namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
 public class TextEditorModelApiTests
 {
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.TextEditorModelApi(ITextEditorService, Common.RazorLib.BackgroundTasks.Models.IBackgroundTaskService, Fluxor.IDispatcher)"/>
+    /// <see cref="ITextEditorService.TextEditorModelApi.TextEditorModelApi(ITextEditorService, IDecorationMapperRegistry, ICompilerServiceRegistry, Common.RazorLib.BackgroundTasks.Models.IBackgroundTaskService, Fluxor.IDispatcher)"/>
     /// </summary>
     [Fact]
     public void Constructor()
@@ -236,7 +236,7 @@ public class TextEditorModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorModelApi.RegisterTemplated(IDecorationMapperRegistry, ICompilerServiceRegistry, string, ResourceUri, DateTime, string, string?)"/>
+    /// <see cref="ITextEditorService.TextEditorModelApi.RegisterTemplated(string, ResourceUri, DateTime, string, string?)"/>
     /// </summary>
     [Fact]
     public void RegisterTemplated()
@@ -271,7 +271,7 @@ public class TextEditorModelApiTests
     /// <see cref="ITextEditorService.TextEditorModelApi.RedoEditEnqueue(ResourceUri)"/>
     /// </summary>
     [Fact]
-    public void RedoEdit()
+    public void RedoEditEnqueue()
     {
         TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
             out var textEditorService,
@@ -324,7 +324,7 @@ public class TextEditorModelApiTests
     /// <see cref="ITextEditorService.TextEditorModelApi.InsertTextEnqueue(TextEditorModelState.InsertTextAction)"/>
     /// </summary>
     [Fact]
-    public void InsertText()
+    public void InsertTextEnqueue()
     {
         TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
             out var textEditorService,
@@ -366,7 +366,7 @@ public class TextEditorModelApiTests
     /// <see cref="ITextEditorService.TextEditorModelApi.HandleKeyboardEventEnqueue(TextEditorModelState.KeyboardEventAction)"/>
     /// </summary>
     [Fact]
-    public void HandleKeyboardEvent()
+    public void HandleKeyboardEventEnqueue()
     {
         TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
             out var textEditorService,
@@ -471,7 +471,7 @@ public class TextEditorModelApiTests
     /// <see cref="ITextEditorService.TextEditorModelApi.GetOrDefault(ResourceUri)"/>
     /// </summary>
     [Fact]
-    public void FindOrDefault()
+    public void GetOrDefault()
     {
         TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
             out var textEditorService,
@@ -525,7 +525,7 @@ public class TextEditorModelApiTests
     /// <see cref="ITextEditorService.TextEditorModelApi.DeleteTextByRangeEnqueue(TextEditorModelState.DeleteTextByRangeAction)"/>
     /// </summary>
     [Fact]
-    public void DeleteTextByRange()
+    public void DeleteTextByRangeEnqueue()
     {
         TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
             out var textEditorService,
@@ -570,7 +570,7 @@ public class TextEditorModelApiTests
     /// <see cref="ITextEditorService.TextEditorModelApi.DeleteTextByMotionEnqueue(TextEditorModelState.DeleteTextByMotionAction)"/>
     /// </summary>
     [Fact]
-    public void DeleteTextByMotion_Backspace()
+    public void DeleteTextByMotionEnqueue_Backspace()
     {
         TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
             out var textEditorService,
@@ -615,7 +615,7 @@ public class TextEditorModelApiTests
     /// <see cref="ITextEditorService.TextEditorModelApi.DeleteTextByMotionEnqueue(TextEditorModelState.DeleteTextByMotionAction)"/>
     /// </summary>
     [Fact]
-    public void DeleteTextByMotion_Delete()
+    public void DeleteTextByMotionEnqueue_Delete()
     {
         TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
             out var textEditorService,

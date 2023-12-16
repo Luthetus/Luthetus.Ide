@@ -16,7 +16,7 @@ namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
 public class TextEditorViewModelApiTests
 {
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.TextEditorViewModelApi(ITextEditorService, Common.RazorLib.BackgroundTasks.Models.IBackgroundTaskService, Fluxor.IState{RazorLib.TextEditors.States.TextEditorViewModelState}, Fluxor.IState{RazorLib.TextEditors.States.TextEditorModelState}, Microsoft.JSInterop.IJSRuntime, Fluxor.IDispatcher)"/>
+    /// <see cref="ITextEditorService.TextEditorViewModelApi.TextEditorViewModelApi(ITextEditorService, Common.RazorLib.BackgroundTasks.Models.IBackgroundTaskService, Fluxor.IState{TextEditorViewModelState}, Fluxor.IState{TextEditorModelState}, Microsoft.JSInterop.IJSRuntime, Fluxor.IDispatcher)"/>
     /// </summary>
     [Fact]
     public void Constructor()
@@ -56,7 +56,7 @@ public class TextEditorViewModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.WithValueEnqueue(Common.RazorLib.Keys.Models.Key{RazorLib.TextEditors.Models.TextEditorViewModel}, Func{RazorLib.TextEditors.Models.TextEditorViewModel, RazorLib.TextEditors.Models.TextEditorViewModel})"/>
+    /// <see cref="ITextEditorService.TextEditorViewModelApi.WithValueEnqueue(Key{TextEditorViewModel}, Func{TextEditorViewModel, TextEditorViewModel})"/>
     /// </summary>
     [Fact]
     public void WithValueEnqueue()
@@ -106,7 +106,7 @@ public class TextEditorViewModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.Register(Common.RazorLib.Keys.Models.Key{RazorLib.TextEditors.Models.TextEditorViewModel}, RazorLib.Lexes.Models.ResourceUri)"/>
+    /// <see cref="ITextEditorService.TextEditorViewModelApi.Register(Key{TextEditorViewModel}, ResourceUri)"/>
     /// </summary>
     [Fact]
     public void Register()
@@ -133,7 +133,7 @@ public class TextEditorViewModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.GetModelOrDefault(Common.RazorLib.Keys.Models.Key{RazorLib.TextEditors.Models.TextEditorViewModel})"/>
+    /// <see cref="ITextEditorService.TextEditorViewModelApi.GetModelOrDefault(Key{TextEditorViewModel})"/>
     /// </summary>
     [Fact]
     public void FindBackingModelOrDefault()
@@ -142,7 +142,7 @@ public class TextEditorViewModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.GetAllText(Common.RazorLib.Keys.Models.Key{RazorLib.TextEditors.Models.TextEditorViewModel})"/>
+    /// <see cref="ITextEditorService.TextEditorViewModelApi.GetAllText(Key{TextEditorViewModel})"/>
     /// </summary>
     [Fact]
     public void GetAllText()
@@ -160,7 +160,7 @@ public class TextEditorViewModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.GetOrDefault(Common.RazorLib.Keys.Models.Key{RazorLib.TextEditors.Models.TextEditorViewModel})"/>
+    /// <see cref="ITextEditorService.TextEditorViewModelApi.GetOrDefault(Key{TextEditorViewModel})"/>
     /// </summary>
     [Fact]
     public void FindOrDefault()
@@ -187,7 +187,7 @@ public class TextEditorViewModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.WithTaskEnqueue(Common.RazorLib.Keys.Models.Key{RazorLib.TextEditors.Models.TextEditorViewModel}, Func{RazorLib.TextEditors.Models.TextEditorViewModel, Task{Func{RazorLib.TextEditors.Models.TextEditorViewModel, RazorLib.TextEditors.Models.TextEditorViewModel}}})"/>
+    /// <see cref="ITextEditorService.TextEditorViewModelApi.WithTaskEnqueue(Key{TextEditorViewModel}, Func{TextEditorViewModel, Task{Func{TextEditorViewModel, TextEditorViewModel}}})"/>
     /// </summary>
     [Fact]
     public void WithTaskEnqueue()
@@ -196,7 +196,7 @@ public class TextEditorViewModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.MoveCursor(Microsoft.AspNetCore.Components.Web.KeyboardEventArgs, RazorLib.Lexes.Models.ResourceUri, Common.RazorLib.Keys.Models.Key{RazorLib.TextEditors.Models.TextEditorViewModel}, Common.RazorLib.Keys.Models.Key{RazorLib.Cursors.Models.TextEditorCursor})"/>
+    /// <see cref="ITextEditorService.TextEditorViewModelApi.MoveCursorEnqueue(Microsoft.AspNetCore.Components.Web.KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel}, Key{TextEditorCursor})"/>
     /// </summary>
     [Fact]
     public void MoveCursorEnqueue()
@@ -205,7 +205,7 @@ public class TextEditorViewModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.CursorMovePageTopEnqueue(RazorLib.Lexes.Models.ResourceUri, Common.RazorLib.Keys.Models.Key{RazorLib.TextEditors.Models.TextEditorViewModel}, Common.RazorLib.Keys.Models.Key{RazorLib.Cursors.Models.TextEditorCursor})"/>
+    /// <see cref="ITextEditorService.TextEditorViewModelApi.CursorMovePageTopEnqueue(ResourceUri, Key{TextEditorViewModel}, Key{TextEditorCursor})"/>
     /// </summary>
     [Fact]
     public void CursorMovePageTopEnqueue()
@@ -215,7 +215,7 @@ public class TextEditorViewModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.CursorMovePageBottomEnqueue(RazorLib.Lexes.Models.ResourceUri, Common.RazorLib.Keys.Models.Key{RazorLib.TextEditors.Models.TextEditorViewModel}, Common.RazorLib.Keys.Models.Key{RazorLib.Cursors.Models.TextEditorCursor})"/>
+    /// <see cref="ITextEditorService.TextEditorViewModelApi.CursorMovePageBottomEnqueue(ResourceUri, Key{TextEditorViewModel}, Key{TextEditorCursor})"/>
     /// </summary>
     [Fact]
     public void CursorMovePageBottomEnqueue()
@@ -224,7 +224,7 @@ public class TextEditorViewModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.Dispose(Common.RazorLib.Keys.Models.Key{RazorLib.TextEditors.Models.TextEditorViewModel})"/>
+    /// <see cref="ITextEditorService.TextEditorViewModelApi.Dispose(Key{TextEditorViewModel})"/>
     /// </summary>
     [Fact]
     public void Dispose()
