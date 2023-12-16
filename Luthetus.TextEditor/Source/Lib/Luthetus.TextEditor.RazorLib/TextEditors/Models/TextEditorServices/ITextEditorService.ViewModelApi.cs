@@ -652,7 +652,7 @@ public partial interface ITextEditorService
             Key<TextEditorCursor> cursorKey)
         {
             var commandArgs = new TextEditorCommandArgs(
-                null, Key<TextEditorViewModel>.Empty, false, null,
+                modelResourceUri, viewModelKey, false, null,
                 _textEditorService, null, null, null, null, null, null);
 
             _textEditorService.EnqueueModification(
@@ -684,7 +684,7 @@ public partial interface ITextEditorService
             Key<TextEditorCursor> cursorKey)
         {
             var commandArgs = new TextEditorCommandArgs(
-                null, Key<TextEditorViewModel>.Empty, false, null,
+                modelResourceUri, viewModelKey, false, null,
                 _textEditorService, null, null, null, null, null, null);
 
             _textEditorService.EnqueueModification(
@@ -722,7 +722,7 @@ public partial interface ITextEditorService
             Key<TextEditorCursor> cursorKey)
         {
             var commandArgs = new TextEditorCommandArgs(
-                null, Key<TextEditorViewModel>.Empty, false, null,
+                modelResourceUri, viewModelKey, false, null,
                 _textEditorService, null, null, null, null, null, null);
 
             _textEditorService.EnqueueModification(

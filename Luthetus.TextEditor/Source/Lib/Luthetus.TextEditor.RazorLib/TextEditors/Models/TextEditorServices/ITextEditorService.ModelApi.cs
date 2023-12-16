@@ -11,6 +11,7 @@ using static Luthetus.TextEditor.RazorLib.TextEditors.States.TextEditorModelStat
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using static Luthetus.TextEditor.RazorLib.Commands.Models.TextEditorCommand;
+using static Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorService;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
@@ -378,18 +379,9 @@ public partial interface ITextEditorService
         }
 
         public ModificationTask HandleKeyboardEventAsync(KeyboardEventAction keyboardEventAction) =>
-            (_, _, _, _, _) =>
+            (_, _, _, refreshCursorsRequest, _) =>
             {
-                var cursorBag = keyboardEventAction.CursorModifierBag;
-
-                if (keyboardEventAction.ViewModelKey is not null)
-                {
-                    var viewModel = _textEditorService.ViewModelApi.GetOrDefault(
-                        keyboardEventAction.ViewModelKey.Value);
-
-                    if (viewModel is not null)
-                        cursorBag = viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList();
-                }
+                var cursorBag = refreshCursorsRequest?.CursorBag ?? keyboardEventAction.CursorModifierBag;
 
                 keyboardEventAction = keyboardEventAction with
                 {
@@ -398,34 +390,13 @@ public partial interface ITextEditorService
 
                 _dispatcher.Dispatch(keyboardEventAction);
 
-                if (keyboardEventAction.ViewModelKey is not null)
-                {
-                    _textEditorService.ViewModelApi.WithTaskAsync(
-                        keyboardEventAction.ViewModelKey.Value,
-                        inViewModel =>
-                        {
-                            var outCursorBag = new List<TextEditorCursor>();
-
-                            foreach (var cursorModifier in keyboardEventAction.CursorModifierBag)
-                            {
-                                outCursorBag.Add(cursorModifier.ToCursor());
-                            }
-
-                            return Task.FromResult(new Func<TextEditorViewModel, TextEditorViewModel>(
-                                state => state with
-                                {
-                                    CursorBag = outCursorBag.ToImmutableArray()
-                                }));
-                        });
-                }
-
                 return Task.CompletedTask;
             };
 
         public void HandleKeyboardEventEnqueue(KeyboardEventAction keyboardEventAction)
         {
             var commandArgs = new TextEditorCommandArgs(
-                keyboardEventAction.ResourceUri, Key<TextEditorViewModel>.Empty, false, null,
+                keyboardEventAction.ResourceUri, keyboardEventAction.ViewModelKey ?? Key<TextEditorViewModel>.Empty, false, null,
                 _textEditorService, null, null, null, null, null, null);
 
             _textEditorService.EnqueueModification(
@@ -435,18 +406,9 @@ public partial interface ITextEditorService
         }
 
         public ModificationTask DeleteTextByRangeAsync(DeleteTextByRangeAction deleteTextByRangeAction) =>
-            (_, _, _, _, _) =>
+            (_, _, _, refreshCursorsRequest, _) =>
             {
-                var cursorBag = deleteTextByRangeAction.CursorModifierBag;
-
-                if (deleteTextByRangeAction.ViewModelKey is not null)
-                {
-                    var viewModel = _textEditorService.ViewModelApi.GetOrDefault(
-                        deleteTextByRangeAction.ViewModelKey.Value);
-
-                    if (viewModel is not null)
-                        cursorBag = viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList();
-                }
+                var cursorBag = refreshCursorsRequest?.CursorBag ?? deleteTextByRangeAction.CursorModifierBag;
 
                 deleteTextByRangeAction = deleteTextByRangeAction with
                 {
@@ -455,34 +417,13 @@ public partial interface ITextEditorService
 
                 _dispatcher.Dispatch(deleteTextByRangeAction);
 
-                if (deleteTextByRangeAction.ViewModelKey is not null)
-                {
-                    _textEditorService.ViewModelApi.WithTaskAsync(
-                        deleteTextByRangeAction.ViewModelKey.Value,
-                        inViewModel =>
-                        {
-                            var outCursorBag = new List<TextEditorCursor>();
-
-                            foreach (var cursorModifier in deleteTextByRangeAction.CursorModifierBag)
-                            {
-                                outCursorBag.Add(cursorModifier.ToCursor());
-                            }
-
-                            return Task.FromResult(new Func<TextEditorViewModel, TextEditorViewModel>(
-                                state => state with
-                                {
-                                    CursorBag = outCursorBag.ToImmutableArray()
-                                }));
-                        });
-                }
-
                 return Task.CompletedTask;
             };
 
         public void DeleteTextByRangeEnqueue(DeleteTextByRangeAction deleteTextByRangeAction)
         {
             var commandArgs = new TextEditorCommandArgs(
-                deleteTextByRangeAction.ResourceUri, Key<TextEditorViewModel>.Empty, false, null,
+                deleteTextByRangeAction.ResourceUri, deleteTextByRangeAction.ViewModelKey ?? Key<TextEditorViewModel>.Empty, false, null,
                 _textEditorService, null, null, null, null, null, null);
 
             _textEditorService.EnqueueModification(
@@ -492,18 +433,9 @@ public partial interface ITextEditorService
         }
 
         public ModificationTask DeleteTextByMotionAsync(DeleteTextByMotionAction deleteTextByMotionAction) =>
-            (_, _, _, _, _) =>
+            (_, _, _, refreshCursorsRequest, _) =>
             {
-                var cursorBag = deleteTextByMotionAction.CursorModifierBag;
-
-                if (deleteTextByMotionAction.ViewModelKey is not null)
-                {
-                    var viewModel = _textEditorService.ViewModelApi.GetOrDefault(
-                        deleteTextByMotionAction.ViewModelKey.Value);
-
-                    if (viewModel is not null)
-                        cursorBag = viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList();
-                }
+                var cursorBag = refreshCursorsRequest?.CursorBag ?? deleteTextByMotionAction.CursorModifierBag;
 
                 deleteTextByMotionAction = deleteTextByMotionAction with
                 {
@@ -512,34 +444,13 @@ public partial interface ITextEditorService
 
                 _dispatcher.Dispatch(deleteTextByMotionAction);
 
-                if (deleteTextByMotionAction.ViewModelKey is not null)
-                {
-                    _textEditorService.ViewModelApi.WithTaskAsync(
-                        deleteTextByMotionAction.ViewModelKey.Value,
-                        inViewModel =>
-                        {
-                            var outCursorBag = new List<TextEditorCursor>();
-
-                            foreach (var cursorModifier in deleteTextByMotionAction.CursorModifierBag)
-                            {
-                                outCursorBag.Add(cursorModifier.ToCursor());
-                            }
-
-                            return Task.FromResult(new Func<TextEditorViewModel, TextEditorViewModel>(
-                                state => state with
-                                {
-                                    CursorBag = outCursorBag.ToImmutableArray()
-                                }));
-                        });
-                }
-
                 return Task.CompletedTask;
             };
 
         public void DeleteTextByMotionEnqueue(DeleteTextByMotionAction deleteTextByMotionAction)
         {
             var commandArgs = new TextEditorCommandArgs(
-                deleteTextByMotionAction.ResourceUri, Key<TextEditorViewModel>.Empty, false, null,
+                deleteTextByMotionAction.ResourceUri, deleteTextByMotionAction.ViewModelKey ?? Key<TextEditorViewModel>.Empty, false, null,
                 _textEditorService, null, null, null, null, null, null);
 
             _textEditorService.EnqueueModification(
