@@ -149,17 +149,20 @@ public partial class TextEditorService : ITextEditorService
             }
         }
 
-        var refreshCursorsRequest = new RefreshCursorsRequest(
-            commandArgs.ViewModelKey,
-            new List<TextEditorCursorModifier>());
+        var refreshCursorsRequest = (RefreshCursorsRequest?)null;
+        var primaryCursor = (TextEditorCursorModifier?)null;
 
-        refreshCursorsRequest.CursorBag.AddRange(viewModel.CursorBag
-            .Select(x => new TextEditorCursorModifier(x)));
+        if (viewModel is not null)
+        {
+            refreshCursorsRequest = new RefreshCursorsRequest(
+                viewModel.ViewModelKey,
+                new List<TextEditorCursorModifier>());
 
-        var primaryCursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
+            refreshCursorsRequest.CursorBag.AddRange(viewModel.CursorBag
+                .Select(x => new TextEditorCursorModifier(x)));
 
-        if (primaryCursor is null)
-            return;
+            primaryCursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
+        }
 
         await modificationTask.Invoke(
             commandArgs,

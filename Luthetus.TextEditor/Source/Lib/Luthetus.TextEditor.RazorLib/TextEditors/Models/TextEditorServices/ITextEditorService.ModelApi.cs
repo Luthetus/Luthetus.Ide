@@ -352,18 +352,9 @@ public partial interface ITextEditorService
         }
 
         public ModificationTask InsertTextAsync(InsertTextAction insertTextAction) =>
-            (_, _, _, _, _) =>
+            (_, _, viewModel, refreshCursorsRequest, primaryCursor) =>
             {
-                var cursorBag = insertTextAction.CursorModifierBag;
-
-                if (insertTextAction.ViewModelKey is not null)
-                {
-                    var viewModel = _textEditorService.ViewModelApi.GetOrDefault(
-                        insertTextAction.ViewModelKey.Value);
-
-                    if (viewModel is not null)
-                        cursorBag = viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList();
-                }
+                var cursorBag = refreshCursorsRequest?.CursorBag ?? insertTextAction.CursorModifierBag;
 
                 insertTextAction = insertTextAction with
                 {
@@ -372,33 +363,12 @@ public partial interface ITextEditorService
 
                 _dispatcher.Dispatch(insertTextAction);
 
-                if (insertTextAction.ViewModelKey is not null)
-                {
-                    _textEditorService.ViewModelApi.WithTaskAsync(
-                        insertTextAction.ViewModelKey.Value,
-                        inViewModel =>
-                        {
-                            var outCursorBag = new List<TextEditorCursor>();
-
-                            foreach (var cursorModifier in insertTextAction.CursorModifierBag)
-                            {
-                                outCursorBag.Add(cursorModifier.ToCursor());
-                            }
-
-                            return Task.FromResult(new Func<TextEditorViewModel, TextEditorViewModel>(
-                                state => state with
-                                {
-                                    CursorBag = outCursorBag.ToImmutableArray()
-                                }));
-                        });
-                }
-
                 return Task.CompletedTask;
             };
         public void InsertTextEnqueue(InsertTextAction insertTextAction)
         {
             var commandArgs = new TextEditorCommandArgs(
-                insertTextAction.ResourceUri, Key<TextEditorViewModel>.Empty, false, null,
+                insertTextAction.ResourceUri, insertTextAction.ViewModelKey ?? Key<TextEditorViewModel>.Empty, false, null,
                 _textEditorService, null, null, null, null, null, null);
 
             _textEditorService.EnqueueModification(
