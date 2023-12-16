@@ -1,4 +1,11 @@
-﻿using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Luthetus.TextEditor.RazorLib.TextEditors.States;
+using System;
 using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
@@ -14,7 +21,11 @@ public class TextEditorViewModelApiTests
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+            out var textEditorService,
+            out var serviceProvider);
+
+        Assert.NotNull(textEditorService.ViewModelApi);
     }
 
     /// <summary>
@@ -45,28 +56,51 @@ public class TextEditorViewModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.WithValue(Common.RazorLib.Keys.Models.Key{RazorLib.TextEditors.Models.TextEditorViewModel}, Func{RazorLib.TextEditors.Models.TextEditorViewModel, RazorLib.TextEditors.Models.TextEditorViewModel})"/>
+    /// <see cref="ITextEditorService.TextEditorViewModelApi.WithValueEnqueue(Common.RazorLib.Keys.Models.Key{RazorLib.TextEditors.Models.TextEditorViewModel}, Func{RazorLib.TextEditors.Models.TextEditorViewModel, RazorLib.TextEditors.Models.TextEditorViewModel})"/>
     /// </summary>
     [Fact]
-    public void With()
+    public void WithValueEnqueue()
+    {
+        InitializeTextEditorViewModelApiTests(
+            out var textEditorService,
+            out var model,
+            out var viewModel,
+            out var serviceProvider);
+
+        var oppositeShouldSetFocusAfterNextRender = !viewModel.ShouldSetFocusAfterNextRender;
+
+        Assert.NotEqual(
+            oppositeShouldSetFocusAfterNextRender,
+            viewModel.ShouldSetFocusAfterNextRender);
+
+        textEditorService.ViewModelApi.WithValueEnqueue(
+            viewModel.ViewModelKey,
+            inState => inState with
+            {
+                ShouldSetFocusAfterNextRender = oppositeShouldSetFocusAfterNextRender
+            });
+
+        var modifiedViewModel = textEditorService.ViewModelApi.GetOrDefault(viewModel.ViewModelKey);
+
+        Assert.Equal(
+            oppositeShouldSetFocusAfterNextRender,
+            modifiedViewModel!.ShouldSetFocusAfterNextRender);
+    }
+
+    /// <summary>
+    /// <see cref="ITextEditorService.TextEditorViewModelApi.SetScrollPositionEnqueue(string, string, double?, double?)"/>
+    /// </summary>
+    [Fact]
+    public void SetScrollPositionEnqueue()
     {
         throw new NotImplementedException();
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.SetScrollPositionAsync(string, string, double?, double?)"/>
+    /// <see cref="ITextEditorService.TextEditorViewModelApi.SetGutterScrollTopEnqueue(string, double)"/>
     /// </summary>
     [Fact]
-    public void SetScrollPositionAsync()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.SetGutterScrollTopAsync(string, double)"/>
-    /// </summary>
-    [Fact]
-    public void SetGutterScrollTopAsync()
+    public void SetGutterScrollTopEnqueue()
     {
         throw new NotImplementedException();
     }
@@ -81,19 +115,19 @@ public class TextEditorViewModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.MutateScrollVerticalPositionAsync(string, string, double)"/>
+    /// <see cref="ITextEditorService.TextEditorViewModelApi.MutateScrollVerticalPositionEnqueue(string, string, double)"/>
     /// </summary>
     [Fact]
-    public void MutateScrollVerticalPositionAsync()
+    public void MutateScrollVerticalPositionEnqueue()
     {
         throw new NotImplementedException();
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.MutateScrollHorizontalPositionAsync(string, string, double)"/>
+    /// <see cref="ITextEditorService.TextEditorViewModelApi.MutateScrollHorizontalPositionEnqueue(string, string, double)"/>
     /// </summary>
     [Fact]
-    public void MutateScrollHorizontalPositionAsync()
+    public void MutateScrollHorizontalPositionEnqueue()
     {
         throw new NotImplementedException();
     }
@@ -153,10 +187,10 @@ public class TextEditorViewModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.WithAsync(Common.RazorLib.Keys.Models.Key{RazorLib.TextEditors.Models.TextEditorViewModel}, Func{RazorLib.TextEditors.Models.TextEditorViewModel, Task{Func{RazorLib.TextEditors.Models.TextEditorViewModel, RazorLib.TextEditors.Models.TextEditorViewModel}}})"/>
+    /// <see cref="ITextEditorService.TextEditorViewModelApi.WithTaskEnqueue(Common.RazorLib.Keys.Models.Key{RazorLib.TextEditors.Models.TextEditorViewModel}, Func{RazorLib.TextEditors.Models.TextEditorViewModel, Task{Func{RazorLib.TextEditors.Models.TextEditorViewModel, RazorLib.TextEditors.Models.TextEditorViewModel}}})"/>
     /// </summary>
     [Fact]
-    public void SetViewModelWith()
+    public void WithTaskEnqueue()
     {
         throw new NotImplementedException();
     }
@@ -165,26 +199,26 @@ public class TextEditorViewModelApiTests
     /// <see cref="ITextEditorService.TextEditorViewModelApi.MoveCursor(Microsoft.AspNetCore.Components.Web.KeyboardEventArgs, RazorLib.Lexes.Models.ResourceUri, Common.RazorLib.Keys.Models.Key{RazorLib.TextEditors.Models.TextEditorViewModel}, Common.RazorLib.Keys.Models.Key{RazorLib.Cursors.Models.TextEditorCursor})"/>
     /// </summary>
     [Fact]
-    public void MoveCursor()
+    public void MoveCursorEnqueue()
     {
         throw new NotImplementedException();
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.CursorMovePageTop(RazorLib.Lexes.Models.ResourceUri, Common.RazorLib.Keys.Models.Key{RazorLib.TextEditors.Models.TextEditorViewModel}, Common.RazorLib.Keys.Models.Key{RazorLib.Cursors.Models.TextEditorCursor})"/>
+    /// <see cref="ITextEditorService.TextEditorViewModelApi.CursorMovePageTopEnqueue(RazorLib.Lexes.Models.ResourceUri, Common.RazorLib.Keys.Models.Key{RazorLib.TextEditors.Models.TextEditorViewModel}, Common.RazorLib.Keys.Models.Key{RazorLib.Cursors.Models.TextEditorCursor})"/>
     /// </summary>
     [Fact]
-    public void CursorMovePageTop()
+    public void CursorMovePageTopEnqueue()
     {
-    
+
         throw new NotImplementedException();
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.CursorMovePageBottom(RazorLib.Lexes.Models.ResourceUri, Common.RazorLib.Keys.Models.Key{RazorLib.TextEditors.Models.TextEditorViewModel}, Common.RazorLib.Keys.Models.Key{RazorLib.Cursors.Models.TextEditorCursor})"/>
+    /// <see cref="ITextEditorService.TextEditorViewModelApi.CursorMovePageBottomEnqueue(RazorLib.Lexes.Models.ResourceUri, Common.RazorLib.Keys.Models.Key{RazorLib.TextEditors.Models.TextEditorViewModel}, Common.RazorLib.Keys.Models.Key{RazorLib.Cursors.Models.TextEditorCursor})"/>
     /// </summary>
     [Fact]
-    public void CursorMovePageBottom()
+    public void CursorMovePageBottomEnqueue()
     {
         throw new NotImplementedException();
     }
@@ -196,5 +230,39 @@ public class TextEditorViewModelApiTests
     public void Dispose()
     {
         throw new NotImplementedException();
+    }
+
+    private void InitializeTextEditorViewModelApiTests(
+        out ITextEditorService textEditorService,
+        out TextEditorModel model,
+        out TextEditorViewModel viewModel,
+        out IServiceProvider serviceProvider)
+    {
+        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+            out textEditorService,
+            out serviceProvider);
+
+        var fileExtension = ExtensionNoPeriodFacts.TXT;
+        var resourceUri = new ResourceUri("/unitTesting.txt");
+        var resourceLastWriteTime = DateTime.UtcNow;
+        var initialContent = "Hello World!";
+
+        textEditorService.ModelApi.RegisterTemplated(
+            fileExtension,
+            resourceUri,
+            resourceLastWriteTime,
+            initialContent);
+
+        model = textEditorService.ModelApi.GetOrDefault(resourceUri)
+           ?? throw new ArgumentNullException();
+
+        var viewModelKey = Key<TextEditorViewModel>.NewKey();
+
+        textEditorService.ViewModelApi.Register(
+            viewModelKey,
+            resourceUri);
+
+        viewModel = textEditorService.ViewModelApi.GetOrDefault(viewModelKey)
+           ?? throw new ArgumentNullException();
     }
 }
