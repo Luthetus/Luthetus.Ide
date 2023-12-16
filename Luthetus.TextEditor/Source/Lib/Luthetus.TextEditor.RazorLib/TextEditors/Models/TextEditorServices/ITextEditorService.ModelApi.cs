@@ -6,12 +6,10 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using static Luthetus.TextEditor.RazorLib.TextEditors.States.TextEditorModelState;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using static Luthetus.TextEditor.RazorLib.Commands.Models.TextEditorCommand;
-using static Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorService;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 

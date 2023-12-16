@@ -1,9 +1,7 @@
-﻿using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
-using Luthetus.TextEditor.RazorLib.Decorations.Models;
+﻿using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
