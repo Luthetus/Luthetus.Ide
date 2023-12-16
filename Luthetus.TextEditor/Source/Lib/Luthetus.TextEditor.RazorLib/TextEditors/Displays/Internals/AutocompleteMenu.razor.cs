@@ -161,7 +161,7 @@ public partial class AutocompleteMenu : ComponentBase
             autocompleteEntry.DisplayName.Substring(word.Length),
             CancellationToken.None);
 
-        TextEditorService.ModelApi.InsertText(insertTextTextEditorModelAction);
+        TextEditorService.ModelApi.InsertTextEnqueue(insertTextTextEditorModelAction);
 
         return Task.CompletedTask;
     }

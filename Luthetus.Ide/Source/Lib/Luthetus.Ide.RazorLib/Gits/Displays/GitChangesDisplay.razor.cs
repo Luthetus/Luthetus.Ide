@@ -52,7 +52,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                     DiffPresentationFacts.InPresentationKey,
                 };
 
-                TextEditorService.ViewModelApi.With(
+                TextEditorService.ViewModelApi.WithValue(
                     BeforeViewModelKey,
                     textEditorViewModel => textEditorViewModel with
                     {
@@ -86,7 +86,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                     DiffPresentationFacts.OutPresentationKey,
                 };
 
-                TextEditorService.ViewModelApi.With(
+                TextEditorService.ViewModelApi.WithValue(
                     AfterViewModelKey,
                     textEditorViewModel => textEditorViewModel with
                     {

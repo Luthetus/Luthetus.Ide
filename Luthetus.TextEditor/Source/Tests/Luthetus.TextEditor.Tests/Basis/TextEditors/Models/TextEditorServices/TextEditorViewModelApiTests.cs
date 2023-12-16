@@ -45,7 +45,7 @@ public class TextEditorViewModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.With(Common.RazorLib.Keys.Models.Key{RazorLib.TextEditors.Models.TextEditorViewModel}, Func{RazorLib.TextEditors.Models.TextEditorViewModel, RazorLib.TextEditors.Models.TextEditorViewModel})"/>
+    /// <see cref="ITextEditorService.TextEditorViewModelApi.WithValue(Common.RazorLib.Keys.Models.Key{RazorLib.TextEditors.Models.TextEditorViewModel}, Func{RazorLib.TextEditors.Models.TextEditorViewModel, RazorLib.TextEditors.Models.TextEditorViewModel})"/>
     /// </summary>
     [Fact]
     public void With()

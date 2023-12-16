@@ -142,7 +142,7 @@ public record TextEditorViewModel : IDisposable
     {
         await _batchScrollEvents.ThrottleSetScrollPosition.FireAsync((async _ =>
         {
-            await TextEditorService.ViewModelApi.SetScrollPositionAsync(
+            await TextEditorService.ViewModelApi.SetScrollPosition(
 				BodyElementId,
 				GutterElementId,
                 scrollLeft,
@@ -183,7 +183,7 @@ public record TextEditorViewModel : IDisposable
 				SeenOptionsRenderStateKeysBag.Add(options.RenderStateKey);
             }
 
-			TextEditorService.ViewModelApi.With(
+			TextEditorService.ViewModelApi.WithValue(
 				ViewModelKey,
                 previousViewModel => (previousViewModel with
                 {
@@ -424,7 +424,7 @@ public record TextEditorViewModel : IDisposable
 				SeenModelRenderStateKeysBag.Add(model.RenderStateKey);
             }
 
-			TextEditorService.ViewModelApi.With(
+			TextEditorService.ViewModelApi.WithValue(
 				ViewModelKey,
                 previousViewModel => (previousViewModel with
                 {
