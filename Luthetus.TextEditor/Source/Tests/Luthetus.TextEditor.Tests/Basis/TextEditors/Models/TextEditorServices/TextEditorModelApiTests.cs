@@ -26,8 +26,10 @@ public class TextEditorModelApiTests
     [Fact]
     public void Constructor()
     {
-        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
+            out var inModel,
+            out var inViewModel,
             out var serviceProvider);
 
         Assert.NotNull(textEditorService.ModelApi);
@@ -39,22 +41,11 @@ public class TextEditorModelApiTests
     [Fact]
     public void UndoEdit()
     {
-        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
+            out var inModel,
+            out var inViewModel,
             out var serviceProvider);
-
-        var fileExtension = ExtensionNoPeriodFacts.TXT;
-        var resourceUri = new ResourceUri("/unitTesting.txt");
-        var resourceLastWriteTime = DateTime.UtcNow;
-        var initialContent = "Hello World!";
-
-        textEditorService.ModelApi.RegisterTemplated(
-            fileExtension,
-            resourceUri,
-            resourceLastWriteTime,
-            initialContent);
-
-        var originalModel = textEditorService.ModelApi.GetModels().Single();
 
         var cursor = new TextEditorCursor(0, 0, 0, true, TextEditorSelection.Empty);
         var cursorBag = new[] { new TextEditorCursorModifier(cursor) }.ToList();
@@ -62,21 +53,21 @@ public class TextEditorModelApiTests
         var insertedText = "I have something to say: ";
 
         textEditorService.ModelApi.InsertTextEnqueue(new TextEditorModelState.InsertTextAction(
-            resourceUri,
+            inModel.ResourceUri,
             null,
             cursorBag,
             insertedText,
             CancellationToken.None));
 
-        var modifiedModel = textEditorService.ModelApi.GetModels().Single();
+        var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(
-            insertedText + originalModel.GetAllText(),
-            modifiedModel.GetAllText());
+            insertedText + inModel.GetAllText(),
+            outModel.GetAllText());
 
-        textEditorService.ModelApi.UndoEditEnqueue(resourceUri);
+        textEditorService.ModelApi.UndoEditEnqueue(inModel.ResourceUri);
 
-        modifiedModel = textEditorService.ModelApi.GetModels().Single();
-        Assert.Equal(initialContent, modifiedModel.GetAllText());
+        outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+        Assert.Equal(inModel.GetAllText(), outModel.GetAllText());
     }
 
     /// <summary>
@@ -85,36 +76,22 @@ public class TextEditorModelApiTests
     [Fact]
     public void SetUsingRowEndingKind()
     {
-        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
+            out var inModel,
+            out var inViewModel,
             out var serviceProvider);
-
-        Assert.Empty(textEditorService.ModelApi.GetModels());
-
-        var fileExtension = ExtensionNoPeriodFacts.TXT;
-        var resourceUri = new ResourceUri("/unitTesting.txt");
-        var resourceLastWriteTime = DateTime.UtcNow;
-        var initialContent = "Hello World!";
-
-        textEditorService.ModelApi.RegisterTemplated(
-            fileExtension,
-            resourceUri,
-            resourceLastWriteTime,
-            initialContent);
-
-        Assert.Single(textEditorService.ModelApi.GetModels());
-        var existingModel = textEditorService.ModelApi.GetModels().Single();
 
         var rowEndingKind = RowEndingKind.CarriageReturn;
 
         // Assert the current values are different from that which will be set.
-        Assert.NotEqual(rowEndingKind, existingModel.UsingRowEndingKind);
+        Assert.NotEqual(rowEndingKind, inModel.UsingRowEndingKind);
 
-        textEditorService.ModelApi.SetUsingRowEndingKindEnqueue(resourceUri, rowEndingKind);
-        existingModel = textEditorService.ModelApi.GetOrDefault(resourceUri);
+        textEditorService.ModelApi.SetUsingRowEndingKindEnqueue(inModel.ResourceUri, rowEndingKind);
+        var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
 
         // Assert the value is now set
-        Assert.Equal(rowEndingKind, existingModel!.UsingRowEndingKind);
+        Assert.Equal(rowEndingKind, outModel!.UsingRowEndingKind);
     }
 
     /// <summary>
@@ -123,36 +100,22 @@ public class TextEditorModelApiTests
     [Fact]
     public void SetResourceData()
     {
-        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
+            out var inModel,
+            out var inViewModel,
             out var serviceProvider);
 
-        Assert.Empty(textEditorService.ModelApi.GetModels());
-
-        var fileExtension = ExtensionNoPeriodFacts.TXT;
-        var resourceUri = new ResourceUri("/unitTesting.txt");
-        var resourceLastWriteTime = DateTime.UtcNow;
-        var initialContent = "Hello World!";
-
-        textEditorService.ModelApi.RegisterTemplated(
-            fileExtension,
-            resourceUri,
-            resourceLastWriteTime,
-            initialContent);
-
-        Assert.Single(textEditorService.ModelApi.GetModels());
-        var existingModel = textEditorService.ModelApi.GetModels().Single();
-
-        var newResourceLastWriteTime = resourceLastWriteTime.AddDays(1);
+        var newResourceLastWriteTime = inModel.ResourceLastWriteTime.AddDays(1);
 
         // Assert the current values are different from that which will be set.
-        Assert.NotEqual(newResourceLastWriteTime, existingModel.ResourceLastWriteTime);
+        Assert.NotEqual(newResourceLastWriteTime, inModel.ResourceLastWriteTime);
 
-        textEditorService.ModelApi.SetResourceDataEnqueue(resourceUri, newResourceLastWriteTime);
-        existingModel = textEditorService.ModelApi.GetOrDefault(resourceUri);
+        textEditorService.ModelApi.SetResourceDataEnqueue(inModel.ResourceUri, newResourceLastWriteTime);
+        var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
 
         // Assert the values are now set
-        Assert.Equal(newResourceLastWriteTime, existingModel!.ResourceLastWriteTime);
+        Assert.Equal(newResourceLastWriteTime, outModel!.ResourceLastWriteTime);
     }
 
     /// <summary>
@@ -161,36 +124,22 @@ public class TextEditorModelApiTests
     [Fact]
     public void Reload()
     {
-        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
+            out var inModel,
+            out var inViewModel,
             out var serviceProvider);
-
-        Assert.Empty(textEditorService.ModelApi.GetModels());
-
-        var fileExtension = ExtensionNoPeriodFacts.TXT;
-        var resourceUri = new ResourceUri("/unitTesting.txt");
-        var resourceLastWriteTime = DateTime.UtcNow;
-        var initialContent = "Hello World!";
-
-        textEditorService.ModelApi.RegisterTemplated(
-            fileExtension,
-            resourceUri,
-            resourceLastWriteTime,
-            initialContent);
-
-        Assert.Single(textEditorService.ModelApi.GetModels());
-        var existingModel = textEditorService.ModelApi.GetModels().Single();
 
         var newContent = "Alphabet Soup";
 
         // Assert the current values are different from that which will be set.
-        Assert.NotEqual(newContent, existingModel.GetAllText());
+        Assert.NotEqual(newContent, inModel.GetAllText());
 
-        textEditorService.ModelApi.ReloadEnqueue(resourceUri, newContent, DateTime.UtcNow);
-        existingModel = textEditorService.ModelApi.GetOrDefault(resourceUri);
+        textEditorService.ModelApi.ReloadEnqueue(inModel.ResourceUri, newContent, DateTime.UtcNow);
+        var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
 
         // Assert the values are now set
-        Assert.Equal(newContent, existingModel!.GetAllText());
+        Assert.Equal(newContent, outModel!.GetAllText());
     }
 
     /// <summary>
@@ -199,11 +148,11 @@ public class TextEditorModelApiTests
     [Fact]
     public void RegisterCustom()
     {
-        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
+            out _,
+            out var inViewModel,
             out var serviceProvider);
-
-        Assert.Empty(textEditorService.ModelApi.GetModels());
 
         var fileExtension = ExtensionNoPeriodFacts.TXT;
         var resourceUri = new ResourceUri("/unitTesting.txt");
@@ -226,8 +175,7 @@ public class TextEditorModelApiTests
 
         textEditorService.ModelApi.RegisterCustom(model);
 
-        Assert.Single(textEditorService.ModelApi.GetModels());
-        var existingModel = textEditorService.ModelApi.GetModels().Single();
+        var existingModel = textEditorService.ModelApi.GetOrDefault(model.ResourceUri);
 
         Assert.Equal(resourceUri, existingModel.ResourceUri);
         Assert.Equal(resourceLastWriteTime, existingModel.ResourceLastWriteTime);
@@ -241,8 +189,10 @@ public class TextEditorModelApiTests
     [Fact]
     public void RegisterTemplated()
     {
-        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
+            out _,
+            out var inViewModel,
             out var serviceProvider);
 
         Assert.Empty(textEditorService.ModelApi.GetModels());
@@ -258,13 +208,12 @@ public class TextEditorModelApiTests
             resourceLastWriteTime,
             initialContent);
 
-        Assert.Single(textEditorService.ModelApi.GetModels());
-        var existingModel = textEditorService.ModelApi.GetModels().Single();
+        var model = textEditorService.ModelApi.GetOrDefault(resourceUri);
 
-        Assert.Equal(resourceUri, existingModel.ResourceUri);
-        Assert.Equal(resourceLastWriteTime, existingModel.ResourceLastWriteTime);
-        Assert.Equal(initialContent, existingModel.GetAllText());
-        Assert.Equal(fileExtension, existingModel.FileExtension);
+        Assert.Equal(resourceUri, model.ResourceUri);
+        Assert.Equal(resourceLastWriteTime, model.ResourceLastWriteTime);
+        Assert.Equal(initialContent, model.GetAllText());
+        Assert.Equal(fileExtension, model.FileExtension);
     }
 
     /// <summary>
@@ -273,22 +222,11 @@ public class TextEditorModelApiTests
     [Fact]
     public void RedoEditEnqueue()
     {
-        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
+            out var inModel,
+            out var inViewModel,
             out var serviceProvider);
-
-        var fileExtension = ExtensionNoPeriodFacts.TXT;
-        var resourceUri = new ResourceUri("/unitTesting.txt");
-        var resourceLastWriteTime = DateTime.UtcNow;
-        var initialContent = "Hello World!";
-
-        textEditorService.ModelApi.RegisterTemplated(
-            fileExtension,
-            resourceUri,
-            resourceLastWriteTime,
-            initialContent);
-
-        var originalModel = textEditorService.ModelApi.GetModels().Single();
 
         var cursor = new TextEditorCursor(0, 0, 0, true, TextEditorSelection.Empty);
         var cursorBag = new[] { new TextEditorCursorModifier(cursor) }.ToList();
@@ -296,28 +234,24 @@ public class TextEditorModelApiTests
         var insertedText = "I have something to say: ";
 
         textEditorService.ModelApi.InsertTextEnqueue(new TextEditorModelState.InsertTextAction(
-            resourceUri,
+            inModel.ResourceUri,
             null,
             cursorBag,
             insertedText,
             CancellationToken.None));
 
-        var modifiedModel = textEditorService.ModelApi.GetModels().Single();
-        Assert.Equal(
-            insertedText + originalModel.GetAllText(),
-            modifiedModel.GetAllText());
+        var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+        Assert.Equal(insertedText + inModel.GetAllText(), outModel.GetAllText());
 
-        textEditorService.ModelApi.UndoEditEnqueue(resourceUri);
+        textEditorService.ModelApi.UndoEditEnqueue(inModel.ResourceUri);
 
-        modifiedModel = textEditorService.ModelApi.GetModels().Single();
-        Assert.Equal(initialContent, modifiedModel.GetAllText());
+        outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+        Assert.Equal(inModel.GetAllText(), outModel.GetAllText());
 
-        textEditorService.ModelApi.RedoEditEnqueue(resourceUri);
+        textEditorService.ModelApi.RedoEditEnqueue(inModel.ResourceUri);
 
-        modifiedModel = textEditorService.ModelApi.GetModels().Single();
-        Assert.Equal(
-            insertedText + originalModel.GetAllText(),
-            modifiedModel.GetAllText());
+        outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+        Assert.Equal(insertedText + inModel.GetAllText(), outModel.GetAllText());
     }
 
     /// <summary>
@@ -326,22 +260,11 @@ public class TextEditorModelApiTests
     [Fact]
     public void InsertTextEnqueue()
     {
-        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
+            out var inModel,
+            out var inViewModel,
             out var serviceProvider);
-
-        var fileExtension = ExtensionNoPeriodFacts.TXT;
-        var resourceUri = new ResourceUri("/unitTesting.txt");
-        var resourceLastWriteTime = DateTime.UtcNow;
-        var initialContent = "Hello World!";
-
-        textEditorService.ModelApi.RegisterTemplated(
-            fileExtension,
-            resourceUri,
-            resourceLastWriteTime,
-            initialContent);
-
-        var originalModel = textEditorService.ModelApi.GetModels().Single();
 
         var cursor = new TextEditorCursor(0, 0, 0, true, TextEditorSelection.Empty);
         var cursorBag = new[] { new TextEditorCursorModifier(cursor) }.ToList();
@@ -349,17 +272,14 @@ public class TextEditorModelApiTests
         var insertedText = "I have something to say: ";
 
         textEditorService.ModelApi.InsertTextEnqueue(new TextEditorModelState.InsertTextAction(
-            resourceUri,
+            inModel.ResourceUri,
             null,
             cursorBag,
             insertedText,
             CancellationToken.None));
 
-        var modifiedModel = textEditorService.ModelApi.GetModels().Single();
-
-        Assert.Equal(
-            insertedText + originalModel.GetAllText(),
-            modifiedModel.GetAllText());
+        var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+        Assert.Equal(insertedText + inModel.GetAllText(), outModel.GetAllText());
     }
 
     /// <summary>
@@ -368,22 +288,11 @@ public class TextEditorModelApiTests
     [Fact]
     public void HandleKeyboardEventEnqueue()
     {
-        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
+            out var inModel,
+            out var inViewModel,
             out var serviceProvider);
-
-        var fileExtension = ExtensionNoPeriodFacts.TXT;
-        var resourceUri = new ResourceUri("/unitTesting.txt");
-        var resourceLastWriteTime = DateTime.UtcNow;
-        var initialContent = "Hello World!";
-
-        textEditorService.ModelApi.RegisterTemplated(
-            fileExtension,
-            resourceUri,
-            resourceLastWriteTime,
-            initialContent);
-
-        var originalModel = textEditorService.ModelApi.GetModels().Single();
 
         var cursor = new TextEditorCursor(0, 0, 0, true, TextEditorSelection.Empty);
         var cursorBag = new[] { new TextEditorCursorModifier(cursor) }.ToList();
@@ -396,17 +305,14 @@ public class TextEditorModelApiTests
         };
 
         textEditorService.ModelApi.HandleKeyboardEventEnqueue(new TextEditorModelState.KeyboardEventAction(
-            resourceUri,
+            inModel.ResourceUri,
             null,
             cursorBag,
             keyboardEventArgs,
             CancellationToken.None));
 
-        var modifiedModel = textEditorService.ModelApi.GetModels().Single();
-
-        Assert.Equal(
-            key + originalModel.GetAllText(),
-            modifiedModel.GetAllText());
+        var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+        Assert.Equal(key + inModel.GetAllText(), outModel.GetAllText());
     }
 
     /// <summary>
@@ -415,30 +321,19 @@ public class TextEditorModelApiTests
     [Fact]
     public void GetViewModelsOrEmpty()
     {
-        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
+            out var inModel,
+            out var inViewModel,
             out var serviceProvider);
 
-        var fileExtension = ExtensionNoPeriodFacts.TXT;
-        var resourceUri = new ResourceUri("/unitTesting.txt");
-        var resourceLastWriteTime = DateTime.UtcNow;
-        var initialContent = "Hello World!";
-
-        textEditorService.ModelApi.RegisterTemplated(
-            fileExtension,
-            resourceUri,
-            resourceLastWriteTime,
-            initialContent);
-
-        var model = textEditorService.ModelApi.GetModels().Single();
-
-        Assert.Empty(textEditorService.ModelApi.GetViewModelsOrEmpty(model.ResourceUri));
+        Assert.Empty(textEditorService.ModelApi.GetViewModelsOrEmpty(inModel.ResourceUri));
 
         textEditorService.ViewModelApi.Register(
             Key<TextEditorViewModel>.NewKey(),
-            model.ResourceUri);
+            inModel.ResourceUri);
         
-        Assert.Single(textEditorService.ModelApi.GetViewModelsOrEmpty(model.ResourceUri));
+        Assert.Single(textEditorService.ModelApi.GetViewModelsOrEmpty(inModel.ResourceUri));
     }
 
     /// <summary>
@@ -447,8 +342,10 @@ public class TextEditorModelApiTests
     [Fact]
     public void GetAllText()
     {
-        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
+            out _,
+            out var inViewModel,
             out var serviceProvider);
 
         var fileExtension = ExtensionNoPeriodFacts.TXT;
@@ -462,8 +359,7 @@ public class TextEditorModelApiTests
             resourceLastWriteTime,
             initialContent);
 
-        var model = textEditorService.ModelApi.GetModels().Single();
-
+        var model = textEditorService.ModelApi.GetOrDefault(resourceUri);
         Assert.Equal(initialContent, model.GetAllText());
     }
 
@@ -473,23 +369,14 @@ public class TextEditorModelApiTests
     [Fact]
     public void GetOrDefault()
     {
-        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
+            out var inModel,
+            out var inViewModel,
             out var serviceProvider);
 
-        var fileExtension = ExtensionNoPeriodFacts.TXT;
-        var resourceUri = new ResourceUri("/unitTesting.txt");
-        var resourceLastWriteTime = DateTime.UtcNow;
-        var initialContent = "Hello World!";
-
-        textEditorService.ModelApi.RegisterTemplated(
-            fileExtension,
-            resourceUri,
-            resourceLastWriteTime,
-            initialContent);
-
-        var model = textEditorService.ModelApi.GetOrDefault(resourceUri);
-        Assert.NotNull(model);
+        var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+        Assert.NotNull(outModel);
     }
 
     /// <summary>
@@ -498,26 +385,15 @@ public class TextEditorModelApiTests
     [Fact]
     public void Dispose()
     {
-        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
+            out var model,
+            out var inViewModel,
             out var serviceProvider);
-
-        Assert.Empty(textEditorService.ModelApi.GetModels());
-
-        var fileExtension = ExtensionNoPeriodFacts.TXT;
-        var resourceUri = new ResourceUri("/unitTesting.txt");
-        var resourceLastWriteTime = DateTime.UtcNow;
-        var initialContent = "Hello World!";
-
-        textEditorService.ModelApi.RegisterTemplated(
-            fileExtension,
-            resourceUri,
-            resourceLastWriteTime,
-            initialContent);
 
         Assert.Single(textEditorService.ModelApi.GetModels());
 
-        textEditorService.ModelApi.Dispose(resourceUri);
+        textEditorService.ModelApi.Dispose(model.ResourceUri);
         Assert.Empty(textEditorService.ModelApi.GetModels());
     }
 
@@ -527,43 +403,29 @@ public class TextEditorModelApiTests
     [Fact]
     public void DeleteTextByRangeEnqueue()
     {
-        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
+            out var inModel,
+            out var inViewModel,
             out var serviceProvider);
 
-        Assert.Empty(textEditorService.ModelApi.GetModels());
-
-        var fileExtension = ExtensionNoPeriodFacts.TXT;
-        var resourceUri = new ResourceUri("/unitTesting.txt");
-        var resourceLastWriteTime = DateTime.UtcNow;
-        var initialContent = "Hello World!";
-
         var textToDelete = " World!";
-        var expectedContent = initialContent.Replace(textToDelete, string.Empty);
+        var expectedContent = inModel.GetAllText().Replace(textToDelete, string.Empty);
 
-        textEditorService.ModelApi.RegisterTemplated(
-            fileExtension,
-            resourceUri,
-            resourceLastWriteTime,
-            initialContent);
-
-        var model = textEditorService.ModelApi.GetOrDefault(resourceUri);
-
-        var columnIndex = initialContent.IndexOf(textToDelete);
+        var columnIndex = inModel.GetAllText().IndexOf(textToDelete);
 
         var cursor = new TextEditorCursor(0, columnIndex, columnIndex, true, TextEditorSelection.Empty);
         var cursorBag = new[] { new TextEditorCursorModifier(cursor) }.ToList();
 
         textEditorService.ModelApi.DeleteTextByRangeEnqueue(new TextEditorModelState.DeleteTextByRangeAction(
-            resourceUri,
+            inModel.ResourceUri,
             null,
             cursorBag,
             textToDelete.Length,
             CancellationToken.None));
 
-        model = textEditorService.ModelApi.GetOrDefault(resourceUri);
-
-        Assert.Equal(expectedContent, model!.GetAllText());
+        var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+        Assert.Equal(expectedContent, outModel!.GetAllText());
     }
 
     /// <summary>
@@ -572,43 +434,30 @@ public class TextEditorModelApiTests
     [Fact]
     public void DeleteTextByMotionEnqueue_Backspace()
     {
-        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
+            out var inModel,
+            out var inViewModel,
             out var serviceProvider);
-
-        Assert.Empty(textEditorService.ModelApi.GetModels());
-
-        var fileExtension = ExtensionNoPeriodFacts.TXT;
-        var resourceUri = new ResourceUri("/unitTesting.txt");
-        var resourceLastWriteTime = DateTime.UtcNow;
-        var initialContent = "Hello World!";
 
         // "Hello World" -> "HelloWorld" is the expected output
         var wordToJoin = "World!";
         var expectedContent = "HelloWorld!";
 
-        textEditorService.ModelApi.RegisterTemplated(
-            fileExtension,
-            resourceUri,
-            resourceLastWriteTime,
-            initialContent);
-
-        var model = textEditorService.ModelApi.GetOrDefault(resourceUri);
-
-        var columnIndex = initialContent.IndexOf(wordToJoin);
+        var columnIndex = inModel.GetAllText().IndexOf(wordToJoin);
 
         var cursor = new TextEditorCursor(0, columnIndex, columnIndex, true, TextEditorSelection.Empty);
         var cursorBag = new[] { new TextEditorCursorModifier(cursor) }.ToList();
 
         textEditorService.ModelApi.DeleteTextByMotionEnqueue(new TextEditorModelState.DeleteTextByMotionAction(
-            resourceUri,
+            inModel.ResourceUri,
             null,
             cursorBag,
             MotionKind.Backspace,
             CancellationToken.None));
 
-        model = textEditorService.ModelApi.GetOrDefault(resourceUri);
-        Assert.Equal(expectedContent, model!.GetAllText());
+        var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+        Assert.Equal(expectedContent, outModel!.GetAllText());
     }
     
     /// <summary>
@@ -617,43 +466,30 @@ public class TextEditorModelApiTests
     [Fact]
     public void DeleteTextByMotionEnqueue_Delete()
     {
-        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
+            out var inModel,
+            out var inViewModel,
             out var serviceProvider);
-
-        Assert.Empty(textEditorService.ModelApi.GetModels());
-
-        var fileExtension = ExtensionNoPeriodFacts.TXT;
-        var resourceUri = new ResourceUri("/unitTesting.txt");
-        var resourceLastWriteTime = DateTime.UtcNow;
-        var initialContent = "Hello World!";
 
         // "Hello World" -> "HelloWorld" is the expected output
         var spaceText = " ";
         var expectedContent = "HelloWorld!";
 
-        textEditorService.ModelApi.RegisterTemplated(
-            fileExtension,
-            resourceUri,
-            resourceLastWriteTime,
-            initialContent);
-
-        var model = textEditorService.ModelApi.GetOrDefault(resourceUri);
-
-        var columnIndex = initialContent.IndexOf(spaceText);
+        var columnIndex = inModel.GetAllText().IndexOf(spaceText);
 
         var cursor = new TextEditorCursor(0, columnIndex, columnIndex, true, TextEditorSelection.Empty);
         var cursorBag = new[] { new TextEditorCursorModifier(cursor) }.ToList();
 
         textEditorService.ModelApi.DeleteTextByMotionEnqueue(new TextEditorModelState.DeleteTextByMotionAction(
-            resourceUri,
+            inModel.ResourceUri,
             null,
             cursorBag,
             MotionKind.Delete,
             CancellationToken.None));
 
-        model = textEditorService.ModelApi.GetOrDefault(resourceUri);
-        Assert.Equal(expectedContent, model!.GetAllText());
+        var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+        Assert.Equal(expectedContent, outModel!.GetAllText());
     }
 
     /// <summary>
@@ -662,27 +498,17 @@ public class TextEditorModelApiTests
     [Fact]
     public void RegisterPresentationModel()
     {
-        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
+            out var inModel,
+            out var inViewModel,
             out var serviceProvider);
 
-        var fileExtension = ExtensionNoPeriodFacts.TXT;
-        var resourceUri = new ResourceUri("/unitTesting.txt");
-        var resourceLastWriteTime = DateTime.UtcNow;
-        var initialContent = "Hello World!";
-
-        textEditorService.ModelApi.RegisterTemplated(
-            fileExtension,
-            resourceUri,
-            resourceLastWriteTime,
-            initialContent);
-
-        var model = textEditorService.ModelApi.GetOrDefault(resourceUri);
-        Assert.Empty(model!.PresentationModelsBag);
+        Assert.Empty(inModel!.PresentationModelsBag);
         
-        textEditorService.ModelApi.RegisterPresentationModel(resourceUri, DiffPresentationFacts.EmptyOutPresentationModel);
+        textEditorService.ModelApi.RegisterPresentationModel(inModel.ResourceUri, DiffPresentationFacts.EmptyOutPresentationModel);
 
-        model = textEditorService.ModelApi.GetOrDefault(resourceUri);
-        Assert.NotEmpty(model!.PresentationModelsBag);
+        var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+        Assert.NotEmpty(outModel!.PresentationModelsBag);
     }
 }

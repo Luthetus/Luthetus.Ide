@@ -20,8 +20,10 @@ public class TextEditorViewModelApiTests
     [Fact]
     public void Constructor()
     {
-        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
+            out var inModel,
+            out var inViewModel,
             out var serviceProvider);
 
         Assert.NotNull(textEditorService.ViewModelApi);
@@ -60,26 +62,26 @@ public class TextEditorViewModelApiTests
     [Fact]
     public void WithValueEnqueue()
     {
-        InitializeTextEditorViewModelApiTests(
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
-            out var model,
-            out var viewModel,
+            out var inModel,
+            out var inViewModel,
             out var serviceProvider);
 
-        var oppositeShouldSetFocusAfterNextRender = !viewModel.ShouldSetFocusAfterNextRender;
+        var oppositeShouldSetFocusAfterNextRender = !inViewModel.ShouldSetFocusAfterNextRender;
 
         Assert.NotEqual(
             oppositeShouldSetFocusAfterNextRender,
-            viewModel.ShouldSetFocusAfterNextRender);
+            inViewModel.ShouldSetFocusAfterNextRender);
 
         textEditorService.ViewModelApi.WithValueEnqueue(
-            viewModel.ViewModelKey,
+            inViewModel.ViewModelKey,
             inState => inState with
             {
                 ShouldSetFocusAfterNextRender = oppositeShouldSetFocusAfterNextRender
             });
 
-        var modifiedViewModel = textEditorService.ViewModelApi.GetOrDefault(viewModel.ViewModelKey);
+        var modifiedViewModel = textEditorService.ViewModelApi.GetOrDefault(inViewModel.ViewModelKey);
 
         Assert.Equal(
             oppositeShouldSetFocusAfterNextRender,
@@ -229,39 +231,5 @@ public class TextEditorViewModelApiTests
     public void Dispose()
     {
         throw new NotImplementedException();
-    }
-
-    private void InitializeTextEditorViewModelApiTests(
-        out ITextEditorService textEditorService,
-        out TextEditorModel model,
-        out TextEditorViewModel viewModel,
-        out IServiceProvider serviceProvider)
-    {
-        TextEditorServicesTestsHelper.InitializeTextEditorServiceTests(
-            out textEditorService,
-            out serviceProvider);
-
-        var fileExtension = ExtensionNoPeriodFacts.TXT;
-        var resourceUri = new ResourceUri("/unitTesting.txt");
-        var resourceLastWriteTime = DateTime.UtcNow;
-        var initialContent = "Hello World!";
-
-        textEditorService.ModelApi.RegisterTemplated(
-            fileExtension,
-            resourceUri,
-            resourceLastWriteTime,
-            initialContent);
-
-        model = textEditorService.ModelApi.GetOrDefault(resourceUri)
-           ?? throw new ArgumentNullException();
-
-        var viewModelKey = Key<TextEditorViewModel>.NewKey();
-
-        textEditorService.ViewModelApi.Register(
-            viewModelKey,
-            resourceUri);
-
-        viewModel = textEditorService.ViewModelApi.GetOrDefault(viewModelKey)
-           ?? throw new ArgumentNullException();
     }
 }

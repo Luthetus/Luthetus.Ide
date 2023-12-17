@@ -1,5 +1,10 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorModels;
+using Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
+using Luthetus.TextEditor.RazorLib.Characters.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 
@@ -14,7 +19,29 @@ public class TextEditorViewModelTests
 	[Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+			out _,
+            out var serviceProvider);
+
+		var viewModelKey = Common.RazorLib.Keys.Models.Key<TextEditorViewModel>.NewKey();
+		var resourceUri = inModel.ResourceUri;
+		var virtualizationResult = VirtualizationResult<List<RichCharacter>>.GetEmptyRichCharacters();
+		var displayCommandBar = false;
+
+        var viewModel = new TextEditorViewModel(
+			viewModelKey,
+			resourceUri,
+			textEditorService,
+            virtualizationResult,
+            displayCommandBar);
+
+        Assert.Equal(viewModelKey, viewModel.ViewModelKey);
+        Assert.Equal(resourceUri, viewModel.ResourceUri);
+        Assert.Equal(textEditorService, viewModel.TextEditorService);
+        Assert.Equal(virtualizationResult, viewModel.VirtualizationResult);
+		Assert.Equal(displayCommandBar, viewModel.DisplayCommandBar);
 	}
 
 	/// <summary>
@@ -158,7 +185,6 @@ public class TextEditorViewModelTests
 	[Fact]
 	public void CommandBarValue()
 	{
-		//public string  { get; set; } = string.Empty;
 		throw new NotImplementedException();
 	}
 
@@ -177,7 +203,15 @@ public class TextEditorViewModelTests
 	[Fact]
 	public void BodyElementId()
 	{
-		throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+		Assert.Equal(
+			$"luth_te_text-editor-content_{inViewModel.ViewModelKey.Guid}",
+			inViewModel.BodyElementId);
 	}
 
 	/// <summary>
@@ -185,8 +219,16 @@ public class TextEditorViewModelTests
 	/// </summary>
 	[Fact]
 	public void PrimaryCursorContentId()
-	{
-		throw new NotImplementedException();
+    {
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        Assert.Equal(
+            $"luth_te_text-editor-content_{inViewModel.ViewModelKey.Guid}_primary-cursor",
+            inViewModel.PrimaryCursorContentId);
 	}
 
 	/// <summary>
@@ -194,8 +236,16 @@ public class TextEditorViewModelTests
 	/// </summary>
 	[Fact]
 	public void GutterElementId()
-	{
-		throw new NotImplementedException();
+    {
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        Assert.Equal(
+            $"luth_te_text-editor-gutter_{inViewModel.ViewModelKey.Guid}",
+            inViewModel.GutterElementId);
 	}
 
 	/// <summary>

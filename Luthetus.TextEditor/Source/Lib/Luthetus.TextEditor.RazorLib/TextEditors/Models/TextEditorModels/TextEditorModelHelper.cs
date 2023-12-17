@@ -137,6 +137,10 @@ public static class TextEditorModelHelper
 		return Task.CompletedTask;
 	}
 
+	/// <summary>
+	/// TODO: Given that the text editor is now immutable (2023-12-17), when this is invoked...
+	/// ...it should be cached.
+	/// </summary>
 	public static string GetAllText(this ITextEditorModel model)
 	{
 		return new string(model.ContentBag.Select(rc => rc.Value).ToArray());

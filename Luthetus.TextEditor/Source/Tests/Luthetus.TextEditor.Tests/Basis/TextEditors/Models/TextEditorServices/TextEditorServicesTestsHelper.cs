@@ -11,13 +11,18 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
 
 public class TextEditorServicesTestsHelper
 {
-    public static void InitializeTextEditorServiceTests(
+    public static void InitializeTextEditorServicesTestsHelper(
         out ITextEditorService textEditorService,
+        out TextEditorModel model,
+        out TextEditorViewModel viewModel,
         out IServiceProvider serviceProvider)
     {
         var services = new ServiceCollection()
@@ -63,5 +68,28 @@ public class TextEditorServicesTestsHelper
             .GetRequiredService<ICompilerServiceRegistry>();
 
         textEditorService = serviceProvider.GetRequiredService<ITextEditorService>();
+
+        var fileExtension = ExtensionNoPeriodFacts.TXT;
+        var resourceUri = new ResourceUri("/unitTesting.txt");
+        var resourceLastWriteTime = DateTime.UtcNow;
+        var initialContent = "Hello World!";
+
+        textEditorService.ModelApi.RegisterTemplated(
+            fileExtension,
+            resourceUri,
+            resourceLastWriteTime,
+            initialContent);
+
+        model = textEditorService.ModelApi.GetOrDefault(resourceUri)
+           ?? throw new ArgumentNullException();
+
+        var viewModelKey = Key<TextEditorViewModel>.NewKey();
+
+        textEditorService.ViewModelApi.Register(
+            viewModelKey,
+            resourceUri);
+
+        viewModel = textEditorService.ViewModelApi.GetOrDefault(viewModelKey)
+           ?? throw new ArgumentNullException();
     }
 }
