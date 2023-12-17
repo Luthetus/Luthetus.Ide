@@ -388,7 +388,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         var primaryCursor = viewModel.PrimaryCursor;
 
         TextEditorService.EnqueueModification(
-            "HandleContentOnMouseDownAsync",
+            "HandleContentOnDoubleClick",
             new TextEditorCommandArgs(
                 model.ResourceUri,
                 viewModel.ViewModelKey,
@@ -469,7 +469,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         var primaryCursor = viewModel.PrimaryCursor;
 
         TextEditorService.EnqueueModification(
-            "HandleContentOnMouseDownAsync",
+            "HandleContentOnMouseDown",
             new TextEditorCommandArgs(
                 model.ResourceUri,
                 viewModel.ViewModelKey,
@@ -588,31 +588,31 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (localThinksLeftMouseButtonIsDown && (mouseEventArgs.Buttons & 1) == 1)
         {
             TextEditorService.EnqueueModification(
-            "HandleContentOnMouseDownAsync",
-            new TextEditorCommandArgs(
-                model.ResourceUri,
-                viewModel.ViewModelKey,
-                TextEditorSelectionHelper.HasSelectedText(primaryCursor.Selection),
-                ClipboardService,
-                TextEditorService,
-                HandleMouseStoppedMovingEventAsync,
-                JsRuntime,
-                Dispatcher,
-                ViewModelDisplayOptions.RegisterModelAction,
-                ViewModelDisplayOptions.RegisterViewModelAction,
-                ViewModelDisplayOptions.ShowViewModelAction),
-            async (commandArgs, model, viewModel, refreshCursorsRequest, primaryCursor) =>
-            {
-                var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs);
+                "HandleContentOnMouseMove",
+                new TextEditorCommandArgs(
+                    model.ResourceUri,
+                    viewModel.ViewModelKey,
+                    TextEditorSelectionHelper.HasSelectedText(primaryCursor.Selection),
+                    ClipboardService,
+                    TextEditorService,
+                    HandleMouseStoppedMovingEventAsync,
+                    JsRuntime,
+                    Dispatcher,
+                    ViewModelDisplayOptions.RegisterModelAction,
+                    ViewModelDisplayOptions.RegisterViewModelAction,
+                    ViewModelDisplayOptions.ShowViewModelAction),
+                async (commandArgs, model, viewModel, refreshCursorsRequest, primaryCursor) =>
+                {
+                    var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs);
 
-                primaryCursor.RowIndex = rowAndColumnIndex.rowIndex;
-                primaryCursor.ColumnIndex = rowAndColumnIndex.columnIndex;
-                primaryCursor.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
+                    primaryCursor.RowIndex = rowAndColumnIndex.rowIndex;
+                    primaryCursor.ColumnIndex = rowAndColumnIndex.columnIndex;
+                    primaryCursor.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
 
-                CursorDisplay?.PauseBlinkAnimation();
+                    CursorDisplay?.PauseBlinkAnimation();
 
-                primaryCursor.SelectionEndingPositionIndex = model.GetCursorPositionIndex(primaryCursor);
-            });
+                    primaryCursor.SelectionEndingPositionIndex = model.GetCursorPositionIndex(primaryCursor);
+                });
         }
         else
         {
@@ -997,16 +997,30 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         int localMeasureCharacterWidthAndRowHeightComponent,
         CancellationToken cancellationToken)
     {
-        if (localRefCurrentRenderBatch.ViewModel is null || localRefCurrentRenderBatch.Options is null)
+        var model = GetModel();
+        var viewModel = GetViewModel();
+
+        if (model is null || viewModel is null)
             return;
 
-		BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
-            "TextEditor Remeasure",
-            (Func<Task>)(async () =>
-            {
-                // Get the most recent instantiation of the ViewModel with the given key.
-                var viewModel = TextEditorService.ViewModelApi.GetOrDefault(localRefCurrentRenderBatch.ViewModel.ViewModelKey);
+        var primaryCursor = viewModel.PrimaryCursor;
 
+        TextEditorService.EnqueueModification(
+            "QueueRemeasureBackgroundTask",
+            new TextEditorCommandArgs(
+                model.ResourceUri,
+                viewModel.ViewModelKey,
+                TextEditorSelectionHelper.HasSelectedText(primaryCursor.Selection),
+                ClipboardService,
+                TextEditorService,
+                HandleMouseStoppedMovingEventAsync,
+                JsRuntime,
+                Dispatcher,
+                ViewModelDisplayOptions.RegisterModelAction,
+                ViewModelDisplayOptions.RegisterViewModelAction,
+                ViewModelDisplayOptions.ShowViewModelAction),
+            async (commandArgs, model, viewModel, refreshCursorsRequest, primaryCursor) =>
+            {
                 var options = GetOptions();
 
                 if (viewModel is not null && options is not null)
@@ -1015,35 +1029,43 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                         options,
                         localMeasureCharacterWidthAndRowHeightElementId,
                         localMeasureCharacterWidthAndRowHeightComponent,
-						CancellationToken.None);
+                        CancellationToken.None);
                 }
-            }));
+            });
     }
 
     private void QueueCalculateVirtualizationResultBackgroundTask(
         TextEditorRenderBatch localCurrentRenderBatch)
     {
-        if (localCurrentRenderBatch.ViewModel is null || localCurrentRenderBatch.Options is null)
+        var model = GetModel();
+        var viewModel = GetViewModel();
+
+        if (model is null || viewModel is null)
             return;
 
-		BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
-            "TextEditor CalculateVirtualizationResult",
-            (Func<Task>)(async () =>
-            {
-                // Get the most recent instantiation of the ViewModel with the given key.
-                var viewModel = TextEditorService.ViewModelApi.GetOrDefault(localCurrentRenderBatch.ViewModel.ViewModelKey);
+        var primaryCursor = viewModel.PrimaryCursor;
 
-                var model = TextEditorService.ViewModelApi.GetModelOrDefault(
-                    localCurrentRenderBatch.ViewModel.ViewModelKey);
-
-                if (viewModel is not null && model is not null)
+        TextEditorService.EnqueueModification(
+            "QueueRemeasureBackgroundTask",
+            new TextEditorCommandArgs(
+                model.ResourceUri,
+                viewModel.ViewModelKey,
+                TextEditorSelectionHelper.HasSelectedText(primaryCursor.Selection),
+                ClipboardService,
+                TextEditorService,
+                HandleMouseStoppedMovingEventAsync,
+                JsRuntime,
+                Dispatcher,
+                ViewModelDisplayOptions.RegisterModelAction,
+                ViewModelDisplayOptions.RegisterViewModelAction,
+                ViewModelDisplayOptions.ShowViewModelAction),
+                async (commandArgs, model, viewModel, refreshCursorsRequest, primaryCursor) =>
                 {
-                    await localCurrentRenderBatch.ViewModel.CalculateVirtualizationResultAsync(
-                        (TextEditorModel)model,
+                    await viewModel.CalculateVirtualizationResultAsync(
+                        model,
                         null,
-						CancellationToken.None);
-                }
-            }));
+                        CancellationToken.None);
+                });
     }
 
     public void Dispose()

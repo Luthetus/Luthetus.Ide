@@ -43,6 +43,7 @@ public record TextEditorViewModel : IDisposable
         }.ToImmutableArray();
 
         DisplayTracker = new(
+            textEditorService,
             () => textEditorService.ViewModelApi.GetOrDefault(viewModelKey),
             () => textEditorService.ViewModelApi.GetModelOrDefault(viewModelKey));
     }
@@ -183,7 +184,7 @@ public record TextEditorViewModel : IDisposable
 				SeenOptionsRenderStateKeysBag.Add(options.RenderStateKey);
             }
 
-			TextEditorService.ViewModelApi.WithValueEnqueue(
+			TextEditorService.ViewModelApi.WithValueAsync(
 				ViewModelKey,
                 previousViewModel => (previousViewModel with
                 {
@@ -192,7 +193,7 @@ public record TextEditorViewModel : IDisposable
                     VirtualizationResult = previousViewModel.VirtualizationResult with
                     {
                         CharAndRowMeasurements = characterWidthAndRowHeight
-                    }
+                    },
                 }));
         }));
     }
@@ -424,7 +425,7 @@ public record TextEditorViewModel : IDisposable
 				SeenModelRenderStateKeysBag.Add(model.RenderStateKey);
             }
 
-			TextEditorService.ViewModelApi.WithValueEnqueue(
+			TextEditorService.ViewModelApi.WithValueAsync(
 				ViewModelKey,
                 previousViewModel => (previousViewModel with
                 {

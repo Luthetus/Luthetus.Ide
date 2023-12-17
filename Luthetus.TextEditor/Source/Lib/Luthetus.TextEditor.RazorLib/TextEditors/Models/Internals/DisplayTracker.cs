@@ -1,6 +1,11 @@
 ﻿using Fluxor;
+using Luthetus.Common.RazorLib.Clipboards.Models;
+using Luthetus.TextEditor.RazorLib.Commands.Models;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
+using Microsoft.JSInterop;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
@@ -14,14 +19,17 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 public class DisplayTracker : IDisposable
 {
     private readonly object _linksLock = new();
-
+    private readonly ITextEditorService _textEditorService;
+    
     private IState<TextEditorModelState>? _modelStateWrap;
     private CancellationTokenSource _calculateVirtualizationResultCancellationTokenSource = new();
 
     public DisplayTracker(
+        ITextEditorService textEditorService,
         Func<TextEditorViewModel?> getViewModelFunc,
         Func<TextEditorModel?> getModelFunc)
     {
+        _textEditorService = textEditorService;
         GetViewModelFunc = getViewModelFunc;
         GetModelFunc = getModelFunc;
     }
@@ -98,21 +106,40 @@ public class DisplayTracker : IDisposable
         }
     }
 
-    private async void ModelsStateWrap_StateChanged(object? sender, EventArgs e)
+    private void ModelsStateWrap_StateChanged(object? sender, EventArgs e)
     {
-        var viewModel = GetViewModelFunc.Invoke();
         var model = GetModelFunc.Invoke();
+        var viewModel = GetViewModelFunc.Invoke();
 
-        if (viewModel is null || model is null)
+        if (model is null || viewModel is null)
             return;
 
         _calculateVirtualizationResultCancellationTokenSource.Cancel();
         _calculateVirtualizationResultCancellationTokenSource = new();
 
-        await viewModel.CalculateVirtualizationResultAsync(
-            model,
-            null,
-            _calculateVirtualizationResultCancellationTokenSource.Token);
+        var primaryCursor = viewModel.PrimaryCursor;
+
+        _textEditorService.EnqueueModification(
+            "QueueRemeasureBackgroundTask",
+            new TextEditorCommandArgs(
+                model.ResourceUri,
+                viewModel.ViewModelKey,
+                TextEditorSelectionHelper.HasSelectedText(primaryCursor.Selection),
+                null,
+                _textEditorService,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null),
+                async (commandArgs, model, viewModel, refreshCursorsRequest, primaryCursor) =>
+                {
+                    await viewModel.CalculateVirtualizationResultAsync(
+                        model,
+                        null,
+                        _calculateVirtualizationResultCancellationTokenSource.Token);
+                });
     }
 
     public void Dispose()

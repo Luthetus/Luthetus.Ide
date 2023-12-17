@@ -5,11 +5,17 @@ using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.TextEditor.RazorLib.Commands.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using System.Reflection;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
 public partial class RowSection : ComponentBase
 {
+    [Inject]
+    private ITextEditorService TextEditorService { get; set; } = null!;
+
     [CascadingParameter]
     public TextEditorRenderBatch RenderBatch { get; set; } = null!;
 
@@ -96,24 +102,34 @@ public partial class RowSection : ComponentBase
 
     private void VirtualizationDisplayItemsProviderFunc(VirtualizationRequest virtualizationRequest)
     {
-        _ = Task.Run(async () =>
-        {
-            Task calculateVirtualizationResultTask = Task.CompletedTask;
+        var model = RenderBatch.Model;
+        var viewModel = RenderBatch.ViewModel;
 
-            try
+        if (model is null || viewModel is null)
+            return;
+
+        var primaryCursor = viewModel.PrimaryCursor;
+
+        TextEditorService.EnqueueModification(
+            "QueueRemeasureBackgroundTask",
+            new TextEditorCommandArgs(
+            model.ResourceUri,
+            viewModel.ViewModelKey,
+            TextEditorSelectionHelper.HasSelectedText(primaryCursor.Selection),
+            null,
+            TextEditorService,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null),
+            async (commandArgs, model, viewModel, refreshCursorsRequest, primaryCursor) =>
             {
-                calculateVirtualizationResultTask = RenderBatch.ViewModel!.CalculateVirtualizationResultAsync(
-                    RenderBatch.Model!,
+                await viewModel.CalculateVirtualizationResultAsync(
+                    model,
                     null,
                     virtualizationRequest.CancellationToken);
-
-                await calculateVirtualizationResultTask;
-            }
-            catch
-            {
-                if (!calculateVirtualizationResultTask.IsCanceled)
-                    throw;
-            }
-        }, CancellationToken.None);
+            });
     }
 }
