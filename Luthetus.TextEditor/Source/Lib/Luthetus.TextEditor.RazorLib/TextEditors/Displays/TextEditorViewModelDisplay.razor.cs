@@ -532,11 +532,10 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             });
     }
 
-    /// <summary>OnMouseUp is unnecessary</summary>
-    private async Task HandleContentOnMouseMoveAsync(MouseEventArgs mouseEventArgs)
+    /// <summary>OnMouseUp is un-necessary</summary>
+    private void HandleContentOnMouseMove(MouseEventArgs mouseEventArgs)
     {
         _userMouseIsInside = true;
-
         var localThinksLeftMouseButtonIsDown = _thinksLeftMouseButtonIsDown;
 
         // MouseStoppedMovingEvent
@@ -577,13 +576,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (!_thinksLeftMouseButtonIsDown)
             return;
 
-        var viewModel = GetViewModel();
-
-        if (viewModel is null)
-            return;
-
         var model = GetModel();
-        viewModel = GetViewModel();
+        var viewModel = GetViewModel();
 
         if (model is null || viewModel is null)
             return;
@@ -593,47 +587,31 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         // Buttons is a bit flag '& 1' gets if left mouse button is held
         if (localThinksLeftMouseButtonIsDown && (mouseEventArgs.Buttons & 1) == 1)
         {
-            TextEditorService.ViewModelApi.WithTaskEnqueue(viewModel.ViewModelKey, async inViewModel =>
+            TextEditorService.EnqueueModification(
+            "HandleContentOnMouseDownAsync",
+            new TextEditorCommandArgs(
+                model.ResourceUri,
+                viewModel.ViewModelKey,
+                TextEditorSelectionHelper.HasSelectedText(primaryCursor.Selection),
+                ClipboardService,
+                TextEditorService,
+                HandleMouseStoppedMovingEventAsync,
+                JsRuntime,
+                Dispatcher,
+                ViewModelDisplayOptions.RegisterModelAction,
+                ViewModelDisplayOptions.RegisterViewModelAction,
+                ViewModelDisplayOptions.ShowViewModelAction),
+            async (commandArgs, model, viewModel, refreshCursorsRequest, primaryCursor) =>
             {
                 var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs);
 
-                var refRowIndex = primaryCursor.RowIndex;
-                var refColumnIndex = primaryCursor.ColumnIndex;
-                var refPreferredColumnIndex = primaryCursor.ColumnIndex;
-                var refSelectionAnchorPositionIndex = primaryCursor.Selection.AnchorPositionIndex;
-                var refSelectionEndingPositionIndex = primaryCursor.Selection.EndingPositionIndex;
-
-                refRowIndex = rowAndColumnIndex.rowIndex;
-                refColumnIndex = rowAndColumnIndex.columnIndex;
-                refPreferredColumnIndex = rowAndColumnIndex.columnIndex;
+                primaryCursor.RowIndex = rowAndColumnIndex.rowIndex;
+                primaryCursor.ColumnIndex = rowAndColumnIndex.columnIndex;
+                primaryCursor.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
 
                 CursorDisplay?.PauseBlinkAnimation();
 
-                refSelectionEndingPositionIndex = model.GetCursorPositionIndex(
-                    TextEditorCursor.Empty with
-                    {
-                        RowIndex = rowAndColumnIndex.rowIndex,
-                        ColumnIndex = rowAndColumnIndex.columnIndex,
-                    });
-
-                var outCursor = inViewModel.PrimaryCursor with
-                {
-                    RowIndex = refRowIndex,
-                    ColumnIndex = refColumnIndex,
-                    PreferredColumnIndex = refPreferredColumnIndex,
-                    Selection = inViewModel.PrimaryCursor.Selection with
-                    {
-                        AnchorPositionIndex = refSelectionAnchorPositionIndex,
-                        EndingPositionIndex = refSelectionEndingPositionIndex,
-                    }
-                };
-
-                var outCursorBag = inViewModel.CursorBag.Replace(inViewModel.PrimaryCursor, outCursor);
-
-                return state => state with
-                {
-                    CursorBag = outCursorBag
-                };
+                primaryCursor.SelectionEndingPositionIndex = model.GetCursorPositionIndex(primaryCursor);
             });
         }
         else
