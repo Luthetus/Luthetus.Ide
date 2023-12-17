@@ -377,100 +377,85 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         CursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.ContextMenu);
     }
 
-    private async Task HandleContentOnDoubleClickAsync(MouseEventArgs mouseEventArgs)
+    private void HandleContentOnDoubleClick(MouseEventArgs mouseEventArgs)
     {
+        var model = GetModel();
         var viewModel = GetViewModel();
 
-        if (viewModel is null)
+        if (model is null || viewModel is null)
             return;
 
-        TextEditorService.ViewModelApi.WithTaskEnqueue(viewModel.ViewModelKey, async inViewModel =>
-        {
-            var model = GetModel();
-            viewModel = GetViewModel();
+        var primaryCursor = viewModel.PrimaryCursor;
 
-            if (model is null || viewModel is null)
-                return state => state;
-
-            var primaryCursor = viewModel.PrimaryCursor;
-            var hasSelectedText = TextEditorSelectionHelper.HasSelectedText(primaryCursor.Selection);
-
-            if ((mouseEventArgs.Buttons & 1) != 1 && hasSelectedText)
-                return state => state; // Not pressing the left mouse button so assume ContextMenu is desired result.
-
-            if (mouseEventArgs.ShiftKey)
-                return state => state; // Do not expand selection if user is holding shift
-
-            var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs);
-
-            var lowerColumnIndexExpansion = model.GetColumnIndexOfCharacterWithDifferingKind(
-                rowAndColumnIndex.rowIndex,
-                rowAndColumnIndex.columnIndex,
-                true);
-
-            lowerColumnIndexExpansion = lowerColumnIndexExpansion == -1
-                ? 0
-                : lowerColumnIndexExpansion;
-
-            var higherColumnIndexExpansion = model.GetColumnIndexOfCharacterWithDifferingKind(
-                rowAndColumnIndex.rowIndex,
-                rowAndColumnIndex.columnIndex,
-                false);
-
-            higherColumnIndexExpansion = higherColumnIndexExpansion == -1
-                    ? model.GetLengthOfRow(rowAndColumnIndex.rowIndex)
-                    : higherColumnIndexExpansion;
-
-            var refRowIndex = primaryCursor.RowIndex;
-            var refColumnIndex = primaryCursor.ColumnIndex;
-            var refPreferredColumnIndex = primaryCursor.PreferredColumnIndex;
-            var refSelectionEndingPositionIndex = primaryCursor.Selection.EndingPositionIndex;
-            var refSelectionAnchorPositionIndex = primaryCursor.Selection.AnchorPositionIndex;
-
-            // Move user's cursor position to the higher expansion
+        TextEditorService.EnqueueModification(
+            "HandleContentOnMouseDownAsync",
+            new TextEditorCommandArgs(
+                model.ResourceUri,
+                viewModel.ViewModelKey,
+                TextEditorSelectionHelper.HasSelectedText(primaryCursor.Selection),
+                ClipboardService,
+                TextEditorService,
+                HandleMouseStoppedMovingEventAsync,
+                JsRuntime,
+                Dispatcher,
+                ViewModelDisplayOptions.RegisterModelAction,
+                ViewModelDisplayOptions.RegisterViewModelAction,
+                ViewModelDisplayOptions.ShowViewModelAction),
+            async (commandArgs, model, viewModel, refreshCursorsRequest, primaryCursor) =>
             {
-                refRowIndex = rowAndColumnIndex.rowIndex;
-                refColumnIndex = higherColumnIndexExpansion;
-                refPreferredColumnIndex = rowAndColumnIndex.columnIndex;
-            }
+                var hasSelectedText = TextEditorSelectionHelper.HasSelectedText(primaryCursor);
 
-            // Set text selection ending to higher expansion
-            {
-                var cursorPositionOfHigherExpansion = model.GetPositionIndex(
+                if ((mouseEventArgs.Buttons & 1) != 1 && hasSelectedText)
+                    return; // Not pressing the left mouse button so assume ContextMenu is desired result.
+
+                if (mouseEventArgs.ShiftKey)
+                    return; // Do not expand selection if user is holding shift
+
+                var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs);
+
+                var lowerColumnIndexExpansion = model.GetColumnIndexOfCharacterWithDifferingKind(
                     rowAndColumnIndex.rowIndex,
-                    higherColumnIndexExpansion);
+                    rowAndColumnIndex.columnIndex,
+                    true);
 
-                refSelectionEndingPositionIndex = cursorPositionOfHigherExpansion;
-            }
+                lowerColumnIndexExpansion = lowerColumnIndexExpansion == -1
+                    ? 0
+                    : lowerColumnIndexExpansion;
 
-            // Set text selection anchor to lower expansion
-            {
-                var cursorPositionOfLowerExpansion = model.GetPositionIndex(
+                var higherColumnIndexExpansion = model.GetColumnIndexOfCharacterWithDifferingKind(
                     rowAndColumnIndex.rowIndex,
-                    lowerColumnIndexExpansion);
+                    rowAndColumnIndex.columnIndex,
+                    false);
 
-                refSelectionAnchorPositionIndex = cursorPositionOfLowerExpansion;
-            }
+                higherColumnIndexExpansion = higherColumnIndexExpansion == -1
+                        ? model.GetLengthOfRow(rowAndColumnIndex.rowIndex)
+                        : higherColumnIndexExpansion;
 
-            var outCursor = inViewModel.PrimaryCursor with
-            {
-                RowIndex = refRowIndex,
-                ColumnIndex = refColumnIndex,
-                PreferredColumnIndex = refPreferredColumnIndex,
-                Selection = inViewModel.PrimaryCursor.Selection with
+                // Move user's cursor position to the higher expansion
                 {
-                    AnchorPositionIndex = refSelectionAnchorPositionIndex,
-                    EndingPositionIndex = refSelectionEndingPositionIndex,
+                    primaryCursor.RowIndex = rowAndColumnIndex.rowIndex;
+                    primaryCursor.ColumnIndex = higherColumnIndexExpansion;
+                    primaryCursor.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
                 }
-            };
 
-            var outCursorBag = inViewModel.CursorBag.Replace(inViewModel.PrimaryCursor, outCursor);
+                // Set text selection ending to higher expansion
+                {
+                    var cursorPositionOfHigherExpansion = model.GetPositionIndex(
+                        rowAndColumnIndex.rowIndex,
+                        higherColumnIndexExpansion);
 
-            return state => state with
-            {
-                CursorBag = outCursorBag
-            };
-        });
+                    primaryCursor.SelectionEndingPositionIndex = cursorPositionOfHigherExpansion;
+                }
+
+                // Set text selection anchor to lower expansion
+                {
+                    var cursorPositionOfLowerExpansion = model.GetPositionIndex(
+                        rowAndColumnIndex.rowIndex,
+                        lowerColumnIndexExpansion);
+
+                    primaryCursor.SelectionAnchorPositionIndex = cursorPositionOfLowerExpansion;
+                }
+            });
     }
 
     private void HandleContentOnMouseDown(MouseEventArgs mouseEventArgs)
@@ -999,7 +984,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         _previousTouchEventArgs = touchEventArgs;
     }
 
-    private async Task ClearTouchAsync(TouchEventArgs touchEventArgs)
+    private void ClearTouch(TouchEventArgs touchEventArgs)
     {
         var rememberStartTouchEventArgs = _previousTouchEventArgs;
 
@@ -1019,7 +1004,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             if (startTouchPoint is null)
                 return;
 
-            await HandleContentOnMouseDown(new MouseEventArgs
+            HandleContentOnMouseDown(new MouseEventArgs
             {
                 Buttons = 1,
                 ClientX = startTouchPoint.ClientX,
