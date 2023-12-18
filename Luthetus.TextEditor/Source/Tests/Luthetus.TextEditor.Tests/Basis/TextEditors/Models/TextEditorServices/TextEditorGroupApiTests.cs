@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Xunit;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
 
@@ -18,7 +19,14 @@ public class TextEditorGroupApiTests
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
+        InitializeTextEditorGroupApiTests(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var inGroup,
+            out var serviceProvider);
+
+        Assert.NotNull(textEditorService.GroupApi);
     }
 
     /// <summary>
@@ -27,7 +35,23 @@ public class TextEditorGroupApiTests
     [Fact]
     public void SetActiveViewModel()
     {
-        throw new NotImplementedException();
+        InitializeTextEditorGroupApiTests(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var inGroup,
+            out var serviceProvider);
+
+        Assert.Equal(Key<TextEditorViewModel>.Empty, inGroup.ActiveViewModelKey);
+
+        textEditorService.GroupApi.AddViewModel(inGroup.GroupKey, inViewModel.ViewModelKey);
+        textEditorService.GroupApi.SetActiveViewModel(inGroup.GroupKey, inViewModel.ViewModelKey);
+
+        var outGroup = textEditorService.GroupApi.GetOrDefault(inGroup.GroupKey)!;
+
+        Assert.Equal(
+            inViewModel.ViewModelKey,
+            outGroup.ActiveViewModelKey);
     }
 
     /// <summary>
@@ -36,7 +60,24 @@ public class TextEditorGroupApiTests
     [Fact]
     public void RemoveViewModel()
     {
-        throw new NotImplementedException();
+        InitializeTextEditorGroupApiTests(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var inGroup,
+            out var serviceProvider);
+
+        Assert.Empty(inGroup.ViewModelKeyBag);
+
+        textEditorService.GroupApi.AddViewModel(inGroup.GroupKey, inViewModel.ViewModelKey);
+        var refGroup = textEditorService.GroupApi.GetOrDefault(inGroup.GroupKey)!;
+
+        Assert.NotEmpty(refGroup.ViewModelKeyBag);
+
+        textEditorService.GroupApi.RemoveViewModel(inGroup.GroupKey, inViewModel.ViewModelKey);
+        var outGroup = textEditorService.GroupApi.GetOrDefault(inGroup.GroupKey)!;
+        
+        Assert.Empty(outGroup.ViewModelKeyBag);
     }
 
     /// <summary>
@@ -45,7 +86,21 @@ public class TextEditorGroupApiTests
     [Fact]
     public void Register()
     {
-        throw new NotImplementedException();
+        InitializeTextEditorGroupApiTests(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var inGroup,
+            out var serviceProvider);
+
+        Assert.Single(textEditorService.GroupApi.GetGroups());
+
+        var groupKey = Key<TextEditorGroup>.NewKey();
+        textEditorService.GroupApi.Register(groupKey);
+        var outGroup = textEditorService.GroupApi.GetOrDefault(groupKey)!;
+
+        Assert.NotNull(outGroup);
+        Assert.Equal(2, textEditorService.GroupApi.GetGroups().Count);
     }
 
     /// <summary>
@@ -54,16 +109,45 @@ public class TextEditorGroupApiTests
     [Fact]
     public void Dispose()
     {
-        throw new NotImplementedException();
+        InitializeTextEditorGroupApiTests(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var inGroup,
+            out var serviceProvider);
+
+        Assert.Single(textEditorService.GroupApi.GetGroups());
+
+        var groupKey = Key<TextEditorGroup>.NewKey();
+
+        textEditorService.GroupApi.Register(groupKey);
+        Assert.Equal(2, textEditorService.GroupApi.GetGroups().Count);
+
+        textEditorService.GroupApi.Dispose(groupKey);
+        Assert.Single(textEditorService.GroupApi.GetGroups());
     }
 
     /// <summary>
     /// <see cref="ITextEditorService.TextEditorGroupApi.GetOrDefault(Key{TextEditorGroup})"/>
     /// </summary>
     [Fact]
-    public void FindOrDefault()
+    public void GetOrDefault()
     {
-        throw new NotImplementedException();
+        InitializeTextEditorGroupApiTests(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var inGroup,
+            out var serviceProvider);
+
+        Assert.Single(textEditorService.GroupApi.GetGroups());
+
+        var groupKey = Key<TextEditorGroup>.NewKey();
+        textEditorService.GroupApi.Register(groupKey);
+        var outGroup = textEditorService.GroupApi.GetOrDefault(groupKey)!;
+
+        Assert.NotNull(outGroup);
+        Assert.Equal(groupKey, outGroup.GroupKey);
     }
 
     /// <summary>
@@ -72,6 +156,40 @@ public class TextEditorGroupApiTests
     [Fact]
     public void AddViewModel()
     {
-        throw new NotImplementedException();
+        InitializeTextEditorGroupApiTests(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var inGroup,
+            out var serviceProvider);
+
+        Assert.Empty(inGroup.ViewModelKeyBag);
+
+        textEditorService.GroupApi.AddViewModel(inGroup.GroupKey, inViewModel.ViewModelKey);
+        var outGroup = textEditorService.GroupApi.GetOrDefault(inGroup.GroupKey)!;
+
+        Assert.Single(outGroup.ViewModelKeyBag);
+    }
+
+    private void InitializeTextEditorGroupApiTests(
+        out ITextEditorService textEditorService,
+        out TextEditorModel inModel,
+        out TextEditorViewModel inViewModel,
+        out TextEditorGroup inGroup,
+        out IServiceProvider serviceProvider)
+    {
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out textEditorService,
+            out inModel,
+            out inViewModel,
+            out serviceProvider);
+
+        // TODO: Separately, register existing needs to be made for all API that...
+        // ...registers with a key alone.
+        var groupKey = Key<TextEditorGroup>.NewKey();
+
+        textEditorService.GroupApi.Register(groupKey);
+        inGroup = textEditorService.GroupApi.GetOrDefault(groupKey)
+            ?? throw new ArgumentNullException();
     }
 }

@@ -16,11 +16,11 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
 
     private static readonly Key<TextEditorDiffModel> DiffModelKey = Key<TextEditorDiffModel>.NewKey();
 
-    private static readonly ResourceUri BeforeResourceUri = new(nameof(GitChangesDisplay) + "_in");
-    private static readonly ResourceUri AfterResourceUri = new(nameof(GitChangesDisplay) + "_out");
+    private static readonly ResourceUri InResourceUri = new(nameof(GitChangesDisplay) + "_in");
+    private static readonly ResourceUri OutResourceUri = new(nameof(GitChangesDisplay) + "_out");
 
-    private static readonly Key<TextEditorViewModel> BeforeViewModelKey = Key<TextEditorViewModel>.NewKey();
-    private static readonly Key<TextEditorViewModel> AfterViewModelKey = Key<TextEditorViewModel>.NewKey();
+    private static readonly Key<TextEditorViewModel> InViewModelKey = Key<TextEditorViewModel>.NewKey();
+    private static readonly Key<TextEditorViewModel> OutViewModelKey = Key<TextEditorViewModel>.NewKey();
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
@@ -30,22 +30,22 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
             {
                 TextEditorService.ModelApi.RegisterTemplated(
                     ExtensionNoPeriodFacts.TXT,
-                    BeforeResourceUri,
+                    InResourceUri,
                     DateTime.UtcNow,
                     "ABCDEFK",
                     "Before");
 
                 TextEditorService.ModelApi.RegisterPresentationModel(
-                    BeforeResourceUri,
+                    InResourceUri,
                     DiffPresentationFacts.EmptyInPresentationModel);
                 
                 TextEditorService.ModelApi.RegisterPresentationModel(
-                    BeforeResourceUri,
+                    InResourceUri,
                     DiffPresentationFacts.EmptyOutPresentationModel);
 
                 TextEditorService.ViewModelApi.Register(
-                    BeforeViewModelKey,
-                    BeforeResourceUri);
+                    InViewModelKey,
+                    InResourceUri);
 
                 var presentationKeys = new[]
                 {
@@ -53,7 +53,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                 };
 
                 TextEditorService.ViewModelApi.WithValueEnqueue(
-                    BeforeViewModelKey,
+                    InViewModelKey,
                     textEditorViewModel => textEditorViewModel with
                     {
                         FirstPresentationLayerKeysBag = presentationKeys.ToImmutableList()
@@ -64,22 +64,22 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
             {
                 TextEditorService.ModelApi.RegisterTemplated(
                     ExtensionNoPeriodFacts.TXT,
-                    AfterResourceUri,
+                    OutResourceUri,
                     DateTime.UtcNow,
                     "BHDEFCK",
                     "After");
 
                 TextEditorService.ModelApi.RegisterPresentationModel(
-                    AfterResourceUri,
+                    OutResourceUri,
                     DiffPresentationFacts.EmptyInPresentationModel);
 
                 TextEditorService.ModelApi.RegisterPresentationModel(
-                    AfterResourceUri,
+                    OutResourceUri,
                     DiffPresentationFacts.EmptyOutPresentationModel);
 
                 TextEditorService.ViewModelApi.Register(
-                    AfterViewModelKey,
-                    AfterResourceUri);
+                    OutViewModelKey,
+                    OutResourceUri);
 
                 var presentationKeys = new[]
                 {
@@ -87,7 +87,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                 };
 
                 TextEditorService.ViewModelApi.WithValueEnqueue(
-                    AfterViewModelKey,
+                    OutViewModelKey,
                     textEditorViewModel => textEditorViewModel with
                     {
                         FirstPresentationLayerKeysBag = presentationKeys.ToImmutableList()
@@ -96,8 +96,8 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
 
             TextEditorService.DiffApi.Register(
                 DiffModelKey,
-                BeforeViewModelKey,
-                AfterViewModelKey);
+                InViewModelKey,
+                OutViewModelKey);
         }
 
         return base.OnAfterRenderAsync(firstRender);
