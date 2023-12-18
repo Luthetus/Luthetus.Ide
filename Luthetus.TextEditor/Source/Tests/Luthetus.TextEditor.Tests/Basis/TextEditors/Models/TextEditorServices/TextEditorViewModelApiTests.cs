@@ -31,29 +31,54 @@ public class TextEditorViewModelApiTests
 
     /// <summary>
     /// <see cref="ITextEditorService.TextEditorViewModelApi.CursorShouldBlink"/>
-    /// </summary>
-    [Fact]
-    public void CursorShouldBlink()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
+    /// <br/>----<br/>
     /// <see cref="ITextEditorService.TextEditorViewModelApi.CursorShouldBlinkChanged"/>
-    /// </summary>
-    [Fact]
-    public void CursorShouldBlinkChanged()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="ITextEditorService.TextEditorViewModelApi.SetCursorShouldBlink(bool)"/>
     /// </summary>
     [Fact]
-    public void SetCursorShouldBlink()
+    public async Task CursorShouldBlink()
     {
-        throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        var cursorShouldBlinkChangedCount = 0;
+        var expectedChangeCount = 2;
+        var expectedBoolean = false;
+
+        // Delay for blinking cursor is 1,000 (miliseconds)
+        // The blinking cursor is done via a fire and forget Task.Run.
+        // Therefore I'm going to test using a polling solution.
+        // TODO: This test is hacky. (2023-12-17)
+        var checkResultDelay = TimeSpan.FromMilliseconds(1_100);
+
+        void ViewModelApi_CursorShouldBlinkChanged()
+        {
+            cursorShouldBlinkChangedCount++;
+            Assert.Equal(expectedBoolean, textEditorService.ViewModelApi.CursorShouldBlink);
+        }
+
+        var checkResultTask = Task.Run(async () =>
+        {
+            while (cursorShouldBlinkChangedCount != expectedChangeCount)
+            {
+                await Task.Delay(checkResultDelay);
+            }
+        });
+
+        textEditorService.ViewModelApi.CursorShouldBlinkChanged += ViewModelApi_CursorShouldBlinkChanged;
+
+        expectedBoolean = false;
+        textEditorService.ViewModelApi.SetCursorShouldBlink(expectedBoolean);
+
+        expectedBoolean = true;
+        textEditorService.ViewModelApi.SetCursorShouldBlink(expectedBoolean);
+
+        await checkResultTask;
+        textEditorService.ViewModelApi.CursorShouldBlinkChanged -= ViewModelApi_CursorShouldBlinkChanged;
+        Assert.Equal(expectedChangeCount, cursorShouldBlinkChangedCount);
     }
 
     /// <summary>

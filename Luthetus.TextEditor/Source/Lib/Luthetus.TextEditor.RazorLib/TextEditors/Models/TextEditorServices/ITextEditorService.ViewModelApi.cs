@@ -153,7 +153,6 @@ public partial interface ITextEditorService
         public bool CursorShouldBlink { get; private set; } = true;
         public event Action? CursorShouldBlinkChanged;
 
-        /// <summary>(2023-06-03) Previously this logic was in the TextEditorCursorDisplay itself. The Task.Run() would get re-executed upon each cancellation. With this version, the Task.Run() session is re-used with the while loop. As well, all the text editor cursors are blinking in sync.</summary>
         public void SetCursorShouldBlink(bool cursorShouldBlink)
         {
             if (!cursorShouldBlink)
