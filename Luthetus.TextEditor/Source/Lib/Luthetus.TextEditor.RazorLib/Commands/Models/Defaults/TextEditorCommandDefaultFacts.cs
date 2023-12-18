@@ -96,6 +96,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
+            // TODO: There is a double invocation of EnqueueModification when one follows the method invocations
             commandArgs.TextEditorService.EnqueueModification(
                 nameof(SelectAll),
                 commandArgs,

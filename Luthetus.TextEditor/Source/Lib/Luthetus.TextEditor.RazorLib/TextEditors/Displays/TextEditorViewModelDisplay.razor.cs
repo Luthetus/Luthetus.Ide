@@ -29,6 +29,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Microsoft.Extensions.Options;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 
@@ -92,7 +93,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     protected override async Task OnParametersSetAsync()
     {
-        var sctx = SynchronizationContext.Current;
         HandleTextEditorViewModelKeyChange();
 
         await base.OnParametersSetAsync();
@@ -100,7 +100,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        var sctx = SynchronizationContext.Current; // has value
         ConstructRenderBatch();
 
         TextEditorViewModelsStateWrap.StateChanged += GeneralOnStateChangedEventHandler;
@@ -111,7 +110,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     protected override bool ShouldRender()
     {
-        var sctx = SynchronizationContext.Current;
         var shouldRender = base.ShouldRender();
 
         if (_linkedViewModel is null)
@@ -145,11 +143,18 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var sctx = SynchronizationContext.Current;
         if (firstRender)
         {
             await JsRuntime.InvokeVoidAsync("luthetusTextEditor.preventDefaultOnWheelEvents",
                 ContentElementId);
+
+            QueueRemeasureBackgroundTask(
+                _storedRenderBatch,
+                MeasureCharacterWidthAndRowHeightElementId,
+                _measureCharacterWidthAndRowHeightComponent?.CountOfTestCharacters ?? 0,
+                CancellationToken.None);
+
+            QueueCalculateVirtualizationResultBackgroundTask(_storedRenderBatch);
         }
 
         if (_storedRenderBatch?.ViewModel is not null && _storedRenderBatch.ViewModel.ShouldSetFocusAfterNextRender)
@@ -994,7 +999,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     private void QueueRemeasureBackgroundTask(
         TextEditorRenderBatch localRefCurrentRenderBatch,
         string localMeasureCharacterWidthAndRowHeightElementId,
-        int localMeasureCharacterWidthAndRowHeightComponent,
+        int countOfTestCharacters,
         CancellationToken cancellationToken)
     {
         var model = GetModel();
@@ -1005,33 +1010,12 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
         var primaryCursor = viewModel.PrimaryCursor;
 
-        TextEditorService.EnqueueModification(
-            "QueueRemeasureBackgroundTask",
-            new TextEditorCommandArgs(
-                model.ResourceUri,
-                viewModel.ViewModelKey,
-                TextEditorSelectionHelper.HasSelectedText(primaryCursor.Selection),
-                ClipboardService,
-                TextEditorService,
-                HandleMouseStoppedMovingEventAsync,
-                JsRuntime,
-                Dispatcher,
-                ViewModelDisplayOptions.RegisterModelAction,
-                ViewModelDisplayOptions.RegisterViewModelAction,
-                ViewModelDisplayOptions.ShowViewModelAction),
-            async (commandArgs, model, viewModel, refreshCursorsRequest, primaryCursor) =>
-            {
-                var options = GetOptions();
-
-                if (viewModel is not null && options is not null)
-                {
-                    await viewModel.RemeasureAsync(
-                        options,
-                        localMeasureCharacterWidthAndRowHeightElementId,
-                        localMeasureCharacterWidthAndRowHeightComponent,
-                        CancellationToken.None);
-                }
-            });
+        TextEditorService.ViewModelApi.RemeasureEnqueue(
+            model.ResourceUri,
+            viewModel.ViewModelKey,
+            localMeasureCharacterWidthAndRowHeightElementId,
+            countOfTestCharacters,
+            CancellationToken.None);
     }
 
     private void QueueCalculateVirtualizationResultBackgroundTask(
@@ -1045,27 +1029,12 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
         var primaryCursor = viewModel.PrimaryCursor;
 
-        TextEditorService.EnqueueModification(
-            "QueueRemeasureBackgroundTask",
-            new TextEditorCommandArgs(
-                model.ResourceUri,
-                viewModel.ViewModelKey,
-                TextEditorSelectionHelper.HasSelectedText(primaryCursor.Selection),
-                ClipboardService,
-                TextEditorService,
-                HandleMouseStoppedMovingEventAsync,
-                JsRuntime,
-                Dispatcher,
-                ViewModelDisplayOptions.RegisterModelAction,
-                ViewModelDisplayOptions.RegisterViewModelAction,
-                ViewModelDisplayOptions.ShowViewModelAction),
-                async (commandArgs, model, viewModel, refreshCursorsRequest, primaryCursor) =>
-                {
-                    await viewModel.CalculateVirtualizationResultAsync(
-                        model,
-                        null,
-                        CancellationToken.None);
-                });
+        TextEditorService.ViewModelApi.CalculateVirtualizationResultEnqueue(
+            model.ResourceUri,
+            viewModel.ViewModelKey,
+            viewModel.MostRecentTextEditorMeasurements,
+            primaryCursor.Key,
+            CancellationToken.None);
     }
 
     public void Dispose()

@@ -45,24 +45,19 @@ public record TextEditorViewModel : IDisposable
             () => textEditorService.ViewModelApi.GetModelOrDefault(viewModelKey));
     }
 
-    private const int _clearTrackingOfUniqueIdentifiersWhenCountIs = 250;
+    public const int ClearTrackingOfUniqueIdentifiersWhenCountIs = 250;
 
-    private readonly object _trackingOfUniqueIdentifiersLock = new();
-
-    private TextEditorMeasurements _mostRecentTextEditorMeasurements = new(0, 0, 0, 0, 0, 0, 0, CancellationToken.None);
     private BatchScrollEvents _batchScrollEvents = new();
+
+    public readonly object TrackingOfUniqueIdentifiersLock = new();
+    public TextEditorMeasurements MostRecentTextEditorMeasurements { get; set; } = new(0, 0, 0, 0, 0, 0, 0, CancellationToken.None);
 
     public IThrottle ThrottleRemeasure { get; } = new Throttle(IThrottle.DefaultThrottleTimeSpan);
     public IThrottle ThrottleCalculateVirtualizationResult { get; } = new Throttle(IThrottle.DefaultThrottleTimeSpan);
 
-    /// <summary>
-    /// The first entry of CursorBag should be the PrimaryCursor
-    /// </summary>
+    /// <summary>The first entry of CursorBag should be the PrimaryCursor</summary>
     public TextEditorCursor PrimaryCursor => CursorBag.First();
-
-    /// <summary>
-    /// The first entry of CursorBag should be the PrimaryCursor
-    /// </summary>
+    /// <summary>The first entry of CursorBag should be the PrimaryCursor</summary>
     public ImmutableArray<TextEditorCursor> CursorBag { get; init; }
 
     public DisplayTracker DisplayTracker { get; }
@@ -79,9 +74,9 @@ public record TextEditorViewModel : IDisposable
     /// <summary><see cref="LastPresentationLayerKeysBag"/> is painted after any internal workings of the text editor.<br/><br/>Therefore the selected text background is rendered before anything in the <see cref="LastPresentationLayerKeysBag"/>.<br/><br/>When using the <see cref="LastPresentationLayerKeysBag"/> one might find the selected text background not being rendered with the text selection css if it were overriden by something in the <see cref="LastPresentationLayerKeysBag"/>.</summary>
     public ImmutableList<Key<TextEditorPresentationModel>> LastPresentationLayerKeysBag { get; init; } = ImmutableList<Key<TextEditorPresentationModel>>.Empty;
 
-    /// <summary>In order to prevent infinite loops, track the unique identifiers. Note, this HashSet is cleared when the options change or the count >= <see cref="_clearTrackingOfUniqueIdentifiersWhenCountIs"/>.</summary>
+    /// <summary>In order to prevent infinite loops, track the unique identifiers. Note, this HashSet is cleared when the options change or the count >= <see cref="ClearTrackingOfUniqueIdentifiersWhenCountIs"/>.</summary>
     public HashSet<Key<RenderState>> SeenModelRenderStateKeysBag { get; init; } = new();
-    /// <summary>In order to prevent infinite loops, track the unique identifiers. Note, this HashSet is cleared when the count is >= <see cref="_clearTrackingOfUniqueIdentifiersWhenCountIs"/>.</summary>
+    /// <summary>In order to prevent infinite loops, track the unique identifiers. Note, this HashSet is cleared when the count is >= <see cref="ClearTrackingOfUniqueIdentifiersWhenCountIs"/>.</summary>
     public HashSet<Key<RenderState>> SeenOptionsRenderStateKeysBag { get; init; } = new();
 
     public string CommandBarValue { get; set; } = string.Empty;
@@ -126,7 +121,7 @@ public record TextEditorViewModel : IDisposable
     public async Task MutateScrollVerticalPositionByPagesAsync(double pages)
     {
         await MutateScrollVerticalPositionByPixelsAsync(
-            pages * _mostRecentTextEditorMeasurements.Height);
+            pages * MostRecentTextEditorMeasurements.Height);
     }
 
     public async Task MutateScrollVerticalPositionByLinesAsync(double lines)
@@ -151,284 +146,6 @@ public record TextEditorViewModel : IDisposable
     public async Task FocusAsync()
     {
         TextEditorService.ViewModelApi.FocusPrimaryCursorEnqueue(PrimaryCursorContentId);
-    }
-
-    public async Task RemeasureAsync(
-        TextEditorOptions options,
-        string measureCharacterWidthAndRowHeightElementId,
-        int countOfTestCharacters,
-        CancellationToken cancellationToken)
-    {
-        await ThrottleRemeasure.FireAsync((async _ =>
-        {
-            lock (_trackingOfUniqueIdentifiersLock)
-            {
-                if (SeenOptionsRenderStateKeysBag.Contains(options.RenderStateKey))
-                    return;
-            }
-
-            var characterWidthAndRowHeight = await TextEditorService.ViewModelApi.MeasureCharacterWidthAndRowHeightAsync(
-                measureCharacterWidthAndRowHeightElementId,
-                countOfTestCharacters);
-
-			VirtualizationResult.CharAndRowMeasurements = characterWidthAndRowHeight;
-
-            lock (_trackingOfUniqueIdentifiersLock)
-            {
-                if (SeenOptionsRenderStateKeysBag.Count > _clearTrackingOfUniqueIdentifiersWhenCountIs)
-					SeenOptionsRenderStateKeysBag.Clear();
-
-				SeenOptionsRenderStateKeysBag.Add(options.RenderStateKey);
-            }
-
-			TextEditorService.ViewModelApi.WithValueAsync(
-				ViewModelKey,
-                previousViewModel => (previousViewModel with
-                {
-                    // Clear the SeenModelRenderStateKeys because one needs to recalculate the virtualization result now that the options have changed.
-                    SeenModelRenderStateKeysBag = new(),
-                    VirtualizationResult = previousViewModel.VirtualizationResult with
-                    {
-                        CharAndRowMeasurements = characterWidthAndRowHeight
-                    },
-                }));
-        }));
-    }
-
-    public async Task CalculateVirtualizationResultAsync(
-        TextEditorModel? model,
-        TextEditorMeasurements? textEditorMeasurements,
-        CancellationToken cancellationToken)
-    {
-        if (cancellationToken.IsCancellationRequested)
-            return;
-
-        // Return because the UI still needs to be measured.
-        if (!SeenOptionsRenderStateKeysBag.Any())
-            return;
-
-        await ThrottleCalculateVirtualizationResult.FireAsync((Func<CancellationToken, Task>)(async _ =>
-        {
-            if (model is null)
-                return;
-
-            // TODO: Should this '_trackingOfUniqueIdentifiersLock' logic when in regards to the TextEditorModel be removed? The issue is that when scrolling the TextEditorModel would show up in the HashSet and therefore the calculation of the virtualization result would not occur.
-            //
-            //lock (_trackingOfUniqueIdentifiersLock)
-            //{
-            //    if (SeenModelRenderStateKeys.Contains(model.RenderStateKey))
-            //        return;
-            //}
-
-            var localCharacterWidthAndRowHeight = VirtualizationResult.CharAndRowMeasurements;
-
-            if (textEditorMeasurements is null)
-                textEditorMeasurements = await TextEditorService.ViewModelApi.GetTextEditorMeasurementsAsync(BodyElementId);
-
-			_mostRecentTextEditorMeasurements = textEditorMeasurements;
-
-            textEditorMeasurements = textEditorMeasurements with
-            {
-                MeasurementsExpiredCancellationToken = cancellationToken
-            };
-
-            var verticalStartingIndex = (int)Math.Floor(
-                textEditorMeasurements.ScrollTop /
-                localCharacterWidthAndRowHeight.RowHeight);
-
-            var verticalTake = (int)Math.Ceiling(
-                textEditorMeasurements.Height /
-                localCharacterWidthAndRowHeight.RowHeight);
-
-            // Vertical Padding (render some offscreen data)
-            {
-                verticalTake += 1;
-            }
-
-            // Check index boundaries
-            {
-                verticalStartingIndex = Math.Max(0, verticalStartingIndex);
-
-                if (verticalStartingIndex + verticalTake > model.RowEndingPositionsBag.Count)
-                    verticalTake = model.RowEndingPositionsBag.Count - verticalStartingIndex;
-
-                verticalTake = Math.Max(0, verticalTake);
-            }
-
-            var horizontalStartingIndex = (int)Math.Floor(
-                textEditorMeasurements.ScrollLeft /
-                localCharacterWidthAndRowHeight.CharacterWidth);
-
-            var horizontalTake = (int)Math.Ceiling(
-                textEditorMeasurements.Width /
-                localCharacterWidthAndRowHeight.CharacterWidth);
-
-            var virtualizedEntryBag = model
-                .GetRows(verticalStartingIndex, verticalTake)
-                .Select((row, rowIndex) =>
-                {
-                    rowIndex += verticalStartingIndex;
-
-                    var localHorizontalStartingIndex = horizontalStartingIndex;
-                    var localHorizontalTake = horizontalTake;
-
-					// 1 of the character width is already accounted for
-					var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
-
-					// Adjust for tab key width
-					{
-                        var maxValidColumnIndex = row.Count - 1;
-
-                        var parameterForGetTabsCountOnSameRowBeforeCursor =
-                            localHorizontalStartingIndex > maxValidColumnIndex
-                                ? maxValidColumnIndex
-                                : localHorizontalStartingIndex;
-
-                        var tabsOnSameRowBeforeCursor = model.GetTabsCountOnSameRowBeforeCursor(
-                            rowIndex,
-                            parameterForGetTabsCountOnSameRowBeforeCursor);
-
-                        localHorizontalStartingIndex -= extraWidthPerTabKey * tabsOnSameRowBeforeCursor;
-                    }
-
-                    if (localHorizontalStartingIndex + localHorizontalTake > row.Count)
-                        localHorizontalTake = row.Count - localHorizontalStartingIndex;
-
-					localHorizontalStartingIndex = Math.Max(0, localHorizontalStartingIndex);
-					localHorizontalTake = Math.Max(0, localHorizontalTake);
-
-                    var horizontallyVirtualizedRow = row
-                        .Skip(localHorizontalStartingIndex)
-                        .Take(localHorizontalTake)
-                        .ToList();
-
-                    var countTabKeysInVirtualizedRow = horizontallyVirtualizedRow
-                        .Where(x => x.Value == KeyboardKeyFacts.WhitespaceCharacters.TAB)
-                        .Count();
-
-					var widthInPixels = (horizontallyVirtualizedRow.Count + (extraWidthPerTabKey * countTabKeysInVirtualizedRow)) *
-                        localCharacterWidthAndRowHeight.CharacterWidth;
-
-					var leftInPixels = localHorizontalStartingIndex *
-                        localCharacterWidthAndRowHeight.CharacterWidth;
-
-					// Adjust for tab key width
-					{
-						var maxValidColumnIndex = row.Count - 1;
-
-						var parameterForGetTabsCountOnSameRowBeforeCursor =
-							localHorizontalStartingIndex > maxValidColumnIndex
-								? maxValidColumnIndex
-								: localHorizontalStartingIndex;
-
-						var tabsOnSameRowBeforeCursor = model.GetTabsCountOnSameRowBeforeCursor(
-							rowIndex,
-							parameterForGetTabsCountOnSameRowBeforeCursor);
-
-						leftInPixels += (extraWidthPerTabKey *
-                            tabsOnSameRowBeforeCursor *
-                            localCharacterWidthAndRowHeight.CharacterWidth);
-					}
-
-					leftInPixels = Math.Max(0, leftInPixels);
-
-					var topInPixels = rowIndex * localCharacterWidthAndRowHeight.RowHeight;
-
-                    return new VirtualizationEntry<List<RichCharacter>>(
-                        rowIndex,
-                        horizontallyVirtualizedRow,
-                        widthInPixels,
-                        localCharacterWidthAndRowHeight.RowHeight,
-                        leftInPixels,
-                        topInPixels);
-                }).ToImmutableArray();
-
-            var totalWidth = model.MostCharactersOnASingleRowTuple.rowLength *
-                localCharacterWidthAndRowHeight.CharacterWidth;
-
-            var totalHeight = model.RowEndingPositionsBag.Count *
-                localCharacterWidthAndRowHeight.RowHeight;
-
-            // Add vertical margin so the user can scroll beyond the final row of content
-            double marginScrollHeight;
-            {
-                var percentOfMarginScrollHeightByPageUnit = 0.4;
-
-                marginScrollHeight = textEditorMeasurements.Height * percentOfMarginScrollHeightByPageUnit;
-                totalHeight += marginScrollHeight;
-            }
-
-            var leftBoundaryWidthInPixels = horizontalStartingIndex *
-                localCharacterWidthAndRowHeight.CharacterWidth;
-
-            var leftBoundary = new VirtualizationBoundary(
-                leftBoundaryWidthInPixels,
-                totalHeight,
-                0,
-                0);
-
-            var rightBoundaryLeftInPixels = leftBoundary.WidthInPixels +
-                localCharacterWidthAndRowHeight.CharacterWidth *
-                horizontalTake;
-
-            var rightBoundaryWidthInPixels = totalWidth - rightBoundaryLeftInPixels;
-
-            var rightBoundary = new VirtualizationBoundary(
-                rightBoundaryWidthInPixels,
-                totalHeight,
-                rightBoundaryLeftInPixels,
-                0);
-
-            var topBoundaryHeightInPixels = verticalStartingIndex *
-                localCharacterWidthAndRowHeight.RowHeight;
-
-            var topBoundary = new VirtualizationBoundary(
-                totalWidth,
-                topBoundaryHeightInPixels,
-                0,
-                0);
-
-            var bottomBoundaryTopInPixels = topBoundary.HeightInPixels +
-                localCharacterWidthAndRowHeight.RowHeight *
-                verticalTake;
-
-            var bottomBoundaryHeightInPixels = totalHeight - bottomBoundaryTopInPixels;
-
-            var bottomBoundary = new VirtualizationBoundary(
-                totalWidth,
-                bottomBoundaryHeightInPixels,
-                0,
-                bottomBoundaryTopInPixels);
-
-            var virtualizationResult = new VirtualizationResult<List<RichCharacter>>(
-                virtualizedEntryBag,
-                leftBoundary,
-                rightBoundary,
-                topBoundary,
-                bottomBoundary,
-                textEditorMeasurements with
-                {
-                    ScrollWidth = totalWidth,
-                    ScrollHeight = totalHeight,
-                    MarginScrollHeight = marginScrollHeight
-                },
-                localCharacterWidthAndRowHeight);
-
-            lock (_trackingOfUniqueIdentifiersLock)
-            {
-                if (SeenModelRenderStateKeysBag.Count > _clearTrackingOfUniqueIdentifiersWhenCountIs)
-					SeenModelRenderStateKeysBag.Clear();
-
-				SeenModelRenderStateKeysBag.Add(model.RenderStateKey);
-            }
-
-			TextEditorService.ViewModelApi.WithValueAsync(
-				ViewModelKey,
-                previousViewModel => (previousViewModel with
-                {
-                    VirtualizationResult = virtualizationResult,
-                }));
-        }));
     }
 
     public void Dispose()

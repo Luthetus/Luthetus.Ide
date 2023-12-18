@@ -110,26 +110,11 @@ public partial class RowSection : ComponentBase
 
         var primaryCursor = viewModel.PrimaryCursor;
 
-        TextEditorService.EnqueueModification(
-            "QueueRemeasureBackgroundTask",
-            new TextEditorCommandArgs(
+        TextEditorService.ViewModelApi.CalculateVirtualizationResultEnqueue(
             model.ResourceUri,
             viewModel.ViewModelKey,
-            TextEditorSelectionHelper.HasSelectedText(primaryCursor.Selection),
-            null,
-            TextEditorService,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null),
-            async (commandArgs, model, viewModel, refreshCursorsRequest, primaryCursor) =>
-            {
-                await viewModel.CalculateVirtualizationResultAsync(
-                    model,
-                    null,
-                    virtualizationRequest.CancellationToken);
-            });
+            viewModel.MostRecentTextEditorMeasurements,
+            primaryCursor.Key,
+            virtualizationRequest.CancellationToken);
     }
 }

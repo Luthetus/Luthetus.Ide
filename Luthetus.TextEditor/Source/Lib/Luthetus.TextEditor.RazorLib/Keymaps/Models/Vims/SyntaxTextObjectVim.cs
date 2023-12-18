@@ -57,15 +57,16 @@ public static class SyntaxTextObjectVim
             TextEditorService.RefreshCursorsRequest refreshCursorsRequest,
             TextEditorCursorModifier primaryCursor)
     {
-        commandArgs.TextEditorService.ViewModelApi.MoveCursorAsync(
-            new KeyboardEventArgs
-            {
-                Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
-                ShiftKey = commandArgs.ShiftKey
-            },
-            model.ResourceUri,
-            viewModel.ViewModelKey,
-            primaryCursor.Key);
+        commandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
+                new KeyboardEventArgs
+                {
+                    Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
+                    ShiftKey = commandArgs.ShiftKey
+                },
+                model.ResourceUri,
+                viewModel.ViewModelKey,
+                primaryCursor.Key)
+            .Invoke(commandArgs, model, viewModel, refreshCursorsRequest, primaryCursor);
 
         return Task.CompletedTask;
     }
@@ -77,15 +78,16 @@ public static class SyntaxTextObjectVim
             TextEditorService.RefreshCursorsRequest refreshCursorsRequest,
             TextEditorCursorModifier primaryCursor)
     {
-        commandArgs.TextEditorService.ViewModelApi.MoveCursorAsync(
-            new KeyboardEventArgs
-            {
-                Key = KeyboardKeyFacts.MovementKeys.ARROW_DOWN,
-                ShiftKey = commandArgs.ShiftKey
-            },
-            model.ResourceUri,
-            viewModel.ViewModelKey,
-            primaryCursor.Key);
+        commandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
+                new KeyboardEventArgs
+                {
+                    Key = KeyboardKeyFacts.MovementKeys.ARROW_DOWN,
+                    ShiftKey = commandArgs.ShiftKey
+                },
+                model.ResourceUri,
+                viewModel.ViewModelKey,
+                primaryCursor.Key)
+            .Invoke(commandArgs, model, viewModel, refreshCursorsRequest, primaryCursor);
 
         return Task.CompletedTask;
     }
@@ -97,15 +99,16 @@ public static class SyntaxTextObjectVim
             TextEditorService.RefreshCursorsRequest refreshCursorsRequest,
             TextEditorCursorModifier primaryCursor)
     {
-        commandArgs.TextEditorService.ViewModelApi.MoveCursorAsync(
-            new KeyboardEventArgs
-            {
-                Key = KeyboardKeyFacts.MovementKeys.ARROW_UP,
-                ShiftKey = commandArgs.ShiftKey
-            },
-            model.ResourceUri,
-            viewModel.ViewModelKey,
-            primaryCursor.Key);
+        commandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
+                new KeyboardEventArgs
+                {
+                    Key = KeyboardKeyFacts.MovementKeys.ARROW_UP,
+                    ShiftKey = commandArgs.ShiftKey
+                },
+                model.ResourceUri,
+                viewModel.ViewModelKey,
+                primaryCursor.Key)
+            .Invoke(commandArgs, model, viewModel, refreshCursorsRequest, primaryCursor);
 
         return Task.CompletedTask;
     }
@@ -117,15 +120,16 @@ public static class SyntaxTextObjectVim
             TextEditorService.RefreshCursorsRequest refreshCursorsRequest,
             TextEditorCursorModifier primaryCursor)
     {
-        commandArgs.TextEditorService.ViewModelApi.MoveCursorAsync(
-            new KeyboardEventArgs
-            {
-                Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
-                ShiftKey = commandArgs.ShiftKey
-            },
-            model.ResourceUri,
-            viewModel.ViewModelKey,
-            primaryCursor.Key);
+        commandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
+                new KeyboardEventArgs
+                {
+                    Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
+                    ShiftKey = commandArgs.ShiftKey
+                },
+                model.ResourceUri,
+                viewModel.ViewModelKey,
+                primaryCursor.Key)
+            .Invoke(commandArgs, model, viewModel, refreshCursorsRequest, primaryCursor);
 
         return Task.CompletedTask;
     }
@@ -137,15 +141,16 @@ public static class SyntaxTextObjectVim
             TextEditorService.RefreshCursorsRequest refreshCursorsRequest,
             TextEditorCursorModifier primaryCursor)
     {
-        commandArgs.TextEditorService.ViewModelApi.MoveCursorAsync(
-            new KeyboardEventArgs
-            {
-                Key = KeyboardKeyFacts.MovementKeys.END,
-                ShiftKey = commandArgs.ShiftKey
-            },
-            model.ResourceUri,
-            viewModel.ViewModelKey,
-            primaryCursor.Key);
+        commandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
+                new KeyboardEventArgs
+                {
+                    Key = KeyboardKeyFacts.MovementKeys.END,
+                    ShiftKey = commandArgs.ShiftKey
+                },
+                model.ResourceUri,
+                viewModel.ViewModelKey,
+                primaryCursor.Key)
+            .Invoke(commandArgs, model, viewModel, refreshCursorsRequest, primaryCursor);
 
         return Task.CompletedTask;
     }
@@ -157,15 +162,16 @@ public static class SyntaxTextObjectVim
             TextEditorService.RefreshCursorsRequest refreshCursorsRequest,
             TextEditorCursorModifier primaryCursor)
     {
-        commandArgs.TextEditorService.ViewModelApi.MoveCursorAsync(
-            new KeyboardEventArgs
-            {
-                Key = KeyboardKeyFacts.MovementKeys.HOME,
-                ShiftKey = commandArgs.ShiftKey
-            },
-            model.ResourceUri,
-            viewModel.ViewModelKey,
-            primaryCursor.Key);
+        commandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
+                new KeyboardEventArgs
+                {
+                    Key = KeyboardKeyFacts.MovementKeys.HOME,
+                    ShiftKey = commandArgs.ShiftKey
+                },
+                model.ResourceUri,
+                viewModel.ViewModelKey,
+                primaryCursor.Key)
+            .Invoke(commandArgs, model, viewModel, refreshCursorsRequest, primaryCursor);
 
         return Task.CompletedTask;
     }

@@ -128,7 +128,7 @@ public class TextEditorCommandDefaultFunctions
         RefreshCursorsRequest refreshCursorsRequest,
         TextEditorCursorModifier primaryCursor)
     {
-        commandArgs.TextEditorService.ModelApi.UndoEditAsync(commandArgs.ModelResourceUri);
+        commandArgs.TextEditorService.ModelApi.UndoEditEnqueue(commandArgs.ModelResourceUri);
         return Task.CompletedTask;
     }
 
@@ -139,7 +139,7 @@ public class TextEditorCommandDefaultFunctions
         RefreshCursorsRequest refreshCursorsRequest,
         TextEditorCursorModifier primaryCursor)
     {
-        commandArgs.TextEditorService.ModelApi.RedoEditAsync(commandArgs.ModelResourceUri);
+        commandArgs.TextEditorService.ModelApi.RedoEditEnqueue(commandArgs.ModelResourceUri);
         return Task.CompletedTask;
     }
 
@@ -596,11 +596,12 @@ public class TextEditorCommandDefaultFunctions
                 };
             }
 
-            commandArgs.TextEditorService.ViewModelApi.MoveCursorAsync(
-                keyboardEventArgs,
-                model.ResourceUri,
-                viewModel.ViewModelKey,
-                primaryCursor.Key);
+            commandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
+                    keyboardEventArgs,
+                    model.ResourceUri,
+                    viewModel.ViewModelKey,
+                    primaryCursor.Key)
+                .Invoke(commandArgs, model, viewModel, refreshCursorsRequest, primaryCursor);
 
             var temporaryCursorPositionIndex = model.GetCursorPositionIndex(
                 temporaryCursor);

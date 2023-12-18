@@ -263,7 +263,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                         commandArgs,
                         async (commandArgs, model, viewModel, refreshCursorsRequest, primaryCursor) =>
                         {
-                            commandArgs.TextEditorService.ModelApi.UndoEditAsync(model.ResourceUri);
+                            await commandArgs.TextEditorService.ModelApi
+                                .GetUndoEditTask(model.ResourceUri)
+                                .Invoke(commandArgs, model, viewModel, refreshCursorsRequest, primaryCursor);
+
                             await model.ApplySyntaxHighlightingAsync();
                         });
 
@@ -289,7 +292,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                         commandArgs,
                         async (commandArgs, model, viewModel, refreshCursorsRequest, primaryCursor) =>
                         {
-                            commandArgs.TextEditorService.ModelApi.RedoEditAsync(model.ResourceUri);
+                            await commandArgs.TextEditorService.ModelApi
+                                .GetRedoEditTask(model.ResourceUri)
+                                .Invoke(commandArgs, model, viewModel, refreshCursorsRequest, primaryCursor);
+
                             await model.ApplySyntaxHighlightingAsync();
                         });
 
@@ -826,11 +832,12 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                                 {
                                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                                    commandArgs.TextEditorService.ViewModelApi.MoveCursorAsync(
-                                        keyboardEventArgs,
-                                        model.ResourceUri,
-                                        viewModel.ViewModelKey,
-                                        primaryCursor.Key);
+                                    commandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
+                                            keyboardEventArgs,
+                                            model.ResourceUri,
+                                            viewModel.ViewModelKey,
+                                            primaryCursor.Key)
+                                        .Invoke(commandArgs, model, viewModel, refreshCursorsRequest, primaryCursor);
 
                                     return Task.CompletedTask;
                                 });

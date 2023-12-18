@@ -56,74 +56,74 @@ public partial interface ITextEditorService
         /// <summary>
         /// To ensure text editor modifications are synced, use <see cref="DeleteTextByMotionEnqueue"/> instead.
         /// </summary>
-        public ModificationTask DeleteTextByMotionAsync(DeleteTextByMotionAction deleteTextByMotionAction);
+        public ModificationTask GetDeleteTextByMotionTask(DeleteTextByMotionAction deleteTextByMotionAction);
         /// <summary>
         /// To ensure text editor modifications are synced, use <see cref="DeleteTextByRangeEnqueue"/> instead.
         /// </summary>
-        public ModificationTask DeleteTextByRangeAsync(DeleteTextByRangeAction deleteTextByRangeAction);
+        public ModificationTask GetDeleteTextByRangeTask(DeleteTextByRangeAction deleteTextByRangeAction);
         /// <summary>
         /// To ensure text editor modifications are synced, use <see cref="HandleKeyboardEventEnqueue"/> instead.
         /// </summary>
-        public ModificationTask HandleKeyboardEventAsync(KeyboardEventAction keyboardEventAction);
+        public ModificationTask GetHandleKeyboardEventTask(KeyboardEventAction keyboardEventAction);
         /// <summary>
         /// To ensure text editor modifications are synced, use <see cref="InsertTextEnqueue"/> instead.
         /// </summary>
-        public ModificationTask InsertTextAsync(InsertTextAction insertTextAction);
+        public ModificationTask GetInsertTextTask(InsertTextAction insertTextAction);
         /// <summary>
         /// To ensure text editor modifications are synced, use <see cref="RedoEditEnqueue"/> instead.
         /// </summary>
-        public ModificationTask RedoEditAsync(ResourceUri resourceUri);
+        public ModificationTask GetRedoEditTask(ResourceUri resourceUri);
         /// <summary>
         /// To ensure text editor modifications are synced, use <see cref="ReloadEnqueue"/> instead.
         /// </summary>
-        public ModificationTask ReloadAsync(ResourceUri resourceUri, string content, DateTime resourceLastWriteTime);
+        public ModificationTask GetReloadTask(ResourceUri resourceUri, string content, DateTime resourceLastWriteTime);
         /// <summary>
         /// To ensure text editor modifications are synced, use <see cref="SetResourceDataEnqueue"/> instead.
         /// </summary>
-        public ModificationTask SetResourceDataAsync(ResourceUri resourceUri, DateTime resourceLastWriteTime);
+        public ModificationTask GetSetResourceDataTask(ResourceUri resourceUri, DateTime resourceLastWriteTime);
         /// <summary>
         /// To ensure text editor modifications are synced, use <see cref="SetUsingRowEndingKindEnqueue"/> instead.
         /// </summary>
-        public ModificationTask SetUsingRowEndingKindAsync(ResourceUri resourceUri, RowEndingKind rowEndingKind);
+        public ModificationTask GetSetUsingRowEndingKindTask(ResourceUri resourceUri, RowEndingKind rowEndingKind);
         /// <summary>
         /// To ensure text editor modifications are synced, use <see cref="UndoEditEnqueue"/> instead.
         /// </summary>
-        public ModificationTask UndoEditAsync(ResourceUri resourceUri);
+        public ModificationTask GetUndoEditTask(ResourceUri resourceUri);
 
         /// <summary>
-        /// Enqueue a background task that invokes <see cref="DeleteTextByMotionAsync"/>
+        /// Enqueue a background task that invokes <see cref="GetDeleteTextByMotionTask"/>
         /// </summary>
         public void DeleteTextByMotionEnqueue(DeleteTextByMotionAction deleteTextByMotionAction);
         /// <summary>
-        /// Enqueue a background task that invokes <see cref="DeleteTextByRangeAsync"/>
+        /// Enqueue a background task that invokes <see cref="GetDeleteTextByRangeTask"/>
         /// </summary>
         public void DeleteTextByRangeEnqueue(DeleteTextByRangeAction deleteTextByRangeAction);
         /// <summary>
-        /// Enqueue a background task that invokes <see cref="HandleKeyboardEventAsync"/>
+        /// Enqueue a background task that invokes <see cref="GetHandleKeyboardEventTask"/>
         /// </summary>
         public void HandleKeyboardEventEnqueue(KeyboardEventAction keyboardEventAction);
         /// <summary>
-        /// Enqueue a background task that invokes <see cref="InsertTextAsync"/>
+        /// Enqueue a background task that invokes <see cref="GetInsertTextTask"/>
         /// </summary>
         public void InsertTextEnqueue(InsertTextAction insertTextAction);
         /// <summary>
-        /// Enqueue a background task that invokes <see cref="RedoEditAsync"/>
+        /// Enqueue a background task that invokes <see cref="GetRedoEditTask"/>
         /// </summary>
         public void RedoEditEnqueue(ResourceUri resourceUri);
         /// <summary>
-        /// Enqueue a background task that invokes <see cref="ReloadAsync"/>
+        /// Enqueue a background task that invokes <see cref="GetReloadTask"/>
         /// </summary>
         public void ReloadEnqueue(ResourceUri resourceUri, string content, DateTime resourceLastWriteTime);
         /// <summary>
-        /// Enqueue a background task that invokes <see cref="SetResourceDataAsync"/>
+        /// Enqueue a background task that invokes <see cref="GetSetResourceDataTask"/>
         /// </summary>
         public void SetResourceDataEnqueue(ResourceUri resourceUri, DateTime resourceLastWriteTime);
         /// <summary>
-        /// Enqueue a background task that invokes <see cref="SetUsingRowEndingKindAsync"/>
+        /// Enqueue a background task that invokes <see cref="GetSetUsingRowEndingKindTask"/>
         /// </summary>
         public void SetUsingRowEndingKindEnqueue(ResourceUri resourceUri, RowEndingKind rowEndingKind);
         /// <summary>
-        /// Enqueue a background task that invokes <see cref="UndoEditAsync"/>
+        /// Enqueue a background task that invokes <see cref="GetUndoEditTask"/>
         /// </summary>
         public void UndoEditEnqueue(ResourceUri resourceUri);
         #endregion
@@ -245,7 +245,7 @@ public partial interface ITextEditorService
         #endregion
 
         #region UPDATE_METHODS
-        public ModificationTask UndoEditAsync(ResourceUri resourceUri) =>
+        public ModificationTask GetUndoEditTask(ResourceUri resourceUri) =>
             (_, _, _, _, _) =>
             {
                 _dispatcher.Dispatch(new UndoEditAction(resourceUri));
@@ -261,10 +261,10 @@ public partial interface ITextEditorService
             _textEditorService.EnqueueModification(
                 nameof(UndoEditEnqueue),
                 commandArgs,
-                UndoEditAsync(resourceUri));
+                GetUndoEditTask(resourceUri));
         }
 
-        public ModificationTask SetUsingRowEndingKindAsync(ResourceUri resourceUri, RowEndingKind rowEndingKind) =>
+        public ModificationTask GetSetUsingRowEndingKindTask(ResourceUri resourceUri, RowEndingKind rowEndingKind) =>
             (_, _, _, _, _) =>
             {
                 _dispatcher.Dispatch(new SetUsingRowEndingKindAction(
@@ -283,10 +283,10 @@ public partial interface ITextEditorService
             _textEditorService.EnqueueModification(
                 nameof(SetUsingRowEndingKindEnqueue),
                 commandArgs,
-                SetUsingRowEndingKindAsync(resourceUri, rowEndingKind));
+                GetSetUsingRowEndingKindTask(resourceUri, rowEndingKind));
         }
 
-        public ModificationTask SetResourceDataAsync(ResourceUri resourceUri, DateTime resourceLastWriteTime) =>
+        public ModificationTask GetSetResourceDataTask(ResourceUri resourceUri, DateTime resourceLastWriteTime) =>
             (_, _, _, _, _) =>
             {
                 _dispatcher.Dispatch(new SetResourceDataAction(
@@ -305,10 +305,10 @@ public partial interface ITextEditorService
             _textEditorService.EnqueueModification(
                 nameof(SetResourceDataEnqueue),
                 commandArgs,
-                SetResourceDataAsync(resourceUri, resourceLastWriteTime));
+                GetSetResourceDataTask(resourceUri, resourceLastWriteTime));
         }
 
-        public ModificationTask ReloadAsync(ResourceUri resourceUri, string content, DateTime resourceLastWriteTime) =>
+        public ModificationTask GetReloadTask(ResourceUri resourceUri, string content, DateTime resourceLastWriteTime) =>
             (_, _, _, _, _) =>
             {
                 _dispatcher.Dispatch(new ReloadAction(
@@ -328,10 +328,10 @@ public partial interface ITextEditorService
             _textEditorService.EnqueueModification(
                 nameof(ReloadEnqueue),
                 commandArgs,
-                ReloadAsync(resourceUri, content, resourceLastWriteTime));
+                GetReloadTask(resourceUri, content, resourceLastWriteTime));
         }
 
-        public ModificationTask RedoEditAsync(ResourceUri resourceUri) =>
+        public ModificationTask GetRedoEditTask(ResourceUri resourceUri) =>
             (_, _, _, _, _) =>
             {
                 _dispatcher.Dispatch(new RedoEditAction(resourceUri));
@@ -347,10 +347,10 @@ public partial interface ITextEditorService
             _textEditorService.EnqueueModification(
                 nameof(RedoEditEnqueue),
                 commandArgs,
-                RedoEditAsync(resourceUri));
+                GetRedoEditTask(resourceUri));
         }
 
-        public ModificationTask InsertTextAsync(InsertTextAction insertTextAction) =>
+        public ModificationTask GetInsertTextTask(InsertTextAction insertTextAction) =>
             (_, _, viewModel, refreshCursorsRequest, primaryCursor) =>
             {
                 var cursorBag = refreshCursorsRequest?.CursorBag ?? insertTextAction.CursorModifierBag;
@@ -373,10 +373,10 @@ public partial interface ITextEditorService
             _textEditorService.EnqueueModification(
                 nameof(InsertTextEnqueue),
                 commandArgs,
-                InsertTextAsync(insertTextAction));
+                GetInsertTextTask(insertTextAction));
         }
 
-        public ModificationTask HandleKeyboardEventAsync(KeyboardEventAction keyboardEventAction) =>
+        public ModificationTask GetHandleKeyboardEventTask(KeyboardEventAction keyboardEventAction) =>
             (_, _, _, refreshCursorsRequest, _) =>
             {
                 var cursorBag = refreshCursorsRequest?.CursorBag ?? keyboardEventAction.CursorModifierBag;
@@ -400,10 +400,10 @@ public partial interface ITextEditorService
             _textEditorService.EnqueueModification(
                 nameof(HandleKeyboardEventEnqueue),
                 commandArgs,
-                HandleKeyboardEventAsync(keyboardEventAction));
+                GetHandleKeyboardEventTask(keyboardEventAction));
         }
 
-        public ModificationTask DeleteTextByRangeAsync(DeleteTextByRangeAction deleteTextByRangeAction) =>
+        public ModificationTask GetDeleteTextByRangeTask(DeleteTextByRangeAction deleteTextByRangeAction) =>
             (_, _, _, refreshCursorsRequest, _) =>
             {
                 var cursorBag = refreshCursorsRequest?.CursorBag ?? deleteTextByRangeAction.CursorModifierBag;
@@ -427,10 +427,10 @@ public partial interface ITextEditorService
             _textEditorService.EnqueueModification(
                 nameof(DeleteTextByRangeEnqueue),
                 commandArgs,
-                DeleteTextByRangeAsync(deleteTextByRangeAction));
+                GetDeleteTextByRangeTask(deleteTextByRangeAction));
         }
 
-        public ModificationTask DeleteTextByMotionAsync(DeleteTextByMotionAction deleteTextByMotionAction) =>
+        public ModificationTask GetDeleteTextByMotionTask(DeleteTextByMotionAction deleteTextByMotionAction) =>
             (_, _, _, refreshCursorsRequest, _) =>
             {
                 var cursorBag = refreshCursorsRequest?.CursorBag ?? deleteTextByMotionAction.CursorModifierBag;
@@ -454,7 +454,7 @@ public partial interface ITextEditorService
             _textEditorService.EnqueueModification(
                 nameof(DeleteTextByMotionEnqueue),
                 commandArgs,
-                DeleteTextByMotionAsync(deleteTextByMotionAction));
+                GetDeleteTextByMotionTask(deleteTextByMotionAction));
         }
         #endregion
 

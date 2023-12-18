@@ -252,7 +252,7 @@ public class TextEditorViewModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.FocusPrimaryCursorAsync(string)"/>
+    /// <see cref="ITextEditorService.TextEditorViewModelApi.GetFocusPrimaryCursorTask(string)"/>
     /// </summary>
     [Fact]
     public void FocusPrimaryCursorAsync()

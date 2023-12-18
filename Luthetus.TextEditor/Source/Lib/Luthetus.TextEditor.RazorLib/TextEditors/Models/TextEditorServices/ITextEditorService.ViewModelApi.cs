@@ -12,6 +12,9 @@ using Luthetus.Common.RazorLib.Keyboards.Models;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using static Luthetus.TextEditor.RazorLib.Commands.Models.TextEditorCommand;
+using Luthetus.TextEditor.RazorLib.Characters.Models;
+using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
+using Luthetus.TextEditor.RazorLib.Options.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
@@ -44,19 +47,19 @@ public partial interface ITextEditorService
         #endregion
 
         #region UPDATE_METHODS
-        public ModificationTask FocusPrimaryCursorAsync(string primaryCursorContentId);
+        public ModificationTask GetFocusPrimaryCursorTask(string primaryCursorContentId);
         public void FocusPrimaryCursorEnqueue(string primaryCursorContentId);
 
-        public ModificationTask MutateScrollHorizontalPositionAsync(string bodyElementId, string gutterElementId, double pixels);
+        public ModificationTask GetMutateScrollHorizontalPositionTask(string bodyElementId, string gutterElementId, double pixels);
         public void MutateScrollHorizontalPositionEnqueue(string bodyElementId, string gutterElementId, double pixels);
         
-        public ModificationTask MutateScrollVerticalPositionAsync(string bodyElementId, string gutterElementId, double pixels);
+        public ModificationTask GetMutateScrollVerticalPositionTask(string bodyElementId, string gutterElementId, double pixels);
         public void MutateScrollVerticalPositionEnqueue(string bodyElementId, string gutterElementId, double pixels);
         
-        public ModificationTask SetGutterScrollTopAsync(string gutterElementId, double scrollTopInPixels);
+        public ModificationTask GetSetGutterScrollTopTask(string gutterElementId, double scrollTopInPixels);
         public void SetGutterScrollTopEnqueue(string gutterElementId, double scrollTopInPixels);
         
-        public ModificationTask SetScrollPositionAsync(
+        public ModificationTask GetSetScrollPositionTask(
             string bodyElementId,
             string gutterElementId,
             double? scrollLeftInPixels,
@@ -67,21 +70,21 @@ public partial interface ITextEditorService
             double? scrollLeftInPixels,
             double? scrollTopInPixels);
 
-        public ModificationTask WithValueAsync(
+        public ModificationTask GetWithValueTask(
             Key<TextEditorViewModel> viewModelKey,
             Func<TextEditorViewModel, TextEditorViewModel> withFunc);
         public void WithValueEnqueue(
             Key<TextEditorViewModel> viewModelKey,
             Func<TextEditorViewModel, TextEditorViewModel> withFunc);
 
-        public ModificationTask WithTaskAsync(
+        public ModificationTask GetWithTaskTask(
             Key<TextEditorViewModel> viewModelKey,
             Func<TextEditorViewModel, Task<Func<TextEditorViewModel, TextEditorViewModel>>> withFuncWrap);
         public void WithTaskEnqueue(
             Key<TextEditorViewModel> viewModelKey,
             Func<TextEditorViewModel, Task<Func<TextEditorViewModel, TextEditorViewModel>>> withFuncWrap);
 
-        public ModificationTask MoveCursorAsync(
+        public ModificationTask GetMoveCursorTask(
             KeyboardEventArgs keyboardEventArgs,
             ResourceUri modelResourceUri,
             Key<TextEditorViewModel> viewModelKey,
@@ -92,7 +95,7 @@ public partial interface ITextEditorService
             Key<TextEditorViewModel> viewModelKey,
             Key<TextEditorCursor> cursorKey);
 
-        public ModificationTask CursorMovePageTopAsync(
+        public ModificationTask GetCursorMovePageTopTask(
             ResourceUri modelResourceUri,
             Key<TextEditorViewModel> viewModelKey,
             Key<TextEditorCursor> cursorKey);
@@ -101,7 +104,7 @@ public partial interface ITextEditorService
             Key<TextEditorViewModel> viewModelKey,
             Key<TextEditorCursor> cursorKey);
 
-        public ModificationTask CursorMovePageBottomAsync(
+        public ModificationTask GetCursorMovePageBottomTask(
             ResourceUri modelResourceUri,
             Key<TextEditorViewModel> viewModelKey,
             Key<TextEditorCursor> cursorKey);
@@ -109,6 +112,32 @@ public partial interface ITextEditorService
             ResourceUri modelResourceUri,
             Key<TextEditorViewModel> viewModelKey,
             Key<TextEditorCursor> cursorKey);
+
+        public ModificationTask GetCalculateVirtualizationResultTask(
+            ResourceUri modelResourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            TextEditorMeasurements? textEditorMeasurements,
+            Key<TextEditorCursor> cursorKey,
+            CancellationToken cancellationToken);
+        public void CalculateVirtualizationResultEnqueue(
+            ResourceUri modelResourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            TextEditorMeasurements? textEditorMeasurements,
+            Key<TextEditorCursor> cursorKey,
+            CancellationToken cancellationToken);
+
+        public ModificationTask GetRemeasureTask(
+            ResourceUri modelResourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            string measureCharacterWidthAndRowHeightElementId,
+            int countOfTestCharacters,
+            CancellationToken cancellationToken);
+        public void RemeasureEnqueue(
+            ResourceUri modelResourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            string measureCharacterWidthAndRowHeightElementId,
+            int countOfTestCharacters,
+            CancellationToken cancellationToken);
         #endregion
 
         #region DELETE_METHODS
@@ -262,7 +291,7 @@ public partial interface ITextEditorService
         #endregion
 
         #region UPDATE_METHODS
-        public ModificationTask WithValueAsync(
+        public ModificationTask GetWithValueTask(
             Key<TextEditorViewModel> viewModelKey,
             Func<TextEditorViewModel, TextEditorViewModel> withFunc) =>
                 (_, _, _, _, _) =>
@@ -283,12 +312,12 @@ public partial interface ITextEditorService
                 _textEditorService, null, null, null, null, null, null);
 
             _textEditorService.EnqueueModification(
-                nameof(WithValueAsync),
+                nameof(GetWithValueTask),
                 commandArgs,
-                WithValueAsync(viewModelKey, withFunc));
+                GetWithValueTask(viewModelKey, withFunc));
         }
 
-        public ModificationTask WithTaskAsync(
+        public ModificationTask GetWithTaskTask(
             Key<TextEditorViewModel> viewModelKey,
             Func<TextEditorViewModel, Task<Func<TextEditorViewModel, TextEditorViewModel>>> withFuncWrap) =>
                 async (_, _, viewModel, _, _) =>
@@ -307,15 +336,15 @@ public partial interface ITextEditorService
                 _textEditorService, null, null, null, null, null, null);
 
             _textEditorService.EnqueueModification(
-                nameof(WithTaskAsync),
+                nameof(GetWithTaskTask),
                 commandArgs,
-                WithTaskAsync(viewModelKey, withFuncWrap));
+                GetWithTaskTask(viewModelKey, withFuncWrap));
         }
 
         /// <summary>
         /// If a parameter is null the JavaScript will not modify that value
         /// </summary>
-        public ModificationTask SetScrollPositionAsync(
+        public ModificationTask GetSetScrollPositionTask(
             string bodyElementId,
             string gutterElementId,
             double? scrollLeftInPixels,
@@ -343,16 +372,16 @@ public partial interface ITextEditorService
                 _textEditorService, null, null, null, null, null, null);
 
             _textEditorService.EnqueueModification(
-                nameof(SetScrollPositionAsync),
+                nameof(GetSetScrollPositionTask),
                 commandArgs,
-                SetScrollPositionAsync(
+                GetSetScrollPositionTask(
                     bodyElementId,
                     gutterElementId,
                     scrollLeftInPixels,
                     scrollTopInPixels));
         }
 
-        public ModificationTask SetGutterScrollTopAsync(
+        public ModificationTask GetSetGutterScrollTopTask(
             string gutterElementId,
             double scrollTopInPixels) =>
                 async (_, _, _, _, _) =>
@@ -371,12 +400,12 @@ public partial interface ITextEditorService
                 _textEditorService, null, null, null, null, null, null);
 
             _textEditorService.EnqueueModification(
-                nameof(SetGutterScrollTopAsync),
+                nameof(GetSetGutterScrollTopTask),
                 commandArgs,
-                SetGutterScrollTopAsync(gutterElementId, scrollTopInPixels));
+                GetSetGutterScrollTopTask(gutterElementId, scrollTopInPixels));
         }
 
-        public ModificationTask MutateScrollVerticalPositionAsync(
+        public ModificationTask GetMutateScrollVerticalPositionTask(
             string bodyElementId,
             string gutterElementId,
             double pixels) =>
@@ -398,12 +427,12 @@ public partial interface ITextEditorService
                 _textEditorService, null, null, null, null, null, null);
 
             _textEditorService.EnqueueModification(
-                nameof(MutateScrollVerticalPositionAsync),
+                nameof(GetMutateScrollVerticalPositionTask),
                 commandArgs,
-                MutateScrollVerticalPositionAsync(bodyElementId, gutterElementId, pixels));
+                GetMutateScrollVerticalPositionTask(bodyElementId, gutterElementId, pixels));
         }
 
-        public ModificationTask MutateScrollHorizontalPositionAsync(
+        public ModificationTask GetMutateScrollHorizontalPositionTask(
             string bodyElementId,
             string gutterElementId,
             double pixels) => 
@@ -425,12 +454,12 @@ public partial interface ITextEditorService
                 _textEditorService, null, null, null, null, null, null);
 
             _textEditorService.EnqueueModification(
-                nameof(MutateScrollHorizontalPositionAsync),
+                nameof(GetMutateScrollHorizontalPositionTask),
                 commandArgs,
-                MutateScrollHorizontalPositionAsync(bodyElementId, gutterElementId, pixels));
+                GetMutateScrollHorizontalPositionTask(bodyElementId, gutterElementId, pixels));
         }
 
-        public ModificationTask FocusPrimaryCursorAsync(string primaryCursorContentId) =>
+        public ModificationTask GetFocusPrimaryCursorTask(string primaryCursorContentId) =>
             async (_, _, _, _, _) =>
             {
                 await _jsRuntime.InvokeVoidAsync("luthetusTextEditor.focusHtmlElementById",
@@ -444,12 +473,12 @@ public partial interface ITextEditorService
                 _textEditorService, null, null, null, null, null, null);
 
             _textEditorService.EnqueueModification(
-                nameof(FocusPrimaryCursorAsync),
+                nameof(GetFocusPrimaryCursorTask),
                 commandArgs,
-                FocusPrimaryCursorAsync(primaryCursorContentId));
+                GetFocusPrimaryCursorTask(primaryCursorContentId));
         }
 
-        public ModificationTask MoveCursorAsync(
+        public ModificationTask GetMoveCursorTask(
             KeyboardEventArgs keyboardEventArgs,
             ResourceUri modelResourceUri,
             Key<TextEditorViewModel> viewModelKey,
@@ -655,12 +684,12 @@ public partial interface ITextEditorService
                 _textEditorService, null, null, null, null, null, null);
 
             _textEditorService.EnqueueModification(
-                nameof(MoveCursorAsync),
+                nameof(GetMoveCursorTask),
                 commandArgs,
-                MoveCursorAsync(keyboardEventArgs, modelResourceUri, viewModelKey, cursorKey));
+                GetMoveCursorTask(keyboardEventArgs, modelResourceUri, viewModelKey, cursorKey));
         }
 
-        public ModificationTask CursorMovePageTopAsync(
+        public ModificationTask GetCursorMovePageTopTask(
             ResourceUri modelResourceUri,
             Key<TextEditorViewModel> viewModelKey,
             Key<TextEditorCursor> cursorKey) =>
@@ -687,12 +716,12 @@ public partial interface ITextEditorService
                 _textEditorService, null, null, null, null, null, null);
 
             _textEditorService.EnqueueModification(
-                nameof(CursorMovePageTopAsync),
+                nameof(GetCursorMovePageTopTask),
                 commandArgs,
-                CursorMovePageTopAsync(modelResourceUri, viewModelKey, cursorKey));
+                GetCursorMovePageTopTask(modelResourceUri, viewModelKey, cursorKey));
         }
 
-        public ModificationTask CursorMovePageBottomAsync(
+        public ModificationTask GetCursorMovePageBottomTask(
             ResourceUri modelResourceUri,
             Key<TextEditorViewModel> viewModelKey,
             Key<TextEditorCursor> cursorKey) =>
@@ -725,9 +754,339 @@ public partial interface ITextEditorService
                 _textEditorService, null, null, null, null, null, null);
 
             _textEditorService.EnqueueModification(
-                nameof(CursorMovePageBottomAsync),
+                nameof(GetCursorMovePageBottomTask),
                 commandArgs,
-                CursorMovePageBottomAsync(modelResourceUri, viewModelKey, cursorKey));
+                GetCursorMovePageBottomTask(modelResourceUri, viewModelKey, cursorKey));
+        }
+
+        public ModificationTask GetCalculateVirtualizationResultTask(
+            ResourceUri modelResourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            TextEditorMeasurements? textEditorMeasurements,
+            Key<TextEditorCursor> cursorKey,
+            CancellationToken cancellationToken) =>
+                async (_, model, viewModel, refreshCursorsRequest, primaryCursor) =>
+                {
+                    if (cancellationToken.IsCancellationRequested)
+                        return;
+
+                    // Return because the UI still needs to be measured.
+                    if (!viewModel.SeenOptionsRenderStateKeysBag.Any())
+                        return;
+
+                    await viewModel.ThrottleCalculateVirtualizationResult.FireAsync((Func<CancellationToken, Task>)(async _ =>
+                    {
+                        if (model is null)
+                            return;
+
+                        // TODO: Should this '_trackingOfUniqueIdentifiersLock' logic when in regards to the TextEditorModel be removed? The issue is that when scrolling the TextEditorModel would show up in the HashSet and therefore the calculation of the virtualization result would not occur.
+                        //
+                        //lock (_trackingOfUniqueIdentifiersLock)
+                        //{
+                        //    if (SeenModelRenderStateKeys.Contains(model.RenderStateKey))
+                        //        return;
+                        //}
+
+                        var localCharacterWidthAndRowHeight = viewModel.VirtualizationResult.CharAndRowMeasurements;
+
+                        textEditorMeasurements = await _textEditorService.ViewModelApi.GetTextEditorMeasurementsAsync(viewModel.BodyElementId);
+
+                        viewModel.MostRecentTextEditorMeasurements = textEditorMeasurements;
+
+                        textEditorMeasurements = textEditorMeasurements with
+                        {
+                            MeasurementsExpiredCancellationToken = cancellationToken
+                        };
+
+                        var verticalStartingIndex = (int)Math.Floor(
+                            textEditorMeasurements.ScrollTop /
+                            localCharacterWidthAndRowHeight.RowHeight);
+
+                        var verticalTake = (int)Math.Ceiling(
+                            textEditorMeasurements.Height /
+                            localCharacterWidthAndRowHeight.RowHeight);
+
+                        // Vertical Padding (render some offscreen data)
+                        {
+                            verticalTake += 1;
+                        }
+
+                        // Check index boundaries
+                        {
+                            verticalStartingIndex = Math.Max(0, verticalStartingIndex);
+
+                            if (verticalStartingIndex + verticalTake > model.RowEndingPositionsBag.Count)
+                                verticalTake = model.RowEndingPositionsBag.Count - verticalStartingIndex;
+
+                            verticalTake = Math.Max(0, verticalTake);
+                        }
+
+                        var horizontalStartingIndex = (int)Math.Floor(
+                            textEditorMeasurements.ScrollLeft /
+                            localCharacterWidthAndRowHeight.CharacterWidth);
+
+                        var horizontalTake = (int)Math.Ceiling(
+                            textEditorMeasurements.Width /
+                            localCharacterWidthAndRowHeight.CharacterWidth);
+
+                        var virtualizedEntryBag = model
+                            .GetRows(verticalStartingIndex, verticalTake)
+                            .Select((row, rowIndex) =>
+                            {
+                                rowIndex += verticalStartingIndex;
+
+                                var localHorizontalStartingIndex = horizontalStartingIndex;
+                                var localHorizontalTake = horizontalTake;
+
+                                // 1 of the character width is already accounted for
+                                var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+
+                                // Adjust for tab key width
+                                {
+                                    var maxValidColumnIndex = row.Count - 1;
+
+                                    var parameterForGetTabsCountOnSameRowBeforeCursor =
+                                        localHorizontalStartingIndex > maxValidColumnIndex
+                                            ? maxValidColumnIndex
+                                            : localHorizontalStartingIndex;
+
+                                    var tabsOnSameRowBeforeCursor = model.GetTabsCountOnSameRowBeforeCursor(
+                                        rowIndex,
+                                        parameterForGetTabsCountOnSameRowBeforeCursor);
+
+                                    localHorizontalStartingIndex -= extraWidthPerTabKey * tabsOnSameRowBeforeCursor;
+                                }
+
+                                if (localHorizontalStartingIndex + localHorizontalTake > row.Count)
+                                    localHorizontalTake = row.Count - localHorizontalStartingIndex;
+
+                                localHorizontalStartingIndex = Math.Max(0, localHorizontalStartingIndex);
+                                localHorizontalTake = Math.Max(0, localHorizontalTake);
+
+                                var horizontallyVirtualizedRow = row
+                                    .Skip(localHorizontalStartingIndex)
+                                    .Take(localHorizontalTake)
+                                    .ToList();
+
+                                var countTabKeysInVirtualizedRow = horizontallyVirtualizedRow
+                                    .Where(x => x.Value == KeyboardKeyFacts.WhitespaceCharacters.TAB)
+                                    .Count();
+
+                                var widthInPixels = (horizontallyVirtualizedRow.Count + (extraWidthPerTabKey * countTabKeysInVirtualizedRow)) *
+                                    localCharacterWidthAndRowHeight.CharacterWidth;
+
+                                var leftInPixels = localHorizontalStartingIndex *
+                                    localCharacterWidthAndRowHeight.CharacterWidth;
+
+                                // Adjust for tab key width
+                                {
+                                    var maxValidColumnIndex = row.Count - 1;
+
+                                    var parameterForGetTabsCountOnSameRowBeforeCursor =
+                                        localHorizontalStartingIndex > maxValidColumnIndex
+                                            ? maxValidColumnIndex
+                                            : localHorizontalStartingIndex;
+
+                                    var tabsOnSameRowBeforeCursor = model.GetTabsCountOnSameRowBeforeCursor(
+                                        rowIndex,
+                                        parameterForGetTabsCountOnSameRowBeforeCursor);
+
+                                    leftInPixels += (extraWidthPerTabKey *
+                                        tabsOnSameRowBeforeCursor *
+                                        localCharacterWidthAndRowHeight.CharacterWidth);
+                                }
+
+                                leftInPixels = Math.Max(0, leftInPixels);
+
+                                var topInPixels = rowIndex * localCharacterWidthAndRowHeight.RowHeight;
+
+                                return new VirtualizationEntry<List<RichCharacter>>(
+                                    rowIndex,
+                                    horizontallyVirtualizedRow,
+                                    widthInPixels,
+                                    localCharacterWidthAndRowHeight.RowHeight,
+                                    leftInPixels,
+                                    topInPixels);
+                            }).ToImmutableArray();
+
+                        var totalWidth = model.MostCharactersOnASingleRowTuple.rowLength *
+                            localCharacterWidthAndRowHeight.CharacterWidth;
+
+                        var totalHeight = model.RowEndingPositionsBag.Count *
+                            localCharacterWidthAndRowHeight.RowHeight;
+
+                        // Add vertical margin so the user can scroll beyond the final row of content
+                        double marginScrollHeight;
+                        {
+                            var percentOfMarginScrollHeightByPageUnit = 0.4;
+
+                            marginScrollHeight = textEditorMeasurements.Height * percentOfMarginScrollHeightByPageUnit;
+                            totalHeight += marginScrollHeight;
+                        }
+
+                        var leftBoundaryWidthInPixels = horizontalStartingIndex *
+                            localCharacterWidthAndRowHeight.CharacterWidth;
+
+                        var leftBoundary = new VirtualizationBoundary(
+                            leftBoundaryWidthInPixels,
+                            totalHeight,
+                            0,
+                            0);
+
+                        var rightBoundaryLeftInPixels = leftBoundary.WidthInPixels +
+                            localCharacterWidthAndRowHeight.CharacterWidth *
+                            horizontalTake;
+
+                        var rightBoundaryWidthInPixels = totalWidth - rightBoundaryLeftInPixels;
+
+                        var rightBoundary = new VirtualizationBoundary(
+                            rightBoundaryWidthInPixels,
+                            totalHeight,
+                            rightBoundaryLeftInPixels,
+                            0);
+
+                        var topBoundaryHeightInPixels = verticalStartingIndex *
+                            localCharacterWidthAndRowHeight.RowHeight;
+
+                        var topBoundary = new VirtualizationBoundary(
+                            totalWidth,
+                            topBoundaryHeightInPixels,
+                            0,
+                            0);
+
+                        var bottomBoundaryTopInPixels = topBoundary.HeightInPixels +
+                            localCharacterWidthAndRowHeight.RowHeight *
+                            verticalTake;
+
+                        var bottomBoundaryHeightInPixels = totalHeight - bottomBoundaryTopInPixels;
+
+                        var bottomBoundary = new VirtualizationBoundary(
+                            totalWidth,
+                            bottomBoundaryHeightInPixels,
+                            0,
+                            bottomBoundaryTopInPixels);
+
+                        var virtualizationResult = new VirtualizationResult<List<RichCharacter>>(
+                            virtualizedEntryBag,
+                            leftBoundary,
+                            rightBoundary,
+                            topBoundary,
+                            bottomBoundary,
+                            textEditorMeasurements with
+                            {
+                                ScrollWidth = totalWidth,
+                                ScrollHeight = totalHeight,
+                                MarginScrollHeight = marginScrollHeight
+                            },
+                            localCharacterWidthAndRowHeight);
+
+                        lock (viewModel.TrackingOfUniqueIdentifiersLock)
+                        {
+                            if (viewModel.SeenModelRenderStateKeysBag.Count > TextEditorViewModel.ClearTrackingOfUniqueIdentifiersWhenCountIs)
+                                viewModel.SeenModelRenderStateKeysBag.Clear();
+
+                            viewModel.SeenModelRenderStateKeysBag.Add(model.RenderStateKey);
+                        }
+
+                        await _textEditorService.ViewModelApi.GetWithValueTask(
+                            viewModel.ViewModelKey,
+                            previousViewModel => previousViewModel with
+                            {
+                                VirtualizationResult = virtualizationResult,
+                            })
+                            .Invoke(null, model, viewModel, refreshCursorsRequest, primaryCursor);
+                    }));
+                };
+
+        public void CalculateVirtualizationResultEnqueue(
+            ResourceUri modelResourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            TextEditorMeasurements? textEditorMeasurements,
+            Key<TextEditorCursor> cursorKey,
+            CancellationToken cancellationToken)
+        {
+            var commandArgs = new TextEditorCommandArgs(
+                modelResourceUri, viewModelKey, false, null,
+                _textEditorService, null, null, null, null, null, null);
+
+            _textEditorService.EnqueueModification(
+                nameof(GetCalculateVirtualizationResultTask),
+                commandArgs,
+                GetCalculateVirtualizationResultTask(
+                    modelResourceUri,
+                    viewModelKey,
+                    textEditorMeasurements,
+                    cursorKey,
+                    cancellationToken));
+        }
+
+        public ModificationTask GetRemeasureTask(
+            ResourceUri modelResourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            string measureCharacterWidthAndRowHeightElementId,
+            int countOfTestCharacters,
+            CancellationToken cancellationToken) =>
+                async (_, model, viewModel, refreshCursorsRequest, primaryCursor) =>
+                {
+                    var options = _textEditorService.OptionsApi.GetOptions();
+
+                    await viewModel.ThrottleRemeasure.FireAsync((async _ =>
+                    {
+                        lock (viewModel.TrackingOfUniqueIdentifiersLock)
+                        {
+                            if (viewModel.SeenOptionsRenderStateKeysBag.Contains(options.RenderStateKey))
+                                return;
+                        }
+
+                        var characterWidthAndRowHeight = await _textEditorService.ViewModelApi.MeasureCharacterWidthAndRowHeightAsync(
+                            measureCharacterWidthAndRowHeightElementId,
+                            countOfTestCharacters);
+
+                        viewModel.VirtualizationResult.CharAndRowMeasurements = characterWidthAndRowHeight;
+
+                        lock (viewModel.TrackingOfUniqueIdentifiersLock)
+                        {
+                            if (viewModel.SeenOptionsRenderStateKeysBag.Count > TextEditorViewModel.ClearTrackingOfUniqueIdentifiersWhenCountIs)
+                                viewModel.SeenOptionsRenderStateKeysBag.Clear();
+
+                            viewModel.SeenOptionsRenderStateKeysBag.Add(options.RenderStateKey);
+                        }
+
+                        await viewModel.TextEditorService.ViewModelApi.GetWithValueTask(
+                            viewModel.ViewModelKey,
+                            previousViewModel => (previousViewModel with
+                            {
+                                // Clear the SeenModelRenderStateKeys because one needs to recalculate the virtualization result now that the options have changed.
+                                SeenModelRenderStateKeysBag = new(),
+                                VirtualizationResult = previousViewModel.VirtualizationResult with
+                                {
+                                    CharAndRowMeasurements = characterWidthAndRowHeight
+                                },
+                            }))
+                        .Invoke(null, model, viewModel, refreshCursorsRequest, primaryCursor);
+                    }));
+                };
+
+        public void RemeasureEnqueue(
+            ResourceUri modelResourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            string measureCharacterWidthAndRowHeightElementId,
+            int countOfTestCharacters,
+            CancellationToken cancellationToken)
+        {
+            var commandArgs = new TextEditorCommandArgs(
+                modelResourceUri, viewModelKey, false, null,
+                _textEditorService, null, null, null, null, null, null);
+
+            _textEditorService.EnqueueModification(
+                nameof(GetRemeasureTask),
+                commandArgs,
+                GetRemeasureTask(
+                    modelResourceUri,
+                    viewModelKey,
+                    measureCharacterWidthAndRowHeightElementId,
+                    countOfTestCharacters,
+                    cancellationToken));
         }
         #endregion
 

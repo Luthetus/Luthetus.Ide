@@ -1,4 +1,7 @@
 ﻿using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.Commands.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
@@ -19,8 +22,12 @@ public partial class GutterSection : ComponentBase
     {
         var viewModel = RenderBatch.ViewModel!;
 
+        var commandArgs = new TextEditorCommandArgs(
+            null, Key<TextEditorViewModel>.Empty, false, null,
+            TextEditorService, null, null, null, null, null, null);
+
         // TODO: Does 'SetGutterScrollTopAsync' need to be throttled? 
-        TextEditorService.ViewModelApi.SetGutterScrollTopAsync(
+        TextEditorService.ViewModelApi.SetGutterScrollTopEnqueue(
             viewModel.GutterElementId,
             viewModel.VirtualizationResult.TextEditorMeasurements.ScrollTop);
 

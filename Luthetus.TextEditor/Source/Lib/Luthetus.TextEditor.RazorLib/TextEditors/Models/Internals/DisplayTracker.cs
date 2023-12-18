@@ -5,6 +5,7 @@ using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
+using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 using Microsoft.JSInterop;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -119,27 +120,12 @@ public class DisplayTracker : IDisposable
 
         var primaryCursor = viewModel.PrimaryCursor;
 
-        _textEditorService.EnqueueModification(
-            "QueueRemeasureBackgroundTask",
-            new TextEditorCommandArgs(
-                model.ResourceUri,
-                viewModel.ViewModelKey,
-                TextEditorSelectionHelper.HasSelectedText(primaryCursor.Selection),
-                null,
-                _textEditorService,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null),
-                async (commandArgs, model, viewModel, refreshCursorsRequest, primaryCursor) =>
-                {
-                    await viewModel.CalculateVirtualizationResultAsync(
-                        model,
-                        null,
-                        _calculateVirtualizationResultCancellationTokenSource.Token);
-                });
+        _textEditorService.ViewModelApi.CalculateVirtualizationResultEnqueue(
+            model.ResourceUri,
+            viewModel.ViewModelKey,
+            viewModel.MostRecentTextEditorMeasurements,
+            primaryCursor.Key,
+            _calculateVirtualizationResultCancellationTokenSource.Token);
     }
 
     public void Dispose()
