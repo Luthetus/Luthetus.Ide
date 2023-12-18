@@ -1,4 +1,10 @@
-﻿using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.RenderStates.Models;
+using Luthetus.Common.RazorLib.Themes.Models;
+using Luthetus.TextEditor.RazorLib.Keymaps.Models;
+using Luthetus.TextEditor.RazorLib.Options.States;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Xunit;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
@@ -13,6 +19,239 @@ public class TextEditorOptionsApiTests
     /// </summary>
     [Fact]
     public void Constructor()
+    {
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        Assert.NotNull(textEditorService.OptionsApi);
+    }
+
+    /// <summary>
+    /// <see cref="ITextEditorService.TextEditorOptionsApi.SetTheme(ThemeRecord)"/>
+    /// </summary>
+    [Fact]
+    public void SetTheme()
+    {
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        Assert.Equal(
+            ThemeFacts.VisualStudioDarkThemeClone.Key,
+            textEditorService.OptionsApi.GetOptions().CommonOptions.ThemeKey);
+
+        textEditorService.OptionsApi.SetTheme(ThemeFacts.VisualStudioLightThemeClone);
+
+        Assert.Equal(
+            ThemeFacts.VisualStudioLightThemeClone.Key,
+            textEditorService.OptionsApi.GetOptions().CommonOptions.ThemeKey);
+    }
+
+    /// <summary>
+    /// <see cref="ITextEditorService.TextEditorOptionsApi.SetShowWhitespace(bool)"/>
+    /// </summary>
+    [Fact]
+    public void SetShowWhitespace()
+    {
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        Assert.False(textEditorService.OptionsApi.GetOptions().ShowWhitespace);
+        textEditorService.OptionsApi.SetShowWhitespace(true);
+        Assert.True(textEditorService.OptionsApi.GetOptions().ShowWhitespace);
+    }
+
+    /// <summary>
+    /// <see cref="ITextEditorService.TextEditorOptionsApi.SetUseMonospaceOptimizations(bool)"/>
+    /// </summary>
+    [Fact]
+    public void SetUseMonospaceOptimizations()
+    {
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        Assert.True(textEditorService.OptionsApi.GetOptions().UseMonospaceOptimizations);
+        textEditorService.OptionsApi.SetUseMonospaceOptimizations(false);
+        Assert.False(textEditorService.OptionsApi.GetOptions().UseMonospaceOptimizations);
+    }
+
+    /// <summary>
+    /// <see cref="ITextEditorService.TextEditorOptionsApi.SetShowNewlines(bool)"/>
+    /// </summary>
+    [Fact]
+    public void SetShowNewlines()
+    {
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        Assert.False(textEditorService.OptionsApi.GetOptions().ShowNewlines);
+        textEditorService.OptionsApi.SetShowNewlines(true);
+        Assert.True(textEditorService.OptionsApi.GetOptions().ShowNewlines);
+    }
+
+    /// <summary>
+    /// <see cref="ITextEditorService.TextEditorOptionsApi.SetKeymap(Common.RazorLib.Keymaps.Models.Keymap)"/>
+    /// </summary>
+    [Fact]
+    public void SetKeymap()
+    {
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        Assert.Equal(
+            TextEditorKeymapFacts.DefaultKeymap.Key,
+            textEditorService.OptionsApi.GetOptions().Keymap.Key);
+
+        textEditorService.OptionsApi.SetKeymap(TextEditorKeymapFacts.VimKeymap);
+
+        Assert.Equal(
+            TextEditorKeymapFacts.VimKeymap.Key,
+            textEditorService.OptionsApi.GetOptions().Keymap.Key);
+    }
+
+    /// <summary>
+    /// <see cref="ITextEditorService.TextEditorOptionsApi.SetHeight(int?)"/>
+    /// </summary>
+    [Fact]
+    public void SetHeight()
+    {
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        var textEditorHeightInPixels = 500;
+
+        Assert.Null(textEditorService.OptionsApi.GetOptions().TextEditorHeightInPixels);
+
+        textEditorService.OptionsApi.SetHeight(textEditorHeightInPixels);
+
+        Assert.Equal(
+            textEditorHeightInPixels,
+            textEditorService.OptionsApi.GetOptions().TextEditorHeightInPixels!.Value);
+    }
+
+    /// <summary>
+    /// <see cref="ITextEditorService.TextEditorOptionsApi.SetFontSize(int)"/>
+    /// </summary>
+    [Fact]
+    public void SetFontSize()
+    {
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        Assert.Equal(
+            AppOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS,
+            textEditorService.OptionsApi.GetOptions().CommonOptions.FontSizeInPixels);
+
+        var fontSizeInPixels = 1 + AppOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS;
+
+        textEditorService.OptionsApi.SetFontSize(fontSizeInPixels);
+
+        Assert.Equal(
+            fontSizeInPixels,
+            textEditorService.OptionsApi.GetOptions().CommonOptions.FontSizeInPixels);
+    }
+
+    /// <summary>
+    /// <see cref="ITextEditorService.TextEditorOptionsApi.SetFontFamily(string?)"/>
+    /// </summary>
+    [Fact]
+    public void SetFontFamily()
+    {
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        Assert.Null(textEditorService.OptionsApi.GetOptions().CommonOptions.FontFamily);
+
+        var fontFamily = "chiller";
+
+        textEditorService.OptionsApi.SetFontFamily(fontFamily);
+
+        Assert.Equal(
+            fontFamily,
+            textEditorService.OptionsApi.GetOptions().CommonOptions.FontFamily);
+    }
+
+    /// <summary>
+    /// <see cref="ITextEditorService.TextEditorOptionsApi.SetCursorWidth(double)"/>
+    /// </summary>
+    [Fact]
+    public void SetCursorWidth()
+    {
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        Assert.Equal(
+            TextEditorOptionsState.DEFAULT_CURSOR_WIDTH_IN_PIXELS,
+            textEditorService.OptionsApi.GetOptions().CursorWidthInPixels);
+
+        var cursorWidthInPixels = 1 + TextEditorOptionsState.DEFAULT_CURSOR_WIDTH_IN_PIXELS;
+
+        textEditorService.OptionsApi.SetCursorWidth(cursorWidthInPixels);
+
+        Assert.Equal(
+            cursorWidthInPixels,
+            textEditorService.OptionsApi.GetOptions().CursorWidthInPixels);
+    }
+
+    /// <summary>
+    /// <see cref="ITextEditorService.TextEditorOptionsApi.SetRenderStateKey(Common.RazorLib.Keys.Models.Key{Common.RazorLib.RenderStates.Models.RenderState})"/>
+    /// </summary>
+    [Fact]
+    public void SetRenderStateKey()
+    {
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        var renderStateKey = Key<RenderState>.NewKey();
+
+        Assert.NotEqual(
+            renderStateKey,
+            textEditorService.OptionsApi.GetOptions().RenderStateKey);
+
+        textEditorService.OptionsApi.SetRenderStateKey(renderStateKey);
+
+        Assert.Equal(
+            renderStateKey,
+            textEditorService.OptionsApi.GetOptions().RenderStateKey);
+    }
+
+    /// <summary>
+    /// <see cref="ITextEditorService.TextEditorOptionsApi.SetFromLocalStorageAsync()"/>
+    /// </summary>
+    [Fact]
+    public void SetFromLocalStorageAsync()
     {
         throw new NotImplementedException();
     }
@@ -40,105 +279,6 @@ public class TextEditorOptionsApiTests
     /// </summary>
     [Fact]
     public void ShowFindDialog()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="ITextEditorService.TextEditorOptionsApi.SetTheme(Common.RazorLib.Themes.Models.ThemeRecord)"/>
-    /// </summary>
-    [Fact]
-    public void SetTheme()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="ITextEditorService.TextEditorOptionsApi.SetShowWhitespace(bool)"/>
-    /// </summary>
-    [Fact]
-    public void SetShowWhitespace()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="ITextEditorService.TextEditorOptionsApi.SetUseMonospaceOptimizations(bool)"/>
-    /// </summary>
-    [Fact]
-    public void SetUseMonospaceOptimizations()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="ITextEditorService.TextEditorOptionsApi.SetShowNewlines(bool)"/>
-    /// </summary>
-    [Fact]
-    public void SetShowNewlines()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="ITextEditorService.TextEditorOptionsApi.SetKeymap(Common.RazorLib.Keymaps.Models.Keymap)"/>
-    /// </summary>
-    [Fact]
-    public void SetKeymap()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="ITextEditorService.TextEditorOptionsApi.SetHeight(int?)"/>
-    /// </summary>
-    [Fact]
-    public void SetHeight()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="ITextEditorService.TextEditorOptionsApi.SetFromLocalStorageAsync()"/>
-    /// </summary>
-    [Fact]
-    public void SetFromLocalStorageAsync()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="ITextEditorService.TextEditorOptionsApi.SetFontSize(int)"/>
-    /// </summary>
-    [Fact]
-    public void SetFontSize()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="ITextEditorService.TextEditorOptionsApi.SetFontFamily(string?)"/>
-    /// </summary>
-    [Fact]
-    public void SetFontFamily()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="ITextEditorService.TextEditorOptionsApi.SetCursorWidth(double)"/>
-    /// </summary>
-    [Fact]
-    public void SetCursorWidth()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="ITextEditorService.TextEditorOptionsApi.SetRenderStateKey(Common.RazorLib.Keys.Models.Key{Common.RazorLib.RenderStates.Models.RenderState})"/>
-    /// </summary>
-    [Fact]
-    public void SetRenderStateKey()
     {
         throw new NotImplementedException();
     }

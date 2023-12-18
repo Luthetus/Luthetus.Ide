@@ -26,7 +26,7 @@ public partial interface ITextEditorService
         public void SetFontSize(int fontSizeInPixels);
         public Task SetFromLocalStorageAsync();
         public void SetHeight(int? heightInPixels);
-        public void SetKeymap(Keymap foundKeymap);
+        public void SetKeymap(Keymap keymap);
         public void SetShowNewlines(bool showNewlines);
         public void SetUseMonospaceOptimizations(bool useMonospaceOptimizations);
         public void SetShowWhitespace(bool showWhitespace);
@@ -128,9 +128,9 @@ public partial interface ITextEditorService
             WriteToStorage();
         }
 
-        public void SetKeymap(Keymap foundKeymap)
+        public void SetKeymap(Keymap keymap)
         {
-            _dispatcher.Dispatch(new TextEditorOptionsState.SetKeymapAction(foundKeymap));
+            _dispatcher.Dispatch(new TextEditorOptionsState.SetKeymapAction(keymap));
 
             var activeKeymap = _textEditorService.OptionsStateWrap.Value.Options.Keymap;
 
