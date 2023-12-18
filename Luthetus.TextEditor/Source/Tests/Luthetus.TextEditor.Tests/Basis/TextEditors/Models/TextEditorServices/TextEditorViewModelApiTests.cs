@@ -112,6 +112,108 @@ public class TextEditorViewModelApiTests
             oppositeShouldSetFocusAfterNextRender,
             modifiedViewModel!.ShouldSetFocusAfterNextRender);
     }
+    
+    /// <summary>
+    /// <see cref="ITextEditorService.TextEditorViewModelApi.Register(Key{TextEditorViewModel}, ResourceUri)"/>
+    /// </summary>
+    [Fact]
+    public void Register()
+    {
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        Assert.Single(textEditorService.ModelApi.GetViewModelsOrEmpty(inModel.ResourceUri));
+
+        textEditorService.ViewModelApi.Register(
+            Key<TextEditorViewModel>.NewKey(),
+            inModel.ResourceUri);
+
+        Assert.Equal(2, textEditorService.ModelApi.GetViewModelsOrEmpty(inModel.ResourceUri).Length);
+    }/// <summary>
+     /// <see cref="ITextEditorService.TextEditorViewModelApi.GetModelOrDefault(Key{TextEditorViewModel})"/>
+     /// </summary>
+    [Fact]
+    public void GetModelOrDefault()
+    {
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        var viewModelsOrEmpty = textEditorService.ModelApi.GetViewModelsOrEmpty(inModel.ResourceUri);
+        var getModelOrDefault = textEditorService.ViewModelApi.GetModelOrDefault(inViewModel.ViewModelKey);
+
+        Assert.Single(viewModelsOrEmpty);
+        Assert.Equal(inViewModel, viewModelsOrEmpty.Single());
+
+        Assert.Equal(inModel, getModelOrDefault);
+    }
+
+    /// <summary>
+    /// <see cref="ITextEditorService.TextEditorViewModelApi.GetAllText(Key{TextEditorViewModel})"/>
+    /// </summary>
+    [Fact]
+    public void GetAllText()
+    {
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        Assert.Equal(
+            inModel.GetAllText(),
+            textEditorService.ViewModelApi.GetAllText(inViewModel.ViewModelKey));
+    }
+
+    /// <summary>
+    /// <see cref="ITextEditorService.TextEditorViewModelApi.GetOrDefault(Key{TextEditorViewModel})"/>
+    /// </summary>
+    [Fact]
+    public void FindOrDefault()
+    {
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        Assert.Equal(
+            inViewModel,
+            textEditorService.ViewModelApi.GetOrDefault(inViewModel.ViewModelKey));
+    }
+
+    /// <summary>
+    /// <see cref="ITextEditorService.TextEditorViewModelApi.Dispose(Key{TextEditorViewModel})"/>
+    /// </summary>
+    [Fact]
+    public void Dispose()
+    {
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        Assert.Single(textEditorService.ViewModelApi.GetViewModels());
+
+        textEditorService.ViewModelApi.Dispose(inViewModel.ViewModelKey);
+
+        Assert.Empty(textEditorService.ViewModelApi.GetViewModels());
+    }
+
+    /// <summary>
+    /// <see cref="ITextEditorService.TextEditorViewModelApi.WithTaskEnqueue(Key{TextEditorViewModel}, Func{TextEditorViewModel, Task{Func{TextEditorViewModel, TextEditorViewModel}}})"/>
+    /// </summary>
+    [Fact]
+    public void WithTaskEnqueue()
+    {
+        throw new NotImplementedException();
+    }
 
     /// <summary>
     /// <see cref="ITextEditorService.TextEditorViewModelApi.SetScrollPositionEnqueue(string, string, double?, double?)"/>
@@ -127,15 +229,6 @@ public class TextEditorViewModelApiTests
     /// </summary>
     [Fact]
     public void SetGutterScrollTopEnqueue()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.Register(Key{TextEditorViewModel}, ResourceUri)"/>
-    /// </summary>
-    [Fact]
-    public void Register()
     {
         throw new NotImplementedException();
     }
@@ -159,37 +252,10 @@ public class TextEditorViewModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.GetModelOrDefault(Key{TextEditorViewModel})"/>
-    /// </summary>
-    [Fact]
-    public void FindBackingModelOrDefault()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.GetAllText(Key{TextEditorViewModel})"/>
-    /// </summary>
-    [Fact]
-    public void GetAllText()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// <see cref="ITextEditorService.TextEditorViewModelApi.FocusPrimaryCursorAsync(string)"/>
     /// </summary>
     [Fact]
     public void FocusPrimaryCursorAsync()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.GetOrDefault(Key{TextEditorViewModel})"/>
-    /// </summary>
-    [Fact]
-    public void FindOrDefault()
     {
         throw new NotImplementedException();
     }
@@ -208,15 +274,6 @@ public class TextEditorViewModelApiTests
     /// </summary>
     [Fact]
     public void MeasureCharacterWidthAndRowHeightAsync()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.WithTaskEnqueue(Key{TextEditorViewModel}, Func{TextEditorViewModel, Task{Func{TextEditorViewModel, TextEditorViewModel}}})"/>
-    /// </summary>
-    [Fact]
-    public void WithTaskEnqueue()
     {
         throw new NotImplementedException();
     }
@@ -245,15 +302,6 @@ public class TextEditorViewModelApiTests
     /// </summary>
     [Fact]
     public void CursorMovePageBottomEnqueue()
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.Dispose(Key{TextEditorViewModel})"/>
-    /// </summary>
-    [Fact]
-    public void Dispose()
     {
         throw new NotImplementedException();
     }
