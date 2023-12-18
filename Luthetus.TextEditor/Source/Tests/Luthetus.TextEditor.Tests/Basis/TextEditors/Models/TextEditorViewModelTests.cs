@@ -13,10 +13,14 @@ namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 /// </summary>
 public class TextEditorViewModelTests
 {
-	/// <summary>
-	/// <see cref="TextEditorViewModel(Common.RazorLib.Keys.Models.Key{TextEditorViewModel}, RazorLib.Lexes.Models.ResourceUri, RazorLib.TextEditors.Models.TextEditorServices.ITextEditorService, RazorLib.Virtualizations.Models.VirtualizationResult{List{RazorLib.Characters.Models.RichCharacter}}, bool)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="TextEditorViewModel(Common.RazorLib.Keys.Models.Key{TextEditorViewModel}, RazorLib.Lexes.Models.ResourceUri, RazorLib.TextEditors.Models.TextEditorServices.ITextEditorService, RazorLib.Virtualizations.Models.VirtualizationResult{List{RazorLib.Characters.Models.RichCharacter}}, bool)"/>
+    /// <br/>----<br/>
+    /// <see cref="TextEditorViewModel.ViewModelKey"/>
+    /// <see cref="TextEditorViewModel.ResourceUri"/>
+    /// <see cref="TextEditorViewModel.TextEditorService"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
         TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
@@ -44,10 +48,19 @@ public class TextEditorViewModelTests
 		Assert.Equal(displayCommandBar, viewModel.DisplayCommandBar);
 	}
 
-	/// <summary>
-	/// <see cref="TextEditorViewModel.ThrottleRemeasure"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="TextEditorViewModel.CalculateVirtualizationResultAsync(RazorLib.TextEditors.Models.TextEditorModels.TextEditorModel?, RazorLib.JavaScriptObjects.Models.TextEditorMeasurements?, CancellationToken)"/>
+    /// </summary>
+    [Fact]
+    public void CalculateVirtualizationResultAsync()
+    {
+		throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorViewModel.ThrottleRemeasure"/>
+    /// </summary>
+    [Fact]
 	public void ThrottleRemeasure()
 	{
 		throw new NotImplementedException();
@@ -76,33 +89,6 @@ public class TextEditorViewModelTests
 	/// </summary>
 	[Fact]
 	public void DisplayTracker()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorViewModel.ViewModelKey"/>
-	/// </summary>
-	[Fact]
-	public void ViewModelKey()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorViewModel.ResourceUri"/>
-	/// </summary>
-	[Fact]
-	public void ResourceUri()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorViewModel.TextEditorService"/>
-	/// </summary>
-	[Fact]
-	public void TextEditorService()
 	{
 		throw new NotImplementedException();
 	}
@@ -197,10 +183,13 @@ public class TextEditorViewModelTests
 		throw new NotImplementedException();
 	}
 
-	/// <summary>
-	/// <see cref="TextEditorViewModel.BodyElementId"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="TextEditorViewModel.BodyElementId"/>
+    /// <br/>----<br/>
+	/// <see cref="TextEditorViewModel.PrimaryCursorContentId"/>
+	/// <see cref="TextEditorViewModel.GutterElementId"/>
+    /// </summary>
+    [Fact]
 	public void BodyElementId()
 	{
         TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
@@ -212,41 +201,15 @@ public class TextEditorViewModelTests
 		Assert.Equal(
 			$"luth_te_text-editor-content_{inViewModel.ViewModelKey.Guid}",
 			inViewModel.BodyElementId);
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorViewModel.PrimaryCursorContentId"/>
-	/// </summary>
-	[Fact]
-	public void PrimaryCursorContentId()
-    {
-        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
-            out var textEditorService,
-            out var inModel,
-            out var inViewModel,
-            out var serviceProvider);
 
         Assert.Equal(
             $"luth_te_text-editor-content_{inViewModel.ViewModelKey.Guid}_primary-cursor",
             inViewModel.PrimaryCursorContentId);
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorViewModel.GutterElementId"/>
-	/// </summary>
-	[Fact]
-	public void GutterElementId()
-    {
-        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
-            out var textEditorService,
-            out var inModel,
-            out var inViewModel,
-            out var serviceProvider);
 
         Assert.Equal(
             $"luth_te_text-editor-gutter_{inViewModel.ViewModelKey.Guid}",
             inViewModel.GutterElementId);
-	}
+    }
 
 	/// <summary>
 	/// <see cref="TextEditorViewModel.CursorMovePageTop()"/>
@@ -325,15 +288,6 @@ public class TextEditorViewModelTests
 	/// </summary>
 	[Fact]
 	public void RemeasureAsync()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorViewModel.CalculateVirtualizationResultAsync(RazorLib.TextEditors.Models.TextEditorModels.TextEditorModel?, RazorLib.JavaScriptObjects.Models.TextEditorMeasurements?, CancellationToken)"/>
-	/// </summary>
-	[Fact]
-	public void CalculateVirtualizationResultAsync()
 	{
 		throw new NotImplementedException();
 	}

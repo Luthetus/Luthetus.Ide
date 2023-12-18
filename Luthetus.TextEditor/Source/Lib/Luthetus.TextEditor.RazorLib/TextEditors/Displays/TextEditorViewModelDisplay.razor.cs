@@ -92,6 +92,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     protected override async Task OnParametersSetAsync()
     {
+        var sctx = SynchronizationContext.Current;
         HandleTextEditorViewModelKeyChange();
 
         await base.OnParametersSetAsync();
@@ -99,6 +100,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
+        var sctx = SynchronizationContext.Current; // has value
         ConstructRenderBatch();
 
         TextEditorViewModelsStateWrap.StateChanged += GeneralOnStateChangedEventHandler;
@@ -109,6 +111,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     protected override bool ShouldRender()
     {
+        var sctx = SynchronizationContext.Current;
         var shouldRender = base.ShouldRender();
 
         if (_linkedViewModel is null)
@@ -142,6 +145,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        var sctx = SynchronizationContext.Current;
         if (firstRender)
         {
             await JsRuntime.InvokeVoidAsync("luthetusTextEditor.preventDefaultOnWheelEvents",
@@ -499,12 +503,10 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
                 CursorDisplay?.PauseBlinkAnimation();
 
-                var cursorPositionIndex = model.GetCursorPositionIndex(
-                    TextEditorCursor.Empty with
-                    {
-                        RowIndex = rowAndColumnIndex.rowIndex,
-                        ColumnIndex = rowAndColumnIndex.columnIndex
-                    });
+                var cursorPositionIndex = model.GetCursorPositionIndex(new TextEditorCursor(
+                    rowAndColumnIndex.rowIndex,
+                    rowAndColumnIndex.columnIndex,
+                    true));
 
                 if (mouseEventArgs.ShiftKey)
                 {
@@ -780,12 +782,10 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             mouseEventArgs.ClientX,
             mouseEventArgs.ClientY);
 
-        var cursorPositionIndex = model.GetCursorPositionIndex(
-            TextEditorCursor.Empty with
-            {
-                RowIndex = rowAndColumnIndex.rowIndex,
-                ColumnIndex = rowAndColumnIndex.columnIndex
-            });
+        var cursorPositionIndex = model.GetCursorPositionIndex(new TextEditorCursor(
+            rowAndColumnIndex.rowIndex,
+            rowAndColumnIndex.columnIndex,
+            true));
 
         var foundMatch = false;
 

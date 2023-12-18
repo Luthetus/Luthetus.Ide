@@ -9,6 +9,18 @@ public record TextEditorCursor(
     bool IsPrimaryCursor,
     TextEditorSelection Selection)
 {
+    public TextEditorCursor(bool isPrimaryCursor) 
+        : this(0, 0, 0, isPrimaryCursor, TextEditorSelection.Empty)
+    {
+        
+    }
+    
+    public TextEditorCursor(int rowIndex, int columnIndex, bool isPrimaryCursor) 
+        : this(rowIndex, columnIndex, columnIndex, isPrimaryCursor, TextEditorSelection.Empty)
+    {
+        
+    }
+
     public static readonly TextEditorCursor Empty = new(
         0,
         0,

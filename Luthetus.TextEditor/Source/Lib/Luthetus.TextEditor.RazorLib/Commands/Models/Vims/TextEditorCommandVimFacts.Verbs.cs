@@ -83,12 +83,10 @@ public static partial class TextEditorCommandVimFacts
             TextEditorService.RefreshCursorsRequest refreshCursorsRequest,
             TextEditorCursorModifier primaryCursor)
         {
-            var cursorForMotion = TextEditorCursor.Empty with
-            {
-                RowIndex = primaryCursor.RowIndex,
-                ColumnIndex = primaryCursor.ColumnIndex,
-                IsPrimaryCursor = true,
-            };
+            var cursorForMotion = new TextEditorCursor(
+                primaryCursor.RowIndex,
+                primaryCursor.ColumnIndex,
+                true);
 
             var textEditorCommandArgsForMotion = new TextEditorCommandArgs(
                 model.ResourceUri,
@@ -111,12 +109,10 @@ public static partial class TextEditorCommandVimFacts
                 async () => await commandArgs.InnerCommand.DoAsyncFunc
                     .Invoke(textEditorCommandArgsForMotion));
 
-            var cursorForDeletion = TextEditorCursor.Empty with
-            {
-                RowIndex = motionResult.LowerPositionIndexCursor.RowIndex,
-                ColumnIndex = motionResult.LowerPositionIndexCursor.ColumnIndex,
-                IsPrimaryCursor = true,
-            };
+            var cursorForDeletion = new TextEditorCursor(
+                motionResult.LowerPositionIndexCursor.RowIndex,
+                motionResult.LowerPositionIndexCursor.ColumnIndex,
+                true);
 
             var deleteTextTextEditorModelAction = new TextEditorModelState.DeleteTextByRangeAction(
                 model.ResourceUri,

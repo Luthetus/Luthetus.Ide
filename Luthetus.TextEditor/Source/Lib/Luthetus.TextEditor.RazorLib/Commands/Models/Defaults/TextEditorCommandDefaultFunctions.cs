@@ -249,13 +249,10 @@ public class TextEditorCommandDefaultFunctions
             // Select line
             selectedText = model.GetLinesRange(primaryCursor.RowIndex, 1);
 
-            cursorForInsertion = TextEditorCursor.Empty with
-            {
-                RowIndex = primaryCursor.RowIndex,
-                ColumnIndex = 0,
-                PreferredColumnIndex = 0,
-                IsPrimaryCursor = primaryCursor.IsPrimaryCursor
-            };
+            cursorForInsertion = new TextEditorCursor(
+                primaryCursor.RowIndex,
+                0,
+                primaryCursor.IsPrimaryCursor);
         }
         else
         {
@@ -295,12 +292,7 @@ public class TextEditorCommandDefaultFunctions
              i < selectionBoundsInRowIndexUnits.upperRowIndexExclusive;
              i++)
         {
-            var cursorForInsertion = TextEditorCursor.Empty with
-            {
-                RowIndex = i,
-                ColumnIndex = 0,
-                IsPrimaryCursor = true
-            };
+            var cursorForInsertion = new TextEditorCursor(i, 0, true);
 
             commandArgs.Dispatcher.Dispatch(new InsertTextAction(
                 model.ResourceUri,
@@ -375,12 +367,7 @@ public class TextEditorCommandDefaultFunctions
             {
                 removeCharacterCount = 1;
 
-                var cursorForDeletion = TextEditorCursor.Empty with
-                {
-                    RowIndex = i,
-                    ColumnIndex = 0,
-                    IsPrimaryCursor = true
-                };
+                var cursorForDeletion = new TextEditorCursor(i, 0, true);
 
                 commandArgs.Dispatcher.Dispatch(new DeleteTextByRangeAction(
                     model.ResourceUri,
@@ -391,13 +378,7 @@ public class TextEditorCommandDefaultFunctions
             }
             else if (readResult.StartsWith(KeyboardKeyFacts.WhitespaceCharacters.SPACE))
             {
-                var cursorForDeletion = TextEditorCursor.Empty with
-                {
-                    RowIndex = i,
-                    ColumnIndex = 0,
-                    IsPrimaryCursor = true
-                };
-
+                var cursorForDeletion = new TextEditorCursor(i, 0, true);
                 var contiguousSpaceCount = 0;
 
                 foreach (var character in readResult)
@@ -583,12 +564,12 @@ public class TextEditorCommandDefaultFunctions
         if (directionToFindMatchingPunctuationCharacter is null)
             return Task.CompletedTask;
 
-        var temporaryCursor = TextEditorCursor.Empty with
+        var temporaryCursor = new TextEditorCursor(
+            primaryCursor.RowIndex,
+            primaryCursor.ColumnIndex,
+            primaryCursor.IsPrimaryCursor)
         {
-            RowIndex = primaryCursor.RowIndex,
-            ColumnIndex = primaryCursor.ColumnIndex,
             PreferredColumnIndex = primaryCursor.PreferredColumnIndex,
-            IsPrimaryCursor = primaryCursor.IsPrimaryCursor,
         };
 
         var unmatchedCharacters =

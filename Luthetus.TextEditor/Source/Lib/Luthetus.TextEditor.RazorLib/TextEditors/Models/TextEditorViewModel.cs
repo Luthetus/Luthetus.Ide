@@ -32,10 +32,7 @@ public record TextEditorViewModel : IDisposable
         VirtualizationResult = virtualizationResult;
         DisplayCommandBar = displayCommandBar;
 
-        var primaryCursor = TextEditorCursor.Empty with
-        {
-            IsPrimaryCursor = true
-        };
+        var primaryCursor = new TextEditorCursor(true);
 
         CursorBag = new TextEditorCursor[]
         {
