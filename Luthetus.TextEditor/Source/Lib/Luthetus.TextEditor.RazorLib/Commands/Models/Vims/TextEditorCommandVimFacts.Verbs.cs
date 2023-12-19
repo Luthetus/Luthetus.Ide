@@ -4,7 +4,6 @@ using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models.Vims;
@@ -67,12 +66,7 @@ public static partial class TextEditorCommandVimFacts
                 return Task.CompletedTask;
             });
 
-        public static async Task ChangeLineAsync(
-            TextEditorCommandArgs commandArgs,
-            TextEditorModel model,
-            TextEditorViewModel viewModel,
-            TextEditorService.RefreshCursorsRequest refreshCursorsRequest,
-            TextEditorCursorModifier primaryCursor)
+        public static async Task ChangeLineAsync(ITextEditorEditContext editContext)
         {
             var activeKeymap = commandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
                 ?? TextEditorKeymapFacts.DefaultKeymap;
@@ -113,12 +107,7 @@ public static partial class TextEditorCommandVimFacts
                 return Task.CompletedTask;
             });
 
-        public static async Task DeleteMotionAsync(
-            TextEditorCommandArgs commandArgs,
-            TextEditorModel model,
-            TextEditorViewModel viewModel,
-            TextEditorService.RefreshCursorsRequest refreshCursorsRequest,
-            TextEditorCursorModifier primaryCursor)
+        public static async Task DeleteMotionAsync(ITextEditorEditContext editContext)
         {
             var cursorForMotion = new TextEditorCursor(
                 primaryCursor.RowIndex,
@@ -190,12 +179,7 @@ public static partial class TextEditorCommandVimFacts
                 return Task.CompletedTask;
             });
 
-        public static async Task GetChangeMotionAsync(
-            TextEditorCommandArgs commandArgs,
-            TextEditorModel model,
-            TextEditorViewModel viewModel,
-            TextEditorService.RefreshCursorsRequest refreshCursorsRequest,
-            TextEditorCursorModifier primaryCursor)
+        public static async Task GetChangeMotionAsync(ITextEditorEditContext editContext)
         {
             var activeKeymap = commandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
                 ?? TextEditorKeymapFacts.DefaultKeymap;
@@ -236,12 +220,7 @@ public static partial class TextEditorCommandVimFacts
                 return Task.CompletedTask;
             });
 
-        public static async Task ChangeSelectionAsync(
-            TextEditorCommandArgs commandArgs,
-            TextEditorModel model,
-            TextEditorViewModel viewModel,
-            TextEditorService.RefreshCursorsRequest refreshCursorsRequest,
-            TextEditorCursorModifier primaryCursor)
+        public static async Task ChangeSelectionAsync(ITextEditorEditContext editContext)
         {
             var activeKeymap = commandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
                     ?? TextEditorKeymapFacts.DefaultKeymap;
@@ -280,12 +259,7 @@ public static partial class TextEditorCommandVimFacts
                 return Task.CompletedTask;
             });
 
-        public static async Task YankAsync(
-            TextEditorCommandArgs commandArgs,
-            TextEditorModel model,
-            TextEditorViewModel viewModel,
-            TextEditorService.RefreshCursorsRequest refreshCursorsRequest,
-            TextEditorCursorModifier primaryCursor)
+        public static async Task YankAsync(ITextEditorEditContext editContext)
         {
             await TextEditorCommandDefaultFacts.Copy.DoAsyncFunc.Invoke(commandArgs);
             await TextEditorCommandDefaultFacts.ClearTextSelection.DoAsyncFunc.Invoke(commandArgs);
@@ -318,12 +292,7 @@ public static partial class TextEditorCommandVimFacts
                 return Task.CompletedTask;
             });
 
-        public static async Task NewLineBelowAsync(
-            TextEditorCommandArgs commandArgs,
-            TextEditorModel model,
-            TextEditorViewModel viewModel,
-            TextEditorService.RefreshCursorsRequest refreshCursorsRequest,
-            TextEditorCursorModifier primaryCursor)
+        public static async Task NewLineBelowAsync(ITextEditorEditContext editContext)
         {
             var activeKeymap = commandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
                 ?? TextEditorKeymapFacts.DefaultKeymap;
@@ -362,12 +331,7 @@ public static partial class TextEditorCommandVimFacts
                 return Task.CompletedTask;
             });
 
-        public static async Task NewLineAboveAsync(
-            TextEditorCommandArgs commandArgs,
-            TextEditorModel model,
-            TextEditorViewModel viewModel,
-            TextEditorService.RefreshCursorsRequest refreshCursorsRequest,
-            TextEditorCursorModifier primaryCursor)
+        public static async Task NewLineAboveAsync(ITextEditorEditContext editContext)
         {
             var activeKeymap = commandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
                     ?? TextEditorKeymapFacts.DefaultKeymap;

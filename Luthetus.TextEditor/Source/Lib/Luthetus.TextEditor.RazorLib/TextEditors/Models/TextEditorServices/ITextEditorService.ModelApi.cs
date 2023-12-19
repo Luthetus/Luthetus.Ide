@@ -7,9 +7,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using static Luthetus.TextEditor.RazorLib.TextEditors.States.TextEditorModelState;
-using Luthetus.TextEditor.RazorLib.Commands.Models;
-using Luthetus.Common.RazorLib.Keys.Models;
-using static Luthetus.TextEditor.RazorLib.Commands.Models.TextEditorCommand;
+using static Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorService;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
@@ -50,6 +48,42 @@ public partial interface ITextEditorService
         public TextEditorModel? GetOrDefault(ResourceUri resourceUri);
         public ImmutableArray<TextEditorViewModel> GetViewModelsOrEmpty(ResourceUri resourceUri);
         public string? GetAllText(ResourceUri resourceUri);
+        #endregion
+
+        #region UPDATE_METHODS
+        public ITextEditorEdit UndoEdit(
+            ResourceUri resourceUri);
+
+        public ITextEditorEdit SetUsingRowEndingKind(
+            ResourceUri resourceUri,
+            RowEndingKind rowEndingKind);
+
+        public ITextEditorEdit SetResourceData(
+            ResourceUri resourceUri,
+            DateTime resourceLastWriteTime);
+
+        public ITextEditorEdit Reload(
+        ResourceUri resourceUri,
+            string content,
+            DateTime resourceLastWriteTime);
+
+        public ITextEditorEdit RedoEdit(ResourceUri resourceUri);
+
+        public ITextEditorEdit InsertText(
+            InsertTextAction insertTextAction,
+            RefreshCursorsRequest refreshCursorsRequest);
+
+        public ITextEditorEdit HandleKeyboardEvent(
+            KeyboardEventAction keyboardEventAction,
+            RefreshCursorsRequest refreshCursorsRequest);
+
+        public ITextEditorEdit DeleteTextByRange(
+            DeleteTextByRangeAction deleteTextByRangeAction,
+            RefreshCursorsRequest refreshCursorsRequest);
+
+        public ITextEditorEdit DeleteTextByMotion(
+            DeleteTextByMotionAction deleteTextByMotionAction,
+            RefreshCursorsRequest refreshCursorsRequest);
         #endregion
 
         #region DELETE_METHODS
@@ -165,6 +199,146 @@ public partial interface ITextEditorService
         public ImmutableList<TextEditorModel> GetModels()
         {
             return _textEditorService.ModelStateWrap.Value.ModelBag;
+        }
+        #endregion
+
+        #region UPDATE_METHODS
+        public ITextEditorEdit UndoEdit(ResourceUri resourceUri)
+        {
+            return _textEditorService.CreateEdit(context =>
+            {
+                _dispatcher.Dispatch(new UndoEditAction(resourceUri));
+                return Task.CompletedTask;
+            });
+        }
+
+        public ITextEditorEdit SetUsingRowEndingKind(
+            ResourceUri resourceUri,
+            RowEndingKind rowEndingKind)
+        {
+            return _textEditorService.CreateEdit(context =>
+            {
+                _dispatcher.Dispatch(new SetUsingRowEndingKindAction(
+                    resourceUri,
+                    rowEndingKind));
+
+                return Task.CompletedTask;
+            });
+        }
+
+        public ITextEditorEdit SetResourceData(
+            ResourceUri resourceUri,
+            DateTime resourceLastWriteTime)
+        {
+            return _textEditorService.CreateEdit(context =>
+            {
+                _dispatcher.Dispatch(new SetResourceDataAction(
+                    resourceUri,
+                    resourceLastWriteTime));
+
+                return Task.CompletedTask;
+            });
+        }
+
+        public ITextEditorEdit Reload(
+            ResourceUri resourceUri,
+            string content,
+            DateTime resourceLastWriteTime)
+        {
+            return _textEditorService.CreateEdit(context =>
+            {
+                _dispatcher.Dispatch(new ReloadAction(
+                    resourceUri,
+                    content,
+                    resourceLastWriteTime));
+
+                return Task.CompletedTask;
+            });
+        }
+
+        public ITextEditorEdit RedoEdit(ResourceUri resourceUri)
+        {
+            return _textEditorService.CreateEdit(context =>
+            {
+                _dispatcher.Dispatch(new RedoEditAction(resourceUri));
+                return Task.CompletedTask;
+            });
+        }
+
+        public ITextEditorEdit InsertText(
+            InsertTextAction insertTextAction,
+            RefreshCursorsRequest refreshCursorsRequest)
+        {
+            return _textEditorService.CreateEdit(context =>
+            {
+                var cursorBag = refreshCursorsRequest?.CursorBag ?? insertTextAction.CursorModifierBag;
+
+                insertTextAction = insertTextAction with
+                {
+                    CursorModifierBag = cursorBag,
+                };
+
+                _dispatcher.Dispatch(insertTextAction);
+
+                return Task.CompletedTask;
+            });
+        }
+
+        public ITextEditorEdit HandleKeyboardEvent(
+            KeyboardEventAction keyboardEventAction,
+            RefreshCursorsRequest refreshCursorsRequest)
+        {
+            return _textEditorService.CreateEdit(context =>
+            {
+                var cursorBag = refreshCursorsRequest?.CursorBag ?? keyboardEventAction.CursorModifierBag;
+
+                keyboardEventAction = keyboardEventAction with
+                {
+                    CursorModifierBag = cursorBag,
+                };
+
+                _dispatcher.Dispatch(keyboardEventAction);
+
+                return Task.CompletedTask;
+            });
+        }
+
+        public ITextEditorEdit DeleteTextByRange(
+            DeleteTextByRangeAction deleteTextByRangeAction,
+            RefreshCursorsRequest refreshCursorsRequest)
+        {
+            return _textEditorService.CreateEdit(context =>
+            {
+                var cursorBag = refreshCursorsRequest?.CursorBag ?? deleteTextByRangeAction.CursorModifierBag;
+
+                deleteTextByRangeAction = deleteTextByRangeAction with
+                {
+                    CursorModifierBag = cursorBag,
+                };
+
+                _dispatcher.Dispatch(deleteTextByRangeAction);
+
+                return Task.CompletedTask;
+            });
+        }
+
+        public ITextEditorEdit DeleteTextByMotion(
+            DeleteTextByMotionAction deleteTextByMotionAction,
+            RefreshCursorsRequest refreshCursorsRequest)
+        {
+            return _textEditorService.CreateEdit(context =>
+            {
+                var cursorBag = refreshCursorsRequest?.CursorBag ?? deleteTextByMotionAction.CursorModifierBag;
+
+                deleteTextByMotionAction = deleteTextByMotionAction with
+                {
+                    CursorModifierBag = cursorBag,
+                };
+
+                _dispatcher.Dispatch(deleteTextByMotionAction);
+
+                return Task.CompletedTask;
+            });
         }
         #endregion
 
