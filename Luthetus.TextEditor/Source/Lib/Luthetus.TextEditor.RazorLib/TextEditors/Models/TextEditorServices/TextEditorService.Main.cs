@@ -19,6 +19,8 @@ using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.Common.RazorLib.Commands.Models;
+using static Luthetus.TextEditor.RazorLib.Commands.Models.TextEditorCommand;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -100,7 +102,8 @@ public partial class TextEditorService : ITextEditorService
     public ITextEditorOptionsApi OptionsApi { get; }
     public ITextEditorSearchEngineApi SearchEngineApi { get; }
 
-    public void EnqueueModification(
+    [Obsolete("These should be deleted after changes are made on (2023-12-18)")]
+    private void EnqueueModification(
         string modificationName,
         TextEditorCommandArgs commandArgs,
         TextEditorCommand.ModificationTask modificationTask)
@@ -110,8 +113,9 @@ public partial class TextEditorService : ITextEditorService
             modificationName,
             () => ModifyAsync(modificationName, commandArgs, modificationTask));
     }
-    
-    public async Task ModifyAsync(
+
+    [Obsolete("These should be deleted after changes are made on (2023-12-18)")]
+    private async Task ModifyAsync(
         string modificationName,
         TextEditorCommandArgs commandArgs,
         TextEditorCommand.ModificationTask modificationTask)
@@ -182,5 +186,22 @@ public partial class TextEditorService : ITextEditorService
                         .ToImmutableArray()
                 }));
         }
+    }
+
+    public ITextEditorEdit CreateEdit(Func<ITextEditorEditContext, Task> func)
+    {
+        return new TextEditorEdit(this, func, _dispatcher);
+    }
+    
+    public void EnqueueEdit(ITextEditorEdit textEditorEdit)
+    {
+        _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(),
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            nameof(EnqueueEdit),
+            async () => 
+            {
+                var editContext = new TextEditorEditContext();
+                await ((TextEditorEdit)textEditorEdit).Func.Invoke(editContext);
+            });
     }
 }

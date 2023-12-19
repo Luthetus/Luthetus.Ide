@@ -19,11 +19,24 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.EnqueueModification(
-                    nameof(ChangeLineCommand),
-                    commandArgs,
-                    TextEditorCommandDefaultFunctions.CutAsync);
+                var edit = commandArgs.TextEditorService.CreateEdit(async context =>
+                {
+                    var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
+                    var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
 
+                    var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
+                        commandArgs.ViewModelKey,
+                        viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
+
+                    await TextEditorCommandDefaultFunctions.CutAsync(
+                        commandArgs,
+                        model,
+                        viewModel,
+                        refreshCursorsRequest,
+                        refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                });
+
+                commandArgs.TextEditorService.EnqueueEdit(edit);
                 return Task.CompletedTask;
             });
 
@@ -33,11 +46,24 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.EnqueueModification(
-                    nameof(ChangeLineCommand),
-                    commandArgs,
-                    ChangeLineAsync);
+                var edit = commandArgs.TextEditorService.CreateEdit(async context =>
+                {
+                    var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
+                    var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
 
+                    var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
+                        commandArgs.ViewModelKey,
+                        viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
+
+                    await ChangeLineAsync(
+                        commandArgs,
+                        model,
+                        viewModel,
+                        refreshCursorsRequest,
+                        refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                });
+
+                commandArgs.TextEditorService.EnqueueEdit(edit);
                 return Task.CompletedTask;
             });
 
@@ -66,13 +92,24 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.InnerCommand = innerTextEditorCommand;
+                var edit = commandArgs.TextEditorService.CreateEdit(async context =>
+                {
+                    var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
+                    var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
 
-                commandArgs.TextEditorService.EnqueueModification(
-                    nameof(ChangeLineCommand),
-                    commandArgs,
-                    DeleteMotionAsync);
+                    var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
+                        commandArgs.ViewModelKey,
+                        viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
+                    await DeleteMotionAsync(
+                        commandArgs,
+                        model,
+                        viewModel,
+                        refreshCursorsRequest,
+                        refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                });
+
+                commandArgs.TextEditorService.EnqueueEdit(edit);
                 return Task.CompletedTask;
             });
 
@@ -132,13 +169,24 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.InnerCommand = innerTextEditorCommand;
+                var edit = commandArgs.TextEditorService.CreateEdit(async context =>
+                {
+                    var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
+                    var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
 
-                commandArgs.TextEditorService.EnqueueModification(
-                    nameof(ChangeMotionCommandFactory),
-                    commandArgs,
-                    GetChangeMotionAsync);
+                    var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
+                        commandArgs.ViewModelKey,
+                        viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
+                    await GetChangeMotionAsync(
+                        commandArgs,
+                        model,
+                        viewModel,
+                        refreshCursorsRequest,
+                        refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                });
+
+                commandArgs.TextEditorService.EnqueueEdit(edit);
                 return Task.CompletedTask;
             });
 
@@ -167,11 +215,24 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.EnqueueModification(
-                    nameof(ChangeSelectionCommand),
-                    commandArgs,
-                    ChangeSelectionAsync);
+                var edit = commandArgs.TextEditorService.CreateEdit(async context =>
+                {
+                    var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
+                    var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
 
+                    var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
+                        commandArgs.ViewModelKey,
+                        viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
+
+                    await ChangeSelectionAsync(
+                        commandArgs,
+                        model,
+                        viewModel,
+                        refreshCursorsRequest,
+                        refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                });
+
+                commandArgs.TextEditorService.EnqueueEdit(edit);
                 return Task.CompletedTask;
             });
 
@@ -198,11 +259,24 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.EnqueueModification(
-                    nameof(YankCommand),
-                    commandArgs,
-                    YankAsync);
+                var edit = commandArgs.TextEditorService.CreateEdit(async context =>
+                {
+                    var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
+                    var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
 
+                    var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
+                        commandArgs.ViewModelKey,
+                        viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
+
+                    await YankAsync(
+                        commandArgs,
+                        model,
+                        viewModel,
+                        refreshCursorsRequest,
+                        refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                });
+
+                commandArgs.TextEditorService.EnqueueEdit(edit);
                 return Task.CompletedTask;
             });
 
@@ -223,11 +297,24 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.EnqueueModification(
-                    nameof(NewLineBelowCommand),
-                    commandArgs,
-                    NewLineBelowAsync);
+                var edit = commandArgs.TextEditorService.CreateEdit(async context =>
+                {
+                    var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
+                    var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
 
+                    var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
+                        commandArgs.ViewModelKey,
+                        viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
+
+                    await NewLineBelowAsync(
+                        commandArgs,
+                        model,
+                        viewModel,
+                        refreshCursorsRequest,
+                        refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                });
+
+                commandArgs.TextEditorService.EnqueueEdit(edit);
                 return Task.CompletedTask;
             });
 
@@ -254,11 +341,24 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.EnqueueModification(
-                    nameof(NewLineAboveCommand),
-                    commandArgs,
-                    NewLineAboveAsync);
+                var edit = commandArgs.TextEditorService.CreateEdit(async context =>
+                {
+                    var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
+                    var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
 
+                    var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
+                        commandArgs.ViewModelKey,
+                        viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
+
+                    await NewLineAboveAsync(
+                        commandArgs,
+                        model,
+                        viewModel,
+                        refreshCursorsRequest,
+                        refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                });
+
+                commandArgs.TextEditorService.EnqueueEdit(edit);
                 return Task.CompletedTask;
             });
 

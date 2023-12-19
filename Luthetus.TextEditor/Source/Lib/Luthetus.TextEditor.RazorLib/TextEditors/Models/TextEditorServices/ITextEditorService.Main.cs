@@ -30,14 +30,7 @@ public partial interface ITextEditorService
     public IState<TextEditorOptionsState> OptionsStateWrap { get; }
     public IState<TextEditorSearchEngineState> SearchEngineStateWrap { get; }
 
-    public void EnqueueModification(
-        string modificationName,
-        TextEditorCommandArgs commandArgs,
-        TextEditorCommand.ModificationTask modificationTask);
-    
-    public Task ModifyAsync(
-        string modificationName,
-        TextEditorCommandArgs commandArgs,
-        TextEditorCommand.ModificationTask modificationTask);
+    public ITextEditorEdit CreateEdit(Func<ITextEditorEditContext, Task> func);
+    public void EnqueueEdit(ITextEditorEdit textEditorEdit);
 }
 
