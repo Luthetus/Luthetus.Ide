@@ -12,6 +12,7 @@ using Luthetus.Common.RazorLib.Keyboards.Models;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
@@ -263,11 +264,12 @@ public partial interface ITextEditorService
             Key<TextEditorViewModel> viewModelKey,
             Func<TextEditorViewModel, TextEditorViewModel> withFunc)
         {
-            return context =>
+            return editContext =>
             {
                 _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
                     viewModelKey,
-                    withFunc));
+                    withFunc,
+                    editContext.AuthenticatedActionKey));
 
                 return Task.CompletedTask;
             };
@@ -277,11 +279,12 @@ public partial interface ITextEditorService
             TextEditorViewModel viewModel,
             Func<TextEditorViewModel, Task<Func<TextEditorViewModel, TextEditorViewModel>>> withFuncWrap)
         {
-            return async context =>
+            return async editContext =>
             {
                 _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
                     viewModel.ViewModelKey,
-                    await withFuncWrap.Invoke(viewModel)));
+                    await withFuncWrap.Invoke(viewModel),
+                    editContext.AuthenticatedActionKey));
             };
         }
 
@@ -294,7 +297,7 @@ public partial interface ITextEditorService
             double? scrollLeftInPixels,
             double? scrollTopInPixels)
         {
-            return async context =>
+            return async editContext =>
             {
                 await _jsRuntime.InvokeVoidAsync("luthetusTextEditor.setScrollPosition",
                     bodyElementId,
@@ -308,7 +311,7 @@ public partial interface ITextEditorService
             string gutterElementId,
             double scrollTopInPixels)
         {
-            return async context =>
+            return async editContext =>
             {
                 await _jsRuntime.InvokeVoidAsync("luthetusTextEditor.setGutterScrollTop",
                     gutterElementId,
@@ -321,7 +324,7 @@ public partial interface ITextEditorService
             string gutterElementId,
             double pixels)
         {
-            return async context =>
+            return async editContext =>
             {
                 await _jsRuntime.InvokeVoidAsync("luthetusTextEditor.mutateScrollVerticalPositionByPixels",
                     bodyElementId,
@@ -335,7 +338,7 @@ public partial interface ITextEditorService
             string gutterElementId,
             double pixels)
         {
-            return async context =>
+            return async editContext =>
             {
                 await _jsRuntime.InvokeVoidAsync("luthetusTextEditor.mutateScrollHorizontalPositionByPixels",
                     bodyElementId,
@@ -346,7 +349,7 @@ public partial interface ITextEditorService
 
         public TextEditorEdit GetFocusPrimaryCursorTask(string primaryCursorContentId)
         {
-            return async context =>
+            return async editContext =>
             {
                 await _jsRuntime.InvokeVoidAsync("luthetusTextEditor.focusHtmlElementById",
                     primaryCursorContentId);
@@ -359,7 +362,7 @@ public partial interface ITextEditorService
             Key<TextEditorViewModel> viewModelKey,
             TextEditorCursorModifier primaryCursor)
         {
-            return context =>
+            return editContext =>
             {
                 void MutateIndexCoordinatesAndPreferredColumnIndex(int columnIndex)
                 {
@@ -555,7 +558,7 @@ public partial interface ITextEditorService
             TextEditorViewModel viewModel,
             TextEditorCursorModifier primaryCursor)
         {
-            return context =>
+            return editContext =>
             {
                 if (viewModel.VirtualizationResult?.EntryBag.Any() ?? false)
                 {
@@ -574,7 +577,7 @@ public partial interface ITextEditorService
             TextEditorViewModel viewModel,
             TextEditorCursorModifier primaryCursor)
         {
-            return context =>
+            return editContext =>
             {
                 if ((viewModel.VirtualizationResult?.EntryBag.Any() ?? false))
                 {
@@ -596,7 +599,7 @@ public partial interface ITextEditorService
             TextEditorCursorModifier primaryCursor,
             CancellationToken cancellationToken)
         {
-            return async context =>
+            return async editContext =>
             {
                 if (cancellationToken.IsCancellationRequested)
                     return;
@@ -825,7 +828,7 @@ public partial interface ITextEditorService
                             {
                                 VirtualizationResult = virtualizationResult,
                             })
-                        .Invoke(context);
+                        .Invoke(editContext);
                 }));
             };
         }
@@ -837,7 +840,7 @@ public partial interface ITextEditorService
             int countOfTestCharacters,
             CancellationToken cancellationToken)
         {
-            return async context =>
+            return async editContext =>
             {
                 var options = _textEditorService.OptionsApi.GetOptions();
 
@@ -874,7 +877,7 @@ public partial interface ITextEditorService
                                     CharAndRowMeasurements = characterWidthAndRowHeight
                                 },
                             }))
-                        .Invoke(context);
+                        .Invoke(editContext);
                 }));
             };
         }

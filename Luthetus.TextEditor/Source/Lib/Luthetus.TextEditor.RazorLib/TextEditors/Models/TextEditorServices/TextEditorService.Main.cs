@@ -19,6 +19,7 @@ using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -180,14 +181,15 @@ public partial class TextEditorService : ITextEditorService
 
         if (refreshCursorsRequest is not null)
         {
-            _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
-                refreshCursorsRequest.ViewModelKey,
-                inState => inState with
-                {
-                    CursorBag = refreshCursorsRequest.CursorBag
-                        .Select(x => x.ToCursor())
-                        .ToImmutableArray()
-                }));
+            //_dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
+            //    refreshCursorsRequest.ViewModelKey,
+            //    inState => inState with
+            //    {
+            //        CursorBag = refreshCursorsRequest.CursorBag
+            //            .Select(x => x.ToCursor())
+            //        .ToImmutableArray()
+            //    },
+            //    editContext.AuthenticatedActionKey));
         }
     }
     

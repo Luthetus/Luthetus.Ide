@@ -79,7 +79,8 @@ public class TextEditorCommandDefaultFunctions
 
             editContext.CommandArgs.Dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
                 editContext.ViewModel.ViewModelKey,
-                inState => inState with { })); // "with { }" is a Hack to re-render
+                inState => inState with { },
+                editContext.AuthenticatedActionKey)); // "with { }" is a Hack to re-render
         }
 
         return Task.CompletedTask;
@@ -606,7 +607,8 @@ public class TextEditorCommandDefaultFunctions
                 {
                     CursorBag = outCursorBag
                 };
-            }));
+            },
+            editContext.AuthenticatedActionKey));
 
         if (editContext.CommandArgs.ShowViewModelAction is not null)
             editContext.CommandArgs.ShowViewModelAction.Invoke(firstDefinitionViewModel.ViewModelKey);

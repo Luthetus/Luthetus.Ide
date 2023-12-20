@@ -221,7 +221,8 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                             previousViewModel => previousViewModel with
                             {
                                 DisplayCommandBar = true
-                            }));
+                            },
+                            editContext.AuthenticatedActionKey));
 
                         return Task.CompletedTask;
                     });
