@@ -44,63 +44,63 @@ public partial interface ITextEditorService
         #endregion
 
         #region UPDATE_METHODS
-        public ITextEditorEdit GetWithValueTask(
+        public TextEditorEdit GetWithValueTask(
             Key<TextEditorViewModel> viewModelKey,
             Func<TextEditorViewModel, TextEditorViewModel> withFunc);
 
-        public ITextEditorEdit GetWithTaskTask(
+        public TextEditorEdit GetWithTaskTask(
             TextEditorViewModel viewModel,
             Func<TextEditorViewModel, Task<Func<TextEditorViewModel, TextEditorViewModel>>> withFuncWrap);
 
         /// <summary>
         /// If a parameter is null the JavaScript will not modify that value
         /// </summary>
-        public ITextEditorEdit GetSetScrollPositionTask(
+        public TextEditorEdit GetSetScrollPositionTask(
             string bodyElementId,
             string gutterElementId,
             double? scrollLeftInPixels,
             double? scrollTopInPixels);
 
-        public ITextEditorEdit GetSetGutterScrollTopTask(
+        public TextEditorEdit GetSetGutterScrollTopTask(
             string gutterElementId,
             double scrollTopInPixels);
 
-        public ITextEditorEdit GetMutateScrollVerticalPositionTask(
+        public TextEditorEdit GetMutateScrollVerticalPositionTask(
             string bodyElementId,
             string gutterElementId,
             double pixels);
 
-        public ITextEditorEdit GetMutateScrollHorizontalPositionTask(
+        public TextEditorEdit GetMutateScrollHorizontalPositionTask(
             string bodyElementId,
             string gutterElementId,
             double pixels);
 
-        public ITextEditorEdit GetFocusPrimaryCursorTask(string primaryCursorContentId);
+        public TextEditorEdit GetFocusPrimaryCursorTask(string primaryCursorContentId);
 
-        public ITextEditorEdit GetMoveCursorTask(
+        public TextEditorEdit GetMoveCursorTask(
             KeyboardEventArgs keyboardEventArgs,
             TextEditorModel model,
             Key<TextEditorViewModel> viewModelKey,
             TextEditorCursorModifier primaryCursor);
 
-        public ITextEditorEdit GetCursorMovePageTopTask(
+        public TextEditorEdit GetCursorMovePageTopTask(
             ResourceUri modelResourceUri,
             TextEditorViewModel viewModel,
             TextEditorCursorModifier primaryCursor);
 
-        public ITextEditorEdit GetCursorMovePageBottomTask(
+        public TextEditorEdit GetCursorMovePageBottomTask(
             TextEditorModel model,
             TextEditorViewModel viewModel,
             TextEditorCursorModifier primaryCursor);
 
-        public ITextEditorEdit GetCalculateVirtualizationResultTask(
+        public TextEditorEdit GetCalculateVirtualizationResultTask(
             TextEditorModel model,
             TextEditorViewModel viewModel,
             TextEditorMeasurements? textEditorMeasurements,
             TextEditorCursorModifier primaryCursor,
             CancellationToken cancellationToken);
 
-        public ITextEditorEdit GetRemeasureTask(
+        public TextEditorEdit GetRemeasureTask(
             ResourceUri modelResourceUri,
             TextEditorViewModel viewModel,
             string measureCharacterWidthAndRowHeightElementId,
@@ -259,107 +259,107 @@ public partial interface ITextEditorService
         #endregion
 
         #region UPDATE_METHODS
-        public ITextEditorEdit GetWithValueTask(
+        public TextEditorEdit GetWithValueTask(
             Key<TextEditorViewModel> viewModelKey,
             Func<TextEditorViewModel, TextEditorViewModel> withFunc)
         {
-            return _textEditorService.CreateEdit(context =>
+            return context =>
             {
                 _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
                     viewModelKey,
                     withFunc));
 
                 return Task.CompletedTask;
-            });
+            };
         }
 
-        public ITextEditorEdit GetWithTaskTask(
+        public TextEditorEdit GetWithTaskTask(
             TextEditorViewModel viewModel,
             Func<TextEditorViewModel, Task<Func<TextEditorViewModel, TextEditorViewModel>>> withFuncWrap)
         {
-            return _textEditorService.CreateEdit(async context =>
+            return async context =>
             {
                 _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
                     viewModel.ViewModelKey,
                     await withFuncWrap.Invoke(viewModel)));
-            });
+            };
         }
 
         /// <summary>
         /// If a parameter is null the JavaScript will not modify that value
         /// </summary>
-        public ITextEditorEdit GetSetScrollPositionTask(
+        public TextEditorEdit GetSetScrollPositionTask(
             string bodyElementId,
             string gutterElementId,
             double? scrollLeftInPixels,
             double? scrollTopInPixels)
         {
-            return _textEditorService.CreateEdit(async context =>
+            return async context =>
             {
                 await _jsRuntime.InvokeVoidAsync("luthetusTextEditor.setScrollPosition",
                     bodyElementId,
                     gutterElementId,
                     scrollLeftInPixels,
                     scrollTopInPixels);
-            });
+            };
         }
 
-        public ITextEditorEdit GetSetGutterScrollTopTask(
+        public TextEditorEdit GetSetGutterScrollTopTask(
             string gutterElementId,
             double scrollTopInPixels)
         {
-            return _textEditorService.CreateEdit(async context =>
+            return async context =>
             {
                 await _jsRuntime.InvokeVoidAsync("luthetusTextEditor.setGutterScrollTop",
                     gutterElementId,
                     scrollTopInPixels);
-            });
+            };
         }
 
-        public ITextEditorEdit GetMutateScrollVerticalPositionTask(
+        public TextEditorEdit GetMutateScrollVerticalPositionTask(
             string bodyElementId,
             string gutterElementId,
             double pixels)
         {
-            return _textEditorService.CreateEdit(async context =>
+            return async context =>
             {
                 await _jsRuntime.InvokeVoidAsync("luthetusTextEditor.mutateScrollVerticalPositionByPixels",
                     bodyElementId,
                     gutterElementId,
                     pixels);
-            });
+            };
         }
 
-        public ITextEditorEdit GetMutateScrollHorizontalPositionTask(
+        public TextEditorEdit GetMutateScrollHorizontalPositionTask(
             string bodyElementId,
             string gutterElementId,
             double pixels)
         {
-            return _textEditorService.CreateEdit(async context =>
+            return async context =>
             {
                 await _jsRuntime.InvokeVoidAsync("luthetusTextEditor.mutateScrollHorizontalPositionByPixels",
                     bodyElementId,
                     gutterElementId,
                     pixels);
-            });
+            };
         }
 
-        public ITextEditorEdit GetFocusPrimaryCursorTask(string primaryCursorContentId)
+        public TextEditorEdit GetFocusPrimaryCursorTask(string primaryCursorContentId)
         {
-            return _textEditorService.CreateEdit(async context =>
+            return async context =>
             {
                 await _jsRuntime.InvokeVoidAsync("luthetusTextEditor.focusHtmlElementById",
                     primaryCursorContentId);
-            });
+            };
         }
 
-        public ITextEditorEdit GetMoveCursorTask(
+        public TextEditorEdit GetMoveCursorTask(
             KeyboardEventArgs keyboardEventArgs,
             TextEditorModel model,
             Key<TextEditorViewModel> viewModelKey,
             TextEditorCursorModifier primaryCursor)
         {
-            return _textEditorService.CreateEdit(context =>
+            return context =>
             {
                 void MutateIndexCoordinatesAndPreferredColumnIndex(int columnIndex)
                 {
@@ -547,15 +547,15 @@ public partial interface ITextEditorService
                 }
 
                 return Task.CompletedTask;
-            });
+            };
         }
 
-        public ITextEditorEdit GetCursorMovePageTopTask(
+        public TextEditorEdit GetCursorMovePageTopTask(
             ResourceUri modelResourceUri,
             TextEditorViewModel viewModel,
             TextEditorCursorModifier primaryCursor)
         {
-            return _textEditorService.CreateEdit(context =>
+            return context =>
             {
                 if (viewModel.VirtualizationResult?.EntryBag.Any() ?? false)
                 {
@@ -566,15 +566,15 @@ public partial interface ITextEditorService
                 }
 
                 return Task.CompletedTask;
-            });
+            };
         }
 
-        public ITextEditorEdit GetCursorMovePageBottomTask(
+        public TextEditorEdit GetCursorMovePageBottomTask(
             TextEditorModel model,
             TextEditorViewModel viewModel,
             TextEditorCursorModifier primaryCursor)
         {
-            return _textEditorService.CreateEdit(context =>
+            return context =>
             {
                 if ((viewModel.VirtualizationResult?.EntryBag.Any() ?? false))
                 {
@@ -586,17 +586,17 @@ public partial interface ITextEditorService
                 }
 
                 return Task.CompletedTask;
-            });
+            };
         }
 
-        public ITextEditorEdit GetCalculateVirtualizationResultTask(
+        public TextEditorEdit GetCalculateVirtualizationResultTask(
             TextEditorModel model,
             TextEditorViewModel viewModel,
             TextEditorMeasurements? textEditorMeasurements,
             TextEditorCursorModifier primaryCursor,
             CancellationToken cancellationToken)
         {
-            return _textEditorService.CreateEdit(async context =>
+            return async context =>
             {
                 if (cancellationToken.IsCancellationRequested)
                     return;
@@ -819,26 +819,25 @@ public partial interface ITextEditorService
                         viewModel.SeenModelRenderStateKeysBag.Add(model.RenderStateKey);
                     }
 
-                    var getWithValueEdit = GetWithValueTask(
-                        viewModel.ViewModelKey,
-                        previousViewModel => previousViewModel with
-                        {
-                            VirtualizationResult = virtualizationResult,
-                        });
-
-                    await getWithValueEdit.ExecuteAsync(context);
+                    await GetWithValueTask(
+                            viewModel.ViewModelKey,
+                            previousViewModel => previousViewModel with
+                            {
+                                VirtualizationResult = virtualizationResult,
+                            })
+                        .Invoke(context);
                 }));
-            });
+            };
         }
 
-        public ITextEditorEdit GetRemeasureTask(
+        public TextEditorEdit GetRemeasureTask(
             ResourceUri modelResourceUri,
             TextEditorViewModel viewModel,
             string measureCharacterWidthAndRowHeightElementId,
             int countOfTestCharacters,
             CancellationToken cancellationToken)
         {
-            return _textEditorService.CreateEdit(async context =>
+            return async context =>
             {
                 var options = _textEditorService.OptionsApi.GetOptions();
 
@@ -864,21 +863,20 @@ public partial interface ITextEditorService
                         viewModel.SeenOptionsRenderStateKeysBag.Add(options.RenderStateKey);
                     }
 
-                    var getWithValueEdit = GetWithValueTask(
-                        viewModel.ViewModelKey,
-                        previousViewModel => (previousViewModel with
-                        {
-                            // Clear the SeenModelRenderStateKeys because one needs to recalculate the virtualization result now that the options have changed.
-                            SeenModelRenderStateKeysBag = new(),
-                            VirtualizationResult = previousViewModel.VirtualizationResult with
+                    await GetWithValueTask(
+                            viewModel.ViewModelKey,
+                            previousViewModel => (previousViewModel with
                             {
-                                CharAndRowMeasurements = characterWidthAndRowHeight
-                            },
-                        }));
-
-                    await getWithValueEdit.ExecuteAsync(context);
+                                // Clear the SeenModelRenderStateKeys because one needs to recalculate the virtualization result now that the options have changed.
+                                SeenModelRenderStateKeysBag = new(),
+                                VirtualizationResult = previousViewModel.VirtualizationResult with
+                                {
+                                    CharAndRowMeasurements = characterWidthAndRowHeight
+                                },
+                            }))
+                        .Invoke(context);
                 }));
-            });
+            };
         }
         #endregion
 

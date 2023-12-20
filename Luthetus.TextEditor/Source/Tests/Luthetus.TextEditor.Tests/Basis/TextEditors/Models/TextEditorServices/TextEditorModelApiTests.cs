@@ -63,7 +63,7 @@ public class TextEditorModelApiTests
                         insertedText,
                         CancellationToken.None),
                     editContext.RefreshCursorsRequest)
-                .ExecuteAsync(editContext);
+                .Invoke(editContext);
         });
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
@@ -71,12 +71,9 @@ public class TextEditorModelApiTests
             insertedText + inModel.GetAllText(),
             outModel.GetAllText());
 
-        textEditorService.EnqueueEdit(editContext =>
-        {
-            return textEditorService.ModelApi
-                .UndoEdit(inModel.ResourceUri)
-                .ExecuteAsync(editContext);
-        });
+        textEditorService.EnqueueEdit(
+            textEditorService.ModelApi.UndoEdit(
+                inModel.ResourceUri));
 
         outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(inModel.GetAllText(), outModel.GetAllText());
@@ -99,12 +96,9 @@ public class TextEditorModelApiTests
         // Assert the current values are different from that which will be set.
         Assert.NotEqual(rowEndingKind, inModel.UsingRowEndingKind);
 
-        textEditorService.EnqueueEdit(editContext =>
-        {
-            return textEditorService.ModelApi
-                .SetUsingRowEndingKind(inModel.ResourceUri, rowEndingKind)
-                .ExecuteAsync(editContext);
-        });
+        textEditorService.EnqueueEdit(
+            textEditorService.ModelApi.SetUsingRowEndingKind(
+                inModel.ResourceUri, rowEndingKind));
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
 
@@ -129,12 +123,9 @@ public class TextEditorModelApiTests
         // Assert the current values are different from that which will be set.
         Assert.NotEqual(newResourceLastWriteTime, inModel.ResourceLastWriteTime);
 
-        textEditorService.EnqueueEdit(editContext =>
-        {
-            return textEditorService.ModelApi
-                .SetResourceData(inModel.ResourceUri, newResourceLastWriteTime)
-                .ExecuteAsync(editContext);
-        });
+        textEditorService.EnqueueEdit(
+            textEditorService.ModelApi.SetResourceData(
+                inModel.ResourceUri, newResourceLastWriteTime));
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
 
@@ -159,12 +150,9 @@ public class TextEditorModelApiTests
         // Assert the current values are different from that which will be set.
         Assert.NotEqual(newContent, inModel.GetAllText());
 
-        textEditorService.EnqueueEdit(editContext =>
-        {
-            return textEditorService.ModelApi
-                .Reload(inModel.ResourceUri, newContent, DateTime.UtcNow)
-                .ExecuteAsync(editContext);
-        });
+        textEditorService.EnqueueEdit(
+            textEditorService.ModelApi.Reload(
+                inModel.ResourceUri, newContent, DateTime.UtcNow));
         
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
 
@@ -274,28 +262,22 @@ public class TextEditorModelApiTests
                         insertedText,
                         CancellationToken.None),
                     editContext.RefreshCursorsRequest)
-                .ExecuteAsync(editContext);
+                .Invoke(editContext);
         });
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(insertedText + inModel.GetAllText(), outModel.GetAllText());
 
-        textEditorService.EnqueueEdit(editContext =>
-        {
-            return textEditorService.ModelApi
-                .UndoEdit(inModel.ResourceUri)
-                .ExecuteAsync(editContext);
-        });
+        textEditorService.EnqueueEdit(
+            textEditorService.ModelApi.UndoEdit(
+                inModel.ResourceUri));
 
         outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(inModel.GetAllText(), outModel.GetAllText());
 
-        textEditorService.EnqueueEdit(editContext =>
-        {
-            return textEditorService.ModelApi
-                .RedoEdit(inModel.ResourceUri)
-                .ExecuteAsync(editContext);
-        });
+        textEditorService.EnqueueEdit(
+            textEditorService.ModelApi.RedoEdit(
+                inModel.ResourceUri));
 
         outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(insertedText + inModel.GetAllText(), outModel.GetAllText());
@@ -329,7 +311,7 @@ public class TextEditorModelApiTests
                         insertedText,
                         CancellationToken.None),
                     editContext.RefreshCursorsRequest)
-                .ExecuteAsync(editContext);
+                .Invoke(editContext);
         });
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
@@ -369,7 +351,7 @@ public class TextEditorModelApiTests
                         keyboardEventArgs,
                         CancellationToken.None),
                     editContext.RefreshCursorsRequest)
-                .ExecuteAsync(editContext);
+                .Invoke(editContext);
         });
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
@@ -489,7 +471,7 @@ public class TextEditorModelApiTests
                         textToDelete.Length,
                         CancellationToken.None),
                     editContext.RefreshCursorsRequest)
-                .ExecuteAsync(editContext);
+                .Invoke(editContext);
         });
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
@@ -528,7 +510,7 @@ public class TextEditorModelApiTests
                         MotionKind.Backspace,
                         CancellationToken.None),
                     editContext.RefreshCursorsRequest)
-                .ExecuteAsync(editContext);
+                .Invoke(editContext);
         });
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
@@ -567,7 +549,7 @@ public class TextEditorModelApiTests
                         MotionKind.Delete,
                         CancellationToken.None),
                     editContext.RefreshCursorsRequest)
-                .ExecuteAsync(editContext);
+                .Invoke(editContext);
         });
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);

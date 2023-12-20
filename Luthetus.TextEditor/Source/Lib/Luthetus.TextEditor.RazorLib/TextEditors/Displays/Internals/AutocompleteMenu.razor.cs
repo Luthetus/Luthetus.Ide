@@ -165,7 +165,7 @@ public partial class AutocompleteMenu : ComponentBase
         {
             return TextEditorService.ModelApi
                 .InsertText(insertTextTextEditorModelAction, editContext.RefreshCursorsRequest)
-                .ExecuteAsync(editContext);
+                .Invoke(editContext);
         });
 
         return Task.CompletedTask;

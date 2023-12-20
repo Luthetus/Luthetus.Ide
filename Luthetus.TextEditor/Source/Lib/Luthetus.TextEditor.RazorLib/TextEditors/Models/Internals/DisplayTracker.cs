@@ -126,7 +126,7 @@ public class DisplayTracker : IDisposable
                     viewModel.MostRecentTextEditorMeasurements,
                     editContext.PrimaryCursor,
                     _calculateVirtualizationResultCancellationTokenSource.Token)
-                .ExecuteAsync(editContext);
+                .Invoke(editContext);
         });
     }
 

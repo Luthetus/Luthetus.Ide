@@ -99,17 +99,13 @@ public class TextEditorViewModelApiTests
             oppositeShouldSetFocusAfterNextRender,
             inViewModel.ShouldSetFocusAfterNextRender);
 
-        textEditorService.EnqueueEdit(editContext =>
-        {
-            return textEditorService.ViewModelApi
-                .GetWithValueTask(
-                    inViewModel.ViewModelKey,
-                    inState => inState with
-                    {
-                        ShouldSetFocusAfterNextRender = oppositeShouldSetFocusAfterNextRender
-                    })
-                .ExecuteAsync(editContext);
-        });
+        textEditorService.EnqueueEdit(
+            textEditorService.ViewModelApi.GetWithValueTask(
+                inViewModel.ViewModelKey,
+                inState => inState with
+                {
+                    ShouldSetFocusAfterNextRender = oppositeShouldSetFocusAfterNextRender
+                }));
 
         var modifiedViewModel = textEditorService.ViewModelApi.GetOrDefault(inViewModel.ViewModelKey);
 

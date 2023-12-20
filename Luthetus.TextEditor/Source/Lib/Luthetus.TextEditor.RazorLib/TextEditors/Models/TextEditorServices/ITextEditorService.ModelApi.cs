@@ -51,37 +51,37 @@ public partial interface ITextEditorService
         #endregion
 
         #region UPDATE_METHODS
-        public ITextEditorEdit UndoEdit(
+        public TextEditorEdit UndoEdit(
             ResourceUri resourceUri);
 
-        public ITextEditorEdit SetUsingRowEndingKind(
+        public TextEditorEdit SetUsingRowEndingKind(
             ResourceUri resourceUri,
             RowEndingKind rowEndingKind);
 
-        public ITextEditorEdit SetResourceData(
+        public TextEditorEdit SetResourceData(
             ResourceUri resourceUri,
             DateTime resourceLastWriteTime);
 
-        public ITextEditorEdit Reload(
+        public TextEditorEdit Reload(
         ResourceUri resourceUri,
             string content,
             DateTime resourceLastWriteTime);
 
-        public ITextEditorEdit RedoEdit(ResourceUri resourceUri);
+        public TextEditorEdit RedoEdit(ResourceUri resourceUri);
 
-        public ITextEditorEdit InsertText(
+        public TextEditorEdit InsertText(
             InsertTextAction insertTextAction,
             RefreshCursorsRequest refreshCursorsRequest);
 
-        public ITextEditorEdit HandleKeyboardEvent(
+        public TextEditorEdit HandleKeyboardEvent(
             KeyboardEventAction keyboardEventAction,
             RefreshCursorsRequest refreshCursorsRequest);
 
-        public ITextEditorEdit DeleteTextByRange(
+        public TextEditorEdit DeleteTextByRange(
             DeleteTextByRangeAction deleteTextByRangeAction,
             RefreshCursorsRequest refreshCursorsRequest);
 
-        public ITextEditorEdit DeleteTextByMotion(
+        public TextEditorEdit DeleteTextByMotion(
             DeleteTextByMotionAction deleteTextByMotionAction,
             RefreshCursorsRequest refreshCursorsRequest);
         #endregion
@@ -203,49 +203,49 @@ public partial interface ITextEditorService
         #endregion
 
         #region UPDATE_METHODS
-        public ITextEditorEdit UndoEdit(ResourceUri resourceUri)
+        public TextEditorEdit UndoEdit(ResourceUri resourceUri)
         {
-            return _textEditorService.CreateEdit(context =>
+            return context =>
             {
                 _dispatcher.Dispatch(new UndoEditAction(resourceUri));
                 return Task.CompletedTask;
-            });
+            };
         }
 
-        public ITextEditorEdit SetUsingRowEndingKind(
+        public TextEditorEdit SetUsingRowEndingKind(
             ResourceUri resourceUri,
             RowEndingKind rowEndingKind)
         {
-            return _textEditorService.CreateEdit(context =>
+            return context =>
             {
                 _dispatcher.Dispatch(new SetUsingRowEndingKindAction(
                     resourceUri,
                     rowEndingKind));
 
                 return Task.CompletedTask;
-            });
+            };
         }
 
-        public ITextEditorEdit SetResourceData(
+        public TextEditorEdit SetResourceData(
             ResourceUri resourceUri,
             DateTime resourceLastWriteTime)
         {
-            return _textEditorService.CreateEdit(context =>
+            return context =>
             {
                 _dispatcher.Dispatch(new SetResourceDataAction(
                     resourceUri,
                     resourceLastWriteTime));
 
                 return Task.CompletedTask;
-            });
+            };
         }
 
-        public ITextEditorEdit Reload(
+        public TextEditorEdit Reload(
             ResourceUri resourceUri,
             string content,
             DateTime resourceLastWriteTime)
         {
-            return _textEditorService.CreateEdit(context =>
+            return context =>
             {
                 _dispatcher.Dispatch(new ReloadAction(
                     resourceUri,
@@ -253,23 +253,23 @@ public partial interface ITextEditorService
                     resourceLastWriteTime));
 
                 return Task.CompletedTask;
-            });
+            };
         }
 
-        public ITextEditorEdit RedoEdit(ResourceUri resourceUri)
+        public TextEditorEdit RedoEdit(ResourceUri resourceUri)
         {
-            return _textEditorService.CreateEdit(context =>
+            return context =>
             {
                 _dispatcher.Dispatch(new RedoEditAction(resourceUri));
                 return Task.CompletedTask;
-            });
+            };
         }
 
-        public ITextEditorEdit InsertText(
+        public TextEditorEdit InsertText(
             InsertTextAction insertTextAction,
             RefreshCursorsRequest refreshCursorsRequest)
         {
-            return _textEditorService.CreateEdit(context =>
+            return context =>
             {
                 var cursorBag = refreshCursorsRequest?.CursorBag ?? insertTextAction.CursorModifierBag;
 
@@ -281,14 +281,14 @@ public partial interface ITextEditorService
                 _dispatcher.Dispatch(insertTextAction);
 
                 return Task.CompletedTask;
-            });
+            };
         }
 
-        public ITextEditorEdit HandleKeyboardEvent(
+        public TextEditorEdit HandleKeyboardEvent(
             KeyboardEventAction keyboardEventAction,
             RefreshCursorsRequest refreshCursorsRequest)
         {
-            return _textEditorService.CreateEdit(context =>
+            return context =>
             {
                 var cursorBag = refreshCursorsRequest?.CursorBag ?? keyboardEventAction.CursorModifierBag;
 
@@ -300,14 +300,14 @@ public partial interface ITextEditorService
                 _dispatcher.Dispatch(keyboardEventAction);
 
                 return Task.CompletedTask;
-            });
+            };
         }
 
-        public ITextEditorEdit DeleteTextByRange(
+        public TextEditorEdit DeleteTextByRange(
             DeleteTextByRangeAction deleteTextByRangeAction,
             RefreshCursorsRequest refreshCursorsRequest)
         {
-            return _textEditorService.CreateEdit(context =>
+            return context =>
             {
                 var cursorBag = refreshCursorsRequest?.CursorBag ?? deleteTextByRangeAction.CursorModifierBag;
 
@@ -319,14 +319,14 @@ public partial interface ITextEditorService
                 _dispatcher.Dispatch(deleteTextByRangeAction);
 
                 return Task.CompletedTask;
-            });
+            };
         }
 
-        public ITextEditorEdit DeleteTextByMotion(
+        public TextEditorEdit DeleteTextByMotion(
             DeleteTextByMotionAction deleteTextByMotionAction,
             RefreshCursorsRequest refreshCursorsRequest)
         {
-            return _textEditorService.CreateEdit(context =>
+            return context =>
             {
                 var cursorBag = refreshCursorsRequest?.CursorBag ?? deleteTextByMotionAction.CursorModifierBag;
 
@@ -338,7 +338,7 @@ public partial interface ITextEditorService
                 _dispatcher.Dispatch(deleteTextByMotionAction);
 
                 return Task.CompletedTask;
-            });
+            };
         }
         #endregion
 

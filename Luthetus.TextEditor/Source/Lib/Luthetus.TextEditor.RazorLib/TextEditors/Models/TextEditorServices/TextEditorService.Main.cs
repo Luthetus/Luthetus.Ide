@@ -190,26 +190,21 @@ public partial class TextEditorService : ITextEditorService
                 }));
         }
     }
-
-    public ITextEditorEdit CreateEdit(Func<ITextEditorEditContext, Task> func)
-    {
-        return new TextEditorEdit(this, func);
-    }
     
-    public void EnqueueEdit(ITextEditorEdit textEditorEdit)
+    public void EnqueueEdit(TextEditorEdit textEditorEdit)
     {
-        _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
-            nameof(EnqueueEdit),
-            async () => 
-            {
-                var editContext = new TextEditorEditContext();
-                await ((TextEditorEdit)textEditorEdit).Func.Invoke(editContext);
-            });
+        EnqueueEdit(textEditorEdit);
     }
 
     public void EnqueueEdit(Func<ITextEditorEditContext, Task> func)
     {
-        EnqueueEdit(CreateEdit(func));
+        _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(),
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            nameof(EnqueueEdit),
+            async () =>
+            {
+                var editContext = new TextEditorEditContext();
+                await func.Invoke(editContext);
+            });
     }
 }

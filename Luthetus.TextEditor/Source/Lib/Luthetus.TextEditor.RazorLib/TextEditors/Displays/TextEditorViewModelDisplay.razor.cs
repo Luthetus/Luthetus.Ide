@@ -345,7 +345,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
                 _tooltipViewModel = null;
 
-                TextEditorService.EnqueueEdit(TextEditorService.CreateEdit(editContext =>
+                TextEditorService.EnqueueEdit(editContext =>
                 {
                     return TextEditorService.ModelApi.HandleKeyboardEvent(
                             new TextEditorModelState.KeyboardEventAction(
@@ -355,8 +355,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                                 keyboardEventArgs,
                                 CancellationToken.None),
                             editContext.RefreshCursorsRequest)
-                        .ExecuteAsync(editContext);
-                }));
+                        .Invoke(editContext);
+                });
             }
         }
 
@@ -967,16 +967,12 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (model is null || viewModel is null)
             return;
 
-        TextEditorService.EnqueueEdit(editContext =>
-        {
-            return TextEditorService.ViewModelApi.GetRemeasureTask(
-                    model.ResourceUri,
-                    viewModel,
-                    localMeasureCharacterWidthAndRowHeightElementId,
-                    countOfTestCharacters,
-                    CancellationToken.None)
-                .ExecuteAsync(editContext);
-        });
+        TextEditorService.EnqueueEdit(TextEditorService.ViewModelApi.GetRemeasureTask(
+            model.ResourceUri,
+            viewModel,
+            localMeasureCharacterWidthAndRowHeightElementId,
+            countOfTestCharacters,
+            CancellationToken.None));
     }
 
     private void QueueCalculateVirtualizationResultBackgroundTask(
@@ -996,7 +992,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                     editContext.ViewModel.MostRecentTextEditorMeasurements,
                     editContext.PrimaryCursor,
                     CancellationToken.None)
-                .ExecuteAsync(editContext);
+                .Invoke(editContext);
         });
     }
 

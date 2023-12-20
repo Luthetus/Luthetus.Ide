@@ -7,6 +7,7 @@ using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 
@@ -47,12 +48,10 @@ public static class SyntaxTextObjectVim
         vimGrammarToken = null;
         return false;
     }
-    
-    public static ITextEditorEdit MOVE_CURSOR_ONE_COLUMN_LEFT(ITextEditorEditContext editContext)
+
+    public static TextEditorEdit MOVE_CURSOR_ONE_COLUMN_LEFT = (ITextEditorEditContext editContext) =>
     {
-        return editContext.CommandArgs.TextEditorService.CreateEdit(editContext =>
-        {
-            editContext.CommandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
+        editContext.CommandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
                 new KeyboardEventArgs
                 {
                     Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
@@ -61,17 +60,14 @@ public static class SyntaxTextObjectVim
                 editContext.Model,
                 editContext.ViewModel.ViewModelKey,
                 editContext.PrimaryCursor)
-            .ExecuteAsync(editContext);
+            .Invoke(editContext);
 
-            return Task.CompletedTask;
-        });
-    }
-    
-    public static ITextEditorEdit MOVE_CURSOR_ONE_ROW_DOWN(ITextEditorEditContext editContext)
+        return Task.CompletedTask;
+    };
+
+    public static TextEditorEdit MOVE_CURSOR_ONE_ROW_DOWN = (ITextEditorEditContext editContext) =>
     {
-        return editContext.CommandArgs.TextEditorService.CreateEdit(editContext =>
-        {
-            return editContext.CommandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
+        return editContext.CommandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
                 new KeyboardEventArgs
                 {
                     Key = KeyboardKeyFacts.MovementKeys.ARROW_DOWN,
@@ -80,15 +76,12 @@ public static class SyntaxTextObjectVim
                 editContext.Model,
                 editContext.ViewModel.ViewModelKey,
                 editContext.PrimaryCursor)
-            .ExecuteAsync(editContext);
-        });
-    }
-    
-    public static ITextEditorEdit MOVE_CURSOR_ONE_ROW_UP(ITextEditorEditContext editContext)
+            .Invoke(editContext);
+    };
+
+    public static TextEditorEdit MOVE_CURSOR_ONE_ROW_UP = (ITextEditorEditContext editContext) =>
     {
-        return editContext.CommandArgs.TextEditorService.CreateEdit(editContext =>
-        {
-            return editContext.CommandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
+        return editContext.CommandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
                 new KeyboardEventArgs
                 {
                     Key = KeyboardKeyFacts.MovementKeys.ARROW_UP,
@@ -97,15 +90,12 @@ public static class SyntaxTextObjectVim
                 editContext.Model,
                 editContext.ViewModel.ViewModelKey,
                 editContext.PrimaryCursor)
-            .ExecuteAsync(editContext);
-        });
-    }
-    
-    public static ITextEditorEdit MOVE_CURSOR_ONE_COLUMN_RIGHT(ITextEditorEditContext editContext)
+            .Invoke(editContext);
+    };
+
+    public static TextEditorEdit MOVE_CURSOR_ONE_COLUMN_RIGHT = (ITextEditorEditContext editContext) =>
     {
-        return editContext.CommandArgs.TextEditorService.CreateEdit(editContext =>
-        {
-            return editContext.CommandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
+        return editContext.CommandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
                 new KeyboardEventArgs
                 {
                     Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
@@ -114,15 +104,12 @@ public static class SyntaxTextObjectVim
                 editContext.Model,
                 editContext.ViewModel.ViewModelKey,
                 editContext.PrimaryCursor)
-            .ExecuteAsync(editContext);
-        });
-    }
-    
-    public static ITextEditorEdit MOVE_CURSOR_END_CURRENT_LINE(ITextEditorEditContext editContext)
+            .Invoke(editContext);
+    };
+
+    public static TextEditorEdit MOVE_CURSOR_END_CURRENT_LINE = (ITextEditorEditContext editContext) =>
     {
-        return editContext.CommandArgs.TextEditorService.CreateEdit(editContext =>
-        {
-            return editContext.CommandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
+        return editContext.CommandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
                 new KeyboardEventArgs
                 {
                     Key = KeyboardKeyFacts.MovementKeys.END,
@@ -131,15 +118,12 @@ public static class SyntaxTextObjectVim
                 editContext.Model,
                 editContext.ViewModel.ViewModelKey,
                 editContext.PrimaryCursor)
-            .ExecuteAsync(editContext);
-        });
-    }
-    
-    public static ITextEditorEdit MOVE_CURSOR_START_CURRENT_LINE(ITextEditorEditContext editContext)
+            .Invoke(editContext);
+    };
+
+    public static TextEditorEdit MOVE_CURSOR_START_CURRENT_LINE = (ITextEditorEditContext editContext) =>
     {
-        return editContext.CommandArgs.TextEditorService.CreateEdit(editContext =>
-        {
-            return editContext.CommandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
+        return editContext.CommandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
                 new KeyboardEventArgs
                 {
                     Key = KeyboardKeyFacts.MovementKeys.HOME,
@@ -148,9 +132,8 @@ public static class SyntaxTextObjectVim
                 editContext.Model,
                 editContext.ViewModel.ViewModelKey,
                 editContext.PrimaryCursor)
-            .ExecuteAsync(editContext);
-        });
-    }
+            .Invoke(editContext);
+    };
 
     public static bool TryParse(TextEditorKeymapVim textEditorKeymapVim,
         ImmutableArray<VimGrammarToken> sentenceSnapshotBag,
@@ -187,13 +170,8 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.EnqueueEdit(editContext =>
-                                {
-                                    MOVE_CURSOR_ONE_COLUMN_LEFT(editContext).ExecuteAsync(editContext);
-                                    return Task.CompletedTask;
-                                });
+                                commandArgs.TextEditorService.EnqueueEdit(MOVE_CURSOR_ONE_COLUMN_LEFT);
                                 return Task.CompletedTask;
-                                
                             });
 
                         return true;
@@ -208,11 +186,7 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.EnqueueEdit(editContext =>
-                                {
-                                    MOVE_CURSOR_ONE_ROW_DOWN(editContext).ExecuteAsync(editContext);
-                                    return Task.CompletedTask;
-                                });
+                                commandArgs.TextEditorService.EnqueueEdit(MOVE_CURSOR_ONE_ROW_DOWN);
                                 return Task.CompletedTask;
                             });
 
@@ -228,11 +202,7 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.EnqueueEdit(editContext =>
-                                {
-                                    MOVE_CURSOR_ONE_ROW_UP(editContext).ExecuteAsync(editContext);
-                                    return Task.CompletedTask;
-                                });
+                                commandArgs.TextEditorService.EnqueueEdit(MOVE_CURSOR_ONE_ROW_UP);
                                 return Task.CompletedTask;
                             });
 
@@ -248,11 +218,7 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.EnqueueEdit(editContext =>
-                                {
-                                    MOVE_CURSOR_ONE_COLUMN_RIGHT(editContext).ExecuteAsync(editContext);
-                                    return Task.CompletedTask;
-                                });
+                                commandArgs.TextEditorService.EnqueueEdit(MOVE_CURSOR_ONE_COLUMN_RIGHT);
                                 return Task.CompletedTask;
                             });
 
@@ -274,11 +240,7 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.EnqueueEdit(editContext =>
-                                {
-                                    MOVE_CURSOR_END_CURRENT_LINE(editContext).ExecuteAsync(editContext);
-                                    return Task.CompletedTask;
-                                });
+                                commandArgs.TextEditorService.EnqueueEdit(MOVE_CURSOR_END_CURRENT_LINE);
                                 return Task.CompletedTask;
                             });
 
@@ -294,11 +256,7 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.EnqueueEdit(editContext =>
-                                {
-                                    MOVE_CURSOR_START_CURRENT_LINE(editContext).ExecuteAsync(editContext);
-                                    return Task.CompletedTask;
-                                });
+                                commandArgs.TextEditorService.EnqueueEdit(MOVE_CURSOR_START_CURRENT_LINE);
                                 return Task.CompletedTask;
                             });
 

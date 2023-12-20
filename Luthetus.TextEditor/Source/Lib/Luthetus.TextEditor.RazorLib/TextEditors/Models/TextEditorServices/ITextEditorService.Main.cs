@@ -30,8 +30,5 @@ public partial interface ITextEditorService
     public IState<TextEditorOptionsState> OptionsStateWrap { get; }
     public IState<TextEditorSearchEngineState> SearchEngineStateWrap { get; }
 
-    public ITextEditorEdit CreateEdit(Func<ITextEditorEditContext, Task> func);
-    public void EnqueueEdit(ITextEditorEdit textEditorEdit);
-    public void EnqueueEdit(Func<ITextEditorEditContext, Task> func);
+    public void EnqueueEdit(TextEditorEdit textEditorEdit);
 }
-

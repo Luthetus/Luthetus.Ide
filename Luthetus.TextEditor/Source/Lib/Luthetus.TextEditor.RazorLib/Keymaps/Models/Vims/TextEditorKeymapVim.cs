@@ -247,7 +247,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                     {
                         await commandArgs.TextEditorService.ModelApi
                             .UndoEdit(editContext.Model.ResourceUri)
-                            .ExecuteAsync(editContext);
+                            .Invoke(editContext);
 
                         await editContext.Model.ApplySyntaxHighlightingAsync();
                     });
@@ -272,7 +272,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                     {
                         await commandArgs.TextEditorService.ModelApi
                             .RedoEdit(editContext.Model.ResourceUri)
-                            .ExecuteAsync(editContext);
+                            .Invoke(editContext);
 
                         await editContext.Model.ApplySyntaxHighlightingAsync();
                     });
@@ -785,7 +785,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                                         editContext.Model,
                                         editContext.ViewModel.ViewModelKey,
                                         editContext.PrimaryCursor)
-                                    .ExecuteAsync(editContext);
+                                    .Invoke(editContext);
 
                                 return Task.CompletedTask;
                             });

@@ -16,19 +16,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(async context =>
-            {
-                var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
-
-                var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                    commandArgs.ViewModelKey,
-                    viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
-
-                await TextEditorCommandDefaultFunctions
-                    .CopyAsync(context)
-                    .ExecuteAsync(context);
-            });
+            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.CopyAsync);
             return Task.CompletedTask;
         });
 
@@ -38,19 +26,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(async context =>
-            {
-                var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
-
-                var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                    commandArgs.ViewModelKey,
-                    viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
-
-                await TextEditorCommandDefaultFunctions
-                    .CutAsync(context)
-                    .ExecuteAsync(context);
-            });
+            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.CutAsync);
             return Task.CompletedTask;
         });
 
@@ -60,19 +36,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(async context =>
-            {
-                var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
-
-                var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                    commandArgs.ViewModelKey,
-                    viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
-
-                await TextEditorCommandDefaultFunctions
-                    .PasteAsync(context)
-                    .ExecuteAsync(context);
-            });
+            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.PasteAsync);
             return Task.CompletedTask;
         });
 
@@ -82,19 +46,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(async context =>
-            {
-                var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
-
-                var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                    commandArgs.ViewModelKey,
-                    viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
-
-                await TextEditorCommandDefaultFunctions
-                    .SaveAsync(context)
-                    .ExecuteAsync(context);
-            });
+            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.SaveAsync);
             return Task.CompletedTask;
         });
 
@@ -104,19 +56,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(async context =>
-            {
-                var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
-
-                var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                    commandArgs.ViewModelKey,
-                    viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
-
-                await TextEditorCommandDefaultFunctions
-                    .SelectAllAsync(context)
-                    .ExecuteAsync(context);
-            });
+            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.SelectAllAsync);
             return Task.CompletedTask;
         });
 
@@ -126,19 +66,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(async context =>
-            {
-                var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
-
-                var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                    commandArgs.ViewModelKey,
-                    viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
-
-                await TextEditorCommandDefaultFunctions
-                    .UndoAsync(context)
-                    .ExecuteAsync(context);
-            });
+            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.UndoAsync);
             return Task.CompletedTask;
         });
 
@@ -148,19 +76,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(async context =>
-            {
-                var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
-
-                var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                    commandArgs.ViewModelKey,
-                    viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
-
-                await TextEditorCommandDefaultFunctions
-                    .RedoAsync(context)
-                    .ExecuteAsync(context);
-            });
+            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.RedoAsync);
             return Task.CompletedTask;
         });
 
@@ -170,19 +86,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(async context =>
-            {
-                var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
-
-                var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                    commandArgs.ViewModelKey,
-                    viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
-
-                await TextEditorCommandDefaultFunctions
-                    .RemeasureAsync(context)
-                    .ExecuteAsync(context);
-            });
+            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.RemeasureAsync);
             return Task.CompletedTask;
         });
 
@@ -192,19 +96,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(async context =>
-            {
-                var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
-
-                var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                    commandArgs.ViewModelKey,
-                    viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
-
-                await TextEditorCommandDefaultFunctions
-                    .ScrollLineDownAsync(context)
-                    .ExecuteAsync(context);
-            });
+            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.ScrollLineDownAsync);
             return Task.CompletedTask;
         });
 
@@ -214,19 +106,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(async context =>
-            {
-                var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
-
-                var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                    commandArgs.ViewModelKey,
-                    viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
-
-                await TextEditorCommandDefaultFunctions
-                    .ScrollLineUpAsync(context)
-                    .ExecuteAsync(context);
-            });
+            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.ScrollLineUpAsync);
             return Task.CompletedTask;
         });
 
@@ -236,19 +116,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(async context =>
-            {
-                var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
-
-                var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                    commandArgs.ViewModelKey,
-                    viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
-
-                await TextEditorCommandDefaultFunctions
-                    .ScrollPageDownAsync(context)
-                    .ExecuteAsync(context);
-            });
+            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.ScrollPageDownAsync);
             return Task.CompletedTask;
         });
 
@@ -258,19 +126,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(async context =>
-            {
-                var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
-
-                var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                    commandArgs.ViewModelKey,
-                    viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
-
-                await TextEditorCommandDefaultFunctions
-                    .ScrollPageUpAsync(context)
-                    .ExecuteAsync(context);
-            });
+            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.ScrollPageUpAsync);
             return Task.CompletedTask;
         });
 
@@ -280,19 +136,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(async context =>
-            {
-                var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
-
-                var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                    commandArgs.ViewModelKey,
-                    viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
-
-                await TextEditorCommandDefaultFunctions
-                    .CursorMovePageBottomAsync(context)
-                    .ExecuteAsync(context);
-            });
+            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.CursorMovePageBottomAsync);
             return Task.CompletedTask;
         });
 
@@ -302,19 +146,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(async context =>
-            {
-                var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
-
-                var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                    commandArgs.ViewModelKey,
-                    viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
-
-                await TextEditorCommandDefaultFunctions
-                    .CursorMovePageTopAsync(context)
-                    .ExecuteAsync(context);
-            });
+            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.CursorMovePageTopAsync);
             return Task.CompletedTask;
         });
 
@@ -324,19 +156,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(async context =>
-            {
-                var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
-
-                var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                    commandArgs.ViewModelKey,
-                    viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
-
-                await TextEditorCommandDefaultFunctions
-                    .DuplicateAsync(context)
-                    .ExecuteAsync(context);
-            });
+            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.DuplicateAsync);
             return Task.CompletedTask;
         });
 
@@ -346,19 +166,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(async context =>
-            {
-                var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
-
-                var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                    commandArgs.ViewModelKey,
-                    viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
-
-                await TextEditorCommandDefaultFunctions
-                    .IndentMoreAsync(context)
-                    .ExecuteAsync(context);
-            });
+            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.IndentMoreAsync);
             return Task.CompletedTask;
         });
 
@@ -368,19 +176,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(async context =>
-            {
-                var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
-
-                var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                    commandArgs.ViewModelKey,
-                    viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
-
-                await TextEditorCommandDefaultFunctions
-                    .IndentLessAsync(context)
-                    .ExecuteAsync(context);
-            });
+            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.IndentLessAsync);
             return Task.CompletedTask;
         });
 
@@ -390,19 +186,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(async context =>
-            {
-                var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
-
-                var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                    commandArgs.ViewModelKey,
-                    viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
-
-                await TextEditorCommandDefaultFunctions
-                    .ClearTextSelectionAsync(context)
-                    .ExecuteAsync(context);
-            });
+            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.ClearTextSelectionAsync);
             return Task.CompletedTask;
         });
 
@@ -412,19 +196,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(async context =>
-            {
-                var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
-
-                var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                    commandArgs.ViewModelKey,
-                    viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
-
-                await TextEditorCommandDefaultFunctions
-                    .NewLineBelowAsync(context)
-                    .ExecuteAsync(context);
-            });
+            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.NewLineBelowAsync);
             return Task.CompletedTask;
         });
 
@@ -434,19 +206,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(async context =>
-            {
-                var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
-
-                var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                    commandArgs.ViewModelKey,
-                    viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
-
-                await TextEditorCommandDefaultFunctions
-                    .NewLineAboveAsync(context)
-                    .ExecuteAsync(context);
-            });
+            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.NewLineAboveAsync);
             return Task.CompletedTask;
         });
 
@@ -456,19 +216,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(async context =>
-            {
-                var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
-
-                var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                    commandArgs.ViewModelKey,
-                    viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
-
-                await TextEditorCommandDefaultFunctions
-                    .GoToMatchingCharacterFactoryAsync(context)
-                    .ExecuteAsync(context);
-            });
+            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.GoToMatchingCharacterFactoryAsync);
             return Task.CompletedTask;
         });
 
@@ -478,19 +226,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(async context =>
-            {
-                var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
-
-                var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                    commandArgs.ViewModelKey,
-                    viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
-
-                await TextEditorCommandDefaultFunctions
-                    .GoToDefinitionAsync(context)
-                    .ExecuteAsync(context);
-            });
+            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.GoToDefinitionAsync);
             return Task.CompletedTask;
         });
 
@@ -500,19 +236,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(async context =>
-            {
-                var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
-
-                var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                    commandArgs.ViewModelKey,
-                    viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
-
-                await TextEditorCommandDefaultFunctions
-                    .ShowFindDialogAsync(context)
-                    .ExecuteAsync(context);
-            });
+            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.ShowFindDialogAsync);
             return Task.CompletedTask;
         });
 
@@ -526,19 +250,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(async context =>
-            {
-                var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
-
-                var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                    commandArgs.ViewModelKey,
-                    viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
-
-                await TextEditorCommandDefaultFunctions
-                    .ShowTooltipByCursorPositionAsync(context)
-                    .ExecuteAsync(context);
-            });
+            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.ShowTooltipByCursorPositionAsync);
             return Task.CompletedTask;
         });
 }

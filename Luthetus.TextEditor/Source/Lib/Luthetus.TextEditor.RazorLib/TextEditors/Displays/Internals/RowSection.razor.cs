@@ -118,7 +118,7 @@ public partial class RowSection : ComponentBase
                     viewModel.MostRecentTextEditorMeasurements,
                     new TextEditorCursorModifier(primaryCursor),
                     virtualizationRequest.CancellationToken)
-                .ExecuteAsync(editContext);
+                .Invoke(editContext);
         });
     }
 }

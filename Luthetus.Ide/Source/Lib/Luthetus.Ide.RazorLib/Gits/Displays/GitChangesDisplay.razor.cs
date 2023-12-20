@@ -52,17 +52,13 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                     DiffPresentationFacts.InPresentationKey,
                 };
 
-                TextEditorService.EnqueueEdit(editContext =>
-                {
-                    return TextEditorService.ViewModelApi
-                        .GetWithValueTask(
-                            InViewModelKey,
-                            textEditorViewModel => textEditorViewModel with
-                            {
-                                FirstPresentationLayerKeysBag = presentationKeys.ToImmutableList()
-                            })
-                        .ExecuteAsync(editContext);
-                });
+                TextEditorService.EnqueueEdit(
+                    TextEditorService.ViewModelApi.GetWithValueTask(
+                        InViewModelKey,
+                        textEditorViewModel => textEditorViewModel with
+                        {
+                            FirstPresentationLayerKeysBag = presentationKeys.ToImmutableList()
+                        }));
             }
             
             // "Out" Registrations
@@ -91,17 +87,13 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                     DiffPresentationFacts.OutPresentationKey,
                 };
 
-                TextEditorService.EnqueueEdit(editContext =>
-                {
-                    return TextEditorService.ViewModelApi
-                        .GetWithValueTask(
-                            OutViewModelKey,
-                            textEditorViewModel => textEditorViewModel with
-                            {
-                                FirstPresentationLayerKeysBag = presentationKeys.ToImmutableList()
-                            })
-                        .ExecuteAsync(editContext);
-                });
+                TextEditorService.EnqueueEdit(
+                    TextEditorService.ViewModelApi.GetWithValueTask(
+                        OutViewModelKey,
+                        textEditorViewModel => textEditorViewModel with
+                        {
+                            FirstPresentationLayerKeysBag = presentationKeys.ToImmutableList()
+                        }));
             }
 
             TextEditorService.DiffApi.Register(
