@@ -118,14 +118,18 @@ public class DisplayTracker : IDisposable
         _calculateVirtualizationResultCancellationTokenSource.Cancel();
         _calculateVirtualizationResultCancellationTokenSource = new();
 
-        var primaryCursor = viewModel.PrimaryCursor;
+        var edit = _textEditorService.CreateEdit(editContext =>
+        {
+            return _textEditorService.ViewModelApi.GetCalculateVirtualizationResultTask(
+                    model,
+                    viewModel,
+                    viewModel.MostRecentTextEditorMeasurements,
+                    editContext.PrimaryCursor,
+                    _calculateVirtualizationResultCancellationTokenSource.Token)
+                .ExecuteAsync(editContext);
+        });
 
-        _textEditorService.ViewModelApi.CalculateVirtualizationResultEnqueue(
-            model.ResourceUri,
-            viewModel.ViewModelKey,
-            viewModel.MostRecentTextEditorMeasurements,
-            primaryCursor.Key,
-            _calculateVirtualizationResultCancellationTokenSource.Token);
+        _textEditorService.EnqueueEdit(edit);
     }
 
     public void Dispose()

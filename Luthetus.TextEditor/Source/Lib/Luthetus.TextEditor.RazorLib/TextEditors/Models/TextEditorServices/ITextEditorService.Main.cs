@@ -32,5 +32,6 @@ public partial interface ITextEditorService
 
     public ITextEditorEdit CreateEdit(Func<ITextEditorEditContext, Task> func);
     public void EnqueueEdit(ITextEditorEdit textEditorEdit);
+    public void EnqueueEdit(Func<ITextEditorEditContext, Task> func);
 }
 

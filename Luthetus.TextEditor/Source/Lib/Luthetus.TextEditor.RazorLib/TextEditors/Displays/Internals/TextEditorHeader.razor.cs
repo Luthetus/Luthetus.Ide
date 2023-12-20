@@ -53,20 +53,6 @@ public partial class TextEditorHeader : ComponentBase
             null);
     }
 
-    private void SelectRowEndingKindOnChange(ChangeEventArgs changeEventArgs)
-    {
-        var model = RenderBatch.Model;
-        var viewModel = RenderBatch.ViewModel;
-
-        if (model is null || viewModel is null)
-            return;
-
-        var rowEndingKindString = (string)(changeEventArgs.Value ?? string.Empty);
-
-        if (Enum.TryParse<RowEndingKind>(rowEndingKindString, out var rowEndingKind))
-            TextEditorService.ModelApi.SetUsingRowEndingKindEnqueue(viewModel.ResourceUri, rowEndingKind);
-    }
-
     private async Task DoCopyOnClick(MouseEventArgs arg)
     {
         var model = RenderBatch.Model;

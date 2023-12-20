@@ -190,7 +190,7 @@ public partial class TextEditorService : ITextEditorService
 
     public ITextEditorEdit CreateEdit(Func<ITextEditorEditContext, Task> func)
     {
-        return new TextEditorEdit(this, func, _dispatcher);
+        return new TextEditorEdit(this, func);
     }
     
     public void EnqueueEdit(ITextEditorEdit textEditorEdit)
@@ -203,5 +203,10 @@ public partial class TextEditorService : ITextEditorService
                 var editContext = new TextEditorEditContext();
                 await ((TextEditorEdit)textEditorEdit).Func.Invoke(editContext);
             });
+    }
+
+    public void EnqueueEdit(Func<ITextEditorEditContext, Task> func)
+    {
+        EnqueueEdit(CreateEdit(func));
     }
 }

@@ -52,19 +52,33 @@ public class TextEditorModelApiTests
 
         var insertedText = "I have something to say: ";
 
-        textEditorService.ModelApi.InsertTextEnqueue(new TextEditorModelState.InsertTextAction(
-            inModel.ResourceUri,
-            null,
-            cursorBag,
-            insertedText,
-            CancellationToken.None));
+        var edit = textEditorService.CreateEdit(editContext =>
+        {
+            return textEditorService.ModelApi
+                .InsertText(
+                    new TextEditorModelState.InsertTextAction(
+                        inModel.ResourceUri,
+                        null,
+                        cursorBag,
+                        insertedText,
+                        CancellationToken.None),
+                    editContext.RefreshCursorsRequest)
+                .ExecuteAsync(editContext);
+        });
+
+        textEditorService.EnqueueEdit(edit);
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(
             insertedText + inModel.GetAllText(),
             outModel.GetAllText());
 
-        textEditorService.ModelApi.UndoEditEnqueue(inModel.ResourceUri);
+        textEditorService.EnqueueEdit(editContext =>
+        {
+            return textEditorService.ModelApi
+                .UndoEdit(inModel.ResourceUri)
+                .ExecuteAsync(editContext);
+        });
 
         outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(inModel.GetAllText(), outModel.GetAllText());
@@ -87,7 +101,13 @@ public class TextEditorModelApiTests
         // Assert the current values are different from that which will be set.
         Assert.NotEqual(rowEndingKind, inModel.UsingRowEndingKind);
 
-        textEditorService.ModelApi.SetUsingRowEndingKindEnqueue(inModel.ResourceUri, rowEndingKind);
+        textEditorService.EnqueueEdit(editContext =>
+        {
+            return textEditorService.ModelApi
+                .SetUsingRowEndingKind(inModel.ResourceUri, rowEndingKind)
+                .ExecuteAsync(editContext);
+        });
+
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
 
         // Assert the value is now set
@@ -111,7 +131,13 @@ public class TextEditorModelApiTests
         // Assert the current values are different from that which will be set.
         Assert.NotEqual(newResourceLastWriteTime, inModel.ResourceLastWriteTime);
 
-        textEditorService.ModelApi.SetResourceDataEnqueue(inModel.ResourceUri, newResourceLastWriteTime);
+        textEditorService.EnqueueEdit(editContext =>
+        {
+            return textEditorService.ModelApi
+                .SetResourceData(inModel.ResourceUri, newResourceLastWriteTime)
+                .ExecuteAsync(editContext);
+        });
+
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
 
         // Assert the values are now set
@@ -135,7 +161,13 @@ public class TextEditorModelApiTests
         // Assert the current values are different from that which will be set.
         Assert.NotEqual(newContent, inModel.GetAllText());
 
-        textEditorService.ModelApi.ReloadEnqueue(inModel.ResourceUri, newContent, DateTime.UtcNow);
+        textEditorService.EnqueueEdit(editContext =>
+        {
+            return textEditorService.ModelApi
+                .Reload(inModel.ResourceUri, newContent, DateTime.UtcNow)
+                .ExecuteAsync(editContext);
+        });
+        
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
 
         // Assert the values are now set
@@ -233,22 +265,39 @@ public class TextEditorModelApiTests
 
         var insertedText = "I have something to say: ";
 
-        textEditorService.ModelApi.InsertTextEnqueue(new TextEditorModelState.InsertTextAction(
-            inModel.ResourceUri,
-            null,
-            cursorBag,
-            insertedText,
-            CancellationToken.None));
+        textEditorService.EnqueueEdit(editContext =>
+        {
+            return textEditorService.ModelApi
+                .InsertText(
+                    new TextEditorModelState.InsertTextAction(
+                        inModel.ResourceUri,
+                        null,
+                        cursorBag,
+                        insertedText,
+                        CancellationToken.None),
+                    editContext.RefreshCursorsRequest)
+                .ExecuteAsync(editContext);
+        });
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(insertedText + inModel.GetAllText(), outModel.GetAllText());
 
-        textEditorService.ModelApi.UndoEditEnqueue(inModel.ResourceUri);
+        textEditorService.EnqueueEdit(editContext =>
+        {
+            return textEditorService.ModelApi
+                .UndoEdit(inModel.ResourceUri)
+                .ExecuteAsync(editContext);
+        });
 
         outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(inModel.GetAllText(), outModel.GetAllText());
 
-        textEditorService.ModelApi.RedoEditEnqueue(inModel.ResourceUri);
+        textEditorService.EnqueueEdit(editContext =>
+        {
+            return textEditorService.ModelApi
+                .RedoEdit(inModel.ResourceUri)
+                .ExecuteAsync(editContext);
+        });
 
         outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(insertedText + inModel.GetAllText(), outModel.GetAllText());
@@ -271,12 +320,19 @@ public class TextEditorModelApiTests
 
         var insertedText = "I have something to say: ";
 
-        textEditorService.ModelApi.InsertTextEnqueue(new TextEditorModelState.InsertTextAction(
-            inModel.ResourceUri,
-            null,
-            cursorBag,
-            insertedText,
-            CancellationToken.None));
+        textEditorService.EnqueueEdit(editContext =>
+        {
+            return textEditorService.ModelApi
+                .InsertText(
+                    new TextEditorModelState.InsertTextAction(
+                        inModel.ResourceUri,
+                        null,
+                        cursorBag,
+                        insertedText,
+                        CancellationToken.None),
+                    editContext.RefreshCursorsRequest)
+                .ExecuteAsync(editContext);
+        });
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(insertedText + inModel.GetAllText(), outModel.GetAllText());
@@ -304,12 +360,19 @@ public class TextEditorModelApiTests
             Key = key
         };
 
-        textEditorService.ModelApi.HandleKeyboardEventEnqueue(new TextEditorModelState.KeyboardEventAction(
-            inModel.ResourceUri,
-            null,
-            cursorBag,
-            keyboardEventArgs,
-            CancellationToken.None));
+        textEditorService.EnqueueEdit(editContext =>
+        {
+            return textEditorService.ModelApi
+                .HandleKeyboardEvent(
+                    new TextEditorModelState.KeyboardEventAction(
+                        inModel.ResourceUri,
+                        null,
+                        cursorBag,
+                        keyboardEventArgs,
+                        CancellationToken.None),
+                    editContext.RefreshCursorsRequest)
+                .ExecuteAsync(editContext);
+        });
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(key + inModel.GetAllText(), outModel.GetAllText());
@@ -417,12 +480,19 @@ public class TextEditorModelApiTests
         var cursor = new TextEditorCursor(0, columnIndex, columnIndex, true, TextEditorSelection.Empty);
         var cursorBag = new[] { new TextEditorCursorModifier(cursor) }.ToList();
 
-        textEditorService.ModelApi.DeleteTextByRangeEnqueue(new TextEditorModelState.DeleteTextByRangeAction(
-            inModel.ResourceUri,
-            null,
-            cursorBag,
-            textToDelete.Length,
-            CancellationToken.None));
+        textEditorService.EnqueueEdit(editContext =>
+        {
+            return textEditorService.ModelApi
+                .DeleteTextByRange(
+                    new TextEditorModelState.DeleteTextByRangeAction(
+                        inModel.ResourceUri,
+                        null,
+                        cursorBag,
+                        textToDelete.Length,
+                        CancellationToken.None),
+                    editContext.RefreshCursorsRequest)
+                .ExecuteAsync(editContext);
+        });
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(expectedContent, outModel!.GetAllText());
@@ -449,12 +519,19 @@ public class TextEditorModelApiTests
         var cursor = new TextEditorCursor(0, columnIndex, columnIndex, true, TextEditorSelection.Empty);
         var cursorBag = new[] { new TextEditorCursorModifier(cursor) }.ToList();
 
-        textEditorService.ModelApi.DeleteTextByMotionEnqueue(new TextEditorModelState.DeleteTextByMotionAction(
-            inModel.ResourceUri,
-            null,
-            cursorBag,
-            MotionKind.Backspace,
-            CancellationToken.None));
+        textEditorService.EnqueueEdit(editContext =>
+        {
+            return textEditorService.ModelApi
+                .DeleteTextByMotion(
+                    new TextEditorModelState.DeleteTextByMotionAction(
+                        inModel.ResourceUri,
+                        null,
+                        cursorBag,
+                        MotionKind.Backspace,
+                        CancellationToken.None),
+                    editContext.RefreshCursorsRequest)
+                .ExecuteAsync(editContext);
+        });
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(expectedContent, outModel!.GetAllText());
@@ -481,12 +558,19 @@ public class TextEditorModelApiTests
         var cursor = new TextEditorCursor(0, columnIndex, columnIndex, true, TextEditorSelection.Empty);
         var cursorBag = new[] { new TextEditorCursorModifier(cursor) }.ToList();
 
-        textEditorService.ModelApi.DeleteTextByMotionEnqueue(new TextEditorModelState.DeleteTextByMotionAction(
-            inModel.ResourceUri,
-            null,
-            cursorBag,
-            MotionKind.Delete,
-            CancellationToken.None));
+        textEditorService.EnqueueEdit(editContext =>
+        {
+            return textEditorService.ModelApi
+                .DeleteTextByMotion(
+                    new TextEditorModelState.DeleteTextByMotionAction(
+                        inModel.ResourceUri,
+                        null,
+                        cursorBag,
+                        MotionKind.Delete,
+                        CancellationToken.None),
+                    editContext.RefreshCursorsRequest)
+                .ExecuteAsync(editContext);
+        });
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(expectedContent, outModel!.GetAllText());

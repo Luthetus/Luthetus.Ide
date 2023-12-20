@@ -27,15 +27,11 @@ public partial class TextEditorService
     private class TextEditorEdit : ITextEditorEdit
     {
         private readonly TextEditorService _textEditorService;
-        private readonly IJSRuntime _jsRuntime;
-        private readonly IDispatcher _dispatcher;
         
-        public TextEditorEdit(TextEditorService textEditorService, IJSRuntime jsRuntime, Func<ITextEditorEditContext, Task> func, IDispatcher dispatcher)
+        public TextEditorEdit(TextEditorService textEditorService, Func<ITextEditorEditContext, Task> func)
         {
             _textEditorService = textEditorService;
-            _jsRuntime = jsRuntime;
             Func = func;
-            _dispatcher = dispatcher;
         }
 
         public readonly Func<ITextEditorEditContext, Task> Func;

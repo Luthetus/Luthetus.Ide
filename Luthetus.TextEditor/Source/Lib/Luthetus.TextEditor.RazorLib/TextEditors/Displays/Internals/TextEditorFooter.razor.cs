@@ -24,7 +24,13 @@ public partial class TextEditorFooter : ComponentBase
         var rowEndingKindString = (string)(changeEventArgs.Value ?? string.Empty);
 
         if (Enum.TryParse<RowEndingKind>(rowEndingKindString, out var rowEndingKind))
-            TextEditorService.ModelApi.SetUsingRowEndingKindEnqueue(viewModel.ResourceUri, rowEndingKind);
+        {
+            var edit = TextEditorService.ModelApi.SetUsingRowEndingKind(
+                viewModel.ResourceUri,
+                rowEndingKind);
+
+            TextEditorService.EnqueueEdit(edit);
+        }
     }
 
     private string StyleMinWidthFromMaxLengthOfValue(int value)

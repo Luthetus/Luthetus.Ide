@@ -104,11 +104,17 @@ public partial class EditorSync
                                         var content = await _fileSystemProvider.File
                                             .ReadAllTextAsync(inputFileAbsolutePathString);
 
-										_textEditorService.ModelApi.ReloadEnqueue(
-                                            textEditorModel.ResourceUri,
-                                            content,
-                                            fileLastWriteTime);
+                                        var edit = _textEditorService.CreateEdit(editContext =>
+                                        {
+                                            return _textEditorService.ModelApi
+                                                .Reload(
+                                                    textEditorModel.ResourceUri,
+                                                    content,
+                                                    fileLastWriteTime)
+                                                .ExecuteAsync(editContext);
+                                        });
 
+                                        _textEditorService.EnqueueEdit(edit);
                                         await textEditorModel.ApplySyntaxHighlightingAsync();
                                     }));
                             })
@@ -155,15 +161,22 @@ public partial class EditorSync
                 CompilerServiceDiagnosticPresentationFacts.PresentationKey,
             }.ToImmutableArray();
 
-            _textEditorService.ViewModelApi.WithValueEnqueue(
-                viewModelKey,
-                textEditorViewModel => textEditorViewModel with
-                {
-                    OnSaveRequested = HandleOnSaveRequested,
-                    GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension,
-                    ShouldSetFocusAfterNextRender = shouldSetFocusToEditor,
-                    FirstPresentationLayerKeysBag = presentationKeys.ToImmutableList()
-                });
+            var edit = _textEditorService.CreateEdit(editContext =>
+            {
+                return _textEditorService.ViewModelApi
+                    .GetWithValueTask(
+                        viewModelKey,
+                        textEditorViewModel => textEditorViewModel with
+                        {
+                            OnSaveRequested = HandleOnSaveRequested,
+                            GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension,
+                            ShouldSetFocusAfterNextRender = shouldSetFocusToEditor,
+                            FirstPresentationLayerKeysBag = presentationKeys.ToImmutableList()
+                        })
+                    .ExecuteAsync(editContext);
+            });
+
+            _textEditorService.EnqueueEdit(edit);
         }
         else
         {
@@ -181,15 +194,22 @@ public partial class EditorSync
 			_fileSystemSync.SaveFile(
                 absolutePath,
                 innerContent,
-                (Action<DateTime?>)(                writtenDateTime =>
+                writtenDateTime =>
                 {
                     if (writtenDateTime is not null)
                     {
-						_textEditorService.ModelApi.SetResourceDataEnqueue(
-                            innerTextEditor.ResourceUri,
-                            writtenDateTime.Value);
+                        var edit = _textEditorService.CreateEdit(editContext =>
+                        {
+                            return _textEditorService.ModelApi
+                                .SetResourceData(
+                                    innerTextEditor.ResourceUri,
+                                    writtenDateTime.Value)
+                                .ExecuteAsync(editContext);
+                        });
+
+                        _textEditorService.EnqueueEdit(edit);
                     }
-                }),
+                },
                 cancellationToken);
         }
     }

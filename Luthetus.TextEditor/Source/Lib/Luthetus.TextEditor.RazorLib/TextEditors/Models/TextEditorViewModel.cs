@@ -95,10 +95,16 @@ public record TextEditorViewModel : IDisposable
             var batch = _batchScrollEvents.MutateScrollHorizontalPositionByPixels;
 			_batchScrollEvents.MutateScrollHorizontalPositionByPixels -= batch;
 
-            TextEditorService.ViewModelApi.MutateScrollHorizontalPositionEnqueue(
-				BodyElementId,
-				GutterElementId,
-                batch);
+            var edit = TextEditorService.CreateEdit(editContext =>
+            {
+                return TextEditorService.ViewModelApi.GetMutateScrollHorizontalPositionTask(
+                        BodyElementId,
+                        GutterElementId,
+                        batch)
+                    .ExecuteAsync(editContext);
+            });
+
+            TextEditorService.EnqueueEdit(edit);
         }));
     }
 
@@ -111,10 +117,16 @@ public record TextEditorViewModel : IDisposable
             var batch = _batchScrollEvents.MutateScrollVerticalPositionByPixels;
 			_batchScrollEvents.MutateScrollVerticalPositionByPixels -= batch;
 
-            TextEditorService.ViewModelApi.MutateScrollVerticalPositionEnqueue(
-				BodyElementId,
-				GutterElementId,
-                batch);
+            var edit = TextEditorService.CreateEdit(editContext =>
+            {
+                return TextEditorService.ViewModelApi.GetMutateScrollVerticalPositionTask(
+                        BodyElementId,
+                        GutterElementId,
+                        batch)
+                    .ExecuteAsync(editContext);
+            });
+
+            TextEditorService.EnqueueEdit(edit);
         }));
     }
 
@@ -135,17 +147,30 @@ public record TextEditorViewModel : IDisposable
     {
         await _batchScrollEvents.ThrottleSetScrollPosition.FireAsync((async _ =>
         {
-            TextEditorService.ViewModelApi.SetScrollPositionEnqueue(
-				BodyElementId,
-				GutterElementId,
-                scrollLeft,
-                scrollTop);
+            var edit = TextEditorService.CreateEdit(editContext =>
+            {
+                return TextEditorService.ViewModelApi.GetSetScrollPositionTask(
+                        BodyElementId,
+                        GutterElementId,
+                        scrollLeft,
+                        scrollTop)
+                    .ExecuteAsync(editContext);
+            });
+
+            TextEditorService.EnqueueEdit(edit);
         }));
     }
 
     public async Task FocusAsync()
     {
-        TextEditorService.ViewModelApi.FocusPrimaryCursorEnqueue(PrimaryCursorContentId);
+        var edit = TextEditorService.CreateEdit(editContext =>
+        {
+            return TextEditorService.ViewModelApi
+                .GetFocusPrimaryCursorTask(PrimaryCursorContentId)
+                .ExecuteAsync(editContext);
+        });
+
+        TextEditorService.EnqueueEdit(edit);
     }
 
     public void Dispose()

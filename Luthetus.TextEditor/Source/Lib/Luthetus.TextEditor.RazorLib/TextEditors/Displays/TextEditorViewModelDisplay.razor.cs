@@ -299,11 +299,13 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             }
             else
             {
-                TextEditorService.ViewModelApi.MoveCursorEnqueue(
+                var edit = TextEditorService.ViewModelApi.GetMoveCursorTask(
                     keyboardEventArgs,
-                    model.ResourceUri,
+                    model,
                     viewModel.ViewModelKey,
-                    primaryCursor.Key);
+                    new TextEditorCursorModifier(primaryCursor));
+
+                TextEditorService.EnqueueEdit(edit);
 
                 CursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.None);
             }
@@ -344,12 +346,20 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
                 _tooltipViewModel = null;
 
-                TextEditorService.ModelApi.HandleKeyboardEventEnqueue(new TextEditorModelState.KeyboardEventAction(
-                    viewModel.ResourceUri,
-                    viewModel.ViewModelKey,
-                    cursorBag.Select(x => new TextEditorCursorModifier(x)).ToList(),
-                    keyboardEventArgs,
-                    CancellationToken.None));
+                var edit = TextEditorService.CreateEdit(editContext =>
+                {
+                    return TextEditorService.ModelApi.HandleKeyboardEvent(
+                            new TextEditorModelState.KeyboardEventAction(
+                                viewModel.ResourceUri,
+                                viewModel.ViewModelKey,
+                                cursorBag.Select(x => new TextEditorCursorModifier(x)).ToList(),
+                                keyboardEventArgs,
+                                CancellationToken.None),
+                            editContext.RefreshCursorsRequest)
+                        .ExecuteAsync(editContext);
+                });
+
+                TextEditorService.EnqueueEdit(edit);
             }
         }
 
@@ -394,77 +404,63 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (model is null || viewModel is null)
             return;
 
-        var primaryCursor = viewModel.PrimaryCursor;
+        var edit = TextEditorService.CreateEdit(async editContext =>
+        {
+            var hasSelectedText = TextEditorSelectionHelper.HasSelectedText(editContext.PrimaryCursor);
 
-        TextEditorService.EnqueueModification(
-            "HandleContentOnDoubleClick",
-            new TextEditorCommandArgs(
-                model.ResourceUri,
-                viewModel.ViewModelKey,
-                TextEditorSelectionHelper.HasSelectedText(primaryCursor.Selection),
-                ClipboardService,
-                TextEditorService,
-                HandleMouseStoppedMovingEventAsync,
-                JsRuntime,
-                Dispatcher,
-                ViewModelDisplayOptions.RegisterModelAction,
-                ViewModelDisplayOptions.RegisterViewModelAction,
-                ViewModelDisplayOptions.ShowViewModelAction),
-            async (commandArgs, model, viewModel, refreshCursorsRequest, primaryCursor) =>
+            if ((mouseEventArgs.Buttons & 1) != 1 && hasSelectedText)
+                return; // Not pressing the left mouse button so assume ContextMenu is desired result.
+
+            if (mouseEventArgs.ShiftKey)
+                return; // Do not expand selection if user is holding shift
+
+            var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs);
+
+            var lowerColumnIndexExpansion = model.GetColumnIndexOfCharacterWithDifferingKind(
+                rowAndColumnIndex.rowIndex,
+                rowAndColumnIndex.columnIndex,
+                true);
+
+            lowerColumnIndexExpansion = lowerColumnIndexExpansion == -1
+                ? 0
+                : lowerColumnIndexExpansion;
+
+            var higherColumnIndexExpansion = model.GetColumnIndexOfCharacterWithDifferingKind(
+                rowAndColumnIndex.rowIndex,
+                rowAndColumnIndex.columnIndex,
+                false);
+
+            higherColumnIndexExpansion = higherColumnIndexExpansion == -1
+                    ? model.GetLengthOfRow(rowAndColumnIndex.rowIndex)
+                    : higherColumnIndexExpansion;
+
+            // Move user's cursor position to the higher expansion
             {
-                var hasSelectedText = TextEditorSelectionHelper.HasSelectedText(primaryCursor);
+                editContext.PrimaryCursor.RowIndex = rowAndColumnIndex.rowIndex;
+                editContext.PrimaryCursor.ColumnIndex = higherColumnIndexExpansion;
+                editContext.PrimaryCursor.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
+            }
 
-                if ((mouseEventArgs.Buttons & 1) != 1 && hasSelectedText)
-                    return; // Not pressing the left mouse button so assume ContextMenu is desired result.
-
-                if (mouseEventArgs.ShiftKey)
-                    return; // Do not expand selection if user is holding shift
-
-                var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs);
-
-                var lowerColumnIndexExpansion = model.GetColumnIndexOfCharacterWithDifferingKind(
+            // Set text selection ending to higher expansion
+            {
+                var cursorPositionOfHigherExpansion = model.GetPositionIndex(
                     rowAndColumnIndex.rowIndex,
-                    rowAndColumnIndex.columnIndex,
-                    true);
+                    higherColumnIndexExpansion);
 
-                lowerColumnIndexExpansion = lowerColumnIndexExpansion == -1
-                    ? 0
-                    : lowerColumnIndexExpansion;
+                editContext.PrimaryCursor.SelectionEndingPositionIndex = cursorPositionOfHigherExpansion;
+            }
 
-                var higherColumnIndexExpansion = model.GetColumnIndexOfCharacterWithDifferingKind(
+            // Set text selection anchor to lower expansion
+            {
+                var cursorPositionOfLowerExpansion = model.GetPositionIndex(
                     rowAndColumnIndex.rowIndex,
-                    rowAndColumnIndex.columnIndex,
-                    false);
+                    lowerColumnIndexExpansion);
 
-                higherColumnIndexExpansion = higherColumnIndexExpansion == -1
-                        ? model.GetLengthOfRow(rowAndColumnIndex.rowIndex)
-                        : higherColumnIndexExpansion;
+                editContext.PrimaryCursor.SelectionAnchorPositionIndex = cursorPositionOfLowerExpansion;
+            }
+        });
 
-                // Move user's cursor position to the higher expansion
-                {
-                    primaryCursor.RowIndex = rowAndColumnIndex.rowIndex;
-                    primaryCursor.ColumnIndex = higherColumnIndexExpansion;
-                    primaryCursor.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
-                }
-
-                // Set text selection ending to higher expansion
-                {
-                    var cursorPositionOfHigherExpansion = model.GetPositionIndex(
-                        rowAndColumnIndex.rowIndex,
-                        higherColumnIndexExpansion);
-
-                    primaryCursor.SelectionEndingPositionIndex = cursorPositionOfHigherExpansion;
-                }
-
-                // Set text selection anchor to lower expansion
-                {
-                    var cursorPositionOfLowerExpansion = model.GetPositionIndex(
-                        rowAndColumnIndex.rowIndex,
-                        lowerColumnIndexExpansion);
-
-                    primaryCursor.SelectionAnchorPositionIndex = cursorPositionOfLowerExpansion;
-                }
-            });
+        TextEditorService.EnqueueEdit(edit);
     }
 
     private void HandleContentOnMouseDown(MouseEventArgs mouseEventArgs)
@@ -475,68 +471,54 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (model is null || viewModel is null)
             return;
         
-        var primaryCursor = viewModel.PrimaryCursor;
+        var edit = TextEditorService.CreateEdit(async editContext =>
+        {
+            var hasSelectedText = TextEditorSelectionHelper.HasSelectedText(editContext.PrimaryCursor);
 
-        TextEditorService.EnqueueModification(
-            "HandleContentOnMouseDown",
-            new TextEditorCommandArgs(
-                model.ResourceUri,
-                viewModel.ViewModelKey,
-                TextEditorSelectionHelper.HasSelectedText(primaryCursor.Selection),
-                ClipboardService,
-                TextEditorService,
-                HandleMouseStoppedMovingEventAsync,
-                JsRuntime,
-                Dispatcher,
-                ViewModelDisplayOptions.RegisterModelAction,
-                ViewModelDisplayOptions.RegisterViewModelAction,
-                ViewModelDisplayOptions.ShowViewModelAction),
-            async (commandArgs, model, viewModel, refreshCursorsRequest, primaryCursor) =>
+            if ((mouseEventArgs.Buttons & 1) != 1 && hasSelectedText)
+                return; // Not pressing the left mouse button so assume ContextMenu is desired result.
+
+            CursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.None, false);
+
+            var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs);
+
+            editContext.PrimaryCursor.RowIndex = rowAndColumnIndex.rowIndex;
+            editContext.PrimaryCursor.ColumnIndex = rowAndColumnIndex.columnIndex;
+            editContext.PrimaryCursor.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
+
+            CursorDisplay?.PauseBlinkAnimation();
+
+            var cursorPositionIndex = model.GetCursorPositionIndex(new TextEditorCursor(
+                rowAndColumnIndex.rowIndex,
+                rowAndColumnIndex.columnIndex,
+                true));
+
+            if (mouseEventArgs.ShiftKey)
             {
-                var hasSelectedText = TextEditorSelectionHelper.HasSelectedText(primaryCursor);
-
-                if ((mouseEventArgs.Buttons & 1) != 1 && hasSelectedText)
-                    return; // Not pressing the left mouse button so assume ContextMenu is desired result.
-
-                CursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.None, false);
-
-                var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs);
-
-                primaryCursor.RowIndex = rowAndColumnIndex.rowIndex;
-                primaryCursor.ColumnIndex = rowAndColumnIndex.columnIndex;
-                primaryCursor.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
-
-                CursorDisplay?.PauseBlinkAnimation();
-
-                var cursorPositionIndex = model.GetCursorPositionIndex(new TextEditorCursor(
-                    rowAndColumnIndex.rowIndex,
-                    rowAndColumnIndex.columnIndex,
-                    true));
-
-                if (mouseEventArgs.ShiftKey)
+                if (!hasSelectedText)
                 {
-                    if (!hasSelectedText)
-                    {
-                        // If user does not yet have a selection then place the text selection anchor were they were
+                    // If user does not yet have a selection then place the text selection anchor were they were
 
-                        var cursorPositionPriorToMovementOccurring = model.GetPositionIndex(
-                            primaryCursor.RowIndex,
-                            primaryCursor.ColumnIndex);
+                    var cursorPositionPriorToMovementOccurring = model.GetPositionIndex(
+                        editContext.PrimaryCursor.RowIndex,
+                        editContext.PrimaryCursor.ColumnIndex);
 
-                        primaryCursor.SelectionAnchorPositionIndex = cursorPositionPriorToMovementOccurring;
-                    }
-
-                    // If user ALREADY has a selection then do not modify the text selection anchor
-                }
-                else
-                {
-                    primaryCursor.SelectionAnchorPositionIndex = cursorPositionIndex;
+                    editContext.PrimaryCursor.SelectionAnchorPositionIndex = cursorPositionPriorToMovementOccurring;
                 }
 
-                primaryCursor.SelectionEndingPositionIndex = cursorPositionIndex;
+                // If user ALREADY has a selection then do not modify the text selection anchor
+            }
+            else
+            {
+                editContext.PrimaryCursor.SelectionAnchorPositionIndex = cursorPositionIndex;
+            }
 
-                _thinksLeftMouseButtonIsDown = true;
-            });
+            editContext.PrimaryCursor.SelectionEndingPositionIndex = cursorPositionIndex;
+
+            _thinksLeftMouseButtonIsDown = true;
+        });
+
+        TextEditorService.EnqueueEdit(edit);
     }
 
     /// <summary>OnMouseUp is un-necessary</summary>
@@ -589,37 +571,23 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (model is null || viewModel is null)
             return;
 
-        var primaryCursor = viewModel.PrimaryCursor;
-
         // Buttons is a bit flag '& 1' gets if left mouse button is held
         if (localThinksLeftMouseButtonIsDown && (mouseEventArgs.Buttons & 1) == 1)
         {
-            TextEditorService.EnqueueModification(
-                "HandleContentOnMouseMove",
-                new TextEditorCommandArgs(
-                    model.ResourceUri,
-                    viewModel.ViewModelKey,
-                    TextEditorSelectionHelper.HasSelectedText(primaryCursor.Selection),
-                    ClipboardService,
-                    TextEditorService,
-                    HandleMouseStoppedMovingEventAsync,
-                    JsRuntime,
-                    Dispatcher,
-                    ViewModelDisplayOptions.RegisterModelAction,
-                    ViewModelDisplayOptions.RegisterViewModelAction,
-                    ViewModelDisplayOptions.ShowViewModelAction),
-                async (commandArgs, model, viewModel, refreshCursorsRequest, primaryCursor) =>
-                {
-                    var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs);
+            var edit = TextEditorService.CreateEdit(async editContext =>
+            {
+                var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs);
 
-                    primaryCursor.RowIndex = rowAndColumnIndex.rowIndex;
-                    primaryCursor.ColumnIndex = rowAndColumnIndex.columnIndex;
-                    primaryCursor.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
+                editContext.PrimaryCursor.RowIndex = rowAndColumnIndex.rowIndex;
+                editContext.PrimaryCursor.ColumnIndex = rowAndColumnIndex.columnIndex;
+                editContext.PrimaryCursor.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
 
-                    CursorDisplay?.PauseBlinkAnimation();
+                CursorDisplay?.PauseBlinkAnimation();
 
-                    primaryCursor.SelectionEndingPositionIndex = model.GetCursorPositionIndex(primaryCursor);
-                });
+                editContext.PrimaryCursor.SelectionEndingPositionIndex = model.GetCursorPositionIndex(editContext.PrimaryCursor);
+            });
+
+            TextEditorService.EnqueueEdit(edit);
         }
         else
         {
@@ -1010,12 +978,18 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
         var primaryCursor = viewModel.PrimaryCursor;
 
-        TextEditorService.ViewModelApi.RemeasureEnqueue(
-            model.ResourceUri,
-            viewModel.ViewModelKey,
-            localMeasureCharacterWidthAndRowHeightElementId,
-            countOfTestCharacters,
-            CancellationToken.None);
+        var edit = TextEditorService.CreateEdit(editContext =>
+        {
+            return TextEditorService.ViewModelApi.GetRemeasureTask(
+                    model.ResourceUri,
+                    viewModel,
+                    localMeasureCharacterWidthAndRowHeightElementId,
+                    countOfTestCharacters,
+                    CancellationToken.None)
+                .ExecuteAsync(editContext);
+        });
+
+        TextEditorService.EnqueueEdit(edit);
     }
 
     private void QueueCalculateVirtualizationResultBackgroundTask(
@@ -1027,14 +1001,18 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (model is null || viewModel is null)
             return;
 
-        var primaryCursor = viewModel.PrimaryCursor;
-
-        TextEditorService.ViewModelApi.CalculateVirtualizationResultEnqueue(
-            model.ResourceUri,
-            viewModel.ViewModelKey,
-            viewModel.MostRecentTextEditorMeasurements,
-            primaryCursor.Key,
-            CancellationToken.None);
+        var edit = TextEditorService.CreateEdit(editContext =>
+        {
+            return TextEditorService.ViewModelApi.GetCalculateVirtualizationResultTask(
+                    editContext.Model,
+                    editContext.ViewModel,
+                    editContext.ViewModel.MostRecentTextEditorMeasurements,
+                    editContext.PrimaryCursor,
+                    CancellationToken.None)
+                .ExecuteAsync(editContext);
+        });
+        
+        TextEditorService.EnqueueEdit(edit);
     }
 
     public void Dispose()
