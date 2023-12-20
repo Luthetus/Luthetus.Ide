@@ -203,7 +203,7 @@ public partial class TextEditorService : ITextEditorService
             nameof(EnqueueEdit),
             async () =>
             {
-                var editContext = new TextEditorEditContext();
+                var editContext = new TextEditorEditContext(AuthenticatedActionKey);
                 await func.Invoke(editContext);
             });
     }

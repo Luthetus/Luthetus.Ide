@@ -102,7 +102,8 @@ public static partial class TextEditorCommandVimFacts
                 editContext.ViewModel.ViewModelKey,
                 new TextEditorCursorModifier[] { new TextEditorCursorModifier(cursorForDeletion) }.ToList(),
                 motionResult.PositionIndexDisplacement,
-                CancellationToken.None);
+                CancellationToken.None,
+                editContext.AuthenticatedActionKey);
 
             await editContext.CommandArgs.TextEditorService.ModelApi
                 .DeleteTextByRange(deleteTextByRangeAction, editContext.RefreshCursorsRequest)

@@ -52,7 +52,8 @@ public class TextEditorCommandDefaultFunctions
             editContext.ViewModel.ViewModelKey,
             editContext.RefreshCursorsRequest.CursorBag,
             new KeyboardEventArgs { Key = KeyboardKeyFacts.MetaKeys.DELETE },
-            CancellationToken.None));
+            CancellationToken.None,
+            editContext.AuthenticatedActionKey));
     };
 
     public static TextEditorEdit PasteAsync = async (ITextEditorEditContext editContext) =>
@@ -64,7 +65,8 @@ public class TextEditorCommandDefaultFunctions
             editContext.ViewModel.ViewModelKey,
             editContext.RefreshCursorsRequest.CursorBag,
             clipboard,
-            CancellationToken.None));
+            CancellationToken.None,
+            editContext.AuthenticatedActionKey));
     };
 
     public static TextEditorEdit SaveAsync = (ITextEditorEditContext editContext) =>
@@ -193,7 +195,8 @@ public class TextEditorCommandDefaultFunctions
             editContext.ViewModel.ViewModelKey,
             new TextEditorCursorModifier[] { new(cursorForInsertion) }.ToList(),
             selectedText,
-            CancellationToken.None));
+            CancellationToken.None,
+            editContext.AuthenticatedActionKey));
 
         return Task.CompletedTask;
     };
@@ -218,7 +221,8 @@ public class TextEditorCommandDefaultFunctions
                 editContext.ViewModel.ViewModelKey,
                 editContext.RefreshCursorsRequest.CursorBag,
                 KeyboardKeyFacts.WhitespaceCharacters.TAB.ToString(),
-                CancellationToken.None));
+                CancellationToken.None,
+                editContext.AuthenticatedActionKey));
         }
 
         var lowerBoundPositionIndexChange = 1;
@@ -288,7 +292,8 @@ public class TextEditorCommandDefaultFunctions
                     editContext.ViewModel.ViewModelKey,
                     new TextEditorCursorModifier[] { new(cursorForDeletion) }.ToList(),
                     removeCharacterCount, // Delete a single "Tab" character
-                    CancellationToken.None));
+                    CancellationToken.None,
+                    editContext.AuthenticatedActionKey));
             }
             else if (readResult.StartsWith(KeyboardKeyFacts.WhitespaceCharacters.SPACE))
             {
@@ -308,7 +313,8 @@ public class TextEditorCommandDefaultFunctions
                     editContext.ViewModel.ViewModelKey,
                     new TextEditorCursorModifier[] { new(cursorForDeletion) }.ToList(),
                     removeCharacterCount,
-                    CancellationToken.None));
+                    CancellationToken.None,
+                    editContext.AuthenticatedActionKey));
             }
 
             // Modify the lower bound of user's text selection
@@ -376,7 +382,8 @@ public class TextEditorCommandDefaultFunctions
             editContext.ViewModel.ViewModelKey,
             editContext.RefreshCursorsRequest.CursorBag,
             "\n",
-            CancellationToken.None));
+            CancellationToken.None,
+            editContext.AuthenticatedActionKey));
 
         return Task.CompletedTask;
     };
@@ -393,7 +400,8 @@ public class TextEditorCommandDefaultFunctions
             editContext.ViewModel.ViewModelKey,
             new TextEditorCursorModifier[] { editContext.PrimaryCursor }.ToList(),
             "\n",
-            CancellationToken.None));
+            CancellationToken.None,
+            editContext.AuthenticatedActionKey));
 
         if (editContext.PrimaryCursor.RowIndex > 1)
         {

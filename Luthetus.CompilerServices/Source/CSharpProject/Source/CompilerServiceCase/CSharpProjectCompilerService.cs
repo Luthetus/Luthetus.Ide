@@ -5,6 +5,7 @@ using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
@@ -125,7 +126,7 @@ public class CSharpProjectCompilerService : ICompilerService
     {
 		_backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
             "C# Project Compiler Service - Parse",
-            (Func<Task>)(async () =>
+            async () =>
             {
                 var model = _textEditorService.ModelApi.GetOrDefault(resourceUri);
 
@@ -135,8 +136,9 @@ public class CSharpProjectCompilerService : ICompilerService
                 var text = TextEditorModelHelper.GetAllText(model);
 
 				_dispatcher.Dispatch(new TextEditorModelState.CalculatePresentationModelAction(
-                    (ResourceUri)model.ResourceUri,
-					CompilerServiceDiagnosticPresentationFacts.PresentationKey));
+                    model.ResourceUri,
+					CompilerServiceDiagnosticPresentationFacts.PresentationKey,
+                    TextEditorService.AuthenticatedActionKey));
 
                 var pendingCalculation = model.PresentationModelsBag.FirstOrDefault<TextEditor.RazorLib.Decorations.Models.TextEditorPresentationModel>((Func<TextEditor.RazorLib.Decorations.Models.TextEditorPresentationModel, bool>)(x =>
                     x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey))
@@ -145,8 +147,8 @@ public class CSharpProjectCompilerService : ICompilerService
                 if (pendingCalculation is null)
                     pendingCalculation = new(TextEditorModelHelper.GetAllText(model));
 
-                var lexer = new TextEditorHtmlLexer((ResourceUri)model.ResourceUri);
-                var lexResult = await lexer.Lex(text, (Key<Common.RazorLib.RenderStates.Models.RenderState>)model.RenderStateKey);
+                var lexer = new TextEditorHtmlLexer(model.ResourceUri);
+                var lexResult = await lexer.Lex(text, model.RenderStateKey);
 
                 lock (_cSharpProjectResourceMapLock)
                 {
@@ -162,6 +164,6 @@ public class CSharpProjectCompilerService : ICompilerService
                 ResourceParsed?.Invoke();
 
                 return;
-            }));
+            });
     }
 }

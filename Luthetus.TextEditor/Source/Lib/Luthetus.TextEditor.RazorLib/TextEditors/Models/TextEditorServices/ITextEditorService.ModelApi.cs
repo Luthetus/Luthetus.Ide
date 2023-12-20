@@ -207,7 +207,10 @@ public partial interface ITextEditorService
         {
             return context =>
             {
-                _dispatcher.Dispatch(new UndoEditAction(resourceUri));
+                _dispatcher.Dispatch(new UndoEditAction(
+                    resourceUri,
+                    context.AuthenticatedActionKey));
+
                 return Task.CompletedTask;
             };
         }
@@ -220,7 +223,8 @@ public partial interface ITextEditorService
             {
                 _dispatcher.Dispatch(new SetUsingRowEndingKindAction(
                     resourceUri,
-                    rowEndingKind));
+                    rowEndingKind,
+                    context.AuthenticatedActionKey));
 
                 return Task.CompletedTask;
             };
@@ -234,7 +238,8 @@ public partial interface ITextEditorService
             {
                 _dispatcher.Dispatch(new SetResourceDataAction(
                     resourceUri,
-                    resourceLastWriteTime));
+                    resourceLastWriteTime,
+                    context.AuthenticatedActionKey));
 
                 return Task.CompletedTask;
             };
@@ -250,7 +255,8 @@ public partial interface ITextEditorService
                 _dispatcher.Dispatch(new ReloadAction(
                     resourceUri,
                     content,
-                    resourceLastWriteTime));
+                    resourceLastWriteTime,
+                    context.AuthenticatedActionKey));
 
                 return Task.CompletedTask;
             };
@@ -260,7 +266,7 @@ public partial interface ITextEditorService
         {
             return context =>
             {
-                _dispatcher.Dispatch(new RedoEditAction(resourceUri));
+                _dispatcher.Dispatch(new RedoEditAction(resourceUri, context.AuthenticatedActionKey));
                 return Task.CompletedTask;
             };
         }

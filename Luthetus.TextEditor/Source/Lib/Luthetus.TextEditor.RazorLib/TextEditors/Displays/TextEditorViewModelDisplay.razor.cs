@@ -353,7 +353,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                                 viewModel.ViewModelKey,
                                 cursorBag.Select(x => new TextEditorCursorModifier(x)).ToList(),
                                 keyboardEventArgs,
-                                CancellationToken.None),
+                                CancellationToken.None,
+                                editContext.AuthenticatedActionKey),
                             editContext.RefreshCursorsRequest)
                         .Invoke(editContext);
                 });

@@ -945,7 +945,8 @@ public partial class TextEditorModelModifier
                         Code = KeyboardKeyFacts.MetaKeys.DELETE,
                         Key = KeyboardKeyFacts.MetaKeys.DELETE,
                     },
-                    CancellationToken.None));
+                    CancellationToken.None,
+                    keyboardEventAction.AuthenticatedActionKey));
             }
 
             var innerCursorBag = keyboardEventAction.CursorModifierBag;
@@ -995,7 +996,8 @@ public partial class TextEditorModelModifier
                     Code = KeyboardKeyFacts.MetaKeys.DELETE,
                     Key = KeyboardKeyFacts.MetaKeys.DELETE,
                 },
-                CancellationToken.None));
+                CancellationToken.None,
+                insertTextAction.AuthenticatedActionKey));
         }
 
         var localContent = insertTextAction.Content.Replace("\r\n", "\n");
@@ -1027,7 +1029,8 @@ public partial class TextEditorModelModifier
                     Code = code,
                     Key = character.ToString(),
                 },
-                CancellationToken.None);
+                CancellationToken.None,
+                insertTextAction.AuthenticatedActionKey);
 
             PerformEditTextEditorAction(keyboardEventTextEditorModelAction);
         }
@@ -1047,7 +1050,8 @@ public partial class TextEditorModelModifier
             deleteTextByMotionAction.ViewModelKey,
             deleteTextByMotionAction.CursorModifierBag,
             keyboardEventArgs,
-            CancellationToken.None);
+            CancellationToken.None,
+            deleteTextByMotionAction.AuthenticatedActionKey);
 
         PerformEditTextEditorAction(keyboardEventTextEditorModelAction);
     }
@@ -1071,7 +1075,8 @@ public partial class TextEditorModelModifier
                     Code = KeyboardKeyFacts.MetaKeys.DELETE,
                     Key = KeyboardKeyFacts.MetaKeys.DELETE,
                 },
-                CancellationToken.None);
+                CancellationToken.None,
+                deleteTextByRangeAction.AuthenticatedActionKey);
 
             PerformEditTextEditorAction(keyboardEventTextEditorModelAction);
         }

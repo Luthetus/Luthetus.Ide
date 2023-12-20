@@ -68,7 +68,8 @@ public partial class DotNetSolutionSync
             Dispatcher.Dispatch(new TextEditorModelState.ReloadAction(
                 solutionTextEditorModel.ResourceUri,
                 outDotNetSolutionModel.SolutionFileContents,
-                DateTime.UtcNow));
+                DateTime.UtcNow,
+                TextEditorService.AuthenticatedActionKey));
         }
 
         // TODO: Putting a hack for now to overwrite if somehow model was registered already

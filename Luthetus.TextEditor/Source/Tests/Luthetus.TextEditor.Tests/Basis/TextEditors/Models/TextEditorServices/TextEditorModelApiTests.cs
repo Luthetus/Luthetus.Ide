@@ -61,7 +61,8 @@ public class TextEditorModelApiTests
                         null,
                         cursorBag,
                         insertedText,
-                        CancellationToken.None),
+                        CancellationToken.None,
+                        editContext.AuthenticatedActionKey),
                     editContext.RefreshCursorsRequest)
                 .Invoke(editContext);
         });
@@ -260,7 +261,8 @@ public class TextEditorModelApiTests
                         null,
                         cursorBag,
                         insertedText,
-                        CancellationToken.None),
+                        CancellationToken.None,
+                        editContext.AuthenticatedActionKey),
                     editContext.RefreshCursorsRequest)
                 .Invoke(editContext);
         });
@@ -309,7 +311,8 @@ public class TextEditorModelApiTests
                         null,
                         cursorBag,
                         insertedText,
-                        CancellationToken.None),
+                        CancellationToken.None,
+                        editContext.AuthenticatedActionKey),
                     editContext.RefreshCursorsRequest)
                 .Invoke(editContext);
         });
@@ -349,7 +352,8 @@ public class TextEditorModelApiTests
                         null,
                         cursorBag,
                         keyboardEventArgs,
-                        CancellationToken.None),
+                        CancellationToken.None,
+                        editContext.AuthenticatedActionKey),
                     editContext.RefreshCursorsRequest)
                 .Invoke(editContext);
         });
@@ -469,7 +473,8 @@ public class TextEditorModelApiTests
                         null,
                         cursorBag,
                         textToDelete.Length,
-                        CancellationToken.None),
+                        CancellationToken.None,
+                        editContext.AuthenticatedActionKey),
                     editContext.RefreshCursorsRequest)
                 .Invoke(editContext);
         });
@@ -508,7 +513,8 @@ public class TextEditorModelApiTests
                         null,
                         cursorBag,
                         MotionKind.Backspace,
-                        CancellationToken.None),
+                        CancellationToken.None,
+                        editContext.AuthenticatedActionKey),
                     editContext.RefreshCursorsRequest)
                 .Invoke(editContext);
         });
@@ -547,7 +553,8 @@ public class TextEditorModelApiTests
                         null,
                         cursorBag,
                         MotionKind.Delete,
-                        CancellationToken.None),
+                        CancellationToken.None,
+                        editContext.AuthenticatedActionKey),
                     editContext.RefreshCursorsRequest)
                 .Invoke(editContext);
         });
