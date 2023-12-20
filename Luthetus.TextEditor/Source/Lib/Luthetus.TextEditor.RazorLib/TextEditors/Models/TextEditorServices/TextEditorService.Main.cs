@@ -19,13 +19,16 @@ using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
-using Luthetus.Common.RazorLib.Commands.Models;
-using static Luthetus.TextEditor.RazorLib.Commands.Models.TextEditorCommand;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 public partial class TextEditorService : ITextEditorService
 {
+    /// <summary>
+    /// See explanation of this field at: <see cref="AuthenticatedAction"/>
+    /// </summary>
+    public static readonly Key<AuthenticatedAction> AuthenticatedActionKey = new(Guid.Parse("13831968-9b10-46d1-8d47-842b78238d6a"));
+
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IDispatcher _dispatcher;
     private readonly LuthetusTextEditorOptions _textEditorOptions;

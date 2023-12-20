@@ -187,13 +187,11 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                var edit = commandArgs.TextEditorService.CreateEdit(editContext =>
+                                commandArgs.TextEditorService.EnqueueEdit(editContext =>
                                 {
                                     MOVE_CURSOR_ONE_COLUMN_LEFT(editContext).ExecuteAsync(editContext);
                                     return Task.CompletedTask;
                                 });
-
-                                commandArgs.TextEditorService.EnqueueEdit(edit);
                                 return Task.CompletedTask;
                                 
                             });
@@ -210,13 +208,11 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                var edit = commandArgs.TextEditorService.CreateEdit(editContext =>
+                                commandArgs.TextEditorService.EnqueueEdit(editContext =>
                                 {
                                     MOVE_CURSOR_ONE_ROW_DOWN(editContext).ExecuteAsync(editContext);
                                     return Task.CompletedTask;
                                 });
-
-                                commandArgs.TextEditorService.EnqueueEdit(edit);
                                 return Task.CompletedTask;
                             });
 
@@ -232,13 +228,11 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                var edit = commandArgs.TextEditorService.CreateEdit(editContext =>
+                                commandArgs.TextEditorService.EnqueueEdit(editContext =>
                                 {
                                     MOVE_CURSOR_ONE_ROW_UP(editContext).ExecuteAsync(editContext);
                                     return Task.CompletedTask;
                                 });
-
-                                commandArgs.TextEditorService.EnqueueEdit(edit);
                                 return Task.CompletedTask;
                             });
 
@@ -254,13 +248,11 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                var edit = commandArgs.TextEditorService.CreateEdit(editContext =>
+                                commandArgs.TextEditorService.EnqueueEdit(editContext =>
                                 {
                                     MOVE_CURSOR_ONE_COLUMN_RIGHT(editContext).ExecuteAsync(editContext);
                                     return Task.CompletedTask;
                                 });
-
-                                commandArgs.TextEditorService.EnqueueEdit(edit);
                                 return Task.CompletedTask;
                             });
 
@@ -282,13 +274,11 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                var edit = commandArgs.TextEditorService.CreateEdit(editContext =>
+                                commandArgs.TextEditorService.EnqueueEdit(editContext =>
                                 {
                                     MOVE_CURSOR_END_CURRENT_LINE(editContext).ExecuteAsync(editContext);
                                     return Task.CompletedTask;
                                 });
-
-                                commandArgs.TextEditorService.EnqueueEdit(edit);
                                 return Task.CompletedTask;
                             });
 
@@ -304,13 +294,11 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                var edit = commandArgs.TextEditorService.CreateEdit(editContext =>
+                                commandArgs.TextEditorService.EnqueueEdit(editContext =>
                                 {
                                     MOVE_CURSOR_START_CURRENT_LINE(editContext).ExecuteAsync(editContext);
                                     return Task.CompletedTask;
                                 });
-
-                                commandArgs.TextEditorService.EnqueueEdit(edit);
                                 return Task.CompletedTask;
                             });
 

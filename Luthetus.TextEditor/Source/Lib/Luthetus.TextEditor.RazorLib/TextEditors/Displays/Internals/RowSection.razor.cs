@@ -110,7 +110,7 @@ public partial class RowSection : ComponentBase
 
         var primaryCursor = viewModel.PrimaryCursor;
 
-        var edit = TextEditorService.CreateEdit(editContext =>
+        TextEditorService.EnqueueEdit(editContext =>
         {
             return TextEditorService.ViewModelApi.GetCalculateVirtualizationResultTask(
                     model,
@@ -120,7 +120,5 @@ public partial class RowSection : ComponentBase
                     virtualizationRequest.CancellationToken)
                 .ExecuteAsync(editContext);
         });
-
-        TextEditorService.EnqueueEdit(edit);
     }
 }

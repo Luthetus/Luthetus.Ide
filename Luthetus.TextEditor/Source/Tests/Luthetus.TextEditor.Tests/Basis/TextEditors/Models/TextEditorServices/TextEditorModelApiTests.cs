@@ -52,7 +52,7 @@ public class TextEditorModelApiTests
 
         var insertedText = "I have something to say: ";
 
-        var edit = textEditorService.CreateEdit(editContext =>
+        textEditorService.EnqueueEdit(editContext =>
         {
             return textEditorService.ModelApi
                 .InsertText(
@@ -65,8 +65,6 @@ public class TextEditorModelApiTests
                     editContext.RefreshCursorsRequest)
                 .ExecuteAsync(editContext);
         });
-
-        textEditorService.EnqueueEdit(edit);
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(

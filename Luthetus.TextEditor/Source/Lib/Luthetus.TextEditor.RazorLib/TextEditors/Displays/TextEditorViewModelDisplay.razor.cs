@@ -299,13 +299,12 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             }
             else
             {
-                var edit = TextEditorService.ViewModelApi.GetMoveCursorTask(
-                    keyboardEventArgs,
-                    model,
-                    viewModel.ViewModelKey,
-                    new TextEditorCursorModifier(primaryCursor));
-
-                TextEditorService.EnqueueEdit(edit);
+                TextEditorService.EnqueueEdit(
+                    TextEditorService.ViewModelApi.GetMoveCursorTask(
+                        keyboardEventArgs,
+                        model,
+                        viewModel.ViewModelKey,
+                        new TextEditorCursorModifier(primaryCursor)));
 
                 CursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.None);
             }
@@ -346,7 +345,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
                 _tooltipViewModel = null;
 
-                var edit = TextEditorService.CreateEdit(editContext =>
+                TextEditorService.EnqueueEdit(TextEditorService.CreateEdit(editContext =>
                 {
                     return TextEditorService.ModelApi.HandleKeyboardEvent(
                             new TextEditorModelState.KeyboardEventAction(
@@ -357,9 +356,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                                 CancellationToken.None),
                             editContext.RefreshCursorsRequest)
                         .ExecuteAsync(editContext);
-                });
-
-                TextEditorService.EnqueueEdit(edit);
+                }));
             }
         }
 
@@ -404,7 +401,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (model is null || viewModel is null)
             return;
 
-        var edit = TextEditorService.CreateEdit(async editContext =>
+        TextEditorService.EnqueueEdit(async editContext =>
         {
             var hasSelectedText = TextEditorSelectionHelper.HasSelectedText(editContext.PrimaryCursor);
 
@@ -459,8 +456,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                 editContext.PrimaryCursor.SelectionAnchorPositionIndex = cursorPositionOfLowerExpansion;
             }
         });
-
-        TextEditorService.EnqueueEdit(edit);
     }
 
     private void HandleContentOnMouseDown(MouseEventArgs mouseEventArgs)
@@ -471,7 +466,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (model is null || viewModel is null)
             return;
         
-        var edit = TextEditorService.CreateEdit(async editContext =>
+        TextEditorService.EnqueueEdit(async editContext =>
         {
             var hasSelectedText = TextEditorSelectionHelper.HasSelectedText(editContext.PrimaryCursor);
 
@@ -517,8 +512,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
             _thinksLeftMouseButtonIsDown = true;
         });
-
-        TextEditorService.EnqueueEdit(edit);
     }
 
     /// <summary>OnMouseUp is un-necessary</summary>
@@ -574,7 +567,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         // Buttons is a bit flag '& 1' gets if left mouse button is held
         if (localThinksLeftMouseButtonIsDown && (mouseEventArgs.Buttons & 1) == 1)
         {
-            var edit = TextEditorService.CreateEdit(async editContext =>
+            TextEditorService.EnqueueEdit(async editContext =>
             {
                 var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs);
 
@@ -586,8 +579,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
                 editContext.PrimaryCursor.SelectionEndingPositionIndex = model.GetCursorPositionIndex(editContext.PrimaryCursor);
             });
-
-            TextEditorService.EnqueueEdit(edit);
         }
         else
         {
@@ -976,9 +967,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (model is null || viewModel is null)
             return;
 
-        var primaryCursor = viewModel.PrimaryCursor;
-
-        var edit = TextEditorService.CreateEdit(editContext =>
+        TextEditorService.EnqueueEdit(editContext =>
         {
             return TextEditorService.ViewModelApi.GetRemeasureTask(
                     model.ResourceUri,
@@ -988,8 +977,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                     CancellationToken.None)
                 .ExecuteAsync(editContext);
         });
-
-        TextEditorService.EnqueueEdit(edit);
     }
 
     private void QueueCalculateVirtualizationResultBackgroundTask(
@@ -1001,7 +988,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (model is null || viewModel is null)
             return;
 
-        var edit = TextEditorService.CreateEdit(editContext =>
+        TextEditorService.EnqueueEdit(editContext =>
         {
             return TextEditorService.ViewModelApi.GetCalculateVirtualizationResultTask(
                     editContext.Model,
@@ -1011,8 +998,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                     CancellationToken.None)
                 .ExecuteAsync(editContext);
         });
-        
-        TextEditorService.EnqueueEdit(edit);
     }
 
     public void Dispose()

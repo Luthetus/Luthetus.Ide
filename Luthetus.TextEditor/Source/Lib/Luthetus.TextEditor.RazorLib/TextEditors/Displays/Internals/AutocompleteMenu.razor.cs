@@ -161,14 +161,12 @@ public partial class AutocompleteMenu : ComponentBase
             autocompleteEntry.DisplayName.Substring(word.Length),
             CancellationToken.None);
 
-        var edit = TextEditorService.CreateEdit(editContext =>
+        TextEditorService.EnqueueEdit(editContext =>
         {
             return TextEditorService.ModelApi
                 .InsertText(insertTextTextEditorModelAction, editContext.RefreshCursorsRequest)
                 .ExecuteAsync(editContext);
         });
-
-        TextEditorService.EnqueueEdit(edit);
 
         return Task.CompletedTask;
     }

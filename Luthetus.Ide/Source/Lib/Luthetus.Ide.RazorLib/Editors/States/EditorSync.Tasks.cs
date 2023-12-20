@@ -96,7 +96,7 @@ public partial class EditorSync
                             {
 								BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
                                     "Check If Contexts Were Modified",
-                                    (Func<Task>)(async () =>
+                                    (async () =>
                                     {
                                         dispatcher.Dispatch(new NotificationState.DisposeAction(
                                             notificationInformativeKey));
@@ -104,7 +104,7 @@ public partial class EditorSync
                                         var content = await _fileSystemProvider.File
                                             .ReadAllTextAsync(inputFileAbsolutePathString);
 
-                                        var edit = _textEditorService.CreateEdit(editContext =>
+                                        _textEditorService.EnqueueEdit(editContext =>
                                         {
                                             return _textEditorService.ModelApi
                                                 .Reload(
@@ -113,8 +113,6 @@ public partial class EditorSync
                                                     fileLastWriteTime)
                                                 .ExecuteAsync(editContext);
                                         });
-
-                                        _textEditorService.EnqueueEdit(edit);
                                         await textEditorModel.ApplySyntaxHighlightingAsync();
                                     }));
                             })
@@ -161,7 +159,7 @@ public partial class EditorSync
                 CompilerServiceDiagnosticPresentationFacts.PresentationKey,
             }.ToImmutableArray();
 
-            var edit = _textEditorService.CreateEdit(editContext =>
+            _textEditorService.EnqueueEdit(editContext =>
             {
                 return _textEditorService.ViewModelApi
                     .GetWithValueTask(
@@ -175,8 +173,6 @@ public partial class EditorSync
                         })
                     .ExecuteAsync(editContext);
             });
-
-            _textEditorService.EnqueueEdit(edit);
         }
         else
         {
@@ -198,7 +194,7 @@ public partial class EditorSync
                 {
                     if (writtenDateTime is not null)
                     {
-                        var edit = _textEditorService.CreateEdit(editContext =>
+                        _textEditorService.EnqueueEdit(editContext =>
                         {
                             return _textEditorService.ModelApi
                                 .SetResourceData(
@@ -206,8 +202,6 @@ public partial class EditorSync
                                     writtenDateTime.Value)
                                 .ExecuteAsync(editContext);
                         });
-
-                        _textEditorService.EnqueueEdit(edit);
                     }
                 },
                 cancellationToken);

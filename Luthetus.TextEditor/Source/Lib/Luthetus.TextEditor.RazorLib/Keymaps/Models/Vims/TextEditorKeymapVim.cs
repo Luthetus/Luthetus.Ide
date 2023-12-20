@@ -107,13 +107,11 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    var edit = commandArgs.TextEditorService.CreateEdit(editContext =>
+                    commandArgs.TextEditorService.EnqueueEdit(editContext =>
                     {
                         ActiveVimMode = VimMode.Insert;
                         return Task.CompletedTask;
                     });
-
-                    commandArgs.TextEditorService.EnqueueEdit(edit);
                     return Task.CompletedTask;
                 });
 
@@ -131,7 +129,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    var edit = commandArgs.TextEditorService.CreateEdit(editContext =>
+                    commandArgs.TextEditorService.EnqueueEdit(editContext =>
                     {
                         if (ActiveVimMode == VimMode.Visual)
                         {
@@ -152,8 +150,6 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
                         return Task.CompletedTask;
                     });
-
-                    commandArgs.TextEditorService.EnqueueEdit(edit);
                     return Task.CompletedTask;
                 });
 
@@ -171,7 +167,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    var edit = commandArgs.TextEditorService.CreateEdit(editContext =>
+                    commandArgs.TextEditorService.EnqueueEdit(editContext =>
                     {
                         if (ActiveVimMode == VimMode.VisualLine)
                         {
@@ -200,8 +196,6 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                         return Task.CompletedTask;
                     });
 
-                    commandArgs.TextEditorService.EnqueueEdit(edit);
-
                     return Task.CompletedTask;
                 });
 
@@ -220,7 +214,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    var edit = commandArgs.TextEditorService.CreateEdit(editContext =>
+                    commandArgs.TextEditorService.EnqueueEdit(editContext =>
                     {
                         commandArgs.Dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
                             editContext.ViewModel.ViewModelKey,
@@ -231,8 +225,6 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
                         return Task.CompletedTask;
                     });
-
-                    commandArgs.TextEditorService.EnqueueEdit(edit);
                     return Task.CompletedTask;
                 });
 
@@ -251,7 +243,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    var edit = commandArgs.TextEditorService.CreateEdit(async editContext =>
+                    commandArgs.TextEditorService.EnqueueEdit(async editContext =>
                     {
                         await commandArgs.TextEditorService.ModelApi
                             .UndoEdit(editContext.Model.ResourceUri)
@@ -259,8 +251,6 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
                         await editContext.Model.ApplySyntaxHighlightingAsync();
                     });
-
-                    commandArgs.TextEditorService.EnqueueEdit(edit);
                     return Task.CompletedTask;
                 });
 
@@ -278,7 +268,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    var edit = commandArgs.TextEditorService.CreateEdit(async editContext =>
+                    commandArgs.TextEditorService.EnqueueEdit(async editContext =>
                     {
                         await commandArgs.TextEditorService.ModelApi
                             .RedoEdit(editContext.Model.ResourceUri)
@@ -286,8 +276,6 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
                         await editContext.Model.ApplySyntaxHighlightingAsync();
                     });
-
-                    commandArgs.TextEditorService.EnqueueEdit(edit);
                     return Task.CompletedTask;
                 });
 
@@ -306,13 +294,11 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    var edit = commandArgs.TextEditorService.CreateEdit(editContext =>
+                    commandArgs.TextEditorService.EnqueueEdit(editContext =>
                     {
                         return TextEditorCommandVimFacts.Verbs.NewLineBelowCommand.DoAsyncFunc
                             .Invoke(interfaceCommandArgs);
                     });
-
-                    commandArgs.TextEditorService.EnqueueEdit(edit);
                     return Task.CompletedTask;
                 });
 
@@ -330,13 +316,11 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    var edit = commandArgs.TextEditorService.CreateEdit(editContext =>
+                    commandArgs.TextEditorService.EnqueueEdit(editContext =>
                     {
                         return TextEditorCommandVimFacts.Verbs.NewLineAboveCommand.DoAsyncFunc
                             .Invoke(interfaceCommandArgs);
                     });
-
-                    commandArgs.TextEditorService.EnqueueEdit(edit);
                     return Task.CompletedTask;
                 });
 
@@ -355,13 +339,11 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    var edit = commandArgs.TextEditorService.CreateEdit(editContext =>
+                    commandArgs.TextEditorService.EnqueueEdit(editContext =>
                     {
                         return TextEditorCommandDefaultFacts.ScrollLineDown.DoAsyncFunc
                         .Invoke(interfaceCommandArgs);
                     });
-
-                    commandArgs.TextEditorService.EnqueueEdit(edit);
                     return Task.CompletedTask;
                 });
 
@@ -380,13 +362,11 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    var edit = commandArgs.TextEditorService.CreateEdit(editContext =>
+                    commandArgs.TextEditorService.EnqueueEdit(editContext =>
                     {
                         return TextEditorCommandDefaultFacts.ScrollLineUp.DoAsyncFunc
                             .Invoke(interfaceCommandArgs);
                     });
-
-                    commandArgs.TextEditorService.EnqueueEdit(edit);
                     return Task.CompletedTask;
                 });
 
@@ -650,13 +630,11 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                var edit = commandArgs.TextEditorService.CreateEdit(editContext =>
+                commandArgs.TextEditorService.EnqueueEdit(editContext =>
                 {
                     ActiveVimMode = VimMode.Normal;
                     return Task.CompletedTask;
                 });
-
-                commandArgs.TextEditorService.EnqueueEdit(edit);
                 return Task.CompletedTask;
             });
 
@@ -707,13 +685,11 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    var edit = commandArgs.TextEditorService.CreateEdit(editContext =>
+                    commandArgs.TextEditorService.EnqueueEdit(editContext =>
                     {
                         return TextEditorCommandDefaultFacts.ScrollPageDown.DoAsyncFunc
                             .Invoke(commandArgs);
                     });
-
-                    commandArgs.TextEditorService.EnqueueEdit(edit);
                     return Task.CompletedTask;
                 });
 
@@ -731,13 +707,11 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    var edit = commandArgs.TextEditorService.CreateEdit(editContext =>
+                    commandArgs.TextEditorService.EnqueueEdit(editContext =>
                     {
                         return TextEditorCommandDefaultFacts.ScrollPageUp.DoAsyncFunc
                             .Invoke(commandArgs);
                     });
-
-                    commandArgs.TextEditorService.EnqueueEdit(edit);
                     return Task.CompletedTask;
                 });
 
@@ -756,7 +730,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                var edit = commandArgs.TextEditorService.CreateEdit(editContext =>
+                commandArgs.TextEditorService.EnqueueEdit(editContext =>
                 {
                     var success = VimSentence.TryLex(this, keymapArgument, commandArgs.HasTextSelection, out var lexCommand);
 
@@ -765,8 +739,6 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
                     return Task.CompletedTask;
                 });
-
-                commandArgs.TextEditorService.EnqueueEdit(edit);
                 return Task.CompletedTask;
             });
     }
@@ -779,7 +751,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                var edit = commandArgs.TextEditorService.CreateEdit(editContext =>
+                commandArgs.TextEditorService.EnqueueEdit(editContext =>
                 {
                     if (ActiveVimMode == VimMode.Visual || ActiveVimMode == VimMode.VisualLine)
                     {
@@ -831,8 +803,6 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
                     return Task.CompletedTask;
                 });
-
-                commandArgs.TextEditorService.EnqueueEdit(edit);
                 return Task.CompletedTask;
             });
     }

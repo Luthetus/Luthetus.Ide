@@ -52,7 +52,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                     DiffPresentationFacts.InPresentationKey,
                 };
 
-                var edit = TextEditorService.CreateEdit(editContext =>
+                TextEditorService.EnqueueEdit(editContext =>
                 {
                     return TextEditorService.ViewModelApi
                         .GetWithValueTask(
@@ -63,8 +63,6 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                             })
                         .ExecuteAsync(editContext);
                 });
-
-                TextEditorService.EnqueueEdit(edit);
             }
             
             // "Out" Registrations
@@ -93,7 +91,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                     DiffPresentationFacts.OutPresentationKey,
                 };
 
-                var edit = TextEditorService.CreateEdit(editContext =>
+                TextEditorService.EnqueueEdit(editContext =>
                 {
                     return TextEditorService.ViewModelApi
                         .GetWithValueTask(
@@ -104,8 +102,6 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                             })
                         .ExecuteAsync(editContext);
                 });
-
-                TextEditorService.EnqueueEdit(edit);
             }
 
             TextEditorService.DiffApi.Register(

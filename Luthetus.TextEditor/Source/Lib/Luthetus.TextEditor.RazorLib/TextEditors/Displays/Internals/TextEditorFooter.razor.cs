@@ -25,11 +25,10 @@ public partial class TextEditorFooter : ComponentBase
 
         if (Enum.TryParse<RowEndingKind>(rowEndingKindString, out var rowEndingKind))
         {
-            var edit = TextEditorService.ModelApi.SetUsingRowEndingKind(
-                viewModel.ResourceUri,
-                rowEndingKind);
-
-            TextEditorService.EnqueueEdit(edit);
+            TextEditorService.EnqueueEdit(
+                TextEditorService.ModelApi.SetUsingRowEndingKind(
+                    viewModel.ResourceUri,
+                    rowEndingKind));
         }
     }
 

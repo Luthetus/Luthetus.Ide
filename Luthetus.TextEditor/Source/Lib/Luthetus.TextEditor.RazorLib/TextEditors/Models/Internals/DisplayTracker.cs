@@ -118,7 +118,7 @@ public class DisplayTracker : IDisposable
         _calculateVirtualizationResultCancellationTokenSource.Cancel();
         _calculateVirtualizationResultCancellationTokenSource = new();
 
-        var edit = _textEditorService.CreateEdit(editContext =>
+        _textEditorService.EnqueueEdit(editContext =>
         {
             return _textEditorService.ViewModelApi.GetCalculateVirtualizationResultTask(
                     model,
@@ -128,8 +128,6 @@ public class DisplayTracker : IDisposable
                     _calculateVirtualizationResultCancellationTokenSource.Token)
                 .ExecuteAsync(editContext);
         });
-
-        _textEditorService.EnqueueEdit(edit);
     }
 
     public void Dispose()

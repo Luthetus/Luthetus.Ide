@@ -16,11 +16,11 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            var edit = commandArgs.TextEditorService.CreateEdit(async context =>
+            commandArgs.TextEditorService.EnqueueEdit(async context =>
             {
                 var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
                 var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
-                
+
                 var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
                     commandArgs.ViewModelKey,
                     viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
@@ -29,8 +29,6 @@ public static class TextEditorCommandDefaultFacts
                     .CopyAsync(context)
                     .ExecuteAsync(context);
             });
-
-            commandArgs.TextEditorService.EnqueueEdit(edit);
             return Task.CompletedTask;
         });
 
@@ -40,7 +38,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            var edit = commandArgs.TextEditorService.CreateEdit(async context =>
+            commandArgs.TextEditorService.EnqueueEdit(async context =>
             {
                 var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
                 var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
@@ -53,8 +51,6 @@ public static class TextEditorCommandDefaultFacts
                     .CutAsync(context)
                     .ExecuteAsync(context);
             });
-
-            commandArgs.TextEditorService.EnqueueEdit(edit);
             return Task.CompletedTask;
         });
 
@@ -64,7 +60,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            var edit = commandArgs.TextEditorService.CreateEdit(async context =>
+            commandArgs.TextEditorService.EnqueueEdit(async context =>
             {
                 var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
                 var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
@@ -77,8 +73,6 @@ public static class TextEditorCommandDefaultFacts
                     .PasteAsync(context)
                     .ExecuteAsync(context);
             });
-
-            commandArgs.TextEditorService.EnqueueEdit(edit);
             return Task.CompletedTask;
         });
 
@@ -88,7 +82,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            var edit = commandArgs.TextEditorService.CreateEdit(async context =>
+            commandArgs.TextEditorService.EnqueueEdit(async context =>
             {
                 var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
                 var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
@@ -101,8 +95,6 @@ public static class TextEditorCommandDefaultFacts
                     .SaveAsync(context)
                     .ExecuteAsync(context);
             });
-
-            commandArgs.TextEditorService.EnqueueEdit(edit);
             return Task.CompletedTask;
         });
 
@@ -112,7 +104,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            var edit = commandArgs.TextEditorService.CreateEdit(async context =>
+            commandArgs.TextEditorService.EnqueueEdit(async context =>
             {
                 var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
                 var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
@@ -125,8 +117,6 @@ public static class TextEditorCommandDefaultFacts
                     .SelectAllAsync(context)
                     .ExecuteAsync(context);
             });
-
-            commandArgs.TextEditorService.EnqueueEdit(edit);
             return Task.CompletedTask;
         });
 
@@ -136,7 +126,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            var edit = commandArgs.TextEditorService.CreateEdit(async context =>
+            commandArgs.TextEditorService.EnqueueEdit(async context =>
             {
                 var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
                 var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
@@ -149,8 +139,6 @@ public static class TextEditorCommandDefaultFacts
                     .UndoAsync(context)
                     .ExecuteAsync(context);
             });
-
-            commandArgs.TextEditorService.EnqueueEdit(edit);
             return Task.CompletedTask;
         });
 
@@ -160,7 +148,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            var edit = commandArgs.TextEditorService.CreateEdit(async context =>
+            commandArgs.TextEditorService.EnqueueEdit(async context =>
             {
                 var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
                 var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
@@ -173,8 +161,6 @@ public static class TextEditorCommandDefaultFacts
                     .RedoAsync(context)
                     .ExecuteAsync(context);
             });
-
-            commandArgs.TextEditorService.EnqueueEdit(edit);
             return Task.CompletedTask;
         });
 
@@ -184,7 +170,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            var edit = commandArgs.TextEditorService.CreateEdit(async context =>
+            commandArgs.TextEditorService.EnqueueEdit(async context =>
             {
                 var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
                 var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
@@ -197,8 +183,6 @@ public static class TextEditorCommandDefaultFacts
                     .RemeasureAsync(context)
                     .ExecuteAsync(context);
             });
-
-            commandArgs.TextEditorService.EnqueueEdit(edit);
             return Task.CompletedTask;
         });
 
@@ -208,7 +192,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            var edit = commandArgs.TextEditorService.CreateEdit(async context =>
+            commandArgs.TextEditorService.EnqueueEdit(async context =>
             {
                 var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
                 var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
@@ -221,8 +205,6 @@ public static class TextEditorCommandDefaultFacts
                     .ScrollLineDownAsync(context)
                     .ExecuteAsync(context);
             });
-
-            commandArgs.TextEditorService.EnqueueEdit(edit);
             return Task.CompletedTask;
         });
 
@@ -232,7 +214,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            var edit = commandArgs.TextEditorService.CreateEdit(async context =>
+            commandArgs.TextEditorService.EnqueueEdit(async context =>
             {
                 var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
                 var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
@@ -245,8 +227,6 @@ public static class TextEditorCommandDefaultFacts
                     .ScrollLineUpAsync(context)
                     .ExecuteAsync(context);
             });
-
-            commandArgs.TextEditorService.EnqueueEdit(edit);
             return Task.CompletedTask;
         });
 
@@ -256,7 +236,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            var edit = commandArgs.TextEditorService.CreateEdit(async context =>
+            commandArgs.TextEditorService.EnqueueEdit(async context =>
             {
                 var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
                 var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
@@ -269,8 +249,6 @@ public static class TextEditorCommandDefaultFacts
                     .ScrollPageDownAsync(context)
                     .ExecuteAsync(context);
             });
-
-            commandArgs.TextEditorService.EnqueueEdit(edit);
             return Task.CompletedTask;
         });
 
@@ -280,7 +258,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            var edit = commandArgs.TextEditorService.CreateEdit(async context =>
+            commandArgs.TextEditorService.EnqueueEdit(async context =>
             {
                 var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
                 var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
@@ -293,8 +271,6 @@ public static class TextEditorCommandDefaultFacts
                     .ScrollPageUpAsync(context)
                     .ExecuteAsync(context);
             });
-
-            commandArgs.TextEditorService.EnqueueEdit(edit);
             return Task.CompletedTask;
         });
 
@@ -304,7 +280,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            var edit = commandArgs.TextEditorService.CreateEdit(async context =>
+            commandArgs.TextEditorService.EnqueueEdit(async context =>
             {
                 var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
                 var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
@@ -317,8 +293,6 @@ public static class TextEditorCommandDefaultFacts
                     .CursorMovePageBottomAsync(context)
                     .ExecuteAsync(context);
             });
-
-            commandArgs.TextEditorService.EnqueueEdit(edit);
             return Task.CompletedTask;
         });
 
@@ -328,7 +302,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            var edit = commandArgs.TextEditorService.CreateEdit(async context =>
+            commandArgs.TextEditorService.EnqueueEdit(async context =>
             {
                 var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
                 var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
@@ -341,8 +315,6 @@ public static class TextEditorCommandDefaultFacts
                     .CursorMovePageTopAsync(context)
                     .ExecuteAsync(context);
             });
-
-            commandArgs.TextEditorService.EnqueueEdit(edit);
             return Task.CompletedTask;
         });
 
@@ -352,7 +324,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            var edit = commandArgs.TextEditorService.CreateEdit(async context =>
+            commandArgs.TextEditorService.EnqueueEdit(async context =>
             {
                 var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
                 var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
@@ -365,8 +337,6 @@ public static class TextEditorCommandDefaultFacts
                     .DuplicateAsync(context)
                     .ExecuteAsync(context);
             });
-
-            commandArgs.TextEditorService.EnqueueEdit(edit);
             return Task.CompletedTask;
         });
 
@@ -376,7 +346,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            var edit = commandArgs.TextEditorService.CreateEdit(async context =>
+            commandArgs.TextEditorService.EnqueueEdit(async context =>
             {
                 var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
                 var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
@@ -389,8 +359,6 @@ public static class TextEditorCommandDefaultFacts
                     .IndentMoreAsync(context)
                     .ExecuteAsync(context);
             });
-
-            commandArgs.TextEditorService.EnqueueEdit(edit);
             return Task.CompletedTask;
         });
 
@@ -400,7 +368,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            var edit = commandArgs.TextEditorService.CreateEdit(async context =>
+            commandArgs.TextEditorService.EnqueueEdit(async context =>
             {
                 var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
                 var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
@@ -413,8 +381,6 @@ public static class TextEditorCommandDefaultFacts
                     .IndentLessAsync(context)
                     .ExecuteAsync(context);
             });
-
-            commandArgs.TextEditorService.EnqueueEdit(edit);
             return Task.CompletedTask;
         });
 
@@ -424,7 +390,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            var edit = commandArgs.TextEditorService.CreateEdit(async context =>
+            commandArgs.TextEditorService.EnqueueEdit(async context =>
             {
                 var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
                 var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
@@ -437,8 +403,6 @@ public static class TextEditorCommandDefaultFacts
                     .ClearTextSelectionAsync(context)
                     .ExecuteAsync(context);
             });
-
-            commandArgs.TextEditorService.EnqueueEdit(edit);
             return Task.CompletedTask;
         });
 
@@ -448,7 +412,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            var edit = commandArgs.TextEditorService.CreateEdit(async context =>
+            commandArgs.TextEditorService.EnqueueEdit(async context =>
             {
                 var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
                 var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
@@ -461,8 +425,6 @@ public static class TextEditorCommandDefaultFacts
                     .NewLineBelowAsync(context)
                     .ExecuteAsync(context);
             });
-
-            commandArgs.TextEditorService.EnqueueEdit(edit);
             return Task.CompletedTask;
         });
 
@@ -472,7 +434,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            var edit = commandArgs.TextEditorService.CreateEdit(async context =>
+            commandArgs.TextEditorService.EnqueueEdit(async context =>
             {
                 var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
                 var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
@@ -485,8 +447,6 @@ public static class TextEditorCommandDefaultFacts
                     .NewLineAboveAsync(context)
                     .ExecuteAsync(context);
             });
-
-            commandArgs.TextEditorService.EnqueueEdit(edit);
             return Task.CompletedTask;
         });
 
@@ -496,7 +456,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            var edit = commandArgs.TextEditorService.CreateEdit(async context =>
+            commandArgs.TextEditorService.EnqueueEdit(async context =>
             {
                 var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
                 var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
@@ -509,8 +469,6 @@ public static class TextEditorCommandDefaultFacts
                     .GoToMatchingCharacterFactoryAsync(context)
                     .ExecuteAsync(context);
             });
-
-            commandArgs.TextEditorService.EnqueueEdit(edit);
             return Task.CompletedTask;
         });
 
@@ -520,7 +478,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            var edit = commandArgs.TextEditorService.CreateEdit(async context =>
+            commandArgs.TextEditorService.EnqueueEdit(async context =>
             {
                 var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
                 var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
@@ -533,8 +491,6 @@ public static class TextEditorCommandDefaultFacts
                     .GoToDefinitionAsync(context)
                     .ExecuteAsync(context);
             });
-
-            commandArgs.TextEditorService.EnqueueEdit(edit);
             return Task.CompletedTask;
         });
 
@@ -544,7 +500,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            var edit = commandArgs.TextEditorService.CreateEdit(async context =>
+            commandArgs.TextEditorService.EnqueueEdit(async context =>
             {
                 var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
                 var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
@@ -557,8 +513,6 @@ public static class TextEditorCommandDefaultFacts
                     .ShowFindDialogAsync(context)
                     .ExecuteAsync(context);
             });
-
-            commandArgs.TextEditorService.EnqueueEdit(edit);
             return Task.CompletedTask;
         });
 
@@ -572,7 +526,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            var edit = commandArgs.TextEditorService.CreateEdit(async context =>
+            commandArgs.TextEditorService.EnqueueEdit(async context =>
             {
                 var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
                 var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
@@ -585,8 +539,6 @@ public static class TextEditorCommandDefaultFacts
                     .ShowTooltipByCursorPositionAsync(context)
                     .ExecuteAsync(context);
             });
-
-            commandArgs.TextEditorService.EnqueueEdit(edit);
             return Task.CompletedTask;
         });
 }
