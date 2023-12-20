@@ -844,7 +844,7 @@ public partial interface ITextEditorService
             {
                 var options = _textEditorService.OptionsApi.GetOptions();
 
-                await viewModel.ThrottleRemeasure.FireAsync((async _ =>
+                await viewModel.ThrottleRemeasure.FireAsync(async _ =>
                 {
                     lock (viewModel.TrackingOfUniqueIdentifiersLock)
                     {
@@ -878,7 +878,7 @@ public partial interface ITextEditorService
                                 },
                             }))
                         .Invoke(editContext);
-                }));
+                });
             };
         }
         #endregion

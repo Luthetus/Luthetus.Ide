@@ -195,18 +195,13 @@ public partial class TextEditorService : ITextEditorService
     
     public void EnqueueEdit(TextEditorEdit textEditorEdit)
     {
-        EnqueueEdit(textEditorEdit);
-    }
-
-    public void EnqueueEdit(Func<ITextEditorEditContext, Task> func)
-    {
         _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             nameof(EnqueueEdit),
             async () =>
             {
-                var editContext = new TextEditorEditContext(AuthenticatedActionKey);
-                await func.Invoke(editContext);
+                await textEditorEdit.Invoke(
+                    new TextEditorEditContext(AuthenticatedActionKey));
             });
     }
 }
