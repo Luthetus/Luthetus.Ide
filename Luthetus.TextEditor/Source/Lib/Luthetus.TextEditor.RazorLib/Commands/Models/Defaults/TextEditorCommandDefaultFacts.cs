@@ -25,12 +25,9 @@ public static class TextEditorCommandDefaultFacts
                     commandArgs.ViewModelKey,
                     viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
-                await TextEditorCommandDefaultFunctions.CopyAsync(
-                    commandArgs,
-                    model,
-                    viewModel,
-                    refreshCursorsRequest,
-                    refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                await TextEditorCommandDefaultFunctions
+                    .CopyAsync(context)
+                    .ExecuteAsync(context);
             });
 
             commandArgs.TextEditorService.EnqueueEdit(edit);
@@ -52,12 +49,9 @@ public static class TextEditorCommandDefaultFacts
                     commandArgs.ViewModelKey,
                     viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
-                await TextEditorCommandDefaultFunctions.CutAsync(
-                    commandArgs,
-                    model,
-                    viewModel,
-                    refreshCursorsRequest,
-                    refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                await TextEditorCommandDefaultFunctions
+                    .CutAsync(context)
+                    .ExecuteAsync(context);
             });
 
             commandArgs.TextEditorService.EnqueueEdit(edit);
@@ -79,12 +73,9 @@ public static class TextEditorCommandDefaultFacts
                     commandArgs.ViewModelKey,
                     viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
-                await TextEditorCommandDefaultFunctions.PasteAsync(
-                    commandArgs,
-                    model,
-                    viewModel,
-                    refreshCursorsRequest,
-                    refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                await TextEditorCommandDefaultFunctions
+                    .PasteAsync(context)
+                    .ExecuteAsync(context);
             });
 
             commandArgs.TextEditorService.EnqueueEdit(edit);
@@ -106,12 +97,9 @@ public static class TextEditorCommandDefaultFacts
                     commandArgs.ViewModelKey,
                     viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
-                await TextEditorCommandDefaultFunctions.SaveAsync(
-                    commandArgs,
-                    model,
-                    viewModel,
-                    refreshCursorsRequest,
-                    refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                await TextEditorCommandDefaultFunctions
+                    .SaveAsync(context)
+                    .ExecuteAsync(context);
             });
 
             commandArgs.TextEditorService.EnqueueEdit(edit);
@@ -133,12 +121,9 @@ public static class TextEditorCommandDefaultFacts
                     commandArgs.ViewModelKey,
                     viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
-                await TextEditorCommandDefaultFunctions.SelectAllAsync(
-                    commandArgs,
-                    model,
-                    viewModel,
-                    refreshCursorsRequest,
-                    refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                await TextEditorCommandDefaultFunctions
+                    .SelectAllAsync(context)
+                    .ExecuteAsync(context);
             });
 
             commandArgs.TextEditorService.EnqueueEdit(edit);
@@ -160,12 +145,9 @@ public static class TextEditorCommandDefaultFacts
                     commandArgs.ViewModelKey,
                     viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
-                await TextEditorCommandDefaultFunctions.UndoAsync(
-                    commandArgs,
-                    model,
-                    viewModel,
-                    refreshCursorsRequest,
-                    refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                await TextEditorCommandDefaultFunctions
+                    .UndoAsync(context)
+                    .ExecuteAsync(context);
             });
 
             commandArgs.TextEditorService.EnqueueEdit(edit);
@@ -187,12 +169,9 @@ public static class TextEditorCommandDefaultFacts
                     commandArgs.ViewModelKey,
                     viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
-                await TextEditorCommandDefaultFunctions.RedoAsync(
-                    commandArgs,
-                    model,
-                    viewModel,
-                    refreshCursorsRequest,
-                    refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                await TextEditorCommandDefaultFunctions
+                    .RedoAsync(context)
+                    .ExecuteAsync(context);
             });
 
             commandArgs.TextEditorService.EnqueueEdit(edit);
@@ -214,12 +193,9 @@ public static class TextEditorCommandDefaultFacts
                     commandArgs.ViewModelKey,
                     viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
-                await TextEditorCommandDefaultFunctions.RemeasureAsync(
-                    commandArgs,
-                    model,
-                    viewModel,
-                    refreshCursorsRequest,
-                    refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                await TextEditorCommandDefaultFunctions
+                    .RemeasureAsync(context)
+                    .ExecuteAsync(context);
             });
 
             commandArgs.TextEditorService.EnqueueEdit(edit);
@@ -241,12 +217,9 @@ public static class TextEditorCommandDefaultFacts
                     commandArgs.ViewModelKey,
                     viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
-                await TextEditorCommandDefaultFunctions.ScrollLineDownAsync(
-                    commandArgs,
-                    model,
-                    viewModel,
-                    refreshCursorsRequest,
-                    refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                await TextEditorCommandDefaultFunctions
+                    .ScrollLineDownAsync(context)
+                    .ExecuteAsync(context);
             });
 
             commandArgs.TextEditorService.EnqueueEdit(edit);
@@ -268,12 +241,9 @@ public static class TextEditorCommandDefaultFacts
                     commandArgs.ViewModelKey,
                     viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
-                await TextEditorCommandDefaultFunctions.ScrollLineUpAsync(
-                    commandArgs,
-                    model,
-                    viewModel,
-                    refreshCursorsRequest,
-                    refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                await TextEditorCommandDefaultFunctions
+                    .ScrollLineUpAsync(context)
+                    .ExecuteAsync(context);
             });
 
             commandArgs.TextEditorService.EnqueueEdit(edit);
@@ -295,12 +265,9 @@ public static class TextEditorCommandDefaultFacts
                     commandArgs.ViewModelKey,
                     viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
-                await TextEditorCommandDefaultFunctions.ScrollPageDownAsync(
-                    commandArgs,
-                    model,
-                    viewModel,
-                    refreshCursorsRequest,
-                    refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                await TextEditorCommandDefaultFunctions
+                    .ScrollPageDownAsync(context)
+                    .ExecuteAsync(context);
             });
 
             commandArgs.TextEditorService.EnqueueEdit(edit);
@@ -322,12 +289,9 @@ public static class TextEditorCommandDefaultFacts
                     commandArgs.ViewModelKey,
                     viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
-                await TextEditorCommandDefaultFunctions.ScrollPageUpAsync(
-                    commandArgs,
-                    model,
-                    viewModel,
-                    refreshCursorsRequest,
-                    refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                await TextEditorCommandDefaultFunctions
+                    .ScrollPageUpAsync(context)
+                    .ExecuteAsync(context);
             });
 
             commandArgs.TextEditorService.EnqueueEdit(edit);
@@ -349,12 +313,9 @@ public static class TextEditorCommandDefaultFacts
                     commandArgs.ViewModelKey,
                     viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
-                await TextEditorCommandDefaultFunctions.CursorMovePageBottomAsync(
-                    commandArgs,
-                    model,
-                    viewModel,
-                    refreshCursorsRequest,
-                    refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                await TextEditorCommandDefaultFunctions
+                    .CursorMovePageBottomAsync(context)
+                    .ExecuteAsync(context);
             });
 
             commandArgs.TextEditorService.EnqueueEdit(edit);
@@ -376,12 +337,9 @@ public static class TextEditorCommandDefaultFacts
                     commandArgs.ViewModelKey,
                     viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
-                await TextEditorCommandDefaultFunctions.CursorMovePageTopAsync(
-                    commandArgs,
-                    model,
-                    viewModel,
-                    refreshCursorsRequest,
-                    refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                await TextEditorCommandDefaultFunctions
+                    .CursorMovePageTopAsync(context)
+                    .ExecuteAsync(context);
             });
 
             commandArgs.TextEditorService.EnqueueEdit(edit);
@@ -403,12 +361,9 @@ public static class TextEditorCommandDefaultFacts
                     commandArgs.ViewModelKey,
                     viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
-                await TextEditorCommandDefaultFunctions.DuplicateAsync(
-                    commandArgs,
-                    model,
-                    viewModel,
-                    refreshCursorsRequest,
-                    refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                await TextEditorCommandDefaultFunctions
+                    .DuplicateAsync(context)
+                    .ExecuteAsync(context);
             });
 
             commandArgs.TextEditorService.EnqueueEdit(edit);
@@ -430,12 +385,9 @@ public static class TextEditorCommandDefaultFacts
                     commandArgs.ViewModelKey,
                     viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
-                await TextEditorCommandDefaultFunctions.IndentMoreAsync(
-                    commandArgs,
-                    model,
-                    viewModel,
-                    refreshCursorsRequest,
-                    refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                await TextEditorCommandDefaultFunctions
+                    .IndentMoreAsync(context)
+                    .ExecuteAsync(context);
             });
 
             commandArgs.TextEditorService.EnqueueEdit(edit);
@@ -457,12 +409,9 @@ public static class TextEditorCommandDefaultFacts
                     commandArgs.ViewModelKey,
                     viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
-                await TextEditorCommandDefaultFunctions.IndentLessAsync(
-                    commandArgs,
-                    model,
-                    viewModel,
-                    refreshCursorsRequest,
-                    refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                await TextEditorCommandDefaultFunctions
+                    .IndentLessAsync(context)
+                    .ExecuteAsync(context);
             });
 
             commandArgs.TextEditorService.EnqueueEdit(edit);
@@ -484,12 +433,9 @@ public static class TextEditorCommandDefaultFacts
                     commandArgs.ViewModelKey,
                     viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
-                await TextEditorCommandDefaultFunctions.ClearTextSelectionAsync(
-                    commandArgs,
-                    model,
-                    viewModel,
-                    refreshCursorsRequest,
-                    refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                await TextEditorCommandDefaultFunctions
+                    .ClearTextSelectionAsync(context)
+                    .ExecuteAsync(context);
             });
 
             commandArgs.TextEditorService.EnqueueEdit(edit);
@@ -511,12 +457,9 @@ public static class TextEditorCommandDefaultFacts
                     commandArgs.ViewModelKey,
                     viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
-                await TextEditorCommandDefaultFunctions.NewLineBelowAsync(
-                    commandArgs,
-                    model,
-                    viewModel,
-                    refreshCursorsRequest,
-                    refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                await TextEditorCommandDefaultFunctions
+                    .NewLineBelowAsync(context)
+                    .ExecuteAsync(context);
             });
 
             commandArgs.TextEditorService.EnqueueEdit(edit);
@@ -538,12 +481,9 @@ public static class TextEditorCommandDefaultFacts
                     commandArgs.ViewModelKey,
                     viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
-                await TextEditorCommandDefaultFunctions.NewLineAboveAsync(
-                    commandArgs,
-                    model,
-                    viewModel,
-                    refreshCursorsRequest,
-                    refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                await TextEditorCommandDefaultFunctions
+                    .NewLineAboveAsync(context)
+                    .ExecuteAsync(context);
             });
 
             commandArgs.TextEditorService.EnqueueEdit(edit);
@@ -565,12 +505,9 @@ public static class TextEditorCommandDefaultFacts
                     commandArgs.ViewModelKey,
                     viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
-                await TextEditorCommandDefaultFunctions.GoToMatchingCharacterFactoryAsync(
-                    commandArgs,
-                    model,
-                    viewModel,
-                    refreshCursorsRequest,
-                    refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                await TextEditorCommandDefaultFunctions
+                    .GoToMatchingCharacterFactoryAsync(context)
+                    .ExecuteAsync(context);
             });
 
             commandArgs.TextEditorService.EnqueueEdit(edit);
@@ -592,12 +529,9 @@ public static class TextEditorCommandDefaultFacts
                     commandArgs.ViewModelKey,
                     viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
-                await TextEditorCommandDefaultFunctions.GoToDefinitionAsync(
-                    commandArgs,
-                    model,
-                    viewModel,
-                    refreshCursorsRequest,
-                    refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                await TextEditorCommandDefaultFunctions
+                    .GoToDefinitionAsync(context)
+                    .ExecuteAsync(context);
             });
 
             commandArgs.TextEditorService.EnqueueEdit(edit);
@@ -619,12 +553,9 @@ public static class TextEditorCommandDefaultFacts
                     commandArgs.ViewModelKey,
                     viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
-                await TextEditorCommandDefaultFunctions.ShowFindDialogAsync(
-                    commandArgs,
-                    model,
-                    viewModel,
-                    refreshCursorsRequest,
-                    refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                await TextEditorCommandDefaultFunctions
+                    .ShowFindDialogAsync(context)
+                    .ExecuteAsync(context);
             });
 
             commandArgs.TextEditorService.EnqueueEdit(edit);
@@ -650,12 +581,9 @@ public static class TextEditorCommandDefaultFacts
                     commandArgs.ViewModelKey,
                     viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
-                await TextEditorCommandDefaultFunctions.ShowTooltipByCursorPositionAsync(
-                    commandArgs,
-                    model,
-                    viewModel,
-                    refreshCursorsRequest,
-                    refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                await TextEditorCommandDefaultFunctions
+                    .ShowTooltipByCursorPositionAsync(context)
+                    .ExecuteAsync(context);
             });
 
             commandArgs.TextEditorService.EnqueueEdit(edit);
