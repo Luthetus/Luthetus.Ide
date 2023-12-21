@@ -11,527 +11,872 @@ using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Microsoft.JSInterop;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 
 public class TextEditorCommandDefaultFunctions
 {
-    public static TextEditorEdit DoNothingDiscardAsync = (ITextEditorEditContext editContext) =>
+    public static TextEditorEdit DoNothingDiscardFactory()
     {
-        return Task.CompletedTask;
-    };
-
-    public static TextEditorEdit CopyAsync = async (ITextEditorEditContext editContext) =>
-    {
-        var selectedText = TextEditorSelectionHelper.GetSelectedText(
-            editContext.PrimaryCursor,
-            editContext.Model);
-
-        selectedText ??= editContext.Model.GetLinesRange(
-            editContext.PrimaryCursor.RowIndex,
-            1);
-
-        await editContext.CommandArgs.ClipboardService.SetClipboard(selectedText);
-        await editContext.ViewModel.FocusAsync();
-    };
-
-    public static TextEditorEdit CutAsync = async (ITextEditorEditContext editContext) =>
-    {
-        var selectedText = TextEditorSelectionHelper.GetSelectedText(
-            editContext.PrimaryCursor,
-            editContext.Model);
-
-        if (selectedText is null)
-            return; // Should never occur
-
-        await editContext.CommandArgs.ClipboardService.SetClipboard(selectedText);
-        await editContext.ViewModel.FocusAsync();
-
-        editContext.CommandArgs.Dispatcher.Dispatch(new KeyboardEventAction(
-            editContext.Model.ResourceUri,
-            editContext.ViewModel.ViewModelKey,
-            editContext.RefreshCursorsRequest.CursorBag,
-            new KeyboardEventArgs { Key = KeyboardKeyFacts.MetaKeys.DELETE },
-            CancellationToken.None,
-            editContext.AuthenticatedActionKey));
-    };
-
-    public static TextEditorEdit PasteAsync = async (ITextEditorEditContext editContext) =>
-    {
-        var clipboard = await editContext.CommandArgs.ClipboardService.ReadClipboard();
-
-        editContext.CommandArgs.Dispatcher.Dispatch(new InsertTextAction(
-            editContext.Model.ResourceUri,
-            editContext.ViewModel.ViewModelKey,
-            editContext.RefreshCursorsRequest.CursorBag,
-            clipboard,
-            CancellationToken.None,
-            editContext.AuthenticatedActionKey));
-    };
-
-    public static TextEditorEdit SaveAsync = (ITextEditorEditContext editContext) =>
-    {
-        var onSaveRequestedFunc = editContext.ViewModel.OnSaveRequested;
-
-        if (onSaveRequestedFunc is not null)
+        return (ITextEditorEditContext editContext) =>
         {
-            onSaveRequestedFunc.Invoke(editContext.Model);
+            return Task.CompletedTask;
+        };
+    }
 
-            editContext.CommandArgs.Dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
-                editContext.ViewModel.ViewModelKey,
-                inState => inState with { },
-                editContext.AuthenticatedActionKey)); // "with { }" is a Hack to re-render
-        }
-
-        return Task.CompletedTask;
-    };
-
-    public static TextEditorEdit SelectAllAsync = (ITextEditorEditContext editContext) =>
+    public static TextEditorEdit CopyFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
     {
-        editContext.PrimaryCursor.SelectionAnchorPositionIndex = 0;
-        editContext.PrimaryCursor.SelectionEndingPositionIndex = editContext.Model.DocumentLength;
-
-        return Task.CompletedTask;
-    };
-
-    public static TextEditorEdit UndoAsync = (ITextEditorEditContext editContext) =>
-    {
-        return editContext.CommandArgs.TextEditorService.ModelApi
-            .UndoEdit(editContext.CommandArgs.ModelResourceUri)
-            .Invoke(editContext);
-    };
-
-    public static TextEditorEdit RedoAsync = (ITextEditorEditContext editContext) =>
-    {
-        return editContext.CommandArgs.TextEditorService.ModelApi
-            .RedoEdit(editContext.CommandArgs.ModelResourceUri)
-            .Invoke(editContext);
-    };
-
-    public static TextEditorEdit RemeasureAsync = (ITextEditorEditContext editContext) =>
-    {
-        editContext.CommandArgs.TextEditorService.OptionsApi.SetRenderStateKey(
-            Key<RenderState>.NewKey());
-
-        return Task.CompletedTask;
-    };
-
-    public static TextEditorEdit ScrollLineDownAsync = async (ITextEditorEditContext editContext) =>
-    {
-        await editContext.ViewModel.MutateScrollVerticalPositionByLinesAsync(1);
-    };
-
-    public static TextEditorEdit ScrollLineUpAsync = async (ITextEditorEditContext editContext) =>
-    {
-        await editContext.ViewModel.MutateScrollVerticalPositionByLinesAsync(-1);
-    };
-
-    public static TextEditorEdit ScrollPageDownAsync = async (ITextEditorEditContext editContext) =>
-    {
-        await editContext.ViewModel.MutateScrollVerticalPositionByPagesAsync(1);
-    };
-
-    public static TextEditorEdit ScrollPageUpAsync = async (ITextEditorEditContext editContext) =>
-    {
-        await editContext.ViewModel.MutateScrollVerticalPositionByPagesAsync(-1);
-    };
-
-    public static TextEditorEdit CursorMovePageBottomAsync = (ITextEditorEditContext editContext) =>
-    {
-        if (editContext.ViewModel.VirtualizationResult?.EntryBag.Any() ?? false)
+        return async (ITextEditorEditContext editContext) =>
         {
-            var lastEntry = editContext.ViewModel.VirtualizationResult.EntryBag.Last();
-            var lastEntriesRowLength = editContext.Model.GetLengthOfRow(lastEntry.Index);
+            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
 
-            editContext.PrimaryCursor.RowIndex = lastEntry.Index;
-            editContext.PrimaryCursor.ColumnIndex = lastEntriesRowLength;
-        }
+            if (modelModifier is null || viewModelModifier is null)
+                return;
 
-        return Task.CompletedTask;
-    };
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-    public static TextEditorEdit CursorMovePageTopAsync = (ITextEditorEditContext editContext) =>
+            if (cursorModifierBag is null || primaryCursorModifier is null)
+                return;
+
+            var selectedText = TextEditorSelectionHelper.GetSelectedText(
+                primaryCursorModifier,
+                modelModifier);
+
+            selectedText ??= modelModifier.GetLinesRange(
+                primaryCursorModifier.RowIndex,
+                1);
+
+            await commandArgs.ClipboardService.SetClipboard(selectedText);
+            await viewModelModifier.ViewModel.FocusAsync();
+        };
+    }
+
+    public static TextEditorEdit CutFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
     {
-        if (editContext.ViewModel.VirtualizationResult?.EntryBag.Any() ?? false)
+        return async (ITextEditorEditContext editContext) =>
         {
-            var firstEntry = editContext.ViewModel.VirtualizationResult.EntryBag.First();
+            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
 
-            editContext.PrimaryCursor.RowIndex = firstEntry.Index;
-            editContext.PrimaryCursor.ColumnIndex = 0;
-        }
+            if (modelModifier is null || viewModelModifier is null)
+                return;
 
-        return Task.CompletedTask;
-    };
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-    public static TextEditorEdit DuplicateAsync = (ITextEditorEditContext editContext) =>
-    {
-        var selectedText = TextEditorSelectionHelper.GetSelectedText(
-            editContext.PrimaryCursor,
-            editContext.Model);
+            if (cursorModifierBag is null || primaryCursorModifier is null)
+                return;
 
-        TextEditorCursor cursorForInsertion;
+            var selectedText = TextEditorSelectionHelper.GetSelectedText(
+                primaryCursorModifier,
+                modelModifier);
 
-        if (selectedText is null)
-        {
-            // Select line
-            selectedText = editContext.Model.GetLinesRange(editContext.PrimaryCursor.RowIndex, 1);
+            if (selectedText is null)
+                return; // Should never occur
 
-            cursorForInsertion = new TextEditorCursor(
-                editContext.PrimaryCursor.RowIndex,
-                0,
-                editContext.PrimaryCursor.IsPrimaryCursor);
-        }
-        else
-        {
-            // Clone the TextEditorCursor to remove the TextEditorSelection otherwise the
-            // selected text to duplicate would be overwritten by itself and do nothing
-            cursorForInsertion = editContext.PrimaryCursor.ToCursor() with
-            {
-                Selection = TextEditorSelection.Empty
-            };
-        }
+            await commandArgs.ClipboardService.SetClipboard(selectedText);
+            await viewModelModifier.ViewModel.FocusAsync();
 
-        editContext.CommandArgs.Dispatcher.Dispatch(new InsertTextAction(
-            editContext.Model.ResourceUri,
-            editContext.ViewModel.ViewModelKey,
-            new TextEditorCursorModifier[] { new(cursorForInsertion) }.ToList(),
-            selectedText,
-            CancellationToken.None,
-            editContext.AuthenticatedActionKey));
-
-        return Task.CompletedTask;
-    };
-
-    public static TextEditorEdit IndentMoreAsync = (ITextEditorEditContext editContext) =>
-    {
-        var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(
-            editContext.PrimaryCursor);
-
-        var selectionBoundsInRowIndexUnits = TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(
-            editContext.Model,
-            selectionBoundsInPositionIndexUnits);
-
-        for (var i = selectionBoundsInRowIndexUnits.lowerRowIndexInclusive;
-             i < selectionBoundsInRowIndexUnits.upperRowIndexExclusive;
-             i++)
-        {
-            var cursorForInsertion = new TextEditorCursor(i, 0, true);
-
-            editContext.CommandArgs.Dispatcher.Dispatch(new InsertTextAction(
-                editContext.Model.ResourceUri,
-                editContext.ViewModel.ViewModelKey,
-                editContext.RefreshCursorsRequest.CursorBag,
-                KeyboardKeyFacts.WhitespaceCharacters.TAB.ToString(),
+            commandArgs.Dispatcher.Dispatch(new KeyboardEventAction(
+                modelModifier.ResourceUri,
+                viewModelModifier.ViewModel.ViewModelKey,
+                cursorModifierBag,
+                new KeyboardEventArgs { Key = KeyboardKeyFacts.MetaKeys.DELETE },
                 CancellationToken.None,
                 editContext.AuthenticatedActionKey));
-        }
+        };
+    }
 
-        var lowerBoundPositionIndexChange = 1;
-
-        var upperBoundPositionIndexChange = selectionBoundsInRowIndexUnits.upperRowIndexExclusive -
-            selectionBoundsInRowIndexUnits.lowerRowIndexInclusive;
-
-        if (editContext.PrimaryCursor.SelectionAnchorPositionIndex <
-            editContext.PrimaryCursor.SelectionEndingPositionIndex)
-        {
-            editContext.PrimaryCursor.SelectionAnchorPositionIndex +=
-                lowerBoundPositionIndexChange;
-
-            editContext.PrimaryCursor.SelectionEndingPositionIndex +=
-                upperBoundPositionIndexChange;
-        }
-        else
-        {
-            editContext.PrimaryCursor.SelectionAnchorPositionIndex +=
-                upperBoundPositionIndexChange;
-
-            editContext.PrimaryCursor.SelectionEndingPositionIndex +=
-                lowerBoundPositionIndexChange;
-        }
-
-        var userCursorRowIndex = editContext.PrimaryCursor.RowIndex;
-        var userCursorColumnIndex = editContext.PrimaryCursor.ColumnIndex;
-
-        editContext.PrimaryCursor.RowIndex = userCursorRowIndex;
-        editContext.PrimaryCursor.ColumnIndex = userCursorColumnIndex + 1;
-
-        return Task.CompletedTask;
-    };
-
-    public static TextEditorEdit IndentLessAsync = (ITextEditorEditContext editContext) =>
+    public static TextEditorEdit PasteFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
     {
-        var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(
-            editContext.PrimaryCursor);
-
-        var selectionBoundsInRowIndexUnits = TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(
-            editContext.Model,
-            selectionBoundsInPositionIndexUnits);
-
-        bool isFirstLoop = true;
-
-        for (var i = selectionBoundsInRowIndexUnits.lowerRowIndexInclusive;
-             i < selectionBoundsInRowIndexUnits.upperRowIndexExclusive;
-             i++)
+        return async (ITextEditorEditContext editContext) =>
         {
-            var rowPositionIndex = editContext.Model.GetPositionIndex(i, 0);
-            var characterReadCount = TextEditorModel.TAB_WIDTH;
-            var lengthOfRow = editContext.Model.GetLengthOfRow(i);
+            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
 
-            characterReadCount = Math.Min(lengthOfRow, characterReadCount);
+            if (modelModifier is null || viewModelModifier is null)
+                return;
 
-            var readResult = editContext.Model.GetTextRange(rowPositionIndex, characterReadCount);
-            var removeCharacterCount = 0;
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-            if (readResult.StartsWith(KeyboardKeyFacts.WhitespaceCharacters.TAB))
+            if (cursorModifierBag is null || primaryCursorModifier is null)
+                return;
+
+            var clipboard = await commandArgs.ClipboardService.ReadClipboard();
+
+            commandArgs.Dispatcher.Dispatch(new InsertTextAction(
+                modelModifier.ResourceUri,
+                viewModelModifier.ViewModel.ViewModelKey,
+                cursorModifierBag,
+                clipboard,
+                CancellationToken.None,
+                editContext.AuthenticatedActionKey));
+        };
+    }
+
+    public static TextEditorEdit SaveFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
+    {
+        return (ITextEditorEditContext editContext) =>
+        {
+            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+            if (modelModifier is null || viewModelModifier is null)
+                return Task.CompletedTask;
+
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (cursorModifierBag is null || primaryCursorModifier is null)
+                return Task.CompletedTask;
+
+            var onSaveRequestedFunc = viewModelModifier.ViewModel.OnSaveRequested;
+
+            if (onSaveRequestedFunc is not null)
             {
-                removeCharacterCount = 1;
+                onSaveRequestedFunc.Invoke(modelModifier);
 
-                var cursorForDeletion = new TextEditorCursor(i, 0, true);
+                commandArgs.Dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
+                    viewModelModifier.ViewModel.ViewModelKey,
+                    inState => inState with { },
+                    editContext.AuthenticatedActionKey)); // "with { }" is a Hack to re-render
+            }
 
-                editContext.CommandArgs.Dispatcher.Dispatch(new DeleteTextByRangeAction(
-                    editContext.Model.ResourceUri,
-                    editContext.ViewModel.ViewModelKey,
-                    new TextEditorCursorModifier[] { new(cursorForDeletion) }.ToList(),
-                    removeCharacterCount, // Delete a single "Tab" character
+            return Task.CompletedTask;
+        };
+    }
+
+    public static TextEditorEdit SelectAllFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
+    {
+        return (ITextEditorEditContext editContext) =>
+        {
+            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+            if (modelModifier is null || viewModelModifier is null)
+                return Task.CompletedTask;
+
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (cursorModifierBag is null || primaryCursorModifier is null)
+                return Task.CompletedTask;
+
+            primaryCursorModifier.SelectionAnchorPositionIndex = 0;
+            primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.DocumentLength;
+
+            return Task.CompletedTask;
+        };
+    }
+
+    public static TextEditorEdit UndoFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
+    {
+        return (ITextEditorEditContext editContext) =>
+        {
+            return editContext.TextEditorService.ModelApi
+                .UndoEdit(modelResourceUri)
+                .Invoke(editContext);
+        };
+    }
+
+    public static TextEditorEdit RedoFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
+    {
+        return (ITextEditorEditContext editContext) =>
+        {
+            return editContext.TextEditorService.ModelApi
+                .RedoEdit(modelResourceUri)
+                .Invoke(editContext);
+        };
+    }
+
+    public static TextEditorEdit RemeasureFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
+    {
+        return (ITextEditorEditContext editContext) =>
+        {
+            editContext.TextEditorService.OptionsApi.SetRenderStateKey(
+                Key<RenderState>.NewKey());
+
+            return Task.CompletedTask;
+        };
+    }
+
+    public static TextEditorEdit ScrollLineDownFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
+    {
+        return async (ITextEditorEditContext editContext) =>
+        {
+            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+            if (modelModifier is null || viewModelModifier is null)
+                return;
+
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (cursorModifierBag is null || primaryCursorModifier is null)
+                return;
+
+            await viewModelModifier.ViewModel.MutateScrollVerticalPositionByLinesAsync(1);
+        };
+    }
+
+    public static TextEditorEdit ScrollLineUpFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
+    {
+        return async (ITextEditorEditContext editContext) =>
+        {
+            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+            if (modelModifier is null || viewModelModifier is null)
+                return;
+
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (cursorModifierBag is null || primaryCursorModifier is null)
+                return;
+
+            await viewModelModifier.ViewModel.MutateScrollVerticalPositionByLinesAsync(-1);
+        };
+    }
+
+    public static TextEditorEdit ScrollPageDownFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
+    {
+        return async (ITextEditorEditContext editContext) =>
+        {
+            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+            if (modelModifier is null || viewModelModifier is null)
+                return;
+
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (cursorModifierBag is null || primaryCursorModifier is null)
+                return;
+
+            await viewModelModifier.ViewModel.MutateScrollVerticalPositionByPagesAsync(1);
+        };
+    }
+
+    public static TextEditorEdit ScrollPageUpFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
+    {
+        return async (ITextEditorEditContext editContext) =>
+        {
+            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+            if (modelModifier is null || viewModelModifier is null)
+                return;
+
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (cursorModifierBag is null || primaryCursorModifier is null)
+                return;
+
+            await viewModelModifier.ViewModel.MutateScrollVerticalPositionByPagesAsync(-1);
+        };
+    }
+
+    public static TextEditorEdit CursorMovePageBottomFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
+    {
+        return (ITextEditorEditContext editContext) =>
+        {
+            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+            if (modelModifier is null || viewModelModifier is null)
+                return Task.CompletedTask;
+
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (cursorModifierBag is null || primaryCursorModifier is null)
+                return Task.CompletedTask;
+
+            if (viewModelModifier.ViewModel.VirtualizationResult?.EntryBag.Any() ?? false)
+            {
+                var lastEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryBag.Last();
+                var lastEntriesRowLength = modelModifier.GetLengthOfRow(lastEntry.Index);
+
+                primaryCursorModifier.RowIndex = lastEntry.Index;
+                primaryCursorModifier.ColumnIndex = lastEntriesRowLength;
+            }
+
+            return Task.CompletedTask;
+        };
+    }
+
+    public static TextEditorEdit CursorMovePageTopFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
+    {
+        return (ITextEditorEditContext editContext) =>
+        {
+            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+            if (modelModifier is null || viewModelModifier is null)
+                return Task.CompletedTask;
+
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (cursorModifierBag is null || primaryCursorModifier is null)
+                return Task.CompletedTask;
+
+            if (viewModelModifier.ViewModel.VirtualizationResult?.EntryBag.Any() ?? false)
+            {
+                var firstEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryBag.First();
+
+                primaryCursorModifier.RowIndex = firstEntry.Index;
+                primaryCursorModifier.ColumnIndex = 0;
+            }
+
+            return Task.CompletedTask;
+        };
+    }
+
+    public static TextEditorEdit DuplicateFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
+    {
+        return (ITextEditorEditContext editContext) =>
+        {
+            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+            if (modelModifier is null || viewModelModifier is null)
+                return Task.CompletedTask;
+
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (cursorModifierBag is null || primaryCursorModifier is null)
+                return Task.CompletedTask;
+
+            var selectedText = TextEditorSelectionHelper.GetSelectedText(
+                primaryCursorModifier,
+                modelModifier);
+
+            TextEditorCursor cursorForInsertion;
+
+            if (selectedText is null)
+            {
+                // Select line
+                selectedText = modelModifier.GetLinesRange(primaryCursorModifier.RowIndex, 1);
+
+                cursorForInsertion = new TextEditorCursor(
+                    primaryCursorModifier.RowIndex,
+                    0,
+                    primaryCursorModifier.IsPrimaryCursor);
+            }
+            else
+            {
+                // Clone the TextEditorCursor to remove the TextEditorSelection otherwise the
+                // selected text to duplicate would be overwritten by itself and do nothing
+                cursorForInsertion = primaryCursorModifier.ToCursor() with
+                {
+                    Selection = TextEditorSelection.Empty
+                };
+            }
+
+            commandArgs.Dispatcher.Dispatch(new InsertTextAction(
+                modelModifier.ResourceUri,
+                viewModelModifier.ViewModel.ViewModelKey,
+                new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, new List<TextEditorCursorModifier>{ new(cursorForInsertion) }),
+                selectedText,
+                CancellationToken.None,
+                editContext.AuthenticatedActionKey));
+
+            return Task.CompletedTask;
+        };
+    }
+
+    public static TextEditorEdit IndentMoreFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
+    {
+        return (ITextEditorEditContext editContext) =>
+        {
+            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+            if (modelModifier is null || viewModelModifier is null)
+                return Task.CompletedTask;
+
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (cursorModifierBag is null || primaryCursorModifier is null)
+                return Task.CompletedTask;
+
+            var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(
+                primaryCursorModifier);
+
+            var selectionBoundsInRowIndexUnits = TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(
+                modelModifier,
+                selectionBoundsInPositionIndexUnits);
+
+            for (var i = selectionBoundsInRowIndexUnits.lowerRowIndexInclusive;
+                 i < selectionBoundsInRowIndexUnits.upperRowIndexExclusive;
+                 i++)
+            {
+                var cursorForInsertion = new TextEditorCursor(i, 0, true);
+
+                commandArgs.Dispatcher.Dispatch(new InsertTextAction(
+                    modelModifier.ResourceUri,
+                    viewModelModifier.ViewModel.ViewModelKey,
+                    cursorModifierBag,
+                    KeyboardKeyFacts.WhitespaceCharacters.TAB.ToString(),
                     CancellationToken.None,
                     editContext.AuthenticatedActionKey));
             }
-            else if (readResult.StartsWith(KeyboardKeyFacts.WhitespaceCharacters.SPACE))
-            {
-                var cursorForDeletion = new TextEditorCursor(i, 0, true);
-                var contiguousSpaceCount = 0;
 
-                foreach (var character in readResult)
+            var lowerBoundPositionIndexChange = 1;
+
+            var upperBoundPositionIndexChange = selectionBoundsInRowIndexUnits.upperRowIndexExclusive -
+                selectionBoundsInRowIndexUnits.lowerRowIndexInclusive;
+
+            if (primaryCursorModifier.SelectionAnchorPositionIndex <
+                primaryCursorModifier.SelectionEndingPositionIndex)
+            {
+                primaryCursorModifier.SelectionAnchorPositionIndex +=
+                    lowerBoundPositionIndexChange;
+
+                primaryCursorModifier.SelectionEndingPositionIndex +=
+                    upperBoundPositionIndexChange;
+            }
+            else
+            {
+                primaryCursorModifier.SelectionAnchorPositionIndex +=
+                    upperBoundPositionIndexChange;
+
+                primaryCursorModifier.SelectionEndingPositionIndex +=
+                    lowerBoundPositionIndexChange;
+            }
+
+            var userCursorRowIndex = primaryCursorModifier.RowIndex;
+            var userCursorColumnIndex = primaryCursorModifier.ColumnIndex;
+
+            primaryCursorModifier.RowIndex = userCursorRowIndex;
+            primaryCursorModifier.ColumnIndex = userCursorColumnIndex + 1;
+
+            return Task.CompletedTask;
+        };
+    }
+
+    public static TextEditorEdit IndentLessFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
+    {
+        return (ITextEditorEditContext editContext) =>
+        {
+            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+            if (modelModifier is null || viewModelModifier is null)
+                return Task.CompletedTask;
+
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (cursorModifierBag is null || primaryCursorModifier is null)
+                return Task.CompletedTask;
+
+            var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(
+                primaryCursorModifier);
+
+            var selectionBoundsInRowIndexUnits = TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(
+                modelModifier,
+                selectionBoundsInPositionIndexUnits);
+
+            bool isFirstLoop = true;
+
+            for (var i = selectionBoundsInRowIndexUnits.lowerRowIndexInclusive;
+                 i < selectionBoundsInRowIndexUnits.upperRowIndexExclusive;
+                 i++)
+            {
+                var rowPositionIndex = modelModifier.GetPositionIndex(i, 0);
+                var characterReadCount = TextEditorModel.TAB_WIDTH;
+                var lengthOfRow = modelModifier.GetLengthOfRow(i);
+
+                characterReadCount = Math.Min(lengthOfRow, characterReadCount);
+
+                var readResult = modelModifier.GetTextRange(rowPositionIndex, characterReadCount);
+                var removeCharacterCount = 0;
+
+                if (readResult.StartsWith(KeyboardKeyFacts.WhitespaceCharacters.TAB))
                 {
-                    if (character == KeyboardKeyFacts.WhitespaceCharacters.SPACE)
-                        contiguousSpaceCount++;
+                    removeCharacterCount = 1;
+
+                    var cursorForDeletion = new TextEditorCursor(i, 0, true);
+
+                    commandArgs.Dispatcher.Dispatch(new DeleteTextByRangeAction(
+                        modelModifier.ResourceUri,
+                        viewModelModifier.ViewModel.ViewModelKey,
+                        new(Key<TextEditorViewModel>.Empty, new List<TextEditorCursorModifier> { new(cursorForDeletion) }),
+                        removeCharacterCount, // Delete a single "Tab" character
+                        CancellationToken.None,
+                        editContext.AuthenticatedActionKey));
+                }
+                else if (readResult.StartsWith(KeyboardKeyFacts.WhitespaceCharacters.SPACE))
+                {
+                    var cursorForDeletion = new TextEditorCursor(i, 0, true);
+                    var contiguousSpaceCount = 0;
+
+                    foreach (var character in readResult)
+                    {
+                        if (character == KeyboardKeyFacts.WhitespaceCharacters.SPACE)
+                            contiguousSpaceCount++;
+                    }
+
+                    removeCharacterCount = contiguousSpaceCount;
+
+                    commandArgs.Dispatcher.Dispatch(new DeleteTextByRangeAction(
+                        modelModifier.ResourceUri,
+                        viewModelModifier.ViewModel.ViewModelKey,
+                        new(Key<TextEditorViewModel>.Empty, new List<TextEditorCursorModifier> { new(cursorForDeletion) }),
+                        removeCharacterCount,
+                        CancellationToken.None,
+                        editContext.AuthenticatedActionKey));
                 }
 
-                removeCharacterCount = contiguousSpaceCount;
-
-                editContext.CommandArgs.Dispatcher.Dispatch(new DeleteTextByRangeAction(
-                    editContext.Model.ResourceUri,
-                    editContext.ViewModel.ViewModelKey,
-                    new TextEditorCursorModifier[] { new(cursorForDeletion) }.ToList(),
-                    removeCharacterCount,
-                    CancellationToken.None,
-                    editContext.AuthenticatedActionKey));
-            }
-
-            // Modify the lower bound of user's text selection
-            if (isFirstLoop)
-            {
-                isFirstLoop = false;
-
-                if (editContext.PrimaryCursor.SelectionAnchorPositionIndex <
-                    editContext.PrimaryCursor.SelectionEndingPositionIndex)
+                // Modify the lower bound of user's text selection
+                if (isFirstLoop)
                 {
-                    editContext.PrimaryCursor.SelectionAnchorPositionIndex -=
+                    isFirstLoop = false;
+
+                    if (primaryCursorModifier.SelectionAnchorPositionIndex <
+                        primaryCursorModifier.SelectionEndingPositionIndex)
+                    {
+                        primaryCursorModifier.SelectionAnchorPositionIndex -=
+                            removeCharacterCount;
+                    }
+                    else
+                    {
+                        primaryCursorModifier.SelectionEndingPositionIndex -=
+                            removeCharacterCount;
+                    }
+                }
+
+                // Modify the upper bound of user's text selection
+                if (primaryCursorModifier.SelectionAnchorPositionIndex <
+                    primaryCursorModifier.SelectionEndingPositionIndex)
+                {
+                    primaryCursorModifier.SelectionEndingPositionIndex -=
                         removeCharacterCount;
                 }
                 else
                 {
-                    editContext.PrimaryCursor.SelectionEndingPositionIndex -=
+                    primaryCursorModifier.SelectionAnchorPositionIndex -=
                         removeCharacterCount;
+                }
+
+                // Modify the column index of user's cursor
+                if (i == primaryCursorModifier.RowIndex)
+                {
+                    var nextColumnIndex = primaryCursorModifier.ColumnIndex -
+                        removeCharacterCount;
+
+                    primaryCursorModifier.RowIndex = primaryCursorModifier.RowIndex;
+                    primaryCursorModifier.ColumnIndex = Math.Max(0, nextColumnIndex);
                 }
             }
 
-            // Modify the upper bound of user's text selection
-            if (editContext.PrimaryCursor.SelectionAnchorPositionIndex <
-                editContext.PrimaryCursor.SelectionEndingPositionIndex)
-            {
-                editContext.PrimaryCursor.SelectionEndingPositionIndex -=
-                    removeCharacterCount;
-            }
-            else
-            {
-                editContext.PrimaryCursor.SelectionAnchorPositionIndex -=
-                    removeCharacterCount;
-            }
-
-            // Modify the column index of user's cursor
-            if (i == editContext.PrimaryCursor.RowIndex)
-            {
-                var nextColumnIndex = editContext.PrimaryCursor.ColumnIndex -
-                    removeCharacterCount;
-
-                editContext.PrimaryCursor.RowIndex = editContext.PrimaryCursor.RowIndex;
-                editContext.PrimaryCursor.ColumnIndex = Math.Max(0, nextColumnIndex);
-            }
-        }
-
-        return Task.CompletedTask;
-    };
-
-    public static TextEditorEdit ClearTextSelectionAsync = (ITextEditorEditContext editContext) =>
-    {
-        editContext.PrimaryCursor.SelectionAnchorPositionIndex = null;
-        return Task.CompletedTask;
-    };
-
-    public static TextEditorEdit NewLineBelowAsync = (ITextEditorEditContext editContext) =>
-    {
-        editContext.PrimaryCursor.SelectionAnchorPositionIndex = null;
-
-        var lengthOfRow = editContext.Model.GetLengthOfRow(editContext.PrimaryCursor.RowIndex);
-
-        editContext.PrimaryCursor.RowIndex = editContext.PrimaryCursor.RowIndex;
-        editContext.PrimaryCursor.ColumnIndex = lengthOfRow;
-
-        editContext.CommandArgs.Dispatcher.Dispatch(new InsertTextAction(
-            editContext.Model.ResourceUri,
-            editContext.ViewModel.ViewModelKey,
-            editContext.RefreshCursorsRequest.CursorBag,
-            "\n",
-            CancellationToken.None,
-            editContext.AuthenticatedActionKey));
-
-        return Task.CompletedTask;
-    };
-
-    public static TextEditorEdit NewLineAboveAsync = (ITextEditorEditContext editContext) =>
-    {
-        editContext.PrimaryCursor.SelectionAnchorPositionIndex = null;
-
-        editContext.PrimaryCursor.RowIndex = editContext.PrimaryCursor.RowIndex;
-        editContext.PrimaryCursor.ColumnIndex = 0;
-
-        editContext.CommandArgs.Dispatcher.Dispatch(new InsertTextAction(
-            editContext.Model.ResourceUri,
-            editContext.ViewModel.ViewModelKey,
-            new TextEditorCursorModifier[] { editContext.PrimaryCursor }.ToList(),
-            "\n",
-            CancellationToken.None,
-            editContext.AuthenticatedActionKey));
-
-        if (editContext.PrimaryCursor.RowIndex > 1)
-        {
-            editContext.PrimaryCursor.RowIndex--;
-            editContext.PrimaryCursor.ColumnIndex = 0;
-        }
-
-        return Task.CompletedTask;
-    };
-
-    public static TextEditorEdit GoToMatchingCharacterFactoryAsync = async (ITextEditorEditContext editContext) =>
-    {
-        var cursorPositionIndex = editContext.Model.GetCursorPositionIndex(
-            editContext.PrimaryCursor);
-
-        if (editContext.CommandArgs.ShouldSelectText)
-        {
-            if (!TextEditorSelectionHelper.HasSelectedText(editContext.PrimaryCursor))
-                editContext.PrimaryCursor.SelectionAnchorPositionIndex = cursorPositionIndex;
-        }
-        else
-        {
-            editContext.PrimaryCursor.SelectionAnchorPositionIndex = null;
-        }
-
-        var previousCharacter = editContext.Model.GetTextAt(cursorPositionIndex - 1);
-        var currentCharacter = editContext.Model.GetTextAt(cursorPositionIndex);
-
-        char? characterToMatch = null;
-        char? match = null;
-
-        var fallbackToPreviousCharacter = false;
-
-        if (CharacterKindHelper.CharToCharacterKind(currentCharacter) == CharacterKind.Punctuation)
-        {
-            // Prefer current character
-            match = KeyboardKeyFacts.MatchPunctuationCharacter(currentCharacter);
-
-            if (match is not null)
-                characterToMatch = currentCharacter;
-        }
-
-        if (characterToMatch is null && CharacterKindHelper.CharToCharacterKind(previousCharacter) == CharacterKind.Punctuation)
-        {
-            // Fallback to the previous current character
-            match = KeyboardKeyFacts.MatchPunctuationCharacter(previousCharacter);
-
-            if (match is not null)
-            {
-                characterToMatch = previousCharacter;
-                fallbackToPreviousCharacter = true;
-            }
-        }
-
-        if (characterToMatch is null || match is null)
-            return;
-
-        var directionToFindMatchingPunctuationCharacter =
-            KeyboardKeyFacts.DirectionToFindMatchingPunctuationCharacter(characterToMatch.Value);
-
-        if (directionToFindMatchingPunctuationCharacter is null)
-            return;
-
-        var temporaryCursor = new TextEditorCursor(
-            editContext.PrimaryCursor.RowIndex,
-            editContext.PrimaryCursor.ColumnIndex,
-            editContext.PrimaryCursor.IsPrimaryCursor)
-        {
-            PreferredColumnIndex = editContext.PrimaryCursor.PreferredColumnIndex,
+            return Task.CompletedTask;
         };
+    }
 
-        var unmatchedCharacters =
-            fallbackToPreviousCharacter && directionToFindMatchingPunctuationCharacter == -1
-                ? 0
-                : 1;
-
-        while (true)
+    public static TextEditorEdit ClearTextSelectionFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
+    {
+        return (ITextEditorEditContext editContext) =>
         {
-            KeyboardEventArgs keyboardEventArgs;
+            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
 
-            if (directionToFindMatchingPunctuationCharacter == -1)
+            if (modelModifier is null || viewModelModifier is null)
+                return Task.CompletedTask;
+
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (cursorModifierBag is null || primaryCursorModifier is null)
+                return Task.CompletedTask;
+
+            primaryCursorModifier.SelectionAnchorPositionIndex = null;
+            return Task.CompletedTask;
+        };
+    }
+
+    public static TextEditorEdit NewLineBelowFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
+    {
+        return (ITextEditorEditContext editContext) =>
+        {
+            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+            if (modelModifier is null || viewModelModifier is null)
+                return Task.CompletedTask;
+
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (cursorModifierBag is null || primaryCursorModifier is null)
+                return Task.CompletedTask;
+
+            primaryCursorModifier.SelectionAnchorPositionIndex = null;
+
+            var lengthOfRow = modelModifier.GetLengthOfRow(primaryCursorModifier.RowIndex);
+
+            primaryCursorModifier.RowIndex = primaryCursorModifier.RowIndex;
+            primaryCursorModifier.ColumnIndex = lengthOfRow;
+
+            commandArgs.Dispatcher.Dispatch(new InsertTextAction(
+                modelModifier.ResourceUri,
+                viewModelModifier.ViewModel.ViewModelKey,
+                cursorModifierBag,
+                "\n",
+                CancellationToken.None,
+                editContext.AuthenticatedActionKey));
+
+            return Task.CompletedTask;
+        };
+    }
+
+    public static TextEditorEdit NewLineAboveFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
+    {
+        return (ITextEditorEditContext editContext) =>
+        {
+            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+            if (modelModifier is null || viewModelModifier is null)
+                return Task.CompletedTask;
+
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (cursorModifierBag is null || primaryCursorModifier is null)
+                return Task.CompletedTask;
+
+            primaryCursorModifier.SelectionAnchorPositionIndex = null;
+
+            primaryCursorModifier.RowIndex = primaryCursorModifier.RowIndex;
+            primaryCursorModifier.ColumnIndex = 0;
+
+            commandArgs.Dispatcher.Dispatch(new InsertTextAction(
+                modelModifier.ResourceUri,
+                viewModelModifier.ViewModel.ViewModelKey,
+                new(Key<TextEditorViewModel>.Empty, new List<TextEditorCursorModifier> { primaryCursorModifier }),
+                "\n",
+                CancellationToken.None,
+                editContext.AuthenticatedActionKey));
+
+            if (primaryCursorModifier.RowIndex > 1)
             {
-                keyboardEventArgs = new KeyboardEventArgs
-                {
-                    Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
-                };
+                primaryCursorModifier.RowIndex--;
+                primaryCursorModifier.ColumnIndex = 0;
+            }
+
+            return Task.CompletedTask;
+        };
+    }
+
+    public static TextEditorEdit GoToMatchingCharacterFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
+    {
+        return async (ITextEditorEditContext editContext) =>
+        {
+            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+            if (modelModifier is null || viewModelModifier is null)
+                return;
+
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (cursorModifierBag is null || primaryCursorModifier is null)
+                return;
+
+            var cursorPositionIndex = modelModifier.GetCursorPositionIndex(primaryCursorModifier);
+
+            if (commandArgs.ShouldSelectText)
+            {
+                if (!TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier))
+                    primaryCursorModifier.SelectionAnchorPositionIndex = cursorPositionIndex;
             }
             else
             {
-                keyboardEventArgs = new KeyboardEventArgs
-                {
-                    Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
-                };
+                primaryCursorModifier.SelectionAnchorPositionIndex = null;
             }
 
-            await editContext.CommandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
-                    keyboardEventArgs,
-                    editContext.Model,
-                    editContext.ViewModel.ViewModelKey,
-                    editContext.PrimaryCursor)
-                .Invoke(editContext);
+            var previousCharacter = modelModifier.GetTextAt(cursorPositionIndex - 1);
+            var currentCharacter = modelModifier.GetTextAt(cursorPositionIndex);
 
-            var temporaryCursorPositionIndex = editContext.Model.GetCursorPositionIndex(
-                temporaryCursor);
+            char? characterToMatch = null;
+            char? match = null;
 
-            var characterAt = editContext.Model.GetTextAt(temporaryCursorPositionIndex);
+            var fallbackToPreviousCharacter = false;
 
-            if (characterAt == match)
-                unmatchedCharacters--;
-            else if (characterAt == characterToMatch)
-                unmatchedCharacters++;
+            if (CharacterKindHelper.CharToCharacterKind(currentCharacter) == CharacterKind.Punctuation)
+            {
+                // Prefer current character
+                match = KeyboardKeyFacts.MatchPunctuationCharacter(currentCharacter);
 
-            if (unmatchedCharacters == 0)
-                break;
+                if (match is not null)
+                    characterToMatch = currentCharacter;
+            }
 
-            if (temporaryCursorPositionIndex <= 0 ||
-                temporaryCursorPositionIndex >= editContext.Model.DocumentLength)
-                break;
-        }
+            if (characterToMatch is null && CharacterKindHelper.CharToCharacterKind(previousCharacter) == CharacterKind.Punctuation)
+            {
+                // Fallback to the previous current character
+                match = KeyboardKeyFacts.MatchPunctuationCharacter(previousCharacter);
 
-        if (editContext.CommandArgs.ShouldSelectText)
-        {
-            editContext.PrimaryCursor.SelectionEndingPositionIndex =
-                editContext.Model.GetCursorPositionIndex(temporaryCursor);
-        }
+                if (match is not null)
+                {
+                    characterToMatch = previousCharacter;
+                    fallbackToPreviousCharacter = true;
+                }
+            }
 
-        editContext.PrimaryCursor.RowIndex = temporaryCursor.RowIndex;
-        editContext.PrimaryCursor.ColumnIndex = temporaryCursor.ColumnIndex;
-    };
+            if (characterToMatch is null || match is null)
+                return;
+
+            var directionToFindMatchingPunctuationCharacter =
+                KeyboardKeyFacts.DirectionToFindMatchingPunctuationCharacter(characterToMatch.Value);
+
+            if (directionToFindMatchingPunctuationCharacter is null)
+                return;
+
+            var temporaryCursor = new TextEditorCursor(
+                primaryCursorModifier.RowIndex,
+                primaryCursorModifier.ColumnIndex,
+                primaryCursorModifier.IsPrimaryCursor)
+            {
+                PreferredColumnIndex = primaryCursorModifier.PreferredColumnIndex,
+            };
+
+            var unmatchedCharacters =
+                fallbackToPreviousCharacter && directionToFindMatchingPunctuationCharacter == -1
+                    ? 0
+                    : 1;
+
+            while (true)
+            {
+                KeyboardEventArgs keyboardEventArgs;
+
+                if (directionToFindMatchingPunctuationCharacter == -1)
+                {
+                    keyboardEventArgs = new KeyboardEventArgs
+                    {
+                        Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
+                    };
+                }
+                else
+                {
+                    keyboardEventArgs = new KeyboardEventArgs
+                    {
+                        Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
+                    };
+                }
+
+                await editContext.TextEditorService.ViewModelApi.GetMoveCursorTask(
+                        keyboardEventArgs,
+                        modelModifier.ResourceUri,
+                        viewModelModifier.ViewModel.ViewModelKey,
+                        primaryCursorModifier)
+                    .Invoke(editContext);
+
+                var temporaryCursorPositionIndex = modelModifier.GetCursorPositionIndex(
+                    temporaryCursor);
+
+                var characterAt = modelModifier.GetTextAt(temporaryCursorPositionIndex);
+
+                if (characterAt == match)
+                    unmatchedCharacters--;
+                else if (characterAt == characterToMatch)
+                    unmatchedCharacters++;
+
+                if (unmatchedCharacters == 0)
+                    break;
+
+                if (temporaryCursorPositionIndex <= 0 ||
+                    temporaryCursorPositionIndex >= modelModifier.DocumentLength)
+                    break;
+            }
+
+            if (commandArgs.ShouldSelectText)
+            {
+                primaryCursorModifier.SelectionEndingPositionIndex =
+                    modelModifier.GetCursorPositionIndex(temporaryCursor);
+            }
+
+            primaryCursorModifier.RowIndex = temporaryCursor.RowIndex;
+            primaryCursorModifier.ColumnIndex = temporaryCursor.ColumnIndex;
+        };
+    }
 
     public static TextEditorEdit GoToDefinitionAsync = (ITextEditorEditContext editContext) =>
     {

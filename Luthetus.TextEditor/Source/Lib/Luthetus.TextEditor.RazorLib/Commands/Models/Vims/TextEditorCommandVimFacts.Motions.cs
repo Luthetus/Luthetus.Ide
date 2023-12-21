@@ -43,7 +43,7 @@ public static partial class TextEditorCommandVimFacts
             TextEditorCommandArgs commandArgs,
             TextEditorModel model,
             TextEditorViewModel viewModel,
-            RefreshCursorsRequest refreshCursorsRequest,
+            TextEditorCursorModifierBag refreshCursorsRequest,
             TextEditorCursorModifier primaryCursor) 
         {
             void MutateIndexCoordinatesAndPreferredColumnIndex(int columnIndex)
@@ -114,7 +114,7 @@ public static partial class TextEditorCommandVimFacts
             TextEditorCommandArgs commandArgs,
             TextEditorModel model,
             TextEditorViewModel viewModel,
-            RefreshCursorsRequest refreshCursorsRequest,
+            TextEditorCursorModifierBag refreshCursorsRequest,
             TextEditorCursorModifier primaryCursor)
         {
             return PerformEndAsync(
@@ -129,7 +129,7 @@ public static partial class TextEditorCommandVimFacts
             TextEditorCommandArgs commandArgs,
             TextEditorModel model,
             TextEditorViewModel viewModel,
-            RefreshCursorsRequest refreshCursorsRequest,
+            TextEditorCursorModifierBag refreshCursorsRequest,
             TextEditorCursorModifier primaryCursor,
             bool isRecursiveCall = false)
         {
@@ -234,7 +234,7 @@ public static partial class TextEditorCommandVimFacts
             TextEditorCommandArgs commandArgs,
             TextEditorModel model,
             TextEditorViewModel viewModel,
-            RefreshCursorsRequest refreshCursorsRequest,
+            TextEditorCursorModifierBag refreshCursorsRequest,
             TextEditorCursorModifier primaryCursor)
         {
             void MutateIndexCoordinatesAndPreferredColumnIndex(int columnIndex)
@@ -313,7 +313,7 @@ public static partial class TextEditorCommandVimFacts
             TextEditorCommandArgs commandArgs,
             TextEditorModel model,
             TextEditorViewModel viewModel,
-            RefreshCursorsRequest refreshCursorsRequest,
+            TextEditorCursorModifierBag refreshCursorsRequest,
             TextEditorCursorModifier primaryCursor)
         {
             var activeKeymap = commandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
@@ -383,7 +383,7 @@ public static partial class TextEditorCommandVimFacts
             TextEditorCommandArgs commandArgs,
             TextEditorModel model,
             TextEditorViewModel viewModel,
-            RefreshCursorsRequest refreshCursorsRequest,
+            TextEditorCursorModifierBag refreshCursorsRequest,
             TextEditorCursorModifier primaryCursor)
         {
             var activeKeymap = commandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap

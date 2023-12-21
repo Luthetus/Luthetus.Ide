@@ -67,7 +67,7 @@ public record TextEditorViewModel : IDisposable
     public ITextEditorService TextEditorService { get; init; }
     public VirtualizationResult<List<RichCharacter>> VirtualizationResult { get; init; }
     public bool DisplayCommandBar { get; init; }
-    public Action<TextEditorModel>? OnSaveRequested { get; init; }
+    public Action<ITextEditorModel>? OnSaveRequested { get; init; }
     public Func<TextEditorModel, string>? GetTabDisplayNameFunc { get; init; }
     /// <summary><see cref="FirstPresentationLayerKeysBag"/> is painted prior to any internal workings of the text editor.<br/><br/>Therefore the selected text background is rendered after anything in the <see cref="FirstPresentationLayerKeysBag"/>.<br/><br/>When using the <see cref="FirstPresentationLayerKeysBag"/> one might find their css overriden by for example, text being selected.</summary>
     public ImmutableList<Key<TextEditorPresentationModel>> FirstPresentationLayerKeysBag { get; init; } = ImmutableList<Key<TextEditorPresentationModel>>.Empty;

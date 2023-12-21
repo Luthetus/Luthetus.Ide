@@ -28,4 +28,7 @@ public interface ITextEditorModel
 	public int EditBlockIndex { get; }
 	public (int rowIndex, int rowLength) MostCharactersOnASingleRowTuple { get; }
 	public Key<RenderState> RenderStateKey { get; }
+
+    public int RowCount { get; }
+    public int DocumentLength { get; }
 }

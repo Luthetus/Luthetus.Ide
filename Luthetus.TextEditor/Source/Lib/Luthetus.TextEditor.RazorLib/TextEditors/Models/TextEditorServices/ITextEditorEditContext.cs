@@ -1,19 +1,25 @@
 ﻿using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
-using static Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorService;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 public interface ITextEditorEditContext
 {
-    public TextEditorCommandArgs CommandArgs { get; set; }
-    public TextEditorModel Model { get; set; }
-    public TextEditorViewModel ViewModel { get; set; }
-    public RefreshCursorsRequest RefreshCursorsRequest { get; set; }
-    public TextEditorCursorModifier PrimaryCursor { get; set; }
-    public Key<AuthenticatedAction> AuthenticatedActionKey { get; set; }
+    public ITextEditorService TextEditorService { get; }
+    public Key<AuthenticatedAction> AuthenticatedActionKey { get; }
+
+    public TextEditorModelModifier? GetModelModifier(ResourceUri? modelResourceUri);
+    public TextEditorModelModifier? GetModelModifierByViewModelKey(Key<TextEditorViewModel> viewModelKey);
+    public TextEditorViewModelModifier? GetViewModelModifier(Key<TextEditorViewModel> viewModelKey);
+    public TextEditorCursorModifierBag? GetCursorModifierBag(TextEditorViewModel viewModel);
+
+    /// <summary>
+    /// TODO: Caching for this method?
+    /// </summary>
+    public TextEditorCursorModifier? GetPrimaryCursorModifier(TextEditorCursorModifierBag? cursorModifierBag);
 }
 

@@ -69,7 +69,4 @@ public partial class TextEditorModel
     /// </summary>
     public Key<TextEditorModel> Key  => throw new NotImplementedException($"{nameof(TextEditorModel)} uses {nameof(ResourceUri)} as its unique identifier. Throughout this library, one finds {typeof(Key<>).FullName} to be a unique identifier. However since {typeof(ResourceUri).FullName} should be unique, {nameof(TextEditorModel)} is an exception to this pattern.");
     public Key<RenderState> RenderStateKey { get; init; } = Key<RenderState>.NewKey();
-
-	public int RowCount => RowEndingPositionsBag.Count;
-	public int DocumentLength => ContentBag.Count;
 }

@@ -57,7 +57,7 @@ public partial class TextEditorModelState
     public record KeyboardEventAction(
             ResourceUri ResourceUri,
             Key<TextEditorViewModel>? ViewModelKey,
-            List<TextEditorCursorModifier> CursorModifierBag,
+            TextEditorCursorModifierBag CursorModifierBag,
             KeyboardEventArgs KeyboardEventArgs,
             CancellationToken CancellationToken,
             Key<AuthenticatedAction> AuthenticatedActionKey)
@@ -66,7 +66,7 @@ public partial class TextEditorModelState
     public record InsertTextAction(
             ResourceUri ResourceUri,
             Key<TextEditorViewModel>? ViewModelKey,
-            List<TextEditorCursorModifier> CursorModifierBag,
+            TextEditorCursorModifierBag CursorModifierBag,
             string Content,
             CancellationToken CancellationToken,
             Key<AuthenticatedAction> AuthenticatedActionKey)
@@ -75,7 +75,7 @@ public partial class TextEditorModelState
     public record DeleteTextByMotionAction(
             ResourceUri ResourceUri,
             Key<TextEditorViewModel>? ViewModelKey,
-            List<TextEditorCursorModifier> CursorModifierBag,
+            TextEditorCursorModifierBag CursorModifierBag,
             MotionKind MotionKind,
             CancellationToken CancellationToken,
             Key<AuthenticatedAction> AuthenticatedActionKey)
@@ -84,7 +84,7 @@ public partial class TextEditorModelState
     public record DeleteTextByRangeAction(
             ResourceUri ResourceUri,
             Key<TextEditorViewModel>? ViewModelKey,
-            List<TextEditorCursorModifier> CursorModifierBag,
+            TextEditorCursorModifierBag CursorModifierBag,
             int Count,
             CancellationToken CancellationToken,
             Key<AuthenticatedAction> AuthenticatedActionKey)

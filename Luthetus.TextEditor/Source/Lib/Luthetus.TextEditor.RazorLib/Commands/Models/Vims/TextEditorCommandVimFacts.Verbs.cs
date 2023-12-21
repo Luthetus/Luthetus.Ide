@@ -18,7 +18,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.CutAsync);
+                commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.CutFactory);
                 return Task.CompletedTask;
             });
 
@@ -50,7 +50,7 @@ public static partial class TextEditorCommandVimFacts
             if (activeKeymap is not TextEditorKeymapVim vimKeymap)
                 return;
 
-            await TextEditorCommandDefaultFunctions.CutAsync.Invoke(editContext);
+            await TextEditorCommandDefaultFunctions.CutFactory.Invoke(editContext);
             vimKeymap.ActiveVimMode = VimMode.Insert;
         }
 

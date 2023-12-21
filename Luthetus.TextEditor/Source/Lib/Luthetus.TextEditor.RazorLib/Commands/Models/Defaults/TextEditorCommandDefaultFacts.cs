@@ -26,7 +26,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.CutAsync);
+            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.CutFactory);
             return Task.CompletedTask;
         });
 

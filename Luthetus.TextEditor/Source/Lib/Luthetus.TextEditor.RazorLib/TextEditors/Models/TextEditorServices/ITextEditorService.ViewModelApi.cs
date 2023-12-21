@@ -80,7 +80,7 @@ public partial interface ITextEditorService
 
         public TextEditorEdit GetMoveCursorTask(
             KeyboardEventArgs keyboardEventArgs,
-            TextEditorModel model,
+            ResourceUri modelResourceUri,
             Key<TextEditorViewModel> viewModelKey,
             TextEditorCursorModifier primaryCursor);
 
@@ -358,7 +358,7 @@ public partial interface ITextEditorService
 
         public TextEditorEdit GetMoveCursorTask(
             KeyboardEventArgs keyboardEventArgs,
-            TextEditorModel model,
+            ResourceUri modelResourceUri,
             Key<TextEditorViewModel> viewModelKey,
             TextEditorCursorModifier primaryCursor)
         {

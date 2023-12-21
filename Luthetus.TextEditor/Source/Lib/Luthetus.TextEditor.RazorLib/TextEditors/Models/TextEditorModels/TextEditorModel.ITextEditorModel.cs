@@ -13,4 +13,7 @@ public partial class TextEditorModel : ITextEditorModel
 	IList<(RowEndingKind rowEndingKind, int count)> ITextEditorModel.RowEndingKindCountsBag => RowEndingKindCountsBag;
 	IList<TextEditorPresentationModel> ITextEditorModel.PresentationModelsBag => PresentationModelsBag;
 	IList<int> ITextEditorModel.TabKeyPositionsBag => TabKeyPositionsBag;
+
+    public int RowCount => RowEndingPositionsBag.Count;
+    public int DocumentLength => ContentBag.Count;
 }

@@ -28,4 +28,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
 	public int EditBlockIndex => _editBlockIndex ?? _textEditorModel.EditBlockIndex;
 	public (int rowIndex, int rowLength) MostCharactersOnASingleRowTuple => _mostCharactersOnASingleRowTuple ?? _textEditorModel.MostCharactersOnASingleRowTuple;
 	public Key<RenderState> RenderStateKey => _renderStateKey ?? _textEditorModel.RenderStateKey;
+
+    public int RowCount { get; }
+    public int DocumentLength { get; }
 }

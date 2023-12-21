@@ -71,19 +71,19 @@ public partial interface ITextEditorService
 
         public TextEditorEdit InsertText(
             InsertTextAction insertTextAction,
-            RefreshCursorsRequest refreshCursorsRequest);
+            TextEditorCursorModifierBag refreshCursorsRequest);
 
         public TextEditorEdit HandleKeyboardEvent(
             KeyboardEventAction keyboardEventAction,
-            RefreshCursorsRequest refreshCursorsRequest);
+            TextEditorCursorModifierBag refreshCursorsRequest);
 
         public TextEditorEdit DeleteTextByRange(
             DeleteTextByRangeAction deleteTextByRangeAction,
-            RefreshCursorsRequest refreshCursorsRequest);
+            TextEditorCursorModifierBag refreshCursorsRequest);
 
         public TextEditorEdit DeleteTextByMotion(
             DeleteTextByMotionAction deleteTextByMotionAction,
-            RefreshCursorsRequest refreshCursorsRequest);
+            TextEditorCursorModifierBag refreshCursorsRequest);
         #endregion
 
         #region DELETE_METHODS
@@ -273,11 +273,11 @@ public partial interface ITextEditorService
 
         public TextEditorEdit InsertText(
             InsertTextAction insertTextAction,
-            RefreshCursorsRequest refreshCursorsRequest)
+            TextEditorCursorModifierBag refreshCursorsRequest)
         {
             return context =>
             {
-                var cursorBag = refreshCursorsRequest?.CursorBag ?? insertTextAction.CursorModifierBag;
+                var cursorBag = refreshCursorsRequest?.CursorModifierBag ?? insertTextAction.CursorModifierBag;
 
                 insertTextAction = insertTextAction with
                 {
@@ -292,11 +292,11 @@ public partial interface ITextEditorService
 
         public TextEditorEdit HandleKeyboardEvent(
             KeyboardEventAction keyboardEventAction,
-            RefreshCursorsRequest refreshCursorsRequest)
+            TextEditorCursorModifierBag refreshCursorsRequest)
         {
             return context =>
             {
-                var cursorBag = refreshCursorsRequest?.CursorBag ?? keyboardEventAction.CursorModifierBag;
+                var cursorBag = refreshCursorsRequest?.CursorModifierBag ?? keyboardEventAction.CursorModifierBag;
 
                 keyboardEventAction = keyboardEventAction with
                 {
@@ -311,11 +311,11 @@ public partial interface ITextEditorService
 
         public TextEditorEdit DeleteTextByRange(
             DeleteTextByRangeAction deleteTextByRangeAction,
-            RefreshCursorsRequest refreshCursorsRequest)
+            TextEditorCursorModifierBag refreshCursorsRequest)
         {
             return context =>
             {
-                var cursorBag = refreshCursorsRequest?.CursorBag ?? deleteTextByRangeAction.CursorModifierBag;
+                var cursorBag = refreshCursorsRequest?.CursorModifierBag ?? deleteTextByRangeAction.CursorModifierBag;
 
                 deleteTextByRangeAction = deleteTextByRangeAction with
                 {
@@ -330,11 +330,11 @@ public partial interface ITextEditorService
 
         public TextEditorEdit DeleteTextByMotion(
             DeleteTextByMotionAction deleteTextByMotionAction,
-            RefreshCursorsRequest refreshCursorsRequest)
+            TextEditorCursorModifierBag refreshCursorsRequest)
         {
             return context =>
             {
-                var cursorBag = refreshCursorsRequest?.CursorBag ?? deleteTextByMotionAction.CursorModifierBag;
+                var cursorBag = refreshCursorsRequest?.CursorModifierBag ?? deleteTextByMotionAction.CursorModifierBag;
 
                 deleteTextByMotionAction = deleteTextByMotionAction with
                 {

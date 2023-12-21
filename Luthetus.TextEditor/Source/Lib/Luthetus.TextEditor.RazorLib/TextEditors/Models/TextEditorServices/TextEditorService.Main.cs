@@ -20,6 +20,8 @@ using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Microsoft.AspNetCore.Components.Forms;
+using Luthetus.Common.RazorLib.Commands.Models;
+using static Luthetus.TextEditor.RazorLib.Commands.Models.TextEditorCommand;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -105,103 +107,32 @@ public partial class TextEditorService : ITextEditorService
     public ITextEditorDiffApi DiffApi { get; }
     public ITextEditorOptionsApi OptionsApi { get; }
     public ITextEditorSearchEngineApi SearchEngineApi { get; }
-
-    [Obsolete("These should be deleted after changes are made on (2023-12-18)")]
-    private void EnqueueModification(
-        string modificationName,
-        TextEditorCommandArgs commandArgs,
-        TextEditorCommand.ModificationTask modificationTask)
-    {
-        _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
-            modificationName,
-            () => ModifyAsync(modificationName, commandArgs, modificationTask));
-    }
-
-    [Obsolete("These should be deleted after changes are made on (2023-12-18)")]
-    private async Task ModifyAsync(
-        string modificationName,
-        TextEditorCommandArgs commandArgs,
-        TextEditorCommand.ModificationTask modificationTask)
-    {
-        var shouldHaveViewModel = commandArgs.ViewModelKey != Key<TextEditorViewModel>.Empty;
-        var shouldHaveModel = commandArgs.ModelResourceUri != null || shouldHaveViewModel;
-
-        var viewModel = (TextEditorViewModel?)null; // Get ViewModel
-        {
-            if (commandArgs.ViewModelKey != Key<TextEditorViewModel>.Empty)
-            {
-                viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
-            }
-
-            if (viewModel is null && shouldHaveViewModel)
-            {
-                return;
-            }
-        }
-
-        var model = (TextEditorModel?)null; // Get Model
-        {
-            if (commandArgs.ModelResourceUri is not null)
-            {
-                model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-            }
-            else if (commandArgs.ViewModelKey != Key<TextEditorViewModel>.Empty)
-            {
-                model = commandArgs.TextEditorService.ViewModelApi.GetModelOrDefault(commandArgs.ViewModelKey);
-            }
-
-            if (model is null && shouldHaveModel)
-            {
-                return;
-            }
-        }
-
-        var refreshCursorsRequest = (RefreshCursorsRequest?)null;
-        var primaryCursor = (TextEditorCursorModifier?)null;
-
-        if (viewModel is not null)
-        {
-            refreshCursorsRequest = new RefreshCursorsRequest(
-                viewModel.ViewModelKey,
-                new List<TextEditorCursorModifier>());
-
-            refreshCursorsRequest.CursorBag.AddRange(viewModel.CursorBag
-                .Select(x => new TextEditorCursorModifier(x)));
-
-            primaryCursor = refreshCursorsRequest.CursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
-        }
-
-        await modificationTask.Invoke(
-            commandArgs,
-            model,
-            viewModel,
-            refreshCursorsRequest,
-            primaryCursor);
-
-        if (refreshCursorsRequest is not null)
-        {
-            //_dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
-            //    refreshCursorsRequest.ViewModelKey,
-            //    inState => inState with
-            //    {
-            //        CursorBag = refreshCursorsRequest.CursorBag
-            //            .Select(x => x.ToCursor())
-            //        .ToImmutableArray()
-            //    },
-            //    editContext.AuthenticatedActionKey));
-        }
-    }
     
     public void EnqueueEdit(TextEditorEdit textEditorEdit)
     {
         _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
-            nameof(EnqueueEdit),
+        ContinuousBackgroundTaskWorker.GetQueueKey(),
+        nameof(EnqueueEdit),
             async () =>
             {
-                await textEditorEdit.Invoke(
-                    new TextEditorEditContext(AuthenticatedActionKey));
+                var textEditorEditContext = new TextEditorEditContext(
+                    this,
+                    AuthenticatedActionKey);
+
+                await textEditorEdit.Invoke(textEditorEditContext);
+
+                if (textEditorEditContext.RefreshCursorsRequest is not null)
+                {
+                    _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
+                        textEditorEditContext.RefreshCursorsRequest.ViewModelKey,
+                        inState => inState with
+                        {
+                            CursorBag = textEditorEditContext.RefreshCursorsRequest.CursorBag
+                                .Select(x => x.ToCursor())
+                                .ToImmutableArray()
+                        },
+                        AuthenticatedActionKey));
+                }
             });
     }
 }
