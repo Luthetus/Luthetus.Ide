@@ -8,6 +8,8 @@ using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 
@@ -49,91 +51,199 @@ public static class SyntaxTextObjectVim
         return false;
     }
 
-    public static TextEditorEdit MOVE_CURSOR_ONE_COLUMN_LEFT = (ITextEditorEditContext editContext) =>
+    public static TextEditorEdit MoveCursorOneColumnLeftFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
     {
-        editContext.CommandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
-                new KeyboardEventArgs
-                {
-                    Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
-                    ShiftKey = editContext.CommandArgs.ShiftKey
-                },
-                editContext.Model,
-                editContext.ViewModel.ViewModelKey,
-                editContext.PrimaryCursor)
-            .Invoke(editContext);
+        return (ITextEditorEditContext editContext) =>
+        {
+            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
 
-        return Task.CompletedTask;
-    };
+            if (modelModifier is null || viewModelModifier is null)
+                return Task.CompletedTask;
 
-    public static TextEditorEdit MOVE_CURSOR_ONE_ROW_DOWN = (ITextEditorEditContext editContext) =>
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (cursorModifierBag is null || primaryCursorModifier is null)
+                return Task.CompletedTask;
+
+            commandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
+                    new KeyboardEventArgs
+                    {
+                        Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
+                        ShiftKey = commandArgs.ShiftKey
+                    },
+                    modelModifier.ResourceUri,
+                    viewModelModifier.ViewModel.ViewModelKey,
+                    primaryCursorModifier.Key)
+                .Invoke(editContext);
+
+            return Task.CompletedTask;
+        };
+    }
+
+    public static TextEditorEdit MoveCursorOneRowDownFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
     {
-        return editContext.CommandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
-                new KeyboardEventArgs
-                {
-                    Key = KeyboardKeyFacts.MovementKeys.ARROW_DOWN,
-                    ShiftKey = editContext.CommandArgs.ShiftKey
-                },
-                editContext.Model,
-                editContext.ViewModel.ViewModelKey,
-                editContext.PrimaryCursor)
-            .Invoke(editContext);
-    };
+        return (ITextEditorEditContext editContext) =>
+        {
+            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
 
-    public static TextEditorEdit MOVE_CURSOR_ONE_ROW_UP = (ITextEditorEditContext editContext) =>
-    {
-        return editContext.CommandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
-                new KeyboardEventArgs
-                {
-                    Key = KeyboardKeyFacts.MovementKeys.ARROW_UP,
-                    ShiftKey = editContext.CommandArgs.ShiftKey
-                },
-                editContext.Model,
-                editContext.ViewModel.ViewModelKey,
-                editContext.PrimaryCursor)
-            .Invoke(editContext);
-    };
+            if (modelModifier is null || viewModelModifier is null)
+                return Task.CompletedTask;
 
-    public static TextEditorEdit MOVE_CURSOR_ONE_COLUMN_RIGHT = (ITextEditorEditContext editContext) =>
-    {
-        return editContext.CommandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
-                new KeyboardEventArgs
-                {
-                    Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
-                    ShiftKey = editContext.CommandArgs.ShiftKey
-                },
-                editContext.Model,
-                editContext.ViewModel.ViewModelKey,
-                editContext.PrimaryCursor)
-            .Invoke(editContext);
-    };
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-    public static TextEditorEdit MOVE_CURSOR_END_CURRENT_LINE = (ITextEditorEditContext editContext) =>
-    {
-        return editContext.CommandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
-                new KeyboardEventArgs
-                {
-                    Key = KeyboardKeyFacts.MovementKeys.END,
-                    ShiftKey = editContext.CommandArgs.ShiftKey
-                },
-                editContext.Model,
-                editContext.ViewModel.ViewModelKey,
-                editContext.PrimaryCursor)
-            .Invoke(editContext);
-    };
+            if (cursorModifierBag is null || primaryCursorModifier is null)
+                return Task.CompletedTask;
 
-    public static TextEditorEdit MOVE_CURSOR_START_CURRENT_LINE = (ITextEditorEditContext editContext) =>
+            return commandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
+                    new KeyboardEventArgs
+                    {
+                        Key = KeyboardKeyFacts.MovementKeys.ARROW_DOWN,
+                        ShiftKey = commandArgs.ShiftKey
+                    },
+                    modelModifier.ResourceUri,
+                    viewModelModifier.ViewModel.ViewModelKey,
+                    primaryCursorModifier.Key)
+                .Invoke(editContext);
+        };
+    }
+
+    public static TextEditorEdit MoveCursorOneRowUpFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
     {
-        return editContext.CommandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
-                new KeyboardEventArgs
-                {
-                    Key = KeyboardKeyFacts.MovementKeys.HOME,
-                    ShiftKey = editContext.CommandArgs.ShiftKey
-                },
-                editContext.Model,
-                editContext.ViewModel.ViewModelKey,
-                editContext.PrimaryCursor)
-            .Invoke(editContext);
-    };
+        return (ITextEditorEditContext editContext) =>
+        {
+            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+            if (modelModifier is null || viewModelModifier is null)
+                return Task.CompletedTask;
+
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (cursorModifierBag is null || primaryCursorModifier is null)
+                return Task.CompletedTask;
+
+            return commandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
+                    new KeyboardEventArgs
+                    {
+                        Key = KeyboardKeyFacts.MovementKeys.ARROW_UP,
+                        ShiftKey = commandArgs.ShiftKey
+                    },
+                    modelModifier.ResourceUri,
+                    viewModelModifier.ViewModel.ViewModelKey,
+                    primaryCursorModifier.Key)
+                .Invoke(editContext);
+        };
+    }
+
+    public static TextEditorEdit MoveCursorOneColumnRightFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
+    {
+        return (ITextEditorEditContext editContext) =>
+        {
+            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+            if (modelModifier is null || viewModelModifier is null)
+                return Task.CompletedTask;
+
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (cursorModifierBag is null || primaryCursorModifier is null)
+                return Task.CompletedTask;
+
+            return commandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
+                    new KeyboardEventArgs
+                    {
+                        Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
+                        ShiftKey = commandArgs.ShiftKey
+                    },
+                    modelModifier.ResourceUri,
+                    viewModelModifier.ViewModel.ViewModelKey,
+                    primaryCursorModifier.Key)
+                .Invoke(editContext);
+        };
+    }
+
+    public static TextEditorEdit MoveCursorEndCurrentLineFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
+    {
+        return (ITextEditorEditContext editContext) =>
+        {
+            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+            if (modelModifier is null || viewModelModifier is null)
+                return Task.CompletedTask;
+
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (cursorModifierBag is null || primaryCursorModifier is null)
+                return Task.CompletedTask;
+
+            return commandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
+                    new KeyboardEventArgs
+                    {
+                        Key = KeyboardKeyFacts.MovementKeys.END,
+                        ShiftKey = commandArgs.ShiftKey
+                    },
+                    modelModifier.ResourceUri,
+                    viewModelModifier.ViewModel.ViewModelKey,
+                    primaryCursorModifier.Key)
+                .Invoke(editContext);
+        };
+    }
+
+    public static TextEditorEdit MoveCursorStartCurrentLineFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
+    {
+        return (ITextEditorEditContext editContext) =>
+        {
+            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+            if (modelModifier is null || viewModelModifier is null)
+                return Task.CompletedTask;
+
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (cursorModifierBag is null || primaryCursorModifier is null)
+                return Task.CompletedTask;
+
+            return commandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
+                    new KeyboardEventArgs
+                    {
+                        Key = KeyboardKeyFacts.MovementKeys.HOME,
+                        ShiftKey = commandArgs.ShiftKey
+                    },
+                    modelModifier.ResourceUri,
+                    viewModelModifier.ViewModel.ViewModelKey,
+                    primaryCursorModifier.Key)
+                .Invoke(editContext);
+        };
+    }
 
     public static bool TryParse(TextEditorKeymapVim textEditorKeymapVim,
         ImmutableArray<VimGrammarToken> sentenceSnapshotBag,
@@ -170,7 +280,11 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.Post(MOVE_CURSOR_ONE_COLUMN_LEFT);
+                                commandArgs.TextEditorService.Post(MoveCursorOneColumnLeftFactory(
+                                    commandArgs.ModelResourceUri,
+                                    commandArgs.ViewModelKey,
+                                    commandArgs));
+
                                 return Task.CompletedTask;
                             });
 
@@ -186,7 +300,12 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.Post(MOVE_CURSOR_ONE_ROW_DOWN);
+                                commandArgs.TextEditorService.Post(
+                                    MoveCursorOneRowDownFactory(
+                                        commandArgs.ModelResourceUri,
+                                        commandArgs.ViewModelKey,
+                                        commandArgs));
+
                                 return Task.CompletedTask;
                             });
 
@@ -202,7 +321,11 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.Post(MOVE_CURSOR_ONE_ROW_UP);
+                                commandArgs.TextEditorService.Post(MoveCursorOneRowUpFactory(
+                                        commandArgs.ModelResourceUri,
+                                        commandArgs.ViewModelKey,
+                                        commandArgs));
+
                                 return Task.CompletedTask;
                             });
 
@@ -218,7 +341,11 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.Post(MOVE_CURSOR_ONE_COLUMN_RIGHT);
+                                commandArgs.TextEditorService.Post(MoveCursorOneColumnRightFactory(
+                                        commandArgs.ModelResourceUri,
+                                        commandArgs.ViewModelKey,
+                                        commandArgs));
+
                                 return Task.CompletedTask;
                             });
 
@@ -240,7 +367,11 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.Post(MOVE_CURSOR_END_CURRENT_LINE);
+                                commandArgs.TextEditorService.Post(MoveCursorEndCurrentLineFactory(
+                                        commandArgs.ModelResourceUri,
+                                        commandArgs.ViewModelKey,
+                                        commandArgs));
+
                                 return Task.CompletedTask;
                             });
 
@@ -256,7 +387,11 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.Post(MOVE_CURSOR_START_CURRENT_LINE);
+                                commandArgs.TextEditorService.Post(MoveCursorStartCurrentLineFactory(
+                                        commandArgs.ModelResourceUri,
+                                        commandArgs.ViewModelKey,
+                                        commandArgs));
+
                                 return Task.CompletedTask;
                             });
 
