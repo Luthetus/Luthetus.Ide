@@ -842,7 +842,7 @@ public class TextEditorCommandDefaultFunctions
                     };
                 }
 
-                await editContext.TextEditorService.ViewModelApi.GetMoveCursorTask(
+                await editContext.TextEditorService.ViewModelApi.GetMoveCursorUnsafeTask(
                         keyboardEventArgs,
                         modelModifier.ResourceUri,
                         viewModelModifier.ViewModel.ViewModelKey,

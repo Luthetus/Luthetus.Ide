@@ -12,7 +12,6 @@ using Luthetus.Common.RazorLib.Keyboards.Models;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
-using Microsoft.AspNetCore.Components.Forms;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
@@ -50,7 +49,7 @@ public partial interface ITextEditorService
             Func<TextEditorViewModel, TextEditorViewModel> withFunc);
 
         public TextEditorEdit GetWithTaskTask(
-            TextEditorViewModel viewModel,
+            Key<TextEditorViewModel> viewModelKey,
             Func<TextEditorViewModel, Task<Func<TextEditorViewModel, TextEditorViewModel>>> withFuncWrap);
 
         /// <summary>
@@ -82,28 +81,64 @@ public partial interface ITextEditorService
             KeyboardEventArgs keyboardEventArgs,
             ResourceUri modelResourceUri,
             Key<TextEditorViewModel> viewModelKey,
+            Key<TextEditorCursor> cursorKey);
+
+        /// <summary>
+        /// If one wants to guarantee that the state is up to date use <see cref="GetMoveCursorTask"/>
+        /// instead of this method. This is because, the <see cref="ITextEditorService"/> will provide
+        /// you the latest instance of the given <see cref="TextEditorCursor"/>. As opposed to whatever
+        /// instance of the <see cref="TextEditorCursorModifier"/> you have at time of enqueueing.
+        /// <br/><br/>
+        /// This method is needed however, because if one wants to arbitrarily create a cursor that does not
+        /// map to the view model's cursors, then one would use this method. Since an attempt to map
+        /// the cursor key would come back as the cursor not existing.
+        /// </summary>
+        public TextEditorEdit GetMoveCursorUnsafeTask(
+            KeyboardEventArgs keyboardEventArgs,
+            ResourceUri modelResourceUri,
+            Key<TextEditorViewModel> viewModelKey,
             TextEditorCursorModifier primaryCursor);
 
         public TextEditorEdit GetCursorMovePageTopTask(
             ResourceUri modelResourceUri,
-            TextEditorViewModel viewModel,
+            Key<TextEditorViewModel> viewModelKey,
+            Key<TextEditorCursor> cursorKey);
+
+        /// <summary>
+        /// If one wants to guarantee that the state is up to date use <see cref="GetCursorMovePageTopTask"/>
+        /// instead of this method. This is because, the <see cref="ITextEditorService"/> will provide
+        /// you the latest instance of the given <see cref="TextEditorCursor"/>. As opposed to whatever
+        /// instance of the <see cref="TextEditorCursorModifier"/> you have at time of enqueueing.
+        /// <br/><br/>
+        /// This method is needed however, because if one wants to arbitrarily create a cursor that does not
+        /// map to the view model's cursors, then one would use this method. Since an attempt to map
+        /// the cursor key would come back as the cursor not existing.
+        /// </summary>
+        public TextEditorEdit GetCursorMovePageTopUnsafeTask(
+            ResourceUri modelResourceUri,
+            Key<TextEditorViewModel> viewModelKey,
             TextEditorCursorModifier primaryCursor);
 
         public TextEditorEdit GetCursorMovePageBottomTask(
-            TextEditorModel model,
-            TextEditorViewModel viewModel,
-            TextEditorCursorModifier primaryCursor);
+            ResourceUri modelResourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            Key<TextEditorCursor> cursorKey);
+
+        public TextEditorEdit GetCursorMovePageBottomUnsafeTask(
+            ResourceUri modelResourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            TextEditorCursorModifier cursorModifier);
 
         public TextEditorEdit GetCalculateVirtualizationResultTask(
-            TextEditorModel model,
-            TextEditorViewModel viewModel,
+            ResourceUri modelResourceUri,
+            Key<TextEditorViewModel> viewModelKey,
             TextEditorMeasurements? textEditorMeasurements,
-            TextEditorCursorModifier primaryCursor,
+            Key<TextEditorCursor> cursorKey,
             CancellationToken cancellationToken);
 
         public TextEditorEdit GetRemeasureTask(
             ResourceUri modelResourceUri,
-            TextEditorViewModel viewModel,
+            Key<TextEditorViewModel> viewModelKey,
             string measureCharacterWidthAndRowHeightElementId,
             int countOfTestCharacters,
             CancellationToken cancellationToken);
@@ -276,14 +311,19 @@ public partial interface ITextEditorService
         }
 
         public TextEditorEdit GetWithTaskTask(
-            TextEditorViewModel viewModel,
+            Key<TextEditorViewModel> viewModelKey,
             Func<TextEditorViewModel, Task<Func<TextEditorViewModel, TextEditorViewModel>>> withFuncWrap)
         {
             return async editContext =>
             {
+                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+                if (viewModelModifier is null)
+                    return;
+
                 _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
-                    viewModel.ViewModelKey,
-                    await withFuncWrap.Invoke(viewModel),
+                    viewModelKey,
+                    await withFuncWrap.Invoke(viewModelModifier.ViewModel),
                     editContext.AuthenticatedActionKey));
             };
         }
@@ -360,31 +400,69 @@ public partial interface ITextEditorService
             KeyboardEventArgs keyboardEventArgs,
             ResourceUri modelResourceUri,
             Key<TextEditorViewModel> viewModelKey,
-            TextEditorCursorModifier primaryCursor)
+            Key<TextEditorCursor> cursorKey)
         {
             return editContext =>
             {
+                var modelModifier = editContext.GetModelModifier(modelResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+                if (modelModifier is null || viewModelModifier is null)
+                    return Task.CompletedTask;
+
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                if (cursorModifierBag is null || primaryCursorModifier is null)
+                    return Task.CompletedTask;
+
+                var cursorModifier = cursorModifierBag.CursorModifierBag.FirstOrDefault(x => x.Key == cursorKey);
+
+                if (cursorModifier is null)
+                    return Task.CompletedTask;
+
+                return GetMoveCursorUnsafeTask(keyboardEventArgs, modelResourceUri, viewModelKey, cursorModifier)
+                    .Invoke(editContext);
+            };
+        }
+
+        public TextEditorEdit GetMoveCursorUnsafeTask(
+            KeyboardEventArgs keyboardEventArgs,
+            ResourceUri modelResourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            TextEditorCursorModifier cursorModifier)
+        {
+            return editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(modelResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+                if (modelModifier is null || viewModelModifier is null)
+                    return Task.CompletedTask;
+
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+
                 void MutateIndexCoordinatesAndPreferredColumnIndex(int columnIndex)
                 {
-                    primaryCursor.ColumnIndex = columnIndex;
-                    primaryCursor.PreferredColumnIndex = columnIndex;
+                    cursorModifier.ColumnIndex = columnIndex;
+                    cursorModifier.PreferredColumnIndex = columnIndex;
                 }
 
                 if (keyboardEventArgs.ShiftKey)
                 {
-                    if (primaryCursor.SelectionAnchorPositionIndex is null ||
-                        primaryCursor.SelectionEndingPositionIndex == primaryCursor.SelectionAnchorPositionIndex)
+                    if (cursorModifier.SelectionAnchorPositionIndex is null ||
+                        cursorModifier.SelectionEndingPositionIndex == cursorModifier.SelectionAnchorPositionIndex)
                     {
-                        var positionIndex = model.GetPositionIndex(
-                            primaryCursor.RowIndex,
-                            primaryCursor.ColumnIndex);
+                        var positionIndex = modelModifier.GetPositionIndex(
+                            cursorModifier.RowIndex,
+                            cursorModifier.ColumnIndex);
 
-                        primaryCursor.SelectionAnchorPositionIndex = positionIndex;
+                        cursorModifier.SelectionAnchorPositionIndex = positionIndex;
                     }
                 }
                 else
                 {
-                    primaryCursor.SelectionAnchorPositionIndex = null;
+                    cursorModifier.SelectionAnchorPositionIndex = null;
                 }
 
                 int lengthOfRow = 0; // This variable is used in multiple switch cases.
@@ -392,28 +470,28 @@ public partial interface ITextEditorService
                 switch (keyboardEventArgs.Key)
                 {
                     case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
-                        if (TextEditorSelectionHelper.HasSelectedText(primaryCursor) &&
+                        if (TextEditorSelectionHelper.HasSelectedText(cursorModifier) &&
                             !keyboardEventArgs.ShiftKey)
                         {
-                            var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(primaryCursor);
+                            var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
 
-                            var lowerRowMetaData = model.FindRowInformation(
+                            var lowerRowMetaData = modelModifier.FindRowInformation(
                                 selectionBounds.lowerPositionIndexInclusive);
 
-                            primaryCursor.RowIndex = lowerRowMetaData.rowIndex;
+                            cursorModifier.RowIndex = lowerRowMetaData.rowIndex;
 
-                            primaryCursor.ColumnIndex = selectionBounds.lowerPositionIndexInclusive -
+                            cursorModifier.ColumnIndex = selectionBounds.lowerPositionIndexInclusive -
                                 lowerRowMetaData.rowStartPositionIndex;
                         }
                         else
                         {
-                            if (primaryCursor.ColumnIndex == 0)
+                            if (cursorModifier.ColumnIndex == 0)
                             {
-                                if (primaryCursor.RowIndex != 0)
+                                if (cursorModifier.RowIndex != 0)
                                 {
-                                    primaryCursor.RowIndex--;
+                                    cursorModifier.RowIndex--;
 
-                                    lengthOfRow = model.GetLengthOfRow(primaryCursor.RowIndex);
+                                    lengthOfRow = modelModifier.GetLengthOfRow(cursorModifier.RowIndex);
 
                                     MutateIndexCoordinatesAndPreferredColumnIndex(lengthOfRow);
                                 }
@@ -422,9 +500,9 @@ public partial interface ITextEditorService
                             {
                                 if (keyboardEventArgs.CtrlKey)
                                 {
-                                    var columnIndexOfCharacterWithDifferingKind = model.GetColumnIndexOfCharacterWithDifferingKind(
-                                        primaryCursor.RowIndex,
-                                        primaryCursor.ColumnIndex,
+                                    var columnIndexOfCharacterWithDifferingKind = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
+                                        cursorModifier.RowIndex,
+                                        cursorModifier.ColumnIndex,
                                         true);
 
                                     if (columnIndexOfCharacterWithDifferingKind == -1)
@@ -434,78 +512,78 @@ public partial interface ITextEditorService
                                 }
                                 else
                                 {
-                                    MutateIndexCoordinatesAndPreferredColumnIndex(primaryCursor.ColumnIndex - 1);
+                                    MutateIndexCoordinatesAndPreferredColumnIndex(cursorModifier.ColumnIndex - 1);
                                 }
                             }
                         }
 
                         break;
                     case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
-                        if (primaryCursor.RowIndex < model.RowCount - 1)
+                        if (cursorModifier.RowIndex < modelModifier.RowCount - 1)
                         {
-                            primaryCursor.RowIndex++;
+                            cursorModifier.RowIndex++;
 
-                            lengthOfRow = model.GetLengthOfRow(primaryCursor.RowIndex);
+                            lengthOfRow = modelModifier.GetLengthOfRow(cursorModifier.RowIndex);
 
-                            primaryCursor.ColumnIndex = lengthOfRow < primaryCursor.PreferredColumnIndex
+                            cursorModifier.ColumnIndex = lengthOfRow < cursorModifier.PreferredColumnIndex
                                 ? lengthOfRow
-                                : primaryCursor.PreferredColumnIndex;
+                                : cursorModifier.PreferredColumnIndex;
                         }
 
                         break;
                     case KeyboardKeyFacts.MovementKeys.ARROW_UP:
-                        if (primaryCursor.RowIndex > 0)
+                        if (cursorModifier.RowIndex > 0)
                         {
-                            primaryCursor.RowIndex--;
+                            cursorModifier.RowIndex--;
 
-                            lengthOfRow = model.GetLengthOfRow(primaryCursor.RowIndex);
+                            lengthOfRow = modelModifier.GetLengthOfRow(cursorModifier.RowIndex);
 
-                            primaryCursor.ColumnIndex = lengthOfRow < primaryCursor.PreferredColumnIndex
+                            cursorModifier.ColumnIndex = lengthOfRow < cursorModifier.PreferredColumnIndex
                                 ? lengthOfRow
-                                : primaryCursor.PreferredColumnIndex;
+                                : cursorModifier.PreferredColumnIndex;
                         }
 
                         break;
                     case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
-                        if (TextEditorSelectionHelper.HasSelectedText(primaryCursor) && !keyboardEventArgs.ShiftKey)
+                        if (TextEditorSelectionHelper.HasSelectedText(cursorModifier) && !keyboardEventArgs.ShiftKey)
                         {
-                            var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(primaryCursor);
+                            var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
 
-                            var upperRowMetaData = model.FindRowInformation(selectionBounds.upperPositionIndexExclusive);
+                            var upperRowMetaData = modelModifier.FindRowInformation(selectionBounds.upperPositionIndexExclusive);
 
-                            primaryCursor.RowIndex = upperRowMetaData.rowIndex;
+                            cursorModifier.RowIndex = upperRowMetaData.rowIndex;
 
-                            if (primaryCursor.RowIndex >= model.RowCount)
+                            if (cursorModifier.RowIndex >= modelModifier.RowCount)
                             {
-                                primaryCursor.RowIndex = model.RowCount - 1;
+                                cursorModifier.RowIndex = modelModifier.RowCount - 1;
 
-                                var upperRowLength = model.GetLengthOfRow(primaryCursor.RowIndex);
+                                var upperRowLength = modelModifier.GetLengthOfRow(cursorModifier.RowIndex);
 
-                                primaryCursor.ColumnIndex = upperRowLength;
+                                cursorModifier.ColumnIndex = upperRowLength;
                             }
                             else
                             {
-                                primaryCursor.ColumnIndex =
+                                cursorModifier.ColumnIndex =
                                     selectionBounds.upperPositionIndexExclusive - upperRowMetaData.rowStartPositionIndex;
                             }
                         }
                         else
                         {
-                            lengthOfRow = model.GetLengthOfRow(primaryCursor.RowIndex);
+                            lengthOfRow = modelModifier.GetLengthOfRow(cursorModifier.RowIndex);
 
-                            if (primaryCursor.ColumnIndex == lengthOfRow &&
-                                primaryCursor.RowIndex < model.RowCount - 1)
+                            if (cursorModifier.ColumnIndex == lengthOfRow &&
+                                cursorModifier.RowIndex < modelModifier.RowCount - 1)
                             {
                                 MutateIndexCoordinatesAndPreferredColumnIndex(0);
-                                primaryCursor.RowIndex++;
+                                cursorModifier.RowIndex++;
                             }
-                            else if (primaryCursor.ColumnIndex != lengthOfRow)
+                            else if (cursorModifier.ColumnIndex != lengthOfRow)
                             {
                                 if (keyboardEventArgs.CtrlKey)
                                 {
-                                    var columnIndexOfCharacterWithDifferingKind = model.GetColumnIndexOfCharacterWithDifferingKind(
-                                        primaryCursor.RowIndex,
-                                        primaryCursor.ColumnIndex,
+                                    var columnIndexOfCharacterWithDifferingKind = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
+                                        cursorModifier.RowIndex,
+                                        cursorModifier.ColumnIndex,
                                         false);
 
                                     if (columnIndexOfCharacterWithDifferingKind == -1)
@@ -518,7 +596,7 @@ public partial interface ITextEditorService
                                 }
                                 else
                                 {
-                                    MutateIndexCoordinatesAndPreferredColumnIndex(primaryCursor.ColumnIndex + 1);
+                                    MutateIndexCoordinatesAndPreferredColumnIndex(cursorModifier.ColumnIndex + 1);
                                 }
                             }
                         }
@@ -526,16 +604,16 @@ public partial interface ITextEditorService
                         break;
                     case KeyboardKeyFacts.MovementKeys.HOME:
                         if (keyboardEventArgs.CtrlKey)
-                            primaryCursor.RowIndex = 0;
+                            cursorModifier.RowIndex = 0;
 
                         MutateIndexCoordinatesAndPreferredColumnIndex(0);
 
                         break;
                     case KeyboardKeyFacts.MovementKeys.END:
                         if (keyboardEventArgs.CtrlKey)
-                            primaryCursor.RowIndex = model.RowCount - 1;
+                            cursorModifier.RowIndex = modelModifier.RowCount - 1;
 
-                        lengthOfRow = model.GetLengthOfRow(primaryCursor.RowIndex);
+                        lengthOfRow = modelModifier.GetLengthOfRow(cursorModifier.RowIndex);
 
                         MutateIndexCoordinatesAndPreferredColumnIndex(lengthOfRow);
 
@@ -544,9 +622,9 @@ public partial interface ITextEditorService
 
                 if (keyboardEventArgs.ShiftKey)
                 {
-                    primaryCursor.SelectionEndingPositionIndex = model.GetPositionIndex(
-                        primaryCursor.RowIndex,
-                        primaryCursor.ColumnIndex);
+                    cursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(
+                        cursorModifier.RowIndex,
+                        cursorModifier.ColumnIndex);
                 }
 
                 return Task.CompletedTask;
@@ -555,17 +633,55 @@ public partial interface ITextEditorService
 
         public TextEditorEdit GetCursorMovePageTopTask(
             ResourceUri modelResourceUri,
-            TextEditorViewModel viewModel,
-            TextEditorCursorModifier primaryCursor)
+            Key<TextEditorViewModel> viewModelKey,
+            Key<TextEditorCursor> cursorKey)
         {
             return editContext =>
             {
-                if (viewModel.VirtualizationResult?.EntryBag.Any() ?? false)
-                {
-                    var firstEntry = viewModel.VirtualizationResult.EntryBag.First();
+                var modelModifier = editContext.GetModelModifier(modelResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
 
-                    primaryCursor.RowIndex = firstEntry.Index;
-                    primaryCursor.ColumnIndex = 0;
+                if (modelModifier is null || viewModelModifier is null)
+                    return Task.CompletedTask;
+
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                if (cursorModifierBag is null || primaryCursorModifier is null)
+                    return Task.CompletedTask;
+
+                var cursorModifier = cursorModifierBag.CursorModifierBag.FirstOrDefault(x => x.Key == cursorKey);
+
+                if (cursorModifier is null)
+                    return Task.CompletedTask;
+
+                return GetCursorMovePageTopUnsafeTask(modelResourceUri, viewModelKey, cursorModifier)
+                    .Invoke(editContext);
+            };
+        }
+            
+        public TextEditorEdit GetCursorMovePageTopUnsafeTask(
+            ResourceUri modelResourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            TextEditorCursorModifier cursorModifier)
+        {
+            return editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(modelResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+                if (modelModifier is null || viewModelModifier is null)
+                    return Task.CompletedTask;
+
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                if (viewModelModifier.ViewModel.VirtualizationResult?.EntryBag.Any() ?? false)
+                {
+                    var firstEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryBag.First();
+
+                    cursorModifier.RowIndex = firstEntry.Index;
+                    cursorModifier.ColumnIndex = 0;
                 }
 
                 return Task.CompletedTask;
@@ -573,19 +689,54 @@ public partial interface ITextEditorService
         }
 
         public TextEditorEdit GetCursorMovePageBottomTask(
-            TextEditorModel model,
-            TextEditorViewModel viewModel,
-            TextEditorCursorModifier primaryCursor)
+            ResourceUri modelResourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            Key<TextEditorCursor> cursorKey)
         {
             return editContext =>
             {
-                if ((viewModel.VirtualizationResult?.EntryBag.Any() ?? false))
-                {
-                    var lastEntry = viewModel.VirtualizationResult.EntryBag.Last();
-                    var lastEntriesRowLength = model.GetLengthOfRow(lastEntry.Index);
+                var modelModifier = editContext.GetModelModifier(modelResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
 
-                    primaryCursor.RowIndex = lastEntry.Index;
-                    primaryCursor.ColumnIndex = lastEntriesRowLength;
+                if (modelModifier is null || viewModelModifier is null)
+                    return Task.CompletedTask;
+
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                if (cursorModifierBag is null || primaryCursorModifier is null)
+                    return Task.CompletedTask;
+
+                var cursorModifier = cursorModifierBag.CursorModifierBag.FirstOrDefault(x => x.Key == cursorKey);
+
+                if (cursorModifier is null)
+                    return Task.CompletedTask;
+
+                return GetCursorMovePageBottomUnsafeTask(modelResourceUri, viewModelKey, cursorModifier)
+                    .Invoke(editContext);
+            };
+        }
+
+        public TextEditorEdit GetCursorMovePageBottomUnsafeTask(
+            ResourceUri modelResourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            TextEditorCursorModifier cursorModifier)
+        {
+            return editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(modelResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+                if (modelModifier is null || viewModelModifier is null)
+                    return Task.CompletedTask;
+
+                if ((viewModelModifier.ViewModel.VirtualizationResult?.EntryBag.Any() ?? false))
+                {
+                    var lastEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryBag.Last();
+                    var lastEntriesRowLength = modelModifier.GetLengthOfRow(lastEntry.Index);
+
+                    cursorModifier.RowIndex = lastEntry.Index;
+                    cursorModifier.ColumnIndex = lastEntriesRowLength;
                 }
 
                 return Task.CompletedTask;
@@ -593,10 +744,10 @@ public partial interface ITextEditorService
         }
 
         public TextEditorEdit GetCalculateVirtualizationResultTask(
-            TextEditorModel model,
-            TextEditorViewModel viewModel,
+            ResourceUri modelResourceUri,
+            Key<TextEditorViewModel> viewModelKey,
             TextEditorMeasurements? textEditorMeasurements,
-            TextEditorCursorModifier primaryCursor,
+            Key<TextEditorCursor> cursorKey,
             CancellationToken cancellationToken)
         {
             return async editContext =>
@@ -604,13 +755,25 @@ public partial interface ITextEditorService
                 if (cancellationToken.IsCancellationRequested)
                     return;
 
-                // Return because the UI still needs to be measured.
-                if (!viewModel.SeenOptionsRenderStateKeysBag.Any())
+                var modelModifier = editContext.GetModelModifier(modelResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+                if (modelModifier is null || viewModelModifier is null)
                     return;
 
-                await viewModel.ThrottleCalculateVirtualizationResult.FireAsync((Func<CancellationToken, Task>)(async _ =>
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                if (cursorModifierBag is null || primaryCursorModifier is null)
+                    return;
+
+                // Return because the UI still needs to be measured.
+                if (!viewModelModifier.ViewModel.SeenOptionsRenderStateKeysBag.Any())
+                    return;
+
+                await viewModelModifier.ViewModel.ThrottleCalculateVirtualizationResult.FireAsync((Func<CancellationToken, Task>)(async _ =>
                 {
-                    if (model is null)
+                    if (modelModifier is null)
                         return;
 
                     // TODO: Should this '_trackingOfUniqueIdentifiersLock' logic when in regards to the TextEditorModel be removed? The issue is that when scrolling the TextEditorModel would show up in the HashSet and therefore the calculation of the virtualization result would not occur.
@@ -621,11 +784,12 @@ public partial interface ITextEditorService
                     //        return;
                     //}
 
-                    var localCharacterWidthAndRowHeight = viewModel.VirtualizationResult.CharAndRowMeasurements;
+                    var localCharacterWidthAndRowHeight = viewModelModifier.ViewModel.VirtualizationResult.CharAndRowMeasurements;
 
-                    textEditorMeasurements = await _textEditorService.ViewModelApi.GetTextEditorMeasurementsAsync(viewModel.BodyElementId);
+                    textEditorMeasurements = await _textEditorService.ViewModelApi.GetTextEditorMeasurementsAsync(
+                        viewModelModifier.ViewModel.BodyElementId);
 
-                    viewModel.MostRecentTextEditorMeasurements = textEditorMeasurements;
+                    viewModelModifier.ViewModel.MostRecentTextEditorMeasurements = textEditorMeasurements;
 
                     textEditorMeasurements = textEditorMeasurements with
                     {
@@ -649,8 +813,8 @@ public partial interface ITextEditorService
                     {
                         verticalStartingIndex = Math.Max(0, verticalStartingIndex);
 
-                        if (verticalStartingIndex + verticalTake > model.RowEndingPositionsBag.Count)
-                            verticalTake = model.RowEndingPositionsBag.Count - verticalStartingIndex;
+                        if (verticalStartingIndex + verticalTake > modelModifier.RowEndingPositionsBag.Count)
+                            verticalTake = modelModifier.RowEndingPositionsBag.Count - verticalStartingIndex;
 
                         verticalTake = Math.Max(0, verticalTake);
                     }
@@ -663,7 +827,7 @@ public partial interface ITextEditorService
                         textEditorMeasurements.Width /
                         localCharacterWidthAndRowHeight.CharacterWidth);
 
-                    var virtualizedEntryBag = model
+                    var virtualizedEntryBag = modelModifier
                         .GetRows(verticalStartingIndex, verticalTake)
                         .Select((row, rowIndex) =>
                         {
@@ -684,7 +848,7 @@ public partial interface ITextEditorService
                                         ? maxValidColumnIndex
                                         : localHorizontalStartingIndex;
 
-                                var tabsOnSameRowBeforeCursor = model.GetTabsCountOnSameRowBeforeCursor(
+                                var tabsOnSameRowBeforeCursor = modelModifier.GetTabsCountOnSameRowBeforeCursor(
                                     rowIndex,
                                     parameterForGetTabsCountOnSameRowBeforeCursor);
 
@@ -721,7 +885,7 @@ public partial interface ITextEditorService
                                         ? maxValidColumnIndex
                                         : localHorizontalStartingIndex;
 
-                                var tabsOnSameRowBeforeCursor = model.GetTabsCountOnSameRowBeforeCursor(
+                                var tabsOnSameRowBeforeCursor = modelModifier.GetTabsCountOnSameRowBeforeCursor(
                                     rowIndex,
                                     parameterForGetTabsCountOnSameRowBeforeCursor);
 
@@ -743,10 +907,10 @@ public partial interface ITextEditorService
                                 topInPixels);
                         }).ToImmutableArray();
 
-                    var totalWidth = model.MostCharactersOnASingleRowTuple.rowLength *
+                    var totalWidth = modelModifier.MostCharactersOnASingleRowTuple.rowLength *
                         localCharacterWidthAndRowHeight.CharacterWidth;
 
-                    var totalHeight = model.RowEndingPositionsBag.Count *
+                    var totalHeight = modelModifier.RowEndingPositionsBag.Count *
                         localCharacterWidthAndRowHeight.RowHeight;
 
                     // Add vertical margin so the user can scroll beyond the final row of content
@@ -814,16 +978,16 @@ public partial interface ITextEditorService
                         },
                         localCharacterWidthAndRowHeight);
 
-                    lock (viewModel.TrackingOfUniqueIdentifiersLock)
+                    lock (viewModelModifier.ViewModel.TrackingOfUniqueIdentifiersLock)
                     {
-                        if (viewModel.SeenModelRenderStateKeysBag.Count > TextEditorViewModel.ClearTrackingOfUniqueIdentifiersWhenCountIs)
-                            viewModel.SeenModelRenderStateKeysBag.Clear();
+                        if (viewModelModifier.ViewModel.SeenModelRenderStateKeysBag.Count > TextEditorViewModel.ClearTrackingOfUniqueIdentifiersWhenCountIs)
+                            viewModelModifier.ViewModel.SeenModelRenderStateKeysBag.Clear();
 
-                        viewModel.SeenModelRenderStateKeysBag.Add(model.RenderStateKey);
+                        viewModelModifier.ViewModel.SeenModelRenderStateKeysBag.Add(modelModifier.RenderStateKey);
                     }
 
                     await GetWithValueTask(
-                            viewModel.ViewModelKey,
+                            viewModelModifier.ViewModel.ViewModelKey,
                             previousViewModel => previousViewModel with
                             {
                                 VirtualizationResult = virtualizationResult,
@@ -835,20 +999,35 @@ public partial interface ITextEditorService
 
         public TextEditorEdit GetRemeasureTask(
             ResourceUri modelResourceUri,
-            TextEditorViewModel viewModel,
+            Key<TextEditorViewModel> viewModelKey,
             string measureCharacterWidthAndRowHeightElementId,
             int countOfTestCharacters,
             CancellationToken cancellationToken)
         {
             return async editContext =>
             {
+                if (cancellationToken.IsCancellationRequested)
+                    return;
+
+                var modelModifier = editContext.GetModelModifier(modelResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+                if (modelModifier is null || viewModelModifier is null)
+                    return;
+
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                if (cursorModifierBag is null || primaryCursorModifier is null)
+                    return;
+
                 var options = _textEditorService.OptionsApi.GetOptions();
 
-                await viewModel.ThrottleRemeasure.FireAsync(async _ =>
+                await viewModelModifier.ViewModel.ThrottleRemeasure.FireAsync(async _ =>
                 {
-                    lock (viewModel.TrackingOfUniqueIdentifiersLock)
+                    lock (viewModelModifier.ViewModel.TrackingOfUniqueIdentifiersLock)
                     {
-                        if (viewModel.SeenOptionsRenderStateKeysBag.Contains(options.RenderStateKey))
+                        if (viewModelModifier.ViewModel.SeenOptionsRenderStateKeysBag.Contains(options.RenderStateKey))
                             return;
                     }
 
@@ -856,18 +1035,18 @@ public partial interface ITextEditorService
                         measureCharacterWidthAndRowHeightElementId,
                         countOfTestCharacters);
 
-                    viewModel.VirtualizationResult.CharAndRowMeasurements = characterWidthAndRowHeight;
+                    viewModelModifier.ViewModel.VirtualizationResult.CharAndRowMeasurements = characterWidthAndRowHeight;
 
-                    lock (viewModel.TrackingOfUniqueIdentifiersLock)
+                    lock (viewModelModifier.ViewModel.TrackingOfUniqueIdentifiersLock)
                     {
-                        if (viewModel.SeenOptionsRenderStateKeysBag.Count > TextEditorViewModel.ClearTrackingOfUniqueIdentifiersWhenCountIs)
-                            viewModel.SeenOptionsRenderStateKeysBag.Clear();
+                        if (viewModelModifier.ViewModel.SeenOptionsRenderStateKeysBag.Count > TextEditorViewModel.ClearTrackingOfUniqueIdentifiersWhenCountIs)
+                            viewModelModifier.ViewModel.SeenOptionsRenderStateKeysBag.Clear();
 
-                        viewModel.SeenOptionsRenderStateKeysBag.Add(options.RenderStateKey);
+                        viewModelModifier.ViewModel.SeenOptionsRenderStateKeysBag.Add(options.RenderStateKey);
                     }
 
                     await GetWithValueTask(
-                            viewModel.ViewModelKey,
+                            viewModelModifier.ViewModel.ViewModelKey,
                             previousViewModel => (previousViewModel with
                             {
                                 // Clear the SeenModelRenderStateKeys because one needs to recalculate the virtualization result now that the options have changed.
