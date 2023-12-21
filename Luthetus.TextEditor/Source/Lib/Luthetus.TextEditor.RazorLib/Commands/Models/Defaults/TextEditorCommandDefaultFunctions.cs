@@ -878,114 +878,156 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEdit GoToDefinitionAsync = (ITextEditorEditContext editContext) =>
+    public static TextEditorEdit GoToDefinitionFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
     {
-        if (editContext.Model.CompilerService.Binder is null)
-            return Task.CompletedTask;
-
-        var positionIndex = editContext.Model.GetCursorPositionIndex(editContext.PrimaryCursor);
-        var wordTextSpan = editContext.Model.GetWordAt(positionIndex);
-
-        if (wordTextSpan is null)
-            return Task.CompletedTask;
-
-        var definitionTextSpan = editContext.Model.CompilerService.Binder.GetDefinition(
-            wordTextSpan);
-
-        if (definitionTextSpan is null)
-            return Task.CompletedTask;
-
-        var definitionModel = editContext.CommandArgs.TextEditorService.ModelApi.GetOrDefault(definitionTextSpan.ResourceUri);
-
-        if (definitionModel is null)
+        return (ITextEditorEditContext editContext) =>
         {
-            if (editContext.CommandArgs.RegisterModelAction is not null)
-            {
-                editContext.CommandArgs.RegisterModelAction.Invoke(definitionTextSpan.ResourceUri);
-                definitionModel = editContext.CommandArgs.TextEditorService.ModelApi.GetOrDefault(definitionTextSpan.ResourceUri);
+            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
 
-                if (definitionModel is null)
-                    return Task.CompletedTask;
-            }
-            else
-            {
+            if (modelModifier is null || viewModelModifier is null)
                 return Task.CompletedTask;
-            }
-        }
 
-        var definitionViewModels = editContext.CommandArgs.TextEditorService.ModelApi.GetViewModelsOrEmpty(definitionTextSpan.ResourceUri);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-        if (!definitionViewModels.Any())
-        {
-            if (editContext.CommandArgs.RegisterViewModelAction is not null)
-            {
-                editContext.CommandArgs.RegisterViewModelAction.Invoke(definitionTextSpan.ResourceUri);
-                definitionViewModels = editContext.CommandArgs.TextEditorService.ModelApi.GetViewModelsOrEmpty(definitionTextSpan.ResourceUri);
-
-                if (!definitionViewModels.Any())
-                    return Task.CompletedTask;
-            }
-            else
-            {
+            if (cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
-            }
-        }
 
-        var firstDefinitionViewModel = definitionViewModels.First();
-        var rowData = definitionModel.FindRowInformation(definitionTextSpan.StartingIndexInclusive);
-        var columnIndex = definitionTextSpan.StartingIndexInclusive - rowData.rowStartPositionIndex;
+            if (modelModifier.CompilerService.Binder is null)
+                return Task.CompletedTask;
 
-        var firstDefinitionViewModelCursorModifier = new TextEditorCursorModifier(firstDefinitionViewModel.PrimaryCursor);
+            var positionIndex = modelModifier.GetCursorPositionIndex(primaryCursorModifier);
+            var wordTextSpan = modelModifier.GetWordAt(positionIndex);
 
-        firstDefinitionViewModelCursorModifier.RowIndex = rowData.rowIndex;
-        firstDefinitionViewModelCursorModifier.ColumnIndex = columnIndex;
-        firstDefinitionViewModelCursorModifier.PreferredColumnIndex = columnIndex;
+            if (wordTextSpan is null)
+                return Task.CompletedTask;
 
-        editContext.CommandArgs.Dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
-            editContext.ViewModel.ViewModelKey,
-            firstDefinitionInViewModel =>
+            var definitionTextSpan = modelModifier.CompilerService.Binder.GetDefinition(
+                wordTextSpan);
+
+            if (definitionTextSpan is null)
+                return Task.CompletedTask;
+
+            var definitionModel = commandArgs.TextEditorService.ModelApi.GetOrDefault(definitionTextSpan.ResourceUri);
+
+            if (definitionModel is null)
             {
-                var outCursor = firstDefinitionViewModelCursorModifier.ToCursor();
-                var outCursorBag = firstDefinitionInViewModel.CursorBag.Replace(firstDefinitionInViewModel.PrimaryCursor, outCursor);
-
-                return firstDefinitionInViewModel with
+                if (commandArgs.RegisterModelAction is not null)
                 {
-                    CursorBag = outCursorBag
-                };
-            },
-            editContext.AuthenticatedActionKey));
+                    commandArgs.RegisterModelAction.Invoke(definitionTextSpan.ResourceUri);
+                    definitionModel = commandArgs.TextEditorService.ModelApi.GetOrDefault(definitionTextSpan.ResourceUri);
 
-        if (editContext.CommandArgs.ShowViewModelAction is not null)
-            editContext.CommandArgs.ShowViewModelAction.Invoke(firstDefinitionViewModel.ViewModelKey);
+                    if (definitionModel is null)
+                        return Task.CompletedTask;
+                }
+                else
+                {
+                    return Task.CompletedTask;
+                }
+            }
 
-        return Task.CompletedTask;
-    };
+            var definitionViewModels = commandArgs.TextEditorService.ModelApi.GetViewModelsOrEmpty(definitionTextSpan.ResourceUri);
 
-    public static TextEditorEdit ShowFindDialogAsync = (ITextEditorEditContext editContext) =>
-    {
-        editContext.CommandArgs.TextEditorService.OptionsApi.ShowFindDialog();
-        return Task.CompletedTask;
-    };
+            if (!definitionViewModels.Any())
+            {
+                if (commandArgs.RegisterViewModelAction is not null)
+                {
+                    commandArgs.RegisterViewModelAction.Invoke(definitionTextSpan.ResourceUri);
+                    definitionViewModels = commandArgs.TextEditorService.ModelApi.GetViewModelsOrEmpty(definitionTextSpan.ResourceUri);
 
-    public static TextEditorEdit ShowTooltipByCursorPositionAsync = async (ITextEditorEditContext editContext) =>
-    {
-        if (editContext.CommandArgs.JsRuntime is null || editContext.CommandArgs.HandleMouseStoppedMovingEventAsyncFunc is null)
-            return;
+                    if (!definitionViewModels.Any())
+                        return Task.CompletedTask;
+                }
+                else
+                {
+                    return Task.CompletedTask;
+                }
+            }
 
-        var elementPositionInPixels = await editContext.CommandArgs.JsRuntime.InvokeAsync<ElementPositionInPixels>(
-            "luthetusTextEditor.getBoundingClientRect",
-            editContext.ViewModel.PrimaryCursorContentId);
+            var firstDefinitionViewModel = definitionViewModels.First();
+            var rowData = definitionModel.FindRowInformation(definitionTextSpan.StartingIndexInclusive);
+            var columnIndex = definitionTextSpan.StartingIndexInclusive - rowData.rowStartPositionIndex;
 
-        elementPositionInPixels = elementPositionInPixels with
-        {
-            Top = elementPositionInPixels.Top +
-                (.9 * editContext.ViewModel.VirtualizationResult.CharAndRowMeasurements.RowHeight)
+            var firstDefinitionViewModelCursorModifier = new TextEditorCursorModifier(firstDefinitionViewModel.PrimaryCursor);
+
+            firstDefinitionViewModelCursorModifier.RowIndex = rowData.rowIndex;
+            firstDefinitionViewModelCursorModifier.ColumnIndex = columnIndex;
+            firstDefinitionViewModelCursorModifier.PreferredColumnIndex = columnIndex;
+
+            commandArgs.Dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
+                viewModelModifier.ViewModel.ViewModelKey,
+                firstDefinitionInViewModel =>
+                {
+                    var outCursor = firstDefinitionViewModelCursorModifier.ToCursor();
+                    var outCursorBag = firstDefinitionInViewModel.CursorBag.Replace(firstDefinitionInViewModel.PrimaryCursor, outCursor);
+
+                    return firstDefinitionInViewModel with
+                    {
+                        CursorBag = outCursorBag
+                    };
+                },
+                editContext.AuthenticatedActionKey));
+
+            if (commandArgs.ShowViewModelAction is not null)
+                commandArgs.ShowViewModelAction.Invoke(firstDefinitionViewModel.ViewModelKey);
+
+            return Task.CompletedTask;
         };
+    }
 
-        await editContext.CommandArgs.HandleMouseStoppedMovingEventAsyncFunc.Invoke(new MouseEventArgs
+    public static TextEditorEdit ShowFindDialogFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
+    {
+        return (ITextEditorEditContext editContext) =>
         {
-            ClientX = elementPositionInPixels.Left,
-            ClientY = elementPositionInPixels.Top
-        });
-    };
+            commandArgs.TextEditorService.OptionsApi.ShowFindDialog();
+            return Task.CompletedTask;
+        };
+    }
+
+    public static TextEditorEdit ShowTooltipByCursorPositionFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
+    {
+        return async (ITextEditorEditContext editContext) =>
+        {
+            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+            if (modelModifier is null || viewModelModifier is null)
+                return;
+
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (cursorModifierBag is null || primaryCursorModifier is null)
+                return;
+
+            if (commandArgs.JsRuntime is null || commandArgs.HandleMouseStoppedMovingEventAsyncFunc is null)
+                return;
+
+            var elementPositionInPixels = await commandArgs.JsRuntime.InvokeAsync<ElementPositionInPixels>(
+                "luthetusTextEditor.getBoundingClientRect",
+                viewModelModifier.ViewModel.PrimaryCursorContentId);
+
+            elementPositionInPixels = elementPositionInPixels with
+            {
+                Top = elementPositionInPixels.Top +
+                    (.9 * viewModelModifier.ViewModel.VirtualizationResult.CharAndRowMeasurements.RowHeight)
+            };
+
+            await commandArgs.HandleMouseStoppedMovingEventAsyncFunc.Invoke(new MouseEventArgs
+            {
+                ClientX = elementPositionInPixels.Left,
+                ClientY = elementPositionInPixels.Top
+            });
+        };
+    }
 }
