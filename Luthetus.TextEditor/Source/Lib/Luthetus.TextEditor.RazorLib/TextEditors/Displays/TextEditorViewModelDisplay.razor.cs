@@ -985,7 +985,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (model is null || viewModel is null)
             return;
 
-        TextEditorService.EnqueueEdit(editContext =>
+        TextEditorService.Post(editContext =>
         {
             return TextEditorService.ViewModelApi.GetCalculateVirtualizationResultTask(
                     editContext.Model,
