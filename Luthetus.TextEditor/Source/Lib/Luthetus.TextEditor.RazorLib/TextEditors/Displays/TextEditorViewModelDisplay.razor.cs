@@ -299,10 +299,10 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             }
             else
             {
-                TextEditorService.EnqueueEdit(
+                TextEditorService.Post(
                     TextEditorService.ViewModelApi.GetMoveCursorTask(
                         keyboardEventArgs,
-                        model,
+                        model.ResourceUri,
                         viewModel.ViewModelKey,
                         new TextEditorCursorModifier(primaryCursor)));
 
@@ -345,7 +345,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
                 _tooltipViewModel = null;
 
-                TextEditorService.EnqueueEdit(editContext =>
+                TextEditorService.Post(editContext =>
                 {
                     return TextEditorService.ModelApi.HandleKeyboardEvent(
                             new TextEditorModelState.KeyboardEventAction(
@@ -402,7 +402,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (model is null || viewModel is null)
             return;
 
-        TextEditorService.EnqueueEdit(async editContext =>
+        TextEditorService.Post(async editContext =>
         {
             var hasSelectedText = TextEditorSelectionHelper.HasSelectedText(editContext.PrimaryCursor);
 
@@ -467,7 +467,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (model is null || viewModel is null)
             return;
         
-        TextEditorService.EnqueueEdit(async editContext =>
+        TextEditorService.Post(async editContext =>
         {
             var hasSelectedText = TextEditorSelectionHelper.HasSelectedText(editContext.PrimaryCursor);
 
@@ -568,7 +568,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         // Buttons is a bit flag '& 1' gets if left mouse button is held
         if (localThinksLeftMouseButtonIsDown && (mouseEventArgs.Buttons & 1) == 1)
         {
-            TextEditorService.EnqueueEdit(async editContext =>
+            TextEditorService.Post(async editContext =>
             {
                 var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs);
 
@@ -968,7 +968,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (model is null || viewModel is null)
             return;
 
-        TextEditorService.EnqueueEdit(TextEditorService.ViewModelApi.GetRemeasureTask(
+        TextEditorService.Post(TextEditorService.ViewModelApi.GetRemeasureTask(
             model.ResourceUri,
             viewModel,
             localMeasureCharacterWidthAndRowHeightElementId,

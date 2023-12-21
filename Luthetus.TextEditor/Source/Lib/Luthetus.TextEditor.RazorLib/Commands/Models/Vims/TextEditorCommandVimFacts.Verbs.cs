@@ -18,7 +18,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.CutFactory);
+                commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.CutFactory);
                 return Task.CompletedTask;
             });
 
@@ -28,7 +28,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.EnqueueEdit(async editContext =>
+                commandArgs.TextEditorService.Post(async editContext =>
                 {
                     var model = editContext.CommandArgs.TextEditorService.ModelApi.GetOrDefault(editContext.CommandArgs.ModelResourceUri);
                     var viewModel = editContext.CommandArgs.TextEditorService.ViewModelApi.GetOrDefault(editContext.CommandArgs.ViewModelKey);
@@ -60,7 +60,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.EnqueueEdit(DeleteMotionAsync);
+                commandArgs.TextEditorService.Post(DeleteMotionAsync);
                 return Task.CompletedTask;
             });
 
@@ -116,7 +116,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.EnqueueEdit(async editContext =>
+                commandArgs.TextEditorService.Post(async editContext =>
                 {
                     var model = editContext.CommandArgs.TextEditorService.ModelApi.GetOrDefault(editContext.CommandArgs.ModelResourceUri);
                     var viewModel = editContext.CommandArgs.TextEditorService.ViewModelApi.GetOrDefault(editContext.CommandArgs.ViewModelKey);
@@ -150,7 +150,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.EnqueueEdit(async editContext =>
+                commandArgs.TextEditorService.Post(async editContext =>
                 {
                     var model = editContext.CommandArgs.TextEditorService.ModelApi.GetOrDefault(editContext.CommandArgs.ModelResourceUri);
                     var viewModel = editContext.CommandArgs.TextEditorService.ViewModelApi.GetOrDefault(editContext.CommandArgs.ViewModelKey);
@@ -182,7 +182,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.EnqueueEdit(async editContext =>
+                commandArgs.TextEditorService.Post(async editContext =>
                 {
                     var model = editContext.CommandArgs.TextEditorService.ModelApi.GetOrDefault(editContext.CommandArgs.ModelResourceUri);
                     var viewModel = editContext.CommandArgs.TextEditorService.ViewModelApi.GetOrDefault(editContext.CommandArgs.ViewModelKey);
@@ -208,7 +208,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.EnqueueEdit(async editContext =>
+                commandArgs.TextEditorService.Post(async editContext =>
                 {
                     var model = editContext.CommandArgs.TextEditorService.ModelApi.GetOrDefault(editContext.CommandArgs.ModelResourceUri);
                     var viewModel = editContext.CommandArgs.TextEditorService.ViewModelApi.GetOrDefault(editContext.CommandArgs.ViewModelKey);
@@ -240,7 +240,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.EnqueueEdit(async editContext =>
+                commandArgs.TextEditorService.Post(async editContext =>
                 {
                     var model = editContext.CommandArgs.TextEditorService.ModelApi.GetOrDefault(editContext.CommandArgs.ModelResourceUri);
                     var viewModel = editContext.CommandArgs.TextEditorService.ViewModelApi.GetOrDefault(editContext.CommandArgs.ViewModelKey);
@@ -257,7 +257,7 @@ public static partial class TextEditorCommandVimFacts
         public static async Task NewLineAboveAsync(ITextEditorEditContext editContext)
         {
             var activeKeymap = editContext.CommandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
-                    ?? TextEditorKeymapFacts.DefaultKeymap;
+                ?? TextEditorKeymapFacts.DefaultKeymap;
 
             if (activeKeymap is not TextEditorKeymapVim textEditorKeymapVim)
                 return;

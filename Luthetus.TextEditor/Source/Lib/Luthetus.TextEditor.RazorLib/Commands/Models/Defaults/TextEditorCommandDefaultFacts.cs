@@ -16,7 +16,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.CopyAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.CopyAsync);
             return Task.CompletedTask;
         });
 
@@ -26,7 +26,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.CutFactory);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.CutFactory);
             return Task.CompletedTask;
         });
 
@@ -36,7 +36,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.PasteAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.PasteAsync);
             return Task.CompletedTask;
         });
 
@@ -46,7 +46,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.SaveAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.SaveAsync);
             return Task.CompletedTask;
         });
 
@@ -56,7 +56,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.SelectAllAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.SelectAllAsync);
             return Task.CompletedTask;
         });
 
@@ -66,7 +66,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.UndoAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.UndoAsync);
             return Task.CompletedTask;
         });
 
@@ -76,7 +76,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.RedoAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.RedoAsync);
             return Task.CompletedTask;
         });
 
@@ -86,7 +86,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.RemeasureAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.RemeasureAsync);
             return Task.CompletedTask;
         });
 
@@ -96,7 +96,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.ScrollLineDownAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.ScrollLineDownAsync);
             return Task.CompletedTask;
         });
 
@@ -106,7 +106,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.ScrollLineUpAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.ScrollLineUpAsync);
             return Task.CompletedTask;
         });
 
@@ -116,7 +116,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.ScrollPageDownAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.ScrollPageDownAsync);
             return Task.CompletedTask;
         });
 
@@ -126,7 +126,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.ScrollPageUpAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.ScrollPageUpAsync);
             return Task.CompletedTask;
         });
 
@@ -136,7 +136,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.CursorMovePageBottomAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.CursorMovePageBottomAsync);
             return Task.CompletedTask;
         });
 
@@ -146,7 +146,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.CursorMovePageTopAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.CursorMovePageTopAsync);
             return Task.CompletedTask;
         });
 
@@ -156,7 +156,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.DuplicateAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.DuplicateAsync);
             return Task.CompletedTask;
         });
 
@@ -166,7 +166,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.IndentMoreAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.IndentMoreAsync);
             return Task.CompletedTask;
         });
 
@@ -176,7 +176,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.IndentLessAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.IndentLessAsync);
             return Task.CompletedTask;
         });
 
@@ -186,7 +186,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.ClearTextSelectionAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.ClearTextSelectionAsync);
             return Task.CompletedTask;
         });
 
@@ -196,7 +196,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.NewLineBelowAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.NewLineBelowAsync);
             return Task.CompletedTask;
         });
 
@@ -206,7 +206,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.NewLineAboveAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.NewLineAboveAsync);
             return Task.CompletedTask;
         });
 
@@ -216,7 +216,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.GoToMatchingCharacterFactoryAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.GoToMatchingCharacterFactoryAsync);
             return Task.CompletedTask;
         });
 
@@ -226,7 +226,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.GoToDefinitionAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.GoToDefinitionAsync);
             return Task.CompletedTask;
         });
 
@@ -236,7 +236,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.ShowFindDialogAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.ShowFindDialogAsync);
             return Task.CompletedTask;
         });
 
@@ -250,7 +250,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.EnqueueEdit(TextEditorCommandDefaultFunctions.ShowTooltipByCursorPositionAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.ShowTooltipByCursorPositionAsync);
             return Task.CompletedTask;
         });
 }

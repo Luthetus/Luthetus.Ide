@@ -72,7 +72,7 @@ public class TextEditorModelApiTests
             insertedText + inModel.GetAllText(),
             outModel.GetAllText());
 
-        textEditorService.EnqueueEdit(
+        textEditorService.Post(
             textEditorService.ModelApi.UndoEdit(
                 inModel.ResourceUri));
 
@@ -97,7 +97,7 @@ public class TextEditorModelApiTests
         // Assert the current values are different from that which will be set.
         Assert.NotEqual(rowEndingKind, inModel.UsingRowEndingKind);
 
-        textEditorService.EnqueueEdit(
+        textEditorService.Post(
             textEditorService.ModelApi.SetUsingRowEndingKind(
                 inModel.ResourceUri, rowEndingKind));
 
@@ -124,7 +124,7 @@ public class TextEditorModelApiTests
         // Assert the current values are different from that which will be set.
         Assert.NotEqual(newResourceLastWriteTime, inModel.ResourceLastWriteTime);
 
-        textEditorService.EnqueueEdit(
+        textEditorService.Post(
             textEditorService.ModelApi.SetResourceData(
                 inModel.ResourceUri, newResourceLastWriteTime));
 
@@ -151,7 +151,7 @@ public class TextEditorModelApiTests
         // Assert the current values are different from that which will be set.
         Assert.NotEqual(newContent, inModel.GetAllText());
 
-        textEditorService.EnqueueEdit(
+        textEditorService.Post(
             textEditorService.ModelApi.Reload(
                 inModel.ResourceUri, newContent, DateTime.UtcNow));
         
@@ -270,14 +270,14 @@ public class TextEditorModelApiTests
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(insertedText + inModel.GetAllText(), outModel.GetAllText());
 
-        textEditorService.EnqueueEdit(
+        textEditorService.Post(
             textEditorService.ModelApi.UndoEdit(
                 inModel.ResourceUri));
 
         outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(inModel.GetAllText(), outModel.GetAllText());
 
-        textEditorService.EnqueueEdit(
+        textEditorService.Post(
             textEditorService.ModelApi.RedoEdit(
                 inModel.ResourceUri));
 

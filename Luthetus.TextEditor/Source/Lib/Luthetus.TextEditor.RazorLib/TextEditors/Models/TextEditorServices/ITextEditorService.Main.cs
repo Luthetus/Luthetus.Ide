@@ -29,5 +29,10 @@ public partial interface ITextEditorService
     public IState<TextEditorOptionsState> OptionsStateWrap { get; }
     public IState<TextEditorSearchEngineState> SearchEngineStateWrap { get; }
 
-    public void EnqueueEdit(TextEditorEdit textEditorEdit);
+    /// <summary>
+    /// The intent of this method is to replicate functionality of the <see cref="SynchronizationContext"/>
+    /// class. Here the replication is quite roundabout, perhaps I should use <see cref="SynchronizationContext"/> directly,
+    /// but I need to learn more about it. (2023-12-21)
+    /// </summary>
+    public void Post(TextEditorEdit textEditorEdit);
 }

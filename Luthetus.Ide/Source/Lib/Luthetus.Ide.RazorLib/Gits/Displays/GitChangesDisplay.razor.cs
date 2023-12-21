@@ -52,7 +52,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                     DiffPresentationFacts.InPresentationKey,
                 };
 
-                TextEditorService.EnqueueEdit(
+                TextEditorService.Post(
                     TextEditorService.ViewModelApi.GetWithValueTask(
                         InViewModelKey,
                         textEditorViewModel => textEditorViewModel with
@@ -87,7 +87,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                     DiffPresentationFacts.OutPresentationKey,
                 };
 
-                TextEditorService.EnqueueEdit(
+                TextEditorService.Post(
                     TextEditorService.ViewModelApi.GetWithValueTask(
                         OutViewModelKey,
                         textEditorViewModel => textEditorViewModel with

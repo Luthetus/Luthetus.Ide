@@ -154,7 +154,7 @@ public partial class AutocompleteMenu : ComponentBase
         AutocompleteEntry autocompleteEntry,
         TextEditorViewModel viewModel)
     {
-        TextEditorService.EnqueueEdit(editContext =>
+        TextEditorService.Post(editContext =>
         {
             var insertTextTextEditorModelAction = new TextEditorModelState.InsertTextAction(
                 viewModel.ResourceUri,

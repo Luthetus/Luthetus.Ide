@@ -110,7 +110,7 @@ public partial class RowSection : ComponentBase
 
         var primaryCursor = viewModel.PrimaryCursor;
 
-        TextEditorService.EnqueueEdit(editContext =>
+        TextEditorService.Post(editContext =>
         {
             return TextEditorService.ViewModelApi.GetCalculateVirtualizationResultTask(
                     model,

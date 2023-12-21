@@ -108,11 +108,11 @@ public partial class TextEditorService : ITextEditorService
     public ITextEditorOptionsApi OptionsApi { get; }
     public ITextEditorSearchEngineApi SearchEngineApi { get; }
     
-    public void EnqueueEdit(TextEditorEdit textEditorEdit)
+    public void Post(TextEditorEdit textEditorEdit)
     {
         _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(),
         ContinuousBackgroundTaskWorker.GetQueueKey(),
-        nameof(EnqueueEdit),
+        nameof(Post),
             async () =>
             {
                 var textEditorEditContext = new TextEditorEditContext(

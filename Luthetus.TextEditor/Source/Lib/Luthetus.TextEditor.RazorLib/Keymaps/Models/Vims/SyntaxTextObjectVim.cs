@@ -170,7 +170,7 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.EnqueueEdit(MOVE_CURSOR_ONE_COLUMN_LEFT);
+                                commandArgs.TextEditorService.Post(MOVE_CURSOR_ONE_COLUMN_LEFT);
                                 return Task.CompletedTask;
                             });
 
@@ -186,7 +186,7 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.EnqueueEdit(MOVE_CURSOR_ONE_ROW_DOWN);
+                                commandArgs.TextEditorService.Post(MOVE_CURSOR_ONE_ROW_DOWN);
                                 return Task.CompletedTask;
                             });
 
@@ -202,7 +202,7 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.EnqueueEdit(MOVE_CURSOR_ONE_ROW_UP);
+                                commandArgs.TextEditorService.Post(MOVE_CURSOR_ONE_ROW_UP);
                                 return Task.CompletedTask;
                             });
 
@@ -218,7 +218,7 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.EnqueueEdit(MOVE_CURSOR_ONE_COLUMN_RIGHT);
+                                commandArgs.TextEditorService.Post(MOVE_CURSOR_ONE_COLUMN_RIGHT);
                                 return Task.CompletedTask;
                             });
 
@@ -240,7 +240,7 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.EnqueueEdit(MOVE_CURSOR_END_CURRENT_LINE);
+                                commandArgs.TextEditorService.Post(MOVE_CURSOR_END_CURRENT_LINE);
                                 return Task.CompletedTask;
                             });
 
@@ -256,7 +256,7 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.EnqueueEdit(MOVE_CURSOR_START_CURRENT_LINE);
+                                commandArgs.TextEditorService.Post(MOVE_CURSOR_START_CURRENT_LINE);
                                 return Task.CompletedTask;
                             });
 
