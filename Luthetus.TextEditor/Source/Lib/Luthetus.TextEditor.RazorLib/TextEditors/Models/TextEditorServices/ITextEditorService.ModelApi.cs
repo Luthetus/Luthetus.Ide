@@ -6,8 +6,9 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using static Luthetus.TextEditor.RazorLib.TextEditors.States.TextEditorModelState;
-using static Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorService;
+using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
@@ -71,19 +72,75 @@ public partial interface ITextEditorService
 
         public TextEditorEdit InsertText(
             InsertTextAction insertTextAction,
-            TextEditorCursorModifierBag refreshCursorsRequest);
+            Key<TextEditorViewModel> viewModelKey);
+
+        /// <summary>
+        /// If one wants to guarantee that the state is up to date use <see cref="InsertText"/>
+        /// instead of this method. This is because, the <see cref="ITextEditorService"/> will provide
+        /// you the latest instance of the given <see cref="TextEditorCursor"/>. As opposed to whatever
+        /// instance of the <see cref="TextEditorCursorModifier"/> you have at time of enqueueing.
+        /// <br/><br/>
+        /// This method is needed however, because if one wants to arbitrarily create a cursor that does not
+        /// map to the view model's cursors, then one would use this method. Since an attempt to map
+        /// the cursor key would come back as the cursor not existing.
+        /// </summary>
+        public TextEditorEdit InsertTextUnsafe(
+            InsertTextAction insertTextAction,
+            TextEditorCursorModifierBag cursorModifierBag);
 
         public TextEditorEdit HandleKeyboardEvent(
             KeyboardEventAction keyboardEventAction,
-            TextEditorCursorModifierBag refreshCursorsRequest);
+            Key<TextEditorViewModel> viewModelKey);
+
+        /// <summary>
+        /// If one wants to guarantee that the state is up to date use <see cref="HandleKeyboardEvent"/>
+        /// instead of this method. This is because, the <see cref="ITextEditorService"/> will provide
+        /// you the latest instance of the given <see cref="TextEditorCursor"/>. As opposed to whatever
+        /// instance of the <see cref="TextEditorCursorModifier"/> you have at time of enqueueing.
+        /// <br/><br/>
+        /// This method is needed however, because if one wants to arbitrarily create a cursor that does not
+        /// map to the view model's cursors, then one would use this method. Since an attempt to map
+        /// the cursor key would come back as the cursor not existing.
+        /// </summary>
+        public TextEditorEdit HandleKeyboardEventUnsafe(
+            KeyboardEventAction keyboardEventAction,
+            TextEditorCursorModifierBag cursorModifierBag);
 
         public TextEditorEdit DeleteTextByRange(
             DeleteTextByRangeAction deleteTextByRangeAction,
-            TextEditorCursorModifierBag refreshCursorsRequest);
+            Key<TextEditorViewModel> viewModelKey);
+
+        /// <summary>
+        /// If one wants to guarantee that the state is up to date use <see cref="DeleteTextByRange"/>
+        /// instead of this method. This is because, the <see cref="ITextEditorService"/> will provide
+        /// you the latest instance of the given <see cref="TextEditorCursor"/>. As opposed to whatever
+        /// instance of the <see cref="TextEditorCursorModifier"/> you have at time of enqueueing.
+        /// <br/><br/>
+        /// This method is needed however, because if one wants to arbitrarily create a cursor that does not
+        /// map to the view model's cursors, then one would use this method. Since an attempt to map
+        /// the cursor key would come back as the cursor not existing.
+        /// </summary>
+        public TextEditorEdit DeleteTextByRangeUnsafe(
+            DeleteTextByRangeAction deleteTextByRangeAction,
+            TextEditorCursorModifierBag cursorModifierBag);
 
         public TextEditorEdit DeleteTextByMotion(
             DeleteTextByMotionAction deleteTextByMotionAction,
-            TextEditorCursorModifierBag refreshCursorsRequest);
+            Key<TextEditorViewModel> viewModelKey);
+
+        /// <summary>
+        /// If one wants to guarantee that the state is up to date use <see cref="DeleteTextByMotion"/>
+        /// instead of this method. This is because, the <see cref="ITextEditorService"/> will provide
+        /// you the latest instance of the given <see cref="TextEditorCursor"/>. As opposed to whatever
+        /// instance of the <see cref="TextEditorCursorModifier"/> you have at time of enqueueing.
+        /// <br/><br/>
+        /// This method is needed however, because if one wants to arbitrarily create a cursor that does not
+        /// map to the view model's cursors, then one would use this method. Since an attempt to map
+        /// the cursor key would come back as the cursor not existing.
+        /// </summary>
+        public TextEditorEdit DeleteTextByMotionUnsafe(
+            DeleteTextByMotionAction deleteTextByMotionAction,
+            TextEditorCursorModifierBag cursorModifierBag);
         #endregion
 
         #region DELETE_METHODS
@@ -273,15 +330,36 @@ public partial interface ITextEditorService
 
         public TextEditorEdit InsertText(
             InsertTextAction insertTextAction,
-            TextEditorCursorModifierBag refreshCursorsRequest)
+            Key<TextEditorViewModel> viewModelKey)
+        {
+            return editContext =>
+            {
+                var modelModifier = editContext.GetModelModifierByViewModelKey(viewModelKey);
+                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+                if (modelModifier is null || viewModelModifier is null)
+                    return Task.CompletedTask;
+
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                if (cursorModifierBag is null || primaryCursorModifier is null)
+                    return Task.CompletedTask;
+
+                return InsertTextUnsafe(insertTextAction, cursorModifierBag)
+                    .Invoke(editContext);
+            };
+        }
+        
+        public TextEditorEdit InsertTextUnsafe(
+            InsertTextAction insertTextAction,
+            TextEditorCursorModifierBag cursorModifierBag)
         {
             return context =>
             {
-                var cursorBag = refreshCursorsRequest?.CursorModifierBag ?? insertTextAction.CursorModifierBag;
-
                 insertTextAction = insertTextAction with
                 {
-                    CursorModifierBag = cursorBag,
+                    CursorModifierBag = cursorModifierBag,
                 };
 
                 _dispatcher.Dispatch(insertTextAction);
@@ -292,15 +370,36 @@ public partial interface ITextEditorService
 
         public TextEditorEdit HandleKeyboardEvent(
             KeyboardEventAction keyboardEventAction,
-            TextEditorCursorModifierBag refreshCursorsRequest)
+            Key<TextEditorViewModel> viewModelKey)
+        {
+            return editContext =>
+            {
+                var modelModifier = editContext.GetModelModifierByViewModelKey(viewModelKey);
+                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+                if (modelModifier is null || viewModelModifier is null)
+                    return Task.CompletedTask;
+
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                if (cursorModifierBag is null || primaryCursorModifier is null)
+                    return Task.CompletedTask;
+
+                return HandleKeyboardEventUnsafe(keyboardEventAction, cursorModifierBag)
+                    .Invoke(editContext);
+            };
+        }
+
+        public TextEditorEdit HandleKeyboardEventUnsafe(
+            KeyboardEventAction keyboardEventAction,
+            TextEditorCursorModifierBag cursorModifierBag)
         {
             return context =>
             {
-                var cursorBag = refreshCursorsRequest?.CursorModifierBag ?? keyboardEventAction.CursorModifierBag;
-
                 keyboardEventAction = keyboardEventAction with
                 {
-                    CursorModifierBag = cursorBag,
+                    CursorModifierBag = cursorModifierBag,
                 };
 
                 _dispatcher.Dispatch(keyboardEventAction);
@@ -311,15 +410,36 @@ public partial interface ITextEditorService
 
         public TextEditorEdit DeleteTextByRange(
             DeleteTextByRangeAction deleteTextByRangeAction,
-            TextEditorCursorModifierBag refreshCursorsRequest)
+            Key<TextEditorViewModel> viewModelKey)
+        {
+            return editContext =>
+            {
+                var modelModifier = editContext.GetModelModifierByViewModelKey(viewModelKey);
+                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+                if (modelModifier is null || viewModelModifier is null)
+                    return Task.CompletedTask;
+
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                if (cursorModifierBag is null || primaryCursorModifier is null)
+                    return Task.CompletedTask;
+
+                return DeleteTextByRangeUnsafe(deleteTextByRangeAction, cursorModifierBag)
+                    .Invoke(editContext);
+            };
+        }
+        
+        public TextEditorEdit DeleteTextByRangeUnsafe(
+            DeleteTextByRangeAction deleteTextByRangeAction,
+            TextEditorCursorModifierBag cursorModifierBag)
         {
             return context =>
             {
-                var cursorBag = refreshCursorsRequest?.CursorModifierBag ?? deleteTextByRangeAction.CursorModifierBag;
-
                 deleteTextByRangeAction = deleteTextByRangeAction with
                 {
-                    CursorModifierBag = cursorBag,
+                    CursorModifierBag = cursorModifierBag,
                 };
 
                 _dispatcher.Dispatch(deleteTextByRangeAction);
@@ -330,15 +450,36 @@ public partial interface ITextEditorService
 
         public TextEditorEdit DeleteTextByMotion(
             DeleteTextByMotionAction deleteTextByMotionAction,
-            TextEditorCursorModifierBag refreshCursorsRequest)
+            Key<TextEditorViewModel> viewModelKey)
+        {
+            return editContext =>
+            {
+                var modelModifier = editContext.GetModelModifierByViewModelKey(viewModelKey);
+                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+                if (modelModifier is null || viewModelModifier is null)
+                    return Task.CompletedTask;
+
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                if (cursorModifierBag is null || primaryCursorModifier is null)
+                    return Task.CompletedTask;
+
+                return DeleteTextByMotionUnsafe(deleteTextByMotionAction, cursorModifierBag)
+                    .Invoke(editContext);
+            };
+        }
+        
+        public TextEditorEdit DeleteTextByMotionUnsafe(
+            DeleteTextByMotionAction deleteTextByMotionAction,
+            TextEditorCursorModifierBag cursorModifierBag)
         {
             return context =>
             {
-                var cursorBag = refreshCursorsRequest?.CursorModifierBag ?? deleteTextByMotionAction.CursorModifierBag;
-
                 deleteTextByMotionAction = deleteTextByMotionAction with
                 {
-                    CursorModifierBag = cursorBag,
+                    CursorModifierBag = cursorModifierBag,
                 };
 
                 _dispatcher.Dispatch(deleteTextByMotionAction);

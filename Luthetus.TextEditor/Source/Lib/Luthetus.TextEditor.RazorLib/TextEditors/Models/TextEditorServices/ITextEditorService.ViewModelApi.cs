@@ -124,6 +124,16 @@ public partial interface ITextEditorService
             Key<TextEditorViewModel> viewModelKey,
             Key<TextEditorCursor> cursorKey);
 
+        /// <summary>
+        /// If one wants to guarantee that the state is up to date use <see cref="GetCursorMovePageBottomTask"/>
+        /// instead of this method. This is because, the <see cref="ITextEditorService"/> will provide
+        /// you the latest instance of the given <see cref="TextEditorCursor"/>. As opposed to whatever
+        /// instance of the <see cref="TextEditorCursorModifier"/> you have at time of enqueueing.
+        /// <br/><br/>
+        /// This method is needed however, because if one wants to arbitrarily create a cursor that does not
+        /// map to the view model's cursors, then one would use this method. Since an attempt to map
+        /// the cursor key would come back as the cursor not existing.
+        /// </summary>
         public TextEditorEdit GetCursorMovePageBottomUnsafeTask(
             ResourceUri modelResourceUri,
             Key<TextEditorViewModel> viewModelKey,
