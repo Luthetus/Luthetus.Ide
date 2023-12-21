@@ -44,47 +44,47 @@ public partial interface ITextEditorService
         #endregion
 
         #region UPDATE_METHODS
-        public TextEditorEdit GetWithValueTask(
+        public TextEditorEdit WithValueFactory(
             Key<TextEditorViewModel> viewModelKey,
             Func<TextEditorViewModel, TextEditorViewModel> withFunc);
 
-        public TextEditorEdit GetWithTaskTask(
+        public TextEditorEdit WithTaskFactory(
             Key<TextEditorViewModel> viewModelKey,
             Func<TextEditorViewModel, Task<Func<TextEditorViewModel, TextEditorViewModel>>> withFuncWrap);
 
         /// <summary>
         /// If a parameter is null the JavaScript will not modify that value
         /// </summary>
-        public TextEditorEdit GetSetScrollPositionTask(
+        public TextEditorEdit SetScrollPositionFactory(
             string bodyElementId,
             string gutterElementId,
             double? scrollLeftInPixels,
             double? scrollTopInPixels);
 
-        public TextEditorEdit GetSetGutterScrollTopTask(
+        public TextEditorEdit SetGutterScrollTopFactory(
             string gutterElementId,
             double scrollTopInPixels);
 
-        public TextEditorEdit GetMutateScrollVerticalPositionTask(
+        public TextEditorEdit MutateScrollVerticalPositionFactory(
             string bodyElementId,
             string gutterElementId,
             double pixels);
 
-        public TextEditorEdit GetMutateScrollHorizontalPositionTask(
+        public TextEditorEdit MutateScrollHorizontalPositionFactory(
             string bodyElementId,
             string gutterElementId,
             double pixels);
 
-        public TextEditorEdit GetFocusPrimaryCursorTask(string primaryCursorContentId);
+        public TextEditorEdit FocusPrimaryCursorFactory(string primaryCursorContentId);
 
-        public TextEditorEdit GetMoveCursorTask(
+        public TextEditorEdit MoveCursorFactory(
             KeyboardEventArgs keyboardEventArgs,
             ResourceUri modelResourceUri,
             Key<TextEditorViewModel> viewModelKey,
             Key<TextEditorCursor> cursorKey);
 
         /// <summary>
-        /// If one wants to guarantee that the state is up to date use <see cref="GetMoveCursorTask"/>
+        /// If one wants to guarantee that the state is up to date use <see cref="MoveCursorFactory"/>
         /// instead of this method. This is because, the <see cref="ITextEditorService"/> will provide
         /// you the latest instance of the given <see cref="TextEditorCursor"/>. As opposed to whatever
         /// instance of the <see cref="TextEditorCursorModifier"/> you have at time of enqueueing.
@@ -93,19 +93,19 @@ public partial interface ITextEditorService
         /// map to the view model's cursors, then one would use this method. Since an attempt to map
         /// the cursor key would come back as the cursor not existing.
         /// </summary>
-        public TextEditorEdit GetMoveCursorUnsafeTask(
+        public TextEditorEdit MoveCursorUnsafeFactory(
             KeyboardEventArgs keyboardEventArgs,
             ResourceUri modelResourceUri,
             Key<TextEditorViewModel> viewModelKey,
             TextEditorCursorModifier primaryCursor);
 
-        public TextEditorEdit GetCursorMovePageTopTask(
+        public TextEditorEdit CursorMovePageTopFactory(
             ResourceUri modelResourceUri,
             Key<TextEditorViewModel> viewModelKey,
             Key<TextEditorCursor> cursorKey);
 
         /// <summary>
-        /// If one wants to guarantee that the state is up to date use <see cref="GetCursorMovePageTopTask"/>
+        /// If one wants to guarantee that the state is up to date use <see cref="CursorMovePageTopFactory"/>
         /// instead of this method. This is because, the <see cref="ITextEditorService"/> will provide
         /// you the latest instance of the given <see cref="TextEditorCursor"/>. As opposed to whatever
         /// instance of the <see cref="TextEditorCursorModifier"/> you have at time of enqueueing.
@@ -114,18 +114,18 @@ public partial interface ITextEditorService
         /// map to the view model's cursors, then one would use this method. Since an attempt to map
         /// the cursor key would come back as the cursor not existing.
         /// </summary>
-        public TextEditorEdit GetCursorMovePageTopUnsafeTask(
+        public TextEditorEdit CursorMovePageTopUnsafeFactory(
             ResourceUri modelResourceUri,
             Key<TextEditorViewModel> viewModelKey,
             TextEditorCursorModifier primaryCursor);
 
-        public TextEditorEdit GetCursorMovePageBottomTask(
+        public TextEditorEdit CursorMovePageBottomFactory(
             ResourceUri modelResourceUri,
             Key<TextEditorViewModel> viewModelKey,
             Key<TextEditorCursor> cursorKey);
 
         /// <summary>
-        /// If one wants to guarantee that the state is up to date use <see cref="GetCursorMovePageBottomTask"/>
+        /// If one wants to guarantee that the state is up to date use <see cref="CursorMovePageBottomFactory"/>
         /// instead of this method. This is because, the <see cref="ITextEditorService"/> will provide
         /// you the latest instance of the given <see cref="TextEditorCursor"/>. As opposed to whatever
         /// instance of the <see cref="TextEditorCursorModifier"/> you have at time of enqueueing.
@@ -134,19 +134,19 @@ public partial interface ITextEditorService
         /// map to the view model's cursors, then one would use this method. Since an attempt to map
         /// the cursor key would come back as the cursor not existing.
         /// </summary>
-        public TextEditorEdit GetCursorMovePageBottomUnsafeTask(
+        public TextEditorEdit CursorMovePageBottomUnsafeFactory(
             ResourceUri modelResourceUri,
             Key<TextEditorViewModel> viewModelKey,
             TextEditorCursorModifier cursorModifier);
 
-        public TextEditorEdit GetCalculateVirtualizationResultTask(
+        public TextEditorEdit CalculateVirtualizationResultFactory(
             ResourceUri modelResourceUri,
             Key<TextEditorViewModel> viewModelKey,
             TextEditorMeasurements? textEditorMeasurements,
             Key<TextEditorCursor> cursorKey,
             CancellationToken cancellationToken);
 
-        public TextEditorEdit GetRemeasureTask(
+        public TextEditorEdit RemeasureFactory(
             ResourceUri modelResourceUri,
             Key<TextEditorViewModel> viewModelKey,
             string measureCharacterWidthAndRowHeightElementId,
@@ -305,7 +305,7 @@ public partial interface ITextEditorService
         #endregion
 
         #region UPDATE_METHODS
-        public TextEditorEdit GetWithValueTask(
+        public TextEditorEdit WithValueFactory(
             Key<TextEditorViewModel> viewModelKey,
             Func<TextEditorViewModel, TextEditorViewModel> withFunc)
         {
@@ -320,7 +320,7 @@ public partial interface ITextEditorService
             };
         }
 
-        public TextEditorEdit GetWithTaskTask(
+        public TextEditorEdit WithTaskFactory(
             Key<TextEditorViewModel> viewModelKey,
             Func<TextEditorViewModel, Task<Func<TextEditorViewModel, TextEditorViewModel>>> withFuncWrap)
         {
@@ -341,7 +341,7 @@ public partial interface ITextEditorService
         /// <summary>
         /// If a parameter is null the JavaScript will not modify that value
         /// </summary>
-        public TextEditorEdit GetSetScrollPositionTask(
+        public TextEditorEdit SetScrollPositionFactory(
             string bodyElementId,
             string gutterElementId,
             double? scrollLeftInPixels,
@@ -357,7 +357,7 @@ public partial interface ITextEditorService
             };
         }
 
-        public TextEditorEdit GetSetGutterScrollTopTask(
+        public TextEditorEdit SetGutterScrollTopFactory(
             string gutterElementId,
             double scrollTopInPixels)
         {
@@ -369,7 +369,7 @@ public partial interface ITextEditorService
             };
         }
 
-        public TextEditorEdit GetMutateScrollVerticalPositionTask(
+        public TextEditorEdit MutateScrollVerticalPositionFactory(
             string bodyElementId,
             string gutterElementId,
             double pixels)
@@ -383,7 +383,7 @@ public partial interface ITextEditorService
             };
         }
 
-        public TextEditorEdit GetMutateScrollHorizontalPositionTask(
+        public TextEditorEdit MutateScrollHorizontalPositionFactory(
             string bodyElementId,
             string gutterElementId,
             double pixels)
@@ -397,7 +397,7 @@ public partial interface ITextEditorService
             };
         }
 
-        public TextEditorEdit GetFocusPrimaryCursorTask(string primaryCursorContentId)
+        public TextEditorEdit FocusPrimaryCursorFactory(string primaryCursorContentId)
         {
             return async editContext =>
             {
@@ -406,7 +406,7 @@ public partial interface ITextEditorService
             };
         }
 
-        public TextEditorEdit GetMoveCursorTask(
+        public TextEditorEdit MoveCursorFactory(
             KeyboardEventArgs keyboardEventArgs,
             ResourceUri modelResourceUri,
             Key<TextEditorViewModel> viewModelKey,
@@ -431,12 +431,12 @@ public partial interface ITextEditorService
                 if (cursorModifier is null)
                     return Task.CompletedTask;
 
-                return GetMoveCursorUnsafeTask(keyboardEventArgs, modelResourceUri, viewModelKey, cursorModifier)
+                return MoveCursorUnsafeFactory(keyboardEventArgs, modelResourceUri, viewModelKey, cursorModifier)
                     .Invoke(editContext);
             };
         }
 
-        public TextEditorEdit GetMoveCursorUnsafeTask(
+        public TextEditorEdit MoveCursorUnsafeFactory(
             KeyboardEventArgs keyboardEventArgs,
             ResourceUri modelResourceUri,
             Key<TextEditorViewModel> viewModelKey,
@@ -641,7 +641,7 @@ public partial interface ITextEditorService
             };
         }
 
-        public TextEditorEdit GetCursorMovePageTopTask(
+        public TextEditorEdit CursorMovePageTopFactory(
             ResourceUri modelResourceUri,
             Key<TextEditorViewModel> viewModelKey,
             Key<TextEditorCursor> cursorKey)
@@ -665,12 +665,12 @@ public partial interface ITextEditorService
                 if (cursorModifier is null)
                     return Task.CompletedTask;
 
-                return GetCursorMovePageTopUnsafeTask(modelResourceUri, viewModelKey, cursorModifier)
+                return CursorMovePageTopUnsafeFactory(modelResourceUri, viewModelKey, cursorModifier)
                     .Invoke(editContext);
             };
         }
             
-        public TextEditorEdit GetCursorMovePageTopUnsafeTask(
+        public TextEditorEdit CursorMovePageTopUnsafeFactory(
             ResourceUri modelResourceUri,
             Key<TextEditorViewModel> viewModelKey,
             TextEditorCursorModifier cursorModifier)
@@ -698,7 +698,7 @@ public partial interface ITextEditorService
             };
         }
 
-        public TextEditorEdit GetCursorMovePageBottomTask(
+        public TextEditorEdit CursorMovePageBottomFactory(
             ResourceUri modelResourceUri,
             Key<TextEditorViewModel> viewModelKey,
             Key<TextEditorCursor> cursorKey)
@@ -722,12 +722,12 @@ public partial interface ITextEditorService
                 if (cursorModifier is null)
                     return Task.CompletedTask;
 
-                return GetCursorMovePageBottomUnsafeTask(modelResourceUri, viewModelKey, cursorModifier)
+                return CursorMovePageBottomUnsafeFactory(modelResourceUri, viewModelKey, cursorModifier)
                     .Invoke(editContext);
             };
         }
 
-        public TextEditorEdit GetCursorMovePageBottomUnsafeTask(
+        public TextEditorEdit CursorMovePageBottomUnsafeFactory(
             ResourceUri modelResourceUri,
             Key<TextEditorViewModel> viewModelKey,
             TextEditorCursorModifier cursorModifier)
@@ -753,7 +753,7 @@ public partial interface ITextEditorService
             };
         }
 
-        public TextEditorEdit GetCalculateVirtualizationResultTask(
+        public TextEditorEdit CalculateVirtualizationResultFactory(
             ResourceUri modelResourceUri,
             Key<TextEditorViewModel> viewModelKey,
             TextEditorMeasurements? textEditorMeasurements,
@@ -996,7 +996,7 @@ public partial interface ITextEditorService
                         viewModelModifier.ViewModel.SeenModelRenderStateKeysBag.Add(modelModifier.RenderStateKey);
                     }
 
-                    await GetWithValueTask(
+                    await WithValueFactory(
                             viewModelModifier.ViewModel.ViewModelKey,
                             previousViewModel => previousViewModel with
                             {
@@ -1007,7 +1007,7 @@ public partial interface ITextEditorService
             };
         }
 
-        public TextEditorEdit GetRemeasureTask(
+        public TextEditorEdit RemeasureFactory(
             ResourceUri modelResourceUri,
             Key<TextEditorViewModel> viewModelKey,
             string measureCharacterWidthAndRowHeightElementId,
@@ -1055,7 +1055,7 @@ public partial interface ITextEditorService
                         viewModelModifier.ViewModel.SeenOptionsRenderStateKeysBag.Add(options.RenderStateKey);
                     }
 
-                    await GetWithValueTask(
+                    await WithValueFactory(
                             viewModelModifier.ViewModel.ViewModelKey,
                             previousViewModel => (previousViewModel with
                             {

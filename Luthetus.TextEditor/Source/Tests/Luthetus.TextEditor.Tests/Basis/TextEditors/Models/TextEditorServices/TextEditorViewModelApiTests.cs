@@ -100,7 +100,7 @@ public class TextEditorViewModelApiTests
             inViewModel.ShouldSetFocusAfterNextRender);
 
         textEditorService.Post(
-            textEditorService.ViewModelApi.GetWithValueTask(
+            textEditorService.ViewModelApi.WithValueFactory(
                 inViewModel.ViewModelKey,
                 inState => inState with
                 {
@@ -253,7 +253,7 @@ public class TextEditorViewModelApiTests
     }
 
     /// <summary>
-    /// <see cref="ITextEditorService.TextEditorViewModelApi.GetFocusPrimaryCursorTask(string)"/>
+    /// <see cref="ITextEditorService.TextEditorViewModelApi.FocusPrimaryCursorFactory(string)"/>
     /// </summary>
     [Fact]
     public void FocusPrimaryCursorAsync()

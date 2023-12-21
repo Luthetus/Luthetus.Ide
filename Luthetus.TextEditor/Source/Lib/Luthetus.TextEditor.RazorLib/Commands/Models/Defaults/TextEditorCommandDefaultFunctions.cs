@@ -196,7 +196,7 @@ public class TextEditorCommandDefaultFunctions
         return (ITextEditorEditContext editContext) =>
         {
             return editContext.TextEditorService.ModelApi
-                .UndoEdit(modelResourceUri)
+                .UndoEditFactory(modelResourceUri)
                 .Invoke(editContext);
         };
     }
@@ -209,7 +209,7 @@ public class TextEditorCommandDefaultFunctions
         return (ITextEditorEditContext editContext) =>
         {
             return editContext.TextEditorService.ModelApi
-                .RedoEdit(modelResourceUri)
+                .RedoEditFactory(modelResourceUri)
                 .Invoke(editContext);
         };
     }
@@ -842,7 +842,7 @@ public class TextEditorCommandDefaultFunctions
                     };
                 }
 
-                await editContext.TextEditorService.ViewModelApi.GetMoveCursorUnsafeTask(
+                await editContext.TextEditorService.ViewModelApi.MoveCursorUnsafeFactory(
                         keyboardEventArgs,
                         modelModifier.ResourceUri,
                         viewModelModifier.ViewModel.ViewModelKey,

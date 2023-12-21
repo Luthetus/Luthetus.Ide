@@ -4,6 +4,7 @@ using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models.Vims;
@@ -12,13 +13,17 @@ public static partial class TextEditorCommandVimFacts
 {
     public static class Verbs
     {
-        public static readonly TextEditorCommand DeleteLineCommand = new(
+        public static TextEditorCommand DeleteLineCommand = new(
             "Vim::Delete(Line)", "Vim::Delete(Line)", false, true, TextEditKind.None, null,
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.CutFactory);
+                commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.CutFactory(
+                    commandArgs.ModelResourceUri,
+                    commandArgs.ViewModelKey,
+                    commandArgs));
+
                 return Task.CompletedTask;
             });
 
@@ -27,31 +32,26 @@ public static partial class TextEditorCommandVimFacts
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-                commandArgs.TextEditorService.Post(async editContext =>
-                {
-                    var model = editContext.CommandArgs.TextEditorService.ModelApi.GetOrDefault(editContext.CommandArgs.ModelResourceUri);
-                    var viewModel = editContext.CommandArgs.TextEditorService.ViewModelApi.GetOrDefault(editContext.CommandArgs.ViewModelKey);
-
-                    var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                        editContext.CommandArgs.ViewModelKey,
-                        editContext.ViewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
-
-                    await ChangeLineAsync(editContext);
-                });
+                commandArgs.TextEditorService.Post(ChangeLineFactory(commandArgs));
                 return Task.CompletedTask;
             });
 
-        public static async Task ChangeLineAsync(ITextEditorEditContext editContext)
+        public static TextEditorEdit ChangeLineFactory(TextEditorCommandArgs commandArgs)
         {
-            var activeKeymap = editContext.CommandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
-                ?? TextEditorKeymapFacts.DefaultKeymap;
+            return async editContext =>
+            {
+                var activeKeymap = commandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
+                    ?? TextEditorKeymapFacts.DefaultKeymap;
 
-            if (activeKeymap is not TextEditorKeymapVim vimKeymap)
-                return;
+                if (activeKeymap is not TextEditorKeymapVim vimKeymap)
+                    return;
 
-            await TextEditorCommandDefaultFunctions.CutFactory.Invoke(editContext);
-            vimKeymap.ActiveVimMode = VimMode.Insert;
+                await TextEditorCommandDefaultFunctions
+                    .CutFactory(commandArgs.ModelResourceUri, commandArgs.ViewModelKey, commandArgs)
+                    .Invoke(editContext);
+
+                vimKeymap.ActiveVimMode = VimMode.Insert;
+            };
         }
 
         public static TextEditorCommand DeleteMotionCommandFactory(TextEditorCommand innerTextEditorCommand) => new(
@@ -59,55 +59,69 @@ public static partial class TextEditorCommandVimFacts
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-                commandArgs.TextEditorService.Post(DeleteMotionAsync);
+                commandArgs.TextEditorService.Post(DeleteMotionFactory(commandArgs));
                 return Task.CompletedTask;
             });
 
-        public static async Task DeleteMotionAsync(ITextEditorEditContext editContext)
+        public static TextEditorEdit DeleteMotionFactory(TextEditorCommandArgs commandArgs)
         {
-            var cursorForMotion = new TextEditorCursor(
-                editContext.PrimaryCursor.RowIndex,
-                editContext.PrimaryCursor.ColumnIndex,
-                true);
+            return async editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
 
-            var textEditorCommandArgsForMotion = new TextEditorCommandArgs(
-                editContext.Model.ResourceUri,
-                editContext.ViewModel.ViewModelKey,
-                editContext.CommandArgs.HasTextSelection,
-                editContext.CommandArgs.ClipboardService,
-                editContext.CommandArgs.TextEditorService,
-                editContext.CommandArgs.HandleMouseStoppedMovingEventAsyncFunc,
-                editContext.CommandArgs.JsRuntime,
-                editContext.CommandArgs.Dispatcher,
-                editContext.CommandArgs.RegisterModelAction,
-                editContext.CommandArgs.RegisterViewModelAction,
-                editContext.CommandArgs.ShowViewModelAction);
+                if (modelModifier is null || viewModelModifier is null)
+                    return;
 
-            var motionResult = await VimMotionResult.GetResultAsync(
-                editContext.Model,
-                editContext.ViewModel,
-                editContext.CommandArgs,
-                cursorForMotion,
-                async () => await editContext.CommandArgs.InnerCommand.DoAsyncFunc
-                    .Invoke(textEditorCommandArgsForMotion));
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-            var cursorForDeletion = new TextEditorCursor(
-                motionResult.LowerPositionIndexCursor.RowIndex,
-                motionResult.LowerPositionIndexCursor.ColumnIndex,
-                true);
+                if (cursorModifierBag is null || primaryCursorModifier is null)
+                    return;
 
-            var deleteTextByRangeAction = new TextEditorModelState.DeleteTextByRangeAction(
-                editContext.Model.ResourceUri,
-                editContext.ViewModel.ViewModelKey,
-                new TextEditorCursorModifier[] { new TextEditorCursorModifier(cursorForDeletion) }.ToList(),
-                motionResult.PositionIndexDisplacement,
-                CancellationToken.None,
-                editContext.AuthenticatedActionKey);
+                var cursorForMotion = new TextEditorCursor(
+                    primaryCursorModifier.RowIndex,
+                    primaryCursorModifier.ColumnIndex,
+                    true);
 
-            await editContext.CommandArgs.TextEditorService.ModelApi
-                .DeleteTextByRange(deleteTextByRangeAction, editContext.RefreshCursorsRequest)
-                .Invoke(editContext);
+                var textEditorCommandArgsForMotion = new TextEditorCommandArgs(
+                    modelModifier.ResourceUri,
+                    viewModelModifier.ViewModel.ViewModelKey,
+                    commandArgs.HasTextSelection,
+                    commandArgs.ClipboardService,
+                    commandArgs.TextEditorService,
+                    commandArgs.HandleMouseStoppedMovingEventAsyncFunc,
+                    commandArgs.JsRuntime,
+                    commandArgs.Dispatcher,
+                    commandArgs.RegisterModelAction,
+                    commandArgs.RegisterViewModelAction,
+                    commandArgs.ShowViewModelAction);
+
+                var motionResult = await VimMotionResult.GetResultAsync(
+                    modelModifier,
+                    viewModelModifier.ViewModel,
+                    commandArgs,
+                    cursorForMotion,
+                    async () => await commandArgs.InnerCommand.DoAsyncFunc
+                        .Invoke(textEditorCommandArgsForMotion));
+
+                var cursorForDeletion = new TextEditorCursor(
+                    motionResult.LowerPositionIndexCursor.RowIndex,
+                    motionResult.LowerPositionIndexCursor.ColumnIndex,
+                    true);
+
+                var deleteTextByRangeAction = new TextEditorModelState.DeleteTextByRangeAction(
+                    modelModifier.ResourceUri,
+                    new(viewModelModifier.ViewModel.ViewModelKey, new()),
+                    motionResult.PositionIndexDisplacement,
+                    CancellationToken.None,
+                    editContext.AuthenticatedActionKey);
+
+                await editContext.TextEditorService.ModelApi.DeleteTextByRangeFactory(
+                        deleteTextByRangeAction,
+                        viewModelModifier.ViewModel.ViewModelKey)
+                    .Invoke(editContext);
+            };
         }
 
         public static TextEditorCommand ChangeMotionCommandFactory(TextEditorCommand innerTextEditorCommand) => new(
@@ -115,33 +129,25 @@ public static partial class TextEditorCommandVimFacts
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-                commandArgs.TextEditorService.Post(async editContext =>
-                {
-                    var model = editContext.CommandArgs.TextEditorService.ModelApi.GetOrDefault(editContext.CommandArgs.ModelResourceUri);
-                    var viewModel = editContext.CommandArgs.TextEditorService.ViewModelApi.GetOrDefault(editContext.CommandArgs.ViewModelKey);
-
-                    var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                        editContext.CommandArgs.ViewModelKey,
-                        editContext.ViewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
-
-                    await GetChangeMotionAsync(editContext);
-                });
+                commandArgs.TextEditorService.Post(GetChangeMotionFactory(commandArgs));
                 return Task.CompletedTask;
             });
 
-        public static async Task GetChangeMotionAsync(ITextEditorEditContext editContext)
+        public static TextEditorEdit GetChangeMotionFactory(TextEditorCommandArgs commandArgs)
         {
-            var activeKeymap = editContext.CommandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
-                ?? TextEditorKeymapFacts.DefaultKeymap;
+            return async editContext =>
+            {
+                var activeKeymap = commandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
+                    ?? TextEditorKeymapFacts.DefaultKeymap;
 
-            if (activeKeymap is not TextEditorKeymapVim textEditorKeymapVim)
-                return;
+                if (activeKeymap is not TextEditorKeymapVim textEditorKeymapVim)
+                    return;
 
-            var deleteMotion = DeleteMotionCommandFactory(editContext.CommandArgs.InnerCommand);
+                var deleteMotion = DeleteMotionCommandFactory(commandArgs.InnerCommand);
 
-            await deleteMotion.DoAsyncFunc.Invoke(editContext.CommandArgs);
-            textEditorKeymapVim.ActiveVimMode = VimMode.Insert;
+                await deleteMotion.DoAsyncFunc.Invoke(commandArgs);
+                textEditorKeymapVim.ActiveVimMode = VimMode.Insert;
+            };
         }
 
         public static readonly TextEditorCommand ChangeSelectionCommand = new(
@@ -149,31 +155,23 @@ public static partial class TextEditorCommandVimFacts
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-                commandArgs.TextEditorService.Post(async editContext =>
-                {
-                    var model = editContext.CommandArgs.TextEditorService.ModelApi.GetOrDefault(editContext.CommandArgs.ModelResourceUri);
-                    var viewModel = editContext.CommandArgs.TextEditorService.ViewModelApi.GetOrDefault(editContext.CommandArgs.ViewModelKey);
-
-                    var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                        editContext.CommandArgs.ViewModelKey,
-                        editContext.ViewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
-
-                    await ChangeSelectionAsync(editContext);
-                });
+                commandArgs.TextEditorService.Post(ChangeSelectionFactory(commandArgs));
                 return Task.CompletedTask;
             });
 
-        public static async Task ChangeSelectionAsync(ITextEditorEditContext editContext)
+        public static TextEditorEdit ChangeSelectionFactory(TextEditorCommandArgs commandArgs)
         {
-            var activeKeymap = editContext.CommandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
+            return async editContext =>
+            {
+                var activeKeymap = commandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
                     ?? TextEditorKeymapFacts.DefaultKeymap;
 
-            if (activeKeymap is not TextEditorKeymapVim textEditorKeymapVim)
-                return;
+                if (activeKeymap is not TextEditorKeymapVim textEditorKeymapVim)
+                    return;
 
-            await TextEditorCommandDefaultFacts.Cut.DoAsyncFunc.Invoke(editContext.CommandArgs);
-            textEditorKeymapVim.ActiveVimMode = VimMode.Insert;
+                await TextEditorCommandDefaultFacts.Cut.DoAsyncFunc.Invoke(commandArgs);
+                textEditorKeymapVim.ActiveVimMode = VimMode.Insert;
+            };
         }
 
         public static readonly TextEditorCommand YankCommand = new(
@@ -181,25 +179,17 @@ public static partial class TextEditorCommandVimFacts
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-                commandArgs.TextEditorService.Post(async editContext =>
-                {
-                    var model = editContext.CommandArgs.TextEditorService.ModelApi.GetOrDefault(editContext.CommandArgs.ModelResourceUri);
-                    var viewModel = editContext.CommandArgs.TextEditorService.ViewModelApi.GetOrDefault(editContext.CommandArgs.ViewModelKey);
-
-                    var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                        editContext.CommandArgs.ViewModelKey,
-                        editContext.ViewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
-
-                    await YankAsync(editContext);
-                });
+                commandArgs.TextEditorService.Post(YankFactory(commandArgs));
                 return Task.CompletedTask;
             });
 
-        public static async Task YankAsync(ITextEditorEditContext editContext)
+        public static TextEditorEdit YankFactory(TextEditorCommandArgs commandArgs)
         {
-            await TextEditorCommandDefaultFacts.Copy.DoAsyncFunc.Invoke(editContext.CommandArgs);
-            await TextEditorCommandDefaultFacts.ClearTextSelection.DoAsyncFunc.Invoke(editContext.CommandArgs);
+            return async editContext =>
+            {
+                await TextEditorCommandDefaultFacts.Copy.DoAsyncFunc.Invoke(commandArgs);
+                await TextEditorCommandDefaultFacts.ClearTextSelection.DoAsyncFunc.Invoke(commandArgs);
+            };
         }
 
         public static readonly TextEditorCommand NewLineBelowCommand = new(
@@ -207,31 +197,23 @@ public static partial class TextEditorCommandVimFacts
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-                commandArgs.TextEditorService.Post(async editContext =>
-                {
-                    var model = editContext.CommandArgs.TextEditorService.ModelApi.GetOrDefault(editContext.CommandArgs.ModelResourceUri);
-                    var viewModel = editContext.CommandArgs.TextEditorService.ViewModelApi.GetOrDefault(editContext.CommandArgs.ViewModelKey);
-
-                    var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                        editContext.CommandArgs.ViewModelKey,
-                        editContext.ViewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
-
-                    await NewLineBelowAsync(editContext);
-                });
+                commandArgs.TextEditorService.Post(NewLineBelowFactory(commandArgs));
                 return Task.CompletedTask;
             });
 
-        public static async Task NewLineBelowAsync(ITextEditorEditContext editContext)
+        public static TextEditorEdit NewLineBelowFactory(TextEditorCommandArgs commandArgs)
         {
-            var activeKeymap = editContext.CommandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
-                ?? TextEditorKeymapFacts.DefaultKeymap;
+            return async editContext =>
+            {
+                var activeKeymap = commandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
+                    ?? TextEditorKeymapFacts.DefaultKeymap;
 
-            if (activeKeymap is not TextEditorKeymapVim textEditorKeymapVim)
-                return;
+                if (activeKeymap is not TextEditorKeymapVim textEditorKeymapVim)
+                    return;
 
-            await TextEditorCommandDefaultFacts.NewLineBelow.DoAsyncFunc.Invoke(editContext.CommandArgs);
-            textEditorKeymapVim.ActiveVimMode = VimMode.Insert;
+                await TextEditorCommandDefaultFacts.NewLineBelow.DoAsyncFunc.Invoke(commandArgs);
+                textEditorKeymapVim.ActiveVimMode = VimMode.Insert;
+            };
         }
 
         public static readonly TextEditorCommand NewLineAboveCommand = new(
@@ -239,31 +221,23 @@ public static partial class TextEditorCommandVimFacts
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-                commandArgs.TextEditorService.Post(async editContext =>
-                {
-                    var model = editContext.CommandArgs.TextEditorService.ModelApi.GetOrDefault(editContext.CommandArgs.ModelResourceUri);
-                    var viewModel = editContext.CommandArgs.TextEditorService.ViewModelApi.GetOrDefault(editContext.CommandArgs.ViewModelKey);
-
-                    var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
-                        editContext.CommandArgs.ViewModelKey,
-                        editContext.ViewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
-
-                    await NewLineAboveAsync(editContext);
-                });
+                commandArgs.TextEditorService.Post(NewLineAboveFactory(commandArgs));
                 return Task.CompletedTask;
             });
 
-        public static async Task NewLineAboveAsync(ITextEditorEditContext editContext)
+        public static TextEditorEdit NewLineAboveFactory(TextEditorCommandArgs commandArgs)
         {
-            var activeKeymap = editContext.CommandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
-                ?? TextEditorKeymapFacts.DefaultKeymap;
+            return async editContext =>
+            {
+                var activeKeymap = commandArgs.TextEditorService.OptionsStateWrap.Value.Options.Keymap
+                    ?? TextEditorKeymapFacts.DefaultKeymap;
 
-            if (activeKeymap is not TextEditorKeymapVim textEditorKeymapVim)
-                return;
+                if (activeKeymap is not TextEditorKeymapVim textEditorKeymapVim)
+                    return;
 
-            await TextEditorCommandDefaultFacts.NewLineAbove.DoAsyncFunc.Invoke(editContext.CommandArgs);
-            textEditorKeymapVim.ActiveVimMode = VimMode.Insert;
+                await TextEditorCommandDefaultFacts.NewLineAbove.DoAsyncFunc.Invoke(commandArgs);
+                textEditorKeymapVim.ActiveVimMode = VimMode.Insert;
+            };
         }
     }
 }

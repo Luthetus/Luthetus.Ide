@@ -70,7 +70,7 @@ public static class SyntaxTextObjectVim
             if (cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
-            commandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
+            commandArgs.TextEditorService.ViewModelApi.MoveCursorFactory(
                     new KeyboardEventArgs
                     {
                         Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
@@ -104,7 +104,7 @@ public static class SyntaxTextObjectVim
             if (cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
-            return commandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
+            return commandArgs.TextEditorService.ViewModelApi.MoveCursorFactory(
                     new KeyboardEventArgs
                     {
                         Key = KeyboardKeyFacts.MovementKeys.ARROW_DOWN,
@@ -136,7 +136,7 @@ public static class SyntaxTextObjectVim
             if (cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
-            return commandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
+            return commandArgs.TextEditorService.ViewModelApi.MoveCursorFactory(
                     new KeyboardEventArgs
                     {
                         Key = KeyboardKeyFacts.MovementKeys.ARROW_UP,
@@ -168,7 +168,7 @@ public static class SyntaxTextObjectVim
             if (cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
-            return commandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
+            return commandArgs.TextEditorService.ViewModelApi.MoveCursorFactory(
                     new KeyboardEventArgs
                     {
                         Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
@@ -200,7 +200,7 @@ public static class SyntaxTextObjectVim
             if (cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
-            return commandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
+            return commandArgs.TextEditorService.ViewModelApi.MoveCursorFactory(
                     new KeyboardEventArgs
                     {
                         Key = KeyboardKeyFacts.MovementKeys.END,
@@ -232,7 +232,7 @@ public static class SyntaxTextObjectVim
             if (cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
-            return commandArgs.TextEditorService.ViewModelApi.GetMoveCursorTask(
+            return commandArgs.TextEditorService.ViewModelApi.MoveCursorFactory(
                     new KeyboardEventArgs
                     {
                         Key = KeyboardKeyFacts.MovementKeys.HOME,

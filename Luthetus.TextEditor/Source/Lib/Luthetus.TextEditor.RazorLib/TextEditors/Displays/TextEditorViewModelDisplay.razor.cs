@@ -300,7 +300,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             else
             {
                 TextEditorService.Post(
-                    TextEditorService.ViewModelApi.GetMoveCursorUnsafeTask(
+                    TextEditorService.ViewModelApi.MoveCursorUnsafeFactory(
                         keyboardEventArgs,
                         model.ResourceUri,
                         viewModel.ViewModelKey,

@@ -26,7 +26,7 @@ public partial class TextEditorFooter : ComponentBase
         if (Enum.TryParse<RowEndingKind>(rowEndingKindString, out var rowEndingKind))
         {
             TextEditorService.Post(
-                TextEditorService.ModelApi.SetUsingRowEndingKind(
+                TextEditorService.ModelApi.SetUsingRowEndingKindFactory(
                     viewModel.ResourceUri,
                     rowEndingKind));
         }

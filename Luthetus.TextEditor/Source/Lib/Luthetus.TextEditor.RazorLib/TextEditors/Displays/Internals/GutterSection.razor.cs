@@ -28,7 +28,7 @@ public partial class GutterSection : ComponentBase
 
         // TODO: Does 'SetGutterScrollTopAsync' need to be throttled? 
         TextEditorService.Post(
-            TextEditorService.ViewModelApi.GetSetGutterScrollTopTask(
+            TextEditorService.ViewModelApi.SetGutterScrollTopFactory(
                 viewModel.GutterElementId,
                 viewModel.VirtualizationResult.TextEditorMeasurements.ScrollTop));
 

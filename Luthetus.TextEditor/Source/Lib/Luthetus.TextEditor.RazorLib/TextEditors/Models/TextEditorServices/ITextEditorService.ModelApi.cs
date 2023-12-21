@@ -52,30 +52,30 @@ public partial interface ITextEditorService
         #endregion
 
         #region UPDATE_METHODS
-        public TextEditorEdit UndoEdit(
+        public TextEditorEdit UndoEditFactory(
             ResourceUri resourceUri);
 
-        public TextEditorEdit SetUsingRowEndingKind(
+        public TextEditorEdit SetUsingRowEndingKindFactory(
             ResourceUri resourceUri,
             RowEndingKind rowEndingKind);
 
-        public TextEditorEdit SetResourceData(
+        public TextEditorEdit SetResourceDataFactory(
             ResourceUri resourceUri,
             DateTime resourceLastWriteTime);
 
-        public TextEditorEdit Reload(
+        public TextEditorEdit ReloadFactory(
         ResourceUri resourceUri,
             string content,
             DateTime resourceLastWriteTime);
 
-        public TextEditorEdit RedoEdit(ResourceUri resourceUri);
+        public TextEditorEdit RedoEditFactory(ResourceUri resourceUri);
 
-        public TextEditorEdit InsertText(
+        public TextEditorEdit InsertTextFactory(
             InsertTextAction insertTextAction,
             Key<TextEditorViewModel> viewModelKey);
 
         /// <summary>
-        /// If one wants to guarantee that the state is up to date use <see cref="InsertText"/>
+        /// If one wants to guarantee that the state is up to date use <see cref="InsertTextFactory"/>
         /// instead of this method. This is because, the <see cref="ITextEditorService"/> will provide
         /// you the latest instance of the given <see cref="TextEditorCursor"/>. As opposed to whatever
         /// instance of the <see cref="TextEditorCursorModifier"/> you have at time of enqueueing.
@@ -84,16 +84,16 @@ public partial interface ITextEditorService
         /// map to the view model's cursors, then one would use this method. Since an attempt to map
         /// the cursor key would come back as the cursor not existing.
         /// </summary>
-        public TextEditorEdit InsertTextUnsafe(
+        public TextEditorEdit InsertTextUnsafeFactory(
             InsertTextAction insertTextAction,
             TextEditorCursorModifierBag cursorModifierBag);
 
-        public TextEditorEdit HandleKeyboardEvent(
+        public TextEditorEdit HandleKeyboardEventFactory(
             KeyboardEventAction keyboardEventAction,
             Key<TextEditorViewModel> viewModelKey);
 
         /// <summary>
-        /// If one wants to guarantee that the state is up to date use <see cref="HandleKeyboardEvent"/>
+        /// If one wants to guarantee that the state is up to date use <see cref="HandleKeyboardEventFactory"/>
         /// instead of this method. This is because, the <see cref="ITextEditorService"/> will provide
         /// you the latest instance of the given <see cref="TextEditorCursor"/>. As opposed to whatever
         /// instance of the <see cref="TextEditorCursorModifier"/> you have at time of enqueueing.
@@ -102,16 +102,16 @@ public partial interface ITextEditorService
         /// map to the view model's cursors, then one would use this method. Since an attempt to map
         /// the cursor key would come back as the cursor not existing.
         /// </summary>
-        public TextEditorEdit HandleKeyboardEventUnsafe(
+        public TextEditorEdit HandleKeyboardEventUnsafeFactory(
             KeyboardEventAction keyboardEventAction,
             TextEditorCursorModifierBag cursorModifierBag);
 
-        public TextEditorEdit DeleteTextByRange(
+        public TextEditorEdit DeleteTextByRangeFactory(
             DeleteTextByRangeAction deleteTextByRangeAction,
             Key<TextEditorViewModel> viewModelKey);
 
         /// <summary>
-        /// If one wants to guarantee that the state is up to date use <see cref="DeleteTextByRange"/>
+        /// If one wants to guarantee that the state is up to date use <see cref="DeleteTextByRangeFactory"/>
         /// instead of this method. This is because, the <see cref="ITextEditorService"/> will provide
         /// you the latest instance of the given <see cref="TextEditorCursor"/>. As opposed to whatever
         /// instance of the <see cref="TextEditorCursorModifier"/> you have at time of enqueueing.
@@ -120,16 +120,16 @@ public partial interface ITextEditorService
         /// map to the view model's cursors, then one would use this method. Since an attempt to map
         /// the cursor key would come back as the cursor not existing.
         /// </summary>
-        public TextEditorEdit DeleteTextByRangeUnsafe(
+        public TextEditorEdit DeleteTextByRangeUnsafeFactory(
             DeleteTextByRangeAction deleteTextByRangeAction,
             TextEditorCursorModifierBag cursorModifierBag);
 
-        public TextEditorEdit DeleteTextByMotion(
+        public TextEditorEdit DeleteTextByMotionFactory(
             DeleteTextByMotionAction deleteTextByMotionAction,
             Key<TextEditorViewModel> viewModelKey);
 
         /// <summary>
-        /// If one wants to guarantee that the state is up to date use <see cref="DeleteTextByMotion"/>
+        /// If one wants to guarantee that the state is up to date use <see cref="DeleteTextByMotionFactory"/>
         /// instead of this method. This is because, the <see cref="ITextEditorService"/> will provide
         /// you the latest instance of the given <see cref="TextEditorCursor"/>. As opposed to whatever
         /// instance of the <see cref="TextEditorCursorModifier"/> you have at time of enqueueing.
@@ -138,7 +138,7 @@ public partial interface ITextEditorService
         /// map to the view model's cursors, then one would use this method. Since an attempt to map
         /// the cursor key would come back as the cursor not existing.
         /// </summary>
-        public TextEditorEdit DeleteTextByMotionUnsafe(
+        public TextEditorEdit DeleteTextByMotionUnsafeFactory(
             DeleteTextByMotionAction deleteTextByMotionAction,
             TextEditorCursorModifierBag cursorModifierBag);
         #endregion
@@ -260,7 +260,7 @@ public partial interface ITextEditorService
         #endregion
 
         #region UPDATE_METHODS
-        public TextEditorEdit UndoEdit(ResourceUri resourceUri)
+        public TextEditorEdit UndoEditFactory(ResourceUri resourceUri)
         {
             return context =>
             {
@@ -272,7 +272,7 @@ public partial interface ITextEditorService
             };
         }
 
-        public TextEditorEdit SetUsingRowEndingKind(
+        public TextEditorEdit SetUsingRowEndingKindFactory(
             ResourceUri resourceUri,
             RowEndingKind rowEndingKind)
         {
@@ -287,7 +287,7 @@ public partial interface ITextEditorService
             };
         }
 
-        public TextEditorEdit SetResourceData(
+        public TextEditorEdit SetResourceDataFactory(
             ResourceUri resourceUri,
             DateTime resourceLastWriteTime)
         {
@@ -302,7 +302,7 @@ public partial interface ITextEditorService
             };
         }
 
-        public TextEditorEdit Reload(
+        public TextEditorEdit ReloadFactory(
             ResourceUri resourceUri,
             string content,
             DateTime resourceLastWriteTime)
@@ -319,7 +319,7 @@ public partial interface ITextEditorService
             };
         }
 
-        public TextEditorEdit RedoEdit(ResourceUri resourceUri)
+        public TextEditorEdit RedoEditFactory(ResourceUri resourceUri)
         {
             return context =>
             {
@@ -328,7 +328,7 @@ public partial interface ITextEditorService
             };
         }
 
-        public TextEditorEdit InsertText(
+        public TextEditorEdit InsertTextFactory(
             InsertTextAction insertTextAction,
             Key<TextEditorViewModel> viewModelKey)
         {
@@ -346,12 +346,12 @@ public partial interface ITextEditorService
                 if (cursorModifierBag is null || primaryCursorModifier is null)
                     return Task.CompletedTask;
 
-                return InsertTextUnsafe(insertTextAction, cursorModifierBag)
+                return InsertTextUnsafeFactory(insertTextAction, cursorModifierBag)
                     .Invoke(editContext);
             };
         }
         
-        public TextEditorEdit InsertTextUnsafe(
+        public TextEditorEdit InsertTextUnsafeFactory(
             InsertTextAction insertTextAction,
             TextEditorCursorModifierBag cursorModifierBag)
         {
@@ -368,7 +368,7 @@ public partial interface ITextEditorService
             };
         }
 
-        public TextEditorEdit HandleKeyboardEvent(
+        public TextEditorEdit HandleKeyboardEventFactory(
             KeyboardEventAction keyboardEventAction,
             Key<TextEditorViewModel> viewModelKey)
         {
@@ -386,12 +386,12 @@ public partial interface ITextEditorService
                 if (cursorModifierBag is null || primaryCursorModifier is null)
                     return Task.CompletedTask;
 
-                return HandleKeyboardEventUnsafe(keyboardEventAction, cursorModifierBag)
+                return HandleKeyboardEventUnsafeFactory(keyboardEventAction, cursorModifierBag)
                     .Invoke(editContext);
             };
         }
 
-        public TextEditorEdit HandleKeyboardEventUnsafe(
+        public TextEditorEdit HandleKeyboardEventUnsafeFactory(
             KeyboardEventAction keyboardEventAction,
             TextEditorCursorModifierBag cursorModifierBag)
         {
@@ -408,7 +408,7 @@ public partial interface ITextEditorService
             };
         }
 
-        public TextEditorEdit DeleteTextByRange(
+        public TextEditorEdit DeleteTextByRangeFactory(
             DeleteTextByRangeAction deleteTextByRangeAction,
             Key<TextEditorViewModel> viewModelKey)
         {
@@ -426,12 +426,12 @@ public partial interface ITextEditorService
                 if (cursorModifierBag is null || primaryCursorModifier is null)
                     return Task.CompletedTask;
 
-                return DeleteTextByRangeUnsafe(deleteTextByRangeAction, cursorModifierBag)
+                return DeleteTextByRangeUnsafeFactory(deleteTextByRangeAction, cursorModifierBag)
                     .Invoke(editContext);
             };
         }
         
-        public TextEditorEdit DeleteTextByRangeUnsafe(
+        public TextEditorEdit DeleteTextByRangeUnsafeFactory(
             DeleteTextByRangeAction deleteTextByRangeAction,
             TextEditorCursorModifierBag cursorModifierBag)
         {
@@ -448,7 +448,7 @@ public partial interface ITextEditorService
             };
         }
 
-        public TextEditorEdit DeleteTextByMotion(
+        public TextEditorEdit DeleteTextByMotionFactory(
             DeleteTextByMotionAction deleteTextByMotionAction,
             Key<TextEditorViewModel> viewModelKey)
         {
@@ -466,12 +466,12 @@ public partial interface ITextEditorService
                 if (cursorModifierBag is null || primaryCursorModifier is null)
                     return Task.CompletedTask;
 
-                return DeleteTextByMotionUnsafe(deleteTextByMotionAction, cursorModifierBag)
+                return DeleteTextByMotionUnsafeFactory(deleteTextByMotionAction, cursorModifierBag)
                     .Invoke(editContext);
             };
         }
         
-        public TextEditorEdit DeleteTextByMotionUnsafe(
+        public TextEditorEdit DeleteTextByMotionUnsafeFactory(
             DeleteTextByMotionAction deleteTextByMotionAction,
             TextEditorCursorModifierBag cursorModifierBag)
         {

@@ -53,7 +53,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                 };
 
                 TextEditorService.Post(
-                    TextEditorService.ViewModelApi.GetWithValueTask(
+                    TextEditorService.ViewModelApi.WithValueFactory(
                         InViewModelKey,
                         textEditorViewModel => textEditorViewModel with
                         {
@@ -88,7 +88,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                 };
 
                 TextEditorService.Post(
-                    TextEditorService.ViewModelApi.GetWithValueTask(
+                    TextEditorService.ViewModelApi.WithValueFactory(
                         OutViewModelKey,
                         textEditorViewModel => textEditorViewModel with
                         {

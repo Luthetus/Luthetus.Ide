@@ -73,7 +73,7 @@ public class TextEditorModelApiTests
             outModel.GetAllText());
 
         textEditorService.Post(
-            textEditorService.ModelApi.UndoEdit(
+            textEditorService.ModelApi.UndoEditFactory(
                 inModel.ResourceUri));
 
         outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
@@ -98,7 +98,7 @@ public class TextEditorModelApiTests
         Assert.NotEqual(rowEndingKind, inModel.UsingRowEndingKind);
 
         textEditorService.Post(
-            textEditorService.ModelApi.SetUsingRowEndingKind(
+            textEditorService.ModelApi.SetUsingRowEndingKindFactory(
                 inModel.ResourceUri, rowEndingKind));
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
@@ -125,7 +125,7 @@ public class TextEditorModelApiTests
         Assert.NotEqual(newResourceLastWriteTime, inModel.ResourceLastWriteTime);
 
         textEditorService.Post(
-            textEditorService.ModelApi.SetResourceData(
+            textEditorService.ModelApi.SetResourceDataFactory(
                 inModel.ResourceUri, newResourceLastWriteTime));
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
@@ -152,7 +152,7 @@ public class TextEditorModelApiTests
         Assert.NotEqual(newContent, inModel.GetAllText());
 
         textEditorService.Post(
-            textEditorService.ModelApi.Reload(
+            textEditorService.ModelApi.ReloadFactory(
                 inModel.ResourceUri, newContent, DateTime.UtcNow));
         
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
@@ -271,14 +271,14 @@ public class TextEditorModelApiTests
         Assert.Equal(insertedText + inModel.GetAllText(), outModel.GetAllText());
 
         textEditorService.Post(
-            textEditorService.ModelApi.UndoEdit(
+            textEditorService.ModelApi.UndoEditFactory(
                 inModel.ResourceUri));
 
         outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(inModel.GetAllText(), outModel.GetAllText());
 
         textEditorService.Post(
-            textEditorService.ModelApi.RedoEdit(
+            textEditorService.ModelApi.RedoEditFactory(
                 inModel.ResourceUri));
 
         outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);

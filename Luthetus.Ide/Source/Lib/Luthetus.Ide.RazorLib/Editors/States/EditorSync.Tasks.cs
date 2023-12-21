@@ -107,7 +107,7 @@ public partial class EditorSync
                                         _textEditorService.Post(async editContext =>
                                         {
                                             await _textEditorService.ModelApi
-                                                .Reload(
+                                                .ReloadFactory(
                                                     textEditorModel.ResourceUri,
                                                     content,
                                                     fileLastWriteTime)
@@ -192,7 +192,7 @@ public partial class EditorSync
                     if (writtenDateTime is not null)
                     {
                         _textEditorService.Post(
-                            _textEditorService.ModelApi.SetResourceData(
+                            _textEditorService.ModelApi.SetResourceDataFactory(
                                 innerTextEditor.ResourceUri,
                                 writtenDateTime.Value));
                     }
