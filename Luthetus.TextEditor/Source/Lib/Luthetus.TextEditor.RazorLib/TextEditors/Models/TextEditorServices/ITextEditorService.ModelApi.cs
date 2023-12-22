@@ -85,7 +85,7 @@ public partial interface ITextEditorService
         /// the cursor key would come back as the cursor not existing.
         /// </summary>
         public TextEditorEdit InsertTextUnsafeFactory(
-            InsertTextAction insertTextAction,
+            InsertTextUnsafeAction insertTextUnsafeAction,
             TextEditorCursorModifierBag cursorModifierBag);
 
         public TextEditorEdit HandleKeyboardEventFactory(
@@ -103,7 +103,7 @@ public partial interface ITextEditorService
         /// the cursor key would come back as the cursor not existing.
         /// </summary>
         public TextEditorEdit HandleKeyboardEventUnsafeFactory(
-            KeyboardEventAction keyboardEventAction,
+            KeyboardEventUnsafeAction keyboardEventUnsafeAction,
             TextEditorCursorModifierBag cursorModifierBag);
 
         public TextEditorEdit DeleteTextByRangeFactory(
@@ -121,7 +121,7 @@ public partial interface ITextEditorService
         /// the cursor key would come back as the cursor not existing.
         /// </summary>
         public TextEditorEdit DeleteTextByRangeUnsafeFactory(
-            DeleteTextByRangeAction deleteTextByRangeAction,
+            DeleteTextByRangeUnsafeAction deleteTextByRangeUnsafeAction,
             TextEditorCursorModifierBag cursorModifierBag);
 
         public TextEditorEdit DeleteTextByMotionFactory(
@@ -139,7 +139,7 @@ public partial interface ITextEditorService
         /// the cursor key would come back as the cursor not existing.
         /// </summary>
         public TextEditorEdit DeleteTextByMotionUnsafeFactory(
-            DeleteTextByMotionAction deleteTextByMotionAction,
+            DeleteTextByMotionUnsafeAction deleteTextByMotionUnsafeAction,
             TextEditorCursorModifierBag cursorModifierBag);
         #endregion
 
@@ -262,11 +262,11 @@ public partial interface ITextEditorService
         #region UPDATE_METHODS
         public TextEditorEdit UndoEditFactory(ResourceUri resourceUri)
         {
-            return context =>
+            return editContext =>
             {
                 _dispatcher.Dispatch(new UndoEditAction(
                     resourceUri,
-                    context.AuthenticatedActionKey));
+                    editContext.AuthenticatedActionKey));
 
                 return Task.CompletedTask;
             };
@@ -276,12 +276,12 @@ public partial interface ITextEditorService
             ResourceUri resourceUri,
             RowEndingKind rowEndingKind)
         {
-            return context =>
+            return editContext =>
             {
                 _dispatcher.Dispatch(new SetUsingRowEndingKindAction(
                     resourceUri,
                     rowEndingKind,
-                    context.AuthenticatedActionKey));
+                    editContext.AuthenticatedActionKey));
 
                 return Task.CompletedTask;
             };
@@ -291,12 +291,12 @@ public partial interface ITextEditorService
             ResourceUri resourceUri,
             DateTime resourceLastWriteTime)
         {
-            return context =>
+            return editContext =>
             {
                 _dispatcher.Dispatch(new SetResourceDataAction(
                     resourceUri,
                     resourceLastWriteTime,
-                    context.AuthenticatedActionKey));
+                    editContext.AuthenticatedActionKey));
 
                 return Task.CompletedTask;
             };
@@ -307,13 +307,13 @@ public partial interface ITextEditorService
             string content,
             DateTime resourceLastWriteTime)
         {
-            return context =>
+            return editContext =>
             {
                 _dispatcher.Dispatch(new ReloadAction(
                     resourceUri,
                     content,
                     resourceLastWriteTime,
-                    context.AuthenticatedActionKey));
+                    editContext.AuthenticatedActionKey));
 
                 return Task.CompletedTask;
             };
@@ -321,9 +321,9 @@ public partial interface ITextEditorService
 
         public TextEditorEdit RedoEditFactory(ResourceUri resourceUri)
         {
-            return context =>
+            return editContext =>
             {
-                _dispatcher.Dispatch(new RedoEditAction(resourceUri, context.AuthenticatedActionKey));
+                _dispatcher.Dispatch(new RedoEditAction(resourceUri, editContext.AuthenticatedActionKey));
                 return Task.CompletedTask;
             };
         }
@@ -346,23 +346,29 @@ public partial interface ITextEditorService
                 if (cursorModifierBag is null || primaryCursorModifier is null)
                     return Task.CompletedTask;
 
-                return InsertTextUnsafeFactory(insertTextAction, cursorModifierBag)
-                    .Invoke(editContext);
-            };
-        }
-        
-        public TextEditorEdit InsertTextUnsafeFactory(
-            InsertTextAction insertTextAction,
-            TextEditorCursorModifierBag cursorModifierBag)
-        {
-            return context =>
-            {
                 insertTextAction = insertTextAction with
                 {
                     CursorModifierBag = cursorModifierBag,
                 };
 
                 _dispatcher.Dispatch(insertTextAction);
+
+                return Task.CompletedTask;
+            };
+        }
+        
+        public TextEditorEdit InsertTextUnsafeFactory(
+            InsertTextUnsafeAction insertTextUnsafeAction,
+            TextEditorCursorModifierBag cursorModifierBag)
+        {
+            return editContext =>
+            {
+                insertTextUnsafeAction = insertTextUnsafeAction with
+                {
+                    CursorModifierBag = cursorModifierBag,
+                };
+
+                _dispatcher.Dispatch(insertTextUnsafeAction);
 
                 return Task.CompletedTask;
             };
@@ -386,23 +392,29 @@ public partial interface ITextEditorService
                 if (cursorModifierBag is null || primaryCursorModifier is null)
                     return Task.CompletedTask;
 
-                return HandleKeyboardEventUnsafeFactory(keyboardEventAction, cursorModifierBag)
-                    .Invoke(editContext);
-            };
-        }
-
-        public TextEditorEdit HandleKeyboardEventUnsafeFactory(
-            KeyboardEventAction keyboardEventAction,
-            TextEditorCursorModifierBag cursorModifierBag)
-        {
-            return context =>
-            {
                 keyboardEventAction = keyboardEventAction with
                 {
                     CursorModifierBag = cursorModifierBag,
                 };
 
                 _dispatcher.Dispatch(keyboardEventAction);
+
+                return Task.CompletedTask;
+            };
+        }
+
+        public TextEditorEdit HandleKeyboardEventUnsafeFactory(
+            KeyboardEventUnsafeAction keyboardEventUnsafeAction,
+            TextEditorCursorModifierBag cursorModifierBag)
+        {
+            return editContext =>
+            {
+                keyboardEventUnsafeAction = keyboardEventUnsafeAction with
+                {
+                    CursorModifierBag = cursorModifierBag,
+                };
+
+                _dispatcher.Dispatch(keyboardEventUnsafeAction);
 
                 return Task.CompletedTask;
             };
@@ -426,23 +438,29 @@ public partial interface ITextEditorService
                 if (cursorModifierBag is null || primaryCursorModifier is null)
                     return Task.CompletedTask;
 
-                return DeleteTextByRangeUnsafeFactory(deleteTextByRangeAction, cursorModifierBag)
-                    .Invoke(editContext);
-            };
-        }
-        
-        public TextEditorEdit DeleteTextByRangeUnsafeFactory(
-            DeleteTextByRangeAction deleteTextByRangeAction,
-            TextEditorCursorModifierBag cursorModifierBag)
-        {
-            return context =>
-            {
                 deleteTextByRangeAction = deleteTextByRangeAction with
                 {
                     CursorModifierBag = cursorModifierBag,
                 };
 
                 _dispatcher.Dispatch(deleteTextByRangeAction);
+
+                return Task.CompletedTask;
+            };
+        }
+        
+        public TextEditorEdit DeleteTextByRangeUnsafeFactory(
+            DeleteTextByRangeUnsafeAction deleteTextByRangeUnsafeAction,
+            TextEditorCursorModifierBag cursorModifierBag)
+        {
+            return editContext =>
+            {
+                deleteTextByRangeUnsafeAction = deleteTextByRangeUnsafeAction with
+                {
+                    CursorModifierBag = cursorModifierBag,
+                };
+
+                _dispatcher.Dispatch(deleteTextByRangeUnsafeAction);
 
                 return Task.CompletedTask;
             };
@@ -466,23 +484,29 @@ public partial interface ITextEditorService
                 if (cursorModifierBag is null || primaryCursorModifier is null)
                     return Task.CompletedTask;
 
-                return DeleteTextByMotionUnsafeFactory(deleteTextByMotionAction, cursorModifierBag)
-                    .Invoke(editContext);
-            };
-        }
-        
-        public TextEditorEdit DeleteTextByMotionUnsafeFactory(
-            DeleteTextByMotionAction deleteTextByMotionAction,
-            TextEditorCursorModifierBag cursorModifierBag)
-        {
-            return context =>
-            {
                 deleteTextByMotionAction = deleteTextByMotionAction with
                 {
                     CursorModifierBag = cursorModifierBag,
                 };
 
                 _dispatcher.Dispatch(deleteTextByMotionAction);
+
+                return Task.CompletedTask;
+            };
+        }
+        
+        public TextEditorEdit DeleteTextByMotionUnsafeFactory(
+            DeleteTextByMotionUnsafeAction deleteTextByMotionUnsafeAction,
+            TextEditorCursorModifierBag cursorModifierBag)
+        {
+            return editContext =>
+            {
+                deleteTextByMotionUnsafeAction = deleteTextByMotionUnsafeAction with
+                {
+                    CursorModifierBag = cursorModifierBag,
+                };
+
+                _dispatcher.Dispatch(deleteTextByMotionUnsafeAction);
 
                 return Task.CompletedTask;
             };
