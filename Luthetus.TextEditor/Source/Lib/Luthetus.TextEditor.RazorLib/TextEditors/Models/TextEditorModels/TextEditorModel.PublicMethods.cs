@@ -15,10 +15,12 @@ public partial class TextEditorModel
         return modelModifier.ToModel();
     }
 
-    public TextEditorModel PerformEditTextEditorAction(KeyboardEventAction keyboardEventAction)
+    public TextEditorModel PerformEditTextEditorAction(
+        KeyboardEventAction keyboardEventAction,
+        TextEditorCursorModifierBag cursorModifierBag)
     {
         var modelModifier = new TextEditorModelModifier(this);
-        modelModifier.PerformEditTextEditorAction(keyboardEventAction);
+        modelModifier.PerformEditTextEditorAction(keyboardEventAction, cursorModifierBag);
 		return modelModifier.ToModel();
     }
 

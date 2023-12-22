@@ -9,7 +9,6 @@ using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using static Luthetus.TextEditor.RazorLib.TextEditors.States.TextEditorModelState;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.States;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
@@ -367,8 +366,7 @@ public partial interface ITextEditorService
                 if (cursorModifierBag is null || primaryCursorModifier is null)
                     return Task.CompletedTask;
 
-                modelModifier.PerformEditTextEditorAction(insertTextAction);
-                var outModelBag = inState.ModelBag.Replace(inModel, outModel);
+                modelModifier.PerformEditTextEditorAction(insertTextAction, cursorModifierBag);
 
                 _dispatcher.Dispatch(new SetModelAction(modelModifier));
                 return Task.CompletedTask;
@@ -410,18 +408,7 @@ public partial interface ITextEditorService
                 if (cursorModifierBag is null || primaryCursorModifier is null)
                     return Task.CompletedTask;
 
-                keyboardEventAction = keyboardEventAction with
-                {
-                    CursorModifierBag = cursorModifierBag,
-                };
-
-                var inModel = inState.ModelBag.SingleOrDefault(x => x.ResourceUri == keyboardEventAction.ResourceUri);
-
-                if (inModel is null)
-                    return inState;
-
-                var outModel = inModel.PerformEditTextEditorAction(keyboardEventAction);
-                var outModelBag = inState.ModelBag.Replace(inModel, outModel);
+                modelModifier.PerformEditTextEditorAction(keyboardEventAction, cursorModifierBag);
 
                 _dispatcher.Dispatch(new SetModelAction(modelModifier));
                 return Task.CompletedTask;
@@ -463,18 +450,7 @@ public partial interface ITextEditorService
                 if (cursorModifierBag is null || primaryCursorModifier is null)
                     return Task.CompletedTask;
 
-                deleteTextByRangeAction = deleteTextByRangeAction with
-                {
-                    CursorModifierBag = cursorModifierBag,
-                };
-
-                var inModel = inState.ModelBag.SingleOrDefault(x => x.ResourceUri == deleteTextByRangeAction.ResourceUri);
-
-                if (inModel is null)
-                    return inState;
-
-                var outModel = inModel.PerformEditTextEditorAction(deleteTextByRangeAction);
-                var outModelBag = inState.ModelBag.Replace(inModel, outModel);
+                modelModifier.PerformEditTextEditorAction(deleteTextByRangeAction, cursorModifierBag);
 
                 _dispatcher.Dispatch(new SetModelAction(modelModifier));
                 return Task.CompletedTask;
@@ -516,18 +492,7 @@ public partial interface ITextEditorService
                 if (cursorModifierBag is null || primaryCursorModifier is null)
                     return Task.CompletedTask;
 
-                deleteTextByMotionAction = deleteTextByMotionAction with
-                {
-                    CursorModifierBag = cursorModifierBag,
-                };
-
-                var inModel = inState.ModelBag.SingleOrDefault(x => x.ResourceUri == deleteTextByMotionAction.ResourceUri);
-
-                if (inModel is null)
-                    return inState;
-
-                var outModel = inModel.PerformEditTextEditorAction(deleteTextByMotionAction);
-                var outModelBag = inState.ModelBag.Replace(inModel, outModel);
+                modelModifier.PerformEditTextEditorAction(deleteTextByMotionAction, cursorModifierBag);
 
                 _dispatcher.Dispatch(new SetModelAction(modelModifier));
                 return Task.CompletedTask;
