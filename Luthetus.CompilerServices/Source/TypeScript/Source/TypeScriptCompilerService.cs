@@ -131,9 +131,9 @@ public class TypeScriptCompilerService : ICompilerService
                 var text = model.GetAllText();
 
                 _dispatcher.Dispatch(new TextEditorModelState.CalculatePresentationModelAction(
+                    null,
                     model.ResourceUri,
-                    CompilerServiceDiagnosticPresentationFacts.PresentationKey,
-                    TextEditorService.AuthenticatedActionKey));
+                    CompilerServiceDiagnosticPresentationFacts.PresentationKey));
 
                 var pendingCalculation = model.PresentationModelsBag.FirstOrDefault(x =>
                     x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey)

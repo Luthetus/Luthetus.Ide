@@ -9,6 +9,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -52,20 +53,18 @@ public class TextEditorModelApiTests
 
         var insertedText = "I have something to say: ";
 
-        textEditorService.EnqueueEdit(editContext =>
-        {
-            return textEditorService.ModelApi
-                .InsertText(
-                    new TextEditorModelState.InsertTextAction(
-                        inModel.ResourceUri,
-                        null,
-                        cursorBag,
-                        insertedText,
-                        CancellationToken.None,
-                        editContext.AuthenticatedActionKey),
-                    editContext.RefreshCursorsRequest)
-                .Invoke(editContext);
-        });
+        var cursorModifierBag = new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, cursorBag);
+
+        textEditorService.Post(editContext =>
+            textEditorService.ModelApi.InsertTextUnsafeFactory(
+                new TextEditorModelState.InsertTextUnsafeAction(
+                    editContext,
+                    inModel.ResourceUri,
+                    cursorModifierBag,
+                    insertedText,
+                    CancellationToken.None),
+                cursorModifierBag)
+            .Invoke(editContext));
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(
@@ -252,20 +251,18 @@ public class TextEditorModelApiTests
 
         var insertedText = "I have something to say: ";
 
-        textEditorService.EnqueueEdit(editContext =>
-        {
-            return textEditorService.ModelApi
-                .InsertText(
-                    new TextEditorModelState.InsertTextAction(
-                        inModel.ResourceUri,
-                        null,
-                        cursorBag,
-                        insertedText,
-                        CancellationToken.None,
-                        editContext.AuthenticatedActionKey),
-                    editContext.RefreshCursorsRequest)
-                .Invoke(editContext);
-        });
+        var cursorModifierBag = new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, cursorBag);
+
+        textEditorService.Post(editContext =>
+            textEditorService.ModelApi.InsertTextUnsafeFactory(
+                new TextEditorModelState.InsertTextUnsafeAction(
+                    editContext,
+                    inModel.ResourceUri,
+                    cursorModifierBag,
+                    insertedText,
+                    CancellationToken.None),
+                cursorModifierBag)
+            .Invoke(editContext));
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(insertedText + inModel.GetAllText(), outModel.GetAllText());
@@ -302,20 +299,18 @@ public class TextEditorModelApiTests
 
         var insertedText = "I have something to say: ";
 
-        textEditorService.EnqueueEdit(editContext =>
-        {
-            return textEditorService.ModelApi
-                .InsertText(
-                    new TextEditorModelState.InsertTextAction(
-                        inModel.ResourceUri,
-                        null,
-                        cursorBag,
-                        insertedText,
-                        CancellationToken.None,
-                        editContext.AuthenticatedActionKey),
-                    editContext.RefreshCursorsRequest)
-                .Invoke(editContext);
-        });
+        var cursorModifierBag = new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, cursorBag);
+
+        textEditorService.Post(editContext =>
+            textEditorService.ModelApi.InsertTextUnsafeFactory(
+                new TextEditorModelState.InsertTextUnsafeAction(
+                    editContext,
+                    inModel.ResourceUri,
+                    cursorModifierBag,
+                    insertedText,
+                    CancellationToken.None),
+                cursorModifierBag)
+            .Invoke(editContext));
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(insertedText + inModel.GetAllText(), outModel.GetAllText());
@@ -343,20 +338,18 @@ public class TextEditorModelApiTests
             Key = key
         };
 
-        textEditorService.EnqueueEdit(editContext =>
-        {
-            return textEditorService.ModelApi
-                .HandleKeyboardEvent(
-                    new TextEditorModelState.KeyboardEventAction(
-                        inModel.ResourceUri,
-                        null,
-                        cursorBag,
-                        keyboardEventArgs,
-                        CancellationToken.None,
-                        editContext.AuthenticatedActionKey),
-                    editContext.RefreshCursorsRequest)
-                .Invoke(editContext);
-        });
+        var cursorModifierBag = new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, cursorBag);
+
+        textEditorService.Post(editContext =>
+            textEditorService.ModelApi.HandleKeyboardEventUnsafeFactory(
+                new TextEditorModelState.KeyboardEventUnsafeAction(
+                    editContext,
+                    inModel.ResourceUri,
+                    cursorModifierBag,
+                    keyboardEventArgs,
+                    CancellationToken.None),
+                cursorModifierBag)
+            .Invoke(editContext));
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(key + inModel.GetAllText(), outModel.GetAllText());
@@ -464,20 +457,18 @@ public class TextEditorModelApiTests
         var cursor = new TextEditorCursor(0, columnIndex, columnIndex, true, TextEditorSelection.Empty);
         var cursorBag = new[] { new TextEditorCursorModifier(cursor) }.ToList();
 
-        textEditorService.EnqueueEdit(editContext =>
-        {
-            return textEditorService.ModelApi
-                .DeleteTextByRange(
-                    new TextEditorModelState.DeleteTextByRangeAction(
-                        inModel.ResourceUri,
-                        null,
-                        cursorBag,
-                        textToDelete.Length,
-                        CancellationToken.None,
-                        editContext.AuthenticatedActionKey),
-                    editContext.RefreshCursorsRequest)
-                .Invoke(editContext);
-        });
+        var cursorModifierBag = new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, cursorBag);
+
+        textEditorService.Post(editContext =>
+            textEditorService.ModelApi.DeleteTextByRangeUnsafeFactory(
+                new TextEditorModelState.DeleteTextByRangeUnsafeAction(
+                    editContext,
+                    inModel.ResourceUri,
+                    cursorModifierBag,
+                    textToDelete.Length,
+                    CancellationToken.None),
+                cursorModifierBag)
+            .Invoke(editContext));
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(expectedContent, outModel!.GetAllText());
@@ -504,20 +495,18 @@ public class TextEditorModelApiTests
         var cursor = new TextEditorCursor(0, columnIndex, columnIndex, true, TextEditorSelection.Empty);
         var cursorBag = new[] { new TextEditorCursorModifier(cursor) }.ToList();
 
-        textEditorService.EnqueueEdit(editContext =>
-        {
-            return textEditorService.ModelApi
-                .DeleteTextByMotion(
-                    new TextEditorModelState.DeleteTextByMotionAction(
-                        inModel.ResourceUri,
-                        null,
-                        cursorBag,
-                        MotionKind.Backspace,
-                        CancellationToken.None,
-                        editContext.AuthenticatedActionKey),
-                    editContext.RefreshCursorsRequest)
-                .Invoke(editContext);
-        });
+        var cursorModifierBag = new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, cursorBag);
+
+        textEditorService.Post(editContext =>
+            textEditorService.ModelApi.DeleteTextByMotionUnsafeFactory(
+                new TextEditorModelState.DeleteTextByMotionUnsafeAction(
+                    editContext,
+                    inModel.ResourceUri,
+                    cursorModifierBag,
+                    MotionKind.Backspace,
+                    CancellationToken.None),
+                cursorModifierBag)
+            .Invoke(editContext));
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(expectedContent, outModel!.GetAllText());
@@ -544,20 +533,18 @@ public class TextEditorModelApiTests
         var cursor = new TextEditorCursor(0, columnIndex, columnIndex, true, TextEditorSelection.Empty);
         var cursorBag = new[] { new TextEditorCursorModifier(cursor) }.ToList();
 
-        textEditorService.EnqueueEdit(editContext =>
-        {
-            return textEditorService.ModelApi
-                .DeleteTextByMotion(
-                    new TextEditorModelState.DeleteTextByMotionAction(
-                        inModel.ResourceUri,
-                        null,
-                        cursorBag,
-                        MotionKind.Delete,
-                        CancellationToken.None,
-                        editContext.AuthenticatedActionKey),
-                    editContext.RefreshCursorsRequest)
-                .Invoke(editContext);
-        });
+        var cursorModifierBag = new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, cursorBag);
+
+        textEditorService.Post(editContext =>
+            textEditorService.ModelApi.DeleteTextByMotionUnsafeFactory(
+                new TextEditorModelState.DeleteTextByMotionUnsafeAction(
+                    editContext,
+                    inModel.ResourceUri,
+                    cursorModifierBag,
+                    MotionKind.Delete,
+                    CancellationToken.None),
+                cursorModifierBag)
+            .Invoke(editContext));
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(expectedContent, outModel!.GetAllText());

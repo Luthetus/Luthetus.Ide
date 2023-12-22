@@ -136,9 +136,9 @@ public class CSharpProjectCompilerService : ICompilerService
                 var text = TextEditorModelHelper.GetAllText(model);
 
 				_dispatcher.Dispatch(new TextEditorModelState.CalculatePresentationModelAction(
+                    null,
                     model.ResourceUri,
-					CompilerServiceDiagnosticPresentationFacts.PresentationKey,
-                    TextEditorService.AuthenticatedActionKey));
+					CompilerServiceDiagnosticPresentationFacts.PresentationKey));
 
                 var pendingCalculation = model.PresentationModelsBag.FirstOrDefault<TextEditor.RazorLib.Decorations.Models.TextEditorPresentationModel>((Func<TextEditor.RazorLib.Decorations.Models.TextEditorPresentationModel, bool>)(x =>
                     x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey))

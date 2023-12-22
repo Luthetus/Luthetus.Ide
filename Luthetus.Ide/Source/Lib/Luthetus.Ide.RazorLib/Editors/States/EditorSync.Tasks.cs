@@ -161,7 +161,7 @@ public partial class EditorSync
             }.ToImmutableArray();
 
             _textEditorService.Post(
-                _textEditorService.ViewModelApi.GetWithValueTask(
+                _textEditorService.ViewModelApi.WithValueFactory(
                     viewModelKey,
                     textEditorViewModel => textEditorViewModel with
                     {
@@ -178,7 +178,7 @@ public partial class EditorSync
 
         return viewModelKey;
 
-        void HandleOnSaveRequested(TextEditorModel innerTextEditor)
+        void HandleOnSaveRequested(ITextEditorModel innerTextEditor)
         {
             var innerContent = innerTextEditor.GetAllText();
 

@@ -24,24 +24,30 @@ public partial class TextEditorModel
 		return modelModifier.ToModel();
     }
 
-    public TextEditorModel PerformEditTextEditorAction(InsertTextAction insertTextAction)
+    public TextEditorModel PerformEditTextEditorAction(
+        InsertTextAction insertTextAction,
+        TextEditorCursorModifierBag cursorModifierBag)
     {
 		var modelModifier = new TextEditorModelModifier(this);
-		modelModifier.PerformEditTextEditorAction(insertTextAction);
+		modelModifier.PerformEditTextEditorAction(insertTextAction, cursorModifierBag);
 		return modelModifier.ToModel();
     }
 
-    public TextEditorModel PerformEditTextEditorAction(DeleteTextByMotionAction deleteTextByMotionAction)
+    public TextEditorModel PerformEditTextEditorAction(
+        DeleteTextByMotionAction deleteTextByMotionAction,
+        TextEditorCursorModifierBag cursorModifierBag)
     {
 		var modelModifier = new TextEditorModelModifier(this);
-		modelModifier.PerformEditTextEditorAction(deleteTextByMotionAction);
+		modelModifier.PerformEditTextEditorAction(deleteTextByMotionAction, cursorModifierBag);
 		return modelModifier.ToModel();
     }
 
-    public TextEditorModel PerformEditTextEditorAction(DeleteTextByRangeAction deleteTextByRangeAction)
+    public TextEditorModel PerformEditTextEditorAction(
+        DeleteTextByRangeAction deleteTextByRangeAction,
+        TextEditorCursorModifierBag cursorModifierBag)
     {
 		var modelModifier = new TextEditorModelModifier(this);
-        modelModifier.PerformEditTextEditorAction(deleteTextByRangeAction);
+        modelModifier.PerformEditTextEditorAction(deleteTextByRangeAction, cursorModifierBag);
 		return modelModifier.ToModel();
     }
 

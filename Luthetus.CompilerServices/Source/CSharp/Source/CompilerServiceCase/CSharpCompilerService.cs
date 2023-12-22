@@ -190,9 +190,9 @@ public class CSharpCompilerService : ICompilerService
                     return;
 
                 _dispatcher.Dispatch(new TextEditorModelState.CalculatePresentationModelAction(
+                    null,
                     model.ResourceUri,
-                    CompilerServiceDiagnosticPresentationFacts.PresentationKey,
-                    TextEditorService.AuthenticatedActionKey));
+                    CompilerServiceDiagnosticPresentationFacts.PresentationKey));
 
                 var pendingCalculation = model.PresentationModelsBag.FirstOrDefault(x =>
                     x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey)
