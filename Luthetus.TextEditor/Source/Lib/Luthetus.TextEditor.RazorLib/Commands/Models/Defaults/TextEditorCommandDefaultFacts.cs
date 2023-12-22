@@ -1,6 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.Cursors.Models;
-using Luthetus.TextEditor.RazorLib.Edits.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+﻿using Luthetus.TextEditor.RazorLib.Edits.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 
@@ -16,7 +14,11 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.CopyAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.CopyFactory(
+                commandArgs.ModelResourceUri,
+                commandArgs.ViewModelKey,
+                commandArgs));
+
             return Task.CompletedTask;
         });
 
@@ -26,7 +28,11 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.CutFactory);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.CutFactory(
+                commandArgs.ModelResourceUri,
+                commandArgs.ViewModelKey,
+                commandArgs));
+
             return Task.CompletedTask;
         });
 
@@ -36,7 +42,11 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.PasteAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.PasteFactory(
+                commandArgs.ModelResourceUri,
+                commandArgs.ViewModelKey,
+                commandArgs));
+
             return Task.CompletedTask;
         });
 
@@ -46,7 +56,11 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.SaveAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.SaveFactory(
+                commandArgs.ModelResourceUri,
+                commandArgs.ViewModelKey,
+                commandArgs));
+
             return Task.CompletedTask;
         });
 
@@ -56,7 +70,11 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.SelectAllAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.SelectAllFactory(
+                commandArgs.ModelResourceUri,
+                commandArgs.ViewModelKey,
+                commandArgs));
+
             return Task.CompletedTask;
         });
 
@@ -66,7 +84,11 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.UndoAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.UndoFactory(
+                commandArgs.ModelResourceUri,
+                commandArgs.ViewModelKey,
+                commandArgs));
+
             return Task.CompletedTask;
         });
 
@@ -76,7 +98,11 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.RedoAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.RedoFactory(
+                commandArgs.ModelResourceUri,
+                commandArgs.ViewModelKey,
+                commandArgs));
+
             return Task.CompletedTask;
         });
 
@@ -86,7 +112,11 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.RemeasureAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.RemeasureFactory(
+                commandArgs.ModelResourceUri,
+                commandArgs.ViewModelKey,
+                commandArgs));
+
             return Task.CompletedTask;
         });
 
@@ -96,7 +126,11 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.ScrollLineDownAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.ScrollLineDownFactory(
+                commandArgs.ModelResourceUri,
+                commandArgs.ViewModelKey,
+                commandArgs));
+
             return Task.CompletedTask;
         });
 
@@ -106,7 +140,11 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.ScrollLineUpAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.ScrollLineUpFactory(
+                commandArgs.ModelResourceUri,
+                commandArgs.ViewModelKey,
+                commandArgs));
+
             return Task.CompletedTask;
         });
 
@@ -116,7 +154,11 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.ScrollPageDownAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.ScrollPageDownFactory(
+                commandArgs.ModelResourceUri,
+                commandArgs.ViewModelKey,
+                commandArgs));
+
             return Task.CompletedTask;
         });
 
@@ -126,7 +168,11 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.ScrollPageUpAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.ScrollPageUpFactory(
+                commandArgs.ModelResourceUri,
+                commandArgs.ViewModelKey,
+                commandArgs));
+
             return Task.CompletedTask;
         });
 
@@ -136,7 +182,11 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.CursorMovePageBottomAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.CursorMovePageBottomFactory(
+                commandArgs.ModelResourceUri,
+                commandArgs.ViewModelKey,
+                commandArgs));
+
             return Task.CompletedTask;
         });
 
@@ -146,7 +196,11 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.CursorMovePageTopAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.CursorMovePageTopFactory(
+                commandArgs.ModelResourceUri,
+                commandArgs.ViewModelKey,
+                commandArgs));
+
             return Task.CompletedTask;
         });
 
@@ -156,7 +210,11 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.DuplicateAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.DuplicateFactory(
+                commandArgs.ModelResourceUri,
+                commandArgs.ViewModelKey,
+                commandArgs));
+
             return Task.CompletedTask;
         });
 
@@ -166,7 +224,11 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.IndentMoreAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.IndentMoreFactory(
+                commandArgs.ModelResourceUri,
+                commandArgs.ViewModelKey,
+                commandArgs));
+
             return Task.CompletedTask;
         });
 
@@ -176,7 +238,11 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.IndentLessAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.IndentLessFactory(
+                commandArgs.ModelResourceUri,
+                commandArgs.ViewModelKey,
+                commandArgs));
+
             return Task.CompletedTask;
         });
 
@@ -186,7 +252,11 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.ClearTextSelectionAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.ClearTextSelectionFactory(
+                commandArgs.ModelResourceUri,
+                commandArgs.ViewModelKey,
+                commandArgs));
+
             return Task.CompletedTask;
         });
 
@@ -196,7 +266,10 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.NewLineBelowAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.NewLineBelowFactory(
+                commandArgs.ModelResourceUri,
+                commandArgs.ViewModelKey,
+                commandArgs));
             return Task.CompletedTask;
         });
 
@@ -206,7 +279,11 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.NewLineAboveAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.NewLineAboveFactory(
+                commandArgs.ModelResourceUri,
+                commandArgs.ViewModelKey,
+                commandArgs));
+
             return Task.CompletedTask;
         });
 
@@ -215,8 +292,13 @@ public static class TextEditorCommandDefaultFacts
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+            commandArgs.ShouldSelectText = shouldSelectText;
 
-            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.GoToMatchingCharacterFactoryAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.GoToMatchingCharacterFactory(
+                commandArgs.ModelResourceUri,
+                commandArgs.ViewModelKey,
+                commandArgs));
+
             return Task.CompletedTask;
         });
 
@@ -226,7 +308,11 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.GoToDefinitionAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.GoToDefinitionFactory(
+                commandArgs.ModelResourceUri,
+                commandArgs.ViewModelKey,
+                commandArgs));
+
             return Task.CompletedTask;
         });
 
@@ -236,7 +322,11 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.ShowFindDialogAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.ShowFindDialogFactory(
+                commandArgs.ModelResourceUri,
+                commandArgs.ViewModelKey,
+                commandArgs));
+
             return Task.CompletedTask;
         });
 
@@ -250,7 +340,11 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.ShowTooltipByCursorPositionAsync);
+            commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.ShowTooltipByCursorPositionFactory(
+                commandArgs.ModelResourceUri,
+                commandArgs.ViewModelKey,
+                commandArgs));
+
             return Task.CompletedTask;
         });
 }
