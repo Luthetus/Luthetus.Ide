@@ -111,11 +111,11 @@ public static partial class TextEditorCommandVimFacts
                     true);
 
                 var deleteTextByRangeAction = new TextEditorModelState.DeleteTextByRangeAction(
+                    editContext,
                     modelModifier.ResourceUri,
-                    new(viewModelModifier.ViewModel.ViewModelKey, new()),
+                    viewModelModifier.ViewModel.ViewModelKey,
                     motionResult.PositionIndexDisplacement,
-                    CancellationToken.None,
-                    editContext.AuthenticatedActionKey);
+                    CancellationToken.None);
 
                 await editContext.TextEditorService.ModelApi.DeleteTextByRangeFactory(
                         deleteTextByRangeAction,

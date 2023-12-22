@@ -9,6 +9,7 @@ using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using static Luthetus.TextEditor.RazorLib.TextEditors.States.TextEditorModelState;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.States;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
@@ -264,10 +265,14 @@ public partial interface ITextEditorService
         {
             return editContext =>
             {
-                _dispatcher.Dispatch(new UndoEditAction(
-                    resourceUri,
-                    editContext.AuthenticatedActionKey));
+                var modelModifier = editContext.GetModelModifier(resourceUri);
 
+                if (modelModifier is null)
+                    return Task.CompletedTask;
+
+                modelModifier.UndoEdit();
+
+                _dispatcher.Dispatch(new SetModelAction(modelModifier));
                 return Task.CompletedTask;
             };
         }
@@ -278,11 +283,14 @@ public partial interface ITextEditorService
         {
             return editContext =>
             {
-                _dispatcher.Dispatch(new SetUsingRowEndingKindAction(
-                    resourceUri,
-                    rowEndingKind,
-                    editContext.AuthenticatedActionKey));
+                var modelModifier = editContext.GetModelModifier(resourceUri);
 
+                if (modelModifier is null)
+                    return Task.CompletedTask;
+
+                modelModifier.ModifyUsingRowEndingKind(rowEndingKind);
+
+                _dispatcher.Dispatch(new SetModelAction(modelModifier));
                 return Task.CompletedTask;
             };
         }
@@ -293,11 +301,14 @@ public partial interface ITextEditorService
         {
             return editContext =>
             {
-                _dispatcher.Dispatch(new SetResourceDataAction(
-                    resourceUri,
-                    resourceLastWriteTime,
-                    editContext.AuthenticatedActionKey));
+                var modelModifier = editContext.GetModelModifier(resourceUri);
 
+                if (modelModifier is null)
+                    return Task.CompletedTask;
+
+                modelModifier.ModifyResourceData(resourceUri, resourceLastWriteTime);
+
+                _dispatcher.Dispatch(new SetModelAction(modelModifier));
                 return Task.CompletedTask;
             };
         }
@@ -309,12 +320,15 @@ public partial interface ITextEditorService
         {
             return editContext =>
             {
-                _dispatcher.Dispatch(new ReloadAction(
-                    resourceUri,
-                    content,
-                    resourceLastWriteTime,
-                    editContext.AuthenticatedActionKey));
+                var modelModifier = editContext.GetModelModifier(resourceUri);
 
+                if (modelModifier is null)
+                    return Task.CompletedTask;
+
+                modelModifier.ModifyContent(content);
+                modelModifier.ModifyResourceData(resourceUri, resourceLastWriteTime);
+
+                _dispatcher.Dispatch(new SetModelAction(modelModifier));
                 return Task.CompletedTask;
             };
         }
@@ -323,7 +337,14 @@ public partial interface ITextEditorService
         {
             return editContext =>
             {
-                _dispatcher.Dispatch(new RedoEditAction(resourceUri, editContext.AuthenticatedActionKey));
+                var modelModifier = editContext.GetModelModifier(resourceUri);
+
+                if (modelModifier is null)
+                    return Task.CompletedTask;
+
+                modelModifier.RedoEdit();
+
+                _dispatcher.Dispatch(new SetModelAction(modelModifier));
                 return Task.CompletedTask;
             };
         }
@@ -346,13 +367,10 @@ public partial interface ITextEditorService
                 if (cursorModifierBag is null || primaryCursorModifier is null)
                     return Task.CompletedTask;
 
-                insertTextAction = insertTextAction with
-                {
-                    CursorModifierBag = cursorModifierBag,
-                };
+                modelModifier.PerformEditTextEditorAction(insertTextAction);
+                var outModelBag = inState.ModelBag.Replace(inModel, outModel);
 
-                _dispatcher.Dispatch(insertTextAction);
-
+                _dispatcher.Dispatch(new SetModelAction(modelModifier));
                 return Task.CompletedTask;
             };
         }
@@ -397,8 +415,15 @@ public partial interface ITextEditorService
                     CursorModifierBag = cursorModifierBag,
                 };
 
-                _dispatcher.Dispatch(keyboardEventAction);
+                var inModel = inState.ModelBag.SingleOrDefault(x => x.ResourceUri == keyboardEventAction.ResourceUri);
 
+                if (inModel is null)
+                    return inState;
+
+                var outModel = inModel.PerformEditTextEditorAction(keyboardEventAction);
+                var outModelBag = inState.ModelBag.Replace(inModel, outModel);
+
+                _dispatcher.Dispatch(new SetModelAction(modelModifier));
                 return Task.CompletedTask;
             };
         }
@@ -443,8 +468,15 @@ public partial interface ITextEditorService
                     CursorModifierBag = cursorModifierBag,
                 };
 
-                _dispatcher.Dispatch(deleteTextByRangeAction);
+                var inModel = inState.ModelBag.SingleOrDefault(x => x.ResourceUri == deleteTextByRangeAction.ResourceUri);
 
+                if (inModel is null)
+                    return inState;
+
+                var outModel = inModel.PerformEditTextEditorAction(deleteTextByRangeAction);
+                var outModelBag = inState.ModelBag.Replace(inModel, outModel);
+
+                _dispatcher.Dispatch(new SetModelAction(modelModifier));
                 return Task.CompletedTask;
             };
         }
@@ -489,8 +521,15 @@ public partial interface ITextEditorService
                     CursorModifierBag = cursorModifierBag,
                 };
 
-                _dispatcher.Dispatch(deleteTextByMotionAction);
+                var inModel = inState.ModelBag.SingleOrDefault(x => x.ResourceUri == deleteTextByMotionAction.ResourceUri);
 
+                if (inModel is null)
+                    return inState;
+
+                var outModel = inModel.PerformEditTextEditorAction(deleteTextByMotionAction);
+                var outModelBag = inState.ModelBag.Replace(inModel, outModel);
+
+                _dispatcher.Dispatch(new SetModelAction(modelModifier));
                 return Task.CompletedTask;
             };
         }

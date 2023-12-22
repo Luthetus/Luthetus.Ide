@@ -80,8 +80,7 @@ public partial interface ITextEditorService
         public TextEditorEdit MoveCursorFactory(
             KeyboardEventArgs keyboardEventArgs,
             ResourceUri modelResourceUri,
-            Key<TextEditorViewModel> viewModelKey,
-            Key<TextEditorCursor> cursorKey);
+            Key<TextEditorViewModel> viewModelKey);
 
         /// <summary>
         /// If one wants to guarantee that the state is up to date use <see cref="MoveCursorFactory"/>
@@ -101,8 +100,7 @@ public partial interface ITextEditorService
 
         public TextEditorEdit CursorMovePageTopFactory(
             ResourceUri modelResourceUri,
-            Key<TextEditorViewModel> viewModelKey,
-            Key<TextEditorCursor> cursorKey);
+            Key<TextEditorViewModel> viewModelKey);
 
         /// <summary>
         /// If one wants to guarantee that the state is up to date use <see cref="CursorMovePageTopFactory"/>
@@ -121,8 +119,7 @@ public partial interface ITextEditorService
 
         public TextEditorEdit CursorMovePageBottomFactory(
             ResourceUri modelResourceUri,
-            Key<TextEditorViewModel> viewModelKey,
-            Key<TextEditorCursor> cursorKey);
+            Key<TextEditorViewModel> viewModelKey);
 
         /// <summary>
         /// If one wants to guarantee that the state is up to date use <see cref="CursorMovePageBottomFactory"/>
@@ -143,7 +140,6 @@ public partial interface ITextEditorService
             ResourceUri modelResourceUri,
             Key<TextEditorViewModel> viewModelKey,
             TextEditorMeasurements? textEditorMeasurements,
-            Key<TextEditorCursor> cursorKey,
             CancellationToken cancellationToken);
 
         public TextEditorEdit RemeasureFactory(
@@ -312,9 +308,9 @@ public partial interface ITextEditorService
             return editContext =>
             {
                 _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
+                    editContext,
                     viewModelKey,
-                    withFunc,
-                    editContext.AuthenticatedActionKey));
+                    withFunc));
 
                 return Task.CompletedTask;
             };
@@ -332,9 +328,9 @@ public partial interface ITextEditorService
                     return;
 
                 _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
+                    editContext,
                     viewModelKey,
-                    await withFuncWrap.Invoke(viewModelModifier.ViewModel),
-                    editContext.AuthenticatedActionKey));
+                    await withFuncWrap.Invoke(viewModelModifier.ViewModel)));
             };
         }
 
@@ -409,8 +405,7 @@ public partial interface ITextEditorService
         public TextEditorEdit MoveCursorFactory(
             KeyboardEventArgs keyboardEventArgs,
             ResourceUri modelResourceUri,
-            Key<TextEditorViewModel> viewModelKey,
-            Key<TextEditorCursor> cursorKey)
+            Key<TextEditorViewModel> viewModelKey)
         {
             return editContext =>
             {
@@ -426,12 +421,7 @@ public partial interface ITextEditorService
                 if (cursorModifierBag is null || primaryCursorModifier is null)
                     return Task.CompletedTask;
 
-                var cursorModifier = cursorModifierBag.CursorModifierBag.FirstOrDefault(x => x.Key == cursorKey);
-
-                if (cursorModifier is null)
-                    return Task.CompletedTask;
-
-                return MoveCursorUnsafeFactory(keyboardEventArgs, modelResourceUri, viewModelKey, cursorModifier)
+                return MoveCursorUnsafeFactory(keyboardEventArgs, modelResourceUri, viewModelKey, primaryCursorModifier)
                     .Invoke(editContext);
             };
         }
@@ -449,8 +439,6 @@ public partial interface ITextEditorService
 
                 if (modelModifier is null || viewModelModifier is null)
                     return Task.CompletedTask;
-
-                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
 
                 void MutateIndexCoordinatesAndPreferredColumnIndex(int columnIndex)
                 {
@@ -643,8 +631,7 @@ public partial interface ITextEditorService
 
         public TextEditorEdit CursorMovePageTopFactory(
             ResourceUri modelResourceUri,
-            Key<TextEditorViewModel> viewModelKey,
-            Key<TextEditorCursor> cursorKey)
+            Key<TextEditorViewModel> viewModelKey)
         {
             return editContext =>
             {
@@ -660,12 +647,7 @@ public partial interface ITextEditorService
                 if (cursorModifierBag is null || primaryCursorModifier is null)
                     return Task.CompletedTask;
 
-                var cursorModifier = cursorModifierBag.CursorModifierBag.FirstOrDefault(x => x.Key == cursorKey);
-
-                if (cursorModifier is null)
-                    return Task.CompletedTask;
-
-                return CursorMovePageTopUnsafeFactory(modelResourceUri, viewModelKey, cursorModifier)
+                return CursorMovePageTopUnsafeFactory(modelResourceUri, viewModelKey, primaryCursorModifier)
                     .Invoke(editContext);
             };
         }
@@ -683,9 +665,6 @@ public partial interface ITextEditorService
                 if (modelModifier is null || viewModelModifier is null)
                     return Task.CompletedTask;
 
-                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
-                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
-
                 if (viewModelModifier.ViewModel.VirtualizationResult?.EntryBag.Any() ?? false)
                 {
                     var firstEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryBag.First();
@@ -700,8 +679,7 @@ public partial interface ITextEditorService
 
         public TextEditorEdit CursorMovePageBottomFactory(
             ResourceUri modelResourceUri,
-            Key<TextEditorViewModel> viewModelKey,
-            Key<TextEditorCursor> cursorKey)
+            Key<TextEditorViewModel> viewModelKey)
         {
             return editContext =>
             {
@@ -717,12 +695,7 @@ public partial interface ITextEditorService
                 if (cursorModifierBag is null || primaryCursorModifier is null)
                     return Task.CompletedTask;
 
-                var cursorModifier = cursorModifierBag.CursorModifierBag.FirstOrDefault(x => x.Key == cursorKey);
-
-                if (cursorModifier is null)
-                    return Task.CompletedTask;
-
-                return CursorMovePageBottomUnsafeFactory(modelResourceUri, viewModelKey, cursorModifier)
+                return CursorMovePageBottomUnsafeFactory(modelResourceUri, viewModelKey, primaryCursorModifier)
                     .Invoke(editContext);
             };
         }
@@ -757,7 +730,6 @@ public partial interface ITextEditorService
             ResourceUri modelResourceUri,
             Key<TextEditorViewModel> viewModelKey,
             TextEditorMeasurements? textEditorMeasurements,
-            Key<TextEditorCursor> cursorKey,
             CancellationToken cancellationToken)
         {
             return async editContext =>

@@ -62,7 +62,7 @@ public partial class TextEditorModelModifier
     private Keymap? _textEditorKeymap;
     private TextEditorOptions? _textEditorOptions;
 
-    public TextEditorModel ToTextEditorModel()
+    public TextEditorModel ToModel()
     {
         return new TextEditorModel(
             _contentBag is null ? _textEditorModel.ContentBag : _contentBag.ToImmutableList(),
@@ -250,7 +250,9 @@ public partial class TextEditorModelModifier
         }
     }
 
-    private void PerformInsertions(KeyboardEventAction keyboardEventAction)
+    private void PerformInsertions(
+        KeyboardEventAction keyboardEventAction,
+        TextEditorCursorModifierBag cursorModifierBag)
     {
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value
         //
@@ -265,13 +267,11 @@ public partial class TextEditorModelModifier
 
         EnsureUndoPoint(TextEditKind.Insertion);
 
-        var cursorModifierBag = keyboardEventAction.CursorModifierBag;
-
-        foreach (var cursorModifier in cursorModifierBag)
+        foreach (var cursorModifier in cursorModifierBag.CursorModifierBag)
         {
             if (TextEditorSelectionHelper.HasSelectedText(cursorModifier))
             {
-                PerformDeletions(keyboardEventAction);
+                PerformDeletions(keyboardEventAction, cursorModifierBag);
 
                 var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
 
@@ -283,17 +283,14 @@ public partial class TextEditorModelModifier
                 cursorModifier.RowIndex = lowerRowData.rowIndex;
                 cursorModifier.ColumnIndex = lowerColumnIndex;
 
-                var nextEdit = keyboardEventAction with
-                {
-                    CursorModifierBag = new[]
-                    {
-                        cursorModifier
-                    }.ToList()
-                };
-
                 // Because one cannot move reference of foreach variable,
                 // one has to re-invoke the method with different paramters
-                PerformInsertions(nextEdit);
+                PerformInsertions(
+                    keyboardEventAction,
+                    new TextEditorCursorModifierBag(
+                        cursorModifierBag.ViewModelKey,
+                        new() { cursorModifier }));
+
                 return;
             }
 
@@ -448,7 +445,9 @@ public partial class TextEditorModelModifier
         }
     }
 
-    private void PerformDeletions(KeyboardEventAction keyboardEventAction)
+    private void PerformDeletions(
+        KeyboardEventAction keyboardEventAction,
+        TextEditorCursorModifierBag cursorModifierBag)
     {
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value
         //
@@ -463,9 +462,7 @@ public partial class TextEditorModelModifier
 
         EnsureUndoPoint(TextEditKind.Deletion);
 
-        var cursorModifierBag = keyboardEventAction.CursorModifierBag;
-
-        foreach (var cursorModifier in cursorModifierBag)
+        foreach (var cursorModifier in cursorModifierBag.CursorModifierBag)
         {
             var startOfRowPositionIndex = this.GetStartOfRowTuple(cursorModifier.RowIndex).positionIndex;
             var cursorPositionIndex = startOfRowPositionIndex + cursorModifier.ColumnIndex;
@@ -896,21 +893,21 @@ public partial class TextEditorModelModifier
         ModifyUsingRowEndingKind(RowEndingKind.Unset);
     }
 
-    public void PerformEditTextEditorAction(KeyboardEventAction keyboardEventAction)
+    public void PerformEditTextEditorAction(
+        KeyboardEventAction keyboardEventAction,
+        TextEditorCursorModifierBag cursorModifierBag)
     {
         if (KeyboardKeyFacts.IsMetaKey(keyboardEventAction.KeyboardEventArgs))
         {
             if (KeyboardKeyFacts.MetaKeys.BACKSPACE == keyboardEventAction.KeyboardEventArgs.Key ||
                 KeyboardKeyFacts.MetaKeys.DELETE == keyboardEventAction.KeyboardEventArgs.Key)
             {
-                PerformDeletions(keyboardEventAction);
+                PerformDeletions(keyboardEventAction, cursorModifierBag);
             }
         }
         else
         {
-            var cursorBag = keyboardEventAction.CursorModifierBag;
-
-            var primaryCursor = cursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
+            var primaryCursor = cursorModifierBag.CursorModifierBag.FirstOrDefault(x => x.IsPrimaryCursor);
 
             if (primaryCursor is null)
                 return;
@@ -936,32 +933,31 @@ public partial class TextEditorModelModifier
 
             if (TextEditorSelectionHelper.HasSelectedText(primaryCursor))
             {
-                PerformDeletions(new KeyboardEventAction(
-                    keyboardEventAction.ResourceUri,
-                    keyboardEventAction.ViewModelKey,
-                    cursorBag,
-                    new KeyboardEventArgs
-                    {
-                        Code = KeyboardKeyFacts.MetaKeys.DELETE,
-                        Key = KeyboardKeyFacts.MetaKeys.DELETE,
-                    },
-                    CancellationToken.None,
-                    keyboardEventAction.AuthenticatedActionKey));
+                PerformDeletions(
+                    new KeyboardEventAction(
+                        keyboardEventAction.EditContext,
+                        keyboardEventAction.ResourceUri,
+                        keyboardEventAction.ViewModelKey,
+                        new KeyboardEventArgs
+                        {
+                            Code = KeyboardKeyFacts.MetaKeys.DELETE,
+                            Key = KeyboardKeyFacts.MetaKeys.DELETE,
+                        },
+                        CancellationToken.None),
+                    cursorModifierBag);
             }
 
-            var innerCursorBag = keyboardEventAction.CursorModifierBag;
+            var innerCursorBag = cursorModifierBag;
 
-            PerformInsertions(keyboardEventAction with
-            {
-                CursorModifierBag = innerCursorBag
-            });
+            PerformInsertions(keyboardEventAction, cursorModifierBag);
         }
     }
 
-    public void PerformEditTextEditorAction(InsertTextAction insertTextAction)
+    public void PerformEditTextEditorAction(
+        InsertTextAction insertTextAction,
+        TextEditorCursorModifierBag cursorModifierBag)
     {
-        var cursorBag = insertTextAction.CursorModifierBag;
-        var primaryCursor = cursorBag.FirstOrDefault(x => x.IsPrimaryCursor);
+        var primaryCursor = cursorModifierBag.CursorModifierBag.FirstOrDefault(x => x.IsPrimaryCursor);
 
         if (primaryCursor is null)
             return;
@@ -987,17 +983,20 @@ public partial class TextEditorModelModifier
 
         if (TextEditorSelectionHelper.HasSelectedText(primaryCursor))
         {
-            PerformDeletions(new KeyboardEventAction(
-                insertTextAction.ResourceUri,
-                insertTextAction.ViewModelKey,
-                cursorBag,
-                new KeyboardEventArgs
-                {
-                    Code = KeyboardKeyFacts.MetaKeys.DELETE,
-                    Key = KeyboardKeyFacts.MetaKeys.DELETE,
-                },
-                CancellationToken.None,
-                insertTextAction.AuthenticatedActionKey));
+            PerformDeletions(
+                new KeyboardEventAction(
+                    insertTextAction.EditContext,
+                    insertTextAction.ResourceUri,
+                    insertTextAction.ViewModelKey,
+                    new KeyboardEventArgs
+                    {
+                        Code = KeyboardKeyFacts.MetaKeys.DELETE,
+                        Key = KeyboardKeyFacts.MetaKeys.DELETE,
+                    },
+                    CancellationToken.None),
+                new TextEditorCursorModifierBag(
+                    cursorModifierBag.ViewModelKey,
+                    new() { primaryCursor }));
         }
 
         var localContent = insertTextAction.Content.Replace("\r\n", "\n");
@@ -1009,7 +1008,7 @@ public partial class TextEditorModelModifier
             // Need innerCursorSnapshots because need
             // after every loop of the foreach that the
             // cursor snapshots are updated
-            var innerCursorModifierBag = insertTextAction.CursorModifierBag;
+            var innerCursorModifierBag = cursorModifierBag;
 
             var code = character switch
             {
@@ -1021,22 +1020,23 @@ public partial class TextEditorModelModifier
             };
 
             var keyboardEventTextEditorModelAction = new KeyboardEventAction(
+                insertTextAction.EditContext,
                 insertTextAction.ResourceUri,
                 insertTextAction.ViewModelKey,
-                innerCursorModifierBag,
                 new KeyboardEventArgs
                 {
                     Code = code,
                     Key = character.ToString(),
                 },
-                CancellationToken.None,
-                insertTextAction.AuthenticatedActionKey);
+                CancellationToken.None);
 
-            PerformEditTextEditorAction(keyboardEventTextEditorModelAction);
+            PerformEditTextEditorAction(keyboardEventTextEditorModelAction, innerCursorModifierBag);
         }
     }
 
-    public void PerformEditTextEditorAction(DeleteTextByMotionAction deleteTextByMotionAction)
+    public void PerformEditTextEditorAction(
+        DeleteTextByMotionAction deleteTextByMotionAction,
+        TextEditorCursorModifierBag cursorModifierBag)
     {
         var keyboardEventArgs = deleteTextByMotionAction.MotionKind switch
         {
@@ -1046,17 +1046,18 @@ public partial class TextEditorModelModifier
         };
 
         var keyboardEventTextEditorModelAction = new KeyboardEventAction(
+            deleteTextByMotionAction.EditContext,
             deleteTextByMotionAction.ResourceUri,
             deleteTextByMotionAction.ViewModelKey,
-            deleteTextByMotionAction.CursorModifierBag,
             keyboardEventArgs,
-            CancellationToken.None,
-            deleteTextByMotionAction.AuthenticatedActionKey);
+            CancellationToken.None);
 
-        PerformEditTextEditorAction(keyboardEventTextEditorModelAction);
+        PerformEditTextEditorAction(keyboardEventTextEditorModelAction, cursorModifierBag);
     }
 
-    public void PerformEditTextEditorAction(DeleteTextByRangeAction deleteTextByRangeAction)
+    public void PerformEditTextEditorAction(
+        DeleteTextByRangeAction deleteTextByRangeAction,
+        TextEditorCursorModifierBag cursorModifierBag)
     {
         // TODO: This needs to be rewritten everything should be deleted at the same time not a foreach loop for each character
         for (var i = 0; i < deleteTextByRangeAction.Count; i++)
@@ -1064,21 +1065,20 @@ public partial class TextEditorModelModifier
             // Need innerCursorSnapshots because need
             // after every loop of the foreach that the
             // cursor snapshots are updated
-            var innerCursorModifierBag = deleteTextByRangeAction.CursorModifierBag;
+            var innerCursorModifierBag = cursorModifierBag;
 
             var keyboardEventTextEditorModelAction = new KeyboardEventAction(
+                deleteTextByRangeAction.EditContext,
                 deleteTextByRangeAction.ResourceUri,
                 deleteTextByRangeAction.ViewModelKey,
-                innerCursorModifierBag,
                 new KeyboardEventArgs
                 {
                     Code = KeyboardKeyFacts.MetaKeys.DELETE,
                     Key = KeyboardKeyFacts.MetaKeys.DELETE,
                 },
-                CancellationToken.None,
-                deleteTextByRangeAction.AuthenticatedActionKey);
+                CancellationToken.None);
 
-            PerformEditTextEditorAction(keyboardEventTextEditorModelAction);
+            PerformEditTextEditorAction(keyboardEventTextEditorModelAction, innerCursorModifierBag);
         }
     }
 

@@ -18,7 +18,7 @@ public partial class TextEditorModelModifierTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModelModifier.ToTextEditorModel()"/>
+	/// <see cref="TextEditorModelModifier.ToModel()"/>
 	/// </summary>
 	[Fact]
 	public void ToTextEditorModel()

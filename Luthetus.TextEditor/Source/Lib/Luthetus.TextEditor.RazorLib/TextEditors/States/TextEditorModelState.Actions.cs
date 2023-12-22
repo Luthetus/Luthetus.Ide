@@ -21,47 +21,47 @@ public partial class TextEditorModelState
             TextEditorPresentationModel PresentationModel);
     
     public record UndoEditAction(
-            ResourceUri ResourceUri,
-            Key<AuthenticatedAction> AuthenticatedActionKey)
-        : AuthenticatedAction(AuthenticatedActionKey);
+            ITextEditorEditContext EditContext,
+            ResourceUri ResourceUri)
+        : AuthenticatedAction(EditContext.AuthenticatedActionKey);
 
     public record RedoEditAction(
-            ResourceUri ResourceUri,
-            Key<AuthenticatedAction> AuthenticatedActionKey)
-        : AuthenticatedAction(AuthenticatedActionKey);
+            ITextEditorEditContext EditContext,
+            ResourceUri ResourceUri)
+        : AuthenticatedAction(EditContext.AuthenticatedActionKey);
 
     public record CalculatePresentationModelAction(
+            ITextEditorEditContext EditContext,
             ResourceUri ResourceUri,
-            Key<TextEditorPresentationModel> PresentationKey,
-            Key<AuthenticatedAction> AuthenticatedActionKey)
-        : AuthenticatedAction(AuthenticatedActionKey);
+            Key<TextEditorPresentationModel> PresentationKey)
+        : AuthenticatedAction(EditContext.AuthenticatedActionKey);
 
     public record ReloadAction(
+            ITextEditorEditContext EditContext,
             ResourceUri ResourceUri,
             string Content,
-            DateTime ResourceLastWriteTime,
-            Key<AuthenticatedAction> AuthenticatedActionKey)
-        : AuthenticatedAction(AuthenticatedActionKey);
+            DateTime ResourceLastWriteTime)
+        : AuthenticatedAction(EditContext.AuthenticatedActionKey);
 
     public record SetResourceDataAction(
+            ITextEditorEditContext EditContext,
             ResourceUri ResourceUri,
-            DateTime ResourceLastWriteTime,
-            Key<AuthenticatedAction> AuthenticatedActionKey)
-        : AuthenticatedAction(AuthenticatedActionKey);
+            DateTime ResourceLastWriteTime)
+        : AuthenticatedAction(EditContext.AuthenticatedActionKey);
 
     public record SetUsingRowEndingKindAction(
+            ITextEditorEditContext EditContext,
             ResourceUri ResourceUri,
-            RowEndingKind RowEndingKind,
-            Key<AuthenticatedAction> AuthenticatedActionKey)
-        : AuthenticatedAction(AuthenticatedActionKey);
+            RowEndingKind RowEndingKind)
+        : AuthenticatedAction(EditContext.AuthenticatedActionKey);
 
     public record KeyboardEventAction(
+            ITextEditorEditContext EditContext,
             ResourceUri ResourceUri,
-            TextEditorCursorModifierBag CursorModifierBag,
+            Key<TextEditorViewModel> ViewModelKey,
             KeyboardEventArgs KeyboardEventArgs,
-            CancellationToken CancellationToken,
-            Key<AuthenticatedAction> AuthenticatedActionKey)
-        : AuthenticatedAction(AuthenticatedActionKey);
+            CancellationToken CancellationToken)
+        : AuthenticatedAction(EditContext.AuthenticatedActionKey);
 
     /// <summary>
     /// If one wants to guarantee that the state is up to date use <see cref="KeyboardEventAction"/>
@@ -74,20 +74,20 @@ public partial class TextEditorModelState
     /// the cursor key would come back as the cursor not existing.
     /// </summary>
     public record KeyboardEventUnsafeAction(
+            ITextEditorEditContext EditContext,
             ResourceUri ResourceUri,
             TextEditorCursorModifierBag CursorModifierBag,
             KeyboardEventArgs KeyboardEventArgs,
-            CancellationToken CancellationToken,
-            Key<AuthenticatedAction> AuthenticatedActionKey)
-        : AuthenticatedAction(AuthenticatedActionKey);
+            CancellationToken CancellationToken)
+        : AuthenticatedAction(EditContext.AuthenticatedActionKey);
 
     public record InsertTextAction(
+            ITextEditorEditContext EditContext,
             ResourceUri ResourceUri,
-            TextEditorCursorModifierBag CursorModifierBag,
+            Key<TextEditorViewModel> ViewModelKey,
             string Content,
-            CancellationToken CancellationToken,
-            Key<AuthenticatedAction> AuthenticatedActionKey)
-        : AuthenticatedAction(AuthenticatedActionKey);
+            CancellationToken CancellationToken)
+        : AuthenticatedAction(EditContext.AuthenticatedActionKey);
 
     /// <summary>
     /// If one wants to guarantee that the state is up to date use <see cref="InsertTextAction"/>
@@ -100,20 +100,20 @@ public partial class TextEditorModelState
     /// the cursor key would come back as the cursor not existing.
     /// </summary>
     public record InsertTextUnsafeAction(
+            ITextEditorEditContext EditContext,
             ResourceUri ResourceUri,
             TextEditorCursorModifierBag CursorModifierBag,
             string Content,
-            CancellationToken CancellationToken,
-            Key<AuthenticatedAction> AuthenticatedActionKey)
-        : AuthenticatedAction(AuthenticatedActionKey);
+            CancellationToken CancellationToken)
+        : AuthenticatedAction(EditContext.AuthenticatedActionKey);
 
     public record DeleteTextByMotionAction(
+            ITextEditorEditContext EditContext,
             ResourceUri ResourceUri,
-            TextEditorCursorModifierBag CursorModifierBag,
+            Key<TextEditorViewModel> ViewModelKey,
             MotionKind MotionKind,
-            CancellationToken CancellationToken,
-            Key<AuthenticatedAction> AuthenticatedActionKey)
-        : AuthenticatedAction(AuthenticatedActionKey);
+            CancellationToken CancellationToken)
+        : AuthenticatedAction(EditContext.AuthenticatedActionKey);
 
     /// <summary>
     /// If one wants to guarantee that the state is up to date use <see cref="DeleteTextByMotionAction"/>
@@ -126,20 +126,20 @@ public partial class TextEditorModelState
     /// the cursor key would come back as the cursor not existing.
     /// </summary>
     public record DeleteTextByMotionUnsafeAction(
+            ITextEditorEditContext EditContext,
             ResourceUri ResourceUri,
             TextEditorCursorModifierBag CursorModifierBag,
             MotionKind MotionKind,
-            CancellationToken CancellationToken,
-            Key<AuthenticatedAction> AuthenticatedActionKey)
-        : AuthenticatedAction(AuthenticatedActionKey);
+            CancellationToken CancellationToken)
+        : AuthenticatedAction(EditContext.AuthenticatedActionKey);
 
     public record DeleteTextByRangeAction(
+            ITextEditorEditContext EditContext,
             ResourceUri ResourceUri,
-            TextEditorCursorModifierBag CursorModifierBag,
+            Key<TextEditorViewModel> ViewModelKey,
             int Count,
-            CancellationToken CancellationToken,
-            Key<AuthenticatedAction> AuthenticatedActionKey)
-        : AuthenticatedAction(AuthenticatedActionKey);
+            CancellationToken CancellationToken)
+        : AuthenticatedAction(EditContext.AuthenticatedActionKey);
 
     /// <summary>
     /// If one wants to guarantee that the state is up to date use <see cref="DeleteTextByRangeAction"/>
@@ -152,10 +152,12 @@ public partial class TextEditorModelState
     /// the cursor key would come back as the cursor not existing.
     /// </summary>
     public record DeleteTextByRangeUnsafeAction(
+            ITextEditorEditContext EditContext,
             ResourceUri ResourceUri,
             TextEditorCursorModifierBag CursorModifierBag,
             int Count,
-            CancellationToken CancellationToken,
-            Key<AuthenticatedAction> AuthenticatedActionKey)
-        : AuthenticatedAction(AuthenticatedActionKey);
+            CancellationToken CancellationToken)
+        : AuthenticatedAction(EditContext.AuthenticatedActionKey);
+
+    public record SetModelAction(TextEditorModelModifier ModelModifier);
 }

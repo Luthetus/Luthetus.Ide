@@ -115,23 +115,31 @@ public partial class TextEditorService : ITextEditorService
         nameof(Post),
             async () =>
             {
-                var textEditorEditContext = new TextEditorEditContext(
+                var editContext = new TextEditorEditContext(
                     this,
                     AuthenticatedActionKey);
 
-                await textEditorEdit.Invoke(textEditorEditContext);
+                await textEditorEdit.Invoke(editContext);
 
-                if (textEditorEditContext.RefreshCursorsRequest is not null)
+                foreach (var viewModelModifier in editContext.ViewModelCache.Values)
                 {
-                    _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
-                        textEditorEditContext.RefreshCursorsRequest.ViewModelKey,
-                        inState => inState with
-                        {
-                            CursorBag = textEditorEditContext.RefreshCursorsRequest.CursorBag
-                                .Select(x => x.ToCursor())
-                                .ToImmutableArray()
-                        },
-                        AuthenticatedActionKey));
+                    if (viewModelModifier is not null && editContext.CursorModifierBagCache.TryGetValue(
+                            viewModelModifier.ViewModel.ViewModelKey,
+                            out var cursorModifierBag))
+                    {
+                        if (cursorModifierBag is null)
+                            continue;
+
+                        _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
+                            editContext,
+                            viewModelModifier.ViewModel.ViewModelKey,
+                            inState => inState with
+                            {
+                                CursorBag = cursorModifierBag.CursorModifierBag
+                                    .Select(x => x.ToCursor())
+                                    .ToImmutableArray()
+                            }));
+                    }
                 }
             });
     }

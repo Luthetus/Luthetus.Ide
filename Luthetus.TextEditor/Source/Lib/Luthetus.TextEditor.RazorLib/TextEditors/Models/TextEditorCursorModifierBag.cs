@@ -4,7 +4,7 @@ using System.Collections;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
-public class TextEditorCursorModifierBag : IEnumerable
+public class TextEditorCursorModifierBag
 {
     public TextEditorCursorModifierBag(
         Key<TextEditorViewModel> viewModelKey,

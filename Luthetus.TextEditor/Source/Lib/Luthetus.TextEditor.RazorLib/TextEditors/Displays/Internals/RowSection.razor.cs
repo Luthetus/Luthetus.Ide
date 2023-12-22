@@ -110,15 +110,11 @@ public partial class RowSection : ComponentBase
 
         var primaryCursor = viewModel.PrimaryCursor;
 
-        TextEditorService.Post(editContext =>
-        {
-            return TextEditorService.ViewModelApi.GetCalculateVirtualizationResultTask(
-                    model,
-                    viewModel,
-                    viewModel.MostRecentTextEditorMeasurements,
-                    new TextEditorCursorModifier(primaryCursor),
-                    virtualizationRequest.CancellationToken)
-                .Invoke(editContext);
-        });
+        TextEditorService.Post(
+            TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
+                model.ResourceUri,
+                viewModel.ViewModelKey,
+                viewModel.MostRecentTextEditorMeasurements,
+                virtualizationRequest.CancellationToken));
     }
 }

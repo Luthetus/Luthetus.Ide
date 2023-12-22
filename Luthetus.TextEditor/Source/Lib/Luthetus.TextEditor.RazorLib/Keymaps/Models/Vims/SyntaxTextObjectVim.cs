@@ -77,8 +77,7 @@ public static class SyntaxTextObjectVim
                         ShiftKey = commandArgs.ShiftKey
                     },
                     modelModifier.ResourceUri,
-                    viewModelModifier.ViewModel.ViewModelKey,
-                    primaryCursorModifier.Key)
+                    viewModelModifier.ViewModel.ViewModelKey)
                 .Invoke(editContext);
 
             return Task.CompletedTask;
@@ -111,8 +110,7 @@ public static class SyntaxTextObjectVim
                         ShiftKey = commandArgs.ShiftKey
                     },
                     modelModifier.ResourceUri,
-                    viewModelModifier.ViewModel.ViewModelKey,
-                    primaryCursorModifier.Key)
+                    viewModelModifier.ViewModel.ViewModelKey)
                 .Invoke(editContext);
         };
     }
@@ -143,8 +141,7 @@ public static class SyntaxTextObjectVim
                         ShiftKey = commandArgs.ShiftKey
                     },
                     modelModifier.ResourceUri,
-                    viewModelModifier.ViewModel.ViewModelKey,
-                    primaryCursorModifier.Key)
+                    viewModelModifier.ViewModel.ViewModelKey)
                 .Invoke(editContext);
         };
     }
@@ -175,8 +172,7 @@ public static class SyntaxTextObjectVim
                         ShiftKey = commandArgs.ShiftKey
                     },
                     modelModifier.ResourceUri,
-                    viewModelModifier.ViewModel.ViewModelKey,
-                    primaryCursorModifier.Key)
+                    viewModelModifier.ViewModel.ViewModelKey)
                 .Invoke(editContext);
         };
     }
@@ -207,8 +203,7 @@ public static class SyntaxTextObjectVim
                         ShiftKey = commandArgs.ShiftKey
                     },
                     modelModifier.ResourceUri,
-                    viewModelModifier.ViewModel.ViewModelKey,
-                    primaryCursorModifier.Key)
+                    viewModelModifier.ViewModel.ViewModelKey)
                 .Invoke(editContext);
         };
     }
@@ -239,8 +234,7 @@ public static class SyntaxTextObjectVim
                         ShiftKey = commandArgs.ShiftKey
                     },
                     modelModifier.ResourceUri,
-                    viewModelModifier.ViewModel.ViewModelKey,
-                    primaryCursorModifier.Key)
+                    viewModelModifier.ViewModel.ViewModelKey)
                 .Invoke(editContext);
         };
     }

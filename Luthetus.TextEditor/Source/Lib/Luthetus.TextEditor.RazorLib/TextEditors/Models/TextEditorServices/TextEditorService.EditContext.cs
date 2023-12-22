@@ -11,10 +11,10 @@ public partial class TextEditorService
 {
     private record TextEditorEditContext : ITextEditorEditContext
     {
-        private readonly Dictionary<ResourceUri, TextEditorModelModifier?> _modelCache = new();
-        private readonly Dictionary<Key<TextEditorViewModel>, ResourceUri?> _viewModelToModelResourceUriCache = new();
-        private readonly Dictionary<Key<TextEditorViewModel>, TextEditorViewModelModifier?> _viewModelCache = new();
-        private readonly Dictionary<Key<TextEditorViewModel>, TextEditorCursorModifierBag?> _cursorModifierBagCache = new();
+        public readonly Dictionary<ResourceUri, TextEditorModelModifier?> ModelCache = new();
+        public readonly Dictionary<Key<TextEditorViewModel>, ResourceUri?> ViewModelToModelResourceUriCache = new();
+        public readonly Dictionary<Key<TextEditorViewModel>, TextEditorViewModelModifier?> ViewModelCache = new();
+        public readonly Dictionary<Key<TextEditorViewModel>, TextEditorCursorModifierBag?> CursorModifierBagCache = new();
 
         public TextEditorEditContext(
             ITextEditorService textEditorService,
@@ -31,12 +31,12 @@ public partial class TextEditorService
         {
             if (modelResourceUri is not null)
             {
-                if (!_modelCache.TryGetValue(modelResourceUri, out var modelModifier))
+                if (!ModelCache.TryGetValue(modelResourceUri, out var modelModifier))
                 {
                     var model = TextEditorService.ModelApi.GetOrDefault(modelResourceUri);
                     modelModifier = model is null ? null : new(model);
 
-                    _modelCache.Add(modelResourceUri, modelModifier);
+                    ModelCache.Add(modelResourceUri, modelModifier);
                 }
 
                 return modelModifier;
@@ -49,12 +49,12 @@ public partial class TextEditorService
         {
             if (viewModelKey != Key<TextEditorViewModel>.Empty)
             {
-                if (!_viewModelToModelResourceUriCache.TryGetValue(viewModelKey, out var modelResourceUri))
+                if (!ViewModelToModelResourceUriCache.TryGetValue(viewModelKey, out var modelResourceUri))
                 {
                     var model = TextEditorService.ViewModelApi.GetModelOrDefault(viewModelKey);
                     modelResourceUri = model?.ResourceUri;
 
-                    _viewModelToModelResourceUriCache.Add(viewModelKey, modelResourceUri);
+                    ViewModelToModelResourceUriCache.Add(viewModelKey, modelResourceUri);
                 }
 
                 return GetModelModifier(modelResourceUri);
@@ -67,12 +67,12 @@ public partial class TextEditorService
         {
             if (viewModelKey != Key<TextEditorViewModel>.Empty)
             {
-                if (!_viewModelCache.TryGetValue(viewModelKey, out var viewModelModifier))
+                if (!ViewModelCache.TryGetValue(viewModelKey, out var viewModelModifier))
                 {
                     var viewModel = TextEditorService.ViewModelApi.GetOrDefault(viewModelKey);
                     viewModelModifier = viewModel is null ? null : new(viewModel);
 
-                    _viewModelCache.Add(viewModelKey, viewModelModifier);
+                    ViewModelCache.Add(viewModelKey, viewModelModifier);
                 }
 
                 return viewModelModifier;
@@ -85,13 +85,13 @@ public partial class TextEditorService
         {
             if (viewModel is not null)
             {
-                if (!_cursorModifierBagCache.TryGetValue(viewModel.ViewModelKey, out var cursorModifierBag))
+                if (!CursorModifierBagCache.TryGetValue(viewModel.ViewModelKey, out var cursorModifierBag))
                 {
                     cursorModifierBag = new TextEditorCursorModifierBag(
                         viewModel.ViewModelKey,
                         viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
-                    _cursorModifierBagCache.Add(viewModel.ViewModelKey, cursorModifierBag);
+                    CursorModifierBagCache.Add(viewModel.ViewModelKey, cursorModifierBag);
                 }
 
                 return cursorModifierBag;

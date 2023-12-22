@@ -6,6 +6,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -118,16 +119,12 @@ public class DisplayTracker : IDisposable
         _calculateVirtualizationResultCancellationTokenSource.Cancel();
         _calculateVirtualizationResultCancellationTokenSource = new();
 
-        _textEditorService.EnqueueEdit(editContext =>
-        {
-            return _textEditorService.ViewModelApi.GetCalculateVirtualizationResultTask(
-                    model,
-                    viewModel,
-                    viewModel.MostRecentTextEditorMeasurements,
-                    editContext.PrimaryCursor,
-                    _calculateVirtualizationResultCancellationTokenSource.Token)
-                .Invoke(editContext);
-        });
+        _textEditorService.Post(
+            _textEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
+                model.ResourceUri,
+                viewModel.ViewModelKey,
+                viewModel.MostRecentTextEditorMeasurements,
+                _calculateVirtualizationResultCancellationTokenSource.Token));
     }
 
     public void Dispose()

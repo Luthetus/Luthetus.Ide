@@ -359,15 +359,14 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                     if (cursorModifierBag is null || primaryCursorModifier is null)
                         return Task.CompletedTask;
 
-                    return TextEditorService.ModelApi.HandleKeyboardEvent(
+                    return TextEditorService.ModelApi.HandleKeyboardEventFactory(
                             new TextEditorModelState.KeyboardEventAction(
+                                editContext,
                                 model.ResourceUri,
                                 viewModel.ViewModelKey,
-                                cursorModifierBag,
                                 keyboardEventArgs,
-                                CancellationToken.None,
-                                editContext.AuthenticatedActionKey),
-                            cursorModifierBag)
+                                CancellationToken.None),
+                            viewModel.ViewModelKey)
                         .Invoke(editContext);
                 });
             }
@@ -1016,9 +1015,9 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (model is null || viewModel is null)
             return;
 
-        TextEditorService.Post(TextEditorService.ViewModelApi.GetRemeasureTask(
+        TextEditorService.Post(TextEditorService.ViewModelApi.RemeasureFactory(
             model.ResourceUri,
-            viewModel,
+            viewModel.ViewModelKey,
             localMeasureCharacterWidthAndRowHeightElementId,
             countOfTestCharacters,
             CancellationToken.None));
@@ -1033,28 +1032,12 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (model is null || viewModel is null)
             return;
 
-        TextEditorService.Post(editContext =>
-        {
-            var modelModifier = editContext.GetModelModifier(modelResourceUri);
-            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-            if (modelModifier is null || viewModelModifier is null)
-                return;
-
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
-            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
-
-            if (cursorModifierBag is null || primaryCursorModifier is null)
-                return;
-
-            return TextEditorService.ViewModelApi.GetCalculateVirtualizationResultTask(
-                    modelModifier,
-                    editContext.ViewModel,
-                    editContext.ViewModel.MostRecentTextEditorMeasurements,
-                    editContext.PrimaryCursor,
-                    CancellationToken.None)
-                .Invoke(editContext);
-        });
+        TextEditorService.Post(
+            TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
+                model.ResourceUri,
+                viewModel.ViewModelKey,
+                viewModel.MostRecentTextEditorMeasurements,
+                CancellationToken.None));
     }
 
     public void Dispose()

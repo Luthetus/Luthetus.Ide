@@ -25,7 +25,7 @@ public static partial class TextEditorCommandVimFacts
                     var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
                     var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
 
-                    var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
+                    var cursorModifierBag = new TextEditorCursorModifierBag(
                         commandArgs.ViewModelKey,
                         viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
@@ -33,8 +33,8 @@ public static partial class TextEditorCommandVimFacts
                         commandArgs,
                         model,
                         viewModel,
-                        refreshCursorsRequest,
-                        refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                        cursorModifierBag,
+                        cursorModifierBag.CursorModifierBag.First(x => x.IsPrimaryCursor));
                 });
                 return Task.CompletedTask;
             });
@@ -96,7 +96,7 @@ public static partial class TextEditorCommandVimFacts
                     var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
                     var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
 
-                    var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
+                    var cursorModifierBag = new TextEditorCursorModifierBag(
                         commandArgs.ViewModelKey,
                         viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
@@ -104,8 +104,8 @@ public static partial class TextEditorCommandVimFacts
                         commandArgs,
                         model,
                         viewModel,
-                        refreshCursorsRequest,
-                        refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                        cursorModifierBag,
+                        cursorModifierBag.CursorModifierBag.First(x => x.IsPrimaryCursor));
                 });
                 return Task.CompletedTask;
             });
@@ -216,7 +216,7 @@ public static partial class TextEditorCommandVimFacts
                     var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
                     var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
 
-                    var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
+                    var cursorModifierBag = new TextEditorCursorModifierBag(
                         commandArgs.ViewModelKey,
                         viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
@@ -224,8 +224,8 @@ public static partial class TextEditorCommandVimFacts
                         commandArgs,
                         model,
                         viewModel,
-                        refreshCursorsRequest,
-                        refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                        cursorModifierBag,
+                        cursorModifierBag.CursorModifierBag.First(x => x.IsPrimaryCursor));
                 });
                 return Task.CompletedTask;
             });
@@ -294,7 +294,7 @@ public static partial class TextEditorCommandVimFacts
                         var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
                         var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
 
-                        var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
+                        var cursorModifierBag = new TextEditorCursorModifierBag(
                             commandArgs.ViewModelKey,
                             viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
@@ -302,8 +302,8 @@ public static partial class TextEditorCommandVimFacts
                             commandArgs,
                             model,
                             viewModel,
-                            refreshCursorsRequest,
-                            refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                            cursorModifierBag,
+                            cursorModifierBag.CursorModifierBag.First(x => x.IsPrimaryCursor));
                     });
                     return Task.CompletedTask;
                 });
@@ -364,7 +364,7 @@ public static partial class TextEditorCommandVimFacts
                         var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
                         var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
 
-                        var refreshCursorsRequest = new TextEditorService.RefreshCursorsRequest(
+                        var cursorModifierBag = new TextEditorCursorModifierBag(
                             commandArgs.ViewModelKey,
                             viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
@@ -372,8 +372,8 @@ public static partial class TextEditorCommandVimFacts
                             commandArgs,
                             model,
                             viewModel,
-                            refreshCursorsRequest,
-                            refreshCursorsRequest.CursorBag.First(x => x.IsPrimaryCursor));
+                            cursorModifierBag,
+                            cursorModifierBag.CursorModifierBag.First(x => x.IsPrimaryCursor));
                     });
                     return Task.CompletedTask;
                 });

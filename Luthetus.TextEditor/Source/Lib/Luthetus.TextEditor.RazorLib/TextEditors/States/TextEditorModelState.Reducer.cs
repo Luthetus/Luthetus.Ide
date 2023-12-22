@@ -1,5 +1,6 @@
 ﻿using Fluxor;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using static Luthetus.TextEditor.RazorLib.TextEditors.States.TextEditorViewModelState;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.States;
 
@@ -183,7 +184,7 @@ public partial class TextEditorModelState
             modelModifier.ModifyContent(reloadAction.Content);
 			modelModifier.ModifyResourceData(reloadAction.ResourceUri, reloadAction.ResourceLastWriteTime);
 
-            var outModelBag = inState.ModelBag.Replace(inModel, modelModifier.ToTextEditorModel());
+            var outModelBag = inState.ModelBag.Replace(inModel, modelModifier.ToModel());
 
             return new TextEditorModelState { ModelBag = outModelBag };
         }
@@ -233,6 +234,24 @@ public partial class TextEditorModelState
             var outModelBag = inState.ModelBag.Replace(inModel, outModel);
 
             return new TextEditorModelState { ModelBag = outModelBag };
+        }
+
+        [ReducerMethod]
+        public static TextEditorModelState ReduceSetModelAction(
+            TextEditorModelState inState,
+            SetModelAction setModelAction)
+        {
+            var inModel = inState.ModelBag.FirstOrDefault(
+                x => x.ResourceUri == setModelAction.ModelModifier.ResourceUri);
+
+            if (inModel is null)
+                return inState;
+
+            var outViewModelBag = inState.ModelBag.Replace(
+                inModel,
+                setModelAction.ModelModifier.ToModel());
+
+            return new TextEditorModelState { ModelBag = outViewModelBag };
         }
     }
 }

@@ -12,91 +12,91 @@ public partial class TextEditorModel
     public TextEditorModel PerformForceRerenderAction(ForceRerenderAction forceRerenderAction)
     {
         var modelModifier = new TextEditorModelModifier(this);
-        return modelModifier.ToTextEditorModel();
+        return modelModifier.ToModel();
     }
 
     public TextEditorModel PerformEditTextEditorAction(KeyboardEventAction keyboardEventAction)
     {
         var modelModifier = new TextEditorModelModifier(this);
         modelModifier.PerformEditTextEditorAction(keyboardEventAction);
-		return modelModifier.ToTextEditorModel();
+		return modelModifier.ToModel();
     }
 
     public TextEditorModel PerformEditTextEditorAction(InsertTextAction insertTextAction)
     {
 		var modelModifier = new TextEditorModelModifier(this);
 		modelModifier.PerformEditTextEditorAction(insertTextAction);
-		return modelModifier.ToTextEditorModel();
+		return modelModifier.ToModel();
     }
 
     public TextEditorModel PerformEditTextEditorAction(DeleteTextByMotionAction deleteTextByMotionAction)
     {
 		var modelModifier = new TextEditorModelModifier(this);
 		modelModifier.PerformEditTextEditorAction(deleteTextByMotionAction);
-		return modelModifier.ToTextEditorModel();
+		return modelModifier.ToModel();
     }
 
     public TextEditorModel PerformEditTextEditorAction(DeleteTextByRangeAction deleteTextByRangeAction)
     {
 		var modelModifier = new TextEditorModelModifier(this);
         modelModifier.PerformEditTextEditorAction(deleteTextByRangeAction);
-		return modelModifier.ToTextEditorModel();
+		return modelModifier.ToModel();
     }
 
     public TextEditorModel PerformRegisterPresentationModelAction(RegisterPresentationModelAction registerPresentationModelAction)
     {
 		var modelModifier = new TextEditorModelModifier(this);
 		modelModifier.PerformRegisterPresentationModelAction(registerPresentationModelAction);
-		return modelModifier.ToTextEditorModel();
+		return modelModifier.ToModel();
     }
     
     public TextEditorModel PerformCalculatePresentationModelAction(CalculatePresentationModelAction calculatePresentationModelAction)
     {
 		var modelModifier = new TextEditorModelModifier(this);
 		modelModifier.PerformCalculatePresentationModelAction(calculatePresentationModelAction);
-		return modelModifier.ToTextEditorModel();
+		return modelModifier.ToModel();
     }
 
     public TextEditorModel SetDecorationMapper(IDecorationMapper decorationMapper)
     {
 		var modelModifier = new TextEditorModelModifier(this);
 		modelModifier.ModifyDecorationMapper(decorationMapper);
-		return modelModifier.ToTextEditorModel();
+		return modelModifier.ToModel();
     }
 
     public TextEditorModel SetCompilerService(ICompilerService compilerService)
     {
 		var modelModifier = new TextEditorModelModifier(this);
 		modelModifier.ModifyCompilerService(compilerService);
-		return modelModifier.ToTextEditorModel();
+		return modelModifier.ToModel();
     }
     
     public TextEditorModel SetTextEditorSaveFileHelper(TextEditorSaveFileHelper textEditorSaveFileHelper)
     {
 		var modelModifier = new TextEditorModelModifier(this);
 		modelModifier.ModifyTextEditorSaveFileHelper(textEditorSaveFileHelper);
-		return modelModifier.ToTextEditorModel();
+		return modelModifier.ToModel();
     }
 
     public TextEditorModel SetResourceData(ResourceUri resourceUri, DateTime resourceLastWriteTime)
     {
 		var modelModifier = new TextEditorModelModifier(this);
 		modelModifier.ModifyResourceData(resourceUri, resourceLastWriteTime);
-		return modelModifier.ToTextEditorModel();
+		return modelModifier.ToModel();
     }
 
     public TextEditorModel SetUsingRowEndingKind(RowEndingKind rowEndingKind)
     {
 		var modelModifier = new TextEditorModelModifier(this);
 		modelModifier.ModifyUsingRowEndingKind(rowEndingKind);
-		return modelModifier.ToTextEditorModel();
+		return modelModifier.ToModel();
     }
 
     public TextEditorModel ClearEditBlocks()
     {
 		var modelModifier = new TextEditorModelModifier(this);
 		modelModifier.ClearEditBlocks();
-		return modelModifier.ToTextEditorModel();
+		return modelModifier.ToModel();
     }
 
     /// <summary>The "if (EditBlockIndex == _editBlocksPersisted.Count)"<br/><br/>Is done because the active EditBlock is not yet persisted.<br/><br/>The active EditBlock is instead being 'created' as the user continues to make edits of the same <see cref="TextEditKind"/><br/><br/>For complete clarity, this comment refers to one possibly expecting to see "if (EditBlockIndex == _editBlocksPersisted.Count - 1)"</summary>
@@ -104,13 +104,13 @@ public partial class TextEditorModel
     {
 		var modelModifier = new TextEditorModelModifier(this);
 		modelModifier.UndoEdit();
-		return modelModifier.ToTextEditorModel();
+		return modelModifier.ToModel();
     }
 
     public TextEditorModel RedoEdit()
     {
 		var modelModifier = new TextEditorModelModifier(this);
 		modelModifier.RedoEdit();
-		return modelModifier.ToTextEditorModel();
+		return modelModifier.ToModel();
     }
 }

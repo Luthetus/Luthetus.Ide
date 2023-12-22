@@ -253,12 +253,12 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                             return Task.CompletedTask;
 
                         commandArgs.Dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
+                            editContext,
                             viewModelModifier.ViewModel.ViewModelKey,
                             previousViewModel => previousViewModel with
                             {
                                 DisplayCommandBar = true
-                            },
-                            editContext.AuthenticatedActionKey));
+                            }));
 
                         return Task.CompletedTask;
                     });
@@ -850,8 +850,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                                 commandArgs.TextEditorService.ViewModelApi.MoveCursorFactory(
                                         keyboardEventArgs,
                                         commandArgs.ModelResourceUri,
-                                        commandArgs.ViewModelKey,
-                                        editContext.PrimaryCursor)
+                                        commandArgs.ViewModelKey)
                                     .Invoke(editContext);
 
                                 return Task.CompletedTask;
