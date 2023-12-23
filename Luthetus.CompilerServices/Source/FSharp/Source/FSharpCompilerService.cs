@@ -119,60 +119,58 @@ public class FSharpCompilerService : ICompilerService
 
     private void QueueParseRequest(ResourceUri resourceUri)
     {
-        _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
-            "F# Compiler Service - Parse",
-            async () =>
-            {
-                var model = _textEditorService.ModelApi.GetOrDefault(resourceUri);
+        _textEditorService.Post(async editContext =>
+        {
+            var model = _textEditorService.ModelApi.GetOrDefault(resourceUri);
 
-                if (model is null)
+            if (model is null)
+                return;
+
+            var text = model.GetAllText();
+
+            _dispatcher.Dispatch(new TextEditorModelState.CalculatePresentationModelAction(
+                editContext,
+                model.ResourceUri,
+                CompilerServiceDiagnosticPresentationFacts.PresentationKey));
+
+            var pendingCalculation = model.PresentationModelsBag.FirstOrDefault(x =>
+                x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey)
+                ?.PendingCalculation;
+
+            if (pendingCalculation is null)
+                pendingCalculation = new(model.GetAllText());
+
+            var lexer = new TextEditorFSharpLexer(model.ResourceUri);
+            var lexResult = await lexer.Lex(text, model.RenderStateKey);
+
+            lock (_fSharpResourceMapLock)
+            {
+                if (!_fSharpResourceMap.ContainsKey(resourceUri))
                     return;
 
-                var text = model.GetAllText();
+                _fSharpResourceMap[resourceUri]
+                    .SyntacticTextSpans = lexResult;
+            }
 
-                _dispatcher.Dispatch(new TextEditorModelState.CalculatePresentationModelAction(
-                    null,
-                    model.ResourceUri,
-                    CompilerServiceDiagnosticPresentationFacts.PresentationKey));
+            await model.ApplySyntaxHighlightingAsync();
 
-                var pendingCalculation = model.PresentationModelsBag.FirstOrDefault(x =>
-                    x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey)
-                    ?.PendingCalculation;
+            ResourceParsed?.Invoke();
 
-                if (pendingCalculation is null)
-                    pendingCalculation = new(model.GetAllText());
+            var presentationModel = model.PresentationModelsBag.FirstOrDefault(x =>
+                x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
 
-                var lexer = new TextEditorFSharpLexer(model.ResourceUri);
-                var lexResult = await lexer.Lex(text, model.RenderStateKey);
+            if (presentationModel?.PendingCalculation is not null)
+            {
+                presentationModel.PendingCalculation.TextEditorTextSpanBag =
+                    GetDiagnosticsFor(model.ResourceUri)
+                        .Select(x => x.TextSpan)
+                        .ToImmutableArray();
 
-                lock (_fSharpResourceMapLock)
-                {
-                    if (!_fSharpResourceMap.ContainsKey(resourceUri))
-                        return;
+                (presentationModel.CompletedCalculation, presentationModel.PendingCalculation) =
+                    (presentationModel.PendingCalculation, presentationModel.CompletedCalculation);
+            }
 
-                    _fSharpResourceMap[resourceUri]
-                        .SyntacticTextSpans = lexResult;
-                }
-
-                await model.ApplySyntaxHighlightingAsync();
-
-                ResourceParsed?.Invoke();
-
-                var presentationModel = model.PresentationModelsBag.FirstOrDefault(x =>
-                    x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
-
-                if (presentationModel?.PendingCalculation is not null)
-                {
-                    presentationModel.PendingCalculation.TextEditorTextSpanBag =
-                        GetDiagnosticsFor(model.ResourceUri)
-                            .Select(x => x.TextSpan)
-                            .ToImmutableArray();
-
-                    (presentationModel.CompletedCalculation, presentationModel.PendingCalculation) =
-                        (presentationModel.PendingCalculation, presentationModel.CompletedCalculation);
-                }
-
-                return;
-            });
+            return;
+        });
     }
 }

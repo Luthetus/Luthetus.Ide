@@ -129,72 +129,70 @@ public class DotNetSolutionCompilerService : ICompilerService
 
     private void QueueParseRequest(ResourceUri resourceUri)
     {
-        _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
-            ".NET Solution Compiler Service - Parse",
-            async () =>
-            {
-                var model = _textEditorService.ModelApi.GetOrDefault(resourceUri);
+        _textEditorService.Post(async editContext =>
+        {
+            var model = _textEditorService.ModelApi.GetOrDefault(resourceUri);
 
-                if (model is null)
+            if (model is null)
+                return;
+
+            var absolutePath = new AbsolutePath(
+                model.ResourceUri.Value,
+                false,
+                _environmentProvider);
+
+            var namespacePath = new NamespacePath(
+                string.Empty,
+                absolutePath);
+
+            _dispatcher.Dispatch(new TextEditorModelState.CalculatePresentationModelAction(
+                editContext,
+                model.ResourceUri,
+                CompilerServiceDiagnosticPresentationFacts.PresentationKey));
+
+            var pendingCalculation = model.PresentationModelsBag.FirstOrDefault(x =>
+                x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey)
+                ?.PendingCalculation;
+
+            if (pendingCalculation is null)
+                pendingCalculation = new(model.GetAllText());
+
+            var lexer = new DotNetSolutionLexer(resourceUri, model.GetAllText());
+            lexer.Lex();
+
+            var parser = new DotNetSolutionParser(lexer);
+
+            var compilationUnit = parser.Parse();
+
+            lock (_dotNetSolutionResourceMapLock)
+            {
+                if (!_dotNetSolutionResourceMap.ContainsKey(resourceUri))
                     return;
 
-                var absolutePath = new AbsolutePath(
-                    model.ResourceUri.Value,
-                    false,
-                    _environmentProvider);
+                var dotNetSolutionResource = _dotNetSolutionResourceMap[resourceUri];
+                dotNetSolutionResource.SyntaxTokenBag = lexer.SyntaxTokens;
+                dotNetSolutionResource.CompilationUnit = compilationUnit;
+            }
 
-                var namespacePath = new NamespacePath(
-                    string.Empty,
-                    absolutePath);
+            await model.ApplySyntaxHighlightingAsync();
 
-                _dispatcher.Dispatch(new TextEditorModelState.CalculatePresentationModelAction(
-                    null,
-                    model.ResourceUri,
-                    CompilerServiceDiagnosticPresentationFacts.PresentationKey));
+            ResourceParsed?.Invoke();
 
-                var pendingCalculation = model.PresentationModelsBag.FirstOrDefault(x =>
-                    x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey)
-                    ?.PendingCalculation;
+            var presentationModel = model.PresentationModelsBag.FirstOrDefault(x =>
+                x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
 
-                if (pendingCalculation is null)
-                    pendingCalculation = new(model.GetAllText());
+            if (presentationModel?.PendingCalculation is not null)
+            {
+                presentationModel.PendingCalculation.TextEditorTextSpanBag =
+                    GetDiagnosticsFor(model.ResourceUri)
+                        .Select(x => x.TextSpan)
+                        .ToImmutableArray();
 
-                var lexer = new DotNetSolutionLexer(resourceUri, model.GetAllText());
-                lexer.Lex();
+                (presentationModel.CompletedCalculation, presentationModel.PendingCalculation) =
+                    (presentationModel.PendingCalculation, presentationModel.CompletedCalculation);
+            }
 
-                var parser = new DotNetSolutionParser(lexer);
-
-                var compilationUnit = parser.Parse();
-
-                lock (_dotNetSolutionResourceMapLock)
-                {
-                    if (!_dotNetSolutionResourceMap.ContainsKey(resourceUri))
-                        return;
-
-                    var dotNetSolutionResource = _dotNetSolutionResourceMap[resourceUri];
-                    dotNetSolutionResource.SyntaxTokenBag = lexer.SyntaxTokens;
-                    dotNetSolutionResource.CompilationUnit = compilationUnit;
-                }
-
-                await model.ApplySyntaxHighlightingAsync();
-
-                ResourceParsed?.Invoke();
-
-                var presentationModel = model.PresentationModelsBag.FirstOrDefault(x =>
-                    x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
-
-                if (presentationModel?.PendingCalculation is not null)
-                {
-                    presentationModel.PendingCalculation.TextEditorTextSpanBag =
-                        GetDiagnosticsFor(model.ResourceUri)
-                            .Select(x => x.TextSpan)
-                            .ToImmutableArray();
-
-                    (presentationModel.CompletedCalculation, presentationModel.PendingCalculation) =
-                        (presentationModel.PendingCalculation, presentationModel.CompletedCalculation);
-                }
-
-                return;
-            });
+            return;
+        });
     }
 }

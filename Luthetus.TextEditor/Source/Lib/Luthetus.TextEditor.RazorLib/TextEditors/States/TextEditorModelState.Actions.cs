@@ -7,6 +7,7 @@ using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.States;
 
@@ -159,5 +160,8 @@ public partial class TextEditorModelState
             CancellationToken CancellationToken)
         : AuthenticatedAction(EditContext.AuthenticatedActionKey);
 
-    public record SetModelAction(TextEditorModelModifier ModelModifier);
+    public record SetModelAction(
+            ITextEditorEditContext EditContext,
+            TextEditorModelModifier ModelModifier)
+        : AuthenticatedAction(EditContext.AuthenticatedActionKey);
 }

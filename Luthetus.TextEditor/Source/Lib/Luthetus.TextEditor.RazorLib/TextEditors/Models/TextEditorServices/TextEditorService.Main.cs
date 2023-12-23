@@ -121,6 +121,16 @@ public partial class TextEditorService : ITextEditorService
 
                 await textEditorEdit.Invoke(editContext);
 
+                foreach (var modelModifier in editContext.ModelCache.Values)
+                {
+                    if (modelModifier is null)
+                        continue;
+
+                    _dispatcher.Dispatch(new TextEditorModelState.SetModelAction(
+                        editContext,
+                        modelModifier));
+                }
+
                 foreach (var viewModelModifier in editContext.ViewModelCache.Values)
                 {
                     if (viewModelModifier is not null && editContext.CursorModifierBagCache.TryGetValue(

@@ -270,8 +270,6 @@ public partial interface ITextEditorService
                     return Task.CompletedTask;
 
                 modelModifier.UndoEdit();
-
-                _dispatcher.Dispatch(new SetModelAction(modelModifier));
                 return Task.CompletedTask;
             };
         }
@@ -288,8 +286,6 @@ public partial interface ITextEditorService
                     return Task.CompletedTask;
 
                 modelModifier.ModifyUsingRowEndingKind(rowEndingKind);
-
-                _dispatcher.Dispatch(new SetModelAction(modelModifier));
                 return Task.CompletedTask;
             };
         }
@@ -306,8 +302,6 @@ public partial interface ITextEditorService
                     return Task.CompletedTask;
 
                 modelModifier.ModifyResourceData(resourceUri, resourceLastWriteTime);
-
-                _dispatcher.Dispatch(new SetModelAction(modelModifier));
                 return Task.CompletedTask;
             };
         }
@@ -326,8 +320,6 @@ public partial interface ITextEditorService
 
                 modelModifier.ModifyContent(content);
                 modelModifier.ModifyResourceData(resourceUri, resourceLastWriteTime);
-
-                _dispatcher.Dispatch(new SetModelAction(modelModifier));
                 return Task.CompletedTask;
             };
         }
@@ -342,8 +334,6 @@ public partial interface ITextEditorService
                     return Task.CompletedTask;
 
                 modelModifier.RedoEdit();
-
-                _dispatcher.Dispatch(new SetModelAction(modelModifier));
                 return Task.CompletedTask;
             };
         }
@@ -367,8 +357,6 @@ public partial interface ITextEditorService
                     return Task.CompletedTask;
 
                 modelModifier.PerformEditTextEditorAction(insertTextAction, cursorModifierBag);
-
-                _dispatcher.Dispatch(new SetModelAction(modelModifier));
                 return Task.CompletedTask;
             };
         }
@@ -409,8 +397,6 @@ public partial interface ITextEditorService
                     return Task.CompletedTask;
 
                 modelModifier.PerformEditTextEditorAction(keyboardEventAction, cursorModifierBag);
-
-                _dispatcher.Dispatch(new SetModelAction(modelModifier));
                 return Task.CompletedTask;
             };
         }
@@ -427,7 +413,6 @@ public partial interface ITextEditorService
                 };
 
                 _dispatcher.Dispatch(keyboardEventUnsafeAction);
-
                 return Task.CompletedTask;
             };
         }
@@ -451,8 +436,6 @@ public partial interface ITextEditorService
                     return Task.CompletedTask;
 
                 modelModifier.PerformEditTextEditorAction(deleteTextByRangeAction, cursorModifierBag);
-
-                _dispatcher.Dispatch(new SetModelAction(modelModifier));
                 return Task.CompletedTask;
             };
         }
@@ -469,7 +452,6 @@ public partial interface ITextEditorService
                 };
 
                 _dispatcher.Dispatch(deleteTextByRangeUnsafeAction);
-
                 return Task.CompletedTask;
             };
         }
@@ -493,8 +475,6 @@ public partial interface ITextEditorService
                     return Task.CompletedTask;
 
                 modelModifier.PerformEditTextEditorAction(deleteTextByMotionAction, cursorModifierBag);
-
-                _dispatcher.Dispatch(new SetModelAction(modelModifier));
                 return Task.CompletedTask;
             };
         }
@@ -511,7 +491,6 @@ public partial interface ITextEditorService
                 };
 
                 _dispatcher.Dispatch(deleteTextByMotionUnsafeAction);
-
                 return Task.CompletedTask;
             };
         }
