@@ -1,5 +1,10 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.Groups.States;
+using Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
+using Luthetus.TextEditor.RazorLib.Groups.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.Tests.Basis.Groups.States;
 
@@ -14,7 +19,20 @@ public class TextEditorGroupStateActionsTests
 	[Fact]
 	public void RegisterAction()
 	{
-		throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+		var group = new TextEditorGroup(
+			Key<TextEditorGroup>.NewKey(),
+            inViewModel.ViewModelKey,
+			new Key<TextEditorViewModel>[] { inViewModel.ViewModelKey }.ToImmutableList());
+
+		var registerAction = new TextEditorGroupState.RegisterAction(group);
+
+		Assert.Equal(group, registerAction.Group);
 	}
 
 	/// <summary>
@@ -23,7 +41,22 @@ public class TextEditorGroupStateActionsTests
 	[Fact]
 	public void DisposeAction()
 	{
-		throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+		var groupKey = Key<TextEditorGroup>.NewKey();
+
+        var group = new TextEditorGroup(
+            groupKey,
+            inViewModel.ViewModelKey,
+            new Key<TextEditorViewModel>[] { inViewModel.ViewModelKey }.ToImmutableList());
+
+        var disposeAction = new TextEditorGroupState.DisposeAction(group.GroupKey);
+
+        Assert.Equal(groupKey, disposeAction.GroupKey);
 	}
 
 	/// <summary>
@@ -32,7 +65,25 @@ public class TextEditorGroupStateActionsTests
 	[Fact]
 	public void AddViewModelToGroupAction()
 	{
-		throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        var groupKey = Key<TextEditorGroup>.NewKey();
+
+        var group = new TextEditorGroup(
+            groupKey,
+            inViewModel.ViewModelKey,
+            new Key<TextEditorViewModel>[] { inViewModel.ViewModelKey }.ToImmutableList());
+
+        var addViewModelToGroupAction = new TextEditorGroupState.AddViewModelToGroupAction(
+			group.GroupKey,
+			inViewModel.ViewModelKey);
+
+        Assert.Equal(groupKey, addViewModelToGroupAction.GroupKey);
+        Assert.Equal(inViewModel.ViewModelKey, addViewModelToGroupAction.ViewModelKey);
 	}
 
 	/// <summary>
@@ -41,7 +92,25 @@ public class TextEditorGroupStateActionsTests
 	[Fact]
 	public void RemoveViewModelFromGroupAction()
 	{
-		throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        var groupKey = Key<TextEditorGroup>.NewKey();
+
+        var group = new TextEditorGroup(
+            groupKey,
+            inViewModel.ViewModelKey,
+            new Key<TextEditorViewModel>[] { inViewModel.ViewModelKey }.ToImmutableList());
+
+        var removeViewModelFromGroupAction = new TextEditorGroupState.RemoveViewModelFromGroupAction(
+            group.GroupKey,
+            inViewModel.ViewModelKey);
+
+        Assert.Equal(groupKey, removeViewModelFromGroupAction.GroupKey);
+        Assert.Equal(inViewModel.ViewModelKey, removeViewModelFromGroupAction.ViewModelKey);
 	}
 
 	/// <summary>
@@ -50,6 +119,24 @@ public class TextEditorGroupStateActionsTests
 	[Fact]
 	public void SetActiveViewModelOfGroupAction()
 	{
-		throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        var groupKey = Key<TextEditorGroup>.NewKey();
+
+        var group = new TextEditorGroup(
+            groupKey,
+            inViewModel.ViewModelKey,
+            new Key<TextEditorViewModel>[] { inViewModel.ViewModelKey }.ToImmutableList());
+
+        var setActiveViewModelOfGroupAction = new TextEditorGroupState.SetActiveViewModelOfGroupAction(
+            group.GroupKey,
+            inViewModel.ViewModelKey);
+
+        Assert.Equal(groupKey, setActiveViewModelOfGroupAction.GroupKey);
+        Assert.Equal(inViewModel.ViewModelKey, setActiveViewModelOfGroupAction.ViewModelKey);
 	}
 }
