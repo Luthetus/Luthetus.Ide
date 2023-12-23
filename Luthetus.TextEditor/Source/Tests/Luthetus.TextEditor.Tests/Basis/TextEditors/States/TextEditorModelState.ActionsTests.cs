@@ -1,5 +1,9 @@
 using Xunit;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
+using Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
+using Luthetus.TextEditor.RazorLib.Diffs.Models;
+using Microsoft.AspNetCore.Components.Web;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.States;
 
@@ -14,46 +18,14 @@ public class TextEditorModelStateActionsTests
 	[Fact]
 	public void RegisterAction()
 	{
-		// var registerAction = new RegisterAction();
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
 
-		/*
-	public record RegisterAction(TextEditorModel Model);
-    public record DisposeAction(ResourceUri ResourceUri);
-    public record UndoEditAction(ResourceUri ResourceUri);
-    public record RedoEditAction(ResourceUri ResourceUri);
-    public record ForceRerenderAction(ResourceUri ResourceUri);
-    public record RegisterPresentationModelAction(ResourceUri ResourceUri, TextEditorPresentationModel PresentationModel);
-    public record CalculatePresentationModelAction(ResourceUri ResourceUri, Key<TextEditorPresentationModel> PresentationKey);
-    public record ReloadAction(ResourceUri ResourceUri, string Content, DateTime ResourceLastWriteTime);
-    public record SetResourceDataAction(ResourceUri ResourceUri, DateTime ResourceLastWriteTime);
-    public record SetUsingRowEndingKindAction(ResourceUri ResourceUri, RowEndingKind RowEndingKind);
-
-    public record KeyboardEventAction(
-        ResourceUri ResourceUri,
-        ImmutableArray<TextEditorCursorSnapshot> CursorSnapshotsBag,
-        KeyboardEventArgs KeyboardEventArgs,
-        CancellationToken CancellationToken);
-
-    public record InsertTextAction(
-        ResourceUri ResourceUri,
-        ImmutableArray<TextEditorCursorSnapshot> CursorSnapshotsBag,
-        string Content,
-        CancellationToken CancellationToken);
-
-    public record DeleteTextByMotionAction(
-        ResourceUri ResourceUri,
-        ImmutableArray<TextEditorCursorSnapshot> CursorSnapshotsBag,
-        MotionKind MotionKind,
-        CancellationToken CancellationToken);
-
-    public record DeleteTextByRangeAction(
-        ResourceUri ResourceUri,
-        ImmutableArray<TextEditorCursorSnapshot> CursorSnapshotsBag,
-        int Count,
-        CancellationToken CancellationToken);
-		*/
-
-		throw new NotImplementedException();
+        var registerAction = new TextEditorModelState.RegisterAction(inModel);
+		Assert.Equal(inModel, registerAction.Model);
 	}
 
 	/// <summary>
@@ -62,7 +34,14 @@ public class TextEditorModelStateActionsTests
 	[Fact]
 	public void DisposeAction()
 	{
-		throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        var disposeAction = new TextEditorModelState.DisposeAction(inModel.ResourceUri);
+        Assert.Equal(inModel.ResourceUri, disposeAction.ResourceUri);
 	}
 
 	/// <summary>
@@ -71,7 +50,22 @@ public class TextEditorModelStateActionsTests
 	[Fact]
 	public void UndoEditAction()
 	{
-		throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+		textEditorService.Post(editContext =>
+		{
+            var undoEditAction = new TextEditorModelState.UndoEditAction(
+				editContext,
+				inModel.ResourceUri);
+
+            Assert.Equal(editContext, undoEditAction.EditContext);
+            Assert.Equal(inModel.ResourceUri, undoEditAction.ResourceUri);
+            return Task.CompletedTask;
+		});
 	}
 
 	/// <summary>
@@ -80,7 +74,22 @@ public class TextEditorModelStateActionsTests
 	[Fact]
 	public void RedoEditAction()
 	{
-		throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        textEditorService.Post(editContext =>
+        {
+            var redoEditAction = new TextEditorModelState.RedoEditAction(
+                editContext,
+                inModel.ResourceUri);
+
+            Assert.Equal(editContext, redoEditAction.EditContext);
+            Assert.Equal(inModel.ResourceUri, redoEditAction.ResourceUri);
+            return Task.CompletedTask;
+        });
 	}
 
 	/// <summary>
@@ -89,8 +98,17 @@ public class TextEditorModelStateActionsTests
 	[Fact]
 	public void ForceRerenderAction()
 	{
-		throw new NotImplementedException();
-	}
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        var forceRerenderAction = new TextEditorModelState.ForceRerenderAction(
+            inModel.ResourceUri);
+
+        Assert.Equal(inModel.ResourceUri, forceRerenderAction.ResourceUri);
+    }
 
 	/// <summary>
 	/// <see cref="TextEditorModelState.RegisterPresentationModelAction"/>
@@ -98,8 +116,20 @@ public class TextEditorModelStateActionsTests
 	[Fact]
 	public void RegisterPresentationModelAction()
 	{
-		throw new NotImplementedException();
-	}
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        var presentationModel = DiffPresentationFacts.EmptyInPresentationModel;
+        var registerPresentationModelAction = new TextEditorModelState.RegisterPresentationModelAction(
+            inModel.ResourceUri,
+            presentationModel);
+
+        Assert.Equal(inModel.ResourceUri, registerPresentationModelAction.ResourceUri);
+        Assert.Equal(presentationModel, registerPresentationModelAction.PresentationModel);
+    }
 
 	/// <summary>
 	/// <see cref="TextEditorModelState.CalculatePresentationModelAction"/>
@@ -107,7 +137,25 @@ public class TextEditorModelStateActionsTests
 	[Fact]
 	public void CalculatePresentationModelAction()
 	{
-		throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        textEditorService.Post(editContext =>
+        {
+			var presentationKey = DiffPresentationFacts.InPresentationKey;
+            var calculatePresentationModelAction = new TextEditorModelState.CalculatePresentationModelAction(
+                editContext,
+				inModel.ResourceUri,
+                presentationKey);
+
+            Assert.Equal(editContext, calculatePresentationModelAction.EditContext);
+            Assert.Equal(inModel.ResourceUri, calculatePresentationModelAction.ResourceUri);
+            Assert.Equal(presentationKey, calculatePresentationModelAction.PresentationKey);
+            return Task.CompletedTask;
+        });
 	}
 
 	/// <summary>
@@ -116,7 +164,28 @@ public class TextEditorModelStateActionsTests
 	[Fact]
 	public void ReloadAction()
 	{
-		throw new NotImplementedException();
+		TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        textEditorService.Post(editContext =>
+        {
+			var content = "AlphabetSoup";
+			var resourceLastWriteTime = DateTime.UtcNow;
+            var reloadAction = new TextEditorModelState.ReloadAction(
+                editContext,
+				inModel.ResourceUri,
+                content,
+                resourceLastWriteTime);
+
+            Assert.Equal(editContext, reloadAction.EditContext);
+            Assert.Equal(inModel.ResourceUri, reloadAction.ResourceUri);
+            Assert.Equal(content, reloadAction.Content);
+            Assert.Equal(resourceLastWriteTime, reloadAction.ResourceLastWriteTime);
+            return Task.CompletedTask;
+        });
 	}
 
 	/// <summary>
@@ -125,7 +194,25 @@ public class TextEditorModelStateActionsTests
 	[Fact]
 	public void SetResourceDataAction()
 	{
-		throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        textEditorService.Post(editContext =>
+        {
+            var resourceLastWriteTime = DateTime.UtcNow;
+            var registerPresentationModelAction = new TextEditorModelState.SetResourceDataAction(
+                editContext,
+                inModel.ResourceUri,
+                resourceLastWriteTime);
+
+            Assert.Equal(editContext, registerPresentationModelAction.EditContext);
+            Assert.Equal(inModel.ResourceUri, registerPresentationModelAction.ResourceUri);
+            Assert.Equal(resourceLastWriteTime, registerPresentationModelAction.ResourceLastWriteTime);
+            return Task.CompletedTask;
+        });
 	}
 
 	/// <summary>
@@ -134,7 +221,25 @@ public class TextEditorModelStateActionsTests
 	[Fact]
 	public void SetUsingRowEndingKindAction()
 	{
-		throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        textEditorService.Post(editContext =>
+        {
+            var rowEndingKind = RazorLib.Rows.Models.RowEndingKind.CarriageReturn;
+            var setUsingRowEndingKindAction = new TextEditorModelState.SetUsingRowEndingKindAction(
+                editContext,
+                inModel.ResourceUri,
+                rowEndingKind);
+
+            Assert.Equal(editContext, setUsingRowEndingKindAction.EditContext);
+            Assert.Equal(inModel.ResourceUri, setUsingRowEndingKindAction.ResourceUri);
+            Assert.Equal(rowEndingKind, setUsingRowEndingKindAction.RowEndingKind);
+            return Task.CompletedTask;
+        });
 	}
 
 	/// <summary>
@@ -143,7 +248,30 @@ public class TextEditorModelStateActionsTests
 	[Fact]
 	public void KeyboardEventAction()
 	{
-		throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        textEditorService.Post(editContext =>
+        {
+            var keyboardEventArgs = new KeyboardEventArgs();
+            var cancellationToken = CancellationToken.None;
+            var keyboardEventAction = new TextEditorModelState.KeyboardEventAction(
+                editContext,
+                inModel.ResourceUri,
+                inViewModel.ViewModelKey,
+                keyboardEventArgs,
+                cancellationToken);
+
+            Assert.Equal(editContext, keyboardEventAction.EditContext);
+            Assert.Equal(inModel.ResourceUri, keyboardEventAction.ResourceUri);
+            Assert.Equal(inViewModel.ViewModelKey, keyboardEventAction.ViewModelKey);
+            Assert.Equal(keyboardEventArgs, keyboardEventAction.KeyboardEventArgs);
+            Assert.Equal(cancellationToken, keyboardEventAction.CancellationToken);
+            return Task.CompletedTask;
+        });
 	}
 
 	/// <summary>
@@ -152,7 +280,30 @@ public class TextEditorModelStateActionsTests
 	[Fact]
 	public void InsertTextAction()
 	{
-		throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        textEditorService.Post(editContext =>
+        {
+            var content = "AlphabetSoup";
+            var cancellationToken = CancellationToken.None;
+            var insertTextAction = new TextEditorModelState.InsertTextAction(
+                editContext,
+                inModel.ResourceUri,
+                inViewModel.ViewModelKey,
+                content,
+                cancellationToken);
+
+            Assert.Equal(editContext, insertTextAction.EditContext);
+            Assert.Equal(inModel.ResourceUri, insertTextAction.ResourceUri);
+            Assert.Equal(inViewModel.ViewModelKey, insertTextAction.ViewModelKey);
+            Assert.Equal(content, insertTextAction.Content);
+            Assert.Equal(cancellationToken, insertTextAction.CancellationToken);
+            return Task.CompletedTask;
+        });
 	}
 
 	/// <summary>
@@ -161,7 +312,30 @@ public class TextEditorModelStateActionsTests
 	[Fact]
 	public void DeleteTextByMotionAction()
 	{
-		throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        textEditorService.Post(editContext =>
+        {
+            var motionKind = MotionKind.Backspace;
+            var cancellationToken = CancellationToken.None;
+            var insertTextAction = new TextEditorModelState.DeleteTextByMotionAction(
+                editContext,
+                inModel.ResourceUri,
+                inViewModel.ViewModelKey,
+                motionKind,
+                cancellationToken);
+
+            Assert.Equal(editContext, insertTextAction.EditContext);
+            Assert.Equal(inModel.ResourceUri, insertTextAction.ResourceUri);
+            Assert.Equal(inViewModel.ViewModelKey, insertTextAction.ViewModelKey);
+            Assert.Equal(motionKind, insertTextAction.MotionKind);
+            Assert.Equal(cancellationToken, insertTextAction.CancellationToken);
+            return Task.CompletedTask;
+        });
 	}
 
 	/// <summary>
@@ -170,6 +344,29 @@ public class TextEditorModelStateActionsTests
 	[Fact]
 	public void DeleteTextByRangeAction()
 	{
-		throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        textEditorService.Post(editContext =>
+        {
+            var count = 3;
+            var cancellationToken = CancellationToken.None;
+            var insertTextAction = new TextEditorModelState.DeleteTextByRangeAction(
+                editContext,
+                inModel.ResourceUri,
+                inViewModel.ViewModelKey,
+                count,
+                cancellationToken);
+
+            Assert.Equal(editContext, insertTextAction.EditContext);
+            Assert.Equal(inModel.ResourceUri, insertTextAction.ResourceUri);
+            Assert.Equal(inViewModel.ViewModelKey, insertTextAction.ViewModelKey);
+            Assert.Equal(count, insertTextAction.Count);
+            Assert.Equal(cancellationToken, insertTextAction.CancellationToken);
+            return Task.CompletedTask;
+        });
 	}
 }
