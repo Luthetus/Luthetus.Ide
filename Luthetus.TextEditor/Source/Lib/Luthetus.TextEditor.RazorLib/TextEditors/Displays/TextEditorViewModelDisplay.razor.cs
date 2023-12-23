@@ -300,11 +300,10 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             else
             {
                 TextEditorService.Post(
-                    TextEditorService.ViewModelApi.MoveCursorUnsafeFactory(
+                    TextEditorService.ViewModelApi.MoveCursorFactory(
                         keyboardEventArgs,
                         model.ResourceUri,
-                        viewModel.ViewModelKey,
-                        new TextEditorCursorModifier(primaryCursor)));
+                        viewModel.ViewModelKey));
 
                 CursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.None);
             }

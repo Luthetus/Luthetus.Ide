@@ -108,7 +108,7 @@ public partial class TextEditorService : ITextEditorService
     public ITextEditorOptionsApi OptionsApi { get; }
     public ITextEditorSearchEngineApi SearchEngineApi { get; }
     
-    public void Post(TextEditorEdit textEditorEdit)
+    public void Post(TextEditorEdit edit)
     {
         _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(),
         ContinuousBackgroundTaskWorker.GetQueueKey(),
@@ -119,7 +119,7 @@ public partial class TextEditorService : ITextEditorService
                     this,
                     AuthenticatedActionKey);
 
-                await textEditorEdit.Invoke(editContext);
+                await edit.Invoke(editContext);
 
                 foreach (var modelModifier in editContext.ModelCache.Values)
                 {
