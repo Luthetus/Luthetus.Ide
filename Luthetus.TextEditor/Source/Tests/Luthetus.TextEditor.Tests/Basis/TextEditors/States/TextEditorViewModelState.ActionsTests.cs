@@ -1,5 +1,7 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
+using Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.States;
 
@@ -8,22 +10,44 @@ namespace Luthetus.TextEditor.Tests.Basis.TextEditors.States;
 /// </summary>
 public class TextEditorViewModelStateActionsTests
 {
-	/// <summary>
-	/// <see cref="TextEditorViewModelState.DisposeAction"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="TextEditorViewModelState.RegisterAction"/>
+    /// </summary>
+    [Fact]
+    public void RegisterAction()
+    {
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        var registerAction = new TextEditorViewModelState.RegisterAction(
+            inViewModel.ViewModelKey,
+            inModel.ResourceUri,
+            textEditorService);
+
+        Assert.Equal(inViewModel.ViewModelKey, registerAction.ViewModelKey);
+        Assert.Equal(inModel.ResourceUri, registerAction.ResourceUri);
+        Assert.Equal(textEditorService, registerAction.TextEditorService);
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorViewModelState.DisposeAction"/>
+    /// </summary>
+    [Fact]
 	public void DisposeAction()
 	{
-		throw new NotImplementedException();
-	}
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
 
-	/// <summary>
-	/// <see cref="TextEditorViewModelState.RegisterAction"/>
-	/// </summary>
-	[Fact]
-	public void RegisterAction()
-	{
-		throw new NotImplementedException();
+        var disposeAction = new TextEditorViewModelState.DisposeAction(
+            inViewModel.ViewModelKey);
+
+        Assert.Equal(inViewModel.ViewModelKey, disposeAction.ViewModelKey);
 	}
 
 	/// <summary>
@@ -32,6 +56,26 @@ public class TextEditorViewModelStateActionsTests
 	[Fact]
 	public void SetViewModelWithAction()
 	{
-		throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        textEditorService.Post(editContext =>
+        {
+
+            var withFunc = new Func<TextEditorViewModel, TextEditorViewModel>(inState => inState);
+            var setViewModelWithAction = new TextEditorViewModelState.SetViewModelWithAction(
+                editContext,
+                inViewModel.ViewModelKey,
+                withFunc);
+
+            Assert.Equal(editContext, setViewModelWithAction.EditContext);
+            Assert.Equal(inViewModel.ViewModelKey, setViewModelWithAction.ViewModelKey);
+            Assert.Equal(withFunc, setViewModelWithAction.WithFunc);
+
+            return Task.CompletedTask;
+        });
 	}
 }
