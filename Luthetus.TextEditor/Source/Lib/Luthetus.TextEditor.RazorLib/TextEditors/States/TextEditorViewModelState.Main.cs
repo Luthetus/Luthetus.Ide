@@ -12,7 +12,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.States;
 [FeatureState]
 public partial class TextEditorViewModelState
 {
-    private TextEditorViewModelState()
+    public TextEditorViewModelState()
     {
         ViewModelBag = ImmutableList<TextEditorViewModel>.Empty;
     }

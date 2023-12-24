@@ -30,7 +30,7 @@ public partial class TextEditorModel
         ResourceLastWriteTime = resourceLastWriteTime;
         FileExtension = fileExtension;
         DecorationMapper = decorationMapper ?? new TextEditorDecorationMapperDefault();
-        CompilerService = compilerService ?? new TextEditorDefaultCompilerService();
+        CompilerService = compilerService ?? new TextEditorCompilerServiceDefault();
 
 		var modifier = new TextEditorModelModifier(this);
 

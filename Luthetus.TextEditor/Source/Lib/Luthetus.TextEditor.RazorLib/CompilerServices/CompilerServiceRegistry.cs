@@ -8,10 +8,10 @@ public class CompilerServiceRegistryDefault : ICompilerServiceRegistry
 
     public CompilerServiceRegistryDefault()
     {
-        DefaultCompilerService = new TextEditorDefaultCompilerService();
+        DefaultCompilerService = new TextEditorCompilerServiceDefault();
     }
 
-    public TextEditorDefaultCompilerService DefaultCompilerService { get; }
+    public TextEditorCompilerServiceDefault DefaultCompilerService { get; }
     
     public ImmutableDictionary<string, ICompilerService> Map => _map.ToImmutableDictionary();
 

@@ -1,5 +1,8 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.SearchEngines.States;
+using Luthetus.TextEditor.RazorLib.SearchEngines.Models;
+using System.Collections.Immutable;
+using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.SearchEngines.States;
 
@@ -8,57 +11,49 @@ namespace Luthetus.TextEditor.Tests.Basis.SearchEngines.States;
 /// </summary>
 public class TextEditorSearchEngineStateMainTests
 {
-	/// <summary>
-	/// <see cref="TextEditorSearchEngineState()"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="TextEditorSearchEngineState()"/>
+    /// <br/>----<br/>
+    /// <see cref="TextEditorSearchEngineState.SearchEngineBag"/>
+    /// <see cref="TextEditorSearchEngineState.ActiveSearchEngineKey"/>
+    /// <see cref="TextEditorSearchEngineState.SearchQuery"/>
+	/// <see cref="TextEditorSearchEngineState.GetActiveSearchEngineOrDefault()"/>
+    /// </summary>
+    [Fact]
 	public void Constructor_A()
 	{
-		throw new NotImplementedException();
+		var searchEngineState = new TextEditorSearchEngineState();
+
+        Assert.Equal(ImmutableList<ITextEditorSearchEngine>.Empty, searchEngineState.SearchEngineBag);
+        Assert.Equal(Key<ITextEditorSearchEngine>.Empty, searchEngineState.ActiveSearchEngineKey);
+        Assert.Equal(string.Empty, searchEngineState.SearchQuery);
+        Assert.Null(searchEngineState.GetActiveSearchEngineOrDefault());
 	}
 
-	/// <summary>
-	/// <see cref="TextEditorSearchEngineState(System.Collections.Immutable.ImmutableList{RazorLib.Finds.Models.ITextEditorSearchEngine}, Common.RazorLib.Keys.Models.Key{RazorLib.Finds.Models.ITextEditorSearchEngine}, string)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="TextEditorSearchEngineState(ImmutableList{ITextEditorSearchEngine}, Key{ITextEditorSearchEngine}, string)"/>
+    /// <br/>----<br/>
+    /// <see cref="TextEditorSearchEngineState.SearchEngineBag"/>
+    /// <see cref="TextEditorSearchEngineState.ActiveSearchEngineKey"/>
+    /// <see cref="TextEditorSearchEngineState.SearchQuery"/>
+	/// <see cref="TextEditorSearchEngineState.GetActiveSearchEngineOrDefault()"/>
+    /// </summary>
+    [Fact]
 	public void Constructor_B()
 	{
-		throw new NotImplementedException();
-	}
+		var searchEngine = new SearchEngineOverRegisteredViewModels();
+		var searchEngineBag = new ITextEditorSearchEngine[] { searchEngine }.ToImmutableList();
+		var searchEngineKey = searchEngine.SearchEngineKey;
+        var searchQuery = "AlphabetSoup";
 
-	/// <summary>
-	/// <see cref="TextEditorSearchEngineState.SearchEngineBag"/>
-	/// </summary>
-	[Fact]
-	public void SearchEngineBag()
-	{
-		throw new NotImplementedException();
-	}
+        var searchEngineState = new TextEditorSearchEngineState(
+            searchEngineBag,
+            searchEngineKey,
+            searchQuery);
 
-	/// <summary>
-	/// <see cref="TextEditorSearchEngineState.ActiveSearchEngineKey"/>
-	/// </summary>
-	[Fact]
-	public void ActiveSearchEngineKey()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorSearchEngineState.SearchQuery"/>
-	/// </summary>
-	[Fact]
-	public void SearchQuery()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorSearchEngineState.GetActiveSearchEngineOrDefault()"/>
-	/// </summary>
-	[Fact]
-	public void GetActiveSearchEngineOrDefault()
-	{
-		throw new NotImplementedException();
-	}
+        Assert.Equal(searchEngineBag, searchEngineState.SearchEngineBag);
+        Assert.Equal(searchEngineKey, searchEngineState.ActiveSearchEngineKey);
+        Assert.Equal(searchQuery, searchEngineState.SearchQuery);
+        Assert.Equal(searchEngine, searchEngineState.GetActiveSearchEngineOrDefault());
+    }
 }

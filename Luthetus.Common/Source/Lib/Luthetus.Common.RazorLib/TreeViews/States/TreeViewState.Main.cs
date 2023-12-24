@@ -7,7 +7,7 @@ namespace Luthetus.Common.RazorLib.TreeViews.States;
 [FeatureState]
 public partial record TreeViewState(ImmutableList<TreeViewContainer> ContainerBag)
 {
-    private TreeViewState() : this(ImmutableList<TreeViewContainer>.Empty)
+    public TreeViewState() : this(ImmutableList<TreeViewContainer>.Empty)
     {
     }
 }

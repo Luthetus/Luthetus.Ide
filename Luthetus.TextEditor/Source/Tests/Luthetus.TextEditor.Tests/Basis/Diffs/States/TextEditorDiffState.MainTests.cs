@@ -1,5 +1,9 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.Diffs.States;
+using Luthetus.TextEditor.RazorLib.Diffs.Models;
+using System.Collections.Immutable;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Diffs.States;
 
@@ -14,8 +18,9 @@ public class TextEditorDiffStateMainTests
 	[Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
-	}
+		var diffState = new TextEditorDiffState();
+		Assert.Equal(ImmutableList<TextEditorDiffModel>.Empty, diffState.DiffModelBag);
+    }
 
 	/// <summary>
 	/// <see cref="TextEditorDiffState.DiffModelBag"/>
@@ -23,6 +28,22 @@ public class TextEditorDiffStateMainTests
 	[Fact]
 	public void DiffModelBag()
 	{
-		throw new NotImplementedException();
+        var diffState = new TextEditorDiffState();
+        Assert.Equal(ImmutableList<TextEditorDiffModel>.Empty, diffState.DiffModelBag);
+        
+        var diffModel = new TextEditorDiffModel(
+			Key<TextEditorDiffModel>.NewKey(),
+			Key<TextEditorViewModel>.NewKey(),
+			Key<TextEditorViewModel>.NewKey());
+
+		var outDiffModelBag = diffState.DiffModelBag.Add(diffModel);
+		Assert.NotEqual(ImmutableList<TextEditorDiffModel>.Empty, outDiffModelBag);
+
+		var outDiffState = new TextEditorDiffState
+        {
+            DiffModelBag = outDiffModelBag
+        };
+
+        Assert.Equal(outDiffModelBag, outDiffState.DiffModelBag);
 	}
 }

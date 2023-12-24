@@ -22,7 +22,7 @@ public class TextEditorModelConstructorsTests
 		var fileExtension = ".txt";
 		var content = "Hello World!";
 		var decorationMapper = new TextEditorDecorationMapperDefault();
-		var compilerService = new TextEditorDefaultCompilerService();
+		var compilerService = new TextEditorCompilerServiceDefault();
 
         var model = new TextEditorModel(
             resourceUri,
@@ -52,7 +52,7 @@ public class TextEditorModelConstructorsTests
             ".txt",
             "Hello World!",
             new TextEditorDecorationMapperDefault(),
-            new TextEditorDefaultCompilerService());
+            new TextEditorCompilerServiceDefault());
 
 		var cloneModel = new TextEditorModel(
 			originalModel.ContentBag,

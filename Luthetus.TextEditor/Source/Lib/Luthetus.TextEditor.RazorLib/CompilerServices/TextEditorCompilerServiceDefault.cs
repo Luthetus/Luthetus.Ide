@@ -4,9 +4,9 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 
-public class TextEditorDefaultCompilerService : ICompilerService
+public class TextEditorCompilerServiceDefault : ICompilerService
 {
-    public TextEditorDefaultCompilerService()
+    public TextEditorCompilerServiceDefault()
     {
     }
 
