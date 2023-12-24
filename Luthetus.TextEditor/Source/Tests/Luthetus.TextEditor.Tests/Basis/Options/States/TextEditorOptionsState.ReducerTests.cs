@@ -1,5 +1,12 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.Options.States;
+using Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
+using Microsoft.Extensions.DependencyInjection;
+using Fluxor;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.RenderStates.Models;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Options.States;
 
@@ -14,7 +21,27 @@ public partial class TextEditorOptionsStateReducerTests
 	[Fact]
 	public void ReduceSetFontFamilyAction()
 	{
-		throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+		var dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
+		var textEditorOptionsStateWrap = serviceProvider.GetRequiredService<IState<TextEditorOptionsState>>();
+
+        var fontFamily = "monospace";
+        var setFontFamilyAction = new TextEditorOptionsState.SetFontFamilyAction(fontFamily);
+
+		Assert.NotEqual(
+            fontFamily,
+            textEditorOptionsStateWrap.Value.Options.CommonOptions.FontFamily);
+
+		dispatcher.Dispatch(setFontFamilyAction);
+
+        Assert.Equal(
+            fontFamily,
+            textEditorOptionsStateWrap.Value.Options.CommonOptions.FontFamily);
 	}
 
 	/// <summary>
@@ -23,7 +50,27 @@ public partial class TextEditorOptionsStateReducerTests
 	[Fact]
 	public void ReduceSetFontSizeAction()
 	{
-		throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        var dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
+        var textEditorOptionsStateWrap = serviceProvider.GetRequiredService<IState<TextEditorOptionsState>>();
+
+        var fontSizeInPixels = TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS + 1;
+        var setFontSizeAction = new TextEditorOptionsState.SetFontSizeAction(fontSizeInPixels);
+
+        Assert.NotEqual(
+            fontSizeInPixels,
+            textEditorOptionsStateWrap.Value.Options.CommonOptions.FontSizeInPixels);
+
+        dispatcher.Dispatch(setFontSizeAction);
+
+        Assert.Equal(
+            fontSizeInPixels,
+            textEditorOptionsStateWrap.Value.Options.CommonOptions.FontSizeInPixels);
 	}
 
 	/// <summary>
@@ -32,7 +79,27 @@ public partial class TextEditorOptionsStateReducerTests
 	[Fact]
 	public void ReduceSetRenderStateKeyAction()
 	{
-		throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        var dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
+        var textEditorOptionsStateWrap = serviceProvider.GetRequiredService<IState<TextEditorOptionsState>>();
+
+        var renderStateKey = Key<RenderState>.NewKey();
+        var setRenderStateKeyAction = new TextEditorOptionsState.SetRenderStateKeyAction(renderStateKey);
+
+        Assert.NotEqual(
+            renderStateKey,
+            textEditorOptionsStateWrap.Value.Options.RenderStateKey);
+
+        dispatcher.Dispatch(setRenderStateKeyAction);
+
+        Assert.Equal(
+            renderStateKey,
+            textEditorOptionsStateWrap.Value.Options.RenderStateKey);
 	}
 
 	/// <summary>
@@ -41,7 +108,27 @@ public partial class TextEditorOptionsStateReducerTests
 	[Fact]
 	public void ReduceSetCursorWidthAction()
 	{
-		throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        var dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
+        var textEditorOptionsStateWrap = serviceProvider.GetRequiredService<IState<TextEditorOptionsState>>();
+
+        var cursorWidthInPixels = TextEditorOptionsState.DEFAULT_CURSOR_WIDTH_IN_PIXELS + 1;
+        var setCursorWidthAction = new TextEditorOptionsState.SetCursorWidthAction(cursorWidthInPixels);
+
+        Assert.NotEqual(
+            cursorWidthInPixels,
+            textEditorOptionsStateWrap.Value.Options.CursorWidthInPixels);
+
+        dispatcher.Dispatch(setCursorWidthAction);
+
+        Assert.Equal(
+            cursorWidthInPixels,
+            textEditorOptionsStateWrap.Value.Options.CursorWidthInPixels);
 	}
 
 	/// <summary>
@@ -50,7 +137,46 @@ public partial class TextEditorOptionsStateReducerTests
 	[Fact]
 	public void ReduceSetHeightAction()
 	{
-		throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        var dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
+        var textEditorOptionsStateWrap = serviceProvider.GetRequiredService<IState<TextEditorOptionsState>>();
+
+        // non-null value
+        {
+            var heightInPixels = 500;
+            var setHeightAction = new TextEditorOptionsState.SetHeightAction(heightInPixels);
+
+            Assert.NotEqual(
+                heightInPixels,
+                textEditorOptionsStateWrap.Value.Options.TextEditorHeightInPixels);
+
+            dispatcher.Dispatch(setHeightAction);
+
+            Assert.Equal(
+                heightInPixels,
+                textEditorOptionsStateWrap.Value.Options.TextEditorHeightInPixels);
+        }
+
+        // null value
+        {
+            var heightInPixels = (int?)null;
+            var setHeightAction = new TextEditorOptionsState.SetHeightAction(heightInPixels);
+
+            Assert.NotEqual(
+                heightInPixels,
+                textEditorOptionsStateWrap.Value.Options.TextEditorHeightInPixels);
+
+            dispatcher.Dispatch(setHeightAction);
+
+            Assert.Equal(
+                heightInPixels,
+                textEditorOptionsStateWrap.Value.Options.TextEditorHeightInPixels);
+        }
 	}
 
 	/// <summary>
@@ -59,7 +185,27 @@ public partial class TextEditorOptionsStateReducerTests
 	[Fact]
 	public void ReduceSetThemeAction()
 	{
-		throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        var dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
+        var textEditorOptionsStateWrap = serviceProvider.GetRequiredService<IState<TextEditorOptionsState>>();
+
+        var theme = LuthetusTextEditorCustomThemeFacts.LightTheme;
+        var setThemeAction = new TextEditorOptionsState.SetThemeAction(theme);
+
+        Assert.NotEqual(
+            theme.Key,
+            textEditorOptionsStateWrap.Value.Options.CommonOptions.ThemeKey);
+
+        dispatcher.Dispatch(setThemeAction);
+
+        Assert.Equal(
+            theme.Key,
+            textEditorOptionsStateWrap.Value.Options.CommonOptions.ThemeKey);
 	}
 
 	/// <summary>
@@ -68,7 +214,27 @@ public partial class TextEditorOptionsStateReducerTests
 	[Fact]
 	public void ReduceSetKeymapAction()
 	{
-		throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        var dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
+        var textEditorOptionsStateWrap = serviceProvider.GetRequiredService<IState<TextEditorOptionsState>>();
+
+        var keymap = TextEditorKeymapFacts.VimKeymap;
+        var setKeymapAction = new TextEditorOptionsState.SetKeymapAction(keymap);
+
+        Assert.NotEqual(
+            keymap.Key,
+            textEditorOptionsStateWrap.Value.Options.Keymap.Key);
+
+        dispatcher.Dispatch(setKeymapAction);
+
+        Assert.Equal(
+            keymap.Key,
+            textEditorOptionsStateWrap.Value.Options.Keymap.Key);
 	}
 
 	/// <summary>
@@ -77,7 +243,46 @@ public partial class TextEditorOptionsStateReducerTests
 	[Fact]
 	public void ReduceSetShowWhitespaceAction()
 	{
-		throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        var dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
+        var textEditorOptionsStateWrap = serviceProvider.GetRequiredService<IState<TextEditorOptionsState>>();
+
+        // true
+        {
+            var showWhitespace = true;
+            var setShowWhitespaceAction = new TextEditorOptionsState.SetShowWhitespaceAction(showWhitespace);
+
+            Assert.NotEqual(
+                showWhitespace,
+                textEditorOptionsStateWrap.Value.Options.ShowWhitespace);
+
+            dispatcher.Dispatch(setShowWhitespaceAction);
+
+            Assert.Equal(
+                showWhitespace,
+                textEditorOptionsStateWrap.Value.Options.ShowWhitespace);
+        }
+
+        // false
+        {
+            var showWhitespace = false;
+            var setShowWhitespaceAction = new TextEditorOptionsState.SetShowWhitespaceAction(showWhitespace);
+
+            Assert.NotEqual(
+                showWhitespace,
+                textEditorOptionsStateWrap.Value.Options.ShowWhitespace);
+
+            dispatcher.Dispatch(setShowWhitespaceAction);
+
+            Assert.Equal(
+                showWhitespace,
+                textEditorOptionsStateWrap.Value.Options.ShowWhitespace);
+        }
 	}
 
 	/// <summary>
@@ -86,7 +291,46 @@ public partial class TextEditorOptionsStateReducerTests
 	[Fact]
 	public void ReduceSetShowNewlinesAction()
 	{
-		throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        var dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
+        var textEditorOptionsStateWrap = serviceProvider.GetRequiredService<IState<TextEditorOptionsState>>();
+
+        // true
+        {
+            var showNewlines = true;
+            var setShowNewlinesAction = new TextEditorOptionsState.SetShowNewlinesAction(showNewlines);
+
+            Assert.NotEqual(
+                showNewlines,
+                textEditorOptionsStateWrap.Value.Options.ShowNewlines);
+
+            dispatcher.Dispatch(setShowNewlinesAction);
+
+            Assert.Equal(
+                showNewlines,
+                textEditorOptionsStateWrap.Value.Options.ShowNewlines);
+        }
+
+        // false
+        {
+            var showNewlines = false;
+            var setShowNewlinesAction = new TextEditorOptionsState.SetShowNewlinesAction(showNewlines);
+
+            Assert.NotEqual(
+                showNewlines,
+                textEditorOptionsStateWrap.Value.Options.ShowNewlines);
+
+            dispatcher.Dispatch(setShowNewlinesAction);
+
+            Assert.Equal(
+                showNewlines,
+                textEditorOptionsStateWrap.Value.Options.ShowNewlines);
+        }
 	}
 
 	/// <summary>
@@ -95,6 +339,45 @@ public partial class TextEditorOptionsStateReducerTests
 	[Fact]
 	public void ReduceSetUseMonospaceOptimizationsAction()
 	{
-		throw new NotImplementedException();
-	}
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        var dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
+        var textEditorOptionsStateWrap = serviceProvider.GetRequiredService<IState<TextEditorOptionsState>>();
+
+        // false # The default value for UseMonospaceOptimizations is true so one must do the 'false' case first.
+        {
+            var useMonospaceOptimizations = false;
+            var setUseMonospaceOptimizationsAction = new TextEditorOptionsState.SetUseMonospaceOptimizationsAction(useMonospaceOptimizations);
+
+            Assert.NotEqual(
+                useMonospaceOptimizations,
+                textEditorOptionsStateWrap.Value.Options.UseMonospaceOptimizations);
+
+            dispatcher.Dispatch(setUseMonospaceOptimizationsAction);
+
+            Assert.Equal(
+                useMonospaceOptimizations,
+                textEditorOptionsStateWrap.Value.Options.UseMonospaceOptimizations);
+        }
+
+        // true
+        {
+            var useMonospaceOptimizations = true;
+            var setUseMonospaceOptimizationsAction = new TextEditorOptionsState.SetUseMonospaceOptimizationsAction(useMonospaceOptimizations);
+
+            Assert.NotEqual(
+                useMonospaceOptimizations,
+                textEditorOptionsStateWrap.Value.Options.UseMonospaceOptimizations);
+
+            dispatcher.Dispatch(setUseMonospaceOptimizationsAction);
+
+            Assert.Equal(
+                useMonospaceOptimizations,
+                textEditorOptionsStateWrap.Value.Options.UseMonospaceOptimizations);
+        }
+    }
 }
