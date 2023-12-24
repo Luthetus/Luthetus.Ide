@@ -1,5 +1,7 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 
@@ -8,39 +10,31 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 /// </summary>
 public class KeywordContextualTokenTests
 {
-	/// <summary>
-	/// <see cref="KeywordContextualToken(RazorLib.Lexes.Models.TextEditorTextSpan, RazorLib.CompilerServices.Syntax.SyntaxKind)"/>
-	/// </summary>
-	[Fact]
-	public void Constructor()
-	{
-		throw new NotImplementedException();
-	}
+    /// <summary>
+    /// <see cref="KeywordContextualToken(TextEditorTextSpan, SyntaxKind)"/>
+    /// <br/>----<br/>
+    /// <see cref="KeywordContextualToken.TextSpan"/>
+    /// <see cref="KeywordContextualToken.SyntaxKind"/>
+    /// <see cref="KeywordContextualToken.IsFabricated"/>
+    /// </summary>
+    [Fact]
+    public void Constructor()
+    {
+        var text = @"var";
+        var targetSubstring = "var";
+        var indexOfTokenStartInclusive = text.IndexOf(targetSubstring);
 
-	/// <summary>
-	/// <see cref="KeywordContextualToken.TextSpan"/>
-	/// </summary>
-	[Fact]
-	public void TextSpan()
-	{
-		throw new NotImplementedException();
-	}
+        var keywordContextualToken = new KeywordContextualToken(
+            new TextEditorTextSpan(
+                indexOfTokenStartInclusive,
+                indexOfTokenStartInclusive + targetSubstring.Length,
+                0,
+                new ResourceUri("/unitTesting.txt"),
+                text),
+            SyntaxKind.VarTokenContextualKeyword);
 
-	/// <summary>
-	/// <see cref="KeywordContextualToken.SyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="KeywordContextualToken.IsFabricated"/>
-	/// </summary>
-	[Fact]
-	public void IsFabricated()
-	{
-		throw new NotImplementedException();
-	}
+        Assert.Equal(targetSubstring, keywordContextualToken.TextSpan.GetText());
+        Assert.Equal(SyntaxKind.VarTokenContextualKeyword, keywordContextualToken.SyntaxKind);
+        Assert.False(keywordContextualToken.IsFabricated);
+    }
 }

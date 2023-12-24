@@ -1,5 +1,7 @@
 using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 
@@ -8,39 +10,32 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 /// </summary>
 public class ArraySyntaxTokenTests
 {
-	/// <summary>
-	/// <see cref="ArraySyntaxToken(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="ArraySyntaxToken(TextEditorTextSpan)"/>
+	/// <br/>----<br/>
+    /// <see cref="ArraySyntaxToken.TextSpan"/>
+	/// <see cref="ArraySyntaxToken.SyntaxKind"/>
+	/// <see cref="ArraySyntaxToken.IsFabricated"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
-	}
+		var text = @"public class MyClass
+{
+	private int[] _integers = Array.Empty<int>();
+}";
+		var targetSubstring = "[]";
+        var indexOfTokenStartInclusive = text.IndexOf(targetSubstring);
 
-	/// <summary>
-	/// <see cref="ArraySyntaxToken.TextSpan"/>
-	/// </summary>
-	[Fact]
-	public void TextSpan()
-	{
-		throw new NotImplementedException();
-	}
+		var arraySyntaxToken = new ArraySyntaxToken(new TextEditorTextSpan(
+            indexOfTokenStartInclusive,
+            indexOfTokenStartInclusive + targetSubstring.Length,
+			0,
+			new ResourceUri("/unitTesting.txt"),
+			text));
 
-	/// <summary>
-	/// <see cref="ArraySyntaxToken.SyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="ArraySyntaxToken.IsFabricated"/>
-	/// </summary>
-	[Fact]
-	public void IsFabricated()
-	{
-		throw new NotImplementedException();
+		Assert.Equal(targetSubstring, arraySyntaxToken.TextSpan.GetText());
+		Assert.Equal(SyntaxKind.ArraySyntaxToken, arraySyntaxToken.SyntaxKind);
+		Assert.False(arraySyntaxToken.IsFabricated);
 	}
 }

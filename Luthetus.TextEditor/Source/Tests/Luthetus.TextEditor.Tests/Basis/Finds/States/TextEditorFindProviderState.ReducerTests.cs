@@ -14,6 +14,7 @@ public class TextEditorSearchEngineStateReducerTests
 	[Fact]
 	public void ReduceRegisterAction()
 	{
+
 		throw new NotImplementedException();
 	}
 

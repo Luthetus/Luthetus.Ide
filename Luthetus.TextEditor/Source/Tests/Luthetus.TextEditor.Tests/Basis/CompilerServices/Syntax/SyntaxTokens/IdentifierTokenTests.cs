@@ -1,5 +1,7 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 
@@ -8,39 +10,29 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 /// </summary>
 public class IdentifierTokenTests
 {
-	/// <summary>
-	/// <see cref="IdentifierToken(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
-	/// </summary>
-	[Fact]
-	public void Constructor()
-	{
-		throw new NotImplementedException();
-	}
+    /// <summary>
+    /// <see cref="IdentifierToken(TextEditorTextSpan)"/>
+    /// <br/>----<br/>
+    /// <see cref="IdentifierToken.TextSpan"/>
+    /// <see cref="IdentifierToken.SyntaxKind"/>
+    /// <see cref="IdentifierToken.IsFabricated"/>
+    /// </summary>
+    [Fact]
+    public void Constructor()
+    {
+        var text = @"someVariable";
+        var targetSubstring = "someVariable";
+        var indexOfTokenStartInclusive = text.IndexOf(targetSubstring);
 
-	/// <summary>
-	/// <see cref="IdentifierToken.TextSpan"/>
-	/// </summary>
-	[Fact]
-	public void TextSpan()
-	{
-		throw new NotImplementedException();
-	}
+        var identifierToken = new IdentifierToken(new TextEditorTextSpan(
+            indexOfTokenStartInclusive,
+            indexOfTokenStartInclusive + targetSubstring.Length,
+            0,
+            new ResourceUri("/unitTesting.txt"),
+            text));
 
-	/// <summary>
-	/// <see cref="IdentifierToken.SyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="IdentifierToken.IsFabricated"/>
-	/// </summary>
-	[Fact]
-	public void IsFabricated()
-	{
-		throw new NotImplementedException();
-	}
+        Assert.Equal(targetSubstring, identifierToken.TextSpan.GetText());
+        Assert.Equal(SyntaxKind.IdentifierToken, identifierToken.SyntaxKind);
+        Assert.False(identifierToken.IsFabricated);
+    }
 }
