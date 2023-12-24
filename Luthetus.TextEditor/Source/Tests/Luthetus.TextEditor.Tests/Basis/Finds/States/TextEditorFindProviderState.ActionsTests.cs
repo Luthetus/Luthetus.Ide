@@ -1,5 +1,6 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.SearchEngines.States;
+using Luthetus.TextEditor.RazorLib.SearchEngines.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.SearchEngines.States;
 
@@ -14,7 +15,9 @@ public class TextEditorSearchEngineStateActionsTests
 	[Fact]
 	public void RegisterAction()
 	{
-		throw new NotImplementedException();
+		var searchEngine = new SearchEngineOverRegisteredViewModels();
+        var registerAction = new TextEditorSearchEngineState.RegisterAction(searchEngine);
+		Assert.Equal(searchEngine, registerAction.SearchEngine);
 	}
 
 	/// <summary>
@@ -23,7 +26,10 @@ public class TextEditorSearchEngineStateActionsTests
 	[Fact]
 	public void DisposeAction()
 	{
-		throw new NotImplementedException();
+        var searchEngine = new SearchEngineOverRegisteredViewModels();
+        var searchEngineKey = searchEngine.SearchEngineKey;
+        var disposeAction = new TextEditorSearchEngineState.DisposeAction(searchEngineKey);
+        Assert.Equal(searchEngineKey, disposeAction.SearchEngineKey);
 	}
 
 	/// <summary>
@@ -32,7 +38,10 @@ public class TextEditorSearchEngineStateActionsTests
 	[Fact]
 	public void SetActiveSearchEngineAction()
 	{
-		throw new NotImplementedException();
+        var searchEngine = new SearchEngineOverRegisteredViewModels();
+        var searchEngineKey = searchEngine.SearchEngineKey;
+        var setActiveSearchEngineAction = new TextEditorSearchEngineState.SetActiveSearchEngineAction(searchEngineKey);
+        Assert.Equal(searchEngineKey, setActiveSearchEngineAction.SearchEngineKey);
 	}
 
 	/// <summary>
@@ -41,6 +50,8 @@ public class TextEditorSearchEngineStateActionsTests
 	[Fact]
 	public void SetSearchQueryAction()
 	{
-		throw new NotImplementedException();
+        var searchQuery = "AlphabetSoup";
+        var setSearchQueryAction = new TextEditorSearchEngineState.SetSearchQueryAction(searchQuery);
+        Assert.Equal(searchQuery, setSearchQueryAction.SearchQuery);
 	}
 }
