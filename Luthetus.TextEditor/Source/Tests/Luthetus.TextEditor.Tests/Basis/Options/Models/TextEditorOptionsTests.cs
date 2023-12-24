@@ -1,5 +1,11 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.Options.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Options.Models;
+using Luthetus.Common.RazorLib.RenderStates.Models;
+using Luthetus.TextEditor.RazorLib.Keymaps.Models;
+using Luthetus.Common.RazorLib.Themes.Models;
+using Luthetus.TextEditor.RazorLib.Options.States;
 
 namespace Luthetus.TextEditor.Tests.Basis.Options.Models;
 
@@ -8,84 +14,61 @@ namespace Luthetus.TextEditor.Tests.Basis.Options.Models;
 /// </summary>
 public class TextEditorOptionsTests
 {
-	/// <summary>
-	/// <see cref="TextEditorOptions(Common.RazorLib.Options.Models.CommonOptions, bool, bool, int?, double, Common.RazorLib.Keymaps.Models.Keymap, bool)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="TextEditorOptions(CommonOptions, bool, bool, int?, double, Common.RazorLib.Keymaps.Models.Keymap, bool)"/>
+    /// <br/>----<br/>
+    /// <see cref="TextEditorOptions.CommonOptions"/>
+    /// <see cref="TextEditorOptions.ShowWhitespace"/>
+    /// <see cref="TextEditorOptions.ShowNewlines"/>
+    /// <see cref="TextEditorOptions.TextEditorHeightInPixels"/>
+    /// <see cref="TextEditorOptions.CursorWidthInPixels"/>
+    /// <see cref="TextEditorOptions.Keymap"/>
+    /// <see cref="TextEditorOptions.UseMonospaceOptimizations"/>
+    /// <see cref="TextEditorOptions.RenderStateKey"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
-	}
+        var commonOptions = new CommonOptions(
+            TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS,
+            TextEditorOptionsState.DEFAULT_ICON_SIZE_IN_PIXELS,
+            ThemeFacts.VisualStudioDarkThemeClone.Key,
+            null);
 
-	/// <summary>
-	/// <see cref="TextEditorOptions.CommonOptions"/>
-	/// </summary>
-	[Fact]
-	public void CommonOptions()
-	{
-		throw new NotImplementedException();
-	}
+        var showWhitespace = false;
+        var showNewlines = false;
+        var textEditorHeightInPixels = 400;
+        var cursorWidthInPixels = 5;
+        var keymap = TextEditorKeymapFacts.VimKeymap;
+        var useMonospaceOptimizations = true;
 
-	/// <summary>
-	/// <see cref="TextEditorOptions.ShowWhitespace"/>
-	/// </summary>
-	[Fact]
-	public void ShowWhitespace()
-	{
-		throw new NotImplementedException();
-	}
+        var textEditorOptions = new TextEditorOptions(
+            commonOptions,
+            showWhitespace,
+            showNewlines,
+            textEditorHeightInPixels,
+            cursorWidthInPixels,
+            keymap,
+            useMonospaceOptimizations);
 
-	/// <summary>
-	/// <see cref="TextEditorOptions.ShowNewlines"/>
-	/// </summary>
-	[Fact]
-	public void ShowNewlines()
-	{
-		throw new NotImplementedException();
-	}
+        Assert.Equal(commonOptions, textEditorOptions.CommonOptions);
+        Assert.Equal(showWhitespace, textEditorOptions.ShowWhitespace);
+        Assert.Equal(showNewlines, textEditorOptions.ShowNewlines);
+        Assert.Equal(textEditorHeightInPixels, textEditorOptions.TextEditorHeightInPixels);
+        Assert.Equal(cursorWidthInPixels, textEditorOptions.CursorWidthInPixels);
+        Assert.Equal(keymap, textEditorOptions.Keymap);
+        Assert.Equal(useMonospaceOptimizations, textEditorOptions.UseMonospaceOptimizations);
 
-	/// <summary>
-	/// <see cref="TextEditorOptions.TextEditorHeightInPixels"/>
-	/// </summary>
-	[Fact]
-	public void TextEditorHeightInPixels()
-	{
-		throw new NotImplementedException();
-	}
+        Assert.NotEqual(Key<RenderState>.Empty, textEditorOptions.RenderStateKey);
 
-	/// <summary>
-	/// <see cref="TextEditorOptions.CursorWidthInPixels"/>
-	/// </summary>
-	[Fact]
-	public void CursorWidthInPixels()
-	{
-		throw new NotImplementedException();
-	}
+        // Assert setting of a new RenderStateKey
+        {
+            var outTextEditorOptions = textEditorOptions with
+            {
+                RenderStateKey = Key<RenderState>.NewKey()
+            };
 
-	/// <summary>
-	/// <see cref="TextEditorOptions.Keymap"/>
-	/// </summary>
-	[Fact]
-	public void Keymap()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorOptions.UseMonospaceOptimizations"/>
-	/// </summary>
-	[Fact]
-	public void UseMonospaceOptimizations()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorOptions.RenderStateKey"/>
-	/// </summary>
-	[Fact]
-	public void RenderStateKey()
-	{
-		throw new NotImplementedException();
+            Assert.NotEqual(textEditorOptions.RenderStateKey, outTextEditorOptions.RenderStateKey);
+        }
 	}
 }
