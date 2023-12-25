@@ -158,7 +158,7 @@ public class ParserTests
 		Assert.False(functionArgumentEntryNode.IsFabricated);
 		Assert.Equal(SyntaxKind.FunctionArgumentEntryNode, functionArgumentEntryNode.SyntaxKind);
 
-		var variableDeclarationStatementNode = functionArgumentEntryNode.VariableDeclarationStatementNode;
+		var variableDeclarationStatementNode = functionArgumentEntryNode.VariableDeclarationNode;
 		
 		Assert.Equal(argumentTypeText,
 			variableDeclarationStatementNode.TypeClauseNode.TypeIdentifier.TextSpan.GetText());

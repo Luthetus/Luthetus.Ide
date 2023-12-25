@@ -5,13 +5,13 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 public sealed record FunctionArgumentEntryNode : ISyntaxNode
 {
     public FunctionArgumentEntryNode(
-        VariableDeclarationNode variableDeclarationStatementNode,
+        VariableDeclarationNode variableDeclarationNode,
         bool isOptional,
         bool hasOutKeyword,
         bool hasInKeyword,
         bool hasRefKeyword)
     {
-        VariableDeclarationStatementNode = variableDeclarationStatementNode;
+        VariableDeclarationNode = variableDeclarationNode;
         IsOptional = isOptional;
         HasOutKeyword = hasOutKeyword;
         HasInKeyword = hasInKeyword;
@@ -19,13 +19,13 @@ public sealed record FunctionArgumentEntryNode : ISyntaxNode
 
         var children = new List<ISyntax>
         {
-            VariableDeclarationStatementNode
+            VariableDeclarationNode
         };
 
         ChildBag = children.ToImmutableArray();
     }
 
-    public VariableDeclarationNode VariableDeclarationStatementNode { get; }
+    public VariableDeclarationNode VariableDeclarationNode { get; }
     public bool IsOptional { get; }
     public bool HasOutKeyword { get; }
     public bool HasInKeyword { get; }
