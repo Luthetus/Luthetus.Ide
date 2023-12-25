@@ -7,11 +7,11 @@ public sealed record GenericArgumentsListingNode : ISyntaxNode
 {
     public GenericArgumentsListingNode(
         OpenAngleBracketToken openAngleBracketToken,
-        ImmutableArray<GenericArgumentEntryNode> genericArgumentEntryNodes,
+        ImmutableArray<GenericArgumentEntryNode> genericArgumentEntryNodeBag,
         CloseAngleBracketToken closeAngleBracketToken)
     {
         OpenAngleBracketToken = openAngleBracketToken;
-        GenericArgumentEntryNodeBag = genericArgumentEntryNodes;
+        GenericArgumentEntryNodeBag = genericArgumentEntryNodeBag;
         CloseAngleBracketToken = closeAngleBracketToken;
 
         var children = new List<ISyntax>
