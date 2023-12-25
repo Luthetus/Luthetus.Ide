@@ -1,5 +1,7 @@
 using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
@@ -8,66 +10,48 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 /// </summary>
 public class TypeClauseNodeTests
 {
-	/// <summary>
-	/// <see cref="TypeClauseNode(RazorLib.CompilerServices.Syntax.ISyntaxToken, Type?, RazorLib.CompilerServices.Syntax.SyntaxNodes.GenericParametersListingNode?)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="TypeClauseNode(RazorLib.CompilerServices.Syntax.ISyntaxToken, Type?, RazorLib.CompilerServices.Syntax.SyntaxNodes.GenericParametersListingNode?)"/>
+    /// <br/>----<br/>
+    /// <see cref="TypeClauseNode.TypeIdentifier"/>
+    /// <see cref="TypeClauseNode.ValueType"/>
+    /// <see cref="TypeClauseNode.GenericParametersListingNode"/>
+    /// <see cref="TypeClauseNode.ChildBag"/>
+    /// <see cref="TypeClauseNode.IsFabricated"/>
+    /// <see cref="TypeClauseNode.SyntaxKind"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
-	}
+        var sourceText = @"public void MyMethod(int value)
+{
+}";
+        _ = sourceText; // Suppress unused variable
 
-	/// <summary>
-	/// <see cref="TypeClauseNode.TypeIdentifier"/>
-	/// </summary>
-	[Fact]
-	public void TypeIdentifier()
-	{
-		throw new NotImplementedException();
-	}
+        var intTypeIdentifier = new KeywordToken(
+            TextEditorTextSpan.FabricateTextSpan("int"),
+            RazorLib.CompilerServices.Syntax.SyntaxKind.IntTokenKeyword);
 
-	/// <summary>
-	/// <see cref="TypeClauseNode.ValueType"/>
-	/// </summary>
-	[Fact]
-	public void ValueType()
-	{
-		throw new NotImplementedException();
-	}
+        var valueType = typeof(int);
 
-	/// <summary>
-	/// <see cref="TypeClauseNode.GenericParametersListingNode"/>
-	/// </summary>
-	[Fact]
-	public void GenericParametersListingNode()
-	{
-		throw new NotImplementedException();
-	}
+        GenericParametersListingNode? genericParametersListingNode = null;
 
-	/// <summary>
-	/// <see cref="TypeClauseNode.ChildBag"/>
-	/// </summary>
-	[Fact]
-	public void ChildBag()
-	{
-		throw new NotImplementedException();
-	}
+        var intTypeClauseNode = new TypeClauseNode(
+            intTypeIdentifier,
+            valueType,
+            genericParametersListingNode);
 
-	/// <summary>
-	/// <see cref="TypeClauseNode.IsFabricated"/>
-	/// </summary>
-	[Fact]
-	public void IsFabricated()
-	{
-		throw new NotImplementedException();
-	}
+        Assert.Equal(intTypeIdentifier, intTypeClauseNode.TypeIdentifier);
+        Assert.Equal(valueType, intTypeClauseNode.ValueType);
+        Assert.Equal(genericParametersListingNode, intTypeClauseNode.GenericParametersListingNode);
 
-	/// <summary>
-	/// <see cref="TypeClauseNode.SyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
-	{
-		throw new NotImplementedException();
+        Assert.Single(intTypeClauseNode.ChildBag);
+        Assert.Equal(intTypeIdentifier, intTypeClauseNode.ChildBag.Single());
+
+        Assert.False(intTypeClauseNode.IsFabricated);
+
+        Assert.Equal(
+            RazorLib.CompilerServices.Syntax.SyntaxKind.TypeClauseNode,
+            intTypeClauseNode.SyntaxKind);
 	}
 }
