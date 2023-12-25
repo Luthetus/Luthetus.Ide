@@ -20,7 +20,7 @@ public sealed record ParenthesizedExpressionNode : IExpressionNode
             OpenParenthesisToken,
             InnerExpression,
             CloseParenthesisToken,
-            TypeClauseNode,
+            ResultTypeClauseNode,
         };
 
         ChildBag = children.ToImmutableArray();
@@ -29,7 +29,7 @@ public sealed record ParenthesizedExpressionNode : IExpressionNode
     public OpenParenthesisToken OpenParenthesisToken { get; }
     public IExpressionNode InnerExpression { get; }
     public CloseParenthesisToken CloseParenthesisToken { get; }
-    public TypeClauseNode TypeClauseNode => InnerExpression.TypeClauseNode;
+    public TypeClauseNode ResultTypeClauseNode => InnerExpression.ResultTypeClauseNode;
 
     public ImmutableArray<ISyntax> ChildBag { get; }
 

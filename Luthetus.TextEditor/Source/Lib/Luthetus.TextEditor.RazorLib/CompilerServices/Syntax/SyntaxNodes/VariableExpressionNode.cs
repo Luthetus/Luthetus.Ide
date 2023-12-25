@@ -7,10 +7,10 @@ public class VariableExpressionNode : IExpressionNode
 {
     public VariableExpressionNode(TypeClauseNode typeClauseNode)
     {
-        TypeClauseNode = typeClauseNode;
+        ResultTypeClauseNode = typeClauseNode;
     }
 
-    public TypeClauseNode TypeClauseNode { get; }
+    public TypeClauseNode ResultTypeClauseNode { get; }
 
     public ImmutableArray<ISyntax> ChildBag { get; }
 

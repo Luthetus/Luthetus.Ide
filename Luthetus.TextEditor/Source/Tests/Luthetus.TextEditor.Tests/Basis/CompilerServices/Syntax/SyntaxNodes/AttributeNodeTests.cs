@@ -1,5 +1,7 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
@@ -8,58 +10,66 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 /// </summary>
 public class AttributeNodeTests
 {
-
-	/// <summary>
-	/// <see cref="AttributeNode(RazorLib.CompilerServices.Syntax.SyntaxTokens.OpenSquareBracketToken, RazorLib.CompilerServices.Syntax.SyntaxTokens.CloseSquareBracketToken)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="AttributeNode(OpenSquareBracketToken, CloseSquareBracketToken)"/>
+    /// <br/>----<br/>
+	/// <see cref="AttributeNode.OpenSquareBracketToken"/>
+	/// <see cref="AttributeNode.CloseSquareBracketToken"/>
+	/// <see cref="AttributeNode.ChildBag"/>
+	/// <see cref="AttributeNode.IsFabricated"/>
+	/// <see cref="AttributeNode.SyntaxKind"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
-	}
+        var attributeNodeText = "[Parameter, EditorRequired]";
+        var sourceText = $@"public partial class ContextBoundary : ComponentBase
+{{
+    {attributeNodeText}
+    public ContextRecord ContextRecord {{ get; set; }} = null!;
+}}";
 
-	/// <summary>
-	/// <see cref="AttributeNode.OpenSquareBracketToken"/>
-	/// </summary>
-	[Fact]
-	public void OpenSquareBracketToken()
-	{
-		throw new NotImplementedException();
-	}
+        OpenSquareBracketToken openSquareBracketToken;
+        {
+            var openSquareBracketTokenText = "[";
+            var openSquareBracketTokenInclusiveStartIndex = sourceText.IndexOf(openSquareBracketTokenText);
 
-	/// <summary>
-	/// <see cref="AttributeNode.CloseSquareBracketToken"/>
-	/// </summary>
-	[Fact]
-	public void CloseSquareBracketToken()
-	{
-		throw new NotImplementedException();
-	}
+            openSquareBracketToken = new OpenSquareBracketToken(new TextEditorTextSpan(
+                openSquareBracketTokenInclusiveStartIndex,
+                openSquareBracketTokenInclusiveStartIndex + openSquareBracketTokenText.Length,
+                0,
+                new ResourceUri("/unitTesting.txt"),
+                sourceText));
+        }
 
-	/// <summary>
-	/// <see cref="AttributeNode.ChildBag"/>
-	/// </summary>
-	[Fact]
-	public void ChildBag()
-	{
-		throw new NotImplementedException();
-	}
+        CloseSquareBracketToken closeSquareBracketToken;
+        {
+            var closeSquareBracketTokenText = "]";
+            var closeSquareBracketTokenInclusiveStartIndex = sourceText.IndexOf(closeSquareBracketTokenText);
 
-	/// <summary>
-	/// <see cref="AttributeNode.IsFabricated"/>
-	/// </summary>
-	[Fact]
-	public void IsFabricated()
-	{
-		throw new NotImplementedException();
-	}
+            closeSquareBracketToken = new CloseSquareBracketToken(new TextEditorTextSpan(
+                closeSquareBracketTokenInclusiveStartIndex,
+                closeSquareBracketTokenInclusiveStartIndex + closeSquareBracketTokenText.Length,
+                0,
+                new ResourceUri("/unitTesting.txt"),
+                sourceText));
+        }
 
-	/// <summary>
-	/// <see cref="AttributeNode.SyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
-	{
-		throw new NotImplementedException();
-	}
+        var attributeNode = new AttributeNode(
+            openSquareBracketToken,
+            closeSquareBracketToken);
+
+        Assert.Equal(openSquareBracketToken, attributeNode.OpenSquareBracketToken);
+        Assert.Equal(closeSquareBracketToken, attributeNode.CloseSquareBracketToken);
+
+        Assert.Equal(2, attributeNode.ChildBag.Length);
+        Assert.Equal(openSquareBracketToken, attributeNode.ChildBag[0]);
+        Assert.Equal(closeSquareBracketToken, attributeNode.ChildBag[1]);
+
+        Assert.False(attributeNode.IsFabricated);
+
+        Assert.Equal(
+            RazorLib.CompilerServices.Syntax.SyntaxKind.AttributeNode,
+            attributeNode.SyntaxKind);
+    }
 }

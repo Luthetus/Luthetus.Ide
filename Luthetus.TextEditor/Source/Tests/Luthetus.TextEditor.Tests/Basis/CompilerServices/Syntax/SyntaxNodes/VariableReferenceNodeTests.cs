@@ -36,7 +36,7 @@ public class VariableReferenceNodeTests
 	}
 
 	/// <summary>
-	/// <see cref="VariableReferenceNode.TypeClauseNode"/>
+	/// <see cref="VariableReferenceNode.ResultTypeClauseNode"/>
 	/// </summary>
 	[Fact]
 	public void TypeClauseNode()

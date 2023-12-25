@@ -18,7 +18,7 @@ public class VariableExpressionNodeTests
 	}
 
 	/// <summary>
-	/// <see cref="VariableExpressionNode.TypeClauseNode"/>
+	/// <see cref="VariableExpressionNode.ResultTypeClauseNode"/>
 	/// </summary>
 	[Fact]
 	public void TypeClauseNode()

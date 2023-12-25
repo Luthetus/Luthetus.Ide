@@ -45,7 +45,7 @@ public class ParenthesizedExpressionNodeTests
 	}
 
 	/// <summary>
-	/// <see cref="ParenthesizedExpressionNode.TypeClauseNode"/>
+	/// <see cref="ParenthesizedExpressionNode.ResultTypeClauseNode"/>
 	/// </summary>
 	[Fact]
 	public void TypeClauseNode()

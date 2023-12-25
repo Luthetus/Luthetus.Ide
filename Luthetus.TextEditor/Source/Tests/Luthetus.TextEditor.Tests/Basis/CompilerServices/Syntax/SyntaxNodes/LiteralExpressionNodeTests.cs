@@ -27,7 +27,7 @@ public class LiteralExpressionNodeTests
 	}
 
 	/// <summary>
-	/// <see cref="LiteralExpressionNode.TypeClauseNode"/>
+	/// <see cref="LiteralExpressionNode.ResultTypeClauseNode"/>
 	/// </summary>
 	[Fact]
 	public void TypeClauseNode()

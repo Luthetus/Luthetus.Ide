@@ -18,7 +18,7 @@ public class IdempotentExpressionNodeTests
 	}
 
 	/// <summary>
-	/// <see cref="IdempotentExpressionNode.TypeClauseNode"/>
+	/// <see cref="IdempotentExpressionNode.ResultTypeClauseNode"/>
 	/// </summary>
 	[Fact]
 	public void TypeClauseNode()

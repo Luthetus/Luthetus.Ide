@@ -21,7 +21,7 @@ public sealed record UnaryExpressionNode : IExpressionNode
 
     public IExpressionNode Expression { get; }
     public UnaryOperatorNode UnaryOperatorNode { get; }
-    public TypeClauseNode TypeClauseNode => UnaryOperatorNode.ResultTypeClauseNode;
+    public TypeClauseNode ResultTypeClauseNode => UnaryOperatorNode.ResultTypeClauseNode;
 
     public ImmutableArray<ISyntax> ChildBag { get; init; }
 

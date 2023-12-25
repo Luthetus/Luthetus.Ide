@@ -25,7 +25,7 @@ public sealed record VariableReferenceNode : IExpressionNode
     /// The <see cref="VariableDeclarationStatementNode"/> is null when the variable is undeclared
     /// </summary>
     public VariableDeclarationNode VariableDeclarationStatementNode { get; }
-    public TypeClauseNode TypeClauseNode => VariableDeclarationStatementNode.TypeClauseNode;
+    public TypeClauseNode ResultTypeClauseNode => VariableDeclarationStatementNode.TypeClauseNode;
 
     public ImmutableArray<ISyntax> ChildBag { get; }
 
