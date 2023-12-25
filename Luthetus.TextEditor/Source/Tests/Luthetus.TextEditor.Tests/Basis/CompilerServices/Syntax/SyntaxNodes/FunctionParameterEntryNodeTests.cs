@@ -1,5 +1,8 @@
 using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
@@ -8,75 +11,69 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 /// </summary>
 public class FunctionParameterEntryNodeTests
 {
-	/// <summary>
-	/// <see cref="FunctionParameterEntryNode(RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression.IExpressionNode, bool, bool, bool)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="FunctionParameterEntryNode(IExpressionNode, bool, bool, bool)"/>
+    /// <br/>----<br/>
+    /// <see cref="FunctionParameterEntryNode.ExpressionNode"/>
+    /// <see cref="FunctionParameterEntryNode.HasOutKeyword"/>
+    /// <see cref="FunctionParameterEntryNode.HasInKeyword"/>
+    /// <see cref="FunctionParameterEntryNode.HasRefKeyword"/>
+    /// <see cref="FunctionParameterEntryNode.ChildBag"/>
+    /// <see cref="FunctionParameterEntryNode.IsFabricated"/>
+    /// <see cref="FunctionParameterEntryNode.SyntaxKind.FunctionParameterEntryNode"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
-	}
+        var sourceText = "MyMethod(3)";
 
-	/// <summary>
-	/// <see cref="FunctionParameterEntryNode.ExpressionNode"/>
-	/// </summary>
-	[Fact]
-	public void ExpressionNode()
-	{
-		throw new NotImplementedException();
-	}
+        var numericLiteralText = "3";
+        int indexOfNumericLiteralText = sourceText.IndexOf(numericLiteralText);
+        var numericLiteralToken = new NumericLiteralToken(new TextEditorTextSpan(
+            indexOfNumericLiteralText,
+            indexOfNumericLiteralText + numericLiteralText.Length,
+            0,
+            new ResourceUri("/unitTesting.txt"),
+            sourceText));
 
-	/// <summary>
-	/// <see cref="FunctionParameterEntryNode.HasOutKeyword"/>
-	/// </summary>
-	[Fact]
-	public void HasOutKeyword()
-	{
-		throw new NotImplementedException();
-	}
+        TypeClauseNode intTypeClauseNode;
+        {
+            var intTypeIdentifier = new KeywordToken(
+                TextEditorTextSpan.FabricateTextSpan("int"),
+                RazorLib.CompilerServices.Syntax.SyntaxKind.IntTokenKeyword);
 
-	/// <summary>
-	/// <see cref="FunctionParameterEntryNode.HasInKeyword"/>
-	/// </summary>
-	[Fact]
-	public void HasInKeyword()
-	{
-		throw new NotImplementedException();
-	}
+            intTypeClauseNode = new TypeClauseNode(
+                intTypeIdentifier,
+                typeof(int),
+                null);
+        }
 
-	/// <summary>
-	/// <see cref="FunctionParameterEntryNode.HasRefKeyword"/>
-	/// </summary>
-	[Fact]
-	public void HasRefKeyword()
-	{
-		throw new NotImplementedException();
-	}
+        var expressionNode = new LiteralExpressionNode(
+            numericLiteralToken,
+            intTypeClauseNode);
 
-	/// <summary>
-	/// <see cref="FunctionParameterEntryNode.ChildBag"/>
-	/// </summary>
-	[Fact]
-	public void ChildBag()
-	{
-		throw new NotImplementedException();
-	}
+        var hasOutKeyword = false;
+        var hasInKeyword = false;
+        var hasRefKeyword = false;
 
-	/// <summary>
-	/// <see cref="FunctionParameterEntryNode.IsFabricated"/>
-	/// </summary>
-	[Fact]
-	public void IsFabricated()
-	{
-		throw new NotImplementedException();
-	}
+        var functionParameterEntryNode = new FunctionParameterEntryNode(
+            expressionNode,
+            hasOutKeyword,
+            hasInKeyword,
+            hasRefKeyword);
 
-	/// <summary>
-	/// <see cref="FunctionParameterEntryNode.SyntaxKind.FunctionParameterEntryNode"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
-	{
-		throw new NotImplementedException();
+        Assert.Equal(expressionNode, functionParameterEntryNode.ExpressionNode);
+        Assert.Equal(hasOutKeyword, functionParameterEntryNode.HasOutKeyword);
+        Assert.Equal(hasInKeyword, functionParameterEntryNode.HasInKeyword);
+        Assert.Equal(hasRefKeyword, functionParameterEntryNode.HasRefKeyword);
+
+        Assert.Single(functionParameterEntryNode.ChildBag);
+        Assert.Equal(expressionNode, functionParameterEntryNode.ChildBag.Single());
+
+        Assert.False(functionParameterEntryNode.IsFabricated);
+
+        Assert.Equal(
+            RazorLib.CompilerServices.Syntax.SyntaxKind.FunctionParameterEntryNode,
+            functionParameterEntryNode.SyntaxKind);
 	}
 }
