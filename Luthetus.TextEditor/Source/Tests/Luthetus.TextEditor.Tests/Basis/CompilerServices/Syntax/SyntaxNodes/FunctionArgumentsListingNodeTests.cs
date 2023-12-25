@@ -3,6 +3,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
@@ -11,195 +12,107 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 /// </summary>
 public class FunctionArgumentsListingNodeTests
 {
-	/// <summary>
-	/// <see cref="FunctionArgumentsListingNode(RazorLib.CompilerServices.Syntax.SyntaxTokens.OpenParenthesisToken, System.Collections.Immutable.ImmutableArray{FunctionArgumentEntryNode}, RazorLib.CompilerServices.Syntax.SyntaxTokens.CloseParenthesisToken)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="FunctionArgumentsListingNode(OpenParenthesisToken, ImmutableArray{FunctionArgumentEntryNode}, CloseParenthesisToken)"/>
+    /// <br/>----<br/>
+    /// <see cref="FunctionArgumentsListingNode.OpenParenthesisToken"/>
+    /// <see cref="FunctionArgumentsListingNode.FunctionArgumentEntryNodeBag"/>
+    /// <see cref="FunctionArgumentsListingNode.CloseParenthesisToken"/>
+    /// <see cref="FunctionArgumentsListingNode.ChildBag"/>
+    /// <see cref="FunctionArgumentsListingNode.IsFabricated"/>
+    /// <see cref="FunctionArgumentsListingNode.SyntaxKind"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
     {
         var sourceText = @"public void MyMethod(int value)
 {
 }";
 
-        //FunctionArgumentsListingNode functionArgumentsListingNode;
-        //{
-        //    var openParenthesisText = "(";
-        //    int indexOfOpenParenthesisText = sourceText.IndexOf(openParenthesisText);
-        //    var openParenthesisToken = new OpenParenthesisToken(new TextEditorTextSpan(
-        //        indexOfOpenParenthesisText,
-        //        indexOfOpenParenthesisText + openParenthesisText.Length,
-        //        0,
-        //        new ResourceUri("/unitTesting.txt"),
-        //        sourceText));
-
-        //    ImmutableArray<FunctionArgumentEntryNode> functionArgumentEntryNodeBag;
-        //    {
-        //        TypeClauseNode intTypeClauseNode;
-        //        {
-        //            var intTypeIdentifier = new KeywordToken(
-        //                TextEditorTextSpan.FabricateTextSpan("int"),
-        //                RazorLib.CompilerServices.Syntax.SyntaxKind.IntTokenKeyword);
-
-        //            intTypeClauseNode = new TypeClauseNode(
-        //                intTypeIdentifier,
-        //                typeof(int),
-        //                null);
-        //        }
-
-        //        var variableIdentifierText = "value";
-        //        int indexOfVariableIdentifierText = sourceText.IndexOf(variableIdentifierText);
-        //        var variableIdentifierToken = new IdentifierToken(new TextEditorTextSpan(
-        //            indexOfVariableIdentifierText,
-        //            indexOfVariableIdentifierText + variableIdentifierText.Length,
-        //            0,
-        //            new ResourceUri("/unitTesting.txt"),
-        //            sourceText));
-
-        //        var variableDeclarationNode = new VariableDeclarationNode(
-        //            intTypeClauseNode,
-        //            variableIdentifierToken,
-        //            VariableKind.Local,
-        //            false);
-
-        //        var functionArgumentEntryText = "int value";
-        //        int indexOfFunctionArgumentEntryText = sourceText.IndexOf(functionArgumentEntryText);
-        //        var functionArgumentEntryNode = new FunctionArgumentEntryNode(
-        //            variableDeclarationNode,
-        //            false,
-        //            false,
-        //            false,
-        //            false);
-
-        //        functionArgumentEntryNodeBag = new FunctionArgumentEntryNode[] 
-        //        {
-        //            functionArgumentEntryNode
-        //        }.ToImmutableArray();
-        //    }
-
-        //    var closeParenthesisText = ")";
-        //    int indexOfCloseParenthesisText = sourceText.IndexOf(closeParenthesisText);
-        //    var closeParenthesisToken = new CloseParenthesisToken(new TextEditorTextSpan(
-        //        indexOfCloseParenthesisText,
-        //        indexOfCloseParenthesisText + closeParenthesisText.Length,
-        //        0,
-        //        new ResourceUri("/unitTesting.txt"),
-        //        sourceText));
-
-        //    functionArgumentsListingNode = new FunctionArgumentsListingNode(
-        //        openParenthesisToken,
-        //        functionArgumentEntryNodeBag,
-        //        closeParenthesisToken);
-        //}
-
-        TypeClauseNode intTypeClauseNode;
+        OpenParenthesisToken openParenthesisToken;
         {
-            var intTypeIdentifier = new KeywordToken(
-                TextEditorTextSpan.FabricateTextSpan("int"),
-                RazorLib.CompilerServices.Syntax.SyntaxKind.IntTokenKeyword);
-
-            intTypeClauseNode = new TypeClauseNode(
-                intTypeIdentifier,
-                typeof(int),
-                null);
+            var openParenthesisText = "(";
+            int indexOfOpenParenthesisText = sourceText.IndexOf(openParenthesisText);
+            openParenthesisToken = new OpenParenthesisToken(new TextEditorTextSpan(
+                indexOfOpenParenthesisText,
+                indexOfOpenParenthesisText + openParenthesisText.Length,
+                0,
+                new ResourceUri("/unitTesting.txt"),
+                sourceText));
         }
 
-        var variableIdentifierText = "value";
-        int indexOfVariableIdentifierText = sourceText.IndexOf(variableIdentifierText);
-        var variableIdentifierToken = new IdentifierToken(new TextEditorTextSpan(
-            indexOfVariableIdentifierText,
-            indexOfVariableIdentifierText + variableIdentifierText.Length,
-            0,
-            new ResourceUri("/unitTesting.txt"),
-            sourceText));
+        ImmutableArray<FunctionArgumentEntryNode> functionArgumentEntryNodeBag;
+        {
+            TypeClauseNode intTypeClauseNode;
+            {
+                var intTypeIdentifier = new KeywordToken(
+                    TextEditorTextSpan.FabricateTextSpan("int"),
+                    RazorLib.CompilerServices.Syntax.SyntaxKind.IntTokenKeyword);
 
-        var variableDeclarationNode = new VariableDeclarationNode(
-            intTypeClauseNode,
-            variableIdentifierToken,
-            VariableKind.Local,
-            false);
+                intTypeClauseNode = new TypeClauseNode(
+                    intTypeIdentifier,
+                    typeof(int),
+                    null);
+            }
 
-        var functionArgumentEntryText = "int value";
-        int indexOfFunctionArgumentEntryText = sourceText.IndexOf(functionArgumentEntryText);
+            var variableIdentifierText = "value";
+            int indexOfVariableIdentifierText = sourceText.IndexOf(variableIdentifierText);
+            var variableIdentifierToken = new IdentifierToken(new TextEditorTextSpan(
+                indexOfVariableIdentifierText,
+                indexOfVariableIdentifierText + variableIdentifierText.Length,
+                0,
+                new ResourceUri("/unitTesting.txt"),
+                sourceText));
 
-        var isOptional = false;
-        var hasOutKeyword = false;
-        var hasInKeyword = false;
-        var hasRefKeyword = false;
+            var variableDeclarationNode = new VariableDeclarationNode(
+                intTypeClauseNode,
+                variableIdentifierToken,
+                VariableKind.Local,
+                false);
 
-        var functionArgumentEntryNode = new FunctionArgumentEntryNode(
-            variableDeclarationNode,
-            isOptional,
-            hasOutKeyword,
-            hasInKeyword,
-            hasRefKeyword);
+            var functionArgumentEntryNode = new FunctionArgumentEntryNode(
+                variableDeclarationNode,
+                false,
+                false,
+                false,
+                false);
 
-        Assert.Equal(variableDeclarationNode, functionArgumentEntryNode.VariableDeclarationNode);
-        Assert.Equal(isOptional, functionArgumentEntryNode.IsOptional);
-        Assert.Equal(hasOutKeyword, functionArgumentEntryNode.HasOutKeyword);
-        Assert.Equal(hasInKeyword, functionArgumentEntryNode.HasInKeyword);
-        Assert.Equal(hasRefKeyword, functionArgumentEntryNode.HasRefKeyword);
+            functionArgumentEntryNodeBag = new FunctionArgumentEntryNode[]
+            {
+                    functionArgumentEntryNode
+            }.ToImmutableArray();
+        }
 
-        Assert.Single(functionArgumentEntryNode.ChildBag);
-        Assert.Equal(variableDeclarationNode, functionArgumentEntryNode.ChildBag.Single());
+        CloseParenthesisToken closeParenthesisToken;
+        {
+            var closeParenthesisText = ")";
+            int indexOfCloseParenthesisText = sourceText.IndexOf(closeParenthesisText);
+            closeParenthesisToken = new CloseParenthesisToken(new TextEditorTextSpan(
+                indexOfCloseParenthesisText,
+                indexOfCloseParenthesisText + closeParenthesisText.Length,
+                0,
+                new ResourceUri("/unitTesting.txt"),
+                sourceText));
+        }
 
-        Assert.False(functionArgumentEntryNode.IsFabricated);
+        var functionArgumentsListingNode = new FunctionArgumentsListingNode(
+            openParenthesisToken,
+            functionArgumentEntryNodeBag,
+            closeParenthesisToken);
+
+        Assert.Equal(openParenthesisToken, functionArgumentsListingNode.OpenParenthesisToken);
+        Assert.Equal(functionArgumentEntryNodeBag, functionArgumentsListingNode.FunctionArgumentEntryNodeBag);
+        Assert.Equal(closeParenthesisToken, functionArgumentsListingNode.CloseParenthesisToken);
+
+        Assert.Equal(3, functionArgumentsListingNode.ChildBag.Length);
+        Assert.Equal(openParenthesisToken, functionArgumentsListingNode.ChildBag[0]);
+        Assert.Equal(functionArgumentEntryNodeBag.Single(), functionArgumentsListingNode.ChildBag[1]);
+        Assert.Equal(closeParenthesisToken, functionArgumentsListingNode.ChildBag[2]);
+
+        Assert.False(functionArgumentsListingNode.IsFabricated);
 
         Assert.Equal(
-            RazorLib.CompilerServices.Syntax.SyntaxKind.FunctionArgumentEntryNode,
-            functionArgumentEntryNode.SyntaxKind);
+            RazorLib.CompilerServices.Syntax.SyntaxKind.FunctionArgumentsListingNode,
+            functionArgumentsListingNode.SyntaxKind);
     }
-
-    /// <summary>
-    /// <see cref="FunctionArgumentsListingNode.OpenParenthesisToken"/>
-    /// </summary>
-    [Fact]
-	public void OpenParenthesisToken()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="FunctionArgumentsListingNode.FunctionArgumentEntryNodeBag"/>
-	/// </summary>
-	[Fact]
-	public void FunctionArgumentEntryNodeBag()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="FunctionArgumentsListingNode.CloseParenthesisToken"/>
-	/// </summary>
-	[Fact]
-	public void CloseParenthesisToken()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="FunctionArgumentsListingNode.ChildBag"/>
-	/// </summary>
-	[Fact]
-	public void ChildBag()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="FunctionArgumentsListingNode.IsFabricated"/>
-	/// </summary>
-	[Fact]
-	public void IsFabricated()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="FunctionArgumentsListingNode.SyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
-	{
-		throw new NotImplementedException();
-	}
 }
