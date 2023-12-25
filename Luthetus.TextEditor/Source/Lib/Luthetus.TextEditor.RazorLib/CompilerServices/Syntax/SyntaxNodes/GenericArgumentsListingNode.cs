@@ -3,6 +3,9 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
+/// <summary>
+/// Used when defining a syntax which contains a generic type.
+/// </summary>
 public sealed record GenericArgumentsListingNode : ISyntaxNode
 {
     public GenericArgumentsListingNode(

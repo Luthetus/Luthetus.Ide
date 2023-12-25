@@ -3,6 +3,9 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
+/// <summary>
+/// Used when invoking a function.
+/// </summary>
 public sealed record FunctionParametersListingNode : ISyntaxNode
 {
     public FunctionParametersListingNode(

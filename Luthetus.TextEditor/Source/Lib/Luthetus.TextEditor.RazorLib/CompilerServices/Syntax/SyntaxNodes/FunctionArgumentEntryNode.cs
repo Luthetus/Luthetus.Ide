@@ -2,6 +2,9 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
+/// <summary>
+/// Used when defining a function.
+/// </summary>
 public sealed record FunctionArgumentEntryNode : ISyntaxNode
 {
     public FunctionArgumentEntryNode(

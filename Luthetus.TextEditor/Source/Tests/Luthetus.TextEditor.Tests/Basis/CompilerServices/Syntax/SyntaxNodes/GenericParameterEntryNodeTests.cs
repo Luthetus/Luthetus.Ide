@@ -1,5 +1,8 @@
 using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
@@ -8,48 +11,49 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 /// </summary>
 public class GenericParameterEntryNodeTests
 {
-	/// <summary>
-	/// <see cref="GenericParameterEntryNode(RazorLib.CompilerServices.Syntax.SyntaxNodes.TypeClauseNode)"/>
-	/// </summary>
-	[Fact]
-	public void Constructor()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
+    /// <summary>
+    /// <see cref="GenericParameterEntryNode(TypeClauseNode)"/>
+    /// <br/>----<br/>
 	/// <see cref="GenericParameterEntryNode.TypeClauseNode"/>
-	/// </summary>
-	[Fact]
-	public void TypeClauseNode()
-	{
-		throw new NotImplementedException();
-	}
+    /// <see cref="GenericParameterEntryNode.ChildBag"/>
+    /// <see cref="GenericParameterEntryNode.IsFabricated"/>
+    /// <see cref="GenericParameterEntryNode.SyntaxKind"/>
+    /// </summary>
+    [Fact]
+    public void Constructor()
+    {
+        var sourceText = @"public void AddData<TItem>(TItem data)
+{
+}";
 
-	/// <summary>
-	/// <see cref="GenericParameterEntryNode.ChildBag"/>
-	/// </summary>
-	[Fact]
-	public void ChildBag()
-	{
-		throw new NotImplementedException();
-	}
+        TypeClauseNode genericTypeClauseNode;
+        {
+            var genericArgumentEntryText = "TItem";
+            int indexOfGenericArgumentEntryText = sourceText.IndexOf(genericArgumentEntryText);
+            var genericArgumentIdentifierToken = new IdentifierToken(new TextEditorTextSpan(
+                indexOfGenericArgumentEntryText,
+                indexOfGenericArgumentEntryText + genericArgumentEntryText.Length,
+                0,
+                new ResourceUri("/unitTesting.txt"),
+                sourceText));
 
-	/// <summary>
-	/// <see cref="GenericParameterEntryNode.IsFabricated"/>
-	/// </summary>
-	[Fact]
-	public void IsFabricated()
-	{
-		throw new NotImplementedException();
-	}
+            genericTypeClauseNode = new TypeClauseNode(
+                genericArgumentIdentifierToken,
+                null,
+                null);
+        }
 
-	/// <summary>
-	/// <see cref="GenericParameterEntryNode.SyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
-	{
-		throw new NotImplementedException();
-	}
+        var genericParameterEntryNode = new GenericParameterEntryNode(genericTypeClauseNode);
+
+        Assert.Equal(genericTypeClauseNode, genericParameterEntryNode.TypeClauseNode);
+
+        Assert.Single(genericParameterEntryNode.ChildBag);
+        Assert.Equal(genericTypeClauseNode, genericParameterEntryNode.ChildBag.Single());
+
+        Assert.False(genericParameterEntryNode.IsFabricated);
+
+        Assert.Equal(
+            RazorLib.CompilerServices.Syntax.SyntaxKind.GenericParameterEntryNode,
+            genericParameterEntryNode.SyntaxKind);
+    }
 }
