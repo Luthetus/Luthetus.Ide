@@ -13,6 +13,9 @@ public partial class TextEditorModelState
             TextEditorModelState inState,
             RegisterAction registerAction)
         {
+            // TODO: Is the Any() predicate redundant?...
+            // ...I'm half asleep and don't want to remove the other part of the || without...
+            // ...being sure. I think they're the same expressions or'd with eachother
             if (inState.ModelBag.Any(x =>
                     x.ResourceUri == registerAction.Model.ResourceUri ||
                     x.ResourceUri == registerAction.Model.ResourceUri))
