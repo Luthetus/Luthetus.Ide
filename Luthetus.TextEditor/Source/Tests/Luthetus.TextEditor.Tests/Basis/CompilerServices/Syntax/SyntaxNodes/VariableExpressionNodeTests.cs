@@ -1,5 +1,7 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
@@ -8,48 +10,45 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 /// </summary>
 public class VariableExpressionNodeTests
 {
-	/// <summary>
-	/// <see cref="VariableExpressionNode(RazorLib.CompilerServices.Syntax.SyntaxNodes.TypeClauseNode)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="VariableExpressionNode(TypeClauseNode)"/>
+    /// <br/>----<br/>
+    /// <see cref="VariableExpressionNode.ResultTypeClauseNode"/>
+    /// <see cref="VariableExpressionNode.ChildBag"/>
+    /// <see cref="VariableExpressionNode.IsFabricated"/>
+    /// <see cref="VariableExpressionNode.SyntaxKind"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
-	}
+        var sourceText = @"int x = 2;
+MyMethod(x)";
+        _ = sourceText; // Suppress unused variable warning
 
-	/// <summary>
-	/// <see cref="VariableExpressionNode.ResultTypeClauseNode"/>
-	/// </summary>
-	[Fact]
-	public void TypeClauseNode()
-	{
-		throw new NotImplementedException();
-	}
+        TypeClauseNode intTypeClauseNode;
+        {
+            var intTypeIdentifier = new KeywordToken(
+                TextEditorTextSpan.FabricateTextSpan("int"),
+                RazorLib.CompilerServices.Syntax.SyntaxKind.IntTokenKeyword);
 
-	/// <summary>
-	/// <see cref="VariableExpressionNode.ChildBag"/>
-	/// </summary>
-	[Fact]
-	public void ChildBag()
-	{
-		throw new NotImplementedException();
-	}
+            intTypeClauseNode = new TypeClauseNode(
+                intTypeIdentifier,
+                typeof(int),
+                null);
+        }
 
-	/// <summary>
-	/// <see cref="VariableExpressionNode.IsFabricated"/>
-	/// </summary>
-	[Fact]
-	public void IsFabricated()
-	{
-		throw new NotImplementedException();
-	}
+        var variableExpressionNode = new VariableExpressionNode(
+            intTypeClauseNode);
 
-	/// <summary>
-	/// <see cref="VariableExpressionNode.SyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
-	{
-		throw new NotImplementedException();
+        Assert.Equal(intTypeClauseNode, variableExpressionNode.ResultTypeClauseNode);
+
+        Assert.Single(variableExpressionNode.ChildBag);
+        Assert.Equal(intTypeClauseNode, variableExpressionNode.ChildBag.Single());
+
+        Assert.False(variableExpressionNode.IsFabricated);
+
+        Assert.Equal(
+            RazorLib.CompilerServices.Syntax.SyntaxKind.VariableExpressionNode,
+            variableExpressionNode.SyntaxKind);
 	}
 }

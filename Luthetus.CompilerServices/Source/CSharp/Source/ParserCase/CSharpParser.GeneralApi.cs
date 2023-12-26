@@ -620,7 +620,7 @@ public partial class CSharpParser : IParser
                     {
                         var variableReferenceNode = (VariableReferenceNode)NodeRecent;
 
-                        if (variableReferenceNode.VariableDeclarationStatementNode.IsFabricated)
+                        if (variableReferenceNode.VariableDeclarationNode.IsFabricated)
                         {
                             // Undeclared variable, so the Type is unknown.
                         }

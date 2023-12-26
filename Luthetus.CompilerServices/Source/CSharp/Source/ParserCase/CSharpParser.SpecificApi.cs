@@ -745,7 +745,7 @@ public partial class CSharpParser : IParser
                     variableReferenceNode = Binder.BindVariableReferenceNode(variableReferenceNode);
 
                     expression = new VariableExpressionNode(
-                        variableReferenceNode.VariableDeclarationStatementNode.TypeClauseNode);
+                        variableReferenceNode.VariableDeclarationNode.TypeClauseNode);
                 }
                 else
                 {
