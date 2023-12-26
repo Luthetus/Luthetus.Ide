@@ -1,6 +1,4 @@
 ﻿using Fluxor;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
-using static Luthetus.TextEditor.RazorLib.TextEditors.States.TextEditorViewModelState;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.States;
 

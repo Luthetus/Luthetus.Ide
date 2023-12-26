@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.WatchWindows.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
-using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;

@@ -3,7 +3,6 @@ using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using static Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorService;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models;
 
