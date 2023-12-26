@@ -177,7 +177,7 @@ public class ParserTests
 	    Assert.False(variableDeclarationStatementNode.HasSetter);
 	    Assert.False(variableDeclarationStatementNode.SetterIsAutoImplemented);		
 		Assert.False(variableDeclarationStatementNode.IsFabricated);
-		Assert.Equal(SyntaxKind.VariableDeclarationStatementNode, variableDeclarationStatementNode.SyntaxKind);
+		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationStatementNode.SyntaxKind);
 	}
 	
 	[Fact]
