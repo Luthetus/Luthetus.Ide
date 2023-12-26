@@ -21,4 +21,14 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.States;
 /// <br/>
 /// TODO: Learn more about <see cref="SynchronizationContext"/>
 /// </summary>
-public record AuthenticatedAction(Key<AuthenticatedAction> AuthenticatedActionKey);
+public record AuthenticatedAction
+{
+    public AuthenticatedAction(Key<AuthenticatedAction> authenticatedActionKey)
+    {
+        if (authenticatedActionKey != TextEditorService.AuthenticatedActionKey)
+            throw new ApplicationException($"Only edits made via the {nameof(ITextEditorService)}.{nameof(ITextEditorService.Post)}(...) method may modify state.");
+        AuthenticatedActionKey = authenticatedActionKey;
+    }
+
+    public Key<AuthenticatedAction> AuthenticatedActionKey { get; }
+}

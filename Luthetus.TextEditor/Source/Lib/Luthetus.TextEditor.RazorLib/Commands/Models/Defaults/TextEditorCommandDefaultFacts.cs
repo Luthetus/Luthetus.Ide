@@ -270,6 +270,7 @@ public static class TextEditorCommandDefaultFacts
                 commandArgs.ModelResourceUri,
                 commandArgs.ViewModelKey,
                 commandArgs));
+
             return Task.CompletedTask;
         });
 

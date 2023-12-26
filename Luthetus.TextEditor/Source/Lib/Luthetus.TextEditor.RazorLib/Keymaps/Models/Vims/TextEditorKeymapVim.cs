@@ -403,7 +403,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                     commandArgs.TextEditorService.Post(editContext =>
                     {
                         return TextEditorCommandDefaultFacts.ScrollLineDown.DoAsyncFunc
-                        .Invoke(interfaceCommandArgs);
+                            .Invoke(interfaceCommandArgs);
                     });
                     return Task.CompletedTask;
                 });
@@ -840,12 +840,6 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                             interfaceCommandArgs =>
                             {
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-                                commandArgs.TextEditorService.Post(editContext =>
-                                {
-                                    ActiveVimMode = VimMode.Insert;
-                                    return Task.CompletedTask;
-                                });
 
                                 commandArgs.TextEditorService.ViewModelApi.MoveCursorFactory(
                                         keyboardEventArgs,

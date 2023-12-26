@@ -129,13 +129,13 @@ public class DotNetSolutionCompilerService : ICompilerService
     {
         _textEditorService.Post(async editContext =>
         {
-            var model = _textEditorService.ModelApi.GetOrDefault(resourceUri);
+            var modelModifier = editContext.GetModelModifier(resourceUri);
 
-            if (model is null)
+            if (modelModifier is null)
                 return;
 
             var absolutePath = new AbsolutePath(
-                model.ResourceUri.Value,
+                modelModifier.ResourceUri.Value,
                 false,
                 _environmentProvider);
 
@@ -145,17 +145,17 @@ public class DotNetSolutionCompilerService : ICompilerService
 
             _dispatcher.Dispatch(new TextEditorModelState.CalculatePresentationModelAction(
                 editContext,
-                model.ResourceUri,
+                modelModifier.ResourceUri,
                 CompilerServiceDiagnosticPresentationFacts.PresentationKey));
 
-            var pendingCalculation = model.PresentationModelsBag.FirstOrDefault(x =>
+            var pendingCalculation = modelModifier.PresentationModelsBag.FirstOrDefault(x =>
                 x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey)
                 ?.PendingCalculation;
 
             if (pendingCalculation is null)
-                pendingCalculation = new(model.GetAllText());
+                pendingCalculation = new(modelModifier.GetAllText());
 
-            var lexer = new DotNetSolutionLexer(resourceUri, model.GetAllText());
+            var lexer = new DotNetSolutionLexer(resourceUri, modelModifier.GetAllText());
             lexer.Lex();
 
             var parser = new DotNetSolutionParser(lexer);
@@ -172,17 +172,17 @@ public class DotNetSolutionCompilerService : ICompilerService
                 dotNetSolutionResource.CompilationUnit = compilationUnit;
             }
 
-            await model.ApplySyntaxHighlightingAsync();
+            await modelModifier.ApplySyntaxHighlightingAsync();
 
             ResourceParsed?.Invoke();
 
-            var presentationModel = model.PresentationModelsBag.FirstOrDefault(x =>
+            var presentationModel = modelModifier.PresentationModelsBag.FirstOrDefault(x =>
                 x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
 
             if (presentationModel?.PendingCalculation is not null)
             {
                 presentationModel.PendingCalculation.TextEditorTextSpanBag =
-                    GetDiagnosticsFor(model.ResourceUri)
+                    GetDiagnosticsFor(modelModifier.ResourceUri)
                         .Select(x => x.TextSpan)
                         .ToImmutableArray();
 

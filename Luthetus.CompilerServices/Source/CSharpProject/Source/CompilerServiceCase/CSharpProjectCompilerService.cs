@@ -124,27 +124,27 @@ public class CSharpProjectCompilerService : ICompilerService
     {
         _textEditorService.Post(async editContext =>
         {
-            var model = _textEditorService.ModelApi.GetOrDefault(resourceUri);
+            var modelModifier = editContext.GetModelModifier(resourceUri);
 
-            if (model is null)
+            if (modelModifier is null)
                 return;
 
-            var text = TextEditorModelHelper.GetAllText(model);
+            var text = TextEditorModelHelper.GetAllText(modelModifier);
 
 			_dispatcher.Dispatch(new TextEditorModelState.CalculatePresentationModelAction(
                 editContext,
-                model.ResourceUri,
+                modelModifier.ResourceUri,
 				CompilerServiceDiagnosticPresentationFacts.PresentationKey));
 
-            var pendingCalculation = model.PresentationModelsBag.FirstOrDefault<TextEditor.RazorLib.Decorations.Models.TextEditorPresentationModel>((Func<TextEditor.RazorLib.Decorations.Models.TextEditorPresentationModel, bool>)(x =>
+            var pendingCalculation = modelModifier.PresentationModelsBag.FirstOrDefault<TextEditor.RazorLib.Decorations.Models.TextEditorPresentationModel>((Func<TextEditor.RazorLib.Decorations.Models.TextEditorPresentationModel, bool>)(x =>
                 x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey))
                 ?.PendingCalculation;
 
             if (pendingCalculation is null)
-                pendingCalculation = new(TextEditorModelHelper.GetAllText(model));
+                pendingCalculation = new(TextEditorModelHelper.GetAllText(modelModifier));
 
-            var lexer = new TextEditorHtmlLexer(model.ResourceUri);
-            var lexResult = await lexer.Lex(text, model.RenderStateKey);
+            var lexer = new TextEditorHtmlLexer(modelModifier.ResourceUri);
+            var lexResult = await lexer.Lex(text, modelModifier.RenderStateKey);
 
             lock (_cSharpProjectResourceMapLock)
             {
@@ -155,7 +155,7 @@ public class CSharpProjectCompilerService : ICompilerService
                     .SyntacticTextSpans = lexResult;
             }
 
-            await TextEditorModelHelper.ApplySyntaxHighlightingAsync(model);
+            await TextEditorModelHelper.ApplySyntaxHighlightingAsync(modelModifier);
 
             ResourceParsed?.Invoke();
 

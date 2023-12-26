@@ -180,22 +180,22 @@ public class CSharpCompilerService : ICompilerService
     {
         _textEditorService.Post(async editContext =>
         {
-            var model = _textEditorService.ModelApi.GetOrDefault(resourceUri);
+            var modelModifier = editContext.GetModelModifier(resourceUri);
 
-            if (model is null)
+            if (modelModifier is null)
                 return;
 
             _dispatcher.Dispatch(new TextEditorModelState.CalculatePresentationModelAction(
                 editContext,
-                model.ResourceUri,
+                modelModifier.ResourceUri,
                 CompilerServiceDiagnosticPresentationFacts.PresentationKey));
 
-            var pendingCalculation = model.PresentationModelsBag.FirstOrDefault(x =>
+            var pendingCalculation = modelModifier.PresentationModelsBag.FirstOrDefault(x =>
                 x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey)
                 ?.PendingCalculation;
 
             if (pendingCalculation is null)
-                pendingCalculation = new(model.GetAllText());
+                pendingCalculation = new(modelModifier.GetAllText());
 
             var lexer = new CSharpLexer(resourceUri, pendingCalculation.ContentAtRequest);
             lexer.Lex();
@@ -218,17 +218,17 @@ public class CSharpCompilerService : ICompilerService
             }
 
             // TODO: Shouldn't one get a reference to the most recent TextEditorModel instance with the given key and invoke .ApplySyntaxHighlightingAsync() on that?
-            await model.ApplySyntaxHighlightingAsync();
+            await modelModifier.ApplySyntaxHighlightingAsync();
 
             ResourceParsed?.Invoke();
 
-            var presentationModel = model.PresentationModelsBag.FirstOrDefault(x =>
+            var presentationModel = modelModifier.PresentationModelsBag.FirstOrDefault(x =>
                 x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
 
             if (presentationModel?.PendingCalculation is not null)
             {
                 presentationModel.PendingCalculation.TextEditorTextSpanBag =
-                    GetDiagnosticsFor(model.ResourceUri)
+                    GetDiagnosticsFor(modelModifier.ResourceUri)
                         .Select(x => x.TextSpan)
                         .ToImmutableArray();
 

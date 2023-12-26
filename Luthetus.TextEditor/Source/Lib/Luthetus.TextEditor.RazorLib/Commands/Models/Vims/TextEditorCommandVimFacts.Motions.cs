@@ -20,17 +20,20 @@ public static partial class TextEditorCommandVimFacts
 
                 commandArgs.TextEditorService.Post(async editContext =>
                 {
-                    var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                    var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
+                    var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
+
+                    if (modelModifier is null || viewModelModifier is null)
+                        return;
 
                     var cursorModifierBag = new TextEditorCursorModifierBag(
                         commandArgs.ViewModelKey,
-                        viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
+                        viewModelModifier.ViewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
                     await WordAsync(
                         commandArgs,
-                        model,
-                        viewModel,
+                        modelModifier,
+                        viewModelModifier.ViewModel,
                         cursorModifierBag,
                         cursorModifierBag.CursorModifierBag.First(x => x.IsPrimaryCursor));
                 });
@@ -39,7 +42,7 @@ public static partial class TextEditorCommandVimFacts
 
         public static Task WordAsync(
             TextEditorCommandArgs commandArgs,
-            TextEditorModel model,
+            ITextEditorModel model,
             TextEditorViewModel viewModel,
             TextEditorCursorModifierBag refreshCursorsRequest,
             TextEditorCursorModifier primaryCursor) 
@@ -91,17 +94,20 @@ public static partial class TextEditorCommandVimFacts
 
                 commandArgs.TextEditorService.Post(async editContext =>
                 {
-                    var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                    var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
+                    var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
+
+                    if (modelModifier is null || viewModelModifier is null)
+                        return;
 
                     var cursorModifierBag = new TextEditorCursorModifierBag(
                         commandArgs.ViewModelKey,
-                        viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
+                        viewModelModifier.ViewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
                     await EndAsync(
                         commandArgs,
-                        model,
-                        viewModel,
+                        modelModifier,
+                        viewModelModifier.ViewModel,
                         cursorModifierBag,
                         cursorModifierBag.CursorModifierBag.First(x => x.IsPrimaryCursor));
                 });
@@ -110,7 +116,7 @@ public static partial class TextEditorCommandVimFacts
         
         public static Task EndAsync(
             TextEditorCommandArgs commandArgs,
-            TextEditorModel model,
+            ITextEditorModel model,
             TextEditorViewModel viewModel,
             TextEditorCursorModifierBag refreshCursorsRequest,
             TextEditorCursorModifier primaryCursor)
@@ -125,7 +131,7 @@ public static partial class TextEditorCommandVimFacts
 
         private static async Task PerformEndAsync(
             TextEditorCommandArgs commandArgs,
-            TextEditorModel model,
+            ITextEditorModel model,
             TextEditorViewModel viewModel,
             TextEditorCursorModifierBag refreshCursorsRequest,
             TextEditorCursorModifier primaryCursor,
@@ -211,17 +217,20 @@ public static partial class TextEditorCommandVimFacts
 
                 commandArgs.TextEditorService.Post(async editContext =>
                 {
-                    var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                    var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
+                    var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
+
+                    if (modelModifier is null || viewModelModifier is null)
+                        return;
 
                     var cursorModifierBag = new TextEditorCursorModifierBag(
                         commandArgs.ViewModelKey,
-                        viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
+                        viewModelModifier.ViewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
                     await BackAsync(
                         commandArgs,
-                        model,
-                        viewModel,
+                        modelModifier,
+                        viewModelModifier.ViewModel,
                         cursorModifierBag,
                         cursorModifierBag.CursorModifierBag.First(x => x.IsPrimaryCursor));
                 });
@@ -230,7 +239,7 @@ public static partial class TextEditorCommandVimFacts
         
         public static Task BackAsync(
             TextEditorCommandArgs commandArgs,
-            TextEditorModel model,
+            ITextEditorModel model,
             TextEditorViewModel viewModel,
             TextEditorCursorModifierBag refreshCursorsRequest,
             TextEditorCursorModifier primaryCursor)
@@ -289,17 +298,20 @@ public static partial class TextEditorCommandVimFacts
 
                     commandArgs.TextEditorService.Post(async editContext =>
                     {
-                        var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                        var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
+                        var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
+                        var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
+
+                        if (modelModifier is null || viewModelModifier is null)
+                            return;
 
                         var cursorModifierBag = new TextEditorCursorModifierBag(
                             commandArgs.ViewModelKey,
-                            viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
+                            viewModelModifier.ViewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
                         await VisualAsync(
                             commandArgs,
-                            model,
-                            viewModel,
+                            modelModifier,
+                            viewModelModifier.ViewModel,
                             cursorModifierBag,
                             cursorModifierBag.CursorModifierBag.First(x => x.IsPrimaryCursor));
                     });
@@ -309,7 +321,7 @@ public static partial class TextEditorCommandVimFacts
         
         public static async Task VisualAsync(
             TextEditorCommandArgs commandArgs,
-            TextEditorModel model,
+            ITextEditorModel model,
             TextEditorViewModel viewModel,
             TextEditorCursorModifierBag refreshCursorsRequest,
             TextEditorCursorModifier primaryCursor)
@@ -359,17 +371,20 @@ public static partial class TextEditorCommandVimFacts
 
                     commandArgs.TextEditorService.Post(async editContext =>
                     {
-                        var model = commandArgs.TextEditorService.ModelApi.GetOrDefault(commandArgs.ModelResourceUri);
-                        var viewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(commandArgs.ViewModelKey);
+                        var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
+                        var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
+
+                        if (modelModifier is null || viewModelModifier is null)
+                            return;
 
                         var cursorModifierBag = new TextEditorCursorModifierBag(
                             commandArgs.ViewModelKey,
-                            viewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
+                            viewModelModifier.ViewModel.CursorBag.Select(x => new TextEditorCursorModifier(x)).ToList());
 
                         await VisualLineAsync(
                             commandArgs,
-                            model,
-                            viewModel,
+                            modelModifier,
+                            viewModelModifier.ViewModel,
                             cursorModifierBag,
                             cursorModifierBag.CursorModifierBag.First(x => x.IsPrimaryCursor));
                     });
@@ -379,7 +394,7 @@ public static partial class TextEditorCommandVimFacts
         
         public static async Task VisualLineAsync(
             TextEditorCommandArgs commandArgs,
-            TextEditorModel model,
+            ITextEditorModel model,
             TextEditorViewModel viewModel,
             TextEditorCursorModifierBag refreshCursorsRequest,
             TextEditorCursorModifier primaryCursor)

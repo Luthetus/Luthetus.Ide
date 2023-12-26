@@ -29,6 +29,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using System.Reflection;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 
@@ -343,10 +344,19 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
                 _tooltipViewModel = null;
 
+                // TODO: I need to figure out how to ensure a TextEditorModel which is available from...
+                // ...within a 'TextEditorService.Post' invocation via closure is not used when one...
+                // ...actually meant to use their 'modelModifier'.
+                var modelResourceUri = model.ResourceUri;
+                var viewModelKey = viewModel.ViewModelKey;
+
                 TextEditorService.Post(editContext =>
                 {
-                    var modelModifier = editContext.GetModelModifier(model.ResourceUri);
-                    var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
+                    var model = (TextEditorModel?)null;
+                    var viewModel = (TextEditorViewModel?)null;
+
+                    var modelModifier = editContext.GetModelModifier(modelResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
 
                     if (modelModifier is null || viewModelModifier is null)
                         return Task.CompletedTask;
@@ -360,11 +370,11 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                     return TextEditorService.ModelApi.HandleKeyboardEventFactory(
                             new TextEditorModelState.KeyboardEventAction(
                                 editContext,
-                                model.ResourceUri,
-                                viewModel.ViewModelKey,
+                                modelResourceUri,
+                                viewModelKey,
                                 keyboardEventArgs,
                                 CancellationToken.None),
-                            viewModel.ViewModelKey)
+                            viewModelKey)
                         .Invoke(editContext);
                 });
             }
@@ -405,16 +415,16 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     private void HandleContentOnDoubleClick(MouseEventArgs mouseEventArgs)
     {
-        var model = GetModel();
-        var viewModel = GetViewModel();
+        var modelResourceUri = GetModel()?.ResourceUri;
+        var viewModelKey = GetViewModel()?.ViewModelKey;
 
-        if (model is null || viewModel is null)
+        if (modelResourceUri is null || viewModelKey is null)
             return;
 
         TextEditorService.Post(async editContext =>
         {
-            var modelModifier = editContext.GetModelModifier(model.ResourceUri);
-            var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
+            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
 
             if (modelModifier is null || viewModelModifier is null)
                 return;
@@ -435,7 +445,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
             var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs);
 
-            var lowerColumnIndexExpansion = model.GetColumnIndexOfCharacterWithDifferingKind(
+            var lowerColumnIndexExpansion = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
                 rowAndColumnIndex.rowIndex,
                 rowAndColumnIndex.columnIndex,
                 true);
@@ -444,13 +454,13 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                 ? 0
                 : lowerColumnIndexExpansion;
 
-            var higherColumnIndexExpansion = model.GetColumnIndexOfCharacterWithDifferingKind(
+            var higherColumnIndexExpansion = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
                 rowAndColumnIndex.rowIndex,
                 rowAndColumnIndex.columnIndex,
                 false);
 
             higherColumnIndexExpansion = higherColumnIndexExpansion == -1
-                    ? model.GetLengthOfRow(rowAndColumnIndex.rowIndex)
+                    ? modelModifier.GetLengthOfRow(rowAndColumnIndex.rowIndex)
                     : higherColumnIndexExpansion;
 
             // Move user's cursor position to the higher expansion
@@ -462,7 +472,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
             // Set text selection ending to higher expansion
             {
-                var cursorPositionOfHigherExpansion = model.GetPositionIndex(
+                var cursorPositionOfHigherExpansion = modelModifier.GetPositionIndex(
                     rowAndColumnIndex.rowIndex,
                     higherColumnIndexExpansion);
 
@@ -471,7 +481,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
             // Set text selection anchor to lower expansion
             {
-                var cursorPositionOfLowerExpansion = model.GetPositionIndex(
+                var cursorPositionOfLowerExpansion = modelModifier.GetPositionIndex(
                     rowAndColumnIndex.rowIndex,
                     lowerColumnIndexExpansion);
 
@@ -482,16 +492,16 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     private void HandleContentOnMouseDown(MouseEventArgs mouseEventArgs)
     {
-        var model = GetModel();
-        var viewModel = GetViewModel();
+        var modelResourceUri = GetModel()?.ResourceUri;
+        var viewModelKey = GetViewModel()?.ViewModelKey;
 
-        if (model is null || viewModel is null)
+        if (modelResourceUri is null || viewModelKey is null)
             return;
         
         TextEditorService.Post(async editContext =>
         {
-            var modelModifier = editContext.GetModelModifier(model.ResourceUri);
-            var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
+            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
 
             if (modelModifier is null || viewModelModifier is null)
                 return;
@@ -517,7 +527,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
             CursorDisplay?.PauseBlinkAnimation();
 
-            var cursorPositionIndex = model.GetCursorPositionIndex(new TextEditorCursor(
+            var cursorPositionIndex = modelModifier.GetCursorPositionIndex(new TextEditorCursor(
                 rowAndColumnIndex.rowIndex,
                 rowAndColumnIndex.columnIndex,
                 true));
@@ -528,7 +538,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                 {
                     // If user does not yet have a selection then place the text selection anchor were they were
 
-                    var cursorPositionPriorToMovementOccurring = model.GetPositionIndex(
+                    var cursorPositionPriorToMovementOccurring = modelModifier.GetPositionIndex(
                         primaryCursorModifier.RowIndex,
                         primaryCursorModifier.ColumnIndex);
 
@@ -592,10 +602,10 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (!_thinksLeftMouseButtonIsDown)
             return;
 
-        var model = GetModel();
-        var viewModel = GetViewModel();
+        var modelResourceUri = GetModel()?.ResourceUri;
+        var viewModelKey = GetViewModel()?.ViewModelKey;
 
-        if (model is null || viewModel is null)
+        if (modelResourceUri is null || viewModelKey is null)
             return;
 
         // Buttons is a bit flag '& 1' gets if left mouse button is held
@@ -603,8 +613,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         {
             TextEditorService.Post(async editContext =>
             {
-                var modelModifier = editContext.GetModelModifier(model.ResourceUri);
-                var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
+                var modelModifier = editContext.GetModelModifier(modelResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
 
                 if (modelModifier is null || viewModelModifier is null)
                     return;
@@ -623,7 +633,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
                 CursorDisplay?.PauseBlinkAnimation();
 
-                primaryCursorModifier.SelectionEndingPositionIndex = model.GetCursorPositionIndex(primaryCursorModifier);
+                primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetCursorPositionIndex(primaryCursorModifier);
             });
         }
         else
@@ -1007,15 +1017,15 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         int countOfTestCharacters,
         CancellationToken cancellationToken)
     {
-        var model = GetModel();
-        var viewModel = GetViewModel();
+        var modelResourceUri = GetModel()?.ResourceUri;
+        var viewModelKey = GetViewModel()?.ViewModelKey;
 
-        if (model is null || viewModel is null)
+        if (modelResourceUri is null || viewModelKey is null)
             return;
 
         TextEditorService.Post(TextEditorService.ViewModelApi.RemeasureFactory(
-            model.ResourceUri,
-            viewModel.ViewModelKey,
+            modelResourceUri,
+            viewModelKey.Value,
             localMeasureCharacterWidthAndRowHeightElementId,
             countOfTestCharacters,
             CancellationToken.None));
@@ -1024,18 +1034,27 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     private void QueueCalculateVirtualizationResultBackgroundTask(
         TextEditorRenderBatch localCurrentRenderBatch)
     {
-        var model = GetModel();
-        var viewModel = GetViewModel();
+        var modelResourceUri = GetModel()?.ResourceUri;
+        var viewModelKey = GetViewModel()?.ViewModelKey;
 
-        if (model is null || viewModel is null)
+        if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        TextEditorService.Post(
-            TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
-                model.ResourceUri,
-                viewModel.ViewModelKey,
-                viewModel.MostRecentTextEditorMeasurements,
-                CancellationToken.None));
+        TextEditorService.Post(async editContext =>
+        {
+            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
+
+            if (modelModifier is null || viewModelModifier is null)
+                return;
+
+            await TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
+                    modelModifier.ResourceUri,
+                    viewModelModifier.ViewModel.ViewModelKey,
+                    viewModelModifier.ViewModel.MostRecentTextEditorMeasurements,
+                    CancellationToken.None)
+                .Invoke(editContext);
+        });
     }
 
     public void Dispose()
