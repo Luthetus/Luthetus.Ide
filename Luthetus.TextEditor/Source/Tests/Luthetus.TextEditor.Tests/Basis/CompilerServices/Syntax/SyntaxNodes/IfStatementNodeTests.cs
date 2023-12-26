@@ -1,5 +1,11 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
@@ -8,66 +14,86 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 /// </summary>
 public class IfStatementNodeTests
 {
-	/// <summary>
-	/// <see cref="IfStatementNode(RazorLib.CompilerServices.Syntax.SyntaxTokens.KeywordToken, RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression.IExpressionNode, RazorLib.CompilerServices.CodeBlockNode?)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="IfStatementNode(KeywordToken, IExpressionNode, RazorLib.CompilerServices.CodeBlockNode?)"/>
+    /// <br/>----<br/>
+    /// <see cref="IfStatementNode.KeywordToken"/>
+    /// <see cref="IfStatementNode.ExpressionNode"/>
+    /// <see cref="IfStatementNode.IfStatementBodyCodeBlockNode"/>
+    /// <see cref="IfStatementNode.ChildBag"/>
+    /// <see cref="IfStatementNode.IsFabricated"/>
+    /// <see cref="IfStatementNode.SyntaxKind"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
-	}
+        var sourceText = @"if (true)
+{
+}";
 
-	/// <summary>
-	/// <see cref="IfStatementNode.KeywordToken"/>
-	/// </summary>
-	[Fact]
-	public void KeywordToken()
-	{
-		throw new NotImplementedException();
-	}
+        KeywordToken ifKeywordToken;
+        {
+            var ifKeywordText = "if";
+            int indexOfIfKeywordText = sourceText.IndexOf(ifKeywordText);
 
-	/// <summary>
-	/// <see cref="IfStatementNode.ExpressionNode"/>
-	/// </summary>
-	[Fact]
-	public void ExpressionNode()
-	{
-		throw new NotImplementedException();
-	}
+            ifKeywordToken = new KeywordToken(new TextEditorTextSpan(
+                indexOfIfKeywordText,
+                indexOfIfKeywordText + ifKeywordText.Length,
+                0,
+                new ResourceUri("/unitTesting.txt"),
+                sourceText),
+                SyntaxKind.IfTokenKeyword);
+        }
 
-	/// <summary>
-	/// <see cref="IfStatementNode.IfStatementBodyCodeBlockNode"/>
-	/// </summary>
-	[Fact]
-	public void IfStatementBodyCodeBlockNode()
-	{
-		throw new NotImplementedException();
-	}
+        IExpressionNode expressionNode;
+        {
+            var trueKeywordText = "true";
+            int indexOfTrueKeywordText = sourceText.IndexOf(trueKeywordText);
+            var trueKeyword = new KeywordToken(new TextEditorTextSpan(
+                indexOfTrueKeywordText,
+                indexOfTrueKeywordText + trueKeywordText.Length,
+                0,
+                new ResourceUri("/unitTesting.txt"),
+                sourceText),
+                SyntaxKind.TrueTokenKeyword);
 
-	/// <summary>
-	/// <see cref="IfStatementNode.ChildBag"/>
-	/// </summary>
-	[Fact]
-	public void ChildBag()
-	{
-		throw new NotImplementedException();
-	}
+            TypeClauseNode boolTypeClauseNode;
+            {
+                var boolTypeIdentifier = new KeywordToken(
+                    TextEditorTextSpan.FabricateTextSpan("bool"),
+                    SyntaxKind.BoolTokenKeyword);
 
-	/// <summary>
-	/// <see cref="IfStatementNode.IsFabricated"/>
-	/// </summary>
-	[Fact]
-	public void IsFabricated()
-	{
-		throw new NotImplementedException();
-	}
+                boolTypeClauseNode = new TypeClauseNode(
+                    boolTypeIdentifier,
+                    typeof(bool),
+                    null);
+            }
 
-	/// <summary>
-	/// <see cref="IfStatementNode.SyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
-	{
-		throw new NotImplementedException();
+            expressionNode = new LiteralExpressionNode(
+                trueKeyword,
+                boolTypeClauseNode);
+        }
+
+        CodeBlockNode ifStatementBodyCodeBlockNode = new(ImmutableArray<ISyntax>.Empty);
+
+        var ifStatementNode = new IfStatementNode(
+            ifKeywordToken,
+            expressionNode,
+            ifStatementBodyCodeBlockNode);
+
+        Assert.Equal(ifKeywordToken, ifStatementNode.KeywordToken);
+        Assert.Equal(expressionNode, ifStatementNode.ExpressionNode);
+        Assert.Equal(ifStatementBodyCodeBlockNode, ifStatementNode.IfStatementBodyCodeBlockNode);
+
+        Assert.Equal(3, ifStatementNode.ChildBag.Length);
+        Assert.Equal(ifKeywordToken, ifStatementNode.ChildBag[0]);
+        Assert.Equal(expressionNode, ifStatementNode.ChildBag[1]);
+        Assert.Equal(ifStatementBodyCodeBlockNode, ifStatementNode.ChildBag[2]);
+
+        Assert.False(ifStatementNode.IsFabricated);
+
+        Assert.Equal(
+            SyntaxKind.IfStatementNode,
+            ifStatementNode.SyntaxKind);
 	}
 }

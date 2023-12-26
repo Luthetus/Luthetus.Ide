@@ -183,6 +183,7 @@ public enum SyntaxKind
     PreprocessorLibraryReferenceStatementNode,
     TypeDefinitionNode,
     TypeClauseNode,
+    ConstraintNode,
     VariableDeclarationNode,
     VariableReferenceNode,
     VariableAssignmentExpressionNode,
