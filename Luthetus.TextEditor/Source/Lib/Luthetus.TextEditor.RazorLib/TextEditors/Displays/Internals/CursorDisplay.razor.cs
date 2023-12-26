@@ -7,6 +7,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -120,21 +121,54 @@ public partial class CursorDisplay : ComponentBase, IDisposable
         if (rowIndex > model.RowCount - 1)
             rowIndex = model.RowCount - 1;
 
-        var columnIndex = Cursor.ColumnIndex;
-
-        var rowLength = model.GetLengthOfRow(rowIndex);
-
-        // TODO: (2023-12-13) Writing immutability for text editor
-        // 
         // Ensure cursor stays within the column count index range for the current row
-        //if (columnIndex > rowLength)
-        //    columnIndex = rowLength - 1;
+        {
+            var columnIndex = Cursor.ColumnIndex;
 
-        //rowIndex = Math.Max(0, rowIndex);
-        //columnIndex = Math.Max(0, columnIndex);
+            var rowLength = model.GetLengthOfRow(rowIndex);
 
-        //Cursor.RowIndex = rowIndex;
-        //Cursor.ColumnIndex = columnIndex;
+            if (columnIndex > rowLength)
+                columnIndex = rowLength - 1;
+
+            rowIndex = Math.Max(0, rowIndex);
+            columnIndex = Math.Max(0, columnIndex);
+
+            var modelResourceUri = RenderBatch.Model!.ResourceUri;
+            var viewModelKey = RenderBatch.ViewModel!.ViewModelKey;
+
+            if (Cursor.RowIndex != rowIndex || Cursor.ColumnIndex != columnIndex)
+            {
+                TextEditorService.Post(editContext =>
+                {
+                    var modelModifier = editContext.GetModelModifier(modelResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+                    if (modelModifier is null || viewModelModifier is null)
+                        return Task.CompletedTask;
+
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                    if (primaryCursorModifier is null)
+                        return Task.CompletedTask;
+
+                    var columnIndex = Cursor.ColumnIndex;
+
+                    var rowLength = modelModifier.GetLengthOfRow(rowIndex);
+
+                    if (columnIndex > rowLength)
+                        columnIndex = rowLength - 1;
+
+                    rowIndex = Math.Max(0, rowIndex);
+                    columnIndex = Math.Max(0, columnIndex);
+
+                    primaryCursorModifier.RowIndex = rowIndex;
+                    primaryCursorModifier.ColumnIndex = columnIndex;
+
+                    return Task.CompletedTask;
+                });
+            }
+        }
 
         if (Cursor.ShouldRevealCursor)
         {
