@@ -81,55 +81,10 @@ public class TextEditorModelStateReducerTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModelState.Reducer.ReduceUndoEditAction(TextEditorModelState, TextEditorModelState.UndoEditAction)"/>
-	/// </summary>
-	[Fact]
-	public void ReduceUndoEditAction()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorModelState.Reducer.ReduceRedoEditAction(TextEditorModelState, TextEditorModelState.RedoEditAction)"/>
-	/// </summary>
-	[Fact]
-	public void ReduceRedoEditAction()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorModelState.Reducer.ReduceReloadAction(TextEditorModelState, TextEditorModelState.ReloadAction)"/>
-	/// </summary>
-	[Fact]
-	public void ReduceReloadAction()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorModelState.Reducer.ReduceSetResourceDataAction(TextEditorModelState, TextEditorModelState.SetResourceDataAction)"/>
-	/// </summary>
-	[Fact]
-	public void ReduceSetResourceDataAction()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
 	/// <see cref="TextEditorModelState.Reducer.ReduceDisposeAction(TextEditorModelState, TextEditorModelState.DisposeAction)"/>
 	/// </summary>
 	[Fact]
 	public void ReduceDisposeAction()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorModelState.Reducer.ReduceSetUsingRowEndingKindAction(TextEditorModelState, TextEditorModelState.SetUsingRowEndingKindAction)"/>
-	/// </summary>
-	[Fact]
-	public void ReduceSetUsingRowEndingKindAction()
 	{
 		throw new NotImplementedException();
 	}

@@ -21,39 +21,10 @@ public partial class TextEditorModelState
             ResourceUri ResourceUri,
             TextEditorPresentationModel PresentationModel);
     
-    public record UndoEditAction(
-            ITextEditorEditContext EditContext,
-            ResourceUri ResourceUri)
-        : AuthenticatedAction(EditContext.AuthenticatedActionKey);
-
-    public record RedoEditAction(
-            ITextEditorEditContext EditContext,
-            ResourceUri ResourceUri)
-        : AuthenticatedAction(EditContext.AuthenticatedActionKey);
-
     public record CalculatePresentationModelAction(
             ITextEditorEditContext EditContext,
             ResourceUri ResourceUri,
             Key<TextEditorPresentationModel> PresentationKey)
-        : AuthenticatedAction(EditContext.AuthenticatedActionKey);
-
-    public record ReloadAction(
-            ITextEditorEditContext EditContext,
-            ResourceUri ResourceUri,
-            string Content,
-            DateTime ResourceLastWriteTime)
-        : AuthenticatedAction(EditContext.AuthenticatedActionKey);
-
-    public record SetResourceDataAction(
-            ITextEditorEditContext EditContext,
-            ResourceUri ResourceUri,
-            DateTime ResourceLastWriteTime)
-        : AuthenticatedAction(EditContext.AuthenticatedActionKey);
-
-    public record SetUsingRowEndingKindAction(
-            ITextEditorEditContext EditContext,
-            ResourceUri ResourceUri,
-            RowEndingKind RowEndingKind)
         : AuthenticatedAction(EditContext.AuthenticatedActionKey);
 
     public record KeyboardEventAction(

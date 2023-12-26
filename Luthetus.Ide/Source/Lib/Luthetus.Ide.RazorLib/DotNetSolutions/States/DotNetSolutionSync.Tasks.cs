@@ -65,11 +65,11 @@ public partial class DotNetSolutionSync
 
         if (solutionTextEditorModel is not null)
         {
-            Dispatcher.Dispatch(new TextEditorModelState.ReloadAction(
-                null,
-                solutionTextEditorModel.ResourceUri,
-                outDotNetSolutionModel.SolutionFileContents,
-                DateTime.UtcNow));
+            _textEditorService.Post(
+                _textEditorService.ModelApi.ReloadFactory(
+                    solutionTextEditorModel.ResourceUri,
+                    outDotNetSolutionModel.SolutionFileContents,
+                    DateTime.UtcNow));
         }
 
         // TODO: Putting a hack for now to overwrite if somehow model was registered already
