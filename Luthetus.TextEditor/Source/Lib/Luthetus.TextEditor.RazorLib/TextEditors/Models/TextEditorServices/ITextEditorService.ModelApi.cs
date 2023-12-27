@@ -103,7 +103,7 @@ public partial interface ITextEditorService
         /// the cursor key would come back as the cursor not existing.
         /// </summary>
         public TextEditorEdit HandleKeyboardEventUnsafeFactory(
-            KeyboardEventUnsafeAction keyboardEventUnsafeAction,
+            KeyboardEventAction keyboardEventAction,
             TextEditorCursorModifierBag cursorModifierBag);
 
         public TextEditorEdit DeleteTextByRangeFactory(
@@ -402,17 +402,17 @@ public partial interface ITextEditorService
         }
 
         public TextEditorEdit HandleKeyboardEventUnsafeFactory(
-            KeyboardEventUnsafeAction keyboardEventUnsafeAction,
+            KeyboardEventAction keyboardEventAction,
             TextEditorCursorModifierBag cursorModifierBag)
         {
             return editContext =>
             {
-                keyboardEventUnsafeAction = keyboardEventUnsafeAction with
-                {
-                    CursorModifierBag = cursorModifierBag,
-                };
+                var modelModifier = editContext.GetModelModifier(keyboardEventAction.ResourceUri);
 
-                _dispatcher.Dispatch(keyboardEventUnsafeAction);
+                if (modelModifier is null)
+                    return Task.CompletedTask;
+
+                modelModifier.PerformEditTextEditorAction(keyboardEventAction, cursorModifierBag);
                 return Task.CompletedTask;
             };
         }

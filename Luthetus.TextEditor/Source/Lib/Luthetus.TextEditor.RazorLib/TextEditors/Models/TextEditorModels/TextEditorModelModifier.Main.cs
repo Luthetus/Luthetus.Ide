@@ -907,49 +907,32 @@ public partial class TextEditorModelModifier
         }
         else
         {
-            var primaryCursor = cursorModifierBag.CursorModifierBag.FirstOrDefault(x => x.IsPrimaryCursor);
-
-            if (primaryCursor is null)
-                return;
-
-            /*
-             * TODO: 2022-11-18 one must not use the UserCursor while
-             * calculating but instead make a copy of the mutable cursor
-             * by looking at the snapshot and mutate that local 'userCursor'
-             * then once the transaction is done offer the 'userCursor' to the
-             * user interface such that it can choose to move the actual user cursor
-             * to that position
-             */
-
-            // TODO: start making a mutable copy of their immutable cursor snapshot
-            // so if the user moves the cursor
-            // while calculating nothing can go wrong causing exception
-            //
-            // See the var localCursor in this contiguous code block.
-            //
-            // var localCursor = new TextEditorCursor(
-            //     (primaryCursorSnapshot.RowIndex, primaryCursorSnapshot.ColumnIndex), 
-            //     true);
-
-            if (TextEditorSelectionHelper.HasSelectedText(primaryCursor))
+            for (int i = cursorModifierBag.CursorModifierBag.Count - 1; i >= 0; i--)
             {
-                PerformDeletions(
-                    new KeyboardEventAction(
-                        keyboardEventAction.EditContext,
-                        keyboardEventAction.ResourceUri,
-                        keyboardEventAction.ViewModelKey,
-                        new KeyboardEventArgs
-                        {
-                            Code = KeyboardKeyFacts.MetaKeys.DELETE,
-                            Key = KeyboardKeyFacts.MetaKeys.DELETE,
-                        },
-                        CancellationToken.None),
-                    cursorModifierBag);
+                var cursor = cursorModifierBag.CursorModifierBag[i];
+
+                var singledCursorModifierBag = new TextEditorCursorModifierBag(
+                    cursorModifierBag.ViewModelKey,
+                    new List<TextEditorCursorModifier> { cursor });
+
+                if (TextEditorSelectionHelper.HasSelectedText(cursor))
+                {
+                    PerformDeletions(
+                        new KeyboardEventAction(
+                            keyboardEventAction.EditContext,
+                            keyboardEventAction.ResourceUri,
+                            keyboardEventAction.ViewModelKey,
+                            new KeyboardEventArgs
+                            {
+                                Code = KeyboardKeyFacts.MetaKeys.DELETE,
+                                Key = KeyboardKeyFacts.MetaKeys.DELETE,
+                            },
+                            CancellationToken.None),
+                        singledCursorModifierBag);
+                }
+
+                PerformInsertions(keyboardEventAction, singledCursorModifierBag);
             }
-
-            var innerCursorBag = cursorModifierBag;
-
-            PerformInsertions(keyboardEventAction, cursorModifierBag);
         }
     }
 
@@ -957,80 +940,57 @@ public partial class TextEditorModelModifier
         InsertTextAction insertTextAction,
         TextEditorCursorModifierBag cursorModifierBag)
     {
-        var primaryCursor = cursorModifierBag.CursorModifierBag.FirstOrDefault(x => x.IsPrimaryCursor);
+        var localContent = insertTextAction.Content.Replace("\r\n", "\n");
 
-        if (primaryCursor is null)
-            return;
-
-        /*
-         * TODO: 2022-11-18 one must not use the UserCursor while
-         * calculating but instead make a copy of the mutable cursor
-         * by looking at the snapshot and mutate that local 'userCursor'
-         * then once the transaction is done offer the 'userCursor' to the
-         * user interface such that it can choose to move the actual user cursor
-         * to that position
-         */
-
-        // TODO: start making a mutable copy of their immutable cursor snapshot
-        // so if the user moves the cursor
-        // while calculating nothing can go wrong causing exception
-        //
-        // See the var localCursor in this contiguous code block.
-        //
-        // var localCursor = new TextEditorCursor(
-        //     (primaryCursorSnapshot.RowIndex, primaryCursorSnapshot.ColumnIndex), 
-        //     true);
-
-        if (TextEditorSelectionHelper.HasSelectedText(primaryCursor))
+        for (int i = cursorModifierBag.CursorModifierBag.Count - 1; i >= 0; i--)
         {
-            PerformDeletions(
-                new KeyboardEventAction(
+            var cursor = cursorModifierBag.CursorModifierBag[i];
+
+            var singledCursorModifierBag = new TextEditorCursorModifierBag(
+                cursorModifierBag.ViewModelKey,
+                new List<TextEditorCursorModifier> { cursor });
+
+            if (TextEditorSelectionHelper.HasSelectedText(cursor))
+            {
+                PerformDeletions(
+                    new KeyboardEventAction(
+                        insertTextAction.EditContext,
+                        insertTextAction.ResourceUri,
+                        insertTextAction.ViewModelKey,
+                        new KeyboardEventArgs
+                        {
+                            Code = KeyboardKeyFacts.MetaKeys.DELETE,
+                            Key = KeyboardKeyFacts.MetaKeys.DELETE,
+                        },
+                        CancellationToken.None),
+                    singledCursorModifierBag);
+            }
+
+            foreach (var character in localContent)
+            {
+                // TODO: This needs to be rewritten everything should be inserted at the same time not a foreach loop insertion for each character
+                var code = character switch
+                {
+                    '\r' => KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE,
+                    '\n' => KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE,
+                    '\t' => KeyboardKeyFacts.WhitespaceCodes.TAB_CODE,
+                    ' ' => KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE,
+                    _ => character.ToString(),
+                };
+
+                var keyboardEventTextEditorModelAction = new KeyboardEventAction(
                     insertTextAction.EditContext,
                     insertTextAction.ResourceUri,
                     insertTextAction.ViewModelKey,
                     new KeyboardEventArgs
                     {
-                        Code = KeyboardKeyFacts.MetaKeys.DELETE,
-                        Key = KeyboardKeyFacts.MetaKeys.DELETE,
+                        Code = code,
+                        Key = character.ToString(),
                     },
-                    CancellationToken.None),
-                new TextEditorCursorModifierBag(
-                    cursorModifierBag.ViewModelKey,
-                    new() { primaryCursor }));
-        }
+                    CancellationToken.None);
 
-        var localContent = insertTextAction.Content.Replace("\r\n", "\n");
-
-        foreach (var character in localContent)
-        {
-            // TODO: This needs to be rewritten everything should be inserted at the same time not a foreach loop insertion for each character
-            //
-            // Need innerCursorSnapshots because need
-            // after every loop of the foreach that the
-            // cursor snapshots are updated
-            var innerCursorModifierBag = cursorModifierBag;
-
-            var code = character switch
-            {
-                '\r' => KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE,
-                '\n' => KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE,
-                '\t' => KeyboardKeyFacts.WhitespaceCodes.TAB_CODE,
-                ' ' => KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE,
-                _ => character.ToString(),
-            };
-
-            var keyboardEventTextEditorModelAction = new KeyboardEventAction(
-                insertTextAction.EditContext,
-                insertTextAction.ResourceUri,
-                insertTextAction.ViewModelKey,
-                new KeyboardEventArgs
-                {
-                    Code = code,
-                    Key = character.ToString(),
-                },
-                CancellationToken.None);
-
-            PerformEditTextEditorAction(keyboardEventTextEditorModelAction, innerCursorModifierBag);
+                PerformEditTextEditorAction(keyboardEventTextEditorModelAction, singledCursorModifierBag);
+            }
         }
     }
 
@@ -1059,26 +1019,30 @@ public partial class TextEditorModelModifier
         DeleteTextByRangeAction deleteTextByRangeAction,
         TextEditorCursorModifierBag cursorModifierBag)
     {
-        // TODO: This needs to be rewritten everything should be deleted at the same time not a foreach loop for each character
-        for (var i = 0; i < deleteTextByRangeAction.Count; i++)
+        for (int cursorIndex = cursorModifierBag.CursorModifierBag.Count - 1; cursorIndex >= 0; cursorIndex--)
         {
-            // Need innerCursorSnapshots because need
-            // after every loop of the foreach that the
-            // cursor snapshots are updated
-            var innerCursorModifierBag = cursorModifierBag;
+            var cursor = cursorModifierBag.CursorModifierBag[cursorIndex];
 
-            var keyboardEventTextEditorModelAction = new KeyboardEventAction(
-                deleteTextByRangeAction.EditContext,
-                deleteTextByRangeAction.ResourceUri,
-                deleteTextByRangeAction.ViewModelKey,
-                new KeyboardEventArgs
-                {
-                    Code = KeyboardKeyFacts.MetaKeys.DELETE,
-                    Key = KeyboardKeyFacts.MetaKeys.DELETE,
-                },
-                CancellationToken.None);
+            var singledCursorModifierBag = new TextEditorCursorModifierBag(
+                cursorModifierBag.ViewModelKey,
+                new List<TextEditorCursorModifier> { cursor });
 
-            PerformEditTextEditorAction(keyboardEventTextEditorModelAction, innerCursorModifierBag);
+            // TODO: This needs to be rewritten everything should be deleted at the same time not a foreach loop for each character
+            for (var deleteIndex = 0; deleteIndex < deleteTextByRangeAction.Count; deleteIndex++)
+            {
+                var keyboardEventTextEditorModelAction = new KeyboardEventAction(
+                    deleteTextByRangeAction.EditContext,
+                    deleteTextByRangeAction.ResourceUri,
+                    deleteTextByRangeAction.ViewModelKey,
+                    new KeyboardEventArgs
+                    {
+                        Code = KeyboardKeyFacts.MetaKeys.DELETE,
+                        Key = KeyboardKeyFacts.MetaKeys.DELETE,
+                    },
+                    CancellationToken.None);
+
+                PerformEditTextEditorAction(keyboardEventTextEditorModelAction, singledCursorModifierBag);
+            }
         }
     }
 

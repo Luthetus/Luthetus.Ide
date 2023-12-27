@@ -29,7 +29,6 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
-using System.Reflection;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 
@@ -352,9 +351,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
                 TextEditorService.Post(editContext =>
                 {
-                    var model = (TextEditorModel?)null;
-                    var viewModel = (TextEditorViewModel?)null;
-
                     var modelModifier = editContext.GetModelModifier(modelResourceUri);
                     var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
 

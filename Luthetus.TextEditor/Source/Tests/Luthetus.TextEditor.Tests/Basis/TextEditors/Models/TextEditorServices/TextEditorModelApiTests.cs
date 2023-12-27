@@ -341,10 +341,10 @@ public class TextEditorModelApiTests
 
         textEditorService.Post(editContext =>
             textEditorService.ModelApi.HandleKeyboardEventUnsafeFactory(
-                new TextEditorModelState.KeyboardEventUnsafeAction(
+                new TextEditorModelState.KeyboardEventAction(
                     editContext,
                     inModel.ResourceUri,
-                    cursorModifierBag,
+                    Key<TextEditorViewModel>.Empty,
                     keyboardEventArgs,
                     CancellationToken.None),
                 cursorModifierBag)
