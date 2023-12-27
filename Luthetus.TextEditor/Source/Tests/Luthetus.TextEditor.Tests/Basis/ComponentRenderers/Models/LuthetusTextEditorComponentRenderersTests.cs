@@ -1,5 +1,6 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
 namespace Luthetus.TextEditor.Tests.Basis.ComponentRenderers.Models;
 
@@ -8,30 +9,23 @@ namespace Luthetus.TextEditor.Tests.Basis.ComponentRenderers.Models;
 /// </summary>
 public class LuthetusTextEditorComponentRenderersTests
 {
-	/// <summary>
-	/// <see cref="LuthetusTextEditorComponentRenderers(Type, Type)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="LuthetusTextEditorComponentRenderers(Type, Type)"/>
+    /// <br/>----<br/>
+    /// <see cref="LuthetusTextEditorComponentRenderers.SymbolRendererType"/>
+    /// <see cref="LuthetusTextEditorComponentRenderers.DiagnosticRendererType"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
-	}
+		var symbolDisplay = typeof(TextEditorSymbolDisplay);
+		var diagnosticDisplay = typeof(TextEditorDiagnosticDisplay);
+		
+		var componentRenderers = new LuthetusTextEditorComponentRenderers(
+            symbolDisplay,
+            diagnosticDisplay);
 
-	/// <summary>
-	/// <see cref="LuthetusTextEditorComponentRenderers.SymbolRendererType"/>
-	/// </summary>
-	[Fact]
-	public void SymbolRendererType()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="LuthetusTextEditorComponentRenderers.DiagnosticRendererType"/>
-	/// </summary>
-	[Fact]
-	public void DiagnosticRendererType()
-	{
-		throw new NotImplementedException();
+		Assert.Equal(symbolDisplay, componentRenderers.SymbolRendererType);
+		Assert.Equal(diagnosticDisplay, componentRenderers.DiagnosticRendererType);
 	}
 }
