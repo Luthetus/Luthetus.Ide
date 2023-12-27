@@ -8,21 +8,22 @@ namespace Luthetus.TextEditor.Tests.Basis.Autocompletes.Models;
 /// </summary>
 public class WordAutocompleteServiceTests
 {
-	/// <summary>
-	/// <see cref="WordAutocompleteService(IAutocompleteIndexer)"/>
-	/// </summary>
-	[Fact]
-	public void Constructor()
+    /// <summary>
+    /// <see cref="WordAutocompleteService(WordAutocompleteIndexer)"/>
+	/// <br/>----<br/>
+    /// <see cref="WordAutocompleteService.GetAutocompleteOptions(string)"/>
+    /// </summary>
+    [Fact]
+	public async Task Constructor()
 	{
-		throw new NotImplementedException();
-	}
+		var wordAutocompleteIndexer = new WordAutocompleteIndexer();
+		var wordAutocompleteService = new WordAutocompleteService(wordAutocompleteIndexer);
 
-	/// <summary>
-	/// <see cref="WordAutocompleteService.GetAutocompleteOptions(string)"/>
-	/// </summary>
-	[Fact]
-	public void GetAutocompleteOptions()
-	{
-		throw new NotImplementedException();
+		var emptyResultBecauseNothingWasIndexedYet = wordAutocompleteService.GetAutocompleteOptions(string.Empty);
+        Assert.Empty(emptyResultBecauseNothingWasIndexedYet);
+
+        var wordToIndex = "apple";
+        await wordAutocompleteIndexer.IndexWordAsync(wordToIndex);
+        Assert.Single(wordAutocompleteService.GetAutocompleteOptions(string.Empty));
 	}
 }

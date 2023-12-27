@@ -5,7 +5,6 @@ using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.SearchEngines.Displays;
 using Luthetus.TextEditor.RazorLib.SearchEngines.Models;
 using Luthetus.TextEditor.RazorLib.Options.Displays;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Immutable;
 
@@ -17,9 +16,9 @@ public record LuthetusTextEditorOptions
     public ImmutableArray<ThemeRecord>? CustomThemeRecordBag { get; init; } = LuthetusTextEditorCustomThemeFacts.AllCustomThemesBag;
     public ThemeRecord InitialTheme { get; init; } = ThemeFacts.VisualStudioDarkThemeClone;
     /// <summary>Default value if left null is: <see cref="WordAutocompleteService"/></summary>
-    public Func<IServiceProvider, IAutocompleteService> AutocompleteServiceFactory { get; init; } = serviceProvider => new WordAutocompleteService(serviceProvider.GetRequiredService<IAutocompleteIndexer>());
+    public Func<IServiceProvider, IAutocompleteService> AutocompleteServiceFactory { get; init; } = serviceProvider => new WordAutocompleteService((WordAutocompleteIndexer)serviceProvider.GetRequiredService<IAutocompleteIndexer>());
     /// <summary>Default value if left null is: <see cref="WordAutocompleteIndexer"/></summary>
-    public Func<IServiceProvider, IAutocompleteIndexer> AutocompleteIndexerFactory { get; init; } = serviceProvider => new WordAutocompleteIndexer(serviceProvider.GetRequiredService<ITextEditorService>());
+    public Func<IServiceProvider, IAutocompleteIndexer> AutocompleteIndexerFactory { get; init; } = serviceProvider => new WordAutocompleteIndexer();
     public Type SettingsComponentRendererType { get; init; } = typeof(TextEditorSettings);
     public bool SettingsDialogComponentIsResizable { get; init; } = true;
     public Type FindComponentRendererType { get; init; } = typeof(TextEditorSearchEngineDisplay);
