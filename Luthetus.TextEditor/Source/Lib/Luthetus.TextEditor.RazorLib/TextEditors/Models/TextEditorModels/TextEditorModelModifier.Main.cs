@@ -206,16 +206,9 @@ public partial class TextEditorModelModifier
         throw new NotImplementedException();
     }
 
-    //////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////////////
-
     private void EnsureUndoPoint(TextEditKind textEditKind, string? otherTextEditKindIdentifier = null)
     {
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value
-        //
-        // When reading state, if the state had been 'null coallesce assigned' then the field will
-        // be read. Otherwise, the existing TextEditorModel's value will be read.
+        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
             _editBlocksBag ??= _textEditorModel.EditBlocksBag.ToList();
             _editBlockIndex ??= _textEditorModel.EditBlockIndex;
@@ -254,10 +247,7 @@ public partial class TextEditorModelModifier
         KeyboardEventAction keyboardEventAction,
         TextEditorCursorModifierBag cursorModifierBag)
     {
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value
-        //
-        // When reading state, if the state had been 'null coallesce assigned' then the field will
-        // be read. Otherwise, the existing TextEditorModel's value will be read.
+        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
             _contentBag ??= _textEditorModel.ContentBag.ToList();
             _rowEndingPositionsBag ??= _textEditorModel.RowEndingPositionsBag.ToList();
@@ -287,7 +277,6 @@ public partial class TextEditorModelModifier
                 var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
 
                 var lowerRowData = this.FindRowInformation(selectionBounds.lowerPositionIndexInclusive);
-
                 var lowerColumnIndex = selectionBounds.lowerPositionIndexInclusive - lowerRowData.rowStartPositionIndex;
 
                 // Move cursor to lower bound of text selection
@@ -334,7 +323,8 @@ public partial class TextEditorModelModifier
 
                 _contentBag.InsertRange(cursorPositionIndex, richCharacters);
 
-                RowEndingPositionsBag.Insert(cursorModifier.RowIndex,
+                RowEndingPositionsBag.Insert(
+                    cursorModifier.RowIndex,
                     (cursorPositionIndex + characterCountInserted, rowEndingKindToInsert));
 
                 MutateRowEndingKindCount(UsingRowEndingKind, 1);
@@ -453,10 +443,7 @@ public partial class TextEditorModelModifier
         KeyboardEventAction keyboardEventAction,
         TextEditorCursorModifierBag cursorModifierBag)
     {
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value
-        //
-        // When reading state, if the state had been 'null coallesce assigned' then the field will
-        // be read. Otherwise, the existing TextEditorModel's value will be read.
+        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
             _rowEndingPositionsBag ??= _textEditorModel.RowEndingPositionsBag.ToList();
             _tabKeyPositionsBag ??= _textEditorModel.TabKeyPositionsBag.ToList();
@@ -648,7 +635,6 @@ public partial class TextEditorModelModifier
                 var endingPositionIndex = cursorPositionIndex + modifyPositionIndexBy;
 
                 var columnIndex = endingPositionIndex - startOfCurrentRowPositionIndex;
-
                 var rowIndex = cursorModifier.RowIndex;
 
                 cursorModifier.RowIndex = rowIndex + modifyRowsBy;
@@ -737,10 +723,7 @@ public partial class TextEditorModelModifier
 
     private void MutateRowEndingKindCount(RowEndingKind rowEndingKind, int changeBy)
     {
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value
-        //
-        // When reading state, if the state had been 'null coallesce assigned' then the field will
-        // be read. Otherwise, the existing TextEditorModel's value will be read.
+        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
             _rowEndingKindCountsBag ??= _textEditorModel.RowEndingKindCountsBag.ToList();
         }
@@ -755,10 +738,7 @@ public partial class TextEditorModelModifier
 
     private void CheckRowEndingPositions(bool setUsingRowEndingKind)
     {
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value
-        //
-        // When reading state, if the state had been 'null coallesce assigned' then the field will
-        // be read. Otherwise, the existing TextEditorModel's value will be read.
+        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
             _rowEndingKindCountsBag ??= _textEditorModel.RowEndingKindCountsBag.ToList();
             _onlyRowEndingKind ??= _textEditorModel.OnlyRowEndingKind;
@@ -797,10 +777,7 @@ public partial class TextEditorModelModifier
 
     public void ModifyContent(string content)
     {
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value
-        //
-        // When reading state, if the state had been 'null coallesce assigned' then the field will
-        // be read. Otherwise, the existing TextEditorModel's value will be read.
+        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
             _mostCharactersOnASingleRowTuple ??= _textEditorModel.MostCharactersOnASingleRowTuple;
             _rowEndingPositionsBag ??= _textEditorModel.RowEndingPositionsBag.ToList();
@@ -1020,10 +997,7 @@ public partial class TextEditorModelModifier
 
     public void PerformRegisterPresentationModelAction(RegisterPresentationModelAction registerPresentationModelAction)
     {
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value
-        //
-        // When reading state, if the state had been 'null coallesce assigned' then the field will
-        // be read. Otherwise, the existing TextEditorModel's value will be read.
+        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
             _presentationModelsBag ??= _textEditorModel.PresentationModelsBag.ToList();
         }
@@ -1034,10 +1008,7 @@ public partial class TextEditorModelModifier
 
     public void PerformCalculatePresentationModelAction(CalculatePresentationModelAction calculatePresentationModelAction)
     {
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value
-        //
-        // When reading state, if the state had been 'null coallesce assigned' then the field will
-        // be read. Otherwise, the existing TextEditorModel's value will be read.
+        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
             _presentationModelsBag ??= _textEditorModel.PresentationModelsBag.ToList();
         }
@@ -1055,10 +1026,7 @@ public partial class TextEditorModelModifier
 
     public void ClearEditBlocks()
     {
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value
-        //
-        // When reading state, if the state had been 'null coallesce assigned' then the field will
-        // be read. Otherwise, the existing TextEditorModel's value will be read.
+        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
             _editBlocksBag ??= _textEditorModel.EditBlocksBag.ToList();
             _editBlockIndex ??= _textEditorModel.EditBlockIndex;
@@ -1071,10 +1039,7 @@ public partial class TextEditorModelModifier
     /// <summary>The "if (EditBlockIndex == _editBlocksPersisted.Count)"<br/><br/>Is done because the active EditBlock is not yet persisted.<br/><br/>The active EditBlock is instead being 'created' as the user continues to make edits of the same <see cref="TextEditKind"/><br/><br/>For complete clarity, this comment refers to one possibly expecting to see "if (EditBlockIndex == _editBlocksPersisted.Count - 1)"</summary>
     public void UndoEdit()
     {
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value
-        //
-        // When reading state, if the state had been 'null coallesce assigned' then the field will
-        // be read. Otherwise, the existing TextEditorModel's value will be read.
+        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
             _editBlocksBag ??= _textEditorModel.EditBlocksBag.ToList();
             _editBlockIndex ??= _textEditorModel.EditBlockIndex;
@@ -1085,9 +1050,8 @@ public partial class TextEditorModelModifier
 
         if (EditBlockIndex == EditBlocksBag.Count)
         {
-            // If the edit block is pending then persist it
-            // before reverting back to the previous persisted edit block.
-
+            // If the edit block is pending then persist it before
+            // reverting back to the previous persisted edit block.
             EnsureUndoPoint(TextEditKind.ForcePersistEditBlock);
             _editBlockIndex--;
         }
@@ -1101,10 +1065,7 @@ public partial class TextEditorModelModifier
 
     public void RedoEdit()
     {
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value
-        //
-        // When reading state, if the state had been 'null coallesce assigned' then the field will
-        // be read. Otherwise, the existing TextEditorModel's value will be read.
+        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
             _editBlocksBag ??= _textEditorModel.EditBlocksBag.ToList();
             _editBlockIndex ??= _textEditorModel.EditBlockIndex;
