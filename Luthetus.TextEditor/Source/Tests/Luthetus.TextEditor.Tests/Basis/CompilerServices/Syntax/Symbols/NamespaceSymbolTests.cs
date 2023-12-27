@@ -1,5 +1,7 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.Symbols;
 
@@ -8,39 +10,21 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.Symbols;
 /// </summary>
 public class NamespaceSymbolTests
 {
-	/// <summary>
-	/// <see cref="NamespaceSymbol(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="NamespaceSymbol(TextEditorTextSpan)"/>
+    /// <br/>----<br/>
+    /// <see cref="NamespaceSymbol.TextSpan"/>
+    /// <see cref="NamespaceSymbol.SymbolKindString"/>
+    /// <see cref="NamespaceSymbol.SyntaxKind"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
-	{
-		throw new NotImplementedException();
-	}
+    {
+        var textSpan = TextEditorTextSpan.FabricateTextSpan("Luthetus");
+        var namespaceSymbol = new NamespaceSymbol(textSpan);
 
-	/// <summary>
-	/// <see cref="NamespaceSymbol.TextSpan"/>
-	/// </summary>
-	[Fact]
-	public void TextSpan()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="NamespaceSymbol.SymbolKindString"/>
-	/// </summary>
-	[Fact]
-	public void SymbolKindString()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="NamespaceSymbol.SyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
-	{
-		throw new NotImplementedException();
-	}
+        Assert.Equal(textSpan, namespaceSymbol.TextSpan);
+        Assert.Equal(SyntaxKind.NamespaceSymbol, namespaceSymbol.SyntaxKind);
+        Assert.Equal(namespaceSymbol.SyntaxKind.ToString(), namespaceSymbol.SymbolKindString);
+    }
 }

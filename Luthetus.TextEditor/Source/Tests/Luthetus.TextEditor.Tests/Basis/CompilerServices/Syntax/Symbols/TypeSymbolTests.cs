@@ -1,5 +1,7 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.Symbols;
 
@@ -8,39 +10,20 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.Symbols;
 /// </summary>
 public class TypeSymbolTests
 {
-	/// <summary>
-	/// <see cref="TypeSymbol(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="TypeSymbol(TextEditorTextSpan)"/>
+    /// <see cref="TypeSymbol.TextSpan"/>
+    /// <see cref="TypeSymbol.SymbolKindString"/>
+    /// <see cref="TypeSymbol.SyntaxKind"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
-	}
+        var textSpan = TextEditorTextSpan.FabricateTextSpan("$");
+        var typeSymbol = new TypeSymbol(textSpan);
 
-	/// <summary>
-	/// <see cref="TypeSymbol.TextSpan"/>
-	/// </summary>
-	[Fact]
-	public void TextSpan()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TypeSymbol.SymbolKindString"/>
-	/// </summary>
-	[Fact]
-	public void SymbolKindString()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TypeSymbol.SyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
-	{
-		throw new NotImplementedException();
-	}
+        Assert.Equal(textSpan, typeSymbol.TextSpan);
+        Assert.Equal(SyntaxKind.TypeSymbol, typeSymbol.SyntaxKind);
+        Assert.Equal(typeSymbol.SyntaxKind.ToString(), typeSymbol.SymbolKindString);
+    }
 }

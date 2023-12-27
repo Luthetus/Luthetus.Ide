@@ -1,5 +1,7 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.Symbols;
 
@@ -8,39 +10,21 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.Symbols;
 /// </summary>
 public class FunctionSymbolTests
 {
-	/// <summary>
-	/// <see cref="FunctionSymbol(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="FunctionSymbol(TextEditorTextSpan)"/>
+    /// <br/>----<br/>
+    /// <see cref="FunctionSymbol.TextSpan"/>
+    /// <see cref="FunctionSymbol.SymbolKindString"/>
+    /// <see cref="FunctionSymbol.SyntaxKind"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
-	}
+        var textSpan = TextEditorTextSpan.FabricateTextSpan("MyMethod");
+        var functionSymbol = new FunctionSymbol(textSpan);
 
-	/// <summary>
-	/// <see cref="FunctionSymbol.TextSpan"/>
-	/// </summary>
-	[Fact]
-	public void TextSpan()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="FunctionSymbol.SymbolKindString"/>
-	/// </summary>
-	[Fact]
-	public void SymbolKindString()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="FunctionSymbol.SyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
-	{
-		throw new NotImplementedException();
+        Assert.Equal(textSpan, functionSymbol.TextSpan);
+        Assert.Equal(SyntaxKind.FunctionSymbol, functionSymbol.SyntaxKind);
+        Assert.Equal(functionSymbol.SyntaxKind.ToString(), functionSymbol.SymbolKindString);
 	}
 }
