@@ -114,60 +114,63 @@ public partial class CursorDisplay : ComponentBase, IDisposable
             _previouslyObservedCursorDisplayId = CursorDisplayId;
         }
 
-        var rowIndex = Cursor.RowIndex;
-
+        // TODO: This code block seems to bug out 'enter' keystrokes...
+        // ...I'm commenting it out for now, but I am still investigating the issue (2023-12-26)
+        //
+        // var rowIndex = Cursor.RowIndex;
+        //
         // Ensure cursor stays within the row count index range
-        if (rowIndex > model.RowCount - 1)
-            rowIndex = model.RowCount - 1;
-
+        // if (rowIndex > model.RowCount - 1)
+        //    rowIndex = model.RowCount - 1;
+        //
         // Ensure cursor stays within the column count index range for the current row
-        {
-            var columnIndex = Cursor.ColumnIndex;
-
-            var rowLength = model.GetLengthOfRow(rowIndex);
-
-            if (columnIndex > rowLength)
-                columnIndex = rowLength - 1;
-
-            rowIndex = Math.Max(0, rowIndex);
-            columnIndex = Math.Max(0, columnIndex);
-
-            var modelResourceUri = RenderBatch.Model!.ResourceUri;
-            var viewModelKey = RenderBatch.ViewModel!.ViewModelKey;
-
-            if (Cursor.RowIndex != rowIndex || Cursor.ColumnIndex != columnIndex)
-            {
-                TextEditorService.Post(editContext =>
-                {
-                    var modelModifier = editContext.GetModelModifier(modelResourceUri);
-                    var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-                    if (modelModifier is null || viewModelModifier is null)
-                        return Task.CompletedTask;
-
-                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
-                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
-
-                    if (primaryCursorModifier is null)
-                        return Task.CompletedTask;
-
-                    var columnIndex = Cursor.ColumnIndex;
-
-                    var rowLength = modelModifier.GetLengthOfRow(rowIndex);
-
-                    if (columnIndex > rowLength)
-                        columnIndex = rowLength - 1;
-
-                    rowIndex = Math.Max(0, rowIndex);
-                    columnIndex = Math.Max(0, columnIndex);
-
-                    primaryCursorModifier.RowIndex = rowIndex;
-                    primaryCursorModifier.ColumnIndex = columnIndex;
-
-                    return Task.CompletedTask;
-                });
-            }
-        }
+        // {
+        //    var columnIndex = Cursor.ColumnIndex;
+        //
+        //    var rowLength = model.GetLengthOfRow(rowIndex);
+        //
+        //    if (columnIndex > rowLength)
+        //        columnIndex = rowLength - 1;
+        //
+        //    rowIndex = Math.Max(0, rowIndex);
+        //    columnIndex = Math.Max(0, columnIndex);
+        //
+        //    var modelResourceUri = RenderBatch.Model!.ResourceUri;
+        //    var viewModelKey = RenderBatch.ViewModel!.ViewModelKey;
+        //
+        //    if (Cursor.RowIndex != rowIndex || Cursor.ColumnIndex != columnIndex)
+        //    {
+        //        TextEditorService.Post(editContext =>
+        //        {
+        //            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+        //            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+        //
+        //            if (modelModifier is null || viewModelModifier is null)
+        //                return Task.CompletedTask;
+        //
+        //            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+        //            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+        //
+        //            if (primaryCursorModifier is null)
+        //                return Task.CompletedTask;
+        //
+        //            var columnIndex = primaryCursorModifier.ColumnIndex;
+        //
+        //            var rowLength = modelModifier.GetLengthOfRow(rowIndex);
+        //
+        //            if (columnIndex > rowLength)
+        //                columnIndex = rowLength - 1;
+        //
+        //            rowIndex = Math.Max(0, rowIndex);
+        //            columnIndex = Math.Max(0, columnIndex);
+        //
+        //            primaryCursorModifier.RowIndex = rowIndex;
+        //            primaryCursorModifier.ColumnIndex = columnIndex;
+        //
+        //            return Task.CompletedTask;
+        //        });
+        //    }
+        // }
 
         if (Cursor.ShouldRevealCursor)
         {

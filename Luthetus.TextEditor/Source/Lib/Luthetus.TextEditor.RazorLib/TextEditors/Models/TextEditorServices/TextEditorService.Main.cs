@@ -115,16 +115,9 @@ public partial class TextEditorService : ITextEditorService
 
                 await edit.Invoke(editContext);
 
-                foreach (var modelModifier in editContext.ModelCache.Values)
-                {
-                    if (modelModifier is null)
-                        continue;
-
-                    _dispatcher.Dispatch(new TextEditorModelState.SetModelAction(
-                        editContext,
-                        modelModifier));
-                }
-
+                // One must update the ViewModel first.
+                // If a model is updated first, then the ViewModel UI is
+                // likely to complain that the cursor is in a bad place.
                 foreach (var viewModelModifier in editContext.ViewModelCache.Values)
                 {
                     if (viewModelModifier is not null && editContext.CursorModifierBagCache.TryGetValue(
@@ -144,6 +137,16 @@ public partial class TextEditorService : ITextEditorService
                                     .ToImmutableArray()
                             }));
                     }
+                }
+
+                foreach (var modelModifier in editContext.ModelCache.Values)
+                {
+                    if (modelModifier is null)
+                        continue;
+
+                    _dispatcher.Dispatch(new TextEditorModelState.SetModelAction(
+                        editContext,
+                        modelModifier));
                 }
             });
     }

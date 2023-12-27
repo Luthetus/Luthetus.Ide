@@ -483,7 +483,7 @@ public partial interface ITextEditorService
                         }
                         else
                         {
-                            if (cursorModifier.ColumnIndex == 0)
+                            if (cursorModifier.ColumnIndex <= 0)
                             {
                                 if (cursorModifier.RowIndex != 0)
                                 {
@@ -492,6 +492,10 @@ public partial interface ITextEditorService
                                     lengthOfRow = modelModifier.GetLengthOfRow(cursorModifier.RowIndex);
 
                                     MutateIndexCoordinatesAndPreferredColumnIndex(lengthOfRow);
+                                }
+                                else
+                                {
+                                    MutateIndexCoordinatesAndPreferredColumnIndex(0);
                                 }
                             }
                             else
@@ -569,7 +573,7 @@ public partial interface ITextEditorService
                         {
                             lengthOfRow = modelModifier.GetLengthOfRow(cursorModifier.RowIndex);
 
-                            if (cursorModifier.ColumnIndex == lengthOfRow &&
+                            if (cursorModifier.ColumnIndex >= lengthOfRow &&
                                 cursorModifier.RowIndex < modelModifier.RowCount - 1)
                             {
                                 MutateIndexCoordinatesAndPreferredColumnIndex(0);
