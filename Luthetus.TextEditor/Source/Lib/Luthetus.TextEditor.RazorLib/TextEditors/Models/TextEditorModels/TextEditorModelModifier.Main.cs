@@ -271,7 +271,18 @@ public partial class TextEditorModelModifier
         {
             if (TextEditorSelectionHelper.HasSelectedText(cursorModifier))
             {
-                PerformDeletions(keyboardEventAction, cursorModifierBag);
+                PerformDeletions(
+                    new KeyboardEventAction(
+                        keyboardEventAction.EditContext,
+                        keyboardEventAction.ResourceUri,
+                        keyboardEventAction.ViewModelKey,
+                        new KeyboardEventArgs
+                        {
+                            Code = KeyboardKeyFacts.MetaKeys.DELETE,
+                            Key = KeyboardKeyFacts.MetaKeys.DELETE,
+                        },
+                        CancellationToken.None),
+                    cursorModifierBag);
 
                 var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
 
@@ -283,15 +294,8 @@ public partial class TextEditorModelModifier
                 cursorModifier.RowIndex = lowerRowData.rowIndex;
                 cursorModifier.ColumnIndex = lowerColumnIndex;
 
-                // Because one cannot move reference of foreach variable,
-                // one has to re-invoke the method with different paramters
-                PerformInsertions(
-                    keyboardEventAction,
-                    new TextEditorCursorModifierBag(
-                        cursorModifierBag.ViewModelKey,
-                        new() { cursorModifier }));
-
-                return;
+                // Clear selection
+                cursorModifier.SelectionAnchorPositionIndex = null;
             }
 
             var startOfRowPositionIndex = this.GetStartOfRowTuple(cursorModifier.RowIndex).positionIndex;
@@ -915,22 +919,6 @@ public partial class TextEditorModelModifier
                     cursorModifierBag.ViewModelKey,
                     new List<TextEditorCursorModifier> { cursor });
 
-                if (TextEditorSelectionHelper.HasSelectedText(cursor))
-                {
-                    PerformDeletions(
-                        new KeyboardEventAction(
-                            keyboardEventAction.EditContext,
-                            keyboardEventAction.ResourceUri,
-                            keyboardEventAction.ViewModelKey,
-                            new KeyboardEventArgs
-                            {
-                                Code = KeyboardKeyFacts.MetaKeys.DELETE,
-                                Key = KeyboardKeyFacts.MetaKeys.DELETE,
-                            },
-                            CancellationToken.None),
-                        singledCursorModifierBag);
-                }
-
                 PerformInsertions(keyboardEventAction, singledCursorModifierBag);
             }
         }
@@ -949,22 +937,6 @@ public partial class TextEditorModelModifier
             var singledCursorModifierBag = new TextEditorCursorModifierBag(
                 cursorModifierBag.ViewModelKey,
                 new List<TextEditorCursorModifier> { cursor });
-
-            if (TextEditorSelectionHelper.HasSelectedText(cursor))
-            {
-                PerformDeletions(
-                    new KeyboardEventAction(
-                        insertTextAction.EditContext,
-                        insertTextAction.ResourceUri,
-                        insertTextAction.ViewModelKey,
-                        new KeyboardEventArgs
-                        {
-                            Code = KeyboardKeyFacts.MetaKeys.DELETE,
-                            Key = KeyboardKeyFacts.MetaKeys.DELETE,
-                        },
-                        CancellationToken.None),
-                    singledCursorModifierBag);
-            }
 
             foreach (var character in localContent)
             {
