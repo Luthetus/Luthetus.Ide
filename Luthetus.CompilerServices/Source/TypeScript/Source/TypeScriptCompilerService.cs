@@ -6,7 +6,6 @@ using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
-using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using System.Collections.Immutable;
 
 namespace Luthetus.CompilerServices.Lang.TypeScript;

@@ -11,10 +11,8 @@ using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
-using static Luthetus.TextEditor.RazorLib.TextEditors.States.TextEditorModelState;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
