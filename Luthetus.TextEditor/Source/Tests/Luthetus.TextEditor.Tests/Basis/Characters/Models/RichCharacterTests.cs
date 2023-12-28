@@ -1,5 +1,6 @@
 using Xunit;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 
 namespace Luthetus.TextEditor.Tests.Basis.Characters.Models;
 
@@ -8,22 +9,42 @@ namespace Luthetus.TextEditor.Tests.Basis.Characters.Models;
 /// </summary>
 public class RichCharacterTests
 {
-
-	/// <summary>
-	/// <see cref="RichCharacter.Value"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="RichCharacter.Value"/>
+    /// <br/>----<br/>
+    /// <see cref="RichCharacter.DecorationByte"/>
+    /// </summary>
+    [Fact]
 	public void Value()
 	{
-		throw new NotImplementedException();
-	}
+		// Construct two RichCharacter to ensure the constructor is not just assigning the same constant value
 
-	/// <summary>
-	/// <see cref="RichCharacter.DecorationByte"/>
-	/// </summary>
-	[Fact]
-	public void DecorationByte()
-	{
-		throw new NotImplementedException();
+		{
+			var decorationByte = (byte)GenericDecorationKind.Function;
+			var value = 'C';
+
+            var richCharacter = new RichCharacter
+            {
+                DecorationByte = decorationByte,
+                Value = value
+            };
+
+			Assert.Equal(decorationByte, richCharacter.DecorationByte);
+			Assert.Equal(value, richCharacter.Value);
+        }
+		
+		{
+			var decorationByte = (byte)GenericDecorationKind.Keyword;
+			var value = 'K';
+
+            var richCharacter = new RichCharacter
+            {
+                DecorationByte = decorationByte,
+                Value = value
+            };
+
+			Assert.Equal(decorationByte, richCharacter.DecorationByte);
+			Assert.Equal(value, richCharacter.Value);
+        }
 	}
 }

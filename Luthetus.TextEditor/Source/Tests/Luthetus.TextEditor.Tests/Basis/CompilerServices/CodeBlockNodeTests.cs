@@ -1,5 +1,10 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
@@ -8,57 +13,86 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 /// </summary>
 public class CodeBlockNodeTests
 {
-	/// <summary>
-	/// <see cref="CodeBlockNode(System.Collections.Immutable.ImmutableArray{RazorLib.CompilerServices.Syntax.ISyntax})"/>
-	/// </summary>
-	[Fact]
-	public void CodeBlockNode_A()
+    /// <summary>
+    /// <see cref="CodeBlockNode(ImmutableArray{ISyntax})"/>
+    /// <br/>----<br/>
+    /// <see cref="CodeBlockNode(ImmutableArray{ISyntax}, ImmutableArray{TextEditorDiagnostic})"/>
+    /// <see cref="CodeBlockNode.DiagnosticsBag"/>
+    /// <see cref="CodeBlockNode.ChildBag"/>
+    /// <see cref="CodeBlockNode.IsFabricated"/>
+    /// <see cref="CodeBlockNode.SyntaxKind"/>
+    /// </summary>
+    [Fact]
+	public void Constructor()
 	{
-		throw new NotImplementedException();
-	}
+        var typeDefinitionNode = ConstructTypeDefinitionNode();
+        var childBag = new List<ISyntax> { typeDefinitionNode }.ToImmutableArray();
 
-	/// <summary>
-	/// <see cref="CodeBlockNode(System.Collections.Immutable.ImmutableArray{RazorLib.CompilerServices.Syntax.ISyntax}, System.Collections.Immutable.ImmutableArray{TextEditorDiagnostic})"/>
-	/// </summary>
-	[Fact]
-	public void CodeBlockNode_B()
-	{
-		throw new NotImplementedException();
-	}
+        // No Diagnostics
+        {
+            var codeBlockNoDiagnostics = new CodeBlockNode(childBag);
 
-	/// <summary>
-	/// <see cref="CodeBlockNode.DiagnosticsBag"/>
-	/// </summary>
-	[Fact]
-	public void DiagnosticsBag()
-	{
-		throw new NotImplementedException();
-	}
+            Assert.Empty(codeBlockNoDiagnostics.DiagnosticsBag);
+            Assert.Single(codeBlockNoDiagnostics.ChildBag);
+            Assert.Equal(typeDefinitionNode, codeBlockNoDiagnostics.ChildBag.Single());
+            Assert.Equal(SyntaxKind.CodeBlockNode, codeBlockNoDiagnostics.SyntaxKind);
+            Assert.False(codeBlockNoDiagnostics.IsFabricated);
+        }
 
-	/// <summary>
-	/// <see cref="CodeBlockNode.ChildBag"/>
-	/// </summary>
-	[Fact]
-	public void ChildBag()
-	{
-		throw new NotImplementedException();
-	}
+        // With Diagnostics
+        {
+            var diagnostic = new TextEditorDiagnostic(
+                TextEditorDiagnosticLevel.Error,
+                "Error",
+                TextEditorTextSpan.FabricateTextSpan("Hello World!"),
+                Guid.NewGuid());
 
-	/// <summary>
-	/// <see cref="CodeBlockNode.IsFabricated"/>
-	/// </summary>
-	[Fact]
-	public void IsFabricated()
-	{
-		throw new NotImplementedException();
-	}
+            var diagnosticBag = new TextEditorDiagnostic[]
+            {
+                diagnostic
+            }.ToImmutableArray();
 
-	/// <summary>
-	/// <see cref="CodeBlockNode.SyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
-	{
-		throw new NotImplementedException();
-	}
+            var codeBlockWithDiagnostics = new CodeBlockNode(childBag, diagnosticBag);
+
+            Assert.Single(codeBlockWithDiagnostics.DiagnosticsBag);
+            Assert.Single(codeBlockWithDiagnostics.ChildBag);
+            Assert.Equal(typeDefinitionNode, codeBlockWithDiagnostics.ChildBag.Single());
+            Assert.Equal(SyntaxKind.CodeBlockNode, codeBlockWithDiagnostics.SyntaxKind);
+            Assert.False(codeBlockWithDiagnostics.IsFabricated);
+        }
+    }
+
+    private TypeDefinitionNode ConstructTypeDefinitionNode()
+    {
+        var sourceText = @"public class MyClass
+{
+}";
+        IdentifierToken typeIdentifier;
+        {
+            var typeIdentifierText = "MyClass";
+            int indexOfTypeIdentifierText = sourceText.IndexOf(typeIdentifierText);
+
+            typeIdentifier = new IdentifierToken(new TextEditorTextSpan(
+                indexOfTypeIdentifierText,
+                indexOfTypeIdentifierText + typeIdentifierText.Length,
+                0,
+                new ResourceUri("/unitTesting.txt"),
+                sourceText));
+        }
+
+        Type? valueType = null;
+
+        GenericArgumentsListingNode? genericArgumentsListingNode = null;
+
+        TypeClauseNode? inheritedTypeClauseNode = null;
+
+        CodeBlockNode? typeBodyCodeBlockNode = new(ImmutableArray<ISyntax>.Empty);
+
+        return new TypeDefinitionNode(
+            typeIdentifier,
+            valueType,
+            genericArgumentsListingNode,
+            inheritedTypeClauseNode,
+            typeBodyCodeBlockNode);
+    }
 }
