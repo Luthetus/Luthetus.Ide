@@ -252,13 +252,12 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                         if (cursorModifierBag is null || primaryCursorModifier is null)
                             return Task.CompletedTask;
 
-                        commandArgs.Dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
-                            editContext,
+                        editContext.TextEditorService.ViewModelApi.WithValueFactory(
                             viewModelModifier.ViewModel.ViewModelKey,
                             previousViewModel => previousViewModel with
                             {
                                 DisplayCommandBar = true
-                            }));
+                            }).Invoke(editContext);
 
                         return Task.CompletedTask;
                     });

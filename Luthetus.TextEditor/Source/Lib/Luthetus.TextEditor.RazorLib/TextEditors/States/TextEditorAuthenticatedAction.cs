@@ -5,7 +5,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 namespace Luthetus.TextEditor.RazorLib.TextEditors.States;
 
 /// <summary>
-/// Any actions which modify state should inhert from <see cref="AuthenticatedAction"/>.<br/>
+/// Any actions which modify state should inhert from <see cref="TextEditorAuthenticatedAction"/>.<br/>
 /// <br/>
 /// Doing this permits state modifications to be concurrency safe. They will be enqueued using
 /// <see cref="ITextEditorService.EnqueueEdit(Func{ITextEditorEditContext, Task})"/>.<br/>
@@ -21,14 +21,14 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.States;
 /// <br/>
 /// TODO: Learn more about <see cref="SynchronizationContext"/>
 /// </summary>
-public record AuthenticatedAction
+public record TextEditorAuthenticatedAction
 {
-    public AuthenticatedAction(Key<AuthenticatedAction> authenticatedActionKey)
+    public TextEditorAuthenticatedAction(Key<TextEditorAuthenticatedAction> authenticatedActionKey)
     {
         if (authenticatedActionKey != TextEditorService.AuthenticatedActionKey)
             throw new ApplicationException($"Only edits made via the {nameof(ITextEditorService)}.{nameof(ITextEditorService.Post)}(...) method may modify state.");
         AuthenticatedActionKey = authenticatedActionKey;
     }
 
-    public Key<AuthenticatedAction> AuthenticatedActionKey { get; }
+    public Key<TextEditorAuthenticatedAction> AuthenticatedActionKey { get; }
 }

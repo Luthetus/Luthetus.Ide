@@ -156,15 +156,12 @@ public partial class AutocompleteMenu : ComponentBase
     {
         TextEditorService.Post(editContext =>
         {
-            var insertTextTextEditorModelAction = new TextEditorModelState.InsertTextAction(
-                editContext,
-                viewModel.ResourceUri,
-                viewModel.ViewModelKey,
-                autocompleteEntry.DisplayName.Substring(word.Length),
-                CancellationToken.None);
-
             return TextEditorService.ModelApi
-                .InsertTextFactory(insertTextTextEditorModelAction, viewModel.ViewModelKey)
+                .InsertTextFactory(
+                    viewModel.ResourceUri,
+                    viewModel.ViewModelKey,
+                    autocompleteEntry.DisplayName.Substring(word.Length),
+                    CancellationToken.None)
                 .Invoke(editContext);
         });
 

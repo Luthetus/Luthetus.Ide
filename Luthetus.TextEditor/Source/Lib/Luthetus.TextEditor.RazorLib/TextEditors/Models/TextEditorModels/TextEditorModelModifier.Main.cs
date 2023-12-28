@@ -11,6 +11,7 @@ using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
 using static Luthetus.TextEditor.RazorLib.TextEditors.States.TextEditorModelState;
@@ -262,16 +263,15 @@ public partial class TextEditorModelModifier
             if (TextEditorSelectionHelper.HasSelectedText(cursorModifier))
             {
                 PerformDeletions(
-                    new KeyboardEventAction(
-                        keyboardEventAction.EditContext,
-                        keyboardEventAction.ResourceUri,
-                        keyboardEventAction.ViewModelKey,
-                        new KeyboardEventArgs
-                        {
-                            Code = KeyboardKeyFacts.MetaKeys.DELETE,
-                            Key = KeyboardKeyFacts.MetaKeys.DELETE,
-                        },
-                        CancellationToken.None),
+                    keyboardEventAction.EditContext,
+                    keyboardEventAction.ResourceUri,
+                    keyboardEventAction.ViewModelKey,
+                    new KeyboardEventArgs
+                    {
+                        Code = KeyboardKeyFacts.MetaKeys.DELETE,
+                        Key = KeyboardKeyFacts.MetaKeys.DELETE,
+                    },
+                    CancellationToken.None,
                     cursorModifierBag);
 
                 var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
@@ -440,7 +440,11 @@ public partial class TextEditorModelModifier
     }
 
     private void PerformDeletions(
-        KeyboardEventAction keyboardEventAction,
+        ITextEditorEditContext editContext,
+        ResourceUri resourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        KeyboardEventArgs keyboardEventArgs,
+        CancellationToken cancellationToken,
         TextEditorCursorModifierBag cursorModifierBag)
     {
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
@@ -496,11 +500,11 @@ public partial class TextEditorModelModifier
 
                 cursorModifier.SelectionAnchorPositionIndex = null;
             }
-            else if (KeyboardKeyFacts.MetaKeys.BACKSPACE == keyboardEventAction.KeyboardEventArgs.Key)
+            else if (KeyboardKeyFacts.MetaKeys.BACKSPACE == keyboardEventArgs.Key)
             {
                 moveBackwards = true;
 
-                if (keyboardEventAction.KeyboardEventArgs.CtrlKey)
+                if (keyboardEventArgs.CtrlKey)
                 {
                     var columnIndexOfCharacterWithDifferingKind = this.GetColumnIndexOfCharacterWithDifferingKind(
                         cursorModifier.RowIndex,
@@ -525,11 +529,11 @@ public partial class TextEditorModelModifier
 
                 startingPositionIndexToRemoveInclusive = cursorPositionIndex - 1;
             }
-            else if (KeyboardKeyFacts.MetaKeys.DELETE == keyboardEventAction.KeyboardEventArgs.Key)
+            else if (KeyboardKeyFacts.MetaKeys.DELETE == keyboardEventArgs.Key)
             {
                 moveBackwards = false;
 
-                if (keyboardEventAction.KeyboardEventArgs.CtrlKey)
+                if (keyboardEventArgs.CtrlKey)
                 {
                     var columnIndexOfCharacterWithDifferingKind = this.GetColumnIndexOfCharacterWithDifferingKind(
                         cursorModifier.RowIndex,
@@ -556,7 +560,7 @@ public partial class TextEditorModelModifier
             }
             else
             {
-                throw new ApplicationException($"The keyboard key: {keyboardEventAction.KeyboardEventArgs.Key} was not recognized");
+                throw new ApplicationException($"The keyboard key: {keyboardEventArgs.Key} was not recognized");
             }
 
             var charactersRemovedCount = 0;
@@ -874,16 +878,26 @@ public partial class TextEditorModelModifier
         ModifyUsingRowEndingKind(RowEndingKind.Unset);
     }
 
-    public void PerformEditTextEditorAction(
-        KeyboardEventAction keyboardEventAction,
+    public void HandleKeyboardEvent(
+        ITextEditorEditContext editContext,
+        ResourceUri resourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        KeyboardEventArgs keyboardEventArgs,
+        CancellationToken cancellationToken,
         TextEditorCursorModifierBag cursorModifierBag)
     {
-        if (KeyboardKeyFacts.IsMetaKey(keyboardEventAction.KeyboardEventArgs))
+        if (KeyboardKeyFacts.IsMetaKey(keyboardEventArgs))
         {
-            if (KeyboardKeyFacts.MetaKeys.BACKSPACE == keyboardEventAction.KeyboardEventArgs.Key ||
-                KeyboardKeyFacts.MetaKeys.DELETE == keyboardEventAction.KeyboardEventArgs.Key)
+            if (KeyboardKeyFacts.MetaKeys.BACKSPACE == keyboardEventArgs.Key ||
+                KeyboardKeyFacts.MetaKeys.DELETE == keyboardEventArgs.Key)
             {
-                PerformDeletions(keyboardEventAction, cursorModifierBag);
+                PerformDeletions(
+                    editContext,
+                    resourceUri,
+                    viewModelKey,
+                    keyboardEventArgs,
+                    cancellationToken,
+                    cursorModifierBag);
             }
         }
         else
@@ -896,16 +910,26 @@ public partial class TextEditorModelModifier
                     cursorModifierBag.ViewModelKey,
                     new List<TextEditorCursorModifier> { cursor });
 
-                PerformInsertions(keyboardEventAction, singledCursorModifierBag);
+                PerformDeletions(
+                    editContext,
+                    resourceUri,
+                    viewModelKey,
+                    keyboardEventArgs,
+                    cancellationToken,
+                    singledCursorModifierBag);
             }
         }
     }
 
-    public void PerformEditTextEditorAction(
-        InsertTextAction insertTextAction,
+    public void EditByInsertion(
+        ITextEditorEditContext editContext,
+        ResourceUri resourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        string content,
+        CancellationToken cancellationToken,
         TextEditorCursorModifierBag cursorModifierBag)
     {
-        var localContent = insertTextAction.Content.Replace("\r\n", "\n");
+        var localContent = content.Replace("\r\n", "\n");
 
         for (int i = cursorModifierBag.CursorModifierBag.Count - 1; i >= 0; i--)
         {
@@ -927,45 +951,51 @@ public partial class TextEditorModelModifier
                     _ => character.ToString(),
                 };
 
-                var keyboardEventTextEditorModelAction = new KeyboardEventAction(
-                    insertTextAction.EditContext,
-                    insertTextAction.ResourceUri,
-                    insertTextAction.ViewModelKey,
+                HandleKeyboardEvent(
+                    editContext,
+                    resourceUri,
+                    viewModelKey,
                     new KeyboardEventArgs
                     {
                         Code = code,
                         Key = character.ToString(),
                     },
-                    CancellationToken.None);
-
-                PerformEditTextEditorAction(keyboardEventTextEditorModelAction, singledCursorModifierBag);
+                    CancellationToken.None,
+                    singledCursorModifierBag);
             }
         }
     }
 
-    public void PerformEditTextEditorAction(
-        DeleteTextByMotionAction deleteTextByMotionAction,
+    public void DeleteTextByMotion(
+        ITextEditorEditContext editContext,
+        ResourceUri resourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        MotionKind motionKind,
+        CancellationToken cancellationToken,
         TextEditorCursorModifierBag cursorModifierBag)
     {
-        var keyboardEventArgs = deleteTextByMotionAction.MotionKind switch
+        var keyboardEventArgs = motionKind switch
         {
             MotionKind.Backspace => new KeyboardEventArgs { Key = KeyboardKeyFacts.MetaKeys.BACKSPACE },
             MotionKind.Delete => new KeyboardEventArgs { Key = KeyboardKeyFacts.MetaKeys.DELETE },
-            _ => throw new ApplicationException($"The {nameof(MotionKind)}: {deleteTextByMotionAction.MotionKind} was not recognized.")
+            _ => throw new ApplicationException($"The {nameof(MotionKind)}: {motionKind} was not recognized.")
         };
-
-        var keyboardEventTextEditorModelAction = new KeyboardEventAction(
-            deleteTextByMotionAction.EditContext,
-            deleteTextByMotionAction.ResourceUri,
-            deleteTextByMotionAction.ViewModelKey,
+        
+        HandleKeyboardEvent(
+            editContext,
+            resourceUri,
+            viewModelKey,
             keyboardEventArgs,
-            CancellationToken.None);
-
-        PerformEditTextEditorAction(keyboardEventTextEditorModelAction, cursorModifierBag);
+            CancellationToken.None,
+            cursorModifierBag);
     }
 
-    public void PerformEditTextEditorAction(
-        DeleteTextByRangeAction deleteTextByRangeAction,
+    public void DeleteByRange(
+        ITextEditorEditContext editContext,
+        ResourceUri resourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        int count,
+        CancellationToken cancellationToken,
         TextEditorCursorModifierBag cursorModifierBag)
     {
         for (int cursorIndex = cursorModifierBag.CursorModifierBag.Count - 1; cursorIndex >= 0; cursorIndex--)
@@ -977,20 +1007,19 @@ public partial class TextEditorModelModifier
                 new List<TextEditorCursorModifier> { cursor });
 
             // TODO: This needs to be rewritten everything should be deleted at the same time not a foreach loop for each character
-            for (var deleteIndex = 0; deleteIndex < deleteTextByRangeAction.Count; deleteIndex++)
+            for (var deleteIndex = 0; deleteIndex < count; deleteIndex++)
             {
-                var keyboardEventTextEditorModelAction = new KeyboardEventAction(
-                    deleteTextByRangeAction.EditContext,
-                    deleteTextByRangeAction.ResourceUri,
-                    deleteTextByRangeAction.ViewModelKey,
+                HandleKeyboardEvent(
+                    editContext,
+                    resourceUri,
+                    viewModelKey,
                     new KeyboardEventArgs
                     {
                         Code = KeyboardKeyFacts.MetaKeys.DELETE,
                         Key = KeyboardKeyFacts.MetaKeys.DELETE,
                     },
-                    CancellationToken.None);
-
-                PerformEditTextEditorAction(keyboardEventTextEditorModelAction, singledCursorModifierBag);
+                    CancellationToken.None,
+                    singledCursorModifierBag);
             }
         }
     }
@@ -1006,7 +1035,8 @@ public partial class TextEditorModelModifier
             PresentationModelsBag.Add(registerPresentationModelAction.PresentationModel);
     }
 
-    public void PerformCalculatePresentationModelAction(CalculatePresentationModelAction calculatePresentationModelAction)
+    public void PerformCalculatePresentationModelAction(
+        Key<TextEditorPresentationModel> presentationKey)
     {
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
@@ -1014,7 +1044,7 @@ public partial class TextEditorModelModifier
         }
 
         var indexOfPresentationModel = _presentationModelsBag.FindIndex(
-            x => x.TextEditorPresentationKey == calculatePresentationModelAction.PresentationKey);
+            x => x.TextEditorPresentationKey == presentationKey);
 
         if (indexOfPresentationModel == -1)
             return;
@@ -1079,5 +1109,12 @@ public partial class TextEditorModelModifier
         var restoreEditBlock = EditBlocksBag[EditBlockIndex];
 
         ModifyContent(restoreEditBlock.ContentSnapshot);
+    }
+
+    ///////////// (2023-12-28)
+
+    public TextEditorModel ForceRerenderAction()
+    {
+        return ToModel();
     }
 }

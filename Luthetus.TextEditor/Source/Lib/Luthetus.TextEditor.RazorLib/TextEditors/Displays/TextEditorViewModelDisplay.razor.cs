@@ -364,13 +364,10 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                         return Task.CompletedTask;
 
                     return TextEditorService.ModelApi.HandleKeyboardEventFactory(
-                            new TextEditorModelState.KeyboardEventAction(
-                                editContext,
-                                modelResourceUri,
-                                viewModelKey,
-                                keyboardEventArgs,
-                                CancellationToken.None),
-                            viewModelKey)
+                            modelResourceUri,
+                            viewModelKey,
+                            keyboardEventArgs,
+                            CancellationToken.None)
                         .Invoke(editContext);
                 });
             }

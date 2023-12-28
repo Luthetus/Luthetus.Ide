@@ -4,6 +4,7 @@ using Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.States;
 
@@ -24,7 +25,13 @@ public class TextEditorModelStateActionsTests
             out var inViewModel,
             out var serviceProvider);
 
-        var registerAction = new TextEditorModelState.RegisterAction(inModel);
+        var authenticatedActionKey = Key<TextEditorAuthenticatedAction>.NewKey();
+
+        var registerAction = new TextEditorModelState.RegisterAction(
+            authenticatedActionKey,
+            inModel);
+
+		Assert.Equal(authenticatedActionKey, registerAction.AuthenticatedActionKey);
 		Assert.Equal(inModel, registerAction.Model);
 	}
 
@@ -39,8 +46,14 @@ public class TextEditorModelStateActionsTests
             out var inModel,
             out var inViewModel,
             out var serviceProvider);
+        
+        var authenticatedActionKey = Key<TextEditorAuthenticatedAction>.NewKey();
 
-        var disposeAction = new TextEditorModelState.DisposeAction(inModel.ResourceUri);
+        var disposeAction = new TextEditorModelState.DisposeAction(
+            authenticatedActionKey,
+            inModel.ResourceUri);
+
+        Assert.Equal(authenticatedActionKey, disposeAction.AuthenticatedActionKey);
         Assert.Equal(inModel.ResourceUri, disposeAction.ResourceUri);
 	}
 
@@ -56,9 +69,13 @@ public class TextEditorModelStateActionsTests
             out var inViewModel,
             out var serviceProvider);
 
+        var authenticatedActionKey = Key<TextEditorAuthenticatedAction>.NewKey();
+
         var forceRerenderAction = new TextEditorModelState.ForceRerenderAction(
+            authenticatedActionKey,
             inModel.ResourceUri);
 
+        Assert.Equal(authenticatedActionKey, forceRerenderAction.AuthenticatedActionKey);
         Assert.Equal(inModel.ResourceUri, forceRerenderAction.ResourceUri);
     }
 
@@ -73,12 +90,16 @@ public class TextEditorModelStateActionsTests
             out var inModel,
             out var inViewModel,
             out var serviceProvider);
-
+        
+        var authenticatedActionKey = Key<TextEditorAuthenticatedAction>.NewKey();
         var presentationModel = DiffPresentationFacts.EmptyInPresentationModel;
+        
         var registerPresentationModelAction = new TextEditorModelState.RegisterPresentationModelAction(
+            authenticatedActionKey,
             inModel.ResourceUri,
             presentationModel);
 
+        Assert.Equal(authenticatedActionKey, registerPresentationModelAction.AuthenticatedActionKey);
         Assert.Equal(inModel.ResourceUri, registerPresentationModelAction.ResourceUri);
         Assert.Equal(presentationModel, registerPresentationModelAction.PresentationModel);
     }
@@ -97,12 +118,16 @@ public class TextEditorModelStateActionsTests
 
         textEditorService.Post(editContext =>
         {
+            var authenticatedActionKey = Key<TextEditorAuthenticatedAction>.NewKey();
 			var presentationKey = DiffPresentationFacts.InPresentationKey;
+
             var calculatePresentationModelAction = new TextEditorModelState.CalculatePresentationModelAction(
+                authenticatedActionKey,
                 editContext,
 				inModel.ResourceUri,
                 presentationKey);
 
+            Assert.Equal(authenticatedActionKey, calculatePresentationModelAction.AuthenticatedActionKey);
             Assert.Equal(editContext, calculatePresentationModelAction.EditContext);
             Assert.Equal(inModel.ResourceUri, calculatePresentationModelAction.ResourceUri);
             Assert.Equal(presentationKey, calculatePresentationModelAction.PresentationKey);
@@ -124,15 +149,19 @@ public class TextEditorModelStateActionsTests
 
         textEditorService.Post(editContext =>
         {
+            var authenticatedActionKey = Key<TextEditorAuthenticatedAction>.NewKey();
             var keyboardEventArgs = new KeyboardEventArgs();
             var cancellationToken = CancellationToken.None;
+
             var keyboardEventAction = new TextEditorModelState.KeyboardEventAction(
+                authenticatedActionKey,
                 editContext,
                 inModel.ResourceUri,
                 inViewModel.ViewModelKey,
                 keyboardEventArgs,
                 cancellationToken);
 
+            Assert.Equal(authenticatedActionKey, keyboardEventAction.AuthenticatedActionKey);
             Assert.Equal(editContext, keyboardEventAction.EditContext);
             Assert.Equal(inModel.ResourceUri, keyboardEventAction.ResourceUri);
             Assert.Equal(inViewModel.ViewModelKey, keyboardEventAction.ViewModelKey);
@@ -156,15 +185,19 @@ public class TextEditorModelStateActionsTests
 
         textEditorService.Post(editContext =>
         {
+            var authenticatedActionKey = Key<TextEditorAuthenticatedAction>.NewKey();
             var content = "AlphabetSoup";
             var cancellationToken = CancellationToken.None;
+
             var insertTextAction = new TextEditorModelState.InsertTextAction(
+                authenticatedActionKey,
                 editContext,
                 inModel.ResourceUri,
                 inViewModel.ViewModelKey,
                 content,
                 cancellationToken);
 
+            Assert.Equal(authenticatedActionKey, insertTextAction.AuthenticatedActionKey);
             Assert.Equal(editContext, insertTextAction.EditContext);
             Assert.Equal(inModel.ResourceUri, insertTextAction.ResourceUri);
             Assert.Equal(inViewModel.ViewModelKey, insertTextAction.ViewModelKey);
@@ -188,15 +221,19 @@ public class TextEditorModelStateActionsTests
 
         textEditorService.Post(editContext =>
         {
+            var authenticatedActionKey = Key<TextEditorAuthenticatedAction>.NewKey();
             var motionKind = MotionKind.Backspace;
             var cancellationToken = CancellationToken.None;
+
             var insertTextAction = new TextEditorModelState.DeleteTextByMotionAction(
+                authenticatedActionKey,
                 editContext,
                 inModel.ResourceUri,
                 inViewModel.ViewModelKey,
                 motionKind,
                 cancellationToken);
 
+            Assert.Equal(authenticatedActionKey, insertTextAction.AuthenticatedActionKey);
             Assert.Equal(editContext, insertTextAction.EditContext);
             Assert.Equal(inModel.ResourceUri, insertTextAction.ResourceUri);
             Assert.Equal(inViewModel.ViewModelKey, insertTextAction.ViewModelKey);
@@ -220,15 +257,19 @@ public class TextEditorModelStateActionsTests
 
         textEditorService.Post(editContext =>
         {
+            var authenticatedActionKey = Key<TextEditorAuthenticatedAction>.NewKey();
             var count = 3;
             var cancellationToken = CancellationToken.None;
+
             var insertTextAction = new TextEditorModelState.DeleteTextByRangeAction(
+                authenticatedActionKey,
                 editContext,
                 inModel.ResourceUri,
                 inViewModel.ViewModelKey,
                 count,
                 cancellationToken);
 
+            Assert.Equal(authenticatedActionKey, insertTextAction.AuthenticatedActionKey);
             Assert.Equal(editContext, insertTextAction.EditContext);
             Assert.Equal(inModel.ResourceUri, insertTextAction.ResourceUri);
             Assert.Equal(inViewModel.ViewModelKey, insertTextAction.ViewModelKey);

@@ -15,8 +15,9 @@ public partial class TextEditorViewModelState
     public record DisposeAction(Key<TextEditorViewModel> ViewModelKey);
 
     public record SetViewModelWithAction(
+        Key<TextEditorAuthenticatedAction> AuthenticatedActionKey,
             ITextEditorEditContext EditContext,
             Key<TextEditorViewModel> ViewModelKey,
             Func<TextEditorViewModel, TextEditorViewModel> WithFunc)
-        : AuthenticatedAction(EditContext.AuthenticatedActionKey);
+        : TextEditorAuthenticatedAction(AuthenticatedActionKey);
 }

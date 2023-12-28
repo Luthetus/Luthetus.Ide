@@ -18,14 +18,14 @@ public partial class TextEditorService
 
         public TextEditorEditContext(
             ITextEditorService textEditorService,
-            Key<AuthenticatedAction> authenticatedActionKey)
+            Key<TextEditorAuthenticatedAction> authenticatedActionKey)
         {
             TextEditorService = textEditorService;
             AuthenticatedActionKey = authenticatedActionKey;
         }
 
         public ITextEditorService TextEditorService { get; }
-        public Key<AuthenticatedAction> AuthenticatedActionKey { get; }
+        public Key<TextEditorAuthenticatedAction> AuthenticatedActionKey { get; }
         
         public TextEditorModelModifier? GetModelModifier(ResourceUri? modelResourceUri)
         {

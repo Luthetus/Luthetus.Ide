@@ -1,5 +1,12 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.TextEditor.RazorLib.TextEditors.States;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Rows.Models;
+using Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorModels;
 
@@ -9,25 +16,56 @@ namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorModels;
 public class TextEditorModelPublicMethodsTests
 {
 	/// <summary>
-	/// <see cref="TextEditorModel.PerformForceRerenderAction(RazorLib.TextEditors.States.TextEditorModelState.ForceRerenderAction)"/>
+	/// <see cref="TextEditorModel.PerformForceRerenderAction(TextEditorModelState.ForceRerenderAction)"/>
 	/// </summary>
 	[Fact]
 	public void PerformForceRerenderAction()
 	{
-		throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+		var modelModifier = new TextEditorModelModifier(inModel);
+
+		var outModel = modelModifier.ForceRerenderAction();
+
+		Assert.NotEqual(inModel, outModel);
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModel.PerformEditTextEditorAction(RazorLib.TextEditors.States.TextEditorModelState.KeyboardEventAction)"/>
+	/// <see cref="TextEditorModel.PerformEditTextEditorAction(TextEditorModelState.KeyboardEventAction, RazorLib.TextEditors.Models.TextEditorCursorModifierBag)"/>
 	/// </summary>
 	[Fact]
 	public void PerformEditTextEditorAction_KeyboardEventAction()
 	{
-		throw new NotImplementedException();
+  //      TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+  //          out var textEditorService,
+  //          out var inModel,
+  //          out var inViewModel,
+  //          out var serviceProvider);
+
+		//textEditorService.Post(editContext =>
+		//{
+		//	var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+
+		//	if (modelModifier is null)
+		//	{
+
+		//	}
+
+  //          inModel.PerformEditTextEditorAction(new TextEditorModelState.KeyboardEventAction(
+  //              ));
+  //      });
+
+		
+
+        throw new NotImplementedException();
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModel.PerformEditTextEditorAction(RazorLib.TextEditors.States.TextEditorModelState.InsertTextAction)"/>
+	/// <see cref="TextEditorModel.PerformEditTextEditorAction(TextEditorModelState.InsertTextAction, TextEditorCursorModifierBag)"/>
 	/// </summary>
 	[Fact]
 	public void PerformEditTextEditorAction_InsertTextAction()
@@ -36,7 +74,7 @@ public class TextEditorModelPublicMethodsTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModel.PerformEditTextEditorAction(RazorLib.TextEditors.States.TextEditorModelState.DeleteTextByMotionAction)"/>
+	/// <see cref="TextEditorModel.PerformEditTextEditorAction(TextEditorModelState.DeleteTextByMotionAction, TextEditorCursorModifierBag)"/>
 	/// </summary>
 	[Fact]
 	public void PerformEditTextEditorAction_DeleteTextByMotionAction()
@@ -45,7 +83,7 @@ public class TextEditorModelPublicMethodsTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModel.PerformEditTextEditorAction(RazorLib.TextEditors.States.TextEditorModelState.DeleteTextByRangeAction)"/>
+	/// <see cref="TextEditorModel.PerformEditTextEditorAction(TextEditorModelState.DeleteTextByRangeAction, TextEditorCursorModifierBag)"/>
 	/// </summary>
 	[Fact]
 	public void PerformEditTextEditorAction_DeleteTextByRangeAction()
@@ -54,7 +92,7 @@ public class TextEditorModelPublicMethodsTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModel.PerformRegisterPresentationModelAction(RazorLib.TextEditors.States.TextEditorModelState.RegisterPresentationModelAction)"/>
+	/// <see cref="TextEditorModel.PerformRegisterPresentationModelAction(TextEditorModelState.RegisterPresentationModelAction)"/>
 	/// </summary>
 	[Fact]
 	public void PerformRegisterPresentationModelAction()
@@ -63,7 +101,7 @@ public class TextEditorModelPublicMethodsTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModel.PerformCalculatePresentationModelAction(RazorLib.TextEditors.States.TextEditorModelState.CalculatePresentationModelAction)"/>
+	/// <see cref="TextEditorModel.PerformCalculatePresentationModelAction(TextEditorModelState.CalculatePresentationModelAction)"/>
 	/// </summary>
 	[Fact]
 	public void PerformCalculatePresentationModelAction()
@@ -72,7 +110,7 @@ public class TextEditorModelPublicMethodsTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModel.SetDecorationMapper(RazorLib.Decorations.Models.IDecorationMapper)"/>
+	/// <see cref="TextEditorModel.SetDecorationMapper(IDecorationMapper)"/>
 	/// </summary>
 	[Fact]
 	public void SetDecorationMapper()
@@ -81,7 +119,7 @@ public class TextEditorModelPublicMethodsTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModel.SetCompilerService(RazorLib.CompilerServices.ICompilerService)"/>
+	/// <see cref="TextEditorModel.SetCompilerService(ICompilerService)"/>
 	/// </summary>
 	[Fact]
 	public void SetCompilerService()
@@ -90,7 +128,7 @@ public class TextEditorModelPublicMethodsTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModel.SetTextEditorSaveFileHelper(RazorLib.TextEditors.Models.TextEditorSaveFileHelper)"/>
+	/// <see cref="TextEditorModel.SetTextEditorSaveFileHelper(TextEditorSaveFileHelper)"/>
 	/// </summary>
 	[Fact]
 	public void SetTextEditorSaveFileHelper()
@@ -99,7 +137,7 @@ public class TextEditorModelPublicMethodsTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModel.SetResourceData(RazorLib.Lexes.Models.ResourceUri, DateTime)"/>
+	/// <see cref="TextEditorModel.SetResourceData(ResourceUri, DateTime)"/>
 	/// </summary>
 	[Fact]
 	public void SetResourceData()
@@ -108,7 +146,7 @@ public class TextEditorModelPublicMethodsTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModel.SetUsingRowEndingKind(RazorLib.Rows.Models.RowEndingKind)"/>
+	/// <see cref="TextEditorModel.SetUsingRowEndingKind(RowEndingKind)"/>
 	/// </summary>
 	[Fact]
 	public void SetUsingRowEndingKind()

@@ -308,6 +308,7 @@ public partial interface ITextEditorService
             return editContext =>
             {
                 _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
+                    TextEditorService.AuthenticatedActionKey,
                     editContext,
                     viewModelKey,
                     withFunc));
@@ -328,6 +329,7 @@ public partial interface ITextEditorService
                     return;
 
                 _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
+                    TextEditorService.AuthenticatedActionKey,
                     editContext,
                     viewModelKey,
                     await withFuncWrap.Invoke(viewModelModifier.ViewModel)));

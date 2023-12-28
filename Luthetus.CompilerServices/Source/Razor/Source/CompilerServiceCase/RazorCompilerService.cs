@@ -136,10 +136,10 @@ public class RazorCompilerService : ICompilerService
             if (modelModifier is null)
                 return;
 
-            _dispatcher.Dispatch(new TextEditorModelState.CalculatePresentationModelAction(
-                editContext,
-                modelModifier.ResourceUri,
-                CompilerServiceDiagnosticPresentationFacts.PresentationKey));
+            await _textEditorService.ModelApi.CalculatePresentationModelFactory(
+                    modelModifier.ResourceUri,
+                    CompilerServiceDiagnosticPresentationFacts.PresentationKey)
+                .Invoke(editContext);
 
             var pendingCalculation = modelModifier.PresentationModelsBag.FirstOrDefault(x =>
                 x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey)

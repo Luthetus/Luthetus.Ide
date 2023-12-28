@@ -109,16 +109,11 @@ public static partial class TextEditorCommandVimFacts
                     motionResult.LowerPositionIndexCursor.ColumnIndex,
                     true);
 
-                var deleteTextByRangeAction = new TextEditorModelState.DeleteTextByRangeAction(
-                    editContext,
-                    modelModifier.ResourceUri,
-                    viewModelModifier.ViewModel.ViewModelKey,
-                    motionResult.PositionIndexDisplacement,
-                    CancellationToken.None);
-
                 await editContext.TextEditorService.ModelApi.DeleteTextByRangeFactory(
-                        deleteTextByRangeAction,
-                        viewModelModifier.ViewModel.ViewModelKey)
+                        modelModifier.ResourceUri,
+                        viewModelModifier.ViewModel.ViewModelKey,
+                        motionResult.PositionIndexDisplacement,
+                        CancellationToken.None)
                     .Invoke(editContext);
             };
         }

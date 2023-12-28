@@ -9,6 +9,8 @@ using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using static Luthetus.TextEditor.RazorLib.TextEditors.States.TextEditorModelState;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
@@ -64,15 +66,17 @@ public partial interface ITextEditorService
             DateTime resourceLastWriteTime);
 
         public TextEditorEdit ReloadFactory(
-        ResourceUri resourceUri,
+            ResourceUri resourceUri,
             string content,
             DateTime resourceLastWriteTime);
 
         public TextEditorEdit RedoEditFactory(ResourceUri resourceUri);
 
         public TextEditorEdit InsertTextFactory(
-            InsertTextAction insertTextAction,
-            Key<TextEditorViewModel> viewModelKey);
+            ResourceUri resourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            string content,
+            CancellationToken cancellationToken);
 
         /// <summary>
         /// If one wants to guarantee that the state is up to date use <see cref="InsertTextFactory"/>
@@ -85,12 +89,16 @@ public partial interface ITextEditorService
         /// the cursor key would come back as the cursor not existing.
         /// </summary>
         public TextEditorEdit InsertTextUnsafeFactory(
-            InsertTextUnsafeAction insertTextUnsafeAction,
-            TextEditorCursorModifierBag cursorModifierBag);
+            ResourceUri resourceUri,
+            TextEditorCursorModifierBag cursorModifierBag,
+            string content,
+            CancellationToken cancellationToken);
 
         public TextEditorEdit HandleKeyboardEventFactory(
-            KeyboardEventAction keyboardEventAction,
-            Key<TextEditorViewModel> viewModelKey);
+            ResourceUri resourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            KeyboardEventArgs keyboardEventArgs,
+            CancellationToken cancellationToken);
 
         /// <summary>
         /// If one wants to guarantee that the state is up to date use <see cref="HandleKeyboardEventFactory"/>
@@ -103,12 +111,17 @@ public partial interface ITextEditorService
         /// the cursor key would come back as the cursor not existing.
         /// </summary>
         public TextEditorEdit HandleKeyboardEventUnsafeFactory(
-            KeyboardEventAction keyboardEventAction,
+            ResourceUri resourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            KeyboardEventArgs keyboardEventArgs,
+            CancellationToken cancellationToken,
             TextEditorCursorModifierBag cursorModifierBag);
 
         public TextEditorEdit DeleteTextByRangeFactory(
-            DeleteTextByRangeAction deleteTextByRangeAction,
-            Key<TextEditorViewModel> viewModelKey);
+            ResourceUri resourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            int count,
+            CancellationToken cancellationToken);
 
         /// <summary>
         /// If one wants to guarantee that the state is up to date use <see cref="DeleteTextByRangeFactory"/>
@@ -121,12 +134,16 @@ public partial interface ITextEditorService
         /// the cursor key would come back as the cursor not existing.
         /// </summary>
         public TextEditorEdit DeleteTextByRangeUnsafeFactory(
-            DeleteTextByRangeUnsafeAction deleteTextByRangeUnsafeAction,
-            TextEditorCursorModifierBag cursorModifierBag);
+            ResourceUri resourceUri,
+            TextEditorCursorModifierBag cursorModifierBag,
+            int count,
+            CancellationToken cancellationToken);
 
         public TextEditorEdit DeleteTextByMotionFactory(
-            DeleteTextByMotionAction deleteTextByMotionAction,
-            Key<TextEditorViewModel> viewModelKey);
+            ResourceUri resourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            MotionKind motionKind,
+            CancellationToken cancellationToken);
 
         /// <summary>
         /// If one wants to guarantee that the state is up to date use <see cref="DeleteTextByMotionFactory"/>
@@ -139,8 +156,14 @@ public partial interface ITextEditorService
         /// the cursor key would come back as the cursor not existing.
         /// </summary>
         public TextEditorEdit DeleteTextByMotionUnsafeFactory(
-            DeleteTextByMotionUnsafeAction deleteTextByMotionUnsafeAction,
-            TextEditorCursorModifierBag cursorModifierBag);
+            ResourceUri resourceUri,
+            TextEditorCursorModifierBag cursorModifierBag,
+            MotionKind motionKind,
+            CancellationToken cancellationToken);
+
+        public TextEditorEdit CalculatePresentationModelFactory(
+            ResourceUri resourceUri,
+            Key<TextEditorPresentationModel> presentationKey);
         #endregion
 
         #region DELETE_METHODS
@@ -173,14 +196,16 @@ public partial interface ITextEditorService
         #region CREATE_METHODS
         public void RegisterCustom(TextEditorModel model)
         {
-            _dispatcher.Dispatch(new RegisterAction(model));
+            _dispatcher.Dispatch(new RegisterAction(
+                TextEditorService.AuthenticatedActionKey,
+                model));
 
             _ = Task.Run(async () =>
             {
                 try
                 {
                     await model.ApplySyntaxHighlightingAsync();
-                    _dispatcher.Dispatch(new ForceRerenderAction(model.ResourceUri));
+                    _dispatcher.Dispatch(new ForceRerenderAction(TextEditorService.AuthenticatedActionKey, model.ResourceUri));
                 }
                 catch (Exception e)
                 {
@@ -205,14 +230,19 @@ public partial interface ITextEditorService
                 _decorationMapperRegistry.GetDecorationMapper(extensionNoPeriod),
                 _compilerServiceRegistry.GetCompilerService(extensionNoPeriod));
             
-            _dispatcher.Dispatch(new RegisterAction(textEditorModel));
+            _dispatcher.Dispatch(new RegisterAction(
+                TextEditorService.AuthenticatedActionKey,
+                textEditorModel));
 
             _ = Task.Run(async () =>
             {
                 try
                 {
                     await textEditorModel.ApplySyntaxHighlightingAsync();
-                    _dispatcher.Dispatch(new ForceRerenderAction(textEditorModel.ResourceUri));
+
+                    _dispatcher.Dispatch(new ForceRerenderAction(
+                        TextEditorService.AuthenticatedActionKey,
+                        textEditorModel.ResourceUri));
                 }
                 catch (Exception e)
                 {
@@ -227,6 +257,7 @@ public partial interface ITextEditorService
             TextEditorPresentationModel emptyPresentationModel)
         {
             _dispatcher.Dispatch(new RegisterPresentationModelAction(
+                TextEditorService.AuthenticatedActionKey,
                 resourceUri,
                 emptyPresentationModel));
         }
@@ -339,8 +370,10 @@ public partial interface ITextEditorService
         }
 
         public TextEditorEdit InsertTextFactory(
-            InsertTextAction insertTextAction,
-            Key<TextEditorViewModel> viewModelKey)
+            ResourceUri resourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            string content,
+            CancellationToken cancellationToken)
         {
             return editContext =>
             {
@@ -356,31 +389,48 @@ public partial interface ITextEditorService
                 if (cursorModifierBag is null || primaryCursorModifier is null)
                     return Task.CompletedTask;
 
-                modelModifier.PerformEditTextEditorAction(insertTextAction, cursorModifierBag);
+                modelModifier.EditByInsertion(
+                    editContext,
+                    resourceUri,
+                    viewModelKey,
+                    content,
+                    cancellationToken,
+                    cursorModifierBag);
+
                 return Task.CompletedTask;
             };
         }
         
         public TextEditorEdit InsertTextUnsafeFactory(
-            InsertTextUnsafeAction insertTextUnsafeAction,
-            TextEditorCursorModifierBag cursorModifierBag)
+            ResourceUri resourceUri,
+            TextEditorCursorModifierBag cursorModifierBag,
+            string content,
+            CancellationToken cancellationToken)
         {
             return editContext =>
             {
-                insertTextUnsafeAction = insertTextUnsafeAction with
-                {
-                    CursorModifierBag = cursorModifierBag,
-                };
+                var modelModifier = editContext.GetModelModifier(resourceUri);
 
-                _dispatcher.Dispatch(insertTextUnsafeAction);
+                if (modelModifier is null)
+                    return Task.CompletedTask;
+
+                modelModifier.EditByInsertion(
+                    editContext,
+                    resourceUri,
+                    Key<TextEditorViewModel>.Empty,
+                    content,
+                    cancellationToken,
+                    cursorModifierBag);
 
                 return Task.CompletedTask;
             };
         }
 
         public TextEditorEdit HandleKeyboardEventFactory(
-            KeyboardEventAction keyboardEventAction,
-            Key<TextEditorViewModel> viewModelKey)
+            ResourceUri resourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            KeyboardEventArgs keyboardEventArgs,
+            CancellationToken cancellationToken)
         {
             return editContext =>
             {
@@ -396,30 +446,49 @@ public partial interface ITextEditorService
                 if (cursorModifierBag is null || primaryCursorModifier is null)
                     return Task.CompletedTask;
 
-                modelModifier.PerformEditTextEditorAction(keyboardEventAction, cursorModifierBag);
+                modelModifier.HandleKeyboardEvent(
+                    editContext,
+                    resourceUri,
+                    viewModelKey,
+                    keyboardEventArgs,
+                    cancellationToken,
+                    cursorModifierBag);
+
                 return Task.CompletedTask;
             };
         }
 
         public TextEditorEdit HandleKeyboardEventUnsafeFactory(
-            KeyboardEventAction keyboardEventAction,
+            ResourceUri resourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            KeyboardEventArgs keyboardEventArgs,
+            CancellationToken cancellationToken,
             TextEditorCursorModifierBag cursorModifierBag)
         {
             return editContext =>
             {
-                var modelModifier = editContext.GetModelModifier(keyboardEventAction.ResourceUri);
+                var modelModifier = editContext.GetModelModifier(resourceUri);
 
                 if (modelModifier is null)
                     return Task.CompletedTask;
 
-                modelModifier.PerformEditTextEditorAction(keyboardEventAction, cursorModifierBag);
+                modelModifier.HandleKeyboardEvent(
+                    editContext,
+                    resourceUri,
+                    viewModelKey,
+                    keyboardEventArgs,
+                    cancellationToken,
+                    cursorModifierBag);
+
                 return Task.CompletedTask;
             };
         }
 
         public TextEditorEdit DeleteTextByRangeFactory(
-            DeleteTextByRangeAction deleteTextByRangeAction,
-            Key<TextEditorViewModel> viewModelKey)
+            ResourceUri resourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            int count,
+            CancellationToken cancellationToken)
         {
             return editContext =>
             {
@@ -435,30 +504,48 @@ public partial interface ITextEditorService
                 if (cursorModifierBag is null || primaryCursorModifier is null)
                     return Task.CompletedTask;
 
-                modelModifier.PerformEditTextEditorAction(deleteTextByRangeAction, cursorModifierBag);
+                modelModifier.DeleteByRange(
+                    editContext,
+                    resourceUri,
+                    viewModelKey,
+                    count,
+                    cancellationToken,
+                    cursorModifierBag);
+
                 return Task.CompletedTask;
             };
         }
         
         public TextEditorEdit DeleteTextByRangeUnsafeFactory(
-            DeleteTextByRangeUnsafeAction deleteTextByRangeUnsafeAction,
-            TextEditorCursorModifierBag cursorModifierBag)
+            ResourceUri resourceUri,
+            TextEditorCursorModifierBag cursorModifierBag,
+            int count,
+            CancellationToken cancellationToken)
         {
             return editContext =>
             {
-                deleteTextByRangeUnsafeAction = deleteTextByRangeUnsafeAction with
-                {
-                    CursorModifierBag = cursorModifierBag,
-                };
+                var modelModifier = editContext.GetModelModifier(resourceUri);
 
-                _dispatcher.Dispatch(deleteTextByRangeUnsafeAction);
+                if (modelModifier is null)
+                    return Task.CompletedTask;
+
+                modelModifier.DeleteByRange(
+                    editContext,
+                    resourceUri,
+                    Key<TextEditorViewModel>.Empty,
+                    count,
+                    cancellationToken,
+                    cursorModifierBag);
+
                 return Task.CompletedTask;
             };
         }
 
         public TextEditorEdit DeleteTextByMotionFactory(
-            DeleteTextByMotionAction deleteTextByMotionAction,
-            Key<TextEditorViewModel> viewModelKey)
+            ResourceUri resourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            MotionKind motionKind,
+            CancellationToken cancellationToken)
         {
             return editContext =>
             {
@@ -474,23 +561,56 @@ public partial interface ITextEditorService
                 if (cursorModifierBag is null || primaryCursorModifier is null)
                     return Task.CompletedTask;
 
-                modelModifier.PerformEditTextEditorAction(deleteTextByMotionAction, cursorModifierBag);
+                modelModifier.DeleteTextByMotion(
+                    editContext,
+                    resourceUri,
+                    viewModelKey,
+                    motionKind,
+                    cancellationToken,
+                    cursorModifierBag);
+
                 return Task.CompletedTask;
             };
         }
         
         public TextEditorEdit DeleteTextByMotionUnsafeFactory(
-            DeleteTextByMotionUnsafeAction deleteTextByMotionUnsafeAction,
-            TextEditorCursorModifierBag cursorModifierBag)
+            ResourceUri resourceUri,
+            TextEditorCursorModifierBag cursorModifierBag,
+            MotionKind motionKind,
+            CancellationToken cancellationToken)
         {
             return editContext =>
             {
-                deleteTextByMotionUnsafeAction = deleteTextByMotionUnsafeAction with
-                {
-                    CursorModifierBag = cursorModifierBag,
-                };
+                var modelModifier = editContext.GetModelModifier(resourceUri);
 
-                _dispatcher.Dispatch(deleteTextByMotionUnsafeAction);
+                if (modelModifier is null)
+                    return Task.CompletedTask;
+
+                modelModifier.DeleteTextByMotion(
+                    editContext,
+                    resourceUri,
+                    Key<TextEditorViewModel>.Empty,
+                    motionKind,
+                    cancellationToken,
+                    cursorModifierBag);
+
+                return Task.CompletedTask;
+            };
+        }
+
+        public TextEditorEdit CalculatePresentationModelFactory(
+            ResourceUri resourceUri,
+            Key<TextEditorPresentationModel> presentationKey)
+        {
+            return editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(resourceUri);
+
+                if (modelModifier is null)
+                    return Task.CompletedTask;
+
+                modelModifier.PerformCalculatePresentationModelAction(presentationKey);
+
                 return Task.CompletedTask;
             };
         }
@@ -499,7 +619,9 @@ public partial interface ITextEditorService
         #region DELETE_METHODS
         public void Dispose(ResourceUri resourceUri)
         {
-            _dispatcher.Dispatch(new DisposeAction(resourceUri));
+            _dispatcher.Dispatch(new DisposeAction(
+                TextEditorService.AuthenticatedActionKey,
+                resourceUri));
         }
         #endregion
     }

@@ -11,35 +11,51 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.States;
 
 public partial class TextEditorModelState
 {
-    public record RegisterAction(TextEditorModel Model);
-    public record DisposeAction(ResourceUri ResourceUri);
-    public record ForceRerenderAction(ResourceUri ResourceUri);
-    
+    public record RegisterAction(
+            Key<TextEditorAuthenticatedAction> AuthenticatedActionKey,
+            TextEditorModel Model)
+        : TextEditorAuthenticatedAction(AuthenticatedActionKey);
+
+    public record DisposeAction(
+            Key<TextEditorAuthenticatedAction> AuthenticatedActionKey,
+            ResourceUri ResourceUri)
+        : TextEditorAuthenticatedAction(AuthenticatedActionKey);
+
+    public record ForceRerenderAction(
+            Key<TextEditorAuthenticatedAction> AuthenticatedActionKey,
+            ResourceUri ResourceUri)
+        : TextEditorAuthenticatedAction(AuthenticatedActionKey);
+
     public record RegisterPresentationModelAction(
+            Key<TextEditorAuthenticatedAction> AuthenticatedActionKey,
             ResourceUri ResourceUri,
-            TextEditorPresentationModel PresentationModel);
-    
+            TextEditorPresentationModel PresentationModel)
+        : TextEditorAuthenticatedAction(AuthenticatedActionKey);
+
     public record CalculatePresentationModelAction(
+            Key<TextEditorAuthenticatedAction> AuthenticatedActionKey,
             ITextEditorEditContext EditContext,
             ResourceUri ResourceUri,
             Key<TextEditorPresentationModel> PresentationKey)
-        : AuthenticatedAction(EditContext.AuthenticatedActionKey);
+        : TextEditorAuthenticatedAction(AuthenticatedActionKey);
 
     public record KeyboardEventAction(
+            Key<TextEditorAuthenticatedAction> AuthenticatedActionKey,
             ITextEditorEditContext EditContext,
             ResourceUri ResourceUri,
             Key<TextEditorViewModel> ViewModelKey,
             KeyboardEventArgs KeyboardEventArgs,
             CancellationToken CancellationToken)
-        : AuthenticatedAction(EditContext.AuthenticatedActionKey);
+        : TextEditorAuthenticatedAction(AuthenticatedActionKey);
 
     public record InsertTextAction(
+            Key<TextEditorAuthenticatedAction> AuthenticatedActionKey,
             ITextEditorEditContext EditContext,
             ResourceUri ResourceUri,
             Key<TextEditorViewModel> ViewModelKey,
             string Content,
             CancellationToken CancellationToken)
-        : AuthenticatedAction(EditContext.AuthenticatedActionKey);
+        : TextEditorAuthenticatedAction(AuthenticatedActionKey);
 
     /// <summary>
     /// If one wants to guarantee that the state is up to date use <see cref="InsertTextAction"/>
@@ -52,20 +68,22 @@ public partial class TextEditorModelState
     /// the cursor key would come back as the cursor not existing.
     /// </summary>
     public record InsertTextUnsafeAction(
+            Key<TextEditorAuthenticatedAction> AuthenticatedActionKey,
             ITextEditorEditContext EditContext,
             ResourceUri ResourceUri,
             TextEditorCursorModifierBag CursorModifierBag,
             string Content,
             CancellationToken CancellationToken)
-        : AuthenticatedAction(EditContext.AuthenticatedActionKey);
+        : TextEditorAuthenticatedAction(AuthenticatedActionKey);
 
     public record DeleteTextByMotionAction(
+            Key<TextEditorAuthenticatedAction> AuthenticatedActionKey,
             ITextEditorEditContext EditContext,
             ResourceUri ResourceUri,
             Key<TextEditorViewModel> ViewModelKey,
             MotionKind MotionKind,
             CancellationToken CancellationToken)
-        : AuthenticatedAction(EditContext.AuthenticatedActionKey);
+        : TextEditorAuthenticatedAction(AuthenticatedActionKey);
 
     /// <summary>
     /// If one wants to guarantee that the state is up to date use <see cref="DeleteTextByMotionAction"/>
@@ -78,20 +96,22 @@ public partial class TextEditorModelState
     /// the cursor key would come back as the cursor not existing.
     /// </summary>
     public record DeleteTextByMotionUnsafeAction(
+            Key<TextEditorAuthenticatedAction> AuthenticatedActionKey,
             ITextEditorEditContext EditContext,
             ResourceUri ResourceUri,
             TextEditorCursorModifierBag CursorModifierBag,
             MotionKind MotionKind,
             CancellationToken CancellationToken)
-        : AuthenticatedAction(EditContext.AuthenticatedActionKey);
+        : TextEditorAuthenticatedAction(AuthenticatedActionKey);
 
     public record DeleteTextByRangeAction(
+            Key<TextEditorAuthenticatedAction> AuthenticatedActionKey,
             ITextEditorEditContext EditContext,
             ResourceUri ResourceUri,
             Key<TextEditorViewModel> ViewModelKey,
             int Count,
             CancellationToken CancellationToken)
-        : AuthenticatedAction(EditContext.AuthenticatedActionKey);
+        : TextEditorAuthenticatedAction(AuthenticatedActionKey);
 
     /// <summary>
     /// If one wants to guarantee that the state is up to date use <see cref="DeleteTextByRangeAction"/>
@@ -104,15 +124,17 @@ public partial class TextEditorModelState
     /// the cursor key would come back as the cursor not existing.
     /// </summary>
     public record DeleteTextByRangeUnsafeAction(
+            Key<TextEditorAuthenticatedAction> AuthenticatedActionKey,
             ITextEditorEditContext EditContext,
             ResourceUri ResourceUri,
             TextEditorCursorModifierBag CursorModifierBag,
             int Count,
             CancellationToken CancellationToken)
-        : AuthenticatedAction(EditContext.AuthenticatedActionKey);
+        : TextEditorAuthenticatedAction(AuthenticatedActionKey);
 
     public record SetModelAction(
+            Key<TextEditorAuthenticatedAction> AuthenticatedActionKey,
             ITextEditorEditContext EditContext,
             TextEditorModelModifier ModelModifier)
-        : AuthenticatedAction(EditContext.AuthenticatedActionKey);
+        : TextEditorAuthenticatedAction(AuthenticatedActionKey);
 }

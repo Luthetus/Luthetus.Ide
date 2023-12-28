@@ -2,6 +2,7 @@
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.States;
 
@@ -64,9 +65,11 @@ public class TextEditorViewModelStateActionsTests
 
         textEditorService.Post(editContext =>
         {
-
+            var authenticatedActionKey = Key<TextEditorAuthenticatedAction>.NewKey();
             var withFunc = new Func<TextEditorViewModel, TextEditorViewModel>(inState => inState);
+            
             var setViewModelWithAction = new TextEditorViewModelState.SetViewModelWithAction(
+                authenticatedActionKey,
                 editContext,
                 inViewModel.ViewModelKey,
                 withFunc);

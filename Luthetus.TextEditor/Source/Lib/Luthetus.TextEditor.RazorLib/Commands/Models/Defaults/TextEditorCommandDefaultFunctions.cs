@@ -86,12 +86,13 @@ public class TextEditorCommandDefaultFunctions
             await commandArgs.ClipboardService.SetClipboard(selectedText);
             await viewModelModifier.ViewModel.FocusAsync();
 
-            commandArgs.Dispatcher.Dispatch(new KeyboardEventAction(
+            modelModifier.HandleKeyboardEvent(
                 editContext,
                 modelModifier.ResourceUri,
                 viewModelModifier.ViewModel.ViewModelKey,
                 new KeyboardEventArgs { Key = KeyboardKeyFacts.MetaKeys.DELETE },
-                CancellationToken.None));
+                CancellationToken.None,
+                cursorModifierBag);
         };
     }
 
@@ -116,12 +117,13 @@ public class TextEditorCommandDefaultFunctions
 
             var clipboard = await commandArgs.ClipboardService.ReadClipboard();
 
-            commandArgs.Dispatcher.Dispatch(new InsertTextAction(
+            modelModifier.EditByInsertion(
                 editContext,
                 modelModifier.ResourceUri,
                 viewModelModifier.ViewModel.ViewModelKey,
                 clipboard,
-                CancellationToken.None));
+                CancellationToken.None,
+                cursorModifierBag);
         };
     }
 
@@ -147,14 +149,7 @@ public class TextEditorCommandDefaultFunctions
             var onSaveRequestedFunc = viewModelModifier.ViewModel.OnSaveRequested;
 
             if (onSaveRequestedFunc is not null)
-            {
                 onSaveRequestedFunc.Invoke(modelModifier);
-
-                commandArgs.Dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
-                    editContext,
-                    viewModelModifier.ViewModel.ViewModelKey,
-                    inState => inState with { })); // "with { }" is a Hack to re-render
-            }
 
             return Task.CompletedTask;
         };
@@ -426,12 +421,13 @@ public class TextEditorCommandDefaultFunctions
                 };
             }
 
-            commandArgs.Dispatcher.Dispatch(new InsertTextAction(
+            modelModifier.EditByInsertion(
                 editContext,
                 modelModifier.ResourceUri,
                 viewModelModifier.ViewModel.ViewModelKey,
                 selectedText,
-                CancellationToken.None));
+                CancellationToken.None,
+                new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, new List<TextEditorCursorModifier>() { new(cursorForInsertion) }));
 
             return Task.CompletedTask;
         };
@@ -469,12 +465,13 @@ public class TextEditorCommandDefaultFunctions
             {
                 var cursorForInsertion = new TextEditorCursor(i, 0, true);
 
-                commandArgs.Dispatcher.Dispatch(new InsertTextAction(
+                modelModifier.EditByInsertion(
                     editContext,
                     modelModifier.ResourceUri,
                     viewModelModifier.ViewModel.ViewModelKey,
                     KeyboardKeyFacts.WhitespaceCharacters.TAB.ToString(),
-                    CancellationToken.None));
+                    CancellationToken.None,
+                    cursorModifierBag);
             }
 
             var lowerBoundPositionIndexChange = 1;
@@ -557,12 +554,13 @@ public class TextEditorCommandDefaultFunctions
 
                     var cursorForDeletion = new TextEditorCursor(i, 0, true);
 
-                    commandArgs.Dispatcher.Dispatch(new DeleteTextByRangeAction(
+                    modelModifier.DeleteByRange(
                         editContext,
                         modelModifier.ResourceUri,
                         viewModelModifier.ViewModel.ViewModelKey,
                         removeCharacterCount, // Delete a single "Tab" character
-                        CancellationToken.None));
+                        CancellationToken.None,
+                        new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, new List<TextEditorCursorModifier> { new(cursorForDeletion) }));
                 }
                 else if (readResult.StartsWith(KeyboardKeyFacts.WhitespaceCharacters.SPACE))
                 {
@@ -577,12 +575,13 @@ public class TextEditorCommandDefaultFunctions
 
                     removeCharacterCount = contiguousSpaceCount;
 
-                    commandArgs.Dispatcher.Dispatch(new DeleteTextByRangeAction(
+                    modelModifier.DeleteByRange(
                         editContext,
                         modelModifier.ResourceUri,
                         viewModelModifier.ViewModel.ViewModelKey,
                         removeCharacterCount,
-                        CancellationToken.None));
+                        CancellationToken.None,
+                        new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, new List<TextEditorCursorModifier> { new(cursorForDeletion) }));
                 }
 
                 // Modify the lower bound of user's text selection
@@ -681,12 +680,13 @@ public class TextEditorCommandDefaultFunctions
             primaryCursorModifier.RowIndex = primaryCursorModifier.RowIndex;
             primaryCursorModifier.ColumnIndex = lengthOfRow;
 
-            commandArgs.Dispatcher.Dispatch(new InsertTextAction(
+            modelModifier.EditByInsertion(
                 editContext,
                 modelModifier.ResourceUri,
                 viewModelModifier.ViewModel.ViewModelKey,
                 "\n",
-                CancellationToken.None));
+                CancellationToken.None,
+                cursorModifierBag);
 
             return Task.CompletedTask;
         };
@@ -716,12 +716,13 @@ public class TextEditorCommandDefaultFunctions
             primaryCursorModifier.RowIndex = primaryCursorModifier.RowIndex;
             primaryCursorModifier.ColumnIndex = 0;
 
-            commandArgs.Dispatcher.Dispatch(new InsertTextAction(
+            modelModifier.EditByInsertion(
                 editContext,
                 modelModifier.ResourceUri,
                 viewModelModifier.ViewModel.ViewModelKey,
                 "\n",
-                CancellationToken.None));
+                CancellationToken.None,
+                cursorModifierBag);
 
             if (primaryCursorModifier.RowIndex > 1)
             {
@@ -950,8 +951,7 @@ public class TextEditorCommandDefaultFunctions
             firstDefinitionViewModelCursorModifier.ColumnIndex = columnIndex;
             firstDefinitionViewModelCursorModifier.PreferredColumnIndex = columnIndex;
 
-            commandArgs.Dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
-                editContext,
+            commandArgs.TextEditorService.ViewModelApi.WithValueFactory(
                 viewModelModifier.ViewModel.ViewModelKey,
                 firstDefinitionInViewModel =>
                 {
@@ -962,7 +962,7 @@ public class TextEditorCommandDefaultFunctions
                     {
                         CursorBag = outCursorBag
                     };
-                }));
+                }).Invoke(editContext);
 
             if (commandArgs.ShowViewModelAction is not null)
                 commandArgs.ShowViewModelAction.Invoke(firstDefinitionViewModel.ViewModelKey);
