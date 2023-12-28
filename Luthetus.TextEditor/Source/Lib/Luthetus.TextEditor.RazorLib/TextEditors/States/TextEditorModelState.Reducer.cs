@@ -38,7 +38,7 @@ public partial class TextEditorModelState
         [ReducerMethod]
         public static TextEditorModelState ReduceSetModelAction(
             TextEditorModelState inState,
-            SetModelAction setModelAction)
+            SetAction setModelAction)
         {
             var inModel = inState.ModelBag.FirstOrDefault(
                 x => x.ResourceUri == setModelAction.ModelModifier.ResourceUri);

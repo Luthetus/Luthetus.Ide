@@ -145,7 +145,7 @@ public partial class TextEditorService : ITextEditorService
                     if (modelModifier is null)
                         continue;
 
-                    _dispatcher.Dispatch(new TextEditorModelState.SetModelAction(
+                    _dispatcher.Dispatch(new TextEditorModelState.SetAction(
                         AuthenticatedActionKey,
                         editContext,
                         modelModifier));

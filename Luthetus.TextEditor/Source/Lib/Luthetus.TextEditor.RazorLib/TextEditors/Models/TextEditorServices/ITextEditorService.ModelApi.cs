@@ -10,7 +10,6 @@ using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using static Luthetus.TextEditor.RazorLib.TextEditors.States.TextEditorModelState;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.Forms;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
@@ -35,10 +34,6 @@ public partial interface ITextEditorService
             DateTime resourceLastWriteTime,
             string initialContent,
             string? overrideDisplayTextForFileExtension = null);
-
-        public void RegisterPresentationModel(
-            ResourceUri resourceUri,
-            TextEditorPresentationModel emptyPresentationModel);
         #endregion
 
         #region READ_METHODS
@@ -161,6 +156,10 @@ public partial interface ITextEditorService
             MotionKind motionKind,
             CancellationToken cancellationToken);
 
+        public TextEditorEdit RegisterPresentationModel(
+            ResourceUri resourceUri,
+            TextEditorPresentationModel emptyPresentationModel);
+
         public TextEditorEdit CalculatePresentationModelFactory(
             ResourceUri resourceUri,
             Key<TextEditorPresentationModel> presentationKey);
@@ -205,7 +204,13 @@ public partial interface ITextEditorService
                 try
                 {
                     await model.ApplySyntaxHighlightingAsync();
-                    _dispatcher.Dispatch(new ForceRerenderAction(TextEditorService.AuthenticatedActionKey, model.ResourceUri));
+
+                    _textEditorService.Post(editContext =>
+                    {
+                        // Getting a model modifier marks it to be reloaded (2023-12-28)
+                        _ = editContext.GetModelModifier(model.ResourceUri);
+                        return Task.CompletedTask;
+                    });
                 }
                 catch (Exception e)
                 {
@@ -222,7 +227,7 @@ public partial interface ITextEditorService
             string initialContent,
             string? overrideDisplayTextForFileExtension = null)
         {
-            var textEditorModel = new TextEditorModel(
+            var model = new TextEditorModel(
                 resourceUri,
                 resourceLastWriteTime,
                 overrideDisplayTextForFileExtension ?? extensionNoPeriod,
@@ -232,17 +237,20 @@ public partial interface ITextEditorService
             
             _dispatcher.Dispatch(new RegisterAction(
                 TextEditorService.AuthenticatedActionKey,
-                textEditorModel));
+                model));
 
             _ = Task.Run(async () =>
             {
                 try
                 {
-                    await textEditorModel.ApplySyntaxHighlightingAsync();
+                    await model.ApplySyntaxHighlightingAsync();
 
-                    _dispatcher.Dispatch(new ForceRerenderAction(
-                        TextEditorService.AuthenticatedActionKey,
-                        textEditorModel.ResourceUri));
+                    _textEditorService.Post(editContext =>
+                    {
+                        // Getting a model modifier marks it to be reloaded (2023-12-28)
+                        _ = editContext.GetModelModifier(model.ResourceUri);
+                        return Task.CompletedTask;
+                    });
                 }
                 catch (Exception e)
                 {
@@ -250,16 +258,6 @@ public partial interface ITextEditorService
                     throw;
                 }
             }, CancellationToken.None);
-        }
-
-        public void RegisterPresentationModel(
-            ResourceUri resourceUri,
-            TextEditorPresentationModel emptyPresentationModel)
-        {
-            _dispatcher.Dispatch(new RegisterPresentationModelAction(
-                TextEditorService.AuthenticatedActionKey,
-                resourceUri,
-                emptyPresentationModel));
         }
         #endregion
 
@@ -593,6 +591,23 @@ public partial interface ITextEditorService
                     motionKind,
                     cancellationToken,
                     cursorModifierBag);
+
+                return Task.CompletedTask;
+            };
+        }
+
+        public TextEditorEdit RegisterPresentationModel(
+            ResourceUri resourceUri,
+            TextEditorPresentationModel emptyPresentationModel)
+        {
+            return editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(resourceUri);
+
+                if (modelModifier is null)
+                    return Task.CompletedTask;
+
+                modelModifier.PerformRegisterPresentationModelAction(emptyPresentationModel);
 
                 return Task.CompletedTask;
             };

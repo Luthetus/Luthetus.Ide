@@ -245,7 +245,11 @@ public partial class TextEditorModelModifier
     }
 
     private void PerformInsertions(
-        KeyboardEventAction keyboardEventAction,
+        ITextEditorEditContext editContext,
+        ResourceUri resourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        KeyboardEventArgs keyboardEventArgs,
+        CancellationToken cancellationToken,
         TextEditorCursorModifierBag cursorModifierBag)
     {
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
@@ -263,9 +267,9 @@ public partial class TextEditorModelModifier
             if (TextEditorSelectionHelper.HasSelectedText(cursorModifier))
             {
                 PerformDeletions(
-                    keyboardEventAction.EditContext,
-                    keyboardEventAction.ResourceUri,
-                    keyboardEventAction.ViewModelKey,
+                    editContext,
+                    resourceUri,
+                    viewModelKey,
                     new KeyboardEventArgs
                     {
                         Code = KeyboardKeyFacts.MetaKeys.DELETE,
@@ -297,14 +301,14 @@ public partial class TextEditorModelModifier
             var wasTabCode = false;
             var wasEnterCode = false;
 
-            var characterValueToInsert = keyboardEventAction.KeyboardEventArgs.Key.First();
+            var characterValueToInsert = keyboardEventArgs.Key.First();
 
-            if (KeyboardKeyFacts.IsWhitespaceCode(keyboardEventAction.KeyboardEventArgs.Code))
+            if (KeyboardKeyFacts.IsWhitespaceCode(keyboardEventArgs.Code))
             {
-                characterValueToInsert = KeyboardKeyFacts.ConvertWhitespaceCodeToCharacter(keyboardEventAction.KeyboardEventArgs.Code);
+                characterValueToInsert = KeyboardKeyFacts.ConvertWhitespaceCodeToCharacter(keyboardEventArgs.Code);
 
-                wasTabCode = KeyboardKeyFacts.WhitespaceCodes.TAB_CODE == keyboardEventAction.KeyboardEventArgs.Code;
-                wasEnterCode = KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == keyboardEventAction.KeyboardEventArgs.Code;
+                wasTabCode = KeyboardKeyFacts.WhitespaceCodes.TAB_CODE == keyboardEventArgs.Code;
+                wasEnterCode = KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == keyboardEventArgs.Code;
             }
 
             var characterCountInserted = 1;
@@ -1024,15 +1028,16 @@ public partial class TextEditorModelModifier
         }
     }
 
-    public void PerformRegisterPresentationModelAction(RegisterPresentationModelAction registerPresentationModelAction)
+    public void PerformRegisterPresentationModelAction(
+        TextEditorPresentationModel presentationModel)
     {
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
             _presentationModelsBag ??= _textEditorModel.PresentationModelsBag.ToList();
         }
 
-        if (!PresentationModelsBag.Any(x => x.TextEditorPresentationKey == registerPresentationModelAction.PresentationModel.TextEditorPresentationKey))
-            PresentationModelsBag.Add(registerPresentationModelAction.PresentationModel);
+        if (!PresentationModelsBag.Any(x => x.TextEditorPresentationKey == presentationModel.TextEditorPresentationKey))
+            PresentationModelsBag.Add(presentationModel);
     }
 
     public void PerformCalculatePresentationModelAction(
@@ -1110,8 +1115,6 @@ public partial class TextEditorModelModifier
 
         ModifyContent(restoreEditBlock.ContentSnapshot);
     }
-
-    ///////////// (2023-12-28)
 
     public TextEditorModel ForceRerenderAction()
     {
