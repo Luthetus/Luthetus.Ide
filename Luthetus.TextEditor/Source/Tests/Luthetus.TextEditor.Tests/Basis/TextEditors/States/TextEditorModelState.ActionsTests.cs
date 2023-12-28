@@ -2,6 +2,7 @@ using Xunit;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.States;
 
@@ -22,7 +23,7 @@ public class TextEditorModelStateActionsTests
             out var inViewModel,
             out var serviceProvider);
 
-        var authenticatedActionKey = Key<TextEditorAuthenticatedAction>.NewKey();
+        var authenticatedActionKey = TextEditorService.AuthenticatedActionKey;
 
         var registerAction = new TextEditorModelState.RegisterAction(
             authenticatedActionKey,
@@ -44,7 +45,7 @@ public class TextEditorModelStateActionsTests
             out var inViewModel,
             out var serviceProvider);
         
-        var authenticatedActionKey = Key<TextEditorAuthenticatedAction>.NewKey();
+        var authenticatedActionKey = TextEditorService.AuthenticatedActionKey;
 
         var disposeAction = new TextEditorModelState.DisposeAction(
             authenticatedActionKey,

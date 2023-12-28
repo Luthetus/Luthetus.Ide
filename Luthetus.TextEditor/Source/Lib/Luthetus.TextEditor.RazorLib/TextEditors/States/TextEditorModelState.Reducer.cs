@@ -36,19 +36,19 @@ public partial class TextEditorModelState
         }
 
         [ReducerMethod]
-        public static TextEditorModelState ReduceSetModelAction(
+        public static TextEditorModelState ReduceSetAction(
             TextEditorModelState inState,
-            SetAction setModelAction)
+            SetAction setAction)
         {
             var inModel = inState.ModelBag.FirstOrDefault(
-                x => x.ResourceUri == setModelAction.ModelModifier.ResourceUri);
+                x => x.ResourceUri == setAction.ModelModifier.ResourceUri);
 
             if (inModel is null)
                 return inState;
 
             var outViewModelBag = inState.ModelBag.Replace(
                 inModel,
-                setModelAction.ModelModifier.ToModel());
+                setAction.ModelModifier.ToModel());
 
             return new TextEditorModelState { ModelBag = outViewModelBag };
         }
