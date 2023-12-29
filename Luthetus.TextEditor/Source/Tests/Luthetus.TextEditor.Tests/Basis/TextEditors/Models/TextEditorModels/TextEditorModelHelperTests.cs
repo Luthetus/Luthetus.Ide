@@ -1,5 +1,6 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorModels;
 
@@ -14,7 +15,82 @@ public class TextEditorModelHelperTests
 	[Fact]
 	public void GetStartOfRowTuple()
 	{
-		throw new NotImplementedException();
+		// This test is broken down into code blocks, one for each subcase.
+		// TODO: Perhaps separate the subcases as individual tests.
+
+		// InBounds
+		{
+			{
+                TextEditorServicesTestsHelper.InBounds_StartOfRow(
+					out var textEditorService,
+					out var inModel,
+					out var inViewModel,
+					out var serviceProvider);
+            }
+
+            // !start_of_row && !end_of_row
+            {
+                TextEditorServicesTestsHelper.InBounds_NOT_StartOfRow_AND_NOT_EndOfRow(
+                    out var textEditorService,
+                    out var inModel,
+                    out var inViewModel,
+                    out var serviceProvider);
+            }
+			
+			// End of a row && !end_of_document
+			{
+                TextEditorServicesTestsHelper.InBounds_EndOfRow(
+                    out var textEditorService,
+                    out var inModel,
+                    out var inViewModel,
+                    out var serviceProvider);
+            }
+			
+			// Start of document
+			{
+                TextEditorServicesTestsHelper.InBounds_StartOfDocument(
+                    out var textEditorService,
+                    out var inModel,
+                    out var inViewModel,
+                    out var serviceProvider);
+            }
+
+            // End of document
+			//
+            // NOTE: end of document is to mean: position_index == document.Length...
+			// ...the reason for this is that an insertion cursor is allowed to go 1 index...
+			// ...beyond the length of the document.
+            {
+                TextEditorServicesTestsHelper.InBounds_EndOfDocument(
+                    out var textEditorService,
+                    out var inModel,
+                    out var inViewModel,
+                    out var serviceProvider);
+            }
+		}
+
+		// OutOfBounds
+		{
+			// position_index < 0
+			{
+                TextEditorServicesTestsHelper.OutOfBounds_PositionIndex_LESS_THAN_Zero(
+                    out var textEditorService,
+                    out var inModel,
+                    out var inViewModel,
+                    out var serviceProvider);
+            }
+
+            // position_index > document.Length + 1
+            {
+                TextEditorServicesTestsHelper.OutOfBounds_PositionIndex_GREATER_THAN_DocumentLength_PLUS_One(
+                    out var textEditorService,
+                    out var inModel,
+                    out var inViewModel,
+                    out var serviceProvider);
+            }
+        }
+
+        throw new NotImplementedException();
 	}
 
 	/// <summary>

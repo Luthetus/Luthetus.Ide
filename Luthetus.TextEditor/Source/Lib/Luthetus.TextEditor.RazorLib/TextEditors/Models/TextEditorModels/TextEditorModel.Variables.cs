@@ -17,56 +17,28 @@ public partial class TextEditorModel
     public const int GUTTER_PADDING_RIGHT_IN_PIXELS = 15;
     public const int MAXIMUM_EDIT_BLOCKS = 10;
     public const int MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN = 5;
-    
-    /// <summary>
-    /// TODO: Divide the content into partitions for optimization.
-    /// </summary>
+
+    /// <inheritdoc cref="ITextEditorModel.ContentBag"/>
     public ImmutableList<RichCharacter> ContentBag = ImmutableList<RichCharacter>.Empty;
 	public ImmutableList<EditBlock> EditBlocksBag { get; init; } = ImmutableList<EditBlock>.Empty;
-    /// <summary>
-    /// To get the ending position of RowIndex _rowEndingPositions[RowIndex]<br /><br />
-    /// _rowEndingPositions returns the start of the NEXT row
-    /// </summary>
+    /// <inheritdoc cref="ITextEditorModel.RowEndingPositionsBag"/>
 	public ImmutableList<(int positionIndex, RowEndingKind rowEndingKind)> RowEndingPositionsBag { get; init; } = ImmutableList<(int positionIndex, RowEndingKind rowEndingKind)>.Empty;
 	public ImmutableList<(RowEndingKind rowEndingKind, int count)> RowEndingKindCountsBag { get; init; } = ImmutableList<(RowEndingKind rowEndingKind, int count)>.Empty;
 	public ImmutableList<TextEditorPresentationModel> PresentationModelsBag { get; init; } = ImmutableList<TextEditorPresentationModel>.Empty;
-    /// <summary>
-    /// Provides exact position index of a tab character
-    /// </summary>
+    /// <inheritdoc cref="ITextEditorModel.TabKeyPositionsBag"/>
 	public ImmutableList<int> TabKeyPositionsBag = ImmutableList<int>.Empty;
-	/// <summary>
-	/// If there is a mixture of<br/>-Carriage Return<br/>-Linefeed<br/>-CRLF<br/>
-	/// Then this will be null.<br/><br/>
-	/// If there are no line endings then this will be null.
-	/// </summary>
-	public RowEndingKind? OnlyRowEndingKind { get; init; }
+    /// <inheritdoc cref="ITextEditorModel.OnlyRowEndingKind"/>
+    public RowEndingKind? OnlyRowEndingKind { get; init; }
     public RowEndingKind UsingRowEndingKind { get; init; }
-    /// <summary>
-    /// TODO: On (2023-10-02) Key&lt;TextEditorModel&gt; was removed, because it felt redundant...
-    /// ...given only 1 <see cref="TextEditorModel"/> can exist for a given <see cref="ResourceUri"/>.
-    /// This change however creates an issue regarding 'fake' resource uri's that are used for in-memory
-    /// files. For example, <see cref="Options.Displays.TextEditorSettingsPreview"/> now has the resource
-    /// URI of "__LUTHETUS_SETTINGS_PREVIEW__". This is an issue because could a user have on
-    /// their filesystem the file "__LUTHETUS_SETTINGS_PREVIEW__"? (at that exact resource uri)
-    /// </summary>
+    /// <inheritdoc cref="ITextEditorModel.ResourceUri"/>
     public ResourceUri ResourceUri { get; init; }
     public DateTime ResourceLastWriteTime { get; init; }
-	/// <summary>
-	/// This is displayed within the<see cref="Displays.Internals.TextEditorFooter"/>.
-	/// </summary>
-	public string FileExtension { get; init; }
+    /// <inheritdoc cref="ITextEditorModel.FileExtension"/>
+    public string FileExtension { get; init; }
     public IDecorationMapper DecorationMapper { get; init; }
     public ICompilerService CompilerService { get; init; }
     public TextEditorSaveFileHelper TextEditorSaveFileHelper { get; init; } = new();
     public int EditBlockIndex { get; init; }
 	public (int rowIndex, int rowLength) MostCharactersOnASingleRowTuple { get; init; }
-
-    /// <summary>
-    /// <see cref="TextEditorModel"/> uses <see cref="ResourceUri"/> as its unique identifier.
-    /// Throughout this library, one finds <see cref="Key{T}"/> to be a unique identifier.
-    /// However, since <see cref="ResourceUri"/> should be unique,
-    /// <see cref="TextEditorModel"/> is an exception to this pattern.
-    /// </summary>
-    public Key<TextEditorModel> Key  => throw new NotImplementedException($"{nameof(TextEditorModel)} uses {nameof(ResourceUri)} as its unique identifier. Throughout this library, one finds {typeof(Key<>).FullName} to be a unique identifier. However since {typeof(ResourceUri).FullName} should be unique, {nameof(TextEditorModel)} is an exception to this pattern.");
     public Key<RenderState> RenderStateKey { get; init; } = Key<RenderState>.NewKey();
 }

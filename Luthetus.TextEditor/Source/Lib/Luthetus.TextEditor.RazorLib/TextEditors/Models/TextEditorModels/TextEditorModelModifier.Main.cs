@@ -21,9 +21,8 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 ///
 /// When reading state, if the state had been 'null coallesce assigned' then the field will
 /// be read. Otherwise, the existing TextEditorModel's value will be read.
-/// <br/>
-/// A large amount of this file is going to be deleted. I copied over everything from
-/// <see cref="TextEditorModel"/>, and I need to think about how I want to simplify things.
+/// <br/><br/>
+/// <inheritdoc cref="ITextEditorModel"/>
 /// </summary>
 public partial class TextEditorModelModifier
 {
