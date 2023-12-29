@@ -131,7 +131,7 @@ public class TextEditorServicesTestsHelper
         out TextEditorCursor cursor)
     {
         model = new TextEditorModel(
-            new ResourceUri($"/{nameof(InBounds_StartOfRow)}.txt"),
+            new ResourceUri($"/{nameof(InBounds_NOT_StartOfRow_AND_NOT_EndOfRow)}.txt"),
             DateTime.UtcNow,
             ExtensionNoPeriodFacts.TXT,
             _sourceText,
@@ -146,7 +146,7 @@ public class TextEditorServicesTestsHelper
         out TextEditorCursor cursor)
     {
         model = new TextEditorModel(
-            new ResourceUri($"/{nameof(InBounds_StartOfRow)}.txt"),
+            new ResourceUri($"/{nameof(InBounds_EndOfRow)}.txt"),
             DateTime.UtcNow,
             ExtensionNoPeriodFacts.TXT,
             _sourceText,
@@ -161,7 +161,7 @@ public class TextEditorServicesTestsHelper
         out TextEditorCursor cursor)
     {
         model = new TextEditorModel(
-            new ResourceUri($"/{nameof(InBounds_StartOfRow)}.txt"),
+            new ResourceUri($"/{nameof(InBounds_StartOfDocument)}.txt"),
             DateTime.UtcNow,
             ExtensionNoPeriodFacts.TXT,
             _sourceText,
@@ -176,7 +176,7 @@ public class TextEditorServicesTestsHelper
         out TextEditorCursor cursor)
     {
         model = new TextEditorModel(
-            new ResourceUri($"/{nameof(InBounds_StartOfRow)}.txt"),
+            new ResourceUri($"/{nameof(InBounds_EndOfDocument)}.txt"),
             DateTime.UtcNow,
             ExtensionNoPeriodFacts.TXT,
             _sourceText,
@@ -191,7 +191,7 @@ public class TextEditorServicesTestsHelper
         out TextEditorCursor cursor)
     {
         model = new TextEditorModel(
-            new ResourceUri($"/{nameof(InBounds_StartOfRow)}.txt"),
+            new ResourceUri($"/{nameof(OutOfBounds_PositionIndex_LESS_THAN_Zero)}.txt"),
             DateTime.UtcNow,
             ExtensionNoPeriodFacts.TXT,
             _sourceText,
@@ -206,7 +206,7 @@ public class TextEditorServicesTestsHelper
         out TextEditorCursor cursor)
     {
         model = new TextEditorModel(
-            new ResourceUri($"/{nameof(InBounds_StartOfRow)}.txt"),
+            new ResourceUri($"/{nameof(OutOfBounds_PositionIndex_GREATER_THAN_DocumentLength_PLUS_One)}.txt"),
             DateTime.UtcNow,
             ExtensionNoPeriodFacts.TXT,
             _sourceText,
