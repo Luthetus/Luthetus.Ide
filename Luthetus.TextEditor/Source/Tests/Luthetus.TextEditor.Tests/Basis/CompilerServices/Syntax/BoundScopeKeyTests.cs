@@ -8,30 +8,32 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax;
 /// </summary>
 public class BoundScopeKeyTests
 {
-	/// <summary>
-	/// <see cref="BoundScopeKey(Guid)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="BoundScopeKey(Guid)"/>
+	/// <br/>----<br/>
+    /// <see cref="BoundScopeKey.Empty"/>
+    /// <see cref="BoundScopeKey.NewKey()"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
-	}
+		// Constructor
+		{
+            var guid = Guid.NewGuid();
+            var boundScopeKey = new BoundScopeKey(guid);
+            Assert.Equal(guid, boundScopeKey.Guid);
+        }
 
-	/// <summary>
-	/// <see cref="BoundScopeKey.Empty"/>
-	/// </summary>
-	[Fact]
-	public void Empty()
-	{
-		throw new NotImplementedException();
-	}
+        // Empty
+        {
+            Assert.Equal(BoundScopeKey.Empty, BoundScopeKey.Empty);
+            Assert.NotEqual(BoundScopeKey.Empty, BoundScopeKey.NewKey());
+        }
 
-	/// <summary>
-	/// <see cref="BoundScopeKey.NewKey()"/>
-	/// </summary>
-	[Fact]
-	public void NewKey()
-	{
-		throw new NotImplementedException();
+        // NewKey()
+        {
+            Assert.NotEqual(BoundScopeKey.NewKey(), BoundScopeKey.NewKey());
+			Assert.NotEqual(BoundScopeKey.Empty, BoundScopeKey.NewKey());
+		}
 	}
 }
