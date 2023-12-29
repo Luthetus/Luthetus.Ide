@@ -2,6 +2,7 @@
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorModels;
 
@@ -408,26 +409,86 @@ public class TextEditorModelHelperTests
 	[Fact]
 	public void GetAllText()
 	{
-		throw new NotImplementedException();
+        // Empty
+        {
+            throw new NotImplementedException();
+        }
+
+        // NotEmpty
+        {
+		    throw new NotImplementedException();
+        }
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModelHelper.GetCursorPositionIndex(ITextEditorModel, RazorLib.Cursors.Models.TextEditorCursor)"/>
+	/// <see cref="TextEditorModelHelper.GetCursorPositionIndex(ITextEditorModel, TextEditorCursor)"/>
 	/// </summary>
 	[Fact]
 	public void GetCursorPositionIndex_TextEditorCursor()
 	{
-		throw new NotImplementedException();
-	}
+        // Cursor.RowIndex < 0
+        {
+            throw new NotImplementedException();
+        }
 
-	/// <summary>
-	/// <see cref="TextEditorModelHelper.GetCursorPositionIndex(ITextEditorModel, RazorLib.Cursors.Models.ImmutableTextEditorCursor)"/>
-	/// </summary>
-	[Fact]
-	public void GetCursorPositionIndex_ImmutableTextEditorCursor()
+        // Cursor.RowIndex > 0 && Cursor.RowIndex is within bounds
+        {
+            // FirstRow
+            {
+                throw new NotImplementedException();
+            }
+
+            // !FirstRow && !LastRow
+            {
+                throw new NotImplementedException();
+            }
+
+            // LastRow
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        // Cursor.RowIndex > 0 && Cursor.RowIndex is OUT of bounds
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorModelHelper.GetCursorPositionIndex(ITextEditorModel, TextEditorCursorModifier)"/>
+    /// </summary>
+    [Fact]
+	public void GetCursorPositionIndex_TextEditorCursorModifier()
 	{
-		throw new NotImplementedException();
-	}
+        // CursorModifier.RowIndex < 0
+        {
+            throw new NotImplementedException();
+        }
+
+        // CursorModifier.RowIndex > 0 && CursorModifier.RowIndex is within bounds
+        {
+            // FirstRow
+            {
+                throw new NotImplementedException();
+            }
+
+            // !FirstRow && !LastRow
+            {
+                throw new NotImplementedException();
+            }
+
+            // LastRow
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        // CursorModifier.RowIndex > 0 && CursorModifier.RowIndex is OUT of bounds
+        {
+            throw new NotImplementedException();
+        }
+    }
 
 	/// <summary>
 	/// <see cref="TextEditorModelHelper.GetPositionIndex(ITextEditorModel, int, int)"/>
@@ -435,8 +496,34 @@ public class TextEditorModelHelperTests
 	[Fact]
 	public void GetPositionIndex()
 	{
-		throw new NotImplementedException();
-	}
+        // RowIndex < 0
+        {
+            throw new NotImplementedException();
+        }
+
+        // RowIndex > 0 && RowIndex is within bounds
+        {
+            // FirstRow
+            {
+                throw new NotImplementedException();
+            }
+
+            // !FirstRow && !LastRow
+            {
+                throw new NotImplementedException();
+            }
+
+            // LastRow
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        // RowIndex > 0 && RowIndex is OUT of bounds
+        {
+            throw new NotImplementedException();
+        }
+    }
 
 	/// <summary>
 	/// <see cref="TextEditorModelHelper.GetTextAt(ITextEditorModel, int)"/>
@@ -546,10 +633,10 @@ public class TextEditorModelHelperTests
 		throw new NotImplementedException();
 	}
 
-	/// <summary>
-	/// <see cref="TextEditorModelHelper.GetTextOffsettingCursor(ITextEditorModel, RazorLib.Cursors.Models.TextEditorCursor)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="TextEditorModelHelper.GetTextOffsettingCursor(ITextEditorModel, TextEditorCursor)"/>
+    /// </summary>
+    [Fact]
 	public void GetTextOffsettingCursor()
 	{
 		throw new NotImplementedException();
