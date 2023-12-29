@@ -30,10 +30,7 @@ public class TextEditorModelHelperTests
 
 				// TextEditorModel
 				{
-					var debug_twelve = model.GetAllText()[12];
-					var debug_thirteen = model.GetAllText()[13];
-
-                    var actual = model.GetRowEndingThatCreatedRow(cursor.RowIndex);
+					var actual = model.GetRowEndingThatCreatedRow(cursor.RowIndex);
                     Assert.Equal(expected, actual);
                 }
 				
@@ -50,6 +47,21 @@ public class TextEditorModelHelperTests
                 TextEditorServicesTestsHelper.InBounds_NOT_StartOfRow_AND_NOT_EndOfRow(
                     out var model,
                     out var cursor);
+
+                var expected = new RowEnding(12, 13, RowEndingKind.Linefeed);
+
+                // TextEditorModel
+                {
+                    var actual = model.GetRowEndingThatCreatedRow(cursor.RowIndex);
+                    Assert.Equal(expected, actual);
+                }
+
+                // TextEditorModelModifier
+                {
+                    var modelModifier = new TextEditorModelModifier(model);
+                    var actual = modelModifier.GetRowEndingThatCreatedRow(cursor.RowIndex);
+                    Assert.Equal(expected, actual);
+                }
             }
 			
 			// End of a row && !end_of_document
@@ -57,6 +69,21 @@ public class TextEditorModelHelperTests
                 TextEditorServicesTestsHelper.InBounds_EndOfRow(
                     out var model,
                     out var cursor);
+
+                var expected = new RowEnding(12, 13, RowEndingKind.Linefeed);
+
+                // TextEditorModel
+                {
+                    var actual = model.GetRowEndingThatCreatedRow(cursor.RowIndex);
+                    Assert.Equal(expected, actual);
+                }
+
+                // TextEditorModelModifier
+                {
+                    var modelModifier = new TextEditorModelModifier(model);
+                    var actual = modelModifier.GetRowEndingThatCreatedRow(cursor.RowIndex);
+                    Assert.Equal(expected, actual);
+                }
             }
 			
 			// Start of document
@@ -64,6 +91,21 @@ public class TextEditorModelHelperTests
                 TextEditorServicesTestsHelper.InBounds_StartOfDocument(
                     out var model,
                     out var cursor);
+
+                var expected = new RowEnding(0, 0, RowEndingKind.StartOfFile);
+
+                // TextEditorModel
+                {
+                    var actual = model.GetRowEndingThatCreatedRow(cursor.RowIndex);
+                    Assert.Equal(expected, actual);
+                }
+
+                // TextEditorModelModifier
+                {
+                    var modelModifier = new TextEditorModelModifier(model);
+                    var actual = modelModifier.GetRowEndingThatCreatedRow(cursor.RowIndex);
+                    Assert.Equal(expected, actual);
+                }
             }
 
             // End of document
@@ -75,6 +117,21 @@ public class TextEditorModelHelperTests
                 TextEditorServicesTestsHelper.InBounds_EndOfDocument(
                     out var model,
                     out var cursor);
+
+                var expected = new RowEnding(24, 25, RowEndingKind.Linefeed);
+
+                // TextEditorModel
+                {
+                    var actual = model.GetRowEndingThatCreatedRow(cursor.RowIndex);
+                    Assert.Equal(expected, actual);
+                }
+
+                // TextEditorModelModifier
+                {
+                    var modelModifier = new TextEditorModelModifier(model);
+                    var actual = modelModifier.GetRowEndingThatCreatedRow(cursor.RowIndex);
+                    Assert.Equal(expected, actual);
+                }
             }
 		}
 
@@ -85,6 +142,21 @@ public class TextEditorModelHelperTests
                 TextEditorServicesTestsHelper.OutOfBounds_PositionIndex_LESS_THAN_Zero(
                     out var model,
                     out var cursor);
+
+                var expected = new RowEnding(0, 0, RowEndingKind.StartOfFile);
+
+                // TextEditorModel
+                {
+                    var actual = model.GetRowEndingThatCreatedRow(cursor.RowIndex);
+                    Assert.Equal(expected, actual);
+                }
+
+                // TextEditorModelModifier
+                {
+                    var modelModifier = new TextEditorModelModifier(model);
+                    var actual = modelModifier.GetRowEndingThatCreatedRow(cursor.RowIndex);
+                    Assert.Equal(expected, actual);
+                }
             }
 
             // position_index > document.Length + 1
@@ -92,10 +164,23 @@ public class TextEditorModelHelperTests
                 TextEditorServicesTestsHelper.OutOfBounds_PositionIndex_GREATER_THAN_DocumentLength_PLUS_One(
                     out var model,
                     out var cursor);
+
+                var expected = new RowEnding(24, 25, RowEndingKind.Linefeed);
+
+                // TextEditorModel
+                {
+                    var actual = model.GetRowEndingThatCreatedRow(cursor.RowIndex);
+                    Assert.Equal(expected, actual);
+                }
+
+                // TextEditorModelModifier
+                {
+                    var modelModifier = new TextEditorModelModifier(model);
+                    var actual = modelModifier.GetRowEndingThatCreatedRow(cursor.RowIndex);
+                    Assert.Equal(expected, actual);
+                }
             }
         }
-
-        throw new NotImplementedException();
 	}
 
 	/// <summary>
@@ -104,8 +189,31 @@ public class TextEditorModelHelperTests
 	[Fact]
 	public void GetLengthOfRow()
 	{
-		throw new NotImplementedException();
-	}
+		// Negative rowIndex
+		{
+            throw new NotImplementedException();
+        }
+
+		// First row
+		{
+            throw new NotImplementedException();
+        }
+
+		// Row which is between first and last row.
+		{
+            throw new NotImplementedException();
+        }
+
+        // Last row
+        {
+            throw new NotImplementedException();
+        }
+
+        // rowIndex > document.Rows.Count
+        {
+            throw new NotImplementedException();
+        }
+    }
 
 	/// <summary>
 	/// <see cref="TextEditorModelHelper.GetRows(ITextEditorModel, int, int)"/>
