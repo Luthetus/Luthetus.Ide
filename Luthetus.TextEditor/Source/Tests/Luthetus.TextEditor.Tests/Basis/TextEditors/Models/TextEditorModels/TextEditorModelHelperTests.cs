@@ -691,7 +691,97 @@ public class TextEditorModelHelperTests
 	[Fact]
 	public void GetLinesRange()
 	{
-		throw new NotImplementedException();
+        // rowIndex < 0
+        {
+            // Count < 0
+            {
+                throw new NotImplementedException();
+            }
+
+            // Count == 0
+            {
+                throw new NotImplementedException();
+            }
+
+            // Count > 0
+            {
+                throw new NotImplementedException();
+            }
+
+            // Count reads beyond the document length
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        // rowIndex == 0
+        {
+            // Count < 0
+            {
+                throw new NotImplementedException();
+            }
+
+            // Count == 0
+            {
+                throw new NotImplementedException();
+            }
+
+            // Count > 0
+            {
+                throw new NotImplementedException();
+            }
+
+            // Count reads beyond the document length
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        // rowIndex > 0 && rowIndex is within bounds
+        {
+            // Count < 0
+            {
+                throw new NotImplementedException();
+            }
+
+            // Count == 0
+            {
+                throw new NotImplementedException();
+            }
+
+            // Count > 0
+            {
+                throw new NotImplementedException();
+            }
+
+            // Count reads beyond the document length
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        // rowIndex > 0 && rowIndex is OUT of bounds
+        {
+            // Count < 0
+            {
+                throw new NotImplementedException();
+            }
+
+            // Count == 0
+            {
+                throw new NotImplementedException();
+            }
+
+            // Count > 0
+            {
+                throw new NotImplementedException();
+            }
+
+            // Count reads beyond the document length
+            {
+                throw new NotImplementedException();
+            }
+        }
 	}
 
 	/// <summary>
