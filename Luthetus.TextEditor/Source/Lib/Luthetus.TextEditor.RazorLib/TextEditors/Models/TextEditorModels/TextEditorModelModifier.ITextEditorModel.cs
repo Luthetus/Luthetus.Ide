@@ -13,7 +13,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
 {
 	public IList<RichCharacter> ContentBag => _contentBag is null ? _textEditorModel.ContentBag : _contentBag;
 	public IList<EditBlock> EditBlocksBag => _editBlocksBag is null ? _textEditorModel.EditBlocksBag : _editBlocksBag;
-	public IList<(int positionIndex, RowEndingKind rowEndingKind)> RowEndingPositionsBag => _rowEndingPositionsBag is null ? _textEditorModel.RowEndingPositionsBag : _rowEndingPositionsBag;
+	public IList<RowEnding> RowEndingPositionsBag => _rowEndingPositionsBag is null ? _textEditorModel.RowEndingPositionsBag : _rowEndingPositionsBag;
 	public IList<(RowEndingKind rowEndingKind, int count)> RowEndingKindCountsBag => _rowEndingKindCountsBag is null ? _textEditorModel.RowEndingKindCountsBag : _rowEndingKindCountsBag;
 	public IList<TextEditorPresentationModel> PresentationModelsBag => _presentationModelsBag is null ? _textEditorModel.PresentationModelsBag : _presentationModelsBag;
 	public IList<int> TabKeyPositionsBag => _tabKeyPositionsBag is null ? _textEditorModel.TabKeyPositionsBag : _tabKeyPositionsBag;

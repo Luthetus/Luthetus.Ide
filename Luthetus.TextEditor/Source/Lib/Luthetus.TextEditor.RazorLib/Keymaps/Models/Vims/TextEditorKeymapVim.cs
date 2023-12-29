@@ -211,7 +211,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
                         var endOfRowPositionIndexExclusive = modelModifier.RowEndingPositionsBag[
                                 primaryCursorModifier.RowIndex]
-                            .positionIndex;
+                            .EndPositionIndexExclusive;
 
                         primaryCursorModifier.SelectionEndingPositionIndex =
                             endOfRowPositionIndexExclusive;

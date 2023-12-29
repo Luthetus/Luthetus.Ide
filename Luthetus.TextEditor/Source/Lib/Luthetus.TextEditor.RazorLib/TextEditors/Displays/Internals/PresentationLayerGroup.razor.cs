@@ -49,23 +49,23 @@ public partial class PresentationLayerGroup : ComponentBase
         if (rowIndex >= RenderBatch.Model!.RowEndingPositionsBag.Count)
             return string.Empty;
 
-        var startOfRowTuple = RenderBatch.Model!.GetStartOfRowTuple(rowIndex);
+        var startOfRowTuple = RenderBatch.Model!.GetRowEndingThatCreatedRow(rowIndex);
         var endOfRowTuple = RenderBatch.Model!.RowEndingPositionsBag[rowIndex];
 
         var startingColumnIndex = 0;
-        var endingColumnIndex = endOfRowTuple.positionIndex - 1;
+        var endingColumnIndex = endOfRowTuple.EndPositionIndexExclusive - 1;
 
         var fullWidthOfRowIsSelected = true;
 
-        if (lowerPositionIndexInclusive > startOfRowTuple.positionIndex)
+        if (lowerPositionIndexInclusive > startOfRowTuple.EndPositionIndexExclusive)
         {
-            startingColumnIndex = lowerPositionIndexInclusive - startOfRowTuple.positionIndex;
+            startingColumnIndex = lowerPositionIndexInclusive - startOfRowTuple.EndPositionIndexExclusive;
             fullWidthOfRowIsSelected = false;
         }
 
-        if (upperPositionIndexExclusive < endOfRowTuple.positionIndex)
+        if (upperPositionIndexExclusive < endOfRowTuple.EndPositionIndexExclusive)
         {
-            endingColumnIndex = upperPositionIndexExclusive - startOfRowTuple.positionIndex;
+            endingColumnIndex = upperPositionIndexExclusive - startOfRowTuple.EndPositionIndexExclusive;
             fullWidthOfRowIsSelected = false;
         }
 
@@ -121,7 +121,7 @@ public partial class PresentationLayerGroup : ComponentBase
 
         if (fullWidthOfRowIsSelected)
             widthCssStyleString += $"{fullWidthValueInPixelsInvariantCulture}px;";
-        else if (startingColumnIndex != 0 && upperPositionIndexExclusive > endOfRowTuple.positionIndex - 1)
+        else if (startingColumnIndex != 0 && upperPositionIndexExclusive > endOfRowTuple.EndPositionIndexExclusive - 1)
             widthCssStyleString += $"calc({fullWidthValueInPixelsInvariantCulture}px - {startInPixelsInvariantCulture}px);";
         else
             widthCssStyleString += $"{widthInPixelsInvariantCulture}px;";

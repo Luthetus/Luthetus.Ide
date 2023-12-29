@@ -28,11 +28,11 @@ public class TextEditorServicesTestsHelper
     /// <br/><br/>
     /// Note: there is a line which contains only a space character, this note is here to try to
     /// avoid confusion if one does not see it.
+    /// <br/><br/>
+    /// Do not use a verbatim string here, it will use operating system dependent line endings,
+    /// which then cannot be asserted in the unit tests.
     /// </summary>
-    private const string _sourceText = @"Hello World!
-7 Pillows
- 
-,abc123";
+    private const string _sourceText = "Hello World!\n7 Pillows\n \n,abc123";
 
     public static void InitializeTextEditorServicesTestsHelper(
         out ITextEditorService textEditorService,

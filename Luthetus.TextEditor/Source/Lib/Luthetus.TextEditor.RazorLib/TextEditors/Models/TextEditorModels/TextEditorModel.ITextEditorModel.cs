@@ -9,7 +9,7 @@ public partial class TextEditorModel : ITextEditorModel
 {
     IList<RichCharacter> ITextEditorModel.ContentBag => ContentBag;
 	IList<EditBlock> ITextEditorModel.EditBlocksBag => EditBlocksBag;
-	IList<(int positionIndex, RowEndingKind rowEndingKind)> ITextEditorModel.RowEndingPositionsBag => RowEndingPositionsBag;
+	IList<RowEnding> ITextEditorModel.RowEndingPositionsBag => RowEndingPositionsBag;
 	IList<(RowEndingKind rowEndingKind, int count)> ITextEditorModel.RowEndingKindCountsBag => RowEndingKindCountsBag;
 	IList<TextEditorPresentationModel> ITextEditorModel.PresentationModelsBag => PresentationModelsBag;
 	IList<int> ITextEditorModel.TabKeyPositionsBag => TabKeyPositionsBag;

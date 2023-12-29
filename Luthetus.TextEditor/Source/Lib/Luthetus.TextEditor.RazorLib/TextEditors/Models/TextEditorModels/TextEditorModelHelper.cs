@@ -10,11 +10,14 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 public static class TextEditorModelHelper
 {
 	/// <summary>
+	/// This returns the position index of the line-ending character which created the row in question.
+	/// To get the first character on the row, add 1 to the position index.
+	/// <br/><br/>
 	/// The cursor is a separate Blazor Component and at times will try to access out of bounds locations.
 	/// <br/><br/>
 	/// When cursor accesses out of bounds location return the final RowIndex, and that row's final ColumnIndex
 	/// </summary>
-	public static (int positionIndex, RowEndingKind rowEndingKind) GetStartOfRowTuple(
+	public static RowEnding GetRowEndingThatCreatedRow(
 		this ITextEditorModel model, int rowIndex)
 	{
 		if (rowIndex > model.RowEndingPositionsBag.Count - 1)
@@ -23,7 +26,7 @@ public static class TextEditorModelHelper
 		if (rowIndex > 0)
 			return model.RowEndingPositionsBag[rowIndex - 1];
 
-		return (0, RowEndingKind.StartOfFile);
+		return new(0, 0, RowEndingKind.StartOfFile);
 	}
 
 	/// <summary>Returns the Length of a row however it does not include the line ending characters by default. To include line ending characters the parameter <see cref="includeLineEndingCharacters" /> must be true.</summary>
@@ -39,17 +42,17 @@ public static class TextEditorModelHelper
 		if (rowIndex < 0)
 			rowIndex = 0;
 
-		var startOfRowTupleInclusive = model.GetStartOfRowTuple(rowIndex);
+		var startOfRowTupleInclusive = model.GetRowEndingThatCreatedRow(rowIndex);
 
 		// TODO: Index was out of range exception on 2023-04-18
 		var endOfRowTupleExclusive = model.RowEndingPositionsBag[rowIndex];
 
-		var lengthOfRowWithLineEndings = endOfRowTupleExclusive.positionIndex - startOfRowTupleInclusive.positionIndex;
+		var lengthOfRowWithLineEndings = endOfRowTupleExclusive.EndPositionIndexExclusive - startOfRowTupleInclusive.EndPositionIndexExclusive;
 
 		if (includeLineEndingCharacters)
 			return lengthOfRowWithLineEndings;
 
-		return lengthOfRowWithLineEndings - endOfRowTupleExclusive.rowEndingKind.AsCharacters().Length;
+		return lengthOfRowWithLineEndings - endOfRowTupleExclusive.RowEndingKind.AsCharacters().Length;
 	}
 
 	/// <param name="startingRowIndex">The starting index of the rows to return</param>
@@ -70,9 +73,9 @@ public static class TextEditorModelHelper
 		for (var i = startingRowIndex; i < endingRowIndexExclusive; i++)
 		{
 			// Previous row's line ending position is this row's start.
-			var startOfRowInclusive = model.GetStartOfRowTuple(i).positionIndex;
+			var startOfRowInclusive = model.GetRowEndingThatCreatedRow(i).EndPositionIndexExclusive;
 
-			var endOfRowExclusive = model.RowEndingPositionsBag[i].positionIndex;
+			var endOfRowExclusive = model.RowEndingPositionsBag[i].EndPositionIndexExclusive;
 
 			var row = model.ContentBag
 				.Skip(startOfRowInclusive)
@@ -88,7 +91,7 @@ public static class TextEditorModelHelper
 	public static int GetTabsCountOnSameRowBeforeCursor(
 		this ITextEditorModel model, int rowIndex, int columnIndex)
 	{
-		var startOfRowPositionIndex = model.GetStartOfRowTuple(rowIndex).positionIndex;
+		var startOfRowPositionIndex = model.GetRowEndingThatCreatedRow(rowIndex).EndPositionIndexExclusive;
 
 		var tabs = model.TabKeyPositionsBag
 			.SkipWhile(positionIndex => positionIndex < startOfRowPositionIndex)
@@ -165,7 +168,7 @@ public static class TextEditorModelHelper
 	public static int GetPositionIndex(
 		this ITextEditorModel model, int rowIndex, int columnIndex)
 	{
-		var startOfRowPositionIndex = model.GetStartOfRowTuple(rowIndex).positionIndex;
+		var startOfRowPositionIndex = model.GetRowEndingThatCreatedRow(rowIndex).EndPositionIndexExclusive;
 		return startOfRowPositionIndex + columnIndex;
 	}
 
@@ -278,16 +281,16 @@ public static class TextEditorModelHelper
 		return null;
 	}
 
-	public static (int rowIndex, int rowStartPositionIndex, (int positionIndex, RowEndingKind rowEndingKind) rowEndingTuple)
+	public static (int rowIndex, int rowStartPositionIndex, RowEnding rowEnding)
 		FindRowInformation(this ITextEditorModel model, int positionIndex)
 	{
 		for (var i = model.RowEndingPositionsBag.Count - 1; i >= 0; i--)
 		{
 			var rowEndingTuple = model.RowEndingPositionsBag[i];
 
-			if (positionIndex >= rowEndingTuple.positionIndex)
+			if (positionIndex >= rowEndingTuple.EndPositionIndexExclusive)
 			{
-				return (i + 1, rowEndingTuple.positionIndex,
+				return (i + 1, rowEndingTuple.EndPositionIndexExclusive,
 					i == model.RowEndingPositionsBag.Count - 1
 						? rowEndingTuple
 						: model.RowEndingPositionsBag[i + 1]);
@@ -309,12 +312,12 @@ public static class TextEditorModelHelper
 			? -1
 			: 1;
 
-		var startOfRowPositionIndex = model.GetStartOfRowTuple(rowIndex).positionIndex;
+		var startOfRowPositionIndex = model.GetRowEndingThatCreatedRow(rowIndex).EndPositionIndexExclusive;
 
 		if (rowIndex > model.RowEndingPositionsBag.Count - 1)
 			return -1;
 
-		var lastPositionIndexOnRow = model.RowEndingPositionsBag[rowIndex].positionIndex - 1;
+		var lastPositionIndexOnRow = model.RowEndingPositionsBag[rowIndex].EndPositionIndexExclusive - 1;
 
 		var positionIndex = model.GetPositionIndex(rowIndex, columnIndex);
 
@@ -454,17 +457,17 @@ public static class TextEditorModelHelper
 		this ITextEditorModel model, TextEditorCursor textEditorCursor)
 	{
 		var cursorPositionIndex = model.GetCursorPositionIndex(textEditorCursor);
-		var startOfRowTuple = model.GetStartOfRowTuple(textEditorCursor.RowIndex);
+		var startOfRowTuple = model.GetRowEndingThatCreatedRow(textEditorCursor.RowIndex);
 
-		return model.GetTextRange(startOfRowTuple.positionIndex, cursorPositionIndex - startOfRowTuple.positionIndex);
+		return model.GetTextRange(startOfRowTuple.EndPositionIndexExclusive, cursorPositionIndex - startOfRowTuple.EndPositionIndexExclusive);
 	}
 
 	public static string GetTextOnRow(
 		this ITextEditorModel model, int rowIndex)
 	{
-		var startOfRowTuple = model.GetStartOfRowTuple(rowIndex);
+		var startOfRowTuple = model.GetRowEndingThatCreatedRow(rowIndex);
 		var lengthOfRow = model.GetLengthOfRow(rowIndex);
 
-		return model.GetTextRange(startOfRowTuple.positionIndex, lengthOfRow);
+		return model.GetTextRange(startOfRowTuple.EndPositionIndexExclusive, lengthOfRow);
 	}
 }

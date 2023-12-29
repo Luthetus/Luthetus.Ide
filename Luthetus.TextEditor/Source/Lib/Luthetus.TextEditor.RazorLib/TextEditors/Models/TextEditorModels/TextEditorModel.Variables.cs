@@ -22,7 +22,7 @@ public partial class TextEditorModel
     public ImmutableList<RichCharacter> ContentBag = ImmutableList<RichCharacter>.Empty;
 	public ImmutableList<EditBlock> EditBlocksBag { get; init; } = ImmutableList<EditBlock>.Empty;
     /// <inheritdoc cref="ITextEditorModel.RowEndingPositionsBag"/>
-	public ImmutableList<(int positionIndex, RowEndingKind rowEndingKind)> RowEndingPositionsBag { get; init; } = ImmutableList<(int positionIndex, RowEndingKind rowEndingKind)>.Empty;
+	public ImmutableList<RowEnding> RowEndingPositionsBag { get; init; } = ImmutableList<RowEnding>.Empty;
 	public ImmutableList<(RowEndingKind rowEndingKind, int count)> RowEndingKindCountsBag { get; init; } = ImmutableList<(RowEndingKind rowEndingKind, int count)>.Empty;
 	public ImmutableList<TextEditorPresentationModel> PresentationModelsBag { get; init; } = ImmutableList<TextEditorPresentationModel>.Empty;
     /// <inheritdoc cref="ITextEditorModel.TabKeyPositionsBag"/>

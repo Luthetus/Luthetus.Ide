@@ -1,6 +1,7 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
+using Luthetus.TextEditor.RazorLib.Rows.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorModels;
 
@@ -10,7 +11,7 @@ namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorModels;
 public class TextEditorModelHelperTests
 {
 	/// <summary>
-	/// <see cref="TextEditorModelHelper.GetStartOfRowTuple(ITextEditorModel, int)"/>
+	/// <see cref="TextEditorModelHelper.GetRowEndingThatCreatedRow(ITextEditorModel, int)"/>
 	/// </summary>
 	[Fact]
 	public void GetStartOfRowTuple()
@@ -22,37 +23,47 @@ public class TextEditorModelHelperTests
 		{
 			{
                 TextEditorServicesTestsHelper.InBounds_StartOfRow(
-					out var textEditorService,
-					out var inModel,
-					out var inViewModel,
-					out var serviceProvider);
+					out var model,
+					out var cursor);
+
+				var expected = new RowEnding(12, 13, RowEndingKind.Linefeed);
+
+				// TextEditorModel
+				{
+					var debug_twelve = model.GetAllText()[12];
+					var debug_thirteen = model.GetAllText()[13];
+
+                    var actual = model.GetRowEndingThatCreatedRow(cursor.RowIndex);
+                    Assert.Equal(expected, actual);
+                }
+				
+				// TextEditorModelModifier
+				{
+					var modelModifier = new TextEditorModelModifier(model);
+                    var actual = modelModifier.GetRowEndingThatCreatedRow(cursor.RowIndex);
+                    Assert.Equal(expected, actual);
+                }
             }
 
             // !start_of_row && !end_of_row
             {
                 TextEditorServicesTestsHelper.InBounds_NOT_StartOfRow_AND_NOT_EndOfRow(
-                    out var textEditorService,
-                    out var inModel,
-                    out var inViewModel,
-                    out var serviceProvider);
+                    out var model,
+                    out var cursor);
             }
 			
 			// End of a row && !end_of_document
 			{
                 TextEditorServicesTestsHelper.InBounds_EndOfRow(
-                    out var textEditorService,
-                    out var inModel,
-                    out var inViewModel,
-                    out var serviceProvider);
+                    out var model,
+                    out var cursor);
             }
 			
 			// Start of document
 			{
                 TextEditorServicesTestsHelper.InBounds_StartOfDocument(
-                    out var textEditorService,
-                    out var inModel,
-                    out var inViewModel,
-                    out var serviceProvider);
+                    out var model,
+                    out var cursor);
             }
 
             // End of document
@@ -62,10 +73,8 @@ public class TextEditorModelHelperTests
 			// ...beyond the length of the document.
             {
                 TextEditorServicesTestsHelper.InBounds_EndOfDocument(
-                    out var textEditorService,
-                    out var inModel,
-                    out var inViewModel,
-                    out var serviceProvider);
+                    out var model,
+                    out var cursor);
             }
 		}
 
@@ -74,19 +83,15 @@ public class TextEditorModelHelperTests
 			// position_index < 0
 			{
                 TextEditorServicesTestsHelper.OutOfBounds_PositionIndex_LESS_THAN_Zero(
-                    out var textEditorService,
-                    out var inModel,
-                    out var inViewModel,
-                    out var serviceProvider);
+                    out var model,
+                    out var cursor);
             }
 
             // position_index > document.Length + 1
             {
                 TextEditorServicesTestsHelper.OutOfBounds_PositionIndex_GREATER_THAN_DocumentLength_PLUS_One(
-                    out var textEditorService,
-                    out var inModel,
-                    out var inViewModel,
-                    out var serviceProvider);
+                    out var model,
+                    out var cursor);
             }
         }
 

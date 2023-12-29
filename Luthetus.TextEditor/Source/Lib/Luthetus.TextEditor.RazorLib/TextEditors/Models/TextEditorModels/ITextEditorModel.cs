@@ -31,7 +31,7 @@ public interface ITextEditorModel
     /// To get the ending position of RowIndex _rowEndingPositions[RowIndex]<br /><br />
     /// _rowEndingPositions returns the start of the NEXT row
     /// </summary>
-    public IList<(int positionIndex, RowEndingKind rowEndingKind)> RowEndingPositionsBag { get; }
+    public IList<RowEnding> RowEndingPositionsBag { get; }
 	public IList<(RowEndingKind rowEndingKind, int count)> RowEndingKindCountsBag { get; }
 	public IList<TextEditorPresentationModel> PresentationModelsBag { get; }
     /// <summary>

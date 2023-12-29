@@ -35,7 +35,7 @@ public partial class TextEditorModelModifier
 
     private List<RichCharacter>? _contentBag;
     private List<EditBlock>? _editBlocksBag;
-    private List<(int positionIndex, RowEndingKind rowEndingKind)>? _rowEndingPositionsBag;
+    private List<RowEnding>? _rowEndingPositionsBag;
     private List<(RowEndingKind rowEndingKind, int count)>? _rowEndingKindCountsBag;
     private List<TextEditorPresentationModel>? _presentationModelsBag;
     private List<int>? _tabKeyPositionsBag;
@@ -288,7 +288,7 @@ public partial class TextEditorModelModifier
                 cursorModifier.SelectionAnchorPositionIndex = null;
             }
 
-            var startOfRowPositionIndex = this.GetStartOfRowTuple(cursorModifier.RowIndex).positionIndex;
+            var startOfRowPositionIndex = this.GetRowEndingThatCreatedRow(cursorModifier.RowIndex).EndPositionIndexExclusive;
             var cursorPositionIndex = startOfRowPositionIndex + cursorModifier.ColumnIndex;
 
             // If cursor is out of bounds then continue
@@ -326,7 +326,7 @@ public partial class TextEditorModelModifier
 
                 RowEndingPositionsBag.Insert(
                     cursorModifier.RowIndex,
-                    (cursorPositionIndex + characterCountInserted, rowEndingKindToInsert));
+                    new (cursorPositionIndex, cursorPositionIndex + characterCountInserted, rowEndingKindToInsert));
 
                 MutateRowEndingKindCount(UsingRowEndingKind, 1);
 
@@ -381,7 +381,7 @@ public partial class TextEditorModelModifier
             for (var i = firstRowIndexToModify; i < RowEndingPositionsBag.Count; i++)
             {
                 var rowEndingTuple = RowEndingPositionsBag[i];
-                RowEndingPositionsBag[i] = (rowEndingTuple.positionIndex + characterCountInserted, rowEndingTuple.rowEndingKind);
+                rowEndingTuple.EndPositionIndexExclusive += characterCountInserted;
             }
 
             if (!wasTabCode)
@@ -460,7 +460,7 @@ public partial class TextEditorModelModifier
 
         foreach (var cursorModifier in cursorModifierBag.CursorModifierBag)
         {
-            var startOfRowPositionIndex = this.GetStartOfRowTuple(cursorModifier.RowIndex).positionIndex;
+            var startOfRowPositionIndex = this.GetRowEndingThatCreatedRow(cursorModifier.RowIndex).EndPositionIndexExclusive;
             var cursorPositionIndex = startOfRowPositionIndex + cursorModifier.ColumnIndex;
 
             // If cursor is out of bounds then continue
@@ -589,14 +589,14 @@ public partial class TextEditorModelModifier
                     // rep.positionIndex == indexToRemove + 2
                     //     ^is for delete
                     var rowEndingTupleIndex = _rowEndingPositionsBag.FindIndex(rep =>
-                        rep.positionIndex == indexToRemove + 1 ||
-                        rep.positionIndex == indexToRemove + 2);
+                        rep.EndPositionIndexExclusive == indexToRemove + 1 ||
+                        rep.EndPositionIndexExclusive == indexToRemove + 2);
 
                     var rowEndingTuple = RowEndingPositionsBag[rowEndingTupleIndex];
 
                     RowEndingPositionsBag.RemoveAt(rowEndingTupleIndex);
 
-                    var lengthOfRowEnding = rowEndingTuple.rowEndingKind.AsCharacters().Length;
+                    var lengthOfRowEnding = rowEndingTuple.RowEndingKind.AsCharacters().Length;
 
                     if (moveBackwards)
                         startingIndexToRemoveRange = indexToRemove - (lengthOfRowEnding - 1);
@@ -606,7 +606,7 @@ public partial class TextEditorModelModifier
                     countToRemove -= lengthOfRowEnding - 1;
                     countToRemoveRange = lengthOfRowEnding;
 
-                    MutateRowEndingKindCount(rowEndingTuple.rowEndingKind, -1);
+                    MutateRowEndingKindCount(rowEndingTuple.RowEndingKind, -1);
                 }
                 else
                 {
@@ -632,8 +632,8 @@ public partial class TextEditorModelModifier
             {
                 var modifyRowsBy = -1 * rowsRemovedCount;
 
-                var startOfCurrentRowPositionIndex = this.GetStartOfRowTuple(cursorModifier.RowIndex + modifyRowsBy)
-                    .positionIndex;
+                var startOfCurrentRowPositionIndex = this.GetRowEndingThatCreatedRow(cursorModifier.RowIndex + modifyRowsBy)
+                    .EndPositionIndexExclusive;
 
                 var modifyPositionIndexBy = -1 * charactersRemovedCount;
 
@@ -666,7 +666,7 @@ public partial class TextEditorModelModifier
             for (var i = firstRowIndexToModify; i < RowEndingPositionsBag.Count; i++)
             {
                 var rowEndingTuple = RowEndingPositionsBag[i];
-                _rowEndingPositionsBag[i] = (rowEndingTuple.positionIndex - charactersRemovedCount, rowEndingTuple.rowEndingKind);
+                rowEndingTuple.EndPositionIndexExclusive -= charactersRemovedCount;
             }
 
             var firstTabKeyPositionIndexToModify = _tabKeyPositionsBag.FindIndex(x => x >= startingPositionIndexToRemoveInclusive);
@@ -813,7 +813,7 @@ public partial class TextEditorModelModifier
                 if (charactersOnRow > MostCharactersOnASingleRowTuple.rowLength - TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN)
                     _mostCharactersOnASingleRowTuple = (rowIndex, charactersOnRow + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
 
-                RowEndingPositionsBag.Add((index + 1, RowEndingKind.CarriageReturn));
+                RowEndingPositionsBag.Add(new(index, index + 1, RowEndingKind.CarriageReturn));
                 rowIndex++;
 
                 charactersOnRow = 0;
@@ -828,15 +828,15 @@ public partial class TextEditorModelModifier
                 if (previousCharacter == KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN)
                 {
                     var lineEnding = RowEndingPositionsBag[rowIndex - 1];
-
-                    RowEndingPositionsBag[rowIndex - 1] = (lineEnding.positionIndex + 1, RowEndingKind.CarriageReturnLinefeed);
+                    lineEnding.EndPositionIndexExclusive++;
+                    lineEnding.RowEndingKind = RowEndingKind.CarriageReturnLinefeed;
 
                     carriageReturnCount--;
                     carriageReturnLinefeedCount++;
                 }
                 else
                 {
-                    RowEndingPositionsBag.Add((index + 1, RowEndingKind.Linefeed));
+                    RowEndingPositionsBag.Add(new (index, index + 1, RowEndingKind.Linefeed));
                     rowIndex++;
 
                     linefeedCount++;
@@ -866,7 +866,7 @@ public partial class TextEditorModelModifier
 
         CheckRowEndingPositions(true);
 
-        RowEndingPositionsBag.Add((content.Length, RowEndingKind.EndOfFile));
+        RowEndingPositionsBag.Add(new(content.Length, content.Length, RowEndingKind.EndOfFile));
     }
 
     public void ModifyResetStateButNotEditHistory()

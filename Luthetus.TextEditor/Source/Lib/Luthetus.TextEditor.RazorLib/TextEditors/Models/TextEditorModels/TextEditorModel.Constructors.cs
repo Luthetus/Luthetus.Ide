@@ -43,7 +43,7 @@ public partial class TextEditorModel
 	public TextEditorModel(
 		ImmutableList<RichCharacter> contentBag,
 		ImmutableList<EditBlock> editBlocksBag,
-		ImmutableList<(int positionIndex, RowEndingKind rowEndingKind)> rowEndingPositionsBag,
+		ImmutableList<RowEnding> rowEndingPositionsBag,
 		ImmutableList<(RowEndingKind rowEndingKind, int count)> rowEndingKindCountsBag,
 		ImmutableList<TextEditorPresentationModel> presentationModelsBag,
 		ImmutableList<int> tabKeyPositionsBag,
