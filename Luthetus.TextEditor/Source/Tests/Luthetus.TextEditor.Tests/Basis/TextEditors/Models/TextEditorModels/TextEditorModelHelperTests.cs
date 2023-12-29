@@ -221,7 +221,70 @@ public class TextEditorModelHelperTests
 	[Fact]
 	public void GetRows()
 	{
-		throw new NotImplementedException();
+        // Negative rowIndex
+        {
+            // Negative count
+            {
+                throw new NotImplementedException();
+            }
+
+            // Positive count
+            {
+				throw new NotImplementedException();
+			}
+        }
+
+        // First row
+        {
+            // Negative count
+            {
+                throw new NotImplementedException();
+            }
+
+            // Positive count
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        // Row which is between first and last row.
+        {
+            // Negative count
+            {
+                throw new NotImplementedException();
+            }
+
+            // Positive count
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        // Last row
+        {
+            // Negative count
+            {
+                throw new NotImplementedException();
+            }
+
+            // Positive count
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        // rowIndex > document.Rows.Count
+        {
+            // Negative count
+            {
+                throw new NotImplementedException();
+            }
+
+            // Positive count
+            {
+                throw new NotImplementedException();
+            }
+        }
 	}
 
 	/// <summary>
@@ -230,8 +293,96 @@ public class TextEditorModelHelperTests
 	[Fact]
 	public void GetTabsCountOnSameRowBeforeCursor()
 	{
-		throw new NotImplementedException();
-	}
+        // Negative rowIndex
+        {
+            // Negative columnIndex
+            {
+                throw new NotImplementedException();
+            }
+
+            // Positive columnIndex && WithinRange
+            {
+                throw new NotImplementedException();
+            }
+
+            // Positive columnIndex && OutOfRange
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        // First row
+        {
+            // Negative columnIndex
+            {
+                throw new NotImplementedException();
+            }
+
+            // Positive columnIndex && WithinRange
+            {
+                throw new NotImplementedException();
+            }
+            
+            // Positive columnIndex && OutOfRange
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        // Row which is between first and last row.
+        {
+            // Negative columnIndex
+            {
+                throw new NotImplementedException();
+            }
+
+            // Positive columnIndex && WithinRange
+            {
+                throw new NotImplementedException();
+            }
+
+            // Positive columnIndex && OutOfRange
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        // Last row
+        {
+            // Negative columnIndex
+            {
+                throw new NotImplementedException();
+            }
+
+            // Positive columnIndex && WithinRange
+            {
+                throw new NotImplementedException();
+            }
+
+            // Positive columnIndex && OutOfRange
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        // rowIndex > document.Rows.Count
+        {
+            // Negative columnIndex
+            {
+                throw new NotImplementedException();
+            }
+
+            // Positive columnIndex && WithinRange
+            {
+                throw new NotImplementedException();
+            }
+
+            // Positive columnIndex && OutOfRange
+            {
+                throw new NotImplementedException();
+            }
+        }
+    }
 
 	/// <summary>
 	/// <see cref="TextEditorModelHelper.ApplyDecorationRange(ITextEditorModel, IEnumerable{RazorLib.Lexes.Models.TextEditorTextSpan})"/>
