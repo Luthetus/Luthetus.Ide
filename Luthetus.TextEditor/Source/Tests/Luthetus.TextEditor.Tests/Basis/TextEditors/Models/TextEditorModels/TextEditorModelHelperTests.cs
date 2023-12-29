@@ -531,8 +531,34 @@ public class TextEditorModelHelperTests
 	[Fact]
 	public void GetTextAt()
 	{
-		throw new NotImplementedException();
-	}
+        // PositionIndex < 0
+        {
+            throw new NotImplementedException();
+        }
+
+        // PositionIndex > 0 && PositionIndex is within bounds
+        {
+            // PositionIndex resides on the FirstRow
+            {
+                throw new NotImplementedException();
+            }
+
+            //  PositionIndex does not reside on the FirstRow nor the LastRow
+            {
+                throw new NotImplementedException();
+            }
+
+            // PositionIndex resides on the LastRow
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        // PositionIndex > 0 && PositionIndex is OUT of bounds
+        {
+            throw new NotImplementedException();
+        }
+    }
 
 	/// <summary>
 	/// <see cref="TextEditorModelHelper.GetTextRange(ITextEditorModel, int, int)"/>
@@ -540,8 +566,124 @@ public class TextEditorModelHelperTests
 	[Fact]
 	public void GetTextRange()
 	{
-		throw new NotImplementedException();
-	}
+        // PositionIndex < 0
+        {
+            // Count < 0
+            {
+                throw new NotImplementedException();
+            }
+
+            // Count == 0
+            {
+                throw new NotImplementedException();
+            }
+
+            // Count > 0
+            {
+                throw new NotImplementedException();
+            }
+
+            // Count reads beyond the document length
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        // PositionIndex > 0 && PositionIndex is within bounds
+        {
+            // PositionIndex resides on the FirstRow
+            {
+                // Count < 0
+                {
+                    throw new NotImplementedException();
+                }
+
+                // Count == 0
+                {
+                    throw new NotImplementedException();
+                }
+
+                // Count > 0
+                {
+                    throw new NotImplementedException();
+                }
+
+                // Count reads beyond the document length
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            //  PositionIndex does not reside on the FirstRow nor the LastRow
+            {
+                // Count < 0
+                {
+                    throw new NotImplementedException();
+                }
+
+                // Count == 0
+                {
+                    throw new NotImplementedException();
+                }
+
+                // Count > 0
+                {
+                    throw new NotImplementedException();
+                }
+
+                // Count reads beyond the document length
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            // PositionIndex resides on the LastRow
+            {
+                // Count < 0
+                {
+                    throw new NotImplementedException();
+                }
+
+                // Count == 0
+                {
+                    throw new NotImplementedException();
+                }
+
+                // Count > 0
+                {
+                    throw new NotImplementedException();
+                }
+
+                // Count reads beyond the document length
+                {
+                    throw new NotImplementedException();
+                }
+            }
+        }
+
+        // PositionIndex > 0 && PositionIndex is OUT of bounds
+        {
+            // Count < 0
+            {
+                throw new NotImplementedException();
+            }
+
+            // Count == 0
+            {
+                throw new NotImplementedException();
+            }
+
+            // Count > 0
+            {
+                throw new NotImplementedException();
+            }
+
+            // Count reads beyond the document length
+            {
+                throw new NotImplementedException();
+            }
+        }
+    }
 
 	/// <summary>
 	/// <see cref="TextEditorModelHelper.GetLinesRange(ITextEditorModel, int, int)"/>
