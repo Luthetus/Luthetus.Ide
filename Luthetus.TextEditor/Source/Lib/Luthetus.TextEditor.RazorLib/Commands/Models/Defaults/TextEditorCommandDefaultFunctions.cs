@@ -89,8 +89,8 @@ public class TextEditorCommandDefaultFunctions
                 modelModifier.ResourceUri,
                 viewModelModifier.ViewModel.ViewModelKey,
                 new KeyboardEventArgs { Key = KeyboardKeyFacts.MetaKeys.DELETE },
-                CancellationToken.None,
-                cursorModifierBag);
+                cursorModifierBag,
+                CancellationToken.None);
         };
     }
 
@@ -120,8 +120,8 @@ public class TextEditorCommandDefaultFunctions
                 modelModifier.ResourceUri,
                 viewModelModifier.ViewModel.ViewModelKey,
                 clipboard,
-                CancellationToken.None,
-                cursorModifierBag);
+                cursorModifierBag,
+                CancellationToken.None);
         };
     }
 
@@ -424,8 +424,8 @@ public class TextEditorCommandDefaultFunctions
                 modelModifier.ResourceUri,
                 viewModelModifier.ViewModel.ViewModelKey,
                 selectedText,
-                CancellationToken.None,
-                new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, new List<TextEditorCursorModifier>() { new(cursorForInsertion) }));
+                new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, new List<TextEditorCursorModifier>() { new(cursorForInsertion) }),
+                CancellationToken.None);
 
             return Task.CompletedTask;
         };
@@ -468,8 +468,8 @@ public class TextEditorCommandDefaultFunctions
                     modelModifier.ResourceUri,
                     viewModelModifier.ViewModel.ViewModelKey,
                     KeyboardKeyFacts.WhitespaceCharacters.TAB.ToString(),
-                    CancellationToken.None,
-                    cursorModifierBag);
+                    cursorModifierBag,
+                    CancellationToken.None);
             }
 
             var lowerBoundPositionIndexChange = 1;
@@ -557,8 +557,8 @@ public class TextEditorCommandDefaultFunctions
                         modelModifier.ResourceUri,
                         viewModelModifier.ViewModel.ViewModelKey,
                         removeCharacterCount, // Delete a single "Tab" character
-                        CancellationToken.None,
-                        new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, new List<TextEditorCursorModifier> { new(cursorForDeletion) }));
+                        new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, new List<TextEditorCursorModifier> { new(cursorForDeletion) }),
+                        CancellationToken.None);
                 }
                 else if (readResult.StartsWith(KeyboardKeyFacts.WhitespaceCharacters.SPACE))
                 {
@@ -578,8 +578,8 @@ public class TextEditorCommandDefaultFunctions
                         modelModifier.ResourceUri,
                         viewModelModifier.ViewModel.ViewModelKey,
                         removeCharacterCount,
-                        CancellationToken.None,
-                        new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, new List<TextEditorCursorModifier> { new(cursorForDeletion) }));
+                        new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, new List<TextEditorCursorModifier> { new(cursorForDeletion) }),
+                        CancellationToken.None);
                 }
 
                 // Modify the lower bound of user's text selection
@@ -683,8 +683,8 @@ public class TextEditorCommandDefaultFunctions
                 modelModifier.ResourceUri,
                 viewModelModifier.ViewModel.ViewModelKey,
                 "\n",
-                CancellationToken.None,
-                cursorModifierBag);
+                cursorModifierBag,
+                CancellationToken.None);
 
             return Task.CompletedTask;
         };
@@ -719,8 +719,8 @@ public class TextEditorCommandDefaultFunctions
                 modelModifier.ResourceUri,
                 viewModelModifier.ViewModel.ViewModelKey,
                 "\n",
-                CancellationToken.None,
-                cursorModifierBag);
+                cursorModifierBag,
+                CancellationToken.None);
 
             if (primaryCursorModifier.RowIndex > 1)
             {

@@ -176,8 +176,8 @@ public partial class TextEditorModelModifier
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
         KeyboardEventArgs keyboardEventArgs,
-        CancellationToken cancellationToken,
-        TextEditorCursorModifierBag cursorModifierBag)
+        TextEditorCursorModifierBag cursorModifierBag,
+        CancellationToken cancellationToken)
     {
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
@@ -202,8 +202,8 @@ public partial class TextEditorModelModifier
                         Code = KeyboardKeyFacts.MetaKeys.DELETE,
                         Key = KeyboardKeyFacts.MetaKeys.DELETE,
                     },
-                    CancellationToken.None,
-                    cursorModifierBag);
+                    cursorModifierBag,
+                    CancellationToken.None);
 
                 var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
 
@@ -375,8 +375,8 @@ public partial class TextEditorModelModifier
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
         KeyboardEventArgs keyboardEventArgs,
-        CancellationToken cancellationToken,
-        TextEditorCursorModifierBag cursorModifierBag)
+        TextEditorCursorModifierBag cursorModifierBag,
+        CancellationToken cancellationToken)
     {
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
@@ -814,8 +814,8 @@ public partial class TextEditorModelModifier
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
         KeyboardEventArgs keyboardEventArgs,
-        CancellationToken cancellationToken,
-        TextEditorCursorModifierBag cursorModifierBag)
+        TextEditorCursorModifierBag cursorModifierBag,
+        CancellationToken cancellationToken)
     {
         if (KeyboardKeyFacts.IsMetaKey(keyboardEventArgs))
         {
@@ -827,8 +827,8 @@ public partial class TextEditorModelModifier
                     resourceUri,
                     viewModelKey,
                     keyboardEventArgs,
-                    cancellationToken,
-                    cursorModifierBag);
+                    cursorModifierBag,
+                    cancellationToken);
             }
         }
         else
@@ -846,8 +846,8 @@ public partial class TextEditorModelModifier
                     resourceUri,
                     viewModelKey,
                     keyboardEventArgs,
-                    cancellationToken,
-                    singledCursorModifierBag);
+                    singledCursorModifierBag,
+                    cancellationToken);
             }
         }
     }
@@ -857,8 +857,8 @@ public partial class TextEditorModelModifier
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
         string content,
-        CancellationToken cancellationToken,
-        TextEditorCursorModifierBag cursorModifierBag)
+        TextEditorCursorModifierBag cursorModifierBag,
+        CancellationToken cancellationToken)
     {
         var localContent = content.Replace("\r\n", "\n");
 
@@ -891,8 +891,8 @@ public partial class TextEditorModelModifier
                         Code = code,
                         Key = character.ToString(),
                     },
-                    CancellationToken.None,
-                    singledCursorModifierBag);
+                    singledCursorModifierBag,
+                    CancellationToken.None);
             }
         }
     }
@@ -902,8 +902,8 @@ public partial class TextEditorModelModifier
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
         MotionKind motionKind,
-        CancellationToken cancellationToken,
-        TextEditorCursorModifierBag cursorModifierBag)
+        TextEditorCursorModifierBag cursorModifierBag,
+        CancellationToken cancellationToken)
     {
         var keyboardEventArgs = motionKind switch
         {
@@ -917,8 +917,8 @@ public partial class TextEditorModelModifier
             resourceUri,
             viewModelKey,
             keyboardEventArgs,
-            CancellationToken.None,
-            cursorModifierBag);
+            cursorModifierBag,
+            CancellationToken.None);
     }
 
     public void DeleteByRange(
@@ -926,8 +926,8 @@ public partial class TextEditorModelModifier
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
         int count,
-        CancellationToken cancellationToken,
-        TextEditorCursorModifierBag cursorModifierBag)
+        TextEditorCursorModifierBag cursorModifierBag,
+        CancellationToken cancellationToken)
     {
         for (int cursorIndex = cursorModifierBag.CursorModifierBag.Count - 1; cursorIndex >= 0; cursorIndex--)
         {
@@ -949,8 +949,8 @@ public partial class TextEditorModelModifier
                         Code = KeyboardKeyFacts.MetaKeys.DELETE,
                         Key = KeyboardKeyFacts.MetaKeys.DELETE,
                     },
-                    CancellationToken.None,
-                    singledCursorModifierBag);
+                    singledCursorModifierBag,
+                    CancellationToken.None);
             }
         }
     }

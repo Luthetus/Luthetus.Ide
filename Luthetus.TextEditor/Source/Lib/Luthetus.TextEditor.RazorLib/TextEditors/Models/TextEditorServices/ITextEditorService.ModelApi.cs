@@ -392,8 +392,8 @@ public partial interface ITextEditorService
                     resourceUri,
                     viewModelKey,
                     content,
-                    cancellationToken,
-                    cursorModifierBag);
+                    cursorModifierBag,
+                    cancellationToken);
 
                 return Task.CompletedTask;
             };
@@ -417,8 +417,8 @@ public partial interface ITextEditorService
                     resourceUri,
                     Key<TextEditorViewModel>.Empty,
                     content,
-                    cancellationToken,
-                    cursorModifierBag);
+                    cursorModifierBag,
+                    cancellationToken);
 
                 return Task.CompletedTask;
             };
@@ -449,8 +449,8 @@ public partial interface ITextEditorService
                     resourceUri,
                     viewModelKey,
                     keyboardEventArgs,
-                    cancellationToken,
-                    cursorModifierBag);
+                    cursorModifierBag,
+                    cancellationToken);
 
                 return Task.CompletedTask;
             };
@@ -475,8 +475,8 @@ public partial interface ITextEditorService
                     resourceUri,
                     viewModelKey,
                     keyboardEventArgs,
-                    cancellationToken,
-                    cursorModifierBag);
+                    cursorModifierBag,
+                    cancellationToken);
 
                 return Task.CompletedTask;
             };
@@ -507,8 +507,8 @@ public partial interface ITextEditorService
                     resourceUri,
                     viewModelKey,
                     count,
-                    cancellationToken,
-                    cursorModifierBag);
+                    cursorModifierBag,
+                    cancellationToken);
 
                 return Task.CompletedTask;
             };
@@ -532,8 +532,8 @@ public partial interface ITextEditorService
                     resourceUri,
                     Key<TextEditorViewModel>.Empty,
                     count,
-                    cancellationToken,
-                    cursorModifierBag);
+                    cursorModifierBag,
+                    cancellationToken);
 
                 return Task.CompletedTask;
             };
@@ -564,8 +564,8 @@ public partial interface ITextEditorService
                     resourceUri,
                     viewModelKey,
                     motionKind,
-                    cancellationToken,
-                    cursorModifierBag);
+                    cursorModifierBag,
+                    cancellationToken);
 
                 return Task.CompletedTask;
             };
@@ -589,8 +589,8 @@ public partial interface ITextEditorService
                     resourceUri,
                     Key<TextEditorViewModel>.Empty,
                     motionKind,
-                    cancellationToken,
-                    cursorModifierBag);
+                    cursorModifierBag,
+                    cancellationToken);
 
                 return Task.CompletedTask;
             };
