@@ -15,7 +15,7 @@ public class TextEditorModelHelperTests
 	/// <see cref="TextEditorModelHelper.GetRowEndingThatCreatedRow(ITextEditorModel, int)"/>
 	/// </summary>
 	[Fact]
-	public void GetStartOfRowTuple()
+	public void GetRowEndingThatCreatedRow()
 	{
 		// This test is broken down into code blocks, one for each subcase.
 		// TODO: Perhaps separate the subcases as individual tests.
@@ -190,28 +190,36 @@ public class TextEditorModelHelperTests
 	[Fact]
 	public void GetLengthOfRow()
 	{
-		// Negative rowIndex
-		{
+        TextEditorServicesTestsHelper.GetTestTextEditorModel(
+            out var model);
+
+        // Negative rowIndex
+        {
+            model.GetLengthOfRow(TestConstants.NEGATIVE_ROW_INDEX);
             throw new NotImplementedException();
         }
 
 		// First row
 		{
+            model.GetLengthOfRow(TestConstants.FIRST_ROW_INDEX);
             throw new NotImplementedException();
         }
 
 		// Row which is between first and last row.
 		{
+            model.GetLengthOfRow(TestConstants.ROW_INDEX_WHICH_IS_BETWEEN_FIRST_AND_LAST_ROW);
             throw new NotImplementedException();
         }
 
         // Last row
         {
+            model.GetLengthOfRow(TestConstants.LAST_ROW_INDEX);
             throw new NotImplementedException();
         }
 
         // rowIndex > document.Rows.Count
         {
+            model.GetLengthOfRow(TestConstants.LARGE_OUT_OF_BOUNDS_ROW_INDEX);
             throw new NotImplementedException();
         }
     }

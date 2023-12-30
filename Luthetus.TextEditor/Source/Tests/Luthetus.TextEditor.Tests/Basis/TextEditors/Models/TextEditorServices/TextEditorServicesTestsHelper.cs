@@ -20,20 +20,6 @@ namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
 
 public class TextEditorServicesTestsHelper
 {
-    /// <summary>
-    /// This sample text is used for testing.
-    /// <br/><br/>
-    /// It contains separate lines that start with letter, digit, whitespace, and punctuation
-    /// Similarly, separate lines that end with punctuation, letter, whitespace, digit.
-    /// <br/><br/>
-    /// Note: there is a line which contains only a space character, this note is here to try to
-    /// avoid confusion if one does not see it.
-    /// <br/><br/>
-    /// Do not use a verbatim string here, it will use operating system dependent line endings,
-    /// which then cannot be asserted in the unit tests.
-    /// </summary>
-    private const string _sourceText = "Hello World!\n7 Pillows\n \n,abc123";
-
     public static void InitializeTextEditorServicesTestsHelper(
         out ITextEditorService textEditorService,
         out TextEditorModel model,
@@ -106,6 +92,17 @@ public class TextEditorServicesTestsHelper
 
         viewModel = textEditorService.ViewModelApi.GetOrDefault(viewModelKey)
            ?? throw new ArgumentNullException();
+    }
+
+    public static void GetTestTextEditorModel(out TextEditorModel model)
+    {
+        model = new TextEditorModel(
+            new ResourceUri($"/{nameof(GetTestTextEditorModel)}.txt"),
+            DateTime.UtcNow,
+            ExtensionNoPeriodFacts.TXT,
+            TestConstants.SOURCE_TEXT,
+            null,
+            null);
     }
 
     /// <summary>
