@@ -26,9 +26,12 @@ public record TextEditorCursor(
         0,
         0,
         false,
-        TextEditorSelection.Empty);
+        TextEditorSelection.Empty)
+    {
+        Key = Key<TextEditorCursor>.Empty
+    };
 
-    public Key<TextEditorCursor> Key { get; init; }
+    public Key<TextEditorCursor> Key { get; init; } = Key<TextEditorCursor>.NewKey();
     public bool ShouldRevealCursor { get; set; }
     /// <summary>
     /// Relates to whether the cursor is within the viewable area of the Text Editor on the UI
