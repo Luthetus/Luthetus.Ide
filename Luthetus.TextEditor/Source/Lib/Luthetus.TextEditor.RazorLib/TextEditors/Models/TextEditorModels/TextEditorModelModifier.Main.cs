@@ -911,7 +911,7 @@ public partial class TextEditorModelModifier
                     cursorModifierBag.ViewModelKey,
                     new List<TextEditorCursorModifier> { cursor });
 
-                PerformDeletions(
+                PerformInsertions(
                     editContext,
                     resourceUri,
                     viewModelKey,
