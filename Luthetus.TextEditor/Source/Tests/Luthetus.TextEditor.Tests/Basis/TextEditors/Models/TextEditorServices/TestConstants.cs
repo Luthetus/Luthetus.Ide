@@ -28,4 +28,7 @@ public class TestConstants
     public const int LAST_ROW_INDEX = 3;
     public const int LARGE_OUT_OF_BOUNDS_ROW_INDEX = 5;
     public const int ROW_COUNT = 4;
+    public const int LENGTH_OF_FIRST_ROW = 12;
+    public const int LENGTH_OF_ROW_WHICH_IS_BETWEEN_FIRST_AND_LAST_ROW = 9;
+    public const int LENGTH_OF_LAST_ROW = 7;
 }

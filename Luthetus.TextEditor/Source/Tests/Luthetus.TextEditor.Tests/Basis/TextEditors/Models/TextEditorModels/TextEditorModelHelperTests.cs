@@ -195,32 +195,35 @@ public class TextEditorModelHelperTests
 
         // Negative rowIndex
         {
-            model.GetLengthOfRow(TestConstants.NEGATIVE_ROW_INDEX);
-            throw new NotImplementedException();
+            // Explanation of result: negative index gets changed to index of 0
+            var lengthOfRow = model.GetLengthOfRow(TestConstants.NEGATIVE_ROW_INDEX);
+            Assert.Equal(TestConstants.LENGTH_OF_FIRST_ROW, lengthOfRow);
         }
 
 		// First row
 		{
-            model.GetLengthOfRow(TestConstants.FIRST_ROW_INDEX);
-            throw new NotImplementedException();
+            var lengthOfRow = model.GetLengthOfRow(TestConstants.FIRST_ROW_INDEX);
+            Assert.Equal(TestConstants.LENGTH_OF_FIRST_ROW, lengthOfRow);
         }
 
 		// Row which is between first and last row.
 		{
-            model.GetLengthOfRow(TestConstants.ROW_INDEX_WHICH_IS_BETWEEN_FIRST_AND_LAST_ROW);
-            throw new NotImplementedException();
+            var lengthOfRow = model.GetLengthOfRow(TestConstants.ROW_INDEX_WHICH_IS_BETWEEN_FIRST_AND_LAST_ROW);
+            Assert.Equal(TestConstants.LENGTH_OF_ROW_WHICH_IS_BETWEEN_FIRST_AND_LAST_ROW, lengthOfRow);
         }
 
         // Last row
         {
-            model.GetLengthOfRow(TestConstants.LAST_ROW_INDEX);
-            throw new NotImplementedException();
+            var lengthOfRow = model.GetLengthOfRow(TestConstants.LAST_ROW_INDEX);
+            Assert.Equal(TestConstants.LENGTH_OF_LAST_ROW, lengthOfRow);
         }
 
         // rowIndex > document.Rows.Count
         {
-            model.GetLengthOfRow(TestConstants.LARGE_OUT_OF_BOUNDS_ROW_INDEX);
-            throw new NotImplementedException();
+            // Explanation of result: large out of bounds index gets changed to
+            // index of 'model.RowEndingPositionsBag.Count - 1'
+            var lengthOfRow = model.GetLengthOfRow(TestConstants.LARGE_OUT_OF_BOUNDS_ROW_INDEX);
+            Assert.Equal(TestConstants.LENGTH_OF_LAST_ROW, lengthOfRow);
         }
     }
 
