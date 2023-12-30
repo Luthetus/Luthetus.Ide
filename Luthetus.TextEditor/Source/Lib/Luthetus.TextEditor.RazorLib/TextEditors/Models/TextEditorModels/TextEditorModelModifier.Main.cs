@@ -82,24 +82,9 @@ public partial class TextEditorModelModifier
             _renderStateKey ?? _textEditorModel.RenderStateKey);
     }
 
-    public void ModifyContentBag()
-    {
-        throw new NotImplementedException();
-    }
-
     public void ClearContentBag()
     {
         _contentBag = new();
-    }
-
-    public void ModifyEditBlocksBag()
-    {
-        throw new NotImplementedException();
-    }
-
-    public void ModifyRowEndingPositionsBag()
-    {
-        throw new NotImplementedException();
     }
 
     public void ClearRowEndingPositionsBag()
@@ -107,24 +92,9 @@ public partial class TextEditorModelModifier
         _rowEndingPositionsBag = new();
     }
 
-    public void ModifyRowEndingKindCountsBag()
-    {
-        throw new NotImplementedException();
-    }
-
     public void ClearRowEndingKindCountsBag()
     {
         _rowEndingKindCountsBag = new();
-    }
-
-    public void ModifyPresentationModelsBag()
-    {
-        throw new NotImplementedException();
-    }
-
-    public void ModifyTabKeyPositionsBag()
-    {
-        throw new NotImplementedException();
     }
 
     public void ClearTabKeyPositionsBag()
@@ -143,25 +113,10 @@ public partial class TextEditorModelModifier
         _usingRowEndingKind = rowEndingKind;
     }
 
-    public void ModifyResourceUri()
-    {
-        throw new NotImplementedException();
-    }
-
-    public void ModifyResourceLastWriteTime()
-    {
-        throw new NotImplementedException();
-    }
-
     public void ModifyResourceData(ResourceUri resourceUri, DateTime resourceLastWriteTime)
     {
         _resourceUri = resourceUri;
         _resourceLastWriteTime = resourceLastWriteTime;
-    }
-
-    public void ModifyFileExtension()
-    {
-        throw new NotImplementedException();
     }
 
     public void ModifyDecorationMapper(IDecorationMapper decorationMapper)
@@ -177,31 +132,6 @@ public partial class TextEditorModelModifier
     public void ModifyTextEditorSaveFileHelper(TextEditorSaveFileHelper textEditorSaveFileHelper)
     {
         _textEditorSaveFileHelper = textEditorSaveFileHelper;
-    }
-
-    public void ModifyEditBlockIndex()
-    {
-        throw new NotImplementedException();
-    }
-
-    public void ModifyMostCharactersOnASingleRowTuple()
-    {
-        throw new NotImplementedException();
-    }
-
-    public void ModifyRenderStateKey()
-    {
-        throw new NotImplementedException();
-    }
-
-    public void ModifyTextEditorKeymap()
-    {
-        throw new NotImplementedException();
-    }
-
-    public void ModifyTextEditorOptions()
-    {
-        throw new NotImplementedException();
     }
 
     private void EnsureUndoPoint(TextEditKind textEditKind, string? otherTextEditKindIdentifier = null)
