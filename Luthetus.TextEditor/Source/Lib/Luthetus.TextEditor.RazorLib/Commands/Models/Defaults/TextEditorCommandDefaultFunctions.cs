@@ -85,9 +85,6 @@ public class TextEditorCommandDefaultFunctions
             await viewModelModifier.ViewModel.FocusAsync();
 
             modelModifier.HandleKeyboardEvent(
-                editContext,
-                modelModifier.ResourceUri,
-                viewModelModifier.ViewModel.ViewModelKey,
                 new KeyboardEventArgs { Key = KeyboardKeyFacts.MetaKeys.DELETE },
                 cursorModifierBag,
                 CancellationToken.None);
@@ -116,9 +113,6 @@ public class TextEditorCommandDefaultFunctions
             var clipboard = await commandArgs.ClipboardService.ReadClipboard();
 
             modelModifier.EditByInsertion(
-                editContext,
-                modelModifier.ResourceUri,
-                viewModelModifier.ViewModel.ViewModelKey,
                 clipboard,
                 cursorModifierBag,
                 CancellationToken.None);
@@ -420,9 +414,6 @@ public class TextEditorCommandDefaultFunctions
             }
 
             modelModifier.EditByInsertion(
-                editContext,
-                modelModifier.ResourceUri,
-                viewModelModifier.ViewModel.ViewModelKey,
                 selectedText,
                 new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, new List<TextEditorCursorModifier>() { new(cursorForInsertion) }),
                 CancellationToken.None);
@@ -464,9 +455,6 @@ public class TextEditorCommandDefaultFunctions
                 var cursorForInsertion = new TextEditorCursor(i, 0, true);
 
                 modelModifier.EditByInsertion(
-                    editContext,
-                    modelModifier.ResourceUri,
-                    viewModelModifier.ViewModel.ViewModelKey,
                     KeyboardKeyFacts.WhitespaceCharacters.TAB.ToString(),
                     cursorModifierBag,
                     CancellationToken.None);
@@ -553,9 +541,6 @@ public class TextEditorCommandDefaultFunctions
                     var cursorForDeletion = new TextEditorCursor(i, 0, true);
 
                     modelModifier.DeleteByRange(
-                        editContext,
-                        modelModifier.ResourceUri,
-                        viewModelModifier.ViewModel.ViewModelKey,
                         removeCharacterCount, // Delete a single "Tab" character
                         new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, new List<TextEditorCursorModifier> { new(cursorForDeletion) }),
                         CancellationToken.None);
@@ -574,9 +559,6 @@ public class TextEditorCommandDefaultFunctions
                     removeCharacterCount = contiguousSpaceCount;
 
                     modelModifier.DeleteByRange(
-                        editContext,
-                        modelModifier.ResourceUri,
-                        viewModelModifier.ViewModel.ViewModelKey,
                         removeCharacterCount,
                         new TextEditorCursorModifierBag(Key<TextEditorViewModel>.Empty, new List<TextEditorCursorModifier> { new(cursorForDeletion) }),
                         CancellationToken.None);
@@ -679,9 +661,6 @@ public class TextEditorCommandDefaultFunctions
             primaryCursorModifier.ColumnIndex = lengthOfRow;
 
             modelModifier.EditByInsertion(
-                editContext,
-                modelModifier.ResourceUri,
-                viewModelModifier.ViewModel.ViewModelKey,
                 "\n",
                 cursorModifierBag,
                 CancellationToken.None);
@@ -715,9 +694,6 @@ public class TextEditorCommandDefaultFunctions
             primaryCursorModifier.ColumnIndex = 0;
 
             modelModifier.EditByInsertion(
-                editContext,
-                modelModifier.ResourceUri,
-                viewModelModifier.ViewModel.ViewModelKey,
                 "\n",
                 cursorModifierBag,
                 CancellationToken.None);

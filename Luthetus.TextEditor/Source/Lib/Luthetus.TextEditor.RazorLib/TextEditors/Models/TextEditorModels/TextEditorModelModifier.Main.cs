@@ -172,9 +172,6 @@ public partial class TextEditorModelModifier
     }
 
     private void PerformInsertions(
-        ITextEditorEditContext editContext,
-        ResourceUri resourceUri,
-        Key<TextEditorViewModel> viewModelKey,
         KeyboardEventArgs keyboardEventArgs,
         TextEditorCursorModifierBag cursorModifierBag,
         CancellationToken cancellationToken)
@@ -194,9 +191,6 @@ public partial class TextEditorModelModifier
             if (TextEditorSelectionHelper.HasSelectedText(cursorModifier))
             {
                 PerformDeletions(
-                    editContext,
-                    resourceUri,
-                    viewModelKey,
                     new KeyboardEventArgs
                     {
                         Code = KeyboardKeyFacts.MetaKeys.DELETE,
@@ -371,9 +365,6 @@ public partial class TextEditorModelModifier
     }
 
     private void PerformDeletions(
-        ITextEditorEditContext editContext,
-        ResourceUri resourceUri,
-        Key<TextEditorViewModel> viewModelKey,
         KeyboardEventArgs keyboardEventArgs,
         TextEditorCursorModifierBag cursorModifierBag,
         CancellationToken cancellationToken)
@@ -810,9 +801,6 @@ public partial class TextEditorModelModifier
     }
 
     public void HandleKeyboardEvent(
-        ITextEditorEditContext editContext,
-        ResourceUri resourceUri,
-        Key<TextEditorViewModel> viewModelKey,
         KeyboardEventArgs keyboardEventArgs,
         TextEditorCursorModifierBag cursorModifierBag,
         CancellationToken cancellationToken)
@@ -823,9 +811,6 @@ public partial class TextEditorModelModifier
                 KeyboardKeyFacts.MetaKeys.DELETE == keyboardEventArgs.Key)
             {
                 PerformDeletions(
-                    editContext,
-                    resourceUri,
-                    viewModelKey,
                     keyboardEventArgs,
                     cursorModifierBag,
                     cancellationToken);
@@ -842,9 +827,6 @@ public partial class TextEditorModelModifier
                     new List<TextEditorCursorModifier> { cursor });
 
                 PerformInsertions(
-                    editContext,
-                    resourceUri,
-                    viewModelKey,
                     keyboardEventArgs,
                     singledCursorModifierBag,
                     cancellationToken);
@@ -853,9 +835,6 @@ public partial class TextEditorModelModifier
     }
 
     public void EditByInsertion(
-        ITextEditorEditContext editContext,
-        ResourceUri resourceUri,
-        Key<TextEditorViewModel> viewModelKey,
         string content,
         TextEditorCursorModifierBag cursorModifierBag,
         CancellationToken cancellationToken)
@@ -883,9 +862,6 @@ public partial class TextEditorModelModifier
                 };
 
                 HandleKeyboardEvent(
-                    editContext,
-                    resourceUri,
-                    viewModelKey,
                     new KeyboardEventArgs
                     {
                         Code = code,
@@ -898,9 +874,6 @@ public partial class TextEditorModelModifier
     }
 
     public void DeleteTextByMotion(
-        ITextEditorEditContext editContext,
-        ResourceUri resourceUri,
-        Key<TextEditorViewModel> viewModelKey,
         MotionKind motionKind,
         TextEditorCursorModifierBag cursorModifierBag,
         CancellationToken cancellationToken)
@@ -913,18 +886,12 @@ public partial class TextEditorModelModifier
         };
         
         HandleKeyboardEvent(
-            editContext,
-            resourceUri,
-            viewModelKey,
             keyboardEventArgs,
             cursorModifierBag,
             CancellationToken.None);
     }
 
     public void DeleteByRange(
-        ITextEditorEditContext editContext,
-        ResourceUri resourceUri,
-        Key<TextEditorViewModel> viewModelKey,
         int count,
         TextEditorCursorModifierBag cursorModifierBag,
         CancellationToken cancellationToken)
@@ -941,9 +908,6 @@ public partial class TextEditorModelModifier
             for (var deleteIndex = 0; deleteIndex < count; deleteIndex++)
             {
                 HandleKeyboardEvent(
-                    editContext,
-                    resourceUri,
-                    viewModelKey,
                     new KeyboardEventArgs
                     {
                         Code = KeyboardKeyFacts.MetaKeys.DELETE,

@@ -388,9 +388,6 @@ public partial interface ITextEditorService
                     return Task.CompletedTask;
 
                 modelModifier.EditByInsertion(
-                    editContext,
-                    resourceUri,
-                    viewModelKey,
                     content,
                     cursorModifierBag,
                     cancellationToken);
@@ -413,9 +410,6 @@ public partial interface ITextEditorService
                     return Task.CompletedTask;
 
                 modelModifier.EditByInsertion(
-                    editContext,
-                    resourceUri,
-                    Key<TextEditorViewModel>.Empty,
                     content,
                     cursorModifierBag,
                     cancellationToken);
@@ -445,9 +439,6 @@ public partial interface ITextEditorService
                     return Task.CompletedTask;
 
                 modelModifier.HandleKeyboardEvent(
-                    editContext,
-                    resourceUri,
-                    viewModelKey,
                     keyboardEventArgs,
                     cursorModifierBag,
                     cancellationToken);
@@ -471,9 +462,6 @@ public partial interface ITextEditorService
                     return Task.CompletedTask;
 
                 modelModifier.HandleKeyboardEvent(
-                    editContext,
-                    resourceUri,
-                    viewModelKey,
                     keyboardEventArgs,
                     cursorModifierBag,
                     cancellationToken);
@@ -503,9 +491,6 @@ public partial interface ITextEditorService
                     return Task.CompletedTask;
 
                 modelModifier.DeleteByRange(
-                    editContext,
-                    resourceUri,
-                    viewModelKey,
                     count,
                     cursorModifierBag,
                     cancellationToken);
@@ -528,9 +513,6 @@ public partial interface ITextEditorService
                     return Task.CompletedTask;
 
                 modelModifier.DeleteByRange(
-                    editContext,
-                    resourceUri,
-                    Key<TextEditorViewModel>.Empty,
                     count,
                     cursorModifierBag,
                     cancellationToken);
@@ -560,9 +542,6 @@ public partial interface ITextEditorService
                     return Task.CompletedTask;
 
                 modelModifier.DeleteTextByMotion(
-                    editContext,
-                    resourceUri,
-                    viewModelKey,
                     motionKind,
                     cursorModifierBag,
                     cancellationToken);
@@ -585,9 +564,6 @@ public partial interface ITextEditorService
                     return Task.CompletedTask;
 
                 modelModifier.DeleteTextByMotion(
-                    editContext,
-                    resourceUri,
-                    Key<TextEditorViewModel>.Empty,
                     motionKind,
                     cursorModifierBag,
                     cancellationToken);
