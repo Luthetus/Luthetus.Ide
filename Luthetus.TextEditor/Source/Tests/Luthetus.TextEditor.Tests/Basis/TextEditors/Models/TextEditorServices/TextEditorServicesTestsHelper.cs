@@ -94,10 +94,10 @@ public class TextEditorServicesTestsHelper
            ?? throw new ArgumentNullException();
     }
 
-    public static void GetTestTextEditorModel(out TextEditorModel model)
+    public static void ConstructTestTextEditorModel(out TextEditorModel model)
     {
         model = new TextEditorModel(
-            new ResourceUri($"/{nameof(GetTestTextEditorModel)}.txt"),
+            new ResourceUri($"/{nameof(ConstructTestTextEditorModel)}.txt"),
             DateTime.UtcNow,
             ExtensionNoPeriodFacts.TXT,
             TestConstants.SOURCE_TEXT,

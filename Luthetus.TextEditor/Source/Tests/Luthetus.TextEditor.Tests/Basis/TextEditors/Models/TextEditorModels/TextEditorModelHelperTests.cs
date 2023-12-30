@@ -3,6 +3,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.Characters.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorModels;
 
@@ -190,7 +191,7 @@ public class TextEditorModelHelperTests
 	[Fact]
 	public void GetLengthOfRow()
 	{
-        TextEditorServicesTestsHelper.GetTestTextEditorModel(
+        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(
             out var model);
 
         // Negative rowIndex
@@ -233,28 +234,48 @@ public class TextEditorModelHelperTests
 	[Fact]
 	public void GetRows()
 	{
+        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(
+            out var model);
+
         // Negative rowIndex
         {
             // Negative count
             {
-                throw new NotImplementedException();
+                var rows = model.GetRows(TestConstants.NEGATIVE_ROW_INDEX, -3);
+                Assert.Equal(new List<List<RichCharacter>>(), rows);
             }
 
             // Positive count
             {
-				throw new NotImplementedException();
+                var rows = model.GetRows(TestConstants.NEGATIVE_ROW_INDEX, 3);
+                Assert.Equal(new List<List<RichCharacter>>(), rows);
 			}
+
+            // If the rowIndex is negative, but the row count to read results
+            // in indices which are valid?
+            {
+                var countNeededToGoFromNegativeStartingIndexToAValidIndex =
+                    1 + (-1 * TestConstants.NEGATIVE_ROW_INDEX);
+
+                var rows = model.GetRows(
+                    TestConstants.NEGATIVE_ROW_INDEX,
+                    countNeededToGoFromNegativeStartingIndexToAValidIndex);
+
+                Assert.Equal(new List<List<RichCharacter>>(), rows);
+            }
         }
 
         // First row
         {
             // Negative count
             {
+                var rows = model.GetRows(TestConstants.FIRST_ROW_INDEX, -3);
                 throw new NotImplementedException();
             }
 
             // Positive count
             {
+                var rows = model.GetRows(TestConstants.FIRST_ROW_INDEX, 3);
                 throw new NotImplementedException();
             }
         }
@@ -263,11 +284,13 @@ public class TextEditorModelHelperTests
         {
             // Negative count
             {
+                var rows = model.GetRows(TestConstants.ROW_INDEX_WHICH_IS_BETWEEN_FIRST_AND_LAST_ROW, -3);
                 throw new NotImplementedException();
             }
 
             // Positive count
             {
+                var rows = model.GetRows(TestConstants.ROW_INDEX_WHICH_IS_BETWEEN_FIRST_AND_LAST_ROW, 3);
                 throw new NotImplementedException();
             }
         }
@@ -276,11 +299,13 @@ public class TextEditorModelHelperTests
         {
             // Negative count
             {
+                var rows = model.GetRows(TestConstants.LAST_ROW_INDEX, -3);
                 throw new NotImplementedException();
             }
 
             // Positive count
             {
+                var rows = model.GetRows(TestConstants.LAST_ROW_INDEX, 3);
                 throw new NotImplementedException();
             }
         }
@@ -289,11 +314,13 @@ public class TextEditorModelHelperTests
         {
             // Negative count
             {
+                var rows = model.GetRows(TestConstants.LARGE_OUT_OF_BOUNDS_ROW_INDEX, -3);
                 throw new NotImplementedException();
             }
 
             // Positive count
             {
+                var rows = model.GetRows(TestConstants.LARGE_OUT_OF_BOUNDS_ROW_INDEX, 3);
                 throw new NotImplementedException();
             }
         }

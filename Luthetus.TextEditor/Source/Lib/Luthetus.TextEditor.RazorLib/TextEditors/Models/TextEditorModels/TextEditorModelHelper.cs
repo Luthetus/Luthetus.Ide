@@ -70,6 +70,9 @@ public static class TextEditorModelHelper
 
 		var rowsBag = new List<List<RichCharacter>>();
 
+		if (startingRowIndex < 0 || endingRowIndexExclusive < 0)
+			return rowsBag;
+
 		for (var i = startingRowIndex; i < endingRowIndexExclusive; i++)
 		{
 			// Previous row's line ending position is this row's start.
