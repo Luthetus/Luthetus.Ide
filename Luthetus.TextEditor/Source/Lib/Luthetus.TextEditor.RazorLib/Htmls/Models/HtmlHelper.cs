@@ -23,6 +23,10 @@ public static class HtmlHelper
         return input.ToString().EscapeHtml();
     }
 
+    /// <summary>
+    /// Be careful if one alters the order of the replacements.
+    /// Some replacements must be done in a particular order.
+    /// </summary>
     public static string EscapeHtml(this string input)
     {
         return input
