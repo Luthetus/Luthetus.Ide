@@ -39,6 +39,7 @@ public class TextEditorCursorModifier
             IsPrimaryCursor,
             new TextEditorSelection(SelectionAnchorPositionIndex, SelectionEndingPositionIndex))
         {
+            Key = Key,
             ShouldRevealCursor = ShouldRevealCursor,
             IsIntersecting = IsIntersecting,
         };
