@@ -55,9 +55,16 @@ public static class TextEditorModelHelper
 		return lengthOfRowWithLineEndings - endOfRowTupleExclusive.RowEndingKind.AsCharacters().Length;
 	}
 
+    /// <summary>
+	/// Line endings are included in the individual rows which get returned.
+	/// </summary>
 	/// <param name="startingRowIndex">The starting index of the rows to return</param>
-	/// <param name="count">count of 0 returns 0 rows. count of 1 returns the startingRowIndex.</param>
-	public static List<List<RichCharacter>> GetRows(
+    /// <param name="count">
+    /// A count of 0 returns 0 rows.<br/>
+    /// A count of 1 returns rows[startingRowIndex] only.<br/>
+    /// A count of 2 returns rows[startingRowIndex] and rows[startingRowIndex + 1].<br/>
+    /// </param>
+    public static List<List<RichCharacter>> GetRows(
 		this ITextEditorModel model, int startingRowIndex, int count)
 	{
 		var rowCountAvailable = model.RowEndingPositionsBag.Count - startingRowIndex;
@@ -70,7 +77,7 @@ public static class TextEditorModelHelper
 
 		var rowsBag = new List<List<RichCharacter>>();
 
-		if (startingRowIndex < 0 || endingRowIndexExclusive < 0)
+		if (rowCountToReturn < 0 || startingRowIndex < 0 || endingRowIndexExclusive < 0)
 			return rowsBag;
 
 		for (var i = startingRowIndex; i < endingRowIndexExclusive; i++)
