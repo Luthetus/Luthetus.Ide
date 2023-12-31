@@ -156,9 +156,9 @@ public partial class TextEditorHeader : ComponentBase
             return;
 
         var watchWindowObject = new WatchWindowObject(
-            model,
-            typeof(TextEditorModel),
-            "TextEditorModel",
+            RenderBatch,
+            typeof(TextEditorRenderBatch),
+            "TextEditorRenderBatch",
             true);
 
         var dialogRecord = new DialogRecord(
