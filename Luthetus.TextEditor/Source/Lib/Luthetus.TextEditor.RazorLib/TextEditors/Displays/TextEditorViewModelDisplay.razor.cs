@@ -244,7 +244,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             await CursorDisplay.FocusAsync();
     }
 
-    private async Task HandleOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
+    private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
         if (keyboardEventArgs.Key == "Shift" ||
             keyboardEventArgs.Key == "Control" ||
@@ -254,151 +254,142 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             return;
         }
 
-        var model = GetModel();
-        var viewModel = GetViewModel();
+        // TODO: I need to figure out how to ensure a TextEditorModel which is available from...
+        // ...within a 'TextEditorService.Post' invocation via closure is not used when one...
+        // ...actually meant to use their 'modelModifier'.
+        var resourceUri = GetModel()?.ResourceUri;
+        var viewModelKey = GetViewModel()?.ViewModelKey;
 
-        if (model is null || viewModel is null)
+        if (resourceUri is null || viewModelKey is null)
             return;
 
-        var primaryCursor = viewModel.PrimaryCursor;
-        var cursorBag = new TextEditorCursor[]{ primaryCursor }.ToImmutableArray();
-        var hasSelection = TextEditorSelectionHelper.HasSelectedText(primaryCursor.Selection);
-        var layerKey = ((ITextEditorKeymap)TextEditorService.OptionsStateWrap.Value.Options.Keymap!).GetLayer(hasSelection);
-        
-        var keymapArgument = keyboardEventArgs.ToKeymapArgument() with
+        TextEditorService.Post(nameof(HandleOnKeyDown), async editContext =>
         {
-            LayerKey = layerKey
-        };
+            var modelModifier = editContext.GetModelModifier(resourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
 
-        var success = TextEditorService.OptionsStateWrap.Value.Options.Keymap!.Map.TryGetValue(
-            keymapArgument,
-            out var command);
+            if (modelModifier is null || viewModelModifier is null)
+                return;
 
-        if (!success && keymapArgument.LayerKey != TextEditorKeymapDefaultFacts.DefaultLayer.Key)
-        {
-            _ = TextEditorService.OptionsStateWrap.Value.Options.Keymap!.Map.TryGetValue(
-                keymapArgument with
-                {
-                    LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key,
-                },
-                out command);
-        }
+            var primaryCursor = viewModelModifier.ViewModel.PrimaryCursor;
+            var cursorBag = new TextEditorCursor[] { primaryCursor }.ToImmutableArray();
+            var hasSelection = TextEditorSelectionHelper.HasSelectedText(primaryCursor.Selection);
+            var layerKey = ((ITextEditorKeymap)TextEditorService.OptionsStateWrap.Value.Options.Keymap!).GetLayer(hasSelection);
 
-        if (KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == keyboardEventArgs.Code && keyboardEventArgs.ShiftKey)
-            command = TextEditorCommandDefaultFacts.NewLineBelow;
-
-        if (KeyboardKeyFacts.IsMovementKey(keyboardEventArgs.Key) && command is null)
-        {
-            if ((KeyboardKeyFacts.MovementKeys.ARROW_DOWN == keyboardEventArgs.Key ||
-                 KeyboardKeyFacts.MovementKeys.ARROW_UP == keyboardEventArgs.Key) &&
-                CursorDisplay is not null &&
-                CursorDisplay.MenuKind == TextEditorMenuKind.AutoCompleteMenu)
+            var keymapArgument = keyboardEventArgs.ToKeymapArgument() with
             {
-                await CursorDisplay.SetFocusToActiveMenuAsync();
-            }
-            else
-            {
-                TextEditorService.Post(
-                    TextEditorService.ViewModelApi.MoveCursorFactory(
-                        keyboardEventArgs,
-                        model.ResourceUri,
-                        viewModel.ViewModelKey));
+                LayerKey = layerKey
+            };
 
-                CursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.None);
-            }
-        }
-        else if (KeyboardKeyFacts.CheckIsContextMenuEvent(keyboardEventArgs))
-        {
-            CursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.ContextMenu);
-        }
-        else
-        {
-            if (command is not null)
+            var success = TextEditorService.OptionsStateWrap.Value.Options.Keymap!.Map.TryGetValue(
+                keymapArgument,
+                out var command);
+
+            if (!success && keymapArgument.LayerKey != TextEditorKeymapDefaultFacts.DefaultLayer.Key)
             {
-                await command.DoAsyncFunc.Invoke(new TextEditorCommandArgs(
-                    model.ResourceUri,
-                    viewModel.ViewModelKey,
-                    hasSelection,
-                    ClipboardService,
-                    TextEditorService,
-                    HandleMouseStoppedMovingEventAsync,
-                    JsRuntime,
-                    Dispatcher,
-                    ViewModelDisplayOptions.RegisterModelAction,
-                    ViewModelDisplayOptions.RegisterViewModelAction,
-                    ViewModelDisplayOptions.ShowViewModelAction));
-            }
-            else
-            {
-                if (!IsAutocompleteMenuInvoker(keyboardEventArgs))
-                {
-                    if (!KeyboardKeyFacts.IsMetaKey(keyboardEventArgs)
-                        || KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key ||
-                            KeyboardKeyFacts.MetaKeys.BACKSPACE == keyboardEventArgs.Key ||
-                            KeyboardKeyFacts.MetaKeys.DELETE == keyboardEventArgs.Key)
+                _ = TextEditorService.OptionsStateWrap.Value.Options.Keymap!.Map.TryGetValue(
+                    keymapArgument with
                     {
-                        CursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.None);
-                    }
-                }
+                        LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key,
+                    },
+                    out command);
+            }
 
-                _tooltipViewModel = null;
+            if (KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == keyboardEventArgs.Code && keyboardEventArgs.ShiftKey)
+                command = TextEditorCommandDefaultFacts.NewLineBelow;
 
-                // TODO: I need to figure out how to ensure a TextEditorModel which is available from...
-                // ...within a 'TextEditorService.Post' invocation via closure is not used when one...
-                // ...actually meant to use their 'modelModifier'.
-                var modelResourceUri = model.ResourceUri;
-                var viewModelKey = viewModel.ViewModelKey;
-
-                TextEditorService.Post(editContext =>
+            if (KeyboardKeyFacts.IsMovementKey(keyboardEventArgs.Key) && command is null)
+            {
+                if ((KeyboardKeyFacts.MovementKeys.ARROW_DOWN == keyboardEventArgs.Key ||
+                     KeyboardKeyFacts.MovementKeys.ARROW_UP == keyboardEventArgs.Key) &&
+                    CursorDisplay is not null &&
+                    CursorDisplay.MenuKind == TextEditorMenuKind.AutoCompleteMenu)
                 {
-                    var modelModifier = editContext.GetModelModifier(modelResourceUri);
-                    var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+                    await CursorDisplay.SetFocusToActiveMenuAsync();
+                }
+                else
+                {
+                    await TextEditorService.ViewModelApi.MoveCursorFactory(
+                                keyboardEventArgs,
+                                modelModifier.ResourceUri,
+                                viewModelModifier.ViewModel.ViewModelKey)
+                        .Invoke(editContext);
 
-                    if (modelModifier is null || viewModelModifier is null)
-                        return Task.CompletedTask;
+                    CursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.None);
+                }
+            }
+            else if (KeyboardKeyFacts.CheckIsContextMenuEvent(keyboardEventArgs))
+            {
+                CursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.ContextMenu);
+            }
+            else
+            {
+                if (command is not null)
+                {
+                    await command.DoAsyncFunc.Invoke(new TextEditorCommandArgs(
+                        modelModifier.ResourceUri,
+                        viewModelModifier.ViewModel.ViewModelKey,
+                        hasSelection,
+                        ClipboardService,
+                        TextEditorService,
+                        HandleMouseStoppedMovingEventAsync,
+                        JsRuntime,
+                        Dispatcher,
+                        ViewModelDisplayOptions.RegisterModelAction,
+                        ViewModelDisplayOptions.RegisterViewModelAction,
+                        ViewModelDisplayOptions.ShowViewModelAction));
+                }
+                else
+                {
+                    if (!IsAutocompleteMenuInvoker(keyboardEventArgs))
+                    {
+                        if (!KeyboardKeyFacts.IsMetaKey(keyboardEventArgs)
+                            || KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key ||
+                                KeyboardKeyFacts.MetaKeys.BACKSPACE == keyboardEventArgs.Key ||
+                                KeyboardKeyFacts.MetaKeys.DELETE == keyboardEventArgs.Key)
+                        {
+                            CursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.None);
+                        }
+                    }
 
-                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
-                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+                    _tooltipViewModel = null;
 
-                    if (cursorModifierBag is null || primaryCursorModifier is null)
-                        return Task.CompletedTask;
-
-                    return TextEditorService.ModelApi.HandleKeyboardEventFactory(
-                            modelResourceUri,
-                            viewModelKey,
+                    await TextEditorService.ModelApi.HandleKeyboardEventFactory(
+                            resourceUri,
+                            viewModelKey.Value,
                             keyboardEventArgs,
                             CancellationToken.None)
                         .Invoke(editContext);
-                });
+                }
             }
-        }
 
-        if (keyboardEventArgs.Key != "Shift" &&
-            keyboardEventArgs.Key != "Control" &&
-            keyboardEventArgs.Key != "Alt")
-        {
-            if (command is null ||
-                command is TextEditorCommand commandTextEditor &&
-                commandTextEditor.ShouldScrollCursorIntoView)
+            if (keyboardEventArgs.Key != "Shift" &&
+                keyboardEventArgs.Key != "Control" &&
+                keyboardEventArgs.Key != "Alt")
             {
-                primaryCursor.ShouldRevealCursor = true;
+                if (command is null ||
+                    command is TextEditorCommand commandTextEditor &&
+                    commandTextEditor.ShouldScrollCursorIntoView)
+                {
+                    primaryCursor.ShouldRevealCursor = true;
+                }
             }
-        }
 
-        var afterOnKeyDownAsync = ViewModelDisplayOptions.AfterOnKeyDownAsync ?? HandleAfterOnKeyDownAsync;
+            var afterOnKeyDownAsync = ViewModelDisplayOptions.AfterOnKeyDownAsync ?? HandleAfterOnKeyDownAsync;
 
-        var cursorDisplay = CursorDisplay;
+            var cursorDisplay = CursorDisplay;
 
-        if (cursorDisplay is not null)
-        {
-            var textEditor = model;
+            if (cursorDisplay is not null)
+            {
+                var textEditor = modelModifier;
 
-            await afterOnKeyDownAsync.Invoke(
-                textEditor,
-                cursorBag,
-                keyboardEventArgs,
-                cursorDisplay.SetShouldDisplayMenuAsync);
-        }
+                await afterOnKeyDownAsync.Invoke(
+                    textEditor,
+                    cursorBag,
+                    keyboardEventArgs,
+                    cursorDisplay.SetShouldDisplayMenuAsync);
+            }
+        });
     }
 
     private void HandleOnContextMenuAsync()
@@ -414,7 +405,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        TextEditorService.Post(async editContext =>
+        TextEditorService.Post(nameof(HandleContentOnDoubleClick), async editContext =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
@@ -491,7 +482,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
         
-        TextEditorService.Post(async editContext =>
+        TextEditorService.Post(nameof(HandleContentOnMouseDown), async editContext =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
@@ -604,7 +595,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         // Buttons is a bit flag '& 1' gets if left mouse button is held
         if (localThinksLeftMouseButtonIsDown && (mouseEventArgs.Buttons & 1) == 1)
         {
-            TextEditorService.Post(async editContext =>
+            TextEditorService.Post(nameof(HandleContentOnMouseMove), async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(modelResourceUri);
                 var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
@@ -727,7 +718,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     /// <summary>The default <see cref="AfterOnKeyDownAsync"/> will provide syntax highlighting, and autocomplete.<br/><br/>The syntax highlighting occurs on ';', whitespace, paste, undo, redo<br/><br/>The autocomplete occurs on LetterOrDigit typed or { Ctrl + Space }. Furthermore, the autocomplete is done via <see cref="IAutocompleteService"/> and the one can provide their own implementation when registering the Luthetus.TextEditor services using <see cref="LuthetusTextEditorOptions.AutocompleteServiceFactory"/></summary>
     public async Task HandleAfterOnKeyDownAsync(
-        TextEditorModel textEditor,
+        ITextEditorModel textEditor,
         ImmutableArray<TextEditorCursor> cursorBag,
         KeyboardEventArgs keyboardEventArgs,
         Func<TextEditorMenuKind, bool, Task> setTextEditorMenuKind)
@@ -1016,7 +1007,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        TextEditorService.Post(TextEditorService.ViewModelApi.RemeasureFactory(
+        TextEditorService.Post(nameof(QueueRemeasureBackgroundTask), TextEditorService.ViewModelApi.RemeasureFactory(
             modelResourceUri,
             viewModelKey.Value,
             localMeasureCharacterWidthAndRowHeightElementId,
@@ -1033,7 +1024,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        TextEditorService.Post(async editContext =>
+        TextEditorService.Post(nameof(QueueCalculateVirtualizationResultBackgroundTask), async editContext =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);

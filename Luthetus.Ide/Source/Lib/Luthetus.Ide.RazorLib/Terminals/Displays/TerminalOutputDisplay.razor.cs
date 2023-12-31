@@ -141,7 +141,7 @@ public partial class TerminalOutputDisplay : FluxorComponent
     }
 
     private async Task TextEditorAfterOnKeyDownAsync(
-        TextEditorModel textEditor,
+        ITextEditorModel textEditor,
         ImmutableArray<TextEditorCursor> cursorBag,
         KeyboardEventArgs keyboardEventArgs,
         Func<TextEditorMenuKind, bool, Task> setTextEditorMenuKind)

@@ -63,7 +63,7 @@ public class TextEditorViewModelStateActionsTests
             out var inViewModel,
             out var serviceProvider);
 
-        textEditorService.Post(editContext =>
+        textEditorService.Post(nameof(SetViewModelWithAction), editContext =>
         {
             var authenticatedActionKey = TextEditorService.AuthenticatedActionKey;
             var withFunc = new Func<TextEditorViewModel, TextEditorViewModel>(inState => inState);

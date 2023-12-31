@@ -100,13 +100,15 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
         // "i"
         {
+            var commandDisplayName = "Vim::i";
+
             var command = new TextEditorCommand(
-                "Vim::i", "vim-i", false, true, TextEditKind.None, null,
+                commandDisplayName, "vim-i", false, true, TextEditKind.None, null,
                 interfaceCommandArgs =>
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.Post(editContext =>
+                    commandArgs.TextEditorService.Post(nameof(commandDisplayName), editContext =>
                     {
                         ActiveVimMode = VimMode.Insert;
                         return Task.CompletedTask;
@@ -122,13 +124,15 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
         // "v"
         {
+            var commandDisplayName = "Vim::v";
+
             var command = new TextEditorCommand(
-                "Vim::v", "vim-v", false, true, TextEditKind.None, null,
+                commandDisplayName, "vim-v", false, true, TextEditKind.None, null,
                 interfaceCommandArgs =>
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.Post(editContext =>
+                    commandArgs.TextEditorService.Post(nameof(commandDisplayName), editContext =>
                     {
                         var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
                         var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
@@ -172,13 +176,15 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
         // "V"
         {
+            var commandDisplayName = "Vim::V";
+
             var command = new TextEditorCommand(
-                "Vim::V", "vim-V", false, true, TextEditKind.None, null,
+                commandDisplayName, "vim-V", false, true, TextEditKind.None, null,
                 interfaceCommandArgs =>
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.Post(editContext =>
+                    commandArgs.TextEditorService.Post(nameof(commandDisplayName), editContext =>
                     {
                         var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
                         var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
@@ -231,13 +237,15 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
         // ":"
         {
+            var commandDisplayName = "Vim:::";
+
             var command = new TextEditorCommand(
-                "Vim:::", "vim-:", false, true, TextEditKind.None, null,
+                commandDisplayName, "vim-:", false, true, TextEditKind.None, null,
                 interfaceCommandArgs =>
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.Post(editContext =>
+                    commandArgs.TextEditorService.Post(nameof(commandDisplayName), editContext =>
                     {
                         var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
                         var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
@@ -272,13 +280,15 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
         // "u"
         {
+            var commandDisplayName = "Vim::u";
+
             var command = new TextEditorCommand(
-                "Vim::u", "vim-u", false, true, TextEditKind.None, null,
+                commandDisplayName, "vim-u", false, true, TextEditKind.None, null,
                 interfaceCommandArgs =>
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.Post(async editContext =>
+                    commandArgs.TextEditorService.Post(nameof(commandDisplayName), async editContext =>
                     {
                         var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
                         var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
@@ -309,13 +319,15 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
         // "r"
         {
+            var commandDisplayName = "Vim::r";
+
             var command = new TextEditorCommand(
-                "Vim::r", "vim-r", false, true, TextEditKind.None, null,
+                commandDisplayName, "vim-r", false, true, TextEditKind.None, null,
                 interfaceCommandArgs =>
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.Post(async editContext =>
+                    commandArgs.TextEditorService.Post(nameof(commandDisplayName), async editContext =>
                     {
                         var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
                         var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
@@ -347,13 +359,15 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
         // "o"
         {
+            var commandDisplayName = "Vim::o";
+
             var command = new TextEditorCommand(
-                "Vim::o", "vim-o", false, true, TextEditKind.None, null,
+                commandDisplayName, "vim-o", false, true, TextEditKind.None, null,
                 interfaceCommandArgs =>
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.Post(editContext =>
+                    commandArgs.TextEditorService.Post(nameof(commandDisplayName), editContext =>
                     {
                         return TextEditorCommandVimFacts.Verbs.NewLineBelowCommand.DoAsyncFunc
                             .Invoke(interfaceCommandArgs);
@@ -369,13 +383,15 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
         // "O"
         {
+            var commandDisplayName = "Vim::O";
+
             var command = new TextEditorCommand(
-                "Vim::O", "vim-O", false, true, TextEditKind.None, null,
+                commandDisplayName, "vim-O", false, true, TextEditKind.None, null,
                 interfaceCommandArgs =>
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.Post(editContext =>
+                    commandArgs.TextEditorService.Post(nameof(commandDisplayName), editContext =>
                     {
                         return TextEditorCommandVimFacts.Verbs.NewLineAboveCommand.DoAsyncFunc
                             .Invoke(interfaceCommandArgs);
@@ -392,13 +408,15 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
         // "e"
         {
+            var commandDisplayName = "Vim::e";
+
             var command = new TextEditorCommand(
-                "Vim::e", "vim-e", false, false, TextEditKind.None, null,
+                commandDisplayName, "vim-e", false, false, TextEditKind.None, null,
                 interfaceCommandArgs =>
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.Post(editContext =>
+                    commandArgs.TextEditorService.Post(nameof(commandDisplayName), editContext =>
                     {
                         return TextEditorCommandDefaultFacts.ScrollLineDown.DoAsyncFunc
                             .Invoke(interfaceCommandArgs);
@@ -415,13 +433,15 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
         // "y"
         {
+            var commandDisplayName = "Vim::y";
+
             var command = new TextEditorCommand(
-                "Vim::y", "vim-y", false, false, TextEditKind.None, null,
+                commandDisplayName, "vim-y", false, false, TextEditKind.None, null,
                 interfaceCommandArgs =>
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.Post(editContext =>
+                    commandArgs.TextEditorService.Post(nameof(commandDisplayName), editContext =>
                     {
                         return TextEditorCommandDefaultFacts.ScrollLineUp.DoAsyncFunc
                             .Invoke(interfaceCommandArgs);
@@ -683,13 +703,15 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
     private void AddInsertLayer()
     {
+        var commandDisplayName = "Vim::Escape";
+
         var escapeCommand = new TextEditorCommand(
-            "Vim::Escape", "vim-Escape", false, true, TextEditKind.None, null,
+            commandDisplayName, "vim-Escape", false, true, TextEditKind.None, null,
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.Post(editContext =>
+                commandArgs.TextEditorService.Post(nameof(commandDisplayName), editContext =>
                 {
                     ActiveVimMode = VimMode.Normal;
                     return Task.CompletedTask;
@@ -738,13 +760,15 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
         // PageDown
         {
+            var commandDisplayName = "Vim::PageDown";
+
             var escapeCommand = new TextEditorCommand(
-                "Vim::PageDown", "vim-PageDown", false, true, TextEditKind.None, null,
+                commandDisplayName, "vim-PageDown", false, true, TextEditKind.None, null,
                 interfaceCommandArgs =>
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.Post(editContext =>
+                    commandArgs.TextEditorService.Post(nameof(commandDisplayName), editContext =>
                     {
                         return TextEditorCommandDefaultFacts.ScrollPageDown.DoAsyncFunc
                             .Invoke(commandArgs);
@@ -760,13 +784,15 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
         // PageUp
         {
+            var commandDisplayName = "Vim::PageUp";
+
             var escapeCommand = new TextEditorCommand(
-                "Vim::PageUp", "vim-PageUp", false, true, TextEditKind.None, null,
+                commandDisplayName, "vim-PageUp", false, true, TextEditKind.None, null,
                 interfaceCommandArgs =>
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.Post(editContext =>
+                    commandArgs.TextEditorService.Post(nameof(commandDisplayName), editContext =>
                     {
                         return TextEditorCommandDefaultFacts.ScrollPageUp.DoAsyncFunc
                             .Invoke(commandArgs);
@@ -789,7 +815,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.Post(editContext =>
+                commandArgs.TextEditorService.Post(nameof(displayName), editContext =>
                 {
                     var success = VimSentence.TryLex(this, keymapArgument, commandArgs.HasTextSelection, out var lexCommand);
 
@@ -804,13 +830,15 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
     private TextEditorCommand BuildMovementCommand(KeymapArgument keymapArgument, string key)
     {
+        var commandDisplayName = $"Vim::{key}";
+
         return new TextEditorCommand(
-            $"Vim::{key}", $"vim-{key}", false, true, TextEditKind.None, null,
+            commandDisplayName, $"vim-{key}", false, true, TextEditKind.None, null,
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.Post(editContext =>
+                commandArgs.TextEditorService.Post(nameof(commandDisplayName), editContext =>
                 {
                     if (ActiveVimMode == VimMode.Visual || ActiveVimMode == VimMode.VisualLine)
                     {

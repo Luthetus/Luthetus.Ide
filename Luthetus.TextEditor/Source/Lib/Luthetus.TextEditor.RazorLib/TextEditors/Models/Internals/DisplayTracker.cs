@@ -113,7 +113,7 @@ public class DisplayTracker : IDisposable
         _calculateVirtualizationResultCancellationTokenSource.Cancel();
         _calculateVirtualizationResultCancellationTokenSource = new();
 
-        _textEditorService.Post(
+        _textEditorService.Post(nameof(_textEditorService.ViewModelApi.CalculateVirtualizationResultFactory),
             _textEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
                 model.ResourceUri,
                 viewModel.ViewModelKey,

@@ -177,7 +177,7 @@ public class CSharpCompilerService : ICompilerService
 
     private void QueueParseRequest(ResourceUri resourceUri)
     {
-        _textEditorService.Post(async editContext =>
+        _textEditorService.Post(nameof(QueueParseRequest), async editContext =>
         {
             var modelModifier = editContext.GetModelModifier(resourceUri);
 

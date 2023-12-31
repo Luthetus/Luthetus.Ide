@@ -274,7 +274,7 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.Post(MoveCursorOneColumnLeftFactory(
+                                commandArgs.TextEditorService.Post(nameof(MoveCursorOneColumnLeftFactory), MoveCursorOneColumnLeftFactory(
                                     commandArgs.ModelResourceUri,
                                     commandArgs.ViewModelKey,
                                     commandArgs));
@@ -294,11 +294,10 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.Post(
-                                    MoveCursorOneRowDownFactory(
-                                        commandArgs.ModelResourceUri,
-                                        commandArgs.ViewModelKey,
-                                        commandArgs));
+                                commandArgs.TextEditorService.Post(nameof(MoveCursorOneRowDownFactory), MoveCursorOneRowDownFactory(
+                                    commandArgs.ModelResourceUri,
+                                    commandArgs.ViewModelKey,
+                                    commandArgs));
 
                                 return Task.CompletedTask;
                             });
@@ -315,7 +314,7 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.Post(MoveCursorOneRowUpFactory(
+                                commandArgs.TextEditorService.Post(nameof(MoveCursorOneRowUpFactory), MoveCursorOneRowUpFactory(
                                     commandArgs.ModelResourceUri,
                                     commandArgs.ViewModelKey,
                                     commandArgs));
@@ -335,7 +334,7 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.Post(MoveCursorOneColumnRightFactory(
+                                commandArgs.TextEditorService.Post(nameof(MoveCursorOneColumnRightFactory), MoveCursorOneColumnRightFactory(
                                     commandArgs.ModelResourceUri,
                                     commandArgs.ViewModelKey,
                                     commandArgs));
@@ -361,7 +360,7 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.Post(MoveCursorEndCurrentLineFactory(
+                                commandArgs.TextEditorService.Post(nameof(MoveCursorEndCurrentLineFactory), MoveCursorEndCurrentLineFactory(
                                     commandArgs.ModelResourceUri,
                                     commandArgs.ViewModelKey,
                                     commandArgs));
@@ -381,7 +380,7 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.Post(MoveCursorStartCurrentLineFactory(
+                                commandArgs.TextEditorService.Post(nameof(MoveCursorStartCurrentLineFactory), MoveCursorStartCurrentLineFactory(
                                     commandArgs.ModelResourceUri,
                                     commandArgs.ViewModelKey,
                                     commandArgs));

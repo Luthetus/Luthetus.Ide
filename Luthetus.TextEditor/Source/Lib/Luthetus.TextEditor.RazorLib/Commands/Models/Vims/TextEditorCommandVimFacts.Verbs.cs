@@ -17,7 +17,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.Post(TextEditorCommandDefaultFunctions.CutFactory(
+                commandArgs.TextEditorService.Post(nameof(DeleteLineCommand), TextEditorCommandDefaultFunctions.CutFactory(
                     commandArgs.ModelResourceUri,
                     commandArgs.ViewModelKey,
                     commandArgs));
@@ -30,7 +30,7 @@ public static partial class TextEditorCommandVimFacts
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                commandArgs.TextEditorService.Post(ChangeLineFactory(commandArgs));
+                commandArgs.TextEditorService.Post(nameof(ChangeLineCommand), ChangeLineFactory(commandArgs));
                 return Task.CompletedTask;
             });
 
@@ -57,7 +57,7 @@ public static partial class TextEditorCommandVimFacts
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                commandArgs.TextEditorService.Post(DeleteMotionFactory(commandArgs));
+                commandArgs.TextEditorService.Post(nameof(DeleteMotionCommandFactory), DeleteMotionFactory(commandArgs));
                 return Task.CompletedTask;
             });
 
@@ -122,7 +122,7 @@ public static partial class TextEditorCommandVimFacts
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                commandArgs.TextEditorService.Post(GetChangeMotionFactory(commandArgs));
+                commandArgs.TextEditorService.Post(nameof(ChangeMotionCommandFactory), GetChangeMotionFactory(commandArgs));
                 return Task.CompletedTask;
             });
 
@@ -148,7 +148,7 @@ public static partial class TextEditorCommandVimFacts
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                commandArgs.TextEditorService.Post(ChangeSelectionFactory(commandArgs));
+                commandArgs.TextEditorService.Post(nameof(ChangeSelectionCommand), ChangeSelectionFactory(commandArgs));
                 return Task.CompletedTask;
             });
 
@@ -172,7 +172,7 @@ public static partial class TextEditorCommandVimFacts
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                commandArgs.TextEditorService.Post(YankFactory(commandArgs));
+                commandArgs.TextEditorService.Post(nameof(YankCommand), YankFactory(commandArgs));
                 return Task.CompletedTask;
             });
 
@@ -190,7 +190,7 @@ public static partial class TextEditorCommandVimFacts
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                commandArgs.TextEditorService.Post(NewLineBelowFactory(commandArgs));
+                commandArgs.TextEditorService.Post(nameof(NewLineBelowCommand), NewLineBelowFactory(commandArgs));
                 return Task.CompletedTask;
             });
 
@@ -214,7 +214,7 @@ public static partial class TextEditorCommandVimFacts
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                commandArgs.TextEditorService.Post(NewLineAboveFactory(commandArgs));
+                commandArgs.TextEditorService.Post(nameof(NewLineAboveCommand), NewLineAboveFactory(commandArgs));
                 return Task.CompletedTask;
             });
 

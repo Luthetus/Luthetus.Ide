@@ -18,7 +18,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.Post(async editContext =>
+                commandArgs.TextEditorService.Post(nameof(Word), async editContext =>
                 {
                     var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
                     var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
@@ -92,7 +92,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.Post(async editContext =>
+                commandArgs.TextEditorService.Post(nameof(End), async editContext =>
                 {
                     var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
                     var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
@@ -215,7 +215,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.Post(async editContext =>
+                commandArgs.TextEditorService.Post(nameof(Back), async editContext =>
                 {
                     var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
                     var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
@@ -296,7 +296,7 @@ public static partial class TextEditorCommandVimFacts
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.Post(async editContext =>
+                    commandArgs.TextEditorService.Post(nameof(GetVisualFactory), async editContext =>
                     {
                         var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
                         var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
@@ -369,7 +369,7 @@ public static partial class TextEditorCommandVimFacts
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.Post(async editContext =>
+                    commandArgs.TextEditorService.Post(nameof(GetVisualLineFactory), async editContext =>
                     {
                         var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
                         var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);

@@ -153,7 +153,7 @@ public partial class AutocompleteMenu : ComponentBase
         AutocompleteEntry autocompleteEntry,
         TextEditorViewModel viewModel)
     {
-        TextEditorService.Post(editContext =>
+        TextEditorService.Post(nameof(InsertAutocompleteMenuOption), editContext =>
         {
             return TextEditorService.ModelApi
                 .InsertTextFactory(

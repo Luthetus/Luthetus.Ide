@@ -102,11 +102,11 @@ public partial class TextEditorService : ITextEditorService
     public ITextEditorOptionsApi OptionsApi { get; }
     public ITextEditorSearchEngineApi SearchEngineApi { get; }
     
-    public void Post(TextEditorEdit edit)
+    public void Post(string taskDisplayName, TextEditorEdit edit)
     {
         _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(),
         ContinuousBackgroundTaskWorker.GetQueueKey(),
-        nameof(Post),
+        taskDisplayName,
             async () =>
             {
                 var editContext = new TextEditorEditContext(
@@ -115,18 +115,46 @@ public partial class TextEditorService : ITextEditorService
 
                 await edit.Invoke(editContext);
 
-                // One must update the ViewModel first.
-                // If a model is updated first, then the ViewModel UI is
-                // likely to complain that the cursor is in a bad place.
+                foreach (var modelModifier in editContext.ModelCache.Values)
+                {
+                    if (modelModifier is null)
+                        continue;
+
+                    _dispatcher.Dispatch(new TextEditorModelState.SetAction(
+                        AuthenticatedActionKey,
+                        editContext,
+                        modelModifier));
+
+                    var viewModelBag = ModelApi.GetViewModelsOrEmpty(modelModifier.ResourceUri);
+
+                    foreach (var viewModel in viewModelBag)
+                    {
+                        var viewModelModifier = editContext.GetViewModelModifier(
+                            viewModel.ViewModelKey);
+
+                        if (viewModelModifier is null)
+                            return;
+
+                        await ViewModelApi.CalculateVirtualizationResultFactory(
+                            viewModelModifier.ViewModel.ResourceUri,
+                            viewModelModifier.ViewModel.ViewModelKey,
+                            viewModelModifier.ViewModel.MostRecentTextEditorMeasurements,
+                            CancellationToken.None)
+                        .Invoke(editContext);
+                    }
+                }
+
                 foreach (var viewModelModifier in editContext.ViewModelCache.Values)
                 {
-                    if (viewModelModifier is not null && editContext.CursorModifierBagCache.TryGetValue(
-                            viewModelModifier.ViewModel.ViewModelKey,
-                            out var cursorModifierBag))
-                    {
-                        if (cursorModifierBag is null)
-                            continue;
+                    if (viewModelModifier is null)
+                        return;
 
+                    var successCursorModifierBag = editContext.CursorModifierBagCache.TryGetValue(
+                        viewModelModifier.ViewModel.ViewModelKey,
+                        out var cursorModifierBag);
+
+                    if (successCursorModifierBag && cursorModifierBag is not null)
+                    {
                         _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
                             AuthenticatedActionKey,
                             editContext,
@@ -138,17 +166,16 @@ public partial class TextEditorService : ITextEditorService
                                     .ToImmutableArray()
                             }));
                     }
-                }
-
-                foreach (var modelModifier in editContext.ModelCache.Values)
-                {
-                    if (modelModifier is null)
-                        continue;
-
-                    _dispatcher.Dispatch(new TextEditorModelState.SetAction(
-                        AuthenticatedActionKey,
-                        editContext,
-                        modelModifier));
+                    else
+                    {
+                        _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
+                            AuthenticatedActionKey,
+                            editContext,
+                            viewModelModifier.ViewModel.ViewModelKey,
+                            inState => inState with
+                            {
+                            }));
+                    }
                 }
             });
     }

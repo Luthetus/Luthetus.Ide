@@ -205,7 +205,7 @@ public partial interface ITextEditorService
                 {
                     await model.ApplySyntaxHighlightingAsync();
 
-                    _textEditorService.Post(editContext =>
+                    _textEditorService.Post(nameof(RegisterCustom), editContext =>
                     {
                         // Getting a model modifier marks it to be reloaded (2023-12-28)
                         _ = editContext.GetModelModifier(model.ResourceUri);
@@ -245,7 +245,7 @@ public partial interface ITextEditorService
                 {
                     await model.ApplySyntaxHighlightingAsync();
 
-                    _textEditorService.Post(editContext =>
+                    _textEditorService.Post(nameof(RegisterTemplated), editContext =>
                     {
                         // Getting a model modifier marks it to be reloaded (2023-12-28)
                         _ = editContext.GetModelModifier(model.ResourceUri);

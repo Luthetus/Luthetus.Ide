@@ -34,5 +34,5 @@ public partial interface ITextEditorService
     /// class. Here the replication is quite roundabout, perhaps I should use <see cref="SynchronizationContext"/> directly,
     /// but I need to learn more about it. (2023-12-21)
     /// </summary>
-    public void Post(TextEditorEdit textEditorEdit);
+    public void Post(string taskDisplayName, TextEditorEdit textEditorEdit);
 }

@@ -104,7 +104,7 @@ public partial class EditorSync
                                         var content = await _fileSystemProvider.File
                                             .ReadAllTextAsync(inputFileAbsolutePathString);
 
-                                        _textEditorService.Post(async editContext =>
+                                        _textEditorService.Post(nameof(CheckIfContentsWereModifiedAsync), async editContext =>
                                         {
                                             await _textEditorService.ModelApi
                                                 .ReloadFactory(
@@ -160,7 +160,7 @@ public partial class EditorSync
                 CompilerServiceDiagnosticPresentationFacts.PresentationKey,
             }.ToImmutableArray();
 
-            _textEditorService.Post(
+            _textEditorService.Post(nameof(GetOrCreateTextEditorViewModel),
                 _textEditorService.ViewModelApi.WithValueFactory(
                     viewModelKey,
                     textEditorViewModel => textEditorViewModel with
@@ -191,7 +191,7 @@ public partial class EditorSync
                 {
                     if (writtenDateTime is not null)
                     {
-                        _textEditorService.Post(
+                        _textEditorService.Post(nameof(HandleOnSaveRequested),
                             _textEditorService.ModelApi.SetResourceDataFactory(
                                 innerTextEditor.ResourceUri,
                                 writtenDateTime.Value));

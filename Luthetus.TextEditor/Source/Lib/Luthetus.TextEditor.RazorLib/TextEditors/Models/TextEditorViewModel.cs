@@ -93,7 +93,7 @@ public record TextEditorViewModel : IDisposable
             var batch = _batchScrollEvents.MutateScrollHorizontalPositionByPixels;
 			_batchScrollEvents.MutateScrollHorizontalPositionByPixels -= batch;
 
-            TextEditorService.Post(TextEditorService.ViewModelApi.MutateScrollHorizontalPositionFactory(
+            TextEditorService.Post(nameof(MutateScrollHorizontalPositionByPixelsAsync), TextEditorService.ViewModelApi.MutateScrollHorizontalPositionFactory(
                 BodyElementId,
                 GutterElementId,
                 batch));
@@ -109,7 +109,7 @@ public record TextEditorViewModel : IDisposable
             var batch = _batchScrollEvents.MutateScrollVerticalPositionByPixels;
 			_batchScrollEvents.MutateScrollVerticalPositionByPixels -= batch;
 
-            TextEditorService.Post(TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
+            TextEditorService.Post(nameof(MutateScrollVerticalPositionByPixelsAsync), TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
                 BodyElementId,
                 GutterElementId,
                 batch));
@@ -133,7 +133,7 @@ public record TextEditorViewModel : IDisposable
     {
         await _batchScrollEvents.ThrottleSetScrollPosition.FireAsync((async _ =>
         {
-            TextEditorService.Post(TextEditorService.ViewModelApi.SetScrollPositionFactory(
+            TextEditorService.Post(nameof(SetScrollPositionAsync), TextEditorService.ViewModelApi.SetScrollPositionFactory(
                 BodyElementId,
                 GutterElementId,
                 scrollLeft,
@@ -143,7 +143,7 @@ public record TextEditorViewModel : IDisposable
 
     public async Task FocusAsync()
     {
-        TextEditorService.Post(
+        TextEditorService.Post(nameof(FocusAsync),
             TextEditorService.ViewModelApi.FocusPrimaryCursorFactory(
                 PrimaryCursorContentId));
     }

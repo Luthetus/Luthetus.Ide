@@ -1,0 +1,18 @@
+﻿@{
+    var activeBackgroundTask = _continuousBackgroundTaskWorker.ExecutingBackgroundTask;
+}
+
+<div class="luth_ide_active-background-task">
+    @if (activeBackgroundTask is null)
+    {
+        <text>
+            activeBackgroundTask is null
+        </text>
+    }
+    else
+    {
+        <text>
+            @activeBackgroundTask.Name
+        </text>
+    }
+</div>
