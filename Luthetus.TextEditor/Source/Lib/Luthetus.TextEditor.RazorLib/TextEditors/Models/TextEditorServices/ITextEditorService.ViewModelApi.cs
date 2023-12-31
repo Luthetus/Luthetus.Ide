@@ -985,8 +985,6 @@ public partial interface ITextEditorService
                     measureCharacterWidthAndRowHeightElementId,
                     countOfTestCharacters);
 
-                viewModelModifier.ViewModel.VirtualizationResult.CharAndRowMeasurements = characterWidthAndRowHeight;
-
                 viewModelModifier.ViewModel = viewModelModifier.ViewModel with
                 {
                     VirtualizationResult = viewModelModifier.ViewModel.VirtualizationResult with

@@ -124,23 +124,6 @@ public partial class TextEditorService : ITextEditorService
                             AuthenticatedActionKey,
                             editContext,
                             modelModifier));
-
-                        var viewModelBag = ModelApi.GetViewModelsOrEmpty(modelModifier.ResourceUri);
-
-                        foreach (var viewModel in viewModelBag)
-                        {
-                            var viewModelModifier = editContext.GetViewModelModifier(
-                                viewModel.ViewModelKey);
-
-                            if (viewModelModifier is null)
-                                return;
-
-                            await ViewModelApi.CalculateVirtualizationResultFactory(
-                                viewModelModifier.ViewModel.ResourceUri,
-                                viewModelModifier.ViewModel.ViewModelKey,
-                                CancellationToken.None)
-                            .Invoke(editContext);
-                        }
                     }
 
                     foreach (var viewModelModifier in editContext.ViewModelCache.Values)
@@ -154,27 +137,19 @@ public partial class TextEditorService : ITextEditorService
 
                         if (successCursorModifierBag && cursorModifierBag is not null)
                         {
-                            _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
-                                AuthenticatedActionKey,
-                                editContext,
-                                viewModelModifier.ViewModel.ViewModelKey,
-                                inState => inState with
-                                {
-                                    CursorBag = cursorModifierBag.CursorModifierBag
-                                        .Select(x => x.ToCursor())
-                                        .ToImmutableArray()
-                                }));
+                            viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+                            {
+                                CursorBag = cursorModifierBag.CursorModifierBag
+                                    .Select(x => x.ToCursor())
+                                    .ToImmutableArray()
+                            };
                         }
-                        else
-                        {
-                            _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
-                                AuthenticatedActionKey,
-                                editContext,
-                                viewModelModifier.ViewModel.ViewModelKey,
-                                inState => inState with
-                                {
-                                }));
-                        }
+
+                        _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
+                            AuthenticatedActionKey,
+                            editContext,
+                            viewModelModifier.ViewModel.ViewModelKey,
+                            inState => viewModelModifier.ViewModel));
                     }
                 });
     }

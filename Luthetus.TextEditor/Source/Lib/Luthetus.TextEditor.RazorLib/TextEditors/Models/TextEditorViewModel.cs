@@ -43,9 +43,6 @@ public record TextEditorViewModel : IDisposable
             () => textEditorService.ViewModelApi.GetModelOrDefault(viewModelKey));
     }
 
-    private BatchScrollEvents _batchScrollEvents = new();
-
-    public readonly object TrackingOfUniqueIdentifiersLock = new();
 
     /// <summary>The first entry of CursorBag should be the PrimaryCursor</summary>
     public TextEditorCursor PrimaryCursor => CursorBag.First();
