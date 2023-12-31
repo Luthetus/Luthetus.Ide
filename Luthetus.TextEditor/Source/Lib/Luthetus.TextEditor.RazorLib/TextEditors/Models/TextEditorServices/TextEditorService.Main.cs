@@ -124,6 +124,14 @@ public partial class TextEditorService : ITextEditorService
                             AuthenticatedActionKey,
                             editContext,
                             modelModifier));
+
+                        var viewModelBag = ModelApi.GetViewModelsOrEmpty(modelModifier.ResourceUri);
+
+                        foreach (var viewModel in viewModelBag)
+                        {
+                            // Invoking 'GetViewModelModifier' marks the view model to be updated.
+                            editContext.GetViewModelModifier(viewModel.ViewModelKey);
+                        }
                     }
 
                     foreach (var viewModelModifier in editContext.ViewModelCache.Values)
@@ -144,6 +152,10 @@ public partial class TextEditorService : ITextEditorService
                                     .ToImmutableArray()
                             };
                         }
+
+                        await ViewModelApi.CalculateVirtualizationResultFactory(
+                                viewModelModifier.ViewModel.ResourceUri, viewModelModifier.ViewModel.ViewModelKey, CancellationToken.None)
+                            .Invoke(editContext);
 
                         _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
                             AuthenticatedActionKey,
