@@ -104,21 +104,20 @@ public class DisplayTracker : IDisposable
 
     private void ModelsStateWrap_StateChanged(object? sender, EventArgs e)
     {
-        var model = GetModelFunc.Invoke();
-        var viewModel = GetViewModelFunc.Invoke();
+        //var model = GetModelFunc.Invoke();
+        //var viewModel = GetViewModelFunc.Invoke();
 
-        if (model is null || viewModel is null)
-            return;
+        //if (model is null || viewModel is null)
+        //    return;
 
-        _calculateVirtualizationResultCancellationTokenSource.Cancel();
-        _calculateVirtualizationResultCancellationTokenSource = new();
+        //_calculateVirtualizationResultCancellationTokenSource.Cancel();
+        //_calculateVirtualizationResultCancellationTokenSource = new();
 
-        _textEditorService.Post(nameof(ModelsStateWrap_StateChanged),
-            _textEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
-                model.ResourceUri,
-                viewModel.ViewModelKey,
-                viewModel.MostRecentTextEditorMeasurements,
-                _calculateVirtualizationResultCancellationTokenSource.Token));
+        //_textEditorService.Post(nameof(ModelsStateWrap_StateChanged),
+        //    _textEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
+        //        model.ResourceUri,
+        //        viewModel.ViewModelKey,
+        //        _calculateVirtualizationResultCancellationTokenSource.Token));
     }
 
     public void Dispose()

@@ -51,7 +51,7 @@ public class TextEditorCommandDefaultFunctions
                 1);
 
             await commandArgs.ClipboardService.SetClipboard(selectedText);
-            await viewModelModifier.ViewModel.FocusAsync();
+            viewModelModifier.ViewModel.Focus();
         };
     }
 
@@ -82,7 +82,7 @@ public class TextEditorCommandDefaultFunctions
                 return; // Should never occur
 
             await commandArgs.ClipboardService.SetClipboard(selectedText);
-            await viewModelModifier.ViewModel.FocusAsync();
+            viewModelModifier.ViewModel.Focus();
 
             modelModifier.HandleKeyboardEvent(
                 new KeyboardEventArgs { Key = KeyboardKeyFacts.MetaKeys.DELETE },
@@ -232,7 +232,7 @@ public class TextEditorCommandDefaultFunctions
             if (cursorModifierBag is null || primaryCursorModifier is null)
                 return;
 
-            await viewModelModifier.ViewModel.MutateScrollVerticalPositionByLinesAsync(1);
+            viewModelModifier.ViewModel.MutateScrollVerticalPositionByLines(1);
         };
     }
 
@@ -255,7 +255,7 @@ public class TextEditorCommandDefaultFunctions
             if (cursorModifierBag is null || primaryCursorModifier is null)
                 return;
 
-            await viewModelModifier.ViewModel.MutateScrollVerticalPositionByLinesAsync(-1);
+            viewModelModifier.ViewModel.MutateScrollVerticalPositionByLines(-1);
         };
     }
 
@@ -278,7 +278,7 @@ public class TextEditorCommandDefaultFunctions
             if (cursorModifierBag is null || primaryCursorModifier is null)
                 return;
 
-            await viewModelModifier.ViewModel.MutateScrollVerticalPositionByPagesAsync(1);
+            viewModelModifier.ViewModel.MutateScrollVerticalPositionByPages(1);
         };
     }
 
@@ -301,7 +301,7 @@ public class TextEditorCommandDefaultFunctions
             if (cursorModifierBag is null || primaryCursorModifier is null)
                 return;
 
-            await viewModelModifier.ViewModel.MutateScrollVerticalPositionByPagesAsync(-1);
+            viewModelModifier.ViewModel.MutateScrollVerticalPositionByPages(-1);
         };
     }
 

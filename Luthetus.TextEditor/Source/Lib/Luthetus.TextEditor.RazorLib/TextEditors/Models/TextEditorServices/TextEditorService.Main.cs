@@ -138,7 +138,6 @@ public partial class TextEditorService : ITextEditorService
                             await ViewModelApi.CalculateVirtualizationResultFactory(
                                 viewModelModifier.ViewModel.ResourceUri,
                                 viewModelModifier.ViewModel.ViewModelKey,
-                                viewModelModifier.ViewModel.MostRecentTextEditorMeasurements,
                                 CancellationToken.None)
                             .Invoke(editContext);
                         }

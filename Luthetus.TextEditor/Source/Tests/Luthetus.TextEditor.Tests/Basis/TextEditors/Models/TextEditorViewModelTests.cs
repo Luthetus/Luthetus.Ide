@@ -228,7 +228,7 @@ public class TextEditorViewModelTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorViewModel.MutateScrollHorizontalPositionByPixelsAsync(double)"/>
+	/// <see cref="TextEditorViewModel.MutateScrollHorizontalPositionByPixels(double)"/>
 	/// </summary>
 	[Fact]
 	public void MutateScrollHorizontalPositionByPixelsAsync()
@@ -237,7 +237,7 @@ public class TextEditorViewModelTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorViewModel.MutateScrollVerticalPositionByPixelsAsync(double)"/>
+	/// <see cref="TextEditorViewModel.MutateScrollVerticalPositionByPixels(double)"/>
 	/// </summary>
 	[Fact]
 	public void MutateScrollVerticalPositionByPixelsAsync()
@@ -246,7 +246,7 @@ public class TextEditorViewModelTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorViewModel.MutateScrollVerticalPositionByPagesAsync(double)"/>
+	/// <see cref="TextEditorViewModel.MutateScrollVerticalPositionByPages(double)"/>
 	/// </summary>
 	[Fact]
 	public void MutateScrollVerticalPositionByPagesAsync()
@@ -255,7 +255,7 @@ public class TextEditorViewModelTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorViewModel.MutateScrollVerticalPositionByLinesAsync(double)"/>
+	/// <see cref="TextEditorViewModel.MutateScrollVerticalPositionByLines(double)"/>
 	/// </summary>
 	[Fact]
 	public void MutateScrollVerticalPositionByLinesAsync()
@@ -264,7 +264,7 @@ public class TextEditorViewModelTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorViewModel.SetScrollPositionAsync(double?, double?)"/>
+	/// <see cref="TextEditorViewModel.SetScrollPosition(double?, double?)"/>
 	/// </summary>
 	[Fact]
 	public void SetScrollPositionAsync()
@@ -273,7 +273,7 @@ public class TextEditorViewModelTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorViewModel.FocusAsync()"/>
+	/// <see cref="TextEditorViewModel.Focus()"/>
 	/// </summary>
 	[Fact]
 	public void FocusAsync()

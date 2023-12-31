@@ -149,7 +149,7 @@ public partial class ScrollbarVertical : ComponentBase, IDisposable
             if (scrollTop + elementMeasurements.Height > elementMeasurements.ScrollHeight)
                 scrollTop = elementMeasurements.ScrollHeight - elementMeasurements.Height;
 
-            await RenderBatch.ViewModel!.SetScrollPositionAsync(null, scrollTop);
+            RenderBatch.ViewModel!.SetScrollPosition(null, scrollTop);
         }
         else
         {

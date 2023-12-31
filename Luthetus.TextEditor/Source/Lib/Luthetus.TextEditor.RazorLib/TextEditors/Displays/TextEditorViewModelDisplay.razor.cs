@@ -903,9 +903,9 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             return;
 
         if (wheelEventArgs.ShiftKey)
-            await textEditorViewModel.MutateScrollHorizontalPositionByPixelsAsync(wheelEventArgs.DeltaY);
+            textEditorViewModel.MutateScrollHorizontalPositionByPixels(wheelEventArgs.DeltaY);
         else
-            await textEditorViewModel.MutateScrollVerticalPositionByPixelsAsync(wheelEventArgs.DeltaY);
+            textEditorViewModel.MutateScrollVerticalPositionByPixels(wheelEventArgs.DeltaY);
     }
 
     private Task HandleOnTooltipMouseOverAsync()
@@ -960,8 +960,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         var diffX = previousTouchPoint.ClientX - currentTouchPoint.ClientX;
         var diffY = previousTouchPoint.ClientY - currentTouchPoint.ClientY;
 
-        await viewModel.MutateScrollHorizontalPositionByPixelsAsync(diffX);
-        await viewModel.MutateScrollVerticalPositionByPixelsAsync(diffY);
+        viewModel.MutateScrollHorizontalPositionByPixels(diffX);
+        viewModel.MutateScrollVerticalPositionByPixels(diffY);
 
         _previousTouchEventArgs = touchEventArgs;
     }
@@ -1035,7 +1035,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             await TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
                     modelModifier.ResourceUri,
                     viewModelModifier.ViewModel.ViewModelKey,
-                    viewModelModifier.ViewModel.MostRecentTextEditorMeasurements,
                     CancellationToken.None)
                 .Invoke(editContext);
         });

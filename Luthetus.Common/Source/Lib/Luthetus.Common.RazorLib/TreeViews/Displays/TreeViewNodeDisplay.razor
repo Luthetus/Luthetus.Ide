@@ -57,7 +57,10 @@
     @if (TreeViewNoType.IsExpanded) 
     {
         <div class="luth_tree-view-children">
-            @foreach (var child in TreeViewNoType.ChildBag)
+            
+            @{ var childBag = TreeViewNoType.ChildBag.ToArray(); }
+
+            @foreach (var child in childBag)
             {
                 <TreeViewNodeDisplay TreeViewNoType="child"
                                      Depth="Depth + 1"/>

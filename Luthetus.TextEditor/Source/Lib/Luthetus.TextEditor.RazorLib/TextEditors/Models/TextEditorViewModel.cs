@@ -43,15 +43,9 @@ public record TextEditorViewModel : IDisposable
             () => textEditorService.ViewModelApi.GetModelOrDefault(viewModelKey));
     }
 
-    public const int ClearTrackingOfUniqueIdentifiersWhenCountIs = 250;
-
     private BatchScrollEvents _batchScrollEvents = new();
 
     public readonly object TrackingOfUniqueIdentifiersLock = new();
-    public TextEditorMeasurements MostRecentTextEditorMeasurements { get; set; } = new(0, 0, 0, 0, 0, 0, 0, CancellationToken.None);
-
-    public IThrottle ThrottleRemeasure { get; } = new Throttle(IThrottle.DefaultThrottleTimeSpan);
-    public IThrottle ThrottleCalculateVirtualizationResult { get; } = new Throttle(IThrottle.DefaultThrottleTimeSpan);
 
     /// <summary>The first entry of CursorBag should be the PrimaryCursor</summary>
     public TextEditorCursor PrimaryCursor => CursorBag.First();
@@ -72,11 +66,6 @@ public record TextEditorViewModel : IDisposable
     /// <summary><see cref="LastPresentationLayerKeysBag"/> is painted after any internal workings of the text editor.<br/><br/>Therefore the selected text background is rendered before anything in the <see cref="LastPresentationLayerKeysBag"/>.<br/><br/>When using the <see cref="LastPresentationLayerKeysBag"/> one might find the selected text background not being rendered with the text selection css if it were overriden by something in the <see cref="LastPresentationLayerKeysBag"/>.</summary>
     public ImmutableList<Key<TextEditorPresentationModel>> LastPresentationLayerKeysBag { get; init; } = ImmutableList<Key<TextEditorPresentationModel>>.Empty;
 
-    /// <summary>In order to prevent infinite loops, track the unique identifiers. Note, this HashSet is cleared when the options change or the count >= <see cref="ClearTrackingOfUniqueIdentifiersWhenCountIs"/>.</summary>
-    public HashSet<Key<RenderState>> SeenModelRenderStateKeysBag { get; init; } = new();
-    /// <summary>In order to prevent infinite loops, track the unique identifiers. Note, this HashSet is cleared when the count is >= <see cref="ClearTrackingOfUniqueIdentifiersWhenCountIs"/>.</summary>
-    public HashSet<Key<RenderState>> SeenOptionsRenderStateKeysBag { get; init; } = new();
-
     public string CommandBarValue { get; set; } = string.Empty;
     public bool ShouldSetFocusAfterNextRender { get; set; }
 
@@ -84,66 +73,47 @@ public record TextEditorViewModel : IDisposable
     public string PrimaryCursorContentId => $"luth_te_text-editor-content_{ViewModelKey.Guid}_primary-cursor";
     public string GutterElementId => $"luth_te_text-editor-gutter_{ViewModelKey.Guid}";
 
-    public async Task MutateScrollHorizontalPositionByPixelsAsync(double pixels)
+    public void MutateScrollHorizontalPositionByPixels(double pixels)
     {
-        _batchScrollEvents.MutateScrollHorizontalPositionByPixels += pixels;
-
-        await _batchScrollEvents.ThrottleMutateScrollHorizontalPositionByPixels.FireAsync((async _ =>
-        {
-            var batch = _batchScrollEvents.MutateScrollHorizontalPositionByPixels;
-			_batchScrollEvents.MutateScrollHorizontalPositionByPixels -= batch;
-
-            TextEditorService.Post(nameof(MutateScrollHorizontalPositionByPixelsAsync), TextEditorService.ViewModelApi.MutateScrollHorizontalPositionFactory(
-                BodyElementId,
-                GutterElementId,
-                batch));
-        }));
+        TextEditorService.Post(nameof(MutateScrollHorizontalPositionByPixels), TextEditorService.ViewModelApi.MutateScrollHorizontalPositionFactory(
+            BodyElementId,
+            GutterElementId,
+            pixels));
     }
 
-    public async Task MutateScrollVerticalPositionByPixelsAsync(double pixels)
+    public void MutateScrollVerticalPositionByPixels(double pixels)
     {
-        _batchScrollEvents.MutateScrollVerticalPositionByPixels += pixels;
-
-        await _batchScrollEvents.ThrottleMutateScrollVerticalPositionByPixels.FireAsync((async _ =>
-        {
-            var batch = _batchScrollEvents.MutateScrollVerticalPositionByPixels;
-			_batchScrollEvents.MutateScrollVerticalPositionByPixels -= batch;
-
-            TextEditorService.Post(nameof(MutateScrollVerticalPositionByPixelsAsync), TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
-                BodyElementId,
-                GutterElementId,
-                batch));
-        }));
+        TextEditorService.Post(nameof(MutateScrollVerticalPositionByPixels), TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
+            BodyElementId,
+            GutterElementId,
+            pixels));
     }
 
-    public async Task MutateScrollVerticalPositionByPagesAsync(double pages)
+    public void MutateScrollVerticalPositionByPages(double pages)
     {
-        await MutateScrollVerticalPositionByPixelsAsync(
-            pages * MostRecentTextEditorMeasurements.Height);
+        MutateScrollVerticalPositionByPixels(
+            pages * VirtualizationResult.TextEditorMeasurements.Height);
     }
 
-    public async Task MutateScrollVerticalPositionByLinesAsync(double lines)
+    public void MutateScrollVerticalPositionByLines(double lines)
     {
-        await MutateScrollVerticalPositionByPixelsAsync(
+        MutateScrollVerticalPositionByPixels(
             lines * VirtualizationResult.CharAndRowMeasurements.RowHeight);
     }
 
     /// <summary>If a parameter is null the JavaScript will not modify that value</summary>
-    public async Task SetScrollPositionAsync(double? scrollLeft, double? scrollTop)
+    public void SetScrollPosition(double? scrollLeft, double? scrollTop)
     {
-        await _batchScrollEvents.ThrottleSetScrollPosition.FireAsync((async _ =>
-        {
-            TextEditorService.Post(nameof(SetScrollPositionAsync), TextEditorService.ViewModelApi.SetScrollPositionFactory(
-                BodyElementId,
-                GutterElementId,
-                scrollLeft,
-                scrollTop));
-        }));
+        TextEditorService.Post(nameof(SetScrollPosition), TextEditorService.ViewModelApi.SetScrollPositionFactory(
+            BodyElementId,
+            GutterElementId,
+            scrollLeft,
+            scrollTop));
     }
 
-    public async Task FocusAsync()
+    public void Focus()
     {
-        TextEditorService.Post(nameof(FocusAsync),
+        TextEditorService.Post(nameof(Focus),
             TextEditorService.ViewModelApi.FocusPrimaryCursorFactory(
                 PrimaryCursorContentId));
     }

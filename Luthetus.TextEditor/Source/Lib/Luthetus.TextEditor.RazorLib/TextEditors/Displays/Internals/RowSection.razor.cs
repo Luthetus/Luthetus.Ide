@@ -112,7 +112,6 @@ public partial class RowSection : ComponentBase
             TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
                 model.ResourceUri,
                 viewModel.ViewModelKey,
-                viewModel.MostRecentTextEditorMeasurements,
                 virtualizationRequest.CancellationToken));
     }
 }
