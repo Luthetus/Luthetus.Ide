@@ -60,6 +60,8 @@ public partial class TextEditorModelModifier
     private Keymap? _textEditorKeymap;
     private TextEditorOptions? _textEditorOptions;
 
+    public bool WasModified { get; internal set; }
+
     public TextEditorModel ToModel()
     {
         return new TextEditorModel(

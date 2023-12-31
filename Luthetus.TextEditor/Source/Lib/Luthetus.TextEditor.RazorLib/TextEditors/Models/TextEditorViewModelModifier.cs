@@ -11,4 +11,5 @@ public class TextEditorViewModelModifier
     /// TODO: Make this private
     /// </summary>
     public TextEditorViewModel ViewModel { get; set; }
+    public bool WasModified { get; internal set; }
 }

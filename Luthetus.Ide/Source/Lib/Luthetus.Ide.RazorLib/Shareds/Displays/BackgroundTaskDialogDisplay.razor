@@ -1,0 +1,12 @@
+﻿<div class="luth_ide_background-task">
+    <div>Count:@SeenBackgroundTasks.Length</div>
+    
+    <div>
+        @foreach (var backgroundTask in SeenBackgroundTasks)
+        {
+            <div>
+                @backgroundTask.Name @backgroundTask.BackgroundTaskKey.Guid
+            </div>
+        }
+    </div>
+</div>

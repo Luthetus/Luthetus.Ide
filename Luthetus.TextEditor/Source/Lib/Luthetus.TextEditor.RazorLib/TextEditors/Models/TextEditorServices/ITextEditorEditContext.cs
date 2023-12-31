@@ -10,9 +10,9 @@ public interface ITextEditorEditContext
 {
     public ITextEditorService TextEditorService { get; }
 
-    public TextEditorModelModifier? GetModelModifier(ResourceUri? modelResourceUri);
-    public TextEditorModelModifier? GetModelModifierByViewModelKey(Key<TextEditorViewModel> viewModelKey);
-    public TextEditorViewModelModifier? GetViewModelModifier(Key<TextEditorViewModel> viewModelKey);
+    public TextEditorModelModifier? GetModelModifier(ResourceUri? modelResourceUri, bool isReadonly = false);
+    public TextEditorModelModifier? GetModelModifierByViewModelKey(Key<TextEditorViewModel> viewModelKey, bool isReadonly = false);
+    public TextEditorViewModelModifier? GetViewModelModifier(Key<TextEditorViewModel> viewModelKey, bool isReadonly = false);
     public TextEditorCursorModifierBag? GetCursorModifierBag(TextEditorViewModel viewModel);
 
     /// <summary>

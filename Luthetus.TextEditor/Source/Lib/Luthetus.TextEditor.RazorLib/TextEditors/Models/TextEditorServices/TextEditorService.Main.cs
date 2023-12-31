@@ -105,78 +105,78 @@ public partial class TextEditorService : ITextEditorService
     public void Post(string taskDisplayName, TextEditorEdit edit)
     {
         _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(),
-        ContinuousBackgroundTaskWorker.GetQueueKey(),
-        taskDisplayName,
-            async () =>
-            {
-                var editContext = new TextEditorEditContext(
-                    this,
-                    AuthenticatedActionKey);
-
-                await edit.Invoke(editContext);
-
-                foreach (var modelModifier in editContext.ModelCache.Values)
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            taskDisplayName,
+                async () =>
                 {
-                    if (modelModifier is null)
-                        continue;
+                    var editContext = new TextEditorEditContext(
+                        this,
+                        AuthenticatedActionKey);
 
-                    _dispatcher.Dispatch(new TextEditorModelState.SetAction(
-                        AuthenticatedActionKey,
-                        editContext,
-                        modelModifier));
+                    await edit.Invoke(editContext);
 
-                    var viewModelBag = ModelApi.GetViewModelsOrEmpty(modelModifier.ResourceUri);
-
-                    foreach (var viewModel in viewModelBag)
+                    foreach (var modelModifier in editContext.ModelCache.Values)
                     {
-                        var viewModelModifier = editContext.GetViewModelModifier(
-                            viewModel.ViewModelKey);
+                        if (modelModifier is null || !modelModifier.WasModified)
+                            continue;
 
-                        if (viewModelModifier is null)
+                        _dispatcher.Dispatch(new TextEditorModelState.SetAction(
+                            AuthenticatedActionKey,
+                            editContext,
+                            modelModifier));
+
+                        var viewModelBag = ModelApi.GetViewModelsOrEmpty(modelModifier.ResourceUri);
+
+                        foreach (var viewModel in viewModelBag)
+                        {
+                            var viewModelModifier = editContext.GetViewModelModifier(
+                                viewModel.ViewModelKey);
+
+                            if (viewModelModifier is null)
+                                return;
+
+                            await ViewModelApi.CalculateVirtualizationResultFactory(
+                                viewModelModifier.ViewModel.ResourceUri,
+                                viewModelModifier.ViewModel.ViewModelKey,
+                                viewModelModifier.ViewModel.MostRecentTextEditorMeasurements,
+                                CancellationToken.None)
+                            .Invoke(editContext);
+                        }
+                    }
+
+                    foreach (var viewModelModifier in editContext.ViewModelCache.Values)
+                    {
+                        if (viewModelModifier is null || !viewModelModifier.WasModified)
                             return;
 
-                        await ViewModelApi.CalculateVirtualizationResultFactory(
-                            viewModelModifier.ViewModel.ResourceUri,
+                        var successCursorModifierBag = editContext.CursorModifierBagCache.TryGetValue(
                             viewModelModifier.ViewModel.ViewModelKey,
-                            viewModelModifier.ViewModel.MostRecentTextEditorMeasurements,
-                            CancellationToken.None)
-                        .Invoke(editContext);
-                    }
-                }
+                            out var cursorModifierBag);
 
-                foreach (var viewModelModifier in editContext.ViewModelCache.Values)
-                {
-                    if (viewModelModifier is null)
-                        return;
-
-                    var successCursorModifierBag = editContext.CursorModifierBagCache.TryGetValue(
-                        viewModelModifier.ViewModel.ViewModelKey,
-                        out var cursorModifierBag);
-
-                    if (successCursorModifierBag && cursorModifierBag is not null)
-                    {
-                        _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
-                            AuthenticatedActionKey,
-                            editContext,
-                            viewModelModifier.ViewModel.ViewModelKey,
-                            inState => inState with
-                            {
-                                CursorBag = cursorModifierBag.CursorModifierBag
-                                    .Select(x => x.ToCursor())
-                                    .ToImmutableArray()
-                            }));
+                        if (successCursorModifierBag && cursorModifierBag is not null)
+                        {
+                            _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
+                                AuthenticatedActionKey,
+                                editContext,
+                                viewModelModifier.ViewModel.ViewModelKey,
+                                inState => inState with
+                                {
+                                    CursorBag = cursorModifierBag.CursorModifierBag
+                                        .Select(x => x.ToCursor())
+                                        .ToImmutableArray()
+                                }));
+                        }
+                        else
+                        {
+                            _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
+                                AuthenticatedActionKey,
+                                editContext,
+                                viewModelModifier.ViewModel.ViewModelKey,
+                                inState => inState with
+                                {
+                                }));
+                        }
                     }
-                    else
-                    {
-                        _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
-                            AuthenticatedActionKey,
-                            editContext,
-                            viewModelModifier.ViewModel.ViewModelKey,
-                            inState => inState with
-                            {
-                            }));
-                    }
-                }
-            });
+                });
     }
 }

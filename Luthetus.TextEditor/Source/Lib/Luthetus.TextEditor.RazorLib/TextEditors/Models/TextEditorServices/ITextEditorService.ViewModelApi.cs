@@ -436,7 +436,7 @@ public partial interface ITextEditorService
         {
             return editContext =>
             {
-                var modelModifier = editContext.GetModelModifier(modelResourceUri);
+                var modelModifier = editContext.GetModelModifier(modelResourceUri, true);
                 var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
 
                 if (modelModifier is null || viewModelModifier is null)
@@ -743,7 +743,7 @@ public partial interface ITextEditorService
                 if (cancellationToken.IsCancellationRequested)
                     return;
 
-                var modelModifier = editContext.GetModelModifier(modelResourceUri);
+                var modelModifier = editContext.GetModelModifier(modelResourceUri, true);
                 var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
 
                 if (modelModifier is null || viewModelModifier is null)
@@ -759,7 +759,7 @@ public partial interface ITextEditorService
                 if (!viewModelModifier.ViewModel.SeenOptionsRenderStateKeysBag.Any())
                     return;
 
-                await viewModelModifier.ViewModel.ThrottleCalculateVirtualizationResult.FireAsync((Func<CancellationToken, Task>)(async _ =>
+                await viewModelModifier.ViewModel.ThrottleCalculateVirtualizationResult.FireAsync(async _ =>
                 {
                     if (modelModifier is null)
                         return;
@@ -974,14 +974,11 @@ public partial interface ITextEditorService
                         viewModelModifier.ViewModel.SeenModelRenderStateKeysBag.Add(modelModifier.RenderStateKey);
                     }
 
-                    await WithValueFactory(
-                            viewModelModifier.ViewModel.ViewModelKey,
-                            previousViewModel => previousViewModel with
-                            {
-                                VirtualizationResult = virtualizationResult,
-                            })
-                        .Invoke(editContext);
-                }));
+                    viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+                    {
+                        VirtualizationResult = virtualizationResult,
+                    };
+                });
             };
         }
 
@@ -1033,18 +1030,15 @@ public partial interface ITextEditorService
                         viewModelModifier.ViewModel.SeenOptionsRenderStateKeysBag.Add(options.RenderStateKey);
                     }
 
-                    await WithValueFactory(
-                            viewModelModifier.ViewModel.ViewModelKey,
-                            previousViewModel => (previousViewModel with
-                            {
-                                // Clear the SeenModelRenderStateKeys because one needs to recalculate the virtualization result now that the options have changed.
-                                SeenModelRenderStateKeysBag = new(),
-                                VirtualizationResult = previousViewModel.VirtualizationResult with
-                                {
-                                    CharAndRowMeasurements = characterWidthAndRowHeight
-                                },
-                            }))
-                        .Invoke(editContext);
+                    viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+                    {
+                        // Clear the SeenModelRenderStateKeys because one needs to recalculate the virtualization result now that the options have changed.
+                        SeenModelRenderStateKeysBag = new(),
+                        VirtualizationResult = viewModelModifier.ViewModel.VirtualizationResult with
+                        {
+                            CharAndRowMeasurements = characterWidthAndRowHeight
+                        }
+                    };
                 });
             };
         }

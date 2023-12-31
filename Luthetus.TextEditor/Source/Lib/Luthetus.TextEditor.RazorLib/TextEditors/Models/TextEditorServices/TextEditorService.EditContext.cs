@@ -27,7 +27,9 @@ public partial class TextEditorService
         public ITextEditorService TextEditorService { get; }
         public Key<TextEditorAuthenticatedAction> AuthenticatedActionKey { get; }
         
-        public TextEditorModelModifier? GetModelModifier(ResourceUri? modelResourceUri)
+        public TextEditorModelModifier? GetModelModifier(
+            ResourceUri? modelResourceUri,
+            bool isReadonly = false)
         {
             if (modelResourceUri is not null)
             {
@@ -39,13 +41,18 @@ public partial class TextEditorService
                     ModelCache.Add(modelResourceUri, modelModifier);
                 }
 
+                if (!isReadonly && modelModifier is not null)
+                    modelModifier.WasModified = true;
+
                 return modelModifier;
             }
             
             return null;
         }
         
-        public TextEditorModelModifier? GetModelModifierByViewModelKey(Key<TextEditorViewModel> viewModelKey)
+        public TextEditorModelModifier? GetModelModifierByViewModelKey(
+            Key<TextEditorViewModel> viewModelKey,
+            bool isReadonly = false)
         {
             if (viewModelKey != Key<TextEditorViewModel>.Empty)
             {
@@ -63,7 +70,9 @@ public partial class TextEditorService
             return null;
         }
 
-        public TextEditorViewModelModifier? GetViewModelModifier(Key<TextEditorViewModel> viewModelKey)
+        public TextEditorViewModelModifier? GetViewModelModifier(
+            Key<TextEditorViewModel> viewModelKey,
+            bool isReadonly = false)
         {
             if (viewModelKey != Key<TextEditorViewModel>.Empty)
             {
@@ -74,6 +83,9 @@ public partial class TextEditorService
 
                     ViewModelCache.Add(viewModelKey, viewModelModifier);
                 }
+
+                if (!isReadonly && viewModelModifier is not null)
+                    viewModelModifier.WasModified = true;
 
                 return viewModelModifier;
             }
