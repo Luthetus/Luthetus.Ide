@@ -18,6 +18,8 @@ public partial class GutterSection : ComponentBase
     [CascadingParameter]
     public TextEditorRenderBatch RenderBatch { get; set; } = null!;
 
+    private double _scrollTop;
+
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
         var viewModel = RenderBatch.ViewModel!;
@@ -26,11 +28,16 @@ public partial class GutterSection : ComponentBase
             null, Key<TextEditorViewModel>.Empty, false, null,
             TextEditorService, null, null, null, null, null, null);
 
-        // TODO: Does 'SetGutterScrollTopAsync' need to be throttled? 
-        TextEditorService.Post(nameof(TextEditorService.ViewModelApi.SetGutterScrollTopFactory),
-            TextEditorService.ViewModelApi.SetGutterScrollTopFactory(
-                viewModel.GutterElementId,
-                viewModel.VirtualizationResult.TextEditorMeasurements.ScrollTop));
+        if (_scrollTop != viewModel.VirtualizationResult.TextEditorMeasurements.ScrollTop)
+        {
+            _scrollTop = viewModel.VirtualizationResult.TextEditorMeasurements.ScrollTop;
+
+            // TODO: Does 'SetGutterScrollTopAsync' need to be throttled? 
+            TextEditorService.Post(nameof(TextEditorService.ViewModelApi.SetGutterScrollTopFactory),
+                TextEditorService.ViewModelApi.SetGutterScrollTopFactory(
+                    viewModel.GutterElementId,
+                    viewModel.VirtualizationResult.TextEditorMeasurements.ScrollTop));
+        }
 
         return base.OnAfterRenderAsync(firstRender);
     }

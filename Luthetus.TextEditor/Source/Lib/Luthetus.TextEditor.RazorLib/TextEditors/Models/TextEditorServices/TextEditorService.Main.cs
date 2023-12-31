@@ -106,7 +106,7 @@ public partial class TextEditorService : ITextEditorService
     {
         _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
-            taskDisplayName,
+            "te_" + taskDisplayName,
                 async () =>
                 {
                     var editContext = new TextEditorEditContext(

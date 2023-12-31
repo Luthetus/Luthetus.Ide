@@ -2,11 +2,53 @@
     <div>Count:@SeenBackgroundTasks.Length</div>
     
     <div>
-        @foreach (var backgroundTask in SeenBackgroundTasks)
+        @for (var i = 0; i < SeenBackgroundTasks.Length; i++)
         {
-            <div>
-                @backgroundTask.Name @backgroundTask.BackgroundTaskKey.Guid
-            </div>
+            var outerIndex = i;
+            var backgroundTask = SeenBackgroundTasks[outerIndex];
+
+            var sameBackgroundTaskCount = 1;
+
+            var j = i;
+
+            for (; j < SeenBackgroundTasks.Length; j++)
+            {
+                var innerIndex = j;
+
+                if (backgroundTask.Name == SeenBackgroundTasks[innerIndex].Name)
+                    sameBackgroundTaskCount++;
+                else
+                    break;
+            }
+            
+            i += j - i;
+
+            if (backgroundTask.Name.StartsWith("te_"))
+            {
+                <div class="luth_te_keyword">
+                    @backgroundTask.Name @backgroundTask.BackgroundTaskKey.Guid
+
+                    @if (sameBackgroundTaskCount > 1)
+                    {
+                        <span class="luth_te_method">
+                            (x@(sameBackgroundTaskCount))
+                        </span>
+                    }
+                </div>
+            }
+            else
+            {
+                <div>
+                    @backgroundTask.Name @backgroundTask.BackgroundTaskKey.Guid
+
+                    @if (sameBackgroundTaskCount > 1)
+                    {
+                        <span class="luth_te_method">
+                            (x@(sameBackgroundTaskCount))
+                        </span>
+                    }
+                </div>
+            }
         }
     </div>
 </div>
