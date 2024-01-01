@@ -52,7 +52,8 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                     DiffPresentationFacts.InPresentationKey,
                 };
 
-                TextEditorService.Post(nameof(GitChangesDisplay),
+                TextEditorService.Post(
+                    nameof(GitChangesDisplay),
                     TextEditorService.ViewModelApi.WithValueFactory(
                         InViewModelKey,
                         textEditorViewModel => textEditorViewModel with
@@ -87,7 +88,8 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                     DiffPresentationFacts.OutPresentationKey,
                 };
 
-                TextEditorService.Post(nameof(TextEditorService.ViewModelApi.WithValueFactory),
+                TextEditorService.Post(
+                    nameof(TextEditorService.ViewModelApi.WithValueFactory),
                     TextEditorService.ViewModelApi.WithValueFactory(
                         OutViewModelKey,
                         textEditorViewModel => textEditorViewModel with

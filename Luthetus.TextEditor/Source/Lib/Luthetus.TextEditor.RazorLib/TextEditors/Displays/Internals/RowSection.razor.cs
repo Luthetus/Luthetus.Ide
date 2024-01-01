@@ -108,7 +108,8 @@ public partial class RowSection : ComponentBase
 
         var primaryCursor = viewModel.PrimaryCursor;
 
-        TextEditorService.Post(nameof(VirtualizationDisplayItemsProviderFunc),
+        TextEditorService.Post(
+            nameof(VirtualizationDisplayItemsProviderFunc),
             TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
                 model.ResourceUri,
                 viewModel.ViewModelKey,

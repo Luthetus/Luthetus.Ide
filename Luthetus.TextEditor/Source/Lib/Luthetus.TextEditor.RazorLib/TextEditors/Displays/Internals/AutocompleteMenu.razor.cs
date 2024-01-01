@@ -153,16 +153,18 @@ public partial class AutocompleteMenu : ComponentBase
         AutocompleteEntry autocompleteEntry,
         TextEditorViewModel viewModel)
     {
-        TextEditorService.Post(nameof(InsertAutocompleteMenuOption), editContext =>
-        {
-            return TextEditorService.ModelApi
-                .InsertTextFactory(
-                    viewModel.ResourceUri,
-                    viewModel.ViewModelKey,
-                    autocompleteEntry.DisplayName.Substring(word.Length),
-                    CancellationToken.None)
-                .Invoke(editContext);
-        });
+        TextEditorService.Post(
+            nameof(InsertAutocompleteMenuOption),
+            editContext =>
+            {
+                return TextEditorService.ModelApi
+                    .InsertTextFactory(
+                        viewModel.ResourceUri,
+                        viewModel.ViewModelKey,
+                        autocompleteEntry.DisplayName.Substring(word.Length),
+                        CancellationToken.None)
+                    .Invoke(editContext);
+            });
 
         return Task.CompletedTask;
     }

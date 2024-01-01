@@ -128,74 +128,76 @@ public class RazorCompilerService : ICompilerService
 
     private void QueueParseRequest(ResourceUri resourceUri)
     {
-        _textEditorService.Post(nameof(QueueParseRequest), async editContext =>
-        {
-            var modelModifier = editContext.GetModelModifier(resourceUri);
+        _textEditorService.Post(
+            nameof(QueueParseRequest),
+            async editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(resourceUri);
 
-            if (modelModifier is null)
-                return;
+                if (modelModifier is null)
+                    return;
 
-            await _textEditorService.ModelApi.CalculatePresentationModelFactory(
+                await _textEditorService.ModelApi.CalculatePresentationModelFactory(
+                        modelModifier.ResourceUri,
+                        CompilerServiceDiagnosticPresentationFacts.PresentationKey)
+                    .Invoke(editContext);
+
+                var pendingCalculation = modelModifier.PresentationModelsBag.FirstOrDefault(x =>
+                    x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey)
+                    ?.PendingCalculation;
+
+                if (pendingCalculation is null)
+                    pendingCalculation = new(modelModifier.GetAllText());
+
+                var lexer = new RazorLexer(
                     modelModifier.ResourceUri,
-                    CompilerServiceDiagnosticPresentationFacts.PresentationKey)
-                .Invoke(editContext);
+                    modelModifier.GetAllText(),
+                    this,
+                    _cSharpCompilerService,
+                    _environmentProvider);
 
-            var pendingCalculation = modelModifier.PresentationModelsBag.FirstOrDefault(x =>
-                x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey)
-                ?.PendingCalculation;
+                lock (_razorResourceMapLock)
+                {
+                    if (!_razorResourceMap.ContainsKey(resourceUri))
+                        return;
 
-            if (pendingCalculation is null)
-                pendingCalculation = new(modelModifier.GetAllText());
+                    var razorResource = _razorResourceMap[resourceUri];
 
-            var lexer = new RazorLexer(
-                modelModifier.ResourceUri,
-                modelModifier.GetAllText(),
-                this,
-                _cSharpCompilerService,
-                _environmentProvider);
+                    razorResource.HtmlSymbols.Clear();
+                }
 
-            lock (_razorResourceMapLock)
-            {
-                if (!_razorResourceMap.ContainsKey(resourceUri))
-                    return;
+                lexer.Lex();
 
-                var razorResource = _razorResourceMap[resourceUri];
+                lock (_razorResourceMapLock)
+                {
+                    if (!_razorResourceMap.ContainsKey(resourceUri))
+                        return;
 
-                razorResource.HtmlSymbols.Clear();
-            }
+                    var razorResource = _razorResourceMap[resourceUri];
 
-            lexer.Lex();
+                    razorResource.SyntacticTextSpans = lexer.TextEditorTextSpans;
+                    razorResource.RazorSyntaxTree = lexer.RazorSyntaxTree;
+                }
 
-            lock (_razorResourceMapLock)
-            {
-                if (!_razorResourceMap.ContainsKey(resourceUri))
-                    return;
+                await modelModifier.ApplySyntaxHighlightingAsync();
 
-                var razorResource = _razorResourceMap[resourceUri];
+                ResourceParsed?.Invoke();
 
-                razorResource.SyntacticTextSpans = lexer.TextEditorTextSpans;
-                razorResource.RazorSyntaxTree = lexer.RazorSyntaxTree;
-            }
+                var presentationModel = modelModifier.PresentationModelsBag.FirstOrDefault(x =>
+                    x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
 
-            await modelModifier.ApplySyntaxHighlightingAsync();
+                if (presentationModel?.PendingCalculation is not null)
+                {
+                    presentationModel.PendingCalculation.TextEditorTextSpanBag =
+                        GetDiagnosticsFor(modelModifier.ResourceUri)
+                            .Select(x => x.TextSpan)
+                            .ToImmutableArray();
 
-            ResourceParsed?.Invoke();
+                    (presentationModel.CompletedCalculation, presentationModel.PendingCalculation) =
+                        (presentationModel.PendingCalculation, presentationModel.CompletedCalculation);
+                }
 
-            var presentationModel = modelModifier.PresentationModelsBag.FirstOrDefault(x =>
-                x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
-
-            if (presentationModel?.PendingCalculation is not null)
-            {
-                presentationModel.PendingCalculation.TextEditorTextSpanBag =
-                    GetDiagnosticsFor(modelModifier.ResourceUri)
-                        .Select(x => x.TextSpan)
-                        .ToImmutableArray();
-
-                (presentationModel.CompletedCalculation, presentationModel.PendingCalculation) =
-                    (presentationModel.PendingCalculation, presentationModel.CompletedCalculation);
-            }
-
-            return;
-        });
+                return;
+            });
     }
 }

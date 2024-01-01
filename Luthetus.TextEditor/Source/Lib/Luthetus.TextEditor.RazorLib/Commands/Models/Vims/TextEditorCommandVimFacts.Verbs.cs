@@ -17,10 +17,12 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.Post(nameof(DeleteLineCommand), TextEditorCommandDefaultFunctions.CutFactory(
-                    commandArgs.ModelResourceUri,
-                    commandArgs.ViewModelKey,
-                    commandArgs));
+                commandArgs.TextEditorService.Post(
+                    nameof(DeleteLineCommand),
+                    TextEditorCommandDefaultFunctions.CutFactory(
+                        commandArgs.ModelResourceUri,
+                        commandArgs.ViewModelKey,
+                        commandArgs));
 
                 return Task.CompletedTask;
             });
@@ -57,7 +59,11 @@ public static partial class TextEditorCommandVimFacts
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                commandArgs.TextEditorService.Post(nameof(DeleteMotionCommandFactory), DeleteMotionFactory(commandArgs));
+                
+                commandArgs.TextEditorService.Post(
+                    nameof(DeleteMotionCommandFactory),
+                    DeleteMotionFactory(commandArgs));
+
                 return Task.CompletedTask;
             });
 
@@ -122,7 +128,11 @@ public static partial class TextEditorCommandVimFacts
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                commandArgs.TextEditorService.Post(nameof(ChangeMotionCommandFactory), GetChangeMotionFactory(commandArgs));
+
+                commandArgs.TextEditorService.Post(
+                    nameof(ChangeMotionCommandFactory),
+                    GetChangeMotionFactory(commandArgs));
+
                 return Task.CompletedTask;
             });
 

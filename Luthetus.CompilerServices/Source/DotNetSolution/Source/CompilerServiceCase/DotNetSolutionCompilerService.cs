@@ -126,70 +126,72 @@ public class DotNetSolutionCompilerService : ICompilerService
 
     private void QueueParseRequest(ResourceUri resourceUri)
     {
-        _textEditorService.Post(nameof(QueueParseRequest), async editContext =>
-        {
-            var modelModifier = editContext.GetModelModifier(resourceUri);
-
-            if (modelModifier is null)
-                return;
-
-            var absolutePath = new AbsolutePath(
-                modelModifier.ResourceUri.Value,
-                false,
-                _environmentProvider);
-
-            var namespacePath = new NamespacePath(
-                string.Empty,
-                absolutePath);
-
-            await _textEditorService.ModelApi.CalculatePresentationModelFactory(
-                    modelModifier.ResourceUri,
-                    CompilerServiceDiagnosticPresentationFacts.PresentationKey)
-                .Invoke(editContext);
-
-            var pendingCalculation = modelModifier.PresentationModelsBag.FirstOrDefault(x =>
-                x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey)
-                ?.PendingCalculation;
-
-            if (pendingCalculation is null)
-                pendingCalculation = new(modelModifier.GetAllText());
-
-            var lexer = new DotNetSolutionLexer(resourceUri, modelModifier.GetAllText());
-            lexer.Lex();
-
-            var parser = new DotNetSolutionParser(lexer);
-
-            var compilationUnit = parser.Parse();
-
-            lock (_dotNetSolutionResourceMapLock)
+        _textEditorService.Post(
+            nameof(QueueParseRequest),
+            async editContext =>
             {
-                if (!_dotNetSolutionResourceMap.ContainsKey(resourceUri))
+                var modelModifier = editContext.GetModelModifier(resourceUri);
+
+                if (modelModifier is null)
                     return;
 
-                var dotNetSolutionResource = _dotNetSolutionResourceMap[resourceUri];
-                dotNetSolutionResource.SyntaxTokenBag = lexer.SyntaxTokens;
-                dotNetSolutionResource.CompilationUnit = compilationUnit;
-            }
+                var absolutePath = new AbsolutePath(
+                    modelModifier.ResourceUri.Value,
+                    false,
+                    _environmentProvider);
 
-            await modelModifier.ApplySyntaxHighlightingAsync();
+                var namespacePath = new NamespacePath(
+                    string.Empty,
+                    absolutePath);
 
-            ResourceParsed?.Invoke();
+                await _textEditorService.ModelApi.CalculatePresentationModelFactory(
+                        modelModifier.ResourceUri,
+                        CompilerServiceDiagnosticPresentationFacts.PresentationKey)
+                    .Invoke(editContext);
 
-            var presentationModel = modelModifier.PresentationModelsBag.FirstOrDefault(x =>
-                x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
+                var pendingCalculation = modelModifier.PresentationModelsBag.FirstOrDefault(x =>
+                    x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey)
+                    ?.PendingCalculation;
 
-            if (presentationModel?.PendingCalculation is not null)
-            {
-                presentationModel.PendingCalculation.TextEditorTextSpanBag =
-                    GetDiagnosticsFor(modelModifier.ResourceUri)
-                        .Select(x => x.TextSpan)
-                        .ToImmutableArray();
+                if (pendingCalculation is null)
+                    pendingCalculation = new(modelModifier.GetAllText());
 
-                (presentationModel.CompletedCalculation, presentationModel.PendingCalculation) =
-                    (presentationModel.PendingCalculation, presentationModel.CompletedCalculation);
-            }
+                var lexer = new DotNetSolutionLexer(resourceUri, modelModifier.GetAllText());
+                lexer.Lex();
 
-            return;
-        });
+                var parser = new DotNetSolutionParser(lexer);
+
+                var compilationUnit = parser.Parse();
+
+                lock (_dotNetSolutionResourceMapLock)
+                {
+                    if (!_dotNetSolutionResourceMap.ContainsKey(resourceUri))
+                        return;
+
+                    var dotNetSolutionResource = _dotNetSolutionResourceMap[resourceUri];
+                    dotNetSolutionResource.SyntaxTokenBag = lexer.SyntaxTokens;
+                    dotNetSolutionResource.CompilationUnit = compilationUnit;
+                }
+
+                await modelModifier.ApplySyntaxHighlightingAsync();
+
+                ResourceParsed?.Invoke();
+
+                var presentationModel = modelModifier.PresentationModelsBag.FirstOrDefault(x =>
+                    x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
+
+                if (presentationModel?.PendingCalculation is not null)
+                {
+                    presentationModel.PendingCalculation.TextEditorTextSpanBag =
+                        GetDiagnosticsFor(modelModifier.ResourceUri)
+                            .Select(x => x.TextSpan)
+                            .ToImmutableArray();
+
+                    (presentationModel.CompletedCalculation, presentationModel.PendingCalculation) =
+                        (presentationModel.PendingCalculation, presentationModel.CompletedCalculation);
+                }
+
+                return;
+            });
     }
 }

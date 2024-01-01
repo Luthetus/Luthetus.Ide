@@ -29,6 +29,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 
@@ -263,133 +264,135 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (resourceUri is null || viewModelKey is null)
             return;
 
-        TextEditorService.Post(nameof(HandleOnKeyDown), async editContext =>
-        {
-            var modelModifier = editContext.GetModelModifier(resourceUri);
-            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
-
-            if (modelModifier is null || viewModelModifier is null)
-                return;
-
-            var primaryCursor = viewModelModifier.ViewModel.PrimaryCursor;
-            var cursorBag = new TextEditorCursor[] { primaryCursor }.ToImmutableArray();
-            var hasSelection = TextEditorSelectionHelper.HasSelectedText(primaryCursor.Selection);
-            var layerKey = ((ITextEditorKeymap)TextEditorService.OptionsStateWrap.Value.Options.Keymap!).GetLayer(hasSelection);
-
-            var keymapArgument = keyboardEventArgs.ToKeymapArgument() with
+        TextEditorService.Post(
+            nameof(HandleOnKeyDown),
+            async editContext =>
             {
-                LayerKey = layerKey
-            };
+                var modelModifier = editContext.GetModelModifier(resourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
 
-            var success = TextEditorService.OptionsStateWrap.Value.Options.Keymap!.Map.TryGetValue(
-                keymapArgument,
-                out var command);
+                if (modelModifier is null || viewModelModifier is null)
+                    return;
 
-            if (!success && keymapArgument.LayerKey != TextEditorKeymapDefaultFacts.DefaultLayer.Key)
-            {
-                _ = TextEditorService.OptionsStateWrap.Value.Options.Keymap!.Map.TryGetValue(
-                    keymapArgument with
-                    {
-                        LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key,
-                    },
-                    out command);
-            }
+                var primaryCursor = viewModelModifier.ViewModel.PrimaryCursor;
+                var cursorBag = new TextEditorCursor[] { primaryCursor }.ToImmutableArray();
+                var hasSelection = TextEditorSelectionHelper.HasSelectedText(primaryCursor.Selection);
+                var layerKey = ((ITextEditorKeymap)TextEditorService.OptionsStateWrap.Value.Options.Keymap!).GetLayer(hasSelection);
 
-            if (KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == keyboardEventArgs.Code && keyboardEventArgs.ShiftKey)
-                command = TextEditorCommandDefaultFacts.NewLineBelow;
-
-            if (KeyboardKeyFacts.IsMovementKey(keyboardEventArgs.Key) && command is null)
-            {
-                if ((KeyboardKeyFacts.MovementKeys.ARROW_DOWN == keyboardEventArgs.Key ||
-                     KeyboardKeyFacts.MovementKeys.ARROW_UP == keyboardEventArgs.Key) &&
-                    CursorDisplay is not null &&
-                    CursorDisplay.MenuKind == TextEditorMenuKind.AutoCompleteMenu)
+                var keymapArgument = keyboardEventArgs.ToKeymapArgument() with
                 {
-                    await CursorDisplay.SetFocusToActiveMenuAsync();
-                }
-                else
-                {
-                    await TextEditorService.ViewModelApi.MoveCursorFactory(
-                                keyboardEventArgs,
-                                modelModifier.ResourceUri,
-                                viewModelModifier.ViewModel.ViewModelKey)
-                        .Invoke(editContext);
+                    LayerKey = layerKey
+                };
 
-                    CursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.None);
-                }
-            }
-            else if (KeyboardKeyFacts.CheckIsContextMenuEvent(keyboardEventArgs))
-            {
-                CursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.ContextMenu);
-            }
-            else
-            {
-                if (command is not null)
+                var success = TextEditorService.OptionsStateWrap.Value.Options.Keymap!.Map.TryGetValue(
+                    keymapArgument,
+                    out var command);
+
+                if (!success && keymapArgument.LayerKey != TextEditorKeymapDefaultFacts.DefaultLayer.Key)
                 {
-                    await command.DoAsyncFunc.Invoke(new TextEditorCommandArgs(
-                        modelModifier.ResourceUri,
-                        viewModelModifier.ViewModel.ViewModelKey,
-                        hasSelection,
-                        ClipboardService,
-                        TextEditorService,
-                        HandleMouseStoppedMovingEventAsync,
-                        JsRuntime,
-                        Dispatcher,
-                        ViewModelDisplayOptions.RegisterModelAction,
-                        ViewModelDisplayOptions.RegisterViewModelAction,
-                        ViewModelDisplayOptions.ShowViewModelAction));
-                }
-                else
-                {
-                    if (!IsAutocompleteMenuInvoker(keyboardEventArgs))
-                    {
-                        if (!KeyboardKeyFacts.IsMetaKey(keyboardEventArgs)
-                            || KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key ||
-                                KeyboardKeyFacts.MetaKeys.BACKSPACE == keyboardEventArgs.Key ||
-                                KeyboardKeyFacts.MetaKeys.DELETE == keyboardEventArgs.Key)
+                    _ = TextEditorService.OptionsStateWrap.Value.Options.Keymap!.Map.TryGetValue(
+                        keymapArgument with
                         {
-                            CursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.None);
-                        }
-                    }
-
-                    _tooltipViewModel = null;
-
-                    await TextEditorService.ModelApi.HandleKeyboardEventFactory(
-                            resourceUri,
-                            viewModelKey.Value,
-                            keyboardEventArgs,
-                            CancellationToken.None)
-                        .Invoke(editContext);
+                            LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key,
+                        },
+                        out command);
                 }
-            }
 
-            if (keyboardEventArgs.Key != "Shift" &&
-                keyboardEventArgs.Key != "Control" &&
-                keyboardEventArgs.Key != "Alt")
-            {
-                if (command is null ||
-                    command is TextEditorCommand commandTextEditor &&
-                    commandTextEditor.ShouldScrollCursorIntoView)
+                if (KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == keyboardEventArgs.Code && keyboardEventArgs.ShiftKey)
+                    command = TextEditorCommandDefaultFacts.NewLineBelow;
+
+                if (KeyboardKeyFacts.IsMovementKey(keyboardEventArgs.Key) && command is null)
                 {
-                    primaryCursor.ShouldRevealCursor = true;
+                    if ((KeyboardKeyFacts.MovementKeys.ARROW_DOWN == keyboardEventArgs.Key ||
+                         KeyboardKeyFacts.MovementKeys.ARROW_UP == keyboardEventArgs.Key) &&
+                        CursorDisplay is not null &&
+                        CursorDisplay.MenuKind == TextEditorMenuKind.AutoCompleteMenu)
+                    {
+                        await CursorDisplay.SetFocusToActiveMenuAsync();
+                    }
+                    else
+                    {
+                        await TextEditorService.ViewModelApi.MoveCursorFactory(
+                                    keyboardEventArgs,
+                                    modelModifier.ResourceUri,
+                                    viewModelModifier.ViewModel.ViewModelKey)
+                            .Invoke(editContext);
+
+                        CursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.None);
+                    }
                 }
-            }
+                else if (KeyboardKeyFacts.CheckIsContextMenuEvent(keyboardEventArgs))
+                {
+                    CursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.ContextMenu);
+                }
+                else
+                {
+                    if (command is not null)
+                    {
+                        await command.DoAsyncFunc.Invoke(new TextEditorCommandArgs(
+                            modelModifier.ResourceUri,
+                            viewModelModifier.ViewModel.ViewModelKey,
+                            hasSelection,
+                            ClipboardService,
+                            TextEditorService,
+                            HandleMouseStoppedMovingEventAsync,
+                            JsRuntime,
+                            Dispatcher,
+                            ViewModelDisplayOptions.RegisterModelAction,
+                            ViewModelDisplayOptions.RegisterViewModelAction,
+                            ViewModelDisplayOptions.ShowViewModelAction));
+                    }
+                    else
+                    {
+                        if (!IsAutocompleteMenuInvoker(keyboardEventArgs))
+                        {
+                            if (!KeyboardKeyFacts.IsMetaKey(keyboardEventArgs)
+                                || KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key ||
+                                    KeyboardKeyFacts.MetaKeys.BACKSPACE == keyboardEventArgs.Key ||
+                                    KeyboardKeyFacts.MetaKeys.DELETE == keyboardEventArgs.Key)
+                            {
+                                CursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.None);
+                            }
+                        }
 
-            var afterOnKeyDownAsync = ViewModelDisplayOptions.AfterOnKeyDownAsync ?? HandleAfterOnKeyDownAsync;
+                        _tooltipViewModel = null;
 
-            var cursorDisplay = CursorDisplay;
+                        await TextEditorService.ModelApi.HandleKeyboardEventFactory(
+                                resourceUri,
+                                viewModelKey.Value,
+                                keyboardEventArgs,
+                                CancellationToken.None)
+                            .Invoke(editContext);
+                    }
+                }
 
-            if (cursorDisplay is not null)
-            {
-                var textEditor = modelModifier;
+                if (keyboardEventArgs.Key != "Shift" &&
+                    keyboardEventArgs.Key != "Control" &&
+                    keyboardEventArgs.Key != "Alt")
+                {
+                    if (command is null ||
+                        command is TextEditorCommand commandTextEditor &&
+                        commandTextEditor.ShouldScrollCursorIntoView)
+                    {
+                        primaryCursor.ShouldRevealCursor = true;
+                    }
+                }
 
-                await afterOnKeyDownAsync.Invoke(
-                    textEditor,
-                    cursorBag,
-                    keyboardEventArgs,
-                    cursorDisplay.SetShouldDisplayMenuAsync);
-            }
-        });
+                var afterOnKeyDownAsync = ViewModelDisplayOptions.AfterOnKeyDownAsync ?? HandleAfterOnKeyDownAsync;
+
+                var cursorDisplay = CursorDisplay;
+
+                if (cursorDisplay is not null)
+                {
+                    var textEditor = modelModifier;
+
+                    await afterOnKeyDownAsync.Invoke(
+                        textEditor,
+                        cursorBag,
+                        keyboardEventArgs,
+                        cursorDisplay.SetShouldDisplayMenuAsync);
+                }
+            });
     }
 
     private void HandleOnContextMenuAsync()
@@ -405,73 +408,75 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        TextEditorService.Post(nameof(HandleContentOnDoubleClick), async editContext =>
-        {
-            var modelModifier = editContext.GetModelModifier(modelResourceUri);
-            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
-
-            if (modelModifier is null || viewModelModifier is null)
-                return;
-
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
-            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
-
-            if (cursorModifierBag is null || primaryCursorModifier is null)
-                return;
-
-            var hasSelectedText = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
-
-            if ((mouseEventArgs.Buttons & 1) != 1 && hasSelectedText)
-                return; // Not pressing the left mouse button so assume ContextMenu is desired result.
-
-            if (mouseEventArgs.ShiftKey)
-                return; // Do not expand selection if user is holding shift
-
-            var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs);
-
-            var lowerColumnIndexExpansion = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
-                rowAndColumnIndex.rowIndex,
-                rowAndColumnIndex.columnIndex,
-                true);
-
-            lowerColumnIndexExpansion = lowerColumnIndexExpansion == -1
-                ? 0
-                : lowerColumnIndexExpansion;
-
-            var higherColumnIndexExpansion = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
-                rowAndColumnIndex.rowIndex,
-                rowAndColumnIndex.columnIndex,
-                false);
-
-            higherColumnIndexExpansion = higherColumnIndexExpansion == -1
-                    ? modelModifier.GetLengthOfRow(rowAndColumnIndex.rowIndex)
-                    : higherColumnIndexExpansion;
-
-            // Move user's cursor position to the higher expansion
+        TextEditorService.Post(
+            nameof(HandleContentOnDoubleClick),
+            async editContext =>
             {
-                primaryCursorModifier.RowIndex = rowAndColumnIndex.rowIndex;
-                primaryCursorModifier.ColumnIndex = higherColumnIndexExpansion;
-                primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
-            }
+                var modelModifier = editContext.GetModelModifier(modelResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
 
-            // Set text selection ending to higher expansion
-            {
-                var cursorPositionOfHigherExpansion = modelModifier.GetPositionIndex(
+                if (modelModifier is null || viewModelModifier is null)
+                    return;
+
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                if (cursorModifierBag is null || primaryCursorModifier is null)
+                    return;
+
+                var hasSelectedText = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
+
+                if ((mouseEventArgs.Buttons & 1) != 1 && hasSelectedText)
+                    return; // Not pressing the left mouse button so assume ContextMenu is desired result.
+
+                if (mouseEventArgs.ShiftKey)
+                    return; // Do not expand selection if user is holding shift
+
+                var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs);
+
+                var lowerColumnIndexExpansion = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
                     rowAndColumnIndex.rowIndex,
-                    higherColumnIndexExpansion);
+                    rowAndColumnIndex.columnIndex,
+                    true);
 
-                primaryCursorModifier.SelectionEndingPositionIndex = cursorPositionOfHigherExpansion;
-            }
+                lowerColumnIndexExpansion = lowerColumnIndexExpansion == -1
+                    ? 0
+                    : lowerColumnIndexExpansion;
 
-            // Set text selection anchor to lower expansion
-            {
-                var cursorPositionOfLowerExpansion = modelModifier.GetPositionIndex(
+                var higherColumnIndexExpansion = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
                     rowAndColumnIndex.rowIndex,
-                    lowerColumnIndexExpansion);
+                    rowAndColumnIndex.columnIndex,
+                    false);
 
-                primaryCursorModifier.SelectionAnchorPositionIndex = cursorPositionOfLowerExpansion;
-            }
-        });
+                higherColumnIndexExpansion = higherColumnIndexExpansion == -1
+                        ? modelModifier.GetLengthOfRow(rowAndColumnIndex.rowIndex)
+                        : higherColumnIndexExpansion;
+
+                // Move user's cursor position to the higher expansion
+                {
+                    primaryCursorModifier.RowIndex = rowAndColumnIndex.rowIndex;
+                    primaryCursorModifier.ColumnIndex = higherColumnIndexExpansion;
+                    primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
+                }
+
+                // Set text selection ending to higher expansion
+                {
+                    var cursorPositionOfHigherExpansion = modelModifier.GetPositionIndex(
+                        rowAndColumnIndex.rowIndex,
+                        higherColumnIndexExpansion);
+
+                    primaryCursorModifier.SelectionEndingPositionIndex = cursorPositionOfHigherExpansion;
+                }
+
+                // Set text selection anchor to lower expansion
+                {
+                    var cursorPositionOfLowerExpansion = modelModifier.GetPositionIndex(
+                        rowAndColumnIndex.rowIndex,
+                        lowerColumnIndexExpansion);
+
+                    primaryCursorModifier.SelectionAnchorPositionIndex = cursorPositionOfLowerExpansion;
+                }
+            });
     }
 
     private void HandleContentOnMouseDown(MouseEventArgs mouseEventArgs)
@@ -482,64 +487,66 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
         
-        TextEditorService.Post(nameof(HandleContentOnMouseDown), async editContext =>
-        {
-            var modelModifier = editContext.GetModelModifier(modelResourceUri);
-            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
-
-            if (modelModifier is null || viewModelModifier is null)
-                return;
-
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
-            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
-
-            if (cursorModifierBag is null || primaryCursorModifier is null)
-                return;
-
-            var hasSelectedText = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
-
-            if ((mouseEventArgs.Buttons & 1) != 1 && hasSelectedText)
-                return; // Not pressing the left mouse button so assume ContextMenu is desired result.
-
-            CursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.None, false);
-
-            var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs);
-
-            primaryCursorModifier.RowIndex = rowAndColumnIndex.rowIndex;
-            primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
-            primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
-
-            CursorDisplay?.PauseBlinkAnimation();
-
-            var cursorPositionIndex = modelModifier.GetCursorPositionIndex(new TextEditorCursor(
-                rowAndColumnIndex.rowIndex,
-                rowAndColumnIndex.columnIndex,
-                true));
-
-            if (mouseEventArgs.ShiftKey)
+        TextEditorService.Post(
+            nameof(HandleContentOnMouseDown),
+            async editContext =>
             {
-                if (!hasSelectedText)
+                var modelModifier = editContext.GetModelModifier(modelResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
+
+                if (modelModifier is null || viewModelModifier is null)
+                    return;
+
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                if (cursorModifierBag is null || primaryCursorModifier is null)
+                    return;
+
+                var hasSelectedText = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
+
+                if ((mouseEventArgs.Buttons & 1) != 1 && hasSelectedText)
+                    return; // Not pressing the left mouse button so assume ContextMenu is desired result.
+
+                CursorDisplay?.SetShouldDisplayMenuAsync(TextEditorMenuKind.None, false);
+
+                var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs);
+
+                primaryCursorModifier.RowIndex = rowAndColumnIndex.rowIndex;
+                primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
+                primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
+
+                CursorDisplay?.PauseBlinkAnimation();
+
+                var cursorPositionIndex = modelModifier.GetCursorPositionIndex(new TextEditorCursor(
+                    rowAndColumnIndex.rowIndex,
+                    rowAndColumnIndex.columnIndex,
+                    true));
+
+                if (mouseEventArgs.ShiftKey)
                 {
-                    // If user does not yet have a selection then place the text selection anchor were they were
+                    if (!hasSelectedText)
+                    {
+                        // If user does not yet have a selection then place the text selection anchor were they were
 
-                    var cursorPositionPriorToMovementOccurring = modelModifier.GetPositionIndex(
-                        primaryCursorModifier.RowIndex,
-                        primaryCursorModifier.ColumnIndex);
+                        var cursorPositionPriorToMovementOccurring = modelModifier.GetPositionIndex(
+                            primaryCursorModifier.RowIndex,
+                            primaryCursorModifier.ColumnIndex);
 
-                    primaryCursorModifier.SelectionAnchorPositionIndex = cursorPositionPriorToMovementOccurring;
+                        primaryCursorModifier.SelectionAnchorPositionIndex = cursorPositionPriorToMovementOccurring;
+                    }
+
+                    // If user ALREADY has a selection then do not modify the text selection anchor
+                }
+                else
+                {
+                    primaryCursorModifier.SelectionAnchorPositionIndex = cursorPositionIndex;
                 }
 
-                // If user ALREADY has a selection then do not modify the text selection anchor
-            }
-            else
-            {
-                primaryCursorModifier.SelectionAnchorPositionIndex = cursorPositionIndex;
-            }
+                primaryCursorModifier.SelectionEndingPositionIndex = cursorPositionIndex;
 
-            primaryCursorModifier.SelectionEndingPositionIndex = cursorPositionIndex;
-
-            _thinksLeftMouseButtonIsDown = true;
-        });
+                _thinksLeftMouseButtonIsDown = true;
+            });
     }
 
     /// <summary>OnMouseUp is un-necessary</summary>
@@ -595,30 +602,32 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         // Buttons is a bit flag '& 1' gets if left mouse button is held
         if (localThinksLeftMouseButtonIsDown && (mouseEventArgs.Buttons & 1) == 1)
         {
-            TextEditorService.Post(nameof(HandleContentOnMouseMove), async editContext =>
-            {
-                var modelModifier = editContext.GetModelModifier(modelResourceUri);
-                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
+            TextEditorService.Post(
+                nameof(HandleContentOnMouseMove),
+                async editContext =>
+                {
+                    var modelModifier = editContext.GetModelModifier(modelResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
 
-                if (modelModifier is null || viewModelModifier is null)
-                    return;
+                    if (modelModifier is null || viewModelModifier is null)
+                        return;
 
-                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
-                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                if (cursorModifierBag is null || primaryCursorModifier is null)
-                    return;
+                    if (cursorModifierBag is null || primaryCursorModifier is null)
+                        return;
 
-                var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs);
+                    var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs);
 
-                primaryCursorModifier.RowIndex = rowAndColumnIndex.rowIndex;
-                primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
-                primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
+                    primaryCursorModifier.RowIndex = rowAndColumnIndex.rowIndex;
+                    primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
+                    primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
 
-                CursorDisplay?.PauseBlinkAnimation();
+                    CursorDisplay?.PauseBlinkAnimation();
 
-                primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetCursorPositionIndex(primaryCursorModifier);
-            });
+                    primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetCursorPositionIndex(primaryCursorModifier);
+                });
         }
         else
         {
@@ -1007,12 +1016,14 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        TextEditorService.Post(nameof(QueueRemeasureBackgroundTask), TextEditorService.ViewModelApi.RemeasureFactory(
-            modelResourceUri,
-            viewModelKey.Value,
-            localMeasureCharacterWidthAndRowHeightElementId,
-            countOfTestCharacters,
-            CancellationToken.None));
+        TextEditorService.Post(
+            nameof(QueueRemeasureBackgroundTask),
+            TextEditorService.ViewModelApi.RemeasureFactory(
+                modelResourceUri,
+                viewModelKey.Value,
+                localMeasureCharacterWidthAndRowHeightElementId,
+                countOfTestCharacters,
+                CancellationToken.None));
     }
 
     private void QueueCalculateVirtualizationResultBackgroundTask(
@@ -1024,20 +1035,12 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        TextEditorService.Post(nameof(QueueCalculateVirtualizationResultBackgroundTask), async editContext =>
-        {
-            var modelModifier = editContext.GetModelModifier(modelResourceUri);
-            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
-
-            if (modelModifier is null || viewModelModifier is null)
-                return;
-
-            await TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
-                    modelModifier.ResourceUri,
-                    viewModelModifier.ViewModel.ViewModelKey,
-                    CancellationToken.None)
-                .Invoke(editContext);
-        });
+        TextEditorService.Post(
+            nameof(QueueCalculateVirtualizationResultBackgroundTask),
+            TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
+                modelResourceUri,
+                viewModelKey.Value,
+                CancellationToken.None));
     }
 
     public void Dispose()

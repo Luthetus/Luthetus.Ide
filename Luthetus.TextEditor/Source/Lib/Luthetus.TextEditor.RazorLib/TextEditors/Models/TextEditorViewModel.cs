@@ -72,18 +72,22 @@ public record TextEditorViewModel : IDisposable
 
     public void MutateScrollHorizontalPositionByPixels(double pixels)
     {
-        TextEditorService.Post(nameof(MutateScrollHorizontalPositionByPixels), TextEditorService.ViewModelApi.MutateScrollHorizontalPositionFactory(
-            BodyElementId,
-            GutterElementId,
-            pixels));
+        TextEditorService.Post(
+            nameof(MutateScrollHorizontalPositionByPixels),
+            TextEditorService.ViewModelApi.MutateScrollHorizontalPositionFactory(
+                BodyElementId,
+                GutterElementId,
+                pixels));
     }
 
     public void MutateScrollVerticalPositionByPixels(double pixels)
     {
-        TextEditorService.Post(nameof(MutateScrollVerticalPositionByPixels), TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
-            BodyElementId,
-            GutterElementId,
-            pixels));
+        TextEditorService.Post(
+            nameof(MutateScrollVerticalPositionByPixels),
+            TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
+                BodyElementId,
+                GutterElementId,
+                pixels));
     }
 
     public void MutateScrollVerticalPositionByPages(double pages)
@@ -101,16 +105,19 @@ public record TextEditorViewModel : IDisposable
     /// <summary>If a parameter is null the JavaScript will not modify that value</summary>
     public void SetScrollPosition(double? scrollLeft, double? scrollTop)
     {
-        TextEditorService.Post(nameof(SetScrollPosition), TextEditorService.ViewModelApi.SetScrollPositionFactory(
-            BodyElementId,
-            GutterElementId,
-            scrollLeft,
-            scrollTop));
+        TextEditorService.Post(
+            nameof(SetScrollPosition),
+            TextEditorService.ViewModelApi.SetScrollPositionFactory(
+                BodyElementId,
+                GutterElementId,
+                scrollLeft,
+                scrollTop));
     }
 
     public void Focus()
     {
-        TextEditorService.Post(nameof(Focus),
+        TextEditorService.Post(
+            nameof(Focus),
             TextEditorService.ViewModelApi.FocusPrimaryCursorFactory(
                 PrimaryCursorContentId));
     }

@@ -98,7 +98,8 @@ public class TextEditorViewModelApiTests
             oppositeShouldSetFocusAfterNextRender,
             inViewModel.ShouldSetFocusAfterNextRender);
 
-        textEditorService.Post(nameof(textEditorService.ViewModelApi.WithValueFactory),
+        textEditorService.Post(
+            nameof(textEditorService.ViewModelApi.WithValueFactory),
             textEditorService.ViewModelApi.WithValueFactory(
                 inViewModel.ViewModelKey,
                 inState => inState with

@@ -63,22 +63,24 @@ public class TextEditorViewModelStateActionsTests
             out var inViewModel,
             out var serviceProvider);
 
-        textEditorService.Post(nameof(SetViewModelWithAction), editContext =>
-        {
-            var authenticatedActionKey = TextEditorService.AuthenticatedActionKey;
-            var withFunc = new Func<TextEditorViewModel, TextEditorViewModel>(inState => inState);
+        textEditorService.Post(
+            nameof(SetViewModelWithAction),
+            editContext =>
+            {
+                var authenticatedActionKey = TextEditorService.AuthenticatedActionKey;
+                var withFunc = new Func<TextEditorViewModel, TextEditorViewModel>(inState => inState);
             
-            var setViewModelWithAction = new TextEditorViewModelState.SetViewModelWithAction(
-                authenticatedActionKey,
-                editContext,
-                inViewModel.ViewModelKey,
-                withFunc);
+                var setViewModelWithAction = new TextEditorViewModelState.SetViewModelWithAction(
+                    authenticatedActionKey,
+                    editContext,
+                    inViewModel.ViewModelKey,
+                    withFunc);
 
-            Assert.Equal(editContext, setViewModelWithAction.EditContext);
-            Assert.Equal(inViewModel.ViewModelKey, setViewModelWithAction.ViewModelKey);
-            Assert.Equal(withFunc, setViewModelWithAction.WithFunc);
+                Assert.Equal(editContext, setViewModelWithAction.EditContext);
+                Assert.Equal(inViewModel.ViewModelKey, setViewModelWithAction.ViewModelKey);
+                Assert.Equal(withFunc, setViewModelWithAction.WithFunc);
 
-            return Task.CompletedTask;
-        });
+                return Task.CompletedTask;
+            });
 	}
 }
