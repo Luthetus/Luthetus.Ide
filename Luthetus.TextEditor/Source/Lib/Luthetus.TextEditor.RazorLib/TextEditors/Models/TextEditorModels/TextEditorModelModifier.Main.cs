@@ -254,12 +254,9 @@ public partial class TextEditorModelModifier
                     cursorModifier.RowIndex,
                     new (cursorPositionIndex, cursorPositionIndex + characterCountInserted, rowEndingKindToInsert));
 
-                MutateRowEndingKindCount(UsingRowEndingKind, 1);
+                MutateRowEndingKindCount(rowEndingKindToInsert, 1);
 
-                var rowIndex = cursorModifier.RowIndex;
-                var columnIndex = cursorModifier.ColumnIndex;
-
-                cursorModifier.RowIndex = rowIndex + 1;
+                cursorModifier.RowIndex++;
                 cursorModifier.ColumnIndex = 0;
                 cursorModifier.PreferredColumnIndex = cursorModifier.ColumnIndex;
             }
@@ -292,22 +289,18 @@ public partial class TextEditorModelModifier
 
                 ContentBag.Insert(cursorPositionIndex, richCharacterToInsert);
 
-                var rowIndex = cursorModifier.RowIndex;
-                var columnIndex = cursorModifier.ColumnIndex;
-
-                cursorModifier.RowIndex = rowIndex;
-                cursorModifier.ColumnIndex = columnIndex + 1;
+                cursorModifier.ColumnIndex++;
                 cursorModifier.PreferredColumnIndex = cursorModifier.ColumnIndex;
             }
 
-            var firstRowIndexToModify = wasEnterCode
-                ? cursorModifier.RowIndex + 1
-                : cursorModifier.RowIndex;
-
-            for (var i = firstRowIndexToModify; i < RowEndingPositionsBag.Count; i++)
+            // Reposition the Row Endings
             {
-                var rowEndingTuple = RowEndingPositionsBag[i];
-                rowEndingTuple.EndPositionIndexExclusive += characterCountInserted;
+                for (var i = cursorModifier.RowIndex; i < RowEndingPositionsBag.Count; i++)
+                {
+                    var rowEndingTuple = RowEndingPositionsBag[i];
+                    rowEndingTuple.StartPositionIndexInclusive += characterCountInserted;
+                    rowEndingTuple.EndPositionIndexExclusive += characterCountInserted;
+                }
             }
 
             if (!wasTabCode)
@@ -589,6 +582,7 @@ public partial class TextEditorModelModifier
             for (var i = firstRowIndexToModify; i < RowEndingPositionsBag.Count; i++)
             {
                 var rowEndingTuple = RowEndingPositionsBag[i];
+                rowEndingTuple.StartPositionIndexInclusive -= charactersRemovedCount;
                 rowEndingTuple.EndPositionIndexExclusive -= charactersRemovedCount;
             }
 
