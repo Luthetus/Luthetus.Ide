@@ -1,52 +1,30 @@
-﻿<div class="luth_ide_background-task">
-    <div>Count:@SeenBackgroundTasks.Length</div>
+﻿@{
+    var countShown = 50;
+    var seenBackgroundTasks = BackgroundTaskDialogModel.SeenBackgroundTasks.TakeLast(50).Reverse().ToArray();
+}
+
+<div class="luth_ide_background-task">
+    <div>Total count:@seenBackgroundTasks.Length // only showing the most recent @countShown</div>
+    <div>The most recent entry is the first entry rendered, the last entry is the oldest entry relative to the set which was rendered.</div>
     
+    <hr/>
+
     <div>
-        @for (var i = 0; i < SeenBackgroundTasks.Length; i++)
+        @for (var i = 0; i < seenBackgroundTasks.Length; i++)
         {
-            var outerIndex = i;
-            var backgroundTask = SeenBackgroundTasks[outerIndex];
-
-            var sameBackgroundTaskCount = 1;
-
-            var j = i;
-
-            for (; j < SeenBackgroundTasks.Length; j++)
-            {
-                var innerIndex = j;
-
-                if (backgroundTask.Name == SeenBackgroundTasks[innerIndex].Name)
-                    sameBackgroundTaskCount++;
-                else
-                    break;
-            }
-            
-            i += j - i;
+            var index = i;
+            var backgroundTask = seenBackgroundTasks[index];
 
             if (backgroundTask.Name.StartsWith("te_"))
             {
                 <div class="luth_te_keyword">
                     @backgroundTask.Name @backgroundTask.BackgroundTaskKey.Guid
-
-                    @if (sameBackgroundTaskCount > 1)
-                    {
-                        <span class="luth_te_method">
-                            (x@(sameBackgroundTaskCount))
-                        </span>
-                    }
                 </div>
             }
             else
             {
                 <div>
                     @backgroundTask.Name @backgroundTask.BackgroundTaskKey.Guid
-
-                    @if (sameBackgroundTaskCount > 1)
-                    {
-                        <span class="luth_te_method">
-                            (x@(sameBackgroundTaskCount))
-                        </span>
-                    }
                 </div>
             }
         }
