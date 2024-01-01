@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Components.Web;
 using Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.Characters.Models;
+using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorModels;
 
@@ -20,20 +22,32 @@ public partial class TextEditorModelModifierTests
 {
     /// <summary>
     /// <see cref="TextEditorModelModifier(TextEditorModel)"/>
+    /// <br/>----<br/>
+    /// <see cref="TextEditorModelModifier.ToModel()"/>
     /// </summary>
     [Fact]
     public void Constructor()
     {
-        throw new NotImplementedException();
-    }
+        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var inModel);
+        var modelModifier = new TextEditorModelModifier(inModel);
 
-    /// <summary>
-    /// <see cref="TextEditorModelModifier.ToModel()"/>
-    /// </summary>
-    [Fact]
-    public void ToTextEditorModel()
-    {
-        throw new NotImplementedException();
+        var outModel = modelModifier.ToModel();
+        Assert.Equal(inModel.ContentBag, outModel.ContentBag);
+        Assert.Equal(inModel.EditBlocksBag, outModel.EditBlocksBag);
+        Assert.Equal(inModel.RowEndingPositionsBag, outModel.RowEndingPositionsBag);
+        Assert.Equal(inModel.RowEndingKindCountsBag, outModel.RowEndingKindCountsBag);
+        Assert.Equal(inModel.PresentationModelsBag, outModel.PresentationModelsBag);
+        Assert.Equal(inModel.TabKeyPositionsBag, outModel.TabKeyPositionsBag);
+        Assert.Equal(inModel.OnlyRowEndingKind, outModel.OnlyRowEndingKind);
+        Assert.Equal(inModel.UsingRowEndingKind, outModel.UsingRowEndingKind);
+        Assert.Equal(inModel.ResourceUri, outModel.ResourceUri);
+        Assert.Equal(inModel.ResourceLastWriteTime, outModel.ResourceLastWriteTime);
+        Assert.Equal(inModel.FileExtension, outModel.FileExtension);
+        Assert.Equal(inModel.DecorationMapper, outModel.DecorationMapper);
+        Assert.Equal(inModel.CompilerService, outModel.CompilerService);
+        Assert.Equal(inModel.TextEditorSaveFileHelper, outModel.TextEditorSaveFileHelper);
+        Assert.Equal(inModel.EditBlockIndex, outModel.EditBlockIndex);
+        Assert.Equal(inModel.MostCharactersOnASingleRowTuple, outModel.MostCharactersOnASingleRowTuple);
     }
 
     /// <summary>
@@ -42,7 +56,14 @@ public partial class TextEditorModelModifierTests
     [Fact]
     public void ClearContentBag()
     {
-        throw new NotImplementedException();
+        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var inModel);
+        var modelModifier = new TextEditorModelModifier(inModel);
+
+        modelModifier.ClearContentBag();
+
+        var outModel = modelModifier.ToModel();
+        Assert.NotEqual(inModel.ContentBag, outModel.ContentBag);
+        Assert.Equal(ImmutableList<RichCharacter>.Empty, outModel.ContentBag);
     }
 
     /// <summary>
@@ -51,7 +72,14 @@ public partial class TextEditorModelModifierTests
     [Fact]
     public void ClearRowEndingPositionsBag()
     {
-        throw new NotImplementedException();
+        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var inModel);
+        var modelModifier = new TextEditorModelModifier(inModel);
+
+        modelModifier.ClearRowEndingPositionsBag();
+
+        var outModel = modelModifier.ToModel();
+        Assert.NotEqual(inModel.RowEndingPositionsBag, outModel.RowEndingPositionsBag);
+        Assert.Equal(ImmutableList<RowEnding>.Empty, outModel.RowEndingPositionsBag);
     }
 
     /// <summary>
@@ -60,7 +88,14 @@ public partial class TextEditorModelModifierTests
     [Fact]
     public void ClearRowEndingKindCountsBag()
     {
-        throw new NotImplementedException();
+        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var inModel);
+        var modelModifier = new TextEditorModelModifier(inModel);
+
+        modelModifier.ClearRowEndingKindCountsBag();
+
+        var outModel = modelModifier.ToModel();
+        Assert.NotEqual(inModel.RowEndingKindCountsBag, outModel.RowEndingKindCountsBag);
+        Assert.Equal(ImmutableList<(RowEndingKind rowEndingKind, int count)>.Empty, outModel.RowEndingKindCountsBag);
     }
 
     /// <summary>
@@ -73,12 +108,19 @@ public partial class TextEditorModelModifierTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.ModifyOnlyRowEndingKind()"/>
+    /// <see cref="TextEditorModelModifier.ClearOnlyRowEndingKind()"/>
     /// </summary>
     [Fact]
-    public void ModifyOnlyRowEndingKind()
+    public void ClearOnlyRowEndingKind()
     {
-        throw new NotImplementedException();
+        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var inModel);
+        var modelModifier = new TextEditorModelModifier(inModel);
+
+        modelModifier.ClearOnlyRowEndingKind();
+
+        var outModel = modelModifier.ToModel();
+        Assert.NotEqual(inModel.OnlyRowEndingKind, outModel.OnlyRowEndingKind);
+        Assert.Null(outModel.OnlyRowEndingKind);
     }
 
     /// <summary>
@@ -87,7 +129,14 @@ public partial class TextEditorModelModifierTests
     [Fact]
     public void ModifyUsingRowEndingKind()
     {
-        throw new NotImplementedException();
+        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var inModel);
+        var modelModifier = new TextEditorModelModifier(inModel);
+
+        modelModifier.ModifyUsingRowEndingKind(RowEndingKind.CarriageReturn);
+
+        var outModel = modelModifier.ToModel();
+        Assert.NotEqual(inModel.UsingRowEndingKind, outModel.UsingRowEndingKind);
+        Assert.Equal(RowEndingKind.CarriageReturn, outModel.UsingRowEndingKind);
     }
 
     /// <summary>
@@ -96,7 +145,21 @@ public partial class TextEditorModelModifierTests
     [Fact]
     public void ModifyResourceData()
     {
-        throw new NotImplementedException();
+        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var inModel);
+        var modelModifier = new TextEditorModelModifier(inModel);
+
+        var resourceUri = new ResourceUri("/abc123.txt");
+        
+        // Add one second to guarantee the date times differ.
+        var dateTime = DateTime.UtcNow.AddSeconds(1);
+
+        modelModifier.ModifyResourceData(resourceUri, dateTime);
+
+        var outModel = modelModifier.ToModel();
+        Assert.NotEqual(inModel.ResourceUri, outModel.ResourceUri);
+        Assert.NotEqual(inModel.ResourceLastWriteTime, outModel.ResourceLastWriteTime);
+        Assert.Equal(resourceUri, outModel.ResourceUri);
+        Assert.Equal(dateTime, outModel.ResourceLastWriteTime);
     }
 
     /// <summary>
@@ -150,8 +213,7 @@ public partial class TextEditorModelModifierTests
     [Fact]
     public void HandleKeyboardEvent()
     {
-        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(
-            out var inModel);
+        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var inModel);
 
         var inText = inModel.GetAllText();
 
@@ -197,8 +259,7 @@ public partial class TextEditorModelModifierTests
     [Fact]
     public void EditByInsertion()
     {
-        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(
-            out var inModel);
+        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var inModel);
 
         var inText = inModel.GetAllText();
 
@@ -237,8 +298,7 @@ public partial class TextEditorModelModifierTests
     [Fact]
     public void DeleteTextByMotion()
     {
-        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(
-            out var inModel);
+        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var inModel);
 
         var inText = inModel.GetAllText();
 
@@ -277,8 +337,7 @@ public partial class TextEditorModelModifierTests
     [Fact]
     public void DeleteByRange()
     {
-        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(
-            out var inModel);
+        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var inModel);
 
         var inText = inModel.GetAllText();
 

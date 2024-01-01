@@ -30,7 +30,7 @@ public partial class TextEditorModel
 		var modifier = new TextEditorModelModifier(this);
 
 		modifier.ModifyContent(content);
-
+		
 		ContentBag = modifier.ContentBag.ToImmutableList();
 		RowEndingKindCountsBag = modifier.RowEndingKindCountsBag.ToImmutableList();
 		RowEndingPositionsBag = modifier.RowEndingPositionsBag.ToImmutableList();

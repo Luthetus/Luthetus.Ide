@@ -104,7 +104,7 @@ public partial class TextEditorModelModifier
         _tabKeyPositionsBag = new();
     }
 
-    public void ModifyOnlyRowEndingKind()
+    public void ClearOnlyRowEndingKind()
     {
         _onlyRowEndingKind = null;
         _onlyRowEndingKindWasModified = true;
@@ -798,7 +798,7 @@ public partial class TextEditorModelModifier
         ClearRowEndingKindCountsBag();
         ClearRowEndingPositionsBag();
         ClearTabKeyPositionsBag();
-        ModifyOnlyRowEndingKind();
+        ClearOnlyRowEndingKind();
         ModifyUsingRowEndingKind(RowEndingKind.Unset);
     }
 
