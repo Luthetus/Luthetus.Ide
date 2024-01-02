@@ -962,22 +962,26 @@ public class TextEditorModelHelperTests
 
                 // Count < 0
                 {
-                    throw new NotImplementedException();
+                    var lines = model.GetLinesRange(rowIndex, -1);
+                    Assert.Equal(string.Empty, lines);
                 }
 
                 // Count == 0
                 {
-                    throw new NotImplementedException();
+                    var lines = model.GetLinesRange(rowIndex, 0);
+                    Assert.Equal(string.Empty, lines);
                 }
 
                 // Count > 0
                 {
-                    throw new NotImplementedException();
+                    var lines = model.GetLinesRange(rowIndex, 1);
+                    Assert.Equal("Hello World!\n", lines);
                 }
 
                 // Count reads beyond the document length
                 {
-                    throw new NotImplementedException();
+                    var lines = model.GetLinesRange(rowIndex, TestConstants.ROW_COUNT + 5);
+                    Assert.Equal(TestConstants.SOURCE_TEXT, lines);
                 }
             }
 
@@ -987,22 +991,26 @@ public class TextEditorModelHelperTests
 
                 // Count < 0
                 {
-                    throw new NotImplementedException();
+                    var lines = model.GetLinesRange(rowIndex, -1);
+                    Assert.Equal(string.Empty, lines);
                 }
 
                 // Count == 0
                 {
-                    throw new NotImplementedException();
+                    var lines = model.GetLinesRange(rowIndex, 0);
+                    Assert.Equal(string.Empty, lines);
                 }
 
                 // Count > 0
                 {
-                    throw new NotImplementedException();
+                    var lines = model.GetLinesRange(rowIndex, 1);
+                    Assert.Equal("7 Pillows\n", lines);
                 }
 
                 // Count reads beyond the document length
                 {
-                    throw new NotImplementedException();
+                    var lines = model.GetLinesRange(rowIndex, TestConstants.ROW_COUNT + 5);
+                    Assert.Equal("7 Pillows\n \n,abc123", lines);
                 }
             }
 
@@ -1012,25 +1020,28 @@ public class TextEditorModelHelperTests
 
                 // Count < 0
                 {
-                    throw new NotImplementedException();
+                    var lines = model.GetLinesRange(rowIndex, -1);
+                    Assert.Equal(string.Empty, lines);
                 }
 
                 // Count == 0
                 {
-                    throw new NotImplementedException();
+                    var lines = model.GetLinesRange(rowIndex, 0);
+                    Assert.Equal(string.Empty, lines);
                 }
 
                 // Count > 0
                 {
-                    throw new NotImplementedException();
+                    var lines = model.GetLinesRange(rowIndex, 1);
+                    Assert.Equal(",abc123", lines);
                 }
 
                 // Count reads beyond the document length
                 {
-                    throw new NotImplementedException();
+                    var lines = model.GetLinesRange(rowIndex, 1);
+                    Assert.Equal(",abc123", lines);
                 }
             }
-            
         }
 
         // rowIndex > 0 && rowIndex is OUT of bounds
@@ -1039,22 +1050,26 @@ public class TextEditorModelHelperTests
 
             // Count < 0
             {
-                throw new NotImplementedException();
+                var lines = model.GetLinesRange(rowIndex, -1);
+                Assert.Equal(string.Empty, lines);
             }
 
             // Count == 0
             {
-                throw new NotImplementedException();
+                var lines = model.GetLinesRange(rowIndex, 0);
+                Assert.Equal(string.Empty, lines);
             }
 
             // Count > 0
             {
-                throw new NotImplementedException();
+                var lines = model.GetLinesRange(rowIndex, -1);
+                Assert.Equal(string.Empty, lines);
             }
 
             // Count reads beyond the document length
             {
-                throw new NotImplementedException();
+                var lines = model.GetLinesRange(rowIndex, -1);
+                Assert.Equal(string.Empty, lines);
             }
         }
 	}

@@ -215,8 +215,12 @@ public static class TextEditorModelHelper
 
 	public static string GetLinesRange(this ITextEditorModel model, int startingRowIndex, int count)
 	{
+		if (startingRowIndex > model.RowCount - 1)
+			return string.Empty;
+        
 		var startingPositionIndexInclusive = model.GetPositionIndex(startingRowIndex, 0);
-		var lastRowIndexExclusive = startingRowIndex + count;
+
+        var lastRowIndexExclusive = startingRowIndex + count;
 		int endingPositionIndexExclusive;
 
 		if (lastRowIndexExclusive > model.RowCount - 1)
