@@ -82,7 +82,7 @@ public partial class AutocompleteMenu : ComponentBase
 
                 // (2023-08-09) Looking into using an ICompilerService for autocompletion.
                 {
-                    var positionIndex = RenderBatch.Model.GetCursorPositionIndex(primaryCursor);
+                    var positionIndex = RenderBatch.Model.GetPositionIndex(primaryCursor);
 
                     var textSpan = new TextEditorTextSpan(
                         positionIndex,

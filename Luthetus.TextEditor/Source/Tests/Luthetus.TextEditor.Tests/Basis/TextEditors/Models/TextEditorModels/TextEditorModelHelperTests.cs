@@ -4,6 +4,9 @@ using Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorModels;
 
@@ -456,10 +459,10 @@ public class TextEditorModelHelperTests
         }
     }
 
-	/// <summary>
-	/// <see cref="TextEditorModelHelper.ApplyDecorationRange(ITextEditorModel, IEnumerable{RazorLib.Lexes.Models.TextEditorTextSpan})"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="TextEditorModelHelper.ApplyDecorationRange(ITextEditorModel, IEnumerable{TextEditorTextSpan})"/>
+    /// </summary>
+    [Fact]
 	public void ApplyDecorationRange()
 	{
 		throw new NotImplementedException();
@@ -474,125 +477,193 @@ public class TextEditorModelHelperTests
 		throw new NotImplementedException();
 	}
 
-	/// <summary>
-	/// <see cref="TextEditorModelHelper.GetAllText(ITextEditorModel)"/>
+    /// <summary>
+	/// <see cref="TextEditorModelHelper.GetAllRichCharacters(ITextEditorModel)"/>
 	/// </summary>
 	[Fact]
-	public void GetAllText()
-	{
+    public void GetAllRichCharacters()
+    {
         // Empty
         {
-            throw new NotImplementedException();
+            var sourceText = string.Empty;
+
+            var model = new TextEditorModel(
+                new ResourceUri($"/{nameof(GetAllRichCharacters)}.txt"),
+                DateTime.UtcNow,
+                ExtensionNoPeriodFacts.TXT,
+                sourceText,
+                null,
+                null);
+
+            var richCharacterBag = model.GetAllRichCharacters();
+
+            Assert.Empty(sourceText);
+            Assert.Empty(richCharacterBag);
         }
 
         // NotEmpty
         {
-		    throw new NotImplementedException();
-        }
-	}
+            TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var model);
 
-	/// <summary>
-	/// <see cref="TextEditorModelHelper.GetCursorPositionIndex(ITextEditorModel, TextEditorCursor)"/>
-	/// </summary>
-	[Fact]
-	public void GetCursorPositionIndex_TextEditorCursor()
+            var richCharacterBag = model.GetAllRichCharacters();
+
+            Assert.Equal(TestConstants.SOURCE_TEXT.Length, richCharacterBag.Length);
+
+            for (int i = 0; i < richCharacterBag.Length; i++)
+            {
+                var character = TestConstants.SOURCE_TEXT[i];
+                var richCharacter = richCharacterBag[i];
+
+                Assert.Equal(character, richCharacter.Value);
+                Assert.Equal((byte)GenericDecorationKind.None, richCharacter.DecorationByte);
+            }
+        }
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorModelHelper.GetAllText(ITextEditorModel)"/>
+    /// </summary>
+    [Fact]
+	public void GetAllText()
 	{
+        // Empty
+        {
+            var sourceText = string.Empty;
+
+            var model = new TextEditorModel(
+                new ResourceUri($"/{nameof(GetAllText)}.txt"),
+                DateTime.UtcNow,
+                ExtensionNoPeriodFacts.TXT,
+                sourceText,
+                null,
+                null);
+
+            var outputText = model.GetAllText();
+
+            Assert.Empty(sourceText);
+            Assert.Empty(outputText);
+        }
+
+        // NotEmpty
+        {
+            TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var model);
+
+            var outputText = model.GetAllText();
+
+            Assert.Equal(TestConstants.SOURCE_TEXT.Length, outputText.Length);
+
+            for (int i = 0; i < outputText.Length; i++)
+            {
+                var sourceCharacter = TestConstants.SOURCE_TEXT[i];
+                var outputCharacter = outputText[i];
+
+                Assert.Equal(sourceCharacter, outputCharacter);
+            }
+        }
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorModelHelper.GetPositionIndex(ITextEditorModel, TextEditorCursor)"/>
+    /// <br/>----<br/>
+    /// <see cref="TextEditorModelHelper.GetPositionIndex(ITextEditorModel, TextEditorCursorModifier)"/>
+	/// <see cref="TextEditorModelHelper.GetPositionIndex(ITextEditorModel, int, int)"/>
+    /// </summary>
+    [Fact]
+	public void GetPositionIndex()
+	{
+        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var model);
+
         // Cursor.RowIndex < 0
         {
-            throw new NotImplementedException();
+            var expectedPositionIndex = -1;
+
+            var rowIndex = -1;
+            var columnIndex = -1;
+            var pointPositionIndex = model.GetPositionIndex(rowIndex, columnIndex);
+            Assert.Equal(expectedPositionIndex, pointPositionIndex);
+
+            var cursor = new TextEditorCursor(rowIndex, columnIndex, true);
+            var cursorPositionIndex = model.GetPositionIndex(cursor);
+            Assert.Equal(expectedPositionIndex, cursorPositionIndex);
+
+            var cursorModifier = new TextEditorCursorModifier(cursor);
+            var modifierPositionIndex = model.GetPositionIndex(cursorModifier);
+            Assert.Equal(expectedPositionIndex, modifierPositionIndex);
         }
 
         // Cursor.RowIndex > 0 && Cursor.RowIndex is within bounds
         {
             // FirstRow
             {
-                throw new NotImplementedException();
+                var expectedPositionIndex = 1;
+
+                var rowIndex = 0;
+                var columnIndex = 1;
+                var pointPositionIndex = model.GetPositionIndex(rowIndex, columnIndex);
+                Assert.Equal(expectedPositionIndex, pointPositionIndex);
+
+                var cursor = new TextEditorCursor(rowIndex, columnIndex, true);
+                var cursorPositionIndex = model.GetPositionIndex(cursor);
+                Assert.Equal(expectedPositionIndex, cursorPositionIndex);
+
+                var cursorModifier = new TextEditorCursorModifier(cursor);
+                var modifierPositionIndex = model.GetPositionIndex(cursorModifier);
+                Assert.Equal(expectedPositionIndex, modifierPositionIndex);
             }
 
             // !FirstRow && !LastRow
             {
-                throw new NotImplementedException();
+                var expectedPositionIndex = 14;
+
+                var rowIndex = TestConstants.ROW_INDEX_WHICH_IS_BETWEEN_FIRST_AND_LAST_ROW;
+                var columnIndex = 1;
+                var pointPositionIndex = model.GetPositionIndex(rowIndex, columnIndex);
+                Assert.Equal(expectedPositionIndex, pointPositionIndex);
+
+                var cursor = new TextEditorCursor(rowIndex, columnIndex, true);
+                var cursorPositionIndex = model.GetPositionIndex(cursor);
+                Assert.Equal(expectedPositionIndex, cursorPositionIndex);
+
+                var cursorModifier = new TextEditorCursorModifier(cursor);
+                var modifierPositionIndex = model.GetPositionIndex(cursorModifier);
+                Assert.Equal(expectedPositionIndex, modifierPositionIndex);
             }
 
             // LastRow
             {
-                throw new NotImplementedException();
+                var expectedPositionIndex = 26;
+
+                var rowIndex = TestConstants.LAST_ROW_INDEX;
+                var columnIndex = 1;
+                var pointPositionIndex = model.GetPositionIndex(rowIndex, columnIndex);
+                Assert.Equal(expectedPositionIndex, pointPositionIndex);
+
+                var cursor = new TextEditorCursor(rowIndex, columnIndex, true);
+                var cursorPositionIndex = model.GetPositionIndex(cursor);
+                Assert.Equal(expectedPositionIndex, cursorPositionIndex);
+
+                var cursorModifier = new TextEditorCursorModifier(cursor);
+                var modifierPositionIndex = model.GetPositionIndex(cursorModifier);
+                Assert.Equal(expectedPositionIndex, modifierPositionIndex);
             }
         }
 
         // Cursor.RowIndex > 0 && Cursor.RowIndex is OUT of bounds
         {
-            throw new NotImplementedException();
-        }
-    }
+            var expectedPositionIndex = 27;
 
-    /// <summary>
-    /// <see cref="TextEditorModelHelper.GetCursorPositionIndex(ITextEditorModel, TextEditorCursorModifier)"/>
-    /// </summary>
-    [Fact]
-	public void GetCursorPositionIndex_TextEditorCursorModifier()
-	{
-        // CursorModifier.RowIndex < 0
-        {
-            throw new NotImplementedException();
-        }
+            var rowIndex = TestConstants.LARGE_OUT_OF_BOUNDS_ROW_INDEX;
+            var columnIndex = 2;
+            var pointPositionIndex = model.GetPositionIndex(rowIndex, columnIndex);
+            Assert.Equal(expectedPositionIndex, pointPositionIndex);
 
-        // CursorModifier.RowIndex > 0 && CursorModifier.RowIndex is within bounds
-        {
-            // FirstRow
-            {
-                throw new NotImplementedException();
-            }
+            var cursor = new TextEditorCursor(rowIndex, columnIndex, true);
+            var cursorPositionIndex = model.GetPositionIndex(cursor);
+            Assert.Equal(expectedPositionIndex, cursorPositionIndex);
 
-            // !FirstRow && !LastRow
-            {
-                throw new NotImplementedException();
-            }
-
-            // LastRow
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        // CursorModifier.RowIndex > 0 && CursorModifier.RowIndex is OUT of bounds
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-	/// <summary>
-	/// <see cref="TextEditorModelHelper.GetPositionIndex(ITextEditorModel, int, int)"/>
-	/// </summary>
-	[Fact]
-	public void GetPositionIndex()
-	{
-        // RowIndex < 0
-        {
-            throw new NotImplementedException();
-        }
-
-        // RowIndex > 0 && RowIndex is within bounds
-        {
-            // FirstRow
-            {
-                throw new NotImplementedException();
-            }
-
-            // !FirstRow && !LastRow
-            {
-                throw new NotImplementedException();
-            }
-
-            // LastRow
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        // RowIndex > 0 && RowIndex is OUT of bounds
-        {
-            throw new NotImplementedException();
+            var cursorModifier = new TextEditorCursorModifier(cursor);
+            var modifierPositionIndex = model.GetPositionIndex(cursorModifier);
+            Assert.Equal(expectedPositionIndex, modifierPositionIndex);
         }
     }
 
@@ -878,15 +949,6 @@ public class TextEditorModelHelperTests
 	/// </summary>
 	[Fact]
 	public void GetColumnIndexOfCharacterWithDifferingKind()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorModelHelper.GetAllRichCharacters(ITextEditorModel)"/>
-	/// </summary>
-	[Fact]
-	public void GetAllRichCharacters()
 	{
 		throw new NotImplementedException();
 	}

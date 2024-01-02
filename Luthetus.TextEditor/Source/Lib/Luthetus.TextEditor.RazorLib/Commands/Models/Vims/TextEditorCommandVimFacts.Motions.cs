@@ -180,7 +180,7 @@ public static partial class TextEditorCommandVimFacts
                     }
                     else if (columnsToMoveBy == 1 && !isRecursiveCall)
                     {
-                        var positionIndex = model.GetCursorPositionIndex(primaryCursor);
+                        var positionIndex = model.GetPositionIndex(primaryCursor);
                         var currentCharacterKind = model.GetCharacterKindAt(positionIndex);
                         var nextCharacterKind = model.GetCharacterKindAt(positionIndex + 1);
 
@@ -211,7 +211,7 @@ public static partial class TextEditorCommandVimFacts
             }
 
             if (TextEditorSelectionHelper.HasSelectedText(primaryCursor))
-                primaryCursor.SelectionEndingPositionIndex = model.GetCursorPositionIndex(primaryCursor);
+                primaryCursor.SelectionEndingPositionIndex = model.GetPositionIndex(primaryCursor);
         }
 
         public static readonly TextEditorCommand Back = new(
@@ -287,7 +287,7 @@ public static partial class TextEditorCommandVimFacts
             if (TextEditorSelectionHelper.HasSelectedText(primaryCursor))
             {
                 primaryCursor.SelectionEndingPositionIndex =
-                    model.GetCursorPositionIndex(primaryCursor);
+                    model.GetPositionIndex(primaryCursor);
             }
 
             return Task.CompletedTask;

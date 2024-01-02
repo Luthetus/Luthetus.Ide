@@ -727,7 +727,7 @@ public class TextEditorCommandDefaultFunctions
             if (cursorModifierBag is null || primaryCursorModifier is null)
                 return;
 
-            var cursorPositionIndex = modelModifier.GetCursorPositionIndex(primaryCursorModifier);
+            var cursorPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
 
             if (commandArgs.ShouldSelectText)
             {
@@ -816,7 +816,7 @@ public class TextEditorCommandDefaultFunctions
                         primaryCursorModifier)
                     .Invoke(editContext);
 
-                var temporaryCursorPositionIndex = modelModifier.GetCursorPositionIndex(
+                var temporaryCursorPositionIndex = modelModifier.GetPositionIndex(
                     temporaryCursor);
 
                 var characterAt = modelModifier.GetTextAt(temporaryCursorPositionIndex);
@@ -837,7 +837,7 @@ public class TextEditorCommandDefaultFunctions
             if (commandArgs.ShouldSelectText)
             {
                 primaryCursorModifier.SelectionEndingPositionIndex =
-                    modelModifier.GetCursorPositionIndex(temporaryCursor);
+                    modelModifier.GetPositionIndex(temporaryCursor);
             }
 
             primaryCursorModifier.RowIndex = temporaryCursor.RowIndex;
@@ -867,7 +867,7 @@ public class TextEditorCommandDefaultFunctions
             if (modelModifier.CompilerService.Binder is null)
                 return Task.CompletedTask;
 
-            var positionIndex = modelModifier.GetCursorPositionIndex(primaryCursorModifier);
+            var positionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
             var wordTextSpan = modelModifier.GetWordAt(positionIndex);
 
             if (wordTextSpan is null)

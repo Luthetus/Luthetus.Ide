@@ -163,18 +163,21 @@ public static class TextEditorModelHelper
 		return new string(model.ContentBag.Select(rc => rc.Value).ToArray());
 	}
 
-	public static int GetCursorPositionIndex(
+	public static int GetPositionIndex(
 		this ITextEditorModel model, TextEditorCursor textEditorCursor)
 	{
 		return model.GetPositionIndex(textEditorCursor.RowIndex, textEditorCursor.ColumnIndex);
 	}
 	
-	public static int GetCursorPositionIndex(
+	public static int GetPositionIndex(
 		this ITextEditorModel model, TextEditorCursorModifier textEditorCursorModifier)
 	{
 		return model.GetPositionIndex(textEditorCursorModifier.RowIndex, textEditorCursorModifier.ColumnIndex);
 	}
 
+	/// <summary>
+	/// TODO: How should this method handle input which is out of bounds?
+	/// </summary>
 	public static int GetPositionIndex(
 		this ITextEditorModel model, int rowIndex, int columnIndex)
 	{
@@ -466,7 +469,7 @@ public static class TextEditorModelHelper
 	public static string GetTextOffsettingCursor(
 		this ITextEditorModel model, TextEditorCursor textEditorCursor)
 	{
-		var cursorPositionIndex = model.GetCursorPositionIndex(textEditorCursor);
+		var cursorPositionIndex = model.GetPositionIndex(textEditorCursor);
 		var startOfRowTuple = model.GetRowEndingThatCreatedRow(textEditorCursor.RowIndex);
 
 		return model.GetTextRange(startOfRowTuple.EndPositionIndexExclusive, cursorPositionIndex - startOfRowTuple.EndPositionIndexExclusive);

@@ -518,7 +518,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
                 CursorDisplay?.PauseBlinkAnimation();
 
-                var cursorPositionIndex = modelModifier.GetCursorPositionIndex(new TextEditorCursor(
+                var cursorPositionIndex = modelModifier.GetPositionIndex(new TextEditorCursor(
                     rowAndColumnIndex.rowIndex,
                     rowAndColumnIndex.columnIndex,
                     true));
@@ -626,7 +626,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
                     CursorDisplay?.PauseBlinkAnimation();
 
-                    primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetCursorPositionIndex(primaryCursorModifier);
+                    primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
                 });
         }
         else
@@ -795,7 +795,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             mouseEventArgs.ClientX,
             mouseEventArgs.ClientY);
 
-        var cursorPositionIndex = model.GetCursorPositionIndex(new TextEditorCursor(
+        var cursorPositionIndex = model.GetPositionIndex(new TextEditorCursor(
             rowAndColumnIndex.rowIndex,
             rowAndColumnIndex.columnIndex,
             true));
