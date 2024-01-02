@@ -217,7 +217,16 @@ public static class TextEditorModelHelper
 	{
 		var startingPositionIndexInclusive = model.GetPositionIndex(startingRowIndex, 0);
 		var lastRowIndexExclusive = startingRowIndex + count;
-		var endingPositionIndexExclusive = model.GetPositionIndex(lastRowIndexExclusive, 0);
+		int endingPositionIndexExclusive;
+
+		if (lastRowIndexExclusive > model.RowCount - 1)
+		{
+			endingPositionIndexExclusive = model.DocumentLength;
+        }
+		else
+		{
+			endingPositionIndexExclusive = model.GetPositionIndex(lastRowIndexExclusive, 0);
+        }
 
 		return model.GetString(
 			startingPositionIndexInclusive,

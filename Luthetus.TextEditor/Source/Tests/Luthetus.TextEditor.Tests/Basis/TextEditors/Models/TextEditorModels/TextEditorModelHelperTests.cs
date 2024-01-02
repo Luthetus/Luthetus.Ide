@@ -765,7 +765,7 @@ public class TextEditorModelHelperTests
             }
         }
 
-        // PositionIndex > 0 && PositionIndex is within bounds
+        // PositionIndex is within bounds
         {
             // PositionIndex resides on the FirstRow
             {
@@ -923,77 +923,120 @@ public class TextEditorModelHelperTests
 	[Fact]
 	public void GetLinesRange()
 	{
+        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var model);
+
         // rowIndex < 0
         {
+            var rowIndex = -1;
+
             // Count < 0
             {
-                throw new NotImplementedException();
+                var lines = model.GetLinesRange(rowIndex, -1);
+                Assert.Equal(string.Empty, lines);
             }
 
             // Count == 0
             {
-                throw new NotImplementedException();
+                var lines = model.GetLinesRange(rowIndex, 0);
+                Assert.Equal(string.Empty, lines);
             }
 
             // Count > 0
             {
-                throw new NotImplementedException();
+                var lines = model.GetLinesRange(rowIndex, 1);
+                Assert.Equal(string.Empty, lines);
             }
 
             // Count reads beyond the document length
             {
-                throw new NotImplementedException();
+                var lines = model.GetLinesRange(rowIndex, TestConstants.ROW_COUNT + 5);
+                Assert.Equal(TestConstants.SOURCE_TEXT, lines);
             }
         }
 
-        // rowIndex == 0
+        // rowIndex is within bounds
         {
-            // Count < 0
+            // rowIndex == 0
             {
-                throw new NotImplementedException();
+                var rowIndex = 0;
+
+                // Count < 0
+                {
+                    throw new NotImplementedException();
+                }
+
+                // Count == 0
+                {
+                    throw new NotImplementedException();
+                }
+
+                // Count > 0
+                {
+                    throw new NotImplementedException();
+                }
+
+                // Count reads beyond the document length
+                {
+                    throw new NotImplementedException();
+                }
             }
 
-            // Count == 0
+            //  rowIndex is not the FirstRow nor the LastRow
             {
-                throw new NotImplementedException();
+                var rowIndex = TestConstants.ROW_INDEX_WHICH_IS_BETWEEN_FIRST_AND_LAST_ROW;
+
+                // Count < 0
+                {
+                    throw new NotImplementedException();
+                }
+
+                // Count == 0
+                {
+                    throw new NotImplementedException();
+                }
+
+                // Count > 0
+                {
+                    throw new NotImplementedException();
+                }
+
+                // Count reads beyond the document length
+                {
+                    throw new NotImplementedException();
+                }
             }
 
-            // Count > 0
+            // rowIndex resides on the LastRow
             {
-                throw new NotImplementedException();
-            }
+                var rowIndex = TestConstants.LAST_ROW_INDEX;
 
-            // Count reads beyond the document length
-            {
-                throw new NotImplementedException();
-            }
-        }
+                // Count < 0
+                {
+                    throw new NotImplementedException();
+                }
 
-        // rowIndex > 0 && rowIndex is within bounds
-        {
-            // Count < 0
-            {
-                throw new NotImplementedException();
-            }
+                // Count == 0
+                {
+                    throw new NotImplementedException();
+                }
 
-            // Count == 0
-            {
-                throw new NotImplementedException();
-            }
+                // Count > 0
+                {
+                    throw new NotImplementedException();
+                }
 
-            // Count > 0
-            {
-                throw new NotImplementedException();
+                // Count reads beyond the document length
+                {
+                    throw new NotImplementedException();
+                }
             }
-
-            // Count reads beyond the document length
-            {
-                throw new NotImplementedException();
-            }
+            
         }
 
         // rowIndex > 0 && rowIndex is OUT of bounds
         {
+            var rowIndex = TestConstants.LARGE_OUT_OF_BOUNDS_ROW_INDEX;
+
             // Count < 0
             {
                 throw new NotImplementedException();
