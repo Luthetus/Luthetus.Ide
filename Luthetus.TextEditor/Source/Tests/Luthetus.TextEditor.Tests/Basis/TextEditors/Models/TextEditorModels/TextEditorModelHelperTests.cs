@@ -7,6 +7,7 @@ using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorModels;
 
@@ -668,66 +669,99 @@ public class TextEditorModelHelperTests
     }
 
 	/// <summary>
-	/// <see cref="TextEditorModelHelper.GetTextAt(ITextEditorModel, int)"/>
+	/// <see cref="TextEditorModelHelper.GetCharacter(ITextEditorModel, int)"/>
 	/// </summary>
 	[Fact]
-	public void GetTextAt()
+	public void GetCharacter()
 	{
+        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var model);
+
         // PositionIndex < 0
         {
-            throw new NotImplementedException();
+            var expectedCharacter = ParserFacts.END_OF_FILE;
+            var positionIndex = -1;
+            var actualCharacter = model.GetCharacter(positionIndex);
+            Assert.Equal(expectedCharacter, actualCharacter);
         }
 
         // PositionIndex > 0 && PositionIndex is within bounds
         {
-            // PositionIndex resides on the FirstRow
+            // FirstRow
             {
-                throw new NotImplementedException();
+                var expectedCharacter = 'e';
+                var positionIndex = 1;
+                var actualCharacter = model.GetCharacter(positionIndex);
+                Assert.Equal(expectedCharacter, actualCharacter);
             }
 
-            //  PositionIndex does not reside on the FirstRow nor the LastRow
+            // !FirstRow && !LastRow
             {
-                throw new NotImplementedException();
+                var expectedCharacter = ' ';
+                var positionIndex = 14;
+                var actualCharacter = model.GetCharacter(positionIndex);
+                Assert.Equal(expectedCharacter, actualCharacter);
             }
 
-            // PositionIndex resides on the LastRow
+            // LastRow
             {
-                throw new NotImplementedException();
+                var expectedCharacter = 'a';
+                var positionIndex = 26;
+                var actualCharacter = model.GetCharacter(positionIndex);
+                Assert.Equal(expectedCharacter, actualCharacter);
             }
         }
 
         // PositionIndex > 0 && PositionIndex is OUT of bounds
         {
-            throw new NotImplementedException();
+            var expectedCharacter = ParserFacts.END_OF_FILE;
+            var positionIndex = 43;
+            var actualCharacter = model.GetCharacter(positionIndex);
+            Assert.Equal(expectedCharacter, actualCharacter);
         }
     }
 
 	/// <summary>
-	/// <see cref="TextEditorModelHelper.GetTextRange(ITextEditorModel, int, int)"/>
+	/// <see cref="TextEditorModelHelper.GetString(ITextEditorModel, int, int)"/>
 	/// </summary>
 	[Fact]
-	public void GetTextRange()
+	public void GetString()
 	{
+        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var model);
+
         // PositionIndex < 0
         {
+            var positionIndex = -1;
+
             // Count < 0
             {
-                throw new NotImplementedException();
+                var expectedString = string.Empty;
+                var count = -1;
+                var actualString = model.GetString(positionIndex, count);
+                Assert.Equal(expectedString, actualString);
             }
 
             // Count == 0
             {
-                throw new NotImplementedException();
+                var expectedString = string.Empty;
+                var count = 0;
+                var actualString = model.GetString(positionIndex, count);
+                Assert.Equal(expectedString, actualString);
             }
 
             // Count > 0
             {
-                throw new NotImplementedException();
+                var expectedString = "H";
+                var count = 1;
+                var actualString = model.GetString(positionIndex, count);
+                Assert.Equal(expectedString, actualString);
             }
 
             // Count reads beyond the document length
             {
-                throw new NotImplementedException();
+                var expectedString = TestConstants.SOURCE_TEXT;
+                var count = 60;
+                var actualString = model.GetString(positionIndex, count);
+                Assert.Equal(expectedString, actualString);
             }
         }
 
@@ -735,94 +769,150 @@ public class TextEditorModelHelperTests
         {
             // PositionIndex resides on the FirstRow
             {
+                var positionIndex = 1;
+
                 // Count < 0
                 {
-                    throw new NotImplementedException();
+                    var expectedString = string.Empty;
+                    var count = -1;
+                    var actualString = model.GetString(positionIndex, count);
+                    Assert.Equal(expectedString, actualString);
                 }
 
                 // Count == 0
                 {
-                    throw new NotImplementedException();
+                    var expectedString = string.Empty;
+                    var count = 0;
+                    var actualString = model.GetString(positionIndex, count);
+                    Assert.Equal(expectedString, actualString);
                 }
 
                 // Count > 0
                 {
-                    throw new NotImplementedException();
+                    var expectedString = "e";
+                    var count = 1;
+                    var actualString = model.GetString(positionIndex, count);
+                    Assert.Equal(expectedString, actualString);
                 }
 
                 // Count reads beyond the document length
                 {
-                    throw new NotImplementedException();
+                    var expectedString = TestConstants.SOURCE_TEXT[1..];
+                    var count = 60;
+                    var actualString = model.GetString(positionIndex, count);
+                    Assert.Equal(expectedString, actualString);
                 }
             }
 
             //  PositionIndex does not reside on the FirstRow nor the LastRow
             {
+                var positionIndex = 14;
+
                 // Count < 0
                 {
-                    throw new NotImplementedException();
+                    var expectedString = string.Empty;
+                    var count = -1;
+                    var actualString = model.GetString(positionIndex, count);
+                    Assert.Equal(expectedString, actualString);
                 }
 
                 // Count == 0
                 {
-                    throw new NotImplementedException();
+                    var expectedString = string.Empty;
+                    var count = 0;
+                    var actualString = model.GetString(positionIndex, count);
+                    Assert.Equal(expectedString, actualString);
                 }
 
                 // Count > 0
                 {
-                    throw new NotImplementedException();
+                    var expectedString = " ";
+                    var count = 1;
+                    var actualString = model.GetString(positionIndex, count);
+                    Assert.Equal(expectedString, actualString);
                 }
 
                 // Count reads beyond the document length
                 {
-                    throw new NotImplementedException();
+                    var expectedString = TestConstants.SOURCE_TEXT[14..];
+                    var count = 60;
+                    var actualString = model.GetString(positionIndex, count);
+                    Assert.Equal(expectedString, actualString);
                 }
             }
 
             // PositionIndex resides on the LastRow
             {
+                var positionIndex = 26;
+
                 // Count < 0
                 {
-                    throw new NotImplementedException();
+                    var expectedString = string.Empty;
+                    var count = -1;
+                    var actualString = model.GetString(positionIndex, count);
+                    Assert.Equal(expectedString, actualString);
                 }
 
                 // Count == 0
                 {
-                    throw new NotImplementedException();
+                    var expectedString = string.Empty;
+                    var count = 0;
+                    var actualString = model.GetString(positionIndex, count);
+                    Assert.Equal(expectedString, actualString);
                 }
 
                 // Count > 0
                 {
-                    throw new NotImplementedException();
+                    var expectedString = "a";
+                    var count = 1;
+                    var actualString = model.GetString(positionIndex, count);
+                    Assert.Equal(expectedString, actualString);
                 }
 
                 // Count reads beyond the document length
                 {
-                    throw new NotImplementedException();
+                    var expectedString = TestConstants.SOURCE_TEXT[26..];
+                    var count = 60;
+                    var actualString = model.GetString(positionIndex, count);
+                    Assert.Equal(expectedString, actualString);
                 }
             }
         }
 
         // PositionIndex > 0 && PositionIndex is OUT of bounds
         {
+            var positionIndex = 43;
+
             // Count < 0
             {
-                throw new NotImplementedException();
+                var expectedString = string.Empty;
+                var count = -1;
+                var actualString = model.GetString(positionIndex, count);
+                Assert.Equal(expectedString, actualString);
             }
 
             // Count == 0
             {
-                throw new NotImplementedException();
+                var expectedString = string.Empty;
+                var count = 0;
+                var actualString = model.GetString(positionIndex, count);
+                Assert.Equal(expectedString, actualString);
             }
 
             // Count > 0
             {
-                throw new NotImplementedException();
+                var expectedString = string.Empty;
+                var count = 1;
+                var actualString = model.GetString(positionIndex, count);
+                Assert.Equal(expectedString, actualString);
             }
 
             // Count reads beyond the document length
             {
-                throw new NotImplementedException();
+                var expectedString = string.Empty;
+                var count = 60;
+                var actualString = model.GetString(positionIndex, count);
+                Assert.Equal(expectedString, actualString);
             }
         }
     }

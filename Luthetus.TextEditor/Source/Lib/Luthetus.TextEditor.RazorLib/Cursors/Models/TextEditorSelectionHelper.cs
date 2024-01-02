@@ -55,7 +55,7 @@ public static class TextEditorSelectionHelper
         {
             var selectionBounds = GetSelectionBounds(anchorPositionIndex, endingPositionIndex);
 
-            var result = textEditorModel.GetTextRange(
+            var result = textEditorModel.GetString(
                 selectionBounds.lowerPositionIndexInclusive,
                 selectionBounds.upperPositionIndexExclusive - selectionBounds.lowerPositionIndexInclusive);
 

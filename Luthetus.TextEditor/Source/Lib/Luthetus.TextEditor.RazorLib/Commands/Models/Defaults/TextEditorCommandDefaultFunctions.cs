@@ -531,7 +531,7 @@ public class TextEditorCommandDefaultFunctions
 
                 characterReadCount = Math.Min(lengthOfRow, characterReadCount);
 
-                var readResult = modelModifier.GetTextRange(rowPositionIndex, characterReadCount);
+                var readResult = modelModifier.GetString(rowPositionIndex, characterReadCount);
                 var removeCharacterCount = 0;
 
                 if (readResult.StartsWith(KeyboardKeyFacts.WhitespaceCharacters.TAB))
@@ -739,8 +739,8 @@ public class TextEditorCommandDefaultFunctions
                 primaryCursorModifier.SelectionAnchorPositionIndex = null;
             }
 
-            var previousCharacter = modelModifier.GetTextAt(cursorPositionIndex - 1);
-            var currentCharacter = modelModifier.GetTextAt(cursorPositionIndex);
+            var previousCharacter = modelModifier.GetCharacter(cursorPositionIndex - 1);
+            var currentCharacter = modelModifier.GetCharacter(cursorPositionIndex);
 
             char? characterToMatch = null;
             char? match = null;
@@ -819,7 +819,7 @@ public class TextEditorCommandDefaultFunctions
                 var temporaryCursorPositionIndex = modelModifier.GetPositionIndex(
                     temporaryCursor);
 
-                var characterAt = modelModifier.GetTextAt(temporaryCursorPositionIndex);
+                var characterAt = modelModifier.GetCharacter(temporaryCursorPositionIndex);
 
                 if (characterAt == match)
                     unmatchedCharacters--;

@@ -185,7 +185,10 @@ public static class TextEditorModelHelper
 		return startOfRowPositionIndex + columnIndex;
 	}
 
-	public static char GetTextAt(
+    /// <summary>
+    /// To receive a <see cref="string"/> value, one can use <see cref="GetString"/> instead.
+    /// </summary>
+    public static char GetCharacter(
 		this ITextEditorModel model,
 		int positionIndex)
 	{
@@ -195,7 +198,10 @@ public static class TextEditorModelHelper
 		return model.ContentBag[positionIndex].Value;
 	}
 
-	public static string GetTextRange(
+    /// <summary>
+    /// To receive a <see cref="char"/> value, one can use <see cref="GetCharacter"/> instead.
+    /// </summary>
+    public static string GetString(
 		this ITextEditorModel model,
 		int startingPositionIndex,
 		int count)
@@ -213,7 +219,7 @@ public static class TextEditorModelHelper
 		var lastRowIndexExclusive = startingRowIndex + count;
 		var endingPositionIndexExclusive = model.GetPositionIndex(lastRowIndexExclusive, 0);
 
-		return model.GetTextRange(
+		return model.GetString(
 			startingPositionIndexInclusive,
 			endingPositionIndexExclusive - startingPositionIndexInclusive);
 	}
@@ -221,8 +227,8 @@ public static class TextEditorModelHelper
 	/// <summary>Given a <see cref="TextEditorModel"/> with a preference for the right side of the cursor, the following conditional branch will play out.<br/><br/>-IF the cursor is amongst a word, that word will be returned.<br/><br/>-ELSE IF the start of a word is to the right of the cursor that word will be returned.<br/><br/>-ELSE IF the end of a word is to the left of the cursor that word will be returned.</summary>
 	public static TextEditorTextSpan? GetWordAt(this ITextEditorModel model, int positionIndex)
 	{
-		var previousCharacter = model.GetTextAt(positionIndex - 1);
-		var currentCharacter = model.GetTextAt(positionIndex);
+		var previousCharacter = model.GetCharacter(positionIndex - 1);
+		var currentCharacter = model.GetCharacter(positionIndex);
 
 		var previousCharacterKind = CharacterKindHelper.CharToCharacterKind(previousCharacter);
 		var currentCharacterKind = CharacterKindHelper.CharToCharacterKind(currentCharacter);
@@ -434,7 +440,7 @@ public static class TextEditorModelHelper
 
 			var wordPositionIndexStartInclusive = wordPositionIndexEndExclusive - wordLength;
 
-			return model.GetTextRange(wordPositionIndexStartInclusive, wordLength);
+			return model.GetString(wordPositionIndexStartInclusive, wordLength);
 		}
 
 		return null;
@@ -459,7 +465,7 @@ public static class TextEditorModelHelper
 
 			var wordLength = wordColumnIndexEndExclusive - columnIndex;
 
-			return model.GetTextRange(wordPositionIndexStartInclusive, wordLength);
+			return model.GetString(wordPositionIndexStartInclusive, wordLength);
 		}
 
 		return null;
@@ -472,7 +478,7 @@ public static class TextEditorModelHelper
 		var cursorPositionIndex = model.GetPositionIndex(textEditorCursor);
 		var startOfRowTuple = model.GetRowEndingThatCreatedRow(textEditorCursor.RowIndex);
 
-		return model.GetTextRange(startOfRowTuple.EndPositionIndexExclusive, cursorPositionIndex - startOfRowTuple.EndPositionIndexExclusive);
+		return model.GetString(startOfRowTuple.EndPositionIndexExclusive, cursorPositionIndex - startOfRowTuple.EndPositionIndexExclusive);
 	}
 
 	public static string GetTextOnRow(
@@ -481,6 +487,6 @@ public static class TextEditorModelHelper
 		var startOfRowTuple = model.GetRowEndingThatCreatedRow(rowIndex);
 		var lengthOfRow = model.GetLengthOfRow(rowIndex);
 
-		return model.GetTextRange(startOfRowTuple.EndPositionIndexExclusive, lengthOfRow);
+		return model.GetString(startOfRowTuple.EndPositionIndexExclusive, lengthOfRow);
 	}
 }
