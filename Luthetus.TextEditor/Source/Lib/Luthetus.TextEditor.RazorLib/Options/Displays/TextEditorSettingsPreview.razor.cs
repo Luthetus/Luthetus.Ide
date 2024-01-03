@@ -30,7 +30,7 @@ public partial class TextEditorSettingsPreview : ComponentBase
         TextEditorStyleCssString = "height: 100%;",
         IncludeHeaderHelperComponent = false,
         IncludeFooterHelperComponent = false,
-        AfterOnKeyDownAsync = (_, _, _, _) => { return Task.CompletedTask; }
+        AfterOnKeyDownAsyncFactory = (_, _, _, _) => { return editContext => Task.CompletedTask; }
     };
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

@@ -274,9 +274,13 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                 if (modelModifier is null || viewModelModifier is null)
                     return;
 
-                var primaryCursor = viewModelModifier.ViewModel.PrimaryCursor;
-                var cursorBag = new TextEditorCursor[] { primaryCursor }.ToImmutableArray();
-                var hasSelection = TextEditorSelectionHelper.HasSelectedText(primaryCursor.Selection);
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                if (primaryCursorModifier is null)
+                    return;
+
+                var hasSelection = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
                 var layerKey = ((ITextEditorKeymap)TextEditorService.OptionsStateWrap.Value.Options.Keymap!).GetLayer(hasSelection);
 
                 var keymapArgument = keyboardEventArgs.ToKeymapArgument() with
@@ -374,23 +378,22 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                         command is TextEditorCommand commandTextEditor &&
                         commandTextEditor.ShouldScrollCursorIntoView)
                     {
-                        primaryCursor.ShouldRevealCursor = true;
+                        primaryCursorModifier.ShouldRevealCursor = true;
                     }
                 }
 
-                var afterOnKeyDownAsync = ViewModelDisplayOptions.AfterOnKeyDownAsync ?? HandleAfterOnKeyDownAsync;
+                var afterOnKeyDownAsyncFactory = ViewModelDisplayOptions.AfterOnKeyDownAsyncFactory ?? HandleAfterOnKeyDownAsyncFactory;
 
                 var cursorDisplay = CursorDisplay;
 
                 if (cursorDisplay is not null)
                 {
-                    var textEditor = modelModifier;
-
-                    await afterOnKeyDownAsync.Invoke(
-                        textEditor,
-                        cursorBag,
-                        keyboardEventArgs,
-                        cursorDisplay.SetShouldDisplayMenuAsync);
+                    await afterOnKeyDownAsyncFactory(
+                            modelModifier.ResourceUri,
+                            viewModelModifier.ViewModel.ViewModelKey,
+                            keyboardEventArgs,
+                            cursorDisplay.SetShouldDisplayMenuAsync)
+                        .Invoke(editContext);
                 }
             });
     }
@@ -726,41 +729,48 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     }
 
     /// <summary>The default <see cref="AfterOnKeyDownAsync"/> will provide syntax highlighting, and autocomplete.<br/><br/>The syntax highlighting occurs on ';', whitespace, paste, undo, redo<br/><br/>The autocomplete occurs on LetterOrDigit typed or { Ctrl + Space }. Furthermore, the autocomplete is done via <see cref="IAutocompleteService"/> and the one can provide their own implementation when registering the Luthetus.TextEditor services using <see cref="LuthetusTextEditorOptions.AutocompleteServiceFactory"/></summary>
-    public async Task HandleAfterOnKeyDownAsync(
-        ITextEditorModel textEditor,
-        ImmutableArray<TextEditorCursor> cursorBag,
+    public TextEditorEdit HandleAfterOnKeyDownAsyncFactory(
+        ResourceUri resourceUri,
+        Key<TextEditorViewModel> viewModelKey,
         KeyboardEventArgs keyboardEventArgs,
         Func<TextEditorMenuKind, bool, Task> setTextEditorMenuKind)
     {
-        var primaryCursor = cursorBag.First(x => x.IsPrimaryCursor);
-
-        // Indexing can be invoked and this method still check for syntax highlighting and such
-        if (IsAutocompleteIndexerInvoker(keyboardEventArgs))
+        return async editContext =>
         {
-            _ = Task.Run(async () =>
+            var modelModifier = editContext.GetModelModifier(resourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+            if (modelModifier is null || viewModelModifier is null)
+                return;
+
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (primaryCursorModifier is null)
+                return;
+
+            // Indexing can be invoked and this method still check for syntax highlighting and such
+            if (IsAutocompleteIndexerInvoker(keyboardEventArgs))
             {
-                if (primaryCursor.ColumnIndex > 0)
+                if (primaryCursorModifier.ColumnIndex > 0)
                 {
                     // All keyboardEventArgs that return true from "IsAutocompleteIndexerInvoker"
                     // are to be 1 character long, as well either specific whitespace or punctuation.
                     // Therefore 1 character behind might be a word that can be indexed.
-                    var word = textEditor.ReadPreviousWordOrDefault(
-                        primaryCursor.RowIndex,
-                        primaryCursor.ColumnIndex);
+                    var word = modelModifier.ReadPreviousWordOrDefault(
+                        primaryCursorModifier.RowIndex,
+                        primaryCursorModifier.ColumnIndex);
 
                     if (word is not null)
                         await AutocompleteIndexer.IndexWordAsync(word);
                 }
-            }).ConfigureAwait(false);
-        }
+            }
 
-        if (IsAutocompleteMenuInvoker(keyboardEventArgs))
-        {
-            await setTextEditorMenuKind.Invoke(TextEditorMenuKind.AutoCompleteMenu, true);
-        }
-        else if (IsSyntaxHighlightingInvoker(keyboardEventArgs))
-        {
-            _ = Task.Run(async () =>
+            if (IsAutocompleteMenuInvoker(keyboardEventArgs))
+            {
+                await setTextEditorMenuKind.Invoke(TextEditorMenuKind.AutoCompleteMenu, true);
+            }
+            else if (IsSyntaxHighlightingInvoker(keyboardEventArgs))
             {
                 await _throttleApplySyntaxHighlighting.FireAsync(async _ =>
                 {
@@ -771,16 +781,14 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
                     if (model is not null)
                     {
-                        textEditor = model;
-
-                        await textEditor.ApplySyntaxHighlightingAsync();
+                        await modelModifier.ApplySyntaxHighlightingAsync();
 
                         if (viewModel is not null && model.CompilerService is not null)
                             model.CompilerService.ResourceWasModified(model.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
                     }
                 });
-            }).ConfigureAwait(false);
-        }
+            }
+        };
     }
 
     private async Task HandleMouseStoppedMovingEventAsync(MouseEventArgs mouseEventArgs)
