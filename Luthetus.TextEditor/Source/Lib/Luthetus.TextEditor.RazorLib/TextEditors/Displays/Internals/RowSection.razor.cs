@@ -5,11 +5,15 @@ using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
 public partial class RowSection : ComponentBase
 {
+    [Inject]
+    private ITextEditorService TextEditorService { get; set; } = null!;
+
     [CascadingParameter]
     public TextEditorRenderBatch RenderBatch { get; set; } = null!;
 
@@ -27,7 +31,7 @@ public partial class RowSection : ComponentBase
     [Parameter, EditorRequired]
     public RenderFragment? AutoCompleteMenuRenderFragmentOverride { get; set; }
     [Parameter, EditorRequired]
-    public TextEditorCursorSnapshot PrimaryCursorSnapshot { get; set; } = null!;
+    public TextEditorCursor PrimaryCursor { get; set; } = null!;
 
     [Parameter]
     public bool IncludeContextMenuHelperComponent { get; set; }
@@ -96,24 +100,19 @@ public partial class RowSection : ComponentBase
 
     private void VirtualizationDisplayItemsProviderFunc(VirtualizationRequest virtualizationRequest)
     {
-        _ = Task.Run(async () =>
-        {
-            Task calculateVirtualizationResultTask = Task.CompletedTask;
+        var model = RenderBatch.Model;
+        var viewModel = RenderBatch.ViewModel;
 
-            try
-            {
-                calculateVirtualizationResultTask = RenderBatch.ViewModel!.CalculateVirtualizationResultAsync(
-                    RenderBatch.Model!,
-                    null,
-                    virtualizationRequest.CancellationToken);
+        if (model is null || viewModel is null)
+            return;
 
-                await calculateVirtualizationResultTask;
-            }
-            catch
-            {
-                if (!calculateVirtualizationResultTask.IsCanceled)
-                    throw;
-            }
-        }, CancellationToken.None);
+        var primaryCursor = viewModel.PrimaryCursor;
+
+        TextEditorService.Post(
+            nameof(VirtualizationDisplayItemsProviderFunc),
+            TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
+                model.ResourceUri,
+                viewModel.ViewModelKey,
+                virtualizationRequest.CancellationToken));
     }
 }

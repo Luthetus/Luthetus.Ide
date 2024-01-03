@@ -21,8 +21,8 @@ public partial class EditorSync
         IAbsolutePath absolutePath,
         string absolutePathString)
     {
-        var textEditorModel = _textEditorService.Model
-            .FindOrDefault(new(absolutePathString));
+        var textEditorModel = _textEditorService.ModelApi
+            .GetOrDefault(new(absolutePathString));
 
         if (textEditorModel is null)
         {
@@ -39,22 +39,21 @@ public partial class EditorSync
                 absolutePath.ExtensionNoPeriod,
                 content,
                 decorationMapper,
-                compilerService,
-                null);
+                compilerService);
 
             textEditorModel.CompilerService.RegisterResource(textEditorModel.ResourceUri);
 
-            _textEditorService.Model.RegisterCustom(textEditorModel);
+            _textEditorService.ModelApi.RegisterCustom(textEditorModel);
 
-            _textEditorService.Model.RegisterPresentationModel(
+            _textEditorService.ModelApi.RegisterPresentationModel(
                 textEditorModel.ResourceUri,
                 CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
 
-            _textEditorService.Model.RegisterPresentationModel(
+            _textEditorService.ModelApi.RegisterPresentationModel(
                 textEditorModel.ResourceUri,
                 DiffPresentationFacts.EmptyInPresentationModel);
 
-            _textEditorService.Model.RegisterPresentationModel(
+            _textEditorService.ModelApi.RegisterPresentationModel(
                 textEditorModel.ResourceUri,
                 DiffPresentationFacts.EmptyOutPresentationModel);
 
@@ -95,9 +94,9 @@ public partial class EditorSync
                             nameof(IBooleanPromptOrCancelRendererType.OnAfterAcceptAction),
                             new Action(() =>
                             {
-                                BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+								BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
                                     "Check If Contexts Were Modified",
-                                    async () =>
+                                    (async () =>
                                     {
                                         dispatcher.Dispatch(new NotificationState.DisposeAction(
                                             notificationInformativeKey));
@@ -105,13 +104,20 @@ public partial class EditorSync
                                         var content = await _fileSystemProvider.File
                                             .ReadAllTextAsync(inputFileAbsolutePathString);
 
-                                        _textEditorService.Model.Reload(
-                                            textEditorModel.ResourceUri,
-                                            content,
-                                            fileLastWriteTime);
+                                        _textEditorService.Post(
+                                            nameof(CheckIfContentsWereModifiedAsync),
+                                            async editContext =>
+                                            {
+                                                await _textEditorService.ModelApi
+                                                    .ReloadFactory(
+                                                        textEditorModel.ResourceUri,
+                                                        content,
+                                                        fileLastWriteTime)
+                                                    .Invoke(editContext);
 
-                                        await textEditorModel.ApplySyntaxHighlightingAsync();
-                                    });
+                                                await textEditorModel.ApplySyntaxHighlightingAsync();
+                                            });
+                                    }));
                             })
                         },
                         {
@@ -137,7 +143,7 @@ public partial class EditorSync
         bool shouldSetFocusToEditor,
         TextEditorModel textEditorModel)
     {
-        var viewModel = _textEditorService.Model
+        var viewModel = _textEditorService.ModelApi
             .GetViewModelsOrEmpty(textEditorModel.ResourceUri)
             .FirstOrDefault();
 
@@ -147,7 +153,7 @@ public partial class EditorSync
         {
             viewModelKey = Key<TextEditorViewModel>.NewKey();
 
-            _textEditorService.ViewModel.Register(
+            _textEditorService.ViewModelApi.Register(
                 viewModelKey,
                 textEditorModel.ResourceUri);
 
@@ -156,15 +162,17 @@ public partial class EditorSync
                 CompilerServiceDiagnosticPresentationFacts.PresentationKey,
             }.ToImmutableArray();
 
-            _textEditorService.ViewModel.With(
-                viewModelKey,
-                textEditorViewModel => textEditorViewModel with
-                {
-                    OnSaveRequested = HandleOnSaveRequested,
-                    GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension,
-                    ShouldSetFocusAfterNextRender = shouldSetFocusToEditor,
-                    FirstPresentationLayerKeysBag = presentationKeys.ToImmutableList()
-                });
+            _textEditorService.Post(
+                nameof(GetOrCreateTextEditorViewModel),
+                _textEditorService.ViewModelApi.WithValueFactory(
+                    viewModelKey,
+                    textEditorViewModel => textEditorViewModel with
+                    {
+                        OnSaveRequested = HandleOnSaveRequested,
+                        GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension,
+                        ShouldSetFocusAfterNextRender = shouldSetFocusToEditor,
+                        FirstPresentationLayerKeysBag = presentationKeys.ToImmutableList()
+                    }));
         }
         else
         {
@@ -173,22 +181,24 @@ public partial class EditorSync
 
         return viewModelKey;
 
-        void HandleOnSaveRequested(TextEditorModel innerTextEditor)
+        void HandleOnSaveRequested(ITextEditorModel innerTextEditor)
         {
             var innerContent = innerTextEditor.GetAllText();
 
             var cancellationToken = textEditorModel.TextEditorSaveFileHelper.GetCancellationToken();
 
-            _fileSystemSync.SaveFile(
+			_fileSystemSync.SaveFile(
                 absolutePath,
                 innerContent,
                 writtenDateTime =>
                 {
                     if (writtenDateTime is not null)
                     {
-                        _textEditorService.Model.SetResourceData(
-                            innerTextEditor.ResourceUri,
-                            writtenDateTime.Value);
+                        _textEditorService.Post(
+                            nameof(HandleOnSaveRequested),
+                            _textEditorService.ModelApi.SetResourceDataFactory(
+                                innerTextEditor.ResourceUri,
+                                writtenDateTime.Value));
                     }
                 },
                 cancellationToken);
@@ -205,7 +215,7 @@ public partial class EditorSync
         if (absolutePath is null || absolutePath.IsDirectory)
             return;
 
-        _textEditorService.Group.Register(editorTextEditorGroupKey.Value);
+        _textEditorService.GroupApi.Register(editorTextEditorGroupKey.Value);
 
         var inputFileAbsolutePathString = absolutePath.Value;
 
@@ -226,11 +236,11 @@ public partial class EditorSync
             shouldSetFocusToEditor,
             textEditorModel);
 
-        _textEditorService.Group.AddViewModel(
+        _textEditorService.GroupApi.AddViewModel(
             editorTextEditorGroupKey.Value,
             viewModel);
 
-        _textEditorService.Group.SetActiveViewModel(
+        _textEditorService.GroupApi.SetActiveViewModel(
             editorTextEditorGroupKey.Value,
             viewModel);
     }

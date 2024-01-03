@@ -1,5 +1,7 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 
@@ -8,39 +10,29 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 /// </summary>
 public class StatementDelimiterTokenTests
 {
-	/// <summary>
-	/// <see cref="StatementDelimiterToken(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
-	/// </summary>
-	[Fact]
-	public void Constructor()
-	{
-		throw new NotImplementedException();
-	}
+    /// <summary>
+    /// <see cref="StatementDelimiterToken(TextEditorTextSpan)"/>
+    /// <br/>----<br/>
+    /// <see cref="StatementDelimiterToken.TextSpan"/>
+    /// <see cref="StatementDelimiterToken.SyntaxKind"/>
+    /// <see cref="StatementDelimiterToken.IsFabricated"/>
+    /// </summary>
+    [Fact]
+    public void Constructor()
+    {
+        var text = @";";
+        var targetSubstring = ";";
+        var indexOfTokenStartInclusive = text.IndexOf(targetSubstring);
 
-	/// <summary>
-	/// <see cref="StatementDelimiterToken.TextSpan"/>
-	/// </summary>
-	[Fact]
-	public void TextSpan()
-	{
-		throw new NotImplementedException();
-	}
+        var statementDelimiterToken = new StatementDelimiterToken(new TextEditorTextSpan(
+            indexOfTokenStartInclusive,
+            indexOfTokenStartInclusive + targetSubstring.Length,
+            0,
+            new ResourceUri("/unitTesting.txt"),
+            text));
 
-	/// <summary>
-	/// <see cref="StatementDelimiterToken.SyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="StatementDelimiterToken.IsFabricated"/>
-	/// </summary>
-	[Fact]
-	public void IsFabricated()
-	{
-		throw new NotImplementedException();
-	}
+        Assert.Equal(targetSubstring, statementDelimiterToken.TextSpan.GetText());
+        Assert.Equal(SyntaxKind.StatementDelimiterToken, statementDelimiterToken.SyntaxKind);
+        Assert.False(statementDelimiterToken.IsFabricated);
+    }
 }

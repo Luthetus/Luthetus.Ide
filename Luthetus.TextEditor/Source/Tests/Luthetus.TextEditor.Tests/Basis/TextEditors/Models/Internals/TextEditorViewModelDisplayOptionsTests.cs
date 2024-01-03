@@ -72,7 +72,7 @@ public class TextEditorViewModelDisplayOptionsTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorViewModelDisplayOptions.AfterOnKeyDownAsync"/>
+	/// <see cref="TextEditorViewModelDisplayOptions.AfterOnKeyDownAsyncFactory"/>
 	/// </summary>
 	[Fact]
 	public void AfterOnKeyDownAsync()

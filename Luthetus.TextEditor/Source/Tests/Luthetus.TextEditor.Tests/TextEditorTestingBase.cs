@@ -23,11 +23,11 @@ public class TextEditorTestingBase
     protected readonly CommonUnitTestHelper CommonHelper;
     protected readonly TextEditorUnitTestHelper TextEditorHelper;
 
-    protected TextEditorModel TextEditorModel => TextEditorHelper.TextEditorService.Model.FindOrDefault(ResourceUri)
-        ?? throw new ApplicationException($"{nameof(TextEditorService)}.{nameof(TextEditorHelper.TextEditorService.Model.FindOrDefault)} returned null.");
+    protected TextEditorModel TextEditorModel => TextEditorHelper.TextEditorService.ModelApi.GetOrDefault(ResourceUri)
+        ?? throw new ApplicationException($"{nameof(TextEditorService)}.{nameof(TextEditorHelper.TextEditorService.ModelApi.GetOrDefault)} returned null.");
 
-    protected TextEditorViewModel TextEditorViewModel => TextEditorHelper.TextEditorService.ViewModel.FindOrDefault(TextEditorViewModelKey)
-        ?? throw new ApplicationException($"{nameof(TextEditorService)}.{nameof(TextEditorHelper.TextEditorService.ViewModel.FindOrDefault)} returned null.");
+    protected TextEditorViewModel TextEditorViewModel => TextEditorHelper.TextEditorService.ViewModelApi.GetOrDefault(TextEditorViewModelKey)
+        ?? throw new ApplicationException($"{nameof(TextEditorService)}.{nameof(TextEditorHelper.TextEditorService.ViewModelApi.GetOrDefault)} returned null.");
 
     public TextEditorTestingBase()
     {
@@ -61,10 +61,9 @@ public class TextEditorTestingBase
             "UnitTests",
             string.Empty,
             null,
-            null,
             null);
 
-        TextEditorHelper.TextEditorService.Model.RegisterCustom(textEditor);
-        TextEditorHelper.TextEditorService.ViewModel.Register(TextEditorViewModelKey, ResourceUri);
+        TextEditorHelper.TextEditorService.ModelApi.RegisterCustom(textEditor);
+        TextEditorHelper.TextEditorService.ViewModelApi.Register(TextEditorViewModelKey, ResourceUri);
     }
 }

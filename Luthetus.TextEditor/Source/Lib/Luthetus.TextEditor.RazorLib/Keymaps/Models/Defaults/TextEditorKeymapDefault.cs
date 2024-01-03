@@ -62,7 +62,7 @@ public class TextEditorKeymapDefault : Keymap, ITextEditorKeymap
         {
             CtrlKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
-        }, TextEditorCommandDefaultFacts.Paste);
+        }, TextEditorCommandDefaultFacts.PasteCommand);
 
         Map.Add(new KeymapArgument("KeyS")
         {

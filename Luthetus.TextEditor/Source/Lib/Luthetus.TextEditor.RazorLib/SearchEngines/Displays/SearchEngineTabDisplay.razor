@@ -1,0 +1,11 @@
+﻿<button class="luth_te_find-provider-tab luth_button luth_tab @IsActiveCssClassString"
+        @onclick="SetActiveSearchEngineOnClick">
+
+    <div class="luth_te_find-provider-icon">
+        <DynamicComponent Type="@SearchEngine.IconComponentRendererType"/>
+    </div>
+
+    <div class="luth_te_find-provider-title">
+        @SearchEngine.DisplayName
+    </div>
+</button>

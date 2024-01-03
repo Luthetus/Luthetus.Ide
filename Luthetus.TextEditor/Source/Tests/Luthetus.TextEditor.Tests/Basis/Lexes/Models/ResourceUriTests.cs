@@ -8,21 +8,16 @@ namespace Luthetus.TextEditor.Tests.Basis.Lexes.Models;
 /// </summary>
 public record ResourceUriTests
 {
-	/// <summary>
-	/// <see cref="ResourceUri(string)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="ResourceUri(string)"/>
+	/// <br/>----<br/>
+    /// <see cref="ResourceUri.Value"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="ResourceUri.Value"/>
-	/// </summary>
-	[Fact]
-	public void Value()
-	{
-		throw new NotImplementedException();
+		var value = "/unitTesting.txt";
+        var resourceUri = new ResourceUri(value);
+		Assert.Equal(value, resourceUri.Value);
 	}
 }

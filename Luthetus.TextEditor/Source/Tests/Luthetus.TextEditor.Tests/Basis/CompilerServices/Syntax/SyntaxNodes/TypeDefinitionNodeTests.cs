@@ -1,5 +1,10 @@
 using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
@@ -8,111 +13,74 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 /// </summary>
 public class TypeDefinitionNodeTests
 {
-	/// <summary>
-	/// <see cref="TypeDefinitionNode(RazorLib.CompilerServices.Syntax.SyntaxTokens.IdentifierToken, Type?, RazorLib.CompilerServices.Syntax.SyntaxNodes.GenericArgumentsListingNode?, TypeClauseNode?, RazorLib.CompilerServices.CodeBlockNode?)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="TypeDefinitionNode(IdentifierToken, Type?, RazorLib.CompilerServices.Syntax.SyntaxNodes.GenericArgumentsListingNode?, TypeClauseNode?, RazorLib.CompilerServices.CodeBlockNode?)"/>
+    /// <br/>----<br/>
+    /// <see cref="TypeDefinitionNode.TypeIdentifier"/>
+    /// <see cref="TypeDefinitionNode.ValueType"/>
+    /// <see cref="TypeDefinitionNode.GenericArgumentsListingNode"/>
+    /// <see cref="TypeDefinitionNode.InheritedTypeClauseNode"/>
+    /// <see cref="TypeDefinitionNode.TypeBodyCodeBlockNode"/>
+    /// <see cref="TypeDefinitionNode.IsInterface"/>
+    /// <see cref="TypeDefinitionNode.ChildBag"/>
+    /// <see cref="TypeDefinitionNode.IsFabricated"/>
+    /// <see cref="TypeDefinitionNode.SyntaxKind"/>
+    /// <see cref="TypeDefinitionNode.GetFunctionDefinitionNodes()"/>
+    /// <see cref="TypeDefinitionNode.ToTypeClause()"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
-	}
+        var sourceText = @"public class MyClass
+{
+}";
+        IdentifierToken typeIdentifier;
+        {
+            var typeIdentifierText = "MyClass";
+            int indexOfTypeIdentifierText = sourceText.IndexOf(typeIdentifierText);
+            
+            typeIdentifier = new IdentifierToken(new TextEditorTextSpan(
+                indexOfTypeIdentifierText,
+                indexOfTypeIdentifierText + typeIdentifierText.Length,
+                0,
+                new ResourceUri("/unitTesting.txt"),
+                sourceText));
+        }
 
-	/// <summary>
-	/// <see cref="TypeDefinitionNode.TypeIdentifier"/>
-	/// </summary>
-	[Fact]
-	public void TypeIdentifier()
-	{
-		throw new NotImplementedException();
-	}
+        Type? valueType = null;
 
-	/// <summary>
-	/// <see cref="TypeDefinitionNode.ValueType"/>
-	/// </summary>
-	[Fact]
-	public void ValueType()
-	{
-		throw new NotImplementedException();
-	}
+        GenericArgumentsListingNode? genericArgumentsListingNode = null;
 
-	/// <summary>
-	/// <see cref="TypeDefinitionNode.GenericArgumentsListingNode"/>
-	/// </summary>
-	[Fact]
-	public void GenericArgumentsListingNode()
-	{
-		throw new NotImplementedException();
-	}
+        TypeClauseNode? inheritedTypeClauseNode = null;
 
-	/// <summary>
-	/// <see cref="TypeDefinitionNode.InheritedTypeClauseNode"/>
-	/// </summary>
-	[Fact]
-	public void InheritedTypeClauseNode()
-	{
-		throw new NotImplementedException();
-	}
+        CodeBlockNode? typeBodyCodeBlockNode = new(ImmutableArray<ISyntax>.Empty);
 
-	/// <summary>
-	/// <see cref="TypeDefinitionNode.TypeBodyCodeBlockNode"/>
-	/// </summary>
-	[Fact]
-	public void TypeBodyCodeBlockNode()
-	{
-		throw new NotImplementedException();
-	}
+        var typeDefinitionNode = new TypeDefinitionNode(
+            typeIdentifier,
+            valueType,
+            genericArgumentsListingNode,
+            inheritedTypeClauseNode,
+            typeBodyCodeBlockNode);
 
-	/// <summary>
-	/// <see cref="TypeDefinitionNode.IsInterface"/>
-	/// </summary>
-	[Fact]
-	public void IsInterface()
-	{
-		throw new NotImplementedException();
-	}
+        Assert.Equal(typeIdentifier, typeDefinitionNode.TypeIdentifier);
+        Assert.Equal(valueType, typeDefinitionNode.ValueType);
+        Assert.Equal(genericArgumentsListingNode, typeDefinitionNode.GenericArgumentsListingNode);
+        Assert.Equal(inheritedTypeClauseNode, typeDefinitionNode.InheritedTypeClauseNode);
+        Assert.Equal(typeBodyCodeBlockNode, typeDefinitionNode.TypeBodyCodeBlockNode);
+        Assert.False(typeDefinitionNode.IsInterface);
+        Assert.Empty(typeDefinitionNode.GetFunctionDefinitionNodes());
+        Assert.Equal(typeIdentifier, typeDefinitionNode.ToTypeClause().TypeIdentifier);
+        Assert.Equal(valueType, typeDefinitionNode.ToTypeClause().ValueType);
+        Assert.Null(typeDefinitionNode.ToTypeClause().GenericParametersListingNode);
 
-	/// <summary>
-	/// <see cref="TypeDefinitionNode.ChildBag"/>
-	/// </summary>
-	[Fact]
-	public void ChildBag()
-	{
-		throw new NotImplementedException();
-	}
+        Assert.Equal(2, typeDefinitionNode.ChildBag.Length);
+        Assert.Equal(typeIdentifier, typeDefinitionNode.ChildBag[0]);
+        Assert.Equal(typeBodyCodeBlockNode, typeDefinitionNode.ChildBag[1]);
 
-	/// <summary>
-	/// <see cref="TypeDefinitionNode.IsFabricated"/>
-	/// </summary>
-	[Fact]
-	public void IsFabricated()
-	{
-		throw new NotImplementedException();
-	}
+        Assert.False(typeDefinitionNode.IsFabricated);
 
-	/// <summary>
-	/// <see cref="TypeDefinitionNode.SyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TypeDefinitionNode.GetFunctionDefinitionNodes()"/>
-	/// </summary>
-	[Fact]
-	public void GetFunctionDefinitionNodes()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TypeDefinitionNode.ToTypeClause()"/>
-	/// </summary>
-	[Fact]
-	public void ToTypeClause()
-	{
-		throw new NotImplementedException();
+        Assert.Equal(
+            SyntaxKind.TypeDefinitionNode,
+            typeDefinitionNode.SyntaxKind);
 	}
 }

@@ -1,24 +1,16 @@
-﻿using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
-using Luthetus.TextEditor.RazorLib.Decorations.Models;
+﻿using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
-/// <summary>
-/// Stores the <see cref="RichCharacter"/> class instances that represent the text.<br/><br/>
-/// Each TextEditorModel has a unique underlying resource uri.<br/><br/>
-/// Therefore, if one has a text file named "myHomework.txt", then only one TextEditorModel
-/// can exist with the resource uri of "myHomework.txt".
-/// </summary>
+/// <inheritdoc cref="ITextEditorModel"/>
 public partial class TextEditorModel
 {
     public TextEditorModel(
@@ -27,20 +19,18 @@ public partial class TextEditorModel
         string fileExtension,
         string content,
         IDecorationMapper? decorationMapper,
-        ICompilerService? compilerService,
-        Keymap? textEditorKeymap)
+        ICompilerService? compilerService)
     {
         ResourceUri = resourceUri;
         ResourceLastWriteTime = resourceLastWriteTime;
         FileExtension = fileExtension;
         DecorationMapper = decorationMapper ?? new TextEditorDecorationMapperDefault();
-        CompilerService = compilerService ?? new TextEditorDefaultCompilerService();
-        TextEditorKeymap = textEditorKeymap ?? new TextEditorKeymapDefault();
+        CompilerService = compilerService ?? new TextEditorCompilerServiceDefault();
 
 		var modifier = new TextEditorModelModifier(this);
 
 		modifier.ModifyContent(content);
-
+		
 		ContentBag = modifier.ContentBag.ToImmutableList();
 		RowEndingKindCountsBag = modifier.RowEndingKindCountsBag.ToImmutableList();
 		RowEndingPositionsBag = modifier.RowEndingPositionsBag.ToImmutableList();
@@ -53,7 +43,7 @@ public partial class TextEditorModel
 	public TextEditorModel(
 		ImmutableList<RichCharacter> contentBag,
 		ImmutableList<EditBlock> editBlocksBag,
-		ImmutableList<(int positionIndex, RowEndingKind rowEndingKind)> rowEndingPositionsBag,
+		ImmutableList<RowEnding> rowEndingPositionsBag,
 		ImmutableList<(RowEndingKind rowEndingKind, int count)> rowEndingKindCountsBag,
 		ImmutableList<TextEditorPresentationModel> presentationModelsBag,
 		ImmutableList<int> tabKeyPositionsBag,
@@ -67,9 +57,7 @@ public partial class TextEditorModel
 		TextEditorSaveFileHelper textEditorSaveFileHelper,
 		int editBlockIndex,
 		(int rowIndex, int rowLength) mostCharactersOnASingleRowTuple,
-		Key<RenderState>  renderStateKey,
-		Keymap textEditorKeymap,
-		TextEditorOptions? textEditorOptions)
+		Key<RenderState>  renderStateKey)
 	{
 
 		ContentBag = contentBag;
@@ -89,7 +77,5 @@ public partial class TextEditorModel
 		EditBlockIndex = editBlockIndex;
 		MostCharactersOnASingleRowTuple = mostCharactersOnASingleRowTuple;
 		RenderStateKey = renderStateKey;
-		TextEditorKeymap = textEditorKeymap;
-		TextEditorOptions = textEditorOptions;
 	}
 }

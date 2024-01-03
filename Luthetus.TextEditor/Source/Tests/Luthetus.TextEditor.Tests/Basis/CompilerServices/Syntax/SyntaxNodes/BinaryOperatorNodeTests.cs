@@ -1,5 +1,7 @@
 using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
@@ -8,75 +10,65 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 /// </summary>
 public class BinaryOperatorNodeTests
 {
-	/// <summary>
-	/// <see cref="BinaryOperatorNode(RazorLib.CompilerServices.Syntax.SyntaxNodes.TypeClauseNode, RazorLib.CompilerServices.Syntax.ISyntaxToken, RazorLib.CompilerServices.Syntax.SyntaxNodes.TypeClauseNode, RazorLib.CompilerServices.Syntax.SyntaxNodes.TypeClauseNode)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="BinaryOperatorNode(TypeClauseNode, RazorLib.CompilerServices.Syntax.ISyntaxToken, TypeClauseNode, TypeClauseNode)"/>
+    /// <br/>----<br/>
+    /// <see cref="BinaryOperatorNode.LeftOperandTypeClauseNode"/>
+    /// <see cref="BinaryOperatorNode.OperatorToken"/>
+    /// <see cref="BinaryOperatorNode.RightOperandTypeClauseNode"/>
+    /// <see cref="BinaryOperatorNode.ResultTypeClauseNode"/>
+    /// <see cref="BinaryOperatorNode.ChildBag"/>
+    /// <see cref="BinaryOperatorNode.IsFabricated"/>
+    /// <see cref="BinaryOperatorNode.SyntaxKind"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
-	{
-		throw new NotImplementedException();
-	}
+    {
+        var binaryOperatorText = "+";
+        var sourceText = $@"{binaryOperatorText}";
 
-	/// <summary>
-	/// <see cref="BinaryOperatorNode.LeftOperandTypeClauseNode"/>
-	/// </summary>
-	[Fact]
-	public void LeftOperandTypeClauseNode()
-	{
-		throw new NotImplementedException();
-	}
+        TypeClauseNode intTypeClauseNode;
+        {
+            var intTypeIdentifier = new KeywordToken(
+                TextEditorTextSpan.FabricateTextSpan("int"),
+                RazorLib.CompilerServices.Syntax.SyntaxKind.IntTokenKeyword);
 
-	/// <summary>
-	/// <see cref="BinaryOperatorNode.OperatorToken"/>
-	/// </summary>
-	[Fact]
-	public void OperatorToken()
-	{
-		throw new NotImplementedException();
-	}
+            intTypeClauseNode = new TypeClauseNode(
+                intTypeIdentifier,
+                typeof(int),
+                null);
+        }
 
-	/// <summary>
-	/// <see cref="BinaryOperatorNode.RightOperandTypeClauseNode"/>
-	/// </summary>
-	[Fact]
-	public void RightOperandTypeClauseNode()
-	{
-		throw new NotImplementedException();
-	}
+        PlusToken plusToken;
+        {
+            var plusTokenInclusiveStartIndex = sourceText.IndexOf(binaryOperatorText);
 
-	/// <summary>
-	/// <see cref="BinaryOperatorNode.TypeClauseNode"/>
-	/// </summary>
-	[Fact]
-	public void TypeClauseNode()
-	{
-		throw new NotImplementedException();
-	}
+            plusToken = new PlusToken(new TextEditorTextSpan(
+                plusTokenInclusiveStartIndex,
+                plusTokenInclusiveStartIndex + binaryOperatorText.Length,
+                0,
+                new ResourceUri("/unitTesting.txt"),
+                sourceText));
+        }
 
-	/// <summary>
-	/// <see cref="BinaryOperatorNode.ChildBag"/>
-	/// </summary>
-	[Fact]
-	public void ChildBag()
-	{
-		throw new NotImplementedException();
-	}
+        var binaryOperatorNode = new BinaryOperatorNode(
+            intTypeClauseNode,
+            plusToken,
+            intTypeClauseNode,
+            intTypeClauseNode);
 
-	/// <summary>
-	/// <see cref="BinaryOperatorNode.IsFabricated"/>
-	/// </summary>
-	[Fact]
-	public void IsFabricated()
-	{
-		throw new NotImplementedException();
-	}
+        Assert.Equal(intTypeClauseNode, binaryOperatorNode.LeftOperandTypeClauseNode);
+        Assert.Equal(plusToken, binaryOperatorNode.OperatorToken);
+        Assert.Equal(intTypeClauseNode, binaryOperatorNode.RightOperandTypeClauseNode);
+        Assert.Equal(intTypeClauseNode, binaryOperatorNode.ResultTypeClauseNode);
 
-	/// <summary>
-	/// <see cref="BinaryOperatorNode.SyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
-	{
-		throw new NotImplementedException();
-	}
+        Assert.Single(binaryOperatorNode.ChildBag);
+        Assert.Equal(plusToken, binaryOperatorNode.ChildBag.Single());
+
+        Assert.False(binaryOperatorNode.IsFabricated);
+
+        Assert.Equal(
+            RazorLib.CompilerServices.Syntax.SyntaxKind.BinaryOperatorNode,
+            binaryOperatorNode.SyntaxKind);
+    }
 }

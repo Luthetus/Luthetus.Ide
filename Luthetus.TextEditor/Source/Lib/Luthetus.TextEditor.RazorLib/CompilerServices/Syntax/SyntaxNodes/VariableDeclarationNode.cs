@@ -48,5 +48,5 @@ public sealed record VariableDeclarationNode : ISyntaxNode
     public ImmutableArray<ISyntax> ChildBag { get; }
 
     public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.VariableDeclarationStatementNode;
+    public SyntaxKind SyntaxKind => SyntaxKind.VariableDeclarationNode;
 }

@@ -1,5 +1,7 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.TextEditor.Tests.Basis.Lexes.Models;
 
@@ -8,85 +10,97 @@ namespace Luthetus.TextEditor.Tests.Basis.Lexes.Models;
 /// </summary>
 public class TextEditorTextSpanTests
 {
-	/// <summary>
-	/// <see cref="TextEditorTextSpan(int, int, byte, RazorLib.Lexes.Models.ResourceUri, string)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="TextEditorTextSpan(int, int, byte, ResourceUri, string)"/>
+	/// <br/>----<br/>
+    /// <see cref="TextEditorTextSpan.StartingIndexInclusive"/>
+    /// <see cref="TextEditorTextSpan.EndingIndexExclusive"/>
+    /// <see cref="TextEditorTextSpan.DecorationByte"/>
+    /// <see cref="TextEditorTextSpan.ResourceUri"/>
+    /// <see cref="TextEditorTextSpan.SourceText"/>
+    /// <see cref="TextEditorTextSpan.Length"/>
+    /// <see cref="TextEditorTextSpan.GetText()"/>
+    /// </summary>
+    [Fact]
 	public void Constructor_A()
 	{
-		throw new NotImplementedException();
+        var resourceUri = new ResourceUri("/unitTesting.txt");
+		var functionIdentifier = "MyFunction";
+		var sourceText = $"Abc123 {functionIdentifier} AppleSoup";
+		var indexOfFunctionIdentifier = sourceText.IndexOf(functionIdentifier);
+		var startingIndexInclusive = indexOfFunctionIdentifier;
+		var endingIndexExclusive = indexOfFunctionIdentifier + functionIdentifier.Length;
+		var decorationByte = (byte)GenericDecorationKind.Function;
+
+        var textSpan = new TextEditorTextSpan(
+            startingIndexInclusive,
+            endingIndexExclusive,
+            decorationByte,
+            resourceUri,
+			sourceText);
+
+		Assert.Equal(startingIndexInclusive, textSpan.StartingIndexInclusive);
+		Assert.Equal(endingIndexExclusive, textSpan.EndingIndexExclusive);
+		Assert.Equal(decorationByte, textSpan.DecorationByte);
+		Assert.Equal(resourceUri, textSpan.ResourceUri);
+		Assert.Equal(sourceText, textSpan.SourceText);
+		Assert.Equal(functionIdentifier.Length, textSpan.Length);
+		Assert.Equal(textSpan.EndingIndexExclusive - textSpan.StartingIndexInclusive, textSpan.Length);
+		Assert.Equal(functionIdentifier, textSpan.GetText());
 	}
 
-	/// <summary>
-	/// <see cref="TextEditorTextSpan(int, RazorLib.CompilerServices.StringWalker, byte)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="TextEditorTextSpan(int, StringWalker, byte)"/>
+    /// <br/>----<br/>
+    /// <see cref="TextEditorTextSpan.StartingIndexInclusive"/>
+    /// <see cref="TextEditorTextSpan.EndingIndexExclusive"/>
+    /// <see cref="TextEditorTextSpan.DecorationByte"/>
+    /// <see cref="TextEditorTextSpan.ResourceUri"/>
+    /// <see cref="TextEditorTextSpan.SourceText"/>
+    /// <see cref="TextEditorTextSpan.Length"/>
+    /// <see cref="TextEditorTextSpan.GetText()"/>
+    /// </summary>
+    [Fact]
 	public void Constructor_B()
 	{
-		throw new NotImplementedException();
-	}
+        var resourceUri = new ResourceUri("/unitTesting.txt");
+        var functionIdentifier = "MyFunction";
+        var sourceText = $"Abc123 {functionIdentifier} AppleSoup";
+        var decorationByte = (byte)GenericDecorationKind.Function;
 
-	/// <summary>
-	/// <see cref="TextEditorTextSpan.StartingIndexInclusive"/>
-	/// </summary>
-	[Fact]
-	public void StartingIndexInclusive()
-	{
-		throw new NotImplementedException();
-	}
+		var stringWalker = new StringWalker(resourceUri, sourceText);
+		
+		var firstCharacterOfFunctionIdentifier = functionIdentifier.First();
 
-	/// <summary>
-	/// <see cref="TextEditorTextSpan.EndingIndexExclusive"/>
-	/// </summary>
-	[Fact]
-	public void EndingIndexExclusive()
-	{
-		throw new NotImplementedException();
-	}
+        while (!stringWalker.IsEof)
+		{
+			if (stringWalker.CurrentCharacter == firstCharacterOfFunctionIdentifier)
+			{
+				if (stringWalker.CheckForSubstring(functionIdentifier))
+					break;
+            }
 
-	/// <summary>
-	/// <see cref="TextEditorTextSpan.DecorationByte"/>
-	/// </summary>
-	[Fact]
-	public void DecorationByte()
-	{
-		throw new NotImplementedException();
-	}
+			_ = stringWalker.ReadCharacter();
+		}
 
-	/// <summary>
-	/// <see cref="TextEditorTextSpan.ResourceUri"/>
-	/// </summary>
-	[Fact]
-	public void ResourceUri()
-	{
-		throw new NotImplementedException();
-	}
+		var startingIndexInclusive = stringWalker.PositionIndex;
+        var endingIndexExclusive = startingIndexInclusive + functionIdentifier.Length;
 
-	/// <summary>
-	/// <see cref="TextEditorTextSpan.SourceText"/>
-	/// </summary>
-	[Fact]
-	public void SourceText()
-	{
-		throw new NotImplementedException();
-	}
+        _ = stringWalker.ReadRange(functionIdentifier.Length);
 
-	/// <summary>
-	/// <see cref="TextEditorTextSpan.Length"/>
-	/// </summary>
-	[Fact]
-	public void Length()
-	{
-		throw new NotImplementedException();
-	}
+        var textSpan = new TextEditorTextSpan(
+            startingIndexInclusive,
+            stringWalker,
+            decorationByte);
 
-	/// <summary>
-	/// <see cref="TextEditorTextSpan.GetText()"/>
-	/// </summary>
-	[Fact]
-	public void GetText()
-	{
-		throw new NotImplementedException();
+        Assert.Equal(startingIndexInclusive, textSpan.StartingIndexInclusive);
+        Assert.Equal(endingIndexExclusive, textSpan.EndingIndexExclusive);
+        Assert.Equal(decorationByte, textSpan.DecorationByte);
+        Assert.Equal(resourceUri, textSpan.ResourceUri);
+        Assert.Equal(sourceText, textSpan.SourceText);
+        Assert.Equal(functionIdentifier.Length, textSpan.Length);
+        Assert.Equal(textSpan.EndingIndexExclusive - textSpan.StartingIndexInclusive, textSpan.Length);
+        Assert.Equal(functionIdentifier, textSpan.GetText());
 	}
 
 	/// <summary>

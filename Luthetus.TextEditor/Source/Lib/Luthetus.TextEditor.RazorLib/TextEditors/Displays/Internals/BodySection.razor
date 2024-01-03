@@ -4,7 +4,7 @@
      style="@GetBodyStyleCss()">
 
     @{
-        var primaryCursorSnapshot = new TextEditorCursorSnapshot(RenderBatch.ViewModel!.PrimaryCursor);
+        var primaryCursor = RenderBatch.ViewModel!.PrimaryCursor;
 
         var tabKeyOutput = "&nbsp;&nbsp;&nbsp;&nbsp;";
         var spaceKeyOutput = "&nbsp;";
@@ -21,7 +21,7 @@
                 SpaceKeyOutput="@spaceKeyOutput"
                 TabKeyOutput="@tabKeyOutput"
                 TabIndex="@TabIndex"
-                PrimaryCursorSnapshot="primaryCursorSnapshot"
+                PrimaryCursor="primaryCursor"
                 ContextMenuRenderFragmentOverride="ContextMenuRenderFragmentOverride"
                 IncludeContextMenuHelperComponent="IncludeContextMenuHelperComponent"
                 AutoCompleteMenuRenderFragmentOverride="AutoCompleteMenuRenderFragmentOverride"/>

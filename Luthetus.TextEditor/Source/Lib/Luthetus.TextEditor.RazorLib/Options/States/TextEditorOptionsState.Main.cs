@@ -14,7 +14,7 @@ namespace Luthetus.TextEditor.RazorLib.Options.States;
 [FeatureState]
 public partial class TextEditorOptionsState
 {
-    private TextEditorOptionsState()
+    public TextEditorOptionsState()
     {
         Options = new TextEditorOptions(
             new CommonOptions(

@@ -1,5 +1,8 @@
-﻿using Xunit;
+using Xunit;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
+using Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.States;
 
@@ -14,7 +17,20 @@ public class TextEditorModelStateActionsTests
 	[Fact]
 	public void RegisterAction()
 	{
-		throw new NotImplementedException();
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+
+        var authenticatedActionKey = TextEditorService.AuthenticatedActionKey;
+
+        var registerAction = new TextEditorModelState.RegisterAction(
+            authenticatedActionKey,
+            inModel);
+
+		Assert.Equal(authenticatedActionKey, registerAction.AuthenticatedActionKey);
+		Assert.Equal(inModel, registerAction.Model);
 	}
 
 	/// <summary>
@@ -23,114 +39,19 @@ public class TextEditorModelStateActionsTests
 	[Fact]
 	public void DisposeAction()
 	{
-		throw new NotImplementedException();
-	}
+        TextEditorServicesTestsHelper.InitializeTextEditorServicesTestsHelper(
+            out var textEditorService,
+            out var inModel,
+            out var inViewModel,
+            out var serviceProvider);
+        
+        var authenticatedActionKey = TextEditorService.AuthenticatedActionKey;
 
-	/// <summary>
-	/// <see cref="TextEditorModelState.UndoEditAction"/>
-	/// </summary>
-	[Fact]
-	public void UndoEditAction()
-	{
-		throw new NotImplementedException();
-	}
+        var disposeAction = new TextEditorModelState.DisposeAction(
+            authenticatedActionKey,
+            inModel.ResourceUri);
 
-	/// <summary>
-	/// <see cref="TextEditorModelState.RedoEditAction"/>
-	/// </summary>
-	[Fact]
-	public void RedoEditAction()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorModelState.ForceRerenderAction"/>
-	/// </summary>
-	[Fact]
-	public void ForceRerenderAction()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorModelState.RegisterPresentationModelAction"/>
-	/// </summary>
-	[Fact]
-	public void RegisterPresentationModelAction()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorModelState.CalculatePresentationModelAction"/>
-	/// </summary>
-	[Fact]
-	public void CalculatePresentationModelAction()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorModelState.ReloadAction"/>
-	/// </summary>
-	[Fact]
-	public void ReloadAction()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorModelState.SetResourceDataAction"/>
-	/// </summary>
-	[Fact]
-	public void SetResourceDataAction()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorModelState.SetUsingRowEndingKindAction"/>
-	/// </summary>
-	[Fact]
-	public void SetUsingRowEndingKindAction()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorModelState.KeyboardEventAction"/>
-	/// </summary>
-	[Fact]
-	public void KeyboardEventAction()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorModelState.InsertTextAction"/>
-	/// </summary>
-	[Fact]
-	public void InsertTextAction()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorModelState.DeleteTextByMotionAction"/>
-	/// </summary>
-	[Fact]
-	public void DeleteTextByMotionAction()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorModelState.DeleteTextByRangeAction"/>
-	/// </summary>
-	[Fact]
-	public void DeleteTextByRangeAction()
-	{
-		throw new NotImplementedException();
+        Assert.Equal(authenticatedActionKey, disposeAction.AuthenticatedActionKey);
+        Assert.Equal(inModel.ResourceUri, disposeAction.ResourceUri);
 	}
 }

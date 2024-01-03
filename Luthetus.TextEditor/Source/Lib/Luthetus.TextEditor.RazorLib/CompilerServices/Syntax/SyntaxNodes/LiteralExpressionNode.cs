@@ -8,19 +8,19 @@ public sealed record LiteralExpressionNode : IExpressionNode
     public LiteralExpressionNode(ISyntaxToken literalSyntaxToken, TypeClauseNode typeClauseNode)
     {
         LiteralSyntaxToken = literalSyntaxToken;
-        TypeClauseNode = typeClauseNode;
+        ResultTypeClauseNode = typeClauseNode;
 
         var children = new List<ISyntax>
         {
             LiteralSyntaxToken,
-            TypeClauseNode
+            ResultTypeClauseNode
         };
 
         ChildBag = children.ToImmutableArray();
     }
 
     public ISyntaxToken LiteralSyntaxToken { get; }
-    public TypeClauseNode TypeClauseNode { get; }
+    public TypeClauseNode ResultTypeClauseNode { get; }
 
     public ImmutableArray<ISyntax> ChildBag { get; }
 

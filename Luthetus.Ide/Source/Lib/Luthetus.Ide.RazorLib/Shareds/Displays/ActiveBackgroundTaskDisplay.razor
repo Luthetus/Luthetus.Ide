@@ -1,0 +1,27 @@
+﻿@{
+    var activeBackgroundTask = _continuousBackgroundTaskWorker.ExecutingBackgroundTask;
+}
+
+<div class="luth_ide_active-background-task"
+     style="display: flex;">
+    
+    <button class="luth_button"
+            @onclick="ShowBackgroundTaskDialogOnClick">
+        Dialog
+    </button>
+
+    <div>
+        @if (activeBackgroundTask is null)
+        {
+            <text>
+                activeBackgroundTask is null
+            </text>
+        }
+        else
+        {
+            <text>
+                @activeBackgroundTask.Name @activeBackgroundTask.BackgroundTaskKey.Guid
+            </text>
+        }
+    </div>
+</div>

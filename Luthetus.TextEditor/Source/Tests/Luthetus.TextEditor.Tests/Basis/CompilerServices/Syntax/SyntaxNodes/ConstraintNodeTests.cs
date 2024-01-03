@@ -1,5 +1,9 @@
 using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
@@ -8,48 +12,98 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 /// </summary>
 public class ConstraintNodeTests
 {
-	/// <summary>
-	/// <see cref="ConstraintNode(System.Collections.Immutable.ImmutableArray{RazorLib.CompilerServices.Syntax.ISyntaxToken})"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="ConstraintNode(ImmutableArray{ISyntaxToken})"/>
+    /// <br/>----<br/>
+    /// <see cref="ConstraintNode.InnerTokens"/>
+    /// <see cref="ConstraintNode.ChildBag"/>
+    /// <see cref="ConstraintNode.IsFabricated"/>
+    /// <see cref="ConstraintNode.SyntaxKind"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
-	{
-		throw new NotImplementedException();
-	}
+    {
+        var constraintText = @"where T : notnull";
+        var sourceText = $@"public abstract class TreeViewWithType<T> : TreeViewNoType {constraintText}
+{{
+}}";
 
-	/// <summary>
-	/// <see cref="ConstraintNode.InnerTokens"/>
-	/// </summary>
-	[Fact]
-	public void InnerTokens()
-	{
-		throw new NotImplementedException();
-	}
+        KeywordContextualToken whereKeywordToken;
+        {
+            var whereKeywordText = "where";
+            int indexOfWhereKeywordText = sourceText.IndexOf(whereKeywordText);
+            
+            whereKeywordToken = new KeywordContextualToken(new TextEditorTextSpan(
+                indexOfWhereKeywordText,
+                indexOfWhereKeywordText + whereKeywordText.Length,
+                0,
+                new ResourceUri("/unitTesting.txt"),
+                sourceText),
+                SyntaxKind.WhereTokenContextualKeyword);
+        }
+        
+        IdentifierToken identifierToken;
+        {
+            var identifierText = "T";
+            int indexOfIdentifierText = sourceText.IndexOf(identifierText);
 
-	/// <summary>
-	/// <see cref="ConstraintNode.ChildBag"/>
-	/// </summary>
-	[Fact]
-	public void ChildBag()
-	{
-		throw new NotImplementedException();
-	}
+            identifierToken = new IdentifierToken(new TextEditorTextSpan(
+                indexOfIdentifierText,
+                indexOfIdentifierText + identifierText.Length,
+                0,
+                new ResourceUri("/unitTesting.txt"),
+                sourceText));
+        }
+        
+        ColonToken colonToken;
+        {
+            var colonText = "T";
+            int indexOfColonText = sourceText.IndexOf(colonText);
 
-	/// <summary>
-	/// <see cref="ConstraintNode.IsFabricated"/>
-	/// </summary>
-	[Fact]
-	public void IsFabricated()
-	{
-		throw new NotImplementedException();
-	}
+            colonToken = new ColonToken(new TextEditorTextSpan(
+                indexOfColonText,
+                indexOfColonText + colonText.Length,
+                0,
+                new ResourceUri("/unitTesting.txt"),
+                sourceText));
+        }
 
-	/// <summary>
-	/// <see cref="ConstraintNode.SyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
-	{
-		throw new NotImplementedException();
-	}
+        KeywordContextualToken notnullKeywordToken;
+        {
+            var notnullKeywordText = "notnull";
+            int indexOfNotnullKeywordText = sourceText.IndexOf(notnullKeywordText);
+
+            notnullKeywordToken = new KeywordContextualToken(new TextEditorTextSpan(
+                indexOfNotnullKeywordText,
+                indexOfNotnullKeywordText + notnullKeywordText.Length,
+                0,
+                new ResourceUri("/unitTesting.txt"),
+                sourceText),
+                SyntaxKind.NotnullTokenContextualKeyword);
+        }
+
+        ImmutableArray<ISyntaxToken> innerTokens = new List<ISyntaxToken>
+        {
+            whereKeywordToken,
+            identifierToken,
+            colonToken,
+            notnullKeywordToken,
+        }.ToImmutableArray();
+
+        var constraintNode = new ConstraintNode(innerTokens);
+
+        Assert.Equal(innerTokens, constraintNode.InnerTokens);
+
+        Assert.Equal(innerTokens.Length, constraintNode.ChildBag.Length);
+        Assert.Equal(whereKeywordToken, constraintNode.ChildBag[0]);
+        Assert.Equal(identifierToken, constraintNode.ChildBag[1]);
+        Assert.Equal(colonToken, constraintNode.ChildBag[2]);
+        Assert.Equal(notnullKeywordToken, constraintNode.ChildBag[3]);
+
+        Assert.False(constraintNode.IsFabricated);
+
+        Assert.Equal(
+            SyntaxKind.ConstraintNode,
+            constraintNode.SyntaxKind);
+    }
 }

@@ -5,6 +5,7 @@ using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
@@ -23,7 +24,13 @@ public class TextEditorViewModelDisplayOptions
     /// <summary>
     /// If left null, the default <see cref="HandleAfterOnKeyDownAsync"/> will be used.
     /// </summary>
-    public Func<TextEditorModel, ImmutableArray<TextEditorCursorSnapshot>, KeyboardEventArgs, Func<TextEditorMenuKind, bool, Task>, Task>? AfterOnKeyDownAsync { get; set; }
+    public Func<
+        ResourceUri,
+        Key<TextEditorViewModel>,
+        KeyboardEventArgs,
+        Func<TextEditorMenuKind, bool, Task>,
+        TextEditorEdit>?
+        AfterOnKeyDownAsyncFactory { get; set; }
     /// <summary>
     /// If set to false the <see cref="TextEditorHeader"/> will NOT render above the text editor.
     /// </summary>

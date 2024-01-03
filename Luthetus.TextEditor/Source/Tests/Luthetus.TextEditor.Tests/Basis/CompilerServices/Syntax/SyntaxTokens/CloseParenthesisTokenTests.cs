@@ -1,5 +1,7 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 
@@ -8,39 +10,29 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 /// </summary>
 public class CloseParenthesisTokenTests
 {
-	/// <summary>
-	/// <see cref="CloseParenthesisToken(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
-	/// </summary>
-	[Fact]
-	public void Constructor()
-	{
-		throw new NotImplementedException();
-	}
+    /// <summary>
+    /// <see cref="CloseParenthesisToken(TextEditorTextSpan)"/>
+    /// <br/>----<br/>
+    /// <see cref="CloseParenthesisToken.TextSpan"/>
+    /// <see cref="CloseParenthesisToken.SyntaxKind"/>
+    /// <see cref="CloseParenthesisToken.IsFabricated"/>
+    /// </summary>
+    [Fact]
+    public void Constructor()
+    {
+        var text = @")";
+        var targetSubstring = ")";
+        var indexOfTokenStartInclusive = text.IndexOf(targetSubstring);
 
-	/// <summary>
-	/// <see cref="CloseParenthesisToken.TextSpan"/>
-	/// </summary>
-	[Fact]
-	public void TextSpan()
-	{
-		throw new NotImplementedException();
-	}
+        var closeParenthesisToken = new CloseParenthesisToken(new TextEditorTextSpan(
+            indexOfTokenStartInclusive,
+            indexOfTokenStartInclusive + targetSubstring.Length,
+            0,
+            new ResourceUri("/unitTesting.txt"),
+            text));
 
-	/// <summary>
-	/// <see cref="CloseParenthesisToken.SyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="CloseParenthesisToken.IsFabricated"/>
-	/// </summary>
-	[Fact]
-	public void IsFabricated()
-	{
-		throw new NotImplementedException();
-	}
+        Assert.Equal(targetSubstring, closeParenthesisToken.TextSpan.GetText());
+        Assert.Equal(SyntaxKind.CloseParenthesisToken, closeParenthesisToken.SyntaxKind);
+        Assert.False(closeParenthesisToken.IsFabricated);
+    }
 }

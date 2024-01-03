@@ -2,17 +2,16 @@
 
 public class WordAutocompleteService : IAutocompleteService
 {
-    private readonly IAutocompleteIndexer _autocompleteIndexer;
+    private readonly WordAutocompleteIndexer _wordAutocompleteIndexer;
 
-    public WordAutocompleteService(IAutocompleteIndexer autocompleteIndexer)
+    public WordAutocompleteService(WordAutocompleteIndexer wordAutocompleteIndexer)
     {
-        _autocompleteIndexer = autocompleteIndexer;
+        _wordAutocompleteIndexer = wordAutocompleteIndexer;
     }
 
     public List<string> GetAutocompleteOptions(string word)
     {
-        var indexedStrings = _autocompleteIndexer.IndexedStringsBag;
-
+        var indexedStrings = _wordAutocompleteIndexer.IndexedStringsBag;
         return new List<string>(indexedStrings.Where(x => x.StartsWith(word)).Take(5));
     }
 }

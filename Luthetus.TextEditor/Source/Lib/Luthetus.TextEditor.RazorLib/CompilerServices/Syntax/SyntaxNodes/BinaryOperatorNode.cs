@@ -8,12 +8,12 @@ public sealed record BinaryOperatorNode : ISyntaxNode
         TypeClauseNode leftOperandTypeClauseNode,
         ISyntaxToken operatorToken,
         TypeClauseNode rightOperandTypeClauseNode,
-        TypeClauseNode typeClauseNode)
+        TypeClauseNode resultTypeClauseNode)
     {
         LeftOperandTypeClauseNode = leftOperandTypeClauseNode;
         OperatorToken = operatorToken;
         RightOperandTypeClauseNode = rightOperandTypeClauseNode;
-        TypeClauseNode = typeClauseNode;
+        ResultTypeClauseNode = resultTypeClauseNode;
 
         ChildBag = new ISyntax[]
         {
@@ -25,10 +25,7 @@ public sealed record BinaryOperatorNode : ISyntaxNode
     public TypeClauseNode LeftOperandTypeClauseNode { get; }
     public ISyntaxToken OperatorToken { get; }
     public TypeClauseNode RightOperandTypeClauseNode { get; }
-	/// <summary>
-	/// TypeClauseNode refers to the return type of the binary expression.
-	/// </summary>
-    public TypeClauseNode TypeClauseNode { get; }
+	public TypeClauseNode ResultTypeClauseNode { get; }
 
     public ImmutableArray<ISyntax> ChildBag { get; }
 

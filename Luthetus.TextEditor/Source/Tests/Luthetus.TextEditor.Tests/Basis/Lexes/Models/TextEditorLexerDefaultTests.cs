@@ -1,5 +1,8 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.Common.RazorLib.RenderStates.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.Tests.Basis.Lexes.Models;
 
@@ -8,39 +11,23 @@ namespace Luthetus.TextEditor.Tests.Basis.Lexes.Models;
 /// </summary>
 public class TextEditorLexerDefaultTests
 {
-	/// <summary>
-	/// <see cref="TextEditorLexerDefault(RazorLib.Lexes.Models.ResourceUri)"/>
-	/// </summary>
-	[Fact]
-	public void Constructor()
+    /// <summary>
+    /// <see cref="TextEditorLexerDefault(ResourceUri)"/>
+	/// <br/>----<br/>
+    /// <see cref="TextEditorLexerDefault.ModelRenderStateKey"/>
+    /// <see cref="TextEditorLexerDefault.ResourceUri"/>
+    /// <see cref="TextEditorLexerDefault.Lex(string, Key{RenderState})"/>
+    /// </summary>
+    [Fact]
+	public async Task Constructor()
 	{
-		throw new NotImplementedException();
-	}
+        var resourceUri = new ResourceUri("/unitTesting.txt");
+		var lexer = new TextEditorLexerDefault(resourceUri);
 
-	/// <summary>
-	/// <see cref="TextEditorLexerDefault.ModelRenderStateKey"/>
-	/// </summary>
-	[Fact]
-	public void ModelRenderStateKey()
-	{
-		throw new NotImplementedException();
-	}
+        Assert.Equal(Key<RenderState>.Empty, lexer.ModelRenderStateKey);
+		Assert.Equal(resourceUri, lexer.ResourceUri);
 
-	/// <summary>
-	/// <see cref="TextEditorLexerDefault.ResourceUri"/>
-	/// </summary>
-	[Fact]
-	public void ResourceUri()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorLexerDefault.Lex(string, Common.RazorLib.Keys.Models.Key{Common.RazorLib.RenderStates.Models.RenderState})"/>
-	/// </summary>
-	[Fact]
-	public void Lex()
-	{
-		throw new NotImplementedException();
+        var lexResult = await lexer.Lex(string.Empty, Key<RenderState>.Empty);
+        Assert.Equal(ImmutableArray<TextEditorTextSpan>.Empty, lexResult);
 	}
 }

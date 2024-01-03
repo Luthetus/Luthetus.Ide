@@ -1,18 +1,18 @@
 ﻿using Xunit;
-using Luthetus.TextEditor.RazorLib.Finds.Models;
+using Luthetus.TextEditor.RazorLib.SearchEngines.Models;
 
-namespace Luthetus.TextEditor.Tests.Basis.Finds.Models;
+namespace Luthetus.TextEditor.Tests.Basis.SearchEngines.Models;
 
 /// <summary>
-/// <see cref="FindFacts"/>
+/// <see cref="SearchEngineFacts"/>
 /// </summary>
 public class FindFactsTests
 {
 	/// <summary>
-	/// <see cref="FindFacts.DefaultFindProvidersBag"/>
+	/// <see cref="SearchEngineFacts.DefaultSearchEngineBag"/>
 	/// </summary>
 	[Fact]
-	public void DefaultFindProvidersBag()
+	public void DefaultSearchEngineBag()
 	{
 		throw new NotImplementedException();
 	}

@@ -1,5 +1,7 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 
@@ -8,39 +10,29 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 /// </summary>
 public class DollarSignTokenTests
 {
-	/// <summary>
-	/// <see cref="DollarSignToken(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
-	/// </summary>
-	[Fact]
-	public void Constructor()
-	{
-		throw new NotImplementedException();
-	}
+    /// <summary>
+    /// <see cref="DollarSignToken(TextEditorTextSpan)"/>
+    /// <br/>----<br/>
+    /// <see cref="DollarSignToken.TextSpan"/>
+    /// <see cref="DollarSignToken.SyntaxKind"/>
+    /// <see cref="DollarSignToken.IsFabricated"/>
+    /// </summary>
+    [Fact]
+    public void Constructor()
+    {
+        var text = @"$";
+        var targetSubstring = "$";
+        var indexOfTokenStartInclusive = text.IndexOf(targetSubstring);
 
-	/// <summary>
-	/// <see cref="DollarSignToken.TextSpan"/>
-	/// </summary>
-	[Fact]
-	public void TextSpan()
-	{
-		throw new NotImplementedException();
-	}
+        var dollarSignToken = new DollarSignToken(new TextEditorTextSpan(
+            indexOfTokenStartInclusive,
+            indexOfTokenStartInclusive + targetSubstring.Length,
+            0,
+            new ResourceUri("/unitTesting.txt"),
+            text));
 
-	/// <summary>
-	/// <see cref="DollarSignToken.SyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="DollarSignToken.IsFabricated"/>
-	/// </summary>
-	[Fact]
-	public void IsFabricated()
-	{
-		throw new NotImplementedException();
-	}
+        Assert.Equal(targetSubstring, dollarSignToken.TextSpan.GetText());
+        Assert.Equal(SyntaxKind.DollarSignToken, dollarSignToken.SyntaxKind);
+        Assert.False(dollarSignToken.IsFabricated);
+    }
 }

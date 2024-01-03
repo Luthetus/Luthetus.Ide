@@ -1,5 +1,8 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
@@ -8,48 +11,45 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 /// </summary>
 public class InheritanceStatementNodeTests
 {
-	/// <summary>
-	/// <see cref="InheritanceStatementNode(TypeClauseNode)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="InheritanceStatementNode(TypeClauseNode)"/>
+    /// <br/>----<br/>
+    /// <see cref="InheritanceStatementNode.ParentTypeClauseNode"/>
+    /// <see cref="InheritanceStatementNode.ChildBag"/>
+    /// <see cref="InheritanceStatementNode.IsFabricated"/>
+    /// <see cref="InheritanceStatementNode.SyntaxKind"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
-	}
+        var sourceText = @"public partial class ContextBoundary : ComponentBase
+{
+}";
+        _ = sourceText; // Supress unused variable
 
-	/// <summary>
-	/// <see cref="InheritanceStatementNode.ParentTypeClauseNode"/>
-	/// </summary>
-	[Fact]
-	public void ParentTypeClauseNode()
-	{
-		throw new NotImplementedException();
-	}
+        TypeClauseNode componentBaseTypeClauseNode;
+        {
+            var componentBaseTypeIdentifier = new IdentifierToken(
+                TextEditorTextSpan.FabricateTextSpan("ComponentBase"));
 
-	/// <summary>
-	/// <see cref="InheritanceStatementNode.ChildBag"/>
-	/// </summary>
-	[Fact]
-	public void ChildBag()
-	{
-		throw new NotImplementedException();
-	}
+            componentBaseTypeClauseNode = new TypeClauseNode(
+                componentBaseTypeIdentifier,
+                null,
+                null);
+        }
 
-	/// <summary>
-	/// <see cref="InheritanceStatementNode.IsFabricated"/>
-	/// </summary>
-	[Fact]
-	public void IsFabricated()
-	{
-		throw new NotImplementedException();
-	}
+        var inheritanceStatementNode = new InheritanceStatementNode(
+            componentBaseTypeClauseNode);
 
-	/// <summary>
-	/// <see cref="InheritanceStatementNode.SyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
-	{
-		throw new NotImplementedException();
+        Assert.Equal(componentBaseTypeClauseNode, inheritanceStatementNode.ParentTypeClauseNode);
+
+        Assert.Single(inheritanceStatementNode.ChildBag);
+        Assert.Equal(componentBaseTypeClauseNode, inheritanceStatementNode.ChildBag[0]);
+
+        Assert.False(inheritanceStatementNode.IsFabricated);
+
+        Assert.Equal(
+            SyntaxKind.InheritanceStatementNode,
+            inheritanceStatementNode.SyntaxKind);
 	}
 }

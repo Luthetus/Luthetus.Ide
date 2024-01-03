@@ -1,129 +1,218 @@
 ﻿using Fluxor;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using static Luthetus.TextEditor.RazorLib.TextEditors.States.TextEditorModelState;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 public partial interface ITextEditorService
 {
-    public interface IModelApi
+    public interface ITextEditorModelApi
     {
-        public void DeleteTextByMotion(TextEditorModelState.DeleteTextByMotionAction deleteTextByMotionAction);
-        public void DeleteTextByRange(TextEditorModelState.DeleteTextByRangeAction deleteTextByRangeAction);
-        public void Dispose(ResourceUri resourceUri);
-        public TextEditorModel? FindOrDefault(ResourceUri resourceUri);
-        public string? GetAllText(ResourceUri resourceUri);
-        public ImmutableArray<TextEditorViewModel> GetViewModelsOrEmpty(ResourceUri resourceUri);
-        public void HandleKeyboardEvent(TextEditorModelState.KeyboardEventAction keyboardEventAction);
-        public void InsertText(TextEditorModelState.InsertTextAction insertTextAction);
-        public void RedoEdit(ResourceUri resourceUri);
+        #region CREATE_METHODS
         /// <summary>It is recommended to use the <see cref="RegisterTemplated" /> method as it will internally reference the <see cref="ITextEditorLexer" /> and <see cref="IDecorationMapper" /> that correspond to the desired text editor.</summary>
         public void RegisterCustom(TextEditorModel model);
-        ///// 
-
         /// <summary>
-        /// As an example, for a C# Text Editor one would pass in an <see cref="extensionNoPeriod"/>
-        /// of "cs" or the constant varible: <see cref="ExtensionNoPeriodFacts.C_SHARP_CLASS"/>.<br /><br />
-        /// 
-        /// As an example, for a Plain Text Editor one would pass in an <see cref="extensionNoPeriod"/>
+        /// Plain Text Editor: one would pass in an <see cref="extensionNoPeriod"/>
         /// of "txt" or the constant varible: <see cref="ExtensionNoPeriodFacts.TXT"/>.<br /><br />
+        /// 
+        /// C# Text Editor: one would pass in an <see cref="extensionNoPeriod"/>
+        /// of "cs" or the constant varible: <see cref="ExtensionNoPeriodFacts.C_SHARP_CLASS"/>;
+        /// NOTE: One must first install the Luthetus.CompilerServices.CSharp NuGet package.<br /><br />
         /// </summary>
         public void RegisterTemplated(
-            IDecorationMapperRegistry decorationMapperRegistry,
-            ICompilerServiceRegistry compilerServiceRegistry,
             string extensionNoPeriod,
             ResourceUri resourceUri,
             DateTime resourceLastWriteTime,
             string initialContent,
             string? overrideDisplayTextForFileExtension = null);
+        #endregion
 
-        public void Reload(ResourceUri resourceUri, string content, DateTime resourceLastWriteTime);
+        #region READ_METHODS
+        /// <summary>
+        /// One should store the result of invoking this method in a variable, then reference that variable.
+        /// If one continually invokes this, there is no guarantee that the data had not changed
+        /// since the previous invocation.
+        /// </summary>
+        public ImmutableList<TextEditorModel> GetModels();
+        public TextEditorModel? GetOrDefault(ResourceUri resourceUri);
+        public ImmutableArray<TextEditorViewModel> GetViewModelsOrEmpty(ResourceUri resourceUri);
+        public string? GetAllText(ResourceUri resourceUri);
+        #endregion
 
-        public void SetResourceData(
+        #region UPDATE_METHODS
+        public TextEditorEdit UndoEditFactory(
+            ResourceUri resourceUri);
+
+        public TextEditorEdit SetUsingRowEndingKindFactory(
+            ResourceUri resourceUri,
+            RowEndingKind rowEndingKind);
+
+        public TextEditorEdit SetResourceDataFactory(
             ResourceUri resourceUri,
             DateTime resourceLastWriteTime);
 
-        public void SetUsingRowEndingKind(ResourceUri resourceUri, RowEndingKind rowEndingKind);
-        public void UndoEdit(ResourceUri resourceUri);
-        public void RegisterPresentationModel(ResourceUri resourceUri, TextEditorPresentationModel emptyPresentationModel);
+        public TextEditorEdit ReloadFactory(
+            ResourceUri resourceUri,
+            string content,
+            DateTime resourceLastWriteTime);
+
+        public TextEditorEdit RedoEditFactory(ResourceUri resourceUri);
+
+        public TextEditorEdit InsertTextFactory(
+            ResourceUri resourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            string content,
+            CancellationToken cancellationToken);
+
+        /// <summary>
+        /// If one wants to guarantee that the state is up to date use <see cref="InsertTextFactory"/>
+        /// instead of this method. This is because, the <see cref="ITextEditorService"/> will provide
+        /// you the latest instance of the given <see cref="TextEditorCursor"/>. As opposed to whatever
+        /// instance of the <see cref="TextEditorCursorModifier"/> you have at time of enqueueing.
+        /// <br/><br/>
+        /// This method is needed however, because if one wants to arbitrarily create a cursor that does not
+        /// map to the view model's cursors, then one would use this method. Since an attempt to map
+        /// the cursor key would come back as the cursor not existing.
+        /// </summary>
+        public TextEditorEdit InsertTextUnsafeFactory(
+            ResourceUri resourceUri,
+            TextEditorCursorModifierBag cursorModifierBag,
+            string content,
+            CancellationToken cancellationToken);
+
+        public TextEditorEdit HandleKeyboardEventFactory(
+            ResourceUri resourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            KeyboardEventArgs keyboardEventArgs,
+            CancellationToken cancellationToken);
+
+        /// <summary>
+        /// If one wants to guarantee that the state is up to date use <see cref="HandleKeyboardEventFactory"/>
+        /// instead of this method. This is because, the <see cref="ITextEditorService"/> will provide
+        /// you the latest instance of the given <see cref="TextEditorCursor"/>. As opposed to whatever
+        /// instance of the <see cref="TextEditorCursorModifier"/> you have at time of enqueueing.
+        /// <br/><br/>
+        /// This method is needed however, because if one wants to arbitrarily create a cursor that does not
+        /// map to the view model's cursors, then one would use this method. Since an attempt to map
+        /// the cursor key would come back as the cursor not existing.
+        /// </summary>
+        public TextEditorEdit HandleKeyboardEventUnsafeFactory(
+            ResourceUri resourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            KeyboardEventArgs keyboardEventArgs,
+            CancellationToken cancellationToken,
+            TextEditorCursorModifierBag cursorModifierBag);
+
+        public TextEditorEdit DeleteTextByRangeFactory(
+            ResourceUri resourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            int count,
+            CancellationToken cancellationToken);
+
+        /// <summary>
+        /// If one wants to guarantee that the state is up to date use <see cref="DeleteTextByRangeFactory"/>
+        /// instead of this method. This is because, the <see cref="ITextEditorService"/> will provide
+        /// you the latest instance of the given <see cref="TextEditorCursor"/>. As opposed to whatever
+        /// instance of the <see cref="TextEditorCursorModifier"/> you have at time of enqueueing.
+        /// <br/><br/>
+        /// This method is needed however, because if one wants to arbitrarily create a cursor that does not
+        /// map to the view model's cursors, then one would use this method. Since an attempt to map
+        /// the cursor key would come back as the cursor not existing.
+        /// </summary>
+        public TextEditorEdit DeleteTextByRangeUnsafeFactory(
+            ResourceUri resourceUri,
+            TextEditorCursorModifierBag cursorModifierBag,
+            int count,
+            CancellationToken cancellationToken);
+
+        public TextEditorEdit DeleteTextByMotionFactory(
+            ResourceUri resourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            MotionKind motionKind,
+            CancellationToken cancellationToken);
+
+        /// <summary>
+        /// If one wants to guarantee that the state is up to date use <see cref="DeleteTextByMotionFactory"/>
+        /// instead of this method. This is because, the <see cref="ITextEditorService"/> will provide
+        /// you the latest instance of the given <see cref="TextEditorCursor"/>. As opposed to whatever
+        /// instance of the <see cref="TextEditorCursorModifier"/> you have at time of enqueueing.
+        /// <br/><br/>
+        /// This method is needed however, because if one wants to arbitrarily create a cursor that does not
+        /// map to the view model's cursors, then one would use this method. Since an attempt to map
+        /// the cursor key would come back as the cursor not existing.
+        /// </summary>
+        public TextEditorEdit DeleteTextByMotionUnsafeFactory(
+            ResourceUri resourceUri,
+            TextEditorCursorModifierBag cursorModifierBag,
+            MotionKind motionKind,
+            CancellationToken cancellationToken);
+
+        public TextEditorEdit RegisterPresentationModel(
+            ResourceUri resourceUri,
+            TextEditorPresentationModel emptyPresentationModel);
+
+        public TextEditorEdit CalculatePresentationModelFactory(
+            ResourceUri resourceUri,
+            Key<TextEditorPresentationModel> presentationKey);
+        #endregion
+
+        #region DELETE_METHODS
+        public void Dispose(ResourceUri resourceUri);
+        #endregion
     }
 
-    public class ModelApi : IModelApi
+    public class TextEditorModelApi : ITextEditorModelApi
     {
         private readonly ITextEditorService _textEditorService;
+        private readonly IDecorationMapperRegistry _decorationMapperRegistry;
+        private readonly ICompilerServiceRegistry _compilerServiceRegistry;
+        private readonly IBackgroundTaskService _backgroundTaskService;
         private readonly IDispatcher _dispatcher;
 
-        public ModelApi(ITextEditorService textEditorService, IDispatcher dispatcher)
+        public TextEditorModelApi(
+            ITextEditorService textEditorService,
+            IDecorationMapperRegistry decorationMapperRegistry,
+            ICompilerServiceRegistry compilerServiceRegistry,
+            IBackgroundTaskService backgroundTaskService,
+            IDispatcher dispatcher)
         {
             _textEditorService = textEditorService;
+            _decorationMapperRegistry = decorationMapperRegistry;
+            _compilerServiceRegistry = compilerServiceRegistry;
+            _backgroundTaskService = backgroundTaskService;
             _dispatcher = dispatcher;
         }
 
-        public void UndoEdit(ResourceUri resourceUri)
-        {
-            _dispatcher.Dispatch(new TextEditorModelState.UndoEditAction(resourceUri));
-        }
-
-        public void SetUsingRowEndingKind(ResourceUri resourceUri, RowEndingKind rowEndingKind)
-        {
-            _dispatcher.Dispatch(new TextEditorModelState.SetUsingRowEndingKindAction(
-                resourceUri,
-                rowEndingKind));
-        }
-
-        public void SetResourceData(
-            ResourceUri resourceUri,
-            DateTime resourceLastWriteTime)
-        {
-            _dispatcher.Dispatch(new TextEditorModelState.SetResourceDataAction(
-                resourceUri,
-                resourceLastWriteTime));
-        }
-
-        public void Reload(ResourceUri resourceUri, string content, DateTime resourceLastWriteTime)
-        {
-            _dispatcher.Dispatch(new TextEditorModelState.ReloadAction(
-                resourceUri,
-                content,
-                resourceLastWriteTime));
-        }
-
+        #region CREATE_METHODS
         public void RegisterCustom(TextEditorModel model)
         {
-            _dispatcher.Dispatch(new TextEditorModelState.RegisterAction(model));
-        }
+            _dispatcher.Dispatch(new RegisterAction(
+                TextEditorService.AuthenticatedActionKey,
+                model));
 
-        public void RegisterTemplated(
-            IDecorationMapperRegistry decorationMapperRegistry,
-            ICompilerServiceRegistry compilerServiceRegistry,
-            string extensionNoPeriod,
-            ResourceUri resourceUri,
-            DateTime resourceLastWriteTime,
-            string initialContent,
-            string? overrideDisplayTextForFileExtension = null)
-        {
-            var textEditorModel = new TextEditorModel(
-                resourceUri,
-                resourceLastWriteTime,
-                overrideDisplayTextForFileExtension ?? extensionNoPeriod,
-                initialContent,
-                decorationMapperRegistry.GetDecorationMapper(extensionNoPeriod),
-                compilerServiceRegistry.GetCompilerService(extensionNoPeriod),
-                null);
-
-            // ICommonBackgroundTaskQueue does not work well here because
-            // this Task does not need to be tracked.
             _ = Task.Run(async () =>
             {
                 try
                 {
-                    await textEditorModel.ApplySyntaxHighlightingAsync();
-                    _dispatcher.Dispatch(new TextEditorModelState.ForceRerenderAction(textEditorModel.ResourceUri));
+                    await model.ApplySyntaxHighlightingAsync();
+
+                    _textEditorService.Post(
+                        nameof(RegisterCustom),
+                        editContext =>
+                        {
+                            // Getting a model modifier marks it to be reloaded (2023-12-28)
+                            _ = editContext.GetModelModifier(model.ResourceUri);
+                            return Task.CompletedTask;
+                        });
                 }
                 catch (Exception e)
                 {
@@ -131,25 +220,52 @@ public partial interface ITextEditorService
                     throw;
                 }
             }, CancellationToken.None);
-
-            _dispatcher.Dispatch(new TextEditorModelState.RegisterAction(textEditorModel));
         }
 
-        public void RedoEdit(ResourceUri resourceUri)
+        public void RegisterTemplated(
+            string extensionNoPeriod,
+            ResourceUri resourceUri,
+            DateTime resourceLastWriteTime,
+            string initialContent,
+            string? overrideDisplayTextForFileExtension = null)
         {
-            _dispatcher.Dispatch(new TextEditorModelState.RedoEditAction(resourceUri));
-        }
+            var model = new TextEditorModel(
+                resourceUri,
+                resourceLastWriteTime,
+                overrideDisplayTextForFileExtension ?? extensionNoPeriod,
+                initialContent,
+                _decorationMapperRegistry.GetDecorationMapper(extensionNoPeriod),
+                _compilerServiceRegistry.GetCompilerService(extensionNoPeriod));
+            
+            _dispatcher.Dispatch(new RegisterAction(
+                TextEditorService.AuthenticatedActionKey,
+                model));
 
-        public void InsertText(TextEditorModelState.InsertTextAction insertTextAction)
-        {
-            _dispatcher.Dispatch(insertTextAction);
-        }
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    await model.ApplySyntaxHighlightingAsync();
 
-        public void HandleKeyboardEvent(TextEditorModelState.KeyboardEventAction keyboardEventAction)
-        {
-            _dispatcher.Dispatch(keyboardEventAction);
+                    _textEditorService.Post(
+                        nameof(RegisterTemplated),
+                        editContext =>
+                        {
+                            // Getting a model modifier marks it to be reloaded (2023-12-28)
+                            _ = editContext.GetModelModifier(model.ResourceUri);
+                            return Task.CompletedTask;
+                        });
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw;
+                }
+            }, CancellationToken.None);
         }
+        #endregion
 
+        #region READ_METHODS
         public ImmutableArray<TextEditorViewModel> GetViewModelsOrEmpty(ResourceUri resourceUri)
         {
             return _textEditorService.ViewModelStateWrap.Value.ViewModelBag
@@ -164,32 +280,344 @@ public partial interface ITextEditorService
                 ?.GetAllText();
         }
 
-        public TextEditorModel? FindOrDefault(ResourceUri resourceUri)
+        public TextEditorModel? GetOrDefault(ResourceUri resourceUri)
         {
             return _textEditorService.ModelStateWrap.Value.ModelBag
                 .FirstOrDefault(x => x.ResourceUri == resourceUri);
         }
 
+        public ImmutableList<TextEditorModel> GetModels()
+        {
+            return _textEditorService.ModelStateWrap.Value.ModelBag;
+        }
+        #endregion
+
+        #region UPDATE_METHODS
+        public TextEditorEdit UndoEditFactory(ResourceUri resourceUri)
+        {
+            return editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(resourceUri);
+
+                if (modelModifier is null)
+                    return Task.CompletedTask;
+
+                modelModifier.UndoEdit();
+                return Task.CompletedTask;
+            };
+        }
+
+        public TextEditorEdit SetUsingRowEndingKindFactory(
+            ResourceUri resourceUri,
+            RowEndingKind rowEndingKind)
+        {
+            return editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(resourceUri);
+
+                if (modelModifier is null)
+                    return Task.CompletedTask;
+
+                modelModifier.ModifyUsingRowEndingKind(rowEndingKind);
+                return Task.CompletedTask;
+            };
+        }
+
+        public TextEditorEdit SetResourceDataFactory(
+            ResourceUri resourceUri,
+            DateTime resourceLastWriteTime)
+        {
+            return editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(resourceUri);
+
+                if (modelModifier is null)
+                    return Task.CompletedTask;
+
+                modelModifier.ModifyResourceData(resourceUri, resourceLastWriteTime);
+                return Task.CompletedTask;
+            };
+        }
+
+        public TextEditorEdit ReloadFactory(
+            ResourceUri resourceUri,
+            string content,
+            DateTime resourceLastWriteTime)
+        {
+            return editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(resourceUri);
+
+                if (modelModifier is null)
+                    return Task.CompletedTask;
+
+                modelModifier.ModifyContent(content);
+                modelModifier.ModifyResourceData(resourceUri, resourceLastWriteTime);
+                return Task.CompletedTask;
+            };
+        }
+
+        public TextEditorEdit RedoEditFactory(ResourceUri resourceUri)
+        {
+            return editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(resourceUri);
+
+                if (modelModifier is null)
+                    return Task.CompletedTask;
+
+                modelModifier.RedoEdit();
+                return Task.CompletedTask;
+            };
+        }
+
+        public TextEditorEdit InsertTextFactory(
+            ResourceUri resourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            string content,
+            CancellationToken cancellationToken)
+        {
+            return editContext =>
+            {
+                var modelModifier = editContext.GetModelModifierByViewModelKey(viewModelKey);
+                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+                if (modelModifier is null || viewModelModifier is null)
+                    return Task.CompletedTask;
+
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                if (cursorModifierBag is null || primaryCursorModifier is null)
+                    return Task.CompletedTask;
+
+                modelModifier.EditByInsertion(
+                    content,
+                    cursorModifierBag,
+                    cancellationToken);
+
+                return Task.CompletedTask;
+            };
+        }
+        
+        public TextEditorEdit InsertTextUnsafeFactory(
+            ResourceUri resourceUri,
+            TextEditorCursorModifierBag cursorModifierBag,
+            string content,
+            CancellationToken cancellationToken)
+        {
+            return editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(resourceUri);
+
+                if (modelModifier is null)
+                    return Task.CompletedTask;
+
+                modelModifier.EditByInsertion(
+                    content,
+                    cursorModifierBag,
+                    cancellationToken);
+
+                return Task.CompletedTask;
+            };
+        }
+
+        public TextEditorEdit HandleKeyboardEventFactory(
+            ResourceUri resourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            KeyboardEventArgs keyboardEventArgs,
+            CancellationToken cancellationToken)
+        {
+            return editContext =>
+            {
+                var modelModifier = editContext.GetModelModifierByViewModelKey(viewModelKey);
+                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+                if (modelModifier is null || viewModelModifier is null)
+                    return Task.CompletedTask;
+
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                if (cursorModifierBag is null || primaryCursorModifier is null)
+                    return Task.CompletedTask;
+
+                modelModifier.HandleKeyboardEvent(
+                    keyboardEventArgs,
+                    cursorModifierBag,
+                    cancellationToken);
+
+                return Task.CompletedTask;
+            };
+        }
+
+        public TextEditorEdit HandleKeyboardEventUnsafeFactory(
+            ResourceUri resourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            KeyboardEventArgs keyboardEventArgs,
+            CancellationToken cancellationToken,
+            TextEditorCursorModifierBag cursorModifierBag)
+        {
+            return editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(resourceUri);
+
+                if (modelModifier is null)
+                    return Task.CompletedTask;
+
+                modelModifier.HandleKeyboardEvent(
+                    keyboardEventArgs,
+                    cursorModifierBag,
+                    cancellationToken);
+
+                return Task.CompletedTask;
+            };
+        }
+
+        public TextEditorEdit DeleteTextByRangeFactory(
+            ResourceUri resourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            int count,
+            CancellationToken cancellationToken)
+        {
+            return editContext =>
+            {
+                var modelModifier = editContext.GetModelModifierByViewModelKey(viewModelKey);
+                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+                if (modelModifier is null || viewModelModifier is null)
+                    return Task.CompletedTask;
+
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                if (cursorModifierBag is null || primaryCursorModifier is null)
+                    return Task.CompletedTask;
+
+                modelModifier.DeleteByRange(
+                    count,
+                    cursorModifierBag,
+                    cancellationToken);
+
+                return Task.CompletedTask;
+            };
+        }
+        
+        public TextEditorEdit DeleteTextByRangeUnsafeFactory(
+            ResourceUri resourceUri,
+            TextEditorCursorModifierBag cursorModifierBag,
+            int count,
+            CancellationToken cancellationToken)
+        {
+            return editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(resourceUri);
+
+                if (modelModifier is null)
+                    return Task.CompletedTask;
+
+                modelModifier.DeleteByRange(
+                    count,
+                    cursorModifierBag,
+                    cancellationToken);
+
+                return Task.CompletedTask;
+            };
+        }
+
+        public TextEditorEdit DeleteTextByMotionFactory(
+            ResourceUri resourceUri,
+            Key<TextEditorViewModel> viewModelKey,
+            MotionKind motionKind,
+            CancellationToken cancellationToken)
+        {
+            return editContext =>
+            {
+                var modelModifier = editContext.GetModelModifierByViewModelKey(viewModelKey);
+                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+                if (modelModifier is null || viewModelModifier is null)
+                    return Task.CompletedTask;
+
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                if (cursorModifierBag is null || primaryCursorModifier is null)
+                    return Task.CompletedTask;
+
+                modelModifier.DeleteTextByMotion(
+                    motionKind,
+                    cursorModifierBag,
+                    cancellationToken);
+
+                return Task.CompletedTask;
+            };
+        }
+        
+        public TextEditorEdit DeleteTextByMotionUnsafeFactory(
+            ResourceUri resourceUri,
+            TextEditorCursorModifierBag cursorModifierBag,
+            MotionKind motionKind,
+            CancellationToken cancellationToken)
+        {
+            return editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(resourceUri);
+
+                if (modelModifier is null)
+                    return Task.CompletedTask;
+
+                modelModifier.DeleteTextByMotion(
+                    motionKind,
+                    cursorModifierBag,
+                    cancellationToken);
+
+                return Task.CompletedTask;
+            };
+        }
+
+        public TextEditorEdit RegisterPresentationModel(
+            ResourceUri resourceUri,
+            TextEditorPresentationModel emptyPresentationModel)
+        {
+            return editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(resourceUri);
+
+                if (modelModifier is null)
+                    return Task.CompletedTask;
+
+                modelModifier.PerformRegisterPresentationModelAction(emptyPresentationModel);
+
+                return Task.CompletedTask;
+            };
+        }
+
+        public TextEditorEdit CalculatePresentationModelFactory(
+            ResourceUri resourceUri,
+            Key<TextEditorPresentationModel> presentationKey)
+        {
+            return editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(resourceUri);
+
+                if (modelModifier is null)
+                    return Task.CompletedTask;
+
+                modelModifier.PerformCalculatePresentationModelAction(presentationKey);
+
+                return Task.CompletedTask;
+            };
+        }
+        #endregion
+
+        #region DELETE_METHODS
         public void Dispose(ResourceUri resourceUri)
         {
-            _dispatcher.Dispatch(new TextEditorModelState.DisposeAction(resourceUri));
+            _dispatcher.Dispatch(new DisposeAction(
+                TextEditorService.AuthenticatedActionKey,
+                resourceUri));
         }
-
-        public void DeleteTextByRange(TextEditorModelState.DeleteTextByRangeAction deleteTextByRangeAction)
-        {
-            _dispatcher.Dispatch(deleteTextByRangeAction);
-        }
-
-        public void DeleteTextByMotion(TextEditorModelState.DeleteTextByMotionAction deleteTextByMotionAction)
-        {
-            _dispatcher.Dispatch(deleteTextByMotionAction);
-        }
-
-        public void RegisterPresentationModel(ResourceUri resourceUri, TextEditorPresentationModel emptyPresentationModel)
-        {
-            _dispatcher.Dispatch(new TextEditorModelState.RegisterPresentationModelAction(
-                resourceUri,
-                emptyPresentationModel));
-        }
+        #endregion
     }
 }

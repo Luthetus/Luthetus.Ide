@@ -1,5 +1,7 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
@@ -8,48 +10,42 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 /// </summary>
 public class AmbiguousIdentifierNodeTests
 {
-	/// <summary>
-	/// <see cref="AmbiguousIdentifierNode(RazorLib.CompilerServices.Syntax.SyntaxTokens.IdentifierToken)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="AmbiguousIdentifierNode(IdentifierToken)"/>
+    /// <br/>----<br/>
+    /// <see cref="AmbiguousIdentifierNode.IdentifierToken"/>
+	/// <see cref="AmbiguousIdentifierNode.ChildBag"/>
+	/// <see cref="AmbiguousIdentifierNode.IsFabricated"/>
+	/// <see cref="AmbiguousIdentifierNode.SyntaxKind"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
-	}
+		var typeIdentifier = "SomeUndefinedType";
+        var sourceText = $@"{typeIdentifier} MyMethod()
+{{
+}}";
 
-	/// <summary>
-	/// <see cref="AmbiguousIdentifierNode.IdentifierToken"/>
-	/// </summary>
-	[Fact]
-	public void IdentifierToken()
-	{
-		throw new NotImplementedException();
-	}
+		var indexOfTypeIdentifierInclusive = sourceText.IndexOf(typeIdentifier);
 
-	/// <summary>
-	/// <see cref="AmbiguousIdentifierNode.ChildBag"/>
-	/// </summary>
-	[Fact]
-	public void ChildBag()
-	{
-		throw new NotImplementedException();
-	}
+		var identifierToken = new IdentifierToken(new TextEditorTextSpan(
+            indexOfTypeIdentifierInclusive,
+            indexOfTypeIdentifierInclusive + typeIdentifier.Length,
+			0,
+			new ResourceUri("/unitTesting.txt"),
+			sourceText));
 
-	/// <summary>
-	/// <see cref="AmbiguousIdentifierNode.IsFabricated"/>
-	/// </summary>
-	[Fact]
-	public void IsFabricated()
-	{
-		throw new NotImplementedException();
-	}
+		var ambiguousIdentifierNode = new AmbiguousIdentifierNode(identifierToken);
 
-	/// <summary>
-	/// <see cref="AmbiguousIdentifierNode.SyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
-	{
-		throw new NotImplementedException();
+		Assert.Equal(identifierToken, ambiguousIdentifierNode.IdentifierToken);
+		
+		Assert.Single(ambiguousIdentifierNode.ChildBag);
+		Assert.Equal(identifierToken, ambiguousIdentifierNode.ChildBag.Single());
+
+		Assert.False(ambiguousIdentifierNode.IsFabricated);
+
+		Assert.Equal(
+			RazorLib.CompilerServices.Syntax.SyntaxKind.AmbiguousIdentifierNode,
+			ambiguousIdentifierNode.SyntaxKind);
 	}
 }

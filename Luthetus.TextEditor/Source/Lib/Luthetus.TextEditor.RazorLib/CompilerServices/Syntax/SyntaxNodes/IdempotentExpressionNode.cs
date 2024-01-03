@@ -11,17 +11,17 @@ public sealed record IdempotentExpressionNode : IExpressionNode
 {
     public IdempotentExpressionNode(TypeClauseNode typeClauseNode)
     {
-        TypeClauseNode = typeClauseNode;
+        ResultTypeClauseNode = typeClauseNode;
 
         var children = new List<ISyntax>
         {
-            TypeClauseNode
+            ResultTypeClauseNode
         };
 
         ChildBag = children.ToImmutableArray();
     }
 
-    public TypeClauseNode TypeClauseNode { get; }
+    public TypeClauseNode ResultTypeClauseNode { get; }
 
     public ImmutableArray<ISyntax> ChildBag { get; }
 

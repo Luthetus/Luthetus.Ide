@@ -1,5 +1,9 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
@@ -8,66 +12,90 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 /// </summary>
 public class VariableReferenceNodeTests
 {
-	/// <summary>
-	/// <see cref="VariableReferenceNode(RazorLib.CompilerServices.Syntax.SyntaxTokens.IdentifierToken, VariableDeclarationNode)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="VariableReferenceNode(IdentifierToken, VariableDeclarationNode)"/>
+    /// <br/>----<br/>
+    /// <see cref="VariableReferenceNode.VariableIdentifierToken"/>
+    /// <see cref="VariableReferenceNode.VariableDeclarationNode"/>
+    /// <see cref="VariableReferenceNode.ResultTypeClauseNode"/>
+    /// <see cref="VariableReferenceNode.ChildBag"/>
+    /// <see cref="VariableReferenceNode.IsFabricated"/>
+    /// <see cref="VariableReferenceNode.SyntaxKind"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
-	}
+        var sourceText = @"int x = 2;
+MyMethod(x)";
+        _ = sourceText; // Suppress unused variable warning
 
-	/// <summary>
-	/// <see cref="VariableReferenceNode.VariableIdentifierToken"/>
-	/// </summary>
-	[Fact]
-	public void VariableIdentifierToken()
-	{
-		throw new NotImplementedException();
-	}
+        VariableDeclarationNode variableDeclarationNode;
+        {
+            TypeClauseNode intTypeClauseNode;
+            {
+                var intTypeIdentifier = new KeywordToken(
+                    TextEditorTextSpan.FabricateTextSpan("int"),
+                    SyntaxKind.IntTokenKeyword);
 
-	/// <summary>
-	/// <see cref="VariableReferenceNode.VariableDeclarationStatementNode"/>
-	/// </summary>
-	[Fact]
-	public void VariableDeclarationStatementNode()
-	{
-		throw new NotImplementedException();
-	}
+                intTypeClauseNode = new TypeClauseNode(
+                    intTypeIdentifier,
+                    typeof(int),
+                    null);
+            }
 
-	/// <summary>
-	/// <see cref="VariableReferenceNode.TypeClauseNode"/>
-	/// </summary>
-	[Fact]
-	public void TypeClauseNode()
-	{
-		throw new NotImplementedException();
-	}
+            IdentifierToken declarationVariableIdentifierToken;
+            {
+                var variableIdentifierText = "value";
+                int indexOfVariableIdentifierText = sourceText.IndexOf(variableIdentifierText);
 
-	/// <summary>
-	/// <see cref="VariableReferenceNode.ChildBag"/>
-	/// </summary>
-	[Fact]
-	public void ChildBag()
-	{
-		throw new NotImplementedException();
-	}
+                declarationVariableIdentifierToken = new IdentifierToken(new TextEditorTextSpan(
+                    indexOfVariableIdentifierText,
+                    indexOfVariableIdentifierText + variableIdentifierText.Length,
+                    0,
+                    new ResourceUri("/unitTesting.txt"),
+                    sourceText));
+            }
 
-	/// <summary>
-	/// <see cref="VariableReferenceNode.IsFabricated"/>
-	/// </summary>
-	[Fact]
-	public void IsFabricated()
-	{
-		throw new NotImplementedException();
-	}
+            VariableKind variableKind = VariableKind.Local;
 
-	/// <summary>
-	/// <see cref="VariableReferenceNode.SyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
-	{
-		throw new NotImplementedException();
+            bool isInitialized = false;
+
+            variableDeclarationNode = new VariableDeclarationNode(
+                intTypeClauseNode,
+                declarationVariableIdentifierToken,
+                variableKind,
+                isInitialized);
+        }
+
+        IdentifierToken referenceVariableIdentifierToken;
+        {
+            var variableIdentifierText = "x";
+            int indexOfVariableIdentifierText = sourceText.IndexOf(variableIdentifierText);
+
+            referenceVariableIdentifierToken = new IdentifierToken(new TextEditorTextSpan(
+                indexOfVariableIdentifierText,
+                indexOfVariableIdentifierText + variableIdentifierText.Length,
+                0,
+                new ResourceUri("/unitTesting.txt"),
+                sourceText));
+        }
+
+        var variableReferenceNode = new VariableReferenceNode(
+            referenceVariableIdentifierToken,
+            variableDeclarationNode);
+
+        Assert.Equal(referenceVariableIdentifierToken, variableReferenceNode.VariableIdentifierToken);
+        Assert.Equal(variableDeclarationNode, variableReferenceNode.VariableDeclarationNode);
+        Assert.Equal(variableDeclarationNode.TypeClauseNode, variableReferenceNode.ResultTypeClauseNode);
+
+        Assert.Equal(2, variableReferenceNode.ChildBag.Length);
+        Assert.Equal(referenceVariableIdentifierToken, variableReferenceNode.ChildBag[0]);
+        Assert.Equal(variableDeclarationNode, variableReferenceNode.ChildBag[1]);
+
+        Assert.False(variableReferenceNode.IsFabricated);
+
+        Assert.Equal(
+            SyntaxKind.VariableReferenceNode,
+            variableReferenceNode.SyntaxKind);
 	}
 }

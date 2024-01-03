@@ -52,12 +52,12 @@ public class ParserTests
 		var binaryOperatorNode = (BinaryOperatorNode)binaryExpressionNode.BinaryOperatorNode;
 		var rightLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.RightExpressionNode;
 
-		Assert.Equal(typeof(int), leftLiteralExpressionNode.TypeClauseNode.ValueType);
+		Assert.Equal(typeof(int), leftLiteralExpressionNode.ResultTypeClauseNode.ValueType);
 
-		Assert.Equal(typeof(int), binaryOperatorNode.TypeClauseNode.ValueType);
+		Assert.Equal(typeof(int), binaryOperatorNode.ResultTypeClauseNode.ValueType);
 		Assert.Equal(SyntaxKind.PlusToken, binaryOperatorNode.OperatorToken.SyntaxKind);
 
-		Assert.Equal(typeof(int), rightLiteralExpressionNode.TypeClauseNode.ValueType);
+		Assert.Equal(typeof(int), rightLiteralExpressionNode.ResultTypeClauseNode.ValueType);
 	}
 	
 	[Fact]
@@ -78,7 +78,7 @@ public class ParserTests
 		Assert.Equal(typeof(int), binaryOperatorNode.LeftOperandTypeClauseNode.ValueType);
 		Assert.Equal(SyntaxKind.StarToken, binaryOperatorNode.OperatorToken.SyntaxKind);
 		Assert.Equal(typeof(int), binaryOperatorNode.RightOperandTypeClauseNode.ValueType);
-		Assert.Equal(typeof(int), binaryOperatorNode.TypeClauseNode.ValueType);
+		Assert.Equal(typeof(int), binaryOperatorNode.ResultTypeClauseNode.ValueType);
 		Assert.False(binaryOperatorNode.IsFabricated);
 		Assert.Equal(SyntaxKind.BinaryOperatorNode, binaryOperatorNode.SyntaxKind);
 	}
@@ -158,7 +158,7 @@ public class ParserTests
 		Assert.False(functionArgumentEntryNode.IsFabricated);
 		Assert.Equal(SyntaxKind.FunctionArgumentEntryNode, functionArgumentEntryNode.SyntaxKind);
 
-		var variableDeclarationStatementNode = functionArgumentEntryNode.VariableDeclarationStatementNode;
+		var variableDeclarationStatementNode = functionArgumentEntryNode.VariableDeclarationNode;
 		
 		Assert.Equal(argumentTypeText,
 			variableDeclarationStatementNode.TypeClauseNode.TypeIdentifier.TextSpan.GetText());
@@ -177,7 +177,7 @@ public class ParserTests
 	    Assert.False(variableDeclarationStatementNode.HasSetter);
 	    Assert.False(variableDeclarationStatementNode.SetterIsAutoImplemented);		
 		Assert.False(variableDeclarationStatementNode.IsFabricated);
-		Assert.Equal(SyntaxKind.VariableDeclarationStatementNode, variableDeclarationStatementNode.SyntaxKind);
+		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationStatementNode.SyntaxKind);
 	}
 	
 	[Fact]
@@ -452,7 +452,7 @@ Actual:   1");
 		var topCodeBlock = compilationUnit.TopLevelStatementsCodeBlockNode;
 
 		var literalExpressionNode = (LiteralExpressionNode)topCodeBlock.ChildBag.Single();
-		Assert.Equal(typeof(int), literalExpressionNode.TypeClauseNode.ValueType);
+		Assert.Equal(typeof(int), literalExpressionNode.ResultTypeClauseNode.ValueType);
 	}
 	
 	[Fact]

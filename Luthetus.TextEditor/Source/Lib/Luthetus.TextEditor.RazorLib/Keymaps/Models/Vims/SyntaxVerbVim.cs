@@ -76,16 +76,16 @@ public static class SyntaxVerbVim
             switch (currentToken.KeymapArgument.Code)
             {
                 case "KeyD":
-                    textEditorCommand = TextEditorCommandVimFacts.Verbs.DeleteLine;
+                    textEditorCommand = TextEditorCommandVimFacts.Verbs.DeleteLineCommand;
                     return true;
                 case "KeyC":
-                    textEditorCommand = TextEditorCommandVimFacts.Verbs.ChangeLine;
+                    textEditorCommand = TextEditorCommandVimFacts.Verbs.ChangeLineCommand;
                     return true;
                 case "KeyY":
                     textEditorCommand = TextEditorCommandDefaultFacts.Copy;
                     return true;
                 case "KeyP":
-                    textEditorCommand = TextEditorCommandDefaultFacts.Paste;
+                    textEditorCommand = TextEditorCommandDefaultFacts.PasteCommand;
                     return true;
             }
         }
@@ -119,16 +119,16 @@ public static class SyntaxVerbVim
                 switch (currentToken.KeymapArgument.Code)
                 {
                     case "KeyD":
-                        textEditorCommand = TextEditorCommandVimFacts.Verbs.GetDeleteMotion(innerCommand);
+                        textEditorCommand = TextEditorCommandVimFacts.Verbs.DeleteMotionCommandFactory(innerCommand);
                         return true;
                     case "KeyC":
-                        textEditorCommand = TextEditorCommandVimFacts.Verbs.GetChangeMotion(innerCommand);
+                        textEditorCommand = TextEditorCommandVimFacts.Verbs.ChangeMotionCommandFactory(innerCommand);
                         return true;
                     case "KeyY":
                         textEditorCommand = TextEditorCommandDefaultFacts.Copy;
                         return true;
                     case "KeyP":
-                        textEditorCommand = TextEditorCommandDefaultFacts.Paste;
+                        textEditorCommand = TextEditorCommandDefaultFacts.PasteCommand;
                         return true;
                 }
             }
@@ -140,7 +140,7 @@ public static class SyntaxVerbVim
                 switch (currentToken.KeymapArgument.Code)
                 {
                     case "KeyP":
-                        textEditorCommand = TextEditorCommandDefaultFacts.Paste;
+                        textEditorCommand = TextEditorCommandDefaultFacts.PasteCommand;
                         return true;
                     case "Comma":
                         if (keymapArgument.ShiftKey)
@@ -168,13 +168,13 @@ public static class SyntaxVerbVim
                         textEditorCommand = TextEditorCommandDefaultFacts.Cut;
                         return true;
                     case "KeyC":
-                        textEditorCommand = TextEditorCommandVimFacts.Verbs.ChangeSelection;
+                        textEditorCommand = TextEditorCommandVimFacts.Verbs.ChangeSelectionCommand;
                         return true;
                     case "KeyY":
-                        textEditorCommand = TextEditorCommandVimFacts.Verbs.Yank;
+                        textEditorCommand = TextEditorCommandVimFacts.Verbs.YankCommand;
                         return true;
                     case "KeyP":
-                        textEditorCommand = TextEditorCommandDefaultFacts.Paste;
+                        textEditorCommand = TextEditorCommandDefaultFacts.PasteCommand;
                         return true;
                     case "Comma":
                         if (keymapArgument.ShiftKey)

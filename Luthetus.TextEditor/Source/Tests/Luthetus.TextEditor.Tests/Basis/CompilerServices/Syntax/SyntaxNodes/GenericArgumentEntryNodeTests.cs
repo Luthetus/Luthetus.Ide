@@ -1,5 +1,7 @@
 using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
@@ -8,48 +10,49 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 /// </summary>
 public class GenericArgumentEntryNodeTests
 {
-	/// <summary>
-	/// <see cref="GenericArgumentEntryNode(RazorLib.CompilerServices.Syntax.SyntaxNodes.TypeClauseNode)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="GenericArgumentEntryNode(TypeClauseNode)"/>
+    /// <br/>----<br/>
+    /// <see cref="GenericArgumentEntryNode.TypeClauseNode"/>
+    /// <see cref="GenericArgumentEntryNode.ChildBag"/>
+    /// <see cref="GenericArgumentEntryNode.IsFabricated"/>
+    /// <see cref="GenericArgumentEntryNode.SyntaxKind"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
-	}
+        var sourceText = @"public void AddData<TItem>(TItem data)
+{
+}";
 
-	/// <summary>
-	/// <see cref="GenericArgumentEntryNode.TypeClauseNode"/>
-	/// </summary>
-	[Fact]
-	public void TypeClauseNode()
-	{
-		throw new NotImplementedException();
-	}
+        TypeClauseNode genericTypeClauseNode;
+        {
+            var genericArgumentEntryText = "TItem";
+            int indexOfGenericArgumentEntryText = sourceText.IndexOf(genericArgumentEntryText);
+            var genericArgumentIdentifierToken = new IdentifierToken(new TextEditorTextSpan(
+                indexOfGenericArgumentEntryText,
+                indexOfGenericArgumentEntryText + genericArgumentEntryText.Length,
+                0,
+                new ResourceUri("/unitTesting.txt"),
+                sourceText));
 
-	/// <summary>
-	/// <see cref="GenericArgumentEntryNode.ChildBag"/>
-	/// </summary>
-	[Fact]
-	public void ChildBag()
-	{
-		throw new NotImplementedException();
-	}
+            genericTypeClauseNode = new TypeClauseNode(
+                genericArgumentIdentifierToken,
+                null,
+                null);
+        }
 
-	/// <summary>
-	/// <see cref="GenericArgumentEntryNode.IsFabricated"/>
-	/// </summary>
-	[Fact]
-	public void IsFabricated()
-	{
-		throw new NotImplementedException();
-	}
+        var genericArgumentEntryNode = new GenericArgumentEntryNode(genericTypeClauseNode);
 
-	/// <summary>
-	/// <see cref="GenericArgumentEntryNode.SyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
-	{
-		throw new NotImplementedException();
+        Assert.Equal(genericTypeClauseNode, genericArgumentEntryNode.TypeClauseNode);
+
+        Assert.Single(genericArgumentEntryNode.ChildBag);
+        Assert.Equal(genericTypeClauseNode, genericArgumentEntryNode.ChildBag.Single());
+
+        Assert.False(genericArgumentEntryNode.IsFabricated);
+
+        Assert.Equal(
+            RazorLib.CompilerServices.Syntax.SyntaxKind.GenericArgumentEntryNode,
+            genericArgumentEntryNode.SyntaxKind);
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using Fluxor;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -14,14 +15,17 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 public class DisplayTracker : IDisposable
 {
     private readonly object _linksLock = new();
-
+    private readonly ITextEditorService _textEditorService;
+    
     private IState<TextEditorModelState>? _modelStateWrap;
     private CancellationTokenSource _calculateVirtualizationResultCancellationTokenSource = new();
 
     public DisplayTracker(
+        ITextEditorService textEditorService,
         Func<TextEditorViewModel?> getViewModelFunc,
         Func<TextEditorModel?> getModelFunc)
     {
+        _textEditorService = textEditorService;
         GetViewModelFunc = getViewModelFunc;
         GetModelFunc = getModelFunc;
     }
@@ -98,21 +102,22 @@ public class DisplayTracker : IDisposable
         }
     }
 
-    private async void ModelsStateWrap_StateChanged(object? sender, EventArgs e)
+    private void ModelsStateWrap_StateChanged(object? sender, EventArgs e)
     {
-        var viewModel = GetViewModelFunc.Invoke();
-        var model = GetModelFunc.Invoke();
+        //var model = GetModelFunc.Invoke();
+        //var viewModel = GetViewModelFunc.Invoke();
 
-        if (viewModel is null || model is null)
-            return;
+        //if (model is null || viewModel is null)
+        //    return;
 
-        _calculateVirtualizationResultCancellationTokenSource.Cancel();
-        _calculateVirtualizationResultCancellationTokenSource = new();
+        //_calculateVirtualizationResultCancellationTokenSource.Cancel();
+        //_calculateVirtualizationResultCancellationTokenSource = new();
 
-        await viewModel.CalculateVirtualizationResultAsync(
-            model,
-            null,
-            _calculateVirtualizationResultCancellationTokenSource.Token);
+        //_textEditorService.Post(nameof(ModelsStateWrap_StateChanged),
+        //    _textEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
+        //        model.ResourceUri,
+        //        viewModel.ViewModelKey,
+        //        _calculateVirtualizationResultCancellationTokenSource.Token));
     }
 
     public void Dispose()

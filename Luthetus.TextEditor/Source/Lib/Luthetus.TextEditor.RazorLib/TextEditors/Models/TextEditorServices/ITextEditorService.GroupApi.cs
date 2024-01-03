@@ -8,22 +8,29 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 public partial interface ITextEditorService
 {
-    public interface IGroupApi
+    public interface ITextEditorGroupApi
     {
-        public void AddViewModel(Key<TextEditorGroup> textEditorGroupKey, Key<TextEditorViewModel> textEditorViewModelKey);
-        public TextEditorGroup? FindOrDefault(Key<TextEditorGroup> textEditorGroupKey);
-        public void Register(Key<TextEditorGroup> textEditorGroupKey);
-        public void Dispose(Key<TextEditorGroup> textEditorGroupKey);
-        public void RemoveViewModel(Key<TextEditorGroup> textEditorGroupKey, Key<TextEditorViewModel> textEditorViewModelKey);
-        public void SetActiveViewModel(Key<TextEditorGroup> textEditorGroupKey, Key<TextEditorViewModel> textEditorViewModelKey);
+        public void AddViewModel(Key<TextEditorGroup> groupKey, Key<TextEditorViewModel> viewModelKey);
+        public TextEditorGroup? GetOrDefault(Key<TextEditorGroup> groupKey);
+        public void Register(Key<TextEditorGroup> groupKey);
+        public void Dispose(Key<TextEditorGroup> groupKey);
+        public void RemoveViewModel(Key<TextEditorGroup> groupKey, Key<TextEditorViewModel> viewModelKey);
+        public void SetActiveViewModel(Key<TextEditorGroup> groupKey, Key<TextEditorViewModel> viewModelKey);
+
+        /// <summary>
+        /// One should store the result of invoking this method in a variable, then reference that variable.
+        /// If one continually invokes this, there is no guarantee that the data had not changed
+        /// since the previous invocation.
+        /// </summary>
+        public ImmutableList<TextEditorGroup> GetGroups();
     }
 
-    public class GroupApi : IGroupApi
+    public class TextEditorGroupApi : ITextEditorGroupApi
     {
         private readonly IDispatcher _dispatcher;
         private readonly ITextEditorService _textEditorService;
 
-        public GroupApi(ITextEditorService textEditorService, IDispatcher dispatcher)
+        public TextEditorGroupApi(ITextEditorService textEditorService, IDispatcher dispatcher)
         {
             _textEditorService = textEditorService;
             _dispatcher = dispatcher;
@@ -58,7 +65,7 @@ public partial interface ITextEditorService
             _dispatcher.Dispatch(new TextEditorGroupState.DisposeAction(textEditorGroupKey));
         }
 
-        public TextEditorGroup? FindOrDefault(Key<TextEditorGroup> textEditorGroupKey)
+        public TextEditorGroup? GetOrDefault(Key<TextEditorGroup> textEditorGroupKey)
         {
             return _textEditorService.GroupStateWrap.Value.GroupBag.FirstOrDefault(
                 x => x.GroupKey == textEditorGroupKey);
@@ -69,6 +76,11 @@ public partial interface ITextEditorService
             _dispatcher.Dispatch(new TextEditorGroupState.AddViewModelToGroupAction(
                 textEditorGroupKey,
                 textEditorViewModelKey));
+        }
+
+        public ImmutableList<TextEditorGroup> GetGroups()
+        {
+            return _textEditorService.GroupStateWrap.Value.GroupBag;
         }
     }
 }

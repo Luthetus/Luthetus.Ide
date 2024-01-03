@@ -47,13 +47,15 @@ public partial class CommandBarDisplay : FluxorComponent
         {
             await RestoreFocusToTextEditor.Invoke();
 
-            TextEditorService.ViewModel.With(
-                RenderBatch.ViewModel!.ViewModelKey,
-                previousViewModel => previousViewModel with
-                {
-                    CommandBarValue = string.Empty,
-                    DisplayCommandBar = false
-                });
+            TextEditorService.Post(
+                nameof(HandleOnKeyDown),
+                TextEditorService.ViewModelApi.WithValueFactory(
+                    RenderBatch.ViewModel!.ViewModelKey,
+                    previousViewModel => previousViewModel with
+                    {
+                        CommandBarValue = string.Empty,
+                        DisplayCommandBar = false
+                    }));
         }
     }
 }

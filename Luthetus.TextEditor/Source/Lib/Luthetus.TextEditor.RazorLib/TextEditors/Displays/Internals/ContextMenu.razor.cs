@@ -51,16 +51,16 @@ public partial class ContextMenu : ComponentBase
 
     private TextEditorCommandArgs ConstructCommandArgs()
     {
-        var cursorSnapshotsBag = TextEditorCursorSnapshot.TakeSnapshots(RenderBatch.ViewModel!.PrimaryCursor);
-        var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorSnapshotsBag.FirstOrDefault()!.ImmutableCursor.ImmutableSelection);
+        var cursorSnapshotsBag = new TextEditorCursor[] { RenderBatch.ViewModel!.PrimaryCursor }.ToImmutableArray();
+        var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorSnapshotsBag.First(x => x.IsPrimaryCursor).Selection);
 
         return new TextEditorCommandArgs(
-            RenderBatch.Model!,
-            cursorSnapshotsBag,
+            RenderBatch.Model!.ResourceUri,
+            RenderBatch.ViewModel.ViewModelKey,
             hasSelection,
             ClipboardService,
             TextEditorService,
-            RenderBatch.ViewModel,
+            null,
             null,
             null,
             null,
@@ -138,6 +138,6 @@ public partial class ContextMenu : ComponentBase
     private async Task PasteMenuOption()
     {
         var commandArgs = ConstructCommandArgs();
-        await TextEditorCommandDefaultFacts.Paste.DoAsyncFunc.Invoke(commandArgs);
+        await TextEditorCommandDefaultFacts.PasteCommand.DoAsyncFunc.Invoke(commandArgs);
     }
 }

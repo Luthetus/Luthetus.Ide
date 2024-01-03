@@ -1,5 +1,7 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 
@@ -8,39 +10,28 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxTokens;
 /// </summary>
 public class EndOfFileTokenTests
 {
-	/// <summary>
-	/// <see cref="EndOfFileToken(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="EndOfFileToken(TextEditorTextSpan)"/>
+    /// <see cref="EndOfFileToken.TextSpan"/>
+    /// <see cref="EndOfFileToken.SyntaxKind"/>
+    /// <see cref="EndOfFileToken.IsFabricated"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
-	}
+        var text = "Hello World!";
+        var targetSubstring = string.Empty;
+        var indexOfTokenStartInclusive = text.Length;
 
-	/// <summary>
-	/// <see cref="EndOfFileToken.TextSpan"/>
-	/// </summary>
-	[Fact]
-	public void TextSpan()
-	{
-		throw new NotImplementedException();
-	}
+        var endOfFileToken = new EndOfFileToken(new TextEditorTextSpan(
+            indexOfTokenStartInclusive,
+            indexOfTokenStartInclusive + targetSubstring.Length,
+            0,
+            new ResourceUri("/unitTesting.txt"),
+            text));
 
-	/// <summary>
-	/// <see cref="EndOfFileToken.SyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="EndOfFileToken.IsFabricated"/>
-	/// </summary>
-	[Fact]
-	public void IsFabricated()
-	{
-		throw new NotImplementedException();
+        Assert.Equal(targetSubstring, endOfFileToken.TextSpan.GetText());
+        Assert.Equal(SyntaxKind.EndOfFileToken, endOfFileToken.SyntaxKind);
+        Assert.False(endOfFileToken.IsFabricated);
 	}
 }

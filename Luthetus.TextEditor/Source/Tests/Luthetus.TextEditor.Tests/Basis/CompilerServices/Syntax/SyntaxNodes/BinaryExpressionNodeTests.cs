@@ -1,5 +1,8 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
@@ -8,75 +11,107 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 /// </summary>
 public class BinaryExpressionNodeTests
 {
-	/// <summary>
-	/// <see cref="BinaryExpressionNode(RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression.IExpressionNode, RazorLib.CompilerServices.Syntax.SyntaxNodes.BinaryOperatorNode, RazorLib.CompilerServices.Syntax.SyntaxNodes.Expression.IExpressionNode)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="BinaryExpressionNode(IExpressionNode, BinaryOperatorNode, IExpressionNode)"/>
+    /// <br/>----<br/>
+    /// <see cref="BinaryExpressionNode.LeftExpressionNode"/>
+    /// <see cref="BinaryExpressionNode.BinaryOperatorNode"/>
+    /// <see cref="BinaryExpressionNode.RightExpressionNode"/>
+    /// <see cref="BinaryExpressionNode.ResultTypeClauseNode"/>
+    /// <see cref="BinaryExpressionNode.ChildBag"/>
+    /// <see cref="BinaryExpressionNode.IsFabricated"/>
+    /// <see cref="BinaryExpressionNode.SyntaxKind"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
-	{
-		throw new NotImplementedException();
-	}
+    {
+        var leftExpressionText = "3";
+        var binaryOperatorText = "+";
+        var rightExpressionText = "7";
+        var binaryExpressionText = $"{leftExpressionText} {binaryOperatorText} {rightExpressionText}";
+        var sourceText = $@"SomeMethodInvocation({binaryExpressionText})";
 
-	/// <summary>
-	/// <see cref="BinaryExpressionNode.LeftExpressionNode"/>
-	/// </summary>
-	[Fact]
-	public void LeftExpressionNode()
-	{
-		throw new NotImplementedException();
-	}
+        TypeClauseNode intTypeClauseNode;
+        {
+            var intTypeIdentifier = new KeywordToken(
+                TextEditorTextSpan.FabricateTextSpan("int"),
+                RazorLib.CompilerServices.Syntax.SyntaxKind.IntTokenKeyword);
 
-	/// <summary>
-	/// <see cref="BinaryExpressionNode.BinaryOperatorNode"/>
-	/// </summary>
-	[Fact]
-	public void BinaryOperatorNode()
-	{
-		throw new NotImplementedException();
-	}
+            intTypeClauseNode = new TypeClauseNode(
+                intTypeIdentifier,
+                typeof(int),
+                null);
+        }
 
-	/// <summary>
-	/// <see cref="BinaryExpressionNode.RightExpressionNode"/>
-	/// </summary>
-	[Fact]
-	public void RightExpressionNode()
-	{
-		throw new NotImplementedException();
-	}
+        IExpressionNode leftExpressionNode;
+        {
+            var leftExpressionNodeInclusiveStartIndex = sourceText.IndexOf(leftExpressionText);
 
-	/// <summary>
-	/// <see cref="BinaryExpressionNode.TypeClauseNode"/>
-	/// </summary>
-	[Fact]
-	public void TypeClauseNode()
-	{
-		throw new NotImplementedException();
-	}
+            var leftNumericLiteralToken = new NumericLiteralToken(new TextEditorTextSpan(
+                leftExpressionNodeInclusiveStartIndex,
+                leftExpressionNodeInclusiveStartIndex + leftExpressionText.Length,
+                0,
+                new ResourceUri("/unitTesting.txt"),
+                sourceText));
 
-	/// <summary>
-	/// <see cref="BinaryExpressionNode.ChildBag"/>
-	/// </summary>
-	[Fact]
-	public void ChildBag()
-	{
-		throw new NotImplementedException();
-	}
+            leftExpressionNode = new LiteralExpressionNode(
+                leftNumericLiteralToken,
+                intTypeClauseNode);
+        }
 
-	/// <summary>
-	/// <see cref="BinaryExpressionNode.IsFabricated"/>
-	/// </summary>
-	[Fact]
-	public void IsFabricated()
-	{
-		throw new NotImplementedException();
-	}
+        BinaryOperatorNode binaryOperatorNode;
+        {
+            var plusTokenInclusiveStartIndex = sourceText.IndexOf(binaryOperatorText);
 
-	/// <summary>
-	/// <see cref="BinaryExpressionNode.SyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
-	{
-		throw new NotImplementedException();
-	}
+            var plusToken = new PlusToken(new TextEditorTextSpan(
+                plusTokenInclusiveStartIndex,
+                plusTokenInclusiveStartIndex + binaryOperatorText.Length,
+                0,
+                new ResourceUri("/unitTesting.txt"),
+                sourceText));
+
+            binaryOperatorNode = new BinaryOperatorNode(
+                intTypeClauseNode,
+                plusToken,
+                intTypeClauseNode,
+                intTypeClauseNode);
+        }
+
+        IExpressionNode rightExpressionNode;
+        {
+            var rightExpressionNodeInclusiveStartIndex = sourceText.IndexOf(rightExpressionText);
+
+            var rightNumericLiteralToken = new NumericLiteralToken(new TextEditorTextSpan(
+                rightExpressionNodeInclusiveStartIndex,
+                rightExpressionNodeInclusiveStartIndex + rightExpressionText.Length,
+                0,
+                new ResourceUri("/unitTesting.txt"),
+                sourceText));
+
+            rightExpressionNode = new LiteralExpressionNode(
+                rightNumericLiteralToken,
+                intTypeClauseNode);
+        }
+
+        var binaryExpressionNode = new BinaryExpressionNode(
+            leftExpressionNode,
+            binaryOperatorNode,
+            rightExpressionNode);
+
+        Assert.Equal(leftExpressionNode, binaryExpressionNode.LeftExpressionNode);
+        Assert.Equal(binaryOperatorNode, binaryExpressionNode.BinaryOperatorNode);
+        Assert.Equal(rightExpressionNode, binaryExpressionNode.RightExpressionNode);
+        Assert.Equal(binaryOperatorNode.ResultTypeClauseNode, binaryExpressionNode.ResultTypeClauseNode);
+
+        Assert.Equal(3, binaryExpressionNode.ChildBag.Length);
+        Assert.Equal(leftExpressionNode, binaryExpressionNode.ChildBag[0]);
+        Assert.Equal(binaryOperatorNode, binaryExpressionNode.ChildBag[1]);
+        Assert.Equal(rightExpressionNode, binaryExpressionNode.ChildBag[2]);
+
+        Assert.False(binaryExpressionNode.IsFabricated);
+
+        Assert.Equal(
+            RazorLib.CompilerServices.Syntax.SyntaxKind.BinaryExpressionNode,
+            binaryExpressionNode.SyntaxKind);
+    }
 }

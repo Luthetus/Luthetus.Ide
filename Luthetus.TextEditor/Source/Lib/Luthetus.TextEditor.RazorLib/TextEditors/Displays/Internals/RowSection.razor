@@ -12,13 +12,13 @@
     <VirtualizationDisplay VirtualizationResultWithoutTypeMask="RenderBatch.ViewModel!.VirtualizationResult"
                            ItemsProviderFunc="VirtualizationDisplayItemsProviderFunc"/>
 
-    <PresentationLayerGroup PrimaryCursorSnapshot="PrimaryCursorSnapshot"
+    <PresentationLayerGroup PrimaryCursor="PrimaryCursor"
                             CssClassString="luth_te_first-presentation-layer-group"
                             TextEditorPresentationKeys="RenderBatch.ViewModel!.FirstPresentationLayerKeysBag" />
 
-    <TextSelectionGroup PrimaryCursorSnapshot="PrimaryCursorSnapshot"/>
+    <TextSelectionGroup PrimaryCursor="PrimaryCursor"/>
 
-    <PresentationLayerGroup PrimaryCursorSnapshot="PrimaryCursorSnapshot"
+    <PresentationLayerGroup PrimaryCursor="PrimaryCursor"
                             CssClassString="luth_te_last-presentation-layer-group"
                             TextEditorPresentationKeys="RenderBatch.ViewModel.LastPresentationLayerKeysBag" />
 
@@ -69,7 +69,7 @@
                     var rowEndingTuple = RenderBatch.Model!.RowEndingPositionsBag[virtualizedRow.Index];
 
                     <span class="luth_te_newline">
-                        @rowEndingTuple.rowEndingKind.AsCharactersHtmlEscaped()
+                        @rowEndingTuple.RowEndingKind.AsCharactersHtmlEscaped()
                     </span>
                 }
             }

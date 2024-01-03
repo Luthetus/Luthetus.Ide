@@ -36,7 +36,7 @@ public class UnaryExpressionNodeTests
 	}
 
 	/// <summary>
-	/// <see cref="UnaryExpressionNode.TypeClauseNode"/>
+	/// <see cref="UnaryExpressionNode.ResultTypeClauseNode"/>
 	/// </summary>
 	[Fact]
 	public void TypeClauseNode()

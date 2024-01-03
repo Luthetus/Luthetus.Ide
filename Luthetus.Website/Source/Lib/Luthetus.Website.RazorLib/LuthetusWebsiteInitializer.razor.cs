@@ -26,6 +26,8 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
+    private ITextEditorRegistryWrap TextEditorRegistryWrap { get; set; } = null!;
+    [Inject]
     private IDecorationMapperRegistry DecorationMapperRegistry { get; set; } = null!;
     [Inject]
     private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
@@ -35,6 +37,14 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
     private DotNetSolutionSync DotNetSolutionSync { get; set; } = null!;
     [Inject]
     private EditorSync EditorSync { get; set; } = null!;
+
+    protected override void OnInitialized()
+    {
+        TextEditorRegistryWrap.DecorationMapperRegistry = DecorationMapperRegistry;
+        TextEditorRegistryWrap.CompilerServiceRegistry = CompilerServiceRegistry;
+
+        base.OnInitialized();
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -136,22 +146,21 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
                 absolutePath.ExtensionNoPeriod,
                 content,
                 decorationMapper,
-                compilerService,
-                null);
+                compilerService);
 
             textEditorModel.CompilerService.RegisterResource(textEditorModel.ResourceUri);
 
-            TextEditorService.Model.RegisterCustom(textEditorModel);
+            TextEditorService.ModelApi.RegisterCustom(textEditorModel);
 
-            TextEditorService.Model.RegisterPresentationModel(
+            TextEditorService.ModelApi.RegisterPresentationModel(
                     textEditorModel.ResourceUri,
                     CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
 
-            TextEditorService.Model.RegisterPresentationModel(
+            TextEditorService.ModelApi.RegisterPresentationModel(
                 textEditorModel.ResourceUri,
                 DiffPresentationFacts.EmptyInPresentationModel);
             
-            TextEditorService.Model.RegisterPresentationModel(
+            TextEditorService.ModelApi.RegisterPresentationModel(
                 textEditorModel.ResourceUri,
                 DiffPresentationFacts.EmptyOutPresentationModel);
 

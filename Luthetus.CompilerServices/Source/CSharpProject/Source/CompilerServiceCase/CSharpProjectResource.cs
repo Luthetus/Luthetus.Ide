@@ -12,11 +12,11 @@ public class CSharpProjectResource : ICompilerServiceResource
         CSharpProjectCompilerService cSharpProjectCompilerService)
     {
         ResourceUri = resourceUri;
-        DotNetCompilerService = cSharpProjectCompilerService;
+        CSharpProjectCompilerService = cSharpProjectCompilerService;
     }
 
     public ResourceUri ResourceUri { get; }
-    public CSharpProjectCompilerService DotNetCompilerService { get; }
+    public CSharpProjectCompilerService CSharpProjectCompilerService { get; }
     public CompilationUnit? CompilationUnit { get; internal set; }
     public ImmutableArray<ISyntaxToken>? SyntaxTokens { get; internal set; }
     public DotNetSolution.Models.Project.CSharpProject? CSharpProject { get; set; }

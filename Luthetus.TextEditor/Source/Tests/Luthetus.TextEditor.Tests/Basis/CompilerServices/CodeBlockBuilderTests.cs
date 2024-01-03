@@ -1,5 +1,10 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
@@ -8,57 +13,100 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 /// </summary>
 public class CodeBlockBuilderTests
 {
-	/// <summary>
-	/// <see cref="CodeBlockBuilder(CodeBlockBuilder?, RazorLib.CompilerServices.Syntax.ISyntaxNode?)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="CodeBlockBuilder(CodeBlockBuilder?, RazorLib.CompilerServices.Syntax.ISyntaxNode?)"/>
+    /// <br/>----<br/>
+	/// <see cref="CodeBlockBuilder.ChildBag"/>
+    /// <see cref="CodeBlockBuilder.Parent"/>
+    /// <see cref="CodeBlockBuilder.CodeBlockOwner"/>
+    /// <see cref="CodeBlockBuilder.Build()"/>
+    /// <see cref="CodeBlockBuilder.Build(ImmutableArray{TextEditorDiagnostic})"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
+		var globalCodeBlockBuilder = new CodeBlockBuilder(null, null);
+
+		Assert.Empty(globalCodeBlockBuilder.ChildBag);
+		Assert.Null(globalCodeBlockBuilder.Parent);
+		Assert.Null(globalCodeBlockBuilder.CodeBlockOwner);
+
+		var typeDefinitionNode = ConstructTypeDefinitionNode();
+        globalCodeBlockBuilder.ChildBag.Add(typeDefinitionNode);
+        Assert.Single(globalCodeBlockBuilder.ChildBag);
+
+        // No Diagnostics
+        {
+            var codeBlockNoDiagnostics = globalCodeBlockBuilder.Build();
+
+            Assert.Empty(codeBlockNoDiagnostics.DiagnosticsBag);
+            Assert.Single(codeBlockNoDiagnostics.ChildBag);
+            Assert.Equal(typeDefinitionNode, codeBlockNoDiagnostics.ChildBag.Single());
+            Assert.Equal(SyntaxKind.CodeBlockNode, codeBlockNoDiagnostics.SyntaxKind);
+            Assert.False(codeBlockNoDiagnostics.IsFabricated);
+        }
+
+		// With Diagnostics
+		{
+            var diagnostic = new TextEditorDiagnostic(
+				TextEditorDiagnosticLevel.Error,
+				"Error",
+				TextEditorTextSpan.FabricateTextSpan("Hello World!"),
+				Guid.NewGuid());
+
+            var diagnosticBag = new TextEditorDiagnostic[]
+            {
+				diagnostic
+            }.ToImmutableArray();
+
+            var codeBlockWithDiagnostics = globalCodeBlockBuilder.Build(diagnosticBag);
+
+            Assert.Single(codeBlockWithDiagnostics.DiagnosticsBag);
+            Assert.Single(codeBlockWithDiagnostics.ChildBag);
+            Assert.Equal(typeDefinitionNode, codeBlockWithDiagnostics.ChildBag.Single());
+            Assert.Equal(SyntaxKind.CodeBlockNode, codeBlockWithDiagnostics.SyntaxKind);
+            Assert.False(codeBlockWithDiagnostics.IsFabricated);
+        }
+
+		var typeDefinitionCodeBlockBuilder = new CodeBlockBuilder(
+			globalCodeBlockBuilder,
+			typeDefinitionNode);
+
+		Assert.Equal(globalCodeBlockBuilder, typeDefinitionCodeBlockBuilder.Parent);
+		Assert.Equal(typeDefinitionNode, typeDefinitionCodeBlockBuilder.CodeBlockOwner);
 	}
 
-	/// <summary>
-	/// <see cref="CodeBlockBuilder.ChildBag"/>
-	/// </summary>
-	[Fact]
-	public void ChildBag()
+	private TypeDefinitionNode ConstructTypeDefinitionNode()
 	{
-		throw new NotImplementedException();
-	}
+        var sourceText = @"public class MyClass
+{
+}";
+        IdentifierToken typeIdentifier;
+        {
+            var typeIdentifierText = "MyClass";
+            int indexOfTypeIdentifierText = sourceText.IndexOf(typeIdentifierText);
 
-	/// <summary>
-	/// <see cref="CodeBlockBuilder.Parent"/>
-	/// </summary>
-	[Fact]
-	public void Parent()
-	{
-		throw new NotImplementedException();
-	}
+            typeIdentifier = new IdentifierToken(new TextEditorTextSpan(
+                indexOfTypeIdentifierText,
+                indexOfTypeIdentifierText + typeIdentifierText.Length,
+                0,
+                new ResourceUri("/unitTesting.txt"),
+                sourceText));
+        }
 
-	/// <summary>
-	/// <see cref="CodeBlockBuilder.CodeBlockOwner"/>
-	/// </summary>
-	[Fact]
-	public void CodeBlockOwner()
-	{
-		throw new NotImplementedException();
-	}
+        Type? valueType = null;
 
-	/// <summary>
-	/// <see cref="CodeBlockBuilder.Build()"/>
-	/// </summary>
-	[Fact]
-	public void Build_A()
-	{
-		throw new NotImplementedException();
-	}
+        GenericArgumentsListingNode? genericArgumentsListingNode = null;
 
-	/// <summary>
-	/// <see cref="CodeBlockBuilder.Build(System.Collections.Immutable.ImmutableArray{TextEditorDiagnostic})"/>
-	/// </summary>
-	[Fact]
-	public void Build_B()
-	{
-		throw new NotImplementedException();
-	}
+        TypeClauseNode? inheritedTypeClauseNode = null;
+
+        CodeBlockNode? typeBodyCodeBlockNode = new(ImmutableArray<ISyntax>.Empty);
+
+        return new TypeDefinitionNode(
+            typeIdentifier,
+            valueType,
+            genericArgumentsListingNode,
+            inheritedTypeClauseNode,
+            typeBodyCodeBlockNode);
+    }
 }

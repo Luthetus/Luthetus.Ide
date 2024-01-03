@@ -7,6 +7,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.Common.RazorLib.Reactives.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -39,6 +40,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     public RenderFragment AutoCompleteMenuRenderFragment { get; set; } = null!;
 
     private readonly Guid _intersectionObserverMapKey = Guid.NewGuid();
+    private readonly IThrottle _throttleShouldRevealCursor = new Throttle(TimeSpan.FromMilliseconds(50));
 
     private ElementReference? _cursorDisplayElementReference;
     private TextEditorMenuKind _menuKind;
@@ -55,7 +57,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     public string CaretRowStyleCss => GetCaretRowStyleCss();
     public string MenuStyleCss => GetMenuStyleCss();
 
-    public string BlinkAnimationCssClass => TextEditorService.ViewModel.CursorShouldBlink
+    public string BlinkAnimationCssClass => TextEditorService.ViewModelApi.CursorShouldBlink
         ? "luth_te_blink"
         : string.Empty;
 
@@ -63,7 +65,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        TextEditorService.ViewModel.CursorShouldBlinkChanged += ViewModel_CursorShouldBlinkChanged;
+        TextEditorService.ViewModelApi.CursorShouldBlinkChanged += ViewModel_CursorShouldBlinkChanged;
 
         base.OnInitialized();
     }
@@ -114,33 +116,17 @@ public partial class CursorDisplay : ComponentBase, IDisposable
             _previouslyObservedCursorDisplayId = CursorDisplayId;
         }
 
-        var rowIndex = Cursor.IndexCoordinates.rowIndex;
-
-        // Ensure cursor stays within the row count index range
-        if (rowIndex > model.RowCount - 1)
-            rowIndex = model.RowCount - 1;
-
-        var columnIndex = Cursor.IndexCoordinates.columnIndex;
-
-        var rowLength = model.GetLengthOfRow(rowIndex);
-
-        // Ensure cursor stays within the column count index range for the current row
-        if (columnIndex > rowLength)
-            columnIndex = rowLength - 1;
-
-        rowIndex = Math.Max(0, rowIndex);
-        columnIndex = Math.Max(0, columnIndex);
-
-        Cursor.IndexCoordinates = (rowIndex, columnIndex);
-
         if (Cursor.ShouldRevealCursor)
         {
             Cursor.ShouldRevealCursor = false;
 
             if (!Cursor.IsIntersecting)
             {
-                await JsRuntime.InvokeVoidAsync("luthetusTextEditor.scrollElementIntoView",
-                    CursorDisplayId);
+                await _throttleShouldRevealCursor.FireAsync(async _ =>
+                {
+                    await JsRuntime.InvokeVoidAsync("luthetusTextEditor.scrollElementIntoView",
+                        CursorDisplayId);
+                });
             }
         }
 
@@ -163,8 +149,8 @@ public partial class CursorDisplay : ComponentBase, IDisposable
         // Tab key column offset
         {
             var tabsOnSameRowBeforeCursor = RenderBatch.Model!.GetTabsCountOnSameRowBeforeCursor(
-                Cursor.IndexCoordinates.rowIndex,
-                Cursor.IndexCoordinates.columnIndex);
+                Cursor.RowIndex,
+                Cursor.ColumnIndex);
 
             // 1 of the character width is already accounted for
 
@@ -175,13 +161,12 @@ public partial class CursorDisplay : ComponentBase, IDisposable
                 measurements.CharacterWidth;
         }
 
-        leftInPixels += measurements.CharacterWidth * Cursor.IndexCoordinates.columnIndex;
+        leftInPixels += measurements.CharacterWidth * Cursor.ColumnIndex;
 
         var leftInPixelsInvariantCulture = leftInPixels.ToCssValue();
         var left = $"left: {leftInPixelsInvariantCulture}px;";
 
-        var topInPixelsInvariantCulture = (measurements.RowHeight *
-                Cursor.IndexCoordinates.rowIndex)
+        var topInPixelsInvariantCulture = (measurements.RowHeight * Cursor.RowIndex)
             .ToCssValue();
 
         var top = $"top: {topInPixelsInvariantCulture}px;";
@@ -204,8 +189,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     {
         var measurements = RenderBatch.ViewModel!.VirtualizationResult.CharAndRowMeasurements;
 
-        var topInPixelsInvariantCulture = (measurements.RowHeight *
-                Cursor.IndexCoordinates.rowIndex)
+        var topInPixelsInvariantCulture = (measurements.RowHeight * Cursor.RowIndex)
             .ToCssValue();
 
         var top = $"top: {topInPixelsInvariantCulture}px;";
@@ -231,8 +215,8 @@ public partial class CursorDisplay : ComponentBase, IDisposable
         // Tab key column offset
         {
             var tabsOnSameRowBeforeCursor = RenderBatch.Model!.GetTabsCountOnSameRowBeforeCursor(
-                Cursor.IndexCoordinates.rowIndex,
-                Cursor.IndexCoordinates.columnIndex);
+                Cursor.RowIndex,
+                Cursor.ColumnIndex);
 
             // 1 of the character width is already accounted for
             var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
@@ -241,13 +225,12 @@ public partial class CursorDisplay : ComponentBase, IDisposable
                 measurements.CharacterWidth;
         }
 
-        leftInPixels += measurements.CharacterWidth * Cursor.IndexCoordinates.columnIndex;
+        leftInPixels += measurements.CharacterWidth * Cursor.ColumnIndex;
 
         var leftInPixelsInvariantCulture = leftInPixels.ToCssValue();
         var left = $"left: {leftInPixelsInvariantCulture}px;";
 
-        var topInPixelsInvariantCulture = 
-            (measurements.RowHeight * (Cursor.IndexCoordinates.rowIndex + 1))
+        var topInPixelsInvariantCulture = (measurements.RowHeight * (Cursor.RowIndex + 1))
             .ToCssValue();
 
         // Top is 1 row further than the cursor so it does not cover text at cursor position.
@@ -280,7 +263,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
     public void PauseBlinkAnimation()
     {
-        TextEditorService.ViewModel.SetCursorShouldBlink(false);
+        TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
     }
 
     private void HandleOnKeyDown()
@@ -328,7 +311,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        TextEditorService.ViewModel.CursorShouldBlinkChanged -= ViewModel_CursorShouldBlinkChanged;
+        TextEditorService.ViewModelApi.CursorShouldBlinkChanged -= ViewModel_CursorShouldBlinkChanged;
 
         if (IsFocusTarget)
         {

@@ -2,5 +2,5 @@
 
 public interface IExpressionNode : ISyntaxNode
 {
-    public TypeClauseNode TypeClauseNode { get; }
+    public TypeClauseNode ResultTypeClauseNode { get; }
 }

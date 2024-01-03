@@ -1,5 +1,8 @@
 using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
@@ -8,66 +11,102 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 /// </summary>
 public class FunctionParametersListingNodeTests
 {
-	/// <summary>
-	/// <see cref="FunctionParametersListingNode(RazorLib.CompilerServices.Syntax.SyntaxTokens.OpenParenthesisToken, System.Collections.Immutable.ImmutableArray{FunctionParameterEntryNode}, RazorLib.CompilerServices.Syntax.SyntaxTokens.CloseParenthesisToken)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="FunctionParametersListingNode(OpenParenthesisToken, ImmutableArray{FunctionParameterEntryNode}, CloseParenthesisToken)"/>
+    /// <br/>----<br/>
+    /// <see cref="FunctionParametersListingNode.OpenParenthesisToken"/>
+    /// <see cref="FunctionParametersListingNode.FunctionParameterEntryNodeBag"/>
+    /// <see cref="FunctionParametersListingNode.CloseParenthesisToken"/>
+    /// <see cref="FunctionParametersListingNode.ChildBag"/>
+    /// <see cref="FunctionParametersListingNode.IsFabricated"/>
+    /// <see cref="FunctionParametersListingNode.SyntaxKind"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
-	}
+        var sourceText = "MyMethod(3)";
 
-	/// <summary>
-	/// <see cref="FunctionParametersListingNode.OpenParenthesisToken"/>
-	/// </summary>
-	[Fact]
-	public void OpenParenthesisToken()
-	{
-		throw new NotImplementedException();
-	}
+        OpenParenthesisToken openParenthesisToken;
+        {
+            var openParenthesisText = "(";
+            int indexOfOpenParenthesisText = sourceText.IndexOf(openParenthesisText);
+            openParenthesisToken = new OpenParenthesisToken(new TextEditorTextSpan(
+                indexOfOpenParenthesisText,
+                indexOfOpenParenthesisText + openParenthesisText.Length,
+                0,
+                new ResourceUri("/unitTesting.txt"),
+                sourceText));
+        }
 
-	/// <summary>
-	/// <see cref="FunctionParametersListingNode.FunctionParameterEntryNodeBag"/>
-	/// </summary>
-	[Fact]
-	public void FunctionParameterEntryNodeBag()
-	{
-		throw new NotImplementedException();
-	}
+        ImmutableArray<FunctionParameterEntryNode> functionParameterEntryNodeBag;
+        {
+            var numericLiteralText = "3";
+            int indexOfNumericLiteralText = sourceText.IndexOf(numericLiteralText);
+            var numericLiteralToken = new NumericLiteralToken(new TextEditorTextSpan(
+                indexOfNumericLiteralText,
+                indexOfNumericLiteralText + numericLiteralText.Length,
+                0,
+                new ResourceUri("/unitTesting.txt"),
+                sourceText));
 
-	/// <summary>
-	/// <see cref="FunctionParametersListingNode.CloseParenthesisToken"/>
-	/// </summary>
-	[Fact]
-	public void CloseParenthesisToken()
-	{
-		throw new NotImplementedException();
-	}
+            TypeClauseNode intTypeClauseNode;
+            {
+                var intTypeIdentifier = new KeywordToken(
+                    TextEditorTextSpan.FabricateTextSpan("int"),
+                    RazorLib.CompilerServices.Syntax.SyntaxKind.IntTokenKeyword);
 
-	/// <summary>
-	/// <see cref="FunctionParametersListingNode.ChildBag"/>
-	/// </summary>
-	[Fact]
-	public void ChildBag()
-	{
-		throw new NotImplementedException();
-	}
+                intTypeClauseNode = new TypeClauseNode(
+                    intTypeIdentifier,
+                    typeof(int),
+                    null);
+            }
 
-	/// <summary>
-	/// <see cref="FunctionParametersListingNode.IsFabricated"/>
-	/// </summary>
-	[Fact]
-	public void IsFabricated()
-	{
-		throw new NotImplementedException();
-	}
+            var literalExpressionNode = new LiteralExpressionNode(
+                numericLiteralToken,
+                intTypeClauseNode);
 
-	/// <summary>
-	/// <see cref="FunctionParametersListingNode.SyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
-	{
-		throw new NotImplementedException();
+            var functionParameterEntryNode = new FunctionParameterEntryNode(
+                literalExpressionNode,
+                false,
+                false,
+                false);
+
+            functionParameterEntryNodeBag = new FunctionParameterEntryNode[]
+            {
+                    functionParameterEntryNode
+            }.ToImmutableArray();
+        }
+
+        CloseParenthesisToken closeParenthesisToken;
+        {
+            var closeParenthesisText = ")";
+            int indexOfCloseParenthesisText = sourceText.IndexOf(closeParenthesisText);
+            closeParenthesisToken = new CloseParenthesisToken(new TextEditorTextSpan(
+                indexOfCloseParenthesisText,
+                indexOfCloseParenthesisText + closeParenthesisText.Length,
+                0,
+                new ResourceUri("/unitTesting.txt"),
+                sourceText));
+        }
+
+        var functionParametersListingNode = new FunctionParametersListingNode(
+            openParenthesisToken,
+            functionParameterEntryNodeBag,
+            closeParenthesisToken);
+
+        Assert.Equal(openParenthesisToken, functionParametersListingNode.OpenParenthesisToken);
+        Assert.Equal(functionParameterEntryNodeBag, functionParametersListingNode.FunctionParameterEntryNodeBag);
+        Assert.Equal(closeParenthesisToken, functionParametersListingNode.CloseParenthesisToken);
+
+        Assert.Equal(3, functionParametersListingNode.ChildBag.Length);
+        Assert.Equal(openParenthesisToken, functionParametersListingNode.ChildBag[0]);
+        Assert.Equal(functionParameterEntryNodeBag.Single(), functionParametersListingNode.ChildBag[1]);
+        Assert.Equal(closeParenthesisToken, functionParametersListingNode.ChildBag[2]);
+
+        Assert.False(functionParametersListingNode.IsFabricated);
+
+        Assert.Equal(
+            RazorLib.CompilerServices.Syntax.SyntaxKind.FunctionParametersListingNode,
+            functionParametersListingNode.SyntaxKind);
 	}
 }

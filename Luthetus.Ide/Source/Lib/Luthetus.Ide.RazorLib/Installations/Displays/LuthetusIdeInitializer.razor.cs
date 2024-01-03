@@ -5,7 +5,7 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.Common.RazorLib.Icons.Displays.Codicon;
-using Luthetus.TextEditor.RazorLib.Finds.States;
+using Luthetus.TextEditor.RazorLib.SearchEngines.States;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Contexts.Displays;
 using Luthetus.Common.RazorLib.Panels.Models;
@@ -51,9 +51,9 @@ public partial class LuthetusIdeInitializer : ComponentBase
                 }
             }
 
-            foreach (var findProvider in LuthetusTextEditorOptions.FindProviderBag)
+            foreach (var searchEngine in LuthetusTextEditorOptions.SearchEngineBag)
             {
-                Dispatcher.Dispatch(new TextEditorFindProviderState.RegisterAction(findProvider));
+                Dispatcher.Dispatch(new TextEditorSearchEngineState.RegisterAction(searchEngine));
             }
 
             foreach (var terminalSessionKey in TerminalSessionFacts.WELL_KNOWN_TERMINAL_SESSION_KEYS)

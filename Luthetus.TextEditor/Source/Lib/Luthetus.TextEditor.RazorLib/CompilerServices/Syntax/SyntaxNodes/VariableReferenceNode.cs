@@ -8,24 +8,24 @@ public sealed record VariableReferenceNode : IExpressionNode
 {
     public VariableReferenceNode(
         IdentifierToken variableIdentifierToken,
-        VariableDeclarationNode variableDeclarationStatementNode)
+        VariableDeclarationNode variableDeclarationNode)
     {
         VariableIdentifierToken = variableIdentifierToken;
-        VariableDeclarationStatementNode = variableDeclarationStatementNode;
+        VariableDeclarationNode = variableDeclarationNode;
 
         ChildBag = new ISyntax[]
         {
             VariableIdentifierToken,
-            VariableDeclarationStatementNode,
+            VariableDeclarationNode,
         }.ToImmutableArray();
     }
 
     public IdentifierToken VariableIdentifierToken { get; }
     /// <summary>
-    /// The <see cref="VariableDeclarationStatementNode"/> is null when the variable is undeclared
+    /// The <see cref="VariableDeclarationNode"/> is null when the variable is undeclared
     /// </summary>
-    public VariableDeclarationNode VariableDeclarationStatementNode { get; }
-    public TypeClauseNode TypeClauseNode => VariableDeclarationStatementNode.TypeClauseNode;
+    public VariableDeclarationNode VariableDeclarationNode { get; }
+    public TypeClauseNode ResultTypeClauseNode => VariableDeclarationNode.TypeClauseNode;
 
     public ImmutableArray<ISyntax> ChildBag { get; }
 

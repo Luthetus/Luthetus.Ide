@@ -1,7 +1,5 @@
 ﻿using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -15,18 +13,14 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
 {
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
-    [Inject]
-    private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
-    [Inject]
-    private IDecorationMapperRegistry DecorationMapperRegistry { get; set; } = null!;
 
     private static readonly Key<TextEditorDiffModel> DiffModelKey = Key<TextEditorDiffModel>.NewKey();
 
-    private static readonly ResourceUri BeforeResourceUri = new(nameof(GitChangesDisplay) + "_in");
-    private static readonly ResourceUri AfterResourceUri = new(nameof(GitChangesDisplay) + "_out");
+    private static readonly ResourceUri InResourceUri = new(nameof(GitChangesDisplay) + "_in");
+    private static readonly ResourceUri OutResourceUri = new(nameof(GitChangesDisplay) + "_out");
 
-    private static readonly Key<TextEditorViewModel> BeforeViewModelKey = Key<TextEditorViewModel>.NewKey();
-    private static readonly Key<TextEditorViewModel> AfterViewModelKey = Key<TextEditorViewModel>.NewKey();
+    private static readonly Key<TextEditorViewModel> InViewModelKey = Key<TextEditorViewModel>.NewKey();
+    private static readonly Key<TextEditorViewModel> OutViewModelKey = Key<TextEditorViewModel>.NewKey();
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
@@ -34,80 +28,80 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
         {
             // "In" Registrations
             {
-                TextEditorService.Model.RegisterTemplated(
-                    DecorationMapperRegistry,
-                    CompilerServiceRegistry,
+                TextEditorService.ModelApi.RegisterTemplated(
                     ExtensionNoPeriodFacts.TXT,
-                    BeforeResourceUri,
+                    InResourceUri,
                     DateTime.UtcNow,
                     "ABCDEFK",
                     "Before");
 
-                TextEditorService.Model.RegisterPresentationModel(
-                    BeforeResourceUri,
+                TextEditorService.ModelApi.RegisterPresentationModel(
+                    InResourceUri,
                     DiffPresentationFacts.EmptyInPresentationModel);
                 
-                TextEditorService.Model.RegisterPresentationModel(
-                    BeforeResourceUri,
+                TextEditorService.ModelApi.RegisterPresentationModel(
+                    InResourceUri,
                     DiffPresentationFacts.EmptyOutPresentationModel);
 
-                TextEditorService.ViewModel.Register(
-                    BeforeViewModelKey,
-                    BeforeResourceUri);
+                TextEditorService.ViewModelApi.Register(
+                    InViewModelKey,
+                    InResourceUri);
 
                 var presentationKeys = new[]
                 {
                     DiffPresentationFacts.InPresentationKey,
                 };
 
-                TextEditorService.ViewModel.With(
-                    BeforeViewModelKey,
-                    textEditorViewModel => textEditorViewModel with
-                    {
-                        FirstPresentationLayerKeysBag = presentationKeys.ToImmutableList()
-                    });
+                TextEditorService.Post(
+                    nameof(GitChangesDisplay),
+                    TextEditorService.ViewModelApi.WithValueFactory(
+                        InViewModelKey,
+                        textEditorViewModel => textEditorViewModel with
+                        {
+                            FirstPresentationLayerKeysBag = presentationKeys.ToImmutableList()
+                        }));
             }
             
             // "Out" Registrations
             {
-                TextEditorService.Model.RegisterTemplated(
-                    DecorationMapperRegistry,
-                    CompilerServiceRegistry,
+                TextEditorService.ModelApi.RegisterTemplated(
                     ExtensionNoPeriodFacts.TXT,
-                    AfterResourceUri,
+                    OutResourceUri,
                     DateTime.UtcNow,
                     "BHDEFCK",
                     "After");
 
-                TextEditorService.Model.RegisterPresentationModel(
-                    AfterResourceUri,
+                TextEditorService.ModelApi.RegisterPresentationModel(
+                    OutResourceUri,
                     DiffPresentationFacts.EmptyInPresentationModel);
 
-                TextEditorService.Model.RegisterPresentationModel(
-                    AfterResourceUri,
+                TextEditorService.ModelApi.RegisterPresentationModel(
+                    OutResourceUri,
                     DiffPresentationFacts.EmptyOutPresentationModel);
 
-                TextEditorService.ViewModel.Register(
-                    AfterViewModelKey,
-                    AfterResourceUri);
+                TextEditorService.ViewModelApi.Register(
+                    OutViewModelKey,
+                    OutResourceUri);
 
                 var presentationKeys = new[]
                 {
                     DiffPresentationFacts.OutPresentationKey,
                 };
 
-                TextEditorService.ViewModel.With(
-                    AfterViewModelKey,
-                    textEditorViewModel => textEditorViewModel with
-                    {
-                        FirstPresentationLayerKeysBag = presentationKeys.ToImmutableList()
-                    });
+                TextEditorService.Post(
+                    nameof(TextEditorService.ViewModelApi.WithValueFactory),
+                    TextEditorService.ViewModelApi.WithValueFactory(
+                        OutViewModelKey,
+                        textEditorViewModel => textEditorViewModel with
+                        {
+                            FirstPresentationLayerKeysBag = presentationKeys.ToImmutableList()
+                        }));
             }
 
-            TextEditorService.Diff.Register(
+            TextEditorService.DiffApi.Register(
                 DiffModelKey,
-                BeforeViewModelKey,
-                AfterViewModelKey);
+                InViewModelKey,
+                OutViewModelKey);
         }
 
         return base.OnAfterRenderAsync(firstRender);

@@ -1,49 +1,52 @@
 ﻿using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 
 namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 
 public record VimMotionResult(
-    ImmutableTextEditorCursor LowerPositionIndexImmutableCursor,
+    TextEditorCursor LowerPositionIndexCursor,
     int LowerPositionIndex,
-    ImmutableTextEditorCursor HigherPositionIndexImmutableCursor,
+    TextEditorCursor HigherPositionIndexCursor,
     int HigherPositionIndex,
     int PositionIndexDisplacement)
 {
     public static async Task<VimMotionResult> GetResultAsync(
-        TextEditorCommandArgs textEditorCommandArgs,
+        ITextEditorModel model,
+        TextEditorViewModel viewModel,
+        TextEditorCommandArgs commandArgs,
         TextEditorCursor textEditorCursorForMotion,
-        Func<Task> motionCommandArgs)
+        Func<Task> motionCommand)
     {
-        await motionCommandArgs.Invoke();
+        await motionCommand.Invoke();
 
-        var beforeMotionImmutableCursor = textEditorCommandArgs.PrimaryCursorSnapshot.ImmutableCursor;
+        var beforeMotionCursor = textEditorCursorForMotion;
 
-        var beforeMotionPositionIndex = textEditorCommandArgs.Model.GetPositionIndex(
-            beforeMotionImmutableCursor.RowIndex,
-            beforeMotionImmutableCursor.ColumnIndex);
+        var beforeMotionPositionIndex = model.GetPositionIndex(
+            beforeMotionCursor.RowIndex,
+            beforeMotionCursor.ColumnIndex);
 
-        var afterMotionImmutableCursor = new ImmutableTextEditorCursor(textEditorCursorForMotion);
+        var afterMotionCursor = textEditorCursorForMotion;
 
-        var afterMotionPositionIndex = textEditorCommandArgs.Model.GetPositionIndex(
-            afterMotionImmutableCursor.RowIndex,
-            afterMotionImmutableCursor.ColumnIndex);
+        var afterMotionPositionIndex = model.GetPositionIndex(
+            afterMotionCursor.RowIndex,
+            afterMotionCursor.ColumnIndex);
 
         if (beforeMotionPositionIndex > afterMotionPositionIndex)
         {
             return new VimMotionResult(
-                afterMotionImmutableCursor,
+                afterMotionCursor,
                 afterMotionPositionIndex,
-                beforeMotionImmutableCursor,
+                beforeMotionCursor,
                 beforeMotionPositionIndex,
                 beforeMotionPositionIndex - afterMotionPositionIndex);
         }
 
         return new VimMotionResult(
-            beforeMotionImmutableCursor,
+            beforeMotionCursor,
             beforeMotionPositionIndex,
-            afterMotionImmutableCursor,
+            afterMotionCursor,
             afterMotionPositionIndex,
             afterMotionPositionIndex - beforeMotionPositionIndex);
     }

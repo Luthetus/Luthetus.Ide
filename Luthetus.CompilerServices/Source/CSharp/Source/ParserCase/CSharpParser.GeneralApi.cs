@@ -313,9 +313,9 @@ public partial class CSharpParser : IParser
             if (NodeRecent is VariableReferenceNode variableReferenceNode)
             {
                 var unaryOperatorNode = new UnaryOperatorNode(
-                    variableReferenceNode.TypeClauseNode,
+                    variableReferenceNode.ResultTypeClauseNode,
                     plusPlusToken,
-                    variableReferenceNode.TypeClauseNode);
+                    variableReferenceNode.ResultTypeClauseNode);
 
                 var unaryExpressionNode = new UnaryExpressionNode(
                     variableReferenceNode,
@@ -620,7 +620,7 @@ public partial class CSharpParser : IParser
                     {
                         var variableReferenceNode = (VariableReferenceNode)NodeRecent;
 
-                        if (variableReferenceNode.VariableDeclarationStatementNode.IsFabricated)
+                        if (variableReferenceNode.VariableDeclarationNode.IsFabricated)
                         {
                             // Undeclared variable, so the Type is unknown.
                         }

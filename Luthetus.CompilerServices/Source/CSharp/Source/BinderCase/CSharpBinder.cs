@@ -65,8 +65,8 @@ public class CSharpBinder : IBinder
         ISyntaxToken operatorToken,
         IExpressionNode rightExpressionNode)
     {
-        if (leftExpressionNode.TypeClauseNode.ValueType == typeof(int) &&
-            rightExpressionNode.TypeClauseNode.ValueType == typeof(int))
+        if (leftExpressionNode.ResultTypeClauseNode.ValueType == typeof(int) &&
+            rightExpressionNode.ResultTypeClauseNode.ValueType == typeof(int))
         {
             switch (operatorToken.SyntaxKind)
             {
@@ -75,22 +75,22 @@ public class CSharpBinder : IBinder
                 case SyntaxKind.StarToken:
                 case SyntaxKind.DivisionToken:
                     return new BinaryOperatorNode(
-                        leftExpressionNode.TypeClauseNode,
+                        leftExpressionNode.ResultTypeClauseNode,
                         operatorToken,
-                        rightExpressionNode.TypeClauseNode,
+                        rightExpressionNode.ResultTypeClauseNode,
                         CSharpFacts.Types.Int.ToTypeClause());
             }
         }
-        else if (leftExpressionNode.TypeClauseNode.ValueType == typeof(string) &&
-            rightExpressionNode.TypeClauseNode.ValueType == typeof(string))
+        else if (leftExpressionNode.ResultTypeClauseNode.ValueType == typeof(string) &&
+            rightExpressionNode.ResultTypeClauseNode.ValueType == typeof(string))
         {
             switch (operatorToken.SyntaxKind)
             {
                 case SyntaxKind.PlusToken:
                     return new BinaryOperatorNode(
-                        leftExpressionNode.TypeClauseNode,
+                        leftExpressionNode.ResultTypeClauseNode,
                         operatorToken,
-                        rightExpressionNode.TypeClauseNode,
+                        rightExpressionNode.ResultTypeClauseNode,
                         CSharpFacts.Types.String.ToTypeClause());
             }
         }
@@ -136,7 +136,7 @@ public class CSharpBinder : IBinder
         bool hasInKeyword,
         bool hasRefKeyword)
     {
-        var argumentTypeClauseNode = functionArgumentEntryNode.VariableDeclarationStatementNode.TypeClauseNode;
+        var argumentTypeClauseNode = functionArgumentEntryNode.VariableDeclarationNode.TypeClauseNode;
 
         if (TryGetTypeDefinitionHierarchically(
                 argumentTypeClauseNode.TypeIdentifier.TextSpan.GetText(),
@@ -152,23 +152,23 @@ public class CSharpBinder : IBinder
 
         literalExpressionNode = BindLiteralExpressionNode(literalExpressionNode);
 
-        if (literalExpressionNode.TypeClauseNode.ValueType is null ||
-            literalExpressionNode.TypeClauseNode.ValueType != functionArgumentEntryNode.VariableDeclarationStatementNode.TypeClauseNode.ValueType)
+        if (literalExpressionNode.ResultTypeClauseNode.ValueType is null ||
+            literalExpressionNode.ResultTypeClauseNode.ValueType != functionArgumentEntryNode.VariableDeclarationNode.TypeClauseNode.ValueType)
         {
-            var optionalArgumentTextSpan = functionArgumentEntryNode.VariableDeclarationStatementNode.TypeClauseNode.TypeIdentifier.TextSpan with
+            var optionalArgumentTextSpan = functionArgumentEntryNode.VariableDeclarationNode.TypeClauseNode.TypeIdentifier.TextSpan with
             {
-                EndingIndexExclusive = functionArgumentEntryNode.VariableDeclarationStatementNode.IdentifierToken.TextSpan.EndingIndexExclusive
+                EndingIndexExclusive = functionArgumentEntryNode.VariableDeclarationNode.IdentifierToken.TextSpan.EndingIndexExclusive
             };
 
             _diagnosticBag.ReportBadFunctionOptionalArgumentDueToMismatchInType(
                 optionalArgumentTextSpan,
-                functionArgumentEntryNode.VariableDeclarationStatementNode.IdentifierToken.TextSpan.GetText(),
-                functionArgumentEntryNode.VariableDeclarationStatementNode.TypeClauseNode.ValueType?.Name ?? "null",
-                literalExpressionNode.TypeClauseNode.ValueType?.Name ?? "null");
+                functionArgumentEntryNode.VariableDeclarationNode.IdentifierToken.TextSpan.GetText(),
+                functionArgumentEntryNode.VariableDeclarationNode.TypeClauseNode.ValueType?.Name ?? "null",
+                literalExpressionNode.ResultTypeClauseNode.ValueType?.Name ?? "null");
         }
 
         return new FunctionArgumentEntryNode(
-            functionArgumentEntryNode.VariableDeclarationStatementNode,
+            functionArgumentEntryNode.VariableDeclarationNode,
             true,
             hasOutKeyword,
             hasInKeyword,

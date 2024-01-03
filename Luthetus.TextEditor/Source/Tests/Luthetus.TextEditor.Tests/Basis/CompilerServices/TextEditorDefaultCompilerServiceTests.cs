@@ -4,12 +4,12 @@ using Luthetus.TextEditor.RazorLib.CompilerServices;
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
 /// <summary>
-/// <see cref="TextEditorDefaultCompilerService"/>
+/// <see cref="TextEditorCompilerServiceDefault"/>
 /// </summary>
 public class TextEditorDefaultCompilerServiceTests
 {
 	/// <summary>
-	/// <see cref="TextEditorDefaultCompilerService()"/>
+	/// <see cref="TextEditorCompilerServiceDefault()"/>
 	/// </summary>
 	[Fact]
 	public void Constructor()
@@ -18,7 +18,7 @@ public class TextEditorDefaultCompilerServiceTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorDefaultCompilerService.ResourceRegistered"/>
+	/// <see cref="TextEditorCompilerServiceDefault.ResourceRegistered"/>
 	/// </summary>
 	[Fact]
 	public void ResourceRegistered()
@@ -27,7 +27,7 @@ public class TextEditorDefaultCompilerServiceTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorDefaultCompilerService.ResourceParsed"/>
+	/// <see cref="TextEditorCompilerServiceDefault.ResourceParsed"/>
 	/// </summary>
 	[Fact]
 	public void ResourceParsed()
@@ -36,7 +36,7 @@ public class TextEditorDefaultCompilerServiceTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorDefaultCompilerService.ResourceDisposed"/>
+	/// <see cref="TextEditorCompilerServiceDefault.ResourceDisposed"/>
 	/// </summary>
 	[Fact]
 	public void ResourceDisposed()
@@ -45,7 +45,7 @@ public class TextEditorDefaultCompilerServiceTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorDefaultCompilerService.Binder"/>
+	/// <see cref="TextEditorCompilerServiceDefault.Binder"/>
 	/// </summary>
 	[Fact]
 	public void Binder()
@@ -54,7 +54,7 @@ public class TextEditorDefaultCompilerServiceTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorDefaultCompilerService.CompilerServiceResources"/>
+	/// <see cref="TextEditorCompilerServiceDefault.CompilerServiceResources"/>
 	/// </summary>
 	[Fact]
 	public void CompilerServiceResources()
@@ -63,7 +63,7 @@ public class TextEditorDefaultCompilerServiceTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorDefaultCompilerService.RegisterResource(RazorLib.Lexes.Models.ResourceUri)"/>
+	/// <see cref="TextEditorCompilerServiceDefault.RegisterResource(RazorLib.Lexes.Models.ResourceUri)"/>
 	/// </summary>
 	[Fact]
 	public void RegisterResource()
@@ -72,7 +72,7 @@ public class TextEditorDefaultCompilerServiceTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorDefaultCompilerService.GetCompilerServiceResourceFor(RazorLib.Lexes.Models.ResourceUri)"/>
+	/// <see cref="TextEditorCompilerServiceDefault.GetCompilerServiceResourceFor(RazorLib.Lexes.Models.ResourceUri)"/>
 	/// </summary>
 	[Fact]
 	public void GetCompilerServiceResourceFor()
@@ -81,7 +81,7 @@ public class TextEditorDefaultCompilerServiceTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorDefaultCompilerService.GetSyntacticTextSpansFor(RazorLib.Lexes.Models.ResourceUri)"/>
+	/// <see cref="TextEditorCompilerServiceDefault.GetSyntacticTextSpansFor(RazorLib.Lexes.Models.ResourceUri)"/>
 	/// </summary>
 	[Fact]
 	public void GetSyntacticTextSpansFor()
@@ -90,7 +90,7 @@ public class TextEditorDefaultCompilerServiceTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorDefaultCompilerService.GetSymbolsFor(RazorLib.Lexes.Models.ResourceUri)"/>
+	/// <see cref="TextEditorCompilerServiceDefault.GetSymbolsFor(RazorLib.Lexes.Models.ResourceUri)"/>
 	/// </summary>
 	[Fact]
 	public void GetSymbolsFor()
@@ -99,7 +99,7 @@ public class TextEditorDefaultCompilerServiceTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorDefaultCompilerService.GetDiagnosticsFor(RazorLib.Lexes.Models.ResourceUri)"/>
+	/// <see cref="TextEditorCompilerServiceDefault.GetDiagnosticsFor(RazorLib.Lexes.Models.ResourceUri)"/>
 	/// </summary>
 	[Fact]
 	public void GetDiagnosticsFor()
@@ -108,7 +108,7 @@ public class TextEditorDefaultCompilerServiceTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorDefaultCompilerService.ResourceWasModified(RazorLib.Lexes.Models.ResourceUri, System.Collections.Immutable.ImmutableArray{RazorLib.Lexes.Models.TextEditorTextSpan})"/>
+	/// <see cref="TextEditorCompilerServiceDefault.ResourceWasModified(RazorLib.Lexes.Models.ResourceUri, System.Collections.Immutable.ImmutableArray{RazorLib.Lexes.Models.TextEditorTextSpan})"/>
 	/// </summary>
 	[Fact]
 	public void ResourceWasModified()
@@ -117,7 +117,7 @@ public class TextEditorDefaultCompilerServiceTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorDefaultCompilerService.GetAutocompleteEntries(string, RazorLib.Lexes.Models.TextEditorTextSpan)"/>
+	/// <see cref="TextEditorCompilerServiceDefault.GetAutocompleteEntries(string, RazorLib.Lexes.Models.TextEditorTextSpan)"/>
 	/// </summary>
 	[Fact]
 	public void GetAutocompleteEntries()
@@ -126,7 +126,7 @@ public class TextEditorDefaultCompilerServiceTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorDefaultCompilerService.DisposeResource(RazorLib.Lexes.Models.ResourceUri)"/>
+	/// <see cref="TextEditorCompilerServiceDefault.DisposeResource(RazorLib.Lexes.Models.ResourceUri)"/>
 	/// </summary>
 	[Fact]
 	public void DisposeResource()

@@ -1,5 +1,17 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
+using Luthetus.TextEditor.RazorLib.Rows.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Microsoft.AspNetCore.Components.Web;
+using Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
+using Luthetus.Common.RazorLib.Keyboards.Models;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.Characters.Models;
+using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorModels;
 
@@ -8,336 +20,398 @@ namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorModels;
 /// </summary>
 public partial class TextEditorModelModifierTests
 {
-	/// <summary>
-	/// <see cref="TextEditorModelModifier(TextEditorModel)"/>
-	/// </summary>
-	[Fact]
-	public void Constructor()
-	{
-		throw new NotImplementedException();
-	}
+    /// <summary>
+    /// <see cref="TextEditorModelModifier(TextEditorModel)"/>
+    /// <br/>----<br/>
+    /// <see cref="TextEditorModelModifier.ToModel()"/>
+    /// </summary>
+    [Fact]
+    public void Constructor()
+    {
+        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var inModel);
+        var modelModifier = new TextEditorModelModifier(inModel);
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.ToTextEditorModel()"/>
-	/// </summary>
-	[Fact]
-	public void ToTextEditorModel()
-	{
-		throw new NotImplementedException();
-	}
+        var outModel = modelModifier.ToModel();
+        Assert.Equal(inModel.ContentBag, outModel.ContentBag);
+        Assert.Equal(inModel.EditBlocksBag, outModel.EditBlocksBag);
+        Assert.Equal(inModel.RowEndingPositionsBag, outModel.RowEndingPositionsBag);
+        Assert.Equal(inModel.RowEndingKindCountsBag, outModel.RowEndingKindCountsBag);
+        Assert.Equal(inModel.PresentationModelsBag, outModel.PresentationModelsBag);
+        Assert.Equal(inModel.TabKeyPositionsBag, outModel.TabKeyPositionsBag);
+        Assert.Equal(inModel.OnlyRowEndingKind, outModel.OnlyRowEndingKind);
+        Assert.Equal(inModel.UsingRowEndingKind, outModel.UsingRowEndingKind);
+        Assert.Equal(inModel.ResourceUri, outModel.ResourceUri);
+        Assert.Equal(inModel.ResourceLastWriteTime, outModel.ResourceLastWriteTime);
+        Assert.Equal(inModel.FileExtension, outModel.FileExtension);
+        Assert.Equal(inModel.DecorationMapper, outModel.DecorationMapper);
+        Assert.Equal(inModel.CompilerService, outModel.CompilerService);
+        Assert.Equal(inModel.TextEditorSaveFileHelper, outModel.TextEditorSaveFileHelper);
+        Assert.Equal(inModel.EditBlockIndex, outModel.EditBlockIndex);
+        Assert.Equal(inModel.MostCharactersOnASingleRowTuple, outModel.MostCharactersOnASingleRowTuple);
+    }
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.ModifyContentBag()"/>
-	/// </summary>
-	[Fact]
-	public void ModifyContentBag()
-	{
-		throw new NotImplementedException();
-	}
+    /// <summary>
+    /// <see cref="TextEditorModelModifier.ClearContentBag()"/>
+    /// </summary>
+    [Fact]
+    public void ClearContentBag()
+    {
+        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var inModel);
+        var modelModifier = new TextEditorModelModifier(inModel);
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.ClearContentBag()"/>
-	/// </summary>
-	[Fact]
-	public void ClearContentBag()
-	{
-		throw new NotImplementedException();
-	}
+        modelModifier.ClearContentBag();
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.ModifyEditBlocksBag()"/>
-	/// </summary>
-	[Fact]
-	public void ModifyEditBlocksBag()
-	{
-		throw new NotImplementedException();
-	}
+        var outModel = modelModifier.ToModel();
+        Assert.NotEqual(inModel.ContentBag, outModel.ContentBag);
+        Assert.Equal(ImmutableList<RichCharacter>.Empty, outModel.ContentBag);
+    }
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.ModifyRowEndingPositionsBag()"/>
-	/// </summary>
-	[Fact]
-	public void ModifyRowEndingPositionsBag()
-	{
-		throw new NotImplementedException();
-	}
+    /// <summary>
+    /// <see cref="TextEditorModelModifier.ClearRowEndingPositionsBag()"/>
+    /// </summary>
+    [Fact]
+    public void ClearRowEndingPositionsBag()
+    {
+        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var inModel);
+        var modelModifier = new TextEditorModelModifier(inModel);
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.ClearRowEndingPositionsBag()"/>
-	/// </summary>
-	[Fact]
-	public void ClearRowEndingPositionsBag()
-	{
-		throw new NotImplementedException();
-	}
+        modelModifier.ClearRowEndingPositionsBag();
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.ModifyRowEndingKindCountsBag()"/>
-	/// </summary>
-	[Fact]
-	public void ModifyRowEndingKindCountsBag()
-	{
-		throw new NotImplementedException();
-	}
+        var outModel = modelModifier.ToModel();
+        Assert.NotEqual(inModel.RowEndingPositionsBag, outModel.RowEndingPositionsBag);
+        Assert.Equal(ImmutableList<RowEnding>.Empty, outModel.RowEndingPositionsBag);
+    }
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.ClearRowEndingKindCountsBag()"/>
-	/// </summary>
-	[Fact]
-	public void ClearRowEndingKindCountsBag()
-	{
-		throw new NotImplementedException();
-	}
+    /// <summary>
+    /// <see cref="TextEditorModelModifier.ClearRowEndingKindCountsBag()"/>
+    /// </summary>
+    [Fact]
+    public void ClearRowEndingKindCountsBag()
+    {
+        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var inModel);
+        var modelModifier = new TextEditorModelModifier(inModel);
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.ModifyPresentationModelsBag()"/>
-	/// </summary>
-	[Fact]
-	public void ModifyPresentationModelsBag()
-	{
-		throw new NotImplementedException();
-	}
+        modelModifier.ClearRowEndingKindCountsBag();
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.ModifyTabKeyPositionsBag()"/>
-	/// </summary>
-	[Fact]
-	public void ModifyTabKeyPositionsBag()
-	{
-		throw new NotImplementedException();
-	}
+        var outModel = modelModifier.ToModel();
+        Assert.NotEqual(inModel.RowEndingKindCountsBag, outModel.RowEndingKindCountsBag);
+        Assert.Equal(ImmutableList<(RowEndingKind rowEndingKind, int count)>.Empty, outModel.RowEndingKindCountsBag);
+    }
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.ClearTabKeyPositionsBag()"/>
-	/// </summary>
-	[Fact]
-	public void ClearTabKeyPositionsBag()
-	{
-		throw new NotImplementedException();
-	}
+    /// <summary>
+    /// <see cref="TextEditorModelModifier.ClearTabKeyPositionsBag()"/>
+    /// </summary>
+    [Fact]
+    public void ClearTabKeyPositionsBag()
+    {
+        throw new NotImplementedException();
+    }
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.ModifyOnlyRowEndingKind()"/>
-	/// </summary>
-	[Fact]
-	public void ModifyOnlyRowEndingKind()
-	{
-		throw new NotImplementedException();
-	}
+    /// <summary>
+    /// <see cref="TextEditorModelModifier.ClearOnlyRowEndingKind()"/>
+    /// </summary>
+    [Fact]
+    public void ClearOnlyRowEndingKind()
+    {
+        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var inModel);
+        var modelModifier = new TextEditorModelModifier(inModel);
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.ModifyUsingRowEndingKind(RazorLib.Rows.Models.RowEndingKind)"/>
-	/// </summary>
-	[Fact]
-	public void ModifyUsingRowEndingKind()
-	{
-		throw new NotImplementedException();
-	}
+        modelModifier.ClearOnlyRowEndingKind();
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.ModifyResourceUri()"/>
-	/// </summary>
-	[Fact]
-	public void ModifyResourceUri()
-	{
-		throw new NotImplementedException();
-	}
+        var outModel = modelModifier.ToModel();
+        Assert.NotEqual(inModel.OnlyRowEndingKind, outModel.OnlyRowEndingKind);
+        Assert.Null(outModel.OnlyRowEndingKind);
+    }
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.ModifyResourceLastWriteTime()"/>
-	/// </summary>
-	[Fact]
-	public void ModifyResourceLastWriteTime()
-	{
-		throw new NotImplementedException();
-	}
+    /// <summary>
+    /// <see cref="TextEditorModelModifier.ModifyUsingRowEndingKind(RowEndingKind)"/>
+    /// </summary>
+    [Fact]
+    public void ModifyUsingRowEndingKind()
+    {
+        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var inModel);
+        var modelModifier = new TextEditorModelModifier(inModel);
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.ModifyResourceData(RazorLib.Lexes.Models.ResourceUri, DateTime)"/>
-	/// </summary>
-	[Fact]
-	public void ModifyResourceData()
-	{
-		throw new NotImplementedException();
-	}
+        modelModifier.ModifyUsingRowEndingKind(RowEndingKind.CarriageReturn);
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.ModifyFileExtension()"/>
-	/// </summary>
-	[Fact]
-	public void ModifyFileExtension()
-	{
-		throw new NotImplementedException();
-	}
+        var outModel = modelModifier.ToModel();
+        Assert.NotEqual(inModel.UsingRowEndingKind, outModel.UsingRowEndingKind);
+        Assert.Equal(RowEndingKind.CarriageReturn, outModel.UsingRowEndingKind);
+    }
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.ModifyDecorationMapper(RazorLib.Decorations.Models.IDecorationMapper)"/>
-	/// </summary>
-	[Fact]
-	public void ModifyDecorationMapper()
-	{
-		throw new NotImplementedException();
-	}
+    /// <summary>
+    /// <see cref="TextEditorModelModifier.ModifyResourceData(ResourceUri, DateTime)"/>
+    /// </summary>
+    [Fact]
+    public void ModifyResourceData()
+    {
+        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var inModel);
+        var modelModifier = new TextEditorModelModifier(inModel);
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.ModifyCompilerService(RazorLib.CompilerServices.ICompilerService)"/>
-	/// </summary>
-	[Fact]
-	public void ModifyCompilerService()
-	{
-		throw new NotImplementedException();
-	}
+        var resourceUri = new ResourceUri("/abc123.txt");
+        
+        // Add one second to guarantee the date times differ.
+        var dateTime = DateTime.UtcNow.AddSeconds(1);
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.ModifyTextEditorSaveFileHelper(RazorLib.TextEditors.Models.TextEditorSaveFileHelper)"/>
-	/// </summary>
-	[Fact]
-	public void ModifyTextEditorSaveFileHelper()
-	{
-		throw new NotImplementedException();
-	}
+        modelModifier.ModifyResourceData(resourceUri, dateTime);
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.ModifyEditBlockIndex()"/>
-	/// </summary>
-	[Fact]
-	public void ModifyEditBlockIndex()
-	{
-		throw new NotImplementedException();
-	}
+        var outModel = modelModifier.ToModel();
+        Assert.NotEqual(inModel.ResourceUri, outModel.ResourceUri);
+        Assert.NotEqual(inModel.ResourceLastWriteTime, outModel.ResourceLastWriteTime);
+        Assert.Equal(resourceUri, outModel.ResourceUri);
+        Assert.Equal(dateTime, outModel.ResourceLastWriteTime);
+    }
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.ModifyMostCharactersOnASingleRowTuple()"/>
-	/// </summary>
-	[Fact]
-	public void ModifyMostCharactersOnASingleRowTuple()
-	{
-		throw new NotImplementedException();
-	}
+    /// <summary>
+    /// <see cref="TextEditorModelModifier.ModifyDecorationMapper(IDecorationMapper)"/>
+    /// </summary>
+    [Fact]
+    public void ModifyDecorationMapper()
+    {
+        throw new NotImplementedException();
+    }
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.ModifyRenderStateKey()"/>
-	/// </summary>
-	[Fact]
-	public void ModifyRenderStateKey()
-	{
-		throw new NotImplementedException();
-	}
+    /// <summary>
+    /// <see cref="TextEditorModelModifier.ModifyCompilerService(ICompilerService)"/>
+    /// </summary>
+    [Fact]
+    public void ModifyCompilerService()
+    {
+        throw new NotImplementedException();
+    }
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.ModifyTextEditorKeymap()"/>
-	/// </summary>
-	[Fact]
-	public void ModifyTextEditorKeymap()
-	{
-		throw new NotImplementedException();
-	}
+    /// <summary>
+    /// <see cref="TextEditorModelModifier.ModifyTextEditorSaveFileHelper(TextEditorSaveFileHelper)"/>
+    /// </summary>
+    [Fact]
+    public void ModifyTextEditorSaveFileHelper()
+    {
+        throw new NotImplementedException();
+    }
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.ModifyTextEditorOptions()"/>
-	/// </summary>
-	[Fact]
-	public void ModifyTextEditorOptions()
-	{
-		throw new NotImplementedException();
-	}
+    /// <summary>
+    /// <see cref="TextEditorModelModifier.ModifyContent(string)"/>
+    /// </summary>
+    [Fact]
+    public void ModifyContent()
+    {
+        throw new NotImplementedException();
+    }
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.ModifyContent(string)"/>
-	/// </summary>
-	[Fact]
-	public void ModifyContent()
-	{
-		throw new NotImplementedException();
-	}
+    /// <summary>
+    /// <see cref="TextEditorModelModifier.ModifyResetStateButNotEditHistory()"/>
+    /// </summary>
+    [Fact]
+    public void ModifyResetStateButNotEditHistory()
+    {
+        throw new NotImplementedException();
+    }
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.ModifyResetStateButNotEditHistory()"/>
-	/// </summary>
-	[Fact]
-	public void ModifyResetStateButNotEditHistory()
-	{
-		throw new NotImplementedException();
-	}
+    /// <summary>
+    /// <see cref="TextEditorModelModifier.HandleKeyboardEvent(KeyboardEventArgs, TextEditorCursorModifierBag, CancellationToken)"/>
+    /// </summary>
+    [Fact]
+    public void HandleKeyboardEvent()
+    {
+        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var inModel);
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.PerformEditTextEditorAction(RazorLib.TextEditors.States.TextEditorModelState.KeyboardEventAction)"/>
-	/// </summary>
-	[Fact]
-	public void PerformEditTextEditorAction_KeyboardEventAction()
-	{
-		throw new NotImplementedException();
-	}
+        var inText = inModel.GetAllText();
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.PerformEditTextEditorAction(RazorLib.TextEditors.States.TextEditorModelState.InsertTextAction)"/>
-	/// </summary>
-	[Fact]
-	public void PerformEditTextEditorAction_InsertTextAction()
-	{
-		throw new NotImplementedException();
-	}
+        var modelModifier = new TextEditorModelModifier(inModel);
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.PerformEditTextEditorAction(RazorLib.TextEditors.States.TextEditorModelState.DeleteTextByMotionAction)"/>
-	/// </summary>
-	[Fact]
-	public void PerformEditTextEditorAction_DeleteTextByMotionAction()
-	{
-		throw new NotImplementedException();
-	}
+        var inCursor = new TextEditorCursor(0, 0, true);
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.PerformEditTextEditorAction(RazorLib.TextEditors.States.TextEditorModelState.DeleteTextByRangeAction)"/>
-	/// </summary>
-	[Fact]
-	public void PerformEditTextEditorAction_DeleteTextByRangeAction()
-	{
-		throw new NotImplementedException();
-	}
+        var cursorModifier = new TextEditorCursorModifier(inCursor);
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.PerformRegisterPresentationModelAction(RazorLib.TextEditors.States.TextEditorModelState.RegisterPresentationModelAction)"/>
-	/// </summary>
-	[Fact]
-	public void PerformRegisterPresentationModelAction()
-	{
-		throw new NotImplementedException();
-	}
+        var cursorModifierBag = new TextEditorCursorModifierBag(
+            Key<TextEditorViewModel>.Empty,
+            new List<TextEditorCursorModifier>
+            {
+                cursorModifier
+            });
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.PerformCalculatePresentationModelAction(RazorLib.TextEditors.States.TextEditorModelState.CalculatePresentationModelAction)"/>
-	/// </summary>
-	[Fact]
-	public void PerformCalculatePresentationModelAction()
-	{
-		throw new NotImplementedException();
-	}
+        Assert.Equal(0, cursorModifier.RowIndex);
+        Assert.Equal(0, cursorModifier.ColumnIndex);
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.ClearEditBlocks()"/>
-	/// </summary>
-	[Fact]
-	public void ClearEditBlocks()
-	{
-		throw new NotImplementedException();
-	}
+        modelModifier.HandleKeyboardEvent(
+            new KeyboardEventArgs
+            {
+                Key = KeyboardKeyFacts.WhitespaceCharacters.NEW_LINE.ToString(),
+                Code = KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE
+            },
+            cursorModifierBag,
+            CancellationToken.None);
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.UndoEdit()"/>
-	/// </summary>
-	[Fact]
-	public void UndoEdit()
-	{
-		throw new NotImplementedException();
-	}
+        var outCursor = cursorModifier.ToCursor();
 
-	/// <summary>
-	/// <see cref="TextEditorModelModifier.RedoEdit()"/>
-	/// </summary>
-	[Fact]
-	public void RedoEdit()
-	{
-		throw new NotImplementedException();
-	}
+        Assert.Equal(1, outCursor.RowIndex);
+        Assert.Equal(0, outCursor.ColumnIndex);
+
+        var outModel = modelModifier.ToModel();
+        var outText = outModel.GetAllText();
+
+        Assert.Equal('\n' + inText, outText);
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorModelModifier.EditByInsertion(string, TextEditorCursorModifierBag, CancellationToken)"/>
+    /// </summary>
+    [Fact]
+    public void EditByInsertion()
+    {
+        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var inModel);
+
+        var inText = inModel.GetAllText();
+
+        var modelModifier = new TextEditorModelModifier(inModel);
+
+        var inCursor = new TextEditorCursor(0, 0, true);
+
+        var cursorModifier = new TextEditorCursorModifier(inCursor);
+
+        var cursorModifierBag = new TextEditorCursorModifierBag(
+            Key<TextEditorViewModel>.Empty,
+            new List<TextEditorCursorModifier>
+            {
+                cursorModifier
+            });
+
+        Assert.Equal(0, cursorModifier.RowIndex);
+        Assert.Equal(0, cursorModifier.ColumnIndex);
+
+        modelModifier.EditByInsertion("\n", cursorModifierBag, CancellationToken.None);
+
+        var outCursor = cursorModifier.ToCursor();
+
+        Assert.Equal(1, outCursor.RowIndex);
+        Assert.Equal(0, outCursor.ColumnIndex);
+
+        var outModel = modelModifier.ToModel();
+        var outText = outModel.GetAllText();
+
+        Assert.Equal('\n' + inText, outText);
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorModelModifier.DeleteTextByMotion(MotionKind, TextEditorCursorModifierBag, CancellationToken)"/>
+    /// </summary>
+    [Fact]
+    public void DeleteTextByMotion()
+    {
+        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var inModel);
+
+        var inText = inModel.GetAllText();
+
+        var modelModifier = new TextEditorModelModifier(inModel);
+
+        var inCursor = new TextEditorCursor(0, 0, true);
+
+        var cursorModifier = new TextEditorCursorModifier(inCursor);
+
+        var cursorModifierBag = new TextEditorCursorModifierBag(
+            Key<TextEditorViewModel>.Empty,
+            new List<TextEditorCursorModifier>
+            {
+                cursorModifier
+            });
+
+        Assert.Equal(0, cursorModifier.RowIndex);
+        Assert.Equal(0, cursorModifier.ColumnIndex);
+
+        modelModifier.DeleteTextByMotion(MotionKind.Delete, cursorModifierBag, CancellationToken.None);
+
+        var outCursor = cursorModifier.ToCursor();
+
+        Assert.Equal(0, outCursor.RowIndex);
+        Assert.Equal(0, outCursor.ColumnIndex);
+
+        var outModel = modelModifier.ToModel();
+        var outText = outModel.GetAllText();
+
+        Assert.Equal(inText[1..], outText);
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorModelModifier.DeleteByRange(int, TextEditorCursorModifierBag, CancellationToken)"/>
+    /// </summary>
+    [Fact]
+    public void DeleteByRange()
+    {
+        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var inModel);
+
+        var inText = inModel.GetAllText();
+
+        var modelModifier = new TextEditorModelModifier(inModel);
+
+        var inCursor = new TextEditorCursor(0, 0, true);
+
+        var cursorModifier = new TextEditorCursorModifier(inCursor);
+
+        var cursorModifierBag = new TextEditorCursorModifierBag(
+            Key<TextEditorViewModel>.Empty,
+            new List<TextEditorCursorModifier>
+            {
+                cursorModifier
+            });
+
+        Assert.Equal(0, cursorModifier.RowIndex);
+        Assert.Equal(0, cursorModifier.ColumnIndex);
+
+        modelModifier.DeleteByRange(3, cursorModifierBag, CancellationToken.None);
+
+        var outCursor = cursorModifier.ToCursor();
+
+        Assert.Equal(0, outCursor.RowIndex);
+        Assert.Equal(0, outCursor.ColumnIndex);
+
+        var outModel = modelModifier.ToModel();
+        var outText = outModel.GetAllText();
+
+        Assert.Equal(inText[3..], outText);
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorModelModifier.PerformRegisterPresentationModelAction(TextEditorPresentationModel)"/>
+    /// </summary>
+    [Fact]
+    public void PerformRegisterPresentationModelAction()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorModelModifier.PerformCalculatePresentationModelAction(Key{TextEditorPresentationModel})"/>
+    /// </summary>
+    [Fact]
+    public void PerformCalculatePresentationModelAction()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorModelModifier.ClearEditBlocks()"/>
+    /// </summary>
+    [Fact]
+    public void ClearEditBlocks()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorModelModifier.UndoEdit()"/>
+    /// </summary>
+    [Fact]
+    public void UndoEdit()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorModelModifier.RedoEdit()"/>
+    /// </summary>
+    [Fact]
+    public void RedoEdit()
+    {
+        throw new NotImplementedException();
+    }
 }

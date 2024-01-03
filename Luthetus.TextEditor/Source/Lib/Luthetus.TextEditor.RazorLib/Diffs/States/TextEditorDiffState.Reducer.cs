@@ -39,8 +39,8 @@ public partial class TextEditorDiffState
 
             var diff = new TextEditorDiffModel(
                 registerAction.DiffKey,
-                registerAction.BeforeViewModelKey,
-                registerAction.AfterViewModelKey);
+                registerAction.InViewModelKey,
+                registerAction.OutViewModelKey);
 
             var outDiffModelBag = inState.DiffModelBag.Add(diff);
 

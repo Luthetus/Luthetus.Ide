@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.WatchWindows.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
-using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -36,35 +35,21 @@ public partial class TextEditorHeader : ComponentBase
         TextEditorModel textEditorModel,
         TextEditorViewModel viewModel)
     {
-        var cursorSnapshotsBag = TextEditorCursorSnapshot.TakeSnapshots(viewModel.PrimaryCursor);
-        var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorSnapshotsBag.FirstOrDefault()!.ImmutableCursor.ImmutableSelection);
+        var cursorSnapshotsBag = new TextEditorCursor[] { viewModel.PrimaryCursor }.ToImmutableArray();
+        var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorSnapshotsBag.First(x => x.IsPrimaryCursor).Selection);
 
         return new TextEditorCommandArgs(
-            textEditorModel,
-            cursorSnapshotsBag,
+            textEditorModel.ResourceUri,
+            viewModel.ViewModelKey,
             hasSelection,
             ClipboardService,
             TextEditorService,
-            viewModel,
+            null,
             null,
             null,
             null,
             null,
             null);
-    }
-
-    private void SelectRowEndingKindOnChange(ChangeEventArgs changeEventArgs)
-    {
-        var model = RenderBatch.Model;
-        var viewModel = RenderBatch.ViewModel;
-
-        if (model is null || viewModel is null)
-            return;
-
-        var rowEndingKindString = (string)(changeEventArgs.Value ?? string.Empty);
-
-        if (Enum.TryParse<RowEndingKind>(rowEndingKindString, out var rowEndingKind))
-            TextEditorService.Model.SetUsingRowEndingKind(viewModel.ResourceUri, rowEndingKind);
     }
 
     private async Task DoCopyOnClick(MouseEventArgs arg)
@@ -100,7 +85,7 @@ public partial class TextEditorHeader : ComponentBase
             return;
 
         var commandArgs = ConstructCommandArgs(model, viewModel);
-        await TextEditorCommandDefaultFacts.Paste.DoAsyncFunc.Invoke(commandArgs);
+        await TextEditorCommandDefaultFacts.PasteCommand.DoAsyncFunc.Invoke(commandArgs);
     }
 
     private async Task DoRedoOnClick(MouseEventArgs arg)
@@ -171,9 +156,9 @@ public partial class TextEditorHeader : ComponentBase
             return;
 
         var watchWindowObject = new WatchWindowObject(
-            model,
-            typeof(TextEditorModel),
-            "TextEditorModel",
+            RenderBatch,
+            typeof(TextEditorRenderBatch),
+            "TextEditorRenderBatch",
             true);
 
         var dialogRecord = new DialogRecord(

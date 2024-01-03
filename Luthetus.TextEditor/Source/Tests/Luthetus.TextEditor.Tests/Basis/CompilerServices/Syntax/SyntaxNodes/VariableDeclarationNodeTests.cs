@@ -1,5 +1,9 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
@@ -8,111 +12,74 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 /// </summary>
 public class VariableDeclarationNodeTests
 {
-	/// <summary>
-	/// <see cref="VariableDeclarationNode(RazorLib.CompilerServices.Syntax.SyntaxNodes.TypeClauseNode, RazorLib.CompilerServices.Syntax.SyntaxTokens.IdentifierToken, RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums.VariableKind, bool)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="VariableDeclarationNode(TypeClauseNode, IdentifierToken, VariableKind, bool)"/>
+    /// <br/>----<br/>
+	/// <see cref="VariableDeclarationNode.TypeClauseNode"/>
+    /// <see cref="VariableDeclarationNode.IdentifierToken"/>
+    /// <see cref="VariableDeclarationNode.VariableKind"/>
+    /// <see cref="VariableDeclarationNode.IsInitialized"/>
+    /// <see cref="VariableDeclarationNode.HasGetter"/>
+    /// <see cref="VariableDeclarationNode.GetterIsAutoImplemented"/>
+    /// <see cref="VariableDeclarationNode.HasSetter"/>
+    /// <see cref="VariableDeclarationNode.SetterIsAutoImplemented"/>
+    /// <see cref="VariableDeclarationNode.ChildBag"/>
+    /// <see cref="VariableDeclarationNode.IsFabricated"/>
+    /// <see cref="VariableDeclarationNode.SyntaxKind"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
-	}
+        var sourceText = "int x;";
 
-	/// <summary>
-	/// <see cref="VariableDeclarationNode.TypeClauseNode"/>
-	/// </summary>
-	[Fact]
-	public void TypeClauseNode()
-	{
-		throw new NotImplementedException();
-	}
+        TypeClauseNode intTypeClauseNode;
+        {
+            var intTypeIdentifier = new KeywordToken(
+                TextEditorTextSpan.FabricateTextSpan("int"),
+                SyntaxKind.IntTokenKeyword);
 
-	/// <summary>
-	/// <see cref="VariableDeclarationNode.IdentifierToken"/>
-	/// </summary>
-	[Fact]
-	public void IdentifierToken()
-	{
-		throw new NotImplementedException();
-	}
+            intTypeClauseNode = new TypeClauseNode(
+                intTypeIdentifier,
+                typeof(int),
+                null);
+        }
 
-	/// <summary>
-	/// <see cref="VariableDeclarationNode.VariableKind"/>
-	/// </summary>
-	[Fact]
-	public void VariableKind()
-	{
-		throw new NotImplementedException();
-	}
+        IdentifierToken variableIdentifierToken;
+        {
+            var variableIdentifierText = "value";
+            int indexOfVariableIdentifierText = sourceText.IndexOf(variableIdentifierText);
 
-	/// <summary>
-	/// <see cref="VariableDeclarationNode.IsInitialized"/>
-	/// </summary>
-	[Fact]
-	public void IsInitialized()
-	{
-		throw new NotImplementedException();
-	}
+            variableIdentifierToken = new IdentifierToken(new TextEditorTextSpan(
+                indexOfVariableIdentifierText,
+                indexOfVariableIdentifierText + variableIdentifierText.Length,
+                0,
+                new ResourceUri("/unitTesting.txt"),
+                sourceText));
+        }
 
-	/// <summary>
-	/// <see cref="VariableDeclarationNode.HasGetter"/>
-	/// </summary>
-	[Fact]
-	public void HasGetter()
-	{
-		throw new NotImplementedException();
-	}
+        VariableKind variableKind = VariableKind.Local;
 
-	/// <summary>
-	/// <see cref="VariableDeclarationNode.GetterIsAutoImplemented"/>
-	/// </summary>
-	[Fact]
-	public void GetterIsAutoImplemented()
-	{
-		throw new NotImplementedException();
-	}
+        bool isInitialized = false;
 
-	/// <summary>
-	/// <see cref="VariableDeclarationNode.HasSetter"/>
-	/// </summary>
-	[Fact]
-	public void HasSetter()
-	{
-		throw new NotImplementedException();
-	}
+        var variableDeclarationNode = new VariableDeclarationNode(
+            intTypeClauseNode,
+            variableIdentifierToken,
+            variableKind,
+            isInitialized);
 
-	/// <summary>
-	/// <see cref="VariableDeclarationNode.SetterIsAutoImplemented"/>
-	/// </summary>
-	[Fact]
-	public void SetterIsAutoImplemented()
-	{
-		throw new NotImplementedException();
-	}
+        Assert.Equal(intTypeClauseNode, variableDeclarationNode.TypeClauseNode);
+        Assert.Equal(variableIdentifierToken, variableDeclarationNode.IdentifierToken);
+        Assert.Equal(variableKind, variableDeclarationNode.VariableKind);
+        Assert.Equal(isInitialized, variableDeclarationNode.IsInitialized);
 
-	/// <summary>
-	/// <see cref="VariableDeclarationNode.ChildBag"/>
-	/// </summary>
-	[Fact]
-	public void ChildBag()
-	{
-		throw new NotImplementedException();
-	}
+        Assert.Equal(2, variableDeclarationNode.ChildBag.Length);
+        Assert.Equal(intTypeClauseNode, variableDeclarationNode.ChildBag[0]);
+        Assert.Equal(variableIdentifierToken, variableDeclarationNode.ChildBag[1]);
 
-	/// <summary>
-	/// <see cref="VariableDeclarationNode.IsFabricated"/>
-	/// </summary>
-	[Fact]
-	public void IsFabricated()
-	{
-		throw new NotImplementedException();
-	}
+        Assert.False(variableDeclarationNode.IsFabricated);
 
-	/// <summary>
-	/// <see cref="VariableDeclarationNode.SyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
-	{
-		throw new NotImplementedException();
+        Assert.Equal(
+            SyntaxKind.VariableDeclarationNode,
+            variableDeclarationNode.SyntaxKind);
 	}
 }

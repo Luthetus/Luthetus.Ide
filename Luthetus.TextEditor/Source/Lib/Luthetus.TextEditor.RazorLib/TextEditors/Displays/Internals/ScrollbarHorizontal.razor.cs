@@ -161,7 +161,7 @@ public partial class ScrollbarHorizontal : ComponentBase, IDisposable
                     RenderBatch.ViewModel!.VirtualizationResult.TextEditorMeasurements.Width;
             }
 
-            await RenderBatch.ViewModel!.SetScrollPositionAsync(scrollLeft, null);
+            RenderBatch.ViewModel!.SetScrollPosition(scrollLeft, null);
         }
         else
         {

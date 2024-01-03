@@ -1,5 +1,8 @@
 using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
@@ -8,66 +11,92 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 /// </summary>
 public class GenericArgumentsListingNodeTests
 {
-	/// <summary>
-	/// <see cref="GenericArgumentsListingNode(RazorLib.CompilerServices.Syntax.SyntaxTokens.OpenAngleBracketToken, System.Collections.Immutable.ImmutableArray{GenericArgumentEntryNode}, RazorLib.CompilerServices.Syntax.SyntaxTokens.CloseAngleBracketToken)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="GenericArgumentsListingNode(OpenAngleBracketToken, ImmutableArray{GenericArgumentEntryNode}, CloseAngleBracketToken)"/>
+    /// <br/>----<br/>
+    /// <see cref="GenericArgumentsListingNode.OpenAngleBracketToken"/>
+    /// <see cref="GenericArgumentsListingNode.GenericArgumentEntryNodeBag"/>
+    /// <see cref="GenericArgumentsListingNode.CloseAngleBracketToken"/>
+    /// <see cref="GenericArgumentsListingNode.ChildBag"/>
+    /// <see cref="GenericArgumentsListingNode.IsFabricated"/>
+    /// <see cref="GenericArgumentsListingNode.SyntaxKind"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
-	}
+        var sourceText = @"public void AddData<TItem>(TItem data)
+{
+}";
 
-	/// <summary>
-	/// <see cref="GenericArgumentsListingNode.OpenAngleBracketToken"/>
-	/// </summary>
-	[Fact]
-	public void OpenAngleBracketToken()
-	{
-		throw new NotImplementedException();
-	}
+        TypeClauseNode genericTypeClauseNode;
+        {
+            var genericArgumentEntryText = "TItem";
+            int indexOfGenericArgumentEntryText = sourceText.IndexOf(genericArgumentEntryText);
+            var genericArgumentIdentifierToken = new IdentifierToken(new TextEditorTextSpan(
+                indexOfGenericArgumentEntryText,
+                indexOfGenericArgumentEntryText + genericArgumentEntryText.Length,
+                0,
+                new ResourceUri("/unitTesting.txt"),
+                sourceText));
 
-	/// <summary>
-	/// <see cref="GenericArgumentsListingNode.GenericArgumentEntryNodeBag"/>
-	/// </summary>
-	[Fact]
-	public void GenericArgumentEntryNodeBag()
-	{
-		throw new NotImplementedException();
-	}
+            genericTypeClauseNode = new TypeClauseNode(
+                genericArgumentIdentifierToken,
+                null,
+                null);
+        }
 
-	/// <summary>
-	/// <see cref="GenericArgumentsListingNode.CloseAngleBracketToken"/>
-	/// </summary>
-	[Fact]
-	public void CloseAngleBracketToken()
-	{
-		throw new NotImplementedException();
-	}
+        OpenAngleBracketToken openAngleBracketToken;
+        {
+            var openAngleBracketText = "<";
+            int indexOfOpenAngleBracketText = sourceText.IndexOf(openAngleBracketText);
+            openAngleBracketToken = new OpenAngleBracketToken(new TextEditorTextSpan(
+                indexOfOpenAngleBracketText,
+                indexOfOpenAngleBracketText + openAngleBracketText.Length,
+                0,
+                new ResourceUri("/unitTesting.txt"),
+                sourceText));
+        }
 
-	/// <summary>
-	/// <see cref="GenericArgumentsListingNode.ChildBag"/>
-	/// </summary>
-	[Fact]
-	public void ChildBag()
-	{
-		throw new NotImplementedException();
-	}
+        ImmutableArray<GenericArgumentEntryNode> genericArgumentEntryNodeBag;
+        {
+            var genericArgumentEntryNode = new GenericArgumentEntryNode(genericTypeClauseNode);
 
-	/// <summary>
-	/// <see cref="GenericArgumentsListingNode.IsFabricated"/>
-	/// </summary>
-	[Fact]
-	public void IsFabricated()
-	{
-		throw new NotImplementedException();
-	}
+            genericArgumentEntryNodeBag = new GenericArgumentEntryNode[]
+            {
+                    genericArgumentEntryNode
+            }.ToImmutableArray();
+        }
 
-	/// <summary>
-	/// <see cref="GenericArgumentsListingNode.SyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
-	{
-		throw new NotImplementedException();
-	}
+        CloseAngleBracketToken closeAngleBracketToken;
+        {
+            var closeAngleBracketText = ">";
+            int indexOfCloseAngleBracketText = sourceText.IndexOf(closeAngleBracketText);
+            closeAngleBracketToken = new CloseAngleBracketToken(new TextEditorTextSpan(
+                indexOfCloseAngleBracketText,
+                indexOfCloseAngleBracketText + closeAngleBracketText.Length,
+                0,
+                new ResourceUri("/unitTesting.txt"),
+                sourceText));
+        }
+
+        var genericArgumentsListingNode = new GenericArgumentsListingNode(
+            openAngleBracketToken,
+            genericArgumentEntryNodeBag,
+            closeAngleBracketToken);
+
+        Assert.Equal(openAngleBracketToken, genericArgumentsListingNode.OpenAngleBracketToken);
+        Assert.Equal(genericArgumentEntryNodeBag, genericArgumentsListingNode.GenericArgumentEntryNodeBag);
+        Assert.Equal(closeAngleBracketToken, genericArgumentsListingNode.CloseAngleBracketToken);
+
+        Assert.Equal(3, genericArgumentsListingNode.ChildBag.Length);
+        Assert.Equal(openAngleBracketToken, genericArgumentsListingNode.ChildBag[0]);
+        Assert.Equal(genericArgumentEntryNodeBag.Single(), genericArgumentsListingNode.ChildBag[1]);
+        Assert.Equal(closeAngleBracketToken, genericArgumentsListingNode.ChildBag[2]);
+
+        Assert.False(genericArgumentsListingNode.IsFabricated);
+
+        Assert.Equal(
+            RazorLib.CompilerServices.Syntax.SyntaxKind.GenericArgumentsListingNode,
+            genericArgumentsListingNode.SyntaxKind);
+    }
 }

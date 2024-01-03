@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -61,17 +60,15 @@ public partial class AutocompleteMenu : ComponentBase
 
     private MenuRecord GetMenuRecord()
     {
-        var cursorSnapshotsBag = TextEditorCursorSnapshot.TakeSnapshots(
-            RenderBatch.ViewModel!.PrimaryCursor);
+        var cursorBag = new TextEditorCursor[] { RenderBatch.ViewModel!.PrimaryCursor }.ToImmutableArray();
 
-        var primaryCursorSnapshot = cursorSnapshotsBag.First(
-            x => x.UserCursor.IsPrimaryCursor);
+        var primaryCursor = cursorBag.First(x => x.IsPrimaryCursor);
 
-        if (primaryCursorSnapshot.ImmutableCursor.ColumnIndex > 0)
+        if (primaryCursor.ColumnIndex > 0)
         {
             var word = RenderBatch.Model!.ReadPreviousWordOrDefault(
-                primaryCursorSnapshot.ImmutableCursor.RowIndex,
-                primaryCursorSnapshot.ImmutableCursor.ColumnIndex);
+                primaryCursor.RowIndex,
+                primaryCursor.ColumnIndex);
 
             List<MenuOptionRecord> menuOptionRecordsBag = new();
 
@@ -85,7 +82,7 @@ public partial class AutocompleteMenu : ComponentBase
 
                 // (2023-08-09) Looking into using an ICompilerService for autocompletion.
                 {
-                    var positionIndex = RenderBatch.Model.GetCursorPositionIndex(primaryCursorSnapshot.ImmutableCursor);
+                    var positionIndex = RenderBatch.Model.GetPositionIndex(primaryCursor);
 
                     var textSpan = new TextEditorTextSpan(
                         positionIndex,
@@ -154,15 +151,20 @@ public partial class AutocompleteMenu : ComponentBase
     private Task InsertAutocompleteMenuOption(
         string word,
         AutocompleteEntry autocompleteEntry,
-        TextEditorViewModel textEditorViewModel)
+        TextEditorViewModel viewModel)
     {
-        var insertTextTextEditorModelAction = new TextEditorModelState.InsertTextAction(
-            textEditorViewModel.ResourceUri,
-            TextEditorCursorSnapshot.TakeSnapshots(textEditorViewModel.PrimaryCursor),
-            autocompleteEntry.DisplayName.Substring(word.Length),
-            CancellationToken.None);
-
-        TextEditorService.Model.InsertText(insertTextTextEditorModelAction);
+        TextEditorService.Post(
+            nameof(InsertAutocompleteMenuOption),
+            editContext =>
+            {
+                return TextEditorService.ModelApi
+                    .InsertTextFactory(
+                        viewModel.ResourceUri,
+                        viewModel.ViewModelKey,
+                        autocompleteEntry.DisplayName.Substring(word.Length),
+                        CancellationToken.None)
+                    .Invoke(editContext);
+            });
 
         return Task.CompletedTask;
     }

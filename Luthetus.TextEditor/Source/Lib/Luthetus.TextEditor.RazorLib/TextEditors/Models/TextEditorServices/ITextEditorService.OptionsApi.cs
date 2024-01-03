@@ -19,14 +19,14 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 public partial interface ITextEditorService
 {
-    public interface IOptionsApi
+    public interface ITextEditorOptionsApi
     {
         public void SetCursorWidth(double cursorWidthInPixels);
         public void SetFontFamily(string? fontFamily);
         public void SetFontSize(int fontSizeInPixels);
         public Task SetFromLocalStorageAsync();
         public void SetHeight(int? heightInPixels);
-        public void SetKeymap(Keymap foundKeymap);
+        public void SetKeymap(Keymap keymap);
         public void SetShowNewlines(bool showNewlines);
         public void SetUseMonospaceOptimizations(bool useMonospaceOptimizations);
         public void SetShowWhitespace(bool showWhitespace);
@@ -36,9 +36,16 @@ public partial interface ITextEditorService
         public void ShowFindDialog(bool? isResizableOverride = null, string? cssClassString = null);
         public void WriteToStorage();
         public void SetRenderStateKey(Key<RenderState> renderStateKey);
+
+        /// <summary>
+        /// One should store the result of invoking this method in a variable, then reference that variable.
+        /// If one continually invokes this, there is no guarantee that the data had not changed
+        /// since the previous invocation.
+        /// </summary>
+        public TextEditorOptions GetOptions();
     }
 
-    public class OptionsApi : IOptionsApi
+    public class TextEditorOptionsApi : ITextEditorOptionsApi
     {
         private readonly ITextEditorService _textEditorService;
         private readonly LuthetusTextEditorOptions _luthetusTextEditorOptions;
@@ -46,7 +53,7 @@ public partial interface ITextEditorService
         private readonly StorageSync _storageSync;
         private readonly IDispatcher _dispatcher;
 
-        public OptionsApi(
+        public TextEditorOptionsApi(
             ITextEditorService textEditorService,
             LuthetusTextEditorOptions luthetusTextEditorOptions,
             IStorageService storageService,
@@ -121,9 +128,9 @@ public partial interface ITextEditorService
             WriteToStorage();
         }
 
-        public void SetKeymap(Keymap foundKeymap)
+        public void SetKeymap(Keymap keymap)
         {
-            _dispatcher.Dispatch(new TextEditorOptionsState.SetKeymapAction(foundKeymap));
+            _dispatcher.Dispatch(new TextEditorOptionsState.SetKeymapAction(keymap));
 
             var activeKeymap = _textEditorService.OptionsStateWrap.Value.Options.Keymap;
 
@@ -224,6 +231,11 @@ public partial interface ITextEditorService
         public void SetRenderStateKey(Key<RenderState> renderStateKey)
         {
             _dispatcher.Dispatch(new TextEditorOptionsState.SetRenderStateKeyAction(renderStateKey));
+        }
+
+        public TextEditorOptions GetOptions()
+        {
+            return _textEditorService.OptionsStateWrap.Value.Options;
         }
     }
 }

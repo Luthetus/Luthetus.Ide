@@ -10,15 +10,6 @@ public sealed record SymbolDefinition
         Symbol = symbol;
     }
 
-    public SymbolDefinition(
-            BoundScopeKey boundScopeKey,
-            ISymbol symbol,
-            List<SymbolReference> symbolReferences)
-        : this(boundScopeKey, symbol)
-    {
-        SymbolReferences = symbolReferences;
-    }
-
     public List<SymbolReference> SymbolReferences { get; init; } = new();
 
     public BoundScopeKey BoundScopeKey { get; }

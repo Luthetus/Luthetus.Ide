@@ -53,16 +53,16 @@ public class CSharpEvaluator
 
     private EvaluatorResult EvaluateLiteralExpressionNode(LiteralExpressionNode literalExpressionNode)
     {
-        if (literalExpressionNode.TypeClauseNode.ValueType == typeof(int))
+        if (literalExpressionNode.ResultTypeClauseNode.ValueType == typeof(int))
         {
             var value = int.Parse(
                 literalExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
 
             return new EvaluatorResult(
-                literalExpressionNode.TypeClauseNode.ValueType,
+                literalExpressionNode.ResultTypeClauseNode.ValueType,
                 value);
         }
-        else if (literalExpressionNode.TypeClauseNode.ValueType == typeof(string))
+        else if (literalExpressionNode.ResultTypeClauseNode.ValueType == typeof(string))
         {
             var value = new string(literalExpressionNode.LiteralSyntaxToken.TextSpan
                 .GetText()
@@ -71,7 +71,7 @@ public class CSharpEvaluator
                 .ToArray());
 
             return new EvaluatorResult(
-                literalExpressionNode.TypeClauseNode.ValueType,
+                literalExpressionNode.ResultTypeClauseNode.ValueType,
                 value);
         }
 
@@ -80,7 +80,7 @@ public class CSharpEvaluator
 
     private EvaluatorResult EvaluateBinaryExpressionNode(BinaryExpressionNode boundBinaryExpressionNode)
     {
-        if (boundBinaryExpressionNode.TypeClauseNode.ValueType == typeof(int))
+        if (boundBinaryExpressionNode.ResultTypeClauseNode.ValueType == typeof(int))
         {
             var leftValue = EvaluateExpression(
                 boundBinaryExpressionNode.LeftExpressionNode);
@@ -95,7 +95,7 @@ public class CSharpEvaluator
                         var resultingValue = (int)leftValue.Result + (int)rightValue.Result;
 
                         return new EvaluatorResult(
-                            boundBinaryExpressionNode.TypeClauseNode.ValueType,
+                            boundBinaryExpressionNode.ResultTypeClauseNode.ValueType,
                             resultingValue);
                     }
                 case SyntaxKind.MinusToken:
@@ -103,7 +103,7 @@ public class CSharpEvaluator
                         var resultingValue = (int)leftValue.Result - (int)rightValue.Result;
 
                         return new EvaluatorResult(
-                            boundBinaryExpressionNode.TypeClauseNode.ValueType,
+                            boundBinaryExpressionNode.ResultTypeClauseNode.ValueType,
                             resultingValue);
                     }
                 case SyntaxKind.StarToken:
@@ -111,7 +111,7 @@ public class CSharpEvaluator
                         var resultingValue = (int)leftValue.Result * (int)rightValue.Result;
 
                         return new EvaluatorResult(
-                            boundBinaryExpressionNode.TypeClauseNode.ValueType,
+                            boundBinaryExpressionNode.ResultTypeClauseNode.ValueType,
                             resultingValue);
                     }
                 case SyntaxKind.DivisionToken:
@@ -119,12 +119,12 @@ public class CSharpEvaluator
                         var resultingValue = (int)leftValue.Result / (int)rightValue.Result;
 
                         return new EvaluatorResult(
-                            boundBinaryExpressionNode.TypeClauseNode.ValueType,
+                            boundBinaryExpressionNode.ResultTypeClauseNode.ValueType,
                             resultingValue);
                     }
             }
         }
-        else if (boundBinaryExpressionNode.TypeClauseNode.ValueType == typeof(string))
+        else if (boundBinaryExpressionNode.ResultTypeClauseNode.ValueType == typeof(string))
         {
             var leftValue = EvaluateExpression(
                 boundBinaryExpressionNode.LeftExpressionNode);
@@ -140,7 +140,7 @@ public class CSharpEvaluator
                         var resultingValue = (string)leftValue.Result + (string)rightValue.Result;
 
                         return new EvaluatorResult(
-                            boundBinaryExpressionNode.TypeClauseNode.ValueType,
+                            boundBinaryExpressionNode.ResultTypeClauseNode.ValueType,
                             resultingValue);
                     }
             }

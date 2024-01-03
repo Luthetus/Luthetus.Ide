@@ -1,6 +1,4 @@
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -13,10 +11,6 @@ public partial class TextEditorSettingsPreview : ComponentBase
 {
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
-    [Inject]
-    private IDecorationMapperRegistry DecorationMapperRegistry { get; set; } = null!;
-    [Inject]
-    private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
 
     [Parameter]
     public string TopLevelDivElementCssClassString { get; set; } = string.Empty;
@@ -36,23 +30,21 @@ public partial class TextEditorSettingsPreview : ComponentBase
         TextEditorStyleCssString = "height: 100%;",
         IncludeHeaderHelperComponent = false,
         IncludeFooterHelperComponent = false,
-        AfterOnKeyDownAsync = (_, _, _, _) => { return Task.CompletedTask; }
+        AfterOnKeyDownAsyncFactory = (_, _, _, _) => { return editContext => Task.CompletedTask; }
     };
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            TextEditorService.Model.RegisterTemplated(
-                DecorationMapperRegistry,
-                CompilerServiceRegistry,
+            TextEditorService.ModelApi.RegisterTemplated(
                 ExtensionNoPeriodFacts.TXT,
                 SettingsPreviewTextEditorResourceUri,
                 DateTime.UtcNow,
                 "Preview settings here",
                 "Settings Preview");
 
-            TextEditorService.ViewModel.Register(
+            TextEditorService.ViewModelApi.Register(
                 SettingsPreviewTextEditorViewModelKey,
                 SettingsPreviewTextEditorResourceUri);
 

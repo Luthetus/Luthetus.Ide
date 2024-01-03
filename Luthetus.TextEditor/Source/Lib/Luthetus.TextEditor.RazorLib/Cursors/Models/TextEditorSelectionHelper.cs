@@ -11,11 +11,11 @@ public static class TextEditorSelectionHelper
             textEditorSelection.EndingPositionIndex);
     }
 
-    public static bool HasSelectedText(ImmutableTextEditorSelection immutableTextEditorSelection)
+    public static bool HasSelectedText(TextEditorCursorModifier cursorModifier)
     {
         return HasSelectedText(
-            immutableTextEditorSelection.AnchorPositionIndex,
-            immutableTextEditorSelection.EndingPositionIndex);
+            cursorModifier.SelectionAnchorPositionIndex,
+            cursorModifier.SelectionEndingPositionIndex);
     }
 
     public static bool HasSelectedText(int? anchorPositionIndex, int endingPositionIndex)
@@ -28,34 +28,34 @@ public static class TextEditorSelectionHelper
 
     public static string? GetSelectedText(
         TextEditorSelection textEditorSelection,
-        TextEditorModel textEditorModel)
+        ITextEditorModel textEditorModel)
     {
         return GetSelectedText(
             textEditorSelection.AnchorPositionIndex,
             textEditorSelection.EndingPositionIndex,
             textEditorModel);
     }
-
+    
     public static string? GetSelectedText(
-        ImmutableTextEditorSelection immutableTextEditorSelection,
-        TextEditorModel textEditorModel)
+        TextEditorCursorModifier cursorModifier,
+        ITextEditorModel textEditorModel)
     {
         return GetSelectedText(
-            immutableTextEditorSelection.AnchorPositionIndex,
-            immutableTextEditorSelection.EndingPositionIndex,
+            cursorModifier.SelectionAnchorPositionIndex,
+            cursorModifier.SelectionEndingPositionIndex,
             textEditorModel);
     }
 
     public static string? GetSelectedText(
         int? anchorPositionIndex,
         int endingPositionIndex,
-        TextEditorModel textEditorModel)
+        ITextEditorModel textEditorModel)
     {
         if (HasSelectedText(anchorPositionIndex, endingPositionIndex))
         {
             var selectionBounds = GetSelectionBounds(anchorPositionIndex, endingPositionIndex);
 
-            var result = textEditorModel.GetTextRange(
+            var result = textEditorModel.GetString(
                 selectionBounds.lowerPositionIndexInclusive,
                 selectionBounds.upperPositionIndexExclusive - selectionBounds.lowerPositionIndexInclusive);
 
@@ -66,7 +66,7 @@ public static class TextEditorSelectionHelper
     }
 
     public static TextEditorCursor SelectLinesRange(
-        TextEditorModel textEditorModel,
+        ITextEditorModel textEditorModel,
         int startingRowIndex,
         int count)
     {
@@ -76,12 +76,20 @@ public static class TextEditorSelectionHelper
 
         var endingPositionIndexExclusive = textEditorModel.GetPositionIndex(lastRowIndexExclusive, 0);
 
-        var textEditorCursor = new TextEditorCursor((startingRowIndex, 0), false);
+        var columnIndex = 0;
+        // TODO: (2023-12-13) Writing immutability for text editor
+        //
+        //var textEditorCursor = new TextEditorCursor(
+        //    startingRowIndex,
+        //    columnIndex,
+        //    columnIndex,
+        //    false,
+        //    TextEditorSelection.Empty);
 
-        textEditorCursor.Selection.AnchorPositionIndex = startingPositionIndexInclusive;
-        textEditorCursor.Selection.EndingPositionIndex = endingPositionIndexExclusive;
+        //textEditorCursor.Selection.AnchorPositionIndex = startingPositionIndexInclusive;
+        //textEditorCursor.Selection.EndingPositionIndex = endingPositionIndexExclusive;
 
-        return textEditorCursor;
+        return TextEditorCursor.Empty; // TODO: (2023-12-13) Writing immutability for text editor
     }
 
     public static (int lowerPositionIndexInclusive, int upperPositionIndexExclusive) GetSelectionBounds(
@@ -91,13 +99,13 @@ public static class TextEditorSelectionHelper
             textEditorSelection.AnchorPositionIndex,
             textEditorSelection.EndingPositionIndex);
     }
-
+    
     public static (int lowerPositionIndexInclusive, int upperPositionIndexExclusive) GetSelectionBounds(
-        ImmutableTextEditorSelection immutableTextEditorSelection)
+        TextEditorCursorModifier cursorModifier)
     {
         return GetSelectionBounds(
-            immutableTextEditorSelection.AnchorPositionIndex,
-            immutableTextEditorSelection.EndingPositionIndex);
+            cursorModifier.SelectionAnchorPositionIndex,
+            cursorModifier.SelectionEndingPositionIndex);
     }
 
     public static (int lowerPositionIndexInclusive, int upperPositionIndexExclusive) GetSelectionBounds(
@@ -120,7 +128,7 @@ public static class TextEditorSelectionHelper
     }
 
     public static (int lowerRowIndexInclusive, int upperRowIndexExclusive) ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(
-        TextEditorModel textEditorModel,
+        ITextEditorModel textEditorModel,
         (int lowerPositionIndexInclusive, int upperPositionIndexExclusive) positionIndexBounds)
     {
         var firstRowToSelectDataInclusive = textEditorModel.FindRowInformation(

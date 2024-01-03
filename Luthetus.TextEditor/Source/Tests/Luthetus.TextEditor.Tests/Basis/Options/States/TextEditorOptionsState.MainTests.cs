@@ -14,7 +14,8 @@ public class TextEditorOptionsStateMainTests
 	[Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
+		var optionsState = new TextEditorOptionsState();
+		Assert.NotNull(optionsState.Options);
 	}
 
 	/// <summary>
@@ -23,6 +24,22 @@ public class TextEditorOptionsStateMainTests
 	[Fact]
 	public void Options()
 	{
-		throw new NotImplementedException();
-	}
+        var optionsState = new TextEditorOptionsState();
+		Assert.NotNull(optionsState.Options);
+
+		var outCursorWidthInPixels = optionsState.Options.CursorWidthInPixels + 1;
+
+		var outOptions = optionsState.Options with
+		{
+			CursorWidthInPixels = outCursorWidthInPixels
+        };
+
+		Assert.NotEqual(outOptions, optionsState.Options);
+
+		var outOptionsState = new TextEditorOptionsState
+		{
+			Options = outOptions
+		};
+		Assert.Equal(outOptions, outOptionsState.Options);
+    }
 }

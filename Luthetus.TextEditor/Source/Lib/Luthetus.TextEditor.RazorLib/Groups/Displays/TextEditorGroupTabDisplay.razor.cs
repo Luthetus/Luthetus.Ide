@@ -29,7 +29,7 @@ public partial class TextEditorGroupTabDisplay : ComponentBase
 
     private void OnClickSetActiveTextEditorViewModel()
     {
-        TextEditorService.Group.SetActiveViewModel(TextEditorGroup.GroupKey, TextEditorViewModelKey);
+        TextEditorService.GroupApi.SetActiveViewModel(TextEditorGroup.GroupKey, TextEditorViewModelKey);
     }
 
     private void OnMouseDown(MouseEventArgs mouseEventArgs)
@@ -40,6 +40,6 @@ public partial class TextEditorGroupTabDisplay : ComponentBase
 
     private void CloseTabOnClick()
     {
-        TextEditorService.Group.RemoveViewModel(TextEditorGroup.GroupKey, TextEditorViewModelKey);
+        TextEditorService.GroupApi.RemoveViewModel(TextEditorGroup.GroupKey, TextEditorViewModelKey);
     }
 }

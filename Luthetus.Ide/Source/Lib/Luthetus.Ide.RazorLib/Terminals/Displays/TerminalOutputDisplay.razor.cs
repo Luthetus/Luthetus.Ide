@@ -12,8 +12,6 @@ using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
 using System.Text;
 using Luthetus.TextEditor.RazorLib.Htmls.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
@@ -23,7 +21,6 @@ public partial class TerminalOutputDisplay : FluxorComponent
 {
     [Inject]
     private IStateSelection<TerminalSessionState, TerminalSession?> TerminalSessionsStateSelection { get; set; } = null!;
-
     // TODO: Don't inject TerminalSessionsStateWrap. It causes too many unnecessary re-renders
     [Inject]
     private IState<TerminalSessionState> TerminalSessionStateWrap { get; set; } = null!;
@@ -31,10 +28,6 @@ public partial class TerminalOutputDisplay : FluxorComponent
     private IState<TerminalSessionWasModifiedState> TerminalSessionWasModifiedStateWrap { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
-    [Inject]
-    private IDecorationMapperRegistry DecorationMapperRegistry { get; set; } = null!;
-    [Inject]
-    private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
 
     /// <summary>
     /// <see cref="TerminalSessionKey"/> is used to narrow down the terminal
@@ -58,12 +51,15 @@ public partial class TerminalOutputDisplay : FluxorComponent
 
     protected override void OnInitialized()
     {
+        // Supress un-used service
+        _ = TerminalSessionStateWrap;
+
         _textEditorViewModelDisplayOptions = new()
         {
             IncludeHeaderHelperComponent = false,
             IncludeFooterHelperComponent = false,
             IncludeContextMenuHelperComponent = false,
-            AfterOnKeyDownAsync = TextEditorAfterOnKeyDownAsync,
+            AfterOnKeyDownAsyncFactory = TextEditorAfterOnKeyDownAsync,
         };
 
         TerminalSessionsStateSelection.Select(x =>
@@ -87,20 +83,18 @@ public partial class TerminalOutputDisplay : FluxorComponent
 
                 if (terminalSession is not null)
                 {
-                    var textEditorModel = TextEditorService.Model.FindOrDefault(terminalSession.ResourceUri);
+                    var textEditorModel = TextEditorService.ModelApi.GetOrDefault(terminalSession.ResourceUri);
 
                     if (textEditorModel is null)
                     {
-                        TextEditorService.Model.RegisterTemplated(
-                            DecorationMapperRegistry,
-                            CompilerServiceRegistry,
+                        TextEditorService.ModelApi.RegisterTemplated(
                             ExtensionNoPeriodFacts.TXT,
                             new ResourceUri("__terminal-display-name-fallback__"),
                             DateTime.UtcNow,
                             string.Empty,
                             "TERMINAL");
 
-                        TextEditorService.ViewModel.Register(
+                        TextEditorService.ViewModelApi.Register(
                             terminalSession.TextEditorViewModelKey,
                             terminalSession.ResourceUri);
                     }
@@ -146,56 +140,61 @@ public partial class TerminalOutputDisplay : FluxorComponent
         return (MarkupString)outputBuilder.ToString();
     }
 
-    private async Task TextEditorAfterOnKeyDownAsync(
-        TextEditorModel textEditor,
-        ImmutableArray<TextEditorCursorSnapshot> cursorSnapshots,
+    private TextEditorEdit TextEditorAfterOnKeyDownAsync(
+        ResourceUri resourceUri,
+        Key<TextEditorViewModel> viewModel,
         KeyboardEventArgs keyboardEventArgs,
         Func<TextEditorMenuKind, bool, Task> setTextEditorMenuKind)
     {
-        // TODO: I am commenting this code out as of (2023-12-07). I am currently rewriting the...
-        // ...text editor to be immutable. I don't know why this method is here and it isn't used?
-        //
-        //if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
-        //{
-        //    var text = textEditor.GetAllText();
-        //    textEditor.WithContent(string.Empty);
+        return editContext =>
+        {
+            // TODO: I am commenting this code out as of (2023-12-07). I am currently rewriting the...
+            // ...text editor to be immutable. I don't know why this method is here and it isn't used?
+            //
+            //if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
+            //{
+            //    var text = textEditor.GetAllText();
+            //    textEditor.WithContent(string.Empty);
 
-        //    var generalTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[
-        //        TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
+            //    var generalTerminalSession = TerminalSessionStateWrap.Value.TerminalSessionMap[
+            //        TerminalSessionFacts.GENERAL_TERMINAL_SESSION_KEY];
 
-        //    var whitespace = new[]
-        //    {
-        //        KeyboardKeyFacts.WhitespaceCharacters.SPACE,
-        //        KeyboardKeyFacts.WhitespaceCharacters.TAB,
-        //        KeyboardKeyFacts.WhitespaceCharacters.NEW_LINE,
-        //        KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN,
-        //    };
+            //    var whitespace = new[]
+            //    {
+            //        KeyboardKeyFacts.WhitespaceCharacters.SPACE,
+            //        KeyboardKeyFacts.WhitespaceCharacters.TAB,
+            //        KeyboardKeyFacts.WhitespaceCharacters.NEW_LINE,
+            //        KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN,
+            //    };
 
-        //    var indexOfFirstWordEndingExclusive = text.IndexOfAny(whitespace);
+            //    var indexOfFirstWordEndingExclusive = text.IndexOfAny(whitespace);
 
-        //    var targetFileName = text[..indexOfFirstWordEndingExclusive];
+            //    var targetFileName = text[..indexOfFirstWordEndingExclusive];
 
-        //    if (targetFileName.StartsWith('.'))
-        //    {
-        //        targetFileName = (generalTerminalSession.WorkingDirectoryAbsolutePathString ?? string.Empty) +
-        //            targetFileName;
-        //    }
+            //    if (targetFileName.StartsWith('.'))
+            //    {
+            //        targetFileName = (generalTerminalSession.WorkingDirectoryAbsolutePathString ?? string.Empty) +
+            //            targetFileName;
+            //    }
 
-        //    var arguments = text[(indexOfFirstWordEndingExclusive + 1)..]
-        //        .Split(whitespace)
-        //        .Where(x => !string.IsNullOrWhiteSpace(x))
-        //        .ToArray();
+            //    var arguments = text[(indexOfFirstWordEndingExclusive + 1)..]
+            //        .Split(whitespace)
+            //        .Where(x => !string.IsNullOrWhiteSpace(x))
+            //        .ToArray();
 
-        //    var formattedCommand = new FormattedCommand(targetFileName, arguments);
+            //    var formattedCommand = new FormattedCommand(targetFileName, arguments);
 
-        //    var terminalCommand = new TerminalCommand(
-        //        Key<TerminalCommand>.NewKey(),
-        //        formattedCommand,
-        //        null,
-        //        CancellationToken.None,
-        //        () => Task.CompletedTask);
+            //    var terminalCommand = new TerminalCommand(
+            //        Key<TerminalCommand>.NewKey(),
+            //        formattedCommand,
+            //        null,
+            //        CancellationToken.None,
+            //        () => Task.CompletedTask);
 
-        //    await generalTerminalSession.EnqueueCommandAsync(terminalCommand);
-        //}
+            //    await generalTerminalSession.EnqueueCommandAsync(terminalCommand);
+            //}
+
+            return Task.CompletedTask;
+        };
     }
 }

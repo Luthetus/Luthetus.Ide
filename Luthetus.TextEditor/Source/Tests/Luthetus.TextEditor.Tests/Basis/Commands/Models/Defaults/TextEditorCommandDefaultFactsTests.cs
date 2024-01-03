@@ -37,7 +37,7 @@ public class TextEditorCommandDefaultFactsTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorCommandDefaultFacts.Paste"/>
+	/// <see cref="TextEditorCommandDefaultFacts.PasteCommand"/>
 	/// </summary>
 	[Fact]
     public void Paste()

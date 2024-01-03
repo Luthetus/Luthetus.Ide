@@ -8,8 +8,8 @@ public partial class TextEditorDiffState
 {
     public record RegisterAction(
         Key<TextEditorDiffModel> DiffKey,
-        Key<TextEditorViewModel> BeforeViewModelKey,
-        Key<TextEditorViewModel> AfterViewModelKey);
+        Key<TextEditorViewModel> InViewModelKey,
+        Key<TextEditorViewModel> OutViewModelKey);
 
     public record DisposeAction(Key<TextEditorDiffModel> DiffKey);
 }

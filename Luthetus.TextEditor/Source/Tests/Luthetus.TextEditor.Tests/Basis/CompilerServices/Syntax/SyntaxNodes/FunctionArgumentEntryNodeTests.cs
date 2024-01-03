@@ -1,5 +1,8 @@
 using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Enums;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
@@ -8,84 +11,77 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 /// </summary>
 public class FunctionArgumentEntryNodeTests
 {
-	/// <summary>
-	/// <see cref="FunctionArgumentEntryNode(VariableDeclarationNode, bool, bool, bool, bool)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="FunctionArgumentEntryNode(VariableDeclarationNode, bool, bool, bool, bool)"/>
+    /// <br/>----<br/>
+    /// <see cref="FunctionArgumentEntryNode.VariableDeclarationNode"/>
+    /// <see cref="FunctionArgumentEntryNode.IsOptional"/>
+    /// <see cref="FunctionArgumentEntryNode.HasOutKeyword"/>
+    /// <see cref="FunctionArgumentEntryNode.HasInKeyword"/>
+    /// <see cref="FunctionArgumentEntryNode.HasRefKeyword"/>
+    /// <see cref="FunctionArgumentEntryNode.ChildBag"/>
+    /// <see cref="FunctionArgumentEntryNode.IsFabricated"/>
+    /// <see cref="FunctionArgumentEntryNode.SyntaxKind"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
-	}
+        var sourceText = @"public void MyMethod(int value)
+{
+}";
 
-	/// <summary>
-	/// <see cref="FunctionArgumentEntryNode.VariableDeclarationStatementNode"/>
-	/// </summary>
-	[Fact]
-	public void VariableDeclarationStatementNode()
-	{
-		throw new NotImplementedException();
-	}
+        TypeClauseNode intTypeClauseNode;
+        {
+            var intTypeIdentifier = new KeywordToken(
+                TextEditorTextSpan.FabricateTextSpan("int"),
+                RazorLib.CompilerServices.Syntax.SyntaxKind.IntTokenKeyword);
 
-	/// <summary>
-	/// <see cref="FunctionArgumentEntryNode.IsOptional"/>
-	/// </summary>
-	[Fact]
-	public void IsOptional()
-	{
-		throw new NotImplementedException();
-	}
+            intTypeClauseNode = new TypeClauseNode(
+                intTypeIdentifier,
+                typeof(int),
+                null);
+        }
 
-	/// <summary>
-	/// <see cref="FunctionArgumentEntryNode.HasOutKeyword"/>
-	/// </summary>
-	[Fact]
-	public void HasOutKeyword()
-	{
-		throw new NotImplementedException();
-	}
+        var variableIdentifierText = "value";
+        int indexOfVariableIdentifierText = sourceText.IndexOf(variableIdentifierText);
+        var variableIdentifierToken = new IdentifierToken(new TextEditorTextSpan(
+            indexOfVariableIdentifierText,
+            indexOfVariableIdentifierText + variableIdentifierText.Length,
+            0,
+            new ResourceUri("/unitTesting.txt"),
+            sourceText));
 
-	/// <summary>
-	/// <see cref="FunctionArgumentEntryNode.HasInKeyword"/>
-	/// </summary>
-	[Fact]
-	public void HasInKeyword()
-	{
-		throw new NotImplementedException();
-	}
+        var variableDeclarationNode = new VariableDeclarationNode(
+            intTypeClauseNode,
+            variableIdentifierToken,
+            VariableKind.Local,
+            false);
 
-	/// <summary>
-	/// <see cref="FunctionArgumentEntryNode.HasRefKeyword"/>
-	/// </summary>
-	[Fact]
-	public void HasRefKeyword()
-	{
-		throw new NotImplementedException();
-	}
+        var isOptional = false;
+        var hasOutKeyword = false;
+        var hasInKeyword = false;
+        var hasRefKeyword = false;
 
-	/// <summary>
-	/// <see cref="FunctionArgumentEntryNode.ChildBag"/>
-	/// </summary>
-	[Fact]
-	public void ChildBag()
-	{
-		throw new NotImplementedException();
-	}
+        var functionArgumentEntryNode = new FunctionArgumentEntryNode(
+            variableDeclarationNode,
+            isOptional,
+            hasOutKeyword,
+            hasInKeyword,
+            hasRefKeyword);
 
-	/// <summary>
-	/// <see cref="FunctionArgumentEntryNode.IsFabricated"/>
-	/// </summary>
-	[Fact]
-	public void IsFabricated()
-	{
-		throw new NotImplementedException();
-	}
+        Assert.Equal(variableDeclarationNode, functionArgumentEntryNode.VariableDeclarationNode);
+        Assert.Equal(isOptional, functionArgumentEntryNode.IsOptional);
+        Assert.Equal(hasOutKeyword, functionArgumentEntryNode.HasOutKeyword);
+        Assert.Equal(hasInKeyword, functionArgumentEntryNode.HasInKeyword);
+        Assert.Equal(hasRefKeyword, functionArgumentEntryNode.HasRefKeyword);
 
-	/// <summary>
-	/// <see cref="FunctionArgumentEntryNode.SyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
-	{
-		throw new NotImplementedException();
-	}
+        Assert.Single(functionArgumentEntryNode.ChildBag);
+        Assert.Equal(variableDeclarationNode, functionArgumentEntryNode.ChildBag.Single());
+
+        Assert.False(functionArgumentEntryNode.IsFabricated);
+
+        Assert.Equal(
+            RazorLib.CompilerServices.Syntax.SyntaxKind.FunctionArgumentEntryNode,
+            functionArgumentEntryNode.SyntaxKind);
+    }
 }

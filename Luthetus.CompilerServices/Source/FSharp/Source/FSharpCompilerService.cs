@@ -1,13 +1,11 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.CompilerServices.Lang.FSharp.FSharp.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
-using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using System.Collections.Immutable;
 
 namespace Luthetus.CompilerServices.Lang.FSharp;
@@ -60,7 +58,7 @@ public class FSharpCompilerService : ICompilerService
 
     public ICompilerServiceResource? GetCompilerServiceResourceFor(ResourceUri resourceUri)
     {
-        var model = _textEditorService.Model.FindOrDefault(resourceUri);
+        var model = _textEditorService.ModelApi.GetOrDefault(resourceUri);
 
         if (model is null)
             return null;
@@ -118,30 +116,31 @@ public class FSharpCompilerService : ICompilerService
 
     private void QueueParseRequest(ResourceUri resourceUri)
     {
-        _backgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
-            "F# Compiler Service - Parse",
-            async () =>
+        _textEditorService.Post(
+            nameof(QueueParseRequest),
+            async editContext =>
             {
-                var model = _textEditorService.Model.FindOrDefault(resourceUri);
+                var modelModifier = editContext.GetModelModifier(resourceUri);
 
-                if (model is null)
+                if (modelModifier is null)
                     return;
 
-                var text = model.GetAllText();
+                var text = modelModifier.GetAllText();
 
-                _dispatcher.Dispatch(new TextEditorModelState.CalculatePresentationModelAction(
-                    model.ResourceUri,
-                    CompilerServiceDiagnosticPresentationFacts.PresentationKey));
+                await _textEditorService.ModelApi.CalculatePresentationModelFactory(
+                        modelModifier.ResourceUri,
+                        CompilerServiceDiagnosticPresentationFacts.PresentationKey)
+                    .Invoke(editContext);
 
-                var pendingCalculation = model.PresentationModelsBag.FirstOrDefault(x =>
+                var pendingCalculation = modelModifier.PresentationModelsBag.FirstOrDefault(x =>
                     x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey)
                     ?.PendingCalculation;
 
                 if (pendingCalculation is null)
-                    pendingCalculation = new(model.GetAllText());
+                    pendingCalculation = new(modelModifier.GetAllText());
 
-                var lexer = new TextEditorFSharpLexer(model.ResourceUri);
-                var lexResult = await lexer.Lex(text, model.RenderStateKey);
+                var lexer = new TextEditorFSharpLexer(modelModifier.ResourceUri);
+                var lexResult = await lexer.Lex(text, modelModifier.RenderStateKey);
 
                 lock (_fSharpResourceMapLock)
                 {
@@ -152,17 +151,17 @@ public class FSharpCompilerService : ICompilerService
                         .SyntacticTextSpans = lexResult;
                 }
 
-                await model.ApplySyntaxHighlightingAsync();
+                await modelModifier.ApplySyntaxHighlightingAsync();
 
                 ResourceParsed?.Invoke();
 
-                var presentationModel = model.PresentationModelsBag.FirstOrDefault(x =>
+                var presentationModel = modelModifier.PresentationModelsBag.FirstOrDefault(x =>
                     x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
 
                 if (presentationModel?.PendingCalculation is not null)
                 {
                     presentationModel.PendingCalculation.TextEditorTextSpanBag =
-                        GetDiagnosticsFor(model.ResourceUri)
+                        GetDiagnosticsFor(modelModifier.ResourceUri)
                             .Select(x => x.TextSpan)
                             .ToImmutableArray();
 

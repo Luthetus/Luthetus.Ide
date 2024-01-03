@@ -14,6 +14,27 @@ public class CharacterKindHelperTests
 	[Fact]
 	public void CharToCharacterKind()
 	{
-		throw new NotImplementedException();
-	}
+        // CharacterKind.Whitespace
+        {
+            Assert.Equal(CharacterKind.Whitespace, CharacterKindHelper.CharToCharacterKind(' '));
+        }
+
+        // CharacterKind.Punctuation
+        {
+            Assert.Equal(CharacterKind.Punctuation, CharacterKindHelper.CharToCharacterKind(';'));
+        }
+
+        // CharacterKind.LetterOrDigit
+        {
+            // Letter
+            {
+                Assert.Equal(CharacterKind.LetterOrDigit, CharacterKindHelper.CharToCharacterKind('C'));
+            }
+
+            // Digit
+            {
+                Assert.Equal(CharacterKind.LetterOrDigit, CharacterKindHelper.CharToCharacterKind('8'));
+            }
+        }
+    }
 }

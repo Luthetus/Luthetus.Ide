@@ -2,6 +2,9 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
 
+/// <summary>
+/// Used when defining a syntax which contains a generic type.
+/// </summary>
 public sealed record GenericArgumentEntryNode : ISyntaxNode
 {
     public GenericArgumentEntryNode(TypeClauseNode typeClauseNode)

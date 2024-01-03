@@ -4,7 +4,6 @@ using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.SyntaxActors;
@@ -60,15 +59,17 @@ public partial class DotNetSolutionSync
             outDotNetSolutionModel.NamespacePath.AbsolutePath.Value,
             outDotNetSolutionModel.SolutionFileContents);
 
-        var solutionTextEditorModel = _textEditorService.Model.FindOrDefault(
+        var solutionTextEditorModel = _textEditorService.ModelApi.GetOrDefault(
             new ResourceUri(inDotNetSolutionModel.NamespacePath.AbsolutePath.Value));
 
         if (solutionTextEditorModel is not null)
         {
-            Dispatcher.Dispatch(new TextEditorModelState.ReloadAction(
-                solutionTextEditorModel.ResourceUri,
-                outDotNetSolutionModel.SolutionFileContents,
-                DateTime.UtcNow));
+            _textEditorService.Post(
+                nameof(Website_AddExistingProjectToSolutionAsync),
+                _textEditorService.ModelApi.ReloadFactory(
+                    solutionTextEditorModel.ResourceUri,
+                    outDotNetSolutionModel.SolutionFileContents,
+                    DateTime.UtcNow));
         }
 
         // TODO: Putting a hack for now to overwrite if somehow model was registered already

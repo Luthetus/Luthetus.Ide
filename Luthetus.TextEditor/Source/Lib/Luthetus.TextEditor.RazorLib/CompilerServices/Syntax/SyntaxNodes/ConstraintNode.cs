@@ -33,5 +33,5 @@ public sealed record ConstraintNode : ISyntaxNode
     public ImmutableArray<ISyntax> ChildBag { get; }
 
     public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.TypeClauseNode;
+    public SyntaxKind SyntaxKind => SyntaxKind.ConstraintNode;
 }

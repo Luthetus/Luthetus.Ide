@@ -1,5 +1,9 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxTokens;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 
@@ -8,93 +12,109 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax.SyntaxNodes;
 /// </summary>
 public class ConstructorDefinitionNodeTests
 {
-	/// <summary>
-	/// <see cref="ConstructorDefinitionNode(TypeClauseNode, RazorLib.CompilerServices.Syntax.SyntaxTokens.IdentifierToken, RazorLib.CompilerServices.Syntax.SyntaxNodes.GenericArgumentsListingNode?, RazorLib.CompilerServices.Syntax.SyntaxNodes.FunctionArgumentsListingNode, RazorLib.CompilerServices.CodeBlockNode?, RazorLib.CompilerServices.Syntax.SyntaxNodes.ConstraintNode?)"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="ConstructorDefinitionNode(TypeClauseNode, IdentifierToken, RazorLib.CompilerServices.Syntax.SyntaxNodes.GenericArgumentsListingNode?, FunctionArgumentsListingNode, RazorLib.CompilerServices.CodeBlockNode?, RazorLib.CompilerServices.Syntax.SyntaxNodes.ConstraintNode?)"/>
+    /// <br/>----<br/>
+    /// <see cref="ConstructorDefinitionNode.ReturnTypeClauseNode"/>
+    /// <see cref="ConstructorDefinitionNode.FunctionIdentifier"/>
+    /// <see cref="ConstructorDefinitionNode.GenericArgumentsListingNode"/>
+    /// <see cref="ConstructorDefinitionNode.FunctionArgumentsListingNode"/>
+    /// <see cref="ConstructorDefinitionNode.FunctionBodyCodeBlockNode"/>
+    /// <see cref="ConstructorDefinitionNode.ConstraintNode"/>
+    /// <see cref="ConstructorDefinitionNode.ChildBag"/>
+    /// <see cref="ConstructorDefinitionNode.IsFabricated"/>
+    /// <see cref="ConstructorDefinitionNode.SyntaxKind"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
-	{
-		throw new NotImplementedException();
-	}
+    {
+        var sourceText = @"public class MyClass
+{
+    public MyClass()
+    {
+    }
+}";
 
-	/// <summary>
-	/// <see cref="ConstructorDefinitionNode.ReturnTypeClauseNode"/>
-	/// </summary>
-	[Fact]
-	public void ReturnTypeClauseNode()
-	{
-		throw new NotImplementedException();
-	}
+        TypeClauseNode myClassTypeClauseNode;
+        {
+            var myClassTypeIdentifier = new IdentifierToken(
+                TextEditorTextSpan.FabricateTextSpan("MyClass"));
 
-	/// <summary>
-	/// <see cref="ConstructorDefinitionNode.FunctionIdentifier"/>
-	/// </summary>
-	[Fact]
-	public void FunctionIdentifier()
-	{
-		throw new NotImplementedException();
-	}
+            myClassTypeClauseNode = new TypeClauseNode(
+                myClassTypeIdentifier,
+                null,
+                null);
+        }
+        
+        IdentifierToken functionIdentifierToken;
+        {
+            functionIdentifierToken = new IdentifierToken(
+                TextEditorTextSpan.FabricateTextSpan("MyClass"));
+        }
 
-	/// <summary>
-	/// <see cref="ConstructorDefinitionNode.GenericArgumentsListingNode"/>
-	/// </summary>
-	[Fact]
-	public void GenericArgumentsListingNode()
-	{
-		throw new NotImplementedException();
-	}
+        FunctionArgumentsListingNode functionArgumentsListingNode;
+        {
+            var openParenthesisText = "(";
+            int indexOfOpenParenthesisText = sourceText.IndexOf(openParenthesisText);
+            var openParenthesisToken = new OpenParenthesisToken(new TextEditorTextSpan(
+                indexOfOpenParenthesisText,
+                indexOfOpenParenthesisText + openParenthesisText.Length,
+                0,
+                new ResourceUri("/unitTesting.txt"),
+                sourceText));
 
-	/// <summary>
-	/// <see cref="ConstructorDefinitionNode.FunctionArgumentsListingNode"/>
-	/// </summary>
-	[Fact]
-	public void FunctionArgumentsListingNode()
-	{
-		throw new NotImplementedException();
-	}
+            var functionArgumentEntryNodes = ImmutableArray<FunctionArgumentEntryNode>.Empty;
 
-	/// <summary>
-	/// <see cref="ConstructorDefinitionNode.FunctionBodyCodeBlockNode"/>
-	/// </summary>
-	[Fact]
-	public void FunctionBodyCodeBlockNode()
-	{
-		throw new NotImplementedException();
-	}
+            var closeParenthesisText = ")";
+            int indexOfCloseParenthesisText = sourceText.IndexOf(closeParenthesisText);
+            var closeParenthesisToken = new CloseParenthesisToken(new TextEditorTextSpan(
+                indexOfCloseParenthesisText,
+                indexOfCloseParenthesisText + closeParenthesisText.Length,
+                0,
+                new ResourceUri("/unitTesting.txt"),
+                sourceText));
 
-	/// <summary>
-	/// <see cref="ConstructorDefinitionNode.ConstraintNode"/>
-	/// </summary>
-	[Fact]
-	public void ConstraintNode()
-	{
-		throw new NotImplementedException();
-	}
+            functionArgumentsListingNode = new FunctionArgumentsListingNode(
+                openParenthesisToken,
+                functionArgumentEntryNodes,
+                closeParenthesisToken);
+        }
 
-	/// <summary>
-	/// <see cref="ConstructorDefinitionNode.ChildBag"/>
-	/// </summary>
-	[Fact]
-	public void ChildBag()
-	{
-		throw new NotImplementedException();
-	}
+        GenericArgumentsListingNode? genericArgumentsListingNode = null;
 
-	/// <summary>
-	/// <see cref="ConstructorDefinitionNode.IsFabricated"/>
-	/// </summary>
-	[Fact]
-	public void IsFabricated()
-	{
-		throw new NotImplementedException();
-	}
+        CodeBlockNode functionBodyCodeBlockNode;
+        {
+            functionBodyCodeBlockNode = new CodeBlockNode(
+                ImmutableArray<RazorLib.CompilerServices.Syntax.ISyntax>.Empty);
+        }
 
-	/// <summary>
-	/// <see cref="ConstructorDefinitionNode.SyntaxKind"/>
-	/// </summary>
-	[Fact]
-	public void SyntaxKind()
-	{
-		throw new NotImplementedException();
-	}
+        ConstraintNode? constraintNode = null;
+
+        var constructorDefinitionNode = new ConstructorDefinitionNode(
+            myClassTypeClauseNode,
+            functionIdentifierToken,
+            genericArgumentsListingNode,
+            functionArgumentsListingNode,
+            functionBodyCodeBlockNode,
+            constraintNode);
+
+        Assert.Equal(myClassTypeClauseNode, constructorDefinitionNode.ReturnTypeClauseNode);
+        Assert.Equal(functionIdentifierToken, constructorDefinitionNode.FunctionIdentifier);
+        Assert.Equal(genericArgumentsListingNode, constructorDefinitionNode.GenericArgumentsListingNode);
+        Assert.Equal(functionArgumentsListingNode, constructorDefinitionNode.FunctionArgumentsListingNode);
+        Assert.Equal(functionBodyCodeBlockNode, constructorDefinitionNode.FunctionBodyCodeBlockNode);
+        Assert.Equal(constraintNode, constructorDefinitionNode.ConstraintNode);
+
+        Assert.Equal(4, constructorDefinitionNode.ChildBag.Length);
+        Assert.Equal(myClassTypeClauseNode, constructorDefinitionNode.ChildBag[0]);
+        Assert.Equal(functionIdentifierToken, constructorDefinitionNode.ChildBag[1]);
+        Assert.Equal(functionArgumentsListingNode, constructorDefinitionNode.ChildBag[2]);
+        Assert.Equal(functionBodyCodeBlockNode, constructorDefinitionNode.ChildBag[3]);
+
+        Assert.False(constructorDefinitionNode.IsFabricated);
+
+        Assert.Equal(
+            RazorLib.CompilerServices.Syntax.SyntaxKind.ConstructorDefinitionNode,
+            constructorDefinitionNode.SyntaxKind);
+    }
 }

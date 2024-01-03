@@ -20,7 +20,7 @@ public class TextEditorCommandVimFactsVerbsTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorCommandVimFacts.Verbs.ChangeLine"/>
+	/// <see cref="TextEditorCommandVimFacts.Verbs.ChangeLineCommand"/>
 	/// </summary>
 	[Fact]
 	public void ChangeLine()
@@ -29,7 +29,7 @@ public class TextEditorCommandVimFactsVerbsTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorCommandVimFacts.Verbs.GetDeleteMotion(TextEditorCommand)"/>
+	/// <see cref="TextEditorCommandVimFacts.Verbs.DeleteMotionCommandFactory(TextEditorCommand)"/>
 	/// </summary>
 	[Fact]
 	public void GetDeleteMotion()
@@ -38,7 +38,7 @@ public class TextEditorCommandVimFactsVerbsTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorCommandVimFacts.Verbs.GetChangeMotion(TextEditorCommand)"/>
+	/// <see cref="TextEditorCommandVimFacts.Verbs.ChangeMotionCommandFactory(TextEditorCommand)"/>
 	/// </summary>
 	[Fact]
 	public void GetChangeMotion()
@@ -47,7 +47,7 @@ public class TextEditorCommandVimFactsVerbsTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorCommandVimFacts.Verbs.ChangeSelection"/>
+	/// <see cref="TextEditorCommandVimFacts.Verbs.ChangeSelectionCommand"/>
 	/// </summary>
 	[Fact]
 	public void ChangeSelection()
@@ -56,7 +56,7 @@ public class TextEditorCommandVimFactsVerbsTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorCommandVimFacts.Verbs.Yank"/>
+	/// <see cref="TextEditorCommandVimFacts.Verbs.YankCommand"/>
 	/// </summary>
 	[Fact]
 	public void Yank()
@@ -65,7 +65,7 @@ public class TextEditorCommandVimFactsVerbsTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorCommandVimFacts.Verbs.NewLineBelow"/>
+	/// <see cref="TextEditorCommandVimFacts.Verbs.NewLineBelowCommand"/>
 	/// </summary>
 	[Fact]
 	public void NewLineBelow()
@@ -74,7 +74,7 @@ public class TextEditorCommandVimFactsVerbsTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorCommandVimFacts.Verbs.NewLineAbove"/>
+	/// <see cref="TextEditorCommandVimFacts.Verbs.NewLineAboveCommand"/>
 	/// </summary>
 	[Fact]
 	public void NewLineAbove()

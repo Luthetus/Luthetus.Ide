@@ -40,7 +40,7 @@ public class CompilerServiceRegistry : ICompilerServiceRegistry
         RazorCompilerService = new RazorCompilerService(textEditorService, backgroundTaskService, CSharpCompilerService, environmentProvider, dispatcher);
         TypeScriptCompilerService = new TypeScriptCompilerService(textEditorService, backgroundTaskService, dispatcher);
         XmlCompilerService = new XmlCompilerService(textEditorService, backgroundTaskService, dispatcher);
-        DefaultCompilerService = new TextEditorDefaultCompilerService();
+        DefaultCompilerService = new TextEditorCompilerServiceDefault();
 
         _map.Add(ExtensionNoPeriodFacts.HTML, XmlCompilerService);
         _map.Add(ExtensionNoPeriodFacts.XML, XmlCompilerService);
@@ -67,7 +67,7 @@ public class CompilerServiceRegistry : ICompilerServiceRegistry
     public RazorCompilerService RazorCompilerService { get; }
     public TypeScriptCompilerService TypeScriptCompilerService { get; }
     public XmlCompilerService XmlCompilerService { get; }
-    public TextEditorDefaultCompilerService DefaultCompilerService { get; }
+    public TextEditorCompilerServiceDefault DefaultCompilerService { get; }
 
     public ICompilerService GetCompilerService(string extensionNoPeriod)
     {
