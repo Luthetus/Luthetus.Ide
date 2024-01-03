@@ -546,20 +546,14 @@ public partial class TextEditorModelModifier
 
             if (moveBackwards && !selectionUpperBoundRowIndex.HasValue)
             {
-                var modifyRowsBy = -1 * rowsRemovedCount;
-
-                var startOfCurrentRowPositionIndex = this.GetRowEndingThatCreatedRow(cursorModifier.RowIndex + modifyRowsBy)
+                var startOfCurrentRowPositionIndex = this
+                    .GetRowEndingThatCreatedRow(cursorModifier.RowIndex - rowsRemovedCount)
                     .EndPositionIndexExclusive;
 
-                var modifyPositionIndexBy = -1 * charactersRemovedCount;
-
-                var endingPositionIndex = cursorPositionIndex + modifyPositionIndexBy;
-
-                var columnIndex = endingPositionIndex - startOfCurrentRowPositionIndex;
-                var rowIndex = cursorModifier.RowIndex;
-
-                cursorModifier.RowIndex = rowIndex + modifyRowsBy;
-                cursorModifier.ColumnIndex = columnIndex;
+                var endingPositionIndex = cursorPositionIndex - charactersRemovedCount;
+                
+                cursorModifier.RowIndex -= rowsRemovedCount;
+                cursorModifier.SetColumnIndexAndPreferred(endingPositionIndex - startOfCurrentRowPositionIndex);
             }
 
             int firstRowIndexToModify;
@@ -568,11 +562,7 @@ public partial class TextEditorModelModifier
             {
                 firstRowIndexToModify = selectionLowerBoundIndexCoordinates!.Value.rowIndex;
                 cursorModifier.RowIndex = selectionLowerBoundIndexCoordinates!.Value.rowIndex;
-                cursorModifier.ColumnIndex = selectionLowerBoundIndexCoordinates!.Value.columnIndex;
-            }
-            else if (moveBackwards)
-            {
-                firstRowIndexToModify = cursorModifier.RowIndex - rowsRemovedCount;
+                cursorModifier.SetColumnIndexAndPreferred(selectionLowerBoundIndexCoordinates!.Value.columnIndex);
             }
             else
             {

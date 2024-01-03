@@ -44,4 +44,10 @@ public class TextEditorCursorModifier
             IsIntersecting = IsIntersecting,
         };
     }
+
+    public void SetColumnIndexAndPreferred(int columnIndex)
+    {
+        ColumnIndex = columnIndex;
+        PreferredColumnIndex = columnIndex;
+    }
 }
