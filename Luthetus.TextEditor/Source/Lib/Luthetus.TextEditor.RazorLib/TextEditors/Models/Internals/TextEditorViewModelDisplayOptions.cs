@@ -1,10 +1,8 @@
-﻿using Luthetus.TextEditor.RazorLib.Cursors.Models;
-using Microsoft.AspNetCore.Components.Web;
+﻿using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModels;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
