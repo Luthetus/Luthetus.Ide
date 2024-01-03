@@ -9,7 +9,6 @@ public class Throttle : IThrottle
     private Task _throttleDelayTask = Task.CompletedTask;
     private Task _previousWorkItemTask = Task.CompletedTask;
 
-    /// <summary>The default value is true</summary>
     public bool ShouldWaitForPreviousWorkItemToComplete { get; } = true;
 
     public Throttle(TimeSpan throttleTimeSpan)

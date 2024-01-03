@@ -5,6 +5,8 @@ public interface IThrottle : IDisposable
     public static readonly TimeSpan DefaultThrottleTimeSpan = TimeSpan.FromMilliseconds(15);
 
     /// <summary>
+    /// The default value is true.
+    /// <br/><br/>
     /// With <see cref="ShouldWaitForPreviousWorkItemToComplete"/> set to false,
     /// the only thing limiting invocations is the throttle delay.
     /// <br/><br/>
