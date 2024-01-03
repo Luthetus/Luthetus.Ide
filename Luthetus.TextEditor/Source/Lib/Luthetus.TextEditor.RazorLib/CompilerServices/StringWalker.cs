@@ -245,7 +245,7 @@ public class StringWalker
 
         while (!IsEof)
         {
-            if (WhitespaceFacts.LINE_ENDING_CHARACTERS.Contains(CurrentCharacter))
+            if (WhitespaceFacts.LINE_ENDING_CHARACTER_BAG.Contains(CurrentCharacter))
                 break;
 
             textBuilder.Append(ReadCharacter());

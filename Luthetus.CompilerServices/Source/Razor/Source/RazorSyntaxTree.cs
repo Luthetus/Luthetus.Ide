@@ -1011,7 +1011,7 @@ public class RazorSyntaxTree
         {
             _ = stringWalker.ReadCharacter();
 
-            if (WhitespaceFacts.LINE_ENDING_CHARACTERS.Contains(stringWalker.CurrentCharacter))
+            if (WhitespaceFacts.LINE_ENDING_CHARACTER_BAG.Contains(stringWalker.CurrentCharacter))
             {
                 break;
             }

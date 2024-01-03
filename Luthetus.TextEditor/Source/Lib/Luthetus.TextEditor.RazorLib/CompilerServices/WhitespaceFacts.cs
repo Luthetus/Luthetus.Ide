@@ -17,7 +17,7 @@ public static class WhitespaceFacts
         LINE_FEED,
     }.ToImmutableArray();
 
-    public static readonly ImmutableArray<char> LINE_ENDING_CHARACTERS = new[]
+    public static readonly ImmutableArray<char> LINE_ENDING_CHARACTER_BAG = new[]
     {
         CARRIAGE_RETURN,
         LINE_FEED,

@@ -14,7 +14,7 @@ public class WhitespaceFactsTests
 	[Fact]
 	public void SPACE()
 	{
-		throw new NotImplementedException();
+		Assert.Equal(' ', WhitespaceFacts.SPACE);
 	}
 
 	/// <summary>
@@ -23,7 +23,7 @@ public class WhitespaceFactsTests
 	[Fact]
 	public void TAB()
 	{
-		throw new NotImplementedException();
+		Assert.Equal('\t', WhitespaceFacts.TAB);
 	}
 
 	/// <summary>
@@ -32,7 +32,7 @@ public class WhitespaceFactsTests
 	[Fact]
 	public void CARRIAGE_RETURN()
 	{
-		throw new NotImplementedException();
+		Assert.Equal('\r', WhitespaceFacts.CARRIAGE_RETURN);
 	}
 
 	/// <summary>
@@ -41,8 +41,8 @@ public class WhitespaceFactsTests
 	[Fact]
 	public void LINE_FEED()
 	{
-		throw new NotImplementedException();
-	}
+		Assert.Equal('\n', WhitespaceFacts.LINE_FEED);
+    }
 
 	/// <summary>
 	/// <see cref="WhitespaceFacts.ALL_BAG"/>
@@ -50,15 +50,19 @@ public class WhitespaceFactsTests
 	[Fact]
 	public void ALL_BAG()
 	{
-		throw new NotImplementedException();
+        Assert.Contains(WhitespaceFacts.SPACE, WhitespaceFacts.ALL_BAG);
+        Assert.Contains(WhitespaceFacts.TAB, WhitespaceFacts.ALL_BAG);
+        Assert.Contains(WhitespaceFacts.CARRIAGE_RETURN, WhitespaceFacts.ALL_BAG);
+        Assert.Contains(WhitespaceFacts.LINE_FEED, WhitespaceFacts.ALL_BAG);
 	}
 
 	/// <summary>
-	/// <see cref="WhitespaceFacts.LINE_ENDING_CHARACTERS"/>
+	/// <see cref="WhitespaceFacts.LINE_ENDING_CHARACTER_BAG"/>
 	/// </summary>
 	[Fact]
-	public void LINE_ENDING_CHARACTERS()
+	public void LINE_ENDING_CHARACTER_BAG()
 	{
-		throw new NotImplementedException();
+        Assert.Contains(WhitespaceFacts.CARRIAGE_RETURN, WhitespaceFacts.LINE_ENDING_CHARACTER_BAG);
+        Assert.Contains(WhitespaceFacts.LINE_FEED, WhitespaceFacts.LINE_ENDING_CHARACTER_BAG);
 	}
 }
