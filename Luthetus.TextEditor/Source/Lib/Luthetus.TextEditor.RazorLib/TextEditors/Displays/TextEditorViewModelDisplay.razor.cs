@@ -752,18 +752,21 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             // Indexing can be invoked and this method still check for syntax highlighting and such
             if (IsAutocompleteIndexerInvoker(keyboardEventArgs))
             {
-                if (primaryCursorModifier.ColumnIndex > 0)
+                _ = Task.Run(async () => 
                 {
-                    // All keyboardEventArgs that return true from "IsAutocompleteIndexerInvoker"
-                    // are to be 1 character long, as well either specific whitespace or punctuation.
-                    // Therefore 1 character behind might be a word that can be indexed.
-                    var word = modelModifier.ReadPreviousWordOrDefault(
-                        primaryCursorModifier.RowIndex,
-                        primaryCursorModifier.ColumnIndex);
+                    if (primaryCursorModifier.ColumnIndex > 0)
+                    {
+                        // All keyboardEventArgs that return true from "IsAutocompleteIndexerInvoker"
+                        // are to be 1 character long, as well either specific whitespace or punctuation.
+                        // Therefore 1 character behind might be a word that can be indexed.
+                        var word = modelModifier.ReadPreviousWordOrDefault(
+                            primaryCursorModifier.RowIndex,
+                            primaryCursorModifier.ColumnIndex);
 
-                    if (word is not null)
-                        await AutocompleteIndexer.IndexWordAsync(word);
-                }
+                        if (word is not null)
+                            await AutocompleteIndexer.IndexWordAsync(word);
+                    }
+                }).ConfigureAwait(false);
             }
 
             if (IsAutocompleteMenuInvoker(keyboardEventArgs))
@@ -772,21 +775,24 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             }
             else if (IsSyntaxHighlightingInvoker(keyboardEventArgs))
             {
-                await _throttleApplySyntaxHighlighting.FireAsync(async _ =>
+                _ = Task.Run(async () =>
                 {
-                    // The TextEditorModel may have been changed by the time this logic is ran and
-                    // thus the local variables must be updated accordingly.
-                    var model = GetModel();
-                    var viewModel = GetViewModel();
-
-                    if (model is not null)
+                    await _throttleApplySyntaxHighlighting.FireAsync(async _ =>
                     {
-                        await modelModifier.ApplySyntaxHighlightingAsync();
+                        // The TextEditorModel may have been changed by the time this logic is ran and
+                        // thus the local variables must be updated accordingly.
+                        var model = GetModel();
+                        var viewModel = GetViewModel();
 
-                        if (viewModel is not null && model.CompilerService is not null)
-                            model.CompilerService.ResourceWasModified(model.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
-                    }
-                });
+                        if (model is not null)
+                        {
+                            await modelModifier.ApplySyntaxHighlightingAsync();
+
+                            if (viewModel is not null && model.CompilerService is not null)
+                                model.CompilerService.ResourceWasModified(model.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
+                        }
+                    });
+                }).ConfigureAwait(false);
             }
         };
     }
