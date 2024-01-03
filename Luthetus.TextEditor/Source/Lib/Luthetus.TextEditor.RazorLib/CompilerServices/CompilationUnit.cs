@@ -16,7 +16,7 @@ public sealed record CompilationUnit : ISyntaxNode
         IParser? parser,
         IBinder? binder)
     {
-        TopLevelStatementsCodeBlockNode = rootCodeBlockNode ?? new CodeBlockNode(ImmutableArray<ISyntax>.Empty);
+        RootCodeBlockNode = rootCodeBlockNode ?? new CodeBlockNode(ImmutableArray<ISyntax>.Empty);
         Lexer = lexer ?? new TextEditorDefaultLexer();
         Parser = parser ?? new TextEditorDefaultParser();
         Binder = binder ?? new TextEditorDefaultBinder();
@@ -31,11 +31,11 @@ public sealed record CompilationUnit : ISyntaxNode
 
         ChildBag = new ISyntax[]
         {
-            TopLevelStatementsCodeBlockNode
+            RootCodeBlockNode
         }.ToImmutableArray();
     }
 
-    public CodeBlockNode TopLevelStatementsCodeBlockNode { get; }
+    public CodeBlockNode RootCodeBlockNode { get; }
     public ILexer Lexer { get; }
     public IParser Parser { get; }
     public IBinder Binder { get; }

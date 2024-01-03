@@ -28,7 +28,7 @@ public class ParserTests
 		lexer.Lex();
 		var parser = new CSharpParser(lexer);
 		var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.TopLevelStatementsCodeBlockNode;
+		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
 		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.ChildBag.Single();
 
@@ -44,7 +44,7 @@ public class ParserTests
 		lexer.Lex();
 		var parser = new CSharpParser(lexer);
 		var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.TopLevelStatementsCodeBlockNode;
+		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
 		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.ChildBag.Single();
 
@@ -69,7 +69,7 @@ public class ParserTests
 		lexer.Lex();
 		var parser = new CSharpParser(lexer);
 		var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.TopLevelStatementsCodeBlockNode;
+		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
 		var binaryOperatorNode = 
 			((BinaryExpressionNode)topCodeBlock.ChildBag.Single())
@@ -104,7 +104,7 @@ public class ParserTests
 		lexer.Lex();
 		var parser = new CSharpParser(lexer);
 		var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.TopLevelStatementsCodeBlockNode;
+		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
 		var constructorDefinitionNode = (ConstructorDefinitionNode)(
 			((TypeDefinitionNode)topCodeBlock.ChildBag.Single())
@@ -141,7 +141,7 @@ public class ParserTests
 		lexer.Lex();
 		var parser = new CSharpParser(lexer);
 		var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.TopLevelStatementsCodeBlockNode;
+		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
 		var functionDefinitionNode = 
 			(FunctionDefinitionNode)topCodeBlock.ChildBag.Single();
@@ -192,7 +192,7 @@ public class ParserTests
 		lexer.Lex();
 		var parser = new CSharpParser(lexer);
 		var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.TopLevelStatementsCodeBlockNode;
+		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
 		var functionDefinitionNode = 
 			(FunctionDefinitionNode)topCodeBlock.ChildBag.Single();
@@ -215,7 +215,7 @@ public class ParserTests
 		lexer.Lex();
 		var parser = new CSharpParser(lexer);
 		var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.TopLevelStatementsCodeBlockNode;
+		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
 		var functionDefinitionNode = 
 			(FunctionDefinitionNode)topCodeBlock.ChildBag.Single();
@@ -249,7 +249,7 @@ public class ParserTests
 		lexer.Lex();
 		var parser = new CSharpParser(lexer);
 		var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.TopLevelStatementsCodeBlockNode;
+		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
 		var functionInvocationNode = 
 			(FunctionInvocationNode)topCodeBlock.ChildBag.Single();
@@ -279,7 +279,7 @@ public class ParserTests
 		lexer.Lex();
 		var parser = new CSharpParser(lexer);
 		var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.TopLevelStatementsCodeBlockNode;
+		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
 		var functionParameterEntryNode = 
 			((FunctionInvocationNode)topCodeBlock.ChildBag.Single())
@@ -313,7 +313,7 @@ Actual:   Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.SyntaxNodes.Paren
 		lexer.Lex();
 		var parser = new CSharpParser(lexer);
 		var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.TopLevelStatementsCodeBlockNode;
+		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
 		var functionParameterEntryNode = 
 			((FunctionInvocationNode)topCodeBlock.ChildBag.Single())
@@ -345,7 +345,7 @@ Actual:   1");
 		lexer.Lex();
 		var parser = new CSharpParser(lexer);
 		var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.TopLevelStatementsCodeBlockNode;
+		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
 		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildBag[0];
 		
@@ -383,7 +383,7 @@ Actual:   1");
 		lexer.Lex();
 		var parser = new CSharpParser(lexer);
 		var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.TopLevelStatementsCodeBlockNode;
+		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
 		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildBag[0];
 		
@@ -409,7 +409,7 @@ Actual:   1");
 		lexer.Lex();
 		var parser = new CSharpParser(lexer);
 		var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.TopLevelStatementsCodeBlockNode;
+		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
 		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildBag[0];
 
@@ -449,7 +449,7 @@ Actual:   1");
 		lexer.Lex();
 		var parser = new CSharpParser(lexer);
 		var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.TopLevelStatementsCodeBlockNode;
+		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
 		var literalExpressionNode = (LiteralExpressionNode)topCodeBlock.ChildBag.Single();
 		Assert.Equal(typeof(int), literalExpressionNode.ResultTypeClauseNode.ValueType);
@@ -470,7 +470,7 @@ Actual:   1");
 		lexer.Lex();
 		var parser = new CSharpParser(lexer);
 		var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.TopLevelStatementsCodeBlockNode;
+		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
 		var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildBag.Single();
 		Assert.Equal(SyntaxKind.NamespaceStatementNode, namespaceStatementNode.SyntaxKind);
@@ -533,7 +533,7 @@ Actual:   1");
 		lexer.Lex();
 		var parser = new CSharpParser(lexer);
 		var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.TopLevelStatementsCodeBlockNode;
+		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
 		var usingStatementNode = (UsingStatementNode)topCodeBlock.ChildBag.Single();
 		Assert.Equal(SyntaxKind.UsingStatementNode, usingStatementNode.SyntaxKind);
