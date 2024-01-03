@@ -1064,10 +1064,57 @@ public class TextEditorModelHelperTests
         }
     }
 
-	/// <summary>
-	/// <see cref="TextEditorModelHelper.GetLineRange(ITextEditorModel, int, int)"/>
+    /// <summary>
+	/// <see cref="TextEditorModelHelper.GetLine(ITextEditorModel, int)"/>
 	/// </summary>
 	[Fact]
+    public void GetLine()
+    {
+        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var model);
+
+        // rowIndex < 0
+        {
+            var rowIndex = -1;
+            var line = model.GetLine(rowIndex);
+            Assert.Equal(string.Empty, line);
+        }
+
+        // rowIndex is within bounds
+        {
+            // rowIndex == 0
+            {
+                var rowIndex = 0;
+                var line = model.GetLine(rowIndex);
+                Assert.Equal("Hello World!\n", line);
+            }
+
+            //  rowIndex is not the FirstRow nor the LastRow
+            {
+                var rowIndex = TestConstants.ROW_INDEX_WHICH_IS_BETWEEN_FIRST_AND_LAST_ROW;
+                var line = model.GetLine(rowIndex);
+                Assert.Equal("7 Pillows\n", line);
+            }
+
+            // rowIndex resides on the LastRow
+            {
+                var rowIndex = TestConstants.LAST_ROW_INDEX;
+                var line = model.GetLine(rowIndex);
+                Assert.Equal(",abc123", line);
+            }
+        }
+
+        // rowIndex > 0 && rowIndex is OUT of bounds
+        {
+            var rowIndex = TestConstants.LARGE_OUT_OF_BOUNDS_ROW_INDEX;
+            var line = model.GetLine(rowIndex);
+            Assert.Equal(string.Empty, line);
+        }
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorModelHelper.GetLineRange(ITextEditorModel, int, int)"/>
+    /// </summary>
+    [Fact]
 	public void GetLineRange()
 	{
         TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var model);
@@ -1282,52 +1329,5 @@ public class TextEditorModelHelperTests
 	public void GetTextOffsettingCursor()
 	{
 		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorModelHelper.GetLine(ITextEditorModel, int)"/>
-	/// </summary>
-	[Fact]
-	public void GetLine()
-	{
-        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var model);
-
-        // rowIndex < 0
-        {
-            var rowIndex = -1;
-            var line = model.GetLine(rowIndex);
-            Assert.Equal(string.Empty, line);
-        }
-
-        // rowIndex is within bounds
-        {
-            // rowIndex == 0
-            {
-                var rowIndex = 0;
-                var line = model.GetLine(rowIndex);
-                Assert.Equal("Hello World!\n", line);
-            }
-
-            //  rowIndex is not the FirstRow nor the LastRow
-            {
-                var rowIndex = TestConstants.ROW_INDEX_WHICH_IS_BETWEEN_FIRST_AND_LAST_ROW;
-                var line = model.GetLine(rowIndex);
-                Assert.Equal("7 Pillows\n", line);
-            }
-
-            // rowIndex resides on the LastRow
-            {
-                var rowIndex = TestConstants.LAST_ROW_INDEX;
-                var line = model.GetLine(rowIndex);
-                Assert.Equal(",abc123", line);
-            }
-        }
-
-        // rowIndex > 0 && rowIndex is OUT of bounds
-        {
-            var rowIndex = TestConstants.LARGE_OUT_OF_BOUNDS_ROW_INDEX;
-            var line = model.GetLine(rowIndex);
-            Assert.Equal(string.Empty, line);
-        }
 	}
 }
