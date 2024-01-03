@@ -238,7 +238,7 @@ public static class TextEditorModelHelper
 	}
 
 	/// <summary>Given a <see cref="TextEditorModel"/> with a preference for the right side of the cursor, the following conditional branch will play out.<br/><br/>-IF the cursor is amongst a word, that word will be returned.<br/><br/>-ELSE IF the start of a word is to the right of the cursor that word will be returned.<br/><br/>-ELSE IF the end of a word is to the left of the cursor that word will be returned.</summary>
-	public static TextEditorTextSpan? GetWordAt(this ITextEditorModel model, int positionIndex)
+	public static TextEditorTextSpan? GetWordTextSpan(this ITextEditorModel model, int positionIndex)
 	{
 		var previousCharacter = model.GetCharacter(positionIndex - 1);
 		var currentCharacter = model.GetCharacter(positionIndex);
@@ -404,7 +404,7 @@ public static class TextEditorModelHelper
 		return model.EditBlockIndex < model.EditBlocksBag.Count - 1;
 	}
 
-	public static CharacterKind GetCharacterKindAt(this ITextEditorModel model, int positionIndex)
+	public static CharacterKind GetCharacterKind(this ITextEditorModel model, int positionIndex)
 	{
 		try
 		{
@@ -423,7 +423,7 @@ public static class TextEditorModelHelper
 		this ITextEditorModel model, int rowIndex, int columnIndex, bool isRecursiveCall = false)
 	{
 		var wordPositionIndexEndExclusive = model.GetPositionIndex(rowIndex, columnIndex);
-		var wordCharacterKind = model.GetCharacterKindAt(wordPositionIndexEndExclusive - 1);
+		var wordCharacterKind = model.GetCharacterKind(wordPositionIndexEndExclusive - 1);
 
 		if (wordCharacterKind == CharacterKind.Punctuation && !isRecursiveCall)
 		{
@@ -464,7 +464,7 @@ public static class TextEditorModelHelper
 	{
 		var wordPositionIndexStartInclusive = model.GetPositionIndex(rowIndex, columnIndex);
 
-		var wordCharacterKind = model.GetCharacterKindAt(wordPositionIndexStartInclusive);
+		var wordCharacterKind = model.GetCharacterKind(wordPositionIndexStartInclusive);
 
 		if (wordCharacterKind == CharacterKind.LetterOrDigit)
 		{

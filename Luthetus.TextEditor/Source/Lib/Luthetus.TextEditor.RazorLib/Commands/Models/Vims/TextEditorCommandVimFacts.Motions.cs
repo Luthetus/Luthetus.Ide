@@ -181,8 +181,8 @@ public static partial class TextEditorCommandVimFacts
                     else if (columnsToMoveBy == 1 && !isRecursiveCall)
                     {
                         var positionIndex = model.GetPositionIndex(primaryCursor);
-                        var currentCharacterKind = model.GetCharacterKindAt(positionIndex);
-                        var nextCharacterKind = model.GetCharacterKindAt(positionIndex + 1);
+                        var currentCharacterKind = model.GetCharacterKind(positionIndex);
+                        var nextCharacterKind = model.GetCharacterKind(positionIndex + 1);
 
                         if (nextCharacterKind != CharacterKind.Bad &&
                             currentCharacterKind == nextCharacterKind)

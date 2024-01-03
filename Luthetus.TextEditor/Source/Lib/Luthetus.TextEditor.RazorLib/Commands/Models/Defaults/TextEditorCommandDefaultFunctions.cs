@@ -868,7 +868,7 @@ public class TextEditorCommandDefaultFunctions
                 return Task.CompletedTask;
 
             var positionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
-            var wordTextSpan = modelModifier.GetWordAt(positionIndex);
+            var wordTextSpan = modelModifier.GetWordTextSpan(positionIndex);
 
             if (wordTextSpan is null)
                 return Task.CompletedTask;

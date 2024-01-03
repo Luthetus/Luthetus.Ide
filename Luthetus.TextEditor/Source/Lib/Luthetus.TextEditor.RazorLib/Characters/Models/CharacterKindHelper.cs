@@ -10,6 +10,8 @@ public static class CharacterKindHelper
             return CharacterKind.Whitespace;
         if (KeyboardKeyFacts.IsPunctuationCharacter(value))
             return CharacterKind.Punctuation;
+        if (value == '\0')
+            return CharacterKind.Bad;
         return CharacterKind.LetterOrDigit;
     }
 }
