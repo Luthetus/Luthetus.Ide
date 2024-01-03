@@ -720,10 +720,73 @@ public class TextEditorModelHelperTests
         }
     }
 
-	/// <summary>
-	/// <see cref="TextEditorModelHelper.GetString(ITextEditorModel, int, int)"/>
+    /// <summary>
+	/// <see cref="TextEditorModelHelper.GetCharacterKindAt(ITextEditorModel, int)"/>
 	/// </summary>
 	[Fact]
+    public void GetCharacterKindAt()
+    {
+        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var model);
+
+        // PositionIndex < 0
+        {
+            var expectedCharacterKind = CharacterKind.Bad;
+            var positionIndex = -1;
+            var actualCharacterKind = model.GetCharacterKindAt(positionIndex);
+            Assert.Equal(expectedCharacterKind, actualCharacterKind);
+        }
+
+        // PositionIndex > 0 && PositionIndex is within bounds
+        {
+            // FirstRow
+            {
+                // CharacterKind.LetterOrDigit
+                {
+                    var expectedCharacterKind = CharacterKind.LetterOrDigit;
+                    var positionIndex = 1;
+                    var actualCharacterKind = model.GetCharacterKindAt(positionIndex);
+                    Assert.Equal(expectedCharacterKind, actualCharacterKind);
+                }
+                
+                // CharacterKind.Punctuation
+                {
+                    var expectedCharacterKind = CharacterKind.Punctuation;
+                    var positionIndex = 11;
+                    var actualCharacterKind = model.GetCharacterKindAt(positionIndex);
+                    Assert.Equal(expectedCharacterKind, actualCharacterKind);
+                }
+            }
+
+            // !FirstRow && !LastRow
+            {
+                var expectedCharacterKind = CharacterKind.Whitespace;
+                var positionIndex = 14;
+                var actualCharacterKind = model.GetCharacterKindAt(positionIndex);
+                Assert.Equal(expectedCharacterKind, actualCharacterKind);
+            }
+
+            // LastRow
+            {
+                var expectedCharacterKind = CharacterKind.LetterOrDigit;
+                var positionIndex = 26;
+                var actualCharacterKind = model.GetCharacterKindAt(positionIndex);
+                Assert.Equal(expectedCharacterKind, actualCharacterKind);
+            }
+        }
+
+        // PositionIndex > 0 && PositionIndex is OUT of bounds
+        {
+            var expectedCharacterKind = CharacterKind.Bad;
+            var positionIndex = 43;
+            var actualCharacterKind = model.GetCharacterKindAt(positionIndex);
+            Assert.Equal(expectedCharacterKind, actualCharacterKind);
+        }
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorModelHelper.GetString(ITextEditorModel, int, int)"/>
+    /// </summary>
+    [Fact]
 	public void GetString()
 	{
         TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var model);
@@ -918,10 +981,10 @@ public class TextEditorModelHelperTests
     }
 
 	/// <summary>
-	/// <see cref="TextEditorModelHelper.GetLinesRange(ITextEditorModel, int, int)"/>
+	/// <see cref="TextEditorModelHelper.GetLineRange(ITextEditorModel, int, int)"/>
 	/// </summary>
 	[Fact]
-	public void GetLinesRange()
+	public void GetLineRange()
 	{
         TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var model);
 
@@ -931,25 +994,25 @@ public class TextEditorModelHelperTests
 
             // Count < 0
             {
-                var lines = model.GetLinesRange(rowIndex, -1);
+                var lines = model.GetLineRange(rowIndex, -1);
                 Assert.Equal(string.Empty, lines);
             }
 
             // Count == 0
             {
-                var lines = model.GetLinesRange(rowIndex, 0);
+                var lines = model.GetLineRange(rowIndex, 0);
                 Assert.Equal(string.Empty, lines);
             }
 
             // Count > 0
             {
-                var lines = model.GetLinesRange(rowIndex, 1);
+                var lines = model.GetLineRange(rowIndex, 1);
                 Assert.Equal(string.Empty, lines);
             }
 
             // Count reads beyond the document length
             {
-                var lines = model.GetLinesRange(rowIndex, TestConstants.ROW_COUNT + 5);
+                var lines = model.GetLineRange(rowIndex, TestConstants.ROW_COUNT + 5);
                 Assert.Equal(TestConstants.SOURCE_TEXT, lines);
             }
         }
@@ -962,25 +1025,25 @@ public class TextEditorModelHelperTests
 
                 // Count < 0
                 {
-                    var lines = model.GetLinesRange(rowIndex, -1);
+                    var lines = model.GetLineRange(rowIndex, -1);
                     Assert.Equal(string.Empty, lines);
                 }
 
                 // Count == 0
                 {
-                    var lines = model.GetLinesRange(rowIndex, 0);
+                    var lines = model.GetLineRange(rowIndex, 0);
                     Assert.Equal(string.Empty, lines);
                 }
 
                 // Count > 0
                 {
-                    var lines = model.GetLinesRange(rowIndex, 1);
+                    var lines = model.GetLineRange(rowIndex, 1);
                     Assert.Equal("Hello World!\n", lines);
                 }
 
                 // Count reads beyond the document length
                 {
-                    var lines = model.GetLinesRange(rowIndex, TestConstants.ROW_COUNT + 5);
+                    var lines = model.GetLineRange(rowIndex, TestConstants.ROW_COUNT + 5);
                     Assert.Equal(TestConstants.SOURCE_TEXT, lines);
                 }
             }
@@ -991,25 +1054,25 @@ public class TextEditorModelHelperTests
 
                 // Count < 0
                 {
-                    var lines = model.GetLinesRange(rowIndex, -1);
+                    var lines = model.GetLineRange(rowIndex, -1);
                     Assert.Equal(string.Empty, lines);
                 }
 
                 // Count == 0
                 {
-                    var lines = model.GetLinesRange(rowIndex, 0);
+                    var lines = model.GetLineRange(rowIndex, 0);
                     Assert.Equal(string.Empty, lines);
                 }
 
                 // Count > 0
                 {
-                    var lines = model.GetLinesRange(rowIndex, 1);
+                    var lines = model.GetLineRange(rowIndex, 1);
                     Assert.Equal("7 Pillows\n", lines);
                 }
 
                 // Count reads beyond the document length
                 {
-                    var lines = model.GetLinesRange(rowIndex, TestConstants.ROW_COUNT + 5);
+                    var lines = model.GetLineRange(rowIndex, TestConstants.ROW_COUNT + 5);
                     Assert.Equal("7 Pillows\n \n,abc123", lines);
                 }
             }
@@ -1020,25 +1083,25 @@ public class TextEditorModelHelperTests
 
                 // Count < 0
                 {
-                    var lines = model.GetLinesRange(rowIndex, -1);
+                    var lines = model.GetLineRange(rowIndex, -1);
                     Assert.Equal(string.Empty, lines);
                 }
 
                 // Count == 0
                 {
-                    var lines = model.GetLinesRange(rowIndex, 0);
+                    var lines = model.GetLineRange(rowIndex, 0);
                     Assert.Equal(string.Empty, lines);
                 }
 
                 // Count > 0
                 {
-                    var lines = model.GetLinesRange(rowIndex, 1);
+                    var lines = model.GetLineRange(rowIndex, 1);
                     Assert.Equal(",abc123", lines);
                 }
 
                 // Count reads beyond the document length
                 {
-                    var lines = model.GetLinesRange(rowIndex, 1);
+                    var lines = model.GetLineRange(rowIndex, 1);
                     Assert.Equal(",abc123", lines);
                 }
             }
@@ -1050,25 +1113,25 @@ public class TextEditorModelHelperTests
 
             // Count < 0
             {
-                var lines = model.GetLinesRange(rowIndex, -1);
+                var lines = model.GetLineRange(rowIndex, -1);
                 Assert.Equal(string.Empty, lines);
             }
 
             // Count == 0
             {
-                var lines = model.GetLinesRange(rowIndex, 0);
+                var lines = model.GetLineRange(rowIndex, 0);
                 Assert.Equal(string.Empty, lines);
             }
 
             // Count > 0
             {
-                var lines = model.GetLinesRange(rowIndex, -1);
+                var lines = model.GetLineRange(rowIndex, -1);
                 Assert.Equal(string.Empty, lines);
             }
 
             // Count reads beyond the document length
             {
-                var lines = model.GetLinesRange(rowIndex, -1);
+                var lines = model.GetLineRange(rowIndex, -1);
                 Assert.Equal(string.Empty, lines);
             }
         }
@@ -1120,15 +1183,6 @@ public class TextEditorModelHelperTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModelHelper.GetCharacterKindAt(ITextEditorModel, int)"/>
-	/// </summary>
-	[Fact]
-	public void GetCharacterKindAt()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
 	/// <see cref="TextEditorModelHelper.ReadPreviousWordOrDefault(ITextEditorModel, int, int, bool)"/>
 	/// </summary>
 	[Fact]
@@ -1156,11 +1210,49 @@ public class TextEditorModelHelperTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorModelHelper.GetTextOnRow(ITextEditorModel, int)"/>
+	/// <see cref="TextEditorModelHelper.GetLine(ITextEditorModel, int)"/>
 	/// </summary>
 	[Fact]
-	public void GetTextOnRow()
+	public void GetLine()
 	{
-		throw new NotImplementedException();
+        TextEditorServicesTestsHelper.ConstructTestTextEditorModel(out var model);
+
+        // rowIndex < 0
+        {
+            var rowIndex = -1;
+            var line = model.GetLine(rowIndex);
+            Assert.Equal(string.Empty, line);
+        }
+
+        // rowIndex is within bounds
+        {
+            // rowIndex == 0
+            {
+                var rowIndex = 0;
+                var line = model.GetLine(rowIndex);
+                Assert.Equal("Hello World!\n", line);
+            }
+
+            //  rowIndex is not the FirstRow nor the LastRow
+            {
+                var rowIndex = TestConstants.ROW_INDEX_WHICH_IS_BETWEEN_FIRST_AND_LAST_ROW;
+                var line = model.GetLine(rowIndex);
+                Assert.Equal("7 Pillows\n", line);
+            }
+
+            // rowIndex resides on the LastRow
+            {
+                var rowIndex = TestConstants.LAST_ROW_INDEX;
+                var line = model.GetLine(rowIndex);
+                Assert.Equal(",abc123", line);
+            }
+        }
+
+        // rowIndex > 0 && rowIndex is OUT of bounds
+        {
+            var rowIndex = TestConstants.LARGE_OUT_OF_BOUNDS_ROW_INDEX;
+            var line = model.GetLine(rowIndex);
+            Assert.Equal(string.Empty, line);
+        }
 	}
 }

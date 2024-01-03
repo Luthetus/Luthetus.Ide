@@ -213,7 +213,7 @@ public static class TextEditorModelHelper
 			.ToArray());
 	}
 
-	public static string GetLinesRange(this ITextEditorModel model, int startingRowIndex, int count)
+	public static string GetLineRange(this ITextEditorModel model, int startingRowIndex, int count)
 	{
 		if (startingRowIndex > model.RowCount - 1)
 			return string.Empty;
@@ -494,11 +494,14 @@ public static class TextEditorModelHelper
 		return model.GetString(startOfRowTuple.EndPositionIndexExclusive, cursorPositionIndex - startOfRowTuple.EndPositionIndexExclusive);
 	}
 
-	public static string GetTextOnRow(
+	public static string GetLine(
 		this ITextEditorModel model, int rowIndex)
 	{
+		if (rowIndex < 0 || rowIndex > model.RowCount - 1)
+			return string.Empty;
+
 		var startOfRowTuple = model.GetRowEndingThatCreatedRow(rowIndex);
-		var lengthOfRow = model.GetLengthOfRow(rowIndex);
+		var lengthOfRow = model.GetLengthOfRow(rowIndex, true);
 
 		return model.GetString(startOfRowTuple.EndPositionIndexExclusive, lengthOfRow);
 	}

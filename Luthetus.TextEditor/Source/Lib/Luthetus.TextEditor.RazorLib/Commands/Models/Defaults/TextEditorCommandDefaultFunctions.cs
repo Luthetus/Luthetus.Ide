@@ -46,7 +46,7 @@ public class TextEditorCommandDefaultFunctions
                 primaryCursorModifier,
                 modelModifier);
 
-            selectedText ??= modelModifier.GetLinesRange(
+            selectedText ??= modelModifier.GetLineRange(
                 primaryCursorModifier.RowIndex,
                 1);
 
@@ -396,7 +396,7 @@ public class TextEditorCommandDefaultFunctions
             if (selectedText is null)
             {
                 // Select line
-                selectedText = modelModifier.GetLinesRange(primaryCursorModifier.RowIndex, 1);
+                selectedText = modelModifier.GetLineRange(primaryCursorModifier.RowIndex, 1);
 
                 cursorForInsertion = new TextEditorCursor(
                     primaryCursorModifier.RowIndex,
