@@ -344,7 +344,7 @@ public static partial class TextEditorCommandVimFacts
             var previousAnchorPositionIndex = primaryCursor.SelectionAnchorPositionIndex;
             var previousEndingPositionIndex = primaryCursor.SelectionEndingPositionIndex;
 
-            await commandArgs.InnerCommand.DoAsyncFunc.Invoke(commandArgs);
+            await commandArgs.InnerCommand.CommandFunc.Invoke(commandArgs);
 
             var nextEndingPositionIndex = primaryCursor.SelectionEndingPositionIndex;
 
@@ -420,7 +420,7 @@ public static partial class TextEditorCommandVimFacts
             var previousAnchorPositionIndex = primaryCursor.SelectionAnchorPositionIndex;
             var previousEndingPositionIndex = primaryCursor.SelectionEndingPositionIndex;
 
-            await commandArgs.InnerCommand.DoAsyncFunc.Invoke(commandArgs);
+            await commandArgs.InnerCommand.CommandFunc.Invoke(commandArgs);
 
             var nextEndingPositionIndex = primaryCursor.SelectionEndingPositionIndex;
 

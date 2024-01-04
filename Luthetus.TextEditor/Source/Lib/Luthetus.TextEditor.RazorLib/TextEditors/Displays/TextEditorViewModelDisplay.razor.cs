@@ -332,7 +332,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                 {
                     if (command is not null)
                     {
-                        await command.DoAsyncFunc.Invoke(new TextEditorCommandArgs(
+                        await command.CommandFunc.Invoke(new TextEditorCommandArgs(
                             modelModifier.ResourceUri,
                             viewModelModifier.ViewModel.ViewModelKey,
                             hasSelection,

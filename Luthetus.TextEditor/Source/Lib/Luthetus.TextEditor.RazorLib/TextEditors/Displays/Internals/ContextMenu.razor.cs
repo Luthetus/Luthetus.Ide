@@ -126,18 +126,18 @@ public partial class ContextMenu : ComponentBase
     private async Task CutMenuOption()
     {
         var commandArgs = ConstructCommandArgs();
-        await TextEditorCommandDefaultFacts.Cut.DoAsyncFunc.Invoke(commandArgs);
+        await TextEditorCommandDefaultFacts.Cut.CommandFunc.Invoke(commandArgs);
     }
 
     private async Task CopyMenuOption()
     {
         var commandArgs = ConstructCommandArgs();
-        await TextEditorCommandDefaultFacts.Copy.DoAsyncFunc.Invoke(commandArgs);
+        await TextEditorCommandDefaultFacts.Copy.CommandFunc.Invoke(commandArgs);
     }
 
     private async Task PasteMenuOption()
     {
         var commandArgs = ConstructCommandArgs();
-        await TextEditorCommandDefaultFacts.PasteCommand.DoAsyncFunc.Invoke(commandArgs);
+        await TextEditorCommandDefaultFacts.PasteCommand.CommandFunc.Invoke(commandArgs);
     }
 }

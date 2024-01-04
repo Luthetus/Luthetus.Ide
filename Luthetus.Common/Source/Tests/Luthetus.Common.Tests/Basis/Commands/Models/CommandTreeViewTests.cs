@@ -19,7 +19,7 @@ public class CommandTreeViewTests
 
         var incrementThisNumberToOne = 0;
 
-        var doAsyncFunc = new Func<ICommandArgs, Task>(commandArgs =>
+        var commandFunc = new Func<ICommandArgs, Task>(commandArgs =>
         {
             incrementThisNumberToOne++;
             return Task.CompletedTask;
@@ -29,9 +29,9 @@ public class CommandTreeViewTests
             displayName,
             internalIdentifier,
             shouldBubble,
-            doAsyncFunc);
+            commandFunc);
 
-        await treeViewCommand.DoAsyncFunc.Invoke(new CommonCommandArgs());
+        await treeViewCommand.CommandFunc.Invoke(new CommonCommandArgs());
 
         Assert.Equal(displayName, treeViewCommand.DisplayName);
         Assert.Equal(internalIdentifier, treeViewCommand.InternalIdentifier);

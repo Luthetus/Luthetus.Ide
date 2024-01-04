@@ -6,8 +6,8 @@ public class TreeViewCommand : CommandWithType<TreeViewCommandArgs>
             string displayName,
             string internalIdentifier,
             bool shouldBubble,
-            Func<ICommandArgs, Task> doAsyncFunc)
-        : base(displayName, internalIdentifier, shouldBubble, doAsyncFunc)
+            Func<ICommandArgs, Task> commandFunc)
+        : base(displayName, internalIdentifier, shouldBubble, commandFunc)
     {
     }
 }

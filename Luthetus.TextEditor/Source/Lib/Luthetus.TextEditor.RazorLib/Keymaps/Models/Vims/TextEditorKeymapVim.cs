@@ -155,7 +155,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                             {
                                 ActiveVimMode = VimMode.Normal;
 
-                                TextEditorCommandDefaultFacts.ClearTextSelection.DoAsyncFunc.Invoke(interfaceCommandArgs);
+                                TextEditorCommandDefaultFacts.ClearTextSelection.CommandFunc.Invoke(interfaceCommandArgs);
                                 return Task.CompletedTask;
                             }
 
@@ -209,7 +209,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                             {
                                 ActiveVimMode = VimMode.Normal;
 
-                                TextEditorCommandDefaultFacts.ClearTextSelection.DoAsyncFunc.Invoke(interfaceCommandArgs);
+                                TextEditorCommandDefaultFacts.ClearTextSelection.CommandFunc.Invoke(interfaceCommandArgs);
                                 return Task.CompletedTask;
                             }
 
@@ -384,7 +384,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                         nameof(commandDisplayName),
                         editContext =>
                         {
-                            return TextEditorCommandVimFacts.Verbs.NewLineBelowCommand.DoAsyncFunc
+                            return TextEditorCommandVimFacts.Verbs.NewLineBelowCommand.CommandFunc
                                 .Invoke(interfaceCommandArgs);
                         });
 
@@ -411,7 +411,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                         nameof(commandDisplayName),
                         editContext =>
                         {
-                            return TextEditorCommandVimFacts.Verbs.NewLineAboveCommand.DoAsyncFunc
+                            return TextEditorCommandVimFacts.Verbs.NewLineAboveCommand.CommandFunc
                                 .Invoke(interfaceCommandArgs);
                         });
                     return Task.CompletedTask;
@@ -438,7 +438,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                         nameof(commandDisplayName),
                         editContext =>
                         {
-                            return TextEditorCommandDefaultFacts.ScrollLineDown.DoAsyncFunc
+                            return TextEditorCommandDefaultFacts.ScrollLineDown.CommandFunc
                                 .Invoke(interfaceCommandArgs);
                         });
 
@@ -466,7 +466,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                         nameof(commandDisplayName),
                         editContext =>
                         {
-                            return TextEditorCommandDefaultFacts.ScrollLineUp.DoAsyncFunc
+                            return TextEditorCommandDefaultFacts.ScrollLineUp.CommandFunc
                                 .Invoke(interfaceCommandArgs);
                         });
 
@@ -799,7 +799,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                         nameof(commandDisplayName),
                         editContext =>
                         {
-                            return TextEditorCommandDefaultFacts.ScrollPageDown.DoAsyncFunc
+                            return TextEditorCommandDefaultFacts.ScrollPageDown.CommandFunc
                                 .Invoke(commandArgs);
                         });
 
@@ -826,7 +826,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                         nameof(commandDisplayName),
                         editContext =>
                         {
-                            return TextEditorCommandDefaultFacts.ScrollPageUp.DoAsyncFunc
+                            return TextEditorCommandDefaultFacts.ScrollPageUp.CommandFunc
                                 .Invoke(commandArgs);
                         });
 
@@ -855,7 +855,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                         var success = VimSentence.TryLex(this, keymapArgument, commandArgs.HasTextSelection, out var lexCommand);
 
                         if (success && lexCommand is not null)
-                            return lexCommand.DoAsyncFunc.Invoke(commandArgs);
+                            return lexCommand.CommandFunc.Invoke(commandArgs);
 
                         return Task.CompletedTask;
                     });
@@ -922,7 +922,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                             if (ActiveVimMode == VimMode.VisualLine)
                                 finalCommand = TextEditorCommandVimFacts.Motions.GetVisualLineFactory(modifiedCommand, $"{nameof(TextEditorKeymapVim)}");
 
-                            return finalCommand.DoAsyncFunc.Invoke(commandArgs);
+                            return finalCommand.CommandFunc.Invoke(commandArgs);
                         }
 
                         return Task.CompletedTask;

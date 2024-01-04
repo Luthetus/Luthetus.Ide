@@ -11,7 +11,7 @@ public class CommandWithTypeTests
     /// <see cref="CommandNoType.DisplayName"/>
     /// <see cref="CommandNoType.InternalIdentifier"/>
     /// <see cref="CommandNoType.ShouldBubble"/>
-    /// <see cref="CommandNoType.DoAsyncFunc"/>
+    /// <see cref="CommandNoType.CommandFunc"/>
     /// </summary>
     [Fact]
     public async Task DoAsyncFunc()
@@ -32,7 +32,7 @@ public class CommandWithTypeTests
                 return Task.CompletedTask;
             });
 
-        await commandWithType.DoAsyncFunc.Invoke(new CommonCommandArgs());
+        await commandWithType.CommandFunc.Invoke(new CommonCommandArgs());
 
         Assert.Equal(1, number);
         Assert.Equal(displayName, commandWithType.DisplayName);

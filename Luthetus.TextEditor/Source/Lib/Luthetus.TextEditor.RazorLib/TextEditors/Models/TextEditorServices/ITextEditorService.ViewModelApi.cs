@@ -756,6 +756,9 @@ public partial interface ITextEditorService
                 var textEditorMeasurements = await _textEditorService.ViewModelApi.GetTextEditorMeasurementsAsync(
                     viewModelModifier.ViewModel.BodyElementId);
 
+                if (textEditorMeasurements is null)
+                    return;
+
                 var virtualizationResult = viewModelModifier.ViewModel.VirtualizationResult with 
                 { 
                     TextEditorMeasurements = textEditorMeasurements

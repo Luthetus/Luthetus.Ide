@@ -15,8 +15,8 @@ public class TextEditorCommand : CommandWithType<TextEditorCommandArgs>
             bool shouldScrollCursorIntoView,
             TextEditKind textEditKind,
             string? otherTextEditKindIdentifier,
-            Func<ICommandArgs, Task> doAsyncFunc)
-        : base(displayName, internalIdentifier, shouldBubble, doAsyncFunc)
+            Func<ICommandArgs, Task> commandFunc)
+        : base(displayName, internalIdentifier, shouldBubble, commandFunc)
     {
         if (textEditKind == TextEditKind.Other && otherTextEditKindIdentifier is null)
             ThrowOtherTextEditKindIdentifierWasExpectedException(textEditKind);
