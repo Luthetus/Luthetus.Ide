@@ -264,7 +264,135 @@ public class TextEditorCommandDefaultFactsTests
 	[Fact]
     public async Task Paste()
     {
-		throw new NotImplementedException();
+        var pasteCommand = TextEditorCommandDefaultFacts.PasteCommand;
+
+        // No selection
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService,
+                out var inModel,
+                out var inViewModel,
+                out var serviceProvider);
+
+            var clipboardService = serviceProvider.GetRequiredService<IClipboardService>();
+
+            var textEditorCommandArgs = new TextEditorCommandArgs(
+                inModel.ResourceUri,
+                inViewModel.ViewModelKey,
+                false,
+                clipboardService,
+                textEditorService,
+                (MouseEventArgs m) => Task.CompletedTask,
+                serviceProvider.GetRequiredService<IJSRuntime>(),
+                serviceProvider.GetRequiredService<IDispatcher>(),
+                (ResourceUri resourceUri) => { },
+                (ResourceUri resourceUri) => { },
+                (Key<TextEditorViewModel> viewModel) => { });
+
+            textEditorService.Post(
+                nameof(TextEditorCommandDefaultFactsTests),
+                async editContext =>
+                {
+                    var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
+
+                    if (modelModifier is null || viewModelModifier is null)
+                        return;
+
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                    if (primaryCursorModifier is null)
+                        return;
+
+                    var stringToPaste = "Alphabet Soup\n";
+                    await clipboardService.SetClipboard(stringToPaste);
+                    Assert.Equal(stringToPaste, await clipboardService.ReadClipboard());
+
+                    primaryCursorModifier.RowIndex = 0;
+                    primaryCursorModifier.SetColumnIndexAndPreferred(0);
+
+                    return;
+                });
+
+            await pasteCommand.CommandFunc.Invoke(textEditorCommandArgs);
+
+            // Assert text was pasted
+            {
+                var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+                Assert.NotNull(outModel);
+
+                var outText = outModel!.GetAllText();
+                Assert.Equal("Alphabet Soup\nHello World!\n7 Pillows\n \n,abc123", outText);
+            }
+        }
+
+        // With selection
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService,
+                out var inModel,
+                out var inViewModel,
+                out var serviceProvider);
+
+            var clipboardService = serviceProvider.GetRequiredService<IClipboardService>();
+
+            var textEditorCommandArgs = new TextEditorCommandArgs(
+                inModel.ResourceUri,
+                inViewModel.ViewModelKey,
+                false,
+                clipboardService,
+                textEditorService,
+                (MouseEventArgs m) => Task.CompletedTask,
+                serviceProvider.GetRequiredService<IJSRuntime>(),
+                serviceProvider.GetRequiredService<IDispatcher>(),
+                (ResourceUri resourceUri) => { },
+                (ResourceUri resourceUri) => { },
+                (Key<TextEditorViewModel> viewModel) => { });
+
+            textEditorService.Post(
+                nameof(TextEditorCommandDefaultFactsTests),
+                async editContext =>
+                {
+                    var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
+
+                    if (modelModifier is null || viewModelModifier is null)
+                        return;
+
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                    if (primaryCursorModifier is null)
+                        return;
+
+                    var stringToPaste = "Alphabet Soup\n";
+                    await clipboardService.SetClipboard(stringToPaste);
+                    Assert.Equal(stringToPaste, await clipboardService.ReadClipboard());
+
+                    primaryCursorModifier.RowIndex = 0;
+                    primaryCursorModifier.SetColumnIndexAndPreferred(0);
+
+                    // Select the first row in its entirety (including line ending)
+                    {
+                        primaryCursorModifier.SelectionAnchorPositionIndex = 0;
+                        primaryCursorModifier.SelectionEndingPositionIndex = 13;
+                    }
+
+                    return;
+                });
+
+            await pasteCommand.CommandFunc.Invoke(textEditorCommandArgs);
+
+            // Assert text was pasted
+            {
+                var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+                Assert.NotNull(outModel);
+
+                var outText = outModel!.GetAllText();
+                Assert.Equal("Alphabet Soup\n7 Pillows\n \n,abc123", outText);
+            }
+        }
 	}
 
 	/// <summary>
