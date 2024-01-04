@@ -21,13 +21,13 @@
                 {
                     var boundsInPositionIndexUnits = (textSpan.StartingIndexInclusive, textSpan.EndingIndexExclusive);
 
-                    var firstRowToSelectDataInclusive = RenderBatch.Model!.FindRowInformation(
+                    var firstRowToSelectDataInclusive = RenderBatch.Model!.GetRowInformation(
                             boundsInPositionIndexUnits.StartingIndexInclusive)
-                        .rowIndex;
+                        .RowIndex;
 
-                    var lastRowToSelectDataExclusive = RenderBatch.Model!.FindRowInformation(
+                    var lastRowToSelectDataExclusive = RenderBatch.Model!.GetRowInformation(
                             boundsInPositionIndexUnits.EndingIndexExclusive)
-                        .rowIndex +
+                        .RowIndex +
                         1;
 
                     var boundsInRowIndexUnits = (firstRowToSelectDataInclusive, lastRowToSelectDataExclusive);

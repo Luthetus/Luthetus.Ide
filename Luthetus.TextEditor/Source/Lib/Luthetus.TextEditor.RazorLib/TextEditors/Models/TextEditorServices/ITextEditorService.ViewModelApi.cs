@@ -474,13 +474,13 @@ public partial interface ITextEditorService
                         {
                             var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
 
-                            var lowerRowMetaData = modelModifier.FindRowInformation(
+                            var lowerRowMetaData = modelModifier.GetRowInformation(
                                 selectionBounds.lowerPositionIndexInclusive);
 
-                            cursorModifier.RowIndex = lowerRowMetaData.rowIndex;
+                            cursorModifier.RowIndex = lowerRowMetaData.RowIndex;
 
                             cursorModifier.ColumnIndex = selectionBounds.lowerPositionIndexInclusive -
-                                lowerRowMetaData.rowStartPositionIndex;
+                                lowerRowMetaData.RowStartPositionIndexInclusive;
                         }
                         else
                         {
@@ -552,9 +552,9 @@ public partial interface ITextEditorService
                         {
                             var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
 
-                            var upperRowMetaData = modelModifier.FindRowInformation(selectionBounds.upperPositionIndexExclusive);
+                            var upperRowMetaData = modelModifier.GetRowInformation(selectionBounds.upperPositionIndexExclusive);
 
-                            cursorModifier.RowIndex = upperRowMetaData.rowIndex;
+                            cursorModifier.RowIndex = upperRowMetaData.RowIndex;
 
                             if (cursorModifier.RowIndex >= modelModifier.RowCount)
                             {
@@ -567,7 +567,7 @@ public partial interface ITextEditorService
                             else
                             {
                                 cursorModifier.ColumnIndex =
-                                    selectionBounds.upperPositionIndexExclusive - upperRowMetaData.rowStartPositionIndex;
+                                    selectionBounds.upperPositionIndexExclusive - upperRowMetaData.RowStartPositionIndexInclusive;
                             }
                         }
                         else

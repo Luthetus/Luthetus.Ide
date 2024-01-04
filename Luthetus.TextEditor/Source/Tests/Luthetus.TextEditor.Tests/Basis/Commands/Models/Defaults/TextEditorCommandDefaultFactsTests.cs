@@ -43,30 +43,18 @@ public class TextEditorCommandDefaultFactsTests
 
 		var doNothingDiscardCommand = TextEditorCommandDefaultFacts.DoNothingDiscard;
 
-        var modelResourceUri = inModel.ResourceUri;
-		var viewModelKey = inViewModel.ViewModelKey;
-		var hasTextSelection = false;
-		var clipboardService = serviceProvider.GetRequiredService<IClipboardService>();
-		//var textEditorService = textEditorService;
-		var handleMouseStoppedMovingEventAsyncFunc = (MouseEventArgs m) => Task.CompletedTask;
-        var jsRuntime = serviceProvider.GetRequiredService<IJSRuntime>();
-        var dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
-        var registerModelAction = (ResourceUri resourceUri) => { };
-		var registerViewModelAction = (ResourceUri resourceUri) => { };
-        var showViewModelAction = (Key<TextEditorViewModel> viewModel) => { };
-
         var textEditorCommandArgs = new TextEditorCommandArgs(
-            modelResourceUri,
-			viewModelKey,
-			hasTextSelection,
-			clipboardService,
+            inModel.ResourceUri,
+			inViewModel.ViewModelKey,
+			false,
+            serviceProvider.GetRequiredService<IClipboardService>(),
 			textEditorService,
-			handleMouseStoppedMovingEventAsyncFunc,
-			jsRuntime,
-			dispatcher,
-			registerModelAction,
-			registerViewModelAction,
-			showViewModelAction);
+			(MouseEventArgs m) => Task.CompletedTask,
+            serviceProvider.GetRequiredService<IJSRuntime>(),
+            serviceProvider.GetRequiredService<IDispatcher>(),
+			(ResourceUri resourceUri) => { },
+			(ResourceUri resourceUri) => { },
+			(Key<TextEditorViewModel> viewModel) => { });
 
 		await doNothingDiscardCommand.CommandFunc.Invoke(textEditorCommandArgs);
 	}
@@ -85,32 +73,22 @@ public class TextEditorCommandDefaultFactsTests
 
         var copyCommand = TextEditorCommandDefaultFacts.Copy;
 
-        var modelResourceUri = inModel.ResourceUri;
-        var viewModelKey = inViewModel.ViewModelKey;
-        var hasTextSelection = false;
         var clipboardService = serviceProvider.GetRequiredService<IClipboardService>();
-        //var textEditorService = textEditorService;
-        var handleMouseStoppedMovingEventAsyncFunc = (MouseEventArgs m) => Task.CompletedTask;
-        var jsRuntime = serviceProvider.GetRequiredService<IJSRuntime>();
-        var dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
-        var registerModelAction = (ResourceUri resourceUri) => { };
-        var registerViewModelAction = (ResourceUri resourceUri) => { };
-        var showViewModelAction = (Key<TextEditorViewModel> viewModel) => { };
 
         var textEditorCommandArgs = new TextEditorCommandArgs(
-            modelResourceUri,
-            viewModelKey,
-            hasTextSelection,
+            inModel.ResourceUri,
+            inViewModel.ViewModelKey,
+            false,
             clipboardService,
             textEditorService,
-            handleMouseStoppedMovingEventAsyncFunc,
-            jsRuntime,
-            dispatcher,
-            registerModelAction,
-            registerViewModelAction,
-            showViewModelAction);
+            (MouseEventArgs m) => Task.CompletedTask,
+            serviceProvider.GetRequiredService<IJSRuntime>(),
+            serviceProvider.GetRequiredService<IDispatcher>(),
+            (ResourceUri resourceUri) => { },
+            (ResourceUri resourceUri) => { },
+            (Key<TextEditorViewModel> viewModel) => { });
 
-		await clipboardService.SetClipboard(string.Empty);
+        await clipboardService.SetClipboard(string.Empty);
 
         // No selection
         {
@@ -167,7 +145,117 @@ public class TextEditorCommandDefaultFactsTests
 	[Fact]
 	public async Task Cut()
 	{
-		throw new NotImplementedException();
+        var cutCommand = TextEditorCommandDefaultFacts.Cut;
+
+        // No selection
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService,
+                out var inModel,
+                out var inViewModel,
+                out var serviceProvider);
+
+            var clipboardService = serviceProvider.GetRequiredService<IClipboardService>();
+
+            var textEditorCommandArgs = new TextEditorCommandArgs(
+                inModel.ResourceUri,
+                inViewModel.ViewModelKey,
+                false,
+                clipboardService,
+                textEditorService,
+                (MouseEventArgs m) => Task.CompletedTask,
+                serviceProvider.GetRequiredService<IJSRuntime>(),
+                serviceProvider.GetRequiredService<IDispatcher>(),
+                (ResourceUri resourceUri) => { },
+                (ResourceUri resourceUri) => { },
+                (Key<TextEditorViewModel> viewModel) => { });
+
+            await clipboardService.SetClipboard(string.Empty);
+
+            var inClipboard = await clipboardService.ReadClipboard();
+            Assert.Empty(inClipboard);
+
+            await cutCommand.CommandFunc.Invoke(textEditorCommandArgs);
+
+            var outClipboard = await clipboardService.ReadClipboard();
+            Assert.Equal("Hello World!\n", outClipboard);
+
+            // Assert text was deleted
+            {
+                var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+                Assert.NotNull(outModel);
+
+                var outText = outModel!.GetAllText();
+                Assert.Equal("7 Pillows\n \n,abc123", outText);
+            }
+        }
+
+        // With selection
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService,
+                out var inModel,
+                out var inViewModel,
+                out var serviceProvider);
+
+            var clipboardService = serviceProvider.GetRequiredService<IClipboardService>();
+
+            var textEditorCommandArgs = new TextEditorCommandArgs(
+                inModel.ResourceUri,
+                inViewModel.ViewModelKey,
+                false,
+                clipboardService,
+                textEditorService,
+                (MouseEventArgs m) => Task.CompletedTask,
+                serviceProvider.GetRequiredService<IJSRuntime>(),
+                serviceProvider.GetRequiredService<IDispatcher>(),
+                (ResourceUri resourceUri) => { },
+                (ResourceUri resourceUri) => { },
+                (Key<TextEditorViewModel> viewModel) => { });
+
+            await clipboardService.SetClipboard(string.Empty);
+
+            textEditorService.Post(
+                nameof(TextEditorCommandDefaultFactsTests),
+                editContext =>
+                {
+                    var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
+
+                    if (modelModifier is null || viewModelModifier is null)
+                        return Task.CompletedTask;
+
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                    if (primaryCursorModifier is null)
+                        return Task.CompletedTask;
+
+                    primaryCursorModifier.RowIndex = 1;
+                    primaryCursorModifier.SetColumnIndexAndPreferred(9);
+                    primaryCursorModifier.SelectionAnchorPositionIndex = 15;
+                    primaryCursorModifier.SelectionEndingPositionIndex = 22;
+
+                    return Task.CompletedTask;
+                });
+
+            var inClipboard = await clipboardService.ReadClipboard();
+            Assert.Empty(inClipboard);
+
+            await cutCommand.CommandFunc.Invoke(textEditorCommandArgs);
+
+            var outClipboard = await clipboardService.ReadClipboard();
+            Assert.Equal("Pillows", outClipboard);
+
+            // Assert text was deleted
+            {
+                var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+                Assert.NotNull(outModel);
+
+                var outText = outModel!.GetAllText();
+                Assert.Equal("Hello World!\n7 \n \n,abc123", outText);
+            }
+        }
 	}
 
 	/// <summary>

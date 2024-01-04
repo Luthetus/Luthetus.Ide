@@ -246,14 +246,14 @@ public static class TextEditorModelHelper
 		var previousCharacterKind = CharacterKindHelper.CharToCharacterKind(previousCharacter);
 		var currentCharacterKind = CharacterKindHelper.CharToCharacterKind(currentCharacter);
 
-		var rowInformation = model.FindRowInformation(positionIndex);
+		var rowInformation = model.GetRowInformation(positionIndex);
 
-		var columnIndex = positionIndex - rowInformation.rowStartPositionIndex;
+		var columnIndex = positionIndex - rowInformation.RowStartPositionIndexInclusive;
 
 		if (previousCharacterKind == CharacterKind.LetterOrDigit && currentCharacterKind == CharacterKind.LetterOrDigit)
 		{
 			var wordColumnIndexStartInclusive = model.GetColumnIndexOfCharacterWithDifferingKind(
-				rowInformation.rowIndex,
+				rowInformation.RowIndex,
 				columnIndex,
 				true);
 
@@ -261,16 +261,16 @@ public static class TextEditorModelHelper
 				wordColumnIndexStartInclusive = 0;
 
 			var wordColumnIndexEndExclusive = model.GetColumnIndexOfCharacterWithDifferingKind(
-				rowInformation.rowIndex,
+				rowInformation.RowIndex,
 				columnIndex,
 				false);
 
 			if (wordColumnIndexEndExclusive == -1)
-				wordColumnIndexEndExclusive = model.GetLengthOfRow(rowInformation.rowIndex);
+				wordColumnIndexEndExclusive = model.GetLengthOfRow(rowInformation.RowIndex);
 
 			return new TextEditorTextSpan(
-				wordColumnIndexStartInclusive + rowInformation.rowStartPositionIndex,
-				wordColumnIndexEndExclusive + rowInformation.rowStartPositionIndex,
+				wordColumnIndexStartInclusive + rowInformation.RowStartPositionIndexInclusive,
+				wordColumnIndexEndExclusive + rowInformation.RowStartPositionIndexInclusive,
 				0,
 				model.ResourceUri,
 				model.GetAllText());
@@ -278,16 +278,16 @@ public static class TextEditorModelHelper
 		else if (currentCharacterKind == CharacterKind.LetterOrDigit)
 		{
 			var wordColumnIndexEndExclusive = model.GetColumnIndexOfCharacterWithDifferingKind(
-				rowInformation.rowIndex,
+				rowInformation.RowIndex,
 				columnIndex,
 				false);
 
 			if (wordColumnIndexEndExclusive == -1)
-				wordColumnIndexEndExclusive = model.GetLengthOfRow(rowInformation.rowIndex);
+				wordColumnIndexEndExclusive = model.GetLengthOfRow(rowInformation.RowIndex);
 
 			return new TextEditorTextSpan(
-				columnIndex + rowInformation.rowStartPositionIndex,
-				wordColumnIndexEndExclusive + rowInformation.rowStartPositionIndex,
+				columnIndex + rowInformation.RowStartPositionIndexInclusive,
+				wordColumnIndexEndExclusive + rowInformation.RowStartPositionIndexInclusive,
 				0,
 				model.ResourceUri,
 				model.GetAllText());
@@ -295,7 +295,7 @@ public static class TextEditorModelHelper
 		else if (previousCharacterKind == CharacterKind.LetterOrDigit)
 		{
 			var wordColumnIndexStartInclusive = model.GetColumnIndexOfCharacterWithDifferingKind(
-				rowInformation.rowIndex,
+				rowInformation.RowIndex,
 				columnIndex,
 				true);
 
@@ -303,8 +303,8 @@ public static class TextEditorModelHelper
 				wordColumnIndexStartInclusive = 0;
 
 			return new TextEditorTextSpan(
-				wordColumnIndexStartInclusive + rowInformation.rowStartPositionIndex,
-				columnIndex + rowInformation.rowStartPositionIndex,
+				wordColumnIndexStartInclusive + rowInformation.RowStartPositionIndexInclusive,
+				columnIndex + rowInformation.RowStartPositionIndexInclusive,
 				0,
 				model.ResourceUri,
 				model.GetAllText());
@@ -313,8 +313,7 @@ public static class TextEditorModelHelper
 		return null;
 	}
 
-	public static (int rowIndex, int rowStartPositionIndex, RowEnding rowEnding)
-		FindRowInformation(this ITextEditorModel model, int positionIndex)
+	public static RowInformation GetRowInformation(this ITextEditorModel model, int positionIndex)
 	{
 		for (var i = model.RowEndingPositionsBag.Count - 1; i >= 0; i--)
 		{
@@ -322,14 +321,16 @@ public static class TextEditorModelHelper
 
 			if (positionIndex >= rowEndingTuple.EndPositionIndexExclusive)
 			{
-				return (i + 1, rowEndingTuple.EndPositionIndexExclusive,
+				return new(
+					i + 1,
+					rowEndingTuple.EndPositionIndexExclusive,
 					i == model.RowEndingPositionsBag.Count - 1
 						? rowEndingTuple
 						: model.RowEndingPositionsBag[i + 1]);
 			}
 		}
 
-		return (0, 0, model.RowEndingPositionsBag[0]);
+		return new(0, 0, model.RowEndingPositionsBag[0]);
 	}
 
 	/// <summary>

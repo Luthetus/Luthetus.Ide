@@ -74,12 +74,20 @@ public class TextEditorCommandDefaultFunctions
             if (cursorModifierBag is null || primaryCursorModifier is null)
                 return;
 
+            if (!TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier))
+            {
+                var rowInformation = modelModifier.GetRowInformation(primaryCursorModifier.RowIndex);
+
+                primaryCursorModifier.SelectionAnchorPositionIndex = rowInformation.RowStartPositionIndexInclusive;
+                primaryCursorModifier.SelectionEndingPositionIndex = rowInformation.RowEnding.EndPositionIndexExclusive;
+            }
+
             var selectedText = TextEditorSelectionHelper.GetSelectedText(
                 primaryCursorModifier,
                 modelModifier);
 
             if (selectedText is null)
-                return; // Should never occur
+                return; // This should never occur
 
             await commandArgs.ClipboardService.SetClipboard(selectedText);
             viewModelModifier.ViewModel.Focus();
@@ -916,12 +924,12 @@ public class TextEditorCommandDefaultFunctions
             }
 
             var firstDefinitionViewModel = definitionViewModels.First();
-            var rowData = definitionModel.FindRowInformation(definitionTextSpan.StartingIndexInclusive);
-            var columnIndex = definitionTextSpan.StartingIndexInclusive - rowData.rowStartPositionIndex;
+            var rowData = definitionModel.GetRowInformation(definitionTextSpan.StartingIndexInclusive);
+            var columnIndex = definitionTextSpan.StartingIndexInclusive - rowData.RowStartPositionIndexInclusive;
 
             var firstDefinitionViewModelCursorModifier = new TextEditorCursorModifier(firstDefinitionViewModel.PrimaryCursor);
 
-            firstDefinitionViewModelCursorModifier.RowIndex = rowData.rowIndex;
+            firstDefinitionViewModelCursorModifier.RowIndex = rowData.RowIndex;
             firstDefinitionViewModelCursorModifier.ColumnIndex = columnIndex;
             firstDefinitionViewModelCursorModifier.PreferredColumnIndex = columnIndex;
 

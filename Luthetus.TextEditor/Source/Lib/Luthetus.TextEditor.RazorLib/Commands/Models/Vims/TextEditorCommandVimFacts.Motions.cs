@@ -429,10 +429,10 @@ public static partial class TextEditorCommandVimFacts
                 if (previousAnchorPositionIndex < previousEndingPositionIndex)
                 {
                     // Anchor went from being the lower bound to the upper bound.
-                    var rowDataAnchorIsOn = model.FindRowInformation(previousAnchorPositionIndex.Value);
+                    var rowDataAnchorIsOn = model.GetRowInformation(previousAnchorPositionIndex.Value);
 
                     primaryCursor.SelectionAnchorPositionIndex = model.RowEndingPositionsBag[
-                        rowDataAnchorIsOn.rowIndex].EndPositionIndexExclusive;
+                        rowDataAnchorIsOn.RowIndex].EndPositionIndexExclusive;
                 }
 
                 var startingPositionOfRow = model.GetRowEndingThatCreatedRow(primaryCursor.RowIndex)
@@ -445,9 +445,9 @@ public static partial class TextEditorCommandVimFacts
                 if (previousAnchorPositionIndex > previousEndingPositionIndex)
                 {
                     // Anchor went from being the upper bound to the lower bound.
-                    var rowDataAnchorIsOn = model.FindRowInformation(previousAnchorPositionIndex.Value);
+                    var rowDataAnchorIsOn = model.GetRowInformation(previousAnchorPositionIndex.Value);
 
-                    primaryCursor.SelectionAnchorPositionIndex = model.GetRowEndingThatCreatedRow(rowDataAnchorIsOn.rowIndex - 1)
+                    primaryCursor.SelectionAnchorPositionIndex = model.GetRowEndingThatCreatedRow(rowDataAnchorIsOn.RowIndex - 1)
                         .EndPositionIndexExclusive;
                 }
 

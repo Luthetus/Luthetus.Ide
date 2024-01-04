@@ -203,11 +203,11 @@ public partial class TextEditorModelModifier
 
                 var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
 
-                var lowerRowData = this.FindRowInformation(selectionBounds.lowerPositionIndexInclusive);
-                var lowerColumnIndex = selectionBounds.lowerPositionIndexInclusive - lowerRowData.rowStartPositionIndex;
+                var lowerRowData = this.GetRowInformation(selectionBounds.lowerPositionIndexInclusive);
+                var lowerColumnIndex = selectionBounds.lowerPositionIndexInclusive - lowerRowData.RowStartPositionIndexInclusive;
 
                 // Move cursor to lower bound of text selection
-                cursorModifier.RowIndex = lowerRowData.rowIndex;
+                cursorModifier.RowIndex = lowerRowData.RowIndex;
                 cursorModifier.ColumnIndex = lowerColumnIndex;
 
                 // Clear selection
@@ -401,15 +401,15 @@ public partial class TextEditorModelModifier
                 if (lowerPositionIndexInclusiveBound > upperPositionIndexExclusive)
                     (lowerPositionIndexInclusiveBound, upperPositionIndexExclusive) = (upperPositionIndexExclusive, lowerPositionIndexInclusiveBound);
 
-                var lowerRowMetaData = this.FindRowInformation(lowerPositionIndexInclusiveBound);
-                var upperRowMetaData = this.FindRowInformation(upperPositionIndexExclusive);
+                var lowerRowMetaData = this.GetRowInformation(lowerPositionIndexInclusiveBound);
+                var upperRowMetaData = this.GetRowInformation(upperPositionIndexExclusive);
 
                 // Value is needed when knowing what row ending positions to update after deletion is done
-                selectionUpperBoundRowIndex = upperRowMetaData.rowIndex;
+                selectionUpperBoundRowIndex = upperRowMetaData.RowIndex;
 
                 // Value is needed when knowing where to position the cursor after deletion is done
-                selectionLowerBoundIndexCoordinates = (lowerRowMetaData.rowIndex,
-                    lowerPositionIndexInclusiveBound - lowerRowMetaData.rowStartPositionIndex);
+                selectionLowerBoundIndexCoordinates = (lowerRowMetaData.RowIndex,
+                    lowerPositionIndexInclusiveBound - lowerRowMetaData.RowStartPositionIndexInclusive);
 
                 startingPositionIndexToRemoveInclusive = upperPositionIndexExclusive - 1;
                 countToRemove = upperPositionIndexExclusive - lowerPositionIndexInclusiveBound;
