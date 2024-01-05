@@ -20,7 +20,6 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Microsoft.Extensions.DependencyInjection;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.Forms;
 
 namespace Luthetus.TextEditor.Tests.Basis.Commands.Models.Defaults;
 
@@ -36,27 +35,11 @@ public class TextEditorCommandDefaultFactsTests
     public async Task DoNothingDiscard()
     {
         InitializeTextEditorCommandDefaultFactsTests(
-            out var textEditorService,
-            out var inModel,
-            out var inViewModel,
-            out var serviceProvider);
+            out var textEditorService, out var inModel, out var inViewModel,
+            out var textEditorCommandArgs, out var serviceProvider);
 
-		var doNothingDiscardCommand = TextEditorCommandDefaultFacts.DoNothingDiscard;
-
-        var textEditorCommandArgs = new TextEditorCommandArgs(
-            inModel.ResourceUri,
-			inViewModel.ViewModelKey,
-			false,
-            serviceProvider.GetRequiredService<IClipboardService>(),
-			textEditorService,
-			(MouseEventArgs m) => Task.CompletedTask,
-            serviceProvider.GetRequiredService<IJSRuntime>(),
-            serviceProvider.GetRequiredService<IDispatcher>(),
-			(ResourceUri resourceUri) => { },
-			(ResourceUri resourceUri) => { },
-			(Key<TextEditorViewModel> viewModel) => { });
-
-		await doNothingDiscardCommand.CommandFunc.Invoke(textEditorCommandArgs);
+		await TextEditorCommandDefaultFacts.DoNothingDiscard.CommandFunc.Invoke(
+            textEditorCommandArgs);
 	}
 
 	/// <summary>
@@ -66,46 +49,31 @@ public class TextEditorCommandDefaultFactsTests
     public async Task Copy()
     {
         InitializeTextEditorCommandDefaultFactsTests(
-            out var textEditorService,
-            out var inModel,
-            out var inViewModel,
-            out var serviceProvider);
-
-        var copyCommand = TextEditorCommandDefaultFacts.Copy;
+            out var textEditorService, out var inModel, out var inViewModel,
+            out var textEditorCommandArgs, out var serviceProvider);
 
         var clipboardService = serviceProvider.GetRequiredService<IClipboardService>();
 
-        var textEditorCommandArgs = new TextEditorCommandArgs(
-            inModel.ResourceUri,
-            inViewModel.ViewModelKey,
-            false,
-            clipboardService,
-            textEditorService,
-            (MouseEventArgs m) => Task.CompletedTask,
-            serviceProvider.GetRequiredService<IJSRuntime>(),
-            serviceProvider.GetRequiredService<IDispatcher>(),
-            (ResourceUri resourceUri) => { },
-            (ResourceUri resourceUri) => { },
-            (Key<TextEditorViewModel> viewModel) => { });
-
-        await clipboardService.SetClipboard(string.Empty);
-
         // No selection
         {
+            await clipboardService.SetClipboard(string.Empty);
             var inClipboard = await clipboardService.ReadClipboard();
             Assert.Empty(inClipboard);
 
-            await copyCommand.CommandFunc.Invoke(textEditorCommandArgs);
+            await TextEditorCommandDefaultFacts.Copy.CommandFunc.Invoke(textEditorCommandArgs);
 
             var outClipboard = await clipboardService.ReadClipboard();
             Assert.Equal("Hello World!\n", outClipboard);
         }
 
-        await clipboardService.SetClipboard(string.Empty);
 
         // With selection
         {
-			textEditorService.Post(
+            await clipboardService.SetClipboard(string.Empty);
+            var inClipboard = await clipboardService.ReadClipboard();
+            Assert.Empty(inClipboard);
+
+            textEditorService.Post(
 				nameof(TextEditorCommandDefaultFactsTests),
 				editContext =>
 				{
@@ -129,10 +97,7 @@ public class TextEditorCommandDefaultFactsTests
                     return Task.CompletedTask;
                 });
 
-            var inClipboard = await clipboardService.ReadClipboard();
-            Assert.Empty(inClipboard);
-
-            await copyCommand.CommandFunc.Invoke(textEditorCommandArgs);
+            await TextEditorCommandDefaultFacts.Copy.CommandFunc.Invoke(textEditorCommandArgs);
 
             var outClipboard = await clipboardService.ReadClipboard();
             Assert.Equal("Pillows", outClipboard);
@@ -145,37 +110,18 @@ public class TextEditorCommandDefaultFactsTests
 	[Fact]
 	public async Task Cut()
 	{
-        var cutCommand = TextEditorCommandDefaultFacts.Cut;
-
         // No selection
         {
             InitializeTextEditorCommandDefaultFactsTests(
-                out var textEditorService,
-                out var inModel,
-                out var inViewModel,
-                out var serviceProvider);
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
 
             var clipboardService = serviceProvider.GetRequiredService<IClipboardService>();
-
-            var textEditorCommandArgs = new TextEditorCommandArgs(
-                inModel.ResourceUri,
-                inViewModel.ViewModelKey,
-                false,
-                clipboardService,
-                textEditorService,
-                (MouseEventArgs m) => Task.CompletedTask,
-                serviceProvider.GetRequiredService<IJSRuntime>(),
-                serviceProvider.GetRequiredService<IDispatcher>(),
-                (ResourceUri resourceUri) => { },
-                (ResourceUri resourceUri) => { },
-                (Key<TextEditorViewModel> viewModel) => { });
-
             await clipboardService.SetClipboard(string.Empty);
-
             var inClipboard = await clipboardService.ReadClipboard();
             Assert.Empty(inClipboard);
 
-            await cutCommand.CommandFunc.Invoke(textEditorCommandArgs);
+            await TextEditorCommandDefaultFacts.Cut.CommandFunc.Invoke(textEditorCommandArgs);
 
             var outClipboard = await clipboardService.ReadClipboard();
             Assert.Equal("Hello World!\n", outClipboard);
@@ -193,27 +139,13 @@ public class TextEditorCommandDefaultFactsTests
         // With selection
         {
             InitializeTextEditorCommandDefaultFactsTests(
-                out var textEditorService,
-                out var inModel,
-                out var inViewModel,
-                out var serviceProvider);
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
 
             var clipboardService = serviceProvider.GetRequiredService<IClipboardService>();
-
-            var textEditorCommandArgs = new TextEditorCommandArgs(
-                inModel.ResourceUri,
-                inViewModel.ViewModelKey,
-                false,
-                clipboardService,
-                textEditorService,
-                (MouseEventArgs m) => Task.CompletedTask,
-                serviceProvider.GetRequiredService<IJSRuntime>(),
-                serviceProvider.GetRequiredService<IDispatcher>(),
-                (ResourceUri resourceUri) => { },
-                (ResourceUri resourceUri) => { },
-                (Key<TextEditorViewModel> viewModel) => { });
-
             await clipboardService.SetClipboard(string.Empty);
+            var inClipboard = await clipboardService.ReadClipboard();
+            Assert.Empty(inClipboard);
 
             textEditorService.Post(
                 nameof(TextEditorCommandDefaultFactsTests),
@@ -239,22 +171,24 @@ public class TextEditorCommandDefaultFactsTests
                     return Task.CompletedTask;
                 });
 
-            var inClipboard = await clipboardService.ReadClipboard();
-            Assert.Empty(inClipboard);
+            await TextEditorCommandDefaultFacts.Cut.CommandFunc.Invoke(textEditorCommandArgs);
 
-            await cutCommand.CommandFunc.Invoke(textEditorCommandArgs);
+            textEditorService.Post(
+                nameof(TextEditorCommandDefaultFactsTests),
+                async editContext =>
+                {
+                    var outClipboard = await clipboardService.ReadClipboard();
+                    Assert.Equal("Pillows", outClipboard);
 
-            var outClipboard = await clipboardService.ReadClipboard();
-            Assert.Equal("Pillows", outClipboard);
+                    // Assert text was deleted
+                    {
+                        var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+                        Assert.NotNull(outModel);
 
-            // Assert text was deleted
-            {
-                var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
-                Assert.NotNull(outModel);
-
-                var outText = outModel!.GetAllText();
-                Assert.Equal("Hello World!\n7 \n \n,abc123", outText);
-            }
+                        var outText = outModel!.GetAllText();
+                        Assert.Equal("Hello World!\n7 \n \n,abc123", outText);
+                    }
+                });
         }
 	}
 
@@ -264,30 +198,13 @@ public class TextEditorCommandDefaultFactsTests
 	[Fact]
     public async Task Paste()
     {
-        var pasteCommand = TextEditorCommandDefaultFacts.PasteCommand;
-
         // No selection
         {
             InitializeTextEditorCommandDefaultFactsTests(
-                out var textEditorService,
-                out var inModel,
-                out var inViewModel,
-                out var serviceProvider);
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
 
             var clipboardService = serviceProvider.GetRequiredService<IClipboardService>();
-
-            var textEditorCommandArgs = new TextEditorCommandArgs(
-                inModel.ResourceUri,
-                inViewModel.ViewModelKey,
-                false,
-                clipboardService,
-                textEditorService,
-                (MouseEventArgs m) => Task.CompletedTask,
-                serviceProvider.GetRequiredService<IJSRuntime>(),
-                serviceProvider.GetRequiredService<IDispatcher>(),
-                (ResourceUri resourceUri) => { },
-                (ResourceUri resourceUri) => { },
-                (Key<TextEditorViewModel> viewModel) => { });
 
             textEditorService.Post(
                 nameof(TextEditorCommandDefaultFactsTests),
@@ -315,7 +232,7 @@ public class TextEditorCommandDefaultFactsTests
                     return;
                 });
 
-            await pasteCommand.CommandFunc.Invoke(textEditorCommandArgs);
+            await TextEditorCommandDefaultFacts.PasteCommand.CommandFunc.Invoke(textEditorCommandArgs);
 
             // Assert text was pasted
             {
@@ -330,25 +247,10 @@ public class TextEditorCommandDefaultFactsTests
         // With selection
         {
             InitializeTextEditorCommandDefaultFactsTests(
-                out var textEditorService,
-                out var inModel,
-                out var inViewModel,
-                out var serviceProvider);
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
 
             var clipboardService = serviceProvider.GetRequiredService<IClipboardService>();
-
-            var textEditorCommandArgs = new TextEditorCommandArgs(
-                inModel.ResourceUri,
-                inViewModel.ViewModelKey,
-                false,
-                clipboardService,
-                textEditorService,
-                (MouseEventArgs m) => Task.CompletedTask,
-                serviceProvider.GetRequiredService<IJSRuntime>(),
-                serviceProvider.GetRequiredService<IDispatcher>(),
-                (ResourceUri resourceUri) => { },
-                (ResourceUri resourceUri) => { },
-                (Key<TextEditorViewModel> viewModel) => { });
 
             textEditorService.Post(
                 nameof(TextEditorCommandDefaultFactsTests),
@@ -382,7 +284,7 @@ public class TextEditorCommandDefaultFactsTests
                     return;
                 });
 
-            await pasteCommand.CommandFunc.Invoke(textEditorCommandArgs);
+            await TextEditorCommandDefaultFacts.PasteCommand.CommandFunc.Invoke(textEditorCommandArgs);
 
             // Assert text was pasted
             {
@@ -401,7 +303,87 @@ public class TextEditorCommandDefaultFactsTests
 	[Fact]
     public async Task Save()
     {
-		throw new NotImplementedException();
+        // ViewModel.OnSaveRequested is NOT null
+        {
+            try
+            {
+                InitializeTextEditorCommandDefaultFactsTests(
+                    out var textEditorService, out var inModel, out var inViewModel,
+                    out var textEditorCommandArgs, out var serviceProvider);
+
+                var savedContent = (string?)null;
+                Assert.Null(savedContent);
+
+                textEditorService.Post(
+                    nameof(TextEditorCommandDefaultFactsTests),
+                    editContext =>
+                    {
+                        var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+                        var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
+
+                        if (modelModifier is null || viewModelModifier is null)
+                            return Task.CompletedTask;
+
+                        var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                        var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                        if (primaryCursorModifier is null)
+                            return Task.CompletedTask;
+
+                        viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+                        {
+                            OnSaveRequested = model => savedContent = model.GetAllText()
+                        };
+
+                        return Task.CompletedTask;
+                    });
+
+                await TextEditorCommandDefaultFacts.Save.CommandFunc.Invoke(textEditorCommandArgs);
+
+                textEditorService.Post(
+                    nameof(TextEditorCommandDefaultFactsTests),
+                    editContext =>
+                    {
+                        Assert.Equal(TestConstants.SOURCE_TEXT, savedContent);
+                        return Task.CompletedTask;
+                    });
+            }
+            catch (AggregateException aggregateException)
+            {
+                throw new Exception("UPPER_" + string.Join('\n', aggregateException.InnerExceptions.Select(x => x.Message)));
+
+                // throw new Exception(string.Join('\n', aggregateException.InnerExceptions.Select(x => x.StackTrace)));
+            }
+        }
+
+        // ViewModel.OnSaveRequested is null
+        {
+            try
+            {
+                InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+                var savedContent = (string?)null;
+
+                Assert.Null(savedContent);
+                await TextEditorCommandDefaultFacts.Save.CommandFunc.Invoke(textEditorCommandArgs);
+
+                textEditorService.Post(
+                    nameof(TextEditorCommandDefaultFactsTests),
+                    editContext =>
+                    {
+                        Assert.Null(savedContent);
+                        return Task.CompletedTask;
+                    });
+            }
+            catch (AggregateException aggregateException)
+            {
+                throw new Exception("LOWER_" + string.Join('\n', aggregateException.InnerExceptions.Select(x => x.Message)));
+
+                // throw new Exception(string.Join('\n', aggregateException.InnerExceptions.Select(x => x.StackTrace)));
+            }
+        }
 	}
 
 	/// <summary>
@@ -410,8 +392,22 @@ public class TextEditorCommandDefaultFactsTests
 	[Fact]
     public async Task SelectAll()
     {
-		throw new NotImplementedException();
-	}
+        InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+        // No already existing selection
+        {
+            await TextEditorCommandDefaultFacts.SelectAll.CommandFunc.Invoke(textEditorCommandArgs);
+            throw new NotImplementedException();
+        }
+
+        // With an already existing selection
+        {
+            await TextEditorCommandDefaultFacts.SelectAll.CommandFunc.Invoke(textEditorCommandArgs);
+            throw new NotImplementedException();
+        }
+    }
 
 	/// <summary>
 	/// <see cref="TextEditorCommandDefaultFacts.Undo"/>
@@ -588,6 +584,7 @@ public class TextEditorCommandDefaultFactsTests
         out ITextEditorService textEditorService,
         out TextEditorModel model,
         out TextEditorViewModel viewModel,
+        out TextEditorCommandArgs textEditorCommandArgs,
         out IServiceProvider serviceProvider)
     {
         var services = new ServiceCollection()
@@ -656,5 +653,18 @@ public class TextEditorCommandDefaultFactsTests
 
         viewModel = textEditorService.ViewModelApi.GetOrDefault(viewModelKey)
            ?? throw new ArgumentNullException();
+
+        textEditorCommandArgs = new TextEditorCommandArgs(
+            model.ResourceUri,
+            viewModel.ViewModelKey,
+            false,
+            serviceProvider.GetRequiredService<IClipboardService>(),
+            textEditorService,
+            (MouseEventArgs m) => Task.CompletedTask,
+            serviceProvider.GetRequiredService<IJSRuntime>(),
+            serviceProvider.GetRequiredService<IDispatcher>(),
+            (ResourceUri resourceUri) => { },
+            (ResourceUri resourceUri) => { },
+            (Key<TextEditorViewModel> viewModelKey) => { });
     }
 }
