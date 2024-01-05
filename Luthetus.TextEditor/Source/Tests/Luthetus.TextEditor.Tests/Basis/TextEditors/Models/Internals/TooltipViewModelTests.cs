@@ -1,5 +1,7 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.Internals;
 
@@ -8,57 +10,35 @@ namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models.Internals;
 /// </summary>
 public class TooltipViewModelTests
 {
-	/// <summary>
-	/// <see cref="TooltipViewModel(Type, Dictionary{string, object?}?, Common.RazorLib.JavaScriptObjects.Models.RelativeCoordinates, string?, Func{Task})"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="TooltipViewModel(Type, Dictionary{string, object?}?, RelativeCoordinates, string?, Func{Task})"/>
+	/// <br/>----<br/>
+    /// <see cref="TooltipViewModel.RendererType"/>
+    /// <see cref="TooltipViewModel.ParameterMap"/>
+    /// <see cref="TooltipViewModel.RelativeCoordinates"/>
+    /// <see cref="TooltipViewModel.CssClassString"/>
+    /// <see cref="TooltipViewModel.OnMouseOver"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
-	}
+        var rendererType = typeof(TextEditorSymbolDisplay);
+		var parameterMap = new Dictionary<string, object?>();
+		var relativeCoordinates = new RelativeCoordinates(50, 100, 25, 50);
+		var cssClassString = nameof(TooltipViewModelTests);
+		var onMouseOver = () => Task.CompletedTask;
 
-	/// <summary>
-	/// <see cref="TooltipViewModel.RendererType"/>
-	/// </summary>
-	[Fact]
-	public void RendererType()
-	{
-		throw new NotImplementedException();
-	}
+        var tooltipViewModel = new TooltipViewModel(
+            rendererType,
+            parameterMap,
+            relativeCoordinates,
+            cssClassString,
+            onMouseOver);
 
-	/// <summary>
-	/// <see cref="TooltipViewModel.ParameterMap"/>
-	/// </summary>
-	[Fact]
-	public void ParameterMap()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TooltipViewModel.RelativeCoordinates"/>
-	/// </summary>
-	[Fact]
-	public void RelativeCoordinates()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TooltipViewModel.CssClassString"/>
-	/// </summary>
-	[Fact]
-	public void CssClassString()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TooltipViewModel.OnMouseOver"/>
-	/// </summary>
-	[Fact]
-	public void OnMouseOver()
-	{
-		throw new NotImplementedException();
+		Assert.Equal(rendererType, tooltipViewModel.RendererType);
+		Assert.Equal(parameterMap, tooltipViewModel.ParameterMap);
+		Assert.Equal(relativeCoordinates, tooltipViewModel.RelativeCoordinates);
+		Assert.Equal(cssClassString, tooltipViewModel.CssClassString);
+		Assert.Equal(onMouseOver, tooltipViewModel.OnMouseOver);
 	}
 }
