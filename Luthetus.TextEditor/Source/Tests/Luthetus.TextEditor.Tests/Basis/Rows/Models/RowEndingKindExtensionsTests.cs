@@ -14,7 +14,12 @@ public class RowEndingKindExtensionsTests
 	[Fact]
 	public void AsCharacters()
 	{
-		throw new NotImplementedException();
+		Assert.Equal("\r", RowEndingKind.CarriageReturn.AsCharacters());
+		Assert.Equal("\n", RowEndingKind.Linefeed.AsCharacters());
+		Assert.Equal("\r\n", RowEndingKind.CarriageReturnLinefeed.AsCharacters());
+		Assert.Equal(string.Empty, RowEndingKind.StartOfFile.AsCharacters());
+		Assert.Equal(string.Empty, RowEndingKind.EndOfFile.AsCharacters());
+		Assert.Equal(string.Empty, RowEndingKind.Unset.AsCharacters());
 	}
 
 	/// <summary>

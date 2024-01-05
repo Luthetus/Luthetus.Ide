@@ -305,61 +305,50 @@ public class TextEditorCommandDefaultFactsTests
     {
         // ViewModel.OnSaveRequested is NOT null
         {
-            try
-            {
-                InitializeTextEditorCommandDefaultFactsTests(
-                    out var textEditorService, out var inModel, out var inViewModel,
-                    out var textEditorCommandArgs, out var serviceProvider);
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
 
-                var savedContent = (string?)null;
-                Assert.Null(savedContent);
+            var savedContent = (string?)null;
+            Assert.Null(savedContent);
 
-                textEditorService.Post(
-                    nameof(TextEditorCommandDefaultFactsTests),
-                    editContext =>
-                    {
-                        var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
-                        var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
+            textEditorService.Post(
+                nameof(TextEditorCommandDefaultFactsTests),
+                editContext =>
+                {
+                    var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
 
-                        if (modelModifier is null || viewModelModifier is null)
-                            return Task.CompletedTask;
-
-                        var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
-                        var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
-
-                        if (primaryCursorModifier is null)
-                            return Task.CompletedTask;
-
-                        viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-                        {
-                            OnSaveRequested = model => savedContent = model.GetAllText()
-                        };
-
+                    if (modelModifier is null || viewModelModifier is null)
                         return Task.CompletedTask;
-                    });
 
-                await TextEditorCommandDefaultFacts.Save.CommandFunc.Invoke(textEditorCommandArgs);
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                textEditorService.Post(
-                    nameof(TextEditorCommandDefaultFactsTests),
-                    editContext =>
-                    {
-                        Assert.Equal(TestConstants.SOURCE_TEXT, savedContent);
+                    if (primaryCursorModifier is null)
                         return Task.CompletedTask;
-                    });
-            }
-            catch (AggregateException aggregateException)
-            {
-                throw new Exception("UPPER_" + string.Join('\n', aggregateException.InnerExceptions.Select(x => x.Message)));
 
-                // throw new Exception(string.Join('\n', aggregateException.InnerExceptions.Select(x => x.StackTrace)));
-            }
+                    viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+                    {
+                        OnSaveRequested = model => savedContent = model.GetAllText()
+                    };
+
+                    return Task.CompletedTask;
+                });
+
+            await TextEditorCommandDefaultFacts.Save.CommandFunc.Invoke(textEditorCommandArgs);
+
+            textEditorService.Post(
+                nameof(TextEditorCommandDefaultFactsTests),
+                editContext =>
+                {
+                    Assert.Equal(TestConstants.SOURCE_TEXT, savedContent);
+                    return Task.CompletedTask;
+                });
         }
 
         // ViewModel.OnSaveRequested is null
         {
-            try
-            {
                 InitializeTextEditorCommandDefaultFactsTests(
                 out var textEditorService, out var inModel, out var inViewModel,
                 out var textEditorCommandArgs, out var serviceProvider);
@@ -376,13 +365,6 @@ public class TextEditorCommandDefaultFactsTests
                         Assert.Null(savedContent);
                         return Task.CompletedTask;
                     });
-            }
-            catch (AggregateException aggregateException)
-            {
-                throw new Exception("LOWER_" + string.Join('\n', aggregateException.InnerExceptions.Select(x => x.Message)));
-
-                // throw new Exception(string.Join('\n', aggregateException.InnerExceptions.Select(x => x.StackTrace)));
-            }
         }
 	}
 
@@ -392,20 +374,70 @@ public class TextEditorCommandDefaultFactsTests
 	[Fact]
     public async Task SelectAll()
     {
-        InitializeTextEditorCommandDefaultFactsTests(
+        // No already existing selection
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
                 out var textEditorService, out var inModel, out var inViewModel,
                 out var textEditorCommandArgs, out var serviceProvider);
 
-        // No already existing selection
-        {
             await TextEditorCommandDefaultFacts.SelectAll.CommandFunc.Invoke(textEditorCommandArgs);
-            throw new NotImplementedException();
+
+            var outViewModel = textEditorService.ViewModelApi.GetOrDefault(inViewModel.ViewModelKey);
+            Assert.NotNull(outViewModel);
+
+            Assert.Equal(0, outViewModel!.PrimaryCursor.Selection.AnchorPositionIndex);
+            Assert.Equal(inModel.DocumentLength, outViewModel!.PrimaryCursor.Selection.EndingPositionIndex);
+
+            // Assert that 'SelectAll' does not move the cursor itself, it only should move the selection
+            {
+                Assert.Equal(inViewModel.PrimaryCursor.RowIndex, outViewModel!.PrimaryCursor.RowIndex);
+                Assert.Equal(inViewModel.PrimaryCursor.ColumnIndex, outViewModel!.PrimaryCursor.ColumnIndex);
+            }
         }
 
         // With an already existing selection
         {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            textEditorService.Post(
+                nameof(TextEditorCommandDefaultFactsTests),
+                editContext =>
+                {
+                    var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
+
+                    if (modelModifier is null || viewModelModifier is null)
+                        return Task.CompletedTask;
+
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                    if (primaryCursorModifier is null)
+                        return Task.CompletedTask;
+
+                    // Select the "Hello" text on the first row
+                    {
+                        primaryCursorModifier.SelectionAnchorPositionIndex = 0;
+                        primaryCursorModifier.SelectionEndingPositionIndex = 5;
+                    }
+
+                    // SetColumnIndexAndPreferred is unnecessary, but the user is likely
+                    // to have their ColumnIndex == SelectionEndingPositionIndex
+                    primaryCursorModifier.SetColumnIndexAndPreferred(
+                        primaryCursorModifier.SelectionEndingPositionIndex);
+
+                    return Task.CompletedTask;
+                });
+
             await TextEditorCommandDefaultFacts.SelectAll.CommandFunc.Invoke(textEditorCommandArgs);
-            throw new NotImplementedException();
+
+            var outViewModel = textEditorService.ViewModelApi.GetOrDefault(inViewModel.ViewModelKey);
+            Assert.NotNull(outViewModel);
+
+            Assert.Equal(0, outViewModel!.PrimaryCursor.Selection.AnchorPositionIndex);
+            Assert.Equal(inModel.DocumentLength, outViewModel!.PrimaryCursor.Selection.EndingPositionIndex);
         }
     }
 
@@ -432,60 +464,6 @@ public class TextEditorCommandDefaultFactsTests
 	/// </summary>
 	[Fact]
     public async Task Remeasure()
-    {
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorCommandDefaultFacts.ScrollLineDown"/>
-	/// </summary>
-	[Fact]
-    public async Task ScrollLineDown()
-    {
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorCommandDefaultFacts.ScrollLineUp"/>
-	/// </summary>
-	[Fact]
-    public async Task ScrollLineUp()
-    {
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorCommandDefaultFacts.ScrollPageDown"/>
-	/// </summary>
-	[Fact]
-    public async Task ScrollPageDown()
-    {
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorCommandDefaultFacts.ScrollPageUp"/>
-	/// </summary>
-	[Fact]
-    public async Task ScrollPageUp()
-    {
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorCommandDefaultFacts.CursorMovePageBottom"/>
-	/// </summary>
-	[Fact]
-    public async Task CursorMovePageBottom()
-    {
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorCommandDefaultFacts.CursorMovePageTop"/>
-	/// </summary>
-	[Fact]
-    public async Task CursorMovePageTop()
     {
 		throw new NotImplementedException();
 	}
@@ -562,23 +540,77 @@ public class TextEditorCommandDefaultFactsTests
 		throw new NotImplementedException();
 	}
 
-	/// <summary>
-	/// <see cref="TextEditorCommandDefaultFacts.ShowFindDialog"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="TextEditorCommandDefaultFacts.ShowFindDialog"/>
+    /// </summary>
+    [Fact]
     public async Task ShowFindDialog()
     {
-		throw new NotImplementedException();
-	}
+        throw new NotImplementedException();
+    }
 
-	/// <summary>
-	/// <see cref="TextEditorCommandDefaultFacts.ShowTooltipByCursorPosition"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="TextEditorCommandDefaultFacts.ShowTooltipByCursorPosition"/>
+    /// </summary>
+    [Fact]
     public async Task ShowTooltipByCursorPosition()
     {
-		throw new NotImplementedException();
-	}
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+	/// <see cref="TextEditorCommandDefaultFacts.ScrollLineDown"/>
+	/// </summary>
+	[Fact]
+    public async Task ScrollLineDown()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorCommandDefaultFacts.ScrollLineUp"/>
+    /// </summary>
+    [Fact]
+    public async Task ScrollLineUp()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorCommandDefaultFacts.ScrollPageDown"/>
+    /// </summary>
+    [Fact]
+    public async Task ScrollPageDown()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorCommandDefaultFacts.ScrollPageUp"/>
+    /// </summary>
+    [Fact]
+    public async Task ScrollPageUp()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorCommandDefaultFacts.CursorMovePageBottom"/>
+    /// </summary>
+    [Fact]
+    public async Task CursorMovePageBottom()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// <see cref="TextEditorCommandDefaultFacts.CursorMovePageTop"/>
+    /// </summary>
+    [Fact]
+    public async Task CursorMovePageTop()
+    {
+        throw new NotImplementedException();
+    }
 
     private static void InitializeTextEditorCommandDefaultFactsTests(
         out ITextEditorService textEditorService,
