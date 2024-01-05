@@ -192,6 +192,11 @@ public partial class TextEditorModelModifier
         {
             if (TextEditorSelectionHelper.HasSelectedText(cursorModifier))
             {
+                var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
+
+                var lowerRowData = this.GetRowInformation(selectionBounds.lowerPositionIndexInclusive);
+                var lowerColumnIndex = selectionBounds.lowerPositionIndexInclusive - lowerRowData.RowStartPositionIndexInclusive;
+
                 PerformDeletions(
                     new KeyboardEventArgs
                     {
@@ -201,17 +206,9 @@ public partial class TextEditorModelModifier
                     cursorModifierBag,
                     CancellationToken.None);
 
-                var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
-
-                var lowerRowData = this.GetRowInformation(selectionBounds.lowerPositionIndexInclusive);
-                var lowerColumnIndex = selectionBounds.lowerPositionIndexInclusive - lowerRowData.RowStartPositionIndexInclusive;
-
                 // Move cursor to lower bound of text selection
                 cursorModifier.RowIndex = lowerRowData.RowIndex;
-                cursorModifier.ColumnIndex = lowerColumnIndex;
-
-                // Clear selection
-                cursorModifier.SelectionAnchorPositionIndex = null;
+                cursorModifier.SetColumnIndexAndPreferred(lowerColumnIndex);
             }
 
             var startOfRowPositionIndex = this.GetRowEndingThatCreatedRow(cursorModifier.RowIndex).EndPositionIndexExclusive;
