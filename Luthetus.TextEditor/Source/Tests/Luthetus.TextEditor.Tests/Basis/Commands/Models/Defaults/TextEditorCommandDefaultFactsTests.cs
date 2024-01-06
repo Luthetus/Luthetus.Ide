@@ -20,6 +20,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Microsoft.Extensions.DependencyInjection;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Microsoft.AspNetCore.Components.Web;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Commands.Models.Defaults;
 
@@ -447,7 +448,80 @@ public class TextEditorCommandDefaultFactsTests
 	[Fact]
     public async Task Undo()
     {
-		throw new NotImplementedException();
+        // Able to undo
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            // Modify text, as to create an edit which one can then undo
+            {
+                var cursor = new TextEditorCursor(0, 0, true);
+
+                var cursorModificationBag = new TextEditorCursorModifierBag(
+                    Key<TextEditorViewModel>.Empty,
+                    new List<TextEditorCursorModifier> { new TextEditorCursorModifier(cursor) });
+
+                textEditorService.Post(
+                    nameof(TextEditorCommandDefaultFactsTests),
+                    textEditorService.ModelApi.InsertTextUnsafeFactory(
+                        inModel.ResourceUri,
+                        cursorModificationBag,
+                        "zyx",
+                        CancellationToken.None));
+            }
+
+
+            // Assert that the new text is different from the original
+            {
+                var refModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+                Assert.NotNull(refModel);
+
+                var inText = inModel.GetAllText();
+                var refText = refModel!.GetAllText();
+                Assert.NotEqual(inText, refText);
+            }
+            
+            // Invoke the command
+            await TextEditorCommandDefaultFacts.Undo.CommandFunc.Invoke(textEditorCommandArgs);
+
+            // Assert that the text was reverted to the original
+            {
+                var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+                Assert.NotNull(outModel);
+
+                var inText = inModel.GetAllText();
+                var outText = outModel!.GetAllText();
+                Assert.Equal(inText, outText);
+            }
+        }
+
+        // Cannot undo
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            // Capture the current text, as to later be used after the
+            // Undo invocation to Assert the text had not changed.
+            var refModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+            Assert.NotNull(refModel);
+            var refText = refModel!.GetAllText();
+
+            // Invoke the command
+            await TextEditorCommandDefaultFacts.Undo.CommandFunc.Invoke(textEditorCommandArgs);
+
+            // Capture the text, now that the Undo command was invoked.
+            var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+            Assert.NotNull(outModel);
+            var outText = outModel!.GetAllText();
+
+            // Assert that the text immediately BEFORE invoking the 'Undo' command
+            // is equal to the text which one gets AFTER invoking 'Undo'
+            //
+            // This asserts that the 'cannot undo' case does not modify the text in any way.
+            Assert.Equal(refText, outText);
+        }
 	}
 
 	/// <summary>
@@ -456,7 +530,81 @@ public class TextEditorCommandDefaultFactsTests
 	[Fact]
     public async Task Redo()
     {
-		throw new NotImplementedException();
+        // Able to redo
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            // Modify text, as to create an edit which one can then undo
+            {
+                var cursor = new TextEditorCursor(0, 0, true);
+
+                var cursorModificationBag = new TextEditorCursorModifierBag(
+                    Key<TextEditorViewModel>.Empty,
+                    new List<TextEditorCursorModifier> { new TextEditorCursorModifier(cursor) });
+
+                textEditorService.Post(
+                    nameof(TextEditorCommandDefaultFactsTests),
+                    textEditorService.ModelApi.InsertTextUnsafeFactory(
+                        inModel.ResourceUri,
+                        cursorModificationBag,
+                        "zyx",
+                        CancellationToken.None));
+            }
+
+            // Capture the current text, as to later be used after the
+            // Redo invocation to Assert the text has been re-edited.
+            var refModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+            Assert.NotNull(refModel);
+            var refText = refModel!.GetAllText();
+
+            // Undo the previous edit, as to be able to redo an edit
+            {
+                await TextEditorCommandDefaultFacts.Undo.CommandFunc.Invoke(textEditorCommandArgs);
+            }
+            
+            // Redo the previous edit
+            {
+                await TextEditorCommandDefaultFacts.Redo.CommandFunc.Invoke(textEditorCommandArgs);
+            }
+
+            // Assert that the text was re-edited
+            {
+                var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+                Assert.NotNull(outModel);
+
+                var outText = outModel!.GetAllText();
+                Assert.Equal(refText, outText);
+            }
+        }
+
+        // Cannot redo
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            // Capture the current text, as to later be used after the
+            // Redo invocation to Assert the text had not changed.
+            var refModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+            Assert.NotNull(refModel);
+            var refText = refModel!.GetAllText();
+
+            // Invoke the command
+            await TextEditorCommandDefaultFacts.Redo.CommandFunc.Invoke(textEditorCommandArgs);
+
+            // Capture the text, now that the Redo command was invoked.
+            var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+            Assert.NotNull(outModel);
+            var outText = outModel!.GetAllText();
+
+            // Assert that the text immediately BEFORE invoking the 'Redo' command
+            // is equal to the text which one gets AFTER invoking 'Redo'
+            //
+            // This asserts that the 'cannot redo' case does not modify the text in any way.
+            Assert.Equal(refText, outText);
+        }
 	}
 
 	/// <summary>
