@@ -608,21 +608,66 @@ public class TextEditorCommandDefaultFactsTests
 	}
 
 	/// <summary>
-	/// <see cref="TextEditorCommandDefaultFacts.Remeasure"/>
-	/// </summary>
-	[Fact]
-    public async Task Remeasure()
-    {
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
 	/// <see cref="TextEditorCommandDefaultFacts.Duplicate"/>
 	/// </summary>
 	[Fact]
     public async Task Duplicate()
     {
-		throw new NotImplementedException();
+        // No selection
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            // Duplicate with the default Cursor position. This should duplicate the
+            // first row, including its line endings.
+            await TextEditorCommandDefaultFacts.Duplicate.CommandFunc.Invoke(textEditorCommandArgs);
+
+            var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+            Assert.NotNull(outModel);
+            var outText = outModel!.GetAllText();
+            Assert.Equal("Hello World!\n" + TestConstants.SOURCE_TEXT, outText);
+        }
+
+        // With selection
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            textEditorService.Post(
+                nameof(TextEditorCommandDefaultFactsTests),
+                editContext =>
+                {
+                    var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
+
+                    if (modelModifier is null || viewModelModifier is null)
+                        return Task.CompletedTask;
+
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                    if (primaryCursorModifier is null)
+                        return Task.CompletedTask;
+
+                    primaryCursorModifier.RowIndex = 1;
+                    primaryCursorModifier.SetColumnIndexAndPreferred(9);
+                    primaryCursorModifier.SelectionAnchorPositionIndex = 15;
+                    primaryCursorModifier.SelectionEndingPositionIndex = 22;
+
+                    return Task.CompletedTask;
+                });
+
+            // Duplicate with the text selected.
+            // This should duplicate the text 'Pillows' on the second row.
+            await TextEditorCommandDefaultFacts.Duplicate.CommandFunc.Invoke(textEditorCommandArgs);
+
+            var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+            Assert.NotNull(outModel);
+            var outText = outModel!.GetAllText();
+            Assert.Equal(TestConstants.SOURCE_TEXT.Insert(22, "Pillows"), outText);
+        }
 	}
 
 	/// <summary>
@@ -631,8 +676,65 @@ public class TextEditorCommandDefaultFactsTests
 	[Fact]
     public async Task IndentMore()
     {
-		throw new NotImplementedException();
-	}
+        // Invoke IndentMore on 1 row, by selecting a single character,
+        // where the character is NOT at the start or end of the row
+        //
+        // Reasoning: In Luthetus.Ide, this should IndentMore the line on which the selection lies.
+        //            This behavior is not universal however.
+        //            In Visual Studio this will delete the user's selected text, and
+        //            then insert a single tab character.
+        //            
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.IndentMore.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+
+        // Invoke IndentMore on 1 row, by selecting the entire row, including its line ending.
+        //
+        // Reasoning: This should IndentMore a single row.
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.IndentMore.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+
+        // Invoke IndentMore on 2 rows, by selecting the entirety of one row (including its line ending),
+        // and some but NOT all of another row.
+        //
+        // Reasoning: This should IndentMore a 2 rows.
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.IndentMore.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+
+        // Invoke IndentMore on 2 rows, by selecting the entirety of one row (including its line ending),
+        // and the entirety of another row (including its line ending).
+        //
+        // Reasoning: This should IndentMore a 2 rows.
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.IndentMore.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+    }
 
 	/// <summary>
 	/// <see cref="TextEditorCommandDefaultFacts.IndentLess"/>
@@ -640,7 +742,63 @@ public class TextEditorCommandDefaultFactsTests
 	[Fact]
     public async Task IndentLess()
     {
-		throw new NotImplementedException();
+        // Invoke IndentLess on 1 row, by selecting a single character,
+        // where the character is NOT at the start or end of the row
+        //
+        // Reasoning: In Luthetus.Ide, this should IndentLess the line on which the selection lies.
+        //            This behavior is not universal however.
+        //            In Visual Studio this will do nothing.
+        //            
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.IndentLess.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+
+        // Invoke IndentLess on 1 row, by selecting the entire row, including its line ending.
+        //
+        // Reasoning: This should IndentLess a single row.
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.IndentLess.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+
+        // Invoke IndentLess on 2 rows, by selecting the entirety of one row (including its line ending),
+        // and some but NOT all of another row.
+        //
+        // Reasoning: This should IndentLess a 2 rows.
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.IndentLess.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+
+        // Invoke IndentLess on 2 rows, by selecting the entirety of one row (including its line ending),
+        // and the entirety of another row (including its line ending).
+        //
+        // Reasoning: This should IndentLess a 2 rows.
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.IndentLess.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
 	}
 
 	/// <summary>
@@ -693,6 +851,15 @@ public class TextEditorCommandDefaultFactsTests
     /// </summary>
     [Fact]
     public async Task ShowFindDialog()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+	/// <see cref="TextEditorCommandDefaultFacts.Remeasure"/>
+	/// </summary>
+	[Fact]
+    public async Task Remeasure()
     {
         throw new NotImplementedException();
     }
