@@ -807,7 +807,73 @@ public class TextEditorCommandDefaultFactsTests
 	[Fact]
     public async Task ClearTextSelection()
     {
-		throw new NotImplementedException();
+        // No already existing selection
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            var refViewModel = textEditorService.ViewModelApi.GetOrDefault(inViewModel.ViewModelKey);
+            Assert.NotNull(refViewModel);
+            Assert.Null(refViewModel!.PrimaryCursor.Selection.AnchorPositionIndex);
+            Assert.False(TextEditorSelectionHelper.HasSelectedText(refViewModel!.PrimaryCursor.Selection));
+
+            await TextEditorCommandDefaultFacts.ClearTextSelection.CommandFunc.Invoke(textEditorCommandArgs);
+
+            var outViewModel = textEditorService.ViewModelApi.GetOrDefault(inViewModel.ViewModelKey);
+            Assert.NotNull(outViewModel);
+            Assert.Null(outViewModel!.PrimaryCursor.Selection.AnchorPositionIndex);
+            Assert.False(TextEditorSelectionHelper.HasSelectedText(outViewModel!.PrimaryCursor.Selection));
+        }
+
+        // With an already existing selection
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            textEditorService.Post(
+                nameof(TextEditorCommandDefaultFactsTests),
+                editContext =>
+                {
+                    var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
+
+                    if (modelModifier is null || viewModelModifier is null)
+                        return Task.CompletedTask;
+
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                    if (primaryCursorModifier is null)
+                        return Task.CompletedTask;
+
+                    // Select the "Hello" text on the first row
+                    {
+                        primaryCursorModifier.SelectionAnchorPositionIndex = 0;
+                        primaryCursorModifier.SelectionEndingPositionIndex = 5;
+                    }
+
+                    // SetColumnIndexAndPreferred is unnecessary, but the user is likely
+                    // to have their ColumnIndex == SelectionEndingPositionIndex
+                    primaryCursorModifier.SetColumnIndexAndPreferred(
+                        primaryCursorModifier.SelectionEndingPositionIndex);
+
+                    return Task.CompletedTask;
+                });
+
+            var refViewModel = textEditorService.ViewModelApi.GetOrDefault(inViewModel.ViewModelKey);
+            Assert.NotNull(refViewModel);
+            Assert.NotNull(refViewModel!.PrimaryCursor.Selection.AnchorPositionIndex);
+            Assert.True(TextEditorSelectionHelper.HasSelectedText(refViewModel!.PrimaryCursor.Selection));
+
+            await TextEditorCommandDefaultFacts.ClearTextSelection.CommandFunc.Invoke(textEditorCommandArgs);
+
+            var outViewModel = textEditorService.ViewModelApi.GetOrDefault(inViewModel.ViewModelKey);
+            Assert.NotNull(outViewModel);
+            Assert.Null(outViewModel!.PrimaryCursor.Selection.AnchorPositionIndex);
+            Assert.False(TextEditorSelectionHelper.HasSelectedText(outViewModel!.PrimaryCursor.Selection));
+        }
 	}
 
 	/// <summary>
@@ -816,8 +882,103 @@ public class TextEditorCommandDefaultFactsTests
 	[Fact]
     public async Task NewLineBelow()
     {
-		throw new NotImplementedException();
-	}
+        // RowIndex == 0 && ColumnIndex == 0
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+
+        // RowIndex is firstRow
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+
+        // RowIndex is not firstRow, nor lastRow
+        {
+
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+
+        // RowIndex is lastRow
+        {
+
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+        
+        // RowIndex == document.RowCount
+        //
+        // That is to say, the final character in the document is a line ending.
+        // Because a cursor can go 1 character further than the document's length,
+        // what happens here?
+        {
+
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+
+        // Cursor exists at the start of a row
+        // (Note: the cursor is at a column index of 0)
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+
+        // Cursor exists at neither the start of a row, nor the end of a row
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+
+        // Cursor exists at the end of a row
+        // (Note: the cursor is immediately before a line ending)
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+    }
 
 	/// <summary>
 	/// <see cref="TextEditorCommandDefaultFacts.NewLineAbove"/>
@@ -825,7 +986,102 @@ public class TextEditorCommandDefaultFactsTests
 	[Fact]
     public async Task NewLineAbove()
     {
-		throw new NotImplementedException();
+        // RowIndex == 0 && ColumnIndex == 0
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+
+        // RowIndex is firstRow
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+
+        // RowIndex is not firstRow, nor lastRow
+        {
+
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+
+        // RowIndex is lastRow
+        {
+
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+
+        // RowIndex == document.RowCount
+        //
+        // That is to say, the final character in the document is a line ending.
+        // Because a cursor can go 1 character further than the document's length,
+        // what happens here?
+        {
+
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+
+        // Cursor exists at the start of a row
+        // (Note: the cursor is at a column index of 0)
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+
+        // Cursor exists at neither the start of a row, nor the end of a row
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+
+        // Cursor exists at the end of a row
+        // (Note: the cursor is immediately before a line ending)
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
 	}
 
 	/// <summary>
