@@ -446,8 +446,12 @@ public class TextEditorCommandDefaultFunctions
             var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-            if (cursorModifierBag is null || primaryCursorModifier is null)
+            if (cursorModifierBag is null ||
+                primaryCursorModifier is null ||
+                !TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier))
+            {
                 return Task.CompletedTask;
+            }
 
             var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(
                 primaryCursorModifier);
