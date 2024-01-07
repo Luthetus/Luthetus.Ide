@@ -460,11 +460,15 @@ public class TextEditorCommandDefaultFunctions
                  i < selectionBoundsInRowIndexUnits.upperRowIndexExclusive;
                  i++)
             {
-                var cursorForInsertion = new TextEditorCursor(i, 0, true);
+                var insertionCursor = new TextEditorCursor(i, 0, true);
+
+                var insertionCursorModifierBag = new TextEditorCursorModifierBag(
+                    Key<TextEditorViewModel>.Empty,
+                    new List<TextEditorCursorModifier> { new TextEditorCursorModifier(insertionCursor) });
 
                 modelModifier.EditByInsertion(
                     KeyboardKeyFacts.WhitespaceCharacters.TAB.ToString(),
-                    cursorModifierBag,
+                    insertionCursorModifierBag,
                     CancellationToken.None);
             }
 
@@ -491,11 +495,7 @@ public class TextEditorCommandDefaultFunctions
                     lowerBoundPositionIndexChange;
             }
 
-            var userCursorRowIndex = primaryCursorModifier.RowIndex;
-            var userCursorColumnIndex = primaryCursorModifier.ColumnIndex;
-
-            primaryCursorModifier.RowIndex = userCursorRowIndex;
-            primaryCursorModifier.ColumnIndex = userCursorColumnIndex + 1;
+            primaryCursorModifier.SetColumnIndexAndPreferred(1 + primaryCursorModifier.ColumnIndex);
 
             return Task.CompletedTask;
         };

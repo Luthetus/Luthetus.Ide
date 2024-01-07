@@ -132,14 +132,24 @@ public static class TextEditorSelectionHelper
         (int lowerPositionIndexInclusive, int upperPositionIndexExclusive) positionIndexBounds)
     {
         var firstRowToSelectDataInclusive = textEditorModel.GetRowInformation(
-                positionIndexBounds.lowerPositionIndexInclusive)
-            .RowIndex;
+            positionIndexBounds.lowerPositionIndexInclusive);
 
         var lastRowToSelectDataExclusive = textEditorModel.GetRowInformation(
-                positionIndexBounds.upperPositionIndexExclusive)
-            .RowIndex +
-            1;
+            positionIndexBounds.upperPositionIndexExclusive);
 
-        return (firstRowToSelectDataInclusive, lastRowToSelectDataExclusive);
+        var upperRowIndexExclusive = lastRowToSelectDataExclusive.RowIndex + 1;
+
+        if (lastRowToSelectDataExclusive.RowStartPositionIndexInclusive ==
+                positionIndexBounds.upperPositionIndexExclusive)
+        {
+            // If the selection ends at the start of a row, then an extra row
+            // will be erroneously indended. This occurs because the '+1' logic
+            // is used to ensure partially selected rows still get indented.
+            upperRowIndexExclusive--;
+        }
+
+        return (
+            firstRowToSelectDataInclusive.RowIndex,
+            upperRowIndexExclusive);
     }
 }

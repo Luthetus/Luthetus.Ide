@@ -21,6 +21,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using System.Linq;
 
 namespace Luthetus.TextEditor.Tests.Basis.Commands.Models.Defaults;
 
@@ -689,9 +690,73 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorService, out var inModel, out var inViewModel,
                 out var textEditorCommandArgs, out var serviceProvider);
 
+            textEditorService.Post(
+                nameof(TextEditorCommandDefaultFactsTests),
+                editContext =>
+                {
+                    var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
+
+                    if (modelModifier is null || viewModelModifier is null)
+                        return Task.CompletedTask;
+
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                    if (primaryCursorModifier is null)
+                        return Task.CompletedTask;
+
+                    primaryCursorModifier.RowIndex = 1;
+                    primaryCursorModifier.SetColumnIndexAndPreferred(3);
+                    primaryCursorModifier.SelectionAnchorPositionIndex = 15;
+                    primaryCursorModifier.SelectionEndingPositionIndex = 16;
+
+                    // Assert that the text selected, is what was planned
+                    {
+                        var selectedText = TextEditorSelectionHelper.GetSelectedText(
+                            primaryCursorModifier,
+                            modelModifier);
+
+                        Assert.Equal("P", selectedText);
+                    }
+
+                    return Task.CompletedTask;
+                });
+
             await TextEditorCommandDefaultFacts.IndentMore.CommandFunc.Invoke(textEditorCommandArgs);
 
-            throw new NotImplementedException();
+            // Assert that the row(s) were indented: "7 Pillows\n" -> "\t7 Pillows\n"
+            {
+                var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+                Assert.NotNull(outModel);
+
+                var textOnRow = new string(outModel!
+                    .GetRows(1, 1)
+                    .Single()
+                    .Select(x => x.Value)
+                    .ToArray());
+
+                Assert.Equal("\t7 Pillows\n", textOnRow);
+            }
+
+            // Assert that the viewModel's cursor was moved properly (including its selection)
+            {
+                var outViewModel = textEditorService.ViewModelApi.GetOrDefault(inViewModel.ViewModelKey);
+                Assert.NotNull(outViewModel);
+                var primaryCursor = outViewModel!.PrimaryCursor;
+
+                // The row index should be unchanged
+                Assert.Equal(1, primaryCursor.RowIndex);
+
+                Assert.Equal(4, primaryCursor.ColumnIndex);
+                // Assert column and preferred indices to ensure both were set,
+                // as opposed to only ColumnIndex and forgetting to also change PreferredColumnIndex.
+                Assert.Equal(primaryCursor.ColumnIndex, primaryCursor.PreferredColumnIndex);
+
+                // Due to the insertion of a '\t' character, the selection should move 1 character further
+                Assert.Equal(16, primaryCursor.Selection.AnchorPositionIndex);
+                Assert.Equal(17, primaryCursor.Selection.EndingPositionIndex);
+            }
         }
 
         // Invoke IndentMore on 1 row, by selecting the entire row, including its line ending.
@@ -702,9 +767,73 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorService, out var inModel, out var inViewModel,
                 out var textEditorCommandArgs, out var serviceProvider);
 
+            textEditorService.Post(
+                nameof(TextEditorCommandDefaultFactsTests),
+                editContext =>
+                {
+                    var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
+
+                    if (modelModifier is null || viewModelModifier is null)
+                        return Task.CompletedTask;
+
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                    if (primaryCursorModifier is null)
+                        return Task.CompletedTask;
+
+                    primaryCursorModifier.RowIndex = 1;
+                    primaryCursorModifier.SetColumnIndexAndPreferred(0);
+                    primaryCursorModifier.SelectionAnchorPositionIndex = 13;
+                    primaryCursorModifier.SelectionEndingPositionIndex = 23;
+
+                    // Assert that the text selected, is what was planned
+                    {
+                        var selectedText = TextEditorSelectionHelper.GetSelectedText(
+                            primaryCursorModifier,
+                            modelModifier);
+
+                        Assert.Equal("7 Pillows\n", selectedText);
+                    }
+
+                    return Task.CompletedTask;
+                });
+
             await TextEditorCommandDefaultFacts.IndentMore.CommandFunc.Invoke(textEditorCommandArgs);
 
-            throw new NotImplementedException();
+            // Assert that the row(s) were indented: "7 Pillows\n" -> "\t7 Pillows\n"
+            {
+                var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+                Assert.NotNull(outModel);
+
+                var textOnRow = new string(outModel!
+                    .GetRows(1, 1)
+                    .Single()
+                    .Select(x => x.Value)
+                    .ToArray());
+
+                Assert.Equal("\t7 Pillows\n", textOnRow);
+            }
+
+            // Assert that the viewModel's cursor was moved properly (including its selection)
+            {
+                var outViewModel = textEditorService.ViewModelApi.GetOrDefault(inViewModel.ViewModelKey);
+                Assert.NotNull(outViewModel);
+                var primaryCursor = outViewModel!.PrimaryCursor;
+
+                // The row index should be unchanged
+                Assert.Equal(1, primaryCursor.RowIndex);
+
+                Assert.Equal(1, primaryCursor.ColumnIndex);
+                // Assert column and preferred indices to ensure both were set,
+                // as opposed to only ColumnIndex and forgetting to also change PreferredColumnIndex.
+                Assert.Equal(primaryCursor.ColumnIndex, primaryCursor.PreferredColumnIndex);
+
+                // Due to the insertion of a '\t' character, the selection should move 1 character further
+                Assert.Equal(14, primaryCursor.Selection.AnchorPositionIndex);
+                Assert.Equal(24, primaryCursor.Selection.EndingPositionIndex);
+            }
         }
 
         // Invoke IndentMore on 2 rows, by selecting the entirety of one row (including its line ending),
@@ -716,15 +845,90 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorService, out var inModel, out var inViewModel,
                 out var textEditorCommandArgs, out var serviceProvider);
 
+            textEditorService.Post(
+                nameof(TextEditorCommandDefaultFactsTests),
+                editContext =>
+                {
+                    var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
+
+                    if (modelModifier is null || viewModelModifier is null)
+                        return Task.CompletedTask;
+
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                    if (primaryCursorModifier is null)
+                        return Task.CompletedTask;
+
+                    primaryCursorModifier.RowIndex = 0;
+                    primaryCursorModifier.SetColumnIndexAndPreferred(0);
+                    primaryCursorModifier.SelectionAnchorPositionIndex = 0;
+                    primaryCursorModifier.SelectionEndingPositionIndex = 16;
+
+                    // Assert that the text selected, is what was planned
+                    {
+                        var selectedText = TextEditorSelectionHelper.GetSelectedText(
+                            primaryCursorModifier,
+                            modelModifier);
+
+                        Assert.Equal("Hello World!\n7 P", selectedText);
+                    }
+
+                    return Task.CompletedTask;
+                });
+
             await TextEditorCommandDefaultFacts.IndentMore.CommandFunc.Invoke(textEditorCommandArgs);
 
-            throw new NotImplementedException();
+            // Assert that the row(s) were indented:
+            //     "Hello World!\n7 Pillows\n" -> "\tHello World!\n\t7 Pillows\n"
+            {
+                var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+                Assert.NotNull(outModel);
+
+                var textOnRow = string.Join(string.Empty, outModel!
+                    .GetRows(0, 2)
+                    .SelectMany(x => new string(x.Select(y => y.Value).ToArray()))
+                    .ToArray());
+
+                Assert.Equal("\tHello World!\n\t7 Pillows\n", textOnRow);
+            }
+
+            // Assert that the viewModel's cursor was moved properly (including its selection)
+            {
+                var outViewModel = textEditorService.ViewModelApi.GetOrDefault(inViewModel.ViewModelKey);
+                Assert.NotNull(outViewModel);
+                var primaryCursor = outViewModel!.PrimaryCursor;
+
+                // The row index should be unchanged
+                Assert.Equal(0, primaryCursor.RowIndex);
+
+                Assert.Equal(1, primaryCursor.ColumnIndex);
+                // Assert column and preferred indices to ensure both were set,
+                // as opposed to only ColumnIndex and forgetting to also change PreferredColumnIndex.
+                Assert.Equal(primaryCursor.ColumnIndex, primaryCursor.PreferredColumnIndex);
+
+                // Due to the insertion of a '\t' character, the selection should move 1 character further
+                Assert.Equal(1, primaryCursor.Selection.AnchorPositionIndex);
+                Assert.Equal(18, primaryCursor.Selection.EndingPositionIndex);
+            }
         }
 
         // Invoke IndentMore on 2 rows, by selecting the entirety of one row (including its line ending),
         // and the entirety of another row (including its line ending).
         //
         // Reasoning: This should IndentMore a 2 rows.
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            await TextEditorCommandDefaultFacts.IndentMore.CommandFunc.Invoke(textEditorCommandArgs);
+
+            throw new NotImplementedException();
+        }
+
+        // Invoke IndentMore without a selection
         {
             InitializeTextEditorCommandDefaultFactsTests(
                 out var textEditorService, out var inModel, out var inViewModel,
