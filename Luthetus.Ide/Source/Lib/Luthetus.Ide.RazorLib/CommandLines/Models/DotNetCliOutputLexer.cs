@@ -39,7 +39,7 @@ public static class DotNetCliOutputLexer
                 switch (stringWalker.CurrentCharacter)
                 {
                     case 'T':
-                        if (stringWalker.CheckForSubstring(keywordTags))
+                        if (stringWalker.PeekForSubstring(keywordTags))
                         {
                             // The '-1' is due to the while loop always reading a character at the end.
                             _ = stringWalker.ReadRange(keywordTags.Length - 1);

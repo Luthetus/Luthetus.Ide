@@ -2,6 +2,8 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.Tests.Basis.TextEditors.Models.TextEditorServices;
+using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
@@ -27,6 +29,13 @@ public class StringWalkerTests
 	/// <see cref="StringWalker.PeekRange(int, int)"/>
 	/// <see cref="StringWalker.BacktrackRange(int)"/>
 	/// <see cref="StringWalker.PeekNextWord()"/>
+	/// <see cref="StringWalker.PeekForSubstring(string)"/>
+	/// <see cref="StringWalker.PeekForSubstringRange(ImmutableArray{string}, out string?)"/>
+	/// <see cref="StringWalker.ReadWhitespace(IEnumerable{char}?)"/>
+	/// <see cref="StringWalker.ReadUnsignedNumericLiteral()"/>
+	/// <see cref="StringWalker.ReadUntil(char)"/>
+    /// <see cref="StringWalker.ReadLine()"/>
+    /// <see cref="StringWalker.ReadWordTuple(ImmutableArray{char}?)"/>
     /// </summary>
     [Fact]
 	public void Constructor()
@@ -174,69 +183,206 @@ public class StringWalkerTests
             }
         }
 
-        throw new NotImplementedException();
-	}
+		// Peek for substring
+		{
+			Assert.False(stringWalker.PeekForSubstring("AlphabetSoup"));
+			Assert.True(stringWalker.PeekForSubstring("Hello"));
 
-	/// <summary>
-	/// <see cref="StringWalker.CheckForSubstring(string)"/>
-	/// </summary>
-	[Fact]
-	public void CheckForSubstring()
-	{
-		throw new NotImplementedException();
-	}
+            // Assert values of Properties.
+            // The values should not have changed from 'Peek the next word' since a peek was performed.
+            {
+                Assert.Equal(0, stringWalker.PositionIndex);
+                Assert.Equal(resourceUri, stringWalker.ResourceUri);
+                Assert.Equal(sourceText, stringWalker.SourceText);
+                Assert.Equal('H', stringWalker.CurrentCharacter);
+                Assert.Equal('e', stringWalker.NextCharacter);
+                Assert.Equal("Hello World!\n7 Pillows\n \n,abc123", stringWalker.RemainingText);
+                Assert.False(stringWalker.IsEof);
+            }
+        }
 
-	/// <summary>
-	/// <see cref="StringWalker.CheckForSubstringRange(System.Collections.Immutable.ImmutableArray{string}, out string?)"/>
-	/// </summary>
-	[Fact]
-	public void CheckForSubstringRange()
-	{
-		throw new NotImplementedException();
-	}
+		// Peek for a range of substrings
+		{
+			var substringsBag = new List<string> 
+			{
+                "AlphabetSoup",
+				"Abc123",
+				"Apple Sauce"
+            };
 
-	/// <summary>
-	/// <see cref="StringWalker.ReadWhitespace(IEnumerable{char}?)"/>
-	/// </summary>
-	[Fact]
+			// A false result
+			{
+                Assert.False(stringWalker.PeekForSubstringRange(
+					substringsBag.ToImmutableArray(),
+					out var matchedOn));
+
+                Assert.Null(matchedOn);
+            }
+
+			// A true result
+			{
+				substringsBag.Add("Hello");
+
+                Assert.True(stringWalker.PeekForSubstringRange(
+                    substringsBag.ToImmutableArray(),
+                    out var matchedOn));
+
+                Assert.Equal("Hello", matchedOn);
+            }
+
+            // Assert values of Properties.
+            // The values should not have changed from 'Peek for substring' since a peek was performed.
+            {
+                Assert.Equal(0, stringWalker.PositionIndex);
+                Assert.Equal(resourceUri, stringWalker.ResourceUri);
+                Assert.Equal(sourceText, stringWalker.SourceText);
+                Assert.Equal('H', stringWalker.CurrentCharacter);
+                Assert.Equal('e', stringWalker.NextCharacter);
+                Assert.Equal("Hello World!\n7 Pillows\n \n,abc123", stringWalker.RemainingText);
+                Assert.False(stringWalker.IsEof);
+            }
+        }
+
+        // Read until a character
+        {
+            var expectedOutput = "Hello" + ' ';
+            var actualOutput = stringWalker.ReadUntil('W');
+
+            Assert.Equal(expectedOutput, actualOutput);
+
+            // Assert values of Properties.
+            {
+                Assert.Equal(expectedOutput.Length, stringWalker.PositionIndex);
+                Assert.Equal(resourceUri, stringWalker.ResourceUri);
+                Assert.Equal(sourceText, stringWalker.SourceText);
+                Assert.Equal('W', stringWalker.CurrentCharacter);
+                Assert.Equal('o', stringWalker.NextCharacter);
+                Assert.Equal("World!\n7 Pillows\n \n,abc123", stringWalker.RemainingText);
+                Assert.False(stringWalker.IsEof);
+            }
+        }
+
+        // Read a line
+        {
+            var expectedOutput = "World!";
+            var actualOutput = stringWalker.ReadLine();
+            
+            Assert.Equal(expectedOutput, actualOutput);
+
+            // Assert values of Properties.
+            {
+                Assert.Equal(12, stringWalker.PositionIndex);
+                Assert.Equal(resourceUri, stringWalker.ResourceUri);
+                Assert.Equal(sourceText, stringWalker.SourceText);
+                Assert.Equal('\n', stringWalker.CurrentCharacter);
+                Assert.Equal('7', stringWalker.NextCharacter);
+                Assert.Equal("\n7 Pillows\n \n,abc123", stringWalker.RemainingText);
+                Assert.False(stringWalker.IsEof);
+            }
+        }
+
+        // Read a word-tuple
+        {
+            // Read whitespace as to position the cursor at a word.
+            _ = stringWalker.ReadWhitespace();
+
+            var textSpan = new TextEditorTextSpan(
+                13,
+                14,
+                (byte)GenericDecorationKind.None,
+                resourceUri,
+                sourceText);
+
+            var expectedOutput = (textSpan, "7");
+            var actualOutput = stringWalker.ReadWordTuple();
+
+            Assert.Equal(expectedOutput, actualOutput);
+        }
+	}
+    
+    /// <summary>
+    /// <see cref="StringWalker.ReadUnsignedNumericLiteral()"/>
+    /// </summary>
+    [Fact]
+    public void ReadUnsignedNumericLiteral()
+    {
+        // No decimal place
+        {
+            var resourceUri = new ResourceUri("/unitTesting.txt");
+            var sourceText = "123abc";
+
+            var stringWalker = new StringWalker(
+                resourceUri,
+                sourceText);
+
+            var numeric = stringWalker.ReadUnsignedNumericLiteral();
+            Assert.Equal("123", numeric.TextSpan.GetText());
+        }
+        
+        // With decimal place
+        {
+            var resourceUri = new ResourceUri("/unitTesting.txt");
+            var sourceText = "123.456abc";
+
+            var stringWalker = new StringWalker(
+                resourceUri,
+                sourceText);
+
+            var numeric = stringWalker.ReadUnsignedNumericLiteral();
+            Assert.Equal("123.456", numeric.TextSpan.GetText());
+        }
+        
+        // With decimal place AND a period character
+        {
+            var resourceUri = new ResourceUri("/unitTesting.txt");
+            var sourceText = "123.456.abc";
+
+            var stringWalker = new StringWalker(
+                resourceUri,
+                sourceText);
+
+            var numeric = stringWalker.ReadUnsignedNumericLiteral();
+            Assert.Equal("123.456", numeric.TextSpan.GetText());
+        }
+    }
+
+    /// <summary>
+    /// <see cref="StringWalker.ReadWhitespace(IEnumerable{char}?)"/>
+    /// </summary>
+    [Fact]
 	public void ReadWhitespace()
 	{
-		throw new NotImplementedException();
-	}
+        // No whitespaceOverrideBag
+        {
+            var resourceUri = new ResourceUri("/unitTesting.txt");
+            var sourceText = ' ' + "\t\r\n\n\rApple";
 
-	/// <summary>
-	/// <see cref="StringWalker.ReadUnsignedNumericLiteral()"/>
-	/// </summary>
-	[Fact]
-	public void ReadUnsignedNumericLiteral()
-	{
-		throw new NotImplementedException();
-	}
+            var stringWalker = new StringWalker(
+                resourceUri,
+                sourceText);
 
-	/// <summary>
-	/// <see cref="StringWalker.ReadUntil(char)"/>
-	/// </summary>
-	[Fact]
-	public void ReadUntil()
-	{
-		throw new NotImplementedException();
-	}
+            var whitespace = stringWalker.ReadWhitespace();
+            Assert.Equal(' ' + "\t\r\n\n\r", whitespace);
+            Assert.Equal('A', stringWalker.CurrentCharacter);
+        }
 
-	/// <summary>
-	/// <see cref="StringWalker.ReadLine()"/>
-	/// </summary>
-	[Fact]
-	public void ReadLine()
-	{
-		throw new NotImplementedException();
-	}
+        // With whitespaceOverrideBag
+        {
+            var resourceUri = new ResourceUri("/unitTesting.txt");
+            var sourceText = ' ' + "\t\r\n\n\rApple";
 
-	/// <summary>
-	/// <see cref="StringWalker.ReadWordTuple(System.Collections.Immutable.ImmutableArray{char}?)"/>
-	/// </summary>
-	[Fact]
-	public void ReadWordTuple()
-	{
-		throw new NotImplementedException();
+            var stringWalker = new StringWalker(
+                resourceUri,
+                sourceText);
+
+            List<char> whitespaceOverrideBag = new List<char>
+            {
+                WhitespaceFacts.SPACE,
+            };
+
+            var whitespace = stringWalker.ReadWhitespace(whitespaceOverrideBag);
+            Assert.Equal(" ", whitespace);
+            Assert.Equal('\t', stringWalker.CurrentCharacter);
+        }
 	}
 }

@@ -28,7 +28,7 @@ public class CssSyntaxTree
             if (char.IsLetterOrDigit(stringWalker.CurrentCharacter))
                 ConsumeIdentifier(stringWalker, cssDocumentChildren, textEditorCssDiagnosticBag);
 
-            if (stringWalker.CheckForSubstring(CssFacts.COMMENT_START))
+            if (stringWalker.PeekForSubstring(CssFacts.COMMENT_START))
                 ConsumeComment(stringWalker, cssDocumentChildren, textEditorCssDiagnosticBag);
 
             if (stringWalker.CurrentCharacter == CssFacts.STYLE_BLOCK_START)
@@ -70,7 +70,7 @@ public class CssSyntaxTree
             _ = stringWalker.ReadCharacter();
 
             var closingOfCommentTextFound = stringWalker
-                .CheckForSubstring(CssFacts.COMMENT_END);
+                .PeekForSubstring(CssFacts.COMMENT_END);
 
             if (closingOfCommentTextFound)
             {
@@ -122,7 +122,7 @@ public class CssSyntaxTree
                 if (stringWalker.CurrentCharacter == CssFacts.STYLE_BLOCK_END)
                     break;
 
-                if (stringWalker.CheckForSubstring(CssFacts.COMMENT_START))
+                if (stringWalker.PeekForSubstring(CssFacts.COMMENT_START))
                 {
                     ConsumeComment(stringWalker, cssDocumentChildren, diagnosticBag);
                     continue;

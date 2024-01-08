@@ -25,22 +25,22 @@ public class GenericSyntaxTree
 
         while (!stringWalker.IsEof)
         {
-            if (stringWalker.CheckForSubstring(GenericLanguageDefinition.StringStart))
+            if (stringWalker.PeekForSubstring(GenericLanguageDefinition.StringStart))
             {
                 var genericStringSyntax = ParseString(stringWalker, diagnosticBag);
                 documentChildBag.Add(genericStringSyntax);
             }
-            else if (stringWalker.CheckForSubstring(GenericLanguageDefinition.CommentSingleLineStart))
+            else if (stringWalker.PeekForSubstring(GenericLanguageDefinition.CommentSingleLineStart))
             {
                 var genericCommentSingleLineSyntax = ParseCommentSingleLine(stringWalker, diagnosticBag);
                 documentChildBag.Add(genericCommentSingleLineSyntax);
             }
-            else if (stringWalker.CheckForSubstring(GenericLanguageDefinition.CommentMultiLineStart))
+            else if (stringWalker.PeekForSubstring(GenericLanguageDefinition.CommentMultiLineStart))
             {
                 var genericCommentMultiLineSyntax = ParseCommentMultiLine(stringWalker, diagnosticBag);
                 documentChildBag.Add(genericCommentMultiLineSyntax);
             }
-            else if (stringWalker.CheckForSubstring(GenericLanguageDefinition.FunctionInvocationStart))
+            else if (stringWalker.PeekForSubstring(GenericLanguageDefinition.FunctionInvocationStart))
             {
                 if (TryParseFunctionIdentifier(stringWalker, diagnosticBag, out var genericFunctionSyntax) &&
                     genericFunctionSyntax is not null)
@@ -57,7 +57,7 @@ public class GenericSyntaxTree
                     documentChildBag.Add(genericKeywordSyntax);
                 }
             }
-            else if (stringWalker.CheckForSubstring(GenericLanguageDefinition.PreprocessorDefinition.TransitionSubstring))
+            else if (stringWalker.PeekForSubstring(GenericLanguageDefinition.PreprocessorDefinition.TransitionSubstring))
             {
                 var genericCommentMultiLineSyntax = ParsePreprocessorDirective(stringWalker, diagnosticBag);
                 documentChildBag.Add(genericCommentMultiLineSyntax);
@@ -87,7 +87,7 @@ public class GenericSyntaxTree
         {
             _ = stringWalker.ReadCharacter();
 
-            if (stringWalker.CheckForSubstringRange(
+            if (stringWalker.PeekForSubstringRange(
                     GenericLanguageDefinition.CommentSingleLineEndingsBag,
                     out _))
             {
@@ -126,7 +126,7 @@ public class GenericSyntaxTree
         {
             _ = stringWalker.ReadCharacter();
 
-            if (stringWalker.CheckForSubstring(GenericLanguageDefinition.CommentMultiLineEnd))
+            if (stringWalker.PeekForSubstring(GenericLanguageDefinition.CommentMultiLineEnd))
                 break;
         }
 
@@ -161,7 +161,7 @@ public class GenericSyntaxTree
         {
             _ = stringWalker.ReadCharacter();
 
-            if (stringWalker.CheckForSubstring(GenericLanguageDefinition.StringEnd))
+            if (stringWalker.PeekForSubstring(GenericLanguageDefinition.StringEnd))
                 break;
         }
 
@@ -263,8 +263,8 @@ public class GenericSyntaxTree
                     break;
             }
             else if (KeyboardKeyFacts.IsPunctuationCharacter(stringWalker.CurrentCharacter) ||
-                     stringWalker.CheckForSubstring(GenericLanguageDefinition.MemberAccessToken) ||
-                     stringWalker.CheckForSubstring(GenericLanguageDefinition.FunctionInvocationEnd))
+                     stringWalker.PeekForSubstring(GenericLanguageDefinition.MemberAccessToken) ||
+                     stringWalker.PeekForSubstring(GenericLanguageDefinition.FunctionInvocationEnd))
             {
                 break;
             }
@@ -370,7 +370,7 @@ public class GenericSyntaxTree
 
         foreach (var deliminationExtendedSyntax in GenericLanguageDefinition.PreprocessorDefinition.DeliminationExtendedSyntaxBag)
         {
-            if (stringWalker.CheckForSubstring(deliminationExtendedSyntax.SyntaxStart))
+            if (stringWalker.PeekForSubstring(deliminationExtendedSyntax.SyntaxStart))
             {
                 matchedDeliminationExtendedSyntax = deliminationExtendedSyntax;
                 break;
@@ -384,7 +384,7 @@ public class GenericSyntaxTree
 
             while (!stringWalker.IsEof)
             {
-                if (stringWalker.CheckForSubstring(matchedDeliminationExtendedSyntax.SyntaxEnd))
+                if (stringWalker.PeekForSubstring(matchedDeliminationExtendedSyntax.SyntaxEnd))
                 {
                     _ = stringWalker.ReadCharacter();
                     break;

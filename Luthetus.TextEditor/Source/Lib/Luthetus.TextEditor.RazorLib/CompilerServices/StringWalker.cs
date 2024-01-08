@@ -154,16 +154,16 @@ public class StringWalker
     }
 
     /// <summary>Form a substring of the <see cref="SourceText" /> that starts inclusively at the index <see cref="PositionIndex" /> and has a maximum length of <see cref="substring" />.Length.<br /><br />This method uses <see cref="PeekRange" /> internally and therefore will return a string that ends with <see cref="ParserFacts.END_OF_FILE" /> if an index out of bounds read was performed on <see cref="SourceText" /></summary>
-    public bool CheckForSubstring(string substring)
+    public bool PeekForSubstring(string substring)
     {
         return PeekRange(0, substring.Length) == substring;
     }
 
-    public bool CheckForSubstringRange(ImmutableArray<string> substringsBag, out string? matchedOn)
+    public bool PeekForSubstringRange(ImmutableArray<string> substringsBag, out string? matchedOn)
     {
         foreach (var substring in substringsBag)
         {
-            if (CheckForSubstring(substring))
+            if (PeekForSubstring(substring))
             {
                 matchedOn = substring;
                 return true;
@@ -239,6 +239,9 @@ public class StringWalker
         return textBuilder.ToString();
     }
 
+    /// <summary>
+    /// The line ending is NOT included in the returned string
+    /// </summary>
     public string ReadLine()
     {
         var textBuilder = new StringBuilder();

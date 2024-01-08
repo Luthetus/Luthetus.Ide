@@ -56,7 +56,7 @@ public static class HtmlSyntaxTree
             LuthetusDiagnosticBag diagnosticBag,
             InjectedLanguageDefinition? injectedLanguageDefinition)
         {
-            if (stringWalker.CheckForSubstring(
+            if (stringWalker.PeekForSubstring(
                     HtmlFacts.COMMENT_TAG_BEGINNING))
             {
                 return ParseComment(
@@ -112,7 +112,7 @@ public static class HtmlSyntaxTree
                     return tagBuilder.Build();
                 }
 
-                if (stringWalker.CheckForSubstring(HtmlFacts.OPEN_TAG_WITH_CHILD_CONTENT_ENDING))
+                if (stringWalker.PeekForSubstring(HtmlFacts.OPEN_TAG_WITH_CHILD_CONTENT_ENDING))
                 {
                     // Ending of opening tag
                     tagBuilder.HtmlSyntaxKind = HtmlSyntaxKind.TagOpeningNode;
@@ -127,7 +127,7 @@ public static class HtmlSyntaxTree
 
                     // TODO: check that the closing tag name matches the opening tag
                 }
-                else if (stringWalker.CheckForSubstring(HtmlFacts.OPEN_TAG_SELF_CLOSING_ENDING))
+                else if (stringWalker.PeekForSubstring(HtmlFacts.OPEN_TAG_SELF_CLOSING_ENDING))
                 {
                     _ = stringWalker.ReadRange(
                             HtmlFacts.OPEN_TAG_SELF_CLOSING_ENDING
@@ -138,7 +138,7 @@ public static class HtmlSyntaxTree
 
                     return tagBuilder.Build();
                 }
-                else if (stringWalker.CheckForSubstring(HtmlFacts.CLOSE_TAG_WITH_CHILD_CONTENT_BEGINNING))
+                else if (stringWalker.PeekForSubstring(HtmlFacts.CLOSE_TAG_WITH_CHILD_CONTENT_BEGINNING))
                 {
                     tagBuilder.HtmlSyntaxKind = HtmlSyntaxKind.TagClosingNode;
 
@@ -152,7 +152,7 @@ public static class HtmlSyntaxTree
 
                     while (!stringWalker.IsEof)
                     {
-                        if (stringWalker.CheckForSubstring(HtmlFacts.CLOSE_TAG_WITH_CHILD_CONTENT_ENDING))
+                        if (stringWalker.PeekForSubstring(HtmlFacts.CLOSE_TAG_WITH_CHILD_CONTENT_ENDING))
                         {
                             tagBuilder.CloseTagNameSyntax = new TagNameNode(
                                 new(closeTagNameStartingPositionIndex, stringWalker, (byte)HtmlDecorationKind.TagName));
@@ -208,7 +208,7 @@ public static class HtmlSyntaxTree
 
             while (!stringWalker.IsEof)
             {
-                if (stringWalker.CheckForSubstringRange(HtmlFacts.TAG_NAME_STOP_DELIMITERS, out var matchedOn))
+                if (stringWalker.PeekForSubstringRange(HtmlFacts.TAG_NAME_STOP_DELIMITERS, out var matchedOn))
                     break;
 
                 tagNameBuilder.Append(stringWalker.CurrentCharacter);
@@ -294,7 +294,7 @@ public static class HtmlSyntaxTree
 
             while (!stringWalker.IsEof)
             {
-                if (stringWalker.CheckForSubstring(HtmlFacts.CLOSE_TAG_WITH_CHILD_CONTENT_BEGINNING))
+                if (stringWalker.PeekForSubstring(HtmlFacts.CLOSE_TAG_WITH_CHILD_CONTENT_BEGINNING))
                     break;
 
                 if (stringWalker.CurrentCharacter == HtmlFacts.OPEN_TAG_BEGINNING)
@@ -302,7 +302,7 @@ public static class HtmlSyntaxTree
                     // If there is text in textNodeBuilder add a new TextNode to the List of TagSyntax
                     AddTextNode();
 
-                    if (stringWalker.CheckForSubstring(HtmlFacts.COMMENT_TAG_BEGINNING))
+                    if (stringWalker.PeekForSubstring(HtmlFacts.COMMENT_TAG_BEGINNING))
                     {
                         var node = ParseComment(stringWalker, diagnosticBag, injectedLanguageDefinition);
                         htmlSyntaxes.Add(node);
@@ -427,7 +427,7 @@ public static class HtmlSyntaxTree
 
                 if (WhitespaceFacts.ALL_BAG.Contains(stringWalker.CurrentCharacter) ||
                     HtmlFacts.SEPARATOR_FOR_ATTRIBUTE_NAME_AND_ATTRIBUTE_VALUE == stringWalker.CurrentCharacter ||
-                    stringWalker.CheckForSubstringRange(HtmlFacts.OPEN_TAG_ENDING_OPTIONS, out var matchedOn))
+                    stringWalker.PeekForSubstringRange(HtmlFacts.OPEN_TAG_ENDING_OPTIONS, out var matchedOn))
                 {
                     break;
                 }
@@ -506,7 +506,7 @@ public static class HtmlSyntaxTree
                     break;
             }
 
-            var foundOpenTagEnding = stringWalker.CheckForSubstringRange(
+            var foundOpenTagEnding = stringWalker.PeekForSubstringRange(
                 HtmlFacts.OPEN_TAG_ENDING_OPTIONS,
                 out _);
 
@@ -542,7 +542,7 @@ public static class HtmlSyntaxTree
                         break;
                     }
 
-                    if (stringWalker.CheckForSubstringRange(
+                    if (stringWalker.PeekForSubstringRange(
                             HtmlFacts.OPEN_TAG_ENDING_OPTIONS,
                             out _))
                     {
@@ -585,7 +585,7 @@ public static class HtmlSyntaxTree
             {
                 _ = stringWalker.ReadCharacter();
 
-                if (stringWalker.CheckForSubstring(HtmlFacts.COMMENT_TAG_ENDING))
+                if (stringWalker.PeekForSubstring(HtmlFacts.COMMENT_TAG_ENDING))
                     break;
             }
 

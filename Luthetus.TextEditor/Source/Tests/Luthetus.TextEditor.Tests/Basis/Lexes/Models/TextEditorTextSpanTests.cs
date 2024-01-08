@@ -76,7 +76,7 @@ public class TextEditorTextSpanTests
 		{
 			if (stringWalker.CurrentCharacter == firstCharacterOfFunctionIdentifier)
 			{
-				if (stringWalker.CheckForSubstring(functionIdentifier))
+				if (stringWalker.PeekForSubstring(functionIdentifier))
 					break;
             }
 
