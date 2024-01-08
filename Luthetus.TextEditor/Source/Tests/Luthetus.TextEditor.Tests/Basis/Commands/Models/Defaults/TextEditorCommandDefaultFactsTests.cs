@@ -1032,7 +1032,8 @@ public class TextEditorCommandDefaultFactsTests
 	[Fact]
     public async Task IndentLess()
     {
-        // Invoke IndexLess on a single line, of which the line has one tab character at the start.
+        // Invoke IndexLess on a single line of which the line has one tab character at the start.
+        // Only select a single character.
         {
             InitializeTextEditorCommandDefaultFactsTests(
                 out var textEditorService, out var inModel, out var inViewModel,
@@ -1106,6 +1107,7 @@ public class TextEditorCommandDefaultFactsTests
         }
 
         // Invoke IndexLess on a single line, of which the line has 4 space characters at the start.
+        // Only select a single character.
         {
             InitializeTextEditorCommandDefaultFactsTests(
                 out var textEditorService, out var inModel, out var inViewModel,
@@ -1162,6 +1164,80 @@ public class TextEditorCommandDefaultFactsTests
                             modelModifier);
 
                         Assert.Equal("P", selectedText);
+                    }
+
+                    return Task.CompletedTask;
+                });
+
+            await TextEditorCommandDefaultFacts.IndentLess.CommandFunc.Invoke(textEditorCommandArgs);
+
+            var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+            Assert.NotNull(outModel);
+
+            var rowText = new string(
+                outModel!.GetRows(1, 1).Single().Select(x => x.Value).ToArray());
+
+            Assert.Equal("7 Pillows\n", rowText);
+        }
+
+        // Invoke IndexLess on a single line of which the line has one tab character at the start.
+        // Select the entire line, including the line ending
+        {
+            InitializeTextEditorCommandDefaultFactsTests(
+                out var textEditorService, out var inModel, out var inViewModel,
+                out var textEditorCommandArgs, out var serviceProvider);
+
+            textEditorService.Post(
+                nameof(TextEditorCommandDefaultFactsTests),
+                editContext =>
+                {
+                    var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
+
+                    if (modelModifier is null || viewModelModifier is null)
+                        return Task.CompletedTask;
+
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                    if (primaryCursorModifier is null)
+                        return Task.CompletedTask;
+
+                    // Insert a tab character at the start of the row under testing
+                    {
+                        var cursor = new TextEditorCursor(1, 0, true);
+                        var cursorModifier = new TextEditorCursorModifier(cursor);
+
+                        var insertionCursorModifierBag = new TextEditorCursorModifierBag(
+                            Key<TextEditorViewModel>.Empty,
+                            new List<TextEditorCursorModifier> { cursorModifier });
+
+                        textEditorService.ModelApi
+                            .InsertTextUnsafeFactory(
+                                modelModifier.ResourceUri,
+                                insertionCursorModifierBag,
+                                "\t",
+                                CancellationToken.None)
+                            .Invoke(editContext);
+
+                        var rowText = new string(
+                            modelModifier.GetRows(1, 1).Single().Select(x => x.Value).ToArray());
+
+                        Assert.Equal("\t7 Pillows\n", rowText);
+                    }
+
+                    primaryCursorModifier.RowIndex = 1;
+                    primaryCursorModifier.SetColumnIndexAndPreferred(0);
+                    primaryCursorModifier.SelectionAnchorPositionIndex = 13;
+                    primaryCursorModifier.SelectionEndingPositionIndex = 24;
+
+                    // Assert that the text selected, is what was planned
+                    {
+                        var selectedText = TextEditorSelectionHelper.GetSelectedText(
+                            primaryCursorModifier,
+                            modelModifier);
+
+                        Assert.Equal("\t7 Pillows\n", selectedText);
                     }
 
                     return Task.CompletedTask;
