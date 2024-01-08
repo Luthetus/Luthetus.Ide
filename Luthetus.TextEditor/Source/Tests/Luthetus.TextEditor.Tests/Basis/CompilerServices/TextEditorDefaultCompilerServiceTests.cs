@@ -1,5 +1,9 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using System.Reflection;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
@@ -8,129 +12,94 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 /// </summary>
 public class TextEditorDefaultCompilerServiceTests
 {
-	/// <summary>
-	/// <see cref="TextEditorCompilerServiceDefault()"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="TextEditorCompilerServiceDefault()"/>
+    /// <br/>----<br/>
+	/// <see cref="TextEditorCompilerServiceDefault.ResourceRegistered"/>
+	/// <see cref="TextEditorCompilerServiceDefault.ResourceParsed"/>
+	/// <see cref="TextEditorCompilerServiceDefault.ResourceDisposed"/>
+	/// <see cref="TextEditorCompilerServiceDefault.Binder"/>
+	/// <see cref="TextEditorCompilerServiceDefault.CompilerServiceResources"/>
+	/// <see cref="TextEditorCompilerServiceDefault.RegisterResource(ResourceUri)"/>
+	/// <see cref="TextEditorCompilerServiceDefault.GetCompilerServiceResourceFor(ResourceUri)"/>
+	/// <see cref="TextEditorCompilerServiceDefault.GetSyntacticTextSpansFor(ResourceUri)"/>
+	/// <see cref="TextEditorCompilerServiceDefault.GetSymbolsFor(ResourceUri)"/>
+	/// <see cref="TextEditorCompilerServiceDefault.GetDiagnosticsFor(ResourceUri)"/>
+	/// <see cref="TextEditorCompilerServiceDefault.ResourceWasModified(ResourceUri, ImmutableArray{TextEditorTextSpan})"/>
+	/// <see cref="TextEditorCompilerServiceDefault.GetAutocompleteEntries(string, TextEditorTextSpan)"/>
+	/// <see cref="TextEditorCompilerServiceDefault.DisposeResource(ResourceUri)"/>
+    /// </summary>
+    [Fact]
 	public void Constructor()
 	{
-		throw new NotImplementedException();
-	}
+		var compilerServiceDefault = new TextEditorCompilerServiceDefault();
 
-	/// <summary>
-	/// <see cref="TextEditorCompilerServiceDefault.ResourceRegistered"/>
-	/// </summary>
-	[Fact]
-	public void ResourceRegistered()
-	{
-		throw new NotImplementedException();
-	}
+		Assert.Null(compilerServiceDefault.Binder);
+		Assert.Empty(compilerServiceDefault.CompilerServiceResources);
 
-	/// <summary>
-	/// <see cref="TextEditorCompilerServiceDefault.ResourceParsed"/>
-	/// </summary>
-	[Fact]
-	public void ResourceParsed()
-	{
-		throw new NotImplementedException();
-	}
+		var registeredResourcesCounter = 0;
+		void OnResourceRegistered()
+		{
+			registeredResourcesCounter++;
 
-	/// <summary>
-	/// <see cref="TextEditorCompilerServiceDefault.ResourceDisposed"/>
-	/// </summary>
-	[Fact]
-	public void ResourceDisposed()
-	{
-		throw new NotImplementedException();
-	}
+        }
+		
+		var parsedResourcesCounter = 0;
+		void OnResourceParsed()
+		{
+            parsedResourcesCounter++;
+        }
+		
+		var disposedResourcesCounter = 0;
+		void OnResourceDisposed()
+		{
+            disposedResourcesCounter++;
+        }
 
-	/// <summary>
-	/// <see cref="TextEditorCompilerServiceDefault.Binder"/>
-	/// </summary>
-	[Fact]
-	public void Binder()
-	{
-		throw new NotImplementedException();
-	}
+		compilerServiceDefault.ResourceRegistered += OnResourceRegistered;
+		compilerServiceDefault.ResourceParsed += OnResourceParsed;
+		compilerServiceDefault.ResourceDisposed += OnResourceDisposed;
 
-	/// <summary>
-	/// <see cref="TextEditorCompilerServiceDefault.CompilerServiceResources"/>
-	/// </summary>
-	[Fact]
-	public void CompilerServiceResources()
-	{
-		throw new NotImplementedException();
-	}
+		var resourceUri = new ResourceUri("/unitTesting.txt");
 
-	/// <summary>
-	/// <see cref="TextEditorCompilerServiceDefault.RegisterResource(RazorLib.Lexes.Models.ResourceUri)"/>
-	/// </summary>
-	[Fact]
-	public void RegisterResource()
-	{
-		throw new NotImplementedException();
-	}
+        compilerServiceDefault.RegisterResource(resourceUri);
+		
+		// The default compiler service should do nothing
+		Assert.Empty(compilerServiceDefault.CompilerServiceResources);
 
-	/// <summary>
-	/// <see cref="TextEditorCompilerServiceDefault.GetCompilerServiceResourceFor(RazorLib.Lexes.Models.ResourceUri)"/>
-	/// </summary>
-	[Fact]
-	public void GetCompilerServiceResourceFor()
-	{
-		throw new NotImplementedException();
-	}
+		var compilerServiceResource = compilerServiceDefault.GetCompilerServiceResourceFor(resourceUri);
+		Assert.Null(compilerServiceResource);
 
-	/// <summary>
-	/// <see cref="TextEditorCompilerServiceDefault.GetSyntacticTextSpansFor(RazorLib.Lexes.Models.ResourceUri)"/>
-	/// </summary>
-	[Fact]
-	public void GetSyntacticTextSpansFor()
-	{
-		throw new NotImplementedException();
-	}
+		Assert.Equal(
+			ImmutableArray<TextEditorTextSpan>.Empty,
+            compilerServiceDefault.GetSyntacticTextSpansFor(resourceUri));
+		
+		Assert.Equal(
+			ImmutableArray<ITextEditorSymbol>.Empty,
+            compilerServiceDefault.GetSymbolsFor(resourceUri));
+		
+		Assert.Equal(
+			ImmutableArray<TextEditorDiagnostic>.Empty,
+            compilerServiceDefault.GetDiagnosticsFor(resourceUri));
+		
+		Assert.Equal(
+			ImmutableArray<AutocompleteEntry>.Empty,
+            compilerServiceDefault.GetAutocompleteEntries(
+				"AlphabetSoup",
+				TextEditorTextSpan.FabricateTextSpan("unit-test")));
 
-	/// <summary>
-	/// <see cref="TextEditorCompilerServiceDefault.GetSymbolsFor(RazorLib.Lexes.Models.ResourceUri)"/>
-	/// </summary>
-	[Fact]
-	public void GetSymbolsFor()
-	{
-		throw new NotImplementedException();
-	}
+		compilerServiceDefault.ResourceWasModified(
+			resourceUri,
+			ImmutableArray<TextEditorTextSpan>.Empty);
+		
+		compilerServiceDefault.DisposeResource(resourceUri);
 
-	/// <summary>
-	/// <see cref="TextEditorCompilerServiceDefault.GetDiagnosticsFor(RazorLib.Lexes.Models.ResourceUri)"/>
-	/// </summary>
-	[Fact]
-	public void GetDiagnosticsFor()
-	{
-		throw new NotImplementedException();
-	}
+        compilerServiceDefault.ResourceRegistered -= OnResourceRegistered;
+		compilerServiceDefault.ResourceParsed -= OnResourceParsed;
+		compilerServiceDefault.ResourceDisposed -= OnResourceDisposed;
 
-	/// <summary>
-	/// <see cref="TextEditorCompilerServiceDefault.ResourceWasModified(RazorLib.Lexes.Models.ResourceUri, System.Collections.Immutable.ImmutableArray{RazorLib.Lexes.Models.TextEditorTextSpan})"/>
-	/// </summary>
-	[Fact]
-	public void ResourceWasModified()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorCompilerServiceDefault.GetAutocompleteEntries(string, RazorLib.Lexes.Models.TextEditorTextSpan)"/>
-	/// </summary>
-	[Fact]
-	public void GetAutocompleteEntries()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorCompilerServiceDefault.DisposeResource(RazorLib.Lexes.Models.ResourceUri)"/>
-	/// </summary>
-	[Fact]
-	public void DisposeResource()
-	{
-		throw new NotImplementedException();
+		Assert.Equal(1, registeredResourcesCounter);
+		Assert.Equal(1, parsedResourcesCounter);
+		Assert.Equal(1, disposedResourcesCounter);
 	}
 }

@@ -1,5 +1,7 @@
 ﻿using Xunit;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
@@ -8,39 +10,21 @@ namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 /// </summary>
 public class TextEditorDefaultBinderTests
 {
-	/// <summary>
-	/// <see cref="TextEditorDefaultBinder.DiagnosticsBag"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="TextEditorDefaultBinder.DiagnosticsBag"/>
+    /// <br/>----<br/>
+    /// <see cref="TextEditorDefaultBinder.SymbolsBag"/>
+	/// <see cref="TextEditorDefaultBinder.GetDefinition(TextEditorTextSpan)"/>
+	/// <see cref="TextEditorDefaultBinder.GetBoundScope(TextEditorTextSpan)"/>
+    /// </summary>
+    [Fact]
 	public void DiagnosticsBag()
 	{
-		throw new NotImplementedException();
-	}
+        var defaultBinder = new TextEditorDefaultBinder();
 
-	/// <summary>
-	/// <see cref="TextEditorDefaultBinder.SymbolsBag"/>
-	/// </summary>
-	[Fact]
-	public void SymbolsBag()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorDefaultBinder.GetDefinition(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
-	/// </summary>
-	[Fact]
-	public void GetDefinition()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorDefaultBinder.GetBoundScope(RazorLib.Lexes.Models.TextEditorTextSpan)"/>
-	/// </summary>
-	[Fact]
-	public void GetBoundScope()
-	{
-		throw new NotImplementedException();
-	}
+        Assert.Equal(ImmutableArray<TextEditorDiagnostic>.Empty, defaultBinder.DiagnosticsBag);
+        Assert.Equal(ImmutableArray<ITextEditorSymbol>.Empty, defaultBinder.SymbolsBag);
+        Assert.Null(defaultBinder.GetDefinition(TextEditorTextSpan.FabricateTextSpan("unit-test")));
+        Assert.Null(defaultBinder.GetBoundScope(TextEditorTextSpan.FabricateTextSpan("unit-test")));
+    }
 }
