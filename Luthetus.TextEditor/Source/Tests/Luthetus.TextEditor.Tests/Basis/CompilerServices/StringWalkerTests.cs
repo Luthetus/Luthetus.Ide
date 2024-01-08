@@ -24,6 +24,9 @@ public class StringWalkerTests
 	/// <see cref="StringWalker.PeekCharacter(int)"/>
 	/// <see cref="StringWalker.BacktrackCharacter()"/>
 	/// <see cref="StringWalker.ReadRange(int)"/>
+	/// <see cref="StringWalker.PeekRange(int, int)"/>
+	/// <see cref="StringWalker.BacktrackRange(int)"/>
+	/// <see cref="StringWalker.PeekNextWord()"/>
     /// </summary>
     [Fact]
 	public void Constructor()
@@ -62,13 +65,10 @@ public class StringWalkerTests
 		{
 			// Peek current character
             Assert.Equal('e', stringWalker.PeekCharacter(0));
-
             // Peek next character
             Assert.Equal('l', stringWalker.PeekCharacter(1));
-
             // Peek the character two indices higher
             Assert.Equal('l', stringWalker.PeekCharacter(2));
-
             // Peek the character three indices higher
             Assert.Equal('o', stringWalker.PeekCharacter(3));
 			
@@ -114,44 +114,67 @@ public class StringWalkerTests
             Assert.False(stringWalker.IsEof);
         }
 
-        
+		// Peek a range of characters
+		{
+            var goalString = "World";
+            var charsToRead = goalString.Length;
+
+			// The cursor is one character away from reading the goal string.
+			// So another assertion can test the 'offset' argument of 'PeekRange'
+            Assert.Equal(" Worl", stringWalker.PeekRange(0, charsToRead));
+
+			// Increase index to begin reading by 1. This puts the cursor
+			// at the correct position to read the goalString.
+            Assert.Equal(goalString, stringWalker.PeekRange(1, charsToRead));
+
+            // Assert values of Properties after having peeked a range of characters
+			// These values should be unchanged from the 'read range' assertions
+            Assert.Equal(goalString.Length, stringWalker.PositionIndex);
+            Assert.Equal(resourceUri, stringWalker.ResourceUri);
+            Assert.Equal(sourceText, stringWalker.SourceText);
+            Assert.Equal(' ', stringWalker.CurrentCharacter);
+            Assert.Equal('W', stringWalker.NextCharacter);
+            Assert.Equal(" World!\n7 Pillows\n \n,abc123", stringWalker.RemainingText);
+            Assert.False(stringWalker.IsEof);
+        }
+
+		// Backtrack a range of characters
+		{
+			// By backtracking a length equal to the current position index,
+			// one returns to the initial state
+			var result = stringWalker.BacktrackRange(stringWalker.PositionIndex);
+            Assert.Equal(new string("Hello".Reverse().ToArray()), result);
+
+            // Assert initial values of Properties
+            {
+                Assert.Equal(0, stringWalker.PositionIndex);
+                Assert.Equal(resourceUri, stringWalker.ResourceUri);
+                Assert.Equal(sourceText, stringWalker.SourceText);
+                Assert.Equal('H', stringWalker.CurrentCharacter);
+                Assert.Equal('e', stringWalker.NextCharacter);
+                Assert.Equal("Hello World!\n7 Pillows\n \n,abc123", stringWalker.RemainingText);
+                Assert.False(stringWalker.IsEof);
+            }
+        }
+
+		// Peek the next word
+		{
+			Assert.Equal("Hello", stringWalker.PeekNextWord());
+
+            // Assert values of Properties.
+            // The values should not have changed from 'Backtrack' since a peek was performed.
+            {
+                Assert.Equal(0, stringWalker.PositionIndex);
+                Assert.Equal(resourceUri, stringWalker.ResourceUri);
+                Assert.Equal(sourceText, stringWalker.SourceText);
+                Assert.Equal('H', stringWalker.CurrentCharacter);
+                Assert.Equal('e', stringWalker.NextCharacter);
+                Assert.Equal("Hello World!\n7 Pillows\n \n,abc123", stringWalker.RemainingText);
+                Assert.False(stringWalker.IsEof);
+            }
+        }
 
         throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// </summary>
-	[Fact]
-	public void ReadRange()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="StringWalker.PeekRange(int, int)"/>
-	/// </summary>
-	[Fact]
-	public void PeekRange()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="StringWalker.BacktrackRange(int)"/>
-	/// </summary>
-	[Fact]
-	public void BacktrackRange()
-	{
-		throw new NotImplementedException();
-	}
-
-	/// <summary>
-	/// <see cref="StringWalker.PeekNextWord()"/>
-	/// </summary>
-	[Fact]
-	public void PeekNextWord()
-	{
-		throw new NotImplementedException();
 	}
 
 	/// <summary>
