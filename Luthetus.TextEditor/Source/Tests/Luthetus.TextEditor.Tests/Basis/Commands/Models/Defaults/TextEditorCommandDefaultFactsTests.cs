@@ -1032,69 +1032,157 @@ public class TextEditorCommandDefaultFactsTests
 	[Fact]
     public async Task IndentLess()
     {
-        // Invoke IndentLess on 1 row, by selecting a single character,
-        // where the character is NOT at the start or end of the row
-        //
-        // Reasoning: In Luthetus.Ide, this should IndentLess the line on which the selection lies.
-        //            This behavior is not universal however.
-        //            In Visual Studio this will do nothing.
-        //            
+        // Invoke IndexLess on a single line, of which the line has one tab character at the start.
         {
             InitializeTextEditorCommandDefaultFactsTests(
                 out var textEditorService, out var inModel, out var inViewModel,
                 out var textEditorCommandArgs, out var serviceProvider);
 
+            textEditorService.Post(
+                nameof(TextEditorCommandDefaultFactsTests),
+                editContext =>
+                {
+                    var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
+
+                    if (modelModifier is null || viewModelModifier is null)
+                        return Task.CompletedTask;
+
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                    if (primaryCursorModifier is null)
+                        return Task.CompletedTask;
+
+                    // Insert a tab character at the start of the row under testing
+                    {
+                        var cursor = new TextEditorCursor(1, 0, true);
+                        var cursorModifier = new TextEditorCursorModifier(cursor);
+
+                        var insertionCursorModifierBag = new TextEditorCursorModifierBag(
+                            Key<TextEditorViewModel>.Empty,
+                            new List<TextEditorCursorModifier> { cursorModifier });
+
+                        textEditorService.ModelApi
+                            .InsertTextUnsafeFactory(
+                                modelModifier.ResourceUri,
+                                insertionCursorModifierBag,
+                                "\t",
+                                CancellationToken.None)
+                            .Invoke(editContext);
+
+                        var rowText = new string(
+                            modelModifier.GetRows(1, 1).Single().Select(x => x.Value).ToArray());
+
+                        Assert.Equal("\t7 Pillows\n", rowText);
+                    }
+
+                    primaryCursorModifier.RowIndex = 1;
+                    primaryCursorModifier.SetColumnIndexAndPreferred(4);
+                    primaryCursorModifier.SelectionAnchorPositionIndex = 16;
+                    primaryCursorModifier.SelectionEndingPositionIndex = 17;
+
+                    // Assert that the text selected, is what was planned
+                    {
+                        var selectedText = TextEditorSelectionHelper.GetSelectedText(
+                            primaryCursorModifier,
+                            modelModifier);
+
+                        Assert.Equal("P", selectedText);
+                    }
+
+                    return Task.CompletedTask;
+                });
+
             await TextEditorCommandDefaultFacts.IndentLess.CommandFunc.Invoke(textEditorCommandArgs);
 
-            throw new NotImplementedException();
+            var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+            Assert.NotNull(outModel);
+
+            var rowText = new string(
+                outModel!.GetRows(1, 1).Single().Select(x => x.Value).ToArray());
+            
+            Assert.Equal("7 Pillows\n", rowText);
         }
 
-        // Invoke IndentLess on 1 row, by selecting the entire row, including its line ending.
-        //
-        // Reasoning: This should IndentLess a single row.
+        // Invoke IndexLess on a single line, of which the line has 4 space characters at the start.
         {
             InitializeTextEditorCommandDefaultFactsTests(
                 out var textEditorService, out var inModel, out var inViewModel,
                 out var textEditorCommandArgs, out var serviceProvider);
 
+            textEditorService.Post(
+                nameof(TextEditorCommandDefaultFactsTests),
+                editContext =>
+                {
+                    var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
+
+                    if (modelModifier is null || viewModelModifier is null)
+                        return Task.CompletedTask;
+
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+                    var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                    if (primaryCursorModifier is null)
+                        return Task.CompletedTask;
+
+                    // Insert a tab character at the start of the row under testing
+                    {
+                        var cursor = new TextEditorCursor(1, 0, true);
+                        var cursorModifier = new TextEditorCursorModifier(cursor);
+
+                        var insertionCursorModifierBag = new TextEditorCursorModifierBag(
+                            Key<TextEditorViewModel>.Empty,
+                            new List<TextEditorCursorModifier> { cursorModifier });
+
+                        textEditorService.ModelApi
+                            .InsertTextUnsafeFactory(
+                                modelModifier.ResourceUri,
+                                insertionCursorModifierBag,
+                                "    ",
+                                CancellationToken.None)
+                            .Invoke(editContext);
+
+                        var rowText = new string(
+                            modelModifier.GetRows(1, 1).Single().Select(x => x.Value).ToArray());
+
+                        Assert.Equal("    7 Pillows\n", rowText);
+                    }
+
+                    primaryCursorModifier.RowIndex = 1;
+                    primaryCursorModifier.SetColumnIndexAndPreferred(7);
+                    primaryCursorModifier.SelectionAnchorPositionIndex = 19;
+                    primaryCursorModifier.SelectionEndingPositionIndex = 20;
+
+                    // Assert that the text selected, is what was planned
+                    {
+                        var selectedText = TextEditorSelectionHelper.GetSelectedText(
+                            primaryCursorModifier,
+                            modelModifier);
+
+                        Assert.Equal("P", selectedText);
+                    }
+
+                    return Task.CompletedTask;
+                });
+
             await TextEditorCommandDefaultFacts.IndentLess.CommandFunc.Invoke(textEditorCommandArgs);
 
-            throw new NotImplementedException();
+            var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+            Assert.NotNull(outModel);
+
+            var rowText = new string(
+                outModel!.GetRows(1, 1).Single().Select(x => x.Value).ToArray());
+
+            Assert.Equal("7 Pillows\n", rowText);
         }
+    }
 
-        // Invoke IndentLess on 2 rows, by selecting the entirety of one row (including its line ending),
-        // and some but NOT all of another row.
-        //
-        // Reasoning: This should IndentLess a 2 rows.
-        {
-            InitializeTextEditorCommandDefaultFactsTests(
-                out var textEditorService, out var inModel, out var inViewModel,
-                out var textEditorCommandArgs, out var serviceProvider);
-
-            await TextEditorCommandDefaultFacts.IndentLess.CommandFunc.Invoke(textEditorCommandArgs);
-
-            throw new NotImplementedException();
-        }
-
-        // Invoke IndentLess on 2 rows, by selecting the entirety of one row (including its line ending),
-        // and the entirety of another row (including its line ending).
-        //
-        // Reasoning: This should IndentLess a 2 rows.
-        {
-            InitializeTextEditorCommandDefaultFactsTests(
-                out var textEditorService, out var inModel, out var inViewModel,
-                out var textEditorCommandArgs, out var serviceProvider);
-
-            await TextEditorCommandDefaultFacts.IndentLess.CommandFunc.Invoke(textEditorCommandArgs);
-
-            throw new NotImplementedException();
-        }
-	}
-
-	/// <summary>
-	/// <see cref="TextEditorCommandDefaultFacts.ClearTextSelection"/>
-	/// </summary>
-	[Fact]
+    /// <summary>
+    /// <see cref="TextEditorCommandDefaultFacts.ClearTextSelection"/>
+    /// </summary>
+    [Fact]
     public async Task ClearTextSelection()
     {
         // No already existing selection
