@@ -1,11 +1,13 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.Common.RazorLib.Themes.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.SearchEngines.States;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
-using Microsoft.AspNetCore.Components;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Luthetus.TextEditor.RazorLib.SearchEngines.Models;
+using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.TextEditor.RazorLib.Installations.Displays;
 
@@ -19,6 +21,8 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
     private IThemeService ThemeRecordsCollectionService { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
+	[Inject]
+    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -42,6 +46,9 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
 	        {
 	            Dispatcher.Dispatch(new TextEditorSearchEngineState.RegisterAction(searchEngine));
 	        }
+
+			Dispatcher.Dispatch(new TextEditorSearchEngineState.RegisterAction(
+				new SearchEngineFileSystem(FileSystemProvider)));
 	
 	        await TextEditorService.OptionsApi.SetFromLocalStorageAsync();
 		}
