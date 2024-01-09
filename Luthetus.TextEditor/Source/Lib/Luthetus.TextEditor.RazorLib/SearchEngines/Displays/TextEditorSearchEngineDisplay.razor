@@ -1,4 +1,5 @@
-﻿@using Fluxor.Blazor.Web.Components;
+@using Fluxor.Blazor.Web.Components;
+@using Luthetus.TextEditor.RazorLib.SearchEngines.Models;
 
 @inherits FluxorComponent
 
@@ -47,5 +48,10 @@
                 Not Searching
             </div>
         }
+
+		@if (activeSearchEngine is SearchEngineFileSystem searchEngineFileSystem)
+		{
+			<SearchEngineFileSystemDisplay SearchEngineFileSystem="searchEngineFileSystem"/>
+		}
     </div>
 </div>

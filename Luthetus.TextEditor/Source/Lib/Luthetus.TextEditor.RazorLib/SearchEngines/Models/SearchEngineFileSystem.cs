@@ -18,9 +18,11 @@ public class SearchEngineFileSystem : ITextEditorSearchEngine
 
     public Type IconComponentRendererType { get; } = typeof(IconCopy);
     public string DisplayName { get; } = "FileSystem";
+	public List<string> Results = new List<string>();
 
     public async Task SearchAsync(string searchQuery, CancellationToken cancellationToken = default)
     {
-        await Task.Delay(5_000);
+		Results.Clear();
+		Results.AddRange(await _fileSystemProvider.Directory.GetDirectoriesAsync("/"));
     }
 }
