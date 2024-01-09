@@ -4,24 +4,28 @@ using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.States;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Microsoft.JSInterop;
 
 namespace Luthetus.Ide.RazorLib.Commands;
 
 public class CommandFactory : ICommandFactory
 {
-    private readonly IJSRuntime _jsRuntime;
     private readonly IState<PanelsState> _panelsStateWrap;
+    private readonly ITextEditorService _textEditorService;
     private readonly IDispatcher _dispatcher;
+    private readonly IJSRuntime _jsRuntime;
 
     public CommandFactory(
-        IJSRuntime jsRuntime,
+		ITextEditorService textEditorService,
         IState<PanelsState> panelsStateWrap,
-        IDispatcher dispatcher)
+        IDispatcher dispatcher,
+		IJSRuntime jsRuntime)
     {
-        _jsRuntime = jsRuntime;
+		_textEditorService = textEditorService;
         _panelsStateWrap = panelsStateWrap;
         _dispatcher = dispatcher;
+		_jsRuntime = jsRuntime;
     }
 
     public void Initialize()
@@ -137,6 +141,21 @@ public class CommandFactory : ICommandFactory
                 new KeymapArgument("KeyT", false, true, true, Key<KeymapLayer>.Empty),
                 ConstructFocusContextElementCommand(
                     ContextFacts.TextEditorContext, "Focus: TextEditor", "focus-text-editor"));
+        }
+
+		// Add command to bring up a Find dialog. Example: { Ctrl + Shift + f } (2024-01-09)
+		{
+			var openFindDialogCommand = new CommonCommand(
+	            "Open: Find", "open-find", false,
+	            commandArgs => 
+				{
+					_textEditorService.OptionsApi.ShowFindDialog();
+		            return Task.CompletedTask;
+				});
+
+            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
+	                new KeymapArgument("KeyF", true, true, false, Key<KeymapLayer>.Empty),
+	                openFindDialogCommand);
         }
     }
 
