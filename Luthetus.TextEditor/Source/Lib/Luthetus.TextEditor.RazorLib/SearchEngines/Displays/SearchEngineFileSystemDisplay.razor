@@ -1,5 +1,14 @@
-<h3>SearchEngineFileSystemDisplay</h3>
+<div class="luth_te_search-engine-file-system">
 
-@code {
-	
-}
+	<input class="luth_ide_input luth_ide_input-text"
+		   style="width: 100%;"
+		   @bind="SearchEngineFileSystem.StartingDirectoryPath"
+		   @bind:event="oninput"/>
+
+	<div class="luth_te_search-engine-file-system-results">
+		@foreach (var result in SearchEngineFileSystem.ResultBag)
+		{
+			<div>@result</div>
+		}
+	</div>
+</div>

@@ -18,11 +18,12 @@ public class SearchEngineFileSystem : ITextEditorSearchEngine
 
     public Type IconComponentRendererType { get; } = typeof(IconCopy);
     public string DisplayName { get; } = "FileSystem";
-	public List<string> Results = new List<string>();
+	public string StartingDirectoryPath = "C:\\Users\\hunte\\Repos\\Luthetus.Ide_Fork\\";
+	public List<string> ResultBag = new List<string>();
 
     public async Task SearchAsync(string searchQuery, CancellationToken cancellationToken = default)
     {
-		Results.Clear();
-		Results.AddRange(await _fileSystemProvider.Directory.GetDirectoriesAsync("/"));
+		ResultBag.Clear();
+		ResultBag.AddRange(await _fileSystemProvider.Directory.GetDirectoriesAsync(StartingDirectoryPath));
     }
 }
