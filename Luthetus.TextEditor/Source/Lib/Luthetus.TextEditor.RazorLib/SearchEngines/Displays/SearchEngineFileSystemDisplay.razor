@@ -5,10 +5,24 @@
 		   @bind="SearchEngineFileSystem.StartingDirectoryPath"
 		   @bind:event="oninput"/>
 
+	@if (SearchEngineFileSystem.IsSearching)
+    {
+        <IconLoading/>
+    }
+    else
+    {
+        <div>
+            Not Searching
+        </div>
+    }
+
 	<div class="luth_te_search-engine-file-system-results">
-		@foreach (var result in SearchEngineFileSystem.ResultBag)
+
+		@{ var localFilePathBag = SearchEngineFileSystem.FilePathBag.ToArray(); }
+
+		@foreach (var filePath in localFilePathBag)
 		{
-			<div>@result</div>
+			<div>@filePath</div>
 		}
 	</div>
 </div>
