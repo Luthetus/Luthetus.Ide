@@ -37,7 +37,7 @@
                 ?? contextState.FocusedContextHeirarchy;
         }
 
-        @foreach (var contextKey in contextKeysToRender.KeyBag)
+        @foreach (var contextKey in contextKeysToRender.KeyList)
         {
             <ContextDisplay @key="contextKey"
                             ContextKey="contextKey" />

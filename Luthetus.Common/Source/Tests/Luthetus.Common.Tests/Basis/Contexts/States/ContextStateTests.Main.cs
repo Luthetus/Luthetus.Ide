@@ -17,16 +17,16 @@ public class ContextStateTests
     {
         var contextState = new ContextState();
 
-        var allContextRecordsBag = ContextFacts.AllContextsBag;
+        var allContextRecordsList = ContextFacts.AllContextsList;
 
         var inspectedContextRecordKeyHeirarchy = (ContextHeirarchy?)null;
-        var inspectContextRecordEntryBag = ImmutableArray<InspectableContext>.Empty;
+        var inspectContextRecordEntryList = ImmutableArray<InspectableContext>.Empty;
         var isSelectingInspectionTarget = false;
 
-        Assert.Equal(allContextRecordsBag, contextState.AllContextsBag);
+        Assert.Equal(allContextRecordsList, contextState.AllContextsList);
         Assert.NotNull(contextState.FocusedContextHeirarchy);
         Assert.True(inspectedContextRecordKeyHeirarchy == contextState.InspectedContextHeirarchy);
-        Assert.Equal(inspectContextRecordEntryBag, contextState.InspectableContextBag);
+        Assert.Equal(inspectContextRecordEntryList, contextState.InspectableContextList);
         Assert.Equal(isSelectingInspectionTarget, contextState.IsSelectingInspectionTarget);
     }
 }

@@ -44,21 +44,21 @@ public class TreeViewReflection : TreeViewWithType<WatchWindowObject>
             });
     }
 
-    public override Task LoadChildBagAsync()
+    public override Task LoadChildListAsync()
     {
-        var previousChildren = new List<TreeViewNoType>(ChildBag);
+        var previousChildren = new List<TreeViewNoType>(ChildList);
 
         try
         {
-            ChildBag.Clear();
+            ChildList.Clear();
 
-            ChildBag.Add(new TreeViewFields(
+            ChildList.Add(new TreeViewFields(
                 Item,
                 true,
                 false,
                 _luthetusCommonComponentRenderers));
 
-            ChildBag.Add(new TreeViewProperties(
+            ChildList.Add(new TreeViewProperties(
                 Item,
                 true,
                 false,
@@ -66,7 +66,7 @@ public class TreeViewReflection : TreeViewWithType<WatchWindowObject>
 
             if (Item.Item is IEnumerable)
             {
-                ChildBag.Add(new TreeViewEnumerable(
+                ChildList.Add(new TreeViewEnumerable(
                     Item,
                     true,
                     false,
@@ -81,7 +81,7 @@ public class TreeViewReflection : TreeViewWithType<WatchWindowObject>
                     "InterfaceImplementation",
                     false);
 
-                ChildBag.Add(new TreeViewInterfaceImplementation(
+                ChildList.Add(new TreeViewInterfaceImplementation(
                     interfaceImplementation,
                     true,
                     false,
@@ -90,16 +90,16 @@ public class TreeViewReflection : TreeViewWithType<WatchWindowObject>
         }
         catch (Exception e)
         {
-            ChildBag.Clear();
+            ChildList.Clear();
 
-            ChildBag.Add(new TreeViewException(
+            ChildList.Add(new TreeViewException(
                 e,
                 false,
                 false,
                 _luthetusCommonComponentRenderers));
         }
 
-        LinkChildren(previousChildren, ChildBag);
+        LinkChildren(previousChildren, ChildList);
 
         return Task.CompletedTask;
     }

@@ -21,28 +21,28 @@ public class ReflectiveStateMainTests
     public void Constructor()
     {
         var reflectiveState = new ReflectiveState();
-        Assert.Equal(ImmutableList<ReflectiveModel>.Empty, reflectiveState.ReflectiveModelBag);
+        Assert.Equal(ImmutableList<ReflectiveModel>.Empty, reflectiveState.ReflectiveModelList);
     }
 
     /// <summary>
-    /// <see cref="ReflectiveState.ReflectiveModelBag"/>
+    /// <see cref="ReflectiveState.ReflectiveModelList"/>
     /// </summary>
     [Fact]
-    public void ReflectiveModelBag()
+    public void ReflectiveModelList()
     {
         InitializeReflectiveStateMainTests(out var dispatcher, out var model);
 
         var reflectiveState = new ReflectiveState();
-        var outReflectiveModelBag = reflectiveState.ReflectiveModelBag.Add(model);
+        var outReflectiveModelList = reflectiveState.ReflectiveModelList.Add(model);
 
-        Assert.NotEqual(outReflectiveModelBag, reflectiveState.ReflectiveModelBag);
+        Assert.NotEqual(outReflectiveModelList, reflectiveState.ReflectiveModelList);
 
         reflectiveState = reflectiveState with
         {
-            ReflectiveModelBag = outReflectiveModelBag
+            ReflectiveModelList = outReflectiveModelList
         };
 
-        Assert.Equal(outReflectiveModelBag, reflectiveState.ReflectiveModelBag);
+        Assert.Equal(outReflectiveModelList, reflectiveState.ReflectiveModelList);
     }
 
     private void InitializeReflectiveStateMainTests(
@@ -62,28 +62,28 @@ public class ReflectiveStateMainTests
         var key = Key<ReflectiveModel>.NewKey();
         var personDisplayType = typeof(PersonDisplay);
 
-        var componentTypeBag = new List<Type>
+        var componentTypeList = new List<Type>
         {
             personDisplayType,
             typeof(PersonSimpleDisplay),
         };
 
-        var componentPropertyInfoBag = Array.Empty<PropertyInfo>();
+        var componentPropertyInfoList = Array.Empty<PropertyInfo>();
         var previousTypeGuid = Guid.Empty;
         var reflectiveParameterMap = new Dictionary<string, IReflectiveParameter>();
 
         model = new ReflectiveModel(
             key,
-            componentTypeBag,
+            componentTypeList,
             personDisplayType.GUID,
             previousTypeGuid,
-            componentPropertyInfoBag,
+            componentPropertyInfoList,
             reflectiveParameterMap,
             dispatcher);
 
         var chosenComponentChangeCounter = 0;
 
-        model.CalculateComponentPropertyInfoBag(
+        model.CalculateComponentPropertyInfoList(
             model.ChosenTypeGuid.ToString(),
             ref chosenComponentChangeCounter);
     }

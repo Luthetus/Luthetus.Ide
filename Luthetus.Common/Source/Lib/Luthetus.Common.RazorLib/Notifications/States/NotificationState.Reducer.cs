@@ -13,9 +13,9 @@ public partial record NotificationState
             NotificationState inState,
             RegisterAction registerAction)
         {
-            var outDefaultBag = inState.DefaultBag.Add(registerAction.Notification);
+            var outDefaultList = inState.DefaultList.Add(registerAction.Notification);
 
-            return inState with { DefaultBag = outDefaultBag };
+            return inState with { DefaultList = outDefaultList };
         }
 
         [ReducerMethod]
@@ -23,15 +23,15 @@ public partial record NotificationState
             NotificationState inState,
             DisposeAction disposeAction)
         {
-            var inNotification = inState.DefaultBag.FirstOrDefault(
+            var inNotification = inState.DefaultList.FirstOrDefault(
                 x => x.Key == disposeAction.Key);
 
             if (inNotification is null)
                 return inState;
 
-            var outDefaultBag = inState.DefaultBag.Remove(inNotification);
+            var outDefaultList = inState.DefaultList.Remove(inNotification);
 
-            return inState with { DefaultBag = outDefaultBag };
+            return inState with { DefaultList = outDefaultList };
         }
 
         [ReducerMethod]
@@ -39,21 +39,21 @@ public partial record NotificationState
             NotificationState inState,
             MakeReadAction makeReadAction)
         {
-            var inNotificationIndex = inState.DefaultBag.FindIndex(
+            var inNotificationIndex = inState.DefaultList.FindIndex(
                 x => x.Key == makeReadAction.Key);
 
             if (inNotificationIndex == -1)
                 return inState;
 
-            var inNotification = inState.DefaultBag[inNotificationIndex];
+            var inNotification = inState.DefaultList[inNotificationIndex];
 
-            var outDefaultBag = inState.DefaultBag.RemoveAt(inNotificationIndex);
-            var outReadBag = inState.ReadBag.Add(inNotification);
+            var outDefaultList = inState.DefaultList.RemoveAt(inNotificationIndex);
+            var outReadList = inState.ReadList.Add(inNotification);
 
             return inState with
             {
-                DefaultBag = outDefaultBag,
-                ReadBag = outReadBag
+                DefaultList = outDefaultList,
+                ReadList = outReadList
             };
         }
         
@@ -62,21 +62,21 @@ public partial record NotificationState
             NotificationState inState,
             UndoMakeReadAction undoMakeReadAction)
         {
-            var inNotificationIndex = inState.ReadBag.FindIndex(
+            var inNotificationIndex = inState.ReadList.FindIndex(
                 x => x.Key == undoMakeReadAction.Key);
 
             if (inNotificationIndex == -1)
                 return inState;
 
-            var inNotification = inState.ReadBag[inNotificationIndex];
+            var inNotification = inState.ReadList[inNotificationIndex];
 
-            var outReadBag = inState.ReadBag.RemoveAt(inNotificationIndex);
-            var outDefaultBag = inState.DefaultBag.Add(inNotification);
+            var outReadList = inState.ReadList.RemoveAt(inNotificationIndex);
+            var outDefaultList = inState.DefaultList.Add(inNotification);
 
             return inState with
             {
-                DefaultBag = outDefaultBag,
-                ReadBag = outReadBag
+                DefaultList = outDefaultList,
+                ReadList = outReadList
             };
         }
 
@@ -85,21 +85,21 @@ public partial record NotificationState
             NotificationState inState,
             MakeDeletedAction makeDeletedAction)
         {
-            var inNotificationIndex = inState.DefaultBag.FindIndex(
+            var inNotificationIndex = inState.DefaultList.FindIndex(
                 x => x.Key == makeDeletedAction.Key);
 
             if (inNotificationIndex == -1)
                 return inState;
 
-            var inNotification = inState.DefaultBag[inNotificationIndex];
+            var inNotification = inState.DefaultList[inNotificationIndex];
 
-            var outDefaultBag = inState.DefaultBag.RemoveAt(inNotificationIndex);
-            var outDeletedBag = inState.DeletedBag.Add(inNotification);
+            var outDefaultList = inState.DefaultList.RemoveAt(inNotificationIndex);
+            var outDeletedList = inState.DeletedList.Add(inNotification);
 
             return inState with
             {
-                DefaultBag = outDefaultBag,
-                DeletedBag = outDeletedBag
+                DefaultList = outDefaultList,
+                DeletedList = outDeletedList
             };
         }
 
@@ -108,21 +108,21 @@ public partial record NotificationState
             NotificationState inState,
             UndoMakeDeletedAction undoMakeDeletedAction)
         {
-            var inNotificationIndex = inState.DeletedBag.FindIndex(
+            var inNotificationIndex = inState.DeletedList.FindIndex(
                 x => x.Key == undoMakeDeletedAction.Key);
 
             if (inNotificationIndex == -1)
                 return inState;
 
-            var inNotification = inState.DeletedBag[inNotificationIndex];
+            var inNotification = inState.DeletedList[inNotificationIndex];
 
-            var outDeletedBag = inState.DeletedBag.RemoveAt(inNotificationIndex);
-            var outDefaultBag = inState.DefaultBag.Add(inNotification);
+            var outDeletedList = inState.DeletedList.RemoveAt(inNotificationIndex);
+            var outDefaultList = inState.DefaultList.Add(inNotification);
 
             return inState with
             {
-                DefaultBag = outDefaultBag,
-                DeletedBag = outDeletedBag
+                DefaultList = outDefaultList,
+                DeletedList = outDeletedList
             };
         }
 
@@ -131,21 +131,21 @@ public partial record NotificationState
             NotificationState inState,
             MakeArchivedAction makeArchivedAction)
         {
-            var inNotificationIndex = inState.DefaultBag.FindIndex(
+            var inNotificationIndex = inState.DefaultList.FindIndex(
                 x => x.Key == makeArchivedAction.Key);
 
             if (inNotificationIndex == -1)
                 return inState;
 
-            var inNotification = inState.DefaultBag[inNotificationIndex];
+            var inNotification = inState.DefaultList[inNotificationIndex];
 
-            var outDefaultBag = inState.DefaultBag.RemoveAt(inNotificationIndex);
-            var outArchivedBag = inState.ArchivedBag.Add(inNotification);
+            var outDefaultList = inState.DefaultList.RemoveAt(inNotificationIndex);
+            var outArchivedList = inState.ArchivedList.Add(inNotification);
 
             return inState with
             {
-                DefaultBag = outDefaultBag,
-                ArchivedBag = outArchivedBag
+                DefaultList = outDefaultList,
+                ArchivedList = outArchivedList
             };
         }
         
@@ -154,21 +154,21 @@ public partial record NotificationState
             NotificationState inState,
             UndoMakeArchivedAction undoMakeArchivedAction)
         {
-            var inNotificationIndex = inState.ArchivedBag.FindIndex(
+            var inNotificationIndex = inState.ArchivedList.FindIndex(
                 x => x.Key == undoMakeArchivedAction.Key);
 
             if (inNotificationIndex == -1)
                 return inState;
 
-            var inNotification = inState.ArchivedBag[inNotificationIndex];
+            var inNotification = inState.ArchivedList[inNotificationIndex];
 
-            var outArchivedBag = inState.ArchivedBag.RemoveAt(inNotificationIndex);
-            var outDefaultBag = inState.DefaultBag.Add(inNotification);
+            var outArchivedList = inState.ArchivedList.RemoveAt(inNotificationIndex);
+            var outDefaultList = inState.DefaultList.Add(inNotification);
 
             return inState with
             {
-                DefaultBag = outDefaultBag,
-                ArchivedBag = outArchivedBag
+                DefaultList = outDefaultList,
+                ArchivedList = outArchivedList
             };
         }
 
@@ -178,7 +178,7 @@ public partial record NotificationState
         {
             return inState with
             {
-                DefaultBag = ImmutableList<NotificationRecord>.Empty
+                DefaultList = ImmutableList<NotificationRecord>.Empty
             };
         }
         
@@ -188,7 +188,7 @@ public partial record NotificationState
         {
             return inState with
             {
-                ReadBag = ImmutableList<NotificationRecord>.Empty
+                ReadList = ImmutableList<NotificationRecord>.Empty
             };
         }
         
@@ -198,7 +198,7 @@ public partial record NotificationState
         {
             return inState with
             {
-                DeletedBag = ImmutableList<NotificationRecord>.Empty
+                DeletedList = ImmutableList<NotificationRecord>.Empty
             };
         }
 
@@ -208,7 +208,7 @@ public partial record NotificationState
         {
             return inState with
             {
-                ArchivedBag = ImmutableList<NotificationRecord>.Empty
+                ArchivedList = ImmutableList<NotificationRecord>.Empty
             };
         }
     }

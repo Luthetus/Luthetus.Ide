@@ -76,7 +76,7 @@ public class TreeViewMouseEventHandler
             if (commandArgs.MouseEventArgs is not null &&
                 (commandArgs.MouseEventArgs.Buttons & 1) != 1 &&
                 commandArgs.TargetNode is not null &&
-                commandArgs.TreeViewContainer.SelectedNodeBag.Any(x => x.Key == commandArgs.TargetNode.Key))
+                commandArgs.TreeViewContainer.SelectedNodeList.Any(x => x.Key == commandArgs.TargetNode.Key))
             {
                 // Not pressing the left mouse button
                 // so assume ContextMenu is desired result.

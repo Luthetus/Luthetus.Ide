@@ -33,12 +33,12 @@ public class DialogServiceTests
     {
         InitializeDialogServiceTests(out var dialogService, out var dialogRecord, out _);
 
-        Assert.Empty(dialogService.DialogStateWrap.Value.DialogBag);
+        Assert.Empty(dialogService.DialogStateWrap.Value.DialogList);
 
         dialogService.RegisterDialogRecord(dialogRecord);
 
-        Assert.NotEmpty(dialogService.DialogStateWrap.Value.DialogBag);
-        Assert.Contains(dialogService.DialogStateWrap.Value.DialogBag, x => x == dialogRecord);
+        Assert.NotEmpty(dialogService.DialogStateWrap.Value.DialogList);
+        Assert.Contains(dialogService.DialogStateWrap.Value.DialogList, x => x == dialogRecord);
     }
 
     /// <summary>
@@ -49,17 +49,17 @@ public class DialogServiceTests
     {
         InitializeDialogServiceTests(out var dialogService, out var dialogRecord, out _);
 
-        Assert.Empty(dialogService.DialogStateWrap.Value.DialogBag);
+        Assert.Empty(dialogService.DialogStateWrap.Value.DialogList);
 
         dialogService.RegisterDialogRecord(dialogRecord);
 
-        Assert.NotEmpty(dialogService.DialogStateWrap.Value.DialogBag);
-        Assert.Single(dialogService.DialogStateWrap.Value.DialogBag);
+        Assert.NotEmpty(dialogService.DialogStateWrap.Value.DialogList);
+        Assert.Single(dialogService.DialogStateWrap.Value.DialogList);
 
         Assert.False(dialogRecord.IsMaximized);
         dialogService.SetDialogRecordIsMaximized(dialogRecord.Key, true);
 
-        dialogRecord = dialogService.DialogStateWrap.Value.DialogBag.Single();
+        dialogRecord = dialogService.DialogStateWrap.Value.DialogList.Single();
         Assert.True(dialogRecord.IsMaximized);
     }
 
@@ -71,16 +71,16 @@ public class DialogServiceTests
     {
         InitializeDialogServiceTests(out var dialogService, out var dialogRecord, out _);
 
-        Assert.Empty(dialogService.DialogStateWrap.Value.DialogBag);
+        Assert.Empty(dialogService.DialogStateWrap.Value.DialogList);
 
         dialogService.RegisterDialogRecord(dialogRecord);
 
-        Assert.NotEmpty(dialogService.DialogStateWrap.Value.DialogBag);
-        Assert.Contains(dialogService.DialogStateWrap.Value.DialogBag, x => x == dialogRecord);
+        Assert.NotEmpty(dialogService.DialogStateWrap.Value.DialogList);
+        Assert.Contains(dialogService.DialogStateWrap.Value.DialogList, x => x == dialogRecord);
 
         dialogService.DisposeDialogRecord(dialogRecord.Key);
         
-        Assert.Empty(dialogService.DialogStateWrap.Value.DialogBag);
+        Assert.Empty(dialogService.DialogStateWrap.Value.DialogList);
     }
 
     private void InitializeDialogServiceTests(

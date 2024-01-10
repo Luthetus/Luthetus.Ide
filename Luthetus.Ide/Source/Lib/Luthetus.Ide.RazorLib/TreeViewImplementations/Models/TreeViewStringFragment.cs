@@ -44,11 +44,11 @@ public class TreeViewStringFragment : TreeViewWithType<StringFragment>
             });
     }
 
-    public override async Task LoadChildBagAsync()
+    public override async Task LoadChildListAsync()
     {
         try
         {
-            var previousChildren = new List<TreeViewNoType>(ChildBag);
+            var previousChildren = new List<TreeViewNoType>(ChildList);
 
             var newChildBag = Item.Map.Select(kvp => (TreeViewNoType)new TreeViewStringFragment(
 				kvp.Value,
@@ -59,9 +59,9 @@ public class TreeViewStringFragment : TreeViewWithType<StringFragment>
 			for (var i = 0; i < newChildBag.Count; i++)
 			{
 				var child = (TreeViewStringFragment)newChildBag[i];
-				await child.LoadChildBagAsync();
+				await child.LoadChildListAsync();
 
-				if (child.ChildBag.Count == 0)
+				if (child.ChildList.Count == 0)
 				{
 					child.IsExpandable = false;
 					child.IsExpanded = false;
@@ -78,15 +78,15 @@ public class TreeViewStringFragment : TreeViewWithType<StringFragment>
 				Item.Map = child.Item.Map;
 				Item.IsEndpoint = child.Item.IsEndpoint;
 
-				newChildBag = child.ChildBag;
+				newChildBag = child.ChildList;
 			}
 
-            ChildBag = newChildBag;
-            LinkChildren(previousChildren, ChildBag);
+            ChildList = newChildBag;
+            LinkChildren(previousChildren, ChildList);
         }
         catch (Exception exception)
         {
-            ChildBag = new List<TreeViewNoType>
+            ChildList = new List<TreeViewNoType>
             {
                 new TreeViewException(exception, false, false, CommonComponentRenderers)
                 {

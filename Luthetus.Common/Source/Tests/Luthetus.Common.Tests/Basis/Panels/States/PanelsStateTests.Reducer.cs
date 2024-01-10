@@ -29,10 +29,10 @@ public class PanelsStateReducerTests
             out var panelGroup,
             out var panelTab);
 
-        Assert.DoesNotContain(panelsStateWrap.Value.PanelGroupBag, x => x == panelGroup);
+        Assert.DoesNotContain(panelsStateWrap.Value.PanelGroupList, x => x == panelGroup);
         
         dispatcher.Dispatch(new PanelsState.RegisterPanelGroupAction(panelGroup));
-        Assert.Contains(panelsStateWrap.Value.PanelGroupBag, x => x == panelGroup);
+        Assert.Contains(panelsStateWrap.Value.PanelGroupList, x => x == panelGroup);
     }
 
     /// <summary>
@@ -48,13 +48,13 @@ public class PanelsStateReducerTests
             out var panelGroup,
             out var panelTab);
 
-        Assert.DoesNotContain(panelsStateWrap.Value.PanelGroupBag, x => x == panelGroup);
+        Assert.DoesNotContain(panelsStateWrap.Value.PanelGroupList, x => x == panelGroup);
 
         dispatcher.Dispatch(new PanelsState.RegisterPanelGroupAction(panelGroup));
-        Assert.Contains(panelsStateWrap.Value.PanelGroupBag, x => x == panelGroup);
+        Assert.Contains(panelsStateWrap.Value.PanelGroupList, x => x == panelGroup);
 
         dispatcher.Dispatch(new PanelsState.DisposePanelGroupAction(panelGroup.Key));
-        Assert.DoesNotContain(panelsStateWrap.Value.PanelGroupBag, x => x == panelGroup);
+        Assert.DoesNotContain(panelsStateWrap.Value.PanelGroupList, x => x == panelGroup);
     }
 
     /// <summary>
@@ -71,7 +71,7 @@ public class PanelsStateReducerTests
             out var panelTab);
 
         dispatcher.Dispatch(new PanelsState.RegisterPanelGroupAction(panelGroup));
-        Assert.Contains(panelsStateWrap.Value.PanelGroupBag, x => x == panelGroup);
+        Assert.Contains(panelsStateWrap.Value.PanelGroupList, x => x == panelGroup);
 
         // Ensure the panelGroup is not empty.
         // This allows one to test the 'insertAtIndexZero' logic.
@@ -82,9 +82,9 @@ public class PanelsStateReducerTests
                 panelTab,
                 true));
 
-            var localPanelGroup = panelsStateWrap.Value.PanelGroupBag.Single(x => x.Key == panelGroup.Key);
-            Assert.Contains(localPanelGroup.TabBag, x => x == panelTab);
-            Assert.NotEmpty(localPanelGroup.TabBag);
+            var localPanelGroup = panelsStateWrap.Value.PanelGroupList.Single(x => x.Key == panelGroup.Key);
+            Assert.Contains(localPanelGroup.TabList, x => x == panelTab);
+            Assert.NotEmpty(localPanelGroup.TabList);
         }
 
         // InsertAtIndexZero == false
@@ -109,9 +109,9 @@ public class PanelsStateReducerTests
                 localPanelTab,
                 insertAtIndexZero));
 
-            var localPanelGroup = panelsStateWrap.Value.PanelGroupBag.Single(x => x.Key == panelGroup.Key);
-            Assert.Contains(localPanelGroup.TabBag, x => x == localPanelTab);
-            Assert.Equal(localPanelGroup.TabBag.Last(), localPanelTab);
+            var localPanelGroup = panelsStateWrap.Value.PanelGroupList.Single(x => x.Key == panelGroup.Key);
+            Assert.Contains(localPanelGroup.TabList, x => x == localPanelTab);
+            Assert.Equal(localPanelGroup.TabList.Last(), localPanelTab);
         }
 
         // InsertAtIndexZero == true
@@ -136,9 +136,9 @@ public class PanelsStateReducerTests
                 localPanelTab,
                 insertAtIndexZero));
 
-            var localPanelGroup = panelsStateWrap.Value.PanelGroupBag.Single(x => x.Key == panelGroup.Key);
-            Assert.Contains(localPanelGroup.TabBag, x => x == localPanelTab);
-            Assert.Equal(localPanelGroup.TabBag.First(), localPanelTab);
+            var localPanelGroup = panelsStateWrap.Value.PanelGroupList.Single(x => x.Key == panelGroup.Key);
+            Assert.Contains(localPanelGroup.TabList, x => x == localPanelTab);
+            Assert.Equal(localPanelGroup.TabList.First(), localPanelTab);
         }
     }
 
@@ -155,27 +155,27 @@ public class PanelsStateReducerTests
             out var panelGroup,
             out var panelTab);
 
-        Assert.Empty(panelGroup.TabBag);
+        Assert.Empty(panelGroup.TabList);
 
         dispatcher.Dispatch(new PanelsState.RegisterPanelGroupAction(panelGroup));
-        Assert.Contains(panelsStateWrap.Value.PanelGroupBag, x => x == panelGroup);
+        Assert.Contains(panelsStateWrap.Value.PanelGroupList, x => x == panelGroup);
 
         dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
                 panelGroup.Key,
                 panelTab,
                 true));
 
-        var localPanelGroup = panelsStateWrap.Value.PanelGroupBag.Single(x => x.Key == panelGroup.Key);
-        Assert.Contains(localPanelGroup.TabBag, x => x == panelTab);
-        Assert.NotEmpty(localPanelGroup.TabBag);
+        var localPanelGroup = panelsStateWrap.Value.PanelGroupList.Single(x => x.Key == panelGroup.Key);
+        Assert.Contains(localPanelGroup.TabList, x => x == panelTab);
+        Assert.NotEmpty(localPanelGroup.TabList);
 
         dispatcher.Dispatch(new PanelsState.DisposePanelTabAction(
             panelGroup.Key,
             panelTab.Key));
 
-        localPanelGroup = panelsStateWrap.Value.PanelGroupBag.Single(x => x.Key == panelGroup.Key);
-        Assert.DoesNotContain(localPanelGroup.TabBag, x => x == panelTab);
-        Assert.Empty(localPanelGroup.TabBag);
+        localPanelGroup = panelsStateWrap.Value.PanelGroupList.Single(x => x.Key == panelGroup.Key);
+        Assert.DoesNotContain(localPanelGroup.TabList, x => x == panelTab);
+        Assert.Empty(localPanelGroup.TabList);
     }
 
     /// <summary>
@@ -191,19 +191,19 @@ public class PanelsStateReducerTests
             out var panelGroup,
             out var panelTab);
 
-        Assert.Empty(panelGroup.TabBag);
+        Assert.Empty(panelGroup.TabList);
 
         dispatcher.Dispatch(new PanelsState.RegisterPanelGroupAction(panelGroup));
-        Assert.Contains(panelsStateWrap.Value.PanelGroupBag, x => x == panelGroup);
+        Assert.Contains(panelsStateWrap.Value.PanelGroupList, x => x == panelGroup);
 
         dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
                 panelGroup.Key,
                 panelTab,
                 true));
 
-        var localPanelGroup = panelsStateWrap.Value.PanelGroupBag.Single(x => x.Key == panelGroup.Key);
-        Assert.Contains(localPanelGroup.TabBag, x => x == panelTab);
-        Assert.NotEmpty(localPanelGroup.TabBag);
+        var localPanelGroup = panelsStateWrap.Value.PanelGroupList.Single(x => x.Key == panelGroup.Key);
+        Assert.Contains(localPanelGroup.TabList, x => x == panelTab);
+        Assert.NotEmpty(localPanelGroup.TabList);
 
         Assert.NotEqual(panelTab.Key, localPanelGroup.ActiveTabKey);
 
@@ -211,7 +211,7 @@ public class PanelsStateReducerTests
             panelGroup.Key,
             panelTab.Key));
         
-        localPanelGroup = panelsStateWrap.Value.PanelGroupBag.Single(x => x.Key == panelGroup.Key);
+        localPanelGroup = panelsStateWrap.Value.PanelGroupList.Single(x => x.Key == panelGroup.Key);
         Assert.Equal(panelTab.Key, localPanelGroup.ActiveTabKey);
     }
 
@@ -228,14 +228,14 @@ public class PanelsStateReducerTests
             out var panelGroup,
             out var panelTab);
 
-        Assert.Empty(panelGroup.TabBag);
+        Assert.Empty(panelGroup.TabList);
 
         dispatcher.Dispatch(new PanelsState.RegisterPanelGroupAction(panelGroup));
-        Assert.Contains(panelsStateWrap.Value.PanelGroupBag, x => x == panelGroup);
+        Assert.Contains(panelsStateWrap.Value.PanelGroupList, x => x == panelGroup);
 
-        List<(ContextRecord contextRecord, PanelTab panelTab)> panelTabTupleBag = new();
+        List<(ContextRecord contextRecord, PanelTab panelTab)> panelTabTupleList = new();
 
-        foreach (var context in ContextFacts.AllContextsBag)
+        foreach (var context in ContextFacts.AllContextsList)
         {
             var localPanelTab = new PanelTab(
                 Key<PanelTab>.NewKey(),
@@ -250,25 +250,25 @@ public class PanelsStateReducerTests
                 ContextRecordKey = context.ContextKey
             };
 
-            panelTabTupleBag.Add((context, localPanelTab));
+            panelTabTupleList.Add((context, localPanelTab));
 
             dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
                 panelGroup.Key,
                 localPanelTab,
                 false));
 
-            var localPanelGroup = panelsStateWrap.Value.PanelGroupBag.Single(x => x.Key == panelGroup.Key);
-            Assert.Contains(localPanelGroup.TabBag, x => x == localPanelTab);
+            var localPanelGroup = panelsStateWrap.Value.PanelGroupList.Single(x => x.Key == panelGroup.Key);
+            Assert.Contains(localPanelGroup.TabList, x => x == localPanelTab);
         }
 
-        panelTabTupleBag.Reverse();
+        panelTabTupleList.Reverse();
 
-        foreach (var panelTabTuple in panelTabTupleBag)
+        foreach (var panelTabTuple in panelTabTupleList)
         {
             dispatcher.Dispatch(new PanelsState.SetPanelTabAsActiveByContextRecordKeyAction(
                 panelTabTuple.contextRecord.ContextKey));
 
-            var localPanelGroup = panelsStateWrap.Value.PanelGroupBag.Single(x => x.Key == panelGroup.Key);
+            var localPanelGroup = panelsStateWrap.Value.PanelGroupList.Single(x => x.Key == panelGroup.Key);
             Assert.Equal(panelTabTuple.panelTab.Key, localPanelGroup.ActiveTabKey);
         }
     }
@@ -286,10 +286,10 @@ public class PanelsStateReducerTests
             out var panelGroup,
             out var panelTab);
 
-        Assert.Empty(panelGroup.TabBag);
+        Assert.Empty(panelGroup.TabList);
 
         dispatcher.Dispatch(new PanelsState.RegisterPanelGroupAction(panelGroup));
-        Assert.Contains(panelsStateWrap.Value.PanelGroupBag, x => x == panelGroup);
+        Assert.Contains(panelsStateWrap.Value.PanelGroupList, x => x == panelGroup);
 
         dispatcher.Dispatch(new PanelsState.RegisterPanelTabAction(
             panelGroup.Key,
@@ -329,10 +329,10 @@ public class PanelsStateReducerTests
                 new ElementDimensions(),
                 ImmutableArray<PanelTab>.Empty);
 
-        var samplePanelGroupWidth = samplePanelGroup.ElementDimensions.DimensionAttributeBag
+        var samplePanelGroupWidth = samplePanelGroup.ElementDimensions.DimensionAttributeList
             .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
 
-        samplePanelGroupWidth.DimensionUnitBag.AddRange(new[]
+        samplePanelGroupWidth.DimensionUnitList.AddRange(new[]
         {
             new DimensionUnit
             {

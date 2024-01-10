@@ -27,7 +27,7 @@ public partial class NotificationInitializer : FluxorComponent
 
             var notificationState = NotificationStateWrap.Value;
 
-            foreach (var notification in notificationState.DefaultBag)
+            foreach (var notification in notificationState.DefaultList)
             {
                 Dispatcher.Dispatch(new NotificationState.DisposeAction(notification.Key));
             }

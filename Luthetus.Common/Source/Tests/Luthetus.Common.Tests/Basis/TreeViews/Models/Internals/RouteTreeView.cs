@@ -17,24 +17,24 @@ public class RouteTreeView : TreeViewWithType<RouteWrapper>
         throw new NotImplementedException();
     }
 
-    public override Task LoadChildBagAsync()
+    public override Task LoadChildListAsync()
     {
-        var previousChildren = new List<TreeViewNoType>(ChildBag);
+        var previousChildren = new List<TreeViewNoType>(ChildList);
 
         var websiteServer = Item.WebsiteServerState.WebsiteServerMap[Item.WebsiteServerName];
 
-        var childRouteBag = websiteServer.Routes.Where(x => x.StartsWith(Item.Name));
-        var routeWrapperBag = new List<RouteWrapper>();
+        var childRouteList = websiteServer.Routes.Where(x => x.StartsWith(Item.Name));
+        var routeWrapperList = new List<RouteWrapper>();
 
-        foreach (var childRoute in childRouteBag)
+        foreach (var childRoute in childRouteList)
         {
-            routeWrapperBag.Add(new RouteWrapper(
+            routeWrapperList.Add(new RouteWrapper(
                 Item.Name,
                 Item.WebsiteServerState,
                 Item.WebsiteServerName));
         }
 
-        LinkChildren(previousChildren, ChildBag);
+        LinkChildren(previousChildren, ChildList);
 
         return Task.CompletedTask;
     }

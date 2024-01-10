@@ -42,7 +42,7 @@ public static class PathHelper
         if (absolutePath.IsDirectory && string.IsNullOrWhiteSpace(upperDirectoryString))
             upperDirectoryCount--; // nearest shared ancestor is the directory itself
 
-        var sharedAncestorDirectories = absolutePath.AncestorDirectoryBag
+        var sharedAncestorDirectories = absolutePath.AncestorDirectoryList
             .SkipLast(upperDirectoryCount)
             .ToArray();
 
@@ -71,7 +71,7 @@ public static class PathHelper
         IEnvironmentProvider environmentProvider)
     {
         var pathBuilder = new StringBuilder();
-        var commonPath = startingPath.AncestorDirectoryBag.First().Value;
+        var commonPath = startingPath.AncestorDirectoryList.First().Value;
 
         if ((startingPath.ParentDirectory?.Value ?? string.Empty) ==
             (endingPath.ParentDirectory?.Value ?? string.Empty))
@@ -81,21 +81,21 @@ public static class PathHelper
             // Use './' because they share the same parent directory.
             pathBuilder.Append($".{environmentProvider.DirectorySeparatorChar}");
 
-            commonPath = startingPath.AncestorDirectoryBag.Last().Value;
+            commonPath = startingPath.AncestorDirectoryList.Last().Value;
         }
         else
         {
             // Use '../' but first calculate how many UpDir(s) are needed
             int limitingIndex = Math.Min(
-                startingPath.AncestorDirectoryBag.Count,
-                endingPath.AncestorDirectoryBag.Count);
+                startingPath.AncestorDirectoryList.Count,
+                endingPath.AncestorDirectoryList.Count);
 
             var i = 0;
 
             for (; i < limitingIndex; i++)
             {
-                var startingPathAncestor = startingPath.AncestorDirectoryBag[i];
-                var endingPathAncestor = endingPath.AncestorDirectoryBag[i];
+                var startingPathAncestor = startingPath.AncestorDirectoryList[i];
+                var endingPathAncestor = endingPath.AncestorDirectoryList[i];
 
                 if (startingPathAncestor.NameWithExtension == endingPathAncestor.NameWithExtension)
                     commonPath = startingPathAncestor.Value;
@@ -103,7 +103,7 @@ public static class PathHelper
                     break;
             }
 
-            var upDirCount = startingPath.AncestorDirectoryBag.Count - i;
+            var upDirCount = startingPath.AncestorDirectoryList.Count - i;
 
             for (int appendUpDir = 0; appendUpDir < upDirCount; appendUpDir++)
             {

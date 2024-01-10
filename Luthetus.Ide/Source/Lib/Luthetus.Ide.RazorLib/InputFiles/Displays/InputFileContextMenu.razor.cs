@@ -131,7 +131,7 @@ public partial class InputFileContextMenu : ComponentBase
         if (treeViewModel is null)
             return;
 
-        await treeViewModel.LoadChildBagAsync();
+        await treeViewModel.LoadChildListAsync();
 
         TreeViewService.ReRenderNode(InputFileSidebar.TreeViewStateKey, treeViewModel);
         TreeViewService.MoveUp(InputFileSidebar.TreeViewStateKey, false);
@@ -154,7 +154,7 @@ public partial class InputFileContextMenu : ComponentBase
             
         var dialogLeftDimensionAttribute = dialogRecord
             .ElementDimensions
-            .DimensionAttributeBag
+            .DimensionAttributeList
             .First(x => x.DimensionAttributeKind == DimensionAttributeKind.Left);
 
         var contextMenuLeftDimensionAttribute = new DimensionAttribute
@@ -162,15 +162,15 @@ public partial class InputFileContextMenu : ComponentBase
             DimensionAttributeKind = DimensionAttributeKind.Left
         };
 
-        contextMenuLeftDimensionAttribute.DimensionUnitBag.Add(new DimensionUnit
+        contextMenuLeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
         {
             DimensionUnitKind = DimensionUnitKind.Pixels,
             Value = commandArgs.ContextMenuFixedPosition.LeftPositionInPixels
         });
 
-        foreach (var dimensionUnit in dialogLeftDimensionAttribute.DimensionUnitBag)
+        foreach (var dimensionUnit in dialogLeftDimensionAttribute.DimensionUnitList)
         {
-            contextMenuLeftDimensionAttribute.DimensionUnitBag.Add(new DimensionUnit
+            contextMenuLeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
             {
                 Purpose = dimensionUnit.Purpose,
                 Value = dimensionUnit.Value,
@@ -181,7 +181,7 @@ public partial class InputFileContextMenu : ComponentBase
 
         var dialogTopDimensionAttribute = dialogRecord
             .ElementDimensions
-            .DimensionAttributeBag
+            .DimensionAttributeList
             .First(x => x.DimensionAttributeKind == DimensionAttributeKind.Top);
 
         var contextMenuTopDimensionAttribute = new DimensionAttribute
@@ -189,15 +189,15 @@ public partial class InputFileContextMenu : ComponentBase
             DimensionAttributeKind = DimensionAttributeKind.Top
         };
 
-        contextMenuTopDimensionAttribute.DimensionUnitBag.Add(new DimensionUnit
+        contextMenuTopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
         {
             DimensionUnitKind = DimensionUnitKind.Pixels,
             Value = commandArgs.ContextMenuFixedPosition.TopPositionInPixels
         });
 
-        foreach (var dimensionUnit in dialogTopDimensionAttribute.DimensionUnitBag)
+        foreach (var dimensionUnit in dialogTopDimensionAttribute.DimensionUnitList)
         {
-            contextMenuTopDimensionAttribute.DimensionUnitBag.Add(new DimensionUnit
+            contextMenuTopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
             {
                 Purpose = dimensionUnit.Purpose,
                 Value = dimensionUnit.Value,

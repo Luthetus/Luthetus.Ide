@@ -35,7 +35,7 @@ public partial class FolderExplorerSync
             true,
             true);
 
-        await rootNode.LoadChildBagAsync();
+        await rootNode.LoadChildListAsync();
 
         if (!_treeViewService.TryGetTreeViewContainer(
                 TreeViewContentStateKey,

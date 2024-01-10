@@ -44,11 +44,11 @@ public class TreeViewProjectTestModel : TreeViewWithType<ProjectTestModel>
             });
     }
 
-    public override async Task LoadChildBagAsync()
+    public override async Task LoadChildListAsync()
     {
-		var previousChildren = new List<TreeViewNoType>(ChildBag);
+		var previousChildren = new List<TreeViewNoType>(ChildList);
 		
-		ChildBag = new []
+		ChildList = new []
 		{
 			(TreeViewNoType)new TreeViewSpinner(
 				Item.ProjectIdGuid,
@@ -57,7 +57,7 @@ public class TreeViewProjectTestModel : TreeViewWithType<ProjectTestModel>
 				false)
 		}.ToList();
 		
-		LinkChildren(previousChildren, ChildBag);	
+		LinkChildren(previousChildren, ChildList);	
 		
         TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
 
@@ -65,7 +65,7 @@ public class TreeViewProjectTestModel : TreeViewWithType<ProjectTestModel>
 		{
 			try
 	        {
-				previousChildren = new List<TreeViewNoType>(ChildBag);
+				previousChildren = new List<TreeViewNoType>(ChildList);
 
 				if (rootStringFragmentMap.Values.Any())
 				{
@@ -83,14 +83,14 @@ public class TreeViewProjectTestModel : TreeViewWithType<ProjectTestModel>
 					for (var i = 0; i < newChildBag.Length; i++)
 					{
 						var node = (TreeViewStringFragment)newChildBag[i];
-						await node.LoadChildBagAsync();
+						await node.LoadChildListAsync();
 					}
 		
-		            ChildBag = newChildBag.ToList();
+		            ChildList = newChildBag.ToList();
 				}
 				else
 				{
-					ChildBag = new List<TreeViewNoType>
+					ChildList = new List<TreeViewNoType>
 		            {
 		                new TreeViewException(new Exception("No results"), false, false, CommonComponentRenderers)
 		                {
@@ -100,11 +100,11 @@ public class TreeViewProjectTestModel : TreeViewWithType<ProjectTestModel>
 		            };
 				}
 
-	            LinkChildren(previousChildren, ChildBag);
+	            LinkChildren(previousChildren, ChildList);
 	        }
 	        catch (Exception exception)
 	        {
-	            ChildBag = new List<TreeViewNoType>
+	            ChildList = new List<TreeViewNoType>
 	            {
 	                new TreeViewException(exception, false, false, CommonComponentRenderers)
 	                {

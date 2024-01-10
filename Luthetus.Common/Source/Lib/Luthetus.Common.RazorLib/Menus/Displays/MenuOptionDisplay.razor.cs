@@ -32,7 +32,7 @@ public partial class MenuOptionDisplay : ComponentBase
 
     private bool IsActive => Index == ActiveMenuOptionRecordIndex;
 
-    private bool HasSubmenuActive => DropdownStateWrap.Value.ActiveKeyBag.Any(
+    private bool HasSubmenuActive => DropdownStateWrap.Value.ActiveKeyList.Any(
         x => x.Guid == _subMenuDropdownKey.Guid);
 
     private string IsActiveCssClass => IsActive ? "luth_active" : string.Empty;

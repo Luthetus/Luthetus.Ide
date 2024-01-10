@@ -146,7 +146,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         }
         else
         {
-            var parentDirectory = treeViewAbsolutePath.Item.AncestorDirectoryBag.Last();
+            var parentDirectory = treeViewAbsolutePath.Item.AncestorDirectoryList.Last();
 
             pasteMenuOptionRecord = _menuOptionsFactory.PasteClipboard(
                 parentDirectory,
@@ -203,7 +203,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         if (treeViewModel is null)
             return;
 
-        await treeViewModel.LoadChildBagAsync();
+        await treeViewModel.LoadChildListAsync();
 
         _treeViewService.ReRenderNode(
             FolderExplorerState.TreeViewContentStateKey,

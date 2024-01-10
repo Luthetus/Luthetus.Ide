@@ -149,7 +149,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
     private MenuOptionRecord[] GetCSharpProjectMenuOptions(TreeViewNamespacePath treeViewModel)
     {
-        var parentDirectory = treeViewModel.Item.AbsolutePath.AncestorDirectoryBag.Last();
+        var parentDirectory = treeViewModel.Item.AbsolutePath.AncestorDirectoryList.Last();
         var treeViewSolution = treeViewModel.Parent as TreeViewSolution;
 
         if (treeViewSolution is null)
@@ -237,7 +237,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         if (treeViewCSharpProjectNugetPackageReference.Parent 
                 is not TreeViewCSharpProjectNugetPackageReferences treeViewCSharpProjectNugetPackageReferences)
         {
-            return MenuRecord.Empty.MenuOptionBag.ToArray();
+            return MenuRecord.Empty.MenuOptionList.ToArray();
         }
         
         return new[]
@@ -402,7 +402,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         if (treeViewModel is null)
             return;
 
-        await treeViewModel.LoadChildBagAsync();
+        await treeViewModel.LoadChildListAsync();
 
         TreeViewService.ReRenderNode(DotNetSolutionState.TreeViewSolutionExplorerStateKey, treeViewModel);
         TreeViewService.MoveUp(DotNetSolutionState.TreeViewSolutionExplorerStateKey, false);

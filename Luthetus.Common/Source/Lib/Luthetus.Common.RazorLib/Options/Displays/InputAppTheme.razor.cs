@@ -41,19 +41,19 @@ public partial class InputAppTheme : IDisposable
 
         if (Guid.TryParse(guidAsString, out var guidValue))
         {
-            var themesInScopeBag = themeState.ThemeBag.Where(x => x.ThemeScopeBag.Contains(ThemeScope.App))
+            var themesInScopeList = themeState.ThemeList.Where(x => x.ThemeScopeList.Contains(ThemeScope.App))
                 .ToArray();
 
-            var existingThemeRecord = themesInScopeBag.FirstOrDefault(btr => btr.Key.Guid == guidValue);
+            var existingThemeRecord = themesInScopeList.FirstOrDefault(btr => btr.Key.Guid == guidValue);
 
             if (existingThemeRecord is not null)
                 AppOptionsService.SetActiveThemeRecordKey(existingThemeRecord.Key);
         }
     }
 
-    private bool CheckIsActiveValid(ThemeRecord[] themeRecordBag, Key<ThemeRecord> activeThemeKey)
+    private bool CheckIsActiveValid(ThemeRecord[] themeRecordList, Key<ThemeRecord> activeThemeKey)
     {
-        return themeRecordBag.Any(btr => btr.Key == activeThemeKey);
+        return themeRecordList.Any(btr => btr.Key == activeThemeKey);
     }
 
     private bool CheckIsActiveSelection(Key<ThemeRecord> themeKey, Key<ThemeRecord> activeThemeKey)

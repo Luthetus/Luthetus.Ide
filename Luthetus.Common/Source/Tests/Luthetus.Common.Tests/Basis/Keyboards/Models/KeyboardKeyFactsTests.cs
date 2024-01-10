@@ -51,12 +51,12 @@ public class KeyboardKeyFactsTests
     [Fact]
     public void IsWhitespaceCharacter()
     {
-        foreach (var whitespaceCharacter in WhitespaceCharacters.AllBag)
+        foreach (var whitespaceCharacter in WhitespaceCharacters.AllList)
         {
             Assert.True(KeyboardKeyFacts.IsWhitespaceCharacter(whitespaceCharacter));
         }
 
-        foreach (var punctuationCharacter in PunctuationCharacters.AllBag)
+        foreach (var punctuationCharacter in PunctuationCharacters.AllList)
         {
             Assert.False(KeyboardKeyFacts.IsWhitespaceCharacter(punctuationCharacter));
         }
@@ -74,12 +74,12 @@ public class KeyboardKeyFactsTests
     [Fact]
     public void IsPunctuationCharacter()
     {
-        foreach (var punctuationCharacter in PunctuationCharacters.AllBag)
+        foreach (var punctuationCharacter in PunctuationCharacters.AllList)
         {
             Assert.True(KeyboardKeyFacts.IsPunctuationCharacter(punctuationCharacter));
         }
 
-        foreach (var whitespaceCharacter in WhitespaceCharacters.AllBag)
+        foreach (var whitespaceCharacter in WhitespaceCharacters.AllList)
         {
             Assert.False(KeyboardKeyFacts.IsPunctuationCharacter(whitespaceCharacter));
         }
@@ -153,22 +153,22 @@ public class KeyboardKeyFactsTests
     [Fact]
     public void IsWhitespaceCode()
     {
-        foreach (var whitespaceCode in WhitespaceCodes.AllBag)
+        foreach (var whitespaceCode in WhitespaceCodes.AllList)
         {
             Assert.True(KeyboardKeyFacts.IsWhitespaceCode(whitespaceCode));
         }
 
-        foreach (var movementKey in MovementKeys.AllBag)
+        foreach (var movementKey in MovementKeys.AllList)
         {
             Assert.False(KeyboardKeyFacts.IsWhitespaceCode(movementKey));
         }
 
-        foreach (var punctuationCharacter in PunctuationCharacters.AllBag)
+        foreach (var punctuationCharacter in PunctuationCharacters.AllList)
         {
             Assert.False(KeyboardKeyFacts.IsWhitespaceCode(punctuationCharacter.ToString()));
         }
 
-        foreach (var whitespaceCharacter in WhitespaceCharacters.AllBag)
+        foreach (var whitespaceCharacter in WhitespaceCharacters.AllList)
         {
             Assert.False(KeyboardKeyFacts.IsWhitespaceCode(whitespaceCharacter.ToString()));
         }
@@ -351,22 +351,22 @@ public class KeyboardKeyFactsTests
     [Fact]
     public void IsMovementKey()
     {
-        foreach (var movementKey in MovementKeys.AllBag)
+        foreach (var movementKey in MovementKeys.AllList)
         {
             Assert.True(KeyboardKeyFacts.IsMovementKey(movementKey));
         }
 
-        foreach (var whitespaceCode in WhitespaceCodes.AllBag)
+        foreach (var whitespaceCode in WhitespaceCodes.AllList)
         {
             Assert.False(KeyboardKeyFacts.IsMovementKey(whitespaceCode));
         }
 
-        foreach (var punctuationCharacter in PunctuationCharacters.AllBag)
+        foreach (var punctuationCharacter in PunctuationCharacters.AllList)
         {
             Assert.False(KeyboardKeyFacts.IsMovementKey(punctuationCharacter.ToString()));
         }
 
-        foreach (var whitespaceCharacter in WhitespaceCharacters.AllBag)
+        foreach (var whitespaceCharacter in WhitespaceCharacters.AllList)
         {
             Assert.False(KeyboardKeyFacts.IsMovementKey(whitespaceCharacter.ToString()));
         }
@@ -418,7 +418,7 @@ public class KeyboardKeyFactsTests
         Assert.True(KeyboardKeyFacts.IsLineEndingCharacter(WhitespaceCharacters.NEW_LINE));
         Assert.True(KeyboardKeyFacts.IsLineEndingCharacter(WhitespaceCharacters.CARRIAGE_RETURN));
 
-        foreach (var punctuationCharacter in PunctuationCharacters.AllBag)
+        foreach (var punctuationCharacter in PunctuationCharacters.AllList)
         {
             Assert.False(KeyboardKeyFacts.IsLineEndingCharacter(punctuationCharacter));
         }

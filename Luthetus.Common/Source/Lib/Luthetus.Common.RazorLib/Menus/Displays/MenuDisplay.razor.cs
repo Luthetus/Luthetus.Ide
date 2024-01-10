@@ -99,7 +99,7 @@ public partial class MenuDisplay : ComponentBase
 
     private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
-        if (MenuRecord.MenuOptionBag.Length == 0)
+        if (MenuRecord.MenuOptionList.Length == 0)
         {
             _activeMenuOptionRecordIndex = -1;
             return;
@@ -117,7 +117,7 @@ public partial class MenuDisplay : ComponentBase
                 break;
             case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
             case KeyboardKeyFacts.AlternateMovementKeys.ARROW_DOWN:
-                if (_activeMenuOptionRecordIndex >= MenuRecord.MenuOptionBag.Length - 1)
+                if (_activeMenuOptionRecordIndex >= MenuRecord.MenuOptionList.Length - 1)
                     _activeMenuOptionRecordIndex = 0;
                 else
                     _activeMenuOptionRecordIndex++;
@@ -125,7 +125,7 @@ public partial class MenuDisplay : ComponentBase
             case KeyboardKeyFacts.MovementKeys.ARROW_UP:
             case KeyboardKeyFacts.AlternateMovementKeys.ARROW_UP:
                 if (_activeMenuOptionRecordIndex <= 0)
-                    _activeMenuOptionRecordIndex = MenuRecord.MenuOptionBag.Length - 1;
+                    _activeMenuOptionRecordIndex = MenuRecord.MenuOptionList.Length - 1;
                 else
                     _activeMenuOptionRecordIndex--;
                 break;
@@ -133,7 +133,7 @@ public partial class MenuDisplay : ComponentBase
                 _activeMenuOptionRecordIndex = 0;
                 break;
             case KeyboardKeyFacts.MovementKeys.END:
-                _activeMenuOptionRecordIndex = MenuRecord.MenuOptionBag.Length - 1;
+                _activeMenuOptionRecordIndex = MenuRecord.MenuOptionList.Length - 1;
                 break;
             case KeyboardKeyFacts.MetaKeys.ESCAPE:
                 if (DropdownKey != Key<DropdownRecord>.Empty)

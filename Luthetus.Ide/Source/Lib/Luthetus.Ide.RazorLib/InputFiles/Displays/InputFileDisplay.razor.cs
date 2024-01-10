@@ -132,10 +132,10 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
 
     private void InitializeElementDimensions()
     {
-        var navMenuWidth = _sidebarElementDimensions.DimensionAttributeBag
+        var navMenuWidth = _sidebarElementDimensions.DimensionAttributeList
             .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
 
-        navMenuWidth.DimensionUnitBag.AddRange(new[]
+        navMenuWidth.DimensionUnitList.AddRange(new[]
         {
             new DimensionUnit
             {
@@ -150,10 +150,10 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
             }
         });
 
-        var contentWidth = _contentElementDimensions.DimensionAttributeBag
+        var contentWidth = _contentElementDimensions.DimensionAttributeList
             .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
 
-        contentWidth.DimensionUnitBag.AddRange(new[]
+        contentWidth.DimensionUnitList.AddRange(new[]
         {
             new DimensionUnit
             {
@@ -180,16 +180,16 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
             true,
             false);
 
-        await pseudoRootNode.LoadChildBagAsync();
+        await pseudoRootNode.LoadChildListAsync();
 
-        var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(pseudoRootNode.ChildBag.ToArray());
+        var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(pseudoRootNode.ChildList.ToArray());
 
-        foreach (var child in adhocRootNode.ChildBag)
+        foreach (var child in adhocRootNode.ChildList)
         {
             child.IsExpandable = false;
         }
 
-        var activeNode = adhocRootNode.ChildBag.FirstOrDefault();
+        var activeNode = adhocRootNode.ChildList.FirstOrDefault();
 
         if (!TreeViewService.TryGetTreeViewContainer(InputFileContent.TreeViewStateKey, out var treeViewState))
         {
@@ -206,7 +206,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
             TreeViewService.SetActiveNode(InputFileContent.TreeViewStateKey, activeNode);
         }
 
-        await pseudoRootNode.LoadChildBagAsync();
+        await pseudoRootNode.LoadChildListAsync();
 
         var setOpenedTreeViewModelAction = new InputFileState.SetOpenedTreeViewModelAction(
             pseudoRootNode,

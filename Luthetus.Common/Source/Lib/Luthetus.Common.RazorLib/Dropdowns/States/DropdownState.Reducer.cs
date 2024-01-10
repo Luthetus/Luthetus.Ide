@@ -11,12 +11,12 @@ public partial record DropdownState
             DropdownState inState,
             AddActiveAction addActiveAction)
         {
-            if (inState.ActiveKeyBag.Any(x => x == addActiveAction.Key))
+            if (inState.ActiveKeyList.Any(x => x == addActiveAction.Key))
                 return inState;
 
             return inState with
             {
-                ActiveKeyBag = inState.ActiveKeyBag.Add(addActiveAction.Key)
+                ActiveKeyList = inState.ActiveKeyList.Add(addActiveAction.Key)
             };
         }
 
@@ -27,7 +27,7 @@ public partial record DropdownState
         {
             return inState with
             {
-                ActiveKeyBag = inState.ActiveKeyBag.Remove(removeActiveAction.Key)
+                ActiveKeyList = inState.ActiveKeyList.Remove(removeActiveAction.Key)
             };
         }
 
@@ -37,7 +37,7 @@ public partial record DropdownState
         {
             return inState with
             {
-                ActiveKeyBag = inState.ActiveKeyBag.Clear()
+                ActiveKeyList = inState.ActiveKeyList.Clear()
             };
         }
     }

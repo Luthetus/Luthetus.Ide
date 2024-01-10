@@ -58,9 +58,9 @@
     {
         <div class="luth_tree-view-children">
             
-            @{ var childBag = TreeViewNoType.ChildBag.ToArray(); }
+            @{ var childList = TreeViewNoType.ChildList.ToArray(); }
 
-            @foreach (var child in childBag)
+            @foreach (var child in childList)
             {
                 <TreeViewNodeDisplay TreeViewNoType="child"
                                      Depth="Depth + 1"/>

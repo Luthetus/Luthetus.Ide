@@ -131,7 +131,7 @@ public partial class FolderExplorerContextMenu : ComponentBase
         if (treeViewModel is null)
             return;
 
-        await treeViewModel.LoadChildBagAsync();
+        await treeViewModel.LoadChildListAsync();
 
         TreeViewService.ReRenderNode(
             FolderExplorerState.TreeViewContentStateKey,

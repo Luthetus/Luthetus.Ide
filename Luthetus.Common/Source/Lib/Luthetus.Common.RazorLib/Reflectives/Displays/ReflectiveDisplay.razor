@@ -32,7 +32,7 @@
                 Select a type
             </option>
 
-            @foreach (var type in model.ComponentTypeBag)
+            @foreach (var type in model.ComponentTypeList)
             {
                 <option title="@type.FullName"
                         value="@type.GUID"
@@ -44,7 +44,7 @@
 
         @if (model.ChosenTypeGuid != Guid.Empty)
         {
-            foreach (var parameter in model.ComponentPropertyInfoBag)
+            foreach (var parameter in model.ComponentPropertyInfoList)
             {
                 <CascadingValue Value="model">
                     <ReflectiveVariable VariableType="parameter.PropertyType"

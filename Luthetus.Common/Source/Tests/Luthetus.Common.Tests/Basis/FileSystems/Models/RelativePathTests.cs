@@ -14,7 +14,7 @@ public class RelativePathTests
     /// <see cref="RelativePath.PathType"/>
     /// <see cref="RelativePath.IsDirectory"/>
     /// <see cref="RelativePath.EnvironmentProvider"/>
-    /// <see cref="RelativePath.AncestorDirectoryBag"/>
+    /// <see cref="RelativePath.AncestorDirectoryList"/>
     /// <see cref="RelativePath.NameNoExtension"/>
     /// <see cref="RelativePath.ExtensionNoPeriod"/>
     /// <see cref="RelativePath.UpDirDirectiveCount"/>
@@ -49,7 +49,7 @@ public class RelativePathTests
             Assert.Equal(relativePathString, relativePath.Value);
             Assert.Equal("Math/", relativePath.NameWithExtension);
 
-            var homeworkDirectory = relativePath.AncestorDirectoryBag[0];
+            var homeworkDirectory = relativePath.AncestorDirectoryList[0];
             Assert.Equal("Homework", homeworkDirectory.NameNoExtension);
         }
 
@@ -67,7 +67,7 @@ public class RelativePathTests
             Assert.Equal(relativePathString, relativePath.Value);
             Assert.Equal("addition.txt", relativePath.NameWithExtension);
 
-            var mathDirectory = relativePath.AncestorDirectoryBag[0];
+            var mathDirectory = relativePath.AncestorDirectoryList[0];
             Assert.Equal("Math", mathDirectory.NameNoExtension);
         }
 
@@ -85,7 +85,7 @@ public class RelativePathTests
             Assert.Equal(relativePathString, relativePath.Value);
             Assert.Equal("skeletalSystem.txt", relativePath.NameWithExtension);
 
-            Assert.Empty(relativePath.AncestorDirectoryBag);
+            Assert.Empty(relativePath.AncestorDirectoryList);
         }
 
         {
@@ -102,7 +102,7 @@ public class RelativePathTests
             Assert.Equal(relativePathString, relativePath.Value);
             Assert.Equal("/", relativePath.NameWithExtension);
 
-            Assert.Empty(relativePath.AncestorDirectoryBag);
+            Assert.Empty(relativePath.AncestorDirectoryList);
         }
 
         {
@@ -119,7 +119,7 @@ public class RelativePathTests
             Assert.Equal(relativePathString, relativePath.Value);
             Assert.Equal("/", relativePath.NameWithExtension);
 
-            Assert.Empty(relativePath.AncestorDirectoryBag);
+            Assert.Empty(relativePath.AncestorDirectoryList);
         }
     }
 }

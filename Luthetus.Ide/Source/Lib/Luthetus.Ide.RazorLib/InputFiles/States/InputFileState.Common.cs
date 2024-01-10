@@ -36,7 +36,7 @@ public partial record InputFileState
             true);
 
         selectionClone.IsExpanded = true;
-        selectionClone.ChildBag = selectedTreeViewModel.ChildBag;
+        selectionClone.ChildList = selectedTreeViewModel.ChildList;
         
         var nextHistory = inInputFileState.OpenedTreeViewModelHistoryBag;
 

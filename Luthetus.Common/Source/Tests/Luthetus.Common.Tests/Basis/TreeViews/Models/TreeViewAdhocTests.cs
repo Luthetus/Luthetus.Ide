@@ -25,7 +25,7 @@ public class TreeViewAdhocTests
         Assert.Equal(item, treeViewAdhoc.UntypedItem);
         Assert.Equal(typeof(byte), treeViewAdhoc.ItemType);
         Assert.Null(treeViewAdhoc.Parent);
-        Assert.Empty(treeViewAdhoc.ChildBag);
+        Assert.Empty(treeViewAdhoc.ChildList);
         Assert.Equal(0, treeViewAdhoc.IndexAmongSiblings);
         Assert.False(treeViewAdhoc.IsRoot);
         Assert.False(treeViewAdhoc.IsHidden);
@@ -241,7 +241,7 @@ public class TreeViewAdhocTests
             var treeViewAdhoc = TreeViewAdhoc.ConstructTreeViewAdhoc(new List<TreeViewNoType>().ToArray());
             AssertTreeViewAdhocIsValid(treeViewAdhoc);
 
-            Assert.Empty(treeViewAdhoc.ChildBag);
+            Assert.Empty(treeViewAdhoc.ChildList);
         }
 
         // 1 children
@@ -253,9 +253,9 @@ public class TreeViewAdhocTests
 
             AssertTreeViewAdhocIsValid(treeViewAdhoc);
 
-            Assert.Single(treeViewAdhoc.ChildBag);
+            Assert.Single(treeViewAdhoc.ChildList);
 
-            var childOne = treeViewAdhoc.ChildBag[0];
+            var childOne = treeViewAdhoc.ChildList[0];
             Assert.Equal(childOneText, (string)childOne.UntypedItem);
         }
 
@@ -269,12 +269,12 @@ public class TreeViewAdhocTests
 
             AssertTreeViewAdhocIsValid(treeViewAdhoc);
 
-            Assert.Equal(2, treeViewAdhoc.ChildBag.Count);
+            Assert.Equal(2, treeViewAdhoc.ChildList.Count);
 
-            var childOne = treeViewAdhoc.ChildBag[0];
+            var childOne = treeViewAdhoc.ChildList[0];
             Assert.Equal(childOneText, (string)childOne.UntypedItem);
 
-            var childTwo = treeViewAdhoc.ChildBag[1];
+            var childTwo = treeViewAdhoc.ChildList[1];
             Assert.Equal(childTwoText, (string)childTwo.UntypedItem);
         }
 
@@ -289,15 +289,15 @@ public class TreeViewAdhocTests
 
             AssertTreeViewAdhocIsValid(treeViewAdhoc);
 
-            Assert.Equal(3, treeViewAdhoc.ChildBag.Count);
+            Assert.Equal(3, treeViewAdhoc.ChildList.Count);
 
-            var childOne = treeViewAdhoc.ChildBag[0];
+            var childOne = treeViewAdhoc.ChildList[0];
             Assert.Equal(childOneText, (string)childOne.UntypedItem);
 
-            var childTwo = treeViewAdhoc.ChildBag[1];
+            var childTwo = treeViewAdhoc.ChildList[1];
             Assert.Equal(childTwoText, (string)childTwo.UntypedItem);
 
-            var childThree = treeViewAdhoc.ChildBag[2];
+            var childThree = treeViewAdhoc.ChildList[2];
             Assert.Equal(childThreeText, (string)childThree.UntypedItem);
         }
 
@@ -336,19 +336,19 @@ public class TreeViewAdhocTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewAdhoc.LoadChildBagAsync()"/>
+    /// <see cref="TreeViewAdhoc.LoadChildListAsync()"/>
     /// </summary>
     [Fact]
-    public async Task LoadChildBagAsync()
+    public async Task LoadChildListAsync()
     {
         var treeViewAdhoc = TreeViewAdhoc.ConstructTreeViewAdhoc();
 
-        Assert.Empty(treeViewAdhoc.ChildBag);
+        Assert.Empty(treeViewAdhoc.ChildList);
 
-        // TreeViewAdhoc.LoadChildBagAsync() should do nothing
-        await treeViewAdhoc.LoadChildBagAsync();
+        // TreeViewAdhoc.LoadChildListAsync() should do nothing
+        await treeViewAdhoc.LoadChildListAsync();
         
-        Assert.Empty(treeViewAdhoc.ChildBag);
+        Assert.Empty(treeViewAdhoc.ChildList);
     }
 
     /// <summary>
@@ -359,11 +359,11 @@ public class TreeViewAdhocTests
     {
         var treeViewAdhoc = TreeViewAdhoc.ConstructTreeViewAdhoc();
 
-        Assert.Empty(treeViewAdhoc.ChildBag);
+        Assert.Empty(treeViewAdhoc.ChildList);
 
         // TreeViewAdhoc.RemoveRelatedFilesFromParent(...) should do nothing
         treeViewAdhoc.RemoveRelatedFilesFromParent(new List<TreeViewNoType> { treeViewAdhoc });
 
-        Assert.Empty(treeViewAdhoc.ChildBag);
+        Assert.Empty(treeViewAdhoc.ChildList);
     }
 }

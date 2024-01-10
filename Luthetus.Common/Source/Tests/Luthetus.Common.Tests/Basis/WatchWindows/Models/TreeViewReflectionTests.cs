@@ -153,10 +153,10 @@ public class TreeViewReflectionTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewReflection.LoadChildBagAsync()"/>
+    /// <see cref="TreeViewReflection.LoadChildListAsync()"/>
     /// </summary>
     [Fact]
-    public void LoadChildBagAsync()
+    public void LoadChildListAsync()
     {
         throw new NotImplementedException();
     }

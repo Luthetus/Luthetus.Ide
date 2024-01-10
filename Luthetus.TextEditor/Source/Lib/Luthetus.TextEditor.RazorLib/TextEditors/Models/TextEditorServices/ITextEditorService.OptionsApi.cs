@@ -164,7 +164,7 @@ public partial interface ITextEditorService
 
             if (optionsJson.CommonOptionsJsonDto?.ThemeKey is not null)
             {
-                var matchedTheme = _textEditorService.ThemeStateWrap.Value.ThemeBag.FirstOrDefault(
+                var matchedTheme = _textEditorService.ThemeStateWrap.Value.ThemeList.FirstOrDefault(
                     x => x.Key == optionsJson.CommonOptionsJsonDto.ThemeKey);
 
                 SetTheme(matchedTheme ?? ThemeFacts.VisualStudioDarkThemeClone);

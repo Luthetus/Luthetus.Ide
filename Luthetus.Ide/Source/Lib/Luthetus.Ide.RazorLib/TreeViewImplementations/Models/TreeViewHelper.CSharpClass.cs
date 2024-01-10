@@ -10,6 +10,6 @@ public partial class TreeViewHelper
         if (cSharpClassTreeView.Item is null)
             return Task.FromResult<List<TreeViewNoType>>(new());
 
-        return Task.FromResult(cSharpClassTreeView.ChildBag);
+        return Task.FromResult(cSharpClassTreeView.ChildList);
     }
 }

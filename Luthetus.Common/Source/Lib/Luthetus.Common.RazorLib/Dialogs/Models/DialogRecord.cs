@@ -24,10 +24,10 @@ public record DialogRecord(
 
         // Width
         {
-            var width = elementDimensions.DimensionAttributeBag.Single(
+            var width = elementDimensions.DimensionAttributeList.Single(
                 x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
 
-            width.DimensionUnitBag.Add(new DimensionUnit
+            width.DimensionUnitList.Add(new DimensionUnit
             {
                 Value = 60,
                 DimensionUnitKind = DimensionUnitKind.ViewportWidth
@@ -36,10 +36,10 @@ public record DialogRecord(
 
         // Height
         {
-            var height = elementDimensions.DimensionAttributeBag.Single(
+            var height = elementDimensions.DimensionAttributeList.Single(
                 x => x.DimensionAttributeKind == DimensionAttributeKind.Height);
 
-            height.DimensionUnitBag.Add(new DimensionUnit
+            height.DimensionUnitList.Add(new DimensionUnit
             {
                 Value = 60,
                 DimensionUnitKind = DimensionUnitKind.ViewportHeight
@@ -48,10 +48,10 @@ public record DialogRecord(
 
         // Left
         {
-            var left = elementDimensions.DimensionAttributeBag.Single(
+            var left = elementDimensions.DimensionAttributeList.Single(
                 x => x.DimensionAttributeKind == DimensionAttributeKind.Left);
 
-            left.DimensionUnitBag.Add(new DimensionUnit
+            left.DimensionUnitList.Add(new DimensionUnit
             {
                 Value = 20,
                 DimensionUnitKind = DimensionUnitKind.ViewportWidth
@@ -60,10 +60,10 @@ public record DialogRecord(
 
         // Top
         {
-            var top = elementDimensions.DimensionAttributeBag.Single(
+            var top = elementDimensions.DimensionAttributeList.Single(
                 x => x.DimensionAttributeKind == DimensionAttributeKind.Top);
 
-            top.DimensionUnitBag.Add(new DimensionUnit
+            top.DimensionUnitList.Add(new DimensionUnit
             {
                 Value = 20,
                 DimensionUnitKind = DimensionUnitKind.ViewportHeight

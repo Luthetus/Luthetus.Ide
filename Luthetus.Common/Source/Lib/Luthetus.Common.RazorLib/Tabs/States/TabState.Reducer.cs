@@ -11,9 +11,9 @@ public partial record TabState
             TabState inState,
             RegisterTabGroupAction registerTabGroupAction)
         {
-            var outTabGroupBag = inState.TabGroupBag.Add(registerTabGroupAction.TabGroup);
+            var outTabGroupList = inState.TabGroupList.Add(registerTabGroupAction.TabGroup);
             
-            return new TabState { TabGroupBag = outTabGroupBag };
+            return new TabState { TabGroupList = outTabGroupList };
         }
 
         [ReducerMethod]
@@ -21,35 +21,35 @@ public partial record TabState
             TabState inState,
             DisposeTabGroupAction disposeTabGroupAction)
         {
-            var inTabGroup = inState.TabGroupBag.FirstOrDefault(
+            var inTabGroup = inState.TabGroupList.FirstOrDefault(
                 x => x.Key == disposeTabGroupAction.TabGroupKey);
 
             if (inTabGroup is null)
                 return inState;
 
-            var outTabGroupBag = inState.TabGroupBag.Remove(inTabGroup);
+            var outTabGroupList = inState.TabGroupList.Remove(inTabGroup);
 
-            return new TabState { TabGroupBag = outTabGroupBag };
+            return new TabState { TabGroupList = outTabGroupList };
         }
         
         [ReducerMethod]
-        public static TabState ReduceSetTabEntryBagAction(
+        public static TabState ReduceSetTabEntryListAction(
             TabState inState,
-            SetTabEntryBagAction setTabEntryBagAction)
+            SetTabEntryListAction setTabEntryListAction)
         {
-            var inTabGroup = inState.TabGroupBag.FirstOrDefault(
-                x => x.Key == setTabEntryBagAction.TabGroupKey);
+            var inTabGroup = inState.TabGroupList.FirstOrDefault(
+                x => x.Key == setTabEntryListAction.TabGroupKey);
 
             if (inTabGroup is null)
                 return inState;
 
-            var outTabGroup = inTabGroup with { EntryBag = setTabEntryBagAction.TabEntryBag };
+            var outTabGroup = inTabGroup with { EntryList = setTabEntryListAction.TabEntryList };
 
-            var outTabGroupBag = inState.TabGroupBag.Replace(
+            var outTabGroupList = inState.TabGroupList.Replace(
                 inTabGroup,
                 outTabGroup);
 
-            return new TabState { TabGroupBag = outTabGroupBag };
+            return new TabState { TabGroupList = outTabGroupList };
         }
         
         [ReducerMethod]
@@ -57,7 +57,7 @@ public partial record TabState
             TabState inState,
             SetActiveTabEntryKeyAction setActiveTabEntryKeyAction)
         {
-            var inTabGroup = inState.TabGroupBag.FirstOrDefault(
+            var inTabGroup = inState.TabGroupList.FirstOrDefault(
                 x => x.Key == setActiveTabEntryKeyAction.TabGroupKey);
 
             if (inTabGroup is null)
@@ -65,11 +65,11 @@ public partial record TabState
 
             var outTabGroup = inTabGroup with { ActiveEntryKey = setActiveTabEntryKeyAction.TabEntryKey };
 
-            var outTabGroupBag = inState.TabGroupBag.Replace(
+            var outTabGroupList = inState.TabGroupList.Replace(
                 inTabGroup,
                 outTabGroup);
 
-            return new TabState { TabGroupBag = outTabGroupBag };
+            return new TabState { TabGroupList = outTabGroupList };
         }
     }
 }

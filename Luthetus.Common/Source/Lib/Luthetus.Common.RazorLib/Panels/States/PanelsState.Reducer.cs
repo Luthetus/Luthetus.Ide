@@ -11,12 +11,12 @@ public partial record PanelsState
             PanelsState inState,
             RegisterPanelGroupAction registerPanelGroupAction)
         {
-            if (inState.PanelGroupBag.Any(x => x.Key == registerPanelGroupAction.PanelGroup.Key))
+            if (inState.PanelGroupList.Any(x => x.Key == registerPanelGroupAction.PanelGroup.Key))
                 return inState;
 
-            var outPanelGroupBag = inState.PanelGroupBag.Add(registerPanelGroupAction.PanelGroup);
+            var outPanelGroupList = inState.PanelGroupList.Add(registerPanelGroupAction.PanelGroup);
 
-            return inState with { PanelGroupBag = outPanelGroupBag };
+            return inState with { PanelGroupList = outPanelGroupList };
         }
 
         [ReducerMethod]
@@ -24,15 +24,15 @@ public partial record PanelsState
             PanelsState inState,
             DisposePanelGroupAction disposePanelGroupAction)
         {
-            var inPanelGroup = inState.PanelGroupBag.FirstOrDefault(
+            var inPanelGroup = inState.PanelGroupList.FirstOrDefault(
                 x => x.Key == disposePanelGroupAction.PanelGroupKey);
 
             if (inPanelGroup is null)
                 return inState;
 
-            var outPanelGroupBag = inState.PanelGroupBag.Remove(inPanelGroup);
+            var outPanelGroupList = inState.PanelGroupList.Remove(inPanelGroup);
 
-            return inState with { PanelGroupBag = outPanelGroupBag };
+            return inState with { PanelGroupList = outPanelGroupList };
         }
 
         [ReducerMethod]
@@ -40,28 +40,28 @@ public partial record PanelsState
             PanelsState inState,
             RegisterPanelTabAction registerPanelTabAction)
         {
-            var inPanelGroup = inState.PanelGroupBag.FirstOrDefault(
+            var inPanelGroup = inState.PanelGroupList.FirstOrDefault(
                 x => x.Key == registerPanelTabAction.PanelGroupKey);
 
             if (inPanelGroup is null)
                 return inState;
 
-            var outTabBag = inPanelGroup.TabBag;
+            var outTabList = inPanelGroup.TabList;
 
             var insertionPoint = registerPanelTabAction.InsertAtIndexZero
                 ? 0
-                : inPanelGroup.TabBag.Length;
+                : inPanelGroup.TabList.Length;
 
-            outTabBag = inPanelGroup.TabBag.Insert(insertionPoint, registerPanelTabAction.PanelTab);
+            outTabList = inPanelGroup.TabList.Insert(insertionPoint, registerPanelTabAction.PanelTab);
 
-            var outPanelGroupBag = inState.PanelGroupBag.Replace(inPanelGroup, inPanelGroup with
+            var outPanelGroupList = inState.PanelGroupList.Replace(inPanelGroup, inPanelGroup with
             {
-                TabBag = outTabBag
+                TabList = outTabList
             });
 
             return inState with
             {
-                PanelGroupBag = outPanelGroupBag
+                PanelGroupList = outPanelGroupList
             };
         }
 
@@ -70,26 +70,26 @@ public partial record PanelsState
             PanelsState inState,
             DisposePanelTabAction disposePanelTabAction)
         {
-            var inPanelGroup = inState.PanelGroupBag.FirstOrDefault(
+            var inPanelGroup = inState.PanelGroupList.FirstOrDefault(
                 x => x.Key == disposePanelTabAction.PanelGroupKey);
 
             if (inPanelGroup is null)
                 return inState;
 
-            var panelTab = inPanelGroup.TabBag.FirstOrDefault(
+            var panelTab = inPanelGroup.TabList.FirstOrDefault(
                 x => x.Key == disposePanelTabAction.PanelTabKey);
 
             if (panelTab is null)
                 return inState;
 
-            var outTabBag = inPanelGroup.TabBag.Remove(panelTab);
+            var outTabList = inPanelGroup.TabList.Remove(panelTab);
 
-            var outPanelGroupBag = inState.PanelGroupBag.Replace(inPanelGroup, inPanelGroup with
+            var outPanelGroupList = inState.PanelGroupList.Replace(inPanelGroup, inPanelGroup with
             {
-                TabBag = outTabBag
+                TabList = outTabList
             });
 
-            return inState with { PanelGroupBag = outPanelGroupBag };
+            return inState with { PanelGroupList = outPanelGroupList };
         }
 
         [ReducerMethod]
@@ -97,18 +97,18 @@ public partial record PanelsState
             PanelsState inState,
             SetActivePanelTabAction setActivePanelTabAction)
         {
-            var inPanelGroup = inState.PanelGroupBag.FirstOrDefault(
+            var inPanelGroup = inState.PanelGroupList.FirstOrDefault(
                 x => x.Key == setActivePanelTabAction.PanelGroupKey);
 
             if (inPanelGroup is null)
                 return inState;
 
-            var outPanelGroupBag = inState.PanelGroupBag.Replace(inPanelGroup, inPanelGroup with
+            var outPanelGroupList = inState.PanelGroupList.Replace(inPanelGroup, inPanelGroup with
             {
                 ActiveTabKey = setActivePanelTabAction.PanelTabKey
             });
 
-            return inState with { PanelGroupBag = outPanelGroupBag };
+            return inState with { PanelGroupList = outPanelGroupList };
         }
 
         [ReducerMethod]
@@ -116,13 +116,13 @@ public partial record PanelsState
             PanelsState inState,
             SetPanelTabAsActiveByContextRecordKeyAction setPanelTabAsActiveByContextRecordKeyAction)
         {
-            var inPanelGroup = inState.PanelGroupBag.FirstOrDefault(x => x.TabBag
+            var inPanelGroup = inState.PanelGroupList.FirstOrDefault(x => x.TabList
                 .Any(y => y.ContextRecordKey == setPanelTabAsActiveByContextRecordKeyAction.ContextRecordKey));
 
             if (inPanelGroup is null)
                 return inState;
 
-            var inPanelTab = inPanelGroup.TabBag.FirstOrDefault(
+            var inPanelTab = inPanelGroup.TabList.FirstOrDefault(
                 x => x.ContextRecordKey == setPanelTabAsActiveByContextRecordKeyAction.ContextRecordKey);
 
             if (inPanelTab is null)

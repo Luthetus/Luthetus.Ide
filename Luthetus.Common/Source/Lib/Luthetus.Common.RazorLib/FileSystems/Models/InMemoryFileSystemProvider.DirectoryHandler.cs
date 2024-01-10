@@ -174,12 +174,12 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             if (indexOfExistingFile == -1)
                 return;
 
-            var childFileBag = _inMemoryFileSystemProvider._files.Where(imf =>
+            var childFileList = _inMemoryFileSystemProvider._files.Where(imf =>
                     imf.AbsolutePath.Value.StartsWith(absolutePathString) &&
                     imf.AbsolutePath.Value != absolutePathString)
                 .ToArray();
 
-            foreach (var child in childFileBag)
+            foreach (var child in childFileList)
             {
                 if (child.IsDirectory)
                 {
@@ -307,12 +307,12 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             if (existingFile is null)
                 return Task.FromResult(Array.Empty<string>());
 
-            var childrenFromAllGenerationsBag = _inMemoryFileSystemProvider._files.Where(
+            var childrenFromAllGenerationsList = _inMemoryFileSystemProvider._files.Where(
                 f => f.AbsolutePath.Value.StartsWith(absolutePathString) &&
                      f.AbsolutePath.Value != absolutePathString)
                 .ToArray();
 
-            var directChildren = childrenFromAllGenerationsBag.Where(
+            var directChildren = childrenFromAllGenerationsList.Where(
                 f =>
                 {
                     var withoutParentPrefix = new string(
@@ -340,11 +340,11 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             if (existingFile is null)
                 return Task.FromResult(Array.Empty<string>());
 
-            var childrenFromAllGenerationsBag = _inMemoryFileSystemProvider._files.Where(
+            var childrenFromAllGenerationsList = _inMemoryFileSystemProvider._files.Where(
                 f => f.AbsolutePath.Value.StartsWith(absolutePathString) &&
                      f.AbsolutePath.Value != absolutePathString);
 
-            var directChildrenBag = childrenFromAllGenerationsBag.Where(
+            var directChildrenList = childrenFromAllGenerationsList.Where(
                 f =>
                 {
                     var withoutParentPrefix = new string(
@@ -357,20 +357,20 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                 .Select(f => f.AbsolutePath.Value)
                 .ToArray();
 
-            return Task.FromResult(directChildrenBag);
+            return Task.FromResult(directChildrenList);
         }
 
         public async Task<IEnumerable<string>> UnsafeEnumerateFileSystemEntriesAsync(
             string absolutePathString,
             CancellationToken cancellationToken = default)
         {
-            var directoryBag = await UnsafeGetDirectoriesAsync(
+            var directoryList = await UnsafeGetDirectoriesAsync(
                 absolutePathString,
                 cancellationToken);
 
-            var fileBag = await UnsafeGetFilesAsync(absolutePathString, cancellationToken);
+            var fileList = await UnsafeGetFilesAsync(absolutePathString, cancellationToken);
 
-            return directoryBag.Union(fileBag);
+            return directoryList.Union(fileList);
         }
     }
 }

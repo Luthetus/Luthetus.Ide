@@ -54,7 +54,7 @@ public partial class TreeViewContainerDisplay : FluxorComponent
     protected override void OnInitialized()
     {
         TreeViewStateSelection
-            .Select(treeViewState => treeViewState.ContainerBag
+            .Select(treeViewState => treeViewState.ContainerList
                 .FirstOrDefault(x => x.Key == TreeViewStateKey));
 
         base.OnInitialized();

@@ -20,7 +20,7 @@ public partial class ContextDisplay : FluxorComponent
     protected override void OnInitialized()
     {
         ContextRecordSelection
-            .Select(contextState => contextState.AllContextsBag
+            .Select(contextState => contextState.AllContextsList
                 .FirstOrDefault(x => x.ContextKey == ContextKey));
 
         base.OnInitialized();

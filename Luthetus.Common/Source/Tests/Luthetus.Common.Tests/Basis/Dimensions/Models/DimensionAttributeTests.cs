@@ -10,7 +10,7 @@ public class DimensionAttributeTests
     /// <summary>
     /// <see cref="DimensionAttribute.DimensionAttributeKind"/>
     /// <br/>----<br/>
-    /// <see cref="DimensionAttribute.DimensionUnitBag"/>
+    /// <see cref="DimensionAttribute.DimensionUnitList"/>
     /// <see cref="DimensionAttribute.StyleString"/>
     /// </summary>
     [Fact]
@@ -23,7 +23,7 @@ public class DimensionAttributeTests
                 DimensionAttributeKind = RazorLib.Dimensions.Models.DimensionAttributeKind.Width,
             };
 
-            dimensionAttribute.DimensionUnitBag.Add(new DimensionUnit
+            dimensionAttribute.DimensionUnitList.Add(new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 Value = 5
@@ -39,13 +39,13 @@ public class DimensionAttributeTests
                 DimensionAttributeKind = RazorLib.Dimensions.Models.DimensionAttributeKind.Width,
             };
 
-            dimensionAttribute.DimensionUnitBag.Add(new DimensionUnit
+            dimensionAttribute.DimensionUnitList.Add(new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.ViewportWidth,
                 Value = 60
             });
 
-            dimensionAttribute.DimensionUnitBag.Add(new DimensionUnit
+            dimensionAttribute.DimensionUnitList.Add(new DimensionUnit
             {
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 Value = 33.333,

@@ -70,15 +70,15 @@ public class BackgroundTaskQueueTests
         Would something like this work?:
         // C#
         {
-            var backgroundTaskBag = new List<BackgroundTask>();
+            var backgroundTaskList = new List<BackgroundTask>();
 
-            // Add many things to backgroundTaskBag
+            // Add many things to backgroundTaskList
 
             var queue = new BackgroundTaskQueue();
 
-            Parallel.Foreach(backgroundTaskBag, bt => 
+            Parallel.Foreach(backgroundTaskList, bt => 
             {
-                queue.Enqueue(backgroundTaskBag);
+                queue.Enqueue(backgroundTaskList);
             })
         }
          */

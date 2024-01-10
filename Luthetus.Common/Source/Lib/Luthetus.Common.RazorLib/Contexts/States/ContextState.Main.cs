@@ -7,10 +7,10 @@ namespace Luthetus.Common.RazorLib.Contexts.States;
 
 [FeatureState]
 public partial record ContextState(
-    ImmutableArray<ContextRecord> AllContextsBag,
+    ImmutableArray<ContextRecord> AllContextsList,
     ContextHeirarchy FocusedContextHeirarchy,
     ContextHeirarchy? InspectedContextHeirarchy,
-    ImmutableArray<InspectableContext> InspectableContextBag,
+    ImmutableArray<InspectableContext> InspectableContextList,
     bool IsSelectingInspectionTarget)
 {
     public ContextState() : this(
@@ -25,6 +25,6 @@ public partial record ContextState(
             ContextFacts.GlobalContext.ContextKey
         }.ToImmutableArray());
 
-        AllContextsBag = ContextFacts.AllContextsBag;
+        AllContextsList = ContextFacts.AllContextsList;
     }
 }

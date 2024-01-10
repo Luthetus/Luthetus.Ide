@@ -16,7 +16,7 @@ public partial class ReflectivePanel : FluxorComponent
     private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public List<Type> ComponentTypeBag { get; set; } = null!;
+    public List<Type> ComponentTypeList { get; set; } = null!;
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
@@ -24,8 +24,8 @@ public partial class ReflectivePanel : FluxorComponent
         {
             var model = new ReflectiveModel(
                 Key<ReflectiveModel>.NewKey(),
-                ComponentTypeBag,
-                ComponentTypeBag.FirstOrDefault(x => x.Name == "SolutionExplorerDisplay")?.GUID ?? Guid.Empty,
+                ComponentTypeList,
+                ComponentTypeList.FirstOrDefault(x => x.Name == "SolutionExplorerDisplay")?.GUID ?? Guid.Empty,
                 Guid.Empty,
                 Array.Empty<PropertyInfo>(),
                 new(),
@@ -41,7 +41,7 @@ public partial class ReflectivePanel : FluxorComponent
     {
         var model = new ReflectiveModel(
             Key<ReflectiveModel>.NewKey(),
-            ComponentTypeBag,
+            ComponentTypeList,
             Guid.Empty,
             Guid.Empty,
             Array.Empty<PropertyInfo>(),

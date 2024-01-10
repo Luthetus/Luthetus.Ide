@@ -55,18 +55,18 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
             });
     }
 
-    public override Task LoadChildBagAsync()
+    public override Task LoadChildListAsync()
     {
         if (Item is null)
             return Task.CompletedTask;
 
         try
         {
-			LinkChildren(ChildBag, ChildBag);
+			LinkChildren(ChildList, ChildList);
         }
         catch (Exception exception)
         {
-            ChildBag = new List<TreeViewNoType>
+            ChildList = new List<TreeViewNoType>
             {
                 new TreeViewException(exception, false, false, CommonComponentRenderers)
                 {
@@ -154,7 +154,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
             }
         }
 
-        ChildBag = childTreeViews;
+        ChildList = childTreeViews;
     }
 
     private TreeViewNoType ConstructTreeViewSolutionFolder(SolutionFolder dotNetSolutionFolder)

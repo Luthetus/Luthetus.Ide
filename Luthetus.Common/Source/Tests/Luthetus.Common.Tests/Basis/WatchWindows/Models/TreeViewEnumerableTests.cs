@@ -153,10 +153,10 @@ public class TreeViewEnumerableTests
     }
 
     /// <summary>
-    /// <see cref="TreeViewEnumerable.LoadChildBagAsync()"/>
+    /// <see cref="TreeViewEnumerable.LoadChildListAsync()"/>
     /// </summary>
     [Fact]
-    public void LoadChildBagAsync()
+    public void LoadChildListAsync()
     {
         throw new NotImplementedException();
     }

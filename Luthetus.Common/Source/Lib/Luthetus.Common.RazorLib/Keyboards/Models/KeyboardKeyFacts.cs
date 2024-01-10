@@ -213,7 +213,7 @@ public static class KeyboardKeyFacts
         public const string PAGE_UP = "PageUp";
         public const string PAGE_DOWN = "PageDown";
 
-        public static readonly ImmutableArray<string> AllBag = new string[]
+        public static readonly ImmutableArray<string> AllList = new string[]
         {
             BACKSPACE,
             ESCAPE,
@@ -231,7 +231,7 @@ public static class KeyboardKeyFacts
         public const char NEW_LINE = '\n';
         public const char SPACE = ' ';
 
-        public static readonly ImmutableArray<char> AllBag = new char[]
+        public static readonly ImmutableArray<char> AllList = new char[]
         {
             TAB,
             CARRIAGE_RETURN,
@@ -250,7 +250,7 @@ public static class KeyboardKeyFacts
         public const string ENTER_CODE = "Enter";
         public const string SPACE_CODE = "Space";
 
-        public static readonly ImmutableArray<string> AllBag = new string[]
+        public static readonly ImmutableArray<string> AllList = new string[]
         {
             TAB_CODE,
             ENTER_CODE,
@@ -298,7 +298,7 @@ public static class KeyboardKeyFacts
         public const char FORWARD_SLASH = '/';
         public const char BACK_SLASH = '\\';
 
-        public static readonly ImmutableArray<char> AllBag = new char[]
+        public static readonly ImmutableArray<char> AllList = new char[]
         {
             OPEN_CURLY_BRACE,
             CLOSE_CURLY_BRACE,
@@ -345,7 +345,7 @@ public static class KeyboardKeyFacts
         public const string HOME = "Home";
         public const string END = "End";
 
-        public static readonly ImmutableArray<string> AllBag = new string[]
+        public static readonly ImmutableArray<string> AllList = new string[]
         {
             ARROW_LEFT,
             ARROW_DOWN,
@@ -363,7 +363,7 @@ public static class KeyboardKeyFacts
         public const string ARROW_UP = "k";
         public const string ARROW_RIGHT = "l";
 
-        public static readonly ImmutableArray<string> AllBag = new string[]
+        public static readonly ImmutableArray<string> AllList = new string[]
         {
             ARROW_LEFT,
             ARROW_DOWN,

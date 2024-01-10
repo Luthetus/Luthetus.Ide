@@ -24,12 +24,12 @@ public class NotificationStateReducerTests
             out var dispatcher,
             out var notificationRecord);
 
-        Assert.Empty(notificationStateWrap.Value.DefaultBag);
+        Assert.Empty(notificationStateWrap.Value.DefaultList);
 
         dispatcher.Dispatch(new NotificationState.RegisterAction(notificationRecord));
 
-        Assert.Single(notificationStateWrap.Value.DefaultBag);
-        Assert.Contains(notificationStateWrap.Value.DefaultBag, x => x == notificationRecord);
+        Assert.Single(notificationStateWrap.Value.DefaultList);
+        Assert.Contains(notificationStateWrap.Value.DefaultList, x => x == notificationRecord);
     }
 
     /// <summary>
@@ -46,12 +46,12 @@ public class NotificationStateReducerTests
 
         dispatcher.Dispatch(new NotificationState.RegisterAction(notificationRecord));
 
-        Assert.Single(notificationStateWrap.Value.DefaultBag);
-        Assert.Contains(notificationStateWrap.Value.DefaultBag, x => x == notificationRecord);
+        Assert.Single(notificationStateWrap.Value.DefaultList);
+        Assert.Contains(notificationStateWrap.Value.DefaultList, x => x == notificationRecord);
 
         dispatcher.Dispatch(new NotificationState.DisposeAction(notificationRecord.Key));
         
-        Assert.Empty(notificationStateWrap.Value.DefaultBag);
+        Assert.Empty(notificationStateWrap.Value.DefaultList);
     }
 
     /// <summary>
@@ -68,15 +68,15 @@ public class NotificationStateReducerTests
 
         dispatcher.Dispatch(new NotificationState.RegisterAction(notificationRecord));
 
-        Assert.Single(notificationStateWrap.Value.DefaultBag);
-        Assert.Contains(notificationStateWrap.Value.DefaultBag, x => x == notificationRecord);
+        Assert.Single(notificationStateWrap.Value.DefaultList);
+        Assert.Contains(notificationStateWrap.Value.DefaultList, x => x == notificationRecord);
 
         dispatcher.Dispatch(new NotificationState.MakeReadAction(notificationRecord.Key));
         
-        Assert.Empty(notificationStateWrap.Value.DefaultBag);
+        Assert.Empty(notificationStateWrap.Value.DefaultList);
 
-        Assert.Single(notificationStateWrap.Value.ReadBag);
-        Assert.Contains(notificationStateWrap.Value.ReadBag, x => x == notificationRecord);
+        Assert.Single(notificationStateWrap.Value.ReadList);
+        Assert.Contains(notificationStateWrap.Value.ReadList, x => x == notificationRecord);
     }
 
     /// <summary>
@@ -93,22 +93,22 @@ public class NotificationStateReducerTests
 
         dispatcher.Dispatch(new NotificationState.RegisterAction(notificationRecord));
 
-        Assert.Single(notificationStateWrap.Value.DefaultBag);
-        Assert.Contains(notificationStateWrap.Value.DefaultBag, x => x == notificationRecord);
+        Assert.Single(notificationStateWrap.Value.DefaultList);
+        Assert.Contains(notificationStateWrap.Value.DefaultList, x => x == notificationRecord);
 
         dispatcher.Dispatch(new NotificationState.MakeReadAction(notificationRecord.Key));
 
-        Assert.Empty(notificationStateWrap.Value.DefaultBag);
+        Assert.Empty(notificationStateWrap.Value.DefaultList);
 
-        Assert.Single(notificationStateWrap.Value.ReadBag);
-        Assert.Contains(notificationStateWrap.Value.ReadBag, x => x == notificationRecord);
+        Assert.Single(notificationStateWrap.Value.ReadList);
+        Assert.Contains(notificationStateWrap.Value.ReadList, x => x == notificationRecord);
 
         dispatcher.Dispatch(new NotificationState.UndoMakeReadAction(notificationRecord.Key));
 
-        Assert.Empty(notificationStateWrap.Value.ReadBag);
+        Assert.Empty(notificationStateWrap.Value.ReadList);
 
-        Assert.Single(notificationStateWrap.Value.DefaultBag);
-        Assert.Contains(notificationStateWrap.Value.DefaultBag, x => x == notificationRecord);
+        Assert.Single(notificationStateWrap.Value.DefaultList);
+        Assert.Contains(notificationStateWrap.Value.DefaultList, x => x == notificationRecord);
     }
 
     /// <summary>
@@ -125,15 +125,15 @@ public class NotificationStateReducerTests
 
         dispatcher.Dispatch(new NotificationState.RegisterAction(notificationRecord));
 
-        Assert.Single(notificationStateWrap.Value.DefaultBag);
-        Assert.Contains(notificationStateWrap.Value.DefaultBag, x => x == notificationRecord);
+        Assert.Single(notificationStateWrap.Value.DefaultList);
+        Assert.Contains(notificationStateWrap.Value.DefaultList, x => x == notificationRecord);
 
         dispatcher.Dispatch(new NotificationState.MakeDeletedAction(notificationRecord.Key));
 
-        Assert.Empty(notificationStateWrap.Value.DefaultBag);
+        Assert.Empty(notificationStateWrap.Value.DefaultList);
 
-        Assert.Single(notificationStateWrap.Value.DeletedBag);
-        Assert.Contains(notificationStateWrap.Value.DeletedBag, x => x == notificationRecord);
+        Assert.Single(notificationStateWrap.Value.DeletedList);
+        Assert.Contains(notificationStateWrap.Value.DeletedList, x => x == notificationRecord);
     }
 
     /// <summary>
@@ -150,22 +150,22 @@ public class NotificationStateReducerTests
 
         dispatcher.Dispatch(new NotificationState.RegisterAction(notificationRecord));
 
-        Assert.Single(notificationStateWrap.Value.DefaultBag);
-        Assert.Contains(notificationStateWrap.Value.DefaultBag, x => x == notificationRecord);
+        Assert.Single(notificationStateWrap.Value.DefaultList);
+        Assert.Contains(notificationStateWrap.Value.DefaultList, x => x == notificationRecord);
 
         dispatcher.Dispatch(new NotificationState.MakeDeletedAction(notificationRecord.Key));
 
-        Assert.Empty(notificationStateWrap.Value.DefaultBag);
+        Assert.Empty(notificationStateWrap.Value.DefaultList);
 
-        Assert.Single(notificationStateWrap.Value.DeletedBag);
-        Assert.Contains(notificationStateWrap.Value.DeletedBag, x => x == notificationRecord);
+        Assert.Single(notificationStateWrap.Value.DeletedList);
+        Assert.Contains(notificationStateWrap.Value.DeletedList, x => x == notificationRecord);
 
         dispatcher.Dispatch(new NotificationState.UndoMakeDeletedAction(notificationRecord.Key));
 
-        Assert.Empty(notificationStateWrap.Value.DeletedBag);
+        Assert.Empty(notificationStateWrap.Value.DeletedList);
 
-        Assert.Single(notificationStateWrap.Value.DefaultBag);
-        Assert.Contains(notificationStateWrap.Value.DefaultBag, x => x == notificationRecord);
+        Assert.Single(notificationStateWrap.Value.DefaultList);
+        Assert.Contains(notificationStateWrap.Value.DefaultList, x => x == notificationRecord);
     }
 
     /// <summary>
@@ -182,15 +182,15 @@ public class NotificationStateReducerTests
 
         dispatcher.Dispatch(new NotificationState.RegisterAction(notificationRecord));
 
-        Assert.Single(notificationStateWrap.Value.DefaultBag);
-        Assert.Contains(notificationStateWrap.Value.DefaultBag, x => x == notificationRecord);
+        Assert.Single(notificationStateWrap.Value.DefaultList);
+        Assert.Contains(notificationStateWrap.Value.DefaultList, x => x == notificationRecord);
 
         dispatcher.Dispatch(new NotificationState.MakeArchivedAction(notificationRecord.Key));
 
-        Assert.Empty(notificationStateWrap.Value.DefaultBag);
+        Assert.Empty(notificationStateWrap.Value.DefaultList);
 
-        Assert.Single(notificationStateWrap.Value.ArchivedBag);
-        Assert.Contains(notificationStateWrap.Value.ArchivedBag, x => x == notificationRecord);
+        Assert.Single(notificationStateWrap.Value.ArchivedList);
+        Assert.Contains(notificationStateWrap.Value.ArchivedList, x => x == notificationRecord);
     }
 
     /// <summary>
@@ -207,22 +207,22 @@ public class NotificationStateReducerTests
 
         dispatcher.Dispatch(new NotificationState.RegisterAction(notificationRecord));
 
-        Assert.Single(notificationStateWrap.Value.DefaultBag);
-        Assert.Contains(notificationStateWrap.Value.DefaultBag, x => x == notificationRecord);
+        Assert.Single(notificationStateWrap.Value.DefaultList);
+        Assert.Contains(notificationStateWrap.Value.DefaultList, x => x == notificationRecord);
 
         dispatcher.Dispatch(new NotificationState.MakeArchivedAction(notificationRecord.Key));
 
-        Assert.Empty(notificationStateWrap.Value.DefaultBag);
+        Assert.Empty(notificationStateWrap.Value.DefaultList);
 
-        Assert.Single(notificationStateWrap.Value.ArchivedBag);
-        Assert.Contains(notificationStateWrap.Value.ArchivedBag, x => x == notificationRecord);
+        Assert.Single(notificationStateWrap.Value.ArchivedList);
+        Assert.Contains(notificationStateWrap.Value.ArchivedList, x => x == notificationRecord);
 
         dispatcher.Dispatch(new NotificationState.UndoMakeArchivedAction(notificationRecord.Key));
 
-        Assert.Empty(notificationStateWrap.Value.ArchivedBag);
+        Assert.Empty(notificationStateWrap.Value.ArchivedList);
 
-        Assert.Single(notificationStateWrap.Value.DefaultBag);
-        Assert.Contains(notificationStateWrap.Value.DefaultBag, x => x == notificationRecord);
+        Assert.Single(notificationStateWrap.Value.DefaultList);
+        Assert.Contains(notificationStateWrap.Value.DefaultList, x => x == notificationRecord);
     }
 
     /// <summary>
@@ -239,31 +239,31 @@ public class NotificationStateReducerTests
 
         // 0 items
         {
-            Assert.Empty(notificationStateWrap.Value.DefaultBag);
+            Assert.Empty(notificationStateWrap.Value.DefaultList);
             
             dispatcher.Dispatch(new NotificationState.ClearDefaultAction());
-            Assert.Empty(notificationStateWrap.Value.DefaultBag);
+            Assert.Empty(notificationStateWrap.Value.DefaultList);
         }
 
         // 1 item
         {
-            Assert.Empty(notificationStateWrap.Value.DefaultBag);
+            Assert.Empty(notificationStateWrap.Value.DefaultList);
 
             dispatcher.Dispatch(new NotificationState.RegisterAction(notificationRecord));
-            Assert.Single(notificationStateWrap.Value.DefaultBag);
-            Assert.Contains(notificationStateWrap.Value.DefaultBag, x => x == notificationRecord);
+            Assert.Single(notificationStateWrap.Value.DefaultList);
+            Assert.Contains(notificationStateWrap.Value.DefaultList, x => x == notificationRecord);
             
             dispatcher.Dispatch(new NotificationState.ClearDefaultAction());
-            Assert.Empty(notificationStateWrap.Value.DefaultBag);
+            Assert.Empty(notificationStateWrap.Value.DefaultList);
         }
 
         // 2 items
         {
-            Assert.Empty(notificationStateWrap.Value.DefaultBag);
+            Assert.Empty(notificationStateWrap.Value.DefaultList);
 
             dispatcher.Dispatch(new NotificationState.RegisterAction(notificationRecord));
-            Assert.Single(notificationStateWrap.Value.DefaultBag);
-            Assert.Contains(notificationStateWrap.Value.DefaultBag, x => x == notificationRecord);
+            Assert.Single(notificationStateWrap.Value.DefaultList);
+            Assert.Contains(notificationStateWrap.Value.DefaultList, x => x == notificationRecord);
 
             // Add second item
             {
@@ -283,21 +283,21 @@ public class NotificationStateReducerTests
                     null);
 
                 dispatcher.Dispatch(new NotificationState.RegisterAction(sampleNotificationRecord));
-                Assert.Equal(2, notificationStateWrap.Value.DefaultBag.Count);
-                Assert.Contains(notificationStateWrap.Value.DefaultBag, x => x == sampleNotificationRecord);
+                Assert.Equal(2, notificationStateWrap.Value.DefaultList.Count);
+                Assert.Contains(notificationStateWrap.Value.DefaultList, x => x == sampleNotificationRecord);
             }
 
             dispatcher.Dispatch(new NotificationState.ClearDefaultAction());
-            Assert.Empty(notificationStateWrap.Value.DefaultBag);
+            Assert.Empty(notificationStateWrap.Value.DefaultList);
         }
         
         // 3 items
         {
-            Assert.Empty(notificationStateWrap.Value.DefaultBag);
+            Assert.Empty(notificationStateWrap.Value.DefaultList);
 
             dispatcher.Dispatch(new NotificationState.RegisterAction(notificationRecord));
-            Assert.Single(notificationStateWrap.Value.DefaultBag);
-            Assert.Contains(notificationStateWrap.Value.DefaultBag, x => x == notificationRecord);
+            Assert.Single(notificationStateWrap.Value.DefaultList);
+            Assert.Contains(notificationStateWrap.Value.DefaultList, x => x == notificationRecord);
 
             // Add second item
             {
@@ -317,8 +317,8 @@ public class NotificationStateReducerTests
                     null);
 
                 dispatcher.Dispatch(new NotificationState.RegisterAction(sampleNotificationRecord));
-                Assert.Equal(2, notificationStateWrap.Value.DefaultBag.Count);
-                Assert.Contains(notificationStateWrap.Value.DefaultBag, x => x == sampleNotificationRecord);
+                Assert.Equal(2, notificationStateWrap.Value.DefaultList.Count);
+                Assert.Contains(notificationStateWrap.Value.DefaultList, x => x == sampleNotificationRecord);
             }
             
             // Add third item
@@ -339,12 +339,12 @@ public class NotificationStateReducerTests
                     null);
 
                 dispatcher.Dispatch(new NotificationState.RegisterAction(sampleNotificationRecord));
-                Assert.Equal(3, notificationStateWrap.Value.DefaultBag.Count);
-                Assert.Contains(notificationStateWrap.Value.DefaultBag, x => x == sampleNotificationRecord);
+                Assert.Equal(3, notificationStateWrap.Value.DefaultList.Count);
+                Assert.Contains(notificationStateWrap.Value.DefaultList, x => x == sampleNotificationRecord);
             }
 
             dispatcher.Dispatch(new NotificationState.ClearDefaultAction());
-            Assert.Empty(notificationStateWrap.Value.DefaultBag);
+            Assert.Empty(notificationStateWrap.Value.DefaultList);
         }
     }
 
@@ -362,33 +362,33 @@ public class NotificationStateReducerTests
 
         // 0 items
         {
-            Assert.Empty(notificationStateWrap.Value.ReadBag);
+            Assert.Empty(notificationStateWrap.Value.ReadList);
 
             dispatcher.Dispatch(new NotificationState.ClearReadAction());
-            Assert.Empty(notificationStateWrap.Value.ReadBag);
+            Assert.Empty(notificationStateWrap.Value.ReadList);
         }
 
         // 1 item
         {
-            Assert.Empty(notificationStateWrap.Value.ReadBag);
+            Assert.Empty(notificationStateWrap.Value.ReadList);
 
             dispatcher.Dispatch(new NotificationState.RegisterAction(notificationRecord));
             dispatcher.Dispatch(new NotificationState.MakeReadAction(notificationRecord.Key));
-            Assert.Single(notificationStateWrap.Value.ReadBag);
-            Assert.Contains(notificationStateWrap.Value.ReadBag, x => x == notificationRecord);
+            Assert.Single(notificationStateWrap.Value.ReadList);
+            Assert.Contains(notificationStateWrap.Value.ReadList, x => x == notificationRecord);
 
             dispatcher.Dispatch(new NotificationState.ClearReadAction());
-            Assert.Empty(notificationStateWrap.Value.ReadBag);
+            Assert.Empty(notificationStateWrap.Value.ReadList);
         }
 
         // 2 items
         {
-            Assert.Empty(notificationStateWrap.Value.ReadBag);
+            Assert.Empty(notificationStateWrap.Value.ReadList);
 
             dispatcher.Dispatch(new NotificationState.RegisterAction(notificationRecord));
             dispatcher.Dispatch(new NotificationState.MakeReadAction(notificationRecord.Key));
-            Assert.Single(notificationStateWrap.Value.ReadBag);
-            Assert.Contains(notificationStateWrap.Value.ReadBag, x => x == notificationRecord);
+            Assert.Single(notificationStateWrap.Value.ReadList);
+            Assert.Contains(notificationStateWrap.Value.ReadList, x => x == notificationRecord);
 
             // Add second item
             {
@@ -409,22 +409,22 @@ public class NotificationStateReducerTests
 
                 dispatcher.Dispatch(new NotificationState.RegisterAction(sampleNotificationRecord));
                 dispatcher.Dispatch(new NotificationState.MakeReadAction(sampleNotificationRecord.Key));
-                Assert.Equal(2, notificationStateWrap.Value.ReadBag.Count);
-                Assert.Contains(notificationStateWrap.Value.ReadBag, x => x == sampleNotificationRecord);
+                Assert.Equal(2, notificationStateWrap.Value.ReadList.Count);
+                Assert.Contains(notificationStateWrap.Value.ReadList, x => x == sampleNotificationRecord);
             }
 
             dispatcher.Dispatch(new NotificationState.ClearReadAction());
-            Assert.Empty(notificationStateWrap.Value.ReadBag);
+            Assert.Empty(notificationStateWrap.Value.ReadList);
         }
 
         // 3 items
         {
-            Assert.Empty(notificationStateWrap.Value.ReadBag);
+            Assert.Empty(notificationStateWrap.Value.ReadList);
 
             dispatcher.Dispatch(new NotificationState.RegisterAction(notificationRecord));
             dispatcher.Dispatch(new NotificationState.MakeReadAction(notificationRecord.Key));
-            Assert.Single(notificationStateWrap.Value.ReadBag);
-            Assert.Contains(notificationStateWrap.Value.ReadBag, x => x == notificationRecord);
+            Assert.Single(notificationStateWrap.Value.ReadList);
+            Assert.Contains(notificationStateWrap.Value.ReadList, x => x == notificationRecord);
 
             // Add second item
             {
@@ -445,8 +445,8 @@ public class NotificationStateReducerTests
 
                 dispatcher.Dispatch(new NotificationState.RegisterAction(sampleNotificationRecord));
                 dispatcher.Dispatch(new NotificationState.MakeReadAction(sampleNotificationRecord.Key));
-                Assert.Equal(2, notificationStateWrap.Value.ReadBag.Count);
-                Assert.Contains(notificationStateWrap.Value.ReadBag, x => x == sampleNotificationRecord);
+                Assert.Equal(2, notificationStateWrap.Value.ReadList.Count);
+                Assert.Contains(notificationStateWrap.Value.ReadList, x => x == sampleNotificationRecord);
             }
 
             // Add third item
@@ -468,12 +468,12 @@ public class NotificationStateReducerTests
 
                 dispatcher.Dispatch(new NotificationState.RegisterAction(sampleNotificationRecord));
                 dispatcher.Dispatch(new NotificationState.MakeReadAction(sampleNotificationRecord.Key));
-                Assert.Equal(3, notificationStateWrap.Value.ReadBag.Count);
-                Assert.Contains(notificationStateWrap.Value.ReadBag, x => x == sampleNotificationRecord);
+                Assert.Equal(3, notificationStateWrap.Value.ReadList.Count);
+                Assert.Contains(notificationStateWrap.Value.ReadList, x => x == sampleNotificationRecord);
             }
 
             dispatcher.Dispatch(new NotificationState.ClearReadAction());
-            Assert.Empty(notificationStateWrap.Value.ReadBag);
+            Assert.Empty(notificationStateWrap.Value.ReadList);
         }
     }
 
@@ -491,33 +491,33 @@ public class NotificationStateReducerTests
 
         // 0 items
         {
-            Assert.Empty(notificationStateWrap.Value.DeletedBag);
+            Assert.Empty(notificationStateWrap.Value.DeletedList);
 
             dispatcher.Dispatch(new NotificationState.ClearDeletedAction());
-            Assert.Empty(notificationStateWrap.Value.DeletedBag);
+            Assert.Empty(notificationStateWrap.Value.DeletedList);
         }
 
         // 1 item
         {
-            Assert.Empty(notificationStateWrap.Value.DeletedBag);
+            Assert.Empty(notificationStateWrap.Value.DeletedList);
 
             dispatcher.Dispatch(new NotificationState.RegisterAction(notificationRecord));
             dispatcher.Dispatch(new NotificationState.MakeDeletedAction(notificationRecord.Key));
-            Assert.Single(notificationStateWrap.Value.DeletedBag);
-            Assert.Contains(notificationStateWrap.Value.DeletedBag, x => x == notificationRecord);
+            Assert.Single(notificationStateWrap.Value.DeletedList);
+            Assert.Contains(notificationStateWrap.Value.DeletedList, x => x == notificationRecord);
 
             dispatcher.Dispatch(new NotificationState.ClearDeletedAction());
-            Assert.Empty(notificationStateWrap.Value.DeletedBag);
+            Assert.Empty(notificationStateWrap.Value.DeletedList);
         }
 
         // 2 items
         {
-            Assert.Empty(notificationStateWrap.Value.DeletedBag);
+            Assert.Empty(notificationStateWrap.Value.DeletedList);
 
             dispatcher.Dispatch(new NotificationState.RegisterAction(notificationRecord));
             dispatcher.Dispatch(new NotificationState.MakeDeletedAction(notificationRecord.Key));
-            Assert.Single(notificationStateWrap.Value.DeletedBag);
-            Assert.Contains(notificationStateWrap.Value.DeletedBag, x => x == notificationRecord);
+            Assert.Single(notificationStateWrap.Value.DeletedList);
+            Assert.Contains(notificationStateWrap.Value.DeletedList, x => x == notificationRecord);
 
             // Add second item
             {
@@ -538,22 +538,22 @@ public class NotificationStateReducerTests
 
                 dispatcher.Dispatch(new NotificationState.RegisterAction(sampleNotificationRecord));
                 dispatcher.Dispatch(new NotificationState.MakeDeletedAction(sampleNotificationRecord.Key));
-                Assert.Equal(2, notificationStateWrap.Value.DeletedBag.Count);
-                Assert.Contains(notificationStateWrap.Value.DeletedBag, x => x == sampleNotificationRecord);
+                Assert.Equal(2, notificationStateWrap.Value.DeletedList.Count);
+                Assert.Contains(notificationStateWrap.Value.DeletedList, x => x == sampleNotificationRecord);
             }
 
             dispatcher.Dispatch(new NotificationState.ClearDeletedAction());
-            Assert.Empty(notificationStateWrap.Value.DeletedBag);
+            Assert.Empty(notificationStateWrap.Value.DeletedList);
         }
 
         // 3 items
         {
-            Assert.Empty(notificationStateWrap.Value.DeletedBag);
+            Assert.Empty(notificationStateWrap.Value.DeletedList);
 
             dispatcher.Dispatch(new NotificationState.RegisterAction(notificationRecord));
             dispatcher.Dispatch(new NotificationState.MakeDeletedAction(notificationRecord.Key));
-            Assert.Single(notificationStateWrap.Value.DeletedBag);
-            Assert.Contains(notificationStateWrap.Value.DeletedBag, x => x == notificationRecord);
+            Assert.Single(notificationStateWrap.Value.DeletedList);
+            Assert.Contains(notificationStateWrap.Value.DeletedList, x => x == notificationRecord);
 
             // Add second item
             {
@@ -574,8 +574,8 @@ public class NotificationStateReducerTests
 
                 dispatcher.Dispatch(new NotificationState.RegisterAction(sampleNotificationRecord));
                 dispatcher.Dispatch(new NotificationState.MakeDeletedAction(sampleNotificationRecord.Key));
-                Assert.Equal(2, notificationStateWrap.Value.DeletedBag.Count);
-                Assert.Contains(notificationStateWrap.Value.DeletedBag, x => x == sampleNotificationRecord);
+                Assert.Equal(2, notificationStateWrap.Value.DeletedList.Count);
+                Assert.Contains(notificationStateWrap.Value.DeletedList, x => x == sampleNotificationRecord);
             }
 
             // Add third item
@@ -597,12 +597,12 @@ public class NotificationStateReducerTests
 
                 dispatcher.Dispatch(new NotificationState.RegisterAction(sampleNotificationRecord));
                 dispatcher.Dispatch(new NotificationState.MakeDeletedAction(sampleNotificationRecord.Key));
-                Assert.Equal(3, notificationStateWrap.Value.DeletedBag.Count);
-                Assert.Contains(notificationStateWrap.Value.DeletedBag, x => x == sampleNotificationRecord);
+                Assert.Equal(3, notificationStateWrap.Value.DeletedList.Count);
+                Assert.Contains(notificationStateWrap.Value.DeletedList, x => x == sampleNotificationRecord);
             }
 
             dispatcher.Dispatch(new NotificationState.ClearDeletedAction());
-            Assert.Empty(notificationStateWrap.Value.DeletedBag);
+            Assert.Empty(notificationStateWrap.Value.DeletedList);
         }
     }
 
@@ -620,33 +620,33 @@ public class NotificationStateReducerTests
 
         // 0 items
         {
-            Assert.Empty(notificationStateWrap.Value.ArchivedBag);
+            Assert.Empty(notificationStateWrap.Value.ArchivedList);
 
             dispatcher.Dispatch(new NotificationState.ClearArchivedAction());
-            Assert.Empty(notificationStateWrap.Value.ArchivedBag);
+            Assert.Empty(notificationStateWrap.Value.ArchivedList);
         }
 
         // 1 item
         {
-            Assert.Empty(notificationStateWrap.Value.ArchivedBag);
+            Assert.Empty(notificationStateWrap.Value.ArchivedList);
 
             dispatcher.Dispatch(new NotificationState.RegisterAction(notificationRecord));
             dispatcher.Dispatch(new NotificationState.MakeArchivedAction(notificationRecord.Key));
-            Assert.Single(notificationStateWrap.Value.ArchivedBag);
-            Assert.Contains(notificationStateWrap.Value.ArchivedBag, x => x == notificationRecord);
+            Assert.Single(notificationStateWrap.Value.ArchivedList);
+            Assert.Contains(notificationStateWrap.Value.ArchivedList, x => x == notificationRecord);
 
             dispatcher.Dispatch(new NotificationState.ClearArchivedAction());
-            Assert.Empty(notificationStateWrap.Value.ArchivedBag);
+            Assert.Empty(notificationStateWrap.Value.ArchivedList);
         }
 
         // 2 items
         {
-            Assert.Empty(notificationStateWrap.Value.ArchivedBag);
+            Assert.Empty(notificationStateWrap.Value.ArchivedList);
 
             dispatcher.Dispatch(new NotificationState.RegisterAction(notificationRecord));
             dispatcher.Dispatch(new NotificationState.MakeArchivedAction(notificationRecord.Key));
-            Assert.Single(notificationStateWrap.Value.ArchivedBag);
-            Assert.Contains(notificationStateWrap.Value.ArchivedBag, x => x == notificationRecord);
+            Assert.Single(notificationStateWrap.Value.ArchivedList);
+            Assert.Contains(notificationStateWrap.Value.ArchivedList, x => x == notificationRecord);
 
             // Add second item
             {
@@ -667,22 +667,22 @@ public class NotificationStateReducerTests
 
                 dispatcher.Dispatch(new NotificationState.RegisterAction(sampleNotificationRecord));
                 dispatcher.Dispatch(new NotificationState.MakeArchivedAction(sampleNotificationRecord.Key));
-                Assert.Equal(2, notificationStateWrap.Value.ArchivedBag.Count);
-                Assert.Contains(notificationStateWrap.Value.ArchivedBag, x => x == sampleNotificationRecord);
+                Assert.Equal(2, notificationStateWrap.Value.ArchivedList.Count);
+                Assert.Contains(notificationStateWrap.Value.ArchivedList, x => x == sampleNotificationRecord);
             }
 
             dispatcher.Dispatch(new NotificationState.ClearArchivedAction());
-            Assert.Empty(notificationStateWrap.Value.ArchivedBag);
+            Assert.Empty(notificationStateWrap.Value.ArchivedList);
         }
 
         // 3 items
         {
-            Assert.Empty(notificationStateWrap.Value.ArchivedBag);
+            Assert.Empty(notificationStateWrap.Value.ArchivedList);
 
             dispatcher.Dispatch(new NotificationState.RegisterAction(notificationRecord));
             dispatcher.Dispatch(new NotificationState.MakeArchivedAction(notificationRecord.Key));
-            Assert.Single(notificationStateWrap.Value.ArchivedBag);
-            Assert.Contains(notificationStateWrap.Value.ArchivedBag, x => x == notificationRecord);
+            Assert.Single(notificationStateWrap.Value.ArchivedList);
+            Assert.Contains(notificationStateWrap.Value.ArchivedList, x => x == notificationRecord);
 
             // Add second item
             {
@@ -703,8 +703,8 @@ public class NotificationStateReducerTests
 
                 dispatcher.Dispatch(new NotificationState.RegisterAction(sampleNotificationRecord));
                 dispatcher.Dispatch(new NotificationState.MakeArchivedAction(sampleNotificationRecord.Key));
-                Assert.Equal(2, notificationStateWrap.Value.ArchivedBag.Count);
-                Assert.Contains(notificationStateWrap.Value.ArchivedBag, x => x == sampleNotificationRecord);
+                Assert.Equal(2, notificationStateWrap.Value.ArchivedList.Count);
+                Assert.Contains(notificationStateWrap.Value.ArchivedList, x => x == sampleNotificationRecord);
             }
 
             // Add third item
@@ -726,12 +726,12 @@ public class NotificationStateReducerTests
 
                 dispatcher.Dispatch(new NotificationState.RegisterAction(sampleNotificationRecord));
                 dispatcher.Dispatch(new NotificationState.MakeArchivedAction(sampleNotificationRecord.Key));
-                Assert.Equal(3, notificationStateWrap.Value.ArchivedBag.Count);
-                Assert.Contains(notificationStateWrap.Value.ArchivedBag, x => x == sampleNotificationRecord);
+                Assert.Equal(3, notificationStateWrap.Value.ArchivedList.Count);
+                Assert.Contains(notificationStateWrap.Value.ArchivedList, x => x == sampleNotificationRecord);
             }
 
             dispatcher.Dispatch(new NotificationState.ClearArchivedAction());
-            Assert.Empty(notificationStateWrap.Value.ArchivedBag);
+            Assert.Empty(notificationStateWrap.Value.ArchivedList);
         }
     }
 

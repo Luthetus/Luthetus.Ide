@@ -43,7 +43,7 @@ public class TreeViewException : TreeViewWithType<Exception>
             });
     }
 
-    public override Task LoadChildBagAsync()
+    public override Task LoadChildListAsync()
     {
         return Task.CompletedTask;
     }

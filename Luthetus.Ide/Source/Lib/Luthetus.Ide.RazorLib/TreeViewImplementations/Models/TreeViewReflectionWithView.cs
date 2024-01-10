@@ -22,13 +22,13 @@ public class TreeViewReflectionWithView : TreeViewReflection
     public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
     public ILuthetusCommonComponentRenderers CommonComponentRenderers { get; }
 
-    public override async Task LoadChildBagAsync()
+    public override async Task LoadChildListAsync()
     {
-        var previousChildren = new List<TreeViewNoType>(ChildBag);
+        var previousChildren = new List<TreeViewNoType>(ChildList);
 
-        ChildBag.Clear();
+        ChildList.Clear();
 
-        await base.LoadChildBagAsync();
+        await base.LoadChildListAsync();
 
         try
         {
@@ -46,10 +46,10 @@ public class TreeViewReflectionWithView : TreeViewReflection
         }
         catch (Exception e)
         {
-            ChildBag.Clear();
-            ChildBag.Add(new TreeViewException(e, false, false, CommonComponentRenderers));
+            ChildList.Clear();
+            ChildList.Add(new TreeViewException(e, false, false, CommonComponentRenderers));
         }
 
-        LinkChildren(previousChildren, ChildBag);
+        LinkChildren(previousChildren, ChildList);
     }
 }

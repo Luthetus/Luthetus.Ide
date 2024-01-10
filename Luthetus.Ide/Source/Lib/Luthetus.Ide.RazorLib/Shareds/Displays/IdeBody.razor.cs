@@ -22,10 +22,10 @@ public partial class IdeBody : ComponentBase
 
     protected override void OnInitialized()
     {
-        var editorWidth = _editorElementDimensions.DimensionAttributeBag.Single(
+        var editorWidth = _editorElementDimensions.DimensionAttributeList.Single(
             da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
 
-        editorWidth.DimensionUnitBag.AddRange(new[]
+        editorWidth.DimensionUnitList.AddRange(new[]
         {
             new DimensionUnit
             {

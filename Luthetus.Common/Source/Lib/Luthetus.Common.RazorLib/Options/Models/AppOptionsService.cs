@@ -39,7 +39,7 @@ public class AppOptionsService : IAppOptionsService
     public string StorageKey => "luthetus-common_theme-storage-key";
 #endif
 
-    public string ThemeCssClassString => ThemeStateWrap.Value.ThemeBag.FirstOrDefault(
+    public string ThemeCssClassString => ThemeStateWrap.Value.ThemeList.FirstOrDefault(
         x => x.Key == AppOptionsStateWrap.Value.Options.ThemeKey)
         ?.CssClassString
             ?? ThemeFacts.VisualStudioDarkThemeClone.CssClassString;
@@ -151,7 +151,7 @@ public class AppOptionsService : IAppOptionsService
 
         if (optionsJson.ThemeKey is not null)
         {
-            var matchedTheme = ThemeStateWrap.Value.ThemeBag.FirstOrDefault(
+            var matchedTheme = ThemeStateWrap.Value.ThemeList.FirstOrDefault(
                 x => x.Key == optionsJson.ThemeKey);
 
             SetTheme(matchedTheme ?? ThemeFacts.VisualStudioDarkThemeClone, false);

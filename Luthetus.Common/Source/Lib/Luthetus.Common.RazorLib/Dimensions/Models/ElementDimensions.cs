@@ -6,7 +6,7 @@ public class ElementDimensions
 {
     public ElementDimensions()
     {
-        DimensionAttributeBag.AddRange(new[]
+        DimensionAttributeList.AddRange(new[]
         {
             new DimensionAttribute { DimensionAttributeKind = DimensionAttributeKind.Width },
             new DimensionAttribute { DimensionAttributeKind = DimensionAttributeKind.Height },
@@ -17,7 +17,7 @@ public class ElementDimensions
         });
     }
 
-    public List<DimensionAttribute> DimensionAttributeBag { get; } = new();
+    public List<DimensionAttribute> DimensionAttributeList { get; } = new();
     public ElementPositionKind ElementPositionKind { get; set; } = ElementPositionKind.Static;
     public string StyleString => GetStyleString();
 
@@ -27,7 +27,7 @@ public class ElementDimensions
 
         styleBuilder.Append($"position: {ElementPositionKind.ToString().ToLower()}; ");
 
-        foreach (var dimensionAttribute in DimensionAttributeBag)
+        foreach (var dimensionAttribute in DimensionAttributeList)
         {
             styleBuilder.Append(dimensionAttribute.StyleString);
         }

@@ -42,10 +42,10 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         AppOptionsStateWrap.StateChanged += AppOptionsStateWrapOnStateChanged;
         TextEditorService.OptionsStateWrap.StateChanged += TextEditorOptionsStateWrap_StateChanged;
 
-        var bodyHeight = _bodyElementDimensions.DimensionAttributeBag.Single(
+        var bodyHeight = _bodyElementDimensions.DimensionAttributeList.Single(
             da => da.DimensionAttributeKind == DimensionAttributeKind.Height);
 
-        bodyHeight.DimensionUnitBag.AddRange(new[]
+        bodyHeight.DimensionUnitList.AddRange(new[]
         {
             new DimensionUnit
             {

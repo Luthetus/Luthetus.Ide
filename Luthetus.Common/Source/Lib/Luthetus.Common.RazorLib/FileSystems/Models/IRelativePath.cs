@@ -12,11 +12,11 @@ public interface IRelativePath : IPath
     /// </summary>
     public int UpDirDirectiveCount { get; }
     /// <summary>
-    /// Given an <see cref="IRelativePath"/> then <see cref="AncestorDirectoryBag"/> refers to the "../Todos/" in "../Todos/myFile.cs".
+    /// Given an <see cref="IRelativePath"/> then <see cref="AncestorDirectoryList"/> refers to the "../Todos/" in "../Todos/myFile.cs".
     /// In this example there is 1 ancestor directory.<br/><br/>
     /// 
-    /// Don't pull <see cref="AncestorDirectoryBag"/> up to <see cref="IPath"/>. If done, one loses the
+    /// Don't pull <see cref="AncestorDirectoryList"/> up to <see cref="IPath"/>. If done, one loses the
     /// <see cref="IRelativePath"/> typing
     /// </summary>
-    public List<IRelativePath> AncestorDirectoryBag { get; }
+    public List<IRelativePath> AncestorDirectoryList { get; }
 }

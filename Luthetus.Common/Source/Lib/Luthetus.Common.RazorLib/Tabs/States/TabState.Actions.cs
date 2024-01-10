@@ -8,6 +8,6 @@ public partial record TabState
 {
     public record RegisterTabGroupAction(TabGroup TabGroup);
     public record DisposeTabGroupAction(Key<TabGroup> TabGroupKey);
-    public record SetTabEntryBagAction(Key<TabGroup> TabGroupKey, ImmutableList<TabEntryNoType> TabEntryBag);
+    public record SetTabEntryListAction(Key<TabGroup> TabGroupKey, ImmutableList<TabEntryNoType> TabEntryList);
     public record SetActiveTabEntryKeyAction(Key<TabGroup> TabGroupKey, Key<TabEntryNoType> TabEntryKey);
 }

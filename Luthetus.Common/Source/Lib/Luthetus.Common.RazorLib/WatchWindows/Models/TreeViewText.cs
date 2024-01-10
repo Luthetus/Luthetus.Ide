@@ -43,7 +43,7 @@ public class TreeViewText : TreeViewWithType<string>
             });
     }
 
-    public override Task LoadChildBagAsync()
+    public override Task LoadChildListAsync()
     {
         return Task.CompletedTask;
     }

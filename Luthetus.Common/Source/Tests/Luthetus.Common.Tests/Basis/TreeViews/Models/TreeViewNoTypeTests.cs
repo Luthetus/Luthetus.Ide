@@ -16,7 +16,7 @@ public class TreeViewNoTypeTests
     /// <see cref="TreeViewNoType.UntypedItem"/>
     /// <see cref="TreeViewNoType.ItemType"/>
     /// <see cref="TreeViewNoType.Parent"/>
-    /// <see cref="TreeViewNoType.ChildBag"/>
+    /// <see cref="TreeViewNoType.ChildList"/>
     /// <see cref="TreeViewNoType.IndexAmongSiblings"/>
     /// <see cref="TreeViewNoType.IsRoot"/>
     /// <see cref="TreeViewNoType.IsHidden"/>
@@ -25,7 +25,7 @@ public class TreeViewNoTypeTests
     /// <see cref="TreeViewNoType.TreeViewChangedKey"/>
     /// <see cref="TreeViewNoType.Key"/>
     /// <see cref="TreeViewNoType.GetTreeViewRenderer()"/>
-    /// <see cref="TreeViewNoType.LoadChildBagAsync()"/>
+    /// <see cref="TreeViewNoType.LoadChildListAsync()"/>
     /// <see cref="TreeViewNoType.RemoveRelatedFilesFromParent(List{TreeViewNoType})"/>
     /// </summary>
     [Fact]
@@ -49,7 +49,7 @@ public class TreeViewNoTypeTests
         Assert.Equal(item, treeViewNoType.UntypedItem);
         Assert.Equal(typeof(string), treeViewNoType.ItemType);
         Assert.Null(treeViewNoType.Parent);
-        Assert.Equal(new(), treeViewNoType.ChildBag);
+        Assert.Equal(new(), treeViewNoType.ChildList);
         Assert.Equal(0, treeViewNoType.IndexAmongSiblings);
         Assert.False(treeViewNoType.IsRoot);
         Assert.False(treeViewNoType.IsHidden);
@@ -70,20 +70,20 @@ public class TreeViewNoTypeTests
             Assert.Equal(treeViewNoType, parameter.Value);
         }
 
-        // LoadChildBagAsync()
+        // LoadChildListAsync()
         {
-            Assert.Empty(treeViewNoType.ChildBag);
+            Assert.Empty(treeViewNoType.ChildList);
 
-            treeViewNoType.LoadChildBagAsync();
-            Assert.Empty(treeViewNoType.ChildBag);
+            treeViewNoType.LoadChildListAsync();
+            Assert.Empty(treeViewNoType.ChildList);
         }
 
         // RemoveRelatedFilesFromParent()
         {
-            Assert.Empty(treeViewNoType.ChildBag);
+            Assert.Empty(treeViewNoType.ChildList);
 
             treeViewNoType.RemoveRelatedFilesFromParent(new() { treeViewNoType });
-            Assert.Empty(treeViewNoType.ChildBag);
+            Assert.Empty(treeViewNoType.ChildList);
         }
     }
 

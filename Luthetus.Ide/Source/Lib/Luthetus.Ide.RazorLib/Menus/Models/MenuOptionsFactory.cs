@@ -478,7 +478,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         }
 
         var sourceAbsolutePathString = sourceAbsolutePath.Value;
-        var parentOfSource = sourceAbsolutePath.AncestorDirectoryBag.Last();
+        var parentOfSource = sourceAbsolutePath.AncestorDirectoryList.Last();
         var destinationAbsolutePathString = parentOfSource.Value + nextName;
 
         try

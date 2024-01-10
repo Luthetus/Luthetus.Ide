@@ -1,8 +1,8 @@
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@{ var dialogBag = DialogStateWrap.Value.DialogBag; }
+@{ var dialogList = DialogStateWrap.Value.DialogList; }
 
-@foreach (var dialog in dialogBag)
+@foreach (var dialog in dialogList)
 {
     <DialogDisplay @key="dialog.Key" 
                    DialogRecord="dialog" />

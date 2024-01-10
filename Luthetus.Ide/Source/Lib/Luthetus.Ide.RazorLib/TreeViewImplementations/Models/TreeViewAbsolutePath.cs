@@ -50,23 +50,23 @@ public class TreeViewAbsolutePath : TreeViewWithType<IAbsolutePath>
             });
     }
 
-    public override async Task LoadChildBagAsync()
+    public override async Task LoadChildListAsync()
     {
         try
         {
-            var previousChildren = new List<TreeViewNoType>(ChildBag);
+            var previousChildren = new List<TreeViewNoType>(ChildList);
 
             var newChildBag = new List<TreeViewNoType>();
 
             if (Item.IsDirectory)
                 newChildBag = await TreeViewHelper.LoadChildrenForDirectoryAsync(this);
 
-            ChildBag = newChildBag;
-            LinkChildren(previousChildren, ChildBag);
+            ChildList = newChildBag;
+            LinkChildren(previousChildren, ChildList);
         }
         catch (Exception exception)
         {
-            ChildBag = new List<TreeViewNoType>
+            ChildList = new List<TreeViewNoType>
             {
                 new TreeViewException(exception, false, false, CommonComponentRenderers)
                 {

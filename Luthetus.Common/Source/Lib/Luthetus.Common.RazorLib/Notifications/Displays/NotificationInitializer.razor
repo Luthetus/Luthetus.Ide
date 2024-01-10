@@ -2,10 +2,10 @@
 
 @{ var notificationState = NotificationStateWrap.Value; }
 
-@for (int i = 0; i < notificationState.DefaultBag.Count; i++)
+@for (int i = 0; i < notificationState.DefaultList.Count; i++)
 {
     var index = i;
-    var notification = notificationState.DefaultBag[index];
+    var notification = notificationState.DefaultList[index];
     
     <NotificationDisplay @key="notification.Key" 
                          NotificationRecord="notification"

@@ -11,12 +11,12 @@ public partial record DialogState
             DialogState inState,
             RegisterAction registerAction)
         {
-            if (inState.DialogBag.Any(x => x.Key == registerAction.Entry.Key))
+            if (inState.DialogList.Any(x => x.Key == registerAction.Entry.Key))
                 return inState;
 
-            var outDialogBag = inState.DialogBag.Add(registerAction.Entry);
+            var outDialogList = inState.DialogList.Add(registerAction.Entry);
 
-            return new DialogState { DialogBag = outDialogBag };
+            return new DialogState { DialogList = outDialogList };
         }
 
         [ReducerMethod]
@@ -24,18 +24,18 @@ public partial record DialogState
             DialogState inState,
             SetIsMaximizedAction setIsMaximizedAction)
         {
-            var inDialog = inState.DialogBag.FirstOrDefault(
+            var inDialog = inState.DialogList.FirstOrDefault(
                 x => x.Key == setIsMaximizedAction.Key);
 
             if (inDialog is null)
                 return inState;
 
-            var outDialogBag = inState.DialogBag.Replace(inDialog, inDialog with
+            var outDialogList = inState.DialogList.Replace(inDialog, inDialog with
             {
                 IsMaximized = setIsMaximizedAction.IsMaximized
             });
 
-            return new DialogState { DialogBag = outDialogBag };
+            return new DialogState { DialogList = outDialogList };
         }
 
         [ReducerMethod]
@@ -43,17 +43,17 @@ public partial record DialogState
             DialogState inState,
             DisposeAction disposeAction)
         {
-            var inDialog = inState.DialogBag.FirstOrDefault(
+            var inDialog = inState.DialogList.FirstOrDefault(
                 x => x.Key == disposeAction.Key);
 
             if (inDialog is null)
                 return inState;
 
-            var outDialogBag = inState.DialogBag.Remove(inDialog);
+            var outDialogList = inState.DialogList.Remove(inDialog);
 
             return new DialogState
             {
-                DialogBag = outDialogBag
+                DialogList = outDialogList
             };
         }
     }

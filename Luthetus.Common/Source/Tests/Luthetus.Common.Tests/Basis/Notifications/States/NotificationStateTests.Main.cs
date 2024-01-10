@@ -17,9 +17,9 @@ public class NotificationStateTests
     {
         var notificationState = new NotificationState();
 
-        Assert.Equal(ImmutableList<NotificationRecord>.Empty, notificationState.DefaultBag);
-        Assert.Equal(ImmutableList<NotificationRecord>.Empty, notificationState.ReadBag);
-        Assert.Equal(ImmutableList<NotificationRecord>.Empty, notificationState.ArchivedBag);
-        Assert.Equal(ImmutableList<NotificationRecord>.Empty, notificationState.DeletedBag);
+        Assert.Equal(ImmutableList<NotificationRecord>.Empty, notificationState.DefaultList);
+        Assert.Equal(ImmutableList<NotificationRecord>.Empty, notificationState.ReadList);
+        Assert.Equal(ImmutableList<NotificationRecord>.Empty, notificationState.ArchivedList);
+        Assert.Equal(ImmutableList<NotificationRecord>.Empty, notificationState.DeletedList);
     }
 }

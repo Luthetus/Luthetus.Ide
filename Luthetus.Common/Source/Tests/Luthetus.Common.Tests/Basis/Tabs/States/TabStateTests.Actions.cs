@@ -45,10 +45,10 @@ public partial class TabStateActionsTests
     }
 
     /// <summary>
-    /// <see cref="TabState.SetTabEntryBagAction"/>
+    /// <see cref="TabState.SetTabEntryListAction"/>
     /// </summary>
     [Fact]
-    public void SetTabEntryBagAction()
+    public void SetTabEntryListAction()
     {
         TabsTestsHelper.InitializeTabStateActionsTests(
             out var tabGroup,
@@ -59,12 +59,12 @@ public partial class TabStateActionsTests
 
         var emptyTabEntries = ImmutableList<TabEntryNoType>.Empty;
 
-        var setTabEntryBagAction = new TabState.SetTabEntryBagAction(
+        var setTabEntryListAction = new TabState.SetTabEntryListAction(
             tabGroup.Key,
             emptyTabEntries);
 
-        Assert.Equal(tabGroup.Key, setTabEntryBagAction.TabGroupKey);
-        Assert.Equal(emptyTabEntries, setTabEntryBagAction.TabEntryBag);
+        Assert.Equal(tabGroup.Key, setTabEntryListAction.TabGroupKey);
+        Assert.Equal(emptyTabEntries, setTabEntryListAction.TabEntryList);
     }
 
     /// <summary>

@@ -44,21 +44,21 @@ public class TreeViewProperties : TreeViewWithType<WatchWindowObject>
             });
     }
 
-    public override Task LoadChildBagAsync()
+    public override Task LoadChildListAsync()
     {
-        var previousChildren = new List<TreeViewNoType>(ChildBag);
+        var previousChildren = new List<TreeViewNoType>(ChildList);
 
         try
         {
-            ChildBag.Clear();
+            ChildList.Clear();
 
-            var propertyInfoBag = Item.ItemType.GetProperties(
+            var propertyInfoList = Item.ItemType.GetProperties(
                 BindingFlags.Public |
                 BindingFlags.NonPublic |
                 BindingFlags.Instance |
                 BindingFlags.Static);
 
-            foreach (var propertyInfo in propertyInfoBag)
+            foreach (var propertyInfo in propertyInfoList)
             {
                 try
                 {
@@ -79,7 +79,7 @@ public class TreeViewProperties : TreeViewWithType<WatchWindowObject>
                         propertyInfo.Name,
                         hasPublicGetter);
 
-                    ChildBag.Add(new TreeViewReflection(
+                    ChildList.Add(new TreeViewReflection(
                         childNode,
                         true,
                         false,
@@ -96,9 +96,9 @@ public class TreeViewProperties : TreeViewWithType<WatchWindowObject>
                 }
             }
 
-            if (ChildBag.Count == 0)
+            if (ChildList.Count == 0)
             {
-                ChildBag.Add(new TreeViewText(
+                ChildList.Add(new TreeViewText(
                     "No properties exist for this Type",
                     false,
                     false,
@@ -107,16 +107,16 @@ public class TreeViewProperties : TreeViewWithType<WatchWindowObject>
         }
         catch (Exception e)
         {
-            ChildBag.Clear();
+            ChildList.Clear();
 
-            ChildBag.Add(new TreeViewException(
+            ChildList.Add(new TreeViewException(
                 e,
                 false,
                 false,
                 _luthetusCommonComponentRenderers));
         }
 
-        LinkChildren(previousChildren, ChildBag);
+        LinkChildren(previousChildren, ChildList);
 
         return Task.CompletedTask;
     }

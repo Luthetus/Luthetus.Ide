@@ -6,8 +6,8 @@ public interface IAbsolutePath : IPath
     public IAbsolutePath? ParentDirectory { get; }
     public bool IsRootDirectory { get; }
     /// <summary>
-    /// Don't pull <see cref="AncestorDirectoryBag"/> up to <see cref="IPath"/>. If done, one loses the
+    /// Don't pull <see cref="AncestorDirectoryList"/> up to <see cref="IPath"/>. If done, one loses the
     /// <see cref="IAbsolutePath"/> typing
     /// </summary>
-    public List<IAbsolutePath> AncestorDirectoryBag { get; }
+    public List<IAbsolutePath> AncestorDirectoryList { get; }
 }

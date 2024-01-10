@@ -93,9 +93,9 @@ public partial record InputFileState
             TreeViewAbsolutePath? parentDirectoryTreeViewModel = null;
 
             // If has a ParentDirectory select it
-            if (currentSelection.Item.AncestorDirectoryBag.Any())
+            if (currentSelection.Item.AncestorDirectoryList.Any())
             {
-                var parentDirectoryAbsolutePath = currentSelection.Item.AncestorDirectoryBag.Last();
+                var parentDirectoryAbsolutePath = currentSelection.Item.AncestorDirectoryList.Last();
 
                 parentDirectoryTreeViewModel = new TreeViewAbsolutePath(
                     parentDirectoryAbsolutePath,
@@ -110,7 +110,7 @@ public partial record InputFileState
                     "Open Parent Directory",
                     async () =>
                     {
-                        await parentDirectoryTreeViewModel.LoadChildBagAsync();
+                        await parentDirectoryTreeViewModel.LoadChildListAsync();
                     });
             }
 
@@ -134,13 +134,13 @@ public partial record InputFileState
             RefreshCurrentSelectionAction refreshCurrentSelectionAction)
         {
             var currentSelection = inState.OpenedTreeViewModelHistoryBag[inState.IndexInHistory];
-            currentSelection.ChildBag.Clear();
+            currentSelection.ChildList.Clear();
 
             refreshCurrentSelectionAction.BackgroundTaskService.Enqueue(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
                 "Refresh Current Selection",
                 async () =>
                 {
-                    await currentSelection.LoadChildBagAsync();
+                    await currentSelection.LoadChildListAsync();
                 });
 
             return inState;
@@ -153,7 +153,7 @@ public partial record InputFileState
         {
             var openedTreeViewModel = inState.OpenedTreeViewModelHistoryBag[inState.IndexInHistory];
 
-            foreach (var treeViewModel in openedTreeViewModel.ChildBag)
+            foreach (var treeViewModel in openedTreeViewModel.ChildList)
             {
                 var treeViewAbsolutePath = (TreeViewAbsolutePath)treeViewModel;
 

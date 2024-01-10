@@ -86,14 +86,14 @@ public class AbsolutePath : IAbsolutePath
         IEnvironmentProvider environmentProvider)
     {
         RootDrive = rootDrive;
-        AncestorDirectoryBag = ancestorDirectories;
+        AncestorDirectoryList = ancestorDirectories;
         NameNoExtension = nameNoExtension;
         ExtensionNoPeriod = extensionNoPeriod;
         IsDirectory = isDirectory;
         EnvironmentProvider = environmentProvider;
     }
 
-    public IAbsolutePath? ParentDirectory => AncestorDirectoryBag.LastOrDefault();
+    public IAbsolutePath? ParentDirectory => AncestorDirectoryList.LastOrDefault();
     public string? ExactInput { get; }
     public PathType PathType { get; } = PathType.AbsolutePath;
     public bool IsDirectory { get; protected set; }
@@ -103,7 +103,7 @@ public class AbsolutePath : IAbsolutePath
     /// but the ancestor directories too store their ancestor directies.
     /// I imagine a good bit of memory is being eaten with the current implementation.
     /// </summary>
-    public List<IAbsolutePath> AncestorDirectoryBag { get; } = new();
+    public List<IAbsolutePath> AncestorDirectoryList { get; } = new();
     /// <summary>
     /// The <see cref="NameNoExtension"/> for a directory does NOT end with a directory separator char.
     /// </summary>
@@ -116,7 +116,7 @@ public class AbsolutePath : IAbsolutePath
 
     public string Value => _value ??= CalculateValue();
     public string NameWithExtension => _nameWithExtension ??= PathHelper.CalculateNameWithExtension(NameNoExtension, ExtensionNoPeriod, IsDirectory);
-    public bool IsRootDirectory => AncestorDirectoryBag.Count == 0;
+    public bool IsRootDirectory => AncestorDirectoryList.Count == 0;
 
     private void ConsumeTokenAsRootDrive()
     {
@@ -128,13 +128,13 @@ public class AbsolutePath : IAbsolutePath
     {
         var directoryPath = new AbsolutePath(
             RootDrive,
-            new List<IAbsolutePath>(AncestorDirectoryBag),
+            new List<IAbsolutePath>(AncestorDirectoryList),
             _tokenBuilder.ToString(),
             EnvironmentProvider.DirectorySeparatorChar.ToString(),
             true,
             EnvironmentProvider);
 
-        AncestorDirectoryBag.Add(directoryPath);
+        AncestorDirectoryList.Add(directoryPath);
         _tokenBuilder.Clear();
     }
 
@@ -142,7 +142,7 @@ public class AbsolutePath : IAbsolutePath
     {
         StringBuilder absolutePathStringBuilder = new(RootDrive?.DriveNameAsPath ?? string.Empty);
 
-        foreach (var directory in AncestorDirectoryBag)
+        foreach (var directory in AncestorDirectoryList)
         {
             absolutePathStringBuilder.Append(directory.NameWithExtension);
         }

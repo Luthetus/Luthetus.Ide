@@ -12,11 +12,11 @@ public abstract class TreeViewNoType
     public abstract Type ItemType { get; }
 
     public TreeViewNoType? Parent { get; set; }
-    public List<TreeViewNoType> ChildBag { get; set; } = new();
+    public List<TreeViewNoType> ChildList { get; set; } = new();
 
     /// <summary>
     /// <see cref="IndexAmongSiblings"/> refers to the index which this <see cref="TreeViewNoType"/>
-    /// is found at within their <see cref="Parent"/>'s <see cref="ChildBag"/>
+    /// is found at within their <see cref="Parent"/>'s <see cref="ChildList"/>
     /// </summary>
     public int IndexAmongSiblings { get; set; }
     public bool IsRoot { get; set; }
@@ -27,7 +27,7 @@ public abstract class TreeViewNoType
     public Key<TreeViewNoType> Key { get; set; } = Key<TreeViewNoType>.NewKey();
 
     public abstract TreeViewRenderer GetTreeViewRenderer();
-    public abstract Task LoadChildBagAsync();
+    public abstract Task LoadChildListAsync();
 
     /// <summary>
     /// Sets foreach child: child.Parent = this;
@@ -55,7 +55,7 @@ public abstract class TreeViewNoType
                 newChild.IsExpandable = oldChild.IsExpandable;
                 newChild.IsHidden = oldChild.IsHidden;
                 newChild.Key = oldChild.Key;
-                newChild.ChildBag = oldChild.ChildBag;
+                newChild.ChildList = oldChild.ChildList;
             }
         }
     }

@@ -33,10 +33,10 @@ public partial class TestExplorerDisplay : FluxorComponent
 
         // TreeView ElementDimensions
 		{
-			var treeViewWidth = _treeViewElementDimensions.DimensionAttributeBag.Single(
+			var treeViewWidth = _treeViewElementDimensions.DimensionAttributeList.Single(
 	            da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
 	
-	        treeViewWidth.DimensionUnitBag.AddRange(new[]
+	        treeViewWidth.DimensionUnitList.AddRange(new[]
 	        {
 	            new DimensionUnit
 	            {
@@ -54,10 +54,10 @@ public partial class TestExplorerDisplay : FluxorComponent
 
 		// Details ElementDimensions
 		{
-			var detailsWidth = _detailsElementDimensions.DimensionAttributeBag.Single(
+			var detailsWidth = _detailsElementDimensions.DimensionAttributeList.Single(
 	            da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
 	
-	        detailsWidth.DimensionUnitBag.AddRange(new[]
+	        detailsWidth.DimensionUnitList.AddRange(new[]
 	        {
 	            new DimensionUnit
 	            {

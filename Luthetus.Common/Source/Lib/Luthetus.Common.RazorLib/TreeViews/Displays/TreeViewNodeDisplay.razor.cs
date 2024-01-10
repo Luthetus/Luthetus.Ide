@@ -38,7 +38,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
 
     private int OffsetInPixels => OffsetPerDepthInPixels * Depth;
 
-    private bool IsSelected => TreeViewState.SelectedNodeBag.Any(x => x.Key == TreeViewNoType.Key);
+    private bool IsSelected => TreeViewState.SelectedNodeList.Any(x => x.Key == TreeViewNoType.Key);
 
     private bool IsActive => TreeViewState.ActiveNode is not null &&
                              TreeViewState.ActiveNode.Key == TreeViewNoType.Key;
@@ -103,7 +103,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
             	"TreeView.HandleExpansionChevronOnMouseDown",
 				async () => 
 				{
-					await localTreeViewNoType.LoadChildBagAsync();
+					await localTreeViewNoType.LoadChildListAsync();
 	                TreeViewService.ReRenderNode(TreeViewState.Key, localTreeViewNoType);
 				});
         }

@@ -51,7 +51,7 @@ public class TreeViewService : ITreeViewService
 
     public bool TryGetTreeViewContainer(Key<TreeViewContainer> containerKey, out TreeViewContainer? container)
     {
-        container = TreeViewStateWrap.Value.ContainerBag.FirstOrDefault(
+        container = TreeViewStateWrap.Value.ContainerList.FirstOrDefault(
             x => x.Key == containerKey);
 
         return container is not null;
@@ -105,8 +105,8 @@ public class TreeViewService : ITreeViewService
 
     public void ClearSelectedNodes(Key<TreeViewContainer> containerKey)
     {
-        var clearSelectedNodeBagAction = new TreeViewState.ClearSelectedNodeBagAction(containerKey);
-        _dispatcher.Dispatch(clearSelectedNodeBagAction);
+        var clearSelectedNodeListAction = new TreeViewState.ClearSelectedNodeListAction(containerKey);
+        _dispatcher.Dispatch(clearSelectedNodeListAction);
     }
 
     public void MoveLeft(Key<TreeViewContainer> containerKey, bool shiftKey)
@@ -137,12 +137,12 @@ public class TreeViewService : ITreeViewService
                 var backgroundTask = new BackgroundTask(
                     Key<BackgroundTask>.NewKey(),
                     ContinuousBackgroundTaskWorker.GetQueueKey(),
-                    "TreeView.LoadChildBagAsync()",
+                    "TreeView.LoadChildListAsync()",
                     async () =>
                     {
                         try
                         {
-                            await treeViewNoType.LoadChildBagAsync().ConfigureAwait(false);
+                            await treeViewNoType.LoadChildListAsync().ConfigureAwait(false);
 
                             var reRenderNodeAction = new TreeViewState.ReRenderNodeAction(
                                 containerKey,

@@ -13,9 +13,9 @@ public class MenuRecordTests
     [Fact]
     public void Empty()
     {
-        Assert.Single(MenuRecord.Empty.MenuOptionBag);
+        Assert.Single(MenuRecord.Empty.MenuOptionList);
 
-        var menuOption = MenuRecord.Empty.MenuOptionBag.Single();
+        var menuOption = MenuRecord.Empty.MenuOptionList.Single();
 
         Assert.Equal("No menu options exist for this item.", menuOption.DisplayName);
         Assert.Equal(MenuOptionKind.Other, menuOption.MenuOptionKind);

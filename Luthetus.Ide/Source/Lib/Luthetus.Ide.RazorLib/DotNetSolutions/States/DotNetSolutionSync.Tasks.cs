@@ -179,7 +179,7 @@ public partial class DotNetSolutionSync
             true,
             true);
 
-        await rootNode.LoadChildBagAsync();
+        await rootNode.LoadChildListAsync();
 
         if (!_treeViewService.TryGetTreeViewContainer(TreeViewSolutionExplorerStateKey, out _))
         {

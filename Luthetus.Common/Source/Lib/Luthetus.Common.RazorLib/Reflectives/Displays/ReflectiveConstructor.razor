@@ -22,19 +22,19 @@
     <span class="luth_reflective-argument-list">
         (
 
-        @{ var parameterInfoBag = ConstructorInfo.GetParameters(); }
+        @{ var parameterInfoList = ConstructorInfo.GetParameters(); }
 
-        @for (var i = 0; i < parameterInfoBag.Length; i++)
+        @for (var i = 0; i < parameterInfoList.Length; i++)
         {
             var index = i;
-            var parameter = parameterInfoBag[index];
+            var parameter = parameterInfoList[index];
 
             <ReflectiveVariable VariableType="parameter.ParameterType"
                                      VariableName="@parameter.Name"
                                      ParametersKey="@(ParametersKey + '.' + parameter.Name)"
                                      IsProperty="false" />
 
-            @if (i != parameterInfoBag.Length - 1)
+            @if (i != parameterInfoList.Length - 1)
             {
                 @: ,&nbsp;
             }

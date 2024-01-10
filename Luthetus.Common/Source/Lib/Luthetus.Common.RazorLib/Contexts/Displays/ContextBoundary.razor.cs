@@ -30,14 +30,14 @@ public partial class ContextBoundary : ComponentBase
     [Parameter]
     public int TabIndex { get; set; } = -1;
 
-    public void DispatchSetActiveContextStatesAction(List<Key<ContextRecord>> contextRecordKeyBag)
+    public void DispatchSetActiveContextStatesAction(List<Key<ContextRecord>> contextRecordKeyList)
     {
-        contextRecordKeyBag.Add(ContextRecord.ContextKey);
+        contextRecordKeyList.Add(ContextRecord.ContextKey);
 
         if (ParentContextBoundary is not null)
-            ParentContextBoundary.DispatchSetActiveContextStatesAction(contextRecordKeyBag);
+            ParentContextBoundary.DispatchSetActiveContextStatesAction(contextRecordKeyList);
         else
-            Dispatcher.Dispatch(new ContextState.SetFocusedContextHeirarchyAction(new(contextRecordKeyBag.ToImmutableArray())));
+            Dispatcher.Dispatch(new ContextState.SetFocusedContextHeirarchyAction(new(contextRecordKeyList.ToImmutableArray())));
     }
 
     public void HandleOnFocusIn()
@@ -68,13 +68,13 @@ public partial class ContextBoundary : ComponentBase
             await ParentContextBoundary.HandleKeymapArgumentAsync(keymapArgument);
     }
 
-    public ImmutableArray<Key<ContextRecord>> GetContextBoundaryHeirarchy(List<Key<ContextRecord>> contextRecordKeyBag)
+    public ImmutableArray<Key<ContextRecord>> GetContextBoundaryHeirarchy(List<Key<ContextRecord>> contextRecordKeyList)
     {
-        contextRecordKeyBag.Add(ContextRecord.ContextKey);
+        contextRecordKeyList.Add(ContextRecord.ContextKey);
 
         if (ParentContextBoundary is not null)
-            return ParentContextBoundary.GetContextBoundaryHeirarchy(contextRecordKeyBag);
+            return ParentContextBoundary.GetContextBoundaryHeirarchy(contextRecordKeyList);
         else
-            return contextRecordKeyBag.ToImmutableArray();
+            return contextRecordKeyList.ToImmutableArray();
     }
 }

@@ -5,12 +5,12 @@
 @{
     var panelsState = PanelsStateWrap.Value;
 
-    var panelGroup = panelsState.PanelGroupBag.FirstOrDefault(x => x.Key == PanelGroupKey);
+    var panelGroup = panelsState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
 
     PanelTab? activePanelTab = null;
 
     if (panelGroup is not null)
-        activePanelTab = panelGroup.TabBag.FirstOrDefault(x => x.Key == panelGroup.ActiveTabKey);
+        activePanelTab = panelGroup.TabList.FirstOrDefault(x => x.Key == panelGroup.ActiveTabKey);
 }
 
 <div class="luth_ide_panel @PanelPositionCssClass @CssClassString"
@@ -20,7 +20,7 @@
 
         @if (panelGroup is not null)
         {
-            foreach (var panelTab in panelGroup.TabBag)
+            foreach (var panelTab in panelGroup.TabList)
             {
                 <PanelTabDisplay @key="panelTab.Key"
                                  PanelTab="panelTab"

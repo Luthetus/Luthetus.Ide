@@ -92,7 +92,7 @@ public class TreeViewMouseEventHandlerTests
             // The 'InitializeTreeViewKeyboardEventHandlerTests' method provides an unexpanded
             // node. Therefore, make the node expanded.
             websiteServerTreeView.IsExpanded = true;
-            await websiteServerTreeView.LoadChildBagAsync();
+            await websiteServerTreeView.LoadChildListAsync();
         }
 
         Assert.Equal(websiteServerTreeView, websiteServerTreeViewContainer.ActiveNode);
@@ -100,7 +100,7 @@ public class TreeViewMouseEventHandlerTests
         mouseEventHandler.OnMouseDown(new TreeViewCommandArgs(
                 treeViewService,
                 websiteServerTreeViewContainer,
-                websiteServerTreeView.ChildBag.First(),
+                websiteServerTreeView.ChildList.First(),
                 () => Task.CompletedTask,
                 null,
                 new MouseEventArgs(),
@@ -110,7 +110,7 @@ public class TreeViewMouseEventHandlerTests
             websiteServerTreeViewContainer.Key,
             out websiteServerTreeViewContainer!));
 
-        Assert.Equal(websiteServerTreeView.ChildBag.First(), websiteServerTreeViewContainer.ActiveNode);
+        Assert.Equal(websiteServerTreeView.ChildList.First(), websiteServerTreeViewContainer.ActiveNode);
     }
 
     private void InitializeTreeViewMouseEventHandlerTests(

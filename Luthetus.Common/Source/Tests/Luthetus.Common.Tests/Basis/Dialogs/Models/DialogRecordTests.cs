@@ -79,19 +79,19 @@ public class DialogRecordTests
         Assert.Equal(ElementPositionKind.Fixed, defaultDialogDimensions.ElementPositionKind);
 
         Assert.Single(
-            defaultDialogDimensions.DimensionAttributeBag,
+            defaultDialogDimensions.DimensionAttributeList,
             x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
 
         Assert.Single(
-            defaultDialogDimensions.DimensionAttributeBag,
+            defaultDialogDimensions.DimensionAttributeList,
             x => x.DimensionAttributeKind == DimensionAttributeKind.Height);
 
         Assert.Single(
-            defaultDialogDimensions.DimensionAttributeBag,
+            defaultDialogDimensions.DimensionAttributeList,
             x => x.DimensionAttributeKind == DimensionAttributeKind.Left);
 
         Assert.Single(
-            defaultDialogDimensions.DimensionAttributeBag,
+            defaultDialogDimensions.DimensionAttributeList,
             x => x.DimensionAttributeKind == DimensionAttributeKind.Top);
     }
 }

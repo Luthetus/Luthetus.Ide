@@ -47,7 +47,7 @@ public class NotificationHelperTests
             typeof(CommonInformativeNotificationDisplay),
             luthetusCommonTreeViews);
 
-        Assert.Empty(notificationService.NotificationStateWrap.Value.DefaultBag);
+        Assert.Empty(notificationService.NotificationStateWrap.Value.DefaultList);
 
         NotificationHelper.DispatchInformative(
             "Test",
@@ -56,7 +56,7 @@ public class NotificationHelperTests
             dispatcher,
             null);
 
-        Assert.NotEmpty(notificationService.NotificationStateWrap.Value.DefaultBag);
+        Assert.NotEmpty(notificationService.NotificationStateWrap.Value.DefaultList);
     }
 
     /// <summary>
@@ -94,7 +94,7 @@ public class NotificationHelperTests
             typeof(CommonInformativeNotificationDisplay),
             luthetusCommonTreeViews);
 
-        Assert.Empty(notificationService.NotificationStateWrap.Value.DefaultBag);
+        Assert.Empty(notificationService.NotificationStateWrap.Value.DefaultList);
 
         NotificationHelper.DispatchError(
             "Test",
@@ -103,6 +103,6 @@ public class NotificationHelperTests
             dispatcher,
             null);
 
-        Assert.NotEmpty(notificationService.NotificationStateWrap.Value.DefaultBag);
+        Assert.NotEmpty(notificationService.NotificationStateWrap.Value.DefaultList);
     }
 }

@@ -20,16 +20,16 @@
                     -->@switch (notificationsViewKind)
                     {
                         case NotificationsViewKind.Notifications:
-                            @: @notificationRecordsCollection.DefaultBag.Count
+                            @: @notificationRecordsCollection.DefaultList.Count
                             break;
                         case NotificationsViewKind.Read:
-                            @: @notificationRecordsCollection.ReadBag.Count
+                            @: @notificationRecordsCollection.ReadList.Count
                             break;
                         case NotificationsViewKind.Deleted:
-                            @: @notificationRecordsCollection.DeletedBag.Count
+                            @: @notificationRecordsCollection.DeletedList.Count
                             break;
                         case NotificationsViewKind.Archived:
-                            @: @notificationRecordsCollection.ArchivedBag.Count
+                            @: @notificationRecordsCollection.ArchivedList.Count
                             break;
                     }<!--
                     -->)
@@ -40,25 +40,25 @@
 
     <div class="luth_web_notifications-view-body">
         @{
-            var entriesToRenderBag = ImmutableList<NotificationRecord>.Empty;
+            var entriesToRenderList = ImmutableList<NotificationRecord>.Empty;
             var clearOnClick = new Action(() => { });
 
             switch (_chosenNotificationsViewKind)
             {
                 case NotificationsViewKind.Notifications:
-                    entriesToRenderBag = notificationRecordsCollection.DefaultBag;
+                    entriesToRenderList = notificationRecordsCollection.DefaultList;
                     clearOnClick = Clear;
                     break;
                 case NotificationsViewKind.Read:
-                    entriesToRenderBag = notificationRecordsCollection.ReadBag;
+                    entriesToRenderList = notificationRecordsCollection.ReadList;
                     clearOnClick = ClearRead;
                     break;
                 case NotificationsViewKind.Deleted:
-                    entriesToRenderBag = notificationRecordsCollection.DeletedBag;
+                    entriesToRenderList = notificationRecordsCollection.DeletedList;
                     clearOnClick = ClearDeleted;
                     break;
                 case NotificationsViewKind.Archived:
-                    entriesToRenderBag = notificationRecordsCollection.ArchivedBag;
+                    entriesToRenderList = notificationRecordsCollection.ArchivedList;
                     clearOnClick = ClearArchived;
                     break;
             }
@@ -68,7 +68,7 @@
                 Clear @_chosenNotificationsViewKind
             </button>
 
-            foreach (var entry in entriesToRenderBag)
+            foreach (var entry in entriesToRenderList)
             {
                 <div @key="entry.Key"
                      class="luth_web_notifications-view-body-entry">

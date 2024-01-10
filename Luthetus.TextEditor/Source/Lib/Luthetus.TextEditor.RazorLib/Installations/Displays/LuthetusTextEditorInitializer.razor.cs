@@ -36,7 +36,7 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
 	            }
 	        }
 	
-	        var initialThemeRecord = ThemeRecordsCollectionService.ThemeStateWrap.Value.ThemeBag.FirstOrDefault(
+	        var initialThemeRecord = ThemeRecordsCollectionService.ThemeStateWrap.Value.ThemeList.FirstOrDefault(
 	            x => x.Key == LuthetusTextEditorOptions.InitialThemeKey);
 	
 	        if (initialThemeRecord is not null)

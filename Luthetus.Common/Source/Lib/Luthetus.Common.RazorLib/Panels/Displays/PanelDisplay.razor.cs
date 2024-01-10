@@ -61,28 +61,28 @@ public partial class PanelDisplay : FluxorComponent
     {
         var panelsState = PanelsStateWrap.Value;
 
-        var panelRecord = panelsState.PanelGroupBag.FirstOrDefault(x => x.Key == PanelGroupKey);
+        var panelRecord = panelsState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
 
         if (panelRecord is not null)
         {
-            var activePanelTab = panelRecord.TabBag.FirstOrDefault(
+            var activePanelTab = panelRecord.TabList.FirstOrDefault(
                 x => x.Key == panelRecord.ActiveTabKey);
 
-            var adjacentElementSizeDimensionAttribute = AdjacentElementDimensions.DimensionAttributeBag.First(
+            var adjacentElementSizeDimensionAttribute = AdjacentElementDimensions.DimensionAttributeList.First(
                 x => x.DimensionAttributeKind == DimensionAttributeKind);
 
-            var indexOfPreviousPassAlong = adjacentElementSizeDimensionAttribute.DimensionUnitBag.FindIndex(
+            var indexOfPreviousPassAlong = adjacentElementSizeDimensionAttribute.DimensionUnitList.FindIndex(
                 x => x.Purpose == DimensionAttributeModificationPurpose);
 
             if (activePanelTab is null && indexOfPreviousPassAlong == -1)
             {
-                var panelRecordSizeDimensionsAttribute = panelRecord.ElementDimensions.DimensionAttributeBag.First(
+                var panelRecordSizeDimensionsAttribute = panelRecord.ElementDimensions.DimensionAttributeList.First(
                     x => x.DimensionAttributeKind == DimensionAttributeKind);
 
-                var panelRecordPercentageSize = panelRecordSizeDimensionsAttribute.DimensionUnitBag.First(
+                var panelRecordPercentageSize = panelRecordSizeDimensionsAttribute.DimensionUnitList.First(
                     x => x.DimensionUnitKind == DimensionUnitKind.Percentage);
 
-                adjacentElementSizeDimensionAttribute.DimensionUnitBag.Add(new DimensionUnit
+                adjacentElementSizeDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
                 {
                     Value = panelRecordPercentageSize.Value,
                     DimensionUnitKind = panelRecordPercentageSize.DimensionUnitKind,
@@ -94,7 +94,7 @@ public partial class PanelDisplay : FluxorComponent
             }
             else if (activePanelTab is not null && indexOfPreviousPassAlong != -1)
             {
-                adjacentElementSizeDimensionAttribute.DimensionUnitBag.RemoveAt(indexOfPreviousPassAlong);
+                adjacentElementSizeDimensionAttribute.DimensionUnitList.RemoveAt(indexOfPreviousPassAlong);
 
                 await ReRenderSelfAndAdjacentElementDimensionsFunc.Invoke();
             }
@@ -118,7 +118,7 @@ public partial class PanelDisplay : FluxorComponent
     {
         var panelsState = PanelsStateWrap.Value;
 
-        var panelRecord = panelsState.PanelGroupBag.FirstOrDefault(x => x.Key == PanelGroupKey);
+        var panelRecord = panelsState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
 
         if (panelRecord is null)
             return Task.CompletedTask;
@@ -152,7 +152,7 @@ public partial class PanelDisplay : FluxorComponent
     {
         var panelsState = PanelsStateWrap.Value;
 
-        var panelRecord = panelsState.PanelGroupBag.FirstOrDefault(x => x.Key == PanelGroupKey);
+        var panelRecord = panelsState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
 
         if (panelRecord is null)
             return Task.CompletedTask;

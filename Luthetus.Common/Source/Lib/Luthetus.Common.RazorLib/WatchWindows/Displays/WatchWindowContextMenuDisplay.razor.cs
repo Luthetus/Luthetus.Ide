@@ -27,9 +27,9 @@ public partial class WatchWindowContextMenuDisplay : ComponentBase
 
     private MenuRecord GetMenuRecord(TreeViewCommandArgs treeViewCommandArgs)
     {
-        var menuOptionRecordBag = new List<MenuOptionRecord>();
+        var menuOptionRecordList = new List<MenuOptionRecord>();
 
-        menuOptionRecordBag.Add(
+        menuOptionRecordList.Add(
             new MenuOptionRecord(
                 "Refresh",
                 MenuOptionKind.Other,
@@ -44,7 +44,7 @@ public partial class WatchWindowContextMenuDisplay : ComponentBase
                             if (treeViewCommandArgs.TargetNode is null)
                                 return;
 
-                            await treeViewCommandArgs.TargetNode.LoadChildBagAsync();
+                            await treeViewCommandArgs.TargetNode.LoadChildListAsync();
 
                             TreeViewService.ReRenderNode(
                                 WatchWindowDisplay.TreeViewStateKey,
@@ -60,6 +60,6 @@ public partial class WatchWindowContextMenuDisplay : ComponentBase
                     }, CancellationToken.None);
                 }));
 
-        return new MenuRecord(menuOptionRecordBag.ToImmutableArray());
+        return new MenuRecord(menuOptionRecordList.ToImmutableArray());
     }
 }

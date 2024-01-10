@@ -32,15 +32,15 @@ public class DropdownServiceTests
     {
         InitializeDropdownServiceTests(out var dropdownService, out var dropdownKey, out _);
 
-        Assert.Empty(dropdownService.DropdownStateWrap.Value.ActiveKeyBag);
+        Assert.Empty(dropdownService.DropdownStateWrap.Value.ActiveKeyList);
 
         dropdownService.AddActiveDropdownKey(dropdownKey);
         
-        Assert.NotEmpty(dropdownService.DropdownStateWrap.Value.ActiveKeyBag);
-        Assert.Single(dropdownService.DropdownStateWrap.Value.ActiveKeyBag);
+        Assert.NotEmpty(dropdownService.DropdownStateWrap.Value.ActiveKeyList);
+        Assert.Single(dropdownService.DropdownStateWrap.Value.ActiveKeyList);
 
         Assert.Contains(
-            dropdownService.DropdownStateWrap.Value.ActiveKeyBag,
+            dropdownService.DropdownStateWrap.Value.ActiveKeyList,
             x => x == dropdownKey);
     }
 
@@ -52,19 +52,19 @@ public class DropdownServiceTests
     {
         InitializeDropdownServiceTests(out var dropdownService, out var dropdownKey, out _);
 
-        Assert.Empty(dropdownService.DropdownStateWrap.Value.ActiveKeyBag);
+        Assert.Empty(dropdownService.DropdownStateWrap.Value.ActiveKeyList);
 
         dropdownService.AddActiveDropdownKey(dropdownKey);
 
-        Assert.Single(dropdownService.DropdownStateWrap.Value.ActiveKeyBag);
+        Assert.Single(dropdownService.DropdownStateWrap.Value.ActiveKeyList);
 
         Assert.Contains(
-            dropdownService.DropdownStateWrap.Value.ActiveKeyBag,
+            dropdownService.DropdownStateWrap.Value.ActiveKeyList,
             x => x == dropdownKey);
 
         dropdownService.RemoveActiveDropdownKey(dropdownKey);
         
-        Assert.Empty(dropdownService.DropdownStateWrap.Value.ActiveKeyBag);
+        Assert.Empty(dropdownService.DropdownStateWrap.Value.ActiveKeyList);
     }
 
     /// <summary>
@@ -75,7 +75,7 @@ public class DropdownServiceTests
     {
         InitializeDropdownServiceTests(out var dropdownService, out _, out _);
 
-        Assert.Empty(dropdownService.DropdownStateWrap.Value.ActiveKeyBag);
+        Assert.Empty(dropdownService.DropdownStateWrap.Value.ActiveKeyList);
 
         var keyCount = 3;
 
@@ -84,12 +84,12 @@ public class DropdownServiceTests
             dropdownService.AddActiveDropdownKey(Key<DropdownRecord>.NewKey());
         }
 
-        Assert.NotEmpty(dropdownService.DropdownStateWrap.Value.ActiveKeyBag);
-        Assert.Equal(3, dropdownService.DropdownStateWrap.Value.ActiveKeyBag.Count);
+        Assert.NotEmpty(dropdownService.DropdownStateWrap.Value.ActiveKeyList);
+        Assert.Equal(3, dropdownService.DropdownStateWrap.Value.ActiveKeyList.Count);
 
         dropdownService.ClearActiveDropdownKeysAction();
 
-        Assert.Empty(dropdownService.DropdownStateWrap.Value.ActiveKeyBag);
+        Assert.Empty(dropdownService.DropdownStateWrap.Value.ActiveKeyList);
     }
 
     private void InitializeDropdownServiceTests(
