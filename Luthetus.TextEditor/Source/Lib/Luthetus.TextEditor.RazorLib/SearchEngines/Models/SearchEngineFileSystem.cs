@@ -15,7 +15,7 @@ public class SearchEngineFileSystem : ITextEditorSearchEngine
 		_fileSystemProvider = fileSystemProvider;
 	}
 
-    public Key<ITextEditorSearchEngine> SearchEngineKey { get; } =
+    public Key<ITextEditorSearchEngine> Key { get; } =
         new Key<ITextEditorSearchEngine>(Guid.Parse("dd38073d-b2fb-478c-844f-8af5e61855e7"));
 
     public Type IconComponentRendererType { get; } = typeof(IconCopy);

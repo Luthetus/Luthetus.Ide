@@ -43,7 +43,7 @@ public class TextEditorSearchEngineStateMainTests
 	{
 		var searchEngine = new SearchEngineOverRegisteredViewModels();
 		var searchEngineList = new ITextEditorSearchEngine[] { searchEngine }.ToImmutableList();
-		var searchEngineKey = searchEngine.SearchEngineKey;
+		var searchEngineKey = searchEngine.Key;
         var searchQuery = "AlphabetSoup";
 
         var searchEngineState = new TextEditorSearchEngineState(

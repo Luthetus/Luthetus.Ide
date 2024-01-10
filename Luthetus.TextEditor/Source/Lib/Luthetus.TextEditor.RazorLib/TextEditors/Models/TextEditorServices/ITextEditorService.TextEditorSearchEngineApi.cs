@@ -42,7 +42,7 @@ public partial interface ITextEditorService
         public ITextEditorSearchEngine? GetOrDefault(Key<ITextEditorSearchEngine> searchEngineKey)
         {
             return _textEditorService.SearchEngineStateWrap.Value.SearchEngineList.FirstOrDefault(
-                x => x.SearchEngineKey == searchEngineKey);
+                x => x.Key == searchEngineKey);
         }
 
         public void Register(ITextEditorSearchEngine searchEngine)

@@ -1,5 +1,7 @@
 @using Fluxor.Blazor.Web.Components;
+@using Luthetus.Common.RazorLib.Keys.Models;
 @using Luthetus.Common.RazorLib.Tabs.Displays
+@using Luthetus.Common.RazorLib.Tabs.Models;
 @using Luthetus.TextEditor.RazorLib.SearchEngines.Models;
 
 @inherits FluxorComponent
@@ -30,47 +32,54 @@
             }
             else
             {
-                var activeSearchEngine = (ITextEditorSearchEngine)tabEntryNoType.UntypedItem;
+                var tabEntryWithType = (TabEntryWithType<Key<ITextEditorSearchEngine>>)tabEntryNoType;
+                var activeSearchEngine = searchEngineState.SearchEngineList.FirstOrDefault(x => x.Key == tabEntryWithType.Item);
 
-                <div>
-                    SearchQuery:&nbsp;
+                if (activeSearchEngine is null)
+                {
+                    <div>@nameof(activeSearchEngine) is null</div>
+                }
+                else
+                {
+                    <div>
+                        SearchQuery:&nbsp;
 
-                    <input class="luth_input"
-                           @bind="SearchQuery"
-                           @bind:event="oninput" />
+                        <input class="luth_ide_input luth_ide_input-text"
+                               placeholder="@nameof(SearchQuery)"
+                               @bind="SearchQuery"
+                               @bind:event="oninput" />
 
-                    <button class="luth_button"
-                            @onclick="() => DoSearchOnClickAsync(searchEngineState, activeSearchEngine)">
-                        Do Search
-                    </button>
+                        <button class="luth_button"
+                                @onclick="() => DoSearchOnClickAsync(searchEngineState, activeSearchEngine)">
+                            Do Search
+                        </button>
 
+                        @if (activeSearchEngine is null)
+                        {
+                            @: null active find provider
+                        }
+                        else
+                        {
+                            @: @activeSearchEngine.DisplayName
+                        }
 
+                        @if (_isSearching)
+                        {
+                            <IconLoading />
+                        }
+                        else
+                        {
+                            <div>
+                                Not Searching
+                            </div>
+                        }
 
-                    @if (activeSearchEngine is null)
-                    {
-                        @: null active find provider
-                    }
-                    else
-                    {
-                        @: @activeSearchEngine.DisplayName
-                    }
-
-                    @if (_isSearching)
-                    {
-                        <IconLoading />
-                    }
-                    else
-                    {
-                        <div>
-                            Not Searching
-                        </div>
-                    }
-
-                    @if (activeSearchEngine is SearchEngineFileSystem searchEngineFileSystem)
-                    {
-                        <SearchEngineFileSystemDisplay SearchEngineFileSystem="searchEngineFileSystem" />
-                    }
-                </div>
+                        @if (activeSearchEngine is SearchEngineFileSystem searchEngineFileSystem)
+                        {
+                            <SearchEngineFileSystemDisplay SearchEngineFileSystem="searchEngineFileSystem" />
+                        }
+                    </div>
+                }
             }
         }
     </div>

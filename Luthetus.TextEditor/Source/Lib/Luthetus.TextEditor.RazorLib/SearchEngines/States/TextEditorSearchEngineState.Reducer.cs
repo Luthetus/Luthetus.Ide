@@ -12,7 +12,7 @@ public partial class TextEditorSearchEngineState
             RegisterAction registerAction)
         {
             var inSearchEngine = inState.SearchEngineList.FirstOrDefault(
-                x => x.SearchEngineKey == registerAction.SearchEngine.SearchEngineKey);
+                x => x.Key == registerAction.SearchEngine.Key);
 
             if (inSearchEngine is not null)
                 return inState;
@@ -30,7 +30,7 @@ public partial class TextEditorSearchEngineState
             DisposeAction disposeAction)
         {
             var existingSearchEngine = inState.SearchEngineList.FirstOrDefault(
-                x => x.SearchEngineKey == disposeAction.SearchEngineKey);
+                x => x.Key == disposeAction.SearchEngineKey);
 
             if (existingSearchEngine is null)
                 return inState;

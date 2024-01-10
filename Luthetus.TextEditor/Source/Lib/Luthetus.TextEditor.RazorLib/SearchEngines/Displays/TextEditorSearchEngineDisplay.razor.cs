@@ -1,5 +1,6 @@
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Tabs.Models;
 using Luthetus.Common.RazorLib.Tabs.States;
@@ -16,6 +17,8 @@ public partial class TextEditorSearchEngineDisplay : FluxorComponent
     private IState<TextEditorSearchEngineState> TextEditorSearchEngineStateWrap { get; set; } = null!;
     [Inject]
     private IStateSelection<TabState, TabGroup?> TabStateGroupSelection { get; set; } = null!;
+    [Inject]
+    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -61,10 +64,15 @@ public partial class TextEditorSearchEngineDisplay : FluxorComponent
 
                         foreach (var searchEngine in searchEngineList)
                         {
-                            var tabEntryWithType = new TabEntryWithType<ITextEditorSearchEngine>(
-                                searchEngine,
-                                tabEntryNoType => ((TabEntryWithType<ITextEditorSearchEngine>)tabEntryNoType)
-                                    .Item.DisplayName,
+                            var tabEntryWithType = new TabEntryWithType<Key<ITextEditorSearchEngine>>(
+                                searchEngine.Key,
+                                tabEntryNoType => 
+                                {
+                                    var tabEntryWithType = (TabEntryWithType<Key<ITextEditorSearchEngine>>)tabEntryNoType;
+                                    var searchEngineState = TextEditorSearchEngineStateWrap.Value;
+                                    var searchEngine = searchEngineState.SearchEngineList.FirstOrDefault(x => x.Key == tabEntryWithType.Item);
+                                    return searchEngine?.DisplayName ?? $"{nameof(searchEngine.DisplayName)} was null";
+                                },
                                 tabEntryNoType => Dispatcher.Dispatch(new TabState.SetActiveTabEntryKeyAction(
                                     SelectedSearchEngineTabGroupKey,
                                     tabEntryNoType.TabEntryKey)));
@@ -84,6 +92,13 @@ public partial class TextEditorSearchEngineDisplay : FluxorComponent
                 Dispatcher.Dispatch(new TabState.SetTabEntryListAction(
                     SelectedSearchEngineTabGroupKey,
                     entries.OutTabEntries));
+
+                Dispatcher.Dispatch(new TabState.SetActiveTabEntryKeyAction(
+                    SelectedSearchEngineTabGroupKey,
+                    entries.OutTabEntries.Single(x =>
+                        ((TabEntryWithType<Key<ITextEditorSearchEngine>>)x).Item ==
+                            new SearchEngineFileSystem(FileSystemProvider).Key)
+                    .TabEntryKey));
             }
         }
 

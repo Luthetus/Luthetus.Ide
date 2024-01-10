@@ -4,7 +4,7 @@ namespace Luthetus.TextEditor.RazorLib.SearchEngines.Models;
 
 public interface ITextEditorSearchEngine
 {
-    public Key<ITextEditorSearchEngine> SearchEngineKey { get; }
+    public Key<ITextEditorSearchEngine> Key { get; }
     public Type IconComponentRendererType { get; }
     public string DisplayName { get; }
 

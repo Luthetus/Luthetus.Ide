@@ -27,7 +27,7 @@ public class TextEditorSearchEngineStateActionsTests
 	public void DisposeAction()
 	{
         var searchEngine = new SearchEngineOverRegisteredViewModels();
-        var searchEngineKey = searchEngine.SearchEngineKey;
+        var searchEngineKey = searchEngine.Key;
         var disposeAction = new TextEditorSearchEngineState.DisposeAction(searchEngineKey);
         Assert.Equal(searchEngineKey, disposeAction.SearchEngineKey);
 	}
@@ -39,7 +39,7 @@ public class TextEditorSearchEngineStateActionsTests
 	public void SetActiveSearchEngineAction()
 	{
         var searchEngine = new SearchEngineOverRegisteredViewModels();
-        var searchEngineKey = searchEngine.SearchEngineKey;
+        var searchEngineKey = searchEngine.Key;
         var setActiveSearchEngineAction = new TextEditorSearchEngineState.SetActiveSearchEngineAction(searchEngineKey);
         Assert.Equal(searchEngineKey, setActiveSearchEngineAction.SearchEngineKey);
 	}
