@@ -1,9 +1,13 @@
 @using Fluxor.Blazor.Web.Components;
+@using Luthetus.Common.RazorLib.Tabs.Displays
 @using Luthetus.TextEditor.RazorLib.SearchEngines.Models;
 
 @inherits FluxorComponent
 
-@{ var searchEngineState = TextEditorSearchEngineStateWrap.Value; }
+@{
+    var searchEngineState = TextEditorSearchEngineStateWrap.Value;
+    var tabGroup = TabStateGroupSelection.Value;
+}
 
 <div class="luth_te_find">
     <div class="luth_te_find-tabs">
@@ -13,7 +17,13 @@
                                     IsActive="searchEngine.SearchEngineKey == searchEngineState.ActiveSearchEngineKey" />
         }
     </div>
-    
+
+    <hr/>
+
+    <TabGroupDisplay TabGroupKey="SelectedSearchEngineTabGroupKey"/>
+
+    <hr />
+
     <div class="luth_te_find-body">
 
         SearchQuery:&nbsp;
